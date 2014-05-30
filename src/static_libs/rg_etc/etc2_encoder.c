@@ -87,12 +87,6 @@ static const int kBlockWalk[16] = {
 #define BIT(byteval, bit) \
    (((byteval) >> (bit)) & 0x1)
 
-// Clamps only if value is > 255
-#define CLAMPDOWN(a) ({ int _z = (a); ((_z <= 255) ? _z : 255); })
-
-// Clamps only if value is < 0
-#define CLAMPUP(a) ({ int _z = (a); ((_z >= 0) ? _z : 0); })
-
 // Real clamp
 #define CLAMP(a) ({ int _b = (a); (((_b) >= 0) ? (((_b) < 256) ? (_b) : 255) : 0); })
 
@@ -336,6 +330,93 @@ _etc2_t_mode_header_pack(uint8_t *etc2,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_etc2_h_mode_header_pack(uint8_t *etc2, Eina_Bool *swap_colors,
+                         uint32_t color1, uint32_t color2, int distance)
+{
+   int distanceIdx, R, dR, G, dG, distanceSpecialBit, da, db;
+   int r1_4, g1_4, b1_4, r2_4, g2_4, b2_4;
+   uint32_t c1, c2;
+
+   for (distanceIdx = 0; distanceIdx < 8; distanceIdx++)
+     if (kDistances[distanceIdx] == distance) break;
+
+   if (distanceIdx >= 8)
+     return EINA_FALSE;
+
+   // The distance is coded in 3 bits. But in H mode, one bit is not coded
+   // in the header, as we use the comparison result between the two colors
+   // to select it.
+   distanceSpecialBit = BIT(distanceIdx, 0);
+   db = BIT(distanceIdx, 1);
+   da = BIT(distanceIdx, 2);
+
+   // Note: if c1 == c2, no big deal because H is not the best choice of mode
+   if (distanceSpecialBit)
+     {
+        c1 = MAX(color1, color2);
+        c2 = MIN(color1, color2);
+     }
+   else
+     {
+        c1 = MIN(color1, color2);
+        c2 = MAX(color1, color2);
+     }
+
+   // Return flag so we use the proper colors when packing the block
+   *swap_colors = (c1 != color1);
+
+   // 4 bit colors
+   r1_4 = R_VAL(&c1) >> 4;
+   g1_4 = G_VAL(&c1) >> 4;
+   b1_4 = B_VAL(&c1) >> 4;
+   r2_4 = R_VAL(&c2) >> 4;
+   g2_4 = G_VAL(&c2) >> 4;
+   b2_4 = B_VAL(&c2) >> 4;
+
+   // R1 + G1a. R + [dR] must be inside [0..31]. Scanning all values. Not smart.
+   R  = r1_4;
+   dR = g1_4 >> 1;
+   if ((R + kSigned3bit[dR]) < 0 || (R + kSigned3bit[dR] > 31))
+     R |= (1 << 4);
+
+   if ((R + kSigned3bit[dR]) < 0 || (R + kSigned3bit[dR] > 31))
+     return EINA_FALSE; // wtf?
+
+   etc2[0] = ((R & 0x1F) << 3) | (dR & 0x7);
+
+   // G1b + B1a + B1b[2 msb]. G + dG must be outside the range.
+   G  = (g1_4 & 0x1) << 1;
+   G |= BIT(b1_4, 3);
+   dG = BITS(b1_4, 1, 2);
+   for (int Gx = 0; Gx < 8; Gx++)
+     for (int dGx = 0; dGx < 2; dGx++)
+       {
+          int Gtry = G | (Gx << 2);
+          int dGtry = dG | (dGx << 2);
+          if ((Gtry + kSigned3bit[dGtry]) < 0 || (Gtry + kSigned3bit[dGtry] > 31))
+            {
+               G = Gtry;
+               dG = dGtry;
+               break;
+            }
+       }
+
+   if ((G + kSigned3bit[dG]) >= 0 && (G + kSigned3bit[dG] <= 31))
+     return EINA_FALSE; // wtf?
+
+   etc2[1] = ((G & 0x1F) << 3) | (dG & 0x7);
+
+   // B1[lsb] + R2 + G2 [3 msb]
+   etc2[2] = ((b1_4 & 0x1) << 7) | (r2_4 << 3) | (g2_4 >> 1);
+
+   // G2[lsb] + B2 + distance
+   etc2[3] = ((g2_4 & 0x1) << 7) | (b2_4 << 3)
+         | (da << 2) | 0x2 | db;
+
+   return EINA_TRUE;
+}
+
 static inline int
 _rgb_distance_percept(uint32_t color1, uint32_t color2)
 {
@@ -355,24 +436,53 @@ _rgb_distance_euclid(uint32_t color1, uint32_t color2)
 }
 
 static unsigned int
-_etc2_t_mode_block_pack(uint8_t *etc2,
-                        uint32_t color1, uint32_t color2, int distance,
-                        const uint32_t *bgra, Eina_Bool write)
+_etc2_th_mode_block_pack(uint8_t *etc2, Eina_Bool h_mode,
+                         uint32_t color1, uint32_t color2, int distance,
+                         const uint32_t *bgra, Eina_Bool write,
+                         Eina_Bool *swap_colors)
 {
    uint8_t paint_colors[4][4];
    int errAcc = 0;
 
-   for (int k = 0; k < 4; k++)
+   if (write)
      {
-        // Note: We don't really care about alpha...
-        paint_colors[0][k] = ((uint8_t *) &color1)[k];
-        paint_colors[1][k] = CLAMPDOWN(((uint8_t *) &color2)[k] + distance);
-        paint_colors[2][k] = ((uint8_t *) &color2)[k];
-        paint_colors[3][k] = CLAMPUP(((uint8_t *) &color2)[k] - distance);
+        memset(etc2 + 4, 0, 4);
+        if (!h_mode)
+          {
+             if (!_etc2_t_mode_header_pack(etc2, color1, color2, distance))
+               return INT_MAX; // assert
+          }
+        else
+          {
+             if (!_etc2_h_mode_header_pack(etc2, swap_colors,
+                                           color1, color2, distance))
+               return INT_MAX; // assert
+             if (*swap_colors)
+               {
+                  uint32_t tmp = color1;
+                  color1 = color2;
+                  color2 = tmp;
+               }
+          }
      }
 
-   if (write)
-     memset(etc2 + 4, 0, 4);
+   for (int k = 0; k < 4; k++)
+     {
+        if (!h_mode)
+          {
+             paint_colors[0][k] = ((uint8_t *) &color1)[k];
+             paint_colors[1][k] = CLAMP(((uint8_t *) &color2)[k] + distance);
+             paint_colors[2][k] = ((uint8_t *) &color2)[k];
+             paint_colors[3][k] = CLAMP(((uint8_t *) &color2)[k] - distance);
+          }
+        else
+          {
+             paint_colors[0][k] = CLAMP(((uint8_t *) &color1)[k] + distance);
+             paint_colors[1][k] = CLAMP(((uint8_t *) &color1)[k] - distance);
+             paint_colors[2][k] = CLAMP(((uint8_t *) &color2)[k] + distance);
+             paint_colors[3][k] = CLAMP(((uint8_t *) &color2)[k] - distance);
+          }
+     }
 
    for (int k = 0; k < 16; k++)
      {
@@ -398,12 +508,6 @@ _etc2_t_mode_block_pack(uint8_t *etc2,
              etc2[5 - (k >> 3)] |= ((bestIdx & 0x2) ? 1 : 0) << (k & 0x7);
              etc2[7 - (k >> 3)] |= (bestIdx & 0x1) << (k & 0x7);
           }
-     }
-
-   if (write)
-     {
-        if (!_etc2_t_mode_header_pack(etc2, color1, color2, distance))
-          return INT_MAX; // assert
      }
 
    return errAcc;
@@ -547,12 +651,13 @@ found:
 }
 
 static unsigned int
-_etc2_t_mode_block_encode(uint8_t *etc2, const uint32_t *bgra,
-                          const rg_etc1_pack_params *params)
+_etc2_th_mode_block_encode(uint8_t *etc2, const uint32_t *bgra,
+                           const rg_etc1_pack_params *params)
 {
    int err, bestDist = kDistances[0];
-   int minErr = INT_MAX;
+   int minErr = INT_MAX, bestMode = 0;
    uint32_t c1, c2, bestC1 = bgra[0], bestC2 = bgra[1];
+   Eina_Bool swap_colors = EINA_FALSE;
 
    Eina_Inlist *tried_pairs = NULL;
    struct ColorPair {
@@ -609,23 +714,31 @@ _etc2_t_mode_block_encode(uint8_t *etc2, const uint32_t *bgra,
 
           for (int distIdx = 0; distIdx < 8; distIdx++)
             {
-               for (int swap = 0; swap < 2; swap++)
+               for (int mode = 0; mode < 2; mode++)
                  {
-                    if (swap)
+
+                    for (int swap = 0; swap < 2; swap++)
                       {
-                         uint32_t tmp = c2;
-                         c2 = c1;
-                         c1 = tmp;
-                      }
-                    err = _etc2_t_mode_block_pack(etc2, c1, c2, kDistances[distIdx], bgra, EINA_FALSE);
-                    if (err < minErr)
-                      {
-                         bestDist = kDistances[distIdx];
-                         minErr = err;
-                         bestC1 = c1;
-                         bestC2 = c2;
-                         if (err <= kTargetError[params->m_quality])
-                           goto found;
+                         if (mode == 0 && swap)
+                           {
+                              uint32_t tmp = c2;
+                              c2 = c1;
+                              c1 = tmp;
+                           }
+                         err = _etc2_th_mode_block_pack(etc2, mode, c1, c2,
+                                                        kDistances[distIdx],
+                                                        bgra, EINA_FALSE,
+                                                        &swap_colors);
+                         if (err < minErr)
+                           {
+                              bestDist = kDistances[distIdx];
+                              minErr = err;
+                              bestC1 = (!swap_colors) ? c1 : c2;
+                              bestC2 = (!swap_colors) ? c2 : c1;
+                              bestMode = mode;
+                              if (err <= kTargetError[params->m_quality])
+                                goto found;
+                           }
                       }
                  }
             }
@@ -638,7 +751,8 @@ found:
         free(pair);
      }
 
-   err = _etc2_t_mode_block_pack(etc2, bestC1, bestC2, bestDist, bgra, EINA_TRUE);
+   err = _etc2_th_mode_block_pack(etc2, bestMode, bestC1, bestC2, bestDist,
+                                  bgra, EINA_TRUE, &swap_colors);
 
    return err;
 }
@@ -673,8 +787,8 @@ etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
 
    // TODO: H mode, Planar mode
 
-   errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params); // 36.63dB
-   errors[1] = _etc2_t_mode_block_encode(etc2_try[1], bgra, &safe_params); // 36.69dB (+0.6dB)
+   errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params);
+   errors[1] = _etc2_th_mode_block_encode(etc2_try[1], bgra, &safe_params);
 
 #ifdef DEBUG
    if (errors[1] < INT_MAX)
@@ -688,8 +802,8 @@ etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
 
           if (real_errors[0] != errors[1])
             {
-               DBG("Invalid error calc in T mode");
-               errors[1] = real_errors[0];
+               DBG("Invalid error calc in T or H mode");
+               //errors[1] = real_errors[0];
             }
        }
 #endif
@@ -723,7 +837,7 @@ etc2_rgb8_block_pack(unsigned char *etc2, const unsigned int *bgra,
   // TODO: Planar mode
 
   errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params);
-  errors[1] = _etc2_t_mode_block_encode(etc2_try[1], bgra, &safe_params);
+  errors[1] = _etc2_th_mode_block_encode(etc2_try[1], bgra, &safe_params);
 
   for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
     if (errors[k] < minErr)
