@@ -3036,24 +3036,32 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
           {
              if (_accel_is_gl())
                {
-                  enginelist[0] = ELM_OPENGL_X11;
-                  enginelist[1] = ELM_WAYLAND_EGL;
-                  enginelist[2] = ELM_DRM;
-                  enginelist[3] = ELM_SOFTWARE_FB;
-                  enginelist[4] = ELM_OPENGL_COCOA;
-                  enginelist[5] = ELM_OPENGL_SDL;
-                  enginelist[6] = NULL;
+                  enginelist[ 0] = ELM_OPENGL_X11;
+                  enginelist[ 1] = ELM_WAYLAND_EGL;
+                  enginelist[ 2] = ELM_DRM;
+                  enginelist[ 3] = ELM_SOFTWARE_FB;
+                  enginelist[ 4] = ELM_OPENGL_COCOA;
+                  enginelist[ 5] = ELM_OPENGL_SDL;
+                  enginelist[ 6] = ELM_SOFTWARE_X11;
+                  enginelist[ 7] = ELM_WAYLAND_SHM;
+                  enginelist[ 8] = ELM_SOFTWARE_SDL;
+                  enginelist[ 9] = ELM_SOFTWARE_PSL1GHT;
+                  enginelist[10] = NULL;
                }
              else
                {
-                  enginelist[0] = ENGINE_GET();
-                  enginelist[1] = ELM_SOFTWARE_X11;
-                  enginelist[2] = ELM_WAYLAND_SHM;
-                  enginelist[3] = ELM_DRM;
-                  enginelist[4] = ELM_SOFTWARE_FB;
-                  enginelist[5] = ELM_OPENGL_COCOA;
-                  enginelist[6] = ELM_SOFTWARE_SDL;
-                  enginelist[7] = NULL;
+                  enginelist[ 0] = ENGINE_GET();
+                  enginelist[ 1] = ELM_SOFTWARE_X11;
+                  enginelist[ 2] = ELM_WAYLAND_SHM;
+                  enginelist[ 3] = ELM_DRM;
+                  enginelist[ 4] = ELM_SOFTWARE_FB;
+                  enginelist[ 5] = ELM_OPENGL_COCOA;
+                  enginelist[ 6] = ELM_SOFTWARE_SDL;
+                  enginelist[ 7] = ELM_OPENGL_X11;
+                  enginelist[ 8] = ELM_WAYLAND_EGL;
+                  enginelist[ 9] = ELM_DRM;
+                  enginelist[10] = ELM_OPENGL_SDL;
+                  enginelist[11] = NULL;
                }
           }
         for (i = 0; i < 30; i++)
