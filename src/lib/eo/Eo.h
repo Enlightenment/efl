@@ -964,7 +964,7 @@ EAPI void eo_key_data_set(const char *key, const void *data, eo_key_data_free_fu
 /**
  * @brief Get generic data from object.
  * @param[in] key the key associated with the data
- * @param[out] data the data for the key
+ * @return data the data for the key
  *
  * @see #eo_key_data_set
  * @see #eo_key_data_del
@@ -1001,7 +1001,7 @@ EAPI void eo_parent_set(Eo *parent);
 
 /**
  * @brief Get the parent of an object
- * @param[out] a pointer to the parent object.
+ * @return a pointer to the parent object.
  *
  * @see eo_parent_set()
  */
@@ -1238,7 +1238,7 @@ EAPI void eo_event_thaw(void);
 /**
  * @brief return freeze events of object.
  *
- * @param[out] fcount The event freeze count of the object.
+ * @return fcount The event freeze count of the object.
  *
  * Return event freeze count.
  *
@@ -1270,7 +1270,7 @@ EAPI void eo_event_global_thaw(void);
 /**
  * @brief return freeze events of object.
  *
- * @param[out] fcount The event freeze count of the object.
+ * @return fcount The event freeze count of the object.
  *
  * Return event freeze count.
  *
@@ -1363,7 +1363,7 @@ EAPI void eo_event_callback_array_del(const Eo_Callback_Array_Item *array,
  * @brief Call the callbacks for an event of an object.
  * @param[in] desc The description of the event to call.
  * @param[in] event_info Extra event info to pass to the callbacks.
- * @param[out] aborted @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
+ * @return aborted @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool eo_event_callback_call(const Eo_Event_Description *desc, void *event_info);
 
