@@ -9,9 +9,10 @@ static void
 _op_blend_p_c_dp_neon(DATA32 * __restrict s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 * __restrict d, int l) {
 
 /* Current this neon code is a little buggy, color blending won't be done
-	correctly. So leave the code depend on the compilier optimization. */
+   correctly. So leave the code depend on the compilier optimization. */
 #if 1
-   int i = 0;
+   int i;
+   int alpha;
 
    for (i = 0; i < l; i++)
      {
