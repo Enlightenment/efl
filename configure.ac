@@ -556,7 +556,7 @@ case $host_cpu in
        build_cpu_neon="yes"
        AC_MSG_CHECKING([whether to use NEON instructions])
        CFLAGS_save="${CFLAGS}"
-       CFLAGS="${CFLAGS} -mfpu=neon"
+       CFLAGS="${CFLAGS} -mfpu=neon -ftree-vectorize"
        AC_TRY_COMPILE([#include <arm_neon.h>],
          [asm volatile ("vqadd.u8 d0, d1, d0\n")],
        	 [
