@@ -573,8 +573,7 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
    it->current.start = it->current.end;
 
    it->current.end = eol;
-   it->current.length = eol - it->current.start;
-   if (eol < it->end) it->current.length--;
+   it->current.length = eol - it->current.start - 1;
 
    *data = &it->current;
    return EINA_TRUE;
