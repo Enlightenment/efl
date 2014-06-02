@@ -167,9 +167,12 @@ _mesh_setup(Scene_Data *data)
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
 
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 0.2, 0.2, 0.2, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT,
+                                    0.2, 0.2, 0.2, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE,
+                                    0.8, 0.8, 0.8, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR,
+                                    1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(100.0));
 
    /* Setup mesh. */
@@ -179,20 +182,22 @@ _mesh_setup(Scene_Data *data)
          evas_3d_mesh_frame_add(0),
 
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_POSITION,
-                                            12 * sizeof(float), &cube_vertices[ 0]),
+                                            12 * sizeof(float),
+                                            &cube_vertices[ 0]),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_NORMAL,
-                                            12 * sizeof(float), &cube_vertices[ 3]),
+                                            12 * sizeof(float),
+                                            &cube_vertices[ 3]),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_COLOR,
-                                            12 * sizeof(float), &cube_vertices[ 6]),
+                                            12 * sizeof(float),
+                                            &cube_vertices[ 6]),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_TEXCOORD,
-                                            12 * sizeof(float), &cube_vertices[10]),
+                                            12 * sizeof(float),
+                                            &cube_vertices[10]),
 
          evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
                                      36, &cube_indices[0]),
          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
-
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
-
          evas_3d_mesh_frame_material_set(0, data->material));
 
    data->mesh_node =
@@ -238,8 +243,12 @@ _stop_scene(void *data,
    if (ev->button == 1)
      {
         if (eo_do(d->scene,
-                  evas_3d_scene_exist((ev->canvas.x - d_w/2), (ev->canvas.y - d_h/2), d->mesh_node)))
-          d_angle = 0;
+                  evas_3d_scene_exist((ev->canvas.x - (d_w / 2)),
+                                      (ev->canvas.y - (d_h / 2)),
+                                      d->mesh_node)))
+          {
+             d_angle = 0;
+          }
      }
 }
 
@@ -258,24 +267,22 @@ _play_scene(void *data,
 }
 
 int
-main(void)
+elm_main(int argc, char **argv)
 {
-   setenv("ELM_ENGINE", "opengl_x11", 1);
-
    Scene_Data data;
 
-   if (!elm_init(0,0)) return 0;
-
+   elm_config_preferred_engine_set("opengl_x11");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("__WIN__", "3d object on the button");
+   if (!win) return 0;
+
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, WIDTH, HEIGHT);
    evas_object_show(win);
 
    evas = evas_object_evas_get(win);
-
-   if ((!win) || (!evas)) return 0;
+   if (!evas) return 0;
 
    _scene_setup(&data);
 
@@ -288,13 +295,15 @@ main(void)
 
    /* Setup scene to the widget button. */
    btn = elm_button_add(win);
-   elm_object_part_content_set(btn, "elm.swallow.content", image);
-   evas_object_resize(btn, WIDTH - d_w, HEIGHT - d_h);
-   evas_object_move(btn, d_w/2, d_h/2);
+   elm_object_content_set(btn, image);
+   evas_object_resize(btn, (WIDTH - d_w), (HEIGHT - d_h));
+   evas_object_move(btn, (d_w / 2), (d_h / 2));
    evas_object_show(btn);
 
-   evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_DOWN, _stop_scene, &data);
-   evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_UP, _play_scene, &data);
+   evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_DOWN, _stop_scene,
+                                  &data);
+   evas_object_event_callback_add(btn, EVAS_CALLBACK_MOUSE_UP, _play_scene,
+                                  &data);
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);
@@ -306,3 +315,4 @@ main(void)
 
    return 0;
 }
+ELM_MAIN()
