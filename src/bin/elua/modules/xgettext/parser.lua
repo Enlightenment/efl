@@ -132,10 +132,30 @@ local parse = function(ls, keywords)
     end
 end
 
+local parse_all = function(ls)
+    yield()
+    local tok = ls.token
+    while tok.name do
+        if tok.name == "<comment>" then
+            saved_comment = tok.value
+            ls:get()
+        elseif tok.name == "<string>" then
+            local line    = ls.line_number
+            local val     = tok.value
+            local sc      = saved_comment
+            saved_comment = nil
+            ls:get()
+            yield { val, comment = sc, line = line }
+        else
+            ls:get()
+        end
+    end
+end
+
 return { init = function (chunkname, input, keywords, flags, opts)
     local ls = lexer.init(chunkname, input, opts)
     ls:get()
-    local coro = coroutine.wrap(parse, ls, keywords)
+    local coro = coroutine.wrap(opts["a"] and parse_all or parse, ls, keywords)
     coro(ls, keywords)
     return coro
 end }
