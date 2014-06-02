@@ -279,6 +279,10 @@ for i = 1, #keywords do
         error("invalid keyword specifier")
     end
 
+    if keywords[kwb] then
+        error("cannot specify the same keyword more than twice")
+    end
+
     -- all sanitized, store :)
     keywords[kwb] = { context = context, argnum = tonumber(argnum),
         xcomment = xcmt, tonumber(n1), tonumber(n2) }
