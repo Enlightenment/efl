@@ -1608,7 +1608,7 @@ _cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
    int freeze_num = 0, i;
 
-   eo_do(eo_e, freeze_num = eo_event_freeze_get());
+   eo_do(eo_e, freeze_num = eo_event_freeze_count_get());
    for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_thaw());
    evas_event_callback_call(eo_e, type, event_info);
    for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_freeze());

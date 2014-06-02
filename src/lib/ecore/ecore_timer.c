@@ -431,12 +431,12 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 {
    int r = 0;
 
-   eo_do(timer, r = eo_event_freeze_get());
+   eo_do(timer, r = eo_event_freeze_count_get());
    return !!r;
 }
 
 EOLIAN static int
-_ecore_timer_eo_base_event_freeze_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
+_ecore_timer_eo_base_event_freeze_count_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
 

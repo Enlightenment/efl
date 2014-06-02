@@ -842,7 +842,7 @@ _ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data)
 
    return pd->event_freeze_count;
 }
-EAPI EO_FUNC_BODY(eo_event_freeze_get, int, 0);
+EAPI EO_FUNC_BODY(eo_event_freeze_count_get, int, 0);
 
 static void
 _ev_global_freeze(const Eo_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED)
@@ -870,7 +870,7 @@ _ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, void *class_data EINA_U
 {
    return event_freeze_count;
 }
-EAPI EO_FUNC_BODY(eo_event_global_freeze_get, int, 0);
+EAPI EO_FUNC_BODY(eo_event_global_freeze_count_get, int, 0);
 
 /* Eo_Dbg */
 EAPI void
@@ -1048,10 +1048,10 @@ static Eo_Op_Description op_descs [] = {
        EO_OP_FUNC(eo_event_callback_forwarder_del, _ev_cb_forwarder_del, "Delete an event forwarder."),
        EO_OP_FUNC(eo_event_freeze, _ev_freeze, "Freezes events."),
        EO_OP_FUNC(eo_event_thaw, _ev_thaw, "Thaws events."),
-       EO_OP_FUNC(eo_event_freeze_get, _ev_freeze_get, "Get event freeze counter."),
+       EO_OP_FUNC(eo_event_freeze_count_get, _ev_freeze_get, "Get event freeze counter."),
        EO_OP_CLASS_FUNC(eo_event_global_freeze, _ev_global_freeze, "Freezes events globally."),
        EO_OP_CLASS_FUNC(eo_event_global_thaw, _ev_global_thaw, "Thaws events globally."),
-       EO_OP_CLASS_FUNC(eo_event_global_freeze_get, _ev_global_freeze_get, "Get global event freeze counter."),
+       EO_OP_CLASS_FUNC(eo_event_global_freeze_count_get, _ev_global_freeze_get, "Get global event freeze counter."),
        EO_OP_FUNC(eo_dbg_info_get, _dbg_info_get, "Get debug info list for obj."),
        EO_OP_SENTINEL
 };

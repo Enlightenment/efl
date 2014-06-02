@@ -960,7 +960,7 @@ _canvas_event_thaw(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(eo_e, EVAS_CLASS,
          eo_event_thaw());
    eo_do_super(eo_e, EVAS_CLASS,
-         fcount = eo_event_freeze_get());
+         fcount = eo_event_freeze_count_get());
    if (0 == fcount)
      {
         Evas_Public_Data *e = _pd;
@@ -989,7 +989,7 @@ evas_event_freeze_get(const Evas *eo_e)
    return 0;
    MAGIC_CHECK_END();
    int ret = 0;
-   eo_do((Eo *)eo_e, ret = eo_event_freeze_get());
+   eo_do((Eo *)eo_e, ret = eo_event_freeze_count_get());
    return ret;
 }
 

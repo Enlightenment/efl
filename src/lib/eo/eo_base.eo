@@ -21,7 +21,7 @@ Parents keep references to their children so in order to delete objects that hav
             Eo* parent; /*@ the new parent */
          }
       }
-      event_global_freeze {
+      event_global_freeze_count {
          get {
             /*@ return freeze events of object.
 Return event freeze count. */
@@ -30,7 +30,7 @@ Return event freeze count. */
             int fcount; /*@ The event freeze count of the object */
          }
       }
-      event_freeze {
+      event_freeze_count {
          get {
             /*@ return freeze events of object.
 Return event freeze count. */

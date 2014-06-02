@@ -119,7 +119,7 @@ inline int
 event_freeze_get(const Eo *obj)
 {
    int count = -1;
-   eo_do(obj, count = eo_event_freeze_get());
+   eo_do(obj, count = eo_event_freeze_count_get());
    return count;
 }
 

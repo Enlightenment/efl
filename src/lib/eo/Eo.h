@@ -1245,7 +1245,7 @@ EAPI void eo_event_thaw(void);
  * @see #eo_event_freeze
  * @see #eo_event_thaw
  */
-EAPI int eo_event_freeze_get(void);
+EAPI int eo_event_freeze_count_get(void);
 
 /**
  * @brief freeze events of object.
@@ -1274,11 +1274,11 @@ EAPI void eo_event_global_thaw(void);
  *
  * Return event freeze count.
  *
- * @see #eo_event_freeze_get
+ * @see #eo_event_freeze_count_get
  * @see #eo_event_global_freeze
  * @see #eo_event_global_thaw
  */
-EAPI int eo_event_global_freeze_get(void);
+EAPI int eo_event_global_freeze_count_get(void);
 
 /**
  * @def eo_event_callback_add(obj, desc, cb, data)
