@@ -136,7 +136,7 @@ end
 local parse_all = function(ls)
     yield()
     local tok = ls.token
-    while tok.name do
+    while tok.name ~= "<eof>" do
         if tok.name == "<comment>" then
             saved_comment = tok.value
             ls:get()
