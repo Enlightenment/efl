@@ -39,9 +39,9 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \
    Edje *ed; \
-   if (!eo_isa(obj, EDJE_OBJ_CLASS)) \
+   if (!eo_isa(obj, EDJE_CLASS)) \
      return RET; \
-   ed = eo_data_scope_get(obj, EDJE_OBJ_CLASS);
+   ed = eo_data_scope_get(obj, EDJE_CLASS);
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
@@ -151,7 +151,7 @@ _edje_edit_data_clean(Edje_Edit *eed)
 }
 
 EOLIAN static void
-_edje_edit_evas_smart_del(Eo *obj, Edje_Edit *eed)
+_edje_edit_evas_object_smart_del(Eo *obj, Edje_Edit *eed)
 {
    _edje_edit_data_clean(eed);
 
@@ -239,7 +239,7 @@ edje_edit_object_add(Evas *evas)
 EOLIAN static void
 _edje_edit_eo_base_constructor(Eo *obj, Edje_Edit *eed)
 {
-   eed->base = eo_data_ref(obj, EDJE_OBJ_CLASS);
+   eed->base = eo_data_ref(obj, EDJE_CLASS);
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 }

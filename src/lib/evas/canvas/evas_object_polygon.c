@@ -1,7 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_OBJ_POLYGON_CLASS
+#define MY_CLASS EVAS_POLYGON_CLASS
 
 /* private magic number for polygon objects */
 static const char o_type[] = "polygon";
@@ -97,7 +97,7 @@ evas_object_polygon_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_OBJ_POLYGON_CLASS, e);
+   Evas_Object *eo_obj = eo_add(EVAS_POLYGON_CLASS, e);
    eo_unref(eo_obj);
    return eo_obj;
 }
@@ -110,7 +110,7 @@ _evas_polygon_eo_base_constructor(Eo *eo_obj, Evas_Polygon_Data *class_data EINA
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_polygon_init(eo_obj);
    eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
@@ -119,7 +119,7 @@ _evas_polygon_eo_base_constructor(Eo *eo_obj, Evas_Polygon_Data *class_data EINA
 EOLIAN static void
 _evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Polygon_Data *o = _pd;
    Evas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
@@ -226,7 +226,7 @@ _evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_C
 EOLIAN static void
 _evas_polygon_points_clear(Eo *eo_obj, Evas_Polygon_Data *_pd)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Polygon_Data *o = _pd;
    void *list_data;
    int is, was;
@@ -270,7 +270,7 @@ _evas_polygon_points_clear(Eo *eo_obj, Evas_Polygon_Data *_pd)
 static void
 evas_object_polygon_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
@@ -280,7 +280,7 @@ evas_object_polygon_init(Evas_Object *eo_obj)
 EOLIAN static void
 _evas_polygon_eo_base_destructor(Eo *eo_obj, Evas_Polygon_Data *_pd EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    evas_object_polygon_free(eo_obj, obj, obj->private_data);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());

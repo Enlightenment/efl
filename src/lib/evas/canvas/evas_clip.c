@@ -178,7 +178,7 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
         if (obj->smart.parent)
           {
              Evas_Object_Protected_Data *smart_parent_obj =
-                eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
+                eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
              evas_object_child_map_across_mark
                 (eo_obj, obj, smart_parent_obj->map->cur.map_parent, 0, NULL);
           }
@@ -207,7 +207,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
    return;
    MAGIC_CHECK_END();
 
-   clip = eo_data_scope_get(eo_clip, EVAS_OBJ_CLASS);
+   clip = eo_data_scope_get(eo_clip, EVAS_OBJECT_CLASS);
    if (obj->cur->clipper && obj->cur->clipper->object == eo_clip) return;
    if (eo_obj == eo_clip)
      {

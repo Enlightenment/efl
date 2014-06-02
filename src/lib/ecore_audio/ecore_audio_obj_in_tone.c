@@ -14,7 +14,7 @@
 #include "ecore_audio_private.h"
 #include <math.h>
 
-#define MY_CLASS ECORE_AUDIO_OBJ_IN_TONE_CLASS
+#define MY_CLASS ECORE_AUDIO_IN_TONE_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_In_Tone"
 
 struct _Ecore_Audio_In_Tone_Data
@@ -29,7 +29,7 @@ EOLIAN static ssize_t
 _ecore_audio_in_tone_ecore_audio_in_read_internal(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, void *data, size_t len)
 {
   size_t i, remain;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
   float *val = data;
 
@@ -50,7 +50,7 @@ EOLIAN static double
 _ecore_audio_in_tone_ecore_audio_in_seek(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, double offs, int mode)
 {
   int tmp;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
   switch (mode) {
     case SEEK_SET:
@@ -78,7 +78,7 @@ err:
 EOLIAN static void
 _ecore_audio_in_tone_ecore_audio_in_length_set(Eo *eo_obj, Ecore_Audio_In_Tone_Data *_pd EINA_UNUSED, double length)
 {
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
   in_obj->length = length;
 }
 
@@ -110,7 +110,7 @@ _ecore_audio_in_tone_eo_base_key_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Data *
 EOLIAN static void
 _ecore_audio_in_tone_eo_base_constructor(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj)
 {
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 

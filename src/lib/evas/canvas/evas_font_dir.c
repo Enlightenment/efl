@@ -1396,7 +1396,7 @@ evas_font_path_global_list(void)
 void
 evas_font_object_rehint(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (obj->is_smart)
      {
 	EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj)

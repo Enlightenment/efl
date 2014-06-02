@@ -20,7 +20,7 @@
 
 extern pa_mainloop_api functable;
 
-#define MY_CLASS ECORE_AUDIO_OBJ_OUT_PULSE_CLASS
+#define MY_CLASS ECORE_AUDIO_OUT_PULSE_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_Out_Pulse"
 
 struct _Ecore_Audio_Pulse_Class {
@@ -50,7 +50,7 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
   Eina_List *input;
   uint32_t idx;
   pa_cvolume pa_volume;
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
   if (volume < 0)
     volume = 0;
@@ -109,7 +109,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   double speed = 0;
   pa_stream *stream;
   Eina_Bool ret = EINA_FALSE;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, ret = ecore_audio_obj_out_input_attach(in));
   if (!ret)
@@ -256,7 +256,7 @@ _ecore_audio_out_pulse_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Dat
 {
   int argc;
   char **argv;
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 

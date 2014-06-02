@@ -1,7 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_OBJ_RECTANGLE_CLASS
+#define MY_CLASS EVAS_RECTANGLE_CLASS
 
 /* private magic number for rectangle objects */
 static const char o_type[] = "rectangle";
@@ -85,7 +85,7 @@ evas_object_rectangle_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_OBJ_RECTANGLE_CLASS, e);
+   Evas_Object *eo_obj = eo_add(EVAS_RECTANGLE_CLASS, e);
    eo_unref(eo_obj);
    return eo_obj;
 }
@@ -97,7 +97,7 @@ _evas_rectangle_eo_base_constructor(Eo *eo_obj, Evas_Rectangle_Data *class_data 
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_rectangle_init(eo_obj);
 
    eo_do(eo_obj, parent = eo_parent_get());
@@ -108,7 +108,7 @@ _evas_rectangle_eo_base_constructor(Eo *eo_obj, Evas_Rectangle_Data *class_data 
 static void
 evas_object_rectangle_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);

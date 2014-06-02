@@ -1,7 +1,7 @@
 #include "evas_common_private.h" /* Includes evas_bidi_utils stuff. */
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_OBJ_TEXTGRID_CLASS
+#define MY_CLASS EVAS_TEXTGRID_CLASS
 
 #define MY_CLASS_NAME "Evas_Textgrid"
 
@@ -182,7 +182,7 @@ evas_object_textgrid_textprop_get(Evas_Object *eo_obj, Evas_Textgrid_Data *o, Ei
         Evas_Script_Type script;
 
         script = evas_common_language_script_type_get(&codepoint, 1);
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         ENFN->font_run_end_get(ENDT, o->font, &script_fi, &cur_fi, script, &codepoint, 1);
         memset(&(glyph->props[idx]), 0, sizeof(Evas_Text_Props));
         evas_common_text_props_script_set(&(glyph->props[idx]), script);
@@ -358,7 +358,7 @@ evas_object_textgrid_textprop_int_to(Evas_Textgrid_Data *o, int props)
 static void
 evas_object_textgrid_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
@@ -474,7 +474,7 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 EOLIAN static void
 _evas_textgrid_eo_base_destructor(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_textgrid_free(eo_obj, obj);
    eo_data_unref(eo_obj, obj->private_data);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
@@ -1055,7 +1055,7 @@ evas_object_textgrid_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_OBJ_TEXTGRID_CLASS, e);
+   Evas_Object *eo_obj = eo_add(EVAS_TEXTGRID_CLASS, e);
    eo_unref(eo_obj);
    return eo_obj;
 }
@@ -1067,7 +1067,7 @@ _evas_textgrid_eo_base_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EI
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_textgrid_init(eo_obj);
 
    eo_do(eo_obj, eo_parent = eo_parent_get());
@@ -1112,7 +1112,7 @@ _evas_textgrid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
    o->cur.h = h;
    o->changed = 1;
    o->core_change = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1136,7 +1136,7 @@ _evas_textgrid_font_source_set(Eo *eo_obj, Evas_Textgrid_Data *o, const char *fo
    eina_stringshare_replace(&o->cur.font_source, font_source);
    o->changed = 1;
    o->core_change = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1149,7 +1149,7 @@ _evas_textgrid_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
 EOLIAN static void
 _evas_textgrid_font_set(Eo *eo_obj, Evas_Textgrid_Data *o, const char *font_name, Evas_Font_Size font_size)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
@@ -1379,7 +1379,7 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
    o->changed = 1;
    o->pal_change = 1;
    evas_object_textgrid_rows_clear(eo_obj);
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1419,7 +1419,7 @@ _evas_textgrid_supported_font_styles_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas
    /* FIXME: to do */
    if (styles)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         o->changed = 1;
         evas_object_change(eo_obj, obj);
      }
@@ -1478,7 +1478,7 @@ _evas_textgrid_update_add(Eo *eo_obj, Evas_Textgrid_Data *o, int x, int y, int w
      }
    o->row_change = 1;
    o->changed = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 

@@ -2,7 +2,7 @@
 #include "evas_private.h"
 #include "evas_filter.h"
 
-#define MY_CLASS EVAS_OBJ_TEXT_CLASS
+#define MY_CLASS EVAS_TEXT_CLASS
 
 #define MY_CLASS_NAME "Evas_Text"
 
@@ -150,7 +150,7 @@ _evas_object_text_char_coords_get(const Evas_Object *eo_obj,
       const Evas_Text_Data *o,
       size_t pos, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Text_Item *it;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
@@ -271,7 +271,7 @@ static int
 _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
       const Evas_Text_Data *o, Evas_Coord cx, Evas_Coord cy)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Text_Item *it;
 
 #ifdef BIDI_SUPPORT
@@ -326,7 +326,7 @@ _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
       const Evas_Text_Data *o, Evas_Coord cx, Evas_Coord cy,
       Evas_Coord *rx, Evas_Coord *ry, Evas_Coord *rw, Evas_Coord *rh)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Text_Item *it;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
@@ -370,7 +370,7 @@ evas_object_text_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_OBJ_TEXT_CLASS, e);
+   Evas_Object *eo_obj = eo_add(EVAS_TEXT_CLASS, e);
    eo_unref(eo_obj);
    return eo_obj;
 }
@@ -380,7 +380,7 @@ _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *class_data EINA_UNUSE
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_text_init(eo_obj);
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eo *parent = NULL;
 
    eo_do(eo_obj, parent = eo_parent_get());
@@ -443,7 +443,7 @@ _evas_text_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_S
    eina_stringshare_replace(&o->cur.font, font);
    o->prev.font = NULL;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (!(obj->layer->evas->is_frozen))
      {
         pass = evas_event_passes_through(eo_obj, obj);
@@ -670,7 +670,7 @@ _layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Text_Data *o, Evas_
 static void
 _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *text)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    EvasBiDiStrIndex *v_to_l = NULL;
    Evas_Coord advance = 0;
    size_t pos, visual_pos;
@@ -915,7 +915,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 EOLIAN static void
 _evas_text_evas_object_size_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
@@ -930,7 +930,7 @@ _evas_text_evas_object_size_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord w, Eva
 EOLIAN static void
 _evas_text_ellipsis_set(Eo *eo_obj, Evas_Text_Data *o, double ellipsis)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (o->cur.ellipsis == ellipsis) return;
 
@@ -977,7 +977,7 @@ _evas_text_text_set(Eo *eo_obj, Evas_Text_Data *o, const char *_text)
    text = eina_unicode_utf8_to_unicode(_text, &len);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    was = evas_object_is_in_output_rect(eo_obj, obj,
 				       obj->layer->evas->pointer.x,
 				       obj->layer->evas->pointer.y, 1, 1);
@@ -1060,7 +1060,7 @@ _evas_text_max_descent_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 EOLIAN static Evas_Coord
 _evas_text_inset_get(Eo *eo_obj, Evas_Text_Data *o)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Coord inset = 0;
    if (!o->font) return inset;
    if (!o->items) return inset;
@@ -1108,7 +1108,7 @@ _evas_text_char_pos_get(Eo *eo_obj, Evas_Text_Data *o, int pos, Evas_Coord *cx, 
    if (!o->font) return ret;
    if (!o->items || (pos < 0)) return ret;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    Eina_Bool int_ret = _evas_object_text_char_coords_get(eo_obj, o, (size_t) pos,
             &x, &y, &w, &h);
@@ -1180,7 +1180,7 @@ _evas_text_char_coords_get(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coo
 	rw += rx;
 	rx = 0;
      }
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((rx + rw) > obj->cur->geometry.w) rw = obj->cur->geometry.w - rx;
    if (rw < 0) rw = 0;
    if (ry < 0)
@@ -1206,7 +1206,7 @@ _evas_text_style_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Text_Style_Type style)
    int w = 0, h = 0;
 
    if (o->cur.style == style) return;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    evas_text_style_pad_get(o->cur.style, &pl, &pr, &pt, &pb);
    o->cur.style = style;
@@ -1236,7 +1236,7 @@ _evas_text_shadow_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, 
    o->cur.shadow.b = b;
    o->cur.shadow.a = a;
    o->changed = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1260,7 +1260,7 @@ _evas_text_glow_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, in
    o->cur.glow.b = b;
    o->cur.glow.a = a;
    o->changed = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1284,7 +1284,7 @@ _evas_text_glow2_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, i
    o->cur.glow2.b = b;
    o->cur.glow2.a = a;
    o->changed = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1308,7 +1308,7 @@ _evas_text_outline_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b,
    o->cur.outline.b = b;
    o->cur.outline.a = a;
    o->changed = 1;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1503,7 +1503,7 @@ evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int 
 static void
 evas_object_text_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
@@ -1521,7 +1521,7 @@ evas_object_text_init(Evas_Object *eo_obj)
 EOLIAN static void
 _evas_text_eo_base_destructor(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_text_free(eo_obj, obj);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
@@ -1588,7 +1588,7 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    // Redraw text with normal styles in case of failure
    if (!success)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         Evas_Text_Data *o = (Evas_Text_Data *) obj->private_data;
 
         ERR("Filter failed at runtime!");
@@ -1764,7 +1764,7 @@ evas_object_text_render(Evas_Object *eo_obj,
                   iter = eina_hash_iterator_data_new(o->cur.filter.sources);
                   EINA_ITERATOR_FOREACH(iter, pb)
                     {
-                       source = eo_data_scope_get(pb->eo_source, EVAS_OBJ_CLASS);
+                       source = eo_data_scope_get(pb->eo_source, EVAS_OBJECT_CLASS);
                        if (source->changed)
                          {
                             redraw = EINA_TRUE;
@@ -2181,7 +2181,7 @@ evas_object_text_scale_update(Evas_Object *eo_obj,
 void
 _evas_object_text_rehint(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    int is, was;
 
@@ -2213,7 +2213,7 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
 static void
 _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
@@ -2328,7 +2328,7 @@ _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
    eina_stringshare_replace(&o->cur.filter.code, arg);
 
    // Update object
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    _evas_object_text_items_clear(o);
    o->changed = 1;
    _evas_object_text_recalc(eo_obj, o->cur.text);
@@ -2345,8 +2345,8 @@ _filter_source_hash_free_cb(void *data)
    Evas_Object_Protected_Data *proxy, *source;
    Evas_Text_Data *o;
 
-   proxy = eo_data_scope_get(pb->eo_proxy, EVAS_OBJ_CLASS);
-   source = eo_data_scope_get(pb->eo_source, EVAS_OBJ_CLASS);
+   proxy = eo_data_scope_get(pb->eo_proxy, EVAS_OBJECT_CLASS);
+   source = eo_data_scope_get(pb->eo_source, EVAS_OBJECT_CLASS);
 
    if (source)
      {
@@ -2382,8 +2382,8 @@ _evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Ev
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
    Evas_Object_Protected_Data *source = NULL;
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   if (eo_source) source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   if (eo_source) source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
 
    if (!name)
      {

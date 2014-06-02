@@ -2992,7 +2992,7 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
 
    if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
        ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
-        (eo_isa(mo, EVAS_OBJ_IMAGE_CLASS) &&
+        (eo_isa(mo, EVAS_IMAGE_CLASS) &&
          (!evas_object_image_source_get(mo))))
       )
      {

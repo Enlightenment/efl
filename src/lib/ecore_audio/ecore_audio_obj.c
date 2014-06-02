@@ -15,7 +15,7 @@
 #include <Eo.h>
 #include "ecore_audio_private.h"
 
-#define MY_CLASS ECORE_AUDIO_OBJ_CLASS
+#define MY_CLASS ECORE_AUDIO_CLASS
 #define MY_CLASS_NAME "Ecore_Audio"
 
 EOLIAN static void

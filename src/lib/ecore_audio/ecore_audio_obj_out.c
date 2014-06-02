@@ -14,7 +14,7 @@
 
 #include "ecore_audio_private.h"
 
-#define MY_CLASS ECORE_AUDIO_OBJ_OUT_CLASS
+#define MY_CLASS ECORE_AUDIO_OUT_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_Out"
 
 static Eina_Bool _write_cb(void *data)
@@ -22,8 +22,8 @@ static Eina_Bool _write_cb(void *data)
   Eo *eo_obj = data;
   Eo *in;
 
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   ssize_t written, bread = 0;
   float buf[1024];
@@ -54,9 +54,9 @@ _ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Output *obj, Eo *input)
 {
   Ecore_Audio_Input *in;
 
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
-  in = eo_data_scope_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
+  in = eo_data_scope_get(input, ECORE_AUDIO_IN_CLASS);
 
   if (in->output == eo_obj)
     return EINA_FALSE;
@@ -81,7 +81,7 @@ _ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Output *obj, Eo *input)
 {
   Ecore_Audio_Input *in;
 
-  in = eo_data_scope_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
+  in = eo_data_scope_get(input, ECORE_AUDIO_IN_CLASS);
 
   if (in->output != eo_obj)
     return EINA_FALSE;
@@ -115,7 +115,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 EOLIAN static void
 _ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UNUSED, Ecore_Audio_Vio *vio, void *data, eo_key_data_free_func free_func)
 {
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio)
     _free_vio(ea_obj);

@@ -1,7 +1,7 @@
-class Evas_Smart (Evas_Object, Evas_Signal_Interface)
+class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
 {
-   legacy_prefix: evas_object_smart;
    eo_prefix: evas_obj_smart;
+   data: Evas_Smart_Data;
    properties {
       need_recalculate {
          set {

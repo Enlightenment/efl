@@ -10,11 +10,11 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#define MY_CLASS ECORE_OBJ_TIMER_CLASS
+#define MY_CLASS ECORE_TIMER_CLASS
 #define MY_CLASS_NAME "Ecore_Timer"
 
 #define ECORE_TIMER_CHECK(obj)                       \
-  if (!eo_isa((obj), ECORE_OBJ_TIMER_CLASS)) \
+  if (!eo_isa((obj), ECORE_TIMER_CLASS)) \
     return
 
 #ifdef WANT_ECORE_TIMER_DUMP

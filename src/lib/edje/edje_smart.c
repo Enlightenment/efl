@@ -6,7 +6,7 @@
 # undef MY_CLASS
 #endif
 
-#define MY_CLASS EDJE_OBJ_CLASS
+#define MY_CLASS EDJE_CLASS
 
 #define MY_CLASS_NAME "Edje"
 #define MY_CLASS_NAME_LEGACY "edje"
@@ -27,7 +27,7 @@ edje_object_add(Evas *evas)
 EOLIAN static void
 _edje_eo_base_constructor(Eo *obj, Edje *ed)
 {
-   ed->base = eo_data_ref(obj, EVAS_OBJ_SMART_CLIPPED_CLASS);
+   ed->base = eo_data_ref(obj, EVAS_SMART_CLIPPED_CLASS);
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
@@ -73,7 +73,7 @@ _edje_color_class_free(void *data)
 
 /* Private Routines */
 EOLIAN static void
-_edje_evas_smart_add(Eo *obj, Edje *ed)
+_edje_evas_object_smart_add(Eo *obj, Edje *ed)
 {
    Evas *tev = evas_object_evas_get(obj);
 
@@ -115,7 +115,7 @@ _edje_evas_smart_add(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_evas_smart_del(Eo *obj, Edje *ed)
+_edje_evas_object_smart_del(Eo *obj, Edje *ed)
 {
    _edje_block_violate(ed);
    ed->delete_me = 1;
@@ -139,7 +139,7 @@ _edje_evas_smart_del(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_evas_smart_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
+_edje_evas_object_smart_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
 {
    unsigned int i;
 
@@ -234,7 +234,7 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_edje_evas_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord h)
+_edje_evas_object_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord h)
 {
    if ((w == ed->w) && (h == ed->h)) return;
    if (ed->collection)
@@ -270,7 +270,7 @@ _edje_evas_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord 
 }
 
 EOLIAN static void
-_edje_evas_smart_show(Eo *obj, Edje *ed)
+_edje_evas_object_smart_show(Eo *obj, Edje *ed)
 {
    Eina_List *l;
    Edje *edg;
@@ -303,7 +303,7 @@ _edje_evas_smart_show(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_evas_smart_hide(Eo *obj, Edje *ed)
+_edje_evas_object_smart_hide(Eo *obj, Edje *ed)
 {
    Eina_List *l;
    Edje *edg;
@@ -326,7 +326,7 @@ _edje_evas_smart_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_evas_smart_calculate(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 {
    _edje_recalc_do(ed);
 }

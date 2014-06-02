@@ -4,7 +4,7 @@ class Edje_Edit (Edje)
    implements {
       Eo_Base::constructor;
       Eo_Base::destructor;
-      Evas_Smart::del;
+      Evas_Object_Smart::del;
       Edje::file::set;
    }
 }

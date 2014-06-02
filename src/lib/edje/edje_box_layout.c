@@ -175,7 +175,7 @@ _edje_box_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, Edje_Calc_Param
              ep->typedata.container->anim->end.align.x = param2_desc->box.align.x;
              ep->typedata.container->anim->end.align.y = param2_desc->box.align.y;
 
-             priv = eo_data_scope_get(ep->object, EVAS_OBJ_BOX_CLASS);
+             priv = eo_data_scope_get(ep->object, EVAS_BOX_CLASS);
              if (priv == NULL)
                 return;
 

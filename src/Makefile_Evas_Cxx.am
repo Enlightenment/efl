@@ -11,7 +11,7 @@ lib/evas/canvas/evas_text.eo.hh \
 lib/evas/canvas/evas_textblock.eo.hh \
 lib/evas/canvas/evas_textgrid.eo.hh \
 lib/evas/canvas/evas_signal_interface.eo.hh \
-lib/evas/canvas/evas_smart.eo.hh \
+lib/evas/canvas/evas_object_smart.eo.hh \
 lib/evas/canvas/evas_smart_clipped.eo.hh \
 lib/evas/canvas/evas_table.eo.hh \
 lib/evas/canvas/evas_common_interface.eo.hh \

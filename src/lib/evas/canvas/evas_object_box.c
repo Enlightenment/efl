@@ -8,7 +8,7 @@
 #define MY_CLASS_NAME "Evas_Box"
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Box"
 
-#define MY_CLASS EVAS_OBJ_BOX_CLASS
+#define MY_CLASS EVAS_BOX_CLASS
 
 typedef struct _Evas_Object_Box_Iterator Evas_Object_Box_Iterator;
 typedef struct _Evas_Object_Box_Accessor Evas_Object_Box_Accessor;
@@ -389,7 +389,7 @@ _evas_box_internal_remove_at(Eo *o, Evas_Object_Box_Data *priv, unsigned int pos
 }
 
 EOLIAN static void
-_evas_box_evas_smart_add(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_evas_object_smart_add(Eo *o, Evas_Object_Box_Data *priv)
 {
    eo_do_super(o, MY_CLASS, evas_obj_smart_add());
    
@@ -406,7 +406,7 @@ _evas_box_evas_smart_add(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static void
-_evas_box_evas_smart_del(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_evas_object_smart_del(Eo *o, Evas_Object_Box_Data *priv)
 {
    Eina_List *l;
 
@@ -427,7 +427,7 @@ _evas_box_evas_smart_del(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static void
-_evas_box_evas_smart_resize(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_evas_box_evas_object_smart_resize(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord ow, oh;
    evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
@@ -436,7 +436,7 @@ _evas_box_evas_smart_resize(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_C
 }
 
 EOLIAN static void
-_evas_box_evas_smart_calculate(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_evas_object_smart_calculate(Eo *o, Evas_Object_Box_Data *priv)
 {
    if (priv->layout.cb)
        {

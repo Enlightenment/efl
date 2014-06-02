@@ -92,7 +92,6 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
 #define EVAS_SMART_ZOOMABLE_INTERFACE   EVAS_ZOOMABLE_INTERFACE_CLASS
 
 #include "canvas/evas.eo.h"
-#define EVAS_CLASS EVAS_CANVAS_CLASS
 
 /**
  * @ingroup Evas_Object_Rectangle
@@ -159,7 +158,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
  *
  * @{
  */
-#include "canvas/evas_smart.eo.h"
+#include "canvas/evas_object_smart.eo.h"
 /**
  * @}
  */

@@ -1648,7 +1648,7 @@ EAPI void             *evas_object_smart_interface_data_get(const Evas_Object *o
  */
 EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
 
-#include "canvas/evas_smart.eo.legacy.h"
+#include "canvas/evas_object_smart.eo.legacy.h"
 
 /**
  * @}

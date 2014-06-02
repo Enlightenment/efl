@@ -16,7 +16,7 @@
 static sf_count_t _wrap_get_filelen(void *data)
 {
   Eo *eo_obj = data;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (!ea_obj->vio->vio)
     goto error;
@@ -31,7 +31,7 @@ error:
 static sf_count_t _wrap_seek(sf_count_t offset, int whence, void *data)
 {
   Eo *eo_obj = data;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (!ea_obj->vio->vio)
     goto error;
@@ -46,7 +46,7 @@ error:
 static sf_count_t _wrap_read(void *buffer, sf_count_t count, void *data)
 {
   Eo *eo_obj = data;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (!ea_obj->vio->vio)
     goto error;
@@ -61,7 +61,7 @@ error:
 static sf_count_t _wrap_write(const void *buffer, sf_count_t count, void *data)
 {
   Eo *eo_obj = data;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (!ea_obj->vio->vio)
     goto error;
@@ -76,7 +76,7 @@ error:
 static sf_count_t _wrap_tell(void *data)
 {
   Eo *eo_obj = data;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (!ea_obj->vio->vio)
     goto error;

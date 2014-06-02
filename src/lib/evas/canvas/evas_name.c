@@ -38,7 +38,7 @@ _priv_evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, i
    const Eina_Inlist *lst;
    Evas_Object_Protected_Data *child;
 
-   if (!eo_isa(eo_obj, EVAS_OBJ_SMART_CLASS)) return NULL;
+   if (!eo_isa(eo_obj, EVAS_OBJECT_SMART_CLASS)) return NULL;
    lst = evas_object_smart_members_get_direct(eo_obj);
    EINA_INLIST_FOREACH(lst, child)
      {

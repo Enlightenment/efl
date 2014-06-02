@@ -1,7 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_OBJ_LINE_CLASS
+#define MY_CLASS EVAS_LINE_CLASS
 
 /* private magic number for line objects */
 static const char o_type[] = "line";
@@ -96,7 +96,7 @@ evas_object_line_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_OBJ_LINE_CLASS, e);
+   Evas_Object *eo_obj = eo_add(EVAS_LINE_CLASS, e);
    eo_unref(eo_obj);
    return eo_obj;
 }
@@ -113,7 +113,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if ((x1 == (obj->cur->geometry.x + o->cur.x1)) &&
        (y1 == (obj->cur->geometry.y + o->cur.y1)) &&
@@ -196,7 +196,7 @@ _evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y
    const Evas_Line_Data *o = _pd;
 
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (x1) *x1 = obj->cur->geometry.x + o->cur.x1;
    if (y1) *y1 = obj->cur->geometry.y + o->cur.y1;
    if (x2) *x2 = obj->cur->geometry.x + o->cur.x2;
@@ -207,7 +207,7 @@ _evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y
 static void
 evas_object_line_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
@@ -223,7 +223,7 @@ _evas_line_eo_base_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSE
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_line_init(eo_obj);
    eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));

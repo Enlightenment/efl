@@ -20,7 +20,7 @@ _texture_proxy_set(Evas_3D_Texture *texture, Evas_Object *eo_src, Evas_Object_Pr
 static inline void
 _texture_proxy_unset(Evas_3D_Texture_Data *texture)
 {
-   Evas_Object_Protected_Data *src = eo_data_scope_get(texture->source, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *src = eo_data_scope_get(texture->source, EVAS_OBJECT_CLASS);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src);
      {
@@ -66,9 +66,9 @@ _texture_proxy_subrender(Evas_3D_Texture *obj)
    if (!pd->source)
      return;
 
-   source = eo_data_scope_get(pd->source, EVAS_OBJ_CLASS);
+   source = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
 
-   is_image = eo_isa(pd->source, EVAS_OBJ_IMAGE_CLASS);
+   is_image = eo_isa(pd->source, EVAS_IMAGE_CLASS);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, proxy_write)
      {
@@ -210,7 +210,7 @@ _evas_3d_texture_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
         Eo *evas = NULL;
         eo_do(obj, evas = evas_common_evas_get());
         Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-        Evas_Object_Protected_Data *src = eo_data_scope_get(pd->source, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *src = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
 
         if (pd->engine_data == NULL)
           {
@@ -374,7 +374,7 @@ _evas_3d_texture_source_set(Eo *obj , Evas_3D_Texture_Data *pd, Evas_Object *sou
         return;
      }
 
-   src = eo_data_scope_get(source, EVAS_OBJ_CLASS);
+   src = eo_data_scope_get(source, EVAS_OBJECT_CLASS);
 
    if (src->delete_me)
      {
@@ -400,7 +400,7 @@ _evas_3d_texture_source_visible_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *p
    if (pd->source == NULL)
      return;
 
-   src_obj = eo_data_scope_get(pd->source, EVAS_OBJ_CLASS);
+   src_obj = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
 
    if (src_obj->proxy->src_invisible == !visible)
      return;
@@ -422,7 +422,7 @@ _evas_3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *p
    if (pd->source == NULL)
      return EINA_FALSE;
 
-   src_obj = eo_data_scope_get(pd->source, EVAS_OBJ_CLASS);
+   src_obj = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
    return !src_obj->proxy->src_invisible;
 }
 

@@ -187,7 +187,7 @@ evas_object_event_callback_all_del(Evas_Object *eo_obj)
 {
    _eo_evas_object_cb_info *info;
    Eina_Inlist *itr;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!obj) return;
    if (!obj->callbacks) return;
@@ -318,7 +318,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
               (type <= EVAS_CALLBACK_KEY_UP))
           {
-             Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
+             Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
              evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id);
           }
      }
@@ -335,7 +335,7 @@ evas_object_event_callback_add(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -363,7 +363,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!obj) return NULL;
    if (!func) return NULL;
@@ -395,7 +395,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!obj) return NULL;
    if (!func) return NULL;

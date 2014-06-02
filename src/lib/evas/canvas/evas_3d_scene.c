@@ -29,7 +29,7 @@ _evas_3d_scene_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3D_Scen
 
    EINA_LIST_FOREACH(pd->images, l, eo)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
         evas_object_change(eo, obj);
      }
 }

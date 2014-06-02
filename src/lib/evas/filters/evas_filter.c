@@ -207,7 +207,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
    int w, h;
 
    if (!eo_source) return;
-   source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
+   source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
 
    w = source->cur->geometry.w;
    h = source->cur->geometry.h;
@@ -249,7 +249,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
 
         ctx = e->engine.func->context_new(e->engine.data.output);
 
-        if (eo_isa(eo_proxy, EVAS_OBJ_IMAGE_CLASS))
+        if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
           eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
 
         Evas_Proxy_Render_Data proxy_render_data = {
@@ -286,14 +286,14 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
    Evas_Filter_Buffer *fb;
    Eina_List *li;
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!ctx->has_proxies) return;
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      if (fb->source)
        {
           // TODO: Lock current object as proxyrendering (see image obj)
-          source = eo_data_scope_get(fb->source, EVAS_OBJ_CLASS);
+          source = eo_data_scope_get(fb->source, EVAS_OBJECT_CLASS);
           if (source->proxy->surface && !source->proxy->redraw)
             {
                DBG("Source already rendered: '%s' of type '%s'",

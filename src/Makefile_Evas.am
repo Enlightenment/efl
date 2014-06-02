@@ -22,9 +22,9 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_textgrid.eo.legacy.h \
                  lib/evas/canvas/evas_signal_interface.eo.c \
                  lib/evas/canvas/evas_signal_interface.eo.h \
-                 lib/evas/canvas/evas_smart.eo.c \
-                 lib/evas/canvas/evas_smart.eo.h \
-                 lib/evas/canvas/evas_smart.eo.legacy.h \
+                 lib/evas/canvas/evas_object_smart.eo.c \
+                 lib/evas/canvas/evas_object_smart.eo.h \
+                 lib/evas/canvas/evas_object_smart.eo.legacy.h \
                  lib/evas/canvas/evas_smart_clipped.eo.c \
                  lib/evas/canvas/evas_smart_clipped.eo.h \
                  lib/evas/canvas/evas_smart_clipped.eo.legacy.h \
@@ -89,7 +89,7 @@ evaseolianfiles_DATA = \
               lib/evas/canvas/evas_textblock.eo \
               lib/evas/canvas/evas_textgrid.eo \
               lib/evas/canvas/evas_signal_interface.eo \
-              lib/evas/canvas/evas_smart.eo \
+              lib/evas/canvas/evas_object_smart.eo \
               lib/evas/canvas/evas_smart_clipped.eo \
               lib/evas/canvas/evas_table.eo \
               lib/evas/canvas/evas_common_interface.eo \
@@ -136,7 +136,7 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_textblock.eo.h \
                                         lib/evas/canvas/evas_textgrid.eo.h \
                                         lib/evas/canvas/evas_signal_interface.eo.h \
-                                        lib/evas/canvas/evas_smart.eo.h \
+                                        lib/evas/canvas/evas_object_smart.eo.h \
                                         lib/evas/canvas/evas_smart_clipped.eo.h \
                                         lib/evas/canvas/evas_table.eo.h \
                                         lib/evas/canvas/evas_common_interface.eo.h \
@@ -158,7 +158,7 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_textblock.eo.legacy.h \
                                         lib/evas/canvas/evas_textgrid.eo.legacy.h \
                                         lib/evas/canvas/evas_table.eo.legacy.h \
-                                        lib/evas/canvas/evas_smart.eo.legacy.h \
+                                        lib/evas/canvas/evas_object_smart.eo.legacy.h \
                                         lib/evas/canvas/evas_smart_clipped.eo.legacy.h \
                                         lib/evas/canvas/evas_common_interface.eo.legacy.h \
                                         lib/evas/canvas/evas_object.eo.legacy.h \

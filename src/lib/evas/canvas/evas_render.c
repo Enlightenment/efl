@@ -203,7 +203,7 @@ _evas_render_had_map(Evas_Object_Protected_Data *obj)
 static Eina_Bool
 _evas_render_is_relevant(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    return ((evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees)) ||
            (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees)));
 }
@@ -261,7 +261,7 @@ _evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
 
    EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
      {
-        proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
+        proxy = eo_data_scope_get(eo_proxy, EVAS_OBJECT_CLASS);
 
         /* Flag need redraw on proxy too */
         EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy,
@@ -400,7 +400,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
    int is_active;
    Eina_Bool map, hmap;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    //Need pre render for the children of mapped object.
    //But only when they have changed.
    if (mapped_parent && (!obj->changed)) return EINA_FALSE;
@@ -827,7 +827,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    Evas_Coord xc1, yc1, xc2, yc2;
    unsigned int i;
    Eina_Bool nooverlay;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *tmp = NULL;
    Evas_Coord imgw, imgh;
    unsigned int caps;
@@ -840,7 +840,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    eo_tmp = eo_obj;
    while (tmp && !_evas_render_has_map(eo_tmp, tmp))
      {
-        tmp = eo_data_scope_get(eo_tmp, EVAS_OBJ_CLASS);
+        tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
         eo_tmp = tmp->smart.parent;
      }
 
@@ -953,7 +953,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
             (current->cur->visible) &&
             (!current->delete_me) &&
             (current->cur->cache.clip.visible) &&
-            (!eo_isa(eo_current, EVAS_OBJ_SMART_CLASS)))
+            (!eo_isa(eo_current, EVAS_OBJECT_SMART_CLASS)))
           {
              Eina_Bool included = EINA_FALSE;
 
@@ -1517,7 +1517,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, in
              Evas_Object_Protected_Data *oo;
 
              eo_oo = obj->object;
-             oo = eo_data_scope_get(eo_oo, EVAS_OBJ_CLASS);
+             oo = eo_data_scope_get(eo_oo, EVAS_OBJECT_CLASS);
              while (oo->cur->clipper)
                {
                   if ((oo->cur->clipper->map->cur.map_parent
@@ -2066,7 +2066,7 @@ evas_render_updates_internal(Evas *eo_e,
              Evas_Object_Protected_Data *smart_parent;
 
              smart_parent = eo_data_scope_get(obj->smart.parent,
-                                              EVAS_OBJ_CLASS);
+                                              EVAS_OBJECT_CLASS);
              evas_object_change(obj->smart.parent, smart_parent);
           }
      }
@@ -2396,7 +2396,7 @@ _evas_sync(Eo *eo_e, Evas_Public_Data *e)
 void
 _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((obj->map->cur.map) && obj->map->surface)
      {
         obj->layer->evas->engine.func->image_map_surface_free
@@ -2521,7 +2521,7 @@ evas_render_object_recalc(Evas_Object *eo_obj)
    return;
    MAGIC_CHECK_END();
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((!obj->changed) && (obj->delete_me < 2))
      {
        Evas_Public_Data *e;

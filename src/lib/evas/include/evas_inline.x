@@ -84,7 +84,7 @@ evas_event_freezes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
    if (obj->parent_cache.freeze_events_valid)
      return obj->parent_cache.freeze_events;
    if (!obj->smart.parent) return 0;
-   Evas_Object_Protected_Data *smart_parent_pd = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *smart_parent_pd = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
    obj->parent_cache.freeze_events =
       evas_event_freezes_through(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.freeze_events_valid = EINA_TRUE;
@@ -98,7 +98,7 @@ evas_event_passes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected
    if (obj->parent_cache.pass_events_valid)
      return obj->parent_cache.pass_events;
    if (!obj->smart.parent) return 0;
-   Evas_Object_Protected_Data *smart_parent_pd = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *smart_parent_pd = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
    obj->parent_cache.pass_events =
       evas_event_passes_through(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.pass_events_valid = EINA_TRUE;
@@ -113,7 +113,7 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
    if ((obj->proxy->proxies || obj->proxy->proxy_textures) && obj->proxy->src_invisible) return 1;
    if (!obj->smart.parent) return 0;
    Evas_Object_Protected_Data *smart_parent_pd =
-      eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
+      eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
    obj->parent_cache.src_invisible =
       evas_object_is_source_invisible(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.src_invisible_valid = EINA_TRUE;

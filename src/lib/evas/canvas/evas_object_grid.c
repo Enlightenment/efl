@@ -2,7 +2,7 @@
 #include "evas_private.h"
 #include <errno.h>
 
-#define MY_CLASS EVAS_OBJ_GRID_CLASS
+#define MY_CLASS EVAS_GRID_CLASS
 
 typedef struct _Evas_Grid_Data              Evas_Grid_Data;
 typedef struct _Evas_Object_Grid_Option     Evas_Object_Grid_Option;

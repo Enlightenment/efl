@@ -14,7 +14,7 @@
 
 #include "ecore_audio_private.h"
 
-#define MY_CLASS ECORE_AUDIO_OBJ_IN_CLASS
+#define MY_CLASS ECORE_AUDIO_IN_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_In"
 
 EOLIAN static void
@@ -98,7 +98,7 @@ EOLIAN static ssize_t
 _ecore_audio_in_read(Eo *eo_obj, Ecore_Audio_Input *obj, void *buf, size_t len)
 {
   ssize_t len_read = 0;
-  const Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  const Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->paused) {
     memset(buf, 0, len);
@@ -124,7 +124,7 @@ EOLIAN static ssize_t
 _ecore_audio_in_read_internal(Eo *eo_obj, Ecore_Audio_Input *_pd EINA_UNUSED, void *buf, size_t len)
 {
   ssize_t len_read = 0;
-  const Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  const Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio && ea_obj->vio->vio->read) {
       len_read = ea_obj->vio->vio->read(ea_obj->vio->data, eo_obj, buf, len);
@@ -151,7 +151,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 EOLIAN static void
 _ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Audio_Vio *vio, void *data, eo_key_data_free_func free_func)
 {
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
   if (ea_obj->vio)
     _free_vio(ea_obj);

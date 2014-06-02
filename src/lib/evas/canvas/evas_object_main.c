@@ -3,7 +3,7 @@
 
 EVAS_MEMPOOL(_mp_sh);
 
-#define MY_CLASS EVAS_OBJ_CLASS
+#define MY_CLASS EVAS_OBJECT_CLASS
 
 #define MY_CLASS_NAME "Evas_Object"
 
@@ -671,9 +671,9 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
      {
-        if (eo_isa(proxy, EVAS_OBJ_IMAGE_CLASS))
+        if (eo_isa(proxy, EVAS_IMAGE_CLASS))
           evas_object_image_source_unset(proxy);
-        else if (eo_isa(proxy, EVAS_OBJ_TEXT_CLASS))
+        else if (eo_isa(proxy, EVAS_TEXT_CLASS))
           eo_do(proxy, evas_obj_text_filter_source_set(NULL, eo_obj));
      }
 
