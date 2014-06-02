@@ -624,20 +624,22 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
    Eolian_Implement impl_desc;
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl_desc)
      {
-        Eolian_Class impl_class;
-        Eolian_Function_Type ftype;
         _eolian_class_vars impl_env;
-        Eolian_Function fnid;
-        const char *funcname;
-
-        eolian_implement_information_get(impl_desc, &impl_class, &fnid, &ftype);
-        _class_env_create(impl_class, NULL, &impl_env);
-        funcname = eolian_function_name_get(fnid);
-
         char implname[0xFF];
+        Eolian_Class impl_class = NULL;
+        Eolian_Function_Type ftype;
+        Eolian_Function fnid = NULL;
+        const char *funcname;
         char *tp = implname;
-        sprintf(implname, "%s_%s", class_env.full_classname, impl_env.full_classname);
-        eina_str_tolower(&tp);
+
+        if (eolian_implement_information_get(impl_desc, &impl_class, &fnid, &ftype))
+          {
+             _class_env_create(impl_class, NULL, &impl_env);
+             funcname = eolian_function_name_get(fnid);
+
+             sprintf(implname, "%s_%s", class_env.full_classname, impl_env.full_classname);
+             eina_str_tolower(&tp);
+          }
 
         if (!fnid)
           {
