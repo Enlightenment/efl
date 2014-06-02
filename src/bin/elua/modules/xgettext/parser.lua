@@ -70,6 +70,7 @@ local parse_arglist = function(ls)
             break
         end
     end
+    return rets
 end
 
 local parse_call = function(ls)
@@ -97,7 +98,7 @@ end
 local parse = function(ls, keywords)
     yield()
     local tok = ls.token
-    while tok.name do
+    while tok.name ~= "<eof>" do
         if tok.name == "<comment>" then
             saved_comment = tok.value
             ls:get()

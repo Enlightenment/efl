@@ -285,7 +285,7 @@ for i = 1, #keywords do
 
     -- all sanitized, store :)
     keywords[kwb] = { context = context, argnum = tonumber(argnum),
-        xcomment = xcmt, tonumber(n1), tonumber(n2) }
+        xcomment = xcmt, tonumber(n1) or 1, tonumber(n2) }
     keywords[i] = nil
 end
 
@@ -379,6 +379,7 @@ for i, fname in ipairs(input_files) do
                 local f = io.open(fpath, "r")
                 fcontents = f:read("*all")
                 f:close()
+                fpath = "@" .. fpath
             end
             parsed_files[#parsed_files + 1] = generator.init(fpath, fcontents,
                 keywords, flags, add_loc, opts)

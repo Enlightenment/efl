@@ -64,6 +64,7 @@ local gen_grouped_messages = function(ps)
         end
         msg = ps()
     end
+    return ret
 end
 
 local gen_line_info = function(chunkname, lines)
@@ -112,7 +113,6 @@ return { init  = function(chunkname, input, keywords, flags, add_loc, opts)
             ret[#ret + 1] = "msgstr " .. gen_msgstr(msg[1], spf, ssf)
         end
         rets[#rets + 1] = tconc(ret, "\n")
-        msg             = ps()
     end
     return tconc(rets, "\n\n")
 end }

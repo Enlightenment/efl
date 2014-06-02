@@ -3,6 +3,10 @@
 local yield = coroutine.yield
 local tconc = table.concat
 
+local max_custom_len = 79
+local max_fname_len = 72
+local max_str_len = 63
+
 local source_to_msg = function(source)
     local c = source:sub(1, 1)
     local srclen = #source
@@ -302,5 +306,5 @@ return { init = function(chunkname, input, opts)
     local coro = coroutine.wrap(lex_main, ls)
     ls.coro = coro
     coro(ls)
-    return coro
+    return ls
 end, syntax_error = syntax_error, source_to_msg = source_to_msg }
