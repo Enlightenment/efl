@@ -1,3 +1,4 @@
 abstract Eo_Abstract_Class ()
 {
+    data: null;
 }

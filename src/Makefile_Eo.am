@@ -1,10 +1,17 @@
 
 ### Library
 
+BUILT_SOURCES += \
+                 lib/eo/eo_abstract_class.eo.c \
+                 lib/eo/eo_abstract_class.eo.h
+
 lib_LTLIBRARIES += lib/eo/libeo.la
 
 installed_eomainheadersdir = $(includedir)/eo-@VMAJ@
 dist_installed_eomainheaders_DATA = lib/eo/Eo.h
+
+nodist_installed_eomainheaders_DATA = \
+                                      lib/eo/eo_abstract_class.eo.h
 
 lib_eo_libeo_la_SOURCES = \
 lib/eo/eo.c \

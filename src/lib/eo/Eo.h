@@ -913,16 +913,7 @@ EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
  * @{
  */
 
-/**
- * @def EO_CLASS_CLASS
- * The class type for the Eo Class class.
- */
-#define EO_CLASS_CLASS eo_class_class_get()
-/**
- * @brief Use #EO_CLASS_CLASS
- * @internal
- * */
-EAPI const Eo_Class *eo_class_class_get(void);
+#include "eo_abstract_class.eo.h"
 
 /**
  * @}
