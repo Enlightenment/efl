@@ -1,6 +1,14 @@
 =========
-EFL 1.9.4
+EFL 1.9.5
 =========
+
+Changes since 1.9.4:
+--------------------
+
+Fixes:
+
+   * evas/text: fix abnormal ellipsis logic when harfbuzz is enabled.
+   * recursively hide edje group objects on edje hide
 
 Changes since 1.9.3:
 --------------------
