@@ -144,14 +144,20 @@ local read_string = function(ls)
     return tconc(buf)
 end
 
+local last_comment = false
+
 local match_comment = function(ls, cmt)
+    cmt = cmt:match("^%s*(.+)%s*$")
+    if ls.flags[cmt] then
+        return "<flagcomment>", cmt
+    end
     local   lcmt = ls.lex_cmt
     if not  lcmt then return nil end
     if type(lcmt) ~= "string" then
         return "<comment>", cmt
     end
-    lcmt = lcmt:match("^%s*(.+)$")
-    if cmt:match("^%s*(.+)$"):sub(1, #lcmt) == lcmt then
+    lcmt = lcmt:match("^%s*(.+)%s*$")
+    if last_comment or cmt:sub(1, #lcmt) == lcmt then
         return "<comment>", cmt
     end
     return nil
@@ -249,8 +255,12 @@ local lex_main = function(ls)
         local opt = lex_tbl[c]
         if opt then
             local t, v = opt(ls)
-            if t then yield(t, v) end
+            if t then
+                last_comment = t == "<comment>"
+                yield(t, v)
+            end
         else
+            last_comment = false
             yield(lex_default(ls))
         end
     end
@@ -291,7 +301,7 @@ local ls_get = function(self)
     return tok
 end
 
-return { init = function(chunkname, input, opts)
+return { init = function(chunkname, input, flags, opts)
     local reader = type(input) == "string" and strstream(input) or input
     local current = skip_shebang(reader)
     local ls = {
@@ -301,7 +311,8 @@ return { init = function(chunkname, input, opts)
         current     = current,
         line_number = 1,
         get         = ls_get,
-        lex_cmt     = opts["c"]
+        lex_cmt     = opts["c"],
+        flags       = flags.valid
     }
     local coro = coroutine.wrap(lex_main, ls)
     ls.coro = coro

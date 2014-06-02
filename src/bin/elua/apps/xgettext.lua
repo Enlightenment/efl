@@ -14,7 +14,7 @@ local input_sources  = {}
 local search_dirs    = {}
 local excluded_files = {}
 local keywords       = {}
-local flags          = {}
+local flags          = { valid = {} }
 
 local opts_final = {}
 local opts_nolua = {}

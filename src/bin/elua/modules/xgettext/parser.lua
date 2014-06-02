@@ -5,8 +5,10 @@ local lexer = require("xgettext.lexer")
 local syntax_error = lexer.syntax_error
 
 local yield = coroutine.yield
+local tconc = table.concat
 
-local saved_comment
+local saved_flagcomments = {}
+local saved_comments     = {}
 
 local check_match = function(ls, a, b, line)
     if ls.token.name ~= a then
@@ -100,7 +102,10 @@ local parse = function(ls, keywords)
     local tok = ls.token
     while tok.name ~= "<eof>" do
         if tok.name == "<comment>" then
-            saved_comment = tok.value
+            saved_comments[#saved_comments + 1] = tok.value
+            ls:get()
+        elseif tok.name == "<flagcomment>" then
+            saved_flagcomments[#saved_flagcomments + 1] = tok.value
             ls:get()
         elseif tok.name == "<name>" and keywords[tok.value] then
             local line = ls.line_number
@@ -120,11 +125,15 @@ local parse = function(ls, keywords)
             if        not n1argt  then goto skip end
             if n2 and not n2argt  then goto skip end
             if cx and not cxargt  then goto skip end
-            local sc = saved_comment
-            saved_comment = nil
+            local sc = saved_comments
+            saved_comments = {}
+            sc = tconc(sc, "\n")
+            local fsc = saved_flagcomments
+            saved_flagcomments = {}
             yield {
                 n1arg[1], n2 and n2arg[1], context = cx and cxarg[1],
-                xcomment = kw.xcomment, comment = sc, line = line
+                xcomment = kw.xcomment, comment = sc, line = line,
+                flags = fsc
             }
         else
             ls:get()
@@ -154,7 +163,7 @@ local parse_all = function(ls)
 end
 
 return { init = function (chunkname, input, keywords, flags, opts)
-    local ls = lexer.init(chunkname, input, opts)
+    local ls = lexer.init(chunkname, input, flags, opts)
     ls:get()
     local coro = coroutine.wrap(opts["a"] and parse_all or parse, ls, keywords)
     coro(ls, keywords)
