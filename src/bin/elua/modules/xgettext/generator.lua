@@ -34,16 +34,14 @@ local gen_msgstr = function(str, prefix, suffix)
 end
 
 local cmp_msgs = function(msg1, msg2)
-    return  msg1[1]       == msg2[1]      and msg1[2]      == msg2[2]
-        and msg1.context  == msg2.context and msg1.comment == msg2.comment
-        and msg1.xcomment == msg2.xcomment
+    return msg1[1]      == msg2[1] and msg1[2] == msg2[2]
+       and msg1.context == msg2.context
 end
 
 local new_msg = function(msg)
     return {
-        msg[1], msg[2], msg.context, msg.comment, msg.xcomment, lines = {
-            msg.line
-        }
+        msg[1], msg[2], msg.context, comments = { msg.comment },
+        xcomment = msg.xcomment, lines = { msg.line }
     }
 end
 
@@ -55,7 +53,8 @@ local gen_grouped_messages = function(ps)
         local found = false
         for i, amsg in ipairs(ret) do
             if cmp_msgs(msg, amsg) then
-                amsg.lines[#amsg.lines + 1] = msg.line
+                amsg.lines   [#amsg.lines    + 1] = msg.line
+                amsg.comments[#amsg.comments + 1] = msg.comment
                 found = true
                 break
             end
@@ -91,11 +90,11 @@ return { init  = function(chunkname, input, keywords, flags, add_loc, opts)
     for i, msg in ipairs(gen_grouped_messages(parser.init(chunkname,
     input, keywords, flags, opts))) do
         local ret = {}
-        if msg.comment then
-            ret[#ret + 1] = gen_comment(msg.comment)
-        end
         if msg.xcomment then
             ret[#ret + 1] = gen_comment(msg.xcomment)
+        end
+        for i, cmt in ipairs(msg.comments) do
+            ret[#ret + 1] = gen_comment(cmt)
         end
         if msg.context then
             ret[#ret + 1] = "msgctxt " .. gen_message(msg.context)
