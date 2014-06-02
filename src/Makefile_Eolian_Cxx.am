@@ -1,6 +1,7 @@
 
 ### Library
 
+if HAVE_CXX11
 installed_eoliancxxmainheadersdir = $(includedir)/eolian-cxx-@VMAJ@/
 dist_installed_eoliancxxmainheaders_DATA = \
 lib/eolian_cxx/Eolian_Cxx.hh
@@ -25,7 +26,6 @@ lib/eolian_cxx/grammar/tab.hh
 
 ### Binary
 
-if HAVE_CXX11
 
 bin_PROGRAMS += bin/eolian_cxx/eolian_cxx
 

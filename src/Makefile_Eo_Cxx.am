@@ -1,6 +1,8 @@
 
 ### Library
 
+if HAVE_CXX11
+
 installed_eocxxmainheadersdir = $(includedir)/eo-cxx-@VMAJ@/
 dist_installed_eocxxmainheaders_DATA = \
 bindings/eo_cxx/Eo.hh
@@ -15,3 +17,5 @@ bindings/eo_cxx/eo_ops.hh \
 bindings/eo_cxx/eo_private.hh \
 bindings/eo_cxx/eo_inherit_bindings.hh \
 bindings/eo_cxx/Eo.hh
+
+endif

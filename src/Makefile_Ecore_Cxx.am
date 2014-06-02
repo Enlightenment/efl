@@ -1,10 +1,10 @@
 
 ### Library
 
+if HAVE_CXX11
+
 installed_ecorecxxmainheadersdir = $(includedir)/ecore-cxx-@VMAJ@
 dist_installed_ecorecxxmainheaders_DATA = bindings/ecore_cxx/Ecore.hh
-
-if HAVE_CXX11
 
 generated_ecore_cxx_bindings = \
 lib/ecore/ecore_poll.eo.hh \
@@ -27,12 +27,10 @@ lib/ecore/Ecore.eo.hh:
 	@for i in $(generated_ecore_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 
-endif
 
 ### Unit tests
 
 if EFL_ENABLE_TESTS
-if HAVE_CXX11
 
 check_PROGRAMS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test
 TESTS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test

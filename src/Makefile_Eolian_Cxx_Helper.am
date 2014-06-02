@@ -1,4 +1,3 @@
-
 if HAVE_EOLIAN_CXX
 EOLIAN_CXX = @eolian_cxx@
 _EOLIAN_CXX_DEP = @eolian_cxx@

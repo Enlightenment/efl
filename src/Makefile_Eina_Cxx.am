@@ -1,6 +1,7 @@
 
 ### Library
 
+if HAVE_CXX11
 installed_einacxxmainheadersdir = $(includedir)/eina-cxx-@VMAJ@
 dist_installed_einacxxmainheaders_DATA = \
 bindings/eina_cxx/Eina.hh
@@ -29,7 +30,6 @@ bindings/eina_cxx/eina_value.hh
 ### Unit tests
 
 if EFL_ENABLE_TESTS
-if HAVE_CXX11
 
 check_PROGRAMS += tests/eina_cxx/eina_cxx_suite
 TESTS += tests/eina_cxx/eina_cxx_suite

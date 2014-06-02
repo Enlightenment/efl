@@ -1,6 +1,7 @@
 
 ### Library
 
+if HAVE_CXX11
 installed_eetcxxmainheadersdir = $(includedir)/eet-cxx-@VMAJ@
 dist_installed_eetcxxmainheaders_DATA = bindings/eet_cxx/Eet.hh
 
@@ -15,8 +16,6 @@ bindings/eet_cxx/eet_type.hh
 ### Unit tests
 
 if EFL_ENABLE_TESTS
-if HAVE_CXX11
-
 check_PROGRAMS += tests/eet_cxx/eet_cxx_suite
 TESTS += tests/eet_cxx/eet_cxx_suite
 
@@ -33,6 +32,5 @@ tests_eet_cxx_eet_cxx_suite_CPPFLAGS = 	\
 @CHECK_CFLAGS@ @EET_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
 tests_eet_cxx_eet_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
 tests_eet_cxx_eet_cxx_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
-
 endif
 endif
