@@ -1414,10 +1414,15 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
              filepath = eina_hash_find(_filenames, filename);
              if (!filepath)
                {
-                  ERR("Unable to find class %s", inherit_name);
+                  ERR("Unable to find a file for class %s", inherit_name);
                   return EINA_FALSE;
                }
              if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
+             if (!eolian_class_find_by_name(inherit_name))
+               {
+                  ERR("Unable to find class %s", inherit_name);
+                  return EINA_FALSE;
+               }
              free(filename);
           }
      }
