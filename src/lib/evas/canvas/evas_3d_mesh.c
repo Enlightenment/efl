@@ -65,6 +65,12 @@ evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
    float *minmaxdata = NULL;
    Evas_Box3 box3;
 
+   if (!curframe)
+     {
+        ERR("Invalid frame %i.", frame);
+	return EINA_FALSE;
+     }
+
    step = curframe->vertices[EVAS_3D_VERTEX_POSITION].element_count;
    size = curframe->vertices[EVAS_3D_VERTEX_POSITION].size;
    minmaxdata = (float *)curframe->vertices[EVAS_3D_VERTEX_POSITION].data;
