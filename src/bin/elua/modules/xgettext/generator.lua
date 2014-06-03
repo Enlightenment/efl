@@ -34,8 +34,7 @@ local gen_msgstr = function(str, prefix, suffix)
 end
 
 local cmp_msgs = function(msg1, msg2)
-    return msg1[1]      == msg2[1] and msg1[2] == msg2[2]
-       and msg1.context == msg2.context
+    return msg1[1] == msg2[1] and msg1.context == msg2.context
 end
 
 local new_msg = function(msg)
@@ -55,6 +54,9 @@ local gen_grouped_messages = function(ps)
         local found = false
         for i, amsg in ipairs(ret) do
             if cmp_msgs(msg, amsg) then
+                if not amsg[2] then
+                    amsg[2] = msg[2]
+                end
                 amsg.lines   [#amsg.lines    + 1] = msg.line
                 amsg.comments[#amsg.comments + 1] = msg.comment
                 for i, v in ipairs(msg.flags) do
