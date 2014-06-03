@@ -281,7 +281,7 @@ main(void)
    evas = ecore_evas_get(ecore_evas);
 
    /* Add a background rectangle objects. */
-   background = eo_add(EVAS_OBJ_RECTANGLE_CLASS, evas);
+   background = eo_add(EVAS_RECTANGLE_CLASS, evas);
    eo_unref(background);
    eo_do(background,
          evas_obj_color_set(0, 0, 0, 255),

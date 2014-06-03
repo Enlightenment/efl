@@ -170,7 +170,7 @@ main(void)
 
    /* Creating object with Eo.
     * Object must be deleted explixitly at the end of program.*/
-   d.bg = eo_add(EVAS_OBJ_RECTANGLE_CLASS, d.canvas);
+   d.bg = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
 
    /* Eo-styled way to perform actions on an object*/
    eo_do(d.bg, evas_obj_name_set("background rectangle"),
@@ -183,7 +183,7 @@ main(void)
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
-   d.img = eo_add(EVAS_OBJ_IMAGE_CLASS, d.canvas);
+   d.img = eo_add(EVAS_IMAGE_CLASS, d.canvas);
 
    /* As soon as 'canvas' object is a parent for 'image' object,
     * 'canvas' keeps reference to 'image'.
@@ -211,7 +211,7 @@ main(void)
      }
 
    /* border on the image's clipper, here just to emphasize its position */
-   d.clipper_border = eo_add(EVAS_OBJ_IMAGE_CLASS, d.canvas);
+   d.clipper_border = eo_add(EVAS_IMAGE_CLASS, d.canvas);
    eo_do(d.clipper_border, evas_obj_image_filled_set(EINA_TRUE),
                            evas_obj_image_file_set(border_img_path, NULL),
                            err = evas_obj_image_load_error_get());
@@ -232,7 +232,7 @@ main(void)
    /* solid white clipper (note that it's the default color for a
     * rectangle) - it won't change clippees' colors, then (multiplying
     * by 255) */
-   d.clipper = eo_add(EVAS_OBJ_RECTANGLE_CLASS, d.canvas);
+   d.clipper = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
    eo_unref(d.clipper);
 
    eo_do(d.clipper,
