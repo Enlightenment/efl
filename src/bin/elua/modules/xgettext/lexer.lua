@@ -3,6 +3,20 @@
 local yield = coroutine.yield
 local tconc = table.concat
 
+local keywords = {
+    ["and"     ] = true, ["break" ] = true, ["do"   ] = true, ["else"] = true,
+    ["elseif"  ] = true, ["end"   ] = true, ["false"] = true, ["for" ] = true,
+    ["function"] = true, ["goto"  ] = true, ["if"   ] = true, ["in"  ] = true,
+    ["local"   ] = true, ["nil"   ] = true, ["not"  ] = true, ["or"  ] = true,
+    ["repeat"  ] = true, ["return"] = true, ["then" ] = true, ["true"] = true,
+    ["until"   ] = true, ["while" ] = true
+}
+
+local tokens = {
+    "..", "...", "==", ">=", "<=", "~=", "::",
+    "<name>", "<string>", "<number>", "<eof>"
+}
+
 local max_custom_len = 79
 local max_fname_len = 72
 local max_str_len = 63
@@ -196,18 +210,30 @@ local lex_tbl = {
             lex_error(ls, "invalid long string delimiter", tconc(buf))
         end
     end,
+    ["="] = function(ls)
+        local oc = ls.current
+        local c  = next_char(ls)
+        if c ~= "=" then return c end
+        else next_char(ls); return c .. "=" end
+    end,
     ['"' ] = function(ls)
         return "<string>", read_string(ls)
     end,
     ["." ] = function(ls)
         local c = next_char(ls)
-        if c:match("%d") then
+        if c == "." then
+            c = next_char(ls)
+            if c == "." then
+                next_char(ls)
+                return "..."
+            else
+                return ".."
+            end
+        elseif c:match("%d") then
             return "<number>", read_number(ls, ".")
-        elseif c ~= "." then
+        else
             return "."
         end
-        next_char(ls)
-        return ".."
     end,
     ["0" ] = function(ls)
         return "<number>", read_number(ls)
@@ -217,6 +243,9 @@ lex_tbl["\r"] = lex_tbl["\n"]
 lex_tbl["\f"] = lex_tbl[" " ]
 lex_tbl["\t"] = lex_tbl[" " ]
 lex_tbl["\v"] = lex_tbl[" " ]
+lex_tbl["<" ] = lex_tbl["=" ]
+lex_tbl[">" ] = lex_tbl["=" ]
+lex_tbl["~" ] = lex_tbl["=" ]
 lex_tbl["'" ] = lex_tbl['"' ]
 lex_tbl["1" ] = lex_tbl["0" ]
 lex_tbl["2" ] = lex_tbl["0" ]
@@ -238,6 +267,9 @@ local lex_default = function(ls)
             if not c then break end
         until not (c == "_" or c:match("%w"))
         local str = tconc(buf)
+        if keywords[str] then
+            return str
+        end
         return "<name>", str
     else
         next_char(ls)
