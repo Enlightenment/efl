@@ -925,108 +925,10 @@ EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
  */
 
 /**
- * @def EO_CLASS
- * The class type for the Eo base class.
- */
-#define EO_CLASS eo_base_class_get()
-/**
- * @brief Use #EO_CLASS
- * @internal
- * */
-EAPI const Eo_Class *eo_base_class_get(void);
-
-/**
  * @typedef eo_key_data_free_func
  * Data free func prototype.
  */
 typedef void (*eo_key_data_free_func)(void *);
-
-/**
- * @brief Set generic data to object.
- * @param[in] key the key associated with the data
- * @param[in] data the data to set.
- * @param[in] free_func the func to free data with (NULL means "do nothing").
- *
- * @see #eo_key_data_get
- * @see #eo_key_data_del
- */
-EAPI void eo_key_data_set(const char *key, const void *data, eo_key_data_free_func free_func);
-
-/**
- * @brief Get generic data from object.
- * @param[in] key the key associated with the data
- * @return data the data for the key
- *
- * @see #eo_key_data_set
- * @see #eo_key_data_del
- */
-EAPI void *eo_key_data_get(const char *key);
-
-/**
- * @brief Get dbg information from the object.
- * @param[in] root node of the tree
- */
-EAPI void eo_dbg_info_get(Eo_Dbg_Info *root_node);
-
-/**
- * @brief Del generic data from object.
- * @param[in] key the key associated with the data
- *
- * @see #eo_key_data_set
- * @see #eo_key_data_get
- */
-EAPI void eo_key_data_del(const char *key);
-
-/**
- * @brief Set the parent of an object
- * @param[in] parent the new parent.
- *
- * Parents keep references to their children so in order to delete objects
- * that have parents you need to set parent to NULL or use eo_del() that
- * does that for you (and also unrefs the object).
- *
- * @see eo_del()
- * @see eo_parent_get()
- */
-EAPI void eo_parent_set(Eo *parent);
-
-/**
- * @brief Get the parent of an object
- * @return a pointer to the parent object.
- *
- * @see eo_parent_set()
- */
-EAPI Eo *eo_parent_get(void);
-
-/**
- * @brief Get an iterator on all childrens
- * @param obj the object to get the childrens from.
- * @return a pointer to an Eina_Iterator containing all the childrens.
- *
- * @see eo_parent_set()
- */
-EAPI Eina_Iterator *eo_children_iterator_new(void);
-
-/**
- * @brief Add a new weak reference to obj.
- * @param wref The pointer to use for the weak ref.
- *
- * This function registers the object handle pointed by wref to obj so when
- * obj is deleted it'll be updated to NULL. This functions should be used
- * when you want to keep track of an object in a safe way, but you don't want
- * to prevent it from being freed.
- *
- * @see #eo_wref_del
- */
-EAPI void eo_wref_add(Eo **wref);
-
-/**
- * @brief Delete the weak reference passed.
- * @param wref the weak reference to free.
- *
- * @see #eo_wref_add
- */
-EAPI void eo_wref_del(Eo **wref);
 
 /**
  * @def eo_weak_ref
@@ -1074,33 +976,6 @@ EAPI void eo_wref_del(Eo **wref);
  * @see #eo_wref_del
  */
 #define eo_wref_del_safe(wref) eo_weak_unref(wref)
-
-/**
- * @brief Call the object's constructor.
- *
- * Should not be used with #eo_do. Only use it with #eo_do_super.
- *
- * @see #eo_destructor
- */
-EAPI void eo_constructor(void);
-
-/**
- * @brief Call the object's destructor.
- *
- * Should not be used with #eo_do. Only use it with #eo_do_super.
- *
- * @see #eo_constructor
- */
-EAPI void eo_destructor(void);
-
-/**
- * @brief Called at the end of #eo_add.
- *
- * Should not be called, just overridden.
- *
- * @see #eo_add
- */
-EAPI Eo *eo_finalize(void);
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
@@ -1191,87 +1066,6 @@ struct _Eo_Callback_Array_Item
   }
 
 /**
- * @brief Add an event callback forwarder for an event and an object.
- * @param[in] desc The description of the event to listen to.
- * @param[in] new_obj The object to emit events from.
- *
- * @see eo_event_callback_forwarder_del()
- */
-EAPI void eo_event_callback_forwarder_add(const Eo_Event_Description *desc, Eo *new_obj);
-
-/**
- * @brief Remove an event callback forwarder for an event and an object.
- * @param[in] desc The description of the event to listen to.
- * @param[in] new_obj The object to emit events from.
- *
- * @see eo_event_callback_forwarder_add()
- */
-EAPI void eo_event_callback_forwarder_del(const Eo_Event_Description *desc, Eo *new_obj);
-
-/**
- * @brief freeze events of object.
- *
- * Prevents event callbacks from being called for the object.
- *
- * @see #eo_event_thaw
- */
-EAPI void eo_event_freeze(void);
-
-/**
- * @brief thaw events of object.
- *
- * Lets event callbacks be called for the object.
- *
- * @see #eo_event_freeze
- */
-EAPI void eo_event_thaw(void);
-
-/**
- * @brief return freeze events of object.
- *
- * @return fcount The event freeze count of the object.
- *
- * Return event freeze count.
- *
- * @see #eo_event_freeze
- * @see #eo_event_thaw
- */
-EAPI int eo_event_freeze_count_get(void);
-
-/**
- * @brief freeze events of object.
- *
- * Prevents event callbacks from being called for the object.
- *
- * @see #eo_event_freeze
- * @see #eo_event_global_thaw
- */
-EAPI void eo_event_global_freeze(void);
-
-/**
- * @brief thaw events of object.
- *
- * Lets event callbacks be called for the object.
- *
- * @see #eo_event_thaw
- * @see #eo_event_global_freeze
- */
-EAPI void eo_event_global_thaw(void);
-
-/**
- * @brief return freeze events of object.
- *
- * @return fcount The event freeze count of the object.
- *
- * Return event freeze count.
- *
- * @see #eo_event_freeze_count_get
- * @see #eo_event_global_freeze
- * @see #eo_event_global_thaw
- */
-EAPI int eo_event_global_freeze_count_get(void);
-
-/**
  * @def eo_event_callback_add(obj, desc, cb, data)
  * Add a callback for an event.
  * @param[in] desc The description of the event to listen to.
@@ -1285,33 +1079,6 @@ EAPI int eo_event_global_freeze_count_get(void);
 #define eo_event_callback_add(desc, cb, data) \
    eo_event_callback_priority_add(desc, \
          EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
-
-/**
- * @brief Add a callback for an event with a specific priority.
- * @param[in] desc The description of the event to listen to.
- * @param[in] priority The priority of the callback.
- * @param[in] cb the callback to call.
- * @param[in] data additional data to pass to the callback.
- *
- * callbacks of the same priority are called in reverse order of creation.
- *
- * @see #eo_event_callback_add
- */
-EAPI void eo_event_callback_priority_add(const Eo_Event_Description *desc,
-                                Eo_Callback_Priority priority,
-                                Eo_Event_Cb func,
-                                const void *user_data);
-
-/**
- * @brief Del a callback with a specific data associated to it for an event.
- * @param[in] desc The description of the event to listen to.
- * @param[in] func the callback to delete.
- * @param[in] user_data The data to compare.
- *
- */
-EAPI void eo_event_callback_del(const Eo_Event_Description *desc,
-                       Eo_Event_Cb func,
-                       const void *user_data);
 
 /**
  * @def eo_event_callback_array_add(obj, desc, cb, data)
@@ -1328,82 +1095,21 @@ EAPI void eo_event_callback_del(const Eo_Event_Description *desc,
          EO_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**
- * @brief Add a callback array for an event with a specific priority.
- * @param[in] array an #Eo_Callback_Array_Item of events to listen to.
- * @param[in] priority The priority of the callback.
- * @param[in] data additional data to pass to the callback.
- *
- * callbacks of the same priority are called in reverse order of creation.
- *
- * @see #eo_event_callback_add
+ * @}
  */
-EAPI void eo_event_callback_array_priority_add(const Eo_Callback_Array_Item *array,
-                                      Eo_Callback_Priority priority,
-                                      const void *user_data);
 
-/**
- * @brief Del a callback array with a specific data associated to it for an event.
- * @param[in] array an #Eo_Callback_Array_Item of events to listen to.
- * @param[in] user_data The data to compare.
- *
- */
-EAPI void eo_event_callback_array_del(const Eo_Callback_Array_Item *array,
-                             const void *user_data);
-
-/**
- * @brief Call the callbacks for an event of an object.
- * @param[in] desc The description of the event to call.
- * @param[in] event_info Extra event info to pass to the callbacks.
- * @return aborted @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool eo_event_callback_call(const Eo_Event_Description *desc, void *event_info);
+/* XXX: Remove, for compat with the old names. */
+#define EO_EV_CALLBACK_ADD EO_BASE_EVENT_CALLBACK_ADD
+#define EO_EV_CALLBACK_DEL EO_BASE_EVENT_CALLBACK_DEL
+#define EO_EV_DEL EO_BASE_EVENT_DEL
 
 /**
  * @}
  */
 
-/**
- * @var _EO_EV_CALLBACK_ADD
- * see EO_EV_CALLBACK_ADD
- */
-EAPI extern const Eo_Event_Description _EO_EV_CALLBACK_ADD;
+#include "eo_base.eo.h"
 
-/**
- * @def EO_EV_CALLBACK_ADD
- * The event description (of type #Eo_Event_Description) for
- * The "Callback listener added" event.
- */
-#define EO_EV_CALLBACK_ADD (&(_EO_EV_CALLBACK_ADD))
-
-/**
- * @var _EO_EV_CALLBACK_DEL
- * see EO_EV_CALLBACK_DEL
- */
-EAPI extern const Eo_Event_Description _EO_EV_CALLBACK_DEL;
-
-/**
- * @def EO_EV_CALLBACK_DEL
- * The event description (of type #Eo_Event_Description) for
- * The "Callback listener deleted" event.
- */
-#define EO_EV_CALLBACK_DEL (&(_EO_EV_CALLBACK_DEL))
-
-/**
- * @var _EO_EV_DEL
- * see #EO_EV_DEL
- */
-EAPI extern const Eo_Event_Description _EO_EV_DEL;
-
-/**
- * @def EO_EV_DEL
- * Object is being deleted.
- */
-#define EO_EV_DEL (&(_EO_EV_DEL))
-
-/**
- * @}
- */
-
+#define EO_CLASS EO_BASE_CLASS
 
 #endif
 

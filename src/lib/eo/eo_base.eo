@@ -1,6 +1,7 @@
 abstract Eo_Base ()
 {
    eo_prefix: eo;
+   legacy_prefix: null;
 
    constructors {
       constructor {
@@ -146,8 +147,8 @@ This function registers the object handle pointed by wref to obj so when obj is 
       event_callback_call {
          /*@ Call the callbacks for an event of an object. */
          params {
-            @in const Eo_Event_Description* desc; /*@ The description of the event to call */
-            @in const void* event_info; /*@ Extra event info to pass to the callbacks */
+            @in const Eo_Event_Description *desc; /*@ The description of the event to call */
+            @in void *event_info; /*@ Extra event info to pass to the callbacks */
          }
          return Eina_Bool; /* @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
       }
@@ -163,10 +164,12 @@ callbacks of the same priority are called in reverse order of creation. */
       }
       children_iterator_new {
          /*@ Get an iterator on all childrens */
-         params {
-            @inout Eina_Iterator** it;
-         }
+         return Eina_Iterator *;
       }
+   }
+   implements {
+        class::constructor;
+        class::destructor;
    }
    events {
       callback,add; /*@ A callback was added. */
