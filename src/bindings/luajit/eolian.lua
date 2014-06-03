@@ -89,7 +89,8 @@ ffi.cdef [[
     const char *eolian_function_return_comment_get(Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(Eolian_Function *function_id);
-    Eina_Bool eolian_implement_information_get(Eolian_Implement *impl, const char **class_name, const char **func_name, Eolian_Function_Type *type);
+    const char *eolian_implement_full_name_get(const Eolian_Implement *impl);
+    Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl, Eolian_Class *klass, Eolian_Function *function, Eolian_Function_Type *type);
     const Eina_List *eolian_class_implements_list_get(const Eolian_Class *klass);
     const Eina_List *eolian_class_events_list_get(const Eolian_Class *klass);
     Eina_Bool eolian_class_event_information_get(Eolian_Event *event, const char **event_name, const char **event_type, const char **event_desc);
@@ -306,14 +307,20 @@ ffi.metatype("Eolian_Function_Parameter", {
 
 ffi.metatype("Eolian_Implement", {
     __index = {
+        full_name_get = function(self)
+            local v = eolian.eolian_implement_full_name_get(self)
+            if v == nil then return nil end
+            return ffi.string(v)
+        end,
+
         information_get = function(self)
-            local nm = ffi.new("const char*[2]")
+            local cl = ffi.new("Eolian_Class[1]")
+            local fn = ffi.new("Eolian_Function[1]")
             local tp = ffi.new("Eolian_Function_Type[1]")
-            eolian.eolian_implement_information_get(self, nm, nm + 1, tp)
-            local cn, fn = nm[0], nm[1]
-            cn, fn = (cn ~= nil) and ffi.string(cn) or nil,
-                     (fn ~= nil) and ffi.string(fn) or nil
-            return cn, fn, tp[0]
+            eolian.eolian_implement_information_get(self, cl, fn, tp)
+            cl, fn = (cl[0] ~= nil) and cl[0] or nil,
+                     (fn[0] ~= nil) and fn[0] or nil
+            return cl, fn, tp[0]
         end
     }
 })
