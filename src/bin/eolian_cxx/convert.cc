@@ -271,9 +271,8 @@ _cxx_new(const Eolian_Class klass)
    else if (cls_type == EOLIAN_CLASS_MIXIN)     cls.type = eo_class::mixin_;
    else if (cls_type == EOLIAN_CLASS_INTERFACE) cls.type = eo_class::interface_;
    else    { assert(false); }
-   std::string prefix(safe_str(eolian_class_eo_prefix_get(klass)));
    cls.name = eolian_class_name_get(klass);
-   cls.eo_name = (prefix != "" ? prefix : cls.name) + "_CLASS";
+   cls.eo_name = cls.name + "_CLASS";
    cls.comment = detail::eolian_class_comment(klass);
    std::transform(cls.name.begin(), cls.name.end(), cls.name.begin(), ::tolower);
    std::transform(cls.eo_name.begin(), cls.eo_name.end(), cls.eo_name.begin(), ::toupper);
