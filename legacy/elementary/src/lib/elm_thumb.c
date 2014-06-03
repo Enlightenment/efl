@@ -10,7 +10,7 @@
 #define MY_CLASS_NAME "Elm_Thumb"
 #define MY_CLASS_NAME_LEGACY "elm_thumb"
 
-#define MY_CLASS ELM_OBJ_THUMB_CLASS
+#define MY_CLASS ELM_THUMB_CLASS
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
@@ -288,7 +288,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
           ELM_SAFE_FREE(sd->thumb.thumb_key, eina_stringshare_del);
           ELM_SAFE_FREE(sd->view, evas_object_del);
 
-          wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+          wd = eo_data_scope_get(sd->obj, ELM_WIDGET_CLASS);
           edje_object_signal_emit
              (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           evas_object_smart_callback_call
@@ -458,7 +458,7 @@ _thumb_show(Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_evas_smart_show(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_evas_object_smart_show(Eo *obj, Elm_Thumb_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
@@ -466,7 +466,7 @@ _elm_thumb_evas_smart_show(Eo *obj, Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_evas_smart_hide(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_evas_object_smart_hide(Eo *obj, Elm_Thumb_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -531,7 +531,7 @@ elm_need_ethumb(void)
 }
 
 EOLIAN static void
-_elm_thumb_evas_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
+_elm_thumb_evas_object_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -550,7 +550,7 @@ _elm_thumb_evas_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_thumb_evas_smart_del(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_evas_object_smart_del(Eo *obj, Elm_Thumb_Data *sd)
 {
    if (sd->thumb.request)
      {

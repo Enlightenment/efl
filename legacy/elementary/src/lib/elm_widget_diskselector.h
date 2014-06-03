@@ -65,7 +65,7 @@ struct _Elm_Diskselector_Item
  */
 
 #define ELM_DISKSELECTOR_DATA_GET(o, sd) \
-  Elm_Diskselector_Data * sd = eo_data_scope_get(o, ELM_OBJ_DISKSELECTOR_CLASS)
+  Elm_Diskselector_Data * sd = eo_data_scope_get(o, ELM_DISKSELECTOR_CLASS)
 
 #define ELM_DISKSELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
   ELM_DISKSELECTOR_DATA_GET(o, ptr);                 \
@@ -86,7 +86,7 @@ struct _Elm_Diskselector_Item
     }
 
 #define ELM_DISKSELECTOR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_DISKSELECTOR_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_DISKSELECTOR_CLASS))) \
     return
 
 #define ELM_DISKSELECTOR_ITEM_CHECK(it)                     \
@@ -99,7 +99,7 @@ struct _Elm_Diskselector_Item
 
 #define ELM_DISKSELECTOR_ITEM_CHECK_OR_GOTO(it, label)         \
   ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
-  if (!it->base.widget || !eo_isa((it->base.widget), ELM_OBJ_DISKSELECTOR_CLASS)) \
+  if (!it->base.widget || !eo_isa((it->base.widget), ELM_DISKSELECTOR_CLASS)) \
            goto label;
 
 #endif

@@ -66,7 +66,7 @@ struct _Elm_Thumb_Data
  */
 
 #define ELM_THUMB_DATA_GET(o, sd) \
-  Elm_Thumb_Data * sd = eo_data_scope_get(o, ELM_OBJ_THUMB_CLASS)
+  Elm_Thumb_Data * sd = eo_data_scope_get(o, ELM_THUMB_CLASS)
 
 #define ELM_THUMB_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_THUMB_DATA_GET(o, ptr);                        \
@@ -87,7 +87,7 @@ struct _Elm_Thumb_Data
     }
 
 #define ELM_THUMB_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_THUMB_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_THUMB_CLASS))) \
     return
 
 #endif

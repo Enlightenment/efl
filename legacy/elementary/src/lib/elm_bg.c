@@ -7,7 +7,7 @@
 #include "elm_widget_bg.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_BG_CLASS
+#define MY_CLASS ELM_BG_CLASS
 
 #define MY_CLASS_NAME "Elm_Bg"
 #define MY_CLASS_NAME_LEGACY "elm_bg"
@@ -99,7 +99,7 @@ _on_resize(void *data,
 }
 
 EOLIAN static void
-_elm_bg_evas_smart_add(Eo *obj, Elm_Bg_Data *priv)
+_elm_bg_evas_object_smart_add(Eo *obj, Elm_Bg_Data *priv)
 {
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());

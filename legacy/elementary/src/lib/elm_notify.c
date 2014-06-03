@@ -8,7 +8,7 @@
 #include "elm_widget_notify.h"
 #include "elm_widget_container.h"
 
-#define MY_CLASS ELM_OBJ_NOTIFY_CLASS
+#define MY_CLASS ELM_NOTIFY_CLASS
 
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
@@ -112,7 +112,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (!sd->parent) return;
    evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
-   if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+   if (eo_isa(sd->parent, ELM_WIN_CLASS))
      {
         x = 0;
         y = 0;
@@ -214,7 +214,7 @@ _restack_cb(void *data EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_notify_evas_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -222,7 +222,7 @@ _elm_notify_evas_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coo
 }
 
 EOLIAN static void
-_elm_notify_evas_smart_move(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_elm_notify_evas_object_smart_move(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -268,7 +268,7 @@ _timer_init(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_notify_evas_smart_show(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_evas_object_smart_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
@@ -281,7 +281,7 @@ _elm_notify_evas_smart_show(Eo *obj, Elm_Notify_Data *sd)
 }
 
 EOLIAN static void
-_elm_notify_evas_smart_hide(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_evas_object_smart_hide(Eo *obj, Elm_Notify_Data *sd)
 {
    const char *hide_signal;
 
@@ -419,7 +419,7 @@ _hide_finished_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_evas_smart_add(Eo *obj, Elm_Notify_Data *priv)
+_elm_notify_evas_object_smart_add(Eo *obj, Elm_Notify_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -440,7 +440,7 @@ _elm_notify_evas_smart_add(Eo *obj, Elm_Notify_Data *priv)
 }
 
 EOLIAN static void
-_elm_notify_evas_smart_del(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_evas_object_smart_del(Eo *obj, Elm_Notify_Data *sd)
 {
    edje_object_signal_callback_del_full
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);

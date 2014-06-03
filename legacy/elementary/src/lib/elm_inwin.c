@@ -8,7 +8,7 @@
 #include "elm_widget_inwin.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_WIN_INWIN_CLASS
+#define MY_CLASS ELM_INWIN_CLASS
 
 #define MY_CLASS_NAME "Elm_Inwin"
 #define MY_CLASS_NAME_LEGACY "elm_inwin"
@@ -63,7 +63,7 @@ _elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm
 }
 
 EOLIAN static void
-_elm_inwin_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_inwin_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -107,7 +107,7 @@ _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 
    eo_do(obj, parent = eo_parent_get());
 
-   if (parent && !eo_isa(parent, ELM_OBJ_WIN_CLASS))
+   if (parent && !eo_isa(parent, ELM_WIN_CLASS))
      {
         eo_error_set(obj);  /* *has* to have a parent window */
         return;

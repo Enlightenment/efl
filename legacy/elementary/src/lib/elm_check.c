@@ -7,7 +7,7 @@
 #include "elm_widget_check.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_CHECK_CLASS
+#define MY_CLASS ELM_CHECK_CLASS
 
 #define MY_CLASS_NAME "Elm_Check"
 #define MY_CLASS_NAME_LEGACY "elm_check"
@@ -282,7 +282,7 @@ _on_check_toggle(void *data,
 }
 
 EOLIAN static void
-_elm_check_evas_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+_elm_check_evas_object_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

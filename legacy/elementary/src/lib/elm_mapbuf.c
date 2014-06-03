@@ -8,7 +8,7 @@
 #include "elm_widget_mapbuf.h"
 #include "elm_widget_container.h"
 
-#define MY_CLASS ELM_OBJ_MAPBUF_CLASS
+#define MY_CLASS ELM_MAPBUF_CLASS
 
 #define MY_CLASS_NAME "Elm_Mapbuf"
 #define MY_CLASS_NAME_LEGACY "elm_mapbuf"
@@ -150,7 +150,7 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_mapbuf_evas_object_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -160,7 +160,7 @@ _elm_mapbuf_evas_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coo
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_mapbuf_evas_object_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -170,7 +170,7 @@ _elm_mapbuf_evas_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_C
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_evas_object_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
@@ -179,7 +179,7 @@ _elm_mapbuf_evas_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_evas_object_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
@@ -240,7 +240,7 @@ _elm_mapbuf_elm_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
+_elm_mapbuf_evas_object_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
 {
    ELM_SAFE_FREE(priv->idler, ecore_idler_del);
    ELM_SAFE_FREE(priv->map, evas_map_free);
@@ -249,7 +249,7 @@ _elm_mapbuf_evas_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_smart_add(Eo *obj, Elm_Mapbuf_Data *priv)
+_elm_mapbuf_evas_object_smart_add(Eo *obj, Elm_Mapbuf_Data *priv)
 {
    Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    int i;

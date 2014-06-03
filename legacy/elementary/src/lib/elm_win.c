@@ -15,7 +15,7 @@
 #include "elm_interface_atspi_window.eo.h"
 #include "elm_interface_atspi_widget.eo.h"
 
-#define MY_CLASS ELM_OBJ_WIN_CLASS
+#define MY_CLASS ELM_WIN_CLASS
 
 #define MY_CLASS_NAME "Elm_Win"
 #define MY_CLASS_NAME_LEGACY "elm_win"
@@ -1301,7 +1301,7 @@ _deferred_ecore_evas_free(void *data)
 }
 
 EOLIAN static void
-_elm_win_evas_smart_show(Eo *obj, Elm_Win_Data *sd)
+_elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
 {
    if (sd->modal_count) return;
    const Eina_List *l;
@@ -1322,7 +1322,7 @@ _elm_win_evas_smart_show(Eo *obj, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_evas_smart_hide(Eo *obj, Elm_Win_Data *sd)
+_elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
 {
    if (sd->modal_count) return;
    const Eina_List *l;
@@ -1582,7 +1582,7 @@ _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
 }
 
 EOLIAN static void
-_elm_win_evas_smart_del(Eo *obj, Elm_Win_Data *sd)
+_elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
 {
    const Eina_List *l;
    Evas_Object *current;
@@ -1711,7 +1711,7 @@ _elm_win_obj_intercept_show(void *data,
 }
 
 EOLIAN static void
-_elm_win_evas_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    if (sd->img_obj)
      {
@@ -1751,7 +1751,7 @@ _elm_win_evas_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Coord y)
 }
 
 EOLIAN static void
-_elm_win_evas_smart_resize(Eo *obj, Elm_Win_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_win_evas_object_smart_resize(Eo *obj, Elm_Win_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -2779,7 +2779,7 @@ _elm_win_on_icon_del(void *data,
 }
 
 EOLIAN static void
-_elm_win_evas_smart_add(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED)
+_elm_win_evas_object_smart_add(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

@@ -35,7 +35,7 @@ struct _Elm_Fileselector_Entry_Data
 
 
 #define ELM_FILESELECTOR_ENTRY_DATA_GET(o, sd) \
-  Elm_Fileselector_Entry_Data * sd = eo_data_scope_get(o, ELM_OBJ_FILESELECTOR_ENTRY_CLASS)
+  Elm_Fileselector_Entry_Data * sd = eo_data_scope_get(o, ELM_FILESELECTOR_ENTRY_CLASS)
 
 #define ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN(o, ptr) \
   ELM_FILESELECTOR_ENTRY_DATA_GET(o, ptr);                \
@@ -56,7 +56,7 @@ struct _Elm_Fileselector_Entry_Data
     }
 
 #define ELM_FILESELECTOR_ENTRY_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_FILESELECTOR_ENTRY_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FILESELECTOR_ENTRY_CLASS))) \
     return
 
 #endif

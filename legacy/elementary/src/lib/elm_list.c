@@ -8,7 +8,7 @@
 #include "elm_widget_list.h"
 #include "elm_interface_scrollable.h"
 
-#define MY_CLASS ELM_OBJ_LIST_CLASS
+#define MY_CLASS ELM_LIST_CLASS
 
 #define MY_CLASS_NAME "Elm_List"
 #define MY_CLASS_NAME_LEGACY "elm_list"
@@ -2202,7 +2202,7 @@ _elm_list_elm_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction 
 }
 
 EOLIAN static void
-_elm_list_evas_smart_add(Eo *obj, Elm_List_Data *priv)
+_elm_list_evas_object_smart_add(Eo *obj, Elm_List_Data *priv)
 {
    Evas_Coord minw, minh;
 
@@ -2268,7 +2268,7 @@ _elm_list_evas_smart_add(Eo *obj, Elm_List_Data *priv)
 }
 
 EOLIAN static void
-_elm_list_evas_smart_del(Eo *obj, Elm_List_Data *sd)
+_elm_list_evas_object_smart_del(Eo *obj, Elm_List_Data *sd)
 {
    const Eina_List *l;
    Elm_List_Item *it;
@@ -2315,7 +2315,7 @@ _elm_list_evas_smart_del(Eo *obj, Elm_List_Data *sd)
 }
 
 EOLIAN static void
-_elm_list_evas_smart_move(Eo *obj, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_list_evas_object_smart_move(Eo *obj, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -2323,7 +2323,7 @@ _elm_list_evas_smart_move(Eo *obj, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y
 }
 
 EOLIAN static void
-_elm_list_evas_smart_resize(Eo *obj, Elm_List_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_list_evas_object_smart_resize(Eo *obj, Elm_List_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -2331,7 +2331,7 @@ _elm_list_evas_smart_resize(Eo *obj, Elm_List_Data *sd, Evas_Coord w, Evas_Coord
 }
 
 EOLIAN static void
-_elm_list_evas_smart_member_add(Eo *obj, Elm_List_Data *sd, Evas_Object *member)
+_elm_list_evas_object_smart_member_add(Eo *obj, Elm_List_Data *sd, Evas_Object *member)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 

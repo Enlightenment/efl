@@ -76,7 +76,7 @@ struct _Vertex3
  */
 
 #define ELM_FLIP_DATA_GET(o, sd) \
-  Elm_Flip_Data * sd = eo_data_scope_get(o, ELM_OBJ_FLIP_CLASS)
+  Elm_Flip_Data * sd = eo_data_scope_get(o, ELM_FLIP_CLASS)
 
 #define ELM_FLIP_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_FLIP_DATA_GET(o, ptr);                         \
@@ -97,7 +97,7 @@ struct _Vertex3
     }
 
 #define ELM_FLIP_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_FLIP_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FLIP_CLASS))) \
     return
 
 #endif

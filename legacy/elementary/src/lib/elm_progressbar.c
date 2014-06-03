@@ -8,7 +8,7 @@
 #include "elm_widget_progressbar.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_PROGRESSBAR_CLASS
+#define MY_CLASS ELM_PROGRESSBAR_CLASS
 
 #define MY_CLASS_NAME "Elm_Progressbar"
 #define MY_CLASS_NAME_LEGACY "elm_progressbar"
@@ -250,7 +250,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_progressbar_evas_smart_add(Eo *obj, Elm_Progressbar_Data *priv)
+_elm_progressbar_evas_object_smart_add(Eo *obj, Elm_Progressbar_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -289,7 +289,7 @@ _elm_progressbar_evas_smart_add(Eo *obj, Elm_Progressbar_Data *priv)
 }
 
 EOLIAN static void
-_elm_progressbar_evas_smart_del(Eo *obj, Elm_Progressbar_Data *sd)
+_elm_progressbar_evas_object_smart_del(Eo *obj, Elm_Progressbar_Data *sd)
 {
    Elm_Progress_Status *progress_obj;
 

@@ -1158,13 +1158,13 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::move;
-      Evas_Smart::member_add;
-      Evas_Smart::add;
-      Evas_Smart::resize;
-      Evas_Smart::del;
-      Evas_Smart::show;
-      Evas_Smart::hide;
+      Evas_Object_Smart::move;
+      Evas_Object_Smart::member_add;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::resize;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::show;
+      Evas_Object_Smart::hide;
       Elm_Widget::activate;
       Elm_Widget::focus_direction_manager_is;
       Elm_Widget::theme_apply;

@@ -8,12 +8,12 @@
 #include "elm_widget_map.h"
 #include "elm_interface_scrollable.h"
 
-#define MY_PAN_CLASS ELM_OBJ_MAP_PAN_CLASS
+#define MY_PAN_CLASS ELM_MAP_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Map_Pan"
 #define MY_PAN_CLASS_NAME_LEGACY "elm_map_pan"
 
-#define MY_CLASS ELM_OBJ_MAP_CLASS
+#define MY_CLASS ELM_MAP_CLASS
 
 #define MY_CLASS_NAME "Elm_Map"
 #define MY_CLASS_NAME_LEGACY "elm_map"
@@ -3814,7 +3814,7 @@ _elm_map_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd
 }
 
 EOLIAN static void
-_elm_map_pan_evas_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
+_elm_map_pan_evas_object_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
 {
    _sizing_eval(psd->wsd->obj);
    elm_map_zoom_mode_set(psd->wobj, psd->wsd->mode);
@@ -3822,7 +3822,7 @@ _elm_map_pan_evas_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA
 }
 
 EOLIAN static void
-_elm_map_pan_evas_smart_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
+_elm_map_pan_evas_object_smart_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 {
    Evas_Coord w, h;
 
@@ -3836,7 +3836,7 @@ _elm_map_pan_evas_smart_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_map_pan_evas_smart_move(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+_elm_map_pan_evas_object_smart_move(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    evas_object_smart_changed(obj);
 }
@@ -3986,7 +3986,7 @@ _elm_map_elm_widget_event(Eo *obj, Elm_Map_Data *sd EINA_UNUSED, Evas_Object *sr
 }
 
 EOLIAN static void
-_elm_map_evas_smart_add(Eo *obj, Elm_Map_Data *priv)
+_elm_map_evas_object_smart_add(Eo *obj, Elm_Map_Data *priv)
 {
    Evas_Coord minw, minh;
    Elm_Map_Pan_Data *pan_data;
@@ -4095,7 +4095,7 @@ _elm_map_evas_smart_add(Eo *obj, Elm_Map_Data *priv)
 }
 
 EOLIAN static void
-_elm_map_evas_smart_del(Eo *obj, Elm_Map_Data *sd)
+_elm_map_evas_object_smart_del(Eo *obj, Elm_Map_Data *sd)
 {
    Elm_Map_Route *r;
    Elm_Map_Name *na;
@@ -4156,7 +4156,7 @@ _elm_map_evas_smart_del(Eo *obj, Elm_Map_Data *sd)
 }
 
 EOLIAN static void
-_elm_map_evas_smart_move(Eo *obj, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_map_evas_object_smart_move(Eo *obj, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -4164,7 +4164,7 @@ _elm_map_evas_smart_move(Eo *obj, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y)
 }
 
 EOLIAN static void
-_elm_map_evas_smart_resize(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_map_evas_object_smart_resize(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -4172,7 +4172,7 @@ _elm_map_evas_smart_resize(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h
 }
 
 EOLIAN static void
-_elm_map_evas_smart_member_add(Eo *obj, Elm_Map_Data *sd, Evas_Object *member)
+_elm_map_evas_object_smart_member_add(Eo *obj, Elm_Map_Data *sd, Evas_Object *member)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 

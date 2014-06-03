@@ -12,7 +12,7 @@
 
 #define FMT_SIZE_T "%zu"
 
-#define MY_CLASS ELM_OBJ_IMAGE_CLASS
+#define MY_CLASS ELM_IMAGE_CLASS
 #define MY_CLASS_NAME "Elm_Image"
 #define MY_CLASS_NAME_LEGACY "elm_image"
 
@@ -418,7 +418,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
 }
 
 EOLIAN static void
-_elm_image_evas_smart_add(Eo *obj, Elm_Image_Data *priv)
+_elm_image_evas_object_smart_add(Eo *obj, Elm_Image_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -452,7 +452,7 @@ _elm_image_evas_smart_add(Eo *obj, Elm_Image_Data *priv)
 }
 
 EOLIAN static void
-_elm_image_evas_smart_del(Eo *obj, Elm_Image_Data *sd)
+_elm_image_evas_object_smart_del(Eo *obj, Elm_Image_Data *sd)
 {
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
@@ -465,7 +465,7 @@ _elm_image_evas_smart_del(Eo *obj, Elm_Image_Data *sd)
 }
 
 EOLIAN static void
-_elm_image_evas_smart_move(Eo *obj, Elm_Image_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_image_evas_object_smart_move(Eo *obj, Elm_Image_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -478,7 +478,7 @@ _elm_image_evas_smart_move(Eo *obj, Elm_Image_Data *sd, Evas_Coord x, Evas_Coord
 }
 
 EOLIAN static void
-_elm_image_evas_smart_resize(Eo *obj, Elm_Image_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_image_evas_object_smart_resize(Eo *obj, Elm_Image_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -492,7 +492,7 @@ _elm_image_evas_smart_resize(Eo *obj, Elm_Image_Data *sd, Evas_Coord w, Evas_Coo
 }
 
 EOLIAN static void
-_elm_image_evas_smart_show(Eo *obj, Elm_Image_Data *sd)
+_elm_image_evas_object_smart_show(Eo *obj, Elm_Image_Data *sd)
 {
    sd->show = EINA_TRUE;
    if (sd->preloading) return;
@@ -505,7 +505,7 @@ _elm_image_evas_smart_show(Eo *obj, Elm_Image_Data *sd)
 }
 
 EOLIAN static void
-_elm_image_evas_smart_hide(Eo *obj, Elm_Image_Data *sd)
+_elm_image_evas_object_smart_hide(Eo *obj, Elm_Image_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
@@ -516,7 +516,7 @@ _elm_image_evas_smart_hide(Eo *obj, Elm_Image_Data *sd)
 }
 
 EOLIAN static void
-_elm_image_evas_smart_member_add(Eo *obj, Elm_Image_Data *sd, Evas_Object *member)
+_elm_image_evas_object_smart_member_add(Eo *obj, Elm_Image_Data *sd, Evas_Object *member)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
@@ -525,7 +525,7 @@ _elm_image_evas_smart_member_add(Eo *obj, Elm_Image_Data *sd, Evas_Object *membe
 }
 
 EOLIAN static void
-_elm_image_evas_smart_color_set(Eo *obj, Elm_Image_Data *sd, int r, int g, int b, int a)
+_elm_image_evas_object_smart_color_set(Eo *obj, Elm_Image_Data *sd, int r, int g, int b, int a)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_color_set(r, g, b, a));
 
@@ -535,7 +535,7 @@ _elm_image_evas_smart_color_set(Eo *obj, Elm_Image_Data *sd, int r, int g, int b
 }
 
 EOLIAN static void
-_elm_image_evas_smart_clip_set(Eo *obj, Elm_Image_Data *sd, Evas_Object *clip)
+_elm_image_evas_object_smart_clip_set(Eo *obj, Elm_Image_Data *sd, Evas_Object *clip)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_set(clip));
 
@@ -544,7 +544,7 @@ _elm_image_evas_smart_clip_set(Eo *obj, Elm_Image_Data *sd, Evas_Object *clip)
 }
 
 EOLIAN static void
-_elm_image_evas_smart_clip_unset(Eo *obj, Elm_Image_Data *sd)
+_elm_image_evas_object_smart_clip_unset(Eo *obj, Elm_Image_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_unset());
 

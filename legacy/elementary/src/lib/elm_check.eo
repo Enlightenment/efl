@@ -47,7 +47,7 @@ class Elm_Check (Elm_Layout)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::add;
+      Evas_Object_Smart::add;
       Elm_Widget::activate;
       Elm_Widget::focus_next_manager_is;
       Elm_Widget::focus_direction_manager_is;

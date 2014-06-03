@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_route.h"
 
-#define MY_CLASS ELM_OBJ_ROUTE_CLASS
+#define MY_CLASS ELM_ROUTE_CLASS
 
 #define MY_CLASS_NAME "Elm_Route"
 #define MY_CLASS_NAME_LEGACY "elm_route"
@@ -134,7 +134,7 @@ _update_lon_lat_min_max(Evas_Object *obj,
 #endif
 
 EOLIAN static void
-_elm_route_evas_smart_add(Eo *obj, Elm_Route_Data *priv)
+_elm_route_evas_object_smart_add(Eo *obj, Elm_Route_Data *priv)
 {
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -159,7 +159,7 @@ _elm_route_evas_smart_add(Eo *obj, Elm_Route_Data *priv)
 }
 
 EOLIAN static void
-_elm_route_evas_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
+_elm_route_evas_object_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
    _clear_route(obj);
 

@@ -30,7 +30,7 @@ struct _Elm_Frame_Data
  */
 
 #define ELM_FRAME_DATA_GET(o, sd) \
-  Elm_Frame_Data * sd = eo_data_scope_get(o, ELM_OBJ_FRAME_CLASS)
+  Elm_Frame_Data * sd = eo_data_scope_get(o, ELM_FRAME_CLASS)
 
 #define ELM_FRAME_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_FRAME_DATA_GET(o, ptr);                        \
@@ -51,7 +51,7 @@ struct _Elm_Frame_Data
     }
 
 #define ELM_FRAME_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_FRAME_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FRAME_CLASS))) \
     return
 
 #endif

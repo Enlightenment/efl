@@ -98,8 +98,8 @@ class Elm_Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
    }
    implements {
       Eo_Base::constructor;
-      Evas_Smart::add;
-      Evas_Smart::del;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::del;
       Elm_Widget::theme_apply;
       Elm_Button::admits_autorepeat::get;
       Elm_Interface_Fileselector::selected_paths::get;

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define MY_CLASS ELM_OBJ_ACCESS_CLASS
+#define MY_CLASS ELM_ACCESS_CLASS
 
 #define MY_CLASS_NAME "Elm_Access"
 #define MY_CLASS_NAME_LEGACY "elm_access"
@@ -35,7 +35,7 @@ static Evas_Object * _elm_access_add(Evas_Object *parent);
 static void _access_object_unregister(Evas_Object *obj);
 
 EOLIAN static void
-_elm_access_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

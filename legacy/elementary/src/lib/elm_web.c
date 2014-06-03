@@ -14,7 +14,7 @@
 
 #if !defined(HAVE_ELEMENTARY_WEB) || !defined(USE_WEBKIT2)
 
-#define MY_CLASS ELM_OBJ_WEB_CLASS
+#define MY_CLASS ELM_WEB_CLASS
 
 #define MY_CLASS_NAME "Elm_Web"
 #define MY_CLASS_NAME_LEGACY "elm_web"
@@ -1145,7 +1145,7 @@ elm_need_web(void)
 }
 
 EOLIAN static void
-_elm_web_evas_smart_add(Eo *obj, Elm_Web_Data *priv)
+_elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *priv)
 {
    Evas_Object *resize_obj;
 
@@ -1202,7 +1202,7 @@ _elm_web_evas_smart_add(Eo *obj, Elm_Web_Data *priv)
 }
 
 EOLIAN static void
-_elm_web_evas_smart_del(Eo *obj, Elm_Web_Data *sd)
+_elm_web_evas_object_smart_del(Eo *obj, Elm_Web_Data *sd)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    ecore_timer_del(sd->zoom.timer);

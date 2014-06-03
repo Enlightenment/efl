@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_hoversel.h"
 
-#define MY_CLASS ELM_OBJ_HOVERSEL_CLASS
+#define MY_CLASS ELM_HOVERSEL_CLASS
 
 #define MY_CLASS_NAME "Elm_Hoversel"
 #define MY_CLASS_NAME_LEGACY "elm_hoversel"
@@ -277,7 +277,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 EOLIAN static void
-_elm_hoversel_evas_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
+_elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -291,7 +291,7 @@ _elm_hoversel_evas_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_hoversel_evas_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_evas_object_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Hoversel_Item *item;
 
@@ -308,14 +308,14 @@ _elm_hoversel_evas_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 EOLIAN static void
-_elm_hoversel_evas_smart_show(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_evas_object_smart_show(Eo *obj, Elm_Hoversel_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
    evas_object_show(sd->hover);
 }
 
 EOLIAN static void
-_elm_hoversel_evas_smart_hide(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_evas_object_smart_hide(Eo *obj, Elm_Hoversel_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    evas_object_hide(sd->hover);

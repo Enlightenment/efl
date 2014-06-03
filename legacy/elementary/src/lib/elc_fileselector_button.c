@@ -7,7 +7,7 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_button.h"
 
-#define MY_CLASS ELM_OBJ_FILESELECTOR_BUTTON_CLASS
+#define MY_CLASS ELM_FILESELECTOR_BUTTON_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector_Button"
 #define MY_CLASS_NAME_LEGACY "elm_fileselector_button"
@@ -164,7 +164,7 @@ _button_clicked(void *data,
 }
 
 EOLIAN static void
-_elm_fileselector_button_evas_smart_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
+_elm_fileselector_button_evas_object_smart_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -187,7 +187,7 @@ _elm_fileselector_button_evas_smart_add(Eo *obj, Elm_Fileselector_Button_Data *p
 }
 
 EOLIAN static void
-_elm_fileselector_button_evas_smart_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
+_elm_fileselector_button_evas_object_smart_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
    eina_stringshare_del(sd->window_title);
    eina_stringshare_del(sd->fsd.path);

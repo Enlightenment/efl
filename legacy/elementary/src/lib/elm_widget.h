@@ -835,7 +835,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
-  ptr = eo_data_scope_get(o, ELM_OBJ_WIDGET_CLASS);  \
+  ptr = eo_data_scope_get(o, ELM_WIDGET_CLASS);  \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("no widget data for object %p (%s)",      \
@@ -844,7 +844,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
     }
 
 #define ELM_WIDGET_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_WIDGET_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_WIDGET_CLASS))) \
     return
 
 /**

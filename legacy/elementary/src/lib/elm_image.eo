@@ -535,16 +535,16 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface, Elm_Interface_Atspi_Image
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::hide;
-      Evas_Smart::clip::set;
-      Evas_Smart::clip_unset;
-      Evas_Smart::show;
-      Evas_Smart::color::set;
-      Evas_Smart::move;
-      Evas_Smart::add;
-      Evas_Smart::del;
-      Evas_Smart::member_add;
-      Evas_Smart::resize;
+      Evas_Object_Smart::hide;
+      Evas_Object_Smart::clip::set;
+      Evas_Object_Smart::clip_unset;
+      Evas_Object_Smart::show;
+      Evas_Object_Smart::color::set;
+      Evas_Object_Smart::move;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::member_add;
+      Evas_Object_Smart::resize;
       Elm_Widget::theme_apply;
       Elm_Widget::event;
       Elm_Interface_Atspi_Image::extents::get;

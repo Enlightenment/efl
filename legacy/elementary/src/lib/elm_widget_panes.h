@@ -38,7 +38,7 @@ struct _Elm_Panes_Data
  */
 
 #define ELM_PANES_DATA_GET(o, sd) \
-  Elm_Panes_Data * sd = eo_data_scope_get(o, ELM_OBJ_PANES_CLASS)
+  Elm_Panes_Data * sd = eo_data_scope_get(o, ELM_PANES_CLASS)
 
 #define ELM_PANES_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PANES_DATA_GET(o, ptr);                        \
@@ -59,7 +59,7 @@ struct _Elm_Panes_Data
     }
 
 #define ELM_PANES_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_PANES_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_PANES_CLASS))) \
     return
 
 #endif

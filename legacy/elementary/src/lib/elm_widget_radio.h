@@ -40,7 +40,7 @@ struct _Elm_Radio_Data
  */
 
 #define ELM_RADIO_DATA_GET(o, sd) \
-  Elm_Radio_Data * sd = eo_data_scope_get(o, ELM_OBJ_RADIO_CLASS)
+  Elm_Radio_Data * sd = eo_data_scope_get(o, ELM_RADIO_CLASS)
 
 #define ELM_RADIO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_RADIO_DATA_GET(o, ptr);                        \
@@ -61,7 +61,7 @@ struct _Elm_Radio_Data
     }
 
 #define ELM_RADIO_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_RADIO_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_RADIO_CLASS))) \
     return
 
 #endif

@@ -53,7 +53,7 @@ struct _Elm_Slider_Data
  */
 
 #define ELM_SLIDER_DATA_GET(o, sd) \
-  Elm_Slider_Data * sd = eo_data_scope_get(o, ELM_OBJ_SLIDER_CLASS)
+  Elm_Slider_Data * sd = eo_data_scope_get(o, ELM_SLIDER_CLASS)
 
 #define ELM_SLIDER_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_SLIDER_DATA_GET(o, ptr);                       \
@@ -74,7 +74,7 @@ struct _Elm_Slider_Data
     }
 
 #define ELM_SLIDER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_SLIDER_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_SLIDER_CLASS))) \
     return
 
 #endif

@@ -62,7 +62,7 @@ enum _Conformant_Part_Type
  */
 
 #define ELM_CONFORMANT_DATA_GET(o, sd) \
-  Elm_Conformant_Data * sd = eo_data_scope_get(o, ELM_OBJ_CONFORMANT_CLASS)
+  Elm_Conformant_Data * sd = eo_data_scope_get(o, ELM_CONFORMANT_CLASS)
 
 #define ELM_CONFORMANT_DATA_GET_OR_RETURN(o, ptr)    \
   ELM_CONFORMANT_DATA_GET(o, ptr);                   \
@@ -83,7 +83,7 @@ enum _Conformant_Part_Type
     }
 
 #define ELM_CONFORMANT_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_CONFORMANT_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_CONFORMANT_CLASS))) \
     return
 
 #endif

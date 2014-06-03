@@ -7,7 +7,7 @@
 #include "elm_widget_frame.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_FRAME_CLASS
+#define MY_CLASS ELM_FRAME_CLASS
 
 #define MY_CLASS_NAME "Elm_Frame"
 #define MY_CLASS_NAME_LEGACY "elm_frame"
@@ -142,7 +142,7 @@ _on_frame_clicked(void *data,
 
 /* using deferred sizing evaluation, just like the parent */
 EOLIAN static void
-_elm_frame_evas_smart_calculate(Eo *obj, Elm_Frame_Data *sd)
+_elm_frame_evas_object_smart_calculate(Eo *obj, Elm_Frame_Data *sd)
 {
    ELM_LAYOUT_DATA_GET(obj, ld);
 
@@ -155,7 +155,7 @@ _elm_frame_evas_smart_calculate(Eo *obj, Elm_Frame_Data *sd)
 }
 
 EOLIAN static void
-_elm_frame_evas_smart_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
+_elm_frame_evas_object_smart_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

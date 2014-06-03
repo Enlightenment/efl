@@ -8,12 +8,12 @@
 #include "elm_widget_gengrid.h"
 #include "elm_interface_scrollable.h"
 
-#define MY_PAN_CLASS ELM_OBJ_GENGRID_PAN_CLASS
+#define MY_PAN_CLASS ELM_GENGRID_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Gengrid_Pan"
 #define MY_PAN_CLASS_NAME_LEGACY "elm_gengrid_pan"
 
-#define MY_CLASS ELM_OBJ_GENGRID_CLASS
+#define MY_CLASS ELM_GENGRID_CLASS
 
 #define MY_CLASS_NAME "Elm_Gengrid"
 #define MY_CLASS_NAME_LEGACY "elm_gengrid"
@@ -269,14 +269,14 @@ _elm_gengrid_pan_eo_base_destructor(Eo *obj, Elm_Gengrid_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_gengrid_pan_evas_smart_move(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd, Evas_Coord _gen_param2 EINA_UNUSED, Evas_Coord _gen_param3 EINA_UNUSED)
+_elm_gengrid_pan_evas_object_smart_move(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd, Evas_Coord _gen_param2 EINA_UNUSED, Evas_Coord _gen_param3 EINA_UNUSED)
 {
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
 }
 
 EOLIAN static void
-_elm_gengrid_pan_evas_smart_resize(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_gengrid_pan_evas_object_smart_resize(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord ow, oh;
 
@@ -1346,7 +1346,7 @@ _group_item_place(Elm_Gengrid_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_gengrid_pan_evas_smart_calculate(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd)
+_elm_gengrid_pan_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd)
 {
    Evas_Coord cx = 0, cy = 0;
    Elm_Gen_Item *it;
@@ -3119,7 +3119,7 @@ _elm_gengrid_elm_layout_sizing_eval(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd E
 }
 
 EOLIAN static void
-_elm_gengrid_evas_smart_add(Eo *obj, Elm_Gengrid_Data *priv)
+_elm_gengrid_evas_object_smart_add(Eo *obj, Elm_Gengrid_Data *priv)
 {
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
    Elm_Gengrid_Pan_Data *pan_data;
@@ -3185,7 +3185,7 @@ _elm_gengrid_evas_smart_add(Eo *obj, Elm_Gengrid_Data *priv)
 }
 
 EOLIAN static void
-_elm_gengrid_evas_smart_del(Eo *obj, Elm_Gengrid_Data *sd)
+_elm_gengrid_evas_object_smart_del(Eo *obj, Elm_Gengrid_Data *sd)
 {
    elm_gengrid_clear(obj);
    eo_unref(sd->pan_obj);
@@ -3198,7 +3198,7 @@ _elm_gengrid_evas_smart_del(Eo *obj, Elm_Gengrid_Data *sd)
 }
 
 EOLIAN static void
-_elm_gengrid_evas_smart_move(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_gengrid_evas_object_smart_move(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -3206,7 +3206,7 @@ _elm_gengrid_evas_smart_move(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_C
 }
 
 EOLIAN static void
-_elm_gengrid_evas_smart_resize(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_gengrid_evas_object_smart_resize(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -3214,7 +3214,7 @@ _elm_gengrid_evas_smart_resize(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas
 }
 
 EOLIAN static void
-_elm_gengrid_evas_smart_member_add(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *member)
+_elm_gengrid_evas_object_smart_member_add(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *member)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 

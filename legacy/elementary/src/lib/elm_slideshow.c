@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_slideshow.h"
 
-#define MY_CLASS ELM_OBJ_SLIDESHOW_CLASS
+#define MY_CLASS ELM_SLIDESHOW_CLASS
 
 #define MY_CLASS_NAME "Elm_Slideshow"
 #define MY_CLASS_NAME_LEGACY "elm_slideshow"
@@ -311,7 +311,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 EOLIAN static void
-_elm_slideshow_evas_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
+_elm_slideshow_evas_object_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -355,7 +355,7 @@ _elm_slideshow_evas_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
 }
 
 EOLIAN static void
-_elm_slideshow_evas_smart_del(Eo *obj, Elm_Slideshow_Data *sd)
+_elm_slideshow_evas_object_smart_del(Eo *obj, Elm_Slideshow_Data *sd)
 {
    const char *layout;
 

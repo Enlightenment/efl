@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_grid.h"
 
-#define MY_CLASS ELM_OBJ_GRID_CLASS
+#define MY_CLASS ELM_GRID_CLASS
 #define MY_CLASS_NAME "Elm_Grid"
 #define MY_CLASS_NAME_LEGACY "elm_grid"
 
@@ -114,7 +114,7 @@ _elm_grid_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_grid_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object *grid;
@@ -133,7 +133,7 @@ _elm_grid_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_grid_evas_smart_del(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_evas_object_smart_del(Eo *obj, void *_pd EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *child;

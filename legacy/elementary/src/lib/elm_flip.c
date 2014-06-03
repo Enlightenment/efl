@@ -7,7 +7,7 @@
 #include "elm_widget_flip.h"
 #include "elm_widget_container.h"
 
-#define MY_CLASS ELM_OBJ_FLIP_CLASS
+#define MY_CLASS ELM_FLIP_CLASS
 
 #define MY_CLASS_NAME "Elm_Flip"
 #define MY_CLASS_NAME_LEGACY "elm_flip"
@@ -1798,7 +1798,7 @@ _elm_flip_elm_container_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EI
 }
 
 EOLIAN static void
-_elm_flip_evas_smart_add(Eo *obj, Elm_Flip_Data *priv)
+_elm_flip_evas_object_smart_add(Eo *obj, Elm_Flip_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -1841,7 +1841,7 @@ _elm_flip_evas_smart_add(Eo *obj, Elm_Flip_Data *priv)
 }
 
 EOLIAN static void
-_elm_flip_evas_smart_del(Eo *obj, Elm_Flip_Data *sd)
+_elm_flip_evas_object_smart_del(Eo *obj, Elm_Flip_Data *sd)
 {
    ecore_animator_del(sd->animator);
    _state_slices_clear(sd);

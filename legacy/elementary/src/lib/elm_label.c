@@ -8,7 +8,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_label.h"
 
-#define MY_CLASS ELM_OBJ_LABEL_CLASS
+#define MY_CLASS ELM_LABEL_CLASS
 
 #define MY_CLASS_NAME "Elm_Label"
 #define MY_CLASS_NAME_LEGACY "elm_label"
@@ -353,7 +353,7 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_label_evas_smart_add(Eo *obj, Elm_Label_Data *priv)
+_elm_label_evas_object_smart_add(Eo *obj, Elm_Label_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

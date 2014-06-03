@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_glview.h"
 
-#define MY_CLASS ELM_OBJ_GLVIEW_CLASS
+#define MY_CLASS ELM_GLVIEW_CLASS
 
 #define MY_CLASS_NAME "Elm_Glview"
 #define MY_CLASS_NAME_LEGACY "elm_glview"
@@ -73,7 +73,7 @@ _glview_update_surface(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_glview_evas_object_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -179,7 +179,7 @@ _set_render_policy_callback(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_smart_add(Eo *obj, Elm_Glview_Data *priv)
+_elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
 {
    Evas_Object *img;
 
@@ -235,7 +235,7 @@ _elm_glview_evas_smart_add(Eo *obj, Elm_Glview_Data *priv)
 }
 
 EOLIAN static void
-_elm_glview_evas_smart_del(Eo *obj, Elm_Glview_Data *sd)
+_elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
 {
    // Call delete func if it's registered
    if (sd->del_func)

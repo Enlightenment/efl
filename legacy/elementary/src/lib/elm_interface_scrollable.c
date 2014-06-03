@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
 
-#define MY_PAN_CLASS ELM_OBJ_PAN_CLASS
+#define MY_PAN_CLASS ELM_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Pan"
 #define MY_PAN_CLASS_NAME_LEGACY "elm_pan"
@@ -86,7 +86,7 @@ _elm_pan_update(Elm_Pan_Smart_Data *psd)
 }
 
 EOLIAN static void
-_elm_pan_evas_smart_add(Eo *obj, Elm_Pan_Smart_Data *priv)
+_elm_pan_evas_object_smart_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 {
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_add());
 
@@ -94,7 +94,7 @@ _elm_pan_evas_smart_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 }
 
 EOLIAN static void
-_elm_pan_evas_smart_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
+_elm_pan_evas_object_smart_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_pan_content_set(obj, NULL);
 
@@ -102,7 +102,7 @@ _elm_pan_evas_smart_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_pan_evas_smart_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Evas_Coord y)
+_elm_pan_evas_object_smart_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Evas_Coord y)
 {
    psd->x = x;
    psd->y = y;
@@ -111,7 +111,7 @@ _elm_pan_evas_smart_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coor
 }
 
 EOLIAN static void
-_elm_pan_evas_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_pan_evas_object_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord w, Evas_Coord h)
 {
    psd->w = w;
    psd->h = h;
@@ -121,7 +121,7 @@ _elm_pan_evas_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Co
 }
 
 EOLIAN static void
-_elm_pan_evas_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
+_elm_pan_evas_object_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_show());
 
@@ -130,7 +130,7 @@ _elm_pan_evas_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 }
 
 EOLIAN static void
-_elm_pan_evas_smart_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
+_elm_pan_evas_object_smart_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_hide());
 
@@ -4291,7 +4291,7 @@ _elm_interface_scrollable_movement_block_get(Eo *obj EINA_UNUSED, Elm_Scrollable
 }
 
 EOLIAN static void
-_elm_interface_scrollable_evas_smart_add(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_interface_scrollable_evas_object_smart_add(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
    memset(sid, 0, sizeof(*sid));
 
@@ -4326,7 +4326,7 @@ _elm_interface_scrollable_evas_smart_add(Eo *obj, Elm_Scrollable_Smart_Interface
 }
 
 EOLIAN static void
-_elm_interface_scrollable_evas_smart_del(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_interface_scrollable_evas_object_smart_del(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
 
    eo_do_super(obj, MY_SCROLLABLE_INTERFACE, evas_obj_smart_del());

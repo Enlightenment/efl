@@ -29,7 +29,7 @@ struct _Elm_Bubble_Data
  */
 
 #define ELM_BUBBLE_DATA_GET(o, sd) \
-  Elm_Bubble_Data * sd = eo_data_scope_get(o, ELM_OBJ_BUBBLE_CLASS)
+  Elm_Bubble_Data * sd = eo_data_scope_get(o, ELM_BUBBLE_CLASS)
 
 #define ELM_BUBBLE_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_BUBBLE_DATA_GET(o, ptr);                       \
@@ -50,7 +50,7 @@ struct _Elm_Bubble_Data
     }
 
 #define ELM_BUBBLE_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_BUBBLE_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_BUBBLE_CLASS))) \
     return
 
 #endif

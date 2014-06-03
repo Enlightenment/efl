@@ -67,7 +67,7 @@ struct _Elm_Image_Data
  */
 
 #define ELM_IMAGE_DATA_GET(o, sd) \
-  Elm_Image_Data * sd = eo_data_scope_get(o, ELM_OBJ_IMAGE_CLASS)
+  Elm_Image_Data * sd = eo_data_scope_get(o, ELM_IMAGE_CLASS)
 
 #define ELM_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_IMAGE_DATA_GET(o, ptr);                        \
@@ -88,7 +88,7 @@ struct _Elm_Image_Data
     }
 
 #define ELM_IMAGE_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_IMAGE_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_IMAGE_CLASS))) \
     return
 
 #endif

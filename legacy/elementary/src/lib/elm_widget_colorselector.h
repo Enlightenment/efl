@@ -95,7 +95,7 @@ struct _Elm_Color_Item
  */
 
 #define ELM_COLORSELECTOR_DATA_GET(o, sd) \
-  Elm_Colorselector_Data * sd = eo_data_scope_get(o, ELM_OBJ_COLORSELECTOR_CLASS)
+  Elm_Colorselector_Data * sd = eo_data_scope_get(o, ELM_COLORSELECTOR_CLASS)
 
 #define ELM_COLORSELECTOR_DATA_GET_OR_RETURN(o, ptr) \
   ELM_COLORSELECTOR_DATA_GET(o, ptr);                \
@@ -116,7 +116,7 @@ struct _Elm_Color_Item
     }
 
 #define ELM_COLORSELECTOR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_COLORSELECTOR_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_COLORSELECTOR_CLASS))) \
     return
 
 #define ELM_COLORSELECTOR_ITEM_CHECK(it)                    \

@@ -18,7 +18,7 @@
  */
 
 #define ELM_PLUG_DATA_GET(o, sd) \
-     Elm_Plug_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PLUG_CLASS)
+     Elm_Plug_Smart_Data * sd = eo_data_scope_get(o, ELM_PLUG_CLASS)
 
 #define ELM_PLUG_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_PLUG_DATA_GET(o, ptr);                         \
@@ -39,7 +39,7 @@
     }
 
 #define ELM_PLUG_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_PLUG_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_PLUG_CLASS))) \
     return
 
 #endif

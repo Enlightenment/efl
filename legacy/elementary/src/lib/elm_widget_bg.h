@@ -42,7 +42,7 @@ struct _Elm_Bg_Data
  */
 
 #define ELM_BG_DATA_GET(o, sd) \
-  Elm_Bg_Data * sd = eo_data_scope_get(o, ELM_OBJ_BG_CLASS)
+  Elm_Bg_Data * sd = eo_data_scope_get(o, ELM_BG_CLASS)
 
 #define ELM_BG_DATA_GET_OR_RETURN(o, ptr)            \
   ELM_BG_DATA_GET(o, ptr);                           \
@@ -63,7 +63,7 @@ struct _Elm_Bg_Data
     }
 
 #define ELM_BG_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_BG_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_BG_CLASS))) \
     return
 
 #endif

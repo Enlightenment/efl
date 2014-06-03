@@ -10,7 +10,7 @@
 #if defined(HAVE_ELEMENTARY_WEB) && defined(USE_WEBKIT2)
 #include <EWebKit2.h>
 
-#define MY_CLASS ELM_OBJ_WEB_CLASS
+#define MY_CLASS ELM_WEB_CLASS
 
 #define MY_CLASS_NAME "Elm_Web"
 #define MY_CLASS_NAME_LEGACY "elm_web"
@@ -636,7 +636,7 @@ _elm_web_tab_propagate_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Eina_Bool prop
 }
 
 EOLIAN static void
-_elm_web_evas_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
+_elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    Evas_Object *resize_obj;
@@ -656,7 +656,7 @@ _elm_web_evas_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_web_evas_smart_del(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
+_elm_web_evas_object_smart_del(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

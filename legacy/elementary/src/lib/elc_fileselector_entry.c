@@ -8,7 +8,7 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
 
-#define MY_CLASS ELM_OBJ_FILESELECTOR_ENTRY_CLASS
+#define MY_CLASS ELM_FILESELECTOR_ENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector_Entry"
 #define MY_CLASS_NAME_LEGACY "elm_fileselector_entry"
@@ -269,7 +269,7 @@ _elm_fileselector_entry_elm_container_content_unset(Eo *obj, Elm_Fileselector_En
 }
 
 EOLIAN static void
-_elm_fileselector_entry_evas_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
+_elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -326,7 +326,7 @@ _elm_fileselector_entry_evas_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *pri
 }
 
 EOLIAN static void
-_elm_fileselector_entry_evas_smart_del(Eo *obj, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_evas_object_smart_del(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
    free(sd->path);
 

@@ -46,7 +46,7 @@ struct _Elm_Flipselector_Item
 };
 
 #define ELM_FLIPSELECTOR_DATA_GET(o, sd) \
-  Elm_Flipselector_Data * sd = eo_data_scope_get(o, ELM_OBJ_FLIPSELECTOR_CLASS)
+  Elm_Flipselector_Data * sd = eo_data_scope_get(o, ELM_FLIPSELECTOR_CLASS)
 
 #define ELM_FLIPSELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
   ELM_FLIPSELECTOR_DATA_GET(o, ptr);                 \
@@ -67,7 +67,7 @@ struct _Elm_Flipselector_Item
     }
 
 #define ELM_FLIPSELECTOR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_FLIPSELECTOR_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FLIPSELECTOR_CLASS))) \
     return
 
 #define ELM_FLIPSELECTOR_ITEM_CHECK(it)                     \

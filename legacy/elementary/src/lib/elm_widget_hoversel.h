@@ -50,7 +50,7 @@ struct _Elm_Hoversel_Item
  */
 
 #define ELM_HOVERSEL_DATA_GET(o, sd) \
-  Elm_Hoversel_Data * sd = eo_data_scope_get(o, ELM_OBJ_HOVERSEL_CLASS)
+  Elm_Hoversel_Data * sd = eo_data_scope_get(o, ELM_HOVERSEL_CLASS)
 
 #define ELM_HOVERSEL_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_HOVERSEL_DATA_GET(o, ptr);                     \
@@ -71,7 +71,7 @@ struct _Elm_Hoversel_Item
     }
 
 #define ELM_HOVERSEL_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_HOVERSEL_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_HOVERSEL_CLASS))) \
     return
 
 #define ELM_HOVERSEL_ITEM_CHECK(it)                         \

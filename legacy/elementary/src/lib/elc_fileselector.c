@@ -14,7 +14,7 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 
-#define MY_CLASS ELM_OBJ_FILESELECTOR_CLASS
+#define MY_CLASS ELM_FILESELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector"
 #define MY_CLASS_NAME_LEGACY "elm_fileselector"
@@ -1336,7 +1336,7 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
 }
 
 EOLIAN static void
-_elm_fileselector_evas_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
+_elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 {
    Evas_Object *ic, *bt, *en, *pb;
 
@@ -1445,7 +1445,7 @@ _elm_fileselector_evas_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_fileselector_evas_smart_del(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
+_elm_fileselector_evas_object_smart_del(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
 {
    Elm_Fileselector_Filter *filter;
    char *path;

@@ -86,7 +86,7 @@ struct _Elm_List_Item
  */
 
 #define ELM_LIST_DATA_GET(o, sd) \
-  Elm_List_Data * sd = eo_data_scope_get(o, ELM_OBJ_LIST_CLASS)
+  Elm_List_Data * sd = eo_data_scope_get(o, ELM_LIST_CLASS)
 
 #define ELM_LIST_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_LIST_DATA_GET(o, ptr);                         \
@@ -107,7 +107,7 @@ struct _Elm_List_Item
     }
 
 #define ELM_LIST_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_LIST_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_LIST_CLASS))) \
     return
 
 #define ELM_LIST_ITEM_CHECK(it)                             \

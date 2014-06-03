@@ -7,7 +7,7 @@
 #include "elm_widget_button.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_BUTTON_CLASS
+#define MY_CLASS ELM_BUTTON_CLASS
 
 // ATSPI Accessibility
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
@@ -275,7 +275,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_button_evas_smart_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
+_elm_button_evas_object_smart_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

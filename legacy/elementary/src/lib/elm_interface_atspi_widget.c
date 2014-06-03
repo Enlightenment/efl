@@ -38,7 +38,7 @@ _elm_interface_atspi_widget_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Interfa
    pd->role = ELM_ATSPI_ROLE_UNKNOWN;
 
    // Elm_Widget_Access_Object can only be constructed on top of Elm_Widget
-   assert(eo_isa(obj, ELM_OBJ_WIDGET_CLASS));
+   assert(eo_isa(obj, ELM_WIDGET_CLASS));
 
    evas_object_smart_callback_add(obj, "focused", _on_focus_change, (void*)1);
    evas_object_smart_callback_add(obj, "unfocused", _on_focus_change, NULL);
@@ -109,7 +109,7 @@ _elm_interface_atspi_widget_elm_interface_atspi_accessible_children_get(Eo *obj 
    Elm_Widget_Smart_Data *wd;
    Evas_Object *widget;
 
-   wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   wd = eo_data_scope_get(obj, ELM_WIDGET_CLASS);
    if (!wd) return NULL;
 
    EINA_LIST_FOREACH(wd->subobjs, l, widget)

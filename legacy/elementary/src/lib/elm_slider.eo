@@ -363,9 +363,9 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::calculate;
-      Evas_Smart::add;
-      Evas_Smart::del;
+      Evas_Object_Smart::calculate;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::del;
       Elm_Widget::theme_apply;
       Elm_Widget::activate;
       Elm_Widget::focus_next_manager_is;

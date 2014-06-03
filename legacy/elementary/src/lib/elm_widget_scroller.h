@@ -34,7 +34,7 @@ struct _Elm_Scroller_Data
  */
 
 #define ELM_SCROLLER_DATA_GET(o, sd) \
-  Elm_Scroller_Data * sd = eo_data_scope_get(o, ELM_OBJ_SCROLLER_CLASS)
+  Elm_Scroller_Data * sd = eo_data_scope_get(o, ELM_SCROLLER_CLASS)
 
 #define ELM_SCROLLER_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_SCROLLER_DATA_GET(o, ptr);                     \
@@ -55,7 +55,7 @@ struct _Elm_Scroller_Data
     }
 
 #define ELM_SCROLLER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_SCROLLER_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_SCROLLER_CLASS))) \
     return
 
 #endif

@@ -7,7 +7,7 @@
 #include "els_box.h"
 #include "elm_widget_box.h"
 
-#define MY_CLASS ELM_OBJ_BOX_CLASS
+#define MY_CLASS ELM_BOX_CLASS
 #define MY_CLASS_NAME "Elm_Box"
 #define MY_CLASS_NAME_LEGACY "elm_box"
 
@@ -368,7 +368,7 @@ _transition_layout_animation_exec(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_box_evas_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_evas_object_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    elm_widget_resize_object_set(obj,
@@ -395,7 +395,7 @@ _elm_box_evas_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_box_evas_smart_del(Eo *obj, Elm_Box_Data *sd)
+_elm_box_evas_object_smart_del(Eo *obj, Elm_Box_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;

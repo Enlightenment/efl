@@ -99,8 +99,8 @@ class Elm_Fileselector_Entry (Elm_Layout, Elm_Interface_Fileselector)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::del;
-      Evas_Smart::add;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::add;
       Elm_Widget::theme_apply;
       Elm_Widget::focus_next_manager_is;
       Elm_Widget::focus_next;

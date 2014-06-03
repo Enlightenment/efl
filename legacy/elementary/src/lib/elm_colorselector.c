@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_colorselector.h"
 
-#define MY_CLASS ELM_OBJ_COLORSELECTOR_CLASS
+#define MY_CLASS ELM_COLORSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Colorselector"
 #define MY_CLASS_NAME_LEGACY "elm_colorselector"
@@ -1144,7 +1144,7 @@ _sub_obj_size_hints_set(Evas_Object *sobj,
    Evas_Coord minw = -1, minh = -1;
 
    elm_coords_finger_size_adjust(timesw, &minw, timesh, &minh);
-   if (sobj && eo_isa(sobj, EDJE_OBJ_CLASS))
+   if (sobj && eo_isa(sobj, EDJE_CLASS))
      edje_object_size_min_restricted_calc(sobj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(sobj, minw, minh);
    evas_object_size_hint_max_set(sobj, -1, -1);
@@ -1488,7 +1488,7 @@ _palette_colors_load(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_colorselector_evas_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
+_elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
 {
    const char *hpadstr, *vpadstr;
    unsigned int h_pad = DEFAULT_HOR_PAD;
@@ -1579,7 +1579,7 @@ _elm_colorselector_evas_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_colorselector_evas_smart_del(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_evas_object_smart_del(Eo *obj, Elm_Colorselector_Data *sd)
 {
    int i = 0;
    void *tmp[4];

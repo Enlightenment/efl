@@ -141,7 +141,7 @@ class Elm_Bg (Elm_Layout)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::add;
+      Evas_Object_Smart::add;
       Elm_Layout::content_aliases::get;
       Elm_Layout::sizing_eval;
    }

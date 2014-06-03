@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_calendar.h"
 
-#define MY_CLASS ELM_OBJ_CALENDAR_CLASS
+#define MY_CLASS ELM_CALENDAR_CLASS
 
 #define MY_CLASS_NAME "Elm_Calendar"
 #define MY_CLASS_NAME_LEGACY "elm_calendar"
@@ -924,7 +924,7 @@ _elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_
 }
 
 EOLIAN static void
-_elm_calendar_evas_smart_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
+_elm_calendar_evas_object_smart_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
 {
    elm_layout_freeze(obj);
 
@@ -951,7 +951,7 @@ _style_changed(void *data,
 }
 
 EOLIAN static void
-_elm_calendar_evas_smart_add(Eo *obj, Elm_Calendar_Data *priv)
+_elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 {
    time_t weekday = 259200; /* Just the first sunday since epoch */
    time_t current_time;
@@ -1037,7 +1037,7 @@ _elm_calendar_evas_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 }
 
 EOLIAN static void
-_elm_calendar_evas_smart_del(Eo *obj, Elm_Calendar_Data *sd)
+_elm_calendar_evas_object_smart_del(Eo *obj, Elm_Calendar_Data *sd)
 {
    int i;
    Elm_Calendar_Mark *mark;

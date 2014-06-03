@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_flipselector.h"
 
-#define MY_CLASS ELM_OBJ_FLIPSELECTOR_CLASS
+#define MY_CLASS ELM_FLIPSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Flipselector"
 #define MY_CLASS_NAME_LEGACY "elm_flipselector"
@@ -549,7 +549,7 @@ _signal_val_change_stop(void *data,
 }
 
 EOLIAN static void
-_elm_flipselector_evas_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
+_elm_flipselector_evas_object_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -575,7 +575,7 @@ _elm_flipselector_evas_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_flipselector_evas_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_evas_object_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
 {
    sd->deleting = EINA_TRUE;
 

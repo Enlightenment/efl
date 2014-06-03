@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_segment_control.h"
 
-#define MY_CLASS ELM_OBJ_SEGMENT_CONTROL_CLASS
+#define MY_CLASS ELM_SEGMENT_CONTROL_CLASS
 
 #define MY_CLASS_NAME "Elm_Segment_Control"
 #define MY_CLASS_NAME_LEGACY "elm_segment_control"
@@ -588,7 +588,7 @@ _item_new(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_segment_control_evas_smart_add(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED)
+_elm_segment_control_evas_object_smart_add(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -606,7 +606,7 @@ _elm_segment_control_evas_smart_add(Eo *obj, Elm_Segment_Control_Data *_pd EINA_
 }
 
 EOLIAN static void
-_elm_segment_control_evas_smart_del(Eo *obj, Elm_Segment_Control_Data *sd)
+_elm_segment_control_evas_object_smart_del(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Elm_Segment_Item *it;
 

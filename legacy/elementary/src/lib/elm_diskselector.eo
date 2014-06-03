@@ -235,11 +235,11 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::member_add;
-      Evas_Smart::move;
-      Evas_Smart::add;
-      Evas_Smart::del;
-      Evas_Smart::resize;
+      Evas_Object_Smart::member_add;
+      Evas_Object_Smart::move;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::resize;
       Elm_Widget::focus_next_manager_is;
       Elm_Widget::access;
       Elm_Widget::focus_next;

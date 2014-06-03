@@ -652,9 +652,9 @@ class Elm_Layout (Elm_Container)
       class::constructor;
       Eo_Base::constructor;
       Eo_Base::dbg_info_get;
-      Evas_Smart::del;
-      Evas_Smart::add;
-      Evas_Smart::calculate;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::calculate;
       Elm_Widget::focus_direction;
       Elm_Widget::sub_object_add;
       Elm_Widget::theme_apply;

@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_photo.h"
 
-#define MY_CLASS ELM_OBJ_PHOTO_CLASS
+#define MY_CLASS ELM_PHOTO_CLASS
 
 #define MY_CLASS_NAME "Elm_Photo"
 #define MY_CLASS_NAME_LEGACY "elm_photo"
@@ -249,7 +249,7 @@ _on_thumb_done(void *data,
 }
 
 EOLIAN static void
-_elm_photo_evas_smart_add(Eo *obj, Elm_Photo_Data *priv)
+_elm_photo_evas_object_smart_add(Eo *obj, Elm_Photo_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -293,7 +293,7 @@ _elm_photo_evas_smart_add(Eo *obj, Elm_Photo_Data *priv)
 }
 
 EOLIAN static void
-_elm_photo_evas_smart_del(Eo *obj, Elm_Photo_Data *sd)
+_elm_photo_evas_object_smart_del(Eo *obj, Elm_Photo_Data *sd)
 {
    ecore_timer_del(sd->long_press_timer);
 

@@ -166,9 +166,9 @@ class Elm_Glview (Elm_Widget)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::add;
-      Evas_Smart::del;
-      Evas_Smart::resize;
+      Evas_Object_Smart::add;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::resize;
       Elm_Widget::on_focus;
    }
    events {

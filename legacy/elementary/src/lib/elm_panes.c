@@ -8,7 +8,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_panes.h"
 
-#define MY_CLASS ELM_OBJ_PANES_CLASS
+#define MY_CLASS ELM_PANES_CLASS
 
 #define MY_CLASS_NAME "Elm_Panes"
 #define MY_CLASS_NAME_LEGACY "elm_panes"
@@ -175,7 +175,7 @@ _on_unpressed(void *data,
 }
 
 EOLIAN static void
-_elm_panes_evas_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
+_elm_panes_evas_object_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_PANES_DATA_GET(obj, sd);

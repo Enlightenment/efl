@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_plug.h"
 
-#define MY_CLASS ELM_OBJ_PLUG_CLASS
+#define MY_CLASS ELM_PLUG_CLASS
 
 #define MY_CLASS_NAME "Elm_Plug"
 #define MY_CLASS_NAME_LEGACY "elm_plug"
@@ -105,7 +105,7 @@ _on_mouse_up(void *data,
 }
 
 EOLIAN static void
-_elm_plug_evas_smart_add(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_evas_object_smart_add(Eo *obj, void *sd EINA_UNUSED)
 {
    Evas_Object *p_obj;
    Ecore_Evas *ee;

@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
 
-#define MY_CLASS ELM_OBJ_CTXPOPUP_CLASS
+#define MY_CLASS ELM_CTXPOPUP_CLASS
 
 #define MY_CLASS_NAME "Elm_Ctxpopup"
 #define MY_CLASS_NAME_LEGACY "elm_ctxpopup"
@@ -216,7 +216,7 @@ _base_geometry_calc(Evas_Object *obj,
    evas_object_geometry_get
      (sd->parent, &hover_area.x, &hover_area.y, &hover_area.w,
      &hover_area.h);
-   if (sd->parent && eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+   if (sd->parent && eo_isa(sd->parent, ELM_WIN_CLASS))
      hover_area.x = hover_area.y = 0;
 
    evas_object_geometry_get(obj, &pos.x, &pos.y, NULL, NULL);
@@ -1073,7 +1073,7 @@ _elm_ctxpopup_elm_widget_disable(Eo *obj, Elm_Ctxpopup_Data *sd)
 }
 
 EOLIAN static void
-_elm_ctxpopup_evas_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
+_elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1126,7 +1126,7 @@ _elm_ctxpopup_evas_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 }
 
 EOLIAN static void
-_elm_ctxpopup_evas_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_evas_object_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Ctxpopup_Item *it;
 
@@ -1195,7 +1195,7 @@ _elm_ctxpopup_hover_parent_set(Eo *obj, Elm_Ctxpopup_Data *sd, Evas_Object *pare
 
    //Update Background
    evas_object_geometry_get(parent, &x, &y, &w, &h);
-   if (parent && eo_isa(parent, ELM_OBJ_WIN_CLASS))
+   if (parent && eo_isa(parent, ELM_WIN_CLASS))
      x = y = 0;
    evas_object_move(sd->bg, x, y);
    evas_object_resize(sd->bg, w, h);

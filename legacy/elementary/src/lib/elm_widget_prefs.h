@@ -91,7 +91,7 @@ extern const Eina_Hash *elm_prefs_item_type_widgets_map;
 extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
 
 #define ELM_PREFS_DATA_GET(o, sd) \
-  Elm_Prefs_Data * sd = eo_data_scope_get(o, ELM_OBJ_PREFS_CLASS)
+  Elm_Prefs_Data * sd = eo_data_scope_get(o, ELM_PREFS_CLASS)
 
 #define ELM_PREFS_ENTRY(o, sd)                                              \
   if (EINA_UNLIKELY(!sd->data_file || !sd->page))                           \
@@ -120,7 +120,7 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
     }
 
 #define ELM_PREFS_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_PREFS_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_PREFS_CLASS))) \
     return
 
 #endif

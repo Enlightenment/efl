@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define MY_CLASS ELM_OBJ_GESTURE_LAYER_CLASS
+#define MY_CLASS ELM_GESTURE_LAYER_CLASS
 
 #define MY_CLASS_NAME "Elm_Gesture_Layer"
 #define MY_CLASS_NAME_LEGACY "elm_gesture_layer"
@@ -3729,7 +3729,7 @@ _elm_gesture_layer_elm_widget_disable(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_
 }
 
 EOLIAN static void
-_elm_gesture_layer_evas_smart_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
+_elm_gesture_layer_evas_object_smart_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -3762,7 +3762,7 @@ _elm_gesture_layer_evas_smart_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 static void _cbs_clean(Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type);
 
 EOLIAN static void
-_elm_gesture_layer_evas_smart_del(Eo *obj, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_evas_object_smart_del(Eo *obj, Elm_Gesture_Layer_Data *sd)
 {
    Pointer_Event *data;
    int i;

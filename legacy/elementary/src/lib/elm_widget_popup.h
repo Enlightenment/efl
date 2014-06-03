@@ -70,7 +70,7 @@ struct _Action_Area_Data
  */
 
 #define ELM_POPUP_DATA_GET(o, sd) \
-  Elm_Popup_Data * sd = eo_data_scope_get(o, ELM_OBJ_POPUP_CLASS)
+  Elm_Popup_Data * sd = eo_data_scope_get(o, ELM_POPUP_CLASS)
 
 #define ELM_POPUP_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_POPUP_DATA_GET(o, ptr);                        \
@@ -91,7 +91,7 @@ struct _Action_Area_Data
     }
 
 #define ELM_POPUP_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_POPUP_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_POPUP_CLASS))) \
     return
 
 #define ELM_POPUP_ITEM_CHECK(it)                            \

@@ -43,7 +43,7 @@ struct _Elm_Segment_Item
  */
 
 #define ELM_SEGMENT_CONTROL_DATA_GET(o, sd) \
-  Elm_Segment_Control_Data * sd = eo_data_scope_get(o, ELM_OBJ_SEGMENT_CONTROL_CLASS)
+  Elm_Segment_Control_Data * sd = eo_data_scope_get(o, ELM_SEGMENT_CONTROL_CLASS)
 
 #define ELM_SEGMENT_CONTROL_DATA_GET_OR_RETURN(o, ptr) \
   ELM_SEGMENT_CONTROL_DATA_GET(o, ptr);                \
@@ -64,7 +64,7 @@ struct _Elm_Segment_Item
     }
 
 #define ELM_SEGMENT_CONTROL_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_SEGMENT_CONTROL_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_SEGMENT_CONTROL_CLASS))) \
     return
 
 #define ELM_SEGMENT_CONTROL_ITEM_CHECK(it)                  \

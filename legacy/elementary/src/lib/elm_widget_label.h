@@ -25,7 +25,7 @@ struct _Elm_Label_Data
 };
 
 #define ELM_LABEL_DATA_GET(o, sd) \
-  Elm_Label_Data * sd = eo_data_scope_get(o, ELM_OBJ_LABEL_CLASS)
+  Elm_Label_Data * sd = eo_data_scope_get(o, ELM_LABEL_CLASS)
 
 #define ELM_LABEL_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_LABEL_DATA_GET(o, ptr);                        \
@@ -46,7 +46,7 @@ struct _Elm_Label_Data
     }
 
 #define ELM_LABEL_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_LABEL_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_LABEL_CLASS))) \
     return
 
 #endif

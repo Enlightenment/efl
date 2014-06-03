@@ -82,7 +82,7 @@ struct _Format_Map
  */
 
 #define ELM_DATETIME_DATA_GET(o, sd) \
-  Elm_Datetime_Data * sd = eo_data_scope_get(o, ELM_OBJ_DATETIME_CLASS)
+  Elm_Datetime_Data * sd = eo_data_scope_get(o, ELM_DATETIME_CLASS)
 
 #define ELM_DATETIME_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_DATETIME_DATA_GET(o, ptr);                     \
@@ -103,7 +103,7 @@ struct _Format_Map
     }
 
 #define ELM_DATETIME_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_DATETIME_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_DATETIME_CLASS))) \
     return
 
 #endif

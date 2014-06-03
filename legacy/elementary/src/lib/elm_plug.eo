@@ -42,7 +42,7 @@ class Elm_Plug (Elm_Widget)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::add;
+      Evas_Object_Smart::add;
       Elm_Widget::theme_apply;
       Elm_Widget::on_focus;
    }

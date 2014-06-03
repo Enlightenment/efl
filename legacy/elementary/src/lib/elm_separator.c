@@ -8,7 +8,7 @@
 #include "elm_widget_separator.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_SEPARATOR_CLASS
+#define MY_CLASS ELM_SEPARATOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Separator"
 #define MY_CLASS_NAME_LEGACY "elm_separator"
@@ -43,7 +43,7 @@ _elm_separator_elm_layout_sizing_eval(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
 }
 
 EOLIAN static void
-_elm_separator_evas_smart_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
+_elm_separator_evas_object_smart_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

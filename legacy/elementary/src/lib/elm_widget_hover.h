@@ -47,7 +47,7 @@ struct _Elm_Hover_Data
  */
 
 #define ELM_HOVER_DATA_GET(o, sd) \
-  Elm_Hover_Data * sd = eo_data_scope_get(o, ELM_OBJ_HOVER_CLASS)
+  Elm_Hover_Data * sd = eo_data_scope_get(o, ELM_HOVER_CLASS)
 
 #define ELM_HOVER_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_HOVER_DATA_GET(o, ptr);                        \
@@ -68,7 +68,7 @@ struct _Elm_Hover_Data
     }
 
 #define ELM_HOVER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_HOVER_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_HOVER_CLASS))) \
     return
 
 #endif

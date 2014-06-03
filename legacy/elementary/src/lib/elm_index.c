@@ -9,7 +9,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_index.h"
 
-#define MY_CLASS ELM_OBJ_INDEX_CLASS
+#define MY_CLASS ELM_INDEX_CLASS
 
 #define MY_CLASS_NAME "Elm_Index"
 #define MY_CLASS_NAME_LEGACY "elm_index"
@@ -871,7 +871,7 @@ _index_resize_cb(void *data EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_index_evas_smart_add(Eo *obj, Elm_Index_Data *priv)
+_elm_index_evas_object_smart_add(Eo *obj, Elm_Index_Data *priv)
 {
    Evas_Object *o;
    Evas_Coord minw = 0, minh = 0;
@@ -949,7 +949,7 @@ _elm_index_evas_smart_add(Eo *obj, Elm_Index_Data *priv)
 }
 
 EOLIAN static void
-_elm_index_evas_smart_del(Eo *obj, Elm_Index_Data *sd)
+_elm_index_evas_object_smart_del(Eo *obj, Elm_Index_Data *sd)
 {
    Elm_Index_Omit *o;
 

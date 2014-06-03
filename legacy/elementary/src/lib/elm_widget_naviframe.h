@@ -82,7 +82,7 @@ struct _Elm_Naviframe_Text_Item_Pair
  */
 
 #define ELM_NAVIFRAME_DATA_GET(o, sd) \
-  Elm_Naviframe_Data * sd = eo_data_scope_get(o, ELM_OBJ_NAVIFRAME_CLASS)
+  Elm_Naviframe_Data * sd = eo_data_scope_get(o, ELM_NAVIFRAME_CLASS)
 
 #define ELM_NAVIFRAME_DATA_GET_OR_RETURN(o, ptr)     \
   ELM_NAVIFRAME_DATA_GET(o, ptr);                    \
@@ -103,7 +103,7 @@ struct _Elm_Naviframe_Text_Item_Pair
     }
 
 #define ELM_NAVIFRAME_CHECK(obj)                                 \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_NAVIFRAME_CLASS)))    \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_NAVIFRAME_CLASS)))    \
     return
 
 #define ELM_NAVIFRAME_ITEM_CHECK(it)                        \

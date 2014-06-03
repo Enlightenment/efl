@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 
-#define MY_CLASS ELM_OBJ_CONTAINER_CLASS
+#define MY_CLASS ELM_CONTAINER_CLASS
 
 #define MY_CLASS_NAME "Elm_Container"
 

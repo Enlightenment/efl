@@ -9,7 +9,7 @@
 
 #include "els_box.h"
 
-#define MY_CLASS ELM_OBJ_PANEL_CLASS
+#define MY_CLASS ELM_PANEL_CLASS
 
 #define MY_CLASS_NAME "Elm_Panel"
 #define MY_CLASS_NAME_LEGACY "elm_panel"
@@ -33,7 +33,7 @@ _mirrored_set(Evas_Object *obj,
 {
    ELM_PANEL_DATA_GET(obj, sd);
 
-   if ((sd->content) && (eo_isa(sd->content, ELM_OBJ_WIDGET_CLASS)))
+   if ((sd->content) && (eo_isa(sd->content, ELM_WIDGET_CLASS)))
      elm_widget_mirrored_set(sd->content, rtl);
    elm_panel_orient_set(obj, elm_panel_orient_get(obj));
 }
@@ -318,7 +318,7 @@ _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
 }
 
 EOLIAN static void
-_elm_panel_evas_smart_add(Eo *obj, Elm_Panel_Data *priv)
+_elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -365,7 +365,7 @@ _elm_panel_evas_smart_add(Eo *obj, Elm_Panel_Data *priv)
 }
 
 EOLIAN static void
-_elm_panel_evas_smart_del(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_evas_object_smart_del(Eo *obj, Elm_Panel_Data *sd)
 {
    Evas_Object *child;
    Eina_List *l;

@@ -167,8 +167,8 @@ class Elm_Ctxpopup (Elm_Layout)
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::del;
-      Evas_Smart::add;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::add;
       Elm_Widget::parent::set;
       Elm_Widget::focus_direction;
       Elm_Widget::sub_object_add;

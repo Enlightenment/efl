@@ -7,7 +7,7 @@
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_BUBBLE_CLASS
+#define MY_CLASS ELM_BUBBLE_CLASS
 
 #define MY_CLASS_NAME "Elm_Bubble"
 #define MY_CLASS_NAME_LEGACY "elm_bubble"
@@ -171,7 +171,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_bubble_evas_smart_add(Eo *obj, Elm_Bubble_Data *priv)
+_elm_bubble_evas_object_smart_add(Eo *obj, Elm_Bubble_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

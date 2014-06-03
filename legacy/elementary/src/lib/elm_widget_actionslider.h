@@ -33,7 +33,7 @@ struct _Elm_Actionslider_Data
  */
 
 #define ELM_ACTIONSLIDER_DATA_GET(o, sd) \
-  Elm_Actionslider_Data * sd = eo_data_scope_get(o, ELM_OBJ_ACTIONSLIDER_CLASS)
+  Elm_Actionslider_Data * sd = eo_data_scope_get(o, ELM_ACTIONSLIDER_CLASS)
 
 #define ELM_ACTIONSLIDER_DATA_GET_OR_RETURN(o, ptr)  \
   ELM_ACTIONSLIDER_DATA_GET(o, ptr);                 \
@@ -54,7 +54,7 @@ struct _Elm_Actionslider_Data
     }
 
 #define ELM_ACTIONSLIDER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_ACTIONSLIDER_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_ACTIONSLIDER_CLASS))) \
     return
 
 #endif

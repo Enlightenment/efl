@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_entry.h"
 
-#define MY_CLASS ELM_OBJ_ENTRY_CLASS
+#define MY_CLASS ELM_ENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Entry"
 #define MY_CLASS_NAME_LEGACY "elm_entry"
@@ -1052,7 +1052,7 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd)
    Eina_Bool top_is_win = EINA_FALSE;
 
    top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, ELM_OBJ_WIN_CLASS))
+   if (top && eo_isa(top, ELM_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
    if (!sd->editable) return EINA_FALSE;
@@ -1731,7 +1731,7 @@ _mouse_up_cb(void *data,
              top = elm_widget_top_get(data);
              if (top)
                {
-                  if (eo_isa(top, ELM_OBJ_WIN_CLASS))
+                  if (eo_isa(top, ELM_WIN_CLASS))
                     top_is_win = EINA_TRUE;
 
                   if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&
@@ -3272,7 +3272,7 @@ _end_handler_mouse_move_cb(void *data,
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_add(Eo *obj, Elm_Entry_Data *priv)
+_elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
@@ -3473,7 +3473,7 @@ _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_del(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_evas_object_smart_del(Eo *obj, Elm_Entry_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
@@ -3550,7 +3550,7 @@ _elm_entry_evas_smart_del(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_entry_evas_object_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -3563,7 +3563,7 @@ _elm_entry_evas_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Evas_Coord
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_entry_evas_object_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -3572,7 +3572,7 @@ _elm_entry_evas_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coo
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_show(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_evas_object_smart_show(Eo *obj, Elm_Entry_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
@@ -3581,7 +3581,7 @@ _elm_entry_evas_smart_show(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_hide(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_evas_object_smart_hide(Eo *obj, Elm_Entry_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
@@ -3590,7 +3590,7 @@ _elm_entry_evas_smart_hide(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_smart_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_Object *member)
+_elm_entry_evas_object_smart_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_Object *member)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 

@@ -8,7 +8,7 @@
 #include "elm_widget_actionslider.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_ACTIONSLIDER_CLASS
+#define MY_CLASS ELM_ACTIONSLIDER_CLASS
 
 #define MY_CLASS_NAME "Elm_Actionslider"
 #define MY_CLASS_NAME_LEGACY "elm_actionslider"
@@ -453,7 +453,7 @@ _elm_actionslider_elm_layout_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
 }
 
 EOLIAN static void
-_elm_actionslider_evas_smart_add(Eo *obj, Elm_Actionslider_Data *priv)
+_elm_actionslider_evas_object_smart_add(Eo *obj, Elm_Actionslider_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

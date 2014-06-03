@@ -49,7 +49,7 @@ _elm_interface_atspi_widget_action_elm_interface_atspi_action_keybinding_get(Eo 
    Elm_Config_Binding_Key *binding;
    int tmp = 0;
 
-   if (!eo_isa(obj, ELM_OBJ_WIDGET_CLASS))
+   if (!eo_isa(obj, ELM_WIDGET_CLASS))
       return NULL;
 
    eo_do(obj, actions = elm_interface_atspi_widget_action_elm_actions_get());

@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
 
-#define MY_CLASS ELM_OBJ_CLOCK_CLASS
+#define MY_CLASS ELM_CLOCK_CLASS
 
 #define MY_CLASS_NAME "Elm_Clock"
 #define MY_CLASS_NAME_LEGACY "elm_clock"
@@ -650,7 +650,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_clock_evas_smart_add(Eo *obj, Elm_Clock_Data *priv)
+_elm_clock_evas_object_smart_add(Eo *obj, Elm_Clock_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -688,7 +688,7 @@ _elm_clock_evas_smart_add(Eo *obj, Elm_Clock_Data *priv)
 }
 
 EOLIAN static void
-_elm_clock_evas_smart_del(Eo *obj, Elm_Clock_Data *sd)
+_elm_clock_evas_object_smart_del(Eo *obj, Elm_Clock_Data *sd)
 {
 
    ecore_timer_del(sd->ticker);

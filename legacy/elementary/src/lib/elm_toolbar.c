@@ -8,7 +8,7 @@
 #include "elm_widget_toolbar.h"
 #include "els_box.h"
 
-#define MY_CLASS ELM_OBJ_TOOLBAR_CLASS
+#define MY_CLASS ELM_TOOLBAR_CLASS
 
 #define MY_CLASS_NAME "Elm_Toolbar"
 #define MY_CLASS_NAME_LEGACY "elm_toolbar"
@@ -2698,7 +2698,7 @@ _elm_toolbar_action_down_cb(void *data,
 }
 
 EOLIAN static void
-_elm_toolbar_evas_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
+_elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
 {
    Evas_Object *edje;
 
@@ -2800,7 +2800,7 @@ _elm_toolbar_evas_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
 }
 
 EOLIAN static void
-_elm_toolbar_evas_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_evas_object_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item *it, *next;
 
@@ -2823,7 +2823,7 @@ _elm_toolbar_evas_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
 }
 
 EOLIAN static void
-_elm_toolbar_evas_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_toolbar_evas_object_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -2831,7 +2831,7 @@ _elm_toolbar_evas_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_C
 }
 
 EOLIAN static void
-_elm_toolbar_evas_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_toolbar_evas_object_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -2839,7 +2839,7 @@ _elm_toolbar_evas_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas
 }
 
 EOLIAN static void
-_elm_toolbar_evas_smart_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
+_elm_toolbar_evas_object_smart_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 

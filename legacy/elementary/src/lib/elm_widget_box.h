@@ -64,7 +64,7 @@ struct _Transition_Animation_Data
  */
 
 #define ELM_BOX_DATA_GET(o, sd) \
-  Elm_Box_Data * sd = eo_data_scope_get(o, ELM_OBJ_BOX_CLASS)
+  Elm_Box_Data * sd = eo_data_scope_get(o, ELM_BOX_CLASS)
 
 #define ELM_BOX_DATA_GET_OR_RETURN(o, ptr)           \
   ELM_BOX_DATA_GET(o, ptr);                          \
@@ -85,7 +85,7 @@ struct _Transition_Animation_Data
     }
 
 #define ELM_BOX_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_BOX_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_BOX_CLASS))) \
     return
 
 #endif

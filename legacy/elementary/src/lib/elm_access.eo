@@ -5,7 +5,7 @@ eo_prefix: elm_obj_access;
    implements {
       class::constructor;
       Eo_Base::constructor;
-      Evas_Smart::add;
+      Evas_Object_Smart::add;
       Elm_Widget::activate;
       Elm_Widget::on_focus;
    }

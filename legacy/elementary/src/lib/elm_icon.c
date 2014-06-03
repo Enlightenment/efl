@@ -11,7 +11,7 @@
 #define NON_EXISTING (void *)-1
 static const char *icon_theme = NULL;
 
-#define MY_CLASS ELM_OBJ_ICON_CLASS
+#define MY_CLASS ELM_ICON_CLASS
 #define MY_CLASS_NAME "Elm_Icon"
 #define MY_CLASS_NAME_LEGACY "elm_icon"
 
@@ -349,7 +349,7 @@ static void
 _edje_signals_free(Elm_Icon_Data *sd)
 {
    Edje_Signal_Data *esd;
-   Elm_Image_Data *id = eo_data_scope_get(sd->obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(sd->obj, ELM_IMAGE_CLASS);
 
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
@@ -367,7 +367,7 @@ _elm_icon_elm_image_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const
 {
    Evas_Object *pclip;
 
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
@@ -565,7 +565,7 @@ _elm_icon_thumb_resize_cb(void *data,
 }
 
 EOLIAN static void
-_elm_icon_evas_smart_add(Eo *obj, Elm_Icon_Data *priv)
+_elm_icon_evas_object_smart_add(Eo *obj, Elm_Icon_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -576,7 +576,7 @@ _elm_icon_evas_smart_add(Eo *obj, Elm_Icon_Data *priv)
 }
 
 EOLIAN static void
-_elm_icon_evas_smart_del(Eo *obj, Elm_Icon_Data *sd)
+_elm_icon_evas_object_smart_del(Eo *obj, Elm_Icon_Data *sd)
 {
    eina_stringshare_del(sd->stdicon);
 
@@ -604,7 +604,7 @@ _elm_icon_signal_emit(Evas_Object *obj,
                       const char *source)
 {
 
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -622,7 +622,7 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
    Edje_Signal_Data *esd;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -653,7 +653,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    Eina_List *l;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
 
    if (!id->edje) return NULL;
 

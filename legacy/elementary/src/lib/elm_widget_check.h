@@ -29,7 +29,7 @@ struct _Elm_Check_Data
  */
 
 #define ELM_CHECK_DATA_GET(o, sd) \
-  Elm_Check_Data * sd = eo_data_scope_get(o, ELM_OBJ_CHECK_CLASS)
+  Elm_Check_Data * sd = eo_data_scope_get(o, ELM_CHECK_CLASS)
 
 #define ELM_CHECK_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_CHECK_DATA_GET(o, ptr);                        \
@@ -50,7 +50,7 @@ struct _Elm_Check_Data
     }
 
 #define ELM_CHECK_CHECK(obj)                       \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_CHECK_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_CHECK_CLASS))) \
     return
 
 #endif

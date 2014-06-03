@@ -9,7 +9,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_player.h"
 
-#define MY_CLASS ELM_OBJ_PLAYER_CLASS
+#define MY_CLASS ELM_PLAYER_CLASS
 
 #define MY_CLASS_NAME "Elm_Player"
 #define MY_CLASS_NAME_LEGACY "elm_player"
@@ -620,7 +620,7 @@ end:
 }
 
 EOLIAN static void
-_elm_player_evas_smart_add(Eo *obj, Elm_Player_Data *priv)
+_elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
 {
    char buf[256];
 
@@ -688,7 +688,7 @@ _elm_player_evas_smart_add(Eo *obj, Elm_Player_Data *priv)
 }
 
 EOLIAN static void
-_elm_player_evas_smart_del(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
+_elm_player_evas_object_smart_del(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

@@ -8,12 +8,12 @@
 #include "elm_widget_photocam.h"
 #include "elm_interface_scrollable.h"
 
-#define MY_PAN_CLASS ELM_OBJ_PHOTOCAM_PAN_CLASS
+#define MY_PAN_CLASS ELM_PHOTOCAM_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Photocam_Pan"
 #define MY_PAN_CLASS_NAME_LEGACY "elm_photocam_pan"
 
-#define MY_CLASS ELM_OBJ_PHOTOCAM_CLASS
+#define MY_CLASS ELM_PHOTOCAM_CLASS
 
 #define MY_CLASS_NAME "Elm_Photocam"
 #define MY_CLASS_NAME_LEGACY "elm_photocam"
@@ -135,14 +135,14 @@ _calc_job_cb(void *data)
 }
 
 EOLIAN static void
-_elm_photocam_pan_evas_smart_move(Eo *obj EINA_UNUSED, Elm_Photocam_Pan_Data *psd, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+_elm_photocam_pan_evas_object_smart_move(Eo *obj EINA_UNUSED, Elm_Photocam_Pan_Data *psd, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job_cb, psd->wobj);
 }
 
 EOLIAN static void
-_elm_photocam_pan_evas_smart_resize(Eo *obj, Elm_Photocam_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_photocam_pan_evas_object_smart_resize(Eo *obj, Elm_Photocam_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord ow, oh;
 
@@ -335,7 +335,7 @@ _grid_place(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_photocam_pan_evas_smart_calculate(Eo *obj, Elm_Photocam_Pan_Data *psd)
+_elm_photocam_pan_evas_object_smart_calculate(Eo *obj, Elm_Photocam_Pan_Data *psd)
 {
    Elm_Phocam_Grid *g;
    Eina_List *l;
@@ -1273,7 +1273,7 @@ _g_layer_zoom_end_cb(void *data,
 }
 
 EOLIAN static void
-_elm_photocam_evas_smart_add(Eo *obj, Elm_Photocam_Data *priv)
+_elm_photocam_evas_object_smart_add(Eo *obj, Elm_Photocam_Data *priv)
 {
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
    Elm_Photocam_Pan_Data *pan_data;
@@ -1350,7 +1350,7 @@ _elm_photocam_evas_smart_add(Eo *obj, Elm_Photocam_Data *priv)
 }
 
 EOLIAN static void
-_elm_photocam_evas_smart_del(Eo *obj, Elm_Photocam_Data *sd)
+_elm_photocam_evas_object_smart_del(Eo *obj, Elm_Photocam_Data *sd)
 {
    Elm_Phocam_Grid *g;
 
@@ -1376,7 +1376,7 @@ _elm_photocam_evas_smart_del(Eo *obj, Elm_Photocam_Data *sd)
 }
 
 EOLIAN static void
-_elm_photocam_evas_smart_move(Eo *obj, Elm_Photocam_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_photocam_evas_object_smart_move(Eo *obj, Elm_Photocam_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -1384,7 +1384,7 @@ _elm_photocam_evas_smart_move(Eo *obj, Elm_Photocam_Data *sd, Evas_Coord x, Evas
 }
 
 EOLIAN static void
-_elm_photocam_evas_smart_resize(Eo *obj, Elm_Photocam_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_photocam_evas_object_smart_resize(Eo *obj, Elm_Photocam_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -1392,7 +1392,7 @@ _elm_photocam_evas_smart_resize(Eo *obj, Elm_Photocam_Data *sd, Evas_Coord w, Ev
 }
 
 EOLIAN static void
-_elm_photocam_evas_smart_member_add(Eo *obj, Elm_Photocam_Data *sd, Evas_Object *member)
+_elm_photocam_evas_object_smart_member_add(Eo *obj, Elm_Photocam_Data *sd, Evas_Object *member)
 {
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));

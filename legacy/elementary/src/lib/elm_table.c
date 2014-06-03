@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_table.h"
 
-#define MY_CLASS ELM_OBJ_TABLE_CLASS
+#define MY_CLASS ELM_TABLE_CLASS
 
 #define MY_CLASS_NAME "Elm_Table"
 #define MY_CLASS_NAME_LEGACY "elm_table"
@@ -162,7 +162,7 @@ _elm_table_elm_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object
 }
 
 EOLIAN static void
-_elm_table_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_table_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *table;
 
@@ -183,7 +183,7 @@ _elm_table_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_table_evas_smart_del(Eo *obj, void *_pd EINA_UNUSED)
+_elm_table_evas_object_smart_del(Eo *obj, void *_pd EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *child;

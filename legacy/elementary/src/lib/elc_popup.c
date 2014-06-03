@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include "elm_widget_popup.h"
 
-#define MY_CLASS ELM_OBJ_POPUP_CLASS
+#define MY_CLASS ELM_POPUP_CLASS
 
 #define MY_CLASS_NAME "Elm_Popup"
 #define MY_CLASS_NAME_LEGACY "elm_popup"
@@ -215,7 +215,7 @@ _items_remove(Elm_Popup_Data *sd)
 }
 
 EOLIAN static void
-_elm_popup_evas_smart_del(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
 {
    unsigned int i;
 
@@ -1478,7 +1478,7 @@ _elm_popup_elm_widget_event(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static void
-_elm_popup_evas_smart_add(Eo *obj, Elm_Popup_Data *priv)
+_elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    char style[1024];

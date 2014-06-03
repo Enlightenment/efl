@@ -51,7 +51,7 @@
  */
 
 /**
- * ELM_OBJ_PLAYER_CLASS
+ * ELM_PLAYER_CLASS
  */
 
 #ifdef EFL_EO_API_SUPPORT

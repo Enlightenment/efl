@@ -7,7 +7,7 @@
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_CONFORMANT_CLASS
+#define MY_CLASS ELM_CONFORMANT_CLASS
 
 #define MY_CLASS_NAME "Elm_Conformant"
 #define MY_CLASS_NAME_LEGACY "elm_conformant"
@@ -889,7 +889,7 @@ _on_prop_change(void *data,
 #endif
 
 EOLIAN static void
-_elm_conformant_evas_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
+_elm_conformant_evas_object_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -910,7 +910,7 @@ _elm_conformant_evas_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_conformant_evas_smart_del(Eo *obj, Elm_Conformant_Data *sd)
+_elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 {
    Evas_Object *top;
 

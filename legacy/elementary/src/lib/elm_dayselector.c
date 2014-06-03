@@ -7,7 +7,7 @@
 #include "elm_widget_dayselector.h"
 #include "elm_widget_container.h"
 
-#define MY_CLASS ELM_OBJ_DAYSELECTOR_CLASS
+#define MY_CLASS ELM_DAYSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Dayselector"
 #define MY_CLASS_NAME_LEGACY "elm_dayselector"
@@ -399,7 +399,7 @@ _items_create(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_dayselector_evas_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
+_elm_dayselector_evas_object_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -420,7 +420,7 @@ _elm_dayselector_evas_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_dayselector_evas_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
+_elm_dayselector_evas_object_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
 {
    Elm_Dayselector_Item *it;
 

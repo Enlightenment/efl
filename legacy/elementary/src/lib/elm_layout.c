@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_OBJ_LAYOUT_CLASS
+#define MY_CLASS ELM_LAYOUT_CLASS
 
 #define MY_CLASS_NAME "Elm_Layout"
 #define MY_CLASS_NAME_LEGACY "elm_layout"
@@ -729,7 +729,7 @@ _on_size_evaluate_signal(void *data,
 }
 
 EOLIAN static void
-_elm_layout_evas_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_elm_layout_evas_object_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
    Evas_Object *edje;
 
@@ -750,7 +750,7 @@ _elm_layout_evas_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_layout_evas_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_evas_object_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    Elm_Layout_Sub_Object_Cursor *pc;
@@ -808,7 +808,7 @@ _elm_layout_evas_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void
-_elm_layout_evas_smart_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_evas_object_smart_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    if (sd->needs_size_calc)
      {
@@ -1672,7 +1672,7 @@ _elm_layout_eo_base_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNU
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
-   if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_OBJ_CLASS))
+   if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_CLASS))
      {
         Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
         const char *file, *edje_group;

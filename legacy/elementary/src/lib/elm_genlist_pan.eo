@@ -4,10 +4,10 @@ class Elm_Genlist_Pan (Elm_Pan)
    implements {
       class::constructor;
       Eo_Base::destructor;
-      Evas_Smart::calculate;
-      Evas_Smart::move;
-      Evas_Smart::del;
-      Evas_Smart::resize;
+      Evas_Object_Smart::calculate;
+      Evas_Object_Smart::move;
+      Evas_Object_Smart::del;
+      Evas_Object_Smart::resize;
       Elm_Pan::content_size::get;
       Elm_Pan::pos;
       Elm_Pan::pos_min::get;

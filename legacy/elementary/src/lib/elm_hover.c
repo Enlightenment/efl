@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_hover.h"
 
-#define MY_CLASS ELM_OBJ_HOVER_CLASS
+#define MY_CLASS ELM_HOVER_CLASS
 
 #define MY_CLASS_NAME "Elm_Hover"
 #define MY_CLASS_NAME_LEGACY "elm_hover"
@@ -131,7 +131,7 @@ _elm_hover_left_space_calc(Elm_Hover_Data *sd,
    if (sd->parent)
      {
         evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
-        if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+        if (eo_isa(sd->parent, ELM_WIN_CLASS))
           {
              x = 0;
              y = 0;
@@ -313,7 +313,7 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
    if (sd->parent)
      {
         evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
-        if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+        if (eo_isa(sd->parent, ELM_WIN_CLASS))
           {
              x = 0;
              y = 0;
@@ -520,7 +520,7 @@ _hov_dismiss_cb(void *data,
 }
 
 EOLIAN static void
-_elm_hover_evas_smart_add(Eo *obj, Elm_Hover_Data *priv)
+_elm_hover_evas_object_smart_add(Eo *obj, Elm_Hover_Data *priv)
 {
    unsigned int i;
 
@@ -551,7 +551,7 @@ _elm_hover_evas_smart_add(Eo *obj, Elm_Hover_Data *priv)
 }
 
 EOLIAN static void
-_elm_hover_evas_smart_del(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_evas_object_smart_del(Eo *obj, Elm_Hover_Data *sd)
 {
 
    sd->on_del = EINA_TRUE;
@@ -571,7 +571,7 @@ _elm_hover_evas_smart_del(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_evas_smart_move(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_elm_hover_evas_object_smart_move(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
@@ -579,7 +579,7 @@ _elm_hover_evas_smart_move(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord 
 }
 
 EOLIAN static void
-_elm_hover_evas_smart_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_elm_hover_evas_object_smart_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
@@ -587,7 +587,7 @@ _elm_hover_evas_smart_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coor
 }
 
 EOLIAN static void
-_elm_hover_evas_smart_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_evas_object_smart_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
@@ -595,7 +595,7 @@ _elm_hover_evas_smart_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_hover_evas_smart_hide(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_evas_object_smart_hide(Eo *obj, Elm_Hover_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 

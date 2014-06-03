@@ -85,10 +85,10 @@ typedef struct _Elm_Layout_Smart_Data
  */
 
 #define ELM_LAYOUT_DATA_GET(o, sd) \
-  Elm_Layout_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_LAYOUT_CLASS)
+  Elm_Layout_Smart_Data * sd = eo_data_scope_get(o, ELM_LAYOUT_CLASS)
 
 #define ELM_LAYOUT_CHECK(obj)                            \
-  if (EINA_UNLIKELY(!eo_isa(obj, ELM_OBJ_LAYOUT_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa(obj, ELM_LAYOUT_CLASS))) \
     return
 
 #endif

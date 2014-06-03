@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_menu.h"
 
-#define MY_CLASS ELM_OBJ_MENU_CLASS
+#define MY_CLASS ELM_MENU_CLASS
 
 #define MY_CLASS_NAME "Elm_Menu"
 #define MY_CLASS_NAME_LEGACY "elm_menu"
@@ -103,7 +103,7 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
    evas_object_geometry_get(sd->parent, &px, &py, &pw, &ph);
-   if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+   if (eo_isa(sd->parent, ELM_WIN_CLASS))
      {
         px = 0;
         py = 0;
@@ -165,7 +165,7 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
    evas_object_geometry_get(sd->parent, &x2, &y2, &w2, &h2);
-   if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+   if (eo_isa(sd->parent, ELM_WIN_CLASS))
      {
         x2 = 0;
         y2 = 0;
@@ -189,7 +189,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
 
-   hover = eo_data_scope_get(sd->hv, ELM_OBJ_WIDGET_CLASS);
+   hover = eo_data_scope_get(sd->hv, ELM_WIDGET_CLASS);
    edje_object_part_geometry_get(hover->resize_obj, "bottom", NULL,
                                  NULL, &bw, &bh);
    evas_object_size_hint_min_set(obj, bw, bh);
@@ -522,7 +522,7 @@ _unblock_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 }
 
 EOLIAN static void
-_elm_menu_evas_smart_show(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_evas_object_smart_show(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    evas_object_show(sd->hv);
 }
@@ -634,7 +634,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
 }
 
 EOLIAN static void
-_elm_menu_evas_smart_add(Eo *obj, Elm_Menu_Data *priv)
+_elm_menu_evas_object_smart_add(Eo *obj, Elm_Menu_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -660,7 +660,7 @@ _elm_menu_evas_smart_add(Eo *obj, Elm_Menu_Data *priv)
 }
 
 EOLIAN static void
-_elm_menu_evas_smart_del(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_evas_object_smart_del(Eo *obj, Elm_Menu_Data *sd)
 {
    Elm_Menu_Item *item;
 
