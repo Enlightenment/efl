@@ -111,30 +111,32 @@ local parse = function(ls, keywords)
             local line = ls.line_number
             local kw   = keywords[tok.value]
             ls:get()
-            local  args = parse_call(ls)
-            local n1, n2, cx, an = kw[1], kw[2], kw.context, kw.argnum
-            local n1arg, n2arg, cxarg = args[n1], args[n2], args[cx]
-            local n1argt, n2argt, cxargt = n1arg and (n1arg[2] ~= "<name>"),
-                                           n2arg and (n2arg[2] ~= "<name>"),
-                                           cxarg and (cxarg[2] ~= "<name>")
-            if not args           then goto skip end
-            if an and #args ~= an then goto skip end
-            if        #args  < n1 then goto skip end
-            if n2 and #args  < n2 then goto skip end
-            if cx and #args  < cx then goto skip end
-            if        not n1argt  then goto skip end
-            if n2 and not n2argt  then goto skip end
-            if cx and not cxargt  then goto skip end
-            local sc = saved_comments
-            saved_comments = {}
-            sc = tconc(sc, "\n")
-            local fsc = saved_flagcomments
-            saved_flagcomments = {}
-            yield {
-                n1arg[1], n2 and n2arg[1], context = cx and cxarg[1],
-                xcomment = kw.xcomment, comment = sc, line = line,
-                flags = fsc
-            }
+            local status, args = pcall(parse_call, ls)
+            if status then
+                local n1, n2, cx, an = kw[1], kw[2], kw.context, kw.argnum
+                local n1arg, n2arg, cxarg = args[n1], args[n2], args[cx]
+                local n1argt, n2argt, cxargt = n1arg and (n1arg[2] ~= "<name>"),
+                                               n2arg and (n2arg[2] ~= "<name>"),
+                                               cxarg and (cxarg[2] ~= "<name>")
+                if not args           then goto skip end
+                if an and #args ~= an then goto skip end
+                if        #args  < n1 then goto skip end
+                if n2 and #args  < n2 then goto skip end
+                if cx and #args  < cx then goto skip end
+                if        not n1argt  then goto skip end
+                if n2 and not n2argt  then goto skip end
+                if cx and not cxargt  then goto skip end
+                local sc = saved_comments
+                saved_comments = {}
+                sc = tconc(sc, "\n")
+                local fsc = saved_flagcomments
+                saved_flagcomments = {}
+                yield {
+                    n1arg[1], n2 and n2arg[1], context = cx and cxarg[1],
+                    xcomment = kw.xcomment, comment = sc, line = line,
+                    flags = fsc
+                }
+            end
         else
             ls:get()
         end
