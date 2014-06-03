@@ -629,7 +629,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
         Eolian_Class impl_class = NULL;
         Eolian_Function_Type ftype;
         Eolian_Function fnid = NULL;
-        const char *funcname;
+        const char *funcname = NULL;
         char *tp = implname;
 
         if (eolian_implement_information_get(impl_desc, &impl_class, &fnid, &ftype))
