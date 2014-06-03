@@ -20,7 +20,6 @@ extern "C"
 #endif
 
 #include <Eina.h>
-#include <Eo.h>
 #include <Eolian.h>
 }
 

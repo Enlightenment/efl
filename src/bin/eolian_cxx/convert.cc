@@ -8,7 +8,6 @@
 
 #include <Eina.h>
 #include <Eina.hh>
-#include <Eo.h>
 #include <Eolian.h>
 
 #include "eo_types.hh"
