@@ -69,6 +69,9 @@ local gen_grouped_messages = function(ps)
         end
         msg = ps()
     end
+    for i, msg in ipairs(ret) do
+        msg.flags = table.uniq(msg.flags)
+    end
     return ret
 end
 

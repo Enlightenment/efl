@@ -366,4 +366,17 @@ M.find_file = function(fname, paths)
     end
 end
 
+-- table utils
+
+table.uniq = function(tbl)
+    local ret  = {}
+    local used = {}
+    for i, v in ipairs(tbl) do
+        if not used[v] then
+            ret[#ret + 1], used[v] = v, true
+        end
+    end
+    return ret
+end
+
 return M
