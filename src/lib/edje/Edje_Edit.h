@@ -2991,6 +2991,17 @@ EAPI int edje_edit_image_id_get(Evas_Object *obj, const char *image_name);
  */
 EAPI Edje_Edit_Image_Comp edje_edit_image_compression_type_get(Evas_Object *obj, const char *image);
 
+/** Set compression type for the given image.
+ *
+ * @param obj Object being edited.
+ * @param image The name of the image.
+ * @param ic Edje_Edit_Image_Comp.
+ * (EDJE_EDIT_IMAGE_COMP_RAW, EDJE_EDIT_IMAGE_COMP_USER, EDJE_EDIT_IMAGE_COMP_COMP, EDJE_EDIT_IMAGE_COMP_LOSSY[_ETC1]).
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
+ */
+EAPI Eina_Bool edje_edit_image_compression_type_set(Evas_Object *obj, const char *image, Edje_Edit_Image_Comp ic);
+
 /** Get compression rate for the given image.
  *
  * @param obj Object being edited.
