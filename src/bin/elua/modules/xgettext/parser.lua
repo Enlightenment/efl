@@ -147,15 +147,23 @@ local parse_all = function(ls)
     local tok = ls.token
     while tok.name ~= "<eof>" do
         if tok.name == "<comment>" then
-            saved_comment = tok.value
+            saved_comments[#saved_comments + 1] = tok.value
+            ls:get()
+        elseif tok.name == "<flagcomment>" then
+            saved_flagcomments[#saved_flagcomments + 1] = tok.value
             ls:get()
         elseif tok.name == "<string>" then
-            local line    = ls.line_number
-            local val     = tok.value
-            local sc      = saved_comment
-            saved_comment = nil
+            local line = ls.line_number
+            local val = tok.value
+            local sc = saved_comments
+            saved_comments = {}
+            sc = tconc(sc, "\n")
+            local fsc = saved_flagcomments
+            saved_flagcomments = {}
             ls:get()
-            yield { val, comment = sc, line = line }
+            yield {
+                val, comment = sc, line = line, flags = fsc
+            }
         else
             ls:get()
         end
