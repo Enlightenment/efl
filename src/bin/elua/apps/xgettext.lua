@@ -365,6 +365,13 @@ for i, fname in ipairs(input_files) do
     end
 end
 
+-- mapping to real flags
+local allowed_lua_flags = {
+    ["lua-format"     ] = true,
+    ["pass-lua-format"] = true,
+    ["no-lua-format"  ] = true
+}
+
 local parsed_files = {}
 for i, fname in ipairs(input_files) do
     if not excluded_files[fname] then
@@ -381,8 +388,16 @@ for i, fname in ipairs(input_files) do
                 f:close()
                 fpath = "@" .. fpath
             end
+            local actual_flags = { valid = flags.valid }
+            for i, v in ipairs(flags) do
+                local word, argn, flag = v:match("([^:]+):(%d+):([%a-]+)")
+                if word and allowed_lua_flags[flag] then
+                    actual_flags[#actual_flags + 1] = { word,
+                        tonumber(argn), flag }
+                end
+            end
             parsed_files[#parsed_files + 1] = generator.init(fpath, fcontents,
-                keywords, flags, add_loc, opts)
+                keywords, actual_flags, add_loc, opts)
         else
             args_nolua[#args_nolua] = fname
             local f = assert(cutil.popenv(hasxgettext, "r",
