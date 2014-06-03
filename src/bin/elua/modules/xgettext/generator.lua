@@ -39,9 +39,11 @@ local cmp_msgs = function(msg1, msg2)
 end
 
 local new_msg = function(msg)
+    local copyflags = {}
+    for i, v in ipairs(msg.flags) do copyflags[#copyflags + 1] = v end
     return {
         msg[1], msg[2], msg.context, comments = { msg.comment },
-        xcomment = msg.xcomment, lines = { msg.line }
+        xcomment = msg.xcomment, lines = { msg.line }, flags = copyflags
     }
 end
 
@@ -55,6 +57,9 @@ local gen_grouped_messages = function(ps)
             if cmp_msgs(msg, amsg) then
                 amsg.lines   [#amsg.lines    + 1] = msg.line
                 amsg.comments[#amsg.comments + 1] = msg.comment
+                for i, v in ipairs(msg.flags) do
+                    amsg.flags[#amsg.flags + 1] = v
+                end
                 found = true
                 break
             end
