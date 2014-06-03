@@ -5662,6 +5662,46 @@ edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const 
    return EINA_TRUE;
 }
 
+/****************/
+/*  SOUNDS API  */
+/****************/
+
+EAPI Eina_List *
+edje_edit_sounds_samples_list_get(Evas_Object *obj)
+{
+   Eina_List *sounds_samples = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if ((!ed->file) || (!ed->file->sound_dir))
+     return NULL;
+
+   for (i = 0; i < ed->file->sound_dir->samples_count; ++i)
+     sounds_samples = eina_list_append(sounds_samples,
+        eina_stringshare_add(ed->file->sound_dir->samples[i].name));
+
+   return sounds_samples;
+}
+
+EAPI Eina_List *
+edje_edit_sounds_tones_list_get(Evas_Object *obj)
+{
+   Eina_List *sounds_tones = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if ((!ed->file) || (!ed->file->sound_dir))
+     return NULL;
+
+   for (i = 0; i < ed->file->sound_dir->tones_count; ++i)
+     sounds_tones = eina_list_append(sounds_tones,
+        eina_stringshare_add(ed->file->sound_dir->tones[i].name));
+
+   return sounds_tones;
+}
+
 /******************/
 /*  PROGRAMS API  */
 /******************/

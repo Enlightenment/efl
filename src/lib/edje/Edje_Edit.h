@@ -3118,6 +3118,31 @@ EAPI Eina_Bool edje_edit_state_tween_add(Evas_Object *obj, const char *part, con
  */
 EAPI Eina_Bool edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, double value, const char *tween);
 
+//@}
+/******************************************************************************/
+/**************************   SOUNDS API   ************************************/
+/******************************************************************************/
+/** @name Sounds API
+ *  Functions to deal with sound objects (see @ref edcref).
+ */ //@{
+
+/** Get the list of all the sounds samples in the given edje.
+ * Use edje_edit_string_list_free() when you don't need the list anymore.
+ *
+ * @param obj Object being edited.
+ *
+ * @return A List containing all sounds samples names found in the edje file.
+ */
+EAPI Eina_List * edje_edit_sounds_samples_get(Evas_Object *obj);
+
+/** Get the list of all the sounds tones in the given edje.
+ * Use edje_edit_string_list_free() when you don't need the list anymore.
+ *
+ * @param obj Object being edited.
+ *
+ * @return A List containing all sounds tones names found in the edje file.
+ */
+EAPI Eina_List * edje_edit_sounds_tones_get(Evas_Object *obj);
 
 //@}
 /******************************************************************************/
