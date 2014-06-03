@@ -270,6 +270,7 @@ _c_init(void)
          }                                    \
     }
 #if defined(_WIN32) || defined(__CYGWIN__)
+   LOAD("libcurl-4.dll"); // try correct dll first
    LOAD("libcurl.dll"); // try 1
    LOAD("curllib.dll"); // if fail try 2
 #elif defined(__APPLE__) && defined(__MACH__)
