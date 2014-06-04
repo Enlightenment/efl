@@ -3004,6 +3004,44 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
      }
 }
 
+#define TEXT_BLOCK_SOURCE_GET(N) \
+EAPI const char * \
+edje_edit_part_source ## N ## _get(Evas_Object *obj, const char *part) \
+{ \
+   GET_RP_OR_RETURN(NULL); \
+   if (!rp->part->source ## N) return NULL; \
+   return eina_stringshare_add(rp->part->source ## N); \
+}
+
+#define TEXT_BLOCK_SOURCE_SET(N) \
+EAPI Eina_Bool \
+edje_edit_part_source ## N ##_set(Evas_Object *obj, const char *part, const char *source) \
+{ \
+   GET_RP_OR_RETURN(EINA_FALSE); \
+ \
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) \
+      return EINA_FALSE; \
+ \
+   eina_stringshare_del(rp->part->source ## N); \
+   if (source) \
+      rp->part->source ## N = eina_stringshare_add(source); \
+   else \
+      rp->part->source ## N = NULL; \
+   edje_object_calc_force(obj); \
+   return EINA_TRUE; \
+}
+TEXT_BLOCK_SOURCE_GET(2);
+TEXT_BLOCK_SOURCE_GET(3);
+TEXT_BLOCK_SOURCE_GET(4);
+TEXT_BLOCK_SOURCE_GET(5);
+TEXT_BLOCK_SOURCE_GET(6);
+
+TEXT_BLOCK_SOURCE_SET(2);
+TEXT_BLOCK_SOURCE_SET(3);
+TEXT_BLOCK_SOURCE_SET(4);
+TEXT_BLOCK_SOURCE_SET(5);
+TEXT_BLOCK_SOURCE_SET(6);
+
 EAPI int
 edje_edit_part_drag_x_get(Evas_Object *obj, const char *part)
 {

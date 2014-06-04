@@ -1000,6 +1000,138 @@ EAPI const char * edje_edit_part_source_get(Evas_Object *obj, const char *part);
  */
 EAPI Eina_Bool edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source);
 
+/** Get the source2 of part.
+ *
+ * Only available to TEXTBLOCK parts. It is used for the group to be loaded and
+ * used for selection display OVER the selected text. source is used for under
+ * of the selected text, if source is specified.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the source from.
+ *
+ * @return Content of the source2 parameter or NULL if nothing set or an error occurred.
+ */
+EAPI const char * edje_edit_part_source2_get(Evas_Object *obj, const char *part);
+
+/** Set the source2 of part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the source of.
+ * @param source Value for the source parameter.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ * @see edje_edit_part_source2_get()
+ *
+ */
+EAPI Eina_Bool edje_edit_part_source2_set(Evas_Object *obj, const char *part, const char *source);
+
+/** Get the source3 of part.
+ *
+ * Only available to TEXTBLOCK parts. It is used for the group to be loaded and
+ * used for cursor display UNDER the cursor position. source4 is used for over
+ * the cursor text, if source4 is specified.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the source from.
+ *
+ * @return Content of the source3 parameter or NULL if nothing set or an error occurred.
+ */
+EAPI const char * edje_edit_part_source3_get(Evas_Object *obj, const char *part);
+
+/** Set the source3 of part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the source of.
+ * @param source Value for the source parameter.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ * @see edje_edit_part_source3_get()
+ *
+ * NOTE: This is not applied now. You must reload the edje to see the change.
+ */
+EAPI Eina_Bool edje_edit_part_source3_set(Evas_Object *obj, const char *part, const char *source);
+
+/** Get the source4 of part.
+ *
+ * Only available to TEXTBLOCK parts. It is used for the group to be loaded and
+ * used for cursor display OVER the cursor position. source3 is used for under
+ * the cursor text, if source4 is specified.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the source from.
+ *
+ * @return Content of the source4 parameter or NULL if nothing set or an error occurred.
+ */
+EAPI const char * edje_edit_part_source4_get(Evas_Object *obj, const char *part);
+
+/** Set the source4 of part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the source of.
+ * @param source Value for the source parameter.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ * @see edje_edit_part_source4_get()
+ *
+ * NOTE: This is not applied now. You must reload the edje to see the change.
+ */
+EAPI Eina_Bool edje_edit_part_source4_set(Evas_Object *obj, const char *part, const char *source);
+
+/** Get the source5 of part.
+ *
+ * Only available to TEXTBLOCK parts. It is used for the group to be loaded and
+ * used for anchors display UNDER the anchor position. source6 is used for over
+ * the anchors text, if source6 is specified.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the source from.
+ *
+ * @return Content of the source5 parameter or NULL if nothing set or an error occurred.
+ */
+EAPI const char * edje_edit_part_source5_get(Evas_Object *obj, const char *part);
+
+/** Set the source5 of part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the source of.
+ * @param source Value for the source parameter.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ * @see edje_edit_part_source5_get()
+ *
+ */
+EAPI Eina_Bool edje_edit_part_source5_set(Evas_Object *obj, const char *part, const char *source);
+
+/** Get the source6 of part.
+ *
+ * Only available to TEXTBLOCK parts. It is used for the group to be loaded and
+ * used for anchor display OVER the anchor position. source5 is used for under
+ * the anchor text, if source6 is specified.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the source from.
+ *
+ * @return Content of the source6 parameter or NULL if nothing set or an error occurred.
+ */
+EAPI const char * edje_edit_part_source6_get(Evas_Object *obj, const char *part);
+
+/** Set the source6 of part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the source of.
+ * @param source Value for the source parameter.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ * @see edje_edit_part_source6_get()
+ *
+ */
+EAPI Eina_Bool edje_edit_part_source6_set(Evas_Object *obj, const char *part, const char *source);
+
 /** Get the effect for a given part.
  *
  * Gets the effect used for parts of type TEXT. See @ref edcref for more details.
