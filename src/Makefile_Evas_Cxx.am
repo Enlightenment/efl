@@ -27,8 +27,6 @@ lib/evas/canvas/evas_selectable_interface.eo.hh \
 lib/evas/canvas/evas_zoomable_interface.eo.hh \
 lib/evas/canvas/evas_box.eo.hh
 
-BUILT_SOURCES += lib/evas/Evas.hh $(generated_evas_canvas_cxx_bindings)
-
 installed_evascxxmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/
 nodist_installed_evascxxmainheaders_DATA = lib/evas/Evas.hh
 

@@ -12,10 +12,6 @@ lib/ecore_audio/ecore_audio_out_sndfile.eo.hh \
 lib/ecore_audio/ecore_audio_out_pulse.eo.hh \
 lib/ecore_audio/ecore_audio_in_tone.eo.hh
 
-BUILT_SOURCES += \
-lib/ecore_audio/Ecore_Audio.hh \
-$(generated_ecore_audio_cxx_bindings)
-
 lib/ecore_audio/Ecore_Audio.hh:
 	@echo -e "#ifndef EFL_CXX_ECORE_AUDIO_HH\n#define EFL_CXX_ECORE_AUDIO_HH\n" > $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
 	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
