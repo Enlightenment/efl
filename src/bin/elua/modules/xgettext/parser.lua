@@ -1,11 +1,83 @@
 -- Elua xgettext: parser
 
+local util = require("util")
 local lexer = require("xgettext.lexer")
 
 local syntax_error = lexer.syntax_error
 
 local yield = coroutine.yield
 local tconc = table.concat
+
+local String = util.Object:clone {
+    __ctor = function(self, sing, plu, ctx, cmt, xcmt, flags, line)
+        self.singular = sing
+        self.plural   = plu
+        self.context  = ctx
+        self.comment  = cmt
+        self.xcomment = xcmt
+        self.flags    = flags
+        self.line     = line
+    end,
+
+    guess_flags = function(self, flags)
+    end,
+
+    gen_flags = function(self)
+        local flags = {}
+        for i, v in ipairs(self.flags) do flags[i] = v end
+        if self.parent then
+            self.parent:add_flags(self, flags)
+        end
+        self:guess_flags(flags)
+        return flags
+    end,
+
+    generate = function(self)
+        yield {
+            self.singular, self.plural, context = self.context,
+            comment = self.xcomment, comment = self.comment, line = self.line,
+            flags = self:gen_flags()
+        }
+    end
+}
+
+local Call = util.Object:clone {
+    __ctor = function(self, flags, args)
+        self.flags = flags
+        self.args  = args
+        for i, v in ipairs(args) do
+            v.parent = self
+        end
+    end,
+
+    add_flags = function(self, argo, flags, flagstr)
+        local argn
+        for i, a in ipairs(self.args) do
+            if a == argo then
+                argn = i
+                break
+            end
+        end
+        for i, flag in ipairs(self.flags) do
+            if flag[1] == argn then
+                local pass = flag[2]:match("^pass%-(.+)$")
+                if not flagstr or flagstr == pass or flagstr == flag[2] then
+                    if pass then
+                        self.parent:add_flags(self, flags, pass)
+                    else
+                        flags[#flags + 1] = flag[2]
+                    end
+                end
+            end
+        end
+    end,
+
+    generate = function(self)
+        for i, v in ipairs(self.args) do
+            v:generate()
+        end
+    end
+}
 
 local saved_flagcomments = {}
 local saved_comments     = {}
@@ -131,11 +203,8 @@ local parse = function(ls, keywords)
                 sc = tconc(sc, "\n")
                 local fsc = saved_flagcomments
                 saved_flagcomments = {}
-                yield {
-                    n1arg[1], n2 and n2arg[1], context = cx and cxarg[1],
-                    xcomment = kw.xcomment, comment = sc, line = line,
-                    flags = fsc
-                }
+                String(n1arg[1], n2 and n2arg[1] or nil, cx and cxarg[1] or nil,
+                    sc, kw.xcomment, fsc, line):generate()
             end
         else
             ls:get()
@@ -163,9 +232,7 @@ local parse_all = function(ls)
             local fsc = saved_flagcomments
             saved_flagcomments = {}
             ls:get()
-            yield {
-                val, comment = sc, line = line, flags = fsc
-            }
+            String(val, nil, nil, sc, nil, fsc, line):generate()
         else
             ls:get()
         end
