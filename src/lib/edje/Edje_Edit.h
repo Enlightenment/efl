@@ -1102,6 +1102,30 @@ EAPI Evas_Event_Flags edje_edit_part_ignore_flags_get(Evas_Object *obj, const ch
  */
 EAPI Eina_Bool edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags);
 
+/** Get pointer_mode of a part.
+ *
+ * @param obj Object being edited.
+ * @param part Part name to get it's pointer_mode.
+ *
+ * @return Ponter Mode of the part.
+ */
+EAPI Evas_Object_Pointer_Mode edje_edit_part_pointer_mode_get(Evas_Object *obj, const char *part);
+
+/** Get pointer_mode of a part.
+ *
+ * Note that Ponter Mode can be:
+ * - EVAS_OBJECT_POINTER_MODE_AUTOGRAB - default, X11-like
+ * - EVAS_OBJECT_POINTER_MODE_NOGRAB - pointer always bound to the object right below it
+ * - EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN - useful on object with "repeat events" enabled, @since 1.2
+ *
+ * @param obj Object being edited.
+ * @param part Part name to get it's pointer_mode.
+ * @param pointer_mode Pointer Mode.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *part, Evas_Object_Pointer_Mode pointer_mode);
+
 /** Set scale property for the part.
  *
  * This property tells Edje that the given part should be scaled by the

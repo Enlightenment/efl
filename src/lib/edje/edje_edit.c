@@ -2914,6 +2914,25 @@ edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_F
    return EINA_TRUE;
 }
 
+EAPI Evas_Object_Pointer_Mode
+edje_edit_part_pointer_mode_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+
+   return rp->part->pointer_mode;
+}
+
+EAPI Eina_Bool
+edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *part, Evas_Object_Pointer_Mode pointer_mode)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (!rp->object) return EINA_FALSE;
+
+   rp->part->pointer_mode = pointer_mode;
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale)
 {
@@ -8035,7 +8054,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    if (edje_edit_part_scale_get(obj, part))
      BUF_APPEND(I4"scale: 1;\n");
    //TODO Support ignore_flags
-   //TODO Support pointer_mode
+   if (edje_edit_part_pointer_mode_get(obj, part) == EVAS_OBJECT_POINTER_MODE_NOGRAB)
+     BUF_APPEND(I4"pointer_mode: NOGRAB;\n");
    //TODO Support precise_is_inside
    //TODO Support use_alternate_font_metrics
    if ((str = edje_edit_part_clip_to_get(obj, part)))
