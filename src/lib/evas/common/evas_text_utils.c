@@ -180,6 +180,10 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
    int max = props->len - 1;
    int mid;
 
+   /* Props can be empty, verify they are not before going on. */
+   if (!props->info)
+      return -1;
+
    _cutoff += props->text_offset;
    ot_info = props->info->ot + props->start;
    /* Should get us closer to the right place. */

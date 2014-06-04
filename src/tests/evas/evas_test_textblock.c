@@ -2612,6 +2612,9 @@ START_TEST(evas_textblock_formats)
    evas_object_textblock_text_markup_prepend(cur, "<b></b>");
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "ab<b></b>c<br/>def");
 
+   /* Ligatures cut by formats */
+   evas_object_textblock_text_markup_set(tb, "f<color=#f00>i</color>f");
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
 
    END_TB_TEST();
 }
