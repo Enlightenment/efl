@@ -140,6 +140,7 @@ web_example_01.c \
 web_example_02.c \
 win_example.c \
 3d_scene_on_button_example.c \
+button_on_3d_object_example.c \
 track_example_01.c
 
 .edc.edj:
@@ -280,6 +281,7 @@ web_example_01 \
 web_example_02 \
 win_example \
 3d_scene_on_button_example \
+button_on_3d_object_example \
 track_example_01
 
 if ELEMENTARY_WINDOWS_BUILD
