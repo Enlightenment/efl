@@ -2895,7 +2895,6 @@ edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool r
    return EINA_TRUE;
 }
 
-
 EAPI Eina_Bool
 edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char *part)
 {
@@ -2912,6 +2911,25 @@ edje_edit_part_precise_is_inside_set(Evas_Object *obj, const char *part, Eina_Bo
    if (!rp->object) return EINA_FALSE;
 
    rp->part->precise_is_inside = precise_is_inside;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_access_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+
+   return rp->part->access;
+}
+
+EAPI Eina_Bool
+edje_edit_part_access_set(Evas_Object *obj, const char *part, Eina_Bool access)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (!rp->object) return EINA_FALSE;
+
+   rp->part->access = access;
    return EINA_TRUE;
 }
 
@@ -8116,6 +8134,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      BUF_APPEND(I4"pointer_mode: NOGRAB;\n");
    if (edje_edit_part_precise_is_inside_get(obj, part))
      BUF_APPEND(I4"precise_is_inside: 1;\n");
+   if (edje_edit_part_access_get(obj, part))
+     BUF_APPEND(I4"access: 1;\n");
    //TODO Support use_alternate_font_metrics
    if ((str = edje_edit_part_clip_to_get(obj, part)))
      {

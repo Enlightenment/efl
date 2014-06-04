@@ -1234,6 +1234,25 @@ EAPI Eina_Bool edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char
  */
 EAPI Eina_Bool edje_edit_part_precise_is_inside_set(Evas_Object *obj, const char *part, Eina_Bool precise_is_inside);
 
+/** Get accessibility for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get if it uses accessibility feature.
+ *
+ * @return EINA_TRUE if part uses accessibility feature, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool edje_edit_part_access_get(Evas_Object *obj, const char *part);
+
+/** Set accessibility for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set if it uses accessibility feature.
+ * @param access EINA_TRUE if part uses accessibility feature, EINA_FALSE otherwise
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_access_set(Evas_Object *obj, const char *part, Eina_Bool access);
+
 /** Get ignore_flags for part.
  *
  * @param obj Object being edited.
