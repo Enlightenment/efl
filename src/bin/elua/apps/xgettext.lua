@@ -394,6 +394,12 @@ for i, fname in ipairs(input_files) do
                 if word and allowed_lua_flags[flag] then
                     actual_flags[#actual_flags + 1] = { word,
                         tonumber(argn), flag }
+                    local  ft = actual_flags[word]
+                    if not ft then
+                        ft = {}
+                        actual_flags[word] = ft
+                    end
+                    ft[#ft + 1] = { tonumber(argn), flag }
                 end
             end
             parsed_files[#parsed_files + 1] = generator.init(fpath, fcontents,
