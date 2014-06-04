@@ -354,6 +354,26 @@ class Evas_3D_Node (Evas_3D_Object, Evas_Common_Interface)
             @in Evas_Real *z2;
          }
       }
+
+      obb_frustum_check {
+         /*
+
+          * Check is the obb of node in frustum of camera node.
+          *
+          * @param camera_node     The given node of camera.
+          * @param node            The given node.
+          * @return                @c 0 if the obb is not in frustum, @c 1 if only min coordinate of obb is in frustum,
+          *                        @c 2 if only max coordinate of obb is in frustum, @c 3 if both coordinates of obb is in frustum.
+
+          * If the camera_node is not of type EVAS_3D_NODE_TYPE_CAMERA error wrong type of node will be generated and returned @ -1.
+
+          * @ingroup Evas_3D_Node
+          */
+         return int;
+         params {
+            @in Evas_3D_Node *camera_node;
+         }
+      }
    }
 
    properties {

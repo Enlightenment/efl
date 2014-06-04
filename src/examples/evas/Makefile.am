@@ -197,6 +197,11 @@ evas_3d_md2_SOURCES = evas-3d-md2.c
 evas_3d_md2_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_md2_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_frustum
+evas_3d_frustum_SOURCES = evas-3d-frustum.c
+evas_3d_frustum_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_3d_frustum_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_3d_aabb
 evas_3d_aabb_SOURCES = evas-3d-aabb.c
 evas_3d_aabb_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
