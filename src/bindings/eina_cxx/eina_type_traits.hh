@@ -6,7 +6,19 @@
 #include <string>
 #include <vector>
 
+/**
+ * @addtogroup Eina_Cxx_Data_Types_Group
+ *
+ * @{
+ */
+
 namespace efl { namespace eina {
+
+/**
+ * @internal
+ *
+ * @{
+ */
 
 using std::enable_if;
 using std::is_integral;
@@ -46,6 +58,14 @@ struct if_ : if_c<U::value, T, F>
 {
 };
 
+/**
+ * @}
+ */
+
 } }
+
+/**
+ * @}
+ */
 
 #endif

@@ -6,8 +6,31 @@
 #include <cstdlib>
 #include <type_traits>
 
+/**
+ * @addtogroup Eina_Cxx_Containers_Group
+ *
+ * @{
+ */
+
 namespace efl { namespace eina {
 
+/**
+ * @defgroup Eina_Cxx_Clone_Allocators_Group Clone Allocators
+ * @ingroup Eina_Cxx_Containers_Group
+ *
+ * Clone allocators is a formalized way to pointer containers control
+ * the memory of the stored objects, allowing users to apply custom
+ * allocators/deallocators for the cloned objects.
+ *
+ * @{
+ */
+
+/**
+ * This allocator creates copies of objects on the heap, calling their
+ * copy constructor to make then equivalent to the given reference.
+ *
+ * The created objects are released with the default delete.
+ */
 struct heap_copy_allocator
 {
   template <typename T>
@@ -27,6 +50,11 @@ struct heap_copy_allocator
   }
 };
 
+/**
+ * This allocator allows users to create custom allocation schemes by
+ * overloading the <tt>new_clone(T const& v)</tt> and
+ * <tt>delete_clone(T* p)</tt> functions.
+ */
 struct heap_clone_allocator
 {
   template <typename T>
@@ -41,6 +69,14 @@ struct heap_clone_allocator
   }
 };
 
+/**
+ * This allocator does not allocate or deallocate anything. It simple
+ * gets non-const-qualified pointers for objects, which allow
+ * containers to hold elements without having ownership on them.
+ *
+ * It is commonly used to create a pointer container that is a view into
+ * another existing container.
+ */
 struct view_clone_allocator
 {
   template <typename T>
@@ -54,6 +90,11 @@ struct view_clone_allocator
   }
 };
 
+/**
+ * This allocator does not define an @c allocate_clone member function,
+ * so it should be used to disable operations that require elements to
+ * be cloned.
+ */
 struct heap_no_copy_allocator
 {
   template <typename T>
@@ -65,8 +106,15 @@ struct heap_no_copy_allocator
     delete p;
 #endif
   }
-};    
+};
 
+/**
+ * Manages allocation and deallocation of memory using the function
+ * @c malloc and @c free. This allocator does not calls constructors,
+ * the content of the newly allocated objects are assigned using
+ * @c memcpy, so it is likely only plausible with types that have
+ * <em>standard-layout</em>.
+ */
 struct malloc_clone_allocator
 {
   template <typename T>
@@ -86,6 +134,14 @@ struct malloc_clone_allocator
   }
 };
 
+/**
+ * @}
+ */
+
 } }
+
+/**
+ * @}
+ */
 
 #endif
