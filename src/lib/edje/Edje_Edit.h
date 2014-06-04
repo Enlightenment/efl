@@ -1215,6 +1215,25 @@ EAPI Eina_Bool edje_edit_part_repeat_events_get(Evas_Object *obj, const char *pa
  */
 EAPI Eina_Bool edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events);
 
+/** Get precise_is_inside for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get if it will enable point collision detection for the part.
+ *
+ * @return EINA_TRUE if point collision detection for the part is enabled, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char *part);
+
+/** Set precise_is_inside for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set if it will enable point collision detection for the part.
+ * @param precise_is_inside EINA_TRUE if point collision detection for the part is enabled, EINA_FALSE otherwise
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_precise_is_inside_set(Evas_Object *obj, const char *part, Eina_Bool precise_is_inside);
+
 /** Get ignore_flags for part.
  *
  * @param obj Object being edited.

@@ -2895,6 +2895,26 @@ edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool r
    return EINA_TRUE;
 }
 
+
+EAPI Eina_Bool
+edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+
+   return rp->part->precise_is_inside;
+}
+
+EAPI Eina_Bool
+edje_edit_part_precise_is_inside_set(Evas_Object *obj, const char *part, Eina_Bool precise_is_inside)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (!rp->object) return EINA_FALSE;
+
+   rp->part->precise_is_inside = precise_is_inside;
+   return EINA_TRUE;
+}
+
 EAPI Evas_Event_Flags
 edje_edit_part_ignore_flags_get(Evas_Object *obj, const char *part)
 {
@@ -8094,7 +8114,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    //TODO Support ignore_flags
    if (edje_edit_part_pointer_mode_get(obj, part) == EVAS_OBJECT_POINTER_MODE_NOGRAB)
      BUF_APPEND(I4"pointer_mode: NOGRAB;\n");
-   //TODO Support precise_is_inside
+   if (edje_edit_part_precise_is_inside_get(obj, part))
+     BUF_APPEND(I4"precise_is_inside: 1;\n");
    //TODO Support use_alternate_font_metrics
    if ((str = edje_edit_part_clip_to_get(obj, part)))
      {
