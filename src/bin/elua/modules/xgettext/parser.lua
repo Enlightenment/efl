@@ -147,7 +147,7 @@ local parse_arglist = function(ls)
     return rets
 end
 
-local parse_call = function(ls)
+local parse_kwcall = function(ls)
     local tok = ls.token
     if tok.name == "(" then
         local line = ls.line_number
@@ -169,7 +169,39 @@ local parse_call = function(ls)
     end
 end
 
-local parse = function(ls, keywords)
+local parse_kw = function(ls, keywords)
+    local tok  = ls.token
+    local line = ls.line_number
+    local kw   = keywords[tok.value]
+    ls:get()
+    local args = parse_kwcall(ls)
+    local n1, n2, cx, an = kw[1], kw[2], kw.context, kw.argnum
+    local n1arg, n2arg, cxarg = args[n1], args[n2], args[cx]
+    local n1argt, n2argt, cxargt = n1arg and (n1arg[2] ~= "<name>"),
+                                   n2arg and (n2arg[2] ~= "<name>"),
+                                   cxarg and (cxarg[2] ~= "<name>")
+    if not args           then goto skip end
+    if an and #args ~= an then goto skip end
+    if        #args  < n1 then goto skip end
+    if n2 and #args  < n2 then goto skip end
+    if cx and #args  < cx then goto skip end
+    if        not n1argt  then goto skip end
+    if n2 and not n2argt  then goto skip end
+    if cx and not cxargt  then goto skip end
+    local sc = saved_comments
+    saved_comments = {}
+    sc = tconc(sc, "\n")
+    local fsc = saved_flagcomments
+    saved_flagcomments = {}
+    return String(n1arg[1], n2 and n2arg[1] or nil, cx and cxarg[1] or nil,
+        sc, kw.xcomment, fsc, line)
+end
+
+local parse_fg = function(ls, flags, keywords)
+    error("NYI")
+end
+
+local parse = function(ls, keywords, flags)
     yield()
     local tok = ls.token
     while tok.name ~= "<eof>" do
@@ -179,32 +211,19 @@ local parse = function(ls, keywords)
         elseif tok.name == "<flagcomment>" then
             saved_flagcomments[#saved_flagcomments + 1] = tok.value
             ls:get()
-        elseif tok.name == "<name>" and keywords[tok.value] then
-            local line = ls.line_number
-            local kw   = keywords[tok.value]
-            ls:get()
-            local status, args = pcall(parse_call, ls)
-            if status then
-                local n1, n2, cx, an = kw[1], kw[2], kw.context, kw.argnum
-                local n1arg, n2arg, cxarg = args[n1], args[n2], args[cx]
-                local n1argt, n2argt, cxargt = n1arg and (n1arg[2] ~= "<name>"),
-                                               n2arg and (n2arg[2] ~= "<name>"),
-                                               cxarg and (cxarg[2] ~= "<name>")
-                if not args           then goto skip end
-                if an and #args ~= an then goto skip end
-                if        #args  < n1 then goto skip end
-                if n2 and #args  < n2 then goto skip end
-                if cx and #args  < cx then goto skip end
-                if        not n1argt  then goto skip end
-                if n2 and not n2argt  then goto skip end
-                if cx and not cxargt  then goto skip end
-                local sc = saved_comments
-                saved_comments = {}
-                sc = tconc(sc, "\n")
-                local fsc = saved_flagcomments
-                saved_flagcomments = {}
-                String(n1arg[1], n2 and n2arg[1] or nil, cx and cxarg[1] or nil,
-                    sc, kw.xcomment, fsc, line):generate()
+        elseif tok.name == "<name>" then
+            if keywords[tok.value] then
+                local status, str = pcall(parse_kw, keywords)
+                if status then
+                    str:generate()
+                end
+            elseif flags[tok.value] then
+                local status, call = pcall(parse_fg, flags, keywords)
+                if status then
+                    call:generate()
+                end
+            else
+                ls:get()
             end
         else
             ls:get()
@@ -242,7 +261,8 @@ end
 return { init = function (chunkname, input, keywords, flags, opts)
     local ls = lexer.init(chunkname, input, flags, opts)
     ls:get()
-    local coro = coroutine.wrap(opts["a"] and parse_all or parse, ls, keywords)
+    local coro = coroutine.wrap(opts["a"] and parse_all or parse, ls,
+        keywords, flags)
     coro(ls, keywords)
     return coro
 end }
