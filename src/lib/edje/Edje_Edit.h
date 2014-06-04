@@ -807,6 +807,18 @@ EAPI Eina_Bool edje_edit_part_external_add(Evas_Object *obj, const char *name, c
  */
 EAPI Eina_Bool edje_edit_part_del(Evas_Object *obj, const char *part);
 
+/** Copy the given part in edje.
+ *
+ * If another part with the same name just exists nothing is created and EINA_FALSE is returned.
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ * @param new_copy Name of the new copied part.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_copy(Evas_Object *obj, const char *part, const char *new_copy);
+
 /** Check if a part with the given name exist in the edje object.
  *
  * @param obj Object being edited.

@@ -2456,6 +2456,99 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_edje_edit_part_state_copy(Evas_Object *obj, const char *part_from, const char *part_to, const char *from, double val_from, const char *to, double val_to);
+
+EAPI Eina_Bool
+edje_edit_part_copy(Evas_Object *obj, const char *part, const char *new_copy)
+{
+   Edje_Part *ep, *epcopy;
+   unsigned int i, count;
+   Edje_Real_Part *rpcopy;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   ep = rp->part;
+
+   /* Check if part doesn't exists */
+   if (_edje_real_part_get(ed, new_copy))
+     return EINA_FALSE;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* Create part (EXTERNAL or not) */
+   if (!_edje_edit_real_part_add(obj, new_copy, ep->type, ep->source))
+     return EINA_FALSE;
+
+   /* Copy part's data */
+   rpcopy = _edje_real_part_get(ed, new_copy);
+   if (!rpcopy)
+     return EINA_FALSE;
+   epcopy = rpcopy->part;
+
+#define _PARAM_PART_COPY(param) \
+   epcopy->param = ep->param;
+
+   _PARAM_PART_COPY(scale)
+   _PARAM_PART_COPY(mouse_events)
+   _PARAM_PART_COPY(repeat_events)
+   _PARAM_PART_COPY(ignore_flags)
+   _PARAM_PART_COPY(pointer_mode)
+   _PARAM_PART_COPY(precise_is_inside)
+   _PARAM_PART_COPY(use_alternate_font_metrics)
+   _PARAM_PART_COPY(clip_to_id)
+   _PARAM_PART_COPY(dragable.event_id)
+   _PARAM_PART_COPY(dragable.confine_id)
+   _PARAM_PART_COPY(dragable.threshold_id)
+   _PARAM_PART_COPY(dragable.step_x)
+   _PARAM_PART_COPY(dragable.step_y)
+   _PARAM_PART_COPY(dragable.count_x)
+   _PARAM_PART_COPY(dragable.count_y)
+   _PARAM_PART_COPY(dragable.x)
+   _PARAM_PART_COPY(dragable.y)
+
+   if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+     {
+        epcopy->source2 = (char *)eina_stringshare_add(ep->source2);
+        epcopy->source3 = (char *)eina_stringshare_add(ep->source3);
+        epcopy->source4 = (char *)eina_stringshare_add(ep->source4);
+        epcopy->source5 = (char *)eina_stringshare_add(ep->source5);
+        epcopy->source6 = (char *)eina_stringshare_add(ep->source6);
+     }
+
+#ifdef HAVE_EPHYSICS
+   _PARAM_PART_COPY(physics_body)
+#endif
+
+   _PARAM_PART_COPY(effect)
+   _PARAM_PART_COPY(entry_mode)
+   _PARAM_PART_COPY(select_mode)
+   _PARAM_PART_COPY(cursor_mode)
+   _PARAM_PART_COPY(multiline)
+   _PARAM_PART_COPY(access)
+
+   if (ep->api.name)
+        epcopy->api.name = eina_stringshare_add(ep->api.name);
+   if (ep->api.description)
+        epcopy->api.description = eina_stringshare_add(ep->api.description);
+
+#undef _PARAM_PART_COPY
+
+   /* Copy default state */
+   _edje_edit_part_state_copy(obj, part, new_copy, "default", 0.0, "default", 0.0);
+
+   /* Copy all other states */
+   count = rp->part->other.desc_count;
+   for (i = 0; i < count; ++i)
+     {
+        _edje_edit_part_state_copy(obj, part, new_copy,
+                                   rp->part->other.desc[i]->state.name, rp->part->other.desc[i]->state.value,
+                                   rp->part->other.desc[i]->state.name, rp->part->other.desc[i]->state.value);
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 edje_edit_part_exist(Evas_Object *obj, const char *part)
 {
@@ -3403,11 +3496,12 @@ edje_edit_state_exist(Evas_Object *obj, const char *part, const char *state, dou
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, double val_from, const char *to, double val_to)
+static Eina_Bool
+_edje_edit_part_state_copy(Evas_Object *obj, const char *part, const char *part_to, const char *from, double val_from, const char *to, double val_to)
 {
    Edje_Part_Description_Common *pdfrom, *pdto;
    Edje_External_Param *p;
+   Edje_Real_Part *rpto;
 
    GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
@@ -3416,24 +3510,27 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
    if (!pdfrom)
      return EINA_FALSE;
 
-   pdto = _edje_part_description_find_byname(eed, part, to, val_to);
+   rpto = _edje_real_part_get(ed, part_to);
+   if (!rpto)
+     return EINA_FALSE;
+   pdto = _edje_part_description_find_byname(eed, part_to, to, val_to);
    if (!pdto)
      {
 	Edje_Part_Description_Common **tmp;
 
-	pdto = _edje_edit_state_alloc(rp->part->type, ed);
+	pdto = _edje_edit_state_alloc(rpto->part->type, ed);
 	if (!pdto) return EINA_FALSE;
 	/* No need to check for default desc, at this point it must exist */
 
-	tmp = realloc(rp->part->other.desc,
-		      sizeof (Edje_Part_Description_Common *) * (rp->part->other.desc_count + 1));
+	tmp = realloc(rpto->part->other.desc,
+		      sizeof (Edje_Part_Description_Common *) * (rpto->part->other.desc_count + 1));
 	if (!tmp)
 	  {
 	     free(pdto);
 	     return EINA_FALSE;
 	  }
-	rp->part->other.desc = tmp;
-	rp->part->other.desc[rp->part->other.desc_count++] = pdto;
+	rpto->part->other.desc = tmp;
+	rpto->part->other.desc[rpto->part->other.desc_count++] = pdto;
      }
 
 #define PD_STRING_COPY(To, From, _x)			\
@@ -3570,6 +3667,12 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 #undef PD_STRING_COPY
 
    return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, double val_from, const char *to, double val_to)
+{
+   return _edje_edit_part_state_copy(obj, part, part, from, val_from, to, val_to);
 }
 
 #define FUNC_STATE_RELATIVE_DOUBLE(Sub, Value) \
