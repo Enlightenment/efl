@@ -2913,6 +2913,32 @@ edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool r
 }
 
 EAPI Eina_Bool
+edje_edit_part_multiline_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+
+   return rp->part->multiline;
+}
+
+EAPI Eina_Bool
+edje_edit_part_multiline_set(Evas_Object *obj, const char *part, Eina_Bool multiline)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if ((!rp->object) ||
+      ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+      (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)))
+     return EINA_FALSE;
+
+   rp->part->multiline = multiline;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
@@ -8168,6 +8194,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      BUF_APPEND(I4"precise_is_inside: 1;\n");
    if (edje_edit_part_access_get(obj, part))
      BUF_APPEND(I4"access: 1;\n");
+   if (edje_edit_part_multiline_get(obj, part))
+      BUF_APPEND(I4"multiline: 1;\n");
    //TODO Support use_alternate_font_metrics
    if ((str = edje_edit_part_clip_to_get(obj, part)))
      {

@@ -1215,6 +1215,25 @@ EAPI Eina_Bool edje_edit_part_repeat_events_get(Evas_Object *obj, const char *pa
  */
 EAPI Eina_Bool edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events);
 
+/** Get multiline for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get if editing multiple lines for text or textblock part is enabled.
+ *
+ * @return EINA_TRUE if multiple lines for editing is enabled, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool edje_edit_part_multiline_get(Evas_Object *obj, const char *part);
+
+/** Set multiline for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set if editing multiple lines for text or textblock part is enabled.
+ * @param multiline EINA_TRUE if multiple lines for editing is enabled, EINA_FALSE otherwise
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_multiline_set(Evas_Object *obj, const char *part, Eina_Bool multiline);
+
 /** Get precise_is_inside for part.
  *
  * @param obj Object being edited.
