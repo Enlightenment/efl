@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "Eolian.h"
-#include "eo1_generator.h"
+#include "eo_generator.h"
 #include "common_funcs.h"
 
 static _eolian_class_vars class_env;
