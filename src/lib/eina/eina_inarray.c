@@ -606,7 +606,7 @@ eina_inarray_remove_at(Eina_Inarray *array, unsigned int position)
         memmove(p, p + sz, (array->len - position - 1) * sz);
      }
 
-   _eina_inarray_resize(array, array->len - 1);
+   if (!_eina_inarray_resize(array, array->len - 1)) return EINA_FALSE; /* should never fail as we reduce the buffer, but just let make compiler happy */
    array->len--;
    return EINA_TRUE;
 }
