@@ -372,12 +372,18 @@ local Constructor = Method:clone {
         local name    = proto.name
         local defctor = name == "constructor"
         table.insert(proto.args, 2, "parent")
-        s:write( "    ", defctor and "__ctor" or name, " = function(",
+
+        s:write("    __define_properties = function(self, proto)\n")
+        self.parent_node:gen_ctor(s)
+        s:write("        proto.__define_properties(self, proto.__proto)\n")
+        s:write("    end,\n\n")
+
+        s:write("    ", defctor and "__ctor" or name, " = function(",
             table.concat(proto.args, ", "), ")\n")
         if not defctor then
             s:write("        self = self:clone()\n")
         end
-        self.parent_node:gen_ctor(s)
+        s:write("        self:__define_properties(self.__proto.__proto)\n")
         for i, v in ipairs(proto.allocs) do
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
@@ -397,8 +403,13 @@ local Constructor = Method:clone {
 
 local Default_Constructor = Node:clone {
     generate = function(self, s, last)
-        s:write( "    __ctor = function(self, parent)\n")
+        s:write("    __define_properties = function(self, proto)\n")
         self.parent_node:gen_ctor(s)
+        s:write("        proto.__define_properties(self, proto.__proto)\n")
+        s:write("    end,\n\n")
+
+        s:write( "    __ctor = function(self, parent)\n")
+        s:write("        self:__define_properties(self.__proto.__proto)\n")
         s:write("        self:__ctor_common(__lib.", self.parent_node.prefix,
             "_class_get(), parent)\n")
         s:write("    end", last and "" or ",", last and "\n" or "\n\n")
