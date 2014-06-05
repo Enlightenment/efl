@@ -3,6 +3,7 @@
 #endif
 
 #include <math.h>
+#include <float.h>
 
 #define  DEGREE_TO_RADIAN(x)     (((x) * M_PI) / 180.0)
 #define  EVAS_MATRIX_IS_IDENTITY 0x00000001
@@ -1537,10 +1538,176 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
 }
 
 static inline Eina_Bool
-evas_box3_ray3_intersect(const Evas_Box3 *box EINA_UNUSED, const Evas_Ray3 *ray EINA_UNUSED)
+evas_box2_intersect_2d(const Evas_Box2 *box, const Evas_Vec2 *org, const Evas_Vec2 *dir)
 {
-   /* TODO: */
+   Evas_Real t1, t2, t_near = FLT_MIN, t_far = FLT_MAX;
+   /* ray intersects box if its begins in */
+   if ((org->x >= box->p0.x) && (org->x <= box->p1.x) &&
+       (org->y >= box->p0.y) && (org->y <= box->p1.y))
+     {
+        return EINA_TRUE;
+     }
+   /* minmax algorithm of ray and box intersection */
+   if ((dir->x != 0.0f) && (dir->y != 0.0f))
+     {
+        t1 = (box->p0.x - org->x) / dir->x;
+        t2 = (box->p1.x - org->x) / dir->x;
+
+        if (t1 > t2)
+          {
+             Evas_Real tmp = t1;
+             t1 = t2;
+             t2 = tmp;
+          }
+
+        if (t1 > t_near) t_near = t1;
+        if (t2 < t_far) t_far = t2;
+
+        if (t_far < 0.0f)
+          return EINA_FALSE;
+
+        t1 = (box->p0.y - org->y) / dir->y;
+        t2 = (box->p1.y - org->y) / dir->y;
+
+        if (t1 > t2)
+          {
+             Evas_Real tmp = t1;
+             t1 = t2;
+             t2 = tmp;
+          }
+
+        if (t1 > t_near) t_near = t1;
+        if (t2 < t_far) t_far = t2;
+
+        if ((t_near > t_far) || (t_far < 0.0f))
+          return EINA_FALSE;
+     }
+   /* case when ray is parallel to one of axes */
+   else if (dir->x == 0.0f)
+     {
+        if ((org->x < box->p0.x) && (org->x > box->p1.x))
+          return EINA_FALSE;
+     }
+   else if (org->y < box->p0.y && org->y > box->p1.y)
+      return EINA_FALSE;
+
    return EINA_TRUE;
+}
+
+static inline Eina_Bool
+evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
+{
+   Evas_Real t1, t2, t_near = FLT_MIN, t_far = FLT_MAX;
+   Evas_Box2 box2;
+   Evas_Vec2 org2;
+   Evas_Vec2 dir2;
+   Eina_Bool intersect = EINA_FALSE;
+
+   /* ray intersects box if its begins in */
+   if ((ray->org.x >= box->p0.x) && (ray->org.x <= box->p1.x) &&
+       (ray->org.y >= box->p0.y) && (ray->org.y <= box->p1.y) &&
+       (ray->org.z >= box->p0.z) && (ray->org.z <= box->p1.z))
+     {
+        return EINA_TRUE;
+     }
+   /* minmax algorithm of ray and box intersection */
+   if ((ray->dir.x != 0.0f) && (ray->dir.y != 0.0f) && (ray->dir.z != 0.0f))
+     {
+        t1 = (box->p0.x - ray->org.x) / ray->dir.x;
+        t2 = (box->p1.x - ray->org.x) / ray->dir.x;
+
+        if (t1 > t2)
+          {
+             Evas_Real tmp = t1;
+             t1 = t2;
+             t2 = tmp;
+          }
+
+        if (t1 > t_near) t_near = t1;
+        if (t2 < t_far) t_far = t2;
+
+        if (t_far < 0.0f)
+          return EINA_FALSE;
+
+        t1 = (box->p0.y - ray->org.y) / ray->dir.y;
+        t2 = (box->p1.y - ray->org.y) / ray->dir.y;
+
+        if (t1 > t2)
+          {
+             Evas_Real tmp = t1;
+             t1 = t2;
+             t2 = tmp;
+          }
+
+        if (t1 > t_near) t_near = t1;
+        if (t2 < t_far) t_far = t2;
+
+        if ((t_near > t_far) || (t_far < 0.0f))
+          return EINA_FALSE;
+
+        t1 = (box->p0.z - ray->org.z) / ray->dir.z;
+        t2 = (box->p1.z - ray->org.z) / ray->dir.z;
+
+        if (t1 > t2)
+          {
+             Evas_Real tmp = t1;
+             t1 = t2;
+             t2 = tmp;
+          }
+
+        if (t1 > t_near) t_near = t1;
+        if (t2 < t_far) t_far = t2;
+
+        if ((t_near > t_far) || (t_far < 0.0f))
+          return EINA_FALSE;
+
+        intersect = EINA_TRUE;
+     }
+   /* case when ray is parallel to one of axes */
+   else
+     {
+     /* use two-dimensional version here */
+        if (ray->dir.x == 0.0f)
+          {
+             if ((ray->org.x < box->p0.x) || (ray->org.x > box->p1.x))
+               return EINA_FALSE;
+             else
+               {
+                  evas_vec2_set(&org2, ray->org.y, ray->org.z);
+                  evas_vec2_set(&dir2, ray->dir.y, ray->dir.z);
+                  evas_box2_set(&box2, box->p0.y, box->p0.z, box->p1.y, box->p1.z);
+                  intersect = evas_box2_intersect_2d(&box2, &org2, &dir2);
+               }
+          }
+
+        if (ray->dir.y == 0.0f)
+          {
+             if ((ray->org.y < box->p0.y) || (ray->org.y > box->p1.y))
+               return EINA_FALSE;
+             else
+               {
+                  evas_vec2_set(&org2, ray->org.x, ray->org.z);
+                  evas_vec2_set(&dir2, ray->dir.x, ray->dir.z);
+                  evas_box2_set(&box2, box->p0.x, box->p0.z, box->p1.x, box->p1.z);
+                  intersect = evas_box2_intersect_2d(&box2, &org2, &dir2);
+               }
+          }
+
+        if (ray->dir.z == 0.0f)
+          {
+             if (ray->org.z < box->p0.z || ray->org.z > box->p1.z)
+               return EINA_FALSE;
+             else
+               {
+                  evas_vec2_set(&org2, ray->org.x, ray->org.y);
+                  evas_vec2_set(&dir2, ray->dir.x, ray->dir.y);
+                  evas_box2_set(&box2, box->p0.x, box->p0.y, box->p1.x, box->p1.y);
+                  intersect = evas_box2_intersect_2d(&box2, &org2, &dir2);
+               }
+          }
+     }
+
+   return intersect;
 }
 
 static inline Evas_Real
