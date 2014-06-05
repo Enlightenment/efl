@@ -267,15 +267,15 @@ _scene_setup(Scene_Data *data)
 }
 
 static void
-_mirror(Evas_Object *image)
+_mirror(Evas_Object *img)
 {
    int x, y, w, h;
    Evas_Map *m_rotate;
 
-   evas_object_geometry_get(image, &x, &y, &w, &h);
+   evas_object_geometry_get(img, &x, &y, &w, &h);
    m_rotate = evas_map_new(4);
 
-   evas_map_util_points_populate_from_object(m_rotate, image);
+   evas_map_util_points_populate_from_object(m_rotate, img);
    evas_map_util_rotate(m_rotate, 180, x + (w / 2), y + (h / 2));
 
    evas_map_point_image_uv_set(m_rotate, 0, 0, h);
@@ -283,19 +283,18 @@ _mirror(Evas_Object *image)
    evas_map_point_image_uv_set(m_rotate, 2, w, h / 10);
    evas_map_point_image_uv_set(m_rotate, 3, 0, h / 10);
 
-   evas_object_map_set(image, m_rotate);
-   evas_object_map_enable_set(image, EINA_TRUE);
+   evas_object_map_set(img, m_rotate);
+   evas_object_map_enable_set(img, EINA_TRUE);
 
    evas_map_free(m_rotate);
 }
 
 int
-main(void)
+elm_main(int argc, char **argv)
 {
    Scene_Data data;
 
-   if (!elm_init(0, 0)) return 0;
-
+   elm_config_preferred_engine_set("opengl_x11");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("__WIN__", " A button on the 3d object");
@@ -337,3 +336,4 @@ main(void)
 
    return 0;
 }
+ELM_MAIN()
