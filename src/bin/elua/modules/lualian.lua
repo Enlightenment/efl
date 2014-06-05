@@ -438,6 +438,7 @@ local Mixin = Node:clone {
         s:write("]]\n\n")
 
         local nspaces = self.klass:namespaces_list_get()
+        local mname
         if #nspaces > 1 then
             local lnspaces = {}
             for i = 2, #nspaces do
@@ -445,14 +446,16 @@ local Mixin = Node:clone {
             end
             s:write("local __M = util.get_namespace(M, { ",
                 table.concat(lnspaces, ", "), " })\n")
+            mname = "__M"
         else
-            s:write("local __M = M\n")
+            mname = "M"
         end
 
         s:write(([[
 local __class = __lib.%s_class_get()
-__M.%s = eo.class_register("%s", {
-]]):format(self.prefix, self.klass:name_get(), self.klass:full_name_get()))
+%s.%s = eo.class_register("%s", {
+]]):format(self.prefix, mname, self.klass:name_get(),
+        self.klass:full_name_get()))
 
         self:gen_children(s)
 
@@ -501,6 +504,7 @@ local Class = Node:clone {
         s:write("]]\n\n")
 
         local nspaces = self.klass:namespaces_list_get()
+        local mname
         if #nspaces > 1 then
             local lnspaces = {}
             for i = 2, #nspaces do
@@ -508,15 +512,16 @@ local Class = Node:clone {
             end
             s:write("local __M = util.get_namespace(M, { ",
                 table.concat(lnspaces, ", "), " })\n")
+            mname = "__M"
         else
-            s:write("local __M = M\n")
+            mname = "M"
         end
 
         s:write(([[
 local __class = __lib.%s_class_get()
 local Parent  = eo.class_get("%s")
-__M.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.prefix, self.parent, self.klass:name_get(),
+%s.%s = eo.class_register("%s", Parent:clone {
+]]):format(self.prefix, self.parent, mname, self.klass:name_get(),
         self.klass:full_name_get()))
 
         self:gen_children(s)
