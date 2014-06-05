@@ -12,6 +12,8 @@ ffi.cdef [[
     Eina_Bool eo_init(void);
     Eina_Bool eo_shutdown(void);
 
+    Eina_Bool eo_isa(const Eo *obj, const Eo_Class *klass);
+
     void eo_constructor(void);
     void eo_destructor(void);
 
@@ -92,7 +94,10 @@ M.Eo_Base = util.Object:clone {
         return retval
     end,
 
-    __do_start = function(self)
+    __do_start = function(self, klass)
+        if eo.eo_isa(self.__obj, klass) == 0 then
+            error("method call on an invalid object", 3)
+        end
         local info = getinfo(3, "nlSf")
         return eo._eo_do_start(self.__obj, nil, false, info.source,
             getfuncname(info), info.currentline) ~= 0

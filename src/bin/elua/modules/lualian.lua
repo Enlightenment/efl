@@ -212,7 +212,7 @@ local Method = Node:clone {
         local proto = self:gen_proto()
         s:write("    ", proto.name, proto.suffix or "", " = function(",
             table.concat(proto.args, ", "), ")\n")
-        s:write( "        self:__do_start()\n")
+        s:write( "        self:__do_start(__class)\n")
         for i, v in ipairs(proto.allocs) do
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
@@ -389,8 +389,8 @@ local Constructor = Method:clone {
         end
         local genv = (proto.ret_type ~= "void")
         s:write("        ", genv and "local v = " or "", "self:__ctor_common(",
-            "__lib.", self.parent_node.prefix, "_class_get(), parent, __lib.",
-            proto.full_name, ", ", table.concat(proto.vargs, ", "), ")\n")
+            "__class, parent, __lib.", proto.full_name, ", ",
+            table.concat(proto.vargs, ", "), ")\n")
         if not defctor then
             table.insert(proto.rets, 1, "self")
         end
@@ -410,8 +410,7 @@ local Default_Constructor = Node:clone {
 
         s:write( "    __ctor = function(self, parent)\n")
         s:write("        self:__define_properties(self.__proto.__proto)\n")
-        s:write("        self:__ctor_common(__lib.", self.parent_node.prefix,
-            "_class_get(), parent)\n")
+        s:write("        self:__ctor_common(__class, parent)\n")
         s:write("    end", last and "" or ",", last and "\n" or "\n\n")
     end,
 
@@ -448,8 +447,10 @@ local Mixin = Node:clone {
             ename = self.klass:name_get()
         end
 
-        s:write(("M.%s = eo.class_register(\"%s\", {\n"):format(
-            ename, self.klass:full_name_get()))
+        s:write(([[
+local __class = __lib.%s_class_get()
+M.%s = eo.class_register("%s", {
+]]):format(self.prefix, ename, self.klass:full_name_get()))
 
         self:gen_children(s)
 
@@ -508,9 +509,10 @@ local Class = Node:clone {
         end
 
         s:write(([[
-local Parent = eo.class_get("%s")
+local __class = __lib.%s_class_get()
+local Parent  = eo.class_get("%s")
 M.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.parent, ename, self.klass:full_name_get()))
+]]):format(self.prefix, self.parent, ename, self.klass:full_name_get()))
 
         self:gen_children(s)
 
