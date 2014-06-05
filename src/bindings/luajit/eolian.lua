@@ -104,6 +104,8 @@ local util  = require("util")
 
 local list = require("eina.list")
 
+local Ptr_List = list.Ptr_List
+
 local M = {}
 
 local eolian
@@ -162,8 +164,6 @@ M.function_scope = {
     PROTECTED = 1
 }
 
-local Eolian_Parameters_List = list.gen_list_type("Eolian_Function_Parameter*")
-
 M.Function = ffi.metatype("Eolian_Function", {
     __index = {
         type_get = function(self)
@@ -201,17 +201,17 @@ M.Function = ffi.metatype("Eolian_Function", {
         end,
 
         property_keys_list_get = function(self)
-            return Eolian_Parameters_List(
+            return Ptr_List("Eolian_Function_Parameter*",
                 eolian.eolian_property_keys_list_get(self)):to_array()
         end,
 
         property_values_list_get = function(self)
-            return Eolian_Parameters_List(
+            return Ptr_List("Eolian_Function_Parameter*",
                 eolian.eolian_property_values_list_get(self)):to_array()
         end,
 
         parameters_list_get = function(self)
-            return Eolian_Parameters_List(
+            return Ptr_List("Eolian_Function_Parameter*",
                 eolian.eolian_parameters_list_get(self)):to_array()
         end,
 
@@ -354,10 +354,6 @@ M.class_type = {
     INTERFACE = 4
 }
 
-local Eolian_Functions_List  = list.gen_list_type("Eolian_Function*")
-local Eolian_Implements_List = list.gen_list_type("Eolian_Implement*")
-local Eolian_Events_List     = list.gen_list_type("Eolian_Event*")
-
 M.Class = ffi.metatype("Eolian_Class", {
     __index = {
         file_get = function(self)
@@ -417,7 +413,7 @@ M.Class = ffi.metatype("Eolian_Class", {
         end,
 
         functions_list_get = function(self, func_type)
-            return Eolian_Functions_List(
+            return Ptr_List("Eolian_Function*",
                 eolian.eolian_class_functions_list_get(self, func_type))
                     :to_array()
         end,
@@ -430,12 +426,12 @@ M.Class = ffi.metatype("Eolian_Class", {
         end,
 
         implements_list_get = function(self)
-            return Eolian_Implements_List(
+            return Ptr_List("Eolian_Implement*",
                 eolian.eolian_class_implements_list_get(self)):to_array()
         end,
 
         events_list_get = function(self)
-            return Eolian_Events_List(
+            return Ptr_List("Eolian_Event*",
                 eolian.eolian_class_events_list_get(self)):to_array()
         end,
 
