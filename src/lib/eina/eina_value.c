@@ -3153,14 +3153,6 @@ _eina_value_type_hash_compare(const Eina_Value_Type *type EINA_UNUSED, const voi
    return ctx.cmp;
 }
 
-static Eina_Bool
-_eina_value_type_hash_find_first(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *ptr, void *user_data)
-{
-   void **ret = user_data;
-   *ret = ptr;
-   return EINA_FALSE;
-}
-
 struct _eina_value_type_hash_convert_to_string_each_ctx
 {
    const Eina_Value_Type *subtype;
@@ -3237,11 +3229,15 @@ _eina_value_type_hash_convert_to(const Eina_Value_Type *type EINA_UNUSED, const 
    else if ((tmem->hash) && (eina_hash_population(tmem->hash) == 1))
      {
         const Eina_Value_Type *subtype = tmem->subtype;
+	Eina_Iterator *it;
         void *imem = NULL;
 
-        eina_hash_foreach(tmem->hash, _eina_value_type_hash_find_first, &imem);
-        if (!imem) /* shouldn't happen... */
-          ret = EINA_FALSE;
+	it = eina_hash_iterator_data_new(tmem->hash);
+
+	if (!it || !eina_iterator_next(it, &imem) || !imem) /* shouldn't happen... */
+	  {
+	    ret = EINA_FALSE;
+	  }
         else
           {
              if (subtype->convert_to)
@@ -3249,6 +3245,7 @@ _eina_value_type_hash_convert_to(const Eina_Value_Type *type EINA_UNUSED, const 
              if ((!ret) && (convert->convert_from))
                ret = convert->convert_from(convert, subtype, convert_mem, imem);
           }
+	eina_iterator_free(it);
      }
 
    if (!ret)
