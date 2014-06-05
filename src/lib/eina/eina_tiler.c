@@ -1506,6 +1506,7 @@ eina_tiler_equal(Eina_Tiler *t1,
    Eina_Iterator  *itr1, *itr2;
    Eina_Rectangle *rect1, *rect2;
    Eina_Bool      next_t1 = EINA_FALSE, next_t2 = EINA_FALSE;
+   Eina_Bool r = EINA_FALSE;
 
    EINA_MAGIC_CHECK_TILER(t1, EINA_FALSE);
    EINA_MAGIC_CHECK_TILER(t2, EINA_FALSE);
@@ -1517,9 +1518,9 @@ eina_tiler_equal(Eina_Tiler *t1,
    itr2 = eina_tiler_iterator_new(t2);
 
    if ((!eina_iterator_next(itr1, (void**)(void*)(&rect1))) && (!rect1))
-     return EINA_FALSE;
+     goto first_fail;
    if ((!eina_iterator_next(itr2, (void**)(void*)(&rect2))) && (!rect2))
-     return EINA_FALSE;
+     goto second_fail;
 
    while((rect1) && (rect2))
      {
@@ -1530,26 +1531,30 @@ eina_tiler_equal(Eina_Tiler *t1,
                  (rect1->w != rect2->w) ||
                  (rect1->h != rect2->h))
                {
-                  return EINA_FALSE;
+		  goto second_fail;
                }
           }
         else
-          return EINA_FALSE;
+	  goto second_fail;
 
         next_t1 = eina_iterator_next(itr1, (void**)&rect1);
         next_t2 = eina_iterator_next(itr2, (void**)&rect2);
 
         if (next_t1 != next_t2)
-          return EINA_FALSE;
+	  goto second_fail;
 
         if (!next_t1 && !next_t2)
           break;
      }
 
+   r = EINA_TRUE;
+
+ second_fail:
    eina_iterator_free(itr1);
+ first_fail:
    eina_iterator_free(itr2);
 
-   return EINA_TRUE;
+   return r;
 
 }
 
