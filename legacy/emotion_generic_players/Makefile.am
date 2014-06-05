@@ -13,6 +13,7 @@ EXTRA_DIST = \
 README \
 AUTHORS \
 COPYING \
+autogen.sh \
 m4/efl_compiler.m4 \
 m4/emotion_generic_players.m4
 
