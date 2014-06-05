@@ -19,21 +19,22 @@ ffi.cdef [[
 
     Eo *_eo_add_internal_start(const char *file, int line,
         const Eo_Class *klass_id, Eo *parent);
-    Eo *_eo_add_internal_end  (const char *file, int line, const Eo *obj);
 
     Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass,
         Eina_Bool is_super, const char *file, const char *func, int line);
     void      _eo_do_end  (const Eo **ojb);
+
+    Eo *eo_finalize(void);
 
     void eo_parent_set(Eo *parent);
     Eo  *eo_parent_get(void);
 
     void eo_event_freeze(void);
     void eo_event_thaw(void);
-    int eo_event_freeze_get(void);
+    int eo_event_freeze_count_get(void);
     void eo_event_global_freeze(void);
     void eo_event_global_thaw(void);
-    int eo_event_global_freeze_get(void);
+    int eo_event_global_freeze_count_get(void);
 ]]
 
 local cutil = require("cutil")
@@ -86,7 +87,7 @@ M.Eo_Base = util.Object:clone {
             else
                 eo.eo_constructor()
             end
-            tmp_obj = eo._eo_add_internal_end(source, line, tmp_obj)
+            tmp_obj = eo.eo_finalize()
             eo._eo_do_end(nil)
         end
         self.__obj    = tmp_obj
@@ -119,16 +120,16 @@ M.Eo_Base = util.Object:clone {
         self:__do_end()
     end,
 
-    event_global_freeze_get = function(self)
+    event_global_freeze_count_get = function(self)
         self:__do_start()
-        local v = eo.eo_event_global_freeze_get()
+        local v = eo.eo_event_global_freeze_count_get()
         self:__do_end()
         return v
     end,
 
-    event_freeze_get = function(self)
+    event_freeze_count_get = function(self)
         self:__do_start()
-        local v = eo.eo_event_freeze_get()
+        local v = eo.eo_event_freeze_count_get()
         self:__do_end()
         return v
     end
