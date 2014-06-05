@@ -34,12 +34,20 @@ include Makefile_Eina.am
 include Makefile_Eo.am
 include Makefile_Eet.am
 include Makefile_Eolian.am
-include Makefile_Evas.am
 include Makefile_Ecore.am
 include Makefile_Ecore_Cxx.am
 include Makefile_Ecore_Con.am
 include Makefile_Ecore_Ipc.am
 include Makefile_Ecore_File.am
+include Makefile_Ecore_Avahi.am
+include Makefile_Embryo.am
+include Makefile_Eio.am
+include Makefile_Eldbus.am
+include Makefile_Efreet.am
+include Makefile_Eeze.am
+
+if BUILD_GUI
+include Makefile_Evas.am
 include Makefile_Ecore_Input.am
 include Makefile_Ecore_Input_Evas.am
 include Makefile_Ecore_Cocoa.am
@@ -51,29 +59,25 @@ include Makefile_Ecore_Wayland.am
 include Makefile_Ecore_Win32.am
 include Makefile_Ecore_WinCE.am
 include Makefile_Ecore_X.am
+include Makefile_Ecore_Audio.am
 include Makefile_Ecore_IMF.am
 include Makefile_Ecore_IMF_Evas.am
 include Makefile_Ecore_Evas.am
-include Makefile_Ecore_Audio.am
-include Makefile_Ecore_Audio_Cxx.am
-include Makefile_Ecore_Avahi.am
-include Makefile_Embryo.am
-include Makefile_Eio.am
-include Makefile_Eldbus.am
-include Makefile_Efreet.am
-include Makefile_Eeze.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 
+include Makefile_Ecore_Audio_Cxx.am
+include Makefile_Edje_Cxx.am
+include Makefile_Evas_Cxx.am
+endif
+
 include Makefile_Eina_Cxx.am
 include Makefile_Eolian_Cxx.am
 include Makefile_Eet_Cxx.am
 include Makefile_Eo_Cxx.am
-include Makefile_Edje_Cxx.am
-include Makefile_Evas_Cxx.am
 
 .PHONY: benchmark examples
 

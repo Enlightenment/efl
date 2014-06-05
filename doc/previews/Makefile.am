@@ -1,3 +1,4 @@
+if BUILD_GUI
 if EFL_BUILD_DOC
 
 .PHONY: doc
@@ -63,9 +64,9 @@ endif
 
 
 endif
+endif
 
 EXTRA_DIST = preview_text_filter.c
 
 clean-local:
 	rm -rf $(DATADIR)
-
