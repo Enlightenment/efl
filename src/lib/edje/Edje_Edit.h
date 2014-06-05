@@ -1315,6 +1315,37 @@ EAPI Evas_Object_Pointer_Mode edje_edit_part_pointer_mode_get(Evas_Object *obj, 
  */
 EAPI Eina_Bool edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *part, Evas_Object_Pointer_Mode pointer_mode);
 
+/** Get cursor_mode of a part.
+ *
+ * Note that Cursor Mode can be:
+ * 0 - UNDER cursor mode means the cursor will draw below the character pointed
+ *     at. That's the default.
+ * 1 - BEFORE cursor mode means the cursor is drawn as a vertical line before
+ *     the current character, just like many other GUI toolkits handle it.
+ *
+ * @param obj Object being edited.
+ * @param part Part name to get it's cursor_mode.
+ *
+ * @return Ponter Mode of the part.
+ */
+EAPI unsigned char edje_edit_part_cursor_mode_get(Evas_Object *obj, const char *part);
+
+/** Get pointer_mode of a part.
+ *
+ * Note that Cursor Mode can be:
+ * 0 - UNDER cursor mode means the cursor will draw below the character pointed
+ *     at. That's the default.
+ * 1 - BEFORE cursor mode means the cursor is drawn as a vertical line before
+ *     the current character, just like many other GUI toolkits handle it.
+ *
+ * @param obj Object being edited.
+ * @param part Part name to get it's pointer_mode.
+ * @param pointer_mode Pointer Mode.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_cursor_mode_set(Evas_Object *obj, const char *part, unsigned char cursor_mode);
+
 /** Set scale property for the part.
  *
  * This property tells Edje that the given part should be scaled by the

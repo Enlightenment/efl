@@ -3014,6 +3014,32 @@ edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *part, Evas_Object_
    return EINA_TRUE;
 }
 
+EAPI unsigned char
+edje_edit_part_cursor_mode_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return 0;
+
+   return rp->part->cursor_mode;
+}
+
+EAPI Eina_Bool
+edje_edit_part_cursor_mode_set(Evas_Object *obj, const char *part, unsigned char cursor_mode)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if ((!rp->object) ||
+       ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)))
+     return EINA_FALSE;
+
+   rp->part->cursor_mode = cursor_mode;
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale)
 {
@@ -8190,6 +8216,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    //TODO Support ignore_flags
    if (edje_edit_part_pointer_mode_get(obj, part) == EVAS_OBJECT_POINTER_MODE_NOGRAB)
      BUF_APPEND(I4"pointer_mode: NOGRAB;\n");
+   if (edje_edit_part_cursor_mode_get(obj, part) == 1)
+     BUF_APPEND(I4"cursor_mode: BEFORE;\n");
    if (edje_edit_part_precise_is_inside_get(obj, part))
      BUF_APPEND(I4"precise_is_inside: 1;\n");
    if (edje_edit_part_access_get(obj, part))
