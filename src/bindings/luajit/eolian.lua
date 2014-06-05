@@ -162,14 +162,7 @@ M.function_scope = {
     PROTECTED = 1
 }
 
-local List_Base = list.List_Base
-
-local Eolian_Parameters_List = List_Base:clone {
-    data_get = function(self, ptr)
-        ptr = List_Base.data_get(self, ptr)
-        return ffi.cast("Eolian_Function_Parameter*", ptr)
-    end
-}
+local Eolian_Parameters_List = list.gen_list_type("Eolian_Function_Parameter*")
 
 M.Function = ffi.metatype("Eolian_Function", {
     __index = {
@@ -361,26 +354,9 @@ M.class_type = {
     INTERFACE = 4
 }
 
-local Eolian_Functions_List = List_Base:clone {
-    data_get = function(self, ptr)
-        ptr = List_Base.data_get(self, ptr)
-        return ffi.cast("Eolian_Function*", ptr)
-    end
-}
-
-local Eolian_Implements_List = List_Base:clone {
-    data_get = function(self, ptr)
-        ptr = List_Base.data_get(self, ptr)
-        return ffi.cast("Eolian_Implement*", ptr)
-    end
-}
-
-local Eolian_Events_List = List_Base:clone {
-    data_get = function(self, ptr)
-        ptr = List_Base.data_get(self, ptr)
-        return ffi.cast("Eolian_Event*", ptr)
-    end
-}
+local Eolian_Functions_List  = list.gen_list_type("Eolian_Function*")
+local Eolian_Implements_List = list.gen_list_type("Eolian_Implement*")
+local Eolian_Events_List     = list.gen_list_type("Eolian_Event*")
 
 M.Class = ffi.metatype("Eolian_Class", {
     __index = {

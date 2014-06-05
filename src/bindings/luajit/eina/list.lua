@@ -277,6 +277,15 @@ local List_Base = util.Readonly_Object:clone {
 }
 M.List_Base = List_Base
 
+M.gen_list_type = function(tp)
+    return List_Base:clone {
+        data_get = function(self, ptr)
+            ptr = List_Base.data_get(self, ptr)
+            return ffi.cast(tp, ptr)
+        end
+    }
+end
+
 M.String_List = List_Base:clone {
     data_get = function(self, ptr)
         ptr = List_Base.data_get(self, ptr)
