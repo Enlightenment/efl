@@ -812,7 +812,6 @@ eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func)
    unsigned int i = 0;
    unsigned int n = 0;
    Eina_Inlist *tail = head;
-   Eina_Inlist *unsort = NULL;
    Eina_Inlist *stack[EINA_INLIST_SORT_STACK_SIZE];
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(head, NULL);
@@ -848,12 +847,6 @@ eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func)
 
    head = stack[0];
    tail = eina_inlist_sort_rebuild_prev(head);
-
-   if (unsort)
-     {
-        tail->next = unsort;
-        unsort->prev = tail;
-     }
 
    head->last = tail;
 
