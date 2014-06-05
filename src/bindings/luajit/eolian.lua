@@ -318,9 +318,7 @@ ffi.metatype("Eolian_Implement", {
             local fn = ffi.new("Eolian_Function[1]")
             local tp = ffi.new("Eolian_Function_Type[1]")
             eolian.eolian_implement_information_get(self, cl, fn, tp)
-            cl, fn = (cl[0] ~= nil) and cl[0] or nil,
-                     (fn[0] ~= nil) and fn[0] or nil
-            return cl, fn, tp[0]
+            return cl[0], fn[0], tp[0]
         end
     }
 })
