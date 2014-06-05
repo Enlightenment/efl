@@ -379,4 +379,17 @@ table.uniq = function(tbl)
     return ret
 end
 
+M.get_namespace = function(M, nspaces)
+    local last_m = M
+    for i, v in ipairs(nspaces) do
+        local nsp = M[v]
+        if not nsp then
+            nsp = {}
+            last_m[v] = nsp
+        end
+        last_m = nsp
+    end
+    return last_m
+end
+
 return M

@@ -438,19 +438,21 @@ local Mixin = Node:clone {
         s:write("]]\n\n")
 
         local nspaces = self.klass:namespaces_list_get()
-        local ename
-        if #nspaces > 0 then
-            table.remove(nspaces, 1)
-            nspaces[#nspaces + 1] = self.klass:name_get()
-            ename = table.concat(nspaces, "_")
+        if #nspaces > 1 then
+            local lnspaces = {}
+            for i = 2, #nspaces do
+                lnspaces[i] = '"' .. nspaces[i]:lower() .. '"'
+            end
+            s:write("local __M = util.get_namespace(M, { ",
+                table.concat(lnspaces, ", "), " })\n")
         else
-            ename = self.klass:name_get()
+            s:write("local __M = M\n")
         end
 
         s:write(([[
 local __class = __lib.%s_class_get()
-M.%s = eo.class_register("%s", {
-]]):format(self.prefix, ename, self.klass:full_name_get()))
+__M.%s = eo.class_register("%s", {
+]]):format(self.prefix, self.klass:name_get(), self.klass:full_name_get()))
 
         self:gen_children(s)
 
@@ -499,20 +501,23 @@ local Class = Node:clone {
         s:write("]]\n\n")
 
         local nspaces = self.klass:namespaces_list_get()
-        local ename
-        if #nspaces > 0 then
-            table.remove(nspaces, 1)
-            nspaces[#nspaces + 1] = self.klass:name_get()
-            ename = table.concat(nspaces, "_")
+        if #nspaces > 1 then
+            local lnspaces = {}
+            for i = 2, #nspaces do
+                lnspaces[i] = '"' .. nspaces[i]:lower() .. '"'
+            end
+            s:write("local __M = util.get_namespace(M, { ",
+                table.concat(lnspaces, ", "), " })\n")
         else
-            ename = self.klass:name_get()
+            s:write("local __M = M\n")
         end
 
         s:write(([[
 local __class = __lib.%s_class_get()
 local Parent  = eo.class_get("%s")
-M.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.prefix, self.parent, ename, self.klass:full_name_get()))
+__M.%s = eo.class_register("%s", Parent:clone {
+]]):format(self.prefix, self.parent, self.klass:name_get(),
+        self.klass:full_name_get()))
 
         self:gen_children(s)
 
