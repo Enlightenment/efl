@@ -7488,7 +7488,7 @@ _edje_generate_source_of_style(Edje * ed, const char *name, Eina_Strbuf *buf);
  static Eina_Bool
 _edje_generate_source_of_colorclass(Edje * ed, const char *name, Eina_Strbuf *buf);
 
-static const char *
+static Eina_Strbuf *
 _edje_generate_image_source(Evas_Object *obj, const char *entry)
 {
    Eina_Strbuf *buf = eina_strbuf_new();
@@ -7496,7 +7496,7 @@ _edje_generate_image_source(Evas_Object *obj, const char *entry)
    if (!buf) return NULL;
 
    int comp = edje_edit_image_compression_type_get(obj, entry);
-   if (comp < 0) return NULL;
+   if (comp < 0) goto error;
 
    BUF_APPENDF("image: \"%s\" ", entry);
 
@@ -7513,14 +7513,14 @@ _edje_generate_image_source(Evas_Object *obj, const char *entry)
    else
      BUF_APPEND("COMP;\n");
 
-   if (!ret)
-     {
-        ERR("Generating EDC for Image");
-        eina_strbuf_free(buf);
-        return NULL;
-     }
+   if (!ret) goto error;
 
-   return eina_strbuf_string_get(buf);
+   return buf;
+
+error:
+   ERR("Generating EDC for Image");
+   eina_strbuf_free(buf);
+   return NULL;
 }
 
 
@@ -7609,9 +7609,11 @@ edje_edit_source_generate(Evas_Object *obj)
 
         EINA_LIST_FOREACH(images, l, entry)
           {
-             const char *image_source = _edje_generate_image_source(obj, entry);
-             if (!image_source) continue;
-             BUF_APPENDF(I1"%s", image_source);
+             Eina_Strbuf *buf = _edje_generate_image_source(obj, entry);
+             if (!buf) continue;
+
+             BUF_APPENDF(I1"%s", eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
           }
 
         BUF_APPEND(I0"}\n\n");
@@ -8473,10 +8475,11 @@ _edje_generate_source(Evas_Object *obj)
 
 	EINA_LIST_FOREACH(ll, l, entry)
 	  {
-             const char *image_source = _edje_generate_image_source(obj, entry);
-	     if (!image_source) continue;
+             Eina_Strbuf *buf = _edje_generate_image_source(obj, entry);
+	     if (!buf) continue;
 
-             BUF_APPENDF(I1"%s", image_source);
+             BUF_APPENDF(I1"%s", eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
           }
 	BUF_APPEND(I0"}\n\n");
 	edje_edit_string_list_free(ll);
