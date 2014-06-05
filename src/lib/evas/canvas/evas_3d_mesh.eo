@@ -8,7 +8,23 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
          /**
           * Load mesh data from file.
           *
-          * Loading a mesh from existing file is supported. Currently, only MD2 file
+          * Loading a mesh from existing file is supported. Currently, only MD2 and OBJ file
+          * formats are supported.
+          *
+          * @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
+            @in const char *file; /*@ Path to the mesh file. */
+            @in const char *key; /*@ Key in the mesh file. */
+         }
+      }
+
+      save {
+         /**
+          * Save mesh data to file.
+          *
+          * Saving a mesh to file is supported. Currently, only OBJ file
           * format is supported.
           *
           * @ingroup Evas_3D_Mesh

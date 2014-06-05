@@ -748,17 +748,46 @@ _evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type ty
    _mesh_fini(pd);
    _mesh_init(pd);
 
-   if (file == NULL)
-     return;
+   if (file == NULL) return;
 
    switch (type)
      {
       case EVAS_3D_MESH_FILE_TYPE_MD2:
-         evas_3d_mesh_file_md2_set(obj, file);
-         break;
+        evas_3d_mesh_file_md2_set(obj, file);
+        break;
+      case EVAS_3D_MESH_FILE_TYPE_OBJ:
+        evas_3d_mesh_file_obj_set(obj, file);
+        break;
       default:
-         ERR("Invalid mesh file type.");
-         break;
+        ERR("Invalid mesh file type.");
+        break;
+     }
+}
+
+EOLIAN static void
+_evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type,
+                   const char *file, const char *key EINA_UNUSED)
+{
+   if ((file == NULL) || (obj == NULL) || (pd == NULL)) return;
+
+   switch (type)
+     {
+      case EVAS_3D_MESH_FILE_TYPE_OBJ:
+        {
+           Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
+
+           if (f == NULL)
+             {
+                ERR("Not existing mesh frame.");
+                return;
+             }
+
+           evas_3d_mesh_save_obj(obj, file, f);//file without extension!
+           break;
+        }
+      default:
+        ERR("Invalid mesh file type.");
+        break;
      }
 }
 
