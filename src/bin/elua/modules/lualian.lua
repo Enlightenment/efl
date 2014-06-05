@@ -427,8 +427,18 @@ local Mixin = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
+        local nspaces = self.klass:namespaces_list_get()
+        local ename
+        if #nspaces > 0 then
+            table.remove(nspaces, 1)
+            nspaces[#nspaces + 1] = self.klass:name_get()
+            ename = table.concat(nspaces, "_")
+        else
+            ename = self.klass:name_get()
+        end
+
         s:write(("M.%s = eo.class_register(\"%s\", {\n"):format(
-            self.klass:name_get(), self.klass:name_get()))
+            ename, self.klass:full_name_get()))
 
         self:gen_children(s)
 
@@ -476,10 +486,20 @@ local Class = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
+        local nspaces = self.klass:namespaces_list_get()
+        local ename
+        if #nspaces > 0 then
+            table.remove(nspaces, 1)
+            nspaces[#nspaces + 1] = self.klass:name_get()
+            ename = table.concat(nspaces, "_")
+        else
+            ename = self.klass:name_get()
+        end
+
         s:write(([[
 local Parent = eo.class_get("%s")
 M.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.parent, self.klass:name_get(), self.klass:name_get()))
+]]):format(self.parent, ename, self.klass:full_name_get()))
 
         self:gen_children(s)
 
@@ -487,7 +507,7 @@ M.%s = eo.class_register("%s", Parent:clone {
 
         for i, v in ipairs(self.mixins) do
             s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
-                :format(self.klass:name_get(), v))
+                :format(ename, v))
         end
     end,
 
@@ -538,7 +558,7 @@ end
 
 cutil.init_module(init, shutdown)
 
-]]):format(self.fname, self.klass:name_get(), modn, self.libname,
+]]):format(self.fname, self.klass:full_name_get(), modn, self.libname,
         self.libname))
 
         self:gen_children(s)

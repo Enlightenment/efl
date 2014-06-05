@@ -57,7 +57,7 @@ ffi.cdef [[
     const char *eolian_class_file_get(const Eolian_Class *klass);
     const char *eolian_class_full_name_get(const Eolian_Class *klass);
     const char *eolian_class_name_get(const Eolian_Class *klass);
-    const Eina_List *eolian_class_namespaces_list_get(const Eolian_Class klass);
+    const Eina_List *eolian_class_namespaces_list_get(const Eolian_Class *klass);
     Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
     const Eina_List *eolian_class_names_list_get(void);
     const char *eolian_class_description_get(const Eolian_Class *klass);
