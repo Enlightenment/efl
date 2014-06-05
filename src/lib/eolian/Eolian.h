@@ -202,6 +202,8 @@ eolian_class_find_by_file(const char *file_name);
  *
  * @param[in] klass the class.
  * @return the name of the file on success or NULL otherwise.
+ *
+ * @ingroup Eolian
  */
 EAPI const char *
 eolian_class_file_get(const Eolian_Class klass);
@@ -214,6 +216,8 @@ eolian_class_file_get(const Eolian_Class klass);
  *
  * The full name and the name of a class will be different if namespaces
  * are used.
+ *
+ * @ingroup Eolian
  */
 EAPI const char *
 eolian_class_full_name_get(const Eolian_Class klass);
@@ -223,6 +227,8 @@ eolian_class_full_name_get(const Eolian_Class klass);
  *
  * @param[in] class the class.
  * @return the name of the class on success or NULL otherwise.
+ *
+ * @ingroup Eolian
  */
 EAPI const char *
 eolian_class_name_get(const Eolian_Class klass);
@@ -232,6 +238,8 @@ eolian_class_name_get(const Eolian_Class klass);
  *
  * @param[in] class the class.
  * @return the namespaces list of the class on success or NULL otherwise.
+ *
+ * @ingroup Eolian
  */
 EAPI const Eina_List *
 eolian_class_namespaces_list_get(const Eolian_Class klass);
@@ -457,6 +465,8 @@ EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter param
  * @param[out] type C type
  * @param[out] own indicates if the ownership has to pass to the caller/callee.
  * @return the next type of the list.
+ *
+ * @ingroup Eolian
  */
 EAPI Eolian_Type eolian_type_information_get(Eolian_Type etype, const char **type, Eina_Bool *own);
 
@@ -600,6 +610,8 @@ EAPI Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
  *
  * @param[in] impl handle of the implement
  * @return the full string.
+ *
+ * @ingroup Eolian
  */
 EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement impl);
 
