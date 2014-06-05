@@ -133,7 +133,7 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
          impl_desc?impl_name:class_env.lower_classname, eolian_function_name_get(foo),
          ftype == EOLIAN_PROP_GET?"_get": (ftype == EOLIAN_PROP_SET?"_set":""));
 
-   if (_function_exists(func_name, buffer)) return EINA_TRUE;
+   if (_function_exists(func_name, buffer)) goto end;
 
    printf("Generation of function %s\n", func_name);
    const char *rettype = eolian_function_return_type_get(foo, ftype);
@@ -175,6 +175,7 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
          eina_strbuf_string_get(super_invok)
          );
 
+end:
    eina_strbuf_free(short_params);
    eina_strbuf_free(params);
    eina_strbuf_free(super_invok);
