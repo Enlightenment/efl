@@ -656,8 +656,6 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
              else
                break;
           }
-        else
-          break;
      }
 
    if (cmp <= 0)
