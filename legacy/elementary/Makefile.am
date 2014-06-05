@@ -63,7 +63,6 @@ AUTHORS \
 COPYING \
 COPYING.images \
 COMPLIANCE \
-autogen.sh \
 elementary.pc.in \
 elementary.spec \
 elementary.spec.in \
