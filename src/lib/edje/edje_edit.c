@@ -7534,7 +7534,8 @@ edje_edit_source_generate(Evas_Object *obj)
    Edje_Part_Description_Text *part_desc_text;
    unsigned int i, j;
    const char *entry;
-   Eina_Strbuf *buf = eina_strbuf_new();
+   const char *str;
+   Eina_Strbuf *buf = NULL;
    Eina_Bool ret = EINA_TRUE;
    Eina_List *images = NULL, *color_classes = NULL, *styles = NULL, *fonts = NULL;
    Eina_List *l;
@@ -7602,6 +7603,8 @@ edje_edit_source_generate(Evas_Object *obj)
           }
      }
 
+   buf = eina_strbuf_new();
+
    /* if images were found, print them */
    if (images)
      {
@@ -7659,11 +7662,14 @@ edje_edit_source_generate(Evas_Object *obj)
    if (!ret)
      {
         ERR("Generating EDC for This Group.");
+        eina_strbuf_free(buf);
         return NULL;
      }
 
    /* return resulted source code of the group */
-   return eina_strbuf_string_get(buf);
+   str = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return str;
 }
 
 #undef COLLECT_RESOURCE

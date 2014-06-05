@@ -4362,6 +4362,8 @@ EAPI const Eina_List *edje_edit_script_error_list_get(Evas_Object *obj);
 /**
  * Return source code of the current edje edit object.
  *
+ * Remember to free the string with edje_edit_string_free()
+ *
  * This function will return source code of the whole group, loaded previously.
  * This function also will collect all possible resources that is required and
  * mentioned in description blocks. For example: all images, fonts, data, styles,
