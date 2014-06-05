@@ -1436,8 +1436,6 @@ eina_list_search_sorted_near_list(const Eina_List *list,
              else
                break;
           }
-        else
-          break;
      }
 
 end:
