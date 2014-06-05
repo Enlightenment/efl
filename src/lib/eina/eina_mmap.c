@@ -164,7 +164,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
 #ifdef HAVE_FCNTL
              flags = fcntl(_eina_mmap_zero_fd, F_GETFD);
              flags |= FD_CLOEXEC;
-             fcntl(_eina_mmap_zero_fd, F_SETFD, flags);
+             fcntl(_eina_mmap_zero_fd, F_SETFD, flags); /* If this fail, it will just leak a fd to zero ... */
 #endif
           }
         /* set up signal handler for SIGBUS */
