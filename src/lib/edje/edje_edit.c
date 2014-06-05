@@ -6579,14 +6579,13 @@ edje_edit_program_action_set(Evas_Object *obj, const char *prog, Edje_Action_Typ
    return EINA_TRUE;
 }
 
-EAPI Eina_List *
-edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
+static Eina_List *
+_edje_program_targets_get(Evas_Object *obj, Edje_Program *epr)
 {
    Eina_List *l, *targets = NULL;
    Edje_Program_Target *t;
 
    GET_ED_OR_RETURN(NULL);
-   GET_EPR_OR_RETURN(NULL);
 
    //printf("GET TARGETS for program: %s [count: %d]\n", prog, eina_list_count(epr->targets));
    EINA_LIST_FOREACH(epr->targets, l, t)
@@ -6614,6 +6613,15 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
      }
    return targets;
 }
+
+EAPI Eina_List *
+edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   return _edje_program_targets_get(obj, epr);
+}
+
 
 EAPI Eina_Bool
 edje_edit_program_targets_clear(Evas_Object *obj, const char *prog)
@@ -6711,14 +6719,13 @@ edje_edit_program_target_del(Evas_Object *obj, const char *prog, const char *tar
    return EINA_TRUE;
 }
 
-EAPI Eina_List *
-edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
+static Eina_List *
+_edje_program_afters_get(Evas_Object *obj, Edje_Program *epr)
 {
    Eina_List *l, *afters = NULL;
    Edje_Program_After *a;
 
    GET_ED_OR_RETURN(NULL);
-   GET_EPR_OR_RETURN(NULL);
 
   // printf("GET AFTERS for program: %s [count: %d]\n", prog, eina_list_count(epr->after));
    EINA_LIST_FOREACH(epr->after, l, a)
@@ -6733,6 +6740,14 @@ edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
 	  }
      }
    return afters;
+}
+
+EAPI Eina_List *
+edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   return _edje_program_afters_get(obj, epr);
 }
 
 EAPI Eina_Bool
@@ -7698,27 +7713,27 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    BUF_APPENDF(I3"program { name: \"%s\";\n", program);
 
    /* Signal */
-   if ((s = edje_edit_program_signal_get(obj, program)))
+   if ((s = eina_stringshare_add(epr->signal)))
      {
 	BUF_APPENDF(I4"signal: \"%s\";\n", s);
 	edje_edit_string_free(s);
      }
 
    /* Source */
-   if ((s = edje_edit_program_source_get(obj, program)))
+   if ((s = eina_stringshare_add(epr->source)))
      {
 	BUF_APPENDF(I4"source: \"%s\";\n", s);
 	edje_edit_string_free(s);
      }
 
    /* Action */
-   switch (edje_edit_program_action_get(obj, program))
+   switch (epr->action)
      {
      case EDJE_ACTION_TYPE_ACTION_STOP:
 	BUF_APPEND(I4"action: ACTION_STOP;\n");
 	break;
      case EDJE_ACTION_TYPE_STATE_SET:
-	if ((s = edje_edit_program_state_get(obj, program)))
+        if ((s = eina_stringshare_add(epr->state)))
 	  {
 		BUF_APPENDF(I4"action: STATE_SET \"%s\" %.2f;\n", s,
 			edje_edit_program_value_get(obj, program));
@@ -7726,8 +7741,8 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 	  }
 	break;
      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
-	s = edje_edit_program_state_get(obj, program);
-	s2 = edje_edit_program_state2_get(obj, program);
+        s = eina_stringshare_add(epr->state);
+        s2 =  eina_stringshare_add(epr->state2);
 	if (s && s2)
 	  {
 		BUF_APPENDF(I4"action: SIGNAL_EMIT \"%s\" \"%s\";\n", s, s2);
@@ -7763,8 +7778,8 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      }
 
    /* Transition */
-   db = edje_edit_program_transition_time_get(obj, program);
-   switch (edje_edit_program_transition_get(obj, program))
+   db = TO_DOUBLE(epr->tween.time);
+   switch (epr->tween.mode)
      {
      case EDJE_TWEEN_MODE_LINEAR:
 	if (db)
@@ -7784,13 +7799,13 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      }
 
    /* In */
-   db = edje_edit_program_in_from_get(obj, program);
-   db2 = edje_edit_program_in_range_get(obj, program);
+   db = epr->in.from;
+   db2 = epr->in.range;
    if (db || db2)
      BUF_APPENDF(I4"in: %.5f %.5f;\n", db, db2);
 
    /* Targets */
-   if ((ll = edje_edit_program_targets_get(obj, program)))
+   if ((ll = _edje_program_targets_get(obj, epr)))
      {
 	EINA_LIST_FOREACH(ll, l, data)
 	  BUF_APPENDF(I4"target: \"%s\";\n", data);
@@ -7798,7 +7813,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      }
 
    /* Afters */
-   if ((ll = edje_edit_program_afters_get(obj, program)))
+   if ((ll = _edje_program_afters_get(obj, epr)))
      {
         EINA_LIST_FOREACH(ll, l, data)
 	  BUF_APPENDF(I4"after: \"%s\";\n", data);
@@ -7807,8 +7822,8 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 
    // TODO Support script {}
    /* api */
-   api_name = edje_edit_program_api_name_get(obj, program);
-   api_description = edje_edit_program_api_description_get(obj, program);
+   api_name =  eina_stringshare_add(epr->api.name);
+   api_description = eina_stringshare_add(epr->api.description);
 
    if (api_name || api_description)
      {
