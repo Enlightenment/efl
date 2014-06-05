@@ -56,7 +56,6 @@ README \
 AUTHORS \
 COPYING \
 COMPLIANCE \
-autogen.sh \
 licenses/COPYING.LGPL \
 licenses/COPYING.GPL \
 licenses/COPYING.BSD \
