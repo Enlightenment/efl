@@ -840,7 +840,7 @@ eina_value_array_value_get(const Eina_Value *src, unsigned int position, Eina_Va
 static inline void *
 eina_value_list_node_memory_get(const Eina_Value_Type *type, const Eina_List *node)
 {
-   if (node == NULL) return NULL;
+   if (node == NULL || type == NULL) return NULL;
    if (type->value_size <= sizeof(void*))
      return (void *)&(node->data);
    return node->data;
