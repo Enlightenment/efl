@@ -1295,6 +1295,23 @@ FUNC_GROUP_ACCESSOR(min, h);
 FUNC_GROUP_ACCESSOR(max, w);
 FUNC_GROUP_ACCESSOR(max, h);
 
+EAPI unsigned char
+edje_edit_group_orientation_get(Evas_Object *obj)
+{
+   GET_ED_OR_RETURN(-1);
+   if (!ed->collection) return -1;
+   return ed->collection->prop.orientation;
+}
+EAPI Eina_Bool
+edje_edit_group_orientation_set(Evas_Object *obj, unsigned char orient)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   if (!ed->collection) return EINA_FALSE;
+   if (orient > 2) return EINA_FALSE;
+   ed->collection->prop.orientation = orient;
+   return EINA_TRUE;
+}
+
 /****************/
 /*  ALIAS  API  */
 /****************/
@@ -8239,7 +8256,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    Evas_Object *obj;
    Eina_List *l, *ll;
    unsigned int i;
-   int w, h;
+   int w, h, orient;
    char *data;
    const char *group = pce->entry;
    Edje_Part_Collection *pc;
@@ -8273,6 +8290,20 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    h = edje_edit_group_max_h_get(obj);
    if ((w > 0) || (h > 0))
       BUF_APPENDF(I2"max: %d %d;\n", w, h);
+
+   orient = edje_edit_group_orientation_get(obj);
+   switch(orient)
+     {
+      case(EDJE_ORIENTATION_LTR):
+         BUF_APPENDF(I2"orientation: LTR;\n");
+         break;
+      case(EDJE_ORIENTATION_RTL):
+         BUF_APPENDF(I2"orientation: RTL;\n");
+         break;
+      case(EDJE_ORIENTATION_AUTO):
+      default:
+         break;
+     }
 
    /* Data */
    if (pc->data)
