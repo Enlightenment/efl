@@ -26,7 +26,6 @@ m4/ltversion.m4
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
-autogen.sh \
 m4/ac_attribute.m4 \
 m4/ac_path_generic.m4 \
 README
