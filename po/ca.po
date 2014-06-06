@@ -7,15 +7,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-02 12:42+0900\n"
-"PO-Revision-Date: 2013-02-01 09:52+0100\n"
-"Last-Translator: Joan Coll <jcoll2@gmail.com>\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-12-30 11:41+0100\n"
+"PO-Revision-Date: 2013-12-30 11:42+0000\n"
+"Last-Translator: joancoll <Unknown>\n"
 "Language-Team: Catalan\n"
-"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2013-12-31 05:52+0000\n"
+"X-Generator: Launchpad (build 16877)\n"
+"Language: ca\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
@@ -40,15 +42,15 @@ msgstr "Llicència:"
 
 #: src/lib/ecore/ecore_getopt.c:449
 msgid "Type: "
-msgstr "Tipus:"
+msgstr "Tipus: "
 
 #: src/lib/ecore/ecore_getopt.c:525
 msgid "Default: "
-msgstr "Per defecte:"
+msgstr "Per defecte: "
 
 #: src/lib/ecore/ecore_getopt.c:552
 msgid "Choices: "
-msgstr "Eleccions:"
+msgstr "Eleccions: "
 
 #: src/lib/ecore/ecore_getopt.c:653
 msgid "Options:\n"
@@ -88,7 +90,7 @@ msgstr "format numèric invàlid %s\n"
 #: src/lib/ecore/ecore_getopt.c:1135
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr "elecció invàlida \"%s\". Els valors vàlids són:"
+msgstr "elecció invàlida \"%s\". Els valors vàlids són: "
 
 #: src/lib/ecore/ecore_getopt.c:1163
 msgid "missing parameter to append.\n"
