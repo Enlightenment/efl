@@ -104,12 +104,13 @@ _device_axis_update(Ecore_Drm_Evdev *dev)
 
    if (!dev) return;
 
-   if (dev->abs.rel_w < 0 || dev->abs.rel_h < 0)
-      {
-         ecore_drm_output_size_get(dev->seat->input->dev, dev->seat->input->dev->window, &w, &h);
-         if (w && h)
-            ecore_drm_inputs_device_axis_size_set(dev, w, h);
-      }
+   if ((dev->abs.rel_w < 0) || (dev->abs.rel_h < 0))
+     {
+        ecore_drm_output_size_get(dev->seat->input->dev, 
+                                  dev->seat->input->dev->window, &w, &h);
+        if ((w) && (h)) 
+          ecore_drm_inputs_device_axis_size_set(dev, w, h);
+     }
 }
 
 static Eina_Bool 
@@ -575,20 +576,20 @@ _device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
         break;
       case EVDEV_ABSOLUTE_TOUCH_DOWN:
       case EVDEV_ABSOLUTE_TOUCH_UP:
-        {
-           struct input_event event;
+          {
+             struct input_event event;
 
-           event.code = 0;
-           event.value = dev->abs.pt[dev->mt_slot].down;
+             event.code = 0;
+             event.value = dev->abs.pt[dev->mt_slot].down;
 
-           dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
-           dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
+             dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
+             dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
 
-           _device_notify_motion(dev, timestamp);
-           _device_notify_button(dev, &event, timestamp);
+             _device_notify_motion(dev, timestamp);
+             _device_notify_button(dev, &event, timestamp);
 
-           break;
-        }
+             break;
+          }
       case EVDEV_ABSOLUTE_MOTION:
         dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
         dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
@@ -653,20 +654,20 @@ _device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsign
 
         break;
       case ABS_MT_SLOT:
-        if (event->value >= 0 && event->value < EVDEV_MAX_SLOTS)
+        if ((event->value >= 0) && (event->value < EVDEV_MAX_SLOTS))
           dev->mt_slot = event->value;
 
         break;
       case ABS_MT_TRACKING_ID:
         if (event->value < 0)
           {
-            dev->abs.pt[dev->mt_slot].down = 0;
-            dev->pending_event = EVDEV_ABSOLUTE_TOUCH_UP;
+             dev->abs.pt[dev->mt_slot].down = 0;
+             dev->pending_event = EVDEV_ABSOLUTE_TOUCH_UP;
           }
         else
           {
-            dev->abs.pt[dev->mt_slot].down = 1;
-            dev->pending_event = EVDEV_ABSOLUTE_TOUCH_DOWN;
+             dev->abs.pt[dev->mt_slot].down = 1;
+             dev->pending_event = EVDEV_ABSOLUTE_TOUCH_DOWN;
           }
         break;
      }
@@ -843,20 +844,22 @@ ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h)
    if ((w < 0) || (h < 0)) return;
 
    if (dev->caps & EVDEV_MOTION_ABS)
-      {
-         /* FIXME looks like some kernels dont include this struct */
-         struct input_absinfo abs_features;
+     {
+        /* FIXME looks like some kernels dont include this struct */
+        struct input_absinfo abs_features;
 
-         ioctl(dev->fd, EVIOCGABS(ABS_X), &abs_features);
-         dev->abs.rel_w = (double)(abs_features.maximum - abs_features.minimum)/(double)(w);
-         dev->abs.min_x = abs_features.minimum;
+        ioctl(dev->fd, EVIOCGABS(ABS_X), &abs_features);
+        dev->abs.rel_w = 
+          (double)(abs_features.maximum - abs_features.minimum)/(double)(w);
+        dev->abs.min_x = abs_features.minimum;
 
-         ioctl(dev->fd, EVIOCGABS(ABS_Y), &abs_features);
-         dev->abs.rel_h = (double)(abs_features.maximum - abs_features.minimum)/(double)(h);
-         dev->abs.min_y = abs_features.minimum;
-      }
+        ioctl(dev->fd, EVIOCGABS(ABS_Y), &abs_features);
+        dev->abs.rel_h = 
+          (double)(abs_features.maximum - abs_features.minimum)/(double)(h);
+        dev->abs.min_y = abs_features.minimum;
+     }
    else if (!(dev->caps & EVDEV_MOTION_REL))
-      return;
+     return;
 
    /* update the local values */
    if (dev->mouse.x > w - 1) dev->mouse.x = w -1;
