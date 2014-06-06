@@ -4787,7 +4787,7 @@ if test -n "$CFOPT_WARNING"; then
     echo "_____________________________________________________________________"
     echo "You disabled XIM input method support. This is the most basic and"
     echo "core input method protocol supported in X11 and you almost certainly"
-    echo "want the suport for it. Input methods allow for complex text input"
+    echo "want the support for it. Input methods allow for complex text input"
     echo "like for Chinese, Japanese and Korean as well as virtual keyboards"
     echo "on touch/mobile devices."
     echo "_____________________________________________________________________"
