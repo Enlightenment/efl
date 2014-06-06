@@ -388,9 +388,10 @@ local Constructor = Method:clone {
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
         local genv = (proto.ret_type ~= "void")
+        local cvargs = table.concat(proto.vargs, ", ")
+        if cvargs ~= "" then cvargs = ", " .. cvargs end
         s:write("        ", genv and "local v = " or "", "self:__ctor_common(",
-            "__class, parent, __lib.", proto.full_name, ", ",
-            table.concat(proto.vargs, ", "), ")\n")
+            "__class, parent, __lib.", proto.full_name, cvargs, ")\n")
         if not defctor then
             table.insert(proto.rets, 1, "self")
         end
