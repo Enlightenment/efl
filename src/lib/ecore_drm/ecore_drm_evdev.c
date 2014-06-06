@@ -621,8 +621,6 @@ _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned in
 static void 
 _device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp EINA_UNUSED)
 {
-   int tmp;
-
    _device_axis_update(dev);
 
    switch (event->code)
@@ -631,9 +629,8 @@ _device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsign
         if (dev->abs.pt[dev->mt_slot].down == 0)
           return;
       case ABS_MT_POSITION_X:
-        tmp = (int)((double)(event->value - dev->abs.min_x) / dev->abs.rel_w);
-
-        dev->abs.pt[dev->mt_slot].x[0] = tmp;
+        dev->abs.pt[dev->mt_slot].x[0] = 
+          (int)((double)(event->value - dev->abs.min_x) / dev->abs.rel_w);
 
         if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_DOWN)
           if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_UP)
@@ -644,9 +641,8 @@ _device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsign
         if (dev->abs.pt[dev->mt_slot].down == 0)
           return;
       case ABS_MT_POSITION_Y:
-        tmp = (int)((double)(event->value - dev->abs.min_y) / dev->abs.rel_h);
-
-        dev->abs.pt[dev->mt_slot].y[0] = tmp;
+        dev->abs.pt[dev->mt_slot].y[0] = 
+          (int)((double)(event->value - dev->abs.min_y) / dev->abs.rel_h);
 
         if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_DOWN)
           if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_UP)
