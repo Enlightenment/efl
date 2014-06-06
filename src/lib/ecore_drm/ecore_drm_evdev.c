@@ -100,12 +100,12 @@ _device_configure(Ecore_Drm_Evdev *edev)
 static void
 _device_axis_update(Ecore_Drm_Evdev *dev)
 {
-   int w, h;
-
    if (!dev) return;
 
    if ((dev->abs.rel_w < 0) || (dev->abs.rel_h < 0))
      {
+        int w = 0, h = 0;
+
         ecore_drm_output_size_get(dev->seat->input->dev, 
                                   dev->seat->input->dev->window, &w, &h);
         if ((w) && (h)) 
