@@ -68,8 +68,11 @@ M.class_get = function(name)
     return classes[name]
 end
 
-M.class_register = function(name, val)
+M.class_register = function(name, val, addr)
     classes[name] = val
+    if addr then
+        classes[tonumber(ffi.cast("intptr_t", addr))] = val
+    end
 end
 
 M.__ctor_common = function(self, klass, parent, ctor, loff, ...)
