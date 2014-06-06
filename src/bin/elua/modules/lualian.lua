@@ -212,14 +212,14 @@ local Method = Node:clone {
         local proto = self:gen_proto()
         s:write("    ", proto.name, proto.suffix or "", " = function(",
             table.concat(proto.args, ", "), ")\n")
-        s:write( "        self:__do_start(__class)\n")
+        s:write( "        eo.__do_start(self, __class)\n")
         for i, v in ipairs(proto.allocs) do
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
         local genv = (proto.ret_type ~= "void")
         s:write("        ", genv and "local v = " or "", "__lib.",
             proto.full_name, "(", table.concat(proto.vargs, ", "), ")\n")
-        s:write("        self:__do_end()\n")
+        s:write("        eo.__do_end()\n")
         if #proto.rets > 0 then
             s:write("        return ", table.concat(proto.rets, ", "), "\n")
         end
@@ -390,8 +390,8 @@ local Constructor = Method:clone {
         local genv = (proto.ret_type ~= "void")
         local cvargs = table.concat(proto.vargs, ", ")
         if cvargs ~= "" then cvargs = ", " .. cvargs end
-        s:write("        ", genv and "local v = " or "", "self:__ctor_common(",
-            "__class, parent, __lib.", proto.full_name, cvargs, ")\n")
+        s:write("        ", genv and "local v = " or "", "eo.__ctor_common(",
+            "self, __class, parent, __lib.", proto.full_name, cvargs, ")\n")
         if not defctor then
             table.insert(proto.rets, 1, "self")
         end
@@ -411,7 +411,7 @@ local Default_Constructor = Node:clone {
 
         s:write( "    __ctor = function(self, parent)\n")
         s:write("        self:__define_properties(self.__proto.__proto)\n")
-        s:write("        self:__ctor_common(__class, parent)\n")
+        s:write("        eo.__ctor_common(self, __class, parent)\n")
         s:write("    end", last and "" or ",", last and "\n" or "\n\n")
     end,
 
