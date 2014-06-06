@@ -69,6 +69,9 @@
 
 extern int _ecore_drm_log_dom;
 
+/* FIXME: Get slots from evdev device */
+#define EVDEV_MAX_SLOTS 32
+
 /* undef this for non-testing builds */
 //# define LOG_TO_FILE
 
@@ -178,12 +181,19 @@ struct _Ecore_Drm_Evdev
    const char *name, *path;
    int fd;
 
+   int mt_slot;
+
    struct 
      {
         int min_x, min_y;
         int max_x, max_y;
-        int x[2], y[2];
-        Eina_Bool down : 1;
+        double rel_w, rel_h;
+        struct
+          {
+            int x[2];
+            int y[2];
+            Eina_Bool down : 1;
+          } pt[EVDEV_MAX_SLOTS];
      } abs;
 
    struct 

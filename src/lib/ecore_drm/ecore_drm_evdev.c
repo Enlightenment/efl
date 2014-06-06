@@ -97,6 +97,21 @@ _device_configure(Ecore_Drm_Evdev *edev)
    return ret;
 }
 
+static void
+_device_axis_update(Ecore_Drm_Evdev *dev)
+{
+   int w, h;
+
+   if (!dev) return;
+
+   if (dev->abs.rel_w < 0 || dev->abs.rel_h < 0)
+      {
+         ecore_drm_output_size_get(dev->seat->input->dev, dev->seat->input->dev->window, &w, &h);
+         if (w && h)
+            ecore_drm_inputs_device_axis_size_set(dev, w, h);
+      }
+}
+
 static Eina_Bool 
 _device_handle(Ecore_Drm_Evdev *edev)
 {
@@ -131,7 +146,7 @@ _device_handle(Ecore_Drm_Evdev *edev)
              ioctl(edev->fd, EVIOCGABS(ABS_X), &absinfo);
              edev->abs.min_x = absinfo.minimum;
              edev->abs.max_x = absinfo.maximum;
-             edev->abs.x[0] = edev->abs.x[1] = edev->abs.min_x - 1;
+             edev->abs.rel_w = -1;
              edev->mouse.x = -1;
              edev->caps |= EVDEV_MOTION_ABS;
           }
@@ -141,7 +156,7 @@ _device_handle(Ecore_Drm_Evdev *edev)
              ioctl(edev->fd, EVIOCGABS(ABS_Y), &absinfo);
              edev->abs.min_y = absinfo.minimum;
              edev->abs.max_y = absinfo.maximum;
-             edev->abs.y[0] = edev->abs.y[1] = edev->abs.min_y - 1;
+             edev->abs.rel_h = -1;
              edev->mouse.y = -1;
              edev->caps |= EVDEV_MOTION_ABS;
           }
@@ -409,6 +424,17 @@ _device_notify_motion(Ecore_Drm_Evdev *dev, unsigned int timestamp)
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
+   ev->multi.device = dev->mt_slot;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = ev->x;
+   ev->multi.y = ev->y;
+   ev->multi.root.x = ev->x;
+   ev->multi.root.y = ev->y;
+
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
 
@@ -467,6 +493,17 @@ _device_notify_button(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned 
    ev->y = dev->mouse.y;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
+
+   ev->multi.device = dev->mt_slot;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = ev->x;
+   ev->multi.y = ev->y;
+   ev->multi.root.x = ev->x;
+   ev->multi.root.y = ev->y;
 
    button = ((event->code & 0x00F) + 1);
 
@@ -537,27 +574,26 @@ _device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
         goto out;
         break;
       case EVDEV_ABSOLUTE_TOUCH_DOWN:
-        goto out;
-        break;
-      case EVDEV_ABSOLUTE_MOTION:
-        /* FIXME what the actual fuck */
-        if ((dev->mouse.x == -1) && (dev->mouse.y == -1))
-          {
-             /* start first motion as centered I guess? */
-             dev->mouse.x = (dev->abs.min_x + dev->abs.max_x) / 2;
-             dev->mouse.y = (dev->abs.min_y + dev->abs.max_y) / 2;
-          }
-
-        dev->mouse.x += (dev->abs.x[0] - dev->abs.x[1]);
-        dev->mouse.y += (dev->abs.y[0] - dev->abs.y[1]);
-        dev->mouse.x = MAX(dev->abs.min_x, dev->mouse.x);
-        dev->mouse.y = MAX(dev->abs.min_y, dev->mouse.y);
-        dev->mouse.x = MIN(dev->abs.max_x, dev->mouse.x);
-        dev->mouse.y = MIN(dev->abs.max_y, dev->mouse.y);
-        _device_notify_motion(dev, timestamp);
-        break;
       case EVDEV_ABSOLUTE_TOUCH_UP:
-        goto out;
+        {
+           struct input_event event;
+
+           event.code = 0;
+           event.value = dev->abs.pt[dev->mt_slot].down;
+
+           dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
+           dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
+
+           _device_notify_motion(dev, timestamp);
+           _device_notify_button(dev, &event, timestamp);
+
+           break;
+        }
+      case EVDEV_ABSOLUTE_MOTION:
+        dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
+        dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
+
+        _device_notify_motion(dev, timestamp);
         break;
      }
 
@@ -578,38 +614,60 @@ _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned in
    else if ((event->code >= KEY_ESC) && (event->code <= KEY_MICMUTE))
      _device_notify_key(dev, event, timestamp);
    else if ((event->code == BTN_TOUCH) && (dev->caps & EVDEV_MOTION_ABS))
-     {
-        dev->abs.down = event->value;
-        if (!dev->abs.down)
-          {
-             dev->abs.x[0] = dev->abs.x[1] = dev->abs.min_x - 1;
-             dev->abs.y[0] = dev->abs.y[1] = dev->abs.min_y - 1;
-          }
-     }
+     dev->abs.pt[dev->mt_slot].down = event->value;
 }
 
 static void 
-_device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+_device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp EINA_UNUSED)
 {
+   int tmp;
+
+   _device_axis_update(dev);
+
    switch (event->code)
      {
       case ABS_X:
-        if (dev->pending_event != EVDEV_ABSOLUTE_MOTION)
-          _device_process_flush(dev, timestamp);
-        dev->abs.x[1] = dev->abs.x[0];
-        dev->abs.x[0] = event->value;
-        if (dev->abs.x[1] == dev->abs.min_x - 1)
-          dev->abs.x[1] = dev->abs.x[0];
-        dev->pending_event = EVDEV_ABSOLUTE_MOTION;
+        if (dev->abs.pt[dev->mt_slot].down == 0)
+          return;
+      case ABS_MT_POSITION_X:
+        tmp = (int)((double)(event->value - dev->abs.min_x) / dev->abs.rel_w);
+
+        dev->abs.pt[dev->mt_slot].x[0] = tmp;
+
+        if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_DOWN)
+          if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_UP)
+            dev->pending_event = EVDEV_ABSOLUTE_MOTION;
+
         break;
       case ABS_Y:
-        if (dev->pending_event != EVDEV_ABSOLUTE_MOTION)
-          _device_process_flush(dev, timestamp);
-        dev->abs.y[1] = dev->abs.y[0];
-        dev->abs.y[0] = event->value;
-        if (dev->abs.y[1] == dev->abs.min_y - 1)
-          dev->abs.y[1] = dev->abs.y[0];
-        dev->pending_event = EVDEV_ABSOLUTE_MOTION;
+        if (dev->abs.pt[dev->mt_slot].down == 0)
+          return;
+      case ABS_MT_POSITION_Y:
+        tmp = (int)((double)(event->value - dev->abs.min_y) / dev->abs.rel_h);
+
+        dev->abs.pt[dev->mt_slot].y[0] = tmp;
+
+        if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_DOWN)
+          if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_UP)
+            dev->pending_event = EVDEV_ABSOLUTE_MOTION;
+
+        break;
+      case ABS_MT_SLOT:
+        if (event->value >= 0 && event->value < EVDEV_MAX_SLOTS)
+          dev->mt_slot = event->value;
+
+        break;
+      case ABS_MT_TRACKING_ID:
+        if (event->value < 0)
+          {
+            dev->abs.pt[dev->mt_slot].down = 0;
+            dev->pending_event = EVDEV_ABSOLUTE_TOUCH_UP;
+          }
+        else
+          {
+            dev->abs.pt[dev->mt_slot].down = 1;
+            dev->pending_event = EVDEV_ABSOLUTE_TOUCH_DOWN;
+          }
         break;
      }
 }
@@ -714,6 +772,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
    edev->seat = seat;
    edev->path = eina_stringshare_add(path);
    edev->fd = fd;
+   edev->mt_slot = 0;
 
    if (ioctl(edev->fd, EVIOCGNAME(sizeof(name)), name) < 0)
      DBG("Error getting device name: %m");
@@ -762,4 +821,44 @@ _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *dev)
    if (dev->hdlr) ecore_main_fd_handler_del(dev->hdlr);
 
    free(dev);
+}
+
+
+/**
+ * @brief Set the axis size of the given device.
+ *
+ * @param dev The device to set the axis size to.
+ * @param w The width of the axis.
+ * @param h The height of the axis.
+ *
+ * This function sets set the width @p w and height @p h of the axis
+ * of device @p dev. If @p dev is a relative input device, a width and
+ * height must set for it. If its absolute set the ioctl correctly, if
+ * not, unsupported device.
+ */
+EAPI void
+ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h)
+{
+   if (!dev) return;
+   if ((w < 0) || (h < 0)) return;
+
+   if (dev->caps & EVDEV_MOTION_ABS)
+      {
+         /* FIXME looks like some kernels dont include this struct */
+         struct input_absinfo abs_features;
+
+         ioctl(dev->fd, EVIOCGABS(ABS_X), &abs_features);
+         dev->abs.rel_w = (double)(abs_features.maximum - abs_features.minimum)/(double)(w);
+         dev->abs.min_x = abs_features.minimum;
+
+         ioctl(dev->fd, EVIOCGABS(ABS_Y), &abs_features);
+         dev->abs.rel_h = (double)(abs_features.maximum - abs_features.minimum)/(double)(h);
+         dev->abs.min_y = abs_features.minimum;
+      }
+   else if (!(dev->caps & EVDEV_MOTION_REL))
+      return;
+
+   /* update the local values */
+   if (dev->mouse.x > w - 1) dev->mouse.x = w -1;
+   if (dev->mouse.y > h - 1) dev->mouse.y = h -1;
 }

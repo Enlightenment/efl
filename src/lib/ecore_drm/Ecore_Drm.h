@@ -163,6 +163,7 @@ EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_inputs_enable(Ecore_Drm_Input *input);
 EAPI void ecore_drm_inputs_disable(Ecore_Drm_Input *input);
+EAPI void ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h);
 
 EAPI Eina_Bool ecore_drm_sprites_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_sprites_destroy(Ecore_Drm_Device *dev);
