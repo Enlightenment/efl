@@ -202,6 +202,11 @@ evas_3d_frustum_SOURCES = evas-3d-frustum.c
 evas_3d_frustum_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_frustum_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_moon_space
+evas_3d_moon_space_SOURCES = evas-3d-moon-space.c
+evas_3d_moon_space_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_3d_moon_space_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_3d_aabb
 evas_3d_aabb_SOURCES = evas-3d-aabb.c
 evas_3d_aabb_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
