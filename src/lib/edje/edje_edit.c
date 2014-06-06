@@ -2787,20 +2787,25 @@ edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char
    return EINA_TRUE;
 }
 
-EAPI const char *
-edje_edit_part_clip_to_get(Evas_Object *obj, const char *part)
+static const char *
+_edje_part_clip_to_get(Edje *ed, Edje_Real_Part *rp)
 {
    Edje_Real_Part *clip = NULL;
 
-   GET_RP_OR_RETURN(NULL);
-
-   //printf("Get clip_to for part: %s [to_id: %d]\n", part, rp->part->clip_to_id);
    if (rp->part->clip_to_id < 0) return NULL;
 
    clip = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
    if (!clip || !clip->part || !clip->part->name) return NULL;
 
    return eina_stringshare_add(clip->part->name);
+}
+
+EAPI const char *
+edje_edit_part_clip_to_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(NULL);
+
+   return _edje_part_clip_to_get(ed, rp);
 }
 
 EAPI Eina_Bool
@@ -7478,6 +7483,7 @@ static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTB
 static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW", "FAR_SHADOW", "FAR_SOFT_SHADOW", "GLOW"};
 static const char *shadow_direction[] = {"BOTTOM_RIGHT", "BOTTOM", "BOTTOM_LEFT", "LEFT", "TOP_LEFT", "TOP", "TOP_RIGHT", "RIGHT"};
 static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
+static const char *entry_mode[] = {"NONE", "PLAIN", "EDITABLE", "PASSWORD"};
 
 static Eina_Bool
 _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *pce, Eina_Strbuf *buf);
@@ -8213,39 +8219,83 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    Eina_Bool ret = EINA_TRUE;
    const char *api_name, *api_description;
 
+   GET_RP_OR_RETURN(EINA_FALSE);
+
    BUF_APPENDF(I3"part { name: \"%s\";\n", part);
-   BUF_APPENDF(I4"type: %s;\n", types[edje_edit_part_type_get(obj, part)]);
-   if (!edje_edit_part_mouse_events_get(obj, part))
+   BUF_APPENDF(I4"type: %s;\n", types[rp->part->type]);
+   if (!rp->part->mouse_events)
       BUF_APPEND(I4"mouse_events: 0;\n");
-   if (edje_edit_part_repeat_events_get(obj, part))
+   if (rp->part->repeat_events)
       BUF_APPEND(I4"repeat_events: 1;\n");
-   if (edje_edit_part_scale_get(obj, part))
+   if (rp->part->scale)
      BUF_APPEND(I4"scale: 1;\n");
-   //TODO Support ignore_flags
-   if (edje_edit_part_pointer_mode_get(obj, part) == EVAS_OBJECT_POINTER_MODE_NOGRAB)
+
+   if (rp->part->ignore_flags)
+     BUF_APPENDF(I4"ignore_flags: \"ON_HOLD\";\n");
+   if (rp->part->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB)
      BUF_APPEND(I4"pointer_mode: NOGRAB;\n");
-   if (edje_edit_part_cursor_mode_get(obj, part) == 1)
-     BUF_APPEND(I4"cursor_mode: BEFORE;\n");
-   if (edje_edit_part_precise_is_inside_get(obj, part))
+   if (rp->part->precise_is_inside)
      BUF_APPEND(I4"precise_is_inside: 1;\n");
-   if (edje_edit_part_access_get(obj, part))
+   if (rp->part->access)
      BUF_APPEND(I4"access: 1;\n");
-   if (edje_edit_part_multiline_get(obj, part))
-      BUF_APPEND(I4"multiline: 1;\n");
+
    //TODO Support use_alternate_font_metrics
-   if ((str = edje_edit_part_clip_to_get(obj, part)))
+   if ((str = _edje_part_clip_to_get(ed, rp)))
      {
         BUF_APPENDF(I4"clip_to: \"%s\";\n", str);
         edje_edit_string_free(str);
      }
-   if ((str = edje_edit_part_source_get(obj, part)))
+
+   if ((rp->part->type == EDJE_PART_TYPE_TEXTBLOCK) ||
+       (rp->part->type == EDJE_PART_TYPE_GROUP))
      {
-        BUF_APPENDF(I4"source: \"%s\";\n", str);
-        edje_edit_string_free(str);
+        if ((str = eina_stringshare_add(rp->part->source)))
+          {
+             BUF_APPENDF(I4"source: \"%s\";\n", str);
+             eina_stringshare_del(str);
+          }
+        if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+          {
+             if ((str = eina_stringshare_add(rp->part->source2)))
+               {
+                  BUF_APPENDF(I4"source2: \"%s\";\n", str);
+                  eina_stringshare_del(str);
+               }
+             if ((str = eina_stringshare_add(rp->part->source3)))
+               {
+                  BUF_APPENDF(I4"source3: \"%s\";\n", str);
+                  eina_stringshare_del(str);
+               }
+             if ((str = eina_stringshare_add(rp->part->source4)))
+               {
+                  BUF_APPENDF(I4"source4: \"%s\";\n", str);
+                  eina_stringshare_del(str);
+               }
+             if ((str = eina_stringshare_add(rp->part->source5)))
+               {
+                  BUF_APPENDF(I4"source5: \"%s\";\n", str);
+                  eina_stringshare_del(str);
+               }
+             if ((str = eina_stringshare_add(rp->part->source6)))
+               {
+                  BUF_APPENDF(I4"source6: \"%s\";\n", str);
+                  eina_stringshare_del(str);
+               }
+            if (rp->part->entry_mode)
+              BUF_APPENDF(I4"entry_mode: \"%s\";\n",
+                          entry_mode[rp->part->entry_mode]);
+            if (rp->part->select_mode)
+              BUF_APPENDF(I4"select_mode: \"EXPLICIT\";\n");
+            if (rp->part->cursor_mode)
+              BUF_APPENDF(I4"cursor_mode: \"BEFORE\";\n");
+            if (rp->part->multiline)
+              BUF_APPEND(I4"multiline: 1;\n");
+          }
      }
-   if (edje_edit_part_effect_get(obj, part))
+
+   if (rp->part->effect)
      {
-        int effect = edje_edit_part_effect_get(obj, part);
+        int effect = rp->part->effect;
         if (effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION)
           {
              BUF_APPENDF(I4"effect: %s %s;\n",
@@ -8258,29 +8308,38 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      }
 
    //Dragable
-   if (edje_edit_part_drag_x_get(obj, part) ||
-       edje_edit_part_drag_y_get(obj, part))
+   str = edje_edit_part_drag_event_get(obj, part);
+   if (rp->part->dragable.x || rp->part->dragable.y || str)
      {
-	BUF_APPEND(I4"dragable {\n");
-	BUF_APPENDF(I5"x: %d %d %d;\n",
-				  edje_edit_part_drag_x_get(obj, part),
-				  edje_edit_part_drag_step_x_get(obj, part),
-				  edje_edit_part_drag_count_x_get(obj, part));
-	BUF_APPENDF(I5"y: %d %d %d;\n",
-				  edje_edit_part_drag_y_get(obj, part),
-				  edje_edit_part_drag_step_y_get(obj, part),
-				  edje_edit_part_drag_count_y_get(obj, part));
-	if ((str = edje_edit_part_drag_confine_get(obj, part)))
-	  {
-		BUF_APPENDF(I5"confine: \"%s\";\n", str);
-		edje_edit_string_free(str);
-	  }
-	if ((str = edje_edit_part_drag_event_get(obj, part)))
-	  {
-		BUF_APPENDF(I5"events: \"%s\";\n", str);
-		edje_edit_string_free(str);
-	  }
-	BUF_APPEND(I4"}\n");
+        BUF_APPEND(I4"dragable {\n");
+        if (str)
+          {
+             BUF_APPENDF(I5"events: \"%s\";\n", str);
+             edje_edit_string_free(str);
+          }
+
+         if (rp->part->dragable.x || rp->part->dragable.y)
+           {
+              BUF_APPENDF(I5"x: %d %d %d;\n",
+                                  rp->part->dragable.x,
+                                  rp->part->dragable.step_x,
+                                  rp->part->dragable.count_x);
+              BUF_APPENDF(I5"y: %d %d %d;\n",
+                                  rp->part->dragable.y,
+                                  rp->part->dragable.step_y,
+                                  rp->part->dragable.count_y);
+              if ((str = edje_edit_part_drag_confine_get(obj, part)))
+               {
+                 BUF_APPENDF(I5"confine: \"%s\";\n", str);
+                 edje_edit_string_free(str);
+               }
+              if ((str = edje_edit_part_drag_threshold_get(obj, part)))
+               {
+                 BUF_APPENDF(I5"threshold: \"%s\";\n", str);
+                 edje_edit_string_free(str);
+               }
+           }
+         BUF_APPEND(I4"}\n");
      }
 
    //Descriptions
@@ -8299,28 +8358,27 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      }
    edje_edit_string_list_free(ll);
 
-   api_name = edje_edit_part_api_name_get(obj, part);
-   api_description = edje_edit_part_api_description_get(obj, part);
-
+   api_name = eina_stringshare_add(rp->part->api.name);
+   api_description =eina_stringshare_add(rp->part->api.description);
    if (api_name || api_description)
      {
-	if (api_name && api_description)
-	  {
-	     BUF_APPENDF(I4"api: \"%s\" \"%s\";\n", api_name, api_description);
-	     edje_edit_string_free(api_name);
-	     edje_edit_string_free(api_description);
-	  }
-	else
-	  if (api_name)
-	    {
-	       BUF_APPENDF(I4"api: \"%s\" \"\";\n", api_name);
-	       edje_edit_string_free(api_name);
-	    }
-	  else
-	    {
-	       BUF_APPENDF(I4"api: \"\" \"%s\";\n", api_description);
-	       edje_edit_string_free(api_description);
-	    }
+        if (api_name && api_description)
+         {
+            BUF_APPENDF(I4"api: \"%s\" \"%s\";\n", api_name, api_description);
+            eina_stringshare_del(api_name);
+            eina_stringshare_del(api_description);
+         }
+       else
+         if (api_name)
+           {
+              BUF_APPENDF(I4"api: \"%s\" \"\";\n", api_name);
+              eina_stringshare_del(api_name);
+           }
+         else
+           {
+              BUF_APPENDF(I4"api: \"\" \"%s\";\n", api_description);
+              eina_stringshare_del(api_description);
+           }
      }
 
    BUF_APPEND(I3"}\n");//part
