@@ -1984,7 +1984,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
              else
                {
                   if ((tmp->position <= ((col * row) + x)) &&
-                      (tmp->position > ((col-1) * row) + x))
+                      (tmp->position > ((col - 1) * row) + x))
                     return EINA_TRUE;
                }
           }
