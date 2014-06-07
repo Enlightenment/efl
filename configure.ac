@@ -4687,7 +4687,7 @@ if test -n "$CFOPT_WARNING"; then
     echo "_____________________________________________________________________"
     echo "You have disabled fontconfig. This is going to make general font"
     echo "searching not work, and only some very direct 'load /path/file.ttf'"
-    echo "will wok alongside some old-school ttf file path searching. This"
+    echo "will work alongside some old-school ttf file path searching. This"
     echo "is very likely not what you want, so highly reconsider turning"
     echo "fontconfig off. Having it off will lead to visual problems like"
     echo "missing text in many UI areas etc."
@@ -4746,7 +4746,7 @@ if test -n "$CFOPT_WARNING"; then
   fi
   if test "x${want_eo_id}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "Eo's ID absttraction interface is a major safety system that"
+    echo "Eo's ID abstraction interface is a major safety system that"
     echo "protects code from crashing or misbehaving in many cases. It does"
     echo "come at a slight cost, but the safety and protection is worth it."
     echo "Also by disabling this, you may also introduce security holes in"
