@@ -1917,6 +1917,8 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
              else
                return EINA_TRUE;
           }
+        if (dir == ELM_FOCUS_UP)
+          return EINA_TRUE;
      }
    else if (((sd->horizontal) && (dir == ELM_FOCUS_DOWN)) ||
             ((!sd->horizontal) && (dir == ELM_FOCUS_RIGHT)))
@@ -1936,6 +1938,8 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
              else
                return EINA_TRUE;
           }
+        if (dir == ELM_FOCUS_DOWN)
+          return EINA_TRUE;
      }
    else if (((!sd->horizontal) && (dir == ELM_FOCUS_UP)) ||
             ((sd->horizontal) && (dir == ELM_FOCUS_LEFT)))
@@ -1954,7 +1958,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
           {
              col = cvw / sd->item_width;
              if (col <= 0) col = 1;
-             if (tmp->position < col)
+             if (tmp->position <= col)
                return EINA_TRUE;
           }
      }
@@ -1974,7 +1978,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
              if (x == 0)
                {
                   if ((tmp->position <= (row * col)) &&
-                      (tmp->position > (row *(col - 1))))
+                      (tmp->position > (row * (col - 1))))
                     return EINA_TRUE;
                }
              else
@@ -1993,13 +1997,13 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
              if (x == 0)
                {
                   if ((tmp->position <= (col * row)) &&
-                      (tmp->position >= (col *(row - 1))))
+                      (tmp->position > (col * (row - 1))))
                        return EINA_TRUE;
                }
              else
                {
                   if ((tmp->position <= ((col * row) + x)) &&
-                      (tmp->position >= (col * row)))
+                      (tmp->position > (((col * (row - 1)) + x))))
                     return EINA_TRUE;
                }
           }
