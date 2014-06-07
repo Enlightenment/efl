@@ -339,6 +339,23 @@ EAPI int edje_edit_group_max_h_get(Evas_Object *obj);
  */
 EAPI Eina_Bool edje_edit_group_max_h_set(Evas_Object *obj, int h);
 
+/** Get the group broadcast_signal.
+ *
+ * @param obj Object being edited.
+ *
+ * @return EINA_FALSE if group not accept broadcast signal, EINA_TRUE otherwise (Default to true since 1.1.).
+ */
+EAPI Eina_Bool edje_edit_group_broadcast_signal_get(Evas_Object *obj);
+
+/** Set the group broadcast signal.
+ *
+ * @param obj Object being edited.
+ * @param bs EINA_TRUE if group will accept broadcast signal, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_broadcast_signal_set(Evas_Object *obj, Eina_Bool bs);
+
 //@}
 /******************************************************************************/
 /**************************   ALIAS API   **************************************/

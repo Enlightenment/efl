@@ -1312,6 +1312,22 @@ edje_edit_group_orientation_set(Evas_Object *obj, unsigned char orient)
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_group_broadcast_signal_get(Evas_Object *obj)
+{
+   GET_ED_OR_RETURN(EINA_TRUE);
+   if (!ed->collection) return EINA_TRUE;
+   return ed->collection->broadcast_signal;
+}
+EAPI Eina_Bool
+edje_edit_group_broadcast_signal_set(Evas_Object *obj, Eina_Bool bs)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   if (!ed->collection) return EINA_FALSE;
+   ed->collection->broadcast_signal = bs ? 1 : 0;
+   return EINA_TRUE;
+}
+
 /****************/
 /*  ALIAS  API  */
 /****************/
@@ -8397,7 +8413,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    char *data;
    const char *group = pce->entry;
    Edje_Part_Collection *pc;
-   Eina_Bool ret = EINA_TRUE;
+   Eina_Bool ret = EINA_TRUE, broadcast;
    Eina_List *alias_list = NULL;
 
    obj = edje_edit_object_add(ed->base->evas);
@@ -8441,6 +8457,8 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
       default:
          break;
      }
+   broadcast = edje_edit_group_broadcast_signal_get(obj);
+   if (!broadcast) BUF_APPENDF(I2"broadcast_signal: %d;\n", broadcast);
 
    /* Data */
    if (pc->data)
