@@ -122,8 +122,10 @@ EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const c
  * @param minh The minimum height
  *
  * This sets the minimum size restriction for the object.
+ *
+ * @deprecated use evas_object_size_hint_min_set() instead.
  */
-EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
+EINA_DEPRECATED EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
 
 /**
  * @brief Set the object maximum size.
@@ -133,6 +135,8 @@ EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord 
  * @param maxh The maximum height
  *
  * This sets the maximum size restriction for the object.
+ *
+ * @deprecated use evas_object_size_hint_max_set() instead.
  */
 EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
 
@@ -148,6 +152,8 @@ EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord 
  * swallowed by Edje. The width and height define a preferred size
  * ASPECT and the object may be scaled to be larger or smaller, but
  * retaining the relative scale of both aspect width and height.
+ *
+ * @deprecated use evas_object_size_hint_aspect_set() instead.
  */
 EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 

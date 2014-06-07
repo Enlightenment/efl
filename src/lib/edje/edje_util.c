@@ -2502,63 +2502,26 @@ _edje_part_swallow(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object 
    return EINA_TRUE;
 }
 
-static void
-_recalc_extern_parent(Evas_Object *obj)
-{
-   Evas_Object *parent;
-   Edje *ed;
-
-   parent = evas_object_smart_parent_get(obj);
-   if (!(ed = _edje_fetch(parent))) return;
-
-   ed->dirty = EINA_TRUE;
-   ed->recalc_call = EINA_TRUE; // ZZZ: ???
-   _edje_recalc(ed);
-}
-
 EAPI void
 edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
    if (!obj) return;
-   Edje_Real_Part *rp;
 
    evas_object_size_hint_min_set(obj, minw, minh);
-   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
-   if (rp)
-     {
-        if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-            (!rp->typedata.swallow)) return;
-        rp->typedata.swallow->swallow_params.min.w = minw;
-        rp->typedata.swallow->swallow_params.min.h = minh;
-
-        _recalc_extern_parent(obj);
-     }
 }
 
 EAPI void
 edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh)
 {
    if (!obj) return;
-   Edje_Real_Part *rp;
 
    evas_object_size_hint_max_set(obj, maxw, maxh);
-   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
-   if (rp)
-     {
-        if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-            (!rp->typedata.swallow)) return;
-        rp->typedata.swallow->swallow_params.max.w = maxw;
-        rp->typedata.swallow->swallow_params.max.h = maxh;
-
-        _recalc_extern_parent(obj);
-     }
 }
 
 EAPI void
 edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah)
 {
    if (!obj) return;
-   Edje_Real_Part *rp;
    Evas_Aspect_Control asp;
 
    asp = EVAS_ASPECT_CONTROL_NONE;
@@ -2574,16 +2537,6 @@ edje_extern_object_aspect_set(Evas_Object *obj, Edje_Aspect_Control aspect, Evas
    if (aw < 1) aw = 1;
    if (ah < 1) ah = 1;
    evas_object_size_hint_aspect_set(obj, asp, aw, ah);
-   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
-   if (rp)
-     {
-        if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-            (!rp->typedata.swallow)) return;
-        rp->typedata.swallow->swallow_params.aspect.mode = aspect;
-        rp->typedata.swallow->swallow_params.aspect.w = aw;
-        rp->typedata.swallow->swallow_params.aspect.h = ah;
-        _recalc_extern_parent(obj);
-     }
 }
 
 struct edje_box_layout_builtin {

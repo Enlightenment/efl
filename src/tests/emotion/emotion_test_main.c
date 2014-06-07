@@ -353,11 +353,11 @@ video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
    ratio = emotion_object_ratio_get(obj);
    printf("HANDLE %ix%i @ %3.3f\n", iw, ih, ratio);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
-   edje_extern_object_min_size_set(obj, iw, ih);
+   evas_object_size_hint_min_set(obj, iw, ih);
    edje_object_part_swallow(oe, "video_swallow", obj);
    edje_object_size_min_calc(oe, &w, &h);
    evas_object_resize(oe, w, h);
-   edje_extern_object_min_size_set(obj, 0, 0);
+   evas_object_size_hint_min_set(obj, 0, 0);
    edje_object_part_swallow(oe, "video_swallow", obj);
 }
 
