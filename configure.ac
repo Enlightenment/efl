@@ -1293,22 +1293,56 @@ if test "${want_sdl}" = "yes" && test "${with_opengl}" = "full"; then
 fi
 
 # Cocoa
-dnl AC_ARG_ENABLE([cocoa],
-dnl    [AC_HELP_STRING([--enable-cocoa],
-dnl        [enable MacOS X Cocoa . @<:@default=disabled@:>@])],
-dnl    [
-dnl     if test "x${enableval}" = "xyes" ; then
-dnl        want_cocoa="yes"
-dnl     else
-dnl        want_cocoa="no"
-dnl     fi
-dnl    ],
-dnl    [want_cocoa="no"])
-dnl
-dnl if test "${want_cocoa}" = "yes"; then
-dnl    test cocoa requirements (objc and Cocoa/Cocoa.h)
-dnl fi
-want_cocoa="no"
+AC_ARG_ENABLE([cocoa],
+    [AC_HELP_STRING([--enable-cocoa],
+        [enable MacOS X Cocoa . @<:@default=disabled@:>@])],
+    [
+     if test "x${enableval}" = "xyes" ; then
+        want_cocoa="yes"
+     else
+        want_cocoa="no"
+     fi
+    ],
+    [want_cocoa="no"])
+
+ if test "${want_cocoa}" = "yes"; then
+    #test cocoa requirements (objc and Cocoa/Cocoa.h)
+ 	cocoa_ldflags=""
+   have_cocoa="no"
+   m4_ifdef([AC_PROG_OBJC],
+      [
+       if test "x${have_gnu_objc}" = "xyes" ; then
+          AC_LANG_PUSH([Objective C])
+          LIBS_save="$LIBS"
+          LIBS="$LIBS -framework Cocoa"
+          AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM(
+                 [[
+#include <Cocoa/Cocoa.h>
+                 ]],
+                 [[
+NSWindow *window;
+window = [[NSWindow alloc]
+           initWithContentRect:NSMakeRect(0, 0, 1, 1)
+           styleMask:(NSTitledWindowMask)
+           backing:NSBackingStoreBuffered
+           defer:NO
+           screen:nil
+         ];
+                 ]])],
+             [
+              have_cocoa="yes"
+              cocoa_ldflags="-framework Cocoa"
+             ],
+             [have_cocoa="no"])
+          LIBS="$LIBS_save"
+          AC_MSG_CHECKING([whether Cocoa framework is supported])
+          AC_MSG_RESULT([${have_cocoa}])
+          AC_LANG_POP([Objective C])
+       fi
+   ])
+fi
+AC_SUBST(cocoa_ldflags)
 
 # Drm
 AC_ARG_ENABLE([drm],
@@ -2659,9 +2693,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eina])
 
 ### Checks for header files
 
-dnl TODO: once cocoa is fixed and test-able, add required libs here
-dnl to ECORE_COCOA_LIBS and ECORE_COCOA_CFLAGS.
-dnl Evas already tests for ObjC and Cocoa/Cocoa.h
+EFL_ADD_LIBS([ECORE_COCOA], [-framework Cocoa])
 
 ### Checks for types
 
