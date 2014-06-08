@@ -65,7 +65,7 @@ end:
 }
 
 static int
-_eolian_gen_execute(const char *eo_filename, const char *output_filename)
+_eolian_gen_execute(const char *eo_filename, const char *options, const char *output_filename)
 {
    char eolian_gen_path[PATH_MAX] = "";
    char command[PATH_MAX];
@@ -80,8 +80,8 @@ _eolian_gen_execute(const char *eo_filename, const char *output_filename)
       return -1;
 
    snprintf(command, PATH_MAX,
-         "%s --eo --gi -I "PACKAGE_DATA_DIR"/data -o %s %s",
-         eolian_gen_path, output_filename, eo_filename);
+         "%s %s -I "PACKAGE_DATA_DIR"/data -o %s %s",
+         eolian_gen_path, options, output_filename, eo_filename);
    return system(command);
 }
 
@@ -96,12 +96,12 @@ START_TEST(eolian_dev_impl_code)
 #endif
          );
    remove(output_filepath);
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", output_filepath));
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", "--eo --gi", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_ref.c", output_filepath));
    /* Check that nothing is added */
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", output_filepath));
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", "--eo --gi", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_ref.c", output_filepath));
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl_add.eo", output_filepath));
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl_add.eo", "--eo --gi", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_add_ref.c", output_filepath));
 }
 END_TEST
