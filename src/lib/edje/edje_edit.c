@@ -7634,11 +7634,11 @@ edje_edit_source_generate(Evas_Object *obj)
 
         EINA_LIST_FOREACH(images, l, entry)
           {
-             Eina_Strbuf *buf = _edje_generate_image_source(obj, entry);
-             if (!buf) continue;
+             Eina_Strbuf *gen_buf = _edje_generate_image_source(obj, entry);
+             if (!gen_buf) continue;
 
-             BUF_APPENDF(I1"%s", eina_strbuf_string_get(buf));
-             eina_strbuf_free(buf);
+             BUF_APPENDF(I1"%s", eina_strbuf_string_get(gen_buf));
+             eina_strbuf_free(gen_buf);
           }
 
         BUF_APPEND(I0"}\n\n");
@@ -8557,11 +8557,11 @@ _edje_generate_source(Evas_Object *obj)
 
 	EINA_LIST_FOREACH(ll, l, entry)
 	  {
-             Eina_Strbuf *buf = _edje_generate_image_source(obj, entry);
-	     if (!buf) continue;
+             Eina_Strbuf *gen_buf = _edje_generate_image_source(obj, entry);
+	     if (!gen_buf) continue;
 
-             BUF_APPENDF(I1"%s", eina_strbuf_string_get(buf));
-             eina_strbuf_free(buf);
+             BUF_APPENDF(I1"%s", eina_strbuf_string_get(gen_buf));
+             eina_strbuf_free(gen_buf);
           }
 	BUF_APPEND(I0"}\n\n");
 	edje_edit_string_list_free(ll);
