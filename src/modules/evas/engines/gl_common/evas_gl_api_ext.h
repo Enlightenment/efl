@@ -7,8 +7,13 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #else
-# include <GL/glext.h>
-# include <GL/glx.h>
+# ifdef BUILD_ENGINE_GL_COCOA
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glext.h>
+# else
+#  include <GL/glext.h>
+#  include <GL/glx.h>
+# endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
