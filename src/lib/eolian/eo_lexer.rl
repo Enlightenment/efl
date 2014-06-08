@@ -1490,6 +1490,7 @@ eo_tokenizer_database_fill(const char *filename)
                             }
                     }
                }
+             if (!prop->accessors) database_function_type_set(foo_id, EOLIAN_PROPERTY);
              database_class_function_add(class, foo_id);
           }
 
