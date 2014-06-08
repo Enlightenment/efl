@@ -391,7 +391,7 @@ window = [[NSWindow alloc]
        ]])],
    [
     have_dep="yes"
-    evas_engine_[]$1[]_libs="-framework Cocoa"
+    evas_engine_[]$1[]_libs="-framework Cocoa -framework OpenGL"
    ],
    [have_dep="no"])
 LIBS="$LIBS_save"
