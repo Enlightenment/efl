@@ -44,6 +44,16 @@ typedef struct
    char lower_classname[PATH_MAX];
 }_eolian_class_vars;
 
+typedef struct
+{
+   char upper_func[PATH_MAX];
+
+   char upper_eo_func[PATH_MAX];
+   char lower_eo_func[PATH_MAX];
+
+   char legacy_func[PATH_MAX];
+}_eolian_class_func_vars;
+
 void _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, const char *classname, const char *funcname, Eina_Bool reset);
 
 char *_nextline(char *str, unsigned int lines);
@@ -54,7 +64,6 @@ char *_source_desc_get(const char *str);
 
 void _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_class_vars *env);
 
-void _class_func_names_fill(const Eolian_Class class, const char *classname, const char *funcname);
+void _class_func_env_create(const Eolian_Class class, const char *funcname, Eolian_Function_Type ftype EINA_UNUSED, _eolian_class_func_vars *env);
 
-char capfunc[0xFF];
 #endif

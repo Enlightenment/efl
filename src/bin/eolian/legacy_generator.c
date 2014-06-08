@@ -11,13 +11,13 @@ static _eolian_class_vars class_env;
 static const char
 tmpl_eapi_funcdef[] = "\n\
 /**\n\
- * @def @#class_@#func\n\
+ * @def %s\n\
  *\n\
 @#desc\n\
  *\n\
 @#list_desc_param\
  */\n\
-EAPI @#type_return@#class_@#func(@#is_constEo *obj@#params)@#flags;\n\
+EAPI @#type_return%s(@#is_constEo *obj@#params)@#flags;\n\
 ";
 
 /*@#CLASS_CHECK(obj) @#check_ret;\n\*/
@@ -25,10 +25,10 @@ static const char
 tmpl_eapi_body[] ="\
 \n\
 EAPI @#ret_type\n\
-@#eapi_prefix_@#func(@#is_constEo *obj@#full_params)\n\
+@#eapi_func(@#is_constEo *obj@#full_params)\n\
 {\n\
 @#ret_init_val\
-   eo_do((Eo *) obj, @#eo_ret_assign@#eoprefix_@#func(@#eo_params));\n\
+   eo_do((Eo *) obj, @#eo_ret_assign@#eo_func(@#eo_params));\n\
    return @#ret_val;\n\
 }\n\
 ";
@@ -36,19 +36,19 @@ static const char
 tmpl_eapi_body_void[] ="\
 \n\
 EAPI void\n\
-@#eapi_prefix_@#func(@#is_constEo *obj@#full_params)\n\
+@#eapi_func(@#is_constEo *obj@#full_params)\n\
 {\n\
-   eo_do((Eo *) obj, @#eoprefix_@#func(@#eo_params));\n\
+   eo_do((Eo *) obj, @#eo_func(@#eo_params));\n\
 }\n\
 ";
 
 static void
 _eapi_decl_func_generate(Eolian_Class class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
 {
-   //TODO return value
+   _eolian_class_func_vars func_env;
+   const char *funcname = eolian_function_name_get(funcid);
    const char *suffix = "";
    const char *rettype = NULL;
-   const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
    Eina_Bool ret_const = EINA_FALSE;
@@ -62,13 +62,12 @@ _eapi_decl_func_generate(Eolian_Class class, Eolian_Function funcid, Eolian_Func
    Eina_Strbuf *fparam = eina_strbuf_new();
    Eina_Strbuf *descparam = eina_strbuf_new();
 
-   _class_func_names_fill(class, NULL, NULL);
+   _class_func_env_create(class, funcname, ftype, &func_env);
    rettype = eolian_function_return_type_get(funcid, ftype);
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";
         add_star = EINA_TRUE;
-        func_lpref = eolian_function_data_get(funcid, EOLIAN_LEGACY_GET);
         if (!rettype)
           {
              l = eolian_parameters_list_get(funcid);
@@ -82,29 +81,10 @@ _eapi_decl_func_generate(Eolian_Class class, Eolian_Function funcid, Eolian_Func
           }
      }
 
-   if (ftype == EOLIAN_PROP_SET)
-     {
-        suffix = "_set";
-        func_lpref = eolian_function_data_get(funcid, EOLIAN_LEGACY_SET);
-     }
+   if (ftype == EOLIAN_PROP_SET) suffix = "_set";
 
-   func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
-   if (func_lpref && !strcmp(func_lpref, "null")) goto end;
-
-   if (func_lpref)
-     {
-        _template_fill(fbody, tmpl_eapi_funcdef, NULL, "@#class", "@#func", EINA_FALSE);
-        eina_strbuf_replace_all (fbody, "@#class_@#func", func_lpref);
-     }
-   else
-     {
-        func_lpref = eolian_class_legacy_prefix_get(class);
-        if (func_lpref && !strcmp(func_lpref, "null")) goto end;
-
-        if (!func_lpref) func_lpref = class_env.lower_classname;
-        sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
-        _template_fill(fbody, tmpl_eapi_funcdef, NULL, func_lpref, tmpstr, EINA_FALSE);
-     }
+   if (func_env.legacy_func[0] == '\0') goto end;
+   eina_strbuf_append_printf(fbody, tmpl_eapi_funcdef, func_env.legacy_func, func_env.legacy_func);
 
    sprintf (tmpstr, "comment%s", suffix);
    const char *desc = eolian_function_description_get(funcid, tmpstr);
@@ -210,10 +190,8 @@ end:
 static void
 _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
 {
-   //TODO return value
+   _eolian_class_func_vars func_env;
    char tmpstr[0xFF];
-   const char *suffix = "";
-   const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    const char *rettype = NULL;
    const char *retname = NULL;
@@ -225,14 +203,13 @@ _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Fun
    Eina_Strbuf *fparam = eina_strbuf_new();
    Eina_Strbuf *eoparam = eina_strbuf_new();
 
+   _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
    rettype = eolian_function_return_type_get(funcid, ftype);
    if (rettype && !strcmp(rettype, "void")) ret_is_void = EINA_TRUE;
    retname = "ret";
    if (ftype == EOLIAN_PROP_GET)
      {
-        suffix = "_get";
         add_star = EINA_TRUE;
-        func_lpref = eolian_function_data_get(funcid, EOLIAN_LEGACY_GET);
         if (!rettype)
           {
              const Eina_List *l = eolian_parameters_list_get(funcid);
@@ -245,35 +222,16 @@ _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Fun
                }
           }
      }
-   if (ftype == EOLIAN_PROP_SET)
-     {
-        suffix = "_set";
-        func_lpref = eolian_function_data_get(funcid, EOLIAN_LEGACY_SET);
-     }
 
-   func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
-   if (func_lpref && !strcmp(func_lpref, "null")) goto end;
+   if (func_env.legacy_func[0] == '\0') goto end;
 
    if (rettype && (!ret_is_void))
-     _template_fill(fbody, tmpl_eapi_body, class, NULL, NULL, EINA_FALSE);
+     eina_strbuf_append(fbody, tmpl_eapi_body);
    else
-     _template_fill(fbody, tmpl_eapi_body_void, class, NULL, NULL, EINA_FALSE);
-   eina_strbuf_replace_all(fbody, "@#eoprefix", class_env.lower_eo_prefix);
+     eina_strbuf_append(fbody, tmpl_eapi_body_void);
 
-   if (func_lpref)
-      eina_strbuf_replace_all(fbody, "@#eapi_prefix_@#func", func_lpref);
-   else
-     {
-        func_lpref = eolian_class_legacy_prefix_get(class);
-        if (func_lpref && !strcmp(func_lpref, "null")) goto end;
-
-        if (func_lpref) eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
-        else
-           eina_strbuf_replace_all(fbody, "@#eapi_prefix", class_env.lower_classname);
-     }
-
-   sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
-   eina_strbuf_replace_all(fbody, "@#func", tmpstr);
+   eina_strbuf_replace_all(fbody, "@#eapi_func", func_env.legacy_func);
+   eina_strbuf_replace_all(fbody, "@#eo_func", func_env.lower_eo_func);
 
    const Eina_List *l;
    void *data;

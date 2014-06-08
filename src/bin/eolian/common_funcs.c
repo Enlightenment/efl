@@ -48,29 +48,70 @@ _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_
 }
 
 void
-_class_func_names_fill(const Eolian_Class class EINA_UNUSED, const char *over_classname EINA_UNUSED, const char *funcname)
+_class_func_env_create(const Eolian_Class class, const char *funcname, Eolian_Function_Type ftype, _eolian_class_func_vars *env)
 {
    char *p;
-   if (funcname)
+   const char *suffix = "";
+   const char *legacy = NULL;
+   Eolian_Function funcid = eolian_class_function_find_by_name(class, funcname, ftype);
+   if (ftype == EOLIAN_PROP_GET)
      {
-        strncpy(capfunc, funcname, sizeof(capfunc) - 1);
-        p = capfunc;
-        eina_str_toupper(&p);
+        suffix = "_get";
+        legacy = eolian_function_data_get(funcid, EOLIAN_LEGACY_GET);
      }
+   if (ftype == EOLIAN_PROP_SET)
+     {
+        suffix = "_set";
+        legacy = eolian_function_data_get(funcid, EOLIAN_LEGACY_SET);
+     }
+   if (!legacy) legacy = eolian_function_data_get(funcid, EOLIAN_LEGACY);
+
+   _eolian_class_vars tmp_env;
+   _class_env_create(class, NULL, &tmp_env);
+
+   p = strncpy(env->upper_func, funcname, PATH_MAX - 1);
+   eina_str_toupper(&p);
+
+   sprintf(p = env->upper_eo_func, "%s_%s%s", tmp_env.upper_eo_prefix, funcname, suffix);
+   eina_str_toupper(&p);
+
+   sprintf(p = env->lower_eo_func, "%s_%s%s", tmp_env.lower_eo_prefix, funcname, suffix);
+   eina_str_tolower(&p);
+
+   env->legacy_func[0] = '\0';
+   if (legacy && !strcmp(legacy, "null")) goto end;
+   if (legacy)
+     {
+        sprintf(p = env->legacy_func, "%s", legacy);
+        goto end;
+     }
+
+   legacy = eolian_class_legacy_prefix_get(class);
+   if (legacy && !strcmp(legacy, "null")) goto end;
+
+   sprintf(env->legacy_func, "%s_%s%s", legacy?legacy:tmp_env.lower_classname, funcname, suffix);
+
+end:
+   return;
 }
 
 void
 _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, const char *classname, const char *funcname, Eina_Bool reset)
 {
    _eolian_class_vars tmp_env;
+   _eolian_class_func_vars tmp_func_env;
    _class_env_create(class, classname, &tmp_env);
-   _class_func_names_fill(NULL, NULL, funcname);
+   if (funcname)
+      _class_func_env_create(class, funcname, EOLIAN_UNRESOLVED, &tmp_func_env);
    if (buf)
      {
         if (reset) eina_strbuf_reset(buf);
         if (templ) eina_strbuf_append(buf, templ);
-        if (funcname) eina_strbuf_replace_all(buf, "@#func", funcname);
-        eina_strbuf_replace_all(buf, "@#FUNC", capfunc);
+        if (funcname)
+          {
+             eina_strbuf_replace_all(buf, "@#func", funcname);
+             eina_strbuf_replace_all(buf, "@#FUNC", tmp_func_env.upper_func);
+          }
         eina_strbuf_replace_all(buf, "@#Class", tmp_env.full_classname);
         eina_strbuf_replace_all(buf, "@#class", tmp_env.lower_classname);
         eina_strbuf_replace_all(buf, "@#CLASS", tmp_env.upper_classname);
