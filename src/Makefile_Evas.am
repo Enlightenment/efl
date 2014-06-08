@@ -889,7 +889,9 @@ endif
 modules_evas_engines_gl_cocoa_module_la_LIBADD += \
 @USE_EVAS_LIBS@ \
 @evas_engine_gl_cocoa_libs@
-modules_evas_engines_gl_cocoa_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_engines_gl_cocoa_module_la_DEPENDENCIES = \
+@USE_EVAS_INTERNAL_LIBS@ \
+modules/evas/engines/gl_common/libevas_engine_gl_common.la
 modules_evas_engines_gl_cocoa_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_gl_cocoa_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
