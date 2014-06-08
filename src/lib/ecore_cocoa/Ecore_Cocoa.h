@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
+typedef struct _Ecore_Cocoa_Screen Ecore_Cocoa_Screen;
 
 EAPI extern int ECORE_COCOA_EVENT_GOT_FOCUS;
 EAPI extern int ECORE_COCOA_EVENT_LOST_FOCUS;
@@ -43,12 +44,20 @@ struct _Ecore_Cocoa_Event_Video_Resize
    int             h;
 };
 
+struct _Ecore_Cocoa_Screen
+{
+  int dummy;
+};
 
 /* Core */
 
 EAPI int  ecore_cocoa_init(void);
 EAPI int  ecore_cocoa_shutdown(void);
 EAPI void ecore_cocoa_feed_events(void);
+
+/* Screen */
+
+EAPI void ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h);
 
 /* Window */
 
