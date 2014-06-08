@@ -265,7 +265,6 @@ evas_3d_mesh_file_obj_set(Evas_3D_Mesh *mesh, const char *file)
 
                   _analyze_face_line(auxiliary_pointer,
                                    &count_of_triangles_in_line);
-                  int j;
                   current++;
                   i++;
                   int first_pos, first_tex, first_norm;
