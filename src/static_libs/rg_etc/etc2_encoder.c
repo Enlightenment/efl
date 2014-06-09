@@ -535,6 +535,22 @@ _color_reduce_444(uint32_t color)
    return BGRA(R, G, B, 255);
 }
 
+static uint32_t
+_color_reduce_676(uint32_t color)
+{
+   int R = R_VAL(&color);
+   int G = G_VAL(&color);
+   int B = B_VAL(&color);
+   int R1, G1, B1;
+
+   // FIXME: Do we have better candidates to try?
+   R1 = (R & 0xFC) | (R >> 6);
+   G1 = (G & 0xFE) | (G >> 7);
+   B1 = (B & 0xFC) | (B >> 6);
+
+   return BGRA(R1, G1, B1, 255);
+}
+
 static int
 _block_main_colors_find(uint32_t *color1_out, uint32_t *color2_out,
                         uint32_t color1, uint32_t color2, const uint32_t *bgra,
@@ -757,6 +773,150 @@ found:
    return err;
 }
 
+static inline Eina_Bool
+_etc2_planar_mode_header_pack(uint8_t *etc2,
+                              uint32_t RO, uint32_t RH, uint32_t RV,
+                              uint32_t GO, uint32_t GH, uint32_t GV,
+                              uint32_t BO, uint32_t BH, uint32_t BV)
+{
+   int R, dR;
+   int G, dG;
+   int B, dB;
+
+   // RO_6 [2..5]
+   R = BITS(RO >> 2, 2, 5);
+   // RO_6 [0..1] + GO_7[6]
+   dR = (BITS(RO >> 2, 0, 1) << 1) | BIT(GO >> 1, 6);
+
+   if (!((R + kSigned3bit[dR] >= 0) && (R + kSigned3bit[dR] <= 31)))
+     R |= 1 << 4;
+
+   // GO_7[2..5]
+   G = BITS(GO >> 1, 2, 5);
+   // GO_7[0..1] + BO_6[5]
+   dG = (BITS(GO >> 1, 0, 1) << 1) | BIT(BO >> 2, 5);
+
+   if (!((G + kSigned3bit[dG] >= 0) && (G + kSigned3bit[dG] <= 31)))
+     G |= 1 << 4;
+
+   // BO_6[3..4]
+   B = BITS(BO >> 2, 3, 4);
+   // BO_6[1..2]
+   dB = BITS(BO >> 2, 1, 2);
+
+   // B + dB must be outside the range.
+   for (int Bx = 0; Bx < 8; Bx++)
+     for (int dBx = 0; dBx < 2; dBx++)
+       {
+          int Btry = B | (Bx << 2);
+          int dBtry = dB | (dBx << 2);
+          if ((Btry + kSigned3bit[dBtry]) < 0 || (Btry + kSigned3bit[dBtry] > 31))
+            {
+               B = Btry;
+               dB = dBtry;
+               break;
+            }
+       }
+
+   if (!((R + kSigned3bit[dR] >= 0) && (R + kSigned3bit[dR] <= 31)))
+     return EINA_FALSE;
+
+   if (!((G + kSigned3bit[dG] >= 0) && (G + kSigned3bit[dG] <= 31)))
+     return EINA_FALSE;
+
+   if ((B + kSigned3bit[dB] >= 0) && (B + kSigned3bit[dB] <= 31))
+     return EINA_FALSE;
+
+   // Write everything
+   etc2[0] = (R << 3) | dR;
+   etc2[1] = (G << 3) | dG;
+   etc2[2] = (B << 3) | dB;
+   etc2[3] = (BIT(BO >> 2, 0) << 7) | (BITS(RH >> 2, 1, 5) << 2) | 0x2 | BIT(RH >> 2, 0);
+   etc2[4] = ((GH >> 1) << 1) | BIT(BH >> 2, 5);
+   etc2[5] = (BITS(BH >> 2, 0, 4) << 3) | BITS(RV >> 2, 3, 5);
+   etc2[6] = (BITS(RV >> 2, 0, 2) << 5) | BITS(GV >> 1, 2, 6);
+   etc2[7] = (BITS(GV >> 1, 0, 1) << 6) | (BV >> 2);
+
+   return EINA_TRUE;
+}
+
+static unsigned int
+_etc2_planar_mode_block_pack(uint8_t *etc2,
+                             uint32_t Ocol, uint32_t Hcol, uint32_t Vcol,
+                             const uint32_t *bgra, Eina_Bool write)
+{
+   unsigned int err = 0;
+   uint32_t RO, RH, RV, GO, GH, GV, BO, BH, BV;
+
+   RO = R_VAL(&Ocol);
+   RH = R_VAL(&Hcol);
+   RV = R_VAL(&Vcol);
+   GO = G_VAL(&Ocol);
+   GH = G_VAL(&Hcol);
+   GV = G_VAL(&Vcol);
+   BO = B_VAL(&Ocol);
+   BH = B_VAL(&Hcol);
+   BV = B_VAL(&Vcol);
+
+   if (write)
+     {
+        if (!_etc2_planar_mode_header_pack(etc2, RO, RH, RV, GO, GH, GV, BO, BH, BV))
+          return INT_MAX;
+     }
+
+   // Compute MSE, that's all we need to do
+
+   for (int y = 0; y < 4; y++)
+     for (int x = 0; x < 4; x++)
+       {
+          const int R = CLAMP(((x * (RH - RO)) + y * (RV - RO) + 4 * RO + 2) >> 2);
+          const int G = CLAMP(((x * (GH - GO)) + y * (GV - GO) + 4 * GO + 2) >> 2);
+          const int B = CLAMP(((x * (BH - BO)) + y * (BV - BO) + 4 * BO + 2) >> 2);
+          uint32_t color = BGRA(R, G, B, 255);
+
+          err += _rgb_distance_euclid(color, bgra[x + y * 4]);
+       }
+
+   return err;
+}
+
+static unsigned int
+_etc2_planar_mode_block_encode(uint8_t *etc2, const uint32_t *bgra,
+                               const rg_etc1_pack_params *params EINA_UNUSED)
+{
+   unsigned int err;
+   unsigned int Ocol, Hcol, Vcol, RO, GO, BO, Rx, Gx, Bx;
+
+   // TODO: Scan a broader range to avoid artifacts when the
+   // points O, H or V are exceptions
+
+   /* O is at (0,0)
+    * H is at (4,0)
+    * V is at (0,4)
+    * So, H and V are outside the block.
+    * We extrapolate the values from (0,3) and (3,0).
+    */
+
+   RO = R_VAL(&(bgra[0]));
+   GO = G_VAL(&(bgra[0]));
+   BO = B_VAL(&(bgra[0]));
+   Ocol = _color_reduce_676(bgra[0]);
+
+   Rx = CLAMP(RO + (4 * (R_VAL(&(bgra[3])) - RO)) / 3);
+   Gx = CLAMP(GO + (4 * (G_VAL(&(bgra[3])) - GO)) / 3);
+   Bx = CLAMP(BO + (4 * (B_VAL(&(bgra[3])) - BO)) / 3);
+   Hcol = _color_reduce_676(BGRA(Rx, Gx, Bx, 0xFF));
+
+   Rx = CLAMP(RO + (4 * (R_VAL(&(bgra[12])) - RO)) / 3);
+   Gx = CLAMP(GO + (4 * (G_VAL(&(bgra[12])) - GO)) / 3);
+   Bx = CLAMP(BO + (4 * (B_VAL(&(bgra[12])) - BO)) / 3);
+   Vcol = _color_reduce_676(BGRA(Rx, Gx, Bx, 0xFF));
+
+   err = _etc2_planar_mode_block_pack(etc2, Ocol, Hcol, Vcol, bgra, EINA_TRUE);
+
+   return err;
+}
+
 static unsigned int
 _block_error_calc(const uint32_t *enc, const uint32_t *orig, Eina_Bool perceptual)
 {
@@ -778,34 +938,39 @@ etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
                       rg_etc1_pack_params *params)
 {
    rg_etc1_pack_params safe_params;
-   unsigned int errors[2], minErr = INT_MAX;
-   uint8_t etc2_try[2][8];
+   unsigned int errors[3] = { INT_MAX, INT_MAX, INT_MAX };
+   unsigned int minErr = INT_MAX;
+   uint8_t etc2_try[3][8];
    int bestSolution = 0;
+
+#ifdef DEBUG
+   static int cnt [3] = {0};
+#endif
 
    safe_params.m_dithering = !!params->m_dithering;
    safe_params.m_quality = MINMAX(params->m_quality, 0, 2);
 
-   // TODO: H mode, Planar mode
-
    errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params);
    errors[1] = _etc2_th_mode_block_encode(etc2_try[1], bgra, &safe_params);
+   errors[2] = _etc2_planar_mode_block_encode(etc2_try[2], bgra, &safe_params);
 
 #ifdef DEBUG
-   if (errors[1] < INT_MAX)
-     for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
-       {
-          uint32_t decoded[16];
-          unsigned int real_errors[2];
-          rg_etc2_rgb8_decode_block(etc2_try[1], decoded);
-          real_errors[0] = _block_error_calc(decoded, bgra, EINA_FALSE);
-          real_errors[1] = _block_error_calc(decoded, bgra, EINA_TRUE);
-
-          if (real_errors[0] != errors[1])
+   for (int i = 1; i < 3; i++)
+     {
+        const char *mode = (i == 1) ? "T or H" : "Planar";
+        if (errors[i] < INT_MAX)
+          for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
             {
-               DBG("Invalid error calc in T or H mode");
-               //errors[1] = real_errors[0];
+               uint32_t decoded[16];
+               unsigned int real_errors[2];
+               rg_etc2_rgb8_decode_block(etc2_try[i], decoded);
+               real_errors[0] = _block_error_calc(decoded, bgra, EINA_FALSE);
+               real_errors[1] = _block_error_calc(decoded, bgra, EINA_TRUE);
+
+               if (real_errors[0] != errors[i])
+                 DBG("Invalid error calc in %s mode", mode);
             }
-       }
+     }
 #endif
 
    for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
@@ -819,6 +984,11 @@ etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
 
    minErr += _etc2_alpha_encode(etc2, bgra, &safe_params);
 
+#ifdef DEBUG
+   cnt[bestSolution]++;
+   DBG("Block count by mode: ETC1: %d T/H: %d Planar: %d", cnt[0], cnt[1], cnt[2]);
+#endif
+
    return minErr;
 }
 
@@ -827,17 +997,17 @@ etc2_rgb8_block_pack(unsigned char *etc2, const unsigned int *bgra,
                      rg_etc1_pack_params *params)
 {
   rg_etc1_pack_params safe_params;
-  unsigned int errors[2], minErr = INT_MAX;
-  uint8_t etc2_try[8][2];
+  unsigned int errors[3] = { INT_MAX, INT_MAX, INT_MAX };
+  unsigned int minErr = INT_MAX;
+  uint8_t etc2_try[3][8];
   int bestSolution = 0;
 
   safe_params.m_dithering = !!params->m_dithering;
   safe_params.m_quality = MINMAX(params->m_quality, 0, 2);
 
-  // TODO: Planar mode
-
   errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params);
   errors[1] = _etc2_th_mode_block_encode(etc2_try[1], bgra, &safe_params);
+  errors[2] = _etc2_planar_mode_block_encode(etc2_try[2], bgra, &safe_params);
 
   for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
     if (errors[k] < minErr)
