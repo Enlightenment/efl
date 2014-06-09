@@ -3042,7 +3042,7 @@ edje_edit_state_text_style_get(Evas_Object *obj, const char *part, const char *s
 EAPI Eina_Bool
 edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *state, double value, const char *style);
 
-/** Get part name, which used as text source.
+/** Get part name, which used as style text source.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
@@ -3054,9 +3054,9 @@ edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *s
 EAPI const char *
 edje_edit_state_text_source_get(Evas_Object *obj, const char *part, const char *state, double value);
 
-/** Set the source text part for a given part.
- * Causes the part to display the text content of another part and update them
- * as they change.
+/** Set the source part which would be used as style for text for a given part.
+ * Causes the part to use the text properties (like font and size) of another
+ * part and update them as they change.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
@@ -3077,6 +3077,8 @@ edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *
  *
  * @return A list containing all the fonts names found in the edje file.
  */
+
+
 EAPI Eina_List * edje_edit_fonts_list_get(Evas_Object *obj);
 
 /** Add a new font to the edje file.
