@@ -306,7 +306,7 @@ _eo_call_stack_mem_alloc(size_t maxsize)
    return ptr;
 #else
    //in regular cases just use malloc
-   return malloc(maxsize);
+   return calloc(1, maxsize);
 #endif   
 }
 
