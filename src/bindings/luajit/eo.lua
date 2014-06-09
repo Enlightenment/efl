@@ -73,6 +73,7 @@ M.class_register = function(name, val, addr)
     if addr then
         classes[tonumber(ffi.cast("intptr_t", addr))] = val
     end
+    return val
 end
 
 M.__ctor_common = function(self, klass, parent, ctor, loff, ...)
