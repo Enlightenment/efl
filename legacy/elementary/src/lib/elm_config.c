@@ -1434,6 +1434,16 @@ _config_user_load(void)
         cfg = eet_data_read(ef, _config_edd, "config");
         eet_close(ef);
      }
+
+   if (cfg)
+     {
+        size_t len;
+
+        len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
+        if (len + 1 < sizeof(buf))
+          ecore_file_mkpath(buf);
+     }
+
    return cfg;
 }
 
@@ -1716,6 +1726,18 @@ _elm_config_save(void)
    const char *err;
    Eet_File *ef;
    size_t len;
+
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
+   if (len + 1 >= sizeof(buf))
+     return EINA_FALSE;
+
+   ok = ecore_file_mkpath(buf);
+   if (!ok)
+     {
+        ERR("Problem accessing Elementary's user configuration directory: %s",
+            buf);
+        return EINA_FALSE;
+     }
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
                                        _elm_profile);
