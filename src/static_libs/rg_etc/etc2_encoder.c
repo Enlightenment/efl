@@ -198,10 +198,10 @@ static int
 _etc2_alpha_encode(uint8_t *etc2_alpha, const uint32_t *bgra,
                    const rg_etc1_pack_params *params)
 {
-   int alphas[16], avg = 0, diff = 0, maxDiff = INT_MAX, minErr = INT_MAX;
+   int alphas[16], avg = 0, diff = 0, maxDiff = 0, minErr = INT_MAX;
    int base_codeword;
    int multiplier, bestMult = 0;
-   int modifierIdx, bestIdx = 0;
+   int modifierIdx, bestIdx = 0, bestBase = 128;
    int err, base_range, base_step = 1, max_error = 0;
 
    // Try to select the best alpha value (avg)
@@ -215,7 +215,7 @@ _etc2_alpha_encode(uint8_t *etc2_alpha, const uint32_t *bgra,
    for (int i = 0; i < 16; i++)
      {
         int thisDiff = ABS(alphas[i] - avg);
-        maxDiff = MIN(thisDiff, maxDiff);
+        maxDiff = MAX(thisDiff, maxDiff);
         diff += thisDiff;
      }
 
@@ -234,27 +234,29 @@ _etc2_alpha_encode(uint8_t *etc2_alpha, const uint32_t *bgra,
      {
       // The follow parameters are completely arbitrary.
       // Need some real testing.
-      case rg_etc1_high_quality:
-        base_range = 15;
+      case rg_etc1_high_quality: // exhaustive search
+        base_range = 255;
         base_step = 1;
         break;
-      case rg_etc1_medium_quality:
-        base_range = 6;
-        base_step = 2;
+      case rg_etc1_medium_quality: // tweaked for "decent" results
+        base_range = 40;
+        base_step = 4;
         break;
-      case rg_etc1_low_quality:
-        base_range = 0;
+      case rg_etc1_low_quality: // fast (not even fastest)
+        base_range = 8;
+        base_step = 4;
         break;
      }
 
    // for loop avg, avg-1, avg+1, avg-2, avg+2, ...
    for (int step = 0; step < base_range; step += base_step)
-     for (base_codeword = avg - step; base_codeword <= avg + step; base_codeword += 2 * step)
+     for (base_codeword = CLAMP(avg - step);
+          base_codeword <= CLAMP(avg + step);)
        {
           for (modifierIdx = 0; modifierIdx < 16; modifierIdx++)
             for (multiplier = 0; multiplier < 16; multiplier++)
               {
-                 if ((ABS(multiplier * kAlphaModifiers[modifierIdx][3])) < maxDiff)
+                 if ((ABS(multiplier * kAlphaModifiers[modifierIdx][3]) + ABS(base_codeword - avg)) < maxDiff)
                    continue;
 
                  err = _etc2_alpha_block_pack(etc2_alpha, base_codeword,
@@ -264,16 +266,21 @@ _etc2_alpha_encode(uint8_t *etc2_alpha, const uint32_t *bgra,
                       minErr = err;
                       bestMult = multiplier;
                       bestIdx = modifierIdx;
-                      if (err < max_error)
+                      bestBase = base_codeword;
+                      if (err <= max_error)
                         goto pack_now;
 
                    }
               }
           if (step <= 0) break;
+          if (base_codeword < 255)
+            base_codeword = CLAMP(base_codeword + 2 * step);
+          else
+            break;
        }
 
 pack_now:
-   err = _etc2_alpha_block_pack(etc2_alpha, base_codeword,
+   err = _etc2_alpha_block_pack(etc2_alpha, bestBase,
                                 bestMult, bestIdx, bgra, EINA_TRUE);
    return err;
 }
@@ -986,7 +993,7 @@ etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
 
 #ifdef DEBUG
    cnt[bestSolution]++;
-   DBG("Block count by mode: ETC1: %d T/H: %d Planar: %d", cnt[0], cnt[1], cnt[2]);
+   DBG("Block count by mode: ETC1: %d T/H: %d Planar: %d. Err %d", cnt[0], cnt[1], cnt[2], minErr);
 #endif
 
    return minErr;
