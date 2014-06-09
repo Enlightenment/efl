@@ -10,6 +10,9 @@
 
 #define EOLIAN
 
+/* When used, it indicates that the function is an Eo API. */
+#define EOAPI EAPI
+
 #ifdef _WIN32
 # ifdef EFL_EO_BUILD
 #  ifdef DLL_EXPORT

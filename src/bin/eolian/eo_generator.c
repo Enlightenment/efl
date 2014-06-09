@@ -122,7 +122,7 @@ eo_fundef_generate(const Eolian_Class class, Eolian_Function func, Eolian_Functi
       eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
 
    eina_strbuf_append(str_func, tmpl_eo_funcdef_doxygen);
-   eina_strbuf_append_printf(str_func, "EAPI @#rettype %s(@#full_params);\n", func_env.lower_eo_func);
+   eina_strbuf_append_printf(str_func, "EOAPI @#rettype %s(@#full_params);\n", func_env.lower_eo_func);
 
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#endif\n");
@@ -272,7 +272,7 @@ eo_header_generate(const Eolian_Class class, Eina_Strbuf *buf)
         char* s = (char *)eina_strbuf_string_get(tmpbuf);
         eina_str_toupper(&s);
         eina_strbuf_append_printf(str_ev, "#define %s (&(_%s))\n", s, s);
-        eina_strbuf_append_printf(str_extrn_ev, "EAPI extern const Eo_Event_Description _%s;\n", s);
+        eina_strbuf_append_printf(str_extrn_ev, "EOAPI extern const Eo_Event_Description _%s;\n", s);
      }
 
    int i;
@@ -409,7 +409,7 @@ eo_bind_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_F
         Eina_Bool ret_is_void = (!rettype || !strcmp(rettype, "void"));
         _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
         eina_strbuf_append_printf(eo_func_decl,
-              "EAPI EO_%sFUNC_BODY%s(%s",
+              "EOAPI EO_%sFUNC_BODY%s(%s",
               ret_is_void?"VOID_":"", has_params?"V":"",
               func_env.lower_eo_func);
         if (!ret_is_void)
@@ -505,7 +505,7 @@ eo_source_beginning_generate(const Eolian_Class class, Eina_Strbuf *buf)
         eina_strbuf_replace_all(str_ev, ",", "_");
 
         eina_strbuf_append_printf(tmpbuf,
-                                  "EAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION(\"%s\", \"%s\");\n",
+                                  "EOAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION(\"%s\", \"%s\");\n",
                                   eina_strbuf_string_get(str_ev), evname, evdesc_line1);
         free(evdesc_line1);
      }
