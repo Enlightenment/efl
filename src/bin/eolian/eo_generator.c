@@ -62,7 +62,6 @@ const Eo_Class *@#class_class_get(void) EINA_CONST;\n\
 static const char
 tmpl_eo_funcdef_doxygen[] = "\
 /**\n\
- * @def %s\n\
  *\n\
 @#desc\n\
  *\n\
@@ -122,7 +121,7 @@ eo_fundef_generate(const Eolian_Class class, Eolian_Function func, Eolian_Functi
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
 
-   eina_strbuf_append_printf(str_func, tmpl_eo_funcdef_doxygen, func_env.lower_eo_func);
+   eina_strbuf_append(str_func, tmpl_eo_funcdef_doxygen);
    eina_strbuf_append_printf(str_func, "EAPI @#rettype %s(@#full_params);\n", func_env.lower_eo_func);
 
    if (scope == EOLIAN_SCOPE_PROTECTED)
@@ -230,20 +229,19 @@ eo_header_generate(const Eolian_Class class, Eina_Strbuf *buf)
    Eina_Strbuf * str_hdr = eina_strbuf_new();
 
    const char *desc = eolian_class_description_get(class);
-   Eina_Strbuf *linedesc = eina_strbuf_new();
-   eina_strbuf_append(linedesc, "/**\n");
    _class_env_create(class, NULL, &class_env);
 
    if (desc)
      {
+        Eina_Strbuf *linedesc = eina_strbuf_new();
+        eina_strbuf_append(linedesc, "/**\n");
         eina_strbuf_append(linedesc, desc);
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");
+        eina_strbuf_append(linedesc, "\n */\n");
+        eina_strbuf_replace_all(linedesc, " * \n", " *\n"); /* Remove trailing whitespaces */
+        eina_strbuf_append(buf, eina_strbuf_string_get(linedesc));
+        eina_strbuf_free(linedesc);
      }
-
-   eina_strbuf_append(linedesc, "\n */\n");
-   eina_strbuf_replace_all(linedesc, " * \n", " *\n"); /* Remove trailing whitespaces */
-   eina_strbuf_append(buf, eina_strbuf_string_get(linedesc));
-   eina_strbuf_free(linedesc);
 
    _template_fill(str_hdr, tmpl_eo_obj_header, class, NULL, NULL, EINA_TRUE);
 

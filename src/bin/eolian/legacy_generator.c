@@ -11,7 +11,6 @@ static _eolian_class_vars class_env;
 static const char
 tmpl_eapi_funcdef[] = "\n\
 /**\n\
- * @def %s\n\
  *\n\
 @#desc\n\
  *\n\
@@ -84,7 +83,7 @@ _eapi_decl_func_generate(Eolian_Class class, Eolian_Function funcid, Eolian_Func
    if (ftype == EOLIAN_PROP_SET) suffix = "_set";
 
    if (func_env.legacy_func[0] == '\0') goto end;
-   eina_strbuf_append_printf(fbody, tmpl_eapi_funcdef, func_env.legacy_func, func_env.legacy_func);
+   eina_strbuf_append_printf(fbody, tmpl_eapi_funcdef, func_env.legacy_func);
 
    sprintf (tmpstr, "comment%s", suffix);
    const char *desc = eolian_function_description_get(funcid, tmpstr);
@@ -309,18 +308,17 @@ legacy_header_generate(const Eolian_Class class, Eina_Strbuf *buf)
    _class_env_create(class, NULL, &class_env);
 
    const char *desc = eolian_class_description_get(class);
-   Eina_Strbuf *linedesc = eina_strbuf_new();
-   eina_strbuf_append(linedesc, "/**\n");
    if (desc)
      {
+        Eina_Strbuf *linedesc = eina_strbuf_new();
+        eina_strbuf_append(linedesc, "/**\n");
         eina_strbuf_append(linedesc, desc);
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");
+        eina_strbuf_append(linedesc, "\n */\n");
+        eina_strbuf_replace_all(linedesc, " * \n", " *\n"); /* Remove trailing whitespaces */
+        eina_strbuf_append(buf, eina_strbuf_string_get(linedesc));
+        eina_strbuf_free(linedesc);
      }
-
-   eina_strbuf_append(linedesc, "\n */\n");
-   eina_strbuf_replace_all(linedesc, " * \n", " *\n"); /* Remove trailing whitespaces */
-   eina_strbuf_append(buf, eina_strbuf_string_get(linedesc));
-   eina_strbuf_free(linedesc);
 
    int i;
    for (i = 0; i < 2; i++)
