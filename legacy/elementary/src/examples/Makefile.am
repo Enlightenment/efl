@@ -139,8 +139,8 @@ transit_example_04.c \
 web_example_01.c \
 web_example_02.c \
 win_example.c \
-3d_scene_on_button_example.c \
-button_on_3d_object_example.c \
+evas3d_scene_on_button_example.c \
+evas3d_object_on_button_example.c \
 track_example_01.c
 
 .edc.edj:
@@ -280,8 +280,8 @@ transit_example_04 \
 web_example_01 \
 web_example_02 \
 win_example \
-3d_scene_on_button_example \
-button_on_3d_object_example \
+evas3d_scene_on_button_example \
+evas3d_object_on_button_example \
 track_example_01
 
 if ELEMENTARY_WINDOWS_BUILD
