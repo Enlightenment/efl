@@ -1538,6 +1538,13 @@ START_TEST(evas_textblock_items)
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w2, &h2);
    fail_if((w != w2) || (h != h2));
 
+   buf = "<ellipsis=1.0>a<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item></ellipsis>";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_resize(tb, 30, 30);
+   evas_textblock_cursor_pos_set(cur, 1);
+   if (evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h))
+     fail_if((w != 64) || (h != 64));
+
    /* FIXME: Also verify x,y positions of the item. */
 
    /* FIXME We need some item tests that involve line wrapping that make the
