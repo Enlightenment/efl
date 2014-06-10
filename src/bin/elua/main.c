@@ -17,10 +17,11 @@ enum
    ARG_LIBDIR
 };
 
-static Eina_List  *modlist     = NULL;
-static int         require_ref = LUA_REFNIL;
-static int         appload_ref = LUA_REFNIL;
-static const char *progname    = NULL;
+static Eina_List   *modlist     = NULL;
+static int          require_ref = LUA_REFNIL;
+static int          appload_ref = LUA_REFNIL;
+static const char  *progname    = NULL;
+static Eina_Prefix *prefix      = NULL;
 
 int el_log_domain = -1;
 
@@ -125,6 +126,7 @@ register_require(lua_State *L)
    Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(4)), *l = NULL;
    Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(5));
    Arg_Data   *data     = NULL;
+   char corepathbuf[PATH_MAX], modpathbuf[PATH_MAX], appspathbuf[PATH_MAX];
    int n = 2;
    lua_pushvalue(L, 1);
    require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -141,17 +143,29 @@ register_require(lua_State *L)
         if (!corepath)
           {
              if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
-                corepath = ELUA_CORE_DIR;
+               {
+                  corepath = corepathbuf;
+                  snprintf(corepathbuf, sizeof(corepathbuf), "%s/core",
+                           eina_prefix_data_get(prefix));
+               }
           }
         if (!modpath)
           {
              if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
-                modpath = ELUA_MODULES_DIR;
+               {
+                  modpath = modpathbuf;
+                  snprintf(modpathbuf, sizeof(modpathbuf), "%s/modules",
+                           eina_prefix_data_get(prefix));
+               }
           }
         if (!appspath)
           {
              if (noenv || !(appspath = getenv("ELUA_APPS_DIR")) || !appspath[0])
-                appspath = ELUA_APPS_DIR;
+               {
+                  appspath = appspathbuf;
+                  snprintf(appspathbuf, sizeof(appspathbuf), "%s/apps",
+                           eina_prefix_data_get(prefix));
+               }
           }
      }
    lua_pushfstring(L, "%s/?.lua;", corepath);
@@ -253,6 +267,8 @@ shutdown(lua_State *L, int c)
         lua_rawgeti(L, LUA_REGISTRYINDEX, (size_t)data);
         lua_call(L, 0, 0);
      }
+
+   if (prefix) eina_prefix_free(prefix);
 
    if (L) lua_close(L);
    eina_shutdown();
@@ -395,7 +411,8 @@ lua_main(lua_State *L)
    Arg_Data   *data    = NULL;
    const char *coref   = NULL;
    char       *coredir = NULL, *moddir = NULL, *appsdir = NULL;
-   char        modfile[1024];
+   char        modfile[PATH_MAX];
+   char       corefbuf[PATH_MAX];
 
    int ch;
 
@@ -448,6 +465,17 @@ lua_main(lua_State *L)
 
    luaL_openlibs(L);
 
+   prefix = eina_prefix_new(progname, lua_main, "ELUA", "elua", NULL,
+                            PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
+                            LOCALE_DIR);
+
+   if (!prefix)
+     {
+        ERR("could not find elua prefix");
+        m->status = 1;
+        return 0;
+     }
+
    if (getenv("EFL_RUN_IN_TREE"))
      {
         Arg_Data *v = malloc(sizeof(Arg_Data));
@@ -459,7 +487,11 @@ lua_main(lua_State *L)
    else if (!(coref = coredir))
      {
         if (noenv || !(coref = getenv("ELUA_CORE_DIR")) || !coref[0])
-           coref = ELUA_CORE_DIR;
+          {
+             coref = corefbuf;
+             snprintf(corefbuf, sizeof(corefbuf), "%s/core",
+                     eina_prefix_data_get(prefix));
+          }
      }
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
    if (report(L, elua_loadfile(L, modfile)))

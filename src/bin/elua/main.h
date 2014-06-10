@@ -12,18 +12,6 @@
 # define _(x) (x)
 #endif
 
-#ifndef ELUA_CORE_DIR
-# define ELUA_CORE_DIR "."
-#endif
-
-#ifndef ELUA_MODULES_DIR
-# define ELUA_MODULES_DIR "."
-#endif
-
-#ifndef ELUA_APPS_DIR
-# define ELUA_APPS_DIR "."
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 

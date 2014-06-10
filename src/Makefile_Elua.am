@@ -7,11 +7,11 @@ bin_elua_elua_SOURCES = \
     bin/elua/main.c \
     bin/elua/io.c
 
-bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
-    -DELUA_CORE_DIR="\"$(datadir)/elua/core\"" \
-    -DELUA_MODULES_DIR="\"$(datadir)/elua/modules\"" @ELUA_CFLAGS@ \
+bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
     -DLOCALE_DIR=\"@LOCALE_DIR@\" \
-    -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\"
+    -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+    -DPACKAGE_BIN_DIR=\"$(bindir)\" \
+    -DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
 if HAVE_WIN32
 bin_elua_elua_LDADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@
 else
