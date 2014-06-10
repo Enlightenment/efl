@@ -3417,6 +3417,71 @@ FUNC_PART_DRAG_ID(confine);
 FUNC_PART_DRAG_ID(event);
 FUNC_PART_DRAG_ID(threshold);
 
+EAPI Eina_Bool
+edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
+{
+
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+      (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          return EINA_FALSE;
+     }
+
+   ep->items_count++;
+   ep->items = realloc(ep->items, sizeof (Edje_Pack_Element *) * ep->items_count);
+   item = _alloc(sizeof (Edje_Pack_Element));
+   ep->items[ep->items_count - 1] = item;
+
+   item->type = EDJE_PART_TYPE_GROUP;
+   item->name = eina_stringshare_add(item_name);
+   item->source = eina_stringshare_add(source_group);
+   item->min.w = 0;
+   item->min.h = 0;
+   item->prefer.w = 0;
+   item->prefer.h = 0;
+   item->max.w = -1;
+   item->max.h = -1;
+   item->padding.l = 0;
+   item->padding.r = 0;
+   item->padding.t = 0;
+   item->padding.b = 0;
+   item->align.x = FROM_DOUBLE(0.5);
+   item->align.y = FROM_DOUBLE(0.5);
+   item->weight.x = FROM_DOUBLE(0.0);
+   item->weight.y = FROM_DOUBLE(0.0);
+   item->aspect.w = 0;
+   item->aspect.h = 0;
+   item->aspect.mode = EDJE_ASPECT_CONTROL_NONE;
+   item->options = NULL;
+   item->col = -1;
+   item->row = -1;
+   item->colspan = 1;
+   item->rowspan = 1;
+   item->spread.w = 1;
+   item->spread.h = 1;
+
+   return EINA_TRUE;
+}
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -8499,6 +8564,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    char *data;
    Eina_Bool ret = EINA_TRUE;
    const char *api_name, *api_description;
+   unsigned int i = 0;
+   Edje_Pack_Element *item;
 
    GET_RP_OR_RETURN(EINA_FALSE);
 
@@ -8586,6 +8653,44 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
         else
           BUF_APPENDF(I4"effect: %s;\n",
                       effects[effect]);
+     }
+
+   //Box
+   if ((edje_edit_part_type_get(obj, part) == EDJE_PART_TYPE_BOX) ||
+       (edje_edit_part_type_get(obj, part) == EDJE_PART_TYPE_TABLE))
+     {
+        if (ep->items_count != 0)
+          {
+             BUF_APPEND(I4"box {\n");
+             BUF_APPEND(I5"items {\n");
+             for (i = 0; i < ep->items_count; ++i)
+               {
+                  item = ep->items[i];
+                  BUF_APPEND(I6"item {\n");
+                  BUF_APPENDF(I7"type: %s;\n", types[item->type]);
+                  if (item->name)
+                    BUF_APPENDF(I7"name: \"%s\";\n", item->name);
+                  if (item->source)
+                    BUF_APPENDF(I7"source: \"%s\";\n", item->source);
+                  //TODO min
+                  //TODO prefer
+                  //TODO max
+                  //TODO padding
+                  //TODO align
+                  //TODO weight
+                  //TODO aspect
+                  //TODO aspect mode
+                  //TODO options
+                  //TODO col
+                  //TODO row
+                  //TODO colspan
+                  //TODO rowspan
+                  //TODO spread
+                  BUF_APPEND(I6"}\n");
+               }
+             BUF_APPEND(I5"}\n");
+             BUF_APPEND(I4"}\n");
+          }
      }
 
    //Dragable

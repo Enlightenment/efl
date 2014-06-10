@@ -1552,6 +1552,16 @@ EAPI const char * edje_edit_part_drag_threshold_get(Evas_Object *obj, const char
  */
 EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *part, const char *threshold);
 
+/** Append new item to box or table part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to add a new item. This part should have BOX or TABLE type.
+ * @param item_name Name of new item that is not exist in BOX or TABLE yet.
+ * @param source_group Source (means group name) of the
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group);
 
 //@}
 /******************************************************************************/
