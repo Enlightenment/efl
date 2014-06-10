@@ -369,7 +369,7 @@ const luaL_reg gettextlib[] =
 };
 
 static void
-print_help(const char *progname, FILE *stream)
+print_help(const char *pname, FILE *stream)
 {
    fprintf(stream, "Usage: %s [OPTIONS] [SCRIPT [ARGS]]\n\n"
                    "A main entry for all EFL/LuaJIT powered applications.\n\n"
@@ -383,7 +383,7 @@ print_help(const char *progname, FILE *stream)
                    "  -e[CODE],    --execute=[CODE]       Execute string 'code'.\n"
                    "  -l[LIBRARY], --library=[LIBRARY]    Require library 'library'.\n"
                    "  -I[DIR],     --lib-dir=[DIR]        Append an additional require path.\n"
-                   "  -E,          --noenv                Ignore environment variables.\n", progname);
+                   "  -E,          --noenv                Ignore environment variables.\n", pname);
 }
 
 static struct option lopt[] =
