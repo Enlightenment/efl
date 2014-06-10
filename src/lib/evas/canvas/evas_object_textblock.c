@@ -10161,6 +10161,7 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
 
    if (!evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
    _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+   if (it && (it->type != EVAS_TEXTBLOCK_ITEM_FORMAT)) return EINA_FALSE;
    fi = _ITEM_FORMAT(it);
    if ((!ln) || (!fi)) return EINA_FALSE;
    x = ln->x + fi->parent.x;
