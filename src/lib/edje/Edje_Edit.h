@@ -2148,6 +2148,52 @@ EAPI int edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const cha
  */
 EAPI Eina_Bool edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, double value, int max_h);
 
+/** Get the multiplier (minmul) width value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get multiplier width (not including the state value).
+ * @param value The state value.
+ *
+ * @return The maximum width value.
+ */
+EAPI double edje_edit_state_minmul_w_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the multiplier (minmul) width value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set multiplier width (not including the state value).
+ * @param value The state value.
+ * @param minmul_w Multiplier width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_minmul_w_set(Evas_Object *obj, const char *part, const char *state, double value, double minmul_w);
+
+/** Get the multiplier (minmul) height value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get multiplier height (not including the state value).
+ * @param value The state value.
+ *
+ * @return The maximum height value.
+ */
+EAPI double edje_edit_state_minmul_h_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the multiplier (minmul) height value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set multiplier height (not including the state value).
+ * @param value The state value.
+ * @param minmul_h Multiplier height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_minmul_h_set(Evas_Object *obj, const char *part, const char *state, double value, double minmul_h);
+
 /** Get the fixed width value of a part state.
  *
  * @param obj Object being edited.

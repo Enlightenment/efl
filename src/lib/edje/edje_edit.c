@@ -4284,6 +4284,8 @@ FUNC_STATE_BOOL(fixed, w);
 FUNC_STATE_BOOL(fixed, h);
 FUNC_STATE_DOUBLE(aspect, min);
 FUNC_STATE_DOUBLE(aspect, max);
+FUNC_STATE_DOUBLE(minmul, w);
+FUNC_STATE_DOUBLE(minmul, h);
 
 EAPI Eina_Bool
 edje_edit_state_fill_smooth_get(Evas_Object *obj, const char *part, const char *state, double value)
@@ -8285,6 +8287,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      BUF_APPENDF(I5"min: %d %d;\n", pd->min.w, pd->min.h);
    if (pd->max.w != -1 || pd->max.h != -1)
      BUF_APPENDF(I5"max: %d %d;\n", pd->max.w, pd->max.h);
+   if (pd->minmul.w != 0 || pd->minmul.h != 0)
+     BUF_APPENDF(I5"minmul: %g %g;\n", TO_DOUBLE(pd->minmul.w), TO_DOUBLE(pd->minmul.h));
 
    //TODO Support step
 
