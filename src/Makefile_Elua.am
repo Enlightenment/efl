@@ -67,11 +67,6 @@ eluaeina_DATA = \
 
 EXTRA_DIST += $(eluaeina_DATA)
 
-eluaeolian_DATA = \
-	bindings/luajit/eolian.lua
-
-EXTRA_DIST += $(eluaeolian_DATA)
-
 eluacoredir = $(datadir)/elua/core
 
 eluacore_DATA = \
