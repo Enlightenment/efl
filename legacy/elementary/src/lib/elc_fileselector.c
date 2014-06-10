@@ -131,6 +131,7 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 
    SWALLOW("elm.swallow.path", sd->path_entry);
    SWALLOW("elm.swallow.filename", sd->name_entry);
+   SWALLOW("elm.swallow.search", sd->search_entry);
 
    snprintf(buf, sizeof(buf), "fileselector/actions/%s", style);
    SWALLOW("elm.swallow.filters", sd->filter_hoversel);
@@ -369,6 +370,8 @@ _ls_filter_cb(void *data,
    Listing_Request *lreq = data;
    Elm_Fileselector_Filter *cf;
    Eina_Bool dir = EINA_FALSE;
+   char *pch = NULL, *temp = NULL;
+   char temp_path[EINA_PATH_MAX];
 
    if (!lreq->sd->hidden_visible && info->path[info->name_start] == '.')
      return EINA_FALSE;
@@ -378,6 +381,21 @@ _ls_filter_cb(void *data,
 
    if (lreq->sd->only_folder && !dir)
      return EINA_FALSE;
+
+   //Search entry filter
+   if ((lreq->sd->search_string) && (lreq->sd->search_string[0] != '\0'))
+     {
+        strcpy(temp_path, info->path);
+        pch = strchr(temp_path, '/');
+        while (pch != NULL)
+          {
+             temp = pch;
+             pch = strchr(pch + 1, '/');
+          }
+        temp++;
+        if ((temp) && (lreq->sd->search_string) && (!strstr(temp, lreq->sd->search_string)))
+          return EINA_FALSE;
+     }
 
    cf = lreq->sd->current_filter;
    if (!cf)
@@ -1335,6 +1353,17 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void _preedit_cb(void *data, Evas_Object *obj,
+                        void *event_info EINA_UNUSED)
+{
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+
+   sd->search_string = elm_entry_entry_get(obj);
+
+   if (sd->search_string && sd->path)
+     _populate(data, sd->path, NULL, NULL);
+}
+
 EOLIAN static void
 _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 {
@@ -1426,6 +1455,20 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 
    elm_widget_sub_object_add(obj, en);
    priv->name_entry = en;
+
+   //search entry
+   en = elm_entry_add(obj);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   elm_entry_editable_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(en, "changed", _preedit_cb, obj);
+
+   elm_widget_sub_object_add(obj, en);
+   priv->search_entry = en;
 
    elm_fileselector_buttons_ok_cancel_set(obj, EINA_TRUE);
    elm_fileselector_is_save_set(obj, EINA_FALSE);

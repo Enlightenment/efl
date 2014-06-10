@@ -27,6 +27,7 @@ struct _Elm_Fileselector_Data
    Evas_Object             *obj;
    Evas_Object             *path_entry;
    Evas_Object             *name_entry;
+   Evas_Object             *search_entry;
    Evas_Object             *files_view;
    Evas_Object             *up_button;
    Evas_Object             *home_button;
@@ -46,6 +47,7 @@ struct _Elm_Fileselector_Data
    Ecore_Idler             *populate_idler;
 
    const char              *path_separator;
+   const char              *search_string;
 
    Eio_File                *current;
    Eio_Monitor             *monitor;
