@@ -3529,6 +3529,9 @@ _elm_win_borderless_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool borderl
                 ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
                  (!strcmp(engine_name, ELM_WAYLAND_EGL)));
 
+   if (need_frame)
+     need_frame = !sd->fullscreen;
+
    if (borderless)
      {
         if (need_frame)
@@ -3651,6 +3654,9 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
         need_frame = engine_name &&
                      ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
                       (!strcmp(engine_name, ELM_WAYLAND_EGL)));
+
+        if (need_frame)
+          need_frame = !ecore_evas_borderless_get(sd->ee);
 
         TRAP(sd, fullscreen_set, fullscreen);
 
