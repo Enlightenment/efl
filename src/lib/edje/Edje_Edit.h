@@ -3069,6 +3069,31 @@ edje_edit_state_text_source_get(Evas_Object *obj, const char *part, const char *
 EAPI Eina_Bool
 edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source);
 
+/** Get the text class of the given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get text class (not including the state value).
+ * @param value The state value.
+ *
+ * @return The current text class.
+ */
+EAPI const char *
+edje_edit_state_text_class_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the text class of the given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set text class (not including the state value).
+ * @param value The state value.
+ * @param color_class The text class to assign.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text_class);
+
 /** Get the list of all the fonts in the given edje.
  *
  * Use edje_edit_string_list_free() when you don't need the list anymore.

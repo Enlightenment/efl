@@ -4753,7 +4753,6 @@ EAPI Eina_Bool
 edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text)
 {
    Edje_Part_Description_Text *txt;
-
    if ((!obj) || (!part) || (!state) || (!text))
      return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
@@ -5207,6 +5206,36 @@ edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *
 
    /* need to recalc, because the source part can has a text */
    edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI const char*
+edje_edit_state_text_class_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Part_Description_Text *txt;
+   GET_PD_OR_RETURN(NULL);
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return NULL;
+   txt = (Edje_Part_Description_Text *) pd;
+
+   return eina_stringshare_add(txt->text.text_class);
+}
+
+EAPI Eina_Bool
+edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text_class)
+{
+   Edje_Part_Description_Text *txt;
+   if (!text_class) return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+   txt = (Edje_Part_Description_Text *) pd;
+
+   txt->text.text_class = (char *) eina_stringshare_add(text_class);
    return EINA_TRUE;
 }
 
