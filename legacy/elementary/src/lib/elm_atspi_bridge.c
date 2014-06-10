@@ -62,8 +62,8 @@ static Eina_Bool _children_changed_signal_send(void *data, Eo *obj, const Eo_Eve
 static Eina_Bool _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eo * _access_object_from_path(const char *path);
-static char * _path_from_access_object(Eo *eo);
-static void _object_append_reference(Eldbus_Message_Iter *iter,  Eo *obj);
+static char * _path_from_access_object(const Eo *eo);
+static void _object_append_reference(Eldbus_Message_Iter *iter, const Eo *obj);
 static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
 static void _cache_build(void *obj);
 static void _object_register(Eo *obj, char *path);
@@ -350,6 +350,36 @@ const int elm_states_to_atspi_state[][2] = {
    { ELM_ATSPI_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED },
 };
 
+const int elm_relation_to_atspi_relation_mapping[] = {
+   [ELM_ATSPI_RELATION_NULL] =  ATSPI_RELATION_NULL,
+   [ELM_ATSPI_RELATION_LABEL_FOR] =  ATSPI_RELATION_LABEL_FOR,
+   [ELM_ATSPI_RELATION_LABELLED_BY] = ATSPI_RELATION_LABELLED_BY,
+   [ELM_ATSPI_RELATION_CONTROLLER_FOR] = ATSPI_RELATION_CONTROLLER_FOR,
+   [ELM_ATSPI_RELATION_CONTROLLED_BY] = ATSPI_RELATION_CONTROLLED_BY,
+   [ELM_ATSPI_RELATION_MEMBER_OF] = ATSPI_RELATION_MEMBER_OF,
+   [ELM_ATSPI_RELATION_TOOLTIP_FOR] = ATSPI_RELATION_TOOLTIP_FOR,
+   [ELM_ATSPI_RELATION_NODE_CHILD_OF] = ATSPI_RELATION_NODE_CHILD_OF,
+   [ELM_ATSPI_RELATION_NODE_PARENT_OF] = ATSPI_RELATION_NODE_PARENT_OF,
+   [ELM_ATSPI_RELATION_EXTENDED] = ATSPI_RELATION_EXTENDED,
+   [ELM_ATSPI_RELATION_FLOWS_TO] = ATSPI_RELATION_FLOWS_TO,
+   [ELM_ATSPI_RELATION_FLOWS_FROM] = ATSPI_RELATION_FLOWS_FROM,
+   [ELM_ATSPI_RELATION_SUBWINDOW_OF] = ATSPI_RELATION_SUBWINDOW_OF,
+   [ELM_ATSPI_RELATION_EMBEDS] = ATSPI_RELATION_EMBEDS,
+   [ELM_ATSPI_RELATION_EMBEDDED_BY] = ATSPI_RELATION_EMBEDDED_BY,
+   [ELM_ATSPI_RELATION_POPUP_FOR] = ATSPI_RELATION_POPUP_FOR,
+   [ELM_ATSPI_RELATION_PARENT_WINDOW_OF] = ATSPI_RELATION_PARENT_WINDOW_OF,
+   [ELM_ATSPI_RELATION_DESCRIPTION_FOR] = ATSPI_RELATION_DESCRIPTION_FOR,
+   [ELM_ATSPI_RELATION_DESCRIBED_BY] = ATSPI_RELATION_DESCRIBED_BY,
+   [ELM_ATSPI_RELATION_LAST_DEFINED] = ATSPI_RELATION_LAST_DEFINED,
+};
+
+static AtspiRelationType _elm_relation_to_atspi_relation(Elm_Atspi_Relation_Type type)
+{
+   if ((type < ELM_ATSPI_RELATION_LAST_DEFINED) && (type > ELM_ATSPI_RELATION_NULL))
+     return elm_relation_to_atspi_relation_mapping[type];
+   return ELM_ATSPI_RELATION_NULL;
+}
+
 static Eldbus_Message *
 _accessible_get_role(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
@@ -461,7 +491,7 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    iter_array = eldbus_message_iter_container_new(iter, 'a', "ss");
 
    EINA_LIST_FOREACH(attrs, l, attr)
-     eldbus_message_iter_arguments_get(iter_array, "ss", attr->key, attr->value);
+     eldbus_message_iter_arguments_append(iter_array, "ss", attr->key, attr->value);
 
    eldbus_message_iter_container_close(iter, iter_array);
    elm_atspi_attributes_list_free(attrs);
@@ -573,7 +603,39 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
 static Eldbus_Message *
 _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
-   return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.NotSupported", "Relation states not implemented.");
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret = NULL;
+   Eldbus_Message_Iter *iter = NULL, *iter_array = NULL, *iter_array2 = NULL, *iter_struct;
+   Elm_Atspi_Relation *rel;
+   Eina_List *rels;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "(ua(so))");
+   EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
+
+   rels = eo_do(obj, elm_interface_atspi_accessible_relation_set_get());
+
+   EINA_LIST_FREE(rels, rel)
+     {
+        iter_struct = eldbus_message_iter_container_new(iter_array, 'r', NULL);
+        eldbus_message_iter_basic_append(iter_struct, 'u', _elm_relation_to_atspi_relation(rel->type));
+        iter_array2 = eldbus_message_iter_container_new(iter_struct, 'a', "(so)");
+        EINA_SAFETY_ON_NULL_GOTO(iter_array2, fail);
+        _object_append_reference(iter_array2, rel->obj);
+        eldbus_message_iter_container_close(iter_struct, iter_array2);
+        eldbus_message_iter_container_close(iter_array, iter_struct);
+        free(rel);
+     }
+   eldbus_message_iter_container_close(iter, iter_array);
+
+   return ret;
+
+fail:
+   return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get relation set.");
 }
 
 static const Eldbus_Method accessible_methods[] = {
@@ -993,7 +1055,7 @@ _access_object_from_path(const char *path)
 }
 
 static char *
-_path_from_access_object(Eo *eo)
+_path_from_access_object(const Eo *eo)
 {
    char path[256];
 
@@ -1248,7 +1310,7 @@ static const Eldbus_Service_Interface_Desc selection_iface_desc = {
 };
 
 static void
-_object_append_reference(Eldbus_Message_Iter *iter, Eo *obj)
+_object_append_reference(Eldbus_Message_Iter *iter, const Eo *obj)
 {
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
