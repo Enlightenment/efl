@@ -11,39 +11,38 @@
 /* bytecode caching */
 
 static Eina_File *
-check_bc(Eina_File *of, const char *mode, Eina_Bool *bc)
+check_bc(Eina_File *of, const char *fname, Eina_Bool *bc)
 {
-   const char *fname = eina_file_filename_get(of);
-   const char *ext   = strstr(fname, ".lua");
+   if (of)
+     {
+        struct stat bc_stat, sc_stat;
+        /* original file doesn't exist, only bytecode does, use bytecode */
+        if (stat(fname, &sc_stat) < 0)
+          return of;
+        stat(eina_file_filename_get(of), &bc_stat);
+        /* bytecode is newer than original file, use bytecode */
+        if (bc_stat.st_mtime > sc_stat.st_mtime)
+          return of;
+        /* bytecode is not new enough; trigger regeneration */
+        eina_file_close(of);
+     }
+   *bc = EINA_TRUE;
+   return eina_file_open(fname, EINA_FALSE);
+}
+
+static Eina_File *
+open_src(const char *fname, const char *mode, Eina_Bool *bc)
+{
+   Eina_File  *f   = NULL;
+   const char *ext = strstr(fname, ".lua");
    if (ext && !ext[4] && (!mode || strchr(mode, 't')))
      {
-        /* loading lua source file, try cached */
         char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "%sc", fname);
-        Eina_File *f = eina_file_open(buf, EINA_FALSE);
-        if (!f)
-          {
-             /* no cached bytecode */
-             *bc = EINA_TRUE;
-          }
-        else
-          {
-             /* cached bytecode, check timestamps */
-             if (eina_file_mtime_get(f) > eina_file_mtime_get(of))
-               {
-                  /* bytecode new enough, chunkname stays the same */
-                  eina_file_close(of);
-                  return f;
-               }
-             else
-               {
-                  /* bytecode too old, remove old file */
-                  eina_file_close(f);
-                  *bc = EINA_TRUE;
-               }
-          }
+        f = check_bc(eina_file_open(buf, EINA_FALSE), fname, bc);
      }
-   return of;
+   if (!f) f = eina_file_open(fname, EINA_FALSE);
+   return  f;
 }
 
 static int
@@ -122,13 +121,12 @@ elua_loadfilex(lua_State *L, const char *fname, const char *mode)
      {
         return elua_loadstdin(L, mode);
      }
-   if (!(f = eina_file_open(fname, EINA_FALSE)))
+   if (!(f = open_src(fname, mode, &bcache)))
      {
         lua_pushfstring(L, "cannot open %s: %s", fname, strerror(errno));
         return LUA_ERRFILE;
      }
    chname = lua_pushfstring(L, "@%s", fname);
-   f = check_bc(f, mode, &bcache);
    s.flen = eina_file_size_get(f);
    if (!(s.fmap = eina_file_map_all(f, EINA_FILE_RANDOM)))
      {
