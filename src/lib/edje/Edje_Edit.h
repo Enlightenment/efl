@@ -3444,6 +3444,19 @@ EAPI Eina_List * edje_edit_sounds_samples_get(Evas_Object *obj);
  */
 EAPI Eina_List * edje_edit_sounds_tones_get(Evas_Object *obj);
 
+/** Delete sound sample from the collection
+ *
+ * Deletes sound sample from collection by its name. After successfull deletion
+ * all PLAY_SAMPLE actions in all programs of all groups of current collection
+ * that use deleted sound will be deleted.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the sound file to be deleted from the edje.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_sound_sample_del(Evas_Object *obj, const char *name);
+
 //@}
 /******************************************************************************/
 /*************************   SPECTRUM API   ***********************************/

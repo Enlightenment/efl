@@ -907,6 +907,134 @@ edje_edit_compiler_get(Evas_Object *obj)
 }
 
 /****************/
+/*  SOUNDS API  */
+/****************/
+
+static Eina_Bool _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc);
+
+EAPI Eina_Bool
+edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
+{
+   Edje_Sound_Sample *sound_sample = NULL;
+   unsigned int i = 0;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->path) return EINA_FALSE;
+
+   if ((!ed->file->sound_dir) || (!ed->file->sound_dir->samples))
+     {
+        WRN("Unable to delete sample \"%s\". The samples list is empty.", name);
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < ed->file->sound_dir->samples_count; ++i)
+     {
+        sound_sample = ed->file->sound_dir->samples + i;
+        if (!strcmp(name, sound_sample->name))
+           break;
+     }
+   if (i == ed->file->sound_dir->samples_count)
+     {
+        WRN("Unable to delete sample \"%s\". It does not exist.", name);
+        return EINA_FALSE;
+     }
+
+   {
+      char sample[PATH_MAX];
+      Eet_File *eetf;
+
+      Edje_Sound_Sample *sound_sample_last;
+
+      eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+      if (!eetf)
+        {
+           WRN("Unable to open \"%s\" for writing output", ed->path);
+           return EINA_FALSE;
+        }
+
+      snprintf(sample, sizeof(sample), "edje/sounds/%i", sound_sample->id);
+
+      if (eet_delete(eetf, sample) <= 0)
+        {
+           WRN("Unable to delete \"%s\" sound", sample);
+           eet_close(eetf);
+           return EINA_FALSE;
+        }
+
+      sound_sample_last = ed->file->sound_dir->samples +
+                          ed->file->sound_dir->samples_count - 1;
+
+      if (sound_sample_last->id != sound_sample->id)
+        *sound_sample = *sound_sample_last;
+
+      _edje_if_string_free(ed, sound_sample->name);
+      --ed->file->sound_dir->samples_count;
+
+      ed->file->sound_dir->samples = realloc(ed->file->sound_dir->samples,
+                                             sizeof(Edje_Sound_Sample) *
+                                             ed->file->sound_dir->samples_count);
+
+      Eina_Iterator *it = eina_hash_iterator_data_new(ed->file->collection);
+      Edje_Part_Collection_Directory_Entry *pce;
+
+      EINA_ITERATOR_FOREACH(it, pce)
+        {
+           Eina_Bool is_collection_changed = EINA_FALSE;
+           int i;
+
+           if (pce->group_alias)
+             continue;
+
+           Evas_Object *obj = edje_edit_object_add(ed->base->evas);
+           if (!edje_object_file_set(obj, ed->file->path, pce->entry))
+             continue;
+
+           Eina_List *programs_list = edje_edit_programs_list_get(obj);
+           if (!programs_list)
+             continue;
+             
+             GET_ED_OR_RETURN(EINA_FALSE);
+
+           for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
+             {
+                Edje_Program *program;
+
+                program = ed->collection->patterns.table_programs[i];
+                if ((program->action == EDJE_ACTION_TYPE_SOUND_SAMPLE) &&
+                    (!strcmp(program->sample_name, name)))
+                  {
+                     program->action = EDJE_ACTION_TYPE_NONE;
+                     program->duration = 0;
+                     program->channel = EDJE_CHANNEL_EFFECT;
+                     _edje_if_string_free(ed, program->sample_name);
+                     program->sample_name = NULL;
+                     is_collection_changed = EINA_TRUE;
+                  }
+             }
+           if (is_collection_changed)
+             {
+                _edje_edit_collection_save(eetf, ed->collection);
+             }
+        }
+
+      if (!_edje_edit_edje_file_save(eetf, ed->file))
+        {
+           eet_close(eetf);
+           return EINA_FALSE;
+        }
+      eet_close(eetf);
+   }
+
+   GET_EED_OR_RETURN(EINA_FALSE);
+   _edje_edit_flag_script_dirty(eed, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+/****************/
 /*  GROUPS API  */
 /****************/
 
@@ -7886,6 +8014,54 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
                }
           }
         break;
+     case EDJE_ACTION_TYPE_SOUND_SAMPLE:
+       {
+          BUF_APPEND(I4"action: PLAY_SAMPLE ");
+          BUF_APPENDF("\"%s\" %.000f", epr->sample_name, epr->speed);
+          switch (epr->channel)
+            {
+             case EDJE_CHANNEL_BACKGROUND:
+               {
+                  BUF_APPEND(" BACKGROUND");
+                  break;
+               }
+             case EDJE_CHANNEL_MUSIC:
+               {
+                  BUF_APPEND(" MUSIC");
+                  break;
+               }
+             case EDJE_CHANNEL_FOREGROUND:
+               {
+                  BUF_APPEND(" FOREGROUND");
+                  break;
+               }
+             case EDJE_CHANNEL_INTERFACE:
+               {
+                  BUF_APPEND(" INTERFACE");
+                  break;
+               }
+             case EDJE_CHANNEL_INPUT:
+               {
+                  BUF_APPEND(" INPUT");
+                  break;
+               }
+             case EDJE_CHANNEL_ALERT:
+               {
+                  BUF_APPEND(" ALERT");
+                  break;
+               }
+             default:
+               break;
+            }
+          BUF_APPENDF(";\n");
+          break;
+       }
+     case EDJE_ACTION_TYPE_SOUND_TONE:
+       {
+          BUF_APPEND(I4"action: PLAY_TONE ");
+          BUF_APPENDF("\"%s\" %.000f\n;", epr->tone_name, epr->duration);
+          break;
+       }
      //TODO Support Drag
      //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
 	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_SET TODO;\n");
@@ -8442,6 +8618,57 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    return ret;
 }
 
+static void
+_edje_generate_source_of_sounds(Edje_Sound_Directory *sound_directory, Eina_Strbuf *buf)
+{
+   unsigned int i = 0;
+   Eina_Bool ret = EINA_TRUE;
+   Edje_Sound_Sample *current_sample = sound_directory->samples;
+   Edje_Sound_Tone *current_tone = sound_directory->tones;
+   BUF_APPEND(I1"sounds {\n");
+
+
+   for (i = 0; i < sound_directory->samples_count; i++, current_sample++)
+     {
+        BUF_APPEND(I2"sample {\n");
+        BUF_APPENDF(I3"name: \"%s\" ", current_sample->name);
+        switch (current_sample->compression)
+          {
+           case EDJE_SOUND_SOURCE_TYPE_INLINE_RAW:
+             {
+                BUF_APPEND("RAW;\n");
+                break;
+             }
+           case EDJE_SOUND_SOURCE_TYPE_INLINE_COMP:
+             {
+                BUF_APPEND("COMP;\n");
+                break;
+             }
+           case EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY:
+             {
+                BUF_APPENDF("LOSSY %f;\n", current_sample->quality);
+                break;
+             }
+           case EDJE_SOUND_SOURCE_TYPE_INLINE_AS_IS:
+             {
+                BUF_APPEND("AS_IS;\n");
+                break;
+             }
+           default:
+             break;
+          }
+        BUF_APPENDF(I3"source: \"%s\";\n", current_sample->snd_src);
+        BUF_APPEND(I2"}\n");
+     }
+   for (i = 0; i < sound_directory->tones_count ; i++, current_tone++)
+     {
+        BUF_APPEND(I2"tone: ");
+        BUF_APPENDF("\"%s\" %d;\n", current_tone->name, current_tone->value);
+     }
+
+   BUF_APPEND(I1"}\n");
+}
+
 static Eina_Bool
 _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *pce, Eina_Strbuf *buf)
 {
@@ -8721,6 +8948,12 @@ _edje_generate_source(Evas_Object *obj)
         Eina_Iterator *it;
         Edje_Part_Collection_Directory_Entry *pce;
         BUF_APPEND("collections {\n");
+
+        /* Sounds */
+        if (ed->file->sound_dir)
+          {
+             _edje_generate_source_of_sounds(ed->file->sound_dir, buf);
+          }
 
         it = eina_hash_iterator_data_new(ed->file->collection);
 
