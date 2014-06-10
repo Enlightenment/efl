@@ -1916,12 +1916,15 @@ EAPI void        ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h);
  * This function makes the mouse cursor over @p ee be the image specified by
  * @p file. The actual point within the image that the mouse is at is specified
  * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
- * corner of the cursor image.
+ * corner of the cursor image. Cursor object will be delete with Ecore_Evas.
  *
  * @note This function creates an object from the image and uses
  * ecore_evas_object_cursor_set().
  *
+ * @warning Previos setted cursor will be delete.
+ *
  * @see ecore_evas_object_cursor_set()
+ * @see ecore_evas_cursor_unset()
  */
 EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y);
 /**
@@ -1937,6 +1940,7 @@ EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int lay
  *
  * @see ecore_evas_cursor_set()
  * @see ecore_evas_object_cursor_set()
+ * @see ecore_evas_cursor_unset()
  */
 EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y);
 
@@ -1953,7 +1957,7 @@ EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, 
  * This function makes the mouse cursor over @p ee be the object specified by
  * @p obj. The actual point within the object that the mouse is at is specified
  * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
- * corner of the cursor object.
+ * corner of the cursor object. Cursor object will be delete with the Ecore_Evas.
  *
  * @see ecore_evas_cursor_set()
  */
