@@ -1939,6 +1939,7 @@ EAPI void        ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int lay
  * @see ecore_evas_object_cursor_set()
  */
 EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *hot_x, int *hot_y);
+
 /**
  * @brief Set the cursor of an Ecore_Evas
  *
@@ -1957,6 +1958,21 @@ EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, 
  * @see ecore_evas_cursor_set()
  */
 EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+
+/**
+ * @brief Unset the Ecore_Evas cursor
+ *
+ * @param ee The Ecore_Evas to uset the cursor.
+ *
+ * This function unset the cursor from the Ecore_Evas and return the cursor
+ * object. If the cursor was setted from ecore_evas_cursor_set() fuction
+ * returned the image. In this case this image need to delete when it not be
+ * needed.
+ *
+ * @see ecore_evas_cursor_set()
+ * @see ecore_evas_object_cursor_set()
+ */
+EAPI Evas_Object*        ecore_evas_cursor_unset(Ecore_Evas *ee);
 
 /**
  * Tell the WM whether or not to ignore an Ecore_Evas' window

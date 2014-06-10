@@ -12,20 +12,20 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 
+Evas_Object *cursor;
+
 static void
 _mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    static Eina_Bool flag = EINA_FALSE;
 
    if (!flag)
-     ecore_evas_object_cursor_set(data, NULL, 0, 1, 1);
-   else
      {
-        Evas_Object *cursor = evas_object_rectangle_add(ecore_evas_get(data));
-        evas_object_color_set(cursor, 0, 255, 0, 255);
-        evas_object_resize(cursor, 5, 10);
-        ecore_evas_object_cursor_set(data, cursor, 0, 1, 1);
+        ecore_evas_cursor_unset(data);
+        ecore_evas_object_cursor_set(data, NULL, 0, 1, 1);
      }
+   else
+     ecore_evas_object_cursor_set(data, cursor, 0, 1, 1);
 
    flag = !flag;
 }
@@ -34,7 +34,7 @@ int
 main(void)
 {
    Ecore_Evas *ee;
-   Evas_Object *bg, *cursor, *obj;
+   Evas_Object *bg, *obj;
    int layer, x, y;
 
    ecore_evas_init();

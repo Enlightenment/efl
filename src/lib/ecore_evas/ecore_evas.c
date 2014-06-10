@@ -1725,6 +1725,24 @@ ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *
    if (hot_y) *hot_y = ee->prop.cursor.hot.y;
 }
 
+EAPI Evas_Object *
+ecore_evas_cursor_unset(Ecore_Evas *ee)
+{
+   Evas_Object *obj;
+
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_cursor_unset");
+        return NULL;
+     }
+   obj = ee->prop.cursor.object;
+   evas_object_hide(obj);
+   ee->prop.cursor.object = NULL;
+
+   return obj;
+}
+
 EAPI void
 ecore_evas_layer_set(Ecore_Evas *ee, int layer)
 {
