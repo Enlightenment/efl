@@ -1,6 +1,24 @@
 ==========
-EFL 1.10.0
+EFL 1.10.1
 ==========
+
+Changes since 1.10.0:
+---------------------
+
+Fixes:
+
+   * recursively hide edje group objects on edje hide
+   * Evas textblock: Fix wrong advance calculation when bidi is disabled.
+   * Eolian: fix issue for Windows.
+   * evas loader - redo gif fix so it doesn't break everything
+   * Evas: Remove invalid cast and fix warning/bug on windows
+   * Win64: Fix a bunch of warnings
+   * eina/file - revert 18be4c50d9990c82ed9ce4269b7820e61f772699
+   * Eolian: Fix class look up.
+   * Evas textblock: Fix crash when cutting ligatures with formats. (T1308)
+   * eo: force zeroing memory on non Linux system.
+   * po: Set initial values for Language-Team in all po files
+   * po: Set initial language value in po file where it is missing
 
 Changes since 1.9.0:
 --------------------
