@@ -3,15 +3,16 @@ if HAVE_ELUA
 bin_PROGRAMS += bin/elua/elua
 
 bin_elua_elua_SOURCES = \
-    bin/elua/cache.c \
-    bin/elua/main.c \
-    bin/elua/io.c
+	bin/elua/main.h \
+	bin/elua/cache.c \
+	bin/elua/main.c \
+	bin/elua/io.c
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
-    -DLOCALE_DIR=\"@LOCALE_DIR@\" \
-    -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
-    -DPACKAGE_BIN_DIR=\"$(bindir)\" \
-    -DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
+	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
+	-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
 if HAVE_WIN32
 bin_elua_elua_LDADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@
 else
@@ -25,35 +26,58 @@ include Makefile_Elua_Helper.am
 eluaappsdir = $(datadir)/elua/apps
 
 eluaapps_DATA = \
-    bin/elua/apps/*.lua
+	bin/elua/apps/lualian.lua \
+	bin/elua/apps/xgettext.lua
 
 EXTRA_DIST += $(eluaapps_DATA)
 
 eluamodulesdir = $(datadir)/elua/modules
 
 eluamodules_DATA = \
-    bin/elua/modules/*.lua
+	bin/elua/modules/benchmark.lua \
+	bin/elua/modules/elm.lua \
+	bin/elua/modules/getopt.lua \
+	bin/elua/modules/lualian.lua \
+	bindings/luajit/eo.lua \
+	bindings/luajit/eolian.lua
 
 EXTRA_DIST += $(eluamodules_DATA)
+
+eluaxgettextdir = $(eluamodulesdir)/xgettext
+
+eluaxgettext_DATA = \
+	bin/elua/modules/xgettext/lexer.lua \
+	bin/elua/modules/xgettext/parser.lua
+
+EXTRA_DIST += $(eluaxgettext_DATA)
 
 eluaeinadir = $(eluamodulesdir)/eina
 
 eluaeina_DATA = \
-    bindings/luajit/eina/*.lua
+	bindings/luajit/eina/accessor.lua \
+	bindings/luajit/eina/counter.lua \
+	bindings/luajit/eina/file.lua \
+	bindings/luajit/eina/hamster.lua \
+	bindings/luajit/eina/iterator.lua \
+	bindings/luajit/eina/list.lua \
+	bindings/luajit/eina/log.lua \
+	bindings/luajit/eina/rectangle.lua \
+	bindings/luajit/eina/tiler.lua \
+	bindings/luajit/eina/xattr.lua
 
 EXTRA_DIST += $(eluaeina_DATA)
 
-eluaeoliandir = $(eluamodulesdir)
-
 eluaeolian_DATA = \
-    bindings/luajit/eolian.lua
+	bindings/luajit/eolian.lua
 
 EXTRA_DIST += $(eluaeolian_DATA)
 
 eluacoredir = $(datadir)/elua/core
 
 eluacore_DATA = \
-    bin/elua/core/*.lua
+	bin/elua/core/gettext.lua \
+	bin/elua/core/module.lua \
+	bin/elua/core/util.lua
 
 EXTRA_DIST += $(eluacore_DATA)
 
