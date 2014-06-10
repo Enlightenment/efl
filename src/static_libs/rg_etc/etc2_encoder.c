@@ -28,8 +28,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <Eina.h>
 #include "rg_etc1.h"
 
-// FIXME: Remove DEBUG
-#define DEBUG
+// Enable this flag when working on (quality) optimizations
+//#define DEBUG
 
 // Weights for the distance (perceptual mode) - sum is ~1024
 static const int R_WEIGHT = 299 * 1024 / 1000;
@@ -126,7 +126,11 @@ static const int kBlockWalk[16] = {
 #endif
 
 #ifndef DBG
-# define DBG(fmt, ...) fprintf(stderr, "%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## __VA_ARGS__)
+# ifdef DEBUG
+#  define DBG(fmt, ...) fprintf(stderr, "%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## __VA_ARGS__)
+# else
+#  define DBG(...)
+# endif
 #endif
 
 /** Pack alpha block given a modifier table and a multiplier
@@ -924,6 +928,7 @@ _etc2_planar_mode_block_encode(uint8_t *etc2, const uint32_t *bgra,
    return err;
 }
 
+#ifdef DEBUG
 static unsigned int
 _block_error_calc(const uint32_t *enc, const uint32_t *orig, Eina_Bool perceptual)
 {
@@ -939,6 +944,7 @@ _block_error_calc(const uint32_t *enc, const uint32_t *orig, Eina_Bool perceptua
 
    return errAcc;
 }
+#endif
 
 unsigned int
 etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
@@ -993,7 +999,8 @@ etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
 
 #ifdef DEBUG
    cnt[bestSolution]++;
-   DBG("Block count by mode: ETC1: %d T/H: %d Planar: %d. Err %d", cnt[0], cnt[1], cnt[2], minErr);
+   DBG("Block count by mode: ETC1: %d T/H: %d Planar: %d. Err %d",
+       cnt[0], cnt[1], cnt[2], minErr);
 #endif
 
    return minErr;
