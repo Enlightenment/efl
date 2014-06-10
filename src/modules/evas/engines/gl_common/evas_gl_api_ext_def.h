@@ -264,6 +264,14 @@ _EVASGL_EXT_BEGIN(QCOM_extended_get2)
 	_EVASGL_EXT_FUNCTION_END()
 _EVASGL_EXT_END()
 
+_EVASGL_EXT_BEGIN(IMG_multisampled_render_to_texture)
+	_EVASGL_EXT_DRVNAME(GL_IMG_multisampled_render_to_texture)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(EXT_multisampled_render_to_texture)
+	_EVASGL_EXT_DRVNAME(GL_EXT_multisampled_render_to_texture)
+_EVASGL_EXT_END()
+
 _EVASGL_EXT_BEGIN(multisampled_render_to_texture)
 	_EVASGL_EXT_DRVNAME(GL_IMG_multisampled_render_to_texture)
 	_EVASGL_EXT_DRVNAME(GL_EXT_multisampled_render_to_texture)

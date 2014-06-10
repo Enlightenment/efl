@@ -657,17 +657,21 @@ _surface_cap_init(void *eng_data)
 #ifdef GL_GLES
    int max_samples = 0;
 
-   if (EXTENSION_SUPPORT(multisampled_render_to_texture))
+   if (EXTENSION_SUPPORT(IMG_multisampled_render_to_texture))
      {
         glGetIntegerv(GL_MAX_SAMPLES_IMG, &max_samples);
+     }
+   else if (EXTENSION_SUPPORT(EXT_multisampled_render_to_texture))
+     {
+        glGetIntegerv(GL_MAX_SAMPLES_EXT, &max_samples);
+     }
 
-        if (max_samples >= 2)
-          {
-             evgl_engine->caps.msaa_samples[0] = 2;
-             evgl_engine->caps.msaa_samples[1] = (max_samples>>1) < 2 ? 2 : (max_samples>>1);
-             evgl_engine->caps.msaa_samples[2] = max_samples;
-             evgl_engine->caps.msaa_supported  = 1;
-          }
+   if (max_samples >= 2)
+     {
+        evgl_engine->caps.msaa_samples[0] = 2;
+        evgl_engine->caps.msaa_samples[1] = (max_samples>>1) < 2 ? 2 : (max_samples>>1);
+        evgl_engine->caps.msaa_samples[2] = max_samples;
+        evgl_engine->caps.msaa_supported  = 1;
      }
 #endif
 

@@ -1194,6 +1194,12 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 /* GL_EXT_texture_type_2_10_10_10_REV */
 #define GL_UNSIGNED_INT_2_10_10_10_REV_EXT                      0x8368
 
+/* GL_EXT_multisampled_render_to_texture */
+#define GL_RENDERBUFFER_SAMPLES_EXT                             0x8CAB
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT               0x8D56
+#define GL_MAX_SAMPLES_EXT                                      0x8D57
+#define GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_SAMPLES_EXT           0x8D6C
+
 /*------------------------------------------------------------------------*
  * IMG extension tokens
  *------------------------------------------------------------------------*/

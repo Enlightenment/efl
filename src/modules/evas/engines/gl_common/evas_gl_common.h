@@ -190,6 +190,9 @@
 #ifndef GL_MAX_SAMPLES_IMG
 #define GL_MAX_SAMPLES_IMG 0x9135
 #endif
+#ifndef GL_MAX_SAMPLES_EXT
+#define GL_MAX_SAMPLES_EXT 0x8D57
+#endif
 #ifndef GL_WRITE_ONLY
 #define GL_WRITE_ONLY 0x88B9
 #endif
