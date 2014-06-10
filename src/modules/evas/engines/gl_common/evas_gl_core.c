@@ -669,7 +669,7 @@ _surface_cap_init(void *eng_data)
    if (max_samples >= 2)
      {
         evgl_engine->caps.msaa_samples[0] = 2;
-        evgl_engine->caps.msaa_samples[1] = (max_samples>>1) < 2 ? 2 : (max_samples>>1);
+        evgl_engine->caps.msaa_samples[1] = (max_samples >> 1) < 2 ? 2 : (max_samples >> 1);
         evgl_engine->caps.msaa_samples[2] = max_samples;
         evgl_engine->caps.msaa_supported  = 1;
      }
