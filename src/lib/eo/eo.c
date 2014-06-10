@@ -730,7 +730,7 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
               * function name itself. Slow, but this should rarely happen.
               */
              for (unsigned int i = 0; i < cur_klass->desc->ops.count; i++)
-               if (op_descs[i].api_name && !strcmp(api_name, op_descs[i].api_name))
+               if (api_name && !strcmp(api_name, op_descs[i].api_name))
                  {
                     if (op_descs[i].api_func == NULL || op_descs[i].api_func == ((void (*)())-1))
                       break;
