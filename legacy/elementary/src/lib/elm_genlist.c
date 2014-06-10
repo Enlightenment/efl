@@ -7463,9 +7463,9 @@ elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
 EOLIAN static void
 _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Coord ox, oy, oh, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
+   Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
-   evas_object_geometry_get(sd->pan_obj, &ox, &oy, NULL, &oh);
+   evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
 
    if (sd->focused_item)
      {
@@ -7473,26 +7473,23 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Ge
         elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->focused_item), &item_x, &item_y, &item_w, &item_h);
      }
 
+   *x = item_x;
+   *y = item_y;
+   *w = item_w;
+   *h = item_h;
+
    if (item_y < oy)
      {
-        *x = ox;
         *y = oy;
-        *w = item_w;
-        *h = item_h;
      }
    else if (item_y > (oy + oh - item_h))
      {
-        *x = ox;
         *y = oy + oh - item_h;
-        *w = item_w;
-        *h = item_h;
      }
-   else
+
+   if ((item_x + item_w) > (ox + ow))
      {
-        *x = item_x;
-        *y = item_y;
-        *w = item_w;
-        *h = item_h;
+        *w = item_w - (item_w - ow);
      }
 }
 

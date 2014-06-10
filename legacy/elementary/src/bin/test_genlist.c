@@ -1151,6 +1151,7 @@ test_genlist5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    win = elm_win_util_standard_add("genlist5", "Genlist 5");
    elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
