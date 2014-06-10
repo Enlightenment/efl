@@ -23,6 +23,8 @@ nodist_installed_ecoreaudiocxxmainheaders_DATA = \
 lib/ecore_audio/Ecore_Audio.hh \
 $(generated_ecore_audio_cxx_bindings)
 
+BUILT_SOURCES += $(generated_ecore_audio_cxx_bindings) lib/ecore_audio/Ecore_Audio.hh
+
 ### Unit tests
 
 if EFL_ENABLE_TESTS

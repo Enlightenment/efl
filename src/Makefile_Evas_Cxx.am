@@ -33,6 +33,8 @@ nodist_installed_evascxxmainheaders_DATA = lib/evas/Evas.hh
 installed_evascxxcanvasheadersdir = $(includedir)/evas-cxx-@VMAJ@/canvas
 nodist_installed_evascxxcanvasheaders_DATA = $(generated_evas_canvas_cxx_bindings)
 
+BUILT_SOURCES += $(generated_evas_canvas_cxx_bindings) lib/evas/Evas.hh
+
 lib/evas/Evas.hh:
 	@echo -e "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
 	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/evas/Evas.hh
