@@ -2,7 +2,7 @@ if HAVE_ELUA
 
 MAINTAINERCLEANFILES = Makefile.in
 
-DATA_FILES = Makefile.examples
+DATA_FILES = elm_test.lua
 EXTRA_DIST = $(DATA_FILES)
 
 install-examples:
