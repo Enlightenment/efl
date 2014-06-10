@@ -4881,7 +4881,8 @@ EAPI Eina_Bool
 edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text)
 {
    Edje_Part_Description_Text *txt;
-   if ((!obj) || (!part) || (!state) || (!text))
+
+   if (!text)
      return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
@@ -4920,8 +4921,6 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
 {
    Edje_Part_Description_Text *txt;
 
-   if ((!obj) || (!part) || (!state))
-     return EINA_FALSE;
    if (size < 0) return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
@@ -5243,8 +5242,6 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
 {
    Edje_Part_Description_Text *txt;
 
-   if ((!obj) || (!part) || (!state))
-     return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
