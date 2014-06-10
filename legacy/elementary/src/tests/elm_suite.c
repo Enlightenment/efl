@@ -19,6 +19,7 @@ static const Elementary_Test_Case etc[] = {
   { "elm_colorselector", elm_test_colorselector },
   { "elm_entry", elm_test_entry},
   { "elm_atspi", elm_test_atspi},
+  { "elm_list", elm_test_list},
   { NULL, NULL }
 };
 

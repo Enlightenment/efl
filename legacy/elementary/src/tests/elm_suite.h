@@ -8,5 +8,6 @@ void elm_test_check(TCase *tc);
 void elm_test_colorselector(TCase *tc);
 void elm_test_entry(TCase *tc);
 void elm_test_atspi(TCase *tc);
+void elm_test_list(TCase *tc);
 
 #endif /* _ELM_SUITE_H */

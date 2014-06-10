@@ -10,7 +10,7 @@ elm_suite_SOURCES = \
 	elm_test_check.c \
 	elm_test_colorselector.c \
 	elm_test_entry.c \
-	elm_test_init.c
+	elm_test_init.c \
 	elm_test_list.c
 
 elm_suite_CPPFLAGS = \

@@ -5,10 +5,8 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
-#include "elm_interface_atspi_selection.h"
+#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #include "elm_interface_atspi_selection.eo.h"
-
 
 START_TEST (elm_list_atspi_selection_selected_children_count_get)
 {
@@ -17,7 +15,7 @@ START_TEST (elm_list_atspi_selection_selected_children_count_get)
  int val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
@@ -44,7 +42,7 @@ START_TEST (elm_list_atspi_selection_child_select)
  Eina_Bool val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
@@ -60,21 +58,21 @@ END_TEST
 START_TEST (elm_list_atspi_selection_selected_child_deselect)
 {
  Evas_Object *win, *list;
- Elm_Object_Item *item1, *item2;
+ Elm_Object_Item *item;
  Eina_Bool val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  elm_list_multi_select_set(list, EINA_TRUE);
- item1 = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
- item2 = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
+ elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
+ item = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
 
- elm_list_item_selected_set(item2, EINA_TRUE);
+ elm_list_item_selected_set(item, EINA_TRUE);
  eo_do(list, val = elm_interface_atspi_selection_selected_child_deselect(0));
  ck_assert(val == EINA_TRUE);
- ck_assert(EINA_FALSE == elm_list_item_selected_get(item2));
+ ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
  elm_shutdown();
 }
@@ -87,8 +85,7 @@ START_TEST (elm_list_atspi_selection_is_child_selected)
  Eina_Bool val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
- Eina_Bool val;
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
@@ -111,19 +108,18 @@ START_TEST (elm_list_atspi_selection_all_children_select)
  Eina_Bool val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
- Eina_Bool val;
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
 
  item1 = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
  item2 = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
 
- eo_do(list, val = elm_interface_atspi_selection_all_children_select(0));
+ eo_do(list, val = elm_interface_atspi_selection_all_children_select());
  ck_assert(val == EINA_FALSE);
 
  elm_list_multi_select_set(list, EINA_TRUE);
- eo_do(list, val = elm_interface_atspi_selection_all_children_select(0));
+ eo_do(list, val = elm_interface_atspi_selection_all_children_select());
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item1));
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item2));
@@ -133,15 +129,14 @@ START_TEST (elm_list_atspi_selection_all_children_select)
 END_TEST
 
 
-START_TEST (elm_list_atspi_selection_child_clear)
+START_TEST (elm_list_atspi_selection_clear)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
- Eina_Bool val;
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  elm_list_multi_select_set(list, EINA_TRUE);
@@ -151,7 +146,7 @@ START_TEST (elm_list_atspi_selection_child_clear)
  elm_list_item_selected_set(item2, EINA_TRUE);
 
 
- eo_do(list, val = elm_interface_atspi_selection_child_clear(0));
+ eo_do(list, val = elm_interface_atspi_selection_clear());
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item1));
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item2));
@@ -163,21 +158,21 @@ END_TEST
 START_TEST (elm_list_atspi_selection_child_deselect)
 {
  Evas_Object *win, *list;
- Elm_Object_Item *item1, *item2;
+ Elm_Object_Item *item;
  Eina_Bool val;
 
  elm_init(1, NULL);
- win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+ win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  elm_list_multi_select_set(list, EINA_TRUE);
- item1 = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
- item2 = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
+ elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
+ item = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
 
- elm_list_item_selected_set(item2, EINA_TRUE);
+ elm_list_item_selected_set(item, EINA_TRUE);
  eo_do(list, val = elm_interface_atspi_selection_selected_child_deselect(1));
  ck_assert(val == EINA_TRUE);
- ck_assert(EINA_FALSE == elm_list_item_selected_get(item2));
+ ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
  elm_shutdown();
 }
