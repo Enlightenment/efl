@@ -180,14 +180,14 @@ local parse_kw = function(ls, keywords)
     local n1argt, n2argt, cxargt = n1arg and (n1arg[2] ~= "<name>"),
                                    n2arg and (n2arg[2] ~= "<name>"),
                                    cxarg and (cxarg[2] ~= "<name>")
-    if not args           then goto skip end
-    if an and #args ~= an then goto skip end
-    if        #args  < n1 then goto skip end
-    if n2 and #args  < n2 then goto skip end
-    if cx and #args  < cx then goto skip end
-    if        not n1argt  then goto skip end
-    if n2 and not n2argt  then goto skip end
-    if cx and not cxargt  then goto skip end
+    if not args           then return false end
+    if an and #args ~= an then return false end
+    if        #args  < n1 then return false end
+    if n2 and #args  < n2 then return false end
+    if cx and #args  < cx then return false end
+    if        not n1argt  then return false end
+    if n2 and not n2argt  then return false end
+    if cx and not cxargt  then return false end
     local sc = saved_comments
     saved_comments = {}
     sc = tconc(sc, "\n")
@@ -214,7 +214,7 @@ local parse = function(ls, keywords, flags)
         elseif tok.name == "<name>" then
             if keywords[tok.value] then
                 local status, str = pcall(parse_kw, keywords)
-                if status then
+                if status and str then
                     str:generate()
                 end
             elseif flags[tok.value] then
@@ -228,7 +228,6 @@ local parse = function(ls, keywords, flags)
         else
             ls:get()
         end
-        ::skip::
     end
 end
 

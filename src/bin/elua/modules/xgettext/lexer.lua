@@ -213,7 +213,7 @@ local lex_tbl = {
     ["="] = function(ls)
         local oc = ls.current
         local c  = next_char(ls)
-        if c ~= "=" then return c end
+        if c ~= "=" then return c
         else next_char(ls); return c .. "=" end
     end,
     ['"' ] = function(ls)
