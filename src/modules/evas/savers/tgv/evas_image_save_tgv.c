@@ -13,6 +13,13 @@
 #include "lz4hc.h"
 #include "rg_etc1.h"
 
+// FIXME: Remove DEBUG
+#define DEBUG
+#if defined(DEBUG) && defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_MONOTONIC_CLOCK)
+# include <time.h>
+# define DEBUG_STATS
+#endif
+
 static int
 _block_size_get(int size)
 {
@@ -147,13 +154,26 @@ evas_image_save_file_tgv(RGBA_Image *im,
 {
    rg_etc1_pack_params param;
    FILE *f;
-   char *comp;
-   char *buffer;
+   uint8_t *comp = NULL;
+   uint8_t *buffer;
    uint32_t *data;
    uint32_t width, height;
    uint8_t header[8] = "TGV1";
    int block_width, block_height, macro_block_width, macro_block_height;
-   int block_count, image_stride, image_height;
+   int block_count, image_stride, image_height, etc_block_size;
+   Evas_Colorspace cspace;
+   Eina_Bool alpha;
+
+#ifdef DEBUG_STATS
+   struct timespec ts1, ts2;
+   long long tsdiff, mse = 0, mse_div = 0, mse_alpha = 0;
+   clock_gettime(CLOCK_MONOTONIC, &ts1);
+#endif
+
+   /* FIXME: How to tell the encoder to encode as ETC1 or ETC2?
+    * The save API is weak. For now, assume ETC2 iif there's alpha.
+    * As long as we don't have a full ETC2 encoder, this is fine.
+    */
 
    if (!im || !im->image.data || !file)
      return 0;
@@ -161,8 +181,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-        if (im->cache_entry.flags.alpha)
-          return 0;
+        alpha = im->cache_entry.flags.alpha;
         break;
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
@@ -177,6 +196,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
    data = im->image.data;
    width = htonl(image_stride);
    height = htonl(image_height);
+   compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
    param.m_dithering = 0;
@@ -193,11 +213,22 @@ evas_image_save_file_tgv(RGBA_Image *im,
    block_height = _block_size_get(image_height + 2);
    header[4] = (block_height << 4) | block_width;
 
-   // header[5]: 0 for ETC1
-   header[5] = 0;
+   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC
+   if (alpha)
+     {
+        cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
+        etc_block_size = 16;
+        header[5] = 2;
+     }
+   else
+     {
+        cspace = EVAS_COLORSPACE_ETC1;
+        etc_block_size = 8;
+        header[5] = 0;
+     }
 
    // header[6]: 0 for raw, 1, for LZ4 compressed
-   header[6] = (!!compress & 0x1);
+   header[6] = compress;
 
    // header[7]: options (unused)
    header[7] = 0;
@@ -216,16 +247,10 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
    // Number of ETC1 blocks in a compressed block
    block_count = (macro_block_width * macro_block_height) / (4 * 4);
-   buffer = alloca(block_count * 8);
+   buffer = alloca(block_count * etc_block_size);
 
    if (compress)
-     {
-        comp = alloca(LZ4_compressBound(block_count * 8));
-     }
-   else
-     {
-        comp = NULL;
-     }
+     comp = alloca(LZ4_compressBound(block_count * etc_block_size));
 
    // Write macro block
    for (int y = 0; y < image_height + 2; y += macro_block_height)
@@ -240,7 +265,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
         for (int x = 0; x < image_stride + 2; x += macro_block_width)
           {
-             char *offset = buffer;
+             uint8_t *offset = buffer;
              int real_x = x;
 
              if (x == 0) real_x = 0;
@@ -315,19 +340,56 @@ evas_image_save_file_tgv(RGBA_Image *im,
                               }
                          }
 
-                       rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
-                       offset += 8;
+                       switch (cspace)
+                         {
+                          case EVAS_COLORSPACE_ETC1:
+                            rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
+                            break;
+                          case EVAS_COLORSPACE_RGB8_ETC2:
+                            etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
+                            break;
+                          case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+                            etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
+                            break;
+                          default: return 0;
+                         }
+
+#ifdef DEBUG_STATS
+                       {
+                          // Decode to compute PSNR, this is slow.
+                          uint32_t done[16];
+
+                          if (alpha)
+                            rg_etc2_rgba8_decode_block(offset, done);
+                          else
+                            rg_etc2_rgb8_decode_block(offset, done);
+
+                          for (int k = 0; k < 16; k++)
+                            {
+                               const int r = (R_VAL(&(todo[k])) - R_VAL(&(done[k])));
+                               const int g = (G_VAL(&(todo[k])) - G_VAL(&(done[k])));
+                               const int b = (B_VAL(&(todo[k])) - B_VAL(&(done[k])));
+                               const int a = (A_VAL(&(todo[k])) - A_VAL(&(done[k])));
+                               mse += r*r + g*g + b*b;
+                               if (alpha) mse_alpha += a*a;
+                               mse_div++;
+                            }
+                       }
+#endif
+
+                       offset += etc_block_size;
                     }
                }
 
              if (compress)
                {
-                  wlen = LZ4_compressHC(buffer, comp, block_count * 8);
+                  wlen = LZ4_compressHC((char *) buffer, (char *) comp,
+                                        block_count * etc_block_size);
                }
              else
                {
                   comp = buffer;
-                  wlen = block_count * 8;
+                  wlen = block_count * etc_block_size;
                }
 
              if (wlen > 0)
@@ -349,6 +411,29 @@ evas_image_save_file_tgv(RGBA_Image *im,
           }
      }
    fclose(f);
+
+#ifdef DEBUG_STATS
+   if (mse_div && mse)
+     {
+        // TODO: Add DSSIM too
+        double dmse = (double) mse / (double) (mse_div * 3.0);
+        double psnr = 20 * log10(255.0) - 10 * log10(dmse);
+        double dmse_alpha = (double) mse_alpha / (double) mse_div;
+        double psnr_alpha = (dmse_alpha > 0.0) ? (20 * log10(255.0) - 10 * log10(dmse_alpha)) : 0;
+        clock_gettime(CLOCK_MONOTONIC, &ts2);
+        tsdiff = ((ts2.tv_sec - ts1.tv_sec) * 1000LL) + ((ts2.tv_nsec - ts1.tv_nsec) / 1000000LL);
+        if (!alpha)
+          {
+             INF("ETC%d encoding stats: %dx%d, Time: %lldms, RGB PSNR: %.02fdB",
+                 alpha ? 2 : 1, image_stride, image_height, tsdiff, psnr);
+          }
+        else
+          {
+             INF("ETC%d encoding stats: %dx%d, Time: %lldms, RGB PSNR: %.02fdB, Alpha PSNR: %.02fdB",
+                 alpha ? 2 : 1, image_stride, image_height, tsdiff, psnr, psnr_alpha);
+          }
+     }
+#endif
 
    return 1;
 
