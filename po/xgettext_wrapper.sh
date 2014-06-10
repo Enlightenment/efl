@@ -7,6 +7,10 @@ if [ ! "$ELUA_BIN" ]; then
     export EFL_RUN_IN_TREE=1
 fi
 
-$ELUA_BIN :xgettext "$@"
+if [ -x "$ELUA_BIN" ]; then
+    $ELUA_BIN :xgettext "$@"
+else
+    $XGETTEXT "$@"
+fi
 
 exit $?
