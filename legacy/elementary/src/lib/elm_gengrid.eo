@@ -678,6 +678,8 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
       Elm_Widget::event;
       Elm_Widget::focus_highlight_geometry_get;
       Elm_Widget::focused_item::get;
+      Elm_Widget::item_loop_enabled::set;
+      Elm_Widget::item_loop_enabled::get;
       Elm_Layout::sizing_eval;
       Elm_Interface_Scrollable::bounce_allow::set;
       Elm_Interface_Scrollable::policy;

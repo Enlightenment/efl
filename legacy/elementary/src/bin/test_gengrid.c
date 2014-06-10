@@ -160,6 +160,21 @@ _horizontal_grid(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+_item_loop_enable_changed_cb(void *data, Evas_Object *obj,
+                             void *event_info  EINA_UNUSED)
+{
+   Evas_Object *grid = data;
+   elm_object_scroll_item_loop_enabled_set(grid, elm_check_state_get(obj));
+}
+
+static void
+_focus_highlight_changed_cb(void *data, Evas_Object *obj,
+                            void *event_info EINA_UNUSED)
+{
+   elm_win_focus_highlight_enabled_set(data, elm_check_state_get(obj));
+}
+
+static void
 grid_drag_up(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Drag up: %p\n", event_info);
@@ -816,6 +831,18 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Horizontal Mode");
    evas_object_smart_callback_add(ck, "changed", _horizontal_grid, grid);
+   elm_box_pack_end(hbx, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Item loop enable");
+   evas_object_smart_callback_add(ck, "changed", _item_loop_enable_changed_cb, grid);
+   elm_box_pack_end(hbx, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Focus Highlight Set");
+   evas_object_smart_callback_add(ck, "changed", _focus_highlight_changed_cb, win);
    elm_box_pack_end(hbx, ck);
    evas_object_show(ck);
 
