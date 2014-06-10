@@ -9,6 +9,16 @@
 
 #define MY_CLASS ELM_ENTRY_CLASS
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
+#define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
+
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+#include "elm_interface_atspi_text.h"
+#include "elm_interface_atspi_text.eo.h"
+#include "elm_interface_atspi_editable_text.eo.h"
+
 #define MY_CLASS_NAME "Elm_Entry"
 #define MY_CLASS_NAME_LEGACY "elm_entry"
 
@@ -1888,6 +1898,24 @@ _entry_changed_user_signal_cb(void *data,
      {
         evas_object_smart_callback_call(data, SIG_CHANGED_USER, NULL);
      }
+   if (_elm_config->atspi_mode)
+     {
+        Elm_Atspi_Text_Change_Info atspi_info;
+        if (edje_info && edje_info->insert)
+          {
+             atspi_info.content = edje_info->change.insert.content;
+             atspi_info.pos = edje_info->change.insert.pos;
+             atspi_info.len = edje_info->change.insert.plain_length;
+             eo_do(data, eo_event_callback_call(ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info));
+          }
+        else if (edje_info && !edje_info->insert)
+          {
+             atspi_info.content = edje_info->change.del.content;
+             atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
+             atspi_info.len = abs(edje_info->change.del.end - edje_info->change.del.start);
+             eo_do(data, eo_event_callback_call(ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info));
+          }
+     }
 }
 
 static void
@@ -1970,6 +1998,8 @@ _entry_selection_changed_signal_cb(void *data,
    evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
    _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
+   if (_elm_config->atspi_mode)
+     eo_do(data, eo_event_callback_call(ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL));
 }
 
 static void
@@ -2073,6 +2103,8 @@ _entry_cursor_changed_signal_cb(void *data,
    if (elm_widget_focus_get(data))
      edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
    _cursor_geometry_recalc(data);
+   if (_elm_config->atspi_mode)
+     eo_do(data, eo_event_callback_call(ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL));
 }
 
 static void
@@ -2082,6 +2114,8 @@ _entry_cursor_changed_manual_signal_cb(void *data,
                                        const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED_MANUAL, NULL);
+   if (_elm_config->atspi_mode)
+     eo_do(data, eo_event_callback_call(ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL));
 }
 
 static void
@@ -3625,7 +3659,8 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_TEXT));
 }
 
 EOLIAN static void
@@ -4951,5 +4986,545 @@ _elm_entry_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+// ATSPI Accessibility
+
+EOLIAN static Eina_Unicode
+_elm_entry_elm_interface_atspi_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
+{
+   char *txt;
+   int index = 0;
+   Eina_Unicode ret = 0;
+   if (offset < 0) return ret;
+
+   txt = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
+   if (!txt) return ret;
+
+   ret = eina_unicode_utf8_next_get(txt, &index);
+   while (offset--) ret = eina_unicode_utf8_next_get(txt, &index);
+
+   free(txt);
+
+   return ret;
+}
+
+EOLIAN static int
+_elm_entry_elm_interface_atspi_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   char *txt;
+   int ret = -1;
+
+   txt = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
+   if (!txt) return ret;
+
+   ret = eina_unicode_utf8_get_len(txt);
+   free(txt);
+
+   return ret;
+}
+
+EOLIAN static char*
+_elm_entry_elm_interface_atspi_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Elm_Atspi_Text_Granularity granularity, int *start_offset, int *end_offset)
+{
+   Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
+   Evas_Object *tblk;
+   char *ret = NULL;
+
+   tblk = elm_entry_textblock_get(obj);
+   if (!tblk) goto fail;
+
+   cur = evas_object_textblock_cursor_new(tblk);
+   cur2 = evas_object_textblock_cursor_new(tblk);
+   if (!cur2 || !cur2) goto fail;
+
+   evas_textblock_cursor_pos_set(cur, *start_offset);
+   if (evas_textblock_cursor_pos_get(cur) != *start_offset) goto fail;
+
+   switch (granularity)
+     {
+      case ELM_ATSPI_TEXT_GRANULARITY_CHAR:
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_WORD:
+         evas_textblock_cursor_word_start(cur);
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_SENTENCE:
+         // TODO - add sentence support in textblock first
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_LINE:
+         evas_textblock_cursor_line_char_first(cur);
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH:
+         evas_textblock_cursor_paragraph_char_first(cur);
+         break;
+     }
+
+   *start_offset = evas_textblock_cursor_pos_get(cur);
+   evas_textblock_cursor_copy(cur, cur2);
+
+   switch (granularity)
+     {
+      case ELM_ATSPI_TEXT_GRANULARITY_CHAR:
+         evas_textblock_cursor_char_next(cur2);
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_WORD:
+         evas_textblock_cursor_word_end(cur2);
+         // since word_end sets cursor position ON (before) last
+         // char of word, we need to manually advance cursor to get
+         // proper string from function range_text_get
+         evas_textblock_cursor_char_next(cur2);
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_SENTENCE:
+         // TODO - add sentence support in textblock first
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_LINE:
+         evas_textblock_cursor_line_char_last(cur2);
+         break;
+      case ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH:
+         evas_textblock_cursor_paragraph_char_last(cur2);
+         break;
+     }
+
+   if (end_offset) *end_offset = evas_textblock_cursor_pos_get(cur2);
+
+   ret = evas_textblock_cursor_range_text_get(cur, cur2, EVAS_TEXTBLOCK_TEXT_PLAIN);
+
+   evas_textblock_cursor_free(cur);
+   evas_textblock_cursor_free(cur2);
+
+   return ret;
+
+fail:
+   if (start_offset) *start_offset = -1;
+   if (end_offset) *end_offset = -1;
+   if (cur) evas_textblock_cursor_free(cur);
+   if (cur2) evas_textblock_cursor_free(cur2);
+   return NULL;
+}
+
+EOLIAN static char*
+_elm_entry_elm_interface_atspi_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+{
+   Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
+   Evas_Object *tblk;
+   char *ret = NULL;
+
+   tblk = elm_entry_textblock_get(obj);
+   if (!tblk) goto fail;
+
+   cur = evas_object_textblock_cursor_new(tblk);
+   cur2 = evas_object_textblock_cursor_new(tblk);
+   if (!cur2 || !cur2) goto fail;
+
+   evas_textblock_cursor_pos_set(cur, start_offset);
+   if (evas_textblock_cursor_pos_get(cur) != start_offset) goto fail;
+
+   evas_textblock_cursor_pos_set(cur2, end_offset);
+   if (evas_textblock_cursor_pos_get(cur2) != end_offset) goto fail;
+
+   ret = evas_textblock_cursor_range_text_get(cur, cur2, EVAS_TEXTBLOCK_TEXT_PLAIN);
+
+   evas_textblock_cursor_free(cur);
+   evas_textblock_cursor_free(cur2);
+
+   return ret;
+
+fail:
+   if (cur) evas_textblock_cursor_free(cur);
+   if (cur2) evas_textblock_cursor_free(cur2);
+   return NULL;
+}
+
+EOLIAN static int
+_elm_entry_elm_interface_atspi_text_caret_offset_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   return elm_entry_cursor_pos_get(obj);
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_caret_offset_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
+{
+   elm_entry_cursor_pos_set(obj, offset);
+   return EINA_TRUE;
+}
+
+EOLIAN static int
+_elm_entry_elm_interface_atspi_text_selections_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   return elm_entry_selection_get(obj) ? 1 : 0;
+}
+
+EOLIAN static void
+_elm_entry_elm_interface_atspi_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+{
+   *start_offset = *end_offset = -1;
+   if (!elm_entry_selection_get(obj)) return;
+   if (selection_number != 0) return;
+
+   *start_offset = edje_object_part_text_cursor_pos_get(_pd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_BEGIN);
+   *end_offset = edje_object_part_text_cursor_pos_get(_pd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_END);
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
+{
+   if (selection_number != 0) return EINA_FALSE;
+
+   elm_entry_select_region_set(obj, start_offset, end_offset);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_selection_remove(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, int selection_number)
+{
+   if (selection_number != 0) return EINA_FALSE;
+   elm_entry_select_none(obj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_selection_add(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, int start_offset, int end_offset)
+{
+   elm_entry_select_region_set(obj, start_offset, end_offset);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_List*
+_elm_entry_elm_interface_atspi_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rectangle rect EINA_UNUSED, Elm_Atspi_Text_Clip_Type xclip EINA_UNUSED, Elm_Atspi_Text_Clip_Type yclip EINA_UNUSED)
+{
+   return NULL;
+}
+
+EOLIAN static int
+_elm_entry_elm_interface_atspi_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
+{
+   Evas_Object *txtblk;
+   Evas_Textblock_Cursor *cur;
+   int ret;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return -1;
+
+   cur = evas_object_textblock_cursor_new(txtblk);
+   if (!cur) return -1;
+
+   if (screen_coods)
+     {
+        int ee_x, ee_y;
+        Ecore_Evas *ee= ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+        x -= ee_x;
+        y -= ee_y;
+     }
+
+   if (!evas_textblock_cursor_char_coord_set(cur, x, y))
+     {
+        evas_textblock_cursor_free(cur);
+        return -1;
+     }
+
+   ret = evas_textblock_cursor_pos_get(cur);
+   evas_textblock_cursor_free(cur);
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rectangle *rect)
+{
+   Evas_Object *txtblk;
+   Evas_Textblock_Cursor *cur;
+   int ret;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return EINA_FALSE;
+
+   cur = evas_object_textblock_cursor_new(txtblk);
+   if (!cur) return EINA_FALSE;
+
+   evas_textblock_cursor_pos_set(cur, offset);
+
+   ret = evas_textblock_cursor_char_geometry_get(cur, &rect->x, &rect->y, &rect->w, &rect->h);
+   evas_textblock_cursor_free(cur);
+
+   if (ret == -1) return EINA_FALSE;
+
+   if (screen_coods)
+     {
+        int ee_x, ee_y;
+        Ecore_Evas *ee= ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+        rect->x += ee_x;
+        rect->y += ee_y;
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_range_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rectangle *rect)
+{
+   Evas_Object *txtblk;
+   Evas_Textblock_Cursor *cur1, *cur2;
+   int ret;
+   int x1, x2, y1, y2;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return EINA_FALSE;
+
+   cur1 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur1) return EINA_FALSE;
+
+   cur2 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur2)
+     {
+        evas_textblock_cursor_free(cur1);
+        return EINA_FALSE;
+     }
+
+   evas_textblock_cursor_pos_set(cur1, start_offset);
+   evas_textblock_cursor_pos_set(cur2, end_offset);
+
+   ret = evas_textblock_cursor_char_geometry_get(cur1, &x1, &y1, NULL, NULL);
+   ret += evas_textblock_cursor_char_geometry_get(cur2, &x2, &y2, NULL, NULL);
+
+   evas_textblock_cursor_free(cur1);
+   evas_textblock_cursor_free(cur2);
+
+   if (ret != 0) return EINA_FALSE;
+
+   rect->x = x1 < x2 ? x1 : x2;
+   rect->y = y1 < y2 ? y1 : y2;
+   rect->w = abs(x1 - x2);
+   rect->h = abs(y1 - y2);
+
+   if (screen_coods)
+     {
+        int ee_x, ee_y;
+        Ecore_Evas *ee= ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+        rect->x += ee_x;
+        rect->y += ee_y;
+     }
+
+   return EINA_TRUE;
+}
+
+static Elm_Atspi_Text_Attribute*
+_textblock_node_format_to_atspi_text_attr(const Evas_Object_Textblock_Node_Format *format)
+{
+   Elm_Atspi_Text_Attribute *ret = NULL;
+   const char *txt;
+
+   txt = evas_textblock_node_format_text_get(format);
+   if (!txt) return NULL;
+
+   if (txt[0] == '-') return NULL; // skip closing format
+
+   if (!strncmp(txt, "+ ", 2))
+     {
+        const char *tmp = &txt[2];
+
+        while (*tmp != '\0' && *tmp != '=') tmp++;
+        if (*tmp++ != '=') return NULL;
+
+        ret = calloc(1, sizeof(Elm_Atspi_Text_Attribute));
+        if (!ret) return NULL;
+
+        ret->value = eina_stringshare_add(tmp);
+        int size = &txt[2] - tmp + 1;
+        ret->name = eina_stringshare_add_length(&txt[2], size > 0 ? size : -size);
+     }
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
+{
+   Evas_Object *txtblk;
+   Evas_Textblock_Cursor *cur1, *cur2;
+   Eina_List *formats, *l;
+   Evas_Object_Textblock_Node_Format *format;
+   Elm_Atspi_Text_Attribute *attr;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return EINA_FALSE;
+
+   cur1 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur1) return EINA_FALSE;
+
+   cur2 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur2)
+     {
+        evas_textblock_cursor_free(cur1);
+        return EINA_FALSE;
+     }
+
+   evas_textblock_cursor_pos_set(cur1, *start_offset);
+   evas_textblock_cursor_pos_set(cur2, *end_offset);
+
+   formats = evas_textblock_cursor_range_formats_get(cur1, cur2);
+
+   evas_textblock_cursor_free(cur1);
+   evas_textblock_cursor_free(cur2);
+
+   if (!formats) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(formats, l , format)
+     {
+        attr = _textblock_node_format_to_atspi_text_attr(format);
+        if (!attr) continue;
+        if (!strcmp(attr->name, attr_name))
+          {
+             *value = attr->value ? strdup(attr->value) : NULL;
+             elm_atspi_text_text_attribute_free(attr);
+             return EINA_TRUE;
+          }
+        elm_atspi_text_text_attribute_free(attr);
+     }
+
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_List*
+_elm_entry_elm_interface_atspi_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
+{
+   Evas_Object *txtblk;
+   Evas_Textblock_Cursor *cur1, *cur2;
+   Eina_List *formats, *ret = NULL, *l;
+   Evas_Object_Textblock_Node_Format *format;
+   Elm_Atspi_Text_Attribute *attr;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return NULL;
+
+   cur1 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur1) return NULL;
+
+   cur2 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur2)
+     {
+        evas_textblock_cursor_free(cur1);
+        return NULL;
+     }
+
+   evas_textblock_cursor_pos_set(cur1, *start_offset);
+   evas_textblock_cursor_pos_set(cur2, *end_offset);
+
+   formats = evas_textblock_cursor_range_formats_get(cur1, cur2);
+
+   evas_textblock_cursor_free(cur1);
+   evas_textblock_cursor_free(cur2);
+
+   if (!formats) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(formats, l , format)
+     {
+        attr = _textblock_node_format_to_atspi_text_attr(format);
+        if (!attr) continue;
+        ret = eina_list_append(ret, attr);
+     }
+
+   return ret;
+}
+
+EOLIAN static Eina_List*
+_elm_entry_elm_interface_atspi_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   Evas_Object *txtblk;
+   Eina_List *ret = NULL;
+   const Evas_Object_Textblock_Node_Format *format;
+   Elm_Atspi_Text_Attribute *attr;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return NULL;
+
+   format = evas_textblock_node_format_first_get(txtblk);
+   if (!format) return EINA_FALSE;
+
+   do
+     {
+        attr = _textblock_node_format_to_atspi_text_attr(format);
+        if (!attr) continue;
+        ret = eina_list_append(ret, attr);
+     }
+   while ((format = evas_textblock_node_format_next_get(format)) != NULL);
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_editable_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
+{
+   elm_entry_entry_set(obj, content);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_editable_text_insert(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *string, int position)
+{
+   elm_entry_cursor_pos_set(obj, position);
+   elm_entry_entry_insert(obj, string);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_editable_text_copy(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
+{
+   elm_entry_select_region_set(obj, start, end);
+   elm_entry_selection_copy(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_editable_text_delete(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+{
+   Evas_Object *txtblk;
+   Evas_Textblock_Cursor *cur1, *cur2;
+
+   txtblk = elm_entry_textblock_get(obj);
+   if (!txtblk) return EINA_FALSE;
+
+   cur1 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur1) return EINA_FALSE;
+
+   cur2 = evas_object_textblock_cursor_new(txtblk);
+   if (!cur2)
+     {
+        evas_textblock_cursor_free(cur1);
+        return EINA_FALSE;
+     }
+
+   evas_textblock_cursor_pos_set(cur1, start_offset);
+   evas_textblock_cursor_pos_set(cur2, end_offset);
+
+   evas_textblock_cursor_range_delete(cur1, cur2);
+
+   evas_textblock_cursor_free(cur1);
+   evas_textblock_cursor_free(cur2);
+
+   elm_entry_calc_force(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_editable_text_paste(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int position)
+{
+   elm_entry_cursor_pos_set(obj, position);
+   elm_entry_selection_paste(obj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_interface_atspi_editable_text_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
+{
+   elm_entry_select_region_set(obj, start, end);
+   elm_entry_selection_cut(obj);
+   return EINA_TRUE;
+}
 
 #include "elm_entry.eo.c"

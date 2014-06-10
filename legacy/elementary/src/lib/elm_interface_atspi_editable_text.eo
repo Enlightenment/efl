@@ -1,0 +1,60 @@
+interface Elm_Interface_Atspi_Editable_Text ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_editable_text;
+   data: null;
+   properties {
+      protected content {
+         set {
+            return Eina_Bool;
+         }
+         values {
+            const char *string;
+         }
+      }
+   }
+   methods {
+      protected insert {
+         params {
+            @in const char *string;
+            @in int position;
+         }
+         return Eina_Bool;
+      }
+      protected copy {
+         params {
+            @in int start;
+            @in int end;
+         }
+		 return Eina_Bool;
+      }
+      protected cut {
+         params {
+            @in int start;
+            @in int end;
+         }
+         return Eina_Bool;
+      }
+      protected delete {
+         params {
+            @in int start;
+            @in int end;
+         }
+         return Eina_Bool;
+      }
+      protected paste {
+         params {
+            @in int position;
+         }
+         return Eina_Bool;
+      }
+   }
+   implements {
+      virtual::content::set;
+      virtual::insert;
+      virtual::copy;
+      virtual::cut;
+      virtual::delete;
+      virtual::paste;
+   }
+}

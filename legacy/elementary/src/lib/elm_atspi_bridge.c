@@ -8,6 +8,9 @@
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
+#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
+#define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
+
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
@@ -23,6 +26,9 @@
 #include "elm_interface_atspi_value.eo.h"
 #include "elm_interface_atspi_image.eo.h"
 #include "elm_interface_atspi_selection.eo.h"
+#include "elm_interface_atspi_text.h"
+#include "elm_interface_atspi_text.eo.h"
+#include "elm_interface_atspi_editable_text.eo.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -51,8 +57,9 @@ static Eina_Hash *_cache;
 static Eldbus_Service_Interface *_cache_interface = NULL;
 static Eldbus_Signal_Handler *_register_hdl;
 static Eldbus_Signal_Handler *_unregister_hdl;
-static unsigned short _object_property_broadcast_mask;
-static unsigned short _object_children_broadcast_mask;
+static unsigned long _object_broadcast_mask;
+static unsigned long _object_property_broadcast_mask;
+static unsigned long _object_children_broadcast_mask;
 static unsigned long long _object_state_broadcast_mask;
 static unsigned long long _window_signal_broadcast_mask;
 
@@ -61,9 +68,13 @@ static Eina_Bool _property_changed_signal_send(void *data, Eo *obj, const Eo_Eve
 static Eina_Bool _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
 static Eina_Bool _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _text_text_inserted_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _text_text_removed_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _text_caret_moved_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED);
 static Eo * _access_object_from_path(const char *path);
 static char * _path_from_access_object(const Eo *eo);
-static void _object_append_reference(Eldbus_Message_Iter *iter, const Eo *obj);
+static void _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
 static void _cache_build(void *obj);
 static void _object_register(Eo *obj, char *path);
@@ -84,6 +95,15 @@ EO_CALLBACKS_ARRAY_DEFINE(_window_cb,
 
 EO_CALLBACKS_ARRAY_DEFINE(_selection_cb,
    { ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, _selection_signal_send}
+);
+
+EO_CALLBACKS_ARRAY_DEFINE(_text_cb,
+   { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, _text_caret_moved_send },
+   { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED, _text_text_inserted_send },
+   { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, _text_text_removed_send },
+   { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, _text_selection_changed_send },
+   { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_BOUNDS_CHANGED, NULL },
+   { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_ATTRIBUTES_CHANGED, NULL }
 );
 
 enum _Atspi_Object_Child_Event_Type
@@ -167,7 +187,7 @@ static const Eldbus_Signal _event_obj_signals[] = {
    [ATSPI_OBJECT_EVENT_COLUMN_DELETED] = {"ColumnDeleted", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_TEXT_BOUNDS_CHANGED] = {"TextBoundsChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED] = {"SelectionChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
-   [ATSPI_OBJECT_EVENT_TEXT_CHANGED] = {"TextChaged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
+   [ATSPI_OBJECT_EVENT_TEXT_CHANGED] = {"TextChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_TEXT_ATTRIBUTES_CHANGED] = {"TextAttributesChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED] = {"TextCaretMoved", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_ATTRIBUTES_CHANGED] = {"AttributesChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
@@ -195,7 +215,6 @@ static const Eldbus_Signal _window_obj_signals[] = {
    [ATSPI_WINDOW_EVENT_RESTYLE] = {"Restyle", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    {NULL, ELDBUS_ARGS({NULL, NULL}), 0}
 };
-
 
 const int elm_roles_to_atspi_roles[][2] = {
    { ELM_ATSPI_ROLE_INVALID, ATSPI_ROLE_INVALID },
@@ -302,7 +321,7 @@ const int elm_roles_to_atspi_roles[][2] = {
    { ELM_ATSPI_ROLE_NOTIFICATION, ATSPI_ROLE_NOTIFICATION },
    { ELM_ATSPI_ROLE_INFO_BAR, ATSPI_ROLE_INFO_BAR },
    { ELM_ATSPI_ROLE_LAST_DEFINED, ATSPI_ROLE_LAST_DEFINED },
-}; 
+};
 
 
 const int elm_states_to_atspi_state[][2] = {
@@ -449,7 +468,7 @@ _accessible_get_children(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
    EINA_LIST_FOREACH(children_list, l, children)
-      _object_append_reference(iter_array, children);
+      _iter_object_reference_append(iter_array, children);
 
    eldbus_message_iter_container_close(iter, iter_array);
    eina_list_free(children_list);
@@ -467,7 +486,7 @@ _accessible_get_application(const Eldbus_Service_Interface *iface EINA_UNUSED, c
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   _object_append_reference(iter, _root);
+   _iter_object_reference_append(iter, _root);
 
    return ret;
 }
@@ -477,7 +496,7 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
 {
    Eina_List *attrs, *l;
    Elm_Atspi_Attribute *attr;
-   Eldbus_Message_Iter *iter, *iter_array;
+   Eldbus_Message_Iter *iter, *iter_dict, *iter_entry;
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -488,12 +507,18 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    eo_do(obj, attrs = elm_interface_atspi_accessible_attributes_get());
 
    iter = eldbus_message_iter_get(ret);
-   iter_array = eldbus_message_iter_container_new(iter, 'a', "ss");
+   iter_dict = eldbus_message_iter_container_new(iter, 'a', "{ss}");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_dict, NULL);
 
    EINA_LIST_FOREACH(attrs, l, attr)
-     eldbus_message_iter_arguments_append(iter_array, "ss", attr->key, attr->value);
+     {
+        iter_entry = eldbus_message_iter_container_new(iter_dict, 'e', NULL);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iter_entry, NULL);
+        eldbus_message_iter_arguments_append(iter_entry, "ss", attr->key, attr->value);
+        eldbus_message_iter_container_close(iter_dict, iter_entry);
+     }
 
-   eldbus_message_iter_container_close(iter, iter_array);
+   eldbus_message_iter_container_close(iter, iter_dict);
    elm_atspi_attributes_list_free(attrs);
 
    return ret;
@@ -594,7 +619,7 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    eo_do(obj, children = elm_interface_atspi_accessible_children_get());
 
    child = eina_list_nth(children, idx);
-   _object_append_reference(iter, child);
+   _iter_object_reference_append(iter, child);
    eina_list_free(children);
 
    return ret;
@@ -625,7 +650,7 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
         eldbus_message_iter_basic_append(iter_struct, 'u', _elm_relation_to_atspi_relation(rel->type));
         iter_array2 = eldbus_message_iter_container_new(iter_struct, 'a', "(so)");
         EINA_SAFETY_ON_NULL_GOTO(iter_array2, fail);
-        _object_append_reference(iter_array2, rel->obj);
+        _iter_object_reference_append(iter_array2, rel->obj);
         eldbus_message_iter_container_close(iter_struct, iter_array2);
         eldbus_message_iter_container_close(iter_array, iter_struct);
         free(rel);
@@ -672,7 +697,7 @@ _selection_selected_child_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
    iter = eldbus_message_iter_get(ret);
    eo_do(obj, child = elm_interface_atspi_selection_selected_child_get(idx));
 
-   _object_append_reference(iter, child);
+   _iter_object_reference_append(iter, child);
 
    return ret;
 }
@@ -1032,6 +1057,657 @@ static const Eldbus_Method image_methods[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
+static Eldbus_Message *
+_text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   char *str;
+   AtspiTextGranularity gran;
+   int start, end;
+   Eldbus_Message *ret;
+   Eo *obj = _access_object_from_path(obj_path);
+
+   if (!eldbus_message_arguments_get(msg, "iu", &start, &gran))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and granularity expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, str = elm_interface_atspi_text_string_get(gran, &start, &end));
+   str = str ? str : strdup("");
+
+   eldbus_message_arguments_append(ret, "sii", str, start, end);
+   free(str);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_text_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   char *str;
+   Eo *obj = _access_object_from_path(obj_path);
+   int start, end;
+
+   if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and granularity expected.");
+
+   Eldbus_Message *ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, str = elm_interface_atspi_text_text_get(start, end));
+   str = str ? str : strdup("");
+
+   eldbus_message_arguments_append(ret, "s", str);
+   free(str);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_caret_offset_set(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int offset;
+   Eldbus_Message *ret;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "i", &offset))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_text_caret_offset_set(offset));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_character_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int offset;
+   Eldbus_Message *ret;
+   Eina_Unicode res;
+
+   if (!eldbus_message_arguments_get(msg, "i", &offset))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_text_character_get(offset));
+
+   eldbus_message_arguments_append(ret, "i", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_attribute_value_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *name, *obj_path = eldbus_service_object_path_get(iface);
+   char *value = NULL;
+   Eo *obj = _access_object_from_path(obj_path);
+   int start, end;
+   Eldbus_Message *ret;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "is", &start, &name))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and attribute name expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_text_attribute_get(name, &start, &end, &value));
+   eldbus_message_arguments_append(ret, "siib", value ? value : "", start, end, res);
+
+   if (value) free(value);
+   return ret;
+}
+
+static Eldbus_Message *
+_text_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int start, end;
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *iter_array;
+   Eina_List *attrs;
+   Elm_Atspi_Text_Attribute *attr;
+
+   if (!eldbus_message_arguments_get(msg, "i", &start))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
+   EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
+
+   eo_do(obj, attrs = elm_interface_atspi_text_attributes_get(&start, &end));
+
+   EINA_LIST_FREE(attrs, attr)
+    {
+       eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
+       elm_atspi_text_text_attribute_free(attr);
+    }
+
+   eldbus_message_iter_container_close(iter, iter_array);
+   eldbus_message_iter_arguments_append(iter, "ii", start, end);
+
+   return ret;
+
+fail:
+   if (ret) eldbus_message_unref(ret);
+   return NULL;
+}
+
+static Eldbus_Message *
+_text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int start = -1, end;
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *iter_array;
+   Eina_List *attrs;
+   Elm_Atspi_Text_Attribute *attr;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
+   EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
+
+   eo_do(obj, attrs = elm_interface_atspi_text_attributes_get(&start, &end));
+
+   EINA_LIST_FREE(attrs, attr)
+    {
+      eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
+      elm_atspi_text_text_attribute_free(attr);
+    }
+
+   eldbus_message_iter_container_close(iter, iter_array);
+   eldbus_message_iter_arguments_append(iter, "ii", start, end);
+
+   return ret;
+
+fail:
+   if (ret) eldbus_message_unref(ret);
+   return NULL;
+}
+
+static Eldbus_Message *
+_text_character_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int offset;
+   Eina_Rectangle rect;
+   AtspiCoordType type;
+   Eina_Bool screen_coords, res;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "iu", &offset, &type))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and coordinates type expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+
+   eo_do(obj, res = elm_interface_atspi_text_character_extents_get(offset, screen_coords, &rect));
+
+   if (!res)
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get character extents.");
+   eldbus_message_arguments_append(ret, "iiii", rect.x, rect.y, rect.w, rect.h);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_offset_at_point_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int offset, x, y;
+   AtspiCoordType type;
+   Eina_Bool screen_coords;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &type))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and coordinates type expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   x = y = -1;
+   screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+
+   eo_do(obj, offset = elm_interface_atspi_text_offset_at_point_get(screen_coords, x, y));
+
+   eldbus_message_arguments_append(ret, "i", offset);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_n_selections_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int n;
+   Eldbus_Message *ret;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, n = elm_interface_atspi_text_selections_count_get());
+
+   eldbus_message_arguments_append(ret, "i", n);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_selection_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int sel_num, start, end;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "i", &sel_num))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, elm_interface_atspi_text_selection_get(sel_num, &start, &end));
+
+   eldbus_message_arguments_append(ret, "ii", start, end);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_selection_add(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int start, end;
+   Eina_Bool res;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end text offset expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_text_selection_add(start, end));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_selection_remove(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int sel_num;
+   Eina_Bool res;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "i", &sel_num))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_text_selection_remove(sel_num));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_selection_set(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int sel_num, start, end;
+   Eina_Bool res;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "iii", &sel_num, &start, &end))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_text_selection_set(sel_num, start, end));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_range_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int start, end;
+   Eina_Rectangle rect;
+   Eina_Bool screen_coords, res;
+   AtspiCoordType type;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "iiu", &start, &end, &type))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Selection number expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, res = elm_interface_atspi_text_range_extents_get(screen_coords, start, end, &rect));
+   if (!res)
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Can't get range extents.");
+
+   eldbus_message_arguments_append(ret, "iiii", rect.x, rect.y, rect.w, rect.h);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eina_Rectangle rect;
+   Eina_Bool screen_coords;
+   AtspiCoordType type;
+   AtspiTextClipType xc, yc;
+   Elm_Atspi_Text_Clip_Type xclip, yclip;
+   Eina_List *ranges;
+   Eldbus_Message *ret;
+   Elm_Atspi_Text_Range *range;
+   Eldbus_Message_Iter *iter, *iter_array, *iter_struct, *iter_var;
+
+   if (!eldbus_message_arguments_get(msg, "iiiiuuu", &rect.x, &rect.y, &rect.w, &rect.h, &type, &xc, &yc))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Expected (x,y,w,h) of bounding box, screen coord type and x, y text clip types.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "(iisv)");
+   EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
+
+   xclip = xc;
+   yclip = yc;
+
+   screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, ranges = elm_interface_atspi_text_bounded_ranges_get(screen_coords, rect, xclip, yclip));
+
+   EINA_LIST_FREE(ranges, range)
+     {
+        iter_struct = eldbus_message_iter_container_new(iter_array, 'r', NULL);
+        if (iter_struct)
+          {
+             eldbus_message_iter_basic_append(iter_struct, 'i', range->start_offset);
+             eldbus_message_iter_basic_append(iter_struct, 'i', range->end_offset);
+             range->content = range->content ? range->content : strdup("");
+             eldbus_message_iter_basic_append(iter_struct, 's', range->content);
+             /* AT-SPI specification requires variant type in return, however
+              * ATK or other implementations as well as AT Clients don't use it .
+              * To cover spec a dummy value will be returned */
+             iter_var = eldbus_message_iter_container_new(iter_struct, 'v', "i");
+             if (iter_var)
+               {
+                  eldbus_message_iter_basic_append(iter_var, 'i', 0);
+                  eldbus_message_iter_container_close(iter_struct, iter_var);
+               }
+             eldbus_message_iter_container_close(iter_array, iter_struct);
+          }
+        if (range->content) free(range->content);
+        free(range);
+     }
+
+   eldbus_message_iter_container_close(iter, iter_array);
+
+   return ret;
+
+fail:
+   if (ret) eldbus_message_unref(ret);
+   return NULL;
+}
+
+static Eldbus_Message *
+_text_run_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int start, end;
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *iter_array;
+   Eina_List *attrs, *defaults;
+   Elm_Atspi_Text_Attribute *attr;
+   Eina_Bool incl_def;
+
+   if (!eldbus_message_arguments_get(msg, "ib", &start, &incl_def))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Offset and include defaults flag expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
+   EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
+
+   eo_do(obj, attrs = elm_interface_atspi_text_attributes_get(&start, &end));
+
+   if (incl_def)
+     {
+        eo_do(obj, defaults = elm_interface_atspi_text_default_attributes_get());
+        attrs = eina_list_merge(attrs, defaults);
+     }
+
+   EINA_LIST_FREE(attrs, attr)
+     {
+        eldbus_message_iter_arguments_append(iter_array, "ss", attr->name, attr->value);
+        elm_atspi_text_text_attribute_free(attr);
+     }
+
+   eldbus_message_iter_container_close(iter, iter_array);
+   eldbus_message_iter_arguments_append(iter, "ii", start, end);
+
+   return ret;
+
+fail:
+   if (ret) eldbus_message_unref(ret);
+   return NULL;
+}
+
+static const Eldbus_Method text_methods[] = {
+   { "GetTextAtOffset", ELDBUS_ARGS({"i", "offset"}, {"u", "granularity"}), ELDBUS_ARGS({"s", "string"}, {"i", "startOffset"}, {"i", "endOffset"}), _text_string_at_offset_get, 0 },
+   { "GetText", ELDBUS_ARGS({"i", "startOffset"}, {"i", "endOffset"}), ELDBUS_ARGS({"s", "string"}), _text_text_get, 0 },
+   { "SetCaretOffset", ELDBUS_ARGS({"i", "offset"}), ELDBUS_ARGS({"b", NULL}), _text_caret_offset_set, 0 },
+   { "GetCharacterAtOffset", ELDBUS_ARGS({"i", "offset"}), ELDBUS_ARGS({"i", NULL}), _text_character_at_offset_get, 0 },
+   { "GetAttributeValue", ELDBUS_ARGS({"i", "offset"}, {"s", "attributeName"}), ELDBUS_ARGS({"s", NULL}, {"i", "startOffset"}, {"i", "endOffset"}, {"b", "defined"}), _text_attribute_value_get, 0 },
+   { "GetAttributes", ELDBUS_ARGS({"i", "offset"}), ELDBUS_ARGS({"a(ss)", NULL}, {"i", "startOffset"}, {"i", "endOffset"}), _text_attributes_get, 0 },
+   { "GetDefaultAttributes", NULL, ELDBUS_ARGS({"a(ss)", NULL}), _text_default_attributes_get, 0 },
+   { "GetCharacterExtents", ELDBUS_ARGS({"i", "offset"}, {"u", "coordType"}), ELDBUS_ARGS({"i", "x"}, {"i", "y"}, {"i","w"}, {"i","h"}), _text_character_extents_get, 0 },
+   { "GetOffsetAtPoint", ELDBUS_ARGS({"i", "x"}, {"i","y"}, {"u", "coordType"}), ELDBUS_ARGS({"i", NULL}), _text_offset_at_point_get, 0 },
+   { "GetNSelections", NULL, ELDBUS_ARGS({"i", NULL}), _text_n_selections_get, 0 },
+   { "GetSelection", ELDBUS_ARGS({"i", "selectionNum"}), ELDBUS_ARGS({"i", "startOffset"}, {"i", "endOffset"}), _text_selection_get, 0 },
+   { "AddSelection", ELDBUS_ARGS({"i", "startOffset"}, {"i", "endOffset"}), ELDBUS_ARGS({"b", NULL}), _text_selection_add, 0 },
+   { "RemoveSelection", ELDBUS_ARGS({"i", "selectionNum"}), ELDBUS_ARGS({"b", NULL}), _text_selection_remove, 0 },
+   { "SetSelection", ELDBUS_ARGS({"i", "selectionNum"}, {"i", "startOffset"}, {"i", "endOffset"}), ELDBUS_ARGS({"b", NULL}), _text_selection_set, 0 },
+   { "GetRangeExtents", ELDBUS_ARGS({"i", "startOffset"}, {"i", "endOffset"}, {"u", "coordType"}), ELDBUS_ARGS({"i", "x"}, {"i", "y"}, {"i","w"}, {"i","h"}), _text_range_extents_get, 0 },
+   { "GetBoundedRanges", ELDBUS_ARGS({"i", "x"}, {"i", "y"}, {"i", "w"}, {"i", "h"}, {"u", "coordType"}, {"u", "xClipType"}, {"u", "yClipType"}), ELDBUS_ARGS({"a(issv)", NULL}), _text_bounded_ranges_get, 0 },
+   { "GetAttributeRun", ELDBUS_ARGS({"i", "offset"}, {"b", "includeDefaults"}), ELDBUS_ARGS({"a(ss)", NULL}, {"i", "startOffset"}, {"i", "endOffset"}), _text_run_attributes_get, 0 },
+   { "GetDefaultAttributeSet", NULL, ELDBUS_ARGS({"a(ss)", NULL}), _text_default_attributes_get, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static Eldbus_Message *
+_editable_text_text_content_set(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   const char *content;
+   Eldbus_Message *ret;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "s", &content))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "String expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_editable_text_content_set(content));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_editable_text_text_insert(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   const char *text;
+   Eldbus_Message *ret;
+   int pos, len;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "isi", &pos, &text, &len))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Postion, string, length expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_editable_text_insert(text, pos));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_editable_text_text_copy(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret;
+   int start, end;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_editable_text_copy(start, end));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_editable_text_text_cut(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret;
+   int start, end;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_editable_text_cut(start, end));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_editable_text_text_delete(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret;
+   int start, end;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_editable_text_delete(start, end));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_editable_text_text_paste(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret;
+   int pos;
+   Eina_Bool res;
+
+   if (!eldbus_message_arguments_get(msg, "i", &pos))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, res = elm_interface_atspi_editable_text_paste(pos));
+
+   eldbus_message_arguments_append(ret, "b", res);
+
+   return ret;
+}
+
+static const Eldbus_Method editable_text_methods[] = {
+   { "SetTextContents", ELDBUS_ARGS({"s", "newcontents"}), ELDBUS_ARGS({"b", NULL}), _editable_text_text_content_set, 0 },
+   { "InsertText", ELDBUS_ARGS({"i", "position"}, {"s", "text"}, {"i", "length"}), ELDBUS_ARGS({"b", NULL}), _editable_text_text_insert, 0 },
+   { "CopyText", ELDBUS_ARGS({"i", "startPos"}, {"i", "endPos"}), NULL, _editable_text_text_copy, 0 },
+   { "CutText", ELDBUS_ARGS({"i", "startPos"}, {"i", "endPos"}), ELDBUS_ARGS({"b", NULL}), _editable_text_text_cut, 0 },
+   { "DeleteText", ELDBUS_ARGS({"i", "startPos"}, {"i", "endPos"}), ELDBUS_ARGS({"b", NULL}), _editable_text_text_delete, 0 },
+   { "PasteText", ELDBUS_ARGS({"i", "position"}), ELDBUS_ARGS({"b", NULL}), _editable_text_text_paste, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
 static Eo *
 _access_object_from_path(const char *path)
 {
@@ -1101,7 +1777,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
        if ((!ret_obj) && (ELM_ATSPI_ROLE_APPLICATION == role))
          _object_append_desktop_reference(iter);
        else
-         _object_append_reference(iter, ret_obj);
+         _iter_object_reference_append(iter, ret_obj);
        return EINA_TRUE;
      }
    else if (!strcmp(property, "ChildCount"))
@@ -1249,6 +1925,32 @@ _image_properties_get(const Eldbus_Service_Interface *interface, const char *pro
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_text_properties_get(const Eldbus_Service_Interface *interface, const char *property,
+                         Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED,
+                         Eldbus_Message **error EINA_UNUSED)
+{
+   const char *obj_path = eldbus_service_object_path_get(interface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int val;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!strcmp(property, "CharacterCount"))
+     {
+        eo_do(obj, val = elm_interface_atspi_text_character_count_get());
+        eldbus_message_iter_basic_append(iter, 'i', val);
+        return EINA_TRUE;
+     }
+   if (!strcmp(property, "CaretOffset"))
+     {
+        eo_do(obj, val = elm_interface_atspi_text_caret_offset_get());
+        eldbus_message_iter_basic_append(iter, 'i', val);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static const Eldbus_Property accessible_properties[] = {
    { "Name", "s", _accessible_property_get, NULL, 0 },
    { "Description", "s", _accessible_property_get, NULL, 0 },
@@ -1281,6 +1983,12 @@ static const Eldbus_Property selection_properties[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
+static const Eldbus_Property text_properties[] = {
+   { "CharacterCount", "i", NULL, NULL, 0 },
+   { "CaretOffset", "i", NULL, NULL, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
 static const Eldbus_Service_Interface_Desc accessible_iface_desc = {
    ATSPI_DBUS_INTERFACE_ACCESSIBLE, accessible_methods, NULL, accessible_properties, _accessible_property_get, NULL
 };
@@ -1309,8 +2017,16 @@ static const Eldbus_Service_Interface_Desc selection_iface_desc = {
    ATSPI_DBUS_INTERFACE_SELECTION, selection_methods, NULL, selection_properties, NULL, NULL
 };
 
+static const Eldbus_Service_Interface_Desc text_iface_desc = {
+   ATSPI_DBUS_INTERFACE_TEXT, text_methods, NULL, text_properties, _text_properties_get, NULL 
+};
+
+static const Eldbus_Service_Interface_Desc editable_text_iface_desc = {
+   ATSPI_DBUS_INTERFACE_EDITABLE_TEXT, editable_text_methods, NULL, NULL, NULL, NULL 
+};
+
 static void
-_object_append_reference(Eldbus_Message_Iter *iter, const Eo *obj)
+_iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *obj)
 {
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
@@ -1349,10 +2065,10 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_struct, EINA_TRUE);
 
   /* Marshall object path */
-  _object_append_reference(iter_struct, data);
+  _iter_object_reference_append(iter_struct, data);
 
   /* Marshall application */
-  _object_append_reference(iter_struct, _root);
+  _iter_object_reference_append(iter_struct, _root);
 
   Eo *parent = NULL;
   eo_do(data, parent = elm_interface_atspi_accessible_parent_get());
@@ -1360,7 +2076,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   if ((!parent) && (ELM_ATSPI_ROLE_APPLICATION == role))
     _object_append_desktop_reference(iter_struct);
   else
-    _object_append_reference(iter_struct, parent);
+    _iter_object_reference_append(iter_struct, parent);
 
   /* Marshall children  */
   Eina_List *children_list = NULL, *l;
@@ -1371,7 +2087,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
 
   EINA_LIST_FOREACH(children_list, l, child)
-     _object_append_reference(iter_sub_array, child);
+     _iter_object_reference_append(iter_sub_array, child);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
   eina_list_free(children_list);
@@ -1389,6 +2105,12 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
   if (eo_isa(data, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
+  if (eo_isa(data, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
+  if (eo_isa(data, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
+  if (eo_isa(data, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_CLASS))
+    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
 
@@ -1510,7 +2232,7 @@ _component_get_accessible_at_point(const Eldbus_Service_Interface *iface EINA_UN
    iter = eldbus_message_iter_get(ret);
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
    eo_do(obj, accessible = elm_interface_atspi_component_accessible_at_point_get(type, x, y));
-   _object_append_reference(iter, accessible);
+   _iter_object_reference_append(iter, accessible);
 
    return ret;
 }
@@ -1772,7 +2494,7 @@ _elm_atspi_bridge_app_register(void)
                                     "Embed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   _object_append_reference(iter, _root);
+   _iter_object_reference_append(iter, _root);
    eldbus_connection_send(_a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
 
    return EINA_TRUE;
@@ -1788,7 +2510,7 @@ _elm_atspi_bridge_app_unregister(void)
                                     "Unembed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   _object_append_reference(iter, _root);
+   _iter_object_reference_append(iter, _root);
    eldbus_connection_send(_a11y_bus, message, NULL, NULL, -1);
 
    return EINA_TRUE;
@@ -1845,6 +2567,16 @@ _set_broadcast_flag(const char *event)
              else if (!strcmp(tokens[2], "remove"))
                STATE_TYPE_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
           }
+        else if (!strcmp(tokens[1], "TextChanged"))
+          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED);
+        else if (!strcmp(tokens[1], "TextCaretMoved"))
+          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED);
+        else if (!strcmp(tokens[1], "TextBoundsChanged"))
+          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_BOUNDS_CHANGED);
+        else if (!strcmp(tokens[1], "TextSelectionChanged"))
+          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED);
+        else if (!strcmp(tokens[1], "TextAttributesChanged"))
+          STATE_TYPE_SET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_ATTRIBUTES_CHANGED);
      }
    else if (!strcmp(tokens[0], "Window"))
      {
@@ -1866,6 +2598,7 @@ static void
 _registered_listeners_get(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    DBG("Updating registered ATSPI signals list.");
+   _object_broadcast_mask = 0;
    _object_children_broadcast_mask = 0;
    _object_property_broadcast_mask = 0;
    _object_state_broadcast_mask = 0;
@@ -1906,7 +2639,7 @@ _handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg)
 }
 
 static Eina_Bool
-_state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *viter;
@@ -1936,6 +2669,9 @@ _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc
         case ELM_ATSPI_STATE_VISIBLE:
          type_desc = "visible";
          break;
+        case ELM_ATSPI_STATE_ACTIVE:
+         type_desc = "active";
+         break;
         default:
          return EINA_FALSE;
    }
@@ -1951,7 +2687,7 @@ _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc
    eldbus_message_iter_arguments_append(viter, "i", 0);
    eldbus_message_iter_container_close(iter, viter);
 
-   _object_append_reference(iter, obj);
+   _iter_object_reference_append(iter, _root);
 
    eldbus_service_signal_send(events, msg);
    DBG("signal sent StateChanged:%s:%d", type_desc, state_data->new_value);
@@ -2097,10 +2833,10 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
    viter = eldbus_message_iter_container_new(iter, 'v', "(so)");
    EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
 
-   _object_append_reference(viter, ev_data->child);
+   _iter_object_reference_append(viter, ev_data->child);
    eldbus_message_iter_container_close(iter, viter);
 
-   _object_append_reference(iter, _root);
+   _iter_object_reference_append(iter, _root);
 
    eldbus_service_signal_send(events, msg);
    DBG("signal sent childrenChanged:%s:%d", atspi_desc, idx);
@@ -2159,7 +2895,7 @@ _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void 
    eldbus_message_iter_arguments_append(viter, "i", 0);
    eldbus_message_iter_container_close(iter, viter);
 
-   _object_append_reference(iter, obj);
+   _iter_object_reference_append(iter, obj);
 
    eldbus_service_signal_send(window, msg);
    DBG("signal sent Window:%s", event_desc);
@@ -2204,12 +2940,128 @@ _selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, vo
    eldbus_message_iter_arguments_append(viter, "i", 0);
    eldbus_message_iter_container_close(iter, viter);
 
-   _object_append_reference(iter, obj);
+   _iter_object_reference_append(iter, obj);
 
    eldbus_service_signal_send(selection, msg);
-   DBG("signal sent Selection:%s", event_desc);
+
    return EINA_TRUE;
 }
+
+static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...)
+{
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter , *viter;
+   va_list va;
+   va_start(va, variant_sig);
+
+   EINA_SAFETY_ON_NULL_RETURN(infc);
+   EINA_SAFETY_ON_NULL_RETURN(minor);
+
+   msg = eldbus_service_signal_new(infc, sig_id);
+   EINA_SAFETY_ON_NULL_RETURN(msg);
+
+   iter = eldbus_message_iter_get(msg);
+
+   eldbus_message_iter_arguments_append(iter, "sii", minor, det1, det2);
+
+   if (variant_sig)
+     {
+        viter = eldbus_message_iter_container_new(iter, 'v', variant_sig);
+        const char *tmp = variant_sig;
+        while (*tmp)
+          {
+             switch (*tmp)
+               {
+                case 's':
+                   eldbus_message_iter_basic_append(viter, 's', va_arg(va, char*));
+                   break;
+                default:
+                   ERR("Not supported type: %c. Invalid variant signature %s. ", *tmp, variant_sig);
+                   break;
+               }
+             tmp++;
+          }
+     }
+   else // AT-SPI implementation forces checks on signature even if varint is not used.
+     {
+        viter  = eldbus_message_iter_container_new(iter, 'v', "i");
+        eldbus_message_iter_basic_append(viter, 'i', 0);
+     }
+
+   va_end(va);
+   eldbus_message_iter_container_close(iter, viter);
+
+   _iter_object_reference_append(iter, _root);
+
+   eldbus_service_signal_send(infc, msg);
+}
+
+static Eina_Bool
+_text_caret_moved_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eldbus_Service_Interface *event = data;
+   int cursor_pos = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
+
+   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED))
+     return EINA_TRUE;
+
+   eo_do(obj, cursor_pos = elm_interface_atspi_text_caret_offset_get());
+
+   _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED, "", cursor_pos, 0, NULL, NULL);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_text_text_inserted_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   Eldbus_Service_Interface *event = data;
+   Elm_Atspi_Text_Change_Info *info = event_info;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event_info, EINA_TRUE);
+
+   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
+     return EINA_TRUE;
+
+   _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_CHANGED, "insert", info->pos, info->len, "s", info->content);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_text_text_removed_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   Eldbus_Service_Interface *event = data;
+   Elm_Atspi_Text_Change_Info *info = event_info;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event_info, EINA_TRUE);
+
+   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
+     return EINA_TRUE;
+
+   _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_CHANGED, "delete", info->pos, info->len, "s", info->content);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_text_selection_changed_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eldbus_Service_Interface *event = data;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_TRUE);
+
+   if (!STATE_TYPE_GET(_object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED))
+     return EINA_TRUE;
+
+   _object_signal_send(event, ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED, "", 0, 0, NULL, NULL);
+
+   return EINA_TRUE;
+}
+
 static void
 _event_handlers_register(void)
 {
@@ -2292,7 +3144,7 @@ end:
 
 static void _object_register(Eo *obj, char *path)
 {
-   Eldbus_Service_Interface *infc = NULL;
+   Eldbus_Service_Interface *infc = NULL, *event_infc;
 
    if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
      {
@@ -2304,22 +3156,16 @@ static void _object_register(Eo *obj, char *path)
      {
         eldbus_service_interface_register(_a11y_bus, path, &accessible_iface_desc);
 
-        infc = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
-        eo_do(obj, eo_key_data_set("event_interface", infc, NULL));
-
-        eo_do(obj, eo_event_callback_array_add(_events_cb(), infc));
+        event_infc = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
+        eo_do(obj, eo_key_data_set("event_interface", event_infc, NULL));
+        eo_do(obj, eo_event_callback_array_add(_events_cb(), event_infc));
 
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
-          {
-             infc = eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
-             eo_do(obj, eo_key_data_set("component_interface", infc, NULL));
-          }
-
+          eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
           {
              infc = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
              eo_do(obj, eo_key_data_set("window_interface", infc, NULL));
-
              eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
@@ -2330,40 +3176,43 @@ static void _object_register(Eo *obj, char *path)
           eldbus_service_interface_register(_a11y_bus, path, &image_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
           {
-             infc = eldbus_service_interface_register(_a11y_bus, path, &selection_iface_desc);
-             eo_do(obj, eo_key_data_set("selection_interface", infc, NULL));
-             eo_do(obj, eo_event_callback_array_add(_selection_cb(), infc));
+             eldbus_service_interface_register(_a11y_bus, path, &selection_iface_desc);
+             eo_do(obj, eo_event_callback_array_add(_selection_cb(), event_infc));
           }
-
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+          {
+             eldbus_service_interface_register(_a11y_bus, path, &text_iface_desc);
+             eo_do(obj, eo_event_callback_array_add(_text_cb(), event_infc));
+          }
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_CLASS))
+          eldbus_service_interface_register(_a11y_bus, path, &editable_text_iface_desc);
      }
 }
 
 static void _object_unregister(void *obj)
 {
-   Eldbus_Service_Interface *infc = NULL;
+   Eldbus_Service_Interface *infc, *event_infc = NULL;
 
-   eo_do(obj, infc = eo_key_data_get("event_interface"));
-   if (_a11y_bus && infc)
+   eo_do(obj, event_infc = eo_key_data_get("event_interface"));
+   if (_a11y_bus && event_infc)
      {
-        eldbus_service_object_unregister(infc);
+        eldbus_service_object_unregister(event_infc);
         eo_do(obj, eo_key_data_set("event_interface", NULL, NULL));
      }
 
    eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, NULL));
 
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
-      eo_do(obj, eo_event_callback_array_del(_events_cb(), infc));
-
+      eo_do(obj, eo_event_callback_array_del(_events_cb(), event_infc));
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
      {
         eo_do(obj, infc = eo_key_data_get("window_interface"));
         eo_do(obj, eo_event_callback_array_del(_window_cb(), infc));
      }
    if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
-     {
-        eo_do(obj, infc = eo_key_data_get("selection_interface"));
-        eo_do(obj, eo_event_callback_array_del(_selection_cb(), infc));
-     }
+      eo_do(obj, eo_event_callback_array_del(_selection_cb(), event_infc));
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+      eo_do(obj, eo_event_callback_array_del(_text_cb(), event_infc));
 }
 
 void

@@ -1,4 +1,5 @@
-class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
+class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
+                 Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text)
 {
    eo_prefix: elm_obj_entry;
    properties {
@@ -1185,6 +1186,30 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
       Elm_Layout::content_aliases::get;
       Elm_Interface_Scrollable::policy::set;
       Elm_Interface_Scrollable::bounce_allow::set;
+      Elm_Interface_Atspi_Text::text::get;
+      Elm_Interface_Atspi_Text::string::get;
+      Elm_Interface_Atspi_Text::attribute::get;
+      Elm_Interface_Atspi_Text::attributes::get;
+      Elm_Interface_Atspi_Text::default_attributes::get;
+      Elm_Interface_Atspi_Text::caret_offset::get;
+      Elm_Interface_Atspi_Text::caret_offset::set;
+      Elm_Interface_Atspi_Text::character::get;
+      Elm_Interface_Atspi_Text::character_extents::get;
+      Elm_Interface_Atspi_Text::character_count::get;
+      Elm_Interface_Atspi_Text::offset_at_point::get;
+      Elm_Interface_Atspi_Text::bounded_ranges::get;
+      Elm_Interface_Atspi_Text::range_extents::get;
+      Elm_Interface_Atspi_Text::selection::get;
+      Elm_Interface_Atspi_Text::selections_count::get;
+      Elm_Interface_Atspi_Text::selection_add;
+      Elm_Interface_Atspi_Text::selection_remove;
+      Elm_Interface_Atspi_Text::selection::set;
+      Elm_Interface_Atspi_Editable_Text::content::set;
+      Elm_Interface_Atspi_Editable_Text::insert;
+      Elm_Interface_Atspi_Editable_Text::copy;
+      Elm_Interface_Atspi_Editable_Text::cut;
+      Elm_Interface_Atspi_Editable_Text::delete;
+      Elm_Interface_Atspi_Editable_Text::paste;
    }
    events {
       language,changed;

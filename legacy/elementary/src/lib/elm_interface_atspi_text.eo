@@ -1,0 +1,223 @@
+interface Elm_Interface_Atspi_Text ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_text;
+   data: null;
+   properties {
+      protected character {
+         get {
+            /*@ Gets single character present in accessible widget's text
+                at given offset. */
+         }
+         keys {
+            int offset; /*@ Position in text. */
+         }
+         values {
+            Eina_Unicode character; /*@ Character at offset. 0 when out-of
+                                      bounds offset has been given.
+                                      Codepoints between DC80 and DCFF indicates
+                                      that string includes invalid UTF8 chars. */
+         }
+      }
+      protected string {
+         get {
+            /*@ Gets string, start and end offset in text according to
+              given initial offset and granulatity. */
+         }
+         keys {
+            @in Elm_Atspi_Text_Granularity granularity;
+            @inout int *start_offset @nonull; /*@ Offset indicating start of string
+                                                according to given granularity.
+                                                -1 in case of error. */
+            @out int *end_offset; /*@ Offset indicating end of string according
+                                   to given granularity. -1 in case of error. */
+         }
+         values {
+            char *string; /*@ Newly allocated UTF-8 encoded string.
+                            Must be free by a user. */
+         }
+      }
+      protected text {
+         get {
+            /*@ Gets text of accessible widget. */
+         }
+         keys {
+            int start_offset; /*@ Position in text. */
+            int end_offset; /*@ End offset of text. */
+         }
+         values {
+            char *text; /*@ UTF-8 encoded text. */
+         }
+      }
+      protected caret_offset {
+         get {
+            /*@ Gets offset position of caret (cursor) */
+         }
+         set {
+            return Eina_Bool; /*@ EINA_TRUE if caret was successfully moved,
+                               EINA_FASLE otherwise. */
+         }
+         values {
+            int offset;
+         }
+      }
+      protected attribute {
+         get {
+            /*@ Indicate if a text attribute with a given name is set */
+            return Eina_Bool;
+         }
+         keys {
+            @in const char *name @nonull; /*@ text attribute name */
+            @inout int *start_offset @nonull; /*@ Position in text from which
+                                                given attribute is set. */
+            @out int *end_offset; /*@ Position in text to which given attribute
+                                    is set. */
+         }
+         values {
+            char *value; /* Value of text attribute. Should be free() */
+         }
+      }
+      protected attributes {
+         get {
+            /* Gets list of all text attributes. */
+         }
+         keys {
+            @inout int *start_offset @nonull;
+            @out int *end_offset;
+         }
+         values {
+            @own Eina_List *attributes;
+         }
+      }
+      protected default_attributes {
+         get {
+         }
+         values {
+            @own Eina_List *attributes;
+         }
+      }
+      protected character_extents {
+         get {
+            return Eina_Bool;
+         }
+         keys {
+            int offset;
+            Eina_Bool screen_coords;
+         }
+         values {
+            Eina_Rectangle rect;
+         }
+      }
+      protected character_count {
+         get {
+         }
+         values {
+            int count;
+         }
+      }
+      protected offset_at_point {
+         get {
+         }
+         keys {
+            Eina_Bool screen_coords;
+            int x;
+            int y;
+         }
+         values {
+            int offset;
+         }
+      }
+      protected bounded_ranges {
+         get {
+         }
+         keys {
+            Eina_Bool screen_coords;
+            Eina_Rectangle rect;
+            Elm_Atspi_Text_Clip_Type xclip;
+            Elm_Atspi_Text_Clip_Type yclip;
+         }
+         values {
+            Eina_List *ranges;
+         }
+      }
+      protected range_extents {
+         get {
+            return Eina_Bool;
+         }
+         keys {
+            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+                                       to screen origin, otherwise relative to
+                                       canvas */
+            int start_offset;
+            int end_offset;
+         }
+         values {
+            Eina_Rectangle rect;
+         }
+      }
+      protected selections_count {
+         get {
+         }
+         values {
+            int count;
+         }
+      }
+      protected selection {
+         get {
+         }
+         set {
+            return Eina_Bool;
+         }
+         keys {
+            int selection_number;
+         }
+         values {
+            int start_offset;
+            int end_offset;
+         }
+      }
+   }
+   methods {
+      protected selection_add {
+         params {
+            @in int start_offset;
+            @in int end_offset;
+         }
+         return Eina_Bool;
+      }
+      protected selection_remove  {
+         params {
+            @in int selection_number;
+         }
+         return Eina_Bool;
+      }
+   }
+   events {
+      access,text,bounds,changed;
+      access,text,attributes,changed;
+      access,text,caret,moved;
+      access,text,inserted;
+      access,text,removed;
+      access,text,selection,changed;
+   }
+   implements {
+      virtual::text::get;
+      virtual::string::get;
+      virtual::attribute::get;
+      virtual::attributes::get;
+      virtual::default_attributes::get;
+      virtual::caret_offset::get;
+      virtual::caret_offset::set;
+      virtual::character::get;
+      virtual::character_extents::get;
+      virtual::character_count::get;
+      virtual::offset_at_point::get;
+      virtual::bounded_ranges::get;
+      virtual::range_extents::get;
+      virtual::selection::get;
+      virtual::selections_count::get;
+      virtual::selection_add;
+      virtual::selection_remove;
+      virtual::selection::set;
+   }
+}
