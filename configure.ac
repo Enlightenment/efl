@@ -147,6 +147,7 @@ efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
+EFL_WITH_BIN([elua], [elua-bin])
 
 #### Default values
 
@@ -254,12 +255,14 @@ AM_GNU_GETTEXT_VERSION([0.17])
 m4_ifdef([AC_GNU_GETTEXT], [
 AC_GNU_GETTEXT([external])
 po_makefile_in=po/Makefile.in
+po_makevars=po/Makevars
 have_po="yes"
 ],
 [
 m4_ifdef([AM_GNU_GETTEXT], [
 AM_GNU_GETTEXT([external])
 po_makefile_in=po/Makefile.in
+po_makevars=po/Makevars
 have_po="yes"
 ],
 [
@@ -4307,6 +4310,51 @@ EFL_EVAL_PKGS([ETHUMB_CLIENT])
 EFL_LIB_END_OPTIONAL([Ethumb_Client])
 #### End of Ethumb_Client
 
+#### Elua
+
+have_elua="yes"
+if test "${want_lua_old}" = "yes"; then
+  have_elua="no"
+fi
+
+EFL_LIB_START_OPTIONAL([Elua], [test "${have_elua}" = "yes"])
+
+### Default values
+
+AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
+
+### Additional options to configure
+
+### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ELUA], [evil])
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ELUA], [eina])
+EFL_INTERNAL_DEPEND_PKG([ELUA], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELUA], [ecore])
+
+EFL_DEPEND_PKG([ELUA], [LUAJIT], [luajit >= 2.0.0])
+
+EFL_EVAL_PKGS([ELUA])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END_OPTIONAL([Elua])
+#### End of Elua
 
 AC_ARG_ENABLE([always-build-examples],
    [AC_HELP_STRING([--enable-always-build-examples],
@@ -4358,6 +4406,7 @@ src/examples/ephysics/Makefile
 src/examples/edje/Makefile
 src/examples/emotion/Makefile
 src/examples/ethumb_client/Makefile
+src/examples/elua/Makefile
 src/examples/eolian_cxx/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
@@ -4428,6 +4477,7 @@ dbus-services/org.enlightenment.Ethumb.service
 systemd-services/efreet.service
 systemd-services/ethumb.service
 $po_makefile_in
+$po_makevars
 cmakeconfig/EinaConfig.cmake
 cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EezeConfig.cmake
@@ -4567,6 +4617,7 @@ echo "Edje............: ${efl_lib_optional_edje} (${features_edje})"
 echo "Emotion.........: ${efl_lib_optional_emotion} (${features_emotion})"
 echo "Ethumb..........: ${efl_lib_optional_ethumb}"
 echo "Ethumb_Client...: ${efl_lib_optional_ethumb_client}"
+echo "Elua............: $have_elua"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then
@@ -4598,6 +4649,10 @@ fi
 
 if test "x${with_binary_eolian_cxx}" != "x"; then
 echo "  eolian_cxx....: ${with_binary_eolian_cxx}"
+fi
+
+if test "x${with_binary_elua_bin}" != "x"; then
+echo "  elua..........: ${with_binary_elua_bin}"
 fi
 
 echo "  "
