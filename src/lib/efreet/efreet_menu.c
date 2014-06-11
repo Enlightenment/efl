@@ -1562,12 +1562,8 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
 
     if (!parent || !xml) return 0;
 
-    if (!strcmp(parent->file.name, "gnome-applications.menu"))
-    {
-        p = alloca(sizeof("applications"));
-        memcpy(p, "applications", sizeof("applications"));
-    }
-    else if (!strcmp(parent->file.name, "kde-applications.menu"))
+    if ((!strcmp(parent->file.name, "gnome-applications.menu")) ||
+        (!strcmp(parent->file.name, "kde-applications.menu")))
     {
         p = alloca(sizeof("applications"));
         memcpy(p, "applications", sizeof("applications"));
