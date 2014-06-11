@@ -1499,7 +1499,7 @@ _config_load(void)
    // config recovery app i guess...
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->config_version = ELM_CONFIG_VERSION;
-   _elm_config->engine = eina_stringshare_add("software_x11");
+   _elm_config->engine = eina_stringshare_add(DEFAULT_ENGINE);
    _elm_config->vsync = 0;
    _elm_config->thumbscroll_enable = EINA_TRUE;
    _elm_config->thumbscroll_threshold = 24;
@@ -3211,7 +3211,8 @@ _elm_config_sub_shutdown(void)
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
        ENGINE_COMPARE(ELM_XRENDER_X11) ||
        ENGINE_COMPARE(ELM_OPENGL_X11) ||
-       ENGINE_COMPARE(ELM_OPENGL_COCOA))
+       ENGINE_COMPARE(ELM_OPENGL_COCOA) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -3228,7 +3229,8 @@ _elm_config_sub_init(void)
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
        ENGINE_COMPARE(ELM_XRENDER_X11) ||
        ENGINE_COMPARE(ELM_OPENGL_X11) ||
-       ENGINE_COMPARE(ELM_OPENGL_COCOA))
+       ENGINE_COMPARE(ELM_OPENGL_COCOA) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -3400,7 +3402,9 @@ _elm_config_shutdown(void)
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
        ENGINE_COMPARE(ELM_XRENDER_X11) ||
-       ENGINE_COMPARE(ELM_OPENGL_X11))
+       ENGINE_COMPARE(ELM_OPENGL_X11) ||
+       ENGINE_COMPARE(ELM_OPENGL_COCOA) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X

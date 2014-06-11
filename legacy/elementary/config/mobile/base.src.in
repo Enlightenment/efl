@@ -1,28 +1,28 @@
 group "Elm_Config" struct {
   value "config_version" int: 65539;
-  value "engine" string: "software_x11";
+  value "engine" string: "@default_engine@";
   value "vsync" uchar: 0;
-  value "thumbscroll_enable" uchar: 0;
-  value "thumbscroll_threshold" int: 4;
-  value "thumbscroll_hold_threshold" int: 4;
+  value "thumbscroll_enable" uchar: 1;
+  value "thumbscroll_threshold" int: 24;
+  value "thumbscroll_hold_threshold" int: 100;
   value "thumbscroll_momentum_threshold" double: 100.0;
   value "thumbscroll_flick_distance_tolerance" int: 1000;
   value "thumbscroll_friction" double: 1.0;
-  value "thumbscroll_min_friction" double: 1.0;
-  value "thumbscroll_friction_standard" double: 2000.0;
+  value "thumbscroll_min_friction" double: 0.3;
+  value "thumbscroll_friction_standard" double: 3000.0;
   value "thumbscroll_bounce_friction" double: 0.5;
-  value "thumbscroll_bounce_enable" uchar: 0;
-  value "thumbscroll_acceleration_threshold" double: 500.0;
-  value "thumbscroll_acceleration_time_limit" double: 0.7;
+  value "thumbscroll_bounce_enable" uchar: 1;
+  value "thumbscroll_acceleration_threshold" double: 2000.0;
+  value "thumbscroll_acceleration_time_limit" double: 0.5;
   value "thumbscroll_acceleration_weight" double: 1.5;
   value "page_scroll_friction" double: 0.5;
   value "bring_in_scroll_friction" double: 0.5;
   value "zoom_friction" double: 0.5;
   value "thumbscroll_border_friction" double: 0.5;
-  value "thumbscroll_sensitivity_friction" double: 0.25;
-  value "scroll_smooth_start_enable" uchar: 0;
-  value "scroll_smooth_time_interval" double: 0.0;
-  value "scroll_smooth_amount" double: 0.0;
+  value "thumbscroll_sensitivity_friction" double: 0.7;
+  value "scroll_smooth_start_enable" uchar: 1;
+  value "scroll_smooth_time_interval" double: 0;
+  value "scroll_smooth_amount" double: 1.0;
   value "scroll_smooth_history_weight" double: 0.1;
   value "scroll_smooth_future_time" double: 0.0;
   value "scroll_smooth_time_window" double: 0.01;
@@ -37,7 +37,7 @@ group "Elm_Config" struct {
   value "font_cache" int: 512;
   value "edje_cache" int: 32;
   value "edje_collection_cache" int: 64;
-  value "finger_size" int: 10;
+  value "finger_size" int: 40;
   value "fps" double: 60.0;
   value "theme" string: "default";
   value "modules" string: "prefs>prefs_iface:access_output>access/api:datetime_input_ctxpopup>datetime/api";
@@ -45,18 +45,17 @@ group "Elm_Config" struct {
   value "cursor_engine_only" uchar: 1;
   value "focus_highlight_enable" uchar: 0;
   value "focus_highlight_animate" uchar: 0;
-  value "focus_highlight_clip_disable" uchar: 1;
+  value "focus_highlight_clip_disable" uchar: 0;
   value "item_select_on_focus_disable" uchar: 0;
   value "focus_move_policy" uchar: 0;
   value "toolbar_shrink_mode" int: 3;
-  value "fileselector_expand_enable" uchar: 1;
-  value "fileselector_double_tap_navigation_enable" uchar: 1;
-  value "inwin_dialogs_enable" uchar: 0;
+  value "fileselector_expand_enable" uchar: 0;
+  value "inwin_dialogs_enable" uchar: 1;
   value "icon_size" int: 32;
   value "longpress_timeout" double: 1.0;
   value "effect_enable" uchar: 1;
-  value "desktop_entry" uchar: 1;
-  value "password_show_last" uchar: 0;
+  value "desktop_entry" uchar: 0;
+  value "password_show_last" uchar: 1;
   value "password_show_last_timeout" double: 2.0;
   value "glayer_zoom_finger_enable" uchar: 1;
   value "glayer_zoom_finger_factor" double: 1.0;
@@ -66,8 +65,8 @@ group "Elm_Config" struct {
   value "glayer_rotate_angular_tolerance" double: 2.0;
   value "glayer_line_min_length" double: 1.0;
   value "glayer_line_distance_tolerance" double: 3.0;
-  value "glayer_line_angular_tolerance" double: 20.0;
-  value "glayer_flick_time_limit_ms" uint: 120; /* ms to finish flick */
+  value "glayer_line_angular_tolerance" double: 20.0
+  value "glayer_flick_time_limit_ms" uint: 100; /* ms to finish flick */
   value "glayer_long_tap_start_timeout" double: 1.2; /* sec to start long-tap */
   value "glayer_double_tap_timeout" double: 0.25; /* Timeout between two mouse dows when doing double click (and more). */
   value "glayer_continues_enable" uchar: 1;          /* Continues gesture enabled */
@@ -77,13 +76,17 @@ group "Elm_Config" struct {
   value "year_min" int: 2;
   value "year_max" int: 137;
   value "softcursor_mode" uchar: 0;
-  value "auto_norender_withdrawn" uchar: 0;
-  value "auto_norender_iconified_same_as_withdrawn" uchar: 0;
+  value "auto_norender_withdrawn" uchar: 1;
+  value "auto_norender_iconified_same_as_withdrawn" uchar: 1;
   value "auto_flush_withdrawn" uchar: 1;
   value "auto_dump_withdrawn" uchar: 1;
-  value "auto_throttle" uchar: 0;
-  value "auto_throttle_amount" double: 0.0333333333;
-  value "magnifier_enable" uchar: 0;
+  value "auto_throttle" uchar: 1;
+  value "auto_throttle_amount" double: 0.0666666666;
+  value "indicator_service_0" string: "elm_indicator_portrait";
+  value "indicator_service_90" string: "elm_indicator_landscape";
+  value "indicator_service_180" string: "elm_indicator_portrait";
+  value "indicator_service_270" string: "elm_indicator_landscape";
+  value "magnifier_enable" uchar: 1;
   value "magnifier_scale" double: 1.5;
   value "audio_mute_effect" uchar: 0;
   value "audio_mute_background" uchar: 0;

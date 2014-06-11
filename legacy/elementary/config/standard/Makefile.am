@@ -5,7 +5,7 @@ EET_EET = @eet_eet@
 EXTRA_DIST = \
         profile.desktop \
         icon.png \
-        base.src
+        base.src.in
 
 filesdir = $(datadir)/elementary/config/standard
 files_DATA = \

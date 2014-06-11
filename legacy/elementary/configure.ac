@@ -49,12 +49,14 @@ dnl managed by evil
       dlopen_libs=-ldl
       requirement_elm="evil"
       have_socket="no"
+      default_engine=software_gdi
       ;;
    *solaris*)
       ELM_UNIX_DEF="#define"
       have_socket="yes"
       have_dlopen="yes"
       AC_CHECK_LIB([socket], [connect], [], [have_socket="no"])
+      default_engine=software_x11
       ;;
    darwin*)
       ELM_UNIX_DEF="#define"
@@ -62,6 +64,7 @@ dnl managed by evil
       have_dlopen="yes"
       AC_CHECK_HEADERS([crt_externs.h])
       AC_DEFINE([environ], [(*_NSGetEnviron())], ["apple doesn't follow POSIX in this case."])
+      default_engine=opengl_cocoa
       ;;
    *)
       ELM_UNIX_DEF="#define"
@@ -79,10 +82,15 @@ dnl managed by evil
         fi
       fi
       have_socket="yes"
+      default_engine=software_x11
       ;;
 esac
+
 AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
 AM_CONDITIONAL([BUILD_MODULES], [test "x$have_dlopen" = "xyes"])
+
+AC_SUBST([default_engine])
+AC_DEFINE_UNQUOTED([DEFAULT_ENGINE], ["$default_engine"], ["Default engine according to host"])
 
 m4_ifdef([v_mic],
    [
@@ -91,13 +99,9 @@ m4_ifdef([v_mic],
     EFL_COMPILER_FLAG([-W])
    ])
 
-AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
-#AC_PROG_LIBTOOL
 
 AC_GNU_SOURCE
 
@@ -681,8 +685,11 @@ data/desktop/Makefile
 data/edje_externals/Makefile
 config/Makefile
 config/default/Makefile
+config/default/base.src
 config/standard/Makefile
+config/standard/base.src
 config/mobile/Makefile
+config/mobile/base.src
 $po_makefile_in
 cmakeconfig/ElementaryConfig.cmake
 cmakeconfig/ElementaryConfigVersion.cmake
