@@ -299,25 +299,6 @@ register_callbacks(lua_State *L)
    return 1;
 }
 
-static int
-elua_build_args(lua_State *L)
-{
-   /* todo: will probably need adjustments for Windows */
-   int nargs = lua_gettop(L), n = 0, i;
-   for (i = 1; i <= nargs; ++i)
-     {
-        lua_pushliteral(L, "'");      ++n;
-        lua_pushvalue(L, i);          ++n;
-        lua_pushliteral(L, "'");      ++n;
-        if (i != nargs)
-          {
-             lua_pushliteral(L, " "); ++n;
-          }
-     }
-   lua_concat(L, n);
-   return 1;
-}
-
 struct Main_Data
 {
    int    argc;
@@ -331,7 +312,6 @@ const luaL_reg cutillib[] =
 {
    { "init_module"       , init_module        },
    { "register_callbacks", register_callbacks },
-   { "build_args"        , elua_build_args    },
    { "popenv"            , elua_popen         },
    { NULL                , NULL               }
 };
