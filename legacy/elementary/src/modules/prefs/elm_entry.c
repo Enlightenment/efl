@@ -17,7 +17,7 @@ _color_change_do(void *data)
    Evas_Object *obj = data;
    int color;
 
-   color = (int)(long)evas_object_data_get(obj, "current_color");
+   color = (int)(uintptr_t)evas_object_data_get(obj, "current_color");
    switch (color)
      {
       case 0:

@@ -464,7 +464,9 @@ _eet_data_save(const Elm_Prefs_Data *prefs_data,
 
              if (eina_value_get(&(item->value), &val))
                {
-                  tm = gmtime(&(val.tv_sec));
+                  time_t gmt = val.tv_sec;
+
+                  tm = gmtime(&gmt);
 
                   it->value.d.y = tm->tm_year + 1900;
                   it->value.d.m = tm->tm_mon + 1;

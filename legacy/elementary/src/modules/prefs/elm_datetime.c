@@ -55,13 +55,14 @@ elm_prefs_datetime_value_set(Evas_Object *obj,
 {
    struct timeval val;
    struct tm *t;
+   time_t gmt;
 
    if (eina_value_type_get(value) != EINA_VALUE_TYPE_TIMEVAL)
      return EINA_FALSE;
 
    eina_value_get(value, &val);
-
-   t = gmtime(&(val.tv_sec));
+   gmt = val.tv_sec;
+   t = gmtime(&gmt);
 
    if (elm_datetime_value_set(obj, t)) return EINA_TRUE;
 

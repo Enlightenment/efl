@@ -3262,7 +3262,7 @@ _genlist_renew(Evas_Object *obj, const char *style)
 
    for (i = 0; i < 50; i++)
      {
-        elm_genlist_item_append(obj, ic, (void *)(long)i, NULL,
+        elm_genlist_item_append(obj, ic, (void *)(uintptr_t)i, NULL,
                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
      }
    elm_genlist_item_class_free(ic);

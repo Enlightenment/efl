@@ -891,6 +891,7 @@ elm_quicklaunch_prepare(int    argc,
 #else
    (void)argc;
    (void)argv;
+   (void)cwd;
    return EINA_FALSE;
 #endif
 }
