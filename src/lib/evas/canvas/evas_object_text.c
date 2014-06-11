@@ -1735,6 +1735,18 @@ evas_object_text_render(Evas_Object *eo_obj,
         X = obj->cur->geometry.x;
         Y = obj->cur->geometry.y;
 
+        // Prepare color multiplier
+        ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
+        if ((obj->cur->cache.clip.r == 255) && (obj->cur->cache.clip.g == 255) &&
+            (obj->cur->cache.clip.b == 255) && (obj->cur->cache.clip.a == 255))
+          ENFN->context_multiplier_unset(ENDT, context);
+        else
+          ENFN->context_multiplier_set(ENDT, context,
+                                       obj->cur->cache.clip.r,
+                                       obj->cur->cache.clip.g,
+                                       obj->cur->cache.clip.b,
+                                       obj->cur->cache.clip.a);
+
         if (!o->cur.filter.chain)
           {
              Evas_Filter_Program *pgm;

@@ -1619,6 +1619,12 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
    ctx->target.clip_use = ENFN->context_clip_get
          (ENDT, draw_context, &ctx->target.cx, &ctx->target.cy,
           &ctx->target.cw, &ctx->target.ch);
+   ctx->target.color_use = ENFN->context_multiplier_get
+         (ENDT, draw_context, &ctx->target.r, &ctx->target.g,
+          &ctx->target.b, &ctx->target.a);
+   if (ctx->target.r == 255 && ctx->target.g == 255 &&
+       ctx->target.b == 255 && ctx->target.a == 255)
+     ctx->target.color_use = EINA_FALSE;
 
    if (ctx->gl_engine)
      {
@@ -1691,6 +1697,17 @@ _filter_target_render(Evas_Filter_Context *ctx)
         use_clip = ENFN->context_clip_get(ENDT, drawctx, &cx, &cy, &cw, &ch);
         ENFN->context_clip_set(ENDT, drawctx, ctx->target.cx, ctx->target.cy,
                                ctx->target.cw, ctx->target.ch);
+     }
+
+   if (ctx->target.color_use)
+     {
+        ENFN->context_multiplier_set(ENDT, drawctx,
+                                     ctx->target.r, ctx->target.g,
+                                     ctx->target.b, ctx->target.a);
+     }
+   else
+     {
+        ENFN->context_multiplier_unset(ENDT, drawctx);
      }
 
    ENFN->image_draw(ENDT, drawctx, surface, image,

@@ -100,7 +100,9 @@ struct _Evas_Filter_Context
       void *context;
       int x, y;
       int cx, cy, cw, ch; // clip
+      int r, g, b, a; // clip color
       Eina_Bool clip_use : 1;
+      Eina_Bool color_use : 1;
    } target;
 
    Eina_Bool async : 1;
