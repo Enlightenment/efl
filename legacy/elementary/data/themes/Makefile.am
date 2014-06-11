@@ -184,6 +184,9 @@ img/box_outline.png \
 img/bt_base.png \
 img/bt_sig_1.png \
 img/bt_sig_2.png \
+img/btn_round_0.png \
+img/btn_round_1.png \
+img/btn_round_2.png \
 img/bub_base_b0.png \
 img/bub_base_b1.png \
 img/bub_base_b2.png \

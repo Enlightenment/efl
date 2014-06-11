@@ -282,3 +282,51 @@ group { name: "e/widgets/syscon/item/button";
       }
    }
 }
+
+group { name: "e/modules/syscon/button";
+   images.image: "btn_round_0.png" COMP;
+   images.image: "btn_round_1.png" COMP;
+   images.image: "btn_round_2.png" COMP;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            image.normal: "btn_round_0.png";
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+         }
+         description { state: "hilight" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "btn_round_1.png";
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "btn_round_2.png";
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,down,1"; source: "base";
+         action: STATE_SET "clicked" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "mouse,up,1"; source: "base";
+         action: STATE_SET "hilight" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "mouse,in"; source: "base";
+         action: STATE_SET "hilight" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "mouse,out"; source: "base";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "mouse,clicked,1*"; source: "base";
+         action: SIGNAL_EMIT "e,action,shutdown,show" "e";
+      }
+   }
+}
