@@ -78,6 +78,7 @@ static void _iter_object_reference_append(Eldbus_Message_Iter *iter, const Eo *o
 static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
 static void _cache_build(void *obj);
 static void _object_register(Eo *obj, char *path);
+static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
 
 EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
@@ -524,6 +525,23 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    return ret;
 }
 
+static Eldbus_Message *
+_accessible_interfaces_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter;
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   _iter_interfaces_append(iter, obj);
+
+   return ret;
+}
+
 static uint64_t 
 _elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
 {
@@ -674,6 +692,7 @@ static const Eldbus_Method accessible_methods[] = {
    { "GetState", NULL, ELDBUS_ARGS({"au", NULL}), _accessible_get_state, 0},
    { "GetApplication", NULL, ELDBUS_ARGS({"(so)", NULL}), _accessible_get_application, 0},
    { "GetAttributes", NULL, ELDBUS_ARGS({"a{ss}", NULL}), _accessible_attributes_get, 0},
+   { "GetInterfaces", NULL, ELDBUS_ARGS({"as", NULL}), _accessible_interfaces_get, 0},
    { NULL, NULL, NULL, NULL, 0 }
 };
 
@@ -2048,6 +2067,33 @@ _object_append_desktop_reference(Eldbus_Message_Iter *iter)
   eldbus_message_iter_container_close(iter, iter_struct);
 }
 
+static void
+_iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
+{
+  Eldbus_Message_Iter *iter_array;
+  iter_array = eldbus_message_iter_container_new(iter, 'a', "s");
+  if (!iter_array) return;
+
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
+
+  eldbus_message_iter_container_close(iter, iter_array);
+}
+
 static Eina_Bool
 _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
@@ -2093,26 +2139,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   eina_list_free(children_list);
 
   /* Marshall interfaces */
-  iter_sub_array = eldbus_message_iter_container_new(iter_struct, 'a', "s");
-  EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
-
-  eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_ACTION_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_VALUE_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_TEXT_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
-  if (eo_isa(data, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_CLASS))
-    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
-
-  eldbus_message_iter_container_close(iter_struct, iter_sub_array);
+  _iter_interfaces_append(iter_struct, data);
 
   /* Marshall name */
   const char *name = NULL;
