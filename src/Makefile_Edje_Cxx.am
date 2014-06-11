@@ -12,8 +12,6 @@ nodist_installed_edjecxxmainheaders_DATA = \
 lib/edje/Edje.hh \
 $(generated_edje_cxx_bindings)
 
-BUILT_SOURCES += $(generated_edje_cxx_bindings) lib/edje/Edje.hh
-
 lib/edje/Edje.hh:
 	@echo -e "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/edje/Edje.hh
 	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/edje/Edje.hh
