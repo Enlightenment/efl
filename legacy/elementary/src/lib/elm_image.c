@@ -10,6 +10,10 @@
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #include "elm_interface_atspi_image.eo.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define FMT_SIZE_T "%zu"
 
 #define MY_CLASS ELM_IMAGE_CLASS
@@ -730,7 +734,8 @@ _elm_image_eo_base_constructor(Eo *obj, Elm_Image_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE));
 }
 
 EAPI Eina_Bool

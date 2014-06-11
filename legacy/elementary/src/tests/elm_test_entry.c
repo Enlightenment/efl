@@ -6,15 +6,18 @@
 #include "elm_suite.h"
 
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #include "elm_interface_atspi_text.h"
 #include "elm_interface_atspi_text.eo.h"
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
 
 START_TEST (elm_entry_del)
 {
    Evas_Object *win, *entry;
 
    elm_init(1, NULL);
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
    elm_object_text_set(entry, "TEST");
@@ -349,6 +352,23 @@ START_TEST (elm_entry_atspi_text_attributes)
 }
 END_TEST
 
+START_TEST (elm_atspi_role_get)
+{
+   Evas_Object *win, *entry;
+   Elm_Atspi_Role role;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+
+   entry = elm_entry_add(win);
+   eo_do(entry, role = elm_interface_atspi_accessible_role_get());
+
+   ck_assert(role == ELM_ATSPI_ROLE_ENTRY);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_del);
@@ -361,4 +381,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_atspi_text_text_get);
    tcase_add_test(tc, elm_entry_atspi_text_selections);
    tcase_add_test(tc, elm_entry_atspi_text_attributes);
+   tcase_add_test(tc, elm_atspi_role_get);
 }

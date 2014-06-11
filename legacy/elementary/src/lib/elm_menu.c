@@ -7,6 +7,10 @@
 #include "elm_priv.h"
 #include "elm_widget_menu.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define MY_CLASS ELM_MENU_CLASS
 
 #define MY_CLASS_NAME "Elm_Menu"
@@ -756,7 +760,8 @@ _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         parent = eo_parent_get());
+         parent = eo_parent_get(),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_MENU));
 
    elm_menu_parent_set(obj, parent);
    elm_hover_target_set(sd->hv, sd->location);

@@ -8,6 +8,10 @@
 #include "elm_widget_map.h"
 #include "elm_interface_scrollable.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define MY_PAN_CLASS ELM_MAP_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Map_Pan"
@@ -4197,7 +4201,8 @@ _elm_map_eo_base_constructor(Eo *obj, Elm_Map_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE_MAP));
 }
 
 EOLIAN static void

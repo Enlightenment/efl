@@ -7,6 +7,10 @@
 #include "elm_widget_bg.h"
 #include "elm_widget_layout.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define MY_CLASS ELM_BG_CLASS
 
 #define MY_CLASS_NAME "Elm_Bg"
@@ -133,7 +137,9 @@ EOLIAN static void
 _elm_bg_eo_base_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE));
 }
 
 static void

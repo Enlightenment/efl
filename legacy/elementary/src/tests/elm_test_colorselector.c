@@ -5,6 +5,10 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 START_TEST (elm_colorselector_palette)
 {
    Evas_Object *win, *c;
@@ -32,7 +36,25 @@ START_TEST (elm_colorselector_palette)
 }
 END_TEST
 
+START_TEST (elm_atspi_role_get)
+{
+   Evas_Object *win, *c;
+   Elm_Atspi_Role role;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
+
+   c = elm_colorselector_add(win);
+   eo_do(c, role = elm_interface_atspi_accessible_role_get());
+
+   ck_assert(role == ELM_ATSPI_ROLE_COLOR_CHOOSER);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_colorselector(TCase *tc)
 {
    tcase_add_test(tc, elm_colorselector_palette);
+   tcase_add_test(tc, elm_atspi_role_get);
 }

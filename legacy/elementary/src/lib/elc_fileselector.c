@@ -14,6 +14,10 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define MY_CLASS ELM_FILESELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector"
@@ -1542,7 +1546,8 @@ _elm_fileselector_eo_base_constructor(Eo *obj, Elm_Fileselector_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILE_CHOOSER));
 }
 
 EAPI void

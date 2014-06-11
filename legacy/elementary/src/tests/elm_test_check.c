@@ -5,6 +5,10 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 START_TEST (elm_check_onoff_text)
 {
    Evas_Object *win, *check;
@@ -49,8 +53,26 @@ START_TEST (elm_check_state)
 }
 END_TEST
 
+START_TEST (elm_atspi_role_get)
+{
+   Evas_Object *win, *check;
+   Elm_Atspi_Role role;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+
+   check = elm_check_add(win);
+   eo_do(check, role = elm_interface_atspi_accessible_role_get());
+
+   ck_assert(role == ELM_ATSPI_ROLE_CHECK_BOX);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_check(TCase *tc)
 {
    tcase_add_test(tc, elm_check_onoff_text);
    tcase_add_test(tc, elm_check_state);
+   tcase_add_test(tc, elm_atspi_role_get);
 }

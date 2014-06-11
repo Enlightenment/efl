@@ -8,6 +8,10 @@
 #include "elm_widget_separator.h"
 #include "elm_widget_layout.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define MY_CLASS ELM_SEPARATOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Separator"
@@ -70,7 +74,8 @@ _elm_separator_eo_base_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_SEPARATOR));
 }
 
 EOLIAN static void

@@ -7,6 +7,10 @@
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
 #define MY_CLASS ELM_NAVIFRAME_CLASS
 
 #define MY_CLASS_NAME "Elm_Naviframe"
@@ -1498,7 +1502,8 @@ _elm_naviframe_eo_base_constructor(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PAGE_TAB_LIST));
 }
 
 EOLIAN static Elm_Object_Item*
