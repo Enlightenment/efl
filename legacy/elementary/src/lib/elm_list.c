@@ -1330,6 +1330,19 @@ _item_select(Elm_List_Item *it)
 
    if (it->base.disabled || (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
      return;
+   if (!sd->focus_on_selection_enabled && (it->icon || it->end))
+     {
+        if (elm_object_widget_check(it->icon) && elm_object_focus_get(it->icon))
+          {
+             elm_object_focus_set(obj, EINA_FALSE);
+             elm_object_focus_set(obj, EINA_TRUE);
+          }
+        else if (elm_object_widget_check(it->end) && elm_object_focus_get(it->end))
+          {
+             elm_object_focus_set(obj, EINA_FALSE);
+             elm_object_focus_set(obj, EINA_TRUE);
+          }
+     }
    if (it->selected)
      {
         if (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) goto call;
