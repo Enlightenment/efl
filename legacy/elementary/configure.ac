@@ -33,7 +33,6 @@ AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 DEPS_EOLIAN_FLAGS=`pkg-config --variable=eolian_flags eo evas edje ecore`
 AC_SUBST(DEPS_EOLIAN_FLAGS)
 
-lt_enable_auto_import=""
 ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
 ELM_WINCE_DEF="#undef"
@@ -43,7 +42,6 @@ case "$host_os" in
    mingw32ce*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
-      lt_enable_auto_import="-Wl,--enable-auto-import"
       ELM_WINCE_DEF="#define"
       have_windows="yes"
 dnl managed by evil
@@ -56,7 +54,6 @@ dnl managed by evil
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
-      lt_enable_auto_import="-Wl,--enable-auto-import"
       ELM_WIN32_DEF="#define"
       have_windows="yes"
 dnl managed by evil
@@ -189,7 +186,6 @@ getuid \
 ])
 
 AC_SUBST(dlopen_libs)
-AC_SUBST(lt_enable_auto_import)
 AC_SUBST(ELM_UNIX_DEF)
 AC_SUBST(ELM_WIN32_DEF)
 AC_SUBST(ELM_WINCE_DEF)
