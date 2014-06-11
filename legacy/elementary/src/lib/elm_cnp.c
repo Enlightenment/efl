@@ -1744,6 +1744,14 @@ _x11_dnd_status(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
    return EINA_TRUE;
 }
 
+static void
+_x11_win_rotation_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   int rot = elm_win_rotation_get(obj);
+   elm_win_rotation_set(win, rot);
+}
+
 static Eina_Bool
 _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
 {
@@ -1776,6 +1784,17 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
         if (dragdonecb) dragdonecb(dragdonedata, dragwidget);
         if (dragwin)
           {
+             if (dragwidget)
+               {
+                  if (elm_widget_is(dragwidget))
+                    {
+                       Evas_Object *win = elm_widget_top_get(dragwidget);
+                       if (win && eo_isa(win, ELM_WIN_CLASS))
+                         evas_object_smart_callback_del_full(win, "rotation,changed",
+                                                  _x11_win_rotation_changed_cb, dragwin);
+                    }
+               }
+
              if (!doaccept)
                {  /* Commit animation when drag cancelled */
                   /* Record final position of dragwin, then do animation */
@@ -2246,7 +2265,12 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
      {
         Evas_Object *win = elm_widget_top_get(obj);
         if (win && eo_isa(win, ELM_WIN_CLASS))
-          elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
+          {
+             elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
+             evas_object_smart_callback_add(win, "rotation,changed",
+                                            _x11_win_rotation_changed_cb,
+                                            dragwin);
+          }
      }
 
    if (createicon)
@@ -4441,6 +4465,16 @@ elm_drag_cancel(Evas_Object *obj)
         ELM_SAFE_FREE(handler_up, ecore_event_handler_del);
         ELM_SAFE_FREE(handler_status, ecore_event_handler_del);
         ecore_x_dnd_abort(xwin);
+     }
+   if (dragwidget)
+     {
+        if (elm_widget_is(dragwidget))
+          {
+             Evas_Object *win = elm_widget_top_get(dragwidget);
+             if (win && eo_isa(win, ELM_WIN_CLASS))
+               evas_object_smart_callback_del_full(win, "rotation,changed",
+                                              _x11_win_rotation_changed_cb, dragwin);
+          }
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
