@@ -1550,7 +1550,8 @@ static int
 efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 {
     Eina_List *dirs;
-    char path[PATH_MAX], *p, *pp;
+    char path[PATH_MAX], *p = NULL;
+    const char *pp;
 #ifndef STRICT_SPEC
     char parent_path[PATH_MAX];
 #endif
@@ -1569,14 +1570,31 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
     }
     else
     {
-        char *s;
         size_t len;
 
-        len = strlen(parent->file.name) + 1;
-        p = alloca(len);
-        memcpy(p, parent->file.name, len);
-        s = strrchr(p, '.');
-        if (s) *s = '\0';
+        len = strlen(efreet_menu_prefix);
+        if (!strncmp(parent->file.name, efreet_menu_prefix, len))
+        {
+            pp = parent->file.name;
+            pp += len;
+            if (!strcmp(pp, "applications.menu"))
+            {
+                p = alloca(sizeof("applications"));
+                memcpy(p, "applications", sizeof("applications"));
+            }
+        }
+
+        if (!p)
+        {
+            char *s;
+            size_t len;
+
+            len = strlen(parent->file.name) + 1;
+            p = alloca(len);
+            memcpy(p, parent->file.name, len);
+            s = strrchr(p, '.');
+            if (s) *s = '\0';
+        }
     }
     snprintf(path, sizeof(path), "menus/%s-merged", p);
 
