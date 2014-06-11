@@ -249,10 +249,10 @@ _elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
    Evas_Object *focus_chain[2];
    Evas_Object *focused = NULL;
    int idx;
-
-   if (it->icon && elm_object_focus_allow_get(it->icon))
+   
+   if (it->icon && elm_object_widget_check(it->icon) && elm_object_focus_allow_get(it->icon))
      focus_chain[focus_objs++] = it->icon;
-   if (it->end && elm_object_focus_allow_get(it->end))
+   if (it->end && elm_object_widget_check(it->end) && elm_object_focus_allow_get(it->end))
      focus_chain[focus_objs++] = it->end;
 
    if (!focus_objs)
