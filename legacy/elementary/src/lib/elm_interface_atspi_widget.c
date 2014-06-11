@@ -150,6 +150,7 @@ _elm_interface_atspi_widget_elm_interface_atspi_accessible_state_set_get(Eo *obj
      {
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_ACTIVE);
+        STATE_TYPE_SET(states, ELM_ATSPI_STATE_SENSITIVE);
      }
 
    return states;
