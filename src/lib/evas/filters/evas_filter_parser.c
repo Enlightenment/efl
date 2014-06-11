@@ -13,7 +13,7 @@
 # define FILTERS_DEBUG
 #endif
 
-//#define FILTERS_LEGACY_COMPAT
+#define FILTERS_LEGACY_COMPAT
 
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
 #define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+2)
@@ -2071,7 +2071,13 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
      }
 #endif
 
-   if (ok) ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
+   if (ok)
+     ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
+   else
+     {
+        const char *msg = lua_tostring(L, -1);
+        ERR("Lua parsing failed: %s", msg);
+     }
    lua_close(L);
 
    ok &= (pgm->instructions != NULL);
