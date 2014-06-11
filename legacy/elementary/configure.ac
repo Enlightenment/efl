@@ -35,22 +35,9 @@ AC_SUBST(DEPS_EOLIAN_FLAGS)
 
 ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
-ELM_WINCE_DEF="#undef"
 have_windows="no"
 have_dlopen="no"
 case "$host_os" in
-   mingw32ce*)
-      PKG_CHECK_MODULES([EVIL], [evil])
-      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
-      ELM_WINCE_DEF="#define"
-      have_windows="yes"
-dnl managed by evil
-      AC_DEFINE(HAVE_DLADDR)
-      have_dlopen="yes"
-      dlopen_libs=-ldl
-      requirement_elm="evil"
-      have_socket="no"
-    ;;
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
@@ -127,14 +114,7 @@ ELM_VERSION_MINOR="v_min"
 AC_SUBST(ELM_VERSION_MAJOR)
 AC_SUBST(ELM_VERSION_MINOR)
 
-case "$host_os" in
-  mingw32ce* | cegcc*)
-    MODULE_ARCH="v"
-    ;;
-  *)
-    MODULE_ARCH="v-v_maj.v_min.v_mic"
-    ;;
-esac
+MODULE_ARCH="v-v_maj.v_min.v_mic"
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
@@ -188,7 +168,6 @@ getuid \
 AC_SUBST(dlopen_libs)
 AC_SUBST(ELM_UNIX_DEF)
 AC_SUBST(ELM_WIN32_DEF)
-AC_SUBST(ELM_WINCE_DEF)
 
 AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
@@ -376,29 +355,6 @@ else
 fi
 if test "x$want_elementary_win32" = "xyes" -a "x$have_elementary_win32" = "xno"; then
     AC_MSG_ERROR([ecore-win32 support requested, but ecore-win32 was not found by pkg-config.])
-fi
-
-have_elementary_wince="no"
-want_elementary_wince="auto"
-AC_ARG_ENABLE([ecore-wince],
-   [AC_HELP_STRING([--disable-ecore-wince], [disable ecore-wince support. @<:@default=detect@:>@])],
-   [want_elementary_wince=$enableval], [])
-
-if test "x$want_elementary_wince" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-      [ecore-wince >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
-       have_elementary_wince="yes"
-       requirement_elm="ecore-wince >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_wince="no"]
-   )
-else
-    have_elementary_wince="no"
-fi
-if test "x$want_elementary_wince" = "xyes" -a "x$have_elementary_wince" = "xno"; then
-    AC_MSG_ERROR([ecore-wince support requested, but ecore-wince was not found by pkg-config.])
 fi
 
 have_elementary_wayland="no"
@@ -754,7 +710,6 @@ echo "    PSL1GHT................: ${have_elementary_psl1ght}"
 echo "    SDL....................: ${have_elementary_sdl}"
 echo "    Cocoa..................: ${have_elementary_cocoa}"
 echo "    Windows XP.............: ${have_elementary_win32}"
-echo "    Windows CE.............: ${have_elementary_wince}"
 echo "    Wayland................: ${have_elementary_wayland}"
 echo
 echo "  Features:"

@@ -786,7 +786,6 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
  * @li "xrender_x11"
  * @li "opengl_x11"
  * @li "software_gdi"
- * @li "software_16_wince_gdi"
  * @li "sdl"
  * @li "software_16_sdl"
  * @li "opengl_sdl"

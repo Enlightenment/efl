@@ -3407,7 +3407,6 @@ _elm_engine_supported(const char *engine)
       "xrender_x11",
       "opengl_x11",
       "software_gdi",
-      "software_16_wince_gdi",
       "sdl",
       "software_16_sdl",
       "opengl_sdl",

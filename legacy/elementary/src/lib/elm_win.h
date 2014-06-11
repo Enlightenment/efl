@@ -35,8 +35,6 @@
  * grayscale using dedicated 8bit software engine in X11)
  * @li "x11-16", "x16", "software-16-x11", "software_16_x11" (Rendering in
  * X11 using 16bit software engine)
- * @li "wince-gdi", "software-16-wince-gdi", "software_16_wince_gdi"
- * (Windows CE rendering via GDI with 16bit software renderer)
  * @li "sdl-16", "software-16-sdl", "software_16_sdl" (Rendering to SDL
  * buffer with 16bit software renderer)
  * @li "ews" (rendering to EWS - Ecore + Evas Single Process Windowing System)

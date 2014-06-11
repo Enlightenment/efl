@@ -3638,7 +3638,6 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
 {
    // YYY: handle if sd->img_obj
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
-       ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE) || 
        ENGINE_COMPARE(ELM_DRM))
      {
         // these engines... can ONLY be fullscreen
@@ -3686,7 +3685,6 @@ _elm_win_fullscreen_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 
    if (engine_name &&
        ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
-        (!strcmp(engine_name, ELM_SOFTWARE_16_WINCE)) || 
         (!strcmp(engine_name, ELM_DRM))))
      {
         // these engines... can ONLY be fullscreen

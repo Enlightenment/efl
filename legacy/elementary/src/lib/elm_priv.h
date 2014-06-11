@@ -6,9 +6,6 @@
 #ifdef HAVE_ELEMENTARY_FB
 #include <Ecore_Fb.h>
 #endif
-#ifdef HAVE_ELEMENTARY_WINCE
-#include <Ecore_WinCE.h>
-#endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
 #include <Ecore_Wayland.h>
 #endif
@@ -145,17 +142,16 @@ extern const char *_elm_engines[];
 #define ELM_XRENDER_X11       (_elm_engines[5])
 #define ELM_OPENGL_X11        (_elm_engines[6])
 #define ELM_SOFTWARE_WIN32    (_elm_engines[7])
-#define ELM_SOFTWARE_16_WINCE (_elm_engines[8])
-#define ELM_SOFTWARE_SDL      (_elm_engines[9])
-#define ELM_SOFTWARE_16_SDL   (_elm_engines[10])
-#define ELM_OPENGL_SDL        (_elm_engines[11])
-#define ELM_BUFFER            (_elm_engines[12])
-#define ELM_EWS               (_elm_engines[13])
-#define ELM_OPENGL_COCOA      (_elm_engines[14])
-#define ELM_SOFTWARE_PSL1GHT  (_elm_engines[15])
-#define ELM_WAYLAND_SHM       (_elm_engines[16])
-#define ELM_WAYLAND_EGL       (_elm_engines[17])
-#define ELM_DRM               (_elm_engines[18])
+#define ELM_SOFTWARE_SDL      (_elm_engines[8])
+#define ELM_SOFTWARE_16_SDL   (_elm_engines[9])
+#define ELM_OPENGL_SDL        (_elm_engines[10])
+#define ELM_BUFFER            (_elm_engines[11])
+#define ELM_EWS               (_elm_engines[12])
+#define ELM_OPENGL_COCOA      (_elm_engines[13])
+#define ELM_SOFTWARE_PSL1GHT  (_elm_engines[14])
+#define ELM_WAYLAND_SHM       (_elm_engines[15])
+#define ELM_WAYLAND_EGL       (_elm_engines[16])
+#define ELM_DRM               (_elm_engines[17])
 
 #define ELM_FONT_TOKEN_STYLE  ":style="
 
