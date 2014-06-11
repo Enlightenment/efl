@@ -2979,7 +2979,6 @@ static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, cons
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter , *viter;
    va_list va;
-   va_start(va, variant_sig);
 
    EINA_SAFETY_ON_NULL_RETURN(infc);
    EINA_SAFETY_ON_NULL_RETURN(minor);
@@ -2987,8 +2986,9 @@ static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, cons
    msg = eldbus_service_signal_new(infc, sig_id);
    EINA_SAFETY_ON_NULL_RETURN(msg);
 
-   iter = eldbus_message_iter_get(msg);
+   va_start(va, variant_sig);
 
+   iter = eldbus_message_iter_get(msg);
    eldbus_message_iter_arguments_append(iter, "sii", minor, det1, det2);
 
    if (variant_sig)

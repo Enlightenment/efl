@@ -5034,7 +5034,7 @@ _elm_entry_elm_interface_atspi_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA
 
    cur = evas_object_textblock_cursor_new(tblk);
    cur2 = evas_object_textblock_cursor_new(tblk);
-   if (!cur2 || !cur2) goto fail;
+   if (!cur || !cur2) goto fail;
 
    evas_textblock_cursor_pos_set(cur, *start_offset);
    if (evas_textblock_cursor_pos_get(cur) != *start_offset) goto fail;
@@ -5112,7 +5112,7 @@ _elm_entry_elm_interface_atspi_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_U
 
    cur = evas_object_textblock_cursor_new(tblk);
    cur2 = evas_object_textblock_cursor_new(tblk);
-   if (!cur2 || !cur2) goto fail;
+   if (!cur || !cur2) goto fail;
 
    evas_textblock_cursor_pos_set(cur, start_offset);
    if (evas_textblock_cursor_pos_get(cur) != start_offset) goto fail;
