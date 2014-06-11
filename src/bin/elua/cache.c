@@ -31,11 +31,11 @@ check_bc(Eina_File *of, const char *fname, Eina_Bool *bc)
 }
 
 static Eina_File *
-open_src(const char *fname, const char *mode, Eina_Bool *bc)
+open_src(const char *fname, Eina_Bool *bc)
 {
    Eina_File  *f   = NULL;
    const char *ext = strstr(fname, ".lua");
-   if (ext && !ext[4] && (!mode || strchr(mode, 't')))
+   if (ext && !ext[4])
      {
         char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "%sc", fname);
@@ -79,10 +79,10 @@ getf(lua_State *L EINA_UNUSED, void *ud, size_t *size)
 }
 
 static int
-elua_loadstdin(lua_State *L, const char *mode)
+elua_loadstdin(lua_State *L)
 {
    char buff[LUAL_BUFFERSIZE];
-   int status = lua_loadx(L, getf, &buff, "=stdin", mode);
+   int status = lua_load(L, getf, &buff, "=stdin");
    if (ferror(stdin))
      {
         lua_pop(L, 1);
@@ -110,7 +110,7 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
 }
 
 int
-elua_loadfilex(lua_State *L, const char *fname, const char *mode)
+elua_loadfile(lua_State *L, const char *fname)
 {
    Map_Stream s;
    int status;
@@ -119,9 +119,9 @@ elua_loadfilex(lua_State *L, const char *fname, const char *mode)
    Eina_Bool bcache = EINA_FALSE;
    if (!fname)
      {
-        return elua_loadstdin(L, mode);
+        return elua_loadstdin(L);
      }
-   if (!(f = open_src(fname, mode, &bcache)))
+   if (!(f = open_src(fname, &bcache)))
      {
         lua_pushfstring(L, "cannot open %s: %s", fname, strerror(errno));
         return LUA_ERRFILE;
@@ -134,18 +134,12 @@ elua_loadfilex(lua_State *L, const char *fname, const char *mode)
         lua_remove(L, -2);
         return LUA_ERRFILE;
      }
-   status = lua_loadx(L, getf_map, &s, chname, mode);
+   status = lua_load(L, getf_map, &s, chname);
    eina_file_map_free(f, s.fmap);
    eina_file_close(f);
    if (!status && bcache) write_bc(L, fname);
    lua_remove(L, -2);
    return status;
-}
-
-int
-elua_loadfile(lua_State *L, const char *fname)
-{
-   return elua_loadfilex(L, fname, NULL);
 }
 
 /* lua function */
@@ -154,8 +148,7 @@ static int
 loadfile(lua_State *L)
 {
    const char *fname = luaL_optstring(L, 1, NULL);
-   const char *mode  = luaL_optstring(L, 2, NULL);
-   int status = elua_loadfilex(L, fname, mode),
+   int status = elua_loadfile(L, fname),
        hasenv = (lua_gettop(L) >= 3);
    if (!status)
      {

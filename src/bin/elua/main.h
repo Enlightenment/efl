@@ -35,7 +35,6 @@ extern int el_log_domain;
 #define ERR(...) EINA_LOG_DOM_ERR(el_log_domain, __VA_ARGS__)
 #define CRT(...) EINA_LOG_DOM_CRITICAL(el_log_domain, __VA_ARGS__)
 
-int elua_loadfilex(lua_State *L, const char *fname, const char *mode);
 int elua_loadfile(lua_State *L, const char *fname);
 void elua_register_cache(lua_State *L);
 
