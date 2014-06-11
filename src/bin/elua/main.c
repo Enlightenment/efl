@@ -310,7 +310,9 @@ elua_build_args(lua_State *L)
         lua_pushvalue(L, i);         ++n;
         lua_pushliteral(L, "'");     ++n;
         if (i != nargs)
-           lua_pushliteral(L, " ");  ++n;
+          {
+             lua_pushliteral(L, " ");  ++n;
+          }
      }
    lua_concat(L, n);
    return 1;

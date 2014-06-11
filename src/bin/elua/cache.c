@@ -19,13 +19,19 @@ check_bc(Eina_File *of, const char *fname, Eina_Bool *bc)
         /* original file doesn't exist, only bytecode does, use bytecode */
         if (stat(fname, &sc_stat) < 0)
           return of;
-        stat(eina_file_filename_get(of), &bc_stat);
+        if (stat(eina_file_filename_get(of), &bc_stat) < 0)
+          {
+             /* what? */
+             eina_file_close(of);
+             goto generate;
+          }
         /* bytecode is newer than original file, use bytecode */
         if (bc_stat.st_mtime > sc_stat.st_mtime)
           return of;
         /* bytecode is not new enough; trigger regeneration */
         eina_file_close(of);
      }
+generate:
    *bc = EINA_TRUE;
    return eina_file_open(fname, EINA_FALSE);
 }
@@ -63,7 +69,8 @@ write_bc(lua_State *L, const char *fname)
         if (lua_dump(L, writef, f))
           {
              fclose(f);
-             remove(buf);
+             /* there really is nothing to handle here */
+             (void)!!remove(buf);
           }
         else fclose(f);
      }

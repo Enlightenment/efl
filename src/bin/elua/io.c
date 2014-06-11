@@ -67,6 +67,9 @@ elua_popen_c(const char *path, const char *md, const char *argv[])
 #else
    ret = _popen(cmdline, md);
 #endif
+
+   free(cmdline);
+
    if (!ret) return NULL;
 
    return ret;
@@ -204,6 +207,7 @@ elua_readline(lua_State *L)
    if (!f)
      {
         luaL_error(L, "file is already closed");
+        return 0; /* shut up coverity; luaL_error does a longjmp */
      }
    success = read_line(L, f);
    if (ferror(f))
@@ -357,8 +361,8 @@ elua_popen(lua_State *L)
      }
    else
      {
-        const char **argv = { NULL };
-        *pf = elua_popen_c(fname, mode, argv);
+        const char *argv = NULL;
+        *pf = elua_popen_c(fname, mode, &argv);
      }
    return (!*pf) ? push_ret(L, 0, fname) : 1;
 }
