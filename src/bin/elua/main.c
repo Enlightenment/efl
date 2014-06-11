@@ -337,7 +337,7 @@ const luaL_reg cutillib[] =
 static int
 gettext_bind_textdomain(lua_State *L)
 {
-#if ENABLE_NLS
+#ifdef ENABLE_NLS
    const char *textdomain = luaL_checkstring(L, 1);
    const char *dirname    = luaL_checkstring(L, 2);
    const char *ret;
@@ -421,7 +421,7 @@ lua_main(lua_State *L)
    int    argc = m->argc;
    char **argv = m->argv;
 
-#if ENABLE_NLS
+#ifdef ENABLE_NLS
    char *(*dgettextp)(const char*, const char*) = dgettext;
    char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
       = dngettext;
@@ -517,7 +517,7 @@ lua_main(lua_State *L)
      }
    lua_createtable(L, 0, 0);
    luaL_register(L, NULL, gettextlib);
-#if ENABLE_NLS
+#ifdef ENABLE_NLS
    lua_pushlightuserdata(L, *((void**)&dgettextp));
    lua_setfield(L, -2, "dgettext");
    lua_pushlightuserdata(L, *((void**)&dngettextp));
@@ -585,7 +585,7 @@ main(int argc, char **argv)
    struct Main_Data m;
    lua_State *L = NULL;
 
-#if ENABLE_NLS
+#ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALE_DIR);
    bind_textdomain_codeset(PACKAGE, "UTF-8");

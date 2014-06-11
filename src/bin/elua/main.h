@@ -5,7 +5,7 @@
 # include <config.h>
 #endif
 
-#if ENABLE_NLS
+#ifdef ENABLE_NLS
 # include <locale.h>
 # include <libintl.h>
 # define _(x) dgettext(PACKAGE, x)
