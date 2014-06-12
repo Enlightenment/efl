@@ -5612,6 +5612,39 @@ edje_edit_state_text_repch_set(Evas_Object *obj, const char *part, const char *s
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_text_size_range_min_max_get(Evas_Object *obj, const char *part, const char *state, double value, int *min, int *max)
+{
+   Edje_Part_Description_Text *txt;
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+
+   txt = (Edje_Part_Description_Text *) pd;
+   if (min) *min = txt->text.size_range_min;
+   if (max) *max = txt->text.size_range_max;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_text_size_range_min_max_set(Evas_Object *obj, const char *part, const char *state, double value, int min, int max)
+{
+   Edje_Part_Description_Text *txt;
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+
+   txt = (Edje_Part_Description_Text *) pd;
+   txt->text.size_range_min = min;
+   txt->text.size_range_max = max;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
 /****************/
 /*  IMAGES API  */
 /****************/

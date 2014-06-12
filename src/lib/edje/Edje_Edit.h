@@ -3130,6 +3130,7 @@ edje_edit_state_text_text_source_set(Evas_Object *obj, const char *part, const c
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set the the maximum vertical size of
+ * @param value Value of the state.
  * the container to be equal (not including the state value).
  *
  * @return The name of part or NULL, if text_source param not a setted.
@@ -3145,6 +3146,7 @@ edje_edit_state_text_source_get(Evas_Object *obj, const char *part, const char *
  * @param part Part that contain state.
  * @param state The name of the state to set the the maximum vertical size of
  * the container to be equal (not including the state value).
+ * @param value Value of the state.
  * @param source The text source part name.
  *
  * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
@@ -3203,6 +3205,34 @@ edje_edit_state_text_repch_get(Evas_Object *obj, const char *part, const char *s
  */
 EAPI Eina_Bool
 edje_edit_state_text_repch_set(Evas_Object *obj, const char *part, const char *state, double value, const char *repch);
+
+/** Get the min and max font size allowed for the text part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state State in which the part is set.
+ * @param value Value of the state.
+ * @param min Minimal value of the font size in points (pt).
+ * @param max Maximum value of the font size in points (pt).
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_text_size_range_min_max_get(Evas_Object *obj, const char *part, const char *state, double value, int *min, int *max);
+
+/** Set the min and max font size allowed for the text part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state State in which the part is set.
+ * @param value Value of the state.
+ * @param min Minimal value of the font size in points (pt).
+ * @param max Maximum value of the font size in points (pt).
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_text_size_range_min_max_set(Evas_Object *obj, const char *part, const char *state, double value, int min, int max);
 
 /** Get the list of all the fonts in the given edje.
  *
