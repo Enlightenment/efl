@@ -12,6 +12,7 @@
 #include <functional>
 #include <chrono>
 #include <mutex>
+#include <functional>
 
 /**
  * @addtogroup Eina_Cxx_Tools_Group Tools
@@ -771,7 +772,6 @@ void sleep_for(std::chrono::duration<Rep, Period>const& rel_time);
  */
 namespace std {
 
-template <typename T> struct hash;
 template <>
 struct hash< ::efl::eina::thread_id> : hash<unsigned long>
 {};
