@@ -3534,11 +3534,24 @@ EAPI Eina_List * edje_edit_sounds_tones_get(Evas_Object *obj);
  * that use deleted sound will be deleted.
  *
  * @param obj Object being edited.
- * @param name The name of the sound file to be deleted from the edje.
+ * @param name The name of the sound to be deleted from the edje.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_sound_sample_del(Evas_Object *obj, const char *name);
+
+/** Delete tone from the collection
+ *
+ * Deletes tone from collection by its name. After successfull deletion
+ * all PLAY_TONE actions in all programs of all groups of current collection
+ * that use deleted sound will be deleted.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the tone to be deleted from the edje.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_sound_tone_del(Evas_Object *obj, const char* name);
 
 //@}
 /******************************************************************************/

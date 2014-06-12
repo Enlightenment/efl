@@ -912,6 +912,65 @@ edje_edit_compiler_get(Evas_Object *obj)
 
 static Eina_Bool _edje_edit_collection_save(Eet_File *eetf, Edje_Part_Collection *epc);
 
+static Eina_Bool
+_delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_File *eetf)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   Eina_Iterator *it = eina_hash_iterator_data_new(ed->file->collection);
+   Edje_Part_Collection_Directory_Entry *pce;
+
+   EINA_ITERATOR_FOREACH(it, pce)
+     {
+        Eina_Bool is_collection_changed = EINA_FALSE;
+        int i;
+
+        if (pce->group_alias)
+          continue;
+
+        Evas_Object *obj = edje_edit_object_add(ed->base->evas);
+        if (!edje_object_file_set(obj, ed->file->path, pce->entry))
+          continue;
+
+        Eina_List *programs_list = edje_edit_programs_list_get(obj);
+        if (!programs_list)
+          continue;
+
+        GET_ED_OR_RETURN(EINA_FALSE);
+
+        for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
+          {
+             Edje_Program *program;
+
+             program = ed->collection->patterns.table_programs[i];
+             if (program->action != action_type)
+                continue;
+
+             if ((action_type == EDJE_ACTION_TYPE_SOUND_SAMPLE) &&
+                 !strcmp(program->sample_name, name))
+               {
+                  program->speed = 0;
+                  program->channel = EDJE_CHANNEL_EFFECT;
+                  _edje_if_string_free(ed, program->sample_name);
+                  program->sample_name = NULL;
+                  program->action = EDJE_ACTION_TYPE_NONE;
+                  is_collection_changed = EINA_TRUE;
+               }
+             else if ((action_type == EDJE_ACTION_TYPE_SOUND_TONE) &&
+                      !strcmp(program->tone_name, name))
+               {
+                  program->duration = 0;
+                  _edje_if_string_free(ed, program->tone_name);
+                  program->tone_name = NULL;
+                  program->action = EDJE_ACTION_TYPE_NONE;
+                  is_collection_changed = EINA_TRUE;
+               }
+          }
+        if (is_collection_changed)
+          _edje_edit_collection_save(eetf, ed->collection);
+     }
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
 {
@@ -945,7 +1004,6 @@ edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
    {
       char sample[PATH_MAX];
       Eet_File *eetf;
-
       Edje_Sound_Sample *sound_sample_last;
 
       eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
@@ -977,47 +1035,84 @@ edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
                                              sizeof(Edje_Sound_Sample) *
                                              ed->file->sound_dir->samples_count);
 
-      Eina_Iterator *it = eina_hash_iterator_data_new(ed->file->collection);
-      Edje_Part_Collection_Directory_Entry *pce;
-
-      EINA_ITERATOR_FOREACH(it, pce)
+      if (!_delete_play_actions(obj, name, EDJE_ACTION_TYPE_SOUND_SAMPLE, eetf))
         {
-           Eina_Bool is_collection_changed = EINA_FALSE;
-           int i;
+           eet_close(eetf);
+           return EINA_FALSE;
+        }
 
-           if (pce->group_alias)
-             continue;
+      if (!_edje_edit_edje_file_save(eetf, ed->file))
+        {
+           eet_close(eetf);
+           return EINA_FALSE;
+        }
+      eet_close(eetf);
+   }
 
-           Evas_Object *obj = edje_edit_object_add(ed->base->evas);
-           if (!edje_object_file_set(obj, ed->file->path, pce->entry))
-             continue;
+   GET_EED_OR_RETURN(EINA_FALSE);
+   _edje_edit_flag_script_dirty(eed, EINA_TRUE);
 
-           Eina_List *programs_list = edje_edit_programs_list_get(obj);
-           if (!programs_list)
-             continue;
-             
-             GET_ED_OR_RETURN(EINA_FALSE);
+   return EINA_TRUE;
+}
 
-           for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
-             {
-                Edje_Program *program;
+EAPI Eina_Bool
+edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
+{
+   Edje_Sound_Tone *sound_tone = NULL;
+   unsigned int i = 0;
 
-                program = ed->collection->patterns.table_programs[i];
-                if ((program->action == EDJE_ACTION_TYPE_SOUND_SAMPLE) &&
-                    (!strcmp(program->sample_name, name)))
-                  {
-                     program->action = EDJE_ACTION_TYPE_NONE;
-                     program->duration = 0;
-                     program->channel = EDJE_CHANNEL_EFFECT;
-                     _edje_if_string_free(ed, program->sample_name);
-                     program->sample_name = NULL;
-                     is_collection_changed = EINA_TRUE;
-                  }
-             }
-           if (is_collection_changed)
-             {
-                _edje_edit_collection_save(eetf, ed->collection);
-             }
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->path) return EINA_FALSE;
+
+   if ((!ed->file->sound_dir) || (!ed->file->sound_dir->tones))
+     {
+        WRN("Unable to delete tone \"%s\". The tones list is empty.", name);
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < ed->file->sound_dir->tones_count; ++i)
+     {
+        sound_tone = ed->file->sound_dir->tones + i;
+        if (!strcmp(name, sound_tone->name))
+           break;
+     }
+   if (i == ed->file->sound_dir->tones_count)
+     {
+        WRN("Unable to delete tone \"%s\". It does not exist.", name);
+        return EINA_FALSE;
+     }
+
+   {
+      Eet_File *eetf;
+
+      eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+      if (!eetf)
+        {
+           WRN("Unable to open file \"%s\" for writing output", ed->path);
+           return EINA_FALSE;
+        }
+
+      Edje_Sound_Tone *sound_tone_last;
+      sound_tone_last = ed->file->sound_dir->tones +
+                        ed->file->sound_dir->tones_count - 1;
+
+      if (sound_tone_last->id != sound_tone->id)
+        *sound_tone = *sound_tone_last;
+
+      _edje_if_string_free(ed, sound_tone->name);
+      --ed->file->sound_dir->tones_count;
+
+      ed->file->sound_dir->tones = realloc(ed->file->sound_dir->tones,
+                                           sizeof(Edje_Sound_Tone) *
+                                           ed->file->sound_dir->tones_count);
+
+      if (!_delete_play_actions(obj, name, EDJE_ACTION_TYPE_SOUND_TONE, eetf))
+        {
+           eet_close(eetf);
+           return EINA_FALSE;
         }
 
       if (!_edje_edit_edje_file_save(eetf, ed->file))
