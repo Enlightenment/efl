@@ -3703,6 +3703,27 @@ edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_
    return EINA_TRUE;
 }
 
+EAPI Eina_List *
+edje_edit_part_items_list_get(Evas_Object *obj, const char *part)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Eina_List *items_list = NULL;
+   GET_RP_OR_RETURN(NULL);
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+      (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return NULL;
+   ep = rp->part;
+   if (!ed->file) return NULL;
+
+   for (i = 0; i < ep->items_count; ++i)
+     items_list = eina_list_append(items_list,
+        eina_stringshare_add(ep->items[i]->name));
+
+   return items_list;
+}
+
 /*********************/
 /*  PART STATES API  */
 /*********************/

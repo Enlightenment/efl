@@ -1563,6 +1563,14 @@ EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *p
  */
 EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group);
 
+/** Get the list of all part items in the given edje.
+ *
+ * @param obj Object being edited.
+ *
+ * @return A List containing all part items names found in the edje file.
+ */
+EAPI Eina_List * edje_edit_part_items_list_get(Evas_Object *obj, const char *part);
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/
