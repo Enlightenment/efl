@@ -210,7 +210,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
    Evas_3D_Mesh_Frame *f;
    float minx, miny, minz, maxx, maxy, maxz, vxmin, vymin, vzmin, vxmax, vymax, vzmax;
    float *minmaxdata;
-   Evas_Vec4 orientation;
+   Evas_Vec4 orientation = {0};
    Evas_Box3 box3;
 
    eo_do(node,
