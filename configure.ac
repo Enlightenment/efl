@@ -147,7 +147,33 @@ efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
-EFL_WITH_BIN([elua], [elua-bin])
+
+# elua binary - special handling of HAVE_ELUA_BIN
+
+elua_bin=""
+_efl_elua_define="no"
+
+AC_ARG_WITH([elua],
+   [AC_HELP_STRING([--with-elua=PATH], [specify a specific path to elua @<:@default=elua@:>@])],
+   [
+    elua_bin=${withval}
+    _efl_elua_define="yes"
+   ], [])
+
+AC_ARG_WITH([bin-elua],
+   [AC_HELP_STRING([--with-bin-elua=PATH], [specify a specific path to elua @<:@default=elua@:>@ DEPRECATED])],
+   [
+    elua_bin=${withval}
+    _efl_elua_define="yes"
+    efl_deprecated_option="yes"
+   ], [])
+
+AC_MSG_NOTICE([elua set to ${elua_bin}])
+
+with_binary_elua=${elua_bin}
+
+AM_CONDITIONAL(HAVE_ELUA_BIN, [test "x${_efl_elua_define}" = "xyes"])
+AC_SUBST(elua_bin)
 
 #### Default values
 
@@ -4651,8 +4677,8 @@ if test "x${with_binary_eolian_cxx}" != "x"; then
 echo "  eolian_cxx....: ${with_binary_eolian_cxx}"
 fi
 
-if test "x${with_binary_elua_bin}" != "x"; then
-echo "  elua..........: ${with_binary_elua_bin}"
+if test "x${with_binary_elua}" != "x"; then
+echo "  elua..........: ${with_binary_elua}"
 fi
 
 echo "  "
