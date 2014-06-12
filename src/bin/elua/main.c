@@ -17,34 +17,34 @@ enum
    ARG_LIBDIR
 };
 
-static Eina_List   *modlist     = NULL;
-static int          require_ref = LUA_REFNIL;
-static int          appload_ref = LUA_REFNIL;
-static const char  *progname    = NULL;
-static Eina_Prefix *prefix      = NULL;
+static Eina_List   *elua_modlist     = NULL;
+static int          elua_require_ref = LUA_REFNIL;
+static int          elua_appload_ref = LUA_REFNIL;
+static const char  *elua_progname    = NULL;
+static Eina_Prefix *elua_prefix      = NULL;
 
 int el_log_domain = -1;
 
 static void
-errmsg(const char *pname, const char *msg)
+elua_errmsg(const char *pname, const char *msg)
 {
    ERR("%s%s%s", pname ? pname : "", pname ? ": " : "", msg);
 }
 
 static int
-report(lua_State *L, int status)
+elua_report(lua_State *L, int status)
 {
    if (status && !lua_isnil(L, -1))
      {
         const char *msg = lua_tostring(L, -1);
-        errmsg(progname, msg ? msg : "(non-string error)");
+        elua_errmsg(elua_progname, msg ? msg : "(non-string error)");
         lua_pop(L, 1);
      }
    return status;
 }
 
 static int
-traceback(lua_State *L)
+elua_traceback(lua_State *L)
 {
    lua_getglobal(L, "debug");
    if (!lua_istable(L, -1))
@@ -65,11 +65,11 @@ traceback(lua_State *L)
 }
 
 static int
-docall(lua_State *L, int narg, int nret)
+elua_docall(lua_State *L, int narg, int nret)
 {
    int status;
    int bs = lua_gettop(L) - narg;
-   lua_pushcfunction(L, traceback);
+   lua_pushcfunction(L, elua_traceback);
    lua_insert(L, bs);
    status = lua_pcall(L, narg, nret, bs);
    lua_remove(L, bs);
@@ -79,7 +79,7 @@ docall(lua_State *L, int narg, int nret)
 }
 
 static int
-getargs(lua_State *L, int argc, char **argv, int n)
+elua_getargs(lua_State *L, int argc, char **argv, int n)
 {
    int i;
    int narg = argc - (n + 1);
@@ -101,7 +101,7 @@ getargs(lua_State *L, int argc, char **argv, int n)
 }
 
 static int
-init_module(lua_State *L)
+elua_init_module(lua_State *L)
 {
    if (!lua_isnoneornil(L, 1))
      {
@@ -111,14 +111,14 @@ init_module(lua_State *L)
    if (!lua_isnoneornil(L, 2))
      {
         lua_pushvalue(L, 2);
-        modlist = eina_list_append(modlist,
+        elua_modlist = eina_list_append(elua_modlist,
            (void*)(size_t)luaL_ref(L, LUA_REGISTRYINDEX));
      }
    return 0;
 }
 
 static int
-register_require(lua_State *L)
+elua_register_require(lua_State *L)
 {
    const char *corepath = lua_touserdata(L, lua_upvalueindex(1));
    const char *modpath  = lua_touserdata(L, lua_upvalueindex(2));
@@ -129,9 +129,9 @@ register_require(lua_State *L)
    char corepathbuf[PATH_MAX], modpathbuf[PATH_MAX], appspathbuf[PATH_MAX];
    int n = 2;
    lua_pushvalue(L, 1);
-   require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+   elua_require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    lua_pushvalue(L, 2);
-   appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+   elua_appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    if (getenv("EFL_RUN_IN_TREE"))
      {
         corepath = PACKAGE_BUILD_DIR "/src/bin/elua/core";
@@ -146,7 +146,7 @@ register_require(lua_State *L)
                {
                   corepath = corepathbuf;
                   snprintf(corepathbuf, sizeof(corepathbuf), "%s/core",
-                           eina_prefix_data_get(prefix));
+                           eina_prefix_data_get(elua_prefix));
                }
           }
         if (!modpath)
@@ -155,7 +155,7 @@ register_require(lua_State *L)
                {
                   modpath = modpathbuf;
                   snprintf(modpathbuf, sizeof(modpathbuf), "%s/modules",
-                           eina_prefix_data_get(prefix));
+                           eina_prefix_data_get(elua_prefix));
                }
           }
         if (!appspath)
@@ -164,7 +164,7 @@ register_require(lua_State *L)
                {
                   appspath = appspathbuf;
                   snprintf(appspathbuf, sizeof(appspathbuf), "%s/apps",
-                           eina_prefix_data_get(prefix));
+                           eina_prefix_data_get(elua_prefix));
                }
           }
      }
@@ -185,30 +185,30 @@ register_require(lua_State *L)
 }
 
 static int
-dolib(lua_State *L, const char *libname)
+elua_dolib(lua_State *L, const char *libname)
 {
-   lua_rawgeti(L, LUA_REGISTRYINDEX, require_ref);
+   lua_rawgeti(L, LUA_REGISTRYINDEX, elua_require_ref);
    lua_pushstring(L, libname);
-   return report(L, lua_pcall(L, 1, 0, 0));
+   return elua_report(L, lua_pcall(L, 1, 0, 0));
 }
 
 static int
-dofile(lua_State *L, const char *fname)
+elua_dofile(lua_State *L, const char *fname)
 {
-   return report(L, elua_loadfile(L, fname) || docall(L, 0, 1));
+   return elua_report(L, elua_loadfile(L, fname) || elua_docall(L, 0, 1));
 }
 
 static int
-dostr(lua_State *L, const char *chunk, const char *chname)
+elua_dostr(lua_State *L, const char *chunk, const char *chname)
 {
-   return report(L, luaL_loadbuffer(L, chunk, strlen(chunk), chname)
-                 || docall(L, 0, 0));
+   return elua_report(L, luaL_loadbuffer(L, chunk, strlen(chunk), chname)
+                 || elua_docall(L, 0, 0));
 }
 
 static Eina_Bool
-loadapp(lua_State *L, const char *appname)
+elua_loadapp(lua_State *L, const char *appname)
 {
-   lua_rawgeti(L, LUA_REGISTRYINDEX, appload_ref);
+   lua_rawgeti(L, LUA_REGISTRYINDEX, elua_appload_ref);
    lua_pushstring(L, appname);
    lua_call(L, 1, 2);
    if (lua_isnil(L, -2))
@@ -221,11 +221,11 @@ loadapp(lua_State *L, const char *appname)
 }
 
 static int
-doscript(lua_State *L, int argc, char **argv, int n, int *quit)
+elua_doscript(lua_State *L, int argc, char **argv, int n, int *quit)
 {
    int status;
    const char *fname = argv[n];
-   int narg = getargs(L, argc, argv, n);
+   int narg = elua_getargs(L, argc, argv, n);
    lua_setglobal(L, "arg");
    if (fname[0] == '-' && !fname[1])
      {
@@ -233,7 +233,7 @@ doscript(lua_State *L, int argc, char **argv, int n, int *quit)
      }
    if (fname && fname[0] == ':')
      {
-        status = !loadapp(L, fname + 1);
+        status = !elua_loadapp(L, fname + 1);
      }
    else
      {
@@ -242,7 +242,7 @@ doscript(lua_State *L, int argc, char **argv, int n, int *quit)
    lua_insert(L, -(narg + 1));
    if (!status)
      {
-         status = docall(L, narg, 1);
+         status = elua_docall(L, narg, 1);
      }
    else
      {
@@ -253,48 +253,48 @@ doscript(lua_State *L, int argc, char **argv, int n, int *quit)
         *quit = lua_toboolean(L, -1);
         lua_pop(L, 1);
      }
-   return report(L, status);
+   return elua_report(L, status);
 }
 
 void
-shutdown(lua_State *L, int c)
+elua_shutdown(lua_State *L, int c)
 {
    void *data;
    INF("elua shutdown");
 
-   EINA_LIST_FREE(modlist, data)
+   EINA_LIST_FREE(elua_modlist, data)
      {
         lua_rawgeti(L, LUA_REGISTRYINDEX, (size_t)data);
         lua_call(L, 0, 0);
      }
 
-   if (prefix) eina_prefix_free(prefix);
+   if (elua_prefix) eina_prefix_free(elua_prefix);
 
    if (L) lua_close(L);
    eina_shutdown();
    exit(c);
 }
 
-static int        cb_ref = LUA_REFNIL;
-static lua_State *LL     = NULL;
+static int        elua_cb_ref = LUA_REFNIL;
+static lua_State *elua_state  = NULL;
 
 static void
-smart_cb_wrapper(void *data, void *obj EINA_UNUSED, void *einfo EINA_UNUSED)
+elua_smart_cb_wrapper(void *data, void *obj EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    int idx = (size_t)data;
-   lua_rawgeti(LL, LUA_REGISTRYINDEX, cb_ref);
-   lua_rawgeti(LL, -1, idx);
-   lua_call(LL, 0, 0);
-   lua_pop(LL, 1);
+   lua_rawgeti(elua_state, LUA_REGISTRYINDEX, elua_cb_ref);
+   lua_rawgeti(elua_state, -1, idx);
+   lua_call(elua_state, 0, 0);
+   lua_pop(elua_state, 1);
 }
 
 static int
-register_callbacks(lua_State *L)
+elua_register_callbacks(lua_State *L)
 {
    union { void (*fptr)(void*, void*, void*); void *ptr; } u;
    lua_pushvalue(L, 1);
-   cb_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-   u.fptr = smart_cb_wrapper;
+   elua_cb_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+   u.fptr = elua_smart_cb_wrapper;
    lua_pushlightuserdata(L, u.ptr);
    return 1;
 }
@@ -310,14 +310,14 @@ int elua_popen(lua_State *L);
 
 const luaL_reg cutillib[] =
 {
-   { "init_module"       , init_module        },
-   { "register_callbacks", register_callbacks },
-   { "popenv"            , elua_popen         },
-   { NULL                , NULL               }
+   { "init_module"       , elua_init_module        },
+   { "register_callbacks", elua_register_callbacks },
+   { "popenv"            , elua_popen              },
+   { NULL                , NULL                    }
 };
 
 static int
-gettext_bind_textdomain(lua_State *L)
+elua_gettext_bind_textdomain(lua_State *L)
 {
 #ifdef ENABLE_NLS
    const char *textdomain = luaL_checkstring(L, 1);
@@ -346,12 +346,12 @@ gettext_bind_textdomain(lua_State *L)
 
 const luaL_reg gettextlib[] =
 {
-   { "bind_textdomain", gettext_bind_textdomain },
+   { "bind_textdomain", elua_gettext_bind_textdomain },
    { NULL, NULL }
 };
 
 static void
-print_help(const char *pname, FILE *stream)
+elua_print_help(const char *pname, FILE *stream)
 {
    fprintf(stream, "Usage: %s [OPTIONS] [SCRIPT [ARGS]]\n\n"
                    "A main entry for all EFL/LuaJIT powered applications.\n\n"
@@ -385,7 +385,7 @@ static struct option lopt[] =
 
 /* protected main */
 static int
-lua_main(lua_State *L)
+elua_main(lua_State *L)
 {
    Eina_Bool   noenv   = EINA_FALSE,
                hasexec = EINA_FALSE;
@@ -409,14 +409,14 @@ lua_main(lua_State *L)
       = dngettext;
 #endif
 
-   progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
+   elua_progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
    while ((ch = getopt_long(argc, argv, "+LhC:M:A:e:l:I:E", lopt, NULL)) != -1)
      {
         switch (ch)
           {
              case 'h':
-                print_help(progname, stdout);
+                elua_print_help(elua_progname, stdout);
                 return 0;
              case 'C':
                 coredir = optarg;
@@ -447,11 +447,11 @@ lua_main(lua_State *L)
 
    luaL_openlibs(L);
 
-   prefix = eina_prefix_new(progname, lua_main, "ELUA", "elua", NULL,
-                            PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
-                            LOCALE_DIR);
+   elua_prefix = eina_prefix_new(elua_progname, elua_main, "ELUA", "elua", NULL,
+                                 PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
+                                 LOCALE_DIR);
 
-   if (!prefix)
+   if (!elua_prefix)
      {
         ERR("could not find elua prefix");
         m->status = 1;
@@ -472,11 +472,11 @@ lua_main(lua_State *L)
           {
              coref = corefbuf;
              snprintf(corefbuf, sizeof(corefbuf), "%s/core",
-                     eina_prefix_data_get(prefix));
+                     eina_prefix_data_get(elua_prefix));
           }
      }
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
-   if (report(L, elua_loadfile(L, modfile)))
+   if (elua_report(L, elua_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
@@ -486,13 +486,13 @@ lua_main(lua_State *L)
    lua_pushlightuserdata(L, appsdir);
    lua_pushlightuserdata(L, largs);
    lua_pushboolean      (L, noenv);
-   lua_pushcclosure(L, register_require, 5);
+   lua_pushcclosure(L, elua_register_require, 5);
    lua_createtable(L, 0, 0);
    luaL_register(L, NULL, cutillib);
    lua_call(L, 2, 0);
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
-   if (report(L, elua_loadfile(L, modfile)))
+   if (elua_report(L, elua_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
@@ -519,14 +519,14 @@ lua_main(lua_State *L)
           {
              case ARG_CODE:
                 if (!hasexec) hasexec = EINA_TRUE;
-                if (dostr(L, data->value, "=(command line)"))
+                if (elua_dostr(L, data->value, "=(command line)"))
                   {
                      m->status = 1;
                      return 0;
                   }
                 break;
              case ARG_LIBRARY:
-                if (dolib(L, data->value))
+                if (elua_dolib(L, data->value))
                   {
                      m->status = 1;
                      return 0;
@@ -544,13 +544,13 @@ lua_main(lua_State *L)
    if (optind < argc)
      {
         int quit = 0;
-        if ((m->status = doscript(L, argc, argv, optind, &quit))) return 0;
+        if ((m->status = elua_doscript(L, argc, argv, optind, &quit))) return 0;
         if (quit) return 0;
      }
    else if (!hasexec)
      {
         int quit;
-        if ((m->status = dofile(L, NULL))) return 0;
+        if ((m->status = elua_dofile(L, NULL))) return 0;
         quit = lua_toboolean(L, -1);
         lua_pop(L, 1);
         if (quit) return 0;
@@ -588,10 +588,10 @@ main(int argc, char **argv)
    if (!(L = luaL_newstate()))
      {
         ERR("could not initialize elua state.");
-        shutdown(L, 1);
+        elua_shutdown(L, 1);
      }
 
-   LL = L;
+   elua_state = L;
 
    INF("elua lua state created");
 
@@ -599,7 +599,7 @@ main(int argc, char **argv)
    m.argv   = argv;
    m.status = 0;
 
-   shutdown(L, !!(lua_cpcall(L, lua_main, &m) || m.status));
+   elua_shutdown(L, !!(lua_cpcall(L, elua_main, &m) || m.status));
 
    return 0; /* never gets here */
 }
