@@ -359,18 +359,18 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
 }
 
 static Eina_Bool
-_edje_import_font_file(Edje *ed, const char *path, const char *entry)
+_edje_edit_file_import(Edje *ed, const char *path, const char *entry, int compress)
 {
    Eina_File *f;
    Eet_File *eetf = NULL;
    void *fdata = NULL;
    long fsize = 0;
 
-   /* Read font data from file */
+   /* Read data from file */
    f = eina_file_open(path, 0);
    if (!f)
      {
-        ERR("Unable to open font file \"%s\"", path);
+        ERR("Unable to open file \"%s\"", path);
         return EINA_FALSE;
      }
 
@@ -378,11 +378,11 @@ _edje_import_font_file(Edje *ed, const char *path, const char *entry)
    fdata = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!fdata)
      {
-        ERR("Unable to map font file \"%s\"", path);
+        ERR("Unable to map file \"%s\"", path);
         goto on_error;
      }
 
-   /* Write font to edje file */
+   /* Write file data to edje file */
    eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
    if (!eetf)
      {
@@ -390,9 +390,9 @@ _edje_import_font_file(Edje *ed, const char *path, const char *entry)
         goto on_error;
      }
 
-   if (eet_write(eetf, entry, fdata, fsize, 1) <= 0)
+   if (eet_write(eetf, entry, fdata, fsize, compress) <= 0)
      {
-        ERR("Unable to write font part \"%s\" as \"%s\" part entry",
+        ERR("Unable to write \"%s\" as \"%s\" part entry",
             path, entry);
         goto on_error;
      }
@@ -971,6 +971,77 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
    return EINA_TRUE;
 }
 
+static void
+_initialize_sound_dir(Edje *ed)
+{
+   if (ed->file->sound_dir)
+     return;
+   ed->file->sound_dir = _alloc(sizeof(Edje_Sound_Directory));
+   ed->file->sound_dir->samples = NULL;
+   ed->file->sound_dir->tones = NULL;
+   ed->file->sound_dir->samples_count = 0;
+   ed->file->sound_dir->tones_count = 0;
+}
+
+EAPI Eina_Bool
+edje_edit_sound_sample_add(Evas_Object *obj, const char* name, const char* snd_src)
+{
+   if (!name) return EINA_FALSE;
+   if (!snd_src) return EINA_FALSE;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   Edje_Sound_Sample *sound_sample = NULL;
+   unsigned int i = 0;
+   char sample[PATH_MAX];
+   int id = 0;
+
+   _initialize_sound_dir(ed);
+
+   for (i = 0; i < ed->file->sound_dir->samples_count; ++i)
+     {
+        sound_sample = ed->file->sound_dir->samples + i;
+        if (!strcmp(name, sound_sample->name))
+          {
+             WRN("Can not add new sound sample because"
+                 "sample named \"%s\" already exists.", name);
+             return EINA_FALSE;
+          }
+     }
+
+   if (ed->file->sound_dir->samples)
+     {
+        sound_sample = ed->file->sound_dir->samples +
+                       ed->file->sound_dir->samples_count - 1;
+        id = sound_sample->id + 1;
+        snprintf(sample, sizeof(sample), "edje/sounds/%i", id);
+     }
+   else
+     strcpy(sample, "edje/sounds/0");
+
+   if (!_edje_edit_file_import(ed, snd_src, sample, 0))
+     return EINA_FALSE;
+
+   if (sound_sample)
+     sound_sample++;
+   ++ed->file->sound_dir->samples_count;
+
+   ed->file->sound_dir->samples = realloc(ed->file->sound_dir->samples,
+                                          sizeof(Edje_Sound_Sample) *
+                                          ed->file->sound_dir->samples_count);
+
+   sound_sample = ed->file->sound_dir->samples +
+                  ed->file->sound_dir->samples_count - 1;
+   sound_sample->name = (char*)eina_stringshare_add(name);
+   sound_sample->snd_src = (char*)eina_stringshare_add(snd_src);
+   sound_sample->compression = EDJE_SOUND_SOURCE_TYPE_INLINE_RAW;
+   sound_sample->id = id;
+   sound_sample->mode = 0;
+   sound_sample->quality = 0;
+   
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
 {
@@ -1022,14 +1093,17 @@ edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
            return EINA_FALSE;
         }
 
+      _edje_if_string_free(ed, sound_sample->name);
+      --ed->file->sound_dir->samples_count;
+
       sound_sample_last = ed->file->sound_dir->samples +
                           ed->file->sound_dir->samples_count - 1;
 
-      if (sound_sample_last->id != sound_sample->id)
-        *sound_sample = *sound_sample_last;
-
-      _edje_if_string_free(ed, sound_sample->name);
-      --ed->file->sound_dir->samples_count;
+      while (sound_sample <= sound_sample_last)
+        {
+           *sound_sample = *(sound_sample + 1);
+           sound_sample++;
+        }
 
       ed->file->sound_dir->samples = realloc(ed->file->sound_dir->samples,
                                              sizeof(Edje_Sound_Sample) *
@@ -1095,15 +1169,18 @@ edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
            return EINA_FALSE;
         }
 
-      Edje_Sound_Tone *sound_tone_last;
-      sound_tone_last = ed->file->sound_dir->tones +
-                        ed->file->sound_dir->tones_count - 1;
-
-      if (sound_tone_last->id != sound_tone->id)
-        *sound_tone = *sound_tone_last;
 
       _edje_if_string_free(ed, sound_tone->name);
       --ed->file->sound_dir->tones_count;
+
+      Edje_Sound_Tone *sound_tone_last = ed->file->sound_dir->tones +
+                                          ed->file->sound_dir->tones_count - 1;
+
+      while (sound_tone <= sound_tone_last)
+        {
+           *sound_tone = *(sound_tone + 1);
+           sound_tone++;
+        }
 
       ed->file->sound_dir->tones = realloc(ed->file->sound_dir->tones,
                                            sizeof(Edje_Sound_Tone) *
@@ -5290,7 +5367,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
    eina_hash_direct_add(ed->file->fonts, fnt->entry, fnt);
 
    /* Import font */
-   if (!_edje_import_font_file(ed, path, entry))
+   if (!_edje_edit_file_import(ed, path, entry, 1))
      {
 	eina_hash_del(ed->file->fonts, fnt->entry, fnt);
         eina_stringshare_del(fnt->file);

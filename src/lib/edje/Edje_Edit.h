@@ -3582,6 +3582,26 @@ EAPI Eina_List * edje_edit_sounds_samples_get(Evas_Object *obj);
  */
 EAPI Eina_List * edje_edit_sounds_tones_get(Evas_Object *obj);
 
+/** Add new sound sample to samples collection
+ *
+ * This function adds the given sound file to the edje collection.
+ * The added sound sample could be used by PLAY_SAMPLE action in any program
+ * of any group that is in the current collection.
+ * The quality of added sound by default is uncompressed (RAW).
+ *
+ * The available formats list of the sound files that can be loaded depends
+ * on the evas engine on your system.
+ *
+ * @param obj Object being edited.
+ * @param name The name that will identify sample.
+ * @param snd_src The name of the sound file to add.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @see edje_edit_sound_sample_del()
+ */
+Eina_Bool
+edje_edit_sound_sample_add(Evas_Object *obj, const char* name, const char* snd_src);
+
 /** Delete sound sample from the collection
  *
  * Deletes sound sample from collection by its name. After successfull deletion
