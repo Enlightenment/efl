@@ -4409,6 +4409,52 @@ edje_edit_program_transition_value2_get(Evas_Object *obj, const char *prog);
 EAPI Eina_Bool
 edje_edit_program_transition_value2_set(Evas_Object *obj, const char *prog, double value);
 
+/** Get the interpolation value 3 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_CUBIC_BEZIER.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 3.
+ *
+ * @return interpolation value 3.
+ */
+EAPI double
+edje_edit_program_transition_value3_get(Evas_Object *obj, const char *prog);
+
+/** Set the interpolation value 3 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_CUBIC_BEZIER.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 3.
+ * @param value The interpolation value 3 for the transition.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_program_transition_value3_set(Evas_Object *obj, const char *prog, double value);
+
+/** Get the interpolation value 4 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_CUBIC_BEZIER.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 4.
+ *
+ * @return interpolation value 4.
+ */
+EAPI double
+edje_edit_program_transition_value4_get(Evas_Object *obj, const char *prog);
+
+/** Set the interpolation value 4 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_CUBIC_BEZIER.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 4.
+ * @param value The interpolation value 4 for the transition.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_program_transition_value4_set(Evas_Object *obj, const char *prog, double value);
+
 /** Get the duration of the transition in seconds.
  *
  * @param obj Object being edited.

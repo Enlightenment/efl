@@ -6948,47 +6948,33 @@ edje_edit_program_transition_set(Evas_Object *obj, const char *prog, Edje_Tween_
    return EINA_TRUE;
 }
 
-EAPI double
-edje_edit_program_transition_value1_get(Evas_Object *obj, const char *prog)
-{
-   eina_error_set(0);
+#define FUNC_PROGRAM_TRANSITION_VALUE(Num)				\
+  EAPI double \
+  edje_edit_program_transition_value##Num##_get(Evas_Object *obj, const char *prog) \
+  {									\
+     eina_error_set(0);                                                 \
+									\
+     GET_EPR_OR_RETURN(-1);                                             \
+									\
+     return TO_DOUBLE(epr->tween.v##Num);                               \
+  }									\
+  EAPI Eina_Bool                                                        \
+  edje_edit_program_transition_value##Num##_set(Evas_Object *obj, const char *prog, double value) \
+  {									\
+     eina_error_set(0);                                                 \
+									\
+     GET_EPR_OR_RETURN(EINA_FALSE);                                     \
+									\
+     epr->tween.v##Num = FROM_DOUBLE(value);                            \
+     return EINA_TRUE;                                                  \
+  }
 
-   GET_EPR_OR_RETURN(-1);
+FUNC_PROGRAM_TRANSITION_VALUE(1)
+FUNC_PROGRAM_TRANSITION_VALUE(2)
+FUNC_PROGRAM_TRANSITION_VALUE(3)
+FUNC_PROGRAM_TRANSITION_VALUE(4)
 
-   return TO_DOUBLE(epr->tween.v1);
-}
-
-EAPI Eina_Bool
-edje_edit_program_transition_value1_set(Evas_Object *obj, const char *prog, double value)
-{
-   eina_error_set(0);
-
-   GET_EPR_OR_RETURN(EINA_FALSE);
-
-   epr->tween.v1 = FROM_DOUBLE(value);
-   return EINA_TRUE;
-}
-
-EAPI double
-edje_edit_program_transition_value2_get(Evas_Object *obj, const char *prog)
-{
-   eina_error_set(0);
-
-   GET_EPR_OR_RETURN(-1);
-
-   return TO_DOUBLE(epr->tween.v2);
-}
-
-EAPI Eina_Bool
-edje_edit_program_transition_value2_set(Evas_Object *obj, const char *prog, double value)
-{
-   eina_error_set(0);
-
-   GET_EPR_OR_RETURN(EINA_FALSE);
-
-   epr->tween.v2 = FROM_DOUBLE(value);
-   return EINA_TRUE;
-}
+#undef FUNC_PROGRAM_TRANSITION_VALUE
 
 EAPI double
 edje_edit_program_transition_time_get(Evas_Object *obj, const char *prog)
