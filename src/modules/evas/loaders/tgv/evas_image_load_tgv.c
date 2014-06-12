@@ -270,7 +270,7 @@ evas_image_load_file_data_tgv(void *loader_data,
    const char *m;
    unsigned int *p = pixels;
    unsigned char *p_etc = pixels;
-   char *buffer;
+   char *buffer = NULL;
    Eina_Rectangle master;
    unsigned int block_length;
    unsigned int length, offset;
@@ -326,12 +326,18 @@ evas_image_load_file_data_tgv(void *loader_data,
       default: abort();
      }
 
+   if (prop->cspace != EVAS_COLORSPACE_ARGB8888 && prop->cspace != loader->cspace)
+     {
+        if (!((prop->cspace == EVAS_COLORSPACE_RGB8_ETC2) &&
+              (loader->cspace == EVAS_COLORSPACE_ETC1)))
+          goto on_error;
+        // else: ETC2 is compatible with ETC1 and is preferred
+     }
+
    // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
    block_count = loader->block.width * loader->block.height / (4 * 4);
    if (loader->compress)
      buffer = alloca(etc_block_size * block_count);
-   else
-     buffer = NULL;
 
    for (y = 0; y < loader->size.height + 2; y += loader->block.height)
      for (x = 0; x < loader->size.width + 2; x += loader->block.width)

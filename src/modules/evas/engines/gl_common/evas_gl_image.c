@@ -218,6 +218,9 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
           }
 
         cspace = im_im->cache_entry.cspaces[i];
+        // ETC2 is backwards compatible with ETC1 but we prefer ETC2
+        if (cspace == EVAS_COLORSPACE_ETC1 && gc->shared->info.etc2)
+          cspace = EVAS_COLORSPACE_RGB8_ETC2;
         im_im->cache_entry.space = cspace;
      }
 

@@ -299,9 +299,7 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, GLenum intformat, GLenum
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
 
-   if ((intformat == etc1_fmt) ||
-       (intformat == etc2_rgb_fmt) ||
-       (intformat == etc2_rgba_fmt))
+   if (!gc->shared->info.etc1_subimage && (intformat == etc1_fmt))
      no_rounding = EINA_TRUE;
 
    if (!no_rounding)
@@ -416,9 +414,7 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
       atlas_w = gc->shared->info.max_texture_size;
    if ((w > gc->shared->info.tune.atlas.max_w) ||
        (h > gc->shared->info.tune.atlas.max_h) ||
-       (intformat == etc1_fmt) ||
-       (intformat == etc2_rgb_fmt) ||
-       (intformat == etc2_rgba_fmt))
+       (!gc->shared->info.etc1_subimage && (intformat == etc1_fmt)))
      {
         pt = _pool_tex_new(gc, w, h, intformat, format);
         if (!pt) return NULL;
@@ -1107,11 +1103,14 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
              all.
            */
            GLsizei width, height;
+           GLint x, y;
            int etc_block_size = 8;
 
            if (im->cache_entry.space == EVAS_COLORSPACE_RGBA8_ETC2_EAC)
              etc_block_size = 16;
 
+           x = tex->x - 1;
+           y = tex->y - 1;
            width = im->cache_entry.w + 2;
            height = im->cache_entry.h + 2;
            width = ((width >> 2) + (width & 0x3 ? 1 : 0)) << 2;
@@ -1120,11 +1119,52 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
            glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
            GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-           glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->format,
-                                  width, height, 0,
-                                  ((width * height) >> 4) * etc_block_size,
-                                  im->image.data);
-           GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+           if ((tex->gc->shared->info.etc1_subimage ||
+               (im->cache_entry.space != EVAS_COLORSPACE_ETC1))
+               && (tex->pt->w != width || tex->pt->h != height))
+             {
+                int glerr;
+                glerr = glGetError();
+
+                if (!tex->pt->comptex_ready)
+                  {
+                     GLsizei tw, th;
+                     tw = ((tex->pt->w >> 2) + (tex->pt->w & 0x3 ? 1 : 0)) << 2;
+                     th = ((tex->pt->h >> 2) + (tex->pt->h & 0x3 ? 1 : 0)) << 2;
+                     glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->format,
+                                            tw, th, 0,
+                                            ((tw * th) >> 4) * etc_block_size,
+                                            NULL);
+                     GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                     tex->pt->comptex_ready = EINA_TRUE;
+                  }
+
+                glCompressedTexSubImage2D(GL_TEXTURE_2D, 0,
+                                          x, y, width, height,
+                                          tex->pt->format,
+                                          ((width * height) >> 4) * etc_block_size,
+                                          im->image.data);
+
+                glerr = glGetError();
+                if (glerr != GL_NO_ERROR)
+                  {
+                     ERR("glCompressedTexSubImage2D failed with ETC1/2: %d", glerr);
+
+                     // FIXME: Changing settings on the fly.
+                     // The first texture will be black.
+                     // How to fallback? We need a whole texture now.
+                     if (im->cache_entry.space == EVAS_COLORSPACE_ETC1)
+                       tex->gc->shared->info.etc1_subimage = EINA_FALSE;
+                  }
+             }
+           else
+             {
+                glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->format,
+                                       width, height, 0,
+                                       ((width * height) >> 4) * etc_block_size,
+                                       im->image.data);
+                GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             }
 
            if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
              {

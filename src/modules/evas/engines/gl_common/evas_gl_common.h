@@ -378,6 +378,7 @@ struct _Evas_GL_Shared
       Eina_Bool unpack_row_length : 1;
       Eina_Bool etc1 : 1;
       Eina_Bool etc2 : 1;
+      Eina_Bool etc1_subimage : 1;
       // tuning params - per gpu/cpu combo?
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
@@ -575,6 +576,7 @@ struct _Evas_GL_Texture_Pool
    Eina_Bool        render : 1;
    Eina_Bool        native : 1;
    Eina_Bool        dynamic : 1;
+   Eina_Bool        comptex_ready : 1;
 };
 
 struct _Evas_GL_Texture_Alloca

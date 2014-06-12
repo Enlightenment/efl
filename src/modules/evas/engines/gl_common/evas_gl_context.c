@@ -740,6 +740,10 @@ evas_gl_common_context_new(void)
                        shared->info.etc2 = (cnt == 2);
                        free(texFormats);
 
+                       // Note: If we support ETC2 we'll try to always use ETC2 even when the
+                       // image has colorspace ETC1 (backwards compatibility).
+                       shared->info.etc1_subimage = shared->info.etc2;
+
                        // FIXME: My NVIDIA driver advertises ETC2 texture formats
                        // but does not support them. Driver bug? Logic bug?
                        // This is in #ifdef GL_GLES because Khronos recommends
