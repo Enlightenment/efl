@@ -3628,6 +3628,25 @@ EAPI Eina_Bool edje_edit_sound_sample_del(Evas_Object *obj, const char *name);
  */
 EAPI Eina_Bool edje_edit_sound_tone_del(Evas_Object *obj, const char* name);
 
+/** Get the sound quality compression.
+ *
+ *@param obj Object being edited.
+ *@param name The name of the sample.
+ *
+ *@return Quality of the compression of the sample sound.
+ */
+EAPI double edje_edit_sound_compression_rate_get(Evas_Object *obj, const char* sound);
+
+/* Set the sound quality compression.
+ *
+ *@param obj Object being edited.
+ *@param name The name of the sample.
+ *@param rate Quality of the compression.
+ *
+ *@return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_sound_compression_rate_set(Evas_Object *obj, const char* sound, double rate);
+
 //@}
 /******************************************************************************/
 /*************************   SPECTRUM API   ***********************************/

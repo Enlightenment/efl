@@ -1206,6 +1206,55 @@ edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
    return EINA_TRUE;
 }
 
+EAPI double
+edje_edit_sound_compression_rate_get(Evas_Object *obj, const char *sound)
+{
+    Edje_Sound_Sample *ss = NULL;
+    unsigned int i;
+
+    GET_ED_OR_RETURN(-1);
+
+    if ((!ed->file) || (!ed->file->sound_dir))
+      return -1;
+
+    for (i = 0; i < ed->file->sound_dir->samples_count; i++)
+      {
+         ss = ed->file->sound_dir->samples + i;
+         if ((ss->name) && (!strcmp(sound, ss->name)))
+           break;
+      }
+
+    if (i == ed->file->sound_dir->samples_count)
+      return -1;
+
+    return ss->quality;
+}
+
+EAPI Eina_Bool
+edje_edit_sound_compression_rate_set(Evas_Object *obj, const char *sound, double rate)
+{
+    Edje_Sound_Sample *ss = NULL;
+    unsigned int i;
+
+    GET_ED_OR_RETURN(EINA_FALSE);
+
+    if ((!ed->file) || (!ed->file->sound_dir))
+      return EINA_FALSE;
+
+    for (i = 0; i < ed->file->sound_dir->samples_count; i++)
+      {
+         ss = ed->file->sound_dir->samples + i;
+         if ((ss->name) && (!strcmp(sound, ss->name)))
+           break;
+      }
+
+    if (i == ed->file->sound_dir->samples_count)
+      return EINA_FALSE;
+
+    ss->quality = rate;
+    return EINA_TRUE;
+}
+
 /****************/
 /*  GROUPS API  */
 /****************/
