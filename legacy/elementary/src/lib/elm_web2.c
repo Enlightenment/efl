@@ -607,8 +607,26 @@ _elm_web_elm_widget_theme_apply(Eo *obj, Elm_Web_Data *sd EINA_UNUSED)
 EOLIAN static Eina_Bool
 _elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
 {
-   (void)obj;
-   (void)sd;
+   Evas_Object *top;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_TRUE);
+   Eina_Bool int_ret = EINA_FALSE;
+
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   if (!int_ret) return EINA_TRUE;
+
+   top = elm_widget_top_get(obj);
+
+   if (elm_object_focus_get(obj))
+     {
+        evas_object_focus_set(wd->resize_obj, EINA_TRUE);
+        if (top) elm_win_keyboard_mode_set(top, sd->input_method);
+     }
+   else
+     {
+        evas_object_focus_set(wd->resize_obj, EINA_FALSE);
+        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
+     }
    return EINA_TRUE;
 }
 
