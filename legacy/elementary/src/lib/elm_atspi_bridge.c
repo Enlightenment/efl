@@ -2569,6 +2569,8 @@ _set_broadcast_flag(const char *event)
                STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_FOCUSED);
              else if (!strcmp(tokens[2], "Showing"))
                STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_SHOWING);
+             else if (!strcmp(tokens[2], "Checked"))
+               STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_CHECKED);
           }
         else if (!strcmp(tokens[1], "PropertyChange"))
           {
@@ -2698,6 +2700,9 @@ _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descr
          break;
         case ELM_ATSPI_STATE_ACTIVE:
          type_desc = "active";
+         break;
+        case ELM_ATSPI_STATE_CHECKED:
+         type_desc = "checked";
          break;
         default:
          return EINA_FALSE;

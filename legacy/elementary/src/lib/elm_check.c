@@ -71,6 +71,11 @@ _activate(Evas_Object *obj)
      }
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+
+   if (_elm_config->atspi_mode)
+       elm_interface_atspi_accessible_state_changed_signal_emit(obj,
+                                                                ELM_ATSPI_STATE_CHECKED,
+                                                                sd->state);
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
@@ -87,6 +92,19 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(wd->resize_obj);
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set states = 0;
+
+   eo_do_super(obj, ELM_CHECK_CLASS, states = elm_interface_atspi_accessible_state_set_get());
+
+   if (elm_check_state_get(obj))
+       STATE_TYPE_SET(states, ELM_ATSPI_STATE_CHECKED);
+
+   return states;
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
@@ -259,6 +277,11 @@ _on_check_off(void *data,
 
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+
+   if (_elm_config->atspi_mode)
+       elm_interface_atspi_accessible_state_changed_signal_emit(data,
+                                                                ELM_ATSPI_STATE_CHECKED,
+                                                                sd->state);
 }
 
 static void
@@ -275,6 +298,11 @@ _on_check_on(void *data,
    if (sd->statep) *sd->statep = sd->state;
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+
+   if (_elm_config->atspi_mode)
+       elm_interface_atspi_accessible_state_changed_signal_emit(data,
+                                                                ELM_ATSPI_STATE_CHECKED,
+                                                                sd->state);
 }
 
 static void

@@ -58,6 +58,7 @@ class Elm_Check (Elm_Layout)
       Elm_Layout::text_aliases::get;
       Elm_Layout::content_aliases::get;
       Elm_Layout::sizing_eval;
+      Elm_Interface_Atspi_Accessible::state_set::get;
    }
    events {
       changed;
