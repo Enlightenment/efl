@@ -3170,12 +3170,39 @@ edje_edit_state_text_class_get(Evas_Object *obj, const char *part, const char *s
  * @param part Part that contain state.
  * @param state The name of the state to set text class (not including the state value).
  * @param value The state value.
- * @param color_class The text class to assign.
+ * @param text_class The text class to assign.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text_class);
+
+/** Get the replacement character string of the given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get replacement character
+ * (not including the state value).
+ * @param value The state value.
+ *
+ * @return The current replacement character.
+ */
+EAPI const char *
+edje_edit_state_text_repch_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the replacement character string of the given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get replacement character
+ * (not including the state value).
+ * @param value The state value.
+ * @param repch The replacement character string to assign.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_text_repch_set(Evas_Object *obj, const char *part, const char *state, double value, const char *repch);
 
 /** Get the list of all the fonts in the given edje.
  *
@@ -3185,8 +3212,6 @@ edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *s
  *
  * @return A list containing all the fonts names found in the edje file.
  */
-
-
 EAPI Eina_List * edje_edit_fonts_list_get(Evas_Object *obj);
 
 /** Add a new font to the edje file.

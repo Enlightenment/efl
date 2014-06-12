@@ -5577,6 +5577,41 @@ edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *s
    return EINA_TRUE;
 }
 
+EAPI const char *
+edje_edit_state_text_repch_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Part_Description_Text *txt;
+
+   GET_PD_OR_RETURN(NULL);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return NULL;
+
+   txt = (Edje_Part_Description_Text*) pd;
+
+   return eina_stringshare_add(edje_string_get(&txt->text.repch));
+}
+
+EAPI Eina_Bool
+edje_edit_state_text_repch_set(Evas_Object *obj, const char *part, const char *state, double value, const char *repch)
+{
+   Edje_Part_Description_Text *txt;
+
+   if (!repch) return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+
+   txt = (Edje_Part_Description_Text*) pd;
+   _edje_if_string_free(ed, txt->text.repch.str);
+   txt->text.repch.str = eina_stringshare_add(repch);
+   txt->text.repch.id = 0;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
 /****************/
 /*  IMAGES API  */
 /****************/
