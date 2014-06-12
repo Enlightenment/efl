@@ -287,7 +287,7 @@ etc1:
 }
 
 void
-rg_etc2_rgba8_decode_block(const uint8_t *etc, uint32_t *bgra)
+rg_etc2_rgba8_decode_block(const unsigned char *etc, unsigned int *bgra)
 {
    const uint8_t zeros[7] = {0};
    uint32_t table_index;
