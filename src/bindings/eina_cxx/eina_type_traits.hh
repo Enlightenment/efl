@@ -30,16 +30,22 @@ using std::false_type;
 using std::remove_pointer;
 using std::remove_reference;
 
+template <typename T>
+struct indirect_is_contiguous_iterator : false_type
+{};
+template <>
+struct indirect_is_contiguous_iterator<std::vector<char>::iterator> : std::true_type
+{};
+template <>
+struct indirect_is_contiguous_iterator<std::vector<char>::const_iterator> : std::true_type
+{};
+    
 template <typename T, typename Enable = void>
-struct is_contiguous_iterator : false_type {};
+struct is_contiguous_iterator : indirect_is_contiguous_iterator<T> {};
 template <>
 struct is_contiguous_iterator<std::string::const_iterator> : true_type {};
 template <>
 struct is_contiguous_iterator<std::string::iterator> : true_type {};
-template <>
-struct is_contiguous_iterator<std::vector<char>::const_iterator> : true_type {};
-template <>
-struct is_contiguous_iterator<std::vector<char>::iterator> : true_type {};
 
 template <bool, typename T, typename F>
 struct if_c
