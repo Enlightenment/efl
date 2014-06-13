@@ -38,6 +38,7 @@ int        compress_mode = EET_COMPRESSION_HI;
 int        threads = 0;
 int        anotate = 0;
 int        no_etc1 = 0;
+int        no_etc2 = 0;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -102,7 +103,8 @@ main_help(void)
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be stored with lossless compression\n"
       "-no-raw                  Do NOT allow images to be stored with zero compression (raw)\n"
-      "-no-etc1                 Do NOT allow images to be stored as ETC1 (LOSSY_ETC1 will be then stored as JPEG)\n"
+      "-no-etc1                 Do NOT allow images to be stored as ETC1\n"
+      "-no-etc2                 Do NOT allow images to be stored as ETC2\n"
       "-no-save                 Do NOT store the input EDC file in the EDJ file\n"
       "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
       "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
@@ -168,15 +170,19 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-no-comp"))
 	  {
 	     no_comp = 1;
-	  }
-	else if (!strcmp(argv[i], "-no-raw"))
-	  {
-	     no_raw = 1;
-	  }
+          }
+        else if (!strcmp(argv[i], "-no-raw"))
+          {
+             no_raw = 1;
+          }
         else if (!strcmp(argv[i], "-no-etc1"))
-	  {
+          {
              no_etc1 = 1;
-	  }
+          }
+        else if (!strcmp(argv[i], "-no-etc2"))
+          {
+             no_etc2 = 1;
+          }
 	else if (!strcmp(argv[i], "-no-save"))
 	  {
 	     no_save = 1;

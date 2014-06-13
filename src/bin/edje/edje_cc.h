@@ -263,6 +263,7 @@ extern int                    no_lossy;
 extern int                    no_comp;
 extern int                    no_raw;
 extern int                    no_etc1;
+extern int                    no_etc2;
 extern int                    no_save;
 extern int                    min_quality;
 extern int                    max_quality;

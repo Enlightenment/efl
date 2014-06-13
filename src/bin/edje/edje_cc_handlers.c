@@ -1605,6 +1605,7 @@ st_externals_external(void)
         @li COMP: Lossless compression.
         @li LOSSY [0-100]: JPEG lossy compression with quality from 0 to 100.
         @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
+        @li LOSSY_ETC2 [0-100]: ETC2 lossy texture compression with quality from 0 to 100 (supports alpha).
         @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
  */
@@ -1655,8 +1656,9 @@ st_images_image(void)
                   "COMP", 1,
                   "LOSSY", 2,
                   "LOSSY_ETC1", 3,
-                  "USER", 4,
-                  NULL);
+                  "LOSSY_ETC2", 4,
+                  "USER", 5,
+		  NULL);
    if (v == 0)
      {
 	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
@@ -1679,11 +1681,16 @@ st_images_image(void)
      }
    else if (v == 4)
      {
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2;
+        img->source_param = 0;
+     }
+   else if (v == 5)
+     {
 	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
 	img->source_param = 0;
      }
-   if ((img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY)
-       && (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1))
+   if ((img->source_type < EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) ||
+       (img->source_type > EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2))
 	check_arg_count(2);
    else
      {
@@ -1813,6 +1820,7 @@ ob_images_set_image(void)
         @li COMP: Lossless compression.
         @li LOSSY [0-100]: JPEG lossy compression with quality from 0 to 100.
         @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
+        @li LOSSY_ETC2 [0-100]: ETC2 lossy texture compression with quality from 0 to 100 (supports alpha).
         @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
 **/

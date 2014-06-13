@@ -350,8 +350,9 @@ typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT       1
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY         2
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1    3
-#define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL             4
-#define EDJE_IMAGE_SOURCE_TYPE_LAST                 5
+#define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2    4
+#define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL             5
+#define EDJE_IMAGE_SOURCE_TYPE_LAST                 6
 
 #define EDJE_SOUND_SOURCE_TYPE_NONE           0
 #define EDJE_SOUND_SOURCE_TYPE_INLINE_RAW     1

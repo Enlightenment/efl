@@ -759,6 +759,8 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
           mode = 1; /* COMPRESS */
         else if (iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1)
           mode = 3; /* LOSSY_ETC1 */
+        else if (iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2)
+          mode = 4; /* LOSSY_ETC2 */
         else
           mode = 2; /* LOSSY */
         if ((mode == 0) && (no_raw))
@@ -766,6 +768,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
              mode = 1; /* promote compression */
              iw->img->source_param = 95;
           }
+        if ((mode == 4) && (no_etc2)) mode = 2; /* demote etc2 to jpeg */
         if ((mode == 3) && (no_etc1)) mode = 2; /* demote etc1 to jpeg */
         if ((mode == 2) && (no_lossy)) mode = 1; /* demote compression */
         if ((mode == 1) && (no_comp))
@@ -784,15 +787,6 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
              if (qual > max_quality) qual = max_quality;
              lossy = EET_IMAGE_JPEG;
           }
-        if (mode == 3)
-          {
-             qual = iw->img->source_param;
-             if (qual < min_quality) qual = min_quality;
-             if (qual > max_quality) qual = max_quality;
-             // Enable TGV with LZ4. A bit redundant with EET compression.
-             comp = !no_comp;
-             lossy = EET_IMAGE_ETC1;
-          }
         if (iw->alpha)
           {
              start = (unsigned int *) iw->data;
@@ -808,6 +802,22 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
                }
              if (opaque) iw->alpha = 0;
           }
+        if (mode == 3)
+          {
+             qual = iw->img->source_param;
+             if (qual < min_quality) qual = min_quality;
+             if (qual > max_quality) qual = max_quality;
+             // Enable TGV with LZ4. A bit redundant with EET compression.
+             comp = !no_comp;
+             lossy = EET_IMAGE_ETC1;
+          }
+        if (mode == 4)
+          {
+             qual = iw->img->source_param;
+             if (qual < min_quality) qual = min_quality;
+             if (qual > max_quality) qual = max_quality;
+             lossy = opaque ? EET_IMAGE_ETC2_RGB : EET_IMAGE_ETC2_RGBA;
+          }
         if (mode == 0)
           bytes = eet_data_image_write(iw->ef, buf,
                                        iw->data, iw->w, iw->h,
@@ -819,7 +829,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
                                        iw->alpha,
                                        compress_mode,
                                        0, 0);
-        else
+        else if (mode >= 2)
           bytes = eet_data_image_write(iw->ef, buf,
                                        iw->data, iw->w, iw->h,
                                        iw->alpha,
