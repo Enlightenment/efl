@@ -36,6 +36,8 @@ struct _Fndat
 #ifdef HAVE_FONTCONFIG
    FcFontSet *set;
    FcPattern *p_nm;
+
+   Eina_Bool file_font : 1; /* Indicates this is a font that uses a file rather than fontconfig. */
 #endif
 };
 
@@ -523,6 +525,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #ifdef HAVE_FONTCONFIG
    FcPattern *p_nm = NULL;
    FcFontSet *set = NULL;
+   Eina_Bool file_font = EINA_FALSE;
 #endif
 
    Evas_Font_Set *font = NULL;
@@ -559,7 +562,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 		       return fd->font;
 		    }
 #ifdef HAVE_FONTCONFIG
-		  else if (fd->set && fd->p_nm)
+		  else if (fd->set && fd->p_nm && !fd->file_font)
 		    {
                        found_fd = fd;
 		    }
@@ -592,7 +595,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 		       return fd->font;
 		    }
 #ifdef HAVE_FONTCONFIG
-		  else if (fd->set && fd->p_nm)
+		  else if (fd->set && fd->p_nm && !fd->file_font)
 		    {
                        found_fd = fd;
 		    }
@@ -827,6 +830,8 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 
         FT_Face face = evas_common_font_freetype_face_get((RGBA_Font *) font);
 
+        file_font = EINA_TRUE;
+
         if (face)
           {
              p_nm = FcFreeTypeQueryFace(face, (FcChar8 *) "", 0, NULL);
@@ -865,6 +870,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #ifdef HAVE_FONTCONFIG
         fd->set = set;
         fd->p_nm = p_nm;
+        fd->file_font = file_font;
 #endif
      }
 
