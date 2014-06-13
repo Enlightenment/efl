@@ -1030,7 +1030,7 @@ etc2_rgb8_block_pack(unsigned char *etc2, const unsigned int *bgra,
          bestSolution = k;
       }
 
-  memcpy(etc2 + 8, etc2_try[bestSolution], 8);
+  memcpy(etc2, etc2_try[bestSolution], 8);
 
   return minErr;
 }
