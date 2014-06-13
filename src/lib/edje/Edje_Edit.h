@@ -782,7 +782,7 @@ EAPI Eina_Bool edje_edit_external_del(Evas_Object *obj, const char *external);
  *
  * @return List of strings, each being the name for a part in the open group.
  *         The return value should be freed with edje_edit_string_list_free().
- * 
+ *
  * @see edje_edit_string_list_free()
  */
 EAPI Eina_List * edje_edit_parts_list_get(Evas_Object *obj);
@@ -3614,7 +3614,7 @@ EAPI Eina_Bool edje_edit_state_tween_del(Evas_Object *obj, const char *part, con
  *
  * @return A List containing all sounds samples names found in the edje file.
  */
-EAPI Eina_List * edje_edit_sounds_samples_get(Evas_Object *obj);
+EAPI Eina_List * edje_edit_sounds_samples_list_get(Evas_Object *obj);
 
 /** Get the list of all the sounds tones in the given edje.
  * Use edje_edit_string_list_free() when you don't need the list anymore.
@@ -3623,7 +3623,7 @@ EAPI Eina_List * edje_edit_sounds_samples_get(Evas_Object *obj);
  *
  * @return A List containing all sounds tones names found in the edje file.
  */
-EAPI Eina_List * edje_edit_sounds_tones_get(Evas_Object *obj);
+EAPI Eina_List * edje_edit_sounds_tones_list_get(Evas_Object *obj);
 
 /** Add new sound sample to samples collection
  *
@@ -3674,7 +3674,7 @@ EAPI Eina_Bool edje_edit_sound_tone_del(Evas_Object *obj, const char* name);
 /** Get the sound quality compression.
  *
  *@param obj Object being edited.
- *@param name The name of the sample.
+ *@param sound The name of the sample.
  *
  *@return Quality of the compression of the sample sound.
  */
@@ -3683,7 +3683,7 @@ EAPI double edje_edit_sound_compression_rate_get(Evas_Object *obj, const char* s
 /* Set the sound quality compression.
  *
  *@param obj Object being edited.
- *@param name The name of the sample.
+ *@param sound The name of the sample.
  *@param rate Quality of the compression.
  *
  *@return EINA_TRUE if successful, EINA_FALSE otherwise.
