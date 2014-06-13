@@ -874,8 +874,7 @@ EAPI Eina_Bool eo_destructed_is(const Eo *obj);
  * @param parent the "parent" object.
  * @return EINA_TRUE if successfull. EINA_FALSE otherwise.
  *
- * The class of comp_obj must be of the type EO_CLASS_TYPE_REGULAR
- * and be part of the extensions of the class of the parent.
+ * The class of comp_obj must be part of the extensions of the class of the parent.
  * It is not possible to attach more then 1 composite of the same class.
  * This functions also sets the parent of comp_obj to parent.
  *
