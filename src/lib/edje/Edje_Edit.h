@@ -1557,7 +1557,7 @@ EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *p
  * @param obj Object being edited.
  * @param part Part to add a new item. This part should have BOX or TABLE type.
  * @param item_name Name of new item that is not exist in BOX or TABLE yet.
- * @param source_group Source (means group name) of the
+ * @param source_group Source (means group name) of the new item
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
@@ -1570,6 +1570,27 @@ EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, co
  * @return A List containing all part items names found in the edje file.
  */
 EAPI Eina_List * edje_edit_part_items_list_get(Evas_Object *obj, const char *part);
+
+/** Set source for item from table or box items.
+ *
+ * @param obj Object being edited.
+ * @param part Part to change item's source. This part should have BOX or TABLE type.
+ * @param item_name Name of item.
+ * @param source_group New gorup name.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *item_name, const char *source_group);
+
+/** Get source for item from table or box items.
+ *
+ * @param obj Object being edited.
+ * @param part Part to return item's source. This part should have BOX or TABLE type.
+ * @param item_name Name of item.
+ *
+ * @return source of the given item.
+ */
+EAPI const char * edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *item_name);
 
 //@}
 /******************************************************************************/
