@@ -22,6 +22,8 @@ static_libs/lz4/lz4.h \
 static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h \
 static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
+static_libs/rg_etc/etc2_encoder.c \
 static_libs/rg_etc/rg_etc1.h
 
 lib_eet_libeet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

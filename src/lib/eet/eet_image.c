@@ -31,7 +31,7 @@
 #include "rg_etc1.h"
 
 #define OFFSET_BLOCK_SIZE 4
-#define OFFSET_ALGORITHN 5
+#define OFFSET_ALGORITHM 5
 #define OFFSET_OPTIONS 6
 #define OFFSET_WIDTH 8
 #define OFFSET_HEIGHT 12
@@ -700,91 +700,149 @@ _tgv_length_get(const char *m, unsigned int length, unsigned int *offset)
 }
 
 static int
-eet_data_image_etc1_decode(const void *data,
+roundup(int val, int rup)
+{
+   if (val >= 0 && rup > 0)
+     return (val + rup - 1) - ((val + rup - 1) % rup);
+   return 0;
+}
+
+static int
+eet_data_image_etc2_decode(const void *data,
                            unsigned int length,
                            unsigned int *p,
                            unsigned int dst_x,
                            unsigned int dst_y,
                            unsigned int dst_w,
                            unsigned int dst_h,
-                           unsigned int cspace)
+                           Eina_Bool alpha,
+                           Eet_Colorspace cspace,
+                           Eet_Image_Encoding lossy)
 {
-   Eina_Rectangle master;
-   Eina_Rectangle current;
-   const char *m = data;
+   const char *m = NULL;
+   unsigned int bwidth, bheight;
+   unsigned char *p_etc;
    char *buffer;
-   unsigned int block_width, block_height;
-   unsigned int compress;
-   unsigned int width, height;
-   unsigned int block_count;
-   unsigned int etc1_width = 0;
+   Eina_Rectangle master;
+   unsigned int block_length;
    unsigned int offset;
-   unsigned int x, y;
+   unsigned int x, y, w, h;
+   unsigned int block_count;
+   unsigned int etc_width = 0;
+   unsigned int etc_block_size;
+   Eet_Colorspace file_cspace;
+   Eina_Bool compress, blockless;
+   Eina_Bool r = EINA_FALSE;
 
-   block_width = 4 << (m[OFFSET_BLOCK_SIZE] & 0x0f);
-   block_height = 4 << ((m[OFFSET_BLOCK_SIZE] & 0xf0) >> 4);
+   m = data;
 
-   if (m[OFFSET_ALGORITHN] != 0) return 0;
-
-   compress = m[OFFSET_OPTIONS] & 0x1;
-
-   width = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
-   height = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
-
-   EINA_RECTANGLE_SET(&master, 0, 0, width, height);
-   EINA_RECTANGLE_SET(&current, dst_x, dst_y, dst_w, dst_h);
-
-   if (!eina_rectangle_intersection(&master, &current))
+   if (strncmp(m, "TGV1", 4) != 0)
      return 0;
 
-   if (cspace == EET_COLORSPACE_ETC1)
-     {
-        if (master.x % 4 ||
-            master.y % 4)
-          abort ();
+   compress = m[OFFSET_OPTIONS] & 0x1;
+   blockless = (m[OFFSET_OPTIONS] & 0x2) != 0;
+   w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
+   h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
 
-        etc1_width = ((dst_w + 2) / 4 + ((dst_w + 2) % 4 ? 1 : 0)) * 8;
+   switch (m[OFFSET_ALGORITHM] & 0xFF)
+     {
+      case 0:
+        if (lossy != EET_IMAGE_ETC1) return 0;
+        file_cspace = EET_COLORSPACE_ETC1;
+        if (alpha != EINA_FALSE) return 0;
+        etc_block_size = 8;
+        etc_width = ((w + 2) / 4 + ((w + 2) % 4 ? 1 : 0)) * 8;
+        break;
+      case 1:
+        if (lossy != EET_IMAGE_ETC2_RGB) return 0;
+        file_cspace = EET_COLORSPACE_RGB8_ETC2;
+        if (alpha != EINA_FALSE) return 0;
+        etc_block_size = 8;
+        etc_width = ((w + 2) / 4 + ((w + 2) % 4 ? 1 : 0)) * 8;
+        break;
+      case 2:
+        if (lossy != EET_IMAGE_ETC2_RGBA) return 0;
+        file_cspace = EET_COLORSPACE_RGBA8_ETC2_EAC;
+        if (alpha != EINA_TRUE) return 0;
+        etc_block_size = 16;
+        etc_width = ((w + 2) / 4 + ((w + 2) % 4 ? 1 : 0)) * 16;
+        break;
+      default:
+        return 0;
+     }
+
+   if (cspace != EET_COLORSPACE_ARGB8888 && cspace != file_cspace)
+     {
+        if (!((cspace == EET_COLORSPACE_RGB8_ETC2) && (file_cspace == EET_COLORSPACE_ETC1)))
+          return 0;
+        // else: ETC2 is compatible with ETC1 and is preferred
+     }
+
+   if (blockless)
+     {
+        bwidth = roundup(w + 2, 4);
+        bheight = roundup(h + 2, 4);
      }
    else
      {
-        // Account for duplicated border pixels
-        master.x += 1;
-        master.y += 1;
+        bwidth = 4 << (m[OFFSET_BLOCK_SIZE] & 0x0f);
+        bheight = 4 << ((m[OFFSET_BLOCK_SIZE] & 0xf0) >> 4);
      }
 
-   // Allocate space for each ETC1 block (64bytes per 4 * 4 pixels group)
-   block_count = block_width * block_height / (4 * 4);
+   EINA_RECTANGLE_SET(&master, dst_x, dst_y, dst_w, dst_h);
+
+   switch (cspace)
+     {
+      case EET_COLORSPACE_ETC1:
+      case EET_COLORSPACE_RGB8_ETC2:
+      case EET_COLORSPACE_RGBA8_ETC2_EAC:
+        if (master.x % 4 || master.y % 4)
+          abort();
+        break;
+      case EET_COLORSPACE_ARGB8888:
+        // Offset to take duplicated pixels into account
+        master.x += 1;
+        master.y += 1;
+        break;
+      default: abort();
+     }
+
+   p_etc = (unsigned char*) p;
+   offset = OFFSET_BLOCKS;
+
+   // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
+   block_count = bwidth * bheight / (4 * 4);
    if (compress)
-     buffer = alloca(8 * block_count);
+     buffer = alloca(etc_block_size * block_count);
    else
      buffer = NULL;
 
-   offset = OFFSET_BLOCKS;
-
-   for (y = 0; y < height + 2; y += block_height)
-     for (x = 0; x < width + 2; x += block_width)
+   for (y = 0; y < h + 2; y += bheight)
+     for (x = 0; x < w + 2; x += bwidth)
        {
+          Eina_Rectangle current;
           const char *data_start;
           const char *it;
-          unsigned int block_length;
           unsigned int expand_length;
           unsigned int i, j;
 
           block_length = _tgv_length_get(m + offset, length, &offset);
+
           if (block_length == 0) return 0;
 
           data_start = m + offset;
           offset += block_length;
 
           EINA_RECTANGLE_SET(&current, x, y,
-                             block_width, block_height);
+                             bwidth, bheight);
+
           if (!eina_rectangle_intersection(&current, &master))
             continue ;
 
           if (compress)
             {
-               expand_length = LZ4_uncompress(data_start,
-                                              buffer, block_count * 8);
+               expand_length = LZ4_uncompress(data_start, buffer,
+                                              block_count * etc_block_size);
                // That's an overhead for now, need to be fixed
                if (expand_length != block_length)
                  return 0;
@@ -792,13 +850,13 @@ eet_data_image_etc1_decode(const void *data,
           else
             {
                buffer = (void*) data_start;
-               if (block_count * 8 != block_length)
+               if (block_count * etc_block_size != block_length)
                  return 0;
             }
           it = buffer;
 
-          for (i = 0; i < block_height; i += 4)
-            for (j = 0; j < block_width; j += 4, it += 8)
+          for (i = 0; i < bheight; i += 4)
+            for (j = 0; j < bwidth; j += 4, it += etc_block_size)
               {
                  Eina_Rectangle current_etc;
                  unsigned int temporary[4 * 4] = { 0 };
@@ -808,19 +866,33 @@ eet_data_image_etc1_decode(const void *data,
                  EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
 
                  if (!eina_rectangle_intersection(&current_etc, &current))
-                   continue ;
+                   continue;
 
                  switch (cspace)
                    {
                     case EET_COLORSPACE_ARGB8888:
-                       if (!rg_etc1_unpack_block(it, temporary, 0))
-                         {
-                            fprintf(stderr, "HOUSTON WE HAVE A PROBLEM ! Block starting at {%i, %i} is corrupted !\n", x + j, y + i);
-                            continue ;
-                         }
+                      switch (file_cspace)
+                        {
+                         case EET_COLORSPACE_ETC1:
+                           if (!rg_etc1_unpack_block(it, temporary, 0))
+                             {
+                                // TODO: Should we decode as RGB8_ETC2?
+                                fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
+                                continue;
+                             }
+                           break;
+                         case EET_COLORSPACE_RGB8_ETC2:
+                           rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
+                           break;
+                         case EET_COLORSPACE_RGBA8_ETC2_EAC:
+                           rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
+                           break;
+                         default: abort();
+                        }
 
                        offset_x = current_etc.x - x - j;
                        offset_y = current_etc.y - y - i;
+                       // FIXME: Import NEON optimizations from Evas.
                        for (k = 0; k < current_etc.h; k++)
                          {
                             memcpy(&p[current_etc.x - 1 +
@@ -830,9 +902,11 @@ eet_data_image_etc1_decode(const void *data,
                          }
                        break;
                     case EET_COLORSPACE_ETC1:
-                       memcpy(&p[current_etc.x +
-                                 current_etc.y * etc1_width],
-                              it, 8);
+                    case EET_COLORSPACE_RGB8_ETC2:
+                    case EET_COLORSPACE_RGBA8_ETC2_EAC:
+                       memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
+                                     (current_etc.y / 4) * etc_width],
+                              it, etc_block_size);
                        break;
                     default:
                        abort();
@@ -1016,16 +1090,18 @@ eet_data_image_etc1_compressed_convert(int         *size,
                                        unsigned int w,
                                        unsigned int h,
                                        int          quality,
-                                       int          compress)
+                                       int          compress,
+                                       Eet_Image_Encoding lossy)
 {
    rg_etc1_pack_params param;
-   char *comp;
-   char *buffer;
+   uint8_t *comp = NULL;
+   uint8_t *buffer;
    uint32_t *data;
    uint32_t width, height;
    uint8_t header[8] = "TGV1";
    int block_width, block_height, macro_block_width, macro_block_height;
-   int block_count, image_stride, image_height;
+   int block_count, image_stride, image_height, etc_block_size;
+   Eet_Colorspace cspace;
    Eina_Binbuf *r;
    void *result;
 
@@ -1037,6 +1113,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
    data = (uint32_t *) data8;
    width = htonl(image_stride);
    height = htonl(image_height);
+   compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
    param.m_dithering = 0;
@@ -1053,11 +1130,29 @@ eet_data_image_etc1_compressed_convert(int         *size,
    block_height = _block_size_get(image_height + 2);
    header[4] = (block_height << 4) | block_width;
 
-   // header[5]: 0 for ETC1
-   header[5] = 0;
+   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC
+   switch (lossy)
+     {
+      case EET_IMAGE_ETC1:
+        cspace = EET_COLORSPACE_ETC1;
+        etc_block_size = 8;
+        header[5] = 0;
+        break;
+      case EET_IMAGE_ETC2_RGB:
+        cspace = EET_COLORSPACE_RGB8_ETC2;
+        etc_block_size = 8;
+        header[5] = 1;
+        break;
+      case EET_IMAGE_ETC2_RGBA:
+        cspace = EET_COLORSPACE_RGBA8_ETC2_EAC;
+        etc_block_size = 16;
+        header[5] = 2;
+        break;
+      default: abort();
+     }
 
    // header[6]: 0 for raw, 1, for LZ4 compressed
-   header[6] = (!!compress & 0x1);
+   header[6] = compress;
 
    // header[7]: options (unused)
    header[7] = 0;
@@ -1073,16 +1168,10 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
    // Number of ETC1 blocks in a compressed block
    block_count = (macro_block_width * macro_block_height) / (4 * 4);
-   buffer = alloca(block_count * 8);
+   buffer = alloca(block_count * etc_block_size);
 
    if (compress)
-     {
-        comp = alloca(LZ4_compressBound(block_count * 8));
-     }
-   else
-     {
-        comp = NULL;
-     }
+     comp = alloca(LZ4_compressBound(block_count * etc_block_size));
 
    // Write macro block
    for (int y = 0; y < image_height + 2; y += macro_block_height)
@@ -1097,7 +1186,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
         for (int x = 0; x < image_stride + 2; x += macro_block_width)
           {
-             char *offset = buffer;
+             uint8_t *offset = buffer;
              int real_x = x;
 
              if (x == 0) real_x = 0;
@@ -1172,19 +1261,33 @@ eet_data_image_etc1_compressed_convert(int         *size,
                               }
                          }
 
-                       rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
-                       offset += 8;
+                       switch (cspace)
+                         {
+                          case EET_COLORSPACE_ETC1:
+                            rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
+                            break;
+                          case EET_COLORSPACE_RGB8_ETC2:
+                            etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
+                            break;
+                          case EET_COLORSPACE_RGBA8_ETC2_EAC:
+                            etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
+                            break;
+                          default: return 0;
+                         }
+
+                       offset += etc_block_size;
                     }
                }
 
              if (compress)
                {
-                  wlen = LZ4_compressHC(buffer, comp, block_count * 8);
+                  wlen = LZ4_compressHC((char *) buffer, (char *) comp,
+                                        block_count * etc_block_size);
                }
              else
                {
                   comp = buffer;
-                  wlen = block_count * 8;
+                  wlen = block_count * etc_block_size;
                }
 
              if (wlen > 0)
@@ -1757,9 +1860,12 @@ eet_data_image_encode_cipher(const void  *data,
                                                  w, h, alpha, quality);
          break;
       case EET_IMAGE_ETC1:
-         if (alpha) abort();
+      case EET_IMAGE_ETC2_RGB:
+        if (alpha) abort();
+        // fallthrough
+      case EET_IMAGE_ETC2_RGBA:
          d = eet_data_image_etc1_compressed_convert(&size, data, w, h,
-                                                    quality, comp);
+                                                    quality, comp, lossy);
          break;
       default:
          abort();
@@ -1937,9 +2043,24 @@ eet_data_image_header_decode_cipher(const void   *data,
 
         if (w) *w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
         if (h) *h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
-        if (alpha) *alpha = 0; // ETC1 only for now
         if (comp) *comp = m[OFFSET_OPTIONS] & 0x1;
-        if (lossy) *lossy = EET_IMAGE_ETC1;
+        switch (m[OFFSET_ALGORITHM] & 0xFF)
+          {
+           case 0:
+             if (lossy) *lossy = EET_IMAGE_ETC1;
+             if (alpha) *alpha = EINA_FALSE;
+             break;
+           case 1:
+             if (lossy) *lossy = EET_IMAGE_ETC2_RGB;
+             if (alpha) *alpha = EINA_FALSE;
+             break;
+           case 2:
+             if (alpha) *alpha = EINA_TRUE;
+             if (lossy) *lossy = EET_IMAGE_ETC2_RGBA;
+             break;
+           default:
+             return 0;
+          }
         if (quality) *quality = 50;
 
         return 1;
@@ -1983,6 +2104,16 @@ static const Eet_Colorspace _eet_etc1_colorspace[] = {
   EET_COLORSPACE_ARGB8888
 };
 
+static const Eet_Colorspace _eet_etc2_rgb_colorspace[] = {
+  EET_COLORSPACE_RGB8_ETC2,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc2_rgba_colorspace[] = {
+  EET_COLORSPACE_RGBA8_ETC2_EAC,
+  EET_COLORSPACE_ARGB8888
+};
+
 EAPI int
 eet_data_image_colorspace_get(Eet_File *ef,
                               const char *name,
@@ -1995,8 +2126,15 @@ eet_data_image_colorspace_get(Eet_File *ef,
    r = eet_data_image_header_read_cipher(ef, name, cipher_key, NULL, NULL, NULL, NULL, NULL, &lossy);
    if (!r) return r;
 
-   if (lossy == EET_IMAGE_ETC1 && cspaces)
-     *cspaces = _eet_etc1_colorspace;
+   if (cspaces)
+     {
+        if (lossy == EET_IMAGE_ETC1)
+          *cspaces = _eet_etc1_colorspace;
+        else if (lossy == EET_IMAGE_ETC2_RGB)
+          *cspaces = _eet_etc2_rgb_colorspace;
+        else if (lossy == EET_IMAGE_ETC2_RGBA)
+          *cspaces = _eet_etc2_rgba_colorspace;
+     }
 
    return r;
 }
@@ -2184,11 +2322,13 @@ _eet_data_image_decode_inside(const void   *data,
                                                  h, row_stride))
           return 0;
      }
-   else if (lossy == EET_IMAGE_ETC1)
+   else if ((lossy == EET_IMAGE_ETC1) ||
+            (lossy == EET_IMAGE_ETC2_RGB) ||
+            (lossy == EET_IMAGE_ETC2_RGBA))
      {
-        return eet_data_image_etc1_decode(data, size, d,
+        return eet_data_image_etc2_decode(data, size, d,
                                           src_x, src_y, src_w, src_h,
-                                          cspace);
+                                          alpha, cspace, lossy);
      }
    else
      abort();
@@ -2324,6 +2464,14 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
 
    if (cspace == EET_COLORSPACE_ETC1 &&
        ilossy != EET_IMAGE_ETC1)
+     return 0;
+
+   if (cspace == EET_COLORSPACE_RGB8_ETC2 &&
+       ilossy != EET_IMAGE_ETC2_RGB)
+     return 0;
+
+   if (cspace == EET_COLORSPACE_RGBA8_ETC2_EAC &&
+       ilossy != EET_IMAGE_ETC2_RGBA)
      return 0;
 
    if (cspace == EET_COLORSPACE_ARGB8888 &&
