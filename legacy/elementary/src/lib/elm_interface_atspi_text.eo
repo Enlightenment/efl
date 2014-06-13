@@ -67,10 +67,10 @@ interface Elm_Interface_Atspi_Text ()
             return Eina_Bool;
          }
          keys {
-            @in const char *name @nonull; /*@ text attribute name */
-            @inout int *start_offset @nonull; /*@ Position in text from which
+            const char *name @nonull; /*@ text attribute name */
+            int *start_offset @nonull; /*@ Position in text from which
                                                 given attribute is set. */
-            @out int *end_offset; /*@ Position in text to which given attribute
+            int *end_offset; /*@ Position in text to which given attribute
                                     is set. */
          }
          values {
@@ -82,8 +82,8 @@ interface Elm_Interface_Atspi_Text ()
             /* Gets list of all text attributes. */
          }
          keys {
-            @inout int *start_offset @nonull;
-            @out int *end_offset;
+            int *start_offset @nonull;
+            int *end_offset;
          }
          values {
             @own Eina_List *attributes;
