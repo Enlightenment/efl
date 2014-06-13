@@ -1019,6 +1019,18 @@ _initialize_sound_dir(Edje *ed)
    ed->file->sound_dir->tones_count = 0;
 }
 
+#define GET_TONE_BY_NAME(_tone_p, _name) \
+   { \
+      unsigned int i = 0; \
+      for (i = 0; i < ed->file->sound_dir->tones_count; ++i) \
+        { \
+           _tone_p = ed->file->sound_dir->tones + i; \
+           if (!strcmp(_name, _tone_p->name)) \
+              break; \
+        } \
+      if (i == ed->file->sound_dir->tones_count) _tone_p = NULL; \
+   }
+
 EAPI Eina_Bool
 edje_edit_sound_sample_add(Evas_Object *obj, const char* name, const char* snd_src)
 {
@@ -1168,9 +1180,6 @@ edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
 EAPI Eina_Bool
 edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
 {
-   Edje_Sound_Tone *sound_tone = NULL;
-   unsigned int i = 0;
-
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!name) return EINA_FALSE;
@@ -1183,17 +1192,13 @@ edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
         return EINA_FALSE;
      }
 
-   for (i = 0; i < ed->file->sound_dir->tones_count; ++i)
-     {
-        sound_tone = ed->file->sound_dir->tones + i;
-        if (!strcmp(name, sound_tone->name))
-           break;
-     }
-   if (i == ed->file->sound_dir->tones_count)
-     {
-        WRN("Unable to delete tone \"%s\". It does not exist.", name);
-        return EINA_FALSE;
-     }
+   Edje_Sound_Tone *sound_tone;
+   GET_TONE_BY_NAME(sound_tone, name);
+   if (!sound_tone)
+      {
+         WRN("Unable to delete tone \"%s\". It does not exist.", name);
+         return EINA_FALSE;
+      }
 
    {
       Eet_File *eetf;
@@ -1240,6 +1245,32 @@ edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
 
    return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_sound_tone_frequency_set(Evas_Object *obj, const char *name, int frequency)
+{
+   Edje_Sound_Tone *tone;
+   if ((frequency < 20) || (frequency > 20000)) return EINA_FALSE;
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_TONE_BY_NAME(tone, name);
+   if (tone)
+     {
+        tone->value = frequency;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EAPI int
+edje_edit_sound_tone_frequency_get(Evas_Object *obj, const char *name)
+{
+   Edje_Sound_Tone *tone;
+   GET_ED_OR_RETURN(-1);
+   GET_TONE_BY_NAME(tone, name);
+   if (tone)
+     return tone->value;
+   return -1;
 }
 
 EAPI double
@@ -1290,6 +1321,8 @@ edje_edit_sound_compression_rate_set(Evas_Object *obj, const char *sound, double
     ss->quality = rate;
     return EINA_TRUE;
 }
+
+#undef GET_TONE_BY_NAME
 
 /****************/
 /*  GROUPS API  */

@@ -3690,6 +3690,27 @@ EAPI double edje_edit_sound_compression_rate_get(Evas_Object *obj, const char* s
  */
 EAPI Eina_Bool edje_edit_sound_compression_rate_set(Evas_Object *obj, const char* sound, double rate);
 
+/** Set the frequency of tone.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the tone.
+ * @param frequency The value of frequency of tone. This value has to be in range of 20 to 20000 inclusive.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @see edje_edit_sound_tone_frequency_get()
+ */
+EAPI Eina_Bool edje_edit_sound_tone_frequency_set(Evas_Object *obj, const char *name, int frequency);
+
+/** Get the frequency of tone.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the tone.
+ *
+ * @return The frequency of tone if succesful, otherwise returns -1.
+ * @see edje_edit_sound_tone_frequency_set()
+ */
+EAPI int edje_edit_sound_tone_frequency_get(Evas_Object *obj, const char *name);
+
 //@}
 /******************************************************************************/
 /*************************   SPECTRUM API   ***********************************/
