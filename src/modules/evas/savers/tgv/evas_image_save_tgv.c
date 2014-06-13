@@ -150,7 +150,7 @@ on_error:
 static int
 evas_image_save_file_tgv(RGBA_Image *im,
                          const char *file, const char *key EINA_UNUSED,
-                         int quality, int compress)
+                         int quality, int compress, const char *encoding)
 {
    rg_etc1_pack_params param;
    FILE *f;
@@ -170,11 +170,6 @@ evas_image_save_file_tgv(RGBA_Image *im,
    clock_gettime(CLOCK_MONOTONIC, &ts1);
 #endif
 
-   /* FIXME: How to tell the encoder to encode as ETC1 or ETC2?
-    * The save API is weak. For now, assume ETC2 iif there's alpha.
-    * As long as we don't have a full ETC2 encoder, this is fine.
-    */
-
    if (!im || !im->image.data || !file)
      return 0;
 
@@ -186,6 +181,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        if (encoding)
+          WRN("Ignoring 'encoding' argument the data is already ETC1/2");
         return _save_direct_tgv(im, file, compress);
       default:
         return 0;
@@ -214,17 +211,37 @@ evas_image_save_file_tgv(RGBA_Image *im,
    header[4] = (block_height << 4) | block_width;
 
    // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC
-   if (alpha)
+   if (!encoding) encoding = "etc2";
+   if (!strcasecmp(encoding, "etc1"))
      {
-        cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
-        etc_block_size = 16;
-        header[5] = 2;
-     }
-   else
-     {
+        if (alpha)
+          {
+             ERR("ETC1 does not support alpha encoding. Abort.");
+             return 0;
+          }
         cspace = EVAS_COLORSPACE_ETC1;
         etc_block_size = 8;
         header[5] = 0;
+     }
+   else if (!strcasecmp(encoding, "etc2"))
+     {
+        if (!alpha)
+          {
+             cspace = EVAS_COLORSPACE_RGB8_ETC2;
+             etc_block_size = 8;
+             header[5] = 1;
+          }
+        else
+          {
+             cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
+             etc_block_size = 16;
+             header[5] = 2;
+          }
+     }
+   else
+     {
+        ERR("Unknown encoding '%.8s' selected. Abort.", encoding);
+        return 0;
      }
 
    // header[6]: 0 for raw, 1, for LZ4 compressed

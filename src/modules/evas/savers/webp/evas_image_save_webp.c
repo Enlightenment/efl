@@ -8,7 +8,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-static int evas_image_save_file_webp(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_webp(RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 
 static Evas_Image_Save_Func evas_image_save_webp_func =
 {
@@ -72,7 +72,8 @@ save_image_webp(RGBA_Image *im, const char *file, int quality)
 	return result;
 }
 
-static int evas_image_save_file_webp(RGBA_Image *im, const char *file, const char *key EINA_UNUSED, int quality, int compress EINA_UNUSED)
+static int evas_image_save_file_webp(RGBA_Image *im, const char *file, const char *key EINA_UNUSED,
+                                     int quality, int compress EINA_UNUSED, const char *encoding EINA_UNUSED)
 {
 	return save_image_webp(im, file, quality);
 }

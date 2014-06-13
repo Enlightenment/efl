@@ -27,6 +27,7 @@ const Ecore_Getopt optdesc = {
   {
     ECORE_GETOPT_STORE_INT('q', "quality", "define encoding quality in percent."),
     ECORE_GETOPT_STORE_TRUE('c', "compress", "define if data should be compressed."),
+    ECORE_GETOPT_STORE_STR('e', "encoding", "define the codec (for TGV files: etc1, etc2)"),
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_VERSION('V', "version"),
@@ -38,19 +39,21 @@ const Ecore_Getopt optdesc = {
 int
 main(int argc, char *argv[])
 {
-   char flags[128];
    Ecore_Evas *ee;
    Evas *e;
    Evas_Object *im;
    int arg_index;
    int quality = -1;
    int r = -1;
+   char *encoding = NULL;
    Eina_Bool compress = 1;
    Eina_Bool quit_option = EINA_FALSE;
+   Eina_Strbuf *flags = NULL;
 
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_INT(quality),
      ECORE_GETOPT_VALUE_BOOL(compress),
+     ECORE_GETOPT_VALUE_STR(encoding),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -86,10 +89,12 @@ main(int argc, char *argv[])
         goto end;
      }
 
+   flags = eina_strbuf_new();
+   eina_strbuf_append_printf(flags, "compress=%d", compress);
    if (quality >= 0)
-     snprintf(flags, sizeof (flags), "compress=%i quality=%i", compress, quality);
-   else
-     snprintf(flags, sizeof (flags), "compress=%i", compress);
+     eina_strbuf_append_printf(flags, " quality=%d", quality);
+   if (encoding)
+     eina_strbuf_append_printf(flags, " encoding=%s", encoding);
 
    im = evas_object_image_add(e);
    evas_object_image_file_set(im, argv[arg_index], NULL);
@@ -102,7 +107,8 @@ main(int argc, char *argv[])
         goto end;
      }
 
-   if (!evas_object_image_save(im, argv[arg_index + 1], NULL, flags))
+   if (!evas_object_image_save(im, argv[arg_index + 1], NULL,
+                               eina_strbuf_string_get(flags)))
      {
         EINA_LOG_ERR("Could not convert file to '%s'.", argv[arg_index + 1]);
         goto end;
@@ -111,6 +117,7 @@ main(int argc, char *argv[])
    r = 0;
 
  end:
+   if (flags) eina_strbuf_free(flags);
    ecore_evas_shutdown();
    ecore_shutdown();
 

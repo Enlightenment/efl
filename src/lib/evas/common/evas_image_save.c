@@ -9,7 +9,8 @@
 
 
 int
-evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key, int quality, int compress)
+evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key,
+                               int quality, int compress, const char *encoding)
 {
    Evas_Image_Save_Func *evas_image_save_func = NULL;
    char *p;
@@ -45,7 +46,8 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
 	     if (evas_module_load(em))
 	       {
 		  evas_image_save_func = em->functions;
-		  return evas_image_save_func->image_save(im, file, key, quality, compress);
+                  return evas_image_save_func->image_save(im, file, key, quality,
+                                                          compress, encoding);
 	       }
 	  }
      }

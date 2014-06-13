@@ -5,7 +5,7 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-static int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 
 static Evas_Image_Save_Func evas_image_save_jpeg_func =
 {
@@ -121,7 +121,8 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    return 1;
 }
 
-static int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key EINA_UNUSED, int quality, int compress EINA_UNUSED)
+static int evas_image_save_file_jpeg(RGBA_Image *im, const char *file, const char *key EINA_UNUSED,
+                                     int quality, int compress EINA_UNUSED, const char *encoding EINA_UNUSED)
 {
    return save_image_jpeg(im, file, quality);
 }

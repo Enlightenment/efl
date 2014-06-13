@@ -1205,7 +1205,7 @@ struct _Evas_Func
 
 struct _Evas_Image_Save_Func
 {
-  int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+  int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
 
 #ifdef __cplusplus

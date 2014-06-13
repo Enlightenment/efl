@@ -7,7 +7,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-static int evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 
 static Evas_Image_Save_Func evas_image_save_eet_func =
 {
@@ -15,7 +15,8 @@ static Evas_Image_Save_Func evas_image_save_eet_func =
 };
 
 static int
-evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key, int quality, int compress)
+evas_image_save_file_eet(RGBA_Image *im, const char *file, const char *key,
+                         int quality, int compress, const char *encoding EINA_UNUSED)
 {
    Eet_File            *ef;
    int alpha = 0, lossy = 0, ok = 0;

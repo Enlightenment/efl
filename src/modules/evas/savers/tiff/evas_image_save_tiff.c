@@ -3,7 +3,7 @@
 
 #include <tiffio.h>
 
-static int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+static int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 
 static Evas_Image_Save_Func evas_image_save_tiff_func =
 {
@@ -102,7 +102,8 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress EINA_UNUSED, int 
    return 1;
 }
 
-static int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key EINA_UNUSED, int quality EINA_UNUSED, int compress)
+static int evas_image_save_file_tiff(RGBA_Image *im, const char *file, const char *key EINA_UNUSED,
+                                     int quality EINA_UNUSED, int compress, const char *encoding EINA_UNUSED)
 {
    return save_image_tiff(im, file, compress, 0);
 }

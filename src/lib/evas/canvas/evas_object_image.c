@@ -1512,6 +1512,7 @@ _evas_image_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *k
 {
    DATA32 *data = NULL;
    int quality = 80, compress = 9, ok = 0;
+   char *encoding = NULL;
    RGBA_Image *im;
    if (!o->engine_data) return 0;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -1530,6 +1531,7 @@ _evas_image_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *k
              if (pp) *pp = 0;
              sscanf(p, "quality=%i", &quality);
              sscanf(p, "compress=%i", &compress);
+             sscanf(p, "encoding=%ms", &encoding);
              if (pp) p = pp + 1;
              else break;
           }
@@ -1550,7 +1552,8 @@ _evas_image_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *k
                                                                    EVAS_COLORSPACE_ARGB8888);
         if (im->image.data)
           {
-             ok = evas_common_save_image_to_file(im, file, key, quality, compress);
+             ok = evas_common_save_image_to_file(im, file, key, quality, compress, encoding);
+             free(encoding);
 
              if (o->cur->cspace != EVAS_COLORSPACE_ARGB8888)
                free(im->image.data);

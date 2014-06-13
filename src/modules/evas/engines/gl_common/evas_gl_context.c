@@ -3346,7 +3346,7 @@ evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const 
         im->image.data = data2;
         if (im->image.data)
           {
-             ok = evas_common_save_image_to_file(im, fname, NULL, 0, 0);
+             ok = evas_common_save_image_to_file(im, fname, NULL, 0, 0, NULL);
 
              if (!ok) ERR("Error Saving file.");
           }
