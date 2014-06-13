@@ -5166,6 +5166,24 @@ edje_edit_state_external_param_choice_set(Evas_Object *obj, const char *part, co
    return edje_edit_state_external_param_set(obj, part, state, value, param, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, val);
 }
 
+EAPI Eina_Bool
+edje_edit_state_step_set(Evas_Object *obj, const char *part, const char *state, double value, int step_x, int step_y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   pd->step.x = step_x;
+   pd->step.y = step_y;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_step_get(Evas_Object *obj, const char *part, const char *state, double value, int *step_x, int *step_y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (step_x) *step_x = (int)pd->step.x;
+   if (step_y) *step_y = (int)pd->step.y;
+   return EINA_TRUE;
+}
+
 /**************/
 /*  TEXT API */
 /**************/
@@ -8586,7 +8604,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    if (pd->minmul.w != 0 || pd->minmul.h != 0)
      BUF_APPENDF(I5"minmul: %g %g;\n", TO_DOUBLE(pd->minmul.w), TO_DOUBLE(pd->minmul.h));
 
-   //TODO Support step
+   if (pd->step.x && pd->step.y)
+     BUF_APPENDF(I5"step: %d %d;\n", TO_INT(pd->step.x), TO_INT(pd->step.y));
 
    if (pd->aspect.min || pd->aspect.max)
       BUF_APPENDF(I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));

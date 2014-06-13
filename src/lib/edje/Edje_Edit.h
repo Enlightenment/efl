@@ -2773,6 +2773,41 @@ EAPI Eina_Bool edje_edit_state_external_param_string_set(Evas_Object *obj, const
  */
 EAPI Eina_Bool edje_edit_state_external_param_choice_set(Evas_Object *obj, const char *part, const char *state, double value, const char *param, const char *val);
 
+/** Set the states step parameter values.
+ *
+ * Step parameter restricts resizing of each dimension to values divisibles by
+ * its value. This causes the part to jump from value to value while resizing.
+ * The default value is "0 0" disabling stepping.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set fill horizontal size
+ * relative value (not including the state value).
+ * @param value The state value.
+ * @param x The horizontal step value.
+ * @param y The vertical step value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @see edje_edit_state_step_get()
+ */
+EAPI Eina_Bool edje_edit_state_step_set(Evas_Object *obj, const char *part, const char *state, double value, int step_x, int step_y);
+
+/** Get the states step values.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set fill horizontal size
+ * relative value (not including the state value).
+ * @param value The state value.
+ * @param x The pointer to the variable where horizontal step value should be written.
+ * @param y The pointer to the variable where vertical step value should be written.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @see edje_edit_state_step_set()
+ */
+EAPI Eina_Bool
+edje_edit_state_step_get(Evas_Object *obj, const char *part, const char *state, double value, int *step_x, int *step_y);
+
 
 //@}
 /******************************************************************************/
