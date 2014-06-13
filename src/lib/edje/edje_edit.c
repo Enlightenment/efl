@@ -2563,6 +2563,31 @@ edje_edit_external_del(Evas_Object *obj, const char *external)
 /*  PARTS API  */
 /***************/
 
+EAPI Edje_Edit_Select_Mode
+edje_edit_part_select_mode_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)
+     return EINA_FALSE;
+
+   return (Edje_Edit_Select_Mode) rp->part->select_mode;
+}
+
+EAPI Eina_Bool
+edje_edit_part_select_mode_set(Evas_Object *obj, const char *part, Edje_Edit_Select_Mode mode)
+{
+   if (mode > EDJE_EDIT_SELECT_MODE_EXPLICIT)
+     return EINA_FALSE;
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)
+     return EINA_FALSE;
+
+   rp->part->select_mode = (unsigned char) mode;
+     return EINA_TRUE;
+}
+
 EAPI Eina_List *
 edje_edit_parts_list_get(Evas_Object *obj)
 {

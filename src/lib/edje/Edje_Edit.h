@@ -43,6 +43,12 @@ typedef enum _Edje_Edit_Image_Comp
    EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1
 } Edje_Edit_Image_Comp;
 
+typedef enum _Edje_Edit_Select_Mode
+{
+   EDJE_EDIT_SELECT_MODE_DEFAULT,
+   EDJE_EDIT_SELECT_MODE_EXPLICIT
+} Edje_Edit_Select_Mode;
+
 struct _Edje_Edit_Script_Error
 {
    const char *program_name; /* null == group shared script */
@@ -775,6 +781,28 @@ EAPI Eina_Bool edje_edit_external_del(Evas_Object *obj, const char *external);
 /** @name Parts API
  *  Functions to deal with part objects (see @ref edcref).
  */ //@{
+
+/** Get the select mode for a textblock part
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+
+ * @return One of possible enum Edje_Edit_Select_Mode.
+ */
+EAPI Edje_Edit_Select_Mode
+edje_edit_part_select_mode_get(Evas_Object *obj, const char *part);
+
+/** Sets the select mode for a textblock part
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ * @param mode One of possible enum Edje_Edit_Select_Mode:
+ * EDJE_EDIT_SELECT_MODE_DEFAULT, EDJE_EDIT_SELECT_MODE_EXPLICIT.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_part_select_mode_set(Evas_Object *obj, const char *part, Edje_Edit_Select_Mode mode);
 
 /** Get the list of all the parts in the given edje object.
  *
