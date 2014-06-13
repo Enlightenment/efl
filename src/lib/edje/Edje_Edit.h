@@ -1592,6 +1592,182 @@ EAPI Eina_Bool edje_edit_part_item_source_set(Evas_Object *obj, const char *part
  */
 EAPI const char * edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *item_name);
 
+/** Get the minimum width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get minimum width.
+ *
+ * @return The minimum width value.
+ */
+EAPI int edje_edit_part_item_min_w_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the minimum width value of a part's item.
+ * The minimum width should be greater than 0.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set minimum width.
+ * @param min_w Minimum width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_min_w_set(Evas_Object *obj, const char *part, const char *item, int min_w);
+
+/** Get the minimum height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get minimum height.
+ *
+ * @return The minimum height value.
+ */
+EAPI int edje_edit_part_item_min_h_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the minimum height value of a part's item.
+ * The minimum height should be greater than 0.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set minimum height.
+ * @param min_h Minimum height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_min_h_set(Evas_Object *obj, const char *part, const char *item, int min_h);
+
+/** Get the maximum width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get maximum width.
+ *
+ * @return The maximum width value.
+ */
+EAPI int edje_edit_part_item_max_w_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the maximum width value of a part's item.
+ * The maximum width should be greater than -1.
+ * The value -1 means that state doesn't have any boundaries on width direction.
+ * (it can be any size that is bigger than it's min)
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set maximum width.
+ * @param max_w Maximum width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_max_w_set(Evas_Object *obj, const char *part, const char *item, int max_w);
+
+/** Get the maximum height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get maximum height.
+ *
+ * @return The maximum height value.
+ */
+EAPI int edje_edit_part_item_max_h_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the maximum height value of a part's item.
+ * The maximum height should be greater than -1.
+ * The value -1 means that state doesn't have any boundaries on height direction.
+ * (it can be any size that is bigger than it's min)
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set maximum height.
+ * @param max_h Maximum height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_max_h_set(Evas_Object *obj, const char *part, const char *item, int max_h);
+
+/** Get the aspect width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get aspect width.
+ *
+ * @return The aspect width value.
+ */
+EAPI int edje_edit_part_item_aspect_w_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the aspect width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set aspect width.
+ * @param aspect_w Maximum width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_aspect_w_set(Evas_Object *obj, const char *part, const char *item, int aspect_w);
+
+/** Get the aspect height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get aspect height.
+ *
+ * @return The maximum height value.
+ */
+EAPI int edje_edit_part_item_aspect_h_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the aspect height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set aspect height.
+ * @param max_h Maximum height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_aspect_h_set(Evas_Object *obj, const char *part, const char *item, int aspect_h);
+
+/** Get the prefer width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get prefer width.
+ *
+ * @return The prefer width value.
+ */
+EAPI int edje_edit_part_item_prefer_w_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the prefer width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set prefer width.
+ * @param prefer_w Maximum width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_prefer_w_set(Evas_Object *obj, const char *part, const char *item, int prefer_w);
+
+/** Get the prefer height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get prefer height.
+ *
+ * @return The maximum height value.
+ */
+EAPI int edje_edit_part_item_prefer_h_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the prefer height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set prefer height.
+ * @param max_h Maximum height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_prefer_h_set(Evas_Object *obj, const char *part, const char *item, int prefer_h);
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/

@@ -3863,6 +3863,64 @@ edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *i
    return eina_stringshare_add(item->source);
 }
 
+#define FUNC_PART_ITEM_INT(Class, Value, Min)				\
+  EAPI int								\
+  edje_edit_part_item_##Class##_##Value##_get(Evas_Object *obj, const char *part, const char *item_name) \
+  {									\
+     Edje_Part *ep;							\
+     unsigned int i;							\
+     Edje_Pack_Element *item = NULL;					\
+     if ((!obj) || (!part) || (!item_name))				\
+       return Min;							\
+     GET_RP_OR_RETURN(Min);						\
+     ep = rp->part;							\
+     for (i = 0; i < ep->items_count; ++i)				\
+       {								\
+          if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name))) \
+            {								\
+               item = ep->items[i];					\
+               break;							\
+            }								\
+       }								\
+     if (!item) return Min;						\
+     return item->Class.Value;						\
+  }									\
+  EAPI Eina_Bool 							\
+  edje_edit_part_item_##Class##_##Value##_set(Evas_Object *obj, const char *part, const char *item_name, int v) \
+  {									\
+     Edje_Part *ep;							\
+     unsigned int i;							\
+     Edje_Pack_Element *item = NULL;					\
+     if ((!obj) || (!part) || (!item_name))				\
+       return EINA_FALSE;						\
+     if (v < Min) return EINA_FALSE;                                    \
+     GET_RP_OR_RETURN(EINA_FALSE);					\
+     ep = rp->part;							\
+     if ((rp->part->type != EDJE_PART_TYPE_BOX) &&			\
+        (rp->part->type != EDJE_PART_TYPE_TABLE))			\
+       return EINA_FALSE;						\
+     for (i = 0; i < ep->items_count; ++i)				\
+       {								\
+          if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name))) \
+            {								\
+               item = ep->items[i];					\
+               break;							\
+            }								\
+       }								\
+     if (!item) return EINA_FALSE;					\
+     item->Class.Value = v;						\
+     return EINA_TRUE;							\
+  }
+
+FUNC_PART_ITEM_INT(min, w, 0);
+FUNC_PART_ITEM_INT(min, h, 0);
+FUNC_PART_ITEM_INT(max, w, -1);
+FUNC_PART_ITEM_INT(max, h, -1);
+FUNC_PART_ITEM_INT(aspect, w, 0);
+FUNC_PART_ITEM_INT(aspect, h, 0);
+FUNC_PART_ITEM_INT(prefer, w, 0);
+FUNC_PART_ITEM_INT(prefer, h, 0);
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -9091,20 +9149,25 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7"name: \"%s\";\n", item->name);
                   if (item->source)
                     BUF_APPENDF(I7"source: \"%s\";\n", item->source);
-                  //TODO min
-                  //TODO prefer
-                  //TODO max
+                  if ((item->min.w != 0) || (item->min.h != 0))
+                    BUF_APPENDF(I7"min: %d %d;\n", item->min.h, item->min.h);
+                  if ((item->max.w != 0) || (item->max.h != 0))
+                    BUF_APPENDF(I7"max: %d %d;\n", item->max.h, item->max.h);
+                  //TODO aspect mode
+                  if ((item->aspect.w != 0) || (item->aspect.h != 0))
+                    BUF_APPENDF(I7"aspect: %d %d;\n", item->aspect.h, item->aspect.h);
+                  if ((item->prefer.w != 0) || (item->prefer.h != 0))
+                    BUF_APPENDF(I7"prefer: %d %d;\n", item->prefer.h, item->prefer.h);
+                  if ((item->spread.w != 1) || (item->spread.h != 1))
+                    BUF_APPENDF(I7"spread: %d %d;\n", item->spread.h, item->spread.h);
                   //TODO padding
                   //TODO align
                   //TODO weight
-                  //TODO aspect
-                  //TODO aspect mode
                   //TODO options
                   //TODO col
                   //TODO row
                   //TODO colspan
                   //TODO rowspan
-                  //TODO spread
                   BUF_APPEND(I6"}\n");
                }
              BUF_APPEND(I5"}\n");
