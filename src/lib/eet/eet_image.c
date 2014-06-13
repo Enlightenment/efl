@@ -732,7 +732,6 @@ eet_data_image_etc2_decode(const void *data,
    unsigned int etc_block_size;
    Eet_Colorspace file_cspace;
    Eina_Bool compress, blockless;
-   Eina_Bool r = EINA_FALSE;
 
    m = data;
 
@@ -1104,6 +1103,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
    Eet_Colorspace cspace;
    Eina_Binbuf *r;
    void *result;
+   const char *codec;
 
    r = eina_binbuf_new();
    if (!r) return NULL;
@@ -1137,16 +1137,19 @@ eet_data_image_etc1_compressed_convert(int         *size,
         cspace = EET_COLORSPACE_ETC1;
         etc_block_size = 8;
         header[5] = 0;
+        codec = "ETC1";
         break;
       case EET_IMAGE_ETC2_RGB:
         cspace = EET_COLORSPACE_RGB8_ETC2;
         etc_block_size = 8;
         header[5] = 1;
+        codec = "ETC2 (RGB)";
         break;
       case EET_IMAGE_ETC2_RGBA:
         cspace = EET_COLORSPACE_RGBA8_ETC2_EAC;
         etc_block_size = 16;
         header[5] = 2;
+        codec = "ETC2 (RGBA)";
         break;
       default: abort();
      }
@@ -1156,6 +1159,10 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
    // header[7]: options (unused)
    header[7] = 0;
+
+   // Encoding being super slow, let's inform the user first.
+   // FIXME: Ctrl+C must be handled
+   INF("Encoding %dx%d image to %s, this may take a while...", w, h, codec);
 
    // Write header
    eina_binbuf_append_length(r, header, sizeof (header));
