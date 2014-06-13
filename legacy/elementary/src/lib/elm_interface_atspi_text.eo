@@ -25,11 +25,11 @@ interface Elm_Interface_Atspi_Text ()
               given initial offset and granulatity. */
          }
          keys {
-            @in Elm_Atspi_Text_Granularity granularity;
-            @inout int *start_offset @nonull; /*@ Offset indicating start of string
+            Elm_Atspi_Text_Granularity granularity;
+            int *start_offset @nonull; /*@ Offset indicating start of string
                                                 according to given granularity.
                                                 -1 in case of error. */
-            @out int *end_offset; /*@ Offset indicating end of string according
+            int *end_offset; /*@ Offset indicating end of string according
                                    to given granularity. -1 in case of error. */
          }
          values {

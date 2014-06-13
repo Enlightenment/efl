@@ -20,7 +20,7 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Gets localized action name for given id */
          }
          values {
-            const char *;
+            const char *name;
          }
          keys {
             int id;
