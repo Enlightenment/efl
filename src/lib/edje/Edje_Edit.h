@@ -1834,6 +1834,52 @@ EAPI Eina_Bool edje_edit_part_item_padding_get(Evas_Object *obj, const char *par
  */
 EAPI Eina_Bool edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *item_name, int l, int r, int t, int b);
 
+/** Get the horizontal align value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to get horizontal align value.
+ *
+ * @return The horizontal align value for the given align (value is between -1.0 and 1.0)
+ * @since 1.11
+ */
+EAPI double edje_edit_part_item_align_x_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the horizontal align value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain itemf
+ * @param item The name of the item to set horizontal align value.
+ * @param align_x New value of the horizontal align.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_align_x_set(Evas_Object *obj, const char *part, const char *item, double align_x);
+
+/** Get the vertical align value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to get vertical align value.
+ *
+ * @return The vertical align value for the given align (value is between -1.0 and 1.0)
+ * @since 1.11
+ */
+EAPI double edje_edit_part_item_align_y_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the vertical align value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to set vertical align value.
+ * @param align_y New value of the vertical align.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_align_y_set(Evas_Object *obj, const char *part, const char *item, double align_y);
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/

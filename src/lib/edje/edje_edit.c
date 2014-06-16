@@ -4064,6 +4064,61 @@ edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *
    return EINA_TRUE;
 }
 
+#define FUNC_PART_ITEM_DOUBLE(Name, Value)				\
+  EAPI double								\
+  edje_edit_part_item_##Name##_get(Evas_Object *obj, const char *part, const char *item_name) \
+  {									\
+     Edje_Part *ep;							\
+     unsigned int i;							\
+     Edje_Pack_Element *item = NULL;					\
+     if ((!obj) || (!part) || (!item_name))				\
+       return 0.0;							\
+     GET_RP_OR_RETURN(0.0);						\
+     ep = rp->part;							\
+     for (i = 0; i < ep->items_count; ++i)				\
+       {								\
+          if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name))) \
+            {								\
+               item = ep->items[i];					\
+               break;							\
+            }								\
+       }								\
+     if (!item) return EINA_FALSE;					\
+     return TO_DOUBLE(item->Value);					\
+  }									\
+  EAPI Eina_Bool                                                        \
+  edje_edit_part_item_##Name##_set(Evas_Object *obj, const char *part, const char *item_name, double v) \
+  {									\
+     Edje_Part *ep;							\
+     unsigned int i;							\
+     Edje_Pack_Element *item = NULL;					\
+     if ((!obj) || (!part) || (!item_name))				\
+       return EINA_FALSE;						\
+     if ((v < -1.0) || (v > 1.0))					\
+       return EINA_FALSE;						\
+     GET_RP_OR_RETURN(EINA_FALSE);					\
+     ep = rp->part;							\
+     if ((rp->part->type != EDJE_PART_TYPE_BOX) &&			\
+        (rp->part->type != EDJE_PART_TYPE_TABLE))			\
+       return EINA_FALSE;						\
+     for (i = 0; i < ep->items_count; ++i)				\
+       {								\
+          if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name))) \
+            {								\
+               item = ep->items[i];					\
+               break;							\
+            }								\
+       }								\
+     if (!item) return EINA_FALSE;					\
+     item->Value = FROM_DOUBLE(v);					\
+     return EINA_TRUE;                                                  \
+  }
+
+FUNC_PART_ITEM_DOUBLE(align_x, align.x);
+FUNC_PART_ITEM_DOUBLE(align_y, align.y);
+
+#undef FUNC_PART_ITEM_DOUBLE
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -9435,7 +9490,9 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7"padding: %d %d %d %d;\n",
                                 item->padding.l, item->padding.r,
                                 item->padding.t, item->padding.b);
-                  //TODO align
+
+                  if (TO_DOUBLE(item->align.x) != 0.5 || TO_DOUBLE(item->align.y) != 0.5)
+                    BUF_APPENDF(I7"align: %g %g;\n", TO_DOUBLE(item->align.x), TO_DOUBLE(item->align.y));
                   //TODO weight
                   //TODO options
                   //TODO col
