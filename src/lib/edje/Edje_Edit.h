@@ -49,6 +49,15 @@ typedef enum _Edje_Edit_Select_Mode
    EDJE_EDIT_SELECT_MODE_EXPLICIT
 } Edje_Edit_Select_Mode;
 
+typedef enum _Edje_Edit_Sound_Comp
+{
+   EDJE_EDIT_SOUND_COMP_NONE,
+   EDJE_EDIT_SOUND_COMP_RAW,
+   EDJE_EDIT_SOUND_COMP_COMP,
+   EDJE_EDIT_SOUND_COMP_LOSSY,
+   EDJE_EDIT_SOUND_COMP_AS_IS
+} Edje_Edit_Sound_Comp;
+
 struct _Edje_Edit_Script_Error
 {
    const char *program_name; /* null == group shared script */
@@ -3935,6 +3944,28 @@ EAPI Eina_Bool edje_edit_sound_tone_frequency_set(Evas_Object *obj, const char *
  * @see edje_edit_sound_tone_frequency_set()
  */
 EAPI int edje_edit_sound_tone_frequency_get(Evas_Object *obj, const char *name);
+
+/** Get the sound type compression.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the sample.
+ *
+ * @return Compression type of the sample sound.
+ * @since 1.11
+ */
+EAPI Edje_Edit_Sound_Comp edje_edit_sound_compression_type_get(Evas_Object *obj, const char* name);
+
+/** Set the sound type compression.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the sample.
+ * @param sc Edje_Edit_Sound_Comp
+ * (EDJE_EDIT_SOUND_COMP_RAW, EDJE_EDIT_SOUND_COMP_COMP, EDJE_EDIT_SOUND_COMP_LOSSY, EDJE_EDIT_SOUND_COMP_AS_IS).
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_sound_compression_type_set(Evas_Object *obj, const char* name, Edje_Edit_Sound_Comp sc);
 
 //@}
 /******************************************************************************/

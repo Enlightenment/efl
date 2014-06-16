@@ -1324,6 +1324,58 @@ edje_edit_sound_compression_rate_set(Evas_Object *obj, const char *sound, double
 
 #undef GET_TONE_BY_NAME
 
+EAPI Edje_Edit_Sound_Comp
+edje_edit_sound_compression_type_get(Evas_Object *obj, const char *sound)
+{
+   Edje_Sound_Sample *ss = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(-1);
+
+   if ((!ed->file) || (!ed->file->sound_dir))
+      return -1;
+
+   for (i = 0; i < ed->file->sound_dir->samples_count; i++)
+     {
+        ss = ed->file->sound_dir->samples + i;
+        if ((ss->name) && (!strcmp(sound, ss->name)))
+          break;
+     }
+
+   if (i == ed->file->sound_dir->samples_count)
+     return -1;
+
+   return (Edje_Edit_Sound_Comp) ss->compression;
+}
+
+EAPI Eina_Bool
+edje_edit_sound_compression_type_set(Evas_Object *obj, const char *sound, Edje_Edit_Sound_Comp sc)
+{
+   Edje_Sound_Sample *ss = NULL;
+   unsigned int i;
+
+   if ((sc <= EDJE_EDIT_SOUND_COMP_NONE) ||
+       (sc > EDJE_EDIT_SOUND_COMP_AS_IS))
+     return EINA_FALSE;
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if ((!ed->file) || (!ed->file->sound_dir))
+      return EINA_FALSE;
+
+   for (i = 0; i < ed->file->sound_dir->samples_count; i++)
+     {
+        ss = ed->file->sound_dir->samples + i;
+        if ((ss->name) && (!strcmp(sound, ss->name)))
+          break;
+     }
+
+   if (i == ed->file->sound_dir->samples_count)
+     return EINA_FALSE;
+
+   ss->compression = (int) sc;
+   return EINA_TRUE;
+}
+
 /****************/
 /*  GROUPS API  */
 /****************/
