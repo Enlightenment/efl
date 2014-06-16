@@ -236,6 +236,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
    re = (Render_Engine *)data;
    evas_gl_common_context_flush(re->win->gl_context);
+   evas_gl_common_context_newframe(re->win->gl_context);
    /* get the upate rect surface - return engine data as dummy */
    if (!re->win->draw.redraw)
      {
@@ -524,6 +525,9 @@ eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
         if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
         im->tex = NULL;
 	if (im->cs.data)
@@ -757,6 +761,9 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
 	*image_data = im->cs.data;
 	break;
       default:
