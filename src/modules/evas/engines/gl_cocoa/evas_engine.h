@@ -64,6 +64,6 @@ void eng_window_free(Evas_GL_Cocoa_Window *gw);
 void eng_window_use(Evas_GL_Cocoa_Window *gw);
 void eng_window_swap_buffers(Evas_GL_Cocoa_Window *gw);
 void eng_window_vsync_set(int on);
-void ng_window_resize(Evas_GL_Cocoa_Window *gw, int width, int height);
+void eng_window_resize(Evas_GL_Cocoa_Window *gw, int width, int height);
 
 #endif /* __EVAS_ENGINE_H__ */
