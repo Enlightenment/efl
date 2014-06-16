@@ -26,13 +26,13 @@ AC_ARG_WITH([bin-$2],
     efl_deprecated_option="yes"
    ], [])
 
-DOWN=${_efl_with_binary}
+DOWN[]$3=${_efl_with_binary}
 AC_MSG_NOTICE(DOWN[ set to ${_efl_with_binary}])
 
 with_binary_[]m4_defn([DOWN])[]$3=${_efl_with_binary}
 
 AM_CONDITIONAL(HAVE_[]UP[]m4_translit([[$3]], [a-z], [A-Z]), [test "x${_efl_binary_define}" = "xyes"])
-AC_SUBST(DOWN)
+AC_SUBST(DOWN[]$3)
 
 ])
 
