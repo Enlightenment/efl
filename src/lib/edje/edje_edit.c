@@ -3998,6 +3998,72 @@ FUNC_PART_ITEM_INT(aspect, h, 0);
 FUNC_PART_ITEM_INT(prefer, w, 0);
 FUNC_PART_ITEM_INT(prefer, h, 0);
 
+EAPI Eina_Bool
+edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *item_name, int *l, int *r, int *t, int *b)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item = NULL;
+
+   if ((!obj) || (!part) || (!item_name))
+     return EINA_FALSE;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   ep = rp->part;
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item = ep->items[i];
+             break;
+          }
+     }
+   if (!item) return EINA_FALSE;
+
+   if (l) *l = item->padding.l;
+   if (t) *t = item->padding.t;
+   if (r) *r = item->padding.r;
+   if (b) *b = item->padding.b;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *item_name, int l, int r, int t, int b)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item = NULL;
+
+   if ((!obj) || (!part) || (!item_name))
+     return EINA_FALSE;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   ep = rp->part;
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item = ep->items[i];
+             break;
+          }
+     }
+   if (!item) return EINA_FALSE;
+
+   if (l > -1) item->padding.l = l;
+   else return EINA_FALSE;
+   if (t > -1) item->padding.t = t;
+   else return EINA_FALSE;
+   if (r > -1) item->padding.r = r;
+   else return EINA_FALSE;
+   if (b > -1) item->padding.b = b;
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -9271,7 +9337,10 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      {
         if (ep->items_count != 0)
           {
-             BUF_APPEND(I4"box {\n");
+             if (edje_edit_part_type_get(obj, part) == EDJE_PART_TYPE_BOX)
+               BUF_APPEND(I4"box {\n");
+             else
+               BUF_APPEND(I4"table {\n");
              BUF_APPEND(I5"items {\n");
              for (i = 0; i < ep->items_count; ++i)
                {
@@ -9284,7 +9353,7 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7"source: \"%s\";\n", item->source);
                   if ((item->min.w != 0) || (item->min.h != 0))
                     BUF_APPENDF(I7"min: %d %d;\n", item->min.h, item->min.h);
-                  if ((item->max.w != 0) || (item->max.h != 0))
+                  if ((item->max.w != -1) || (item->max.h != -1))
                     BUF_APPENDF(I7"max: %d %d;\n", item->max.h, item->max.h);
                   //TODO aspect mode
                   if ((item->aspect.w != 0) || (item->aspect.h != 0))
@@ -9293,7 +9362,11 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7"prefer: %d %d;\n", item->prefer.h, item->prefer.h);
                   if ((item->spread.w != 1) || (item->spread.h != 1))
                     BUF_APPENDF(I7"spread: %d %d;\n", item->spread.h, item->spread.h);
-                  //TODO padding
+                  if ((item->padding.l != 0) || (item->padding.t != 0) ||
+                      (item->padding.r != 0) || (item->padding.b != 0))
+                    BUF_APPENDF(I7"padding: %d %d %d %d;\n",
+                                item->padding.l, item->padding.r,
+                                item->padding.t, item->padding.b);
                   //TODO align
                   //TODO weight
                   //TODO options

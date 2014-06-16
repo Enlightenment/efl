@@ -1805,6 +1805,35 @@ EAPI int edje_edit_part_item_prefer_h_get(Evas_Object *obj, const char *part, co
  */
 EAPI Eina_Bool edje_edit_part_item_prefer_h_set(Evas_Object *obj, const char *part, const char *item, int prefer_h);
 
+/** Get paddings of the part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ * @param l A pointer to store the left padding value.
+ * @param r A pointer to store the right padding value.
+ * @param t A pointer to store the top padding value.
+ * @param b A pointer to store the bottom padding value.
+ *
+ * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *item_name, int *l, int *r, int *t, int *b);
+
+
+/** Set paddings of the part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ * @param l Value of the left padding.
+ * @param r Value of the right padding.
+ * @param t Value of the top padding.
+ * @param b Value of the bottom padding.
+ *
+ * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *item_name, int l, int r, int t, int b);
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/
