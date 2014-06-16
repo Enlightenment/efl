@@ -205,18 +205,25 @@ _tex_format_index(GLuint format)
       case GL_ALPHA12:
       case GL_ALPHA16:
         return 2;
+      case GL_ETC1_RGB8_OES:
+        return 3;
+      case GL_COMPRESSED_RGB8_ETC2:
+        return 4;
+      case GL_COMPRESSED_RGBA8_ETC2_EAC:
+        return 5;
       case GL_LUMINANCE: // never used in atlas
       case GL_LUMINANCE4:
       case GL_LUMINANCE8:
       case GL_LUMINANCE12:
       case GL_LUMINANCE16:
-        return 3;
+        return 6;
       case GL_LUMINANCE4_ALPHA4:
       case GL_LUMINANCE8_ALPHA8:
       case GL_LUMINANCE12_ALPHA12:
       case GL_LUMINANCE16_ALPHA16:
-         return 4;
+        return 7;
       default:
+        // abort?
         return 0;
      }
    return 0;

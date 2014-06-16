@@ -426,7 +426,7 @@ struct _Evas_GL_Shared
 
    struct {
       Eina_List       *whole;
-      Eina_List       *atlas[33][5];
+      Eina_List       *atlas[33][6];
    } tex;
 
    Eina_Hash          *native_pm_hash;
