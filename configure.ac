@@ -4072,6 +4072,7 @@ else
 fi
 
 EFL_ADD_LIBS([EDJE], [-lm])
+EFL_CHECK_FUNCS([EDJE], [dlopen])
 
 EFL_EVAL_PKGS([EDJE])
 
