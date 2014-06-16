@@ -1804,7 +1804,8 @@ struct _Edje_Message
 typedef enum _Edje_Fill
 {
    EDJE_FILL_TYPE_SCALE = 0,
-     EDJE_FILL_TYPE_TILE
+   EDJE_FILL_TYPE_TILE  = 1,
+   EDJE_FILL_TYPE_LAST  = 2
 } Edje_Fill;
 
 typedef enum _Edje_Match_Error

@@ -2579,6 +2579,45 @@ edje_edit_state_fill_smooth_get(Evas_Object *obj, const char *part, const char *
 EAPI Eina_Bool
 edje_edit_state_fill_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool smooth);
 
+/** Get the fill type property for given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ *
+ * @return The value that represents fill type: 0 for SCALE or 1 for TILE. In case of error (for example, if part type does not match) returns 2.
+ * @see edje_edit_state_fill_type_set()
+ * @since 1.11
+ */
+EAPI unsigned char edje_edit_state_fill_type_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+
+/** Set the fill type property for given part state.
+ *
+ * Sets the image fill type. The available types are: 
+ * <dl>
+ * <dt>SCALE</dt>
+ * <dd>image will be scaled accordingly to the 'relative' and 'offset' params values from 'origin' and 'size' blocks.</dd>
+ * <dt>TILE</dt>
+ * <dd>image will be tiled accordingly to the 'relative' and 'offset' params values from 'origin' and 'size' blocks.</dd>
+ * </dl>
+ * <b>Important</b>: the part parameter 'min' must be set, it's size of tiled image.
+ * If parameter 'max' is set tiled area will be resized accordingly to the 'max' values of part. 
+ * The default value of fill type is SCALE.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ * @param fill_type The value that represents fill type: 0 for SCALE or 1 for TILE.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @see edje_edit_state_fill_type_get()
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_state_fill_type_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char fill_type);
+
 /** Get the fill horizontal origin relative value of a part state.
  *
  * @param obj Object being edited.

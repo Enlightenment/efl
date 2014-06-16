@@ -4853,6 +4853,58 @@ edje_edit_state_fill_smooth_set(Evas_Object *obj, const char *part, const char *
    return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_fill_type_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char fill_type)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+   if (fill_type >= EDJE_FILL_TYPE_LAST)
+     return EINA_FALSE;
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_IMAGE:
+        {
+           Edje_Part_Description_Image *img;
+           img = (Edje_Part_Description_Image*) pd;
+           img->image.fill.type = fill_type;
+           return EINA_TRUE;
+        }
+      case EDJE_PART_TYPE_PROXY:
+        {
+           Edje_Part_Description_Proxy *pro;
+           pro = (Edje_Part_Description_Proxy*) pd;
+           pro->proxy.fill.type = fill_type;
+           return EINA_TRUE;
+        }
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI unsigned char
+edje_edit_state_fill_type_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EDJE_FILL_TYPE_LAST)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_IMAGE:
+        {
+           Edje_Part_Description_Image *img;
+           img = (Edje_Part_Description_Image*) pd;
+           return img->image.fill.type;
+        }
+      case EDJE_PART_TYPE_PROXY:
+        {
+           Edje_Part_Description_Proxy *pro;
+           pro = (Edje_Part_Description_Proxy*) pd;
+           return pro->proxy.fill.type;
+        }
+     }
+
+   return EDJE_FILL_TYPE_LAST;
+}
+
 #define FUNC_STATE_DOUBLE_FILL(Class, Type, Value)			\
   EAPI double								\
   edje_edit_state_fill_##Type##_relative_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
@@ -8953,7 +9005,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
        img->image.fill.pos_rel_y || img->image.fill.pos_abs_x ||
        img->image.fill.pos_abs_y || TO_DOUBLE(img->image.fill.rel_x) != 1.0 ||
        TO_DOUBLE(img->image.fill.rel_y) != 1.0 ||
-       img->image.fill.abs_x || img->image.fill.abs_y)
+       img->image.fill.abs_x || img->image.fill.abs_y
+       || img->image.fill.type == EDJE_FILL_TYPE_TILE)
       {
          BUF_APPEND(I5"fill {\n");
          if (!img->image.fill.smooth)
@@ -8981,6 +9034,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                  BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.abs_x, img->image.fill.abs_y);
                BUF_APPEND(I6"}\n");
            }
+         BUF_APPEND(I6"type: TILE;\n");
 
          BUF_APPEND(I5"}\n");
       }
@@ -9021,6 +9075,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 		  BUF_APPENDF(I7"offset: %d %d;\n", pro->proxy.fill.abs_x, pro->proxy.fill.abs_y);
 		BUF_APPEND(I6"}\n");
           }
+   if (pro->proxy.fill.type == EDJE_FILL_TYPE_TILE)
+     BUF_APPEND(I6"type: TILE;\n");
 
 	BUF_APPEND(I5"}\n");
      }
