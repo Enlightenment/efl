@@ -178,23 +178,18 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-Eina_Bool
-_ecore_fd_close_on_exec(int fd)
+static void
+_ecore_con_fd_close_on_exec(int fd)
 {
 #ifdef HAVE_FCNTL
    int flags;
 
    flags = fcntl(fd, F_GETFD);
-   if (flags == -1)
-     return EINA_FALSE;
-
+   if (flags == -1) return;
    flags |= FD_CLOEXEC;
-   if (fcntl(fd, F_SETFD, flags) == -1)
-     return EINA_FALSE;
-   return EINA_TRUE;
+   if (fcntl(fd, F_SETFD, flags) == -1) return;
 #else
    (void)fd;
-   return EINA_FALSE;
 #endif
 }
 
@@ -213,8 +208,8 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         return 0;
      }
 
-   _ecore_fd_close_on_exec(fd[0]);
-   _ecore_fd_close_on_exec(fd[1]);
+   _ecore_con_fd_close_on_exec(fd[0]);
+   _ecore_con_fd_close_on_exec(fd[1]);
 
    cbdata = calloc(1, sizeof(CB_Data));
    if (!cbdata)

@@ -273,23 +273,18 @@ static gboolean _ecore_glib_idle_enterer_called;
 static gboolean ecore_fds_ready;
 #endif
 
-Eina_Bool
+void
 _ecore_fd_close_on_exec(int fd)
 {
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    int flags;
 
    flags = fcntl(fd, F_GETFD);
-   if (flags == -1)
-     return EINA_FALSE;
-
+   if (flags == -1) return;
    flags |= FD_CLOEXEC;
-   if (fcntl(fd, F_SETFD, flags) == -1)
-     return EINA_FALSE;
-   return EINA_TRUE;
+   if (fcntl(fd, F_SETFD, flags) == -1)  return;
 #else
    (void) fd;
-   return EINA_FALSE;
 #endif
 }
 

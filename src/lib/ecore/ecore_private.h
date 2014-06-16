@@ -186,7 +186,7 @@ Ecore_Fd_Handler *
                                       const void *buf_data);
 void      *_ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
 
-Eina_Bool _ecore_fd_close_on_exec(int fd);
+void       _ecore_fd_close_on_exec(int fd);
 
 void       _ecore_main_shutdown(void);
 
