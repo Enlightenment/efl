@@ -52,3 +52,6 @@ tags
 *.gmo
 /config.cache-env
 /compile
+/config/default/*.src
+/config/mobile/*.src
+/config/standard/*.src
