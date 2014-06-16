@@ -348,6 +348,7 @@ Eo                   *_elm_atspi_root_get(void);
 
 void                 _elm_atspi_bridge_init(void);
 void                 _elm_atspi_bridge_shutdown(void);
+void                 _elm_atspi_bridge_key_event_notify(Evas_Callback_Type type, void *event);
 
 void                 _elm_prefs_init(void);
 void                 _elm_prefs_shutdown(void);

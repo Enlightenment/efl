@@ -3305,3 +3305,47 @@ _elm_atspi_bridge_shutdown(void)
         _root = NULL;
      }
 }
+
+static void
+_iter_marshall_key_event(Eldbus_Message_Iter *iter, Evas_Callback_Type type, void *event)
+{
+   Eldbus_Message_Iter *struct_iter;
+
+   EINA_SAFETY_ON_NULL_RETURN(event);
+
+   struct_iter = eldbus_message_iter_container_new(iter, 'r', NULL);
+
+   if (type == EVAS_CALLBACK_KEY_DOWN)
+     {
+        Evas_Event_Key_Down *kde = event;
+        const char *str = kde->string ? kde->string : "";
+        int is_text = kde->string ? 1 : 0;
+        eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", ATSPI_KEY_PRESSED_EVENT, 0, kde->keycode, 0, kde->timestamp, str, is_text);
+     }
+   else if (type == EVAS_CALLBACK_KEY_UP)
+     {
+        Evas_Event_Key_Up *kue = event;
+        const char *str = kue->string ? kue->string : "";
+        int is_text = kue->string ? 1 : 0;
+        eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", ATSPI_KEY_RELEASED_EVENT, 0, kue->keycode, 0, kue->timestamp, str, is_text);
+     }
+
+   eldbus_message_iter_container_close(iter, struct_iter);
+}
+
+EAPI void
+_elm_atspi_bridge_key_event_notify(Evas_Callback_Type type, void *event)
+{
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter;
+
+   if (!_init_count) return;
+   if ((type != EVAS_CALLBACK_KEY_DOWN) && (type != EVAS_CALLBACK_KEY_UP)) return;
+
+   msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC,
+                                        ATSPI_DBUS_INTERFACE_DEC, "NotifyListenersSync");
+   iter = eldbus_message_iter_get(msg);
+   _iter_marshall_key_event(iter, type, event);
+
+   eldbus_connection_send(_a11y_bus, msg, NULL, NULL, -1);
+}
