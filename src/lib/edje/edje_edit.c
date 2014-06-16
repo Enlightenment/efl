@@ -5593,6 +5593,35 @@ edje_edit_state_limit_get(Evas_Object *obj, const char *part, const char *state,
    return pd->limit;
 }
 
+
+
+EAPI const char *
+edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Real_Part *erl;
+
+   GET_PD_OR_RETURN(NULL);
+
+   erl = ed->table_parts[pd->map.id_light % ed->table_parts_size];
+   if (erl->part->name)
+     return eina_stringshare_add(erl->part->name);
+
+   return NULL;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
+{
+   if (!source_part) return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.id_light = _edje_part_id_find(ed, source_part);
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+
 /**************/
 /*  TEXT API */
 /**************/
