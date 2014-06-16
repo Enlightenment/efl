@@ -296,7 +296,7 @@ _ecore_fd_valid(void)
         if (fcntl(epoll_fd, F_GETFD) < 0)
           {
              ERR("arghhh you caught me! report a backtrace to edevel!");
-#ifdef HAVE_PAUSE             
+#ifdef HAVE_PAUSE
              pause();
 #else
              sleep(60);
