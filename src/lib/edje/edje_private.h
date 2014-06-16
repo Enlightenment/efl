@@ -796,6 +796,14 @@ typedef enum {
   EDJE_PART_LIMIT_OVER
 } Edje_Part_Limit_State;
 
+typedef enum {
+  EDJE_STATE_LIMIT_NONE   = 0,
+  EDJE_STATE_LIMIT_WIDTH  = 1,
+  EDJE_STATE_LIMIT_HEIGHT = 2,
+  EDJE_STATE_LIMIT_BOTH   = 3,
+  EDJE_STATE_LIMIT_LAST   = 4
+} Edje_Edit_State_Limit;
+
 #ifdef HAVE_EPHYSICS
 typedef enum {
   EDJE_PART_PHYSICS_BODY_NONE= 0,

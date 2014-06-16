@@ -5576,6 +5576,23 @@ edje_edit_state_step_get(Evas_Object *obj, const char *part, const char *state, 
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_limit_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char limit)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (limit >= EDJE_STATE_LIMIT_LAST)
+     return EINA_FALSE;
+   pd->limit = limit;
+   return EINA_TRUE;
+}
+
+EAPI unsigned char
+edje_edit_state_limit_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EDJE_STATE_LIMIT_LAST);
+   return pd->limit;
+}
+
 /**************/
 /*  TEXT API */
 /**************/
@@ -8944,6 +8961,28 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    if (!pd->visible)
      BUF_APPEND(I5"visible: 0;\n");
+
+   if (pd->limit)
+   {
+      switch (pd->limit)
+        {
+         case EDJE_STATE_LIMIT_WIDTH:
+           {
+              BUF_APPEND("limit: WIDTH;\n");
+              break;
+           }
+         case EDJE_STATE_LIMIT_HEIGHT:
+           {
+              BUF_APPEND("limit: HEIGHT;\n");
+              break;
+           }
+         case EDJE_STATE_LIMIT_BOTH:
+           {
+              BUF_APPEND("limit: BOTH;\n");
+              break;
+           }
+        }
+   }
 
    if (pd->align.x != 0.5 || pd->align.y != 0.5)
      BUF_APPENDF(I5"align: %g %g;\n", TO_DOUBLE(pd->align.x), TO_DOUBLE(pd->align.y));
