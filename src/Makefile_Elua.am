@@ -47,7 +47,8 @@ eluaxgettextdir = $(eluamodulesdir)/xgettext
 
 eluaxgettext_DATA = \
 	bin/elua/modules/xgettext/lexer.lua \
-	bin/elua/modules/xgettext/parser.lua
+	bin/elua/modules/xgettext/parser.lua \
+	bin/elua/modules/xgettext/generator.lua
 
 EXTRA_DIST += $(eluaxgettext_DATA)
 
