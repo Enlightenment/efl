@@ -1,0 +1,18 @@
+interface Efl_Interface_Part {
+   legacy_prefix: null;
+   eo_prefix: efl;
+   properties {
+      part {
+         set {
+         }
+         get {
+         }
+         keys {
+            const char *name; /*@ part name. */
+         }
+         values {
+            Eo *pobj; /*@ the object that populates the part. */
+         }
+      }
+   }
+}
