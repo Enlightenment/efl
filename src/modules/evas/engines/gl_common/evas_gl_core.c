@@ -1794,8 +1794,9 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    else
      {
         // Attach fbo and the buffers
-        if (ctx->current_sfc != sfc)
+        if ((ctx->current_sfc != sfc) || (ctx != sfc->current_ctx))
           {
+             sfc->current_ctx = ctx;
              if ((evgl_engine->direct_mem_opt) && (evgl_engine->direct_override))
                {
                   DBG("Not creating fallback surfaces even though it should. Use at OWN discretion!");
