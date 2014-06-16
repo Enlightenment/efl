@@ -3,7 +3,7 @@
 ELUA_BIN="$ELUA"
 
 if [ ! "$ELUA_BIN" ]; then
-    ELUA_BIN="$ELUA_INTREE"
+    ELUA_BIN="${ELUA_INTREE}${ELUA_EXT}"
     export EFL_RUN_IN_TREE=1
 fi
 

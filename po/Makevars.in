@@ -13,7 +13,8 @@ XGETTEXT_FALLBACK := $(XGETTEXT)
 # Override xgettext with a LuaJIT aware variant (which calls
 # into plain xgettext if it needs to, and handles Lua on its own)
 XGETTEXT = ELUA=@elua_bin@ ELUA_INTREE=$(top_srcdir)/src/bin/elua/elua \
-	XGETTEXT=$(XGETTEXT_FALLBACK) $(top_srcdir)/po/xgettext_wrapper.sh
+	XGETTEXT=$(XGETTEXT_FALLBACK) ELUA_EXT=@EXEEXT@ \
+	$(top_srcdir)/po/xgettext_wrapper.sh
 
 # These options get passed to xgettext.
 XGETTEXT_OPTIONS = --keyword=_ --keyword=N_ --from-code=UTF-8 --foreign-user
