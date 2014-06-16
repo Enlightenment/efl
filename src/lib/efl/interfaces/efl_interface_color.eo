@@ -1,18 +1,3 @@
-interface Efl_Interface_Part
-{
-   legacy_prefix: null;
-}
-
-interface Efl_Interface_Color_Enum_Part (Efl_Interface_Part)
-{
-   legacy_prefix: null;
-}
-
-interface Efl_Interface_Color_Text_Part (Efl_Interface_Part)
-{
-   legacy_prefix: null;
-}
-
 interface Efl_Interface_Color {
    legacy_prefix: null;
    properties {
