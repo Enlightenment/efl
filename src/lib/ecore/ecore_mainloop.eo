@@ -1,0 +1,34 @@
+class Ecore_Mainloop (Eo_Base)
+{
+   legacy_prefix: null;
+   data: null;
+   properties {
+      select_func {
+         set {
+         }
+         get {
+         }
+         values {
+            Ecore_Select_Function select_func;
+         }
+      }
+   }
+   methods {
+      iterate {
+      }
+      iterate_may_block {
+         return int;
+         params {
+            int may_block;
+         }
+      }
+      begin {
+      }
+      quit {
+      }
+      animator_ticked {
+         /* FIXME: Should it be a prooperty? */
+         return Eina_Bool;
+      }
+   }
+}
