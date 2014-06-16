@@ -253,22 +253,32 @@ group { name: "e/modules/ibar/menu/item";
             image.border: 7 7 7 7;
             color: 255 255 255 80;
             visible: 0;
+            link.base: "e,state,unfocused" "e";
+            link.transition: ACCEL 0.1;
          }
          description { state: "focused";
             inherit: "default" 0.0;
             visible: 1;
+            link.base: "e,state,focused" "e";
+            link.transition: ACCEL 0.1;
          }
       }
       part { name: "clip"; type: RECT;
          description { state: "default";
+            link.base: "e,state,other,none" "e";
+            link.transition: ACCEL 0.1;
          }
          description { state: "otherdesk";
             inherit: "default" 0.0;
             color: 255 255 255 160;
+            link.base: "e,state,other,desk" "e";
+            link.transition: ACCEL 0.1;
          }
          description { state: "otherscreen";
             inherit: "default" 0.0;
             color: 255 255 255 80;
+            link.base: "e,state,other,screen" "e";
+            link.transition: ACCEL 0.1;
          }
       }
       part { name: "icon"; type: SPACER;
@@ -412,21 +422,6 @@ group { name: "e/modules/ibar/menu/item";
          target: "icon_clip";
          target: "glow";
          transition: DECELERATE 0.2;
-      }
-      program {
-         signal: "e,state,focused"; source: "e";
-         action: STATE_SET "focused" 0.0;
-         target: "base";
-      }
-      program {
-         signal: "e,state,otherdesk"; source: "e";
-         action: STATE_SET "otherdesk" 0.0;
-         target: "clip";
-      }
-      program {
-         signal: "e,state,otherscreen"; source: "e";
-         action: STATE_SET "otherscreen" 0.0;
-         target: "clip";
       }
    }
 }
