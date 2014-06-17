@@ -36,7 +36,7 @@
 // unpacking values to registers. also mm7 is reserved to hold an unpacked
 // and dumpliacted coltab entry for the final entry (max color). so it's
 // [col][col] in the 63bit register with both 32bit colors doublicated
-#ifdef MMX        
+#ifdef MMX
 pxor_r2r(mm0, mm0);
 movd_m2r(coltab[0xf], mm7);
 punpckldq_r2r(mm7, mm7);
@@ -50,7 +50,7 @@ if (*iptr > 0) // rle4
    DATA32 *d0, *d, t;
    DATA16 len;
    int xx, yy, dif;
-   
+
    iptr = (int *)p;
    p += sizeof(int);
    d0 = dst + x + (y * dst_pitch);
@@ -249,7 +249,7 @@ else // bpp4
    int pitch2;
    DATA8 *s, *s0, v0;
    DATA32 *d;
-   
+
    d = dst + x + x1 + ((y + y1) * dst_pitch);
    djump = dst_pitch - (x2 - x1);
    pitch2 = (w + 1) / 2;
