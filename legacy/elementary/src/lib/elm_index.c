@@ -652,7 +652,11 @@ _sel_eval(Evas_Object *obj,
                          {
                             label = realloc(label, strlen(label) +
                                             strlen(last) + 1);
-                            if (!label) return;
+                            if (!label)
+                              {
+                                 free(last);
+                                 return;
+                              }
                             strcat(label, last);
                          }
                     }
