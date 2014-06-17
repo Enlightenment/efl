@@ -77,6 +77,7 @@ static const struct {
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt }
 };
 
+static const GLenum matching_rgb[] = { GL_RGB4, GL_RGB8, GL_RGB12, GL_RGB16, 0x0 };
 static const GLenum matching_rgba[] = { GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, 0x0 };
 static const GLenum matching_alpha[] = { GL_ALPHA4, GL_ALPHA8, GL_ALPHA12, GL_ALPHA16, 0x0 };
 static const GLenum matching_luminance[] = { GL_LUMINANCE4, GL_LUMINANCE8, GL_LUMINANCE12, GL_LUMINANCE16, 0x0 };
@@ -86,8 +87,10 @@ static const struct {
    GLenum master;
    const GLenum *matching;
 } matching_fmt[] = {
+  { GL_RGB, matching_rgb },
   { GL_RGBA, matching_rgba },
   { GL_ALPHA, matching_alpha },
+  { GL_ALPHA4, matching_alpha },
   { GL_LUMINANCE, matching_luminance },
   { GL_LUMINANCE_ALPHA, matching_luminance_alpha }
 };
@@ -252,7 +255,7 @@ _tex_2d(Evas_Engine_GL_Context *gc, int intfmt, int w, int h, int fmt, int type)
                                  GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
         if (!_evas_gl_texture_match(intfmt, intfmtret))
           {
-             ERR("Fail tex alloc %ix%i", w, h);
+             ERR("Fail tex alloc %ix%i, intfmt: %X  intfmtret: %X", w, h, intfmt, intfmtret);
              //        XXX send async err to evas
              return EINA_FALSE;
           }
