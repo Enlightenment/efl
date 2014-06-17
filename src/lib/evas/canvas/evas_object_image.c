@@ -1553,7 +1553,6 @@ _evas_image_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *k
         if (im->image.data)
           {
              ok = evas_common_save_image_to_file(im, file, key, quality, compress, encoding);
-             free(encoding);
 
              if (o->cur->cspace != EVAS_COLORSPACE_ARGB8888)
                free(im->image.data);
@@ -1564,6 +1563,8 @@ _evas_image_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *k
    o->engine_data = obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
                                                                   o->engine_data,
                                                                   data);
+
+   free(encoding);
    return ok;
 }
 
