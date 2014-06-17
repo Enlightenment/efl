@@ -5649,7 +5649,6 @@ edje_edit_state_limit_get(Evas_Object *obj, const char *part, const char *state,
 }
 
 
-
 EAPI const char *
 edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
@@ -5658,6 +5657,20 @@ edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *st
    GET_PD_OR_RETURN(NULL);
 
    erl = ed->table_parts[pd->map.id_light % ed->table_parts_size];
+   if (erl->part->name)
+     return eina_stringshare_add(erl->part->name);
+
+   return NULL;
+}
+
+EAPI const char *
+edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Real_Part *erl;
+
+   GET_PD_OR_RETURN(NULL);
+
+   erl = ed->table_parts[pd->map.rot.id_center % ed->table_parts_size];
    if (erl->part->name)
      return eina_stringshare_add(erl->part->name);
 
@@ -5676,6 +5689,17 @@ edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *st
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
+{
+   if (!source_part) return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.rot.id_center = _edje_part_id_find(ed, source_part);
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
 
 /**************/
 /*  TEXT API */

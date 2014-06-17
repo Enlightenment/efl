@@ -3204,8 +3204,6 @@ EAPI Eina_Bool edje_edit_state_limit_set(Evas_Object *obj, const char *part, con
  */
 EAPI unsigned char edje_edit_state_limit_get(Evas_Object *obj, const char *part, const char *state, double value);
 
-
-
 /** Get the part's name that is used as the 'light' for calculating the brightness.
  *
  * @param obj Object being edited.
@@ -3233,7 +3231,32 @@ edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *st
 EAPI Eina_Bool
 edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part);
 
+/** Get the part's name that is used as the center rotation.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return The name of the source part that is used as center rotation.
+ * @since 1.11
+ **/
+EAPI const char *
+edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, const char *state, double value);
 
+/** This sets the part that is used as the center of rotation when rotating the part with this description. If no center is given, the parts original center itself is used for the rotation center.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param source_part The source part's name.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part);
 
 //@}
 /******************************************************************************/
