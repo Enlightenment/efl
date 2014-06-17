@@ -2909,6 +2909,42 @@ START_TEST(evas_textblock_size)
 }
 END_TEST
 
+START_TEST(evas_textblock_delete)
+{
+   START_TB_TEST();
+   const Evas_Object_Textblock_Node_Format *fmt;
+
+   /* The first and the second set of commands should result in the same
+    * conditions for format and text nodes of the textblock object.
+    * Essentially, it creates the markup 'a<ps>b' */
+   evas_object_textblock_text_markup_set(tb, "ab");
+   fmt =  evas_textblock_cursor_format_get(cur);
+   fail_if(fmt);
+   evas_textblock_cursor_pos_set(cur, 1);
+   evas_object_textblock_text_markup_prepend(cur, "<ps/>");
+   evas_textblock_cursor_pos_set(cur, 1);
+   fmt =  evas_textblock_cursor_format_get(cur);
+   fail_if (!fmt);
+   evas_textblock_cursor_char_delete(cur);
+   fmt =  evas_textblock_cursor_format_get(cur);
+   fail_if(fmt);
+
+   evas_object_textblock_text_markup_set(tb, "ab");
+   fmt =  evas_textblock_cursor_format_get(cur);
+   fail_if(fmt);
+   evas_textblock_cursor_pos_set(cur, 1);
+   evas_object_textblock_text_markup_prepend(cur, "<ps>");
+   evas_textblock_cursor_pos_set(cur, 1);
+   fmt =  evas_textblock_cursor_format_get(cur);
+   fail_if (!fmt);
+   evas_textblock_cursor_char_delete(cur);
+   fmt =  evas_textblock_cursor_format_get(cur);
+   fail_if(fmt);
+
+   END_TB_TEST();
+}
+END_TEST;
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -2929,5 +2965,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_various);
    tcase_add_test(tc, evas_textblock_wrapping);
    tcase_add_test(tc, evas_textblock_items);
+   tcase_add_test(tc, evas_textblock_delete);
 }
 

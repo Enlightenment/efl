@@ -8491,11 +8491,27 @@ _evas_textblock_node_format_new(Evas_Textblock_Data *o, const char *_format)
         if ((format_len > 0) && format[format_len - 1] == '>')
           {
              format_len--; /* We don't care about '>' */
-             /* Check if it closes itself. Skip the </> case. */
-             if ((format_len > 1) && format[format_len - 1] == '/')
+             /* Check if it closes itself, i.e. one of the following:
+              * 1. Ends with a "/" e.g. "<my_tag/>"
+              * 2. Is a paragraph separator */
+             /* Skip the </> case. */
+             if (format_len > 1)
                {
-                  format_len--; /* We don't care about '/' */
-                  n->own_closer = EINA_TRUE;
+                  if (format[format_len - 1] == '/')
+                    {
+                       format_len--; /* We don't care about '/' */
+                       n->own_closer = EINA_TRUE;
+                    }
+                  else if (format_len == 2)
+                    {
+                       char tmp[format_len + 1];
+                       strncpy(tmp, format, format_len);
+                       tmp[format_len] = '\0';
+                       if (_IS_PARAGRAPH_SEPARATOR(o, tmp))
+                         {
+                             n->own_closer = EINA_TRUE;
+                         }
+                    }
                }
           }
 
