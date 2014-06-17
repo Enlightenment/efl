@@ -140,6 +140,122 @@ class Elm_Panes (Elm_Layout)
             of right side. */
          }
       }
+      content_left_min_relative_size {
+         set {
+            /*@
+             Set the relative minimum size of panes widget's left side.
+
+             @param obj The panes object.
+             @param size double value between 0.0 and 1.0 representing size
+             proportion of minimum size of left side.
+
+             @see elm_panes_content_left_min_size_relative_get()
+
+             @ingroup Panes */
+         }
+         get {
+            /*@
+             Get the relative minimum size of panes widget's left side.
+
+             @param obj The panes object.
+             @return double value between 0.0 and 1.0 representing size proportion
+             of minimum size of left side.
+
+             @see elm_panes_content_left_min_relative_size_set() for more details.
+
+             @ingroup Panes */
+         }
+         values {
+            double size; /*@ value between 0.0 and 1.0 representing size proportion
+                           of minimum size of left side. */
+         }
+      }
+      content_right_min_relative_size {
+         set {
+            /*@
+             Set the relative minimum size of panes widget's right side.
+
+             @param obj The panes object.
+             @param size double value between 0.0 and 1.0 representing size proportion
+             of minimum size of right side.
+
+             @see elm_panes_content_right_min_relative_size_get()
+
+             @ingroup Panes */
+         }
+         get {
+            /*@
+             Get the relative minimum size of panes widget's right side.
+
+             @param obj The panes object.
+             @return double value between 0.0 and 1.0 representing size proportion
+             of minimum size of right side.
+
+             @see elm_panes_content_right_min_size_set() for more details.
+
+             @ingroup Panes */
+         }
+         values {
+            double size; /*@ value between 0.0 and 1.0 representing size proportion
+                           of minimum size of right side. */
+         }
+      }
+      content_left_min_size {
+         set {
+            /*@
+            Set the absolute minimum size of panes widget's left side.
+
+            @param obj The panes object.
+            @param size int value representing minimum size of left side in pixels.
+
+            @see elm_panes_content_left_min_size_get()
+
+            @ingroup Panes */
+         }
+         get {
+            /*@
+            Get the absolute minimum size of panes widget's left side.
+
+            @param obj The panes object.
+            @retur int value representing minimum size of left side in pixels.
+
+            @see elm_panes_content_left_min_size_set() for more details.
+
+            @ingroup Panes */
+         }
+         values {
+            Evas_Coord size; /*@ value representing minimum size of left side
+                               in pixels. */
+         }
+      }
+      content_right_min_size {
+         set {
+            /*@
+            Set the absolute minimum size of panes widget's right side.
+
+            @param obj The panes object.
+            @param size int value representing minimum size of right side in pixels.
+
+            @see elm_panes_content_right_min_size_get()
+
+            @ingroup Panes */
+         }
+         get {
+            /*@
+            Get the absolute minimum size of panes widget's right side.
+
+            @param obj The panes object.
+            @retur int value representing minimum size of right side in pixels.
+
+            @see elm_panes_content_right_min_size_set() for more details.
+
+            @ingroup Panes */
+         }
+         values {
+            Evas_Coord size; /*@ value representing minimum size of right side
+                               in pixels. */
+         }
+      }
    }
    implements {
       class::constructor;

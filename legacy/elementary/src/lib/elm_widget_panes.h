@@ -28,9 +28,15 @@ struct _Elm_Panes_Data
       Eina_Bool move;
    } move;
 
+   double                left_min_relative_size;
+   double                right_min_relative_size;
+   Evas_Coord            left_min_size;
+   Evas_Coord            right_min_size;
    Eina_Bool             double_clicked : 1;
    Eina_Bool             horizontal : 1;
    Eina_Bool             fixed : 1;
+   Eina_Bool             left_min_size_is_relative : 1;
+   Eina_Bool             right_min_size_is_relative : 1;
 };
 
 /**

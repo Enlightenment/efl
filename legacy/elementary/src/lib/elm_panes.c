@@ -178,6 +178,87 @@ _on_unpressed(void *data,
      }
 }
 
+static void
+_set_min_size(void *data)
+{
+   ELM_PANES_DATA_GET(data, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+
+   double sizer = sd->right_min_relative_size;
+   double sizel = sd->left_min_relative_size;
+   if ((sd->left_min_relative_size + sd->right_min_relative_size) > 1)
+     {
+        double sum = sizer + sizel;
+        sizer = sizer / sum;
+        sizel = sizel / sum;
+     }
+   if (sd->horizontal)
+     {
+        edje_object_part_drag_value_set
+           (wd->resize_obj, "right_constraint", 0.0, (1 - sizer));
+        edje_object_part_drag_value_set
+           (wd->resize_obj, "left_constraint", 0.0, sizel);
+     }
+   else
+     {
+        edje_object_part_drag_value_set
+           (wd->resize_obj, "right_constraint", (1 - sizer), 0.0);
+        edje_object_part_drag_value_set
+           (wd->resize_obj, "left_constraint", sizel, 0.0);
+     }
+}
+
+static void
+_update_fixed_sides(void *data)
+{
+   ELM_PANES_DATA_GET(data, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+   Evas_Coord w, h;
+   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, &h);
+
+   if (sd->right_min_size_is_relative)
+     {
+        if (sd->horizontal)
+           sd->right_min_size = (int)(h * sd->right_min_relative_size);
+        else
+           sd->right_min_size =(int)(w * sd->right_min_relative_size);
+     }
+   else
+     {
+        sd->right_min_relative_size = 0;
+        if (sd->horizontal && (h > 0))
+              sd->right_min_relative_size = sd->right_min_size / (double)h;
+        if (!sd->horizontal && (w > 0))
+              sd->right_min_relative_size = sd->right_min_size / (double)w;
+     }
+
+   if(sd->left_min_size_is_relative)
+     {
+        if (sd->horizontal)
+             sd->left_min_size = (int)(h * sd->left_min_relative_size);
+        else
+           sd->left_min_size = (int)(w * sd->left_min_relative_size);
+     }
+   else
+     {
+        sd->left_min_relative_size = 0;
+        if (sd->horizontal && (h > 0))
+           sd->left_min_relative_size = sd->left_min_size / (double)h;
+        if (!sd->horizontal && (w > 0))
+           sd->left_min_relative_size = sd->left_min_size / (double)w;
+     }
+   _set_min_size(data);
+}
+
+static void
+_on_resize(void *data,
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
+{
+  _update_fixed_sides(data);
+}
+
 EOLIAN static void
 _elm_panes_evas_object_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
@@ -205,6 +286,17 @@ _elm_panes_evas_object_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,unpress", "*",
      _on_unpressed, obj);
+   evas_object_event_callback_add
+     (wd->resize_obj, EVAS_CALLBACK_RESIZE,
+     _on_resize, obj);
+
+   sd->right_min_size_is_relative = EINA_TRUE;
+   sd->left_min_size_is_relative = EINA_TRUE;
+   sd->right_min_size = 0;
+   sd->left_min_size = 0;
+   sd->right_min_relative_size = 0;
+   sd->left_min_relative_size = 0;
+   _update_fixed_sides(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -329,6 +421,7 @@ _elm_panes_horizontal_set(Eo *obj, Elm_Panes_Data *sd, Eina_Bool horizontal)
 {
    sd->horizontal = horizontal;
    eo_do(obj, elm_obj_widget_theme_apply());
+   _update_fixed_sides(obj);
 
    elm_panes_content_left_size_set(obj, 0.5);
 }
@@ -365,6 +458,66 @@ EOLIAN static Eina_Bool
 _elm_panes_fixed_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *sd)
 {
    return sd->fixed;
+}
+
+EOLIAN static void
+_elm_panes_content_left_min_relative_size_set(Eo *obj, Elm_Panes_Data *_pd, double size)
+{
+   _pd->left_min_relative_size = size;
+   if (_pd->left_min_relative_size < 0) _pd->left_min_relative_size = 0;
+   _pd->left_min_size_is_relative = EINA_TRUE;
+   _update_fixed_sides(obj);
+}
+
+EOLIAN static double
+_elm_panes_content_left_min_relative_size_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd)
+{
+   return _pd->left_min_relative_size;
+}
+
+EOLIAN static void
+_elm_panes_content_right_min_relative_size_set(Eo *obj, Elm_Panes_Data *_pd, double size)
+{
+   _pd->right_min_relative_size = size;
+   if (_pd->right_min_relative_size < 0) _pd->right_min_relative_size = 0;
+   _pd->right_min_size_is_relative = EINA_TRUE;
+   _update_fixed_sides(obj);
+}
+
+EOLIAN static double
+_elm_panes_content_right_min_relative_size_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd)
+{
+   return _pd->right_min_relative_size;
+}
+
+EOLIAN static void
+_elm_panes_content_left_min_size_set(Eo *obj, Elm_Panes_Data *_pd, Evas_Coord size)
+{
+   _pd->left_min_size = size;
+   if (_pd->left_min_size < 0) _pd->left_min_size = 0;
+   _pd->left_min_size_is_relative = EINA_FALSE;
+   _update_fixed_sides(obj);
+}
+
+EOLIAN static Evas_Coord
+_elm_panes_content_left_min_size_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd)
+{
+   return _pd->left_min_size;
+}
+
+EOLIAN static void
+_elm_panes_content_right_min_size_set(Eo *obj, Elm_Panes_Data *_pd, Evas_Coord size)
+{
+   _pd->right_min_size = size;
+   if (_pd->right_min_size < 0) _pd->right_min_size = 0;
+   _pd->right_min_size_is_relative = EINA_FALSE;
+   _update_fixed_sides(obj);
+}
+
+EOLIAN static Evas_Coord
+_elm_panes_content_right_min_size_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd)
+{
+   return _pd->right_min_size;
 }
 
 EOLIAN static Eina_Bool

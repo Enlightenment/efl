@@ -9,6 +9,32 @@ group { name: "elm/panes/vertical/default";
          description { state: "default" 0.0;
          }
       }
+      part { name: "right_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 1 1 1;
+            y: 0 0 0;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "left_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 1 1 1;
+            y: 0 0 0;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "sub_whole"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "left_constraint";
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "right_constraint";
+         }
+      }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
             rel2.to_x: "elm.bar";
@@ -40,7 +66,7 @@ group { name: "elm/panes/vertical/default";
          }
       }
       part { name: "elm.bar"; type: SPACER;
-         dragable { confine: "whole";
+         dragable { confine: "sub_whole";
             x: 1 1 1;
             y: 0 0 0;
          }
@@ -104,6 +130,32 @@ group { name: "elm/panes/horizontal/default";
          description { state: "default" 0.0;
          }
       }
+      part { name: "right_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 0 0 0;
+            y: 1 1 1;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "left_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 0 0 0;
+            y: 1 1 1;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "sub_whole"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel1.to_y: "left_constraint";
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "right_constraint";
+         }
+      }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
             rel2.to_y: "elm.bar";
@@ -135,7 +187,7 @@ group { name: "elm/panes/horizontal/default";
          }
       }
       part { name: "elm.bar"; type: SPACER;
-         dragable { confine: "whole";
+         dragable { confine: "sub_whole";
             x: 0 0 0;
             y: 1 1 1;
          }
@@ -194,12 +246,39 @@ group { name: "elm/panes/horizontal/default";
 
 ////////////////////////////////////////////////////////////////////////////
 
+
 group { name: "elm/panes/vertical/flush";
    images.image: "downlight_glow_left.png" COMP;
    images.image: "downlight_glow_right.png" COMP;
    parts {
       part { name: "whole"; type: SPACER;
          description { state: "default" 0.0;
+         }
+      }
+      part { name: "right_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 1 1 1;
+            y: 0 0 0;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "left_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 1 1 1;
+            y: 0 0 0;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "sub_whole"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "left_constraint";
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "right_constraint";
          }
       }
       part { name: "whole_left"; type: RECT;
@@ -229,7 +308,7 @@ group { name: "elm/panes/vertical/flush";
          }
       }
       part { name: "elm.bar"; type: SPACER;
-         dragable { confine: "whole";
+         dragable { confine: "sub_whole";
             x: 1 1 1;
             y: 0 0 0;
          }
@@ -388,6 +467,32 @@ group { name: "elm/panes/horizontal/flush";
          description { state: "default" 0.0;
          }
       }
+      part { name: "right_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 0 0 0;
+            y: 1 1 1;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "left_constraint"; type: SPACER;
+         dragable { confine: "whole";
+            x: 0 0 0;
+            y: 1 1 1;
+         }
+         description { state: "default" 0.0;
+            max: 0 0;
+         }
+      }
+      part { name: "sub_whole"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel1.to_y: "left_constraint";
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "right_constraint";
+         }
+      }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
             rel2.to_y: "elm.bar";
@@ -415,7 +520,7 @@ group { name: "elm/panes/horizontal/flush";
          }
       }
       part { name: "elm.bar"; type: SPACER;
-         dragable { confine: "whole";
+         dragable { confine: "sub_whole";
             x: 0 0 0;
             y: 1 1 1;
          }
