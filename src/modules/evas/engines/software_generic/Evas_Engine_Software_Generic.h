@@ -1,0 +1,145 @@
+#ifndef EVAS_ENGINE_SOFTWARE_GENERIC_H_
+# define EVAS_ENGINE_SOFTWARE_GENERIC_H_
+
+#include "evas_private.h"
+
+typedef enum _Outbuf_Depth
+{
+   OUTBUF_DEPTH_NONE,
+   OUTBUF_DEPTH_INHERIT,
+
+   /* From X11 */
+   OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED,
+   OUTBUF_DEPTH_RGB_16BPP_555_555_DITHERED,
+   OUTBUF_DEPTH_RGB_16BPP_444_444_DITHERED,
+   OUTBUF_DEPTH_RGB_16BPP_565_444_DITHERED,
+   OUTBUF_DEPTH_RGB_32BPP_888_8888,
+
+   /* From buffer */
+   OUTBUF_DEPTH_ARGB_32BPP_8888_8888,
+   OUTBUF_DEPTH_BGRA_32BPP_8888_8888,
+   OUTBUF_DEPTH_BGR_32BPP_888_8888,
+   OUTBUF_DEPTH_RGB_24BPP_888_888,
+   OUTBUF_DEPTH_BGR_24BPP_888_888,
+
+   OUTBUF_DEPTH_LAST
+} Outbuf_Depth;
+
+typedef enum {
+  MODE_FULL,
+  MODE_COPY,
+  MODE_DOUBLE,
+  MODE_TRIPLE,
+  MODE_QUADRUPLE
+} Render_Engine_Swap_Mode;
+
+typedef struct _Render_Engine_Software_Generic Render_Engine_Software_Generic;
+typedef struct _Outbuf Outbuf;
+
+typedef Render_Engine_Swap_Mode (*Outbuf_Swap_Mode_Get)(Outbuf *ob);
+typedef void (*Outbuf_Reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
+typedef RGBA_Image *(*Outbuf_New_Region_For_Update)(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+typedef void (*Outbuf_Push_Updated_Region)(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
+typedef void (*Outbuf_Idle_Flush)(Outbuf *ob);
+typedef void (*Outbuf_Free_Region_For_Update)(Outbuf *ob, RGBA_Image *update);
+typedef void (*Outbuf_Free)(Outbuf *ob);
+typedef int (*Outbuf_Get_Rot)(Outbuf *ob);
+typedef void (*Outbuf_Flush)(Outbuf *ob);
+
+struct _Render_Engine_Software_Generic
+{
+   Outbuf *ob;
+   Tilebuf *tb;
+   Tilebuf_Rect *rects;
+   Tilebuf_Rect *rects_prev[4];
+   Eina_Inlist *cur_rect;
+
+   Outbuf_Swap_Mode_Get outbuf_swap_mode_get;
+   Outbuf_Get_Rot outbuf_get_rot;
+   Outbuf_Reconfigure outbuf_reconfigure;
+   Outbuf_New_Region_For_Update outbuf_new_region_for_update;
+   Outbuf_Push_Updated_Region outbuf_push_updated_region;
+   Outbuf_Idle_Flush outbuf_idle_flush;
+   Outbuf_Free_Region_For_Update outbuf_free_region_for_update;
+   Outbuf_Free outbuf_free;
+   Outbuf_Flush outbuf_flush;
+
+   unsigned int w, h;
+
+   Render_Engine_Swap_Mode mode;
+
+   unsigned char end : 1;
+   unsigned char lost_back : 1;
+};
+
+static inline Eina_Bool
+evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
+                                         Outbuf *ob,
+                                         Outbuf_Swap_Mode_Get outbuf_swap_mode_get,
+                                         Outbuf_Get_Rot outbuf_get_rot,
+                                         Outbuf_Reconfigure outbuf_reconfigure,
+                                         Outbuf_New_Region_For_Update outbuf_new_region_for_update,
+                                         Outbuf_Push_Updated_Region outbuf_push_updated_region,
+                                         Outbuf_Free_Region_For_Update outbuf_free_region_for_update,
+                                         Outbuf_Idle_Flush outbuf_idle_flush,
+                                         Outbuf_Flush outbuf_flush,
+                                         Outbuf_Free outbuf_free,
+                                         int w, int h)
+{
+   unsigned int i;
+
+   re->ob = ob;
+   re->outbuf_swap_mode_get = outbuf_swap_mode_get;
+   re->outbuf_get_rot = outbuf_get_rot;
+   re->outbuf_reconfigure = outbuf_reconfigure;
+   re->outbuf_new_region_for_update = outbuf_new_region_for_update;
+   re->outbuf_push_updated_region = outbuf_push_updated_region;
+   re->outbuf_idle_flush = outbuf_idle_flush;
+   re->outbuf_free_region_for_update = outbuf_free_region_for_update;
+   re->outbuf_free = outbuf_free;
+   re->outbuf_flush = outbuf_flush;
+
+   re->rects = NULL;
+   for (i = 0; i < 4; i++)
+     re->rects_prev[i] = NULL;
+   re->cur_rect = NULL;
+
+   re->w = w;
+   re->h = h;
+   re->mode = MODE_FULL;
+   re->end = 0;
+   re->lost_back = 0;
+
+   re->tb = evas_common_tilebuf_new(w, h);
+   if (!re->tb) return EINA_FALSE;
+
+   /* in preliminary tests 16x16 gave highest framerates */
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+
+   return EINA_TRUE;
+}
+
+static inline void
+evas_render_engine_software_generic_clean(Render_Engine_Software_Generic *re)
+{
+   if (re->tb) evas_common_tilebuf_free(re->tb);
+   if (re->ob) re->outbuf_free(re->ob);
+
+   if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+   if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
+   if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
+   if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
+   if (re->rects_prev[3]) evas_common_tilebuf_free_render_rects(re->rects_prev[3]);
+
+   memset(re, 0, sizeof (Render_Engine_Software_Generic));
+}
+
+static inline void
+evas_render_engine_software_generic_update(Render_Engine_Software_Generic *re,
+                                           Outbuf *ob)
+{
+   if (re->ob) re->outbuf_free(re->ob);
+   re->ob = ob;
+}
+
+#endif

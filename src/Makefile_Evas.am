@@ -588,12 +588,12 @@ lib/evas/filters/blur/blur_box_rgba_neon.c
 ### Engines
 
 if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
-lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c
+lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 lib_evas_libevas_la_LIBADD +=
 else
 enginesoftwaregenericpkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
 enginesoftwaregenericpkg_LTLIBRARIES = modules/evas/engines/software_generic/module.la
-modules_evas_engines_software_generic_module_la_SOURCES = modules/evas/engines/software_generic/evas_engine.c
+modules_evas_engines_software_generic_module_la_SOURCES = modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \

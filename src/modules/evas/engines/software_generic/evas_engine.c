@@ -16,6 +16,8 @@
 # warning software_generic will not be able to have Evas_GL API.
 #endif
 
+#include "Evas_Engine_Software_Generic.h"
+
 #ifdef EVAS_GL
 //----------------------------------//
 // OSMesa...
@@ -2565,6 +2567,300 @@ eng_gl_api_get(void *data EINA_UNUSED)
 
 //------------------------------------------------//
 
+/* The following function require that any engine
+   inheriting from software generic to have at the
+   top of their render engine structure a
+   Render_Engine_Software_Generic structure that is
+   initialized by evas_render_engine_software_generic_init().
+ */
+
+static void
+eng_output_resize(void *data, int w, int h)
+{
+   Render_Engine_Software_Generic *re;
+
+   re = (Render_Engine_Software_Generic *)data;
+   re->outbuf_reconfigure(re->ob, w, h, re->outbuf_get_rot(re->ob),
+                          OUTBUF_DEPTH_INHERIT);
+   evas_common_tilebuf_free(re->tb);
+   re->tb = evas_common_tilebuf_new(w, h);
+   if (re->tb)
+     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   re->w = w;
+   re->h = h;
+}
+
+static void
+eng_output_tile_size_set(void *data, int w, int h)
+{
+   Render_Engine_Software_Generic *re;
+
+   re = (Render_Engine_Software_Generic *)data;
+   evas_common_tilebuf_set_tile_size(re->tb, w, h);
+}
+
+static void
+eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
+{
+   Render_Engine_Software_Generic *re;
+
+   re = (Render_Engine_Software_Generic *)data;
+   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
+}
+
+static void
+eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
+{
+   Render_Engine_Software_Generic *re;
+
+   re = (Render_Engine_Software_Generic *)data;
+   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
+}
+
+static void
+eng_output_redraws_clear(void *data)
+{
+   Render_Engine_Software_Generic *re;
+
+   re = (Render_Engine_Software_Generic *)data;
+   evas_common_tilebuf_clear(re->tb);
+}
+
+static Tilebuf_Rect *
+_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3, Tilebuf_Rect *r4)
+{
+   Tilebuf_Rect *r, *rects;
+
+   if (r1)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r1), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+   if (r2)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r2), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+   if (r3)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r3), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+
+   if (r4)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r4), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+
+   rects = evas_common_tilebuf_get_render_rects(tb);
+   /*
+   // bounding box -> make a bounding box single region update of all regions.
+   // yes we could try and be smart and figure out size of regions, how far
+   // apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
+   // between multiple update regions to render and total pixels to render.
+   if (rects)
+     {
+        int px1, py1, px2, py2;
+
+        px1 = rects->x; py1 = rects->y;
+        px2 = rects->x + rects->w; py2 = rects->y + rects->h;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+          {
+             if (r->x < px1) px1 = r->x;
+             if (r->y < py1) py1 = r->y;
+             if ((r->x + r->w) > px2) px2 = r->x + r->w;
+             if ((r->y + r->h) > py2) py2 = r->y + r->h;
+          }
+        evas_common_tilebuf_free_render_rects(rects);
+        rects = calloc(1, sizeof(Tilebuf_Rect));
+        if (rects)
+          {
+             rects->x = px1;
+             rects->y = py1;
+             rects->w = px2 - px1;
+             rects->h = py2 - py1;
+          }
+     }
+   */
+   evas_common_tilebuf_clear(tb);
+   return rects;
+}
+
+
+static void *
+eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
+{
+   Render_Engine_Software_Generic *re;
+   RGBA_Image *surface;
+   Tilebuf_Rect *rect;
+   Eina_Bool first_rect = EINA_FALSE;
+
+#define CLEAR_PREV_RECTS(x) \
+   do { \
+      if (re->rects_prev[x]) \
+        evas_common_tilebuf_free_render_rects(re->rects_prev[x]); \
+      re->rects_prev[x] = NULL; \
+   } while (0)
+
+   re = (Render_Engine_Software_Generic *)data;
+   if (re->end)
+     {
+        re->end = 0;
+        return NULL;
+     }
+
+   if (!re->rects)
+     {
+        int mode = MODE_COPY;
+
+        re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+        if (re->rects)
+          {
+             if (re->outbuf_swap_mode_get) mode = re->outbuf_swap_mode_get(re->ob);
+             re->mode = mode;
+             if ((re->lost_back) || (re->mode == MODE_FULL))
+               {
+                  /* if we lost our backbuffer since the last frame redraw all */
+                  re->lost_back = 0;
+                  evas_common_tilebuf_add_redraw(re->tb, 0, 0, re->w, re->h);
+                  evas_common_tilebuf_free_render_rects(re->rects);
+                  re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+               }
+             /* ensure we get rid of previous rect lists we dont need if mode
+              * changed/is appropriate */
+             evas_common_tilebuf_clear(re->tb);
+             CLEAR_PREV_RECTS(3);
+             re->rects_prev[3] = re->rects_prev[2];
+             re->rects_prev[2] = re->rects_prev[1];
+             re->rects_prev[1] = re->rects_prev[0];
+             re->rects_prev[0] = re->rects;
+             re->rects = NULL;
+             switch (re->mode)
+               {
+                case MODE_FULL:
+                case MODE_COPY: // no prev rects needed
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL, NULL);
+                  break;
+                case MODE_DOUBLE: // double mode - only 1 level of prev rect
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL, NULL);
+                  break;
+                case MODE_TRIPLE: // triple mode - 2 levels of prev rect
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], NULL);
+                  break;
+                case MODE_QUADRUPLE: // keep all
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], re->rects_prev[3]);
+                  break;
+                default:
+                  break;
+               }
+             first_rect = EINA_TRUE;
+          }
+        evas_common_tilebuf_clear(re->tb);
+        re->cur_rect = EINA_INLIST_GET(re->rects);
+     }
+   if (!re->cur_rect) return NULL;
+   rect = (Tilebuf_Rect *)re->cur_rect;
+   if (re->rects)
+     {
+        switch (re->mode)
+          {
+           case MODE_COPY:
+           case MODE_DOUBLE:
+           case MODE_TRIPLE:
+           case MODE_QUADRUPLE:
+             rect = (Tilebuf_Rect *)re->cur_rect;
+             *x = rect->x;
+             *y = rect->y;
+             *w = rect->w;
+             *h = rect->h;
+             *cx = rect->x;
+             *cy = rect->y;
+             *cw = rect->w;
+             *ch = rect->h;
+             re->cur_rect = re->cur_rect->next;
+             break;
+           case MODE_FULL:
+             re->cur_rect = NULL;
+             if (x) *x = 0;
+             if (y) *y = 0;
+             if (w) *w = re->w;
+             if (h) *h = re->h;
+             if (cx) *cx = 0;
+             if (cy) *cy = 0;
+             if (cw) *cw = re->w;
+             if (ch) *ch = re->h;
+             break;
+           default:
+             break;
+          }
+        if (first_rect)
+          {
+             // do anything needed fir the first frame
+          }
+        surface = re->outbuf_new_region_for_update(re->ob,
+                                                   *x, *y, *w, *h,
+                                                   cx, cy, cw, ch);
+        if (!re->cur_rect)
+          {
+             re->end = 1;
+          }
+        return surface;
+     }
+   return NULL;
+}
+
+static void
+eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
+{
+   Render_Engine_Software_Generic *re;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+
+   re = (Render_Engine_Software_Generic *)data;
+#if defined(BUILD_PIPE_RENDER)
+   evas_common_pipe_map_begin(surface);
+#endif /* BUILD_PIPE_RENDER */
+   re->outbuf_push_updated_region(re->ob, surface, x, y, w, h);
+   re->outbuf_free_region_for_update(re->ob, surface);
+   evas_common_cpu_end_opt();
+}
+
+static void
+eng_output_flush(void *data, Evas_Render_Mode render_mode)
+{
+   Render_Engine_Software_Generic *re;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+
+   re = (Render_Engine_Software_Generic *)data;
+   if (re->outbuf_flush) re->outbuf_flush(re->ob);
+   if (re->rects)
+     {
+        evas_common_tilebuf_free_render_rects(re->rects);
+        re->rects = NULL;
+     }
+}
+
+static void
+eng_output_idle_flush(void *data)
+{
+   Render_Engine_Software_Generic *re;
+
+   re = (Render_Engine_Software_Generic *)data;
+   if (re->outbuf_idle_flush) re->outbuf_idle_flush(re->ob);
+}
+
+
+//------------------------------------------------//
 
 /*
  *****
@@ -2580,15 +2876,15 @@ static Evas_Func func =
      NULL,
      NULL,
      NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
+     eng_output_resize,
+     eng_output_tile_size_set,
+     eng_output_redraws_rect_add,
+     eng_output_redraws_rect_del,
+     eng_output_redraws_clear,
+     eng_output_redraws_next_update_get,
+     eng_output_redraws_next_update_push,
+     eng_output_flush,
+     eng_output_idle_flush,
      eng_output_dump,
      /* draw context virtual methods */
      eng_context_new,
