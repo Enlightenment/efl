@@ -81,9 +81,10 @@ static void
 _progressbar_destroy_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Progressbar_Data *pd = data;
+   if (!pd) return;
 
    if (pd->timer) ecore_timer_del(pd->timer);
-   if (pd) free(pd);
+   free(pd);
    my_progressbar_test_stop(NULL, NULL, NULL);
    evas_object_del(obj);
 }
