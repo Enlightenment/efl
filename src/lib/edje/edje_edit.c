@@ -2637,7 +2637,32 @@ edje_edit_part_select_mode_set(Evas_Object *obj, const char *part, Edje_Edit_Sel
      return EINA_FALSE;
 
    rp->part->select_mode = (unsigned char) mode;
-     return EINA_TRUE;
+   return EINA_TRUE;
+}
+
+EAPI Edje_Edit_Entry_Mode
+edje_edit_part_entry_mode_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)
+     return EINA_FALSE;
+
+   return (Edje_Edit_Entry_Mode) rp->part->entry_mode;
+}
+
+EAPI Eina_Bool
+edje_edit_part_entry_mode_set(Evas_Object *obj, const char *part, Edje_Edit_Entry_Mode mode)
+{
+   if (mode > EDJE_EDIT_ENTRY_MODE_PASSWORD)
+     return EINA_FALSE;
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)
+     return EINA_FALSE;
+
+   rp->part->entry_mode = (unsigned char) mode;
+   return EINA_TRUE;
 }
 
 EAPI Eina_List *

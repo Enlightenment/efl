@@ -33,7 +33,6 @@
 # endif
 #endif
 
-
 typedef enum _Edje_Edit_Image_Comp
 {
    EDJE_EDIT_IMAGE_COMP_RAW,
@@ -57,6 +56,14 @@ typedef enum _Edje_Edit_Sound_Comp
    EDJE_EDIT_SOUND_COMP_LOSSY,
    EDJE_EDIT_SOUND_COMP_AS_IS
 } Edje_Edit_Sound_Comp;
+
+typedef enum _Edje_Edit_Entry_Mode
+{
+   EDJE_EDIT_ENTRY_MODE_NONE,
+   EDJE_EDIT_ENTRY_MODE_PLAIN,
+   EDJE_EDIT_ENTRY_MODE_EDITABLE,
+   EDJE_EDIT_ENTRY_MODE_PASSWORD
+} Edje_Edit_Entry_Mode;
 
 struct _Edje_Edit_Script_Error
 {
@@ -792,16 +799,17 @@ EAPI Eina_Bool edje_edit_external_del(Evas_Object *obj, const char *external);
  */ //@{
 
 /** Get the select mode for a textblock part
- *
+
  * @param obj Object being edited.
  * @param part Name of the part.
-
+ *
  * @return One of possible enum Edje_Edit_Select_Mode.
+ * @since 1.11
  */
 EAPI Edje_Edit_Select_Mode
 edje_edit_part_select_mode_get(Evas_Object *obj, const char *part);
 
-/** Sets the select mode for a textblock part
+/** Set the select mode for a textblock part
  *
  * @param obj Object being edited.
  * @param part Name of the part.
@@ -809,9 +817,34 @@ edje_edit_part_select_mode_get(Evas_Object *obj, const char *part);
  * EDJE_EDIT_SELECT_MODE_DEFAULT, EDJE_EDIT_SELECT_MODE_EXPLICIT.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool
 edje_edit_part_select_mode_set(Evas_Object *obj, const char *part, Edje_Edit_Select_Mode mode);
+
+/** Get the edit mode for a textblock part
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ *
+ * @return One of possible enum Edje_Entry_Mode.
+ * @since 1.11
+ */
+EAPI Edje_Edit_Entry_Mode
+edje_edit_part_entry_mode_get(Evas_Object *obj, const char *part);
+
+/** Set the edit mode for a textblock part
+ *
+ * @param obj Object being edited.
+ * @param part Name of the part.
+ * @param mode One of possible enum Edje_Entry_Mode:
+ * EDJE_EDIT_ENTRY_MODE_NONE, EDJE_EDIT_ENTRY_MODE_PLAIN, EDJE_EDIT_ENTRY_MODE_EDITABLE, EDJE_EDIT_ENTRY_MODE_PASSWORD.
+
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool
+edje_edit_part_entry_mode_set(Evas_Object *obj, const char *part, Edje_Edit_Entry_Mode mode);
 
 /** Get the list of all the parts in the given edje object.
  *
