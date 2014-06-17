@@ -10132,7 +10132,7 @@ save_free_source:
 }
 
 Eina_Bool
-_edje_edit_internal_save(Evas_Object *obj, int current_only)
+_edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_source)
 {
    Edje_File *ef;
    Eet_File *eetf;
@@ -10269,10 +10269,11 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
            eina_hash_del(eed->program_scripts, &ps->id, ps);
      }
 
-   if (!_edje_edit_source_save(eetf, obj))
-     {
-	eet_close(eetf);
-	return EINA_FALSE;
+   if (generate_source)
+     if (!_edje_edit_source_save(eetf, obj))
+       {
+          eet_close(eetf);
+          return EINA_FALSE;
      }
 
    eet_close(eetf);
@@ -10292,13 +10293,54 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
 EAPI Eina_Bool
 edje_edit_save(Evas_Object *obj)
 {
-   return _edje_edit_internal_save(obj, 1);
+   return _edje_edit_internal_save(obj, 1, EINA_TRUE);
 }
 
 EAPI Eina_Bool
 edje_edit_save_all(Evas_Object *obj)
 {
-   return _edje_edit_internal_save(obj, 0);
+   return _edje_edit_internal_save(obj, 0, EINA_TRUE);
+}
+
+EAPI Eina_Bool
+edje_edit_without_source_save(Evas_Object *obj, Eina_Bool current_group)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   Eet_File *eetf = NULL;
+   SrcFile_List *sfl = NULL;
+
+   if (!_edje_edit_internal_save(obj, current_group, EINA_FALSE))
+     {
+        ERR("Unable save binary data into file");
+        return EINA_FALSE;
+     }
+
+   sfl = _alloc(sizeof(SrcFile_List));
+   if (!sfl)
+     {
+        ERR("Unable to create file list");
+        return EINA_FALSE;
+     }
+   sfl->list = NULL;
+   eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+     {
+        ERR("Error. Unable to open \"%s\" for cleaning source", ed->file->path);
+        free(sfl);
+        return EINA_FALSE;
+     }
+   source_edd();
+   if (eet_data_write(eetf, _srcfile_list_edd, "edje_sources", sfl, 1) <= 0)
+    {
+       ERR("Unable to clean edc source from edj file");
+       free(sfl);
+       eet_close(eetf);
+       return EINA_FALSE;
+    }
+
+   free(sfl);
+   eet_close(eetf);
+   return EINA_TRUE;
 }
 
 EAPI void

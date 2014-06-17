@@ -197,6 +197,28 @@ EAPI Eina_Bool edje_edit_save(Evas_Object *obj);
  */
 EAPI Eina_Bool edje_edit_save_all(Evas_Object *obj);
 
+/** Save the group(s) back to the file, without generation source code.
+ *
+ * This function saves changes in group(s) back into the edj file. Process of
+ * saving takes a bit time in compare with @edje_edit_save and @edje_edit_save_all,
+ * because this function DOES NOT generate source code for groups.
+ *
+ * @note With using this function all source code will be erased. And DOES NOT
+ * generated new code. In attempt to decompile edj file, wich was saved with
+ * using this functions will unpacked only resources(like fonts, images, sounds).
+ * If needed saving source code into file, please use  @edje_edit_save or
+ * @edje_edit_save_all.
+
+ * @param obj Object to save back to the file it was loaded from.
+ * @param current_group EINA_TRUE if needed save only group which loaded with obj,
+ * or EINA_FALSE for save all groups, which exists in edj file.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ */
+EAPI Eina_Bool
+edje_edit_without_source_save(Evas_Object *obj, Eina_Bool current_group);
+
 /** Print on standard output many information about the internal status
  * of the edje object.
  *
