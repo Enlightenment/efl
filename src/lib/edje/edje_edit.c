@@ -3900,7 +3900,7 @@ edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *i
 {
    Edje_Part *ep;
    unsigned int i;
-   Edje_Pack_Element *item;
+   Edje_Pack_Element *item = NULL;
 
    GET_RP_OR_RETURN(EINA_FALSE);
 
@@ -3938,7 +3938,7 @@ edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *i
 {
    Edje_Part *ep;
    unsigned int i;
-   Edje_Pack_Element *item;
+   Edje_Pack_Element *item = NULL;
 
    GET_RP_OR_RETURN(NULL);
 
