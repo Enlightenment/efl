@@ -1224,7 +1224,7 @@ _zoom_bring_with_animation(Elm_Map_Data *sd,
 {
    double tlon, tlat;
    Evas_Coord vx, vy, vw, vh;
-   if ((zoom_cnt == 0) && (region_cnt == 0)) return;
+   if ((zoom_cnt == 0) || (region_cnt == 0)) return;
 
    sd->ani.zoom_cnt = zoom_cnt;
    sd->ani.zoom = sd->zoom;
