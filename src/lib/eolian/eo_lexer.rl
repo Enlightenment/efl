@@ -67,7 +67,7 @@ eo_tokenizer_shutdown()
 }
 
 static void
-_eo_tokenizer_abort(Eo_Tokenizer *toknz,
+_eo_tokenizer_abort(Eo_Lexer *toknz,
                     const char *file, const char* fct, int line,
                     const char *fmt, ...)
 {
@@ -130,7 +130,7 @@ static void _eo_tokenizer_normalize_buf(char *buf)
 }
 
 static const char*
-_eo_tokenizer_token_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_token_get(Eo_Lexer *toknz, char *p)
 {
    if (toknz->saved.tok == NULL) ABORT(toknz, "toknz->saved.tok is NULL");
    char d[BUFSIZE];
@@ -144,7 +144,7 @@ _eo_tokenizer_token_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Class_Def*
-_eo_tokenizer_class_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_class_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Class_Def *kls = calloc(1, sizeof(Eo_Class_Def));
    if (kls == NULL) ABORT(toknz, "calloc Eo_Class_Def failure");
@@ -155,7 +155,7 @@ _eo_tokenizer_class_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Type_Def*
-_eo_tokenizer_type_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_type_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
    if (def == NULL) ABORT(toknz, "calloc Eo_Type_Def failure");
@@ -166,7 +166,7 @@ _eo_tokenizer_type_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Property_Def*
-_eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_property_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Property_Def *prop = calloc(1, sizeof(Eo_Property_Def));
    if (prop == NULL) ABORT(toknz, "calloc Eo_Property_Def failure");
@@ -179,7 +179,7 @@ _eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Method_Def*
-_eo_tokenizer_method_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_method_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Method_Def *meth = calloc(1, sizeof(Eo_Method_Def));
    if (meth == NULL) ABORT(toknz, "calloc Eo_Method_Def failure");
@@ -192,7 +192,7 @@ _eo_tokenizer_method_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static int
-_eo_tokenizer_scope_get(Eo_Tokenizer *toknz, EINA_UNUSED char *p)
+_eo_tokenizer_scope_get(Eo_Lexer *toknz, EINA_UNUSED char *p)
 {
    if (!strncmp(toknz->saved.tok, "protected ", 10))
      return FUNC_PROTECTED;
@@ -201,7 +201,7 @@ _eo_tokenizer_scope_get(Eo_Tokenizer *toknz, EINA_UNUSED char *p)
 }
 
 static Eo_Param_Def*
-_eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_param_get(Eo_Lexer *toknz, char *p)
 {
    char *s;
 
@@ -266,7 +266,7 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Ret_Def*
-_eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_return_get(Eo_Lexer *toknz, char *p)
 {
    char *s;
 
@@ -319,7 +319,7 @@ _eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Accessor_Param*
-_eo_tokenizer_accessor_param_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_accessor_param_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Accessor_Param *param = calloc(1, sizeof(Eo_Accessor_Param));
    if (param == NULL) ABORT(toknz, "calloc Eo_Accessor_Param failure");
@@ -334,7 +334,7 @@ _eo_tokenizer_accessor_param_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Accessor_Def *
-_eo_tokenizer_accessor_get(Eo_Tokenizer *toknz, Eo_Accessor_Type type)
+_eo_tokenizer_accessor_get(Eo_Lexer *toknz, Eo_Accessor_Type type)
 {
    Eo_Accessor_Def *accessor = calloc(1, sizeof(Eo_Accessor_Def));
    if (accessor == NULL) ABORT(toknz, "calloc Eo_Accessor_Def failure");
@@ -345,7 +345,7 @@ _eo_tokenizer_accessor_get(Eo_Tokenizer *toknz, Eo_Accessor_Type type)
 }
 
 static Eo_Event_Def*
-_eo_tokenizer_event_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_event_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Event_Def *sgn = calloc(1, sizeof(Eo_Event_Def));
    if (sgn == NULL) ABORT(toknz, "calloc Eo_Event_Def failure");
@@ -356,7 +356,7 @@ _eo_tokenizer_event_get(Eo_Tokenizer *toknz, char *p)
 }
 
 static Eo_Implement_Def*
-_eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
+_eo_tokenizer_implement_get(Eo_Lexer *toknz, char *p)
 {
    Eo_Implement_Def *impl = calloc(1, sizeof(Eo_Implement_Def));
    if (impl == NULL) ABORT(toknz, "calloc Eo_Implement_Def failure");
@@ -996,7 +996,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 }%%
 
 Eina_Bool
-eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
+eo_tokenizer_walk(Eo_Lexer *toknz, const char *source)
 {
    INF("tokenize %s...", source);
    toknz->source = eina_stringshare_add(source);
@@ -1080,7 +1080,7 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
 }
 
 static Eina_Bool
-eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, unsigned int len)
+eo_tokenizer_mem_walk(Eo_Lexer *toknz, const char *source, char *buffer, unsigned int len)
 {
    INF("tokenize %s...", source);
    toknz->source = eina_stringshare_add(source);
@@ -1106,10 +1106,10 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
    return ret;
 }
 
-Eo_Tokenizer*
+Eo_Lexer*
 eo_tokenizer_get(void)
 {
-   Eo_Tokenizer *toknz = calloc(1, sizeof(Eo_Tokenizer));
+   Eo_Lexer *toknz = calloc(1, sizeof(Eo_Lexer));
    if (!toknz) return NULL;
 
    toknz->ts = NULL;
@@ -1132,7 +1132,7 @@ static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter" };
 static char *_param_way_str[PARAM_WAY_LAST] = { "IN", "OUT", "INOUT" };
 
 void
-eo_tokenizer_dump(Eo_Tokenizer *toknz)
+eo_tokenizer_dump(Eo_Lexer *toknz)
 {
    const char *s;
    Eina_List *k, *l, *m;
@@ -1343,7 +1343,7 @@ eo_tokenizer_database_fill(const char *filename)
    FILE *stream = NULL;
    char *buffer = NULL;
 
-   Eo_Tokenizer *toknz = eo_tokenizer_get();
+   Eo_Lexer *toknz = eo_tokenizer_get();
    if (!toknz)
      {
         ERR("can't create eo_tokenizer");
@@ -1586,7 +1586,7 @@ end:
 }
 
 void
-eo_tokenizer_free(Eo_Tokenizer *toknz)
+eo_tokenizer_free(Eo_Lexer *toknz)
 {
    Eo_Class_Def *kls;
    Eo_Type_Def *type;

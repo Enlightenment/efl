@@ -53,19 +53,19 @@ typedef struct _eo_tokenizer
       int fscope;
    } tmp;
 
-} Eo_Tokenizer;
+} Eo_Lexer;
 
 int eo_tokenizer_init();
 
 int eo_tokenizer_shutdown();
 
-Eo_Tokenizer* eo_tokenizer_get(void);
+Eo_Lexer* eo_tokenizer_get(void);
 
-Eina_Bool eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source);
+Eina_Bool eo_tokenizer_walk(Eo_Lexer *toknz, const char *source);
 
-void eo_tokenizer_dump(Eo_Tokenizer *toknz);
+void eo_tokenizer_dump(Eo_Lexer *toknz);
 
-void eo_tokenizer_free(Eo_Tokenizer *toknz);
+void eo_tokenizer_free(Eo_Lexer *toknz);
 
 Eina_Bool eo_tokenizer_database_fill(const char *filename);
 
