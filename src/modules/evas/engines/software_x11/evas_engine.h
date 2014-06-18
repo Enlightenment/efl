@@ -18,6 +18,8 @@
 #  include <xcb/xcb_image.h>
 # endif
 
+#include "../software_generic/Evas_Engine_Software_Generic.h"
+
 extern int _evas_engine_soft_x11_log_dom;
 
 # ifdef ERR
@@ -45,30 +47,6 @@ extern int _evas_engine_soft_x11_log_dom;
 # endif
 # define CRI(...) \
    EINA_LOG_DOM_CRIT(_evas_engine_soft_x11_log_dom, __VA_ARGS__)
-
-typedef enum _Outbuf_Depth Outbuf_Depth;
-
-enum _Outbuf_Depth
-{
-   OUTBUF_DEPTH_NONE,
-   OUTBUF_DEPTH_INHERIT,
-   OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_555_555_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_444_444_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_565_444_DITHERED,
-   OUTBUF_DEPTH_RGB_32BPP_888_8888,
-   OUTBUF_DEPTH_LAST
-};
-
-enum {
-   MODE_FULL,
-   MODE_COPY,
-   MODE_DOUBLE,
-   MODE_TRIPLE,
-   MODE_QUADRUPLE
-};
-
-typedef struct _Outbuf Outbuf;
 
 struct _Outbuf
 {

@@ -591,10 +591,10 @@ evas_software_xlib_swapbuf_alpha_get(Outbuf *buf)
    return buf->priv.destination_alpha;
 }
 
-int
+Render_Engine_Swap_Mode
 evas_software_xlib_swapbuf_buffer_state_get(Outbuf *buf)
 {
-   int mode;
+   Render_Engine_Swap_Mode mode;
    if (!buf->priv.swapper) return MODE_FULL;
    mode = evas_xlib_swapper_buffer_state_get(buf->priv.swapper);
    return mode;
