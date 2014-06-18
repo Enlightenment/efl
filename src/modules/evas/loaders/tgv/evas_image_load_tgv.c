@@ -162,7 +162,8 @@ evas_image_load_file_head_tgv(void *loader_data,
                               int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   const char *m;
+   Eina_Bool ret = EINA_FALSE;
+   char *m;
 
    m = eina_file_map_all(loader->f, EINA_FILE_SEQUENTIAL);
    if (!m)
@@ -174,7 +175,7 @@ evas_image_load_file_head_tgv(void *loader_data,
    if (strncmp(m, "TGV1", 4) != 0)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return EINA_FALSE;
+        goto on_error;
      }
 
    switch (m[OFFSET_ALGORITHM] & 0xFF)
@@ -196,7 +197,7 @@ evas_image_load_file_head_tgv(void *loader_data,
         break;
       default:
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return EINA_FALSE;
+        goto on_error;
      }
 
    loader->compress = m[OFFSET_OPTIONS] & 0x1;
@@ -232,14 +233,18 @@ evas_image_load_file_head_tgv(void *loader_data,
         if (!eina_rectangle_intersection(&loader->region, &r))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
-             return EINA_FALSE;
+             goto on_error;
           }
      }
 
    prop->w = loader->size.width;
    prop->h = loader->size.height;
 
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+on_error:
+   eina_file_map_free(loader->f, m);
+   return ret;
 }
 
 static inline unsigned int
