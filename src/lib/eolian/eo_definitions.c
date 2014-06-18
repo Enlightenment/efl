@@ -2,11 +2,11 @@
 #include <stdlib.h>
 
 #include "eo_definitions.h"
+#include "eolian_database.h"
 
 static void
 eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
-   if (ret->type) eina_stringshare_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
    if (ret->dflt_ret_val) eina_stringshare_del(ret->dflt_ret_val);
    free(ret);
@@ -15,7 +15,6 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 static void
 eo_definitions_param_free(Eo_Param_Def *param)
 {
-   if (param->type) eina_stringshare_del(param->type);
    if (param->name) eina_stringshare_del(param->name);
    if (param->comment) eina_stringshare_del(param->comment);
    free(param);
@@ -117,8 +116,6 @@ eo_definitions_type_def_free(Eo_Type_Def *type)
 {
    if (type->alias)
      eina_stringshare_del(type->alias);
-   if (type->type)
-     eina_stringshare_del(type->type);
 
    free(type);
 }
@@ -212,4 +209,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    if (tmp->impl)
       eo_definitions_impl_def_free(tmp->impl);
+
+   if (tmp->type)
+      database_type_del(tmp->type);
 }

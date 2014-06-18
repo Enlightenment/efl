@@ -8,7 +8,7 @@
 
 typedef struct _eo_ret_def
 {
-   const char *type;
+   Eolian_Type type;
    const char *comment;
    const char *dflt_ret_val;
    Eina_Bool warn_unused:1;
@@ -27,7 +27,7 @@ typedef enum _param_way
 typedef struct _eo_param_def
 {
    Param_Way way;
-   const char *type;
+   Eolian_Type type;
    const char *name;
    const char *comment;
    Eina_Bool nonull:1;
@@ -127,7 +127,7 @@ typedef struct _eo_class_def
 typedef struct _eo_type_def
 {
    const char *alias;
-   const char *type;
+   Eolian_Type type;
 } Eo_Type_Def;
 
 /* TEMPS */
@@ -148,6 +148,7 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *str_items;
    Eo_Event_Def *event;
    Eo_Implement_Def *impl;
+   Eolian_Type type;
 } Eo_Lexer_Temps;
 
 void eo_definitions_class_def_free(Eo_Class_Def *kls);

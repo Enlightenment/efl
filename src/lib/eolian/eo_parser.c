@@ -128,21 +128,22 @@ parse_name_list(Eo_Lexer *ls)
    return ls->tmp.str_items;
 }
 
-static void
-parse_type(Eo_Lexer *ls, Eina_Strbuf *buf)
+static Eina_Inlist *
+parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
 {
    Eina_Bool has_struct = EINA_FALSE, need_space = EINA_FALSE;
+   Eina_Bool is_own = EINA_FALSE;
+   Eina_Strbuf *buf = sbuf ? sbuf : push_strbuf(ls);
 
    if (ls->t.kw == KW_at_own)
      {
-        eina_strbuf_append(buf, "@own");
+        if (sbuf) eina_strbuf_append(buf, "@own ");
+        is_own = EINA_TRUE;
         eo_lexer_get(ls);
-        need_space = EINA_TRUE;
      }
 
    if (ls->t.kw == KW_const)
      {
-        if (need_space) eina_strbuf_append_char(buf, ' ');
         eina_strbuf_append(buf, "const");
         eo_lexer_get(ls);
         need_space = EINA_TRUE;
@@ -205,30 +206,37 @@ parse_type(Eo_Lexer *ls, Eina_Strbuf *buf)
           }
      }
 
+   if (!sbuf)
+     {
+        types = database_type_append(types, eina_strbuf_string_get(buf), is_own);
+        ls->tmp.type = types;
+        pop_strbuf(ls);
+     }
+
    if (ls->t.token == '<')
      {
         int line = ls->line_number;
-        eina_strbuf_append(buf, " <");
+        if (sbuf) eina_strbuf_append(buf, " <");
         eo_lexer_get(ls);
-        parse_type(ls, buf);
+        types = parse_type(ls, types, sbuf);
         check_match(ls, '>', '<', line);
-        eina_strbuf_append_char(buf, '>');
+        if (sbuf) eina_strbuf_append_char(buf, '>');
      }
+
+  return types;
 }
 
 static void
 parse_typedef(Eo_Lexer *ls)
 {
-   Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.type_def = calloc(1, sizeof(Eo_Type_Def));
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
    ls->tmp.type_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    test_next(ls, ':');
-   parse_type(ls, buf);
-   ls->tmp.type_def->type = eina_stringshare_add(eina_strbuf_string_get(buf));
-   pop_strbuf(ls);
+   ls->tmp.type_def->type = parse_type(ls, NULL, NULL);
+   ls->tmp.type = NULL;
    check_next(ls, ';');
 }
 
@@ -236,12 +244,10 @@ static void
 parse_return(Eo_Lexer *ls)
 {
    Eo_Ret_Def *ret = calloc(1, sizeof(Eo_Ret_Def));
-   Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.ret_def = ret;
    eo_lexer_get(ls);
-   parse_type(ls, buf);
-   ret->type = eina_stringshare_add(eina_strbuf_string_get(buf));
-   pop_strbuf(ls);
+   ret->type = parse_type(ls, NULL, NULL);
+   ls->tmp.type = NULL;
    if (ls->t.token == '(')
      {
         int line = ls->line_number;
@@ -268,7 +274,6 @@ static void
 parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
 {
    Eo_Param_Def *par = calloc(1, sizeof(Eo_Param_Def));
-   Eina_Strbuf *buf = NULL;
    ls->tmp.param = par;
    if (allow_inout)
      {
@@ -290,10 +295,8 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
         else
            par->way = PARAM_IN;
      }
-   buf = push_strbuf(ls);
-   parse_type(ls, buf);
-   par->type = eina_stringshare_add(eina_strbuf_string_get(buf));
-   pop_strbuf(ls);
+   par->type = parse_type(ls, NULL, NULL);
+   ls->tmp.type = NULL;
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
@@ -748,7 +751,7 @@ parse_event(Eo_Lexer *ls)
         int line = ls->line_number;
         eo_lexer_get(ls);
         buf = push_strbuf(ls);
-        parse_type(ls, buf);
+        parse_type(ls, NULL, buf);
         ev->type = eina_stringshare_add(eina_strbuf_string_get(buf));
         pop_strbuf(ls);
         check_match(ls, ')', '(', line);
@@ -1024,6 +1027,23 @@ parse_chunk(Eo_Lexer *ls)
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
 static char *    _param_way_str[    PARAM_WAY_LAST] = { "IN", "OUT", "INOUT" };
 
+static void
+_print_type(FILE *f, Eolian_Type tp)
+{
+   const char *type;
+   Eina_Bool   own;
+   Eolian_Type ntp = eolian_type_information_get(tp, &type, &own);
+   if (own)
+      fputs("@own ", f);
+   fputs(type, f);
+   if (ntp)
+     {
+        fputc('<', f);
+        _print_type(f, ntp);
+        fputc('>', f);
+     }
+}
+
 void
 eo_parser_dump(Eo_Lexer *ls)
 {
@@ -1059,13 +1079,17 @@ eo_parser_dump(Eo_Lexer *ls)
           {
              printf("  constructors: %s\n", meth->name);
              if (meth->ret)
-                printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
+               {
+                  printf("    return: ");
+                  _print_type(stdout, meth->ret->type);
+                  printf(" (%s)\n", meth->ret->comment);
+               }
              printf("    legacy : %s\n", meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  printf("    param: %s %s : %s (%s)\n",
-                         _param_way_str[param->way], param->name,
-                         param->type, param->comment);
+                  printf("    param: %s %s : ", _param_way_str[param->way], param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
                }
           }
 
@@ -1074,20 +1098,22 @@ eo_parser_dump(Eo_Lexer *ls)
              printf("  property: %s\n", prop->name);
              EINA_LIST_FOREACH(prop->keys, m, param)
                {
-                  printf("    key: %s : %s (%s)\n",
-                         param->name, param->type, param->comment);
+                  printf("    key: %s : ", param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
                }
              EINA_LIST_FOREACH(prop->values, m, param)
                {
-                  printf("    value: %s : %s (%s)\n",
-                         param->name, param->type, param->comment);
+                  printf("    value: %s : ", param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
-                  printf("    accessor: %s : %s (%s)\n",
-                         (accessor->ret?accessor->ret->type:""),
-                         _accessor_type_str[accessor->type],
-                         accessor->comment);
+                  printf("    accessor: ");
+                  if (accessor->ret)
+                     _print_type(stdout, accessor->ret->type);
+                  printf(" : %s (%s)\n", _accessor_type_str[accessor->type], accessor->comment);
                   printf("      legacy : %s\n", accessor->legacy);
                }
           }
@@ -1096,129 +1122,28 @@ eo_parser_dump(Eo_Lexer *ls)
           {
              printf("  method: %s\n", meth->name);
              if (meth->ret)
-                printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
+               {
+                  printf("    return: ");
+                  _print_type(stdout, meth->ret->type);
+                  printf(" (%s)\n", meth->ret->comment);
+               }
              printf("    legacy : %s\n", meth->legacy);
              printf("    obj_const : %s\n", meth->obj_const?"true":"false");
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  printf("    param: %s %s : %s (%s)\n",
-                         _param_way_str[param->way], param->name,
-                         param->type, param->comment);
+                  printf("    param: %s %s : ", _param_way_str[param->way], param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
                }
           }
      }
 
    EINA_LIST_FOREACH(ls->typedefs, k, type)
      {
-        printf("Typedef: %s (%s)\n", type->alias, type->type);
+        printf("Typedef: %s ", type->alias);
+        _print_type(stdout, type->type);
+        printf("\n");
      }
-}
-
-static Eina_Inlist *
-_types_extract(const char *buf, int len)
-{
-   const char *save_buf = buf;
-   Eolian_Type types = NULL;
-   long depth = 0;
-   char *tmp_type = malloc(2 * len + 1);
-
-   while (len > 0)
-     {
-        char *d = tmp_type;
-        Eina_Bool end_type = EINA_FALSE;
-        Eina_Bool is_own = EINA_FALSE;
-        char c;
-        Eina_Bool in_spaces = EINA_TRUE, in_stars = EINA_FALSE;
-        while (len > 0 && !end_type)
-          {
-             switch (c = *buf++)
-               {
-                /* @own */
-                case '@':
-                     {
-                        if (!strncmp(buf, "own ", 4))
-                          {
-                             is_own = EINA_TRUE;
-                             buf += 4; len -= 4;
-                          }
-                        break;
-                     }
-                /* if '*', we have to add a space. We set in_spaces to true in
-                 * case spaces are between stars, to be sure we remove them.
-                 */
-                case '*':
-                     {
-                        if (!in_stars && !in_spaces)
-                          {
-                             *d++ = ' ';
-                             in_stars = EINA_TRUE;
-                             in_spaces = EINA_TRUE;
-                          }
-                        *d++ = c;
-                        break;
-                     }
-                /* Only the first space is inserted. */
-                case ' ':
-                     {
-                        if (!in_spaces) *d++ = c;
-                        in_spaces = EINA_TRUE;
-                        break;
-                     }
-                case '<':
-                     {
-                        if (depth < 0)
-                          {
-                             ERR("%s: Cannot reopen < after >", save_buf);
-                             goto error;
-                          }
-                        depth++;
-                        end_type = EINA_TRUE;
-                        break;
-                     }
-                case '>':
-                     {
-                        if (depth == 0)
-                          {
-                             ERR("%s: Too much >", save_buf);
-                             goto error;
-                          }
-                        if (depth > 0 && d == tmp_type)
-                          {
-                             ERR("%s: empty type inside <>", save_buf);
-                             goto error;
-                          }
-                        if (depth > 0) depth *= -1;
-                        depth++;
-                        end_type = EINA_TRUE;
-                        break;
-                     }
-                default:
-                     {
-                        *d++ = c;
-                        in_spaces = EINA_FALSE;
-                        in_stars = EINA_FALSE;
-                     }
-               }
-             len--;
-          }
-        if (d != tmp_type)
-          {
-             *d = '\0';
-             types = database_type_append(types, tmp_type, is_own);
-          }
-     }
-   if (depth)
-     {
-        ERR("%s: < and > are not well used.", save_buf);
-        goto error;
-     }
-   goto success;
-error:
-   database_type_del(types);
-   types = NULL;
-success:
-   free(tmp_type);
-   return types;
 }
 
 Eina_Bool
@@ -1296,8 +1221,7 @@ eo_parser_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
-                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, type, param->name, param->comment);
+                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
                }
           }
 
@@ -1307,16 +1231,14 @@ eo_parser_database_fill(const char *filename)
              database_function_scope_set(foo_id, prop->scope);
              EINA_LIST_FOREACH(prop->keys, m, param)
                {
-                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
                   Eolian_Function_Parameter p = database_property_key_add(
-                        foo_id, type, param->name, param->comment);
+                        foo_id, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
                }
              EINA_LIST_FOREACH(prop->values, m, param)
                {
-                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
                   Eolian_Function_Parameter p = database_property_value_add(
-                        foo_id, type, param->name, param->comment);
+                        foo_id, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
@@ -1326,8 +1248,7 @@ eo_parser_database_fill(const char *filename)
                     {
                        Eolian_Function_Type ftype =
                           accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
-                       Eolian_Type types = _types_extract(accessor->ret->type, strlen(accessor->ret->type));
-                       database_function_return_type_set(foo_id, ftype, types);
+                       database_function_return_type_set(foo_id, ftype, accessor->ret->type);
                        database_function_return_comment_set(foo_id,
                              ftype, accessor->ret->comment);
                        database_function_return_flag_set_as_warn_unused(foo_id,
@@ -1371,8 +1292,7 @@ eo_parser_database_fill(const char *filename)
              database_class_function_add(class, foo_id);
              if (meth->ret)
                {
-                  Eolian_Type types = _types_extract(meth->ret->type, strlen(meth->ret->type));
-                  database_function_return_type_set(foo_id, EOLIAN_METHOD, types);
+                  database_function_return_type_set(foo_id, EOLIAN_METHOD, meth->ret->type);
                   database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
                   database_function_return_flag_set_as_warn_unused(foo_id,
                         EOLIAN_METHOD, meth->ret->warn_unused);
@@ -1384,9 +1304,8 @@ eo_parser_database_fill(const char *filename)
              database_function_object_set_as_const(foo_id, meth->obj_const);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
                   Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
-                        (Eolian_Parameter_Dir)param->way, type, param->name, param->comment);
+                        (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
                }
           }
@@ -1444,7 +1363,7 @@ eo_parser_database_fill(const char *filename)
 
    EINA_LIST_FOREACH(ls->typedefs, k, type_def)
      {
-        database_type_add(type_def->alias, _types_extract(type_def->type, strlen(type_def->type)));
+        database_type_add(type_def->alias, type_def->type);
      }
 
    ret = EINA_TRUE;
