@@ -49,7 +49,6 @@ typedef struct _eo_tokenizer
       Eina_List *str_items;
       Eo_Event_Def *event;
       Eo_Implement_Def *impl;
-      Eo_Implement_Legacy_Param_Def *impl_leg_param;
       int fscope;
    } tmp;
 

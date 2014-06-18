@@ -8,7 +8,7 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
    if (ret->type) eina_stringshare_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
-   if (ret->dflt_ret_val) free(ret->dflt_ret_val);
+   if (ret->dflt_ret_val) eina_stringshare_del(ret->dflt_ret_val);
    free(ret);
 }
 
@@ -127,7 +127,6 @@ void
 eo_definitions_class_def_free(Eo_Class_Def *kls)
 {
    const char *s;
-   Eina_List *l;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eo_Event_Def *sgn;
@@ -144,7 +143,7 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    if (kls->data_type)
      eina_stringshare_del(kls->data_type);
 
-   EINA_LIST_FOREACH(kls->inherits, l, s)
+   EINA_LIST_FREE(kls->inherits, s)
       if (s) eina_stringshare_del(s);
 
    EINA_LIST_FREE(kls->implements, impl)
@@ -165,3 +164,52 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    free(kls);
 }
 
+void
+eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
+{
+   Eina_Strbuf *buf;
+   Eo_Param_Def *par;
+   const char *s;
+
+   EINA_LIST_FREE(tmp->str_bufs, buf)
+      eina_strbuf_free(buf);
+
+   EINA_LIST_FREE(tmp->params, par)
+      eo_definitions_param_free(par);
+
+   if (tmp->legacy_def)
+      eina_stringshare_del(tmp->legacy_def);
+
+   if (tmp->kls)
+      eo_definitions_class_def_free(tmp->kls);
+
+   if (tmp->ret_def)
+      eo_definitions_ret_free(tmp->ret_def);
+
+   if (tmp->type_def)
+      eo_definitions_type_def_free(tmp->type_def);
+
+   if (tmp->prop)
+      eo_definitions_property_def_free(tmp->prop);
+
+   if (tmp->meth)
+      eo_definitions_method_def_free(tmp->meth);
+
+   if (tmp->param)
+      eo_definitions_param_free(tmp->param);
+
+   if (tmp->accessor)
+      eo_definitions_accessor_free(tmp->accessor);
+
+   if (tmp->accessor_param)
+      eo_definitions_accessor_param_free(tmp->accessor_param);
+
+   EINA_LIST_FREE(tmp->str_items, s)
+      if (s) eina_stringshare_del(s);
+
+   if (tmp->event)
+      eo_definitions_event_def_free(tmp->event);
+
+   if (tmp->impl)
+      eo_definitions_impl_def_free(tmp->impl);
+}

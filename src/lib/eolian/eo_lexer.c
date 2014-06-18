@@ -301,7 +301,8 @@ _eo_tokenizer_return_get(Eo_Lexer *toknz, char *p)
         ret_val = malloc(end - s + 2); /* string + '\0' */
         memcpy(ret_val, s, end - s + 1);
         ret_val[end - s + 1] = '\0';
-        ret->dflt_ret_val = ret_val;
+        ret->dflt_ret_val = eina_stringshare_add(ret_val);
+        free(ret_val);
         memset(s, ' ', end - s + 1);
      }
    *p = ';';
