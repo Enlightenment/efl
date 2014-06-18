@@ -29,19 +29,13 @@ evas_buffer_outbuf_buf_free(Outbuf *buf)
    free(buf);
 }
 
-Outbuf *
-evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
-				void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
-				void   (*free_update_region) (int x, int y, int w, int h, void *data),
-				void * (*switch_buffer) (void *data, void *dest_buffer),
-				void *switch_data
-				)
+void
+evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
+                                void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
+                                void   (*free_update_region) (int x, int y, int w, int h, void *data),
+                                void * (*switch_buffer) (void *data, void *dest_buffer),
+                                void *switch_data)
 {
-   Outbuf *buf;
-   
-   buf = calloc(1, sizeof(Outbuf));
-   if (!buf) return NULL;
-
    buf->w = w;
    buf->h = h;
    buf->depth = depth;
@@ -92,6 +86,33 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
                                                                   buf->dest,
                                                                   0, EVAS_COLORSPACE_ARGB8888);
      }
+}
+
+Outbuf *
+evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
+                                void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
+                                void   (*free_update_region) (int x, int y, int w, int h, void *data),
+                                void * (*switch_buffer) (void *data, void *dest_buffer),
+                                void *switch_data)
+{
+   Outbuf *buf;
+
+   buf = calloc(1, sizeof(Outbuf));
+   if (!buf) return NULL;
+
+   evas_buffer_outbuf_buf_update_fb(buf,
+                                    w,
+                                    h,
+                                    depth,
+                                    dest,
+                                    dest_row_bytes,
+                                    use_color_key,
+                                    color_key,
+                                    alpha_level,
+                                    new_update_region,
+                                    free_update_region,
+                                    switch_buffer,
+                                    switch_data);
 
    return buf;
 }
@@ -416,4 +437,56 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
       default:
 	break;
      }
+}
+
+void
+evas_buffer_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot EINA_UNUSED, Outbuf_Depth depth)
+{
+   void    *dest;
+   int      dest_row_bytes;
+   int      alpha_level;
+   DATA32   color_key;
+   char     use_color_key;
+   void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
+   void   (*free_update_region) (int x, int y, int w, int h, void *data);
+   void * (*switch_buffer) (void *switch_data, void *dest);
+   void    *switch_data;
+
+   if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
+   dest = ob->dest;
+   dest_row_bytes = ob->dest_row_bytes;
+   alpha_level = ob->alpha_level;
+   color_key = ob->color_key;
+   use_color_key = ob->use_color_key;
+   new_update_region = ob->func.new_update_region;
+   free_update_region = ob->func.free_update_region;
+   switch_buffer = ob->func.switch_buffer;
+   switch_data = ob->switch_data;
+
+   evas_buffer_outbuf_buf_update_fb(ob,
+                                    w,
+                                    h,
+                                    depth,
+                                    dest,
+                                    dest_row_bytes,
+                                    use_color_key,
+                                    color_key,
+                                    alpha_level,
+                                    new_update_region,
+                                    free_update_region,
+                                    switch_buffer,
+                                    switch_data);
+}
+
+Render_Engine_Swap_Mode
+evas_buffer_outbuf_buf_swap_mode_get(Outbuf *ob)
+{
+   if (ob->func.switch_buffer) return MODE_DOUBLE;
+   return MODE_FULL;
+}
+
+int
+evas_buffer_outbuf_buf_rot_get(Outbuf *buf EINA_UNUSED)
+{
+   return 0;
 }
