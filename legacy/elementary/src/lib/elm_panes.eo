@@ -68,7 +68,7 @@ class Elm_Panes (Elm_Layout)
          }
          values {
             Eina_Bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to split panes
-            horizontally ("top" and  "bottom" contents). @c EINA_FALSE to make it
+            horizontally ("top" and "bottom" contents). @c EINA_FALSE to make it
             vertically ("left" and "right" contents) */
          }
       }

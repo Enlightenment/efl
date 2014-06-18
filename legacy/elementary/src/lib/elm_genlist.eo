@@ -48,7 +48,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
             - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will call their selection func and
             callback once when first becoming selected. Any further clicks will
             do nothing, unless you set always select mode.
-            - ELM_OBJECT_SELECT_MODE_ALWAYS :  This means that, even if selected,
+            - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
             every click will make the selected callbacks be called.
             - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
             entirely and they will neither appear selected nor call selected
@@ -697,20 +697,20 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
             <dt>FNM_NOESCAPE</dt>
             <dd>If this flag is set, treat backslash as an ordinary character, instead of an escape character.</dd>
             <dt>FNM_PATHNAME</dt>
-            <dd>If this flag is set, match a slash in string only with  a slash in pattern and not by an asterisk (*)
-                or a question mark (?) metacharacter, nor by a bracket expression  ([]) containing a slash.</dd>
+            <dd>If this flag is set, match a slash in string only with a slash in pattern and not by an asterisk (*)
+                or a question mark (?) metacharacter, nor by a bracket expression ([]) containing a slash.</dd>
             <dt>FNM_PERIOD</dt>
             <dd>If this flag is set, a leading period in string has to be matched exactly by a period in pattern.
-                A period is  considered to be leading if it is the first character in string, or if both
+                A period is considered to be leading if it is the first character in string, or if both
                 FNM_PATHNAME is set and the period immediately follows a slash.</dd>
             <dt>FNM_FILE_NAME</dt>
             <dd>This is a GNU synonym for FNM_PATHNAME.</dd>
             <dt>FNM_LEADING_DIR</dt>
             <dd>If this flag (a GNU extension) is set, the pattern is considered to be matched if it matches an
-                initial segment of string which is  followed  by a slash. This flag is mainly for the internal
+                initial segment of string which is followed by a slash. This flag is mainly for the internal
                 use of glibc and is only implemented in certain cases.</dd>
             <dt>FNM_CASEFOLD</dt>
-            <dd>If this flag (a GNU extension) is set, the  pattern  is  matched case-insensitively.</dd>
+            <dd>If this flag (a GNU extension) is set, the pattern is matched case-insensitively.</dd>
          </dl>
          For more details see <a href=http://man7.org/linux/man-pages/man3/fnmatch.3.html>Linux Programmer's Manual. FNMATCH()</a>
 

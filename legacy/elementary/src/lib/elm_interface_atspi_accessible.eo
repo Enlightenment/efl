@@ -25,7 +25,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       protected relation_set {
          get {
             /*@ Gets an string describing ATSPI widget role name. Lists and
-             * elements Should be free by a user. */
+            elements Should be free by a user. */
          }
          values {
             Eina_List *relations;
@@ -52,7 +52,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       protected role_name {
          get {
             /*@ Gets human-readable string indentifying widget accessibility
-             * role. */
+            role. */
          }
          values {
             const char *role_name;
@@ -61,7 +61,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       protected attributes {
          get {
             /*@ Gets key-value pairs indentifying widget extra 
-             * attributes. Must be free by a user. */
+            attributes. Must be free by a user. */
          }
          values {
             Eina_List *attributes;

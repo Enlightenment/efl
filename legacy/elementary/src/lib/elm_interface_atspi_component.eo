@@ -36,7 +36,7 @@ mixin Elm_Interface_Atspi_Component ()
       protected z_order {
          get {
             /*@ Gets the depth at which the component is shown in relation to
-             * other components in the same container. */
+            other components in the same container. */
          }
          values {
             int z_order;

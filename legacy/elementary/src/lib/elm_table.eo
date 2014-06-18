@@ -15,13 +15,13 @@ class Elm_Table (Elm_Widget)
             @brief Get the current table homogeneous mode.
 
             @return A boolean to indicating if the layout is homogeneous in the table
-            (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
+            (EINA_TRUE = homogeneous, EINA_FALSE = no homogeneous)
 
             @ingroup Table */
          }
          values {
             Eina_Bool homogeneous; /*@ A boolean to set if the layout is homogeneous in the
-            table (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous) */
+            table (EINA_TRUE = homogeneous, EINA_FALSE = no homogeneous) */
          }
       }
       padding {

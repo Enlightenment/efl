@@ -59,7 +59,7 @@ class Elm_Hoversel (Elm_Button, Evas_Selectable_Interface)
             /*@
             @brief Returns whether the hoversel is expanded.
 
-            @return  This will return @c EINA_TRUE if the hoversel is expanded or
+            @return This will return @c EINA_TRUE if the hoversel is expanded or
             @c EINA_FALSE if it is not expanded.
 
             @ingroup Hoversel */

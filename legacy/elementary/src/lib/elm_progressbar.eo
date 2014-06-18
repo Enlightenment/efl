@@ -47,7 +47,7 @@ class Elm_Progressbar (Elm_Layout)
 
             By default, progress bars will display values from the low to
             high value boundaries. There are, though, contexts in which the
-            progress of a given task is @b unknown.  For such cases,
+            progress of a given task is @b unknown. For such cases,
             one can set a progress bar widget to a "pulsing state", to give
             the user an idea that some computation is being held, but
             without exact progress values. In the default theme, it will

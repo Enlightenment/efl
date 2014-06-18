@@ -8,7 +8,7 @@ class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
             Set editability of the photo.
 
             An editable photo can be dragged to or from, and can be cut or
-            pasted too.  Note that pasting an image or dropping an item on
+            pasted too. Note that pasting an image or dropping an item on
             the image will delete the existing content. */
          }
          get {

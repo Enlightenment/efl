@@ -14,7 +14,7 @@ class Elm_Glview (Elm_Widget)
             Get the size of the glview.
 
             Note that this function returns the actual image size of the
-            glview.  This means that when the scale policy is set to
+            glview. This means that when the scale policy is set to
             ELM_GLVIEW_RESIZE_POLICY_SCALE, it'll return the non-scaled
             size.
 

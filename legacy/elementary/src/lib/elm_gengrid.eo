@@ -156,7 +156,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
             - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
             callback when first becoming selected. Any further clicks will
             do nothing, unless you set always select mode.
-            - ELM_OBJECT_SELECT_MODE_ALWAYS :  This means that, even if selected,
+            - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
             every click will make the selected callbacks be called.
             - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
             entirely and they will neither appear selected nor call selected

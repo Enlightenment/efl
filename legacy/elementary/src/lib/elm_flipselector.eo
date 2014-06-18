@@ -184,7 +184,7 @@ class Elm_Flipselector (Elm_Layout)
          Programmatically select the previous item of a flip selector
          widget
 
-         @note The selection will be animated.  Also, if it reaches the
+         @note The selection will be animated. Also, if it reaches the
          beginning of its list of member items, it will continue with the
          last one backwards.
 
