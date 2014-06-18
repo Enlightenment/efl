@@ -203,15 +203,16 @@ parse_type(Eo_Lexer *ls, Eina_Strbuf *buf)
                   eo_lexer_get(ls);
                }
           }
-        if (ls->t.token == '<')
-          {
-             int line = ls->line_number;
-             eina_strbuf_append(buf, " <");
-             eo_lexer_get(ls);
-             parse_type(ls, buf);
-             check_match(ls, '>', '<', line);
-             eina_strbuf_append_char(buf, '>');
-          }
+     }
+
+   if (ls->t.token == '<')
+     {
+        int line = ls->line_number;
+        eina_strbuf_append(buf, " <");
+        eo_lexer_get(ls);
+        parse_type(ls, buf);
+        check_match(ls, '>', '<', line);
+        eina_strbuf_append_char(buf, '>');
      }
 }
 
