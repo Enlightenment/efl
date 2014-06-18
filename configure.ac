@@ -1553,6 +1553,7 @@ ARG_ENABLE_EVAS_IMAGE_LOADER(WBMP, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(WEBP, no)
 ARG_ENABLE_EVAS_IMAGE_LOADER(XPM, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(TGV, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(DDS, static)
 
 ### Default values
 
@@ -1843,6 +1844,7 @@ EVAS_CHECK_IMAGE_LOADER([WBMP],    [${want_evas_image_loader_wbmp}])
 EVAS_CHECK_IMAGE_LOADER([WEBP],    [${want_evas_image_loader_webp}])
 EVAS_CHECK_IMAGE_LOADER([XPM],     [${want_evas_image_loader_xpm}])
 EVAS_CHECK_IMAGE_LOADER([TGV],     [${want_evas_image_loader_tgv}])
+EVAS_CHECK_IMAGE_LOADER([DDS],     [${want_evas_image_loader_tgv}])
 
 EFL_EVAL_PKGS([EVAS])
 
@@ -2050,6 +2052,8 @@ if test "x${build_gui}" = "xno"; then
    AM_CONDITIONAL([EVAS_STATIC_BUILD_XPM], [false])
    AM_CONDITIONAL([BUILD_LOADER_TGV], [false])
    AM_CONDITIONAL([EVAS_STATIC_BUILD_TGV], [false])
+   AM_CONDITIONAL([BUILD_LOADER_DDS], [false])
+   AM_CONDITIONAL([EVAS_STATIC_BUILD_DDS], [false])
    AM_CONDITIONAL([EVAS_CSERVE2], [false])
 fi
 

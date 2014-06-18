@@ -1372,6 +1372,33 @@ modules_evas_loaders_bmp_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
+if BUILD_LOADER_DDS
+if EVAS_STATIC_BUILD_DDS
+lib_evas_libevas_la_SOURCES += modules/evas/loaders/dds/evas_image_load_dds.c
+lib_evas_libevas_la_CPPFLAGS += @evas_image_loader_dds_cflags@
+lib_evas_libevas_la_LIBADD += @evas_image_loader_dds_libs@
+if EVAS_CSERVE2
+bin_evas_evas_cserve2_slave_SOURCES += modules/evas/loaders/dds/evas_image_load_dds.c
+bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_image_loader_dds_cflags@
+bin_evas_evas_cserve2_slave_LDADD += @evas_image_loader_dds_libs@
+endif
+else
+loaderddspkgdir = $(libdir)/evas/modules/loaders/dds/$(MODULE_ARCH)
+loaderddspkg_LTLIBRARIES = modules/evas/loaders/dds/module.la
+modules_evas_loaders_dds_module_la_SOURCES = modules/evas/loaders/dds/evas_image_load_dds.c
+modules_evas_loaders_dds_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+@EVAS_CFLAGS@ \
+@evas_image_loader_dds_cflags@
+modules_evas_loaders_dds_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_image_loader_dds_libs@
+modules_evas_loaders_dds_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_loaders_dds_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_loaders_dds_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
 if BUILD_LOADER_EET
 if EVAS_STATIC_BUILD_EET
 lib_evas_libevas_la_SOURCES += modules/evas/loaders/eet/evas_image_load_eet.c modules/evas/savers/eet/evas_image_save_eet.c

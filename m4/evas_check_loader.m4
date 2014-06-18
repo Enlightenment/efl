@@ -42,6 +42,22 @@ AS_IF([test "x${have_dep}" = "xyes"], [$3], [$4])
 
 ])
 
+dnl use: EVAS_CHECK_LOADER_DEP_DDS(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_LOADER_DEP_DDS],
+[
+
+have_dep="yes"
+evas_image_loader_[]$1[]_cflags=""
+evas_image_loader_[]$1[]_libs=""
+
+AC_SUBST([evas_image_loader_$1_cflags])
+AC_SUBST([evas_image_loader_$1_libs])
+
+AS_IF([test "x${have_dep}" = "xyes"], [$3], [$4])
+
+])
+
 dnl use: EVAS_CHECK_LOADER_DEP_EET(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_LOADER_DEP_EET],
