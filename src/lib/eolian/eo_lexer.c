@@ -83,10 +83,22 @@ static void next_line(Eo_Lexer *ls)
       eo_lexer_syntax_error(ls, "chunk has too many lines");
 }
 
+/* go to next line and strip leading whitespace */
+static void next_line_ws(Eo_Lexer *ls)
+{
+   next_line(ls);
+   while (isspace(ls->current) && !strchr("\r\n", ls->current))
+     next_char(ls);
+}
+
 static void
 read_long_comment(Eo_Lexer *ls, const char **value)
 {
    eina_strbuf_reset(ls->buff);
+
+   if (strchr("\r\n", ls->current))
+      next_line_ws(ls);
+
    for (;;)
      {
         if (!ls->current)
@@ -104,7 +116,7 @@ read_long_comment(Eo_Lexer *ls, const char **value)
         else if (strchr("\r\n", ls->current))
           {
              eina_strbuf_append_char(ls->buff, '\n');
-             next_line(ls);
+             next_line_ws(ls);
           }
         else
           {
@@ -112,6 +124,7 @@ read_long_comment(Eo_Lexer *ls, const char **value)
              next_char(ls);
           }
      }
+   eina_strbuf_trim(ls->buff);
    if (value) *value = eina_strbuf_string_get(ls->buff);
 }
 
