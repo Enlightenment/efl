@@ -958,26 +958,31 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
    EINA_ITERATOR_FOREACH(it, pce)
      {
         Eina_Bool is_collection_changed = EINA_FALSE;
+        Evas_Object *eeo;
+        Eina_List *programs_list;
+        Edje *eed;
         int i;
 
         if (pce->group_alias)
           continue;
 
-        Evas_Object *obj = edje_edit_object_add(ed->base->evas);
-        if (!edje_object_file_set(obj, ed->file->path, pce->entry))
+        eeo = edje_edit_object_add(ed->base->evas);
+        if (!eo_isa(eeo, EDJE_CLASS))
+          return EINA_FALSE;
+
+        if (!edje_object_file_set(eeo, ed->file->path, pce->entry))
           continue;
 
-        Eina_List *programs_list = edje_edit_programs_list_get(obj);
+        programs_list = edje_edit_programs_list_get(eeo);
         if (!programs_list)
           continue;
 
-        GET_ED_OR_RETURN(EINA_FALSE);
-
-        for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
+        eed = eo_data_scope_get(eeo, EDJE_CLASS);
+        for (i = 0; i < eed->collection->patterns.table_programs_size; i++)
           {
              Edje_Program *program;
 
-             program = ed->collection->patterns.table_programs[i];
+             program = eed->collection->patterns.table_programs[i];
              if (program->action != action_type)
                 continue;
 
@@ -986,7 +991,7 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
                {
                   program->speed = 0;
                   program->channel = EDJE_CHANNEL_EFFECT;
-                  _edje_if_string_free(ed, program->sample_name);
+                  _edje_if_string_free(eed, program->sample_name);
                   program->sample_name = NULL;
                   program->action = EDJE_ACTION_TYPE_NONE;
                   is_collection_changed = EINA_TRUE;
@@ -995,14 +1000,14 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
                       !strcmp(program->tone_name, name))
                {
                   program->duration = 0;
-                  _edje_if_string_free(ed, program->tone_name);
+                  _edje_if_string_free(eed, program->tone_name);
                   program->tone_name = NULL;
                   program->action = EDJE_ACTION_TYPE_NONE;
                   is_collection_changed = EINA_TRUE;
                }
           }
         if (is_collection_changed)
-          _edje_edit_collection_save(eetf, ed->collection);
+          _edje_edit_collection_save(eetf, eed->collection);
      }
    return EINA_TRUE;
 }
