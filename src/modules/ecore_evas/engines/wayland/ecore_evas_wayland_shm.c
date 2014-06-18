@@ -100,7 +100,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas *ee;
-   int method = 0, count = 0;
+   int method = 0;
    int fx = 0, fy = 0, fw = 0, fh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -111,8 +111,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
         return NULL;
      }
 
-   count = ecore_wl_init(disp_name);
-   if (!count)
+   if (!ecore_wl_init(disp_name))
      {
         ERR("Failed to initialize Ecore_Wayland");
         return NULL;
