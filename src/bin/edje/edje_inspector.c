@@ -1383,6 +1383,10 @@ _comp_str_get(Evas_Object *ed, const char *img)
         rate = edje_edit_image_compression_rate_get(ed, img);
         snprintf(buf, sizeof(buf), "LOSSY_ETC1 %d", rate);
         return buf;
+      case EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2:
+        rate = edje_edit_image_compression_rate_get(ed, img);
+        snprintf(buf, sizeof(buf), "LOSSY_ETC2 %d", rate);
+        return buf;
       default:
          ERR("Unknown compression type %d", type);
          return "???";

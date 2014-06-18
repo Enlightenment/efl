@@ -6787,6 +6787,8 @@ edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
         return EDJE_EDIT_IMAGE_COMP_LOSSY;
       case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1: // LOSSY_ETC1
         return EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1;
+      case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2: // LOSSY_ETC2
+        return EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2;
       case EDJE_IMAGE_SOURCE_TYPE_EXTERNAL: // USER
         return EDJE_EDIT_IMAGE_COMP_USER;
      }
@@ -6842,6 +6844,11 @@ edje_edit_image_compression_type_set(Evas_Object *obj, const char *image, Edje_E
              de->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1;
              return EINA_TRUE;
           }
+      case EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2: // LOSSY_ETC2
+          {
+             de->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2;
+             return EINA_TRUE;
+          }
       case EDJE_EDIT_IMAGE_COMP_USER: // USER
           {
              de->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
@@ -6870,7 +6877,8 @@ edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image)
 
    if (i == ed->file->image_dir->entries_count) return -1;
    if ((de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY)
-       && (de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1))
+       && (de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1)
+       && (de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2))
      return -2;
 
    return de->source_param;
@@ -8628,6 +8636,9 @@ _edje_generate_image_source(Evas_Object *obj, const char *entry)
                  edje_edit_image_compression_rate_get(obj, entry));
    else if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1)
      BUF_APPENDF("LOSSY_ETC1 %d;\n",
+                 edje_edit_image_compression_rate_get(obj, entry));
+   else if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2)
+     BUF_APPENDF("LOSSY_ETC2 %d;\n",
                  edje_edit_image_compression_rate_get(obj, entry));
    else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
      BUF_APPEND("RAW;\n");

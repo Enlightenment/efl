@@ -39,7 +39,8 @@ typedef enum _Edje_Edit_Image_Comp
    EDJE_EDIT_IMAGE_COMP_USER,
    EDJE_EDIT_IMAGE_COMP_COMP,
    EDJE_EDIT_IMAGE_COMP_LOSSY,
-   EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1
+   EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1,
+   EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2
 } Edje_Edit_Image_Comp;
 
 typedef enum _Edje_Edit_Select_Mode
