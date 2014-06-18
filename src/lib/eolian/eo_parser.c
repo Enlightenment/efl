@@ -1160,7 +1160,6 @@ eo_parser_walk(Eo_Lexer *ls)
 Eina_Bool
 eo_parser_database_fill(const char *filename)
 {
-   Eina_Bool ret = EINA_FALSE;
    const char *s;
    Eina_List *k, *l, *m;
 
@@ -1177,18 +1176,23 @@ eo_parser_database_fill(const char *filename)
    if (!ls)
      {
         ERR("unable to create lexer");
-        goto end;
+        return EINA_FALSE;
      }
 
    /* read first token */
    eo_lexer_get(ls);
 
-   if (!eo_parser_walk(ls)) goto end;
+   if (!eo_parser_walk(ls))
+     {
+        eo_lexer_free(ls);
+        return EINA_FALSE;
+     }
 
    if (!ls->classes)
      {
         ERR("No classes for file %s", filename);
-        goto end;
+        eo_lexer_free(ls);
+        return EINA_FALSE;
      }
 
    EINA_LIST_FOREACH(ls->classes, k, kls)
@@ -1344,7 +1348,8 @@ eo_parser_database_fill(const char *filename)
                   if (!foo_id)
                     {
                        ERR("Error - %s not known in class %s", impl_name + 9, eolian_class_name_get(class));
-                       goto end;
+                       eo_lexer_free(ls);
+                       return EINA_FALSE;
                     }
                   database_function_set_as_virtual_pure(foo_id, ftype);
                   continue;
@@ -1366,8 +1371,6 @@ eo_parser_database_fill(const char *filename)
         database_type_add(type_def->alias, type_def->type);
      }
 
-   ret = EINA_TRUE;
-end:
-   if (ls) eo_lexer_free(ls);
-   return ret;
+   eo_lexer_free(ls);
+   return EINA_TRUE;
 }
