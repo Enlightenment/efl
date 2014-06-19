@@ -61,6 +61,19 @@ typedef struct _Eina_Rectangle
  */
 typedef struct _Eina_Rectangle_Pool Eina_Rectangle_Pool;
 
+/**
+ * @typedef Eina_Rectangle_Pool_Type
+ * Type for an Eina Pool based on packing algorithm.
+ * @since 1.11
+ */
+typedef enum {
+  Eina_Packing_Descending,            /**< Current */
+  Eina_Packing_Ascending,             /**< sorting in assending order */
+  Eina_Packing_Bottom_Left,           /**< sorting in bottemleft fasion */
+  Eina_Packing_Bottom_Left_Skyline,   /**< bottemleft skyline  */
+  Eina_Packing_Bottom_Left_Skyline_Improved   /**< optimized bottemleft skyline  */
+} Eina_Rectangle_Packing;
+
 static inline int         eina_spans_intersect(int c1, int l1, int c2, int l2) EINA_WARN_UNUSED_RESULT;
 static inline Eina_Bool   eina_rectangle_is_empty(const Eina_Rectangle *r) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 static inline void        eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
@@ -237,6 +250,17 @@ EAPI Eina_Rectangle *eina_rectangle_new(int x, int y, int w, int h) EINA_MALLOC 
  * This function removes @p rect from the rectangles pool.
  */
 EAPI void            eina_rectangle_free(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Sets the type of given rectangle pool.
+ *
+ * @param pool The rectangle pool for which type is to be set.
+ *
+ * This function sets @p type of @p pool.
+ * @see Eina_Rectangle_Packing
+ * @since 1.11
+ */
+EAPI void            eina_rectangle_pool_packing_set(Eina_Rectangle_Pool *pool,Eina_Rectangle_Packing type) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_rectangle.x"
 

@@ -674,7 +674,6 @@ evas_gl_common_context_new(void)
         shared->info.tune.atlas.max_alloc_alpha_size = DEF_ATLAS_ALLOC_ALPHA;
         shared->info.tune.atlas.max_w                = DEF_ATLAS_W;
         shared->info.tune.atlas.max_h                = DEF_ATLAS_H;
-        shared->info.tune.atlas.slot_size            = DEF_ATLAS_SLOT;
 
         // per gpu hacks. based on impirical measurement of some known gpu's
         s = (const char *)glGetString(GL_RENDERER);
@@ -711,7 +710,6 @@ evas_gl_common_context_new(void)
         GETENVOPT("EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE", atlas.max_alloc_alpha_size, MIN_ATLAS_ALLOC_ALPHA, MAX_ATLAS_ALLOC_ALPHA);
         GETENVOPT("EVAS_GL_ATLAS_MAX_W", atlas.max_w, 0, MAX_ATLAS_W);
         GETENVOPT("EVAS_GL_ATLAS_MAX_H", atlas.max_h, 0, MAX_ATLAS_H);
-        GETENVOPT("EVAS_GL_ATLAS_SLOT_SIZE", atlas.slot_size, MIN_ATLAS_SLOT, MAX_ATLAS_SLOT);
         s = (const char *)getenv("EVAS_GL_GET_PROGRAM_BINARY");
         if (s)
           {
@@ -775,7 +773,6 @@ evas_gl_common_context_new(void)
                    "EVAS_GL_ATLAS_ALLOC_SIZE: %i\n"
                    "EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE: %i\n"
                    "EVAS_GL_ATLAS_MAX_W x EVAS_GL_ATLAS_MAX_H: %i x %i\n"
-                   "EVAS_GL_ATLAS_SLOT_SIZE: %i\n"
                    ,
                    (int)shared->info.max_texture_size, (int)shared->info.max_texture_size,
                    (int)shared->info.max_texture_units,
@@ -793,8 +790,7 @@ evas_gl_common_context_new(void)
                    (int)shared->info.tune.pipes.max,
                    (int)shared->info.tune.atlas.max_alloc_size,
                    (int)shared->info.tune.atlas.max_alloc_alpha_size,
-                   (int)shared->info.tune.atlas.max_w, (int)shared->info.tune.atlas.max_h,
-                   (int)shared->info.tune.atlas.slot_size
+                   (int)shared->info.tune.atlas.max_w, (int)shared->info.tune.atlas.max_h
                   );
 
         glDisable(GL_DEPTH_TEST);
@@ -939,14 +935,11 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              evas_gl_common_image_free(gc->shared->images->data);
           }
 
-        for (i = 0; i < 33; i++)
+        for (j = 0; j < 6; j++)
           {
-             for (j = 0; j < 3; j++)
-               {
-                  EINA_LIST_FOREACH(gc->shared->tex.atlas[i][j], l, pt)
-                     evas_gl_texture_pool_empty(pt);
-                  eina_list_free(gc->shared->tex.atlas[i][j]);
-               }
+              EINA_LIST_FOREACH(gc->shared->tex.atlas[j], l, pt)
+                 evas_gl_texture_pool_empty(pt);
+              eina_list_free(gc->shared->tex.atlas[j]);
           }
         EINA_LIST_FOREACH(gc->shared->tex.whole, l, pt)
            evas_gl_texture_pool_empty(pt);

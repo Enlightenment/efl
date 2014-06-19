@@ -172,14 +172,6 @@ _tex_adjust(Evas_Engine_GL_Context *gc, int *w, int *h)
    *h = _nearest_pow2(*h);
 }
 
-static int
-_tex_round_slot(Evas_Engine_GL_Context *gc, int h)
-{
-   if (!gc->shared->info.tex_npo2)
-     h = _nearest_pow2(h);
-   return (h + gc->shared->info.tune.atlas.slot_size - 1) /
-     gc->shared->info.tune.atlas.slot_size;
-}
 
 static int
 _tex_format_index(GLuint format)
@@ -314,7 +306,6 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, GLenum intformat, GLenum
 
    if (!no_rounding)
      {
-        h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
         _tex_adjust(gc, &w, &h);
      }
    pt->gc = gc;
@@ -324,6 +315,7 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, GLenum intformat, GLenum
    pt->format = format;
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
+   pt->eina_pool = eina_rectangle_pool_new(w, h);
 
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -343,6 +335,8 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, GLenum intformat, GLenum
    if (!ok)
      {
         glDeleteTextures(1, &(pt->texture));
+        if (pt->eina_pool)
+          eina_rectangle_pool_free(pt->eina_pool);
         free(pt);
         return NULL;
      }
@@ -366,59 +360,30 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, GLenum intformat, GLenum
    return pt;
 }
 
-static Evas_GL_Texture_Alloca *
-_pool_tex_define(Evas_GL_Texture_Pool *pt, int lastx, int w, int *u, Eina_List *l)
+static Eina_Rectangle *
+_pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h, int *u, int *v)
 {
-   Evas_GL_Texture_Alloca *napt;
-
-   *u = lastx;
-
-   napt = malloc(sizeof (Evas_GL_Texture_Alloca));
-   if (!napt) return NULL;
-
-   napt->tex = NULL;
-   napt->x = lastx;
-   napt->w = w;
-
-   if (l == NULL)
-     pt->allocations = eina_list_append(pt->allocations, napt);
-   else
-     pt->allocations = eina_list_prepend_relative_list(pt->allocations, napt, l);
-
-   return napt;
-}
-
-static Evas_GL_Texture_Alloca *
-_pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h EINA_UNUSED, int *u, int *v)
-{
-   Evas_GL_Texture_Alloca *apt;
-   Eina_List *l;
-   int lastx = 0;
-
-   *v = 0;
-
-   EINA_LIST_FOREACH(pt->allocations, l, apt)
+   Eina_Rectangle *r;
+   r = eina_rectangle_pool_request( pt->eina_pool, w, h);
+   if (r)
      {
-        if (apt->x - lastx >= w)
-          return _pool_tex_define(pt, lastx, w, u, l);
-
-        lastx = apt->x + apt->w;
+        *v = r->y;
+        *u = r->x;
+        pt->allocations = eina_list_prepend(pt->allocations, r);
      }
 
-   if (pt->w - lastx >= w)
-     return _pool_tex_define(pt, lastx, w, u, NULL);
-
-   return NULL;
+   return r;
 }
 
 static Evas_GL_Texture_Pool *
 _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
                GLenum intformat, GLenum format, int *u, int *v,
-               Evas_GL_Texture_Alloca **apt, int atlas_w)
+               Eina_Rectangle **apt, int atlas_w)
 {
    Evas_GL_Texture_Pool *pt = NULL;
    Eina_List *l;
-   int th, th2;
+   int th2;
+   int pool_h;
 
    if (atlas_w > gc->shared->info.max_texture_size)
       atlas_w = gc->shared->info.max_texture_size;
@@ -429,32 +394,35 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
         pt = _pool_tex_new(gc, w, h, intformat, format);
         if (!pt) return NULL;
         gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
-        pt->slot = -1;
         pt->fslot = -1;
         pt->whole = 1;
         *apt = _pool_tex_alloc(pt, w, h, u, v);
         return pt;
      }
 
-   th = _tex_round_slot(gc, h);
    th2 = _tex_format_index(intformat);
-   EINA_LIST_FOREACH(gc->shared->tex.atlas[th][th2], l, pt)
+   EINA_LIST_FOREACH(gc->shared->tex.atlas[th2], l, pt)
      {
         if ((*apt = _pool_tex_alloc(pt, w, h, u, v)) != NULL)
           {
-             gc->shared->tex.atlas[th][th2] =
-               eina_list_remove_list(gc->shared->tex.atlas[th][th2], l);
-             gc->shared->tex.atlas[th][th2] =
-               eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
+             gc->shared->tex.atlas[th2] =
+               eina_list_remove_list(gc->shared->tex.atlas[th2], l);
+             gc->shared->tex.atlas[th2] =
+               eina_list_prepend(gc->shared->tex.atlas[th2], pt);
              return pt;
           }
      }
+   pool_h = atlas_w;
+   if ( h > pool_h || w > atlas_w )
+     {
+        atlas_w = gc->shared->info.tune.atlas.max_w;
+        pool_h = gc->shared->info.tune.atlas.max_h;
+     }
+   pt = _pool_tex_new(gc, atlas_w, pool_h, intformat, format);
 
-   pt = _pool_tex_new(gc, atlas_w, h, intformat, format);
    if (!pt) return NULL;
-   gc->shared->tex.atlas[th][th2] =
-     eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
-   pt->slot = th;
+   gc->shared->tex.atlas[th2] =
+     eina_list_prepend(gc->shared->tex.atlas[th2], pt);
    pt->fslot = th2;
 
    *apt = _pool_tex_alloc(pt, w, h, u, v);
@@ -495,7 +463,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
      default:
         /* This need to be adjusted if we do something else than strip allocation */
         w = im->cache_entry.w + TEX_HREP + 2; /* one pixel stop gap and two pixels for the border */
-        h = im->cache_entry.h + TEX_VREP; /* only one added border for security down */
+        h = im->cache_entry.h + TEX_VREP + 2; /* only one added border for security down */
      }
 
    tex->pt = _pool_tex_find(gc, w, h,
@@ -508,7 +476,6 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
-   tex->apt->tex = tex;
    tex->x = u + 1;
    tex->y = v + yoffset;
 
@@ -542,6 +509,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->render = 1;
    pt->references = 0;
+   pt->eina_pool = eina_rectangle_pool_new(w, h);
 #ifdef GL_GLES
 # ifndef GL_FRAMEBUFFER
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
@@ -587,6 +555,8 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    if (!ok)
      {
         glDeleteTextures(1, &(pt->texture));
+        if (pt->eina_pool)
+          eina_rectangle_pool_free(pt->eina_pool);
         free(pt);
         return NULL;
      }
@@ -630,6 +600,7 @@ _pool_tex_native_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->references = 0;
    pt->native = 1;
+   pt->eina_pool = eina_rectangle_pool_new(w, h);
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(im->native.target, pt->texture);
@@ -698,7 +669,6 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
    _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
@@ -708,6 +678,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->render = 1;
    pt->references = 0;
+   pt->eina_pool = eina_rectangle_pool_new(w, h);
    texinfo.d.num++;
    texinfo.d.pix += pt->w * pt->h;
 
@@ -744,6 +715,8 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glDeleteTextures(1, &(pt->texture));
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        if (pt->eina_pool)
+          eina_rectangle_pool_free(pt->eina_pool);
         free(pt);
         return NULL;
      }
@@ -788,6 +761,8 @@ error:
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
   glDeleteTextures(1, &(pt->texture));
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+  if (pt->eina_pool)
+    eina_rectangle_pool_free(pt->eina_pool);
   free(pt);
   return NULL;
 #endif
@@ -796,7 +771,7 @@ error:
 void
 evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 {
-   Evas_GL_Texture_Alloca *apt;
+   Eina_Rectangle *apt;
 
    if (!pt->gc) return;
 
@@ -858,9 +833,8 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         pt->fb = 0;
      }
-
-   EINA_LIST_FREE(pt->allocations, apt)
-     free(apt);
+    EINA_LIST_FREE(pt->allocations, apt)
+      eina_rectangle_pool_release(apt);
    pt->texture = 0;
    pt->gc = NULL;
    pt->w = 0;
@@ -881,10 +855,12 @@ pt_unref(Evas_GL_Texture_Pool *pt)
            pt->gc->shared->tex.whole =
            eina_list_remove(pt->gc->shared->tex.whole, pt);
         else
-           pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
-           eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
+           pt->gc->shared->tex.atlas [pt->fslot] =
+           eina_list_remove(pt->gc->shared->tex.atlas[pt->fslot], pt);
      }
    evas_gl_texture_pool_empty(pt);
+   if (pt->eina_pool)
+     eina_rectangle_pool_free(pt->eina_pool);
    free(pt);
 }
 
@@ -892,7 +868,6 @@ static void
 pt_link(Evas_Engine_GL_Context *gc, Evas_GL_Texture_Pool *pt)
 {
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
-   pt->slot = -1;
    pt->fslot = -1;
    pt->whole = 1;
    pt->references++;
@@ -1010,6 +985,28 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
                1, 1,
                fmt, tex->pt->dataformat,
                (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1)) * bytes_count);
+   //2D packing
+   // ---
+   // xxx
+   // xxx
+   _tex_sub_2d(tex->gc, tex->x, tex->y - 1,
+               im->cache_entry.w, 1,
+               fmt, tex->pt->dataformat,
+               im->image.data);
+   // o
+   //  xxx
+   //  xxx
+   _tex_sub_2d(tex->gc, tex->x - 1, tex->y - 1,
+               1, 1,
+               fmt, tex->pt->dataformat,
+               im->image.data);
+   //    o
+   // xxx
+   // xxx
+   _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y - 1,
+               1, 1,
+               fmt, tex->pt->dataformat,
+               im->image.data + (im->cache_entry.w - 1) * bytes_count);
    if (tex->gc->shared->info.unpack_row_length)
      {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, im->cache_entry.w);
@@ -1083,8 +1080,8 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         int lformat;
 
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex->apt);
-        pt_unref(tex->pt);
-        tex->alpha = im->cache_entry.flags.alpha;
+        if (tex->apt)
+          eina_rectangle_pool_release(tex->apt);
 
         lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra, im->cache_entry.space);
         // FIXME: why a 'render' new here ??? Should already have been allocated, quite a weird path.
@@ -1238,7 +1235,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                                   tex->gc->shared->info.tune.atlas.max_alloc_size);
         if (!tex->ptt)
           goto upload;
-        tex->aptt->tex = tex;
 
         tex->tx = u + 1;
         tex->ty = v;
@@ -1327,14 +1323,16 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
    if (tex->pt)
      {
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex->apt);
-        free(tex->apt);
+        if (tex->apt)
+          eina_rectangle_pool_release(tex->apt);
         tex->apt = NULL;
         pt_unref(tex->pt);
      }
    if (tex->ptt)
      {
-        tex->ptt->allocations = eina_list_remove(tex->ptt->allocations, tex->aptt);
-        free(tex->aptt);
+        tex->ptt->allocations = eina_list_remove(tex->pt->allocations, tex->aptt);
+        if (tex->aptt)
+          eina_rectangle_pool_release(tex->aptt);
         tex->aptt = NULL;
         pt_unref(tex->ptt);
      }
@@ -1366,7 +1364,6 @@ evas_gl_common_texture_alpha_new(Evas_Engine_GL_Context *gc, DATA8 *pixels,
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
-   tex->apt->tex = tex;
    tex->x = u + 1;
    tex->y = v;
    tex->pt->references++;
@@ -1435,7 +1432,6 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
         return NULL;
      }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
-   tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
    tex->pt->references++;

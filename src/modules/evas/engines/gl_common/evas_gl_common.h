@@ -391,21 +391,17 @@ struct _Evas_GL_Shared
 
 #define MIN_ATLAS_ALLOC         16
 #define MAX_ATLAS_ALLOC       1024
-#define DEF_ATLAS_ALLOC            1024
+#define DEF_ATLAS_ALLOC            256
 
 #define MIN_ATLAS_ALLOC_ALPHA   16
 #define MAX_ATLAS_ALLOC_ALPHA 4096
-#define DEF_ATLAS_ALLOC_ALPHA      4096
+#define DEF_ATLAS_ALLOC_ALPHA      512
 
 #define MAX_ATLAS_W            512
 #define DEF_ATLAS_W                 512
 
 #define MAX_ATLAS_H            512
 #define DEF_ATLAS_H                 512
-
-#define MIN_ATLAS_SLOT          16
-#define MAX_ATLAS_SLOT         512
-#define DEF_ATLAS_SLOT               16
 
       struct {
          struct {
@@ -419,14 +415,13 @@ struct _Evas_GL_Shared
             int max_alloc_alpha_size;
             int max_w;
             int max_h;
-            int slot_size;
          } atlas;
       } tune;
    } info;
 
    struct {
       Eina_List       *whole;
-      Eina_List       *atlas[33][6];
+      Eina_List       *atlas[6];
    } tex;
 
    Eina_Hash          *native_pm_hash;
@@ -572,6 +567,7 @@ struct _Evas_GL_Texture_Pool
       int           checked_out;
    } dyn;
    Eina_List       *allocations;
+   Eina_Rectangle_Pool *eina_pool;
    Eina_Bool        whole : 1;
    Eina_Bool        render : 1;
    Eina_Bool        native : 1;
@@ -590,7 +586,6 @@ struct _Evas_GL_Texture
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image   *im;
    Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptuv, *ptt;
-   Evas_GL_Texture_Alloca *apt, *aptt;
    RGBA_Font_Glyph *fglyph;
    int              x, y, w, h;
    int              tx, ty;
@@ -604,6 +599,7 @@ struct _Evas_GL_Texture
    } double_buffer;
 
    Eina_List       *targets;
+   Eina_Rectangle  *apt, *aptt;
 
    Eina_Bool        alpha : 1;
    Eina_Bool        dyn : 1;
