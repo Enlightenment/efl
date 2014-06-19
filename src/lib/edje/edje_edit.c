@@ -169,7 +169,7 @@ _edje_edit_program_script_free(Program_Script *ps)
 }
 
 EOLIAN static Eina_Bool
-_edje_edit_edje_object_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
+_edje_edit_efl_interface_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
 {
    Eina_Bool ret;
    Eet_File *ef;
@@ -195,7 +195,7 @@ _edje_edit_edje_object_file_set(Eo *obj, Edje_Edit *eed, const char *file, const
     *    groups).
     */
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = edje_obj_file_set(file, group));
+   eo_do_super(obj, MY_CLASS, int_ret = efl_interface_file_set(file, group));
    if (!int_ret)
      return ret;
 

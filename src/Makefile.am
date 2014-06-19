@@ -6,6 +6,7 @@ EOLIAN_FLAGS = \
 	       -I$(srcdir)/lib/eo \
 	       -I$(srcdir)/lib/evas/canvas \
 	       -I$(srcdir)/lib/edje \
+	       -I$(srcdir)/lib/efl/interfaces \
 	       -I$(srcdir)/lib/ecore_audio
 
 ELUA_GEN_FLAGS =

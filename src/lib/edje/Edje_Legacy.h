@@ -157,5 +157,60 @@ EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord 
  */
 EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 
+/**
+ *
+ * @brief Sets the @b EDJ file (and group within it) to load an Edje
+ * object's contents from
+ *
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on errors (check
+ * edje_object_load_error_get() after this call to get errors causes)
+ *
+ * Edje expects EDJ files, which are theming objects' descriptions and
+ * resources packed together in an EET file, to read Edje object
+ * definitions from. They usually are created with the @c .edj
+ * extension. EDJ files, in turn, are assembled from @b textual object
+ * description files, where one describes Edje objects declaratively
+ * -- the EDC files (see @ref edcref "the syntax" for those files).
+ *
+ * Those description files were designed so that many Edje object
+ * definitions -- also called @b groups (or collections) -- could be
+ * packed together <b>in the same EDJ file</b>, so that a whole
+ * application's theme could be packed in one file only. This is the
+ * reason for the @p group argument.
+ *
+ * Use this function after you instantiate a new Edje object, so that
+ * you can "give him life", telling where to get its contents from.
+ *
+ * @see edje_object_add()
+ * @see edje_object_file_get()
+ * @see edje_object_mmap_set()
+ *
+ * @param[in] file The path to the EDJ file to load @p from
+ * @param[in] group The name of the group, in @p file, which implements an
+Edje object
+ */
+EAPI Eina_Bool edje_object_file_set(Eo *obj, const char *file, const char *group);
+
+/**
+ *
+ * @brief Get the file and group name that a given Edje object is bound to
+ *
+ * This gets the EDJ file's path, with the respective group set for
+ * the given Edje object. If @a obj is either not an Edje file, or has
+ * not had its file/group set previously, by edje_object_file_set(),
+ * then both @p file and @p group will be set to @c NULL, indicating
+ * an error.
+ *
+ * @see edje_object_file_set()
+ *
+ * @note Use @c NULL pointers on the file/group components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @param[out] file The path to the EDJ file to load @p from
+ * @param[out] group The name of the group, in @p file, which implements an
+Edje object
+ */
+EAPI void edje_object_file_get(const Eo *obj, const char **file, const char **group);
+
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

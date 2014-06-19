@@ -1,4 +1,4 @@
-interface Efl_Interface_File {
+interface Efl.Interface.File {
    legacy_prefix: null;
    properties {
       file {
