@@ -190,7 +190,8 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                        } while (isalnum(       ls->current)
                               || strchr(chars, ls->current));
                        str    = eina_strbuf_string_get(ls->buff);
-                       *kwid  = (long)eina_hash_find(keyword_map, str);
+                       *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
+                                                               str);
                        if (at_kw && *kwid == 0)
                          eo_lexer_syntax_error(ls, "invalid keyword");
                        *value = str;
@@ -228,7 +229,7 @@ lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
      }
    eina_strbuf_trim(ls->buff);
    str    = eina_strbuf_string_get(ls->buff);
-   *kwid  = (long)eina_hash_find(keyword_map, str);
+   *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
    *value = str;
    return TOK_VALUE;
 }
@@ -247,7 +248,7 @@ lex_until(Eo_Lexer *ls, const char **value, int *kwid, char end)
      }
    eina_strbuf_trim(ls->buff);
    str    = eina_strbuf_string_get(ls->buff);
-   *kwid  = (long)eina_hash_find(keyword_map, str);
+   *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
    *value = str;
    return TOK_VALUE;
 }
