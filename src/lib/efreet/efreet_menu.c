@@ -1587,11 +1587,11 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
         if (!p)
         {
             char *s;
-            size_t len;
+            size_t len2;
 
-            len = strlen(parent->file.name) + 1;
-            p = alloca(len);
-            memcpy(p, parent->file.name, len);
+            len2 = strlen(parent->file.name) + 1;
+            p = alloca(len2);
+            memcpy(p, parent->file.name, len2);
             s = strrchr(p, '.');
             if (s) *s = '\0';
         }
