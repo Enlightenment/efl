@@ -921,18 +921,23 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    parse_name(ls, buf);
    ls->tmp.kls->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
-   line = ls->line_number;
-   check_next(ls, '(');
-   if (ls->t.token != ')')
+   if (ls->t.token != '{')
      {
-        ls->tmp.kls->inherits = parse_name_list(ls);
-        ls->tmp.str_items = NULL;
+        line = ls->line_number;
+        check_next(ls, '(');
+        if (ls->t.token != ')')
+          {
+             ls->tmp.kls->inherits = parse_name_list(ls);
+             ls->tmp.str_items = NULL;
+          }
+        check_match(ls, ')', '(', line);
      }
-   check_match(ls, ')', '(', line);
    line = ls->line_number;
    check_next(ls, '{');
    parse_class_body(ls, allow_ctors);
    check_match(ls, '}', '{', line);
+   if (ls->t.token == ';')
+     eo_lexer_get(ls);
 }
 
 static void
