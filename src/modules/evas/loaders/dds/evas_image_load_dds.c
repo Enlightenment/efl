@@ -34,8 +34,6 @@ struct _Evas_Loader_Internal
       unsigned int g_mask;
       unsigned int b_mask;
       unsigned int a_mask;
-
-      Eina_Bool has_alpha : 1;
       // TODO: check mipmaps to load faster a small image :)
    } pf; // pixel format
 };
@@ -159,7 +157,7 @@ _dword_read(const char **m)
    return val;
 }
 
-#define FAIL() do { fprintf(stderr, "DDS: ERROR at %s:%d", \
+#define FAIL() do { fprintf(stderr, "DDS: ERROR at %s:%d\n", \
    __FUNCTION__, __LINE__); goto on_error; } while (0)
 
 static Eina_Bool
@@ -228,7 +226,6 @@ evas_image_load_file_head_dds(void *loader_data,
    if (!(loader->pf.flags & DDPF_FOURCC))
      FAIL(); // Unsupported (uncompressed formats may not have a FOURCC)
    loader->pf.fourcc = _dword_read(&m);
-   loader->pf.has_alpha = EINA_TRUE;
    loader->block_size = 16;
    switch (loader->pf.fourcc)
      {
@@ -238,7 +235,6 @@ evas_image_load_file_head_dds(void *loader_data,
           {
              prop->alpha = EINA_FALSE;
              prop->cspaces = cspaces_s3tc_dxt1_rgb;
-             loader->pf.has_alpha = EINA_FALSE;
              loader->format = EVAS_COLORSPACE_RGB_S3TC_DXT1;
           }
         else
@@ -248,7 +244,6 @@ evas_image_load_file_head_dds(void *loader_data,
              loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT1;
           }
         break;
-#if 0
       case FOURCC('D', 'X', 'T', '2'):
         loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT2;
         prop->alpha = EINA_TRUE;
@@ -259,6 +254,7 @@ evas_image_load_file_head_dds(void *loader_data,
         prop->alpha = EINA_TRUE;
         prop->cspaces = cspaces_s3tc_dxt5;
         break;
+#if 0
       case FOURCC('D', 'X', 'T', '4'):
         loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT4;
         prop->alpha = EINA_TRUE;
@@ -353,9 +349,19 @@ evas_image_load_file_data_dds(void *loader_data,
      {
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
         func = s3tc_decode_dxt1_rgb;
+        prop->premul = EINA_FALSE;
         break;
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
         func = s3tc_decode_dxt1_rgba;
+        prop->premul = EINA_FALSE;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+        func = s3tc_decode_dxt2_rgba;
+        prop->premul = EINA_FALSE;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+        func = s3tc_decode_dxt3_rgba;
+        prop->premul = EINA_TRUE;
         break;
       default:
         FAIL();
