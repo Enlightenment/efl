@@ -4,8 +4,6 @@
 #define FUNC_PUBLIC 0
 #define FUNC_PROTECTED 1
 
-#define eo_lexer_get_event_name(ls) eo_lexer_get_ident(ls, "@_.+-/\\='\"?!%,")
-
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
@@ -713,7 +711,7 @@ parse_event(Eo_Lexer *ls)
    /* code path not in use yet
    if (ls->t.kw == KW_private)
      {
-        eo_lexer_get_event_name(ls);
+        eo_lexer_get_ident(ls, "_,");
      }*/
    check(ls, TOK_VALUE);
    ev->name = eina_stringshare_add(ls->t.value);
@@ -727,11 +725,11 @@ parse_event(Eo_Lexer *ls)
         check_match(ls, ')', '(', line);
      }
    check(ls, ';');
-   eo_lexer_get_event_name(ls);
+   eo_lexer_get_ident(ls, "_,");
    if (ls->t.token == TOK_COMMENT)
      {
         ev->comment = eina_stringshare_add(ls->t.value);
-        eo_lexer_get_event_name(ls);
+        eo_lexer_get_ident(ls, "_,");
      }
 }
 
@@ -810,7 +808,7 @@ parse_events(Eo_Lexer *ls)
    eo_lexer_get(ls);
    line = ls->line_number;
    check(ls, '{');
-   eo_lexer_get_event_name(ls);
+   eo_lexer_get_ident(ls, "_,");
    while (ls->t.token != '}')
      {
         parse_event(ls);

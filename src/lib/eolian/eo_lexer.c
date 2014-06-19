@@ -177,8 +177,10 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                        next_char(ls);
                        continue;
                     }
-                  if (isalnum(ls->current) || strchr(chars, ls->current))
+                  if (isalnum(ls->current) || ls->current == '@'
+                                           || strchr(chars, ls->current))
                     {
+                       Eina_Bool at_kw = (ls->current == '@');
                        const char *str;
                        eina_strbuf_reset(ls->buff);
                        do
@@ -189,6 +191,8 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                               || strchr(chars, ls->current));
                        str    = eina_strbuf_string_get(ls->buff);
                        *kwid  = (long)eina_hash_find(keyword_map, str);
+                       if (at_kw && *kwid == 0)
+                         eo_lexer_syntax_error(ls, "invalid keyword");
                        *value = str;
                        return TOK_VALUE;
                     }
@@ -315,13 +319,13 @@ eo_lexer_get_until(Eo_Lexer *ls, char end)
 int
 eo_lexer_get(Eo_Lexer *ls)
 {
-   return eo_lexer_get_ident(ls, "@_.+-/\\='\"?!%");
+   return eo_lexer_get_ident(ls, "_");
 }
 
 int
 eo_lexer_lookahead(Eo_Lexer *ls)
 {
-   return eo_lexer_lookahead_ident(ls, "@_.+-/\\='\"?!%");
+   return eo_lexer_lookahead_ident(ls, "_");
 }
 
 int
