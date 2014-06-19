@@ -1374,18 +1374,27 @@ endif
 
 if BUILD_LOADER_DDS
 if EVAS_STATIC_BUILD_DDS
-lib_evas_libevas_la_SOURCES += modules/evas/loaders/dds/evas_image_load_dds.c
+lib_evas_libevas_la_SOURCES += \
+modules/evas/loaders/dds/evas_image_load_dds.c \
+modules/evas/loaders/dds/s3tc_decoder.c \
+modules/evas/loaders/dds/s3tc.h
 lib_evas_libevas_la_CPPFLAGS += @evas_image_loader_dds_cflags@
 lib_evas_libevas_la_LIBADD += @evas_image_loader_dds_libs@
 if EVAS_CSERVE2
-bin_evas_evas_cserve2_slave_SOURCES += modules/evas/loaders/dds/evas_image_load_dds.c
+bin_evas_evas_cserve2_slave_SOURCES += \
+modules/evas/loaders/dds/evas_image_load_dds.c \
+modules/evas/loaders/dds/s3tc_decoder.c \
+modules/evas/loaders/dds/s3tc.h
 bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_image_loader_dds_cflags@
 bin_evas_evas_cserve2_slave_LDADD += @evas_image_loader_dds_libs@
 endif
 else
 loaderddspkgdir = $(libdir)/evas/modules/loaders/dds/$(MODULE_ARCH)
 loaderddspkg_LTLIBRARIES = modules/evas/loaders/dds/module.la
-modules_evas_loaders_dds_module_la_SOURCES = modules/evas/loaders/dds/evas_image_load_dds.c
+modules_evas_loaders_dds_module_la_SOURCES = \
+modules/evas/loaders/dds/evas_image_load_dds.c \
+modules/evas/loaders/dds/s3tc_decoder.c \
+modules/evas/loaders/dds/s3tc.h
 modules_evas_loaders_dds_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \

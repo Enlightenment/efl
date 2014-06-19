@@ -1,13 +1,7 @@
 #ifndef EFL_S3TC_H
 #define EFL_S3TC_H
 
-typedef enum {
-   DXT1,
-   DXT2,
-   DXT3,
-   DXT4,
-   DXT5,
-   DX10
-} DxtFormat;
+void s3tc_decode_dxt1_rgb(unsigned int *bgra, const unsigned char *s3tc);
+void s3tc_decode_dxt1_rgba(unsigned int *bgra, const unsigned char *s3tc);
 
 #endif // EFL_S3TC_H

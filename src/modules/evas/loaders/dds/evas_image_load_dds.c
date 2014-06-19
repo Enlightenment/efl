@@ -16,22 +16,24 @@
 # include <ddraw.h>
 #endif
 
+#define DDS_HEADER_SIZE 128
+
 typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
 struct _Evas_Loader_Internal
 {
    Eina_File *f;
 
-   DxtFormat format;
-   size_t data_size;
+   Evas_Colorspace format;
+   unsigned int stride, block_size, data_size;
 
    struct {
-      uint32_t flags;
-      uint32_t fourcc;
-      uint32_t rgb_bitcount;
-      uint32_t r_mask;
-      uint32_t g_mask;
-      uint32_t b_mask;
-      uint32_t a_mask;
+      unsigned int flags;
+      unsigned int fourcc;
+      unsigned int rgb_bitcount;
+      unsigned int r_mask;
+      unsigned int g_mask;
+      unsigned int b_mask;
+      unsigned int a_mask;
 
       Eina_Bool has_alpha : 1;
       // TODO: check mipmaps to load faster a small image :)
@@ -88,17 +90,17 @@ static const Evas_Colorspace cspaces_s3tc_dxt1_rgba[] = {
 };
 
 static const Evas_Colorspace cspaces_s3tc_dxt2[] = {
-   //EVAS_COLORSPACE_RGBA_S3TC_DXT2, // Not in OpenGL
+   //EVAS_COLORSPACE_RGBA_S3TC_DXT2,
    EVAS_COLORSPACE_ARGB8888
 };
 
 static const Evas_Colorspace cspaces_s3tc_dxt3[] = {
-   //EVAS_COLORSPACE_RGB_S3TC_DXT3,
+   //EVAS_COLORSPACE_RGBA_S3TC_DXT3,
    EVAS_COLORSPACE_ARGB8888
 };
 
 static const Evas_Colorspace cspaces_s3tc_dxt4[] = {
-   //EVAS_COLORSPACE_RGBA_S3TC_DXT4, // Not in OpenGL
+   //EVAS_COLORSPACE_RGBA_S3TC_DXT4,
    EVAS_COLORSPACE_ARGB8888
 };
 
@@ -115,7 +117,7 @@ evas_image_load_file_open_dds(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 {
    Evas_Loader_Internal *loader;
 
-   if (eina_file_size_get(f) <= 128)
+   if (eina_file_size_get(f) <= DDS_HEADER_SIZE)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         return NULL;
@@ -149,36 +151,39 @@ evas_image_load_file_close_dds(void *loader_data)
    free(loader);
 }
 
-static inline uint32_t
+static inline unsigned int
 _dword_read(const char **m)
 {
-   uint32_t val = *((uint32_t *) *m);
+   unsigned int val = *((unsigned int *) *m);
    *m += 4;
    return val;
 }
 
-#define FAIL() do { fprintf(stderr, "DDS: ERROR at %s:%d", __FUNCTION__, __LINE__); goto on_error; } while (0)
+#define FAIL() do { fprintf(stderr, "DDS: ERROR at %s:%d", \
+   __FUNCTION__, __LINE__); goto on_error; } while (0)
 
 static Eina_Bool
 evas_image_load_file_head_dds(void *loader_data,
                               Evas_Image_Property *prop,
                               int *error)
 {
-   static const uint32_t base_flags = /* 0x1007 */
+   static const unsigned int base_flags = /* 0x1007 */
          DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
 
    Evas_Loader_Internal *loader = loader_data;
-   uint32_t flags, height, width, pitchOrLinearSize, block_size = 16, stride,
-         caps, caps2;
+   unsigned int flags, height, width, pitchOrLinearSize, caps, caps2;
    Eina_Bool has_linearsize, has_mipmapcount;
    const char *m;
+   char *map;
 
-   m = eina_file_map_all(loader->f, EINA_FILE_SEQUENTIAL);
-   if (!m)
+   map = eina_file_map_all(loader->f, EINA_FILE_SEQUENTIAL);
+   if (!map)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         return EINA_FALSE;
      }
+
+   m = map;
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
    if (strncmp(m, "DDS ", 4) != 0)
@@ -215,7 +220,7 @@ evas_image_load_file_head_dds(void *loader_data,
      FAIL();
 
    // Skip depth & mipmap count + reserved[11]
-   m += 13 * sizeof(uint32_t);
+   m += 13 * sizeof(unsigned int);
    // Entering DDS_PIXELFORMAT ddspf
    if (_dword_read(&m) != 32)
      FAIL();
@@ -224,41 +229,43 @@ evas_image_load_file_head_dds(void *loader_data,
      FAIL(); // Unsupported (uncompressed formats may not have a FOURCC)
    loader->pf.fourcc = _dword_read(&m);
    loader->pf.has_alpha = EINA_TRUE;
+   loader->block_size = 16;
    switch (loader->pf.fourcc)
      {
       case FOURCC('D', 'X', 'T', '1'):
-        loader->format = DXT1;
+        loader->block_size = 8;
         if ((loader->pf.flags & DDPF_ALPHAPIXELS) == 0)
           {
              prop->alpha = EINA_FALSE;
              prop->cspaces = cspaces_s3tc_dxt1_rgb;
              loader->pf.has_alpha = EINA_FALSE;
+             loader->format = EVAS_COLORSPACE_RGB_S3TC_DXT1;
           }
         else
           {
              prop->alpha = EINA_TRUE;
              prop->cspaces = cspaces_s3tc_dxt1_rgba;
+             loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT1;
           }
-        block_size = 8;
         break;
 #if 0
       case FOURCC('D', 'X', 'T', '2'):
-        loader->format = DXT2;
+        loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT2;
         prop->alpha = EINA_TRUE;
         prop->cspaces = cspaces_s3tc_dxt2;
         break;
       case FOURCC('D', 'X', 'T', '3'):
-        loader->format = DXT3;
+        loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT3;
         prop->alpha = EINA_TRUE;
         prop->cspaces = cspaces_s3tc_dxt5;
         break;
       case FOURCC('D', 'X', 'T', '4'):
-        loader->format = DXT4;
+        loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT4;
         prop->alpha = EINA_TRUE;
         prop->cspaces = cspaces_s3tc_dxt4;
         break;
       case FOURCC('D', 'X', 'T', '5'):
-        loader->format = DXT5;
+        loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT5;
         prop->alpha = EINA_TRUE;
         prop->cspaces = cspaces_s3tc_dxt5;
         break;
@@ -291,13 +298,13 @@ evas_image_load_file_head_dds(void *loader_data,
      }
    // Since the rest is unused, just ignore it.
 
-   stride = ((width + 3) >> 2) * block_size;
-   loader->data_size = stride * ((height + 3) >> 2);
+   loader->stride = ((width + 3) >> 2) * loader->block_size;
+   loader->data_size = loader->stride * ((height + 3) >> 2);
    if (loader->data_size != pitchOrLinearSize)
      FAIL(); // Invalid size!
 
    // Check file size
-   if (eina_file_size_get(loader->f) < (128 + loader->data_size))
+   if (eina_file_size_get(loader->f) < (DDS_HEADER_SIZE + loader->data_size))
      FAIL();
 
    prop->h = height;
@@ -305,7 +312,7 @@ evas_image_load_file_head_dds(void *loader_data,
    *error = EVAS_LOAD_ERROR_NONE;
 
 on_error:
-   eina_file_map_free(loader->f, (void *) m);
+   eina_file_map_free(loader->f, map);
    return (*error == EVAS_LOAD_ERROR_NONE);
 }
 
@@ -315,24 +322,74 @@ evas_image_load_file_data_dds(void *loader_data,
                               void *pixels,
                               int *error)
 {
+   void (*func) (unsigned int *bgra, const unsigned char *s3tc) = NULL;
    Evas_Loader_Internal *loader = loader_data;
-   const char *m;
-
-   Eina_Bool r = EINA_FALSE;
+   unsigned int *pix = pixels;
+   unsigned char *map = NULL;
+   const unsigned char *src;
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
-   m = eina_file_map_all(loader->f, EINA_FILE_WILLNEED);
-   if (!m) return EINA_FALSE;
+   map = eina_file_map_all(loader->f, EINA_FILE_WILLNEED);
+   if (!map)
+     return EINA_FALSE;
 
-   // TODO
+   src = map + DDS_HEADER_SIZE;
+   if (eina_file_size_get(loader->f) < (DDS_HEADER_SIZE + loader->data_size))
+     FAIL();
 
-   *error = EVAS_LOAD_ERROR_GENERIC;
-   r = EINA_FALSE; // FIXME
+   if (prop->cspace != EVAS_COLORSPACE_ARGB8888)
+     {
+        if (loader->format != prop->cspace)
+          FAIL();
+        memcpy(pixels, src, loader->data_size);
+        *error = EVAS_LOAD_ERROR_NONE;
+        eina_file_map_free(loader->f, (void *) src);
+        return EINA_TRUE;
+     }
+
+   // Decode to BGRA
+   switch (loader->format)
+     {
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+        func = s3tc_decode_dxt1_rgb;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+        func = s3tc_decode_dxt1_rgba;
+        break;
+      default:
+        FAIL();
+     }
+   if (!func) FAIL();
+
+   for (unsigned int y = 0; y < prop->h; y += 4)
+     {
+        int blockh = prop->h - y;
+        if (blockh > 4) blockh = 4;
+
+        for (unsigned int x = 0; x < prop->w; x += 4)
+          {
+             unsigned int bgra[16];
+             int k, j;
+
+             func(bgra, src);
+             src += loader->block_size;
+
+             j = prop->w - x;
+             if (j > 4) j = 4;
+             for (k = 0; k < blockh; k++)
+               {
+                  memcpy(pix + (((y + k) * prop->w) + x), bgra + (k * 4),
+                         j * sizeof (unsigned int));
+               };
+          }
+     }
+
+   *error = EVAS_LOAD_ERROR_NONE;
 
 on_error:
-   eina_file_map_free(loader->f, m);
-   return r;
+   eina_file_map_free(loader->f, (void *) src);
+   return (*error == EVAS_LOAD_ERROR_NONE);
 }
 
 Evas_Image_Load_Func evas_image_load_dds_func =
