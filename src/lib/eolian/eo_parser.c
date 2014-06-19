@@ -225,8 +225,7 @@ parse_return(Eo_Lexer *ls)
    if (ls->t.token == '(')
      {
         int line = ls->line_number;
-        eo_lexer_get(ls);
-        check(ls, TOK_VALUE);
+        eo_lexer_get_balanced(ls, '(', ')');
         ret->dflt_ret_val = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
         check_match(ls, ')', '(', line);
@@ -721,13 +720,10 @@ parse_event(Eo_Lexer *ls)
    eo_lexer_get(ls);
    if (ls->t.token == '(')
      {
-        Eina_Strbuf *buf;
         int line = ls->line_number;
+        eo_lexer_get_balanced(ls, '(', ')');
+        ev->type = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
-        buf = push_strbuf(ls);
-        parse_type(ls, NULL, buf);
-        ev->type = eina_stringshare_add(eina_strbuf_string_get(buf));
-        pop_strbuf(ls);
         check_match(ls, ')', '(', line);
      }
    check(ls, ';');
@@ -872,8 +868,8 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors)
                    eo_lexer_syntax_error(ls, "double data definition");
                 has_data = EINA_TRUE;
                 eo_lexer_get(ls);
-                check_next(ls, ':');
-                check(ls, TOK_VALUE);
+                check(ls, ':');
+                eo_lexer_get_until(ls, ';');
                 ls->tmp.kls->data_type = eina_stringshare_add(ls->t.value);
                 eo_lexer_get(ls);
                 check_next(ls, ';');

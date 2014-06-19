@@ -62,6 +62,8 @@ int       eo_lexer_init           (void);
 int       eo_lexer_shutdown       (void);
 Eo_Lexer *eo_lexer_new            (const char *source);
 void      eo_lexer_free           (Eo_Lexer *ls);
+int       eo_lexer_get_balanced   (Eo_Lexer *ls, char beg, char end);
+int       eo_lexer_get_until      (Eo_Lexer *ls, char end);
 int       eo_lexer_get            (Eo_Lexer *ls);
 int       eo_lexer_get_ident      (Eo_Lexer *ls, const char *chars);
 int       eo_lexer_lookahead      (Eo_Lexer *ls);
