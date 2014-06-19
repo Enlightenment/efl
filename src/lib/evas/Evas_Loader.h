@@ -162,9 +162,17 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_YCBCR420NV12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb,Cr rows. */
    EVAS_COLORSPACE_YCBCR420TM12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of tiled row pointer, pointing to the Y rows, then the Cb,Cr rows. */
    EVAS_COLORSPACE_AGRY88, /**< AY 8bits Alpha and 8bits Grey, accessed 1 16bits at a time */
+   // ETC1/2 support
    EVAS_COLORSPACE_ETC1, /**< OpenGL ETC1 encoding of RGB texture (4 bit per pixel) @since 1.10 */
    EVAS_COLORSPACE_RGB8_ETC2, /**< OpenGL GL_COMPRESSED_RGB8_ETC2 texture compression format (4 bit per pixel) @since 1.10 */
    EVAS_COLORSPACE_RGBA8_ETC2_EAC, /**< OpenGL GL_COMPRESSED_RGBA8_ETC2_EAC texture compression format, supports alpha (8 bit per pixel) @since 1.10 */
+   // S3TC support
+   EVAS_COLORSPACE_RGB_S3TC_DXT1,  /**< OpenGL COMPRESSED_RGB_S3TC_DXT1_EXT format with RGB only. @since 1.11 */
+   EVAS_COLORSPACE_RGBA_S3TC_DXT1, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT1_EXT format with RGBA punchthrough. @since 1.11 */
+   EVAS_COLORSPACE_RGBA_S3TC_DXT2, /**< DirectDraw DXT2 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
+   EVAS_COLORSPACE_RGBA_S3TC_DXT3,  /**< OpenGL COMPRESSED_RGBA_S3TC_DXT3_EXT format with RGBA. @since 1.11 */
+   EVAS_COLORSPACE_RGBA_S3TC_DXT4, /**< DirectDraw DXT4 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
+   EVAS_COLORSPACE_RGBA_S3TC_DXT5, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11 */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
 struct _Evas_Image_Property
