@@ -1,23 +1,28 @@
 class ColourableSquare (Colourable)
 {
-    constructors {
-       size_constructor { params { @in int size; } }
-    };
     legacy_prefix: legacy;
+    data: ColourableSquare_Data;
+    constructors {
+       size_constructor {
+           params {
+              @in int size;
+           }
+       }
+    }
     properties {
         size {
-            values {
-                int size;
-            };
             set {
                 /*@ Sets size. */
-            };
+            }
             get {
                 /*@ Gets size. */
-            };
-        };
-    };
+            }
+            values {
+                int size; /*@ The size. */
+            }
+        }
+    }
     methods {
-        size_print { /*@ Show the square. */ };
-    };
-};
+        size_print { /*@ Show the square. */ }
+    }
+}

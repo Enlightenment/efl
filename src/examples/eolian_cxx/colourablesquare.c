@@ -52,40 +52,23 @@ _colourablesquare_size_constructor(Eo *obj, ColourableSquare_Data *self, int siz
    eo_do_super(obj, MY_CLASS, eo_constructor());
 }
 
-static void
-_colourablesquare_destructor(Eo *obj, ColourableSquare_Data *self)
-{
-   eo_do_super(obj, MY_CLASS, eo_destructor());
-   if(_colourablesquare_impl_logdomain)
-     {
-        eina_log_domain_unregister(_colourablesquare_impl_logdomain);
-        _colourablesquare_impl_logdomain = 0;
-     }
-}
-
 static int
-_colourablesquare_size_get(Eo *obj, ColourableSquare_Data *self)
+_colourablesquare_size_get(Eo *obj EINA_UNUSED, ColourableSquare_Data *self)
 {
    DBG("_colourablesquare_size_get() => %d\n", self->size);
    return self->size;
 }
 
 static void
-_colourablesquare_size_print(Eo *obj, ColourableSquare_Data *self)
+_colourablesquare_size_print(Eo *obj EINA_UNUSED, ColourableSquare_Data *self)
 {
    DBG("_colourablesquare_size_print() ==> %d\n", self->size);
 }
 
 static void
-_colourablesquare_size_set(Eo *obj, ColourableSquare_Data *self, int size)
+_colourablesquare_size_set(Eo *obj EINA_UNUSED, ColourableSquare_Data *self EINA_UNUSED, int size)
 {
    DBG("_colourablesquare_size_set(%d)\n", size);
-}
-
-static void
-_user_colourablesquare_class_constructor(Eo_Class *klass)
-{
-   DBG("_colourablesquare_class_constructor()\n");
 }
 
 #include "colourablesquare.eo.c"

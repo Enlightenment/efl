@@ -40,7 +40,7 @@ typedef struct _Colourable_Data  Colourable_Data;
   Colourable_Data *wd = eo_data_scope_get(o, MY_CLASS)
 
 void
-_colourable_constructor(Eo *obj, Colourable_Data *self)
+_colourable_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    if(!_colourable_impl_logdomain)
      {
@@ -52,7 +52,7 @@ _colourable_constructor(Eo *obj, Colourable_Data *self)
 }
 
 void
-_colourable_destructor(Eo *obj, Colourable_Data *self)
+_colourable_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    if(_colourable_impl_logdomain)
      {
@@ -98,13 +98,13 @@ _colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
 }
 
 void
-_colourable_print_colour(Eo *obj, Colourable_Data *self)
+_colourable_print_colour(Eo *obj EINA_UNUSED, Colourable_Data *self EINA_UNUSED)
 {
    DBG("_colourable_print_colour() ==> 0x%2.x 0x%2.x 0x%2.x\n", self->r, self->g, self->b);
 }
 
 int
-_colourable_colour_mask(Eo *obj, Colourable_Data *self, int mask)
+_colourable_colour_mask(Eo *obj EINA_UNUSED, Colourable_Data *self, int mask)
 {
    int masked_rgb =
      (((self->r << 16)& 0x00ff0000) |
@@ -115,7 +115,7 @@ _colourable_colour_mask(Eo *obj, Colourable_Data *self, int mask)
 }
 
 void
-_colourable_composite_colour_get(Eo *obj, Colourable_Data *self, int* r, int* g, int* b)
+_colourable_composite_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self, int* r, int* g, int* b)
 {
    *r = self->r;
    *g = self->g;
@@ -125,7 +125,7 @@ _colourable_composite_colour_get(Eo *obj, Colourable_Data *self, int* r, int* g,
 }
 
 void
-_colourable_composite_colour_set(Eo *obj, Colourable_Data *self, int r, int g, int b)
+_colourable_composite_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, int r, int g, int b)
 {
    self->r = r;
    self->g = g;
@@ -136,7 +136,7 @@ _colourable_composite_colour_set(Eo *obj, Colourable_Data *self, int r, int g, i
 }
 
 int
-_colourable_colour_get(Eo *obj, Colourable_Data *self)
+_colourable_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self)
 {
    int rgb =
      ((self->r << 16)& 0x00ff0000) |
@@ -147,19 +147,13 @@ _colourable_colour_get(Eo *obj, Colourable_Data *self)
 }
 
 void
-_colourable_colour_set(Eo *obj, Colourable_Data *self, int rgb)
+_colourable_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, int rgb)
 {
    self->r = (rgb & 0x00ff0000) >> 16;
    self->g = (rgb & 0x0000ff00) >> 8;
    self->b = rgb & 0x000000ff;
    DBG("_colourable_colour_set(0x%.6x)\n", (unsigned int)rgb);
    return;
-}
-
-static void
-_user_colourable_class_constructor(Eo_Class *klass)
-{
-   DBG("_colourable_class_constructor()\n");
 }
 
 #include "colourable.eo.c"

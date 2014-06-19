@@ -1,6 +1,7 @@
 // EINA_LOG_LEVELS=colourable:4,colourablesquare:4 ./eolian_cxx_simple_01
 
 #include <iostream>
+#include <cassert>
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

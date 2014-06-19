@@ -2,6 +2,7 @@ class Colourable (Eo_Base)
 {
     /*@ Colourable class. */
     legacy_prefix: legacy;
+    data: Colourable_Data;
     constructors {
         constructor {
             /*@ Default constructor. */
@@ -12,52 +13,52 @@ class Colourable (Eo_Base)
                 @in int r; /*@ The red component. */
                 @in int g; /*@ The green component. */
                 @in int b; /*@ The blue component. */
-               };
-        };
+               }
+        }
         rgb_24bits_constructor {
             /*@ RGB Constructor. */
             params {
                 @in int rgb; /*@ 24-bit RGB Component. */
-            };
-        };
-    };
+            }
+        }
+    }
     methods {
-        print_colour { /*@ Print the RGB colour. */ };
+        print_colour { /*@ Print the RGB colour. */ }
         colour_mask {
             /*@ The masked RGB value. */
-            return int;
             params {
                 @in int mask; /*@ The colour mask to be applied to current RGB value. */
-            };
-        };
-    };
+            }
+            return int; /*@ The RGB colour. */
+        }
+    }
     properties {
         colour {
             set {
                 /*@ Sets a 24-bit RGB colour. */
-            };
+            }
             get {
                 /*@ Gets the 24-bit RGB colour. */
-            };
+            }
             values {
                 int rgb; /*@ The RGB colour value. */
-            };
-        };
+            }
+        }
         composite_colour {
             set {
                 /*@ Sets a composite RGB colour. */
-            };
+            }
             get {
                 /*@ Gets the composite RGB colour. */
-            };
+            }
             values {
                 int r; /*@ The red component. */
                 int g; /*@ The green component. */
                 int b; /*@ The blue component. */
-            };
-        };
-    };
+            }
+        }
+    }
     events {
         colour_changed(int);
-    };
-};
+    }
+}
