@@ -1389,6 +1389,22 @@ eolian_directory_scan(const char *dir)
    return EINA_TRUE;
 }
 
+static char *
+_eolian_class_to_filename(const char *filename)
+{
+   char *ret;
+   Eina_Strbuf *strbuf = eina_strbuf_new();
+   eina_strbuf_append(strbuf, filename);
+   eina_strbuf_replace_all(strbuf, "::", "_");
+
+   ret = eina_strbuf_string_steal(strbuf);
+   eina_strbuf_free(strbuf);
+
+   eina_str_tolower(&ret);
+
+   return ret;
+}
+
 EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
 {
    const Eina_List *itr;
@@ -1409,8 +1425,7 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
      {
         if (!eolian_class_find_by_name(inherit_name))
           {
-             char *filename = strdup(inherit_name);
-             eina_str_tolower(&filename);
+             char *filename = _eolian_class_to_filename(inherit_name);
              filepath = eina_hash_find(_filenames, filename);
              if (!filepath)
                {
