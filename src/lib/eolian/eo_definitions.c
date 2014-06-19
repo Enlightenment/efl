@@ -2,20 +2,21 @@
 #include <stdlib.h>
 
 #include "eo_definitions.h"
+#include "eolian_database.h"
 
 static void
 eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
-   if (ret->type) eina_stringshare_del(ret->type);
+   if (ret->type) database_type_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
-   if (ret->dflt_ret_val) free(ret->dflt_ret_val);
+   if (ret->dflt_ret_val) eina_stringshare_del(ret->dflt_ret_val);
    free(ret);
 }
 
 static void
 eo_definitions_param_free(Eo_Param_Def *param)
 {
-   if (param->type) eina_stringshare_del(param->type);
+   if (param->type) database_type_del(param->type);
    if (param->name) eina_stringshare_del(param->name);
    if (param->comment) eina_stringshare_del(param->comment);
    free(param);
@@ -117,8 +118,9 @@ eo_definitions_type_def_free(Eo_Type_Def *type)
 {
    if (type->alias)
      eina_stringshare_del(type->alias);
+
    if (type->type)
-     eina_stringshare_del(type->type);
+     database_type_del(type->type);
 
    free(type);
 }
@@ -127,7 +129,6 @@ void
 eo_definitions_class_def_free(Eo_Class_Def *kls)
 {
    const char *s;
-   Eina_List *l;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eo_Event_Def *sgn;
@@ -144,7 +145,7 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    if (kls->data_type)
      eina_stringshare_del(kls->data_type);
 
-   EINA_LIST_FOREACH(kls->inherits, l, s)
+   EINA_LIST_FREE(kls->inherits, s)
       if (s) eina_stringshare_del(s);
 
    EINA_LIST_FREE(kls->implements, impl)
@@ -165,3 +166,55 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    free(kls);
 }
 
+void
+eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
+{
+   Eina_Strbuf *buf;
+   Eo_Param_Def *par;
+   const char *s;
+
+   EINA_LIST_FREE(tmp->str_bufs, buf)
+      eina_strbuf_free(buf);
+
+   EINA_LIST_FREE(tmp->params, par)
+      eo_definitions_param_free(par);
+
+   if (tmp->legacy_def)
+      eina_stringshare_del(tmp->legacy_def);
+
+   if (tmp->kls)
+      eo_definitions_class_def_free(tmp->kls);
+
+   if (tmp->ret_def)
+      eo_definitions_ret_free(tmp->ret_def);
+
+   if (tmp->type_def)
+      eo_definitions_type_def_free(tmp->type_def);
+
+   if (tmp->prop)
+      eo_definitions_property_def_free(tmp->prop);
+
+   if (tmp->meth)
+      eo_definitions_method_def_free(tmp->meth);
+
+   if (tmp->param)
+      eo_definitions_param_free(tmp->param);
+
+   if (tmp->accessor)
+      eo_definitions_accessor_free(tmp->accessor);
+
+   if (tmp->accessor_param)
+      eo_definitions_accessor_param_free(tmp->accessor_param);
+
+   EINA_LIST_FREE(tmp->str_items, s)
+      if (s) eina_stringshare_del(s);
+
+   if (tmp->event)
+      eo_definitions_event_def_free(tmp->event);
+
+   if (tmp->impl)
+      eo_definitions_impl_def_free(tmp->impl);
+
+   if (tmp->type)
+      database_type_del(tmp->type);
+}

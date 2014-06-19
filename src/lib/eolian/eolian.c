@@ -1,4 +1,4 @@
-#include "eo_lexer.h"
+#include "eo_parser.h"
 #include "eolian_database.h"
 
 static int _eolian_init_counter = 0;
@@ -23,7 +23,7 @@ EAPI int eolian_init(void)
 
    INF("Init");
    database_init();
-   eo_tokenizer_init();
+   eo_lexer_init();
    return ++_eolian_init_counter;
 }
 
@@ -43,7 +43,7 @@ EAPI int eolian_shutdown(void)
               EINA_LOG_STATE_START,
               EINA_LOG_STATE_SHUTDOWN);
 
-        eo_tokenizer_shutdown();
+        eo_lexer_shutdown();
         database_shutdown();
 
         eina_log_domain_unregister(_eolian_log_dom);

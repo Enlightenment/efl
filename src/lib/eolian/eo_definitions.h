@@ -8,9 +8,9 @@
 
 typedef struct _eo_ret_def
 {
-   const char *type;
+   Eolian_Type type;
    const char *comment;
-   char *dflt_ret_val;
+   const char *dflt_ret_val;
    Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
 
@@ -27,7 +27,7 @@ typedef enum _param_way
 typedef struct _eo_param_def
 {
    Param_Way way;
-   const char *type;
+   Eolian_Type type;
    const char *name;
    const char *comment;
    Eina_Bool nonull:1;
@@ -73,7 +73,6 @@ typedef struct _eo_property_def
 typedef enum _eo_method_type {
      METH_REGULAR,
      METH_CONSTRUCTOR,
-     METH_DESTRUCTOR,
      METH_TYPE_LAST
 } Eo_Method_Type;
 
@@ -99,13 +98,6 @@ typedef struct _eo_event_def
 } Eo_Event_Def;
 
 /* IMPLEMENT */
-
-typedef struct _eo_implement_legacy_param_def
-{
-   const char *eo_name;
-   const char *legacy_name;
-   const char *comment;
-} Eo_Implement_Legacy_Param_Def;
 
 typedef struct _eo_implement_def
 {
@@ -135,10 +127,32 @@ typedef struct _eo_class_def
 typedef struct _eo_type_def
 {
    const char *alias;
-   const char *type;
+   Eolian_Type type;
 } Eo_Type_Def;
+
+/* TEMPS */
+
+typedef struct _Eo_Lexer_Temps
+{
+   Eina_List *str_bufs;
+   Eina_List *params;
+   const char *legacy_def;
+   Eo_Class_Def *kls;
+   Eo_Ret_Def *ret_def;
+   Eo_Type_Def *type_def;
+   Eo_Property_Def *prop;
+   Eo_Method_Def *meth;
+   Eo_Param_Def *param;
+   Eo_Accessor_Def *accessor;
+   Eo_Accessor_Param *accessor_param;
+   Eina_List *str_items;
+   Eo_Event_Def *event;
+   Eo_Implement_Def *impl;
+   Eolian_Type type;
+} Eo_Lexer_Temps;
 
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 void eo_definitions_type_def_free(Eo_Type_Def *type);
+void eo_definitions_temps_free(Eo_Lexer_Temps *tmp);
 
 #endif /* __EO_DEFINITIONS_H__ */

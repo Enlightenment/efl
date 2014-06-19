@@ -1,5 +1,5 @@
 #include <Eina.h>
-#include "eo_lexer.h"
+#include "eo_parser.h"
 #include "eolian_database.h"
 
 #define PROP_GET_RETURN_DFLT_VAL "property_get_return_dflt_val"
@@ -1413,7 +1413,7 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
    Eolian_Implement impl;
    if (!class)
      {
-        if (!eo_tokenizer_database_fill(filepath)) return EINA_FALSE;
+        if (!eo_parser_database_fill(filepath)) return EINA_FALSE;
         class = eolian_class_find_by_file(filepath);
         if (!class)
           {

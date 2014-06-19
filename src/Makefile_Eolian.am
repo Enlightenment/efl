@@ -11,6 +11,8 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/eo_definitions.h \
                                   lib/eolian/eo_lexer.c \
                                   lib/eolian/eo_lexer.h \
+                                  lib/eolian/eo_parser.c \
+                                  lib/eolian/eo_parser.h \
                                   lib/eolian/eolian.c \
                                   lib/eolian/eolian_database.c \
                                   lib/eolian/eolian_database.h
@@ -42,21 +44,6 @@ bin_eolian_eolian_gen_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
 ### Helper for other modules using Eolian
 include Makefile_Eolian_Helper.am
-
-EXTRA_DIST += lib/eolian/eo_lexer.rl
-
-if EFL_HAVE_RAGEL
-SUFFIXES += .rl
-
-AM_V_RAGEL = $(am__v_RAGEL_@AM_V@)
-am__v_RAGEL_ = $(am__v_RAGEL_@AM_DEFAULT_V@)
-am__v_RAGEL_0 = @echo "  RAGEL   " $@;
-
-.rl.c:
-	$(AM_V_RAGEL) ragel -o $@ $<
-
-lib/eolian/eo_lexer.c: lib/eolian/eo_lexer.rl
-endif
 
 ### Unit tests
 

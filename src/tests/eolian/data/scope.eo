@@ -8,7 +8,7 @@ class Simple {
          get {
          }
       }
-      public   c  {
+      c {
          get {
          }
       }
@@ -18,7 +18,7 @@ class Simple {
       }
       protected  bar  {
       }
-      public foobar {
+      foobar {
       }
    }
 };
