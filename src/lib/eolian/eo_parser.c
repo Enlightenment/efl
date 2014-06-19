@@ -1345,6 +1345,7 @@ eo_parser_database_fill(const char *filename)
    EINA_LIST_FOREACH(ls->typedefs, k, type_def)
      {
         database_type_add(type_def->alias, type_def->type);
+        type_def->type = NULL;
      }
 
    eo_lexer_free(ls);
