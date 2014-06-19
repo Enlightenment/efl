@@ -60,6 +60,41 @@ _decode_alpha4(unsigned int *bgra, const unsigned char *s3tc)
      }
 }
 
+static void
+_decode_dxt_alpha(unsigned int *bgra, const unsigned char *s3tc)
+{
+   unsigned char a0 = s3tc[0];
+   unsigned char a1 = s3tc[1];
+   unsigned long long bits = 0ull;
+   unsigned char alpha[8];
+
+   for (int k = 5; k >= 0; k--)
+     bits = (bits << 8) | s3tc[k + 2];
+
+   alpha[0] = a0;
+   alpha[1] = a1;
+
+   if (a0 > a1)
+     {
+        for (int k = 0; k < 6; k++)
+          alpha[2 + k] = ((6 - k) * a0 + (k + 1) * a1) / 7;
+     }
+   else
+     {
+        for (int k = 0; k < 4; k++)
+          alpha[2 + k] = ((4 - k) * a0 + (k + 1) * a1) / 5;
+        alpha[6] = 0;
+        alpha[7] = 255;
+     }
+
+   for (int k = 0; k < 16; k++)
+     {
+        int index = (int) (bits & 0x7ull);
+        *bgra++ |= (alpha[index] << 24);
+        bits >>= 3;
+     }
+}
+
 void s3tc_decode_dxt1_rgb(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc, 0xFF000000, EINA_TRUE, EINA_FALSE);
@@ -80,4 +115,16 @@ void s3tc_decode_dxt3_rgba(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
    _decode_alpha4(bgra, s3tc);
+}
+
+void s3tc_decode_dxt4_rgba(unsigned int *bgra, const unsigned char *s3tc)
+{
+   _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
+   _decode_dxt_alpha(bgra, s3tc);
+}
+
+void s3tc_decode_dxt5_rgba(unsigned int *bgra, const unsigned char *s3tc)
+{
+   _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
+   _decode_dxt_alpha(bgra, s3tc);
 }

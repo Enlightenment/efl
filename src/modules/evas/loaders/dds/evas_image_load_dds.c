@@ -254,7 +254,6 @@ evas_image_load_file_head_dds(void *loader_data,
         prop->alpha = EINA_TRUE;
         prop->cspaces = cspaces_s3tc_dxt5;
         break;
-#if 0
       case FOURCC('D', 'X', 'T', '4'):
         loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT4;
         prop->alpha = EINA_TRUE;
@@ -266,10 +265,8 @@ evas_image_load_file_head_dds(void *loader_data,
         prop->cspaces = cspaces_s3tc_dxt5;
         break;
       case FOURCC('D', 'X', '1', '0'):
-        loader->format = DX10;
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         FAIL();
-#endif
       default:
         // TODO: Implement decoding support for uncompressed formats
         FAIL();
@@ -361,6 +358,14 @@ evas_image_load_file_data_dds(void *loader_data,
         break;
       case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
         func = s3tc_decode_dxt3_rgba;
+        prop->premul = EINA_TRUE;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+        func = s3tc_decode_dxt4_rgba;
+        prop->premul = EINA_FALSE;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+        func = s3tc_decode_dxt5_rgba;
         prop->premul = EINA_TRUE;
         break;
       default:
