@@ -135,6 +135,15 @@ parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
    Eina_Bool is_own = EINA_FALSE;
    Eina_Strbuf *buf = sbuf ? sbuf : push_strbuf(ls);
 
+#define CHECK_KW(kwname, cond) \
+   if ((cond) && (ls->t.kw == KW_##kwname)) \
+     { \
+        if (need_space) eina_strbuf_append_char(buf, ' '); \
+        eina_strbuf_append(buf, #kwname); \
+        eo_lexer_get(ls); \
+        need_space = EINA_TRUE; \
+     }
+
    if (ls->t.kw == KW_at_own)
      {
         if (sbuf) eina_strbuf_append(buf, "@own ");
@@ -142,42 +151,13 @@ parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
         eo_lexer_get(ls);
      }
 
-   if (ls->t.kw == KW_const)
-     {
-        eina_strbuf_append(buf, "const");
-        eo_lexer_get(ls);
-        need_space = EINA_TRUE;
-     }
+   CHECK_KW(const, EINA_TRUE)
 
-   if (ls->t.kw == KW_unsigned)
-     {
-        if (need_space) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "unsigned");
-        eo_lexer_get(ls);
-        need_space = EINA_TRUE;
-     }
-   else if (ls->t.kw == KW_signed)
-     {
-        if (need_space) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "signed");
-        eo_lexer_get(ls);
-        need_space = EINA_TRUE;
-     }
-   else if (ls->t.kw == KW_struct)
-     {
-        if (need_space) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "struct");
-        eo_lexer_get(ls);
-        need_space = EINA_TRUE;
-     }
+   CHECK_KW(unsigned, EINA_TRUE)
+   else CHECK_KW(signed, EINA_TRUE)
+   else CHECK_KW(struct, EINA_TRUE)
 
-   if (!has_struct && ls->t.kw == KW_const)
-     {
-        if (need_space) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "const");
-        eo_lexer_get(ls);
-        need_space = EINA_TRUE;
-     }
+   CHECK_KW(const, !has_struct)
 
    check(ls, TOK_VALUE);
    if (need_space) eina_strbuf_append_char(buf, ' ');
@@ -185,11 +165,7 @@ parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
    eo_lexer_get(ls);
    need_space = EINA_TRUE;
 
-   if (ls->t.kw == KW_const)
-     {
-        eina_strbuf_append(buf, " const");
-        eo_lexer_get(ls);
-     }
+   CHECK_KW(const, EINA_TRUE)
 
    if (ls->t.token == '*')
      {
@@ -198,13 +174,11 @@ parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
           {
              eina_strbuf_append_char(buf, '*');
              eo_lexer_get(ls);
-             if (ls->t.kw == KW_const)
-               {
-                  eina_strbuf_append(buf, " const");
-                  eo_lexer_get(ls);
-               }
+             CHECK_KW(const, EINA_TRUE)
           }
      }
+
+#undef CHECK_KW
 
    if (!sbuf)
      {
