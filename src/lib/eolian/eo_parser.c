@@ -936,8 +936,6 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    check_next(ls, '{');
    parse_class_body(ls, allow_ctors);
    check_match(ls, '}', '{', line);
-   if (ls->t.token == ';')
-     eo_lexer_get(ls);
 }
 
 static void

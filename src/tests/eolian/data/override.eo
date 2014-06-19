@@ -16,4 +16,4 @@ class Simple (Base) {
       virtual::a::set;
       virtual::foo;
    }
-};
+}

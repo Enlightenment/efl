@@ -28,4 +28,4 @@ class Simple {
          return char *(NULL); /*@ comment for method return */
       }
    }
-};
+}

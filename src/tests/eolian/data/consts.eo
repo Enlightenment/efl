@@ -25,4 +25,4 @@ class Const {
          return char *(NULL); /*@ comment for method return */
       }
    }
-};
+}
