@@ -4992,15 +4992,15 @@ EOLIAN static Eina_Unicode
 _elm_entry_elm_interface_atspi_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
 {
    char *txt;
-   int index = 0;
+   int idx = 0;
    Eina_Unicode ret = 0;
    if (offset < 0) return ret;
 
    txt = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
    if (!txt) return ret;
 
-   ret = eina_unicode_utf8_next_get(txt, &index);
-   while (offset--) ret = eina_unicode_utf8_next_get(txt, &index);
+   ret = eina_unicode_utf8_next_get(txt, &idx);
+   while (offset--) ret = eina_unicode_utf8_next_get(txt, &idx);
 
    free(txt);
 
@@ -5267,7 +5267,7 @@ _elm_entry_elm_interface_atspi_text_range_extents_get(Eo *obj, Elm_Entry_Data *_
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
    int ret;
-   int x1, x2, y1, y2;
+   int x, xx, y, yy;
 
    txtblk = elm_entry_textblock_get(obj);
    if (!txtblk) return EINA_FALSE;
@@ -5285,18 +5285,18 @@ _elm_entry_elm_interface_atspi_text_range_extents_get(Eo *obj, Elm_Entry_Data *_
    evas_textblock_cursor_pos_set(cur1, start_offset);
    evas_textblock_cursor_pos_set(cur2, end_offset);
 
-   ret = evas_textblock_cursor_char_geometry_get(cur1, &x1, &y1, NULL, NULL);
-   ret += evas_textblock_cursor_char_geometry_get(cur2, &x2, &y2, NULL, NULL);
+   ret = evas_textblock_cursor_char_geometry_get(cur1, &x, &y, NULL, NULL);
+   ret += evas_textblock_cursor_char_geometry_get(cur2, &xx, &yy, NULL, NULL);
 
    evas_textblock_cursor_free(cur1);
    evas_textblock_cursor_free(cur2);
 
    if (ret != 0) return EINA_FALSE;
 
-   rect->x = x1 < x2 ? x1 : x2;
-   rect->y = y1 < y2 ? y1 : y2;
-   rect->w = abs(x1 - x2);
-   rect->h = abs(y1 - y2);
+   rect->x = x < xx ? x : xx;
+   rect->y = y < yy ? y : yy;
+   rect->w = abs(x - xx);
+   rect->h = abs(y - yy);
 
    if (screen_coods)
      {
