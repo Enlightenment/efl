@@ -1123,7 +1123,7 @@ eo_parser_dump(Eo_Lexer *ls)
 Eina_Bool
 eo_parser_walk(Eo_Lexer *ls)
 {
-   if (!eo_lexer_setjmp(ls))
+   if (!setjmp(ls->err_jmp))
      {
         parse_chunk(ls);
         return EINA_TRUE;
@@ -1200,6 +1200,7 @@ eo_parser_database_fill(const char *filename)
              EINA_LIST_FOREACH(meth->params, m, param)
                {
                   database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  param->type = NULL;
                }
           }
 
@@ -1212,12 +1213,14 @@ eo_parser_database_fill(const char *filename)
                   Eolian_Function_Parameter p = database_property_key_add(
                         foo_id, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
+                  param->type = NULL;
                }
              EINA_LIST_FOREACH(prop->values, m, param)
                {
                   Eolian_Function_Parameter p = database_property_value_add(
                         foo_id, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
+                  param->type = NULL;
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
@@ -1233,6 +1236,7 @@ eo_parser_database_fill(const char *filename)
                              ftype, accessor->ret->warn_unused);
                        database_function_return_dflt_val_set(foo_id,
                              ftype, accessor->ret->dflt_ret_val);
+                       accessor->ret->type = NULL;
                     }
                   if (accessor->legacy)
                     {
@@ -1276,6 +1280,7 @@ eo_parser_database_fill(const char *filename)
                         EOLIAN_METHOD, meth->ret->warn_unused);
                   database_function_return_dflt_val_set(foo_id,
                         EOLIAN_METHOD, meth->ret->dflt_ret_val);
+                  meth->ret->type = NULL;
                }
              database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
@@ -1285,6 +1290,7 @@ eo_parser_database_fill(const char *filename)
                   Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
                         (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
+                  param->type = NULL;
                }
           }
 

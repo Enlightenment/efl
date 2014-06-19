@@ -382,11 +382,11 @@ int main(int argc, char **argv)
               ERR("Bad generation option\n");
               break;
           }
-        free(output_filename);
      }
    else ret = 0;
 
 end:
+   free(output_filename);
    eina_list_free(files4gen);
 
    eina_log_timing(_eolian_gen_log_dom,

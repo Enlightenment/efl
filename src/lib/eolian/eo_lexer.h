@@ -66,7 +66,6 @@ int       eo_lexer_get            (Eo_Lexer *ls);
 int       eo_lexer_get_ident      (Eo_Lexer *ls, const char *chars);
 int       eo_lexer_lookahead      (Eo_Lexer *ls);
 int       eo_lexer_lookahead_ident(Eo_Lexer *ls, const char *chars);
-int       eo_lexer_setjmp         (Eo_Lexer *ls);
 void      eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
 void      eo_lexer_syntax_error   (Eo_Lexer *ls, const char *msg);
 void      eo_lexer_token_to_str   (int token, char *buf);

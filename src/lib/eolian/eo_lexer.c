@@ -287,12 +287,6 @@ eo_lexer_get_ident(Eo_Lexer *ls, const char *chars)
    return (ls->t.token = lex(ls, &ls->t.value, &ls->t.kw, chars));
 }
 
-int
-eo_lexer_setjmp(Eo_Lexer *ls)
-{
-   return setjmp(ls->err_jmp);
-}
-
 void
 eo_lexer_lex_error(Eo_Lexer *ls, const char *msg, int token)
 {

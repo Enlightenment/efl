@@ -7,6 +7,7 @@
 static void
 eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
+   if (ret->type) database_type_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
    if (ret->dflt_ret_val) eina_stringshare_del(ret->dflt_ret_val);
    free(ret);
@@ -15,6 +16,7 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 static void
 eo_definitions_param_free(Eo_Param_Def *param)
 {
+   if (param->type) database_type_del(param->type);
    if (param->name) eina_stringshare_del(param->name);
    if (param->comment) eina_stringshare_del(param->comment);
    free(param);
@@ -116,6 +118,9 @@ eo_definitions_type_def_free(Eo_Type_Def *type)
 {
    if (type->alias)
      eina_stringshare_del(type->alias);
+
+   if (type->type)
+     database_type_del(type->type);
 
    free(type);
 }
