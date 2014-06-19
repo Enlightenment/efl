@@ -1008,6 +1008,7 @@ collections {
                   size: 10;
                   align: 0.5 1.0;
                   min: 1 1;
+                  ellipsis: -1;
                };
             }
          }
@@ -1471,6 +1472,7 @@ collections {
                   size: 10;
                   align: 0.5 1.0;
                   min: 1 1;
+                  ellipsis: -1;
                };
             }
          }
