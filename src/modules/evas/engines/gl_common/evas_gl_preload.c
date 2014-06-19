@@ -117,7 +117,7 @@ _evas_gl_preload_main_loop_wakeup(void)
                                 async->tex->aptt);
              pt_unref(async->tex->ptt);
              async->tex->ptt = NULL;
-             free(async->tex->aptt);
+             eina_rectangle_pool_release(async->tex->aptt);
              async->tex->aptt = NULL;
 
              evas_gl_common_texture_free(async->tex, EINA_FALSE);
