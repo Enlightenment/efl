@@ -728,6 +728,7 @@ echo "    Elocation..............: ${have_elementary_elocation}"
 echo
 echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
+echo "  elementary_codegen.......: ${elementary_codegen}"
 echo "  elm_prefs_cc.............: ${elm_prefs_cc}"
 echo "  eolian_gen...............: ${eolian_gen}"
 echo
