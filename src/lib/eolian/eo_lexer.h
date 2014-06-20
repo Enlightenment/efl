@@ -59,19 +59,20 @@ typedef struct _Eo_Lexer
    Eo_Lexer_Temps  tmp;
 } Eo_Lexer;
 
-int       eo_lexer_init           (void);
-int       eo_lexer_shutdown       (void);
-Eo_Lexer *eo_lexer_new            (const char *source);
-void      eo_lexer_free           (Eo_Lexer *ls);
-int       eo_lexer_get_balanced   (Eo_Lexer *ls, char beg, char end);
-int       eo_lexer_get_until      (Eo_Lexer *ls, char end);
-int       eo_lexer_get            (Eo_Lexer *ls);
-int       eo_lexer_get_ident      (Eo_Lexer *ls, const char *chars);
-int       eo_lexer_lookahead      (Eo_Lexer *ls);
-int       eo_lexer_lookahead_ident(Eo_Lexer *ls, const char *chars);
-void      eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
-void      eo_lexer_syntax_error   (Eo_Lexer *ls, const char *msg);
-void      eo_lexer_token_to_str   (int token, char *buf);
+int         eo_lexer_init           (void);
+int         eo_lexer_shutdown       (void);
+Eo_Lexer   *eo_lexer_new            (const char *source);
+void        eo_lexer_free           (Eo_Lexer *ls);
+int         eo_lexer_get_balanced   (Eo_Lexer *ls, char beg, char end);
+int         eo_lexer_get_until      (Eo_Lexer *ls, char end);
+int         eo_lexer_get            (Eo_Lexer *ls);
+int         eo_lexer_get_ident      (Eo_Lexer *ls, const char *chars);
+int         eo_lexer_lookahead      (Eo_Lexer *ls);
+int         eo_lexer_lookahead_ident(Eo_Lexer *ls, const char *chars);
+void        eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
+void        eo_lexer_syntax_error   (Eo_Lexer *ls, const char *msg);
+void        eo_lexer_token_to_str   (int token, char *buf);
+const char *eo_lexer_keyword_str_get(int kw);
 
 extern int _eo_lexer_log_dom;
 #ifdef CRITICAL

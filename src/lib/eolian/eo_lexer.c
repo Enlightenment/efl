@@ -393,6 +393,12 @@ eo_lexer_token_to_str(int token, char *buf)
      }
 }
 
+const char *
+eo_lexer_keyword_str_get(int kw)
+{
+   return tokens[kw + 2];
+}
+
 static int _init_counter = 0;
 
 int

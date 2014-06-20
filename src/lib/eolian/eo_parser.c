@@ -621,19 +621,10 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         switch (ls->t.kw)
           {
              case KW_constructor:
-                eina_strbuf_append(buf, "constructor");
-                eo_lexer_get(ls);
-                goto end;
              case KW_destructor:
-                eina_strbuf_append(buf, "destructor");
-                eo_lexer_get(ls);
-                goto end;
              case KW_get:
-                eina_strbuf_append(buf, "get");
-                eo_lexer_get(ls);
-                goto end;
              case KW_set:
-                eina_strbuf_append(buf, "set");
+                eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
                 eo_lexer_get(ls);
                 goto end;
              default:
