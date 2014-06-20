@@ -90,8 +90,8 @@ class Elm_App_Server (Eo_Base)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
    }
    events {
       terminate; /*@ Called when application must be terminated. */

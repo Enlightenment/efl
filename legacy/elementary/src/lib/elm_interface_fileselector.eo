@@ -148,30 +148,30 @@ interface Elm_Interface_Fileselector ()
       }
    }
    implements {
-      virtual::selected::set;
-      virtual::selected::get;
-      virtual::selected_paths::get;
-      virtual::custom_filter_append;
-      virtual::expandable::set;
-      virtual::expandable::get;
-      virtual::thumbnail_size::set;
-      virtual::thumbnail_size::get;
-      virtual::folder_only::set;
-      virtual::folder_only::get;
-      virtual::hidden_visible::set;
-      virtual::hidden_visible::get;
-      virtual::filters_clear;
-      virtual::is_save::set;
-      virtual::is_save::get;
-      virtual::path::set;
-      virtual::path::get;
-      virtual::sort_method::set;
-      virtual::sort_method::get;
-      virtual::multi_select::set;
-      virtual::multi_select::get;
-      virtual::mime_types_filter_append;
-      virtual::mode::set;
-      virtual::mode::get;
+      virtual.selected.set;
+      virtual.selected.get;
+      virtual.selected_paths.get;
+      virtual.custom_filter_append;
+      virtual.expandable.set;
+      virtual.expandable.get;
+      virtual.thumbnail_size.set;
+      virtual.thumbnail_size.get;
+      virtual.folder_only.set;
+      virtual.folder_only.get;
+      virtual.hidden_visible.set;
+      virtual.hidden_visible.get;
+      virtual.filters_clear;
+      virtual.is_save.set;
+      virtual.is_save.get;
+      virtual.path.set;
+      virtual.path.get;
+      virtual.sort_method.set;
+      virtual.sort_method.get;
+      virtual.multi_select.set;
+      virtual.multi_select.get;
+      virtual.mime_types_filter_append;
+      virtual.mode.set;
+      virtual.mode.get;
    }
 
 }

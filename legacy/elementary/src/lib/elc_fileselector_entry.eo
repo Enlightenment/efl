@@ -97,26 +97,26 @@ class Elm_Fileselector_Entry (Elm_Layout, Elm_Interface_Fileselector)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::add;
-      Elm_Widget::theme_apply;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_next;
-      Elm_Widget::disable;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Container::content_get;
-      Elm_Container::content_unset;
-      Elm_Container::content_set;
-      Elm_Layout::text_set;
-      Elm_Layout::text_get;
-      Elm_Layout::sizing_eval;
-      Elm_Interface_Fileselector::selected;
-      Elm_Interface_Fileselector::folder_only;
-      Elm_Interface_Fileselector::is_save;
-      Elm_Interface_Fileselector::path;
-      Elm_Interface_Fileselector::expandable;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.add;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Container.content_get;
+      Elm_Container.content_unset;
+      Elm_Container.content_set;
+      Elm_Layout.text_set;
+      Elm_Layout.text_get;
+      Elm_Layout.sizing_eval;
+      Elm_Interface_Fileselector.selected;
+      Elm_Interface_Fileselector.folder_only;
+      Elm_Interface_Fileselector.is_save;
+      Elm_Interface_Fileselector.path;
+      Elm_Interface_Fileselector.expandable;
    }
    events {
       language,changed;

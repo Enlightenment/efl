@@ -586,29 +586,29 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::member_add;
-      Evas_Object_Smart::move;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::resize;
-      Elm_Widget::theme_apply;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::access;
-      Elm_Widget::focus_highlight_geometry_get;
-      Elm_Widget::focus_next;
-      Elm_Widget::disable;
-      Elm_Widget::on_focus;
-      Elm_Widget::translate;
-      Elm_Widget::sub_object_del;
-      Elm_Widget::event;
-      Elm_Widget::focused_item::get;
-      Elm_Widget::item_loop_enabled::set;
-      Elm_Widget::item_loop_enabled::get;
-      Elm_Layout::sizing_eval;
-      Elm_Interface_Scrollable::policy::set;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.member_add;
+      Evas_Object_Smart.move;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.resize;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_highlight_geometry_get;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.on_focus;
+      Elm_Widget.translate;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.event;
+      Elm_Widget.focused_item.get;
+      Elm_Widget.item_loop_enabled.set;
+      Elm_Widget.item_loop_enabled.get;
+      Elm_Layout.sizing_eval;
+      Elm_Interface_Scrollable.policy.set;
    }
    events {
       activated;

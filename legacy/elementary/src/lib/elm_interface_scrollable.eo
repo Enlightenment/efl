@@ -512,10 +512,10 @@ mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface, Evas_Object_Smart)
       }
    }
    implements {
-      Eo_Base::constructor;
-      class::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
+      Eo_Base.constructor;
+      class.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
    }
    events {
       changed;

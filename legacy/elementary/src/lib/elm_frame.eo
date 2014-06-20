@@ -63,16 +63,16 @@ class Elm_Frame (Elm_Layout, Evas_Clickable_Interface)
       }
    }
    implements {
-      Eo_Base::constructor;
-      class::constructor;
-      Evas_Object_Smart::calculate;
-      Evas_Object_Smart::add;
-      Elm_Widget::focus_direction;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_next;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Layout::text_aliases::get;
-      Elm_Layout::content_aliases::get;
+      Eo_Base.constructor;
+      class.constructor;
+      Evas_Object_Smart.calculate;
+      Evas_Object_Smart.add;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
    }
    events {
       clicked;

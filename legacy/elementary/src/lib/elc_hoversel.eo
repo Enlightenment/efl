@@ -138,17 +138,17 @@ class Elm_Hoversel (Elm_Button, Evas_Selectable_Interface)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::hide;
-      Evas_Object_Smart::show;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::parent::set;
-      Elm_Widget::theme_apply;
-      Elm_Widget::translate;
-      Elm_Widget::event;
-      Elm_Button::admits_autorepeat::get;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.hide;
+      Evas_Object_Smart.show;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.parent.set;
+      Elm_Widget.theme_apply;
+      Elm_Widget.translate;
+      Elm_Widget.event;
+      Elm_Button.admits_autorepeat.get;
    }
    events {
       selected;

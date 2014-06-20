@@ -394,18 +394,18 @@ class Elm_Calendar (Elm_Layout)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::calculate;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::theme_apply;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::access;
-      Elm_Widget::focus_next;
-      Elm_Widget::event;
-      Elm_Layout::sizing_eval;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.calculate;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.event;
+      Elm_Layout.sizing_eval;
    }
    events {
       changed;

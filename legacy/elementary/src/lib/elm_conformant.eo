@@ -2,13 +2,13 @@ class Elm_Conformant (Elm_Layout)
 {
    eo_prefix: elm_obj_conformant;
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::parent::set;
-      Elm_Widget::theme_apply;
-      Elm_Layout::content_aliases::get;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.parent.set;
+      Elm_Widget.theme_apply;
+      Elm_Layout.content_aliases.get;
    }
    events {
       virtualkeypad,state,on;

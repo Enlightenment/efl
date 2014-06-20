@@ -38,9 +38,9 @@ interface Elm_Interface_Atspi_Value ()
       }
    }
    implements {
-      virtual::value_and_text::get;
-      virtual::value_and_text::set;
-      virtual::range::get;
-      virtual::increment::get;
+      virtual.value_and_text.get;
+      virtual.value_and_text.set;
+      virtual.range.get;
+      virtual.increment.get;
    }
 }

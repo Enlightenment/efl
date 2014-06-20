@@ -50,11 +50,11 @@ interface Elm_Interface_Atspi_Editable_Text ()
       }
    }
    implements {
-      virtual::content::set;
-      virtual::insert;
-      virtual::copy;
-      virtual::cut;
-      virtual::delete;
-      virtual::paste;
+      virtual.content.set;
+      virtual.insert;
+      virtual.copy;
+      virtual.cut;
+      virtual.delete;
+      virtual.paste;
    }
 }

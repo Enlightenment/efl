@@ -106,11 +106,11 @@ class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::theme_apply;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.theme_apply;
    }
    events {
       clicked;

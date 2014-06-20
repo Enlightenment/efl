@@ -111,8 +111,8 @@ class Elm_App_Client_View (Eo_Base)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
    }
    events {
       state,changed; /*@ State of view changed. */

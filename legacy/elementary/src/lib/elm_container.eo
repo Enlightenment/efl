@@ -38,10 +38,10 @@ class Elm_Container (Elm_Widget)
       }
    }
    implements {
-      virtual::content_set;
-      virtual::content_unset;
-      virtual::content_get;
-      virtual::content_swallow_list::get;
+      virtual.content_set;
+      virtual.content_unset;
+      virtual.content_get;
+      virtual.content_swallow_list.get;
    }
 
 }

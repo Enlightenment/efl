@@ -649,25 +649,25 @@ class Elm_Layout (Elm_Container)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Eo_Base::dbg_info_get;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::calculate;
-      Elm_Widget::focus_direction;
-      Elm_Widget::sub_object_add;
-      Elm_Widget::theme_apply;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_next;
-      Elm_Widget::disable;
-      Elm_Widget::sub_object_del;
-      Elm_Widget::on_focus;
-      Elm_Container::content_get;
-      Elm_Container::content_set;
-      Elm_Container::content_unset;
-      Elm_Container::content_swallow_list::get;
+      class.constructor;
+      Eo_Base.constructor;
+      Eo_Base.dbg_info_get;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.calculate;
+      Elm_Widget.focus_direction;
+      Elm_Widget.sub_object_add;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.on_focus;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
+      Elm_Container.content_swallow_list.get;
    }
    events {
       theme,changed;

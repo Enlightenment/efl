@@ -152,11 +152,11 @@ class Elm_Gesture_Layer (Elm_Widget)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::disable;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.disable;
    }
 
 }

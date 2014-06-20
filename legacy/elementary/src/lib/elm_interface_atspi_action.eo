@@ -67,12 +67,12 @@ mixin Elm_Interface_Atspi_Action ()
       }
    }
    implements {
-      virtual::action_do;
-      virtual::keybinding_get;
-      virtual::name::get;
-      virtual::name::set;
-      virtual::description::get;
-      virtual::description::set;
-      virtual::actions::get;
+      virtual.action_do;
+      virtual.keybinding_get;
+      virtual.name.get;
+      virtual.name.set;
+      virtual.description.get;
+      virtual.description.set;
+      virtual.actions.get;
    }
 }

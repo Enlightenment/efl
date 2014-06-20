@@ -110,7 +110,7 @@ class Elm_Prefs (Elm_Widget)
 
             If @a autosave is @c EINA_TRUE, every call to
             elm_prefs_item_value_set(), every
-            Elm_Prefs_Data_Event_Type::ELM_PREFS_DATA_EVENT_ITEM_CHANGED event
+            Elm_Prefs_Data_Event_Type.ELM_PREFS_DATA_EVENT_ITEM_CHANGED event
             coming for its prefs data and every UI element direct value
             changing will implicitly make the prefs values to be flushed back
             to it prefs data. If a prefs data handle with no writing
@@ -370,11 +370,11 @@ class Elm_Prefs (Elm_Widget)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::add;
-      Elm_Widget::focus_next;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.add;
+      Elm_Widget.focus_next;
    }
    events {
       page,changed; /*@ s */

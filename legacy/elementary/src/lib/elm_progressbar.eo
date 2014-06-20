@@ -276,18 +276,18 @@ class Elm_Progressbar (Elm_Layout)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::theme_apply;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::sub_object_del;
-      Elm_Container::content_set;
-      Elm_Layout::text_aliases::get;
-      Elm_Layout::content_aliases::get;
-      Elm_Layout::sizing_eval;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.sub_object_del;
+      Elm_Container.content_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
    }
    events {
       changed;

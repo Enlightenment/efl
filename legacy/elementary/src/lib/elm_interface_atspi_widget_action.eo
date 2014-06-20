@@ -14,12 +14,12 @@ mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
       }
    }
    implements {
-      Elm_Interface_Atspi_Action::action_do;
-      Elm_Interface_Atspi_Action::keybinding_get;
-      Elm_Interface_Atspi_Action::name::get;
-      Elm_Interface_Atspi_Action::description::set;
-      Elm_Interface_Atspi_Action::description::get;
-      Elm_Interface_Atspi_Action::actions::get;
-      virtual::elm_actions::get;
+      Elm_Interface_Atspi_Action.action_do;
+      Elm_Interface_Atspi_Action.keybinding_get;
+      Elm_Interface_Atspi_Action.name.get;
+      Elm_Interface_Atspi_Action.description.set;
+      Elm_Interface_Atspi_Action.description.get;
+      Elm_Interface_Atspi_Action.actions.get;
+      virtual.elm_actions.get;
    }
 }

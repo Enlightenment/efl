@@ -165,25 +165,25 @@ class Elm_Ctxpopup (Elm_Layout)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::add;
-      Elm_Widget::parent::set;
-      Elm_Widget::focus_direction;
-      Elm_Widget::sub_object_add;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_next;
-      Elm_Widget::disable;
-      Elm_Widget::translate;
-      Elm_Widget::theme_apply;
-      Elm_Widget::event;
-      Elm_Container::content_get;
-      Elm_Container::content_set;
-      Elm_Container::content_unset;
-      Elm_Layout::sub_object_add_enable;
-      Elm_Layout::sizing_eval;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.add;
+      Elm_Widget.parent.set;
+      Elm_Widget.focus_direction;
+      Elm_Widget.sub_object_add;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.disable;
+      Elm_Widget.translate;
+      Elm_Widget.theme_apply;
+      Elm_Widget.event;
+      Elm_Container.content_get;
+      Elm_Container.content_set;
+      Elm_Container.content_unset;
+      Elm_Layout.sub_object_add_enable;
+      Elm_Layout.sizing_eval;
    }
    events {
       language,changed;

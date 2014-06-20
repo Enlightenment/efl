@@ -3,11 +3,11 @@ class Elm_Access (Elm_Widget)
 eo_prefix: elm_obj_access;
    data: null;
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Elm_Widget::activate;
-      Elm_Widget::on_focus;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Elm_Widget.activate;
+      Elm_Widget.on_focus;
    }
 
 }

@@ -30,18 +30,18 @@ class Elm_Bubble (Elm_Layout)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Elm_Widget::focus_direction;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_next;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::access;
-      Elm_Layout::text_set;
-      Elm_Layout::text_aliases::get;
-      Elm_Layout::content_aliases::get;
-      Elm_Layout::sizing_eval;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Elm_Widget.focus_direction;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_next;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Layout.text_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
    }
    events {
       clicked;

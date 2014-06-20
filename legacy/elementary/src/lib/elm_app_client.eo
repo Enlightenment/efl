@@ -52,8 +52,8 @@ class Elm_App_Client (Eo_Base)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
    }
    events {
       view,created; /*@ Called when a view of this application is created. */

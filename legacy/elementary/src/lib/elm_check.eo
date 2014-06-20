@@ -45,20 +45,20 @@ class Elm_Check (Elm_Layout)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Elm_Widget::activate;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::theme_apply;
-      Elm_Widget::sub_object_del;
-      Elm_Widget::event;
-      Elm_Container::content_set;
-      Elm_Layout::text_aliases::get;
-      Elm_Layout::content_aliases::get;
-      Elm_Layout::sizing_eval;
-      Elm_Interface_Atspi_Accessible::state_set::get;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Elm_Widget.activate;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.theme_apply;
+      Elm_Widget.sub_object_del;
+      Elm_Widget.event;
+      Elm_Container.content_set;
+      Elm_Layout.text_aliases.get;
+      Elm_Layout.content_aliases.get;
+      Elm_Layout.sizing_eval;
+      Elm_Interface_Atspi_Accessible.state_set.get;
    }
    events {
       changed;

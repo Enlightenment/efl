@@ -253,21 +253,21 @@ class Elm_Multibuttonentry (Elm_Layout)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Elm_Widget::theme_apply;
-      Elm_Widget::focus_next_manager_is;
-      Elm_Widget::focus_direction_manager_is;
-      Elm_Widget::access;
-      Elm_Widget::focus_next;
-      Elm_Widget::on_focus;
-      Elm_Widget::translate;
-      Elm_Widget::event;
-      Elm_Layout::text_set;
-      Elm_Layout::text_get;
-      Elm_Layout::sizing_eval;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Elm_Widget.theme_apply;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
+      Elm_Widget.access;
+      Elm_Widget.focus_next;
+      Elm_Widget.on_focus;
+      Elm_Widget.translate;
+      Elm_Widget.event;
+      Elm_Layout.text_set;
+      Elm_Layout.text_get;
+      Elm_Layout.sizing_eval;
    }
    events {
       item,selected;
