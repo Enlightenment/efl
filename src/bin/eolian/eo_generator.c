@@ -598,6 +598,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
         Eolian_Function fnid = NULL;
         const char *funcname = NULL;
         char *tp = implname;
+        char *ret;
 
         if (eolian_implement_information_get(impl_desc, &impl_class, &fnid, &ftype))
           {
@@ -615,29 +616,31 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
              goto end;
           }
 
+        ret = _func_name_dedup(impl_env.lower_eo_prefix, funcname);
         switch (ftype)
           {
            case EOLIAN_PROP_SET: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY:
               if (ftype != EOLIAN_PROP_GET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_%s_set, _%s_%s_set),",
-                         impl_env.lower_eo_prefix, funcname, implname, funcname);
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_set, _%s_%s_set),",
+                         ret, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, &impl_env);
                 }
 
               if (ftype != EOLIAN_PROP_SET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_%s_get, _%s_%s_get),",
-                         impl_env.lower_eo_prefix, funcname, implname, funcname);
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_get, _%s_%s_get),",
+                         ret, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, &impl_env);
                 }
               break;
            default:
-              eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_%s, _%s_%s),",
-                    impl_env.lower_eo_prefix, funcname, implname, funcname);
+              eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s, _%s_%s),",
+                    ret, implname, funcname);
               eo_bind_func_generate(class, fnid, ftype, str_bodyf, &impl_env);
               break;
           }
+        free(ret);
      }
 
    //Constructors

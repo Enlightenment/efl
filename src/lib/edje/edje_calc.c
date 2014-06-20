@@ -1652,7 +1652,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
 	     eo_do(ep->object,
 		   evas_obj_text_style_set(style),
-		   evas_obj_text_text_set(text),
+		   evas_obj_text_set(text),
 		   evas_obj_size_get(&tw, &th));
              if (chosen_desc->text.max_x)
                {

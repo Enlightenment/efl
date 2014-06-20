@@ -962,7 +962,7 @@ _evas_text_eo_base_dbg_info_get(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED, Eo_Db
    eo_do(eo_obj, text = evas_obj_text_font_source_get());
    EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
 
-   eo_do(eo_obj, text = evas_obj_text_text_get());
+   eo_do(eo_obj, text = evas_obj_text_get());
    EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, text);
 }
 
