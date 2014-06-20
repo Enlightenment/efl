@@ -418,6 +418,7 @@ struct _inlist_common_base
   typedef typename Allocator::template rebind<_inlist_node<T> >::other node_allocator_type; /**< Type for the allocator of the node. */
   typedef Allocator allocator_type; /**< Type for the allocator. */
   typedef _inlist_node<T> node_type; /**< Type for the list node.  */
+  typedef Eina_Inlist* native_handle_type; /**< Native type. */
 
   /**
    * @brief Creates a list with the given allocator.
@@ -425,6 +426,13 @@ struct _inlist_common_base
    */
   _inlist_common_base(Allocator allocator)
     : _impl(allocator) {}
+
+  /**
+   * @brief Wraps the native object.
+   * @param inlist The native inlist object (Eina_Inlist*).
+   */
+  _inlist_common_base(native_handle_type inlist)
+    : _impl(inlist) {}
 
   /**
    * @brief Creates an empty inline list.
@@ -477,9 +485,11 @@ struct _inlist_common_base
     _inlist_impl(Allocator allocator)
       : node_allocator_type(allocator), _list(0)
     {}
+     explicit _inlist_impl(native_handle_type list)
+       : _list(list)
+     {}
     _inlist_impl() : _list(0) {}
-
-    Eina_Inlist* _list;
+    native_handle_type _list;
   };
 
   _inlist_impl _impl; /**< @internal */
@@ -518,6 +528,7 @@ public:
   typedef typename allocator_type::const_pointer const_pointer; /**< Type for a constant pointer for an element. */
   typedef std::size_t size_type; /**< Type for size information. */
   typedef std::ptrdiff_t difference_type; /**< Type to represent the distance between two iterators. */
+  typedef typename _base_type::native_handle_type native_handle_type; /**< The native handle type. */
 
   typedef std::reverse_iterator<iterator> reverse_iterator; /**< Type for reverse iterator for this kind of container. */
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator; /**< Type for constant reverse iterator for this kind of container. */
@@ -528,6 +539,14 @@ public:
    * @brief Default constructor. Creates an empty inline list.
    */
   inlist() {}
+
+  /**
+   * @brief Construct an inlist from a native object.
+   * @param list The native object.
+   */
+  inlist(native_handle_type list)
+    : _inlist_common_base<T, Allocator>(list)
+  {}
 
   /**
    * @brief Construct an inline list object with @p n copies of @p t.

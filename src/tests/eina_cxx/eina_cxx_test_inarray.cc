@@ -419,6 +419,27 @@ START_TEST(eina_cxx_range_inarray)
 }
 END_TEST
 
+START_TEST(eina_cxx_inarray_from_c)
+{
+  efl::eina::eina_init eina_init;
+
+  Eina_Inarray *c_array = nullptr;
+  int values[] = { 11, 22, 33 };
+
+  c_array = ::eina_inarray_new(sizeof(int), sizeof(values)/sizeof(int));
+  ck_assert(!!c_array);
+
+  eina_inarray_push(c_array, &values[0]);
+  eina_inarray_push(c_array, &values[1]);
+  eina_inarray_push(c_array, &values[2]);
+  {
+      efl::eina::range_inarray<int> range_array(c_array);
+  }
+  ck_assert(eina_inarray_count(c_array) == 3);
+  efl::eina::inarray<int> array(c_array);
+}
+END_TEST
+
 void
 eina_test_inarray(TCase *tc)
 {
@@ -433,4 +454,5 @@ eina_test_inarray(TCase *tc)
   tcase_add_test(tc, eina_cxx_inarray_nonpod_erase);
   tcase_add_test(tc, eina_cxx_inarray_nonpod_constructors);
   tcase_add_test(tc, eina_cxx_range_inarray);
+  tcase_add_test(tc, eina_cxx_inarray_from_c);
 }

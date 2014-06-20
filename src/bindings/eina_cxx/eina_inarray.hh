@@ -363,7 +363,7 @@ struct _inarray_common_base
    * @warning It is important to note that the created array object
    * gains ownership of the handle, deallocating it at destruction time.
    */
-  explicit _inarray_common_base(Eina_Inarray* array)
+  explicit _inarray_common_base(native_handle_type array)
     : _array(array) {}
 
   /**
@@ -439,7 +439,7 @@ struct _inarray_common_base
    * @internal
    * Member variable that holds the native @c Eina_Inarray handle.
    */
-  Eina_Inarray* _array;
+  native_handle_type _array;
 private:
   /** Disabled copy constructor. */
   _inarray_common_base(_inarray_common_base const& other);
@@ -503,7 +503,7 @@ public:
    * @warning It is important to note that the created object gains
    * ownership of the handle, deallocating it at destruction time.
    */
-  _pod_inarray(Eina_Inarray* array)
+  _pod_inarray(native_handle_type array)
     : _base_type(array) {}
 
   /**
@@ -607,6 +607,7 @@ public:
   void push_back(T const& value)
   {
     size_type s = size();
+    static_cast<void>(s);
     eina_inarray_push(_array, &value);
     assert(size() != s);
     assert(size() == s + 1u);
@@ -1019,7 +1020,7 @@ public:
    * @warning It is important to take care when using it, since the
    * handle will be automatically release upon object destruction.
    */
-  Eina_Inarray* native_handle()
+  native_handle_type native_handle()
   {
     return this->_array;
   }
@@ -1033,7 +1034,7 @@ public:
    *
    * @see native_handle()
    */
-  Eina_Inarray const* native_handle() const
+  const_native_handle_type native_handle() const
   {
     return this->_array;
   }
@@ -1286,6 +1287,7 @@ public:
         for(size_type j = 0;j != n;++j)
           new (&*first++) T(t);
         std::size_t diff = last - first;
+        static_cast<void>(diff);
         assert(diff == _array->len - index - n);
         static_cast<void>(diff);
         while(first != last)

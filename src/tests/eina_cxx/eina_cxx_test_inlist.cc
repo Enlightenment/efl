@@ -6,6 +6,12 @@
 
 #include <check.h>
 
+struct Eina_Test_Inlist
+{
+   int i;
+   EINA_INLIST;
+};
+
 START_TEST(eina_cxx_inlist_push_back)
 {
   efl::eina::eina_init eina_init;
@@ -242,6 +248,31 @@ START_TEST(eina_cxx_inlist_range)
 }
 END_TEST
 
+START_TEST(eina_cxx_inlist_from_c)
+{
+  efl::eina::eina_init eina_init;
+
+  Eina_Inlist *c_list = nullptr;
+  Eina_Test_Inlist arr[3] = { {11}, {22}, {33} };
+
+  c_list = eina_inlist_append(c_list, EINA_INLIST_GET(&arr[0]));
+  ck_assert(!!c_list);
+
+  c_list = eina_inlist_append(c_list, EINA_INLIST_GET(&arr[1]));
+  ck_assert(!!c_list);
+
+  c_list = eina_inlist_append(c_list, EINA_INLIST_GET(&arr[2]));
+  ck_assert(!!c_list);
+
+  efl::eina::range_inlist<int const> const_range_inlist(c_list);
+  efl::eina::range_inlist<int> range_inlist(c_list);
+
+  c_list = eina_inlist_first(c_list);
+   while (c_list)
+      c_list = eina_inlist_remove(c_list, c_list);
+}
+END_TEST
+
 void
 eina_test_inlist(TCase *tc)
 {
@@ -253,4 +284,5 @@ eina_test_inlist(TCase *tc)
   tcase_add_test(tc, eina_cxx_inlist_erase);
   tcase_add_test(tc, eina_cxx_inlist_constructors);
   tcase_add_test(tc, eina_cxx_inlist_range);
+  tcase_add_test(tc, eina_cxx_inlist_from_c);
 }

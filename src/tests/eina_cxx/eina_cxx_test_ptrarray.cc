@@ -212,6 +212,18 @@ START_TEST(eina_cxx_ptrarray_range)
 }
 END_TEST
 
+START_TEST(eina_cxx_ptrarray_from_c)
+{
+  efl::eina::eina_init eina_init;
+
+  Eina_Array *c_array = eina_array_new(3);
+  ck_assert(!!c_array);
+  efl::eina::range_ptr_array<int> range_array(c_array);
+
+  eina_array_free(c_array);
+}
+END_TEST
+
 void
 eina_test_ptrarray(TCase* tc)
 {
@@ -221,4 +233,5 @@ eina_test_ptrarray(TCase* tc)
   tcase_add_test(tc, eina_cxx_ptrarray_constructors);
   tcase_add_test(tc, eina_cxx_ptrarray_erase);
   tcase_add_test(tc, eina_cxx_ptrarray_range);
+  tcase_add_test(tc, eina_cxx_ptrarray_from_c);
 }

@@ -255,6 +255,43 @@ START_TEST(eina_cxx_ptrlist_range)
 }
 END_TEST
 
+START_TEST(eina_cxx_ptrlist_from_c)
+{
+  efl::eina::eina_init eina_init;
+  Eina_List *c_list = nullptr;
+
+  int values[] = { 11, 22, 33 };
+
+  c_list = ::eina_list_append(c_list, &values[0]);
+  ck_assert(!!c_list);
+
+  c_list = ::eina_list_append(c_list, &values[1]);
+  ck_assert(!!c_list);
+
+  c_list = ::eina_list_append(c_list, &values[2]);
+  ck_assert(!!c_list);
+
+  const Eina_List* const_c_list = c_list;
+  const Eina_List* const_c_list_const_ptr = c_list;
+
+  efl::eina::range_ptr_list<int> r0(c_list);
+  const efl::eina::range_ptr_list<int> r1(c_list);
+
+  efl::eina::range_ptr_list<int const> r2(c_list);
+  efl::eina::range_ptr_list<int const> r3(const_c_list);
+  efl::eina::range_ptr_list<int const> r4(const_c_list_const_ptr);
+
+  const efl::eina::range_ptr_list<int const> r5(c_list);
+  const efl::eina::range_ptr_list<int const> r6(const_c_list);
+  const efl::eina::range_ptr_list<int const> r7(const_c_list_const_ptr);
+
+  const efl::eina::range_ptr_list<int> r8(c_list);
+
+  c_list = ::eina_list_free(c_list);
+  ck_assert(!c_list);
+}
+END_TEST
+
 void
 eina_test_ptrlist(TCase* tc)
 {
@@ -267,4 +304,5 @@ eina_test_ptrlist(TCase* tc)
   tcase_add_test(tc, eina_cxx_ptrlist_erase);
   tcase_add_test(tc, eina_cxx_ptrlist_range);
   tcase_add_test(tc, eina_cxx_ptrlist_malloc_clone_allocator);
+  tcase_add_test(tc, eina_cxx_ptrlist_from_c);
 }

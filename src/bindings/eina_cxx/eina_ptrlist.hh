@@ -6,6 +6,7 @@
 #include <eina_lists_auxiliary.hh>
 #include <eina_type_traits.hh>
 #include <eina_accessor.hh>
+#include <eina_iterator.hh>
 
 #include <memory>
 #include <iterator>
