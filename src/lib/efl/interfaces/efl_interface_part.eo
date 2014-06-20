@@ -8,7 +8,7 @@ interface Efl_Interface_Part {
          get {
          }
          keys {
-            const char *name; /*@ part name. */
+            const(char) *name; /*@ part name. */
          }
          values {
             Eo *pobj; /*@ the object that populates the part. */

@@ -27,12 +27,9 @@ interface Efl_Interface_Text_Properties {
             @see evas_object_text_font_set() */
          }
          values {
-            const char* font; /*@ The font family name or filename. */
+            const(char) *font; /*@ The font family name or filename. */
             Evas_Font_Size size; /*@ The font size, in points. */
          }
       }
-   }
-   implements {
-      virtual::font;
    }
 }

@@ -17,7 +17,7 @@ interface Efl_Interface_Text {
             @return the markup text of the object. */
          }
          values {
-            const char *text; /*@ the markup text to use. */
+            const(char) *text; /*@ the markup text to use. */
          }
       }
       cursor {
@@ -29,9 +29,5 @@ interface Efl_Interface_Text {
             return Evas_Textblock_Cursor *;
          }
       }
-   }
-   implements {
-      virtual::text_markup;
-      virtual::cursor::get;
    }
 }

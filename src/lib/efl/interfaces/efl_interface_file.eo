@@ -8,8 +8,8 @@ interface Efl_Interface_File {
          get {
          }
          values {
-            const char *file; /*@ The path to the file to load @p from */
-            const char *group; /*@ The name of the group, in @p file */
+            const(char) *file; /*@ The path to the file to load @p from */
+            const(char) *group; /*@ The name of the group, in @p file */
          }
       }
    }
@@ -18,11 +18,11 @@ interface Efl_Interface_File {
          const;
          return Eina_Bool;
          params {
-            @in const char *file @nonull; /*@ The filename to be used to save the data (extension
+            @in const(char) *file @nonull; /*@ The filename to be used to save the data (extension
             obligatory). */
-            @in const char *key; /*@ The image key in the file (if an Eet one), or @c NULL,
+            @in const(char) *key; /*@ The image key in the file (if an Eet one), or @c NULL,
             otherwise. */
-            @in const char *flags; /*@ String containing the flags to be used (@c NULL for
+            @in const(char) *flags; /*@ String containing the flags to be used (@c NULL for
             none). */
          }
       }

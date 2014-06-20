@@ -1,4 +1,4 @@
-class Ecore_Mainloop (Eo_Base)
+class Ecore_Mainloop (Eo.Base)
 {
    legacy_prefix: null;
    data: null;
