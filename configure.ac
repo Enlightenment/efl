@@ -1844,19 +1844,6 @@ EVAS_CHECK_IMAGE_LOADER([WEBP],    [${want_evas_image_loader_webp}])
 EVAS_CHECK_IMAGE_LOADER([XPM],     [${want_evas_image_loader_xpm}])
 EVAS_CHECK_IMAGE_LOADER([TGV],     [${want_evas_image_loader_tgv}])
 
-dnl Windows has no sigsetjmp function, nor equivalent.
-dnl So we disable the jpeg saver.
-dnl TODO: must find a workaround
-if test "${have_windows}" = "yes"; then
-   have_evas_image_saver_jpeg="no"
-elif test "x${have_evas_image_loader_jpeg}" = "xyes" || \
-     test "x${have_evas_image_loader_jpeg}" = "xstatic"; then
-   AC_DEFINE([EVAS_BUILD_SAVER_JPEG], [1], [Build JPEG saver])
-   have_evas_image_saver_jpeg="yes"
-fi
-
-AM_CONDITIONAL([BUILD_SAVER_JPEG], [test "x${have_evas_image_saver_jpeg}" = "xyes"])
-
 EFL_EVAL_PKGS([EVAS])
 
 ### Checks for header files

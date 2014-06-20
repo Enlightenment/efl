@@ -205,6 +205,7 @@ typedef unsigned long  gid_t;
 # endif
 #endif
 
+#define sigsetjmp setjmp
 
 #ifdef __cplusplus
 }
