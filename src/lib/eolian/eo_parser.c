@@ -4,6 +4,11 @@
 #define FUNC_PUBLIC 0
 #define FUNC_PROTECTED 1
 
+#define CASE_LOCK(ls, var, msg) \
+   if (has_##var) \
+      eo_lexer_syntax_error(ls, "double " msg); \
+   has_##var = EINA_TRUE;
+
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
@@ -313,27 +318,21 @@ parse_attrs(Eo_Lexer *ls)
         switch (ls->t.kw)
           {
              case KW_const:
-                if (has_const)
-                   eo_lexer_syntax_error(ls, "double const qualifier");
-                has_const = EINA_TRUE;
+                CASE_LOCK(ls, const, "const qualifier")
                 if (!first) eina_strbuf_append_char(buf, ' ');
                 eina_strbuf_append(buf, "const");
                 first = EINA_FALSE;
                 eo_lexer_get(ls);
                 break;
              case KW_at_own:
-                if (has_own)
-                   eo_lexer_syntax_error(ls, "double @own qualifier");
-                has_own = EINA_TRUE;
+                CASE_LOCK(ls, own, "@own qualifier")
                 if (!first) eina_strbuf_append_char(buf, ' ');
                 eina_strbuf_append(buf, "@own");
                 first = EINA_FALSE;
                 eo_lexer_get(ls);
                 break;
              case KW_at_nonull:
-                if (has_nonull)
-                   eo_lexer_syntax_error(ls, "double @nonull qualifier");
-                has_nonull = EINA_TRUE;
+                CASE_LOCK(ls, nonull, "@nonull qualifier")
                 if (!first) eina_strbuf_append_char(buf, ' ');
                 eina_strbuf_append(buf, "@nonull");
                 first = EINA_FALSE;
@@ -372,17 +371,13 @@ parse_accessor(Eo_Lexer *ls)
         switch (ls->t.kw)
           {
              case KW_return:
-                if (has_return)
-                   eo_lexer_syntax_error(ls, "double return");
-                has_return = EINA_TRUE;
+                CASE_LOCK(ls, return, "return")
                 parse_return(ls);
                 acc->ret = ls->tmp.ret_def;
                 ls->tmp.ret_def = NULL;
                 break;
              case KW_legacy:
-                if (has_legacy)
-                   eo_lexer_syntax_error(ls, "double legacy name");
-                has_legacy = EINA_TRUE;
+                CASE_LOCK(ls, legacy, "legacy name")
                 parse_legacy(ls);
                 acc->legacy = ls->tmp.legacy_def;
                 ls->tmp.legacy_def = NULL;
@@ -450,35 +445,27 @@ parse_property(Eo_Lexer *ls)
         switch (ls->t.kw)
           {
              case KW_get:
-                if (has_get)
-                   eo_lexer_syntax_error(ls, "double get definition");
-                has_get = EINA_TRUE;
+                CASE_LOCK(ls, get, "get definition")
                 parse_accessor(ls);
                 prop->accessors = eina_list_append(prop->accessors,
                                                    ls->tmp.accessor);
                 ls->tmp.accessor = NULL;
                 break;
              case KW_set:
-                if (has_set)
-                   eo_lexer_syntax_error(ls, "double set definition");
-                has_set = EINA_TRUE;
+                CASE_LOCK(ls, set, "set definition")
                 parse_accessor(ls);
                 prop->accessors = eina_list_append(prop->accessors,
                                                    ls->tmp.accessor);
                 ls->tmp.accessor = NULL;
                 break;
              case KW_keys:
-                if (has_keys)
-                   eo_lexer_syntax_error(ls, "double keys definition");
-                has_keys = EINA_TRUE;
+                CASE_LOCK(ls, keys, "keys definition")
                 parse_params(ls, EINA_FALSE);
                 prop->keys = ls->tmp.params;
                 ls->tmp.params = NULL;
                 break;
              case KW_values:
-                if (has_values)
-                   eo_lexer_syntax_error(ls, "double values definition");
-                has_values = EINA_TRUE;
+                CASE_LOCK(ls, values, "values definition")
                 parse_params(ls, EINA_FALSE);
                 prop->values = ls->tmp.params;
                 ls->tmp.params = NULL;
@@ -532,33 +519,25 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
         switch (ls->t.kw)
           {
              case KW_const:
-                if (has_const)
-                   eo_lexer_syntax_error(ls, "double const qualifier");
-                has_const = EINA_TRUE;
+                CASE_LOCK(ls, const, "const qualifier")
                 meth->obj_const = EINA_TRUE;
                 eo_lexer_get(ls);
                 check_next(ls, ';');
                 break;
              case KW_return:
-                if (has_return)
-                   eo_lexer_syntax_error(ls, "double return");
-                has_return = EINA_TRUE;
+                CASE_LOCK(ls, return, "return")
                 parse_return(ls);
                 meth->ret = ls->tmp.ret_def;
                 ls->tmp.ret_def = NULL;
                 break;
              case KW_legacy:
-                if (has_legacy)
-                   eo_lexer_syntax_error(ls, "double legacy name");
-                has_legacy = EINA_TRUE;
+                CASE_LOCK(ls, legacy, "legacy name")
                 parse_legacy(ls);
                 meth->legacy = ls->tmp.legacy_def;
                 ls->tmp.legacy_def = NULL;
                 break;
              case KW_params:
-                if (has_params)
-                   eo_lexer_syntax_error(ls, "double params definition");
-                has_params = EINA_TRUE;
+                CASE_LOCK(ls, params, "params definition")
                 parse_params(ls, EINA_TRUE);
                 meth->params = ls->tmp.params;
                 ls->tmp.params = NULL;
@@ -810,9 +789,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         switch (ls->t.kw)
           {
              case KW_legacy_prefix:
-                if (has_legacy_prefix)
-                   eo_lexer_syntax_error(ls, "double legacy prefix definition");
-                has_legacy_prefix = EINA_TRUE;
+                CASE_LOCK(ls, legacy_prefix, "legacy prefix definition")
                 eo_lexer_get(ls);
                 check_next(ls, ':');
                 check(ls, TOK_VALUE);
@@ -821,9 +798,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
                 check_next(ls, ';');
                 break;
              case KW_eo_prefix:
-                if (has_eo_prefix)
-                   eo_lexer_syntax_error(ls, "double eo prefix definition");
-                has_eo_prefix = EINA_TRUE;
+                CASE_LOCK(ls, eo_prefix, "eo prefix definition")
                 eo_lexer_get(ls);
                 check_next(ls, ':');
                 check(ls, TOK_VALUE);
@@ -832,9 +807,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
                 check_next(ls, ';');
                 break;
              case KW_data:
-                if (has_data)
-                   eo_lexer_syntax_error(ls, "double data definition");
-                has_data = EINA_TRUE;
+                CASE_LOCK(ls, data, "data definition")
                 eo_lexer_get(ls);
                 check(ls, ':');
                 eo_lexer_get_until(ls, ';');
@@ -845,33 +818,23 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
              case KW_constructors:
                 if (!allow_ctors)
                    return;
-                if (has_constructors)
-                   eo_lexer_syntax_error(ls, "double constructors definition");
-                has_constructors = EINA_TRUE;
+                CASE_LOCK(ls, constructors, "constructors definition")
                 parse_constructors(ls);
                 break;
              case KW_properties:
-                if (has_properties)
-                   eo_lexer_syntax_error(ls, "double properties definition");
-                has_properties = EINA_TRUE;
+                CASE_LOCK(ls, properties, "properties definition")
                 parse_properties(ls);
                 break;
              case KW_methods:
-                if (has_methods)
-                   eo_lexer_syntax_error(ls, "double methods definition");
-                has_methods = EINA_TRUE;
+                CASE_LOCK(ls, methods, "methods definition")
                 parse_methods(ls);
                 break;
              case KW_implements:
-                if (has_implements)
-                   eo_lexer_syntax_error(ls, "double implements definition");
-                has_implements = EINA_TRUE;
+                CASE_LOCK(ls, implements, "implements definition")
                 parse_implements(ls, type == EOLIAN_CLASS_INTERFACE);
                 break;
              case KW_events:
-                if (has_events)
-                   eo_lexer_syntax_error(ls, "double events definition");
-                has_events = EINA_TRUE;
+                CASE_LOCK(ls, events, "events definition")
                 parse_events(ls);
                 break;
              default:
