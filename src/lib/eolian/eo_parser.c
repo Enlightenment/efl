@@ -9,6 +9,13 @@
       eo_lexer_syntax_error(ls, "double " msg); \
    has_##var = EINA_TRUE;
 
+#define PARSE_SECTION \
+   int line; \
+   eo_lexer_get(ls); \
+   line = ls->line_number; \
+   check_next(ls, '{'); \
+   while (ls->t.token != '}')
+
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
@@ -409,11 +416,7 @@ end:
 static void
 parse_params(Eo_Lexer *ls, Eina_Bool allow_inout)
 {
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
+   PARSE_SECTION
      {
         parse_param(ls, allow_inout);
         ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
@@ -676,11 +679,7 @@ parse_event(Eo_Lexer *ls)
 static void
 parse_constructors(Eo_Lexer *ls)
 {
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
+   PARSE_SECTION
      {
         parse_method(ls, EINA_TRUE);
         ls->tmp.kls->constructors = eina_list_append(ls->tmp.kls->constructors,
@@ -693,11 +692,7 @@ parse_constructors(Eo_Lexer *ls)
 static void
 parse_methods(Eo_Lexer *ls)
 {
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
+   PARSE_SECTION
      {
         parse_method(ls, EINA_FALSE);
         ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods,
@@ -710,11 +705,7 @@ parse_methods(Eo_Lexer *ls)
 static void
 parse_properties(Eo_Lexer *ls)
 {
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
+   PARSE_SECTION
      {
         parse_property(ls);
         ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties,
@@ -727,11 +718,7 @@ parse_properties(Eo_Lexer *ls)
 static void
 parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
+   PARSE_SECTION
      {
         parse_implement(ls, iface);
         ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements,
