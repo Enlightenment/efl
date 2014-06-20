@@ -2,8 +2,8 @@ class Ecore_Audio_Out_Sndfile (Ecore_Audio_Out)
 {
    eo_prefix: ecore_audio_obj_out_sndfile;
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
       Ecore_Audio.source.get;
       Ecore_Audio.source.set;
       Ecore_Audio.format.get;

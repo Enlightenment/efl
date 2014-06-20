@@ -1,4 +1,4 @@
-class Colourable (Eo_Base)
+class Colourable (Eo.Base)
 {
     /*@ Colourable class. */
     legacy_prefix: legacy;

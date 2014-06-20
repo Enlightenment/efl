@@ -5,7 +5,7 @@ class Evas_Smart_Clipped (Evas_Object_Smart)
    data: Evas_Object_Smart_Clipped_Data;
 
    implements {
-      Eo_Base.constructor;
+      Eo.Base.constructor;
       Evas_Object_Smart.hide;
       Evas_Object_Smart.clip.set;
       Evas_Object_Smart.clip_unset;

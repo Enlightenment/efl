@@ -150,6 +150,6 @@ class Evas_Grid (Evas_Smart_Clipped)
       }
    }
    implements {
-      Eo_Base.constructor;
+      Eo.Base.constructor;
    }
 }

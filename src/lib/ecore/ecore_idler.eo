@@ -1,4 +1,4 @@
-class Ecore_Idler (Eo_Base)
+class Ecore_Idler (Eo.Base)
 {
    eo_prefix: ecore_idler;
    constructors {
@@ -11,7 +11,7 @@ class Ecore_Idler (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 }

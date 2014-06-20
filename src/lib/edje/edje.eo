@@ -2493,9 +2493,9 @@ class Edje (Evas_Smart_Clipped)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
-      Eo_Base.dbg_info_get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
       Evas_Object_Smart.hide;
       Evas_Object_Smart.calculate;
       Evas_Object_Smart.show;

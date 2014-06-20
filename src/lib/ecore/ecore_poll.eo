@@ -1,4 +1,4 @@
-class Ecore_Poller (Eo_Base)
+class Ecore_Poller (Eo.Base)
 {
    eo_prefix: ecore_poller;
    constructors {
@@ -38,7 +38,7 @@ class Ecore_Poller (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 }

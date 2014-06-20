@@ -276,9 +276,9 @@ class Evas_Textgrid (Evas_Object)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
-      Eo_Base.dbg_info_get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
    }
 
 }

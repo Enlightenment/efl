@@ -24,7 +24,7 @@ class Evas_Line (Evas_Object)
       }
    }
    implements {
-      Eo_Base.constructor;
+      Eo.Base.constructor;
    }
 
 }

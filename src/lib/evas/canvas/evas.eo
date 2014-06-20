@@ -1,4 +1,4 @@
-class Evas (Eo_Base, Evas_Common_Interface)
+class Evas (Eo.Base, Evas_Common_Interface)
 {
    eo_prefix: evas_canvas;
    data: Evas_Public_Data;
@@ -1772,8 +1772,8 @@ class Evas (Eo_Base, Evas_Common_Interface)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
       Evas_Common_Interface.evas.get;
    }
 

@@ -1,4 +1,4 @@
-class Ecore_Animator (Eo_Base)
+class Ecore_Animator (Eo.Base)
 {
    eo_prefix: ecore_animator;
    constructors {
@@ -19,9 +19,9 @@ class Ecore_Animator (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
-      Eo_Base.event_freeze;
-      Eo_Base.event_thaw;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.event_freeze;
+      Eo.Base.event_thaw;
    }
 }

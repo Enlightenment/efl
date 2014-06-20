@@ -353,7 +353,7 @@ class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
    implements {
       class.constructor;
       class.destructor;
-      Eo_Base.constructor;
+      Eo.Base.constructor;
       Evas_Object.smart_type_check_ptr;
       Evas_Object.smart_type_check;
       Evas_Object.smart_data.get;
