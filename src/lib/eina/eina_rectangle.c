@@ -658,17 +658,13 @@ EAPI void
 eina_rectangle_pool_free(Eina_Rectangle_Pool *pool)
 {
    Eina_Rectangle_Alloc *del;
-   Eina_List *l;
    Eina_Rectangle *r;
 
    EINA_SAFETY_ON_NULL_RETURN(pool);
    DBG("pool=%p, size=(%d, %d), references=%u",
        pool, pool->w, pool->h, pool->references);
-   EINA_LIST_FOREACH(pool->empty, l, r)
-   {
-      eina_rectangle_free(r);
-      pool->empty = eina_list_remove_list(pool->empty, l);
-   }
+   EINA_LIST_FREE(pool->empty, r)
+     eina_rectangle_free(r);
    while (pool->head)
      {
         del = (Eina_Rectangle_Alloc *)pool->head;
