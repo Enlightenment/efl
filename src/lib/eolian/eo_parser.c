@@ -412,7 +412,7 @@ end:
 }
 
 static void
-parse_keys(Eo_Lexer *ls)
+parse_params(Eo_Lexer *ls, Eina_Bool allow_inout)
 {
    int line;
    eo_lexer_get(ls);
@@ -420,23 +420,7 @@ parse_keys(Eo_Lexer *ls)
    check_next(ls, '{');
    while (ls->t.token != '}')
      {
-        parse_param(ls, EINA_FALSE);
-        ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
-        ls->tmp.param = NULL;
-     }
-   check_match(ls, '}', '{', line);
-}
-
-static void
-parse_values(Eo_Lexer *ls)
-{
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
-     {
-        parse_param(ls, EINA_FALSE);
+        parse_param(ls, allow_inout);
         ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
         ls->tmp.param = NULL;
      }
@@ -487,7 +471,7 @@ parse_property(Eo_Lexer *ls)
                 if (has_keys)
                    eo_lexer_syntax_error(ls, "double keys definition");
                 has_keys = EINA_TRUE;
-                parse_keys(ls);
+                parse_params(ls, EINA_FALSE);
                 prop->keys = ls->tmp.params;
                 ls->tmp.params = NULL;
                 break;
@@ -495,7 +479,7 @@ parse_property(Eo_Lexer *ls)
                 if (has_values)
                    eo_lexer_syntax_error(ls, "double values definition");
                 has_values = EINA_TRUE;
-                parse_values(ls);
+                parse_params(ls, EINA_FALSE);
                 prop->values = ls->tmp.params;
                 ls->tmp.params = NULL;
                 break;
@@ -504,22 +488,6 @@ parse_property(Eo_Lexer *ls)
           }
      }
 end:
-   check_match(ls, '}', '{', line);
-}
-
-static void
-parse_params(Eo_Lexer *ls)
-{
-   int line;
-   eo_lexer_get(ls);
-   line = ls->line_number;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
-     {
-        parse_param(ls, EINA_TRUE);
-        ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
-        ls->tmp.param = NULL;
-     }
    check_match(ls, '}', '{', line);
 }
 
@@ -591,7 +559,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
                 if (has_params)
                    eo_lexer_syntax_error(ls, "double params definition");
                 has_params = EINA_TRUE;
-                parse_params(ls);
+                parse_params(ls, EINA_TRUE);
                 meth->params = ls->tmp.params;
                 ls->tmp.params = NULL;
                 break;
