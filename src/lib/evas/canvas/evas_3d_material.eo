@@ -148,10 +148,10 @@ class Evas_3D_Material (Evas_3D_Object, Evas_Common_Interface)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Evas_3D_Object::update_notify;
-      Evas_3D_Object::change_notify;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Evas_3D_Object.update_notify;
+      Evas_3D_Object.change_notify;
    }
 
 }

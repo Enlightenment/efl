@@ -475,7 +475,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
 
             This function returns the object clipping @p obj. If @p obj is
             not being clipped at all, @c NULL is returned. The object @p obj
-            must be a valid ::Evas_Object.
+            must be a valid .Evas_Object.
 
             See also evas_object_clip_set(), evas_object_clip_unset() and
             evas_object_clipees_get().
@@ -1158,7 +1158,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             returned, so it should not be used anymore after that point. Any
             use of the list after this may have undefined results, possibly
             leading to crashes. The object @p obj must be a valid
-            ::Evas_Object.
+            .Evas_Object.
 
             See also evas_object_clip_set(), evas_object_clip_unset() and
             evas_object_clip_get().
@@ -1466,7 +1466,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          This function disables clipping for the object @p obj, if it was
          already clipped, i.e., its visibility and color get detached from
          the previous clipper. If it wasn't, this has no effect. The object
-         @p obj must be a valid ::Evas_Object.
+         @p obj must be a valid .Evas_Object.
 
          See also evas_object_clip_set() (for an example),
          evas_object_clipees_get() and evas_object_clip_get(). */
@@ -1511,10 +1511,10 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Eo_Base::dbg_info_get;
-      Evas_Common_Interface::evas::get;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Eo_Base.dbg_info_get;
+      Evas_Common_Interface.evas.get;
    }
 
 }

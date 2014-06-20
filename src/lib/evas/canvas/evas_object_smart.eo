@@ -147,7 +147,7 @@ class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
 
          @note Becase @p descriptions must be @c NULL terminated, and
          because a @c NULL name makes little sense, too,
-         Evas_Smart_Cb_Description::name must @b not be @c NULL.
+         Evas_Smart_Cb_Description.name must @b not be @c NULL.
 
          @note While instance callbacks descriptions are possible, they are
          @b not recommended. Use @b class callbacks descriptions
@@ -173,7 +173,7 @@ class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
 
          This call searches for registered callback descriptions for both
          instance and class of the given smart object. These arrays will be
-         sorted by Evas_Smart_Cb_Description::name and also @c NULL
+         sorted by Evas_Smart_Cb_Description.name and also @c NULL
          terminated, so both @a class_count and @a instance_count can be
          ignored, if the caller wishes so. The terminator @c NULL is not
          counted in these values.
@@ -351,11 +351,11 @@ class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
       }
    }
    implements {
-      class::constructor;
-      class::destructor;
-      Eo_Base::constructor;
-      Evas_Object::smart_type_check_ptr;
-      Evas_Object::smart_type_check;
-      Evas_Object::smart_data::get;
+      class.constructor;
+      class.destructor;
+      Eo_Base.constructor;
+      Evas_Object.smart_type_check_ptr;
+      Evas_Object.smart_type_check;
+      Evas_Object.smart_data.get;
    }
 }

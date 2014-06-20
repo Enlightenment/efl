@@ -5,16 +5,16 @@ class Evas_Smart_Clipped (Evas_Object_Smart)
    data: Evas_Object_Smart_Clipped_Data;
 
    implements {
-      Eo_Base::constructor;
-      Evas_Object_Smart::hide;
-      Evas_Object_Smart::clip::set;
-      Evas_Object_Smart::clip_unset;
-      Evas_Object_Smart::show;
-      Evas_Object_Smart::color::set;
-      Evas_Object_Smart::move;
-      Evas_Object_Smart::member_del;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::member_add;
+      Eo_Base.constructor;
+      Evas_Object_Smart.hide;
+      Evas_Object_Smart.clip.set;
+      Evas_Object_Smart.clip_unset;
+      Evas_Object_Smart.show;
+      Evas_Object_Smart.color.set;
+      Evas_Object_Smart.move;
+      Evas_Object_Smart.member_del;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.member_add;
    }
 }

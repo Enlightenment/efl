@@ -58,10 +58,10 @@ class Ecore_Timer (Eo_Base)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Eo_Base::event_freeze;
-      Eo_Base::event_freeze_count::get;
-      Eo_Base::event_thaw;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Eo_Base.event_freeze;
+      Eo_Base.event_freeze_count.get;
+      Eo_Base.event_thaw;
    }
 }

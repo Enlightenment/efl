@@ -11,7 +11,7 @@
 
 enum Tokens
 {
-   TOK_DBCOLON = START_CUSTOM, TOK_COMMENT, TOK_EOF, TOK_VALUE
+   TOK_COMMENT = START_CUSTOM, TOK_EOF, TOK_VALUE
 };
 
 #define KEYWORDS KW(class), KW(const), KW(private), KW(protected), \
@@ -51,6 +51,7 @@ typedef struct _Eo_Lexer
    Eina_File   *handle;
    const char  *source;
    const char  *stream;
+   const char  *stream_end;
    jmp_buf      err_jmp;
 
    Eina_List      *classes;

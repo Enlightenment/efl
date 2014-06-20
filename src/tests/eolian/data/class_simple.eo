@@ -7,7 +7,7 @@ class Simple {
       a {
          set {
             /*@
-            comment a::set */
+            comment a.set */
             return Eina_Bool (EINA_TRUE); /*@ comment for property set return */
          }
          get {

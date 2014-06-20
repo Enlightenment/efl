@@ -8,14 +8,20 @@
 
 int _eo_lexer_log_dom = -1;
 
-#define next_char(ls) (ls->current = *(ls->stream++))
+static void next_char(Eo_Lexer *ls)
+{
+   if (ls->stream == ls->stream_end)
+     ls->current = '\0';
+   else
+     ls->current = *(ls->stream++);
+}
 
 #define KW(x) #x
 #define KWAT(x) "@" #x
 
 static const char * const tokens[] =
 {
-   "::", "<comment>", "<eof>", "<value>",
+   "<comment>", "<eof>", "<value>",
 
    KEYWORDS
 };
@@ -41,9 +47,9 @@ init_hash(void)
    unsigned int i;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = 4; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = 3; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
-         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 3));
+         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 2));
      }
 }
 
@@ -72,12 +78,14 @@ txt_token(Eo_Lexer *ls, int token, char *buf)
 void eo_lexer_lex_error   (Eo_Lexer *ls, const char *msg, int token);
 void eo_lexer_syntax_error(Eo_Lexer *ls, const char *msg);
 
+#define is_newline(c) ((c) == '\n' || (c) == '\r')
+
 static void next_line(Eo_Lexer *ls)
 {
    int old = ls->current;
-   assert(strchr("\r\n", ls->current));
+   assert(is_newline(ls->current));
    next_char(ls);
-   if (strchr("\r\n", ls->current) && ls->current != old)
+   if (is_newline(ls->current) && ls->current != old)
       next_char(ls);
    if (++ls->line_number >= INT_MAX)
       eo_lexer_syntax_error(ls, "chunk has too many lines");
@@ -87,7 +95,7 @@ static void next_line(Eo_Lexer *ls)
 static void next_line_ws(Eo_Lexer *ls)
 {
    next_line(ls);
-   while (isspace(ls->current) && !strchr("\r\n", ls->current))
+   while (isspace(ls->current) && !is_newline(ls->current))
      next_char(ls);
 }
 
@@ -96,7 +104,7 @@ read_long_comment(Eo_Lexer *ls, const char **value)
 {
    eina_strbuf_reset(ls->buff);
 
-   if (strchr("\r\n", ls->current))
+   if (is_newline(ls->current))
       next_line_ws(ls);
 
    for (;;)
@@ -113,7 +121,7 @@ read_long_comment(Eo_Lexer *ls, const char **value)
                }
              eina_strbuf_append_char(ls->buff, '*');
           }
-        else if (strchr("\r\n", ls->current))
+        else if (is_newline(ls->current))
           {
              eina_strbuf_append_char(ls->buff, '\n');
              next_line_ws(ls);
@@ -140,13 +148,6 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
              case '\r':
                 next_line(ls);
                 continue;
-             case ':':
-               {
-                  next_char(ls);
-                  if (ls->current != ':') return ':';
-                  next_char(ls);
-                  return TOK_DBCOLON;
-               }
              case '/':
                {
                   next_char(ls);
@@ -163,7 +164,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                           continue;
                     }
                   else if (ls->current != '/') return '/';
-                  while (ls->current && !strchr("\r\n", ls->current))
+                  while (ls->current && !is_newline(ls->current))
                      next_char(ls);
                   continue;
                }
@@ -173,22 +174,24 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                {
                   if (isspace(ls->current))
                     {
-                       assert(!strchr("\r\n", ls->current));
+                       assert(!is_newline(ls->current));
                        next_char(ls);
                        continue;
                     }
-                  if (isalnum(ls->current) || ls->current == '@'
-                                           || strchr(chars, ls->current))
+                  if (ls->current && (isalnum(ls->current)
+                      || ls->current == '@'
+                      || strchr(chars, ls->current)))
                     {
                        Eina_Bool at_kw = (ls->current == '@');
                        const char *str;
                        eina_strbuf_reset(ls->buff);
                        do
-                       {
-                          eina_strbuf_append_char(ls->buff, ls->current);
-                          next_char(ls);
-                       } while (isalnum(       ls->current)
-                              || strchr(chars, ls->current));
+                         {
+                            eina_strbuf_append_char(ls->buff, ls->current);
+                            next_char(ls);
+                         }
+                       while (ls->current && (isalnum(ls->current)
+                                     || strchr(chars, ls->current)));
                        str    = eina_strbuf_string_get(ls->buff);
                        *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
                                                                str);
@@ -263,6 +266,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->buff            = eina_strbuf_new();
    ls->handle          = f;
    ls->stream          = eina_file_map_all(f, EINA_FILE_RANDOM);
+   ls->stream_end      = ls->stream + eina_file_size_get(f);
    ls->source          = eina_stringshare_add(source);
    ls->line_number     = 1;
    next_char(ls);

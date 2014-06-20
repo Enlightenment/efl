@@ -341,7 +341,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @see evas_key_lock_off
             @see evas_key_lock_is_set
 
-            @return An ::Evas_Lock handle to query Evas' keys subsystem with
+            @return An .Evas_Lock handle to query Evas' keys subsystem with
             evas_key_lock_is_set(), or @c NULL on error. */
             return const Evas_Lock * @warn_unused;
          }
@@ -521,7 +521,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @see evas_key_modifier_off
             @see evas_key_modifier_is_set
 
-            @return An ::Evas_Modifier handle to query Evas' keys subsystem
+            @return An .Evas_Modifier handle to query Evas' keys subsystem
             with evas_key_modifier_is_set(), or @c NULL on error. */
             return const Evas_Modifier * @warn_unused;
          }
@@ -1772,9 +1772,9 @@ class Evas (Eo_Base, Evas_Common_Interface)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Evas_Common_Interface::evas::get;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Evas_Common_Interface.evas.get;
    }
 
 }

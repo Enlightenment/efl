@@ -439,9 +439,9 @@ class Evas_Text (Evas_Object)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Eo_Base::dbg_info_get;
-      Evas_Object::size::set;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Eo_Base.dbg_info_get;
+      Evas_Object.size.set;
    }
 }

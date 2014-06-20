@@ -239,11 +239,11 @@ class Evas_Table (Evas_Smart_Clipped)
       }
    }
    implements {
-      class::constructor; 
-      Eo_Base::constructor;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::calculate;
-      Evas_Object_Smart::resize;
+      class.constructor; 
+      Eo_Base.constructor;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.calculate;
+      Evas_Object_Smart.resize;
    }
 }

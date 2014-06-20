@@ -18,8 +18,8 @@ class Evas_Polygon (Evas_Object)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
    }
 
 }

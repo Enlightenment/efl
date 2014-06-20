@@ -242,7 +242,7 @@ class Evas_Box (Evas_Smart_Clipped)
          depend on the layout set to it.
 
          @note This call will trigger the box's
-         _Evas_Object_Box_Api::insert_after smart function. */
+         _Evas_Object_Box_Api.insert_after smart function. */
 
          return Evas_Object_Box_Option *;
          params {
@@ -306,7 +306,7 @@ class Evas_Box (Evas_Smart_Clipped)
          an item in the end of the box's list of children will appear on its
          right.
 
-         @note This call will trigger the box's _Evas_Object_Box_Api::append
+         @note This call will trigger the box's _Evas_Object_Box_Api.append
          smart function. */
 
          return Evas_Object_Box_Option *;
@@ -326,7 +326,7 @@ class Evas_Box (Evas_Smart_Clipped)
          users which have @b subclassed it, setting custom box items options
          (see #Evas_Object_Box_Option) on it, would benefit from this
          function. They'd have to implement it and set it to be the
-         _Evas_Object_Box_Api::property_id_get smart class function of the
+         _Evas_Object_Box_Api.property_id_get smart class function of the
          box, which is originally set to @c NULL. */
 
          const;
@@ -351,7 +351,7 @@ class Evas_Box (Evas_Smart_Clipped)
          on its left.
 
          @note This call will trigger the box's
-         _Evas_Object_Box_Api::prepend smart function. */
+         _Evas_Object_Box_Api.prepend smart function. */
 
          return Evas_Object_Box_Option *;
          params {
@@ -425,7 +425,7 @@ class Evas_Box (Evas_Smart_Clipped)
          given @p o's internal list of elements.
 
          @note This call will trigger the box's
-         _Evas_Object_Box_Api::remove_at smart function. */
+         _Evas_Object_Box_Api.remove_at smart function. */
 
          return Eina_Bool;
          params {
@@ -482,7 +482,7 @@ class Evas_Box (Evas_Smart_Clipped)
          depend on the layout set to it.
 
          @note This call will trigger the box's
-         _Evas_Object_Box_Api::insert_before smart function. */
+         _Evas_Object_Box_Api.insert_before smart function. */
 
          return Evas_Object_Box_Option *;
          params {
@@ -501,7 +501,7 @@ class Evas_Box (Evas_Smart_Clipped)
          users which have @b subclassed it, setting custom box items options
          (see #Evas_Object_Box_Option) on it, would benefit from this
          function. They'd have to implement it and set it to be the
-         _Evas_Object_Box_Api::property_name_get smart class function of the
+         _Evas_Object_Box_Api.property_name_get smart class function of the
          box, which is originally set to @c NULL. */
 
          const;
@@ -606,7 +606,7 @@ class Evas_Box (Evas_Smart_Clipped)
          depend on the layout set to it.
 
          @note This call will trigger the box's
-         _Evas_Object_Box_Api::insert_at smart function. */
+         _Evas_Object_Box_Api.insert_at smart function. */
 
          return Evas_Object_Box_Option *;
          params {
@@ -631,11 +631,11 @@ class Evas_Box (Evas_Smart_Clipped)
 
          On removal, you'll get an unparented object again, just as it was
          before you inserted it in the box. The
-         _Evas_Object_Box_Api::option_free box smart callback will be called
+         _Evas_Object_Box_Api.option_free box smart callback will be called
          automatically for you and, also, the @c "child,removed" smart event
          will take place.
 
-         @note This call will trigger the box's _Evas_Object_Box_Api::remove
+         @note This call will trigger the box's _Evas_Object_Box_Api.remove
          smart function. */
 
          return Eina_Bool;
@@ -725,13 +725,13 @@ class Evas_Box (Evas_Smart_Clipped)
       }
    }
    implements {
-      class::constructor;
-      Eo_Base::constructor;
-      Evas_Object::smart_data::get;
-      Evas_Object_Smart::calculate;
-      Evas_Object_Smart::add;
-      Evas_Object_Smart::del;
-      Evas_Object_Smart::resize;
+      class.constructor;
+      Eo_Base.constructor;
+      Evas_Object.smart_data.get;
+      Evas_Object_Smart.calculate;
+      Evas_Object_Smart.add;
+      Evas_Object_Smart.del;
+      Evas_Object_Smart.resize;
    }
    events {
       child,added;

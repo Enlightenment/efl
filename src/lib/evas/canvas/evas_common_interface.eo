@@ -14,6 +14,6 @@ interface Evas_Common_Interface ()
       }
    }
    implements {
-      virtual::evas::get;
+      virtual.evas.get;
    }
 }

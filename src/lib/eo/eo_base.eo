@@ -168,8 +168,8 @@ callbacks of the same priority are called in reverse order of creation. */
       }
    }
    implements {
-        class::constructor;
-        class::destructor;
+        class.constructor;
+        class.destructor;
    }
    events {
       callback,add; /*@ A callback was added. */

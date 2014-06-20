@@ -1,4 +1,4 @@
-class nmsp1::nmsp11::class2
+class nmsp1.nmsp11.class2
 {
    properties {
       a {
@@ -7,11 +7,11 @@ class nmsp1::nmsp11::class2
       }
    }
    implements {
-      virtual::a::set;
+      virtual.a.set;
    }
 }
 
-class nmsp2::class1
+class nmsp2.class1
 {
 }
 
@@ -23,11 +23,11 @@ class no_nmsp
    }
 }
 
-class nmsp1::class1 (nmsp1::nmsp11::class2, nmsp2::class1, no_nmsp)
+class nmsp1.class1 (nmsp1.nmsp11.class2, nmsp2.class1, no_nmsp)
 {
    implements {
-      nmsp1::nmsp11::class2::a::set;
-      nmsp1::bad_class::a::set;
-      no_nmsp::foo;
+      nmsp1.nmsp11.class2.a.set;
+      nmsp1.bad_class.a.set;
+      no_nmsp.foo;
    }
 }

@@ -173,13 +173,13 @@ class Ecore_Audio_In (Ecore_Audio)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Ecore_Audio::vio_set;
-      virtual::preloaded::get;
-      virtual::preloaded::set;
-      virtual::seek;
-      virtual::length::set;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Ecore_Audio.vio_set;
+      virtual.preloaded.get;
+      virtual.preloaded.set;
+      virtual.seek;
+      virtual.length.set;
    }
    events {
       in,looped; /*@ Called when an input has looped. */

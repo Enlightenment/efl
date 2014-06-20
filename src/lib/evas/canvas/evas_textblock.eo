@@ -304,8 +304,8 @@ class Evas_Textblock (Evas_Object)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Eo_Base::dbg_info_get;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Eo_Base.dbg_info_get;
    }
 }

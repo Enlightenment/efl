@@ -2,9 +2,9 @@ class Edje_Edit (Edje)
 {
    data: Edje_Edit;
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Evas_Object_Smart::del;
-      Edje::file::set;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Evas_Object_Smart.del;
+      Edje.file.set;
    }
 }

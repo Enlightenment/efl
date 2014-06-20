@@ -100,9 +100,9 @@ parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
      {
         eina_strbuf_append(buf, ls->t.value);
         eo_lexer_get(ls);
-        if (ls->t.token != TOK_DBCOLON) break;
+        if (ls->t.token != '.') break;
         eo_lexer_get(ls);
-        eina_strbuf_append(buf, "::");
+        eina_strbuf_append(buf, ".");
         check(ls, TOK_VALUE);
      }
    return buf;
@@ -613,9 +613,9 @@ parse_implement(Eo_Lexer *ls)
    ls->tmp.impl = impl;
    if (ls->t.kw == KW_class)
      {
-        eina_strbuf_append(buf, "class::");
+        eina_strbuf_append(buf, "class.");
         eo_lexer_get(ls);
-        check_next(ls, TOK_DBCOLON);
+        check_next(ls, '.');
         if (ls->t.kw == KW_destructor)
           {
              eina_strbuf_append(buf, "destructor");
@@ -633,25 +633,25 @@ parse_implement(Eo_Lexer *ls)
      }
    else if (ls->t.kw == KW_virtual)
      {
-        eina_strbuf_append(buf, "virtual::");
+        eina_strbuf_append(buf, "virtual.");
         eo_lexer_get(ls);
-        check_next(ls, TOK_DBCOLON);
+        check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
            eo_lexer_syntax_error(ls, "name expected");
         eina_strbuf_append(buf, ls->t.value);
         eo_lexer_get(ls);
-        if (ls->t.token == TOK_DBCOLON)
+        if (ls->t.token == '.')
           {
              eo_lexer_get(ls);
              if (ls->t.kw == KW_set)
                {
-                  eina_strbuf_append(buf, "::set");
+                  eina_strbuf_append(buf, ".set");
                   eo_lexer_get(ls);
                }
              else
                {
                   check_kw_next(ls, KW_get);
-                  eina_strbuf_append(buf, "::get");
+                  eina_strbuf_append(buf, ".get");
                }
           }
         check_next(ls, ';');
@@ -663,8 +663,8 @@ parse_implement(Eo_Lexer *ls)
       eo_lexer_syntax_error(ls, "class name expected");
    eina_strbuf_append(buf, ls->t.value);
    eo_lexer_get(ls);
-   check_next(ls, TOK_DBCOLON);
-   eina_strbuf_append(buf, "::");
+   check_next(ls, '.');
+   eina_strbuf_append(buf, ".");
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
       eo_lexer_syntax_error(ls, "name or constructor/destructor expected");
    for (;;)
@@ -693,8 +693,8 @@ parse_implement(Eo_Lexer *ls)
         check(ls, TOK_VALUE);
         eina_strbuf_append(buf, ls->t.value);
         eo_lexer_get(ls);
-        if (ls->t.token != TOK_DBCOLON) break;
-        eina_strbuf_append(buf, "::");
+        if (ls->t.token != '.') break;
+        eina_strbuf_append(buf, ".");
         eo_lexer_get(ls);
      }
 end:
@@ -1294,29 +1294,29 @@ eo_parser_database_fill(const char *filename)
         EINA_LIST_FOREACH(kls->implements, l, impl)
           {
              const char *impl_name = impl->meth_name;
-             if (!strcmp(impl_name, "class::constructor"))
+             if (!strcmp(impl_name, "class.constructor"))
                {
                   database_class_ctor_enable_set(class, EINA_TRUE);
                   continue;
                }
-             if (!strcmp(impl_name, "class::destructor"))
+             if (!strcmp(impl_name, "class.destructor"))
                {
                   database_class_dtor_enable_set(class, EINA_TRUE);
                   continue;
                }
-             if (!strncmp(impl_name, "virtual::", 9))
+             if (!strncmp(impl_name, "virtual.", 8))
                {
                   char *virtual_name = strdup(impl_name);
-                  char *func = strstr(virtual_name, "::");
+                  char *func = strchr(virtual_name, '.');
                   if (func) *func = '\0';
-                  func += 2;
+                  func += 1;
                   Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
-                  char *type_as_str = strstr(func, "::");
+                  char *type_as_str = strchr(func, '.');
                   if (type_as_str)
                     {
                        *type_as_str = '\0';
-                       if (!strcmp(type_as_str+2, "set")) ftype = EOLIAN_PROP_SET;
-                       else if (!strcmp(type_as_str+2, "get")) ftype = EOLIAN_PROP_GET;
+                       if (!strcmp(type_as_str+1, "set")) ftype = EOLIAN_PROP_SET;
+                       else if (!strcmp(type_as_str+1, "get")) ftype = EOLIAN_PROP_GET;
                     }
                   /* Search the function into the existing functions of the current class */
                   Eolian_Function foo_id = eolian_class_function_find_by_name(
@@ -1324,7 +1324,7 @@ eo_parser_database_fill(const char *filename)
                   free(virtual_name);
                   if (!foo_id)
                     {
-                       ERR("Error - %s not known in class %s", impl_name + 9, eolian_class_name_get(class));
+                       ERR("Error - %s not known in class %s", impl_name + 8, eolian_class_name_get(class));
                        eo_lexer_free(ls);
                        return EINA_FALSE;
                     }

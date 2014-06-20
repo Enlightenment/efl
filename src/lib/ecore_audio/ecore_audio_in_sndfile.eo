@@ -2,14 +2,14 @@ class Ecore_Audio_In_Sndfile (Ecore_Audio_In)
 {
    eo_prefix: ecore_audio_obj_in_sndfile;
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
-      Ecore_Audio::source::set;
-      Ecore_Audio::source::get;
-      Ecore_Audio::format::set;
-      Ecore_Audio::format::get;
-      Ecore_Audio::vio_set;
-      Ecore_Audio_In::seek;
-      Ecore_Audio_In::read_internal;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
+      Ecore_Audio.source.set;
+      Ecore_Audio.source.get;
+      Ecore_Audio.format.set;
+      Ecore_Audio.format.get;
+      Ecore_Audio.vio_set;
+      Ecore_Audio_In.seek;
+      Ecore_Audio_In.read_internal;
    }
 }

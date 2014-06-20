@@ -10,9 +10,9 @@ class Ctor_Dtor (Base) {
       }
    }
    implements {
-      class::constructor;
-      class::destructor;
-      Base::constructor;
-      Base::destructor;
+      class.constructor;
+      class.destructor;
+      Base.constructor;
+      Base.destructor;
    }
 }

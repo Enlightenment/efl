@@ -38,7 +38,7 @@ class Ecore_Poller (Eo_Base)
       }
    }
    implements {
-      Eo_Base::constructor;
-      Eo_Base::destructor;
+      Eo_Base.constructor;
+      Eo_Base.destructor;
    }
 }
