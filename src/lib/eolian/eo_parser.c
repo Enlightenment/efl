@@ -914,55 +914,37 @@ parse_unit(Eo_Lexer *ls)
    switch (ls->t.kw)
      {
         case KW_abstract:
-          {
-             parse_class(ls, EINA_TRUE, EOLIAN_CLASS_ABSTRACT);
-             ls->classes = eina_list_append(ls->classes, ls->tmp.kls);
-             ls->tmp.kls = NULL;
-             break;
-          }
+           parse_class(ls, EINA_TRUE, EOLIAN_CLASS_ABSTRACT);
+           goto found_class;
         case KW_class:
-          {
-             parse_class(ls, EINA_TRUE, EOLIAN_CLASS_REGULAR);
-             ls->classes = eina_list_append(ls->classes, ls->tmp.kls);
-             ls->tmp.kls = NULL;
-             break;
-          }
+           parse_class(ls, EINA_TRUE, EOLIAN_CLASS_REGULAR);
+           goto found_class;
         case KW_mixin:
-          {
-             parse_class(ls, EINA_FALSE, EOLIAN_CLASS_MIXIN);
-             ls->classes = eina_list_append(ls->classes, ls->tmp.kls);
-             ls->tmp.kls = NULL;
-             break;
-          }
+           parse_class(ls, EINA_FALSE, EOLIAN_CLASS_MIXIN);
+           goto found_class;
         case KW_interface:
-          {
-             parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
-             ls->classes = eina_list_append(ls->classes, ls->tmp.kls);
-             ls->tmp.kls = NULL;
-             break;
-          }
+           parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
+           goto found_class;
         case KW_type:
-          {
-             parse_typedef(ls);
-             ls->typedefs = eina_list_append(ls->typedefs, ls->tmp.type_def);
-             ls->tmp.type_def = NULL;
-             break;
-          }
+           parse_typedef(ls);
+           ls->typedefs = eina_list_append(ls->typedefs, ls->tmp.type_def);
+           ls->tmp.type_def = NULL;
+           break;
         default:
-          {
-             eo_lexer_syntax_error(ls, "invalid token");
-             break;
-          }
+           eo_lexer_syntax_error(ls, "invalid token");
+           break;
      }
+   return;
+found_class:
+   ls->classes = eina_list_append(ls->classes, ls->tmp.kls);
+   ls->tmp.kls = NULL;
 }
 
 static void
 parse_chunk(Eo_Lexer *ls)
 {
    while (ls->t.token != TOK_EOF)
-     {
-        parse_unit(ls);
-     }
+      parse_unit(ls);
 }
 
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
