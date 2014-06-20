@@ -572,13 +572,15 @@ end:
 }
 
 static void
-parse_implement(Eo_Lexer *ls)
+parse_implement(Eo_Lexer *ls, Eina_Bool iface)
 {
    Eina_Strbuf *buf = NULL;
    Eo_Implement_Def *impl = NULL;
    buf = push_strbuf(ls);
    impl = calloc(1, sizeof(Eo_Implement_Def));
    ls->tmp.impl = impl;
+   if (iface)
+      check_kw(ls, KW_class);
    if (ls->t.kw == KW_class)
      {
         eina_strbuf_append(buf, "class.");
@@ -753,7 +755,7 @@ parse_properties(Eo_Lexer *ls)
 }
 
 static void
-parse_implements(Eo_Lexer *ls)
+parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
    int line;
    eo_lexer_get(ls);
@@ -761,7 +763,7 @@ parse_implements(Eo_Lexer *ls)
    check_next(ls, '{');
    while (ls->t.token != '}')
      {
-        parse_implement(ls);
+        parse_implement(ls, iface);
         ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements,
                                                    ls->tmp.impl);
         ls->tmp.impl = NULL;
@@ -788,7 +790,7 @@ parse_events(Eo_Lexer *ls)
 }
 
 static void
-parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors)
+parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 {
    Eina_Bool has_legacy_prefix = EINA_FALSE,
              has_eo_prefix     = EINA_FALSE,
@@ -864,7 +866,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors)
                 if (has_implements)
                    eo_lexer_syntax_error(ls, "double implements definition");
                 has_implements = EINA_TRUE;
-                parse_implements(ls);
+                parse_implements(ls, type == EOLIAN_CLASS_INTERFACE);
                 break;
              case KW_events:
                 if (has_events)
@@ -902,7 +904,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
      }
    line = ls->line_number;
    check_next(ls, '{');
-   parse_class_body(ls, allow_ctors);
+   parse_class_body(ls, allow_ctors, type);
    check_match(ls, '}', '{', line);
 }
 
@@ -1137,6 +1139,7 @@ eo_parser_database_fill(const char *filename)
    EINA_LIST_FOREACH(ls->classes, k, kls)
      {
         Eolian_Class class = database_class_add(kls->name, kls->type);
+        Eina_Bool is_iface = (kls->type == EOLIAN_CLASS_INTERFACE);
         database_class_file_set(class, filename);
 
         if (kls->comment) database_class_description_set(class, kls->comment);
@@ -1190,10 +1193,10 @@ eo_parser_database_fill(const char *filename)
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
                   database_function_type_set(foo_id, (accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET));
+                  Eolian_Function_Type ftype =
+                     accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
                   if (accessor->ret && accessor->ret->type)
                     {
-                       Eolian_Function_Type ftype =
-                          accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
                        database_function_return_type_set(foo_id, ftype, accessor->ret->type);
                        database_function_return_comment_set(foo_id,
                              ftype, accessor->ret->comment);
@@ -1227,8 +1230,15 @@ eo_parser_database_fill(const char *filename)
                                database_parameter_const_attribute_set(desc, accessor->type == GETTER, EINA_TRUE);
                             }
                     }
+                  if (is_iface)
+                     database_function_set_as_virtual_pure(foo_id, ftype);
                }
-             if (!prop->accessors) database_function_type_set(foo_id, EOLIAN_PROPERTY);
+             if (!prop->accessors)
+               {
+                  database_function_type_set(foo_id, EOLIAN_PROPERTY);
+                  if (is_iface)
+                    database_function_set_as_virtual_pure(foo_id, EOLIAN_UNRESOLVED);
+               }
              database_class_function_add(class, foo_id);
           }
 
@@ -1257,6 +1267,8 @@ eo_parser_database_fill(const char *filename)
                   database_parameter_nonull_set(p, param->nonull);
                   param->type = NULL;
                }
+             if (is_iface)
+               database_function_set_as_virtual_pure(foo_id, EOLIAN_METHOD);
           }
 
         EINA_LIST_FOREACH(kls->implements, l, impl)
