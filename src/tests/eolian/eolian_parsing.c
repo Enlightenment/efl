@@ -22,9 +22,9 @@ START_TEST(eolian_namespaces)
    fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/namespace.eo"));
 
    /* Classes existence  */
-   fail_if(!(class11 = eolian_class_find_by_name("nmsp1::class1")));
-   fail_if(!(class112 = eolian_class_find_by_name("nmsp1::nmsp11::class2")));
-   fail_if(!(class21 = eolian_class_find_by_name("nmsp2::class1")));
+   fail_if(!(class11 = eolian_class_find_by_name("nmsp1.class1")));
+   fail_if(!(class112 = eolian_class_find_by_name("nmsp1.nmsp11.class2")));
+   fail_if(!(class21 = eolian_class_find_by_name("nmsp2.class1")));
    fail_if(!(class_no = eolian_class_find_by_name("no_nmsp")));
 
    /* Check names and namespaces*/
@@ -373,7 +373,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_function_name_get(fid), "a"));
    string = eolian_function_description_get(fid, EOLIAN_COMMENT_SET);
    fail_if(!string);
-   fail_if(strcmp(string, "comment a::set"));
+   fail_if(strcmp(string, "comment a.set"));
    string = eolian_function_description_get(fid, EOLIAN_COMMENT_GET);
    fail_if(string);
    /* Set return */
