@@ -986,7 +986,7 @@ _action_action_do(const Eldbus_Service_Interface *iface, const Eldbus_Message *m
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   eo_do(obj, result = elm_interface_atspi_action_action_do(idx));
+   eo_do(obj, result = elm_interface_atspi_action_do(idx));
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -1115,7 +1115,7 @@ _text_text_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   eo_do(obj, str = elm_interface_atspi_text_text_get(start, end));
+   eo_do(obj, str = elm_interface_atspi_text_get(start, end));
    str = str ? str : strdup("");
 
    eldbus_message_arguments_append(ret, "s", str);
@@ -1869,7 +1869,7 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
 
    if (!strcmp(property, "CurrentValue"))
      {
-        eo_do(obj, ret = elm_interface_atspi_value_value_and_text_set(value, NULL));
+        eo_do(obj, ret = elm_interface_atspi_value_and_text_set(value, NULL));
         Eldbus_Message *answer = eldbus_message_method_return_new(request_msg);
         eldbus_message_arguments_append(answer, "b", ret);
         return answer;
@@ -1891,7 +1891,7 @@ _value_properties_get(const Eldbus_Service_Interface *interface, const char *pro
 
    if (!strcmp(property, "CurrentValue"))
      {
-        eo_do(obj, elm_interface_atspi_value_value_and_text_get(&value, NULL));
+        eo_do(obj, elm_interface_atspi_value_and_text_get(&value, NULL));
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
