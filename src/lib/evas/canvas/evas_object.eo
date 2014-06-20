@@ -1516,5 +1516,31 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       Eo_Base.dbg_info_get;
       Evas_Common_Interface.evas.get;
    }
-
+   events {
+       mouse,in; /*@ Mouse In Event */
+       mouse,out; /*@ Mouse Out Event */
+       mouse,down; /*@ Mouse Button Down Event */
+       mouse,up; /*@ Mouse Button Up Event */
+       mouse,move; /*@ Mouse Move Event */
+       mouse,wheel; /*@ Mouse Wheel Event */
+       multi,down; /*@ Mouse-touch Down Event */
+       multi,up; /*@ Mouse-touch Up Event */
+       multi,move; /*@ Multi-touch Move Event */
+       free; /*@ Object Being Freed (Called after Del) */
+       key,down; /*@ Key Press Event */
+       key,up; /*@ Key Release Event */
+       focus,in; /*@ Focus In Event */
+       focus,out; /*@ Focus Out Event */
+       show; /*@ Show Event */
+       hide; /*@ Hide Event */
+       move; /*@ Move Event */
+       resize; /*@ Resize Event */
+       restack; /*@ Restack Event */
+       del; /*@ Object Being Deleted (called before Free) */
+       hold; /*@ Events go on/off hold */
+       changed,size,hints; /*@ Size hints changed event */
+       image,preloaded; /*@ Image has been preloaded */
+       image,resize; /*@ Image resize */
+       image,unloaded; /*@ Image data has been unloaded (by some mechanism in Evas that throw out original image data) */
+   }
 }
