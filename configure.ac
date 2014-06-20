@@ -2050,7 +2050,6 @@ if test "x${build_gui}" = "xno"; then
    AM_CONDITIONAL([EVAS_STATIC_BUILD_XPM], [false])
    AM_CONDITIONAL([BUILD_LOADER_TGV], [false])
    AM_CONDITIONAL([EVAS_STATIC_BUILD_TGV], [false])
-   AM_CONDITIONAL([BUILD_SAVER_JPEG], [false])
    AM_CONDITIONAL([EVAS_CSERVE2], [false])
 fi
 

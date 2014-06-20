@@ -1482,9 +1482,7 @@ endif
 if BUILD_LOADER_JPEG
 if EVAS_STATIC_BUILD_JPEG
 lib_evas_libevas_la_SOURCES += modules/evas/loaders/jpeg/evas_image_load_jpeg.c
-if BUILD_SAVER_JPEG
 lib_evas_libevas_la_SOURCES += modules/evas/savers/jpeg/evas_image_save_jpeg.c
-endif
 lib_evas_libevas_la_CPPFLAGS += @evas_image_loader_jpeg_cflags@
 lib_evas_libevas_la_LIBADD += @evas_image_loader_jpeg_libs@
 if EVAS_CSERVE2
