@@ -207,7 +207,7 @@ _eina_thread_create(Eina_Thread *t,
    tw->data = (void *)data;
    tw->tls_keys = NULL;
 
-   tw->thread = CreateThread(NULL, 0, _eina_thread_win32_cb, tw, 0, NULL);
+   tw->thread = (HANDLE)_beginthreadex(NULL, 0, _eina_thread_win32_cb, tw, 0, NULL);
    if (!tw->thread) goto on_error;
 
    /* affinity is an hint, if we fail, we continue without */
