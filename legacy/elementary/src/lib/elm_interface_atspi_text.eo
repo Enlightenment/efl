@@ -200,24 +200,4 @@ interface Elm_Interface_Atspi_Text ()
       access,text,removed;
       access,text,selection,changed;
    }
-   implements {
-      virtual.text.get;
-      virtual.string.get;
-      virtual.attribute.get;
-      virtual.attributes.get;
-      virtual.default_attributes.get;
-      virtual.caret_offset.get;
-      virtual.caret_offset.set;
-      virtual.character.get;
-      virtual.character_extents.get;
-      virtual.character_count.get;
-      virtual.offset_at_point.get;
-      virtual.bounded_ranges.get;
-      virtual.range_extents.get;
-      virtual.selection.get;
-      virtual.selections_count.get;
-      virtual.selection_add;
-      virtual.selection_remove;
-      virtual.selection.set;
-   }
 }

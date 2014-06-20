@@ -49,12 +49,4 @@ interface Elm_Interface_Atspi_Editable_Text ()
          return Eina_Bool;
       }
    }
-   implements {
-      virtual.content.set;
-      virtual.insert;
-      virtual.copy;
-      virtual.cut;
-      virtual.delete;
-      virtual.paste;
-   }
 }

@@ -61,14 +61,4 @@ interface Elm_Interface_Atspi_Selection ()
    events {
       selection,changed; /*@ Called when selection has been changed. */
    }
-   implements {
-      virtual.selected_children_count.get;
-      virtual.selected_child.get;
-      virtual.child_select;
-      virtual.selected_child_deselect;
-      virtual.is_child_selected;
-      virtual.all_children_select;
-      virtual.clear;
-      virtual.child_deselect;
-   }
 }
