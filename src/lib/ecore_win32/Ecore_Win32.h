@@ -223,6 +223,7 @@ struct _Ecore_Win32_Event_Mouse_In
    int                 x; /**< The x coordinate where the mouse leaved */
    int                 y; /**< The y coordinate where the mouse entered */
    unsigned long       timestamp; /**< The time the event occurred */
+   unsigned int        modifiers; /**< The keyboard modifiers */
 };
 
 /**
@@ -235,6 +236,7 @@ struct _Ecore_Win32_Event_Mouse_Out
    int                 x; /**< The x coordinate where the mouse leaved */
    int                 y; /**< The y coordinate where the mouse leaved */
    unsigned long       timestamp; /**< The time the event occurred */
+   unsigned int        modifiers; /**< The keyboard modifiers */
 };
 
 /**
