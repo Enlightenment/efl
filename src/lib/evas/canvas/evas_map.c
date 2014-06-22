@@ -792,6 +792,10 @@ evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int
 EAPI void
 evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *eo_obj, Evas_Coord z)
 {
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -818,7 +822,7 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj
    return;
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   
+
    if (!obj) return;
    if (m->count != 4)
      {
