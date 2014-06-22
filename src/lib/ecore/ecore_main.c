@@ -2048,6 +2048,163 @@ done: /*******************************************************************/
 #endif
 
 #ifdef _WIN32
+typedef struct
+{
+   DWORD objects_nbr;
+   HANDLE *objects;
+   DWORD timeout;
+} Ecore_Main_Win32_Thread_Data;
+
+static unsigned int __stdcall
+_ecore_main_win32_objects_wait_thread(void *data)
+{
+   Ecore_Main_Win32_Thread_Data *td;
+   DWORD result;
+
+   td = (Ecore_Main_Win32_Thread_Data *)data;
+   result = MsgWaitForMultipleObjects(td->objects_nbr,
+                                      (const HANDLE *)td->objects,
+                                      FALSE,
+                                      td->timeout,
+                                      QS_ALLINPUT);
+   return result;
+}
+
+static DWORD
+_ecore_main_win32_objects_wait(DWORD objects_nbr,
+                               const HANDLE *objects,
+                               DWORD timeout)
+{
+   Ecore_Main_Win32_Thread_Data *threads_data;
+   HANDLE *threads_handles;
+   DWORD threads_nbr;
+   DWORD threads_remain;
+   DWORD objects_idx;
+   DWORD result;
+   DWORD i;
+
+   if (objects_nbr < MAXIMUM_WAIT_OBJECTS)
+     return MsgWaitForMultipleObjects(objects_nbr,
+                                      objects,
+                                      EINA_FALSE,
+                                      timeout, QS_ALLINPUT);
+   /*
+    * too much objects, so we launch a bunch of threads to
+    * wait for, each one calls MsgWaitForMultipleObjects
+    */
+
+   threads_nbr = objects_nbr / (MAXIMUM_WAIT_OBJECTS - 1);
+   threads_remain = objects_nbr % (MAXIMUM_WAIT_OBJECTS - 1);
+   if (threads_remain > 0)
+     threads_nbr++;
+
+   if (threads_nbr > MAXIMUM_WAIT_OBJECTS)
+     {
+        CRI("Too much objects to wait for (%lu).", objects_nbr);
+        return WAIT_FAILED;
+     }
+
+   threads_handles = (HANDLE *)malloc(threads_nbr * sizeof(HANDLE));
+   if (!threads_handles)
+     {
+        ERR("Can not allocate memory for the waiting thread.");
+        return WAIT_FAILED;
+     }
+
+   threads_data = (Ecore_Main_Win32_Thread_Data *)malloc(threads_nbr * sizeof(Ecore_Main_Win32_Thread_Data));
+   if (!threads_data)
+     {
+        ERR("Can not allocate memory for the waiting thread.");
+        goto free_threads_handles;
+     }
+
+   objects_idx = 0;
+   for (i = 0; i < threads_nbr; i++)
+     {
+        threads_data[i].timeout = timeout;
+        threads_data[i].objects = (HANDLE *)objects + objects_idx;
+
+        if ((i == (threads_nbr - 1)) && (threads_remain != 0))
+          {
+             threads_data[i].objects_nbr = threads_remain;
+             objects_idx += threads_remain;
+          }
+        else
+          {
+             threads_data[i].objects_nbr = (MAXIMUM_WAIT_OBJECTS - 1);
+             objects_idx += (MAXIMUM_WAIT_OBJECTS - 1);
+          }
+
+        threads_handles[i] = (HANDLE)_beginthreadex(NULL,
+                                                    0,
+                                                    _ecore_main_win32_objects_wait_thread,
+                                                    &threads_data[i],
+                                                    0,
+                                                    NULL);
+        if (!threads_handles[i])
+          {
+             DWORD j;
+
+             ERR("Can not create the waiting threads.");
+             WaitForMultipleObjects(i, threads_handles, TRUE, INFINITE);
+             for (j = 0; j < i; j++)
+               CloseHandle(threads_handles[i]);
+
+             goto free_threads_data;
+          }
+     }
+
+   result = WaitForMultipleObjects(threads_nbr,
+                                   threads_handles,
+                                   FALSE, /* we wait until one thread is signaled */
+                                   INFINITE);
+
+   if (result < (WAIT_OBJECT_0 + threads_nbr))
+     {
+        DWORD wait_res;
+
+        /*
+         * One of the thread callback has exited so we retrieve
+         * its exit status, that is the returned value of
+         * MsgWaitForMultipleObjects()
+         */
+        if (GetExitCodeThread(threads_handles[result - WAIT_OBJECT_0],
+                              &wait_res))
+          {
+             WaitForMultipleObjects(threads_nbr, threads_handles, TRUE, INFINITE);
+             for (i = 0; i < threads_nbr; i++)
+               CloseHandle(threads_handles[i]);
+             free(threads_data);
+             free(threads_handles);
+             return wait_res;
+          }
+     }
+   else
+     {
+        ERR("Error when waiting threads.");
+        if (result == WAIT_FAILED)
+          {
+             char *str;
+
+             str = evil_last_error_get();
+             ERR("%s", str);
+             free(str);
+          }
+        goto close_thread;
+     }
+
+ close_thread:
+   WaitForMultipleObjects(threads_nbr, threads_handles, TRUE, INFINITE);
+   for (i = 0; i < threads_nbr; i++)
+     CloseHandle(threads_handles[i]);
+ free_threads_data:
+   free(threads_data);
+ free_threads_handles:
+   free(threads_handles);
+
+   return WAIT_FAILED;
+}
+
 static int
 _ecore_main_win32_select(int             nfds EINA_UNUSED,
                          fd_set         *readfds,
@@ -2055,18 +2212,30 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
                          fd_set         *exceptfds,
                          struct timeval *tv)
 {
-   HANDLE objects[MAXIMUM_WAIT_OBJECTS];
-   int sockets[MAXIMUM_WAIT_OBJECTS];
+   HANDLE *objects;
+   int *sockets;
    Ecore_Fd_Handler *fdh;
    Ecore_Win32_Handler *wh;
+   unsigned int fds_nbr = 0;
    unsigned int objects_nbr = 0;
-   unsigned int handles_nbr = 0;
    unsigned int events_nbr = 0;
    DWORD result;
    DWORD timeout;
    MSG msg;
    unsigned int i;
    int res;
+
+   fds_nbr = eina_inlist_count(EINA_INLIST_GET(fd_handlers));
+   sockets = (int *)malloc(fds_nbr * sizeof(int));
+   if (!sockets)
+     return -1;
+
+   objects = (HANDLE)malloc((fds_nbr + eina_inlist_count(EINA_INLIST_GET(win32_handlers))) * sizeof(HANDLE));
+   if (!objects)
+     {
+        free(sockets);
+        return -1;
+     }
 
    /* Create an event object per socket */
    EINA_INLIST_FOREACH(fd_handlers, fdh)
@@ -2106,7 +2275,6 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
    EINA_INLIST_FOREACH(win32_handlers, wh)
      {
         objects[objects_nbr] = wh->h;
-        handles_nbr++;
         objects_nbr++;
      }
 
@@ -2124,10 +2292,16 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
    else
      timeout = (DWORD)((tv->tv_sec * 1000.0) + (tv->tv_usec / 1000.0));
 
-   if (timeout == 0) return 0;
+   if (timeout == 0)
+     {
+        free(objects);
+        free(sockets);
+        return 0;
+     }
 
-   result = MsgWaitForMultipleObjects(objects_nbr, (const HANDLE *)objects, EINA_FALSE,
-                                      timeout, QS_ALLINPUT);
+   result = _ecore_main_win32_objects_wait(objects_nbr,
+                                           (const HANDLE *)objects,
+                                           timeout);
 
    if (readfds)
      FD_ZERO(readfds);
@@ -2148,8 +2322,8 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
      }
    else if (result == WAIT_TIMEOUT)
      {
-        /* ERR("time out\n"); */
-         res = 0;
+        INF("time-out interval elapsed.");
+        res = 0;
      }
    else if (result == (WAIT_OBJECT_0 + objects_nbr))
      {
@@ -2221,6 +2395,8 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
    /* Remove event objects again */
    for (i = 0; i < events_nbr; i++) WSACloseEvent(objects[i]);
 
+   free(objects);
+   free(sockets);
    return res;
 }
 
