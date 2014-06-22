@@ -23,7 +23,11 @@
 #define D(fmt, args...)
 #endif
 
-#define CAPS "video/x-raw,format=RGB"
+#ifdef WORDS_BIGENDIAN
+# define CAPS "video/x-raw,format=ARGB"
+#else
+# define CAPS "video/x-raw,format=BGRA"
+#endif
 
 static GstElement *pipeline = NULL;
 static GstElement *sink = NULL;
@@ -107,7 +111,7 @@ _gst_init(const char *filename)
    ret = gst_element_get_state((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
    if (ret == GST_STATE_CHANGE_FAILURE)
      {
-	D("could not complete pause\n");
+        D("could not complete pause\n");
         goto unref_pipeline;
      }
 
@@ -115,14 +119,14 @@ _gst_init(const char *filename)
    gst_element_query_duration (pipeline, format, &duration);
    if (duration == -1)
      {
-	D("could not retrieve the duration, set it to 1s\n");
+        D("could not retrieve the duration, set it to 1s\n");
         duration = 1 * GST_SECOND;
      }
 
    pad = gst_element_get_static_pad(sink, "sink");
    if (!pad)
      {
-	D("could not retrieve the sink pad\n");
+        D("could not retrieve the sink pad\n");
         goto unref_pipeline;
      }
 
@@ -243,7 +247,7 @@ main(int argc, char **argv)
      }
 
    timeout_init(10);
-   
+
    D("_gst_init_file\n");
 
    if (!_gst_init(file))
