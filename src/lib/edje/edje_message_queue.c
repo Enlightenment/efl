@@ -788,7 +788,7 @@ _edje_message_queue_process(void)
           }
         if (self_feed_debug)
           {
-             ERR("Edje is in a self-feeding message loop (> 8 loops needed)");
+             WRN("Edje is in a self-feeding message loop (> 8 loops needed)");
           }
 	ecore_timer_add(0.0, _edje_dummy_timer, NULL);
      }

@@ -6,17 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2014-01-21 11:50+0100\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-06-23 08:12+0900\n"
 "PO-Revision-Date: 2014-05-10 22:15+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
+"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-05-11 06:43+0000\n"
 "X-Generator: Launchpad (build 16996)\n"
-"Language: lt\n"
 
 #: src/lib/ecore/ecore_getopt.c:93
 msgid "Version:"
@@ -51,157 +51,157 @@ msgstr "Numatytasis: "
 msgid "Choices: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:647 src/lib/ecore/ecore_getopt.c:648
+#: src/lib/ecore/ecore_getopt.c:648 src/lib/ecore/ecore_getopt.c:649
 msgid "No categories available."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:652
+#: src/lib/ecore/ecore_getopt.c:653
 msgid "Categories: "
 msgstr "Kategorijos: "
 
-#: src/lib/ecore/ecore_getopt.c:774
+#: src/lib/ecore/ecore_getopt.c:775
 msgid "Options:\n"
 msgstr "Parametrai:\n"
 
-#: src/lib/ecore/ecore_getopt.c:783
+#: src/lib/ecore/ecore_getopt.c:784
 msgid "Positional arguments:\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:869
+#: src/lib/ecore/ecore_getopt.c:870
 #, c-format
 msgid "ERROR: unknown category '%s'.\n"
 msgstr "KLAIDA: nežinoma kategorija „%s“.\n"
 
-#: src/lib/ecore/ecore_getopt.c:973
+#: src/lib/ecore/ecore_getopt.c:974
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "KLAIDA: nežinomas parametras --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:975
+#: src/lib/ecore/ecore_getopt.c:976
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "KLAIDA: nežinomas parametras -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1038
+#: src/lib/ecore/ecore_getopt.c:1039
 msgid "ERROR: "
 msgstr "KLAIDA: "
 
-#: src/lib/ecore/ecore_getopt.c:1131 src/lib/ecore/ecore_getopt.c:1268
-#: src/lib/ecore/ecore_getopt.c:1284 src/lib/ecore/ecore_getopt.c:1299
-#: src/lib/ecore/ecore_getopt.c:1316 src/lib/ecore/ecore_getopt.c:1363
-#: src/lib/ecore/ecore_getopt.c:1483 src/lib/ecore/ecore_getopt.c:1524
+#: src/lib/ecore/ecore_getopt.c:1132 src/lib/ecore/ecore_getopt.c:1269
+#: src/lib/ecore/ecore_getopt.c:1285 src/lib/ecore/ecore_getopt.c:1300
+#: src/lib/ecore/ecore_getopt.c:1317 src/lib/ecore/ecore_getopt.c:1364
+#: src/lib/ecore/ecore_getopt.c:1484 src/lib/ecore/ecore_getopt.c:1525
 msgid "value has no pointer set.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1163 src/lib/ecore/ecore_getopt.c:1383
+#: src/lib/ecore/ecore_getopt.c:1164 src/lib/ecore/ecore_getopt.c:1384
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1214 src/lib/ecore/ecore_getopt.c:1471
+#: src/lib/ecore/ecore_getopt.c:1215 src/lib/ecore/ecore_getopt.c:1472
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "netinkamas skaičiaus formatas %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1329
+#: src/lib/ecore/ecore_getopt.c:1330
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1357
+#: src/lib/ecore/ecore_getopt.c:1358
 msgid "missing parameter to append.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1461
+#: src/lib/ecore/ecore_getopt.c:1462
 msgid "could not parse value.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1518
+#: src/lib/ecore/ecore_getopt.c:1519
 msgid "missing parameter.\n"
 msgstr "trūksta parametro.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1531
+#: src/lib/ecore/ecore_getopt.c:1532
 msgid "missing callback function!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1562
+#: src/lib/ecore/ecore_getopt.c:1563
 msgid "no version was defined.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1579
+#: src/lib/ecore/ecore_getopt.c:1580
 msgid "no copyright was defined.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1596
+#: src/lib/ecore/ecore_getopt.c:1597
 msgid "no license was defined.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1686
+#: src/lib/ecore/ecore_getopt.c:1687
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "KLAIDA: nežinomas parametras --%s, nepaisomas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1719
+#: src/lib/ecore/ecore_getopt.c:1720
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1761
+#: src/lib/ecore/ecore_getopt.c:1762
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "KLAIDA: nežinomas parametras -%c, nepaisomas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1799
+#: src/lib/ecore/ecore_getopt.c:1800
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1894
+#: src/lib/ecore/ecore_getopt.c:1895
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:1926
+#: src/lib/ecore/ecore_getopt.c:1927
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2115 src/lib/ecore/ecore_getopt.c:2232
+#: src/lib/ecore/ecore_getopt.c:2116 src/lib/ecore/ecore_getopt.c:2233
 msgid "ERROR: no parser provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2120 src/lib/ecore/ecore_getopt.c:2237
+#: src/lib/ecore/ecore_getopt.c:2121 src/lib/ecore/ecore_getopt.c:2238
 msgid "ERROR: no values provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2129 src/lib/ecore/ecore_getopt.c:2246
+#: src/lib/ecore/ecore_getopt.c:2130 src/lib/ecore/ecore_getopt.c:2247
 msgid "ERROR: no arguments provided.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2155
+#: src/lib/ecore/ecore_getopt.c:2156
 msgid "ERROR: invalid options found."
 msgstr "KLAIDA: aptikti netinkami parametrai."
 
-#: src/lib/ecore/ecore_getopt.c:2161 src/lib/ecore/ecore_getopt.c:2278
+#: src/lib/ecore/ecore_getopt.c:2162 src/lib/ecore/ecore_getopt.c:2279
 #, c-format
 msgid " See --%s.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2163 src/lib/ecore/ecore_getopt.c:2280
+#: src/lib/ecore/ecore_getopt.c:2164 src/lib/ecore/ecore_getopt.c:2281
 #, c-format
 msgid " See -%c.\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2272
+#: src/lib/ecore/ecore_getopt.c:2273
 msgid "ERROR: invalid positional arguments found."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2326
+#: src/lib/ecore/ecore_getopt.c:2327
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2358
+#: src/lib/ecore/ecore_getopt.c:2359
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr ""
