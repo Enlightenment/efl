@@ -904,12 +904,10 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    Evas_GL_Texture *tex;
    int lformat;
 
-   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
-   if (lformat < 0) return NULL;
-
    tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_render_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format);
