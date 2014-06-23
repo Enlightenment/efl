@@ -3287,6 +3287,200 @@ edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *st
 EAPI Eina_Bool
 edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part);
 
+/** Get backface_cull value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return backface_cull value of given part state.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_backface_cull_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set backface_cull value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param bool New backface_cull value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_backface_cull_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool);
+
+/** Get perspective_on value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return perspective_on value of given part state.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_perspective_on_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set perspective_on value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param bool New perspective_on value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_perspective_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool);
+
+/** Get map.alpha value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return map.alpha value of given part state.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_alpha_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set map.alpha value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param bool New map.alpha value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_alpha_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Get map.smooth value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return map.smooth value of given part state.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_smooth_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set map.smooth value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param bool New map.smooth value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool);
+
+/** Get map.rotation of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param x x-rotation.
+ * @param y x-rotation.
+ * @param z z-rotation.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_rotation_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y, double *z);
+
+/** Set map.rotation of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param x x-rotation.
+ * @param y x-rotation.
+ * @param z z-rotation.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_rotation_set(Evas_Object *obj, const char *part, const char *state, double value, double x, double y, double z);
+
+/** Get map.perspective.focal value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return map.perspective.focal value of given part state.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_perspective_focal_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set map.perspective.focal value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param bool New map.perspective.focal value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_perspective_focal_set(Evas_Object *obj, const char *part, const char *state, double value, int focal);
+
+/** Get map.perspective.zplane value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return map.perspective.zplane value of given part state.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_perspective_zplane_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set map.perspective.zplane value of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param bool New map.perspective.zplane value.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_perspective_zplane_set(Evas_Object *obj, const char *part, const char *state, double value, int zplane);
+
 /** Get the part's name that is used as the center rotation.
  *
  * @param obj Object being edited.

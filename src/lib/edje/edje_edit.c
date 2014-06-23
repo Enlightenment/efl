@@ -5708,6 +5708,145 @@ edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, cons
 }
 
 EAPI Eina_Bool
+edje_edit_state_map_backface_cull_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return pd->map.backcull;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_backface_cull_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.backcull = bool;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_on_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return pd->map.persp_on;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.persp_on = bool;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_alpha_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return pd->map.alpha;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_alpha_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.alpha = bool;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.smooth = bool;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_smooth_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return pd->map.smooth;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_rotation_set(Evas_Object *obj, const char *part, const char *state, double value, double x, double y, double z)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.rot.x = FROM_DOUBLE(x);
+   pd->map.rot.y = FROM_DOUBLE(y);
+   pd->map.rot.z = FROM_DOUBLE(z);
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_rotation_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y, double *z)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   *x = TO_DOUBLE(pd->map.rot.x);
+   *y = TO_DOUBLE(pd->map.rot.y);
+   *z = TO_DOUBLE(pd->map.rot.z);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_zplane_set(Evas_Object *obj, const char *part, const char *state, double value, int zplane)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->persp.zplane = zplane;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_zplane_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return pd->persp.zplane;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_focal_set(Evas_Object *obj, const char *part, const char *state, double value, int focal)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->persp.focal = focal;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_focal_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return pd->persp.focal;
+}
+
+EAPI Eina_Bool
 edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
 {
    if (!source_part) return EINA_FALSE;
