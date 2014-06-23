@@ -130,7 +130,7 @@ _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace 
          matching_format[i].cspace == cspace)
        return i;
 
-   abort();
+   ERR("Texture doesn't support the image format! colorspace(%s) alpha(%d) bgra(%d)", cspace, alpha, bgra);
    return 0;
 }
 
