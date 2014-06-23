@@ -130,7 +130,7 @@ _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace 
          matching_format[i].cspace == cspace)
        return i;
 
-   ERR("Texture doesn't support the image format! colorspace(%s) alpha(%d) bgra(%d)", cspace, alpha, bgra);
+   ERR("Texture doesn't support the image format! colorspace(%d) alpha(%d) bgra(%d)", cspace, alpha, bgra);
    return 0;
 }
 
@@ -438,13 +438,15 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
    int u = 0, v = 0, yoffset = 0;
    int lformat;
 
+   lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra, im->cache_entry.space);
+   if (lformat < 0) return NULL;
+
    tex = evas_gl_common_texture_alloc(gc, im->cache_entry.w, im->cache_entry.h, im->cache_entry.flags.alpha);
    if (!tex) return NULL;
 
 #define TEX_HREP 1
 #define TEX_VREP 1
 
-   lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra, im->cache_entry.space);
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ETC1:
@@ -879,10 +881,12 @@ evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    Evas_GL_Texture *tex;
    int lformat;
 
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
+   if (lformat < 0) return NULL;
+
    tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
-   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_native_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format,
@@ -902,10 +906,12 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    Evas_GL_Texture *tex;
    int lformat;
 
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
+   if (lformat < 0) return NULL;
+
    tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
-   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_render_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format);
@@ -924,10 +930,12 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
    Evas_GL_Texture *tex;
    int lformat;
 
+   lformat = _evas_gl_texture_search_format(tex->alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
+   if (lformat < 0) return NULL;
+
    tex = evas_gl_common_texture_alloc(gc, im->w, im->h, im->alpha);
    if (!tex) return NULL;
 
-   lformat = _evas_gl_texture_search_format(tex->alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h,
                                    *matching_format[lformat].intformat,
                                    *matching_format[lformat].format);
@@ -1079,11 +1087,13 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
      {
         int lformat;
 
+        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra, im->cache_entry.space);
+        if (lformat < 0) return;
+
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex->apt);
         if (tex->apt)
           eina_rectangle_pool_release(tex->apt);
 
-        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra, im->cache_entry.space);
         // FIXME: why a 'render' new here ??? Should already have been allocated, quite a weird path.
         tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h,
                                        *matching_format[lformat].intformat,
@@ -1228,6 +1238,8 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 
         // Creating the mini picture texture
         lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra, im->cache_entry.space);
+        if (lformat < 0) return;
+
         tex->ptt = _pool_tex_find(tex->gc, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format,
