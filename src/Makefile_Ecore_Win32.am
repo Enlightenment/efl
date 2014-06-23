@@ -23,7 +23,7 @@ lib/ecore_win32/ecore_win32_dnd_enumformatetc.h \
 lib/ecore_win32/ecore_win32_dnd_data_object.h \
 lib/ecore_win32/ecore_win32_dnd_drop_source.h \
 lib/ecore_win32/ecore_win32_dnd_drop_target.h \
-ecore_win32_keysym_table.h
+lib/ecore_win32/ecore_win32_keysym_table.h
 
 lib_ecore_win32_libecore_win32_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WIN32_CFLAGS@
 lib_ecore_win32_libecore_win32_la_LIBADD = @ECORE_WIN32_LIBS@
