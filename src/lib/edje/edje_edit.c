@@ -1207,6 +1207,51 @@ edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
 }
 
 EAPI Eina_Bool
+edje_edit_sound_tone_add(Evas_Object *obj, const char* name, int frequency)
+{
+   if (!name) return EINA_FALSE;
+   if ((frequency < 20) || (frequency > 20000))
+     return EINA_FALSE;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   Edje_Sound_Tone *sound_tone = NULL;
+   Edje_Sound_Tone *sound_tones_array = NULL;
+   unsigned int i = 0;
+   int id = 0;
+
+   _initialize_sound_dir(ed);
+
+   for (i = 0; i < ed->file->sound_dir->tones_count; ++i)
+     {
+        sound_tone = ed->file->sound_dir->tones + i;
+        if (!strcmp(name, sound_tone->name))
+          {
+             WRN("Can not add new tone because"
+                 "tone named \"%s\" already exists.", name);
+             return EINA_FALSE;
+          }
+     }
+   ed->file->sound_dir->tones_count++;
+
+   sound_tones_array = realloc(ed->file->sound_dir->tones,
+                               sizeof(Edje_Sound_Tone) *
+                               ed->file->sound_dir->tones_count);
+   if (sound_tones_array)
+     ed->file->sound_dir->tones = sound_tones_array;
+   else return EINA_FALSE;
+
+   sound_tone = ed->file->sound_dir->tones +
+                ed->file->sound_dir->tones_count - 1;
+   sound_tone->name = (char*)eina_stringshare_add(name);
+   sound_tone->value = frequency;
+   sound_tone->id = id;
+
+   return EINA_TRUE;
+}
+
+
+EAPI Eina_Bool
 edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
 {
    GET_ED_OR_RETURN(EINA_FALSE);

@@ -4398,8 +4398,25 @@ edje_edit_sound_sample_add(Evas_Object *obj, const char* name, const char* snd_s
  * @param name The name of the sound to be deleted from the edje.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @see edje_edit_sound_sample_add()
  */
 EAPI Eina_Bool edje_edit_sound_sample_del(Evas_Object *obj, const char *name);
+
+/** Add new tone to the collection
+ *
+ * This function adds new tone with given frequency to the edje collection.
+ * The added sound sample could be used by PLAY_TONE action in any program
+ * of any group that is in the current collection.
+ *
+ * @param obj Object being edited.
+ * @param name The name that will identify tone.
+ * @param frequency Frequency of added tone. This value should be in range of 20 to 20000 inclusive.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @see edje_edit_sound_tone_del()
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_sound_tone_add(Evas_Object *obj, const char* name, int frequency);
 
 /** Delete tone from the collection
  *
@@ -4410,7 +4427,9 @@ EAPI Eina_Bool edje_edit_sound_sample_del(Evas_Object *obj, const char *name);
  * @param obj Object being edited.
  * @param name The name of the tone to be deleted from the edje.
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @see edje_edit_sound_tone_add()
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_sound_tone_del(Evas_Object *obj, const char* name);
 
