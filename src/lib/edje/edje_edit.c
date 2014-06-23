@@ -3901,6 +3901,59 @@ edje_edit_part_items_list_get(Evas_Object *obj, const char *part)
 }
 
 EAPI Eina_Bool
+edje_edit_part_item_del(Evas_Object *obj, const char *part, const char* name)
+{
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+   unsigned int i;
+   GET_RP_OR_RETURN(EINA_FALSE);
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+      (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+   ep = rp->part;
+   if (!ed->file) return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        item = ep->items[i];
+        if (!strcmp(name, item->name))
+           break;
+     }
+   if (i == ep->items_count)
+     {
+        WRN("Unable to delete item \"%s\". It does not exist.", name);
+        return EINA_FALSE;
+     }
+
+   {
+      Edje_Pack_Element **tmp;
+      _edje_if_string_free(ed, item->name);
+      --ep->items_count;
+
+      while (i < ep->items_count)
+        {
+           ep->items[i] = ep->items[i + 1];
+           i++;
+        }
+
+      tmp = realloc(ep->items, sizeof(Edje_Pack_Element *) * ep->items_count);
+      if (!tmp)
+        {
+           free(item);
+           return EINA_FALSE;
+        }
+      ep->items = tmp;
+   }
+
+   GET_EED_OR_RETURN(EINA_FALSE);
+   _edje_edit_flag_script_dirty(eed, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+
+EAPI Eina_Bool
 edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
 {
    Edje_Part *ep;

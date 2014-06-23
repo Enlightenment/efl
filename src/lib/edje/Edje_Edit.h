@@ -1664,6 +1664,17 @@ EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, co
  */
 EAPI Eina_List * edje_edit_part_items_list_get(Evas_Object *obj, const char *part);
 
+/** Delete item from box or table part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to delete exist item. This part should have BOX or TABLE type.
+ * @param item_name Name of exist item to delete it from BOX or TABLE.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_del(Evas_Object *obj, const char *part, const char* name);
+
 /** Set source for item from table or box items.
  *
  * @param obj Object being edited.
