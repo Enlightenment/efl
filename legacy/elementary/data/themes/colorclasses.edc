@@ -90,6 +90,18 @@ color_classes {
    color_class { name: "check_text_disabled";
       color: FN_COL_DISABLE;
    }
+   color_class { name: "check_off_text";
+      color: FN_COL_DEFAULT;
+   }
+   color_class { name: "check_off_text_disabled";
+      color: FN_COL_DISABLE;
+   }
+   color_class { name: "check_on_text";
+      color: FN_COL_HIGHLIGHT;
+   }
+   color_class { name: "check_on_text_disabled";
+      color: FN_COL_DISABLE;
+   }
    color_class { name: "entry_text";
       color: FN_COL_DEFAULT_BASIC;
    }
