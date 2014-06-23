@@ -103,15 +103,6 @@ pop_strbuf(Eo_Lexer *ls)
    ls->tmp.str_bufs = eina_list_remove_list(ls->tmp.str_bufs, ls->tmp.str_bufs);
 }
 
-static void
-append_node(Eo_Lexer *ls, int type, void *def)
-{
-   Eo_Node *nd = calloc(1, sizeof(Eo_Node));
-   nd->type  = type;
-   nd->def   = def;
-   ls->nodes = eina_list_append(ls->nodes, nd);
-}
-
 static Eina_Strbuf *
 parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
@@ -861,6 +852,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 static void
 parse_unit(Eo_Lexer *ls)
 {
+   Eo_Node *nd;
    switch (ls->t.kw)
      {
         case KW_abstract:
@@ -878,7 +870,10 @@ parse_unit(Eo_Lexer *ls)
         case KW_type:
           {
              parse_typedef(ls);
-             append_node(ls, NODE_TYPEDEF, ls->tmp.type_def);
+             nd = calloc(1, sizeof(Eo_Node));
+             nd->type = NODE_TYPEDEF;
+             nd->def_type = ls->tmp.type_def;
+             ls->nodes = eina_list_append(ls->nodes, nd);
              ls->tmp.type_def = NULL;
              break;
           }
@@ -888,7 +883,10 @@ parse_unit(Eo_Lexer *ls)
      }
    return;
 found_class:
-   append_node(ls, NODE_CLASS, ls->tmp.kls);
+   nd = calloc(1, sizeof(Eo_Node));
+   nd->type = NODE_CLASS;
+   nd->def_class = ls->tmp.kls;
+   ls->nodes = eina_list_append(ls->nodes, nd);
    ls->tmp.kls = NULL;
 }
 
