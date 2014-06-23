@@ -852,7 +852,6 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 static void
 parse_unit(Eo_Lexer *ls)
 {
-   Eo_Node *nd;
    switch (ls->t.kw)
      {
         case KW_abstract:
@@ -868,25 +867,17 @@ parse_unit(Eo_Lexer *ls)
            parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
            goto found_class;
         case KW_type:
-          {
-             parse_typedef(ls);
-             nd = calloc(1, sizeof(Eo_Node));
-             nd->type = NODE_TYPEDEF;
-             nd->def_type = ls->tmp.type_def;
-             ls->nodes = eina_list_append(ls->nodes, nd);
-             ls->tmp.type_def = NULL;
-             break;
-          }
+           parse_typedef(ls);
+           ls->typedefs = eina_list_append(ls->typedefs, ls->tmp.type_def);
+           ls->tmp.type_def = NULL;
+           break;
         default:
            eo_lexer_syntax_error(ls, "invalid token");
            break;
      }
    return;
 found_class:
-   nd = calloc(1, sizeof(Eo_Node));
-   nd->type = NODE_CLASS;
-   nd->def_class = ls->tmp.kls;
-   ls->nodes = eina_list_append(ls->nodes, nd);
+   ls->classes = eina_list_append(ls->classes, ls->tmp.kls);
    ls->tmp.kls = NULL;
 }
 
@@ -917,12 +908,14 @@ _print_type(FILE *f, Eolian_Type tp)
      }
 }
 
-static void
-_dump_class(Eo_Class_Def *kls)
+void
+eo_parser_dump(Eo_Lexer *ls)
 {
    const char *s;
-   Eina_List *l, *m;
+   Eina_List *k, *l, *m;
 
+   Eo_Type_Def *type;
+   Eo_Class_Def *kls;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
@@ -930,109 +923,90 @@ _dump_class(Eo_Class_Def *kls)
    Eo_Event_Def *sgn;
    Eo_Implement_Def *impl;
 
-   printf("Class: %s (%s)\n",
-          kls->name, (kls->comment ? kls->comment : "-"));
-   printf("  inherits from :");
-   EINA_LIST_FOREACH(kls->inherits, l, s)
-      printf(" %s", s);
-   printf("\n");
-   printf("  implements:");
-   EINA_LIST_FOREACH(kls->implements, l, impl)
-      printf(" %s", impl->meth_name);
-   printf("\n");
-   printf("  events:\n");
-   EINA_LIST_FOREACH(kls->events, l, sgn)
-      printf("    %s <%s> (%s)\n", sgn->name, sgn->type, sgn->comment);
-    EINA_LIST_FOREACH(kls->constructors, l, meth)
+   EINA_LIST_FOREACH(ls->classes, k, kls)
      {
-        printf("  constructors: %s\n", meth->name);
-        if (meth->ret)
+        printf("Class: %s (%s)\n",
+               kls->name, (kls->comment ? kls->comment : "-"));
+        printf("  inherits from :");
+        EINA_LIST_FOREACH(kls->inherits, l, s)
+           printf(" %s", s);
+        printf("\n");
+        printf("  implements:");
+        EINA_LIST_FOREACH(kls->implements, l, impl)
+           printf(" %s", impl->meth_name);
+        printf("\n");
+        printf("  events:\n");
+        EINA_LIST_FOREACH(kls->events, l, sgn)
+           printf("    %s <%s> (%s)\n", sgn->name, sgn->type, sgn->comment);
+
+        EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
-             printf("    return: ");
-             _print_type(stdout, meth->ret->type);
-             printf(" (%s)\n", meth->ret->comment);
+             printf("  constructors: %s\n", meth->name);
+             if (meth->ret)
+               {
+                  printf("    return: ");
+                  _print_type(stdout, meth->ret->type);
+                  printf(" (%s)\n", meth->ret->comment);
+               }
+             printf("    legacy : %s\n", meth->legacy);
+             EINA_LIST_FOREACH(meth->params, m, param)
+               {
+                  printf("    param: %s %s : ", _param_way_str[param->way], param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
+               }
           }
-        printf("    legacy : %s\n", meth->legacy);
-        EINA_LIST_FOREACH(meth->params, m, param)
+
+        EINA_LIST_FOREACH(kls->properties, l, prop)
           {
-             printf("    param: %s %s : ", _param_way_str[param->way], param->name);
-             _print_type(stdout, param->type);
-             printf(" (%s)\n", param->comment);
+             printf("  property: %s\n", prop->name);
+             EINA_LIST_FOREACH(prop->keys, m, param)
+               {
+                  printf("    key: %s : ", param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
+               }
+             EINA_LIST_FOREACH(prop->values, m, param)
+               {
+                  printf("    value: %s : ", param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
+               }
+             EINA_LIST_FOREACH(prop->accessors, m, accessor)
+               {
+                  printf("    accessor: ");
+                  if (accessor->ret)
+                     _print_type(stdout, accessor->ret->type);
+                  printf(" : %s (%s)\n", _accessor_type_str[accessor->type], accessor->comment);
+                  printf("      legacy : %s\n", accessor->legacy);
+               }
+          }
+
+        EINA_LIST_FOREACH(kls->methods, l, meth)
+          {
+             printf("  method: %s\n", meth->name);
+             if (meth->ret)
+               {
+                  printf("    return: ");
+                  _print_type(stdout, meth->ret->type);
+                  printf(" (%s)\n", meth->ret->comment);
+               }
+             printf("    legacy : %s\n", meth->legacy);
+             printf("    obj_const : %s\n", meth->obj_const?"true":"false");
+             EINA_LIST_FOREACH(meth->params, m, param)
+               {
+                  printf("    param: %s %s : ", _param_way_str[param->way], param->name);
+                  _print_type(stdout, param->type);
+                  printf(" (%s)\n", param->comment);
+               }
           }
      }
 
-   EINA_LIST_FOREACH(kls->properties, l, prop)
+   EINA_LIST_FOREACH(ls->typedefs, k, type)
      {
-        printf("  property: %s\n", prop->name);
-        EINA_LIST_FOREACH(prop->keys, m, param)
-          {
-             printf("    key: %s : ", param->name);
-             _print_type(stdout, param->type);
-             printf(" (%s)\n", param->comment);
-          }
-        EINA_LIST_FOREACH(prop->values, m, param)
-          {
-             printf("    value: %s : ", param->name);
-             _print_type(stdout, param->type);
-             printf(" (%s)\n", param->comment);
-          }
-        EINA_LIST_FOREACH(prop->accessors, m, accessor)
-          {
-             printf("    accessor: ");
-             if (accessor->ret)
-                _print_type(stdout, accessor->ret->type);
-             printf(" : %s (%s)\n", _accessor_type_str[accessor->type], accessor->comment);
-             printf("      legacy : %s\n", accessor->legacy);
-          }
-     }
-
-   EINA_LIST_FOREACH(kls->methods, l, meth)
-     {
-        printf("  method: %s\n", meth->name);
-        if (meth->ret)
-          {
-             printf("    return: ");
-             _print_type(stdout, meth->ret->type);
-             printf(" (%s)\n", meth->ret->comment);
-          }
-        printf("    legacy : %s\n", meth->legacy);
-        printf("    obj_const : %s\n", meth->obj_const?"true":"false");
-        EINA_LIST_FOREACH(meth->params, m, param)
-          {
-             printf("    param: %s %s : ", _param_way_str[param->way], param->name);
-             _print_type(stdout, param->type);
-             printf(" (%s)\n", param->comment);
-          }
-     }
-}
-
-static void
-_dump_type(Eo_Type_Def *type)
-{
-   printf("Typedef: %s ", type->alias);
-   _print_type(stdout, type->type);
-   printf("\n");
-}
-
-void
-eo_parser_dump(Eo_Lexer *ls)
-{
-   Eina_List *k;
-   Eo_Node *nd;
-
-   EINA_LIST_FOREACH(ls->nodes, k, nd)
-     {
-        switch (nd->type)
-          {
-             case NODE_CLASS:
-                _dump_class(nd->def_class);
-                break;
-             case NODE_TYPEDEF:
-                _dump_type(nd->def_type);
-                break;
-             default:
-                break;
-          }
+        printf("Typedef: %s ", type->alias);
+        _print_type(stdout, type->type);
+        printf("\n");
      }
 }
 
@@ -1047,218 +1021,20 @@ eo_parser_walk(Eo_Lexer *ls)
    return EINA_FALSE;
 }
 
-static Eina_Bool
-_db_fill_class(Eo_Class_Def *kls, const char *filename)
+Eina_Bool
+eo_parser_database_fill(const char *filename)
 {
    const char *s;
-   Eina_List *l, *m;
+   Eina_List *k, *l, *m;
 
+   Eo_Class_Def *kls;
+   Eo_Type_Def *type_def;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
    Eo_Event_Def *event;
    Eo_Implement_Def *impl;
-
-   Eolian_Class class = database_class_add(kls->name, kls->type);
-   Eina_Bool is_iface = (kls->type == EOLIAN_CLASS_INTERFACE);
-   database_class_file_set(class, filename);
-
-   if (kls->comment) database_class_description_set(class, kls->comment);
-
-   EINA_LIST_FOREACH(kls->inherits, l, s)
-      database_class_inherit_add(class, s);
-
-   if (kls->legacy_prefix)
-     {
-        database_class_legacy_prefix_set(class, kls->legacy_prefix);
-     }
-   if (kls->eo_prefix)
-     {
-        database_class_eo_prefix_set(class, kls->eo_prefix);
-     }
-   if (kls->data_type)
-     {
-        database_class_data_type_set(class, kls->data_type);
-     }
-   EINA_LIST_FOREACH(kls->constructors, l, meth)
-     {
-        Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_CTOR);
-        database_class_function_add(class, foo_id);
-        if (meth->ret) database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
-        database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
-        EINA_LIST_FOREACH(meth->params, m, param)
-          {
-             database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
-             param->type = NULL;
-          }
-     }
-
-   EINA_LIST_FOREACH(kls->properties, l, prop)
-     {
-        Eolian_Function foo_id = database_function_new(prop->name, EOLIAN_UNRESOLVED);
-        database_function_scope_set(foo_id, prop->scope);
-        EINA_LIST_FOREACH(prop->keys, m, param)
-          {
-             Eolian_Function_Parameter p = database_property_key_add(
-                   foo_id, param->type, param->name, param->comment);
-             database_parameter_nonull_set(p, param->nonull);
-             param->type = NULL;
-          }
-        EINA_LIST_FOREACH(prop->values, m, param)
-          {
-             Eolian_Function_Parameter p = database_property_value_add(
-                   foo_id, param->type, param->name, param->comment);
-             database_parameter_nonull_set(p, param->nonull);
-             param->type = NULL;
-          }
-        EINA_LIST_FOREACH(prop->accessors, m, accessor)
-          {
-             database_function_type_set(foo_id, (accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET));
-             Eolian_Function_Type ftype =
-                accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
-             if (accessor->ret && accessor->ret->type)
-               {
-                  database_function_return_type_set(foo_id, ftype, accessor->ret->type);
-                  database_function_return_comment_set(foo_id,
-                        ftype, accessor->ret->comment);
-                  database_function_return_flag_set_as_warn_unused(foo_id,
-                        ftype, accessor->ret->warn_unused);
-                  database_function_return_dflt_val_set(foo_id,
-                        ftype, accessor->ret->dflt_ret_val);
-                  accessor->ret->type = NULL;
-               }
-             if (accessor->legacy)
-               {
-                  database_function_data_set(foo_id,
-                        (accessor->type == SETTER?EOLIAN_LEGACY_SET:EOLIAN_LEGACY_GET),
-                        accessor->legacy);
-               }
-             database_function_description_set(foo_id,
-                   (accessor->type == SETTER?EOLIAN_COMMENT_SET:EOLIAN_COMMENT_GET),
-                   accessor->comment);
-             Eo_Accessor_Param *acc_param;
-             Eina_List *m2;
-             EINA_LIST_FOREACH(accessor->params, m2, acc_param)
-               {
-                  Eolian_Function_Parameter desc = eolian_function_parameter_get(foo_id, acc_param->name);
-                  if (!desc)
-                    {
-                       printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
-                    }
-                  else
-                     if (strstr(acc_param->attrs, "const"))
-                       {
-                          database_parameter_const_attribute_set(desc, accessor->type == GETTER, EINA_TRUE);
-                       }
-               }
-             if (is_iface)
-                database_function_set_as_virtual_pure(foo_id, ftype);
-          }
-        if (!prop->accessors)
-          {
-             database_function_type_set(foo_id, EOLIAN_PROPERTY);
-             if (is_iface)
-               database_function_set_as_virtual_pure(foo_id, EOLIAN_UNRESOLVED);
-          }
-        database_class_function_add(class, foo_id);
-     }
-
-   EINA_LIST_FOREACH(kls->methods, l, meth)
-     {
-        Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_METHOD);
-        database_function_scope_set(foo_id, meth->scope);
-        database_class_function_add(class, foo_id);
-        if (meth->ret)
-          {
-             database_function_return_type_set(foo_id, EOLIAN_METHOD, meth->ret->type);
-             database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
-             database_function_return_flag_set_as_warn_unused(foo_id,
-                   EOLIAN_METHOD, meth->ret->warn_unused);
-             database_function_return_dflt_val_set(foo_id,
-                   EOLIAN_METHOD, meth->ret->dflt_ret_val);
-             meth->ret->type = NULL;
-          }
-        database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
-        database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
-        database_function_object_set_as_const(foo_id, meth->obj_const);
-        EINA_LIST_FOREACH(meth->params, m, param)
-          {
-             Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
-                   (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
-             database_parameter_nonull_set(p, param->nonull);
-             param->type = NULL;
-          }
-        if (is_iface)
-          database_function_set_as_virtual_pure(foo_id, EOLIAN_METHOD);
-     }
-
-   EINA_LIST_FOREACH(kls->implements, l, impl)
-     {
-        const char *impl_name = impl->meth_name;
-        if (!strcmp(impl_name, "class.constructor"))
-          {
-             database_class_ctor_enable_set(class, EINA_TRUE);
-             continue;
-          }
-        if (!strcmp(impl_name, "class.destructor"))
-          {
-             database_class_dtor_enable_set(class, EINA_TRUE);
-             continue;
-          }
-        if (!strncmp(impl_name, "virtual.", 8))
-          {
-             char *virtual_name = strdup(impl_name);
-             char *func = strchr(virtual_name, '.');
-             if (func) *func = '\0';
-             func += 1;
-             Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
-             char *type_as_str = strchr(func, '.');
-             if (type_as_str)
-               {
-                  *type_as_str = '\0';
-                  if (!strcmp(type_as_str+1, "set")) ftype = EOLIAN_PROP_SET;
-                  else if (!strcmp(type_as_str+1, "get")) ftype = EOLIAN_PROP_GET;
-               }
-             /* Search the function into the existing functions of the current class */
-             Eolian_Function foo_id = eolian_class_function_find_by_name(
-                   class, func, ftype);
-             free(virtual_name);
-             if (!foo_id)
-               {
-                  ERR("Error - %s not known in class %s", impl_name + 8, eolian_class_name_get(class));
-                  return EINA_FALSE;
-               }
-             database_function_set_as_virtual_pure(foo_id, ftype);
-             continue;
-          }
-        Eolian_Implement impl_desc = database_implement_new(impl_name);
-        database_class_implement_add(class, impl_desc);
-     }
-
-   EINA_LIST_FOREACH(kls->events, l, event)
-     {
-        Eolian_Event ev = database_event_new(event->name, event->type, event->comment);
-        database_class_event_add(class, ev);
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_type(Eo_Type_Def *type_def)
-{
-   database_type_add(type_def->alias, type_def->type);
-   type_def->type = NULL;
-   return EINA_TRUE;
-}
-
-Eina_Bool
-eo_parser_database_fill(const char *filename)
-{
-   Eina_List *k;
-   Eo_Node *nd;
-   Eina_Bool has_class = EINA_FALSE;
 
    Eo_Lexer *ls = eo_lexer_new(filename);
    if (!ls)
@@ -1276,40 +1052,206 @@ eo_parser_database_fill(const char *filename)
         return EINA_FALSE;
      }
 
-   EINA_LIST_FOREACH(ls->nodes, k, nd) if (nd->type == NODE_CLASS)
-     {
-        has_class = EINA_TRUE;
-        break;
-     }
-
-   if (!has_class)
+   if (!ls->classes)
      {
         ERR("No classes for file %s", filename);
         eo_lexer_free(ls);
         return EINA_FALSE;
      }
 
-   EINA_LIST_FOREACH(ls->nodes, k, nd)
+   EINA_LIST_FOREACH(ls->classes, k, kls)
      {
-        switch (nd->type)
+        Eolian_Class class = database_class_add(kls->name, kls->type);
+        Eina_Bool is_iface = (kls->type == EOLIAN_CLASS_INTERFACE);
+        database_class_file_set(class, filename);
+
+        if (kls->comment) database_class_description_set(class, kls->comment);
+
+        EINA_LIST_FOREACH(kls->inherits, l, s)
+           database_class_inherit_add(class, s);
+
+        if (kls->legacy_prefix)
           {
-             case NODE_CLASS:
-                if (!_db_fill_class(nd->def_class, filename))
-                   goto error;
-                break;
-             case NODE_TYPEDEF:
-                if (!_db_fill_type(nd->def_type))
-                   goto error;
-                break;
-             default:
-                break;
+             database_class_legacy_prefix_set(class, kls->legacy_prefix);
           }
+        if (kls->eo_prefix)
+          {
+             database_class_eo_prefix_set(class, kls->eo_prefix);
+          }
+        if (kls->data_type)
+          {
+             database_class_data_type_set(class, kls->data_type);
+          }
+        EINA_LIST_FOREACH(kls->constructors, l, meth)
+          {
+             Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_CTOR);
+             database_class_function_add(class, foo_id);
+             if (meth->ret) database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
+             database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
+             EINA_LIST_FOREACH(meth->params, m, param)
+               {
+                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  param->type = NULL;
+               }
+          }
+
+        EINA_LIST_FOREACH(kls->properties, l, prop)
+          {
+             Eolian_Function foo_id = database_function_new(prop->name, EOLIAN_UNRESOLVED);
+             database_function_scope_set(foo_id, prop->scope);
+             EINA_LIST_FOREACH(prop->keys, m, param)
+               {
+                  Eolian_Function_Parameter p = database_property_key_add(
+                        foo_id, param->type, param->name, param->comment);
+                  database_parameter_nonull_set(p, param->nonull);
+                  param->type = NULL;
+               }
+             EINA_LIST_FOREACH(prop->values, m, param)
+               {
+                  Eolian_Function_Parameter p = database_property_value_add(
+                        foo_id, param->type, param->name, param->comment);
+                  database_parameter_nonull_set(p, param->nonull);
+                  param->type = NULL;
+               }
+             EINA_LIST_FOREACH(prop->accessors, m, accessor)
+               {
+                  database_function_type_set(foo_id, (accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET));
+                  Eolian_Function_Type ftype =
+                     accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
+                  if (accessor->ret && accessor->ret->type)
+                    {
+                       database_function_return_type_set(foo_id, ftype, accessor->ret->type);
+                       database_function_return_comment_set(foo_id,
+                             ftype, accessor->ret->comment);
+                       database_function_return_flag_set_as_warn_unused(foo_id,
+                             ftype, accessor->ret->warn_unused);
+                       database_function_return_dflt_val_set(foo_id,
+                             ftype, accessor->ret->dflt_ret_val);
+                       accessor->ret->type = NULL;
+                    }
+                  if (accessor->legacy)
+                    {
+                       database_function_data_set(foo_id,
+                             (accessor->type == SETTER?EOLIAN_LEGACY_SET:EOLIAN_LEGACY_GET),
+                             accessor->legacy);
+                    }
+                  database_function_description_set(foo_id,
+                        (accessor->type == SETTER?EOLIAN_COMMENT_SET:EOLIAN_COMMENT_GET),
+                        accessor->comment);
+                  Eo_Accessor_Param *acc_param;
+                  Eina_List *m2;
+                  EINA_LIST_FOREACH(accessor->params, m2, acc_param)
+                    {
+                       Eolian_Function_Parameter desc = eolian_function_parameter_get(foo_id, acc_param->name);
+                       if (!desc)
+                         {
+                            printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
+                         }
+                       else
+                          if (strstr(acc_param->attrs, "const"))
+                            {
+                               database_parameter_const_attribute_set(desc, accessor->type == GETTER, EINA_TRUE);
+                            }
+                    }
+                  if (is_iface)
+                     database_function_set_as_virtual_pure(foo_id, ftype);
+               }
+             if (!prop->accessors)
+               {
+                  database_function_type_set(foo_id, EOLIAN_PROPERTY);
+                  if (is_iface)
+                    database_function_set_as_virtual_pure(foo_id, EOLIAN_UNRESOLVED);
+               }
+             database_class_function_add(class, foo_id);
+          }
+
+        EINA_LIST_FOREACH(kls->methods, l, meth)
+          {
+             Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_METHOD);
+             database_function_scope_set(foo_id, meth->scope);
+             database_class_function_add(class, foo_id);
+             if (meth->ret)
+               {
+                  database_function_return_type_set(foo_id, EOLIAN_METHOD, meth->ret->type);
+                  database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
+                  database_function_return_flag_set_as_warn_unused(foo_id,
+                        EOLIAN_METHOD, meth->ret->warn_unused);
+                  database_function_return_dflt_val_set(foo_id,
+                        EOLIAN_METHOD, meth->ret->dflt_ret_val);
+                  meth->ret->type = NULL;
+               }
+             database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
+             database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
+             database_function_object_set_as_const(foo_id, meth->obj_const);
+             EINA_LIST_FOREACH(meth->params, m, param)
+               {
+                  Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
+                        (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  database_parameter_nonull_set(p, param->nonull);
+                  param->type = NULL;
+               }
+             if (is_iface)
+               database_function_set_as_virtual_pure(foo_id, EOLIAN_METHOD);
+          }
+
+        EINA_LIST_FOREACH(kls->implements, l, impl)
+          {
+             const char *impl_name = impl->meth_name;
+             if (!strcmp(impl_name, "class.constructor"))
+               {
+                  database_class_ctor_enable_set(class, EINA_TRUE);
+                  continue;
+               }
+             if (!strcmp(impl_name, "class.destructor"))
+               {
+                  database_class_dtor_enable_set(class, EINA_TRUE);
+                  continue;
+               }
+             if (!strncmp(impl_name, "virtual.", 8))
+               {
+                  char *virtual_name = strdup(impl_name);
+                  char *func = strchr(virtual_name, '.');
+                  if (func) *func = '\0';
+                  func += 1;
+                  Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+                  char *type_as_str = strchr(func, '.');
+                  if (type_as_str)
+                    {
+                       *type_as_str = '\0';
+                       if (!strcmp(type_as_str+1, "set")) ftype = EOLIAN_PROP_SET;
+                       else if (!strcmp(type_as_str+1, "get")) ftype = EOLIAN_PROP_GET;
+                    }
+                  /* Search the function into the existing functions of the current class */
+                  Eolian_Function foo_id = eolian_class_function_find_by_name(
+                        class, func, ftype);
+                  free(virtual_name);
+                  if (!foo_id)
+                    {
+                       ERR("Error - %s not known in class %s", impl_name + 8, eolian_class_name_get(class));
+                       eo_lexer_free(ls);
+                       return EINA_FALSE;
+                    }
+                  database_function_set_as_virtual_pure(foo_id, ftype);
+                  continue;
+               }
+             Eolian_Implement impl_desc = database_implement_new(impl_name);
+             database_class_implement_add(class, impl_desc);
+          }
+
+        EINA_LIST_FOREACH(kls->events, l, event)
+          {
+             Eolian_Event ev = database_event_new(event->name, event->type, event->comment);
+             database_class_event_add(class, ev);
+          }
+
+     }
+
+   EINA_LIST_FOREACH(ls->typedefs, k, type_def)
+     {
+        database_type_add(type_def->alias, type_def->type);
+        type_def->type = NULL;
      }
 
    eo_lexer_free(ls);
    return EINA_TRUE;
-
-error:
-   eo_lexer_free(ls);
-   return EINA_FALSE;
 }

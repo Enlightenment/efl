@@ -42,21 +42,6 @@ typedef struct _Eo_Token
    int         kw;
 } Eo_Token;
 
-enum Nodes
-{
-   NODE_CLASS = 0,
-   NODE_TYPEDEF
-};
-
-typedef struct _Eo_Node
-{
-   unsigned char type;
-   union {
-      Eo_Class_Def *def_class;
-      Eo_Type_Def  *def_type;
-   };
-} Eo_Node;
-
 typedef struct _Eo_Lexer
 {
    int          current;
@@ -69,7 +54,8 @@ typedef struct _Eo_Lexer
    const char  *stream_end;
    jmp_buf      err_jmp;
 
-   Eina_List      *nodes;
+   Eina_List      *classes;
+   Eina_List      *typedefs;
    Eo_Lexer_Temps  tmp;
 } Eo_Lexer;
 

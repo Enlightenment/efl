@@ -275,28 +275,19 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
 void
 eo_lexer_free(Eo_Lexer *ls)
 {
-   Eo_Node *nd;
+   Eo_Class_Def *kls;
+   Eo_Type_Def *type;
 
    if (!ls) return;
    if (ls->source) eina_stringshare_del(ls->source);
    if (ls->buff  ) eina_strbuf_free    (ls->buff);
    if (ls->handle) eina_file_close     (ls->handle);
 
-   EINA_LIST_FREE(ls->nodes, nd)
-     {
-        switch (nd->type)
-          {
-             case NODE_CLASS:
-                eo_definitions_class_def_free(nd->def_class);
-                break;
-             case NODE_TYPEDEF:
-                eo_definitions_type_def_free(nd->def_type);
-                break;
-             default:
-                break;
-          }
-       free(nd);
-     }
+   EINA_LIST_FREE(ls->classes, kls)
+      eo_definitions_class_def_free(kls);
+
+   EINA_LIST_FREE(ls->typedefs, type)
+      eo_definitions_type_def_free(type);
 
    eo_definitions_temps_free(&ls->tmp);
 
