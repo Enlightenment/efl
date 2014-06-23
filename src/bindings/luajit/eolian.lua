@@ -397,7 +397,11 @@ M.Class = ffi.metatype("Eolian_Class", {
 
         eo_prefix_get = function(self)
             local v = eolian.eolian_class_eo_prefix_get(self)
-            if v == nil then return nil end
+            if v == nil then
+                local buf = self:namespaces_list_get()
+                buf[#buf + 1] = self:name_get()
+                return table.concat(buf, "_")
+            end
             return ffi.string(v)
         end,
 
