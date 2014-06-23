@@ -3519,6 +3519,39 @@ edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, cons
 EAPI Eina_Bool
 edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part);
 
+/** Set the source part for given part state.
+ *
+ * Set source causes the part to use another part content as the content
+ * of this part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ * @param source_part The name of part to be set as source. If NULL is passed, the source will be unset.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @see edje_edit_state_proxy_source_get()
+ * @since 1.11
+ */
+EAPI Eina_Bool
+edje_edit_state_proxy_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_name);
+
+/** Get the source name for given state of part.
+ *
+ * @note The returned string should be freed with @c eina_stringshare_del().
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ *
+ * @return The name of the source part in case of success. Otherwise returns NULL.
+ * @see edje_edit_state_proxy_source_set()
+ * @since 1.11
+ */
+EAPI Eina_Stringshare *
+edje_edit_state_proxy_source_get(Evas_Object *obj, const char *part, const char *state, double value);
+
 //@}
 /******************************************************************************/
 /**************************   TEXT API   ************************************/

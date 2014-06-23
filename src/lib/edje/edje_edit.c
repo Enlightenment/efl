@@ -508,6 +508,21 @@ _edje_part_id_find(Edje *ed, const char *part)
    return -1;
 }
 
+static const char *
+_edje_part_name_find(Edje *ed, int id)
+{
+   unsigned int i;
+   if (id < 0) return NULL;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp = ed->table_parts[i];
+        if (rp->part->id == id)
+          return rp->part->name;
+     }
+   return NULL;
+}
+
 static void
 _edje_part_description_id_set(int type, Edje_Part_Description_Common *c, int old_id, int new_id)
 {
@@ -6558,6 +6573,41 @@ edje_edit_state_text_size_range_min_max_set(Evas_Object *obj, const char *part, 
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_proxy_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_name)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (rp->part->type != EDJE_PART_TYPE_PROXY)
+     return EINA_FALSE;
+
+   Edje_Part_Description_Proxy *proxy_part = (Edje_Part_Description_Proxy*) pd;
+
+   if (source_name)
+     {
+        int source_id = _edje_part_id_find(ed, source_name);
+        if (source_id < 0)
+          return EINA_FALSE;
+        proxy_part->proxy.id = source_id;
+     }
+   else proxy_part->proxy.id = -1;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Stringshare *
+edje_edit_state_proxy_source_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(NULL);
+   if (rp->part->type != EDJE_PART_TYPE_PROXY)
+     return NULL;
+
+   Edje_Part_Description_Proxy *proxy_part = (Edje_Part_Description_Proxy*) pd;
+   const char * source_name;
+   source_name = _edje_part_name_find(ed, proxy_part->proxy.id);
+
+   return eina_stringshare_add(source_name);
+}
+
 /****************/
 /*  IMAGES API  */
 /****************/
@@ -9500,6 +9550,14 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	Edje_Part_Description_Proxy *pro;
 
 	pro = (Edje_Part_Description_Proxy *) pd;
+
+        if (pro->proxy.id >= 0)
+          {
+             const char * source_name;
+             source_name = _edje_part_name_find(ed, pro->proxy.id);
+             if (source_name)
+               BUF_APPENDF(I5"source: \"%s\";\n", source_name);
+          }
 
 	//Fill
 
