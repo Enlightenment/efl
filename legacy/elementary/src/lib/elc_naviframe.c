@@ -1631,8 +1631,8 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
 
    if (prev_it)
      {
-        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
         elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
 
         if (sd->freeze_events)
           {
