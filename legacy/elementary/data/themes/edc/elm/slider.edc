@@ -286,7 +286,7 @@ group { name: "elm/slider/horizontal/default";
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
             color_class: "slider_text_disabled";
-            color: FN_COL_DISABLE;
+            color3: 255 255 255 255;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
@@ -374,8 +374,8 @@ group { name: "elm/slider/horizontal/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color: FN_COL_DISABLE_LIGHTER_SHADOW;
             color_class: "slider_text_disabled";
+            color3: 255 255 255 255;
          }
       }
       part { name: "button"; type: GROUP; mouse_events: 0;
@@ -993,7 +993,7 @@ group { name: "elm/slider/vertical/default";
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
             color_class: "slider_text_disabled";
-            color: FN_COL_DISABLE_LIGHTER_SHADOW;
+            color3: 255 255 255 255;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
@@ -1083,8 +1083,8 @@ group { name: "elm/slider/vertical/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color: FN_COL_DISABLE_LIGHTER_SHADOW;
             color_class: "slider_text_disabled";
+            color3: 255 255 255 255;
          }
       }
       part { name: "button"; type: GROUP; mouse_events: 0;
