@@ -176,7 +176,8 @@ group { name: "elm/radio/base/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
+            color_class: "radio_text_disabled";
+            color3: 255 255 255 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -186,8 +187,8 @@ group { name: "elm/radio/base/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color_class: "radio_text_disabled";
+            color3: 255 255 255 255;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
