@@ -971,11 +971,17 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
           return EINA_FALSE;
 
         if (!edje_object_file_set(eeo, ed->file->path, pce->entry))
-          continue;
+          {
+             evas_object_del(eeo);
+             continue;
+          }
 
         programs_list = edje_edit_programs_list_get(eeo);
         if (!programs_list)
-          continue;
+          {
+             evas_object_del(eeo);
+             continue;
+          }
 
         eed = eo_data_scope_get(eeo, EDJE_CLASS);
         for (i = 0; i < eed->collection->patterns.table_programs_size; i++)
@@ -1008,7 +1014,10 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
           }
         if (is_collection_changed)
           _edje_edit_collection_save(eetf, eed->collection);
+        evas_object_del(eeo);
      }
+
+   eina_iterator_free(it);
    return EINA_TRUE;
 }
 
