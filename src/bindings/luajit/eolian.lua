@@ -400,7 +400,7 @@ M.Class = ffi.metatype("Eolian_Class", {
             if v == nil then
                 local buf = self:namespaces_list_get()
                 buf[#buf + 1] = self:name_get()
-                return table.concat(buf, "_")
+                return table.concat(buf, "_"):lower()
             end
             return ffi.string(v)
         end,
