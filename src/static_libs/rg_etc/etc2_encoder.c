@@ -129,6 +129,14 @@ absi(int a)
 #define G_VAL(v) ((uint8_t) ((v & 0x0000FF00) >> 8))
 #define B_VAL(v) ((uint8_t) ((v & 0x000000FF)))
 
+#ifndef WORDS_BIGENDIAN
+# define RGB_START 0
+# define RGB_END   2
+#else
+# define RGB_START 1
+# define RGB_END   3
+#endif
+
 #ifndef DBG
 # ifdef DEBUG
 #  define DBG(fmt, ...) fprintf(stderr, "%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## __VA_ARGS__)
@@ -463,6 +471,10 @@ _etc2_th_mode_block_pack(uint8_t *etc2, Eina_Bool h_mode,
    } paint_colors[4], color1, color2;
    int errAcc = 0;
 
+   paint_colors[0].v = 0;
+   paint_colors[1].v = 0;
+   paint_colors[2].v = 0;
+   paint_colors[3].v = 0;
    color1.v = c1;
    color2.v = c2;
 
@@ -488,7 +500,8 @@ _etc2_th_mode_block_pack(uint8_t *etc2, Eina_Bool h_mode,
           }
      }
 
-   for (int k = 0; k < 4; k++)
+   // Set paint_colors using R,G,B values (byte order is preserved)
+   for (int k = RGB_START; k <= RGB_END; k++)
      {
         if (!h_mode)
           {
