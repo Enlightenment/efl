@@ -1392,6 +1392,7 @@ eolian_directory_scan(const char *dir)
    eina_iterator_free(dir_files);
    dir_files = eina_file_ls(dir);
    EINA_ITERATOR_FOREACH(dir_files, file) EO_SCAN_BODY(EOT_SUFFIX, _tfilenames);
+   eina_iterator_free(dir_files);
    return EINA_TRUE;
 }
 
