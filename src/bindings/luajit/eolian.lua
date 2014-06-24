@@ -71,6 +71,7 @@ ffi.cdef [[
     Eolian_Function_Type eolian_function_type_get(Eolian_Function *function_id);
     Eolian_Function_Scope eolian_function_scope_get(Eolian_Function *function_id);
     const char *eolian_function_name_get(Eolian_Function *function_id);
+    const char *eolian_function_full_c_name_get(Eolian_Function function_id, const char *prefix);
     Eolian_Function *eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_data_get(Eolian_Function *function_id, const char *key);
     Eina_Bool eolian_function_is_virtual_pure(Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -186,6 +187,12 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         name_get = function(self)
             local v = eolian.eolian_function_name_get(self)
+            if v == nil then return nil end
+            return ffi.string(v)
+        end,
+
+        full_c_name_get = function(self)
+            local v = eolian.eolian_function_full_c_name_get(self)
             if v == nil then return nil end
             return ffi.string(v)
         end,

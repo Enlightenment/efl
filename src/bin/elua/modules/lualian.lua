@@ -122,20 +122,6 @@ local typeconv = function(tps, expr, isin)
     return build_calln(tps, expr, false)
 end
 
-local dedup_name = function(classn, funcn)
-    local suffix = classn:match(".+_(.+)"   ) or classn
-    local prefix =  funcn:match("([^_]+)_.+") or funcn
-    if prefix == suffix then
-        if classn == suffix then
-            return funcn
-        else
-            return classn:match("(.+_).+") .. funcn
-        end
-    else
-        return classn .. "_" .. funcn
-    end
-end
-
 local Node = util.Object:clone {
     generate = function(self, s)
     end,
@@ -184,7 +170,7 @@ local Method = Node:clone {
         local allocs = {}
         proto.allocs = allocs
 
-        proto.full_name = dedup_name(self.parent_node.prefix, proto.name)
+        proto.full_name = meth:full_c_name_get(self.parent_node.prefix)
 
         local dirs = eolian.parameter_dir
 
@@ -280,7 +266,7 @@ local Property = Method:clone {
         local allocs = {}
         proto.allocs = allocs
 
-        proto.full_name = dedup_name(self.parent_node.prefix, proto.name)
+        proto.full_name = prop:full_c_name_get(self.parent_node.prefix)
             .. proto.suffix
 
         local dirs = eolian.parameter_dir
