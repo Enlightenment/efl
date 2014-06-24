@@ -1,0 +1,89 @@
+collections {
+   images{
+      image: "bubble-blue.png" COMP;
+   }
+   group {
+      name: "map_example_group";
+      parts {
+         part {
+            type: IMAGE;
+            name: "bg";
+            description {
+               state: "default" 0.0;
+               image {
+                  normal: "bubble-blue.png";
+               }
+               rel1.relative: 0.25 0.25;
+               rel2.relative: 0.75 0.75;
+            }
+         }
+         part {
+            type: RECT;
+            name: "rectangle";
+            description {
+               state: "default" 0.0;
+               color: 255 255 255 255;
+               map {
+                  on: 1;
+                  color: 0 0 0 0 0;
+                  color: 1 255 255 255 255;
+                  color: 2 255 255 255 255;
+                  color: 3 255 255 255 255;
+               }
+            }
+            description { state: "moved" 0.0;
+               state: "moved" 0.0;
+               color: 255 255 255 255;
+               map {
+                  on: 1;
+                  color: 0 0 0 255 255;
+                  color: 1 0 0 255 255;
+                  color: 2 0 0 0 0;
+                  color: 3 0 0 255 255;
+               }
+            }
+            description {
+               state: "rotated" 0.0;
+               color: 255 255 255 255;
+               map {
+                  on: 1;
+                  color: 0 0 125 255 255;
+                  color: 1 255 0 255 128;
+                  color: 2 0 125 255 255;
+                  color: 3 255 0 255 128;
+                  rotation {
+                     x: 65.0;
+                     y: 95.0;
+                     z: 95.0;
+                  }
+               }
+            }
+         }
+      }
+      programs {
+         program {
+            name: "start_program";
+            signal: "load";
+            source: "";
+            transition: ACCELERATE 0.5;
+            action: STATE_SET "default" 0.0;
+            target: "rectangle";
+            after: "continue_program";
+         }
+         program {
+            name: "continue_program";
+            transition: DECELERATE 3;
+            action: STATE_SET "moved" 0.0;
+            target: "rectangle";
+            after: "rotate_program";
+         }
+         program {
+            name: "rotate_program";
+            transition: DECELERATE 4;
+            action: STATE_SET "rotated" 0.0;
+            target: "rectangle";
+            after: "start_program";
+         }
+      }
+   }
+}

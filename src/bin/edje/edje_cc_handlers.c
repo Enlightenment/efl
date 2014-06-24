@@ -9486,17 +9486,17 @@ st_collections_group_parts_part_description_physics_face_source(void)
             perspective_on: 1;
             backface_cull: 1;
             alpha: 1;
-            
+
             rotation {
                 ..
             }
         }
         ..
     }
-    
+
     @description
     @endblock
-    
+
     @property
         perspective
     @parameters
@@ -9653,7 +9653,7 @@ st_collections_group_parts_part_description_map_backface_cull(void)
     @effect
         Enable perspective when rotating even without a perspective point object.
         This would use perspective set for the object itself or for the
-        canvas as a whole as the global perspective with 
+        canvas as a whole as the global perspective with
         edje_perspective_set() and edje_perspective_global_set().
     @endproperty
 */
@@ -9665,6 +9665,24 @@ st_collections_group_parts_part_description_map_perspective_on(void)
    current_desc->map.persp_on = parse_bool(0);
 }
 
+/**
+    @page edcref
+    @property
+        color
+    @parameters
+        [point] [red] [green] [blue] [alpha]
+    @effect
+        Set the color of a vertex in the map.
+        Colors will be linearly interpolated between vertex points through the map.
+        The default color of a vertex in a map is white solid (255, 255, 255, 255)
+        which means it will have no affect on modifying the part pixels.
+        Currently only four points are supported:
+         0 - Left-Top point of a part.
+         1 - Right-Top point of a part.
+         2 - Left-Bottom point of a part.
+         3 - Right-Bottom point of a part.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_map_color(void)
 {
