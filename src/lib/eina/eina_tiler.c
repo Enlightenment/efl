@@ -1380,10 +1380,11 @@ eina_tiler_union(Eina_Tiler *dst,
           }
         _splitter_rect_add(dst, &_rect);
      }
-   eina_iterator_free(itr);
 
    if (rect)
      dst->last.add = *rect;
+
+   eina_iterator_free(itr);
 
    return EINA_TRUE;
 }
@@ -1418,10 +1419,11 @@ eina_tiler_subtract(Eina_Tiler *dst,
           }
         _splitter_rect_del(dst, &_rect);
      }
-   eina_iterator_free(itr);
 
    if (rect)
      dst->last.del = *rect;
+
+   eina_iterator_free(itr);
 
    return EINA_TRUE;
 }
