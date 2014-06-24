@@ -17,6 +17,7 @@
 static Eina_List *_classes = NULL;
 static Eina_Hash *_types = NULL;
 static Eina_Hash *_filenames = NULL; /* Hash: filename without extension -> full path */
+static Eina_Hash *_tfilenames = NULL;
 static int _database_init_count = 0;
 
 typedef struct
@@ -177,6 +178,7 @@ database_init()
    eina_init();
    _types = eina_hash_stringshared_new(_type_hash_free_cb);
    _filenames = eina_hash_string_small_new(free);
+   _tfilenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
 }
 
@@ -197,6 +199,7 @@ database_shutdown()
            _class_del((_Class_Desc *)class);
         eina_hash_free(_types);
         eina_hash_free(_filenames);
+        eina_hash_free(_tfilenames);
         eina_shutdown();
      }
    return _database_init_count;
@@ -1368,6 +1371,16 @@ eolian_show(const Eolian_Class class)
 }
 
 #define EO_SUFFIX ".eo"
+#define EOT_SUFFIX ".eot"
+#define EO_SCAN_BODY(suffix, hash) \
+if (eina_str_has_suffix(file, suffix)) \
+  { \
+     int len = strlen(file); \
+     int idx = len - 1; \
+     while (idx >= 0 && file[idx] != '/' && file[idx] != '\\') idx--; \
+     eina_hash_add(hash, eina_stringshare_add_length(file+idx+1, len - idx - sizeof(suffix)), strdup(file)); \
+  }
+
 EAPI Eina_Bool
 eolian_directory_scan(const char *dir)
 {
@@ -1375,17 +1388,10 @@ eolian_directory_scan(const char *dir)
    char *file;
    /* Get all files from directory. Not recursively!!! */
    Eina_Iterator *dir_files = eina_file_ls(dir);
-   EINA_ITERATOR_FOREACH(dir_files, file)
-     {
-        if (eina_str_has_suffix(file, EO_SUFFIX))
-          {
-             int len = strlen(file);
-             int idx = len - 1;
-             while (idx >= 0 && file[idx] != '/' && file[idx] != '\\') idx--;
-             eina_hash_add(_filenames, eina_stringshare_add_length(file+idx+1, len - idx - sizeof(EO_SUFFIX)), strdup(file));
-          }
-     }
+   EINA_ITERATOR_FOREACH(dir_files, file) EO_SCAN_BODY(EO_SUFFIX, _filenames);
    eina_iterator_free(dir_files);
+   dir_files = eina_file_ls(dir);
+   EINA_ITERATOR_FOREACH(dir_files, file) EO_SCAN_BODY(EOT_SUFFIX, _tfilenames);
    return EINA_TRUE;
 }
 
@@ -1405,7 +1411,14 @@ _eolian_class_to_filename(const char *filename)
    return ret;
 }
 
-EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
+EAPI Eina_Bool
+eolian_eot_file_parse(const char *filepath)
+{
+   return eo_parser_database_fill(filepath, EINA_TRUE);
+}
+
+EAPI Eina_Bool
+eolian_eo_file_parse(const char *filepath)
 {
    const Eina_List *itr;
    Eolian_Class class = eolian_class_find_by_file(filepath);
@@ -1413,7 +1426,7 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
    Eolian_Implement impl;
    if (!class)
      {
-        if (!eo_parser_database_fill(filepath)) return EINA_FALSE;
+        if (!eo_parser_database_fill(filepath, EINA_FALSE)) return EINA_FALSE;
         class = eolian_class_find_by_file(filepath);
         if (!class)
           {
@@ -1454,6 +1467,21 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
           }
      }
    return EINA_TRUE;
+}
+
+static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
+{
+   Eina_Bool *ret = fdata;
+   if (*ret) *ret = eolian_eot_file_parse(data);
+   return *ret;
+}
+
+EAPI Eina_Bool
+eolian_all_eot_files_parse()
+{
+   Eina_Bool ret = EINA_TRUE;
+   eina_hash_foreach(_tfilenames, _tfile_parse, &ret);
+   return ret;
 }
 
 static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)

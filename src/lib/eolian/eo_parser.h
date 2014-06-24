@@ -3,8 +3,8 @@
 
 #include "eo_lexer.h"
 
-Eina_Bool eo_parser_walk         (Eo_Lexer *ls);
 void      eo_parser_dump         (Eo_Lexer *ls);
-Eina_Bool eo_parser_database_fill(const char *filename);
+Eina_Bool eo_parser_walk         (Eo_Lexer *ls, Eina_Bool eot);
+Eina_Bool eo_parser_database_fill(const char *filename, Eina_Bool eot);
 
 #endif /* __EO_PARSER_H__ */

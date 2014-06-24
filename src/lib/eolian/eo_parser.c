@@ -859,20 +859,24 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 }
 
 static void
-parse_unit(Eo_Lexer *ls)
+parse_unit(Eo_Lexer *ls, Eina_Bool eot)
 {
    switch (ls->t.kw)
      {
         case KW_abstract:
+           if (eot) goto def;
            parse_class(ls, EINA_TRUE, EOLIAN_CLASS_ABSTRACT);
            goto found_class;
         case KW_class:
+           if (eot) goto def;
            parse_class(ls, EINA_TRUE, EOLIAN_CLASS_REGULAR);
            goto found_class;
         case KW_mixin:
+           if (eot) goto def;
            parse_class(ls, EINA_FALSE, EOLIAN_CLASS_MIXIN);
            goto found_class;
         case KW_interface:
+           if (eot) goto def;
            parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
            goto found_class;
         case KW_type:
@@ -882,6 +886,7 @@ parse_unit(Eo_Lexer *ls)
              ls->tmp.type_def = NULL;
              break;
           }
+        def:
         default:
            eo_lexer_syntax_error(ls, "invalid token");
            break;
@@ -893,10 +898,10 @@ found_class:
 }
 
 static void
-parse_chunk(Eo_Lexer *ls)
+parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 {
    while (ls->t.token != TOK_EOF)
-      parse_unit(ls);
+      parse_unit(ls, eot);
 }
 
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
@@ -1039,11 +1044,11 @@ eo_parser_dump(Eo_Lexer *ls)
 }
 
 Eina_Bool
-eo_parser_walk(Eo_Lexer *ls)
+eo_parser_walk(Eo_Lexer *ls, Eina_Bool eot)
 {
    if (!setjmp(ls->err_jmp))
      {
-        parse_chunk(ls);
+        parse_chunk(ls, eot);
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -1256,7 +1261,7 @@ _db_fill_type(Eo_Type_Def *type_def)
 }
 
 Eina_Bool
-eo_parser_database_fill(const char *filename)
+eo_parser_database_fill(const char *filename, Eina_Bool eot)
 {
    Eina_List *k;
    Eo_Node *nd;
@@ -1272,11 +1277,13 @@ eo_parser_database_fill(const char *filename)
    /* read first token */
    eo_lexer_get(ls);
 
-   if (!eo_parser_walk(ls))
+   if (!eo_parser_walk(ls, eot))
      {
         eo_lexer_free(ls);
         return EINA_FALSE;
      }
+
+   if (eot) goto nodeloop;
 
    EINA_LIST_FOREACH(ls->nodes, k, nd) if (nd->type == NODE_CLASS)
      {
@@ -1291,6 +1298,7 @@ eo_parser_database_fill(const char *filename)
         return EINA_FALSE;
      }
 
+nodeloop:
    EINA_LIST_FOREACH(ls->nodes, k, nd)
      {
         switch (nd->type)
