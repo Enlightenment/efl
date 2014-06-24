@@ -677,6 +677,40 @@ eolian_function_name_get(Eolian_Function function_id)
    return fid->name;
 }
 
+EAPI const char *
+eolian_function_full_c_name_get(Eolian_Function foo_id, const char *prefix)
+{
+   const char  *funcn = eolian_function_name_get(foo_id);
+   const char  *last_p = strrchr(prefix, '_');
+   const char  *func_p = strchr(funcn, '_');
+   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Stringshare *ret;
+   int   len;
+
+   if (!last_p) last_p = prefix;
+   else last_p++;
+   if (!func_p) len = strlen(funcn);
+   else len = func_p - funcn;
+
+   if ((int)strlen(last_p) != len || strncmp(last_p, funcn, len))
+     {
+        eina_strbuf_append(buf, prefix);
+        eina_strbuf_append_char(buf, '_');
+        eina_strbuf_append(buf, funcn);
+        ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+        return ret;
+     }
+
+   if (last_p != prefix)
+      eina_strbuf_append_n(buf, prefix, last_p - prefix); /* includes _ */
+
+   eina_strbuf_append(buf, funcn);
+   ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 Eina_Bool
 database_function_set_as_virtual_pure(Eolian_Function function_id, Eolian_Function_Type ftype)
 {

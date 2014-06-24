@@ -597,8 +597,8 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
         Eolian_Function_Type ftype;
         Eolian_Function fnid = NULL;
         const char *funcname = NULL;
+        const char *ret;
         char *tp = implname;
-        char *ret;
 
         if (eolian_implement_information_get(impl_desc, &impl_class, &fnid, &ftype))
           {
@@ -616,7 +616,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
              goto end;
           }
 
-        ret = _func_name_dedup(impl_env.lower_eo_prefix, funcname);
+        ret = eolian_function_full_c_name_get(fnid, impl_env.lower_eo_prefix);
         switch (ftype)
           {
            case EOLIAN_PROP_SET: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY:
@@ -640,7 +640,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
               eo_bind_func_generate(class, fnid, ftype, str_bodyf, &impl_env);
               break;
           }
-        free(ret);
+        eina_stringshare_del(ret);
      }
 
    //Constructors

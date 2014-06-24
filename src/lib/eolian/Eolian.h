@@ -382,6 +382,19 @@ EAPI Eolian_Function_Scope eolian_function_scope_get(Eolian_Function function_id
 EAPI const char *eolian_function_name_get(Eolian_Function function_id);
 
 /*
+ * @brief Returns the full C name of a function (with prefix). It's here
+ * because the C API names are deduplicated (prefix of function and suffix
+ * of prefix merge if applicable) and this helps generators not write the
+ * same code over and over.
+ *
+ * @param[in] function_id Id of the function
+ * @return the function name
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_function_full_c_name_get(Eolian_Function function_id, const char *prefix);
+
+/*
  * @brief Find a function in a class by its name and type
  *
  * @param[in] klass the class

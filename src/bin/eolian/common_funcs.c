@@ -50,7 +50,8 @@ _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_
 void
 _class_func_env_create(const Eolian_Class class, const char *funcname, Eolian_Function_Type ftype, _eolian_class_func_vars *env)
 {
-   char *p, *ret;
+   char *p;
+   const char *ret;
    const char *suffix = "";
    const char *legacy = NULL;
    Eolian_Function funcid = eolian_class_function_find_by_name(class, funcname, ftype);
@@ -72,15 +73,15 @@ _class_func_env_create(const Eolian_Class class, const char *funcname, Eolian_Fu
    p = strncpy(env->upper_func, funcname, PATH_MAX - 1);
    eina_str_toupper(&p);
 
-   ret = _func_name_dedup(tmp_env.upper_eo_prefix, funcname);
+   ret = eolian_function_full_c_name_get(funcid, tmp_env.upper_eo_prefix);
    sprintf(p = env->upper_eo_func, "%s%s", ret, suffix);
    eina_str_toupper(&p);
-   free(ret);
+   eina_stringshare_del(ret);
 
-   ret = _func_name_dedup(tmp_env.lower_eo_prefix, funcname);
+   ret = eolian_function_full_c_name_get(funcid, tmp_env.lower_eo_prefix);
    sprintf(p = env->lower_eo_func, "%s%s", ret, suffix);
    eina_str_tolower(&p);
-   free(ret);
+   eina_stringshare_del(ret);
 
    env->legacy_func[0] = '\0';
    if (legacy && !strcmp(legacy, "null")) goto end;
@@ -162,38 +163,5 @@ _source_desc_get(const char *str)
      }
    char *ret = eina_strbuf_string_steal(part);
    eina_strbuf_free(part);
-   return ret;
-}
-
-char *
-_func_name_dedup(const char *classn, const char *funcn)
-{
-   const char  *last_p = strrchr(classn, '_');
-   const char  *func_p = strchr(funcn, '_');
-   Eina_Strbuf *buf = eina_strbuf_new();
-   int   len;
-   char *ret;
-
-   if (!last_p) last_p = classn;
-   else last_p++;
-   if (!func_p) len = strlen(funcn);
-   else len = func_p - funcn;
-
-   if ((int)strlen(last_p) != len || strncmp(last_p, funcn, len))
-     {
-        eina_strbuf_append(buf, classn);
-        eina_strbuf_append_char(buf, '_');
-        eina_strbuf_append(buf, funcn);
-        ret = eina_strbuf_string_steal(buf);
-        eina_strbuf_free(buf);
-        return ret;
-     }
-
-   if (last_p != classn)
-      eina_strbuf_append_n(buf, classn, last_p - classn); /* includes _ */
-
-   eina_strbuf_append(buf, funcn);
-   ret = eina_strbuf_string_steal(buf);
-   eina_strbuf_free(buf);
    return ret;
 }
