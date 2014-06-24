@@ -57,6 +57,7 @@ getopt.parse {
                 for i, v in ipairs(opts["I"] or {}) do
                     lualian.include_dir(v)
                 end
+                lualian.load_eot_files()
                 for i, fname in ipairs(args) do
                     gen_file(opts, i, fname)
                 end

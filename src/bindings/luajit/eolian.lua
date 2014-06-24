@@ -47,10 +47,12 @@ ffi.cdef [[
     } Eolian_Function_Scope;
 
     Eina_Bool eolian_eo_file_parse(const char *filename);
+    Eina_Bool eolian_eot_file_parse(const char *filepath);
     int eolian_init(void);
     int eolian_shutdown(void);
     Eina_Bool eolian_directory_scan(const char *dir);
     Eina_Bool eolian_all_eo_files_parse();
+    Eina_Bool eolian_all_eot_files_parse();
     Eina_Bool eolian_show(const Eolian_Class *klass);
     Eolian_Class *eolian_class_find_by_name(const char *class_name);
     Eolian_Class *eolian_class_find_by_file(const char *file_name);
@@ -132,6 +134,14 @@ end
 
 M.eo_file_parse = function(fname)
     return eolian.eolian_eo_file_parse(fname) ~= 0
+end
+
+M.all_eot_files_parse = function()
+    return eolian.eolian_all_eot_files_parse() ~= 0
+end
+
+M.eot_file_parse = function(fname)
+    return eolian.eolian_eot_file_parse(fname) ~= 0
 end
 
 M.show = function(klass)

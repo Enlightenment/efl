@@ -691,6 +691,10 @@ M.include_dir = function(dir)
     end
 end
 
+M.load_eot_files = function()
+    return eolian.all_eot_files_parse()
+end
+
 M.generate = function(fname, modname, libname, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
