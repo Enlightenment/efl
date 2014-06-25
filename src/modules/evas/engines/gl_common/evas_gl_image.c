@@ -221,6 +221,13 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
         // ETC2 is backwards compatible with ETC1 but we prefer ETC2
         if (cspace == EVAS_COLORSPACE_ETC1 && gc->shared->info.etc2)
           cspace = EVAS_COLORSPACE_RGB8_ETC2;
+
+        /* Current GL doesn't support grayscale with transparency
+           let it convert to argb8888 in loader */
+        if ((cspace == EVAS_COLORSPACE_GRY8) &&
+            im_im->cache_entry.flags.alpha)
+          cspace = EVAS_COLORSPACE_ARGB8888;
+
         im_im->cache_entry.space = cspace;
      }
 
