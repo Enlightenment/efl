@@ -537,13 +537,9 @@ _resize_job(void *data)
    else
      {
         if (sd->vertical)
-          {
-             if ((vh >= mh) && (h != vh)) h = vh;
-          }
+          h = (vh >= mh) ? vh : mh;
         else
-          {
-             if ((vw >= mw) && (w != vw)) w = vw;
-          }
+          w = (vw >= mw) ? vw : mw;
         EINA_INLIST_FOREACH(sd->items, it)
           {
              if (it->selected)
