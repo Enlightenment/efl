@@ -492,6 +492,7 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
 
 %reconfigure \
     --enable-tizen \
+    --enable-g-main-loop \
     --disable-xim \
     --disable-scim \
     --disable-gesture \
