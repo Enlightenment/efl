@@ -218,6 +218,13 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
           }
 
         cspace = im_im->cache_entry.cspaces[i];
+
+        /* Current GL doesn't support grayscale with transparency
+           let it convert to argb8888 in loader */
+        if ((cspace == EVAS_COLORSPACE_GRY8) &&
+            im_im->cache_entry.flags.alpha)
+          cspace = EVAS_COLORSPACE_ARGB8888;
+
         im_im->cache_entry.space = cspace;
      }
 
