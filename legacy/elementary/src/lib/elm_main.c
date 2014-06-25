@@ -310,7 +310,8 @@ elm_init(int    argc,
    system_handlers[0] = ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
    system_handlers[1] = ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
 
-   _elm_atspi_bridge_init();
+   if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
+     _elm_atspi_bridge_init();
 
    return _elm_init_count;
 }

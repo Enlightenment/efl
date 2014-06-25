@@ -18,6 +18,8 @@
 #include "elm_priv.h"
 #include <assert.h>
 
+#include "elm_atspi_app_object.eo.h"
+
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 #include "elm_interface_atspi_component.eo.h"
@@ -3257,14 +3259,12 @@ _elm_atspi_bridge_init(void)
    Eldbus_Message *msg;
    Eldbus_Connection *session_bus;
 
-   if (!_init_count && (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF))
+   if (!_init_count)
      {
-        _elm_atspi_init();
-
-        _root = _elm_atspi_root_get();
+        _root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
         if (!_root)
           {
-             ERR("Unable to get root object");
+             ERR("Unable to create root object");
              return;
           }
 
@@ -3282,12 +3282,18 @@ _elm_atspi_bridge_init(void)
      }
 }
 
+EAPI Eo*
+_elm_atspi_bridge_root_get(void)
+{
+   return _root;
+}
+
 void
 _elm_atspi_bridge_shutdown(void)
 {
    if (_init_count)
      {
-        _elm_atspi_shutdown();
+        eo_unref(_root);
 
         if (_cache_update_idler)
           ecore_idler_del(_cache_update_idler);

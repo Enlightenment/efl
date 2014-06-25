@@ -342,10 +342,7 @@ struct _Elm_Datetime_Module_Data
                                     Elm_Datetime_Field_Type field_type);
 };
 
-void                 _elm_atspi_init(void);
-void                 _elm_atspi_shutdown(void);
-Eo                   *_elm_atspi_root_get(void);
-
+Eo                   *_elm_atspi_bridge_root_get(void);
 void                 _elm_atspi_bridge_init(void);
 void                 _elm_atspi_bridge_shutdown(void);
 
