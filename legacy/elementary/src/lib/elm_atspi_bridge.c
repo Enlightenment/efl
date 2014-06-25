@@ -62,6 +62,7 @@ static unsigned long _object_property_broadcast_mask;
 static unsigned long _object_children_broadcast_mask;
 static unsigned long long _object_state_broadcast_mask;
 static unsigned long long _window_signal_broadcast_mask;
+static Ecore_Event_Handler *_key_hdl;
 
 static Eina_Bool _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
@@ -79,6 +80,7 @@ static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
 static void _cache_build(void *obj);
 static void _object_register(Eo *obj, char *path);
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
+static Eina_Bool _elm_atspi_bridge_key_down_event_notify(void *data, int type, void *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
@@ -3102,6 +3104,8 @@ _event_handlers_register(void)
    // register signal handlers in order to update list of registered listeners of ATSPI-Clients
    _register_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerRegistered", _handle_listener_change, NULL);
    _unregister_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerDeregistered", _handle_listener_change, NULL);
+
+   _key_hdl = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _elm_atspi_bridge_key_down_event_notify, NULL);
 }
 
 static Eina_Bool
@@ -3301,13 +3305,17 @@ _elm_atspi_bridge_shutdown(void)
           eldbus_connection_unref(_a11y_bus);
         _a11y_bus = NULL;
 
+        if (_key_hdl)
+          ecore_event_handler_del(_key_hdl);
+        _key_hdl = NULL;
+
         _init_count = 0;
         _root = NULL;
      }
 }
 
 static void
-_iter_marshall_key_event(Eldbus_Message_Iter *iter, Evas_Callback_Type type, void *event)
+_iter_marshall_key_down_event(Eldbus_Message_Iter *iter, Ecore_Event_Key *event)
 {
    Eldbus_Message_Iter *struct_iter;
 
@@ -3315,37 +3323,28 @@ _iter_marshall_key_event(Eldbus_Message_Iter *iter, Evas_Callback_Type type, voi
 
    struct_iter = eldbus_message_iter_container_new(iter, 'r', NULL);
 
-   if (type == EVAS_CALLBACK_KEY_DOWN)
-     {
-        Evas_Event_Key_Down *kde = event;
-        const char *str = kde->string ? kde->string : "";
-        int is_text = kde->string ? 1 : 0;
-        eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", ATSPI_KEY_PRESSED_EVENT, 0, kde->keycode, 0, kde->timestamp, str, is_text);
-     }
-   else if (type == EVAS_CALLBACK_KEY_UP)
-     {
-        Evas_Event_Key_Up *kue = event;
-        const char *str = kue->string ? kue->string : "";
-        int is_text = kue->string ? 1 : 0;
-        eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", ATSPI_KEY_RELEASED_EVENT, 0, kue->keycode, 0, kue->timestamp, str, is_text);
-     }
+   const char *str = event->keyname ? event->keyname : "";
+   int is_text = event->keyname? 1 : 0;
+   eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", ATSPI_KEY_PRESSED_EVENT, 0, event->keycode, 0, event->timestamp, str, is_text);
 
    eldbus_message_iter_container_close(iter, struct_iter);
 }
 
-EAPI void
-_elm_atspi_bridge_key_event_notify(Evas_Callback_Type type, void *event)
+static Eina_Bool
+_elm_atspi_bridge_key_down_event_notify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter;
+   Ecore_Event_Key *key_event = event;
 
-   if (!_init_count) return;
-   if ((type != EVAS_CALLBACK_KEY_DOWN) && (type != EVAS_CALLBACK_KEY_UP)) return;
+   if (!_init_count) return EINA_TRUE;
 
    msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC,
                                         ATSPI_DBUS_INTERFACE_DEC, "NotifyListenersSync");
    iter = eldbus_message_iter_get(msg);
-   _iter_marshall_key_event(iter, type, event);
+   _iter_marshall_key_down_event(iter, key_event);
 
    eldbus_connection_send(_a11y_bus, msg, NULL, NULL, -1);
+
+   return EINA_TRUE;
 }

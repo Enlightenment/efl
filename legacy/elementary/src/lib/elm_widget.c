@@ -615,9 +615,6 @@ _propagate_event(void *data,
       default:
          break;
      }
-   if (_elm_config->atspi_mode)
-     _elm_atspi_bridge_key_event_notify(type, event_info);
-
 
    elm_widget_event_propagate(obj, type, event_info, event_flags);
 }
