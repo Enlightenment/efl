@@ -1181,7 +1181,7 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
    int x, y, fx, fy;
    Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
    Evas_Object *old;
-   
+
    old = ee->prop.cursor.object;
    if (obj == NULL)
      {
@@ -1191,12 +1191,12 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
         ee->prop.cursor.hot.y = 0;
         goto end;
      }
-   
+
    ee->prop.cursor.object = obj;
    ee->prop.cursor.layer = layer;
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
-   
+
    evas_pointer_output_xy_get(ee->evas, &x, &y);
 
    if (obj != old)
@@ -1209,10 +1209,11 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
         evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                        _ecore_evas_object_cursor_del, ee);
      }
+
    evas_output_framespace_get(ee->evas, &fx, &fy, NULL, NULL);
-   evas_object_move(ee->prop.cursor.object,
-                    x - fx - ee->prop.cursor.hot.x,
+   evas_object_move(ee->prop.cursor.object, x - fx - ee->prop.cursor.hot.x,
                     y - fy - ee->prop.cursor.hot.y);
+
 end:
    if ((old) && (obj != old))
      {

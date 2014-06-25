@@ -3003,8 +3003,8 @@ _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int
         evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                        _ecore_evas_object_cursor_del, ee);
      }
-   evas_object_move(ee->prop.cursor.object,
-                    x - ee->prop.cursor.hot.x,
+
+   evas_object_move(ee->prop.cursor.object, x - ee->prop.cursor.hot.x,
                     y - ee->prop.cursor.hot.y);
 
 end:
