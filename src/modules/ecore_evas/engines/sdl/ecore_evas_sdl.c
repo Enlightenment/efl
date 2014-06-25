@@ -374,9 +374,10 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
    
+   evas_pointer_output_xy_get(ee->evas, &x, &y);
+
    if (obj != old)
      {
-        evas_pointer_output_xy_get(ee->evas, &x, &y);
         evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
         evas_object_pass_events_set(ee->prop.cursor.object, 1);
         if (evas_pointer_inside_get(ee->evas))
