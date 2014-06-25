@@ -133,10 +133,12 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* set back buffer as first one to draw into */
    /* ob->priv.curr = (ob->priv.num - 1); */
 
+   ob->info = info;
+
    return ob;
 }
 
-void 
+void
 evas_outbuf_free(Outbuf *ob)
 {
    int i = 0;
@@ -149,22 +151,25 @@ evas_outbuf_free(Outbuf *ob)
    free(ob);
 }
 
-void 
-evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int h)
+void
+evas_outbuf_reconfigure(Outbuf *ob,
+                        int w, int h,
+                        int rot,
+                        Outbuf_Depth depth)
 {
    int i = 0;
 
    /* check for changes */
-   if ((ob->w == w) && (ob->h == h) && 
-       (ob->destination_alpha == info->info.destination_alpha) && 
-       (ob->rotation == info->info.rotation) && 
-       (ob->depth == info->info.depth)) 
+   if ((ob->w == w) && (ob->h == h) &&
+       (ob->destination_alpha == ob->info->info.destination_alpha) &&
+       (ob->rotation == rot) &&
+       (ob->depth == depth))
      return;
 
    /* set new outbuf properties */
-   ob->rotation =info->info. rotation;
-   ob->depth = info->info.depth;
-   ob->destination_alpha = info->info.destination_alpha;
+   ob->rotation = rot;
+   ob->depth = depth;
+   ob->destination_alpha = ob->info->info.destination_alpha;
 
    /* handle rotation */
    if ((ob->rotation == 0) || (ob->rotation == 180))
@@ -196,7 +201,7 @@ evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int h)
      }
 }
 
-int 
+Render_Engine_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
    int i = 0, n = 0, count = 0;
@@ -399,10 +404,11 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int
         rect.w, rect.h, x + rx, y + ry, NULL);
 }
 
-void 
-evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update)
+void
+evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED,
+                               RGBA_Image *update EINA_UNUSED)
 {
-   evas_cache_image_drop(&update->cache_entry);
+   /* evas_cache_image_drop(&update->cache_entry); */
 }
 
 void 
@@ -477,4 +483,10 @@ evas_outbuf_flush(Outbuf *ob)
 
    /* force a buffer swap */
    _evas_outbuf_buffer_swap(ob, rects, n);
+}
+
+int
+evas_outbuf_get_rot(Outbuf *ob)
+{
+   return ob->info->info.rotation;
 }
