@@ -648,12 +648,6 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 
         if (_elm_scrollable_is(o) && !elm_widget_disabled_get(o))
           {
-             if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
-               {
-                  o = elm_widget_parent_get(o);
-                  continue;
-               }
-
              switch (_elm_config->focus_autoscroll_mode)
                {
                 case ELM_FOCUS_AUTOSCROLL_MODE_SHOW:
@@ -664,6 +658,13 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
                    break;
                 default:
                    break;
+               }
+
+
+             if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
+               {
+                  o = elm_widget_parent_get(o);
+                  continue;
                }
           }
         else
