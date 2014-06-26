@@ -1,4 +1,4 @@
-class Ecore_Job (Eo.Base)
+class Ecore.Job (Eo.Base)
 {
    eo_prefix: ecore_job;
    constructors {

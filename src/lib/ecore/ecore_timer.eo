@@ -1,4 +1,4 @@
-class Ecore_Timer (Eo.Base)
+class Ecore.Timer (Eo.Base)
 {
    /*@ Timers are objects that will call a given callback at some point
     *  in the future. They may also optionall repeat themselves if the

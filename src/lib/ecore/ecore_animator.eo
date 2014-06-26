@@ -1,4 +1,4 @@
-class Ecore_Animator (Eo.Base)
+class Ecore.Animator (Eo.Base)
 {
    eo_prefix: ecore_animator;
    constructors {
