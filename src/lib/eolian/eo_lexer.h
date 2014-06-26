@@ -11,17 +11,17 @@
 
 enum Tokens
 {
-   TOK_COMMENT = START_CUSTOM, TOK_EOF, TOK_VALUE
+   TOK_ARROW = START_CUSTOM, TOK_COMMENT, TOK_EOF, TOK_VALUE
 };
 
 #define KEYWORDS KW(class), KW(const), KW(private), KW(protected), \
     KW(return), KW(signed), KW(struct), KW(unsigned), KW(virtual), \
     \
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
-    KW(destructor), KW(eo_prefix), KW(events), KW(get), KW(implements), \
-    KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), KW(methods), \
-    KW(mixin), KW(params), KW(properties), KW(set), KW(type), KW(values), \
-    KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), KWAT(own), \
+    KW(destructor), KW(eo_prefix), KW(events), KW(func), KW(get), \
+    KW(implements), KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), \
+    KW(methods), KW(mixin), KW(params), KW(properties), KW(set), KW(type), \
+    KW(values), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), KWAT(own), \
     KWAT(warn_unused), \
     \
     KW(char), KW(uchar), KW(schar), KW(short), KW(ushort), KW(int), KW(uint), \
@@ -40,8 +40,7 @@ enum Tokens
 enum Keywords
 {
    KW_UNKNOWN = 0,
-   KEYWORDS,
-   NUM_KEYWORDS
+   KEYWORDS
 };
 
 #undef KW

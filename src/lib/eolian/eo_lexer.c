@@ -182,6 +182,13 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                      next_char(ls);
                   continue;
                }
+             case '-':
+               {
+                  next_char(ls);
+                  if (ls->current != '>') return '-';
+                  next_char(ls);
+                  return TOK_ARROW;
+               }
              case '\0':
                return TOK_EOF;
              default:
