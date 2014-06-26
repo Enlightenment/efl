@@ -158,7 +158,6 @@ void test_slideshow(void *data, Evas_Object *obj, void *event_info);
 void test_menu(void *data, Evas_Object *obj, void *event_info);
 void test_menu2(void *data, Evas_Object *obj, void *event_info);
 void test_panel(void *data, Evas_Object *obj, void *event_info);
-void test_panel2(void *data, Evas_Object *obj, void *event_info);
 void test_panes(void *data, Evas_Object *obj, void *event_info);
 void test_calendar(void *data, Evas_Object *obj, void *event_info);
 void test_calendar2(void *data, Evas_Object *obj, void *event_info);
@@ -786,7 +785,6 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Dividers", "Panel", test_panel);
-   ADD_TEST(NULL, "Dividers", "Panel Scrollable", test_panel2);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
 
    //------------------------------//
