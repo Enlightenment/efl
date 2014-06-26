@@ -162,7 +162,7 @@ class Elm_Naviframe (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The naviframe item to insert before. */
-            @in const char *title_label; /*@ The label in the title area. The name of the title
+            @in const(char)* title_label; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
             @in Evas_Object *prev_btn; /*@ The button to go to the previous item. If it is NULL,
             then naviframe will create a back button automatically. The name of
@@ -172,7 +172,7 @@ class Elm_Naviframe (Elm_Layout)
             "elm.swallow.next_btn" */
             @in Evas_Object *content; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in const char *item_style; /*@ The current item style name. @c NULL would be default. */
+            @in const(char)* item_style; /*@ The current item style name. @c NULL would be default. */
          }
       }
       item_push {
@@ -195,7 +195,7 @@ class Elm_Naviframe (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const char *title_label; /*@ The label in the title area. The name of the title
+            @in const(char)* title_label; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
             @in Evas_Object *prev_btn; /*@ The button to go to the previous item. If it is NULL,
             then naviframe will create a back button automatically. The name of
@@ -205,7 +205,7 @@ class Elm_Naviframe (Elm_Layout)
             "elm.swallow.next_btn" */
             @in Evas_Object *content; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in const char *item_style; /*@ The current item style name. @c NULL would be default. */
+            @in const(char)* item_style; /*@ The current item style name. @c NULL would be default. */
          }
       }
       item_simple_promote {
@@ -239,7 +239,7 @@ class Elm_Naviframe (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The naviframe item to insert after. */
-            @in const char *title_label; /*@ The label in the title area. The name of the title
+            @in const(char)* title_label; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
             @in Evas_Object *prev_btn; /*@ The button to go to the previous item. If it is NULL,
             then naviframe will create a back button automatically. The name of
@@ -249,7 +249,7 @@ class Elm_Naviframe (Elm_Layout)
             "elm.swallow.next_btn" */
             @in Evas_Object *content; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in const char *item_style; /*@ The current item style name. @c NULL would be default. */
+            @in const(char)* item_style; /*@ The current item style name. @c NULL would be default. */
          }
       }
    }

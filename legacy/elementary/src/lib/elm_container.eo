@@ -17,7 +17,7 @@ class Elm_Container (Elm_Widget)
       content_set {
          /*@ No description supplied by the EAPI. */
          params {
-            @in const char *name;
+            @in const(char)* name;
             @in Evas_Object *content;
          }
          return Eina_Bool;
@@ -25,14 +25,14 @@ class Elm_Container (Elm_Widget)
       content_get {
          /*@ No description supplied by the EAPI. */
          params {
-            @in const char *name;
+            @in const(char)* name;
          }
          return Evas_Object *;
       }
       content_unset {
          /*@ No description supplied by the EAPI. */
          params {
-            @in const char *name;
+            @in const(char)* name;
          }
          return Evas_Object *;
       }

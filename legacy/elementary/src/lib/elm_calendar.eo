@@ -135,7 +135,7 @@ class Elm_Calendar (Elm_Layout)
             @ingroup Calendar */
          }
          values {
-            const char **weekdays; /*@ Array of seven strings to be used as weekday names.
+            const(char)** weekdays; /*@ Array of seven strings to be used as weekday names.
             @warning It must have 7 elements, or it will access invalid memory.
             @warning The strings must be NULL terminated ('@\0'). */
          }
@@ -245,7 +245,7 @@ class Elm_Calendar (Elm_Layout)
             @see elm_calendar_marks_clear()
 
             @ingroup Calendar */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
    }
@@ -335,7 +335,7 @@ class Elm_Calendar (Elm_Layout)
 
          return Elm_Calendar_Mark *;
          params {
-            @in const char *mark_type; /*@ A string used to define the type of mark. It will be
+            @in const(char)* mark_type; /*@ A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
             days representation. */
             @in struct tm *mark_time; /*@ A time struct to represent the date of inclusion of the

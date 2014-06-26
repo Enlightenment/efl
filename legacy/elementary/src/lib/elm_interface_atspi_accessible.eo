@@ -9,7 +9,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             /*@ Gets an localized string describing ATSPI widget role name. */
          }
          values {
-            const char *localized_name;
+            const(char)* localized_name;
          }
       }
       protected name {
@@ -19,7 +19,7 @@ mixin Elm_Interface_Atspi_Accessible ()
          set {
          }
          values {
-            const char *name; /*@ obj name */
+            const(char)* name; /*@ obj name */
          }
       }
       protected relation_set {
@@ -55,7 +55,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             role. */
          }
          values {
-            const char *role_name;
+            const(char)* role_name;
          }
       }
       protected attributes {
@@ -83,7 +83,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             /*@ Sets contextual information about widget. */
          }
          values {
-            const char *description;
+            const(char)* description;
          }
       }
       protected parent {
@@ -107,7 +107,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
    }
    events {
-      property,changed (const char *);
+      property,changed (const(char)*);
       children,changed (Elm_Atspi_Event_Children_Changed_Data);
       state,changed (Elm_Atspi_Event_State_Changed_Data);
       visible,data,changed;

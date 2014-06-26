@@ -24,7 +24,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the currently selected item's (full) path, in the given file the given file selector widget */
          }
          values {
-            const char *path;
+            const(char)* path;
          }
       }
       thumbnail_size {
@@ -91,7 +91,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the parent directory's path that a given file selector selector widget will display contents from */
          }
          values {
-            const char *path;
+            const(char)* path;
          }
       }
       mode {
@@ -121,7 +121,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get a list of selected paths in the fileselector. */
          }
          values {
-            const Eina_List *ret;
+            const(Eina_List)* ret;
          }
       }
    }
@@ -131,7 +131,7 @@ interface Elm_Interface_Fileselector ()
          params {
             @in Elm_Fileselector_Filter_Func func; /*@ function */
             @in void *data;
-            @in const char *filter_name;
+            @in const(char)* filter_name;
          }
          return Eina_Bool;
       }
@@ -141,8 +141,8 @@ interface Elm_Interface_Fileselector ()
       mime_types_filter_append {
          /*@ Append mime type based filter into filter list */
          params {
-            @in const char *mime_types;
-            @in const char *filter_name;
+            @in const(char)* mime_types;
+            @in const(char)* filter_name;
          }
          return Eina_Bool;
       }

@@ -70,7 +70,7 @@ class Elm_Icon (Elm_Image)
             @ingroup Icon */
          }
          values {
-            const char *name; /*@ The icon name */
+            const(char)* name; /*@ The icon name */
          }
       }
       thumb {
@@ -89,8 +89,8 @@ class Elm_Icon (Elm_Image)
             @ingroup Icon */
          }
          values {
-            const char *file; /*@ The path to file that will be used as icon image */
-            const char *group; /*@ The group that the icon belongs to an edje file */
+            const(char)* file; /*@ The path to file that will be used as icon image */
+            const(char)* group; /*@ The group that the icon belongs to an edje file */
          }
       }
    }

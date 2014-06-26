@@ -102,7 +102,7 @@ class Elm_Video (Elm_Layout)
             return Eina_Bool;
          }
          values {
-            const char *filename; /*@ The file or URI to target.
+            const(char)* filename; /*@ The file or URI to target.
             Local files can be specified using file:// or by using full file paths.
             URI could be remote source of video, like http:// or local source like
             WebCam (v4l2://). (You can use Emotion API to request and list
@@ -168,7 +168,7 @@ class Elm_Video (Elm_Layout)
             @note Don't change or free the string returned by this function.
 
             @ingroup Video */
-            return const char *;
+            return const(char)*;
          }
       }
    }

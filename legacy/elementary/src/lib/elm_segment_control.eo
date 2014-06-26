@@ -51,7 +51,7 @@ class Elm_Segment_Control (Elm_Layout)
          @ingroup SegmentControl */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
             @in int idx; /*@ The index of the segment item. */
          }
@@ -87,7 +87,7 @@ class Elm_Segment_Control (Elm_Layout)
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in const char *label; /*@ The label of the item. */
+            @in const(char)* label; /*@ The label of the item. */
             @in int idx; /*@ Item position. Value should be between 0 and items count. */
          }
       }
@@ -165,7 +165,7 @@ class Elm_Segment_Control (Elm_Layout)
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in const char *label; /*@ The label of the item.
+            @in const(char)* label; /*@ The label of the item.
             Note that, NULL is different from empty string "". */
          }
       }

@@ -6,7 +6,7 @@ class Elm_App_Client (Eo_Base)
       constructor {
          /*@ Class constructor of elm_app_client. */
          params {
-            @in const char *package; /*@ Package of application */
+            @in const(char)* package; /*@ Package of application */
          }
       }
    }
@@ -24,7 +24,7 @@ class Elm_App_Client (Eo_Base)
             /*@ Return the application package. */
          }
          values {
-            const char *ret; /*@ application package */
+            const(char)* ret; /*@ application package */
          }
       }
    }
@@ -40,7 +40,7 @@ class Elm_App_Client (Eo_Base)
          params {
             @in Eina_Value *args; /*@ an array of */
             @in Elm_App_Client_Open_View_Cb view_open_cb; /*@ callback to be called when view open */
-            @in const void *data; /*@ calback user data */
+            @in const(void)* data; /*@ calback user data */
          }
          return Elm_App_Client_Pending *; /* handler to cancel the view opening if it takes to long */
       }

@@ -34,7 +34,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ This function returns the widget focus highlight style. */
          }
          values {
-            const char *style;
+            const(char)* style;
          }
       }
       tree_unfocusable {
@@ -123,7 +123,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            const char *style;
+            const(char)* style;
          }
       }
       scale {
@@ -190,7 +190,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            const char *txt;
+            const(char)* txt;
          }
       }
       drag_lock_x {
@@ -230,9 +230,9 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          }
          values {
             Evas_Object *edj;
-            const char *wname;
-            const char *welement;
-            const char *wstyle;
+            const(char)* wname;
+            const(char)* welement;
+            const(char)* wstyle;
          }
       }
       hover_object {
@@ -265,8 +265,8 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            const char *part;
-            const char *domain;
+            const(char)* part;
+            const(char)* domain;
             Eina_Bool translatable;
          }
       }
@@ -292,9 +292,9 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            const char *part;
-            const char *domain;
-            const char *label;
+            const(char)* part;
+            const(char)* domain;
+            const(char)* label;
          }
       }
       scrollable_children {
@@ -361,7 +361,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
       focus_order {
          get {
             /*@ No description supplied by the EAPI. */
-            return unsigned int;
+            return uint;
          }
       }
       drag_child_locked_x {
@@ -429,10 +429,10 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          keys {
-            const char *part;
+            const(char)* part;
          }
          values {
-            const char *label;
+            const(char)* label;
          }
       }
    }
@@ -442,7 +442,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          const;
          return Evas_Object *;
          params {
-            @out unsigned int newest_focus_order;
+            @out uint newest_focus_order;
             @in Eina_Bool can_focus_only;
          }
       }
@@ -482,10 +482,10 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
       }
       part_text_translate {
          /*@ No description supplied by the EAPI. */
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part;
-            @in const char *text;
+            @in const(char)* part;
+            @in const(char)* text;
          }
       }
       focus_highlight_geometry_get {
@@ -531,7 +531,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          /*@ No description supplied by the EAPI. */
          params {
             @in Elm_Event_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       access {
@@ -552,7 +552,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          return void *;
          params {
             @in Elm_Event_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       on_focus {
@@ -579,7 +579,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
       focus_direction {
          /*@ 'Virtual' function handling passing focus to sub-objects given a direction, in degrees. */
          params {
-            @in const Evas_Object *base;
+            @in const(Evas_Object)* base;
             @in double degree;
             @out Evas_Object *direction;
             @out double weight;
@@ -598,8 +598,8 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
       signal_callback_add {
          /*@ No description supplied by the EAPI. */
          params {
-            @in const char *emission;
-            @in const char *source;
+            @in const(char)* emission;
+            @in const(char)* source;
             @in Edje_Signal_Cb func;
             @in void *data;
          }
@@ -613,7 +613,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          const;
          return Evas_Object *;
          params {
-            @in const char *name;
+            @in const(char)* name;
             @in int recurse;
          }
       }
@@ -622,8 +622,8 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const Evas_Object *base;
-            @in const Eina_List *items;
+            @in const(Evas_Object)* base;
+            @in const(Eina_List)* items;
             @in list_data_get_func_type list_data_get;
             @in double degree;
             @out Evas_Object *direction;
@@ -681,9 +681,9 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
       translatable_part_text_get {
          /*@ No description supplied by the EAPI. */
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part;
+            @in const(char)* part;
          }
       }
       focus_restore {
@@ -732,7 +732,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const Eina_List *items;
+            @in const(Eina_List)* items;
             @in list_data_get_func_type list_data_get;
             @in Elm_Focus_Direction dir;
             @out Evas_Object *next;
@@ -751,7 +751,7 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const Evas_Object *base;
+            @in const(Evas_Object)* base;
             @in double degree;
             @out Evas_Object *direction;
             @out double weight;
@@ -761,16 +761,16 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
          /*@ No description supplied by the EAPI. */
          return void *;
          params {
-            @in const char *emission;
-            @in const char *source;
+            @in const(char)* emission;
+            @in const(char)* source;
             @in Edje_Signal_Cb func;
          }
       }
       signal_emit {
          /*@ No description supplied by the EAPI. */
          params {
-            @in const char *emission;
-            @in const char *source;
+            @in const(char)* emission;
+            @in const(char)* source;
          }
       }
       disable {

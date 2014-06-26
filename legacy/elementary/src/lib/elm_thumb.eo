@@ -129,8 +129,8 @@ class Elm_Thumb (Elm_Layout, Evas_Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            const char *file; /*@ The path to file that will be used as thumbnail source. */
-            const char *key; /*@ The key used in case of an EET file. */
+            const(char)* file; /*@ The path to file that will be used as thumbnail source. */
+            const(char)* key; /*@ The key used in case of an EET file. */
          }
       }
       orientation {
@@ -305,8 +305,8 @@ class Elm_Thumb (Elm_Layout, Evas_Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            const char *file; /*@ Pointer to thumb path. */
-            const char *key; /*@ Pointer to thumb key. */
+            const(char)* file; /*@ Pointer to thumb path. */
+            const(char)* key; /*@ Pointer to thumb key. */
          }
       }
    }

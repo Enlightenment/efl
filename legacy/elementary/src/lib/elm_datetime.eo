@@ -82,7 +82,7 @@ class Elm_Datetime (Elm_Layout)
             /*@ Get the datetime format. */
          }
          values {
-            const char *fmt; /*@ The datetime format */
+            const(char)* fmt; /*@ The datetime format */
          }
       }
    }
@@ -150,7 +150,7 @@ class Elm_Datetime (Elm_Layout)
 
          return Eina_Bool;
          params {
-            @in const struct tm *mintime; /*@ Time structure containing the minimum time value. */
+            @in const(struct tm)* mintime; /*@ Time structure containing the minimum time value. */
          }
       }
       value_min_get {
@@ -202,7 +202,7 @@ class Elm_Datetime (Elm_Layout)
 
          return Eina_Bool;
          params {
-            @in const struct tm *newtime; /*@ Time structure filled with values to be set. */
+            @in const(struct tm)* newtime; /*@ Time structure filled with values to be set. */
          }
       }
       value_get {
@@ -288,7 +288,7 @@ class Elm_Datetime (Elm_Layout)
 
          return Eina_Bool;
          params {
-            @in const struct tm *maxtime; /*@ Time structure containing the maximum time value. */
+            @in const(struct tm)* maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
       value_max_get {

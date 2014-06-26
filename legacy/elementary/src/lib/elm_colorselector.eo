@@ -45,7 +45,7 @@ class Elm_Colorselector (Elm_Layout)
             @ingroup Colorselector */
          }
          values {
-            const char *palette_name; /*@ Name of palette */
+            const(char)* palette_name; /*@ Name of palette */
          }
       }
       mode {
@@ -82,7 +82,7 @@ class Elm_Colorselector (Elm_Layout)
             @since 1.9
 
             @ingroup Colorselector */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
       palette_selected_item {

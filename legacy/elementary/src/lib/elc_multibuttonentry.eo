@@ -66,7 +66,7 @@ class Elm_Multibuttonentry (Elm_Layout)
          }
          values {
             Elm_Multibuttonentry_Format_Cb format_function; /*@ format_function The actual format function */
-            const void *data; /*@ data User data to passed to @a format_function */
+            const(void)* data; /*@ data User data to passed to @a format_function */
          }
       }
       items {
@@ -77,7 +77,7 @@ class Elm_Multibuttonentry (Elm_Layout)
             @return The list of items, or NULL if none
 
             @ingroup Multibuttonentry */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
       first_item {
@@ -138,7 +138,7 @@ class Elm_Multibuttonentry (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const char *label; /*@ The label of new item */
+            @in const(char)* label; /*@ The label of new item */
             @in Evas_Smart_Cb func; /*@ The callback function to be invoked when this item is pressed. */
             @in void *data; /*@ The pointer to the data to be attached */
          }
@@ -178,7 +178,7 @@ class Elm_Multibuttonentry (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The item before which to add it */
-            @in const char *label; /*@ The label of new item */
+            @in const(char)* label; /*@ The label of new item */
             @in Evas_Smart_Cb func; /*@ The callback function to be invoked when this item is pressed. */
             @in void *data; /*@ The pointer to the data to be attached */
          }
@@ -195,7 +195,7 @@ class Elm_Multibuttonentry (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const char *label; /*@ The label of new item */
+            @in const(char)* label; /*@ The label of new item */
             @in Evas_Smart_Cb func; /*@ The callback function to be invoked when this item is pressed. */
             @in void *data; /*@ The pointer to the data to be attached */
          }
@@ -246,7 +246,7 @@ class Elm_Multibuttonentry (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The item after which to add it */
-            @in const char *label; /*@ The label of new item */
+            @in const(char)* label; /*@ The label of new item */
             @in Evas_Smart_Cb func; /*@ The callback function to be invoked when this item is pressed. */
             @in void *data; /*@ The pointer to the data to be attached */
          }

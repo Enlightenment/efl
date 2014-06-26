@@ -325,7 +325,7 @@ class Elm_Spinner (Elm_Layout)
             @ingroup Spinner */
          }
          values {
-            const char *fmt; /*@ The format string for the label display. */
+            const(char)* fmt; /*@ The format string for the label display. */
          }
       }
    }
@@ -357,7 +357,7 @@ class Elm_Spinner (Elm_Layout)
 
          params {
             @in double value; /*@ The value to be replaced. */
-            @in const char *label; /*@ The label to be used. */
+            @in const(char)* label; /*@ The label to be used. */
          }
       }
    }

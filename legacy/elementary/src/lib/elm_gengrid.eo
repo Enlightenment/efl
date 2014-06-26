@@ -409,7 +409,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
             @see elm_gengrid_selected_item_get()
 
             @ingroup Gengrid */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
       last_item {
@@ -479,12 +479,12 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
-            @in const void *data; /*@ The item data. */
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
             @in Elm_Object_Item *relative; /*@ The item to place this new one before. */
             @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in const void *func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       realized_items_update {
@@ -520,12 +520,12 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
-            @in const void *data; /*@ The item data. */
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
             @in Elm_Object_Item *relative; /*@ The item to place this new one after. */
             @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in const void *func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       items_count {
@@ -539,7 +539,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
          @ingroup Gengrid */
 
          const;
-         return unsigned int;
+         return uint;
       }
       at_xy_item_get {
          /*@
@@ -589,11 +589,11 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
-            @in const void *data; /*@ The item data. */
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
             @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in const void *func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       item_prepend {
@@ -613,11 +613,11 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
-            @in const void *data; /*@ The item data. */
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
             @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
             selected. */
-            @in const void *func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
       clear {
@@ -652,12 +652,12 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
-            @in const void *data; /*@ The item data. */
+            @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
+            @in const(void)* data; /*@ The item data. */
             @in Eina_Compare_Cb comp; /*@ User defined comparison function that defines the sort order
             based on gengrid item and its data. */
             @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected. */
-            @in const void *func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
    }

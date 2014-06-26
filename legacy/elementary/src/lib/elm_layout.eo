@@ -46,8 +46,8 @@ class Elm_Layout (Elm_Container)
             return Eina_Bool;
          }
          values {
-            const char *file; /*@ The path to file (edj) that will be used as layout */
-            const char *group; /*@ The group that the layout belongs in edje file */
+            const(char)* file; /*@ The path to file (edj) that will be used as layout */
+            const(char)* group; /*@ The group that the layout belongs in edje file */
          }
       }
       theme {
@@ -64,9 +64,9 @@ class Elm_Layout (Elm_Container)
             return Eina_Bool;
          }
          values {
-            const char *klass; /*@ the class of the group */
-            const char *group; /*@ the group */
-            const char *style; /*@ the style to used */
+            const(char)* klass; /*@ the class of the group */
+            const(char)* group; /*@ the group */
+            const(char)* style; /*@ the style to used */
          }
       }
       text_aliases {
@@ -75,7 +75,7 @@ class Elm_Layout (Elm_Container)
             legacy null;
          }
          values {
-            const Elm_Layout_Part_Alias_Description *aliases;
+            const(Elm_Layout_Part_Alias_Description)* aliases;
          }
       }
       content_aliases {
@@ -84,7 +84,7 @@ class Elm_Layout (Elm_Container)
             legacy null;
          }
          values {
-            const Elm_Layout_Part_Alias_Description *aliases;
+            const(Elm_Layout_Part_Alias_Description)* aliases;
          }
       }
       edje {
@@ -136,7 +136,7 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The box part name to remove child. */
+            @in const(char)* part; /*@ The box part name to remove child. */
             @in Eina_Bool clear; /*@ If EINA_TRUE, then all objects will be deleted as
             well, otherwise they will just be removed and will be
             dangling on the canvas. */
@@ -158,7 +158,7 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group. */
+            @in const(char)* part_name; /*@ a part from loaded edje group. */
             @in Eina_Bool engine_only; /*@ if cursors should be just provided by the engine (EINA_TRUE)
             or should also search on widget's theme as well (EINA_FALSE) */
          }
@@ -174,7 +174,7 @@ class Elm_Layout (Elm_Container)
          const;
          return Eina_Bool;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group. */
+            @in const(char)* part_name; /*@ a part from loaded edje group. */
          }
       }
       table_unpack {
@@ -194,7 +194,7 @@ class Elm_Layout (Elm_Container)
 
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The table part name to remove child. */
+            @in const(char)* part; /*@ The table part name to remove child. */
             @in Evas_Object *child; /*@ The object to remove from table. */
          }
       }
@@ -254,7 +254,7 @@ class Elm_Layout (Elm_Container)
 
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The box part name to remove child. */
+            @in const(char)* part; /*@ The box part name to remove child. */
             @in Evas_Object *child; /*@ The object to remove from box. */
          }
       }
@@ -287,8 +287,8 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group. */
-            @in const char *style; /*@ the theme style to use (default, transparent, ...) */
+            @in const(char)* part_name; /*@ a part from loaded edje group. */
+            @in const(char)* style; /*@ the theme style to use (default, transparent, ...) */
          }
       }
       part_cursor_style_get {
@@ -301,9 +301,9 @@ class Elm_Layout (Elm_Container)
          @ingroup Layout */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group. */
+            @in const(char)* part_name; /*@ a part from loaded edje group. */
          }
       }
       text_set {
@@ -316,8 +316,8 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The TEXT part where to set the text */
-            @in const char *text; /*@ The text to set */
+            @in const(char)* part; /*@ The TEXT part where to set the text */
+            @in const(char)* text; /*@ The text to set */
          }
       }
       text_get {
@@ -329,9 +329,9 @@ class Elm_Layout (Elm_Container)
          @ingroup Layout */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part; /*@ The TEXT part to retrieve the text off */
+            @in const(char)* part; /*@ The TEXT part to retrieve the text off */
          }
       }
       signal_callback_add {
@@ -347,8 +347,8 @@ class Elm_Layout (Elm_Container)
          @ingroup Layout */
 
          params {
-            @in const char *emission; /*@ The signal's name string */
-            @in const char *source; /*@ The signal's source string */
+            @in const(char)* emission; /*@ The signal's name string */
+            @in const(char)* source; /*@ The signal's source string */
             @in Edje_Signal_Cb func; /*@ The callback function to be executed when the signal is
             emitted. */
             @in void *data; /*@ A pointer to data to pass in to the callback function. */
@@ -365,8 +365,8 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group. */
-            @in const char *cursor; /*@ cursor name to use, see Elementary_Cursor.h */
+            @in const(char)* part_name; /*@ a part from loaded edje group. */
+            @in const(char)* cursor; /*@ cursor name to use, see Elementary_Cursor.h */
          }
       }
       part_cursor_get {
@@ -378,9 +378,9 @@ class Elm_Layout (Elm_Container)
          @ingroup Layout */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group. */
+            @in const(char)* part_name; /*@ a part from loaded edje group. */
          }
       }
       box_insert_before {
@@ -403,9 +403,9 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ the box part to insert. */
+            @in const(char)* part; /*@ the box part to insert. */
             @in Evas_Object *child; /*@ the child object to insert into box. */
-            @in const Evas_Object *reference; /*@ another reference object to insert before in box. */
+            @in const(Evas_Object)* reference; /*@ another reference object to insert before in box. */
          }
       }
       box_insert_at {
@@ -428,9 +428,9 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ the box part to insert. */
+            @in const(char)* part; /*@ the box part to insert. */
             @in Evas_Object *child; /*@ the child object to insert into box. */
-            @in unsigned int pos; /*@ the numeric position >=0 to insert the child. */
+            @in uint pos; /*@ the numeric position >=0 to insert the child. */
          }
       }
       sub_object_add_enable {
@@ -465,9 +465,9 @@ class Elm_Layout (Elm_Container)
          @ingroup Layout */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *key; /*@ The data key */
+            @in const(char)* key; /*@ The data key */
          }
       }
       box_append {
@@ -490,7 +490,7 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ the box part to which the object will be appended. */
+            @in const(char)* part; /*@ the box part to which the object will be appended. */
             @in Evas_Object *child; /*@ the child object to append to box. */
          }
       }
@@ -511,8 +511,8 @@ class Elm_Layout (Elm_Container)
 
          return void *;
          params {
-            @in const char *emission; /*@ The signal's name string */
-            @in const char *source; /*@ The signal's source string */
+            @in const(char)* emission; /*@ The signal's name string */
+            @in const(char)* source; /*@ The signal's source string */
             @in Edje_Signal_Cb func; /*@ The callback function being executed when the signal
             was emitted. */
          }
@@ -552,7 +552,7 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ the box part to prepend. */
+            @in const(char)* part; /*@ the box part to prepend. */
             @in Evas_Object *child; /*@ the child object to prepend to box. */
          }
       }
@@ -568,8 +568,8 @@ class Elm_Layout (Elm_Container)
          @ingroup Layout */
 
          params {
-            @in const char *emission; /*@ The signal's name string */
-            @in const char *source; /*@ The signal's source string */
+            @in const(char)* emission; /*@ The signal's name string */
+            @in const(char)* source; /*@ The signal's source string */
          }
       }
       table_pack {
@@ -601,13 +601,13 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ the box part to pack child. */
+            @in const(char)* part; /*@ the box part to pack child. */
             @in Evas_Object *child; /*@ the child object to pack into table. */
-            @in unsigned short col; /*@ the column to which the child should be added. (>= 0) */
-            @in unsigned short row; /*@ the row to which the child should be added. (>= 0) */
-            @in unsigned short colspan; /*@ how many columns should be used to store this object. (>=
+            @in ushort col; /*@ the column to which the child should be added. (>= 0) */
+            @in ushort row; /*@ the row to which the child should be added. (>= 0) */
+            @in ushort colspan; /*@ how many columns should be used to store this object. (>=
             1) */
-            @in unsigned short rowspan; /*@ how many rows should be used to store this object. (>= 1) */
+            @in ushort rowspan; /*@ how many rows should be used to store this object. (>= 1) */
          }
       }
       part_cursor_unset {
@@ -620,7 +620,7 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part_name; /*@ a part from loaded edje group, that had a cursor set
+            @in const(char)* part_name; /*@ a part from loaded edje group, that had a cursor set
             with elm_layout_part_cursor_set(). */
          }
       }
@@ -641,7 +641,7 @@ class Elm_Layout (Elm_Container)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The table part name to remove child. */
+            @in const(char)* part; /*@ The table part name to remove child. */
             @in Eina_Bool clear; /*@ If EINA_TRUE, then all objects will be deleted as
             well, otherwise they will just be removed and will be
             dangling on the canvas. */

@@ -58,7 +58,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Photocam */
          }
          values {
-            const char *file; /*@ The photo file */
+            const(char)* file; /*@ The photo file */
          }
       }
       gesture_enabled {

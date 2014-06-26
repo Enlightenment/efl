@@ -5,7 +5,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
       constructor {
          /*@ No description supplied by the EAPI. */
          params {
-            @in const char *name;
+            @in const(char)* name;
             @in Elm_Win_Type type;
          }
       }
@@ -143,7 +143,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
          }
          values {
             int *rotations; /*@ The array of rotation value. */
-            unsigned int count; /*@ The number of array of rotations */
+            uint count; /*@ The number of array of rotations */
          }
       }
       quickpanel_zone {
@@ -223,7 +223,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            const char *icon_name; /*@ The icon name to set */
+            const(char)* icon_name; /*@ The icon name to set */
          }
       }
       withdrawn {
@@ -265,7 +265,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            const char *role; /*@ The role to set */
+            const(char)* role; /*@ The role to set */
          }
       }
       size_step {
@@ -316,7 +316,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            const char *style; /*@ The style to set */
+            const(char)* style; /*@ The style to set */
          }
       }
       borderless {
@@ -383,7 +383,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
          }
          values {
             char **profiles; /*@ The string array of available profiles */
-            unsigned int count; /*@ The number of members in profiles */
+            uint count; /*@ The number of members in profiles */
          }
       }
       focus_highlight_enabled {
@@ -428,7 +428,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            const char *title; /*@ The title to set */
+            const(char)* title; /*@ The title to set */
          }
       }
       alpha {
@@ -789,7 +789,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @since 1.8 */
          }
          values {
-            const char *profile; /*@ The string value of a window profile */
+            const(char)* profile; /*@ The string value of a window profile */
          }
       }
       shaped {
@@ -1175,7 +1175,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
 
          return Eina_Bool;
          params {
-            @in const char *svcname; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
+            @in const(char)* svcname; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
             @in int svcnum; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */
             @in Eina_Bool svcsys; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
          }

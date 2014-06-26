@@ -265,8 +265,8 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            const char *file; /*@ The path to file that will be used as image source */
-            const char *group; /*@ The group that the image belongs to, in case it's an
+            const(char)* file; /*@ The path to file that will be used as image source */
+            const(char)* group; /*@ The group that the image belongs to, in case it's an
             EET (including Edje case) file. This can be used as a key inside
             evas image cache if this is a normal image file not eet file. */
          }
@@ -437,8 +437,8 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface, Elm_Interface_Atspi_Image
             legacy null;
          }
          values {
-            const Eina_File *file; /*@ The handler to an Eina_File that will be used as image source */
-            const char *group; /*@ The group that the image belongs to, in case it's an
+            const(Eina_File)* file; /*@ The handler to an Eina_File that will be used as image source */
+            const(char)* group; /*@ The group that the image belongs to, in case it's an
             EET (including Edje case) file. This can be used as a key inside
             evas image cache if this is a normal image file not eet file. */
          }
@@ -466,10 +466,10 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface, Elm_Interface_Atspi_Image
             return Eina_Bool;
          }
          values {
-            const void *img; /*@ The binary data that will be used as image source */
+            const(void)* img; /*@ The binary data that will be used as image source */
             size_t size; /*@ The size of binary data blob @p img */
-            const char *format; /*@ (Optional) expected format of @p img bytes */
-            const char *key; /*@ Optional indexing key of @p img to be passed to the
+            const(char)* format; /*@ (Optional) expected format of @p img bytes */
+            const(char)* key; /*@ Optional indexing key of @p img to be passed to the
             image loader (eg. if @p img is a memory-mapped EET file) */
          }
       }

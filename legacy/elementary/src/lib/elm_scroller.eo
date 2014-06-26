@@ -34,8 +34,8 @@ class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable)
             /*@ Set custom theme elements for the scroller */
          }
          values {
-            const char *klass;
-            const char *group;
+            const(char)* klass;
+            const(char)* group;
          }
       }
    }

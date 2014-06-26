@@ -134,7 +134,7 @@ class Elm_Box (Elm_Widget)
          }
          values {
             Evas_Object_Box_Layout cb; /*@ The callback function used for layout */
-            const void *data; /*@ Data that will be passed to layout function */
+            const(void)* data; /*@ Data that will be passed to layout function */
             Ecore_Cb free_data; /*@ Function called to free @p data */
          }
       }

@@ -9,14 +9,14 @@ interface Elm_Interface_Atspi_Editable_Text ()
             return Eina_Bool;
          }
          values {
-            const char *string;
+            const(char)* string;
          }
       }
    }
    methods {
       protected insert {
          params {
-            @in const char *string;
+            @in const(char)* string;
             @in int position;
          }
          return Eina_Bool;

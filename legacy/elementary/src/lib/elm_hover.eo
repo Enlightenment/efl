@@ -55,7 +55,7 @@ class Elm_Hover (Elm_Layout, Evas_Clickable_Interface)
          @ingroup Hover */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
             @in Elm_Hover_Axis pref_axis; /*@ The preferred orientation axis for the hover object to use */
          }

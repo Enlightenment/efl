@@ -97,8 +97,8 @@ class Elm_Prefs (Elm_Widget)
             return Eina_Bool;
          }
          values {
-            const char *file; /*@ The @b .epb (binary) file to get contents from */
-            const char *page; /*@ The page, inside @a file, where to get item contents from */
+            const(char)* file; /*@ The @b .epb (binary) file to get contents from */
+            const(char)* page; /*@ The page, inside @a file, where to get item contents from */
          }
       }
       autosave {
@@ -170,9 +170,9 @@ class Elm_Prefs (Elm_Widget)
 
          return Eina_Bool;
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) */
-            @in const Eina_Value *value; /*@ The value to set on the item. It should be typed as
+            @in const(Eina_Value)* value; /*@ The value to set on the item. It should be typed as
             the item expects, preferably, or a conversion will
             take place */
          }
@@ -192,7 +192,7 @@ class Elm_Prefs (Elm_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get value from */
             @out Eina_Value value; /*@ Where to store the value of the item. It will be
             overwritten and setup with the type the item
@@ -216,9 +216,9 @@ class Elm_Prefs (Elm_Widget)
 
          @since 1.8 */
 
-         return const Evas_Object *;
+         return const(Evas_Object)*;
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get object from */
          }
       }
@@ -232,7 +232,7 @@ class Elm_Prefs (Elm_Widget)
          @since 1.8 */
 
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to act on */
             @in Eina_Bool disabled; /*@ @c EINA_TRUE, to make it disabled, @c EINA_FALSE
             otherwise */
@@ -253,7 +253,7 @@ class Elm_Prefs (Elm_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get disabled state from */
          }
       }
@@ -269,7 +269,7 @@ class Elm_Prefs (Elm_Widget)
 
          return Eina_Bool;
          params {
-            @in const char *name; /*@ the name of the SWALLOW item (as declared in the prefs
+            @in const(char)* name; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
             @in Evas_Object *child; /*@ The object to occupy the item */
          }
@@ -288,7 +288,7 @@ class Elm_Prefs (Elm_Widget)
          @since 1.8 */
 
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to act on */
             @in Eina_Bool editable; /*@ @c EINA_TRUE, to make it editable, @c EINA_FALSE
             otherwise */
@@ -309,7 +309,7 @@ class Elm_Prefs (Elm_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get editable state from */
          }
       }
@@ -325,7 +325,7 @@ class Elm_Prefs (Elm_Widget)
 
          return Evas_Object *;
          params {
-            @in const char *name; /*@ the name of the SWALLOW item (as declared in the prefs
+            @in const(char)* name; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
          }
       }
@@ -343,7 +343,7 @@ class Elm_Prefs (Elm_Widget)
          @since 1.8 */
 
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to change visibility of */
             @in Eina_Bool visible; /*@ @c EINA_TRUE, to make it visible, @c EINA_FALSE
             otherwise */
@@ -364,7 +364,7 @@ class Elm_Prefs (Elm_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const char *name; /*@ The name of the item (as declared in the prefs
+            @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get visibility state from */
          }
       }
