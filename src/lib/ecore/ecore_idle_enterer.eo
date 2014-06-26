@@ -6,14 +6,14 @@ class Ecore_Idle_Enterer (Eo_Base)
          /*@ Contructor. Will insert the handler at the beginning of the list. */
          params {
             @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       after_constructor {
          /*@ Contructor. Will insert the handler at the end of the list. */
          params {
             @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
    }

@@ -24,7 +24,7 @@ class Evas_Text (Evas_Object)
             @see evas_object_text_font_get() for more details */
          }
          values {
-            const char* font_source; /*@ The font file's path. */
+            const(char)* font_source; /*@ The font file's path. */
          }
       }
       shadow_color {
@@ -113,7 +113,7 @@ class Evas_Text (Evas_Object)
             @since 1.1 */
          }
          values {
-            const char* delim; /*@ A null terminated string of delimiters, e.g ",|". */
+            const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
       outline_color {
@@ -165,7 +165,7 @@ class Evas_Text (Evas_Object)
             @see evas_object_text_text_set() */
          }
          values {
-            const char* text; /*@ Text string to display on it. */
+            const(char)* text; /*@ Text string to display on it. */
          }
       }
       glow2_color {
@@ -222,7 +222,7 @@ class Evas_Text (Evas_Object)
             @see evas_object_text_font_set() */
          }
          values {
-            const char* font; /*@ The font family name or filename. */
+            const(char)* font; /*@ The font family name or filename. */
             Evas_Font_Size size; /*@ The font size, in points. */
          }
       }
@@ -312,7 +312,7 @@ class Evas_Text (Evas_Object)
             legacy null;
          }
          values {
-            const char* program; /*@ The program code, as defined
+            const(char)* program; /*@ The program code, as defined
               by the @ref evasfiltersref "Evas filters script language".
               Pass NULL to remove the former program and switch back
               to the standard text effect */
@@ -332,7 +332,7 @@ class Evas_Text (Evas_Object)
             legacy null;
          }
          values {
-            const char* name; /*@ Object name as used in the program code */
+            const(char)* name; /*@ Object name as used in the program code */
             Eo* eobj; /*@ Eo object to use through proxy rendering */
          }
       }

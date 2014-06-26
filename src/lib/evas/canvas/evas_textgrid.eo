@@ -37,7 +37,7 @@ class Evas_Textgrid (Evas_Object)
             @since 1.7 */
          }
          values {
-            const char *font_source; /*@ The font file's path. */
+            const(char)* font_source; /*@ The font file's path. */
          }
       }
       supported_font_styles {
@@ -90,7 +90,7 @@ class Evas_Textgrid (Evas_Object)
             @since 1.7 */
          }
          values {
-            const char *font_name; /*@ The font (family) name. */
+            const(char)* font_name; /*@ The font (family) name. */
             Evas_Font_Size font_size; /*@ The font size, in points. */
          }
       }
@@ -195,7 +195,7 @@ class Evas_Textgrid (Evas_Object)
    
          params {
             @in int y; /*@ The row index of the grid. */
-            @in const Evas_Textgrid_Cell *row; /*@ The string as a sequence of #Evas_Textgrid_Cell. */
+            @in const(Evas_Textgrid_Cell)* row; /*@ The string as a sequence of #Evas_Textgrid_Cell. */
          }
       }
       cellrow_get {

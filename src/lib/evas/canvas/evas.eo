@@ -343,7 +343,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
             @return An .Evas_Lock handle to query Evas' keys subsystem with
             evas_key_lock_is_set(), or @c NULL on error. */
-            return const Evas_Lock * @warn_unused;
+            return const(Evas_Lock)* @warn_unused;
          }
       }
       pointer_canvas_xy {
@@ -523,7 +523,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
             @return An .Evas_Modifier handle to query Evas' keys subsystem
             with evas_key_modifier_is_set(), or @c NULL on error. */
-            return const Evas_Modifier * @warn_unused;
+            return const(Evas_Modifier)* @warn_unused;
          }
       }
       pointer_button_down_mask {
@@ -598,7 +598,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in int direction; /*@ The wheel mouse direction. */
             @in int z; /*@ How much mouse wheel was scrolled up or down. */
             @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       key_lock_on {
@@ -615,7 +615,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_key_lock_off */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the lock to enable. */
+            @in const(char)* keyname @nonull; /*@ The name of the lock to enable. */
          }
       }
       event_feed_key_down {
@@ -627,12 +627,12 @@ class Evas (Eo_Base, Evas_Common_Interface)
          callback function. */
 
          params {
-            @in const char *keyname; /*@ Name of the key */
-            @in const char *key; /*@ The key pressed. */
-            @in const char *string; /*@ A String */
-            @in const char *compose; /*@ The compose string */
+            @in const(char)* keyname; /*@ Name of the key */
+            @in const(char)* key; /*@ The key pressed. */
+            @in const(char)* string; /*@ A String */
+            @in const(char)* compose; /*@ The compose string */
             @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
-            @in const void *data; /*@ Data for canvas. */
+            @in const(void)* data; /*@ Data for canvas. */
          }
       }
       key_modifier_mask_get {
@@ -659,7 +659,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          const;
          return Evas_Modifier_Mask @warn_unused;
          params {
-            @in const char *keyname @nonull; /*@ The name of the modifier key to create the mask for. */
+            @in const(char)* keyname @nonull; /*@ The name of the modifier key to create the mask for. */
          }
       }
       key_modifier_add {
@@ -689,7 +689,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          "Control", "Alt", "Meta", "Hyper", "Super". */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the modifier key to add to the list of
+            @in const(char)* keyname @nonull; /*@ The name of the modifier key to add to the list of
             Evas modifiers. */
          }
       }
@@ -704,7 +704,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_key_modifier_is_set */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the modifier to disable. */
+            @in const(char)* keyname @nonull; /*@ The name of the modifier to disable. */
          }
       }
       event_feed_hold {
@@ -716,7 +716,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          params {
             @in int hold; /*@ The hold. */
             @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       event_feed_mouse_move {
@@ -731,7 +731,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in int x; /*@ The horizontal position of the mouse pointer. */
             @in int y; /*@ The vertical position of the mouse pointer. */
             @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       event_feed_key_up {
@@ -743,12 +743,12 @@ class Evas (Eo_Base, Evas_Common_Interface)
          callback function. */
 
          params {
-            @in const char *keyname; /*@ Name of the key */
-            @in const char *key; /*@ The key released. */
-            @in const char *string; /*@ string */
-            @in const char *compose; /*@ compose */
+            @in const(char)* keyname; /*@ Name of the key */
+            @in const(char)* key; /*@ The key released. */
+            @in const(char)* string; /*@ string */
+            @in const(char)* compose; /*@ compose */
             @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
-            @in const void *data; /*@ Data for canvas. */
+            @in const(void)* data; /*@ Data for canvas. */
          }
       }
       event_feed_mouse_out {
@@ -761,7 +761,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
          params {
             @in unsigned int timestamp; /*@ Timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       event_input_multi_move {
@@ -778,7 +778,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fx;
             @in double fy;
             @in unsigned int timestamp;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       objects_at_xy_get {
@@ -824,7 +824,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fy;
             @in Evas_Button_Flags flags;
             @in unsigned int timestamp;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       event_feed_multi_down {
@@ -842,7 +842,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fy;
             @in Evas_Button_Flags flags;
             @in unsigned int timestamp;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       render_async {
@@ -892,7 +892,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in int y; /*@ The vertical position of the mouse pointer relative to the 0,0 of
             the window/surface. */
             @in unsigned int timestamp; /*@ The timestamp of the mouse move event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       norender {
@@ -948,7 +948,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fy;
             @in Evas_Button_Flags flags;
             @in unsigned int timestamp;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       nochange_pop {
@@ -975,7 +975,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_key_lock_on */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the lock to disable. */
+            @in const(char)* keyname @nonull; /*@ The name of the lock to disable. */
          }
       }
       nochange_push {
@@ -1051,7 +1051,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_key_modifier_is_set */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the modifier to enable. */
+            @in const(char)* keyname @nonull; /*@ The name of the modifier to enable. */
          }
       }
       event_feed_mouse_up {
@@ -1066,7 +1066,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in int b; /*@ The button number. */
             @in Evas_Button_Flags flags; /*@ evas button flags. */
             @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       event_feed_mouse_down {
@@ -1081,7 +1081,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in int b; /*@ The button number. */
             @in Evas_Button_Flags flags; /*@ The evas button flags. */
             @in unsigned int timestamp; /*@ The timestamp of the mouse down event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       event_refeed_event {
@@ -1143,7 +1143,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          const;
          return Evas_Object * @warn_unused;
          params {
-            @in const char *name; /*@ The given name. */
+            @in const(char)* name; /*@ The given name. */
          }
       }
       font_path_append {
@@ -1152,7 +1152,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @ingroup Evas_Font_Path_Group */
 
          params {
-            @in const char *path @nonull; /*@ The new font path. */
+            @in const(char)* path @nonull; /*@ The new font path. */
          }
       }
       touch_point_list_nth_id_get {
@@ -1243,7 +1243,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_key_lock_off */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the key to remove from the locks list. */
+            @in const(char)* keyname @nonull; /*@ The name of the key to remove from the locks list. */
          }
       }
       damage_rectangle_add {
@@ -1274,7 +1274,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @ingroup Evas_Font_Path_Group */
 
          const;
-         return const Eina_List * @warn_unused;
+         return const(Eina_List)* @warn_unused;
       }
       image_cache_reload {
          /*@
@@ -1324,7 +1324,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fx;
             @in double fy;
             @in unsigned int timestamp;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       render_updates {
@@ -1404,7 +1404,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_key_modifier_is_set */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the key to remove from the modifiers list. */
+            @in const(char)* keyname @nonull; /*@ The name of the key to remove from the modifiers list. */
          }
       }
       touch_point_list_nth_state_get {
@@ -1529,7 +1529,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
          params {
             @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       object_top_in_rectangle_get {
@@ -1587,7 +1587,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fy;
             @in Evas_Button_Flags flags;
             @in unsigned int timestamp;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       font_path_prepend {
@@ -1596,7 +1596,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @ingroup Evas_Font_Path_Group */
 
          params {
-            @in const char *path @nonull; /*@ The new font path. */
+            @in const(char)* path @nonull; /*@ The new font path. */
          }
       }
       obscured_clear {
@@ -1631,7 +1631,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
          params {
             @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
-            @in const void *data; /*@ The data for canvas. */
+            @in const(void)* data; /*@ The data for canvas. */
          }
       }
       coord_screen_x_to_world {
@@ -1689,7 +1689,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          "Num_Lock", "Scroll_Lock". */
 
          params {
-            @in const char *keyname @nonull; /*@ The name of the key to add to the locks list. */
+            @in const(char)* keyname @nonull; /*@ The name of the key to add to the locks list. */
          }
       }
       render_idle_flush {
@@ -1741,12 +1741,12 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @since 1.10 */
 
          params {
-            @in const char *keyname; /*@ Name of the key */
-            @in const char *key; /*@ The key pressed. */
-            @in const char *string; /*@ A String */
-            @in const char *compose; /*@ The compose string */
+            @in const(char)* keyname; /*@ Name of the key */
+            @in const(char)* key; /*@ The key pressed. */
+            @in const(char)* string; /*@ A String */
+            @in const(char)* compose; /*@ The compose string */
             @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
-            @in const void *data; /*@ Data for canvas. */
+            @in const(void)* data; /*@ Data for canvas. */
             @in unsigned int keycode; /*@ Key scan code numeric value for canvas. */
          }
       }
@@ -1761,12 +1761,12 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @since 1.10 */
 
          params {
-            @in const char *keyname; /*@ Name of the key */
-            @in const char *key; /*@ The key released. */
-            @in const char *string; /*@ string */
-            @in const char *compose; /*@ compose */
+            @in const(char)* keyname; /*@ Name of the key */
+            @in const(char)* key; /*@ The key released. */
+            @in const(char)* string; /*@ string */
+            @in const(char)* compose; /*@ compose */
             @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
-            @in const void *data; /*@ Data for canvas. */
+            @in const(void)* data; /*@ Data for canvas. */
             @in unsigned int keycode; /*@ Key scan code numeric value for canvas. */
          }
       }

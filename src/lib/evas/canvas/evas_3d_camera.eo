@@ -19,7 +19,7 @@ class Evas_3D_Camera (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Camera
           */
          params {
-           @in const Evas_Real *matrix; /*@ Projection Matrix */
+           @in const(Evas_Real)* matrix; /*@ Projection Matrix */
          }
       }
 

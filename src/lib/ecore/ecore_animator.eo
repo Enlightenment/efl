@@ -7,14 +7,14 @@ class Ecore_Animator (Eo_Base)
          params {
             @in double runtime;
             @in Ecore_Timeline_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
       constructor {
          /*@ Contructor. */
          params {
             @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
    }

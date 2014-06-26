@@ -18,7 +18,7 @@ class Ecore_Audio (Eo_Base)
             @since 1.8 */
          }
          values {
-            const char *name; 
+            const(char)* name; 
          }
       }
       paused {
@@ -73,7 +73,7 @@ class Ecore_Audio (Eo_Base)
             @since 1.8 */
          }
          values {
-            const char *source; /*The source to set to (i.e. file, URL, device)*/
+            const(char)* source; /*The source to set to (i.e. file, URL, device)*/
          }
       }
       format {

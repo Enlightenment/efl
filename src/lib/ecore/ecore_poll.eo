@@ -8,7 +8,7 @@ class Ecore_Poller (Eo_Base)
             @in Ecore_Poller_Type type;
             @in int interval;
             @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
    }

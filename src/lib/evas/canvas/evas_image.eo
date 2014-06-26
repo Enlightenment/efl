@@ -474,8 +474,8 @@ class Evas_Image (Evas_Object)
             interested in: they'll be ignored by the function. */
          }
          values {
-            const char *file; /*@ The image file path. */
-            const char *key; /*@ The image key in @p file (if its an Eet one), or @c
+            const(char)* file; /*@ The image file path. */
+            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
             NULL, otherwise. */
          }
       }
@@ -788,8 +788,8 @@ class Evas_Image (Evas_Object)
             @since 1.10 */
          }
          values {
-            const Eina_File *f; /*@ The mmaped file */
-            const char *key; /*@ The image key in @p file (if its an Eet one), or @c
+            const(Eina_File)* f; /*@ The mmaped file */
+            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
             NULL, otherwise. */
          }
       }
@@ -1042,7 +1042,7 @@ class Evas_Image (Evas_Object)
             legacy null;
          }
          values {
-            const char* program; /*@ The program code, as defined
+            const(char)* program; /*@ The program code, as defined
               by the @ref evasfiltersref "Evas filters script language".
               Pass NULL to remove the former program and switch back
               to the standard text effect
@@ -1063,7 +1063,7 @@ class Evas_Image (Evas_Object)
             legacy null;
          }
          values {
-            const char* name; /*@ Object name as used in the program code */
+            const(char)* name; /*@ Object name as used in the program code */
             Eo* eobj; /*@ Eo object to use through proxy rendering */
          }
       }
@@ -1142,11 +1142,11 @@ class Evas_Image (Evas_Object)
          const;
          return Eina_Bool;
          params {
-            @in const char *file @nonull; /*@ The filename to be used to save the image (extension
+            @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
             obligatory). */
-            @in const char *key; /*@ The image key in the file (if an Eet one), or @c NULL,
+            @in const(char)* key; /*@ The image key in the file (if an Eet one), or @c NULL,
             otherwise. */
-            @in const char *flags; /*@ String containing the flags to be used (@c NULL for
+            @in const(char)* flags; /*@ String containing the flags to be used (@c NULL for
             none). */
          }
       }

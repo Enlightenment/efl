@@ -15,8 +15,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
           */
          params {
             @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
-            @in const char *file; /*@ Path to the mesh file. */
-            @in const char *key; /*@ Key in the mesh file. */
+            @in const(char)* file; /*@ Path to the mesh file. */
+            @in const(char)* key; /*@ Key in the mesh file. */
          }
       }
 
@@ -31,8 +31,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
           */
          params {
             @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
-            @in const char *file; /*@ Path to the mesh file. */
-            @in const char *key; /*@ Key in the mesh file. */
+            @in const(char)* file; /*@ Path to the mesh file. */
+            @in const(char)* key; /*@ Key in the mesh file. */
          }
       }
 
@@ -57,7 +57,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
             @in int stride; /*@ Stride to go to the next vertex (in bytes). */
-            @in const void *data; /*@ Pointer to the vertex data buffer. */
+            @in const(void)* data; /*@ Pointer to the vertex data buffer. */
          }
       }
 
@@ -79,7 +79,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
             @in int stride; /*@ Stride to go to the next vertex (in bytes). */
-            @in const void *data; /*@ Pointer to the vertex data buffer. */
+            @in const(void)* data; /*@ Pointer to the vertex data buffer. */
          }
       }
 
@@ -160,7 +160,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
          params {
             @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
             @in int count; /*@ Vertex index count. */
-            @in const void *indices; /*@ Pointer to the index data. */
+            @in const(void)* indices; /*@ Pointer to the index data. */
          }
       }
 
@@ -180,7 +180,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
          params {
             @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
             @in int count; /*@ Vertex index count. */
-            @in const void *indices; /*@ Pointer to the index data. */
+            @in const(void)* indices; /*@ Pointer to the index data. */
          }
       }
 
