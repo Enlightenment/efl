@@ -26,6 +26,13 @@ static const char * const tokens[] =
    KEYWORDS
 };
 
+static const char * const ctypes[] =
+{
+   "char", "unsigned char", "signed char", "short", "unsigned short",
+   "int", "unsigned int", "long", "unsigned long", "long long",
+   "unsigned long long"
+};
+
 #undef KW
 #undef KWAT
 
@@ -406,6 +413,19 @@ const char *
 eo_lexer_keyword_str_get(int kw)
 {
    return tokens[kw + 2];
+}
+
+Eina_Bool
+eo_lexer_is_type_keyword(int kw)
+{
+   return (kw >= KW_char && kw <= KW_ullong);
+}
+
+const char *
+eo_lexer_get_c_type(int kw)
+{
+   if (!eo_lexer_is_type_keyword(kw)) return NULL;
+   return ctypes[kw - KW_char];
 }
 
 static int _init_counter = 0;

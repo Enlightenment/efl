@@ -16,11 +16,16 @@ enum Tokens
 
 #define KEYWORDS KW(class), KW(const), KW(private), KW(protected), \
     KW(return), KW(signed), KW(struct), KW(unsigned), KW(virtual), \
+    \
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
     KW(destructor), KW(eo_prefix), KW(events), KW(get), KW(implements), \
     KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), KW(methods), \
     KW(mixin), KW(params), KW(properties), KW(set), KW(type), KW(values), \
-    KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), KWAT(own), KWAT(warn_unused)
+    KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), KWAT(own), \
+    KWAT(warn_unused), \
+    \
+    KW(char), KW(uchar), KW(schar), KW(short), KW(ushort), KW(int), KW(uint), \
+    KW(long), KW(ulong), KW(llong), KW(ullong)
 
 #define KW(x) KW_##x
 #define KWAT(x) KW_at_##x
@@ -88,6 +93,8 @@ void        eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
 void        eo_lexer_syntax_error   (Eo_Lexer *ls, const char *msg);
 void        eo_lexer_token_to_str   (int token, char *buf);
 const char *eo_lexer_keyword_str_get(int kw);
+Eina_Bool   eo_lexer_is_type_keyword(int kw);
+const char *eo_lexer_get_c_type     (int kw);
 
 extern int _eo_lexer_log_dom;
 #ifdef CRITICAL

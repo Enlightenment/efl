@@ -150,6 +150,7 @@ parse_name_list(Eo_Lexer *ls)
 static void
 parse_type_sub(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool *has_ptr)
 {
+   const char *ctype;
    if (has_ptr) *has_ptr = EINA_FALSE;
    switch (ls->t.kw)
      {
@@ -178,7 +179,8 @@ parse_type_sub(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool *has_ptr)
           break;
      }
    check(ls, TOK_VALUE);
-   eina_strbuf_append(buf, ls->t.value);
+   ctype = eo_lexer_get_c_type(ls->t.kw);
+   eina_strbuf_append(buf, ctype ? ctype : ls->t.value);
    eo_lexer_get(ls);
 parse_ptr:
    if (ls->t.token != '*') return;
