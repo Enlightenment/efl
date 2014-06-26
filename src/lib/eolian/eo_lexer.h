@@ -25,7 +25,14 @@ enum Tokens
     KWAT(warn_unused), \
     \
     KW(char), KW(uchar), KW(schar), KW(short), KW(ushort), KW(int), KW(uint), \
-    KW(long), KW(ulong), KW(llong), KW(ullong)
+    KW(long), KW(ulong), KW(llong), KW(ullong), \
+    \
+    KW(int8), KW(uint8), KW(int16), KW(uint16), KW(int32), KW(uint32), \
+    KW(int64), KW(uint64), KW(int128), KW(uint128), \
+    \
+    KW(float), KW(double), KW(ldouble), \
+    \
+    KW(void)
 
 #define KW(x) KW_##x
 #define KWAT(x) KW_at_##x
