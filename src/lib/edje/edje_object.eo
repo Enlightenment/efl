@@ -1,4 +1,4 @@
-class Edje (Evas_Smart_Clipped)
+class Edje.Object (Evas_Smart_Clipped)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;

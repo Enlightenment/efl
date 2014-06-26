@@ -24,7 +24,7 @@ edje_external_param_type_str(Edje_External_Param_Type type)
 }
 
 EOLIAN Evas_Object*
-_edje_part_external_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+_edje_object_part_external_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 
@@ -52,7 +52,7 @@ _edje_part_external_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 }
 
 EOLIAN Eina_Bool
-_edje_part_external_param_set(Eo *obj, Edje *ed, const char *part, const Edje_External_Param *param)
+_edje_object_part_external_param_set(Eo *obj, Edje *ed, const char *part, const Edje_External_Param *param)
 {
    Edje_Real_Part *rp;
 
@@ -73,7 +73,7 @@ _edje_part_external_param_set(Eo *obj, Edje *ed, const char *part, const Edje_Ex
 }
 
 EOLIAN Eina_Bool
-_edje_part_external_param_get(Eo *obj, Edje *ed, const char *part, Edje_External_Param *param)
+_edje_object_part_external_param_get(Eo *obj, Edje *ed, const char *part, Edje_External_Param *param)
 {
    Edje_Real_Part *rp;
 
@@ -92,7 +92,7 @@ _edje_part_external_param_get(Eo *obj, Edje *ed, const char *part, Edje_External
 }
 
 EOLIAN Evas_Object*
-_edje_part_external_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *content)
+_edje_object_part_external_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *content)
 {
    Edje_Real_Part *rp;
 
@@ -113,7 +113,7 @@ _edje_part_external_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
 }
 
 EOLIAN Edje_External_Param_Type
-_edje_part_external_param_type_get(Eo *obj, Edje *ed, const char *part, const char *param)
+_edje_object_part_external_param_type_get(Eo *obj, Edje *ed, const char *part, const char *param)
 {
    Edje_Real_Part *rp;
    Edje_External_Type *type;

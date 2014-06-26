@@ -1,10 +1,10 @@
-class Edje_Edit (Edje)
+class Edje.Edit (Edje.Object)
 {
    data: Edje_Edit;
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
       Evas_Object_Smart.del;
-      Edje.file.set;
+      Edje.Object.file.set;
    }
 }

@@ -32,19 +32,19 @@ _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int
 }
 
 EOLIAN void
-_edje_message_send(Eo *obj, Edje *_pd EINA_UNUSED, Edje_Message_Type type, int id, void *msg)
+_edje_object_message_send(Eo *obj, Edje *_pd EINA_UNUSED, Edje_Message_Type type, int id, void *msg)
 {
    _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
 }
 
 EOLIAN void
-_edje_message_handler_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Message_Handler_Cb func, void *data)
+_edje_object_message_handler_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Message_Handler_Cb func, void *data)
 {
    _edje_message_cb_set(ed, func, data);
 }
 
 EOLIAN void
-_edje_message_signal_process(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_message_signal_process(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_List *l, *ln, *tmpq = NULL;
    Edje *lookup_ed;
