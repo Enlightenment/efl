@@ -125,16 +125,13 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 			 }
 		    }
 	       }
-	     else /* Otherwise add to tag buffer */
-	       {
-		  s2 = eina_str_escape(item);
-		  if (s2)
-		    {
-		       if (eina_strbuf_length_get(txt)) eina_strbuf_append(txt, " ");
-		       eina_strbuf_append(txt, s2);
-		       free(s2);
-		    }
-	       }
+             s2 = eina_str_escape(item);
+             if (s2)
+               {
+                  if (eina_strbuf_length_get(txt)) eina_strbuf_append(txt, " ");
+                  eina_strbuf_append(txt, s2);
+                  free(s2);
+               }
 	     free(key);
 	     free(val);
 	  }
