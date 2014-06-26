@@ -193,8 +193,8 @@ parse_ptr:
      }
 }
 
-static Eina_Inlist *
-parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
+static Eolian_Type
+parse_type(Eo_Lexer *ls, Eolian_Type type, Eina_Strbuf *sbuf)
 {
    Eina_Bool is_own = EINA_FALSE;
    Eina_Strbuf *buf = sbuf ? sbuf : push_strbuf(ls);
@@ -210,8 +210,8 @@ parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
 
    if (!sbuf)
      {
-        types = database_type_append(types, eina_strbuf_string_get(buf), is_own);
-        ls->tmp.type = types;
+        type = database_type_append(type, eina_strbuf_string_get(buf), is_own);
+        ls->tmp.type = type;
         pop_strbuf(ls);
      }
 
@@ -220,12 +220,15 @@ parse_type(Eo_Lexer *ls, Eina_Inlist *types, Eina_Strbuf *sbuf)
         int line = ls->line_number;
         if (sbuf) eina_strbuf_append(buf, " <");
         eo_lexer_get(ls);
-        types = parse_type(ls, types, sbuf);
+        parse_type(ls, type, sbuf);
+        while (test_next(ls, ','))
+           parse_type(ls, type, buf);
+        parse_type(ls, type, sbuf);
         check_match(ls, '>', '<', line);
         if (sbuf) eina_strbuf_append_char(buf, '>');
      }
 
-  return types;
+  return type;
 }
 
 static void
@@ -916,21 +919,22 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
 static char *    _param_way_str[    PARAM_WAY_LAST] = { "IN", "OUT", "INOUT" };
 
-static void
-_print_type(FILE *f, Eolian_Type tp)
+typedef struct
 {
-   const char *type;
-   Eina_Bool   own;
-   Eolian_Type ntp = eolian_type_information_get(tp, &type, &own);
-   if (own)
-      fputs("@own ", f);
-   fputs(type, f);
-   if (ntp)
-     {
-        fputc('<', f);
-        _print_type(f, ntp);
-        fputc('>', f);
-     }
+   Eina_List *subtypes;
+   Eina_Stringshare *name;
+   Eina_Bool is_own :1;
+} _Parameter_Type;
+
+static void
+_print_type(FILE *f, _Parameter_Type *tp)
+{
+   Eina_List *l;
+   Eolian_Type stp;
+   fprintf(f, "%s%s<", tp->name, tp->is_own ? "@own " : "");
+   EINA_LIST_FOREACH(tp->subtypes, l, stp)
+      _type_print(f, stp);
+   fputc('>', f);
 }
 
 static void

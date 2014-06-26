@@ -77,7 +77,7 @@ typedef struct
 
 typedef struct
 {
-   EINA_INLIST;
+   Eina_List *subtypes;
    Eina_Stringshare *name;
    Eina_Bool is_own :1; /* True if the ownership of this argument passes to the caller/callee */
 } _Parameter_Type;
@@ -107,13 +107,13 @@ _param_del(_Parameter_Desc *pdesc)
 void
 database_type_del(Eolian_Type type)
 {
-   while (type)
-     {
-        _Parameter_Type *ptype = (_Parameter_Type *) type;
-        eina_stringshare_del(ptype->name);
-        type = eina_inlist_remove(type, EINA_INLIST_GET(ptype));
-        free(ptype);
-     }
+   _Parameter_Type *typep = (_Parameter_Type*)type;
+   Eolian_Type stype;
+   if (!type) return;
+   EINA_LIST_FREE(typep->subtypes, stype)
+      database_type_del(stype);
+   eina_stringshare_del(typep->name);
+   free(typep);
 }
 
 static void
@@ -890,25 +890,19 @@ eolian_parameter_types_list_get(const Eolian_Function_Parameter param_desc)
    return param->type;
 }
 
-EAPI Eolian_Type
-eolian_type_information_get(Eolian_Type list, const char **name, Eina_Bool *own)
-{
-   _Parameter_Type *type = (_Parameter_Type *)list;
-   if (name) *name = type->name;
-   if (own) *own = type->is_own;
-   return list->next;
-}
-
 Eolian_Type
-database_type_append(Eolian_Type types, const char *name, Eina_Bool own)
+database_type_append(Eolian_Type type, const char *name, Eina_Bool own)
 {
-   _Parameter_Type *type = calloc(1, sizeof(*type));
-   type->name = eina_stringshare_add(name);
-   type->is_own = own;
-   if (types)
-      return eina_inlist_append(types, EINA_INLIST_GET(type));
-   else
-      return EINA_INLIST_GET(type);
+   _Parameter_Type *stypep = calloc(1, sizeof(*stypep));
+   stypep->name = eina_stringshare_add(name);
+   stypep->is_own = own;
+   if (type)
+     {
+        _Parameter_Type *typep = (_Parameter_Type*)type;
+        typep->subtypes = eina_list_append(typep->subtypes, stypep);
+        return type;
+     }
+   return (Eolian_Type)stypep;
 }
 
 void
@@ -1192,6 +1186,18 @@ _event_print(Eolian_Event ev, int nb_spaces)
    printf("%*s <%s> <%s> <%s>\n", nb_spaces + 5, "", name, type, comment);
 }
 
+static void
+_type_print(Eolian_Type tp, Eina_Strbuf *buf)
+{
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   Eina_List *l;
+   Eolian_Type stp;
+   eina_strbuf_append_printf(buf, "%s%s<", tpp->name, tpp->is_own ? "@own" : "");
+   EINA_LIST_FOREACH(tpp->subtypes, l, stp)
+      _type_print(stp, buf);
+   eina_strbuf_append_char(buf, '>');
+}
+
 static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
 {
    Eolian_Function foo_id = (Eolian_Function) fid;
@@ -1282,16 +1288,7 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
               break;
           }
          Eina_Strbuf *type_buf = eina_strbuf_new();
-         Eolian_Type type = param->type;
-         while (type)
-           {
-              const char *type_str = NULL;
-              Eina_Bool is_own = EINA_FALSE;
-              type = eolian_type_information_get(type, &type_str, &is_own);
-              eina_strbuf_append_printf(type_buf, "%s%s%s",
-                    eina_strbuf_length_get(type_buf)?"/":"",
-                    type_str, is_own?"@own":"");
-           }
+         _type_print(param->type, type_buf);
          printf("%*s%s <%s> <%s> <%s>\n", nb_spaces + 5, "",
                param_dir, param->name,
                eina_strbuf_string_get(type_buf),

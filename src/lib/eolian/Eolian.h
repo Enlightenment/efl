@@ -54,7 +54,7 @@ typedef struct _Function_Id* Eolian_Function;
  *
  * @ingroup Eolian
  */
-typedef Eina_Inlist* Eolian_Type;
+typedef struct _Parameter_Type* Eolian_Type;
 
 /* Class function parameter information
  *
@@ -491,22 +491,6 @@ EAPI const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
  * @ingroup Eolian
  */
 EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
-
-/*
- * @brief Get information on given type.
- *
- * An Eolian type is an inlist of basic C types. For example:
- * Eina_List * <Eo *> contains two basic types.
- * The first Eolian type of the list stores Eina_List *, the next one Eo *.
- *
- * @param[in] etype Eolian type
- * @param[out] type C type
- * @param[out] own indicates if the ownership has to pass to the caller/callee.
- * @return the next type of the list.
- *
- * @ingroup Eolian
- */
-EAPI Eolian_Type eolian_type_information_get(Eolian_Type etype, const char **type, Eina_Bool *own);
 
 /*
  * @brief Get type of a parameter
