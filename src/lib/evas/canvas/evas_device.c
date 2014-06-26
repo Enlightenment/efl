@@ -14,7 +14,7 @@ evas_device_add(Evas *eo_e)
    dev->magic = MAGIC_DEV;
    dev->evas = eo_e;
    dev->ref = 1;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    e->devices = eina_list_append(e->devices, dev);
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
    return dev;
@@ -54,7 +54,7 @@ evas_device_push(Evas *eo_e, Evas_Device *dev)
    MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
    return;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->cur_device)
      {
         e->cur_device = eina_array_new(4);
@@ -72,7 +72,7 @@ evas_device_pop(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    dev = eina_array_pop(e->cur_device);
    if (dev) _evas_device_unref(dev);
 }
@@ -90,7 +90,7 @@ evas_device_list(Evas *eo_e, const Evas_Device *dev)
         MAGIC_CHECK_END();
      }
    if (dev) return dev->children;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    return e->devices;
 }
 
@@ -138,7 +138,7 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
    return;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_scope_get(dev->evas, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(dev->evas, EVAS_CANVAS_CLASS);
    if (parent)
      {
         MAGIC_CHECK(parent, Evas_Device, MAGIC_DEV);
@@ -239,7 +239,7 @@ _evas_device_cleanup(Evas *eo_e)
 {
    Evas_Device *dev;
    
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (e->cur_device)
      {
         while ((dev = eina_array_pop(e->cur_device)))
@@ -258,7 +258,7 @@ _evas_device_top_get(const Evas *eo_e)
 {
    int num;
    
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->cur_device) return NULL;
    num = eina_array_count(e->cur_device);
    if (num < 1) return NULL;

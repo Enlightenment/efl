@@ -16,7 +16,7 @@ lib/evas/canvas/evas_smart_clipped.eo.hh \
 lib/evas/canvas/evas_table.eo.hh \
 lib/evas/canvas/evas_common_interface.eo.hh \
 lib/evas/canvas/evas_object.eo.hh \
-lib/evas/canvas/evas.eo.hh \
+lib/evas/canvas/evas_canvas.eo.hh \
 lib/evas/canvas/evas_grid.eo.hh \
 lib/evas/canvas/evas_image.eo.hh \
 lib/evas/canvas/evas_out.eo.hh \

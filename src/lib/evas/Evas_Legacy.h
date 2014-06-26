@@ -44,7 +44,7 @@ EAPI Evas             *evas_new(void) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
  */
 EAPI void              evas_free(Evas *e)  EINA_ARG_NONNULL(1);
 
-#include "canvas/evas.eo.legacy.h"
+#include "canvas/evas_canvas.eo.legacy.h"
 
 /**
  * @}

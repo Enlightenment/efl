@@ -26,7 +26,7 @@ _evas_object_name_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN Evas_Object*
-_evas_object_name_find(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
+_evas_canvas_object_name_find(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
 {
    if (!name) return NULL;
    else return (Evas_Object *)eina_hash_find(e->name_hash, name);

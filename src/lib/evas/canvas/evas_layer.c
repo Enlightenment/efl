@@ -47,7 +47,7 @@ evas_object_release(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, int cl
 Evas_Layer *
 evas_layer_new(Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_ref(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_ref(eo_e, EVAS_CANVAS_CLASS);
    Evas_Layer *lay;
 
    lay = calloc(1, sizeof(Evas_Layer));
@@ -88,7 +88,7 @@ evas_layer_free_objects(Evas_Layer *lay)
 void
 evas_layer_clean(Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Layer *tmp;
 
    while (e->layers)
@@ -102,7 +102,7 @@ evas_layer_clean(Evas *eo_e)
 Evas_Layer *
 evas_layer_find(Evas *eo_e, short layer_num)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Layer *layer;
 
    EINA_INLIST_FOREACH(e->layers, layer)

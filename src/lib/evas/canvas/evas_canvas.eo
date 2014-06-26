@@ -1,6 +1,6 @@
-class Evas (Eo.Base, Evas_Common_Interface)
+class Evas.Canvas (Eo.Base, Evas_Common_Interface)
 {
-   eo_prefix: evas_canvas;
+   legacy_prefix: evas;
    data: Evas_Public_Data;
    properties {
       output_framespace {

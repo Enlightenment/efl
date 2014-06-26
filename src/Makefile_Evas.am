@@ -37,9 +37,9 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_object.eo.c \
                  lib/evas/canvas/evas_object.eo.h \
                  lib/evas/canvas/evas_object.eo.legacy.h \
-                 lib/evas/canvas/evas.eo.c \
-                 lib/evas/canvas/evas.eo.h \
-                 lib/evas/canvas/evas.eo.legacy.h \
+                 lib/evas/canvas/evas_canvas.eo.c \
+                 lib/evas/canvas/evas_canvas.eo.h \
+                 lib/evas/canvas/evas_canvas.eo.legacy.h \
                  lib/evas/canvas/evas_grid.eo.c \
                  lib/evas/canvas/evas_grid.eo.h \
                  lib/evas/canvas/evas_grid.eo.legacy.h \
@@ -93,7 +93,7 @@ evaseolianfiles_DATA = \
               lib/evas/canvas/evas_smart_clipped.eo \
               lib/evas/canvas/evas_table.eo \
               lib/evas/canvas/evas_common_interface.eo \
-              lib/evas/canvas/evas.eo \
+              lib/evas/canvas/evas_canvas.eo \
               lib/evas/canvas/evas_grid.eo \
               lib/evas/canvas/evas_image.eo \
               lib/evas/canvas/evas_out.eo \
@@ -141,7 +141,7 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_table.eo.h \
                                         lib/evas/canvas/evas_common_interface.eo.h \
                                         lib/evas/canvas/evas_object.eo.h \
-                                        lib/evas/canvas/evas.eo.h \
+                                        lib/evas/canvas/evas_canvas.eo.h \
                                         lib/evas/canvas/evas_grid.eo.h \
                                         lib/evas/canvas/evas_image.eo.h \
                                         lib/evas/canvas/evas_out.eo.h \
@@ -166,7 +166,7 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_image.eo.legacy.h \
                                         lib/evas/canvas/evas_out.eo.legacy.h \
                                         lib/evas/canvas/evas_box.eo.legacy.h \
-                                        lib/evas/canvas/evas.eo.legacy.h \
+                                        lib/evas/canvas/evas_canvas.eo.legacy.h \
                                         lib/evas/canvas/evas_3d_camera.eo.h \
                                         lib/evas/canvas/evas_3d_light.eo.h \
                                         lib/evas/canvas/evas_3d_material.eo.h \
