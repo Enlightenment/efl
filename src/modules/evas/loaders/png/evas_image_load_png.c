@@ -182,7 +182,7 @@ evas_image_load_file_head_png(void *loader_data,
          prop->cspaces = cspace_grey_alpha;
          break;
       case PNG_COLOR_TYPE_GRAY:
-         prop->cspaces = cspace_grey;
+         if (!hasa) prop->cspaces = cspace_grey;
          break;
      }
    if (hasa) prop->alpha = 1;
