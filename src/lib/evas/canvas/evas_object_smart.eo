@@ -193,12 +193,12 @@ class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
             @out const(Evas_Smart_Cb_Description)** class_descriptions; /*@ Where to store class callbacks
             descriptions array, if any is known. If no descriptions are
             known, @c NULL is returned */
-            @out unsigned int class_count; /*@ Returns how many class callbacks descriptions
+            @out uint class_count; /*@ Returns how many class callbacks descriptions
             are known. */
             @out const(Evas_Smart_Cb_Description)** instance_descriptions; /*@ Where to store instance callbacks
             descriptions array, if any is known. If no descriptions are
             known, @c NULL is returned. */
-            @out unsigned int instance_count; /*@ Returns how many instance callbacks
+            @out uint instance_count; /*@ Returns how many instance callbacks
             descriptions are known. */
          }
       }

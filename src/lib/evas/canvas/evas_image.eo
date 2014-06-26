@@ -398,7 +398,7 @@ class Evas_Image (Evas_Object)
             /*@ Get the video surface capabilities to a given image of the canvas */
          }
          values {
-            unsigned int caps; /*@ in */
+            uint caps; /*@ in */
          }
       }
       load_orientation {

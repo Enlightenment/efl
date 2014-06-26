@@ -597,7 +597,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          params {
             @in int direction; /*@ The wheel mouse direction. */
             @in int z; /*@ How much mouse wheel was scrolled up or down. */
-            @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
+            @in uint timestamp; /*@ The timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -631,7 +631,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in const(char)* key; /*@ The key pressed. */
             @in const(char)* string; /*@ A String */
             @in const(char)* compose; /*@ The compose string */
-            @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
+            @in uint timestamp; /*@ Timestamp of the mouse up event */
             @in const(void)* data; /*@ Data for canvas. */
          }
       }
@@ -715,7 +715,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
          params {
             @in int hold; /*@ The hold. */
-            @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
+            @in uint timestamp; /*@ The timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -730,7 +730,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          params {
             @in int x; /*@ The horizontal position of the mouse pointer. */
             @in int y; /*@ The vertical position of the mouse pointer. */
-            @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
+            @in uint timestamp; /*@ The timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -747,7 +747,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in const(char)* key; /*@ The key released. */
             @in const(char)* string; /*@ string */
             @in const(char)* compose; /*@ compose */
-            @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
+            @in uint timestamp; /*@ Timestamp of the mouse up event */
             @in const(void)* data; /*@ Data for canvas. */
          }
       }
@@ -760,7 +760,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          by the callback function. */
 
          params {
-            @in unsigned int timestamp; /*@ Timestamp of the mouse up event. */
+            @in uint timestamp; /*@ Timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -777,7 +777,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double ang;
             @in double fx;
             @in double fy;
-            @in unsigned int timestamp;
+            @in uint timestamp;
             @in const(void)* data;
          }
       }
@@ -823,7 +823,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fx;
             @in double fy;
             @in Evas_Button_Flags flags;
-            @in unsigned int timestamp;
+            @in uint timestamp;
             @in const(void)* data;
          }
       }
@@ -841,7 +841,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fx;
             @in double fy;
             @in Evas_Button_Flags flags;
-            @in unsigned int timestamp;
+            @in uint timestamp;
             @in const(void)* data;
          }
       }
@@ -891,7 +891,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             the window/surface. */
             @in int y; /*@ The vertical position of the mouse pointer relative to the 0,0 of
             the window/surface. */
-            @in unsigned int timestamp; /*@ The timestamp of the mouse move event. */
+            @in uint timestamp; /*@ The timestamp of the mouse move event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -931,7 +931,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_touch_point_list_nth_id_get()
          @see evas_touch_point_list_nth_state_get() */
 
-         return unsigned int;
+         return uint;
       }
       event_input_multi_down {
          /*@ No description supplied by the EAPI. */
@@ -947,7 +947,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fx;
             @in double fy;
             @in Evas_Button_Flags flags;
-            @in unsigned int timestamp;
+            @in uint timestamp;
             @in const(void)* data;
          }
       }
@@ -1065,7 +1065,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          params {
             @in int b; /*@ The button number. */
             @in Evas_Button_Flags flags; /*@ evas button flags. */
-            @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
+            @in uint timestamp; /*@ The timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -1080,7 +1080,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          params {
             @in int b; /*@ The button number. */
             @in Evas_Button_Flags flags; /*@ The evas button flags. */
-            @in unsigned int timestamp; /*@ The timestamp of the mouse down event. */
+            @in uint timestamp; /*@ The timestamp of the mouse down event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -1183,7 +1183,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
          return int;
          params {
-            @in unsigned int n; /*@ The number of the touched point (0 being the first). */
+            @in uint n; /*@ The number of the touched point (0 being the first). */
          }
       }
       font_path_clear {
@@ -1227,7 +1227,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          @see evas_touch_point_list_nth_state_get() */
 
          params {
-            @in unsigned int n; /*@ The number of the touched point (0 being the first). */
+            @in uint n; /*@ The number of the touched point (0 being the first). */
             @out Evas_Coord x; /*@ The pointer to a Evas_Coord to be filled in. */
             @out Evas_Coord y; /*@ The pointer to a Evas_Coord to be filled in. */
          }
@@ -1323,7 +1323,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double ang;
             @in double fx;
             @in double fy;
-            @in unsigned int timestamp;
+            @in uint timestamp;
             @in const(void)* data;
          }
       }
@@ -1437,7 +1437,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
 
          return Evas_Touch_Point_State;
          params {
-            @in unsigned int n; /*@ The number of the touched point (0 being the first). */
+            @in uint n; /*@ The number of the touched point (0 being the first). */
          }
       }
       focus_in {
@@ -1528,7 +1528,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          by the callback function. */
 
          params {
-            @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
+            @in uint timestamp; /*@ The timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -1586,7 +1586,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in double fx;
             @in double fy;
             @in Evas_Button_Flags flags;
-            @in unsigned int timestamp;
+            @in uint timestamp;
             @in const(void)* data;
          }
       }
@@ -1630,7 +1630,7 @@ class Evas (Eo_Base, Evas_Common_Interface)
          mouse cancel event happens. */
 
          params {
-            @in unsigned int timestamp; /*@ The timestamp of the mouse up event. */
+            @in uint timestamp; /*@ The timestamp of the mouse up event. */
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
@@ -1745,9 +1745,9 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in const(char)* key; /*@ The key pressed. */
             @in const(char)* string; /*@ A String */
             @in const(char)* compose; /*@ The compose string */
-            @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
+            @in uint timestamp; /*@ Timestamp of the mouse up event */
             @in const(void)* data; /*@ Data for canvas. */
-            @in unsigned int keycode; /*@ Key scan code numeric value for canvas. */
+            @in uint keycode; /*@ Key scan code numeric value for canvas. */
          }
       }
       event_feed_key_up_with_keycode {
@@ -1765,9 +1765,9 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in const(char)* key; /*@ The key released. */
             @in const(char)* string; /*@ string */
             @in const(char)* compose; /*@ compose */
-            @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
+            @in uint timestamp; /*@ Timestamp of the mouse up event */
             @in const(void)* data; /*@ Data for canvas. */
-            @in unsigned int keycode; /*@ Key scan code numeric value for canvas. */
+            @in uint keycode; /*@ Key scan code numeric value for canvas. */
          }
       }
    }

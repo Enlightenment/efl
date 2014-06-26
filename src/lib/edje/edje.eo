@@ -902,7 +902,7 @@ class Edje (Evas_Smart_Clipped)
          return Evas_Object *;
          params {
             @in const(char)* part; /*@ The part name */
-            @in unsigned int pos; /*@ The position index of the object (starts counting from 0) */
+            @in uint pos; /*@ The position index of the object (starts counting from 0) */
          }
       }
       part_text_cursor_copy {
@@ -1095,10 +1095,10 @@ class Edje (Evas_Smart_Clipped)
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child_obj; /*@ The object to pack in */
-            @in unsigned short col; /*@ The column to place it in */
-            @in unsigned short row; /*@ The row to place it in */
-            @in unsigned short colspan; /*@ Columns the child will take */
-            @in unsigned short rowspan; /*@ Rows the child will take */
+            @in ushort col; /*@ The column to place it in */
+            @in ushort row; /*@ The row to place it in */
+            @in ushort colspan; /*@ Columns the child will take */
+            @in ushort rowspan; /*@ Rows the child will take */
          }
       }
       part_text_input_panel_language_set {
@@ -1256,7 +1256,7 @@ class Edje (Evas_Smart_Clipped)
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to insert */
-            @in unsigned int pos; /*@ The position where to insert child */
+            @in uint pos; /*@ The position where to insert child */
          }
       }
       part_text_anchor_geometry_get {
@@ -1904,8 +1904,8 @@ class Edje (Evas_Smart_Clipped)
          return Evas_Object *;
          params {
             @in const(char)* part; /*@ The part name */
-            @in unsigned int col; /*@ The column of the child to get */
-            @in unsigned int row; /*@ The row of the child to get */
+            @in uint col; /*@ The column of the child to get */
+            @in uint row; /*@ The row of the child to get */
          }
       }
       part_box_insert_before {

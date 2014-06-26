@@ -295,7 +295,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in unsigned int count; /*@ Vertex count.*/
+            @in uint count; /*@ Vertex count.*/
          }
       }
 

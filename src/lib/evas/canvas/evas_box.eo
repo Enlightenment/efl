@@ -406,7 +406,7 @@ class Evas_Box (Evas_Smart_Clipped)
          legacy null;
          return Evas_Object *;
          params {
-            @in unsigned int pos;
+            @in uint pos;
          }
       }
       remove_at {
@@ -429,7 +429,7 @@ class Evas_Box (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in unsigned int pos; /*@ The numeric position (starting from @c 0) of the child
+            @in uint pos; /*@ The numeric position (starting from @c 0) of the child
             object to be removed */
          }
       }
@@ -462,7 +462,7 @@ class Evas_Box (Evas_Smart_Clipped)
          return Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
-            @in unsigned int pos;
+            @in uint pos;
          }
       }
       insert_before {
@@ -611,7 +611,7 @@ class Evas_Box (Evas_Smart_Clipped)
          return Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
-            @in unsigned int pos; /*@ The numeric position (starting from @c 0) to place the
+            @in uint pos; /*@ The numeric position (starting from @c 0) to place the
             new child object at */
          }
       }
