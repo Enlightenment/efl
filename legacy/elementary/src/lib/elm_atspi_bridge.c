@@ -83,6 +83,7 @@ static void _cache_build(void *obj);
 static void _object_register(Eo *obj, char *path);
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static Eina_Bool _elm_atspi_bridge_key_down_event_notify(void *data, int type, void *event);
+static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 
 EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
@@ -546,7 +547,7 @@ _accessible_interfaces_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    return ret;
 }
 
-static uint64_t 
+static uint64_t
 _elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
 {
    uint64_t ret = 0;
@@ -2674,8 +2675,6 @@ _handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg)
 static Eina_Bool
 _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter, *viter;
    Eldbus_Service_Interface *events = data;
    Elm_Atspi_Event_State_Changed_Data *state_data = event_info;
    char *type_desc;
@@ -2712,30 +2711,16 @@ _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descr
          return EINA_FALSE;
    }
 
-   msg = eldbus_service_signal_new(events, ATSPI_OBJECT_EVENT_STATE_CHANGED);
-   iter = eldbus_message_iter_get(msg);
+   _object_signal_send(events, ATSPI_OBJECT_EVENT_STATE_CHANGED, type_desc, state_data->new_value, 0, NULL);
 
-   eldbus_message_iter_arguments_append(iter, "sii", type_desc, state_data->new_value, 0);
-
-   viter = eldbus_message_iter_container_new(iter, 'v', "i");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
-
-   eldbus_message_iter_arguments_append(viter, "i", 0);
-   eldbus_message_iter_container_close(iter, viter);
-
-   _iter_object_reference_append(iter, _root);
-
-   eldbus_service_signal_send(events, msg);
    DBG("signal sent StateChanged:%s:%d", type_desc, state_data->new_value);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter, *siter, *viter;
    Eldbus_Service_Interface *events = data;
    const char *property = event_info;
    char *path, *atspi_desc;
@@ -2779,27 +2764,11 @@ _property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
         return EINA_FALSE;
      }
 
-   msg = eldbus_service_signal_new(events, ATSPI_OBJECT_EVENT_PROPERTY_CHANGED);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
-
-   iter = eldbus_message_iter_get(msg);
-   siter = eldbus_message_iter_container_new(iter, 'r', NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(siter, EINA_FALSE);
-
-   eldbus_message_iter_arguments_append(siter, "suu", atspi_desc, 0, 0);
-
-   viter = eldbus_message_iter_container_new(siter, 'v', "s");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
-
    path = _path_from_access_object(obj);
-   eldbus_message_iter_arguments_append(viter, "s", path);
+
+   _object_signal_send(events, ATSPI_OBJECT_EVENT_PROPERTY_CHANGED, atspi_desc, 0, 0, "s", path);
    free(path);
 
-   eldbus_message_iter_arguments_append(siter, "v", viter);
-   eldbus_message_iter_container_close(siter, viter);
-
-   eldbus_message_iter_container_close(iter, siter);
-   eldbus_service_signal_send(events, msg);
    DBG("signal sent PropertyChanged:%s", property);
 
    return EINA_TRUE;
@@ -2820,8 +2789,6 @@ static Eina_Bool
 _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eldbus_Service_Interface *events = data;
-   Eldbus_Message_Iter *iter, *viter;
-   Eldbus_Message *msg;
    const char *atspi_desc = NULL;
    Elm_Atspi_Event_Children_Changed_Data *ev_data = event_info;
    int idx;
@@ -2860,32 +2827,17 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
 
    if (!atspi_desc) return EINA_FALSE;
 
-   msg = eldbus_service_signal_new(events, ATSPI_OBJECT_EVENT_CHILDREN_CHANGED);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
+   _object_signal_send(events, ATSPI_OBJECT_EVENT_CHILDREN_CHANGED, atspi_desc, idx, 0, "(so)", eldbus_connection_unique_name_get(_a11y_bus), ev_data->child);
 
-   iter = eldbus_message_iter_get(msg);
-   eldbus_message_iter_arguments_append(iter, "sii", atspi_desc, idx, 0);
-
-   viter = eldbus_message_iter_container_new(iter, 'v', "(so)");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
-
-   _iter_object_reference_append(viter, ev_data->child);
-   eldbus_message_iter_container_close(iter, viter);
-
-   _iter_object_reference_append(iter, _root);
-
-   eldbus_service_signal_send(events, msg);
    DBG("signal sent childrenChanged:%s:%d", atspi_desc, idx);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
+_window_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
    const char *event_desc;
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter, *viter;
    Eldbus_Service_Interface *window = data;
    enum _Atspi_Window_Signals type;
 
@@ -2919,31 +2871,18 @@ _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void 
         return EINA_FALSE;
      }
 
-   msg = eldbus_service_signal_new(window, type);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
+   _object_signal_send(window, type, event_desc, 0, 0, "i", 0);
 
-   iter = eldbus_message_iter_get(msg);
-   eldbus_message_iter_arguments_append(iter, "sii", event_desc, 0, 0);
-
-   viter = eldbus_message_iter_container_new(iter, 'v', "i");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
-
-   eldbus_message_iter_arguments_append(viter, "i", 0);
-   eldbus_message_iter_container_close(iter, viter);
-
-   _iter_object_reference_append(iter, obj);
-
-   eldbus_service_signal_send(window, msg);
    DBG("signal sent Window:%s", event_desc);
+
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
+_selection_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
    const char *event_desc;
    Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter, *viter;
    Eldbus_Service_Interface *selection = data;
 
    enum _Atspi_Object_Signals type;
@@ -2967,18 +2906,7 @@ _selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, vo
    msg = eldbus_service_signal_new(selection, type);
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
 
-   iter = eldbus_message_iter_get(msg);
-   eldbus_message_iter_arguments_append(iter, "sii", event_desc, 0, 0);
-
-   viter = eldbus_message_iter_container_new(iter, 'v', "i");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
-
-   eldbus_message_iter_arguments_append(viter, "i", 0);
-   eldbus_message_iter_container_close(iter, viter);
-
-   _iter_object_reference_append(iter, obj);
-
-   eldbus_service_signal_send(selection, msg);
+   _object_signal_send(selection, type, event_desc, 0, 0, "i", 0);
 
    return EINA_TRUE;
 }
@@ -2986,8 +2914,11 @@ _selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, vo
 static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...)
 {
    Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter , *viter;
+   Eldbus_Message_Iter *iter , *iter_stack[64];
    va_list va;
+   Eo *atspi_obj;
+   char *path;
+   int top = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(infc);
    EINA_SAFETY_ON_NULL_RETURN(minor);
@@ -3002,30 +2933,51 @@ static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, cons
 
    if (variant_sig)
      {
-        viter = eldbus_message_iter_container_new(iter, 'v', variant_sig);
+        iter_stack[top] = eldbus_message_iter_container_new(iter, 'v', variant_sig);
+
         const char *tmp = variant_sig;
         while (*tmp)
           {
              switch (*tmp)
                {
+                case '(':
+                   iter_stack[top + 1] = eldbus_message_iter_container_new(iter_stack[top], 'r', NULL);
+                   top++;
+                   break;
                 case 's':
-                   eldbus_message_iter_basic_append(viter, 's', va_arg(va, char*));
+                   eldbus_message_iter_basic_append(iter_stack[top], 's', va_arg(va, char*));
+                   break;
+                case 'i':
+                   eldbus_message_iter_basic_append(iter_stack[top], 'i', va_arg(va, int));
+                   break;
+                case 'o':
+                   atspi_obj = va_arg(va, Eo*);
+                   path = _path_from_access_object(atspi_obj);
+                   eldbus_message_iter_basic_append(iter_stack[top], 'o', path);
+                   free(path);
+                   break;
+                case ')':
+                   eldbus_message_iter_container_close(iter_stack[top - 1], iter_stack[top]);
+                   top--;
                    break;
                 default:
-                   ERR("Not supported type: %c. Invalid variant signature %s. ", *tmp, variant_sig);
+                   ERR("Not supported d-bus type: %c.", *tmp);
                    break;
                }
              tmp++;
           }
      }
-   else // AT-SPI implementation forces checks on signature even if varint is not used.
+   else // AT-SPI implementation forces checks on variant in signature even if not used.
      {
-        viter  = eldbus_message_iter_container_new(iter, 'v', "i");
-        eldbus_message_iter_basic_append(viter, 'i', 0);
+        iter_stack[top] = eldbus_message_iter_container_new(iter, 'v', "i");
+        eldbus_message_iter_basic_append(iter_stack[top], 'i', 0);
      }
 
    va_end(va);
-   eldbus_message_iter_container_close(iter, viter);
+   if (top != 0)
+     ERR("Invalid d-bus signature: () do not match.");
+
+   eldbus_message_iter_container_close(iter, iter_stack[0]);
 
    _iter_object_reference_append(iter, _root);
 
