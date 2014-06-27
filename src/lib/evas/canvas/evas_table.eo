@@ -1,4 +1,4 @@
-class Evas_Table (Evas_Smart_Clipped)
+class Evas.Table (Evas_Smart_Clipped)
 {
    legacy_prefix: evas_object_table;
    eo_prefix: evas_obj_table;

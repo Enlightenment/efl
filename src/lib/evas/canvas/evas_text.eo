@@ -1,4 +1,4 @@
-class Evas_Text (Evas_Object)
+class Evas.Text (Evas_Object)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;

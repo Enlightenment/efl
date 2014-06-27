@@ -1,4 +1,4 @@
-class Evas_Grid (Evas_Smart_Clipped)
+class Evas.Grid (Evas_Smart_Clipped)
 {
    legacy_prefix: evas_object_grid;
    eo_prefix: evas_obj_grid;

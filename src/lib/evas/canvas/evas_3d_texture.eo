@@ -1,4 +1,4 @@
-class Evas_3D_Texture (Evas_3D_Object, Evas_Common_Interface)
+class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data : Evas_3D_Texture_Data;

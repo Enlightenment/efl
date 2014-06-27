@@ -1,4 +1,4 @@
-class Evas_Textblock (Evas_Object)
+class Evas.Textblock (Evas_Object)
 {
    legacy_prefix: evas_object_textblock;
    eo_prefix: evas_obj_textblock;

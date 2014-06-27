@@ -1,4 +1,4 @@
-class Evas_Object_Smart (Evas_Object, Evas_Signal_Interface)
+class Evas_Object_Smart (Evas_Object, Evas.Signal_Interface)
 {
    eo_prefix: evas_obj_smart;
    data: Evas_Smart_Data;

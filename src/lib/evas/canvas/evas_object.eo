@@ -1,4 +1,4 @@
-abstract Evas_Object (Eo.Base, Evas_Common_Interface)
+abstract Evas_Object (Eo.Base, Evas.Common_Interface)
 {
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;
@@ -1514,7 +1514,7 @@ abstract Evas_Object (Eo.Base, Evas_Common_Interface)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas_Common_Interface.evas.get;
+      Evas.Common_Interface.evas.get;
    }
    events {
        mouse,in; /*@ Mouse In Event */

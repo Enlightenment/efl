@@ -1,4 +1,4 @@
-class Evas_3D_Object (Eo.Base, Evas_Common_Interface)
+class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data: Evas_3D_Object_Data;
@@ -66,7 +66,7 @@ class Evas_3D_Object (Eo.Base, Evas_Common_Interface)
 
    implements {
       Eo.Base.constructor;
-      Evas_Common_Interface.evas.get;
+      Evas.Common_Interface.evas.get;
       virtual.update_notify;
       virtual.change_notify;
    }

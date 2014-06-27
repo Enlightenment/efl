@@ -1,4 +1,4 @@
-class Evas_Textgrid (Evas_Object)
+class Evas.Textgrid (Evas_Object)
 {
    legacy_prefix: evas_object_textgrid;
    eo_prefix: evas_obj_textgrid;

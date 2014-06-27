@@ -1,4 +1,4 @@
-class Evas_Out (Eo.Base)
+class Evas.Out (Eo.Base)
 {
    eo_prefix: evas_out;
    legacy_prefix: evas_output;

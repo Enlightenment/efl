@@ -1,4 +1,4 @@
-interface Evas_Zoomable_Interface (Evas_Signal_Interface)
+interface Evas.Zoomable_Interface (Evas.Signal_Interface)
 {
    data: null;
    events {

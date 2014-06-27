@@ -1,4 +1,4 @@
-class Evas.Canvas (Eo.Base, Evas_Common_Interface)
+class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 {
    legacy_prefix: evas;
    data: Evas_Public_Data;
@@ -1774,7 +1774,7 @@ class Evas.Canvas (Eo.Base, Evas_Common_Interface)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_Common_Interface.evas.get;
+      Evas.Common_Interface.evas.get;
    }
 
 }
