@@ -1859,7 +1859,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    /* To avoid texture bleeding in the texture atlas,
       we adjust texture uv point as much as a half uv point.
-      Especially, This improves the rendering quality when the image has the 
+      Especially, This improves the rendering quality when the image has the
       border area. */
    if (smooth)
      {
