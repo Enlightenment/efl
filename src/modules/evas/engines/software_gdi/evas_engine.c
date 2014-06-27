@@ -324,7 +324,7 @@ eng_output_idle_flush(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data, void *context)
+eng_canvas_alpha_get(void *data EINA_UNUSED, void *context EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -368,7 +368,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em EINA_UNUSED)
 {
   eina_log_domain_unregister(_evas_engine_soft_gdi_log_dom);
   _evas_engine_soft_gdi_log_dom = -1;

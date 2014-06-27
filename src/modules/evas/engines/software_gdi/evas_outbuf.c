@@ -423,8 +423,6 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
         DATA32 *tmp;
         int i;
         int j;
-        int ww;
-        int wh;
         int dx;
         int dy;
         int xmin;
@@ -432,9 +430,6 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
 
         if (!GetClientRect(buf->priv.gdi.window, &rect))
           return;
-
-        ww = rect.right - rect.left;
-        wh = rect.bottom - rect.top;
 
         if (!GetWindowRect(buf->priv.gdi.window, &rect))
           return;
