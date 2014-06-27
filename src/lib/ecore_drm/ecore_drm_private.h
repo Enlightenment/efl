@@ -251,59 +251,6 @@ struct _Ecore_Drm_Sprite
    unsigned int formats[];
 };
 
-struct _Ecore_Drm_Device
-{
-   int id;
-   const char *seat;
-
-   struct 
-     {
-        int fd;
-        const char *name;
-        const char *path;
-        clockid_t clock;
-        Ecore_Fd_Handler *hdlr;
-        Ecore_Idle_Enterer *idler;
-     } drm;
-
-   unsigned int min_width, min_height;
-   unsigned int max_width, max_height;
-
-   unsigned int crtc_count;
-   unsigned int *crtcs;
-   unsigned int crtc_allocator;
-
-   Eina_List *seats;
-   Eina_List *inputs;
-   Eina_List *outputs;
-   Eina_List *sprites;
-
-   struct 
-     {
-        int fd;
-        const char *name;
-        Ecore_Event_Handler *event_hdlr;
-     } tty;
-
-   unsigned int format;
-   Eina_Bool use_hw_accel : 1;
-   Eina_Bool cursors_broken : 1;
-
-   struct xkb_context *xkb_ctx;
-
-   unsigned int window;
-
-/* #ifdef HAVE_GBM */
-/*    struct gbm_device *gbm; */
-/*    struct */
-/*      { */
-/*         EGLDisplay disp; */
-/*         EGLContext ctxt; */
-/*         EGLConfig cfg; */
-/*      } egl; */
-/* #endif */
-};
-
 void _ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes);
 Eina_Bool _ecore_drm_message_receive(int opcode, int *fd, void **data, size_t bytes);
 
