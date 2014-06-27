@@ -21,7 +21,7 @@
 /* local function prototypes */
 
 Outbuf *
-evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface)
+evas_swapbuf_setup(Evas_Engine_Info_Wayland_Shm *info, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface)
 {
    Outbuf *ob = NULL;
 
@@ -39,6 +39,7 @@ evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina
    ob->priv.destination_alpha = alpha;
    ob->priv.wl.shm = wl_shm;
    ob->priv.wl.surface = wl_surface;
+   ob->info = info;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -88,7 +89,7 @@ evas_swapbuf_free(Outbuf *ob)
 }
 
 void 
-evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha)
+evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rotation, Outbuf_Depth depth, Eina_Bool alpha)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -511,7 +512,7 @@ evas_swapbuf_idle_flush(Outbuf *ob EINA_UNUSED)
    /* evas_swapper_buffer_idle_flush(ob->priv.swapper); */
 }
 
-int 
+Render_Engine_Swap_Mode
 evas_swapbuf_state_get(Outbuf *ob)
 {
    int mode = 0;
@@ -521,6 +522,12 @@ evas_swapbuf_state_get(Outbuf *ob)
    if (!ob->priv.swapper) return MODE_FULL;
    mode = evas_swapper_buffer_state_get(ob->priv.swapper);
    return mode;
+}
+
+int
+evas_swapbuf_rotation_get(Outbuf *ob)
+{
+   return ob->rotation;
 }
 
 /* local functions */
