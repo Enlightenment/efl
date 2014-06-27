@@ -1,8 +1,6 @@
 #ifndef EVAS_ENGINE_SOFTWARE_GENERIC_H_
 # define EVAS_ENGINE_SOFTWARE_GENERIC_H_
 
-#include "evas_private.h"
-
 typedef enum _Outbuf_Depth
 {
    OUTBUF_DEPTH_NONE,
