@@ -1008,7 +1008,7 @@ eina_file_map_free(Eina_File *file, void *map)
 }
 
 EAPI Eina_Bool
-eina_file_map_faulted(Eina_File *file, void *map)
+eina_file_map_faulted(Eina_File *file, void *map EINA_UNUSED)
 {
   if (file->virtual) return EINA_FALSE;
   /*
