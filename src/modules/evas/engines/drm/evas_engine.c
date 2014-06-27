@@ -54,7 +54,7 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h, int swap)
    if (info->info.fd < 0)
      {
         /* try to init drm (this includes openening the card & tty) */
-        if (!evas_drm_init(info, 0))
+        if (!evas_drm_init(info))
           {
              if (re->tb) evas_common_tilebuf_free(re->tb);
              free(re);
