@@ -43,7 +43,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    RECT                rect;
    Ecore_Win32_Window *w;
    int                 minimal_width;
-   int                 minimal_height;
+   /* int                 minimal_height; */
 
    w = (Ecore_Win32_Window *)calloc(1, sizeof(Ecore_Win32_Window));
    if (!w)
@@ -64,7 +64,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
      }
 
    minimal_width = GetSystemMetrics(SM_CXMIN);
-   minimal_height = GetSystemMetrics(SM_CYMIN);
+   /* minimal_height = GetSystemMetrics(SM_CYMIN); */
 /*    if (((rect.right - rect.left) < minimal_width) || */
 /*        ((rect.bottom - rect.top) < minimal_height)) */
 /*      { */
