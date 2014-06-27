@@ -89,7 +89,7 @@ _output_setup(int  width,
 /* engine api this module provides */
 
 static void *
-eng_info(Evas *e)
+eng_info(Evas *e EINA_UNUSED)
 {
    Evas_Engine_Info_Software_DDraw *info;
 
@@ -98,7 +98,6 @@ eng_info(Evas *e)
    info->magic.magic = rand();
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
-   e = NULL;
 }
 
 static void
@@ -318,7 +317,7 @@ eng_output_idle_flush(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data, void *context)
+eng_canvas_alpha_get(void *data EINA_UNUSED, void *context EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -361,7 +360,7 @@ module_open(Evas_Module *em)
 }
 
 static void
-module_close(Evas_Module *em)
+module_close(Evas_Module *em EINA_UNUSED)
 {
   eina_log_domain_unregister(_evas_log_dom_module);
 }
