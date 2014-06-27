@@ -174,7 +174,7 @@ _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
    return EINA_FALSE;
 }
 
-static DWORD WINAPI
+static unsigned int WINAPI
 _eina_thread_win32_cb(LPVOID lpParam)
 {
    Eina_Thread_Win32 *tw = lpParam;
