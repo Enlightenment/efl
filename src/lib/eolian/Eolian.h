@@ -113,6 +113,14 @@ typedef enum
    EOLIAN_SCOPE_PROTECTED
 } Eolian_Function_Scope;
 
+typedef enum
+{
+   EOLIAN_TYPE_UNKNOWN_TYPE,
+   EOLIAN_TYPE_REGULAR,
+   EOLIAN_TYPE_POINTER,
+   EOLIAN_TYPE_FUNCTION
+} Eolian_Type_Type;
+
 /*
  * @brief Parse a given .eo file and fill the database.
  *

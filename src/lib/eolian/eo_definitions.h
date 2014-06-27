@@ -6,6 +6,25 @@
 
 /* RET */
 
+typedef struct _eo_type_def Eo_Type_Def;
+struct _eo_type_def
+{
+   const char *name;
+   int         type;
+   union {
+      struct {
+         Eina_List   *subtypes;
+         Eo_Type_Def *base_type;
+      };
+      struct {
+         Eina_List   *arguments;
+         Eo_Type_Def *ret_type;
+      };
+   };
+   Eina_Bool is_const :1;
+   Eina_Bool is_own   :1;
+};
+
 typedef struct _eo_ret_def
 {
    Eolian_Type type;
