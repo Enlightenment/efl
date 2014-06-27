@@ -486,7 +486,6 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 
    for (i = 0; i < res->count_connectors; i++)
      {
-        if (i > 0) break;
         /* get the connector */
         if (!(conn = drmModeGetConnector(dev->drm.fd, res->connectors[i])))
           continue;
