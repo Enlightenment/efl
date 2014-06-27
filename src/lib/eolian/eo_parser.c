@@ -147,88 +147,72 @@ parse_name_list(Eo_Lexer *ls)
    return ls->tmp.str_items;
 }
 
-static void
-parse_type_sub(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool *has_ptr)
+static Eo_Type_Def *
+parse_type(Eo_Lexer *ls)
 {
-   const char *ctype;
-   if (has_ptr) *has_ptr = EINA_FALSE;
+   Eina_Bool    has_struct = EINA_FALSE;
+   Eo_Type_Def *def;
+   const char  *ctype;
    switch (ls->t.kw)
      {
         case KW_const:
           {
              int line;
-             size_t buflen;
-             Eina_Bool is_ptr;
              eo_lexer_get(ls);
              line = ls->line_number;
              check_next(ls, '(');
-             buflen = eina_strbuf_length_get(buf);
-             parse_type_sub(ls, buf, &is_ptr);
+             def = parse_type(ls);
+             def->is_const = EINA_TRUE;
              check_match(ls, ')', '(', line);
-             if (!is_ptr)
-               eina_strbuf_insert(buf, "const ", buflen);
-             else
-               eina_strbuf_append(buf, " const");
+             goto parse_ptr;
+          }
+        case KW_at_own:
+          {
+             int line;
+             eo_lexer_get(ls);
+             line = ls->line_number;
+             check_next(ls, '(');
+             def = parse_type(ls);
+             def->is_own = EINA_TRUE;
+             check_match(ls, ')', '(', line);
              goto parse_ptr;
           }
         case KW_struct:
           eo_lexer_get(ls);
-          eina_strbuf_append(buf, "struct ");
+          has_struct = EINA_TRUE;
           break;
         default:
           break;
      }
+   def = calloc(1, sizeof(Eo_Type_Def));
+   ls->tmp.type_def = def;
+   def->type = EOLIAN_TYPE_REGULAR;
+   def->is_struct = has_struct;
+   def->is_const  = EINA_FALSE;
    check(ls, TOK_VALUE);
    ctype = eo_lexer_get_c_type(ls->t.kw);
-   eina_strbuf_append(buf, ctype ? ctype : ls->t.value);
+   def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
    eo_lexer_get(ls);
 parse_ptr:
-   if (ls->t.token != '*') return;
-   if (has_ptr) *has_ptr = EINA_TRUE;
-   eina_strbuf_append_char(buf, ' ');
    while (ls->t.token == '*')
      {
-        eina_strbuf_append_char(buf, '*');
+        Eo_Type_Def *pdef = calloc(1, sizeof(Eo_Type_Def));
+        ls->tmp.type_def = pdef;
+        pdef->base_type = def;
+        pdef->type = EOLIAN_TYPE_POINTER;
+        def = pdef;
         eo_lexer_get(ls);
      }
-}
-
-static Eolian_Type
-parse_type(Eo_Lexer *ls, Eolian_Type type, Eina_Strbuf *sbuf)
-{
-   Eina_Bool is_own = EINA_FALSE;
-   Eina_Strbuf *buf = sbuf ? sbuf : push_strbuf(ls);
-
-   if (ls->t.kw == KW_at_own)
-     {
-        if (sbuf) eina_strbuf_append(buf, "@own ");
-        is_own = EINA_TRUE;
-        eo_lexer_get(ls);
-     }
-
-   parse_type_sub(ls, buf, NULL);
-
-   if (!sbuf)
-     {
-        type = database_type_append(type, eina_strbuf_string_get(buf), is_own);
-        ls->tmp.type = type;
-        pop_strbuf(ls);
-     }
-
    if (ls->t.token == '<')
      {
         int line = ls->line_number;
-        if (sbuf) eina_strbuf_append(buf, " <");
         eo_lexer_get(ls);
-        parse_type(ls, type, sbuf);
+        def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
         while (test_next(ls, ','))
-           parse_type(ls, type, buf);
-        parse_type(ls, type, sbuf);
+           def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
         check_match(ls, '>', '<', line);
-        if (sbuf) eina_strbuf_append_char(buf, '>');
      }
-
-  return type;
+   return def;
 }
 
 static void
@@ -240,8 +224,8 @@ parse_typedef(Eo_Lexer *ls)
    ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    test_next(ls, ':');
-   ls->tmp.typedef_def->type = parse_type(ls, NULL, NULL);
-   ls->tmp.type = NULL;
+   ls->tmp.typedef_def->type = parse_type(ls);
+   ls->tmp.type_def = NULL;
    check_next(ls, ';');
 }
 
@@ -251,8 +235,8 @@ parse_return(Eo_Lexer *ls)
    Eo_Ret_Def *ret = calloc(1, sizeof(Eo_Ret_Def));
    ls->tmp.ret_def = ret;
    eo_lexer_get(ls);
-   ret->type = parse_type(ls, NULL, NULL);
-   ls->tmp.type = NULL;
+   ret->type = parse_type(ls);
+   ls->tmp.type_def = NULL;
    if (ls->t.token == '(')
      {
         int line = ls->line_number;
@@ -299,8 +283,8 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
         else
            par->way = PARAM_IN;
      }
-   par->type = parse_type(ls, NULL, NULL);
-   ls->tmp.type = NULL;
+   par->type = parse_type(ls);
+   ls->tmp.type_def = NULL;
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
@@ -927,15 +911,45 @@ typedef struct
 } _Parameter_Type;
 
 static void
-_print_type(FILE *f, Eolian_Type tp)
+_print_type(FILE *f, Eo_Type_Def *tp)
 {
    Eina_List *l;
-   Eolian_Type stp;
-   _Parameter_Type *tpp = (_Parameter_Type*)tp;
-   fprintf(f, "%s%s<", tpp->name, tpp->is_own ? "@own " : "");
-   EINA_LIST_FOREACH(tpp->subtypes, l, stp)
-      _print_type(f, stp);
-   fputc('>', f);
+   Eo_Type_Def *stp;
+   if (tp->is_own)
+      fputs("@own(", f);
+   if (tp->is_const)
+      fputs("const(", f);
+   if (tp->is_struct)
+      fputs("struct ", f);
+   if (tp->type == EOLIAN_TYPE_REGULAR)
+      fputs(tp->name, f);
+   else if (tp->type == EOLIAN_TYPE_POINTER)
+     {
+        _print_type(f, tp->base_type);
+        fputc('*', f);
+     }
+   else if (tp->type == EOLIAN_TYPE_FUNCTION)
+     {
+        Eina_Bool first = EINA_TRUE;
+        fputs("fn", f);
+        if (tp->ret_type)
+          {
+             fputs(" -> ", f);
+             _print_type(f, tp->ret_type);
+          }
+        fputs(" (", f);
+        EINA_LIST_FOREACH(tp->arguments, l, stp)
+          {
+             if (!first) fputs(", ", f);
+             first = EINA_FALSE;
+             _print_type(f, stp);
+          }
+        fputc(')', f);
+     }
+   if (tp->is_own)
+      fputc(')', f);
+   if (tp->is_const)
+      fputc(')', f);
 }
 
 static void
@@ -1110,7 +1124,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
         database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
         EINA_LIST_FOREACH(meth->params, m, param)
           {
-             database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+             database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, (Eolian_Type)param->type, param->name, param->comment);
              param->type = NULL;
           }
      }
@@ -1122,14 +1136,14 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
         EINA_LIST_FOREACH(prop->keys, m, param)
           {
              Eolian_Function_Parameter p = database_property_key_add(
-                   foo_id, param->type, param->name, param->comment);
+                   foo_id, (Eolian_Type)param->type, param->name, param->comment);
              database_parameter_nonull_set(p, param->nonull);
              param->type = NULL;
           }
         EINA_LIST_FOREACH(prop->values, m, param)
           {
              Eolian_Function_Parameter p = database_property_value_add(
-                   foo_id, param->type, param->name, param->comment);
+                   foo_id, (Eolian_Type)param->type, param->name, param->comment);
              database_parameter_nonull_set(p, param->nonull);
              param->type = NULL;
           }
@@ -1140,7 +1154,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
                 accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
              if (accessor->ret && accessor->ret->type)
                {
-                  database_function_return_type_set(foo_id, ftype, accessor->ret->type);
+                  database_function_return_type_set(foo_id, ftype, (Eolian_Type)accessor->ret->type);
                   database_function_return_comment_set(foo_id,
                         ftype, accessor->ret->comment);
                   database_function_return_flag_set_as_warn_unused(foo_id,
@@ -1192,7 +1206,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
         database_class_function_add(class, foo_id);
         if (meth->ret)
           {
-             database_function_return_type_set(foo_id, EOLIAN_METHOD, meth->ret->type);
+             database_function_return_type_set(foo_id, EOLIAN_METHOD, (Eolian_Type)meth->ret->type);
              database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
              database_function_return_flag_set_as_warn_unused(foo_id,
                    EOLIAN_METHOD, meth->ret->warn_unused);
@@ -1206,7 +1220,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
         EINA_LIST_FOREACH(meth->params, m, param)
           {
              Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
-                   (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                   (Eolian_Parameter_Dir)param->way, (Eolian_Type)param->type, param->name, param->comment);
              database_parameter_nonull_set(p, param->nonull);
              param->type = NULL;
           }
@@ -1269,7 +1283,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 static Eina_Bool
 _db_fill_type(Eo_Typedef_Def *type_def)
 {
-   database_type_add(type_def->alias, type_def->type);
+   database_type_add(type_def->alias, (Eolian_Type)type_def->type);
    type_def->type = NULL;
    return EINA_TRUE;
 }
