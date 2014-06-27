@@ -728,10 +728,10 @@ class Evas.Box (Evas.Smart_Clipped)
       class.constructor;
       Eo.Base.constructor;
       Evas_Object.smart_data.get;
-      Evas_Object_Smart.calculate;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
-      Evas_Object_Smart.resize;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
    }
    events {
       child,added;
