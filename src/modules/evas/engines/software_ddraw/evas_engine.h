@@ -7,23 +7,11 @@
 #undef WIN32_LEAN_AND_MEAN
 #include <ddraw.h>
 
+#include "../software_generic/Evas_Engine_Software_Generic.h"
+
 typedef struct _Outbuf                Outbuf;
 typedef struct _Outbuf_Region         Outbuf_Region;
 typedef struct _DD_Output_Buffer      DD_Output_Buffer;
-
-enum _Outbuf_Depth
-{
-   OUTBUF_DEPTH_NONE,
-   OUTBUF_DEPTH_INHERIT,
-   OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_555_555_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_444_444_DITHERED,
-   OUTBUF_DEPTH_RGB_16BPP_565_444_DITHERED,
-   OUTBUF_DEPTH_RGB_32BPP_888_8888,
-   OUTBUF_DEPTH_LAST
-};
-
-typedef enum   _Outbuf_Depth          Outbuf_Depth;
 
 struct _Outbuf
 {
