@@ -1,4 +1,4 @@
-class Evas.Image (Evas_Object)
+class Evas.Image (Evas.Object)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;

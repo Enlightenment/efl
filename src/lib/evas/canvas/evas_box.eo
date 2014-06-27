@@ -727,7 +727,7 @@ class Evas.Box (Evas.Smart_Clipped)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas_Object.smart_data.get;
+      Evas.Object.smart_data.get;
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;

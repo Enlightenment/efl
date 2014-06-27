@@ -1,4 +1,4 @@
-abstract Evas_Object (Eo.Base, Evas.Common_Interface)
+abstract Evas.Object (Eo.Base, Evas.Common_Interface)
 {
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;

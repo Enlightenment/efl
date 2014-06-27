@@ -1,4 +1,4 @@
-class Evas.Text (Evas_Object)
+class Evas.Text (Evas.Object)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
@@ -442,6 +442,6 @@ class Evas.Text (Evas_Object)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas_Object.size.set;
+      Evas.Object.size.set;
    }
 }
