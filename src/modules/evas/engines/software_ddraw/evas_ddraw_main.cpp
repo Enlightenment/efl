@@ -22,7 +22,7 @@ evas_software_ddraw_init (HWND    window,
    if (FAILED(res))
      return 0;
 
-   if (buf->priv.dd.fullscreen)
+   if (fullscreen)
      {
         DDSCAPS caps;
 
@@ -63,6 +63,8 @@ evas_software_ddraw_init (HWND    window,
                                                                &buf->priv.dd.surface_back);
         if (FAILED(res))
           goto release_surface_primary;
+
+        buf->priv.dd.fullscreen = fullscreen;
      }
    else
      {
