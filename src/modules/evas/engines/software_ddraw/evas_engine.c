@@ -319,6 +319,7 @@ eng_output_idle_flush(void *data)
 static Eina_Bool
 eng_canvas_alpha_get(void *data EINA_UNUSED, void *context EINA_UNUSED)
 {
+#warning "We need to handle window with alpha channel."
    return EINA_FALSE;
 }
 

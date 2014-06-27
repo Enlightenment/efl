@@ -43,6 +43,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    RECT                rect;
    Ecore_Win32_Window *w;
    int                 minimal_width;
+#warning "We need to handle minimal_height for window like we do with width."
    /* int                 minimal_height; */
 
    w = (Ecore_Win32_Window *)calloc(1, sizeof(Ecore_Win32_Window));

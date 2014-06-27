@@ -976,6 +976,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 static void
 _ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
 {
+#warning "We need to handle window with alpha channel."
    /* Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data; */
    alpha = !!alpha;
    if ((ee->alpha == alpha)) return;

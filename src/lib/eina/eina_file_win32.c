@@ -1010,6 +1010,7 @@ eina_file_map_free(Eina_File *file, void *map)
 EAPI Eina_Bool
 eina_file_map_faulted(Eina_File *file, void *map EINA_UNUSED)
 {
+#warning "We need to handle access to corrupted memory mapped file."
   if (file->virtual) return EINA_FALSE;
   /*
    * FIXME:
