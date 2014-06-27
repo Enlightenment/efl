@@ -1867,6 +1867,19 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         ty2 = ((double)(offsety) + sy + sh) / (double)pt->h;
      }
 
+   /* To avoid texture bleeding in the texture atlas,
+		we adjust texture uv point as much as a half uv point.
+		Especially, This improves the rendering quality when the image has the 
+		border area. */
+   if (smooth)
+     {
+        GLfloat txhu, txhv;   //texture uv half point
+        txhu = (0.5f * (tx2 - tx1)) / (GLfloat) sw;
+        txhv = (0.5f * (ty2 - ty1)) / (GLfloat) sh;
+        tx1 += txhu; tx2 -= txhu;
+        ty1 += txhv; ty2 -= txhv;
+     }
+
    PUSH_VERTEX(pn, x    , y    , 0);
    PUSH_VERTEX(pn, x + w, y    , 0);
    PUSH_VERTEX(pn, x    , y + h, 0);
