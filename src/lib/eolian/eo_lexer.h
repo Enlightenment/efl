@@ -63,9 +63,9 @@ typedef struct _Eo_Node
 {
    unsigned char type;
    union {
-      void         *def;
-      Eo_Class_Def *def_class;
-      Eo_Type_Def  *def_type;
+      void           *def;
+      Eo_Class_Def   *def_class;
+      Eo_Typedef_Def *def_typedef;
    };
 } Eo_Node;
 

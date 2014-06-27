@@ -311,7 +311,7 @@ eo_lexer_free(Eo_Lexer *ls)
                 eo_definitions_class_def_free(nd->def_class);
                 break;
              case NODE_TYPEDEF:
-                eo_definitions_type_def_free(nd->def_type);
+                eo_definitions_typedef_def_free(nd->def_typedef);
                 break;
              default:
                 break;

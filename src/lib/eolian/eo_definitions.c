@@ -114,7 +114,7 @@ eo_definitions_impl_def_free(Eo_Implement_Def *impl)
 }
 
 void
-eo_definitions_type_def_free(Eo_Type_Def *type)
+eo_definitions_typedef_def_free(Eo_Typedef_Def *type)
 {
    if (type->alias)
      eina_stringshare_del(type->alias);
@@ -188,8 +188,8 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    if (tmp->ret_def)
       eo_definitions_ret_free(tmp->ret_def);
 
-   if (tmp->type_def)
-      eo_definitions_type_def_free(tmp->type_def);
+   if (tmp->typedef_def)
+      eo_definitions_typedef_def_free(tmp->typedef_def);
 
    if (tmp->prop)
       eo_definitions_property_def_free(tmp->prop);

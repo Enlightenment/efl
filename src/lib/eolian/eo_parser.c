@@ -234,13 +234,13 @@ parse_type(Eo_Lexer *ls, Eolian_Type type, Eina_Strbuf *sbuf)
 static void
 parse_typedef(Eo_Lexer *ls)
 {
-   ls->tmp.type_def = calloc(1, sizeof(Eo_Type_Def));
+   ls->tmp.typedef_def = calloc(1, sizeof(Eo_Typedef_Def));
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
-   ls->tmp.type_def->alias = eina_stringshare_add(ls->t.value);
+   ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    test_next(ls, ':');
-   ls->tmp.type_def->type = parse_type(ls, NULL, NULL);
+   ls->tmp.typedef_def->type = parse_type(ls, NULL, NULL);
    ls->tmp.type = NULL;
    check_next(ls, ';');
 }
@@ -894,8 +894,8 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         case KW_type:
           {
              parse_typedef(ls);
-             append_node(ls, NODE_TYPEDEF, ls->tmp.type_def);
-             ls->tmp.type_def = NULL;
+             append_node(ls, NODE_TYPEDEF, ls->tmp.typedef_def);
+             ls->tmp.typedef_def = NULL;
              break;
           }
         def:
@@ -927,13 +927,14 @@ typedef struct
 } _Parameter_Type;
 
 static void
-_print_type(FILE *f, _Parameter_Type *tp)
+_print_type(FILE *f, Eolian_Type tp)
 {
    Eina_List *l;
    Eolian_Type stp;
-   fprintf(f, "%s%s<", tp->name, tp->is_own ? "@own " : "");
-   EINA_LIST_FOREACH(tp->subtypes, l, stp)
-      _type_print(f, stp);
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   fprintf(f, "%s%s<", tpp->name, tpp->is_own ? "@own " : "");
+   EINA_LIST_FOREACH(tpp->subtypes, l, stp)
+      _print_type(f, stp);
    fputc('>', f);
 }
 
@@ -1027,7 +1028,7 @@ _dump_class(Eo_Class_Def *kls)
 }
 
 static void
-_dump_type(Eo_Type_Def *type)
+_dump_type(Eo_Typedef_Def *type)
 {
    printf("Typedef: %s ", type->alias);
    _print_type(stdout, type->type);
@@ -1048,7 +1049,7 @@ eo_parser_dump(Eo_Lexer *ls)
                 _dump_class(nd->def_class);
                 break;
              case NODE_TYPEDEF:
-                _dump_type(nd->def_type);
+                _dump_type(nd->def_typedef);
                 break;
              default:
                 break;
@@ -1266,7 +1267,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 }
 
 static Eina_Bool
-_db_fill_type(Eo_Type_Def *type_def)
+_db_fill_type(Eo_Typedef_Def *type_def)
 {
    database_type_add(type_def->alias, type_def->type);
    type_def->type = NULL;
@@ -1321,7 +1322,7 @@ nodeloop:
                    goto error;
                 break;
              case NODE_TYPEDEF:
-                if (!_db_fill_type(nd->def_type))
+                if (!_db_fill_type(nd->def_typedef))
                    goto error;
                 break;
              default:
