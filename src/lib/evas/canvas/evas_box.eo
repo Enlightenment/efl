@@ -1,4 +1,4 @@
-class Evas.Box (Evas_Smart_Clipped)
+class Evas.Box (Evas.Smart_Clipped)
 {
    legacy_prefix: evas_object_box;
    eo_prefix: evas_obj_box;
