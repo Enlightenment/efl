@@ -336,7 +336,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    /* check for valid device */
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
 
-   dev->drm.fd = open(dev->drm.name, O_RDWR);
+   dev->drm.fd = open(dev->drm.name, O_RDWR | O_CLOEXEC);
    if (dev->drm.fd < 0) return EINA_FALSE;
 
    DBG("Opened Device %s : %d", dev->drm.name, dev->drm.fd);
