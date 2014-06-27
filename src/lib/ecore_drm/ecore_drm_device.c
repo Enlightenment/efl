@@ -350,7 +350,15 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
      }
    else
      {
-        ERR("Could not get device capabilities: %m");
+        ERR("Could not get TIMESTAMP_MONOTONIC device capabilities: %m");
+     }
+
+   /* Without DUMB_BUFFER we can't do software rendering on DRM. Fail without it
+    * until we have rock solid hardware accelerated DRM on all drivers */
+   if (drmGetCap(dev->drm.fd, DRM_CAP_DUMB_BUFFER, &caps) < 0 || !caps)
+     {
+        ERR("Could not get DUMB_BUFFER device capabilities: %m");
+        return EINA_FALSE;
      }
 
 /* #ifdef HAVE_GBM */
