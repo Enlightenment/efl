@@ -9,63 +9,6 @@
 static Evas_Engine_Info_Drm *siginfo;
 
 static int 
-_evas_drm_tty_open(Evas_Engine_Info_Drm *info)
-{
-   int tty = STDIN_FILENO;
-
-   /* check if the current stdin is a valid tty */
-   if (!isatty(tty))
-     {
-        /* if not, try to open the curren tty */
-        if ((tty = open("/dev/tty", (O_RDWR | O_CLOEXEC))) < 0)
-          {
-             int tty0 = -1, num = -1;
-             char name[16];
-
-             /* if that fails, try tty0 */
-             if ((tty0 = open("/dev/tty0", (O_WRONLY | O_CLOEXEC))) < 0)
-               {
-                  CRI("Could not open tty0: %m");
-                  return -1;
-               }
-
-             /* try to find a non-opened tty */
-             if ((ioctl(tty0, VT_OPENQRY, &num) < 0) || (num < 0))
-               {
-                  CRI("Could not find a non-opened tty");
-                  close(tty0);
-                  return -1;
-               }
-
-             snprintf(name, sizeof(name), "/dev/tty%d", num);
-
-             /* try to open this tty */
-             if ((tty = open(name, (O_RDWR | O_CLOEXEC))) < 0)
-               {
-                  CRI("Could not open tty: %s", name);
-                  close(tty0);
-                  return -1;
-               }
-
-             /* set flag that evas should close this tty */
-             info->info.own_tty = EINA_TRUE;
-
-             /* close /dev/tty0 */
-             close(tty0);
-          }
-     }
-   else
-     {
-        /* set flag that evas should close this tty */
-        info->info.own_tty = EINA_TRUE;
-     }
-
-   DBG("Opened Tty %d", tty);
-
-   return tty;
-}
-
-static int 
 _evas_drm_crtc_find(int fd, drmModeRes *res, drmModeConnector *conn)
 {
    int crtc = -1;
@@ -317,30 +260,9 @@ evas_drm_init(Evas_Engine_Info_Drm *info)
 
    setvbuf(stdout, NULL, _IONBF, 0);
 
-   /* check if we already opened the tty */
-   if (info->info.tty < 0)
-     {
-        /* try to open the current tty */
-        if ((info->info.tty = _evas_drm_tty_open(info)) < 0) 
-          {
-             /* check if we already opened the card. if so, close it */
-             if ((info->info.fd >= 0) && (info->info.own_fd))
-               {
-                  close(info->info.fd);
-                  info->info.fd = -1;
-               }
-
-             return EINA_FALSE;
-          }
-     }
-
    /* with the tty opened, we need to set it up */
    if (!_evas_drm_tty_setup(info))
      {
-        /* setup of tty failed, close it */
-        if ((info->info.tty >= 0) && (info->info.own_tty))
-          close(info->info.tty);
-
         return EINA_FALSE;
      }
 
@@ -352,13 +274,6 @@ evas_drm_shutdown(Evas_Engine_Info_Drm *info)
 {
    /* check for valid engine info */
    if (!info) return EINA_TRUE;
-
-   /* check if we already opened the tty. if so, close it */
-   if ((info->info.tty >= 0) && (info->info.own_tty))
-     {
-        close(info->info.tty);
-        info->info.tty = -1;
-     }
 
    return EINA_TRUE;
 }
