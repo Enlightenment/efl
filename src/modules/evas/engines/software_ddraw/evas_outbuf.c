@@ -4,8 +4,9 @@
 
 static Eina_List *ddpool = NULL;
 static int ddsize = 0;
-static int ddmemlimit = 10 * 1024 * 1024;
-static int ddcountlimit = 32;
+
+#define ddmemlimit 10 * 1024 * 1024
+#define ddcountlimit 32
 
 static DD_Output_Buffer *
 _find_ddob(int depth, int w, int h, void *data)
@@ -69,7 +70,7 @@ _unfind_ddob(DD_Output_Buffer *ddob)
 }
 
 static void
-_clear_ddob(int sync)
+_clear_ddob(int sync EINA_UNUSED)
 {
    while (ddpool)
      {
@@ -348,8 +349,8 @@ evas_software_ddraw_outbuf_push_updated_region(Outbuf     *buf,
 }
 
 void
-evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf,
-                                                  RGBA_Image *update)
+evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf EINA_UNUSED,
+                                                  RGBA_Image *update EINA_UNUSED)
 {
    /* no need to do anything - they are cleaned up on flush */
 }
