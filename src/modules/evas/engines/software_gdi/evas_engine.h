@@ -6,6 +6,8 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
+#include "../software_generic/Evas_Engine_Software_Generic.h"
+
 extern int _evas_engine_soft_gdi_log_dom;
 
 #ifdef ERR
@@ -32,17 +34,6 @@ extern int _evas_engine_soft_gdi_log_dom;
 # undef CRI
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_soft_gdi_log_dom, __VA_ARGS__)
-
-typedef enum _Outbuf_Depth Outbuf_Depth;
-
-enum _Outbuf_Depth
-{
-   OUTBUF_DEPTH_NONE,
-   OUTBUF_DEPTH_INHERIT,
-   OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED,
-   OUTBUF_DEPTH_RGB_32BPP_888_8888,
-   OUTBUF_DEPTH_LAST
-};
 
 typedef struct BITMAPINFO_GDI     BITMAPINFO_GDI;
 typedef struct _Outbuf            Outbuf;
