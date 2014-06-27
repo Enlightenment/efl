@@ -1,4 +1,4 @@
-mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface, Evas_Object_Smart)
+mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_scrollable;
@@ -512,10 +512,10 @@ mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface, Evas_Object_Smart)
       }
    }
    implements {
-      Eo_Base.constructor;
+      Eo.Base.constructor;
       class.constructor;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
    }
    events {
       changed;

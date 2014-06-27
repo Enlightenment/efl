@@ -1,4 +1,4 @@
-class Elm_App_Server (Eo_Base)
+class Elm_App_Server (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server;
@@ -90,8 +90,8 @@ class Elm_App_Server (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
    events {
       terminate; /*@ Called when application must be terminated. */

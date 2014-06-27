@@ -1,4 +1,4 @@
-class Elm_Button (Elm_Layout, Evas_Clickable_Interface,
+class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_button;
@@ -98,8 +98,8 @@ class Elm_Button (Elm_Layout, Evas_Clickable_Interface,
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.add;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
       Elm_Widget.activate;
       Elm_Widget.focus_next_manager_is;
       Elm_Widget.focus_direction_manager_is;

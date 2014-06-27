@@ -1676,7 +1676,7 @@ _elm_layout_eo_base_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNU
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
-   if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_CLASS))
+   if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
      {
         Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
         const char *file, *edje_group;

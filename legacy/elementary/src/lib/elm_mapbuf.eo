@@ -177,13 +177,13 @@ class Elm_Mapbuf (Elm_Container)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.hide;
-      Evas_Object_Smart.show;
-      Evas_Object_Smart.move;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
-      Evas_Object_Smart.resize;
+      Eo.Base.constructor;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
       Elm_Widget.theme_apply;
       Elm_Widget.sub_object_del;
       Elm_Container.content_get;

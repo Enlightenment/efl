@@ -1,4 +1,4 @@
-class Elm_App_Client_View (Eo_Base)
+class Elm_App_Client_View (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_client_view;
@@ -111,8 +111,8 @@ class Elm_App_Client_View (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
    events {
       state,changed; /*@ State of view changed. */

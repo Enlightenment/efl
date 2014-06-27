@@ -667,9 +667,9 @@ class Elm_Web (Elm_Widget)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
       Elm_Widget.theme_apply;
       Elm_Widget.on_focus;
       Elm_Widget.event;

@@ -371,9 +371,9 @@ class Elm_Prefs (Elm_Widget)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.del;
-      Evas_Object_Smart.add;
+      Eo.Base.constructor;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.add;
       Elm_Widget.focus_next;
    }
    events {

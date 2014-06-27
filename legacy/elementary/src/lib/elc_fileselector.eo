@@ -36,9 +36,9 @@ class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
    implements {
       class.constructor;
       class.destructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
       Elm_Widget.focus_next;
       Elm_Widget.focus_direction_manager_is;
       Elm_Widget.focus_direction;      

@@ -259,8 +259,8 @@ class Elm_Panes (Elm_Layout)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.add;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
       Elm_Widget.focus_next_manager_is;
       Elm_Widget.focus_next;
       Elm_Widget.theme_apply;

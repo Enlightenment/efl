@@ -3,11 +3,11 @@ class Elm_Genlist_Pan (Elm_Pan)
    eo_prefix: elm_obj_genlist_pan;
    implements {
       class.constructor;
-      Eo_Base.destructor;
-      Evas_Object_Smart.calculate;
-      Evas_Object_Smart.move;
-      Evas_Object_Smart.del;
-      Evas_Object_Smart.resize;
+      Eo.Base.destructor;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
       Elm_Pan.content_size.get;
       Elm_Pan.pos;
       Elm_Pan.pos_min.get;

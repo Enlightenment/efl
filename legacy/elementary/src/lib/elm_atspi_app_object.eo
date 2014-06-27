@@ -1,8 +1,8 @@
-class Elm_Atspi_App_Object (Eo_Base, Elm_Interface_Atspi_Accessible)
+class Elm_Atspi_App_Object (Eo.Base, Elm_Interface_Atspi_Accessible)
 {
    data: Elm_Atspi_App_Object_Data;
    implements {
-      Eo_Base.destructor;
+      Eo.Base.destructor;
       Elm_Interface_Atspi_Accessible.name.get;
       Elm_Interface_Atspi_Accessible.description.get;
       Elm_Interface_Atspi_Accessible.description.set;

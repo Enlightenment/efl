@@ -1,4 +1,4 @@
-class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
+class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
 {
    eo_prefix: elm_obj_photo;
    properties {
@@ -107,9 +107,9 @@ class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
       Elm_Widget.theme_apply;
    }
    events {

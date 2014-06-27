@@ -1,4 +1,4 @@
-abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
+abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
 {
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;
@@ -807,20 +807,20 @@ abstract Elm_Widget (Evas_Object_Smart, Elm_Interface_Atspi_Widget)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Eo_Base.dbg_info_get;
-      Evas_Object_Smart.hide;
-      Evas_Object_Smart.calculate;
-      Evas_Object_Smart.clip_unset;
-      Evas_Object_Smart.show;
-      Evas_Object_Smart.color.set;
-      Evas_Object_Smart.move;
-      Evas_Object_Smart.member_del;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
-      Evas_Object_Smart.clip.set;
-      Evas_Object_Smart.member_add;
-      Evas_Object_Smart.resize;
+      Eo.Base.constructor;
+      Eo.Base.dbg_info_get;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.clip_unset;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.color.set;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.member_del;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.clip.set;
+      Evas.Object_Smart.member_add;
+      Evas.Object_Smart.resize;
       virtual.focus_direction;
       virtual.focus_next;
       virtual.parent_widget.get;

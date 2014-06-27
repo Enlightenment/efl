@@ -1,10 +1,10 @@
-mixin Elm_Interface_Atspi_Widget (Elm_Interface_Atspi_Accessible, Elm_Interface_Atspi_Component, Eo_Base)
+mixin Elm_Interface_Atspi_Widget (Elm_Interface_Atspi_Accessible, Elm_Interface_Atspi_Component, Eo.Base)
 {
    eo_prefix: elm_interface_atspi_widget;
    data: Elm_Interface_Atspi_Widget_Data;
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
       Elm_Interface_Atspi_Accessible.name.get;
       Elm_Interface_Atspi_Accessible.description.get;
       Elm_Interface_Atspi_Accessible.description.set;

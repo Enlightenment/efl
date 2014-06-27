@@ -3767,7 +3767,7 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
    const char *target_hl_part = NULL;
    const Evas_Object *edje_obj = NULL;
 
-   if (obj && eo_isa(obj, EDJE_CLASS))
+   if (obj && eo_isa(obj, EDJE_OBJECT_CLASS))
      {
         edje_obj = obj;
         if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
