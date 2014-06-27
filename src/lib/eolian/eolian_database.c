@@ -1146,7 +1146,7 @@ eolian_type_arguments_list_get(Eolian_Type tp)
 {
    _Parameter_Type *tpp = (_Parameter_Type*)tp;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eolian_type_type_get(tp) != EOLIAN_TYPE_FUNCTION, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eolian_type_type_get(tp) == EOLIAN_TYPE_FUNCTION, NULL);
    if (!tpp->arguments) return NULL;
    return eina_list_iterator_new(tpp->arguments);
 }
@@ -1158,7 +1158,7 @@ eolian_type_subtypes_list_get(Eolian_Type tp)
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    tpt = tpp->type;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt != EOLIAN_TYPE_REGULAR && tpt != EOLIAN_TYPE_POINTER, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR || tpt == EOLIAN_TYPE_POINTER, NULL);
    if (!tpp->subtypes) return NULL;
    return eina_list_iterator_new(tpp->subtypes);
 }
@@ -1167,7 +1167,7 @@ EAPI Eolian_Type
 eolian_type_return_type_get(Eolian_Type tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eolian_type_type_get(tp) != EOLIAN_TYPE_FUNCTION, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eolian_type_type_get(tp) == EOLIAN_TYPE_FUNCTION, NULL);
    return ((_Parameter_Type*)tp)->ret_type;
 }
 
@@ -1177,7 +1177,7 @@ eolian_type_base_type_get(Eolian_Type tp)
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    tpt = eolian_type_type_get(tp);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt != EOLIAN_TYPE_REGULAR && tpt != EOLIAN_TYPE_POINTER, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR || tpt == EOLIAN_TYPE_POINTER, NULL);
    return ((_Parameter_Type*)tp)->base_type;
 }
 
