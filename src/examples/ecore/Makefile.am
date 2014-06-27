@@ -32,6 +32,7 @@ AM_CPPFLAGS = \
 EXTRA_PROGRAMS = \
 ecore_animator_example \
 ecore_client_bench \
+ecore_compose_get_example \
 ecore_con_client_example \
 ecore_con_client_simple_example \
 ecore_con_lookup_example \
@@ -106,6 +107,9 @@ ecore_animator_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 
 ecore_client_bench_SOURCES = ecore_client_bench.c
 ecore_client_bench_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+ecore_compose_get_example_SOURCES = ecore_compose_get_example.c
+ecore_compose_get_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 
 ecore_con_client_example_SOURCES = ecore_con_client_example.c
 ecore_con_client_example_LDADD = $(ECORE_CON_COMMON_LDADD)
@@ -235,6 +239,7 @@ ecore_audio_custom.c \
 ecore_audio_playback.c \
 ecore_audio_to_ogg.c \
 ecore_client_bench.c \
+ecore_compose_get_example.c \
 ecore_con_client_example.c \
 ecore_con_client_simple_example.c \
 ecore_con_lookup_example.c \
