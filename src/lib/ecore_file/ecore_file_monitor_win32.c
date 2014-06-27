@@ -124,7 +124,7 @@ _ecore_file_monitor_win32_data_free(Ecore_File_Monitor_Win32_Data *md)
 }
 
 static Eina_Bool
-_ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh)
+_ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
 {
    char                           filename[PATH_MAX];
    PFILE_NOTIFY_INFORMATION       fni;
