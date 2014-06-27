@@ -540,6 +540,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
                         Eina_Bool (*cb_done)(void *data,
                                              Ecore_Fd_Handler *fd_handler))
 {
+#warning "I am pretty sure cb_done should be used."
    char buf[256];
    Ecore_Win32_Handler *handler_read;
    Ecore_Win32_Handler *handler_peek;
