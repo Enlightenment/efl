@@ -455,12 +455,14 @@ _ecore_win32_window_procedure(HWND   window,
          if (GetUpdateRect(window, &rect, FALSE))
            {
               PAINTSTRUCT ps;
-              HDC         hdc;
 
-              hdc = BeginPaint(window, &ps);
-              data->update = rect;
-              _ecore_win32_event_handle_expose(data);
-              EndPaint(window, &ps);
+              /* No need to get a variable, just checking if it succeed HDC hdc; */
+              if (!BeginPaint(window, &ps))
+                {
+                   data->update = rect;
+                   _ecore_win32_event_handle_expose(data);
+                   EndPaint(window, &ps);
+                }
            }
          return 0;
        }
