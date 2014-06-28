@@ -4014,7 +4014,7 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item *item, Eina_List *posi
                                     wisd->emission, wisd->source,
                                     _elm_widget_item_signal_cb);
    else if (!strcmp(eo_class_name_get(eo_class_get(item->view)),
-                    "edje"))
+                    "Edje"))
      edje_object_signal_callback_del_full(item->view,
                                           wisd->emission, wisd->source,
                                           _elm_widget_item_signal_cb, wisd);
@@ -5166,7 +5166,7 @@ _elm_widget_item_signal_callback_add(Elm_Widget_Item *item,
 
    if (_elm_widget_is(item->view))
      elm_object_signal_callback_add(item->view, emission, source, _elm_widget_item_signal_cb, wisd);
-   else if (!strcmp(eo_class_name_get(eo_class_get(item->view)), "edje"))
+   else if (!strcmp(eo_class_name_get(eo_class_get(item->view)), "Edje"))
      edje_object_signal_callback_add(item->view, emission, source, _elm_widget_item_signal_cb, wisd);
    else
      {
