@@ -1928,6 +1928,10 @@ tests/evas/images/HM7Y9233-50.tgv \
 tests/evas/images/HM7Y9233.jpg \
 tests/evas/images/Light-50.tgv \
 tests/evas/images/Light.jpg \
+tests/evas/images/Light_exif.jpg \
+tests/evas/images/Light_exif_90.jpg \
+tests/evas/images/Light_exif_180.jpg \
+tests/evas/images/Light_exif_270.jpg \
 tests/evas/images/Pic1-10.tgv \
 tests/evas/images/Pic1-100.tgv \
 tests/evas/images/Pic1-50.tgv \
