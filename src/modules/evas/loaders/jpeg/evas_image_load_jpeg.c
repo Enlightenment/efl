@@ -1076,8 +1076,8 @@ done:
 
    if (prop->rotated)
      {
-        DATA32             *data1, *data2,  *to, *from;
-        int                 lx, ly, lw, lh,  hw;
+        DATA32 *data1, *data2, *to, *from;
+        int lx, ly, lw, lh, hw;
 
         lw = w;
         lh = h;
@@ -1107,26 +1107,26 @@ done:
 
              if (degree == 90)
                {
-                  to = data1 + lw - 1;
+                  to = data1 + lh - 1;
                   hw = -hw - 1;
                }
              else if (degree == 270)
                {
-                  to = data1 + hw - lw;
-                  lw = -lw;
+                  to = data1 + hw - lh;
+                  lh = -lh;
                   hw = hw + 1;
                }
 
              if (to)
                {
                   from = data2;
-                  for (lx = w; --lx >= 0;)
+                  for (lx = h; --lx >= 0;)
                     {
-                       for (ly = h; --ly >= 0;)
+                       for (ly = w; --ly >= 0;)
                          {
                             *to = *from;
                             from++;
-                            to += lw;
+                            to += lh;
                          }
                        to += hw;
                     }
