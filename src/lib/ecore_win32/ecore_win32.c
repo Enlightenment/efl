@@ -425,6 +425,8 @@ _ecore_win32_window_procedure(HWND   window,
            w->drag.px = GET_X_LPARAM(data_param);
            w->drag.py = GET_Y_LPARAM(data_param);
            w->drag.dragging = 1;
+           if ((DWORD)window_param == HTCAPTION)
+             ecore_win32_window_raise(w);
            return 0;
          }
        return DefWindowProc(window, message, window_param, data_param);

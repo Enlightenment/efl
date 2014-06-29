@@ -139,6 +139,11 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    w->iconified     = 0;
    w->fullscreen    = 0;
 
+   w->drag.x = x;
+   w->drag.y = y;
+   w->drag.w = rect.right - rect.left;
+   w->drag.h = rect.bottom - rect.top;
+
    return w;
 }
 
