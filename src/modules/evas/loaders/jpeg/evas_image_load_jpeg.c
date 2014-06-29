@@ -160,8 +160,8 @@ static const unsigned char JfifHeader[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
 static const unsigned char JfxxHeader[] = {0x4A, 0x46, 0x58, 0x58, 0x00};
 static const unsigned char App0[] = {0xff, 0xe0};
 static const unsigned char App1[] = {0xff, 0xe1};
-static const unsigned char MM[] = {0x49, 0x49};
-static const unsigned char II[] = {0x4d, 0x4d};
+static const unsigned char II[] = {0x49, 0x49};
+static const unsigned char MM[] = {0x4d, 0x4d};
 typedef enum {
      EXIF_BYTE_ALIGN_II,
      EXIF_BYTE_ALIGN_MM
