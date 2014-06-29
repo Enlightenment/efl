@@ -444,8 +444,6 @@ _ecore_win32_window_procedure(HWND   window,
          }
        return DefWindowProc(window, message, window_param, data_param);
        /* GDI notifications */
-     case WM_ERASEBKGND:
-       return 1;
      case WM_PAINT:
        {
          RECT rect;
@@ -612,7 +610,7 @@ ecore_win32_init()
 
    memset (&wc, 0, sizeof (WNDCLASSEX));
    wc.cbSize = sizeof (WNDCLASSEX);
-   wc.style = CS_HREDRAW | CS_VREDRAW;
+   wc.style = 0;
    wc.lpfnWndProc = _ecore_win32_window_procedure;
    wc.cbClsExtra = 0;
    wc.cbWndExtra = 0;
