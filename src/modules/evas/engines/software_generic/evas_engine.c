@@ -2627,7 +2627,12 @@ eng_output_redraws_clear(void *data)
 }
 
 static Tilebuf_Rect *
-_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3, Tilebuf_Rect *r4)
+_merge_rects(Render_Engine_Merge_Mode merge_mode,
+             Tilebuf *tb,
+             Tilebuf_Rect *r1,
+             Tilebuf_Rect *r2,
+             Tilebuf_Rect *r3,
+             Tilebuf_Rect *r4)
 {
    Tilebuf_Rect *r, *rects;
 
@@ -2662,12 +2667,11 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3, 
      }
 
    rects = evas_common_tilebuf_get_render_rects(tb);
-   /*
    // bounding box -> make a bounding box single region update of all regions.
    // yes we could try and be smart and figure out size of regions, how far
    // apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
    // between multiple update regions to render and total pixels to render.
-   if (rects)
+   if (merge_mode == MERGE_BOUNDING && rects)
      {
         int px1, py1, px2, py2;
 
@@ -2690,7 +2694,6 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3, 
              rects->h = py2 - py1;
           }
      }
-   */
    evas_common_tilebuf_clear(tb);
    return rects;
 }
@@ -2726,8 +2729,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         if (re->rects)
           {
              if (re->outbuf_swap_mode_get) mode = re->outbuf_swap_mode_get(re->ob);
-             re->mode = mode;
-             if ((re->lost_back) || (re->mode == MODE_FULL))
+             re->swap_mode = mode;
+             if ((re->lost_back) || (re->swap_mode == MODE_FULL))
                {
                   /* if we lost our backbuffer since the last frame redraw all */
                   re->lost_back = 0;
@@ -2744,20 +2747,20 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              re->rects_prev[1] = re->rects_prev[0];
              re->rects_prev[0] = re->rects;
              re->rects = NULL;
-             switch (re->mode)
+             switch (re->swap_mode)
                {
                 case MODE_FULL:
                 case MODE_COPY: // no prev rects needed
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL, NULL);
+                  re->rects = _merge_rects(re->merge_mode, re->tb, re->rects_prev[0], NULL, NULL, NULL);
                   break;
                 case MODE_DOUBLE: // double mode - only 1 level of prev rect
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL, NULL);
+                  re->rects = _merge_rects(re->merge_mode, re->tb, re->rects_prev[0], re->rects_prev[1], NULL, NULL);
                   break;
                 case MODE_TRIPLE: // triple mode - 2 levels of prev rect
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], NULL);
+                  re->rects = _merge_rects(re->merge_mode, re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], NULL);
                   break;
                 case MODE_QUADRUPLE: // keep all
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], re->rects_prev[3]);
+                  re->rects = _merge_rects(re->merge_mode, re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], re->rects_prev[3]);
                   break;
                 default:
                   break;
@@ -2771,7 +2774,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    rect = (Tilebuf_Rect *)re->cur_rect;
    if (re->rects)
      {
-        switch (re->mode)
+        switch (re->swap_mode)
           {
            case MODE_COPY:
            case MODE_DOUBLE:

@@ -31,6 +31,11 @@ typedef enum {
   MODE_QUADRUPLE
 } Render_Engine_Swap_Mode;
 
+typedef enum {
+  MERGE_BOUNDING,
+  MERGE_FULL
+} Render_Engine_Merge_Mode;
+
 typedef struct _Render_Engine_Software_Generic Render_Engine_Software_Generic;
 typedef struct _Outbuf Outbuf;
 
@@ -64,7 +69,8 @@ struct _Render_Engine_Software_Generic
 
    unsigned int w, h;
 
-   Render_Engine_Swap_Mode mode;
+   Render_Engine_Swap_Mode swap_mode;
+   Render_Engine_Merge_Mode merge_mode;
 
    unsigned char end : 1;
    unsigned char lost_back : 1;
@@ -104,7 +110,8 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
 
    re->w = w;
    re->h = h;
-   re->mode = MODE_FULL;
+   re->swap_mode = MODE_FULL;
+   re->merge_mode = MERGE_FULL;
    re->end = 0;
    re->lost_back = 0;
 
@@ -138,6 +145,13 @@ evas_render_engine_software_generic_update(Render_Engine_Software_Generic *re,
 {
    if (re->ob) re->outbuf_free(re->ob);
    re->ob = ob;
+}
+
+static inline void
+evas_render_engine_software_generic_merge_mode_set(Render_Engine_Software_Generic *re,
+                                                   Render_Engine_Merge_Mode merge_mode)
+{
+   re->merge_mode = merge_mode;
 }
 
 #endif
