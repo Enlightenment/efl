@@ -821,7 +821,7 @@ ecore_win32_window_raise(Ecore_Win32_Window *window)
 
    if (!SetWindowPos(window->window,
                      HWND_TOP, 0, 0, 0, 0,
-                     SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE))
+                     SWP_NOMOVE | SWP_NOSIZE))
      {
         ERR("SetWindowPos() failed");
      }
