@@ -143,6 +143,8 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    w->drag.y = y;
    w->drag.w = rect.right - rect.left;
    w->drag.h = rect.bottom - rect.top;
+   w->drag.current_mouse_x = -32768;
+   w->drag.current_mouse_y = -32768;
 
    return w;
 }

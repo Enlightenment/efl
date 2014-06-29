@@ -114,13 +114,15 @@ struct _Ecore_Win32_Window
    } shape;
 
    struct {
-      DWORD        type;
+      DWORD type;
       int x;
       int y;
       int w;
       int h;
       int px;
       int py;
+      int current_mouse_x;
+      int current_mouse_y;
       unsigned int dragging : 1;
    } drag;
 

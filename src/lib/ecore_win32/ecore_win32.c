@@ -144,9 +144,21 @@ _ecore_win32_window_procedure(HWND   window,
           RECT                rect;
           Ecore_Win32_Window *w = NULL;
 
-          INF("moue move message");
-
           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
+
+          /*
+           * Windows can send several WM_MOUSEMOVE messages, see:
+           * http://blogs.msdn.com/b/oldnewthing/archive/2003/10/01/55108.aspx
+           * so we discard those which have the same mouse coordinates
+           */
+          if ((w->drag.current_mouse_x == GET_X_LPARAM(data_param)) &&
+              (w->drag.current_mouse_y == GET_Y_LPARAM(data_param)))
+            return 0;
+
+          w->drag.current_mouse_x = GET_X_LPARAM(data_param);
+          w->drag.current_mouse_y = GET_Y_LPARAM(data_param);
+
+          INF("mouse move message");
 
           if (w->drag.dragging)
             {
