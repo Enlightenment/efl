@@ -175,7 +175,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
  * @param x The x coordinate of the top-left corner of the window.
  * @param y The y coordinate of the top-left corner of the window.
  * @param width The width of the window.
- * @param height The height of hte window.
+ * @param height The height of the window.
  * @return A newly allocated window.
  *
  * This function creates a new window which parent is @p parent. @p width and
@@ -207,7 +207,7 @@ ecore_win32_window_new(Ecore_Win32_Window *parent,
  * @param x The x coordinate of the top-left corner of the window.
  * @param y The y coordinate of the top-left corner of the window.
  * @param width The width of the window.
- * @param height The height of hte window.
+ * @param height The height of the window.
  * @return A newly allocated window.
  *
  * This function is the same than ecore_win32_window_override_new()
