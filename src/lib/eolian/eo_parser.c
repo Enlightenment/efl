@@ -1,9 +1,6 @@
 #include "eo_parser.h"
 #include "eolian_database.h"
 
-#define FUNC_PUBLIC 0
-#define FUNC_PROTECTED 1
-
 #define CASE_LOCK(ls, var, msg) \
    if (has_##var) \
       eo_lexer_syntax_error(ls, "double " msg); \
@@ -489,7 +486,7 @@ parse_property(Eo_Lexer *ls)
    ls->tmp.prop = prop;
    if (ls->t.kw == KW_protected)
      {
-        prop->scope = FUNC_PROTECTED;
+        prop->scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
      }
    prop->name = eina_stringshare_add(ls->t.value);
@@ -556,7 +553,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
         meth->type = METH_REGULAR;
         if (ls->t.kw == KW_protected)
           {
-             meth->scope = FUNC_PROTECTED;
+             meth->scope = EOLIAN_SCOPE_PROTECTED;
              eo_lexer_get(ls);
           }
         check(ls, TOK_VALUE);
