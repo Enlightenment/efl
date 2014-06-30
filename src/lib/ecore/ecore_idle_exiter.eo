@@ -6,7 +6,7 @@ class Ecore_Idle_Exiter (Eo_Base)
          /*@ Contructor. */
          params {
             @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
    }

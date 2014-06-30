@@ -180,8 +180,8 @@ class Edje (Evas_Smart_Clipped)
             interested in: they'll be ignored by the function. */
          }
          values {
-            const char *file; /*@ The path to the EDJ file to load @p from */
-            const char *group; /*@ The name of the group, in @p file, which implements an
+            const(char)* file; /*@ The path to the EDJ file to load @p from */
+            const(char)* group; /*@ The name of the group, in @p file, which implements an
             Edje object */
          }
       }
@@ -251,8 +251,8 @@ class Edje (Evas_Smart_Clipped)
             return Eina_Bool;
          }
          values {
-            const Eina_File *file; /*@ The Eina_File pointing to the EDJ file to load @p from */
-            const char *group; /*@ The name of the group, in @p file, which implements an
+            const(Eina_File)* file; /*@ The Eina_File pointing to the EDJ file to load @p from */
+            const(char)* group; /*@ The name of the group, in @p file, which implements an
             Edje object */
          }
       }
@@ -275,7 +275,7 @@ class Edje (Evas_Smart_Clipped)
             @see evas_textblock_cursor_paragraph_first */
          }
          values {
-            const char *part; /*@ The part name */
+            const(char)* part; /*@ The part name */
             Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -286,7 +286,7 @@ class Edje (Evas_Smart_Clipped)
             @see evas_textblock_cursor_line_char_last */
          }
          values {
-            const char *part; /*@ The part name */
+            const(char)* part; /*@ The part name */
             Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -301,8 +301,8 @@ class Edje (Evas_Smart_Clipped)
             return Eina_Bool;
          }
          values {
-            const char *text_class; /*@ The text class name */
-            const char *font; /*@ Font name */
+            const(char)* text_class; /*@ The text class name */
+            const(char)* font; /*@ Font name */
             Evas_Font_Size size; /*@ Font Size */
          }
       }
@@ -317,7 +317,7 @@ class Edje (Evas_Smart_Clipped)
             return Eina_Bool;
          }
          values {
-            const char *part; /*@ The part containing the object. */
+            const(char)* part; /*@ The part containing the object. */
             Edje_Cursor cur; /*@ The cursor to adjust. */
             Evas_Coord x; /*@ X Coordinate. */
             Evas_Coord y; /*@ Y Coordinate. */
@@ -330,7 +330,7 @@ class Edje (Evas_Smart_Clipped)
             @see evas_textblock_cursor_paragraph_last */
          }
          values {
-            const char *part; /*@ The part name */
+            const(char)* part; /*@ The part name */
             Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -349,8 +349,8 @@ class Edje (Evas_Smart_Clipped)
             return Eina_Bool;
          }
          values {
-            const char *part; /*@ The part name */
-            const char *text; /*@ The text string */
+            const(char)* part; /*@ The part name */
+            const(char)* text; /*@ The text string */
          }
       }
       item_provider {
@@ -373,7 +373,7 @@ class Edje (Evas_Smart_Clipped)
             @see evas_textblock_cursor_line_char_first */
          }
          values {
-            const char *part; /*@ The part name */
+            const(char)* part; /*@ The part name */
             Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -523,7 +523,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool clear; /*@ If set, will delete subobjs on remove */
          }
       }
@@ -537,8 +537,8 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Edje_External_Param_Type;
          params {
-            @in const char *part; /*@ The part name */
-            @out const char param; /*@ the parameter name to use. */
+            @in const(char)* part; /*@ The part name */
+            @out const(char) param; /*@ the parameter name to use. */
          }
       }
       part_text_select_allow_set {
@@ -552,7 +552,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool allow; /*@ EINA_TRUE to enable, EINA_FALSE otherwise */
          }
       }
@@ -565,9 +565,9 @@ class Edje (Evas_Smart_Clipped)
          "" for other states */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out double val_ret;
          }
       }
@@ -587,7 +587,7 @@ class Edje (Evas_Smart_Clipped)
 
          return void *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Markup_Filter_Cb func; /*@ The function callback to remove */
             @in void *data; /*@ The data passed to the callback function */
          }
@@ -606,7 +606,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x step amount */
             @in double dy; /*@ The y step amount */
          }
@@ -623,7 +623,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part */
+            @in const(char)* part; /*@ The part */
             @out double dx; /*@ The x step increment pointer */
             @out double dy; /*@ The y step increment pointer */
          }
@@ -641,7 +641,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return void *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_select_begin {
@@ -650,7 +650,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_style_user_peek {
@@ -664,9 +664,9 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       signal_callback_del {
@@ -687,8 +687,8 @@ class Edje (Evas_Smart_Clipped)
          legacy null;
          return void *;
          params {
-            @in const char *emission; /*@ The emission string. */
-            @in const char *source; /*@ The source string. */
+            @in const(char)* emission; /*@ The emission string. */
+            @in const(char)* source; /*@ The source string. */
             @in Edje_Signal_Cb func; /*@ The callback function. */
             @in void *data; /*@ The callback function. */
          }
@@ -700,7 +700,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The edje cursor to advance */
          }
       }
@@ -713,8 +713,8 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *style; /*@ The style to set (textblock conventions). */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* style; /*@ The style to set (textblock conventions). */
          }
       }
       part_text_append {
@@ -727,8 +727,8 @@ class Edje (Evas_Smart_Clipped)
          @since 1.1 */
 
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *text; /*@ The text string */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* text; /*@ The text string */
          }
       }
       part_geometry_get {
@@ -749,7 +749,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The Edje part's name */
+            @in const(char)* part; /*@ The Edje part's name */
             @out Evas_Coord x; /*@ A pointer to a variable where to store the part's x
             coordinate */
             @out Evas_Coord y; /*@ A pointer to a variable where to store the part's y
@@ -770,7 +770,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_item_geometry_get {
@@ -785,8 +785,8 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *item; /*@ The item name */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* item; /*@ The item name */
             @out Evas_Coord cx; /*@ Item x return (relative to entry part) */
             @out Evas_Coord cy; /*@ Item y return (relative to entry part) */
             @out Evas_Coord cw; /*@ Item width return */
@@ -803,7 +803,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child_obj; /*@ The object to pack in */
          }
       }
@@ -813,7 +813,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       text_insert_filter_callback_del_full {
@@ -831,7 +831,7 @@ class Edje (Evas_Smart_Clipped)
 
          return void *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Text_Filter_Cb func; /*@ The function callback to remove */
             @in void *data; /*@ The data passed to the callback function */
          }
@@ -843,7 +843,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_input_panel_imdata_set {
@@ -857,8 +857,8 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
-            @in const void *data; /*@ The specific data to be set to the input panel. */
+            @in const(char)* part; /*@ The part name */
+            @in const(void)* data; /*@ The specific data to be set to the input panel. */
             @in int len; /*@ the length of data, in bytes, to send to the input panel */
          }
       }
@@ -870,7 +870,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in void *data; /*@ The specific data to be got from the input panel */
             @in int *len; /*@ The length of data */
          }
@@ -883,8 +883,8 @@ class Edje (Evas_Smart_Clipped)
          cursor position. */
 
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *text; /*@ The text string */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* text; /*@ The text string */
          }
       }
       part_box_remove_at {
@@ -901,8 +901,8 @@ class Edje (Evas_Smart_Clipped)
 
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The part name */
-            @in unsigned int pos; /*@ The position index of the object (starts counting from 0) */
+            @in const(char)* part; /*@ The part name */
+            @in uint pos; /*@ The position index of the object (starts counting from 0) */
          }
       }
       part_text_cursor_copy {
@@ -910,7 +910,7 @@ class Edje (Evas_Smart_Clipped)
          @brief Copy the cursor to another cursor. */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor src; /*@ the cursor to copy from */
             @in Edje_Cursor dst; /*@ the cursor to copy to */
          }
@@ -965,7 +965,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x value */
             @in double dy; /*@ The y value */
          }
@@ -984,7 +984,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out double dx; /*@ The X value pointer */
             @out double dy; /*@ The Y value pointer */
          }
@@ -1004,7 +1004,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.1.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to move */
             @in int pos; /*@ the position of the cursor */
          }
@@ -1019,7 +1019,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return int;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to get the position */
          }
       }
@@ -1048,7 +1048,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return char *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to use */
          }
       }
@@ -1064,7 +1064,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.1 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Input_Panel_Layout layout; /*@ layout type */
          }
       }
@@ -1080,7 +1080,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Edje_Input_Panel_Layout;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_table_pack {
@@ -1093,12 +1093,12 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child_obj; /*@ The object to pack in */
-            @in unsigned short col; /*@ The column to place it in */
-            @in unsigned short row; /*@ The row to place it in */
-            @in unsigned short colspan; /*@ Columns the child will take */
-            @in unsigned short rowspan; /*@ Rows the child will take */
+            @in ushort col; /*@ The column to place it in */
+            @in ushort row; /*@ The row to place it in */
+            @in ushort colspan; /*@ Columns the child will take */
+            @in ushort rowspan; /*@ Rows the child will take */
          }
       }
       part_text_input_panel_language_set {
@@ -1110,7 +1110,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Input_Panel_Lang lang; /*@ the language to be set to the input panel. */
          }
       }
@@ -1126,7 +1126,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Edje_Input_Panel_Lang;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_table_col_row_size_get {
@@ -1140,7 +1140,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out int cols; /*@ Pointer where to store number of columns (can be NULL) */
             @out int rows; /*@ Pointer where to store number of rows (can be NULL) */
          }
@@ -1166,7 +1166,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_external_content_get {
@@ -1179,8 +1179,8 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The name of the part holding the EXTERNAL */
-            @out const char content; /*@ A string identifying which content from the EXTERNAL to get */
+            @in const(char)* part; /*@ The name of the part holding the EXTERNAL */
+            @out const(char) content; /*@ A string identifying which content from the EXTERNAL to get */
          }
       }
       preload {
@@ -1211,7 +1211,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.1.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
          }
       }
@@ -1226,7 +1226,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_select_extend {
@@ -1235,7 +1235,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_box_insert_at {
@@ -1254,9 +1254,9 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to insert */
-            @in unsigned int pos; /*@ The position where to insert child */
+            @in uint pos; /*@ The position where to insert child */
          }
       }
       part_text_anchor_geometry_get {
@@ -1270,10 +1270,10 @@ class Edje (Evas_Smart_Clipped)
          rectangles. */
 
          const;
-         return const Eina_List *;
+         return const(Eina_List)*;
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *anchor; /*@ The anchor name */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* anchor; /*@ The anchor name */
          }
       }
       part_text_cursor_down {
@@ -1282,7 +1282,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -1300,7 +1300,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x page step increment */
             @in double dy; /*@ The y page step increment */
          }
@@ -1316,7 +1316,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out double dx; /*@ The dx page increment pointer */
             @out double dy; /*@ The dy page increment pointer */
          }
@@ -1336,7 +1336,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to prepend */
          }
       }
@@ -1366,8 +1366,8 @@ class Edje (Evas_Smart_Clipped)
          @see edje_object_signal_callback_add() for more on Edje signals. */
 
          params {
-            @in const char *emission; /*@ The signal's "emission" string */
-            @in const char *source; /*@ The signal's "source" string */
+            @in const(char)* emission; /*@ The signal's "emission" string */
+            @in const(char)* source; /*@ The signal's "source" string */
          }
       }
       part_text_input_panel_layout_variation_set {
@@ -1382,7 +1382,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.8 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in int variation; /*@ layout variation type */
          }
       }
@@ -1398,7 +1398,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return int;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       message_send {
@@ -1433,7 +1433,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_object_get {
@@ -1455,9 +1455,9 @@ class Edje (Evas_Smart_Clipped)
          example), though. */
 
          const;
-         return const Evas_Object *;
+         return const(Evas_Object)*;
          params {
-            @in const char *part; /*@ The Edje part's name */
+            @in const(char)* part; /*@ The Edje part's name */
          }
       }
       part_drag_size_set {
@@ -1473,7 +1473,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in double dw; /*@ The drag width */
             @in double dh; /*@ The drag height */
          }
@@ -1489,7 +1489,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out double dw; /*@ The drag width pointer */
             @out double dh; /*@ The drag height pointer */
          }
@@ -1508,7 +1508,7 @@ class Edje (Evas_Smart_Clipped)
 
          return void *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Text_Filter_Cb func; /*@ The function callback to remove */
          }
       }
@@ -1528,7 +1528,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Edje_Drag_Dir;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_unescaped_set {
@@ -1542,8 +1542,8 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *text_to_escape; /*@ The text string */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* text_to_escape; /*@ The text string */
          }
       }
       part_text_unescaped_get {
@@ -1563,7 +1563,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return char *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       signal_callback_add {
@@ -1621,8 +1621,8 @@ class Edje (Evas_Smart_Clipped)
          @see edje_object_signal_callback_del_full() */
 
          params {
-            @in const char *emission; /*@ The signal's "emission" string */
-            @in const char *source; /*@ The signal's "source" string */
+            @in const(char)* emission; /*@ The signal's "emission" string */
+            @in const(char)* source; /*@ The signal's "source" string */
             @in Edje_Signal_Cb func; /*@ The callback function to be executed when the signal is
             emitted. */
             @in void *data; /*@ A pointer to data to pass in to @p func. */
@@ -1636,7 +1636,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_input_panel_return_key_disabled_set {
@@ -1646,7 +1646,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool disabled; /*@ The state */
          }
       }
@@ -1660,7 +1660,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_autocapital_type_set {
@@ -1670,7 +1670,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.1.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Text_Autocapital_Type autocapital_type; /*@ The type of autocapitalization */
          }
       }
@@ -1684,7 +1684,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Edje_Text_Autocapital_Type;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_unswallow {
@@ -1708,7 +1708,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool prediction; /*@ If true, the prediction feature is allowed. */
          }
       }
@@ -1722,7 +1722,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       data_get {
@@ -1761,9 +1761,9 @@ class Edje (Evas_Smart_Clipped)
          @see edje_object_file_set() */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *key; /*@ The data field's key string */
+            @in const(char)* key; /*@ The data field's key string */
          }
       }
       text_markup_filter_callback_add {
@@ -1795,7 +1795,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Markup_Filter_Cb func; /*@ The callback function that will act as markup filter */
             @in void *data; /*@ User provided data to pass to the filter function */
          }
@@ -1822,7 +1822,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to remove */
          }
       }
@@ -1850,7 +1850,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_imf_context_reset {
@@ -1863,7 +1863,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_input_panel_return_key_type_set {
@@ -1875,7 +1875,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.2.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Input_Panel_Return_Key_Type return_key_type; /*@ The type of "return" key on the input panel */
          }
       }
@@ -1891,7 +1891,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Edje_Input_Panel_Return_Key_Type;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_table_child_get {
@@ -1903,9 +1903,9 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Evas_Object *;
          params {
-            @in const char *part; /*@ The part name */
-            @in unsigned int col; /*@ The column of the child to get */
-            @in unsigned int row; /*@ The row of the child to get */
+            @in const(char)* part; /*@ The part name */
+            @in uint col; /*@ The column of the child to get */
+            @in uint row; /*@ The row of the child to get */
          }
       }
       part_box_insert_before {
@@ -1924,9 +1924,9 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to insert */
-            @in const Evas_Object *reference; /*@ The object to be used as reference */
+            @in const(Evas_Object)* reference; /*@ The object to be used as reference */
          }
       }
       part_external_param_set {
@@ -1953,8 +1953,8 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
-            @in const Edje_External_Param *param; /*@ the parameter details, including its name, type and
+            @in const(char)* part; /*@ The part name */
+            @in const(Edje_External_Param)* param; /*@ the parameter details, including its name, type and
             actual value. This pointer should be valid, and the
             parameter must exist in
             #Edje_External_Type.parameters_info, with the exact type,
@@ -1984,7 +1984,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out Edje_External_Param param; /*@ the parameter details. It is used as both input and
             output variable. This pointer should be valid, and the
             parameter must exist in
@@ -2023,7 +2023,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to append */
          }
       }
@@ -2071,7 +2071,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool clear; /*@ Delete objects on removal */
          }
       }
@@ -2090,7 +2090,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x step */
             @in double dy; /*@ The y step */
          }
@@ -2103,8 +2103,8 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *text; /*@ The text string */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* text; /*@ The text string */
          }
       }
       part_text_get {
@@ -2118,9 +2118,9 @@ class Edje (Evas_Smart_Clipped)
          @see edje_object_part_text_set(). */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_input_panel_show_on_demand_set {
@@ -2131,7 +2131,7 @@ class Edje (Evas_Smart_Clipped)
          @since 1.9.0 */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Eina_Bool ondemand; /*@ If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.) */
          }
       }
@@ -2145,7 +2145,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_selection_get {
@@ -2160,9 +2160,9 @@ class Edje (Evas_Smart_Clipped)
          @see edje_object_part_text_select_none() */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_text_cursor_is_format_get {
@@ -2175,7 +2175,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to adjust. */
          }
       }
@@ -2200,7 +2200,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *color_class;
+            @in const(char)* color_class;
             @in int r; /*@ Object Red value */
             @in int g; /*@ Object Green value */
             @in int b; /*@ Object Blue value */
@@ -2236,7 +2236,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *color_class;
+            @in const(char)* color_class;
             @out int r; /*@ Object Red value */
             @out int g; /*@ Object Green value */
             @out int b; /*@ Object Blue value */
@@ -2264,7 +2264,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x step */
             @in double dy; /*@ The y step */
          }
@@ -2275,7 +2275,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -2286,7 +2286,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @out Evas_Coord x; /*@ Cursor X position */
             @out Evas_Coord y; /*@ Cursor Y position */
             @out Evas_Coord w; /*@ Cursor width */
@@ -2302,9 +2302,9 @@ class Edje (Evas_Smart_Clipped)
          This function returns a list of char anchor names. */
 
          const;
-         return const Eina_List *;
+         return const(Eina_List)*;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       text_insert_filter_callback_add {
@@ -2340,7 +2340,7 @@ class Edje (Evas_Smart_Clipped)
          @see edje_object_text_markup_filter_callback_add */
 
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Text_Filter_Cb func; /*@ The callback function that will act as filter */
             @in void *data; /*@ User provided data to pass to the filter function */
          }
@@ -2356,7 +2356,7 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_exists {
@@ -2376,7 +2376,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part's name to check for existence in @p obj's
+            @in const(char)* part; /*@ The part's name to check for existence in @p obj's
             group */
          }
       }
@@ -2395,7 +2395,7 @@ class Edje (Evas_Smart_Clipped)
 
          return void *;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Markup_Filter_Cb func; /*@ The function callback to remove */
          }
       }
@@ -2408,7 +2408,7 @@ class Edje (Evas_Smart_Clipped)
          const;
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to adjust. */
          }
       }
@@ -2423,8 +2423,8 @@ class Edje (Evas_Smart_Clipped)
 
          const;
          params {
-            @in const char *part; /*@ The part name */
-            @in const char *text; /*@ The text string */
+            @in const(char)* part; /*@ The part name */
+            @in const(char)* text; /*@ The text string */
          }
       }
       part_text_cursor_prev {
@@ -2434,7 +2434,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ the edje cursor to work on */
          }
       }
@@ -2447,9 +2447,9 @@ class Edje (Evas_Smart_Clipped)
          This function returns a list of char item names. */
 
          const;
-         return const Eina_List *;
+         return const(Eina_List)*;
          params {
-            @in const char *part; /*@ The part name */
+            @in const(char)* part; /*@ The part name */
          }
       }
       part_swallow {
@@ -2487,7 +2487,7 @@ class Edje (Evas_Smart_Clipped)
 
          return Eina_Bool;
          params {
-            @in const char *part; /*@ The swallow part's name */
+            @in const(char)* part; /*@ The swallow part's name */
             @in Evas_Object *obj_swallow; /*@ The object to occupy that part */
          }
       }

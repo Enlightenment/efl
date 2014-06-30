@@ -6,7 +6,7 @@ class Ecore_Job (Eo_Base)
          /*@ Contructor. */
          params {
             @in Ecore_Cb func;
-            @in const void *data;
+            @in const(void)* data;
          }
       }
    }

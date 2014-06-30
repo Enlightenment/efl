@@ -26,6 +26,20 @@ static const char * const tokens[] =
    KEYWORDS
 };
 
+static const char * const ctypes[] =
+{
+   "char", "unsigned char", "signed char", "short", "unsigned short",
+   "int", "unsigned int", "long", "unsigned long", "long long",
+   "unsigned long long",
+
+   "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t",
+   "int64_t", "uint64_t", "int128_t", "uint128_t",
+
+   "float", "double", "long double",
+
+   "void"
+};
+
 #undef KW
 #undef KWAT
 
@@ -168,6 +182,13 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                      next_char(ls);
                   continue;
                }
+             case '-':
+               {
+                  next_char(ls);
+                  if (ls->current != '>') return '-';
+                  next_char(ls);
+                  return TOK_ARROW;
+               }
              case '\0':
                return TOK_EOF;
              default:
@@ -290,7 +311,7 @@ eo_lexer_free(Eo_Lexer *ls)
                 eo_definitions_class_def_free(nd->def_class);
                 break;
              case NODE_TYPEDEF:
-                eo_definitions_type_def_free(nd->def_type);
+                eo_definitions_typedef_def_free(nd->def_typedef);
                 break;
              default:
                 break;
@@ -406,6 +427,19 @@ const char *
 eo_lexer_keyword_str_get(int kw)
 {
    return tokens[kw + 2];
+}
+
+Eina_Bool
+eo_lexer_is_type_keyword(int kw)
+{
+   return (kw >= KW_char && kw <= KW_ullong);
+}
+
+const char *
+eo_lexer_get_c_type(int kw)
+{
+   if (!eo_lexer_is_type_keyword(kw)) return NULL;
+   return ctypes[kw - KW_char];
 }
 
 static int _init_counter = 0;

@@ -14,7 +14,7 @@ class Ecore_Timer (Eo_Base)
          params {
             @in double in; /*@ The time, in seconds, from now when to go off */
             @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
-            @in const void *data; /*@ A pointer to pass to the callback function as its data pointer */
+            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
          }
       }
       constructor {
@@ -22,7 +22,7 @@ class Ecore_Timer (Eo_Base)
          params {
             @in double in; /*@ The time, in seconds, from when the main loop woke up, to go off */
             @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
-            @in const void *data; /*@ A pointer to pass to the callback function as its data pointer */
+            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
          }
       }
    }

@@ -79,7 +79,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Node
           */
           const;
-         return const Eina_List * ;
+         return const(Eina_List)*;
       }
       position_set {
 
@@ -327,7 +327,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Node
           */
           const;
-         return const Eina_List *;
+         return const(Eina_List)*;
       }
 
       bounding_box_get{

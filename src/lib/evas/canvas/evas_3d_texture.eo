@@ -47,7 +47,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas_Common_Interface)
             @in Evas_3D_Pixel_Format pixel_format; /*@ Pixel format of the data. */
             @in int w; /*@ Width of the data. */
             @in int h; /*@ Height of the data. */
-            @in const void *data; /*@ Pointer to the data. */
+            @in const(void)* data; /*@ Pointer to the data. */
          }
       }
 
@@ -62,8 +62,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas_Common_Interface)
 
          return void ;
          params {
-            @in const char *file; /*@ Path to the image file. */
-            @in const char *key; /*@ Key in the image file. */
+            @in const(char)* file; /*@ Path to the image file. */
+            @in const(char)* key; /*@ Key in the image file. */
          }
       }
 

@@ -18,10 +18,10 @@ class Object (Base) {
          get {
          }
          keys {
-            const char *part;
+            const(char)* part;
          }
          values {
-            @own Eina_List *<int> value;
+            @own(Eina_List*)<int> value;
          }
       }
       b {
@@ -31,7 +31,7 @@ class Object (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            @own Eina_List *<int> value;
+            @own(Eina_List*)<int> value;
          }
       }
    }
@@ -49,7 +49,7 @@ class Object (Base) {
          /*@ comment foo */
          params {
             @in int a;
-            @in const char *b;
+            @in const(char)* b;
          }
          const;
       }

@@ -7,7 +7,7 @@ class Object (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            @own Eina_List *<int> value;
+            @own(Eina_List*)<int> value;
          }
       }
    }

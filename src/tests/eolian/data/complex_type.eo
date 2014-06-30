@@ -2,21 +2,21 @@ class Complex_Type {
    properties {
       a {
          set {
-            return  @own  Eina_List  * <Eina_Array*< @own  Eo * *>>;
+            return  @own(Eina_List*)<Eina_Array*<@own(Eo**)>>;
          }
          get {
          }
          values {
-            @own Eina_List *<int> value;
+            @own(Eina_List*)<int> value;
          }
       }
    }
    methods {
       foo {
          params {
-            @own char *buf;
+            @own(char*) buf;
          }
-         return @own Eina_List *<Eina_Stringshare *>; /*@ comment for method return */
+         return @own(Eina_List*)<Eina_Stringshare *>; /*@ comment for method return */
       }
    }
 }

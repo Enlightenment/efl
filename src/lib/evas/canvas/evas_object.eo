@@ -121,7 +121,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             See the full @ref Example_Evas_Object_Manipulation "example". */
          }
          values {
-            const char *type; /*@ in */
+            const(char)* type; /*@ in */
          }
       }
       size_hint_min {
@@ -312,7 +312,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             @see evas_object_map_set() */
          }
          values {
-            const Evas_Map *map; /*@ new map to use */
+            const(Evas_Map)* map; /*@ new map to use */
          }
       }
       size_hint_aspect {
@@ -664,7 +664,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             See the full @ref Example_Evas_Events "example". */
          }
          values {
-            const char *name; /*@ The given name. */
+            const(char)* name; /*@ The given name. */
          }
       }
       scale {
@@ -1180,7 +1180,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             evas_object_show(obj_tmp);
             }
             @endcode */
-            return const Eina_List * @warn_unused;
+            return const(Eina_List)* @warn_unused;
          }
       }
       smart_parent {
@@ -1288,7 +1288,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
 
          return Eina_Bool @warn_unused;
          params {
-            @in const char *keyname @nonull; /*@ the key to request events for. */
+            @in const(char)* keyname @nonull; /*@ the key to request events for. */
             @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
             trigger the event. */
             @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must @b not be present
@@ -1393,7 +1393,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          const;
          return Eina_Bool @warn_unused;
          params {
-            @in const char *type @nonull; /*@ The @b name (type) of the smart class to check for */
+            @in const(char)* type @nonull; /*@ The @b name (type) of the smart class to check for */
          }
       }
       name_child_find {
@@ -1416,7 +1416,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          const;
          return Evas_Object * @warn_unused;
          params {
-            @in const char *name; /*@ The given name. */
+            @in const(char)* name; /*@ The given name. */
             @in int recurse; /*@ Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.). */
          }
       }
@@ -1440,7 +1440,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_focus_get */
 
          params {
-            @in const char *keyname @nonull; /*@ the key the grab is set for. */
+            @in const(char)* keyname @nonull; /*@ the key the grab is set for. */
             @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
             trigger the event. */
             @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must not not be
@@ -1506,7 +1506,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          const;
          return Eina_Bool @warn_unused;
          params {
-            @in const char *type @nonull; /*@ The type (name string) to check for. Must be the name */
+            @in const(char)* type @nonull; /*@ The type (name string) to check for. Must be the name */
          }
       }
    }

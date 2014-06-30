@@ -141,8 +141,8 @@ class Evas_Table (Evas_Smart_Clipped)
             @note This does not take into account col/row spanning*/
          }
          keys {
-            unsigned short col;
-            unsigned short row;
+            ushort col;
+            ushort row;
          }
          values {
             Evas_Object *child;
@@ -195,10 +195,10 @@ class Evas_Table (Evas_Smart_Clipped)
          return Eina_Bool;
          params {
             @in Evas_Object *child; /*@ The child object to add. */
-            @out unsigned short col; /*@ pointer to store relative-horizontal position to place child. */
-            @out unsigned short row; /*@ pointer to store relative-vertical position to place child. */
-            @out unsigned short colspan; /*@ pointer to store how many relative-horizontal position to use for this child. */
-            @out unsigned short rowspan; /*@ pointer to store how many relative-vertical position to use for this child. */
+            @out ushort col; /*@ pointer to store relative-horizontal position to place child. */
+            @out ushort row; /*@ pointer to store relative-vertical position to place child. */
+            @out ushort colspan; /*@ pointer to store how many relative-horizontal position to use for this child. */
+            @out ushort rowspan; /*@ pointer to store how many relative-vertical position to use for this child. */
          }
       }
       pack {
@@ -216,10 +216,10 @@ class Evas_Table (Evas_Smart_Clipped)
          return Eina_Bool;
          params {
             @in Evas_Object *child @nonull; /*@ The child object to add. */
-            @in unsigned short col; /*@ relative-horizontal position to place child. */
-            @in unsigned short row; /*@ relative-vertical position to place child. */
-            @in unsigned short colspan; /*@ how many relative-horizontal position to use for this child. */
-            @in unsigned short rowspan; /*@ how many relative-vertical position to use for this child. */
+            @in ushort col; /*@ relative-horizontal position to place child. */
+            @in ushort row; /*@ relative-vertical position to place child. */
+            @in ushort colspan; /*@ how many relative-horizontal position to use for this child. */
+            @in ushort rowspan; /*@ how many relative-vertical position to use for this child. */
          }
       }
       unpack {

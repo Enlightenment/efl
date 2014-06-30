@@ -19,7 +19,7 @@ class Evas_Textblock (Evas_Object)
             @return the markup text of the object. */
          }
          values {
-            const char *text; /*@ the markup text to use. */
+            const(char)* text; /*@ the markup text to use. */
          }
       }
       valign {
@@ -69,7 +69,7 @@ class Evas_Textblock (Evas_Object)
             @since 1.1 */
          }
          values {
-            const char* delim; /*@ A null terminated string of delimiters, e.g ",|". */
+            const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
       replace_char {
@@ -78,7 +78,7 @@ class Evas_Textblock (Evas_Object)
             @brief Set the "replacement character" to use for the given textblock object. */
          }
          values {
-            const char *ch; /*@ The charset name. */
+            const(char)* ch; /*@ The charset name. */
          }
       }
       legacy_newline {
@@ -113,7 +113,7 @@ class Evas_Textblock (Evas_Object)
             @return the style of the object. */
          }
          values {
-            const Evas_Textblock_Style *ts; /*@ the style to set. */
+            const(Evas_Textblock_Style)* ts; /*@ the style to set. */
          }
       }
       node_format_first {
@@ -122,7 +122,7 @@ class Evas_Textblock (Evas_Object)
             legacy evas_textblock_node_format_first_get;
          }
          values {
-            const Evas_Object_Textblock_Node_Format *format;
+            const(Evas_Object_Textblock_Node_Format)* format;
          }
       }
       size_formatted {
@@ -156,7 +156,7 @@ class Evas_Textblock (Evas_Object)
             legacy evas_textblock_node_format_last_get;
          }
          values {
-            const Evas_Object_Textblock_Node_Format *format;
+            const(Evas_Object_Textblock_Node_Format)* format;
          }
       }
       cursor {
@@ -227,7 +227,7 @@ class Evas_Textblock (Evas_Object)
 
         @return Replacement character or @c NULL. */
 
-        return const char *;
+        return const(char)*;
       }
       style_user_pop {
          /*@
@@ -254,9 +254,9 @@ class Evas_Textblock (Evas_Object)
          /*@ No description supplied by the EAPI. */
          const;
          legacy evas_textblock_node_format_list_get;
-         return const Eina_List *;
+         return const(Eina_List)*;
          params {
-            @in const char *anchor;
+            @in const(char)* anchor;
          }
       }
       style_user_peek {
@@ -268,7 +268,7 @@ class Evas_Textblock (Evas_Object)
          @since 1.2 */
 
          const;
-         return const Evas_Textblock_Style *;
+         return const(Evas_Textblock_Style)*;
       }
       node_format_remove_pair {
          /*@ Remove a format node and its match. */

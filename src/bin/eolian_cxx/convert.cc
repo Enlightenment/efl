@@ -27,13 +27,16 @@ static std::string
 _resolve_param_type(Eolian_Function_Parameter id, bool is_get)
 {
    Eolian_Parameter_Dir dir;
-   const char *type;
+   Eolian_Type typet;
+   const char *type = NULL;
    bool is_const;
    std::string res;
 
-   eolian_parameter_information_get(id, &dir, &type, NULL, NULL);
+   eolian_parameter_information_get(id, &dir, &typet, NULL, NULL);
+   if (typet) type = eolian_type_c_type_get(typet);
    is_const = eolian_parameter_const_attribute_get(id, is_get);
    res = safe_str(type);
+   eina_stringshare_del(type);
    assert(res != "");
    if (is_const) res = std::string("const ") + res;
    if (dir == EOLIAN_OUT_PARAM || dir == EOLIAN_INOUT_PARAM) res += "*";
@@ -91,8 +94,11 @@ _get_properties(const Eolian_Class klass)
              getter.type = efl::eolian::eo_function::regular_;
              getter.name = name + "_get";
              getter.impl = _dedup_func_name(property, (prefix != "" ? prefix : cxx_classname)) + "_get";
-             std::string ret = safe_str
-               (eolian_function_return_type_get(property, EOLIAN_PROP_GET));
+             Eolian_Type tp = eolian_function_return_type_get(property, EOLIAN_PROP_GET);
+             const char *tps = NULL;
+             if (tp) tps = eolian_type_c_type_get(tp);
+             std::string ret = safe_str(tps);
+             if (tps) eina_stringshare_del(tps);
              if (ret == "") ret = "void";
 
              // if the getter has a single parameter and void return
@@ -137,8 +143,11 @@ _get_properties(const Eolian_Class klass)
              setter.name = name + "_set";
              setter.impl = _dedup_func_name(property, (prefix != "" ? prefix : cxx_classname)) + "_set";
              setter.params = params;
-             setter.ret = safe_str(eolian_function_return_type_get
-                                   (property, EOLIAN_PROP_SET));
+             Eolian_Type tp = eolian_function_return_type_get(property, EOLIAN_PROP_SET);
+             const char *tps = NULL;
+             if (tp) tps = eolian_type_c_type_get(tp);
+             setter.ret = safe_str(tps);
+             if (tps) eina_stringshare_del(tps);
              if (setter.ret == "") setter.ret = "void";
              setter.comment = detail::eolian_property_setter_comment(property);
              container.push_back(setter);
@@ -250,8 +259,11 @@ convert_eolian_functions(efl::eolian::eo_class& cls, const Eolian_Class klass)
         function.type = efl::eolian::eo_function::regular_;
         function.name = safe_str(eolian_function_name_get(eolian_function));
         function.impl = _dedup_func_name(eolian_function, (prefix != "" ? prefix : cls.name));
-        function.ret = safe_str(eolian_function_return_type_get
-                                (eolian_function, EOLIAN_METHOD));
+        Eolian_Type tp = eolian_function_return_type_get(eolian_function, EOLIAN_METHOD);
+        const char *tps = NULL;
+        if (tp) tps = eolian_type_c_type_get(tp);
+        function.ret = safe_str(tps);
+        if (tps) eina_stringshare_del(tps);
         if(function.ret == "") function.ret = "void";
         function.params = _get_params(eolian_parameters_list_get(eolian_function));
         function.comment = detail::eolian_function_comment(eolian_function);
