@@ -406,6 +406,10 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh EINA_UNUSED)
    dev = (Ecore_Fb_Input_Device*)data;
    /* read up to 64 events at once */
    len = read(dev->fd, &ev, sizeof(ev));
+   if (len < 0) {
+       dev->listen = EINA_FALSE;
+       return EINA_FALSE;
+   }
    for(i = 0; i < (int)(len / sizeof(ev[0])); i++)
      {
         switch(ev[i].type)
