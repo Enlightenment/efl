@@ -147,6 +147,32 @@ parse_name_list(Eo_Lexer *ls)
    return ls->tmp.str_items;
 }
 
+static Eo_Type_Def *parse_type(Eo_Lexer *ls);
+
+static Eo_Type_Def *
+parse_function_type(Eo_Lexer *ls)
+{
+   int line;
+   Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
+   ls->tmp.type_def = def;
+   eo_lexer_get(ls);
+   if (ls->t.token == TOK_ARROW)
+     {
+        eo_lexer_get(ls);
+        def->ret_type = parse_type(ls);
+     }
+   line = ls->line_number;
+   check_next(ls, '(');
+   if (ls->t.token != ')')
+     {
+        def->arguments = eina_list_append(def->arguments, parse_type(ls));
+        while (test_next(ls, ','))
+           def->arguments = eina_list_append(def->arguments, parse_type(ls));
+     }
+   check_match(ls, ')', '(', line);
+   return def;
+}
+
 static Eo_Type_Def *
 parse_type(Eo_Lexer *ls)
 {
@@ -181,6 +207,8 @@ parse_type(Eo_Lexer *ls)
           eo_lexer_get(ls);
           has_struct = EINA_TRUE;
           break;
+        case KW_func:
+          return parse_function_type(ls);
         default:
           break;
      }
