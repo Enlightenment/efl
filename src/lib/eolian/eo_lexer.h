@@ -11,7 +11,7 @@
 
 enum Tokens
 {
-   TOK_ARROW = START_CUSTOM, TOK_COMMENT, TOK_EOF, TOK_VALUE
+   TOK_COMMENT = START_CUSTOM, TOK_EOF, TOK_VALUE
 };
 
 #define KEYWORDS KW(class), KW(const), KW(private), KW(protected), \

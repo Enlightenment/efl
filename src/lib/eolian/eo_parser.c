@@ -156,11 +156,10 @@ parse_function_type(Eo_Lexer *ls)
    Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
    ls->tmp.type_def = def;
    eo_lexer_get(ls);
-   if (ls->t.token == TOK_ARROW)
-     {
-        eo_lexer_get(ls);
-        def->ret_type = parse_type(ls);
-     }
+   if (ls->t.kw == KW_void)
+      eo_lexer_get(ls);
+   else
+      def->ret_type = parse_type(ls);
    line = ls->line_number;
    check_next(ls, '(');
    if (ls->t.token != ')')
