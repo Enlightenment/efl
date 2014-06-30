@@ -1,6 +1,8 @@
 
-#include "comments.hh"
+#include "convert_comments.hh"
 #include "safe_strings.hh"
+
+namespace eolian_cxx {
 
 static std::string
 _comment_parameter(Eolian_Function_Parameter param)
@@ -74,41 +76,20 @@ _comment_return(Eolian_Function function,
    return doc;
 }
 
-namespace detail {
-
 std::string
-eolian_class_comment(const Eolian_Class kls)
+convert_comments_class(Eolian_Class const& klass)
 {
-   return safe_str(eolian_class_description_get(kls));
+   return safe_str(eolian_class_description_get(klass));
 }
 
 std::string
-eolian_constructor_comment(Eolian_Function constructor)
-{
-   return _comment_brief_and_params(constructor);
-}
-
-std::string eolian_function_comment(Eolian_Function function)
+convert_comments_function(Eolian_Function const& function,
+                          Eolian_Function_Type func_type)
 {
    std::string doc = _comment_brief_and_params(function);
-   doc += _comment_return(function, EOLIAN_METHOD);
+   if (func_type != eolian_cxx::ctor.value)
+     doc += _comment_return(function, func_type);
    return doc;
 }
 
-std::string eolian_property_getter_comment(Eolian_Function property)
-{
-   std::string doc = _comment_brief_and_params
-     (property, EOLIAN_COMMENT_GET);
-   doc += _comment_return(property, EOLIAN_PROP_GET);
-   return doc;
-}
-
-std::string eolian_property_setter_comment(Eolian_Function property)
-{
-   std::string doc = _comment_brief_and_params
-     (property, EOLIAN_COMMENT_SET);
-   doc += _comment_return(property, EOLIAN_PROP_SET);
-   return doc;
-}
-
-} // namespace detail
+} // namespace eolian_cxx

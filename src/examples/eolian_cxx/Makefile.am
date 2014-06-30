@@ -99,7 +99,7 @@ eolian_cxx_inherit_01_SOURCES = \
 eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
 
 %.eo.hh: %.eo
-	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I$< -o $@
+	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
 
 %.eo.c: %.eo
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
@@ -114,7 +114,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eolian_cxx/examples
-	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eolian_cxx/examples
+	cd $(abs_srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eolian_cxx/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \

@@ -64,7 +64,5 @@ main()
 
    assert(obj1.colour_get() == obj2.colour_get());
 
-   // ColourableFoo obj3(10, 0xc0ffee);
-
    return 0;
 }

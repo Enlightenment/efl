@@ -16,7 +16,7 @@ installed_eoliancxxgrammarheadersdir = $(includedir)/eolian-cxx-@VMAJ@/grammar/
 dist_installed_eoliancxxgrammarheaders_DATA = \
 lib/eolian_cxx/grammar/comment.hh \
 lib/eolian_cxx/grammar/eo_class_constructors_generator.hh \
-lib/eolian_cxx/grammar/eo_class_events.generator.hh \
+lib/eolian_cxx/grammar/eo_class_events_generator.hh \
 lib/eolian_cxx/grammar/eo_class_functions_generator.hh \
 lib/eolian_cxx/grammar/eo_class_generator.hh \
 lib/eolian_cxx/grammar/eo_header_generator.hh \
@@ -26,15 +26,14 @@ lib/eolian_cxx/grammar/tab.hh
 
 ### Binary
 
-
 bin_PROGRAMS += bin/eolian_cxx/eolian_cxx
 
 bin_eolian_cxx_eolian_cxx_SOURCES = \
-    bin/eolian_cxx/comments.cc \
-    bin/eolian_cxx/comments.hh \
+    bin/eolian_cxx/convert_comments.cc \
+    bin/eolian_cxx/convert_comments.hh \
     bin/eolian_cxx/convert.cc \
     bin/eolian_cxx/convert.hh \
-    bin/eolian_cxx/eo_read.h \
+    bin/eolian_cxx/eolian_wrappers.hh \
     bin/eolian_cxx/safe_strings.hh \
     bin/eolian_cxx/eolian_cxx.cc
 

@@ -4,10 +4,10 @@
 
 extern "C"
 {
-#include <Eolian.h>
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+#include <Eolian.h>
 }
 
 namespace efl { namespace eolian {

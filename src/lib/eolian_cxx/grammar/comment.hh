@@ -2,9 +2,10 @@
 #ifndef EOLIAN_CXX_STD_COMMENT_HH
 #define EOLIAN_CXX_STD_COMMENT_HH
 
+#include <string>
+#include <sstream>
 #include <iosfwd>
 #include <ostream>
-#include <sstream>
 
 #include "tab.hh"
 

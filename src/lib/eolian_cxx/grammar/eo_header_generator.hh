@@ -2,10 +2,12 @@
 #ifndef EOLIAN_CXX_STD_EO_HEADER_GENERATOR_HH
 #define EOLIAN_CXX_STD_EO_HEADER_GENERATOR_HH
 
+#include <set>
 #include <algorithm>
 #include <string>
+#include <ostream>
 #include <iosfwd>
-#include <ctype.h>
+#include <cctype>
 
 #include "eo_types.hh"
 #include "tab.hh"
@@ -84,10 +86,11 @@ namespace_tail(std::ostream& out, eo_class const& cls)
 }
 
 inline void
-include_headers(std::ostream& out, eo_generator_options const& opts)
+include_headers(std::ostream& out,
+                eo_class const& cls EINA_UNUSED,
+                eo_generator_options const& opts)
 {
-   out << "#include <Eo.h>" << endl
-       << "#include <Eo.hh>" << endl << endl
+   out << "#include <Eo.hh>" << endl << endl
        << "extern \"C\"" << endl
        << "{" << endl;
    for (auto c_header : opts.c_headers)
@@ -99,14 +102,13 @@ include_headers(std::ostream& out, eo_generator_options const& opts)
      {
        out << "#include \"" << cxx_header << "\"" << endl;
      }
-   out << endl;
 }
 
 inline void
 eo_header_generator(std::ostream& out, eo_class const& cls, eo_generator_options const& opts)
 {
    onceguard_head(out, cls);
-   include_headers(out, opts);
+   include_headers(out, cls, opts);
    namespace_head(out, cls);
    eo_class_generator(out, cls);
    namespace_tail(out, cls);

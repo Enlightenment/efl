@@ -13,42 +13,40 @@
 #include <type_traits>
 #include <cassert>
 
-extern "C"
-{
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-
-#include <Eina.h>
 #include <Eolian.h>
-}
 
 #include <Eina.hh>
 #include <Eolian_Cxx.hh>
 
-#include "eo_read.h"
 #include "convert.hh"
+#include "type_lookup.hh"
+
+#include "convert.hh"
+#include "eolian_wrappers.hh"
 #include "safe_strings.hh"
 
-namespace {
+namespace eolian_cxx {
 
-// Program options.
+/// Program options.
 struct options_type
 {
-   std::vector<std::string> in_srcs;
+   std::vector<std::string> include_dirs;
+   std::string in_file;
    std::string out_file;
    std::string out_dir;
    std::string classname;
-   std::string name_space;
    bool recurse;
    bool generate_all;
 
    options_type()
-     : in_srcs()
-     , out_file("")
-     , out_dir("")
-     , classname("")
-     , name_space("")
+     : include_dirs()
+     , in_file()
+     , out_file()
+     , out_dir()
+     , classname()
      , recurse(false)
      , generate_all(false)
    {}
@@ -56,112 +54,80 @@ struct options_type
 
 efl::eina::log_domain domain("eolian_cxx");
 
-}
-
-static void
-_opt_error(std::string message)
+static bool
+opts_check(eolian_cxx::options_type const& opts)
 {
-   EINA_CXX_DOM_LOG_ERR(::domain) << message << std::endl;
-   exit(EXIT_FAILURE);
-}
-
-static void
-_assert_not_dup(std::string option, std::string value)
-{
-   if (value != "")
+   if (!opts.generate_all && opts.in_file.empty())
      {
-        _opt_error("Option -" + option + " already set (" + value + ")");
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Nothing to generate?" << std::endl;
      }
-}
-
-// Try to guess classname from input filenames.
-// Precondition: Input sources must be loaded into Eolian Database
-// otherwise we can't infer the classname from the .eo files.
-// Precondition: Input options must have opts.classname == "".
-static std::string
-_guess_classname_from_sources(::options_type& opts)
-{
-   for (auto filename : opts.in_srcs)
+   else if (opts.generate_all && !opts.in_file.empty())
      {
-        if (Eolian_Class klass = eolian_class_find_by_file(filename.c_str()))
-          {
-             return eolian_class_full_name_get(klass);
-          }
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Didn't expect to receive input files (" << opts.in_file
+          << ") with parameter -a."
+          << std::endl;
      }
-   return "";
-}
-
-std::pair<std::string, std::string> get_filename_info(std::string path)
-{
-  const size_t last = path.rfind("lib/");
-  if (last != std::string::npos)
-    {
-      path.erase(0, last+4);
-
-      std::string::iterator slash
-        = std::find(path.begin(), path.end(), '/');
-      if(slash != path.end())
-        {
-          std::string namespace_ (path.begin(), slash);
-          std::string filename (slash+1, path.end());
-          return {filename, namespace_};
-        }
-    }
-  std::string::reverse_iterator slash
-        = std::find(path.rbegin(), path.rend(), '/');
-  return {std::string(slash.base(), path.end()), std::string()};
+   else if (opts.generate_all && !opts.out_file.empty())
+     {
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Can't use -a and -o together." << std::endl;
+     }
+   else if (opts.generate_all && opts.include_dirs.empty())
+     {
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Option -a requires at least one include directory (-I)."
+          << std::endl;
+     }
+   else
+     {
+        return true; // valid.
+     }
+   return false;
 }
 
 efl::eolian::eo_generator_options
-_resolve_includes(std::string const& classname)
+generator_options(const Eolian_Class klass)
 {
    efl::eolian::eo_generator_options gen_opts;
-
-   std::string cls_name = classname;
-   Eolian_Class klass = eolian_class_find_by_name(classname.c_str());
-   std::transform(cls_name.begin(), cls_name.end(), cls_name.begin(), ::tolower);
-
-   std::string eo_file = safe_str(eolian_class_file_get(klass));
-   gen_opts.c_headers.push_back(get_filename_info(eo_file).first + ".h");
+   gen_opts.c_headers.push_back(class_base_file(klass) + ".h");
 
    void *cur = NULL;
    const Eina_List *itr, *inheritances = eolian_class_inherits_list_get(klass);
    EINA_LIST_FOREACH(inheritances, itr, cur)
      {
         Eolian_Class ext = eolian_class_find_by_name(static_cast<const char*>(cur));
-        std::string eo_parent_file = safe_str(eolian_class_file_get(ext));
+        std::string eo_parent_file = class_base_file(ext);
         if (!eo_parent_file.empty())
           {
-             std::string filename, namespace_;
-             std::tie(filename, namespace_) = get_filename_info(eo_parent_file);
              // we have our own eo_base.hh
              std::string eo_base_eo = "eo_base.eo";
-             if (filename.length() < eo_base_eo.length() ||
+             if (eo_parent_file.length() < eo_base_eo.length() ||
                  !std::equal(eo_base_eo.begin(), eo_base_eo.end(),
-                             filename.end() - eo_base_eo.length()))
+                             eo_parent_file.end() - eo_base_eo.length()))
                {
-                  gen_opts.cxx_headers.push_back(filename + ".hh");
+                  gen_opts.cxx_headers.push_back(eo_parent_file + ".hh");
                }
           }
         else
           {
-             EINA_CXX_DOM_LOG_ERR(::domain)
-               << "Couldn't find source file for class '" << ext << "'";
+             EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+               << "Couldn't find source file for class '" << ext << "'"
+               << std::endl;
           }
      }
    return gen_opts;
 }
 
-static void
-_generate(const std::string classname, ::options_type const& opts)
+static bool
+generate(const Eolian_Class klass, eolian_cxx::options_type const& opts)
 {
-   efl::eolian::eo_class cls = ::c_to_cxx(classname.c_str());
-   cls.name_space = opts.name_space;
-   efl::eolian::eo_class_validate(cls);
-   efl::eolian::eo_generator_options gen_opts = _resolve_includes(classname);
-   std::string outname = (opts.out_file == "") ? (cls.name + ".eo.hh") : opts.out_file;
-
-   if (opts.out_dir != "")
+   assert(!!klass);
+   efl::eolian::eo_class cls = eolian_cxx::convert_eolian_class(klass);
+   efl::eolian::eo_generator_options gen_opts = generator_options(klass);
+   std::string outname = opts.out_file.empty() ? (class_base_file(klass) + ".hh") : opts.out_file;
+   if (!opts.out_dir.empty())
      {
         outname = opts.out_dir + "/" + outname;
      }
@@ -173,32 +139,89 @@ _generate(const std::string classname, ::options_type const& opts)
      {
         std::ofstream outfile;
         outfile.open(outname);
-        assert(outfile.good());
-        efl::eolian::generate(outfile, cls, gen_opts);
-        outfile.close();
+        if (outfile.good())
+          {
+             efl::eolian::generate(outfile, cls, gen_opts);
+             outfile.close();
+          }
+        else
+          {
+             EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+               << "Can't open output file: " << outname << std::endl;
+             return false;
+          }
      }
+   return true;
 }
 
 static void
-_run(options_type const& opts)
+run(options_type const& opts)
 {
-   if (opts.classname != "")
+   Eolian_Class klass = NULL;
+   if (!opts.classname.empty())
+     klass = class_from_name(opts.classname);
+   else if (!opts.in_file.empty())
+     klass = class_from_file(opts.in_file);
+   if (klass)
      {
-        _generate(opts.classname.c_str(), opts);
+        if (!generate(klass, opts))
+          goto err;
      }
    else
      {
-        efl::eina::range_ptr_list<const char* const>
-          classes(eolian_class_names_list_get());
-        for (auto cls : classes)
+        auto classes = class_list_all();
+        for (const Eolian_Class c : classes)
           {
-             if (opts.classname == "" || opts.classname == cls)
+             if (!generate(c, opts))
                {
-                  _generate(cls, opts);
+                  klass = c;
+                  goto err;
                }
           }
     }
+   return;
+ err:
+   EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+     << "Error generating: " << class_name(klass)
+     << std::endl;
+   std::abort();
 }
+
+static void
+database_load(options_type const& opts)
+{
+   for (auto src : opts.include_dirs)
+     {
+        if (!::eolian_directory_scan(src.c_str()))
+          {
+             EINA_CXX_DOM_LOG_WARN(eolian_cxx::domain)
+               << "Couldn't load eolian from '" << src << "'.";
+          }
+     }
+   if (!::eolian_all_eot_files_parse())
+     {
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Eolian failed parsing eot files";
+        std::abort();
+     }
+   if (!opts.in_file.empty())
+     {
+        if (!::eolian_eo_file_parse(opts.in_file.c_str()))
+          {
+             EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+               << "Failed parsing: " << opts.in_file << ".";
+             std::abort();
+          }
+     }
+   if (!::eolian_all_eo_files_parse())
+     {
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Eolian failed parsing input files";
+        std::abort();
+     }
+}
+
+} // namespace eolian_cxx {
 
 static void
 _print_version()
@@ -209,77 +232,12 @@ _print_version()
 }
 
 static void
-_validate_options(::options_type const& opts)
-{
-   if (opts.in_srcs.size() == 0)
-     {
-        _opt_error("You must provide at least one input source (-I). "
-                   "Either an .eo file or a directory of .eo files.");
-     }
-   else if (opts.out_file != "" && opts.generate_all)
-     {
-        _opt_error("Options -a and -o can't be used together.");
-     }
-   else if (!opts.generate_all && opts.classname == "")
-     {
-        _opt_error("Neither -a nor -c provided. "
-                   "Don't know what to generate.");
-     }
-}
-
-static void
-_resolve_classname(options_type& opts)
-{
-   if (opts.classname == "")
-     {
-        std::string cls = _guess_classname_from_sources(opts);
-        opts.classname = cls;
-     }
-   if (opts.classname == "" && opts.out_file != "")
-     {
-        EINA_CXX_DOM_LOG_ERR(::domain)
-          << "Unknown output class for " << opts.out_file
-          << " : Missing '-c' option?";
-        std::abort();
-     }
-}
-
-static void
-_scan_directories(options_type const& opts)
-{
-   for (auto src : opts.in_srcs)
-     {
-        if (eina_str_has_suffix(src.c_str(), EO_SUFFIX)) continue;
-        eolian_read_from_fs(src.c_str());
-     }
-}
-
-static void
-_load_eot()
-{
-   eolian_all_eot_files_parse();
-}
-
-static void
-_load_classes(options_type const& opts)
-{
-   for (auto src : opts.in_srcs)
-     {
-        if (!eina_str_has_suffix(src.c_str(), EO_SUFFIX)) continue;
-        if ( eolian_read_from_fs(src.c_str()) == NULL)
-          {
-             EINA_CXX_DOM_LOG_WARN(::domain)
-               << "Couldn't load eolian file: " << src;
-          }
-     }
-}
-
-static void
 _usage(const char *progname)
 {
    std::cerr
      << progname
-     << " [options]" << std::endl
+     << " [options] [file.eo]" << std::endl
+     << " A single input file must be provided (unless -a is specified)." << std::endl
      << "Options:" << std::endl
      << "  -a, --all               Generate bindings for all Eo classes." << std::endl
      << "  -c, --class <name>      The Eo class name to generate code for." << std::endl
@@ -293,10 +251,20 @@ _usage(const char *progname)
    exit(EXIT_FAILURE);
 }
 
-static ::options_type
-_read_options(int argc, char **argv)
+static void
+_assert_not_dup(std::string option, std::string value)
 {
-   ::options_type opts;
+   if (value != "")
+     {
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain) <<
+          "Option -" + option + " already set (" + value + ")";
+     }
+}
+
+static eolian_cxx::options_type
+opts_get(int argc, char **argv)
+{
+   eolian_cxx::options_type opts;
 
    const struct option long_options[] =
      {
@@ -304,21 +272,20 @@ _read_options(int argc, char **argv)
        { "out-dir",   required_argument, 0,  'D' },
        { "out-file",  required_argument, 0,  'o' },
        { "class",     required_argument, 0,  'c' },
-       { "namespace", required_argument, 0,  'n' },
        { "all",       no_argument,       0,  'a' },
        { "recurse",   no_argument,       0,  'r' },
        { "version",   no_argument,       0,  'v' },
        { "help",      no_argument,       0,  'h' },
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:n:arvh";
+   const char* options = "I:D:o:c:arvh";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
      {
         if (c == 'I')
           {
-             opts.in_srcs.push_back(optarg);
+             opts.include_dirs.push_back(optarg);
           }
         else if (c == 'D')
           {
@@ -334,11 +301,6 @@ _read_options(int argc, char **argv)
           {
              _assert_not_dup("c", opts.classname);
              opts.classname = optarg;
-          }
-        else if (c == 'n')
-          {
-             _assert_not_dup("n", opts.name_space);
-             opts.name_space = optarg;
           }
         else if (c == 'a')
           {
@@ -358,6 +320,17 @@ _read_options(int argc, char **argv)
              if (argc == 2) exit(EXIT_SUCCESS);
           }
      }
+   if (optind == argc-1)
+     {
+        opts.in_file = argv[optind];
+     }
+
+   if (!eolian_cxx::opts_check(opts))
+     {
+        _usage(argv[0]);
+        std::abort();
+     }
+
    return opts;
 }
 
@@ -365,15 +338,8 @@ int main(int argc, char **argv)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
-#if DEBUG
-   domain.set_level(efl::eina::log_level::debug);
-#endif
-   options_type opts = _read_options(argc, argv);
-   _scan_directories(opts);
-   _load_eot();
-   _load_classes(opts);
-   _resolve_classname(opts);
-   _validate_options(opts);
-   _run(opts);
+   eolian_cxx::options_type opts = opts_get(argc, argv);
+   eolian_cxx::database_load(opts);
+   eolian_cxx::run(opts);
    return 0;
 }

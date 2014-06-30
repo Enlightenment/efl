@@ -4,6 +4,16 @@
 
 #include "eo_types.hh"
 
-efl::eolian::eo_class c_to_cxx(const char *classname);
+namespace eolian_cxx
+{
+
+///
+/// @brief Retrieve a efl::eolian::eo_class from an Eolian_Class name.
+/// @param cls The Eolian class.
+/// @return The @p eo_class describing @p classname.
+///
+efl::eolian::eo_class convert_eolian_class(Eolian_Class klass);
+
+}
 
 #endif // EOLIAN_CXX_EOLIAN_CONVERT_CLASSES_HH
