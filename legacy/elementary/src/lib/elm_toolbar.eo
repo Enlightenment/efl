@@ -349,10 +349,10 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The toolbar item to insert before. */
-            @in const char *icon; /*@ A string with icon name or the absolute path of an image file. */
-            @in const char *label; /*@ The label of the item. */
+            @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
+            @in const(char)* label; /*@ The label of the item. */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The data to associate with the item for related callbacks. */
+            @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_insert_after {
@@ -389,10 +389,10 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The toolbar item to insert after. */
-            @in const char *icon; /*@ A string with icon name or the absolute path of an image file. */
-            @in const char *label; /*@ The label of the item. */
+            @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
+            @in const(char)* label; /*@ The label of the item. */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The data to associate with the item for related callbacks. */
+            @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_append {
@@ -428,10 +428,10 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
 
          return Elm_Object_Item *;
          params {
-            @in const char *icon; /*@ A string with icon name or the absolute path of an image file. */
-            @in const char *label; /*@ The label of the item. */
+            @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
+            @in const(char)* label; /*@ The label of the item. */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The data to associate with the item for related callbacks. */
+            @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
       items_count {
@@ -441,7 +441,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
          @ingroup Toolbar */
 
          const;
-         return unsigned int;
+         return uint;
       }
       item_prepend {
          /*@
@@ -476,10 +476,10 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
 
          return Elm_Object_Item *;
          params {
-            @in const char *icon; /*@ A string with icon name or the absolute path of an image file. */
-            @in const char *label; /*@ The label of the item. */
+            @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
+            @in const(char)* label; /*@ The label of the item. */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The data to associate with the item for related callbacks. */
+            @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_find_by_label {
@@ -494,7 +494,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
          const;
          return Elm_Object_Item *;
          params {
-            @in const char *label; /*@ The label of the item to find. */
+            @in const(char)* label; /*@ The label of the item to find. */
          }
       }
    }

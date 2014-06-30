@@ -48,7 +48,7 @@ class Elm_Dayselector (Elm_Layout)
             @ingroup Dayselector */
          }
          values {
-            unsigned int length; /*@ Weekend length, number of days as an integer. */
+            uint length; /*@ Weekend length, number of days as an integer. */
          }
       }
       weekend_start {
@@ -105,7 +105,7 @@ class Elm_Dayselector (Elm_Layout)
          @ingroup Dayselector */
 
          params {
-            @in const char **weekdays; /*@ Array of seven strings to be used as weekday names.
+            @in const(char)* *weekdays; /*@ Array of seven strings to be used as weekday names.
             @warning It must have 7 elements, or it will access invalid memory.
             @warning The strings must be NULL terminated ('@\0'). */
          }

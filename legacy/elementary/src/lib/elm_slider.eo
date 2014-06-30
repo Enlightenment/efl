@@ -104,7 +104,7 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value)
             @ingroup Slider */
          }
          values {
-            const char *indicator; /*@ The format string for the indicator display. */
+            const(char)* indicator; /*@ The format string for the indicator display. */
          }
       }
       inverted {
@@ -240,7 +240,7 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value)
             @ingroup Slider */
          }
          values {
-            const char *units; /*@ The format string for the unit display. */
+            const(char)* units; /*@ The format string for the unit display. */
          }
       }
       indicator_show_on_focus {

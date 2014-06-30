@@ -33,7 +33,7 @@ class Elm_Plug (Elm_Widget)
 
          return Eina_Bool;
          params {
-            @in const char *svcname; /*@ The service name to connect to set up by the socket. */
+            @in const(char)* svcname; /*@ The service name to connect to set up by the socket. */
             @in int svcnum; /*@ The service number to connect to (set up by socket). */
             @in Eina_Bool svcsys; /*@ Boolean to set if the service is a system one or not (set up by socket). */
          }

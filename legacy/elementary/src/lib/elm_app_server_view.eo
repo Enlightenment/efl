@@ -6,7 +6,7 @@ class Elm_App_Server_View (Eo_Base)
       constructor {
          /*@ Class constructor of elm_app_server_view */
          params {
-            @in const char *id; /*@ identifier of view */
+            @in const(char)* id; /*@ identifier of view */
          }
       }
    }
@@ -35,7 +35,7 @@ class Elm_App_Server_View (Eo_Base)
          get {
          }
          values {
-            const char *icon;
+            const(char)* icon;
          }
       }
       title {
@@ -44,7 +44,7 @@ class Elm_App_Server_View (Eo_Base)
          get {
          }
          values {
-            const char *title;
+            const(char)* title;
          }
       }
       window {
@@ -72,7 +72,7 @@ class Elm_App_Server_View (Eo_Base)
          get {
          }
          values {
-            const char *ret;
+            const(char)* ret;
          }
       }
       pixels {
@@ -83,10 +83,10 @@ class Elm_App_Server_View (Eo_Base)
             /*@ Set icon to application, using the raw pixels of image. */
          }
          values {
-            unsigned int w;
-            unsigned int h;
+            uint w;
+            uint h;
             Eina_Bool has_alpha;
-            const unsigned char *pixels;
+            const(uchar)* pixels;
          }
       }
    }

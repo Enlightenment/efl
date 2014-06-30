@@ -192,9 +192,9 @@ class Elm_Index (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const char *letter; /*@ Letter under which the item should be indexed */
+            @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is selected. */
-            @in const void *data; /*@ The item data to set for the index's item */
+            @in const(void)* data; /*@ The item data to set for the index's item */
          }
       }
       item_clear {
@@ -228,9 +228,9 @@ class Elm_Index (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The index item to insert after. */
-            @in const char *letter; /*@ Letter under which the item should be indexed */
+            @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The item data to set for the index's item */
+            @in const(void)* data; /*@ The item data to set for the index's item */
          }
       }
       item_find {
@@ -243,7 +243,7 @@ class Elm_Index (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const void *data; /*@ The item data pointed to by the desired index item */
+            @in const(void)* data; /*@ The item data pointed to by the desired index item */
          }
       }
       item_insert_before {
@@ -267,9 +267,9 @@ class Elm_Index (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The index item to insert after. */
-            @in const char *letter; /*@ Letter under which the item should be indexed */
+            @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The item data to set for the index's item */
+            @in const(void)* data; /*@ The item data to set for the index's item */
          }
       }
       item_append {
@@ -289,9 +289,9 @@ class Elm_Index (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const char *letter; /*@ Letter under which the item should be indexed */
+            @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is selected. */
-            @in const void *data; /*@ The item data to set for the index's item */
+            @in const(void)* data; /*@ The item data to set for the index's item */
          }
       }
       selected_item_get {
@@ -326,9 +326,9 @@ class Elm_Index (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const char *letter; /*@ Letter under which the item should be indexed */
+            @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */
-            @in const void *data; /*@ The item data to set for the index's item */
+            @in const(void)* data; /*@ The item data to set for the index's item */
             @in Eina_Compare_Cb cmp_func; /*@ The comparing function to be used to sort index
             items <b>by index item handles</b> */
             @in Eina_Compare_Cb cmp_data_func; /*@ A @b fallback function to be called for the

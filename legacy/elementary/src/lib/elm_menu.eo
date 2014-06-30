@@ -24,7 +24,7 @@ class Elm_Menu (Elm_Widget, Evas_Clickable_Interface)
             @return An Eina_List* of @p item's items
 
             @ingroup Menu */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
       first_item {
@@ -79,10 +79,10 @@ class Elm_Menu (Elm_Widget, Evas_Clickable_Interface)
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item *parent; /*@ The parent menu item (optional) */
-            @in const char *icon; /*@ An icon display on the item. The icon will be destroyed by the menu. */
-            @in const char *label; /*@ The label of the item. */
+            @in const(char)* icon; /*@ An icon display on the item. The icon will be destroyed by the menu. */
+            @in const(char)* label; /*@ The label of the item. */
             @in Evas_Smart_Cb func; /*@ Function called when the user select the item. */
-            @in const void *data; /*@ Data sent by the callback. */
+            @in const(void)* data; /*@ Data sent by the callback. */
          }
       }
       close {

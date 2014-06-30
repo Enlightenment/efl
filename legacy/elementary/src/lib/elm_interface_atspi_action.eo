@@ -9,7 +9,7 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Gets action name for given id */
          }
          values {
-            const char *name;
+            const(char)* name;
          }
          keys {
             int id;
@@ -20,7 +20,7 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Gets localized action name for given id */
          }
          values {
-            const char *name;
+            const(char)* name;
          }
          keys {
             int id;
@@ -35,7 +35,7 @@ mixin Elm_Interface_Atspi_Action ()
             return Eina_Bool;
          }
          values {
-            const char *description;
+            const(char)* description;
          }
          keys {
             int id;
@@ -63,7 +63,7 @@ mixin Elm_Interface_Atspi_Action ()
          params {
             @in  int id;
          }
-         return const char *;
+         return const(char)*;
       }
    }
    implements {

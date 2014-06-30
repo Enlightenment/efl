@@ -237,7 +237,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            const char *style; /*@ The style to use for the underlying hover */
+            const(char)* style; /*@ The style to use for the underlying hover */
          }
       }
       single_line {
@@ -322,7 +322,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            const char *file; /*@ The path to the file to load and save */
+            const(char)* file; /*@ The path to the file to load and save */
             Elm_Text_Format format; /*@ The file format */
          }
       }
@@ -735,7 +735,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
             @return The selected text within the entry or NULL on failure
 
             @ingroup Entry */
-            return const char *;
+            return const(char)*;
          }
       }
       cursor_is_visible_format {
@@ -874,7 +874,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
          @since 1.7 */
 
          params {
-            @in const char *style; /*@ The style user to push */
+            @in const(char)* style; /*@ The style user to push */
          }
       }
       item_provider_remove {
@@ -903,7 +903,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
          @since 1.7 */
 
          const;
-         return const char *;
+         return const(char)*;
       }
       context_menu_clear {
          /*@
@@ -944,7 +944,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in const char *entry; /*@ The text to insert */
+            @in const(char)* entry; /*@ The text to insert */
          }
       }
       input_panel_imdata_set {
@@ -958,7 +958,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in const void *data; /*@ The specific data to be set to the input panel. */
+            @in const(void)* data; /*@ The specific data to be set to the input panel. */
             @in int len; /*@ the length of data, in bytes, to send to the input panel */
          }
       }
@@ -1115,7 +1115,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in const char *entry; /*@ The text to be displayed */
+            @in const(char)* entry; /*@ The text to be displayed */
          }
       }
       context_menu_item_add {
@@ -1134,11 +1134,11 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in const char *label; /*@ The item's text label */
-            @in const char *icon_file; /*@ The item's icon file */
+            @in const(char)* label; /*@ The item's text label */
+            @in const(char)* icon_file; /*@ The item's icon file */
             @in Elm_Icon_Type icon_type; /*@ The item's icon type */
             @in Evas_Smart_Cb func; /*@ The callback to execute when the item is clicked */
-            @in const void *data; /*@ The data to associate with the item for related functions */
+            @in const(void)* data; /*@ The data to associate with the item for related functions */
          }
       }
       markup_filter_prepend {

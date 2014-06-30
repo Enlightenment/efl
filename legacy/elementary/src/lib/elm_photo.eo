@@ -88,7 +88,7 @@ class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
             return Eina_Bool;
          }
          values {
-            const char *file; /*@ The path to file that will be used as @a obj's image. */
+            const(char)* file; /*@ The path to file that will be used as @a obj's image. */
          }
       }
    }
@@ -100,8 +100,8 @@ class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
            @ingroup Photo */
          const;
          params {
-            @in const char *file; /*@ The path to file that will be used as thumbnail. */
-            @in const char *group; /*@ The key used in case of an EET file. */
+            @in const(char)* file; /*@ The path to file that will be used as thumbnail. */
+            @in const(char)* group; /*@ The key used in case of an EET file. */
          }
       }
    }

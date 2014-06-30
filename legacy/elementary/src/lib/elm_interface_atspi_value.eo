@@ -14,7 +14,7 @@ interface Elm_Interface_Atspi_Value ()
          }
          values {
             double value; /*@ Value of widget casted to floating point number. */
-            const char *text; /*@ string describing value in given context
+            const(char)* text; /*@ string describing value in given context
                                eg. small, enough */
          }
       }
@@ -25,7 +25,7 @@ interface Elm_Interface_Atspi_Value ()
          values {
             double lower_limit;
             double upper_limit;
-            const char *description;
+            const(char)* description;
          }
       }
       protected increment {

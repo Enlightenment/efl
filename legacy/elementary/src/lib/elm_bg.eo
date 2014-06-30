@@ -107,8 +107,8 @@ class Elm_Bg (Elm_Layout)
             @ingroup Bg */
          }
          values {
-            const char *file; /*@ The file path */
-            const char *group; /*@ Optional key (group in Edje) within the file */
+            const(char)* file; /*@ The file path */
+            const(char)* group; /*@ Optional key (group in Edje) within the file */
          }
       }
       load_size {

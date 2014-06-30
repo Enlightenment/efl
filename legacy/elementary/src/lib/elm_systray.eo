@@ -11,7 +11,7 @@ class Elm_Systray (Eo_Base)
             /*@ Retrieve the id of the Status Notifier Item. */
          }
          values {
-            const char *id;
+            const(char)* id;
          }
       }
       category {
@@ -33,7 +33,7 @@ class Elm_Systray (Eo_Base)
             /*@ Retrieve the path to the icon's theme currently in use. */
          }
          values {
-            const char *icon_theme_path;
+            const(char)* icon_theme_path;
          }
       }
       menu {
@@ -44,7 +44,7 @@ class Elm_Systray (Eo_Base)
             /*@ Retrieve the object path of the D-Bus Menu currently in use. */
          }
          values {
-            const Eo *menu;
+            const(Eo)* menu;
          }
       }
       att_icon_name {
@@ -55,7 +55,7 @@ class Elm_Systray (Eo_Base)
             /*@ Retrieve the name of the attention icon used by the Status Notifier Item. */
          }
          values {
-            const char *att_icon_name;
+            const(char)* att_icon_name;
          }
       }
       status {
@@ -77,7 +77,7 @@ class Elm_Systray (Eo_Base)
             /*@ Retrieve the name of the icon used by the Status Notifier Item. */
          }
          values {
-            const char *icon_name;
+            const(char)* icon_name;
          }
       }
       title {
@@ -88,7 +88,7 @@ class Elm_Systray (Eo_Base)
             /*@ Retrieve the title of the Status Notifier Item. */
          }
          values {
-            const char *title;
+            const(char)* title;
          }
       }
    }

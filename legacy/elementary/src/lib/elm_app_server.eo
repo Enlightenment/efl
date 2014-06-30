@@ -6,7 +6,7 @@ class Elm_App_Server (Eo_Base)
       constructor {
          /*@ Class constructor of elm_app_server */
          params {
-            @in const char *packageid; /*@ package of application */
+            @in const(char)* packageid; /*@ package of application */
             @in Elm_App_Server_Create_View_Cb create_view_cb; /*@ callback to be called when user whants to open some application view */
          }
       }
@@ -33,7 +33,7 @@ class Elm_App_Server (Eo_Base)
          get {
          }
          values {
-            const char *ret;
+            const(char)* ret;
          }
       }
       package {
@@ -51,10 +51,10 @@ class Elm_App_Server (Eo_Base)
             /*@ Set icon to application, using the raw pixels of image. */
          }
          values {
-            unsigned int w;
-            unsigned int h;
+            uint w;
+            uint h;
             Eina_Bool has_alpha;
-            const unsigned char *pixels;
+            const(uchar)* pixels;
          }
       }
    }
@@ -65,7 +65,7 @@ class Elm_App_Server (Eo_Base)
       view_check {
          /*@ If view id is available and unique, return the full DBus object path of view */
          params {
-            @in const char *id; /*@ view identifier */
+            @in const(char)* id; /*@ view identifier */
          }
          return Eina_Bool; /* @c EINA_TRUE if id is valid or @c EINA_FALSE if not */
       }
@@ -78,7 +78,7 @@ class Elm_App_Server (Eo_Base)
       title_set {
          /*@ Set a title to application. */
          params {
-            @in const char *title; /*@ title of application */
+            @in const(char)* title; /*@ title of application */
          }
       }
       title_get {

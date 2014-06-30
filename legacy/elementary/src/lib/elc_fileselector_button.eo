@@ -92,7 +92,7 @@ class Elm_Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
             @ingroup File_Selector_Button */
          }
          values {
-            const char *title; /*@ The title string */
+            const(char)* title; /*@ The title string */
          }
       }
    }

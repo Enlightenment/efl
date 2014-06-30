@@ -82,7 +82,7 @@ class Elm_Slideshow (Elm_Layout)
             @ingroup Slideshow */
          }
          values {
-            const char *layout; /*@ The new layout's name string */
+            const(char)* layout; /*@ The new layout's name string */
          }
       }
       transition {
@@ -112,7 +112,7 @@ class Elm_Slideshow (Elm_Layout)
             @ingroup Slideshow */
          }
          values {
-            const char *transition; /*@ The new transition's name string */
+            const(char)* transition; /*@ The new transition's name string */
          }
       }
       loop {
@@ -201,7 +201,7 @@ class Elm_Slideshow (Elm_Layout)
             call to this function when changes happen.
 
             @ingroup Slideshow */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
       transitions {
@@ -243,7 +243,7 @@ class Elm_Slideshow (Elm_Layout)
             @see elm_slideshow_transition_set()
 
             @ingroup Slideshow */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
       count {
@@ -254,7 +254,7 @@ class Elm_Slideshow (Elm_Layout)
             @return The number of items on @p obj, at the moment of this call
 
             @ingroup Slideshow */
-            return unsigned int;
+            return uint;
          }
       }
       item_current {
@@ -303,7 +303,7 @@ class Elm_Slideshow (Elm_Layout)
             @see elm_slideshow_layout_set()
 
             @ingroup Slideshow */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
    }
@@ -334,7 +334,7 @@ class Elm_Slideshow (Elm_Layout)
          const;
          return Elm_Object_Item *;
          params {
-            @in unsigned int nth; /*@ The number of the item to grab a handle to (0 being
+            @in uint nth; /*@ The number of the item to grab a handle to (0 being
             the first) */
          }
       }
@@ -384,8 +384,8 @@ class Elm_Slideshow (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Slideshow_Item_Class *itc; /*@ The item class for the item */
-            @in const void *data; /*@ The item's data */
+            @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
+            @in const(void)* data; /*@ The item's data */
          }
       }
       item_sorted_insert {
@@ -410,8 +410,8 @@ class Elm_Slideshow (Elm_Layout)
 
          return Elm_Object_Item *;
          params {
-            @in const Elm_Slideshow_Item_Class *itc; /*@ The item class for the item */
-            @in const void *data; /*@ The item's data */
+            @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
+            @in const(void)* data; /*@ The item's data */
             @in Eina_Compare_Cb func; /*@ The comparing function to be used to sort slideshow
             items <b>by #Elm_Slideshow_Item_Class item handles</b> */
          }

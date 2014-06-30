@@ -180,7 +180,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Map */
          }
          values {
-            const char *user_agent; /*@ The user agent to be used by the map. */
+            const(char)* user_agent; /*@ The user agent to be used by the map. */
          }
       }
       zoom_max {
@@ -326,7 +326,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
 
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
-            @in const char *source_name; /*@ The source to be used. */
+            @in const(char)* source_name; /*@ The source to be used. */
          }
       }
       source_get {
@@ -341,7 +341,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          @ingroup Map */
 
          const;
-         return const char *;
+         return const(char)*;
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
          }
@@ -522,7 +522,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          @ingroup Map */
 
          const;
-         return const char **;
+         return const(char)**;
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
          }
@@ -606,7 +606,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          const;
          return Elm_Map_Name *;
          params {
-            @in const char *address; /*@ The address. */
+            @in const(char)* address; /*@ The address. */
             @in double lon; /*@ The longitude. */
             @in double lat; /*@ The latitude. */
             @in Elm_Map_Name_Cb name_cb; /*@ The callback function. */
@@ -685,7 +685,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
 
          return Elm_Map_Overlay *;
          params {
-            @in const Elm_Map_Route *route; /*@ The route object to make a overlay. */
+            @in const(Elm_Map_Route)* route; /*@ The route object to make a overlay. */
          }
       }
       overlay_scale_add {

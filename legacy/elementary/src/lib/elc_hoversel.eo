@@ -76,7 +76,7 @@ class Elm_Hoversel (Elm_Button, Evas_Selectable_Interface)
             @see elm_hoversel_item_add()
 
             @ingroup Hoversel */
-            return const Eina_List *;
+            return const(Eina_List)*;
          }
       }
    }
@@ -127,13 +127,13 @@ class Elm_Hoversel (Elm_Button, Evas_Selectable_Interface)
 
          return Elm_Object_Item *;
          params {
-            @in const char *label; /*@ The text label to use for the item (NULL if not desired) */
-            @in const char *icon_file; /*@ An image file path on disk to use for the icon or standard
+            @in const(char)* label; /*@ The text label to use for the item (NULL if not desired) */
+            @in const(char)* icon_file; /*@ An image file path on disk to use for the icon or standard
             icon name (NULL if not desired) */
             @in Elm_Icon_Type icon_type; /*@ The icon type if relevant */
             @in Evas_Smart_Cb func; /*@ Convenience function to call when this item is selected. The last
             parameter @p event_info of @c func is the selected item pointer. */
-            @in const void *data; /*@ Data to pass to item-related functions */
+            @in const(void)* data; /*@ Data to pass to item-related functions */
          }
       }
    }

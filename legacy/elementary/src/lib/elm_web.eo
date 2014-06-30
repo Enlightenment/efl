@@ -44,7 +44,7 @@ class Elm_Web (Elm_Widget)
             @ingroup Web */
          }
          values {
-            const char *user_agent; /*@ String for useragent */
+            const(char)* user_agent; /*@ String for useragent */
          }
       }
       url {
@@ -73,7 +73,7 @@ class Elm_Web (Elm_Widget)
             @ingroup Web */
          }
          values {
-            const char *url; /*@ The URL to set */
+            const(char)* url; /*@ The URL to set */
          }
       }
       bg_color {
@@ -426,7 +426,7 @@ class Elm_Web (Elm_Widget)
             error occurred
 
             @ingroup Web */
-            return const char *;
+            return const(char)*;
          }
       }
       title {
@@ -441,7 +441,7 @@ class Elm_Web (Elm_Widget)
             failure
 
             @ingroup Web */
-            return const char *;
+            return const(char)*;
          }
       }
    }
@@ -502,9 +502,9 @@ class Elm_Web (Elm_Widget)
 
          return Eina_Bool;
          params {
-            @in const char *html; /*@ HTML data to load */
-            @in const char *base_url; /*@ Base URL used for relative paths to external objects (optional) */
-            @in const char *unreachable_url; /*@ URL that could not be reached (optional) */
+            @in const(char)* html; /*@ HTML data to load */
+            @in const(char)* base_url; /*@ Base URL used for relative paths to external objects (optional) */
+            @in const(char)* unreachable_url; /*@ URL that could not be reached (optional) */
          }
       }
       text_search {
@@ -519,7 +519,7 @@ class Elm_Web (Elm_Widget)
          const;
          return Eina_Bool;
          params {
-            @in const char *string; /*@ String to search */
+            @in const(char)* string; /*@ String to search */
             @in Eina_Bool case_sensitive; /*@ If search should be case sensitive or not */
             @in Eina_Bool forward; /*@ If search is from cursor and on or backwards */
             @in Eina_Bool wrap; /*@ If search should wrap at the end */
@@ -579,12 +579,12 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return unsigned int;
+         return uint;
          params {
-            @in const char *string; /*@ String to match */
+            @in const(char)* string; /*@ String to match */
             @in Eina_Bool case_sensitive; /*@ If match should be case sensitive or not */
             @in Eina_Bool highlight; /*@ If matches should be highlighted */
-            @in unsigned int limit; /*@ Maximum amount of matches, or zero to unlimited */
+            @in uint limit; /*@ Maximum amount of matches, or zero to unlimited */
          }
       }
       region_bring_in {
