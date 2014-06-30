@@ -80,7 +80,7 @@ _elm_scrollable_is(const Evas_Object *obj)
 {
    INTERNAL_ENTRY EINA_FALSE;
    return
-      eo_isa(obj, ELM_INTERFACE_SCROLLABLE_CLASS);
+      eo_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
 }
 
 void

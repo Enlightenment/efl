@@ -33,7 +33,7 @@ _on_focus_change(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 EOLIAN void
 _elm_interface_atspi_widget_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Widget_Data *pd)
 {
-   eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_CLASS, eo_constructor());
+   eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_MIXIN, eo_constructor());
 
    pd->role = ELM_ATSPI_ROLE_UNKNOWN;
 
@@ -55,7 +55,7 @@ _elm_interface_atspi_widget_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Interfac
    if (parent && !eo_destructed_is(parent))
      elm_interface_atspi_accessible_children_changed_del_signal_emit(parent, obj);
 
-   eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_CLASS, eo_destructor());
+   eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_MIXIN, eo_destructor());
 }
 
 EOLIAN static Eina_Bool
@@ -115,7 +115,7 @@ _elm_interface_atspi_widget_elm_interface_atspi_accessible_children_get(Eo *obj 
    EINA_LIST_FOREACH(wd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
-        if (eo_isa(widget, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+        if (eo_isa(widget, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           accs = eina_list_append(accs, widget);
      }
    return accs;
@@ -127,7 +127,7 @@ _elm_interface_atspi_widget_elm_interface_atspi_accessible_state_set_get(Eo *obj
    Elm_Atspi_State_Set states = 0;
    Evas *evas = NULL;
 
-   eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_CLASS, states = elm_interface_atspi_accessible_state_set_get());
+   eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_MIXIN, states = elm_interface_atspi_accessible_state_set_get());
 
    if (evas_object_visible_get(obj))
      STATE_TYPE_SET(states, ELM_ATSPI_STATE_VISIBLE);
@@ -190,14 +190,14 @@ _elm_interface_atspi_widget_elm_interface_atspi_accessible_relation_set_get(Eo *
    Evas_Object *rel_obj;
 
    rel_obj = elm_object_focus_next_object_get(obj, ELM_FOCUS_NEXT);
-   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
         rel = _relation_new(ELM_ATSPI_RELATION_FLOWS_TO, rel_obj);
         list = eina_list_append(list, rel);
      }
 
    rel_obj = elm_object_focus_next_object_get(obj, ELM_FOCUS_PREVIOUS);
-   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
         rel = _relation_new(ELM_ATSPI_RELATION_FLOWS_FROM, rel_obj);
         list = eina_list_append(list, rel);

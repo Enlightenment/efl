@@ -214,7 +214,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
 #define ELM_SCROLLABLE_CHECK(obj, ...)                                       \
                                                                              \
-  if (!eo_isa(obj, ELM_INTERFACE_SCROLLABLE_CLASS))                    \
+  if (!eo_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN))                    \
     {                                                                        \
        ERR("The object (%p) doesn't implement the Elementary scrollable"     \
             " interface", obj);                                              \

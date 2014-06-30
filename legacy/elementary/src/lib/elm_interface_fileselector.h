@@ -4,7 +4,7 @@
 #include "elm_interface_fileselector.eo.h"
 
 #define ELM_FILESELECTOR_INTERFACE_CHECK(obj, ...) \
-  if (EINA_UNLIKELY(!eo_isa(obj, ELM_INTERFACE_FILESELECTOR_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa(obj, ELM_INTERFACE_FILESELECTOR_INTERFACE))) \
     { \
        ERR("The object (%p) doesn't implement the Elementary fileselector" \
             " interface", obj); \

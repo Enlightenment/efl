@@ -1746,7 +1746,7 @@ _access_object_from_path(const char *path)
 
    sscanf(tmp, "%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
-   return eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS) ? eo : NULL;
+   return eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
 }
 
 static char *
@@ -2074,21 +2074,21 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
   iter_array = eldbus_message_iter_container_new(iter, 'a', "s");
   if (!iter_array) return;
 
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
 
   eldbus_message_iter_container_close(iter, iter_array);
@@ -3122,7 +3122,7 @@ _cache_build(void *obj)
    Eo *child;
    char *path = NULL;
 
-   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      return;
 
    path = _path_from_access_object(obj);
@@ -3178,7 +3178,7 @@ static void _object_register(Eo *obj, char *path)
 {
    Eldbus_Service_Interface *infc = NULL, *event_infc;
 
-   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
         WRN("Unable to register class w/o Elm_Interface_Atspi_Accessible!");
         return;
@@ -3192,31 +3192,31 @@ static void _object_register(Eo *obj, char *path)
         eo_do(obj, eo_key_data_set("event_interface", event_infc, NULL));
         eo_do(obj, eo_event_callback_array_add(_events_cb(), event_infc));
 
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
           eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_INTERFACE))
           {
              infc = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
              eo_do(obj, eo_key_data_set("window_interface", infc, NULL));
              eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
           }
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
           eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
           eldbus_service_interface_register(_a11y_bus, path, &value_iface_desc);
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
           eldbus_service_interface_register(_a11y_bus, path, &image_iface_desc);
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
           {
              eldbus_service_interface_register(_a11y_bus, path, &selection_iface_desc);
              eo_do(obj, eo_event_callback_array_add(_selection_cb(), event_infc));
           }
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
           {
              eldbus_service_interface_register(_a11y_bus, path, &text_iface_desc);
              eo_do(obj, eo_event_callback_array_add(_text_cb(), event_infc));
           }
-        if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_CLASS))
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE))
           eldbus_service_interface_register(_a11y_bus, path, &editable_text_iface_desc);
      }
 }
@@ -3234,16 +3234,16 @@ static void _object_unregister(void *obj)
 
    eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, NULL));
 
-   if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
       eo_do(obj, eo_event_callback_array_del(_events_cb(), event_infc));
-   if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_INTERFACE))
      {
         eo_do(obj, infc = eo_key_data_get("window_interface"));
         eo_do(obj, eo_event_callback_array_del(_window_cb(), infc));
      }
-   if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
       eo_do(obj, eo_event_callback_array_del(_selection_cb(), event_infc));
-   if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_CLASS))
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
       eo_do(obj, eo_event_callback_array_del(_text_cb(), event_infc));
 }
 

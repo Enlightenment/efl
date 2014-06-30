@@ -308,7 +308,7 @@ _elm_pan_class_constructor(Eo_Class *klass)
 /* pan smart object on top, scroller interface on bottom */
 /* ============================================================ */
 
-#define MY_SCROLLABLE_INTERFACE ELM_INTERFACE_SCROLLABLE_CLASS
+#define MY_SCROLLABLE_INTERFACE ELM_INTERFACE_SCROLLABLE_MIXIN
 
 #define MY_SCROLLABLE_INTERFACE_NAME "Elm_Interface_Scrollable"
 #define MY_SCROLLABLE_INTERFACE_NAME_LEGACY "elm_interface_scrollable"

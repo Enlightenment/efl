@@ -89,7 +89,7 @@ _elm_interface_atspi_component_accessible_at_point_get(Eo *obj, void *_pd EINA_U
    EINA_LIST_FOREACH(objs, l, evobj)
      {
         // return first only, test if there is atspi interface for eo
-        if (eo_isa(evobj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+        if (eo_isa(evobj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           {
              ret = evobj;
              break;

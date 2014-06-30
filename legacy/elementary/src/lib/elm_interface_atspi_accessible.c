@@ -156,7 +156,7 @@ _elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, void *pd EINA_UN
    eo_do(obj, parent = eo_parent_get());
    if (!parent) return NULL;
 
-   return eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS) ? parent : NULL;
+   return eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
 }
 
 EOLIAN static void
@@ -250,7 +250,7 @@ _elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, void *pd EINA_
 
    EINA_ITERATOR_FOREACH(iter, chld)
      {
-        if (eo_isa(chld, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+        if (eo_isa(chld, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           children = eina_list_append(children, chld);
      }
    eina_iterator_free(iter);
