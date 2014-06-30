@@ -632,6 +632,7 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
                   _x11_atoms[i].notify(sel, ev);
                }
              else cnp_debug("Ignored: No handler!\n");
+             break;
           }
      }
    return ECORE_CALLBACK_PASS_ON;
