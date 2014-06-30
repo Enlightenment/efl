@@ -305,8 +305,6 @@ _evas_cache_image_entry_surface_alloc__locked(Evas_Cache_Image *cache,
      }
    ie->w = wmin;
    ie->h = hmin;
-   ie->allocated.w = wmin;
-   ie->allocated.h = hmin;
 }
 
 static void

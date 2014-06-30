@@ -183,7 +183,7 @@ struct _Evas_Image_Property
    Evas_Colorspace cspace; /**< Specify the color space handle by the engine @since 1.10 */
 
    struct {
-      unsigned char l, r, t, b; /**< Specify the dimensions of duplicated pixels borders (for OpenGL compressed textures). Set by the loader. @since 1.11 */
+      unsigned char l, r, t, b; /**< Specify the dimensions of duplicated pixels borders for OpenGL compressed textures, set by the loader. @since 1.11 */
    } borders;
 };
 

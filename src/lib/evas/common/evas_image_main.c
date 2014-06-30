@@ -110,7 +110,9 @@ static const Evas_Cache2_Image_Func      _evas_common_image_func2 =
 #endif
 
 static inline int
-_evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colorspace cspace)
+_evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
+                                     Evas_Colorspace cspace,
+                                     /* inout */ int *l, int *r, int *t, int *b)
 {
 #define PAGE_SIZE (4 * 1024)
 #define HUGE_PAGE_SIZE (2 * 1024 * 1024)
@@ -119,24 +121,38 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
 #else
 # define ALIGN_TO_PAGE(Siz) Siz
 #endif
-   int siz;
+
+   int siz, block_size = 8;
+   Eina_Bool reset_borders = EINA_TRUE;
 
    switch (cspace)
      {
       case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
       case EVAS_COLORSPACE_AGRY88: siz = w * h * sizeof(DATA16); break;
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        block_size = 16;
+        // fallthrough
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
-         // Need to round width and height independently
-         w += 2; h += 2; // We do duplicate border in ETC1 to have better rendering on GPU.
-         siz = (w / 4 + (w % 4 ? 1 : 0)) * (h / 4 + (h % 4 ? 1 : 0)) * 8;
-         break;
-      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-         w += 2; h += 2;
-         siz = (w / 4 + (w % 4 ? 1 : 0)) * (h / 4 + (h % 4 ? 1 : 0)) * 16;
-         break;
+        reset_borders = EINA_FALSE;
+        if (l && r && t && b)
+          {
+             w += *l + *r;
+             h += *t + *b;
+          }
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!(w & 0x3) && !(h & 0x3), 0);
+        siz = (w >> 2) * (h >> 2) * block_size;
+        break;
       default:
       case EVAS_COLORSPACE_ARGB8888: siz = w * h * sizeof(DATA32); break;
+     }
+
+   if (reset_borders)
+     {
+        if (l) *l = 0;
+        if (r) *r = 0;
+        if (t) *t = 0;
+        if (b) *b = 0;
      }
 
    if (siz < PAGE_SIZE) return siz;
@@ -147,14 +163,15 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
 }
 
 static void *
-_evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Evas_Colorspace cspace)
+_evas_common_rgba_image_surface_mmap(Image_Entry *ie, unsigned int w, unsigned int h,
+                                     /* inout */ int *pl, int *pr, int *pt, int *pb)
 {
    int siz;
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    void *r = MAP_FAILED;
 #endif
 
-   siz = _evas_common_rgba_image_surface_size(w, h, cspace);
+   siz = _evas_common_rgba_image_surface_size(w, h, ie->space, pl, pr, pt, pb);
 
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
 #ifndef MAP_HUGETLB
@@ -186,7 +203,7 @@ _evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int 
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    size_t siz;
 
-   siz = _evas_common_rgba_image_surface_size(w, h, cspace);
+   siz = _evas_common_rgba_image_surface_size(w, h, cspace, NULL, NULL, NULL, NULL);
    if (siz < PAGE_SIZE)
      free(data);
    else
@@ -453,7 +470,8 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
 static int
 _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned int h)
 {
-   RGBA_Image   *im = (RGBA_Image *) ie;
+   RGBA_Image *im = (RGBA_Image *) ie;
+   int l = 0, r = 0, t = 0, b = 0;
 
 #ifdef EVAS_CSERVE2
    if (ie->data1) return 0;
@@ -471,16 +489,24 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
 #endif
      }
 
-   im->image.data = _evas_common_rgba_image_surface_mmap(w, h, ie->space);
+   l = ie->borders.l;
+   r = ie->borders.r;
+   t = ie->borders.t;
+   b = ie->borders.b;
+   im->image.data = _evas_common_rgba_image_surface_mmap(ie, w, h, &l, &r, &t, &b);
    if (!im->image.data) return -1;
-   ie->allocated.w = w;
-   ie->allocated.h = h;
+   ie->borders.l = l;
+   ie->borders.r = r;
+   ie->borders.t = t;
+   ie->borders.b = b;
+   ie->allocated.w = w + l + r;
+   ie->allocated.h = h + t + b;
 #ifdef SURFDBG
    surfs = eina_list_append(surfs, ie);
 #endif
 #ifdef HAVE_VALGRIND
    int        siz = 0;
-   siz = _evas_common_rgba_image_surface_size(w, h, ie->space);
+   siz = _evas_common_rgba_image_surface_size(w, h, ie->space, &l, &r, &t, &b);
 # ifdef VALGRIND_MAKE_READABLE
    if (siz > 0) VALGRIND_MAKE_READABLE(im->image.data, siz);
 # else

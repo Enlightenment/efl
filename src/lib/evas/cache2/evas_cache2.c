@@ -294,8 +294,6 @@ evas_cache2_image_surface_alloc(Image_Entry *ie, int w, int h)
 
    ie->w = wmin;
    ie->h = hmin;
-   ie->allocated.w = wmin;
-   ie->allocated.h = hmin;
    ie->flags.loaded = EINA_TRUE;
 }
 

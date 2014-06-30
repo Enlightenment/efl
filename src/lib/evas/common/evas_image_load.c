@@ -223,6 +223,10 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
 
              ie->w = property.w;
              ie->h = property.h;
+             ie->borders.l = property.borders.l;
+             ie->borders.r = property.borders.r;
+             ie->borders.t = property.borders.t;
+             ie->borders.b = property.borders.b;
              ie->scale = property.scale;
              ie->flags.alpha = property.alpha;
              if (property.cspaces)
@@ -417,6 +421,10 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    property.cspace = ie->space;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
+   property.borders.l = ie->borders.l;
+   property.borders.r = ie->borders.r;
+   property.borders.t = ie->borders.t;
+   property.borders.b = ie->borders.b;
 
    pixels = evas_cache_image_pixels(ie);
    if (!pixels)

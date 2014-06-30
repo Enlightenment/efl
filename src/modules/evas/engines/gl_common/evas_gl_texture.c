@@ -453,19 +453,17 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
         // Add border to avoid artifacts
-        w = im->cache_entry.w + 2;
-        h = im->cache_entry.h + 2;
+        w = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
+        h = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!(w & 0x3) && !(h & 0x3), NULL);
         yoffset = 1;
-
-        // Adjust w and h for ETC1/2 formats (multiple of 4 pixels on both axes)
-        w = ((w >> 2) + (w & 0x3 ? 1 : 0)) << 2;
-        h = ((h >> 2) + (h & 0x3 ? 1 : 0)) << 2;
         break;
 
      default:
         /* This need to be adjusted if we do something else than strip allocation */
         w = im->cache_entry.w + TEX_HREP + 2; /* one pixel stop gap and two pixels for the border */
         h = im->cache_entry.h + TEX_VREP + 2; /* only one added border for security down */
+        break;
      }
 
    tex->pt = _pool_tex_find(gc, w, h,
@@ -1121,12 +1119,11 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
            if (im->cache_entry.space == EVAS_COLORSPACE_RGBA8_ETC2_EAC)
              etc_block_size = 16;
 
-           x = tex->x - 1;
-           y = tex->y - 1;
-           width = im->cache_entry.w + 2;
-           height = im->cache_entry.h + 2;
-           width = ((width >> 2) + (width & 0x3 ? 1 : 0)) << 2;
-           height = ((height >> 2) + (height & 0x3 ? 1 : 0)) << 2;
+           x = tex->x - im->cache_entry.borders.l;
+           y = tex->y - im->cache_entry.borders.t;
+           width = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
+           height = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
+           EINA_SAFETY_ON_FALSE_RETURN(!(width & 0x3) && !(height & 0x3));
 
            glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
            GLERR(__FUNCTION__, __FILE__, __LINE__, "");
