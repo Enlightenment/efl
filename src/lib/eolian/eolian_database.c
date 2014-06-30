@@ -1228,12 +1228,15 @@ _type_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
         _ftype_to_str(tp, buf, name);
         return;
      }
-   if (tpp->type == EOLIAN_TYPE_REGULAR && tpp->is_const)
+   if ((tpp->type == EOLIAN_TYPE_REGULAR || tpp->type == EOLIAN_TYPE_VOID)
+     && tpp->is_const)
       eina_strbuf_append(buf, "const ");
    if (tpp->is_struct)
       eina_strbuf_append(buf, "struct ");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
       eina_strbuf_append(buf, tpp->name);
+   else if (tpp->type == EOLIAN_TYPE_VOID)
+      eina_strbuf_append(buf, "void");
    else
      {
         _Parameter_Type *btpp = (_Parameter_Type*)tpp->base_type;

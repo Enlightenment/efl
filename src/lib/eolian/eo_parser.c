@@ -147,7 +147,20 @@ parse_name_list(Eo_Lexer *ls)
    return ls->tmp.str_items;
 }
 
-static Eo_Type_Def *parse_type(Eo_Lexer *ls);
+static Eo_Type_Def *parse_type_void(Eo_Lexer *ls);
+
+static Eo_Type_Def *
+parse_type(Eo_Lexer *ls)
+{
+   int line = ls->line_number;
+   Eo_Type_Def *ret = parse_type_void(ls);
+   if (ret->type == EOLIAN_TYPE_VOID)
+     {
+        ls->line_number = line;
+        eo_lexer_syntax_error(ls, "non-void type expected");
+     }
+   return ret;
+}
 
 static Eo_Type_Def *
 parse_function_type(Eo_Lexer *ls)
@@ -159,7 +172,7 @@ parse_function_type(Eo_Lexer *ls)
    if (ls->t.kw == KW_void)
       eo_lexer_get(ls);
    else
-      def->ret_type = parse_type(ls);
+      def->ret_type = parse_type_void(ls);
    line = ls->line_number;
    check_next(ls, '(');
    if (ls->t.token != ')')
@@ -173,7 +186,7 @@ parse_function_type(Eo_Lexer *ls)
 }
 
 static Eo_Type_Def *
-parse_type(Eo_Lexer *ls)
+parse_type_void(Eo_Lexer *ls)
 {
    Eina_Bool    has_struct = EINA_FALSE;
    Eo_Type_Def *def;
@@ -186,7 +199,7 @@ parse_type(Eo_Lexer *ls)
              eo_lexer_get(ls);
              line = ls->line_number;
              check_next(ls, '(');
-             def = parse_type(ls);
+             def = parse_type_void(ls);
              def->is_const = EINA_TRUE;
              check_match(ls, ')', '(', line);
              goto parse_ptr;
@@ -197,7 +210,7 @@ parse_type(Eo_Lexer *ls)
              eo_lexer_get(ls);
              line = ls->line_number;
              check_next(ls, '(');
-             def = parse_type(ls);
+             def = parse_type_void(ls);
              def->is_own = EINA_TRUE;
              check_match(ls, ')', '(', line);
              goto parse_ptr;
@@ -213,12 +226,17 @@ parse_type(Eo_Lexer *ls)
      }
    def = calloc(1, sizeof(Eo_Type_Def));
    ls->tmp.type_def = def;
-   def->type = EOLIAN_TYPE_REGULAR;
-   def->is_struct = has_struct;
-   def->is_const  = EINA_FALSE;
-   check(ls, TOK_VALUE);
-   ctype = eo_lexer_get_c_type(ls->t.kw);
-   def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
+   if (ls->t.kw == KW_void)
+     def->type = EOLIAN_TYPE_VOID;
+   else
+     {
+        def->type = EOLIAN_TYPE_REGULAR;
+        def->is_struct = has_struct;
+        def->is_const  = EINA_FALSE;
+        check(ls, TOK_VALUE);
+        ctype = eo_lexer_get_c_type(ls->t.kw);
+        def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
+     }
    eo_lexer_get(ls);
 parse_ptr:
    while (ls->t.token == '*')

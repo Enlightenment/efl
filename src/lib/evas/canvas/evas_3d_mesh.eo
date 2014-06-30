@@ -176,7 +176,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-         return void ;
          params {
             @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
             @in int count; /*@ Vertex index count. */

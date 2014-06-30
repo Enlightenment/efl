@@ -60,7 +60,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
-         return void ;
          params {
             @in const(char)* file; /*@ Path to the image file. */
             @in const(char)* key; /*@ Key in the image file. */
@@ -79,7 +78,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
-         return void ;
          params {
             @in Evas_Object *source; /*@ Source evas object to be used as the texture data. */
          }
@@ -147,7 +145,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
-         return void ;
          params {
             @out Evas_3D_Wrap_Mode s; /*@ Pointer to receive S-axis wrap mode. */
             @out Evas_3D_Wrap_Mode t; /*@ Pointer to receive T-axis wrap mode. */

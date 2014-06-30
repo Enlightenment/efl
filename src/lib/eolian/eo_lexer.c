@@ -385,11 +385,11 @@ eo_lexer_lex_error(Eo_Lexer *ls, const char *msg, int token)
      {
         char buf[256];
         txt_token(ls, token, buf);
-        throw(ls, "%s: %d: %s near '%s'\n", ls->source, ls->line_number, msg,
+        throw(ls, "%s:%d: %s near '%s'\n", ls->source, ls->line_number, msg,
               buf);
      }
    else
-      throw(ls, "%s: %d: %s\n", ls->source, ls->line_number, msg);
+      throw(ls, "%s:%d: %s\n", ls->source, ls->line_number, msg);
 }
 
 void
