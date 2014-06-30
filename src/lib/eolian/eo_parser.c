@@ -328,7 +328,10 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
         else
            par->way = PARAM_IN;
      }
-   par->type = parse_type(ls);
+   if (par->way == PARAM_OUT)
+     par->type = parse_type_void(ls);
+   else
+     par->type = parse_type(ls);
    ls->tmp.type_def = NULL;
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_add(ls->t.value);
