@@ -120,10 +120,21 @@ typedef enum
  * all the information related to this class.
  *
  * @param[in] filename Name of the file to parse.
+ * @see eolian_eot_file_parse
  *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_eo_file_parse(const char *filename);
+
+/*
+ * @brief Parse a given .eot file and fill the database.
+ *
+ * @param[in] filename Name of the file to parse.
+ * @see eolian_eo_file_parse
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_eot_file_parse(const char *filepath);
 
 /*
  * @brief Init Eolian.
@@ -140,7 +151,7 @@ EAPI int eolian_init(void);
 EAPI int eolian_shutdown(void);
 
 /*
- * @brief Scan the given directory and search for .eo files.
+ * @brief Scan the given directory and search for .eo and .eot files.
  *
  * The found files are just open to extract the class name.
  *
@@ -152,16 +163,30 @@ EAPI int eolian_shutdown(void);
 EAPI Eina_Bool eolian_directory_scan(const char *dir);
 
 /*
- * @brief Force parsing of all the files located in the directories
+ * @brief Force parsing of all the .eo files located in the directories
  * given in eolian_directory_scan..
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
  * @see eolian_directory_scan
+ * @see eolian_all_eot_files_parse
  *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_all_eo_files_parse();
+
+/*
+ * @brief Force parsing of all the .eot files located in the directories
+ * given in eolian_directory_scan..
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_directory_scan
+ * @see eolian_all_eo_files_parse
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_all_eot_files_parse();
 
 /*
  * @brief Show information about a given class.
@@ -355,6 +380,19 @@ EAPI Eolian_Function_Scope eolian_function_scope_get(Eolian_Function function_id
  * @ingroup Eolian
  */
 EAPI const char *eolian_function_name_get(Eolian_Function function_id);
+
+/*
+ * @brief Returns the full C name of a function (with prefix). It's here
+ * because the C API names are deduplicated (prefix of function and suffix
+ * of prefix merge if applicable) and this helps generators not write the
+ * same code over and over.
+ *
+ * @param[in] function_id Id of the function
+ * @return the function name
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_function_full_c_name_get(Eolian_Function function_id, const char *prefix);
 
 /*
  * @brief Find a function in a class by its name and type

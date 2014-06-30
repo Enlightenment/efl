@@ -245,11 +245,28 @@ _resolve_classname(options_type& opts)
 }
 
 static void
+_scan_directories(options_type const& opts)
+{
+   for (auto src : opts.in_srcs)
+     {
+        if (eina_str_has_suffix(src.c_str(), EO_SUFFIX)) continue;
+        eolian_read_from_fs(src.c_str());
+     }
+}
+
+static void
+_load_eot()
+{
+   eolian_all_eot_files_parse();
+}
+
+static void
 _load_classes(options_type const& opts)
 {
    for (auto src : opts.in_srcs)
      {
-        if (eolian_read_from_fs(src.c_str()) == NULL)
+        if (!eina_str_has_suffix(src.c_str(), EO_SUFFIX)) continue;
+        if ( eolian_read_from_fs(src.c_str()) == NULL)
           {
              EINA_CXX_DOM_LOG_WARN(::domain)
                << "Couldn't load eolian file: " << src;
@@ -352,6 +369,8 @@ int main(int argc, char **argv)
    domain.set_level(efl::eina::log_level::debug);
 #endif
    options_type opts = _read_options(argc, argv);
+   _scan_directories(opts);
+   _load_eot();
    _load_classes(opts);
    _resolve_classname(opts);
    _validate_options(opts);

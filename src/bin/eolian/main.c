@@ -321,6 +321,8 @@ int main(int argc, char **argv)
         goto end;
      }
 
+   eolian_all_eot_files_parse();
+
    const char *filename;
    EINA_LIST_FOREACH(files4gen, itr, filename)
      {

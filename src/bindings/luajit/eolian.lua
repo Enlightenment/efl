@@ -47,10 +47,12 @@ ffi.cdef [[
     } Eolian_Function_Scope;
 
     Eina_Bool eolian_eo_file_parse(const char *filename);
+    Eina_Bool eolian_eot_file_parse(const char *filepath);
     int eolian_init(void);
     int eolian_shutdown(void);
     Eina_Bool eolian_directory_scan(const char *dir);
     Eina_Bool eolian_all_eo_files_parse();
+    Eina_Bool eolian_all_eot_files_parse();
     Eina_Bool eolian_show(const Eolian_Class *klass);
     Eolian_Class *eolian_class_find_by_name(const char *class_name);
     Eolian_Class *eolian_class_find_by_file(const char *file_name);
@@ -69,6 +71,7 @@ ffi.cdef [[
     Eolian_Function_Type eolian_function_type_get(Eolian_Function *function_id);
     Eolian_Function_Scope eolian_function_scope_get(Eolian_Function *function_id);
     const char *eolian_function_name_get(Eolian_Function *function_id);
+    const char *eolian_function_full_c_name_get(Eolian_Function function_id, const char *prefix);
     Eolian_Function *eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_data_get(Eolian_Function *function_id, const char *key);
     Eina_Bool eolian_function_is_virtual_pure(Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -134,6 +137,14 @@ M.eo_file_parse = function(fname)
     return eolian.eolian_eo_file_parse(fname) ~= 0
 end
 
+M.all_eot_files_parse = function()
+    return eolian.eolian_all_eot_files_parse() ~= 0
+end
+
+M.eot_file_parse = function(fname)
+    return eolian.eolian_eot_file_parse(fname) ~= 0
+end
+
 M.show = function(klass)
     return eolian.eolian_show(klass) ~= 0
 end
@@ -176,6 +187,12 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         name_get = function(self)
             local v = eolian.eolian_function_name_get(self)
+            if v == nil then return nil end
+            return ffi.string(v)
+        end,
+
+        full_c_name_get = function(self)
+            local v = eolian.eolian_function_full_c_name_get(self)
             if v == nil then return nil end
             return ffi.string(v)
         end,

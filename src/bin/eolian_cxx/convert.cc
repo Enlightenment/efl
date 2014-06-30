@@ -15,31 +15,11 @@
 #include "comments.hh"
 
 static std::string
-_dedup_func_name(const std::string &classn, const std::string &funcn)
+_dedup_func_name(Eolian_Function func, const std::string &classn)
 {
-   size_t last_p = classn.rfind('_');
-   size_t func_p = funcn.find('_');
-   std::string ret;
-   size_t len;
-
-   if  (last_p == std::string::npos) last_p = 0;
-   else last_p++;
-   if (func_p == std::string::npos) len = funcn.size();
-   else len = func_p;
-
-   if ((classn.size() - last_p) != len
-     || classn.compare(last_p, len, funcn, 0, len))
-     {
-        ret += classn;
-        ret += '_';
-        ret += funcn;
-        return ret;
-     }
-
-   if (last_p)
-     ret += classn.substr(0, last_p);
-
-   ret += funcn;
+   const char *s = eolian_function_full_c_name_get(func, classn.c_str());
+   std::string ret(s);
+   eina_stringshare_del(s);
    return ret;
 }
 
@@ -110,7 +90,7 @@ _get_properties(const Eolian_Class klass)
              efl::eolian::eo_function getter;
              getter.type = efl::eolian::eo_function::regular_;
              getter.name = name + "_get";
-             getter.impl = _dedup_func_name((prefix != "" ? prefix : cxx_classname), getter.name);
+             getter.impl = _dedup_func_name(property, (prefix != "" ? prefix : cxx_classname)) + "_get";
              std::string ret = safe_str
                (eolian_function_return_type_get(property, EOLIAN_PROP_GET));
              if (ret == "") ret = "void";
@@ -155,7 +135,7 @@ _get_properties(const Eolian_Class klass)
              efl::eolian::eo_function setter;
              setter.type = efl::eolian::eo_function::regular_;
              setter.name = name + "_set";
-             setter.impl = _dedup_func_name((prefix != "" ? prefix : cxx_classname), setter.name);
+             setter.impl = _dedup_func_name(property, (prefix != "" ? prefix : cxx_classname)) + "_set";
              setter.params = params;
              setter.ret = safe_str(eolian_function_return_type_get
                                    (property, EOLIAN_PROP_SET));
@@ -243,8 +223,8 @@ convert_eolian_constructors(efl::eolian::eo_class& cls, const Eolian_Class klass
      {
         Eolian_Function eolian_constructor = static_cast<Eolian_Function>(curr);
         efl::eolian::eo_constructor constructor;
-        constructor.name = _dedup_func_name((prefix != "" ? prefix : cls.name),
-          safe_str(eolian_function_name_get(eolian_constructor)));
+        constructor.name = _dedup_func_name(eolian_constructor,
+            (prefix != "" ? prefix : cls.name));
         constructor.params = _get_params
           (eolian_parameters_list_get(eolian_constructor));
         constructor.comment = detail::eolian_constructor_comment
@@ -269,7 +249,7 @@ convert_eolian_functions(efl::eolian::eo_class& cls, const Eolian_Class klass)
         // XXX Eolian only provides regular methods so far
         function.type = efl::eolian::eo_function::regular_;
         function.name = safe_str(eolian_function_name_get(eolian_function));
-        function.impl = _dedup_func_name((prefix != "" ? prefix : cls.name), function.name);
+        function.impl = _dedup_func_name(eolian_function, (prefix != "" ? prefix : cls.name));
         function.ret = safe_str(eolian_function_return_type_get
                                 (eolian_function, EOLIAN_METHOD));
         if(function.ret == "") function.ret = "void";

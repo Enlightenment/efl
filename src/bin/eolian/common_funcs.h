@@ -66,6 +66,4 @@ void _class_env_create(const Eolian_Class class, const char *over_classname, _eo
 
 void _class_func_env_create(const Eolian_Class class, const char *funcname, Eolian_Function_Type ftype EINA_UNUSED, _eolian_class_func_vars *env);
 
-char *_func_name_dedup(const char *classn, const char *funcn);
-
 #endif
