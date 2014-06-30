@@ -86,14 +86,14 @@ interface Elm_Interface_Atspi_Text ()
             int *end_offset;
          }
          values {
-            @own(Eina_List*) attributes;
+            own(Eina_List*) attributes;
          }
       }
       protected default_attributes {
          get {
          }
          values {
-            @own(Eina_List*) attributes;
+            own(Eina_List*) attributes;
          }
       }
       protected character_extents {
