@@ -78,7 +78,7 @@ enum DDSCaps {
 #endif
 
 static const Evas_Colorspace cspaces_s3tc_dxt1_rgb[] = {
-   //EVAS_COLORSPACE_RGB_S3TC_DXT1,
+   EVAS_COLORSPACE_RGB_S3TC_DXT1,
    EVAS_COLORSPACE_ARGB8888
 };
 
@@ -88,7 +88,7 @@ static const Evas_Colorspace cspaces_s3tc_dxt1_rgba[] = {
 };
 
 static const Evas_Colorspace cspaces_s3tc_dxt2[] = {
-   //EVAS_COLORSPACE_RGBA_S3TC_DXT2,
+   EVAS_COLORSPACE_RGBA_S3TC_DXT2,
    EVAS_COLORSPACE_ARGB8888
 };
 
@@ -98,7 +98,7 @@ static const Evas_Colorspace cspaces_s3tc_dxt3[] = {
 };
 
 static const Evas_Colorspace cspaces_s3tc_dxt4[] = {
-   //EVAS_COLORSPACE_RGBA_S3TC_DXT4,
+   EVAS_COLORSPACE_RGBA_S3TC_DXT4,
    EVAS_COLORSPACE_ARGB8888
 };
 

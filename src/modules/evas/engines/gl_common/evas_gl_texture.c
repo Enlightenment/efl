@@ -39,6 +39,11 @@ static const GLenum etc1_fmt       = GL_ETC1_RGB8_OES;
 static const GLenum etc2_rgb_fmt   = GL_COMPRESSED_RGB8_ETC2;
 static const GLenum etc2_rgba_fmt  = GL_COMPRESSED_RGBA8_ETC2_EAC;
 
+static const GLenum s3tc_rgb_dxt1_fmt   = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+static const GLenum s3tc_rgba_dxt1_fmt  = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+static const GLenum s3tc_rgba_dxt23_fmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+static const GLenum s3tc_rgba_dxt45_fmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+
 static struct {
    struct {
       int num, pix;
@@ -74,7 +79,20 @@ static const struct {
   { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
   // images marked as no alpha but format supports it (RGBA8_ETC2_EAC):
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt }
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
+  // S3TC support
+  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT1, &s3tc_rgba_dxt1_fmt, &s3tc_rgba_dxt1_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT1, &s3tc_rgba_dxt1_fmt, &s3tc_rgba_dxt1_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT2, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT2, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT3, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT3, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT4, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT4, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt }
 };
 
 static const GLenum matching_rgb[] = { GL_RGB4, GL_RGB8, GL_RGB12, GL_RGB16, 0x0 };
@@ -206,17 +224,25 @@ _tex_format_index(GLuint format)
         return 4;
       case GL_COMPRESSED_RGBA8_ETC2_EAC:
         return 5;
+      case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+        return 6;
+      case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        return 7;
+      case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT: // dxt2 as well
+        return 8;
+      case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT: // dxt4 as well
+        return 9;
       case GL_LUMINANCE: // never used in atlas
       case GL_LUMINANCE4:
       case GL_LUMINANCE8:
       case GL_LUMINANCE12:
       case GL_LUMINANCE16:
-        return 6;
+        return 10;
       case GL_LUMINANCE4_ALPHA4:
       case GL_LUMINANCE8_ALPHA8:
       case GL_LUMINANCE12_ALPHA12:
       case GL_LUMINANCE16_ALPHA16:
-        return 7;
+        return 11;
       default:
         // abort?
         return 0;
@@ -490,6 +516,12 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
         // Add border to avoid artifacts
         w = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
         h = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
@@ -1140,9 +1172,16 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
       case EVAS_COLORSPACE_ARGB8888: bytes_count = 4; break;
       case EVAS_COLORSPACE_GRY8: bytes_count = 1; break;
       case EVAS_COLORSPACE_AGRY88: bytes_count = 2; break;
+      // Compressed texture formats: S3TC and ETC1/2
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
         bsize = 16;
         // fallthrough
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
         {

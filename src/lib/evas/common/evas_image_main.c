@@ -130,10 +130,16 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
       case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
       case EVAS_COLORSPACE_AGRY88: siz = w * h * sizeof(DATA16); break;
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
         block_size = 16;
         // fallthrough
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
         reset_borders = EINA_FALSE;
         if (l && r && t && b)
           {

@@ -120,7 +120,18 @@
 #ifndef GL_COMPRESSED_RGBA8_ETC2_EAC
 # define GL_COMPRESSED_RGBA8_ETC2_EAC 0x9278
 #endif
-
+#ifndef GL_COMPRESSED_RGB_S3TC_DXT1_EXT
+# define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0x83F0
+#endif
+#ifndef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
+# define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
+#endif
+#ifndef GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
+# define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
+#endif
+#ifndef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
+# define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#endif
 
 #ifndef GL_UNPACK_ROW_LENGTH
 # define GL_UNPACK_ROW_LENGTH 0x0cf2
@@ -379,6 +390,7 @@ struct _Evas_GL_Shared
       Eina_Bool etc1 : 1;
       Eina_Bool etc2 : 1;
       Eina_Bool etc1_subimage : 1;
+      Eina_Bool s3tc : 1;
       // tuning params - per gpu/cpu combo?
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
@@ -403,6 +415,8 @@ struct _Evas_GL_Shared
 #define MAX_ATLAS_H            512
 #define DEF_ATLAS_H                 512
 
+      Eina_List *cspaces; // depend on the values of etc1, etc2 and st3c
+
       struct {
          struct {
             int max;
@@ -421,7 +435,7 @@ struct _Evas_GL_Shared
 
    struct {
       Eina_List       *whole;
-      Eina_List       *atlas[6];
+      Eina_List       *atlas[10];
    } tex;
 
    Eina_Hash          *native_pm_hash;

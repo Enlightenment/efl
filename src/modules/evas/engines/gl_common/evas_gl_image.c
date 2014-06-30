@@ -122,30 +122,36 @@ evas_gl_common_image_unref(Evas_GL_Image *im)
      }
 }
 
-static const Evas_Colorspace known_cspace[] = {
-   EVAS_COLORSPACE_GRY8,
-   EVAS_COLORSPACE_AGRY88,
-   EVAS_COLORSPACE_ARGB8888
-};
-
-static const Evas_Colorspace known_etc1_cspace[] = {
-   EVAS_COLORSPACE_ETC1,
-   EVAS_COLORSPACE_GRY8,
-   EVAS_COLORSPACE_AGRY88,
-   EVAS_COLORSPACE_ARGB8888
-};
-
-static const Evas_Colorspace known_etc2_cspace[] = {
-   EVAS_COLORSPACE_RGBA8_ETC2_EAC,
-   EVAS_COLORSPACE_RGB8_ETC2,
-   EVAS_COLORSPACE_ETC1,
-   EVAS_COLORSPACE_GRY8,
-   EVAS_COLORSPACE_AGRY88,
-   EVAS_COLORSPACE_ARGB8888
-};
+static void
+_evas_gl_cspace_list_fill(Evas_Engine_GL_Context *gc)
+{
+#define CS_APPEND(cs) gc->shared->info.cspaces = eina_list_append \
+   (gc->shared->info.cspaces, (void *) (intptr_t) cs)
+   if (gc->shared->info.etc2)
+     {
+        CS_APPEND(EVAS_COLORSPACE_RGBA8_ETC2_EAC);
+        CS_APPEND(EVAS_COLORSPACE_RGB8_ETC2);
+        CS_APPEND(EVAS_COLORSPACE_ETC1);
+     }
+   else if (gc->shared->info.etc1)
+     CS_APPEND(EVAS_COLORSPACE_ETC1);
+   if (gc->shared->info.s3tc)
+     {
+        CS_APPEND(EVAS_COLORSPACE_RGB_S3TC_DXT1);
+        CS_APPEND(EVAS_COLORSPACE_RGBA_S3TC_DXT1);
+        CS_APPEND(EVAS_COLORSPACE_RGBA_S3TC_DXT2);
+        CS_APPEND(EVAS_COLORSPACE_RGBA_S3TC_DXT3);
+        CS_APPEND(EVAS_COLORSPACE_RGBA_S3TC_DXT4);
+        CS_APPEND(EVAS_COLORSPACE_RGBA_S3TC_DXT5);
+     }
+   CS_APPEND(EVAS_COLORSPACE_GRY8);
+   CS_APPEND(EVAS_COLORSPACE_AGRY88);
+   CS_APPEND(EVAS_COLORSPACE_ARGB8888);
+}
 
 static Evas_GL_Image *
-_evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_Load_Opts *lo, int *error)
+_evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im,
+                      Evas_Image_Load_Opts *lo, int *error)
 {
    Evas_GL_Image *im;
    Eina_List     *l;
@@ -193,31 +199,27 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
      }
    if (im_im->cache_entry.cspaces)
      {
-        const Evas_Colorspace *cspaces;
+        Evas_Colorspace cs;
         unsigned int i;
+        Eina_List *l2;
+        void *ldata;
 
-        if (gc->shared->info.etc2)
-          cspaces = known_etc2_cspace;
-        else if (gc->shared->info.etc1)
-          cspaces = known_etc1_cspace;
-        else
-          cspaces = known_cspace;
+        if (!gc->shared->info.cspaces)
+          _evas_gl_cspace_list_fill(gc);
 
+        cspace = EVAS_COLORSPACE_ARGB8888;
         for (i = 0; im_im->cache_entry.cspaces[i] != EVAS_COLORSPACE_ARGB8888; i++)
-          {
-             unsigned int j;
+          EINA_LIST_FOREACH(gc->shared->info.cspaces, l2, ldata)
+            {
+               cs = (Evas_Colorspace) (intptr_t) ldata;
+               if (cs == im_im->cache_entry.cspaces[i])
+                 {
+                    cspace = cs;
+                    goto found_cspace;
+                 }
+            }
 
-             for (j = 0;
-                  cspaces[j] != EVAS_COLORSPACE_ARGB8888;
-                  j++)
-               if (cspaces[j] == im_im->cache_entry.cspaces[i])
-                 break;
-
-             if (cspaces[j] == im_im->cache_entry.cspaces[i])
-               break;
-          }
-
-        cspace = im_im->cache_entry.cspaces[i];
+found_cspace:
         // ETC2 is backwards compatible with ETC1 but we prefer ETC2
         if (cspace == EVAS_COLORSPACE_ETC1 && gc->shared->info.etc2)
           cspace = EVAS_COLORSPACE_RGB8_ETC2;
@@ -786,6 +788,12 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
          if ((im->tex) &&
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {

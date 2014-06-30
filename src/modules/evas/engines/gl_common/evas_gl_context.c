@@ -625,6 +625,9 @@ evas_gl_common_context_new(void)
 #endif
              if (strstr((char *)ext, "OES_compressed_ETC1_RGB8_texture"))
                shared->info.etc1 = 1;
+             if (strstr((char *)ext, "GL_EXT_texture_compression_s3tc") ||
+                 strstr((char *)ext, "GL_S3_s3tc"))
+               shared->info.s3tc = 1;
 #ifdef GL_GLES
              // FIXME: there should be an extension name/string to check for
              // not just symbols in the lib
@@ -761,6 +764,7 @@ evas_gl_common_context_new(void)
                    "bgra : %i\n"
                    "etc1 : %i\n"
                    "etc2 : %i%s\n"
+                   "s3tc : %i\n"
                    "max ansiotropic filtering: %3.3f\n"
                    "egl sec map image: %i\n"
                    "max vertex count: %i\n"
@@ -781,6 +785,7 @@ evas_gl_common_context_new(void)
                    (int)shared->info.bgra,
                    (int)shared->info.etc1,
                    (int)shared->info.etc2, shared->info.etc2 ? " (GL_COMPRESSED_RGB8_ETC2, GL_COMPRESSED_RGBA8_ETC2_EAC)" : "",
+                   (int)shared->info.s3tc,
                    (double)shared->info.anisotropic,
                    (int)shared->info.sec_image_map,
                    (int)shared->info.max_vertex_elements,
@@ -943,6 +948,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
           }
         EINA_LIST_FOREACH(gc->shared->tex.whole, l, pt)
            evas_gl_texture_pool_empty(pt);
+        eina_list_free(gc->shared->info.cspaces);
         eina_list_free(gc->shared->tex.whole);
         eina_hash_free(gc->shared->native_pm_hash);
         eina_hash_free(gc->shared->native_tex_hash);
