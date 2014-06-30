@@ -20,8 +20,8 @@ enum Tokens
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
     KW(destructor), KW(eo_prefix), KW(events), KW(func), KW(get), \
     KW(implements), KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), \
-    KW(methods), KW(mixin), KW(params), KW(properties), KW(set), KW(type), \
-    KW(values), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), KWAT(own), \
+    KW(methods), KW(mixin), KW(own), KW(params), KW(properties), KW(set), \
+    KW(type), KW(values), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), \
     KWAT(warn_unused), \
     \
     KW(char), KW(uchar), KW(schar), KW(short), KW(ushort), KW(int), KW(uint), \

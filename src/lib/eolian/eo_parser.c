@@ -166,7 +166,7 @@ parse_type(Eo_Lexer *ls)
              check_match(ls, ')', '(', line);
              goto parse_ptr;
           }
-        case KW_at_own:
+        case KW_own:
           {
              int line;
              eo_lexer_get(ls);
@@ -336,8 +336,8 @@ parse_attrs(Eo_Lexer *ls)
                 first = EINA_FALSE;
                 eo_lexer_get(ls);
                 break;
-             case KW_at_own:
-                CASE_LOCK(ls, own, "@own qualifier")
+             case KW_own:
+                CASE_LOCK(ls, own, "own qualifier")
                 if (!first) eina_strbuf_append_char(buf, ' ');
                 eina_strbuf_append(buf, "@own");
                 first = EINA_FALSE;
