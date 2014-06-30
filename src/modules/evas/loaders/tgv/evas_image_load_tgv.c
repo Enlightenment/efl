@@ -239,6 +239,10 @@ evas_image_load_file_head_tgv(void *loader_data,
 
    prop->w = loader->size.width;
    prop->h = loader->size.height;
+   prop->borders.l = 1;
+   prop->borders.t = 1;
+   prop->borders.r = roundup(loader->size.width + 2, 4) - prop->w - 1;
+   prop->borders.b = roundup(loader->size.height + 2, 4) - prop->h - 1;
 
    ret = EINA_TRUE;
 

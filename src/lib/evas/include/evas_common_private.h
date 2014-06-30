@@ -609,6 +609,11 @@ struct _Image_Entry
 
    struct
      {
+        unsigned char l, r, t, b;
+     } borders; // Duplicated borders for use by GL engines.
+
+   struct
+     {
         Evas_Module          *module;
         Evas_Image_Load_Func *loader;
      } info;
