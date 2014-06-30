@@ -35,7 +35,7 @@ evas_gl_new(Evas *e)
    if (!evas_gl) return NULL;
 
    evas_gl->magic = MAGIC_EVAS_GL;
-   evas_gl->evas = eo_data_ref(e, EVAS_CLASS);
+   evas_gl->evas = eo_data_ref(e, EVAS_CANVAS_CLASS);
 
    if (!evas_gl->evas->engine.func->gl_context_create)
      {

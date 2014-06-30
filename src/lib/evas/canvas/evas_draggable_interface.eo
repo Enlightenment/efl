@@ -1,4 +1,4 @@
-interface Evas_Draggable_Interface (Evas_Signal_Interface)
+interface Evas.Draggable_Interface (Evas.Signal_Interface)
 {
    data: null;
    events {

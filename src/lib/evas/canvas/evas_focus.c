@@ -53,7 +53,7 @@ _evas_object_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN Evas_Object*
-_evas_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->focused;
 }

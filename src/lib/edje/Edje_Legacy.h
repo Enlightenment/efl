@@ -157,5 +157,5 @@ EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord 
  */
 EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 
-#include "edje.eo.legacy.h"
+#include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

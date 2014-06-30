@@ -1,4 +1,4 @@
-class Evas_Image (Evas_Object)
+class Evas.Image (Evas.Object)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
@@ -1244,8 +1244,8 @@ class Evas_Image (Evas_Object)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
-      Eo_Base.dbg_info_get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
    }
 }

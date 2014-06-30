@@ -32,13 +32,13 @@ evas_key_lock_number(const Evas_Lock *l, const char *keyname)
 /* public calls */
 
 EOLIAN const Evas_Modifier*
-_evas_key_modifier_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_key_modifier_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return &(e->modifiers);
 }
 
 EOLIAN const Evas_Lock*
-_evas_key_lock_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_key_lock_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return &(e->locks);
 }
@@ -76,7 +76,7 @@ evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
 }
 
 EOLIAN void
-_evas_key_modifier_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_modifier_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 {
    if (!keyname) return;
    if (e->modifiers.mod.count >= 64) return;
@@ -88,7 +88,7 @@ _evas_key_modifier_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 }
 
 EOLIAN void
-_evas_key_modifier_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_modifier_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
    int i;
 
@@ -110,7 +110,7 @@ _evas_key_modifier_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *ke
 }
 
 EOLIAN void
-_evas_key_lock_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_lock_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 {
    if (!keyname) return;
    if (e->locks.lock.count >= 64) return;
@@ -122,7 +122,7 @@ _evas_key_lock_add(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 }
 
 EOLIAN void
-_evas_key_lock_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_lock_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
    int i;
    if (!keyname) return;
@@ -144,7 +144,7 @@ _evas_key_lock_del(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keynam
 }
 
 EOLIAN void
-_evas_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;
@@ -157,7 +157,7 @@ _evas_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *key
 }
 
 EOLIAN void
-_evas_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;
@@ -170,7 +170,7 @@ _evas_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *ke
 }
 
 EOLIAN void
-_evas_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;
@@ -183,7 +183,7 @@ _evas_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname
 }
 
 EOLIAN void
-_evas_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;
@@ -198,7 +198,7 @@ _evas_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keynam
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
 
 EOLIAN Evas_Modifier_Mask
-_evas_key_modifier_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+_evas_canvas_key_modifier_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
 {
 
    Evas_Modifier_Mask num;

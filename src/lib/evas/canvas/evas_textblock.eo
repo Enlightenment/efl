@@ -1,4 +1,4 @@
-class Evas_Textblock (Evas_Object)
+class Evas.Textblock (Evas.Object)
 {
    legacy_prefix: evas_object_textblock;
    eo_prefix: evas_obj_textblock;
@@ -304,8 +304,8 @@ class Evas_Textblock (Evas_Object)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
-      Eo_Base.dbg_info_get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
    }
 }

@@ -39,9 +39,9 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \
    Edje *ed; \
-   if (!eo_isa(obj, EDJE_CLASS)) \
+   if (!eo_isa(obj, EDJE_OBJECT_CLASS)) \
      return RET; \
-   ed = eo_data_scope_get(obj, EDJE_CLASS);
+   ed = eo_data_scope_get(obj, EDJE_OBJECT_CLASS);
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
@@ -167,7 +167,7 @@ _edje_edit_program_script_free(Program_Script *ps)
 }
 
 EOLIAN static Eina_Bool
-_edje_edit_edje_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
+_edje_edit_edje_object_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
 {
    Eina_Bool ret;
    Eet_File *ef;
@@ -239,7 +239,7 @@ edje_edit_object_add(Evas *evas)
 EOLIAN static void
 _edje_edit_eo_base_constructor(Eo *obj, Edje_Edit *eed)
 {
-   eed->base = eo_data_ref(obj, EDJE_CLASS);
+   eed->base = eo_data_ref(obj, EDJE_OBJECT_CLASS);
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 }
@@ -982,7 +982,7 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
           continue;
 
         eeo = edje_edit_object_add(ed->base->evas);
-        if (!eo_isa(eeo, EDJE_CLASS))
+        if (!eo_isa(eeo, EDJE_OBJECT_CLASS))
           return EINA_FALSE;
 
         if (!edje_object_file_set(eeo, ed->file->path, pce->entry))
@@ -998,7 +998,7 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
              continue;
           }
 
-        eed = eo_data_scope_get(eeo, EDJE_CLASS);
+        eed = eo_data_scope_get(eeo, EDJE_OBJECT_CLASS);
         for (i = 0; i < eed->collection->patterns.table_programs_size; i++)
           {
              Edje_Program *program;

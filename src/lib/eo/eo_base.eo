@@ -1,4 +1,4 @@
-abstract Eo_Base ()
+abstract Eo.Base ()
 {
    eo_prefix: eo;
    legacy_prefix: null;

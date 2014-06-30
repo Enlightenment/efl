@@ -4,7 +4,7 @@ if HAVE_CXX11
 ### Generated headers
 
 generated_edje_cxx_bindings = \
-lib/edje/edje.eo.hh \
+lib/edje/edje_object.eo.hh \
 lib/edje/edje_edit.eo.hh
 
 installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/

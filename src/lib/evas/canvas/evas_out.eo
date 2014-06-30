@@ -1,4 +1,4 @@
-class Evas_Out (Eo_Base)
+class Evas.Out (Eo.Base)
 {
    eo_prefix: evas_out;
    legacy_prefix: evas_output;
@@ -31,8 +31,8 @@ class Evas_Out (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 
 }

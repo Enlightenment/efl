@@ -5,7 +5,7 @@
 #include "evas_cs2_private.h"
 #endif
 
-#define MY_CLASS EVAS_CLASS
+#define MY_CLASS EVAS_CANVAS_CLASS
 
 #ifdef LKDEBUG
 EAPI Eina_Bool lockdebug = EINA_FALSE;
@@ -145,12 +145,12 @@ evas_shutdown(void)
 EAPI Evas *
 evas_new(void)
 {
-   Evas_Object *eo_obj = eo_add(EVAS_CLASS, NULL);
+   Evas_Object *eo_obj = eo_add(EVAS_CANVAS_CLASS, NULL);
    return eo_obj;
 }
 
 EOLIAN static void
-_evas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
+_evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
@@ -199,7 +199,7 @@ evas_free(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
    Evas_Coord_Touch_Point *touch_point;
@@ -307,7 +307,7 @@ _evas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static void
-_evas_output_method_set(Eo *eo_e, Evas_Public_Data *e, int render_method)
+_evas_canvas_output_method_set(Eo *eo_e, Evas_Public_Data *e, int render_method)
 {
    Evas_Module *em;
 
@@ -334,13 +334,13 @@ _evas_output_method_set(Eo *eo_e, Evas_Public_Data *e, int render_method)
 }
 
 EOLIAN static int
-_evas_output_method_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_output_method_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->output.render_method;
 }
 
 EOLIAN static Evas_Engine_Info*
-_evas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    Evas_Engine_Info *info;
 
@@ -353,7 +353,7 @@ _evas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *info)
+_evas_canvas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *info)
 {
    if (!info) return EINA_FALSE;
    if (info != e->engine.info) return EINA_FALSE;
@@ -363,7 +363,7 @@ _evas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *info)
 }
 
 EOLIAN static void
-_evas_output_size_set(Eo *eo_e, Evas_Public_Data *e, int w, int h)
+_evas_canvas_output_size_set(Eo *eo_e, Evas_Public_Data *e, int w, int h)
 {
    if ((w == e->output.w) && (h == e->output.h)) return;
    if (w < 1) w = 1;
@@ -378,14 +378,14 @@ _evas_output_size_set(Eo *eo_e, Evas_Public_Data *e, int w, int h)
 }
 
 EOLIAN static void
-_evas_output_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *w, int *h)
+_evas_canvas_output_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *w, int *h)
 {
    if (w) *w = e->output.w;
    if (h) *h = e->output.h;
 }
 
 EOLIAN static void
-_evas_output_viewport_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_evas_canvas_output_viewport_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    if ((x == e->viewport.x) && (y == e->viewport.y) &&
        (w == e->viewport.w) && (h == e->viewport.h)) return;
@@ -407,7 +407,7 @@ _evas_output_viewport_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord 
 }
 
 EOLIAN static void
-_evas_output_viewport_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_evas_canvas_output_viewport_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (x) *x = e->viewport.x;
    if (y) *y = e->viewport.y;
@@ -416,7 +416,7 @@ _evas_output_viewport_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord 
 }
 
 EOLIAN static void
-_evas_output_framespace_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_evas_canvas_output_framespace_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    if ((x == e->framespace.x) && (y == e->framespace.y) &&
        (w == e->framespace.w) && (h == e->framespace.h)) return;
@@ -430,7 +430,7 @@ _evas_output_framespace_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coor
 }
 
 EOLIAN static void
-_evas_output_framespace_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_evas_canvas_output_framespace_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (x) *x = e->framespace.x;
    if (y) *y = e->framespace.y;
@@ -439,28 +439,28 @@ _evas_output_framespace_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coor
 }
 
 EOLIAN static Evas_Coord
-_evas_coord_screen_x_to_world(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x)
+_evas_canvas_coord_screen_x_to_world(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x)
 {
    if (e->output.w == e->viewport.w) return e->viewport.x + x;
    else return (long long)e->viewport.x + (((long long)x * (long long)e->viewport.w) / (long long)e->output.w);
 }
 
 EOLIAN static Evas_Coord
-_evas_coord_screen_y_to_world(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int y)
+_evas_canvas_coord_screen_y_to_world(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int y)
 {
    if (e->output.h == e->viewport.h) return e->viewport.y + y;
    else return (long long)e->viewport.y + (((long long)y * (long long)e->viewport.h) / (long long)e->output.h);
 }
 
 EOLIAN static int
-_evas_coord_world_x_to_screen(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x)
+_evas_canvas_coord_world_x_to_screen(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x)
 {
    if (e->output.w == e->viewport.w) return x - e->viewport.x;
    else return (int)((((long long)x - (long long)e->viewport.x) * (long long)e->output.w) /  (long long)e->viewport.w);
 }
 
 EOLIAN static int
-_evas_coord_world_y_to_screen(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord y)
+_evas_canvas_coord_world_y_to_screen(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord y)
 {
    if (e->output.h == e->viewport.h) return y - e->viewport.y;
    else return (int)((((long long)y - (long long)e->viewport.y) * (long long)e->output.h) /  (long long)e->viewport.h);
@@ -513,45 +513,45 @@ evas_object_image_extension_can_load_fast_get(const char *file)
 }
 
 EOLIAN static void
-_evas_pointer_output_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *x, int *y)
+_evas_canvas_pointer_output_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *x, int *y)
 {
    if (x) *x = e->pointer.x;
    if (y) *y = e->pointer.y;
 }
 
 EOLIAN static void
-_evas_pointer_canvas_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
+_evas_canvas_pointer_canvas_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
 {
    if (x) *x = e->pointer.x;
    if (y) *y = e->pointer.y;
 }
 
 EOLIAN static int
-_evas_pointer_button_down_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_pointer_button_down_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return (int)e->pointer.button;
 }
 
 EOLIAN static Eina_Bool
-_evas_pointer_inside_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_pointer_inside_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->pointer.inside;
 }
 
 EOLIAN static void
-_evas_data_attach_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, void *data)
+_evas_canvas_data_attach_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, void *data)
 {
    e->attach_data = data;
 }
 
 EOLIAN static void*
-_evas_data_attach_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_data_attach_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->attach_data;
 }
 
 EOLIAN static void
-_evas_focus_in(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_focus_in(Eo *eo_e, Evas_Public_Data *e)
 {
    if (e->focus) return;
    e->focus = 1;
@@ -559,7 +559,7 @@ _evas_focus_in(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static void
-_evas_focus_out(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 {
    if (!e->focus) return;
    e->focus = 0;
@@ -567,19 +567,19 @@ _evas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->focus;
 }
 
 EOLIAN static void
-_evas_nochange_push(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_nochange_push(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    e->nochange++;
 }
 
 EOLIAN static void
-_evas_nochange_pop(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_nochange_pop(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    e->nochange--;
 }
@@ -660,9 +660,9 @@ evas_data_argb_unpremul(unsigned int *data, unsigned int len)
 }
 
 EOLIAN static Evas *
-_evas_evas_common_interface_evas_get(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
+_evas_canvas_evas_common_interface_evas_get(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
 {
    return (Evas *)eo_e;
 }
 
-#include "canvas/evas.eo.c"
+#include "canvas/evas_canvas.eo.c"

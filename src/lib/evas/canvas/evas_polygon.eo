@@ -1,4 +1,4 @@
-class Evas_Polygon (Evas_Object)
+class Evas.Polygon (Evas.Object)
 {
    legacy_prefix: evas_object_polygon;
    eo_prefix: evas_obj_polygon;
@@ -18,8 +18,8 @@ class Evas_Polygon (Evas_Object)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 
 }

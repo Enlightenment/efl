@@ -1,4 +1,4 @@
-class Ecore_Timer (Eo_Base)
+class Ecore.Timer (Eo.Base)
 {
    /*@ Timers are objects that will call a given callback at some point
     *  in the future. They may also optionall repeat themselves if the
@@ -58,10 +58,10 @@ class Ecore_Timer (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
-      Eo_Base.destructor;
-      Eo_Base.event_freeze;
-      Eo_Base.event_freeze_count.get;
-      Eo_Base.event_thaw;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.event_freeze;
+      Eo.Base.event_freeze_count.get;
+      Eo.Base.event_thaw;
    }
 }

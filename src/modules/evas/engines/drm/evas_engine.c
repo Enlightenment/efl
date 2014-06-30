@@ -122,7 +122,7 @@ eng_setup(Evas *evas, void *einfo)
    if (!(info = (Evas_Engine_Info_Drm *)einfo)) return 0;
 
    /* try to get the evas public data */
-   if (!(epd = eo_data_scope_get(evas, EVAS_CLASS))) return 0;
+   if (!(epd = eo_data_scope_get(evas, EVAS_CANVAS_CLASS))) return 0;
 
    /* set canvas reference
     * 

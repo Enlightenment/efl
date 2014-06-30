@@ -1,4 +1,4 @@
-class Ecore_Audio (Eo_Base)
+class Ecore_Audio (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: ecore_audio_obj;
@@ -115,7 +115,7 @@ class Ecore_Audio (Eo_Base)
       }
    }
    implements {
-      Eo_Base.constructor;
+      Eo.Base.constructor;
       virtual.source.get;
       virtual.source.set;
       virtual.format.get;

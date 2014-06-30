@@ -1,4 +1,4 @@
-class Ecore_Parent (Eo_Base)
+class Ecore.Parent (Eo.Base)
 {
    data: null;
 }

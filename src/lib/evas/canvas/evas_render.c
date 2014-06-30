@@ -155,7 +155,7 @@ _accumulate_time(double before, struct accumulator *acc)
 #endif
 
 EOLIAN void
-_evas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
+_evas_canvas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
 {
    Eina_Rectangle *r;
 
@@ -166,7 +166,7 @@ _evas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int
 }
 
 EOLIAN void
-_evas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
+_evas_canvas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
 {
    Eina_Rectangle *r;
 
@@ -176,7 +176,7 @@ _evas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, i
 }
 
 EOLIAN void
-_evas_obscured_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_obscured_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
 
@@ -1645,7 +1645,7 @@ evas_render_updates_internal(Evas *eo_e,
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->changed) return EINA_FALSE;
 
    if (e->rendering)
@@ -2188,7 +2188,7 @@ evas_render_wakeup(Evas *eo_e)
    Render_Updates *ru;
    Eina_Bool haveup = EINA_FALSE;
    Eina_List *ret_updates = NULL;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    EINA_LIST_FREE(e->render.updates, ru)
      {
@@ -2271,7 +2271,7 @@ evas_render_updates_free(Eina_List *updates)
 }
 
 EOLIAN Eina_Bool
-_evas_render_async(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
@@ -2293,7 +2293,7 @@ evas_render_updates_internal_wait(Evas *eo_e,
                                   unsigned char do_draw)
 {
    Eina_List *ret = NULL;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    static int render_2 = -1;
 
    if (render_2 == -1)
@@ -2319,28 +2319,28 @@ evas_render_updates_internal_wait(Evas *eo_e,
    return ret;
 }
 EOLIAN Eina_List*
-_evas_render_updates(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_render_updates(Eo *eo_e, Evas_Public_Data *e)
 {
    if (!e->changed) return NULL;
    return evas_render_updates_internal_wait(eo_e, 1, 1);
 }
 
 EOLIAN void
-_evas_render(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 {
    if (!e->changed) return;
    evas_render_updates_internal_wait(eo_e, 0, 1);
 }
 
 EOLIAN void
-_evas_norender(Eo *eo_e, Evas_Public_Data *_pd EINA_UNUSED)
+_evas_canvas_norender(Eo *eo_e, Evas_Public_Data *_pd EINA_UNUSED)
 {
    //   if (!e->changed) return;
    evas_render_updates_internal_wait(eo_e, 0, 0);
 }
 
 EOLIAN void
-_evas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
@@ -2378,7 +2378,7 @@ _evas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN void
-_evas_sync(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_sync(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
@@ -2416,7 +2416,7 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 }
 
 EOLIAN void
-_evas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
@@ -2501,7 +2501,7 @@ evas_render_invalidate(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    OBJS_ARRAY_CLEAN(&e->active_objects);
    OBJS_ARRAY_CLEAN(&e->render_objects);

@@ -210,7 +210,7 @@ edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *data, E
 }
 
 EOLIAN void
-_edje_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+_edje_object_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
    if ((!emission) || (!source) || (!func)) return;
 
@@ -241,7 +241,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 }
 
 EOLIAN void*
-_edje_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+_edje_object_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
    if ((!emission) || (!source) || (!func)) return NULL;
    if (!ed) return NULL;
@@ -270,7 +270,7 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 }
 
 EOLIAN void
-_edje_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
+_edje_object_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
 {
    if ((!emission) || (!source)) return;
    if (!ed) return;
@@ -280,7 +280,7 @@ _edje_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const cha
 
 /* FIXDOC: Verify/Expand */
 EOLIAN void
-_edje_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
+_edje_object_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
 {
    double t;
    Eina_List *l;
@@ -317,7 +317,7 @@ _edje_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
 }
 
 EOLIAN Eina_Bool
-_edje_play_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_play_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;
@@ -328,7 +328,7 @@ _edje_play_get(Eo *obj EINA_UNUSED, Edje *ed)
 
 /* FIXDOC: Verify/Expand */
 EOLIAN void
-_edje_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
+_edje_object_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
 {
    Eina_List *l;
    unsigned int i;
@@ -386,7 +386,7 @@ break_prog:
 }
 
 EOLIAN Eina_Bool
-_edje_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;

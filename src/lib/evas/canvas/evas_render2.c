@@ -143,7 +143,7 @@ _evas_render2_updates_clean(Evas_Public_Data *e)
 static void
 _evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    
    // XXX:
    // XXX: actually update screen from mainloop here if needed - eg software
@@ -309,7 +309,7 @@ Eina_Bool
 _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
                     Eina_Bool do_draw, Eina_Bool do_async)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    
    // if nothing changed at all since last render - skip this frame
    if (!e->changed) return EINA_FALSE;
@@ -376,7 +376,7 @@ _evas_render2_end(Eo *eo_e)
 void
 _evas_render2_idle_flush(Eo *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    // wait for rendering to finish so we don't mess up shared resources
    _evas_render2_wait(eo_e);
@@ -400,7 +400,7 @@ _evas_render2_idle_flush(Eo *eo_e)
 void
 _evas_render2_dump(Eo *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    // freeze core cache system async work
    evas_cache_async_freeze();
@@ -424,6 +424,6 @@ _evas_render2_dump(Eo *eo_e)
 void
 _evas_render2_wait(Eo *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    while (e->rendering) evas_async_events_process_blocking();
 }

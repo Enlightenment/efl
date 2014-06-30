@@ -200,7 +200,7 @@ static void
 _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
                  Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *source;
    Eina_Bool source_clip = EINA_FALSE;
    void *ctx;

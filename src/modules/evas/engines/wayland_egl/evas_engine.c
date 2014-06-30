@@ -643,7 +643,7 @@ eng_setup(Evas *evas, void *info)
    const char *s;
 
    inf = (Evas_Engine_Info_Wayland_Egl *)info;
-   epd = eo_data_scope_get(evas, EVAS_CLASS);
+   epd = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    /* check for existing engine output */
    if (!epd->engine.data.output)

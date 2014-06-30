@@ -376,7 +376,7 @@ evas_object_image_add(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e->engine.func, NULL);
    Evas_Object *eo_obj = eo_add(EVAS_IMAGE_CLASS, eo_e);
@@ -2168,14 +2168,14 @@ _evas_image_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
 }
 
 EOLIAN void
-_evas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    evas_render_rendering_wait(e);
    e->engine.func->image_cache_flush(e->engine.data.output);
 }
 
 EOLIAN void
-_evas_image_cache_reload(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_image_cache_reload(Eo *eo_e, Evas_Public_Data *e)
 {
    Evas_Layer *layer;
 
@@ -2213,7 +2213,7 @@ _evas_image_cache_reload(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN void
-_evas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
+_evas_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 {
    if (size < 0) size = 0;
    evas_render_rendering_wait(e);
@@ -2221,13 +2221,13 @@ _evas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 }
 
 EOLIAN int
-_evas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->engine.func->image_cache_get(e->engine.data.output);
 }
 
 EOLIAN Eina_Bool
-_evas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *maxw, int *maxh)
+_evas_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *maxw, int *maxh)
 {
    int w = 0, h = 0;
 
@@ -2360,7 +2360,7 @@ _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
 static void
 _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *source;
    void *ctx;
    int w, h;
@@ -2523,7 +2523,7 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
         return;
      }
 
-   e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    if (pd_scene->surface)
      {

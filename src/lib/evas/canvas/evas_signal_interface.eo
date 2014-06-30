@@ -1,4 +1,4 @@
-interface Evas_Signal_Interface ()
+interface Evas.Signal_Interface ()
 {
    data: null;
    implements {

@@ -1,4 +1,4 @@
-class Evas_Line (Evas_Object)
+class Evas.Line (Evas.Object)
 {
    legacy_prefix: evas_object_line;
    eo_prefix: evas_obj_line;
@@ -24,7 +24,7 @@ class Evas_Line (Evas_Object)
       }
    }
    implements {
-      Eo_Base.constructor;
+      Eo.Base.constructor;
    }
 
 }

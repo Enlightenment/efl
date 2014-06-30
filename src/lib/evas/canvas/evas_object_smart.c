@@ -899,13 +899,13 @@ _evas_object_smart_calculate(Eo *eo_obj, Evas_Smart_Data *o)
 }
 
 EOLIAN void
-_evas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
+_evas_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
 {
    evas_call_smarts_calculate(eo_e);
 }
 
 EOLIAN int
-_evas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->smart_calc_count;
 }
@@ -920,7 +920,7 @@ evas_call_smarts_calculate(Evas *eo_e)
 {
    Evas_Smart_Data *o;
    Eina_Clist *elem;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    evas_event_freeze(eo_e);
    e->in_smart_calc++;

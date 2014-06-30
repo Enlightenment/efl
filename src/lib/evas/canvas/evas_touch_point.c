@@ -4,7 +4,7 @@
 void
 _evas_touch_point_append(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Coord_Touch_Point *point;
 
    /* create new Evas_Coord_Touch_Point */
@@ -19,7 +19,7 @@ _evas_touch_point_append(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y)
 void
 _evas_touch_point_update(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y, Evas_Touch_Point_State state)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l;
    Evas_Coord_Touch_Point *point = NULL;
 
@@ -38,7 +38,7 @@ _evas_touch_point_update(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y, Evas_To
 void
 _evas_touch_point_remove(Evas *eo_e, int id)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l;
    Evas_Coord_Touch_Point *point = NULL;
 
@@ -54,13 +54,13 @@ _evas_touch_point_remove(Evas *eo_e, int id)
 }
 
 EOLIAN unsigned int
-_evas_touch_point_list_count(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_touch_point_list_count(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return eina_list_count(e->touch_points);
 }
 
 EOLIAN void
-_evas_touch_point_list_nth_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n, Evas_Coord *x, Evas_Coord *y)
+_evas_canvas_touch_point_list_nth_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord_Touch_Point *point = NULL;
 
@@ -76,7 +76,7 @@ _evas_touch_point_list_nth_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, uns
 }
 
 EOLIAN int
-_evas_touch_point_list_nth_id_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n)
+_evas_canvas_touch_point_list_nth_id_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n)
 {
    Evas_Coord_Touch_Point *point = NULL;
 
@@ -86,7 +86,7 @@ _evas_touch_point_list_nth_id_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, uns
 }
 
 EOLIAN Evas_Touch_Point_State
-_evas_touch_point_list_nth_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n)
+_evas_canvas_touch_point_list_nth_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int n)
 {
    Evas_Coord_Touch_Point *point = NULL;
 

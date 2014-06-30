@@ -1,4 +1,4 @@
-class Evas_Box (Evas_Smart_Clipped)
+class Evas.Box (Evas.Smart_Clipped)
 {
    legacy_prefix: evas_object_box;
    eo_prefix: evas_obj_box;
@@ -726,12 +726,12 @@ class Evas_Box (Evas_Smart_Clipped)
    }
    implements {
       class.constructor;
-      Eo_Base.constructor;
-      Evas_Object.smart_data.get;
-      Evas_Object_Smart.calculate;
-      Evas_Object_Smart.add;
-      Evas_Object_Smart.del;
-      Evas_Object_Smart.resize;
+      Eo.Base.constructor;
+      Evas.Object.smart_data.get;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
    }
    events {
       child,added;
