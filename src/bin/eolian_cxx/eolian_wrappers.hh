@@ -66,7 +66,23 @@ class_from_name(std::string const& classname)
 inline std::string
 class_eo_name(Eolian_Class const& klass)
 {
-   std::string s = class_full_name(klass) + "_CLASS";
+   std::string suffix;
+   switch (eolian_class_type_get(klass))
+     {
+        case EOLIAN_CLASS_REGULAR:
+        case EOLIAN_CLASS_ABSTRACT:
+           suffix = "CLASS";
+           break;
+        case EOLIAN_CLASS_MIXIN:
+           suffix = "MIXIN";
+           break;
+        case EOLIAN_CLASS_INTERFACE:
+           suffix = "INTERFACE";
+           break;
+        default:
+           break;
+     }
+   std::string s = class_full_name(klass) + "_" + suffix;
    std::transform(s.begin(), s.end(), s.begin(),
                   [](int c)
                   {

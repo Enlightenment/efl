@@ -45,6 +45,26 @@ _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_
    eina_str_toupper(&p);
    p = strncpy(env->lower_eo_prefix, eo_prefix, PATH_MAX - 1);
    eina_str_tolower(&p);
+
+   /* classtype */
+   if (class) switch (eolian_class_type_get(class))
+     {
+        case EOLIAN_CLASS_REGULAR:
+        case EOLIAN_CLASS_ABSTRACT:
+           strcpy(env->lower_classtype, "class");
+           strcpy(env->upper_classtype, "CLASS");
+           break;
+        case EOLIAN_CLASS_MIXIN:
+           strcpy(env->lower_classtype, "mixin");
+           strcpy(env->upper_classtype, "MIXIN");
+           break;
+        case EOLIAN_CLASS_INTERFACE:
+           strcpy(env->lower_classtype, "interface");
+           strcpy(env->upper_classtype, "INTERFACE");
+           break;
+        default:
+           break;
+     }
 }
 
 void
@@ -117,6 +137,8 @@ _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, co
              eina_strbuf_replace_all(buf, "@#func", funcname);
              eina_strbuf_replace_all(buf, "@#FUNC", tmp_func_env.upper_func);
           }
+        eina_strbuf_replace_all(buf, "@#classtype", tmp_env.lower_classtype);
+        eina_strbuf_replace_all(buf, "@#CLASSTYPE", tmp_env.upper_classtype);
         eina_strbuf_replace_all(buf, "@#Class", tmp_env.full_classname);
         eina_strbuf_replace_all(buf, "@#class", tmp_env.lower_classname);
         eina_strbuf_replace_all(buf, "@#CLASS", tmp_env.upper_classname);

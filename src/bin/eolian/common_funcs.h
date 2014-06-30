@@ -42,6 +42,9 @@ typedef struct
 
    char upper_classname[PATH_MAX];
    char lower_classname[PATH_MAX];
+
+   char upper_classtype[PATH_MAX];
+   char lower_classtype[PATH_MAX];
 }_eolian_class_vars;
 
 typedef struct

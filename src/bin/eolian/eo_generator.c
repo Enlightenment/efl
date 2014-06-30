@@ -48,14 +48,14 @@ static const Eo_Class_Description _@#class_class_desc = {\n\
      @#dtor_name\n\
 };\n\
 \n\
-EO_DEFINE_CLASS(@#class_class_get, &_@#class_class_desc, @#list_inheritNULL);\
+EO_DEFINE_CLASS(@#class_@#classtype_get, &_@#class_class_desc, @#list_inheritNULL);\
 ";
 
 static const char
 tmpl_eo_obj_header[] = "\
-#define @#CLASS_CLASS @#class_class_get()\n\
+#define @#CLASS_@#CLASSTYPE @#class_@#classtype_get()\n\
 \n\
-const Eo_Class *@#class_class_get(void) EINA_CONST;\n\
+const Eo_Class *@#class_@#classtype_get(void) EINA_CONST;\n\
 \n\
 ";
 
@@ -761,7 +761,8 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
         Eolian_Class inherit_class = eolian_class_find_by_name(inherit_name);
         _eolian_class_vars inherit_env;
         _class_env_create(inherit_class, NULL, &inherit_env);
-        eina_strbuf_append_printf(tmpbuf, "%s_CLASS, ", inherit_env.upper_classname);
+        eina_strbuf_append_printf(tmpbuf, "%s_%s, ", inherit_env.upper_classname,
+                                  inherit_env.upper_classtype);
      }
 
    if (eina_strbuf_length_get(tmpbuf) == 0) eina_strbuf_append(tmpbuf, "NULL, ");
