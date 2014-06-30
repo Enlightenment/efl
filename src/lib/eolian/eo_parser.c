@@ -275,12 +275,15 @@ parse_typedef(Eo_Lexer *ls)
 }
 
 static void
-parse_return(Eo_Lexer *ls)
+parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
 {
    Eo_Ret_Def *ret = calloc(1, sizeof(Eo_Ret_Def));
    ls->tmp.ret_def = ret;
    eo_lexer_get(ls);
-   ret->type = parse_type(ls);
+   if (allow_void)
+      ret->type = parse_type_void(ls);
+   else
+      ret->type = parse_type(ls);
    ls->tmp.type_def = NULL;
    if (ls->t.token == '(')
      {
@@ -429,7 +432,7 @@ parse_accessor(Eo_Lexer *ls)
           {
              case KW_return:
                 CASE_LOCK(ls, return, "return")
-                parse_return(ls);
+                parse_return(ls, acc->type == GETTER);
                 acc->ret = ls->tmp.ret_def;
                 ls->tmp.ret_def = NULL;
                 break;
@@ -579,7 +582,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
                 break;
              case KW_return:
                 CASE_LOCK(ls, return, "return")
-                parse_return(ls);
+                parse_return(ls, EINA_FALSE);
                 meth->ret = ls->tmp.ret_def;
                 ls->tmp.ret_def = NULL;
                 break;
