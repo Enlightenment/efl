@@ -368,3 +368,20 @@ ecore_x_screensaver_custom_blanking_disable(void)
    return EINA_FALSE;
 #endif
 }
+
+
+EAPI void
+ecore_x_screensaver_supend(void)
+{
+#ifdef ECORE_XCB_SCREENSAVER
+   xcb_screensaver_suspend(_ecore_xcb_conn, 1);
+#endif
+}
+
+EAPI void
+ecore_x_screensaver_resume(void)
+{
+#ifdef ECORE_XCB_SCREENSAVER
+   xcb_screensaver_suspend(_ecore_xcb_conn, 0);
+#endif
+}

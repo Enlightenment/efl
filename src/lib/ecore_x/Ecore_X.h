@@ -1972,7 +1972,9 @@ EAPI int                             ecore_x_screensaver_interval_get(void);
 EAPI void                            ecore_x_screensaver_event_listen_set(Eina_Bool on);
 EAPI Eina_Bool                       ecore_x_screensaver_custom_blanking_enable(void); /** @since 1.7 */
 EAPI Eina_Bool                       ecore_x_screensaver_custom_blanking_disable(void); /** @since 1.7 */
-       
+EAPI void                            ecore_x_screensaver_supend(void);
+EAPI void                            ecore_x_screensaver_resume(void);
+
 /* FIXME: these funcs need categorising */
 
 typedef struct _Ecore_X_Window_Attributes
