@@ -35,6 +35,7 @@ group { name: "e/desklock/login_box";
       part { name: "logo_clip"; type: RECT;
          description { state: "default";
             min: 9999 9999;
+            fixed: 1 1;
          }
          description { state: "hidden";
             visible: 0;
