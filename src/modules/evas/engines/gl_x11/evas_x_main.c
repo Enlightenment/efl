@@ -1,6 +1,6 @@
 #include "evas_engine.h"
 
-static Evas_GL_X11_Window *_evas_gl_x11_window = NULL;
+static Outbuf *_evas_gl_x11_window = NULL;
 
 #ifdef GL_GLES
 static EGLContext context = EGL_NO_CONTEXT;
@@ -22,7 +22,7 @@ static Colormap     _evas_gl_x11_rgba_cmap = 0;
 
 static int win_count = 0;
 
-Evas_GL_X11_Window *
+Outbuf *
 eng_window_new(Display *disp,
                Window   win,
                int      screen,
@@ -35,7 +35,7 @@ eng_window_new(Display *disp,
                int      alpha,
                int      rot)
 {
-   Evas_GL_X11_Window *gw;
+   Outbuf *gw;
 #ifdef GL_GLES
    int context_attrs[3];
    int config_attrs[40];
@@ -48,7 +48,7 @@ eng_window_new(Display *disp,
 
    if (!_evas_gl_x11_vi) return NULL;
 
-   gw = calloc(1, sizeof(Evas_GL_X11_Window));
+   gw = calloc(1, sizeof(Outbuf));
    if (!gw) return NULL;
 
    win_count++;
@@ -416,7 +416,7 @@ eng_window_new(Display *disp,
 }
 
 void
-eng_window_free(Evas_GL_X11_Window *gw)
+eng_window_free(Outbuf *gw)
 {
    int ref = 0;
    win_count--;
@@ -458,7 +458,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
 static Eina_Bool
 eng_window_make_current(void *data, void *doit)
 {
-   Evas_GL_X11_Window *gw = data;
+   Outbuf *gw = data;
 
 #ifdef GL_GLES
    if (doit)
@@ -501,7 +501,7 @@ eng_window_make_current(void *data, void *doit)
 }
 
 void
-eng_window_use(Evas_GL_X11_Window *gw)
+eng_window_use(Outbuf *gw)
 {
    Eina_Bool force_use = EINA_FALSE;
 
@@ -565,7 +565,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
 }
 
 void
-eng_window_unsurf(Evas_GL_X11_Window *gw)
+eng_window_unsurf(Outbuf *gw)
 {
    if (!gw->surf) return;
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
@@ -596,7 +596,7 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
 }
 
 void
-eng_window_resurf(Evas_GL_X11_Window *gw)
+eng_window_resurf(Outbuf *gw)
 {
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO"))
@@ -851,7 +851,7 @@ eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo)
 }
 
 Evas_GL_X11_Context *
-eng_gl_context_new(Evas_GL_X11_Window *win)
+eng_gl_context_new(Outbuf *win)
 {
    Evas_GL_X11_Context *ctx;
 #if GL_GLES

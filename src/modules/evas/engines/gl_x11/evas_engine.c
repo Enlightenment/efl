@@ -49,7 +49,7 @@ struct _Render_Engine
    Tilebuf_Rect            *rects_prev[4];
    Eina_Inlist             *cur_rect;
    
-   Evas_GL_X11_Window      *win;
+   Outbuf      *win;
    Evas_Engine_Info_GL_X11 *info;
    Evas                    *evas;
    Tilebuf                 *tb;
