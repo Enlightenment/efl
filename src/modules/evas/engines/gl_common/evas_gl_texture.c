@@ -435,7 +435,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
 {
    Evas_GL_Texture *tex;
    GLsizei w, h;
-   int u = 0, v = 0, yoffset = 0;
+   int u = 0, v = 0, xoffset = 1, yoffset = 1;
    int lformat;
 
    lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra, im->cache_entry.space);
@@ -443,9 +443,6 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
 
    tex = evas_gl_common_texture_alloc(gc, im->cache_entry.w, im->cache_entry.h, im->cache_entry.flags.alpha);
    if (!tex) return NULL;
-
-#define TEX_HREP 1
-#define TEX_VREP 1
 
    switch (im->cache_entry.space)
      {
@@ -456,13 +453,14 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
         w = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
         h = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!(w & 0x3) && !(h & 0x3), NULL);
-        yoffset = 1;
+        xoffset = im->cache_entry.borders.l;
+        yoffset = im->cache_entry.borders.t;
         break;
 
      default:
-        /* This need to be adjusted if we do something else than strip allocation */
-        w = im->cache_entry.w + TEX_HREP + 2; /* one pixel stop gap and two pixels for the border */
-        h = im->cache_entry.h + TEX_VREP + 2; /* only one added border for security down */
+        // One pixel gap and two pixels for duplicated borders
+        w = im->cache_entry.w + 3;
+        h = im->cache_entry.h + 3;
         break;
      }
 
@@ -476,7 +474,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
-   tex->x = u + 1;
+   tex->x = u + xoffset;
    tex->y = v + yoffset;
 
    tex->pt->references++;
