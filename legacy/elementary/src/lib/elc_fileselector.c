@@ -1902,7 +1902,7 @@ _elm_fileselector_elm_interface_fileselector_selected_set(Eo *obj, Elm_Fileselec
           }
 
         selected = ecore_file_dir_get(path);
-        _populate(obj, selected, NULL, NULL);
+        _populate(obj, selected, NULL, path);
         eina_stringshare_replace(&sd->selection, path);
         free(selected);
      }
