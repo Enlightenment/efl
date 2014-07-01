@@ -214,7 +214,7 @@ evas_image_load_file_head_dds(void *loader_data,
    height = _dword_read(&m);
    width = _dword_read(&m);
    pitchOrLinearSize = _dword_read(&m);
-   if (!width || !height || (width & 0x3) || (height & 0x3))
+   if (!width || !height)
      FAIL();
 
    // Skip depth & mipmap count + reserved[11]
@@ -302,10 +302,142 @@ evas_image_load_file_head_dds(void *loader_data,
 
    prop->h = height;
    prop->w = width;
+   prop->borders.l = 4;
+   prop->borders.t = 4;
+   prop->borders.r = 4 - (prop->w & 0x3);
+   prop->borders.b = 4 - (prop->h & 0x3);
    *error = EVAS_LOAD_ERROR_NONE;
 
 on_error:
    eina_file_map_free(loader->f, map);
+   return (*error == EVAS_LOAD_ERROR_NONE);
+}
+
+static Eina_Bool
+_dds_data_load(Evas_Loader_Internal *loader, Evas_Image_Property *prop,
+               unsigned char *map, void *pixels, int *error)
+{
+   const unsigned char *src;
+   int bsize = 16, srcstride, dststride, w, h;
+   unsigned char *dst;
+
+   void (* flip) (unsigned char *, const unsigned char *, int) = NULL;
+
+   *error = EVAS_LOAD_ERROR_GENERIC;
+
+   if (loader->format != prop->cspace)
+     FAIL();
+
+   switch (loader->format)
+     {
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+        flip = s3tc_encode_dxt1_flip;
+        bsize = 8;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+        flip = s3tc_encode_dxt2_rgba_flip;
+        bsize = 16;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+        flip = s3tc_encode_dxt3_rgba_flip;
+        bsize = 16;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+        flip = s3tc_encode_dxt4_rgba_flip;
+        bsize = 16;
+        break;
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+        flip = s3tc_encode_dxt5_rgba_flip;
+        bsize = 16;
+        break;
+      default: FAIL();
+     }
+
+   src = map + DDS_HEADER_SIZE;
+   w = prop->w;
+   h = prop->h;
+   srcstride = ((prop->w + 3) / 4) * bsize;
+   dststride = ((prop->w + prop->borders.l + prop->borders.r) / 4) * bsize;
+
+   // asserts
+   EINA_SAFETY_ON_FALSE_GOTO(prop->borders.l == 4, on_error);
+   EINA_SAFETY_ON_FALSE_GOTO(prop->borders.t == 4, on_error);
+   EINA_SAFETY_ON_FALSE_GOTO(prop->borders.r == (4 - (w & 0x3)), on_error);
+   EINA_SAFETY_ON_FALSE_GOTO(prop->borders.b == (4 - (h & 0x3)), on_error);
+
+   if (eina_file_size_get(loader->f) <
+       (size_t) (DDS_HEADER_SIZE + srcstride * h / 4))
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto on_error;
+     }
+
+   // First, copy the real data
+   for (int y = 0; y < h; y += 4)
+     {
+        dst = ((unsigned char *) pixels) + ((y / 4) + 1) * dststride + bsize;
+        memcpy(dst, src, srcstride);
+        src += srcstride;
+     }
+   // Top
+   for (int x = 0; x < w; x += 4)
+     {
+        src = map + DDS_HEADER_SIZE + (x / 4) * bsize;
+        dst = ((unsigned char *) pixels) + ((x / 4) + 1) * bsize;
+        flip(dst, src, EINA_TRUE);
+     }
+   // Left
+   for (int y = 0; y < h; y += 4)
+     {
+        src = map + DDS_HEADER_SIZE + (y / 4) * srcstride;
+        dst = ((unsigned char *) pixels) + ((y / 4) + 1) * dststride;
+        flip(dst, src, EINA_FALSE);
+     }
+   // Top-left
+   dst = pixels;
+   src = dst + bsize;
+   flip(dst, src, EINA_FALSE);
+   // Right
+   if ((prop->w & 0x3) == 0)
+     {
+        for (int y = 0; y < h; y += 4)
+          {
+             src = map + DDS_HEADER_SIZE + ((y / 4) + 1) * srcstride - bsize;
+             dst = ((unsigned char *) pixels) + ((y / 4) + 2) * dststride - bsize;
+             flip(dst, src, EINA_FALSE);
+          }
+        // Top-right
+        dst = ((unsigned char *) pixels) + dststride - bsize;
+        src = dst - bsize;
+        flip(dst, src, EINA_FALSE);
+     }
+   // Bottom
+   if ((prop->h & 0x3) == 0)
+     {
+        for (int x = 0; x < w; x += 4)
+          {
+             src = map + DDS_HEADER_SIZE + ((h / 4) - 1) * srcstride + (x / 4) * bsize;
+             dst = ((unsigned char *) pixels) + ((h / 4) + 1) * dststride + ((x / 4) + 1) * bsize;
+             flip(dst, src, EINA_TRUE);
+          }
+        // Bottom-left
+        dst = ((unsigned char *) pixels) + ((h / 4) + 1) * dststride;
+        src = dst + bsize;
+        flip(dst, src, EINA_FALSE);
+        if ((prop->w & 0x3) == 0)
+          {
+             // Bottom-right
+             dst = ((unsigned char *) pixels) + ((h / 4) + 2) * dststride - bsize;
+             src = dst - bsize;
+             flip(dst, src, EINA_FALSE);
+          }
+     }
+
+   *error = EVAS_LOAD_ERROR_NONE;
+
+on_error:
+   eina_file_map_free(loader->f, (void *) map);
    return (*error == EVAS_LOAD_ERROR_NONE);
 }
 
@@ -332,14 +464,7 @@ evas_image_load_file_data_dds(void *loader_data,
      FAIL();
 
    if (prop->cspace != EVAS_COLORSPACE_ARGB8888)
-     {
-        if (loader->format != prop->cspace)
-          FAIL();
-        memcpy(pixels, src, loader->data_size);
-        *error = EVAS_LOAD_ERROR_NONE;
-        eina_file_map_free(loader->f, (void *) src);
-        return EINA_TRUE;
-     }
+     return _dds_data_load(loader, prop, map, pixels, error);
 
    // Decode to BGRA
    switch (loader->format)
@@ -399,7 +524,7 @@ evas_image_load_file_data_dds(void *loader_data,
    *error = EVAS_LOAD_ERROR_NONE;
 
 on_error:
-   eina_file_map_free(loader->f, (void *) src);
+   eina_file_map_free(loader->f, (void *) map);
    return (*error == EVAS_LOAD_ERROR_NONE);
 }
 

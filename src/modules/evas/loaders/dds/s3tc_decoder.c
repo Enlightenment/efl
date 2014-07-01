@@ -95,36 +95,125 @@ _decode_dxt_alpha(unsigned int *bgra, const unsigned char *s3tc)
      }
 }
 
-void s3tc_decode_dxt1_rgb(unsigned int *bgra, const unsigned char *s3tc)
+void
+s3tc_decode_dxt1_rgb(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc, 0xFF000000, EINA_TRUE, EINA_FALSE);
 }
 
-void s3tc_decode_dxt1_rgba(unsigned int *bgra, const unsigned char *s3tc)
+void
+s3tc_decode_dxt1_rgba(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc, 0xFF000000, EINA_TRUE, EINA_TRUE);
 }
 
-void s3tc_decode_dxt2_rgba(unsigned int *bgra, const unsigned char *s3tc)
+void
+s3tc_decode_dxt2_rgba(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
    _decode_alpha4(bgra, s3tc);
 }
 
-void s3tc_decode_dxt3_rgba(unsigned int *bgra, const unsigned char *s3tc)
+void
+s3tc_decode_dxt3_rgba(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
    _decode_alpha4(bgra, s3tc);
 }
 
-void s3tc_decode_dxt4_rgba(unsigned int *bgra, const unsigned char *s3tc)
+void
+s3tc_decode_dxt4_rgba(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
    _decode_dxt_alpha(bgra, s3tc);
 }
 
-void s3tc_decode_dxt5_rgba(unsigned int *bgra, const unsigned char *s3tc)
+void
+s3tc_decode_dxt5_rgba(unsigned int *bgra, const unsigned char *s3tc)
 {
    _decode_dxt1_rgb(bgra, s3tc + 8, 0x0, EINA_FALSE, EINA_FALSE);
    _decode_dxt_alpha(bgra, s3tc);
+}
+
+/* Fast re-encode functions to flip S3TC blocks */
+
+static inline unsigned char
+_byte_2222_flip(unsigned char src)
+{
+   return ((src & (0x3 << 6)) >> 6) |
+         ((src & (0x3 << 4)) >> 2) |
+         ((src & (0x3 << 2)) << 2) |
+         ((src & 0x3) << 6);
+}
+
+static inline unsigned char
+_byte_44_flip(unsigned char src)
+{
+   return ((src & 0xF0) >> 4) | ((src & 0x0F) << 4);
+}
+
+void
+s3tc_encode_dxt1_flip(unsigned char *dest, const unsigned char *orig, int vflip)
+{
+   dest[0] = orig[0];
+   dest[1] = orig[1];
+   dest[2] = orig[2];
+   dest[3] = orig[3];
+
+   if (vflip)
+     {
+        dest[4] = orig[7];
+        dest[5] = orig[6];
+        dest[6] = orig[5];
+        dest[7] = orig[4];
+     }
+   else
+     {
+        dest[4] = _byte_2222_flip(orig[4]);
+        dest[5] = _byte_2222_flip(orig[5]);
+        dest[6] = _byte_2222_flip(orig[6]);
+        dest[7] = _byte_2222_flip(orig[7]);
+     }
+}
+
+void
+s3tc_encode_dxt2_rgba_flip(unsigned char *dest, const unsigned char *orig, int vflip)
+{
+   if (vflip)
+     {
+        dest[0] = orig[6];
+        dest[1] = orig[7];
+        dest[2] = orig[4];
+        dest[3] = orig[5];
+        dest[4] = orig[2];
+        dest[5] = orig[3];
+        dest[6] = orig[0];
+        dest[7] = orig[1];
+     }
+   else
+     {
+        for (int k = 0; k < 8; k += 2)
+          {
+             dest[0+k] = _byte_44_flip(orig[1+k]);
+             dest[1+k] = _byte_44_flip(orig[0+k]);
+          }
+     }
+   s3tc_encode_dxt1_flip(dest + 8, orig + 8, vflip);
+}
+
+void
+s3tc_encode_dxt3_rgba_flip(unsigned char *dest, const unsigned char *orig, int vflip)
+{
+   s3tc_encode_dxt2_rgba_flip(dest, orig, vflip);
+}
+
+void s3tc_encode_dxt4_rgba_flip(unsigned char *dest, const unsigned char *orig, int vflip)
+{
+   s3tc_encode_dxt1_flip(dest, orig, vflip);
+   s3tc_encode_dxt1_flip(dest + 8, orig + 8, vflip);
+}
+
+void s3tc_encode_dxt5_rgba_flip(unsigned char *dest, const unsigned char *orig, int vflip)
+{
+   s3tc_encode_dxt4_rgba_flip(dest, orig, vflip);
 }
