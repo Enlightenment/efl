@@ -572,7 +572,6 @@ struct _Evas_GL_Texture_Pool
    Eina_Bool        render : 1;
    Eina_Bool        native : 1;
    Eina_Bool        dynamic : 1;
-   Eina_Bool        comptex_ready : 1;
 };
 
 struct _Evas_GL_Texture_Alloca

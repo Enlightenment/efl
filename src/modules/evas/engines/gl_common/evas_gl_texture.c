@@ -224,16 +224,57 @@ _tex_format_index(GLuint format)
    return 0;
 }
 
+static inline int
+_evas_gl_texture_size_get(int w, int h, int intfmt, Eina_Bool *comp)
+{
+   if (comp) *comp = EINA_FALSE;
+   switch (intfmt)
+     {
+      case GL_RGBA:
+      case GL_BGRA:
+      case GL_RGB:
+        return w * h * 4;
+      case GL_ALPHA:
+        return w * h * 1;
+      case GL_ALPHA4:
+        return w * h / 2; // TODO: Check this
+      case GL_LUMINANCE:
+        return w * h * 1;
+      case GL_LUMINANCE_ALPHA:
+        return w * h * 2;
+      case GL_ETC1_RGB8_OES:
+      case GL_COMPRESSED_RGB8_ETC2:
+      case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+      case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        if (comp) *comp = EINA_TRUE;
+        return ((w + 3) >> 2) * ((h + 3) >> 2) * 8;
+      case GL_COMPRESSED_RGBA8_ETC2_EAC:
+      case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+      case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        if (comp) *comp = EINA_TRUE;
+        return ((w + 3) >> 2) * ((h + 3) >> 2) * 16;
+      default:
+        return 0;
+     }
+}
+
 static Eina_Bool
 _tex_2d(Evas_Engine_GL_Context *gc, int intfmt, int w, int h, int fmt, int type)
 {
+   Eina_Bool comp;
+   int sz;
+
    if ((w > gc->shared->info.max_texture_size) ||
        (h > gc->shared->info.max_texture_size))
      {
         ERR("Fail tex too big %ix%i", w, h);
         return EINA_FALSE;
      }
-   glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
+   sz = _evas_gl_texture_size_get(w, h, intfmt, &comp);
+   if (!comp)
+     glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
+   else
+     glCompressedTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, sz, NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
 # ifdef GL_GLES
@@ -1072,7 +1113,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
 void
 evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
-   unsigned int bytes_count;
+   unsigned int bytes_count, bsize = 8;
 
    if (tex->alpha != im->cache_entry.flags.alpha)
      {
@@ -1099,9 +1140,11 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
       case EVAS_COLORSPACE_ARGB8888: bytes_count = 4; break;
       case EVAS_COLORSPACE_GRY8: bytes_count = 1; break;
       case EVAS_COLORSPACE_AGRY88: bytes_count = 2; break;
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        bsize = 16;
+        // fallthrough
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
-      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
         {
            /*
              ETC1/2 can't be scaled down on the fly and interpolated, like it is
@@ -1112,10 +1155,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
            */
            GLsizei width, height;
            GLint x, y;
-           int etc_block_size = 8;
-
-           if (im->cache_entry.space == EVAS_COLORSPACE_RGBA8_ETC2_EAC)
-             etc_block_size = 16;
 
            x = tex->x - im->cache_entry.borders.l;
            y = tex->y - im->cache_entry.borders.t;
@@ -1130,32 +1169,19 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                (im->cache_entry.space != EVAS_COLORSPACE_ETC1))
                && (tex->pt->w != width || tex->pt->h != height))
              {
-                int glerr;
-                glerr = glGetError();
-
-                if (!tex->pt->comptex_ready)
-                  {
-                     GLsizei tw, th;
-                     tw = ((tex->pt->w >> 2) + (tex->pt->w & 0x3 ? 1 : 0)) << 2;
-                     th = ((tex->pt->h >> 2) + (tex->pt->h & 0x3 ? 1 : 0)) << 2;
-                     glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->format,
-                                            tw, th, 0,
-                                            ((tw * th) >> 4) * etc_block_size,
-                                            NULL);
-                     GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                     tex->pt->comptex_ready = EINA_TRUE;
-                  }
+                int err;
+                err = glGetError();
 
                 glCompressedTexSubImage2D(GL_TEXTURE_2D, 0,
                                           x, y, width, height,
                                           tex->pt->format,
-                                          ((width * height) >> 4) * etc_block_size,
+                                          ((width * height) >> 4) * bsize,
                                           im->image.data);
 
-                glerr = glGetError();
-                if (glerr != GL_NO_ERROR)
+                err = glGetError();
+                if (err != GL_NO_ERROR)
                   {
-                     ERR("glCompressedTexSubImage2D failed with ETC1/2: %d", glerr);
+                     glerr(err, __FILE__, __FUNCTION__, __LINE__, "glCompressedTexSubImage2D");
 
                      // FIXME: Changing settings on the fly.
                      // The first texture will be black.
@@ -1168,7 +1194,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
              {
                 glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->format,
                                        width, height, 0,
-                                       ((width * height) >> 4) * etc_block_size,
+                                       ((width * height) >> 4) * bsize,
                                        im->image.data);
                 GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              }
