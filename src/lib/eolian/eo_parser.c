@@ -203,11 +203,16 @@ parse_type_void(Eo_Lexer *ls)
           }
         case KW_own:
           {
-             int line;
+             int sline = ls->line_number, line;
              eo_lexer_get(ls);
              line = ls->line_number;
              check_next(ls, '(');
              def = parse_type_void(ls);
+             if (def->type != EOLIAN_TYPE_POINTER)
+               {
+                  ls->line_number = sline;
+                  eo_lexer_syntax_error(ls, "pointer type expected");
+               }
              def->is_own = EINA_TRUE;
              check_match(ls, ')', '(', line);
              goto parse_ptr;
