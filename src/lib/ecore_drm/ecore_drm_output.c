@@ -201,31 +201,52 @@ _ecore_drm_output_software_render(Ecore_Drm_Output *output)
    if (!output->current_mode) return;
 }
 
-static int 
+static int
 _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnector *conn)
 {
    drmModeEncoder *enc;
    unsigned int p;
-   int i = 0, j = 0;
+   int i, j;
+   int crtc = -1;
 
+   /* Trying to first use the currently active encoder and crtc combination to avoid a
+    * full modeset */
+   if (conn->encoder_id)
+     enc = drmModeGetEncoder(dev->drm.fd, conn->encoder_id);
+   else
+     enc = NULL;
+
+   if (enc && enc->crtc_id)
+     {
+        crtc = enc->crtc_id;
+        drmModeFreeEncoder(enc);
+        /* Check is this CRTC is already allocated */
+        if  (!(dev->crtc_allocator & (1 << crtc)))
+          return crtc;
+     }
+
+   /* We did not find an existing encoder + crtc combination. Loop through all of them until we
+    * find the first working combination */
    for (j = 0; j < conn->count_encoders; j++)
      {
         /* get the encoder on this connector */
         if (!(enc = drmModeGetEncoder(dev->drm.fd, conn->encoders[j])))
           {
-             ERR("Failed to get encoder: %m");
-             return -1;
+             WRN("Failed to get encoder: %m");
+             continue;
           }
 
         p = enc->possible_crtcs;
         drmModeFreeEncoder(enc);
 
+	/* Walk over all CRTCs */
         for (i = 0; i < res->count_crtcs; i++)
           {
-             if ((p & (1 << i)) && 
+             /* Does the CRTC match the list of possible CRTCs from the encoder? */
+             if ((p & (1 << i)) &&
                  (!(dev->crtc_allocator & (1 << res->crtcs[i]))))
                {
-                  return i;
+                  return res->crtcs[i];
                }
           }
      }
