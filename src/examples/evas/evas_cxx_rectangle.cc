@@ -12,7 +12,7 @@
 #include <Eina.hh>
 #include <Eo.hh>
 
-#include "canvas/evas.eo.hh"
+#include "canvas/evas_canvas.eo.hh"
 #include "canvas/evas_image.eo.hh"
 #include "canvas/evas_rectangle.eo.hh"
 
@@ -39,8 +39,8 @@ int main()
    ecore_evas_show(ee);
 
    {
-      ::evas canvas(::eo_ref(::ecore_evas_get(ee)));
-      ::evas_rectangle rect(efl::eo::parent = canvas);
+      evas::canvas canvas(::eo_ref(::ecore_evas_get(ee)));
+      evas::rectangle rect(efl::eo::parent = canvas);
       rect.color_set(255, 0, 0, 255);
       rect.position_set(10, 10);
       rect.size_set(100, 100);

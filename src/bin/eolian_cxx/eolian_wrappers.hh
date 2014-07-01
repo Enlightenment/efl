@@ -109,7 +109,7 @@ class_prefix(Eolian_Class const& klass)
 {
    std::string prefix = safe_lower(::eolian_class_eo_prefix_get(klass));
    if (prefix.empty())
-     prefix = safe_lower(class_name(klass));
+     prefix = safe_lower(find_replace(class_full_name(klass), ".", "_"));
    assert(!prefix.empty());
    return prefix;
 }
@@ -148,7 +148,7 @@ class_namespace_full(Eolian_Class const& klass)
      }
    if (s.size() >= 2)
      s = s.substr(0, s.size()-2);
-   return s;
+   return safe_lower(s);
 }
 
 inline efl::eina::range_ptr_list<const Eolian_Class>
@@ -158,46 +158,55 @@ class_list_all()
 }
 
 inline std::string
-function_name(Eolian_Function const& function)
+function_name(Eolian_Function const& func)
 {
-   return safe_str(::eolian_function_name_get(function));
+   return safe_str(::eolian_function_name_get(func));
+}
+
+inline std::string
+function_impl(Eolian_Function const& func, std::string const& prefix)
+{
+   const char *s = ::eolian_function_full_c_name_get(func, prefix.c_str());
+   std::string ret(s);
+   ::eina_stringshare_del(s);
+   return ret;
 }
 
 inline Eolian_Function_Type
-function_type(Eolian_Function const& function)
+function_type(Eolian_Function const& func)
 {
-   return ::eolian_function_type_get(function);
+   return ::eolian_function_type_get(func);
 }
 
 inline efl::eolian::eolian_type_instance
-function_return_type(Eolian_Function const& function, Eolian_Function_Type func_type = method_t::value)
+function_return_type(Eolian_Function const& func, Eolian_Function_Type func_type = method_t::value)
 {
    return type_lookup
-     (::eolian_function_return_type_get(function, func_type));
+     (::eolian_function_return_type_get(func, func_type));
 }
 
 inline efl::eolian::eolian_type_instance
-function_return_type(Eolian_Function const& function, setter_t func_type)
+function_return_type(Eolian_Function const& func, setter_t func_type)
 {
-   return function_return_type(function, func_type.value);
+   return function_return_type(func, func_type.value);
 }
 
 inline efl::eolian::eolian_type_instance
-function_return_type(Eolian_Function const& function, getter_t func_type)
+function_return_type(Eolian_Function const& func, getter_t func_type)
 {
-   return function_return_type(function, func_type.value);
+   return function_return_type(func, func_type.value);
 }
 
 inline efl::eolian::eolian_type_instance
-function_return_type(Eolian_Function const& function, method_t func_type)
+function_return_type(Eolian_Function const& func, method_t func_type)
 {
-   return function_return_type(function, func_type.value);
+   return function_return_type(func, func_type.value);
 }
 
 inline efl::eolian::eolian_type_instance
-function_return_type(Eolian_Function const& function, ctor_t func_type)
+function_return_type(Eolian_Function const& func, ctor_t func_type)
 {
-   return function_return_type(function, func_type.value);
+   return function_return_type(func, func_type.value);
 }
 
 inline bool
@@ -207,9 +216,9 @@ property_is_getter(Eolian_Function_Type func_type)
 }
 
 inline bool
-property_is_getter(Eolian_Function const& function)
+property_is_getter(Eolian_Function const& func)
 {
-   return property_is_getter(function_type(function));
+   return property_is_getter(function_type(func));
 }
 
 inline bool
@@ -219,9 +228,9 @@ property_is_setter(Eolian_Function_Type func_type)
 }
 
 inline bool
-property_is_setter(Eolian_Function const& function)
+property_is_setter(Eolian_Function const& func)
 {
-   return property_is_setter(function_type(function));
+   return property_is_setter(function_type(func));
 }
 
 inline std::string
@@ -264,11 +273,11 @@ parameter_is_const(Eolian_Function_Parameter const& parameter,
 
 inline bool
 parameter_is_const(Eolian_Function_Parameter const& parameter,
-                   Eolian_Function const& function)
+                   Eolian_Function const& func)
 {
-   assert(function_type(function) != EOLIAN_PROPERTY);
+   assert(function_type(func) != EOLIAN_PROPERTY);
    return ::eolian_parameter_const_attribute_get
-     (parameter, property_is_getter(function));
+     (parameter, property_is_getter(func));
 }
 
 inline efl::eolian::eolian_type_instance

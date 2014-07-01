@@ -9,10 +9,23 @@
 #include "eo_types.hh"
 #include "tab.hh"
 #include "parameters_generator.hh"
-
 #include "eo_class_functions_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
+
+inline std::string
+_ns_as_prefix(eo_class const& cls)
+{
+   // XXX Use eolian_cxx::find_replace() instead.
+   std::string s = cls.name_space;
+   std::string::size_type found = s.find("::");
+   while (found != std::string::npos)
+     {
+        s.replace(found, 1, "_");
+        found = s.find("::");
+     }
+   return s;
+}
 
 struct inheritance_operation
 {
@@ -30,6 +43,7 @@ operator<<(std::ostream& out, inheritance_operation const& x)
    eo_function const& func = x._cls.functions[x._idx];
    out << tab(1)
        << "ops[" << x._idx << "].func = reinterpret_cast<void*>(& ::"
+       << _ns_as_prefix(x._cls) << "_"
        << x._cls.name << "_" << func.name << "_wrapper<T>);" << endl
        << tab(1) << "ops[" << x._idx << "].api_func = reinterpret_cast<void*>(& ::"
        << func.impl << ");" << endl
@@ -82,7 +96,9 @@ inline std::ostream&
 operator<<(std::ostream& out, inheritance_wrapper const& x)
 {
    out << "template <typename T>" << endl
-       << x._func.ret << " " << x._cls.name << "_" << x._func.name
+       << x._func.ret << " "
+       << _ns_as_prefix(x._cls) << "_"
+       << x._cls.name << "_" << x._func.name
        << "_wrapper(Eo* objid EINA_UNUSED, "
        << "efl::eo::detail::Inherit_Private_Data* self"
        << (x._func.params.size() ? ", " : "")
@@ -114,7 +130,9 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
      {
         eo_function const& func = *it;
         out << "template <typename T>" << endl
-            << func.ret << " " << x._cls.name << "_" << func.name
+            << func.ret << " "
+            << _ns_as_prefix(x._cls) << "_"
+            << x._cls.name << "_" << func.name
             << "_wrapper(Eo* objid EINA_UNUSED, "
             << "efl::eo::detail::Inherit_Private_Data* self"
             << (func.params.size() ? ", " : "")

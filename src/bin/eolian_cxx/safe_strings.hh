@@ -94,6 +94,8 @@ normalize_spaces(std::string const& s)
    return r;
 }
 
+/// @brief Return the basename of a path.
+///
 inline std::string
 path_base(std::string path)
 {
@@ -102,5 +104,22 @@ path_base(std::string path)
    return std::string(slash.base(), path.end());
 }
 
+/// @brief Find-and-replace patterns in a string.
+///
+inline std::string
+find_replace(std::string const& s_,
+             std::string const& old,
+             std::string const& new_)
+{
+   std::string s = s_;
+   std::string::size_type found = s.find(old);
+   std::string::size_type len = new_.length();
+   while (found != std::string::npos)
+     {
+        s.replace(found, len, new_);
+        found = s.find(old);
+     }
+   return s;
+}
 
 #endif // EOLIAN_CXX_BIN_SAFE_STRINGS_HH

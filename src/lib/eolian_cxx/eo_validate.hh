@@ -2,8 +2,6 @@
 #ifndef EOLIAN_CXX_EO_CLASS_VALIDATE_HH
 #define EOLIAN_CXX_EO_CLASS_VALIDATE_HH
 
-#include <iostream> // XXX
-
 #include <algorithm>
 #include <string>
 #include <cassert>
