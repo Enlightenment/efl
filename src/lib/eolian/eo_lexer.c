@@ -100,9 +100,9 @@ static void next_line(Eo_Lexer *ls)
    assert(is_newline(ls->current));
    next_char(ls);
    if (is_newline(ls->current) && ls->current != old)
-      next_char(ls);
+     next_char(ls);
    if (++ls->line_number >= INT_MAX)
-      eo_lexer_syntax_error(ls, "chunk has too many lines");
+     eo_lexer_syntax_error(ls, "chunk has too many lines");
 }
 
 /* go to next line and strip leading whitespace */
@@ -119,12 +119,12 @@ read_long_comment(Eo_Lexer *ls, const char **value)
    eina_strbuf_reset(ls->buff);
 
    if (is_newline(ls->current))
-      next_line_ws(ls);
+     next_line_ws(ls);
 
    for (;;)
      {
         if (!ls->current)
-             eo_lexer_lex_error(ls, "unfinished long comment", TOK_EOF);
+          eo_lexer_lex_error(ls, "unfinished long comment", TOK_EOF);
         if (ls->current == '*')
           {
              next_char(ls);
@@ -154,74 +154,69 @@ static int
 lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
 {
    eina_strbuf_reset(ls->buff);
-   for (;;)
+   for (;;) switch (ls->current)
      {
-        switch (ls->current)
+      case '\n':
+      case '\r':
+        next_line(ls);
+        continue;
+      case '/':
+        next_char(ls);
+        if (ls->current == '*')
           {
-             case '\n':
-             case '\r':
-                next_line(ls);
-                continue;
-             case '/':
-               {
-                  next_char(ls);
-                  if (ls->current == '*')
-                    {
-                       Eina_Bool doc;
-                       next_char(ls);
-                       if ((doc = (ls->current == '@')))
-                          next_char(ls);
-                       read_long_comment(ls, doc ? value : NULL);
-                       if (doc)
-                          return TOK_COMMENT;
-                       else
-                          continue;
-                    }
-                  else if (ls->current != '/') return '/';
-                  while (ls->current && !is_newline(ls->current))
-                     next_char(ls);
-                  continue;
-               }
-             case '\0':
-               return TOK_EOF;
-             default:
-               {
-                  if (isspace(ls->current))
-                    {
-                       assert(!is_newline(ls->current));
-                       next_char(ls);
-                       continue;
-                    }
-                  if (ls->current && (isalnum(ls->current)
-                      || ls->current == '@'
-                      || strchr(chars, ls->current)))
-                    {
-                       Eina_Bool at_kw = (ls->current == '@');
-                       const char *str;
-                       eina_strbuf_reset(ls->buff);
-                       do
-                         {
-                            eina_strbuf_append_char(ls->buff, ls->current);
-                            next_char(ls);
-                         }
-                       while (ls->current && (isalnum(ls->current)
-                                     || strchr(chars, ls->current)));
-                       str    = eina_strbuf_string_get(ls->buff);
-                       *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
-                                                               str);
-                       if (at_kw && *kwid == 0)
-                         eo_lexer_syntax_error(ls, "invalid keyword");
-                       *value = str;
-                       return TOK_VALUE;
-                    }
-                  else
-                    {
-                       int c = ls->current;
-                       next_char(ls);
-                       return c;
-                    }
-               }
+             Eina_Bool doc;
+             next_char(ls);
+             if ((doc = (ls->current == '@')))
+               next_char(ls);
+             read_long_comment(ls, doc ? value : NULL);
+             if (doc)
+               return TOK_COMMENT;
+             else
+               continue;
           }
+        else if (ls->current != '/') return '/';
+        while (ls->current && !is_newline(ls->current))
+          next_char(ls);
+        continue;
+      case '\0':
+        return TOK_EOF;
+      default:
+        {
+           if (isspace(ls->current))
+             {
+                assert(!is_newline(ls->current));
+                next_char(ls);
+                continue;
+             }
+           if (ls->current && (isalnum(ls->current)
+               || ls->current == '@'
+               || strchr(chars, ls->current)))
+             {
+                Eina_Bool at_kw = (ls->current == '@');
+                const char *str;
+                eina_strbuf_reset(ls->buff);
+                do
+                  {
+                     eina_strbuf_append_char(ls->buff, ls->current);
+                     next_char(ls);
+                  }
+                while (ls->current && (isalnum(ls->current)
+                              || strchr(chars, ls->current)));
+                str    = eina_strbuf_string_get(ls->buff);
+                *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
+                                                        str);
+                if (at_kw && *kwid == 0)
+                  eo_lexer_syntax_error(ls, "invalid keyword");
+                *value = str;
+                return TOK_VALUE;
+             }
+           else
+             {
+                int c = ls->current;
+                next_char(ls);
+                return c;
+             }
+        }
      }
 }
 
@@ -275,7 +270,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
 {
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
-      throw(ls, "%s\n", strerror(errno));
+     throw(ls, "%s\n", strerror(errno));
    ls->lookahead.token = TOK_EOF;
    ls->buff            = eina_strbuf_new();
    ls->handle          = f;
@@ -300,14 +295,14 @@ eo_lexer_free(Eo_Lexer *ls)
      {
         switch (nd->type)
           {
-             case NODE_CLASS:
-                eo_definitions_class_def_free(nd->def_class);
-                break;
-             case NODE_TYPEDEF:
-                eo_definitions_typedef_def_free(nd->def_typedef);
-                break;
-             default:
-                break;
+           case NODE_CLASS:
+             eo_definitions_class_def_free(nd->def_class);
+             break;
+           case NODE_TYPEDEF:
+             eo_definitions_typedef_def_free(nd->def_typedef);
+             break;
+           default:
+             break;
           }
        free(nd);
      }
@@ -389,7 +384,7 @@ eo_lexer_lex_error(Eo_Lexer *ls, const char *msg, int token)
               buf);
      }
    else
-      throw(ls, "%s:%d: %s\n", ls->source, ls->line_number, msg);
+     throw(ls, "%s:%d: %s\n", ls->source, ls->line_number, msg);
 }
 
 void
@@ -405,9 +400,9 @@ eo_lexer_token_to_str(int token, char *buf)
      {
         assert((unsigned char)token == token);
         if (iscntrl(token))
-           sprintf(buf, "char(%d)", token);
+          sprintf(buf, "char(%d)", token);
         else
-           sprintf(buf, "%c", token);
+          sprintf(buf, "%c", token);
      }
    else
      {

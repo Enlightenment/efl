@@ -3,7 +3,7 @@
 
 #define CASE_LOCK(ls, var, msg) \
    if (has_##var) \
-      eo_lexer_syntax_error(ls, "double " msg); \
+     eo_lexer_syntax_error(ls, "double " msg); \
    has_##var = EINA_TRUE;
 
 #define PARSE_SECTION \
@@ -38,14 +38,14 @@ static void
 check(Eo_Lexer *ls, int token)
 {
    if (ls->t.token != token)
-      error_expected(ls, token);
+     error_expected(ls, token);
 }
 
 static void
 check_kw(Eo_Lexer *ls, int kw)
 {
    if (ls->t.kw != kw)
-      error_expected(ls, TOK_VALUE + kw);
+     error_expected(ls, TOK_VALUE + kw);
 }
 
 static void
@@ -68,7 +68,7 @@ check_match(Eo_Lexer *ls, int what, int who, int where)
    if (!test_next(ls, what))
      {
         if (where == ls->line_number)
-           error_expected(ls, what);
+          error_expected(ls, what);
         else
           {
              char  buf[256];
@@ -167,16 +167,16 @@ parse_function_type(Eo_Lexer *ls)
    ls->tmp.type_def = def;
    eo_lexer_get(ls);
    if (ls->t.kw == KW_void)
-      eo_lexer_get(ls);
+     eo_lexer_get(ls);
    else
-      def->ret_type = parse_type_void(ls);
+     def->ret_type = parse_type_void(ls);
    line = ls->line_number;
    check_next(ls, '(');
    if (ls->t.token != ')')
      {
         def->arguments = eina_list_append(def->arguments, parse_type(ls));
         while (test_next(ls, ','))
-           def->arguments = eina_list_append(def->arguments, parse_type(ls));
+          def->arguments = eina_list_append(def->arguments, parse_type(ls));
      }
    check_match(ls, ')', '(', line);
    return def;
@@ -190,41 +190,41 @@ parse_type_void(Eo_Lexer *ls)
    const char  *ctype;
    switch (ls->t.kw)
      {
-        case KW_const:
-          {
-             int line;
-             eo_lexer_get(ls);
-             line = ls->line_number;
-             check_next(ls, '(');
-             def = parse_type_void(ls);
-             def->is_const = EINA_TRUE;
-             check_match(ls, ')', '(', line);
-             goto parse_ptr;
-          }
-        case KW_own:
-          {
-             int sline = ls->line_number, line;
-             eo_lexer_get(ls);
-             line = ls->line_number;
-             check_next(ls, '(');
-             def = parse_type_void(ls);
-             if (def->type != EOLIAN_TYPE_POINTER)
-               {
-                  ls->line_number = sline;
-                  eo_lexer_syntax_error(ls, "pointer type expected");
-               }
-             def->is_own = EINA_TRUE;
-             check_match(ls, ')', '(', line);
-             goto parse_ptr;
-          }
-        case KW_struct:
-          eo_lexer_get(ls);
-          has_struct = EINA_TRUE;
-          break;
-        case KW_func:
-          return parse_function_type(ls);
-        default:
-          break;
+      case KW_const:
+        {
+           int line;
+           eo_lexer_get(ls);
+           line = ls->line_number;
+           check_next(ls, '(');
+           def = parse_type_void(ls);
+           def->is_const = EINA_TRUE;
+           check_match(ls, ')', '(', line);
+           goto parse_ptr;
+        }
+      case KW_own:
+        {
+           int sline = ls->line_number, line;
+           eo_lexer_get(ls);
+           line = ls->line_number;
+           check_next(ls, '(');
+           def = parse_type_void(ls);
+           if (def->type != EOLIAN_TYPE_POINTER)
+             {
+                ls->line_number = sline;
+                eo_lexer_syntax_error(ls, "pointer type expected");
+             }
+           def->is_own = EINA_TRUE;
+           check_match(ls, ')', '(', line);
+           goto parse_ptr;
+        }
+      case KW_struct:
+        eo_lexer_get(ls);
+        has_struct = EINA_TRUE;
+        break;
+      case KW_func:
+        return parse_function_type(ls);
+      default:
+        break;
      }
    def = calloc(1, sizeof(Eo_Type_Def));
    ls->tmp.type_def = def;
@@ -293,9 +293,9 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    ls->tmp.ret_def = ret;
    eo_lexer_get(ls);
    if (allow_void)
-      ret->type = parse_type_void(ls);
+     ret->type = parse_type_void(ls);
    else
-      ret->type = parse_type(ls);
+     ret->type = parse_type(ls);
    ls->tmp.type_def = NULL;
    if (ls->t.token == '(')
      {
@@ -388,35 +388,32 @@ parse_attrs(Eo_Lexer *ls)
    check_next(ls, ':');
    check(ls, TOK_VALUE);
    buf = push_strbuf(ls);
-   for (;;)
+   for (;;) switch (ls->t.kw)
      {
-        switch (ls->t.kw)
-          {
-             case KW_const:
-                CASE_LOCK(ls, const, "const qualifier")
-                if (!first) eina_strbuf_append_char(buf, ' ');
-                eina_strbuf_append(buf, "const");
-                first = EINA_FALSE;
-                eo_lexer_get(ls);
-                break;
-             case KW_own:
-                CASE_LOCK(ls, own, "own qualifier")
-                if (!first) eina_strbuf_append_char(buf, ' ');
-                eina_strbuf_append(buf, "@own");
-                first = EINA_FALSE;
-                eo_lexer_get(ls);
-                break;
-             case KW_at_nonull:
-                CASE_LOCK(ls, nonull, "@nonull qualifier")
-                if (!first) eina_strbuf_append_char(buf, ' ');
-                eina_strbuf_append(buf, "@nonull");
-                first = EINA_FALSE;
-                eo_lexer_get(ls);
-                break;
-             default:
-                if (first) eo_lexer_syntax_error(ls, "attribute expected");
-                goto end;
-          }
+      case KW_const:
+        CASE_LOCK(ls, const, "const qualifier")
+        if (!first) eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, "const");
+        first = EINA_FALSE;
+        eo_lexer_get(ls);
+        break;
+      case KW_own:
+        CASE_LOCK(ls, own, "own qualifier")
+        if (!first) eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, "@own");
+        first = EINA_FALSE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_nonull:
+        CASE_LOCK(ls, nonull, "@nonull qualifier")
+        if (!first) eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, "@nonull");
+        first = EINA_FALSE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        if (first) eo_lexer_syntax_error(ls, "attribute expected");
+        goto end;
      }
 end:
    acc->attrs = eina_stringshare_add(eina_strbuf_string_get(buf));
@@ -441,41 +438,38 @@ parse_accessor(Eo_Lexer *ls)
         acc->comment = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
      }
-   for (;;)
+   for (;;) switch (ls->t.kw)
      {
-        switch (ls->t.kw)
+      case KW_return:
+        CASE_LOCK(ls, return, "return")
+        parse_return(ls, acc->type == GETTER);
+        acc->ret = ls->tmp.ret_def;
+        ls->tmp.ret_def = NULL;
+        break;
+      case KW_legacy:
+        CASE_LOCK(ls, legacy, "legacy name")
+        parse_legacy(ls);
+        acc->legacy = ls->tmp.legacy_def;
+        ls->tmp.legacy_def = NULL;
+        break;
+      default:
+        if (ls->t.token != '}')
           {
-             case KW_return:
-                CASE_LOCK(ls, return, "return")
-                parse_return(ls, acc->type == GETTER);
-                acc->ret = ls->tmp.ret_def;
-                ls->tmp.ret_def = NULL;
-                break;
-             case KW_legacy:
-                CASE_LOCK(ls, legacy, "legacy name")
-                parse_legacy(ls);
-                acc->legacy = ls->tmp.legacy_def;
-                ls->tmp.legacy_def = NULL;
-                break;
-             default:
-                if (ls->t.token != '}')
-                  {
-                     check(ls, TOK_VALUE);
-                     parse_attrs(ls);
-                     acc->params = eina_list_append(acc->params,
-                                                    ls->tmp.accessor_param);
-                     ls->tmp.accessor_param = NULL;
-                     /* this code path is disabled for the time being,
-                      * it's not used in regular eolian yet either...
-                     eo_lexer_lookahead(ls);
-                     if (ls->lookahead.token == ':')
-                        parse_attrs(ls);
-                     else
-                        parse_param(ls, EINA_TRUE);*/
-                  }
-                else
-                   goto end;
+             check(ls, TOK_VALUE);
+             parse_attrs(ls);
+             acc->params = eina_list_append(acc->params,
+                                            ls->tmp.accessor_param);
+             ls->tmp.accessor_param = NULL;
+             /* this code path is disabled for the time being,
+              * it's not used in regular eolian yet either...
+             eo_lexer_lookahead(ls);
+             if (ls->lookahead.token == ':')
+               parse_attrs(ls);
+             else
+               parse_param(ls, EINA_TRUE);*/
           }
+        else
+          goto end;
      }
 end:
    check_match(ls, '}', '{', line);
@@ -511,39 +505,36 @@ parse_property(Eo_Lexer *ls)
    eo_lexer_get(ls);
    line = ls->line_number;
    check_next(ls, '{');
-   for (;;)
+   for (;;) switch (ls->t.kw)
      {
-        switch (ls->t.kw)
-          {
-             case KW_get:
-                CASE_LOCK(ls, get, "get definition")
-                parse_accessor(ls);
-                prop->accessors = eina_list_append(prop->accessors,
-                                                   ls->tmp.accessor);
-                ls->tmp.accessor = NULL;
-                break;
-             case KW_set:
-                CASE_LOCK(ls, set, "set definition")
-                parse_accessor(ls);
-                prop->accessors = eina_list_append(prop->accessors,
-                                                   ls->tmp.accessor);
-                ls->tmp.accessor = NULL;
-                break;
-             case KW_keys:
-                CASE_LOCK(ls, keys, "keys definition")
-                parse_params(ls, EINA_FALSE);
-                prop->keys = ls->tmp.params;
-                ls->tmp.params = NULL;
-                break;
-             case KW_values:
-                CASE_LOCK(ls, values, "values definition")
-                parse_params(ls, EINA_FALSE);
-                prop->values = ls->tmp.params;
-                ls->tmp.params = NULL;
-                break;
-             default:
-                goto end;
-          }
+      case KW_get:
+        CASE_LOCK(ls, get, "get definition")
+        parse_accessor(ls);
+        prop->accessors = eina_list_append(prop->accessors,
+                                           ls->tmp.accessor);
+        ls->tmp.accessor = NULL;
+        break;
+      case KW_set:
+        CASE_LOCK(ls, set, "set definition")
+        parse_accessor(ls);
+        prop->accessors = eina_list_append(prop->accessors,
+                                           ls->tmp.accessor);
+        ls->tmp.accessor = NULL;
+        break;
+      case KW_keys:
+        CASE_LOCK(ls, keys, "keys definition")
+        parse_params(ls, EINA_FALSE);
+        prop->keys = ls->tmp.params;
+        ls->tmp.params = NULL;
+        break;
+      case KW_values:
+        CASE_LOCK(ls, values, "values definition")
+        parse_params(ls, EINA_FALSE);
+        prop->values = ls->tmp.params;
+        ls->tmp.params = NULL;
+        break;
+      default:
+        goto end;
      }
 end:
    check_match(ls, '}', '{', line);
@@ -561,7 +552,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    if (ctor)
      {
         if (ls->t.token != TOK_VALUE)
-           eo_lexer_syntax_error(ls, "expected method name");
+          eo_lexer_syntax_error(ls, "expected method name");
         meth->type = METH_CONSTRUCTOR;
         meth->name = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
@@ -585,37 +576,34 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
         meth->comment = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
      }
-   for (;;)
+   for (;;) switch (ls->t.kw)
      {
-        switch (ls->t.kw)
-          {
-             case KW_const:
-                CASE_LOCK(ls, const, "const qualifier")
-                meth->obj_const = EINA_TRUE;
-                eo_lexer_get(ls);
-                check_next(ls, ';');
-                break;
-             case KW_return:
-                CASE_LOCK(ls, return, "return")
-                parse_return(ls, EINA_FALSE);
-                meth->ret = ls->tmp.ret_def;
-                ls->tmp.ret_def = NULL;
-                break;
-             case KW_legacy:
-                CASE_LOCK(ls, legacy, "legacy name")
-                parse_legacy(ls);
-                meth->legacy = ls->tmp.legacy_def;
-                ls->tmp.legacy_def = NULL;
-                break;
-             case KW_params:
-                CASE_LOCK(ls, params, "params definition")
-                parse_params(ls, EINA_TRUE);
-                meth->params = ls->tmp.params;
-                ls->tmp.params = NULL;
-                break;
-             default:
-                goto end;
-          }
+      case KW_const:
+        CASE_LOCK(ls, const, "const qualifier")
+        meth->obj_const = EINA_TRUE;
+        eo_lexer_get(ls);
+        check_next(ls, ';');
+        break;
+      case KW_return:
+        CASE_LOCK(ls, return, "return")
+        parse_return(ls, EINA_FALSE);
+        meth->ret = ls->tmp.ret_def;
+        ls->tmp.ret_def = NULL;
+        break;
+      case KW_legacy:
+        CASE_LOCK(ls, legacy, "legacy name")
+        parse_legacy(ls);
+        meth->legacy = ls->tmp.legacy_def;
+        ls->tmp.legacy_def = NULL;
+        break;
+      case KW_params:
+        CASE_LOCK(ls, params, "params definition")
+        parse_params(ls, EINA_TRUE);
+        meth->params = ls->tmp.params;
+        ls->tmp.params = NULL;
+        break;
+      default:
+        goto end;
      }
 end:
    check_match(ls, '}', '{', line);
@@ -630,7 +618,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
    impl = calloc(1, sizeof(Eo_Implement_Def));
    ls->tmp.impl = impl;
    if (iface)
-      check_kw(ls, KW_class);
+     check_kw(ls, KW_class);
    if (ls->t.kw == KW_class)
      {
         eina_strbuf_append(buf, "class.");
@@ -657,7 +645,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         eo_lexer_get(ls);
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
-           eo_lexer_syntax_error(ls, "name expected");
+          eo_lexer_syntax_error(ls, "name expected");
         eina_strbuf_append(buf, ls->t.value);
         eo_lexer_get(ls);
         if (ls->t.token == '.')
@@ -680,26 +668,26 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         return;
      }
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
-      eo_lexer_syntax_error(ls, "class name expected");
+     eo_lexer_syntax_error(ls, "class name expected");
    eina_strbuf_append(buf, ls->t.value);
    eo_lexer_get(ls);
    check_next(ls, '.');
    eina_strbuf_append(buf, ".");
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
-      eo_lexer_syntax_error(ls, "name or constructor/destructor expected");
+     eo_lexer_syntax_error(ls, "name or constructor/destructor expected");
    for (;;)
      {
         switch (ls->t.kw)
           {
-             case KW_constructor:
-             case KW_destructor:
-             case KW_get:
-             case KW_set:
-                eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
-                eo_lexer_get(ls);
-                goto end;
-             default:
-                break;
+           case KW_constructor:
+           case KW_destructor:
+           case KW_get:
+           case KW_set:
+             eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
+             eo_lexer_get(ls);
+             goto end;
+           default:
+             break;
           }
         check(ls, TOK_VALUE);
         eina_strbuf_append(buf, ls->t.value);
@@ -830,62 +818,59 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         ls->tmp.kls->comment = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
      }
-   for (;;)
+   for (;;) switch (ls->t.kw)
      {
-        switch (ls->t.kw)
-          {
-             case KW_legacy_prefix:
-                CASE_LOCK(ls, legacy_prefix, "legacy prefix definition")
-                eo_lexer_get(ls);
-                check_next(ls, ':');
-                check(ls, TOK_VALUE);
-                ls->tmp.kls->legacy_prefix = eina_stringshare_add(ls->t.value);
-                eo_lexer_get(ls);
-                check_next(ls, ';');
-                break;
-             case KW_eo_prefix:
-                CASE_LOCK(ls, eo_prefix, "eo prefix definition")
-                eo_lexer_get(ls);
-                check_next(ls, ':');
-                check(ls, TOK_VALUE);
-                ls->tmp.kls->eo_prefix = eina_stringshare_add(ls->t.value);
-                eo_lexer_get(ls);
-                check_next(ls, ';');
-                break;
-             case KW_data:
-                CASE_LOCK(ls, data, "data definition")
-                eo_lexer_get(ls);
-                check(ls, ':');
-                eo_lexer_get_until(ls, ';');
-                ls->tmp.kls->data_type = eina_stringshare_add(ls->t.value);
-                eo_lexer_get(ls);
-                check_next(ls, ';');
-                break;
-             case KW_constructors:
-                if (!allow_ctors)
-                   return;
-                CASE_LOCK(ls, constructors, "constructors definition")
-                parse_constructors(ls);
-                break;
-             case KW_properties:
-                CASE_LOCK(ls, properties, "properties definition")
-                parse_properties(ls);
-                break;
-             case KW_methods:
-                CASE_LOCK(ls, methods, "methods definition")
-                parse_methods(ls);
-                break;
-             case KW_implements:
-                CASE_LOCK(ls, implements, "implements definition")
-                parse_implements(ls, type == EOLIAN_CLASS_INTERFACE);
-                break;
-             case KW_events:
-                CASE_LOCK(ls, events, "events definition")
-                parse_events(ls);
-                break;
-             default:
-                return;
-          }
+      case KW_legacy_prefix:
+        CASE_LOCK(ls, legacy_prefix, "legacy prefix definition")
+        eo_lexer_get(ls);
+        check_next(ls, ':');
+        check(ls, TOK_VALUE);
+        ls->tmp.kls->legacy_prefix = eina_stringshare_add(ls->t.value);
+        eo_lexer_get(ls);
+        check_next(ls, ';');
+        break;
+      case KW_eo_prefix:
+        CASE_LOCK(ls, eo_prefix, "eo prefix definition")
+        eo_lexer_get(ls);
+        check_next(ls, ':');
+        check(ls, TOK_VALUE);
+        ls->tmp.kls->eo_prefix = eina_stringshare_add(ls->t.value);
+        eo_lexer_get(ls);
+        check_next(ls, ';');
+        break;
+      case KW_data:
+        CASE_LOCK(ls, data, "data definition")
+        eo_lexer_get(ls);
+        check(ls, ':');
+        eo_lexer_get_until(ls, ';');
+        ls->tmp.kls->data_type = eina_stringshare_add(ls->t.value);
+        eo_lexer_get(ls);
+        check_next(ls, ';');
+        break;
+      case KW_constructors:
+        if (!allow_ctors)
+          return;
+        CASE_LOCK(ls, constructors, "constructors definition")
+        parse_constructors(ls);
+        break;
+      case KW_properties:
+        CASE_LOCK(ls, properties, "properties definition")
+        parse_properties(ls);
+        break;
+      case KW_methods:
+        CASE_LOCK(ls, methods, "methods definition")
+        parse_methods(ls);
+        break;
+      case KW_implements:
+        CASE_LOCK(ls, implements, "implements definition")
+        parse_implements(ls, type == EOLIAN_CLASS_INTERFACE);
+        break;
+      case KW_events:
+        CASE_LOCK(ls, events, "events definition")
+        parse_events(ls);
+        break;
+      default:
+        return;
      }
 }
 
@@ -922,33 +907,33 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
 {
    switch (ls->t.kw)
      {
-        case KW_abstract:
-           if (eot) goto def;
-           parse_class(ls, EINA_TRUE, EOLIAN_CLASS_ABSTRACT);
-           goto found_class;
-        case KW_class:
-           if (eot) goto def;
-           parse_class(ls, EINA_TRUE, EOLIAN_CLASS_REGULAR);
-           goto found_class;
-        case KW_mixin:
-           if (eot) goto def;
-           parse_class(ls, EINA_FALSE, EOLIAN_CLASS_MIXIN);
-           goto found_class;
-        case KW_interface:
-           if (eot) goto def;
-           parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
-           goto found_class;
-        case KW_type:
-          {
-             parse_typedef(ls);
-             append_node(ls, NODE_TYPEDEF, ls->tmp.typedef_def);
-             ls->tmp.typedef_def = NULL;
-             break;
-          }
-        def:
-        default:
-           eo_lexer_syntax_error(ls, "invalid token");
+      case KW_abstract:
+        if (eot) goto def;
+        parse_class(ls, EINA_TRUE, EOLIAN_CLASS_ABSTRACT);
+        goto found_class;
+      case KW_class:
+        if (eot) goto def;
+        parse_class(ls, EINA_TRUE, EOLIAN_CLASS_REGULAR);
+        goto found_class;
+      case KW_mixin:
+        if (eot) goto def;
+        parse_class(ls, EINA_FALSE, EOLIAN_CLASS_MIXIN);
+        goto found_class;
+      case KW_interface:
+        if (eot) goto def;
+        parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
+        goto found_class;
+      case KW_type:
+        {
+           parse_typedef(ls);
+           append_node(ls, NODE_TYPEDEF, ls->tmp.typedef_def);
+           ls->tmp.typedef_def = NULL;
            break;
+        }
+      def:
+      default:
+        eo_lexer_syntax_error(ls, "invalid token");
+        break;
      }
    return;
 found_class:
@@ -960,7 +945,7 @@ static void
 parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 {
    while (ls->t.token != TOK_EOF)
-      parse_unit(ls, eot);
+     parse_unit(ls, eot);
 }
 
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
@@ -979,11 +964,11 @@ _print_type(FILE *f, Eo_Type_Def *tp)
    Eina_List *l;
    Eo_Type_Def *stp;
    if (tp->is_own)
-      fputs("@own(", f);
+     fputs("@own(", f);
    if (tp->is_const)
-      fputs("const(", f);
+     fputs("const(", f);
    if (tp->type == EOLIAN_TYPE_REGULAR)
-      fputs(tp->name, f);
+     fputs(tp->name, f);
    else if (tp->type == EOLIAN_TYPE_POINTER)
      {
         _print_type(f, tp->base_type);
@@ -1008,9 +993,9 @@ _print_type(FILE *f, Eo_Type_Def *tp)
         fputc(')', f);
      }
    if (tp->is_own)
-      fputc(')', f);
+     fputc(')', f);
    if (tp->is_const)
-      fputc(')', f);
+     fputc(')', f);
 }
 
 static void
@@ -1120,14 +1105,14 @@ eo_parser_dump(Eo_Lexer *ls)
      {
         switch (nd->type)
           {
-             case NODE_CLASS:
-                _dump_class(nd->def_class);
-                break;
-             case NODE_TYPEDEF:
-                _dump_type(nd->def_typedef);
-                break;
-             default:
-                break;
+           case NODE_CLASS:
+             _dump_class(nd->def_class);
+             break;
+           case NODE_TYPEDEF:
+             _dump_type(nd->def_typedef);
+             break;
+           default:
+             break;
           }
      }
 }
@@ -1392,16 +1377,16 @@ nodeloop:
      {
         switch (nd->type)
           {
-             case NODE_CLASS:
-                if (!_db_fill_class(nd->def_class, filename))
-                   goto error;
-                break;
-             case NODE_TYPEDEF:
-                if (!_db_fill_type(nd->def_typedef))
-                   goto error;
-                break;
-             default:
-                break;
+           case NODE_CLASS:
+             if (!_db_fill_class(nd->def_class, filename))
+               goto error;
+             break;
+           case NODE_TYPEDEF:
+             if (!_db_fill_type(nd->def_typedef))
+               goto error;
+             break;
+           default:
+             break;
           }
      }
 

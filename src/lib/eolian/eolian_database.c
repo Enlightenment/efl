@@ -1204,9 +1204,9 @@ _ftype_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
    Eolian_Type stp;
    Eina_Bool first = EINA_TRUE;
    if (tpp->ret_type)
-      _type_to_str(tpp->ret_type, buf, NULL);
+     _type_to_str(tpp->ret_type, buf, NULL);
    else
-      eina_strbuf_append(buf, "void");
+     eina_strbuf_append(buf, "void");
    eina_strbuf_append(buf, " (*");
    if (name) eina_strbuf_append(buf, name);
    eina_strbuf_append(buf, ")(");
@@ -1231,9 +1231,9 @@ _type_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
      && tpp->is_const)
       eina_strbuf_append(buf, "const ");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
-      eina_strbuf_append(buf, tpp->name);
+     eina_strbuf_append(buf, tpp->name);
    else if (tpp->type == EOLIAN_TYPE_VOID)
-      eina_strbuf_append(buf, "void");
+     eina_strbuf_append(buf, "void");
    else
      {
         _Parameter_Type *btpp = (_Parameter_Type*)tpp->base_type;
@@ -1292,10 +1292,10 @@ _implements_print(Eolian_Implement impl, int nb_spaces)
       case EOLIAN_PROP_GET: t = "GET"; break;
       case EOLIAN_METHOD: t = "METHOD"; break;
       case EOLIAN_UNRESOLVED:
-           {
-              t = "Type is the same as function being overriden";
-              break;
-           }
+        {
+           t = "Type is the same as function being overriden";
+           break;
+        }
       default:
          return;
      }
@@ -1318,11 +1318,11 @@ _type_print(Eolian_Type tp, Eina_Strbuf *buf)
    Eina_List *l;
    Eolian_Type stp;
    if (tpp->is_own)
-      eina_strbuf_append(buf, "@own(");
+     eina_strbuf_append(buf, "@own(");
    if (tpp->is_const)
-      eina_strbuf_append(buf, "const(");
+     eina_strbuf_append(buf, "const(");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
-      eina_strbuf_append(buf, tpp->name);
+     eina_strbuf_append(buf, tpp->name);
    else if (tpp->type == EOLIAN_TYPE_POINTER)
      {
         _type_print(tpp->base_type, buf);
@@ -1347,9 +1347,9 @@ _type_print(Eolian_Type tp, Eina_Strbuf *buf)
         eina_strbuf_append_char(buf, ')');
      }
    if (tpp->is_own)
-      eina_strbuf_append_char(buf, ')');
+     eina_strbuf_append_char(buf, ')');
    if (tpp->is_const)
-       eina_strbuf_append_char(buf, ')');
+      eina_strbuf_append_char(buf, ')');
 }
 
 static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
@@ -1432,14 +1432,14 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
         switch (param->param_dir)
           {
            case EOLIAN_IN_PARAM:
-              param_dir = "IN";
-              break;
+             param_dir = "IN";
+             break;
            case EOLIAN_OUT_PARAM:
-              param_dir = "OUT";
-              break;
+             param_dir = "OUT";
+             break;
            case EOLIAN_INOUT_PARAM:
-              param_dir = "INOUT";
-              break;
+             param_dir = "INOUT";
+             break;
           }
          Eina_Strbuf *type_buf = eina_strbuf_new();
          _type_print(param->type, type_buf);
@@ -1463,7 +1463,7 @@ _class_print(const Eolian_Class class)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    printf("Class %s:\n", cl->name);
    if (cl->description)
-      printf("  description: <%s>\n", cl->description);
+     printf("  description: <%s>\n", cl->description);
 
    printf("  type: %s\n", types[cl->type]);
 
@@ -1473,9 +1473,7 @@ _class_print(const Eolian_Class class)
         printf("  inherits: ");
         char *word;
         EINA_LIST_FOREACH(cl->inherits, itr, word)
-          {
-             printf("%s ", word);
-          }
+          printf("%s ", word);
         printf("\n");
      }
 
@@ -1546,7 +1544,7 @@ eolian_show(const Eolian_Class class)
         Eina_List *itr;
         Eolian_Class cl;
         EINA_LIST_FOREACH(_classes, itr, cl)
-           _class_print(cl);
+          _class_print(cl);
      }
    else
      {
