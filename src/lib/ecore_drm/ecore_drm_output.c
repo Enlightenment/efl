@@ -216,12 +216,12 @@ _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConne
    else
      enc = NULL;
 
-   if (enc && enc->crtc_id)
+   if ((enc) && (enc->crtc_id))
      {
         crtc = enc->crtc_id;
         drmModeFreeEncoder(enc);
         /* Check is this CRTC is already allocated */
-        if  (!(dev->crtc_allocator & (1 << crtc)))
+        if (!(dev->crtc_allocator & (1 << crtc)))
           return crtc;
      }
 
