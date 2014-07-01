@@ -14,7 +14,7 @@ lib/ecore/ecore_idle_exiter.eo.hh \
 lib/ecore/ecore_animator.eo.hh \
 lib/ecore/ecore_parent.eo.hh
 
-lib/ecore/Ecore.eo.hh:
+lib/ecore/Ecore.eo.hh: $(generated_ecore_cxx_bindings)
 	@echo -e "#ifndef EFL_CXX_ECORE_HH\n#define EFL_CXX_ECORE_HH\n" > $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 	@for i in $(generated_ecore_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
