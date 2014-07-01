@@ -14,17 +14,20 @@ lib/ecore/ecore_idle_exiter.eo.hh \
 lib/ecore/ecore_animator.eo.hh \
 lib/ecore/ecore_parent.eo.hh
 
-installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
-nodist_installed_ecorecxxheaders_DATA = \
-lib/ecore/Ecore.eo.hh \
-$(generated_ecore_cxx_bindings)
-
 lib/ecore/Ecore.eo.hh:
 	@echo -e "#ifndef EFL_CXX_ECORE_HH\n#define EFL_CXX_ECORE_HH\n" > $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 	@for i in $(generated_ecore_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 
+CLEANFILES += \
+$(generated_ecore_cxx_bindings) \
+lib/ecore/Ecore.eo.hh
+
+installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
+nodist_installed_ecorecxxheaders_DATA = \
+lib/ecore/Ecore.eo.hh \
+$(generated_ecore_cxx_bindings)
 
 ### Unit tests
 

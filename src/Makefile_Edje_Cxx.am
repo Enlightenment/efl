@@ -7,16 +7,20 @@ generated_edje_cxx_bindings = \
 lib/edje/edje_object.eo.hh \
 lib/edje/edje_edit.eo.hh
 
-installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
-nodist_installed_edjecxxmainheaders_DATA = \
-lib/edje/Edje.hh \
-$(generated_edje_cxx_bindings)
-
 lib/edje/Edje.hh: $(generated_edje_cxx_bindings)
 	@echo -e "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/edje/Edje.hh
 	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/edje/Edje.hh
 	@for i in $(generated_edje_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/edje/Edje.hh; done
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/edje/Edje.hh
+
+CLEANFILES += \
+$(generated_edje_cxx_bindings) \
+lib/edje/Edje.hh
+
+installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
+nodist_installed_edjecxxmainheaders_DATA = \
+lib/edje/Edje.hh \
+$(generated_edje_cxx_bindings)
 
 ### Unit tests
 
