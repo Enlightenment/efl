@@ -23,7 +23,6 @@ struct _eo_type_def
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
-   Eina_Bool is_struct :1;
 };
 
 typedef struct _eo_ret_def

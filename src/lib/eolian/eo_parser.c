@@ -233,11 +233,21 @@ parse_type_void(Eo_Lexer *ls)
    else
      {
         def->type = EOLIAN_TYPE_REGULAR;
-        def->is_struct = has_struct;
-        def->is_const  = EINA_FALSE;
+        def->is_const = EINA_FALSE;
         check(ls, TOK_VALUE);
         ctype = eo_lexer_get_c_type(ls->t.kw);
-        def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
+        if (ctype && has_struct)
+          eo_lexer_syntax_error(ls, "struct type expected");
+        if (has_struct)
+          {
+             Eina_Strbuf *buf = eina_strbuf_new();
+             eina_strbuf_append(buf, "struct ");
+             eina_strbuf_append(buf, ls->t.value);
+             def->name = eina_stringshare_add(eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
+          }
+        else
+          def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
      }
    eo_lexer_get(ls);
 parse_ptr:
@@ -972,8 +982,6 @@ _print_type(FILE *f, Eo_Type_Def *tp)
       fputs("@own(", f);
    if (tp->is_const)
       fputs("const(", f);
-   if (tp->is_struct)
-      fputs("struct ", f);
    if (tp->type == EOLIAN_TYPE_REGULAR)
       fputs(tp->name, f);
    else if (tp->type == EOLIAN_TYPE_POINTER)

@@ -92,7 +92,6 @@ typedef struct
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
-   Eina_Bool is_struct :1;
 } _Parameter_Type;
 
 typedef struct
@@ -1231,8 +1230,6 @@ _type_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
    if ((tpp->type == EOLIAN_TYPE_REGULAR || tpp->type == EOLIAN_TYPE_VOID)
      && tpp->is_const)
       eina_strbuf_append(buf, "const ");
-   if (tpp->is_struct)
-      eina_strbuf_append(buf, "struct ");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
       eina_strbuf_append(buf, tpp->name);
    else if (tpp->type == EOLIAN_TYPE_VOID)
@@ -1324,8 +1321,6 @@ _type_print(Eolian_Type tp, Eina_Strbuf *buf)
       eina_strbuf_append(buf, "@own(");
    if (tpp->is_const)
       eina_strbuf_append(buf, "const(");
-   if (tpp->is_struct)
-      eina_strbuf_append(buf, "struct ");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
       eina_strbuf_append(buf, tpp->name);
    else if (tpp->type == EOLIAN_TYPE_POINTER)
