@@ -26,7 +26,7 @@ type_lookup(Eolian_Type type)
      return "void";
    // XXX add complex types implementation.
    const char *tps = eolian_type_c_type_get(type);
-   std::string ret = normalize_spaces(safe_str(tps));
+   std::string ret = safe_str(tps);
    ::eina_stringshare_del(tps);
    return ret;
 }
