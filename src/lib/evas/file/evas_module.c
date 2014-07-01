@@ -37,10 +37,10 @@ _evas_module_append(Eina_List *list, char *path)
 {
    if (path)
      {
-	if (evas_file_path_exists(path))
-	  list = eina_list_append(list, path);
-	else
-	  free(path);
+        if (evas_file_path_exists(path))
+          list = eina_list_append(list, path);
+        else
+          free(path);
      }
    return list;
 }
@@ -95,18 +95,18 @@ evas_module_paths_init(void)
    path = PACKAGE_LIB_DIR "/evas/modules";
    if (!eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
      {
-	path = strdup(path);
-	if (path)
-	  evas_module_paths = _evas_module_append(evas_module_paths, path);
+        path = strdup(path);
+        if (path)
+          evas_module_paths = _evas_module_append(evas_module_paths, path);
      }
 #endif
 }
 
-#define EVAS_EINA_STATIC_MODULE_DEFINE(Tn, Name)	\
-  Eina_Bool evas_##Tn##_##Name##_init(void);		\
+#define EVAS_EINA_STATIC_MODULE_DEFINE(Tn, Name) \
+  Eina_Bool evas_##Tn##_##Name##_init(void); \
   void evas_##Tn##_##Name##_shutdown(void);
 
-#define EVAS_EINA_STATIC_MODULE_USE(Tn, Name)	\
+#define EVAS_EINA_STATIC_MODULE_USE(Tn, Name) \
   { evas_##Tn##_##Name##_init, evas_##Tn##_##Name##_shutdown }
 
 #if !EVAS_MODULE_NO_ENGINES
@@ -300,8 +300,8 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
 
    if (type == EVAS_MODULE_TYPE_ENGINE)
      {
-	eina_array_push(evas_engines, em);
-	em->id_engine = eina_array_count(evas_engines);
+        eina_array_push(evas_engines, em);
+        em->id_engine = eina_array_count(evas_engines);
      }
 
    eina_hash_direct_add(evas_modules[type], module->name, em);
@@ -368,7 +368,7 @@ evas_module_engine_list(void)
              eina_iterator_free(it);
           }
      }
-   
+
    EINA_ARRAY_ITER_NEXT(evas_engines, i, em, iterator)
      {
         EINA_LIST_FOREACH(r, ll, s2)
@@ -456,23 +456,23 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 
         if (!evas_file_path_is_file(buffer)) continue;
 
-	en = eina_module_new(buffer);
-	if (!en) continue;
+        en = eina_module_new(buffer);
+        if (!en) continue;
 
-	if (!eina_module_load(en))
-	  {
-	     eina_module_free(en);
-	     continue;
-	  }
+        if (!eina_module_load(en))
+          {
+             eina_module_free(en);
+             continue;
+          }
 
-	em = eina_hash_find(evas_modules[type], name);
-	if (em)
-	  {
-	     eina_evas_modules = eina_list_append(eina_evas_modules, en);
-	     return em;
-	  }
+        em = eina_hash_find(evas_modules[type], name);
+        if (em)
+          {
+             eina_evas_modules = eina_list_append(eina_evas_modules, en);
+             return em;
+          }
 
-	eina_module_free(en);
+        eina_module_free(en);
      }
 
    return NULL;
@@ -561,9 +561,9 @@ evas_module_clean(void)
 
    if (noclean == -1)
      {
-	if (getenv("EVAS_NOCLEAN"))
+        if (getenv("EVAS_NOCLEAN"))
           noclean = 1;
-	else 
+        else
           noclean = 0;
      }
    if (noclean == 1) return;
@@ -640,14 +640,14 @@ _evas_module_engine_inherit(Evas_Func *funcs, char *name)
    em = evas_module_find_type(EVAS_MODULE_TYPE_ENGINE, name);
    if (em)
      {
-	if (evas_module_load(em))
-	  {
-	     /* FIXME: no way to unref */
-	     evas_module_ref(em);
-	     evas_module_use(em);
-	     *funcs = *((Evas_Func *)(em->functions));
-	     return 1;
-	  }
+        if (evas_module_load(em))
+          {
+             /* FIXME: no way to unref */
+             evas_module_ref(em);
+             evas_module_use(em);
+             *funcs = *((Evas_Func *)(em->functions));
+             return 1;
+          }
      }
    return 0;
 }
