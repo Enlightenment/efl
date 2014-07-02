@@ -31,7 +31,8 @@ next_char(Eo_Lexer *ls)
    if (nb == 1)
      {
         nb = 0;
-        ++ls->column;
+        ++ls->icolumn;
+        ls->column = ls->icolumn;
      }
    else --nb;
 
@@ -125,7 +126,7 @@ static void next_line(Eo_Lexer *ls)
      next_char(ls);
    if (++ls->line_number >= INT_MAX)
      eo_lexer_syntax_error(ls, "chunk has too many lines");
-   ls->column = 0;
+   ls->icolumn = ls->column = 0;
 }
 
 /* go to next line and strip leading whitespace */
@@ -229,7 +230,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                 str    = eina_strbuf_string_get(ls->buff);
                 *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
                                                         str);
-                ls->column = col;
+                ls->column = col + 1;
                 if (at_kw && *kwid == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
                 *value = str;
@@ -271,7 +272,7 @@ lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
    str    = eina_strbuf_string_get(ls->buff);
    *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
    *value = str;
-   ls->column = col;
+   ls->column = col + 1;
    return TOK_VALUE;
 }
 
@@ -295,7 +296,7 @@ lex_until(Eo_Lexer *ls, const char **value, int *kwid, char end)
    str    = eina_strbuf_string_get(ls->buff);
    *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
    *value = str;
-   ls->column = col;
+   ls->column = col + 1;
    return TOK_VALUE;
 }
 
@@ -312,7 +313,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->stream_end      = ls->stream + eina_file_size_get(f);
    ls->source          = eina_stringshare_add(source);
    ls->line_number     = 1;
-   ls->column          = 0;
+   ls->icolumn         = ls->column = 0;
    next_char(ls);
 }
 
