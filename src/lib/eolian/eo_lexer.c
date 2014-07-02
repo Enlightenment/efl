@@ -66,16 +66,27 @@ static const char * const ctypes[] =
 #undef KW
 #undef KWAT
 
+#define is_newline(c) ((c) == '\n' || (c) == '\r')
+
 static Eina_Hash *keyword_map = NULL;
 
 static void
 throw(Eo_Lexer *ls, const char *fmt, ...)
 {
-    va_list ap;
-    va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
-    va_end(ap);
-    longjmp(ls->err_jmp, EINA_TRUE);
+   const char *ln = ls->stream_line, *end = ls->stream_end;
+   int i;
+   va_list ap;
+   va_start(ap, fmt);
+   vfprintf(stderr, fmt, ap);
+   va_end(ap);
+   fputc(' ', stderr);
+   while (ln != end && !is_newline(*ln))
+     fputc(*(ln++), stderr);
+   fputc('\n', stderr);
+   for (i = 0; i < ls->column; ++i)
+     fputc(' ', stderr);
+   fputs("^\n", stderr);
+   longjmp(ls->err_jmp, EINA_TRUE);
 }
 
 static void
@@ -115,15 +126,17 @@ txt_token(Eo_Lexer *ls, int token, char *buf)
 void eo_lexer_lex_error   (Eo_Lexer *ls, const char *msg, int token);
 void eo_lexer_syntax_error(Eo_Lexer *ls, const char *msg);
 
-#define is_newline(c) ((c) == '\n' || (c) == '\r')
-
 static void next_line(Eo_Lexer *ls)
 {
    int old = ls->current;
    assert(is_newline(ls->current));
+   ls->stream_line = ls->stream;
    next_char(ls);
    if (is_newline(ls->current) && ls->current != old)
-     next_char(ls);
+     {
+       next_char(ls);
+       ls->stream_line = ls->stream;
+     }
    if (++ls->line_number >= INT_MAX)
      eo_lexer_syntax_error(ls, "chunk has too many lines");
    ls->icolumn = ls->column = 0;
@@ -311,6 +324,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->handle          = f;
    ls->stream          = eina_file_map_all(f, EINA_FILE_RANDOM);
    ls->stream_end      = ls->stream + eina_file_size_get(f);
+   ls->stream_line     = ls->stream;
    ls->source          = eina_stringshare_add(source);
    ls->line_number     = 1;
    ls->icolumn         = ls->column = 0;

@@ -80,6 +80,7 @@ typedef struct _Eo_Lexer
    const char  *source;
    const char  *stream;
    const char  *stream_end;
+   const char  *stream_line;
    jmp_buf      err_jmp;
 
    Eina_List      *nodes;

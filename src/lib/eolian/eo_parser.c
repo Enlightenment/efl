@@ -78,7 +78,7 @@ check_match(Eo_Lexer *ls, int what, int who, int where, int col)
              eo_lexer_token_to_str(what, tbuf);
              eo_lexer_token_to_str(who , vbuf);
              snprintf(buf, sizeof(buf),
-                      "'%s' expected (to close '%s' at line %d:%d)",
+                      "'%s' expected to close '%s' at line %d (column %d)",
                       tbuf, vbuf, where, col);
              eo_lexer_syntax_error(ls, buf);
           }
