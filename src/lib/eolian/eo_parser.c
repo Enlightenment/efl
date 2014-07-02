@@ -7,9 +7,10 @@
    has_##var = EINA_TRUE;
 
 #define PARSE_SECTION \
-   int line; \
+   int line, col; \
    eo_lexer_get(ls); \
    line = ls->line_number; \
+   col = ls->column; \
    check_next(ls, '{'); \
    while (ls->t.token != '}')
 
@@ -63,7 +64,7 @@ check_kw_next(Eo_Lexer *ls, int kw)
 }
 
 static void
-check_match(Eo_Lexer *ls, int what, int who, int where)
+check_match(Eo_Lexer *ls, int what, int who, int where, int col)
 {
    if (!test_next(ls, what))
      {
@@ -77,8 +78,8 @@ check_match(Eo_Lexer *ls, int what, int who, int where)
              eo_lexer_token_to_str(what, tbuf);
              eo_lexer_token_to_str(who , vbuf);
              snprintf(buf, sizeof(buf),
-                      "'%s' expected (to close '%s' at line %d)",
-                      tbuf, vbuf, where);
+                      "'%s' expected (to close '%s' at line %d:%d)",
+                      tbuf, vbuf, where, col);
              eo_lexer_syntax_error(ls, buf);
           }
      }
@@ -163,7 +164,7 @@ parse_type(Eo_Lexer *ls)
 static Eo_Type_Def *
 parse_function_type(Eo_Lexer *ls)
 {
-   int line;
+   int line, col;
    Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
    ls->tmp.type_def = def;
    eo_lexer_get(ls);
@@ -172,6 +173,7 @@ parse_function_type(Eo_Lexer *ls)
    else
      def->ret_type = parse_type_void(ls);
    line = ls->line_number;
+   col = ls->column;
    check_next(ls, '(');
    if (ls->t.token != ')')
      {
@@ -179,7 +181,7 @@ parse_function_type(Eo_Lexer *ls)
         while (test_next(ls, ','))
           def->arguments = eina_list_append(def->arguments, parse_type(ls));
      }
-   check_match(ls, ')', '(', line);
+   check_match(ls, ')', '(', line, col);
    return def;
 }
 
@@ -193,30 +195,32 @@ parse_type_void(Eo_Lexer *ls)
      {
       case KW_const:
         {
-           int line;
+           int line, col;
            eo_lexer_get(ls);
            line = ls->line_number;
+           col = ls->column;
            check_next(ls, '(');
            def = parse_type_void(ls);
            def->is_const = EINA_TRUE;
-           check_match(ls, ')', '(', line);
+           check_match(ls, ')', '(', line, col);
            goto parse_ptr;
         }
       case KW_own:
         {
-           int sline = ls->line_number, column = ls->column, line;
+           int sline = ls->line_number, scolumn = ls->column, line, column;
            eo_lexer_get(ls);
            line = ls->line_number;
+           column = ls->column;
            check_next(ls, '(');
            def = parse_type_void(ls);
            if (def->type != EOLIAN_TYPE_POINTER)
              {
                 ls->line_number = sline;
-                ls->column = column;
+                ls->column = scolumn;
                 eo_lexer_syntax_error(ls, "pointer type expected");
              }
            def->is_own = EINA_TRUE;
-           check_match(ls, ')', '(', line);
+           check_match(ls, ')', '(', line, column);
            goto parse_ptr;
         }
       case KW_struct:
@@ -264,12 +268,12 @@ parse_ptr:
      }
    if (ls->t.token == '<')
      {
-        int line = ls->line_number;
+        int line = ls->line_number, col = ls->column;
         eo_lexer_get(ls);
         def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
         while (test_next(ls, ','))
            def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
-        check_match(ls, '>', '<', line);
+        check_match(ls, '>', '<', line, col);
      }
    return def;
 }
@@ -301,11 +305,11 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    ls->tmp.type_def = NULL;
    if (ls->t.token == '(')
      {
-        int line = ls->line_number;
+        int line = ls->line_number, col = ls->column;
         eo_lexer_get_balanced(ls, '(', ')');
         ret->dflt_ret_val = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
-        check_match(ls, ')', '(', line);
+        check_match(ls, ')', '(', line, col);
      }
    if (ls->t.kw == KW_at_warn_unused)
      {
@@ -426,7 +430,7 @@ end:
 static void
 parse_accessor(Eo_Lexer *ls)
 {
-   int line;
+   int line, col;
    Eo_Accessor_Def *acc = NULL;
    Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE;
    acc = calloc(1, sizeof(Eo_Accessor_Def));
@@ -434,6 +438,7 @@ parse_accessor(Eo_Lexer *ls)
    acc->type = (ls->t.kw == KW_get) ? GETTER : SETTER;
    eo_lexer_get(ls);
    line = ls->line_number;
+   col = ls->column;
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
@@ -474,7 +479,7 @@ parse_accessor(Eo_Lexer *ls)
           goto end;
      }
 end:
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
@@ -486,13 +491,13 @@ parse_params(Eo_Lexer *ls, Eina_Bool allow_inout)
         ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
         ls->tmp.param = NULL;
      }
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_property(Eo_Lexer *ls)
 {
-   int line;
+   int line, col;
    Eo_Property_Def *prop = NULL;
    Eina_Bool has_get  = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys = EINA_FALSE, has_values = EINA_FALSE;
@@ -506,6 +511,7 @@ parse_property(Eo_Lexer *ls)
    prop->name = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    line = ls->line_number;
+   col = ls->column;
    check_next(ls, '{');
    for (;;) switch (ls->t.kw)
      {
@@ -539,13 +545,13 @@ parse_property(Eo_Lexer *ls)
         goto end;
      }
 end:
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_method(Eo_Lexer *ls, Eina_Bool ctor)
 {
-   int line;
+   int line, col;
    Eo_Method_Def *meth = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE;
@@ -572,6 +578,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
         eo_lexer_get(ls);
      }
    line = ls->line_number;
+   col = ls->column;
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
@@ -608,7 +615,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
         goto end;
      }
 end:
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
@@ -719,11 +726,11 @@ parse_event(Eo_Lexer *ls)
    eo_lexer_get(ls);
    if (ls->t.token == '(')
      {
-        int line = ls->line_number;
+        int line = ls->line_number, col = ls->column;
         eo_lexer_get_balanced(ls, '(', ')');
         ev->type = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
-        check_match(ls, ')', '(', line);
+        check_match(ls, ')', '(', line, col);
      }
    check(ls, ';');
    eo_lexer_get_ident(ls, "_,");
@@ -744,7 +751,7 @@ parse_constructors(Eo_Lexer *ls)
                                                      ls->tmp.meth);
         ls->tmp.meth = NULL;
      }
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
@@ -757,7 +764,7 @@ parse_methods(Eo_Lexer *ls)
                                                 ls->tmp.meth);
         ls->tmp.meth = NULL;
      }
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
@@ -770,7 +777,7 @@ parse_properties(Eo_Lexer *ls)
                                                    ls->tmp.prop);
         ls->tmp.prop = NULL;
      }
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
@@ -783,15 +790,16 @@ parse_implements(Eo_Lexer *ls, Eina_Bool iface)
                                                    ls->tmp.impl);
         ls->tmp.impl = NULL;
      }
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_events(Eo_Lexer *ls)
 {
-   int line;
+   int line, col;
    eo_lexer_get(ls);
    line = ls->line_number;
+   col = ls->column;
    check(ls, '{');
    eo_lexer_get_ident(ls, "_,");
    while (ls->t.token != '}')
@@ -801,7 +809,7 @@ parse_events(Eo_Lexer *ls)
                                                ls->tmp.event);
         ls->tmp.event = NULL;
      }
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
@@ -879,7 +887,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 static void
 parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 {
-   int line;
+   int line, col;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.kls = calloc(1, sizeof(Eo_Class_Def));
    eo_lexer_get(ls);
@@ -890,18 +898,20 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    if (ls->t.token != '{')
      {
         line = ls->line_number;
+        col = ls->column;
         check_next(ls, '(');
         if (ls->t.token != ')')
           {
              ls->tmp.kls->inherits = parse_name_list(ls);
              ls->tmp.str_items = NULL;
           }
-        check_match(ls, ')', '(', line);
+        check_match(ls, ')', '(', line, col);
      }
    line = ls->line_number;
+   col = ls->column;
    check_next(ls, '{');
    parse_class_body(ls, allow_ctors, type);
-   check_match(ls, '}', '{', line);
+   check_match(ls, '}', '{', line, col);
 }
 
 static void
