@@ -72,6 +72,7 @@ typedef struct _Eo_Node
 typedef struct _Eo_Lexer
 {
    int          current;
+   int          column;
    int          line_number;
    Eo_Token     t, lookahead;
    Eina_Strbuf *buff;

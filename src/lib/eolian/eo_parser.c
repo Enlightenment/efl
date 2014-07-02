@@ -149,11 +149,12 @@ static Eo_Type_Def *parse_type_void(Eo_Lexer *ls);
 static Eo_Type_Def *
 parse_type(Eo_Lexer *ls)
 {
-   int line = ls->line_number;
+   int line = ls->line_number, column = ls->column;
    Eo_Type_Def *ret = parse_type_void(ls);
    if (ret->type == EOLIAN_TYPE_VOID)
      {
         ls->line_number = line;
+        ls->column = column;
         eo_lexer_syntax_error(ls, "non-void type expected");
      }
    return ret;
@@ -203,7 +204,7 @@ parse_type_void(Eo_Lexer *ls)
         }
       case KW_own:
         {
-           int sline = ls->line_number, line;
+           int sline = ls->line_number, column = ls->column, line;
            eo_lexer_get(ls);
            line = ls->line_number;
            check_next(ls, '(');
@@ -211,6 +212,7 @@ parse_type_void(Eo_Lexer *ls)
            if (def->type != EOLIAN_TYPE_POINTER)
              {
                 ls->line_number = sline;
+                ls->column = column;
                 eo_lexer_syntax_error(ls, "pointer type expected");
              }
            def->is_own = EINA_TRUE;

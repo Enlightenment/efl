@@ -8,12 +8,38 @@
 
 int _eo_lexer_log_dom = -1;
 
-static void next_char(Eo_Lexer *ls)
+static int
+get_nbytes(int c)
 {
+   if (c < 192) return 1;
+   if (c < 224) return 2;
+   if (c < 240) return 3;
+   return 4;
+}
+
+static int lastbytes = 0;
+
+static void
+next_char(Eo_Lexer *ls)
+{
+   int nb;
+
    if (ls->stream == ls->stream_end)
      ls->current = '\0';
    else
      ls->current = *(ls->stream++);
+
+   nb = lastbytes;
+   if (!nb) nb = get_nbytes(ls->current);
+
+   if (nb == 1)
+     {
+        nb = 0;
+        ++ls->column;
+     }
+   else --nb;
+
+   lastbytes = nb;
 }
 
 #define KW(x) #x
@@ -103,6 +129,7 @@ static void next_line(Eo_Lexer *ls)
      next_char(ls);
    if (++ls->line_number >= INT_MAX)
      eo_lexer_syntax_error(ls, "chunk has too many lines");
+   ls->column = 0;
 }
 
 /* go to next line and strip leading whitespace */
@@ -192,6 +219,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                || ls->current == '@'
                || strchr(chars, ls->current)))
              {
+                int col = ls->column;
                 Eina_Bool at_kw = (ls->current == '@');
                 const char *str;
                 eina_strbuf_reset(ls->buff);
@@ -205,6 +233,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                 str    = eina_strbuf_string_get(ls->buff);
                 *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
                                                         str);
+                ls->column = col;
                 if (at_kw && *kwid == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
                 *value = str;
@@ -223,9 +252,12 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
 static int
 lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
 {
-   int depth = 0;
+   int depth = 0, col;
    const char *str;
    eina_strbuf_reset(ls->buff);
+   while (isspace(ls->current))
+     next_char(ls);
+   col = ls->column;
    while (ls->current)
      {
         if (ls->current == beg)
@@ -243,14 +275,19 @@ lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
    str    = eina_strbuf_string_get(ls->buff);
    *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
    *value = str;
+   ls->column = col;
    return TOK_VALUE;
 }
 
 static int
 lex_until(Eo_Lexer *ls, const char **value, int *kwid, char end)
 {
+   int col;
    const char *str;
    eina_strbuf_reset(ls->buff);
+   while (isspace(ls->current))
+     next_char(ls);
+   col = ls->column;
    while (ls->current)
      {
         if (ls->current == end)
@@ -262,6 +299,7 @@ lex_until(Eo_Lexer *ls, const char **value, int *kwid, char end)
    str    = eina_strbuf_string_get(ls->buff);
    *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
    *value = str;
+   ls->column = col;
    return TOK_VALUE;
 }
 
@@ -278,6 +316,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->stream_end      = ls->stream + eina_file_size_get(f);
    ls->source          = eina_stringshare_add(source);
    ls->line_number     = 1;
+   ls->column          = 0;
    next_char(ls);
 }
 
@@ -380,11 +419,11 @@ eo_lexer_lex_error(Eo_Lexer *ls, const char *msg, int token)
      {
         char buf[256];
         txt_token(ls, token, buf);
-        throw(ls, "%s:%d: %s near '%s'\n", ls->source, ls->line_number, msg,
-              buf);
+        throw(ls, "%s:%d:%d: %s near '%s'\n", ls->source, ls->line_number,
+              ls->column, msg, buf);
      }
    else
-     throw(ls, "%s:%d: %s\n", ls->source, ls->line_number, msg);
+     throw(ls, "%s:%d:%d: %s\n", ls->source, ls->line_number, ls->column, msg);
 }
 
 void
