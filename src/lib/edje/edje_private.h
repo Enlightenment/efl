@@ -490,13 +490,6 @@ struct _Edje_File
    Eet_File                       *ef;
    Eina_File                      *f;
 
-#ifdef HAVE_EIO
-   Eio_Monitor                    *monitor;
-   Eina_List                      *edjes;
-   Eina_List                      *handlers;
-   Ecore_Timer                    *timeout;
-#endif
-
    unsigned char                   free_strings : 1;
    unsigned char                   dangling : 1;
    unsigned char		   warning : 1;

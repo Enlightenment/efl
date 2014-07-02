@@ -1427,9 +1427,6 @@ _edje_file_del(Edje *ed)
      }
    if (ed->file)
      {
-#ifdef HAVE_EIO
-        ed->file->edjes = eina_list_remove(ed->file->edjes, ed);
-#endif
         _edje_cache_file_unref(ed->file);
         ed->file = NULL;
      }
@@ -1472,9 +1469,6 @@ void
 _edje_file_free(Edje_File *edf)
 {
    Edje_Color_Class *ecc;
-#ifdef HAVE_EIO
-   Ecore_Event_Handler *event;
-#endif
 
 #define HASH_FREE(Hash)                         \
    if (Hash) eina_hash_free(Hash);              \
@@ -1561,12 +1555,6 @@ _edje_file_free(Edje_File *edf)
      }
 
    if (edf->collection_patterns) edje_match_patterns_free(edf->collection_patterns);
-#ifdef HAVE_EIO
-   if (edf->timeout) ecore_timer_del(edf->timeout);
-   EINA_LIST_FREE(edf->handlers, event)
-      ecore_event_handler_del(event);
-   eio_monitor_del(edf->monitor);
-#endif
    if (edf->path) eina_stringshare_del(edf->path);
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
    _edje_textblock_style_cleanup(edf);
