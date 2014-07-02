@@ -3061,7 +3061,7 @@ _elm_widget_scroll_freeze_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 EOLIAN static void
 _elm_widget_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
 {
-   if (scale <= 0.0) scale = 0.0;
+   if (scale < 0.0) scale = 0.0;
    if (sd->scale != scale)
      {
         sd->scale = scale;
