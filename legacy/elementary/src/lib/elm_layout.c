@@ -273,18 +273,6 @@ _parts_cursors_apply(Elm_Layout_Smart_Data *sd)
 }
 
 static void
-_reload_theme(void *data, Evas_Object *obj,
-              const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
-   Evas_Object *layout = data;
-   const char *file;
-   const char *group;
-
-   edje_object_file_get(obj, &file, &group);
-   elm_layout_file_set(layout, file, group);
-}
-
-static void
 _visuals_refresh(Evas_Object *obj,
                  Elm_Layout_Smart_Data *sd)
 {
@@ -297,13 +285,6 @@ _visuals_refresh(Evas_Object *obj,
    _parts_cursors_apply(sd);
 
    eo_do(obj, elm_obj_layout_sizing_eval());
-
-   edje_object_signal_callback_del(wd->resize_obj,
-                                   "edje,change,file", "edje",
-                                   _reload_theme);
-   edje_object_signal_callback_add(wd->resize_obj,
-                                   "edje,change,file", "edje",
-                                   _reload_theme, obj);
 }
 
 EOLIAN static Eina_Bool

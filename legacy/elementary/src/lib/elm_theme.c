@@ -264,59 +264,13 @@ _elm_theme_data_find(Elm_Theme *th, const char *key)
    return NULL;
 }
 
-static void _elm_theme_idler_clean(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
-
-static Eina_Bool
-_elm_theme_reload_idler(void *data)
-{
-   Evas_Object *elm = data;
-
-   elm_widget_theme(elm);
-   evas_object_data_del(elm, "elm-theme-reload-idler");
-   evas_object_event_callback_del(elm, EVAS_CALLBACK_DEL, _elm_theme_idler_clean);
-   return EINA_FALSE;
-}
-
-static void
-_elm_theme_idler_clean(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   Ecore_Idler *idler;
-
-   idler = evas_object_data_get(obj, "elm-theme-reload-idler");
-   ecore_idler_del(idler);
-   evas_object_data_del(obj, "elm-theme-reload-idler");
-}
-
-static void
-_elm_theme_reload(void *data EINA_UNUSED, Evas_Object *obj,
-                  const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
-   Evas_Object *elm;
-
-   elm = evas_object_data_get(obj, "elm-parent");
-   if (elm)
-     {
-        evas_object_event_callback_add(elm, EVAS_CALLBACK_DEL, _elm_theme_idler_clean, NULL);
-        evas_object_data_set(elm, "elm-theme-reload-idler", ecore_idler_add(_elm_theme_reload_idler, elm));
-     }
-}
-
 Eina_Bool
 _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
-   void *test;
 
    if (parent) th = elm_widget_theme_get(parent);
    if (!_elm_theme_set(th, o, clas, group, style)) return EINA_FALSE;
-
-   test = evas_object_data_get(o, "edje,theme,watcher");
-   if (!test)
-     {
-        edje_object_signal_callback_add(o, "edje,change,file", "edje",
-                                        _elm_theme_reload, NULL);
-        evas_object_data_set(o, "edje,theme,watcher", (void*) -1);
-     }
    return EINA_TRUE;
 }
 
