@@ -8,29 +8,25 @@
 
 int _eo_lexer_log_dom = -1;
 
-static int
-get_nbytes(int c)
-{
-   if (c < 192) return 1;
-   if (c < 224) return 2;
-   if (c < 240) return 3;
-   return 4;
-}
-
 static int lastbytes = 0;
 
 static void
 next_char(Eo_Lexer *ls)
 {
    int nb;
+   Eina_Bool end = EINA_FALSE;
 
    if (ls->stream == ls->stream_end)
-     ls->current = '\0';
+     {
+        end = EINA_TRUE;
+        ls->current = '\0';
+     }
    else
      ls->current = *(ls->stream++);
 
    nb = lastbytes;
-   if (!nb) nb = get_nbytes(ls->current);
+   if (!nb && end) nb = 1;
+   if (!nb) eina_unicode_utf8_next_get(ls->stream - 1, &nb);
 
    if (nb == 1)
      {
