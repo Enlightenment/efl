@@ -10,7 +10,7 @@ EFREET_COMMON_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/efreet\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DDATA_DIR=\"$(datadir)\" \
 -DLOCALE_DIR=\"@LOCALE_DIR@\" \
 @EFREET_CFLAGS@

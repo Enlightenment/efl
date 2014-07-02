@@ -52,7 +52,7 @@ tests/eina_cxx/eina_cxx_test_value.cc
 tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina_cxx\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_cxx\" \
 @CHECK_CFLAGS@ \
 @EINA_CXX_CFLAGS@

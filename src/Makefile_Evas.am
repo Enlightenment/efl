@@ -390,7 +390,7 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
 @ALTIVEC_CFLAGS@
@@ -1318,7 +1318,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DEVAS_MODULE_NO_ENGINES=1 \
 -DEVAS_MODULE_NO_IMAGE_SAVERS=1 \
 @EVAS_CFLAGS@

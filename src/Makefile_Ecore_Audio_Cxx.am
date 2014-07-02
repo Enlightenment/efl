@@ -42,7 +42,7 @@ tests_ecore_audio_cxx_cxx_compile_test_CPPFLAGS = \
 -I$(srcdir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_audio_cxx\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/ecore_audio_cxx\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ecore_audio_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_audio_cxx\" \
 @CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_AUDIO_CFLAGS@ \
 @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_AUDIO_CXX_CFLAGS@

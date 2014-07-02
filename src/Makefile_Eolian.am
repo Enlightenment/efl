@@ -60,7 +60,7 @@ tests/eolian/eolian_suite.h
 tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
 -DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/eolian\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @CHECK_CFLAGS@ \
 @EOLIAN_CFLAGS@
 TESTS += tests/eolian/eolian_suite

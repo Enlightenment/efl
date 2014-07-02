@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/evas\" \
 @EVAS_CFLAGS@
 

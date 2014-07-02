@@ -75,14 +75,15 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eo/examples
-	$(install_sh_DATA) -c $(DATA_FILES) $(datadir)/eo/examples
 	mkdir -p $(datadir)/eo/examples/isa
-	$(install_sh_DATA) -c $(eo_isa_SOURCES) $(datadir)/eo/examples/isa
 	mkdir -p $(datadir)/eo/examples/simple
-	$(install_sh_DATA) -c $(eo_simple_SOURCES) $(datadir)/eo/examples/simple
+	cd $(srcdir); \
+	$(install_sh_DATA) -c $(DATA_FILES) $(datadir)/eo/examples; \
+	$(install_sh_DATA) -c $(eo_isa_SOURCES) $(datadir)/eo/examples/isa; \
+	$(install_sh_DATA) -c $(eo_simple_SOURCES) $(datadir)/eo/examples/simple;
 if EO_BUILD_EXAMPLE_EVAS
 	mkdir -p $(datadir)/eo/examples/evas
-	$(install_sh_DATA) -c $(eo_evas_SOURCES) $(datadir)/eo/examples/evas
+	cd $(srcdir) && $(install_sh_DATA) -c $(eo_evas_SOURCES) $(datadir)/eo/examples/evas
 endif
 
 uninstall-local:

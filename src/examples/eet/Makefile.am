@@ -51,7 +51,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eet/examples
-	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eet/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eet/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \

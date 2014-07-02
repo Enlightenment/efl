@@ -29,7 +29,7 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_evas\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @ECORE_EVAS_CFLAGS@
 lib_ecore_evas_libecore_evas_la_LIBADD = @ECORE_EVAS_LIBS@
 lib_ecore_evas_libecore_evas_la_DEPENDENCIES = @ECORE_EVAS_INTERNAL_LIBS@

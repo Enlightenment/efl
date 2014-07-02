@@ -50,7 +50,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eio/examples
-	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eio/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eio/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \

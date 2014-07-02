@@ -272,7 +272,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/evas/examples
-	$(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(datadir)/evas/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(datadir)/evas/examples
 
 uninstall-local:
 	for f in $(SRCS) $(EDCS) $(DATA_FILES); do \

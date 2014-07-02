@@ -19,7 +19,7 @@ lib_emotion_libemotion_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @EMOTION_CFLAGS@
 lib_emotion_libemotion_la_LIBADD = @EMOTION_LIBS@
 lib_emotion_libemotion_la_DEPENDENCIES = @EMOTION_INTERNAL_LIBS@
@@ -180,7 +180,7 @@ tests_emotion_emotion_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @EDJE_CFLAGS@ \
 @EMOTION_CFLAGS@
 

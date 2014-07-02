@@ -50,7 +50,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/emotion/examples
-	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/emotion/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/emotion/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \

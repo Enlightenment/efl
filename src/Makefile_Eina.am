@@ -276,7 +276,7 @@ tests/eina/eina_test_lock.c
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina\" \
 -DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
@@ -292,7 +292,7 @@ check_LTLIBRARIES = tests/eina/module_dummy.la
 
 tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
 tests_eina_module_dummy_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
 tests_eina_module_dummy_la_LIBADD = @USE_EINA_LIBS@

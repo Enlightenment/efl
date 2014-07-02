@@ -82,7 +82,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/ephysics/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/ephysics/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(datadir)/ephysics/examples
 
 uninstall-local:
 	for f in $(SRCS) ; do \

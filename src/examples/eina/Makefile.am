@@ -147,7 +147,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eina/examples
-	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eina/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eina/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \

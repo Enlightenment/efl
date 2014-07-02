@@ -10,7 +10,7 @@ bin_elua_elua_SOURCES = \
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
-	-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+	-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
 if HAVE_WIN32

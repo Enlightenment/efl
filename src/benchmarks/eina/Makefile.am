@@ -4,7 +4,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DCITYHASH_BENCH \
 -DEINA_ENABLE_BENCH_E17 \
 @EINA_CFLAGS@ \

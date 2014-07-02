@@ -84,7 +84,7 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eldbus/examples
-	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eldbus/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eldbus/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \

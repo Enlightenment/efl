@@ -27,8 +27,8 @@ EDJE_COMMON_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/edje\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
--DPACKAGE_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @EDJE_CFLAGS@
 
 installed_edjemainheadersdir = $(includedir)/edje-@VMAJ@

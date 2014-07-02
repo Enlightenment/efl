@@ -38,7 +38,7 @@ bin_ethumb_client_ethumbd_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb_client\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @ETHUMB_CLIENT_CFLAGS@
 bin_ethumb_client_ethumbd_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@

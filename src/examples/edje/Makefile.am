@@ -199,7 +199,8 @@ clean-local:
 
 install-examples: $(EDJS)
 	mkdir -p $(datadir)/edje/examples
-	$(install_sh_DATA) -c $(SRCS) $(EDJS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
+	cd $(builddir) && $(install_sh_DATA) -c $(EDJS) $(datadir)/edje/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DIST_EDCS) $(DATA_FILES); do \
