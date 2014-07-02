@@ -18,14 +18,14 @@ lib/ecore_audio/Ecore_Audio.hh: $(generated_ecore_audio_cxx_bindings)
 	@for i in $(generated_ecore_audio_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh; done
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
 
-CLEANFILES += \
+generated_ecore_audio_cxx_all = \
 	$(generated_ecore_audio_cxx_bindings) \
 	lib/ecore_audio/Ecore_Audio.hh
 
+CLEANFILES += $(generated_ecore_audio_cxx_all)
+
 installed_ecoreaudiocxxmainheadersdir = $(includedir)/ecore-audio-cxx-@VMAJ@
-nodist_installed_ecoreaudiocxxmainheaders_DATA = \
-lib/ecore_audio/Ecore_Audio.hh \
-$(generated_ecore_audio_cxx_bindings)
+nodist_installed_ecoreaudiocxxmainheaders_DATA = $(generated_ecore_audio_cxx_all)
 
 ### Unit tests
 

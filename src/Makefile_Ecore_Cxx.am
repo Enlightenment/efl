@@ -20,14 +20,14 @@ lib/ecore/Ecore.eo.hh: $(generated_ecore_cxx_bindings)
 	@for i in $(generated_ecore_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 
-CLEANFILES += \
-$(generated_ecore_cxx_bindings) \
-lib/ecore/Ecore.eo.hh
+generated_ecore_cxx_all = \
+	$(generated_ecore_cxx_bindings) \
+	lib/ecore/Ecore.eo.hh
+
+CLEANFILES += $(generated_ecore_cxx_all)
 
 installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
-nodist_installed_ecorecxxheaders_DATA = \
-lib/ecore/Ecore.eo.hh \
-$(generated_ecore_cxx_bindings)
+nodist_installed_ecorecxxheaders_DATA = $(generated_ecore_cxx_all)
 
 ### Unit tests
 

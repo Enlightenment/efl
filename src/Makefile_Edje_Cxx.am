@@ -13,14 +13,14 @@ lib/edje/Edje.hh: $(generated_edje_cxx_bindings)
 	@for i in $(generated_edje_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/edje/Edje.hh; done
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/edje/Edje.hh
 
-CLEANFILES += \
-$(generated_edje_cxx_bindings) \
-lib/edje/Edje.hh
+generated_edje_cxx_all = \
+	$(generated_edje_cxx_bindings) \
+	lib/edje/Edje.hh
+
+CLEANFILES += $(generated_edje_cxx_all)
 
 installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
-nodist_installed_edjecxxmainheaders_DATA = \
-lib/edje/Edje.hh \
-$(generated_edje_cxx_bindings)
+nodist_installed_edjecxxmainheaders_DATA = $(generated_edje_cxx_all)
 
 ### Unit tests
 
