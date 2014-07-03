@@ -3690,6 +3690,54 @@ edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, cons
 EAPI Eina_Bool
 edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part);
 
+/** This sets the color for vertex/point of the current part.
+ * For more detailed information please @see evas_map_point_color_set().
+ *
+ * In edje there is (currently) only 4 main point:
+ *  - Top-Left (0), Top-Right (1), Bottom-Right (2), Bottom-Left (3).
+ *
+ *  Default value is 255 255 255 255 for every point.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param idx The index of point.
+ * @param r The red value to set.
+ * @param g The green color value to set.
+ * @param b The blue color value to set.
+ * @param a The alpha color value to set.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_point_color_set(Evas_Object *obj, const char *part, const char *state, double value, int idx, int r, int g, int b, int a);
+
+/** This gets the color of given vertex/point of the current part.
+ * For more detailed information please @see evas_map_point_color_set().
+ *
+ * In edje there is (currently) only 4 main point:
+ *  - Top-Left (0), Top-Right (1), Bottom-Right (2), Bottom-Left (3).
+ *
+ *  Default value is 255 255 255 255 for every point.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param idx The index of point.
+ * @param r The red value to get.
+ * @param g The green color value to get.
+ * @param b The blue color value to get.
+ * @param a The alpha color value to get.
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_point_color_get(Evas_Object *obj, const char *part, const char *state, double value, int idx, int *r, int *g, int *b, int *a);
+
 /** Set the source part for given part state.
  *
  * Set source causes the part to use another part content as the content

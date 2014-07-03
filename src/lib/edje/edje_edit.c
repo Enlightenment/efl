@@ -6203,6 +6203,88 @@ edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, cons
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_map_point_color_get(Evas_Object *obj, const char *part, const char *state, double value, int idx, int *r, int *g, int *b, int *a)
+{
+   Edje_Map_Color *color = NULL;
+   unsigned int i;
+
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   /* check if current color is exists and get it. */
+   for (i = 0; i < pd->map.colors_count; ++i)
+     {
+        if (pd->map.colors[i]->idx == idx)
+          {
+             color = pd->map.colors[i];
+             break;
+          }
+     }
+   if (!color)
+     {
+        if (r) *r = 255;
+        if (g) *g = 255;
+        if (b) *b = 255;
+        if (a) *a = 255;
+     }
+   else
+     {
+        if (r) *r = color->r;
+        if (g) *g = color->g;
+        if (b) *b = color->b;
+        if (a) *a = color->a;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_point_color_set(Evas_Object *obj, const char *part, const char *state, double value, int idx, int r, int g, int b, int a)
+{
+   Edje_Map_Color *color = NULL;
+   unsigned int i;
+
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   /* check if current color is exists and get it. */
+   for (i = 0; i < pd->map.colors_count; ++i)
+     {
+        if (pd->map.colors[i]->idx == idx)
+          {
+             color = pd->map.colors[i];
+             break;
+          }
+     }
+
+   if (!color)
+     {
+        color = _alloc(sizeof(Edje_Map_Color));
+        pd->map.colors_count++;
+        pd->map.colors =
+           realloc(pd->map.colors,
+                   sizeof(Edje_Map_Color*) * pd->map.colors_count);
+        pd->map.colors[pd->map.colors_count - 1] = color;
+     }
+
+   color->idx = idx;
+   if ((r > -1) && (r < 256)) color->r = r;
+   else return EINA_FALSE;
+   if ((g > -1) && (g < 256)) color->g = g;
+   else return EINA_FALSE;
+   if ((b > -1) && (b < 256)) color->b = b;
+   else return EINA_FALSE;
+   if ((a > -1) && (a < 256)) color->a = a;
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 /**************/
 /*  MAP API */
 /**************/
