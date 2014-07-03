@@ -1911,6 +1911,45 @@ EAPI Eina_Bool edje_edit_part_item_aspect_h_set(Evas_Object *obj, const char *pa
  */
 EAPI int edje_edit_part_item_prefer_w_get(Evas_Object *obj, const char *part, const char *item);
 
+/** Get aspect mode for an item of TABLE or BOX.
+ *
+ * This may return next values:
+ * - EDJE_ASPECT_CONTROL_NONE
+ * - EDJE_ASPECT_CONTROL_NEITHER
+ * - EDJE_ASPECT_CONTROL_HORIZONTAL
+ * - EDJE_ASPECT_CONTROL_VERTICAL
+ * - EDJE_ASPECT_CONTROL_BOTH
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to set aspect mode.
+ *
+ * @return One of possible enum Edje_Aspect_Control.
+ * @since 1.11
+ */
+EAPI Edje_Aspect_Control
+edje_edit_part_item_aspect_mode_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set aspect mode for an item of TABLE or BOX.
+ *
+ * Mode may be next:
+ * - EDJE_ASPECT_CONTROL_NONE
+ * - EDJE_ASPECT_CONTROL_NEITHER
+ * - EDJE_ASPECT_CONTROL_HORIZONTAL
+ * - EDJE_ASPECT_CONTROL_VERTICAL
+ * - EDJE_ASPECT_CONTROL_BOTH
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to set aspect mode.
+ * @param mode One of possible enum from Edje_Aspect_Control:
+
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool
+edje_edit_part_item_aspect_mode_set(Evas_Object *obj, const char *part, const char *item, Edje_Aspect_Control mode);
+
 /** Set the prefer width value of a part's item.
  *
  * @param obj Object being edited.

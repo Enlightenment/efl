@@ -4245,6 +4245,67 @@ FUNC_PART_ITEM_INT(aspect, h, 0);
 FUNC_PART_ITEM_INT(prefer, w, 0);
 FUNC_PART_ITEM_INT(prefer, h, 0);
 
+EAPI Edje_Aspect_Control
+edje_edit_part_item_aspect_mode_get(Evas_Object *obj, const char *part, const char *item_name)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item = NULL;
+
+   if ((!obj) || (!part) || (!item_name))
+     return EDJE_ASPECT_CONTROL_NONE;
+
+   GET_RP_OR_RETURN(EDJE_ASPECT_CONTROL_NONE);
+
+   ep = rp->part;
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item = ep->items[i];
+             break;
+          }
+     }
+   if (!item) return EDJE_ASPECT_CONTROL_NONE;
+
+   return item->aspect.mode;
+
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_aspect_mode_set(Evas_Object *obj, const char *part, const char *item_name, Edje_Aspect_Control mode)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item = NULL;
+
+   if ((!obj) || (!part) || (!item_name))
+     return EINA_FALSE;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item = ep->items[i];
+             break;
+          }
+     }
+   if (!item) return EINA_FALSE;
+
+   item->aspect.mode = mode;
+
+   return EINA_TRUE;
+
+}
+
 EAPI Eina_Bool
 edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *item_name, int *l, int *r, int *t, int *b)
 {
@@ -9039,6 +9100,7 @@ static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHA
 static const char *shadow_direction[] = {"BOTTOM_RIGHT", "BOTTOM", "BOTTOM_LEFT", "LEFT", "TOP_LEFT", "TOP", "TOP_RIGHT", "RIGHT"};
 static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
 static const char *entry_mode[] = {"NONE", "PLAIN", "EDITABLE", "PASSWORD"};
+static const char *aspect_mode[] = {"NONE", "NEITHER", "HORIZONTAL", "VERTICAL", "BOTH"};
 
 static Eina_Bool
 _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *pce, Eina_Strbuf *buf);
@@ -9976,7 +10038,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7"min: %d %d;\n", item->min.h, item->min.h);
                   if ((item->max.w != -1) || (item->max.h != -1))
                     BUF_APPENDF(I7"max: %d %d;\n", item->max.h, item->max.h);
-                  //TODO aspect mode
+                  if (item->aspect.mode)
+                    BUF_APPENDF(I7"aspect_mode: \"%s\";\n", aspect_mode[item->aspect.mode]);
                   if ((item->aspect.w != 0) || (item->aspect.h != 0))
                     BUF_APPENDF(I7"aspect: %d %d;\n", item->aspect.h, item->aspect.h);
                   if ((item->prefer.w != 0) || (item->prefer.h != 0))
