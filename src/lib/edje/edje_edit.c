@@ -1872,6 +1872,101 @@ edje_edit_group_broadcast_signal_set(Evas_Object *obj, Eina_Bool bs)
    return EINA_TRUE;
 }
 
+#define LIMITS(TYPE) \
+EAPI Eina_List * \
+edje_edit_group_limits_##TYPE##_list_get(Evas_Object * obj) \
+{ \
+   Eina_List *limits = NULL; \
+   unsigned int i; \
+   Edje_Edit_Limit *lim; \
+ \
+   GET_ED_OR_RETURN(NULL); \
+ \
+   if (!ed->file || !ed->collection) \
+     return NULL; \
+   lim = calloc(ed->collection->limits.TYPE##_count, sizeof(Edje_Edit_Limit)); \
+   for(i = 0; i < ed->collection->limits.TYPE##_count; i++) \
+     { \
+        lim[i].name = eina_stringshare_add(ed->collection->limits.TYPE[i]->name); \
+        lim[i].value = ed->collection->limits.TYPE[i]->value; \
+        limits = eina_list_append(limits, &lim[i]); \
+     } \
+ \
+   return limits; \
+} \
+ \
+EAPI Eina_Bool \
+edje_edit_group_limits_##TYPE##_del(Evas_Object * obj, const char * name, int value) \
+{ \
+   unsigned int i; \
+   unsigned int new_count; \
+ \
+   if ((!name) || (value < 1)) \
+     return EINA_FALSE; \
+   GET_ED_OR_RETURN(EINA_FALSE); \
+   GET_EED_OR_RETURN(EINA_FALSE); \
+ \
+   new_count = ed->collection->limits.TYPE##_count - 1; \
+   for(i = 0; i < ed->collection->limits.TYPE##_count; i++) \
+     if ((ed->collection->limits.TYPE[i]->value == value) \
+         && (!strcmp(ed->collection->limits.TYPE[i]->name, name))) \
+       { \
+          _edje_if_string_free(ed, ed->collection->limits.TYPE[i]->name); \
+          free(ed->collection->limits.TYPE[i]); \
+          if (i < new_count) \
+            { \
+               ed->collection->limits.TYPE[i] = \
+                   ed->collection->limits.TYPE[ed->collection->limits.TYPE##_count - 1]; \
+            } \
+          ed->collection->limits.TYPE = realloc(ed->collection->limits.TYPE, \
+                                                    new_count * sizeof(Edje_Limit *)); \
+          --ed->collection->limits.TYPE##_count; \
+          _edje_edit_flag_script_dirty(eed, EINA_TRUE); \
+ \
+          return EINA_TRUE; \
+       } \
+   return EINA_FALSE; \
+} \
+ \
+EAPI Eina_Bool \
+edje_edit_group_limits_##TYPE##_add(Evas_Object * obj, const char * name, int value) \
+{ \
+   unsigned int i; \
+   unsigned int new_count; \
+ \
+   if ((!name) || (value < 1)) \
+     return EINA_FALSE; \
+   GET_ED_OR_RETURN(EINA_FALSE); \
+ \
+   for(i = 0; i < ed->collection->limits.TYPE##_count; i++) \
+     if ((ed->collection->limits.TYPE[i]->value == value) \
+         && (!strcmp(ed->collection->limits.TYPE[i]->name, name))) \
+       { \
+          return EINA_FALSE; \
+       } \
+   new_count = ed->collection->limits.TYPE##_count + 1; \
+   ed->collection->limits.TYPE = realloc(ed->collection->limits.TYPE, \
+                                             new_count * sizeof(Edje_Limit *)); \
+   ed->collection->limits.TYPE[new_count-1] = malloc(sizeof(Edje_Limit)); \
+   ed->collection->limits.TYPE[new_count-1]->name = eina_stringshare_add(name); \
+   ed->collection->limits.TYPE[new_count-1]->value = value; \
+   ++ed->collection->limits.TYPE##_count; \
+   return EINA_TRUE; \
+}
+
+LIMITS(vertical);
+LIMITS(horizontal);
+
+EAPI void
+edje_edit_limits_list_free(Eina_List *list)
+{
+   Edje_Edit_Limit *lim = eina_list_data_get(list);
+   Edje_Edit_Limit *item;
+   EINA_LIST_FREE(list, item)
+     eina_stringshare_del(item->name);
+   free(lim);
+}
+
 /****************/
 /*  ALIAS  API  */
 /****************/

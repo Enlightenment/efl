@@ -85,6 +85,13 @@ struct _Edje_Part_Image_Use
 };
 typedef struct _Edje_Part_Image_Use Edje_Part_Image_Use;
 
+struct _Edje_Edit_Limit
+{
+   Eina_Stringshare  *name;
+   int               value;
+};
+typedef struct _Edje_Edit_Limit Edje_Edit_Limit;
+
 /**
  * @file
  * @brief Functions to deal with edje internal object. Don't use in standard
@@ -402,6 +409,70 @@ EAPI Eina_Bool edje_edit_group_broadcast_signal_get(Evas_Object *obj);
 EAPI Eina_Bool edje_edit_group_broadcast_signal_set(Evas_Object *obj, Eina_Bool bs);
 
 //@}
+
+
+/** Retrieves a list with the item names inside the vertical limits block at the group level.
+ *
+ * @param obj Object being edited.
+ *
+ * @return List of strings, each being a name of vertical limit in the limits block for the group.
+ */
+EAPI Eina_List * edje_edit_group_limits_vertical_list_get(Evas_Object *obj);
+
+/** Delete given pair name-value from the vertical limits block at the group level.
+ *
+ * @param obj Object being edited.
+ * @param name Limit name.
+ * @param value Limit value.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_limits_vertical_del(Evas_Object *obj, const char *name, int value);
+
+/** Add given pair name-value to the vertical limits block at the group level.
+ *
+ * @param obj Object being edited.
+ * @param name Limit name.
+ * @param value Limit value.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_limits_vertical_add(Evas_Object *obj, const char *name, int value);
+
+/** Retrieves a list with the item names inside the horizontal limits block at the group level.
+ *
+ * @param obj Object being edited.
+ *
+ * @return List of strings, each being a name of horizontal limit in the limits block for the group.
+ */
+EAPI Eina_List * edje_edit_group_limits_horizontal_list_get(Evas_Object *obj);
+
+/** Delete given pair name-value from the horizontal limits block at the group level.
+ *
+ * @param obj Object being edited.
+ * @param name Limit name.
+ * @param value Limit value.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_limits_horizontal_del(Evas_Object *obj, const char *name, int value);
+
+/** Add given pair name-value to the horizontal limits block at the group level.
+ *
+ * @param obj Object being edited.
+ * @param name Limit name.
+ * @param value Limit value.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_limits_horizontal_add(Evas_Object *obj, const char *name, int value);
+
+/** Free an Eina_List of (Edje_Edit_List *) allocated by an edje_edit_limits_vertical_list_get() or edje_edit_limits_horizontal_list_get() functions.
+ *
+ * @param lst List to free.
+ */
+EAPI void edje_edit_limits_list_free(Eina_List *lst);
+
 /******************************************************************************/
 /**************************   ALIAS API   **************************************/
 /******************************************************************************/
