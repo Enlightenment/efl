@@ -32,7 +32,7 @@ EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
 
 AC_ARG_WITH([api],
-   [AC_HELP_STRING([--with-api=@<:@eo/legacy/both@:>@], [Select the EFL API Model @<:@default=both@:>@])],
+   [AS_HELP_STRING([--with-api=@<:@eo/legacy/both@:>@],[Select the EFL API Model @<:@default=both@:>@])],
    [efl_api=${withval}],
    [efl_api="both"])
 
@@ -59,8 +59,7 @@ AC_SUBST(EFL_API_EO_DEF)
 
 # string to identify the build
 AC_ARG_WITH([id],
-   [AC_HELP_STRING([--with-id=BUILD_ID],
-                   [Specify a string to identify the build (vendor, maintainer, etc).
+   [AS_HELP_STRING([--with-id=BUILD_ID],[Specify a string to identify the build (vendor, maintainer, etc).
                      @<:@default=none@:>@])],
    [EFL_BUILD_ID="${withval}"],
    [EFL_BUILD_ID="none"])
@@ -68,8 +67,7 @@ AC_SUBST(EFL_BUILD_ID)
 
 # profile
 AC_ARG_WITH([profile],
-   [AC_HELP_STRING([--with-profile=PROFILE],
-                   [use the predefined build profile, one of: dev, debug and release.
+   [AS_HELP_STRING([--with-profile=PROFILE],[use the predefined build profile, one of: dev, debug and release.
                     @<:@default=dev@:>@])],
    [build_profile=${withval}],
    [build_profile=def_build_profile])
@@ -92,8 +90,7 @@ esac
 # TODO: add some build "profile" (server, full, etc...)
 
 AC_ARG_WITH([crypto],
-   [AC_HELP_STRING([--with-crypto=CRYPTO],
-                   [use the predefined build crypto, one of:
+   [AS_HELP_STRING([--with-crypto=CRYPTO],[use the predefined build crypto, one of:
                     openssl, gnutls or none.
                     @<:@default=openssl@:>@])],
    [build_crypto=${withval}],
@@ -108,8 +105,7 @@ case "${build_crypto}" in
 esac
 
 AC_ARG_WITH([tests],
-   [AC_HELP_STRING([--with-tests=none|regular|coverage],
-                   [choose testing method: regular, coverage or none.
+   [AS_HELP_STRING([--with-tests=none|regular|coverage],[choose testing method: regular, coverage or none.
                     @<:@default=none@:>@])],
    [build_tests=${withval}],
    [build_tests=auto])
@@ -138,8 +134,7 @@ esac
 
 dbusservicedir="${datadir}/dbus-1/services"
 AC_ARG_WITH([dbus-services],
-   [AC_HELP_STRING([--with-dbus-services=DBUS_SERVICES],
-      [specify a directory to store dbus service files.])],
+   [AS_HELP_STRING([--with-dbus-services=DBUS_SERVICES],[specify a directory to store dbus service files.])],
    [dbusservicedir=$withval])
 AC_SUBST(dbusservicedir)
 
@@ -366,8 +361,7 @@ AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 # check for lua old
 want_lua_old="no"
 AC_ARG_ENABLE([lua-old],
-   [AC_HELP_STRING([--enable-lua-old],
-       [Enable interpreted Lua support (5.1 or 5.2). @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-lua-old],[Enable interpreted Lua support (5.1 or 5.2). @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_lua_old="yes"
@@ -448,10 +442,8 @@ case "${build_profile}" in
      AC_MSG_CHECKING([whether -Wshadow generates spurious warnings])
      CFLAGS_save="${CFLAGS}"
      CFLAGS="${CFLAGS} -Werror -Wshadow"
-     AC_TRY_COMPILE([int x;], [int x = 0; (void)x;],
-       [AC_MSG_RESULT([no])
-        EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])],
-       [AC_MSG_RESULT([yes])])
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[int x;]], [[int x = 0; (void)x;]])],[AC_MSG_RESULT([no])
+        EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])],[AC_MSG_RESULT([yes])])
      CFLAGS="${CFLAGS_save}"
      ;;
 
@@ -477,7 +469,7 @@ build_cpu_neon="no"
 
 want_neon="yes"
 AC_ARG_ENABLE([neon],
-   [AC_HELP_STRING([--disable-neon], [disable neon support @<:@default=enable@:>@])],
+   [AS_HELP_STRING([--disable-neon],[disable neon support @<:@default=enable@:>@])],
    [
     if test "x${enableval}" = "xyes"; then
        want_neon="yes"
@@ -555,15 +547,12 @@ case $host_cpu in
        AC_MSG_CHECKING([whether to use NEON instructions])
        CFLAGS_save="${CFLAGS}"
        CFLAGS="${CFLAGS} -mfpu=neon -ftree-vectorize"
-       AC_TRY_COMPILE([#include <arm_neon.h>],
-         [asm volatile ("vqadd.u8 d0, d1, d0\n")],
-       	 [
+       AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <arm_neon.h>]], [[asm volatile ("vqadd.u8 d0, d1, d0\n")]])],[
            AC_MSG_RESULT([yes])
            AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
            build_cpu_neon="yes"
            NEON_CFLAGS="-mfpu=neon"
-       	 ],
-       	 [
+       	 ],[
 	   AC_MSG_RESULT([no])
            build_cpu_neon="no"
        	 ])
@@ -611,7 +600,7 @@ AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
 ######################  EFL  ######################
 build_gui="yes"
 AC_ARG_ENABLE([gui],
-   [AC_HELP_STRING([--disable-gui], [disable GUI libraries @<:@default=enable@:>@])],
+   [AS_HELP_STRING([--disable-gui],[disable GUI libraries @<:@default=enable@:>@])],
    [
     if test "x${enableval}" = "xyes"; then
        build_gui="yes"
@@ -623,8 +612,7 @@ AC_ARG_ENABLE([gui],
 AM_CONDITIONAL([BUILD_GUI], [test "x${build_gui}" = "xyes"])
 
 AC_ARG_ENABLE([systemd],
-   [AC_HELP_STRING([--enable-systemd],
-      [Enable systemd support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-systemd],[Enable systemd support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_systemd="yes"
@@ -642,8 +630,7 @@ fi
 AC_SUBST(systemd_dbus_prefix)
 
 AC_ARG_WITH([systemdunitdir],
-         AC_HELP_STRING([--with-systemdunitdir=DIR],
-                [path to systemd user services directory]),
+         AS_HELP_STRING([--with-systemdunitdir=DIR],[path to systemd user services directory]),
          [USER_SESSION_DIR=${withval}])
 if test "$want_systemd" == "no"; then
   have_systemd_user_session="no"
@@ -832,7 +819,7 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 
 ### Additional options to configure
 AC_ARG_ENABLE([magic-debug],
-   [AC_HELP_STRING([--disable-magic-debug], [disable magic debug of eina structure @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-magic-debug],[disable magic debug of eina structure @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_magic_debug="yes"
@@ -855,8 +842,7 @@ EFL_ADD_LIBS([EINA], [-lm])
 
 # Valgrind
 AC_ARG_ENABLE([valgrind],
-   [AC_HELP_STRING([--disable-valgrind],
-       [enable valgrind mempool declaration. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--disable-valgrind],[enable valgrind mempool declaration. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_valgrind="yes"
@@ -977,8 +963,7 @@ EFL_LIB_START([Eina_Cxx])
 EFL_CXX_COMPILE_STDCXX_11([ext])
 want_cxx11="yes"
 AC_ARG_ENABLE([c++11],
-   [AC_HELP_STRING([--disable-c++11],
-       [disable C++11 bindings. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-c++11],[disable C++11 bindings. @<:@default=enabled@:>@])],
    [want_cxx11="${enableval}"])
 
 if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
@@ -1171,8 +1156,7 @@ EFL_LIB_START_OPTIONAL([Evas], [test "x${build_gui}" = "xyes"])
 
 # X11
 AC_ARG_WITH([x11],
-   [AC_HELP_STRING([--with-x11=xlib|xcb|none],
-                   [X11 method to use: xlib, xcb or none])])
+   [AS_HELP_STRING([--with-x11=xlib|xcb|none],[X11 method to use: xlib, xcb or none])])
 
 if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
    with_x11="none"
@@ -1204,8 +1188,7 @@ esac
 
 # OpenGL
 AC_ARG_WITH([opengl],
-   [AC_HELP_STRING([--with-opengl=full|es|none],
-                   [OpenGL method to use: full, es or none])])
+   [AS_HELP_STRING([--with-opengl=full|es|none],[OpenGL method to use: full, es or none])])
 
 if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
    with_opengl="none"
@@ -1231,8 +1214,7 @@ fi
 
 # Wayland
 AC_ARG_ENABLE([wayland],
-   [AC_HELP_STRING([--enable-wayland],
-       [enable wayland display server. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-wayland],[enable wayland display server. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_wayland="yes"
@@ -1248,8 +1230,7 @@ fi
 
 # Fb
 AC_ARG_ENABLE([fb],
-   [AC_HELP_STRING([--enable-fb],
-       [enable raw Framebuffer access. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-fb],[enable raw Framebuffer access. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_fb="yes"
@@ -1261,8 +1242,7 @@ AC_ARG_ENABLE([fb],
 
 # SDL
 AC_ARG_ENABLE([sdl],
-   [AC_HELP_STRING([--enable-sdl],
-       [enable SDL support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-sdl],[enable SDL support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_sdl="yes"
@@ -1289,8 +1269,7 @@ fi
 
 # Cocoa
 AC_ARG_ENABLE([cocoa],
-    [AC_HELP_STRING([--enable-cocoa],
-        [enable MacOS X Cocoa . @<:@default=disabled@:>@])],
+    [AS_HELP_STRING([--enable-cocoa],[enable MacOS X Cocoa . @<:@default=disabled@:>@])],
     [
      if test "x${enableval}" = "xyes" ; then
         want_cocoa="yes"
@@ -1341,8 +1320,7 @@ AC_SUBST(cocoa_ldflags)
 
 # Drm
 AC_ARG_ENABLE([drm],
-   [AC_HELP_STRING([--enable-drm],
-       [enable drm engine. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-drm],[enable drm engine. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_drm="yes"
@@ -1354,8 +1332,7 @@ AC_ARG_ENABLE([drm],
 
 want_drm_hw_accel="no"
 AC_ARG_ENABLE([drm-hw-accel],
-   [AC_HELP_STRING([--enable-drm-hw-accel],
-       [enable drm hardware acceleration. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-drm-hw-accel],[enable drm hardware acceleration. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_drm_hw_accel="yes"
@@ -1368,8 +1345,7 @@ AC_ARG_ENABLE([drm-hw-accel],
 
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
-   [AC_HELP_STRING([--disable-fontconfig],
-       [disable fontconfig for finding fonts. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-fontconfig],[disable fontconfig for finding fonts. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_fontconfig="yes"
@@ -1382,8 +1358,7 @@ AC_ARG_ENABLE([fontconfig],
 
 # Fribidi
 AC_ARG_ENABLE([fribidi],
-   [AC_HELP_STRING([--disable-fribidi],
-       [disable bidirectional text support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-fribidi],[disable bidirectional text support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_fribidi="yes"
@@ -1396,8 +1371,7 @@ AC_ARG_ENABLE([fribidi],
 
 # Eo Id
 AC_ARG_ENABLE([eo_id],
-   [AC_HELP_STRING([--disable-eo-id],
-       [disable Eo indirection. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-eo-id],[disable Eo indirection. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_eo_id="yes"
@@ -1410,8 +1384,7 @@ AC_ARG_ENABLE([eo_id],
 
 # Harfbuzz
 AC_ARG_ENABLE([harfbuzz],
-   [AC_HELP_STRING([--enable-harfbuzz],
-       [enable complex text shaping and layouting support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-harfbuzz],[enable complex text shaping and layouting support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_harfbuzz="yes"
@@ -1423,8 +1396,7 @@ AC_ARG_ENABLE([harfbuzz],
 
 # Egl
 AC_ARG_ENABLE([egl],
-   [AC_HELP_STRING([--enable-egl],
-       [enable EGL rendering. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-egl],[enable EGL rendering. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_egl="yes"
@@ -1436,8 +1408,7 @@ AC_ARG_ENABLE([egl],
 
 # Pixman
 AC_ARG_ENABLE([pixman],
-   [AC_HELP_STRING([--enable-pixman],
-       [enable pixman for software rendering. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-pixman],[enable pixman for software rendering. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_pixman="yes"
@@ -1449,8 +1420,7 @@ AC_ARG_ENABLE([pixman],
    [want_pixman="no"])
 
 AC_ARG_ENABLE([pixman-font],
-   [AC_HELP_STRING([--enable-pixman-font],
-       [Allow pixman to render fonts. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-pixman-font],[Allow pixman to render fonts. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_pixman_font="yes"
@@ -1461,8 +1431,7 @@ AC_ARG_ENABLE([pixman-font],
    [have_pixman_font="no"])
 
 AC_ARG_ENABLE([pixman-rect],
-   [AC_HELP_STRING([--enable-pixman-rect],
-       [Allow pixman to render rects. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-pixman-rect],[Allow pixman to render rects. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_pixman_rect="yes"
@@ -1473,8 +1442,7 @@ AC_ARG_ENABLE([pixman-rect],
    [have_pixman_rect="no"])
 
 AC_ARG_ENABLE([pixman-line],
-   [AC_HELP_STRING([--enable-pixman-line],
-       [Allow pixman to render lines. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-pixman-line],[Allow pixman to render lines. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_pixman_line="yes"
@@ -1485,8 +1453,7 @@ AC_ARG_ENABLE([pixman-line],
    [have_pixman_line="no"])
 
 AC_ARG_ENABLE(pixman-poly,
-   AC_HELP_STRING([--enable-pixman-poly],
-      [Allow pixman to render polys. @<:@default=disabled@:>@]),
+   AS_HELP_STRING([--enable-pixman-poly],[Allow pixman to render polys. @<:@default=disabled@:>@]),
    [
     if test "x${enableval}" = "xyes" ; then
        have_pixman_poly="yes"
@@ -1497,8 +1464,7 @@ AC_ARG_ENABLE(pixman-poly,
    [have_pixman_poly="no"])
 
 AC_ARG_ENABLE([pixman-image],
-   [AC_HELP_STRING([--enable-pixman-image],
-       [Allow pixman to render images. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-pixman-image],[Allow pixman to render images. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_pixman_image="yes"
@@ -1509,8 +1475,7 @@ AC_ARG_ENABLE([pixman-image],
    [have_pixman_image="no"])
 
 AC_ARG_ENABLE([pixman-image-scale-sample],
-   [AC_HELP_STRING([--enable-pixman-image-scale-sample],
-       [Allow pixman to render sampled scaled images. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-pixman-image-scale-sample],[Allow pixman to render sampled scaled images. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_pixman_image_scale_sample="yes"
@@ -1522,8 +1487,7 @@ AC_ARG_ENABLE([pixman-image-scale-sample],
 
 # Tile rotate
 AC_ARG_ENABLE([tile-rotate],
-   [AC_HELP_STRING([--enable-tile-rotate],
-       [Enable tiled rotate algorithm. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-tile-rotate],[Enable tiled rotate algorithm. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_tile_rotate="yes"
@@ -1904,8 +1868,7 @@ AC_CHECK_LIB([m], [lround],
 # Evas cserve2
 
 AC_ARG_ENABLE([cserve],
-   [AC_HELP_STRING([--enable-cserve],
-       [enable shared cache server (cserve2). @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--enable-cserve],[enable shared cache server (cserve2). @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_evas_cserve2="yes"
@@ -1952,8 +1915,7 @@ fi
 ## dither options
 
 AC_ARG_WITH([evas-dither-mask],
-   [AC_HELP_STRING([--with-evas-dither-mask=TYPE],
-                   [use the specified dither mask to convert bitdepths in Evas, one of: big, small, line or none.
+   [AS_HELP_STRING([--with-evas-dither-mask=TYPE],[use the specified dither mask to convert bitdepths in Evas, one of: big, small, line or none.
                     @<:@default=big@:>@])],
    [build_evas_dither_mask=${withval}],
    [build_evas_dither_mask=big])
@@ -2118,8 +2080,7 @@ EFL_LIB_START([Ecore])
 # glib
 
 AC_ARG_WITH([glib],
-   [AC_HELP_STRING([--with-glib=yes|no|always],
-                   [add glib support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--with-glib=yes|no|always],[add glib support. @<:@default=enabled@:>@])],
    [
     if test "x${withval}" = "xyes" ; then
        with_glib="yes"
@@ -2134,8 +2095,7 @@ AC_ARG_WITH([glib],
    [with_glib="yes"])
 
 AC_ARG_ENABLE([g-main-loop],
-   [AC_HELP_STRING([--enable-g-main-loop],
-       [enable ecore_main_loop based on g_main_loop. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-g-main-loop],[enable ecore_main_loop based on g_main_loop. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_g_main_loop="yes"
@@ -2147,8 +2107,7 @@ AC_ARG_ENABLE([g-main-loop],
    [want_g_main_loop="no"])
 
 AC_ARG_ENABLE([gstreamer],
-   [AC_HELP_STRING([--enable-gstreamer],
-                   [enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-gstreamer],[enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_gstreamer="yes"
@@ -2160,8 +2119,7 @@ AC_ARG_ENABLE([gstreamer],
    [want_gstreamer="no"])
 
 AC_ARG_ENABLE([gstreamer1],
-   [AC_HELP_STRING([--disable-gstreamer1],
-                   [disable gstreamer 1.0 support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-gstreamer1],[disable gstreamer 1.0 support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_gstreamer1="yes"
@@ -2176,8 +2134,7 @@ if test "x${build_gui}" = "xno"; then
 fi
 
 AC_ARG_ENABLE([tizen],
-   [AC_HELP_STRING([--enable-tizen],
-       [enable tizen support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-tizen],[enable tizen support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_tizen="yes"
@@ -2699,8 +2656,7 @@ EFL_LIB_START_OPTIONAL([Ecore_FB], [test "${want_fb}" = "yes"])
 
 ### Additional options to configure
 AC_ARG_ENABLE([tslib],
-   [AC_HELP_STRING([--disable-tslib],
-       [disable tslib for touchscreen events.])],
+   [AS_HELP_STRING([--disable-tslib],[disable tslib for touchscreen events.])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_tslib="yes"
@@ -2897,8 +2853,7 @@ EFL_LIB_END_OPTIONAL([Ecore_Drm])
 #### Ecore_Audio
 
 AC_ARG_ENABLE([audio],
-   [AC_HELP_STRING([--disable-audio],
-       [disable audio support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-audio],[disable audio support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_audio="yes"
@@ -2926,8 +2881,7 @@ want_alsa="no"
 want_sndfile="yes"
 
 AC_ARG_ENABLE([pulseaudio],
-   [AC_HELP_STRING([--disable-pulseaudio],
-       [disable pulseaudio sound support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-pulseaudio],[disable pulseaudio sound support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_pulseaudio="yes"
@@ -3035,8 +2989,7 @@ EFL_LIB_START([Ecore_Avahi])
 want_avahi="yes"
 
 AC_ARG_ENABLE([avahi],
-   [AC_HELP_STRING([--disable-avahi],
-       [disable avahi support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-avahi],[disable avahi support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_avahi="yes"
@@ -3122,7 +3075,7 @@ EFL_LIB_START_OPTIONAL([Ecore_X], [test "${want_x11_any}" = "yes"])
 ### Additional options to configure
 
 AC_ARG_ENABLE([gesture],
-   [AC_HELP_STRING([--enable-gesture], [enable X11 Gesture extension support])],
+   [AS_HELP_STRING([--enable-gesture],[enable X11 Gesture extension support])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_gesture="yes"
@@ -3133,7 +3086,7 @@ AC_ARG_ENABLE([gesture],
    [want_gesture="no"])
 
 AC_ARG_ENABLE([xpresent],
-   [AC_HELP_STRING([--enable-xpresent], [enable X11 XPresent extension support])],
+   [AS_HELP_STRING([--enable-xpresent],[enable X11 XPresent extension support])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xpresent="yes"
@@ -3144,7 +3097,7 @@ AC_ARG_ENABLE([xpresent],
    [want_xpresent="no"])
 
 AC_ARG_ENABLE([xinput2],
-   [AC_HELP_STRING([--disable-xinput2], [disable X11 XInput v2.x support])],
+   [AS_HELP_STRING([--disable-xinput2],[disable X11 XInput v2.x support])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xinput2="yes"
@@ -3156,7 +3109,7 @@ AC_ARG_ENABLE([xinput2],
    [want_xinput2="yes"])
 
 AC_ARG_ENABLE([xinput22],
-   [AC_HELP_STRING([--enable-xinput22], [enable X11 XInput v2.2+ support])],
+   [AS_HELP_STRING([--enable-xinput22],[enable X11 XInput v2.2+ support])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xinput22="yes"
@@ -3167,7 +3120,7 @@ AC_ARG_ENABLE([xinput22],
    [want_xinput22="no"])
 
 AC_ARG_ENABLE([xim],
-   [AC_HELP_STRING([--disable-xim], [disable X Input Method.])],
+   [AS_HELP_STRING([--disable-xim],[disable X Input Method.])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xim="yes"
@@ -3179,7 +3132,7 @@ AC_ARG_ENABLE([xim],
    [want_xim="yes"])
 
 AC_ARG_ENABLE([scim],
-   [AC_HELP_STRING([--disable-scim], [disable SCIM.])],
+   [AS_HELP_STRING([--disable-scim],[disable SCIM.])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_scim="yes"
@@ -3191,7 +3144,7 @@ AC_ARG_ENABLE([scim],
    [want_scim="yes"])
 
 AC_ARG_ENABLE([ibus],
-   [AC_HELP_STRING([--disable-ibus], [disable IBUS.])],
+   [AS_HELP_STRING([--disable-ibus],[disable IBUS.])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_ibus="yes"
@@ -3600,8 +3553,7 @@ EFL_INTERNAL_DEPEND_PKG([EEZE], [eet])
 EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
 
 AC_ARG_ENABLE([libmount],
-   [AC_HELP_STRING([--disable-libmount],
-       [disable libmount support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-libmount],[disable libmount support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_libmount="yes"
@@ -3989,8 +3941,7 @@ EFL_LIB_END([Efreet])
 
 #### EPhysics
 AC_ARG_ENABLE([physics],
-   [AC_HELP_STRING([--disable-physics],
-       [disable physics effects and support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--disable-physics],[disable physics effects and support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_physics="yes"
@@ -4049,8 +4000,7 @@ EFL_LIB_START_OPTIONAL([Edje], [test "x${build_gui}" = "xyes"])
 ### Default values
 want_multisense="yes"
 AC_ARG_ENABLE([multisense],
-   [AC_HELP_STRING([--enable-multisense],
-       [Enable multisense support. @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--enable-multisense],[Enable multisense support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_multisense="yes"
@@ -4169,8 +4119,7 @@ fi
 
 ### Additional options to configure
 AC_ARG_ENABLE([xine],
-   [AC_HELP_STRING([--enable-xine],
-                   [enable xine support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-xine],[enable xine support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xine="yes"
@@ -4181,7 +4130,7 @@ AC_ARG_ENABLE([xine],
    [want_xine="no"])
 
 AC_ARG_ENABLE([v4l2],
-   [AC_HELP_STRING([--enable-v4l2], [enable v4l2 support.])],
+   [AS_HELP_STRING([--enable-v4l2],[enable v4l2 support.])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_v4l2="yes"
@@ -4389,8 +4338,7 @@ EFL_LIB_END_OPTIONAL([Elua])
 #### End of Elua
 
 AC_ARG_ENABLE([always-build-examples],
-   [AC_HELP_STRING([--enable-always-build-examples],
-       [always build examples. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-always-build-examples],[always build examples. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_always_build_examples="yes"
