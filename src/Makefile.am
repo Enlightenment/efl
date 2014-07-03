@@ -32,6 +32,7 @@ include Makefile_Evil.am
 include Makefile_Escape.am
 
 include Makefile_Eina.am
+include Makefile_Eina_Cxx.am
 include Makefile_Eo.am
 include Makefile_Eet.am
 include Makefile_Eolian.am
@@ -76,6 +77,7 @@ include Makefile_Evas_Cxx.am
 endif
 
 include Makefile_Eina_Cxx.am
+include Makefile_Eldbus_Cxx.am
 include Makefile_Eolian_Cxx.am
 include Makefile_Eet_Cxx.am
 include Makefile_Eo_Cxx.am

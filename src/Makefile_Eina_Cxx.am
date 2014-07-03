@@ -11,6 +11,7 @@ dist_installed_einacxxheaders_DATA = \
 bindings/eina_cxx/eina_accessor.hh       \
 bindings/eina_cxx/eina_clone_allocators.hh       \
 bindings/eina_cxx/eina_error.hh     \
+bindings/eina_cxx/eina_fold.hh     \
 bindings/eina_cxx/eina_inarray.hh  \
 bindings/eina_cxx/eina_inlist.hh   \
 bindings/eina_cxx/eina_integer_sequence.hh \
@@ -24,6 +25,8 @@ bindings/eina_cxx/eina_range_types.hh \
 bindings/eina_cxx/eina_ref.hh \
 bindings/eina_cxx/eina_stringshare.hh \
 bindings/eina_cxx/eina_thread.hh \
+bindings/eina_cxx/eina_tuple.hh \
+bindings/eina_cxx/eina_tuple_unwrap.hh \
 bindings/eina_cxx/eina_type_traits.hh \
 bindings/eina_cxx/eina_value.hh
 

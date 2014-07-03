@@ -1,0 +1,47 @@
+
+### Library
+
+installed_eldbuscxxmainheadersdir = $(includedir)/eldbus_cxx-@VMAJ@
+dist_installed_eldbuscxxmainheaders_DATA = \
+bindings/eldbus_cxx/eldbus_basic.hh \
+bindings/eldbus_cxx/eldbus_error.hh \
+bindings/eldbus_cxx/eldbus_freedesktop.hh \
+bindings/eldbus_cxx/Eldbus.hh \
+bindings/eldbus_cxx/eldbus_integer_sequence.hh \
+bindings/eldbus_cxx/eldbus_message_arguments.hh \
+bindings/eldbus_cxx/eldbus_message.hh \
+bindings/eldbus_cxx/eldbus_proxy_call.hh \
+bindings/eldbus_cxx/eldbus_raw_tuple.hh \
+bindings/eldbus_cxx/eldbus_service.hh \
+bindings/eldbus_cxx/eldbus_signature_traits.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+if HAVE_CXX11
+
+check_PROGRAMS += tests/eldbus_cxx/eldbus_cxx_suite
+TESTS += tests/eldbus_cxx/eldbus_cxx_suite
+
+tests_eldbus_cxx_eldbus_cxx_suite_SOURCES = \
+tests/eldbus_cxx/eldbus_cxx_suite.cc \
+tests/eldbus_cxx/eldbus_cxx_test_eldbus_connect.cc \
+tests/eldbus_cxx/eldbus_cxx_test_eldbus_client.cc
+
+tests_eldbus_cxx_eldbus_cxx_suite_CPPFLAGS = \
+-I$(top_builddir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-I$(top_builddir)/src/bindings/ecore_cxx \
+-I$(top_srcdir)/src/bindings/ecore_cxx \
+-I$(top_builddir)/src/bindings/eldbus_cxx \
+-I$(top_srcdir)/src/bindings/eldbus_cxx \
+-I$(top_builddir)/src/lib/efl \
+@CHECK_CFLAGS@ \
+ @ELDBUS_CFLAGS@ \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
+
+tests_eldbus_cxx_eldbus_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
+tests_eldbus_cxx_eldbus_cxx_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
+
+endif
+endif

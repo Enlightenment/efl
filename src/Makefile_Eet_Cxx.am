@@ -8,9 +8,7 @@ dist_installed_eetcxxmainheaders_DATA = bindings/eet_cxx/Eet.hh
 installed_eetcxxheadersdir = $(includedir)/eet-cxx-@VMAJ@/eet-cxx
 dist_installed_eetcxxheaders_DATA = \
 bindings/eet_cxx/eet_composite.hh \
-bindings/eet_cxx/eet_fold.hh \
 bindings/eet_cxx/eet_register.hh \
-bindings/eet_cxx/eet_tuple.hh \
 bindings/eet_cxx/eet_type.hh
 
 ### Unit tests

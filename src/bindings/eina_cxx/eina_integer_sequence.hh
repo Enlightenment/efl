@@ -70,6 +70,36 @@ using index_sequence = integer_sequence<std::size_t, I...>;
 template <std::size_t I>
 using make_index_sequence = make_integer_sequence<std::size_t, I>;
 
+template <typename T, typename U>
+struct pop_integer_sequence_t;
+
+template <typename T>
+struct pop_integer_sequence_t<integer_sequence<T>, integer_sequence<T> >
+{
+  typedef integer_sequence<T> type;
+};
+
+template <typename T, T S0, T... S>
+struct pop_integer_sequence_t<integer_sequence<T>, integer_sequence<T, S0, S...> >
+{
+  typedef integer_sequence<T, S...> type;
+};
+
+template <typename T, T S0, T... S>
+struct pop_integer_sequence_t<integer_sequence<T, S0, S...>, integer_sequence<T> >
+{
+  typedef integer_sequence<T> type;
+};
+
+template <typename T, T S, T... Ss1, T... Ss2>
+struct pop_integer_sequence_t<integer_sequence<T, S, Ss1...>, integer_sequence<T, S, Ss2...> >
+  : pop_integer_sequence_t<integer_sequence<T, Ss1...>, integer_sequence<T, Ss2...> >
+{
+};
+
+template <typename T, typename U>
+using pop_integer_sequence = typename pop_integer_sequence_t<T, U>::type;
+
 /**
  * @}
  */

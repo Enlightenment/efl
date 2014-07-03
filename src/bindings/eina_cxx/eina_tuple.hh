@@ -1,9 +1,7 @@
-#ifndef EFL_EET_EET_TUPLE_HH_
-#define EFL_EET_EET_TUPLE_HH_
+#ifndef EFL_EINA_EINA_TUPLE_HH_
+#define EFL_EINA_EINA_TUPLE_HH_
 
-namespace efl { namespace eet {
-
-namespace _mpl {
+namespace efl { namespace eina { namespace _mpl {
 
 template <typename A, typename... Args>
 struct push_back;
@@ -32,8 +30,6 @@ struct pop_front<C<T, Args...> >
   typedef C<Args...> type;
 };
 
-}
-
-} }
+} } }
 
 #endif

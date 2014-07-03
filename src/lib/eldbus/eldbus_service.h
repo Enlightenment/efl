@@ -9,6 +9,7 @@
  */
 #define ELDBUS_METHOD_FLAG_DEPRECATED 1
 #define ELDBUS_METHOD_FLAG_NOREPLY (1 << 1)
+#define ELDBUS_METHOD_FLAG_HAS_DATA (1 << 2) // @since 1.1
 
 #define ELDBUS_SIGNAL_FLAG_DEPRECATED 1
 
@@ -31,6 +32,8 @@ typedef struct _Eldbus_Arg_Info
 
 typedef struct _Eldbus_Service_Interface Eldbus_Service_Interface;
 typedef Eldbus_Message * (*Eldbus_Method_Cb)(const Eldbus_Service_Interface *iface, const Eldbus_Message *message);
+
+typedef Eldbus_Message * (*Eldbus_Method_Data_Cb)(void* data, const Eldbus_Service_Interface *iface, const Eldbus_Message *message); // @since 1.11
 
 /**
  * Callback function to append property value to message.
@@ -69,6 +72,7 @@ typedef struct _Eldbus_Method
    const Eldbus_Arg_Info *out;
    Eldbus_Method_Cb cb;
    unsigned int flags;
+   void* data;           // @since 1.11
 } Eldbus_Method;
 
 typedef struct _Eldbus_Signal

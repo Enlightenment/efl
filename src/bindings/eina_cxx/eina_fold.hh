@@ -1,9 +1,9 @@
-#ifndef EFL_EET_FOLD_HH_
-#define EFL_EET_FOLD_HH_
+#ifndef EFL_EINA_FOLD_HH_
+#define EFL_EINA_FOLD_HH_
 
-#include <eet_tuple.hh>
+#include <eina_tuple.hh>
 
-namespace efl { namespace eet {
+namespace efl { namespace eina {
 
 namespace _mpl {
 
@@ -11,7 +11,7 @@ template <typename T, typename F, typename A0, bool B = std::is_same<T, std::tup
 struct fold_impl
 {
   typedef typename F::template apply<A0, typename std::tuple_element<0, T>::type>::type result;
-  typedef typename fold_impl<typename pop_front<T>::type
+  typedef typename fold_impl<typename _mpl::pop_front<T>::type
                              , F, result
                              >::type
   type;

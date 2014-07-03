@@ -395,7 +395,7 @@ cb_introspect(const Eldbus_Service_Interface *_iface, const Eldbus_Message *mess
 }
 
 static const Eldbus_Method introspect = {
-   "Introspect", NULL, ELDBUS_ARGS({ "s", "xml" }), cb_introspect, 0
+   "Introspect", NULL, ELDBUS_ARGS({ "s", "xml" }), cb_introspect, 0, 0
 };
 
 static void
@@ -435,15 +435,15 @@ _default_interfaces_free(void)
 static const Eldbus_Method _property_methods[] = {
    {
     "Get", ELDBUS_ARGS({"s", "interface"}, {"s", "property"}),
-    ELDBUS_ARGS({"v", "value"}), _cb_property_get, 0
+    ELDBUS_ARGS({"v", "value"}), _cb_property_get, 0, NULL
    },
    {
     "Set", ELDBUS_ARGS({"s", "interface"}, {"s", "property"}, {"v", "value"}),
-    NULL, _cb_property_set, 0
+    NULL, _cb_property_set, 0, NULL
    },
    {
     "GetAll", ELDBUS_ARGS({"s", "interface"}), ELDBUS_ARGS({"a{sv}", "props"}),
-    _cb_property_getall, 0
+    _cb_property_getall, 0, NULL
    }
 };
 
@@ -570,7 +570,7 @@ _cb_managed_objects(const Eldbus_Service_Interface *iface, const Eldbus_Message 
 
 static Eldbus_Method get_managed_objects = {
    "GetManagedObjects", NULL, ELDBUS_ARGS({"a{oa{sa{sv}}}", "objects"}),
-   _cb_managed_objects, 0
+   _cb_managed_objects, 0, NULL
 };
 
 static const Eldbus_Signal _object_manager_signals[] = {
@@ -1282,6 +1282,20 @@ _object_unregister(DBusConnection *conn EINA_UNUSED, void *user_data)
    _object_free(obj);
 }
 
+static Eldbus_Message*
+_eldbus_method_call(Eldbus_Method const* method, Eldbus_Service_Interface* iface, Eldbus_Message* msg)
+{
+  if(method->flags & ELDBUS_METHOD_FLAG_HAS_DATA)
+    {
+      Eldbus_Method_Data_Cb cb = (Eldbus_Method_Data_Cb)method->cb;
+      return cb(method->data, iface, msg);
+    }
+  else
+    {
+      return method->cb(iface, msg);
+    }
+}
+
 static DBusHandlerResult
 _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *user_data)
 {
@@ -1331,19 +1345,19 @@ _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *u
 
    if (!_have_signature(method->in, eldbus_msg))
      reply = eldbus_message_error_new(eldbus_msg, DBUS_ERROR_INVALID_SIGNATURE,
-                                      "See introspectable to know the expected signature");
+                                          "See introspectable to know the expected signature");
    else
      {
-        if (iface->obj)
-          reply = method->cb(iface, eldbus_msg);
-        else
-          {
-             /* if iface does have obj it is some of FreeDesktop interfaces:
-                Introspectable, Properties or ObjectManager */
-             iface->obj = obj;
-             reply = method->cb(iface, eldbus_msg);
-             iface->obj = NULL;
-          }
+       if (iface->obj)
+         reply = _eldbus_method_call(method, iface, eldbus_msg);
+       else
+         {
+           /* if iface does have obj it is some of FreeDesktop interfaces:
+              Introspectable, Properties or ObjectManager */
+           iface->obj = obj;
+           reply = _eldbus_method_call(method, iface, eldbus_msg);
+           iface->obj = NULL;
+         }
      }
 
    eldbus_message_unref(eldbus_msg);
