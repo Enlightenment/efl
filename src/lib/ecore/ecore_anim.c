@@ -154,42 +154,35 @@ _do_tick(void)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
-_ecore_animator_add(Ecore_Animator *obj,
-                    Ecore_Animator_Data *animator,
-                    Ecore_Task_Cb func,
-                    const void   *data)
+EOLIAN static Eo *
+_ecore_animator_eo_base_finalize(Eo *obj, Ecore_Animator_Data *animator)
 {
-    if (EINA_UNLIKELY(!eina_main_loop_is()))
-      {
-         eo_error_set(obj);
-         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-      }
-
-   animator->obj = obj;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_manual_free_set(obj, EINA_TRUE);
-
-   if (!func)
+   if (!animator->func)
      {
         eo_error_set(obj);
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
-        return EINA_FALSE;
+        goto finalize;
      }
 
-   animator->func = func;
-   animator->data = (void *)data;
+   if (EINA_UNLIKELY(!eina_main_loop_is()))
+     {
+        eo_error_set(obj);
+        EINA_MAIN_LOOP_CHECK_RETURN_VAL(
+           eo_do_super(obj, MY_CLASS, eo_finalize()));
+        goto finalize;
+     }
+
+   _ecore_lock();
+
+   eo_manual_free_set(obj, EINA_TRUE);
    animator->just_added = EINA_TRUE;
    animators = (Ecore_Animator_Data *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
-   _begin_tick();
-   return EINA_TRUE;
-}
 
-EOLIAN static void
-_ecore_animator_eo_base_constructor(Eo *obj, Ecore_Animator_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
+   _begin_tick();
+   _ecore_unlock();
+
+finalize:
+   return eo_do_super(obj, MY_CLASS, eo_finalize());
 }
 
 EAPI Ecore_Animator *
@@ -198,17 +191,27 @@ ecore_animator_add(Ecore_Task_Cb func,
 {
    Ecore_Animator *animator = NULL;
 
-   animator = eo_add_custom(MY_CLASS, _ecore_parent,
-                            ecore_animator_constructor(func, data));
+   animator = eo_add(MY_CLASS, _ecore_parent,
+                     ecore_obj_animator_init(func, data));
    eo_unref(animator);
    return animator;
 }
 
 EOLIAN static void
-_ecore_animator_constructor(Eo *obj, Ecore_Animator_Data *animator, Ecore_Task_Cb func, const void *data)
+_ecore_animator_init(Eo *obj, Ecore_Animator_Data *animator, Ecore_Task_Cb func, const void *data)
 {
+   if (animator->func != NULL)
+     {
+        ERR("do not call this function out of '%s' object construction", MY_CLASS_NAME);
+        return;
+     }
+
    _ecore_lock();
-   _ecore_animator_add(obj, animator, func, data);
+
+   animator->obj = obj;
+   animator->func = func;
+   animator->data = (void *)data;
+
    _ecore_unlock();
 }
 
@@ -218,27 +221,32 @@ ecore_animator_timeline_add(double            runtime,
                             const void       *data)
 {
    Ecore_Animator *animator;
-   animator = eo_add_custom(MY_CLASS, _ecore_parent,
-                            ecore_animator_timeline_constructor(runtime, func, data));
+   animator = eo_add(MY_CLASS, _ecore_parent,
+                     ecore_obj_animator_timeline_init(runtime, func, data));
    eo_unref(animator);
    return animator;
 }
 
 EOLIAN static void
-_ecore_animator_timeline_constructor(Eo *obj, Ecore_Animator_Data *animator, double runtime, Ecore_Timeline_Cb func, const void *data)
+_ecore_animator_timeline_init(Eo *obj, Ecore_Animator_Data *animator, double runtime, Ecore_Timeline_Cb func, const void *data)
 {
+   if (animator->func != NULL)
+     {
+        ERR("do not call this function out of '%s' object construction", MY_CLASS_NAME);
+        return;
+     }
+   if (runtime < 0.0) runtime = 0.0;
+
    _ecore_lock();
-   if (runtime <= 0.0) runtime = 0.0;
 
-   if (!_ecore_animator_add(obj, animator, _ecore_animator_run, NULL)) goto unlock;
-
+   animator->obj = obj;
+   animator->func = _ecore_animator_run;
    animator->data = obj;
    animator->run_func = func;
    animator->run_data = (void *)data;
    animator->start = ecore_loop_time_get();
    animator->run = runtime;
 
-unlock:
    _ecore_unlock();
 }
 
