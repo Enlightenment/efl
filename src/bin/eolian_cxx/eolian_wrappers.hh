@@ -154,7 +154,7 @@ class_namespace_full(Eolian_Class const& klass)
 inline efl::eina::range_ptr_list<const Eolian_Class>
 class_list_all()
 {
-   return ::eolian_class_names_list_get();
+   return ::eolian_all_classes_list_get();
 }
 
 inline std::string

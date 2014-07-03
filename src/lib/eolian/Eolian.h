@@ -289,14 +289,13 @@ eolian_class_namespaces_list_get(const Eolian_Class klass);
 EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class klass);
 
 /*
- * @brief Returns the names list of all the classes stored into the database.
+ * @brief Returns a list of all the classes stored into the database.
  *
  * @return the list
  *
  * @ingroup Eolian
  */
-/* Returns the list of class names of the database */
-EAPI const Eina_List *eolian_class_names_list_get(void);
+EAPI const Eina_List *eolian_all_classes_list_get(void);
 
 /*
  * @brief Returns the description of a class.

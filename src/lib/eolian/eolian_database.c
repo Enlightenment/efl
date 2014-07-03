@@ -393,14 +393,9 @@ database_class_del(Eolian_Class class)
 }
 
 EAPI const Eina_List *
-eolian_class_names_list_get(void)
+eolian_all_classes_list_get(void)
 {
-   Eina_List *itr;
-   _Class_Desc *cl;
-   Eina_List *list = NULL;
-   EINA_LIST_FOREACH(_classes, itr, cl)
-      list = eina_list_append(list, cl->name);
-   return list;
+   return _classes;
 }
 
 Eina_Bool
