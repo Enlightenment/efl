@@ -1,65 +1,25 @@
 class Ecore.Animator (Eo.Base)
 {
-   legacy_prefix: null;
-   eo_prefix: ecore_obj_animator;
-   methods {
-      init {
-         /*@
-         Set the @p func to be called at every animation tick during main loop execution.
-
-         The function @p func will be called every N seconds where N is
-         the @p frametime interval set by ecore_animator_frametime_set(). The
-         function will be passed the @p data pointer as its parameter.
-
-         When the animator @p func is called, it must return a boolean value.
-         If it returns EINA_TRUE (or ECORE_CALLBACK_RENEW), it will be called again at
-         the next tick, or if it returns EINA_FALSE (or ECORE_CALLBACK_CANCEL) it will be
-         deleted automatically making any references/handles for it invalid.
-
-         @note Do NOT call this method outside of object constructor.
-
-         @note The default @p frametime value is 1/30th of a second.
-
-         @see ecore_obj_animator_timeline_set()
-         @see ecore_animator_frametime_set() */
+   eo_prefix: ecore_animator;
+   constructors {
+      timeline_constructor {
+         /*@ Contructor. */
          params {
-            @in Ecore_Task_Cb func; /*@ The function to call when it ticks off */
-            @in const(void)* data; /*@ The data to pass to the function */
+            @in double runtime;
+            @in Ecore_Timeline_Cb func;
+            @in const(void)* data;
          }
       }
-      timeline_init {
-         /*@
-         Set the @p func to be called at every animation tick during main loop execution, that runs for a limited time
-
-         This function is just like ecore_obj_animator_task_set() except the animator only
-         runs for a limited time specified in seconds by @p runtime. Once the
-         runtime the animator has elapsed (animator finished) it will automatically
-         be deleted. The callback function @p func can return ECORE_CALLBACK_RENEW
-         to keep the animator running or ECORE_CALLBACK_CANCEL ro stop it and have
-         it be deleted automatically at any time.
-
-         The @p func will ALSO be passed a position parameter that will be in value
-         from 0.0 to 1.0 to indicate where along the timeline (0.0 start, 1.0 end)
-         the animator run is at. If the callback wishes not to have a linear
-         transition it can "map" this value to one of several curves and mappings
-         via ecore_animator_pos_map().
-
-         @note Do NOT call this method outside of object constructor.
-
-         @note The default @p frametime value is 1/30th of a second.
-
-         @see ecore_obj_animator_task_set()
-         @see ecore_animator_pos_map()
-         @since 1.1.0 */
+      constructor {
+         /*@ Contructor. */
          params {
-            @in double runtime; /*@ The time to run in seconds */
-            @in Ecore_Timeline_Cb func; /*@ The function to call when it ticks off */
-            @in const(void)* data; /*@ The data to pass to the function */
+            @in Ecore_Task_Cb func;
+            @in const(void)* data;
          }
       }
    }
    implements {
-      Eo.Base.finalize;
+      Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.event_freeze;
       Eo.Base.event_thaw;
