@@ -74,18 +74,22 @@ static void
 throw(Eo_Lexer *ls, const char *fmt, ...)
 {
    const char *ln = ls->stream_line, *end = ls->stream_end;
+   Eina_Strbuf *buf = eina_strbuf_new();
    int i;
    va_list ap;
    va_start(ap, fmt);
-   vfprintf(stderr, fmt, ap);
+   eina_strbuf_append_vprintf(buf, fmt, ap);
    va_end(ap);
-   fputc(' ', stderr);
+   eina_strbuf_append_char(buf, ' ');
    while (ln != end && !is_newline(*ln))
-     fputc(*(ln++), stderr);
-   fputc('\n', stderr);
+     eina_strbuf_append_char(buf,*(ln++));
+   eina_strbuf_append_char(buf, '\n');
    for (i = 0; i < ls->column; ++i)
-     fputc(' ', stderr);
-   fputs("^\n", stderr);
+     eina_strbuf_append_char(buf, ' ');
+   eina_strbuf_append(buf, "^\n");
+   eina_log_print(_eo_lexer_log_dom, EINA_LOG_LEVEL_ERR, ls->source, "",
+                  ls->line_number, eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
    longjmp(ls->err_jmp, EINA_TRUE);
 }
 
@@ -318,7 +322,10 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
 {
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
-     throw(ls, "%s\n", strerror(errno));
+     {
+        ERR("%s", strerror(errno));
+        longjmp(ls->err_jmp, EINA_TRUE);
+     }
    ls->lookahead.token = TOK_EOF;
    ls->buff            = eina_strbuf_new();
    ls->handle          = f;
@@ -430,11 +437,10 @@ eo_lexer_lex_error(Eo_Lexer *ls, const char *msg, int token)
      {
         char buf[256];
         txt_token(ls, token, buf);
-        throw(ls, "%s:%d:%d: %s near '%s'\n", ls->source, ls->line_number,
-              ls->column, msg, buf);
+        throw(ls, "%s at column %d near '%s'\n", msg, ls->column, buf);
      }
    else
-     throw(ls, "%s:%d:%d: %s\n", ls->source, ls->line_number, ls->column, msg);
+     throw(ls, "%s at column %d\n", msg, ls->column);
 }
 
 void
