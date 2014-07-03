@@ -9589,7 +9589,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      case EDJE_ACTION_TYPE_SOUND_SAMPLE:
        {
           BUF_APPEND(I4"action: PLAY_SAMPLE ");
-          BUF_APPENDF("\"%s\" %.000f", epr->sample_name, epr->speed);
+          BUF_APPENDF("\"%s\" %.4f", epr->sample_name, epr->speed);
           switch (epr->channel)
             {
              case EDJE_CHANNEL_BACKGROUND:
@@ -9631,7 +9631,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      case EDJE_ACTION_TYPE_SOUND_TONE:
        {
           BUF_APPEND(I4"action: PLAY_TONE ");
-          BUF_APPENDF("\"%s\" %.000f\n;", epr->tone_name, epr->duration);
+          BUF_APPENDF("\"%s\" %.4f\n;", epr->tone_name, epr->duration);
           break;
        }
      //TODO Support Drag
@@ -9912,7 +9912,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                  BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.abs_x, img->image.fill.abs_y);
                BUF_APPEND(I6"}\n");
            }
-         BUF_APPEND(I6"type: TILE;\n");
+         if (img->image.fill.type == EDJE_FILL_TYPE_TILE)
+           BUF_APPEND(I6"type: TILE;\n");
 
          BUF_APPEND(I5"}\n");
       }
