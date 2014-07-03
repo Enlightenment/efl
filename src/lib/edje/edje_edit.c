@@ -5993,6 +5993,40 @@ edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, cons
 }
 
 /**************/
+/*  MAP API */
+/**************/
+
+EAPI const char *
+edje_edit_state_map_perspective_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Real_Part *erl;
+
+   GET_PD_OR_RETURN(NULL);
+
+   erl = ed->table_parts[pd->map.id_persp % ed->table_parts_size];
+   if (erl->part->name)
+     return eina_stringshare_add(erl->part->name);
+
+   return NULL;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_perspective_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
+{
+   int src_id;
+
+   if (!source_part) return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   src_id = _edje_part_id_find(ed, source_part);
+   pd->map.id_persp = src_id;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+
+/**************/
 /*  TEXT API */
 /**************/
 
