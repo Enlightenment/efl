@@ -2057,6 +2057,32 @@ EAPI double edje_edit_part_item_align_y_get(Evas_Object *obj, const char *part, 
  */
 EAPI Eina_Bool edje_edit_part_item_align_y_set(Evas_Object *obj, const char *part, const char *item, double align_y);
 
+/** Get column/row position of the part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ * @param col Column item position.
+ * @param row Row item position.
+ *
+ * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_position_get(Evas_Object *obj, const char *part, const char *item_name, unsigned short *col, unsigned short *row);
+
+/** Set column/row position of a new part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ * @param col Column item position.
+ * @param row Row item position.
+ *
+ * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_position_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short col, unsigned short row);
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/

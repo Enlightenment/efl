@@ -4427,6 +4427,61 @@ FUNC_PART_ITEM_DOUBLE(align_y, align.y);
 
 #undef FUNC_PART_ITEM_DOUBLE
 
+EAPI Eina_Bool
+edje_edit_part_item_position_get(Evas_Object *obj, const char *part,
+                                 const char *item_name,
+                                 unsigned short *col,
+                                 unsigned short *row)
+  {
+     Edje_Part *ep;
+     unsigned int i;
+     Edje_Pack_Element *item = NULL;
+     if ((!obj) || (!part) || (!item_name))
+       return EINA_FALSE;
+     GET_RP_OR_RETURN(EINA_FALSE);
+     ep = rp->part;
+     for (i = 0; i < ep->items_count; ++i)
+       {
+          if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+            {
+               item = ep->items[i];
+               break;
+            }
+       }
+     if (!item) return EINA_FALSE;
+     *col = item->col;
+     *row = item->row;
+     return EINA_TRUE;
+  }
+EAPI Eina_Bool
+edje_edit_part_item_position_set(Evas_Object *obj, const char *part,
+                                 const char *item_name,
+                                 unsigned short col,
+                                 unsigned short row)
+  {
+     Edje_Part *ep;
+     unsigned int i;
+     Edje_Pack_Element *item = NULL;
+     if ((!obj) || (!part) || (!item_name))
+       return EINA_FALSE;
+     GET_RP_OR_RETURN(EINA_FALSE);
+     ep = rp->part;
+     if (rp->part->type != EDJE_PART_TYPE_TABLE)
+       return EINA_FALSE;
+     for (i = 0; i < ep->items_count; ++i)
+       {
+          if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+            {
+               item = ep->items[i];
+               break;
+            }
+       }
+     if (!item) return EINA_FALSE;
+     item->col = col;
+     item->row = row;
+     return EINA_TRUE;
+  }
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -10054,10 +10109,11 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
 
                   if (TO_DOUBLE(item->align.x) != 0.5 || TO_DOUBLE(item->align.y) != 0.5)
                     BUF_APPENDF(I7"align: %g %g;\n", TO_DOUBLE(item->align.x), TO_DOUBLE(item->align.y));
+
+                  if (edje_edit_part_type_get(obj, part) == EDJE_PART_TYPE_TABLE)
+                    BUF_APPENDF(I7"position: %d %d;\n", item->col, item->row);
                   //TODO weight
                   //TODO options
-                  //TODO col
-                  //TODO row
                   //TODO colspan
                   //TODO rowspan
                   BUF_APPEND(I6"}\n");
