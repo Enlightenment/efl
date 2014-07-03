@@ -496,7 +496,7 @@ eo_lexer_init()
         eina_init();
         init_hash();
         eina_log_color_disable_set(EINA_FALSE);
-        _eo_lexer_log_dom = eina_log_domain_register("eo_toknz", EINA_COLOR_CYAN);
+        _eo_lexer_log_dom = eina_log_domain_register("eo_lexer", EINA_COLOR_CYAN);
      }
    return _init_counter++;
 }
