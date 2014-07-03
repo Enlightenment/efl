@@ -7487,7 +7487,7 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Ge
      {
         *y = oy;
      }
-   else if (item_y > (oy + oh - item_h))
+   if (item_y > (oy + oh - item_h))
      {
         *y = oy + oh - item_h;
      }
@@ -7495,6 +7495,10 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Ge
    if ((item_x + item_w) > (ox + ow))
      {
         *w = item_w - (item_w - ow);
+     }
+   if (item_x < ox)
+     {
+        *x = ox;
      }
 }
 
