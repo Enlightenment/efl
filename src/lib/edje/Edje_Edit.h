@@ -205,6 +205,21 @@ EAPI Eina_Bool edje_edit_save(Evas_Object *obj);
  */
 EAPI Eina_Bool edje_edit_save_all(Evas_Object *obj);
 
+/** Save every group into new file.
+ *
+ * Use this function when you need clean eet dictionary in .edj file from
+ * unnecessary text entries (e.g. names of deleted groups etc.).
+ *
+ * @param obj Object to save.
+ * @param new_file_name Where to save object. File should not exist, otherwise
+ * EINA_FALSE will be returned.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ *
+ * @see edje_edit_save()
+ */
+EAPI Eina_Bool edje_edit_clean_save_as(Evas_Object *obj, const char* new_file_name);
+
 /** Save the group(s) back to the file, without generation source code.
  *
  * This function saves changes in group(s) back into the edj file. Process of

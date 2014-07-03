@@ -10942,6 +10942,87 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_
 }
 
 EAPI Eina_Bool
+edje_edit_clean_save_as(Evas_Object *obj, const char* new_file_name)
+{
+   Eet_File *ef, *ef_out;
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return EINA_FALSE;
+
+   if (ecore_file_exists(new_file_name))
+     {
+        ERR("Error. file \"%s\" allready exists",
+            new_file_name);
+        return EINA_FALSE;
+     }
+   ef = eet_open(ed->file->path, EET_FILE_MODE_READ);
+   if (!ef)
+     {
+        ERR("Error. unable to open \"%s\" for reading",
+            ed->file->path);
+        return EINA_FALSE;
+     }
+   ef_out = eet_open(new_file_name, EET_FILE_MODE_WRITE);
+   if (!ef_out)
+     {
+        ERR("Error. unable to open \"%s\" for writing output",
+            new_file_name);
+        eet_close(ef);
+        return EINA_FALSE;
+     }
+
+   /* copying file structure */
+   _edje_edit_edje_file_save(ef_out, ed->file);
+
+   int count = 0;
+   char **ent = eet_list(ef, "*", &count);
+   int i;
+   int size = 0;
+   const void * data;
+
+   /* copying data */
+   for (i = 0; i < count; i++)
+     {
+        /* Skiping entries that need special saving */
+        if (!strcmp(ent[i], "edje/file")) continue;
+        if (!strcmp(ent[i], "edje_sources")) continue;
+        if (strstr(ent[i], "collection")) continue;
+
+        data = eet_read_direct(ef, ent[i], &size);
+        if (data) eet_write(ef_out, ent[i], data, size, 0);
+        else
+          {
+             data = eet_read(ef, ent[i], &size);
+             eet_write(ef_out, ent[i], data, size, 1);
+          }
+     }
+   free(ent);
+
+   /* copying groups */
+   Edje_Part_Collection_Directory_Entry *ce;
+   Evas_Object *part_obj;
+   part_obj = edje_edit_object_add(ed->base->evas);
+   Eina_Iterator *it = eina_hash_iterator_data_new(ed->file->collection);
+   EINA_ITERATOR_FOREACH(it, ce)
+     {
+        /* forcing collection load into memory */
+        edje_object_file_set(part_obj, ed->file->path, ce->entry);
+
+        _edje_edit_collection_save(ef_out, ce->ref);
+     }
+   eina_iterator_free(it);
+
+   /* generating source code */
+   _edje_edit_source_save(ef_out, obj);
+
+   eet_close(ef);
+   eet_close(ef_out);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_save(Evas_Object *obj)
 {
    return _edje_edit_internal_save(obj, 1, EINA_TRUE);
