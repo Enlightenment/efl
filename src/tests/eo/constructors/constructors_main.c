@@ -66,12 +66,25 @@ main(int argc, char *argv[])
    fail_if(obj);
 
    my_init_count = 0;
-   obj = eo_add_custom(SIMPLE_CLASS, NULL, simple_constructor(7));
+   obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
-
    fail_if(my_init_count != 2);
    eo_do(obj, a = simple_a_get());
+   fail_if(a != 0);
+
+   my_init_count = 0;
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(7));
+   fail_if(!obj);
+   fail_if(my_init_count != 2);
+   eo_do(obj, a = simple_a_get(););
    fail_if(a != 7);
+
+   my_init_count = 0;
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_b_set(6), simple_a_set(-1),
+                b = simple_b_get());
+   fail_if(obj);
+   fail_if(b != 6);
+   fail_if(my_init_count != 0);
 
    eo_unref(obj);
 

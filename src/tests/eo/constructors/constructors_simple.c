@@ -40,24 +40,21 @@ _GET_SET_FUNC(b)
 extern int my_init_count;
 
 static void
-_simple_constructor(Eo *obj, void *class_data, int a)
-{
-   Private_Data *pd = class_data;
-
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-
-   pd->a = a;
-   printf("%s %d\n", __func__, pd->a);
-
-   my_init_count++;
-}
-
-static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
    my_init_count++;
+}
+
+static Eo*
+_finalize(Eo *obj, void *class_data EINA_UNUSED)
+{
+   Private_Data *pd = class_data;
+
+   if (pd->a < 0) eo_error_set(obj);
+
+   return eo_do_super(obj, MY_CLASS, eo_finalize());
 }
 
 static void
@@ -85,7 +82,7 @@ EO_VOID_FUNC_BODYV(simple_constructor, EO_FUNC_CALL(a), int a);
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
      EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor),
-     EO_OP_FUNC(simple_constructor, _simple_constructor, "Construct and set A."),
+     EO_OP_FUNC_OVERRIDE(eo_finalize, _finalize),
      EO_OP_FUNC(simple_a_set, _a_set, "Set property a"),
      EO_OP_FUNC(simple_a_get, _a_get, "Get property a"),
      EO_OP_FUNC(simple_b_set, _b_set, "Set property b"),

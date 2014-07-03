@@ -1,7 +1,6 @@
 #ifndef SIMPLE_H
 #define SIMPLE_H
 
-EAPI void simple_constructor(int a);
 EAPI void simple_a_set(int a);
 EAPI int simple_a_get(void);
 EAPI void simple_b_set(int b);
