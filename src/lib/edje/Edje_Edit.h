@@ -3430,6 +3430,33 @@ EAPI unsigned char edje_edit_state_limit_get(Evas_Object *obj, const char *part,
  *  Functions to deal with objects with rotation properties (see @ref edcref).
  */ //@{
 
+/** Get the flag which enables mapping for the part.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ *
+ * @return  @cEINA_TRUE in case if mapping allowed or @cEINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_on_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** This enables mapping for the part. Default is 0.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param on The flag which allow mapping for the part.
+ *
+ * @return @cEINA_TRUE in case of success, @cEINA_FALSE otherwise.
+ * @since 1.11
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool on);
+
 /** Get the part's name that is used as the 'perspective point'.
  *
  * @param obj Object being edited.

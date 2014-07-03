@@ -6011,6 +6011,9 @@ edje_edit_state_limit_get(Evas_Object *obj, const char *part, const char *state,
    return pd->limit;
 }
 
+/**************/
+/*  MAP API */
+/**************/
 
 EAPI const char *
 edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *state, double value)
@@ -6285,10 +6288,6 @@ edje_edit_state_map_point_color_set(Evas_Object *obj, const char *part, const ch
    return EINA_TRUE;
 }
 
-/**************/
-/*  MAP API */
-/**************/
-
 EAPI const char *
 edje_edit_state_map_perspective_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
@@ -6318,6 +6317,24 @@ edje_edit_state_map_perspective_set(Evas_Object *obj, const char *part, const ch
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_map_on_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   return  pd->map.on;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool on)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.on = on;
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
 
 /**************/
 /*  TEXT API */
