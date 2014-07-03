@@ -124,6 +124,63 @@ class Elm_Ctxpopup (Elm_Layout)
             return Elm_Ctxpopup_Direction;
          }
       }
+      items {
+         get {
+            /*@
+            @brief Get the internal list of items in a given ctxpopup widget.
+            @since 1.11
+
+            @return The list of items (#Elm_Object_Item as data) or
+            @c NULL on errors.
+
+            This list is @b not to be modified in any way and must not be
+            freed. Use the list members with functions like
+            elm_object_item_text_set(),
+            elm_object_item_text_get(),
+            elm_object_item_del().
+
+            @warning This list is only valid until @p obj object's internal
+            items list is changed. It should be fetched again with another
+            call to this function when changes happen.
+
+            @ingroup Ctxpopup */
+            return const(Eina_List)*;
+         }
+      }
+      first_item {
+         get {
+            /*@
+            Get the first item in the given ctxpopup widget's list of
+            items.
+            @since 1.11
+
+            @return The first item or @c NULL, if it has no items (and on
+            errors)
+
+            @see elm_ctxpopup_item_append()
+            @see elm_ctxpopup_last_item_get()
+
+            @ingroup Ctxpopup */
+            return Elm_Object_Item *;
+         }
+      }
+      last_item {
+         get {
+            /*@
+            Get the last item in the given ctxpopup widget's list of
+            items.
+            @since 1.11
+
+            @return The last item or @c NULL, if it has no items (and on
+            errors)
+
+            @see elm_ctxpopup_item_prepend()
+            @see elm_ctxpopup_first_item_get()
+
+            @ingroup Ctxpopup */
+            return Elm_Object_Item *;
+         }
+      }
    }
    methods {
       dismiss {
@@ -145,6 +202,28 @@ class Elm_Ctxpopup (Elm_Layout)
       item_append {
          /*@
          @brief Add a new item to a ctxpopup object.
+
+         @return A handle to the item added or @c NULL, on errors
+
+         @warning Ctxpopup can't hold both an item list and a content at the same
+         time. When an item is added, any previous content will be removed.
+
+         @see elm_object_content_set()
+
+         @ingroup Ctxpopup */
+
+         return Elm_Object_Item *;
+         params {
+            @in const(char)* label; /*@ The Label of the new item */
+            @in Evas_Object *icon; /*@ Icon to be set on new item */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
+            @in const(void)* data; /*@ Data passed to @p func */
+         }
+      }
+      item_prepend {
+         /*@
+         @brief Prepend a new item to a ctxpopup object.
+         @since 1.11
 
          @return A handle to the item added or @c NULL, on errors
 

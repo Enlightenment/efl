@@ -35,6 +35,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+static Elm_Ctxpopup_Item* _item_new(Eo *obj, 
+                                    Elm_Ctxpopup_Data *sd,
+                                    Evas_Smart_Cb func,
+                                    const void *data);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -1254,40 +1258,12 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 {
    Elm_Ctxpopup_Item *item;
 
-
-   item = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
+   item = _item_new(obj, sd, func, data);
    if (!item) return NULL;
 
-   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
-   elm_widget_item_disable_hook_set(item, _item_disable_hook);
-   elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
-   elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
-   elm_widget_item_content_set_hook_set(item, _item_content_set_hook);
-   elm_widget_item_content_get_hook_set(item, _item_content_get_hook);
-   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
-
-   if (!sd->list)
-     {
-        //The first item is appended.
-        sd->list = elm_list_add(obj);
-        if (!strncmp(elm_object_style_get(obj), "default", strlen("default")))
-          elm_object_style_set(sd->list, "ctxpopup");
-        else elm_object_style_set(sd->list, elm_object_style_get(obj));
-        elm_list_mode_set(sd->list, ELM_LIST_EXPAND);
-        elm_list_horizontal_set(sd->list, sd->horizontal);
-        evas_object_event_callback_add
-          (sd->list, EVAS_CALLBACK_RESIZE, _list_resize_cb, obj);
-        elm_layout_content_set(obj, "default", sd->list);
-     }
-
-   item->wcb.org_func_cb = func;
-   item->wcb.org_data = data;
-   item->wcb.cobj = obj;
    item->list_item =
      elm_list_item_append(sd->list, label, icon, NULL, _item_wrap_cb, item);
    sd->items = eina_list_append(sd->items, item);
-
-   sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
@@ -1344,6 +1320,120 @@ EOLIAN static void
 _elm_ctxpopup_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static const Eina_List*
+_elm_ctxpopup_items_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+{
+   return sd->items;
+}
+
+EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_first_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+{
+   if (!sd->items) return NULL;
+
+   return eina_list_data_get(sd->items);
+}
+
+EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_last_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+{
+   if (!sd->items) return NULL;
+
+   return eina_list_data_get(eina_list_last(sd->items));
+}
+
+EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
+{
+   Elm_Ctxpopup_Item *item;
+
+   item = _item_new(obj, sd, func, data);
+   if (!item) return NULL;
+
+   item->list_item =
+     elm_list_item_prepend(sd->list, label, icon, NULL, _item_wrap_cb, item);
+   sd->items = eina_list_prepend(sd->items, item);
+
+   if (sd->visible) elm_layout_sizing_eval(obj);
+
+   return (Elm_Object_Item *)item;
+}
+
+EAPI Elm_Object_Item *
+elm_ctxpopup_item_prev_get(const Elm_Object_Item *it)
+{
+   Eina_List *l;
+   Elm_Ctxpopup_Item *item = (Elm_Ctxpopup_Item *)it;
+
+   ELM_CTXPOPUP_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_CTXPOPUP_DATA_GET(WIDGET(item), sd);
+
+   if (!sd->items) return NULL;
+
+   l = eina_list_data_find_list(sd->items, it);
+   if (l && l->prev) return eina_list_data_get(l->prev);
+
+   return NULL;
+}
+
+EAPI Elm_Object_Item *
+elm_ctxpopup_item_next_get(const Elm_Object_Item *it)
+{
+   Eina_List *l;
+   Elm_Ctxpopup_Item *item = (Elm_Ctxpopup_Item *)it;
+
+   ELM_CTXPOPUP_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_CTXPOPUP_DATA_GET(WIDGET(item), sd);
+
+   if (!sd->items) return NULL;
+
+   l = eina_list_data_find_list(sd->items, it);
+   if (l && l->next) return eina_list_data_get(l->next);
+
+   return NULL;
+}
+
+static Elm_Ctxpopup_Item*
+_item_new(Eo *obj,
+          Elm_Ctxpopup_Data *sd,
+          Evas_Smart_Cb func,
+          const void *data)
+{
+   Elm_Ctxpopup_Item *item;
+
+   item = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
+   if (!item) return NULL;
+
+   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
+   elm_widget_item_disable_hook_set(item, _item_disable_hook);
+   elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
+   elm_widget_item_content_set_hook_set(item, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(item, _item_content_get_hook);
+   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
+
+   if (!sd->list)
+     {
+        sd->list = elm_list_add(obj);
+        if (!strncmp(elm_object_style_get(obj), "default", strlen("default")))
+          elm_object_style_set(sd->list, "ctxpopup");
+        else elm_object_style_set(sd->list, elm_object_style_get(obj));
+        elm_list_mode_set(sd->list, ELM_LIST_EXPAND);
+        elm_list_horizontal_set(sd->list, sd->horizontal);
+        evas_object_event_callback_add
+          (sd->list, EVAS_CALLBACK_RESIZE, _list_resize_cb, obj);
+        elm_layout_content_set(obj, "default", sd->list);
+     }
+
+   item->wcb.org_func_cb = func;
+   item->wcb.org_data = data;
+   item->wcb.cobj = obj;
+
+   sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+
+   return item;
 }
 
 #include "elc_ctxpopup.eo.c"

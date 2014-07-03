@@ -85,4 +85,8 @@ struct _Elm_Ctxpopup_Data
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_CTXPOPUP_CLASS))) \
     return
 
+#define ELM_CTXPOPUP_ITEM_CHECK_OR_RETURN(it, ...)                 \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+  ELM_CTXPOPUP_CHECK(it->base.widget) __VA_ARGS__;
+
 #endif
