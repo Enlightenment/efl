@@ -133,18 +133,18 @@ R _get_return_value(_data<F>& data, _identity<R>)
 {
   if(!data.exception)
     {
-      R* b = static_cast<R*>(static_cast<void*>(&data.return_buffer.buffer));
+      R* b_ = static_cast<R*>(static_cast<void*>(&data.return_buffer.buffer));
       struct destroy
       {
-        destroy(R* p) : p(p)
+        destroy(R* x_) : p_(x_)
         {}
         ~destroy()
         {
-          p->~R();
+          p_->~R();
         }
-        R* p;
-      } destroy_temp(b);
-      return std::move(*b);
+        R* p_;
+      } destroy_temp(b_);
+      return std::move(*b_);
     }
   else
     {

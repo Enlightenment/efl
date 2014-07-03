@@ -195,7 +195,7 @@ struct message : const_message
 {
   typedef const_message base_type;
 
-  explicit message(Eldbus_Message* message) : const_message(message)
+  explicit message(Eldbus_Message* message_) : const_message(message_)
   {
   }
   message(const_message const& other, reply_t r)
@@ -256,7 +256,7 @@ private:
 struct pending : const_pending
 {
   pending() : const_pending(0) {}
-  pending(Eldbus_Pending* pending) : const_pending(pending) {}
+  pending(Eldbus_Pending* pending_) : const_pending(pending_) {}
 
   void data_set(const char* key, const char* data)
   {

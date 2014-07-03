@@ -1241,15 +1241,15 @@ public:
   {
     if(_array->max - _array->len >= n)
       {
-        iterator end = static_cast<T*>(_array->members)
+        iterator end_ = static_cast<T*>(_array->members)
           + _array->len
-          , last = end + n;
+          , last = end_ + n;
         _array->len += n;
         std::reverse_iterator<iterator>
-          dest(last), src(end), src_end(i);
+          dest(last), src(end_), src_end(i);
         for(;src != src_end; ++src)
           {
-            if(dest.base() <= end)
+            if(dest.base() <= end_)
                 *dest++ = *src;
             else
               new (&*dest++) T(*src);
@@ -1257,7 +1257,7 @@ public:
         iterator j = i;
         for(size_type k = 0;k != n;++k)
           {
-            if(j < end)
+            if(j < end_)
                 *j = t;
             else
               new (&*j++) T(t);

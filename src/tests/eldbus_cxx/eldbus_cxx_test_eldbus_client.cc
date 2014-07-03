@@ -10,9 +10,9 @@
 
 #include <check.h>
 
-const char bus[] = "org.Enlightenment";
-const char path[] = "/org/enlightenment";
-const char interface[] = "org.enlightenment.Test";
+const char g_bus[] = "org.Enlightenment";
+const char g_path[] = "/org/enlightenment";
+const char g_interface[] = "org.enlightenment.Test";
 
 static void
 on_name_request(std::error_code const& ec, efl::eldbus::const_message
@@ -35,7 +35,7 @@ START_TEST(eldbus_cxx_client)
   efl::ecore::ecore_init ecore_init;
   edb::eldbus_init init;
 
-  edb::connection c(edb::session);
+  edb::connection c_(edb::session);
 
   namespace es = edb::service;
 
@@ -48,7 +48,7 @@ START_TEST(eldbus_cxx_client)
   std::string expected_string = "expected string";
 
   edb::service_interface iface = edb::service_interface_register
-    (c, path, interface
+    (c_, g_path, g_interface
      , es::method("SendBool"
                   , [expected_bool] (edb::const_message, edb::service_interface, bool b)
                   {
@@ -160,14 +160,16 @@ START_TEST(eldbus_cxx_client)
                   , es::outs<std::string, bool>("string", "bool")
                   )
     );
+  static_cast<void>(iface);
+
   using namespace std::placeholders;
-  edb::name_request<std::uint32_t>(c, bus, ELDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE
+  edb::name_request<std::uint32_t>(c_, g_bus, ELDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE
                                    , & ::on_name_request);
 
   std::cout << "registered" << std::endl;
 
-  edb::object o = c.get_object(bus, path);
-  edb::proxy p = o.get_proxy(interface);
+  edb::object o = c_.get_object(g_bus, g_path);
+  edb::proxy p = o.get_proxy(g_interface);
 
   using namespace std::placeholders;
   p.call<bool>

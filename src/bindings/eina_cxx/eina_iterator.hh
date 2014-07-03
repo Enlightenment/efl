@@ -148,8 +148,8 @@ public:
    * This constructor creates an iterator that wraps the given native
    * @c Eina_Iterator handle, providing an OOP interface to it.
    */
-  explicit iterator(Eina_Iterator* iterator = 0)
-    : base_type(iterator)
+  explicit iterator(Eina_Iterator* iterator_ = 0)
+    : base_type(iterator_)
   {
     if(this->_iterator)
       ++*this;

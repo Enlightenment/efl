@@ -482,8 +482,8 @@ struct _inlist_common_base
   // For EBO
   struct _inlist_impl : node_allocator_type
   {
-    _inlist_impl(Allocator allocator)
-      : node_allocator_type(allocator), _list(0)
+    _inlist_impl(Allocator allocator_)
+      : node_allocator_type(allocator_), _list(0)
     {}
      explicit _inlist_impl(native_handle_type list)
        : _list(list)

@@ -34,11 +34,11 @@ void _callback_wrapper(void* data, Eldbus_Message const* message, Eldbus_Pending
           , tuple, std::integral_constant<bool, (sizeof...(Ins) == 0)>()))
         {
           std::cout << "error init raw tuple" << std::endl;
-          std::tuple<Ins...> tuple;
+          std::tuple<Ins...> tuple_;
           eldbus::const_message msg( ::eldbus_message_ref(const_cast<Eldbus_Message*>(message)));
           eina::error_code ec(eldbus::signature_mismatch_error_code(), eina::eina_error_category());
           eina::call_tuple_unwrap_prefix
-            (*callback, tuple, eina::make_index_sequence<sizeof...(Ins)>()
+            (*callback, tuple_, eina::make_index_sequence<sizeof...(Ins)>()
              , ec, msg, pending);
         }
     }

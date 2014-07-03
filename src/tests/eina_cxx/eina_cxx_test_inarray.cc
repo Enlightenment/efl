@@ -171,8 +171,8 @@ unsigned int destructors_called = 0u;
 
 struct non_pod
 {
-  non_pod(int x)
-    : x(new int(x))
+  non_pod(int x_)
+    : x(new int(x_))
   {
     ++::constructors_called;
   }

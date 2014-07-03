@@ -253,7 +253,7 @@ START_TEST(eina_cxx_inlist_from_c)
   efl::eina::eina_init eina_init;
 
   Eina_Inlist *c_list = nullptr;
-  Eina_Test_Inlist arr[3] = { {11}, {22}, {33} };
+  Eina_Test_Inlist arr[] = { {11, {}}, {22, {}}, {33, {}} };
 
   c_list = eina_inlist_append(c_list, EINA_INLIST_GET(&arr[0]));
   ck_assert(!!c_list);

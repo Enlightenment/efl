@@ -84,9 +84,9 @@ struct descriptor
   typedef T object_type;
 
   descriptor() : _descriptor(nullptr) {}
-  descriptor( ::Eet_Data_Descriptor* descriptor
+  descriptor( ::Eet_Data_Descriptor* descriptor_
               , std::array<_detail::member_desc_info, sizeof...(Args)> member_info)
-    : _descriptor(descriptor), _member_info(member_info)
+    : _descriptor(descriptor_), _member_info(member_info)
   {
   }
   descriptor(descriptor&& other)

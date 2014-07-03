@@ -703,15 +703,15 @@ public:
   {
     std::size_t j
       = i.native_handle() - this->_impl._array->data
-      , size = this->size();
+      , size_ = this->size();
     if(eina_array_push(this->_impl._array, p.get()))
       {
-        if(size - j)
+        if(size_ - j)
         {
           memmove(
                   this->_impl._array->data + j + 1
                   , this->_impl._array->data + j
-                  , (size - j)*sizeof(void*));
+                  , (size_ - j)*sizeof(void*));
           // PRE: Q:[j, size) = [j+1, size+1)
           pointer* data = static_cast<pointer*>
             (static_cast<void*>(this->_impl._array->data));
@@ -816,11 +816,11 @@ public:
    */
   iterator erase(iterator q)
   {
-    size_type size = this->size()
+    size_type size_ = this->size()
       , i = q.native_handle() - this->_impl._array->data;
     memmove(q.native_handle()
             , q.native_handle() + 1
-            , (size - i - 1)*sizeof(void*));
+            , (size_ - i - 1)*sizeof(void*));
     eina_array_pop(this->_impl._array);
     return q;
   }
@@ -840,11 +840,11 @@ public:
    */
   iterator erase(iterator i, iterator j)
   {
-    size_type size = this->size()
+    size_type size_ = this->size()
       , distance = std::distance(i, j);
     memmove(i.native_handle()
             , j.native_handle()
-            , (size - distance)*sizeof(void*));
+            , (size_ - distance)*sizeof(void*));
     while(distance--)
       eina_array_pop(this->_impl._array);
     return i;

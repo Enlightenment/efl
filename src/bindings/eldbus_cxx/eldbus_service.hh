@@ -48,7 +48,7 @@ struct const_char_type
 template <typename... Args>
 struct ins
 {
-  ins(typename _detail::const_char_type<Args>::type... names) : _names({names...}) {}
+  ins(typename _detail::const_char_type<Args>::type... names) : _names({{names...}}) {}
 
   static constexpr std::size_t size() { return sizeof...(Args); }
 
@@ -59,7 +59,7 @@ struct ins
 template <typename... Args>
 struct outs
 {
-  outs(typename _detail::const_char_type<Args>::type... names) : _names({names...}) {}
+  outs(typename _detail::const_char_type<Args>::type... names) : _names({{names...}}) {}
 
   static constexpr std::size_t size() { return sizeof...(Args); }
 
@@ -223,9 +223,9 @@ Eldbus_Message* _method_callback_call
   std::get<0u>(tuple_outs) = 
     callable(msg, siface, std::get<IndexIns>(tuple_ins_raw)..., &std::get<IndexOuts2>(tuple_outs)...);
 
-  Eldbus_Message *reply = eldbus_message_method_return_new(message);
-  _detail::_append_tuple<0u>(reply, tuple_outs, std::false_type());
-  return reply;
+  Eldbus_Message *reply_ = eldbus_message_method_return_new(message);
+  _detail::_append_tuple<0u>(reply_, tuple_outs, std::false_type());
+  return reply_;
 }
 
 template <typename Callable, typename... Ins, typename... Outs
@@ -254,11 +254,11 @@ Eldbus_Message* _method_callback_call
   // and/or outs<...> different from the arguments of your callable
   callable(msg, siface, std::get<IndexIns>(tuple_ins_raw)..., &std::get<IndexOuts>(tuple_outs)...);
 
-  Eldbus_Message *reply = eldbus_message_method_return_new(message);
+  Eldbus_Message *reply_ = eldbus_message_method_return_new(message);
   _detail::_append_tuple<0u>
-    (reply, tuple_outs
+    (reply_, tuple_outs
      , std::integral_constant<bool, std::tuple_size<tuple_outs_type>::value == 0u>());
-  return reply;
+  return reply_;
 }
 
 template <typename Callable, typename Ins, typename Outs>

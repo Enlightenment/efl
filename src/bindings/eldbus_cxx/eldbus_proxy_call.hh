@@ -26,12 +26,12 @@ void _on_call_impl(void* data, Eldbus_Message const* message, Eldbus_Pending* pe
   const char* errname, *errmsg;
   if (eldbus_message_error_get(message, &errname, &errmsg))
     {
-      Seq tuple;
+      Seq tuple_;
       ::eldbus_message_ref(const_cast<Eldbus_Message*>(message));
       eldbus::const_message msg(message);
       eina::error_code ec (eldbus::call_error_code(), eina::eina_error_category());
       eina::call_tuple_unwrap_prefix
-        (*callback, tuple, eina::make_index_sequence<std::tuple_size<Seq>::value>()
+        (*callback, tuple_, eina::make_index_sequence<std::tuple_size<Seq>::value>()
          , ec, msg, pending);
     }
 
@@ -42,12 +42,12 @@ void _on_call_impl(void* data, Eldbus_Message const* message, Eldbus_Pending* pe
          (eldbus_message_iter_get(message)
           , tuple, std::integral_constant<bool, (std::tuple_size<Seq>::value == 0)>()))
         {
-          Seq tuple;
+          Seq tuple_;
           ::eldbus_message_ref(const_cast<Eldbus_Message*>(message));
           eldbus::const_message msg(message);
           eina::error_code ec(eldbus::signature_mismatch_error_code(), eina::eina_error_category());
           eina::call_tuple_unwrap_prefix
-            (*callback, tuple, eina::make_index_sequence<std::tuple_size<Seq>::value>()
+            (*callback, tuple_, eina::make_index_sequence<std::tuple_size<Seq>::value>()
              , ec, msg, pending);
         }
     }

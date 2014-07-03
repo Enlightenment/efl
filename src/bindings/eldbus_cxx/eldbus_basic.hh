@@ -89,8 +89,8 @@ struct connection
   typedef Eldbus_Connection* native_handle_type;
   typedef Eldbus_Connection const* const_native_handle_type;
 
-  explicit connection(native_handle_type connection)
-    : _connection(connection) {}
+  explicit connection(native_handle_type connection_)
+    : _connection(connection_) {}
   ~connection()
   {
     eldbus_connection_unref(_connection);
