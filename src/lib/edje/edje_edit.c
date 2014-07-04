@@ -9743,6 +9743,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 {
    Eina_List *l, *ll;
    Eina_Bool ret = EINA_TRUE;
+   unsigned int i;
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
@@ -9861,6 +9862,65 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  }
 	BUF_APPEND(I5"}\n");//rel2
      }
+
+   //Map
+   if ((pd->map.id_persp != -1) || (pd->map.id_light != -1) ||
+       (pd->map.rot.id_center != -1) || (TO_DOUBLE(pd->map.rot.x) != 0) ||
+       (TO_DOUBLE(pd->map.rot.y) != 0) || (TO_DOUBLE(pd->map.rot.z) != 0) ||
+       (pd->map.colors_count != 0) || (pd->map.backcull) || (pd->map.on) ||
+       (pd->map.persp_on) || (!pd->map.smooth) || (!pd->map.alpha))
+     {
+	BUF_APPEND(I5"map {\n");
+
+        if (pd->map.id_persp != -1)
+	  BUF_APPENDF(I6"perspective: \"%s\";\n", _edje_part_name_find(ed, pd->map.id_persp));
+        if (pd->map.id_light != -1)
+	  BUF_APPENDF(I6"light: \"%s\";\n", _edje_part_name_find(ed, pd->map.id_light));
+
+        if (pd->map.backcull)
+          BUF_APPEND(I6"backface_cull: 1;\n");
+        if (pd->map.on)
+          BUF_APPEND(I6"on: 1;\n");
+        if (pd->map.persp_on)
+          BUF_APPEND(I6"perspective_on: 1;\n");
+        if (!pd->map.smooth)
+          BUF_APPEND(I6"smooth: 0;\n");
+        if (!pd->map.alpha)
+          BUF_APPEND(I6"alpha: 0;\n");
+
+        if (pd->map.colors_count > 0)
+          {
+             for (i = 0; i < pd->map.colors_count; ++i)
+               {
+                  if ((pd->map.colors[i]->r != 255) || (pd->map.colors[i]->g != 255) ||
+                      (pd->map.colors[i]->b != 255) || (pd->map.colors[i]->b != 255))
+                    BUF_APPENDF(I6"color: %d %d %d %d %d;\n", pd->map.colors[i]->idx,
+                                pd->map.colors[i]->r, pd->map.colors[i]->g,
+                                pd->map.colors[i]->b, pd->map.colors[i]->a);
+               }
+          }
+
+        if ((pd->map.rot.id_center != -1) || (pd->map.rot.x != 0) ||
+            (pd->map.rot.y != 0) || (pd->map.rot.z != 0))
+          {
+             BUF_APPEND(I6"rotation {\n");
+
+             if (pd->map.rot.id_center != -1)
+               BUF_APPENDF(I7"center: \"%s\";\n", _edje_part_name_find(ed, pd->map.rot.id_center));
+             if (TO_DOUBLE(pd->map.rot.x) != 0.0)
+               BUF_APPENDF(I7"x: %g;\n", TO_DOUBLE(pd->map.rot.x));
+             if (TO_DOUBLE(pd->map.rot.y) != 0.0)
+               BUF_APPENDF(I7"y: %g;\n", TO_DOUBLE(pd->map.rot.y));
+             if (TO_DOUBLE(pd->map.rot.x) != 0.0)
+               BUF_APPENDF(I7"z: %g;\n", TO_DOUBLE(pd->map.rot.z));
+
+             BUF_APPEND(I6"}\n");
+          }
+
+        BUF_APPEND(I5"}\n");
+     }
+
+
 
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
