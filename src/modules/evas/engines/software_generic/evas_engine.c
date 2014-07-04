@@ -2586,6 +2586,7 @@ eng_output_resize(void *data, int w, int h)
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   evas_common_tilebuf_tile_strict_set(re->tb, re->tile_strict);
    re->w = w;
    re->h = h;
 }
@@ -2703,9 +2704,8 @@ static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine_Software_Generic *re;
-   RGBA_Image *surface;
+   void *surface;
    Tilebuf_Rect *rect;
-   Eina_Bool first_rect = EINA_FALSE;
 
 #define CLEAR_PREV_RECTS(x) \
    do { \
@@ -2728,9 +2728,13 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         re->rects = evas_common_tilebuf_get_render_rects(re->tb);
         if (re->rects)
           {
+             // do anything needed for the first rect and update lost backbuffer if needed
+             if (re->outbuf_region_first_rect)
+               re->lost_back |= re->outbuf_region_first_rect(re->ob);
+
              if (re->outbuf_swap_mode_get) mode = re->outbuf_swap_mode_get(re->ob);
              re->swap_mode = mode;
-             if ((re->lost_back) || (re->swap_mode == MODE_FULL))
+             if ((re->lost_back) || (re->swap_mode == MODE_FULL) || (re->swap_mode == MODE_AUTO))
                {
                   /* if we lost our backbuffer since the last frame redraw all */
                   re->lost_back = 0;
@@ -2749,6 +2753,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              re->rects = NULL;
              switch (re->swap_mode)
                {
+                case MODE_AUTO:
                 case MODE_FULL:
                 case MODE_COPY: // no prev rects needed
                   re->rects = _merge_rects(re->merge_mode, re->tb, re->rects_prev[0], NULL, NULL, NULL);
@@ -2765,7 +2770,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                 default:
                   break;
                }
-             first_rect = EINA_TRUE;
           }
         evas_common_tilebuf_clear(re->tb);
         re->cur_rect = EINA_INLIST_GET(re->rects);
@@ -2791,6 +2795,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              *ch = rect->h;
              re->cur_rect = re->cur_rect->next;
              break;
+           case MODE_AUTO:
            case MODE_FULL:
              re->cur_rect = NULL;
              if (x) *x = 0;
@@ -2804,10 +2809,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              break;
            default:
              break;
-          }
-        if (first_rect)
-          {
-             // do anything needed fir the first frame
           }
         surface = re->outbuf_new_region_for_update(re->ob,
                                                    *x, *y, *w, *h,
@@ -2845,8 +2846,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    re = (Render_Engine_Software_Generic *)data;
-   if (re->outbuf_flush) re->outbuf_flush(re->ob);
-   if (re->rects)
+   if (re->outbuf_flush) re->outbuf_flush(re->ob, re->rects, render_mode);
+   if (re->rects && render_mode != EVAS_RENDER_MODE_ASYNC_INIT)
      {
         evas_common_tilebuf_free_render_rects(re->rects);
         re->rects = NULL;

@@ -123,10 +123,10 @@ void evas_outbuf_free(Outbuf *ob);
 void evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 Render_Engine_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
 int evas_outbuf_get_rot(Outbuf *ob);
-RGBA_Image *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
-void evas_outbuf_flush(Outbuf *ob);
+void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 
 Eina_Bool evas_drm_init(Evas_Engine_Info_Drm *info);
 Eina_Bool evas_drm_shutdown(Evas_Engine_Info_Drm *info);

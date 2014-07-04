@@ -240,7 +240,7 @@ evas_fb_outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
      }
 }
 
-RGBA_Image *
+void *
 evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    if (buf->priv.back_buf)

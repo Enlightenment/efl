@@ -34,7 +34,7 @@ evas_software_xlib_swapbuf_init(void)
 void
 evas_software_xlib_swapbuf_free(Outbuf *buf)
 {
-   evas_software_xlib_swapbuf_flush(buf);
+   evas_software_xlib_swapbuf_flush(buf, NULL, MODE_FULL);
    evas_software_xlib_swapbuf_idle_flush(buf);
    if (buf->priv.pal)
      evas_software_xlib_x_color_deallocate
@@ -207,7 +207,7 @@ evas_software_xlib_swapbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
    return buf;
 }
 
-RGBA_Image *
+void *
 evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
@@ -315,25 +315,27 @@ evas_software_xlib_swapbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_
 }
 
 void
-evas_software_xlib_swapbuf_flush(Outbuf *buf)
+evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+
    if (!buf->priv.pending_writes)
      {
-        Eina_Rectangle *rects, *rect;
+        Eina_Rectangle *result, *rect;
         Eina_Array_Iterator it;
         unsigned int n, i;
         RGBA_Image *im;
 
         n = eina_array_count_get(&buf->priv.onebuf_regions);
         if (n == 0) return;
-        rects = alloca(n * sizeof(Eina_Rectangle));
+        result = alloca(n * sizeof(Eina_Rectangle));
         EINA_ARRAY_ITER_NEXT(&buf->priv.onebuf_regions, i, rect, it)
           {
-             rects[i] = *rect;
+             result[i] = *rect;
              eina_rectangle_free(rect);
           }
         evas_xlib_swapper_buffer_unmap(buf->priv.swapper);
-        evas_xlib_swapper_swap(buf->priv.swapper, rects, n);
+        evas_xlib_swapper_swap(buf->priv.swapper, result, n);
         eina_array_clean(&buf->priv.onebuf_regions);
         im = buf->priv.onebuf;
         buf->priv.onebuf = NULL;
@@ -350,12 +352,12 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
    else
      {
         RGBA_Image *im;
-        Eina_Rectangle *rects;
+        Eina_Rectangle *result;
         unsigned int n, i = 0;
         
         n = eina_list_count(buf->priv.pending_writes);
         if (n == 0) return;
-        rects = alloca(n * sizeof(Eina_Rectangle));
+        result = alloca(n * sizeof(Eina_Rectangle));
         EINA_LIST_FREE(buf->priv.pending_writes, im)
           {
              Eina_Rectangle *rect = im->extended_info;
@@ -364,33 +366,33 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
              x = rect->x; y = rect->y; w = rect->w; h = rect->h;
              if (buf->rot == 0)
                {
-                  rects[i].x = x;
-                  rects[i].y = y;
+                  result[i].x = x;
+                  result[i].y = y;
                }
              else if (buf->rot == 90)
                {
-                  rects[i].x = y;
-                  rects[i].y = buf->w - x - w;
+                  result[i].x = y;
+                  result[i].y = buf->w - x - w;
                }
              else if (buf->rot == 180)
                {
-                  rects[i].x = buf->w - x - w;
-                  rects[i].y = buf->h - y - h;
+                  result[i].x = buf->w - x - w;
+                  result[i].y = buf->h - y - h;
                }
              else if (buf->rot == 270)
                {
-                  rects[i].x = buf->h - y - h;
-                  rects[i].y = x;
+                  result[i].x = buf->h - y - h;
+                  result[i].y = x;
                }
              if ((buf->rot == 0) || (buf->rot == 180))
                {
-                  rects[i].w = w;
-                  rects[i].h = h;
+                  result[i].w = w;
+                  result[i].h = h;
                }
              else if ((buf->rot == 90) || (buf->rot == 270))
                {
-                  rects[i].w = h;
-                  rects[i].h = w;
+                  result[i].w = h;
+                  result[i].h = w;
                }
              eina_rectangle_free(rect);
 #ifdef EVAS_CSERVE2
@@ -402,7 +404,7 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
              i++;
           }
         evas_xlib_swapper_buffer_unmap(buf->priv.swapper);
-        evas_xlib_swapper_swap(buf->priv.swapper, rects, n);
+        evas_xlib_swapper_swap(buf->priv.swapper, result, n);
 //        evas_xlib_swapper_swap(buf->priv.swapper, NULL, 0);
      }
 }

@@ -172,7 +172,7 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
 	free(obr);
      }
    evas_software_xlib_outbuf_idle_flush(buf);
-   evas_software_xlib_outbuf_flush(buf);
+   evas_software_xlib_outbuf_flush(buf, NULL, MODE_FULL);
    if (buf->priv.x11.xlib.gc)
       XFreeGC(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc);
    if (buf->priv.x11.xlib.gcm)
@@ -361,7 +361,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
    return buf;
 }
 
-RGBA_Image *
+void *
 evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image         *im;
@@ -710,11 +710,13 @@ evas_software_xlib_outbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_I
 }
 
 void
-evas_software_xlib_outbuf_flush(Outbuf *buf)
+evas_software_xlib_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Eina_List *l;
    RGBA_Image *im;
    Outbuf_Region *obr;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    if ((buf->priv.onebuf) && eina_array_count(&buf->priv.onebuf_regions))
      {

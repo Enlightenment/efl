@@ -38,6 +38,7 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
                                                 evas_outbuf_buffer_state_get,
                                                 evas_outbuf_get_rot,
                                                 evas_outbuf_reconfigure,
+                                                NULL,
                                                 evas_outbuf_update_region_new,
                                                 evas_outbuf_update_region_push,
                                                 evas_outbuf_update_region_free,
@@ -144,7 +145,7 @@ eng_setup(Evas *evas, void *einfo)
         if (ob) return 0;
 
         /* if we have an existing outbuf, free it */
-        evas_render_engine_software_generic_update(&re->generic, ob);
+        evas_render_engine_software_generic_update(&re->generic, ob, epd->output.w, epd->output.h);
      }
 
    /* update the info structure pointer */

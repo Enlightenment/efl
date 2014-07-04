@@ -140,7 +140,7 @@ void evas_software_ddraw_outbuf_push_updated_region(Outbuf     *buf,
 void evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf,
                                                        RGBA_Image *update);
 
-void evas_software_ddraw_outbuf_flush(Outbuf *buf);
+void evas_software_ddraw_outbuf_flush(Outbuf *buf, Evas_Render_Mode render_mode);
 
 void evas_software_ddraw_outbuf_idle_flush(Outbuf *buf);
 

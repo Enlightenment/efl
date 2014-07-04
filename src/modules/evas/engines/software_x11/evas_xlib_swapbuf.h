@@ -21,18 +21,18 @@ Outbuf      *evas_software_xlib_swapbuf_setup_x(int          w,
                                                 Pixmap       mask,
                                                 int          shape_dither,
                                                 int          destination_alpha);
-RGBA_Image  *evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf,
-                                                              int     x,
-                                                              int     y,
-                                                              int     w,
-                                                              int     h,
-                                                              int    *cx,
-                                                              int    *cy,
-                                                              int    *cw,
-                                                              int    *ch);
+void  *evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf,
+                                                        int     x,
+                                                        int     y,
+                                                        int     w,
+                                                        int     h,
+                                                        int    *cx,
+                                                        int    *cy,
+                                                        int    *cw,
+                                                        int    *ch);
 void         evas_software_xlib_swapbuf_free_region_for_update(Outbuf     *buf,
                                                                RGBA_Image *update);
-void         evas_software_xlib_swapbuf_flush(Outbuf *buf);
+void         evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 void         evas_software_xlib_swapbuf_idle_flush(Outbuf *buf);
 void         evas_software_xlib_swapbuf_push_updated_region(Outbuf     *buf,
                                                             RGBA_Image *update,

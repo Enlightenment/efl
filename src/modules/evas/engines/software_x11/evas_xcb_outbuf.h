@@ -6,9 +6,9 @@
 void evas_software_xcb_outbuf_init(void);
 void evas_software_xcb_outbuf_free(Outbuf *buf);
 Outbuf *evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_connection_t *conn, xcb_screen_t *screen, xcb_drawable_t draw, xcb_visualtype_t *vis, xcb_colormap_t cmap, int xdepth, Eina_Bool grayscale, int max_colors, xcb_drawable_t mask, Eina_Bool shape_dither, Eina_Bool alpha);
-RGBA_Image *evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void *evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void evas_software_xcb_outbuf_free_region_for_update(Outbuf *buf, RGBA_Image *update);
-void evas_software_xcb_outbuf_flush(Outbuf *buf);
+void evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 void evas_software_xcb_outbuf_idle_flush(Outbuf *buf);
 void evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
 void evas_software_xcb_outbuf_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth);

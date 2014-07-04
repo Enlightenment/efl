@@ -259,7 +259,7 @@ evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_co
    return buf;
 }
 
-RGBA_Image *
+void *
 evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch) 
 {
    RGBA_Image *im = NULL;
@@ -581,11 +581,13 @@ evas_software_xcb_outbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_Im
 }
 
 void 
-evas_software_xcb_outbuf_flush(Outbuf *buf) 
+evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
 {
    Eina_List *l = NULL;
    RGBA_Image *im = NULL;
    Outbuf_Region *obr = NULL;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    if ((buf->priv.onebuf) && (eina_array_count(&buf->priv.onebuf_regions)))
      {

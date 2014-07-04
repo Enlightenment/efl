@@ -54,6 +54,7 @@ _output_engine_setup(Evas_Engine_Info_Wayland_Shm *info,
                                                  evas_swapbuf_state_get,
                                                  evas_swapbuf_rotation_get,
                                                  NULL,
+                                                 NULL,
                                                  evas_swapbuf_update_region_new,
                                                  evas_swapbuf_update_region_push,
                                                  evas_swapbuf_update_region_free,
@@ -167,7 +168,7 @@ eng_setup(Evas *eo_evas, void *einfo)
                                 info->info.wl_surface);
         if (!ob) return 0;
 
-        evas_render_engine_software_generic_update(&re->generic, ob);
+        evas_render_engine_software_generic_update(&re->generic, ob, epd->output.w, epd->output.h);
 
         if ((re) && (re->generic.ob)) re->generic.ob->onebuf = ponebuf;
      }
