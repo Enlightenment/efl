@@ -197,7 +197,16 @@ extern Eina_Bool _ecore_x_xcursor;
 extern Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 extern int _ecore_window_grabs_num;
-extern Window *_ecore_window_grabs;
+typedef struct _Wingrab Wingrab;
+struct _Wingrab
+{
+   Window win;
+   Ecore_X_Event_Mask event_mask;
+   int mod, any_mod;
+   int button;
+};
+extern Wingrab *_ecore_window_grabs;
+
 extern Eina_Bool (*_ecore_window_grab_replay_func)(void *data,
                                                    int event_type,
                                                    void *event);
@@ -292,8 +301,12 @@ void *_ecore_x_selection_parse(const char *target,
 
 void _ecore_x_sync_magic_send(int val,
                               Ecore_X_Window swin);
-void _ecore_x_window_grab_remove(Ecore_X_Window win);
-void _ecore_x_key_grab_remove(Ecore_X_Window win);
+int _ecore_x_window_grab_remove(Ecore_X_Window win, int button, int mod, int any_mod);
+int _ecore_x_key_grab_remove(Ecore_X_Window win, const char *key, int mod, int any_mod);
+void _ecore_x_window_grab_suspend(void);
+void _ecore_x_window_grab_resume(void);
+void _ecore_x_key_grab_suspend(void);
+void _ecore_x_key_grab_resume(void);
 
 /* from dnd */
 void                _ecore_x_dnd_init(void);

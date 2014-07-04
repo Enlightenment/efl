@@ -256,6 +256,16 @@ _ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int idx)
 void
 _ecore_x_modifiers_get(void)
 {
+   ECORE_X_MODIFIER_SHIFT = 0;
+   ECORE_X_MODIFIER_CTRL = 0;
+   ECORE_X_MODIFIER_ALT = 0;
+   ECORE_X_MODIFIER_WIN = 0;
+   ECORE_X_MODIFIER_ALTGR = 0;
+   ECORE_X_LOCK_SCROLL = 0;
+   ECORE_X_LOCK_NUM = 0;
+   ECORE_X_LOCK_CAPS = 0;
+   ECORE_X_LOCK_SHIFT = 0;
+
    /* everything has these... unless its like a pda... :) */
    ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
    ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(XK_Control_L);
@@ -280,6 +290,48 @@ _ecore_x_modifiers_get(void)
 
    if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
      ECORE_X_MODIFIER_ALT = 0;
+
+   if (ECORE_X_MODIFIER_ALTGR)
+     {
+        if ((ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_SHIFT) ||
+            (ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_CTRL) ||
+            (ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_ALT) ||
+            (ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_WIN))
+          {
+             ERR("ALTGR conflicts with other modifiers. IGNORE ALTGR");
+             ECORE_X_MODIFIER_ALTGR = 0;
+          }
+     }
+
+   if (ECORE_X_MODIFIER_ALT)
+     {
+        if ((ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_SHIFT) ||
+            (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL) ||
+            (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_WIN))
+          {
+             ERR("ALT conflicts with other modifiers. IGNORE ALT");
+             ECORE_X_MODIFIER_ALT = 0;
+          }
+     }
+
+   if (ECORE_X_MODIFIER_WIN)
+     {
+        if ((ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_SHIFT) ||
+            (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_CTRL))
+          {
+             ERR("WIN conflicts with other modifiers. IGNORE WIN");
+             ECORE_X_MODIFIER_WIN = 0;
+          }
+     }
+
+   if (ECORE_X_MODIFIER_SHIFT)
+     {
+        if ((ECORE_X_MODIFIER_SHIFT == ECORE_X_MODIFIER_CTRL))
+          {
+             ERR("CTRL conflicts with other modifiers. IGNORE CTRL");
+             ECORE_X_MODIFIER_CTRL = 0;
+          }
+     }
 
    ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
    ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
@@ -1580,8 +1632,6 @@ ecore_x_ungrab(void)
      XUngrabServer(_ecore_x_disp);
 }
 
-int _ecore_window_grabs_num = 0;
-Window *_ecore_window_grabs = NULL;
 Eina_Bool (*_ecore_window_grab_replay_func)(void *data,
                                             int event_type,
                                             void *event);
@@ -1598,18 +1648,26 @@ ecore_x_passive_grab_replay_func_set(Eina_Bool (*func)(void *data,
    _ecore_window_grab_replay_data = data;
 }
 
-EAPI void
-ecore_x_window_button_grab(Ecore_X_Window win,
-                           int button,
-                           Ecore_X_Event_Mask event_mask,
-                           int mod,
-                           int any_mod)
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+int _ecore_window_grabs_num = 0;
+Wingrab *_ecore_window_grabs = NULL;
+
+static void
+_ecore_x_window_button_grab_internal(Ecore_X_Window win,
+                                     int button,
+                                     Ecore_X_Event_Mask event_mask,
+                                     int mod,
+                                     int any_mod)
 {
    unsigned int b;
    unsigned int m;
    unsigned int locks[8];
    int i, ev;
-   Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    b = button;
@@ -1632,12 +1690,28 @@ ecore_x_window_button_grab(Ecore_X_Window win,
    for (i = 0; i < 8; i++)
      XGrabButton(_ecore_x_disp, b, m | locks[i],
                  win, False, ev, GrabModeSync, GrabModeAsync, None, None);
+}
+
+EAPI void
+ecore_x_window_button_grab(Ecore_X_Window win,
+                           int button,
+                           Ecore_X_Event_Mask event_mask,
+                           int mod,
+                           int any_mod)
+{
+   Wingrab *t;
+
+   _ecore_x_window_button_grab_internal(win, button, event_mask, mod, any_mod);
    _ecore_window_grabs_num++;
    t = realloc(_ecore_window_grabs,
-               _ecore_window_grabs_num * sizeof(Window));
+               _ecore_window_grabs_num * sizeof(Wingrab));
    if (!t) return;
    _ecore_window_grabs = t;
-   _ecore_window_grabs[_ecore_window_grabs_num - 1] = win;
+   _ecore_window_grabs[_ecore_window_grabs_num - 1].win = win;
+   _ecore_window_grabs[_ecore_window_grabs_num - 1].button = button;
+   _ecore_window_grabs[_ecore_window_grabs_num - 1].event_mask = event_mask;
+   _ecore_window_grabs[_ecore_window_grabs_num - 1].mod = mod;
+   _ecore_window_grabs[_ecore_window_grabs_num - 1].any_mod = any_mod;
 }
 
 void
@@ -1661,11 +1735,11 @@ _ecore_x_sync_magic_send(int val,
    XSendEvent(_ecore_x_disp, _ecore_x_private_win, False, NoEventMask, &xev);
 }
 
-void
-_ecore_x_window_grab_remove(Ecore_X_Window win)
+int
+_ecore_x_window_grab_remove(Ecore_X_Window win, int button, int mod, int any_mod)
 {
    int i, shuffle = 0;
-   Window *t;
+   Wingrab *t;
 
    if (_ecore_window_grabs_num > 0)
      {
@@ -1674,7 +1748,10 @@ _ecore_x_window_grab_remove(Ecore_X_Window win)
              if (shuffle)
                _ecore_window_grabs[i - 1] = _ecore_window_grabs[i];
 
-             if ((!shuffle) && (_ecore_window_grabs[i] == win))
+             if ((!shuffle) && (_ecore_window_grabs[i].win == win) &&
+                 (((button >= 0) && (_ecore_window_grabs[i].mod == mod) &&
+                   (_ecore_window_grabs[i].any_mod == any_mod)) ||
+                  (button < 0)))
                shuffle = 1;
           }
         if (shuffle)
@@ -1684,22 +1761,23 @@ _ecore_x_window_grab_remove(Ecore_X_Window win)
                {
                   free(_ecore_window_grabs);
                   _ecore_window_grabs = NULL;
-                  return;
+                  return shuffle;
                }
              t = realloc(_ecore_window_grabs,
                          _ecore_window_grabs_num *
-                         sizeof(Window));
-             if (!t) return;
+                         sizeof(Wingrab));
+             if (!t) return shuffle;
              _ecore_window_grabs = t;
           }
      }
+   return shuffle;
 }
 
-EAPI void
-ecore_x_window_button_ungrab(Ecore_X_Window win,
-                             int button,
-                             int mod,
-                             int any_mod)
+static void
+_ecore_x_window_button_ungrab_internal(Ecore_X_Window win,
+                                       int button,
+                                       int mod,
+                                       int any_mod)
 {
    unsigned int b;
    unsigned int m;
@@ -1728,24 +1806,74 @@ ecore_x_window_button_ungrab(Ecore_X_Window win,
         XUngrabButton(_ecore_x_disp, b, m | locks[i], win);
         if (_ecore_xlib_sync) ecore_x_sync();
      }
-   _ecore_x_sync_magic_send(1, win);
 }
 
-int _ecore_key_grabs_num = 0;
-Window *_ecore_key_grabs = NULL;
-
 EAPI void
-ecore_x_window_key_grab(Ecore_X_Window win,
-                        const char *key,
-                        int mod,
-                        int any_mod)
+ecore_x_window_button_ungrab(Ecore_X_Window win,
+                             int button,
+                             int mod,
+                             int any_mod)
+{
+   _ecore_x_window_button_ungrab_internal(win, button, mod, any_mod);
+   _ecore_x_sync_magic_send(1, win);
+   _ecore_x_window_grab_remove(win, button, mod, any_mod);
+}
+
+void _ecore_x_window_grab_suspend(void)
+{
+   int i;
+
+   for (i = 0; i < _ecore_window_grabs_num; i++)
+     {
+        _ecore_x_window_button_ungrab_internal
+        (_ecore_window_grabs[i].win, _ecore_window_grabs[i].button,
+         _ecore_window_grabs[i].mod, _ecore_window_grabs[i].any_mod);
+     }
+}
+
+void _ecore_x_window_grab_resume(void)
+{
+   int i;
+
+   for (i = 0; i < _ecore_window_grabs_num; i++)
+     {
+        _ecore_x_window_button_grab_internal
+        (_ecore_window_grabs[i].win, _ecore_window_grabs[i].button,
+         _ecore_window_grabs[i].event_mask,
+         _ecore_window_grabs[i].mod, _ecore_window_grabs[i].any_mod);
+     }
+}
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+int _ecore_key_grabs_num = 0;
+typedef struct _Keygrab Keygrab;
+struct _Keygrab
+{
+   Window win;
+   char *key;
+   int mod, any_mod;
+};
+Keygrab *_ecore_key_grabs = NULL;
+
+static void
+_ecore_x_window_key_grab_internal(Ecore_X_Window win,
+                                  const char *key,
+                                  int mod,
+                                  int any_mod)
 {
    KeyCode keycode = 0;
    KeySym keysym;
    unsigned int m;
    unsigned int locks[8];
    int i;
-   Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
@@ -1780,19 +1908,36 @@ ecore_x_window_key_grab(Ecore_X_Window win,
                  win, False, GrabModeSync, GrabModeAsync);
         if (_ecore_xlib_sync) ecore_x_sync();
      }
-   _ecore_key_grabs_num++;
-   t = realloc(_ecore_key_grabs,
-               _ecore_key_grabs_num * sizeof(Window));
-   if (!t) return;
-   _ecore_key_grabs = t;
-   _ecore_key_grabs[_ecore_key_grabs_num - 1] = win;
 }
 
-void
-_ecore_x_key_grab_remove(Ecore_X_Window win)
+EAPI void
+ecore_x_window_key_grab(Ecore_X_Window win,
+                        const char *key,
+                        int mod,
+                        int any_mod)
+{
+   Keygrab *t;
+
+   _ecore_x_window_key_grab_internal(win, key, mod, any_mod);
+   _ecore_key_grabs_num++;
+   t = realloc(_ecore_key_grabs,
+               _ecore_key_grabs_num * sizeof(Keygrab));
+   if (!t) return;
+   _ecore_key_grabs = t;
+   _ecore_key_grabs[_ecore_key_grabs_num - 1].win = win;
+   _ecore_key_grabs[_ecore_key_grabs_num - 1].key = strdup(key);
+   _ecore_key_grabs[_ecore_key_grabs_num - 1].mod = mod;
+   _ecore_key_grabs[_ecore_key_grabs_num - 1].any_mod = any_mod;
+}
+
+int
+_ecore_x_key_grab_remove(Ecore_X_Window win,
+                         const char *key,
+                         int mod,
+                         int any_mod)
 {
    int i, shuffle = 0;
-   Window *t;
+   Keygrab *t;
 
    if (_ecore_key_grabs_num > 0)
      {
@@ -1801,8 +1946,16 @@ _ecore_x_key_grab_remove(Ecore_X_Window win)
              if (shuffle)
                _ecore_key_grabs[i - 1] = _ecore_key_grabs[i];
 
-             if ((!shuffle) && (_ecore_key_grabs[i] == win))
-               shuffle = 1;
+             if ((!shuffle) && (_ecore_key_grabs[i].win == win) &&
+                 ((key && ((!strcmp(_ecore_key_grabs[i].key, key)) &&
+                           (_ecore_key_grabs[i].mod == mod) &&
+                           (_ecore_key_grabs[i].any_mod == any_mod))) ||
+                  (!key)))
+               {
+                  free(_ecore_key_grabs[i].key);
+                  _ecore_key_grabs[i].key = NULL;
+                  shuffle = 1;
+               }
           }
         if (shuffle)
           {
@@ -1811,21 +1964,22 @@ _ecore_x_key_grab_remove(Ecore_X_Window win)
                {
                   free(_ecore_key_grabs);
                   _ecore_key_grabs = NULL;
-                  return;
+                  return shuffle;
                }
              t = realloc(_ecore_key_grabs,
-                         _ecore_key_grabs_num * sizeof(Window));
-             if (!t) return;
+                         _ecore_key_grabs_num * sizeof(Keygrab));
+             if (!t) return shuffle;
              _ecore_key_grabs = t;
           }
      }
+   return shuffle;
 }
 
-EAPI void
-ecore_x_window_key_ungrab(Ecore_X_Window win,
-                          const char *key,
-                          int mod,
-                          int any_mod)
+static void
+_ecore_x_window_key_ungrab_internal(Ecore_X_Window win,
+                                    const char *key,
+                                    int mod,
+                                    int any_mod)
 {
    KeyCode keycode = 0;
    KeySym keysym;
@@ -1862,8 +2016,51 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
    locks[7] = ECORE_X_LOCK_CAPS | ECORE_X_LOCK_NUM | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XUngrabKey(_ecore_x_disp, keycode, m | locks[i], win);
-   _ecore_x_sync_magic_send(2, win);
 }
+
+EAPI void
+ecore_x_window_key_ungrab(Ecore_X_Window win,
+                          const char *key,
+                          int mod,
+                          int any_mod)
+{
+   _ecore_x_window_key_ungrab_internal(win, key, mod, any_mod);
+   _ecore_x_sync_magic_send(2, win);
+   _ecore_x_key_grab_remove(win, key, mod, any_mod);
+}
+
+void
+_ecore_x_key_grab_suspend(void)
+{
+   int i;
+
+   for (i = 0; i < _ecore_key_grabs_num; i++)
+     {
+        _ecore_x_window_key_ungrab_internal
+        (_ecore_key_grabs[i].win, _ecore_key_grabs[i].key,
+         _ecore_key_grabs[i].mod, _ecore_key_grabs[i].any_mod);
+     }
+}
+
+void
+_ecore_x_key_grab_resume(void)
+{
+   int i;
+
+   for (i = 0; i < _ecore_key_grabs_num; i++)
+     {
+        _ecore_x_window_key_grab_internal
+        (_ecore_key_grabs[i].win, _ecore_key_grabs[i].key,
+         _ecore_key_grabs[i].mod, _ecore_key_grabs[i].any_mod);
+     }
+}
+
+
+
+
+
+
+
 
 /**
  * Send client message with given type and format 32.

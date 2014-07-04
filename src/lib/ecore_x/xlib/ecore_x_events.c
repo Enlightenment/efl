@@ -575,8 +575,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 
         for (i = 0; i < _ecore_window_grabs_num; i++)
           {
-             if ((_ecore_window_grabs[i] == xevent->xbutton.window) ||
-                 (_ecore_window_grabs[i] == xevent->xbutton.subwindow))
+             if ((_ecore_window_grabs[i].win == xevent->xbutton.window) ||
+                 (_ecore_window_grabs[i].win == xevent->xbutton.subwindow))
                {
                   Eina_Bool replay = EINA_FALSE;
 
@@ -650,8 +650,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
            if (e)
              for (i = 0; i < _ecore_window_grabs_num; i++)
                {
-                  if ((_ecore_window_grabs[i] == xevent->xbutton.window) ||
-                      (_ecore_window_grabs[i] == xevent->xbutton.subwindow))
+                  if ((_ecore_window_grabs[i].win == xevent->xbutton.window) ||
+                      (_ecore_window_grabs[i].win == xevent->xbutton.subwindow))
                     {
                        Eina_Bool replay = EINA_FALSE;
 
@@ -1080,6 +1080,8 @@ _ecore_x_event_handle_destroy_notify(XEvent *xevent)
      _ecore_x_event_last_win = 0;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_DESTROY, e, NULL, NULL);
+   while (_ecore_x_window_grab_remove(e->win, -1, 0, 0));
+   while (_ecore_x_key_grab_remove(e->win, NULL, 0, 0));
 }
 
 void
@@ -1918,9 +1920,9 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
      {
         /* a grab sync marker */
         if (xevent->xclient.data.l[1] == 0x10000001)
-          _ecore_x_window_grab_remove(xevent->xclient.data.l[2]);
+          _ecore_x_window_grab_remove(xevent->xclient.data.l[2], -1, 0, 0);
         else if (xevent->xclient.data.l[1] == 0x10000002)
-          _ecore_x_key_grab_remove(xevent->xclient.data.l[2]);
+          _ecore_x_key_grab_remove(xevent->xclient.data.l[2], NULL, 0, 0);
      }
    else
      {
@@ -1947,8 +1949,15 @@ _ecore_x_event_handle_mapping_notify(XEvent *xevent)
    Ecore_X_Event_Mapping_Change *e;
 
    _ecore_x_last_event_mouse_move = 0;
+
+   _ecore_x_window_grab_suspend();
+   _ecore_x_key_grab_suspend();
+
    XRefreshKeyboardMapping((XMappingEvent *)xevent);
    _ecore_x_modifiers_get();
+
+   _ecore_x_window_grab_resume();
+   _ecore_x_key_grab_resume();
    e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change));
    if (!e) return;
    switch (xevent->xmapping.request)
