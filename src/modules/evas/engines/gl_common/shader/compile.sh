@@ -66,6 +66,9 @@ compile nv12_nomul
 compile yuy2
 compile yuy2_nomul
 
+compile rgb_a_pair
+compile rgb_a_pair_nomul
+
 compile filter_blur_bgra
 compile filter_blur_bgra_nomul
 compile filter_blur
