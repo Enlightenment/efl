@@ -195,6 +195,7 @@ PKG_CHECK_MODULES([ELEMENTARY],
     efreet >= efl_version
     efreet-mime >= efl_version
     efreet-trash >= efl_version
+    eio >= efl_version
    ]
 )
 
@@ -220,6 +221,7 @@ requirement_elm="\
     efreet >= efl_version \
     efreet-mime >= efl_version \
     efreet-trash >= efl_version \
+    eio >= efl_version \
     "
 
 have_elementary_x="no"

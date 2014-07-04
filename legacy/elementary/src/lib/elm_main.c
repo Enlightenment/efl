@@ -613,6 +613,7 @@ elm_quicklaunch_init(int    argc,
      ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
 
    ecore_file_init();
+   eio_init();
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
@@ -747,6 +748,7 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_elocation();
    _elm_unneed_ethumb();
    _elm_unneed_web();
+   eio_shutdown();
    ecore_file_shutdown();
 
 #ifdef HAVE_ELEMENTARY_EMAP
