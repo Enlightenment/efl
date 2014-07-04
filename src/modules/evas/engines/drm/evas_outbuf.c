@@ -133,10 +133,12 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* set back buffer as first one to draw into */
    /* ob->priv.curr = (ob->priv.num - 1); */
 
+   ob->info = info;
+
    return ob;
 }
 
-void 
+void
 evas_outbuf_free(Outbuf *ob)
 {
    int i = 0;
@@ -149,22 +151,25 @@ evas_outbuf_free(Outbuf *ob)
    free(ob);
 }
 
-void 
-evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int h)
+void
+evas_outbuf_reconfigure(Outbuf *ob,
+                        int w, int h,
+                        int rot,
+                        Outbuf_Depth depth)
 {
    int i = 0;
 
    /* check for changes */
-   if ((ob->w == w) && (ob->h == h) && 
-       (ob->destination_alpha == info->info.destination_alpha) && 
-       (ob->rotation == info->info.rotation) && 
-       (ob->depth == info->info.depth)) 
+   if ((ob->w == w) && (ob->h == h) &&
+       (ob->destination_alpha == ob->info->info.destination_alpha) &&
+       (ob->rotation == rot) &&
+       (ob->depth == depth))
      return;
 
    /* set new outbuf properties */
-   ob->rotation =info->info. rotation;
-   ob->depth = info->info.depth;
-   ob->destination_alpha = info->info.destination_alpha;
+   ob->rotation = rot;
+   ob->depth = depth;
+   ob->destination_alpha = ob->info->info.destination_alpha;
 
    /* handle rotation */
    if ((ob->rotation == 0) || (ob->rotation == 180))
@@ -196,7 +201,7 @@ evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int h)
      }
 }
 
-int 
+Render_Engine_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
    int i = 0, n = 0, count = 0;
@@ -221,7 +226,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
    return MODE_FULL;
 }
 
-RGBA_Image *
+void *
 evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *img = NULL;
@@ -399,25 +404,28 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int
         rect.w, rect.h, x + rx, y + ry, NULL);
 }
 
-void 
-evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update)
+void
+evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED,
+                               RGBA_Image *update EINA_UNUSED)
 {
-   evas_cache_image_drop(&update->cache_entry);
+   /* evas_cache_image_drop(&update->cache_entry); */
 }
 
-void 
-evas_outbuf_flush(Outbuf *ob)
+void
+evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
-   Eina_Rectangle *rects;
+   Eina_Rectangle *r;
    RGBA_Image *img;
    unsigned int n = 0, i = 0;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    /* get number of pending writes */
    n = eina_list_count(ob->priv.pending_writes);
    if (n == 0) return;
 
    /* allocate rectangles */
-   if (!(rects = alloca(n * sizeof(Eina_Rectangle)))) return;
+   if (!(r = alloca(n * sizeof(Eina_Rectangle)))) return;
 
    /* loop the pending writes */
    EINA_LIST_FREE(ob->priv.pending_writes, img)
@@ -432,35 +440,35 @@ evas_outbuf_flush(Outbuf *ob)
         /* based on rotation, set rectangle position */
         if (ob->rotation == 0)
           {
-             rects[i].x = x;
-             rects[i].y = y;
+             r[i].x = x;
+             r[i].y = y;
           }
         else if (ob->rotation == 90)
           {
-             rects[i].x = y;
-             rects[i].y = (ob->w - x - w);
+             r[i].x = y;
+             r[i].y = (ob->w - x - w);
           }
         else if (ob->rotation == 180)
           {
-             rects[i].x = (ob->w - x - w);
-             rects[i].y = (ob->h - y - h);
+             r[i].x = (ob->w - x - w);
+             r[i].y = (ob->h - y - h);
           }
         else if (ob->rotation == 270)
           {
-             rects[i].x = (ob->h - y - h);
-             rects[i].y = x;
+             r[i].x = (ob->h - y - h);
+             r[i].y = x;
           }
 
         /* based on rotation, set rectangle size */
         if ((ob->rotation == 0) || (ob->rotation == 180))
           {
-             rects[i].w = w;
-             rects[i].h = h;
+             r[i].w = w;
+             r[i].h = h;
           }
         else if ((ob->rotation == 90) || (ob->rotation == 270))
           {
-             rects[i].w = h;
-             rects[i].h = w;
+             r[i].w = h;
+             r[i].h = w;
           }
 
         eina_rectangle_free(rect);
@@ -476,5 +484,11 @@ evas_outbuf_flush(Outbuf *ob)
      }
 
    /* force a buffer swap */
-   _evas_outbuf_buffer_swap(ob, rects, n);
+   _evas_outbuf_buffer_swap(ob, r, n);
+}
+
+int
+evas_outbuf_get_rot(Outbuf *ob)
+{
+   return ob->info->info.rotation;
 }

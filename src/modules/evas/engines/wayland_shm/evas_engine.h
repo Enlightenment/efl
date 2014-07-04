@@ -39,31 +39,20 @@ extern int _evas_engine_way_shm_log_dom;
 
 # include <wayland-client.h>
 
-typedef enum _Outbuf_Depth Outbuf_Depth;
+#include "Evas_Engine_Wayland_Shm.h"
+
+#include "../software_generic/Evas_Engine_Software_Generic.h"
+
 typedef struct _Outbuf Outbuf;
-
-enum _Outbuf_Depth
-{
-   OUTBUF_DEPTH_NONE,
-   OUTBUF_DEPTH_ARGB_32BPP_8888_8888,
-   OUTBUF_DEPTH_RGB_32BPP_8888_8888,
-   OUTBUF_DEPTH_LAST
-};
-
-enum 
-{
-   MODE_FULL,
-   MODE_COPY,
-   MODE_DOUBLE,
-   MODE_TRIPLE
-};
 
 struct _Outbuf
 {
+   Evas_Engine_Info_Wayland_Shm *info;
+
    int w, h;
-   unsigned int rotation;
-   Outbuf_Depth depth;
+   int rotation;
    int onebuf;
+   Outbuf_Depth depth;
 
    struct 
      {

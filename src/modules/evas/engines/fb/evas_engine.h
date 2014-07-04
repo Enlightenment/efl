@@ -57,7 +57,7 @@ Outbuf      *evas_fb_outbuf_fb_setup_fb               (int w, int h, int rot, Ou
 
 void         evas_fb_outbuf_fb_blit                   (Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 void         evas_fb_outbuf_fb_update                 (Outbuf *buf, int x, int y, int w, int h);
-RGBA_Image  *evas_fb_outbuf_fb_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void        *evas_fb_outbuf_fb_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void         evas_fb_outbuf_fb_free_region_for_update (Outbuf *buf, RGBA_Image *update);
 void         evas_fb_outbuf_fb_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
 void         evas_fb_outbuf_fb_reconfigure            (Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth);

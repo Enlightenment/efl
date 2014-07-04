@@ -17,6 +17,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "../software_generic/Evas_Engine_Software_Generic.h"
+
 extern int _evas_engine_drm_log_dom;
 
 # ifdef ERR
@@ -51,22 +53,6 @@ typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
 typedef struct _Outbuf Outbuf;
 
-enum
-{
-   MODE_FULL,
-   MODE_COPY,
-   MODE_DOUBLE,
-   MODE_TRIPLE
-};
-
-enum
-{
-   OUTBUF_DEPTH_NONE,
-   OUTBUF_DEPTH_ARGB_32BPP_8888_8888,
-   OUTBUF_DEPTH_RGB_32BPP_8888_8888,
-   OUTBUF_DEPTH_LAST
-};
-
 struct _Buffer
 {
    int w, h;
@@ -100,41 +86,47 @@ struct _Plane
 
 struct _Outbuf
 {
+   Evas_Engine_Info_Drm *info;
+
    int w, h;
-   unsigned int rotation, depth;
-   Eina_Bool destination_alpha : 1;
-   Eina_Bool vsync : 1;
+   int rotation;
+   unsigned int depth;
 
-   struct 
-     {
-        int fd;
-        unsigned int conn, crtc, fb;
+   struct
+   {
+      Buffer buffer[NUM_BUFFERS];
 
-        Buffer buffer[NUM_BUFFERS];
-        int curr, num;
-
-        drmModeModeInfo mode;
-        drmEventContext ctx;
-        Eina_Bool pending_flip : 1;
-
-        Eina_List *pending_writes;
-
-        Eina_List *planes;
+      Eina_List *pending_writes;
+      Eina_List *planes;
 
 # ifdef HAVE_DRM_HW_ACCEL
-        void *surface;
+      void *surface;
 # endif
-     } priv;
+
+      int fd;
+      unsigned int conn, crtc, fb;
+
+      int curr, num;
+
+      drmModeModeInfo mode;
+      drmEventContext ctx;
+
+      Eina_Bool pending_flip : 1;
+   } priv;
+
+   Eina_Bool destination_alpha : 1;
+   Eina_Bool vsync : 1;
 };
 
 Outbuf *evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h);
 void evas_outbuf_free(Outbuf *ob);
-void evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int h);
-int evas_outbuf_buffer_state_get(Outbuf *ob);
-RGBA_Image *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
+Render_Engine_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
+int evas_outbuf_get_rot(Outbuf *ob);
+void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
-void evas_outbuf_flush(Outbuf *ob);
+void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 
 Eina_Bool evas_drm_init(Evas_Engine_Info_Drm *info);
 Eina_Bool evas_drm_shutdown(Evas_Engine_Info_Drm *info);

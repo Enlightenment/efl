@@ -21,7 +21,7 @@
 /* local function prototypes */
 
 Outbuf *
-evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface)
+evas_swapbuf_setup(Evas_Engine_Info_Wayland_Shm *info, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface)
 {
    Outbuf *ob = NULL;
 
@@ -39,6 +39,7 @@ evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina
    ob->priv.destination_alpha = alpha;
    ob->priv.wl.shm = wl_shm;
    ob->priv.wl.surface = wl_surface;
+   ob->info = info;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -78,7 +79,7 @@ evas_swapbuf_free(Outbuf *ob)
    if (!ob) return;
 
    /* flush the output buffer */
-   evas_swapbuf_flush(ob);
+   evas_swapbuf_flush(ob, NULL, MODE_FULL);
    evas_swapbuf_idle_flush(ob);
    evas_swapper_free(ob->priv.swapper);
    eina_array_flush(&ob->priv.onebuf_regions);
@@ -88,7 +89,7 @@ evas_swapbuf_free(Outbuf *ob)
 }
 
 void 
-evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha)
+evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rotation, Outbuf_Depth depth, Eina_Bool alpha)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -136,7 +137,7 @@ evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int ro
      }
 }
 
-RGBA_Image *
+void *
 evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *img;
@@ -374,13 +375,15 @@ evas_swapbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_
 }
 
 void 
-evas_swapbuf_flush(Outbuf *ob)
+evas_swapbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
-   Eina_Rectangle *rects;
+   Eina_Rectangle *result;
    RGBA_Image *img;
    unsigned int n = 0, i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    /* check for valid output buffer */
    if (!ob) return;
@@ -396,17 +399,17 @@ evas_swapbuf_flush(Outbuf *ob)
         if (n == 0) return;
 
         /* allocate rectangles */
-        if (!(rects = alloca(n * sizeof(Eina_Rectangle)))) return;
+        if (!(result = alloca(n * sizeof(Eina_Rectangle)))) return;
 
-        /* loop the buffer regions and assign to rects */
+        /* loop the buffer regions and assign to result */
         EINA_ARRAY_ITER_NEXT(&ob->priv.onebuf_regions, i, rect, it)
-          rects[i] = *rect;
+          result[i] = *rect;
 
         /* unmap the buffer */
         evas_swapper_buffer_unmap(ob->priv.swapper);
 
         /* force a buffer swap */
-        evas_swapper_swap(ob->priv.swapper, rects, n);
+        evas_swapper_swap(ob->priv.swapper, result, n);
 
         /* clean array */
         eina_array_clean(&ob->priv.onebuf_regions);
@@ -430,7 +433,7 @@ evas_swapbuf_flush(Outbuf *ob)
         if (n == 0) return;
 
         /* allocate rectangles */
-        if (!(rects = alloca(n * sizeof(Eina_Rectangle)))) return;
+        if (!(result = alloca(n * sizeof(Eina_Rectangle)))) return;
 
         /* loop the pending writes */
         EINA_LIST_FREE(ob->priv.pending_writes, img)
@@ -445,35 +448,35 @@ evas_swapbuf_flush(Outbuf *ob)
              /* based on rotation, set rectangle position */
              if (ob->rotation == 0)
                {
-                  rects[i].x = x;
-                  rects[i].y = y;
+                  result[i].x = x;
+                  result[i].y = y;
                }
              else if (ob->rotation == 90)
                {
-                  rects[i].x = y;
-                  rects[i].y = (ob->w - x - w);
+                  result[i].x = y;
+                  result[i].y = (ob->w - x - w);
                }
              else if (ob->rotation == 180)
                {
-                  rects[i].x = (ob->w - x - w);
-                  rects[i].y = (ob->h - y - h);
+                  result[i].x = (ob->w - x - w);
+                  result[i].y = (ob->h - y - h);
                }
              else if (ob->rotation == 270)
                {
-                  rects[i].x = (ob->h - y - h);
-                  rects[i].y = x;
+                  result[i].x = (ob->h - y - h);
+                  result[i].y = x;
                }
 
              /* based on rotation, set rectangle size */
              if ((ob->rotation == 0) || (ob->rotation == 180))
                {
-                  rects[i].w = w;
-                  rects[i].h = h;
+                  result[i].w = w;
+                  result[i].h = h;
                }
              else if ((ob->rotation == 90) || (ob->rotation == 270))
                {
-                  rects[i].w = h;
-                  rects[i].h = w;
+                  result[i].w = h;
+                  result[i].h = w;
                }
 
              eina_rectangle_free(rect);
@@ -492,7 +495,7 @@ evas_swapbuf_flush(Outbuf *ob)
         evas_swapper_buffer_unmap(ob->priv.swapper);
 
         /* force a buffer swap */
-        evas_swapper_swap(ob->priv.swapper, rects, n);
+        evas_swapper_swap(ob->priv.swapper, result, n);
      }
 }
 
@@ -511,7 +514,7 @@ evas_swapbuf_idle_flush(Outbuf *ob EINA_UNUSED)
    /* evas_swapper_buffer_idle_flush(ob->priv.swapper); */
 }
 
-int 
+Render_Engine_Swap_Mode
 evas_swapbuf_state_get(Outbuf *ob)
 {
    int mode = 0;
@@ -521,6 +524,12 @@ evas_swapbuf_state_get(Outbuf *ob)
    if (!ob->priv.swapper) return MODE_FULL;
    mode = evas_swapper_buffer_state_get(ob->priv.swapper);
    return mode;
+}
+
+int
+evas_swapbuf_rotation_get(Outbuf *ob)
+{
+   return ob->rotation;
 }
 
 /* local functions */

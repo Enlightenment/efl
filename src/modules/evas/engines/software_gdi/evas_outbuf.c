@@ -563,11 +563,13 @@ evas_software_gdi_outbuf_free_region_for_update(Outbuf     *buf EINA_UNUSED,
 }
 
 void
-evas_software_gdi_outbuf_flush(Outbuf *buf)
+evas_software_gdi_outbuf_flush(Outbuf *buf, Evas_Render_Mode render_mode)
 {
    Eina_List     *l;
    RGBA_Image    *im;
    Outbuf_Region *obr;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    /* copy safely the images that need to be drawn onto the back surface */
    EINA_LIST_FOREACH(buf->priv.pending_writes, l, im)

@@ -356,7 +356,7 @@ evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf EINA_UNUSED,
 }
 
 void
-evas_software_ddraw_outbuf_flush(Outbuf *buf)
+evas_software_ddraw_outbuf_flush(Outbuf *buf, Evas_Render_Mode render_mode)
 {
    Eina_List *l;
    RGBA_Image       *im;
@@ -366,6 +366,8 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf)
    int        ddraw_height;
    int        ddraw_pitch;
    int        ddraw_depth;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    /* lock the back surface */
    if (!(ddraw_data = evas_software_ddraw_lock(buf,
