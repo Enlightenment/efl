@@ -494,27 +494,25 @@ if test "x$want_elementary_emap" = "xyes" -a "x$have_elementary_emap" = "xno"; t
 fi
 AC_SUBST(ELM_EMAP_DEF)
 
-ELM_WEB_DEF="#undef"
 ELM_WEB2_DEF="#undef"
 
 elementary_web_backend="detect"
 elementary_web="no"
 want_elementary_web=""
 AC_ARG_WITH([elementary-web-backend],
-   [AC_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit/ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
+   [AC_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
    [
     elementary_web_backend=${withval}
    ],
    [elementary_web_backend="detect"])
 
 case "$elementary_web_backend" in
-    ewebkit|ewebkit2|detect|none) ;;
-    *) AC_MSG_ERROR([Invalid web backend: must be ewebkit, ewebkit2, detect or none]) ;;
+    ewebkit2|detect|none) ;;
+    *) AC_MSG_ERROR([Invalid web backend: must be ewebkit2, detect or none]) ;;
 esac
 
 if test "x$elementary_web_backend" = "xdetect"; then
-    # FIXME : detect option should check both ewebkit and ewebkit2.
-    want_elementary_web="ewebkit"
+    want_elementary_web="ewebkit2"
 else
     want_elementary_web=$elementary_web_backend
 fi
@@ -528,12 +526,7 @@ if test "x$want_elementary_web" != "xnone"; then
         AC_DEFINE_UNQUOTED(WEBKIT_DATADIR,
                            "$webkit_datadir",
                            "WebKit's data dir")
-        if test "x$elementary_web_backend" = "xewebkit2"; then
-            AC_DEFINE(USE_WEBKIT2, 1, [Use ewebkit2 as Elementary web backend])
-            ELM_WEB2_DEF="#define"
-        else
-            ELM_WEB_DEF="#define"
-        fi
+        ELM_WEB2_DEF="#define"
 
         elementary_web=$want_elementary_web
         requirement_elm="${want_elementary_web} ${requirement_elm}"
@@ -544,12 +537,11 @@ else
     elementary_web="no"
 fi
 
-if test "x$elementary_web_backend" = "xewebkit" -o "x$elementary_web_backend" = "xewebkit2"; then
+if test "x$elementary_web_backend" = "xewebkit2"; then
     if test "x$elementary_web" = "xnone"; then
         AC_MSG_ERROR([Web support requested, but no $elementary_web_backend found by pkg-config.])
     fi
 fi
-AC_SUBST(ELM_WEB_DEF)
 AC_SUBST(ELM_WEB2_DEF)
 
 ELM_DEBUG_DEF="#undef"

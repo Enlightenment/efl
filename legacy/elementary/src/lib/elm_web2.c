@@ -7,8 +7,9 @@
 #include "elm_priv.h"
 #include "elm_widget_web.h"
 
-#if defined(HAVE_ELEMENTARY_WEB) && defined(USE_WEBKIT2)
+#if defined(HAVE_ELEMENTARY_WEB)
 #include <EWebKit2.h>
+#endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #include "elm_interface_atspi_accessible.h"
@@ -19,8 +20,10 @@
 #define MY_CLASS_NAME "Elm_Web"
 #define MY_CLASS_NAME_LEGACY "elm_web"
 
+#if defined(HAVE_ELEMENTARY_WEB)
 static Ewk_View_Smart_Class _ewk_view_parent_sc =
   EWK_VIEW_SMART_CLASS_INIT_NULL;
+#endif
 
 static const char SIG_URI_CHANGED[] = "uri,changed"; // deprecated, use "url,changed" instead.
 static const char SIG_URL_CHANGED[] = "url,changed";
@@ -33,6 +36,7 @@ static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { NULL, NULL }
 };
 
+#ifdef HAVE_ELEMENTARY_WEB
 static void
 _view_smart_add(Evas_Object *obj)
 {
@@ -583,22 +587,29 @@ _view_smart_callback_proxy(Evas_Object *view, Evas_Object *parent)
 }
 
 static Eina_Bool _elm_need_web = EINA_FALSE;
+#endif
 
 void
 _elm_unneed_web(void)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    if (!_elm_need_web) return;
    _elm_need_web = EINA_FALSE;
    ewk_shutdown();
+#endif
 }
 
 EAPI Eina_Bool
 elm_need_web(void)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    if (_elm_need_web) return EINA_TRUE;
    _elm_need_web = EINA_TRUE;
    ewk_init();
    return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EOLIAN static Eina_Bool
@@ -611,6 +622,7 @@ _elm_web_elm_widget_theme_apply(Eo *obj, Elm_Web_Data *sd EINA_UNUSED)
 EOLIAN static Eina_Bool
 _elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    Evas_Object *top;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_TRUE);
@@ -631,6 +643,10 @@ _elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
         if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
      }
+#else
+   (void)obj;
+   (void)sd;
+#endif
    return EINA_TRUE;
 }
 
@@ -648,21 +664,31 @@ _elm_web_elm_widget_event(Eo *obj, Elm_Web_Data *sd, Evas_Object *src, Evas_Call
 EOLIAN static Eina_Bool
 _elm_web_tab_propagate_get(Eo *obj EINA_UNUSED, Elm_Web_Data *sd)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    return sd->tab_propagate;
+#else
+   (void)sd;
+   return EINA_FALSE;
+#endif
 }
 
 EOLIAN static void
 _elm_web_tab_propagate_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Eina_Bool propagate)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    sd->tab_propagate = propagate;
+#else
+   (void)propagate;
+   (void)sd;
+#endif
 }
 
 EOLIAN static void
 _elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
-#ifdef HAVE_ELEMENTARY_WEB
    Evas_Object *resize_obj;
 
+#ifdef HAVE_ELEMENTARY_WEB
    resize_obj = _view_add(obj);
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
@@ -674,6 +700,13 @@ _elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 
    _view_smart_callback_proxy(resize_obj, obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+#else
+   resize_obj = elm_label_add(obj);
+   elm_object_text_set(resize_obj, "WebKit not supported!");
+   elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
+
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 #endif
 }
 
@@ -706,36 +739,66 @@ _elm_web_eo_base_constructor(Eo *obj, Elm_Web_Data *sd)
 EOLIAN static Evas_Object*
 _elm_web_webkit_view_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return wd->resize_obj;
+#else
+   (void)obj;
+   ERR("Elementary not compiled with EWebKit support.");
+   return NULL;
+#endif
 }
 
 EOLIAN static void
 _elm_web_window_create_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Window_Open func, void *data)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    sd->hook.window_create = func;
    sd->hook.window_create_data = data;
+#else
+   (void)sd;
+   (void)func;
+   (void)data;
+#endif
 }
 
 EOLIAN static void
 _elm_web_dialog_alert_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Dialog_Alert func, void *data)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    sd->hook.alert = func;
    sd->hook.alert_data = data;
+#else
+   (void)func;
+   (void)data;
+   (void)sd;
+#endif
 }
 
 EOLIAN static void
 _elm_web_dialog_confirm_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Dialog_Confirm func, void *data)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    sd->hook.confirm = func;
    sd->hook.confirm_data = data;
+#else
+   (void)func;
+   (void)data;
+   (void)sd;
+#endif
 }
 
 EOLIAN static void
 _elm_web_dialog_prompt_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Dialog_Prompt func, void *data)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    sd->hook.prompt = func;
    sd->hook.prompt_data = data;
+#else
+   (void)func;
+   (void)data;
+   (void)sd;
+#endif
 }
 
 EOLIAN static void
@@ -793,8 +856,7 @@ _elm_web_useragent_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-elm_web_uri_set(Evas_Object *obj,
-                const char *url)
+elm_web_uri_set(Evas_Object *obj, const char *url)
 {
    ELM_WEB_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
@@ -802,42 +864,82 @@ elm_web_uri_set(Evas_Object *obj,
    return ret;
 }
 
+EAPI const char *
+elm_web_uri_get(const Evas_Object *obj)
+{
+   const char *ret = NULL;
+   eo_do((Eo *) obj, ret = elm_obj_web_url_get());
+   return ret;
+}
+
 EOLIAN static Eina_Bool
 _elm_web_url_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, const char *url)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    return ewk_view_url_set(wd->resize_obj, url);
+#else
+   (void)url;
+   (void)obj;
+   return EINA_FALSE;
+#endif
 }
 
 EOLIAN static const char*
 _elm_web_url_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return ewk_view_url_get(wd->resize_obj);
+#else
+   (void)obj;
+   return NULL;
+#endif
 }
 
 EOLIAN static Eina_Bool
 _elm_web_html_string_load(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, const char *html, const char *base_url, const char *unreachable_url)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    return ewk_view_html_string_load(wd->resize_obj,
                                              html, base_url, unreachable_url);
+#else
+   (void)obj;
+   (void)html;
+   (void)base_url;
+   (void)unreachable_url;
+   return EINA_FALSE;
+#endif
 }
 
 EOLIAN static const char*
 _elm_web_title_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return ewk_view_title_get(wd->resize_obj);
+#else
+   (void)obj;
+   return NULL;
+#endif
 }
 
 EOLIAN static void
 _elm_web_bg_color_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ewk_view_bg_color_set(wd->resize_obj, r, g, b, a);
+#else
+   (void)obj;
+   (void)r;
+   (void)g;
+   (void)b;
+   (void)a;
+#endif
 }
 
 EOLIAN static void
@@ -848,9 +950,13 @@ _elm_web_bg_color_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, int *r, int *g, in
    if (b) *b = 0;
    if (a) *a = 0;
 
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   return ewk_view_bg_color_get(wd->resize_obj, r, g, b, a);
+   ewk_view_bg_color_get(wd->resize_obj, r, g, b, a);
+#else
+   (void)obj;
+#endif
 }
 
 EOLIAN static const char*
@@ -1173,17 +1279,27 @@ _elm_web_history_enabled_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, Eina_Bool e
 EOLIAN static void
 _elm_web_zoom_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, double zoom)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ewk_view_page_zoom_set(wd->resize_obj, zoom);
+#else
+   (void)obj;
+   (void)zoom;
+#endif
 }
 
 EOLIAN static double
-_elm_web_zoom_get(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED)
+_elm_web_zoom_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, -1);
 
    return ewk_view_page_zoom_get(wd->resize_obj);
+#else
+   (void)obj;
+   return -1;
+#endif
 }
 
 EOLIAN static void
@@ -1255,31 +1371,50 @@ _elm_web_region_bring_in(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, int x, int y, i
 EOLIAN static void
 _elm_web_inwin_mode_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Eina_Bool value)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    sd->inwin_mode = value;
+#else
+   (void)sd;
+   (void)value;
+#endif
 }
 
 EOLIAN static Eina_Bool
 _elm_web_inwin_mode_get(Eo *obj EINA_UNUSED, Elm_Web_Data *sd)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    return sd->inwin_mode;
+#else
+   (void)sd;
+   return EINA_FALSE;
+#endif
 }
 
 EAPI void
 elm_web_window_features_ref(Elm_Web_Window_Features *wf)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ewk_object_ref((Ewk_Object *)wf);
+#else
+   (void)wf;
+#endif
 }
 
 EAPI void
 elm_web_window_features_unref(Elm_Web_Window_Features *wf)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ewk_object_unref((Ewk_Object *)wf);
+#else
+   (void)wf;
+#endif
 }
 
 EAPI Eina_Bool
 elm_web_window_features_property_get(const Elm_Web_Window_Features *wf,
                                      Elm_Web_Window_Feature_Flag flag)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    const Ewk_Window_Features *ewf = (const Ewk_Window_Features *)wf;
    switch (flag)
      {
@@ -1301,6 +1436,10 @@ elm_web_window_features_property_get(const Elm_Web_Window_Features *wf,
       case ELM_WEB_WINDOW_FEATURE_FULLSCREEN:
         return ewk_window_features_fullscreen_get(ewf);
      }
+#else
+   (void)wf;
+   (void)flag;
+#endif
 
    return EINA_FALSE;
 }
@@ -1312,8 +1451,16 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
                                    Evas_Coord *w,
                                    Evas_Coord *h)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ewk_window_features_geometry_get
      ((const Ewk_Window_Features *)wf, x, y, w, h);
+#else
+   (void)wf;
+   (void)x;
+   (void)y;
+   (void)w;
+   (void)h;
+#endif
 }
 
 static void
@@ -1323,5 +1470,3 @@ _elm_web_class_constructor(Eo_Class *klass)
 }
 
 #include "elm_web.eo.c"
-
-#endif
