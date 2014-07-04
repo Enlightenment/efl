@@ -237,7 +237,7 @@ EAPI Eina_Bool edje_edit_clean_save_as(Evas_Object *obj, const char* new_file_na
  * or EINA_FALSE for save all groups, which exists in edj file.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
- *
+ * @since 1.11
  */
 EAPI Eina_Bool
 edje_edit_without_source_save(Evas_Object *obj, Eina_Bool current_group);
@@ -411,6 +411,7 @@ EAPI Eina_Bool edje_edit_group_max_h_set(Evas_Object *obj, int h);
  * @param obj Object being edited.
  *
  * @return EINA_FALSE if group not accept broadcast signal, EINA_TRUE otherwise (Default to true since 1.1.).
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_group_broadcast_signal_get(Evas_Object *obj);
 
@@ -420,6 +421,7 @@ EAPI Eina_Bool edje_edit_group_broadcast_signal_get(Evas_Object *obj);
  * @param bs EINA_TRUE if group will accept broadcast signal, EINA_FALSE otherwise.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_group_broadcast_signal_set(Evas_Object *obj, Eina_Bool bs);
 
@@ -1012,6 +1014,7 @@ EAPI Eina_Bool edje_edit_part_del(Evas_Object *obj, const char *part);
  * @param new_copy Name of the new copied part.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_copy(Evas_Object *obj, const char *part, const char *new_copy);
 
@@ -1206,6 +1209,7 @@ EAPI Eina_Bool edje_edit_part_source_set(Evas_Object *obj, const char *part, con
  * @param part Part to get the source from.
  *
  * @return Content of the source2 parameter or NULL if nothing set or an error occurred.
+ * @since 1.11
  */
 EAPI const char * edje_edit_part_source2_get(Evas_Object *obj, const char *part);
 
@@ -1218,7 +1222,7 @@ EAPI const char * edje_edit_part_source2_get(Evas_Object *obj, const char *part)
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  *
  * @see edje_edit_part_source2_get()
- *
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_source2_set(Evas_Object *obj, const char *part, const char *source);
 
@@ -1232,6 +1236,7 @@ EAPI Eina_Bool edje_edit_part_source2_set(Evas_Object *obj, const char *part, co
  * @param part Part to get the source from.
  *
  * @return Content of the source3 parameter or NULL if nothing set or an error occurred.
+ * @since 1.11
  */
 EAPI const char * edje_edit_part_source3_get(Evas_Object *obj, const char *part);
 
@@ -1244,6 +1249,7 @@ EAPI const char * edje_edit_part_source3_get(Evas_Object *obj, const char *part)
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  *
  * @see edje_edit_part_source3_get()
+ * @since 1.11
  *
  * NOTE: This is not applied now. You must reload the edje to see the change.
  */
@@ -1259,6 +1265,7 @@ EAPI Eina_Bool edje_edit_part_source3_set(Evas_Object *obj, const char *part, co
  * @param part Part to get the source from.
  *
  * @return Content of the source4 parameter or NULL if nothing set or an error occurred.
+ * @since 1.11
  */
 EAPI const char * edje_edit_part_source4_get(Evas_Object *obj, const char *part);
 
@@ -1271,6 +1278,7 @@ EAPI const char * edje_edit_part_source4_get(Evas_Object *obj, const char *part)
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  *
  * @see edje_edit_part_source4_get()
+ * @since 1.11
  *
  * NOTE: This is not applied now. You must reload the edje to see the change.
  */
@@ -1286,6 +1294,7 @@ EAPI Eina_Bool edje_edit_part_source4_set(Evas_Object *obj, const char *part, co
  * @param part Part to get the source from.
  *
  * @return Content of the source5 parameter or NULL if nothing set or an error occurred.
+ * @since 1.11
  */
 EAPI const char * edje_edit_part_source5_get(Evas_Object *obj, const char *part);
 
@@ -1298,7 +1307,7 @@ EAPI const char * edje_edit_part_source5_get(Evas_Object *obj, const char *part)
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  *
  * @see edje_edit_part_source5_get()
- *
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_source5_set(Evas_Object *obj, const char *part, const char *source);
 
@@ -1312,6 +1321,7 @@ EAPI Eina_Bool edje_edit_part_source5_set(Evas_Object *obj, const char *part, co
  * @param part Part to get the source from.
  *
  * @return Content of the source6 parameter or NULL if nothing set or an error occurred.
+ * @since 1.11
  */
 EAPI const char * edje_edit_part_source6_get(Evas_Object *obj, const char *part);
 
@@ -1324,7 +1334,7 @@ EAPI const char * edje_edit_part_source6_get(Evas_Object *obj, const char *part)
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  *
  * @see edje_edit_part_source6_get()
- *
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_source6_set(Evas_Object *obj, const char *part, const char *source);
 
@@ -1417,6 +1427,7 @@ EAPI Eina_Bool edje_edit_part_repeat_events_set(Evas_Object *obj, const char *pa
  * @param part Part to get if editing multiple lines for text or textblock part is enabled.
  *
  * @return EINA_TRUE if multiple lines for editing is enabled, EINA_FALSE otherwise
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_multiline_get(Evas_Object *obj, const char *part);
 
@@ -1427,6 +1438,7 @@ EAPI Eina_Bool edje_edit_part_multiline_get(Evas_Object *obj, const char *part);
  * @param multiline EINA_TRUE if multiple lines for editing is enabled, EINA_FALSE otherwise
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_multiline_set(Evas_Object *obj, const char *part, Eina_Bool multiline);
 
@@ -1436,6 +1448,7 @@ EAPI Eina_Bool edje_edit_part_multiline_set(Evas_Object *obj, const char *part, 
  * @param part Part to get if it will enable point collision detection for the part.
  *
  * @return EINA_TRUE if point collision detection for the part is enabled, EINA_FALSE otherwise
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char *part);
 
@@ -1446,6 +1459,7 @@ EAPI Eina_Bool edje_edit_part_precise_is_inside_get(Evas_Object *obj, const char
  * @param precise_is_inside EINA_TRUE if point collision detection for the part is enabled, EINA_FALSE otherwise
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_precise_is_inside_set(Evas_Object *obj, const char *part, Eina_Bool precise_is_inside);
 
@@ -1455,6 +1469,7 @@ EAPI Eina_Bool edje_edit_part_precise_is_inside_set(Evas_Object *obj, const char
  * @param part Part to get if it uses accessibility feature.
  *
  * @return EINA_TRUE if part uses accessibility feature, EINA_FALSE otherwise
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_access_get(Evas_Object *obj, const char *part);
 
@@ -1465,6 +1480,7 @@ EAPI Eina_Bool edje_edit_part_access_get(Evas_Object *obj, const char *part);
  * @param access EINA_TRUE if part uses accessibility feature, EINA_FALSE otherwise
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_access_set(Evas_Object *obj, const char *part, Eina_Bool access);
 
@@ -1493,6 +1509,7 @@ EAPI Eina_Bool edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *par
  * @param part Part name to get it's pointer_mode.
  *
  * @return Ponter Mode of the part.
+ * @since 1.11
  */
 EAPI Evas_Object_Pointer_Mode edje_edit_part_pointer_mode_get(Evas_Object *obj, const char *part);
 
@@ -1508,6 +1525,7 @@ EAPI Evas_Object_Pointer_Mode edje_edit_part_pointer_mode_get(Evas_Object *obj, 
  * @param pointer_mode Pointer Mode.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *part, Evas_Object_Pointer_Mode pointer_mode);
 
@@ -1523,6 +1541,7 @@ EAPI Eina_Bool edje_edit_part_pointer_mode_set(Evas_Object *obj, const char *par
  * @param part Part name to get it's cursor_mode.
  *
  * @return Ponter Mode of the part.
+ * @since 1.11
  */
 EAPI unsigned char edje_edit_part_cursor_mode_get(Evas_Object *obj, const char *part);
 
@@ -1539,6 +1558,7 @@ EAPI unsigned char edje_edit_part_cursor_mode_get(Evas_Object *obj, const char *
  * @param pointer_mode Pointer Mode.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_cursor_mode_set(Evas_Object *obj, const char *part, unsigned char cursor_mode);
 
@@ -1739,6 +1759,7 @@ EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *p
  * @param source_group Source (means group name) of the new item
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group);
 
@@ -1747,6 +1768,7 @@ EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, co
  * @param obj Object being edited.
  *
  * @return A List containing all part items names found in the edje file.
+ * @since 1.11
  */
 EAPI Eina_List * edje_edit_part_items_list_get(Evas_Object *obj, const char *part);
 
@@ -1769,6 +1791,7 @@ EAPI Eina_Bool edje_edit_part_item_del(Evas_Object *obj, const char *part, const
  * @param source_group New gorup name.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *item_name, const char *source_group);
 
@@ -1779,6 +1802,7 @@ EAPI Eina_Bool edje_edit_part_item_source_set(Evas_Object *obj, const char *part
  * @param item_name Name of item.
  *
  * @return source of the given item.
+ * @since 1.11
  */
 EAPI const char * edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *item_name);
 
@@ -1789,6 +1813,7 @@ EAPI const char * edje_edit_part_item_source_get(Evas_Object *obj, const char *p
  * @param item The name of the item to get minimum width.
  *
  * @return The minimum width value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_min_w_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1801,6 +1826,7 @@ EAPI int edje_edit_part_item_min_w_get(Evas_Object *obj, const char *part, const
  * @param min_w Minimum width value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_min_w_set(Evas_Object *obj, const char *part, const char *item, int min_w);
 
@@ -1811,6 +1837,7 @@ EAPI Eina_Bool edje_edit_part_item_min_w_set(Evas_Object *obj, const char *part,
  * @param item The name of the item to get minimum height.
  *
  * @return The minimum height value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_min_h_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1823,6 +1850,7 @@ EAPI int edje_edit_part_item_min_h_get(Evas_Object *obj, const char *part, const
  * @param min_h Minimum height value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_min_h_set(Evas_Object *obj, const char *part, const char *item, int min_h);
 
@@ -1833,6 +1861,7 @@ EAPI Eina_Bool edje_edit_part_item_min_h_set(Evas_Object *obj, const char *part,
  * @param item The name of the item to get maximum width.
  *
  * @return The maximum width value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_max_w_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1847,6 +1876,7 @@ EAPI int edje_edit_part_item_max_w_get(Evas_Object *obj, const char *part, const
  * @param max_w Maximum width value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_max_w_set(Evas_Object *obj, const char *part, const char *item, int max_w);
 
@@ -1857,6 +1887,7 @@ EAPI Eina_Bool edje_edit_part_item_max_w_set(Evas_Object *obj, const char *part,
  * @param item The name of the item to get maximum height.
  *
  * @return The maximum height value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_max_h_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1871,6 +1902,7 @@ EAPI int edje_edit_part_item_max_h_get(Evas_Object *obj, const char *part, const
  * @param max_h Maximum height value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_max_h_set(Evas_Object *obj, const char *part, const char *item, int max_h);
 
@@ -1881,6 +1913,7 @@ EAPI Eina_Bool edje_edit_part_item_max_h_set(Evas_Object *obj, const char *part,
  * @param item The name of the item to get aspect width.
  *
  * @return The aspect width value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_aspect_w_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1892,6 +1925,7 @@ EAPI int edje_edit_part_item_aspect_w_get(Evas_Object *obj, const char *part, co
  * @param aspect_w Maximum width value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_aspect_w_set(Evas_Object *obj, const char *part, const char *item, int aspect_w);
 
@@ -1902,6 +1936,7 @@ EAPI Eina_Bool edje_edit_part_item_aspect_w_set(Evas_Object *obj, const char *pa
  * @param item The name of the item to get aspect height.
  *
  * @return The maximum height value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_aspect_h_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1913,6 +1948,7 @@ EAPI int edje_edit_part_item_aspect_h_get(Evas_Object *obj, const char *part, co
  * @param max_h Maximum height value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_aspect_h_set(Evas_Object *obj, const char *part, const char *item, int aspect_h);
 
@@ -1923,6 +1959,7 @@ EAPI Eina_Bool edje_edit_part_item_aspect_h_set(Evas_Object *obj, const char *pa
  * @param item The name of the item to get prefer width.
  *
  * @return The prefer width value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_prefer_w_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1973,6 +2010,7 @@ edje_edit_part_item_aspect_mode_set(Evas_Object *obj, const char *part, const ch
  * @param prefer_w Maximum width value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_prefer_w_set(Evas_Object *obj, const char *part, const char *item, int prefer_w);
 
@@ -1983,6 +2021,7 @@ EAPI Eina_Bool edje_edit_part_item_prefer_w_set(Evas_Object *obj, const char *pa
  * @param item The name of the item to get prefer height.
  *
  * @return The maximum height value.
+ * @since 1.11
  */
 EAPI int edje_edit_part_item_prefer_h_get(Evas_Object *obj, const char *part, const char *item);
 
@@ -1994,6 +2033,7 @@ EAPI int edje_edit_part_item_prefer_h_get(Evas_Object *obj, const char *part, co
  * @param max_h Maximum height value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_prefer_h_set(Evas_Object *obj, const char *part, const char *item, int prefer_h);
 
@@ -2008,6 +2048,7 @@ EAPI Eina_Bool edje_edit_part_item_prefer_h_set(Evas_Object *obj, const char *pa
  * @param b A pointer to store the bottom padding value.
  *
  * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *item_name, int *l, int *r, int *t, int *b);
 
@@ -2023,6 +2064,7 @@ EAPI Eina_Bool edje_edit_part_item_padding_get(Evas_Object *obj, const char *par
  * @param b Value of the bottom padding.
  *
  * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *item_name, int l, int r, int t, int b);
 
@@ -2691,6 +2733,7 @@ EAPI Eina_Bool edje_edit_state_max_h_set(Evas_Object *obj, const char *part, con
  * @param value The state value.
  *
  * @return The maximum width value.
+ * @since 1.11
  */
 EAPI double edje_edit_state_minmul_w_get(Evas_Object *obj, const char *part, const char *state, double value);
 
@@ -2703,6 +2746,7 @@ EAPI double edje_edit_state_minmul_w_get(Evas_Object *obj, const char *part, con
  * @param minmul_w Multiplier width value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_state_minmul_w_set(Evas_Object *obj, const char *part, const char *state, double value, double minmul_w);
 
@@ -2714,6 +2758,7 @@ EAPI Eina_Bool edje_edit_state_minmul_w_set(Evas_Object *obj, const char *part, 
  * @param value The state value.
  *
  * @return The maximum height value.
+ * @since 1.11
  */
 EAPI double edje_edit_state_minmul_h_get(Evas_Object *obj, const char *part, const char *state, double value);
 
@@ -2726,6 +2771,7 @@ EAPI double edje_edit_state_minmul_h_get(Evas_Object *obj, const char *part, con
  * @param minmul_h Multiplier height value.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_state_minmul_h_set(Evas_Object *obj, const char *part, const char *state, double value, double minmul_h);
 
@@ -3355,6 +3401,7 @@ EAPI Eina_Bool edje_edit_state_external_param_choice_set(Evas_Object *obj, const
  *
  * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
  * @see edje_edit_state_step_get()
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_state_step_set(Evas_Object *obj, const char *part, const char *state, double value, int step_x, int step_y);
 
@@ -3370,6 +3417,7 @@ EAPI Eina_Bool edje_edit_state_step_set(Evas_Object *obj, const char *part, cons
  *
  * @return EINA_TRUE in case of success, EINA_FALSE otherwise.
  * @see edje_edit_state_step_set()
+ * @since 1.11
  */
 EAPI Eina_Bool
 edje_edit_state_step_get(Evas_Object *obj, const char *part, const char *state, double value, int *step_x, int *step_y);
