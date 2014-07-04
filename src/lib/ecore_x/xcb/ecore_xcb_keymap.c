@@ -80,6 +80,48 @@ _ecore_xcb_keymap_finalize(void)
    if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
      ECORE_X_MODIFIER_ALT = 0;
 
+   if (ECORE_X_MODIFIER_ALTGR)
+     {
+        if ((ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_SHIFT) ||
+            (ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_CTRL) ||
+            (ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_ALT) ||
+            (ECORE_X_MODIFIER_ALTGR == ECORE_X_MODIFIER_WIN))
+          {
+             ERR("ALTGR conflicts with other modifiers. IGNORE ALTGR");
+             ECORE_X_MODIFIER_ALTGR = 0;
+          }
+     }
+
+   if (ECORE_X_MODIFIER_ALT)
+     {
+        if ((ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_SHIFT) ||
+            (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL) ||
+            (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_WIN))
+          {
+             ERR("ALT conflicts with other modifiers. IGNORE ALT");
+             ECORE_X_MODIFIER_ALT = 0;
+          }
+     }
+
+   if (ECORE_X_MODIFIER_WIN)
+     {
+        if ((ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_SHIFT) ||
+            (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_CTRL))
+          {
+             ERR("WIN conflicts with other modifiers. IGNORE WIN");
+             ECORE_X_MODIFIER_WIN = 0;
+          }
+     }
+
+   if (ECORE_X_MODIFIER_SHIFT)
+     {
+        if ((ECORE_X_MODIFIER_SHIFT == ECORE_X_MODIFIER_CTRL))
+          {
+             ERR("CTRL conflicts with other modifiers. IGNORE CTRL");
+             ECORE_X_MODIFIER_CTRL = 0;
+          }
+     }
+
    ECORE_X_LOCK_SCROLL = _ecore_xcb_keymap_mask_get(reply, XK_Scroll_Lock);
    ECORE_X_LOCK_NUM = _ecore_xcb_keymap_mask_get(reply, XK_Num_Lock);
    ECORE_X_LOCK_CAPS = _ecore_xcb_keymap_mask_get(reply, XK_Caps_Lock);
