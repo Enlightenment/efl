@@ -63,6 +63,7 @@ _output_setup(int          width,
    if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
                                                  evas_software_gdi_outbuf_rot_get,
                                                  evas_software_gdi_outbuf_reconfigure,
+                                                 NULL,
                                                  evas_software_gdi_outbuf_new_region_for_update,
                                                  evas_software_gdi_outbuf_push_updated_region,
                                                  evas_software_gdi_outbuf_free_region_for_update,
@@ -138,7 +139,7 @@ eng_setup(Evas *eo_e, void *in)
                                             0, 0);
         if (!ob) return 0;
 
-        evas_render_engine_software_generic_update(&re->generic, ob);
+        evas_render_engine_software_generic_update(&re->generic, ob, e->output.w, e->output.h);
         re->generic.ob->onebuf = ponebuf;
      }
    if (!e->engine.data.output) return 0;

@@ -194,7 +194,7 @@ evas_software_ddraw_outbuf_reconfigure(Outbuf      *buf,
    evas_software_ddraw_surface_resize(buf);
 }
 
-RGBA_Image *
+void *
 evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
                                                  int     x,
                                                  int     y,
@@ -356,7 +356,7 @@ evas_software_ddraw_outbuf_free_region_for_update(Outbuf     *buf EINA_UNUSED,
 }
 
 void
-evas_software_ddraw_outbuf_flush(Outbuf *buf, Evas_Render_Mode render_mode)
+evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Eina_List *l;
    RGBA_Image       *im;
