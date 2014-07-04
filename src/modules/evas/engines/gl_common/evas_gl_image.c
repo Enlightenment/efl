@@ -168,21 +168,19 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im,
         return NULL;
      }
     */
-   
+
    // FIXME: keep unreffed shared images around
    EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
-	if (im->im == im_im)
-	  {
-// why did i put this here? i think to free the rgba pixel data once a texture
-// exists.
-//             evas_cache_image_drop(&(im_im->cache_entry));
-	     gc->shared->images = eina_list_remove_list(gc->shared->images, l);
-	     gc->shared->images = eina_list_prepend(gc->shared->images, im);
+        if (im->im == im_im)
+          {
+             evas_cache_image_drop(&(im_im->cache_entry));
+             gc->shared->images = eina_list_remove_list(gc->shared->images, l);
+             gc->shared->images = eina_list_prepend(gc->shared->images, im);
              evas_gl_common_image_ref(im);
-	     *error = EVAS_LOAD_ERROR_NONE;
-	     return im;
-	  }
+             *error = EVAS_LOAD_ERROR_NONE;
+             return im;
+          }
      }
 
    im = calloc(1, sizeof(Evas_GL_Image));
@@ -194,8 +192,8 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im,
         else
 #endif
           evas_cache_image_drop(&(im_im->cache_entry));
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return NULL;
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
      }
    if (im_im->cache_entry.cspaces)
      {
