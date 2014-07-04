@@ -88,7 +88,7 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
      eina_strbuf_append_char(buf, ' ');
    eina_strbuf_append(buf, "^\n");
    eina_log_print(_eo_lexer_log_dom, EINA_LOG_LEVEL_ERR, ls->source, "",
-                  ls->line_number, eina_strbuf_string_get(buf));
+                  ls->line_number, "%s", eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    longjmp(ls->err_jmp, EINA_TRUE);
 }
