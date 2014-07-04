@@ -3676,13 +3676,13 @@ edje_edit_part_access_get(Evas_Object *obj, const char *part)
 }
 
 EAPI Eina_Bool
-edje_edit_part_access_set(Evas_Object *obj, const char *part, Eina_Bool access)
+edje_edit_part_access_set(Evas_Object *obj, const char *part, Eina_Bool access_mode)
 {
    GET_RP_OR_RETURN(EINA_FALSE);
 
    if (!rp->object) return EINA_FALSE;
 
-   rp->part->access = access;
+   rp->part->access = access_mode;
    return EINA_TRUE;
 }
 
