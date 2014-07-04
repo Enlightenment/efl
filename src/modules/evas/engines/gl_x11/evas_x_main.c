@@ -23,7 +23,9 @@ static Colormap     _evas_gl_x11_rgba_cmap = 0;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(Display *disp,
+eng_window_new(Evas_Engine_Info_GL_X11 *info,
+               Evas *e,
+               Display *disp,
                Window   win,
                int      screen,
                Visual  *vis,
@@ -33,7 +35,8 @@ eng_window_new(Display *disp,
                int      h,
                int      indirect,
                int      alpha,
-               int      rot)
+               int      rot,
+               Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
 #ifdef GL_GLES
@@ -62,6 +65,9 @@ eng_window_new(Display *disp,
    gw->w = w;
    gw->h = h;
    gw->rot = rot;
+   gw->swap_mode = swap_mode;
+   gw->info = info;
+   gw->evas = e;
 
    vi_use = _evas_gl_x11_vi;
    if (gw->alpha)
@@ -938,4 +944,306 @@ eng_gl_context_use(Evas_GL_X11_Context *ctx)
           }
      }
 #endif
+}
+
+void
+eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
+{
+   ob->w = w;
+   ob->h = h;
+   ob->rot = rot;
+   eng_window_use(ob);
+   evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+}
+
+int
+eng_outbuf_get_rot(Outbuf *ob)
+{
+   return ob->rot;
+}
+
+Render_Engine_Swap_Mode
+eng_outbuf_swap_mode(Outbuf *ob)
+{
+   if (ob->swap_mode == MODE_AUTO && extn_have_buffer_age)
+     {
+        Render_Engine_Swap_Mode swap_mode;
+#ifdef GL_GLES
+        EGLint age = 0;
+
+        if (!eglQuerySurface(ob->egl_disp,
+                             ob->egl_surface[0],
+                             EGL_BUFFER_AGE_EXT, &age))
+          age = 0;
+#else
+        unsigned int age = 0;
+
+        if (glsym_glXQueryDrawable)
+          {
+             if (ob->glxwin)
+               glsym_glXQueryDrawable(ob->disp,
+                                      ob->glxwin,
+                                      GLX_BACK_BUFFER_AGE_EXT,
+                                      &age);
+             else
+               glsym_glXQueryDrawable(ob->disp,
+                                      ob->win,
+                                      GLX_BACK_BUFFER_AGE_EXT,
+                                      &age);
+          }
+#endif
+        if (age == 1) swap_mode = MODE_COPY;
+        else if (age == 2) swap_mode = MODE_DOUBLE;
+        else if (age == 3) swap_mode = MODE_TRIPLE;
+        else if (age == 4) swap_mode = MODE_QUADRUPLE;
+        else swap_mode = MODE_FULL;
+        if ((int)age != ob->prev_age) swap_mode = MODE_FULL;
+        ob->prev_age = age;
+
+        return swap_mode;
+     }
+
+   return ob->swap_mode;
+}
+
+Eina_Bool
+eng_outbuf_region_first_rect(Outbuf *ob)
+{
+   ob->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
+
+   evas_gl_preload_render_lock(eng_preload_make_current, ob);
+#ifdef GL_GLES
+             // dont need to for egl - eng_window_use() can check for other ctxt's
+#else
+   eng_window_use(NULL);
+#endif
+   eng_window_use(ob);
+   if (!_re_wincheck(ob)) return EINA_TRUE;
+
+   evas_gl_common_context_flush(ob->gl_context);
+   evas_gl_common_context_newframe(ob->gl_context);
+   if (partial_render_debug == 1)
+     {
+        glClearColor(0.2, 0.5, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+     }
+
+   return EINA_FALSE;
+}
+
+void*
+eng_outbuf_new_region_for_update(Outbuf *ob,
+                                 int x, int y, int w, int h,
+                                 int *cx EINA_UNUSED, int *cy EINA_UNUSED,
+                                 int *cw EINA_UNUSED, int *ch EINA_UNUSED)
+{
+   if (w == ob->w && h == ob->h)
+     {
+        ob->gl_context->master_clip.enabled = EINA_FALSE;
+     }
+   else
+     {
+        ob->gl_context->master_clip.enabled = EINA_TRUE;
+        ob->gl_context->master_clip.x = x;
+        ob->gl_context->master_clip.y = y;
+        ob->gl_context->master_clip.w = w;
+        ob->gl_context->master_clip.h = h;
+     }
+   return ob->gl_context->def_surface;
+}
+
+void
+eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update EINA_UNUSED,
+                               int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+{
+   /* Is it really necessary to flush per region ? Shouldn't we be able to
+      still do that for the full canvas when doing partial update */
+   if (!_re_wincheck(ob)) return;
+   ob->draw.drew = 1;
+   evas_gl_common_context_flush(ob->gl_context);
+#ifdef GL_GLES
+   // this is needed to make sure all previous rendering is flushed to
+   // buffers/surfaces
+   // previous rendering should be done and swapped
+//xx   if (!safe_native) eglWaitNative(EGL_CORE_NATIVE_ENGINE);
+//   if (eglGetError() != EGL_SUCCESS)
+//     {
+//        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
+//     }
+#else
+   // previous rendering should be done and swapped
+//xx   if (!safe_native) glXWaitX();
+#endif
+}
+
+void
+eng_outbuf_push_free_region_for_update(Outbuf *ob EINA_UNUSED,
+                                       RGBA_Image *update EINA_UNUSED)
+{
+   /* Nothing to do here as we don't really create an image per area */
+}
+
+void
+eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
+{
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
+
+   if (!_re_wincheck(ob)) goto end;
+   if (!ob->draw.drew) goto end;
+
+   ob->draw.drew = 0;
+   eng_window_use(ob);
+   evas_gl_common_context_done(ob->gl_context);
+
+   // Save contents of the framebuffer to a file
+   if (swap_buffer_debug_mode == 1)
+     {
+        if (swap_buffer_debug)
+          {
+             char fname[100];
+             int ret = 0;
+             snprintf(fname, sizeof(fname), "%p", (void*)ob);
+
+             ret = evas_gl_common_buffer_dump(ob->gl_context,
+                                              (const char*)debug_dir,
+                                              (const char*)fname,
+                                              ob->frame_cnt,
+                                              NULL);
+             if (!ret) swap_buffer_debug_mode = 0;
+          }
+     }
+
+#ifdef GL_GLES
+   if (!ob->vsync)
+     {
+        if (ob->info->vsync) eglSwapInterval(ob->egl_disp, 1);
+        else eglSwapInterval(ob->egl_disp, 0);
+        ob->vsync = 1;
+     }
+   if (ob->info->callback.pre_swap)
+     {
+        ob->info->callback.pre_swap(ob->info->callback.data, re->evas);
+     }
+   if ((glsym_eglSwapBuffersWithDamage) && (re->swap_mode != MODE_FULL))
+     {
+        EGLint num = 0, *result = NULL, i = 0;
+        Tilebuf_Rect *r;
+
+        // if partial swaps can be done use re->rects
+        num = eina_inlist_count(EINA_INLIST_GET(rects));
+        if (num > 0)
+          {
+             result = alloca(sizeof(EGLint) * 4 * num);
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+               {
+                  int gw, gh;
+
+                  gw = ob->gl_context->w;
+                  gh = ob->gl_context->h;
+                  switch (ob->rot)
+                    {
+                     case 0:
+                       result[i + 0] = r->x;
+                       result[i + 1] = gh - (r->y + r->h);
+                       result[i + 2] = r->w;
+                       result[i + 3] = r->h;
+                       break;
+                     case 90:
+                       result[i + 0] = r->y;
+                       result[i + 1] = r->x;
+                       result[i + 2] = r->h;
+                       result[i + 3] = r->w;
+                       break;
+                     case 180:
+                       result[i + 0] = gw - (r->x + r->w);
+                       result[i + 1] = r->y;
+                       result[i + 2] = r->w;
+                       result[i + 3] = r->h;
+                       break;
+                     case 270:
+                       result[i + 0] = gh - (r->y + r->h);
+                       result[i + 1] = gw - (r->x + r->w);
+                       result[i + 2] = r->h;
+                       result[i + 3] = r->w;
+                       break;
+                     default:
+                       result[i + 0] = r->x;
+                       result[i + 1] = gh - (r->y + r->h);
+                       result[i + 2] = r->w;
+                       result[i + 3] = r->h;
+                       break;
+                    }
+                  i += 4;
+               }
+             glsym_eglSwapBuffersWithDamage(ob->egl_disp,
+                                            ob->egl_surface[0],
+                                            rects, num);
+          }
+     }
+   else
+      eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+
+//xx   if (!safe_native) eglWaitGL();
+   if (ob->info->callback.post_swap)
+     {
+        ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
+     }
+//   if (eglGetError() != EGL_SUCCESS)
+//     {
+//        printf("Error:  eglSwapBuffers() fail.\n");
+//     }
+#else
+   (void)rects;
+#ifdef VSYNC_TO_SCREEN
+   if (ob->info->vsync)
+     {
+        if (glsym_glXSwapIntervalEXT)
+          {
+             if (!ob->vsync)
+               {
+                  if (ob->info->vsync) glsym_glXSwapIntervalEXT(ob->disp, ob->win, 1);
+                  else glsym_glXSwapIntervalEXT(ob->disp, ob->win, 0);
+                  ob->vsync = 1;
+               }
+          }
+        else if (glsym_glXSwapIntervalSGI)
+          {
+             if (!ob->vsync)
+               {
+                  if (ob->info->vsync) glsym_glXSwapIntervalSGI(1);
+                  else glsym_glXSwapIntervalSGI(0);
+                  ob->vsync = 1;
+               }
+          }
+        else
+          {
+             if ((glsym_glXGetVideoSync) && (glsym_glXWaitVideoSync))
+               {
+                  unsigned int rc;
+
+                  glsym_glXGetVideoSync(&rc);
+                  glsym_glXWaitVideoSync(1, 0, &rc);
+               }
+          }
+     }
+#endif
+   if (ob->info->callback.pre_swap)
+     {
+        ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
+     }
+   // XXX: if partial swaps can be done use re->rects
+//   measure(0, "swap");
+   glXSwapBuffers(ob->disp, ob->win);
+//   measure(1, "swap");
+   if (ob->info->callback.post_swap)
+     {
+        ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
+     }
+#endif
+   // clear out rects after swap as we may use them during swap
+
+   ob->frame_cnt++;
+
+ end:
+   evas_gl_preload_render_unlock(eng_preload_make_current, ob);
 }
