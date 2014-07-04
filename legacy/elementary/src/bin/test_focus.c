@@ -60,6 +60,15 @@ _tb_sel(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+_focus_highlight_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (elm_check_state_get(obj))
+     elm_win_focus_highlight_enabled_set(data, EINA_TRUE);
+   else
+     elm_win_focus_highlight_enabled_set(data, EINA_FALSE);
+}
+
+static void
 _focus_anim_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
@@ -429,9 +438,19 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
      {
         Evas_Object *ck;
+
+        ck = elm_check_add(bx);
+        elm_object_text_set(ck, "Focus Highlight Enable");
+        elm_check_state_set(ck, elm_win_focus_highlight_enabled_get(win));
+        elm_box_pack_end(bx, ck);
+        my_show(ck);
+        evas_object_smart_callback_add(ck, "changed",
+                                       _focus_highlight_changed,
+                                       win);
+
         ck = elm_check_add(bx);
         elm_object_text_set(ck, "Focus Highlight Animation Enable");
-        elm_check_state_set(ck, elm_config_focus_highlight_animate_get());
+        elm_check_state_set(ck, elm_win_focus_highlight_animate_get(win));
         elm_box_pack_end(bx, ck);
         my_show(ck);
         evas_object_smart_callback_add(ck, "changed",

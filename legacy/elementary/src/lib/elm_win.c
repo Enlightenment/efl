@@ -2281,7 +2281,16 @@ _elm_win_focus_highlight_init(Elm_Win_Data *sd)
                            EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
                            _elm_win_object_focus_out, sd->obj);
 
-   sd->focus_highlight.cur.target = NULL;
+   sd->focus_highlight.cur.target = _elm_win_focus_target_get(evas_focus_get(sd->evas));
+   if (sd->focus_highlight.cur.target)
+     {
+        if (elm_widget_highlight_in_theme_get(sd->focus_highlight.cur.target))
+          sd->focus_highlight.cur.in_theme = EINA_TRUE;
+        else
+          _elm_win_focus_target_callbacks_add(sd);
+     }
+
+   sd->focus_highlight.prev.target = NULL;
    sd->focus_highlight.fobj = edje_object_add(sd->evas);
    sd->focus_highlight.theme_changed = EINA_TRUE;
 
