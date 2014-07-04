@@ -17,8 +17,6 @@ function compile()
 compile rect
 compile font
 
-compile img_mask
-
 compile img
 compile img_nomul
 compile img_bgra

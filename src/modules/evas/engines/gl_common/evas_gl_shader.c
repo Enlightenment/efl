@@ -38,31 +38,6 @@ Evas_GL_Program_Source shader_font_vert_src =
    NULL, 0
 };
 
-
-
-
-/////////////////////////////////////////////
-const char img_mask_frag_glsl[] =
-#include "shader/img_mask_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_mask_frag_src =
-{
-   img_mask_frag_glsl,
-   NULL, 0
-};
-
-const char img_mask_vert_glsl[] =
-#include "shader/img_mask_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_mask_vert_src =
-{
-   img_mask_vert_glsl,
-   NULL, 0
-};
-
-
-
-
 /////////////////////////////////////////////
 const char img_frag_glsl[] =
 #include "shader/img_frag.h"
@@ -1030,8 +1005,6 @@ static const struct {
 } _shaders_source[] = {
   SHADER_SOURCE_LINE(RECT, rect),
   SHADER_SOURCE_LINE(FONT, font),
-   
-  SHADER_SOURCE_LINE(IMG_MASK, img_mask),
    
   SHADER_SOURCE_LINE(IMG, img),
   SHADER_SOURCE_LINE(IMG_NOMUL, img_nomul),
