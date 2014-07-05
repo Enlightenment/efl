@@ -131,6 +131,8 @@ extern const char *debug_dir;
 # define EGL_BUFFER_AGE_EXT 0x313d
 #endif
 
+unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
+
 #else
 
 #ifndef GLX_BACK_BUFFER_AGE_EXT
