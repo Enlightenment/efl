@@ -169,7 +169,6 @@
 ./src/lib/elm_transit.c
 ./src/lib/elm_util.c
 ./src/lib/elm_video.c
-./src/lib/elm_web.c
 ./src/lib/elm_web2.c
 ./src/lib/elm_widget.c
 ./src/lib/elm_win.c
