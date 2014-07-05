@@ -68,9 +68,6 @@ typedef const char     *(*glsym_func_const_char_ptr) ();
 #ifndef EGL_NATIVE_PIXMAP_KHR
 # define EGL_NATIVE_PIXMAP_KHR 0x30b0
 #endif
-#ifndef EGL_BUFFER_AGE_EXT
-# define EGL_BUFFER_AGE_EXT 0x313d
-#endif
 #ifndef EGL_Y_INVERTED_NOK
 # define EGL_Y_INVERTED_NOK 0x307F
 #endif
@@ -84,10 +81,6 @@ unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b, int c) = NULL;
 unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 
 #else
-
-#ifndef GLX_BACK_BUFFER_AGE_EXT
-# define GLX_BACK_BUFFER_AGE_EXT 0x20f4
-#endif
 
 typedef XID     (*glsym_func_xid) ();
 

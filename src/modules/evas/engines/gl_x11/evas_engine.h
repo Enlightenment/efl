@@ -125,11 +125,25 @@ extern int swap_buffer_debug_mode;
 extern int swap_buffer_debug;
 extern const char *debug_dir;
 
+#ifdef GL_GLES
+
+#ifndef EGL_BUFFER_AGE_EXT
+# define EGL_BUFFER_AGE_EXT 0x313d
+#endif
+
+#else
+
+#ifndef GLX_BACK_BUFFER_AGE_EXT
+# define GLX_BACK_BUFFER_AGE_EXT 0x20f4
+#endif
+
 extern void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d);
 extern void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c);
 extern int      (*glsym_glXSwapIntervalSGI) (int a);
 extern int      (*glsym_glXGetVideoSync)    (unsigned int *a);
 extern int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c);
+
+#endif
 
 Outbuf *eng_window_new(Evas_Engine_Info_GL_X11 *info, Evas *e,
                        Display *disp, Window win, int screen,
