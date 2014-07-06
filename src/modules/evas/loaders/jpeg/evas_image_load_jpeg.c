@@ -37,8 +37,9 @@ static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 static Eina_Bool _get_next_app0(unsigned char *map, size_t fsize, size_t *position);
-static Eina_Bool _get_orientation_app1(unsigned char *map, size_t fsize, size_t *position, int *orientation);
-static int _get_orientation(void *map, size_t length);
+static Eina_Bool _get_orientation_app1(unsigned char *map, size_t fsize, size_t *position,
+                                       int *orientation, Eina_Bool *flipped);
+static int _get_orientation(void *map, size_t length, Eina_Bool *flipped);
 
 #if 0 /* not used at the moment */
 static int evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f) EINA_ARG_NONNULL(1, 2);
@@ -218,7 +219,8 @@ _get_next_app0(unsigned char *map, size_t fsize, size_t *position)
  */
 
 static Eina_Bool
-_get_orientation_app1(unsigned char *map, size_t fsize, size_t *position, int *orientation_res)
+_get_orientation_app1(unsigned char *map, size_t fsize, size_t *position,
+                      int *orientation_res, Eina_Bool *flipped)
 {
    unsigned char *app1_head, *buf;
    unsigned char orientation[2];
@@ -279,20 +281,37 @@ _get_orientation_app1(unsigned char *map, size_t fsize, size_t *position, int *o
              switch (direction)
                {
                 case 3:
+                  *orientation_res = 180;
+                  *flipped = EINA_FALSE;
+                  return EINA_TRUE;
                 case 4:
-                   *orientation_res = 180;
-                   return EINA_TRUE;
+                  *orientation_res = 180;
+                  *flipped = EINA_TRUE;
+                  return EINA_TRUE;
                 case 6:
+                  *orientation_res = 90;
+                  *flipped = EINA_FALSE;
+                  return EINA_TRUE;
                 case 7:
-                   *orientation_res = 90;
-                   return EINA_TRUE;
+                  *orientation_res = 90;
+                  *flipped = EINA_TRUE;
+                  return EINA_TRUE;
                 case 5:
+                  *orientation_res = 270;
+                  *flipped = EINA_TRUE;
+                  return EINA_TRUE;
                 case 8:
-                   *orientation_res = 270;
-                   return EINA_TRUE;
+                  *orientation_res = 270;
+                  *flipped = EINA_FALSE;
+                  return EINA_TRUE;
+                case 2:
+                  *orientation_res = 0;
+                  *flipped = EINA_TRUE;
+                  return EINA_TRUE;
                 default:
-                   *orientation_res = 0;
-                   return EINA_TRUE;
+                  *orientation_res = 0;
+                  *flipped = EINA_FALSE;
+                  return EINA_TRUE;
                }
           }
         else
@@ -302,12 +321,14 @@ _get_orientation_app1(unsigned char *map, size_t fsize, size_t *position, int *o
 }
 
 static int
-_get_orientation(void *map, size_t length)
+_get_orientation(void *map, size_t length, Eina_Bool *flipped)
 {
    unsigned char *buf;
    size_t position = 0;
    int orientation = -1;
    Eina_Bool res = EINA_FALSE;
+
+   *flipped = EINA_FALSE;
 
    /* open file and get 22 byte frome file */
    if (!map) return 0;
@@ -326,7 +347,7 @@ _get_orientation(void *map, size_t length)
           }
         else if (!memcmp(buf + position, App1, sizeof (App1)))
           {
-             res = _get_orientation_app1(map, length, &position, &orientation);
+             res = _get_orientation_app1(map, length, &position, &orientation, flipped);
              if (!res) break;
              if (orientation != -1) return orientation;
           }
@@ -335,10 +356,69 @@ _get_orientation(void *map, size_t length)
    return 0;
 }
 
+static void
+_rotate_region(unsigned int *r_x, unsigned int *r_y, unsigned int *r_w, unsigned int *r_h,
+               unsigned int x, unsigned int y, unsigned int w, unsigned int h,
+               unsigned int output_w, unsigned int output_h,
+               int degree, Eina_Bool flipped)
+{
+   switch (degree)
+     {
+      case 90:
+        if (flipped)
+          {
+             *r_x = output_w - (y + h);
+             *r_y = output_h - (x + w);
+             *r_w = h;
+             *r_h = w;
+          }
+        else
+          {
+             *r_x = y;
+             *r_y = output_h - (x + y);
+             *r_w = h;
+             *r_h = w;
+          }
+        break;
+      case 180:
+        if (flipped)
+          {
+             *r_y = output_h - (y + h);
+          }
+        else
+          {
+             *r_x = output_w - (x + w);
+             *r_y = output_h - (y + h);
+          }
+        break;
+      case 270:
+        if (flipped)
+          {
+             *r_x = y;
+             *r_y = x;
+             *r_w = h;
+             *r_h = w;
+          }
+        else
+          {
+             *r_x = output_w - (y + h);
+             *r_y = x;
+             *r_w = h;
+             *r_h = w;
+          }
+        break;
+      default:
+        if (flipped)
+           *r_x = output_w - (x + w);
+        break;
+     }
+}
+
 static Eina_Bool
 evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
                                         unsigned char *scale,
                                         unsigned char *rotated,
+                                        Eina_Bool *flipped,
                                         Evas_Image_Load_Opts *opts,
                                         void *map, size_t length,
                                         int *error)
@@ -388,8 +468,8 @@ evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
    /* rotation decoding */
    if (opts->orientation)
      {
-        degree = _get_orientation(map, length);
-        if (degree != 0)
+        degree = _get_orientation(map, length, flipped);
+        if (degree != 0 || *flipped)
           {
              opts->degree = degree;
 	     *rotated = EINA_TRUE;
@@ -522,29 +602,9 @@ evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
              load_region_w = opts->region.w;
              load_region_h = opts->region.h;
 
-             switch (degree)
-               {
-                case 90:
-                   opts->region.x = load_region_y;
-                   opts->region.y = *h - (load_region_x + load_region_w);
-                   opts->region.w = load_region_h;
-                   opts->region.h = load_region_w;
-                   break;
-                case 180:
-                   opts->region.x = *w - (load_region_x+ load_region_w);
-                   opts->region.y = *h - (load_region_y + load_region_h);
-
-                   break;
-                case 270:
-                   opts->region.x = *w - (load_region_y + load_region_h);
-                   opts->region.y = load_region_x;
-                   opts->region.w = load_region_h;
-                   opts->region.h = load_region_w;
-                   break;
-                default:
-                   break;
-               }
-
+             _rotate_region(&opts->region.x, &opts->region.y, &opts->region.w, &opts->region.h,
+                            load_region_x, load_region_y, load_region_w, load_region_h,
+                            *w, *h, degree, *flipped);
           }
         RECTS_CLIP_TO_RECT(opts->region.x, opts->region.y,
                            opts->region.w, opts->region.h,
@@ -591,6 +651,88 @@ get_time(void)
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
 */
+
+static void
+_rotate_180(DATA32 *data, int w, int h)
+{
+   DATA32 *p1, *p2;
+   DATA32 pt;
+   int x;
+
+   p1 = data;
+   p2 = data + (h * w) - 1;
+   for (x = (w * h) / 2; --x >= 0;)
+     {
+        pt = *p1;
+        *p1 = *p2;
+        *p2 = pt;
+        p1++;
+        p2--;
+     }
+}
+
+static void
+_flip_horizontal(DATA32 *data, int w, int h)
+{
+   DATA32 *p1, *p2;
+   DATA32 pt;
+   int x, y;
+
+   for (y = 0; y < h; y++)
+     {
+        p1 = data + (y * w);
+        p2 = data + ((y + 1) * w) - 1;
+        for (x = 0; x < (w >> 1); x++)
+          {
+             pt = *p1;
+             *p1 = *p2;
+             *p2 = pt;
+             p1++;
+             p2--;
+          }
+     }
+}
+
+static void
+_flip_vertical(DATA32 *data, int w, int h)
+{
+   DATA32 *p1, *p2;
+   DATA32 pt;
+   int x, y;
+
+   for (y = 0; y < (h >> 1); y++)
+     {
+        p1 = data + (y * w);
+        p2 = data + ((h - 1 - y) * w);
+        for (x = 0; x < w; x++)
+          {
+             pt = *p1;
+             *p1 = *p2;
+             *p2 = pt;
+             p1++;
+             p2++;
+          }
+     }
+}
+
+static void
+_rotate_change_wh(DATA32 *to, DATA32 *from,
+                  int w, int h,
+                  int dx, int dy)
+{
+   int x, y;
+
+   for (x = h; --x >= 0;)
+     {
+        for (y = w; --y >= 0;)
+          {
+             *to = *from;
+             from++;
+             to += dy;
+          }
+        to += dx;
+     }
+}
 
 static Eina_Bool
 evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
@@ -705,29 +847,9 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
              load_region_w = opts->region.w;
              load_region_h = opts->region.h;
 
-             switch (degree)
-               {
-                case 90:
-                   opts->region.x = load_region_y;
-                   opts->region.y = h - (load_region_x + load_region_w);
-                   opts->region.w = load_region_h;
-                   opts->region.h = load_region_w;
-                   break;
-                case 180:
-                   opts->region.x = w - (load_region_x+ load_region_w);
-                   opts->region.y = h - (load_region_y + load_region_h);
-
-                   break;
-                case 270:
-                   opts->region.x = w - (load_region_y + load_region_h);
-                   opts->region.y = load_region_x;
-                   opts->region.w = load_region_h;
-                   opts->region.h = load_region_w;
-                   break;
-                default:
-                   break;
-               }
-
+             _rotate_region(&opts->region.x, &opts->region.y, &opts->region.w, &opts->region.h,
+                            load_region_x, load_region_y, load_region_w, load_region_h,
+                            w, h, degree, prop->flipped);
           }
 #ifdef BUILD_LOADER_JPEG_REGION
         cinfo.region_x = opts->region.x;
@@ -1076,61 +1198,36 @@ done:
 
    if (prop->rotated)
      {
-        DATA32 *data1, *data2, *to, *from;
-        int lx, ly, lw, lh, hw;
+        DATA32 *to;
+        int hw;
 
-        lw = w;
-        lh = h;
-        hw = lw * lh;
+        hw = w * h;
+        to = pixels;
 
-        data1 = pixels;
-
-        if (degree == 180)
+        switch (degree)
           {
-             DATA32 tmpd;
-
-             data2 = data1 + (lh * lw) -1;
-             for (lx = (lw * lh) / 2; --lx >= 0;)
-               {
-                  tmpd = *data1;
-                  *data1 = *data2;
-                  *data2 = tmpd;
-                  data1++;
-                  data2--;
-               }
-          }
-        else
-          {
-             data2 = NULL;
-             to = NULL;
-             if (ptr_rotate) data2 = ptr_rotate;
-
-             if (degree == 90)
-               {
-                  to = data1 + lh - 1;
-                  hw = -hw - 1;
-               }
-             else if (degree == 270)
-               {
-                  to = data1 + hw - lh;
-                  lh = -lh;
-                  hw = hw + 1;
-               }
-
-             if (to)
-               {
-                  from = data2;
-                  for (lx = h; --lx >= 0;)
-                    {
-                       for (ly = w; --ly >= 0;)
-                         {
-                            *to = *from;
-                            from++;
-                            to += lh;
-                         }
-                       to += hw;
-                    }
-               }
+           case 90:
+             if (prop->flipped)
+               _rotate_change_wh(to + hw - 1, ptr_rotate, w, h, hw - 1, -h);
+             else
+               _rotate_change_wh(to + h - 1, ptr_rotate, w, h, -hw - 1, h);
+             break;
+           case 180:
+             if (prop->flipped)
+               _flip_vertical(to, w, h);
+             else
+               _rotate_180(to, w, h);
+             break;
+           case 270:
+             if (prop->flipped)
+               _rotate_change_wh(to, ptr_rotate, w, h, -hw + 1, h);
+             else
+               _rotate_change_wh(to + hw - h, ptr_rotate, w, h, hw + 1, -h);
+             break;
+           default:
+             if (prop->flipped)
+               _flip_horizontal(to, w, h);
+             break;
           }
         if (ptr_rotate)
           {
@@ -1317,8 +1414,9 @@ evas_image_load_file_head_jpeg(void *loader_data,
      }
 
    val = evas_image_load_file_head_jpeg_internal(&prop->w, &prop->h,
-						 &prop->scale, &prop->rotated,
-						 opts,
+                                                 &prop->scale, &prop->rotated,
+                                                 &prop->flipped,
+                                                 opts,
                                                  map, eina_file_size_get(f),
                                                  error);
 

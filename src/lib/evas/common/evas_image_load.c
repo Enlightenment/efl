@@ -231,9 +231,8 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              ie->flags.alpha = property.alpha;
              if (property.cspaces)
                ie->cspaces = property.cspaces;
-	     if (ie->load_opts.orientation &&
-		 ie->load_opts.degree != 0)
-	       ie->flags.rotated = EINA_TRUE;
+             ie->flags.rotated = property.rotated;
+             ie->flags.flipped = property.flipped;
              r = EINA_FALSE;
           }
         else
@@ -416,6 +415,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    property.h = ie->h;
    property.scale = ie->scale;
    property.rotated = ie->flags.rotated;
+   property.flipped = ie->flags.flipped;
    property.premul = EINA_FALSE;
    property.alpha_sparse = EINA_FALSE;
    property.cspace = ie->space;

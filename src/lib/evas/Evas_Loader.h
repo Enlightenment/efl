@@ -193,6 +193,8 @@ struct _Evas_Image_Property
    struct {
       unsigned char l, r, t, b; /**< Specify the dimensions of duplicated pixels borders for OpenGL compressed textures, set by the loader. @since 1.11 */
    } borders;
+
+   Eina_Bool     flipped;
 };
 
 struct _Evas_Image_Animated
