@@ -353,6 +353,7 @@ spawn_err:
 sock_err:
    if (udev) udev_unref(udev);
 udev_err:
+   ecore_event_shutdown();
    ecore_shutdown();
    eina_log_domain_unregister(_ecore_drm_log_dom);
    _ecore_drm_log_dom = -1;
