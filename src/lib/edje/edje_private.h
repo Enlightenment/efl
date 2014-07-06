@@ -1323,11 +1323,6 @@ struct _Edje
 
    Eina_List            *groups;
 
-   struct {
-      Eina_Hash         *text_class;
-      Eina_Hash         *color_class;
-   } members;
-
    Edje_Perspective     *persp;
 
    const Edje_Signal_Callback_Group *callbacks;
@@ -2071,9 +2066,9 @@ const char *   _edje_text_font_get(const char *base, const char *new,
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
-void              _edje_color_class_member_direct_del(const char *color_class, void *lookup);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
 void              _edje_color_class_member_del(Edje *ed, const char *color_class);
+void              _edje_color_class_member_clean(Edje *ed);
 void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
 void              _edje_color_class_members_free(void);
 void              _edje_color_class_hash_free(void);
@@ -2081,10 +2076,9 @@ void              _edje_color_class_hash_free(void);
 Edje_Text_Class  *_edje_text_class_find(Edje *ed, const char *text_class);
 void              _edje_text_class_member_add(Edje *ed, const char *text_class);
 void              _edje_text_class_member_del(Edje *ed, const char *text_class);
-void              _edje_text_class_member_direct_del(const char *text_class, void *lookup);
 void              _edje_text_class_members_free(void);
 void              _edje_text_class_hash_free(void);
-
+void              _edje_text_class_members_clean(Edje *ed);
 Edje             *_edje_fetch(const Evas_Object *obj) EINA_PURE;
 int               _edje_util_freeze(Edje *ed);
 int               _edje_util_thaw(Edje *ed);
