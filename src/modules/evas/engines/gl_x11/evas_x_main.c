@@ -1177,7 +1177,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
                }
              glsym_eglSwapBuffersWithDamage(ob->egl_disp,
                                             ob->egl_surface[0],
-                                            rects, num);
+                                            result, num);
           }
      }
    else
