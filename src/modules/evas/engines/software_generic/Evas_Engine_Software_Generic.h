@@ -23,7 +23,8 @@ typedef enum _Outbuf_Depth
    OUTBUF_DEPTH_LAST
 } Outbuf_Depth;
 
-typedef enum {
+typedef enum 
+{
   MODE_FULL,
   MODE_COPY,
   MODE_DOUBLE,
@@ -32,7 +33,8 @@ typedef enum {
   MODE_AUTO
 } Render_Engine_Swap_Mode;
 
-typedef enum {
+typedef enum 
+{
   MERGE_BOUNDING,
   MERGE_FULL
 } Render_Engine_Merge_Mode;
