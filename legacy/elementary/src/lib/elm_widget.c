@@ -83,6 +83,62 @@ _elm_scrollable_is(const Evas_Object *obj)
       eo_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
 }
 
+static Eina_Bool
+_on_sub_obj_del(void *data,
+                Eo *obj,
+                const Eo_Event_Description *desc,
+                void *event_info);
+static Eina_Bool
+_on_sub_obj_hide(void *data,
+                 Eo *obj,
+                 const Eo_Event_Description *desc,
+                 void *event_info);
+static Eina_Bool
+_propagate_event(void *data,
+                 Eo *obj,
+                 const Eo_Event_Description *desc,
+                 void *event_info);
+
+EO_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
+                          { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del },
+                          { EVAS_OBJECT_EVENT_HIDE, _on_sub_obj_hide });
+EO_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
+                          { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del });
+EO_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
+                          { EVAS_OBJECT_EVENT_KEY_DOWN, _propagate_event },
+                          { EVAS_OBJECT_EVENT_KEY_UP, _propagate_event },
+                          { EVAS_OBJECT_EVENT_MOUSE_WHEEL, _propagate_event });
+
+static inline void
+_callbacks_add(Eo *widget, void *data)
+{
+   if (_elm_widget_is(widget))
+     {
+        eo_do(widget,
+              eo_event_callback_array_add(elm_widget_subitems_callbacks(), data));
+     }
+   else
+     {
+        eo_do(widget,
+              eo_event_callback_array_add(efl_subitems_callbacks(), data));
+     }
+}
+
+static inline void
+_callbacks_del(Eo *widget, void *data)
+{
+   if (_elm_widget_is(widget))
+     {
+        eo_do(widget,
+              eo_event_callback_array_del(elm_widget_subitems_callbacks(), data));
+     }
+   else
+     {
+        eo_do(widget,
+              eo_event_callback_array_del(efl_subitems_callbacks(), data));
+     }
+}
+
 void
 _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it)
 {
@@ -167,20 +223,21 @@ _parents_unfocus(Evas_Object *obj)
      }
 }
 
-static void
+static Eina_Bool
 _on_sub_obj_hide(void *data EINA_UNUSED,
-              Evas *e EINA_UNUSED,
-              Evas_Object *obj,
-              void *event_info EINA_UNUSED)
+                 Eo *obj,
+                 const Eo_Event_Description *desc EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    elm_widget_focus_hide_handle(obj);
+   return EO_CALLBACK_CONTINUE;
 }
 
-static void
+static Eina_Bool
 _on_sub_obj_del(void *data,
-             Evas *e EINA_UNUSED,
-             Evas_Object *obj,
-             void *event_info EINA_UNUSED)
+                Eo *obj,
+                const Eo_Event_Description *desc EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
 
@@ -192,18 +249,18 @@ _on_sub_obj_del(void *data,
      {
         /* already dels sub object */
         elm_widget_resize_object_set(sd->obj, NULL, EINA_TRUE);
-        return;
      }
    else if (obj == sd->hover_obj)
      {
         sd->hover_obj = NULL;
-        return;
      }
    else
      {
         if (!elm_widget_sub_object_del(sd->obj, obj))
           ERR("failed to remove sub object %p from %p\n", obj, sd->obj);
      }
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -333,8 +390,7 @@ _elm_widget_evas_object_smart_del(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->hover_obj)
      {
         /* detach it from us */
-        evas_object_event_callback_del_full
-          (sd->hover_obj, EVAS_CALLBACK_DEL, _on_sub_obj_del, obj);
+        _callbacks_del(sd->hover_obj, obj);
         sd->hover_obj = NULL;
      }
 
@@ -579,44 +635,40 @@ _propagate_y_drag_lock(Evas_Object *obj,
      }
 }
 
-static void
-_propagate_event(void *data,
-                 Evas *e EINA_UNUSED,
-                 Evas_Object *obj,
+static Eina_Bool
+_propagate_event(void *data EINA_UNUSED,
+                 Eo *obj,
+                 const Eo_Event_Description *desc,
                  void *event_info)
 {
-   INTERNAL_ENTRY;
-   Evas_Callback_Type type = (Evas_Callback_Type)(uintptr_t)data;
+   INTERNAL_ENTRY EO_CALLBACK_CONTINUE;
+   Evas_Callback_Type type;
    Evas_Event_Flags *event_flags = NULL;
 
-   switch (type)
+   if (desc == EVAS_OBJECT_EVENT_KEY_DOWN)
      {
-      case EVAS_CALLBACK_KEY_DOWN:
-           {
-              Evas_Event_Key_Down *ev = event_info;
-              event_flags = &(ev->event_flags);
-           }
-         break;
-
-      case EVAS_CALLBACK_KEY_UP:
-           {
-              Evas_Event_Key_Up *ev = event_info;
-              event_flags = &(ev->event_flags);
-           }
-         break;
-
-      case EVAS_CALLBACK_MOUSE_WHEEL:
-           {
-              Evas_Event_Mouse_Wheel *ev = event_info;
-              event_flags = &(ev->event_flags);
-           }
-         break;
-
-      default:
-         break;
+        Evas_Event_Key_Down *ev = event_info;
+        event_flags = &(ev->event_flags);
+        type = EVAS_CALLBACK_KEY_DOWN;
      }
+   else if (desc == EVAS_OBJECT_EVENT_KEY_UP)
+     {
+        Evas_Event_Key_Up *ev = event_info;
+        event_flags = &(ev->event_flags);
+        type = EVAS_CALLBACK_KEY_UP;
+     }
+   else if (desc == EVAS_OBJECT_EVENT_MOUSE_WHEEL)
+     {
+        Evas_Event_Mouse_Wheel *ev = event_info;
+        event_flags = &(ev->event_flags);
+        type = EVAS_CALLBACK_MOUSE_WHEEL;
+     }
+   else
+     return EO_CALLBACK_CONTINUE;
 
    elm_widget_event_propagate(obj, type, event_info, event_flags);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 /**
@@ -1033,8 +1085,8 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
      }
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
-   evas_object_event_callback_add
-     (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, obj);
+
+   _callbacks_add(sobj, obj);
    if (_elm_widget_is(sobj))
      {
         ELM_WIDGET_DATA_GET(sobj, sdc);
@@ -1050,9 +1102,6 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
          */
         double scale, pscale = elm_widget_scale_get(sobj);
         Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
-
-        evas_object_event_callback_add
-          (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, NULL);
 
         scale = elm_widget_scale_get(sobj);
         th = elm_widget_theme_get(sobj);
@@ -1148,11 +1197,7 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
 
-   evas_object_event_callback_del_full
-     (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, obj);
-   if (_elm_widget_is(sobj))
-     evas_object_event_callback_del_full
-       (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, NULL);
+   _callbacks_del(sobj, obj);
 
    return EINA_TRUE;
 }
@@ -1224,14 +1269,12 @@ _elm_widget_hover_object_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eva
 {
    if (sd->hover_obj)
      {
-        evas_object_event_callback_del_full(sd->hover_obj, EVAS_CALLBACK_DEL,
-                                            _on_sub_obj_del, obj);
+        _callbacks_del(sd->hover_obj, obj);
      }
    sd->hover_obj = sobj;
    if (sd->hover_obj)
      {
-        evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
-                                       _on_sub_obj_del, obj);
+        _callbacks_add(sobj, obj);
         _smart_reconfigure(sd);
      }
 }
@@ -1257,24 +1300,11 @@ _elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focu
              sd->child_can_focus = EINA_TRUE;
           }
 
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
-                                       _propagate_event,
-                                       (void *)(uintptr_t)EVAS_CALLBACK_KEY_DOWN);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP,
-                                       _propagate_event,
-                                       (void *)(uintptr_t)EVAS_CALLBACK_KEY_UP);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_WHEEL,
-                                       _propagate_event,
-                                       (void *)(uintptr_t)EVAS_CALLBACK_MOUSE_WHEEL);
+        eo_do(obj, eo_event_callback_array_add(focus_callbacks(), NULL));
      }
    else
      {
-        evas_object_event_callback_del(obj, EVAS_CALLBACK_KEY_DOWN,
-                                       _propagate_event);
-        evas_object_event_callback_del(obj, EVAS_CALLBACK_KEY_UP,
-                                       _propagate_event);
-        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_WHEEL,
-                                       _propagate_event);
+        eo_do(obj, eo_event_callback_array_del(focus_callbacks(), NULL));
      }
 }
 
@@ -3945,17 +3975,32 @@ _track_obj_update(Evas_Object *track, Evas_Object *obj)
    else evas_object_hide(track);
 }
 
-static void
-_track_obj_view_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+static Eina_Bool
+_track_obj_view_update(void *data, Eo *obj,
+                       const Eo_Event_Description *desc EINA_UNUSED,
                        void *event_info EINA_UNUSED)
 {
-   Evas_Object *track = data;
-   _track_obj_update(track, obj);
+   Elm_Widget_Item *item = data;
+   _track_obj_update(item->track_obj, obj);
+   return EO_CALLBACK_CONTINUE;
 }
 
-static void
-_track_obj_view_del(void *data, Evas *e EINA_UNUSED,
-                    Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_track_obj_view_del(void *data, Eo *obj EINA_UNUSED,
+                    const Eo_Event_Description *desc EINA_UNUSED,
+                    void *event_info EINA_UNUSED);
+
+EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
+                          { EVAS_OBJECT_EVENT_RESIZE, _track_obj_view_update },
+                          { EVAS_OBJECT_EVENT_MOVE, _track_obj_view_update },
+                          { EVAS_OBJECT_EVENT_SHOW, _track_obj_view_update },
+                          { EVAS_OBJECT_EVENT_HIDE, _track_obj_view_update },
+                          { EVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
+
+static Eina_Bool
+_track_obj_view_del(void *data, Eo *obj EINA_UNUSED,
+                    const Eo_Event_Description *desc EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Elm_Widget_Item *item = data;
 
@@ -3966,6 +4011,8 @@ _track_obj_view_del(void *data, Evas *e EINA_UNUSED,
                                   _track_obj_del);
    evas_object_del(item->track_obj);
    item->track_obj = NULL;
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -3977,16 +4024,7 @@ _track_obj_del(void *data, Evas *e EINA_UNUSED,
 
    if (!item->view) return;
 
-   evas_object_event_callback_del(item->view, EVAS_CALLBACK_RESIZE,
-                                  _track_obj_view_update);
-   evas_object_event_callback_del(item->view, EVAS_CALLBACK_MOVE,
-                                  _track_obj_view_update);
-   evas_object_event_callback_del(item->view, EVAS_CALLBACK_SHOW,
-                                  _track_obj_view_update);
-   evas_object_event_callback_del(item->view, EVAS_CALLBACK_HIDE,
-                                  _track_obj_view_update);
-   evas_object_event_callback_del(item->view, EVAS_CALLBACK_DEL,
-                                  _track_obj_view_del);
+   eo_do(item->view, eo_event_callback_array_del(tracker_callbacks(), item));
 }
 
 static void
@@ -4512,16 +4550,8 @@ elm_widget_item_track(Elm_Widget_Item *item)
    evas_object_event_callback_add(track, EVAS_CALLBACK_DEL, _track_obj_del,
                                   item);
 
-   evas_object_event_callback_add(item->view, EVAS_CALLBACK_RESIZE,
-                                  _track_obj_view_update, track);
-   evas_object_event_callback_add(item->view, EVAS_CALLBACK_MOVE,
-                                  _track_obj_view_update, track);
-   evas_object_event_callback_add(item->view, EVAS_CALLBACK_SHOW,
-                                  _track_obj_view_update, track);
-   evas_object_event_callback_add(item->view, EVAS_CALLBACK_HIDE,
-                                  _track_obj_view_update, track);
-   evas_object_event_callback_add(item->view, EVAS_CALLBACK_DEL,
-                                  _track_obj_view_del, item);
+   eo_do(item->view,
+         eo_event_callback_array_add(tracker_callbacks(), item));
 
    evas_object_ref(track);
 
