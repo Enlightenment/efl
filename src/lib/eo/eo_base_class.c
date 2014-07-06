@@ -16,6 +16,7 @@ typedef struct
 {
    Eina_List *children;
    Eo *parent;
+   Eina_List *parent_list;
 
    Eina_Inlist *generic_data;
    Eo ***wrefs;
@@ -115,8 +116,9 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
         old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
         if (old_parent_pd)
           {
-             old_parent_pd->children = eina_list_remove(old_parent_pd->children,
-                                                        obj);
+             old_parent_pd->children = eina_list_remove_list(old_parent_pd->children,
+                                                             pd->parent_list);
+             pd->parent_list = NULL;
           }
         else
           {
@@ -138,6 +140,7 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
              pd->parent = parent_id;
              parent_pd->children = eina_list_append(parent_pd->children,
                    obj);
+             pd->parent_list = eina_list_last(parent_pd->children);
              eo_xref(obj, pd->parent);
           }
         else
