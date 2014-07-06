@@ -83,10 +83,10 @@ Outbuf      *evas_buffer_outbuf_buf_setup_fb               (int w, int h, Outbuf
 
 
 void         evas_buffer_outbuf_reconfigure                (Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
-RGBA_Image  *evas_buffer_outbuf_buf_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void        *evas_buffer_outbuf_buf_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void         evas_buffer_outbuf_buf_free_region_for_update (Outbuf *buf, RGBA_Image *update);
 void         evas_buffer_outbuf_buf_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
-void         evas_buffer_outbuf_buf_switch_buffer          (Outbuf *buf);
+void         evas_buffer_outbuf_buf_switch_buffer          (Outbuf *buf, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 Render_Engine_Swap_Mode evas_buffer_outbuf_buf_swap_mode_get(Outbuf *buf);
 int          evas_buffer_outbuf_buf_rot_get                (Outbuf *buf);
 

@@ -117,7 +117,7 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    return buf;
 }
 
-RGBA_Image *
+void *
 evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *im;
@@ -170,7 +170,7 @@ evas_buffer_outbuf_buf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 }
 
 void
-evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf)
+evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
    if (buf->func.switch_buffer)
      {
