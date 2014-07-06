@@ -78,6 +78,7 @@ void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 void          *(*glsym_eglMapImageSEC)         (void *a, void *b, int c, int d) = NULL;
 unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b, int c) = NULL;
+unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 
 #else
 
