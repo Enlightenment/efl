@@ -1,6 +1,7 @@
 #ifndef ELM_WIDGET_PANEL_H
 #define ELM_WIDGET_PANEL_H
 
+#include "elm_interface_scrollable.h"
 #include "elm_widget_layout.h"
 
 /**
@@ -22,11 +23,22 @@ struct _Elm_Panel_Data
 {
    Evas_Object                          *bx, *content;
    Evas_Object                          *event;
+   Evas_Object                          *scr_ly;
+   Evas_Object                          *hit_rect, *panel_edje, *scr_edje;
+   Evas_Object                          *scr_panel, *scr_event;
+
 
    Elm_Panel_Orient                      orient;
 
+   double                                content_size_ratio;
+   Evas_Coord                            down_x, down_y;
+   Evas_Coord                            handler_size;
+   Ecore_Timer                          *timer;
+
    Eina_Bool                             hidden : 1;
    Eina_Bool                             delete_me : 1;
+   Eina_Bool                             scrollable : 1;
+   Eina_Bool                             freeze: 1;
 };
 
 /**

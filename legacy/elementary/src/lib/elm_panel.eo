@@ -1,4 +1,4 @@
-class Elm_Panel (Elm_Layout)
+class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable)
 {
    eo_prefix: elm_obj_panel;
    properties {
@@ -45,6 +45,28 @@ class Elm_Panel (Elm_Layout)
             Eina_Bool hidden; /*@ If true, the panel will run the animation to disappear. */
          }
       }
+      scrollable {
+         set {
+            /*@
+            @brief Set the scrollability of the panel.
+
+            @ingroup Panel */
+         }
+         values {
+            Eina_Bool scrollable;
+         }
+      }
+      scrollable_content_size {
+         set {
+            /*@
+            @brief Set the size of the scrollable panel.
+
+            @ingroup Panel */
+         }
+         values {
+            double ratio;
+         }
+      }
    }
    methods {
       toggle {
@@ -59,12 +81,17 @@ class Elm_Panel (Elm_Layout)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
+      Evas.Object_Smart.member_add;
       Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
+      Evas.Object_Smart.move;
       Elm_Widget.theme_apply;
       Elm_Widget.focus_next_manager_is;
       Elm_Widget.focus_next;
+      Elm_Widget.disable;
       Elm_Widget.access;
       Elm_Widget.event;
+      Elm_Widget.on_focus_region;
       Elm_Container.content_get;
       Elm_Container.content_unset;
       Elm_Container.content_set;

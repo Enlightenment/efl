@@ -23,6 +23,9 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
+ * @li @c "scroll" : When the content has been scrolled (moved). (since 1.10)
+ *        This signal is emitted only when the panel is scrollable.
+ *        Elm_Panel_Scroll_Info will be passed by @c event_info argument.
  * @li @c "focused" : When the panel has received focus. (since 1.8)
  * @li @c "unfocused" : When the panel has lost focus. (since 1.8)
  *
