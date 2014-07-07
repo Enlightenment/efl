@@ -1,16 +1,20 @@
 #!/bin/bash
+
+DIR=`dirname $0`
+MAKESTR="sh $DIR/make-c-str.sh"
+
 function compile()
 {
-  F=$1
+  F="$DIR/$1"
 
   if [ -f $F".shd" ]; then
-    make-c-str.sh $F".shd" > $F".h"
+    $MAKESTR $F".shd" > $F".h"
   fi
   if [ -f $F"_frag.shd" ]; then
-    make-c-str.sh $F"_frag.shd" > $F"_frag.h"
+    $MAKESTR $F"_frag.shd" > $F"_frag.h"
   fi
   if [ -f $F"_vert.shd" ]; then
-    make-c-str.sh $F"_vert.shd" > $F"_vert.h"
+    $MAKESTR $F"_vert.shd" > $F"_vert.h"
   fi
 }
 
