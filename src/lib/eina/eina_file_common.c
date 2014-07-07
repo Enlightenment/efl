@@ -515,7 +515,7 @@ eina_file_filename_get(const Eina_File *file)
    in doing a search inside 4K boundary.
  */
 static inline const char *
-_eina_fine_eol(const char *start, int boundary, const char *end)
+_eina_find_eol(const char *start, int boundary, const char *end)
 {
    const char *cr;
    const char *lf;
@@ -564,7 +564,7 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
    if (it->current.end == it->end)
      return EINA_FALSE;
 
-   eol = _eina_fine_eol(it->current.end,
+   eol = _eina_find_eol(it->current.end,
                         it->boundary,
                         it->end);
    it->boundary = (uintptr_t) eol & 0x3FF;
