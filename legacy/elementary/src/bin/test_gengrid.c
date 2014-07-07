@@ -829,6 +829,12 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(bt);
 
    ck = elm_check_add(win);
+   elm_object_text_set(ck, "Reorder mode enable");
+   evas_object_smart_callback_add(ck, "changed", reorder_mode_cb, grid);
+   elm_box_pack_end(hbx, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(win);
    elm_object_text_set(ck, "Horizontal Mode");
    evas_object_smart_callback_add(ck, "changed", _horizontal_grid, grid);
    elm_box_pack_end(hbx, ck);

@@ -2428,7 +2428,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                        if (_item_horizontal_loop(obj, ELM_FOCUS_LEFT))
                          return EINA_TRUE;
                     }
-                  else
+                  else if (sd->item_loop_enable)
                     {
                        if (_item_horizontal_loop(obj, ELM_FOCUS_UP))
                          return EINA_TRUE;
