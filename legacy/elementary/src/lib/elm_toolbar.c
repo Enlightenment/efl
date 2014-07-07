@@ -640,7 +640,6 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *it)
      return;
    if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      return;
-   sd->prev_focused_item = it;
    if (elm_widget_focus_highlight_enabled_get(obj))
      {
         edje_object_signal_emit
@@ -749,7 +748,6 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd)
      }
    else
      {
-        sd->prev_focused_item = sd->focused_item;
         sd->last_focused_item = sd->focused_item;
         if (sd->focused_item)
           _elm_toolbar_item_unfocused(sd->focused_item);
@@ -1137,8 +1135,6 @@ _item_del(Elm_Toolbar_Item *it)
      sd->focused_item = NULL;
    if (sd->last_focused_item == (Elm_Object_Item *)it)
      sd->last_focused_item = NULL;
-   if (sd->prev_focused_item == (Elm_Object_Item *)it)
-     sd->prev_focused_item = NULL;
 
    evas_object_del(it->object);
    //TODO: See if checking for sd->menu_parent is necessary before

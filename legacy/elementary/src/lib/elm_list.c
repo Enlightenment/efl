@@ -83,8 +83,6 @@ _elm_list_item_free(Elm_List_Item *it)
      sd->focused_item = NULL;
    if (sd->last_focused_item == (Elm_Object_Item *)it)
      sd->last_focused_item = NULL;
-   if (sd->prev_focused_item == (Elm_Object_Item *)it)
-     sd->prev_focused_item = NULL;
    if (sd->last_selected_item == (Elm_Object_Item *)it)
      sd->last_selected_item = NULL;
 
@@ -316,7 +314,6 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
    ELM_LIST_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
    Elm_List_Item *it = NULL;
 
-   sd->prev_focused_item = sd->focused_item;
    if (sd->focused_item)
      it = _next_item_get(sd, (Elm_List_Item *)sd->focused_item, dir);
 
@@ -1133,7 +1130,6 @@ _elm_list_item_unfocused(Elm_List_Item *it)
        (it != (Elm_List_Item *)sd->focused_item))
      return;
 
-   sd->prev_focused_item = (Elm_Object_Item *)it;
    if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      return;
 
@@ -1249,7 +1245,6 @@ _elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd)
      }
    else
      {
-        sd->prev_focused_item = sd->focused_item;
         sd->last_focused_item = sd->focused_item;
         if (sd->focused_item)
           _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);

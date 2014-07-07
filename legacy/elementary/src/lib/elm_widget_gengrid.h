@@ -40,7 +40,6 @@ struct _Elm_Gengrid_Data
    Elm_Object_Item                      *last_selected_item;
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
-   Elm_Object_Item                      *prev_focused_item; /**< a previous focused item by keypad arrow or mouse. */
    Elm_Gen_Item                         *show_it;
    Elm_Gen_Item                         *bring_in_it;
    Elm_Gengrid_Item_Scrollto_Type        scroll_to_type;

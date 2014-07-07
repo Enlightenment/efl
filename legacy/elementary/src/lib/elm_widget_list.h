@@ -28,7 +28,6 @@ struct _Elm_List_Data
    Eina_List                            *items, *selected, *to_delete;
    Elm_Object_Item                      *last_selected_item;
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
-   Elm_Object_Item                      *prev_focused_item; /**< a previous focused item by keypad arrow or mouse. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
    Evas_Coord                            minw[2], minh[2];
    Elm_Object_Select_Mode                select_mode;

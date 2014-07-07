@@ -2489,8 +2489,6 @@ _elm_genlist_item_unfocused(Elm_Gen_Item *it)
        (it != (Elm_Gen_Item *)sd->focused_item))
      return;
 
-   sd->prev_focused_item = (Elm_Object_Item *)it;
-
    if (elm_widget_focus_highlight_enabled_get(obj))
      edje_object_signal_emit
         (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
@@ -2958,7 +2956,6 @@ _elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd)
      {
         if (sd->focused_item)
           {
-             sd->prev_focused_item = sd->focused_item;
              sd->last_focused_item = sd->focused_item;
              _elm_genlist_item_unfocused((Elm_Gen_Item *)sd->focused_item);
           }
@@ -3333,8 +3330,6 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
      sd->last_focused_item = NULL;
    if (sd->focused_item == (Elm_Object_Item *)it)
      sd->focused_item = NULL;
-   if (sd->prev_focused_item == (Elm_Object_Item *)it)
-     sd->prev_focused_item = NULL;
    if (sd->last_selected_item == (Elm_Object_Item *)it)
      sd->last_selected_item = NULL;
 

@@ -1547,8 +1547,6 @@ _elm_gengrid_item_unfocused(Elm_Gen_Item *it)
        (it != (Elm_Gen_Item *)sd->focused_item))
      return;
 
-   sd->prev_focused_item = (Elm_Object_Item *)it;
-
    if (elm_widget_focus_highlight_enabled_get(obj))
      {
         edje_object_signal_emit
@@ -2814,7 +2812,6 @@ _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd)
      {
         if (sd->focused_item)
           {
-             sd->prev_focused_item = sd->focused_item;
              sd->last_focused_item = sd->focused_item;
              _elm_gengrid_item_unfocused((Elm_Gen_Item *)sd->focused_item);
           }
@@ -2917,8 +2914,6 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
      sd->focused_item = NULL;
    if (sd->last_focused_item == (Elm_Object_Item *)it)
      sd->last_focused_item = NULL;
-   if (sd->prev_focused_item == (Elm_Object_Item *)it)
-     sd->prev_focused_item = NULL;
 
    if (it->itc->func.del)
      it->itc->func.del((void *)it->base.data, WIDGET(it));
