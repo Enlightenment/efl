@@ -1550,27 +1550,35 @@ eolian_show(const Eolian_Class class)
 
 #define EO_SUFFIX ".eo"
 #define EOT_SUFFIX ".eot"
-#define EO_SCAN_BODY(suffix, hash) \
-if (eina_str_has_suffix(file, suffix)) \
-  { \
-     int len = strlen(file); \
-     int idx = len - 1; \
-     while (idx >= 0 && file[idx] != '/' && file[idx] != '\\') idx--; \
-     eina_hash_add(hash, eina_stringshare_add_length(file+idx+1, len - idx - sizeof(suffix)), strdup(file)); \
-  }
+
+static char *
+join_path(const char *path, const char *file)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   eina_strbuf_append(buf, path);
+   eina_strbuf_append_char(buf, '/');
+   eina_strbuf_append(buf, file);
+
+   return eina_strbuf_string_steal(buf);
+}
+
+static void
+_scan_cb(const char *name, const char *path, void *data EINA_UNUSED)
+{
+   size_t len;
+   Eina_Bool is_eo = eina_str_has_suffix(name, EO_SUFFIX);
+   if (!is_eo && !eina_str_has_suffix(name, EOT_SUFFIX)) return;
+   len = strlen(name) - (is_eo ? sizeof(EO_SUFFIX) : sizeof(EOT_SUFFIX)) + 1;
+   eina_hash_add(is_eo ? _filenames : _tfilenames,
+                 eina_stringshare_add_length(name, len), join_path(path, name));
+}
 
 EAPI Eina_Bool
 eolian_directory_scan(const char *dir)
 {
    if (!dir) return EINA_FALSE;
-   char *file;
-   /* Get all files from directory. Not recursively!!! */
-   Eina_Iterator *dir_files = eina_file_ls(dir);
-   EINA_ITERATOR_FOREACH(dir_files, file) EO_SCAN_BODY(EO_SUFFIX, _filenames);
-   eina_iterator_free(dir_files);
-   dir_files = eina_file_ls(dir);
-   EINA_ITERATOR_FOREACH(dir_files, file) EO_SCAN_BODY(EOT_SUFFIX, _tfilenames);
-   eina_iterator_free(dir_files);
+   eina_file_dir_list(dir, EINA_TRUE, _scan_cb, NULL);
    return EINA_TRUE;
 }
 

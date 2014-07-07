@@ -160,7 +160,8 @@ EAPI int eolian_init(void);
 EAPI int eolian_shutdown(void);
 
 /*
- * @brief Scan the given directory and search for .eo and .eot files.
+ * @brief Scan the given directory (recursively) and search for .eo and
+ * .eot files.
  *
  * The found files are just open to extract the class name.
  *
