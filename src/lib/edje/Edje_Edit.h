@@ -2037,6 +2037,62 @@ EAPI int edje_edit_part_item_prefer_h_get(Evas_Object *obj, const char *part, co
  */
 EAPI Eina_Bool edje_edit_part_item_prefer_h_set(Evas_Object *obj, const char *part, const char *item, int prefer_h);
 
+/** Get the spread width value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get spread width.
+ *
+ * @return The spread width value.
+ * @since 1.11
+ */
+EAPI int edje_edit_part_item_spread_w_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the spread width value of a part's item.
+ *
+ * @attention be carefull, if you set up huge number (like 10 or 100). width and height of
+ * spread is being multiplied and you will get huge number of objects that may "eat"
+ * all of your processor performance at once... Or if you want, you may
+ * get some coffee and wait until it will recalculate all of those objects :)
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set spread width.
+ * @param spread_w Maximum width value.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_spread_w_set(Evas_Object *obj, const char *part, const char *item, int spread_w);
+
+/** Get the spread height value of a part's item.
+ *
+ * @attention be carefull, if you set up huge number (like 10 or 100). width and height of
+ * spread is being multiplied and you will get huge number of objects that may "eat"
+ * all of your processor performance at once... Or if you want, you may
+ * get some coffee and wait until it will recalculate all of those objects :)
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to get spread height.
+ *
+ * @return The spread height value.
+ * @since 1.11
+ */
+EAPI int edje_edit_part_item_spread_h_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the spread height value of a part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param item The name of the item to set spread height.
+ * @param spread_h spread height value.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_spread_h_set(Evas_Object *obj, const char *part, const char *item, int spread_h);
+
 /** Get paddings of the part's item.
  *
  * @param obj Object being edited.
@@ -2051,7 +2107,6 @@ EAPI Eina_Bool edje_edit_part_item_prefer_h_set(Evas_Object *obj, const char *pa
  * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *item_name, int *l, int *r, int *t, int *b);
-
 
 /** Set paddings of the part's item.
  *

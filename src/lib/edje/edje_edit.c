@@ -4244,6 +4244,8 @@ FUNC_PART_ITEM_INT(aspect, w, 0);
 FUNC_PART_ITEM_INT(aspect, h, 0);
 FUNC_PART_ITEM_INT(prefer, w, 0);
 FUNC_PART_ITEM_INT(prefer, h, 0);
+FUNC_PART_ITEM_INT(spread, w, 0);
+FUNC_PART_ITEM_INT(spread, h, 0);
 
 EAPI Edje_Aspect_Control
 edje_edit_part_item_aspect_mode_get(Evas_Object *obj, const char *part, const char *item_name)
