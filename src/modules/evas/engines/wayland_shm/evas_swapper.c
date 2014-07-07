@@ -32,7 +32,7 @@ struct _Wl_Swapper
    Wl_Buffer *buffer_sent;
    int in_use;
    int dx, dy, w, h, depth;
-   int buff_cur, buff_num;
+   int buff_cur, buff_num, buff_last;
    struct wl_shm *shm;
    struct wl_surface *surface;
    struct wl_shm_pool *pool;
@@ -180,7 +180,7 @@ evas_swapper_swap(Wl_Swapper *ws, Eina_Rectangle *rects, unsigned int count)
    /* check for valid swapper */
    if (!ws) return;
 
-   n = ws->buff_cur;
+   ws->buff_last = n = ws->buff_cur;
    _evas_swapper_buffer_put(ws, &(ws->buff[n]), rects, count);
    ws->buff[n].valid = EINA_TRUE;
    ws->in_use++;
@@ -245,25 +245,26 @@ evas_swapper_buffer_unmap(Wl_Swapper *ws)
 int 
 evas_swapper_buffer_state_get(Wl_Swapper *ws)
 {
-   int i = 0, n = 0, count = 0;
+   int delta;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   for (i = 0; i < ws->buff_num; i++)
-     {
-        n = (ws->buff_num + ws->buff_cur - (i)) % ws->buff_num;
-        if (ws->buff[n].valid) count++;
-        else break;
-     }
+   delta = (ws->buff_last - ws->buff_cur +
+            (ws->buff_last > ws->buff_last ?
+             0 : ws->buff_num)) % ws->buff_num;
 
-   if (count == ws->buff_num)
+   /* This is the number of frame since last frame */
+   switch (delta)
      {
-        if (count == 1) return MODE_COPY;
-        else if (count == 2) return MODE_DOUBLE;
-        else if (count == 3) return MODE_TRIPLE;
+      case 0:
+         return MODE_COPY;
+      case 1:
+         return MODE_DOUBLE;
+      case 2:
+         return MODE_TRIPLE;
+      default:
+         return MODE_FULL;
      }
-
-   return MODE_FULL;
 }
 
 void 
