@@ -926,7 +926,7 @@ edje_edit_compiler_get(Evas_Object *obj)
 /****************/
 
 EAPI Eina_List *
-edje_edit_sounds_samples_list_get(Evas_Object *obj)
+edje_edit_sound_samples_list_get(Evas_Object *obj)
 {
    Eina_List *sounds_samples = NULL;
    unsigned int i;
@@ -944,7 +944,7 @@ edje_edit_sounds_samples_list_get(Evas_Object *obj)
 }
 
 EAPI Eina_List *
-edje_edit_sounds_tones_list_get(Evas_Object *obj)
+edje_edit_sound_tones_list_get(Evas_Object *obj)
 {
    Eina_List *sounds_tones = NULL;
    unsigned int i;

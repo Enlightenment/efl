@@ -4713,7 +4713,7 @@ EAPI Eina_Bool edje_edit_state_tween_del(Evas_Object *obj, const char *part, con
  * @return A List containing all sounds samples names found in the edje file.
  * @since 1.11
  */
-EAPI Eina_List * edje_edit_sounds_samples_list_get(Evas_Object *obj);
+EAPI Eina_List * edje_edit_sound_samples_list_get(Evas_Object *obj);
 
 /** Get the list of all the sounds tones in the given edje.
  * Use edje_edit_string_list_free() when you don't need the list anymore.
@@ -4723,7 +4723,7 @@ EAPI Eina_List * edje_edit_sounds_samples_list_get(Evas_Object *obj);
  * @return A List containing all sounds tones names found in the edje file.
  * @since 1.11
  */
-EAPI Eina_List * edje_edit_sounds_tones_list_get(Evas_Object *obj);
+EAPI Eina_List * edje_edit_sound_tones_list_get(Evas_Object *obj);
 
 /** Add new sound sample to samples collection
  *
