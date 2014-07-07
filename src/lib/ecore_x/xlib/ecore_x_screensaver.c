@@ -218,3 +218,14 @@ ecore_x_screensaver_resume(void)
 #endif /* ifdef ECORE_XSS */
 }
 
+EAPI void
+ecore_x_screensaver_reset(void)
+{
+   XResetScreenSaver(_ecore_x_disp);
+}
+
+EAPI void
+ecore_x_screensaver_activate(void)
+{
+   XActivateScreenSaver(_ecore_x_disp);
+}

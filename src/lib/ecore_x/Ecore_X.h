@@ -1974,6 +1974,8 @@ EAPI Eina_Bool                       ecore_x_screensaver_custom_blanking_enable(
 EAPI Eina_Bool                       ecore_x_screensaver_custom_blanking_disable(void); /** @since 1.7 */
 EAPI void                            ecore_x_screensaver_supend(void);
 EAPI void                            ecore_x_screensaver_resume(void);
+EAPI void                            ecore_x_screensaver_reset(void);
+EAPI void                            ecore_x_screensaver_activate(void);
 
 /* FIXME: these funcs need categorising */
 
