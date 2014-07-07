@@ -38,7 +38,6 @@ static void
 eo_definitions_accessor_param_free(Eo_Accessor_Param *param)
 {
    if (param->name) eina_stringshare_del(param->name);
-   if (param->attrs) eina_stringshare_del(param->attrs);
    free(param);
 }
 

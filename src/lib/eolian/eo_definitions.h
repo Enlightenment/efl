@@ -64,7 +64,7 @@ typedef enum _eo_accessor_type
 typedef struct _eo_accessor_param
 {
    const char *name;
-   const char *attrs;
+   Eina_Bool is_const:1;
 } Eo_Accessor_Param;
 
 typedef struct _eo_accessor_def

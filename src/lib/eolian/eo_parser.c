@@ -383,47 +383,27 @@ parse_legacy(Eo_Lexer *ls)
 static void
 parse_attrs(Eo_Lexer *ls)
 {
-   Eina_Strbuf *buf = NULL;
    Eo_Accessor_Param *acc = NULL;
-   Eina_Bool has_const  = EINA_FALSE, has_own = EINA_FALSE,
-             has_nonull = EINA_FALSE, first   = EINA_TRUE;
+   Eina_Bool has_const = EINA_FALSE;
    acc = calloc(1, sizeof(Eo_Accessor_Param));
    ls->tmp.accessor_param = acc;
    acc->name = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    check_next(ls, ':');
    check(ls, TOK_VALUE);
-   buf = push_strbuf(ls);
    for (;;) switch (ls->t.kw)
      {
       case KW_const:
         CASE_LOCK(ls, const, "const qualifier")
-        if (!first) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "const");
-        first = EINA_FALSE;
-        eo_lexer_get(ls);
-        break;
-      case KW_own:
-        CASE_LOCK(ls, own, "own qualifier")
-        if (!first) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "@own");
-        first = EINA_FALSE;
-        eo_lexer_get(ls);
-        break;
-      case KW_at_nonull:
-        CASE_LOCK(ls, nonull, "@nonull qualifier")
-        if (!first) eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, "@nonull");
-        first = EINA_FALSE;
+        acc->is_const = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:
-        if (first) eo_lexer_syntax_error(ls, "attribute expected");
+        if (ls->t.token != ';')
+          eo_lexer_syntax_error(ls, "attribute expected");
         goto end;
      }
 end:
-   acc->attrs = eina_stringshare_add(eina_strbuf_string_get(buf));
-   pop_strbuf(ls);
    check_next(ls, ';');
 }
 
@@ -1240,7 +1220,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
                        printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
                     }
                   else
-                     if (strstr(acc_param->attrs, "const"))
+                     if (acc_param->is_const)
                        {
                           database_parameter_const_attribute_set(desc, accessor->type == GETTER, EINA_TRUE);
                        }
