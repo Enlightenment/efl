@@ -4711,6 +4711,7 @@ EAPI Eina_Bool edje_edit_state_tween_del(Evas_Object *obj, const char *part, con
  * @param obj Object being edited.
  *
  * @return A List containing all sounds samples names found in the edje file.
+ * @since 1.11
  */
 EAPI Eina_List * edje_edit_sounds_samples_list_get(Evas_Object *obj);
 
@@ -4720,6 +4721,7 @@ EAPI Eina_List * edje_edit_sounds_samples_list_get(Evas_Object *obj);
  * @param obj Object being edited.
  *
  * @return A List containing all sounds tones names found in the edje file.
+ * @since 1.11
  */
 EAPI Eina_List * edje_edit_sounds_tones_list_get(Evas_Object *obj);
 
@@ -4737,8 +4739,9 @@ EAPI Eina_List * edje_edit_sounds_tones_list_get(Evas_Object *obj);
  * @param name The name that will identify sample.
  * @param snd_src The name of the sound file to add.
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
  * @see edje_edit_sound_sample_del()
+ * @since 1.11
  */
 Eina_Bool
 edje_edit_sound_sample_add(Evas_Object *obj, const char* name, const char* snd_src);
@@ -4752,8 +4755,9 @@ edje_edit_sound_sample_add(Evas_Object *obj, const char* name, const char* snd_s
  * @param obj Object being edited.
  * @param name The name of the sound to be deleted from the edje.
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
  * @see edje_edit_sound_sample_add()
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_sound_sample_del(Evas_Object *obj, const char *name);
 
@@ -4790,20 +4794,22 @@ EAPI Eina_Bool edje_edit_sound_tone_del(Evas_Object *obj, const char* name);
 
 /** Get the sound quality compression.
  *
- *@param obj Object being edited.
- *@param sound The name of the sample.
+ * @param obj Object being edited.
+ * @param sound The name of the sample.
  *
- *@return Quality of the compression of the sample sound.
+ * @return Quality of the compression of the sample sound.
+ * @since 1.11
  */
 EAPI double edje_edit_sound_compression_rate_get(Evas_Object *obj, const char* sound);
 
 /* Set the sound quality compression.
  *
- *@param obj Object being edited.
- *@param sound The name of the sample.
- *@param rate Quality of the compression.
+ * @param obj Object being edited.
+ * @param sound The name of the sample.
+ * @param rate Quality of the compression.
  *
- *@return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if successful, @cEINA_FALSE otherwise.
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_sound_compression_rate_set(Evas_Object *obj, const char* sound, double rate);
 
@@ -4813,8 +4819,9 @@ EAPI Eina_Bool edje_edit_sound_compression_rate_set(Evas_Object *obj, const char
  * @param name The name of the tone.
  * @param frequency The value of frequency of tone. This value has to be in range of 20 to 20000 inclusive.
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
  * @see edje_edit_sound_tone_frequency_get()
+ * @since 1.11
  */
 EAPI Eina_Bool edje_edit_sound_tone_frequency_set(Evas_Object *obj, const char *name, int frequency);
 
@@ -4825,6 +4832,7 @@ EAPI Eina_Bool edje_edit_sound_tone_frequency_set(Evas_Object *obj, const char *
  *
  * @return The frequency of tone if succesful, otherwise returns -1.
  * @see edje_edit_sound_tone_frequency_set()
+ * @since 1.11
  */
 EAPI int edje_edit_sound_tone_frequency_get(Evas_Object *obj, const char *name);
 
@@ -4843,9 +4851,9 @@ EAPI Edje_Edit_Sound_Comp edje_edit_sound_compression_type_get(Evas_Object *obj,
  * @param obj Object being edited.
  * @param name The name of the sample.
  * @param sc Edje_Edit_Sound_Comp
- * (EDJE_EDIT_SOUND_COMP_RAW, EDJE_EDIT_SOUND_COMP_COMP, EDJE_EDIT_SOUND_COMP_LOSSY, EDJE_EDIT_SOUND_COMP_AS_IS).
+ * (@c EDJE_EDIT_SOUND_COMP_RAW, @c EDJE_EDIT_SOUND_COMP_COMP, @c EDJE_EDIT_SOUND_COMP_LOSSY, @c EDJE_EDIT_SOUND_COMP_AS_IS).
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
  * @since 1.11
  */
 EAPI Eina_Bool edje_edit_sound_compression_type_set(Evas_Object *obj, const char* name, Edje_Edit_Sound_Comp sc);
