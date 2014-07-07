@@ -246,7 +246,10 @@ struct _Evas_3D_Mesh
 
    Evas_3D_Vertex_Assembly assembly;
 
-   Eina_Hash              *nodes;
+   Eina_Hash               *nodes;
+
+   Evas_Color              fog_color;
+   Eina_Bool               fog_enabled :1;
 };
 
 struct _Evas_3D_Texture

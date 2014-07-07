@@ -743,6 +743,36 @@ _evas_3d_mesh_vertex_assembly_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
+_evas_3d_mesh_fog_color_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
+{
+   evas_color_set(&pd->fog_color, r, g, b, a);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FOG, NULL));
+}
+
+EOLIAN static void
+_evas_3d_mesh_fog_color_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
+                                   Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
+{
+   if (r) *r = pd->fog_color.r;
+   if (g) *g = pd->fog_color.g;
+   if (b) *b = pd->fog_color.b;
+   if (a) *a = pd->fog_color.a;
+}
+
+EOLIAN static void
+_evas_3d_mesh_fog_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
+{
+   pd->fog_enabled = enabled;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FOG, NULL));
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_mesh_fog_enable_get(Eo *obj, Evas_3D_Mesh_Data *pd)
+{
+   return pd->fog_enabled;
+}
+
+EOLIAN static void
 _evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type, const char *file, const char *key EINA_UNUSED)
 {
    _mesh_fini(pd);

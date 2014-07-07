@@ -243,6 +243,7 @@ evas-aspect-hints.c \
 evas-box.c \
 evas-buffer-simple.c \
 evas-events.c \
+evas-3d-fog.c \
 evas-hints.c \
 evas-images.c \
 evas-images2.c \

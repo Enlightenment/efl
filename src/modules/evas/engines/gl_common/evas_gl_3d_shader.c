@@ -44,6 +44,8 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_MATERIAL_SPECULAR,
    E3D_UNIFORM_MATERIAL_EMISSION,
    E3D_UNIFORM_MATERIAL_SHININESS,
+   E3D_UNIFORM_FOG_FACTOR,
+   E3D_UNIFORM_FOG_COLOR,
 
    E3D_UNIFORM_COUNT,
 } E3D_Uniform;
@@ -496,6 +498,12 @@ _fragment_shader_string_variable_add(E3D_Shader_String *shader,
    /* Texture coordinate. */
    if (_flags_need_tex_coord(flags))
      ADD_LINE("varying vec2   vTexCoord;");
+
+   if (flags & E3D_SHADER_FLAG_FOG_ENABLED)
+     {
+        ADD_LINE("uniform float uFogFactor;");
+        ADD_LINE("uniform vec4  uFogColor;");
+     }
 
    /* Materials. */
    if (flags & E3D_SHADER_FLAG_DIFFUSE)
@@ -1067,6 +1075,14 @@ _fragment_shader_string_get(E3D_Shader_String *shader,
         ADD_LINE("fragmentNormalMap();");
      }
 
+     if (flags & E3D_SHADER_FLAG_FOG_ENABLED)
+     {
+        ADD_LINE("float z = gl_FragCoord.z / gl_FragCoord.w;");
+        ADD_LINE("float fogFactor = exp2( -uFogFactor * uFogFactor * z * z * 1.44 );");
+        ADD_LINE("fogFactor = clamp(fogFactor, 0.0, 1.0);");
+        ADD_LINE("gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor );");
+     }
+
    ADD_LINE("}");
 }
 
@@ -1234,6 +1250,8 @@ static const char *uniform_names[] =
    "uMaterialSpecular",
    "uMaterialEmission",
    "uMaterialShininess",
+   "uFogFactor",
+   "uFogColor"
 };
 
 static inline void
@@ -1393,6 +1411,12 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       case E3D_UNIFORM_MATERIAL_SHININESS:
          glUniform1f(loc, data->shininess);
+         break;
+      case E3D_UNIFORM_FOG_FACTOR:
+         glUniform1f(loc, data->fog_color.a);
+         break;
+      case E3D_UNIFORM_FOG_COLOR:
+         glUniform4f(loc, data->fog_color.r, data->fog_color.g, data->fog_color.b, 1);
          break;
       default:
          ERR("Invalid uniform ID.");

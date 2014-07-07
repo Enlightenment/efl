@@ -1084,6 +1084,11 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
    if (pdmesh->frames == NULL)
      return EINA_FALSE;
 
+   if (pdmesh->fog_enabled)
+     {
+        data->flags |= E3D_SHADER_FLAG_FOG_ENABLED;
+        data->fog_color = pdmesh->fog_color;
+     }
    data->mode = pdmesh->shade_mode;
    data->assembly = pdmesh->assembly;
    data->vertex_count = pdmesh->vertex_count;

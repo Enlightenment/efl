@@ -310,6 +310,48 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
           return int;
       }
 
+      fog_color_set {
+         /*
+           Set the fog color and density for the given mesh.
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in Evas_Real r; /*@ The red component of the fog color.*/
+            @in Evas_Real g; /*@ The green component of the fog color.*/
+            @in Evas_Real b; /*@ The blue component of the fog color.*/
+            @in Evas_Real a; /*@ The transparency of fog.*/
+         }
+      }
+      fog_color_get {
+         /*
+           Set the fog color and density for the given mesh.
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @out Evas_Real r; /*@ Pointer to receive red component of the fog color.*/
+            @out Evas_Real g; /*@ Pointer to receive green component of the fog color.*/
+            @out Evas_Real b; /*@ Pointer to receive blue component of the fog color.*/
+            @out Evas_Real a; /*@ Pointer to receive transparency of fog.*/
+         }
+      }
+      fog_enable_set {
+         /*
+           Enable or disable fog effect for given mesh.
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in Eina_Bool enabled; /*@ The red component of the fog color.*/
+         }
+      }
+      fog_enable_get {
+         /*
+           Get fog effect status for the given mesh.
+           @ingroup Evas_3D_Mesh
+          */
+         return Eina_Bool;
+         params {
+         }
+      }
    }
    properties {
       shade_mode {

@@ -35,6 +35,7 @@ typedef unsigned long         E3D_Shader_Flag;
 #define E3D_SHADER_FLAG_SPECULAR_TEXTURE_BLEND  (1 << 26)
 #define E3D_SHADER_FLAG_EMISSION_TEXTURE_BLEND  (1 << 27)
 #define E3D_SHADER_FLAG_NORMAL_TEXTURE_BLEND    (1 << 28)
+#define E3D_SHADER_FLAG_FOG_ENABLED             (1 << 29)
 
 static inline Eina_Bool
 _flags_need_tex_coord(E3D_Shader_Flag flags)
@@ -90,6 +91,7 @@ struct _E3D_Draw_Data
         Evas_Color  diffuse;
         Evas_Color  specular;
    } light;
+   Evas_Color fog_color;
 };
 
 struct _E3D_Texture
