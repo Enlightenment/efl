@@ -65,6 +65,24 @@ group { name: "elm/check/base/default";
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
+         } else {
+            if (!d) {
+               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"shadow", "default", 0.0);
+               set_state(PART:"base", "default", 0.0);
+               set_state(PART:"clip", "default", 0.0);
+               set_state(PART:"event", "default", 0.0);
+            } else {
+               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"shadow", "disabled", 0.0);
+               set_state(PART:"base", "disabled", 0.0);
+               set_state(PART:"clip", "disabled", 0.0);
+               set_state(PART:"event", "disabled", 0.0);
+            }
          }
       }
    }
@@ -396,6 +414,32 @@ group { name: "elm/check/base/toggle";
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
+               set_state(PART:"shadow", "disabled", 0.0);
+               set_state(PART:"clip", "disabled", 0.0);
+               set_state(PART:"event", "disabled", 0.0);
+               set_state(PART:"event2", "disabled", 0.0);
+               set_state(PART:"elm.ontext", "disabled", 0.0);
+               set_state(PART:"elm.offtext", "disabled", 0.0);
+               set_state(PART:"onrect", "disabled", 0.0);
+               set_state(PART:"offrect", "disabled", 0.0);
+            }
+         } else {
+            if (!d) {
+               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"shadow", "default", 0.0);
+               set_state(PART:"clip", "default", 0.0);
+               set_state(PART:"event", "default", 0.0);
+               set_state(PART:"event2", "default", 0.0);
+               set_state(PART:"elm.ontext", "default", 0.0);
+               set_state(PART:"elm.offtext", "default", 0.0);
+               set_state(PART:"onrect", "default", 0.0);
+               set_state(PART:"offrect", "default", 0.0);
+            } else {
+               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);

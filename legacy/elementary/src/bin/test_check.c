@@ -95,6 +95,13 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(ck);
    evas_object_show(ic);
 
+   ck = elm_check_add(win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, ck);
+   elm_object_disabled_set(ck, EINA_TRUE);
+   evas_object_show(ck);
+   
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);

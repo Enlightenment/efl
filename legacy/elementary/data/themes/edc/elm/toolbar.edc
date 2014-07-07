@@ -418,10 +418,17 @@ group { name: "elm/toolbar/item/default";
                set_state(PART:"label2", "noicon_disabled", 0.0);
             }
          } else {
-            set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"icon_clip", "default", 0.0);
-            set_state(PART:"elm.text", "default", 0.0);
-            set_state(PART:"label2", "default", 0.0);
+            if (!d) {
+               set_state(PART:"elm.swallow.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"elm.text", "noicon", 0.0);
+               set_state(PART:"label2", "noicon", 0.0);
+            } else {
+               set_state(PART:"elm.swallow.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"elm.text", "noicon_disabled", 0.0);
+               set_state(PART:"label2", "noicon_disabled", 0.0);
+            }
          }
       }
    }
