@@ -181,7 +181,7 @@ _edje_class_member_del(Edje *ed, Eina_Hash **ghash, const char *class)
    members = eina_hash_find(*ghash, class);
    if (!members) return;
 
-   lookup = eina_hash_find(members, class);
+   lookup = eina_hash_find(members, &ed);
    if (!lookup) return;
 
    EINA_REFCOUNT_UNREF(lookup)
