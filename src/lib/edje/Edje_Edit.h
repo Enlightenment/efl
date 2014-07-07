@@ -2114,6 +2114,52 @@ EAPI double edje_edit_part_item_align_y_get(Evas_Object *obj, const char *part, 
  */
 EAPI Eina_Bool edje_edit_part_item_align_y_set(Evas_Object *obj, const char *part, const char *item, double align_y);
 
+/** Get the horizontal weight value of a part item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to get horizontal weight value.
+ *
+ * @return The horizontal weight value for the given item (value is between -1.0 and 1.0)
+ * @since 1.11
+ */
+EAPI double edje_edit_part_item_weight_x_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the horizontal we value of a part item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain itemf
+ * @param item The name of the item to set horizontal weight value.
+ * @param weight_x New value of the horizontal weight.
+ *
+ * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_weight_x_set(Evas_Object *obj, const char *part, const char *item, double weight_x);
+
+/** Get the vertical weight value of a part item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to get vertical weight value.
+ *
+ * @return The vertical weight value for the given item (value is between -1.0 and 1.0)
+ * @since 1.11
+ */
+EAPI double edje_edit_part_item_weight_y_get(Evas_Object *obj, const char *part, const char *item);
+
+/** Set the vertical weight value of a part item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item to set vertical weight value.
+ * @param weight_y New value of the vertical weight.
+ *
+ * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_weight_y_set(Evas_Object *obj, const char *part, const char *item, double weight_y);
+
 /** Get column/row position of the part's item.
  *
  * @param obj Object being edited.

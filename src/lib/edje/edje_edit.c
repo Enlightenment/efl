@@ -4372,7 +4372,7 @@ edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *
    return EINA_TRUE;
 }
 
-#define FUNC_PART_ITEM_DOUBLE(Name, Value)				\
+#define FUNC_PART_ITEM_DOUBLE(Name, Value, Min, Max)			\
   EAPI double								\
   edje_edit_part_item_##Name##_get(Evas_Object *obj, const char *part, const char *item_name) \
   {									\
@@ -4402,7 +4402,7 @@ edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *
      Edje_Pack_Element *item = NULL;					\
      if ((!obj) || (!part) || (!item_name))				\
        return EINA_FALSE;						\
-     if ((v < -1.0) || (v > 1.0))					\
+     if ((v < Min) || (v > Max))					\
        return EINA_FALSE;						\
      GET_RP_OR_RETURN(EINA_FALSE);					\
      ep = rp->part;							\
@@ -4422,8 +4422,10 @@ edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *
      return EINA_TRUE;                                                  \
   }
 
-FUNC_PART_ITEM_DOUBLE(align_x, align.x);
-FUNC_PART_ITEM_DOUBLE(align_y, align.y);
+FUNC_PART_ITEM_DOUBLE(align_x, align.x, -1.0, 1.0);
+FUNC_PART_ITEM_DOUBLE(align_y, align.y, -1.0, 1.0);
+FUNC_PART_ITEM_DOUBLE(weight_x, weight.x, 0.0, 99999.990);
+FUNC_PART_ITEM_DOUBLE(weight_y, weight.y, 0.0, 99999.990);
 
 #undef FUNC_PART_ITEM_DOUBLE
 
