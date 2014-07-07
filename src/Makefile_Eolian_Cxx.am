@@ -35,6 +35,7 @@ bin_eolian_cxx_eolian_cxx_SOURCES = \
     bin/eolian_cxx/convert.hh \
     bin/eolian_cxx/eolian_wrappers.hh \
     bin/eolian_cxx/safe_strings.hh \
+    bin/eolian_cxx/type_lookup.hh \
     bin/eolian_cxx/eolian_cxx.cc
 
 bin_eolian_cxx_eolian_cxx_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
