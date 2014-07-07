@@ -71,6 +71,7 @@ static const struct {
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
   { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
   { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
+  // ETC1/2 support
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
@@ -80,6 +81,8 @@ static const struct {
   // images marked as no alpha but format supports it (RGBA8_ETC2_EAC):
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_ETC1_ALPHA, &etc1_fmt, &etc1_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_ETC1_ALPHA, &etc1_fmt, &etc1_fmt },
   // S3TC support
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
@@ -516,6 +519,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
@@ -1183,6 +1187,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
       case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
       case EVAS_COLORSPACE_RGB8_ETC2:
         {
            /*
@@ -1205,7 +1210,8 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
            GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
            if ((tex->gc->shared->info.etc1_subimage ||
-               (im->cache_entry.space != EVAS_COLORSPACE_ETC1))
+               ((im->cache_entry.space != EVAS_COLORSPACE_ETC1) &&
+                (im->cache_entry.space != EVAS_COLORSPACE_ETC1_ALPHA)))
                && (tex->pt->w != width || tex->pt->h != height))
              {
                 int err;
@@ -1225,7 +1231,8 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                      // FIXME: Changing settings on the fly.
                      // The first texture will be black.
                      // How to fallback? We need a whole texture now.
-                     if (im->cache_entry.space == EVAS_COLORSPACE_ETC1)
+                     if ((im->cache_entry.space == EVAS_COLORSPACE_ETC1) ||
+                         (im->cache_entry.space == EVAS_COLORSPACE_ETC1_ALPHA))
                        tex->gc->shared->info.etc1_subimage = EINA_FALSE;
                   }
              }
@@ -1458,6 +1465,171 @@ evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels,
      {
         glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+}
+
+Evas_GL_Texture *
+evas_gl_common_texture_rgb_a_pair_new(Evas_Engine_GL_Context *gc,
+                                      RGBA_Image *im)
+{
+   Evas_GL_Texture *tex;
+   int lformat, w, h;
+
+   // FIXME/TODO: We don't support texture atlasses here (a bit tricky)
+
+   // Some debugging. We could return.
+   if (im->cache_entry.space != EVAS_COLORSPACE_ETC1_ALPHA)
+     WRN("Using RGB+A texture pair with format %d", im->cache_entry.space);
+
+   w = im->cache_entry.w;
+   h = im->cache_entry.h;
+
+   lformat = _evas_gl_texture_search_format(EINA_FALSE, gc->shared->info.bgra,
+                                            im->cache_entry.space);
+   if (lformat < 0) return NULL;
+
+   tex = evas_gl_common_texture_alloc(gc, w, h, EINA_TRUE);
+   if (!tex) return NULL;
+
+   // Allocate RGB texture normally - as a 'whole'
+   tex->pt = _pool_tex_new(gc, w, h,
+                           *matching_format[lformat].intformat,
+                           *matching_format[lformat].format);
+   if (!tex->pt)
+     {
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   pt_link(gc, tex->pt);
+   tex->pt->slot = -1;
+
+   // And now Alpha texture -- FIXME could intformat be different? (eg. ALPHA4)
+   tex->pta = _pool_tex_new(gc, w, h,
+                            *matching_format[lformat].intformat,
+                            *matching_format[lformat].format);
+   if (!tex->pta)
+     {
+        pt_unref(tex->pt);
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   pt_link(gc, tex->pta);
+   tex->pta->slot = -1;
+
+   evas_gl_common_texture_rgb_a_pair_update(tex, im);
+   return tex;
+}
+
+void
+evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
+                                             RGBA_Image *im)
+{
+   DATA8 *data1, *data2;
+   Eina_Bool comp, upload;
+   int w, h, sz, rowlen, ystep = 1;
+
+   if (!tex->pt) return;
+
+   // Handle compressed formats with 4x4 blocks format
+   if (((int) im->cache_entry.space >= (int) EVAS_COLORSPACE_ETC1) &&
+       ((int) im->cache_entry.space <= (int) EVAS_COLORSPACE_RGBA_S3TC_DXT5))
+     ystep = 4;
+
+   w = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
+   h = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
+   rowlen = _evas_gl_texture_size_get(w, ystep, tex->pt->intformat, NULL);
+   sz = _evas_gl_texture_size_get(w, h, tex->pt->intformat, &comp);
+   data1 = im->image.data8;
+   data2 = data1 + sz;
+   upload = !!data1;
+
+   if (tex->gc->shared->info.unpack_row_length)
+     {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, w); GLERRLOG();
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); GLERRLOG();
+        glBindTexture(GL_TEXTURE_2D, tex->pt->texture); GLERRLOG();
+        if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
+          goto on_error;
+        if (upload)
+          {
+             if (comp)
+               _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data1);
+             else
+               _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
+          }
+        glBindTexture(GL_TEXTURE_2D, tex->pta->texture); GLERRLOG();
+        if (!_tex_2d(tex->gc, tex->pta->intformat, w, h, tex->pta->format, tex->pta->dataformat))
+          goto on_error;
+        if (upload)
+          {
+             if (comp)
+               _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data2);
+             else
+               _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data2);
+          }
+     }
+   else
+     {
+        int y;
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); GLERRLOG();
+        glBindTexture(GL_TEXTURE_2D, tex->pt->texture); GLERRLOG();
+        if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format,
+                     tex->pt->dataformat))
+          goto on_error;
+        if (upload)
+          {
+             if (w == tex->w)
+               {
+                  if (comp)
+                    _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data1);
+                  else
+                    _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
+               }
+             else
+               {
+                  for (y = 0; y < h; y += ystep)
+                    {
+                       if (comp)
+                         _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data1);
+                       else
+                         _tex_sub_2d(tex->gc, 0, y, w, ystep, tex->pt->format,
+                                     tex->pt->dataformat, data1 + rowlen * y / ystep);
+                    }
+               }
+          }
+
+        glBindTexture(GL_TEXTURE_2D, tex->pta->texture); GLERRLOG();
+        if (!_tex_2d(tex->gc, tex->pta->intformat, w, h, tex->pta->format,
+                     tex->pta->dataformat))
+          goto on_error;
+        if (upload)
+          {
+             if (w == tex->w)
+               {
+                  if (comp)
+                    _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data2);
+                  else
+                    _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data2);
+               }
+             else
+               {
+                  for (y = 0; y < h; y += ystep)
+                    {
+                       if (comp)
+                         _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data2);
+                       else
+                         _tex_sub_2d(tex->gc, 0, y, w, ystep, tex->pt->format,
+                                     tex->pt->dataformat, data2 + rowlen * y / ystep);
+                    }
+               }
+          }
+     }
+on_error:
+   if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
+     {
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        GLERRLOG();
      }
 }
 

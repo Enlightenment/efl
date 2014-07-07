@@ -132,9 +132,13 @@ _evas_gl_cspace_list_fill(Evas_Engine_GL_Context *gc)
         CS_APPEND(EVAS_COLORSPACE_RGBA8_ETC2_EAC);
         CS_APPEND(EVAS_COLORSPACE_RGB8_ETC2);
         CS_APPEND(EVAS_COLORSPACE_ETC1);
+        CS_APPEND(EVAS_COLORSPACE_ETC1_ALPHA);
      }
    else if (gc->shared->info.etc1)
-     CS_APPEND(EVAS_COLORSPACE_ETC1);
+     {
+        CS_APPEND(EVAS_COLORSPACE_ETC1);
+        CS_APPEND(EVAS_COLORSPACE_ETC1_ALPHA);
+     }
    if (gc->shared->info.s3tc)
      {
         CS_APPEND(EVAS_COLORSPACE_RGB_S3TC_DXT1);
@@ -347,6 +351,7 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
       case EVAS_COLORSPACE_AGRY88:
         break;
       case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
         if (gc->shared->info.etc1 && !gc->shared->info.etc2) break;
         ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
         break;
@@ -400,6 +405,7 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
       case EVAS_COLORSPACE_AGRY88:
         break;
       case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
         if (gc->shared->info.etc1 && !gc->shared->info.etc2) break;
         ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
         break;
@@ -460,6 +466,7 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
       case EVAS_COLORSPACE_AGRY88:
          break;
       case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
         if (gc->shared->info.etc1 && !gc->shared->info.etc2) break;
         ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
         break;
@@ -601,12 +608,19 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
    if (!im->gc->shared->info.sec_image_map) return;
    if (!im->gc->shared->info.bgra) return;
    // does not handle yuv yet.
-   if (im->cs.space != EVAS_COLORSPACE_ARGB8888 &&
-       im->cs.space != EVAS_COLORSPACE_GRY8 &&
-       im->cs.space != EVAS_COLORSPACE_AGRY88 &&
-       im->cs.space != EVAS_COLORSPACE_ETC1 &&
-       im->cs.space != EVAS_COLORSPACE_RGB8_ETC2 &&
-       im->cs.space != EVAS_COLORSPACE_RGBA8_ETC2_EAC) return;
+   // TODO: Check this list of cspaces
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_RGB565_A5P:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        return;
+      default: break;
+     }
    if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
      {
         if (im->cs.data)
@@ -831,6 +845,22 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
         im->dirty = 0;
         if (!im->tex) return;
 	break;
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        if ((im->tex) && (im->dirty))
+          {
+             evas_cache_image_load_data(&im->im->cache_entry);
+             evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
+             evas_cache_image_unload_data(&im->im->cache_entry);
+          }
+        else if ((!im->tex))
+          {
+             evas_cache_image_load_data(&im->im->cache_entry);
+             im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
+             evas_cache_image_unload_data(&im->im->cache_entry);
+          }
+        im->dirty = 0;
+        if (!im->tex) return;
+        break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
         if ((im->tex) && (im->dirty))
@@ -942,13 +972,14 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                          im->cs.space);
 }
 
-void
-evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
-			  int dx, int dy, int dw, int dh,
-                          int sx, int sy, int sw, int sh,
-                          int cx, int cy, int cw, int ch,
-                          int r, int g, int b, int a, int smooth,
-                          int yuv, int yuy2, int nv12)
+static void
+_evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
+                           int dx, int dy, int dw, int dh,
+                           int sx, int sy, int sw, int sh,
+                           int cx, int cy, int cw, int ch,
+                           int r, int g, int b, int a, Eina_Bool smooth,
+                           Eina_Bool yuv, Eina_Bool yuy2, Eina_Bool nv12,
+                           Eina_Bool rgb_a_pair)
 {
    double ssx, ssy, ssw, ssh;
    int nx, ny, nw, nh;
@@ -981,6 +1012,13 @@ evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                            dx, dy, dw, dh,
                                            r, g, b, a,
                                            smooth);
+        else if (rgb_a_pair)
+          evas_gl_common_context_rgb_a_pair_push(gc,
+                                                 im->tex,
+                                                 sx, sy, sw, sh,
+                                                 dx, dy, dw, dh,
+                                                 r, g, b, a,
+                                                 smooth);
         else
           evas_gl_common_context_image_push(gc,
                                             im->tex,
@@ -1017,6 +1055,13 @@ evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                       nx, ny, nw, nh,
                                       r, g, b, a,
                                       smooth);
+   else if (rgb_a_pair)
+     evas_gl_common_context_rgb_a_pair_push(gc,
+                                            im->tex,
+                                            ssx, ssy, ssw, ssh,
+                                            nx, ny, nw, nh,
+                                            r, g, b, a,
+                                            smooth);
    else
      evas_gl_common_context_image_push(gc,
                                        im->tex,
@@ -1035,9 +1080,10 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    Cutout_Rect  *rct;
    int c, cx, cy, cw, ch;
    int i;
-   int yuv = 0;
-   int yuy2 = 0;
-   int nv12 = 0;
+   Eina_Bool yuv = EINA_FALSE;
+   Eina_Bool yuy2 = EINA_FALSE;
+   Eina_Bool nv12 = EINA_FALSE;
+   Eina_Bool rgb_a_pair = EINA_FALSE;
 
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
@@ -1061,14 +1107,24 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
         return;
      }
 
-   if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
-       (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
-     yuv = 1;
-   if (im->cs.space == EVAS_COLORSPACE_YCBCR422601_PL)
-     yuy2 = 1;
-   if ((im->cs.space == EVAS_COLORSPACE_YCBCR420NV12601_PL) ||
-       (im->cs.space == EVAS_COLORSPACE_YCBCR420TM12601_PL))
-     nv12 = 1;
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        yuv = EINA_TRUE;
+        break;
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+        yuy2 = EINA_TRUE;
+        break;
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+        nv12 = EINA_TRUE;
+        break;
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        rgb_a_pair = EINA_TRUE;
+        break;
+      default: break;
+     }
 
    if ((sw == dw) && (sh == dh)) smooth = 0;
    
@@ -1079,22 +1135,22 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
      {
         if (gc->dc->clip.use)
           {
-             evas_gl_common_image_push(gc, im,
-                                       dx, dy, dw, dh,
-                                       sx, sy, sw, sh,
-                                       gc->dc->clip.x, gc->dc->clip.y,
-                                       gc->dc->clip.w, gc->dc->clip.h,
-                                       r, g, b, a, smooth,
-                                       yuv, yuy2, nv12);
+             _evas_gl_common_image_push(gc, im,
+                                        dx, dy, dw, dh,
+                                        sx, sy, sw, sh,
+                                        gc->dc->clip.x, gc->dc->clip.y,
+                                        gc->dc->clip.w, gc->dc->clip.h,
+                                        r, g, b, a, smooth,
+                                        yuv, yuy2, nv12, rgb_a_pair);
           }
         else
           {
-             evas_gl_common_image_push(gc, im,
-                                       dx, dy, dw, dh,
-                                       sx, sy, sw, sh,
-                                       dx, dy, dw, dh,
-                                       r, g, b, a, smooth,
-                                       yuv, yuy2, nv12);
+             _evas_gl_common_image_push(gc, im,
+                                        dx, dy, dw, dh,
+                                        sx, sy, sw, sh,
+                                        dx, dy, dw, dh,
+                                        r, g, b, a, smooth,
+                                        yuv, yuy2, nv12, rgb_a_pair);
           }
         return;
      }
@@ -1114,12 +1170,12 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
      {
         rct = rects->rects + i;
 
-        evas_gl_common_image_push(gc, im,
-                                  dx, dy, dw, dh,
-                                  sx, sy, sw, sh,
-                                  rct->x, rct->y, rct->w, rct->h,
-                                  r, g, b, a, smooth,
-                                  yuv, yuy2, nv12);
+        _evas_gl_common_image_push(gc, im,
+                                   dx, dy, dw, dh,
+                                   sx, sy, sw, sh,
+                                   rct->x, rct->y, rct->w, rct->h,
+                                   r, g, b, a, smooth,
+                                   yuv, yuy2, nv12, rgb_a_pair);
      }
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;

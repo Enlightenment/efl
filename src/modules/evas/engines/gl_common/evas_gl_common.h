@@ -332,6 +332,9 @@ typedef enum {
   SHADER_YUY2_NOMUL,
   SHADER_NV12,
   SHADER_NV12_NOMUL,
+
+  SHADER_RGB_A_PAIR,
+  SHADER_RGB_A_PAIR_NOMUL,
 /*   
   SHADER_FILTER_INVERT,
   SHADER_FILTER_INVERT_NOMUL,
@@ -413,6 +416,8 @@ struct _Evas_GL_Shared
 #define MAX_ATLAS_H            512
 #define DEF_ATLAS_H                 512
 
+#define ATLAS_FORMATS_COUNT    11
+
       Eina_List *cspaces; // depend on the values of etc1, etc2 and st3c
 
       struct {
@@ -433,7 +438,7 @@ struct _Evas_GL_Shared
 
    struct {
       Eina_List       *whole;
-      Eina_List       *atlas[10];
+      Eina_List       *atlas[ATLAS_FORMATS_COUNT];
    } tex;
 
    Eina_Hash          *native_pm_hash;
@@ -595,7 +600,11 @@ struct _Evas_GL_Texture
 {
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image   *im;
-   Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptuv, *ptt;
+   Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptt;
+   union {
+      Evas_GL_Texture_Pool *ptuv;
+      Evas_GL_Texture_Pool *pta;
+   };
    RGBA_Font_Glyph *fglyph;
    int              x, y, w, h;
    int              tx, ty;
@@ -777,6 +786,12 @@ void             evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                                   int x, int y, int w, int h,
                                                   int r, int g, int b, int a,
                                                   Eina_Bool smooth);
+void             evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
+                                                        Evas_GL_Texture *tex,
+                                                        double sx, double sy, double sw, double sh,
+                                                        int x, int y, int w, int h,
+                                                        int r, int g, int b, int a,
+                                                        Eina_Bool smooth);
 void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                                        Evas_GL_Texture *tex,
                                                        int npoints,
@@ -821,6 +836,8 @@ Evas_GL_Texture  *evas_gl_common_texture_nv12_new(Evas_Engine_GL_Context *gc, DA
 void              evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **row, unsigned int w, unsigned int h);
 Evas_GL_Texture  *evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
 void              evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **row, unsigned int w, unsigned int h);
+Evas_GL_Texture  *evas_gl_common_texture_rgb_a_pair_new(Evas_Engine_GL_Context *gc, RGBA_Image *im);
+void              evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex, RGBA_Image *im);
 
 void              evas_gl_common_image_alloc_ensure(Evas_GL_Image *im);
 void              evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
@@ -900,6 +917,7 @@ void pt_unref(Evas_GL_Texture_Pool *pt);
 #else
 # define GLERR(fn, fl, ln, op)
 #endif
+#define GLERRLOG() GLERR(__FUNCTION__, __FILE__, __LINE__, "")
 
 Eina_Bool evas_gl_common_module_open(void);
 void      evas_gl_common_module_close(void);
@@ -911,6 +929,15 @@ _tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int
        (h > gc->shared->info.max_texture_size)) return;
    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+}
+
+static inline void
+_comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int imgsize, const void *pix)
+{
+   if ((w > gc->shared->info.max_texture_size) ||
+       (h > gc->shared->info.max_texture_size)) return;
+   glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, imgsize, pix);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "glCompressedTexSubImage2D");
 }
 
 #include "evas_gl_3d_common.h"

@@ -861,6 +861,11 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, texuv);
 
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, tex);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, texm);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, tex);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, texm);
+
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
         else glUseProgram(gc->state.current.cur_prog);
@@ -2286,6 +2291,108 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    PUSH_TEXUV2(pn, t2x2, t2y1);
    PUSH_TEXUV2(pn, t2x2, t2y2);
    PUSH_TEXUV2(pn, t2x1, t2y2);
+
+   for (i = 0; i < 6; i++)
+     {
+        PUSH_COLOR(pn, r, g, b, a);
+     }
+}
+
+void
+evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
+                                       Evas_GL_Texture *tex,
+                                       double sx, double sy,
+                                       double sw, double sh,
+                                       int x, int y, int w, int h,
+                                       int r, int g, int b, int a,
+                                       Eina_Bool smooth)
+
+{
+   /* This RGB+Alpha mode is used for ETC1+Alpha textures, where the shader
+    * will multiply RGB by alpha. Two textures are created: tex->{pt,pta}.
+    * Since the exact encoding doesn't matter here (decoding is transparent
+    * from the shader point of view), this method could be used for other
+    * colorspaces as well (eg. RGB565+Alpha4, ...).
+    */
+
+   int pnum, nv, nc, nu, nm, i;
+   GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
+   GLuint prog;
+   int pn;
+
+   prog = gc->shared->shader[evas_gl_common_shader_choice
+     (0, NULL, r, g, b, a, SHADER_RGB_A_PAIR_NOMUL, SHADER_RGB_A_PAIR)].prog;
+
+   pn = _evas_gl_common_context_push(RTYPE_IMAGE,
+                                     gc, tex, NULL,
+                                     prog,
+                                     x, y, w, h,
+                                     EINA_TRUE,
+                                     smooth,
+                                     EINA_FALSE, 0, 0, 0, 0);
+
+   gc->pipe[pn].region.type = RTYPE_IMAGE;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texm = tex->pta->texture;
+   gc->pipe[pn].shader.cur_prog = prog;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.blend = EINA_TRUE;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = EINA_TRUE;
+   // if nomul... dont need this
+   gc->pipe[pn].array.use_color = EINA_TRUE;
+   gc->pipe[pn].array.use_texuv = EINA_TRUE;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = EINA_TRUE;
+   gc->pipe[pn].array.use_texsam = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+
+   pnum = gc->pipe[pn].array.num;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nm = pnum * 2;
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
+
+   tx1 = (sx) / (double)tex->pt->w;
+   ty1 = (sy) / (double)tex->pt->h;
+   tx2 = (sx + sw) / (double)tex->pt->w;
+   ty2 = (sy + sh) / (double)tex->pt->h;
+
+   t2x1 = sx / (double)tex->pta->w;
+   t2y1 = sy / (double)tex->pta->h;
+   t2x2 = (sx + sw) / (double)tex->pta->w;
+   t2y2 = (sy + sh) / (double)tex->pta->h;
+
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_TEXUV(pn, tx1, ty1);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx1, ty2);
+
+   PUSH_TEXM(pn, t2x1, t2y1);
+   PUSH_TEXM(pn, t2x2, t2y1);
+   PUSH_TEXM(pn, t2x1, t2y2);
+
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx2, ty2);
+   PUSH_TEXUV(pn, tx1, ty2);
+
+   PUSH_TEXM(pn, t2x2, t2y1);
+   PUSH_TEXM(pn, t2x2, t2y2);
+   PUSH_TEXM(pn, t2x1, t2y2);
 
    for (i = 0; i < 6; i++)
      {

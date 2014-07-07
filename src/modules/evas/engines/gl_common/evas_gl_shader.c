@@ -771,6 +771,43 @@ Evas_GL_Program_Source shader_yuv_nomul_vert_src =
    NULL, 0
 };
 
+/////////////////////////////////////////////
+const char rgb_a_pair_frag_glsl[] =
+#include "shader/rgb_a_pair_frag.h"
+  ;
+Evas_GL_Program_Source shader_rgb_a_pair_frag_src =
+{
+   rgb_a_pair_frag_glsl,
+   NULL, 0
+};
+
+const char rgb_a_pair_vert_glsl[] =
+#include "shader/rgb_a_pair_vert.h"
+  ;
+Evas_GL_Program_Source shader_rgb_a_pair_vert_src =
+{
+   rgb_a_pair_vert_glsl,
+   NULL, 0
+};
+
+const char rgb_a_pair_nomul_frag_glsl[] =
+#include "shader/rgb_a_pair_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_rgb_a_pair_nomul_frag_src =
+{
+   rgb_a_pair_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char rgb_a_pair_nomul_vert_glsl[] =
+#include "shader/rgb_a_pair_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_rgb_a_pair_nomul_vert_src =
+{
+   rgb_a_pair_nomul_vert_glsl,
+   NULL, 0
+};
+
 
 /////////////////////////////////////////////
 static void
@@ -1048,6 +1085,9 @@ static const struct {
   SHADER_SOURCE_LINE(YUY2_NOMUL, yuy2_nomul),
   SHADER_SOURCE_LINE(NV12, nv12),
   SHADER_SOURCE_LINE(NV12_NOMUL, nv12_nomul),
+
+  SHADER_SOURCE_LINE(RGB_A_PAIR, rgb_a_pair),
+  SHADER_SOURCE_LINE(RGB_A_PAIR_NOMUL, rgb_a_pair_nomul),
 };
 
 static int

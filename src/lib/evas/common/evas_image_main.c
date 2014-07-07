@@ -134,6 +134,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
       case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
         block_size = 16;
         // fallthrough
       case EVAS_COLORSPACE_ETC1:
