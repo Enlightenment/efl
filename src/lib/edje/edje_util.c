@@ -4653,7 +4653,7 @@ _edje_real_part_recursive_get_helper(Edje **ed, char **path)
      }
 }
 
-/* Private Routines */
+/* Private Routines - do not call eo_do inside this one */
 Edje_Real_Part *
 _edje_real_part_get(const Edje *ed, const char *part)
 {
