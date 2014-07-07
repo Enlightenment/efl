@@ -32,16 +32,28 @@ _block_size_get(int size)
    return MIN(k, MAX_BLOCK);
 }
 
+static inline void
+_alpha_to_greyscale_convert(uint32_t *data, int len)
+{
+   for (int k = 0; k < len; k++)
+     {
+        int alpha = A_VAL(data);
+        *data++ = ARGB_JOIN(alpha, alpha, alpha, alpha);
+     }
+}
+
 static int
 _save_direct_tgv(RGBA_Image *im, const char *file, int compress)
 {
+   // FIXME: Now we have border information, this comment isn't valid anymore:
+
    // In case we are directly copying ETC1/2 data, we can't properly
    // duplicate the 1 pixel borders. So we just assume the image contains
    // them already.
 
    // TODO: Add block by block compression.
 
-   int image_width, image_height;
+   int image_width, image_height, planes = 1;
    uint32_t width, height;
    uint8_t header[8] = "TGV1";
    int etc_block_size, etc_data_size, buffer_size, data_size, remain;
@@ -77,6 +89,12 @@ _save_direct_tgv(RGBA_Image *im, const char *file, int compress)
         etc_block_size = 16;
         header[5] = 2;
         break;
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        // FIXME: Properly handle premul vs. unpremul data
+        etc_block_size = 8;
+        header[5] = 3;
+        planes = 2;
+        break;
       default:
         return 0;
      }
@@ -95,7 +113,7 @@ _save_direct_tgv(RGBA_Image *im, const char *file, int compress)
    if (fwrite(&width, sizeof (uint32_t), 1, f) != 1) goto on_error;
    if (fwrite(&height, sizeof (uint32_t), 1, f) != 1) goto on_error;
 
-   etc_data_size = image_width * image_height * etc_block_size / 16;
+   etc_data_size = image_width * image_height * etc_block_size * planes / 16;
    if (compress)
      {
         buffer_size = LZ4_compressBound(etc_data_size);
@@ -156,13 +174,14 @@ evas_image_save_file_tgv(RGBA_Image *im,
    FILE *f;
    uint8_t *comp = NULL;
    uint8_t *buffer;
-   uint32_t *data;
-   uint32_t width, height;
+   uint32_t *data = NULL;
+   uint32_t nl_width, nl_height;
    uint8_t header[8] = "TGV1";
    int block_width, block_height, macro_block_width, macro_block_height;
    int block_count, image_stride, image_height, etc_block_size;
    Evas_Colorspace cspace;
-   Eina_Bool alpha;
+   Eina_Bool alpha, alpha_texture = EINA_FALSE, unpremul = EINA_FALSE;
+   int num_planes = 1;
 
 #ifdef DEBUG_STATS
    struct timespec ts1, ts2;
@@ -181,6 +200,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        // Note: This case should probably never happen
         if (encoding)
           WRN("Ignoring 'encoding' argument the data is already ETC1/2");
         return _save_direct_tgv(im, file, compress);
@@ -190,9 +211,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
    image_stride = im->cache_entry.w;
    image_height = im->cache_entry.h;
-   data = im->image.data;
-   width = htonl(image_stride);
-   height = htonl(image_height);
+   nl_width = htonl(image_stride);
+   nl_height = htonl(image_height);
    compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
@@ -210,13 +230,14 @@ evas_image_save_file_tgv(RGBA_Image *im,
    block_height = _block_size_get(image_height + 2);
    header[4] = (block_height << 4) | block_width;
 
-   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC
+   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC, 3 for ETC1+Alpha
    if (!encoding) encoding = "etc2";
    if (!strcasecmp(encoding, "etc1"))
      {
         if (alpha)
           {
-             ERR("ETC1 does not support alpha encoding. Abort.");
+             ERR("ETC1 does not support alpha encoding. Abort. "
+                 "Please use 'encoding=etc1+alpha' for ETC1+Alpha encoding.");
              return 0;
           }
         cspace = EVAS_COLORSPACE_ETC1;
@@ -238,16 +259,38 @@ evas_image_save_file_tgv(RGBA_Image *im,
              header[5] = 2;
           }
      }
+   else if (!strcasecmp(encoding, "etc1+alpha"))
+     {
+        if (!alpha)
+          {
+             INF("Selected etc1+alpha but image has no alpha, reverting to etc1.");
+             cspace = EVAS_COLORSPACE_ETC1;
+             etc_block_size = 8;
+             header[5] = 0;
+          }
+        else
+          {
+             // Save as two textures, and unpremul the data
+             alpha_texture = EINA_TRUE;
+             unpremul = EINA_TRUE;
+             num_planes = 2; // RGB and Alpha
+             cspace = EVAS_COLORSPACE_ETC1_ALPHA;
+             etc_block_size = 8;
+             header[5] = 3;
+          }
+     }
    else
      {
         ERR("Unknown encoding '%.8s' selected. Abort.", encoding);
         return 0;
      }
 
-   // header[6]: 0 for raw, 1, for LZ4 compressed
-   header[6] = compress;
+   // header[6]: 0 for raw, 1, for LZ4 compressed, 4 for unpremultiplied RGBA
+   // blockless mode (0x2) is never used here
+   header[6] = (compress ? 0x1 : 0x0) | (unpremul ? 0x4 : 0x0);
 
-   // header[7]: options (unused)
+   // header[7]: unused options
+   // Note: consider extending the header instead of filling all the bits here
    header[7] = 0;
 
    f = fopen(file, "w");
@@ -255,8 +298,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
    // Write header
    if (fwrite(header, sizeof (uint8_t), 8, f) != 8) goto on_error;
-   if (fwrite(&width, sizeof (uint32_t), 1, f) != 1) goto on_error;
-   if (fwrite(&height, sizeof (uint32_t), 1, f) != 1) goto on_error;
+   if (fwrite(&nl_width, sizeof (uint32_t), 1, f) != 1) goto on_error;
+   if (fwrite(&nl_height, sizeof (uint32_t), 1, f) != 1) goto on_error;
 
    // Real block size in pixels, obviously a multiple of 4
    macro_block_width = 4 << block_width;
@@ -269,164 +312,190 @@ evas_image_save_file_tgv(RGBA_Image *im,
    if (compress)
      comp = alloca(LZ4_compressBound(block_count * etc_block_size));
 
-   // Write macro block
-   for (int y = 0; y < image_height + 2; y += macro_block_height)
+   // Write a whole plane (RGB or Alpha)
+   for (int plane = 0; plane < num_planes; plane++)
      {
-        uint32_t *input, *last_col, *last_row, *last_pix;
-        int real_y;
-        int wlen;
-
-        if (y == 0) real_y = 0;
-        else if (y < image_height + 1) real_y = y - 1;
-        else real_y = image_height - 1;
-
-        for (int x = 0; x < image_stride + 2; x += macro_block_width)
+        if (!alpha_texture)
           {
-             uint8_t *offset = buffer;
-             int real_x = x;
+             // Normal mode
+             data = im->image.data;
+          }
+        else if (!plane)
+          {
+             int len = image_stride * image_height;
+             // RGB plane for ETC1+Alpha
+             data = malloc(len * 4);
+             if (!data) goto on_error;
+             memcpy(data, im->image.data, len * 4);
+             if (unpremul) evas_data_argb_unpremul(data, len);
+          }
+        else
+          {
+             // Alpha plane for ETC1+Alpha
+             _alpha_to_greyscale_convert(data, image_stride * image_height);
+          }
 
-             if (x == 0) real_x = 0;
-             else if (x < image_stride + 1) real_x = x - 1;
-             else real_x = image_stride - 1;
+        // Write macro block
+        for (int y = 0; y < image_height + 2; y += macro_block_height)
+          {
+             uint32_t *input, *last_col, *last_row, *last_pix;
+             int real_y;
+             int wlen;
 
-             input = data + real_y * image_stride + real_x;
-             last_row = data + image_stride * (image_height - 1) + real_x;
-             last_col = data + (real_y + 1) * image_stride - 1;
-             last_pix = data + image_height * image_stride - 1;
+             if (y == 0) real_y = 0;
+             else if (y < image_height + 1) real_y = y - 1;
+             else real_y = image_height - 1;
 
-             for (int by = 0; by < macro_block_height; by += 4)
+             for (int x = 0; x < image_stride + 2; x += macro_block_width)
                {
-                  int dup_top = ((y + by) == 0) ? 1 : 0;
-                  int max_row = MAX(0, MIN(4, image_height - real_y - by));
-                  int oy = (y == 0) ? 1 : 0;
+                  uint8_t *offset = buffer;
+                  int real_x = x;
 
-                  for (int bx = 0; bx < macro_block_width; bx += 4)
+                  if (x == 0) real_x = 0;
+                  else if (x < image_stride + 1) real_x = x - 1;
+                  else real_x = image_stride - 1;
+
+                  input = data + real_y * image_stride + real_x;
+                  last_row = data + image_stride * (image_height - 1) + real_x;
+                  last_col = data + (real_y + 1) * image_stride - 1;
+                  last_pix = data + image_height * image_stride - 1;
+
+                  for (int by = 0; by < macro_block_height; by += 4)
                     {
-                       int dup_left = ((x + bx) == 0) ? 1 : 0;
-                       int max_col = MAX(0, MIN(4, image_stride - real_x - bx));
-                       uint32_t todo[16] = { 0 };
-                       int row, col;
-                       int ox = (x == 0) ? 1 : 0;
+                       int dup_top = ((y + by) == 0) ? 1 : 0;
+                       int max_row = MAX(0, MIN(4, image_height - real_y - by));
+                       int oy = (y == 0) ? 1 : 0;
 
-                       if (dup_left)
+                       for (int bx = 0; bx < macro_block_width; bx += 4)
                          {
-                            // Duplicate left column
-                            for (row = 0; row < max_row; row++)
-                              todo[row * 4] = input[row * image_stride];
-                            for (row = max_row; row < 4; row++)
-                              todo[row * 4] = last_row[0];
-                         }
+                            int dup_left = ((x + bx) == 0) ? 1 : 0;
+                            int max_col = MAX(0, MIN(4, image_stride - real_x - bx));
+                            uint32_t todo[16] = { 0 };
+                            int row, col;
+                            int ox = (x == 0) ? 1 : 0;
 
-                       if (dup_top)
-                         {
-                            // Duplicate top row
-                            for (col = 0; col < max_col; col++)
-                              todo[col] = input[MAX(col + bx - ox, 0)];
-                            for (col = max_col; col < 4; col++)
-                              todo[col] = last_col[0];
-                         }
-
-                       for (row = dup_top; row < 4; row++)
-                         {
-                            for (col = dup_left; col < max_col; col++)
+                            if (dup_left)
                               {
-                                 if (row < max_row)
+                                 // Duplicate left column
+                                 for (row = 0; row < max_row; row++)
+                                   todo[row * 4] = input[row * image_stride];
+                                 for (row = max_row; row < 4; row++)
+                                   todo[row * 4] = last_row[0];
+                              }
+
+                            if (dup_top)
+                              {
+                                 // Duplicate top row
+                                 for (col = 0; col < max_col; col++)
+                                   todo[col] = input[MAX(col + bx - ox, 0)];
+                                 for (col = max_col; col < 4; col++)
+                                   todo[col] = last_col[0];
+                              }
+
+                            for (row = dup_top; row < 4; row++)
+                              {
+                                 for (col = dup_left; col < max_col; col++)
                                    {
-                                      // Normal copy
-                                      todo[row * 4 + col] = input[(row + by - oy) * image_stride + bx + col - ox];
+                                      if (row < max_row)
+                                        {
+                                           // Normal copy
+                                           todo[row * 4 + col] = input[(row + by - oy) * image_stride + bx + col - ox];
+                                        }
+                                      else
+                                        {
+                                           // Copy last line
+                                           todo[row * 4 + col] = last_row[col + bx - ox];
+                                        }
                                    }
-                                 else
+                                 for (col = max_col; col < 4; col++)
                                    {
-                                      // Copy last line
-                                      todo[row * 4 + col] = last_row[col + bx - ox];
+                                      // Right edge
+                                      if (row < max_row)
+                                        {
+                                           // Duplicate last column
+                                           todo[row * 4 + col] = last_col[MAX(row + by - oy, 0) * image_stride];
+                                        }
+                                      else
+                                        {
+                                           // Duplicate very last pixel again and again
+                                           todo[row * 4 + col] = *last_pix;
+                                        }
                                    }
                               }
-                            for (col = max_col; col < 4; col++)
-                              {
-                                 // Right edge
-                                 if (row < max_row)
-                                   {
-                                      // Duplicate last column
-                                      todo[row * 4 + col] = last_col[MAX(row + by - oy, 0) * image_stride];
-                                   }
-                                 else
-                                   {
-                                      // Duplicate very last pixel again and again
-                                      todo[row * 4 + col] = *last_pix;
-                                   }
-                              }
-                         }
 
-                       switch (cspace)
-                         {
-                          case EVAS_COLORSPACE_ETC1:
-                            rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
-                            break;
-                          case EVAS_COLORSPACE_RGB8_ETC2:
-                            etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
-                            break;
-                          case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-                            etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
-                            break;
-                          default: return 0;
-                         }
+                            switch (cspace)
+                              {
+                               case EVAS_COLORSPACE_ETC1:
+                               case EVAS_COLORSPACE_ETC1_ALPHA:
+                                 rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
+                                 break;
+                               case EVAS_COLORSPACE_RGB8_ETC2:
+                                 etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
+                                 break;
+                               case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+                                 etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
+                                 break;
+                               default: return 0;
+                              }
 
 #ifdef DEBUG_STATS
-                       {
-                          // Decode to compute PSNR, this is slow.
-                          uint32_t done[16];
+                            if (plane == 0)
+                              {
+                                 // Decode to compute PSNR, this is slow.
+                                 uint32_t done[16];
 
-                          if (alpha)
-                            rg_etc2_rgba8_decode_block(offset, done);
-                          else
-                            rg_etc2_rgb8_decode_block(offset, done);
+                                 if (alpha)
+                                   rg_etc2_rgba8_decode_block(offset, done);
+                                 else
+                                    rg_etc2_rgb8_decode_block(offset, done);
 
-                          for (int k = 0; k < 16; k++)
-                            {
-                               const int r = (R_VAL(&(todo[k])) - R_VAL(&(done[k])));
-                               const int g = (G_VAL(&(todo[k])) - G_VAL(&(done[k])));
-                               const int b = (B_VAL(&(todo[k])) - B_VAL(&(done[k])));
-                               const int a = (A_VAL(&(todo[k])) - A_VAL(&(done[k])));
-                               mse += r*r + g*g + b*b;
-                               if (alpha) mse_alpha += a*a;
-                               mse_div++;
-                            }
-                       }
+                                 for (int k = 0; k < 16; k++)
+                                   {
+                                      const int r = (R_VAL(&(todo[k])) - R_VAL(&(done[k])));
+                                      const int g = (G_VAL(&(todo[k])) - G_VAL(&(done[k])));
+                                      const int b = (B_VAL(&(todo[k])) - B_VAL(&(done[k])));
+                                      const int a = (A_VAL(&(todo[k])) - A_VAL(&(done[k])));
+                                      mse += r*r + g*g + b*b;
+                                      if (alpha) mse_alpha += a*a;
+                                      mse_div++;
+                                   }
+                              }
 #endif
 
-                       offset += etc_block_size;
+                            offset += etc_block_size;
+                         }
                     }
-               }
 
-             if (compress)
-               {
-                  wlen = LZ4_compressHC((char *) buffer, (char *) comp,
-                                        block_count * etc_block_size);
-               }
-             else
-               {
-                  comp = buffer;
-                  wlen = block_count * etc_block_size;
-               }
-
-             if (wlen > 0)
-               {
-                  unsigned int blen = wlen;
-
-                  while (blen)
+                  if (compress)
                     {
-                       unsigned char plen;
-
-                       plen = blen & 0x7F;
-                       blen = blen >> 7;
-
-                       if (blen) plen = 0x80 | plen;
-                       if (fwrite(&plen, 1, 1, f) != 1) goto on_error;
+                       wlen = LZ4_compressHC((char *) buffer, (char *) comp,
+                                             block_count * etc_block_size);
                     }
-                  if (fwrite(comp, wlen, 1, f) != 1) goto on_error;
-               }
-          }
-     }
+                  else
+                    {
+                       comp = buffer;
+                       wlen = block_count * etc_block_size;
+                    }
+
+                  if (wlen > 0)
+                    {
+                       unsigned int blen = wlen;
+
+                       while (blen)
+                         {
+                            unsigned char plen;
+
+                            plen = blen & 0x7F;
+                            blen = blen >> 7;
+
+                            if (blen) plen = 0x80 | plen;
+                            if (fwrite(&plen, 1, 1, f) != 1) goto on_error;
+                         }
+                       if (fwrite(comp, wlen, 1, f) != 1) goto on_error;
+                    }
+               } // 4 rows
+          } // macroblocks
+     } // planes
    fclose(f);
 
 #ifdef DEBUG_STATS
@@ -452,9 +521,11 @@ evas_image_save_file_tgv(RGBA_Image *im,
      }
 #endif
 
+   if (alpha_texture) free(data);
    return 1;
 
 on_error:
+   if (alpha_texture) free(data);
    fclose(f);
    return 0;
 }

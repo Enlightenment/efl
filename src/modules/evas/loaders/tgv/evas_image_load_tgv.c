@@ -18,6 +18,20 @@
 #include <arm_neon.h>
 #endif
 
+#ifndef WORDS_BIGENDIAN
+/* x86 */
+#define A_VAL(p) (((uint8_t *)(p))[3])
+#define R_VAL(p) (((uint8_t *)(p))[2])
+#define G_VAL(p) (((uint8_t *)(p))[1])
+#define B_VAL(p) (((uint8_t *)(p))[0])
+#else
+/* ppc */
+#define A_VAL(p) (((uint8_t *)(p))[0])
+#define R_VAL(p) (((uint8_t *)(p))[1])
+#define G_VAL(p) (((uint8_t *)(p))[2])
+#define B_VAL(p) (((uint8_t *)(p))[3])
+#endif
+
 /**************************************************************
  * The TGV file format is oriented around compression mecanism
  * that hardware are good at decompressing. We do still provide
@@ -34,18 +48,21 @@
  * The file format is as follow :
  * - char     magic[4]: "TGV1"
  * - uint8_t  block_size (real block size = (4 << bits[0-3], 4 << bits[4-7])
- * - uint8_t  algorithm (0 -> ETC1)
- * - uint8_t  options[2] (1 -> lz4)
+ * - uint8_t  algorithm (0 -> ETC1, 1 -> ETC2 RGB, 2 -> ETC2 RGBA, 3 -> ETC1+Alpha)
+ * - uint8_t  options[2] (bitmask: 1 -> lz4, 2 for block-less, 4 -> unpremultiplied)
  * - uint32_t width
  * - uint32_t height
  * - blocks[]
  *   - 0 length encoded compress size (if length == 64 * block_size => no compression)
  *   - lzma encoded etc1 block
+ *
+ * If the format is ETC1+Alpha (algo = 3), then a second image is encoded
+ * in ETC1 right after the first one, and it contains grey-scale alpha
+ * values.
  **************************************************************/
 
 // FIXME: wondering if we should support mipmap
 // TODO: support ETC1+ETC2 images (RGB only)
-// TODO: support ETC1 RGB + ETC1 Alpha (2 textures for ETC1 RGBA)
 
 typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
 struct _Evas_Loader_Internal
@@ -67,6 +84,7 @@ struct _Evas_Loader_Internal
 
    Eina_Bool compress : 1;
    Eina_Bool blockless : 1; // Special mode used when copying data directly
+   Eina_Bool unpremul : 1;
 };
 
 static const Evas_Colorspace cspaces_etc1[2] = {
@@ -81,6 +99,11 @@ static const Evas_Colorspace cspaces_rgb8_etc2[2] = {
 
 static const Evas_Colorspace cspaces_rgba8_etc2_eac[2] = {
   EVAS_COLORSPACE_RGBA8_ETC2_EAC,
+  EVAS_COLORSPACE_ARGB8888
+};
+
+static const Evas_Colorspace cspaces_etc1_alpha[2] = {
+  EVAS_COLORSPACE_ETC1_ALPHA,
   EVAS_COLORSPACE_ARGB8888
 };
 
@@ -195,6 +218,13 @@ evas_image_load_file_head_tgv(void *loader_data,
         loader->cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
         prop->alpha = EINA_TRUE;
         break;
+      case 3:
+        prop->cspaces = cspaces_etc1_alpha;
+        loader->cspace = EVAS_COLORSPACE_ETC1_ALPHA;
+        loader->unpremul = !!(m[OFFSET_OPTIONS] & 0x4);
+        prop->alpha = EINA_TRUE;
+        prop->premul = loader->unpremul;
+        break;
       default:
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         goto on_error;
@@ -241,8 +271,8 @@ evas_image_load_file_head_tgv(void *loader_data,
    prop->h = loader->size.height;
    prop->borders.l = 1;
    prop->borders.t = 1;
-   prop->borders.r = roundup(loader->size.width + 2, 4) - prop->w - 1;
-   prop->borders.b = roundup(loader->size.height + 2, 4) - prop->h - 1;
+   prop->borders.r = roundup(prop->w + 2, 4) - prop->w - 1;
+   prop->borders.b = roundup(prop->h + 2, 4) - prop->h - 1;
 
    ret = EINA_TRUE;
 
@@ -292,6 +322,7 @@ evas_image_load_file_data_tgv(void *loader_data,
    unsigned int etc_width = 0;
    unsigned int etc_block_size;
    Eina_Bool r = EINA_FALSE;
+   int num_planes = 1, plane, alpha_offset = 0;
 
    length = eina_file_size_get(loader->f);
    offset = OFFSET_BLOCKS;
@@ -309,25 +340,27 @@ evas_image_load_file_data_tgv(void *loader_data,
    switch (loader->cspace)
      {
       case EVAS_COLORSPACE_ETC1:
-        etc_block_size = 8;
-        etc_width = ((prop->w + 2) / 4 + ((prop->w + 2) % 4 ? 1 : 0)) * 8;
-        break;
       case EVAS_COLORSPACE_RGB8_ETC2:
         etc_block_size = 8;
-        etc_width = ((prop->w + 2) / 4 + ((prop->w + 2) % 4 ? 1 : 0)) * 8;
         break;
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
         etc_block_size = 16;
-        etc_width = ((prop->w + 2) / 4 + ((prop->w + 2) % 4 ? 1 : 0)) * 16;
+        break;
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        etc_block_size = 8;
+        num_planes = 2;
+        alpha_offset = ((prop->w + 2 + 3) / 4) * ((prop->h + 2 + 3) / 4) * 8 / sizeof(*p_etc);
         break;
       default: abort();
      }
+   etc_width = ((prop->w + 2 + 3) / 4) * etc_block_size;
 
    switch (prop->cspace)
      {
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
         if (master.x % 4 || master.y % 4)
           abort();
         break;
@@ -352,125 +385,152 @@ evas_image_load_file_data_tgv(void *loader_data,
    if (loader->compress)
      buffer = alloca(etc_block_size * block_count);
 
-   for (y = 0; y < loader->size.height + 2; y += loader->block.height)
-     for (x = 0; x < loader->size.width + 2; x += loader->block.width)
-       {
-          Eina_Rectangle current;
-          const char *data_start;
-          const char *it;
-          unsigned int expand_length;
-          unsigned int i, j;
+   for (plane = 0; plane < num_planes; plane++)
+     for (y = 0; y < loader->size.height + 2; y += loader->block.height)
+       for (x = 0; x < loader->size.width + 2; x += loader->block.width)
+         {
+            Eina_Rectangle current;
+            const char *data_start;
+            const char *it;
+            unsigned int expand_length;
+            unsigned int i, j;
 
-          block_length = _tgv_length_get(m + offset, length, &offset);
+            block_length = _tgv_length_get(m + offset, length, &offset);
 
-          if (block_length == 0) goto on_error;
+            if (block_length == 0) goto on_error;
 
-          data_start = m + offset;
-          offset += block_length;
+            data_start = m + offset;
+            offset += block_length;
 
-          EINA_RECTANGLE_SET(&current, x, y,
-                             loader->block.width, loader->block.height);
+            EINA_RECTANGLE_SET(&current, x, y,
+                               loader->block.width, loader->block.height);
 
-          if (!eina_rectangle_intersection(&current, &master))
-            continue;
+            if (!eina_rectangle_intersection(&current, &master))
+              continue;
 
-          if (loader->compress)
-            {
-               expand_length = LZ4_uncompress(data_start, buffer,
-                                              block_count * etc_block_size);
-               // That's an overhead for now, need to be fixed
-               if (expand_length != block_length)
-                 goto on_error;
-            }
-          else
-            {
-               buffer = (void*) data_start;
-               if (block_count * etc_block_size != block_length)
-                 goto on_error;
-            }
-          it = buffer;
-
-          for (i = 0; i < loader->block.height; i += 4)
-            for (j = 0; j < loader->block.width; j += 4, it += etc_block_size)
+            if (loader->compress)
               {
-                 Eina_Rectangle current_etc;
-                 unsigned int temporary[4 * 4];
-                 unsigned int offset_x, offset_y;
-                 int k;
-
-                 EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
-
-                 if (!eina_rectangle_intersection(&current_etc, &current))
-                   continue;
-
-                 switch (prop->cspace)
-                   {
-                    case EVAS_COLORSPACE_ARGB8888:
-                      switch (loader->cspace)
-                        {
-                         case EVAS_COLORSPACE_ETC1:
-                           if (!rg_etc1_unpack_block(it, temporary, 0))
-                             {
-                                // TODO: Should we decode as RGB8_ETC2?
-                                fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
-                                continue;
-                             }
-                           break;
-                         case EVAS_COLORSPACE_RGB8_ETC2:
-                           rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
-                           break;
-                         case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-                           rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
-                           break;
-                         default: abort();
-                        }
-
-                       offset_x = current_etc.x - x - j;
-                       offset_y = current_etc.y - y - i;
-#ifdef BUILD_NEON
-                       if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-                         {
-                            uint32_t *dst = &p[current_etc.x - 1 + (current_etc.y - 1) * master.w];
-                            uint32_t *src = &temporary[offset_x + offset_y * 4];
-                            for (k = 0; k < current_etc.h; k++)
-                              {
-                                 if (current_etc.w == 4)
-                                   vst1q_u32(dst, vld1q_u32(src));
-                                 else if (current_etc.w == 3)
-                                   {
-                                      vst1_u32(dst, vld1_u32(src));
-                                      *(dst + 2) = *(src + 2);
-                                   }
-                                 else if (current_etc.w == 2)
-                                   vst1_u32(dst, vld1_u32(src));
-                                 else
-                                   *dst = *src;
-                                 dst += master.w;
-                                 src += 4;
-                              }
-                         }
-                       else
-#endif
-                       for (k = 0; k < current_etc.h; k++)
-                         {
-                            memcpy(&p[current_etc.x - 1 +
-                                      (current_etc.y - 1 + k) * master.w],
-                                   &temporary[offset_x + (offset_y + k) * 4],
-                                   current_etc.w * sizeof (unsigned int));
-                         }
-                       break;
-                    case EVAS_COLORSPACE_ETC1:
-                    case EVAS_COLORSPACE_RGB8_ETC2:
-                    case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-                       memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                     (current_etc.y / 4) * etc_width],
-                              it, etc_block_size);
-                       break;
-                    default:
-                       abort();
-                   }
+                 expand_length = LZ4_uncompress(data_start, buffer,
+                                                block_count * etc_block_size);
+                 // That's an overhead for now, need to be fixed
+                 if (expand_length != block_length)
+                   goto on_error;
               }
-       }
+            else
+              {
+                 buffer = (void*) data_start;
+                 if (block_count * etc_block_size != block_length)
+                   goto on_error;
+              }
+            it = buffer;
+
+            for (i = 0; i < loader->block.height; i += 4)
+              for (j = 0; j < loader->block.width; j += 4, it += etc_block_size)
+                {
+                   Eina_Rectangle current_etc;
+                   unsigned int temporary[4 * 4];
+                   unsigned int offset_x, offset_y;
+                   int k, l;
+
+                   EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
+
+                   if (!eina_rectangle_intersection(&current_etc, &current))
+                     continue;
+
+                   switch (prop->cspace)
+                     {
+                      case EVAS_COLORSPACE_ARGB8888:
+                        switch (loader->cspace)
+                          {
+                           case EVAS_COLORSPACE_ETC1:
+                           case EVAS_COLORSPACE_ETC1_ALPHA:
+                             if (!rg_etc1_unpack_block(it, temporary, 0))
+                               {
+                                  // TODO: Should we decode as RGB8_ETC2?
+                                  fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
+                                  continue;
+                               }
+                             break;
+                           case EVAS_COLORSPACE_RGB8_ETC2:
+                             rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
+                             break;
+                           case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+                             rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
+                             break;
+                           default: abort();
+                          }
+
+                        offset_x = current_etc.x - x - j;
+                        offset_y = current_etc.y - y - i;
+
+                        if (!plane)
+                          {
+#ifdef BUILD_NEON
+                             if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+                               {
+                                  uint32_t *dst = &p[current_etc.x - 1 + (current_etc.y - 1) * master.w];
+                                  uint32_t *src = &temporary[offset_x + offset_y * 4];
+                                  for (k = 0; k < current_etc.h; k++)
+                                    {
+                                       if (current_etc.w == 4)
+                                         vst1q_u32(dst, vld1q_u32(src));
+                                       else if (current_etc.w == 3)
+                                         {
+                                            vst1_u32(dst, vld1_u32(src));
+                                            *(dst + 2) = *(src + 2);
+                                         }
+                                       else if (current_etc.w == 2)
+                                         vst1_u32(dst, vld1_u32(src));
+                                       else
+                                          *dst = *src;
+                                       dst += master.w;
+                                       src += 4;
+                                    }
+                               }
+                             else
+#endif
+                             for (k = 0; k < current_etc.h; k++)
+                               {
+                                  memcpy(&p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w],
+                                         &temporary[offset_x + (offset_y + k) * 4],
+                                         current_etc.w * sizeof (unsigned int));
+                               }
+                          }
+                        else
+                          {
+                             for (k = 0; k < current_etc.h; k++)
+                               for (l = 0; l < current_etc.w; l++)
+                                 {
+                                    unsigned int *rgbdata =
+                                      &p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w + l];
+                                    unsigned int *adata =
+                                      &temporary[offset_x + (offset_y + k) * 4 + l];
+                                    A_VAL(rgbdata) = G_VAL(adata);
+                                 }
+                          }
+                        break;
+                      case EVAS_COLORSPACE_ETC1:
+                      case EVAS_COLORSPACE_RGB8_ETC2:
+                      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
+                                      (current_etc.y / 4) * etc_width],
+                               it, etc_block_size);
+                        break;
+                      case EVAS_COLORSPACE_ETC1_ALPHA:
+                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
+                                      (current_etc.y / 4) * etc_width +
+                                      plane * alpha_offset],
+                               it, etc_block_size);
+                        break;
+                      default:
+                        abort();
+                     }
+                } // bx,by inside blocks
+         } // x,y macroblocks
+
+   // TODO: Add support for more unpremultiplied modes (ETC2)
+   if (prop->cspace == EVAS_COLORSPACE_ARGB8888)
+     prop->premul = loader->unpremul; // call premul if unpremul data
 
    r = EINA_TRUE;
    *error = EVAS_LOAD_ERROR_NONE;
