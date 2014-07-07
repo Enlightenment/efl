@@ -1638,7 +1638,7 @@ _ethumb_dbus_ethumb_setup_cb(const Eldbus_Service_Interface *iface, const Eldbus
    request->id = -1;
 
    r = EINA_TRUE;
-   while (eldbus_message_iter_get_and_next(array, 'r', &data) && r)
+   while (eldbus_message_iter_get_and_next(array, 'e', &data) && r)
      {
         if (!_ethumb_dbus_ethumb_setup_parse_element(eobject, data, request))
           r = EINA_FALSE;

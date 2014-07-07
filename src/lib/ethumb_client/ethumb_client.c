@@ -817,7 +817,7 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "compress", "i");
-   compress = ethumb_thumb_quality_get(e);
+   compress = ethumb_thumb_compress_get(e);
    eldbus_message_iter_arguments_append(variant, "i", compress);
    _setup_iterator_close(array, entry, variant);
 

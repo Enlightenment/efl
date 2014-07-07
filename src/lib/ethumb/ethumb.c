@@ -1611,6 +1611,8 @@ _ethumb_image_load(Ethumb *e)
           }
 #endif
      }
+   else
+     orientation = e->orientation;
 
    if (orientation != ETHUMB_THUMB_ORIENT_NONE)
      _ethumb_image_orient(e, orientation);
