@@ -1711,7 +1711,10 @@ _mouse_down_cb(void *data,
    else if (ev->button == 3)
      {
         if (_elm_config->desktop_entry)
-          _menu_call(data);
+          {
+             sd->use_down = 1;
+             _menu_call(data);
+          }
      }
 }
 
