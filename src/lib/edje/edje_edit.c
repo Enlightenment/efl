@@ -3978,6 +3978,10 @@ FUNC_PART_DRAG_ID(confine);
 FUNC_PART_DRAG_ID(event);
 FUNC_PART_DRAG_ID(threshold);
 
+/***************************/
+/*  BOX & TABLE ITEMS API  */
+/***************************/
+
 EAPI Eina_Bool
 edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
 {
