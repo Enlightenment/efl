@@ -321,6 +321,9 @@ int main(int argc, char **argv)
         goto end;
      }
 
+   if (!getenv("EFL_RUN_IN_TREE"))
+     eolian_system_directory_scan();
+
    eolian_all_eot_files_parse();
 
    const char *filename;

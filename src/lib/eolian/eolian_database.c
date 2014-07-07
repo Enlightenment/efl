@@ -1582,6 +1582,18 @@ eolian_directory_scan(const char *dir)
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+eolian_system_directory_scan()
+{
+   Eina_Bool ret;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   eina_strbuf_append(buf, eina_prefix_data_get(_eolian_prefix));
+   eina_strbuf_append(buf, "/include");
+   ret = eolian_directory_scan(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 static char *
 _eolian_class_to_filename(const char *filename)
 {

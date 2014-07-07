@@ -3,6 +3,7 @@
 
 static int _eolian_init_counter = 0;
 int _eolian_log_dom = -1;
+Eina_Prefix *_eolian_prefix = NULL;
 
 EAPI int eolian_init(void)
 {
@@ -22,6 +23,15 @@ EAPI int eolian_init(void)
                    EINA_LOG_STATE_INIT);
 
    INF("Init");
+
+   _eolian_prefix = eina_prefix_new(NULL, eolian_init, "EOLIAN", "eolian",
+                                    NULL, "", "", PACKAGE_DATA_DIR, "");
+   if (!_eolian_prefix)
+     {
+        ERR("Could not initialize the Eolian prefix.");
+        return EINA_FALSE;
+     }
+
    database_init();
    eo_lexer_init();
    return ++_eolian_init_counter;
@@ -45,6 +55,8 @@ EAPI int eolian_shutdown(void)
 
         eo_lexer_shutdown();
         database_shutdown();
+        eina_prefix_free(_eolian_prefix);
+        _eolian_prefix = NULL;
 
         eina_log_domain_unregister(_eolian_log_dom);
         _eolian_log_dom = -1;

@@ -4,6 +4,7 @@
 #include <Eolian.h>
 
 extern int _eolian_log_dom;
+extern Eina_Prefix *_eolian_prefix;
 
 #ifdef CRI
 #undef CRI

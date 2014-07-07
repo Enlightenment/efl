@@ -168,9 +168,23 @@ EAPI int eolian_shutdown(void);
  * @param[in] dir the directory to scan
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
+ * @see eolian_system_directory_scan
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_directory_scan(const char *dir);
+
+/*
+ * @brief Scan the system directory (recursively) and search for .eo and
+ * .eot files.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_directory_scan
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_system_directory_scan();
 
 /*
  * @brief Force parsing of all the .eo files located in the directories
