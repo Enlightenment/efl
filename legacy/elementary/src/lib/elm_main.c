@@ -469,7 +469,8 @@ elm_need_e_dbus(void)
 #ifndef RTLD_NOLOAD
 # define RTLD_NOLOAD RTLD_GLOBAL
 #endif
-   if (!e_dbus_handle) e_dbus_handle = dlopen("libeldbus.so", RTLD_LAZY | RTLD_NOLOAD);
+   if (!e_dbus_handle) e_dbus_handle = dlopen("libedbus.so", RTLD_LAZY | RTLD_NOLOAD);
+   if (!e_dbus_handle) e_dbus_handle = dlopen("libedbus.so.1", RTLD_LAZY | RTLD_NOLOAD);
    if (!e_dbus_handle) return EINA_FALSE;
    init_func = dlsym(e_dbus_handle, "e_dbus_init");
    if (!init_func) return EINA_FALSE;
