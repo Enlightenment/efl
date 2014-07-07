@@ -4490,6 +4490,61 @@ edje_edit_part_item_position_set(Evas_Object *obj, const char *part,
      return EINA_TRUE;
   }
 
+EAPI void
+edje_edit_part_item_span_get(Evas_Object *obj, const char *part,
+                             const char *item_name, unsigned char *col,
+                             unsigned char *row)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item = NULL;
+   if ((!obj) || (!part) || (!item_name))
+     return;
+   GET_RP_OR_RETURN();
+   ep = rp->part;
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if ((ep->items[i]->name) && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item = ep->items[i];
+             break;
+          }
+     }
+   if (!item) return;
+   if (col) *col = item->colspan;
+   if (row) *row = item->rowspan;
+   return;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_span_set(Evas_Object *obj, const char *part,
+                             const char *item_name, unsigned char col,
+                             unsigned char row)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item = NULL;
+   if ((!obj) || (!part) || (!item_name))
+     return EINA_FALSE;
+   GET_RP_OR_RETURN(EINA_FALSE);
+   ep = rp->part;
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+      (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+    for (i = 0; i < ep->items_count; i++)
+     {
+        if ((ep->items[i]->name) && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item = ep->items[i];
+             break;
+          }
+     }
+   if (!item) return EINA_FALSE;
+   item->colspan = col;
+   item->rowspan = row;
+   return EINA_TRUE;
+}
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
@@ -10280,10 +10335,14 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
 
                   if (edje_edit_part_type_get(obj, part) == EDJE_PART_TYPE_TABLE)
                     BUF_APPENDF(I7"position: %d %d;\n", item->col, item->row);
+                  if ((item->colspan != 1) || (item->rowspan != 1))
+                    BUF_APPENDF(I7"span: %d %d;\n", item->colspan, item->rowspan);
+
                   //TODO weight
                   //TODO options
-                  //TODO colspan
-                  //TODO rowspan
+                  //TODO col
+                  //TODO row
+
                   BUF_APPEND(I6"}\n");
                }
              BUF_APPEND(I5"}\n");

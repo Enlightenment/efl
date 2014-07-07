@@ -2306,6 +2306,31 @@ EAPI Eina_Bool edje_edit_part_item_position_get(Evas_Object *obj, const char *pa
  */
 EAPI Eina_Bool edje_edit_part_item_position_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short col, unsigned short row);
 
+/** Retrieves the how many columns and rows will span for use by item.
+ *
+ * @param obj object being edited.
+ * @param part part that contain item.
+ * @param item the name of the item of part.
+ * @param col Pointer to an unsigned char in which to store the columns count.
+ * @param row Pointer to an unsigned char in which to store the rows count.
+ *
+ * @since 1.11
+ */
+EAPI void edje_edit_part_item_span_get(Evas_Object *obj, const char *part, const char *item, unsigned char *col, unsigned char *row);
+
+/** Set the count of columns and rows, which this item will spans for use.
+ *
+ * @param obj object being edited.
+ * @param part part that contain item.
+ * @param item the name of the item to set new count of columns spans.
+ * @param col new count of the columns spans.
+ * @param row new count of the rows spans.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @since 1.11
+ */
+EAPI Eina_Bool edje_edit_part_item_span_set(Evas_Object *obj, const char *part, const char *item, unsigned char col, unsigned char row);
+
 //@}
 /******************************************************************************/
 /**************************   STATES API   ************************************/
