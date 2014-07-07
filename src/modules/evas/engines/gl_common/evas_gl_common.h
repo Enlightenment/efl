@@ -290,8 +290,6 @@ typedef enum {
   SHADER_RECT,
   SHADER_FONT,
    
-  SHADER_IMG_MASK,
-   
   SHADER_IMG,
   SHADER_IMG_NOMUL,
   SHADER_IMG_BGRA,
@@ -462,9 +460,8 @@ struct _Evas_GL_Shared
 #define RTYPE_FONT  3
 #define RTYPE_YUV   4
 #define RTYPE_MAP   5 /* need to merge with image */
-#define RTYPE_IMASK 6
-#define RTYPE_YUY2  7
-#define RTYPE_NV12  8
+#define RTYPE_YUY2  6
+#define RTYPE_NV12  7
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
 

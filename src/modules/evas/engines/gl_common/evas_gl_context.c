@@ -861,9 +861,6 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, texuv);
 
-        SHADER_TEXTURE_ADD(shared, IMG_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK, texm);
-
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
         else glUseProgram(gc->state.current.cur_prog);
