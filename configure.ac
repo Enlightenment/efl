@@ -4008,7 +4008,7 @@ AC_ARG_ENABLE([multisense],
        want_multisense="no"
     fi
    ],
-   [want_multisense="no"])
+   [want_multisense="yes"])
 
 if test "x${build_gui}" = "xno"; then
    want_multisense="no"
