@@ -289,7 +289,7 @@ class Elm_Calendar (Elm_Layout)
          const;
          return Eina_Bool;
          params {
-            @inout struct tm *selected_time; /*@ A @b tm struct to point to selected date */
+            @inout struct tm selected_time; /*@ A @b tm struct to point to selected date */
          }
       }
       mark_add {
@@ -389,7 +389,7 @@ class Elm_Calendar (Elm_Layout)
          const;
          return Eina_Bool;
          params {
-            @inout struct tm *displayed_time; /*@ A @b tm struct to point to displayed date */
+            @inout struct tm displayed_time; /*@ A @b tm struct to point to displayed date */
          }
       }
    }

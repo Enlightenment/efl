@@ -176,7 +176,7 @@ class Elm_Datetime (Elm_Layout)
          const;
          return Eina_Bool;
          params {
-            @inout struct tm *mintime; /*@ Time structure. */
+            @inout struct tm mintime; /*@ Time structure. */
          }
       }
       value_set {
@@ -228,7 +228,7 @@ class Elm_Datetime (Elm_Layout)
          const;
          return Eina_Bool;
          params {
-            @inout struct tm *currtime; /*@ Time structure. */
+            @inout struct tm currtime; /*@ Time structure. */
          }
       }
       field_visible_set {
@@ -314,7 +314,7 @@ class Elm_Datetime (Elm_Layout)
          const;
          return Eina_Bool;
          params {
-            @inout struct tm *maxtime; /*@ Time structure containing the maximum time value. */
+            @inout struct tm maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
    }
