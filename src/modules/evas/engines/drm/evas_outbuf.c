@@ -152,10 +152,7 @@ evas_outbuf_free(Outbuf *ob)
 }
 
 void
-evas_outbuf_reconfigure(Outbuf *ob,
-                        int w, int h,
-                        int rot,
-                        Outbuf_Depth depth)
+evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 {
    int i = 0;
 
@@ -405,8 +402,7 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int
 }
 
 void
-evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED,
-                               RGBA_Image *update EINA_UNUSED)
+evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
 {
    /* evas_cache_image_drop(&update->cache_entry); */
 }

@@ -42,18 +42,15 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
    if (!(ob = evas_outbuf_setup(info, w, h)))
      goto on_error;
 
-   if(!evas_render_engine_software_generic_init(&re->generic, ob,
-                                                evas_outbuf_buffer_state_get,
-                                                evas_outbuf_get_rot,
-                                                evas_outbuf_reconfigure,
-                                                NULL,
-                                                evas_outbuf_update_region_new,
-                                                evas_outbuf_update_region_push,
-                                                evas_outbuf_update_region_free,
-                                                NULL,
-                                                evas_outbuf_flush,
-                                                evas_outbuf_free,
-                                                w, h))
+   if (!evas_render_engine_software_generic_init(&re->generic, ob,
+                                                 evas_outbuf_buffer_state_get,
+                                                 evas_outbuf_get_rot,
+                                                 evas_outbuf_reconfigure, NULL,
+                                                 evas_outbuf_update_region_new,
+                                                 evas_outbuf_update_region_push,
+                                                 evas_outbuf_update_region_free,
+                                                 NULL, evas_outbuf_flush,
+                                                 evas_outbuf_free, w, h))
      goto on_error;
 
    /* return the allocated render_engine structure */
