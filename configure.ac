@@ -1808,7 +1808,7 @@ EVAS_CHECK_IMAGE_LOADER([WBMP],    [${want_evas_image_loader_wbmp}])
 EVAS_CHECK_IMAGE_LOADER([WEBP],    [${want_evas_image_loader_webp}])
 EVAS_CHECK_IMAGE_LOADER([XPM],     [${want_evas_image_loader_xpm}])
 EVAS_CHECK_IMAGE_LOADER([TGV],     [${want_evas_image_loader_tgv}])
-EVAS_CHECK_IMAGE_LOADER([DDS],     [${want_evas_image_loader_tgv}])
+EVAS_CHECK_IMAGE_LOADER([DDS],     [${want_evas_image_loader_dds}])
 
 EFL_EVAL_PKGS([EVAS])
 
