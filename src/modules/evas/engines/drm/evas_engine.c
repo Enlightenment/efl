@@ -139,7 +139,7 @@ eng_setup(Evas *evas, void *einfo)
 
         /* try to create a new outbuf */
         ob = evas_outbuf_setup(info, epd->output.w, epd->output.h);
-        if (ob) return 0;
+        if (!ob) return 0;
 
         /* if we have an existing outbuf, free it */
         evas_render_engine_software_generic_update(&re->generic, ob, epd->output.w, epd->output.h);
