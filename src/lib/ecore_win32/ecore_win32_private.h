@@ -45,6 +45,14 @@ extern int _ecore_win32_log_dom_global;
 
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
+typedef enum
+{
+   ECORE_WIN32_POS_HINTS_MIN_SIZE = 1 << 0,
+   ECORE_WIN32_POS_HINTS_MAX_SIZE = 1 << 1,
+   ECORE_WIN32_POS_HINTS_BASE_SIZE = 1 << 2,
+   ECORE_WIN32_POS_HINTS_STEP_SIZE = 1 << 3
+} Ecore_Win32_Pos_Hints_Flags;
+
 typedef struct _Ecore_Win32_Callback_Data Ecore_Win32_Callback_Data;
 
 struct _Ecore_Win32_Callback_Data
@@ -61,49 +69,52 @@ struct _Ecore_Win32_Callback_Data
 
 struct _Ecore_Win32_Window
 {
-   HWND                   window;
-
-   DWORD                  style;          /* used to go fullscreen to normal */
-   RECT                   rect;           /* used to go fullscreen to normal */
-
-   unsigned int           min_width;
-   unsigned int           min_height;
-   unsigned int           max_width;
-   unsigned int           max_height;
-   int                    base_width;
-   int                    base_height;
-   unsigned int           step_width;
-   unsigned int           step_height;
+   HWND  window;
+   int   mininal_window_width;
+   DWORD style;                /* used to go fullscreen to normal */
+   RECT  rect;                 /* used to go fullscreen to normal */
 
    struct {
-      unsigned int        iconified         : 1;
-      unsigned int        modal             : 1;
-      unsigned int        sticky            : 1;
-      unsigned int        maximized_vert    : 1;
-      unsigned int        maximized_horz    : 1;
-      unsigned int        shaded            : 1;
-      unsigned int        hidden            : 1;
-      unsigned int        fullscreen        : 1;
-      unsigned int        above             : 1;
-      unsigned int        below             : 1;
-      unsigned int        demands_attention : 1;
+      Ecore_Win32_Pos_Hints_Flags flags;
+      int                         min_width;
+      int                         min_height;
+      int                         max_width;
+      int                         max_height;
+      int                         base_width;
+      int                         base_height;
+      int                         step_width;
+      int                         step_height;
+   } pos_hints;
+
+   struct {
+      unsigned int iconified         : 1;
+      unsigned int modal             : 1;
+      unsigned int sticky            : 1;
+      unsigned int maximized_vert    : 1;
+      unsigned int maximized_horz    : 1;
+      unsigned int shaded            : 1;
+      unsigned int hidden            : 1;
+      unsigned int fullscreen        : 1;
+      unsigned int above             : 1;
+      unsigned int below             : 1;
+      unsigned int demands_attention : 1;
    } state;
 
    struct {
-      unsigned int        desktop : 1;
-      unsigned int        dock    : 1;
-      unsigned int        toolbar : 1;
-      unsigned int        menu    : 1;
-      unsigned int        utility : 1;
-      unsigned int        splash  : 1;
-      unsigned int        dialog  : 1;
-      unsigned int        normal  : 1;
+      unsigned int desktop : 1;
+      unsigned int dock    : 1;
+      unsigned int toolbar : 1;
+      unsigned int menu    : 1;
+      unsigned int utility : 1;
+      unsigned int splash  : 1;
+      unsigned int dialog  : 1;
+      unsigned int normal  : 1;
    } type;
 
-   unsigned int           pointer_is_in : 1;
-   unsigned int           borderless    : 1;
-   unsigned int           iconified     : 1;
-   unsigned int           fullscreen    : 1;
+   unsigned int pointer_is_in : 1;
+   unsigned int borderless    : 1;
+   unsigned int iconified     : 1;
+   unsigned int fullscreen    : 1;
 
    struct {
       unsigned short width;
@@ -114,15 +125,15 @@ struct _Ecore_Win32_Window
    } shape;
 
    struct {
-      DWORD type;
-      int x;
-      int y;
-      int w;
-      int h;
-      int px;
-      int py;
-      int current_mouse_x;
-      int current_mouse_y;
+      DWORD        type;
+      int          x;
+      int          y;
+      int          w;
+      int          h;
+      int          px;
+      int          py;
+      int          current_mouse_x;
+      int          current_mouse_y;
       unsigned int dragging : 1;
    } drag;
 
@@ -161,6 +172,8 @@ void _ecore_win32_dnd_drop_source_free(void *drop_source);
 void *_ecore_win32_dnd_register_drop_window(HWND hwnd,
                                             Ecore_Win32_Dnd_DropTarget_Callback callback, void *ptr);
 void _ecore_win32_dnd_unregister_drop_window(HWND hwnd, void *drop_target);
+
+  Eina_Bool ecore_win32_window_drag(Ecore_Win32_Window *w, int ptx, int pty);
 
 
 #ifdef __cplusplus

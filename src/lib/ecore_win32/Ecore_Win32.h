@@ -421,36 +421,36 @@ EAPI void ecore_win32_window_size_get(Ecore_Win32_Window *window,
                                       int                *height);
 
 EAPI void ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
-                                          unsigned int        min_width,
-                                          unsigned int        min_height);
+                                          int                 min_width,
+                                          int                 min_height);
 
 EAPI void ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
-                                          unsigned int       *min_width,
-                                          unsigned int       *min_height);
+                                          int                *min_width,
+                                          int                *min_height);
 
 EAPI void ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
-                                          unsigned int        max_width,
-                                          unsigned int        max_height);
+                                          int                 max_width,
+                                          int                 max_height);
 
 EAPI void ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
-                                          unsigned int       *max_width,
-                                          unsigned int       *max_height);
+                                          int                *max_width,
+                                          int                *max_height);
 
 EAPI void ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
-                                           unsigned int        base_width,
-                                           unsigned int        base_height);
+                                           int                 base_width,
+                                           int                 base_height);
 
 EAPI void ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
-                                           unsigned int       *base_width,
-                                           unsigned int       *base_height);
+                                           int                *base_width,
+                                           int                *base_height);
 
 EAPI void ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
-                                           unsigned int        step_width,
-                                           unsigned int        step_height);
+                                           int                 step_width,
+                                           int                 step_height);
 
 EAPI void ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
-                                           unsigned int       *step_width,
-                                           unsigned int       *step_height);
+                                           int                *step_width,
+                                           int                *step_height);
 
 EAPI void ecore_win32_window_show(Ecore_Win32_Window *window);
 

@@ -3,7 +3,6 @@
 #endif
 
 #include <stdlib.h>
-#include <stdio.h>   /* for printf */
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -33,7 +32,7 @@ enum _Ecore_Win32_Window_Z_Order
 };
 
 static Ecore_Win32_Window *
-ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
+_ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
                                 int                 x,
                                 int                 y,
                                 int                 width,
@@ -42,9 +41,6 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
 {
    RECT                rect;
    Ecore_Win32_Window *w;
-   int                 minimal_width;
-#warning "We need to handle minimal_height for window like we do with width."
-   /* int                 minimal_height; */
 
    w = (Ecore_Win32_Window *)calloc(1, sizeof(Ecore_Win32_Window));
    if (!w)
@@ -52,6 +48,19 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
         ERR("malloc() failed");
         return NULL;
      }
+
+   rect.left = 0;
+   rect.top = 0;
+   rect.right = 0;
+   rect.bottom = 0;
+   if (!AdjustWindowRectEx(&rect, style, FALSE, 0))
+     {
+        ERR("AdjustWindowRect() failed");
+        free(w);
+        return NULL;
+     }
+
+   w->mininal_window_width = GetSystemMetrics(SM_CXMIN) - (rect.right - rect.left);
 
    rect.left = 0;
    rect.top = 0;
@@ -64,19 +73,18 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   minimal_width = GetSystemMetrics(SM_CXMIN);
-   /* minimal_height = GetSystemMetrics(SM_CYMIN); */
-/*    if (((rect.right - rect.left) < minimal_width) || */
-/*        ((rect.bottom - rect.top) < minimal_height)) */
-/*      { */
-/*         fprintf (stderr, "[Ecore] [Win32] ERROR !!\n"); */
-/*         fprintf (stderr, "                Wrong size %ld\n", rect.right - rect.left); */
-/*         free(w); */
-/*         return NULL; */
-/*      } */
-   if ((rect.right - rect.left) < minimal_width)
+   if (width < w->mininal_window_width)
+     width = w->mininal_window_width;
+
+   rect.left = 0;
+   rect.top = 0;
+   rect.right = width;
+   rect.bottom = height;
+   if (!AdjustWindowRectEx(&rect, style, FALSE, 0))
      {
-       rect.right = rect.left + minimal_width;
+        ERR("AdjustWindowRect() failed");
+        free(w);
+        return NULL;
      }
 
    w->window = CreateWindowEx(0,
@@ -104,14 +112,15 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
         return NULL;
      }
 
-   w->min_width   = 0;
-   w->min_height  = 0;
-   w->max_width   = 32767;
-   w->max_height  = 32767;
-   w->base_width  = -1;
-   w->base_height = -1;
-   w->step_width  = 1;
-   w->step_height = 1;
+   w->pos_hints.flags = 0;
+   w->pos_hints.min_width   = w->mininal_window_width;
+   w->pos_hints.min_height  = 0;
+   w->pos_hints.max_width   = 32767;
+   w->pos_hints.max_height  = 32767;
+   w->pos_hints.base_width  = w->mininal_window_width;
+   w->pos_hints.base_height = 0;
+   w->pos_hints.step_width  = 0;
+   w->pos_hints.step_height = 0;
 
    w->state.iconified         = 0;
    w->state.modal             = 0;
@@ -158,6 +167,255 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
  *                                 Global                                     *
  *============================================================================*/
 
+Eina_Bool
+ecore_win32_window_drag(Ecore_Win32_Window *w, int ptx, int pty)
+{
+   if (w->drag.type == HTCAPTION)
+     {
+        int dx;
+        int dy;
+
+        dx = ptx - w->drag.px;
+        dy = pty - w->drag.py;
+        if ((dx == 0) && (dy == 0))
+          return EINA_TRUE;
+
+        ecore_win32_window_move(w, w->drag.x + dx, w->drag.y + dy);
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTLEFT)
+     {
+        int dw;
+
+        dw = ptx - w->drag.px;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_width;
+
+             new_width = w->pos_hints.base_width + ((w->drag.w - w->pos_hints.base_width - dw) / w->pos_hints.step_width) * w->pos_hints.step_width;
+             if ((new_width != w->drag.w) &&
+                 (new_width >= w->pos_hints.base_width) &&
+                 (new_width <= w->pos_hints.max_width))
+               ecore_win32_window_move_resize(w, w->drag.x - (new_width - w->drag.w), w->drag.y, new_width, w->drag.h);
+          }
+        else
+          {
+             if (((w->drag.w - dw) >= w->pos_hints.min_width) &&
+                 ((w->drag.w - dw) <= w->pos_hints.max_width))
+               ecore_win32_window_move_resize(w, w->drag.x + dw, w->drag.y, w->drag.w - dw, w->drag.h);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTRIGHT)
+     {
+        int dw;
+
+        dw = ptx - w->drag.px;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_width;
+
+             new_width = w->pos_hints.base_width + ((w->drag.w - w->pos_hints.base_width + dw) / w->pos_hints.step_width) * w->pos_hints.step_width;
+             if ((new_width != w->drag.w) &&
+                 (new_width >= w->pos_hints.base_width) &&
+                 (new_width <= w->pos_hints.max_width))
+               ecore_win32_window_resize(w, new_width, w->drag.h);
+          }
+        else
+          {
+             if (((w->drag.w + dw) >= w->pos_hints.min_width) &&
+                 ((w->drag.w + dw) <= w->pos_hints.max_width))
+               ecore_win32_window_resize(w, w->drag.w + dw, w->drag.h);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTTOP)
+     {
+        int dh;
+
+        dh = pty - w->drag.py;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_height;
+
+             new_height = w->pos_hints.base_height + ((w->drag.h - w->pos_hints.base_height - dh) / w->pos_hints.step_height) * w->pos_hints.step_height;
+             if ((new_height != w->drag.h) &&
+                 (new_height >= w->pos_hints.base_height) &&
+                 (new_height <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x, w->drag.y - (new_height - w->drag.h), w->drag.w, new_height);
+          }
+        else
+          {
+             if ((dh != 0) &&
+                 ((w->drag.h - dh) >= w->pos_hints.min_height) &&
+                 ((w->drag.h - dh) <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x, w->drag.y + dh, w->drag.w, w->drag.h - dh);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTBOTTOM)
+     {
+        int dh;
+
+        dh = pty - w->drag.py;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_height;
+
+             new_height = w->pos_hints.base_height + ((w->drag.h - w->pos_hints.base_height + dh) / w->pos_hints.step_height) * w->pos_hints.step_height;
+             if ((new_height != w->drag.h) &&
+                 (new_height >= w->pos_hints.base_height) &&
+                 (new_height <= w->pos_hints.max_height))
+               ecore_win32_window_resize(w, w->drag.w, new_height);
+          }
+        else
+          {
+             if (((w->drag.h + dh) >= w->pos_hints.min_height) &&
+                 ((w->drag.h + dh) <= w->pos_hints.max_height))
+               ecore_win32_window_resize(w, w->drag.w, w->drag.h + dh);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTTOPLEFT)
+     {
+        int dh;
+        int dw;
+
+        dw = ptx - w->drag.px;
+        dh = pty - w->drag.py;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_width;
+             int new_height;
+
+             new_width = w->pos_hints.base_width + ((w->drag.w - w->pos_hints.base_width - dw) / w->pos_hints.step_width) * w->pos_hints.step_width;
+             new_height = w->pos_hints.base_height + ((w->drag.h - w->pos_hints.base_height - dh) / w->pos_hints.step_height) * w->pos_hints.step_height;
+             if ((new_width != w->drag.w) &&
+                 (new_width >= w->pos_hints.base_width) &&
+                 (new_width <= w->pos_hints.max_width) &&
+                 (new_height != w->drag.h) &&
+                 (new_height >= w->pos_hints.base_height) &&
+                 (new_height <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x - (new_width - w->drag.w), w->drag.y - (new_height - w->drag.h), new_width, new_height);
+          }
+        else
+          {
+             if (((w->drag.w - dw) >= w->pos_hints.min_width) &&
+                 ((w->drag.w - dw) <= w->pos_hints.max_width) &&
+                 ((w->drag.h - dh) >= w->pos_hints.min_height) &&
+                 ((w->drag.h - dh) <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x + dw, w->drag.y + dh, w->drag.w - dw, w->drag.h - dh);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTTOPRIGHT)
+     {
+        int dh;
+        int dw;
+
+        dw = ptx - w->drag.px;
+        dh = pty - w->drag.py;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_width;
+             int new_height;
+
+             new_width = w->pos_hints.base_width + ((w->drag.w - w->pos_hints.base_width + dw) / w->pos_hints.step_width) * w->pos_hints.step_width;
+             new_height = w->pos_hints.base_height + ((w->drag.h - w->pos_hints.base_height - dh) / w->pos_hints.step_height) * w->pos_hints.step_height;
+             if ((new_width != w->drag.w) &&
+                 (new_width >= w->pos_hints.base_width) &&
+                 (new_width <= w->pos_hints.max_width) &&
+                 (new_height != w->drag.h) &&
+                 (new_height >= w->pos_hints.base_height) &&
+                 (new_height <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x, w->drag.y - (new_height - w->drag.h), new_width, new_height);
+          }
+        else
+          {
+             if (((w->drag.w + dw) >= w->pos_hints.min_width) &&
+                 ((w->drag.w + dw) <= w->pos_hints.max_width) &&
+                 ((w->drag.h - dh) >= w->pos_hints.min_height) &&
+                 ((w->drag.h - dh) <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x, w->drag.y + dh, w->drag.w + dw, w->drag.h - dh);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTBOTTOMLEFT)
+     {
+        int dh;
+        int dw;
+
+        dw = ptx - w->drag.px;
+        dh = pty - w->drag.py;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_width;
+             int new_height;
+
+             new_width = w->pos_hints.base_width + ((w->drag.w - w->pos_hints.base_width - dw) / w->pos_hints.step_width) * w->pos_hints.step_width;
+             new_height = w->pos_hints.base_height + ((w->drag.h - w->pos_hints.base_height + dh) / w->pos_hints.step_height) * w->pos_hints.step_height;
+             if ((new_width != w->drag.w) &&
+                 (new_width >= w->pos_hints.base_width) &&
+                 (new_width <= w->pos_hints.max_width) &&
+                 (new_height != w->drag.h) &&
+                 (new_height >= w->pos_hints.base_height) &&
+                 (new_height <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x - (new_width - w->drag.w), w->drag.y, new_width, new_height);
+          }
+        else
+          {
+             if (((w->drag.w - dw) >= w->pos_hints.min_width) &&
+                 ((w->drag.w - dw) <= w->pos_hints.max_width) &&
+                 ((w->drag.h + dh) >= w->pos_hints.min_height) &&
+                 ((w->drag.h + dh) <= w->pos_hints.max_height))
+               ecore_win32_window_move_resize(w, w->drag.x + dw, w->drag.y, w->drag.w - dw, w->drag.h + dh);
+          }
+        return EINA_TRUE;
+     }
+   if (w->drag.type == HTBOTTOMRIGHT)
+     {
+        int dh;
+        int dw;
+
+        dw = ptx - w->drag.px;
+        dh = pty - w->drag.py;
+
+        if (w->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE)
+          {
+             int new_width;
+             int new_height;
+
+             new_width = w->pos_hints.base_width + ((w->drag.w - w->pos_hints.base_width + dw) / w->pos_hints.step_width) * w->pos_hints.step_width;
+             new_height = w->pos_hints.base_height + ((w->drag.h - w->pos_hints.base_height + dh) / w->pos_hints.step_height) * w->pos_hints.step_height;
+             if ((new_width != w->drag.w) &&
+                 (new_width >= w->pos_hints.base_width) &&
+                 (new_width <= w->pos_hints.max_width) &&
+                 (new_height != w->drag.h) &&
+                 (new_height >= w->pos_hints.base_height) &&
+                 (new_height <= w->pos_hints.max_height))
+               ecore_win32_window_resize(w, new_width, new_height);
+          }
+        else
+          {
+             if (((w->drag.w + dw) >= w->pos_hints.min_width) &&
+                 ((w->drag.w + dw) <= w->pos_hints.max_width) &&
+                 ((w->drag.h + dh) >= w->pos_hints.min_height) &&
+                 ((w->drag.h + dh) <= w->pos_hints.max_height))
+               ecore_win32_window_resize(w, w->drag.w + dw, w->drag.h + dh);
+          }
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -194,10 +452,10 @@ ecore_win32_window_new(Ecore_Win32_Window *parent,
 {
    INF("creating window with border");
 
-   return ecore_win32_window_internal_new(parent,
-                                          x, y,
-                                          width, height,
-                                          WS_OVERLAPPEDWINDOW | WS_SIZEBOX);
+   return _ecore_win32_window_internal_new(parent,
+                                           x, y,
+                                           width, height,
+                                           WS_OVERLAPPEDWINDOW | WS_SIZEBOX);
 }
 
 /**
@@ -222,10 +480,10 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
 {
    INF("creating window without border");
 
-   return ecore_win32_window_internal_new(parent,
-                                          x, y,
-                                          width, height,
-                                          WS_POPUP & ~(WS_CAPTION | WS_THICKFRAME));
+   return _ecore_win32_window_internal_new(parent,
+                                           x, y,
+                                           width, height,
+                                           WS_POPUP & ~(WS_CAPTION | WS_THICKFRAME));
 }
 
 /**
@@ -354,20 +612,15 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
                           int                 width,
                           int                 height)
 {
-   RECT                rect;
-   DWORD               style;
-   int                 x;
-   int                 y;
-   int                 minimal_width;
-   int                 minimal_height;
+   RECT rect;
+   DWORD style;
+   int x;
+   int y;
 
    /* FIXME: on fullscreen, should not resize it */
    if (!window) return;
 
    INF("resizing window (%dx%d)", width, height);
-
-   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)window->min_width);
-   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)window->min_height);
 
    if (!GetWindowRect(window->window, &rect))
      {
@@ -379,10 +632,10 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    y = rect.top;
    rect.left = 0;
    rect.top = 0;
-   if (width < minimal_width) width = minimal_width;
-   if (width > (int)window->max_width) width = window->max_width;
-   if (height < minimal_height) height = minimal_height;
-   if (height > (int)window->max_height) height = window->max_height;
+   if (width < window->pos_hints.min_width) width = window->pos_hints.min_width;
+   if (width > window->pos_hints.max_width) width = window->pos_hints.max_width;
+   if (height < window->pos_hints.min_height) height = window->pos_hints.min_height;
+   if (height > window->pos_hints.max_height) height = window->pos_hints.max_height;
    rect.right = width;
    rect.bottom = height;
    if (!(style = GetWindowLong(window->window, GWL_STYLE)))
@@ -425,25 +678,20 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
                                int                 width,
                                int                 height)
 {
-   RECT                rect;
-   DWORD               style;
-   int                 minimal_width;
-   int                 minimal_height;
+   RECT rect;
+   DWORD style;
 
    /* FIXME: on fullscreen, should not move/resize it */
    if (!window) return;
 
    INF("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
 
-   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)window->min_width);
-   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)window->min_height);
-
    rect.left = 0;
    rect.top = 0;
-   if (width < minimal_width) width = minimal_width;
-   if (width > (int)window->max_width) width = window->max_width;
-   if (height < minimal_height) height = minimal_height;
-   if (height > (int)window->max_height) height = window->max_height;
+   if (width < window->pos_hints.min_width) width = window->pos_hints.min_width;
+   if (width > window->pos_hints.max_width) width = window->pos_hints.max_width;
+   if (height < window->pos_hints.min_height) height = window->pos_hints.min_height;
+   if (height > window->pos_hints.max_height) height = window->pos_hints.max_height;
    rect.right = width;
    rect.bottom = height;
    if (!(style = GetWindowLong(window->window, GWL_STYLE)))
@@ -499,8 +747,8 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
      {
         if (x) *x = 0;
         if (y) *y = 0;
-        if (width) *width = GetSystemMetrics(SM_CXSCREEN);
-        if (height) *height = GetSystemMetrics(SM_CYSCREEN);
+        if (width) *width = 0;
+        if (height) *height = 0;
 
         return;
      }
@@ -563,8 +811,8 @@ ecore_win32_window_size_get(Ecore_Win32_Window *window,
 
    if (!window)
      {
-        if (width) *width = GetSystemMetrics(SM_CXSCREEN);
-        if (height) *height = GetSystemMetrics(SM_CYSCREEN);
+        if (width) *width = 0;
+        if (height) *height = 0;
 
         return;
      }
@@ -594,14 +842,27 @@ ecore_win32_window_size_get(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
-                                unsigned int        min_width,
-                                unsigned int        min_height)
+                                int                 min_width,
+                                int                 min_height)
 {
    if (!window) return;
 
-   printf ("ecore_win32_window_size_min_set : %p  %d %d\n", window, min_width, min_height);
-   window->min_width = min_width;
-   window->min_height = min_height;
+   INF("setting minimum window size to %dx%d", min_width, min_height);
+
+   if ((min_width > 0) && (min_height > 0))
+     {
+        if (min_width < window->mininal_window_width)
+          min_width = window->mininal_window_width;
+
+        window->pos_hints.flags |= ECORE_WIN32_POS_HINTS_MIN_SIZE;
+        window->pos_hints.min_width = min_width;
+        window->pos_hints.min_height = min_height;
+        if (!(window->pos_hints.flags & ECORE_WIN32_POS_HINTS_BASE_SIZE))
+          {
+             window->pos_hints.base_width = min_width;
+             window->pos_hints.base_height = min_height;
+          }
+     }
 }
 
 /**
@@ -617,14 +878,20 @@ ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
-                                unsigned int       *min_width,
-                                unsigned int       *min_height)
+                                int                *min_width,
+                                int                *min_height)
 {
-   if (!window) return;
+   if (!window || !(window->pos_hints.flags & ECORE_WIN32_POS_HINTS_MIN_SIZE))
+     {
+        if (min_width) *min_width = 0;
+        if (min_height) *min_height = 0;
+        return;
+     }
 
-   printf ("ecore_win32_window_size_min_get : %p  %d %d\n", window, window->min_width, window->min_height);
-   if (min_width) *min_width = window->min_width;
-   if (min_height) *min_height = window->min_height;
+   INF("getting minimum window size: %dx%d", window->pos_hints.min_width, window->pos_hints.min_height);
+
+   if (min_width) *min_width = window->pos_hints.min_width;
+   if (min_height) *min_height = window->pos_hints.min_height;
 }
 
 /**
@@ -640,14 +907,19 @@ ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
-                                unsigned int        max_width,
-                                unsigned int        max_height)
+                                int                 max_width,
+                                int                 max_height)
 {
    if (!window) return;
 
-   printf ("ecore_win32_window_size_max_set : %p  %d %d\n", window, max_width, max_height);
-   window->max_width = max_width;
-   window->max_height = max_height;
+   INF("setting maximum window size to %dx%d", max_width, max_height);
+
+   if ((max_width > 0) && (max_height > 0))
+     {
+        window->pos_hints.flags |= ECORE_WIN32_POS_HINTS_MAX_SIZE;
+        window->pos_hints.max_width = max_width;
+        window->pos_hints.max_height = max_height;
+     }
 }
 
 /**
@@ -663,14 +935,20 @@ ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
-                                unsigned int       *max_width,
-                                unsigned int       *max_height)
+                                int                *max_width,
+                                int                *max_height)
 {
-   if (!window) return;
+   if (!window || !(window->pos_hints.flags & ECORE_WIN32_POS_HINTS_MAX_SIZE))
+     {
+        if (max_width) *max_width = 0;
+        if (max_height) *max_height = 0;
+        return;
+     }
 
-   printf ("ecore_win32_window_size_max_get : %p  %d %d\n", window, window->max_width, window->max_height);
-   if (max_width) *max_width = window->max_width;
-   if (max_height) *max_height = window->max_height;
+   INF("getting maximum window size: %dx%d", window->pos_hints.max_width, window->pos_hints.max_height);
+
+   if (max_width) *max_width = window->pos_hints.max_width;
+   if (max_height) *max_height = window->pos_hints.max_height;
 }
 
 /**
@@ -686,14 +964,19 @@ ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
-                                 unsigned int        base_width,
-                                 unsigned int        base_height)
+                                 int                 base_width,
+                                 int                 base_height)
 {
-   printf ("ecore_win32_window_size_base_set : %p  %d %d\n", window, base_width, base_height);
    if (!window) return;
 
-   window->base_width = base_width;
-   window->base_height = base_height;
+   INF("setting base window size to %dx%d", base_width, base_height);
+
+   if ((base_width > 0) && (base_height > 0))
+     {
+        window->pos_hints.flags |= ECORE_WIN32_POS_HINTS_BASE_SIZE;
+        window->pos_hints.base_width = base_width;
+        window->pos_hints.base_height = base_height;
+     }
 }
 
 /**
@@ -709,14 +992,20 @@ ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
-                                 unsigned int       *base_width,
-                                 unsigned int       *base_height)
+                                 int                *base_width,
+                                 int                *base_height)
 {
-   if (!window) return;
+   if (!window || !(window->pos_hints.flags & ECORE_WIN32_POS_HINTS_BASE_SIZE))
+     {
+        if (base_width) *base_width = 0;
+        if (base_height) *base_height = 0;
+        return;
+     }
 
-   printf ("ecore_win32_window_size_base_get : %p  %d %d\n", window, window->base_width, window->base_height);
-   if (base_width) *base_width = window->base_width;
-   if (base_height) *base_height = window->base_height;
+   INF("getting base window size: %dx%d", window->pos_hints.base_width, window->pos_hints.base_height);
+
+   if (base_width) *base_width = window->pos_hints.base_width;
+   if (base_height) *base_height = window->pos_hints.base_height;
 }
 
 /**
@@ -732,14 +1021,19 @@ ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
-                                 unsigned int        step_width,
-                                 unsigned int        step_height)
+                                 int                 step_width,
+                                 int                 step_height)
 {
-   printf ("ecore_win32_window_size_step_set : %p  %d %d\n", window, step_width, step_height);
    if (!window) return;
 
-   window->step_width = step_width;
-   window->step_height = step_height;
+   INF("setting step window size to %dx%d", step_width, step_height);
+
+   if ((step_width > 0) && (step_height > 0))
+     {
+        window->pos_hints.flags |= ECORE_WIN32_POS_HINTS_STEP_SIZE;
+        window->pos_hints.step_width = step_width;
+        window->pos_hints.step_height = step_height;
+     }
 }
 
 /**
@@ -755,14 +1049,20 @@ ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
  */
 EAPI void
 ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
-                                 unsigned int       *step_width,
-                                 unsigned int       *step_height)
+                                 int                *step_width,
+                                 int                *step_height)
 {
-   if (!window) return;
+   if (!window || !(window->pos_hints.flags & ECORE_WIN32_POS_HINTS_STEP_SIZE))
+     {
+        if (step_width) *step_width = 0;
+        if (step_height) *step_height = 0;
+        return;
+     }
 
-   printf ("ecore_win32_window_size_step_get : %p  %d %d\n", window, window->step_width, window->step_height);
-   if (step_width) *step_width = window->step_width;
-   if (step_height) *step_height = window->step_height;
+   INF("getting step window size: %dx%d", window->pos_hints.step_width, window->pos_hints.step_height);
+
+   if (step_width) *step_width = window->pos_hints.step_width;
+   if (step_height) *step_height = window->pos_hints.step_height;
 }
 
 /**

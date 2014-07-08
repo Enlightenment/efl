@@ -38,24 +38,6 @@ DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
 
 static int       _ecore_win32_init_count = 0;
 
-static void
-_ecore_win32_size_check(Ecore_Win32_Window *win, int w, int h, int *dx, int *dy)
-{
-   int minimal_width;
-   int minimal_height;
-
-   minimal_width = GetSystemMetrics(SM_CXMIN);
-   minimal_height = GetSystemMetrics(SM_CYMIN);
-   if ((w) < MAX(minimal_width, (int)win->min_width))
-     *dx = 0;
-   if ((w) > (int)win->max_width)
-     *dx = 0;
-   if ((h) < MAX(minimal_height, (int)win->min_height))
-     *dy = 0;
-   if ((h) > (int)win->max_height)
-     *dy = 0;
-}
-
 LRESULT CALLBACK
 _ecore_win32_window_procedure(HWND   window,
                               UINT   message,
@@ -124,7 +106,7 @@ _ecore_win32_window_procedure(HWND   window,
           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
           if (w->drag.dragging)
             {
-               w->drag.dragging = 0;
+               w->drag.dragging = EINA_FALSE;
                return 0;
             }
 
@@ -155,10 +137,10 @@ _ecore_win32_window_procedure(HWND   window,
               (w->drag.current_mouse_y == GET_Y_LPARAM(data_param)))
             return 0;
 
+          INF("mouse move message");
+
           w->drag.current_mouse_x = GET_X_LPARAM(data_param);
           w->drag.current_mouse_y = GET_Y_LPARAM(data_param);
-
-          INF("mouse move message");
 
           if (w->drag.dragging)
             {
@@ -168,148 +150,8 @@ _ecore_win32_window_procedure(HWND   window,
                pt.y = GET_Y_LPARAM(data_param);
                if (ClientToScreen(window, &pt))
                  {
-                    if (w->drag.type == HTCAPTION)
-                      {
-                         int dx;
-                         int dy;
-
-                         dx = pt.x - w->drag.px;
-                         dy = pt.y - w->drag.py;
-                         ecore_win32_window_move(w, w->drag.x + dx, w->drag.y + dy);
-                         w->drag.x += dx;
-                         w->drag.y += dy;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTLEFT)
-                      {
-                         int dw;
-
-                         dw = pt.x - w->drag.px;
-                         ecore_win32_window_move_resize(w, w->drag.x + dw, w->drag.y, w->drag.w - dw, w->drag.h);
-                         w->drag.x += dw;
-                         w->drag.w -= dw;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTRIGHT)
-                      {
-                         int dw;
-
-                         dw = pt.x - w->drag.px;
-                         ecore_win32_window_resize(w, w->drag.w + dw, w->drag.h);
-                         w->drag.w += dw;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTTOP)
-                      {
-                         int dh;
-
-                         dh = pt.y - w->drag.py;
-                         ecore_win32_window_move_resize(w, w->drag.x, w->drag.y + dh, w->drag.w, w->drag.h - dh);
-                         w->drag.y += dh;
-                         w->drag.h -= dh;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTBOTTOM)
-                      {
-                         int dh;
-
-                         dh = pt.y - w->drag.py;
-                         ecore_win32_window_resize(w, w->drag.w, w->drag.h + dh);
-                         w->drag.h += dh;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTTOPLEFT)
-                      {
-                         int dx;
-                         int dy;
-                         int dh;
-                         int dw;
-
-                         dw = pt.x - w->drag.px;
-                         dh = pt.y - w->drag.py;
-                         dx = dw;
-                         dy = dh;
-                         _ecore_win32_size_check(w,
-                                                 w->drag.w - dw, w->drag.h - dh,
-                                                 &dx, &dy);
-
-                         ecore_win32_window_move_resize(w, w->drag.x + dx, w->drag.y + dy, w->drag.w - dw, w->drag.h - dh);
-                         w->drag.x += dx;
-                         w->drag.y += dy;
-                         w->drag.w -= dw;
-                         w->drag.h -= dh;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTTOPRIGHT)
-                      {
-                         int dx;
-                         int dy;
-                         int dh;
-                         int dw;
-
-                         dw = pt.x - w->drag.px;
-                         dh = pt.y - w->drag.py;
-                         dx = dw;
-                         dy = dh;
-                         _ecore_win32_size_check(w,
-                                                 w->drag.w, w->drag.h - dh,
-                                                 &dx, &dy);
-                         ecore_win32_window_move_resize(w, w->drag.x, w->drag.y + dy, w->drag.w, w->drag.h - dh);
-                         w->drag.y += dy;
-                         w->drag.w += dw;
-                         w->drag.h -= dh;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTBOTTOMLEFT)
-                      {
-                         int dx;
-                         int dy;
-                         int dh;
-                         int dw;
-
-                         dw = pt.x - w->drag.px;
-                         dh = pt.y - w->drag.py;
-                         dx = dw;
-                         dy = dh;
-                         _ecore_win32_size_check(w,
-                                                 w->drag.w - dw, w->drag.h + dh,
-                                                 &dx, &dy);
-                         ecore_win32_window_move_resize(w, w->drag.x + dx, w->drag.y, w->drag.w - dw, w->drag.h + dh);
-                         w->drag.x += dx;
-                         w->drag.w -= dw;
-                         w->drag.h += dh;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
-                    if (w->drag.type == HTBOTTOMRIGHT)
-                      {
-                         int dh;
-                         int dw;
-
-                         dw = pt.x - w->drag.px;
-                         dh = pt.y - w->drag.py;
-                         ecore_win32_window_resize(w, w->drag.w + dw, w->drag.h + dh);
-                         w->drag.w += dw;
-                         w->drag.h += dh;
-                         w->drag.px = pt.x;
-                         w->drag.py = pt.y;
-                         return 0;
-                      }
+                    if (ecore_win32_window_drag(w, pt.x, pt.y))
+                      return 0;
                  }
             }
 
@@ -430,13 +272,13 @@ _ecore_win32_window_procedure(HWND   window,
 
            w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
            ecore_win32_window_geometry_get(w,
-                                           NULL, NULL,
+                                           &w->drag.x, &w->drag.y,
                                            &w->drag.w, &w->drag.h);
            SetCapture(window);
            w->drag.type = (DWORD)window_param;
            w->drag.px = GET_X_LPARAM(data_param);
            w->drag.py = GET_Y_LPARAM(data_param);
-           w->drag.dragging = 1;
+           w->drag.dragging = EINA_TRUE;
            if ((DWORD)window_param == HTCAPTION)
              ecore_win32_window_raise(w);
            return 0;
@@ -453,7 +295,7 @@ _ecore_win32_window_procedure(HWND   window,
            INF("sys command MOVE or SIZE window message : %dx%d", GET_X_LPARAM(data_param), GET_Y_LPARAM(data_param));
 
            w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
-           w->drag.dragging = 1;
+           w->drag.dragging = EINA_TRUE;
            return 0;
          }
        return DefWindowProc(window, message, window_param, data_param);
