@@ -53,10 +53,6 @@
 # define PATH_MAX 4096
 #endif
 
-#ifdef HAVE_LIBEXIF
-  #include <libexif/exif-data.h>
-#endif
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -1542,7 +1538,6 @@ _ethumb_image_load(Ethumb *e)
    int error;
    Evas_Coord w, h, ww, hh, fx, fy, fw, fh;
    Evas_Object *img;
-   int orientation = ETHUMB_THUMB_ORIENT_NONE;
 
    img = e->img;
 
@@ -1552,6 +1547,10 @@ _ethumb_image_load(Ethumb *e)
      evas_object_hide(img);
    evas_object_image_file_set(img, NULL, NULL);
    evas_object_image_load_size_set(img, e->tw, e->th);
+
+   if (e->orientation == ETHUMB_THUMB_ORIENT_ORIGINAL)
+     evas_object_image_load_orientation_set(img, EINA_TRUE);
+
    evas_object_image_file_set(img, e->src_path, e->src_key);
 
    if (e->frame)
@@ -1566,56 +1565,9 @@ _ethumb_image_load(Ethumb *e)
         return 0;
      }
 
-   if (e->orientation == ETHUMB_THUMB_ORIENT_ORIGINAL)
-     {
-        /* TODO: rewrite to not need libexif just to get this */
-#ifdef HAVE_LIBEXIF
-        ExifData  *exif = exif_data_new_from_file(e->src_path);
-        ExifEntry *entry = NULL;
-        ExifByteOrder bo;
-        int o = 0;
-
-        if (exif)
-          {
-             entry = exif_data_get_entry(exif, EXIF_TAG_ORIENTATION);
-             if (entry)
-               {
-                  bo = exif_data_get_byte_order(exif);
-                  o = exif_get_short(entry->data, bo);
-               }
-             exif_data_free(exif);
-             switch (o)
-               {
-                case 2:
-                   orientation = ETHUMB_THUMB_FLIP_HORIZONTAL;
-                   break;
-                case 3:
-                   orientation = ETHUMB_THUMB_ROTATE_180;
-                   break;
-                case 4:
-                   orientation = ETHUMB_THUMB_FLIP_VERTICAL;
-                   break;
-                case 5:
-                   orientation = ETHUMB_THUMB_FLIP_TRANSPOSE;
-                   break;
-                case 6:
-                   orientation = ETHUMB_THUMB_ROTATE_90_CW;
-                   break;
-                case 7:
-                   orientation = ETHUMB_THUMB_FLIP_TRANSVERSE;
-                   break;
-                case 8:
-                   orientation = ETHUMB_THUMB_ROTATE_90_CCW;
-                   break;
-               }
-          }
-#endif
-     }
-   else
-     orientation = e->orientation;
-
-   if (orientation != ETHUMB_THUMB_ORIENT_NONE)
-     _ethumb_image_orient(e, orientation);
+   if (e->orientation != ETHUMB_THUMB_ORIENT_NONE &&
+       e->orientation != ETHUMB_THUMB_ORIENT_ORIGINAL)
+     _ethumb_image_orient(e, e->orientation);
 
    evas_object_image_size_get(img, &w, &h);
    if ((w <= 0) || (h <= 0))
