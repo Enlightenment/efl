@@ -956,7 +956,7 @@ _print_type(FILE *f, Eo_Type_Def *tp)
    Eina_List *l;
    Eo_Type_Def *stp;
    if (tp->is_own)
-     fputs("@own(", f);
+     fputs("own(", f);
    if (tp->is_const)
      fputs("const(", f);
    if (tp->type == EOLIAN_TYPE_REGULAR)

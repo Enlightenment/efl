@@ -1313,7 +1313,7 @@ _type_print(Eolian_Type tp, Eina_Strbuf *buf)
    Eina_List *l;
    Eolian_Type stp;
    if (tpp->is_own)
-     eina_strbuf_append(buf, "@own(");
+     eina_strbuf_append(buf, "own(");
    if (tpp->is_const)
      eina_strbuf_append(buf, "const(");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
