@@ -767,7 +767,7 @@ _evas_3d_mesh_fog_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_fog_enable_get(Eo *obj, Evas_3D_Mesh_Data *pd)
+_evas_3d_mesh_fog_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
    return pd->fog_enabled;
 }
