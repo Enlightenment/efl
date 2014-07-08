@@ -1025,8 +1025,6 @@ eng_setup(Evas *eo_e, void *in)
                   Outbuf *ob;
 
                   re->generic.ob->gl_context->references++;
-                  eng_window_free(re->generic.ob);
-                  re->generic.ob = NULL;
                   gl_wins--;
 
                   ob = eng_window_new(info, eo_e,
@@ -1041,6 +1039,10 @@ eng_setup(Evas *eo_e, void *in)
                                       re->generic.ob->info->info.destination_alpha,
                                       re->generic.ob->info->info.rotation,
                                       swap_mode);
+
+                  eng_window_free(re->generic.ob);
+                  re->generic.ob = NULL;
+
                   eng_window_use(ob);
                   if (ob)
                     {
