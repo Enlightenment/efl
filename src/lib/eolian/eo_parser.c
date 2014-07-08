@@ -186,7 +186,15 @@ parse_function_type(Eo_Lexer *ls)
 }
 
 static Eo_Type_Def *
-parse_type_void(Eo_Lexer *ls)
+parse_struct(Eo_Lexer *ls, const char *name)
+{
+   (void)ls;
+   (void)name;
+   return NULL;
+}
+
+static Eo_Type_Def *
+parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
 {
    Eina_Bool    has_struct = EINA_FALSE;
    Eo_Type_Def *def;
@@ -225,6 +233,17 @@ parse_type_void(Eo_Lexer *ls)
         }
       case KW_struct:
         eo_lexer_get(ls);
+        if (allow_struct)
+          {
+             if (allow_anon && ls->t.token == '{')
+               return parse_struct(ls, NULL);
+             if (eo_lexer_lookahead(ls) == '{')
+               {
+                  check(ls, TOK_VALUE);
+                  eo_lexer_get(ls);
+                  return parse_struct(ls, NULL);
+               }
+          }
         has_struct = EINA_TRUE;
         break;
       case KW_func:
@@ -278,16 +297,33 @@ parse_ptr:
    return def;
 }
 
+static Eo_Type_Def *
+parse_type_void(Eo_Lexer *ls)
+{
+   return parse_type_struct(ls, EINA_FALSE, EINA_FALSE);
+}
+
 static void
 parse_typedef(Eo_Lexer *ls)
 {
+   int line, column;
+   Eo_Type_Def *ret;
    ls->tmp.typedef_def = calloc(1, sizeof(Eo_Typedef_Def));
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
    ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    test_next(ls, ':');
-   ls->tmp.typedef_def->type = parse_type(ls);
+   line = ls->line_number;
+   column = ls->column;
+   ret = parse_type_struct(ls, EINA_TRUE, EINA_TRUE);
+   if (ret->type == EOLIAN_TYPE_VOID)
+     {
+        ls->line_number = line;
+        ls->column = column;
+        eo_lexer_syntax_error(ls, "non-void type expected");
+     }
+   ls->tmp.typedef_def->type = ret;
    ls->tmp.type_def = NULL;
    check_next(ls, ';');
 }
@@ -921,6 +957,13 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            append_node(ls, NODE_TYPEDEF, ls->tmp.typedef_def);
            ls->tmp.typedef_def = NULL;
            break;
+        }
+      case KW_struct:
+        {
+           eo_lexer_get(ls);
+           check(ls, TOK_VALUE);
+           eo_lexer_get(ls);
+           parse_struct(ls, NULL);
         }
       def:
       default:
