@@ -190,7 +190,7 @@ static const Eldbus_Property _props[] = {
 };
 
 static const Eldbus_Service_Interface_Desc iface_desc = {
-   "org.enlightenment.Application1", _methods, NULL, _props, NULL, NULL
+   "org.enlightenment.Application1", _methods, NULL, _props, NULL, NULL, NULL
 };
 
 EOLIAN static void

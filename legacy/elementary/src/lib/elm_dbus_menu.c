@@ -877,7 +877,7 @@ static const Eldbus_Property _properties[] = {
 };
 
 static const Eldbus_Service_Interface_Desc _interface = {
-   DBUS_INTERFACE, _methods, _signals, _properties, NULL, NULL
+   DBUS_INTERFACE, _methods, _signals, _properties, NULL, NULL, NULL
 };
 // =============================================================================
 

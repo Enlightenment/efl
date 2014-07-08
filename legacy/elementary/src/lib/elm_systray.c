@@ -290,7 +290,7 @@ static const Eldbus_Property properties[] = {
 };
 
 static const Eldbus_Service_Interface_Desc _iface_desc = {
-     INTERFACE, methods, signals, properties, NULL, NULL
+     INTERFACE, methods, signals, properties, NULL, NULL, NULL
 };
 // =============================================================================
 
