@@ -1252,6 +1252,35 @@ _ftype_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
      }
 }
 
+static Eina_Bool
+_stype_field_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
+                void *fdata)
+{
+   _type_to_str((Eolian_Type)data, (Eina_Strbuf*)fdata, (const char*)key);
+   eina_strbuf_append((Eina_Strbuf*)fdata, "; ");
+   return EINA_TRUE;
+}
+
+static void
+_stype_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
+{
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   eina_strbuf_append(buf, "struct ");
+   if (tpp->name)
+     {
+        eina_strbuf_append(buf, tpp->name);
+        eina_strbuf_append_char(buf, ' ');
+     }
+   eina_strbuf_append(buf, "{ ");
+   eina_hash_foreach(tpp->fields, _stype_field_cb, buf);
+   eina_strbuf_append(buf, "}");
+   if (name)
+     {
+        eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, name);
+     }
+}
+
 static void
 _type_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
 {
@@ -1259,6 +1288,11 @@ _type_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
    if (tpp->type == EOLIAN_TYPE_FUNCTION)
      {
         _ftype_to_str(tp, buf, name);
+        return;
+     }
+   else if (tpp->type == EOLIAN_TYPE_STRUCT)
+     {
+        _stype_to_str(tp, buf, name);
         return;
      }
    if ((tpp->type == EOLIAN_TYPE_REGULAR || tpp->type == EOLIAN_TYPE_VOID)
