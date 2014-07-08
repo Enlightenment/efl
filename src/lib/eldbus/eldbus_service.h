@@ -72,8 +72,14 @@ typedef struct _Eldbus_Method
    const Eldbus_Arg_Info *out;
    Eldbus_Method_Cb cb;
    unsigned int flags;
-   void* data;           // @since 1.11
 } Eldbus_Method;
+
+// @since 1.11
+typedef struct _Eldbus_Method2
+{
+   Eldbus_Method method;
+   void* data;
+} Eldbus_Method2;
 
 typedef struct _Eldbus_Signal
 {
@@ -99,6 +105,7 @@ typedef struct _Eldbus_Service_Interface_Desc
    const Eldbus_Property *properties; /**< array of property that this interface have, the last item of array should be filled with NULL  */
    const Eldbus_Property_Get_Cb default_get; /**< default get function, if a property don't have a get function this will be used */
    const Eldbus_Property_Set_Cb default_set; /**< default set function, if a property don't have a set function this will be used */
+  const Eldbus_Method2 *methods2; /**< array of the methods that should be registered in this interface, the last item of array should be filled with NULL @since 1.11 */
 } Eldbus_Service_Interface_Desc;
 
 /**

@@ -933,6 +933,7 @@ _eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, co
    Eldbus_Service_Object *obj;
    Eldbus_Service_Interface *iface;
    const Eldbus_Method *method;
+   const Eldbus_Method2 *method2;
    const Eldbus_Property *property;
    Eina_Array *signatures;
 
@@ -965,6 +966,9 @@ _eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, co
    for (method = desc->methods; method && method->member; method++)
      _eldbus_service_method_add(iface, method);
 
+   for (method2 = desc->methods2; method2 && method2->method.member; method2++)
+     _eldbus_service_method_add(iface, &method2->method);
+   
    iface->signals = desc->signals;
    iface->sign_of_signals = signatures;
 
@@ -1288,7 +1292,7 @@ _eldbus_method_call(Eldbus_Method const* method, Eldbus_Service_Interface* iface
   if(method->flags & ELDBUS_METHOD_FLAG_HAS_DATA)
     {
       Eldbus_Method_Data_Cb cb = (Eldbus_Method_Data_Cb)method->cb;
-      return cb(method->data, iface, msg);
+      return cb(((Eldbus_Method2 const*)method)->data, iface, msg);
     }
   else
     {

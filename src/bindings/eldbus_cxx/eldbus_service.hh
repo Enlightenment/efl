@@ -163,11 +163,11 @@ void _fill_methods(std::array<Eldbus_Arg_Info, N>& array
 
 template <typename Tuple, std::size_t I>
 void _create_methods_specification(Tuple const&
-                                   , std::array<Eldbus_Method, std::tuple_size<Tuple>::value+1>& methods
+                                   , std::array<Eldbus_Method2, std::tuple_size<Tuple>::value+1>& methods
                                    , std::integral_constant<std::size_t, I>
                                    , std::true_type)
 {
-  methods[I] = Eldbus_Method {0, 0, 0, 0, 0, 0};
+  methods[I] = Eldbus_Method2 {0, 0, 0, 0, 0, 0};
 };
 
 template <std::size_t, typename T>
@@ -281,7 +281,7 @@ Eldbus_Message* _method_callback(void* data, Eldbus_Service_Interface const* ifa
 }
 
 template <typename Method>
-void _create_methods_specification_impl(Method const& method, Eldbus_Method& eldbus_method, std::false_type)
+void _create_methods_specification_impl(Method const& method, Eldbus_Method2& eldbus_method, std::false_type)
 {
   std::array<Eldbus_Arg_Info, Method::ins_type::size()+1>*
     in_params = new std::array<Eldbus_Arg_Info, Method::ins_type::size()+1>;
@@ -305,7 +305,7 @@ void _create_methods_specification_impl(Method const& method, Eldbus_Method& eld
 }
 
 template <typename Method>
-void _create_methods_specification_impl(Method const& method, Eldbus_Method& eldbus_method, std::true_type)
+void _create_methods_specification_impl(Method const& method, Eldbus_Method2& eldbus_method, std::true_type)
 {
   std::array<Eldbus_Arg_Info, Method::ins_type::size()+1>*
     in_params = new std::array<Eldbus_Arg_Info, Method::ins_type::size()+1>;
@@ -322,7 +322,7 @@ void _create_methods_specification_impl(Method const& method, Eldbus_Method& eld
 
 template <typename Tuple, std::size_t I>
 void _create_methods_specification(Tuple const& tuple
-                                   , std::array<Eldbus_Method, std::tuple_size<Tuple>::value+1>& methods
+                                   , std::array<Eldbus_Method2, std::tuple_size<Tuple>::value+1>& methods
                                    , std::integral_constant<std::size_t, I>
                                    , std::false_type)
 {
@@ -340,12 +340,12 @@ void _create_methods_specification(Tuple const& tuple
 };
 
 template <typename Tuple>
-std::array<Eldbus_Method, std::tuple_size<Tuple>::value+1> _create_methods_specification
+std::array<Eldbus_Method2, std::tuple_size<Tuple>::value+1> _create_methods_specification
   (Tuple const& tuple
    )
 {
   typedef std::tuple_size<Tuple> tuple_size;
-  std::array<Eldbus_Method, tuple_size::value+1> array;
+  std::array<Eldbus_Method2, tuple_size::value+1> array;
 
   _create_methods_specification(tuple, array
                                 , std::integral_constant<std::size_t, 0u>()
@@ -359,14 +359,14 @@ service_interface service_interface_register(connection& c, const char* path
                                              , Args... args
                                              )
 {
-  std::array<Eldbus_Method, sizeof...(Args) + 1>* methods
-    = new std::array<Eldbus_Method, sizeof...(Args) + 1>
+  std::array<Eldbus_Method2, sizeof...(Args) + 1>* methods
+    = new std::array<Eldbus_Method2, sizeof...(Args) + 1>
     (
      _create_methods_specification(std::make_tuple(args...))
     );
   Eldbus_Service_Interface_Desc description =
     {
-      interface, &(*methods)[0], 0, 0, 0, 0
+      interface, 0, 0, 0, 0, 0, &(*methods)[0]
     };
 
   Eldbus_Service_Interface* iface
