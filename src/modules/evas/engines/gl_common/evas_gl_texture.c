@@ -50,52 +50,43 @@ static struct {
    } c, a, v, r, n, d;
 } texinfo = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
+typedef enum {
+   MATCH_FALSE = EINA_FALSE,
+   MATCH_TRUE  = EINA_TRUE,
+   MATCH_ANY   = 2
+} Eina_Bool_Match;
+
 static const struct {
-   Eina_Bool alpha;
-   Eina_Bool bgra;
+   Eina_Bool_Match alpha;
+   Eina_Bool_Match bgra;
 
    Evas_Colorspace cspace;
 
    const GLenum *intformat;
    const GLenum *format;
 } matching_format[] = {
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_ARGB8888, &bgra_ifmt, &bgra_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgba_ifmt, &rgba_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ARGB8888, &bgr_ifmt, &bgr_fmt },
+  { MATCH_TRUE, MATCH_TRUE, EVAS_COLORSPACE_ARGB8888, &bgra_ifmt, &bgra_fmt },
+  { MATCH_TRUE, MATCH_FALSE, EVAS_COLORSPACE_ARGB8888, &rgba_ifmt, &rgba_fmt },
+  { MATCH_FALSE, MATCH_TRUE, EVAS_COLORSPACE_ARGB8888, &bgr_ifmt, &bgr_fmt },
 #ifdef GL_GLES
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgba_ifmt, &rgba_fmt },
+  { MATCH_FALSE, MATCH_FALSE, EVAS_COLORSPACE_ARGB8888, &rgba_ifmt, &rgba_fmt },
 #else
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgb_ifmt, &rgb_fmt },
+  { MATCH_FALSE, MATCH_FALSE, EVAS_COLORSPACE_ARGB8888, &rgb_ifmt, &rgb_fmt },
 #endif
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
+  { MATCH_FALSE, MATCH_ANY, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
+  { MATCH_TRUE, MATCH_ANY, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
   // ETC1/2 support
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
-  // images marked as no alpha but format supports it (RGBA8_ETC2_EAC):
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_ETC1_ALPHA, &etc1_fmt, &etc1_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_ETC1_ALPHA, &etc1_fmt, &etc1_fmt },
+  { MATCH_FALSE, MATCH_ANY, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
+  { MATCH_FALSE, MATCH_ANY, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_ETC1_ALPHA, &etc1_fmt, &etc1_fmt },
   // S3TC support
-  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT1, &s3tc_rgba_dxt1_fmt, &s3tc_rgba_dxt1_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT1, &s3tc_rgba_dxt1_fmt, &s3tc_rgba_dxt1_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT2, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT2, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT3, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT3, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT4, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT4, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
-  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt }
+  { MATCH_FALSE, MATCH_ANY, EVAS_COLORSPACE_RGB_S3TC_DXT1, &s3tc_rgb_dxt1_fmt, &s3tc_rgb_dxt1_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT1, &s3tc_rgba_dxt1_fmt, &s3tc_rgba_dxt1_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT2, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT3, &s3tc_rgba_dxt23_fmt, &s3tc_rgba_dxt23_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT4, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt },
+  { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt }
 };
 
 static const GLenum matching_rgb[] = { GL_RGB4, GL_RGB8, GL_RGB12, GL_RGB16, 0x0 };
@@ -115,6 +106,8 @@ static const struct {
   { GL_LUMINANCE, matching_luminance },
   { GL_LUMINANCE_ALPHA, matching_luminance_alpha }
 };
+
+#define MATCH(_r, _v) ((_r == MATCH_ANY) || (_v == MATCH_ANY) || (_r == _v))
 
 static Eina_Bool
 _evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
@@ -146,12 +139,13 @@ _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace 
    bgra = !!bgra;
 
    for (i = 0; i < sizeof (matching_format) / sizeof (matching_format[0]); ++i)
-     if (matching_format[i].alpha == alpha &&
-         matching_format[i].bgra == bgra &&
+     if (MATCH(matching_format[i].alpha, alpha) &&
+         MATCH(matching_format[i].bgra, bgra) &&
          matching_format[i].cspace == cspace)
        return i;
 
-   CRI("Texture doesn't support the image format! colorspace(%d) alpha(%d) bgra(%d)", cspace, alpha, bgra);
+   CRI("There is no supported texture format for this colorspace: "
+       "cspace(%d) alpha(%d) bgra(%d)", cspace, alpha, bgra);
    return -1;
 }
 
@@ -1484,7 +1478,7 @@ evas_gl_common_texture_rgb_a_pair_new(Evas_Engine_GL_Context *gc,
    w = im->cache_entry.w;
    h = im->cache_entry.h;
 
-   lformat = _evas_gl_texture_search_format(EINA_FALSE, gc->shared->info.bgra,
+   lformat = _evas_gl_texture_search_format(EINA_TRUE, gc->shared->info.bgra,
                                             im->cache_entry.space);
    if (lformat < 0) return NULL;
 
