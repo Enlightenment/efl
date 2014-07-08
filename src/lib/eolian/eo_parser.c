@@ -240,6 +240,8 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
              if (eo_lexer_lookahead(ls) == '{')
                {
                   check(ls, TOK_VALUE);
+                  if (eo_lexer_get_c_type(ls->t.kw))
+                    eo_lexer_syntax_error(ls, "invalid struct name");
                   eo_lexer_get(ls);
                   return parse_struct(ls, NULL);
                }
@@ -253,7 +255,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
      }
    def = calloc(1, sizeof(Eo_Type_Def));
    ls->tmp.type_def = def;
-   if (ls->t.kw == KW_void)
+   if (ls->t.kw == KW_void && !has_struct)
      def->type = EOLIAN_TYPE_VOID;
    else
      {
@@ -262,7 +264,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
         check(ls, TOK_VALUE);
         ctype = eo_lexer_get_c_type(ls->t.kw);
         if (ctype && has_struct)
-          eo_lexer_syntax_error(ls, "struct type expected");
+          eo_lexer_syntax_error(ls, "invalid struct name");
         if (has_struct)
           {
              Eina_Strbuf *buf = eina_strbuf_new();
@@ -962,6 +964,8 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         {
            eo_lexer_get(ls);
            check(ls, TOK_VALUE);
+           if (eo_lexer_get_c_type(ls->t.kw))
+             eo_lexer_syntax_error(ls, "invalid struct name");
            eo_lexer_get(ls);
            parse_struct(ls, NULL);
         }
