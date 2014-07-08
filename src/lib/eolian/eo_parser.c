@@ -146,12 +146,29 @@ parse_name_list(Eo_Lexer *ls)
 }
 
 static Eo_Type_Def *parse_type_void(Eo_Lexer *ls);
+static Eo_Type_Def *parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct,
+                                      Eina_Bool allow_anon);
 
 static Eo_Type_Def *
 parse_type(Eo_Lexer *ls)
 {
    int line = ls->line_number, column = ls->column;
    Eo_Type_Def *ret = parse_type_void(ls);
+   if (ret->type == EOLIAN_TYPE_VOID)
+     {
+        ls->line_number = line;
+        ls->column = column;
+        eo_lexer_syntax_error(ls, "non-void type expected");
+     }
+   return ret;
+}
+
+static Eo_Type_Def *
+parse_type_struct_nonvoid(Eo_Lexer *ls, Eina_Bool allow_struct,
+                          Eina_Bool allow_anon)
+{
+   int line = ls->line_number, column = ls->column;
+   Eo_Type_Def *ret = parse_type_struct(ls, allow_struct, allow_anon);
    if (ret->type == EOLIAN_TYPE_VOID)
      {
         ls->line_number = line;
@@ -188,9 +205,25 @@ parse_function_type(Eo_Lexer *ls)
 static Eo_Type_Def *
 parse_struct(Eo_Lexer *ls, const char *name)
 {
-   (void)ls;
-   (void)name;
-   return NULL;
+   int line = ls->line_number, column = ls->column;
+   Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
+   ls->tmp.type_def = def;
+   def->name = name;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     {
+        check(ls, TOK_VALUE);
+        eo_lexer_get(ls);
+        check_next(ls, ':');
+        parse_type_struct_nonvoid(ls, EINA_TRUE, EINA_FALSE);
+        check_next(ls, ';');
+        if (ls->t.token == TOK_COMMENT)
+          {
+             eo_lexer_get(ls);
+          }
+     }
+   check_match(ls, '}', '{', line, column);
+   return def;
 }
 
 static Eo_Type_Def *
@@ -239,11 +272,13 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
                return parse_struct(ls, NULL);
              if (eo_lexer_lookahead(ls) == '{')
                {
+                  const char *name;
                   check(ls, TOK_VALUE);
                   if (eo_lexer_get_c_type(ls->t.kw))
                     eo_lexer_syntax_error(ls, "invalid struct name");
+                  name = eina_stringshare_add(ls->t.value);
                   eo_lexer_get(ls);
-                  return parse_struct(ls, NULL);
+                  return parse_struct(ls, name);
                }
           }
         has_struct = EINA_TRUE;
@@ -308,24 +343,14 @@ parse_type_void(Eo_Lexer *ls)
 static void
 parse_typedef(Eo_Lexer *ls)
 {
-   int line, column;
-   Eo_Type_Def *ret;
    ls->tmp.typedef_def = calloc(1, sizeof(Eo_Typedef_Def));
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
    ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
    test_next(ls, ':');
-   line = ls->line_number;
-   column = ls->column;
-   ret = parse_type_struct(ls, EINA_TRUE, EINA_TRUE);
-   if (ret->type == EOLIAN_TYPE_VOID)
-     {
-        ls->line_number = line;
-        ls->column = column;
-        eo_lexer_syntax_error(ls, "non-void type expected");
-     }
-   ls->tmp.typedef_def->type = ret;
+   ls->tmp.typedef_def->type = parse_type_struct_nonvoid(ls, EINA_TRUE,
+                                                         EINA_TRUE);
    ls->tmp.type_def = NULL;
    check_next(ls, ';');
 }
@@ -962,12 +987,14 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         }
       case KW_struct:
         {
+           const char *name;
            eo_lexer_get(ls);
            check(ls, TOK_VALUE);
            if (eo_lexer_get_c_type(ls->t.kw))
              eo_lexer_syntax_error(ls, "invalid struct name");
+           name = eina_stringshare_add(ls->t.value);
            eo_lexer_get(ls);
-           parse_struct(ls, NULL);
+           parse_struct(ls, name);
         }
       def:
       default:
