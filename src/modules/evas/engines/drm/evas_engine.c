@@ -26,9 +26,17 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
    Render_Engine *re;
    Outbuf *ob;
 
+   /* if we have no drm device, get one */
+   if (info->info.fd < 0)
+     {
+        /* try to init drm (this includes openening the card & tty) */
+        if (!evas_drm_init(info, 0))
+          goto on_error;
+     }
+
    /* try to allocate space for our render engine structure */
    if (!(re = calloc(1, sizeof(Render_Engine))))
-     return NULL;
+     goto on_error;
 
    /* try to create new outbuf */
    if (!(ob = evas_outbuf_setup(info, w, h)))
@@ -47,14 +55,6 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
                                                 evas_outbuf_free,
                                                 w, h))
      goto on_error;
-
-   /* if we have no drm device, get one */
-   if (info->info.fd < 0)
-     {
-        /* try to init drm (this includes openening the card & tty) */
-        if (!evas_drm_init(info))
-          goto on_error;
-     }
 
    /* return the allocated render_engine structure */
    return re;
