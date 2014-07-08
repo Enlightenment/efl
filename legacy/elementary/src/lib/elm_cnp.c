@@ -2453,6 +2453,9 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
      return elm_object_cnp_selection_clear(obj, selection);
 
+   if (buflen <= 0)
+     return EINA_FALSE;
+
    _wl_elm_cnp_init();
 
    win = elm_win_wl_window_get(obj);
