@@ -466,7 +466,7 @@ evas_image_load_file_data_tgv(void *loader_data,
                         if (!plane)
                           {
 #ifdef BUILD_NEON
-                             if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+                             if (eina_cpu_features_get() & EINA_CPU_NEON)
                                {
                                   uint32_t *dst = &p[current_etc.x - 1 + (current_etc.y - 1) * master.w];
                                   uint32_t *src = &temporary[offset_x + offset_y * 4];
