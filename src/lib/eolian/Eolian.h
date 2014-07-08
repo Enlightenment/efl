@@ -119,7 +119,8 @@ typedef enum
    EOLIAN_TYPE_VOID,
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_POINTER,
-   EOLIAN_TYPE_FUNCTION
+   EOLIAN_TYPE_FUNCTION,
+   EOLIAN_TYPE_STRUCT
 } Eolian_Type_Type;
 
 /*
@@ -747,6 +748,28 @@ EAPI Eina_Iterator *eolian_type_arguments_list_get(Eolian_Type tp);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_subtypes_list_get(Eolian_Type tp);
+
+/*
+ * @brief Get an iterator to all field names of a struct type.
+ *
+ * @param[in] tp the type.
+ * @return the iterator when @c tp is EOLIAN_TYPE_STRUCT, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_struct_field_names_list_get(Eolian_Type tp);
+
+/*
+ * @brief Get a field of a struct type.
+ *
+ * @param[in] tp the type.
+ * @param[in] field the field name.
+ * @return the field when @c tp is EOLIAN_TYPE_STRUCT, @c field is not NULL
+ * and the field exists, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type eolian_type_struct_field_get(Eolian_Type tp, const char *field);
 
 /*
  * @brief Get the return type of a function type.

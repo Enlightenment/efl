@@ -89,6 +89,7 @@ typedef struct
          Eina_List   *arguments;
          Eolian_Type  ret_type;
       };
+      Eina_Hash *fields;
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
@@ -119,17 +120,8 @@ _param_del(_Parameter_Desc *pdesc)
 void
 database_type_del(Eolian_Type type)
 {
-   _Parameter_Type *typep = (_Parameter_Type*)type;
-   Eolian_Type stype;
    if (!type) return;
-   if (typep->name) eina_stringshare_del(typep->name);
-   /* for function types, this will map to arguments and ret_type */
-   if (typep->subtypes)
-      EINA_LIST_FREE(typep->subtypes, stype)
-         database_type_del(stype);
-   if (typep->base_type)
-      database_type_del(typep->base_type);
-   free(typep);
+   eo_definitions_type_free((Eo_Type_Def*)type);
 }
 
 static void
@@ -1155,6 +1147,29 @@ eolian_type_subtypes_list_get(Eolian_Type tp)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR || tpt == EOLIAN_TYPE_POINTER, NULL);
    if (!tpp->subtypes) return NULL;
    return eina_list_iterator_new(tpp->subtypes);
+}
+
+EAPI Eina_Iterator *
+eolian_type_struct_field_names_list_get(Eolian_Type tp)
+{
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   Eolian_Type_Type tpt;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   tpt = tpp->type;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
+   return eina_hash_iterator_key_new(tpp->fields);
+}
+
+EAPI Eolian_Type
+eolian_type_struct_field_get(Eolian_Type tp, const char *field)
+{
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   Eolian_Type_Type tpt;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
+   tpt = tpp->type;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
+   return eina_hash_find(tpp->fields, field);
 }
 
 EAPI Eolian_Type

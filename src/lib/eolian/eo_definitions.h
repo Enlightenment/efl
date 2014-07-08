@@ -20,6 +20,7 @@ struct _eo_type_def
          Eina_List   *arguments;
          Eo_Type_Def *ret_type;
       };
+      Eina_Hash *fields;
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
@@ -170,6 +171,7 @@ typedef struct _Eo_Lexer_Temps
    Eo_Implement_Def *impl;
 } Eo_Lexer_Temps;
 
+void eo_definitions_type_free(Eo_Type_Def *tp);
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 void eo_definitions_typedef_def_free(Eo_Typedef_Def *type);
 void eo_definitions_temps_free(Eo_Lexer_Temps *tmp);

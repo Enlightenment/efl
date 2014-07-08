@@ -209,13 +209,21 @@ parse_struct(Eo_Lexer *ls, const char *name)
    Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
    ls->tmp.type_def = def;
    def->name = name;
+   def->type = EOLIAN_TYPE_STRUCT;
+   def->fields = eina_hash_string_small_new(EINA_FREE_CB(eo_definitions_type_free));
    check_next(ls, '{');
    while (ls->t.token != '}')
      {
+        const char *name;
         check(ls, TOK_VALUE);
+        if (eina_hash_find(def->fields, ls->t.value))
+          eo_lexer_syntax_error(ls, "double field definition");
+        name = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ':');
-        parse_type_struct_nonvoid(ls, EINA_TRUE, EINA_FALSE);
+        eina_hash_add(def->fields, name, parse_type_struct_nonvoid(ls,
+                      EINA_TRUE, EINA_FALSE));
+        eina_stringshare_del(name);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
           {

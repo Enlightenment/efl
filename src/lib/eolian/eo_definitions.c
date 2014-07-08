@@ -3,11 +3,17 @@
 
 #include "eo_definitions.h"
 
-static void
+void
 eo_definitions_type_free(Eo_Type_Def *tp)
 {
    Eo_Type_Def *stp;
    if (tp->name) eina_stringshare_del(tp->name);
+   if (tp->type == EOLIAN_TYPE_STRUCT)
+     {
+        eina_hash_free(tp->fields);
+        free(tp);
+        return;
+     }
    /* for function types, this will map to arguments and ret_type */
    if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
      eo_definitions_type_free(stp);
