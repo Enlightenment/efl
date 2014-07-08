@@ -3998,7 +3998,7 @@ EFL_LIB_START_OPTIONAL([Edje], [test "x${build_gui}" = "xyes"])
 ### Additional options to configure
 
 ### Default values
-want_multisense="yes"
+want_multisense="${want_pulseaudio}"
 AC_ARG_ENABLE([multisense],
    [AS_HELP_STRING([--enable-multisense],[Enable multisense support. @<:@default=enabled@:>@])],
    [
@@ -4006,9 +4006,10 @@ AC_ARG_ENABLE([multisense],
        want_multisense="yes"
     else
        want_multisense="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
-   [want_multisense="yes"])
+   [want_multisense="${want_pulseaudio}"])
 
 if test "x${build_gui}" = "xno"; then
    want_multisense="no"
@@ -4351,7 +4352,7 @@ AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = 
 
 BARF_OK="xno"
 # Harfbuzz
-AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa],
+AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba],
    [ You will be told when this is needed ],
    [
     if test "x${enableval}" = "xyes" ; then
@@ -4843,6 +4844,15 @@ if test -n "$CFOPT_WARNING"; then
     echo "hurt support for Enlightenment and its filemanager."
     echo "_____________________________________________________________________"
   fi
+  if test "x${want_multisense}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "Multisense has been disabled. This causes Edje audio suport to"
+    echo "Simply not work, and will break applications and libraries"
+    echo "that rely on it with users then reporting bugs."
+    echo "If you want to mute audio, there are APIs and policies to do"
+    echo "that, as opposed to compiling it out."
+    echo "_____________________________________________________________________"
+  fi
   echo "_____________________________________________________________________"
   echo ""
   echo "==-- WARNING --=="
@@ -4850,7 +4860,7 @@ if test -n "$CFOPT_WARNING"; then
   echo "_____________________________________________________________________"
   if test -n "$BARF_OK"; then
     echo "Please add the following option to acknowledge this:"
-    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa"
+    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba"
     echo "_____________________________________________________________________"
     rm -f Makefile
     exit 1
