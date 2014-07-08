@@ -884,7 +884,7 @@ _elm_image_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const char *k
    sd->remote = NULL;
 
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
-     if (!strncmp(remote_uri[i], file, strlen(remote_uri[i])))
+     if (file && !strncmp(remote_uri[i], file, strlen(remote_uri[i])))
        {
           // Found a remote target !
           evas_object_hide(sd->img);
