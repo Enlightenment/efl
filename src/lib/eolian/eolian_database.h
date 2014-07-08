@@ -37,6 +37,9 @@ int database_shutdown();
 /* Add a type in the database */
 Eina_Bool database_type_add(const char *alias, Eolian_Type type);
 
+/* Add a struct in the database */
+Eina_Bool database_struct_add(Eolian_Type type);
+
 /* Add a class in the database */
 Eolian_Class database_class_add(const char *class_name, Eolian_Class_Type type);
 

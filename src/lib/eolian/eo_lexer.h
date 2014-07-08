@@ -56,7 +56,8 @@ typedef struct _Eo_Token
 enum Nodes
 {
    NODE_CLASS = 0,
-   NODE_TYPEDEF
+   NODE_TYPEDEF,
+   NODE_STRUCT
 };
 
 typedef struct _Eo_Node
@@ -66,6 +67,7 @@ typedef struct _Eo_Node
       void           *def;
       Eo_Class_Def   *def_class;
       Eo_Typedef_Def *def_typedef;
+      Eo_Type_Def    *def_struct;
    };
 } Eo_Node;
 

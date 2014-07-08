@@ -16,6 +16,7 @@
 
 static Eina_List *_classes = NULL;
 static Eina_Hash *_types = NULL;
+static Eina_Hash *_structs = NULL;
 static Eina_Hash *_filenames = NULL; /* Hash: filename without extension -> full path */
 static Eina_Hash *_tfilenames = NULL;
 static int _database_init_count = 0;
@@ -185,6 +186,7 @@ database_init()
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
    _types = eina_hash_stringshared_new(_type_hash_free_cb);
+   _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
    _filenames = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
@@ -206,6 +208,7 @@ database_shutdown()
         EINA_LIST_FREE(_classes, class)
            _class_del((_Class_Desc *)class);
         eina_hash_free(_types);
+        eina_hash_free(_structs);
         eina_hash_free(_filenames);
         eina_hash_free(_tfilenames);
         eina_shutdown();
@@ -227,6 +230,17 @@ database_type_add(const char *alias, Eolian_Type type)
    return EINA_FALSE;
 }
 
+Eina_Bool database_struct_add(Eolian_Type type)
+{
+   _Parameter_Type *tp = (_Parameter_Type*)type;
+   if (_structs)
+     {
+        eina_hash_set(_structs, tp->name, tp);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 EAPI Eolian_Type
 eolian_type_find_by_alias(const char *alias)
 {
@@ -235,6 +249,16 @@ eolian_type_find_by_alias(const char *alias)
    Type_Desc *cl = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
    return cl?cl->type:NULL;
+}
+
+EAPI Eolian_Type
+eolian_type_struct_find_by_name(const char *name)
+{
+   if (!_structs) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   Eolian_Type tp = eina_hash_find(_structs, shr);
+   eina_stringshare_del(shr);
+   return tp;
 }
 
 Eolian_Class

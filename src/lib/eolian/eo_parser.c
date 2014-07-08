@@ -214,16 +214,16 @@ parse_struct(Eo_Lexer *ls, const char *name)
    check_next(ls, '{');
    while (ls->t.token != '}')
      {
-        const char *name;
+        const char *fname;
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value))
           eo_lexer_syntax_error(ls, "double field definition");
-        name = eina_stringshare_add(ls->t.value);
+        fname = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ':');
-        eina_hash_add(def->fields, name, parse_type_struct_nonvoid(ls,
+        eina_hash_add(def->fields, fname, parse_type_struct_nonvoid(ls,
                       EINA_TRUE, EINA_FALSE));
-        eina_stringshare_del(name);
+        eina_stringshare_del(fname);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
           {
@@ -231,6 +231,7 @@ parse_struct(Eo_Lexer *ls, const char *name)
           }
      }
    check_match(ls, '}', '{', line, column);
+   if (name) append_node(ls, NODE_STRUCT, def);
    return def;
 }
 
@@ -1003,6 +1004,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            name = eina_stringshare_add(ls->t.value);
            eo_lexer_get(ls);
            parse_struct(ls, name);
+           ls->tmp.type_def = NULL;
         }
       def:
       default:
@@ -1169,6 +1171,12 @@ _dump_type(Eo_Typedef_Def *type)
    printf("\n");
 }
 
+static void
+_dump_struct(Eo_Type_Def *type)
+{
+   _print_type(stdout, type);
+}
+
 void
 eo_parser_dump(Eo_Lexer *ls)
 {
@@ -1185,6 +1193,8 @@ eo_parser_dump(Eo_Lexer *ls)
            case NODE_TYPEDEF:
              _dump_type(nd->def_typedef);
              break;
+           case NODE_STRUCT:
+             _dump_struct(nd->def_struct);
            default:
              break;
           }
@@ -1403,9 +1413,15 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 static Eina_Bool
 _db_fill_type(Eo_Typedef_Def *type_def)
 {
-   database_type_add(type_def->alias, (Eolian_Type)type_def->type);
+   Eina_Bool ret = database_type_add(type_def->alias, (Eolian_Type)type_def->type);
    type_def->type = NULL;
-   return EINA_TRUE;
+   return ret;
+}
+
+static Eina_Bool
+_db_fill_struct(Eo_Type_Def *struct_def)
+{
+   return database_struct_add((Eolian_Type)struct_def);
 }
 
 Eina_Bool
@@ -1459,6 +1475,14 @@ nodeloop:
              if (!_db_fill_type(nd->def_typedef))
                goto error;
              break;
+           case NODE_STRUCT:
+             {
+                Eo_Type_Def *def = nd->def_struct;
+                nd->def_struct = NULL;
+                if (!_db_fill_struct(def))
+                  goto error;
+                break;
+             }
            default:
              break;
           }

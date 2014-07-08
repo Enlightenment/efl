@@ -718,6 +718,16 @@ EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class klass);
 EAPI Eolian_Type eolian_type_find_by_alias(const char *alias);
 
 /*
+ * @brief Find a struct by name
+ *
+ * @param[in] name the name of the struct
+ * @return the struct or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type eolian_type_struct_find_by_name(const char *name);
+
+/*
  * @brief Get the type of a type (regular, function, pointer)
  *
  * @param[in] tp the type.

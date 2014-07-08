@@ -358,6 +358,8 @@ eo_lexer_free(Eo_Lexer *ls)
            case NODE_TYPEDEF:
              eo_definitions_typedef_def_free(nd->def_typedef);
              break;
+           case NODE_STRUCT:
+             if (nd->def_struct) eo_definitions_type_free(nd->def_struct);
            default:
              break;
           }
