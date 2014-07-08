@@ -40,7 +40,7 @@ class Object (Base) {
          /*@ comment foo */
          params {
             @in int a; /*@ a */
-            @inout char *b;
+            @inout char b;
             @out double c;
          }
          return char *(NULL); /*@ comment for method return */

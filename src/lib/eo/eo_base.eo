@@ -71,7 +71,7 @@ Prevents event callbacks from being called for the object. */
       wref_del {
          /*@ Delete the weak reference passed. */
          params {
-            @inout Eo** wref;
+            @inout Eo* wref;
          }
       }
       destructor {
@@ -128,7 +128,7 @@ callbacks of the same priority are called in reverse order of creation. */
          /*@ Add a new weak reference to obj.
 This function registers the object handle pointed by wref to obj so when obj is deleted it'll be updated to NULL. This functions should be used when you want to keep track of an object in a safe way, but you don't want to prevent it from being freed. */
          params {
-            @inout Eo** wref;
+            @inout Eo* wref;
          }
       }
       dbg_info_get {

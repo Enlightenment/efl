@@ -463,8 +463,8 @@ START_TEST(eolian_simple_parsing)
    fail_if(!(param = eina_list_nth(list, 1)));
    eolian_parameter_information_get(param, &dir, &ptypep, &pname, &string);
    fail_if(dir != EOLIAN_INOUT_PARAM);
-   ptype = eolian_type_c_type_get(ptypep);
-   fail_if(strcmp(ptype, "char *"));
+   ptype = eolian_type_name_get(ptypep);
+   fail_if(strcmp(ptype, "char"));
    eina_stringshare_del(ptype);
    fail_if(strcmp(pname, "b"));
    fail_if(string);

@@ -48,7 +48,7 @@ _params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_
              ptype = eolian_type_c_type_get(ptypet);
              Eina_Bool is_const = eolian_parameter_const_attribute_get(param, ftype == EOLIAN_PROP_GET);
              Eina_Bool had_star = !!strchr(ptype, '*');
-             if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM);
+             if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
              if (eina_strbuf_length_get(params))
                {
                   eina_strbuf_append(params, ", ");

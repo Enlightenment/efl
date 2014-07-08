@@ -142,7 +142,7 @@ _eapi_decl_func_generate(Eolian_Class class, Eolian_Function funcid, Eolian_Func
             eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptypet, &pname, &pdesc);
             ptype = eolian_type_c_type_get(ptypet);
             Eina_Bool had_star = !!strchr(ptype, '*');
-            if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM);
+            if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
             if (ftype == EOLIAN_PROP_GET) pdir = EOLIAN_OUT_PARAM;
             if (ftype == EOLIAN_PROP_SET) pdir = EOLIAN_IN_PARAM;
             leg_param_idx++;
@@ -277,7 +277,7 @@ _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Fun
             eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptypet, &pname, NULL);
             ptype = eolian_type_c_type_get(ptypet);
             Eina_Bool had_star = !!strchr(ptype, '*');
-            if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM);
+            if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
             eina_strbuf_append_printf(fparam, ", %s%s%s%s%s",
                   eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const ":"",
                   ptype, had_star?"":" ", add_star?"*":"", pname);

@@ -18,7 +18,7 @@ class Const {
          /*@ comment foo */
          params {
             @in int a; /*@ a */
-            @inout char *b;
+            @inout char b;
             @out double c;
          }
          const;
