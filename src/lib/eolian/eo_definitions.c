@@ -188,6 +188,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
    Eo_Param_Def *par;
+   Eo_Type_Def *tp;
    const char *s;
 
    EINA_LIST_FREE(tmp->str_bufs, buf)
@@ -208,8 +209,8 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    if (tmp->typedef_def)
      eo_definitions_typedef_def_free(tmp->typedef_def);
 
-   if (tmp->type_def)
-     eo_definitions_type_free(tmp->type_def);
+   EINA_LIST_FREE(tmp->type_defs, tp)
+     eo_definitions_type_free(tp);
 
    if (tmp->prop)
      eo_definitions_property_def_free(tmp->prop);

@@ -101,6 +101,20 @@ pop_strbuf(Eo_Lexer *ls)
    ls->tmp.str_bufs = eina_list_remove_list(ls->tmp.str_bufs, ls->tmp.str_bufs);
 }
 
+static Eo_Type_Def *
+push_type(Eo_Lexer *ls)
+{
+   Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
+   ls->tmp.type_defs = eina_list_prepend(ls->tmp.type_defs, def);
+   return def;
+}
+
+static void
+pop_type(Eo_Lexer *ls)
+{
+   ls->tmp.type_defs = eina_list_remove_list(ls->tmp.type_defs, ls->tmp.type_defs);
+}
+
 static void
 append_node(Eo_Lexer *ls, int type, void *def)
 {
@@ -182,21 +196,27 @@ static Eo_Type_Def *
 parse_function_type(Eo_Lexer *ls)
 {
    int line, col;
-   Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
-   ls->tmp.type_def = def;
+   Eo_Type_Def *def = push_type(ls);
    eo_lexer_get(ls);
    if (ls->t.kw == KW_void)
      eo_lexer_get(ls);
    else
-     def->ret_type = parse_type_void(ls);
+     {
+        def->ret_type = parse_type_void(ls);
+        pop_type(ls);
+     }
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '(');
    if (ls->t.token != ')')
      {
         def->arguments = eina_list_append(def->arguments, parse_type(ls));
+        pop_type(ls);
         while (test_next(ls, ','))
-          def->arguments = eina_list_append(def->arguments, parse_type(ls));
+          {
+             def->arguments = eina_list_append(def->arguments, parse_type(ls));
+             pop_type(ls);
+          }
      }
    check_match(ls, ')', '(', line, col);
    return def;
@@ -206,8 +226,7 @@ static Eo_Type_Def *
 parse_struct(Eo_Lexer *ls, const char *name)
 {
    int line = ls->line_number, column = ls->column;
-   Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
-   ls->tmp.type_def = def;
+   Eo_Type_Def *def = push_type(ls);
    def->name = name;
    def->type = EOLIAN_TYPE_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(eo_definitions_type_free));
@@ -223,6 +242,7 @@ parse_struct(Eo_Lexer *ls, const char *name)
         check_next(ls, ':');
         eina_hash_add(def->fields, fname, parse_type_struct_nonvoid(ls,
                       EINA_TRUE, EINA_FALSE));
+        pop_type(ls);
         eina_stringshare_del(fname);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
@@ -297,8 +317,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
       default:
         break;
      }
-   def = calloc(1, sizeof(Eo_Type_Def));
-   ls->tmp.type_def = def;
+   def = push_type(ls);
    if (ls->t.kw == KW_void && !has_struct)
      def->type = EOLIAN_TYPE_VOID;
    else
@@ -315,8 +334,9 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
 parse_ptr:
    while (ls->t.token == '*')
      {
-        Eo_Type_Def *pdef = calloc(1, sizeof(Eo_Type_Def));
-        ls->tmp.type_def = pdef;
+        Eo_Type_Def *pdef;
+        pop_type(ls);
+        pdef = push_type(ls);
         pdef->base_type = def;
         pdef->type = EOLIAN_TYPE_POINTER;
         def = pdef;
@@ -327,8 +347,12 @@ parse_ptr:
         int line = ls->line_number, col = ls->column;
         eo_lexer_get(ls);
         def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
+        pop_type(ls);
         while (test_next(ls, ','))
-           def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
+          {
+             def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
+             pop_type(ls);
+          }
         check_match(ls, '>', '<', line, col);
      }
    return def;
@@ -351,7 +375,7 @@ parse_typedef(Eo_Lexer *ls)
    (void)!!test_next(ls, ':');
    ls->tmp.typedef_def->type = parse_type_struct_nonvoid(ls, EINA_TRUE,
                                                          EINA_TRUE);
-   ls->tmp.type_def = NULL;
+   pop_type(ls);
    check_next(ls, ';');
 }
 
@@ -365,7 +389,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
      ret->type = parse_type_void(ls);
    else
      ret->type = parse_type(ls);
-   ls->tmp.type_def = NULL;
+   pop_type(ls);
    if (ls->t.token == '(')
      {
         int line = ls->line_number, col = ls->column;
@@ -416,7 +440,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
      par->type = parse_type_void(ls);
    else
      par->type = parse_type(ls);
-   ls->tmp.type_def = NULL;
+   pop_type(ls);
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
@@ -995,7 +1019,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            name = eina_stringshare_add(ls->t.value);
            eo_lexer_get(ls);
            parse_struct(ls, name);
-           ls->tmp.type_def = NULL;
+           pop_type(ls);
            break;
         }
       def:

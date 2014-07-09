@@ -160,7 +160,7 @@ typedef struct _Eo_Lexer_Temps
    Eo_Class_Def *kls;
    Eo_Ret_Def *ret_def;
    Eo_Typedef_Def *typedef_def;
-   Eo_Type_Def *type_def;
+   Eina_List *type_defs;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
