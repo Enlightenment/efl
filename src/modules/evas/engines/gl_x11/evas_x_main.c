@@ -1020,6 +1020,10 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    eng_window_use(ob);
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
+   evas_gl_common_context_resize(ob->gl_context,
+                                 ob->w, ob->h,
+                                 ob->rot);
+
    evas_gl_common_context_flush(ob->gl_context);
    evas_gl_common_context_newframe(ob->gl_context);
    if (partial_render_debug == 1)

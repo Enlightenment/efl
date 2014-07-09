@@ -1183,19 +1183,6 @@ eng_preload_make_current(void *data, void *doit)
 }
 
 static void
-eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   eng_window_use(re->generic.ob);
-   evas_gl_common_context_resize(re->generic.ob->gl_context,
-                                 re->generic.ob->w, re->generic.ob->h,
-                                 re->generic.ob->rot);
-   evas_common_tilebuf_add_redraw(re->generic.tb, x, y, w, h);
-}
-
-static void
 eng_output_dump(void *data)
 {
    Render_Engine *re;
@@ -3346,7 +3333,6 @@ module_open(Evas_Module *em)
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_dump);
-   ORD(output_redraws_rect_add);
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_point_add);
