@@ -15,7 +15,7 @@
  *
  */
 Eina_Bool
-eo_source_generate(const Eolian_Class class, Eina_Strbuf *buf);
+eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf);
 
 /*
  * @brief Generate the header code for a specific Eo class.
@@ -28,7 +28,7 @@ eo_source_generate(const Eolian_Class class, Eina_Strbuf *buf);
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
-Eina_Bool eo_header_generate(const Eolian_Class class, Eina_Strbuf *buf);
+Eina_Bool eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf);
 
 #endif
 

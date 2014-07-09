@@ -1204,7 +1204,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
    Eo_Event_Def *event;
    Eo_Implement_Def *impl;
 
-   Eolian_Class class = database_class_add(kls->name, kls->type);
+   Eolian_Class *class = database_class_add(kls->name, kls->type);
    Eina_Bool is_iface = (kls->type == EOLIAN_CLASS_INTERFACE);
    database_class_file_set(class, filename);
 

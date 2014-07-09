@@ -41,7 +41,7 @@ _filename_get(const char *path)
 }
 
 static Eina_Bool
-_generate_eo_h_file(char *filename, const Eolian_Class class)
+_generate_eo_h_file(char *filename, const Eolian_Class *class)
 {
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *hfile = eina_strbuf_new();
@@ -78,7 +78,7 @@ end:
 }
 
 static Eina_Bool
-_generate_c_file(char *filename, const Eolian_Class class, Eina_Bool legacy_support)
+_generate_c_file(char *filename, const Eolian_Class *class, Eina_Bool legacy_support)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -120,7 +120,7 @@ end:
 }
 
 static Eina_Bool
-_generate_impl_c_file(char *filename, const Eolian_Class class)
+_generate_impl_c_file(char *filename, const Eolian_Class *class)
 {
    Eina_Bool ret = EINA_FALSE;
    long file_size = 0;
@@ -187,7 +187,7 @@ end:
 
 // TODO join with header gen.
 static Eina_Bool
-_generate_legacy_header_file(char *filename, const Eolian_Class class)
+_generate_legacy_header_file(char *filename, const Eolian_Class *class)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -240,7 +240,7 @@ int main(int argc, char **argv)
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
    Eina_List *itr;
    Eina_List *files4gen = NULL;
-   Eolian_Class class;
+   Eolian_Class *class;
    char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
 
    eina_init();

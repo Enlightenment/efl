@@ -42,7 +42,7 @@ extern "C" {
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Class* Eolian_Class;
+typedef struct _Eolian_Class Eolian_Class;
 
 /* Function Id used to extract information on class functions
  *
@@ -224,7 +224,7 @@ EAPI Eina_Bool eolian_all_eot_files_parse();
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_show(const Eolian_Class klass);
+EAPI Eina_Bool eolian_show(const Eolian_Class *klass);
 
 /*
  * @brief Finds a class by its name
@@ -234,7 +234,7 @@ EAPI Eina_Bool eolian_show(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Class
+EAPI Eolian_Class *
 eolian_class_find_by_name(const char *class_name);
 
 /*
@@ -245,7 +245,7 @@ eolian_class_find_by_name(const char *class_name);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Class
+EAPI Eolian_Class *
 eolian_class_find_by_file(const char *file_name);
 
 /*
@@ -257,7 +257,7 @@ eolian_class_find_by_file(const char *file_name);
  * @ingroup Eolian
  */
 EAPI const char *
-eolian_class_file_get(const Eolian_Class klass);
+eolian_class_file_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the full name of the given class.
@@ -271,7 +271,7 @@ eolian_class_file_get(const Eolian_Class klass);
  * @ingroup Eolian
  */
 EAPI const char *
-eolian_class_full_name_get(const Eolian_Class klass);
+eolian_class_full_name_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the name of the given class.
@@ -282,7 +282,7 @@ eolian_class_full_name_get(const Eolian_Class klass);
  * @ingroup Eolian
  */
 EAPI const char *
-eolian_class_name_get(const Eolian_Class klass);
+eolian_class_name_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the namespaces list of the given class.
@@ -293,7 +293,7 @@ eolian_class_name_get(const Eolian_Class klass);
  * @ingroup Eolian
  */
 EAPI const Eina_List *
-eolian_class_namespaces_list_get(const Eolian_Class klass);
+eolian_class_namespaces_list_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the class type of the given class
@@ -303,7 +303,7 @@ eolian_class_namespaces_list_get(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class klass);
+EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns a list of all the classes stored into the database.
@@ -322,7 +322,7 @@ EAPI const Eina_List *eolian_all_classes_list_get(void);
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_class_description_get(const Eolian_Class klass);
+EAPI const char *eolian_class_description_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the legacy prefix of a class
@@ -332,7 +332,7 @@ EAPI const char *eolian_class_description_get(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_class_legacy_prefix_get(const Eolian_Class klass);
+EAPI const char *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the eo prefix of a class
@@ -342,7 +342,7 @@ EAPI const char *eolian_class_legacy_prefix_get(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI const char* eolian_class_eo_prefix_get(const Eolian_Class klass);
+EAPI const char* eolian_class_eo_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the data type of a class
@@ -353,7 +353,7 @@ EAPI const char* eolian_class_eo_prefix_get(const Eolian_Class klass);
  * @ingroup Eolian
  */
 EAPI const char*
-eolian_class_data_type_get(const Eolian_Class klass);
+eolian_class_data_type_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the names list of the inherit classes of a class
@@ -363,7 +363,7 @@ eolian_class_data_type_get(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_inherits_list_get(const Eolian_Class klass);
+EAPI const Eina_List *eolian_class_inherits_list_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns a list of functions of a class.
@@ -374,7 +374,7 @@ EAPI const Eina_List *eolian_class_inherits_list_get(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_functions_list_get(const Eolian_Class klass, Eolian_Function_Type func_type);
+EAPI const Eina_List *eolian_class_functions_list_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
 
 /*
  * @brief Returns the type of a function
@@ -429,7 +429,7 @@ EAPI const char *eolian_function_full_c_name_get(Eolian_Function function_id, co
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function eolian_class_function_find_by_name(const Eolian_Class klass, const char *func_name, Eolian_Function_Type f_type);
+EAPI Eolian_Function eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific data for a function.
@@ -652,7 +652,7 @@ EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement im
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement impl,
-      Eolian_Class *klass, Eolian_Function *function, Eolian_Function_Type *type);
+      Eolian_Class **klass, Eolian_Function *function, Eolian_Function_Type *type);
 
 /*
  * @brief Get the list of overriding functions defined in a class.
@@ -662,7 +662,7 @@ EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement impl,
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_implements_list_get(const Eolian_Class klass);
+EAPI const Eina_List *eolian_class_implements_list_get(const Eolian_Class *klass);
 
 /*
  * @brief Get the list of events defined in a class.
@@ -672,7 +672,7 @@ EAPI const Eina_List *eolian_class_implements_list_get(const Eolian_Class klass)
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_events_list_get(const Eolian_Class klass);
+EAPI const Eina_List *eolian_class_events_list_get(const Eolian_Class *klass);
 
 /*
  * @brief Get information about an event.
@@ -695,7 +695,7 @@ EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class klass);
+EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
 
 /*
  * @brief Indicates if the class destructor has to invoke
@@ -706,7 +706,7 @@ EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class klass);
+EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 
 /*
  * @brief Find the type for a certain alias

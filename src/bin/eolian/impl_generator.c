@@ -125,7 +125,7 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
    super_invok = eina_strbuf_new();
    if (impl_desc)
      {
-        Eolian_Class impl_class;
+        Eolian_Class *impl_class;
         eolian_implement_information_get(impl_desc, &impl_class, NULL, NULL);
 
         _class_env_create(impl_class, NULL, &impl_env);
@@ -194,7 +194,7 @@ end:
 }
 
 Eina_Bool
-impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
+impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
 {
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *data_type_buf = eina_strbuf_new();
@@ -267,7 +267,7 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
         Eolian_Implement impl_desc;
         EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr_funcs, impl_desc)
           {
-             Eolian_Class impl_class = NULL;
+             Eolian_Class *impl_class = NULL;
              Eolian_Function_Type ftype;
 
              foo = NULL;

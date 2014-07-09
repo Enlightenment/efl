@@ -8,11 +8,11 @@ namespace eolian_cxx
 {
 
 ///
-/// @brief Retrieve a efl::eolian::eo_class from an Eolian_Class name.
+/// @brief Retrieve a efl::eolian::eo_class from an Eolian_Class* name.
 /// @param cls The Eolian class.
 /// @return The @p eo_class describing @p classname.
 ///
-efl::eolian::eo_class convert_eolian_class(Eolian_Class klass);
+efl::eolian::eo_class convert_eolian_class(const Eolian_Class *klass);
 
 }
 

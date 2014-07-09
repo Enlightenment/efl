@@ -79,7 +79,7 @@ tmpl_eo_retdesc[] =" * @return %s\n";
 #endif
 
 static Eina_Bool
-eo_fundef_generate(const Eolian_Class class, Eolian_Function func, Eolian_Function_Type ftype, Eina_Strbuf *functext)
+eo_fundef_generate(const Eolian_Class *class, Eolian_Function func, Eolian_Function_Type ftype, Eina_Strbuf *functext)
 {
    _eolian_class_func_vars func_env;
    const char *str_dir[] = {"in", "out", "inout"};
@@ -234,7 +234,7 @@ eo_fundef_generate(const Eolian_Class class, Eolian_Function func, Eolian_Functi
 }
 
 Eina_Bool
-eo_header_generate(const Eolian_Class class, Eina_Strbuf *buf)
+eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    const Eolian_Function_Type ftype_order[] = {EOLIAN_CTOR, EOLIAN_PROPERTY, EOLIAN_METHOD};
    const Eina_List *itr;
@@ -326,7 +326,7 @@ eo_header_generate(const Eolian_Class class, Eina_Strbuf *buf)
 }
 
 static Eina_Bool
-eo_bind_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, _eolian_class_vars *impl_env)
+eo_bind_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, _eolian_class_vars *impl_env)
 {
    _eolian_class_func_vars func_env;
    const char *suffix = "";
@@ -488,7 +488,7 @@ eo_bind_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_F
 }
 
 static Eina_Bool
-eo_op_desc_generate(const Eolian_Class class, Eolian_Function fid, Eolian_Function_Type ftype,
+eo_op_desc_generate(const Eolian_Class *class, Eolian_Function fid, Eolian_Function_Type ftype,
       const char *desc, Eina_Strbuf *buf)
 {
    _eolian_class_func_vars func_env;
@@ -510,7 +510,7 @@ eo_op_desc_generate(const Eolian_Class class, Eolian_Function fid, Eolian_Functi
 }
 
 static Eina_Bool
-eo_source_beginning_generate(const Eolian_Class class, Eina_Strbuf *buf)
+eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    const Eina_List *itr;
 
@@ -547,7 +547,7 @@ eo_source_beginning_generate(const Eolian_Class class, Eina_Strbuf *buf)
 }
 
 static Eina_Bool
-eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
+eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
@@ -622,7 +622,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
      {
         _eolian_class_vars impl_env;
         char implname[0xFF];
-        Eolian_Class impl_class = NULL;
+        Eolian_Class *impl_class = NULL;
         Eolian_Function_Type ftype;
         Eolian_Function fnid = NULL;
         const char *funcname = NULL;
@@ -758,7 +758,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
    eina_strbuf_reset(tmpbuf);
    EINA_LIST_FOREACH(eolian_class_inherits_list_get(class), itr, inherit_name)
      {
-        Eolian_Class inherit_class = eolian_class_find_by_name(inherit_name);
+        Eolian_Class *inherit_class = eolian_class_find_by_name(inherit_name);
         _eolian_class_vars inherit_env;
         _class_env_create(inherit_class, NULL, &inherit_env);
         eina_strbuf_append_printf(tmpbuf, "%s_%s, ", inherit_env.upper_classname,
@@ -815,7 +815,7 @@ end:
 }
 
 Eina_Bool
-eo_source_generate(const Eolian_Class class, Eina_Strbuf *buf)
+eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;

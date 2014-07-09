@@ -88,7 +88,7 @@ opts_check(eolian_cxx::options_type const& opts)
 }
 
 efl::eolian::eo_generator_options
-generator_options(const Eolian_Class klass)
+generator_options(const Eolian_Class *klass)
 {
    efl::eolian::eo_generator_options gen_opts;
    gen_opts.c_headers.push_back(class_base_file(klass) + ".h");
@@ -97,7 +97,7 @@ generator_options(const Eolian_Class klass)
    const Eina_List *itr, *inheritances = eolian_class_inherits_list_get(klass);
    EINA_LIST_FOREACH(inheritances, itr, cur)
      {
-        Eolian_Class ext = eolian_class_find_by_name(static_cast<const char*>(cur));
+        const Eolian_Class *ext = eolian_class_find_by_name(static_cast<const char*>(cur));
         std::string eo_parent_file = class_base_file(ext);
         if (!eo_parent_file.empty())
           {
@@ -121,7 +121,7 @@ generator_options(const Eolian_Class klass)
 }
 
 static bool
-generate(const Eolian_Class klass, eolian_cxx::options_type const& opts)
+generate(const Eolian_Class *klass, eolian_cxx::options_type const& opts)
 {
    assert(!!klass);
    efl::eolian::eo_class cls = eolian_cxx::convert_eolian_class(klass);
@@ -157,7 +157,7 @@ generate(const Eolian_Class klass, eolian_cxx::options_type const& opts)
 static void
 run(options_type const& opts)
 {
-   Eolian_Class klass = NULL;
+   const Eolian_Class *klass = NULL;
    if (!opts.classname.empty())
      klass = class_from_name(opts.classname);
    else if (!opts.in_file.empty())
@@ -170,7 +170,7 @@ run(options_type const& opts)
    else
      {
         auto classes = class_list_all();
-        for (const Eolian_Class c : classes)
+        for (const Eolian_Class *c : classes)
           {
              if (!generate(c, opts))
                {

@@ -3,10 +3,10 @@
 
 int _eolian_gen_log_dom = -1;
 
-Eolian_Class current_class;
+Eolian_Class *current_class;
 
 static void
-_class_name_concatenate(const Eolian_Class class, char *buffer)
+_class_name_concatenate(const Eolian_Class *class, char *buffer)
 {
    const Eina_List *list = eolian_class_namespaces_list_get(class), *itr;
    const char *name;
@@ -20,7 +20,7 @@ _class_name_concatenate(const Eolian_Class class, char *buffer)
 }
 
 void
-_class_env_create(const Eolian_Class class, const char *over_classname, _eolian_class_vars *env)
+_class_env_create(const Eolian_Class *class, const char *over_classname, _eolian_class_vars *env)
 {
    if (!env) return;
 
@@ -68,7 +68,7 @@ _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_
 }
 
 void
-_class_func_env_create(const Eolian_Class class, const char *funcname, Eolian_Function_Type ftype, _eolian_class_func_vars *env)
+_class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_Function_Type ftype, _eolian_class_func_vars *env)
 {
    char *p;
    const char *ret;
@@ -121,7 +121,7 @@ end:
 }
 
 void
-_template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, const char *classname, const char *funcname, Eina_Bool reset)
+_template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class *class, const char *classname, const char *funcname, Eina_Bool reset)
 {
    _eolian_class_vars tmp_env;
    _eolian_class_func_vars tmp_func_env;

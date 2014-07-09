@@ -77,7 +77,7 @@ _comment_return(Eolian_Function function,
 }
 
 std::string
-convert_comments_class(Eolian_Class const& klass)
+convert_comments_class(Eolian_Class const *& klass)
 {
    return safe_str(eolian_class_description_get(klass));
 }

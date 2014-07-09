@@ -21,7 +21,7 @@ static Eina_Hash *_filenames = NULL; /* Hash: filename without extension -> full
 static Eina_Hash *_tfilenames = NULL;
 static int _database_init_count = 0;
 
-typedef struct
+typedef struct _Eolian_Class
 {
    Eina_Stringshare *full_name;
    Eina_List *namespaces; /* List Eina_Stringshare * */
@@ -40,7 +40,7 @@ typedef struct
    Eina_List *events; /* List event_name -> _Eolian_Event */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
-} _Eolian_Class;
+} Eolian_Class;
 
 typedef struct
 {
@@ -150,7 +150,7 @@ _fid_del(_Eolian_Function *fid)
 }
 
 static void
-_class_del(_Eolian_Class *class)
+_class_del(Eolian_Class *class)
 {
    Eina_Stringshare *inherit_name;
    Eina_List *inherits = class->inherits;
@@ -214,9 +214,9 @@ database_shutdown()
 
    if (_database_init_count == 0)
      {
-        Eolian_Class class;
+        Eolian_Class *class;
         EINA_LIST_FREE(_classes, class)
-           _class_del((_Eolian_Class *)class);
+           _class_del(class);
         eina_hash_free(_types);
         eina_hash_free(_structs);
         eina_hash_free(_filenames);
@@ -271,13 +271,13 @@ eolian_type_struct_find_by_name(const char *name)
    return tp;
 }
 
-Eolian_Class
+Eolian_Class *
 database_class_add(const char *class_name, Eolian_Class_Type type)
 {
    char *full_name = strdup(class_name);
    char *name = full_name;
    char *colon = full_name;
-   _Eolian_Class *cl = calloc(1, sizeof(*cl));
+   Eolian_Class *cl = calloc(1, sizeof(*cl));
    cl->full_name = eina_stringshare_add(class_name);
    cl->type = type;
    do
@@ -295,58 +295,53 @@ database_class_add(const char *class_name, Eolian_Class_Type type)
    cl->name = eina_stringshare_add(name);
    _classes = eina_list_append(_classes, cl);
    free(full_name);
-   return (Eolian_Class)cl;
+   return cl;
 }
 
 Eina_Bool
-database_class_file_set(Eolian_Class class, const char *file_name)
+database_class_file_set(Eolian_Class *class, const char *file_name)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
-   cl->file = eina_stringshare_add(file_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class, EINA_FALSE);
+   class->file = eina_stringshare_add(file_name);
    return EINA_TRUE;
 }
 
 EAPI const char *
-eolian_class_file_get(const Eolian_Class class)
+eolian_class_file_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    return cl ? cl->file : NULL;
 }
 
 EAPI const char *
-eolian_class_full_name_get(const Eolian_Class class)
+eolian_class_full_name_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    return cl ? cl->full_name : NULL;
 }
 
 EAPI const char *
-eolian_class_name_get(const Eolian_Class class)
+eolian_class_name_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    return cl ? cl->name : NULL;
 }
 
 EAPI const Eina_List *
-eolian_class_namespaces_list_get(const Eolian_Class class)
+eolian_class_namespaces_list_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    return cl ? cl->namespaces : NULL;
 }
 
-EAPI Eolian_Class
+EAPI Eolian_Class *
 eolian_class_find_by_name(const char *class_name)
 {
    Eina_List *itr;
-   _Eolian_Class *cl;
+   Eolian_Class *cl;
    Eina_Stringshare *shr_name = eina_stringshare_add(class_name);
    EINA_LIST_FOREACH(_classes, itr, cl)
       if (cl->full_name == shr_name) goto end;
    cl = NULL;
 end:
    eina_stringshare_del(shr_name);
-   return (Eolian_Class)cl;
+   return cl;
 }
 
 /*
@@ -354,12 +349,12 @@ end:
  * ret true && class -> only one class corresponding
  * ret true && !class -> no class corresponding
  */
-Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class *class)
+Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class **class)
 {
    char *name = strdup(class_name);
    char *colon = name + 1;
-   Eolian_Class found_class = NULL;
-   Eolian_Class candidate;
+   Eolian_Class *found_class = NULL;
+   Eolian_Class *candidate;
    if (class) *class = NULL;
    do
      {
@@ -371,8 +366,8 @@ Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class *cla
              if (found_class)
                {
                   ERR("Name clash between class %s and class %s",
-                        ((_Eolian_Class *)candidate)->full_name,
-                        ((_Eolian_Class *)found_class)->full_name);
+                        candidate->full_name,
+                        found_class->full_name);
                   free(name);
                   return EINA_FALSE; // Names clash
                }
@@ -386,34 +381,32 @@ Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class *cla
    return EINA_TRUE;
 }
 
-EAPI Eolian_Class
+EAPI Eolian_Class *
 eolian_class_find_by_file(const char *file_name)
 {
    Eina_List *itr;
-   _Eolian_Class *cl;
+   Eolian_Class *cl;
    Eina_Stringshare *shr_file = eina_stringshare_add(file_name);
    EINA_LIST_FOREACH(_classes, itr, cl)
       if (cl->file == shr_file) goto end;
    cl = NULL;
 end:
    eina_stringshare_del(shr_file);
-   return (Eolian_Class)cl;
+   return cl;
 }
 
 EAPI Eolian_Class_Type
-eolian_class_type_get(const Eolian_Class class)
+eolian_class_type_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EOLIAN_CLASS_UNKNOWN_TYPE);
    return cl->type;
 }
 
 Eina_Bool
-database_class_del(Eolian_Class class)
+database_class_del(Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
-   _classes = eina_list_remove(_classes, class);
+   _classes = eina_list_remove(_classes, cl);
    _class_del(cl);
    return EINA_TRUE;
 }
@@ -425,91 +418,80 @@ eolian_all_classes_list_get(void)
 }
 
 Eina_Bool
-database_class_inherit_add(Eolian_Class class, const char *inherit_class_name)
+database_class_inherit_add(Eolian_Class *cl, const char *inherit_class_name)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    cl->inherits = eina_list_append(cl->inherits, eina_stringshare_add(inherit_class_name));
    return EINA_TRUE;
 }
 
 EAPI const char *
-eolian_class_description_get(const Eolian_Class class)
+eolian_class_description_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->description;
 }
 
 void
-database_class_description_set(Eolian_Class class, const char *description)
+database_class_description_set(Eolian_Class *cl, const char *description)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN(cl);
    cl->description = eina_stringshare_add(description);
 }
 
 EAPI const char*
-eolian_class_legacy_prefix_get(const Eolian_Class class)
+eolian_class_legacy_prefix_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->legacy_prefix;
 }
 
 void
-database_class_legacy_prefix_set(Eolian_Class class, const char *legacy_prefix)
+database_class_legacy_prefix_set(Eolian_Class *cl, const char *legacy_prefix)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN(cl);
    cl->legacy_prefix = eina_stringshare_add(legacy_prefix);
 }
 
 EAPI const char*
-eolian_class_eo_prefix_get(const Eolian_Class class)
+eolian_class_eo_prefix_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->eo_prefix;
 }
 
 void
-database_class_eo_prefix_set(Eolian_Class class, const char *eo_prefix)
+database_class_eo_prefix_set(Eolian_Class *cl, const char *eo_prefix)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN(cl);
    cl->eo_prefix = eina_stringshare_add(eo_prefix);
 }
 
 EAPI const char*
-eolian_class_data_type_get(const Eolian_Class class)
+eolian_class_data_type_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->data_type;
 }
 
 void
-database_class_data_type_set(Eolian_Class class, const char *data_type)
+database_class_data_type_set(Eolian_Class *cl, const char *data_type)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN(cl);
-   cl->data_type= eina_stringshare_add(data_type);
+   cl->data_type = eina_stringshare_add(data_type);
 }
 
 EAPI const Eina_List *
-eolian_class_inherits_list_get(const Eolian_Class class)
+eolian_class_inherits_list_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    //FIXME: create list here
    return cl->inherits;
 }
 
 EAPI const Eina_List*
-eolian_class_implements_list_get(const Eolian_Class class)
+eolian_class_implements_list_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->implements;
 }
@@ -559,9 +541,8 @@ database_function_type_set(Eolian_Function function_id, Eolian_Function_Type foo
    fid->type = foo_type;
 }
 
-Eina_Bool database_class_function_add(Eolian_Class class, Eolian_Function foo_id)
+Eina_Bool database_class_function_add(Eolian_Class *cl, Eolian_Function foo_id)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(foo_id && cl, EINA_FALSE);
    _Eolian_Function *fid = (_Eolian_Function *) foo_id;
@@ -595,10 +576,9 @@ database_implement_new(const char *impl_name)
 }
 
 Eina_Bool
-database_class_implement_add(Eolian_Class class, Eolian_Implement impl_desc)
+database_class_implement_add(Eolian_Class *cl, Eolian_Implement impl_desc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl_desc, EINA_FALSE);
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    cl->implements = eina_list_append(cl->implements, impl_desc);
    return EINA_TRUE;
@@ -613,13 +593,13 @@ eolian_implement_full_name_get(const Eolian_Implement impl)
 }
 
 EAPI Eina_Bool
-eolian_implement_information_get(const Eolian_Implement impl, Eolian_Class *class_out, Eolian_Function *func_out, Eolian_Function_Type *type_out)
+eolian_implement_information_get(const Eolian_Implement impl, Eolian_Class **class_out, Eolian_Function *func_out, Eolian_Function_Type *type_out)
 {
    _Eolian_Implement *_impl = (_Eolian_Implement *)impl;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, EINA_FALSE);
-   Eolian_Class class;
+   Eolian_Class *class;
    if (!database_class_name_validate(_impl->full_name, &class) || !class) return EINA_FALSE;
-   const char *class_name = ((_Eolian_Class *)class)->full_name;
+   const char *class_name = class->full_name;
    if (class_out) *class_out = class;
 
    char *func_name = strdup(_impl->full_name + strlen(class_name) + 1);
@@ -641,11 +621,10 @@ eolian_implement_information_get(const Eolian_Implement impl, Eolian_Class *clas
 }
 
 EAPI Eolian_Function
-eolian_class_function_find_by_name(const Eolian_Class class, const char *func_name, Eolian_Function_Type f_type)
+eolian_class_function_find_by_name(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
 {
    Eina_List *itr;
    Eolian_Function foo_id;
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    if (!cl) return NULL;
 
    if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_METHOD)
@@ -682,9 +661,8 @@ eolian_class_function_find_by_name(const Eolian_Class class, const char *func_na
 }
 
 EAPI const Eina_List *
-eolian_class_functions_list_get(const Eolian_Class class, Eolian_Function_Type foo_type)
+eolian_class_functions_list_get(const Eolian_Class *cl, Eolian_Function_Type foo_type)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    switch (foo_type)
      {
@@ -1093,18 +1071,16 @@ database_event_free(Eolian_Event event)
 }
 
 Eina_Bool
-database_class_event_add(Eolian_Class class, Eolian_Event event_desc)
+database_class_event_add(Eolian_Class *cl, Eolian_Event event_desc)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(event_desc && cl, EINA_FALSE);
    cl->events = eina_list_append(cl->events, event_desc);
    return EINA_TRUE;
 }
 
 EAPI const Eina_List*
-eolian_class_events_list_get(const Eolian_Class class)
+eolian_class_events_list_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->events;
 }
@@ -1121,35 +1097,31 @@ eolian_class_event_information_get(Eolian_Event event, const char **event_name, 
 }
 
 Eina_Bool
-database_class_ctor_enable_set(Eolian_Class class, Eina_Bool enable)
+database_class_ctor_enable_set(Eolian_Class *cl, Eina_Bool enable)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    cl->class_ctor_enable = enable;
    return EINA_TRUE;
 }
 
 Eina_Bool
-database_class_dtor_enable_set(Eolian_Class class, Eina_Bool enable)
+database_class_dtor_enable_set(Eolian_Class *cl, Eina_Bool enable)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    cl->class_dtor_enable = enable;
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
-eolian_class_ctor_enable_get(const Eolian_Class class)
+eolian_class_ctor_enable_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    return cl->class_ctor_enable;
 }
 
 EAPI Eina_Bool
-eolian_class_dtor_enable_get(const Eolian_Class class)
+eolian_class_dtor_enable_get(const Eolian_Class *cl)
 {
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    return cl->class_dtor_enable;
 }
@@ -1454,7 +1426,7 @@ database_type_print(Eolian_Type type)
 static void
 _implements_print(Eolian_Implement impl, int nb_spaces)
 {
-   Eolian_Class class;
+   Eolian_Class *class;
    Eolian_Function func;
    const char *t;
    Eolian_Function_Type ft;
@@ -1582,13 +1554,12 @@ static Eina_Bool _function_print(const _Eolian_Function *fid, int nb_spaces)
 }
 
 static Eina_Bool
-_class_print(const Eolian_Class class)
+_class_print(const Eolian_Class *cl)
 {
    Eina_List *itr;
    _Eolian_Function *function;
    const char *types[5] = {"", "Regular", "Regular Non Instantiable", "Mixin", "Interface"};
 
-   _Eolian_Class *cl = (_Eolian_Class *)class;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    printf("Class %s:\n", cl->name);
    if (cl->description)
@@ -1666,12 +1637,12 @@ _class_print(const Eolian_Class class)
 }
 
 EAPI Eina_Bool
-eolian_show(const Eolian_Class class)
+eolian_show(const Eolian_Class *class)
 {
    if (!class)
      {
         Eina_List *itr;
-        Eolian_Class cl;
+        Eolian_Class *cl;
         EINA_LIST_FOREACH(_classes, itr, cl)
           _class_print(cl);
      }
@@ -1757,7 +1728,7 @@ EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
    const Eina_List *itr;
-   Eolian_Class class = eolian_class_find_by_file(filepath);
+   Eolian_Class *class = eolian_class_find_by_file(filepath);
    const char *inherit_name;
    Eolian_Implement impl;
    if (!class)
@@ -1792,7 +1763,7 @@ eolian_eo_file_parse(const char *filepath)
      }
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl)
      {
-        Eolian_Class impl_class;
+        Eolian_Class *impl_class;
         Eolian_Function impl_func;
         Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
         eolian_implement_information_get(impl, &impl_class, &impl_func, &impl_type);
