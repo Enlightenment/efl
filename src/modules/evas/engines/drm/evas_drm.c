@@ -319,6 +319,7 @@ _evas_drm_outbuf_page_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, uns
    /* DBG("Page Flip Event"); */
 
    ob->priv.pending_flip = EINA_FALSE;
+   ob->priv.last = ob->priv.curr;
    ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
 }
 

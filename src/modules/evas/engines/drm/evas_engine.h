@@ -106,7 +106,7 @@ struct _Outbuf
       int fd;
       unsigned int conn, crtc, fb;
 
-      int curr, num;
+      int curr, last, num;
 
       drmModeModeInfo mode;
       drmEventContext ctx;

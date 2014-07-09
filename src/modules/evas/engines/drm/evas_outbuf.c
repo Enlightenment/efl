@@ -201,26 +201,27 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 Render_Engine_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
-   int i = 0, n = 0, count = 0;
+   int delta;
 
    /* check for valid output buffer */
    if (!ob) return MODE_FULL;
 
-   for (; i < ob->priv.num; i++)
-     {
-        n = (ob->priv.num + ob->priv.curr - i) % ob->priv.num;
-        if (ob->priv.buffer[n].valid) count++;
-        else break;
-     }
+   delta = (ob->priv.last - ob->priv.curr +
+            (ob->priv.last > ob->priv.last ?
+             0 : ob->priv.num)) % ob->priv.num;
 
-   if (count == ob->priv.num)
+   /* This is the number of frame since last frame */
+   switch (delta)
      {
-        if (count == 1) return MODE_COPY;
-        else if (count == 2) return MODE_DOUBLE;
-        else if (count == 3) return MODE_TRIPLE;
+      case 0:
+         return MODE_COPY;
+      case 1:
+         return MODE_DOUBLE;
+      case 2:
+         return MODE_TRIPLE;
+      default:
+         return MODE_FULL;
      }
-
-   return MODE_FULL;
 }
 
 void *
