@@ -69,19 +69,3 @@ compile yuy2_nomul
 compile rgb_a_pair
 compile rgb_a_pair_nomul
 
-compile filter_blur_bgra
-compile filter_blur_bgra_nomul
-compile filter_blur
-compile filter_blur_nomul
-compile filter_greyscale_bgra
-compile filter_greyscale_bgra_nomul
-compile filter_greyscale
-compile filter_greyscale_nomul
-compile filter_invert_bgra
-compile filter_invert_bgra_nomul
-compile filter_invert
-compile filter_invert_nomul
-compile filter_sepia_bgra
-compile filter_sepia_bgra_nomul
-compile filter_sepia
-compile filter_sepia_nomul
