@@ -38,8 +38,8 @@ convert_eolian_parameters(Eina_List const* parameters,
           (static_cast<const Eolian_Function_Parameter*>(curr));
         list.push_back
           ({
-             parameter_type(id, func_type),
-             parameter_name(id)
+             parameter_type(*id, func_type),
+             parameter_name(*id)
           });
      }
    return list;
