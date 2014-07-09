@@ -229,24 +229,29 @@ parse_struct(Eo_Lexer *ls, const char *name)
    Eo_Type_Def *def = push_type(ls);
    def->name = name;
    def->type = EOLIAN_TYPE_STRUCT;
-   def->fields = eina_hash_string_small_new(EINA_FREE_CB(eo_definitions_type_free));
+   def->fields = eina_hash_string_small_new(EINA_FREE_CB(eo_definitions_struct_field_free));
    check_next(ls, '{');
    while (ls->t.token != '}')
      {
         const char *fname;
+        Eo_Struct_Field_Def *fdef;
+        Eo_Type_Def *tp;
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value))
           eo_lexer_syntax_error(ls, "double field definition");
         fname = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ':');
-        eina_hash_add(def->fields, fname, parse_type_struct_nonvoid(ls,
-                      EINA_TRUE, EINA_FALSE));
+        tp = parse_type_struct_nonvoid(ls, EINA_TRUE, EINA_FALSE);
+        fdef = calloc(1, sizeof(Eo_Struct_Field_Def));
+        fdef->type = tp;
+        eina_hash_add(def->fields, fname, fdef);
         pop_type(ls);
         eina_stringshare_del(fname);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
           {
+             fdef->comment = eina_stringshare_add(ls->t.value);
              eo_lexer_get(ls);
           }
      }

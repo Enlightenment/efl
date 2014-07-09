@@ -4,6 +4,13 @@
 #include "eo_definitions.h"
 
 void
+eo_definitions_struct_field_free(Eo_Struct_Field_Def *def)
+{
+   eo_definitions_type_free(def->type);
+   if (def->comment) eina_stringshare_del(def->comment);
+}
+
+void
 eo_definitions_type_free(Eo_Type_Def *tp)
 {
    Eo_Type_Def *stp;

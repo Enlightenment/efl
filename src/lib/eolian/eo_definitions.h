@@ -4,7 +4,7 @@
 #include <Eina.h>
 #include <Eolian.h>
 
-/* RET */
+/* TYPE */
 
 typedef struct _eo_type_def Eo_Type_Def;
 struct _eo_type_def
@@ -25,6 +25,14 @@ struct _eo_type_def
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
 };
+
+typedef struct _eo_struct_field_def
+{
+   Eo_Type_Def *type;
+   const char *comment;
+} Eo_Struct_Field_Def;
+
+/* RET */
 
 typedef struct _eo_ret_def
 {
@@ -171,6 +179,7 @@ typedef struct _Eo_Lexer_Temps
    Eo_Implement_Def *impl;
 } Eo_Lexer_Temps;
 
+void eo_definitions_struct_field_free(Eo_Struct_Field_Def *def);
 void eo_definitions_type_free(Eo_Type_Def *tp);
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 void eo_definitions_typedef_def_free(Eo_Typedef_Def *type);

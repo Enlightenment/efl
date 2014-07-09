@@ -77,6 +77,13 @@ typedef struct
 } _Parameter_Desc;
 
 /* maps directly to Eo_Type_Def */
+
+typedef struct
+{
+   Eolian_Type type;
+   const char *comment;
+} _Struct_Field_Type;
+
 typedef struct
 {
    const char        *name;
@@ -1190,12 +1197,30 @@ EAPI Eolian_Type
 eolian_type_struct_field_get(Eolian_Type tp, const char *field)
 {
    _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   _Struct_Field_Type *sf = NULL;
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
    tpt = tpp->type;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
-   return eina_hash_find(tpp->fields, field);
+   sf = eina_hash_find(tpp->fields, field);
+   if (!sf) return NULL;
+   return sf->type;
+}
+
+EAPI const char *
+eolian_type_struct_field_description_get(Eolian_Type tp, const char *field)
+{
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   _Struct_Field_Type *sf = NULL;
+   Eolian_Type_Type tpt;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
+   tpt = tpp->type;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
+   sf = eina_hash_find(tpp->fields, field);
+   if (!sf) return NULL;
+   return sf->comment;
 }
 
 EAPI Eolian_Type
@@ -1258,7 +1283,8 @@ static Eina_Bool
 _stype_field_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
                 void *fdata)
 {
-   _type_to_str((Eolian_Type)data, (Eina_Strbuf*)fdata, (const char*)key);
+   _type_to_str((Eolian_Type)((_Struct_Field_Type*)data)->type,
+                (Eina_Strbuf*)fdata, (const char*)key);
    eina_strbuf_append((Eina_Strbuf*)fdata, "; ");
    return EINA_TRUE;
 }
