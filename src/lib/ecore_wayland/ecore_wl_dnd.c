@@ -127,8 +127,6 @@ ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
         wl_array_init(&input->data_types);
      }
 
-   /* destroy any existing data source */
-   if (input->data_source) wl_data_source_destroy(input->data_source);
    input->data_source = NULL;
 
    if (!types_offered[0]) return EINA_FALSE;
