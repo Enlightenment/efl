@@ -20,7 +20,10 @@ struct _eo_type_def
          Eina_List   *arguments;
          Eo_Type_Def *ret_type;
       };
-      Eina_Hash *fields;
+      struct {
+         Eina_Hash  *fields;
+         const char *comment;
+      };
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;

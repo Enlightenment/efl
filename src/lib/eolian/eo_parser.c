@@ -231,6 +231,11 @@ parse_struct(Eo_Lexer *ls, const char *name)
    def->type = EOLIAN_TYPE_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(eo_definitions_struct_field_free));
    check_next(ls, '{');
+   if (ls->t.token == TOK_COMMENT)
+     {
+        def->comment = eina_stringshare_add(ls->t.value);
+        eo_lexer_get(ls);
+     }
    while (ls->t.token != '}')
      {
         const char *fname;

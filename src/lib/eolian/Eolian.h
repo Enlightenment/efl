@@ -795,6 +795,16 @@ EAPI Eolian_Type eolian_type_struct_field_get(Eolian_Type tp, const char *field)
 EAPI const char *eolian_type_struct_field_description_get(Eolian_Type tp, const char *field);
 
 /*
+ * @brief Get the description of a struct type.
+ *
+ * @param[in] tp the type.
+ * @return the description when @c tp is EOLIAN_TYPE_STRUCT, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_type_struct_description_get(Eolian_Type tp);
+
+/*
  * @brief Get the return type of a function type.
  *
  * @param[in] tp the type.

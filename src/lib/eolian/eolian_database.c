@@ -97,7 +97,10 @@ typedef struct
          Eina_List   *arguments;
          Eolian_Type  ret_type;
       };
-      Eina_Hash *fields;
+      struct {
+         Eina_Hash  *fields;
+         const char *comment;
+      };
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
@@ -1186,10 +1189,8 @@ EAPI Eina_Iterator *
 eolian_type_struct_field_names_list_get(Eolian_Type tp)
 {
    _Parameter_Type *tpp = (_Parameter_Type*)tp;
-   Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   tpt = tpp->type;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp->type == EOLIAN_TYPE_STRUCT, NULL);
    return eina_hash_iterator_key_new(tpp->fields);
 }
 
@@ -1198,11 +1199,9 @@ eolian_type_struct_field_get(Eolian_Type tp, const char *field)
 {
    _Parameter_Type *tpp = (_Parameter_Type*)tp;
    _Struct_Field_Type *sf = NULL;
-   Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   tpt = tpp->type;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp->type == EOLIAN_TYPE_STRUCT, NULL);
    sf = eina_hash_find(tpp->fields, field);
    if (!sf) return NULL;
    return sf->type;
@@ -1213,14 +1212,21 @@ eolian_type_struct_field_description_get(Eolian_Type tp, const char *field)
 {
    _Parameter_Type *tpp = (_Parameter_Type*)tp;
    _Struct_Field_Type *sf = NULL;
-   Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   tpt = tpp->type;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_STRUCT, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp->type == EOLIAN_TYPE_STRUCT, NULL);
    sf = eina_hash_find(tpp->fields, field);
    if (!sf) return NULL;
    return sf->comment;
+}
+
+EAPI const char *
+eolian_type_struct_description_get(Eolian_Type tp)
+{
+   _Parameter_Type *tpp = (_Parameter_Type*)tp;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp->type == EOLIAN_TYPE_STRUCT, NULL);
+   return tpp->comment;
 }
 
 EAPI Eolian_Type
