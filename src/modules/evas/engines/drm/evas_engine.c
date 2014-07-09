@@ -50,7 +50,8 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
                                                  evas_outbuf_update_region_push,
                                                  evas_outbuf_update_region_free,
                                                  NULL, evas_outbuf_flush,
-                                                 evas_outbuf_free, w, h))
+                                                 evas_outbuf_free, 
+                                                 ob->w, ob->h))
      goto on_error;
 
    /* return the allocated render_engine structure */
@@ -142,7 +143,8 @@ eng_setup(Evas *evas, void *einfo)
         if (!ob) return 0;
 
         /* if we have an existing outbuf, free it */
-        evas_render_engine_software_generic_update(&re->generic, ob, epd->output.w, epd->output.h);
+        evas_render_engine_software_generic_update(&re->generic, ob, 
+                                                   ob->w, ob->h);
      }
 
    /* update the info structure pointer */
