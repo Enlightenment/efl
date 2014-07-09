@@ -1501,6 +1501,8 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Extn *extn;
+   Ipc_Data_Resize ipc;
+   Ipc_Data_Update ipc2;
    int i;
 
    if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
@@ -1515,8 +1517,6 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    for (i = 0; i < NBUF; i++)
      {
         const char *lock;
-        Ipc_Data_Resize ipc;
-        Ipc_Data_Update ipc2;
 
         ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF0,
                               extn->svc.num, extn->b[i].num, i,
@@ -1529,15 +1529,15 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
         ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF2,
                               ee->alpha, extn->svc.sys, i,
                               NULL, 0);
-        ipc.w = ee->w; ipc.h = ee->h;
-        ecore_ipc_client_send(e->client, MAJOR, OP_RESIZE,
-                              0, 0, 0, &ipc, sizeof(ipc));
-        ipc2.x = 0; ipc2.y = 0; ipc2.w = ee->w; ipc2.h = ee->h;
-        ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc2,
-                              sizeof(ipc2));
-        ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE_DONE, 0, 0,
-                              extn->cur_b, NULL, 0);
      }
+   ipc.w = ee->w; ipc.h = ee->h;
+   ecore_ipc_client_send(e->client, MAJOR, OP_RESIZE,
+                         0, 0, 0, &ipc, sizeof(ipc));
+   ipc2.x = 0; ipc2.y = 0; ipc2.w = ee->w; ipc2.h = ee->h;
+   ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc2,
+                         sizeof(ipc2));
+   ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE_DONE, 0, 0,
+                         extn->cur_b, NULL, 0);
    _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_ADD);
    return ECORE_CALLBACK_PASS_ON;
 }
