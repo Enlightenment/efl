@@ -8,7 +8,7 @@
 static _eolian_class_vars class_env;
 
 static Eina_Bool
-_params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_as_ret, Eina_Strbuf *params, Eina_Strbuf *short_params)
+_params_generate(Eolian_Function *foo, Eolian_Function_Type ftype, Eina_Bool var_as_ret, Eina_Strbuf *params, Eina_Strbuf *short_params)
 {
    const Eina_List *itr;
    Eolian_Function_Parameter *param;
@@ -112,7 +112,7 @@ _type_exists(const char* type_name, Eina_Strbuf *buffer)
 }
 
 static Eina_Bool
-_prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf *data_type_buf, Eolian_Implement *impl_desc, Eina_Strbuf *buffer)
+_prototype_generate(Eolian_Function *foo, Eolian_Function_Type ftype, Eina_Strbuf *data_type_buf, Eolian_Implement *impl_desc, Eina_Strbuf *buffer)
 {
    Eina_Bool var_as_ret = EINA_FALSE, ret_const = EINA_FALSE;
    Eina_Strbuf *params = NULL, *short_params = NULL, *super_invok = NULL;
@@ -199,7 +199,7 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *data_type_buf = eina_strbuf_new();
    const Eina_List *itr_funcs;
-   Eolian_Function foo;
+   Eolian_Function *foo;
    Eina_Strbuf *begin = eina_strbuf_new();
    const char *class_name = eolian_class_name_get(class);
 

@@ -159,13 +159,13 @@ class_list_all()
 inline std::string
 function_name(Eolian_Function const& func)
 {
-   return safe_str(::eolian_function_name_get(func));
+   return safe_str(::eolian_function_name_get(&func));
 }
 
 inline std::string
 function_impl(Eolian_Function const& func, std::string const& prefix)
 {
-   const char *s = ::eolian_function_full_c_name_get(func, prefix.c_str());
+   const char *s = ::eolian_function_full_c_name_get(&func, prefix.c_str());
    std::string ret(s);
    ::eina_stringshare_del(s);
    return ret;
@@ -174,14 +174,14 @@ function_impl(Eolian_Function const& func, std::string const& prefix)
 inline Eolian_Function_Type
 function_type(Eolian_Function const& func)
 {
-   return ::eolian_function_type_get(func);
+   return ::eolian_function_type_get(&func);
 }
 
 inline efl::eolian::eolian_type_instance
 function_return_type(Eolian_Function const& func, Eolian_Function_Type func_type = method_t::value)
 {
    return type_lookup
-     (::eolian_function_return_type_get(func, func_type));
+     (::eolian_function_return_type_get(&func, func_type));
 }
 
 inline efl::eolian::eolian_type_instance

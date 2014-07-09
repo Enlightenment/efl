@@ -48,7 +48,7 @@ typedef struct _Eolian_Class Eolian_Class;
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Function* Eolian_Function;
+typedef struct _Eolian_Function Eolian_Function;
 
 /* Parameter/return type.
  *
@@ -384,7 +384,7 @@ EAPI const Eina_List *eolian_class_functions_list_get(const Eolian_Class *klass,
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
+EAPI Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
 
 /*
  * @brief Returns the scope of a function
@@ -394,7 +394,7 @@ EAPI Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function_Scope eolian_function_scope_get(Eolian_Function function_id);
+EAPI Eolian_Function_Scope eolian_function_scope_get(const Eolian_Function *function_id);
 
 /*
  * @brief Returns the name of a function
@@ -404,7 +404,7 @@ EAPI Eolian_Function_Scope eolian_function_scope_get(Eolian_Function function_id
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_function_name_get(Eolian_Function function_id);
+EAPI const char *eolian_function_name_get(const Eolian_Function *function_id);
 
 /*
  * @brief Returns the full C name of a function (with prefix). It's here
@@ -417,7 +417,7 @@ EAPI const char *eolian_function_name_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_function_full_c_name_get(Eolian_Function function_id, const char *prefix);
+EAPI const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
 
 /*
  * @brief Find a function in a class by its name and type
@@ -429,7 +429,7 @@ EAPI const char *eolian_function_full_c_name_get(Eolian_Function function_id, co
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
+EAPI Eolian_Function *eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific data for a function.
@@ -440,7 +440,7 @@ EAPI Eolian_Function eolian_class_function_find_by_name(const Eolian_Class *klas
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_function_data_get(Eolian_Function function_id, const char *key);
+EAPI const char *eolian_function_data_get(const Eolian_Function *function_id, const char *key);
 
 /*
  * @brief Indicates if a function is virtual pure.
@@ -450,7 +450,7 @@ EAPI const char *eolian_function_data_get(Eolian_Function function_id, const cha
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_virtual_pure(Eolian_Function function_id, Eolian_Function_Type f_type);
+EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific description for a function.
@@ -472,7 +472,7 @@ EAPI Eina_Bool eolian_function_is_virtual_pure(Eolian_Function function_id, Eoli
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian_Function function_id, const char *param_name);
+EAPI Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian_Function *function_id, const char *param_name);
 
 /*
  * @brief Returns a list of keys params of a given function.
@@ -482,7 +482,7 @@ EAPI Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian_Funct
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_property_keys_list_get(Eolian_Function foo_id);
+EAPI const Eina_List *eolian_property_keys_list_get(const Eolian_Function *foo_id);
 
 /*
  * @brief Returns a list of values params of a given function.
@@ -492,7 +492,7 @@ EAPI const Eina_List *eolian_property_keys_list_get(Eolian_Function foo_id);
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_property_values_list_get(Eolian_Function foo_id);
+EAPI const Eina_List *eolian_property_values_list_get(const Eolian_Function *foo_id);
 
 /*
  * @brief Returns a list of parameter handles for a method/ctor/dtor.
@@ -502,7 +502,7 @@ EAPI const Eina_List *eolian_property_values_list_get(Eolian_Function foo_id);
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
+EAPI const Eina_List *eolian_parameters_list_get(const Eolian_Function *function_id);
 
 /*
  * @brief Get information about a function parameter
@@ -573,7 +573,7 @@ EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
+EAPI Eolian_Type *eolian_function_return_type_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get the return default value of a function.
@@ -589,7 +589,7 @@ EAPI Eolian_Type *eolian_function_return_type_get(Eolian_Function function_id, E
  * @ingroup Eolian
  */
 EAPI const char *
-eolian_function_return_dflt_value_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
+eolian_function_return_dflt_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get the return comment of a function.
@@ -604,7 +604,7 @@ eolian_function_return_dflt_value_get(Eolian_Function foo_id, Eolian_Function_Ty
  * @ingroup Eolian
  */
 EAPI const char *
-eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
+eolian_function_return_comment_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function return is warn-unused.
@@ -618,7 +618,7 @@ eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type 
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id, Eolian_Function_Type ftype);
+EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.
@@ -628,7 +628,7 @@ EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id, Eol
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
+EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
 
 /*
  * @brief Get full string of an overriding function (implement).
@@ -652,7 +652,7 @@ EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement *i
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl,
-      Eolian_Class **klass, Eolian_Function *function, Eolian_Function_Type *type);
+      Eolian_Class **klass, Eolian_Function **function, Eolian_Function_Type *type);
 
 /*
  * @brief Get the list of overriding functions defined in a class.

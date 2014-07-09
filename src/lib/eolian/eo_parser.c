@@ -1227,7 +1227,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
      }
    EINA_LIST_FOREACH(kls->constructors, l, meth)
      {
-        Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_CTOR);
+        Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_CTOR);
         database_class_function_add(class, foo_id);
         if (meth->ret) database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
         database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
@@ -1240,7 +1240,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 
    EINA_LIST_FOREACH(kls->properties, l, prop)
      {
-        Eolian_Function foo_id = database_function_new(prop->name, EOLIAN_UNRESOLVED);
+        Eolian_Function *foo_id = database_function_new(prop->name, EOLIAN_UNRESOLVED);
         database_function_scope_set(foo_id, prop->scope);
         EINA_LIST_FOREACH(prop->keys, m, param)
           {
@@ -1310,7 +1310,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 
    EINA_LIST_FOREACH(kls->methods, l, meth)
      {
-        Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_METHOD);
+        Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_METHOD);
         database_function_scope_set(foo_id, meth->scope);
         database_class_function_add(class, foo_id);
         if (meth->ret)
@@ -1365,7 +1365,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
                   else if (!strcmp(type_as_str+1, "get")) ftype = EOLIAN_PROP_GET;
                }
              /* Search the function into the existing functions of the current class */
-             Eolian_Function foo_id = eolian_class_function_find_by_name(
+             Eolian_Function *foo_id = eolian_class_function_find_by_name(
                    class, func, ftype);
              free(virtual_name);
              if (!foo_id)

@@ -49,7 +49,7 @@ static efl::eolian::parameters_container_type
 convert_eolian_parameters(Eolian_Function const& func, getter_t func_type)
 {
    return convert_eolian_parameters
-     (::eolian_parameters_list_get(func), func_type.value);
+     (::eolian_parameters_list_get(&func), func_type.value);
 }
 
 static efl::eolian::parameters_container_type
@@ -69,7 +69,7 @@ convert_eolian_parameters(Eolian_Function const& func)
 {
    assert(function_type(func) != EOLIAN_PROPERTY);
    return convert_eolian_parameters
-     (::eolian_parameters_list_get(func), function_type(func));
+     (::eolian_parameters_list_get(&func), function_type(func));
 }
 
 static efl::eolian::functions_container_type
@@ -84,19 +84,19 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
    std::string prefix(class_prefix(klass));
    EINA_LIST_FOREACH (properties, it, curr)
      {
-        Eolian_Function prop_ = static_cast<Eolian_Function>(curr);
-        if (property_is_getter(prop_))
+        Eolian_Function *prop_ = static_cast<Eolian_Function*>(curr);
+        if (property_is_getter(*prop_))
           {
              efl::eolian::parameters_container_type params
-               = convert_eolian_parameters(prop_, eolian_cxx::getter);
+               = convert_eolian_parameters(*prop_, eolian_cxx::getter);
 
              efl::eolian::eo_function get_;
              get_.type = efl::eolian::eo_function::regular_;
-             get_.name = function_name(prop_) + "_get";
-             get_.impl = function_impl(prop_, prefix) + "_get";
+             get_.name = function_name(*prop_) + "_get";
+             get_.impl = function_impl(*prop_, prefix) + "_get";
 
              efl::eolian::eolian_type_instance ret =
-               function_return_type(prop_, eolian_cxx::getter);
+               function_return_type(*prop_, eolian_cxx::getter);
 
              // if the getter has a single parameter and a void return
              // it is transformed into a getter with no parameters
@@ -131,10 +131,10 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
                               get_.params.end());
                   get_.params = keys;
                }
-             get_.comment = convert_comments_function(prop_, eolian_cxx::getter);
+             get_.comment = convert_comments_function(*prop_, eolian_cxx::getter);
              container.push_back(get_);
           }
-        if (property_is_setter(prop_))
+        if (property_is_setter(*prop_))
           {
              const Eina_List *keys_ = eolian_property_keys_list_get(prop_);
              const Eina_List *args_ = eolian_parameters_list_get(prop_);
@@ -144,11 +144,11 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
              eina_list_free(params_);
              efl::eolian::eo_function set_;
              set_.type = efl::eolian::eo_function::regular_;
-             set_.name = function_name(prop_) + "_set";
-             set_.impl = function_impl(prop_, prefix) + "_set";
+             set_.name = function_name(*prop_) + "_set";
+             set_.impl = function_impl(*prop_, prefix) + "_set";
              set_.params = params;
-             set_.ret = function_return_type(prop_, eolian_cxx::setter);
-             set_.comment = convert_comments_function(prop_, eolian_cxx::setter);
+             set_.ret = function_return_type(*prop_, eolian_cxx::setter);
+             set_.comment = convert_comments_function(*prop_, eolian_cxx::setter);
              container.push_back(set_);
           }
      }
@@ -200,7 +200,7 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
      {
         Eolian_Implement *impl_desc = static_cast<Eolian_Implement*>(impl_desc_);
         Eolian_Class *impl_class;
-        Eolian_Function impl_func;
+        Eolian_Function *impl_func;
         Eolian_Function_Type impl_type;
         eolian_implement_information_get
           (impl_desc, &impl_class, &impl_func, &impl_type);
@@ -209,9 +209,9 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
              efl::eolian::eo_constructor constructor;
              std::string parent = safe_lower(eolian_class_full_name_get(impl_class));
              if (parent == "eo_base" || parent == "eo.base") parent = "eo";
-             constructor.name = parent + "_" + function_name(impl_func);
-             constructor.params = convert_eolian_parameters(impl_func);
-             constructor.comment = convert_comments_function(impl_func, eolian_cxx::ctor);
+             constructor.name = parent + "_" + function_name(*impl_func);
+             constructor.params = convert_eolian_parameters(*impl_func);
+             constructor.comment = convert_comments_function(*impl_func, eolian_cxx::ctor);
              cls.constructors.push_back(constructor);
           }
      }
@@ -227,11 +227,11 @@ convert_eolian_constructors(efl::eolian::eo_class& cls, Eolian_Class const& klas
      ::eolian_class_functions_list_get(&klass, EOLIAN_CTOR);
    EINA_LIST_FOREACH (constructors, it, curr)
      {
-        Eolian_Function eo_constructor = static_cast<Eolian_Function>(curr);
+        Eolian_Function *eo_constructor = static_cast<Eolian_Function*>(curr);
         efl::eolian::eo_constructor constructor;
-        constructor.name = function_impl(eo_constructor, prefix);
-        constructor.params = convert_eolian_parameters(eo_constructor);
-        constructor.comment = convert_comments_function(eo_constructor, eolian_cxx::ctor);
+        constructor.name = function_impl(*eo_constructor, prefix);
+        constructor.params = convert_eolian_parameters(*eo_constructor);
+        constructor.comment = convert_comments_function(*eo_constructor, eolian_cxx::ctor);
         cls.constructors.push_back(constructor);
      }
 }
@@ -247,14 +247,14 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
    EINA_LIST_FOREACH (eolian_functions, it, curr)
      {
         efl::eolian::eo_function func_;
-        Eolian_Function eol_func = static_cast<Eolian_Function>(curr);
+        Eolian_Function *eol_func = static_cast<Eolian_Function*>(curr);
         // XXX Eolian only provides regular methods so far
         func_.type = efl::eolian::eo_function::regular_;
-        func_.name = function_name(eol_func);
-        func_.impl = function_impl(eol_func, class_prefix(klass));
-        func_.ret = function_return_type(eol_func);
-        func_.params = convert_eolian_parameters(eol_func);
-        func_.comment = convert_comments_function(eol_func, eolian_cxx::method);
+        func_.name = function_name(*eol_func);
+        func_.impl = function_impl(*eol_func, class_prefix(klass));
+        func_.ret = function_return_type(*eol_func);
+        func_.params = convert_eolian_parameters(*eol_func);
+        func_.comment = convert_comments_function(*eol_func, eolian_cxx::method);
         cls.functions.push_back(func_);
      }
 }

@@ -79,7 +79,7 @@ tmpl_eo_retdesc[] =" * @return %s\n";
 #endif
 
 static Eina_Bool
-eo_fundef_generate(const Eolian_Class *class, Eolian_Function func, Eolian_Function_Type ftype, Eina_Strbuf *functext)
+eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Function_Type ftype, Eina_Strbuf *functext)
 {
    _eolian_class_func_vars func_env;
    const char *str_dir[] = {"in", "out", "inout"};
@@ -238,7 +238,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    const Eolian_Function_Type ftype_order[] = {EOLIAN_CTOR, EOLIAN_PROPERTY, EOLIAN_METHOD};
    const Eina_List *itr;
-   Eolian_Function fid;
+   Eolian_Function *fid;
    char *tmpstr = malloc(0x1FF);
    Eina_Strbuf * str_hdr = eina_strbuf_new();
 
@@ -326,7 +326,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 }
 
 static Eina_Bool
-eo_bind_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, _eolian_class_vars *impl_env)
+eo_bind_func_generate(const Eolian_Class *class, Eolian_Function *funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, _eolian_class_vars *impl_env)
 {
    _eolian_class_func_vars func_env;
    const char *suffix = "";
@@ -488,7 +488,7 @@ eo_bind_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_
 }
 
 static Eina_Bool
-eo_op_desc_generate(const Eolian_Class *class, Eolian_Function fid, Eolian_Function_Type ftype,
+eo_op_desc_generate(const Eolian_Class *class, Eolian_Function *fid, Eolian_Function_Type ftype,
       const char *desc, Eina_Strbuf *buf)
 {
    _eolian_class_func_vars func_env;
@@ -551,7 +551,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
-   Eolian_Function fn;
+   Eolian_Function *fn;
 
    const char *str_classtype = NULL;
    switch(eolian_class_type_get(class))
@@ -624,7 +624,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         char implname[0xFF];
         Eolian_Class *impl_class = NULL;
         Eolian_Function_Type ftype;
-        Eolian_Function fnid = NULL;
+        Eolian_Function *fnid = NULL;
         const char *funcname = NULL;
         const char *rets;
         char *tp = implname;
@@ -819,7 +819,7 @@ eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
-   Eolian_Function fn;
+   Eolian_Function *fn;
 
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 

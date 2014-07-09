@@ -42,7 +42,7 @@ EAPI void\n\
 ";
 
 static void
-_eapi_decl_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
+_eapi_decl_func_generate(const Eolian_Class *class, Eolian_Function *funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
 {
    _eolian_class_func_vars func_env;
    const char *funcname = eolian_function_name_get(funcid);
@@ -198,7 +198,7 @@ end:
 }
 
 static void
-_eapi_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
+_eapi_func_generate(const Eolian_Class *class, Eolian_Function *funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
 {
    _eolian_class_func_vars func_env;
    char tmpstr[0xFF];
@@ -347,21 +347,21 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    for (i = 0; i < 2; i++)
       EINA_LIST_FOREACH(eolian_class_functions_list_get(class, ftype_order[i]), l, data)
         {
-           const Eolian_Function_Type ftype = eolian_function_type_get((Eolian_Function)data);
+           const Eolian_Function_Type ftype = eolian_function_type_get((Eolian_Function*)data);
            Eina_Bool prop_read = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_GET ) ? EINA_TRUE : EINA_FALSE ;
            Eina_Bool prop_write = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_SET ) ? EINA_TRUE : EINA_FALSE ;
 
            if (!prop_read && !prop_write)
              {
-                _eapi_decl_func_generate(class, (Eolian_Function)data, EOLIAN_METHOD, buf);
+                _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_METHOD, buf);
              }
            if (prop_write)
              {
-                _eapi_decl_func_generate(class, (Eolian_Function)data, EOLIAN_PROP_SET, buf);
+                _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_PROP_SET, buf);
              }
            if (prop_read)
              {
-                _eapi_decl_func_generate(class, (Eolian_Function)data, EOLIAN_PROP_GET, buf);
+                _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_PROP_GET, buf);
              }
         }
    return EINA_TRUE;
@@ -372,7 +372,7 @@ legacy_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
-   Eolian_Function fn;
+   Eolian_Function *fn;
 
    _class_env_create(class, NULL, &class_env);
 
