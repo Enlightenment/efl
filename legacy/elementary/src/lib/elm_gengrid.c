@@ -2056,6 +2056,26 @@ get_down_item(Elm_Gengrid_Data *sd, Elm_Object_Item *it)
    return next;
 }
 
+typedef struct _Item_Info
+{
+   Elm_Gen_Item *it;
+   Evas_Coord x, y;
+} Item_Info;
+
+typedef struct _Reorder_Normal_Data
+{
+   Item_Info *items;
+   Elm_Gen_Item *corner_item;
+   int no;
+} Reorder_Normal_Data;
+
+static void
+_free_reorder_normal_data(Reorder_Normal_Data *rnd)
+{
+   free(rnd->items);
+   free(rnd);
+}
+
 static void
 _anim_end(Elm_Gengrid_Data *sd)
 {
@@ -2064,8 +2084,34 @@ _anim_end(Elm_Gengrid_Data *sd)
    it1_prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(sd->reorder.it1)->prev);
    it2_prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(sd->reorder.it2)->prev);
 
-   if ((!sd->horizontal && ((sd->reorder.dir == ELM_FOCUS_UP) || (sd->reorder.dir == ELM_FOCUS_DOWN))) ||
-       (sd->horizontal && ((sd->reorder.dir == ELM_FOCUS_LEFT) || (sd->reorder.dir == ELM_FOCUS_RIGHT))))
+   if ((sd->reorder.type == ELM_GENGRID_REORDER_TYPE_NORMAL) &&
+       ((!sd->horizontal && ((sd->reorder.dir == ELM_FOCUS_UP) || (sd->reorder.dir == ELM_FOCUS_DOWN))) ||
+       (sd->horizontal && ((sd->reorder.dir == ELM_FOCUS_LEFT) || (sd->reorder.dir == ELM_FOCUS_RIGHT)))))
+     {
+        sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(sd->reorder.it1));
+        if ((sd->reorder.dir == ELM_FOCUS_UP) ||
+            (sd->reorder.dir == ELM_FOCUS_LEFT))
+          {
+             if (it2_prev)
+               {
+                  tmp = eina_inlist_find(sd->items, EINA_INLIST_GET(it2_prev));
+                  sd->items = eina_inlist_append_relative(sd->items, EINA_INLIST_GET(sd->reorder.it1),
+                                                          tmp);
+               }
+             else
+               sd->items = eina_inlist_prepend(sd->items, EINA_INLIST_GET(sd->reorder.it1));
+          }
+        else if ((sd->reorder.dir == ELM_FOCUS_DOWN) ||
+                 (sd->reorder.dir == ELM_FOCUS_RIGHT))
+          {
+             tmp = eina_inlist_find(sd->items, EINA_INLIST_GET(sd->reorder.it2));
+             sd->items = eina_inlist_append_relative(sd->items, EINA_INLIST_GET(sd->reorder.it1),
+                                                          tmp);
+          }
+     }
+   else if ((sd->reorder.type == ELM_GENGRID_REORDER_TYPE_SWAP) &&
+            ((!sd->horizontal && ((sd->reorder.dir == ELM_FOCUS_UP) || (sd->reorder.dir == ELM_FOCUS_DOWN))) ||
+       (sd->horizontal && ((sd->reorder.dir == ELM_FOCUS_LEFT) || (sd->reorder.dir == ELM_FOCUS_RIGHT)))))
      {
         sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(sd->reorder.it1));
         sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(sd->reorder.it2));
@@ -2189,18 +2235,37 @@ _item_move_cb(void *data, double pos)
 
    dx = sd->reorder.x2 - sd->reorder.x1;
    dy = sd->reorder.y2 - sd->reorder.y1;
-   xx1 = sd->reorder.x1 + dx * frame;
-   yy1 = sd->reorder.y1 + dy * frame;
+   xx1 = sd->reorder.x1 + (dx * frame);
+   yy1 = sd->reorder.y1 + (dy * frame);
 
-   xx2 = sd->reorder.x2 - dx * frame;
-   yy2 = sd->reorder.y2 - dy * frame;
+   if (sd->reorder.type == ELM_GENGRID_REORDER_TYPE_NORMAL)
+     {
+        int i = 0;
+        Reorder_Normal_Data *rnd = sd->reorder.data;
+
+        for (;i < rnd->no; i++)
+          {
+             dx = rnd->items[i + 1].x - rnd->items[i].x;
+             dy = rnd->items[i + 1].y - rnd->items[i].y;
+             xx2 = rnd->items[i].x + (frame * dx);
+             yy2 = rnd->items[i].y + (frame * dy);
+             evas_object_move(VIEW(rnd->items[i].it), xx2, yy2);
+          }
+     }
+   else if (sd->reorder.type == ELM_GENGRID_REORDER_TYPE_SWAP)
+     {
+        xx2 = sd->reorder.x2 - (dx * frame);
+        yy2 = sd->reorder.y2 - (dy * frame);
+        evas_object_move(VIEW(sd->reorder.it2), xx2, yy2);
+     }
 
    evas_object_move(VIEW(sd->reorder.it1), xx1, yy1);
-   evas_object_move(VIEW(sd->reorder.it2), xx2, yy2);
 
    if (pos == 1.0)
      {
         _anim_end(sd);
+        if (sd->reorder.type == ELM_GENGRID_REORDER_TYPE_NORMAL)
+          _free_reorder_normal_data(sd->reorder.data);
         elm_gengrid_item_show((Elm_Object_Item *)sd->reorder.it1,
                               ELM_GENGRID_ITEM_SCROLLTO_IN);
         evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_START,
@@ -2213,10 +2278,104 @@ _item_move_cb(void *data, double pos)
 }
 
 static void
+_store_nearby_items(Elm_Gengrid_Data *sd)
+{
+   Reorder_Normal_Data *rnd = sd->reorder.data;
+   Eina_Inlist *itr;
+   Evas_Coord x, y, cvw, cvh, col = 0, row = 0;
+   int i = 0;
+   int corner_item_pos = 0;
+   Eina_Inlist *it1_list, *it2_list;
+
+   evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
+
+   rnd->no = abs(sd->reorder.it2->position - sd->reorder.it1->position);
+   rnd->items = malloc(sizeof(Item_Info) * (rnd->no + 1));
+
+  if (sd->horizontal && sd->item_height > 0)
+    {
+       row = cvh / sd->item_height;
+       if (row <= 0) row = 1;
+       if (sd->reorder.dir == ELM_FOCUS_RIGHT)
+         {
+            corner_item_pos = (sd->reorder.it2->position + 1) / row;
+            corner_item_pos = corner_item_pos * row;
+            corner_item_pos = sd->reorder.it2->position - corner_item_pos;
+         }
+       else if (sd->reorder.dir == ELM_FOCUS_LEFT)
+         {
+            corner_item_pos = (sd->reorder.it2->position + 1) / row;
+            corner_item_pos = (corner_item_pos + 1) * row;
+            corner_item_pos = corner_item_pos - sd->reorder.it2->position;
+         }
+    }
+  else if (sd->item_width > 0)
+    {
+       col = cvw / sd->item_width;
+       if (col <= 0) col = 1;
+       if (sd->reorder.dir == ELM_FOCUS_DOWN)
+         {
+            corner_item_pos = (sd->reorder.it2->position + 1) / col;
+            corner_item_pos = corner_item_pos * col;
+            corner_item_pos = sd->reorder.it2->position - corner_item_pos;
+         }
+       else if (sd->reorder.dir == ELM_FOCUS_UP)
+         {
+            corner_item_pos = (sd->reorder.it2->position + 1) / col;
+            corner_item_pos = (corner_item_pos + 1) * col;
+            corner_item_pos = corner_item_pos - sd->reorder.it2->position;
+         }
+    }
+
+  it1_list = eina_inlist_find(sd->items, EINA_INLIST_GET(sd->reorder.it1));
+  it2_list = eina_inlist_find(sd->items, EINA_INLIST_GET(sd->reorder.it2));
+
+  if ((sd->reorder.it1->position) < (sd->reorder.it2)->position)
+    {
+       for (itr = it2_list; itr != it1_list; itr = itr->prev)
+         {
+            Elm_Gen_Item *cur = EINA_INLIST_CONTAINER_GET(itr, Elm_Gen_Item);
+            evas_object_geometry_get(VIEW(cur), &x, &y, NULL, NULL);
+            rnd->items[i].it = cur;
+            rnd->items[i].x = x;
+            rnd->items[i].y = y;
+            if (i == (corner_item_pos - 1))
+              rnd->corner_item = cur;
+            i++;
+         }
+       rnd->items[i].it = sd->reorder.it1;
+       rnd->items[i].x = sd->reorder.x1;
+       rnd->items[i].y = sd->reorder.y1;
+    }
+  else if (sd->reorder.it1->position > sd->reorder.it2->position)
+    {
+       for (itr = it2_list; itr != it1_list; itr = itr->next)
+         {
+            Elm_Gen_Item *cur = EINA_INLIST_CONTAINER_GET(itr, Elm_Gen_Item);
+            evas_object_geometry_get(VIEW(cur), &x, &y, NULL, NULL);
+            rnd->items[i].it = cur;
+            rnd->items[i].x = x;
+            rnd->items[i].y = y;
+            if (i == (corner_item_pos - 1))
+              rnd->corner_item = cur;
+            i++;
+         }
+       rnd->items[i].it = sd->reorder.it1;
+       rnd->items[i].x = sd->reorder.x1;
+       rnd->items[i].y = sd->reorder.y1;
+    }
+}
+
+static void
 _swap_items(Elm_Gen_Item *it1, Elm_Gen_Item *it2, Elm_Focus_Direction dir)
 {
    ELM_GENGRID_DATA_GET(WIDGET(it1), sd);
    Evas_Coord xx1, yy1, xx2, yy2;
+
+   sd->reorder.running = EINA_TRUE;
+   sd->reorder.dir = dir;
+   sd->reorder.it1 = it1;
+   sd->reorder.it2 = it2;
 
    evas_object_geometry_get(VIEW(it1), &xx1, &yy1, NULL, NULL);
    evas_object_geometry_get(VIEW(it2), &xx2, &yy2, NULL, NULL);
@@ -2225,13 +2384,16 @@ _swap_items(Elm_Gen_Item *it1, Elm_Gen_Item *it2, Elm_Focus_Direction dir)
    sd->reorder.x2 = xx2;
    sd->reorder.y2 = yy2;
 
-   sd->reorder.running = EINA_TRUE;
-   sd->reorder.dir = dir;
-   sd->reorder.it1 = it1;
-   sd->reorder.it2 = it2;
-
-   evas_object_raise(VIEW(it2));
-   evas_object_stack_above(VIEW(it1), VIEW(it2));
+   if (sd->reorder.type == ELM_GENGRID_REORDER_TYPE_NORMAL)
+     {
+        Reorder_Normal_Data *rnd = malloc(sizeof(Reorder_Normal_Data));
+        memset(rnd, 0, sizeof(Reorder_Normal_Data));
+        sd->reorder.data = rnd;
+        _store_nearby_items(sd);
+        if (rnd->corner_item)
+          evas_object_raise(VIEW(rnd->corner_item));
+     }
+   evas_object_raise(VIEW(it1));
    evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_STOP,
                                    sd->reorder.it1);
    //TODO: Add elm config for time
@@ -4008,6 +4170,7 @@ elm_gengrid_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode)
 
    sd->reorder_mode = EINA_TRUE;
    sd->reorder.tween_mode = tween_mode;
+   sd->reorder.type = ELM_GENGRID_REORDER_TYPE_NORMAL;
 }
 
 EAPI void
@@ -4018,6 +4181,15 @@ elm_gengrid_reorder_mode_stop(Evas_Object *obj)
 
    sd->reorder_mode = EINA_FALSE;
    sd->reorder.tween_mode = -1;
+}
+
+EAPI void
+elm_gengrid_reorder_type_set(Evas_Object *obj, Elm_Gengrid_Reorder_Type type)
+{
+   ELM_GENGRID_CHECK(obj);
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   sd->reorder.type = type;
 }
 
 EOLIAN static void

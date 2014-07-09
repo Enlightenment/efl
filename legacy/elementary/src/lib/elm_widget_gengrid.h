@@ -77,9 +77,11 @@ struct _Elm_Gengrid_Data
    struct
    {
       Elm_Gen_Item                          *it1, *it2; /**< The items which are getting swapped */
+      void                                  *data; /**< This is the data used to store information related to animation */
       Elm_Focus_Direction                   dir; /**< focus key direction */
       Ecore_Pos_Map                         tween_mode; /**< Position mappings for animation */
       Evas_Coord                            x1, y1, x2, y2; /**< Coordinates of it1 and it2 */
+      Elm_Gengrid_Reorder_Type              type; /**< Reorder type */
       Eina_Bool                             running : 1; /**< animation is happening */
    } reorder;
 
