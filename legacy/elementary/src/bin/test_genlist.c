@@ -307,7 +307,7 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
@@ -363,7 +363,7 @@ my_gl_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED
 
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
@@ -391,7 +391,7 @@ my_gl_insert_before(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
@@ -427,7 +427,7 @@ my_gl_insert_after(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
 
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
@@ -800,7 +800,7 @@ test_genlist3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    itc2.item_style = "default";
    itc2.func.text_get = gl2_text_get;
-   itc2.func.content_get  = gl2_content_get;
+   itc2.func.content_get = gl2_content_get;
    itc2.func.state_get = gl2_state_get;
    itc2.func.del = NULL;
 
@@ -950,7 +950,7 @@ test_genlist4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    itc3 = elm_genlist_item_class_new();
    itc3->item_style = "default";
    itc3->func.text_get = gl3_text_get;
-   itc3->func.content_get  = gl3_content_get;
+   itc3->func.content_get = gl3_content_get;
    itc3->func.state_get = gl3_state_get;
    itc3->func.del = NULL;
 
@@ -1165,7 +1165,7 @@ test_genlist5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(gl);
    itc5.item_style = "double_label";
    itc5.func.text_get = gl5_text_get;
-   itc5.func.content_get  = gl5_content_get;
+   itc5.func.content_get = gl5_content_get;
    itc5.func.state_get = gl5_state_get;
    itc5.func.del = NULL;
 
@@ -1386,14 +1386,14 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl4_text_get;
-   itc1->func.content_get  = gl4_content_get;
+   itc1->func.content_get = gl4_content_get;
    itc1->func.state_get = gl4_state_get;
    itc1->func.del = gl4_del;
 
    itc4 = elm_genlist_item_class_new();
    itc4->item_style = "tree_effect";
    itc4->func.text_get = gl4_text_get;
-   itc4->func.content_get  = gl4_content_get;
+   itc4->func.content_get = gl4_content_get;
    itc4->func.state_get = gl4_state_get;
    itc4->func.del = gl4_del;
 
@@ -1514,13 +1514,13 @@ test_genlist7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    itc2.item_style = "default";
    itc2.func.text_get = gl2_text_get;
-   itc2.func.content_get  = gl2_content_get;
+   itc2.func.content_get = gl2_content_get;
    itc2.func.state_get = gl2_state_get;
    itc2.func.del = NULL;
 
    itc7.item_style = "double_label";
    itc7.func.text_get = gl5_text_get;
-   itc7.func.content_get  = gl5_content_get;
+   itc7.func.content_get = gl5_content_get;
    itc7.func.state_get = gl5_state_get;
    itc7.func.del = NULL;
 
@@ -1551,7 +1551,7 @@ static Elm_Genlist_Item_Class *itc_group;
 char *gl8_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Group Index # %i (Item # %i)",  (int)((uintptr_t)data / 10), (int)(uintptr_t)data);
+   snprintf(buf, sizeof(buf), "Group Index # %i (Item # %i)", (int)((uintptr_t)data / 10), (int)(uintptr_t)data);
    return strdup(buf);
 }
 
@@ -1598,14 +1598,14 @@ test_genlist8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
    itc_group = elm_genlist_item_class_new();
    itc_group->item_style = "group_index";
    itc_group->func.text_get = gl8_text_get;
-   itc_group->func.content_get  = NULL;
+   itc_group->func.content_get = NULL;
    itc_group->func.state_get = NULL;
    itc_group->func.del = NULL;
 
@@ -1811,14 +1811,14 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
    itc_group = elm_genlist_item_class_new();
    itc_group->item_style = "group_index";
    itc_group->func.text_get = gl8_text_get;
-   itc_group->func.content_get  = NULL;
+   itc_group->func.content_get = NULL;
    itc_group->func.state_get = NULL;
    itc_group->func.del = NULL;
 
@@ -1978,7 +1978,7 @@ test_genlist10(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc10.item_style = "default";
    itc10.decorate_item_style = "mode";
    itc10.func.text_get = gl10_text_get;
-   itc10.func.content_get  = gl10_content_get;
+   itc10.func.content_get = gl10_content_get;
    itc10.func.state_get = gl_state_get;
    itc10.func.del = NULL;
 
@@ -2102,7 +2102,7 @@ test_genlist11(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
    evas_object_smart_callback_add(gl, "moved", (Evas_Smart_Cb)gl_moved, gl);
@@ -2157,7 +2157,7 @@ test_genlist12(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "message";
    itc1->func.text_get = gl12_text_get;
-   itc1->func.content_get  = gl_content_get;
+   itc1->func.content_get = gl_content_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
@@ -2602,7 +2602,7 @@ test_genlist15(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc15 = elm_genlist_item_class_new();
    itc15->item_style = "default";
    itc15->func.text_get = gl15_text_get;
-   itc15->func.content_get  = gl15_content_get;
+   itc15->func.content_get = gl15_content_get;
    itc15->func.state_get = gl_state_get;
    itc15->func.del = gl15_del;
    itc15->decorate_all_item_style = "edit";
@@ -2897,7 +2897,7 @@ test_genlist17(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc17->item_style = "default";
    itc17->decorate_item_style = "mode";
    itc17->func.text_get = gl15_text_get;
-   itc17->func.content_get  = gl15_content_get;
+   itc17->func.content_get = gl15_content_get;
    itc17->func.state_get = gl_state_get;
    itc17->func.del = NULL;
    itc17->decorate_all_item_style = "edit";
@@ -3075,7 +3075,7 @@ test_genlist18(void        *data EINA_UNUSED,
    itc18 = elm_genlist_item_class_new();
    itc18->item_style = "tree_effect"; /* item/tree_effect */
    itc18->func.text_get = gl15_text_get;
-   itc18->func.content_get  = gl15_content_get;
+   itc18->func.content_get = gl15_content_get;
    itc18->func.state_get = gl_state_get;
    itc18->func.del = gl18_del;
    itc18->decorate_all_item_style = "edit";
@@ -3084,7 +3084,7 @@ test_genlist18(void        *data EINA_UNUSED,
    itc18_tree = elm_genlist_item_class_new();
    itc18_tree->item_style = "tree_effect"; /* tree/tree_effect */
    itc18_tree->func.text_get = gl15_text_get;
-   itc18_tree->func.content_get  = gl15_content_get;
+   itc18_tree->func.content_get = gl15_content_get;
    itc18_tree->func.state_get = gl_state_get;
    itc18_tree->func.del = gl18_del;
    itc18_tree->decorate_all_item_style = "edit";
@@ -3192,7 +3192,7 @@ test_genlist19(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "full";
    itc1->func.text_get = NULL;
-   itc1->func.content_get  = gl_content_full_get;
+   itc1->func.content_get = gl_content_full_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del = NULL;
 
@@ -3450,7 +3450,7 @@ test_genlist_multi_select(void *data EINA_UNUSED,
    itc = elm_genlist_item_class_new();
    itc->item_style = "default";
    itc->func.text_get = gl_text_get;
-   itc->func.content_get  = gl_content_get;
+   itc->func.content_get = gl_content_get;
    itc->func.state_get = gl_state_get;
    itc->func.del = NULL;
 
@@ -3579,9 +3579,9 @@ _gl20_item_class_create(const char *item_style)
    Elm_Genlist_Item_Class * itc = elm_genlist_item_class_new();
    itc->item_style = item_style;
    itc->func.text_get = _gl20_text_get;
-   itc->func.content_get  = gl_content_get;
+   itc->func.content_get = gl_content_get;
    itc->func.state_get = gl_state_get;
-   itc->func.del = NULL; 
+   itc->func.del = NULL;
    return itc;
 }
 
@@ -3874,7 +3874,7 @@ test_genlist_del(void *data EINA_UNUSED,
    itc = elm_genlist_item_class_new();
    itc->item_style = "default";
    itc->func.text_get = _gl_del_text_get;
-   itc->func.content_get  = gl_content_get;
+   itc->func.content_get = gl_content_get;
    itc->func.state_get = NULL;
    itc->func.del = _gl_del_del_cb;
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
@@ -3949,7 +3949,7 @@ gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
 
 static void
 _gl_focus_item_loop_enable_changed_cb(void *data, Evas_Object *obj,
-                                      void *event_info  EINA_UNUSED)
+                                      void *event_info EINA_UNUSED)
 {
    Evas_Object *gl = data;
    elm_object_scroll_item_loop_enabled_set(gl, elm_check_state_get(obj));
@@ -3966,7 +3966,7 @@ _gl_focus_focus_on_selection_set(Evas_Object *gl,
 
 static void
 _gl_focus_focus_on_selection_changed_cb(void *data, Evas_Object *obj,
-                                        void *event_info  EINA_UNUSED)
+                                        void *event_info EINA_UNUSED)
 {
    Eina_Bool nextstate = !elm_genlist_focus_on_selection_get(data);
    _gl_focus_focus_on_selection_set(data, obj, nextstate);
@@ -4027,7 +4027,7 @@ _gl_focus_win_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 
 static void
 _gl_focus_item_select_on_focus_disable_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
-                                                  void *event_info  EINA_UNUSED)
+                                                  void *event_info EINA_UNUSED)
 {
    elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
 }
@@ -4228,14 +4228,14 @@ test_genlist_focus(void *data EINA_UNUSED,
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_focus_text_get;
-   itc1->func.content_get  = gl_focus_content_get;
+   itc1->func.content_get = gl_focus_content_get;
    itc1->func.state_get = NULL;
    itc1->func.del = NULL;
 
    itc4 = elm_genlist_item_class_new();
    itc4->item_style = "tree_effect";
    itc4->func.text_get = gl_focus_text_get;
-   itc4->func.content_get  = gl_focus_content_get;
+   itc4->func.content_get = gl_focus_content_get;
    itc4->func.state_get = NULL;
    itc4->func.del = NULL;
 
