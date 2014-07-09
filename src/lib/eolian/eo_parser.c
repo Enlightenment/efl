@@ -1053,12 +1053,18 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
 static char *    _param_way_str[    PARAM_WAY_LAST] = { "IN", "OUT", "INOUT" };
 
-typedef struct
+static void _print_type(FILE *f, Eo_Type_Def *tp);
+
+static Eina_Bool
+_print_field(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
+             void *fdata)
 {
-   Eina_List *subtypes;
-   Eina_Stringshare *name;
-   Eina_Bool is_own :1;
-} _Parameter_Type;
+   FILE *f = (FILE*)fdata;
+   fprintf(f, "%s: ", (const char*)key);
+   _print_type(f, (Eo_Type_Def*)data);
+   fputs("; ", f);
+   return EINA_TRUE;
+}
 
 static void
 _print_type(FILE *f, Eo_Type_Def *tp)
@@ -1095,6 +1101,14 @@ _print_type(FILE *f, Eo_Type_Def *tp)
              _print_type(f, stp);
           }
         fputc(')', f);
+     }
+   else if (tp->type == EOLIAN_TYPE_STRUCT)
+     {
+        fputs("struct ", f);
+        if (tp->name) fprintf(f, "%s ", tp->name);
+        fputs("{ ", f);
+        eina_hash_foreach(tp->fields, _print_field, f);
+        fputs("}", f);
      }
    if (tp->is_own)
      fputc(')', f);
