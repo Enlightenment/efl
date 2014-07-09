@@ -16,7 +16,7 @@ _params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_
    eina_strbuf_reset(short_params);
    EINA_LIST_FOREACH(eolian_property_keys_list_get(foo), itr, param)
      {
-        Eolian_Type ptypet;
+        Eolian_Type *ptypet;
         const char *pname;
         const char *ptype;
         eolian_parameter_information_get(param, NULL, &ptypet, &pname, NULL);
@@ -40,7 +40,7 @@ _params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_
         Eina_Bool add_star = (ftype == EOLIAN_PROP_GET);
         EINA_LIST_FOREACH(eolian_parameters_list_get(foo), itr, param)
           {
-             Eolian_Type ptypet;
+             Eolian_Type *ptypet;
              const char *pname;
              const char *ptype;
              Eolian_Parameter_Dir pdir;
@@ -142,7 +142,7 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
    if (_function_exists(func_name, buffer)) goto end;
 
    printf("Generation of function %s\n", func_name);
-   Eolian_Type rettypet = eolian_function_return_type_get(foo, ftype);
+   Eolian_Type *rettypet = eolian_function_return_type_get(foo, ftype);
    if (ftype == EOLIAN_PROP_GET && !rettypet)
      {
         const Eina_List *l = eolian_parameters_list_get(foo);

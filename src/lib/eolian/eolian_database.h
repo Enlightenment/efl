@@ -35,10 +35,10 @@ int database_init();
 int database_shutdown();
 
 /* Add a type in the database */
-Eina_Bool database_type_add(const char *alias, Eolian_Type type);
+Eina_Bool database_type_add(const char *alias, Eolian_Type *type);
 
 /* Add a struct in the database */
-Eina_Bool database_struct_add(Eolian_Type type);
+Eina_Bool database_struct_add(Eolian_Type *type);
 
 /* Add a class in the database */
 Eolian_Class *database_class_add(const char *class_name, Eolian_Class_Type type);
@@ -85,21 +85,21 @@ void database_function_data_set(Eolian_Function function_id, const char *key, co
 #define database_function_description_set(foo_id, key, desc) database_function_data_set((foo_id), (key), (desc))
 
 /* Add a key to a property */
-Eolian_Function_Parameter *database_property_key_add(Eolian_Function foo_id, Eolian_Type type, const char *name, const char *description);
+Eolian_Function_Parameter *database_property_key_add(Eolian_Function foo_id, Eolian_Type *type, const char *name, const char *description);
 
 /* Add a value to a property */
-Eolian_Function_Parameter *database_property_value_add(Eolian_Function foo_id, Eolian_Type type, const char *name, const char *description);
+Eolian_Function_Parameter *database_property_value_add(Eolian_Function foo_id, Eolian_Type *type, const char *name, const char *description);
 
 /* Add a parameter to a method */
-Eolian_Function_Parameter *database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, Eolian_Type type, const char *name, const char *description);
+Eolian_Function_Parameter *database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, Eolian_Type *type, const char *name, const char *description);
 
-void database_type_del(Eolian_Type type);
+void database_type_del(Eolian_Type *type);
 
 void database_parameter_const_attribute_set(Eolian_Function_Parameter *param, Eina_Bool is_get, Eina_Bool is_const);
 
 void database_parameter_nonull_set(Eolian_Function_Parameter *param, Eina_Bool nonull);
 
-void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, Eolian_Type ret_type);
+void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, Eolian_Type *ret_type);
 
 void database_function_return_comment_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_comment);
 
@@ -140,6 +140,6 @@ Eina_Bool
 database_class_event_add(Eolian_Class *class, Eolian_Event *event_desc);
 
 void
-database_type_print(Eolian_Type type);
+database_type_print(Eolian_Type *type);
 
 #endif

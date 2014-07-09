@@ -47,7 +47,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eoli
    _eolian_class_func_vars func_env;
    const char *funcname = eolian_function_name_get(funcid);
    const char *suffix = "";
-   Eolian_Type rettypet = NULL;
+   Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
@@ -106,7 +106,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eoli
 
    EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
      {
-        Eolian_Type ptypet;
+        Eolian_Type *ptypet;
         const char *pname;
         const char *pdesc;
         const char *ptype;
@@ -133,7 +133,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eoli
      {
        EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)
          {
-            Eolian_Type ptypet;
+            Eolian_Type *ptypet;
             const char *pname;
             const char *pdesc;
             const char *ptype;
@@ -203,7 +203,7 @@ _eapi_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Fu
    _eolian_class_func_vars func_env;
    char tmpstr[0xFF];
    Eina_Bool var_as_ret = EINA_FALSE;
-   Eolian_Type rettypet = NULL;
+   Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
    const char *retname = NULL;
    Eina_Bool ret_const = EINA_FALSE;
@@ -254,7 +254,7 @@ _eapi_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Fu
 
    EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
      {
-        Eolian_Type ptypet;
+        Eolian_Type *ptypet;
         const char *pname;
         const char *ptype;
         eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &ptypet, &pname, NULL);
@@ -270,7 +270,7 @@ _eapi_func_generate(const Eolian_Class *class, Eolian_Function funcid, Eolian_Fu
    {
        EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)
          {
-            Eolian_Type ptypet;
+            Eolian_Type *ptypet;
             const char *pname;
             const char *ptype;
             Eolian_Parameter_Dir pdir;

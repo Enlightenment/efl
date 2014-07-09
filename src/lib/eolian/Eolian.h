@@ -54,7 +54,7 @@ typedef struct _Eolian_Function* Eolian_Function;
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Type* Eolian_Type;
+typedef struct _Eolian_Type Eolian_Type;
 
 /* Class function parameter information
  *
@@ -515,7 +515,7 @@ EAPI const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, Eolian_Type *type, const char **name, const char **description);
+EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, Eolian_Type **type, const char **name, const char **description);
 
 /*
  * @brief Get type of a parameter
@@ -525,7 +525,7 @@ EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter *para
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_parameter_type_get(const Eolian_Function_Parameter *param);
+EAPI Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
 
 /*
  * @brief Get name of a parameter
@@ -573,7 +573,7 @@ EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
+EAPI Eolian_Type *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get the return default value of a function.
@@ -716,7 +716,7 @@ EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_type_find_by_alias(const char *alias);
+EAPI Eolian_Type *eolian_type_find_by_alias(const char *alias);
 
 /*
  * @brief Find a struct by name
@@ -726,7 +726,7 @@ EAPI Eolian_Type eolian_type_find_by_alias(const char *alias);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_type_struct_find_by_name(const char *name);
+EAPI Eolian_Type *eolian_type_struct_find_by_name(const char *name);
 
 /*
  * @brief Get the type of a type (regular, function, pointer)
@@ -737,7 +737,7 @@ EAPI Eolian_Type eolian_type_struct_find_by_name(const char *name);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type_Type eolian_type_type_get(Eolian_Type tp);
+EAPI Eolian_Type_Type eolian_type_type_get(Eolian_Type *tp);
 
 /*
  * @brief Get an iterator to all arguments of a function type.
@@ -747,7 +747,7 @@ EAPI Eolian_Type_Type eolian_type_type_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_arguments_list_get(Eolian_Type tp);
+EAPI Eina_Iterator *eolian_type_arguments_list_get(Eolian_Type *tp);
 
 /*
  * @brief Get an iterator to all subtypes of a type.
@@ -758,7 +758,7 @@ EAPI Eina_Iterator *eolian_type_arguments_list_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_subtypes_list_get(Eolian_Type tp);
+EAPI Eina_Iterator *eolian_type_subtypes_list_get(Eolian_Type *tp);
 
 /*
  * @brief Get an iterator to all field names of a struct type.
@@ -768,7 +768,7 @@ EAPI Eina_Iterator *eolian_type_subtypes_list_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_struct_field_names_list_get(Eolian_Type tp);
+EAPI Eina_Iterator *eolian_type_struct_field_names_list_get(Eolian_Type *tp);
 
 /*
  * @brief Get a field of a struct type.
@@ -780,7 +780,7 @@ EAPI Eina_Iterator *eolian_type_struct_field_names_list_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_type_struct_field_get(Eolian_Type tp, const char *field);
+EAPI Eolian_Type *eolian_type_struct_field_get(Eolian_Type *tp, const char *field);
 
 /*
  * @brief Get the description of a field of a struct type.
@@ -792,7 +792,7 @@ EAPI Eolian_Type eolian_type_struct_field_get(Eolian_Type tp, const char *field)
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_type_struct_field_description_get(Eolian_Type tp, const char *field);
+EAPI const char *eolian_type_struct_field_description_get(Eolian_Type *tp, const char *field);
 
 /*
  * @brief Get the description of a struct type.
@@ -802,7 +802,7 @@ EAPI const char *eolian_type_struct_field_description_get(Eolian_Type tp, const 
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_type_struct_description_get(Eolian_Type tp);
+EAPI const char *eolian_type_struct_description_get(Eolian_Type *tp);
 
 /*
  * @brief Get the return type of a function type.
@@ -812,7 +812,7 @@ EAPI const char *eolian_type_struct_description_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_type_return_type_get(Eolian_Type tp);
+EAPI Eolian_Type *eolian_type_return_type_get(Eolian_Type *tp);
 
 /*
  * @brief Get the base type of a function type.
@@ -822,7 +822,7 @@ EAPI Eolian_Type eolian_type_return_type_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_type_base_type_get(Eolian_Type tp);
+EAPI Eolian_Type *eolian_type_base_type_get(Eolian_Type *tp);
 
 /*
  * @brief Get whether the given type is @own.
@@ -833,7 +833,7 @@ EAPI Eolian_Type eolian_type_base_type_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_type_is_own(Eolian_Type tp);
+EAPI Eina_Bool eolian_type_is_own(Eolian_Type *tp);
 
 /*
  * @brief Get whether the given type is const.
@@ -844,7 +844,7 @@ EAPI Eina_Bool eolian_type_is_own(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_type_is_const(Eolian_Type tp);
+EAPI Eina_Bool eolian_type_is_const(Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type with a name.
@@ -864,7 +864,7 @@ EAPI Eina_Bool eolian_type_is_const(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_c_type_named_get(Eolian_Type tp, const char *name);
+EAPI Eina_Stringshare *eolian_type_c_type_named_get(Eolian_Type *tp, const char *name);
 
 /*
  * @brief Get the full C type name of the given type without a name.
@@ -880,7 +880,7 @@ EAPI Eina_Stringshare *eolian_type_c_type_named_get(Eolian_Type tp, const char *
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_c_type_get(Eolian_Type tp);
+EAPI Eina_Stringshare *eolian_type_c_type_get(Eolian_Type *tp);
 
 /*
  * @brief Get the type name of the given type. You have to manually delete
@@ -892,7 +892,7 @@ EAPI Eina_Stringshare *eolian_type_c_type_get(Eolian_Type tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_name_get(Eolian_Type tp);
+EAPI Eina_Stringshare *eolian_type_name_get(Eolian_Type *tp);
 
 #endif
 

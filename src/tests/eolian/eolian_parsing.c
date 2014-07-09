@@ -217,7 +217,7 @@ END_TEST
 
 START_TEST(eolian_typedef)
 {
-   Eolian_Type type = NULL;
+   Eolian_Type *type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
    Eolian_Class *class;
@@ -262,7 +262,7 @@ START_TEST(eolian_complex_type)
    Eolian_Function fid = NULL;
    Eolian_Function_Parameter *param = NULL;
    const Eina_List *params_list = NULL;
-   Eolian_Type type = NULL;
+   Eolian_Type *type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
    Eolian_Class *class;
@@ -373,13 +373,13 @@ END_TEST
 START_TEST(eolian_simple_parsing)
 {
    Eolian_Function fid = NULL;
-   Eolian_Type ptypep = NULL;
+   Eolian_Type *ptypep = NULL;
    const char *string = NULL, *ptype = NULL, *pname = NULL;
    Eolian_Parameter_Dir dir = EOLIAN_IN_PARAM;
    const Eina_List *list = NULL;
    Eolian_Function_Parameter *param = NULL;
    Eolian_Class *class;
-   Eolian_Type tp;
+   Eolian_Type *tp;
 
    eolian_init();
    /* Parsing */
