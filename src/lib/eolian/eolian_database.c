@@ -1420,12 +1420,14 @@ database_type_print(Eolian_Type type)
    else if (tp->type == EOLIAN_TYPE_FUNCTION)
      {
         Eina_Bool first = EINA_TRUE;
-        puts("fn");
+        puts("func");
         if (tp->ret_type)
           {
-             puts(" -> ");
+             putchar(' ');
              database_type_print(tp->ret_type);
           }
+        else
+          puts(" void");
         puts(" (");
         EINA_LIST_FOREACH(tp->arguments, l, stp)
           {
