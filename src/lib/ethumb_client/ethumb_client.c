@@ -1040,7 +1040,7 @@ _ethumb_client_queue_remove_cb(void *data, const Eldbus_Message *msg, Eldbus_Pen
         goto end;
      }
 
-   if (eldbus_message_arguments_get(msg, "b", &success))
+   if (!eldbus_message_arguments_get(msg, "b", &success))
      {
         ERR("Error getting arguments.");
         goto end;
