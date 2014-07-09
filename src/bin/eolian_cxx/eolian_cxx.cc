@@ -88,17 +88,17 @@ opts_check(eolian_cxx::options_type const& opts)
 }
 
 efl::eolian::eo_generator_options
-generator_options(const Eolian_Class *klass)
+generator_options(const Eolian_Class& klass)
 {
    efl::eolian::eo_generator_options gen_opts;
    gen_opts.c_headers.push_back(class_base_file(klass) + ".h");
 
    void *cur = NULL;
-   const Eina_List *itr, *inheritances = eolian_class_inherits_list_get(klass);
+   const Eina_List *itr, *inheritances = ::eolian_class_inherits_list_get(&klass);
    EINA_LIST_FOREACH(inheritances, itr, cur)
      {
-        const Eolian_Class *ext = eolian_class_find_by_name(static_cast<const char*>(cur));
-        std::string eo_parent_file = class_base_file(ext);
+        const Eolian_Class *ext = ::eolian_class_find_by_name(static_cast<const char*>(cur));
+        std::string eo_parent_file = class_base_file(*ext);
         if (!eo_parent_file.empty())
           {
              // we have our own eo_base.hh
@@ -121,9 +121,8 @@ generator_options(const Eolian_Class *klass)
 }
 
 static bool
-generate(const Eolian_Class *klass, eolian_cxx::options_type const& opts)
+generate(const Eolian_Class& klass, eolian_cxx::options_type const& opts)
 {
-   assert(!!klass);
    efl::eolian::eo_class cls = eolian_cxx::convert_eolian_class(klass);
    efl::eolian::eo_generator_options gen_opts = generator_options(klass);
    std::string outname = opts.out_file.empty() ? (class_base_file(klass) + ".hh") : opts.out_file;
@@ -164,17 +163,17 @@ run(options_type const& opts)
      klass = class_from_file(opts.in_file);
    if (klass)
      {
-        if (!generate(klass, opts))
+        if (!generate(*klass, opts))
           goto err;
      }
    else
      {
         auto classes = class_list_all();
-        for (const Eolian_Class *c : classes)
+        for (const Eolian_Class& c : classes)
           {
              if (!generate(c, opts))
                {
-                  klass = c;
+                  klass = &c;
                   goto err;
                }
           }
@@ -182,7 +181,7 @@ run(options_type const& opts)
    return;
  err:
    EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-     << "Error generating: " << class_name(klass)
+     << "Error generating: " << class_name(*klass)
      << std::endl;
    std::abort();
 }

@@ -73,12 +73,12 @@ convert_eolian_parameters(Eolian_Function const& func)
 }
 
 static efl::eolian::functions_container_type
-convert_eolian_property_to_functions(Eolian_Class const *& klass)
+convert_eolian_property_to_functions(Eolian_Class const& klass)
 {
    efl::eolian::functions_container_type container;
    std::string cxx_classname = safe_lower(class_name(klass));
    const Eina_List *properties =
-     eolian_class_functions_list_get(klass, EOLIAN_PROPERTY); // XXX
+     ::eolian_class_functions_list_get(&klass, EOLIAN_PROPERTY); // XXX
    const Eina_List *it;
    void *curr;
    std::string prefix(class_prefix(klass));
@@ -156,10 +156,10 @@ convert_eolian_property_to_functions(Eolian_Class const *& klass)
 }
 
 void
-convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
+convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    const Eina_List *inheritances =
-     ::eolian_class_inherits_list_get(klass);
+     ::eolian_class_inherits_list_get(&klass);
    const Eina_List *it;
    void *curr;
 
@@ -190,13 +190,13 @@ convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const *& kl
 }
 
 void
-convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
+convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    const Eina_List *it;
    std::string prefix(class_prefix(klass));
    void *impl_desc_;
 
-   EINA_LIST_FOREACH(eolian_class_implements_list_get(klass), it, impl_desc_)
+   EINA_LIST_FOREACH(::eolian_class_implements_list_get(&klass), it, impl_desc_)
      {
         Eolian_Implement *impl_desc = static_cast<Eolian_Implement*>(impl_desc_);
         Eolian_Class *impl_class;
@@ -218,13 +218,13 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const *& klas
 }
 
 void
-convert_eolian_constructors(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
+convert_eolian_constructors(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    const Eina_List *it;
    void *curr;
    std::string prefix(class_prefix(klass));
    const Eina_List *constructors =
-     eolian_class_functions_list_get(klass, EOLIAN_CTOR);
+     ::eolian_class_functions_list_get(&klass, EOLIAN_CTOR);
    EINA_LIST_FOREACH (constructors, it, curr)
      {
         Eolian_Function eo_constructor = static_cast<Eolian_Function>(curr);
@@ -237,13 +237,13 @@ convert_eolian_constructors(efl::eolian::eo_class& cls, Eolian_Class const *& kl
 }
 
 void
-convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
+convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    const Eina_List *it;
    void *curr;
 
    const Eina_List *eolian_functions =
-     eolian_class_functions_list_get(klass, EOLIAN_METHOD);
+     ::eolian_class_functions_list_get(&klass, EOLIAN_METHOD);
    EINA_LIST_FOREACH (eolian_functions, it, curr)
      {
         efl::eolian::eo_function func_;
@@ -260,7 +260,7 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const *& klass
 }
 
 void
-convert_eolian_properties(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
+convert_eolian_properties(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    efl::eolian::functions_container_type properties
      = convert_eolian_property_to_functions(klass);
@@ -269,7 +269,7 @@ convert_eolian_properties(efl::eolian::eo_class& cls, Eolian_Class const *& klas
 }
 
 void
-convert_eolian_events(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
+convert_eolian_events(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    efl::eolian::events_container_type events = event_list(klass);
    cls.events.reserve(cls.events.size() + events.size());
@@ -277,7 +277,7 @@ convert_eolian_events(efl::eolian::eo_class& cls, Eolian_Class const *& klass)
 }
 
 efl::eolian::eo_class
-convert_eolian_class_new(Eolian_Class const *& klass)
+convert_eolian_class_new(Eolian_Class const& klass)
 {
    efl::eolian::eo_class cls;
    cls.type = class_type(klass);
@@ -289,9 +289,8 @@ convert_eolian_class_new(Eolian_Class const *& klass)
 }
 
 efl::eolian::eo_class
-convert_eolian_class(const Eolian_Class *klass)
+convert_eolian_class(const Eolian_Class& klass)
 {
-   assert(klass != NULL);
    efl::eolian::eo_class cls(eolian_cxx::convert_eolian_class_new(klass));
    eolian_cxx::convert_eolian_inheritances(cls, klass);
    eolian_cxx::convert_eolian_implements(cls, klass);

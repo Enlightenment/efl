@@ -12,7 +12,7 @@ namespace eolian_cxx
 /// @param cls The Eolian class.
 /// @return The @p eo_class describing @p classname.
 ///
-efl::eolian::eo_class convert_eolian_class(const Eolian_Class *klass);
+efl::eolian::eo_class convert_eolian_class(const Eolian_Class& klass);
 
 }
 

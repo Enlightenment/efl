@@ -27,34 +27,34 @@ method_t const method = {};
 struct ctor_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_CTOR; };
 ctor_t const ctor = {};
 
-inline Eolian_Class *
+inline Eolian_Class*
 class_from_file(std::string const& file)
 {
    return ::eolian_class_find_by_file(file.c_str());
 }
 
 inline std::string
-class_file(Eolian_Class const *& klass)
+class_file(Eolian_Class const& klass)
 {
-   return safe_str(::eolian_class_file_get(klass));
+   return safe_str(::eolian_class_file_get(&klass));
 }
 
 inline std::string
-class_base_file(Eolian_Class const *& klass)
+class_base_file(Eolian_Class const& klass)
 {
-   return path_base(safe_str(::eolian_class_file_get(klass)));
+   return path_base(safe_str(::eolian_class_file_get(&klass)));
 }
 
 inline std::string
-class_name(Eolian_Class const *& klass)
+class_name(Eolian_Class const& klass)
 {
-   return safe_str(::eolian_class_name_get(klass));
+   return safe_str(::eolian_class_name_get(&klass));
 }
 
 inline std::string
-class_full_name(Eolian_Class const *& klass)
+class_full_name(Eolian_Class const& klass)
 {
-   return safe_str(::eolian_class_full_name_get(klass));
+   return safe_str(::eolian_class_full_name_get(&klass));
 }
 
 inline Eolian_Class *
@@ -64,10 +64,10 @@ class_from_name(std::string const& classname)
 }
 
 inline std::string
-class_eo_name(Eolian_Class const *& klass)
+class_eo_name(Eolian_Class const& klass)
 {
    std::string suffix;
-   switch (eolian_class_type_get(klass))
+   switch (::eolian_class_type_get(&klass))
      {
         case EOLIAN_CLASS_REGULAR:
         case EOLIAN_CLASS_ABSTRACT:
@@ -105,9 +105,9 @@ class_format_cxx(std::string const& fullname)
 }
 
 inline std::string
-class_prefix(Eolian_Class const *& klass)
+class_prefix(Eolian_Class const& klass)
 {
-   std::string prefix = safe_lower(::eolian_class_eo_prefix_get(klass));
+   std::string prefix = safe_lower(::eolian_class_eo_prefix_get(&klass));
    if (prefix.empty())
      prefix = safe_lower(find_replace(class_full_name(klass), ".", "_"));
    assert(!prefix.empty());
@@ -115,11 +115,10 @@ class_prefix(Eolian_Class const *& klass)
 }
 
 inline efl::eolian::eo_class::eo_class_type
-class_type(Eolian_Class const *& klass)
+class_type(Eolian_Class const& klass)
 {
-   assert(klass != NULL);
    efl::eolian::eo_class::eo_class_type type;
-   Eolian_Class_Type cls_type = ::eolian_class_type_get(klass);
+   Eolian_Class_Type cls_type = ::eolian_class_type_get(&klass);
 
    if (cls_type == EOLIAN_CLASS_REGULAR)
      type = efl::eolian::eo_class::regular_;
@@ -135,11 +134,11 @@ class_type(Eolian_Class const *& klass)
 }
 
 inline std::string
-class_namespace_full(Eolian_Class const *& klass)
+class_namespace_full(Eolian_Class const& klass)
 {
    std::string s;
    const Eina_List* list =
-     ::eolian_class_namespaces_list_get(klass), *itr;
+     ::eolian_class_namespaces_list_get(&klass), *itr;
    void* name;
    EINA_LIST_FOREACH(list, itr, name)
      {
@@ -151,10 +150,10 @@ class_namespace_full(Eolian_Class const *& klass)
    return safe_lower(s);
 }
 
-inline efl::eina::range_ptr_list<const Eolian_Class *>
+inline efl::eina::range_ptr_list<const Eolian_Class>
 class_list_all()
 {
-   return (Eina_List*)::eolian_all_classes_list_get();
+   return ::eolian_all_classes_list_get();
 }
 
 inline std::string
@@ -308,7 +307,7 @@ parameter_type(Eolian_Function_Parameter const *& parameter, setter_t func_type)
 }
 
 inline efl::eolian::eo_event
-event_create(Eolian_Class const *& klass, const Eolian_Event *event_)
+event_create(Eolian_Class const& klass, const Eolian_Event *event_)
 {
    efl::eolian::eo_event event;
    const char *name, *type, *comment;
@@ -325,10 +324,10 @@ event_create(Eolian_Class const *& klass, const Eolian_Event *event_)
 }
 
 inline efl::eolian::events_container_type
-event_list(Eolian_Class const *& klass)
+event_list(Eolian_Class const& klass)
 {
    efl::eolian::events_container_type events;
-   const Eina_List* list = eolian_class_events_list_get(klass);
+   const Eina_List* list = ::eolian_class_events_list_get(&klass);
    unsigned int length = eina_list_count(list);
    for (unsigned int i = 0; i < length; ++i)
      {

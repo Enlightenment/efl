@@ -11,7 +11,7 @@
 
 namespace eolian_cxx {
 
-std::string convert_comments_class(Eolian_Class const *& kls);
+std::string convert_comments_class(Eolian_Class const& kls);
 
 std::string convert_comments_function(Eolian_Function const& function,
                                       Eolian_Function_Type func_type);
