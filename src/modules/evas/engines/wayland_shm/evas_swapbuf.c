@@ -96,6 +96,8 @@ evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rotation, O
    /* check for valid output buffer */
    if (!ob) return;
 
+   if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
+
    /* check that something was actually changed */
    if ((ob->w == w) && (ob->h == h) && 
        (ob->rotation == rotation) && (ob->depth == depth)) 
