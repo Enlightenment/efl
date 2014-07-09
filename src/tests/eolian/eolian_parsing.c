@@ -11,7 +11,7 @@
 
 START_TEST(eolian_namespaces)
 {
-   Eolian_Class class11, class112, class21, class_no, impl_class;
+   Eolian_Class *class11, *class112, *class21, *class_no, *impl_class;
    Eolian_Function fid;
    const Eina_List *list = NULL;
    Eolian_Function_Type func_type;
@@ -85,7 +85,7 @@ END_TEST
 
 START_TEST(eolian_events)
 {
-   Eolian_Class class;
+   Eolian_Class *class;
    const Eina_List *list = NULL;
    const char *name, *type, *comment;
 
@@ -118,9 +118,9 @@ START_TEST(eolian_override)
 {
    Eolian_Function fid = NULL;
    const Eina_List *impls = NULL;
-   Eolian_Class impl_class = NULL;
+   Eolian_Class *impl_class = NULL;
    Eolian_Function impl_func = NULL;
-   Eolian_Class class, base;
+   Eolian_Class *class, *base;
 
    eolian_init();
    /* Parsing */
@@ -155,8 +155,8 @@ END_TEST
 START_TEST(eolian_consts)
 {
    Eolian_Function fid = NULL;
-   Eolian_Function_Parameter param = NULL;
-   Eolian_Class class;
+   Eolian_Function_Parameter *param = NULL;
+   Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -180,9 +180,9 @@ END_TEST
 START_TEST(eolian_ctor_dtor)
 {
    const Eina_List *impls = NULL;
-   Eolian_Class impl_class = NULL;
+   Eolian_Class *impl_class = NULL;
    Eolian_Function impl_func = NULL;
-   Eolian_Class class, base;
+   Eolian_Class *class, *base;
 
    eolian_init();
    /* Parsing */
@@ -220,7 +220,7 @@ START_TEST(eolian_typedef)
    Eolian_Type type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
-   Eolian_Class class;
+   Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -260,12 +260,12 @@ END_TEST
 START_TEST(eolian_complex_type)
 {
    Eolian_Function fid = NULL;
-   Eolian_Function_Parameter param = NULL;
+   Eolian_Function_Parameter *param = NULL;
    const Eina_List *params_list = NULL;
    Eolian_Type type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
-   Eolian_Class class;
+   Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -343,7 +343,7 @@ END_TEST
 START_TEST(eolian_scope)
 {
    Eolian_Function fid = NULL;
-   Eolian_Class class;
+   Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -377,8 +377,8 @@ START_TEST(eolian_simple_parsing)
    const char *string = NULL, *ptype = NULL, *pname = NULL;
    Eolian_Parameter_Dir dir = EOLIAN_IN_PARAM;
    const Eina_List *list = NULL;
-   Eolian_Function_Parameter param = NULL;
-   Eolian_Class class;
+   Eolian_Function_Parameter *param = NULL;
+   Eolian_Class *class;
    Eolian_Type tp;
 
    eolian_init();
