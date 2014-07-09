@@ -1168,7 +1168,9 @@ eolian_type_subtypes_list_get(Eolian_Type tp)
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    tpt = tpp->type;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR || tpt == EOLIAN_TYPE_POINTER, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR
+                                || tpt == EOLIAN_TYPE_POINTER
+                                || tpt == EOLIAN_TYPE_REGULAR_STRUCT, NULL);
    if (!tpp->subtypes) return NULL;
    return eina_list_iterator_new(tpp->subtypes);
 }
@@ -1295,11 +1297,20 @@ _type_to_str(Eolian_Type tp, Eina_Strbuf *buf, const char *name)
         _stype_to_str(tp, buf, name);
         return;
      }
-   if ((tpp->type == EOLIAN_TYPE_REGULAR || tpp->type == EOLIAN_TYPE_VOID)
+   if ((tpp->type == EOLIAN_TYPE_REGULAR
+     || tpp->type == EOLIAN_TYPE_REGULAR_STRUCT
+     || tpp->type == EOLIAN_TYPE_VOID)
      && tpp->is_const)
-      eina_strbuf_append(buf, "const ");
+     {
+        eina_strbuf_append(buf, "const ");
+     }
    if (tpp->type == EOLIAN_TYPE_REGULAR)
      eina_strbuf_append(buf, tpp->name);
+   else if (tpp->type == EOLIAN_TYPE_REGULAR_STRUCT)
+     {
+        eina_strbuf_append(buf, "struct ");
+        eina_strbuf_append(buf, tpp->name);
+     }
    else if (tpp->type == EOLIAN_TYPE_VOID)
      eina_strbuf_append(buf, "void");
    else
@@ -1391,6 +1402,11 @@ _type_print(Eolian_Type tp, Eina_Strbuf *buf)
      eina_strbuf_append(buf, "const(");
    if (tpp->type == EOLIAN_TYPE_REGULAR)
      eina_strbuf_append(buf, tpp->name);
+   else if (tpp->type == EOLIAN_TYPE_REGULAR_STRUCT)
+     {
+        eina_strbuf_append(buf, "struct ");
+        eina_strbuf_append(buf, tpp->name);
+     }
    else if (tpp->type == EOLIAN_TYPE_POINTER)
      {
         _type_print(tpp->base_type, buf);
