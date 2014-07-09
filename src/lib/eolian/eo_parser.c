@@ -1005,6 +1005,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            eo_lexer_get(ls);
            parse_struct(ls, name);
            ls->tmp.type_def = NULL;
+           break;
         }
       def:
       default:
