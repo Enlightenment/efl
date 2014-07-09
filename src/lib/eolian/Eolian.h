@@ -60,7 +60,7 @@ typedef struct _Eolian_Type* Eolian_Type;
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Function_Parameter* Eolian_Function_Parameter;
+typedef struct _Eolian_Function_Parameter Eolian_Function_Parameter;
 
 /* Class implement information
  *
@@ -472,13 +472,13 @@ EAPI Eina_Bool eolian_function_is_virtual_pure(Eolian_Function function_id, Eoli
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function_Parameter eolian_function_parameter_get(const Eolian_Function function_id, const char *param_name);
+EAPI Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian_Function function_id, const char *param_name);
 
 /*
  * @brief Returns a list of keys params of a given function.
  *
  * @param[in] function_id Id of the function
- * @return list of Eolian_Function_Parameter
+ * @return list of Eolian_Function_Parameter*
  *
  * @ingroup Eolian
  */
@@ -488,7 +488,7 @@ EAPI const Eina_List *eolian_property_keys_list_get(Eolian_Function foo_id);
  * @brief Returns a list of values params of a given function.
  *
  * @param[in] function_id Id of the function
- * @return list of Eolian_Function_Parameter
+ * @return list of Eolian_Function_Parameter*
  *
  * @ingroup Eolian
  */
@@ -498,7 +498,7 @@ EAPI const Eina_List *eolian_property_values_list_get(Eolian_Function foo_id);
  * @brief Returns a list of parameter handles for a method/ctor/dtor.
  *
  * @param[in] function_id Id of the function
- * @return list of Eolian_Function_Parameter
+ * @return list of Eolian_Function_Parameter*
  *
  * @ingroup Eolian
  */
@@ -515,7 +515,7 @@ EAPI const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, Eolian_Type *type, const char **name, const char **description);
+EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, Eolian_Type *type, const char **name, const char **description);
 
 /*
  * @brief Get type of a parameter
@@ -525,7 +525,7 @@ EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter param
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type eolian_parameter_type_get(const Eolian_Function_Parameter param);
+EAPI Eolian_Type eolian_parameter_type_get(const Eolian_Function_Parameter *param);
 
 /*
  * @brief Get name of a parameter
@@ -535,7 +535,7 @@ EAPI Eolian_Type eolian_parameter_type_get(const Eolian_Function_Parameter param
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter param);
+EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
 
 /*
  * @brief Indicates if a parameter has a const attribute.
@@ -549,7 +549,7 @@ EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_parameter_const_attribute_get(Eolian_Function_Parameter param_desc, Eina_Bool is_get);
+EAPI Eina_Bool eolian_parameter_const_attribute_get(const Eolian_Function_Parameter *param_desc, Eina_Bool is_get);
 
 /*
  * @brief Indicates if a parameter cannot be NULL.
@@ -559,7 +559,7 @@ EAPI Eina_Bool eolian_parameter_const_attribute_get(Eolian_Function_Parameter pa
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc);
+EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
 
 /*
  * @brief Get the return type of a function.

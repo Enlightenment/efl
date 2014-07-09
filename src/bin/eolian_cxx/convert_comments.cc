@@ -5,7 +5,7 @@
 namespace eolian_cxx {
 
 static std::string
-_comment_parameter(Eolian_Function_Parameter param)
+_comment_parameter(Eolian_Function_Parameter *param)
 {
    Eolian_Parameter_Dir direction;
    Eina_Stringshare *description;
@@ -35,7 +35,7 @@ _comment_parameters_list(const Eina_List *params)
    EINA_LIST_FOREACH (params, it, curr)
      {
         doc += _comment_parameter
-          (static_cast<Eolian_Function_Parameter>(curr)) + "\n";
+          (static_cast<Eolian_Function_Parameter*>(curr)) + "\n";
      }
    return doc;
 }

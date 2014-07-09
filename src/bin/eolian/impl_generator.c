@@ -11,7 +11,7 @@ static Eina_Bool
 _params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_as_ret, Eina_Strbuf *params, Eina_Strbuf *short_params)
 {
    const Eina_List *itr;
-   Eolian_Function_Parameter param;
+   Eolian_Function_Parameter *param;
    eina_strbuf_reset(params);
    eina_strbuf_reset(short_params);
    EINA_LIST_FOREACH(eolian_property_keys_list_get(foo), itr, param)
@@ -148,7 +148,7 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
         const Eina_List *l = eolian_parameters_list_get(foo);
         if (eina_list_count(l) == 1)
           {
-             Eolian_Function_Parameter param = eina_list_data_get(l);
+             Eolian_Function_Parameter *param = eina_list_data_get(l);
              eolian_parameter_information_get(param, NULL, &rettypet, NULL, NULL);
              var_as_ret = EINA_TRUE;
              ret_const = eolian_parameter_const_attribute_get(param, EINA_TRUE);

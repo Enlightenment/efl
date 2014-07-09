@@ -51,8 +51,8 @@ typedef struct
 typedef struct
 {
    Eina_Stringshare *name;
-   Eina_List *keys; /* list of _Eolian_Function_Parameter */
-   Eina_List *params; /* list of _Eolian_Function_Parameter */
+   Eina_List *keys; /* list of Eolian_Function_Parameter */
+   Eina_List *params; /* list of Eolian_Function_Parameter */
    Eolian_Function_Type type;
    Eolian_Function_Scope scope;
    Eolian_Type get_ret_type;
@@ -65,7 +65,7 @@ typedef struct
    Eina_Bool set_return_warn_unused :1;
 } _Eolian_Function;
 
-typedef struct
+typedef struct _Eolian_Function_Parameter
 {
    Eina_Stringshare *name;
    Eolian_Type type;
@@ -74,7 +74,7 @@ typedef struct
    Eina_Bool is_const_on_get :1; /* True if const in this the get property */
    Eina_Bool is_const_on_set :1; /* True if const in this the set property */
    Eina_Bool nonull :1; /* True if this argument cannot be NULL */
-} _Eolian_Function_Parameter;
+} Eolian_Function_Parameter;
 
 /* maps directly to Eo_Type_Def */
 
@@ -119,7 +119,7 @@ typedef struct _Eolian_Event
 } Eolian_Event;
 
 static void
-_param_del(_Eolian_Function_Parameter *pdesc)
+_param_del(Eolian_Function_Parameter *pdesc)
 {
    eina_stringshare_del(pdesc->name);
 
@@ -138,7 +138,7 @@ database_type_del(Eolian_Type type)
 static void
 _fid_del(_Eolian_Function *fid)
 {
-   _Eolian_Function_Parameter *param;
+   Eolian_Function_Parameter *param;
    if (!fid) return;
    eina_stringshare_del(fid->name);
    eina_hash_free(fid->data);
@@ -776,10 +776,10 @@ eolian_function_data_get(Eolian_Function function_id, const char *key)
    return eina_hash_find(fid->data, key);
 }
 
-static _Eolian_Function_Parameter *
+static Eolian_Function_Parameter *
 _parameter_new(Eolian_Type type, const char *name, const char *description)
 {
-   _Eolian_Function_Parameter *param = NULL;
+   Eolian_Function_Parameter *param = NULL;
    param = calloc(1, sizeof(*param));
    param->name = eina_stringshare_add(name);
    param->type = type;
@@ -787,64 +787,64 @@ _parameter_new(Eolian_Type type, const char *name, const char *description)
    return param;
 }
 
-Eolian_Function_Parameter
+Eolian_Function_Parameter *
 database_property_key_add(Eolian_Function foo_id, Eolian_Type type, const char *name, const char *description)
 {
    _Eolian_Function *fid = (_Eolian_Function *)foo_id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   _Eolian_Function_Parameter *param = _parameter_new(type, name, description);
+   Eolian_Function_Parameter *param = _parameter_new(type, name, description);
    fid->keys = eina_list_append(fid->keys, param);
-   return (Eolian_Function_Parameter)param;
+   return param;
 }
 
-Eolian_Function_Parameter
+Eolian_Function_Parameter *
 database_property_value_add(Eolian_Function foo_id, Eolian_Type type, const char *name, const char *description)
 {
    _Eolian_Function *fid = (_Eolian_Function *)foo_id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   _Eolian_Function_Parameter *param = _parameter_new(type, name, description);
+   Eolian_Function_Parameter *param = _parameter_new(type, name, description);
    fid->params = eina_list_append(fid->params, param);
-   return (Eolian_Function_Parameter)param;
+   return param;
 }
 
-Eolian_Function_Parameter
+Eolian_Function_Parameter *
 database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, Eolian_Type type, const char *name, const char *description)
 {
    _Eolian_Function *fid = (_Eolian_Function *)foo_id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   _Eolian_Function_Parameter *param = _parameter_new(type, name, description);
+   Eolian_Function_Parameter *param = _parameter_new(type, name, description);
    param->param_dir = param_dir;
    fid->params = eina_list_append(fid->params, param);
-   return (Eolian_Function_Parameter)param;
+   return param;
 }
 
-EAPI Eolian_Function_Parameter
+EAPI Eolian_Function_Parameter *
 eolian_function_parameter_get(const Eolian_Function foo_id, const char *param_name)
 {
    _Eolian_Function *fid = (_Eolian_Function *)foo_id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    Eina_List *itr;
-   _Eolian_Function_Parameter *param;
+   Eolian_Function_Parameter *param;
    EINA_LIST_FOREACH(fid->keys, itr, param)
-      if (!strcmp(param->name, param_name)) return (Eolian_Function_Parameter)param;
+      if (!strcmp(param->name, param_name)) return param;
    EINA_LIST_FOREACH(fid->params, itr, param)
-      if (!strcmp(param->name, param_name)) return (Eolian_Function_Parameter)param;
+      if (!strcmp(param->name, param_name)) return param;
    return NULL;
 }
 
 EAPI Eolian_Type
-eolian_parameter_type_get(const Eolian_Function_Parameter param)
+eolian_parameter_type_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
-   return ((_Eolian_Function_Parameter*)param)->type;
+   return param->type;
 }
 
 EAPI Eina_Stringshare *
-eolian_parameter_name_get(const Eolian_Function_Parameter param)
+eolian_parameter_name_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
-   eina_stringshare_ref(((_Eolian_Function_Parameter*)param)->name);
-   return ((_Eolian_Function_Parameter*)param)->name;
+   eina_stringshare_ref(param->name);
+   return param->name;
 }
 
 EAPI const Eina_List *
@@ -871,9 +871,8 @@ eolian_parameters_list_get(Eolian_Function foo_id)
 
 /* Get parameter information */
 EAPI void
-eolian_parameter_information_get(const Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, Eolian_Type *type, const char **name, const char **description)
+eolian_parameter_information_get(const Eolian_Function_Parameter *param, Eolian_Parameter_Dir *param_dir, Eolian_Type *type, const char **name, const char **description)
 {
-   _Eolian_Function_Parameter *param = (_Eolian_Function_Parameter *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN(param);
    if (param_dir) *param_dir = param->param_dir;
    if (type) *type = param->type;
@@ -882,9 +881,8 @@ eolian_parameter_information_get(const Eolian_Function_Parameter param_desc, Eol
 }
 
 void
-database_parameter_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_get, Eina_Bool is_const)
+database_parameter_const_attribute_set(Eolian_Function_Parameter *param, Eina_Bool is_get, Eina_Bool is_const)
 {
-   _Eolian_Function_Parameter *param = (_Eolian_Function_Parameter *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN(param);
    if (is_get)
       param->is_const_on_get = is_const;
@@ -893,17 +891,15 @@ database_parameter_const_attribute_set(Eolian_Function_Parameter param_desc, Ein
 }
 
 void
-database_parameter_type_set(Eolian_Function_Parameter param_desc, Eolian_Type types)
+database_parameter_type_set(Eolian_Function_Parameter *param, Eolian_Type types)
 {
-   _Eolian_Function_Parameter *param = (_Eolian_Function_Parameter *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN(param);
    param->type = types;
 }
 
 EAPI Eina_Bool
-eolian_parameter_const_attribute_get(Eolian_Function_Parameter param_desc, Eina_Bool is_get)
+eolian_parameter_const_attribute_get(const Eolian_Function_Parameter *param, Eina_Bool is_get)
 {
-   _Eolian_Function_Parameter *param = (_Eolian_Function_Parameter *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    if (is_get)
       return param->is_const_on_get;
@@ -912,17 +908,15 @@ eolian_parameter_const_attribute_get(Eolian_Function_Parameter param_desc, Eina_
 }
 
 void
-database_parameter_nonull_set(Eolian_Function_Parameter param_desc, Eina_Bool nonull)
+database_parameter_nonull_set(Eolian_Function_Parameter *param, Eina_Bool nonull)
 {
-   _Eolian_Function_Parameter *param = (_Eolian_Function_Parameter *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN(param);
    param->nonull = nonull;
 }
 
 EAPI Eina_Bool
-eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc)
+eolian_parameter_is_nonull(const Eolian_Function_Parameter *param)
 {
-   _Eolian_Function_Parameter *param = (_Eolian_Function_Parameter *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->nonull;
 }
@@ -1526,7 +1520,7 @@ static Eina_Bool _function_print(const _Eolian_Function *fid, int nb_spaces)
          return EINA_FALSE;
      }
    Eina_List *itr;
-   _Eolian_Function_Parameter *param;
+   Eolian_Function_Parameter *param;
    EINA_LIST_FOREACH(fid->params, itr, param)
      {
         char *param_dir = NULL;

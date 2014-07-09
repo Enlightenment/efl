@@ -234,13 +234,13 @@ property_is_setter(Eolian_Function const& func)
 }
 
 inline std::string
-parameter_name(Eolian_Function_Parameter const& parameter)
+parameter_name(Eolian_Function_Parameter const *& parameter)
 {
    return safe_strshare(::eolian_parameter_name_get(parameter)) + "_";
 }
 
 inline bool
-parameter_is_out(Eolian_Function_Parameter const& parameter)
+parameter_is_out(Eolian_Function_Parameter const *& parameter)
 {
    Eolian_Parameter_Dir direction;
    ::eolian_parameter_information_get(parameter, &direction, NULL, NULL, NULL);
@@ -248,7 +248,7 @@ parameter_is_out(Eolian_Function_Parameter const& parameter)
 }
 
 inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
+parameter_is_const(Eolian_Function_Parameter const *& parameter,
                    Eolian_Function_Type func_type)
 {
    return ::eolian_parameter_const_attribute_get
@@ -256,7 +256,7 @@ parameter_is_const(Eolian_Function_Parameter const& parameter,
 }
 
 inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
+parameter_is_const(Eolian_Function_Parameter const *& parameter,
                    getter_t func_type)
 {
    return ::eolian_parameter_const_attribute_get
@@ -264,7 +264,7 @@ parameter_is_const(Eolian_Function_Parameter const& parameter,
 }
 
 inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
+parameter_is_const(Eolian_Function_Parameter const *& parameter,
                    setter_t func_type)
 {
    return ::eolian_parameter_const_attribute_get
@@ -272,7 +272,7 @@ parameter_is_const(Eolian_Function_Parameter const& parameter,
 }
 
 inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
+parameter_is_const(Eolian_Function_Parameter const *& parameter,
                    Eolian_Function const& func)
 {
    assert(function_type(func) != EOLIAN_PROPERTY);
@@ -281,7 +281,7 @@ parameter_is_const(Eolian_Function_Parameter const& parameter,
 }
 
 inline efl::eolian::eolian_type_instance
-parameter_type(Eolian_Function_Parameter const& parameter,
+parameter_type(Eolian_Function_Parameter const *& parameter,
                Eolian_Function_Type func_type = method_t::value)
 {
    efl::eolian::eolian_type_instance type
@@ -296,13 +296,13 @@ parameter_type(Eolian_Function_Parameter const& parameter,
 }
 
 inline efl::eolian::eolian_type_instance
-parameter_type(Eolian_Function_Parameter const& parameter, getter_t func_type)
+parameter_type(Eolian_Function_Parameter const *& parameter, getter_t func_type)
 {
    return parameter_type(parameter, func_type.value);
 }
 
 inline efl::eolian::eolian_type_instance
-parameter_type(Eolian_Function_Parameter const& parameter, setter_t func_type)
+parameter_type(Eolian_Function_Parameter const *& parameter, setter_t func_type)
 {
    return parameter_type(parameter, func_type.value);
 }

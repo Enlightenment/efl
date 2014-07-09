@@ -34,8 +34,8 @@ convert_eolian_parameters(Eina_List const* parameters,
    efl::eolian::parameters_container_type list;
    EINA_LIST_FOREACH (parameters, it, curr)
      {
-        Eolian_Function_Parameter id =
-          (static_cast<Eolian_Function_Parameter>(curr));
+        const Eolian_Function_Parameter *id =
+          (static_cast<const Eolian_Function_Parameter*>(curr));
         list.push_back
           ({
              parameter_type(id, func_type),

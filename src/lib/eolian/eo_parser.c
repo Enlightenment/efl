@@ -1244,14 +1244,14 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
         database_function_scope_set(foo_id, prop->scope);
         EINA_LIST_FOREACH(prop->keys, m, param)
           {
-             Eolian_Function_Parameter p = database_property_key_add(
+             Eolian_Function_Parameter *p = database_property_key_add(
                    foo_id, (Eolian_Type)param->type, param->name, param->comment);
              database_parameter_nonull_set(p, param->nonull);
              param->type = NULL;
           }
         EINA_LIST_FOREACH(prop->values, m, param)
           {
-             Eolian_Function_Parameter p = database_property_value_add(
+             Eolian_Function_Parameter *p = database_property_value_add(
                    foo_id, (Eolian_Type)param->type, param->name, param->comment);
              database_parameter_nonull_set(p, param->nonull);
              param->type = NULL;
@@ -1285,7 +1285,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
              Eina_List *m2;
              EINA_LIST_FOREACH(accessor->params, m2, acc_param)
                {
-                  Eolian_Function_Parameter desc = eolian_function_parameter_get(foo_id, acc_param->name);
+                  Eolian_Function_Parameter *desc = eolian_function_parameter_get(foo_id, acc_param->name);
                   if (!desc)
                     {
                        printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
@@ -1328,7 +1328,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
         database_function_object_set_as_const(foo_id, meth->obj_const);
         EINA_LIST_FOREACH(meth->params, m, param)
           {
-             Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
+             Eolian_Function_Parameter *p = database_method_parameter_add(foo_id,
                    (Eolian_Parameter_Dir)param->way, (Eolian_Type)param->type, param->name, param->comment);
              database_parameter_nonull_set(p, param->nonull);
              param->type = NULL;
