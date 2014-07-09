@@ -1517,10 +1517,10 @@ evas_gl_common_texture_rgb_a_pair_new(Evas_Engine_GL_Context *gc,
 
 void
 evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
-                                             RGBA_Image *im)
+                                         RGBA_Image *im)
 {
    DATA8 *data1, *data2;
-   Eina_Bool comp, upload;
+   Eina_Bool comp, upload, subimage = EINA_TRUE;
    int w, h, sz, rowlen, ystep = 1;
 
    if (!tex->pt) return;
@@ -1530,6 +1530,10 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
        ((int) im->cache_entry.space <= (int) EVAS_COLORSPACE_RGBA_S3TC_DXT5))
      ystep = 4;
 
+   if ((im->cache_entry.space == EVAS_COLORSPACE_ETC1) ||
+       (im->cache_entry.space == EVAS_COLORSPACE_ETC1_ALPHA))
+     subimage = tex->gc->shared->info.etc1_subimage;
+
    w = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
    h = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
    rowlen = _evas_gl_texture_size_get(w, ystep, tex->pt->intformat, NULL);
@@ -1538,9 +1542,15 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
    data2 = data1 + sz;
    upload = !!data1;
 
-   if (tex->gc->shared->info.unpack_row_length)
+   if ((w == tex->pt->w) && (h == tex->pt->h))
+     subimage = EINA_FALSE;
+
+   if (!subimage || tex->gc->shared->info.unpack_row_length)
      {
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, w); GLERRLOG();
+        if (tex->gc->shared->info.unpack_row_length)
+          {
+             glPixelStorei(GL_UNPACK_ROW_LENGTH, w); GLERRLOG();
+          }
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); GLERRLOG();
         glBindTexture(GL_TEXTURE_2D, tex->pt->texture); GLERRLOG();
         if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
@@ -1548,7 +1558,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
         if (upload)
           {
              if (comp)
-               _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data1);
+               glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->intformat, w, h, 0, sz, data1);
              else
                _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
           }
@@ -1558,9 +1568,9 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
         if (upload)
           {
              if (comp)
-               _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data2);
+               glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pta->intformat, w, h, 0, sz, data2);
              else
-               _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data2);
+               _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, tex->pta->dataformat, data2);
           }
      }
    else
@@ -1603,29 +1613,25 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
              if (w == tex->w)
                {
                   if (comp)
-                    _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data2);
+                    _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, sz, data2);
                   else
-                    _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data2);
+                    _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, tex->pta->dataformat, data2);
                }
              else
                {
                   for (y = 0; y < h; y += ystep)
                     {
                        if (comp)
-                         _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data2);
+                         _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, sz, data2);
                        else
-                         _tex_sub_2d(tex->gc, 0, y, w, ystep, tex->pt->format,
-                                     tex->pt->dataformat, data2 + rowlen * y / ystep);
+                         _tex_sub_2d(tex->gc, 0, y, w, ystep, tex->pta->format,
+                                     tex->pta->dataformat, data2 + rowlen * y / ystep);
                     }
                }
           }
      }
 on_error:
-   if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
-     {
-        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
-        GLERRLOG();
-     }
+   glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex); GLERRLOG();
 }
 
 Evas_GL_Texture *
