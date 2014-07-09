@@ -2937,7 +2937,6 @@ _elm_list_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 EOLIAN static void
 _elm_list_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool enable)
 {
-   if (sd->item_loop_enable == enable) return;
    sd->item_loop_enable = !!enable;
 }
 
