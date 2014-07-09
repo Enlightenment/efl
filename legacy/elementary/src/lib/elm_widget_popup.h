@@ -26,6 +26,7 @@ typedef struct _Elm_Popup_Data Elm_Popup_Data;
 struct _Elm_Popup_Data
 {
    Evas_Object          *notify;
+   Evas_Object          *main_layout;
    Evas_Object          *title_icon;
    Evas_Object          *content_area;
    Evas_Object          *text_content_obj;
