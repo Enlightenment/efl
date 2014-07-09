@@ -157,6 +157,9 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 {
    int i = 0;
 
+   /* check if we are inheriting the old buffer depth */
+   if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
+
    /* check for changes */
    if ((ob->w == w) && (ob->h == h) &&
        (ob->destination_alpha == ob->info->info.destination_alpha) &&
