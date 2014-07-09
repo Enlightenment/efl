@@ -218,13 +218,13 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
    switch (delta)
      {
       case 0:
-         return MODE_COPY;
+        return MODE_COPY;
       case 1:
-         return MODE_DOUBLE;
+        return MODE_DOUBLE;
       case 2:
-         return MODE_TRIPLE;
+        return MODE_TRIPLE;
       default:
-         return MODE_FULL;
+        return MODE_FULL;
      }
 }
 
