@@ -1388,6 +1388,67 @@ eolian_type_name_get(Eolian_Type tp)
    return ((_Parameter_Type*)tp)->name;
 }
 
+static Eina_Bool
+_print_field(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
+             void *fdata EINA_UNUSED)
+{
+   printf("%s: ", (const char*)key);
+   database_type_print((Eolian_Type)data);
+   puts("; ");
+   return EINA_TRUE;
+}
+
+void
+database_type_print(Eolian_Type type)
+{
+   Eina_List *l;
+   Eolian_Type stp;
+   _Parameter_Type *tp = (_Parameter_Type*)type;
+   if (tp->is_own)
+     puts("own(");
+   if (tp->is_const)
+     puts("const(");
+   if (tp->type == EOLIAN_TYPE_REGULAR)
+     puts(tp->name);
+   else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
+     printf("struct %s", tp->name);
+   else if (tp->type == EOLIAN_TYPE_POINTER)
+     {
+        database_type_print(tp->base_type);
+        putchar('*');
+     }
+   else if (tp->type == EOLIAN_TYPE_FUNCTION)
+     {
+        Eina_Bool first = EINA_TRUE;
+        puts("fn");
+        if (tp->ret_type)
+          {
+             puts(" -> ");
+             database_type_print(tp->ret_type);
+          }
+        puts(" (");
+        EINA_LIST_FOREACH(tp->arguments, l, stp)
+          {
+             if (!first) puts(", ");
+             first = EINA_FALSE;
+             database_type_print(stp);
+          }
+        putchar(')');
+     }
+   else if (tp->type == EOLIAN_TYPE_STRUCT)
+     {
+        puts("struct ");
+        if (tp->name) printf("%s ", tp->name);
+        puts("{ ");
+        eina_hash_foreach(tp->fields, _print_field, NULL);
+        puts("}");
+     }
+   if (tp->is_own)
+     putchar(')');
+   if (tp->is_const)
+     putchar(')');
+}
+
 static void
 _implements_print(Eolian_Implement impl, int nb_spaces)
 {
@@ -1420,73 +1481,6 @@ _event_print(Eolian_Event ev, int nb_spaces)
 
    eolian_class_event_information_get(ev, &name, &type, &comment);
    printf("%*s <%s> <%s> <%s>\n", nb_spaces + 5, "", name, type, comment);
-}
-
-static void _type_print(Eolian_Type tp, Eina_Strbuf *buf);
-
-static Eina_Bool
-_field_print(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
-             void *fdata)
-{
-   Eina_Strbuf *buf = (Eina_Strbuf*)fdata;
-   eina_strbuf_append_printf(buf, "%s: ", (const char*)key);
-   _type_print((Eolian_Type)data, buf);
-   eina_strbuf_append(buf, "; ");
-   return EINA_TRUE;
-}
-
-static void
-_type_print(Eolian_Type tp, Eina_Strbuf *buf)
-{
-   _Parameter_Type *tpp = (_Parameter_Type*)tp;
-   Eina_List *l;
-   Eolian_Type stp;
-   if (tpp->is_own)
-     eina_strbuf_append(buf, "own(");
-   if (tpp->is_const)
-     eina_strbuf_append(buf, "const(");
-   if (tpp->type == EOLIAN_TYPE_REGULAR)
-     eina_strbuf_append(buf, tpp->name);
-   else if (tpp->type == EOLIAN_TYPE_REGULAR_STRUCT)
-     {
-        eina_strbuf_append(buf, "struct ");
-        eina_strbuf_append(buf, tpp->name);
-     }
-   else if (tpp->type == EOLIAN_TYPE_POINTER)
-     {
-        _type_print(tpp->base_type, buf);
-        eina_strbuf_append_char(buf, '*');
-     }
-   else if (tpp->type == EOLIAN_TYPE_FUNCTION)
-     {
-        Eina_Bool first = EINA_TRUE;
-        eina_strbuf_append(buf, "fn");
-        if (tpp->ret_type)
-          {
-             eina_strbuf_append(buf, " -> ");
-             _type_print(tpp->ret_type, buf);
-          }
-        eina_strbuf_append(buf, " (");
-        EINA_LIST_FOREACH(tpp->arguments, l, stp)
-          {
-             if (!first) eina_strbuf_append(buf, ", ");
-             first = EINA_FALSE;
-             _type_print(stp, buf);
-          }
-        eina_strbuf_append_char(buf, ')');
-     }
-   else if (tpp->type == EOLIAN_TYPE_STRUCT)
-     {
-        eina_strbuf_append(buf, "struct ");
-        if (tpp->name) eina_strbuf_append_printf(buf, "%s ", tpp->name);
-        eina_strbuf_append(buf, "{ ");
-        eina_hash_foreach(tpp->fields, _field_print, buf);
-        eina_strbuf_append(buf, "}");
-     }
-   if (tpp->is_own)
-     eina_strbuf_append_char(buf, ')');
-   if (tpp->is_const)
-      eina_strbuf_append_char(buf, ')');
 }
 
 static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
@@ -1578,13 +1572,9 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
              param_dir = "INOUT";
              break;
           }
-         Eina_Strbuf *type_buf = eina_strbuf_new();
-         _type_print(param->type, type_buf);
-         printf("%*s%s <%s> <%s> <%s>\n", nb_spaces + 5, "",
-               param_dir, param->name,
-               eina_strbuf_string_get(type_buf),
-               param->description?param->description:"");
-         eina_strbuf_free(type_buf);
+         printf("%*s%s <%s> <", nb_spaces + 5, "", param_dir, param->name);
+         database_type_print((Eolian_Type)param->type);
+         printf("> <%s>\n", param->description?param->description:"");
      }
    return EINA_TRUE;
 }

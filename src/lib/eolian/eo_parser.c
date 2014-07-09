@@ -1053,69 +1053,6 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
 static char *    _param_way_str[    PARAM_WAY_LAST] = { "IN", "OUT", "INOUT" };
 
-static void _print_type(FILE *f, Eo_Type_Def *tp);
-
-static Eina_Bool
-_print_field(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
-             void *fdata)
-{
-   FILE *f = (FILE*)fdata;
-   fprintf(f, "%s: ", (const char*)key);
-   _print_type(f, (Eo_Type_Def*)data);
-   fputs("; ", f);
-   return EINA_TRUE;
-}
-
-static void
-_print_type(FILE *f, Eo_Type_Def *tp)
-{
-   Eina_List *l;
-   Eo_Type_Def *stp;
-   if (tp->is_own)
-     fputs("own(", f);
-   if (tp->is_const)
-     fputs("const(", f);
-   if (tp->type == EOLIAN_TYPE_REGULAR)
-     fputs(tp->name, f);
-   else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
-     fprintf(f, "struct %s", tp->name);
-   else if (tp->type == EOLIAN_TYPE_POINTER)
-     {
-        _print_type(f, tp->base_type);
-        fputc('*', f);
-     }
-   else if (tp->type == EOLIAN_TYPE_FUNCTION)
-     {
-        Eina_Bool first = EINA_TRUE;
-        fputs("fn", f);
-        if (tp->ret_type)
-          {
-             fputs(" -> ", f);
-             _print_type(f, tp->ret_type);
-          }
-        fputs(" (", f);
-        EINA_LIST_FOREACH(tp->arguments, l, stp)
-          {
-             if (!first) fputs(", ", f);
-             first = EINA_FALSE;
-             _print_type(f, stp);
-          }
-        fputc(')', f);
-     }
-   else if (tp->type == EOLIAN_TYPE_STRUCT)
-     {
-        fputs("struct ", f);
-        if (tp->name) fprintf(f, "%s ", tp->name);
-        fputs("{ ", f);
-        eina_hash_foreach(tp->fields, _print_field, f);
-        fputs("}", f);
-     }
-   if (tp->is_own)
-     fputc(')', f);
-   if (tp->is_const)
-     fputc(')', f);
-}
-
 static void
 _dump_class(Eo_Class_Def *kls)
 {
@@ -1148,14 +1085,14 @@ _dump_class(Eo_Class_Def *kls)
         if (meth->ret)
           {
              printf("    return: ");
-             _print_type(stdout, meth->ret->type);
+             database_type_print((Eolian_Type)meth->ret->type);
              printf(" (%s)\n", meth->ret->comment);
           }
         printf("    legacy : %s\n", meth->legacy);
         EINA_LIST_FOREACH(meth->params, m, param)
           {
              printf("    param: %s %s : ", _param_way_str[param->way], param->name);
-             _print_type(stdout, param->type);
+             database_type_print((Eolian_Type)param->type);
              printf(" (%s)\n", param->comment);
           }
      }
@@ -1166,20 +1103,20 @@ _dump_class(Eo_Class_Def *kls)
         EINA_LIST_FOREACH(prop->keys, m, param)
           {
              printf("    key: %s : ", param->name);
-             _print_type(stdout, param->type);
+             database_type_print((Eolian_Type)param->type);
              printf(" (%s)\n", param->comment);
           }
         EINA_LIST_FOREACH(prop->values, m, param)
           {
              printf("    value: %s : ", param->name);
-             _print_type(stdout, param->type);
+             database_type_print((Eolian_Type)param->type);
              printf(" (%s)\n", param->comment);
           }
         EINA_LIST_FOREACH(prop->accessors, m, accessor)
           {
              printf("    accessor: ");
              if (accessor->ret)
-                _print_type(stdout, accessor->ret->type);
+               database_type_print((Eolian_Type)accessor->ret->type);
              printf(" : %s (%s)\n", _accessor_type_str[accessor->type], accessor->comment);
              printf("      legacy : %s\n", accessor->legacy);
           }
@@ -1191,7 +1128,7 @@ _dump_class(Eo_Class_Def *kls)
         if (meth->ret)
           {
              printf("    return: ");
-             _print_type(stdout, meth->ret->type);
+             database_type_print((Eolian_Type)meth->ret->type);
              printf(" (%s)\n", meth->ret->comment);
           }
         printf("    legacy : %s\n", meth->legacy);
@@ -1199,7 +1136,7 @@ _dump_class(Eo_Class_Def *kls)
         EINA_LIST_FOREACH(meth->params, m, param)
           {
              printf("    param: %s %s : ", _param_way_str[param->way], param->name);
-             _print_type(stdout, param->type);
+             database_type_print((Eolian_Type)param->type);
              printf(" (%s)\n", param->comment);
           }
      }
@@ -1209,14 +1146,14 @@ static void
 _dump_type(Eo_Typedef_Def *type)
 {
    printf("Typedef: %s ", type->alias);
-   _print_type(stdout, type->type);
+   database_type_print((Eolian_Type)type->type);
    printf("\n");
 }
 
 static void
 _dump_struct(Eo_Type_Def *type)
 {
-   _print_type(stdout, type);
+   database_type_print((Eolian_Type)type);
 }
 
 void

@@ -139,4 +139,7 @@ database_event_free(Eolian_Event event);
 Eina_Bool
 database_class_event_add(Eolian_Class class, Eolian_Event event_desc);
 
+void
+database_type_print(Eolian_Type type);
+
 #endif
