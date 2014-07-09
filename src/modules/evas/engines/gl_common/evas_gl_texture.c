@@ -510,7 +510,6 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
       case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-      case EVAS_COLORSPACE_ETC1_ALPHA:
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
@@ -524,7 +523,10 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
         xoffset = im->cache_entry.borders.l;
         yoffset = im->cache_entry.borders.t;
         break;
-
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        // One must call evas_gl_common_texture_rgb_a_pair_new() instead.
+        ERR("Trying to upload ETC1+Alpha texture as a normal texture. Abort.");
+        return NULL;
      default:
         // One pixel gap and two pixels for duplicated borders
         w = im->cache_entry.w + 3;
@@ -1182,7 +1184,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
       case EVAS_COLORSPACE_ETC1:
-      case EVAS_COLORSPACE_ETC1_ALPHA:
       case EVAS_COLORSPACE_RGB8_ETC2:
         {
            /*
@@ -1205,8 +1206,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
            GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
            if ((tex->gc->shared->info.etc1_subimage ||
-               ((im->cache_entry.space != EVAS_COLORSPACE_ETC1) &&
-                (im->cache_entry.space != EVAS_COLORSPACE_ETC1_ALPHA)))
+               (im->cache_entry.space != EVAS_COLORSPACE_ETC1))
                && (tex->pt->w != width || tex->pt->h != height))
              {
                 int err;
@@ -1226,8 +1226,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                      // FIXME: Changing settings on the fly.
                      // The first texture will be black.
                      // How to fallback? We need a whole texture now.
-                     if ((im->cache_entry.space == EVAS_COLORSPACE_ETC1) ||
-                         (im->cache_entry.space == EVAS_COLORSPACE_ETC1_ALPHA))
+                     if (im->cache_entry.space == EVAS_COLORSPACE_ETC1)
                        tex->gc->shared->info.etc1_subimage = EINA_FALSE;
                   }
              }
@@ -1245,12 +1244,15 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                 glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
                 GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              }
-
            return;
         }
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        // One must call evas_gl_common_texture_rgb_a_pair_update() instead.
+        ERR("Can't upload ETC1+Alpha texture as a normal texture. Abort.");
+        return;
       default:
-         ERR("Don't know how to upload texture in colorspace %i.", im->cache_entry.space);
-         return;
+        ERR("Can't upload texture in colorspace %i.", im->cache_entry.space);
+        return;
      }
 
    // if preloaded, then async push it in after uploading a miniature of it
