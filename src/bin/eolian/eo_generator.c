@@ -266,7 +266,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *str_extrn_ev = eina_strbuf_new();
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
 
-   Eolian_Event event;
+   Eolian_Event *event;
    EINA_LIST_FOREACH(eolian_class_events_list_get(class), itr, event)
      {
         const char *evname = NULL;
@@ -517,7 +517,7 @@ eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_ev = eina_strbuf_new();
 
-   Eolian_Event event;
+   Eolian_Event *event;
    EINA_LIST_FOREACH(eolian_class_events_list_get(class), itr, event)
      {
         const char *evname;
@@ -617,7 +617,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_strbuf_reset(tmpbuf);
 
    //Implements - TODO one generate func def for all
-   Eolian_Implement impl_desc;
+   Eolian_Implement *impl_desc;
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl_desc)
      {
         _eolian_class_vars impl_env;
@@ -722,7 +722,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         free(desc);
      }
 
-   Eolian_Event event;
+   Eolian_Event *event;
    EINA_LIST_FOREACH(eolian_class_events_list_get(class), itr, event)
      {
         const char *evname;

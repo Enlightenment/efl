@@ -112,7 +112,7 @@ _type_exists(const char* type_name, Eina_Strbuf *buffer)
 }
 
 static Eina_Bool
-_prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf *data_type_buf, Eolian_Implement impl_desc, Eina_Strbuf *buffer)
+_prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf *data_type_buf, Eolian_Implement *impl_desc, Eina_Strbuf *buffer)
 {
    Eina_Bool var_as_ret = EINA_FALSE, ret_const = EINA_FALSE;
    Eina_Strbuf *params = NULL, *short_params = NULL, *super_invok = NULL;
@@ -264,7 +264,7 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
 
    if (eolian_class_implements_list_get(class))
      {
-        Eolian_Implement impl_desc;
+        Eolian_Implement *impl_desc;
         EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr_funcs, impl_desc)
           {
              Eolian_Class *impl_class = NULL;

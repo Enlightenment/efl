@@ -66,13 +66,13 @@ typedef struct _Eolian_Function_Parameter* Eolian_Function_Parameter;
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Implement* Eolian_Implement;
+typedef struct _Eolian_Implement Eolian_Implement;
 
 /* Event information
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Event* Eolian_Event;
+typedef struct _Eolian_Event Eolian_Event;
 
 #define EOLIAN_LEGACY "legacy"
 #define EOLIAN_LEGACY_GET "legacy_get"
@@ -638,7 +638,7 @@ EAPI Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement impl);
+EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement *impl);
 
 /*
  * @brief Get information about an overriding function (implement).
@@ -651,14 +651,14 @@ EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement im
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement impl,
+EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl,
       Eolian_Class **klass, Eolian_Function *function, Eolian_Function_Type *type);
 
 /*
  * @brief Get the list of overriding functions defined in a class.
  *
  * @param[in] klass the class.
- * @return a list of Eolian_Implement handles
+ * @return a list of Eolian_Implement* handles
  *
  * @ingroup Eolian
  */
@@ -668,7 +668,7 @@ EAPI const Eina_List *eolian_class_implements_list_get(const Eolian_Class *klass
  * @brief Get the list of events defined in a class.
  *
  * @param[in] klass the class.
- * @return a list of Eolian_Event handles
+ * @return a list of Eolian_Event* handles
  *
  * @ingroup Eolian
  */
@@ -684,7 +684,7 @@ EAPI const Eina_List *eolian_class_events_list_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_type, const char **event_desc);
+EAPI Eina_Bool eolian_class_event_information_get(const Eolian_Event *event, const char **event_name, const char **event_type, const char **event_desc);
 
 /*
  * @brief Indicates if the class constructor has to invoke

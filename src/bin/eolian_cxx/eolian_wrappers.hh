@@ -308,7 +308,7 @@ parameter_type(Eolian_Function_Parameter const& parameter, setter_t func_type)
 }
 
 inline efl::eolian::eo_event
-event_create(Eolian_Class const *& klass, const Eolian_Event event_)
+event_create(Eolian_Class const *& klass, const Eolian_Event *event_)
 {
    efl::eolian::eo_event event;
    const char *name, *type, *comment;
@@ -332,7 +332,7 @@ event_list(Eolian_Class const *& klass)
    unsigned int length = eina_list_count(list);
    for (unsigned int i = 0; i < length; ++i)
      {
-        Eolian_Event e = static_cast<Eolian_Event>(eina_list_nth(list, i));
+        Eolian_Event *e = static_cast<Eolian_Event*>(eina_list_nth(list, i));
         events.push_back(event_create(klass, e));
      }
    return events;

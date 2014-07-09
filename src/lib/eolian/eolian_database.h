@@ -118,11 +118,11 @@ database_function_scope_set(Eolian_Function function_id, Eolian_Function_Scope s
 
 /* Need to add API for callbacks and implements */
 
-Eolian_Implement
+Eolian_Implement *
 database_implement_new(const char *impl_name);
 
 Eina_Bool
-database_class_implement_add(Eolian_Class *class, Eolian_Implement impl_id);
+database_class_implement_add(Eolian_Class *class, Eolian_Implement *impl_id);
 
 Eina_Bool
 database_class_ctor_enable_set(Eolian_Class *class, Eina_Bool enable);
@@ -130,14 +130,14 @@ database_class_ctor_enable_set(Eolian_Class *class, Eina_Bool enable);
 Eina_Bool
 database_class_dtor_enable_set(Eolian_Class *class, Eina_Bool enable);
 
-Eolian_Event
+Eolian_Event *
 database_event_new(const char *event_name, const char *event_type, const char *event_desc);
 
 void
-database_event_free(Eolian_Event event);
+database_event_free(Eolian_Event *event);
 
 Eina_Bool
-database_class_event_add(Eolian_Class *class, Eolian_Event event_desc);
+database_class_event_add(Eolian_Class *class, Eolian_Event *event_desc);
 
 void
 database_type_print(Eolian_Type type);

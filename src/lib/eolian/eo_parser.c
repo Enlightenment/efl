@@ -1376,13 +1376,13 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
              database_function_set_as_virtual_pure(foo_id, ftype);
              continue;
           }
-        Eolian_Implement impl_desc = database_implement_new(impl_name);
+        Eolian_Implement *impl_desc = database_implement_new(impl_name);
         database_class_implement_add(class, impl_desc);
      }
 
    EINA_LIST_FOREACH(kls->events, l, event)
      {
-        Eolian_Event ev = database_event_new(event->name, event->type, event->comment);
+        Eolian_Event *ev = database_event_new(event->name, event->type, event->comment);
         database_class_event_add(class, ev);
      }
 
