@@ -83,8 +83,6 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* set properties of outbuf */
    ob->w = w;
    ob->h = h;
-   if (ob->w < ob->priv.mode.hdisplay) ob->w = ob->priv.mode.hdisplay;
-   if (ob->h < ob->priv.mode.vdisplay) ob->h = ob->priv.mode.vdisplay;
 
    ob->depth = info->info.depth;
    ob->rotation = info->info.rotation;
@@ -101,6 +99,9 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
         free(ob);
         return NULL;
      }
+
+   if (ob->w < ob->priv.mode.hdisplay) ob->w = ob->priv.mode.hdisplay;
+   if (ob->h < ob->priv.mode.vdisplay) ob->h = ob->priv.mode.vdisplay;
 
    info->info.output = ob->priv.fb;
 
