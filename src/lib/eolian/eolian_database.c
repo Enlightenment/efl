@@ -1628,12 +1628,15 @@ static char *
 join_path(const char *path, const char *file)
 {
    Eina_Strbuf *buf = eina_strbuf_new();
+   char *ret;
 
    eina_strbuf_append(buf, path);
    eina_strbuf_append_char(buf, '/');
    eina_strbuf_append(buf, file);
 
-   return eina_strbuf_string_steal(buf);
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
 }
 
 static void

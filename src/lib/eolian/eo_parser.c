@@ -357,7 +357,7 @@ parse_typedef(Eo_Lexer *ls)
    check(ls, TOK_VALUE);
    ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
-   test_next(ls, ':');
+   (void)!!test_next(ls, ':');
    ls->tmp.typedef_def->type = parse_type_struct_nonvoid(ls, EINA_TRUE,
                                                          EINA_TRUE);
    ls->tmp.type_def = NULL;

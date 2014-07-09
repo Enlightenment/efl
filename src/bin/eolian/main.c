@@ -143,7 +143,7 @@ _generate_impl_c_file(char *filename, const Eolian_Class class)
              ERR("Couldnt allocate memory for file %s", filename);
              goto end;
           }
-        if (0 == fread(content, file_size, 1, fd))
+        if (!fread(content, file_size, 1, fd))
           {
              ERR("Couldnt read the %ld bytes of file %s", file_size, filename);
              free(content);
