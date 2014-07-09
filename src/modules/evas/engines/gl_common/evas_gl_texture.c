@@ -505,9 +505,6 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
    lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra, im->cache_entry.space);
    if (lformat < 0) return NULL;
 
-   tex = evas_gl_common_texture_alloc(gc, im->cache_entry.w, im->cache_entry.h, im->cache_entry.flags.alpha);
-   if (!tex) return NULL;
-
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ETC1:
@@ -534,6 +531,10 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
         h = im->cache_entry.h + 3;
         break;
      }
+
+   tex = evas_gl_common_texture_alloc(gc, im->cache_entry.w, im->cache_entry.h,
+                                      im->cache_entry.flags.alpha);
+   if (!tex) return NULL;
 
    tex->pt = _pool_tex_find(gc, w, h,
                             *matching_format[lformat].intformat,
