@@ -20,7 +20,7 @@
 namespace eolian_cxx {
 
 inline std::string
-type_lookup(Eolian_Type *type)
+type_lookup(const Eolian_Type *type)
 {
    if (type == NULL)
      return "void";

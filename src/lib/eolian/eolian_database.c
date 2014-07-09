@@ -250,7 +250,7 @@ Eina_Bool database_struct_add(Eolian_Type *tp)
    return EINA_FALSE;
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_type_find_by_alias(const char *alias)
 {
    if (!_types) return NULL;
@@ -260,7 +260,7 @@ eolian_type_find_by_alias(const char *alias)
    return cl?cl->type:NULL;
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_type_struct_find_by_name(const char *name)
 {
    if (!_structs) return NULL;
@@ -329,7 +329,7 @@ eolian_class_namespaces_list_get(const Eolian_Class *cl)
    return cl ? cl->namespaces : NULL;
 }
 
-EAPI Eolian_Class *
+EAPI const Eolian_Class *
 eolian_class_find_by_name(const char *class_name)
 {
    Eina_List *itr;
@@ -348,12 +348,12 @@ end:
  * ret true && class -> only one class corresponding
  * ret true && !class -> no class corresponding
  */
-Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class **class)
+Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **class)
 {
    char *name = strdup(class_name);
    char *colon = name + 1;
-   Eolian_Class *found_class = NULL;
-   Eolian_Class *candidate;
+   const Eolian_Class *found_class = NULL;
+   const Eolian_Class *candidate;
    if (class) *class = NULL;
    do
      {
@@ -380,7 +380,7 @@ Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class **cl
    return EINA_TRUE;
 }
 
-EAPI Eolian_Class *
+EAPI const Eolian_Class *
 eolian_class_find_by_file(const char *file_name)
 {
    Eina_List *itr;
@@ -587,10 +587,10 @@ eolian_implement_full_name_get(const Eolian_Implement *impl)
 }
 
 EAPI Eina_Bool
-eolian_implement_information_get(const Eolian_Implement *impl, Eolian_Class **class_out, Eolian_Function **func_out, Eolian_Function_Type *type_out)
+eolian_implement_information_get(const Eolian_Implement *impl, const Eolian_Class **class_out, const Eolian_Function **func_out, Eolian_Function_Type *type_out)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
-   Eolian_Class *class;
+   const Eolian_Class *class;
    if (!database_class_name_validate(impl->full_name, &class) || !class) return EINA_FALSE;
    const char *class_name = class->full_name;
    if (class_out) *class_out = class;
@@ -605,7 +605,7 @@ eolian_implement_information_get(const Eolian_Implement *impl, Eolian_Class **cl
         else if (!strcmp(colon+1, "get")) type = EOLIAN_PROP_GET;
      }
 
-   Eolian_Function *fid = eolian_class_function_find_by_name(class, func_name, type);
+   const Eolian_Function *fid = eolian_class_function_find_by_name(class, func_name, type);
    if (func_out) *func_out = fid;
    if (type == EOLIAN_UNRESOLVED) type = eolian_function_type_get(fid);
    if (type_out) *type_out = type;
@@ -613,7 +613,7 @@ eolian_implement_information_get(const Eolian_Implement *impl, Eolian_Class **cl
    return EINA_TRUE;
 }
 
-EAPI Eolian_Function *
+EAPI const Eolian_Function *
 eolian_class_function_find_by_name(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
 {
    Eina_List *itr;
@@ -801,7 +801,7 @@ database_method_parameter_add(Eolian_Function *fid, Eolian_Parameter_Dir param_d
    return param;
 }
 
-EAPI Eolian_Function_Parameter *
+EAPI const Eolian_Function_Parameter *
 eolian_function_parameter_get(const Eolian_Function *fid, const char *param_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
@@ -814,7 +814,7 @@ eolian_function_parameter_get(const Eolian_Function *fid, const char *param_name
    return NULL;
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_parameter_type_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
@@ -851,7 +851,7 @@ eolian_parameters_list_get(const Eolian_Function *fid)
 
 /* Get parameter information */
 EAPI void
-eolian_parameter_information_get(const Eolian_Function_Parameter *param, Eolian_Parameter_Dir *param_dir, Eolian_Type **type, const char **name, const char **description)
+eolian_parameter_information_get(const Eolian_Function_Parameter *param, Eolian_Parameter_Dir *param_dir, const Eolian_Type **type, const char **name, const char **description)
 {
    EINA_SAFETY_ON_NULL_RETURN(param);
    if (param_dir) *param_dir = param->param_dir;
@@ -911,7 +911,7 @@ void database_function_return_type_set(Eolian_Function *fid, Eolian_Function_Typ
      }
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_function_return_type_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    switch (ftype)
@@ -1127,7 +1127,7 @@ eolian_type_struct_field_names_list_get(const Eolian_Type *tp)
    return eina_hash_iterator_key_new(tp->fields);
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
 {
    _Struct_Field_Type *sf = NULL;
@@ -1159,7 +1159,7 @@ eolian_type_struct_description_get(const Eolian_Type *tp)
    return tp->comment;
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_type_return_type_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
@@ -1167,7 +1167,7 @@ eolian_type_return_type_get(const Eolian_Type *tp)
    return tp->ret_type;
 }
 
-EAPI Eolian_Type *
+EAPI const Eolian_Type *
 eolian_type_base_type_get(const Eolian_Type *tp)
 {
    Eolian_Type_Type tpt;
@@ -1380,8 +1380,8 @@ database_type_print(Eolian_Type *tp)
 static void
 _implements_print(Eolian_Implement *impl, int nb_spaces)
 {
-   Eolian_Class *class;
-   Eolian_Function *func;
+   const Eolian_Class *class;
+   const Eolian_Function *func;
    const char *t;
    Eolian_Function_Type ft;
 
@@ -1681,7 +1681,7 @@ EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
    const Eina_List *itr;
-   Eolian_Class *class = eolian_class_find_by_file(filepath);
+   const Eolian_Class *class = eolian_class_find_by_file(filepath);
    const char *inherit_name;
    Eolian_Implement *impl;
    if (!class)
@@ -1716,8 +1716,8 @@ eolian_eo_file_parse(const char *filepath)
      }
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl)
      {
-        Eolian_Class *impl_class;
-        Eolian_Function *impl_func;
+        const Eolian_Class *impl_class;
+        const Eolian_Function *impl_func;
         Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
         eolian_implement_information_get(impl, &impl_class, &impl_func, &impl_type);
         if (!impl_func)

@@ -62,7 +62,7 @@ static std::string
 _comment_return(Eolian_Function const& function,
                 Eolian_Function_Type rettype)
 {
-   Eolian_Type *rettypet = ::eolian_function_return_type_get(&function, rettype);
+   const Eolian_Type *rettypet = ::eolian_function_return_type_get(&function, rettype);
    const char *rettypes = NULL;
    if (rettypet) rettypes = ::eolian_type_c_type_get(rettypet);
    std::string doc = "";

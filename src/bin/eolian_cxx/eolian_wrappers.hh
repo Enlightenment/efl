@@ -27,7 +27,7 @@ method_t const method = {};
 struct ctor_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_CTOR; };
 ctor_t const ctor = {};
 
-inline Eolian_Class*
+inline const Eolian_Class*
 class_from_file(std::string const& file)
 {
    return ::eolian_class_find_by_file(file.c_str());
@@ -57,7 +57,7 @@ class_full_name(Eolian_Class const& klass)
    return safe_str(::eolian_class_full_name_get(&klass));
 }
 
-inline Eolian_Class *
+inline const Eolian_Class *
 class_from_name(std::string const& classname)
 {
    return ::eolian_class_find_by_name(classname.c_str());

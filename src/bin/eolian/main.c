@@ -240,7 +240,7 @@ int main(int argc, char **argv)
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
    Eina_List *itr;
    Eina_List *files4gen = NULL;
-   Eolian_Class *class;
+   const Eolian_Class *class;
    char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
 
    eina_init();

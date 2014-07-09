@@ -74,7 +74,7 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    const char *ret;
    const char *suffix = "";
    const char *legacy = NULL;
-   Eolian_Function *funcid = eolian_class_function_find_by_name(class, funcname, ftype);
+   const Eolian_Function *funcid = eolian_class_function_find_by_name(class, funcname, ftype);
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";

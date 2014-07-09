@@ -198,9 +198,9 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 
    EINA_LIST_FOREACH(::eolian_class_implements_list_get(&klass), it, impl_desc_)
      {
-        Eolian_Implement *impl_desc = static_cast<Eolian_Implement*>(impl_desc_);
-        Eolian_Class *impl_class;
-        Eolian_Function *impl_func;
+        const Eolian_Implement *impl_desc = static_cast<Eolian_Implement*>(impl_desc_);
+        const Eolian_Class *impl_class;
+        const Eolian_Function *impl_func;
         Eolian_Function_Type impl_type;
         eolian_implement_information_get
           (impl_desc, &impl_class, &impl_func, &impl_type);
