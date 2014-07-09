@@ -108,7 +108,7 @@ anim(void *data)
 
    // just calculate some position using the pointer value of the object as
    // a seed value to make different objects go into different places over time
-   v = ((int)o) & 0xff;
+   v = ((int)(uintptr_t)o) & 0xff;
    t = ecore_loop_time_get();
    w = 100 + ((v * 100) >> 8);
    h = 100 + ((v * 100) >> 8);

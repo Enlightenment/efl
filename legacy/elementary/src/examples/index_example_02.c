@@ -37,7 +37,7 @@ _grid_label_get(void        *data,
                 Evas_Object *obj,
                 const char  *part)
 {
-   int idx = (int)data;
+   int idx = (int)(uintptr_t)data;
    return strdup(items[idx]);
 }
 
@@ -117,7 +117,7 @@ elm_main(int    argc,
      {
         char buf[32];
 
-        gg_it = elm_gengrid_item_append(grid, &gic, (void *)i, NULL, NULL);
+        gg_it = elm_gengrid_item_append(grid, &gic, (void *)(uintptr_t)i, NULL, NULL);
 
         /* indexing by first letters */
         snprintf(buf, sizeof(buf), "%c", items[i][0]);
