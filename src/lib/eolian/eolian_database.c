@@ -1422,6 +1422,19 @@ _event_print(Eolian_Event ev, int nb_spaces)
    printf("%*s <%s> <%s> <%s>\n", nb_spaces + 5, "", name, type, comment);
 }
 
+static void _type_print(Eolian_Type tp, Eina_Strbuf *buf);
+
+static Eina_Bool
+_field_print(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
+             void *fdata)
+{
+   Eina_Strbuf *buf = (Eina_Strbuf*)fdata;
+   eina_strbuf_append_printf(buf, "%s: ", (const char*)key);
+   _type_print((Eolian_Type)data, buf);
+   eina_strbuf_append(buf, "; ");
+   return EINA_TRUE;
+}
+
 static void
 _type_print(Eolian_Type tp, Eina_Strbuf *buf)
 {
@@ -1461,6 +1474,14 @@ _type_print(Eolian_Type tp, Eina_Strbuf *buf)
              _type_print(stp, buf);
           }
         eina_strbuf_append_char(buf, ')');
+     }
+   else if (tpp->type == EOLIAN_TYPE_STRUCT)
+     {
+        eina_strbuf_append(buf, "struct ");
+        if (tpp->name) eina_strbuf_append_printf(buf, "%s ", tpp->name);
+        eina_strbuf_append(buf, "{ ");
+        eina_hash_foreach(tpp->fields, _field_print, buf);
+        eina_strbuf_append(buf, "}");
      }
    if (tpp->is_own)
      eina_strbuf_append_char(buf, ')');
