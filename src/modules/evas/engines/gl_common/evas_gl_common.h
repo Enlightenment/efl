@@ -416,7 +416,7 @@ struct _Evas_GL_Shared
 #define MAX_ATLAS_H            512
 #define DEF_ATLAS_H                 512
 
-#define ATLAS_FORMATS_COUNT    11
+#define ATLAS_FORMATS_COUNT    10
 
       Eina_List *cspaces; // depend on the values of etc1, etc2 and st3c
 
