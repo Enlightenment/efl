@@ -644,13 +644,11 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
      {
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "expected method name");
-        meth->type = METH_CONSTRUCTOR;
         meth->name = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
      }
    else
      {
-        meth->type = METH_REGULAR;
         if (ls->t.kw == KW_protected)
           {
              meth->scope = EOLIAN_SCOPE_PROTECTED;

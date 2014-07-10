@@ -72,16 +72,9 @@ typedef struct _Eo_Property_Def
 
 /* METHOD */
 
-typedef enum _Eo_Method_Type {
-     METH_REGULAR,
-     METH_CONSTRUCTOR,
-     METH_TYPE_LAST
-} Eo_Method_Type;
-
 typedef struct _Eo_Method_Def
 {
    Eo_Ret_Def *ret;
-   Eo_Method_Type type;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eina_List *params;
