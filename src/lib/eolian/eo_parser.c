@@ -1285,7 +1285,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
              Eina_List *m2;
              EINA_LIST_FOREACH(accessor->params, m2, acc_param)
                {
-                  Eolian_Function_Parameter *desc = eolian_function_parameter_get(foo_id, acc_param->name);
+                  Eolian_Function_Parameter *desc = (Eolian_Function_Parameter*)eolian_function_parameter_get(foo_id, acc_param->name);
                   if (!desc)
                     {
                        printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
@@ -1365,7 +1365,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
                   else if (!strcmp(type_as_str+1, "get")) ftype = EOLIAN_PROP_GET;
                }
              /* Search the function into the existing functions of the current class */
-             Eolian_Function *foo_id = eolian_class_function_find_by_name(
+             Eolian_Function *foo_id = (Eolian_Function*)eolian_class_function_find_by_name(
                    class, func, ftype);
              free(virtual_name);
              if (!foo_id)
