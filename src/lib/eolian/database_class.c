@@ -2,10 +2,10 @@
 #include "eolian_database.h"
 
 void
-database_class_del(Eolian_Class *class)
+database_class_del(Eolian_Class *cl)
 {
    Eina_Stringshare *inherit_name;
-   Eina_List *inherits = class->inherits;
+   Eina_List *inherits = cl->inherits;
    Eolian_Function *fid;
    Eolian_Event *ev;
 
@@ -13,27 +13,27 @@ database_class_del(Eolian_Class *class)
      eina_stringshare_del(inherit_name);
 
    Eolian_Implement *impl;
-   Eina_List *implements = class->implements;
+   Eina_List *implements = cl->implements;
    EINA_LIST_FREE(implements, impl)
      {
         eina_stringshare_del(impl->full_name);
         free(impl);
      }
 
-   EINA_LIST_FREE(class->constructors, fid) database_function_del(fid);
-   EINA_LIST_FREE(class->methods, fid) database_function_del(fid);
-   EINA_LIST_FREE(class->properties, fid) database_function_del(fid);
-   EINA_LIST_FREE(class->events, ev) database_event_free(ev);
+   EINA_LIST_FREE(cl->constructors, fid) database_function_del(fid);
+   EINA_LIST_FREE(cl->methods, fid) database_function_del(fid);
+   EINA_LIST_FREE(cl->properties, fid) database_function_del(fid);
+   EINA_LIST_FREE(cl->events, ev) database_event_del(ev);
 
-   eina_stringshare_del(class->name);
-   eina_stringshare_del(class->full_name);
-   eina_stringshare_del(class->file);
-   eina_stringshare_del(class->description);
-   eina_stringshare_del(class->legacy_prefix);
-   eina_stringshare_del(class->eo_prefix);
-   eina_stringshare_del(class->data_type);
+   eina_stringshare_del(cl->name);
+   eina_stringshare_del(cl->full_name);
+   eina_stringshare_del(cl->file);
+   eina_stringshare_del(cl->description);
+   eina_stringshare_del(cl->legacy_prefix);
+   eina_stringshare_del(cl->eo_prefix);
+   eina_stringshare_del(cl->data_type);
 
-   free(class);
+   free(cl);
 }
 
 Eolian_Class *
@@ -64,12 +64,11 @@ database_class_add(const char *class_name, Eolian_Class_Type type)
    return cl;
 }
 
-Eina_Bool
-database_class_file_set(Eolian_Class *class, const char *file_name)
+void
+database_class_file_set(Eolian_Class *cl, const char *file_name)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(class, EINA_FALSE);
-   class->file = eina_stringshare_add(file_name);
-   return EINA_TRUE;
+   EINA_SAFETY_ON_NULL_RETURN(cl);
+   cl->file = eina_stringshare_add(file_name);
 }
 
 /*
@@ -77,13 +76,13 @@ database_class_file_set(Eolian_Class *class, const char *file_name)
  * ret true && class -> only one class corresponding
  * ret true && !class -> no class corresponding
  */
-Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **class)
+Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **cl)
 {
    char *name = strdup(class_name);
    char *colon = name + 1;
    const Eolian_Class *found_class = NULL;
    const Eolian_Class *candidate;
-   if (class) *class = NULL;
+   if (cl) *cl = NULL;
    do
      {
         colon = strchr(colon, '.');
@@ -104,7 +103,7 @@ Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Clas
         if (colon) *colon++ = '.';
      }
    while(colon);
-   if (class) *class = found_class;
+   if (cl) *cl = found_class;
    free(name);
    return EINA_TRUE;
 }

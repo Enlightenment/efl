@@ -14,7 +14,7 @@ database_event_new(const char *event_name, const char *event_type, const char *e
 }
 
 void
-database_event_free(Eolian_Event *event)
+database_event_del(Eolian_Event *event)
 {
    eina_stringshare_del(event->name);
    eina_stringshare_del(event->comment);
