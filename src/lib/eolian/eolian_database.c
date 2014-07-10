@@ -12,7 +12,7 @@ static int _database_init_count = 0;
 
 static void _type_hash_free_cb(void *data)
 {
-   Type_Desc *type = data;
+   Eolian_Typedef *type = data;
    eina_stringshare_del(type->alias);
    database_type_del(type->type);
    free(type);

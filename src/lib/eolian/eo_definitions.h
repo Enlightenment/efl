@@ -6,8 +6,8 @@
 
 /* TYPE */
 
-typedef struct _eo_type_def Eo_Type_Def;
-struct _eo_type_def
+typedef struct _Eo_Type_Def Eo_Type_Def;
+struct _Eo_Type_Def
 {
    Eina_Stringshare  *name;
    Eolian_Type_Type   type;
@@ -29,7 +29,7 @@ struct _eo_type_def
    Eina_Bool is_own    :1;
 };
 
-typedef struct _eo_struct_field_def
+typedef struct _Eo_Struct_Field_Def
 {
    Eo_Type_Def *type;
    Eina_Stringshare *comment;
@@ -37,7 +37,7 @@ typedef struct _eo_struct_field_def
 
 /* RET */
 
-typedef struct _eo_ret_def
+typedef struct _Eo_Ret_Def
 {
    Eo_Type_Def *type;
    Eina_Stringshare *comment;
@@ -47,7 +47,7 @@ typedef struct _eo_ret_def
 
 /* PARAM */
 
-typedef enum _param_way
+typedef enum _Param_Way
 {
    PARAM_IN,
    PARAM_OUT,
@@ -55,7 +55,7 @@ typedef enum _param_way
    PARAM_WAY_LAST
 } Param_Way;
 
-typedef struct _eo_param_def
+typedef struct _Eo_Param_Def
 {
    Param_Way way;
    Eo_Type_Def *type;
@@ -66,20 +66,20 @@ typedef struct _eo_param_def
 
 /* ACCESSOR */
 
-typedef enum _eo_accessor_type
+typedef enum _Eo_Accessor_Type
 {
    SETTER,
    GETTER,
    ACCESSOR_TYPE_LAST
 } Eo_Accessor_Type;
 
-typedef struct _eo_accessor_param
+typedef struct _Eo_Accessor_Param
 {
    Eina_Stringshare *name;
    Eina_Bool is_const:1;
 } Eo_Accessor_Param;
 
-typedef struct _eo_accessor_def
+typedef struct _Eo_Accessor_Def
 {
    Eo_Accessor_Type type;
    Eo_Ret_Def *ret;
@@ -90,7 +90,7 @@ typedef struct _eo_accessor_def
 
 /* PROPERTY */
 
-typedef struct _eo_property_def
+typedef struct _Eo_Property_Def
 {
    Eina_Stringshare *name;
    Eina_List *keys;
@@ -101,13 +101,13 @@ typedef struct _eo_property_def
 
 /* METHOD */
 
-typedef enum _eo_method_type {
+typedef enum _Eo_Method_Type {
      METH_REGULAR,
      METH_CONSTRUCTOR,
      METH_TYPE_LAST
 } Eo_Method_Type;
 
-typedef struct _eo_method_def
+typedef struct _Eo_Method_Def
 {
    Eo_Ret_Def *ret;
    Eo_Method_Type type;
@@ -121,7 +121,7 @@ typedef struct _eo_method_def
 
 /* SIGNAL */
 
-typedef struct _eo_event_def
+typedef struct _Eo_Event_Def
 {
    Eina_Stringshare *name;
    Eina_Stringshare *type;
@@ -130,14 +130,14 @@ typedef struct _eo_event_def
 
 /* IMPLEMENT */
 
-typedef struct _eo_implement_def
+typedef struct _Eo_Implement_Def
 {
    Eina_Stringshare *meth_name;
 } Eo_Implement_Def;
 
 /* CLASS */
 
-typedef struct _eo_class_def
+typedef struct _Eo_Class_Def
 {
    Eina_Stringshare *name;
    Eolian_Class_Type type;
@@ -155,7 +155,7 @@ typedef struct _eo_class_def
 
 /* TYPE */
 
-typedef struct _eo_typedef_def
+typedef struct _Eo_Typedef_Def
 {
    Eina_Stringshare *alias;
    Eo_Type_Def *type;

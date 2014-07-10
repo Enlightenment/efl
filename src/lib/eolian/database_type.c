@@ -14,7 +14,7 @@ database_type_add(const char *alias, Eolian_Type *type)
 {
    if (_types)
      {
-        Type_Desc *desc = calloc(1, sizeof(*desc));
+        Eolian_Typedef *desc = calloc(1, sizeof(*desc));
         desc->alias = eina_stringshare_add(alias);
         desc->type = type;
         eina_hash_set(_types, desc->alias, desc);
@@ -58,7 +58,7 @@ static Eina_Bool
 _stype_field_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
                 void *fdata)
 {
-   database_type_to_str((Eolian_Type*)((_Struct_Field_Type*)data)->type,
+   database_type_to_str((Eolian_Type*)((Eolian_Struct_Field*)data)->type,
                         (Eina_Strbuf*)fdata, (const char*)key);
    eina_strbuf_append((Eina_Strbuf*)fdata, "; ");
    return EINA_TRUE;

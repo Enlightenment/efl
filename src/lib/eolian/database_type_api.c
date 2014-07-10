@@ -7,7 +7,7 @@ eolian_type_find_by_alias(const char *alias)
 {
    if (!_types) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Type_Desc *cl = eina_hash_find(_types, shr);
+   Eolian_Typedef *cl = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
    return cl?cl->type:NULL;
 }
@@ -62,7 +62,7 @@ eolian_type_struct_field_names_list_get(const Eolian_Type *tp)
 EAPI const Eolian_Type *
 eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
 {
-   _Struct_Field_Type *sf = NULL;
+   Eolian_Struct_Field *sf = NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
@@ -74,7 +74,7 @@ eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
 EAPI Eina_Stringshare *
 eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field)
 {
-   _Struct_Field_Type *sf = NULL;
+   Eolian_Struct_Field *sf = NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);

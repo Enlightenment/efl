@@ -70,12 +70,6 @@ struct _Eolian_Class
    Eina_Bool class_dtor_enable:1;
 };
 
-typedef struct
-{
-   Eina_Stringshare *alias;
-   Eolian_Type *type;
-} Type_Desc;
-
 struct _Eolian_Function
 {
    Eina_Stringshare *name;
@@ -105,12 +99,6 @@ struct _Eolian_Function_Parameter
 };
 
 /* maps directly to Eo_Type_Def */
-
-typedef struct
-{
-   Eolian_Type      *type;
-   Eina_Stringshare *comment;
-} _Struct_Field_Type;
 
 struct _Eolian_Type
 {
@@ -145,6 +133,18 @@ struct _Eolian_Event
    Eina_Stringshare *type;
    Eina_Stringshare *comment;
 };
+
+typedef struct _Eolian_Typedef
+{
+   Eina_Stringshare *alias;
+   Eolian_Type *type;
+} Eolian_Typedef;
+
+typedef struct _Eolian_Struct_Field
+{
+   Eolian_Type      *type;
+   Eina_Stringshare *comment;
+} Eolian_Struct_Field;
 
 int database_init();
 int database_shutdown();
