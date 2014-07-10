@@ -3,10 +3,23 @@
 #include "eo_definitions.h"
 
 void
-database_type_del(Eolian_Type *type)
+database_type_del(Eolian_Type *tp)
 {
-   if (!type) return;
-   eo_definitions_type_free((Eo_Type_Def*)type);
+   if (!tp) return;
+   Eolian_Type *stp;
+   if (tp->name) eina_stringshare_del(tp->name);
+   if (tp->type == EOLIAN_TYPE_STRUCT)
+     {
+        eina_hash_free(tp->fields);
+        free(tp);
+        return;
+     }
+   /* for function types, this will map to arguments and ret_type */
+   if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
+     database_type_del(stp);
+   if (tp->base_type)
+     database_type_del(tp->base_type);
+   free(tp);
 }
 
 Eina_Bool

@@ -2,37 +2,12 @@
 #include <stdlib.h>
 
 #include "eo_definitions.h"
-
-void
-eo_definitions_struct_field_free(Eo_Struct_Field_Def *def)
-{
-   eo_definitions_type_free(def->type);
-   if (def->comment) eina_stringshare_del(def->comment);
-}
-
-void
-eo_definitions_type_free(Eo_Type_Def *tp)
-{
-   Eo_Type_Def *stp;
-   if (tp->name) eina_stringshare_del(tp->name);
-   if (tp->type == EOLIAN_TYPE_STRUCT)
-     {
-        eina_hash_free(tp->fields);
-        free(tp);
-        return;
-     }
-   /* for function types, this will map to arguments and ret_type */
-   if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
-     eo_definitions_type_free(stp);
-   if (tp->base_type)
-     eo_definitions_type_free(tp->base_type);
-   free(tp);
-}
+#include "eolian_database.h"
 
 static void
 eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
-   if (ret->type) eo_definitions_type_free(ret->type);
+   if (ret->type) database_type_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
    if (ret->dflt_ret_val) eina_stringshare_del(ret->dflt_ret_val);
    free(ret);
@@ -41,7 +16,7 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 static void
 eo_definitions_param_free(Eo_Param_Def *param)
 {
-   if (param->type) eo_definitions_type_free(param->type);
+   if (param->type) database_type_del(param->type);
    if (param->name) eina_stringshare_del(param->name);
    if (param->comment) eina_stringshare_del(param->comment);
    free(param);
@@ -144,7 +119,7 @@ eo_definitions_typedef_def_free(Eo_Typedef_Def *type)
      eina_stringshare_del(type->alias);
 
    if (type->type)
-     eo_definitions_type_free(type->type);
+     database_type_del(type->type);
 
    free(type);
 }
@@ -195,7 +170,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
    Eo_Param_Def *par;
-   Eo_Type_Def *tp;
+   Eolian_Type *tp;
    const char *s;
 
    EINA_LIST_FREE(tmp->str_bufs, buf)
@@ -217,7 +192,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
      eo_definitions_typedef_def_free(tmp->typedef_def);
 
    EINA_LIST_FREE(tmp->type_defs, tp)
-     eo_definitions_type_free(tp);
+     database_type_del(tp);
 
    if (tmp->prop)
      eo_definitions_property_def_free(tmp->prop);

@@ -4,42 +4,11 @@
 #include <Eina.h>
 #include <Eolian.h>
 
-/* TYPE */
-
-typedef struct _Eo_Type_Def Eo_Type_Def;
-struct _Eo_Type_Def
-{
-   Eina_Stringshare  *name;
-   Eolian_Type_Type   type;
-   union {
-      struct {
-         Eina_List   *subtypes;
-         Eo_Type_Def *base_type;
-      };
-      struct {
-         Eina_List   *arguments;
-         Eo_Type_Def *ret_type;
-      };
-      struct {
-         Eina_Hash        *fields;
-         Eina_Stringshare *comment;
-      };
-   };
-   Eina_Bool is_const  :1;
-   Eina_Bool is_own    :1;
-};
-
-typedef struct _Eo_Struct_Field_Def
-{
-   Eo_Type_Def *type;
-   Eina_Stringshare *comment;
-} Eo_Struct_Field_Def;
-
 /* RET */
 
 typedef struct _Eo_Ret_Def
 {
-   Eo_Type_Def *type;
+   Eolian_Type *type;
    Eina_Stringshare *comment;
    Eina_Stringshare *dflt_ret_val;
    Eina_Bool warn_unused:1;
@@ -58,7 +27,7 @@ typedef enum _Param_Way
 typedef struct _Eo_Param_Def
 {
    Param_Way way;
-   Eo_Type_Def *type;
+   Eolian_Type *type;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eina_Bool nonull:1;
@@ -158,7 +127,7 @@ typedef struct _Eo_Class_Def
 typedef struct _Eo_Typedef_Def
 {
    Eina_Stringshare *alias;
-   Eo_Type_Def *type;
+   Eolian_Type *type;
 } Eo_Typedef_Def;
 
 /* TEMPS */
@@ -182,8 +151,6 @@ typedef struct _Eo_Lexer_Temps
    Eo_Implement_Def *impl;
 } Eo_Lexer_Temps;
 
-void eo_definitions_struct_field_free(Eo_Struct_Field_Def *def);
-void eo_definitions_type_free(Eo_Type_Def *tp);
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 void eo_definitions_typedef_def_free(Eo_Typedef_Def *type);
 void eo_definitions_temps_free(Eo_Lexer_Temps *tmp);

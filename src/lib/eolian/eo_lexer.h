@@ -67,7 +67,7 @@ typedef struct _Eo_Node
       void           *def;
       Eo_Class_Def   *def_class;
       Eo_Typedef_Def *def_typedef;
-      Eo_Type_Def    *def_struct;
+      Eolian_Type    *def_struct;
    };
 } Eo_Node;
 
