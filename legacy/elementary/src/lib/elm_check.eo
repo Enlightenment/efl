@@ -1,4 +1,4 @@
-class Elm_Check (Elm_Layout)
+class Elm_Check (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_check;
    properties {
@@ -59,6 +59,7 @@ class Elm_Check (Elm_Layout)
       Elm_Layout.content_aliases.get;
       Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Accessible.state_set.get;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;

@@ -12,6 +12,9 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_CHECK_CLASS
 
 #define MY_CLASS_NAME "Elm_Check"
@@ -432,6 +435,12 @@ EOLIAN static Eina_Bool
 _elm_check_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+EOLIAN const Elm_Action *
+_elm_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED)
+{
+   return &key_actions[0];
 }
 
 static void
