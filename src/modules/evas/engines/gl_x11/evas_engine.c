@@ -76,8 +76,6 @@ _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
-void          *(*glsym_eglMapImageSEC)         (void *a, void *b, int c, int d) = NULL;
-unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b, int c) = NULL;
 unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 
 #else
@@ -617,9 +615,6 @@ gl_symbols(void)
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
-
-   FINDSYM(glsym_eglMapImageSEC, "eglMapImageSEC", glsym_func_void_ptr);
-   FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
 
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", glsym_func_uint);
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", glsym_func_uint);
@@ -2207,7 +2202,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
              if (err) *err = EVAS_LOAD_ERROR_NONE;
              return im;
           }
-        *image_data = im->tex->pt->dyn.data = glsym_eglMapImageSEC(re->generic.ob->egl_disp, 
+        *image_data = im->tex->pt->dyn.data = secsym_eglMapImageSEC(re->generic.ob->egl_disp, 
                                                                    im->tex->pt->dyn.img, 
                                                                    EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC, 
                                                                    EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
@@ -2327,7 +2322,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
                  im->tex->pt->dyn.checked_out--;
 #ifdef GL_GLES
                  if (im->tex->pt->dyn.checked_out == 0)
-                   glsym_eglUnmapImageSEC(re->generic.ob->egl_disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
+                   secsym_eglUnmapImageSEC(re->generic.ob->egl_disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
 #endif
                }
 
