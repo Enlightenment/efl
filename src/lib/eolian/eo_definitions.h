@@ -18,17 +18,9 @@ typedef struct _Eo_Ret_Def
 
 /* PARAM */
 
-typedef enum _Param_Way
-{
-   PARAM_IN,
-   PARAM_OUT,
-   PARAM_INOUT,
-   PARAM_WAY_LAST
-} Param_Way;
-
 typedef struct _Eo_Param_Def
 {
-   Param_Way way;
+   Eolian_Parameter_Dir way;
    Eolian_Type *type;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
@@ -40,8 +32,7 @@ typedef struct _Eo_Param_Def
 typedef enum _Eo_Accessor_Type
 {
    SETTER,
-   GETTER,
-   ACCESSOR_TYPE_LAST
+   GETTER
 } Eo_Accessor_Type;
 
 typedef struct _Eo_Accessor_Param

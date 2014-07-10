@@ -436,23 +436,23 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
      {
         if (ls->t.kw == KW_at_in)
           {
-             par->way = PARAM_IN;
+             par->way = EOLIAN_IN_PARAM;
              eo_lexer_get(ls);
           }
         else if (ls->t.kw == KW_at_out)
           {
-             par->way = PARAM_OUT;
+             par->way = EOLIAN_OUT_PARAM;
              eo_lexer_get(ls);
           }
         else if (ls->t.kw == KW_at_inout)
           {
-             par->way = PARAM_INOUT;
+             par->way = EOLIAN_INOUT_PARAM;
              eo_lexer_get(ls);
           }
         else
-           par->way = PARAM_IN;
+           par->way = EOLIAN_IN_PARAM;
      }
-   if (par->way == PARAM_OUT)
+   if (par->way == EOLIAN_OUT_PARAM)
      par->type = parse_type_void(ls);
    else
      par->type = parse_type(ls);
@@ -1054,8 +1054,8 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
      parse_unit(ls, eot);
 }
 
-static char *_accessor_type_str[ACCESSOR_TYPE_LAST] = { "setter", "getter"   };
-static char *    _param_way_str[    PARAM_WAY_LAST] = { "IN", "OUT", "INOUT" };
+static char *_accessor_type_str[2] = { "setter", "getter"   };
+static char *    _param_way_str[3] = { "IN", "OUT", "INOUT" };
 
 static void
 _dump_class(Eo_Class_Def *kls)
