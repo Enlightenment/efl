@@ -351,3 +351,20 @@ ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h)
    if (w) *w = (int)pt.width;
    if (h) *h = (int)pt.height;
 }
+
+EAPI int
+ecore_cocoa_titlebar_height_get(void)
+{
+   static int height = -1;
+
+   if (height == -1)
+     {
+        NSRect frame = NSMakeRect(0, 0, 100, 100);
+        NSRect contentRect;
+        contentRect = [NSWindow contentRectForFrameRect:frame
+                                              styleMask:NSTitledWindowMask];
+        height = (frame.size.height - contentRect.size.height);
+     }
+   return height;
+}
+

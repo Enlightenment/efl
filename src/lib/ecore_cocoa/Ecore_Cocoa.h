@@ -148,6 +148,8 @@ EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
 EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
 				      void *view);
 
+EAPI int ecore_cocoa_titlebar_height_get(void);
+
 
 #ifdef __cplusplus
 }

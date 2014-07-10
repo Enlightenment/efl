@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <Ecore.h>
+#include <Ecore_Cocoa.h>
 #import "ecore_cocoa_window.h"
 
 @implementation EcoreCocoaWindow
@@ -38,10 +40,28 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-	NSLog(@"window is going to be closed");
+   NSLog(@"window is going to be closed");
+}
+
+- (void)windowDidResize:(NSNotification *)notif
+{
+   Ecore_Cocoa_Event_Video_Resize *event;
+   NSSize size = self.frame.size;
+
+   event = malloc(sizeof(Ecore_Cocoa_Event_Video_Resize));
+   if (event == NULL)
+     {
+        // FIXME Use Eina_Log
+        printf("Failed to allocate Ecore_Cocoa_Event_Video_Resize\n");
+        return;
+     }
+   event->w = size.width;
+   event->h = size.height - ecore_cocoa_titlebar_height_get();
+   ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
 }
 
 @end
+
 
 #include "Ecore_Cocoa.h"
 #include "ecore_cocoa_private.h"
@@ -126,13 +146,10 @@ ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
 			  int                 width,
 			  int                 height)
 {
-  if (!window)
-    return;
+  if (!window) return;
 
   NSRect win_frame;
 
-  if (!window)
-    return;
 
   win_frame = [window->window frame];
   win_frame.size.height = height + _title_bar_height();
@@ -204,7 +221,7 @@ ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
 
   if (on)
     [window->window setContentBorderThickness:0.0
-	    forEdje:NSMinXEdge | NSMinYEdge | NSMaxXEdge | NSMaxYEdge];
+	    forEdge:NSMinXEdge | NSMinYEdge | NSMaxXEdge | NSMaxYEdge];
 }
 
 void
