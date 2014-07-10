@@ -90,15 +90,6 @@ typedef struct _Eo_Method_Def
    int scope;
 } Eo_Method_Def;
 
-/* SIGNAL */
-
-typedef struct _Eo_Event_Def
-{
-   Eina_Stringshare *name;
-   Eina_Stringshare *type;
-   Eina_Stringshare *comment;
-} Eo_Event_Def;
-
 /* CLASS */
 
 typedef struct _Eo_Class_Def
@@ -134,7 +125,7 @@ typedef struct _Eo_Lexer_Temps
    Eo_Accessor_Def *accessor;
    Eo_Accessor_Param *accessor_param;
    Eina_List *str_items;
-   Eo_Event_Def *event;
+   Eolian_Event *event;
    Eolian_Implement *impl;
 } Eo_Lexer_Temps;
 

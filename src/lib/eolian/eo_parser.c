@@ -797,7 +797,7 @@ end:
 static void
 parse_event(Eo_Lexer *ls)
 {
-   Eo_Event_Def *ev = calloc(1, sizeof(Eo_Event_Def));
+   Eolian_Event *ev = calloc(1, sizeof(Eolian_Event));
    ls->tmp.event = ev;
    /* code path not in use yet
    if (ls->t.kw == KW_private)
@@ -1069,7 +1069,7 @@ _dump_class(Eo_Class_Def *kls)
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
-   Eo_Event_Def *sgn;
+   Eolian_Event *sgn;
    Eolian_Implement *impl;
 
    printf("Class: %s (%s)\n",
@@ -1207,7 +1207,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
-   Eo_Event_Def *event;
+   Eolian_Event *event;
    Eolian_Implement *impl;
 
    Eolian_Class *class = database_class_add(kls->name, kls->type);
@@ -1388,8 +1388,8 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 
    EINA_LIST_FOREACH(kls->events, l, event)
      {
-        Eolian_Event *ev = database_event_new(event->name, event->type, event->comment);
-        database_class_event_add(class, ev);
+        database_class_event_add(class, event);
+        eina_list_data_set(l, NULL); /* prevent double free */
      }
 
    return EINA_TRUE;

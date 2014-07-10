@@ -89,26 +89,13 @@ eo_definitions_method_def_free(Eo_Method_Def *meth)
    free(meth);
 }
 
-static void
-eo_definitions_event_def_free(Eo_Event_Def *sgn)
-{
-   if (sgn->name)
-     eina_stringshare_del(sgn->name);
-   if (sgn->type)
-     eina_stringshare_del(sgn->type);
-   if (sgn->comment)
-     eina_stringshare_del(sgn->comment);
-
-   free(sgn);
-}
-
 void
 eo_definitions_class_def_free(Eo_Class_Def *kls)
 {
    const char *s;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
-   Eo_Event_Def *sgn;
+   Eolian_Event *sgn;
    Eolian_Implement *impl;
 
    if (kls->name)
@@ -138,7 +125,7 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
      eo_definitions_method_def_free(meth);
 
    EINA_LIST_FREE(kls->events, sgn)
-     eo_definitions_event_def_free(sgn);
+     database_event_del(sgn);
 
    free(kls);
 }
@@ -191,7 +178,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
      if (s) eina_stringshare_del(s);
 
    if (tmp->event)
-     eo_definitions_event_def_free(tmp->event);
+     database_event_del(tmp->event);
 
    if (tmp->impl)
      database_implement_del(tmp->impl);
