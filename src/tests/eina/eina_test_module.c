@@ -63,8 +63,25 @@ START_TEST(eina_module_load_unload)
 }
 END_TEST
 
+START_TEST(eina_module_find_test)
+{
+   Eina_Array *_modules;
+
+   eina_init();
+   _modules = eina_module_list_get(NULL,
+                                   PACKAGE_BUILD_DIR "/src/tests/",
+                                   EINA_TRUE,
+                                   &list_cb,
+                                   NULL);
+   fail_if(!_modules);
+   fail_if(eina_module_find(_modules, NULL) != NULL);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_module(TCase *tc)
 {
    tcase_add_test(tc, eina_module_load_unload);
+   tcase_add_test(tc, eina_module_find_test);
 }
