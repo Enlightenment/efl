@@ -99,13 +99,6 @@ typedef struct _Eo_Event_Def
    Eina_Stringshare *comment;
 } Eo_Event_Def;
 
-/* IMPLEMENT */
-
-typedef struct _Eo_Implement_Def
-{
-   Eina_Stringshare *meth_name;
-} Eo_Implement_Def;
-
 /* CLASS */
 
 typedef struct _Eo_Class_Def
@@ -142,7 +135,7 @@ typedef struct _Eo_Lexer_Temps
    Eo_Accessor_Param *accessor_param;
    Eina_List *str_items;
    Eo_Event_Def *event;
-   Eo_Implement_Def *impl;
+   Eolian_Implement *impl;
 } Eo_Lexer_Temps;
 
 void eo_definitions_class_def_free(Eo_Class_Def *kls);

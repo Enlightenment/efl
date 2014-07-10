@@ -705,9 +705,9 @@ static void
 parse_implement(Eo_Lexer *ls, Eina_Bool iface)
 {
    Eina_Strbuf *buf = NULL;
-   Eo_Implement_Def *impl = NULL;
+   Eolian_Implement *impl = NULL;
    buf = push_strbuf(ls);
-   impl = calloc(1, sizeof(Eo_Implement_Def));
+   impl = calloc(1, sizeof(Eolian_Implement));
    ls->tmp.impl = impl;
    if (iface)
      check_kw(ls, KW_class);
@@ -727,7 +727,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
              eina_strbuf_append(buf, "constructor");
           }
         check_next(ls, ';');
-        impl->meth_name = eina_stringshare_add(eina_strbuf_string_get(buf));
+        impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
         pop_strbuf(ls);
         return;
      }
@@ -755,7 +755,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
                }
           }
         check_next(ls, ';');
-        impl->meth_name = eina_stringshare_add(eina_strbuf_string_get(buf));
+        impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
         pop_strbuf(ls);
         return;
      }
@@ -790,7 +790,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
      }
 end:
    check_next(ls, ';');
-   impl->meth_name = eina_stringshare_add(eina_strbuf_string_get(buf));
+   impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
 }
 
@@ -1070,7 +1070,7 @@ _dump_class(Eo_Class_Def *kls)
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
    Eo_Event_Def *sgn;
-   Eo_Implement_Def *impl;
+   Eolian_Implement *impl;
 
    printf("Class: %s (%s)\n",
           kls->name, (kls->comment ? kls->comment : "-"));
@@ -1080,7 +1080,7 @@ _dump_class(Eo_Class_Def *kls)
    printf("\n");
    printf("  implements:");
    EINA_LIST_FOREACH(kls->implements, l, impl)
-      printf(" %s", impl->meth_name);
+      printf(" %s", impl->full_name);
    printf("\n");
    printf("  events:\n");
    EINA_LIST_FOREACH(kls->events, l, sgn)
@@ -1208,7 +1208,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
    Eo_Event_Def *event;
-   Eo_Implement_Def *impl;
+   Eolian_Implement *impl;
 
    Eolian_Class *class = database_class_add(kls->name, kls->type);
    Eina_Bool is_iface = (kls->type == EOLIAN_CLASS_INTERFACE);
@@ -1345,7 +1345,7 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 
    EINA_LIST_FOREACH(kls->implements, l, impl)
      {
-        const char *impl_name = impl->meth_name;
+        const char *impl_name = impl->full_name;
         if (!strcmp(impl_name, "class.constructor"))
           {
              database_class_ctor_enable_set(class, EINA_TRUE);
@@ -1382,8 +1382,8 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
              database_function_set_as_virtual_pure(foo_id, ftype);
              continue;
           }
-        Eolian_Implement *impl_desc = database_implement_new(impl_name);
-        database_class_implement_add(class, impl_desc);
+        database_class_implement_add(class, impl);
+        eina_list_data_set(l, NULL); /* prevent double free */
      }
 
    EINA_LIST_FOREACH(kls->events, l, event)

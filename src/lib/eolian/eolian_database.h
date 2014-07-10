@@ -211,7 +211,7 @@ void database_parameter_nonull_set(Eolian_Function_Parameter *param, Eina_Bool n
 
 /* implements */
 
-Eolian_Implement *database_implement_new(const char *impl_name);
+void database_implement_del(Eolian_Implement *impl);
 
 /* events */
 
