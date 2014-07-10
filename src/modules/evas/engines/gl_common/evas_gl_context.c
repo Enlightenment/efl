@@ -2353,15 +2353,16 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
-   tx1 = (sx) / (double)tex->pt->w;
-   ty1 = (sy) / (double)tex->pt->h;
-   tx2 = (sx + sw) / (double)tex->pt->w;
-   ty2 = (sy + sh) / (double)tex->pt->h;
+   // FIXME: pt and pta could have different x,y
+   tx1 = (tex->x + sx) / (double)tex->pt->w;
+   ty1 = (tex->y + sy) / (double)tex->pt->h;
+   tx2 = (tex->x + sx + sw) / (double)tex->pt->w;
+   ty2 = (tex->y + sy + sh) / (double)tex->pt->h;
 
-   t2x1 = sx / (double)tex->pta->w;
-   t2y1 = sy / (double)tex->pta->h;
-   t2x2 = (sx + sw) / (double)tex->pta->w;
-   t2y2 = (sy + sh) / (double)tex->pta->h;
+   t2x1 = (tex->x + sx) / (double)tex->pta->w;
+   t2y1 = (tex->y + sy) / (double)tex->pta->h;
+   t2x2 = (tex->x + sx + sw) / (double)tex->pta->w;
+   t2y2 = (tex->y + sy + sh) / (double)tex->pta->h;
 
    PUSH_VERTEX(pn, x    , y    , 0);
    PUSH_VERTEX(pn, x + w, y    , 0);

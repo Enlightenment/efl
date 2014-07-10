@@ -1488,6 +1488,11 @@ evas_gl_common_texture_rgb_a_pair_new(Evas_Engine_GL_Context *gc,
    tex = evas_gl_common_texture_alloc(gc, w, h, EINA_TRUE);
    if (!tex) return NULL;
 
+   w += im->cache_entry.borders.l + im->cache_entry.borders.r;
+   h += im->cache_entry.borders.t + im->cache_entry.borders.b;
+   tex->x = im->cache_entry.borders.l;
+   tex->y = im->cache_entry.borders.t;
+
    // Allocate RGB texture normally - as a 'whole'
    tex->pt = _pool_tex_new(gc, w, h,
                            *matching_format[lformat].intformat,
