@@ -7688,7 +7688,7 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
 
    /* add to tween list */
    tmp = realloc(img->image.tweens,
-		 sizeof (Edje_Part_Image_Id*) * img->image.tweens_count);
+                 sizeof(Edje_Part_Image_Id *) * (img->image.tweens_count + 1));
    if (!tmp)
      {
 	free(i);
