@@ -264,4 +264,7 @@ database_class_event_add(Eolian_Class *class, Eolian_Event *event_desc);
 void
 database_type_print(Eolian_Type *type);
 
+void
+database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
+
 #endif
