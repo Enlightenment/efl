@@ -15,7 +15,14 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/eo_parser.h \
                                   lib/eolian/eolian.c \
                                   lib/eolian/eolian_database.c \
-                                  lib/eolian/eolian_database.h
+                                  lib/eolian/eolian_database.h \
+                                  lib/eolian/database_class.c \
+                                  lib/eolian/database_function.c \
+                                  lib/eolian/database_function_parameter.c \
+                                  lib/eolian/database_type.c \
+                                  lib/eolian/database_implement.c \
+                                  lib/eolian/database_event.c \
+                                  lib/eolian/database_print.c
 
 lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@ \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/eolian\"

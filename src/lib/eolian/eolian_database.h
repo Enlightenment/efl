@@ -31,6 +31,121 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
+#define PROP_GET_RETURN_DFLT_VAL "property_get_return_dflt_val"
+#define PROP_SET_RETURN_DFLT_VAL "property_set_return_dflt_val"
+#define METHOD_RETURN_DFLT_VAL "method_return_dflt_val"
+
+#define EOLIAN_METHOD_RETURN_TYPE "method_return_type"
+#define EOLIAN_PROP_GET_RETURN_TYPE "property_get_return_type"
+#define EOLIAN_PROP_SET_RETURN_TYPE "property_set_return_type"
+
+#define EOLIAN_METHOD_RETURN_COMMENT "method_return_comment"
+#define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
+#define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
+
+extern Eina_List *_classes;
+extern Eina_Hash *_types;
+extern Eina_Hash *_structs;
+extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
+extern Eina_Hash *_tfilenames;
+
+struct _Eolian_Class
+{
+   Eina_Stringshare *full_name;
+   Eina_List *namespaces; /* List Eina_Stringshare * */
+   Eina_Stringshare *name;
+   Eina_Stringshare *file;
+   Eolian_Class_Type type;
+   Eina_Stringshare *description;
+   Eina_Stringshare *legacy_prefix;
+   Eina_Stringshare *eo_prefix;
+   Eina_Stringshare *data_type;
+   Eina_List *inherits; /* List Eina_Stringshare * */
+   Eina_List *properties; /* List prop_name -> Eolian_Function */
+   Eina_List *methods; /* List meth_name -> Eolian_Function */
+   Eina_List *constructors; /* List constructor_name -> Eolian_Function */
+   Eina_List *implements; /* List implements name -> Eolian_Implement */
+   Eina_List *events; /* List event_name -> Eolian_Event */
+   Eina_Bool class_ctor_enable:1;
+   Eina_Bool class_dtor_enable:1;
+};
+
+typedef struct
+{
+   Eina_Stringshare *alias;
+   Eolian_Type *type;
+} Type_Desc;
+
+struct _Eolian_Function
+{
+   Eina_Stringshare *name;
+   Eina_List *keys; /* list of Eolian_Function_Parameter */
+   Eina_List *params; /* list of Eolian_Function_Parameter */
+   Eolian_Function_Type type;
+   Eolian_Function_Scope scope;
+   Eolian_Type *get_ret_type;
+   Eolian_Type *set_ret_type;
+   Eina_Hash *data;
+   Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
+   Eina_Bool get_virtual_pure :1;
+   Eina_Bool set_virtual_pure :1;
+   Eina_Bool get_return_warn_unused :1; /* also used for methods */
+   Eina_Bool set_return_warn_unused :1;
+};
+
+struct _Eolian_Function_Parameter
+{
+   Eina_Stringshare *name;
+   Eolian_Type *type;
+   Eina_Stringshare *description;
+   Eolian_Parameter_Dir param_dir;
+   Eina_Bool is_const_on_get :1; /* True if const in this the get property */
+   Eina_Bool is_const_on_set :1; /* True if const in this the set property */
+   Eina_Bool nonull :1; /* True if this argument cannot be NULL */
+};
+
+/* maps directly to Eo_Type_Def */
+
+typedef struct
+{
+   Eolian_Type *type;
+   const char *comment;
+} _Struct_Field_Type;
+
+struct _Eolian_Type
+{
+   const char        *name;
+   Eolian_Type_Type   type;
+   union {
+      struct {
+         Eina_List   *subtypes;
+         Eolian_Type *base_type;
+      };
+      struct {
+         Eina_List   *arguments;
+         Eolian_Type *ret_type;
+      };
+      struct {
+         Eina_Hash  *fields;
+         const char *comment;
+      };
+   };
+   Eina_Bool is_const  :1;
+   Eina_Bool is_own    :1;
+};
+
+struct _Eolian_Implement
+{
+   Eina_Stringshare *full_name;
+};
+
+struct _Eolian_Event
+{
+   Eina_Stringshare *name;
+   Eina_Stringshare *type;
+   Eina_Stringshare *comment;
+};
+
 int database_init();
 int database_shutdown();
 
@@ -40,12 +155,17 @@ Eina_Bool database_type_add(const char *alias, Eolian_Type *type);
 /* Add a struct in the database */
 Eina_Bool database_struct_add(Eolian_Type *type);
 
+Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **class);
+
 /* Add a class in the database */
 Eolian_Class *database_class_add(const char *class_name, Eolian_Class_Type type);
 
 /* Add a class from the database */
-Eina_Bool
-database_class_del(Eolian_Class *class);
+void database_class_del(Eolian_Class *class);
+
+Eolian_Function_Parameter *database_parameter_add(Eolian_Type *type, const char *name, const char *description);
+
+void database_parameter_del(Eolian_Function_Parameter *pdesc);
 
 /* Add an inherit class name to a class */
 Eina_Bool database_class_inherit_add(Eolian_Class *class, const char *inherit_class_name);
@@ -72,6 +192,8 @@ database_class_file_set(Eolian_Class *class, const char *file_name);
 
 /* Create a function */
 Eolian_Function *database_function_new(const char *function_name, Eolian_Function_Type foo_type);
+
+void database_function_del(Eolian_Function *fid);
 
 /* Set a type to a function */
 void database_function_type_set(Eolian_Function *function_id, Eolian_Function_Type foo_type);
