@@ -31,7 +31,7 @@ static int throttle_val = 0;
  * before it goes into a fully idle state waiting for events, input or
  * timing events to wake it up. For example, if the current throttle level
  * is 0.5, then after every time the main loop cycles and goes into idle
- * affter processing all events, the main loop will explicitly sleep for 0.5
+ * after processing all events, the main loop will explicitly sleep for 0.5
  * seconds before sitting and waiting for incoming events or timeouts, thus
  * preventing animation, async IO and network handling etc. for that period
  * of time. Of course these events, data and timeouts will be buffered,
