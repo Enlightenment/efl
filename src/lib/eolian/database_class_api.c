@@ -1,19 +1,19 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_class_file_get(const Eolian_Class *cl)
 {
    return cl ? cl->file : NULL;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_class_full_name_get(const Eolian_Class *cl)
 {
    return cl ? cl->full_name : NULL;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_class_name_get(const Eolian_Class *cl)
 {
    return cl ? cl->name : NULL;
@@ -66,28 +66,28 @@ eolian_all_classes_list_get(void)
    return _classes;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_class_description_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->description;
 }
 
-EAPI const char*
+EAPI Eina_Stringshare*
 eolian_class_legacy_prefix_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->legacy_prefix;
 }
 
-EAPI const char*
+EAPI Eina_Stringshare*
 eolian_class_eo_prefix_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return cl->eo_prefix;
 }
 
-EAPI const char*
+EAPI Eina_Stringshare*
 eolian_class_data_type_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);

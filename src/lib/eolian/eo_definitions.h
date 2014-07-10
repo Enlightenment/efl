@@ -9,7 +9,7 @@
 typedef struct _eo_type_def Eo_Type_Def;
 struct _eo_type_def
 {
-   const char        *name;
+   Eina_Stringshare  *name;
    Eolian_Type_Type   type;
    union {
       struct {
@@ -21,8 +21,8 @@ struct _eo_type_def
          Eo_Type_Def *ret_type;
       };
       struct {
-         Eina_Hash  *fields;
-         const char *comment;
+         Eina_Hash        *fields;
+         Eina_Stringshare *comment;
       };
    };
    Eina_Bool is_const  :1;
@@ -32,7 +32,7 @@ struct _eo_type_def
 typedef struct _eo_struct_field_def
 {
    Eo_Type_Def *type;
-   const char *comment;
+   Eina_Stringshare *comment;
 } Eo_Struct_Field_Def;
 
 /* RET */
@@ -40,8 +40,8 @@ typedef struct _eo_struct_field_def
 typedef struct _eo_ret_def
 {
    Eo_Type_Def *type;
-   const char *comment;
-   const char *dflt_ret_val;
+   Eina_Stringshare *comment;
+   Eina_Stringshare *dflt_ret_val;
    Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
 
@@ -59,8 +59,8 @@ typedef struct _eo_param_def
 {
    Param_Way way;
    Eo_Type_Def *type;
-   const char *name;
-   const char *comment;
+   Eina_Stringshare *name;
+   Eina_Stringshare *comment;
    Eina_Bool nonull:1;
 } Eo_Param_Def;
 
@@ -75,7 +75,7 @@ typedef enum _eo_accessor_type
 
 typedef struct _eo_accessor_param
 {
-   const char *name;
+   Eina_Stringshare *name;
    Eina_Bool is_const:1;
 } Eo_Accessor_Param;
 
@@ -83,8 +83,8 @@ typedef struct _eo_accessor_def
 {
    Eo_Accessor_Type type;
    Eo_Ret_Def *ret;
-   const char *comment;
-   const char* legacy;
+   Eina_Stringshare *comment;
+   Eina_Stringshare* legacy;
    Eina_List *params; /* List of Eo_Accessor_Param */
 } Eo_Accessor_Def;
 
@@ -92,7 +92,7 @@ typedef struct _eo_accessor_def
 
 typedef struct _eo_property_def
 {
-   const char *name;
+   Eina_Stringshare *name;
    Eina_List *keys;
    Eina_List *values;
    Eina_List *accessors;
@@ -111,10 +111,10 @@ typedef struct _eo_method_def
 {
    Eo_Ret_Def *ret;
    Eo_Method_Type type;
-   const char *name;
-   const char *comment;
+   Eina_Stringshare *name;
+   Eina_Stringshare *comment;
    Eina_List *params;
-   const char* legacy;
+   Eina_Stringshare *legacy;
    Eina_Bool obj_const;
    int scope;
 } Eo_Method_Def;
@@ -123,28 +123,28 @@ typedef struct _eo_method_def
 
 typedef struct _eo_event_def
 {
-   const char *name;
-   const char *type;
-   const char *comment;
+   Eina_Stringshare *name;
+   Eina_Stringshare *type;
+   Eina_Stringshare *comment;
 } Eo_Event_Def;
 
 /* IMPLEMENT */
 
 typedef struct _eo_implement_def
 {
-   const char *meth_name;
+   Eina_Stringshare *meth_name;
 } Eo_Implement_Def;
 
 /* CLASS */
 
 typedef struct _eo_class_def
 {
-   const char *name;
+   Eina_Stringshare *name;
    Eolian_Class_Type type;
-   const char *comment;
-   const char *legacy_prefix;
-   const char *eo_prefix;
-   const char *data_type;
+   Eina_Stringshare *comment;
+   Eina_Stringshare *legacy_prefix;
+   Eina_Stringshare *eo_prefix;
+   Eina_Stringshare *data_type;
    Eina_List *inherits;
    Eina_List *implements;
    Eina_List *events;
@@ -157,7 +157,7 @@ typedef struct _eo_class_def
 
 typedef struct _eo_typedef_def
 {
-   const char *alias;
+   Eina_Stringshare *alias;
    Eo_Type_Def *type;
 } Eo_Typedef_Def;
 
@@ -167,7 +167,7 @@ typedef struct _Eo_Lexer_Temps
 {
    Eina_List *str_bufs;
    Eina_List *params;
-   const char *legacy_def;
+   Eina_Stringshare *legacy_def;
    Eo_Class_Def *kls;
    Eo_Ret_Def *ret_def;
    Eo_Typedef_Def *typedef_def;

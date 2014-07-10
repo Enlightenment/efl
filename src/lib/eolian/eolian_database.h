@@ -108,13 +108,13 @@ struct _Eolian_Function_Parameter
 
 typedef struct
 {
-   Eolian_Type *type;
-   const char *comment;
+   Eolian_Type      *type;
+   Eina_Stringshare *comment;
 } _Struct_Field_Type;
 
 struct _Eolian_Type
 {
-   const char        *name;
+   Eina_Stringshare  *name;
    Eolian_Type_Type   type;
    union {
       struct {
@@ -126,8 +126,8 @@ struct _Eolian_Type
          Eolian_Type *ret_type;
       };
       struct {
-         Eina_Hash  *fields;
-         const char *comment;
+         Eina_Hash        *fields;
+         Eina_Stringshare *comment;
       };
    };
    Eina_Bool is_const  :1;

@@ -234,8 +234,7 @@ EAPI Eina_Bool eolian_show(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *
-eolian_class_find_by_name(const char *class_name);
+EAPI const Eolian_Class *eolian_class_find_by_name(const char *class_name);
 
 /*
  * @brief Finds a class by its location (.eo file)
@@ -245,8 +244,7 @@ eolian_class_find_by_name(const char *class_name);
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *
-eolian_class_find_by_file(const char *file_name);
+EAPI const Eolian_Class *eolian_class_find_by_file(const char *file_name);
 
 /*
  * @brief Returns the name of the file containing the given class.
@@ -256,8 +254,7 @@ eolian_class_find_by_file(const char *file_name);
  *
  * @ingroup Eolian
  */
-EAPI const char *
-eolian_class_file_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_file_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the full name of the given class.
@@ -270,8 +267,7 @@ eolian_class_file_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const char *
-eolian_class_full_name_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_full_name_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the name of the given class.
@@ -281,8 +277,7 @@ eolian_class_full_name_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const char *
-eolian_class_name_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_name_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the namespaces list of the given class.
@@ -292,8 +287,7 @@ eolian_class_name_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *
-eolian_class_namespaces_list_get(const Eolian_Class *klass);
+EAPI const Eina_List *eolian_class_namespaces_list_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the class type of the given class
@@ -322,7 +316,7 @@ EAPI const Eina_List *eolian_all_classes_list_get(void);
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_class_description_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_description_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the legacy prefix of a class
@@ -332,7 +326,7 @@ EAPI const char *eolian_class_description_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the eo prefix of a class
@@ -342,7 +336,7 @@ EAPI const char *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const char* eolian_class_eo_prefix_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare* eolian_class_eo_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the data type of a class
@@ -352,8 +346,7 @@ EAPI const char* eolian_class_eo_prefix_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI const char*
-eolian_class_data_type_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the names list of the inherit classes of a class
@@ -404,7 +397,7 @@ EAPI Eolian_Function_Scope eolian_function_scope_get(const Eolian_Function *func
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_function_name_get(const Eolian_Function *function_id);
+EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_id);
 
 /*
  * @brief Returns the full C name of a function (with prefix). It's here
@@ -417,7 +410,7 @@ EAPI const char *eolian_function_name_get(const Eolian_Function *function_id);
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
+EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
 
 /*
  * @brief Find a function in a class by its name and type
@@ -440,7 +433,7 @@ EAPI const Eolian_Function *eolian_class_function_find_by_name(const Eolian_Clas
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_function_data_get(const Eolian_Function *function_id, const char *key);
+EAPI Eina_Stringshare *eolian_function_data_get(const Eolian_Function *function_id, const char *key);
 
 /*
  * @brief Indicates if a function is virtual pure.
@@ -588,7 +581,7 @@ EAPI const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *f
  *
  * @ingroup Eolian
  */
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_function_return_dflt_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
@@ -603,8 +596,7 @@ eolian_function_return_dflt_value_get(const Eolian_Function *foo_id, Eolian_Func
  *
  * @ingroup Eolian
  */
-EAPI const char *
-eolian_function_return_comment_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+EAPI Eina_Stringshare *eolian_function_return_comment_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function return is warn-unused.
@@ -651,8 +643,7 @@ EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement *i
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl,
-      const Eolian_Class **klass, const Eolian_Function **function, Eolian_Function_Type *type);
+EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl, const Eolian_Class **klass, const Eolian_Function **function, Eolian_Function_Type *type);
 
 /*
  * @brief Get the list of overriding functions defined in a class.
@@ -792,7 +783,7 @@ EAPI const Eolian_Type *eolian_type_struct_field_get(const Eolian_Type *tp, cons
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field);
+EAPI Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field);
 
 /*
  * @brief Get the description of a struct type.
@@ -802,7 +793,7 @@ EAPI const char *eolian_type_struct_field_description_get(const Eolian_Type *tp,
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_type_struct_description_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_type_struct_description_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the return type of a function type.

@@ -71,7 +71,7 @@ eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
    return sf->type;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field)
 {
    _Struct_Field_Type *sf = NULL;
@@ -83,7 +83,7 @@ eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *fiel
    return sf->comment;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_type_struct_description_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);

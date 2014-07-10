@@ -15,14 +15,14 @@ eolian_function_type_get(const Eolian_Function *fid)
    return fid->type;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_function_name_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    return fid->name;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_function_full_c_name_get(const Eolian_Function *foo_id, const char *prefix)
 {
    const char  *funcn = eolian_function_name_get(foo_id);
@@ -68,7 +68,7 @@ eolian_function_is_virtual_pure(const Eolian_Function *fid, Eolian_Function_Type
      }
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_function_data_get(const Eolian_Function *fid, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
@@ -119,7 +119,7 @@ eolian_function_return_type_get(const Eolian_Function *fid, Eolian_Function_Type
      }
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_function_return_dflt_value_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    const char *key = NULL;
@@ -133,7 +133,7 @@ eolian_function_return_dflt_value_get(const Eolian_Function *fid, Eolian_Functio
    return eolian_function_data_get(fid, key);
 }
 
-EAPI const char *
+EAPI Eina_Stringshare *
 eolian_function_return_comment_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    const char *key = NULL;
