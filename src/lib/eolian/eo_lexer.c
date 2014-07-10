@@ -5,7 +5,6 @@
 #include <assert.h>
 
 #include "eo_lexer.h"
-#include "eolian_database.h"
 
 int _eo_lexer_log_dom = -1;
 
@@ -357,10 +356,10 @@ eo_lexer_free(Eo_Lexer *ls)
              eo_definitions_class_def_free(nd->def_class);
              break;
            case NODE_TYPEDEF:
-             eo_definitions_typedef_def_free(nd->def_typedef);
+             database_typedef_del(nd->def_typedef);
              break;
            case NODE_STRUCT:
-             if (nd->def_struct) database_type_del(nd->def_struct);
+             database_type_del(nd->def_struct);
            default:
              break;
           }

@@ -4,6 +4,8 @@
 #include <Eina.h>
 #include <Eolian.h>
 
+#include "eolian_database.h"
+
 /* RET */
 
 typedef struct _Eo_Ret_Def
@@ -122,14 +124,6 @@ typedef struct _Eo_Class_Def
    Eina_List *methods;
 } Eo_Class_Def;
 
-/* TYPE */
-
-typedef struct _Eo_Typedef_Def
-{
-   Eina_Stringshare *alias;
-   Eolian_Type *type;
-} Eo_Typedef_Def;
-
 /* TEMPS */
 
 typedef struct _Eo_Lexer_Temps
@@ -139,7 +133,7 @@ typedef struct _Eo_Lexer_Temps
    Eina_Stringshare *legacy_def;
    Eo_Class_Def *kls;
    Eo_Ret_Def *ret_def;
-   Eo_Typedef_Def *typedef_def;
+   Eolian_Typedef *typedef_def;
    Eina_List *type_defs;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
@@ -152,7 +146,6 @@ typedef struct _Eo_Lexer_Temps
 } Eo_Lexer_Temps;
 
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
-void eo_definitions_typedef_def_free(Eo_Typedef_Def *type);
 void eo_definitions_temps_free(Eo_Lexer_Temps *tmp);
 
 #endif /* __EO_DEFINITIONS_H__ */

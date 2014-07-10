@@ -1,5 +1,4 @@
 #include "eo_parser.h"
-#include "eolian_database.h"
 
 #define CASE_LOCK(ls, var, msg) \
    if (has_##var) \
@@ -384,7 +383,7 @@ parse_type_void(Eo_Lexer *ls)
 static void
 parse_typedef(Eo_Lexer *ls)
 {
-   ls->tmp.typedef_def = calloc(1, sizeof(Eo_Typedef_Def));
+   ls->tmp.typedef_def = calloc(1, sizeof(Eolian_Typedef));
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
    ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
@@ -1150,7 +1149,7 @@ _dump_class(Eo_Class_Def *kls)
 }
 
 static void
-_dump_type(Eo_Typedef_Def *type)
+_dump_type(Eolian_Typedef *type)
 {
    printf("Typedef: %s ", type->alias);
    database_type_print(type->type);
@@ -1397,11 +1396,9 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
 }
 
 static Eina_Bool
-_db_fill_type(Eo_Typedef_Def *type_def)
+_db_fill_type(Eolian_Typedef *type_def)
 {
-   Eina_Bool ret = database_type_add(type_def->alias, type_def->type);
-   type_def->type = NULL;
-   return ret;
+   return database_type_add(type_def);
 }
 
 static Eina_Bool
@@ -1458,9 +1455,13 @@ nodeloop:
                goto error;
              break;
            case NODE_TYPEDEF:
-             if (!_db_fill_type(nd->def_typedef))
-               goto error;
-             break;
+             {
+                Eolian_Typedef *def = nd->def_typedef;
+                nd->def_typedef = NULL;
+                if (!_db_fill_type(def))
+                  goto error;
+                break;
+             }
            case NODE_STRUCT:
              {
                 Eolian_Type *def = nd->def_struct;

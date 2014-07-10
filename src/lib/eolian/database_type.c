@@ -22,15 +22,21 @@ database_type_del(Eolian_Type *tp)
    free(tp);
 }
 
+void
+database_typedef_del(Eolian_Typedef *def)
+{
+   if (!def) return;
+   eina_stringshare_del(def->alias);
+   database_type_del(def->type);
+   free(def);
+}
+
 Eina_Bool
-database_type_add(const char *alias, Eolian_Type *type)
+database_type_add(Eolian_Typedef *def)
 {
    if (_types)
      {
-        Eolian_Typedef *desc = calloc(1, sizeof(*desc));
-        desc->alias = eina_stringshare_add(alias);
-        desc->type = type;
-        eina_hash_set(_types, desc->alias, desc);
+        eina_hash_set(_types, def->alias, def);
         return EINA_TRUE;
      }
    return EINA_FALSE;

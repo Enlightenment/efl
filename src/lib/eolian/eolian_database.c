@@ -10,20 +10,12 @@ Eina_Hash *_tfilenames = NULL;
 
 static int _database_init_count = 0;
 
-static void _type_hash_free_cb(void *data)
-{
-   Eolian_Typedef *type = data;
-   eina_stringshare_del(type->alias);
-   database_type_del(type->type);
-   free(type);
-}
-
 int
 database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _types = eina_hash_stringshared_new(_type_hash_free_cb);
+   _types = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
    _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
    _filenames = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);

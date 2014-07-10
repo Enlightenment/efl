@@ -151,9 +151,10 @@ int database_shutdown();
 
 /* types */
 
-Eina_Bool database_type_add(const char *alias, Eolian_Type *type);
+Eina_Bool database_type_add(Eolian_Typedef *def);
 Eina_Bool database_struct_add(Eolian_Type *type);
 void database_type_del(Eolian_Type *type);
+void database_typedef_del(Eolian_Typedef *def);
 
 void database_type_print(Eolian_Type *type);
 void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
