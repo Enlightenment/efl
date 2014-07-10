@@ -1,7 +1,9 @@
 #include "evas_engine.h"
+#include <Ecore_Drm.h>
 
 /* local structures */
 typedef struct _Render_Engine Render_Engine;
+static Ecore_Drm_Device *drm_dev = NULL;
 
 struct _Render_Engine
 {
@@ -29,8 +31,25 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* if we have no drm device, get one */
    if (info->info.fd < 0)
      {
-        /* try to init drm (this includes openening the card & tty) */
-        if (!evas_drm_init(info, 0))
+      if (!ecore_drm_init())
+        return NULL;
+
+      /* try getting the default drm device */
+      if (!(drm_dev = ecore_drm_device_find(NULL, NULL)))
+        goto on_error;
+
+      /* check if we already opened the drm device with ecore_evas */
+      if (info->info.fd < 0)
+        {
+           /* try to open the drm ourselfs (most likely because we get called from expedite) */
+           if (!ecore_drm_device_open(drm_dev))
+             goto on_error;
+           info->info.own_fd = EINA_TRUE;
+           info->info.fd = ecore_drm_device_fd_get(drm_dev);
+        }
+        /* try to init drm (this includes openening tty) */
+       /* FIXME replace with ecore_drm_tty */
+        if (!evas_drm_init(info))
           goto on_error;
      }
 
@@ -60,7 +79,16 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
  on_error:
    if (re) evas_render_engine_software_generic_clean(&re->generic);
 
-   /* shutdown drm card & tty */
+   /* check if we already opened the card. if so, close it */
+   if ((info->info.fd >= 0) && (info->info.own_fd))
+     {
+        ecore_drm_device_close(drm_dev);
+        info->info.fd = -1;
+        ecore_drm_device_free(drm_dev);
+     }
+
+   /* shutdown tty */
+   /* FIXME use ecore_drm_tty */
    evas_drm_shutdown(info);
 
    free(re);
@@ -170,6 +198,15 @@ eng_output_free(void *data)
 {
    Render_Engine *re = data;
 
+   /* check if we already opened the card. if so, close it */
+   if ((re->info->info.fd >= 0) && (re->info->info.own_fd))
+     {
+        ecore_drm_device_close(drm_dev);
+        re->info->info.fd = -1;
+        ecore_drm_device_free(drm_dev);
+     }
+
+   /* FIXME use ecore_drm_tty */
    evas_drm_shutdown(re->info);
    evas_render_engine_software_generic_clean(&re->generic);
    free(re);
