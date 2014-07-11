@@ -27,7 +27,7 @@ tests_eet_cxx_eet_cxx_suite_CPPFLAGS = 	\
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet_cxx\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eet_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eet_cxx\" \
-@CHECK_CFLAGS@ @EET_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
+@EO_CFLAGS@ @CHECK_CFLAGS@ @EET_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
 tests_eet_cxx_eet_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
 tests_eet_cxx_eet_cxx_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
 endif

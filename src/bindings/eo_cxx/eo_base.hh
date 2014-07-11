@@ -47,6 +47,11 @@ struct base
       detail::unref(_eo_raw);
    }
 
+   base(base const& other)
+     : _eo_raw( detail::ref(other._eo_ptr()) )
+   {
+   }
+
    /// @brief Assignment operator.
    ///
    base& operator=(base const& other)
@@ -164,7 +169,18 @@ struct base
 
  protected:
    Eo* _eo_raw; ///< The opaque <em>EO Object</em>.
+
 };
+
+inline bool operator==(base const& lhs, base const& rhs)
+{
+  return lhs._eo_ptr() == rhs._eo_ptr();
+}
+
+inline bool operator!=(base const& lhs, base const& rhs)
+{
+  return !(lhs == rhs);
+}
 
 /// @brief Downcast @p U to @p T.
 ///
@@ -206,21 +222,21 @@ struct parent_type
 ///
 struct parent_expr
 {
-   parent_type operator=(efl::eo::base const& parent)
+   parent_type operator=(efl::eo::base const& parent) const
    {
       return { parent._eo_ptr() };
    }
 
-   parent_type operator=(std::nullptr_t)
+   parent_type operator=(std::nullptr_t) const
    {
-      return { NULL };
+      return { nullptr };
    }
 };
 
 ///
 /// @brief Placeholder for the parent argument.
 ///
-parent_expr parent = {};
+parent_expr const parent = {};
 
 /// @}
 

@@ -1,15 +1,17 @@
-#ifndef EINA_LIST_HH_
-#define EINA_LIST_HH_
+#ifndef EINA_PTRLIST_HH_
+#define EINA_PTRLIST_HH_
 
 #include <Eina.h>
 #include <eina_clone_allocators.hh>
 #include <eina_lists_auxiliary.hh>
 #include <eina_type_traits.hh>
 #include <eina_accessor.hh>
+#include <eina_eo_base_fwd.hh>
 #include <eina_iterator.hh>
 
 #include <memory>
 #include <iterator>
+#include <type_traits>
 
 /**
  * @addtogroup Eina_Cxx_Containers_Group
@@ -560,6 +562,8 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator; /**< Type for reverse iterator for this container. */
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator; /**< Type for reverse iterator for this container. */
 
+  typedef std::unique_ptr<value_type, clone_allocator_deleter<clone_allocator_type> > _unique_ptr;
+
   /**
    * @brief Default constructor. Create an empty list.
    *
@@ -567,6 +571,12 @@ public:
    */
   ptr_list() {}
 
+  ptr_list(Eina_List* handle) : _base_type(handle) {}
+  
+  ptr_list(clone_allocator_type alloc)
+    : _base_type(alloc)
+  {}
+  
   /**
    * @brief Construct an list object with @p n copies of @p t.
    * @param n Number of elements.
@@ -725,7 +735,7 @@ public:
    */
   void push_back(pointer p)
   {
-    std::unique_ptr<value_type> p1(p);
+    _unique_ptr p1(p);
     push_back(p1);
   }
 
@@ -740,7 +750,8 @@ public:
    * @warning The list gains ownership of the object managed by the
    * given @c unique_ptr and will release it upon element destruction.
    */
-  void push_back(std::unique_ptr<T>& p)
+  template <typename Deleter>
+  void push_back(std::unique_ptr<T, Deleter>& p)
   {
     Eina_List* new_list = eina_list_append(this->_impl._list, p.get());
     if(new_list)
@@ -761,7 +772,7 @@ public:
    */
   void push_front(const_reference a)
   {
-    push_front(this->new_clone(a));
+    push_front(this->_new_clone(a));
   }
 
   /**
@@ -777,7 +788,7 @@ public:
    */
   void push_front(pointer p)
   {
-    std::unique_ptr<value_type> p1(p);
+    _unique_ptr p1(p);
     push_front(p1);
   }
 
@@ -792,7 +803,8 @@ public:
    * @warning The list gains ownership of the object managed by the
    * given @c unique_ptr and will release it upon element destruction.
    */
-  void push_front(std::unique_ptr<T>& p)
+  template <typename Deleter>
+  void push_front(std::unique_ptr<T, Deleter>& p)
   {
     Eina_List* new_list = eina_list_prepend(this->_impl._list, p.get());
     if(new_list)
@@ -857,7 +869,7 @@ public:
    */
   iterator insert(iterator i, pointer pv)
   {
-    std::unique_ptr<value_type> p(pv);
+    _unique_ptr p(pv);
     return insert(i, p);
   }
 
@@ -878,7 +890,8 @@ public:
    * @warning The list gains ownership of the object managed by the
    * given @c unique_ptr and will release it upon element destruction.
    */
-  iterator insert(iterator i, std::unique_ptr<value_type>& p)
+  template <typename Deleter>
+  iterator insert(iterator i, std::unique_ptr<value_type, Deleter>& p)
   {
     this->_impl._list = _eina_list_prepend_relative_list
       (this->_impl._list, p.get(), i.native_handle());
@@ -967,7 +980,7 @@ public:
     iterator r = p;
     if(i != j)
       {
-        r = insert(p, *i);
+        r = insert(p, this->_new_clone(*i));
         ++i;
       }
     while(i != j)
@@ -1442,7 +1455,6 @@ void swap(ptr_list<T, CloneAllocator>& lhs, ptr_list<T, CloneAllocator>& rhs)
 {
   lhs.swap(rhs);
 }
-
 /**
  * @}
  */

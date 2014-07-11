@@ -1,140 +1,366 @@
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eina.hh"
+#include "Eo.hh"
+
+#include <eina_list.hh>
 
 #include <algorithm>
+#include <iostream>
 
 #include <check.h>
+
+const Eo_Class *simple_class_get(void);
+#define MY_CLASS simple_class_get()
+
+static void
+_constructor(Eo *obj, void *class_data EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, eo_constructor());
+}
+
+static void
+_destructor(Eo *obj, void *class_data EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+static Eo_Op_Description op_descs[] = {
+    EO_OP_FUNC_OVERRIDE(reinterpret_cast<void*>(&eo_constructor), reinterpret_cast<void*>(&_constructor))
+  , EO_OP_FUNC_OVERRIDE(reinterpret_cast<void*>(&eo_destructor), reinterpret_cast<void*>(&_destructor))
+  , EO_OP_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     "Simple",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
+     NULL,
+     0,
+     0,
+     0
+};
+
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
+
+struct wrapper : efl::eo::base
+{
+  explicit wrapper(Eo* o)
+    : base(o) {}
+};
 
 START_TEST(eina_cxx_ptrlist_push_back)
 {
   efl::eina::eina_init eina_init;
-
-  efl::eina::ptr_list<int> list;
-
-  list.push_back(new int(5));
-  list.push_back(new int(10));
-  list.push_back(new int(15));
+  efl::eo::eo_init eo_init;
 
   int result[] = {5, 10, 15};
   int rresult[] = {15, 10, 5};
 
-  ck_assert(list.size() == 3);
-  ck_assert(std::equal(list.begin(), list.end(), result));
-  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  wrapper const w1(eo_add(MY_CLASS, NULL));
+  wrapper const w2(eo_add(MY_CLASS, NULL));
+  wrapper const w3(eo_add(MY_CLASS, NULL));
+  
+  {
+    efl::eina::ptr_list<int> list;
+
+    list.push_back(new int(5));
+    list.push_back(new int(10));
+    list.push_back(new int(15));
+
+    ck_assert(list.size() == 3);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    efl::eina::list<int> list;
+    list.push_back(new int(5));
+    list.push_back(new int(10));
+    list.push_back(new int(15));
+
+    ck_assert(list.size() == 3);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    wrapper result[] = {w1, w2, w3};
+    wrapper rresult[] = {w3, w2, w1};
+  
+    efl::eina::list<wrapper> list;
+    list.push_back(w1);
+    list.push_back(w2);
+    list.push_back(w3);
+
+    ck_assert(list.size() == 3);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
 }
 END_TEST
 
 START_TEST(eina_cxx_ptrlist_pop_back)
 {
   efl::eina::eina_init eina_init;
-
-  efl::eina::ptr_list<int> list;
-
-  list.push_back(new int(5));
-  list.push_back(new int(10));
-  list.push_back(new int(15));
-  list.pop_back();
+  efl::eo::eo_init eo_init;
 
   int result[] = {5, 10};
   int rresult[] = {10, 5};
 
-  ck_assert(list.size() == 2);
-  ck_assert(std::equal(list.begin(), list.end(), result));
-  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  wrapper const w1(eo_add(MY_CLASS, NULL));
+  wrapper const w2(eo_add(MY_CLASS, NULL));
+  wrapper const w3(eo_add(MY_CLASS, NULL));
+
+  {
+    efl::eina::ptr_list<int> list;
+
+    list.push_back(new int(5));
+    list.push_back(new int(10));
+    list.push_back(new int(15));
+    list.pop_back();
+
+    ck_assert(list.size() == 2);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    efl::eina::list<int> list;
+
+    list.push_back(new int(5));
+    list.push_back(new int(10));
+    list.push_back(new int(15));
+    list.pop_back();
+
+    ck_assert(list.size() == 2);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    wrapper result[] = {w1, w2};
+    wrapper rresult[] = {w2, w1};
+
+    efl::eina::list<wrapper> list;
+
+    list.push_back(w1);
+    list.push_back(w2);
+    list.push_back(w3);
+    list.pop_back();
+
+    ck_assert(list.size() == 2);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
 }
 END_TEST
 
 START_TEST(eina_cxx_ptrlist_push_front)
 {
   efl::eina::eina_init eina_init;
+  efl::eo::eo_init eo_init;
 
-  efl::eina::ptr_list<int> list;
+  {
+    efl::eina::ptr_list<int> list;
 
-  list.push_front(new int(5));
-  list.push_front(new int(10));
-  list.push_front(new int(15));
+    list.push_front(new int(5));
+    list.push_front(new int(10));
+    list.push_front(new int(15));
 
-  int result[] = {15, 10, 5};
-  int rresult[] = {5, 10, 15};
+    int result[] = {15, 10, 5};
+    int rresult[] = {5, 10, 15};
 
-  ck_assert(list.size() == 3);
-  ck_assert(std::equal(list.begin(), list.end(), result));
-  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+    ck_assert(list.size() == 3);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    wrapper const w1(eo_add(MY_CLASS, NULL));
+    wrapper const w2(eo_add(MY_CLASS, NULL));
+    wrapper const w3(eo_add(MY_CLASS, NULL));
+
+    efl::eina::list<wrapper> list;
+
+    list.push_front(w1);
+    list.push_front(w2);
+    list.push_front(w3);
+
+    wrapper result[] = {w3, w2, w1};
+    wrapper rresult[] = {w1, w2, w3};
+
+    ck_assert(list.size() == 3);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }  
 }
 END_TEST
 
 START_TEST(eina_cxx_ptrlist_pop_front)
 {
   efl::eina::eina_init eina_init;
-
-  efl::eina::ptr_list<int> list;
-
-  list.push_front(new int(5));
-  list.push_front(new int(10));
-  list.push_front(new int(15));
-  list.pop_front();
+  efl::eo::eo_init eo_init;
 
   int result[] = {10, 5};
   int rresult[] = {5, 10};
 
-  ck_assert(list.size() == 2);
-  ck_assert(std::equal(list.begin(), list.end(), result));
-  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  wrapper const w1(eo_add(MY_CLASS, NULL));
+  wrapper const w2(eo_add(MY_CLASS, NULL));
+  wrapper const w3(eo_add(MY_CLASS, NULL));
+
+  {
+    efl::eina::ptr_list<int> list;
+
+    list.push_front(new int(5));
+    list.push_front(new int(10));
+    list.push_front(new int(15));
+    list.pop_front();
+
+    ck_assert(list.size() == 2);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    efl::eina::list<int> list;
+
+    list.push_front(new int(5));
+    list.push_front(new int(10));
+    list.push_front(new int(15));
+    list.pop_front();
+
+    ck_assert(list.size() == 2);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
+  {
+    wrapper result[] = {w2, w1};
+    wrapper rresult[] = {w1, w2};
+
+    efl::eina::list<wrapper> list;
+
+    list.push_front(w1);
+    list.push_front(w2);
+    list.push_front(w3);
+    list.pop_front();
+
+    ck_assert(list.size() == 2);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+  }
 }
 END_TEST
 
 START_TEST(eina_cxx_ptrlist_insert)
 {
   efl::eina::eina_init eina_init;
+  efl::eo::eo_init eo_init;
 
-  efl::eina::ptr_list<int> list;
+  {
+    efl::eina::ptr_list<int> list;
 
-  efl::eina::ptr_list<int>::iterator it;
+    efl::eina::ptr_list<int>::iterator it;
 
-  it = list.insert(list.end(), new int(5)); // first element
-  ck_assert(it != list.end());
-  ++it;
-  ck_assert(it == list.end());
+    it = list.insert(list.end(), new int(5)); // first element
+    ck_assert(it != list.end());
+    ++it;
+    ck_assert(it == list.end());
 
-  it = list.insert(list.end(), new int(10));  // equivalent to push_back
-  ck_assert(it != list.end());
-  ++it;
-  ck_assert(it == list.end());
+    it = list.insert(list.end(), new int(10));  // equivalent to push_back
+    ck_assert(it != list.end());
+    ++it;
+    ck_assert(it == list.end());
 
-  it = list.insert(list.begin(), new int(15)); // equivalent to push_front
-  ck_assert(it == list.begin());
+    it = list.insert(list.begin(), new int(15)); // equivalent to push_front
+    ck_assert(it == list.begin());
 
-  it = list.end();
-  --it;
-  list.insert(it, new int(20)); // insert before the last element
+    it = list.end();
+    --it;
+    list.insert(it, new int(20)); // insert before the last element
 
-  int result[] = {15, 5, 20, 10};
-  int rresult[] = {10, 20, 5, 15};
+    int result[] = {15, 5, 20, 10};
+    int rresult[] = {10, 20, 5, 15};
 
-  ck_assert(list.size() == 4);
-  ck_assert(std::equal(list.begin(), list.end(), result));
-  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+    ck_assert(list.size() == 4);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 
-  efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list2;
-  it = list2.insert(list2.end(), list.begin(), list.end());
-  ck_assert(it == list2.begin());
-  ck_assert(list == list2);
+    efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list2;
+    it = list2.insert(list2.end(), list.begin(), list.end());
+    ck_assert(it == list2.begin());
+    ck_assert(list == list2);
 
-  efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list3;
-  list3.push_back(1);
-  it = list3.insert(list3.end(), list.begin(), list.end());
-  ck_assert(list3.size() == 5);
-  ck_assert(list3.front() == 1);
-  it = list3.begin();
-  ++it;
-  ck_assert(std::equal(it, list3.end(), list.begin()));
+    efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list3;
+    list3.push_back(1);
+    it = list3.insert(list3.end(), list.begin(), list.end());
+    ck_assert(list3.size() == 5);
+    ck_assert(list3.front() == 1);
+    it = list3.begin();
+    ++it;
+    ck_assert(std::equal(it, list3.end(), list.begin()));
 
-  efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list4;
-  list4.push_back(1);
-  it = list4.insert(list4.begin(), list.begin(), list.end());
-  ck_assert(list4.size() == 5);
-  ck_assert(list4.back() == 1);
-  ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
+    efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list4;
+    list4.push_back(1);
+    it = list4.insert(list4.begin(), list.begin(), list.end());
+    ck_assert(list4.size() == 5);
+    ck_assert(list4.back() == 1);
+    ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
+  }
+  {
+    wrapper const w0(eo_add(MY_CLASS, NULL));
+    wrapper const w1(eo_add(MY_CLASS, NULL));
+    wrapper const w2(eo_add(MY_CLASS, NULL));
+    wrapper const w3(eo_add(MY_CLASS, NULL));
+    wrapper const w4(eo_add(MY_CLASS, NULL));
+
+    efl::eina::list<wrapper> list;
+
+    efl::eina::list<wrapper>::iterator it;
+
+    it = list.insert(list.end(), w1); // first element
+    ck_assert(it != list.end());
+    ++it;
+    ck_assert(it == list.end());
+
+    it = list.insert(list.end(), w2);  // equivalent to push_back
+    ck_assert(it != list.end());
+    ++it;
+    ck_assert(it == list.end());
+
+    it = list.insert(list.begin(), w3); // equivalent to push_front
+    ck_assert(it == list.begin());
+
+    it = list.end();
+    --it;
+    list.insert(it, w4); // insert before the last element
+
+    wrapper result[] = {w3, w1, w4, w2};
+    wrapper rresult[] = {w2, w4, w1, w3};
+
+    ck_assert(list.size() == 4);
+    ck_assert(std::equal(list.begin(), list.end(), result));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+
+    efl::eina::list<wrapper> list2;
+    it = list2.insert(list2.end(), list.begin(), list.end());
+    ck_assert(it == list2.begin());
+    ck_assert(list == list2);
+
+    efl::eina::list<wrapper> list3;
+    list3.push_back(w0);
+    it = list3.insert(list3.end(), list.begin(), list.end());
+    ck_assert(list3.size() == 5);
+    ck_assert(list3.front() == w0);
+    it = list3.begin();
+    ++it;
+    ck_assert(std::equal(it, list3.end(), list.begin()));
+
+    efl::eina::list<wrapper> list4;
+    list4.push_back(w0);
+    it = list4.insert(list4.begin(), list.begin(), list.end());
+    ck_assert(list4.size() == 5);
+    ck_assert(list4.back() == w0);
+    ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
+  }
 }
 END_TEST
 
@@ -154,21 +380,50 @@ END_TEST
 START_TEST(eina_cxx_ptrlist_constructors)
 {
   efl::eina::eina_init eina_init;
+  efl::eo::eo_init eo_init;
 
-  efl::eina::ptr_list<int> list1;
-  ck_assert(list1.empty());
+  {
+    efl::eina::ptr_list<int> list1;
+    ck_assert(list1.empty());
 
-  efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list2(10, 5);
-  ck_assert(list2.size() == 10);
-  ck_assert(std::find_if(list2.begin(), list2.end()
-                      , std::not1(std::bind1st(std::equal_to<int>(), 5))) == list2.end());
+    efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list2(10, 5);
+    ck_assert(list2.size() == 10);
+    ck_assert(std::find_if(list2.begin(), list2.end()
+                           , std::not1(std::bind1st(std::equal_to<int>(), 5))) == list2.end());
 
-  efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list3(list2);
-  ck_assert(list2 == list3);
+    efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list3(list2);
+    ck_assert(list2 == list3);
 
-  efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list4
-    (list2.begin(), list2.end());
-  ck_assert(list2 == list4);
+    efl::eina::ptr_list<int, efl::eina::heap_copy_allocator> list4
+      (list2.begin(), list2.end());
+    ck_assert(list2 == list4);
+  }
+  {
+    wrapper const w0(eo_add(MY_CLASS, NULL));
+    wrapper const w1(eo_add(MY_CLASS, NULL));
+    wrapper const w2(eo_add(MY_CLASS, NULL));
+    wrapper const w3(eo_add(MY_CLASS, NULL));
+    wrapper const w4(eo_add(MY_CLASS, NULL));
+
+    efl::eina::list<wrapper> list1;
+    ck_assert(list1.empty());
+
+    efl::eina::list<wrapper> list2(10, w1);
+    ck_assert(list2.size() == 10);
+    ck_assert(std::find_if(list2.begin(), list2.end()
+                           , [&list2, w2] (wrapper i)
+                           {
+                             return  i == w2;
+                           }
+                           ) == list2.end());
+
+    efl::eina::list<wrapper> list3(list2);
+    ck_assert(list2 == list3);
+
+    efl::eina::list<wrapper> list4
+      (list2.begin(), list2.end());
+    ck_assert(list2 == list4);
+  }
 }
 END_TEST
 
@@ -255,43 +510,6 @@ START_TEST(eina_cxx_ptrlist_range)
 }
 END_TEST
 
-START_TEST(eina_cxx_ptrlist_from_c)
-{
-  efl::eina::eina_init eina_init;
-  Eina_List *c_list = nullptr;
-
-  int values[] = { 11, 22, 33 };
-
-  c_list = ::eina_list_append(c_list, &values[0]);
-  ck_assert(!!c_list);
-
-  c_list = ::eina_list_append(c_list, &values[1]);
-  ck_assert(!!c_list);
-
-  c_list = ::eina_list_append(c_list, &values[2]);
-  ck_assert(!!c_list);
-
-  const Eina_List* const_c_list = c_list;
-  const Eina_List* const_c_list_const_ptr = c_list;
-
-  efl::eina::range_ptr_list<int> r0(c_list);
-  const efl::eina::range_ptr_list<int> r1(c_list);
-
-  efl::eina::range_ptr_list<int const> r2(c_list);
-  efl::eina::range_ptr_list<int const> r3(const_c_list);
-  efl::eina::range_ptr_list<int const> r4(const_c_list_const_ptr);
-
-  const efl::eina::range_ptr_list<int const> r5(c_list);
-  const efl::eina::range_ptr_list<int const> r6(const_c_list);
-  const efl::eina::range_ptr_list<int const> r7(const_c_list_const_ptr);
-
-  const efl::eina::range_ptr_list<int> r8(c_list);
-
-  c_list = ::eina_list_free(c_list);
-  ck_assert(!c_list);
-}
-END_TEST
-
 void
 eina_test_ptrlist(TCase* tc)
 {
@@ -304,5 +522,4 @@ eina_test_ptrlist(TCase* tc)
   tcase_add_test(tc, eina_cxx_ptrlist_erase);
   tcase_add_test(tc, eina_cxx_ptrlist_range);
   tcase_add_test(tc, eina_cxx_ptrlist_malloc_clone_allocator);
-  tcase_add_test(tc, eina_cxx_ptrlist_from_c);
 }

@@ -1,6 +1,8 @@
 #ifndef EINA_CLONE_ALLOCATORS_HH_
 #define EINA_CLONE_ALLOCATORS_HH_
 
+#include <Eo.h>
+
 #include <memory>
 #include <cstring>
 #include <cstdlib>
@@ -25,6 +27,11 @@ namespace efl { namespace eina {
  * @{
  */
 
+/*
+ * @internal
+ */
+struct default_clone_allocator_placeholder;
+    
 /**
  * This allocator creates copies of objects on the heap, calling their
  * copy constructor to make then equivalent to the given reference.
@@ -47,6 +54,24 @@ struct heap_copy_allocator
 #else
     delete p;
 #endif
+  }
+};
+
+/**
+ * This allocator creates copies of Eo classes through eo_ref
+ *
+ * The created objects are released using eo_unref
+ */
+struct eo_clone_allocator
+{
+  static Eo* allocate_clone(Eo const& v)
+  {
+    return ::eo_ref(&v);
+  }
+
+  static void deallocate_clone(Eo const* p)
+  {
+    ::eo_unref(const_cast<Eo*>(p));
   }
 };
 
@@ -112,7 +137,7 @@ struct heap_no_copy_allocator
  * Manages allocation and deallocation of memory using the function
  * @c malloc and @c free. This allocator does not calls constructors,
  * the content of the newly allocated objects are assigned using
- * @c memcpy, so it is likely only plausible with types that have
+ * @c memcpy, so it has to be used with types that have
  * <em>standard-layout</em>.
  */
 struct malloc_clone_allocator
@@ -131,6 +156,19 @@ struct malloc_clone_allocator
   {
     static_assert(std::is_pod<T>::value, "malloc_clone_allocator can only be used with POD types");
     std::free(const_cast<T*>(p));
+  }
+};
+
+/**
+ * @internal
+ */
+template <typename A>
+struct clone_allocator_deleter
+{
+  template <typename T>
+  void operator()(T* object) const
+  {
+    A::deallocate_clone(object);
   }
 };
 

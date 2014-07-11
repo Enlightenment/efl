@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CXXFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I. \
-@EINA_CXX_CFLAGS@ @CHECK_CFLAGS@ @EINA_CFLAGS@
+@EINA_CXX_CFLAGS@ @CHECK_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@
 
 LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@ @EFL_PTHREAD_LIBS@
 

@@ -445,6 +445,8 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator; /**< Type for reverse iterator for this container. */
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator; /**< Type for reverse iterator for this container. */
 
+  typedef std::unique_ptr<value_type, clone_allocator_deleter<clone_allocator_type> > _unique_ptr;
+
   /**
    * @brief Default constructor. Create an empty array.
    *
@@ -452,6 +454,10 @@ public:
    */
   ptr_array() {}
 
+  explicit ptr_array(Eina_Array* handle) : _base_type(handle) {}
+
+  explicit ptr_array(clone_allocator_type alloc) : _base_type(alloc) {}
+  
   /**
    * @brief Construct an array object with @p n copies of @p t.
    * @param n Number of elements.
@@ -609,7 +615,7 @@ public:
    */
   void push_back(pointer p)
   {
-    std::unique_ptr<value_type> p1(p);
+    _unique_ptr p1(p);
     push_back(p1);
   }
 
@@ -625,7 +631,8 @@ public:
    * @warning The array gains ownership of the object managed by the
    * given @c unique_ptr and will release it upon element destruction.
    */
-  void push_back(std::unique_ptr<T>& p)
+  template <typename Deleter>
+  void push_back(std::unique_ptr<T, Deleter>& p)
   {
     if(eina_array_push(this->_impl._array, p.get()))
       p.release();
@@ -678,7 +685,7 @@ public:
    */
   iterator insert(iterator i, pointer pv)
   {
-    std::unique_ptr<value_type> p(pv);
+    _unique_ptr p(pv);
     return insert(i, p);
   }
 
@@ -699,7 +706,8 @@ public:
    * @warning The array gains ownership of the object managed by the
    * given @c unique_ptr and will release it upon element destruction.
    */
-  iterator insert(iterator i, std::unique_ptr<value_type>& p)
+  template <typename Deleter>
+  iterator insert(iterator i, std::unique_ptr<value_type, Deleter>& p)
   {
     std::size_t j
       = i.native_handle() - this->_impl._array->data
@@ -712,7 +720,7 @@ public:
                   this->_impl._array->data + j + 1
                   , this->_impl._array->data + j
                   , (size_ - j)*sizeof(void*));
-          // PRE: Q:[j, size) = [j+1, size+1)
+          // PRE: Q:[j, size_) = [j+1, size_+1)
           pointer* data = static_cast<pointer*>
             (static_cast<void*>(this->_impl._array->data));
           data[j] = p.get();
