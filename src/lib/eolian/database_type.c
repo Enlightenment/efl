@@ -153,7 +153,7 @@ _print_field(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
 {
    printf("%s: ", (const char*)key);
    database_type_print((Eolian_Type*)data);
-   puts("; ");
+   printf("; ");
    return EINA_TRUE;
 }
 
@@ -163,11 +163,13 @@ database_type_print(Eolian_Type *tp)
    Eina_List *l;
    Eolian_Type *stp;
    if (tp->is_own)
-     puts("own(");
+     printf("own(");
    if (tp->is_const)
-     puts("const(");
+     printf("const(");
    if (tp->type == EOLIAN_TYPE_REGULAR)
-     puts(tp->name);
+     printf(tp->name);
+   else if (tp->type == EOLIAN_TYPE_VOID)
+     printf("void");
    else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
      printf("struct %s", tp->name);
    else if (tp->type == EOLIAN_TYPE_POINTER)
@@ -178,18 +180,18 @@ database_type_print(Eolian_Type *tp)
    else if (tp->type == EOLIAN_TYPE_FUNCTION)
      {
         Eina_Bool first = EINA_TRUE;
-        puts("func");
+        printf("func");
         if (tp->ret_type)
           {
              putchar(' ');
              database_type_print(tp->ret_type);
           }
         else
-          puts(" void");
-        puts(" (");
+          printf(" void");
+        printf(" (");
         EINA_LIST_FOREACH(tp->arguments, l, stp)
           {
-             if (!first) puts(", ");
+             if (!first) printf(", ");
              first = EINA_FALSE;
              database_type_print(stp);
           }
@@ -197,11 +199,11 @@ database_type_print(Eolian_Type *tp)
      }
    else if (tp->type == EOLIAN_TYPE_STRUCT)
      {
-        puts("struct ");
+        printf("struct ");
         if (tp->name) printf("%s ", tp->name);
-        puts("{ ");
+        printf("{ ");
         eina_hash_foreach(tp->fields, _print_field, NULL);
-        puts("}");
+        printf("}");
      }
    if (tp->is_own)
      putchar(')');
