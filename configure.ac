@@ -1755,7 +1755,12 @@ fi
 
 # OpenGL common
 evas_engine_gl_common_cflags=""
-evas_engine_gl_common_libs=""
+if text "x${have_egl}" = "xyes"; then
+   evas_engine_gl_common_libs="-lEGL"
+else
+   evas_engine_gl_common_libs="-lGL"
+fi
+
 AC_SUBST([evas_engine_gl_common_cflags])
 AC_SUBST([evas_engine_gl_common_libs])
 
