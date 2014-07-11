@@ -34,7 +34,7 @@ _event_print(Eolian_Event *ev, int nb_spaces)
 
    eolian_class_event_information_get(ev, &name, &type, &comment);
    printf("%*s <%s> <",  nb_spaces + 5, "", name);
-   database_type_print((Eolian_Type*)type);
+   if (type) database_type_print((Eolian_Type*)type);
    printf("> <%s>\n", comment);
 }
 
