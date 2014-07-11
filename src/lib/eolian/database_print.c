@@ -263,3 +263,82 @@ eolian_show(const Eolian_Class *class)
      }
    return EINA_TRUE;
 }
+
+EAPI Eina_Bool
+eolian_show_class(const Eolian_Class *class)
+{
+   if (!class)
+     {
+        Eina_List *itr;
+        Eolian_Class *cl;
+        EINA_LIST_FOREACH(_classes, itr, cl)
+          _class_print(cl);
+     }
+   else
+     {
+        _class_print(class);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_typedef_cb(Eina_Hash *hash EINA_UNUSED, const char *alias,
+            const Eolian_Typedef *tp, const void *fdata EINA_UNUSED)
+{
+   printf("Typedef: %s\n", alias);
+   printf("  type: <");
+   database_type_print(tp->type);
+   printf(">\n");
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eolian_show_typedef(const char *alias)
+{
+   if (!alias)
+     eina_hash_foreach(_types, (Eina_Hash_Foreach)_typedef_cb, NULL);
+   else
+     {
+        Eina_Stringshare *shr = eina_stringshare_add(alias);
+        Eolian_Typedef *tp = eina_hash_find(_types, shr);
+        eina_stringshare_del(shr);
+        if (!tp) return EINA_FALSE;
+        _typedef_cb(NULL, alias, tp, NULL);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_struct_cb(Eina_Hash *hash EINA_UNUSED, const char *name,
+            const Eolian_Type *tp, const void *fdata EINA_UNUSED)
+{
+   printf("Struct: %s\n", name);
+   printf("  type: <");
+   database_type_print((Eolian_Type*)tp);
+   printf(">\n");
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eolian_show_struct(const char *name)
+{
+   if (!name)
+     eina_hash_foreach(_structs, (Eina_Hash_Foreach)_struct_cb, NULL);
+   else
+     {
+        Eina_Stringshare *shr = eina_stringshare_add(name);
+        Eolian_Type *tp = eina_hash_find(_structs, shr);
+        eina_stringshare_del(shr);
+        if (!tp) return EINA_FALSE;
+        _struct_cb(NULL, name, tp, NULL);
+     }
+   return EINA_TRUE;
+}
+
+EAPI void
+eolian_show_all()
+{
+   eolian_show_class(NULL);
+   eolian_show_typedef(NULL);
+   eolian_show_struct(NULL);
+}

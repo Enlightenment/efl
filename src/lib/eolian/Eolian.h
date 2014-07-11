@@ -222,9 +222,68 @@ EAPI Eina_Bool eolian_all_eot_files_parse();
  *
  * @param[in] klass the class to show
  *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise (currently always
+ * succeeds).
+ *
+ * @see eolian_show_typedef
+ * @see eolian_show_struct
+ * @see eolian_show_all
+ *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_show(const Eolian_Class *klass);
+EAPI Eina_Bool eolian_show_class(const Eolian_Class *klass);
+
+/*
+ * @brief Show information about a given typedef.
+ *
+ * If @c alias is NULL, this function will print information of
+ * all the typedefs.
+ *
+ * @param[in] alias the typedef to show.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise (when typedef is not
+ * found).
+ *
+ * @see eolian_show_class
+ * @see eolian_show_struct
+ * @see eolian_show_all
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_show_typedef(const char *alias);
+
+/*
+ * @brief Show information about a given struct.
+ *
+ * If @c name is NULL, this function will print information of
+ * all the named global structs.
+ *
+ * @param[in] name the struct to show.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise (when struct is not
+ * found).
+ *
+ * @see eolian_show_class
+ * @see eolian_show_typedef
+ * @see eolian_show_all
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_show_struct(const char *name);
+
+/*
+ * @brief Show information about everything.
+ *
+ * This will print a complete dump of all information stored in the Eolian
+ * database.
+ *
+ * @see eolian_show_class
+ * @see eolian_show_typedef
+ * @see eolian_show_struct
+ *
+ * @ingroup Eolian
+ */
+EAPI void eolian_show_all();
 
 /*
  * @brief Finds a class by its name
