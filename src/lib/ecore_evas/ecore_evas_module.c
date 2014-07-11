@@ -257,6 +257,12 @@ _ecore_evas_available_engines_get(void)
                             ADDENG("opengl_glew");
 #endif
                          }
+                       else if (!strcmp(name, "drm"))
+                         {
+#ifdef BUILD_ECORE_EVAS_DRM
+                            ADDENG("drm");
+#endif
+                         }
                     }
                }
              eina_iterator_free(it);
