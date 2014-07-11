@@ -14,6 +14,9 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define FMT_SIZE_T "%zu"
 
 #define MY_CLASS ELM_IMAGE_CLASS
@@ -1340,6 +1343,12 @@ _elm_image_elm_interface_atspi_image_extents_get(Eo *obj, Elm_Image_Data *sd EIN
         if (y) *y += ee_y;
      }
    elm_image_object_size_get(obj, w, h);
+}
+
+EOLIAN const Elm_Action *
+_elm_image_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Image_Data *pd EINA_UNUSED)
+{
+   return &key_actions[0];
 }
 
 
