@@ -42,6 +42,7 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    const char *ret_desc = eolian_function_return_comment_get(fid, fid->type);
+   const Eolian_Type *tp;
    switch (fid->type)
      {
       case EOLIAN_PROPERTY:
@@ -55,10 +56,20 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
               if (str) printf("%*slegacy_get: <%s>\n", nb_spaces + 5, "", str);
               str = eolian_function_data_get(fid, EOLIAN_LEGACY_SET);
               if (str) printf("%*slegacy_set: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_PROP_GET_RETURN_TYPE);
-              if (str) printf("%*sreturn type for get: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_PROP_SET_RETURN_TYPE);
-              if (str) printf("%*sreturn type for set: <%s>\n", nb_spaces + 5, "", str);
+              tp = eolian_function_return_type_get(fid, EOLIAN_PROP_GET);
+              if (tp)
+                {
+                   printf("%*sreturn type for get: <", nb_spaces + 5, "");
+                   database_type_print((Eolian_Type*)tp);
+                   printf(">\n");
+                }
+              tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
+              if (tp)
+                {
+                   printf("%*sreturn type for set: <", nb_spaces + 5, "");
+                   database_type_print((Eolian_Type*)tp);
+                   printf(">\n");
+                }
               break;
            }
       case EOLIAN_PROP_GET:
@@ -68,8 +79,13 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
               str = eolian_function_data_get(fid, EOLIAN_LEGACY_GET);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_PROP_GET_RETURN_TYPE);
-              if (str) printf("%*sreturn type: <%s>\n", nb_spaces + 5, "", str);
+              tp = eolian_function_return_type_get(fid, EOLIAN_PROP_GET);
+              if (tp)
+                {
+                   printf("%*sreturn type: <", nb_spaces + 5, "");
+                   database_type_print((Eolian_Type*)tp);
+                   printf(">\n");
+                }
               break;
            }
       case EOLIAN_PROP_SET:
@@ -79,8 +95,13 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
               str = eolian_function_data_get(fid, EOLIAN_LEGACY_SET);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_PROP_SET_RETURN_TYPE);
-              if (str) printf("%*sreturn type: <%s>\n", nb_spaces + 5, "", str);
+              tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
+              if (tp)
+                {
+                   printf("%*sreturn type: <", nb_spaces + 5, "");
+                   database_type_print((Eolian_Type*)tp);
+                   printf(">\n");
+                }
               break;
            }
       case EOLIAN_METHOD:
@@ -90,8 +111,13 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
               str = eolian_function_data_get(fid, EOLIAN_LEGACY);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_METHOD_RETURN_TYPE);
-              if (str) printf("%*sreturn type: <%s>\n", nb_spaces + 5, "", str);
+              tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
+              if (tp)
+                {
+                   printf("%*sreturn type: <", nb_spaces + 5, "");
+                   database_type_print((Eolian_Type*)tp);
+                   printf(">\n");
+                }
               if (fid->obj_is_const) printf("%*sobj const: <true>\n", nb_spaces + 5, "");
               break;
            }
@@ -102,8 +128,13 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
               str = eolian_function_data_get(fid, EOLIAN_LEGACY);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_METHOD_RETURN_TYPE);
-              if (str) printf("%*sreturn type: <%s>\n", nb_spaces + 5, "", str);
+              tp = eolian_function_return_type_get(fid, EOLIAN_CTOR);
+              if (tp)
+                {
+                   printf("%*sreturn type: <", nb_spaces + 5, "");
+                   database_type_print((Eolian_Type*)tp);
+                   printf(">\n");
+                }
               break;
            }
       default:

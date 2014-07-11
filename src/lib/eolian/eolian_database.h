@@ -35,10 +35,6 @@ extern Eina_Prefix *_eolian_prefix;
 #define PROP_SET_RETURN_DFLT_VAL "property_set_return_dflt_val"
 #define METHOD_RETURN_DFLT_VAL "method_return_dflt_val"
 
-#define EOLIAN_METHOD_RETURN_TYPE "method_return_type"
-#define EOLIAN_PROP_GET_RETURN_TYPE "property_get_return_type"
-#define EOLIAN_PROP_SET_RETURN_TYPE "property_set_return_type"
-
 #define EOLIAN_METHOD_RETURN_COMMENT "method_return_comment"
 #define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
 #define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
