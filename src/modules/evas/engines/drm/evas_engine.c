@@ -23,7 +23,7 @@ int _evas_engine_drm_log_dom;
 static void *
 _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
 {
-   Render_Engine *re;
+   Render_Engine *re = NULL;
    Outbuf *ob;
 
    /* if we have no drm device, get one */
@@ -58,7 +58,7 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
    return re;
 
  on_error:
-   evas_render_engine_software_generic_clean(&re->generic);
+   if (re) evas_render_engine_software_generic_clean(&re->generic);
 
    /* shutdown drm card & tty */
    evas_drm_shutdown(info);
