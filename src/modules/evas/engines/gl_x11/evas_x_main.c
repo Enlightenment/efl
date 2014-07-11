@@ -404,7 +404,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
      }
 #endif
 
-   gw->gl_context = evas_gl_common_context_new();
+   gw->gl_context = glsym_evas_gl_common_context_new();
    if (!gw->gl_context)
      {
         eng_window_free(gw);
@@ -415,7 +415,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->gl_context->eglctxt = gw->egl_context[0];
 #endif
    eng_window_use(gw);
-   evas_gl_common_context_resize(gw->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
    return gw;
    (void) (indirect = 0);
@@ -431,7 +431,7 @@ eng_window_free(Outbuf *gw)
    if (gw->gl_context)
      {
         ref = gw->gl_context->references - 1;
-        evas_gl_common_context_free(gw->gl_context);
+        glsym_evas_gl_common_context_free(gw->gl_context);
      }
 #ifdef GL_GLES
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -511,7 +511,7 @@ eng_window_use(Outbuf *gw)
 {
    Eina_Bool force_use = EINA_FALSE;
 
-   evas_gl_preload_render_lock(eng_window_make_current, gw);
+   glsym_evas_gl_preload_render_lock(eng_window_make_current, gw);
 #ifdef GL_GLES
    if (_evas_gl_x11_window)
      {
@@ -529,8 +529,8 @@ eng_window_use(Outbuf *gw)
      {
         if (_evas_gl_x11_window)
           {
-             evas_gl_common_context_use(_evas_gl_x11_window->gl_context);
-             evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+             glsym_evas_gl_common_context_use(_evas_gl_x11_window->gl_context);
+             glsym_evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
           }
         _evas_gl_x11_window = gw;
         if (gw)
@@ -567,7 +567,7 @@ eng_window_use(Outbuf *gw)
 #endif
           }
      }
-   if (gw) evas_gl_common_context_use(gw->gl_context);
+   if (gw) glsym_evas_gl_common_context_use(gw->gl_context);
 }
 
 void
@@ -579,7 +579,7 @@ eng_window_unsurf(Outbuf *gw)
       printf("unsurf %p\n", gw);
 #ifdef GL_GLES
    if (_evas_gl_x11_window)
-      evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+      glsym_evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
    if (_evas_gl_x11_window == gw)
      {
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -856,17 +856,17 @@ eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo)
    return _evas_gl_x11_vi->depth;
 }
 
-Evas_GL_X11_Context *
+Context_3D *
 eng_gl_context_new(Outbuf *win)
 {
-   Evas_GL_X11_Context *ctx;
+   Context_3D *ctx;
 #if GL_GLES
    int context_attrs[3] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 #endif
 
    if (!win) return NULL;
 
-   ctx = calloc(1, sizeof(Evas_GL_X11_Context));
+   ctx = calloc(1, sizeof(Context_3D));
    if (!ctx) return NULL;
 
 #if GL_GLES
@@ -903,7 +903,7 @@ error:
 }
 
 void
-eng_gl_context_free(Evas_GL_X11_Context *ctx)
+eng_gl_context_free(Context_3D *ctx)
 {
 #if GL_GLES
    eglDestroyContext(ctx->display, ctx->context);
@@ -915,7 +915,7 @@ eng_gl_context_free(Evas_GL_X11_Context *ctx)
 }
 
 void
-eng_gl_context_use(Evas_GL_X11_Context *ctx)
+eng_gl_context_use(Context_3D *ctx)
 {
 #if GL_GLES
    if (eglMakeCurrent(ctx->display, ctx->surface,
@@ -953,7 +953,7 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
    ob->h = h;
    ob->rot = rot;
    eng_window_use(ob);
-   evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
 }
 
 int
@@ -1011,7 +1011,7 @@ eng_outbuf_region_first_rect(Outbuf *ob)
 {
    ob->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
 
-   evas_gl_preload_render_lock(eng_preload_make_current, ob);
+   glsym_evas_gl_preload_render_lock(eng_preload_make_current, ob);
 #ifdef GL_GLES
              // dont need to for egl - eng_window_use() can check for other ctxt's
 #else
@@ -1020,12 +1020,12 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    eng_window_use(ob);
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   evas_gl_common_context_resize(ob->gl_context,
+   glsym_evas_gl_common_context_resize(ob->gl_context,
                                  ob->w, ob->h,
                                  ob->rot);
 
-   evas_gl_common_context_flush(ob->gl_context);
-   evas_gl_common_context_newframe(ob->gl_context);
+   glsym_evas_gl_common_context_flush(ob->gl_context);
+   glsym_evas_gl_common_context_newframe(ob->gl_context);
    if (partial_render_debug == 1)
      {
         glClearColor(0.2, 0.5, 1.0, 1.0);
@@ -1064,7 +1064,7 @@ eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update EINA_UNUSED,
       still do that for the full canvas when doing partial update */
    if (!_re_wincheck(ob)) return;
    ob->draw.drew = 1;
-   evas_gl_common_context_flush(ob->gl_context);
+   glsym_evas_gl_common_context_flush(ob->gl_context);
 #ifdef GL_GLES
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
@@ -1097,7 +1097,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
 
    ob->draw.drew = 0;
    eng_window_use(ob);
-   evas_gl_common_context_done(ob->gl_context);
+   glsym_evas_gl_common_context_done(ob->gl_context);
 
    // Save contents of the framebuffer to a file
    if (swap_buffer_debug_mode == 1)
@@ -1108,11 +1108,11 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
              int ret = 0;
              snprintf(fname, sizeof(fname), "%p", (void*)ob);
 
-             ret = evas_gl_common_buffer_dump(ob->gl_context,
-                                              (const char*)debug_dir,
-                                              (const char*)fname,
-                                              ob->frame_cnt,
-                                              NULL);
+             ret = glsym_evas_gl_common_buffer_dump(ob->gl_context,
+                                                    (const char*)debug_dir,
+                                                    (const char*)fname,
+                                                    ob->frame_cnt,
+                                                    NULL);
              if (!ret) swap_buffer_debug_mode = 0;
           }
      }
@@ -1249,5 +1249,22 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    ob->frame_cnt++;
 
  end:
-   evas_gl_preload_render_unlock(eng_preload_make_current, ob);
+   glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
+}
+
+Evas_Engine_GL_Context *
+eng_outbuf_gl_context_get(Outbuf *ob)
+{
+   return ob->gl_context;
+}
+
+void *
+eng_outbuf_egl_display_get(Outbuf *ob)
+{
+#ifdef GL_GLES
+   return ob->egl_disp;
+#else
+   (void) ob;
+   return NULL;
+#endif
 }

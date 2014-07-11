@@ -242,7 +242,7 @@ struct _EVGL_Engine
 {
    int initted;
 
-   EVGL_Interface     *funcs;
+   const EVGL_Interface     *funcs;
 
    EVGL_Cap            caps;
 

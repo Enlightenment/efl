@@ -4,7 +4,6 @@
 #include "config.h"
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "evas_gl_common.h"
 #include "Evas.h"
 #include "Evas_Engine_GL_X11.h"
 
@@ -31,7 +30,7 @@
 # include <GL/glx.h>
 #endif
 
-#include "../software_generic/Evas_Engine_Software_Generic.h"
+#include "../gl_generic/Evas_Engine_GL_Generic.h"
 
 extern int _evas_engine_GL_X11_log_dom ;
 #ifdef ERR
@@ -60,7 +59,6 @@ extern int _evas_engine_GL_X11_log_dom ;
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_X11_log_dom, __VA_ARGS__)
 
 typedef struct _Outbuf Outbuf;
-typedef struct _Evas_GL_X11_Context Evas_GL_X11_Context;
 
 struct _Outbuf
 {
@@ -105,7 +103,7 @@ struct _Outbuf
    } draw;
 };
 
-struct _Evas_GL_X11_Context
+struct _Context_3D
 {
 #ifdef GL_GLES
    EGLDisplay      display;
@@ -124,6 +122,17 @@ extern int partial_render_debug;
 extern int swap_buffer_debug_mode;
 extern int swap_buffer_debug;
 extern const char *debug_dir;
+
+extern Evas_GL_Common_Context_New glsym_evas_gl_common_context_new;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_flush;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_free;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_use;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_newframe;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_done;
+extern Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize;
+extern Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump;
+extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock;
+extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 
 #ifdef GL_GLES
 
@@ -162,9 +171,9 @@ void     *eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo);
 Colormap  eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo);
 int       eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo);
 
-Evas_GL_X11_Context *eng_gl_context_new(Outbuf *win);
-void      eng_gl_context_free(Evas_GL_X11_Context *context);
-void      eng_gl_context_use(Evas_GL_X11_Context *context);
+Context_3D *eng_gl_context_new(Outbuf *win);
+void      eng_gl_context_free(Context_3D *context);
+void      eng_gl_context_use(Context_3D *context);
 
 void eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 int eng_outbuf_get_rot(Outbuf *ob);
@@ -177,6 +186,8 @@ void eng_outbuf_push_free_region_for_update(Outbuf *ob, RGBA_Image *update);
 void eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update,
                                     int x, int y, int w, int h);
 void eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+Evas_Engine_GL_Context *eng_outbuf_gl_context_get(Outbuf *ob);
+void *eng_outbuf_egl_display_get(Outbuf *ob);
 
 Eina_Bool eng_preload_make_current(void *data, void *doit);
 
