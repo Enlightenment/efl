@@ -92,6 +92,9 @@ struct _Eina_Module
 {
    void *handle;
    int ref;
+
+   Eina_Bool global;
+
    const char file[];
 };
 
@@ -304,7 +307,11 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
       goto loaded;
 
    if (getenv("EINA_MODULE_LAZY_LOAD")) flag = RTLD_LAZY;
+
+   if (m->global) flag |= RTLD_GLOBAL;
    dl_handle = dlopen(m->file, flag);
+   if (m->global) flag &= ~RTLD_GLOBAL;
+
    if (!dl_handle)
      {
         WRN("could not dlopen(\"%s\", %s): %s", m->file, dlerror(), 
@@ -381,6 +388,11 @@ EAPI const char *eina_module_file_get(const Eina_Module *m)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
    return m->file;
+}
+
+EAPI void eina_module_global_set(Eina_Module *module, Eina_Bool global)
+{
+   module->global = !!global;
 }
 
 EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)

@@ -205,6 +205,13 @@ EAPI void *
 EAPI const char *
  eina_module_file_get(const Eina_Module *module) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Define if on module load we should expose all symbol
+ *
+ * @param module The module to turn off/on symbol to be exposed
+ * @since 1.11
+ */
+EAPI void eina_module_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Return the path built from the location of a library and a
