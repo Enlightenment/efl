@@ -214,29 +214,29 @@ view_set_ortho(float result[16], const float left, const float right,
 }
 
 static void
-init_shaders(GLData *gldata)
+init_shaders(GLData *gl_data)
 {
-   Evas_GL_API *gl = gldata->glapi;
+   Evas_GL_API *gl = gl_data->glapi;
    const char *p;
 
    p = vertex_shader;
-   gldata->vtx_shader = gl->glCreateShader(GL_VERTEX_SHADER);
-   gl->glShaderSource(gldata->vtx_shader, 1, &p, NULL);
-   gl->glCompileShader(gldata->vtx_shader);
+   gl_data->vtx_shader = gl->glCreateShader(GL_VERTEX_SHADER);
+   gl->glShaderSource(gl_data->vtx_shader, 1, &p, NULL);
+   gl->glCompileShader(gl_data->vtx_shader);
 
    p = fragment_shader;
-   gldata->fgmt_shader = gl->glCreateShader(GL_FRAGMENT_SHADER);
-   gl->glShaderSource(gldata->fgmt_shader, 1, &p, NULL);
-   gl->glCompileShader(gldata->fgmt_shader);
+   gl_data->fgmt_shader = gl->glCreateShader(GL_FRAGMENT_SHADER);
+   gl->glShaderSource(gl_data->fgmt_shader, 1, &p, NULL);
+   gl->glCompileShader(gl_data->fgmt_shader);
 
-   gldata->program = gl->glCreateProgram();
-   gl->glAttachShader(gldata->program, gldata->vtx_shader);
-   gl->glAttachShader(gldata->program, gldata->fgmt_shader);
-   gl->glBindAttribLocation(gldata->program, 0, "vPosition");
-   gl->glBindAttribLocation(gldata->program, 1, "inColor");
+   gl_data->program = gl->glCreateProgram();
+   gl->glAttachShader(gl_data->program, gl_data->vtx_shader);
+   gl->glAttachShader(gl_data->program, gl_data->fgmt_shader);
+   gl->glBindAttribLocation(gl_data->program, 0, "vPosition");
+   gl->glBindAttribLocation(gl_data->program, 1, "inColor");
 
-   gl->glLinkProgram(gldata->program);
-   gl->glUseProgram(gldata->program);
+   gl->glLinkProgram(gl_data->program);
+   gl->glUseProgram(gl_data->program);
    gl->glEnable(GL_DEPTH_TEST);
 }
 
@@ -245,35 +245,35 @@ img_pixel_cb(void *data, Evas_Object *obj)
 {
    //Define the model view projection matrix
    float model[16], mvp[16];
-   GLData *gldata = data;
-   Evas_GL_API *glapi = gldata->glapi;
+   GLData *gl_data = data;
+   Evas_GL_API *glapi = gl_data->glapi;
 
    Evas_Coord w, h;
    evas_object_image_size_get(obj, &w, &h);
 
    //Set up the context and surface as the current one
-   evas_gl_make_current(gldata->evasgl, gldata->sfc, gldata->ctx);
+   evas_gl_make_current(gl_data->evasgl, gl_data->sfc, gl_data->ctx);
 
    //Initialize gl stuff just one time.
-   if (!gldata->initialized)
+   if (!gl_data->initialized)
      {
         float aspect;
-        init_shaders(gldata);
-        glapi->glGenBuffers(1, &gldata->vbo);
-        glapi->glBindBuffer(GL_ARRAY_BUFFER, gldata->vbo);
+        init_shaders(gl_data);
+        glapi->glGenBuffers(1, &gl_data->vbo);
+        glapi->glBindBuffer(GL_ARRAY_BUFFER, gl_data->vbo);
         glapi->glBufferData(GL_ARRAY_BUFFER, 3 * 72 * 4, cube_vertices,GL_STATIC_DRAW);
-        init_matrix(gldata->view);
+        init_matrix(gl_data->view);
         if(w > h)
           {
              aspect = (float)w/h;
-             view_set_ortho(gldata->view, -1.0 * aspect, 1.0 * aspect, -1.0, 1.0, -1.0, 1.0);
+             view_set_ortho(gl_data->view, -1.0 * aspect, 1.0 * aspect, -1.0, 1.0, -1.0, 1.0);
           }
         else
           {
              aspect = (float)h/w;
-             view_set_ortho(gldata->view, -1.0, 1.0, -1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+             view_set_ortho(gl_data->view, -1.0, 1.0, -1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
           }
-        gldata->initialized = EINA_TRUE;
+        gl_data->initialized = EINA_TRUE;
      }
 
    glapi->glViewport(0, 0, w, h);
@@ -281,19 +281,19 @@ img_pixel_cb(void *data, Evas_Object *obj)
    glapi->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    init_matrix(model);
-   rotate_xyz(model, gldata->xangle, gldata->yangle, 0.0f);
-   multiply_matrix(mvp, gldata->view, model);
+   rotate_xyz(model, gl_data->xangle, gl_data->yangle, 0.0f);
+   multiply_matrix(mvp, gl_data->view, model);
 
-   glapi->glUseProgram(gldata->program);
-   glapi->glBindBuffer(GL_ARRAY_BUFFER, gldata->vbo);
+   glapi->glUseProgram(gl_data->program);
+   glapi->glBindBuffer(GL_ARRAY_BUFFER, gl_data->vbo);
    glapi->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
    glapi->glEnableVertexAttribArray(0);
 
-   glapi->glBindBuffer(GL_ARRAY_BUFFER, gldata->vbo);
+   glapi->glBindBuffer(GL_ARRAY_BUFFER, gl_data->vbo);
    glapi->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float)*3));
    glapi->glEnableVertexAttribArray(1);
 
-   glapi->glUniformMatrix4fv( glapi->glGetUniformLocation(gldata->program, "mvpMatrix"), 1, GL_FALSE, mvp);
+   glapi->glUniformMatrix4fv( glapi->glGetUniformLocation(gl_data->program, "mvpMatrix"), 1, GL_FALSE, mvp);
    glapi->glDrawArrays(GL_TRIANGLES, 0, 36);
 
    glapi->glFinish();
@@ -302,21 +302,21 @@ img_pixel_cb(void *data, Evas_Object *obj)
 static void
 img_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   GLData *gldata = data;
-   Evas_GL_API *glapi = gldata->glapi;
+   GLData *gl_data = data;
+   Evas_GL_API *glapi = gl_data->glapi;
 
    //Free the gl resources when image object is deleted.
-   evas_gl_make_current(gldata->evasgl, gldata->sfc, gldata->ctx);
+   evas_gl_make_current(gl_data->evasgl, gl_data->sfc, gl_data->ctx);
 
-   glapi->glDeleteShader(gldata->vtx_shader);
-   glapi->glDeleteShader(gldata->fgmt_shader);
-   glapi->glDeleteProgram(gldata->program);
-   glapi->glDeleteBuffers(1, &gldata->vbo);
+   glapi->glDeleteShader(gl_data->vtx_shader);
+   glapi->glDeleteShader(gl_data->fgmt_shader);
+   glapi->glDeleteProgram(gl_data->program);
+   glapi->glDeleteBuffers(1, &gl_data->vbo);
 
-   evas_gl_surface_destroy(gldata->evasgl, gldata->sfc);
-   evas_gl_context_destroy(gldata->evasgl, gldata->ctx);
+   evas_gl_surface_destroy(gl_data->evasgl, gl_data->sfc);
+   evas_gl_context_destroy(gl_data->evasgl, gl_data->ctx);
 
-   evas_gl_free(gldata->evasgl);
+   evas_gl_free(gl_data->evasgl);
 }
 
 static Eina_Bool
@@ -335,8 +335,8 @@ _animator_cb(void *data)
 static void
 _mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   GLData *gldata = data;
-   gldata->mouse_down = EINA_TRUE;
+   GLData *gl_data = data;
+   gl_data->mouse_down = EINA_TRUE;
 }
 
 static void
@@ -344,23 +344,23 @@ _mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 {
    Evas_Event_Mouse_Move *ev;
    ev = (Evas_Event_Mouse_Move *)event_info;
-   GLData *gldata = data;
+   GLData *gl_data = data;
    float dx = 0, dy = 0;
 
-   if( gldata->mouse_down)
+   if( gl_data->mouse_down)
      {
         dx = (ev->cur.canvas.x - ev->prev.canvas.x);
         dy = (ev->cur.canvas.y - ev->prev.canvas.y);
-        gldata->xangle += dy;
-        gldata->yangle += dx;
+        gl_data->xangle += dy;
+        gl_data->yangle += dx;
      }
 }
 
 static void
 _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   GLData *gldata = data;
-   gldata->mouse_down = EINA_FALSE;
+   GLData *gl_data = data;
+   gl_data->mouse_down = EINA_FALSE;
 }
 
 static void
@@ -370,19 +370,19 @@ _win_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
    Evas_Coord w,h;
    evas_object_geometry_get( obj, NULL, NULL, &w, &h);
 
-   GLData *gldata = data;
-   evas_object_resize(gldata->img, w, h);
+   GLData *gl_data = data;
+   evas_object_resize(gl_data->img, w, h);
 
-   init_matrix(gldata->view);
+   init_matrix(gl_data->view);
    if(w > h)
      {
         aspect = (float)w/h;
-        view_set_ortho(gldata->view, (-1.0 * aspect), (1.0 * aspect), -1.0, 1.0, -1.0, 1.0);
+        view_set_ortho(gl_data->view, (-1.0 * aspect), (1.0 * aspect), -1.0, 1.0, -1.0, 1.0);
      }
    else
      {
         aspect = (float)h/w;
-        view_set_ortho(gldata->view, -1.0, 1.0, (-1.0 * aspect), (1.0 * aspect), -1.0, 1.0);
+        view_set_ortho(gl_data->view, -1.0, 1.0, (-1.0 * aspect), (1.0 * aspect), -1.0, 1.0);
      }
 }
 

@@ -405,11 +405,11 @@ main(int   argc,
           {
              if (argc == 5)
                {
-                  My_Account *acc = _my_cache_account_find(my_cache, argv[4]);
-                  if (!acc)
+                  My_Account *acc_ = _my_cache_account_find(my_cache, argv[4]);
+                  if (!acc_)
                     {
-                       acc = _my_account_new(argv[4]);
-                       eina_hash_direct_add(my_cache->accounts, acc->name, acc);
+                       acc_ = _my_account_new(argv[4]);
+                       eina_hash_direct_add(my_cache->accounts, acc_->name, acc);
                     }
                   else
                     fprintf(stderr, "ERROR: account '%s' already exists.\n",
@@ -424,10 +424,10 @@ main(int   argc,
           {
              if (argc == 6)
                {
-                  My_Account *acc = _my_cache_account_find(my_cache, argv[4]);
-                  if (acc)
+                  My_Account *acc_ = _my_cache_account_find(my_cache, argv[4]);
+                  if (acc_)
                     {
-                       _my_post_add(acc, argv[5]);
+                       _my_post_add(acc_, argv[5]);
                     }
                   else
                     fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);
@@ -441,11 +441,11 @@ main(int   argc,
           {
              if (argc == 6)
                {
-                  My_Account *acc = _my_cache_account_find(my_cache, argv[4]);
-                  if (acc)
+                  My_Account *acc_ = _my_cache_account_find(my_cache, argv[4]);
+                  if (acc_)
                     {
                        My_Message *msg = _my_message_new(argv[5]);
-                       acc->messages = eina_list_append(acc->messages, msg);
+                       acc_->messages = eina_list_append(acc_->messages, msg);
                     }
                   else
                     fprintf(stderr, "ERROR: unknown account: '%s'\n", argv[4]);

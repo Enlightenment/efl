@@ -135,12 +135,12 @@ list_free:
 
    if (evas_key_modifier_is_set(mods, "Control"))
      {
-        Evas_Object *o;
+        Evas_Object *o_;
         int pos;
         pos = atoi(ev->key);
-        o = _new_rectangle_add(d.evas);
-        if (!evas_object_box_insert_at(d.box, o, pos))
-          evas_object_box_append(d.box, o);
+        o_ = _new_rectangle_add(d.evas);
+        if (!evas_object_box_insert_at(d.box, o_, pos))
+          evas_object_box_append(d.box, o_);
         return;
      }
 

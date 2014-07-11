@@ -46,7 +46,7 @@ _phone_book_stringshared_free_cb(void *data)
 }
 
 static Eina_Bool
-_phone_book_stringshared_foreach_cb(const Eina_Hash *phone_book,
+_phone_book_stringshared_foreach_cb(const Eina_Hash *phone_book EINA_UNUSED,
                                     const void *key EINA_UNUSED,
                                     void *data,
                                     void *fdata EINA_UNUSED)

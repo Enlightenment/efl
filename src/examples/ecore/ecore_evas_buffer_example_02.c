@@ -31,7 +31,7 @@ static Ecore_Evas *ee;
 static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
 
 static void
-_on_destroy(Ecore_Evas *ee EINA_UNUSED)
+_on_destroy(Ecore_Evas *ee_ EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

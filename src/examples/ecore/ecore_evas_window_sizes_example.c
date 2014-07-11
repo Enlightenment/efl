@@ -41,12 +41,12 @@ static const char commands[] = \
 
 /* to inform current window's size */
 static void
-_canvas_resize_cb(Ecore_Evas *ee)
+_canvas_resize_cb(Ecore_Evas *ee_)
 {
    int w, h;
    char buf[1024];
 
-   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+   ecore_evas_geometry_get(ee_, NULL, NULL, &w, &h);
    snprintf(buf, sizeof(buf), "%d x %d", w, h);
    evas_object_text_text_set(text, buf);
    evas_object_move(text, (w - 150) / 2, (h - 50) / 2);
@@ -55,7 +55,7 @@ _canvas_resize_cb(Ecore_Evas *ee)
 }
 
 static void
-_on_destroy(Ecore_Evas *ee EINA_UNUSED)
+_on_destroy(Ecore_Evas *ee_ EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

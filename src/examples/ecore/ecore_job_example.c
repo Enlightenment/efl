@@ -37,6 +37,11 @@ main(void)
    job3 = ecore_job_add(_job_print_cb, str3);
 
    job_quit = ecore_job_add(_job_quit_cb, NULL);
+
+   (void)job1;
+   (void)job3;
+   (void)job_quit;
+
    printf("Created jobs 1, 2, 3 and quit.\n");
 
    if (job2)

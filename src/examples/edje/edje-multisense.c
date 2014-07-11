@@ -51,7 +51,7 @@ static Evas_Object *create_my_group(Evas *canvas)
    return edje;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
    Ecore_Evas *window;
    Evas *canvas;
