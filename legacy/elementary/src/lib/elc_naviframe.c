@@ -11,6 +11,9 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_NAVIFRAME_CLASS
 
 #define MY_CLASS_NAME "Elm_Naviframe"
@@ -1883,6 +1886,12 @@ static void
 _elm_naviframe_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN const Elm_Action *
+_elm_naviframe_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *pd EINA_UNUSED)
+{
+   return &key_actions[0];
 }
 
 #include "elc_naviframe.eo.c"
