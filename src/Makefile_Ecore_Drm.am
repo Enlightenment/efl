@@ -16,6 +16,7 @@ lib/ecore_drm/ecore_drm_inputs.c \
 lib/ecore_drm/ecore_drm_output.c \
 lib/ecore_drm/ecore_drm_tty.c \
 lib/ecore_drm/ecore_drm_device.c \
+lib/ecore_drm/ecore_drm_dbus.c \
 lib/ecore_drm/ecore_drm.c \
 lib/ecore_drm/ecore_drm_private.h
 
