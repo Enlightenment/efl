@@ -809,7 +809,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
              if (qual > max_quality) qual = max_quality;
              // Enable TGV with LZ4. A bit redundant with EET compression.
              comp = !no_comp;
-             lossy = EET_IMAGE_ETC1;
+             lossy = opaque ? EET_IMAGE_ETC1 : EET_IMAGE_ETC1_ALPHA;
           }
         if (mode == 4)
           {
