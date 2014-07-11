@@ -4,6 +4,7 @@
 # include "Ecore.h"
 # include "ecore_private.h"
 # include "Ecore_Input.h"
+# include "Eldbus.h"
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -16,6 +17,7 @@
 # include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
+# include <systemd/sd-login.h>
 # include <xkbcommon/xkbcommon.h>
 
 # include <xf86drm.h>
