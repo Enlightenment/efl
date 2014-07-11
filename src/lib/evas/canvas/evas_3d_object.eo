@@ -34,7 +34,7 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
            Returns the status of a particular state of the object.
           */
           const;
-          return Eina_Bool;
+          return bool;
          params {
            @in Evas_3D_State state; /*@ State whose status is being asked */
          }

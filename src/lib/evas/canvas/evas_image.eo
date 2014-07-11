@@ -49,7 +49,7 @@ class Evas.Image (Evas.Object)
             @since 1.8 */
          }
          values {
-            Eina_Bool source_clip; /*@ whether @p obj is clipped by the source clipper.
+            bool source_clip; /*@ whether @p obj is clipped by the source clipper.
             (@c EINA_TRUE) or not (@c EINA_FALSE) */
          }
       }
@@ -76,7 +76,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_source_get()
             @see evas_object_image_source_unset()
             @see evas_object_image_source_visible_set() */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -116,7 +116,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_filled_set() for more information */
          }
          values {
-            Eina_Bool filled; /*@ @c EINA_TRUE, to make the fill property follow
+            bool filled; /*@ @c EINA_TRUE, to make the fill property follow
             object size or @c EINA_FALSE, otherwise. */
          }
       }
@@ -210,7 +210,7 @@ class Evas.Image (Evas.Object)
             See @ref evas_object_image_alpha_set() for more details. */
          }
          values {
-            Eina_Bool alpha; /*@ Whether to use alpha channel (@c EINA_TRUE) data
+            bool alpha; /*@ Whether to use alpha channel (@c EINA_TRUE) data
             or not (@c EINA_FALSE). */
          }
       }
@@ -321,7 +321,7 @@ class Evas.Image (Evas.Object)
             See @ref evas_object_image_smooth_scale_set() for more details. */
          }
          values {
-            Eina_Bool smooth_scale; /*@ Whether to use smooth scale or not. */
+            bool smooth_scale; /*@ Whether to use smooth scale or not. */
          }
       }
       border_scale {
@@ -365,7 +365,7 @@ class Evas.Image (Evas.Object)
             @return Whether the image is dirty. */
          }
          values {
-            Eina_Bool dirty; /*@ Whether the image is dirty. */
+            bool dirty; /*@ Whether the image is dirty. */
          }
       }
       video_surface {
@@ -415,7 +415,7 @@ class Evas.Image (Evas.Object)
             @since 1.1 */
          }
          values {
-            Eina_Bool enable; /*@ @c EINA_TRUE means that it should honor the orientation information */
+            bool enable; /*@ @c EINA_TRUE means that it should honor the orientation information */
          }
       }
       fill_spread {
@@ -570,7 +570,7 @@ class Evas.Image (Evas.Object)
             @since 1.8 */
          }
          values {
-            Eina_Bool visible; /*@ @c EINA_TRUE is source object to be shown, @c EINA_FALSE
+            bool visible; /*@ @c EINA_TRUE is source object to be shown, @c EINA_FALSE
             otherwise. */
          }
       }
@@ -728,7 +728,7 @@ class Evas.Image (Evas.Object)
             @since 1.8 */
          }
          values {
-            Eina_Bool source; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
+            bool source; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -847,7 +847,7 @@ class Evas.Image (Evas.Object)
             @since 1.2
 
             This function returns the state of the region support of given image */
-            return Eina_Bool @warn_unused;
+            return bool @warn_unused;
          }
       }
       load_error {
@@ -944,7 +944,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_animated_frame_duration_get()
             @see evas_object_image_animated_frame_set()
             @since 1.1 */
-            return Eina_Bool;
+            return bool;
          }
       }
       animated_loop_type {
@@ -1070,7 +1070,7 @@ class Evas.Image (Evas.Object)
       filter_padding {
          get {
             /*@ Get the value of the extra padding set when a filter is used. */
-            return Eina_Bool; /*@ Returns false if the filter is invalid and padding is 0 */
+            return bool; /*@ Returns false if the filter is invalid and padding is 0 */
             legacy null;
          }
          values {
@@ -1140,7 +1140,7 @@ class Evas.Image (Evas.Object)
          "quality=100 compress=9" */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
             obligatory). */
@@ -1197,7 +1197,7 @@ class Evas.Image (Evas.Object)
          const;
          return void * @warn_unused;
          params {
-            @in Eina_Bool for_writing; /*@ Whether the data being retrieved will be
+            @in bool for_writing; /*@ Whether the data being retrieved will be
             modified (@c EINA_TRUE) or not (@c EINA_FALSE). */
          }
       }
@@ -1231,7 +1231,7 @@ class Evas.Image (Evas.Object)
 
          This function imports pixels from a given source to a given canvas image. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Pixel_Import_Source *pixels @nonull; /*@ The pixel's source to be imported. */
          }

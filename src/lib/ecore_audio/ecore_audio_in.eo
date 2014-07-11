@@ -69,7 +69,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            Eina_Bool preloaded; /*EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
+            bool preloaded; /*EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
          }
       }
       looped {
@@ -90,7 +90,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            Eina_Bool looped; /*EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
+            bool looped; /*EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
          }
       }
       length {

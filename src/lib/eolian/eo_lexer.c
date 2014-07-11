@@ -60,6 +60,8 @@ static const char * const ctypes[] =
 
    "float", "double", "long double",
 
+   "Eina_Bool",
+
    "void"
 };
 
@@ -478,7 +480,7 @@ eo_lexer_keyword_str_get(int kw)
 Eina_Bool
 eo_lexer_is_type_keyword(int kw)
 {
-   return (kw >= KW_char && kw <= KW_ullong);
+   return (kw >= KW_char && kw <= KW_void);
 }
 
 const char *

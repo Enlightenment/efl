@@ -78,7 +78,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
           const;
-         return Eina_Bool ;
+         return bool ;
          params {
             @in Evas_Real x;         /*@ X coordinate of the picking position. */
             @in Evas_Real y;         /*@ Y coordinate of the picking position. */

@@ -20,7 +20,7 @@ class Evas.Out (Eo.Base)
       engine_info {
          set {
             /*@ Sets the engine specific output parameters for a given output. */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@ Gets the engine specific output parameters for a given output. */

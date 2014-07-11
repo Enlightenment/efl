@@ -340,7 +340,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in Eina_Bool enabled; /*@ The red component of the fog color.*/
+            @in bool enabled; /*@ The red component of the fog color.*/
          }
       }
       fog_enable_get {
@@ -348,7 +348,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
            Get fog effect status for the given mesh.
            @ingroup Evas_3D_Mesh
           */
-         return Eina_Bool;
+         return bool;
          params {
          }
       }

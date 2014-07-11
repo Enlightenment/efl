@@ -84,7 +84,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             legacy evas_object_visible_get;
          }
          values {
-            Eina_Bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+            bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
          }
       }
       type {
@@ -247,7 +247,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @since 1.1 */
          }
          values {
-            Eina_Bool freeze; /*@ pass whether @p obj is to freeze events (@c EINA_TRUE) or not
+            bool freeze; /*@ pass whether @p obj is to freeze events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -574,7 +574,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @see evas_object_freeze_events_get() */
          }
          values {
-            Eina_Bool repeat; /*@ whether @p obj is to repeat events (@c EINA_TRUE) or not
+            bool repeat; /*@ whether @p obj is to repeat events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -726,7 +726,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            Eina_Bool is_static_clip; /*@ @c EINA_TRUE if it's to be used as a static
+            bool is_static_clip; /*@ @c EINA_TRUE if it's to be used as a static
             clipper, @c EINA_FALSE otherwise. */
          }
       }
@@ -790,7 +790,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @see evas_object_key_ungrab */
          }
          values {
-            Eina_Bool focus; /*@ @c EINA_TRUE, to set it as focused or @c EINA_FALSE,
+            bool focus; /*@ @c EINA_TRUE, to set it as focused or @c EINA_FALSE,
             to take away the focus from it. */
          }
       }
@@ -802,7 +802,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             /*@             @since 1.2 */
          }
          values {
-            Eina_Bool is_frame; /*@ in */
+            bool is_frame; /*@ in */
          }
       }
       map_enable {
@@ -829,7 +829,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @return the map enabled state */
          }
          values {
-            Eina_Bool enabled; /*@ enabled state */
+            bool enabled; /*@ enabled state */
          }
       }
       precise_is_inside {
@@ -869,7 +869,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            Eina_Bool precise; /*@ Whether to use precise point collision detection or
+            bool precise; /*@ Whether to use precise point collision detection or
             not. The default value is false. */
          }
       }
@@ -971,7 +971,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @see evas_object_freeze_events_get() */
          }
          values {
-            Eina_Bool propagate; /*@ whether to propagate events (@c EINA_TRUE) or not
+            bool propagate; /*@ whether to propagate events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -1012,7 +1012,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @see evas_object_freeze_events_get() */
          }
          values {
-            Eina_Bool pass; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
+            bool pass; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -1044,7 +1044,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            Eina_Bool anti_alias; /*@ 1 if the object is to be anti_aliased, 0 otherwise. */
+            bool anti_alias; /*@ 1 if the object is to be anti_aliased, 0 otherwise. */
          }
       }
       color {
@@ -1243,7 +1243,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @since 1.8 */
 
          const;
-         return Eina_Bool @warn_unused;
+         return bool @warn_unused;
       }
       key_grab {
          /*@
@@ -1286,14 +1286,14 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @see evas_focus_get
          @see evas_key_modifier_add */
 
-         return Eina_Bool @warn_unused;
+         return bool @warn_unused;
          params {
             @in const(char)* keyname @nonull; /*@ the key to request events for. */
             @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
             trigger the event. */
             @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must @b not be present
             to trigger the event. */
-            @in Eina_Bool exclusive; /*@ request that the @p obj is the only object
+            @in bool exclusive; /*@ request that the @p obj is the only object
             receiving the @p keyname events. */
          }
       }
@@ -1391,7 +1391,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Smart_Object_Group */
 
          const;
-         return Eina_Bool @warn_unused;
+         return bool @warn_unused;
          params {
             @in const(char)* type @nonull; /*@ The @b name (type) of the smart class to check for */
          }
@@ -1504,7 +1504,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Smart_Object_Group */
 
          const;
-         return Eina_Bool @warn_unused;
+         return bool @warn_unused;
          params {
             @in const(char)* type @nonull; /*@ The type (name string) to check for. Must be the name */
          }

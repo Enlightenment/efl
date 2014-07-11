@@ -81,7 +81,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
             Evas_3D_Material_Attrib attrib;  /*@ Material attribute ID. */
          }
          values {
-            Eina_Bool enable; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
+            bool enable; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
          }
       }
 

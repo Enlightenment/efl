@@ -22,7 +22,7 @@ class Ecore.Poller (Eo.Base)
             This allows the changing of a poller's polling interval. It is useful when
             you want to alter a poll rate without deleting and re-creating a poller. */
             legacy ecore_poller_poller_interval_set;
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@

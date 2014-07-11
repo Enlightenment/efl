@@ -9,7 +9,7 @@ class Ecore_Audio_Out (Ecore_Audio)
          Attach an input to an output
 
          @since 1.8 */
-         return Eina_Bool; /*EINA_TRUE if the input was attached, EINA_FALSE otherwise*/
+         return bool; /*EINA_TRUE if the input was attached, EINA_FALSE otherwise*/
          params {
             @in Eo *input; /*The input to attach to the output*/
          }
@@ -19,7 +19,7 @@ class Ecore_Audio_Out (Ecore_Audio)
          Detach an input from an output
 
          @since 1.8 */
-         return Eina_Bool; /*EINA_TRUE if the input was detached, EINA_FALSE otherwise*/
+         return bool; /*EINA_TRUE if the input was detached, EINA_FALSE otherwise*/
          params {
             @in Eo *input; /*he input to detach to the output*/
          }

@@ -21,7 +21,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @return @c true if does, @c false if it doesn't. */
          }
          values {
-            Eina_Bool update; /*@ Whether or not update the size hints. */
+            bool update; /*@ Whether or not update the size hints. */
          }
       }
       mirrored {
@@ -41,7 +41,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @since 1.1.0 */
          }
          values {
-            Eina_Bool rtl; /*@ new value of flag EINA_TRUE/EINA_FALSE */
+            bool rtl; /*@ new value of flag EINA_TRUE/EINA_FALSE */
          }
       }
       animation {
@@ -68,7 +68,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @see edje_object_animation_set(). */
          }
          values {
-            Eina_Bool on; /*@ The animation state. @c EINA_TRUE to starts or
+            bool on; /*@ The animation state. @c EINA_TRUE to starts or
             @c EINA_FALSE to stops. */
          }
       }
@@ -97,7 +97,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @see edje_object_play_set(). */
          }
          values {
-            Eina_Bool play; /*@ Object state (@c EINA_TRUE to playing,
+            bool play; /*@ Object state (@c EINA_TRUE to playing,
             @c EINA_FALSE to paused). */
          }
       }
@@ -162,7 +162,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @see edje_object_add()
             @see edje_object_file_get()
             @see edje_object_mmap_set() */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -203,7 +203,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
             @see edje_object_scale_get()
             @see edje_scale_get() for more details */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -248,7 +248,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @see edje_object_file_get()
             @see edje_object_mmap_set()
             @since 1.8 */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(Eina_File)* file; /*@ The Eina_File pointing to the EDJ file to load @p from */
@@ -298,7 +298,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
 
             This function sets the text class for the Edje. */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* text_class; /*@ The text class name */
@@ -314,7 +314,7 @@ class Edje.Object (Evas.Smart_Clipped)
             This is frequently used with the user cursor.
 
             @return True on success, false on error. */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* part; /*@ The part containing the object. */
@@ -346,7 +346,7 @@ class Edje.Object (Evas.Smart_Clipped)
             @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
 
             @since 1.2 */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* part; /*@ The part name */
@@ -521,10 +521,10 @@ class Edje.Object (Evas.Smart_Clipped)
          Removes all object from the table indicated by part, except the
          internal ones set from the theme. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool clear; /*@ If set, will delete subobjs on remove */
+            @in bool clear; /*@ If set, will delete subobjs on remove */
          }
       }
       part_external_param_type_get {
@@ -553,7 +553,7 @@ class Edje.Object (Evas.Smart_Clipped)
          const;
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool allow; /*@ EINA_TRUE to enable, EINA_FALSE otherwise */
+            @in bool allow; /*@ EINA_TRUE to enable, EINA_FALSE otherwise */
          }
       }
       part_state_get {
@@ -604,7 +604,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_drag_step_get() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x step amount */
@@ -621,7 +621,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_drag_step_set() */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part */
             @out double dx; /*@ The x step increment pointer */
@@ -698,7 +698,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @brief Advances the cursor to the next cursor position.
          @see evas_textblock_cursor_char_next */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The edje cursor to advance */
@@ -747,7 +747,7 @@ class Edje.Object (Evas.Smart_Clipped)
          pointers' pointed variables be set to zero. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The Edje part's name */
             @out Evas_Coord x; /*@ A pointer to a variable where to store the part's x
@@ -783,7 +783,7 @@ class Edje.Object (Evas.Smart_Clipped)
          rectangles. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in const(char)* item; /*@ The item name */
@@ -801,7 +801,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          Removes an object from the table indicated by part. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child_obj; /*@ The object to pack in */
@@ -933,7 +933,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @note On failure, this function will make all non-@c NULL geometry
          pointers' pointed variables be set to zero. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @out Evas_Coord x; /*@ A pointer to a variable where to store the parts region's
             x coordinate */
@@ -963,7 +963,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_drag_value_get() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x value */
@@ -982,7 +982,7 @@ class Edje.Object (Evas.Smart_Clipped)
          Gets the drag location values. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @out double dx; /*@ The X value pointer */
@@ -1091,7 +1091,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          Packs an object into the table indicated by part. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child_obj; /*@ The object to pack in */
@@ -1138,7 +1138,7 @@ class Edje.Object (Evas.Smart_Clipped)
          Retrieves the size of the table in number of columns and rows. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @out int cols; /*@ Pointer where to store number of columns (can be NULL) */
@@ -1198,9 +1198,9 @@ class Edje.Object (Evas.Smart_Clipped)
          @note Use @c EINA_TRUE on scenarios where you don't need
          the image data preloaded anymore. */
 
-         return Eina_Bool;
+         return bool;
          params {
-            @in Eina_Bool cancel; /*@ @c EINA_FALSE will add it the preloading work queue,
+            @in bool cancel; /*@ @c EINA_FALSE will add it the preloading work queue,
             @c EINA_TRUE will remove it (if it was issued before). */
          }
       }
@@ -1212,7 +1212,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
+            @in bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
          }
       }
       part_text_input_panel_enabled_get {
@@ -1224,7 +1224,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @since 1.1.0 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
          }
@@ -1252,7 +1252,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_box_prepend()
          @see edje_object_part_box_insert_before() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to insert */
@@ -1280,7 +1280,7 @@ class Edje.Object (Evas.Smart_Clipped)
          /*@
          @brief Moves the cursor to the char below the current cursor position. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ the edje cursor to work on */
@@ -1298,7 +1298,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_drag_page_get() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x page step increment */
@@ -1314,7 +1314,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_drag_page_set() */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @out double dx; /*@ The dx page increment pointer */
@@ -1334,7 +1334,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_box_insert_before()
          @see edje_object_part_box_insert_at() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to prepend */
@@ -1471,7 +1471,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_drag_size_get() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in double dw; /*@ The drag width */
@@ -1487,7 +1487,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_drag_size_set() */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @out double dw; /*@ The drag width pointer */
@@ -1540,7 +1540,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_text_unescaped_get(). */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in const(char)* text_to_escape; /*@ The text string */
@@ -1647,7 +1647,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool disabled; /*@ The state */
+            @in bool disabled; /*@ The state */
          }
       }
       part_text_input_panel_return_key_disabled_get {
@@ -1658,7 +1658,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @since 1.2.0 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
          }
@@ -1709,7 +1709,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool prediction; /*@ If true, the prediction feature is allowed. */
+            @in bool prediction; /*@ If true, the prediction feature is allowed. */
          }
       }
       part_text_prediction_allow_get {
@@ -1720,7 +1720,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @since 1.2.0 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
          }
@@ -1922,7 +1922,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_box_prepend()
          @see edje_object_part_box_insert_at() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to insert */
@@ -1951,7 +1951,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @return @c EINA_TRUE if everything went fine, @c EINA_FALSE on errors. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in const(Edje_External_Param)* param; /*@ the parameter details, including its name, type and
@@ -1982,7 +1982,7 @@ class Edje.Object (Evas.Smart_Clipped)
          param member values are not set or valid. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @out Edje_External_Param param; /*@ the parameter details. It is used as both input and
@@ -2021,7 +2021,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_box_insert_before()
          @see edje_object_part_box_insert_at() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Evas_Object *child; /*@ The object to append */
@@ -2069,10 +2069,10 @@ class Edje.Object (Evas.Smart_Clipped)
          @see edje_object_part_box_remove()
          @see edje_object_part_box_remove_at() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool clear; /*@ Delete objects on removal */
+            @in bool clear; /*@ Delete objects on removal */
          }
       }
       part_drag_page {
@@ -2088,7 +2088,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_drag_step() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x step */
@@ -2101,7 +2101,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @return @c EINA_TRUE on success, @c EINA_FALSE otherwise */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in const(char)* text; /*@ The text string */
@@ -2132,7 +2132,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          params {
             @in const(char)* part; /*@ The part name */
-            @in Eina_Bool ondemand; /*@ If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.) */
+            @in bool ondemand; /*@ If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.) */
          }
       }
       part_text_input_panel_show_on_demand_get {
@@ -2143,7 +2143,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @since 1.9.0 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
          }
@@ -2173,7 +2173,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @return EINA_TRUE if it's true, EINA_FALSE otherwise. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to adjust. */
@@ -2198,7 +2198,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
          half-transparent white is 255 255 255 128. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* color_class;
             @in int r; /*@ Object Red value */
@@ -2234,7 +2234,7 @@ class Edje.Object (Evas.Smart_Clipped)
          half-transparent white is 255 255 255 128. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* color_class;
             @out int r; /*@ Object Red value */
@@ -2262,7 +2262,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
          @see edje_object_part_drag_page() */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in double dx; /*@ The x step */
@@ -2273,7 +2273,7 @@ class Edje.Object (Evas.Smart_Clipped)
          /*@
          @brief Move the cursor to the char above the current cursor position. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ the edje cursor to work on */
@@ -2374,7 +2374,7 @@ class Edje.Object (Evas.Smart_Clipped)
          given GUI element, depending on the @b theme applied to @p obj. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part's name to check for existence in @p obj's
             group */
@@ -2406,7 +2406,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @see  evas_textblock_cursor_format_is_visible_get */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ The cursor to adjust. */
@@ -2432,7 +2432,7 @@ class Edje.Object (Evas.Smart_Clipped)
          @brief Moves the cursor to the previous char
          @see evas_textblock_cursor_char_prev */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The part name */
             @in Edje_Cursor cur; /*@ the edje cursor to work on */
@@ -2485,7 +2485,7 @@ class Edje.Object (Evas.Smart_Clipped)
          For more details on EDC @c SWALLOW parts, see @ref edcref "syntax
          reference". */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* part; /*@ The swallow part's name */
             @in Evas_Object *obj_swallow; /*@ The object to occupy that part */

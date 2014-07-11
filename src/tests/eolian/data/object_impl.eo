@@ -12,7 +12,7 @@ class Object (Base) {
    properties {
       a {
          set {
-            return Eina_Bool(EINA_FALSE);
+            return bool(EINA_FALSE);
             value: const;
          }
          get {

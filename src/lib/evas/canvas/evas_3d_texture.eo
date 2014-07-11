@@ -28,7 +28,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Eina_Bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
+            bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
          }
       }
    }

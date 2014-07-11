@@ -45,7 +45,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             @ingroup Evas_Smart_Object_Group */
          }
          values {
-            Eina_Bool value; /*@ whether one wants to set (@c EINA_TRUE) or to unset
+            bool value; /*@ whether one wants to set (@c EINA_TRUE) or to unset
             (@c EINA_FALSE) the flag. */
          }
       }
@@ -157,7 +157,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
 
          @ingroup Evas_Smart_Object_Group */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(Evas_Smart_Cb_Description)* descriptions; /*@ @c NULL terminated array with
             #Evas_Smart_Cb_Description descriptions. Array elements won't be

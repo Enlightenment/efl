@@ -32,7 +32,11 @@ enum Tokens
     \
     KW(float), KW(double), KW(ldouble), \
     \
-    KW(void)
+    KW(bool), \
+    \
+    KW(void), \
+    \
+    KW(true), KW(false), KW(null)
 
 #define KW(x) KW_##x
 #define KWAT(x) KW_at_##x

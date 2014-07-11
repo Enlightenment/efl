@@ -245,7 +245,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return  @c EINA_TRUE if no error occurred, @c EINA_FALSE otherwise.
             @ingroup Evas_Output_Method */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -408,7 +408,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return @c EINA_TRUE if it got the focus, @c EINA_FALSE otherwise.
             @ingroup Evas_Canvas */
-            return Eina_Bool;
+            return bool;
          }
       }
       pointer_output_xy {
@@ -464,7 +464,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             if (evas_pointer_inside_get(evas)) printf("Mouse is in!\n");
             else printf("Mouse is out!\n");
             @endcode */
-            return Eina_Bool @warn_unused;
+            return bool @warn_unused;
          }
       }
       image_max_size {
@@ -479,7 +479,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             a limit, just a much higher one.
 
             @since 1.1 */
-            return Eina_Bool;
+            return bool;
          }
          values {
             int maxw; /*@ Pointer to hold the return value in pixels of the maximum width */
@@ -803,9 +803,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
             @in Evas_Coord y; /*@ The vertical coordinate of the position */
-            @in Eina_Bool include_pass_events_objects; /*@ Boolean flag to include or not
+            @in bool include_pass_events_objects; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
-            @in Eina_Bool include_hidden_objects; /*@ Boolean flag to include or not hidden
+            @in bool include_hidden_objects; /*@ Boolean flag to include or not hidden
             objects in this calculation */
          }
       }
@@ -865,7 +865,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Canvas
          @since 1.8 */
 
-         return Eina_Bool;
+         return bool;
       }
       focus_out {
          /*@
@@ -1004,7 +1004,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Group */
 
          const;
-         return Eina_Bool @warn_unused;
+         return bool @warn_unused;
          params {
             @in Evas_Font_Hinting_Flags hinting; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
@@ -1031,9 +1031,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
             @in Evas_Coord y; /*@ The vertical coordinate of the position */
-            @in Eina_Bool include_pass_events_objects; /*@ Boolean flag to include or not
+            @in bool include_pass_events_objects; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
-            @in Eina_Bool include_hidden_objects; /*@ Boolean flag to include or not hidden
+            @in bool include_hidden_objects; /*@ Boolean flag to include or not hidden
             objects in this calculation */
          }
       }
@@ -1123,8 +1123,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in Evas_Coord y;
             @in Evas_Coord w;
             @in Evas_Coord h;
-            @in Eina_Bool include_pass_events_objects;
-            @in Eina_Bool include_hidden_objects;
+            @in bool include_pass_events_objects;
+            @in bool include_hidden_objects;
          }
       }
       object_name_find {
@@ -1559,9 +1559,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             rectangular region */
             @in Evas_Coord w; /*@ The width of the rectangular region */
             @in Evas_Coord h; /*@ The height of the rectangular region */
-            @in Eina_Bool include_pass_events_objects; /*@ Boolean flag to include or not
+            @in bool include_pass_events_objects; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
-            @in Eina_Bool include_hidden_objects; /*@ Boolean flag to include or not hidden
+            @in bool include_hidden_objects; /*@ Boolean flag to include or not hidden
             objects in this calculation */
          }
       }

@@ -21,7 +21,7 @@ class Evas.Grid (Evas.Smart_Clipped)
             @since 1.1 */
          }
          values {
-            Eina_Bool mirrored; /*@ the mirrored mode to set */
+            bool mirrored; /*@ the mirrored mode to set */
          }
       }
       size {
@@ -75,7 +75,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
 
          params {
-            @in Eina_Bool clear; /*@ if true, it will delete just removed children. */
+            @in bool clear; /*@ if true, it will delete just removed children. */
          }
       }
       iterator_new {
@@ -108,7 +108,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @return 1 on success, 0 on failure.
          @since 1.1 */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child @nonull;
          }
@@ -123,7 +123,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child; /*@ The grid child to query for coordinates */
             @out int x; /*@ The pointer to where the x coordinate will be returned */
@@ -139,7 +139,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @return 1 on success, 0 on failure.
          @since 1.1 */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child @nonull; /*@ The child object to add. */
             @in int x; /*@ The virtual x coordinate of the child */

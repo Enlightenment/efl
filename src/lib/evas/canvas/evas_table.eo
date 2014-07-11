@@ -103,7 +103,7 @@ class Evas.Table (Evas.Smart_Clipped)
             @see evas_object_table_mirrored_set() */
          }
          values {
-            Eina_Bool mirrored; /*@ the mirrored mode to set */
+            bool mirrored; /*@ the mirrored mode to set */
          }
       }
       col_row_size {
@@ -155,7 +155,7 @@ class Evas.Table (Evas.Smart_Clipped)
          Faster way to remove all child objects from a table object. */
 
          params {
-            @in Eina_Bool clear; /*@ if true, it will delete just removed children. */
+            @in bool clear; /*@ if true, it will delete just removed children. */
          }
       }
       accessor_new {
@@ -192,7 +192,7 @@ class Evas.Table (Evas.Smart_Clipped)
          @since 1.1 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child; /*@ The child object to add. */
             @out ushort col; /*@ pointer to store relative-horizontal position to place child. */
@@ -213,7 +213,7 @@ class Evas.Table (Evas.Smart_Clipped)
 
          @return 1 on success, 0 on failure. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child @nonull; /*@ The child object to add. */
             @in ushort col; /*@ relative-horizontal position to place child. */
@@ -232,7 +232,7 @@ class Evas.Table (Evas.Smart_Clipped)
 
          @return 1 on success, 0 on failure. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child @nonull;
          }

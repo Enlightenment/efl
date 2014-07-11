@@ -428,7 +428,7 @@ class Evas.Text (Evas.Object)
          @return @c EINA_FALSE on success, @c EINA_TRUE on error. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in int pos; /*@ The character position to request co-ordinates for. */
             @out Evas_Coord cx; /*@ A pointer to an @c Evas_Coord to store the X value in (can be NULL). */

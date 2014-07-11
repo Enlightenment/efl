@@ -30,7 +30,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Eina_Bool directional; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
+            bool directional; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
          }
       }
 
@@ -114,7 +114,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Eina_Bool enable; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
+            bool enable; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
          }
       }
    }

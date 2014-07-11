@@ -150,7 +150,7 @@ This function registers the object handle pointed by wref to obj so when obj is 
             @in const(Eo_Event_Description)* desc; /*@ The description of the event to call */
             @in void *event_info; /*@ Extra event info to pass to the callbacks */
          }
-         return Eina_Bool; /* @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
+         return bool; /* @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
       }
       event_callback_priority_add {
          /*@ Add a callback for an event with a specific priority.

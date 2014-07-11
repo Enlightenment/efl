@@ -98,7 +98,7 @@ class Evas.Textblock (Evas.Object)
             @since 1.1 */
          }
          values {
-            Eina_Bool mode; /*@ @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise. */
+            bool mode; /*@ @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise. */
          }
       }
       style {
@@ -211,7 +211,7 @@ class Evas.Textblock (Evas.Object)
          @return @c EINA_TRUE on success, @c EINA_FALSE otherwise. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in int line; /*@ the line number. */
             @out Evas_Coord cx; /*@ x coord of the line. */

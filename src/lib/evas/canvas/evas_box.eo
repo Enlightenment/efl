@@ -261,9 +261,9 @@ class Evas.Box (Evas.Smart_Clipped)
          each of @p o's child objects, in sequence. If, and only if, all
          those calls succeed, so does this one. */
 
-         return Eina_Bool;
+         return bool;
          params {
-            @in Eina_Bool clear; /*@ if true, it will delete just removed children. */
+            @in bool clear; /*@ if true, it will delete just removed children. */
          }
       }
       iterator_new {
@@ -390,7 +390,7 @@ class Evas.Box (Evas.Smart_Clipped)
          evas_object_box_option_property_set(). See its documentation for
          more details. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object_Box_Option *opt @nonull; /*@ The box option structure bound to the child box element
             to set a property on */
@@ -427,7 +427,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's
          _Evas_Object_Box_Api.remove_at smart function. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in uint pos; /*@ The numeric position (starting from @c 0) of the child
             object to be removed */
@@ -445,7 +445,7 @@ class Evas.Box (Evas.Smart_Clipped)
          more details. */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object_Box_Option *opt @nonull; /*@ The box option structure bound to the child box element
             to get a property from */
@@ -638,7 +638,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's _Evas_Object_Box_Api.remove
          smart function. */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *child @nonull; /*@ The handle to the child object to be removed */
          }
