@@ -268,7 +268,7 @@
 #define SHAD_TEXUV  2
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
-#define SHAD_TEXM   5
+#define SHAD_TEXA   5
 #define SHAD_TEXSAM 6
 
 typedef struct _Evas_GL_Program               Evas_GL_Program;
@@ -485,8 +485,7 @@ struct _Evas_Engine_GL_Context
       int                top_pipe;
       struct {
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texu, cur_texv;
-         GLuint          cur_texm, cur_texmu, cur_texmv;
+         GLuint          cur_tex, cur_texu, cur_texv, cur_texa;
          int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
@@ -513,7 +512,7 @@ struct _Evas_Engine_GL_Context
       struct {
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texu, cur_texv, cur_texm;
+         GLuint          cur_tex, cur_texu, cur_texv, cur_texa;
          void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
          int             render_op;
          int             cx, cy, cw, ch;
@@ -528,7 +527,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texuv;
          GLfloat *texuv2;
          GLfloat *texuv3;
-         GLfloat *texm;
+         GLfloat *texa;
          GLfloat *texsam;
          Eina_Bool line: 1;
          Eina_Bool use_vertex : 1;
@@ -536,7 +535,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texuv : 1;
          Eina_Bool use_texuv2 : 1;
          Eina_Bool use_texuv3 : 1;
-         Eina_Bool use_texm : 1;
+         Eina_Bool use_texa : 1;
          Eina_Bool use_texsam : 1;
          Evas_GL_Image *im;
          GLuint buffer;
@@ -753,16 +752,6 @@ void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     int x, int y, int w, int h,
                                                     int r, int g, int b, int a,
                                                     Eina_Bool smooth, Eina_Bool tex_only);
-void              evas_gl_common_context_image_mask_push(Evas_Engine_GL_Context *gc,
-                                                    Evas_GL_Texture *tex,
-                                                    Evas_GL_Texture *texm,
-                                                    double sx, double sy, double sw, double sh,
-                                                    double sxm, double sym, double swm, double shm,
-                                                    int x, int y, int w, int h,
-                                                    int r, int g, int b, int a,
-                                                    Eina_Bool smooth);
-
-
 void              evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                                    Evas_GL_Texture *tex,
                                                    double sx, double sy, double sw, double sh,
