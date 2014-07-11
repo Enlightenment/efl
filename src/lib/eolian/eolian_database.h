@@ -130,8 +130,8 @@ struct _Eolian_Implement
 struct _Eolian_Event
 {
    Eina_Stringshare *name;
-   Eina_Stringshare *type;
    Eina_Stringshare *comment;
+   Eolian_Type *type;
 };
 
 typedef struct _Eolian_Typedef

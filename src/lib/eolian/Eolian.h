@@ -670,12 +670,13 @@ EAPI const Eina_List *eolian_class_events_list_get(const Eolian_Class *klass);
  *
  * @param[in] event handle of the event
  * @param[out] event_name name of the event
+ * @param[out] event_type type of the event
  * @param[out] event_desc description of the event
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_event_information_get(const Eolian_Event *event, const char **event_name, const char **event_type, const char **event_desc);
+EAPI Eina_Bool eolian_class_event_information_get(const Eolian_Event *event, const char **event_name, const Eolian_Type **event_type, const char **event_desc);
 
 /*
  * @brief Indicates if the class constructor has to invoke

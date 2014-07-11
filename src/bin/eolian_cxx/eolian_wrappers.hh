@@ -310,8 +310,8 @@ inline efl::eolian::eo_event
 event_create(Eolian_Class const& klass, const Eolian_Event *event_)
 {
    efl::eolian::eo_event event;
-   const char *name, *type, *comment;
-   if(::eolian_class_event_information_get(event_, &name, &type, &comment))
+   const char *name, *comment;
+   if(::eolian_class_event_information_get(event_, &name, NULL, &comment))
      {
         std::string name_ = safe_str(name);
         std::transform(name_.begin(), name_.end(), name_.begin(),

@@ -808,9 +808,9 @@ parse_event(Eo_Lexer *ls)
    if (ls->t.token == '(')
      {
         int line = ls->line_number, col = ls->column;
-        eo_lexer_get_balanced(ls, '(', ')');
-        ev->type = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
+        ev->type = parse_type(ls);
+        pop_type(ls);
         check_match(ls, ')', '(', line, col);
      }
    check(ls, ';');
