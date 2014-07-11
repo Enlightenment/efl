@@ -479,7 +479,8 @@ typedef enum _Eet_Image_Encoding
    EET_IMAGE_JPEG = 1,
    EET_IMAGE_ETC1 = 2,
    EET_IMAGE_ETC2_RGB = 3,
-   EET_IMAGE_ETC2_RGBA = 4
+   EET_IMAGE_ETC2_RGBA = 4,
+   EET_IMAGE_ETC1_ALPHA = 5,
 } Eet_Image_Encoding;
 
 typedef enum _Eet_Colorspace
@@ -488,7 +489,8 @@ typedef enum _Eet_Colorspace
    /* The number between are reserved to preserve compatibility with evas */
    EET_COLORSPACE_ETC1 = 9,
    EET_COLORSPACE_RGB8_ETC2 = 10,
-   EET_COLORSPACE_RGBA8_ETC2_EAC = 11
+   EET_COLORSPACE_RGBA8_ETC2_EAC = 11,
+   EET_COLORSPACE_ETC1_ALPHA = 12
 } Eet_Colorspace;
 
 /**

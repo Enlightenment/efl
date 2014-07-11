@@ -30,6 +30,27 @@
 
 #include "rg_etc1.h"
 
+#ifdef BUILD_NEON
+#include <arm_neon.h>
+#endif
+
+#ifndef WORDS_BIGENDIAN
+/* x86 */
+#define A_VAL(p) (((uint8_t *)(p))[3])
+#define R_VAL(p) (((uint8_t *)(p))[2])
+#define G_VAL(p) (((uint8_t *)(p))[1])
+#define B_VAL(p) (((uint8_t *)(p))[0])
+#else
+/* ppc */
+#define A_VAL(p) (((uint8_t *)(p))[0])
+#define R_VAL(p) (((uint8_t *)(p))[1])
+#define G_VAL(p) (((uint8_t *)(p))[2])
+#define B_VAL(p) (((uint8_t *)(p))[3])
+#endif
+
+#define ARGB_JOIN(a,r,g,b) \
+        (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+
 #define OFFSET_BLOCK_SIZE 4
 #define OFFSET_ALGORITHM 5
 #define OFFSET_OPTIONS 6
@@ -677,6 +698,50 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    return 1;
 }
 
+// FIXME: Importing two functions from evas here: premul & unpremul
+static void
+_eet_argb_premul(unsigned int *data, unsigned int len)
+{
+   unsigned int *de = data + len;
+
+   while (data < de)
+     {
+        unsigned int  a = 1 + (*data >> 24);
+
+        *data = (*data & 0xff000000) +
+          (((((*data) >> 8) & 0xff) * a) & 0xff00) +
+          (((((*data) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
+        data++;
+     }
+}
+
+static void
+_eet_argb_unpremul(unsigned int *data, unsigned int len)
+{
+   unsigned int *de = data + len;
+   unsigned int p_val = 0x00000000, p_res = 0x00000000;
+
+   while (data < de)
+     {
+        unsigned int  a = (*data >> 24) + 1;
+
+        if (p_val == *data) *data = p_res;
+        else
+          {
+             p_val = *data;
+             if ((a > 1) && (a < 256))
+               *data = ARGB_JOIN(a,
+                                 (R_VAL(data) * 255) / a,
+                                 (G_VAL(data) * 255) / a,
+                                 (B_VAL(data) * 255) / a);
+             else if (a == 1)
+               *data = 0x00000000;
+             p_res = *data;
+          }
+        data++;
+     }
+}
+
 static inline unsigned int
 _tgv_length_get(const char *m, unsigned int length, unsigned int *offset)
 {
@@ -722,7 +787,7 @@ eet_data_image_etc2_decode(const void *data,
    const char *m = NULL;
    unsigned int bwidth, bheight;
    unsigned char *p_etc;
-   char *buffer;
+   char *buffer = NULL;
    Eina_Rectangle master;
    unsigned int block_length;
    unsigned int offset;
@@ -730,8 +795,9 @@ eet_data_image_etc2_decode(const void *data,
    unsigned int block_count;
    unsigned int etc_width = 0;
    unsigned int etc_block_size;
+   unsigned int num_planes = 1, plane, alpha_offset = 0;
    Eet_Colorspace file_cspace;
-   Eina_Bool compress, blockless;
+   Eina_Bool compress, blockless, unpremul;
 
    m = data;
 
@@ -740,6 +806,7 @@ eet_data_image_etc2_decode(const void *data,
 
    compress = m[OFFSET_OPTIONS] & 0x1;
    blockless = (m[OFFSET_OPTIONS] & 0x2) != 0;
+   unpremul = (m[OFFSET_OPTIONS] & 0x4) != 0;
    w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
    h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
 
@@ -750,25 +817,31 @@ eet_data_image_etc2_decode(const void *data,
         file_cspace = EET_COLORSPACE_ETC1;
         if (alpha != EINA_FALSE) return 0;
         etc_block_size = 8;
-        etc_width = ((w + 2) / 4 + ((w + 2) % 4 ? 1 : 0)) * 8;
         break;
       case 1:
         if (lossy != EET_IMAGE_ETC2_RGB) return 0;
         file_cspace = EET_COLORSPACE_RGB8_ETC2;
         if (alpha != EINA_FALSE) return 0;
         etc_block_size = 8;
-        etc_width = ((w + 2) / 4 + ((w + 2) % 4 ? 1 : 0)) * 8;
         break;
       case 2:
         if (lossy != EET_IMAGE_ETC2_RGBA) return 0;
         file_cspace = EET_COLORSPACE_RGBA8_ETC2_EAC;
         if (alpha != EINA_TRUE) return 0;
         etc_block_size = 16;
-        etc_width = ((w + 2) / 4 + ((w + 2) % 4 ? 1 : 0)) * 16;
+        break;
+      case 3:
+        if (lossy != EET_IMAGE_ETC1_ALPHA) return 0;
+        file_cspace = EET_COLORSPACE_ETC1_ALPHA;
+        if (alpha != EINA_TRUE) return 0;
+        etc_block_size = 8;
+        num_planes = 2;
+        alpha_offset = ((w + 2 + 3) / 4) * ((h + 2 + 3) / 4) * 8 / sizeof(*p_etc);
         break;
       default:
         return 0;
      }
+   etc_width = ((w + 2 + 3) / 4) * etc_block_size;
 
    if (cspace != EET_COLORSPACE_ARGB8888 && cspace != file_cspace)
      {
@@ -795,6 +868,7 @@ eet_data_image_etc2_decode(const void *data,
       case EET_COLORSPACE_ETC1:
       case EET_COLORSPACE_RGB8_ETC2:
       case EET_COLORSPACE_RGBA8_ETC2_EAC:
+      case EET_COLORSPACE_ETC1_ALPHA:
         if (master.x % 4 || master.y % 4)
           abort();
         break;
@@ -813,107 +887,159 @@ eet_data_image_etc2_decode(const void *data,
    block_count = bwidth * bheight / (4 * 4);
    if (compress)
      buffer = alloca(etc_block_size * block_count);
-   else
-     buffer = NULL;
 
-   for (y = 0; y < h + 2; y += bheight)
-     for (x = 0; x < w + 2; x += bwidth)
-       {
-          Eina_Rectangle current;
-          const char *data_start;
-          const char *it;
-          unsigned int expand_length;
-          unsigned int i, j;
+   for (plane = 0; plane < num_planes; plane++)
+     for (y = 0; y < h + 2; y += bheight)
+       for (x = 0; x < w + 2; x += bwidth)
+         {
+            Eina_Rectangle current;
+            const char *data_start;
+            const char *it;
+            unsigned int expand_length;
+            unsigned int i, j;
 
-          block_length = _tgv_length_get(m + offset, length, &offset);
+            block_length = _tgv_length_get(m + offset, length, &offset);
 
-          if (block_length == 0) return 0;
+            if (block_length == 0) goto on_error;
 
-          data_start = m + offset;
-          offset += block_length;
+            data_start = m + offset;
+            offset += block_length;
 
-          EINA_RECTANGLE_SET(&current, x, y,
-                             bwidth, bheight);
+            EINA_RECTANGLE_SET(&current, x, y,
+                               bwidth, bheight);
 
-          if (!eina_rectangle_intersection(&current, &master))
-            continue ;
+            if (!eina_rectangle_intersection(&current, &master))
+              continue;
 
-          if (compress)
-            {
-               expand_length = LZ4_uncompress(data_start, buffer,
-                                              block_count * etc_block_size);
-               // That's an overhead for now, need to be fixed
-               if (expand_length != block_length)
-                 return 0;
-            }
-          else
-            {
-               buffer = (void*) data_start;
-               if (block_count * etc_block_size != block_length)
-                 return 0;
-            }
-          it = buffer;
-
-          for (i = 0; i < bheight; i += 4)
-            for (j = 0; j < bwidth; j += 4, it += etc_block_size)
+            if (compress)
               {
-                 Eina_Rectangle current_etc;
-                 unsigned int temporary[4 * 4] = { 0 };
-                 unsigned int offset_x, offset_y;
-                 int k;
-
-                 EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
-
-                 if (!eina_rectangle_intersection(&current_etc, &current))
-                   continue;
-
-                 switch (cspace)
-                   {
-                    case EET_COLORSPACE_ARGB8888:
-                      switch (file_cspace)
-                        {
-                         case EET_COLORSPACE_ETC1:
-                           if (!rg_etc1_unpack_block(it, temporary, 0))
-                             {
-                                // TODO: Should we decode as RGB8_ETC2?
-                                fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
-                                continue;
-                             }
-                           break;
-                         case EET_COLORSPACE_RGB8_ETC2:
-                           rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
-                           break;
-                         case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                           rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
-                           break;
-                         default: abort();
-                        }
-
-                       offset_x = current_etc.x - x - j;
-                       offset_y = current_etc.y - y - i;
-                       // FIXME: Import NEON optimizations from Evas.
-                       for (k = 0; k < current_etc.h; k++)
-                         {
-                            memcpy(&p[current_etc.x - 1 +
-                                      (current_etc.y - 1 + k) * master.w],
-                                   &temporary[offset_x + (offset_y + k) * 4],
-                                   current_etc.w * sizeof (unsigned int));
-                         }
-                       break;
-                    case EET_COLORSPACE_ETC1:
-                    case EET_COLORSPACE_RGB8_ETC2:
-                    case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                       memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                     (current_etc.y / 4) * etc_width],
-                              it, etc_block_size);
-                       break;
-                    default:
-                       abort();
-                   }
+                 expand_length = LZ4_uncompress(data_start, buffer,
+                                                block_count * etc_block_size);
+                 // That's an overhead for now, need to be fixed
+                 if (expand_length != block_length)
+                   goto on_error;
               }
-       }
+            else
+              {
+                 buffer = (void*) data_start;
+                 if (block_count * etc_block_size != block_length)
+                   goto on_error;
+              }
+            it = buffer;
+
+            for (i = 0; i < bheight; i += 4)
+              for (j = 0; j < bwidth; j += 4, it += etc_block_size)
+                {
+                   Eina_Rectangle current_etc;
+                   unsigned int temporary[4 * 4];
+                   unsigned int offset_x, offset_y;
+                   int k, l;
+
+                   EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
+
+                   if (!eina_rectangle_intersection(&current_etc, &current))
+                     continue;
+
+                   switch (cspace)
+                     {
+                      case EET_COLORSPACE_ARGB8888:
+                        switch (file_cspace)
+                          {
+                           case EET_COLORSPACE_ETC1:
+                           case EET_COLORSPACE_ETC1_ALPHA:
+                             if (!rg_etc1_unpack_block(it, temporary, 0))
+                               {
+                                  // TODO: Should we decode as RGB8_ETC2?
+                                  fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
+                                  continue;
+                               }
+                             break;
+                           case EET_COLORSPACE_RGB8_ETC2:
+                             rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
+                             break;
+                           case EET_COLORSPACE_RGBA8_ETC2_EAC:
+                             rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
+                             break;
+                           default: abort();
+                          }
+
+                        offset_x = current_etc.x - x - j;
+                        offset_y = current_etc.y - y - i;
+
+                        if (!plane)
+                          {
+#ifdef BUILD_NEON
+                             if (eina_cpu_features_get() & EINA_CPU_NEON)
+                               {
+                                  uint32_t *dst = &p[current_etc.x - 1 + (current_etc.y - 1) * master.w];
+                                  uint32_t *src = &temporary[offset_x + offset_y * 4];
+                                  for (k = 0; k < current_etc.h; k++)
+                                    {
+                                       if (current_etc.w == 4)
+                                         vst1q_u32(dst, vld1q_u32(src));
+                                       else if (current_etc.w == 3)
+                                         {
+                                            vst1_u32(dst, vld1_u32(src));
+                                            *(dst + 2) = *(src + 2);
+                                         }
+                                       else if (current_etc.w == 2)
+                                         vst1_u32(dst, vld1_u32(src));
+                                       else
+                                          *dst = *src;
+                                       dst += master.w;
+                                       src += 4;
+                                    }
+                               }
+                             else
+#endif
+                             for (k = 0; k < current_etc.h; k++)
+                               {
+                                  memcpy(&p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w],
+                                         &temporary[offset_x + (offset_y + k) * 4],
+                                         current_etc.w * sizeof (unsigned int));
+                               }
+                          }
+                        else
+                          {
+                             for (k = 0; k < current_etc.h; k++)
+                               for (l = 0; l < current_etc.w; l++)
+                                 {
+                                    unsigned int *rgbdata =
+                                      &p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w + l];
+                                    unsigned int *adata =
+                                      &temporary[offset_x + (offset_y + k) * 4 + l];
+                                    A_VAL(rgbdata) = G_VAL(adata);
+                                 }
+                          }
+                        break;
+                      case EET_COLORSPACE_ETC1:
+                      case EET_COLORSPACE_RGB8_ETC2:
+                      case EET_COLORSPACE_RGBA8_ETC2_EAC:
+                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
+                                      (current_etc.y / 4) * etc_width],
+                               it, etc_block_size);
+                        break;
+                      case EET_COLORSPACE_ETC1_ALPHA:
+                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
+                                      (current_etc.y / 4) * etc_width +
+                                      plane * alpha_offset],
+                               it, etc_block_size);
+                        break;
+                      default:
+                        abort();
+                     }
+                } // bx,by inside blocks
+         } // x,y macroblocks
+
+   // TODO: Add support for more unpremultiplied modes (ETC2)
+   if ((cspace == EET_COLORSPACE_ARGB8888) && unpremul)
+     _eet_argb_premul(p, w * h);
 
    return 1;
+
+on_error:
+   ERR("ETC image data is corrupted in this EET file");
+   return 0;
 }
 
 static void *
@@ -1083,6 +1209,16 @@ _block_size_get(int size)
    return MIN(k, MAX_BLOCK);
 }
 
+static inline void
+_alpha_to_greyscale_convert(uint32_t *data, int len)
+{
+   for (int k = 0; k < len; k++)
+     {
+        int alpha = A_VAL(data);
+        *data++ = ARGB_JOIN(alpha, alpha, alpha, alpha);
+     }
+}
+
 static void *
 eet_data_image_etc1_compressed_convert(int         *size,
                                        const unsigned char *data8,
@@ -1096,12 +1232,14 @@ eet_data_image_etc1_compressed_convert(int         *size,
    uint8_t *comp = NULL;
    uint8_t *buffer;
    uint32_t *data;
-   uint32_t width, height;
+   uint32_t nl_width, nl_height;
    uint8_t header[8] = "TGV1";
    int block_width, block_height, macro_block_width, macro_block_height;
    int block_count, image_stride, image_height, etc_block_size;
+   int num_planes = 1;
    Eet_Colorspace cspace;
-   Eina_Binbuf *r;
+   Eina_Bool unpremul = EINA_FALSE, alpha_texture = EINA_FALSE;
+   Eina_Binbuf *r = NULL;
    void *result;
    const char *codec;
 
@@ -1110,9 +1248,8 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
    image_stride = w;
    image_height = h;
-   data = (uint32_t *) data8;
-   width = htonl(image_stride);
-   height = htonl(image_height);
+   nl_width = htonl(image_stride);
+   nl_height = htonl(image_height);
    compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
@@ -1130,7 +1267,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
    block_height = _block_size_get(image_height + 2);
    header[4] = (block_height << 4) | block_width;
 
-   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC
+   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC, 3 for ETC1_ALPHA
    switch (lossy)
      {
       case EET_IMAGE_ETC1:
@@ -1151,13 +1288,22 @@ eet_data_image_etc1_compressed_convert(int         *size,
         header[5] = 2;
         codec = "ETC2 (RGBA)";
         break;
+      case EET_IMAGE_ETC1_ALPHA:
+        cspace = EET_COLORSPACE_ETC1_ALPHA;
+        etc_block_size = 8;
+        num_planes = 2; // RGB and Alpha
+        header[5] = 3;
+        codec = "ETC1+Alpha";
+        break;
       default: abort();
      }
 
-   // header[6]: 0 for raw, 1, for LZ4 compressed
-   header[6] = compress;
+   // header[6]: 0 for raw, 1, for LZ4 compressed, 4 for unpremultiplied RGBA
+   // blockless mode (0x2) is never used here
+   header[6] = (compress ? 0x1 : 0x0) | (unpremul ? 0x4 : 0x0);
 
-   // header[7]: options (unused)
+   // header[7]: unused options
+   // Note: consider extending the header instead of filling all the bits here
    header[7] = 0;
 
    // Encoding being super slow, let's inform the user first.
@@ -1166,8 +1312,8 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
    // Write header
    eina_binbuf_append_length(r, header, sizeof (header));
-   eina_binbuf_append_length(r, (unsigned char*) &width, sizeof (width));
-   eina_binbuf_append_length(r, (unsigned char*) &height, sizeof (height));
+   eina_binbuf_append_length(r, (unsigned char*) &nl_width, sizeof (nl_width));
+   eina_binbuf_append_length(r, (unsigned char*) &nl_height, sizeof (nl_height));
 
    // Real block size in pixels, obviously a multiple of 4
    macro_block_width = 4 << block_width;
@@ -1180,142 +1326,193 @@ eet_data_image_etc1_compressed_convert(int         *size,
    if (compress)
      comp = alloca(LZ4_compressBound(block_count * etc_block_size));
 
-   // Write macro block
-   for (int y = 0; y < image_height + 2; y += macro_block_height)
+   // Write a whole plane (RGB or Alpha)
+   for (int plane = 0; plane < num_planes; plane++)
      {
-        uint32_t *input, *last_col, *last_row, *last_pix;
-        int real_y;
-        int wlen;
-
-        if (y == 0) real_y = 0;
-        else if (y < image_height + 1) real_y = y - 1;
-        else real_y = image_height - 1;
-
-        for (int x = 0; x < image_stride + 2; x += macro_block_width)
+        if (!alpha_texture)
           {
-             uint8_t *offset = buffer;
-             int real_x = x;
-
-             if (x == 0) real_x = 0;
-             else if (x < image_stride + 1) real_x = x - 1;
-             else real_x = image_stride - 1;
-
-             input = data + real_y * image_stride + real_x;
-             last_row = data + image_stride * (image_height - 1) + real_x;
-             last_col = data + (real_y + 1) * image_stride - 1;
-             last_pix = data + image_height * image_stride - 1;
-
-             for (int by = 0; by < macro_block_height; by += 4)
-               {
-                  int dup_top = ((y + by) == 0) ? 1 : 0;
-                  int max_row = MAX(0, MIN(4, image_height - real_y - by));
-                  int oy = (y == 0) ? 1 : 0;
-
-                  for (int bx = 0; bx < macro_block_width; bx += 4)
-                    {
-                       int dup_left = ((x + bx) == 0) ? 1 : 0;
-                       int max_col = MAX(0, MIN(4, image_stride - real_x - bx));
-                       uint32_t todo[16] = { 0 };
-                       int row, col;
-                       int ox = (x == 0) ? 1 : 0;
-
-                       if (dup_left)
-                         {
-                            // Duplicate left column
-                            for (row = 0; row < max_row; row++)
-                              todo[row * 4] = input[row * image_stride];
-                            for (row = max_row; row < 4; row++)
-                              todo[row * 4] = last_row[0];
-                         }
-
-                       if (dup_top)
-                         {
-                            // Duplicate top row
-                            for (col = 0; col < max_col; col++)
-                              todo[col] = input[MAX(col + bx - ox, 0)];
-                            for (col = max_col; col < 4; col++)
-                              todo[col] = last_col[0];
-                         }
-
-                       for (row = dup_top; row < 4; row++)
-                         {
-                            for (col = dup_left; col < max_col; col++)
-                              {
-                                 if (row < max_row)
-                                   {
-                                      // Normal copy
-                                      todo[row * 4 + col] = input[(row + by - oy) * image_stride + bx + col - ox];
-                                   }
-                                 else
-                                   {
-                                      // Copy last line
-                                      todo[row * 4 + col] = last_row[col + bx - ox];
-                                   }
-                              }
-                            for (col = max_col; col < 4; col++)
-                              {
-                                 // Right edge
-                                 if (row < max_row)
-                                   {
-                                      // Duplicate last column
-                                      todo[row * 4 + col] = last_col[MAX(row + by - oy, 0) * image_stride];
-                                   }
-                                 else
-                                   {
-                                      // Duplicate very last pixel again and again
-                                      todo[row * 4 + col] = *last_pix;
-                                   }
-                              }
-                         }
-
-                       switch (cspace)
-                         {
-                          case EET_COLORSPACE_ETC1:
-                            rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
-                            break;
-                          case EET_COLORSPACE_RGB8_ETC2:
-                            etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
-                            break;
-                          case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                            etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
-                            break;
-                          default: return 0;
-                         }
-
-                       offset += etc_block_size;
-                    }
-               }
-
-             if (compress)
-               {
-                  wlen = LZ4_compressHC((char *) buffer, (char *) comp,
-                                        block_count * etc_block_size);
-               }
-             else
-               {
-                  comp = buffer;
-                  wlen = block_count * etc_block_size;
-               }
-
-             if (wlen > 0)
-               {
-                  unsigned int blen = wlen;
-
-                  while (blen)
-                    {
-                       unsigned char plen;
-
-                       plen = blen & 0x7F;
-                       blen = blen >> 7;
-
-                       if (blen) plen = 0x80 | plen;
-                       eina_binbuf_append_length(r, &plen, 1);
-                    }
-                  eina_binbuf_append_length(r, (unsigned char *) comp, wlen);
-               }
+             // Normal mode
+             data = (uint32_t *) data8;
           }
-     }
+        else if (!plane)
+          {
+             int len = image_stride * image_height;
+             // RGB plane for ETC1+Alpha
+             data = malloc(len * 4);
+             if (!data) goto finish;
+             memcpy(data, data8, len * 4);
+             if (unpremul) _eet_argb_unpremul(data, len);
+          }
+        else
+          {
+             // Alpha plane for ETC1+Alpha
+             _alpha_to_greyscale_convert(data, image_stride * image_height);
+          }
 
+        // Write macro block
+        for (int y = 0; y < image_height + 2; y += macro_block_height)
+          {
+             uint32_t *input, *last_col, *last_row, *last_pix;
+             int real_y;
+             int wlen;
+
+             if (y == 0) real_y = 0;
+             else if (y < image_height + 1) real_y = y - 1;
+             else real_y = image_height - 1;
+
+             for (int x = 0; x < image_stride + 2; x += macro_block_width)
+               {
+                  uint8_t *offset = buffer;
+                  int real_x = x;
+
+                  if (x == 0) real_x = 0;
+                  else if (x < image_stride + 1) real_x = x - 1;
+                  else real_x = image_stride - 1;
+
+                  input = data + real_y * image_stride + real_x;
+                  last_row = data + image_stride * (image_height - 1) + real_x;
+                  last_col = data + (real_y + 1) * image_stride - 1;
+                  last_pix = data + image_height * image_stride - 1;
+
+                  for (int by = 0; by < macro_block_height; by += 4)
+                    {
+                       int dup_top = ((y + by) == 0) ? 1 : 0;
+                       int max_row = MAX(0, MIN(4, image_height - real_y - by));
+                       int oy = (y == 0) ? 1 : 0;
+
+                       for (int bx = 0; bx < macro_block_width; bx += 4)
+                         {
+                            int dup_left = ((x + bx) == 0) ? 1 : 0;
+                            int max_col = MAX(0, MIN(4, image_stride - real_x - bx));
+                            uint32_t todo[16] = { 0 };
+                            int row, col;
+                            int ox = (x == 0) ? 1 : 0;
+
+                            if (dup_left)
+                              {
+                                 // Duplicate left column
+                                 for (row = 0; row < max_row; row++)
+                                   todo[row * 4] = input[row * image_stride];
+                                 for (row = max_row; row < 4; row++)
+                                   todo[row * 4] = last_row[0];
+                              }
+
+                            if (dup_top)
+                              {
+                                 // Duplicate top row
+                                 for (col = 0; col < max_col; col++)
+                                   todo[col] = input[MAX(col + bx - ox, 0)];
+                                 for (col = max_col; col < 4; col++)
+                                   todo[col] = last_col[0];
+                              }
+
+                            for (row = dup_top; row < 4; row++)
+                              {
+                                 for (col = dup_left; col < max_col; col++)
+                                   {
+                                      if (row < max_row)
+                                        {
+                                           // Normal copy
+                                           todo[row * 4 + col] = input[(row + by - oy) * image_stride + bx + col - ox];
+                                        }
+                                      else
+                                        {
+                                           // Copy last line
+                                           todo[row * 4 + col] = last_row[col + bx - ox];
+                                        }
+                                   }
+                                 for (col = max_col; col < 4; col++)
+                                   {
+                                      // Right edge
+                                      if (row < max_row)
+                                        {
+                                           // Duplicate last column
+                                           todo[row * 4 + col] = last_col[MAX(row + by - oy, 0) * image_stride];
+                                        }
+                                      else
+                                        {
+                                           // Duplicate very last pixel again and again
+                                           todo[row * 4 + col] = *last_pix;
+                                        }
+                                   }
+                              }
+
+                            switch (cspace)
+                              {
+                               case EET_COLORSPACE_ETC1:
+                               case EET_COLORSPACE_ETC1_ALPHA:
+                                 rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
+                                 break;
+                               case EET_COLORSPACE_RGB8_ETC2:
+                                 etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
+                                 break;
+                               case EET_COLORSPACE_RGBA8_ETC2_EAC:
+                                 etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
+                                 break;
+                               default: return 0;
+                              }
+
+#ifdef DEBUG_STATS
+                            if (plane == 0)
+                              {
+                                 // Decode to compute PSNR, this is slow.
+                                 uint32_t done[16];
+
+                                 if (alpha)
+                                   rg_etc2_rgba8_decode_block(offset, done);
+                                 else
+                                    rg_etc2_rgb8_decode_block(offset, done);
+
+                                 for (int k = 0; k < 16; k++)
+                                   {
+                                      const int r = (R_VAL(&(todo[k])) - R_VAL(&(done[k])));
+                                      const int g = (G_VAL(&(todo[k])) - G_VAL(&(done[k])));
+                                      const int b = (B_VAL(&(todo[k])) - B_VAL(&(done[k])));
+                                      const int a = (A_VAL(&(todo[k])) - A_VAL(&(done[k])));
+                                      mse += r*r + g*g + b*b;
+                                      if (alpha) mse_alpha += a*a;
+                                      mse_div++;
+                                   }
+                              }
+#endif
+
+                            offset += etc_block_size;
+                         }
+                    }
+
+                  if (compress)
+                    {
+                       wlen = LZ4_compressHC((char *) buffer, (char *) comp,
+                                             block_count * etc_block_size);
+                    }
+                  else
+                    {
+                       comp = buffer;
+                       wlen = block_count * etc_block_size;
+                    }
+
+                  if (wlen > 0)
+                    {
+                       unsigned int blen = wlen;
+
+                       while (blen)
+                         {
+                            unsigned char plen;
+
+                            plen = blen & 0x7F;
+                            blen = blen >> 7;
+
+                            if (blen) plen = 0x80 | plen;
+                            eina_binbuf_append_length(r, &plen, 1);
+                         }
+                       eina_binbuf_append_length(r, (unsigned char *) comp, wlen);
+                    }
+               } // 4 rows
+          } // macroblocks
+     } // planes
+
+finish:
+   if (alpha_texture) free(data);
    *size = eina_binbuf_length_get(r);
    result = eina_binbuf_string_steal(r);
    eina_binbuf_free(r);
@@ -1871,6 +2068,7 @@ eet_data_image_encode_cipher(const void  *data,
         if (alpha) abort();
         // fallthrough
       case EET_IMAGE_ETC2_RGBA:
+      case EET_IMAGE_ETC1_ALPHA:
          d = eet_data_image_etc1_compressed_convert(&size, data, w, h,
                                                     quality, comp, lossy);
          break;
@@ -2065,6 +2263,10 @@ eet_data_image_header_decode_cipher(const void   *data,
              if (alpha) *alpha = EINA_TRUE;
              if (lossy) *lossy = EET_IMAGE_ETC2_RGBA;
              break;
+           case 3:
+             if (alpha) *alpha = EINA_TRUE;
+             if (lossy) *lossy = EET_IMAGE_ETC1_ALPHA;
+             break;
            default:
              return 0;
           }
@@ -2111,6 +2313,11 @@ static const Eet_Colorspace _eet_etc1_colorspace[] = {
   EET_COLORSPACE_ARGB8888
 };
 
+static const Eet_Colorspace _eet_etc1_alpha_colorspace[] = {
+  EET_COLORSPACE_ETC1_ALPHA,
+  EET_COLORSPACE_ARGB8888
+};
+
 static const Eet_Colorspace _eet_etc2_rgb_colorspace[] = {
   EET_COLORSPACE_RGB8_ETC2,
   EET_COLORSPACE_ARGB8888
@@ -2141,6 +2348,8 @@ eet_data_image_colorspace_get(Eet_File *ef,
           *cspaces = _eet_etc2_rgb_colorspace;
         else if (lossy == EET_IMAGE_ETC2_RGBA)
           *cspaces = _eet_etc2_rgba_colorspace;
+        else if (lossy == EET_IMAGE_ETC1_ALPHA)
+          *cspaces = _eet_etc1_alpha_colorspace;
      }
 
    return r;
@@ -2331,7 +2540,8 @@ _eet_data_image_decode_inside(const void   *data,
      }
    else if ((lossy == EET_IMAGE_ETC1) ||
             (lossy == EET_IMAGE_ETC2_RGB) ||
-            (lossy == EET_IMAGE_ETC2_RGBA))
+            (lossy == EET_IMAGE_ETC2_RGBA) ||
+            (lossy == EET_IMAGE_ETC1_ALPHA))
      {
         return eet_data_image_etc2_decode(data, size, d,
                                           src_x, src_y, src_w, src_h,
@@ -2479,6 +2689,10 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
 
    if (cspace == EET_COLORSPACE_RGBA8_ETC2_EAC &&
        ilossy != EET_IMAGE_ETC2_RGBA)
+     return 0;
+
+   if (cspace == EET_COLORSPACE_ETC1_ALPHA &&
+       ilossy != EET_IMAGE_ETC1_ALPHA)
      return 0;
 
    if (cspace == EET_COLORSPACE_ARGB8888 &&
