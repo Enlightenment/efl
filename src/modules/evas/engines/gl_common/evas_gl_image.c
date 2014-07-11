@@ -18,7 +18,7 @@ evas_gl_common_image_alloc_ensure(Evas_GL_Image *im)
                                                     im->w, im->h);
 }
 
-void
+EAPI void
 evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc)
 {
    Eina_List *l;
@@ -102,7 +102,7 @@ _evas_gl_image_cache_add(Evas_GL_Image *im)
    return EINA_FALSE;
 }
 
-void
+EAPI void
 evas_gl_common_image_ref(Evas_GL_Image *im)
 {
    if (im->references == 0)
@@ -112,7 +112,7 @@ evas_gl_common_image_ref(Evas_GL_Image *im)
    im->references++;
 }
 
-void
+EAPI void
 evas_gl_common_image_unref(Evas_GL_Image *im)
 {
    im->references--;
@@ -304,7 +304,7 @@ evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_File *f, const char *
    return _evas_gl_common_image(gc, im_im, lo, error);
 }
 
-Evas_GL_Image *
+EAPI Evas_GL_Image *
 evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace)
 {
    Evas_GL_Image *im;
@@ -523,7 +523,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
    return im;
 }
 
-void
+EAPI void
 evas_gl_common_image_native_enable(Evas_GL_Image *im)
 {
    if (im->cs.data)
@@ -560,7 +560,7 @@ evas_gl_common_image_native_enable(Evas_GL_Image *im)
    im->tex_only = 1;
 }
 
-void
+EAPI void
 evas_gl_common_image_native_disable(Evas_GL_Image *im)
 {
    if (im->im)
@@ -689,7 +689,7 @@ evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc)
    _evas_gl_image_cache_trim(gc);
 }
 
-void
+EAPI void
 evas_gl_common_image_free(Evas_GL_Image *im)
 {
    evas_gl_common_context_flush(im->gc);

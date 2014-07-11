@@ -546,7 +546,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
-Evas_Engine_GL_Context *
+EAPI Evas_Engine_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_Engine_GL_Context *gc;
@@ -895,7 +895,7 @@ evas_gl_common_context_new(void)
    return NULL;
 }
 
-void
+EAPI void
 evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
 {
    int i, j;
@@ -961,7 +961,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
    free(gc);
 }
 
-void
+EAPI void
 evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
 {
    if (_evas_gl_common_context == gc) return;
@@ -969,7 +969,7 @@ evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
    if (gc) _evas_gl_common_viewport_set(gc);
 }
 
-void
+EAPI void
 evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 {
    int i;
@@ -1078,7 +1078,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    _evas_gl_common_viewport_set(gc);
 }
 
-void
+EAPI void
 evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
 {
    if ((gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
@@ -1127,7 +1127,7 @@ evas_gl_common_tiling_done(Evas_Engine_GL_Context *gc EINA_UNUSED)
 }
 
 
-void
+EAPI void
 evas_gl_common_context_done(Evas_Engine_GL_Context *gc)
 {
    if (gc->master_clip.used)
@@ -2652,7 +2652,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 }
 
-void
+EAPI void
 evas_gl_common_context_flush(Evas_Engine_GL_Context *gc)
 {
    shader_array_flush(gc);
@@ -3290,7 +3290,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
    gc->havestuff = EINA_FALSE;
 }
 
-int
+EAPI int
 evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* buf_name, int frame, const char *suffix)
 {
    RGBA_Image *im = NULL;

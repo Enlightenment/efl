@@ -1278,7 +1278,7 @@ _evgl_direct_enabled()
 //
 // This code should be called during eng_setup() in evas_engine
 EVGL_Engine *
-evgl_engine_init(void *eng_data, EVGL_Interface *efunc)
+evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 {
    int direct_mem_opt = 0, direct_off = 0, direct_soff = 0, debug_mode = 0;
    char *s = NULL;
