@@ -31,9 +31,9 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-#define PROP_GET_RETURN_DFLT_VAL "property_get_return_dflt_val"
-#define PROP_SET_RETURN_DFLT_VAL "property_set_return_dflt_val"
-#define METHOD_RETURN_DFLT_VAL "method_return_dflt_val"
+#define PROP_GET_RETURN_DEFAULT_VAL "property_get_return_default_val"
+#define PROP_SET_RETURN_DEFAULT_VAL "property_set_return_default_val"
+#define METHOD_RETURN_DEFAULT_VAL "method_return_default_val"
 
 #define EOLIAN_METHOD_RETURN_COMMENT "method_return_comment"
 #define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
@@ -186,7 +186,7 @@ void database_function_data_set(Eolian_Function *function_id, const char *key, c
 
 void database_function_return_type_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Type *ret_type);
 void database_function_return_comment_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_comment);
-void database_function_return_dflt_val_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_dflt_value);
+void database_function_return_default_val_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_default_value);
 void database_function_return_flag_set_as_warn_unused(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eina_Bool warn_unused);
 
 void database_function_object_set_as_const(Eolian_Function *foo_id, Eina_Bool is_const);

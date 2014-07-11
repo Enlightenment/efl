@@ -117,17 +117,17 @@ void database_function_return_type_set(Eolian_Function *fid, Eolian_Function_Typ
      }
 }
 
-void database_function_return_dflt_val_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *ret_dflt_value)
+void database_function_return_default_val_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *ret_default_value)
 {
    const char *key = NULL;
    switch (ftype)
      {
-      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DFLT_VAL; break;
-      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DFLT_VAL; break;
-      case EOLIAN_METHOD: key = METHOD_RETURN_DFLT_VAL; break;
+      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DEFAULT_VAL; break;
+      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DEFAULT_VAL; break;
+      case EOLIAN_METHOD: key = METHOD_RETURN_DEFAULT_VAL; break;
       default: return;
      }
-   database_function_data_set(fid, key, ret_dflt_value);
+   database_function_data_set(fid, key, ret_default_value);
 }
 
 void database_function_return_comment_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *ret_comment)

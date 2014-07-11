@@ -441,11 +441,11 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
               func_env.lower_eo_func);
         if (!ret_is_void)
           {
-             const char *dflt_ret_val =
-                eolian_function_return_dflt_value_get(funcid, ftype);
+             const char *default_ret_val =
+                eolian_function_return_default_value_get(funcid, ftype);
              eina_strbuf_append_printf(eo_func_decl, ", %s%s, %s",
                    ret_const ? "const " : "", rettype,
-                   dflt_ret_val?dflt_ret_val:"0");
+                   default_ret_val?default_ret_val:"0");
 
           }
         if (has_params)

@@ -410,7 +410,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
      {
         int line = ls->line_number, col = ls->column;
         eo_lexer_get_balanced(ls, '(', ')');
-        ret->dflt_ret_val = eina_stringshare_add(ls->t.value);
+        ret->default_ret_val = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
         check_match(ls, ')', '(', line, col);
      }

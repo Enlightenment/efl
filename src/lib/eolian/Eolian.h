@@ -641,7 +641,7 @@ EAPI const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *f
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *
-eolian_function_return_dflt_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get the return comment of a function.

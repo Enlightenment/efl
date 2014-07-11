@@ -120,14 +120,14 @@ eolian_function_return_type_get(const Eolian_Function *fid, Eolian_Function_Type
 }
 
 EAPI Eina_Stringshare *
-eolian_function_return_dflt_value_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
+eolian_function_return_default_value_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    const char *key = NULL;
    switch (ftype)
      {
-      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DFLT_VAL; break;
-      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DFLT_VAL; break;
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = METHOD_RETURN_DFLT_VAL; break;
+      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DEFAULT_VAL; break;
+      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DEFAULT_VAL; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = METHOD_RETURN_DEFAULT_VAL; break;
       default: return NULL;
      }
    return eolian_function_data_get(fid, key);

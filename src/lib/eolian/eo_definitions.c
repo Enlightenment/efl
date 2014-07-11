@@ -8,7 +8,7 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
    if (ret->type) database_type_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
-   if (ret->dflt_ret_val) eina_stringshare_del(ret->dflt_ret_val);
+   if (ret->default_ret_val) eina_stringshare_del(ret->default_ret_val);
    free(ret);
 }
 

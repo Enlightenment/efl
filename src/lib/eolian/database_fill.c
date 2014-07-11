@@ -137,8 +137,8 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
                                              accessor->ret->comment);
         database_function_return_flag_set_as_warn_unused(foo_id, ftype,
                                              accessor->ret->warn_unused);
-        database_function_return_dflt_val_set(foo_id, ftype,
-                                             accessor->ret->dflt_ret_val);
+        database_function_return_default_val_set(foo_id, ftype,
+                                             accessor->ret->default_ret_val);
         accessor->ret->type = NULL;
      }
 
@@ -247,8 +247,8 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
                                           meth->ret->comment);
         database_function_return_flag_set_as_warn_unused(foo_id, EOLIAN_METHOD,
                                           meth->ret->warn_unused);
-        database_function_return_dflt_val_set(foo_id, EOLIAN_METHOD,
-                                          meth->ret->dflt_ret_val);
+        database_function_return_default_val_set(foo_id, EOLIAN_METHOD,
+                                          meth->ret->default_ret_val);
         meth->ret->type = NULL;
      }
 

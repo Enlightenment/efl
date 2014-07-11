@@ -291,12 +291,12 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
      {
         char tmp_ret_str[0xFF];
         sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype);
-             const char *dflt_ret_val =
-                eolian_function_return_dflt_value_get(funcid, ftype);
+             const char *default_ret_val =
+                eolian_function_return_default_value_get(funcid, ftype);
              Eina_Bool had_star = !!strchr(rettype, '*');
              sprintf (tmpstr, "   %s%s%s%s = %s;\n",
                    ret_const?"const ":"", rettype, had_star?"":" ", retname,
-                   dflt_ret_val?dflt_ret_val:"0");
+                   default_ret_val?default_ret_val:"0");
 
              eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
              eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);
