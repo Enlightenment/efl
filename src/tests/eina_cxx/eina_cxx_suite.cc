@@ -1,4 +1,8 @@
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eina.hh"
 
 #include <cassert>
@@ -71,7 +75,7 @@ eina_build_suite(int argc, const char **argv)
    Suite *s;
    int i;
 
-   s = suite_create("Eina");
+   s = suite_create("Eina C++");
 
    for (i = 0; etc[i].test_case; ++i)
      {

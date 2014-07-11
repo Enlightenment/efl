@@ -1,6 +1,10 @@
 //Compile with:
 //gcc -g eina_list_01.c -o eina_list_01 `pkg-config --cflags --libs eina`
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <Eina.hh>
 
