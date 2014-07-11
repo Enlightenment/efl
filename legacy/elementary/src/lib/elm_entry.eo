@@ -24,7 +24,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool scroll; /*@ EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise */
+            bool scroll; /*@ EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise */
          }
       }
       input_panel_show_on_demand {
@@ -45,7 +45,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool ondemand; /*@ If true, the input panel will be shown in case of only Mouse up event.
+            bool ondemand; /*@ If true, the input panel will be shown in case of only Mouse up event.
             (Focus event will be ignored.)
             @since 1.9 */
          }
@@ -67,7 +67,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool disabled; /*@ If true, the menu is disabled */
+            bool disabled; /*@ If true, the menu is disabled */
          }
       }
       cnp_mode {
@@ -133,7 +133,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             legacy null;
          }
          values {
-            Eina_Bool disabled; /*@ If true, the selection handlers are disabled. */
+            bool disabled; /*@ If true, the selection handlers are disabled. */
          }
       }
       input_panel_layout_variation {
@@ -206,7 +206,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool editable; /*@ If EINA_TRUE, user input will be inserted in the entry,
+            bool editable; /*@ If EINA_TRUE, user input will be inserted in the entry,
             if not, the entry is read-only and no user input is allowed. */
          }
       }
@@ -267,7 +267,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool single_line; /*@ If true, the text in the entry
+            bool single_line; /*@ If true, the text in the entry
             will be on a single line. */
          }
       }
@@ -293,7 +293,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool password; /*@ If true, password mode is enabled. */
+            bool password; /*@ If true, password mode is enabled. */
          }
       }
       file {
@@ -310,7 +310,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
 
             @ingroup Entry */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -342,7 +342,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool disabled; /*@ The state to put in in: @c EINA_TRUE for
+            bool disabled; /*@ The state to put in in: @c EINA_TRUE for
             disabled, @c EINA_FALSE for enabled */
          }
       }
@@ -366,7 +366,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool auto_save; /*@ Autosave the loaded file or not */
+            bool auto_save; /*@ Autosave the loaded file or not */
          }
       }
       anchor_hover_parent {
@@ -411,7 +411,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool prediction; /*@ Whether the entry should allow to use the text prediction. */
+            bool prediction; /*@ Whether the entry should allow to use the text prediction. */
          }
       }
       input_panel_layout {
@@ -474,7 +474,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
+            bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
          }
       }
       line_wrap {
@@ -537,7 +537,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool setting; /*@ EINA_TRUE if the object should be displayed,
+            bool setting; /*@ EINA_TRUE if the object should be displayed,
             EINA_FALSE if not. */
          }
       }
@@ -574,7 +574,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool enabled; /*@ If @p enabled is EINA_TRUE, the return key is automatically disabled when the entry has no text. */
+            bool enabled; /*@ If @p enabled is EINA_TRUE, the return key is automatically disabled when the entry has no text. */
          }
       }
       end_visible {
@@ -586,7 +586,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Eina_Bool setting; /*@ EINA_TRUE if the object should be displayed,
+            bool setting; /*@ EINA_TRUE if the object should be displayed,
             EINA_FALSE if not. */
          }
       }
@@ -658,7 +658,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return EINA_TRUE upon success, EINA_FALSE upon failure
 
             @ingroup Entry */
-            return Eina_Bool;
+            return bool;
          }
          values {
             Evas_Coord x; /*@ returned geometry */
@@ -700,7 +700,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @see elm_entry_cursor_is_visible_format_get()
 
             @ingroup Entry */
-            return Eina_Bool;
+            return bool;
          }
       }
       cursor_content {
@@ -749,7 +749,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @see elm_entry_cursor_is_format_get()
 
             @ingroup Entry */
-            return Eina_Bool;
+            return bool;
          }
       }
    }
@@ -762,7 +762,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return Eina_Bool;
+         return bool;
       }
       text_style_user_pop {
          /*@
@@ -846,7 +846,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return Eina_Bool;
+         return bool;
       }
       file_save {
          /*@
@@ -923,7 +923,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return Eina_Bool;
+         return bool;
       }
       entry_insert {
          /*@
@@ -991,7 +991,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return Eina_Bool;
+         return bool;
       }
       select_none {
          /*@
@@ -1045,7 +1045,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          const;
-         return Eina_Bool;
+         return bool;
       }
       markup_filter_remove {
          /*@

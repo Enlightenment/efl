@@ -22,7 +22,7 @@ class Elm_Check (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Check */
          }
          values {
-            Eina_Bool state; /*@ The state to use (1 == on, 0 == off) */
+            bool state; /*@ The state to use (1 == on, 0 == off) */
          }
       }
       state_pointer {
@@ -40,7 +40,7 @@ class Elm_Check (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Check */
          }
          values {
-            Eina_Bool *statep; /*@ Pointer to the boolean to modify */
+            bool *statep; /*@ Pointer to the boolean to modify */
          }
       }
    }

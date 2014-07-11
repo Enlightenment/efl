@@ -27,7 +27,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool is_keyboard; /*@ If true, the window is a virtual keyboard */
+            bool is_keyboard; /*@ If true, the window is a virtual keyboard */
          }
       }
       autodel {
@@ -59,7 +59,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool autodel; /*@ If true, the window will automatically delete itself when
+            bool autodel; /*@ If true, the window will automatically delete itself when
             closed */
          }
       }
@@ -91,7 +91,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool override; /*@ If true, the window is overridden */
+            bool override; /*@ If true, the window is overridden */
          }
       }
       iconified {
@@ -110,7 +110,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool iconified; /*@ If true, the window is iconified */
+            bool iconified; /*@ If true, the window is iconified */
          }
       }
       wm_available_rotations {
@@ -139,7 +139,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             ingroup Win
             @since 1.9 */
             legacy elm_win_wm_rotation_available_rotations_get;
-            return Eina_Bool;
+            return bool;
          }
          values {
             int *rotations; /*@ The array of rotation value. */
@@ -181,7 +181,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool maximized; /*@ If true, the window is maximized */
+            bool maximized; /*@ If true, the window is maximized */
          }
       }
       modal {
@@ -200,7 +200,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool modal; /*@ If true, the window is modal */
+            bool modal; /*@ If true, the window is modal */
          }
       }
       icon_name {
@@ -242,7 +242,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool withdrawn; /*@ If true, the window is withdrawn */
+            bool withdrawn; /*@ If true, the window is withdrawn */
          }
       }
       role {
@@ -338,7 +338,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool borderless; /*@ If true, the window is borderless */
+            bool borderless; /*@ If true, the window is borderless */
          }
       }
       screen_constrain {
@@ -359,7 +359,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool constrain; /*@ EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction */
+            bool constrain; /*@ EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction */
          }
       }
       available_profiles {
@@ -379,7 +379,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
 
             @ingroup Win
             @since 1.8 */
-            return Eina_Bool;
+            return bool;
          }
          values {
             char **profiles; /*@ The string array of available profiles */
@@ -405,7 +405,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool enabled; /*@ The enabled value for the highlight */
+            bool enabled; /*@ The enabled value for the highlight */
          }
       }
       title {
@@ -457,7 +457,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool alpha; /*@ EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise */
+            bool alpha; /*@ EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise */
          }
       }
       urgent {
@@ -476,7 +476,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool urgent; /*@ If true, the window is urgent */
+            bool urgent; /*@ If true, the window is urgent */
          }
       }
       rotation {
@@ -588,7 +588,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool sticky; /*@ If true, the window's sticky state is enabled */
+            bool sticky; /*@ If true, the window's sticky state is enabled */
          }
       }
       keyboard_mode {
@@ -629,7 +629,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool animate; /*@ The enabled value for the highlight animation */
+            bool animate; /*@ The enabled value for the highlight animation */
          }
       }
       aspect {
@@ -706,7 +706,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool demand_attention; /*@ If true, the window is demand_attention */
+            bool demand_attention; /*@ If true, the window is demand_attention */
          }
       }
       wm_preferred_rotation {
@@ -819,7 +819,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool shaped; /*@ If true, the window is shaped */
+            bool shaped; /*@ If true, the window is shaped */
          }
       }
       fullscreen {
@@ -838,7 +838,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool fullscreen; /*@ If true, the window is fullscreen */
+            bool fullscreen; /*@ If true, the window is fullscreen */
          }
       }
       wm_manual_rotation_done {
@@ -874,7 +874,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             legacy elm_win_wm_rotation_manual_rotation_done_get;
          }
          values {
-            Eina_Bool set; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
+            bool set; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
          }
       }
       indicator_mode {
@@ -912,7 +912,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool conformant; /*@ The conformant flag (1 = conformant, 0 = non-conformant) */
+            bool conformant; /*@ The conformant flag (1 = conformant, 0 = non-conformant) */
          }
       }
       size_base {
@@ -959,7 +959,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool quickpanel; /*@ The quickpanel flag (1 = quickpanel, 0 = normal window) */
+            bool quickpanel; /*@ The quickpanel flag (1 = quickpanel, 0 = normal window) */
          }
       }
       rotation_with_resize {
@@ -998,7 +998,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @ingroup Win */
          }
          values {
-            Eina_Bool skip; /*@ The skip flag state (EINA_TRUE if it is to be skipped) */
+            bool skip; /*@ The skip flag state (EINA_TRUE if it is to be skipped) */
          }
       }
       screen_position {
@@ -1034,7 +1034,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
 
             @ingroup Win
             @since 1.9 */
-            return Eina_Bool;
+            return bool;
          }
       }
       xwindow {
@@ -1055,7 +1055,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             @return EINA_TRUE if the window exists and has focus, else EINA_FALSE
 
             @ingroup Win */
-            return Eina_Bool;
+            return bool;
          }
       }
       screen_size {
@@ -1173,11 +1173,11 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
 
          @ingroup Win */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* svcname; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
             @in int svcnum; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */
-            @in Eina_Bool svcsys; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
+            @in bool svcsys; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
          }
       }
       illume_command_send {
@@ -1294,8 +1294,8 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
          @ingroup Win */
 
          params {
-            @in Eina_Bool h; /*@ If true, center horizontally. If false, do not change horizontal location. */
-            @in Eina_Bool v; /*@ If true, center vertically. If false, do not change vertical location. */
+            @in bool h; /*@ If true, center horizontally. If false, do not change horizontal location. */
+            @in bool v; /*@ If true, center vertically. If false, do not change vertical location. */
          }
       }
    }

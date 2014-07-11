@@ -30,7 +30,7 @@ class Elm_Naviframe (Elm_Layout)
             @ingroup Naviframe */
          }
          values {
-            Eina_Bool enabled; /*@ Events are received when enabled is @c EINA_TRUE, and
+            bool enabled; /*@ Events are received when enabled is @c EINA_TRUE, and
             ignored otherwise. */
          }
       }
@@ -54,7 +54,7 @@ class Elm_Naviframe (Elm_Layout)
             @ingroup Naviframe */
          }
          values {
-            Eina_Bool preserve; /*@ Enable the preserve mode if @c EINA_TRUE, disable otherwise */
+            bool preserve; /*@ Enable the preserve mode if @c EINA_TRUE, disable otherwise */
          }
       }
       prev_btn_auto_pushed {
@@ -79,7 +79,7 @@ class Elm_Naviframe (Elm_Layout)
             @ingroup Naviframe */
          }
          values {
-            Eina_Bool auto_pushed; /*@ If @c EINA_TRUE, the previous button(back button) will
+            bool auto_pushed; /*@ If @c EINA_TRUE, the previous button(back button) will
             be created internally when you pass the @c NULL to the prev_btn
             parameter in elm_naviframe_item_push */
          }

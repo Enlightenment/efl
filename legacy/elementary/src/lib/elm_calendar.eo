@@ -287,7 +287,7 @@ class Elm_Calendar (Elm_Layout)
          @ingroup Calendar */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @inout struct tm selected_time; /*@ A @b tm struct to point to selected date */
          }
@@ -387,7 +387,7 @@ class Elm_Calendar (Elm_Layout)
          @since 1.8 */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @inout struct tm displayed_time; /*@ A @b tm struct to point to displayed date */
          }

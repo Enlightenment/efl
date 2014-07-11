@@ -12,13 +12,13 @@ interface Elm_Interface_Fileselector ()
             /*@ Get whether folder-only view is set for a given file selector */
          }
          values {
-            Eina_Bool only;
+            bool only;
          }
       }
       selected {
          set {
             /*@ Set, programmatically, the currently selected file/directory in the given file selector widget */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@ Get the currently selected item's (full) path, in the given file the given file selector widget */
@@ -47,7 +47,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get if hiden files/directories in the file selector are visible or not. */
          }
          values {
-            Eina_Bool multi;
+            bool multi;
          }
       }
       sort_method {
@@ -69,7 +69,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Gets if multi-selection in fileselector is enabled or disabled. */
          }
          values {
-            Eina_Bool multi;
+            bool multi;
          }
       }
       expandable {
@@ -80,7 +80,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get whether tree view is enabled for the given file selector */
          }
          values {
-            Eina_Bool expand;
+            bool expand;
          }
       }
       path {
@@ -113,7 +113,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get whether the given file selector is in "saving dialog" mode */
          }
          values {
-            Eina_Bool is_save;
+            bool is_save;
          }
       }
       selected_paths {
@@ -133,7 +133,7 @@ interface Elm_Interface_Fileselector ()
             @in void *data;
             @in const(char)* filter_name;
          }
-         return Eina_Bool;
+         return bool;
       }
       filters_clear {
          /*@ Clear all filters registered */
@@ -144,7 +144,7 @@ interface Elm_Interface_Fileselector ()
             @in const(char)* mime_types;
             @in const(char)* filter_name;
          }
-         return Eina_Bool;
+         return bool;
       }
    }
 }

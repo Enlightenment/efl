@@ -29,7 +29,7 @@ class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
             @ingroup Fileselector */
          }
          values {
-            Eina_Bool visible; /*@ @c EINA_TRUE to show buttons, @c EINA_FALSE to hide. */
+            bool visible; /*@ @c EINA_TRUE to show buttons, @c EINA_FALSE to hide. */
          }
       }
    }

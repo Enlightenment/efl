@@ -85,7 +85,7 @@ class Elm_App_Server_View (Eo.Base)
          values {
             uint w;
             uint h;
-            Eina_Bool has_alpha;
+            bool has_alpha;
             const(uchar)* pixels;
          }
       }

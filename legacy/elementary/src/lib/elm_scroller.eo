@@ -26,7 +26,7 @@ class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable)
             @ingroup Scroller */
          }
          values {
-            Eina_Bool propagation; /*@ If propagation is enabled or not */
+            bool propagation; /*@ If propagation is enabled or not */
          }
       }
       custom_widget_base_theme {

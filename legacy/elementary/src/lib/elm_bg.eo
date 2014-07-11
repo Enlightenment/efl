@@ -94,7 +94,7 @@ class Elm_Bg (Elm_Layout)
             that method on this object.
 
             @ingroup Bg */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@

@@ -66,7 +66,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Gengrid */
          }
          values {
-            Eina_Bool fill; /*@ Filled if True */
+            bool fill; /*@ Filled if True */
          }
       }
       page_relative {
@@ -112,7 +112,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Gengrid */
          }
          values {
-            Eina_Bool multi; /*@ @c EINA_TRUE, to enable multi-selection,
+            bool multi; /*@ @c EINA_TRUE, to enable multi-selection,
             @c EINA_FALSE to disable it. */
          }
       }
@@ -214,7 +214,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Gengrid */
          }
          values {
-            Eina_Bool reorder_mode; /*@ Use @c EINA_TRUE to turn reordering on,
+            bool reorder_mode; /*@ Use @c EINA_TRUE to turn reordering on,
             @c EINA_FALSE to turn it off */
          }
       }
@@ -226,7 +226,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             /*@ Get whether the gengrid items' should be highlighted when item selected. */
          }
          values {
-            Eina_Bool highlight;
+            bool highlight;
          }
       }
       item_size {
@@ -326,7 +326,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Gengrid */
          }
          values {
-            Eina_Bool horizontal; /*@ @c EINA_TRUE to make the gengrid expand horizontally,
+            bool horizontal; /*@ @c EINA_TRUE to make the gengrid expand horizontally,
             @c EINA_FALSE to expand vertically. */
          }
       }
@@ -456,7 +456,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Gengrid */
          }
          values {
-            Eina_Bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
             to enable it. */
          }
       }

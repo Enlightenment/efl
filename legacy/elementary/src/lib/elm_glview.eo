@@ -37,7 +37,7 @@ class Elm_Glview (Elm_Widget)
             object and not the underlying GL Surface.
 
             @ingroup GLView */
-            return Eina_Bool;
+            return bool;
          }
          values {
             Elm_GLView_Resize_Policy policy; /*@ The scaling policy. */
@@ -111,7 +111,7 @@ class Elm_Glview (Elm_Widget)
             whether it is visible or needs redrawing.
 
             @ingroup GLView */
-            return Eina_Bool;
+            return bool;
          }
          values {
             Elm_GLView_Render_Policy policy; /*@ The render policy. */
@@ -130,7 +130,7 @@ class Elm_Glview (Elm_Widget)
             window.
 
             @ingroup GLView */
-            return Eina_Bool;
+            return bool;
          }
          values {
             Elm_GLView_Mode mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */

@@ -71,7 +71,7 @@ class Elm_Progressbar (Elm_Layout)
             @ingroup Progressbar */
          }
          values {
-            Eina_Bool pulse; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
+            bool pulse; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
             @c EINA_FALSE to put it back to its default one */
          }
       }
@@ -133,7 +133,7 @@ class Elm_Progressbar (Elm_Layout)
             @ingroup Progressbar */
          }
          values {
-            Eina_Bool inverted; /*@ Use @c EINA_TRUE to make @p obj inverted,
+            bool inverted; /*@ Use @c EINA_TRUE to make @p obj inverted,
             @c EINA_FALSE to bring it back to default, non-inverted values. */
          }
       }
@@ -161,7 +161,7 @@ class Elm_Progressbar (Elm_Layout)
             @ingroup Progressbar */
          }
          values {
-            Eina_Bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to be
+            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to be
             @b horizontal, @c EINA_FALSE to make it @b vertical */
          }
       }
@@ -270,7 +270,7 @@ class Elm_Progressbar (Elm_Layout)
          @ingroup Progressbar */
 
          params {
-            @in Eina_Bool state; /*@ @c EINA_TRUE, to @b start the pulsing animation,
+            @in bool state; /*@ @c EINA_TRUE, to @b start the pulsing animation,
             @c EINA_FALSE to @b stop it */
          }
       }

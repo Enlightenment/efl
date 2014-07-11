@@ -83,7 +83,7 @@ class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
             @ingroup Button */
          }
          values {
-            Eina_Bool on; /*@ A bool to turn on/off the event */
+            bool on; /*@ A bool to turn on/off the event */
          }
       }
       admits_autorepeat {
@@ -92,7 +92,7 @@ class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
             legacy null;
          }
          values {
-            Eina_Bool ret;
+            bool ret;
          }
       }
    }

@@ -54,7 +54,7 @@ interface Elm_Interface_Atspi_Text ()
             /*@ Gets offset position of caret (cursor) */
          }
          set {
-            return Eina_Bool; /*@ EINA_TRUE if caret was successfully moved,
+            return bool; /*@ EINA_TRUE if caret was successfully moved,
                                EINA_FASLE otherwise. */
          }
          values {
@@ -64,7 +64,7 @@ interface Elm_Interface_Atspi_Text ()
       protected attribute {
          get {
             /*@ Indicate if a text attribute with a given name is set */
-            return Eina_Bool;
+            return bool;
          }
          keys {
             const(char)* name @nonull; /*@ text attribute name */
@@ -98,11 +98,11 @@ interface Elm_Interface_Atspi_Text ()
       }
       protected character_extents {
          get {
-            return Eina_Bool;
+            return bool;
          }
          keys {
             int offset;
-            Eina_Bool screen_coords;
+            bool screen_coords;
          }
          values {
             Eina_Rectangle rect;
@@ -119,7 +119,7 @@ interface Elm_Interface_Atspi_Text ()
          get {
          }
          keys {
-            Eina_Bool screen_coords;
+            bool screen_coords;
             int x;
             int y;
          }
@@ -131,7 +131,7 @@ interface Elm_Interface_Atspi_Text ()
          get {
          }
          keys {
-            Eina_Bool screen_coords;
+            bool screen_coords;
             Eina_Rectangle rect;
             Elm_Atspi_Text_Clip_Type xclip;
             Elm_Atspi_Text_Clip_Type yclip;
@@ -142,10 +142,10 @@ interface Elm_Interface_Atspi_Text ()
       }
       protected range_extents {
          get {
-            return Eina_Bool;
+            return bool;
          }
          keys {
-            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
             int start_offset;
@@ -166,7 +166,7 @@ interface Elm_Interface_Atspi_Text ()
          get {
          }
          set {
-            return Eina_Bool;
+            return bool;
          }
          keys {
             int selection_number;
@@ -183,13 +183,13 @@ interface Elm_Interface_Atspi_Text ()
             @in int start_offset;
             @in int end_offset;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected selection_remove  {
          params {
             @in int selection_number;
          }
-         return Eina_Bool;
+         return bool;
       }
    }
    events {

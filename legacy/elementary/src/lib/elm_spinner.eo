@@ -115,7 +115,7 @@ class Elm_Spinner (Elm_Layout)
             @ingroup Spinner */
          }
          values {
-            Eina_Bool wrap; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
+            bool wrap; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
             disable it. */
          }
       }
@@ -218,7 +218,7 @@ class Elm_Spinner (Elm_Layout)
             @ingroup Spinner */
          }
          values {
-            Eina_Bool editable; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
+            bool editable; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
             don't allow users to edit it directly. */
          }
       }

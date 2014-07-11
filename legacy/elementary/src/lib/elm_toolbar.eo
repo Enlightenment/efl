@@ -24,7 +24,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Toolbar */
          }
          values {
-            Eina_Bool homogeneous; /*@ Assume the items within the toolbar are of the
+            bool homogeneous; /*@ Assume the items within the toolbar are of the
             same size (EINA_TRUE = on, EINA_FALSE = off). Default is @c EINA_FALSE. */
          }
       }
@@ -133,7 +133,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Toolbar */
          }
          values {
-            Eina_Bool horizontal; /*@ If @c EINA_TRUE, the toolbar is horizontal */
+            bool horizontal; /*@ If @c EINA_TRUE, the toolbar is horizontal */
          }
       }
       icon_order_lookup {

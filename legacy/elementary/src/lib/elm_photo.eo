@@ -15,7 +15,7 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
             /*@ Get editability of the photo. */
          }
          values {
-            Eina_Bool set; /*@ To set of clear editability. */
+            bool set; /*@ To set of clear editability. */
          }
       }
       fill_inside {
@@ -29,7 +29,7 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
             /*@ Get if the photo should be completely visible or not. */
          }
          values {
-            Eina_Bool fill; /*@ if true the photo will be completely visible */
+            bool fill; /*@ if true the photo will be completely visible */
          }
       }
       aspect_fixed {
@@ -56,7 +56,7 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
             @ingroup Photo */
          }
          values {
-            Eina_Bool fixed; /*@ @c EINA_TRUE if the photo should fix the aspect,
+            bool fixed; /*@ @c EINA_TRUE if the photo should fix the aspect,
             @c EINA_FALSE otherwise. */
          }
       }
@@ -85,7 +85,7 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
             initial state, which indicates "no photo".
 
             @ingroup Photo */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* file; /*@ The path to file that will be used as @a obj's image. */

@@ -20,7 +20,7 @@ class Elm_Separator (Elm_Layout)
             @ingroup Separator */
          }
          values {
-            Eina_Bool horizontal; /*@ If true, the separator is horizontal */
+            bool horizontal; /*@ If true, the separator is horizontal */
          }
       }
    }

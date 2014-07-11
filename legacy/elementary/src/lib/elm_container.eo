@@ -20,7 +20,7 @@ class Elm_Container (Elm_Widget)
             @in const(char)* name;
             @in Evas_Object *content;
          }
-         return Eina_Bool;
+         return bool;
       }
       content_get {
          /*@ No description supplied by the EAPI. */

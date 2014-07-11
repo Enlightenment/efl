@@ -32,7 +32,7 @@ mixin Elm_Interface_Atspi_Action ()
          }
          set {
             /*@ Sets action description for given id */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* description;
@@ -56,7 +56,7 @@ mixin Elm_Interface_Atspi_Action ()
          params {
             @in int id;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected keybinding_get {
          /*@ Gets configured keybinding for specific action and widget. */

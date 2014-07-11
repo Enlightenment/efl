@@ -24,7 +24,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool set; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            bool set; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
          }
       }
       smooth_scale {
@@ -37,7 +37,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             legacy null;
          }
          values {
-            Eina_Bool smooth;
+            bool smooth;
          }
       }
       resize_down {
@@ -50,7 +50,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             legacy null;
          }
          values {
-            Eina_Bool resize_down;
+            bool resize_down;
          }
       }
       load_size {
@@ -106,7 +106,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @since 1.7 */
          }
          values {
-            Eina_Bool play; /*@ @c EINA_TRUE to start the animation, @c EINA_FALSE
+            bool play; /*@ @c EINA_TRUE to start the animation, @c EINA_FALSE
             otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -120,7 +120,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             legacy null;
          }
          values {
-            Eina_Bool resize_up;
+            bool resize_up;
          }
       }
       smooth {
@@ -151,7 +151,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool smooth; /*@ @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
+            bool smooth; /*@ @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
             otherwise. Default is @c EINA_TRUE. */
          }
       }
@@ -182,7 +182,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool no_scale; /*@ @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
+            bool no_scale; /*@ @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
             otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -217,7 +217,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @since 1.7 */
          }
          values {
-            Eina_Bool anim; /*@ @c EINA_TRUE if the object is to animate itself,
+            bool anim; /*@ @c EINA_TRUE if the object is to animate itself,
             @c EINA_FALSE otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -253,7 +253,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             unwanted frames.
 
             @ingroup Image */
-            return Eina_Bool;
+            return bool;
             legacy null;
          }
          get {
@@ -281,7 +281,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             legacy null;
          }
          values {
-            Eina_Bool fill_inside;
+            bool fill_inside;
          }
       }
       aspect_fixed {
@@ -309,7 +309,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool fixed; /*@ @c EINA_TRUE if the image should retain the aspect,
+            bool fixed; /*@ @c EINA_TRUE if the image should retain the aspect,
             @c EINA_FALSE otherwise. */
          }
       }
@@ -371,7 +371,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool fill_outside; /*@ @c EINA_TRUE if the object is filled outside,
+            bool fill_outside; /*@ @c EINA_TRUE if the object is filled outside,
             @c EINA_FALSE otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -397,9 +397,9 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool up; /*@ A bool to set if the object is resizable up. Default is
+            bool up; /*@ A bool to set if the object is resizable up. Default is
             @c EINA_TRUE. */
-            Eina_Bool down; /*@ A bool to set if the object is resizable down. Default
+            bool down; /*@ A bool to set if the object is resizable down. Default
             is @c EINA_TRUE. */
          }
       }
@@ -411,7 +411,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @ingroup Image */
          }
          values {
-            Eina_Bool disabled; /*@ If EINA_TRUE, preloading will be disabled */
+            bool disabled; /*@ If EINA_TRUE, preloading will be disabled */
          }
       }
       mmap {
@@ -433,7 +433,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             unwanted frames.
 
             @ingroup Image */
-            return Eina_Bool;
+            return bool;
             legacy null;
          }
          values {
@@ -463,7 +463,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
             @since 1.7
 
             @ingroup Image */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(void)* img; /*@ The binary data that will be used as image source */
@@ -490,7 +490,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
 
             @ingroup Image
             @since 1.7 */
-            return Eina_Bool;
+            return bool;
          }
       }
       object {

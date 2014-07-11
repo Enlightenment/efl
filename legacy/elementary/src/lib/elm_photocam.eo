@@ -27,7 +27,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Photocam */
          }
          values {
-            Eina_Bool paused; /*@ The pause state to set */
+            bool paused; /*@ The pause state to set */
          }
       }
       file {
@@ -84,7 +84,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Photocam */
          }
          values {
-            Eina_Bool gesture; /*@ The gesture state to set */
+            bool gesture; /*@ The gesture state to set */
          }
       }
       zoom {

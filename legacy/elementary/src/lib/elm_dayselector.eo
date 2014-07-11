@@ -140,7 +140,7 @@ class Elm_Dayselector (Elm_Layout)
 
          params {
             @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to set state. */
-            @in Eina_Bool selected; /*@ state of the day. @c EINA_TRUE is selected. */
+            @in bool selected; /*@ state of the day. @c EINA_TRUE is selected. */
          }
       }
       day_selected_get {
@@ -155,7 +155,7 @@ class Elm_Dayselector (Elm_Layout)
          @ingroup Dayselector */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to know state. */
          }

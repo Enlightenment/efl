@@ -42,7 +42,7 @@ class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable)
             @ingroup Panel */
          }
          values {
-            Eina_Bool hidden; /*@ If true, the panel will run the animation to disappear. */
+            bool hidden; /*@ If true, the panel will run the animation to disappear. */
          }
       }
       scrollable {
@@ -53,7 +53,7 @@ class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable)
             @ingroup Panel */
          }
          values {
-            Eina_Bool scrollable;
+            bool scrollable;
          }
       }
       scrollable_content_size {

@@ -148,7 +148,7 @@ class Elm_Datetime (Elm_Layout)
          @see elm_datetime_value_min_get()
          @ingroup Datetime */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(struct tm)* mintime; /*@ Time structure containing the minimum time value. */
          }
@@ -174,7 +174,7 @@ class Elm_Datetime (Elm_Layout)
          @ingroup Datepicker */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @inout struct tm mintime; /*@ Time structure. */
          }
@@ -200,7 +200,7 @@ class Elm_Datetime (Elm_Layout)
          @see elm_datetime_value_set()
          @ingroup Datetime */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(struct tm)* newtime; /*@ Time structure filled with values to be set. */
          }
@@ -226,7 +226,7 @@ class Elm_Datetime (Elm_Layout)
          @ingroup Datetime */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @inout struct tm currtime; /*@ Time structure. */
          }
@@ -248,7 +248,7 @@ class Elm_Datetime (Elm_Layout)
 
          params {
             @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. ELM_DATETIME_YEAR etc. */
-            @in Eina_Bool visible; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
+            @in bool visible; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
          }
       }
       field_visible_get {
@@ -261,7 +261,7 @@ class Elm_Datetime (Elm_Layout)
          @ingroup Datetime */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. ELM_DATETIME_YEAR etc */
          }
@@ -286,7 +286,7 @@ class Elm_Datetime (Elm_Layout)
          @see elm_datetime_value_max_get()
          @ingroup Datetime */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(struct tm)* maxtime; /*@ Time structure containing the maximum time value. */
          }
@@ -312,7 +312,7 @@ class Elm_Datetime (Elm_Layout)
          @ingroup Datetime */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @inout struct tm maxtime; /*@ Time structure containing the maximum time value. */
          }

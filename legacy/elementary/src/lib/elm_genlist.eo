@@ -34,7 +34,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool homogeneous; /*@ Assume the items within the genlist are of the
+            bool homogeneous; /*@ Assume the items within the genlist are of the
             same height and width (EINA_TRUE = on, EINA_FALSE = off). Default is @c
             EINA_FALSE. */
          }
@@ -95,7 +95,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool enabled; /*@ The tree effect status
+            bool enabled; /*@ The tree effect status
             (EINA_TRUE = enabled, EINA_FALSE = disabled) */
          }
       }
@@ -156,7 +156,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool multi; /*@ Multi-select enable/disable. Default is disabled. */
+            bool multi; /*@ Multi-select enable/disable. Default is disabled. */
          }
       }
       reorder_mode {
@@ -180,7 +180,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool reorder_mode; /*@ The reorder mode
+            bool reorder_mode; /*@ The reorder mode
             (EINA_TRUE = on, EINA_FALSE = off) */
          }
       }
@@ -203,7 +203,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool decorated; /*@ The decorate mode status
+            bool decorated; /*@ The decorate mode status
             (EINA_TRUE = decorate mode, EINA_FALSE = normal mode */
          }
       }
@@ -294,7 +294,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool enabled; /*@ The tree effect status
+            bool enabled; /*@ The tree effect status
             (EINA_TRUE = enabled, EINA_FALSE = disabled */
          }
       }
@@ -324,7 +324,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Eina_Bool highlight; /*@ @c EINA_TRUE to enable highlighting or @c EINA_FALSE to
+            bool highlight; /*@ @c EINA_TRUE to enable highlighting or @c EINA_FALSE to
             disable it. */
          }
       }

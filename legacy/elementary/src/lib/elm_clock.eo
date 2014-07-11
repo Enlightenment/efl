@@ -33,7 +33,7 @@ class Elm_Clock (Elm_Layout)
             @ingroup Clock */
          }
          values {
-            Eina_Bool am_pm; /*@ @c EINA_TRUE to put it in am/pm mode, @c EINA_FALSE
+            bool am_pm; /*@ @c EINA_TRUE to put it in am/pm mode, @c EINA_FALSE
             to military mode */
          }
       }
@@ -104,7 +104,7 @@ class Elm_Clock (Elm_Layout)
             @ingroup Clock */
          }
          values {
-            Eina_Bool seconds; /*@ @c EINA_TRUE to show seconds, @c EINA_FALSE otherwise */
+            bool seconds; /*@ @c EINA_TRUE to show seconds, @c EINA_FALSE otherwise */
          }
       }
       edit {
@@ -141,7 +141,7 @@ class Elm_Clock (Elm_Layout)
             @ingroup Clock */
          }
          values {
-            Eina_Bool edit; /*@ @c EINA_TRUE to put it in edition, @c EINA_FALSE to
+            bool edit; /*@ @c EINA_TRUE to put it in edition, @c EINA_FALSE to
             put it back to "displaying only" mode */
          }
       }
@@ -171,7 +171,7 @@ class Elm_Clock (Elm_Layout)
             @since 1.9 */
          }
          values {
-            Eina_Bool paused; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
+            bool paused; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
          }
       }
       time {

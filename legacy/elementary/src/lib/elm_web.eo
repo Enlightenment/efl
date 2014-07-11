@@ -13,7 +13,7 @@ class Elm_Web (Elm_Widget)
             @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
 
             @ingroup Web */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -25,7 +25,7 @@ class Elm_Web (Elm_Widget)
             @ingroup Web */
          }
          values {
-            Eina_Bool highlight; /*@ Whether to highlight the marks or not */
+            bool highlight; /*@ Whether to highlight the marks or not */
          }
       }
       useragent {
@@ -58,7 +58,7 @@ class Elm_Web (Elm_Widget)
             @return @c EINA_TRUE if the URL could be set, @c EINA_FALSE if an error occurred.
 
             @ingroup Web */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -122,7 +122,7 @@ class Elm_Web (Elm_Widget)
             @ingroup Web */
          }
          values {
-            Eina_Bool value; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
+            bool value; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
          }
       }
       tab_propagate {
@@ -149,7 +149,7 @@ class Elm_Web (Elm_Widget)
             @ingroup Web */
          }
          values {
-            Eina_Bool propagate; /*@ Whether to propagate Tab keys to Elementary or not */
+            bool propagate; /*@ Whether to propagate Tab keys to Elementary or not */
          }
       }
       history_enabled {
@@ -168,7 +168,7 @@ class Elm_Web (Elm_Widget)
             @ingroup Web */
          }
          values {
-            Eina_Bool enable; /*@ Whether to enable or disable the browsing history */
+            bool enable; /*@ Whether to enable or disable the browsing history */
          }
       }
       zoom_mode {
@@ -364,7 +364,7 @@ class Elm_Web (Elm_Widget)
             otherwise
 
             @ingroup Web */
-            return Eina_Bool;
+            return bool;
          }
       }
       webkit_view {
@@ -396,7 +396,7 @@ class Elm_Web (Elm_Widget)
             otherwise
 
             @ingroup Web */
-            return Eina_Bool;
+            return bool;
          }
       }
       load_progress {
@@ -462,7 +462,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in int steps; /*@ The number of steps to jump */
          }
@@ -482,7 +482,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
       html_string_load {
          /*@
@@ -500,7 +500,7 @@ class Elm_Web (Elm_Widget)
          @since 1.9
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* html; /*@ HTML data to load */
             @in const(char)* base_url; /*@ Base URL used for relative paths to external objects (optional) */
@@ -517,12 +517,12 @@ class Elm_Web (Elm_Widget)
          @ingroup Web */
 
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(char)* string; /*@ String to search */
-            @in Eina_Bool case_sensitive; /*@ If search should be case sensitive or not */
-            @in Eina_Bool forward; /*@ If search is from cursor and on or backwards */
-            @in Eina_Bool wrap; /*@ If search should wrap at the end */
+            @in bool case_sensitive; /*@ If search should be case sensitive or not */
+            @in bool forward; /*@ If search is from cursor and on or backwards */
+            @in bool wrap; /*@ If search should wrap at the end */
          }
       }
       popup_destroy {
@@ -539,7 +539,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
       region_show {
          /*@
@@ -569,7 +569,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
       text_matches_mark {
          /*@
@@ -582,8 +582,8 @@ class Elm_Web (Elm_Widget)
          return uint;
          params {
             @in const(char)* string; /*@ String to match */
-            @in Eina_Bool case_sensitive; /*@ If match should be case sensitive or not */
-            @in Eina_Bool highlight; /*@ If matches should be highlighted */
+            @in bool case_sensitive; /*@ If match should be case sensitive or not */
+            @in bool highlight; /*@ If matches should be highlighted */
             @in uint limit; /*@ Maximum amount of matches, or zero to unlimited */
          }
       }
@@ -615,7 +615,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
       navigate_possible_get {
          /*@
@@ -629,7 +629,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in int steps; /*@ The number of steps to check for */
          }
@@ -642,7 +642,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
       text_matches_unmark_all {
          /*@
@@ -652,7 +652,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
       reload {
          /*@
@@ -662,7 +662,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return Eina_Bool;
+         return bool;
       }
    }
    implements {

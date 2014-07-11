@@ -42,7 +42,7 @@ class Elm_Video (Elm_Layout)
             @ingroup Video */
          }
          values {
-            Eina_Bool remember; /*@ the last played position of the Elm_Video object. */
+            bool remember; /*@ the last played position of the Elm_Video object. */
          }
       }
       play_position {
@@ -82,7 +82,7 @@ class Elm_Video (Elm_Layout)
             @ingroup Video */
          }
          values {
-            Eina_Bool mute; /*@ The new mute state. */
+            bool mute; /*@ The new mute state. */
          }
       }
       file {
@@ -99,7 +99,7 @@ class Elm_Video (Elm_Layout)
             @see elm_player_add()
 
             @ingroup Video */
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* filename; /*@ The file or URI to target.
@@ -120,7 +120,7 @@ class Elm_Video (Elm_Layout)
             the object state.
 
             @ingroup Video */
-            return Eina_Bool;
+            return bool;
          }
       }
       play_length {
@@ -153,7 +153,7 @@ class Elm_Video (Elm_Layout)
             @return @c EINA_TRUE if is possible to seek inside the video.
 
             @ingroup Video */
-            return Eina_Bool;
+            return bool;
          }
       }
       title {

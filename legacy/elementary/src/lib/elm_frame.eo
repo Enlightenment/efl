@@ -20,7 +20,7 @@ class Elm_Frame (Elm_Layout, Evas.Clickable_Interface)
             @ingroup Frame */
          }
          values {
-            Eina_Bool collapse; /*@ true to collapse, false to expand */
+            bool collapse; /*@ true to collapse, false to expand */
          }
       }
       autocollapse {
@@ -45,7 +45,7 @@ class Elm_Frame (Elm_Layout, Evas.Clickable_Interface)
             @ingroup Frame */
          }
          values {
-            Eina_Bool autocollapse; /*@ Whether to enable autocollapse */
+            bool autocollapse; /*@ Whether to enable autocollapse */
          }
       }
    }
@@ -58,7 +58,7 @@ class Elm_Frame (Elm_Layout, Evas.Clickable_Interface)
          @ingroup Frame */
 
          params {
-            @in Eina_Bool collapse; /*@ true to collapse, false to expand */
+            @in bool collapse; /*@ true to collapse, false to expand */
          }
       }
    }

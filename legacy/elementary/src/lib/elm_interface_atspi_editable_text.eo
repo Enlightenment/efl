@@ -6,7 +6,7 @@ interface Elm_Interface_Atspi_Editable_Text ()
    properties {
       protected content {
          set {
-            return Eina_Bool;
+            return bool;
          }
          values {
             const(char)* string;
@@ -19,34 +19,34 @@ interface Elm_Interface_Atspi_Editable_Text ()
             @in const(char)* string;
             @in int position;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected copy {
          params {
             @in int start;
             @in int end;
          }
-		 return Eina_Bool;
+		 return bool;
       }
       protected cut {
          params {
             @in int start;
             @in int end;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected delete {
          params {
             @in int start;
             @in int end;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected paste {
          params {
             @in int position;
          }
-         return Eina_Bool;
+         return bool;
       }
    }
 }

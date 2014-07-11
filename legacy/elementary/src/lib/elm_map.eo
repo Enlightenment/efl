@@ -73,7 +73,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Map */
          }
          values {
-            Eina_Bool paused; /*@ Use @c EINA_TRUE to pause the map @p obj or @c EINA_FALSE
+            bool paused; /*@ Use @c EINA_TRUE to pause the map @p obj or @c EINA_FALSE
             to unpause it. */
          }
       }
@@ -104,7 +104,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @ingroup Map */
          }
          values {
-            Eina_Bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
             to enable it. */
          }
       }

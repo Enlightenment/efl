@@ -31,7 +31,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
             @ingroup List */
          }
          values {
-            Eina_Bool horizontal; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+            bool horizontal; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
             disable it, i.e., to enable vertical mode. */
          }
       }
@@ -91,7 +91,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
             @ingroup List */
          }
          values {
-            Eina_Bool enabled; /*@ The tree effect status
+            bool enabled; /*@ The tree effect status
             (EINA_TRUE = enabled, EINA_FALSE = disabled) */
          }
       }
@@ -123,7 +123,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
             @ingroup List */
          }
          values {
-            Eina_Bool multi; /*@ @c EINA_TRUE to enable multi selection or @c EINA_FALSE to
+            bool multi; /*@ @c EINA_TRUE to enable multi selection or @c EINA_FALSE to
             disable it. */
          }
       }

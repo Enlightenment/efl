@@ -22,7 +22,7 @@ class Elm_Multibuttonentry (Elm_Layout)
             @since 1.7 */
          }
          values {
-            Eina_Bool editable; /*@ If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
+            bool editable; /*@ If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
          }
       }
       expanded {
@@ -45,7 +45,7 @@ class Elm_Multibuttonentry (Elm_Layout)
             @ingroup Multibuttonentry */
          }
          values {
-            Eina_Bool expanded; /*@ the value of expanded state.
+            bool expanded; /*@ the value of expanded state.
             Set this to @c EINA_TRUE for expanded state.
             Set this to EINA_FALSE for single line state. */
          }

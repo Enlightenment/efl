@@ -22,7 +22,7 @@ class Elm_Index (Elm_Layout)
             @ingroup Index */
          }
          values {
-            Eina_Bool disabled; /*@ @c EINA_TRUE to disable auto hiding, @c EINA_FALSE to enable */
+            bool disabled; /*@ @c EINA_TRUE to disable auto hiding, @c EINA_FALSE to enable */
          }
       }
       omit_enabled {
@@ -49,7 +49,7 @@ class Elm_Index (Elm_Layout)
             @ingroup Index */
          }
          values {
-            Eina_Bool enabled; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
+            bool enabled; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
          }
       }
       horizontal {
@@ -79,7 +79,7 @@ class Elm_Index (Elm_Layout)
             @ingroup Index */
          }
          values {
-            Eina_Bool horizontal; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+            bool horizontal; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
             disable it, i.e., to enable vertical mode. it's an area one @ref Fingers
             "finger" wide on the bottom side of the index widget's container. */
          }
@@ -131,7 +131,7 @@ class Elm_Index (Elm_Layout)
             @ingroup Index */
          }
          values {
-            Eina_Bool disabled; /*@ @c EINA_TRUE to disable it, @c EINA_FALSE to enable it */
+            bool disabled; /*@ @c EINA_TRUE to disable it, @c EINA_FALSE to enable it */
          }
       }
       item_level {

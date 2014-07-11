@@ -20,7 +20,7 @@ class Elm_Table (Elm_Widget)
             @ingroup Table */
          }
          values {
-            Eina_Bool homogeneous; /*@ A boolean to set if the layout is homogeneous in the
+            bool homogeneous; /*@ A boolean to set if the layout is homogeneous in the
             table (EINA_TRUE = homogeneous, EINA_FALSE = no homogeneous) */
          }
       }
@@ -53,7 +53,7 @@ class Elm_Table (Elm_Widget)
          @ingroup Table */
 
          params {
-            @in Eina_Bool clear; /*@ If true, will delete children, else just remove from table. */
+            @in bool clear; /*@ If true, will delete children, else just remove from table. */
          }
       }
       child_get {

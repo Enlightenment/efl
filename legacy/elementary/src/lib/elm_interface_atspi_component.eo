@@ -7,7 +7,7 @@ mixin Elm_Interface_Atspi_Component ()
       protected size {
          set {
             /*@ Sets size of accessible widget. */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@ Gets size of accessible widget. */
@@ -48,10 +48,10 @@ mixin Elm_Interface_Atspi_Component ()
          }
          set {
             /*@ Sets geometry of accessible widget. */
-            return Eina_Bool;
+            return bool;
          }
          keys {
-            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
          }
@@ -65,13 +65,13 @@ mixin Elm_Interface_Atspi_Component ()
       protected position {
          set {
             /*@ Sets position of accessible widget. */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@ Gets position of accessible widget. */
          }
          keys {
-            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
          }
@@ -84,25 +84,25 @@ mixin Elm_Interface_Atspi_Component ()
    methods {
       protected contains {
          params {
-            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
             @in int x;
             @in int y;
          }
-         return Eina_Bool;
+         return bool;
       }
       focus_grab {
          /*@ Focuses accessible widget.
 
          @return true if focus grab focus has successed, false otherwise. */
 
-         return Eina_Bool;
+         return bool;
       }
       protected accessible_at_point_get {
          /*@ Gets top component object occupying space at given coordinates. */
          params {
-            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+            bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
             @in int x;

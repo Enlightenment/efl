@@ -67,7 +67,7 @@ class Elm_Panes (Elm_Layout)
             @ingroup Panes */
          }
          values {
-            Eina_Bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to split panes
+            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to split panes
             horizontally ("top" and "bottom" contents). @c EINA_FALSE to make it
             vertically ("left" and "right" contents) */
          }
@@ -98,7 +98,7 @@ class Elm_Panes (Elm_Layout)
             @ingroup Panes */
          }
          values {
-            Eina_Bool fixed; /*@ Use @c EINA_TRUE to fix the left and right panes sizes and make
+            bool fixed; /*@ Use @c EINA_TRUE to fix the left and right panes sizes and make
             them not to be resized by user interaction. Use @c EINA_FALSE to make them
             resizable. */
          }

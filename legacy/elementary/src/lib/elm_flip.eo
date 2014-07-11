@@ -49,7 +49,7 @@ class Elm_Flip (Elm_Container)
             showing.
 
             @ingroup Flip */
-            return Eina_Bool;
+            return bool;
          }
       }
    }
@@ -114,7 +114,7 @@ class Elm_Flip (Elm_Container)
 
          params {
             @in Elm_Flip_Direction dir; /*@ The direction to change */
-            @in Eina_Bool enabled; /*@ If that direction is enabled or not */
+            @in bool enabled; /*@ If that direction is enabled or not */
          }
       }
       interaction_direction_enabled_get {
@@ -129,7 +129,7 @@ class Elm_Flip (Elm_Container)
 
          @ingroup Flip */
 
-         return Eina_Bool;
+         return bool;
          params {
             @in Elm_Flip_Direction dir; /*@ The direction to check */
          }
@@ -235,7 +235,7 @@ class Elm_Flip (Elm_Container)
          @ingroup Flip */
 
          params {
-            @in Eina_Bool front; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
+            @in bool front; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
             @in Elm_Flip_Mode mode; /*@ The mode type */
          }
       }

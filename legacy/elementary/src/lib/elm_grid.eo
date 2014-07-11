@@ -44,7 +44,7 @@ class Elm_Grid (Elm_Widget)
          @ingroup Grid */
 
          params {
-            @in Eina_Bool clear; /*@ If true, it will delete just removed children */
+            @in bool clear; /*@ If true, it will delete just removed children */
          }
       }
       unpack {

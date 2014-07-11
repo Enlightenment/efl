@@ -169,7 +169,7 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
             @see elm_thumb_editable_get()
 
             @ingroup Thumb */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@
@@ -185,7 +185,7 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            Eina_Bool edit; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            bool edit; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
          }
       }
       aspect {

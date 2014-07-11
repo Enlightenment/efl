@@ -49,7 +49,7 @@ class Elm_Notify (Elm_Container)
             @ingroup Notify */
          }
          values {
-            Eina_Bool allow; /*@ EINA_TRUE If events are allowed, otherwise not */
+            bool allow; /*@ EINA_TRUE If events are allowed, otherwise not */
          }
       }
       timeout {

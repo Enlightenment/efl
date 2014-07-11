@@ -95,7 +95,7 @@ class Elm_Systray (Eo.Base)
    methods {
       register {
          /*@ Register this Status Notifier Item in the System Tray Watcher. This function should only be called after the event ELM_EVENT_SYSTRAY_READY is emitted. */
-         return Eina_Bool;
+         return bool;
       }
    }
 

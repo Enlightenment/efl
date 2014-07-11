@@ -24,8 +24,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool horiz;
-            Eina_Bool vert;
+            bool horiz;
+            bool vert;
          }
       }
       wheel_disabled {
@@ -36,7 +36,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool disabled;
+            bool disabled;
          }
       }
       movement_block {
@@ -58,7 +58,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool disabled;
+            bool disabled;
          }
       }
       policy {
@@ -95,7 +95,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ It gets whether the scrollable object propagates the events to content object or not. */
          }
          values {
-            Eina_Bool repeat_events;
+            bool repeat_events;
          }
       }
       page_size {
@@ -118,7 +118,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool disabled;
+            bool disabled;
          }
       }
       page_scroll_limit {
@@ -141,8 +141,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ Get wether page bouncing is enabled, for paged scrollers, on each axis. */
          }
          values {
-            Eina_Bool horiz;
-            Eina_Bool vert;
+            bool horiz;
+            bool vert;
          }
       }
       paging {
@@ -211,7 +211,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool freeze;
+            bool freeze;
          }
       }
       content_viewport_resize_cb {
@@ -283,7 +283,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool hold;
+            bool hold;
          }
       }
       animate_start_cb {
@@ -332,7 +332,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool mirrored;
+            bool mirrored;
          }
       }
       content_min_limit_cb {
@@ -461,7 +461,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          params {
             @in Evas_Coord x;
             @in Evas_Coord y;
-            @in Eina_Bool sig;
+            @in bool sig;
          }
       }
       content_pos_get {
@@ -506,8 +506,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       content_min_limit {
          /*@ No description supplied by the EAPI. */
          params {
-            @in Eina_Bool w;
-            @in Eina_Bool h;
+            @in bool w;
+            @in bool h;
          }
       }
    }

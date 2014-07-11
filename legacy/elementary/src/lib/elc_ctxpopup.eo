@@ -20,7 +20,7 @@ class Elm_Ctxpopup (Elm_Layout)
             @ingroup Ctxpopup */
          }
          values {
-            Eina_Bool horizontal; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
+            bool horizontal; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
          }
       }
       auto_hide_disabled {
@@ -53,7 +53,7 @@ class Elm_Ctxpopup (Elm_Layout)
             @ingroup Ctxpopup */
          }
          values {
-            Eina_Bool disabled; /*@ auto hide enable/disable. */
+            bool disabled; /*@ auto hide enable/disable. */
          }
       }
       hover_parent {

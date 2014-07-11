@@ -31,7 +31,7 @@ class Elm_Mapbuf (Elm_Container)
             @ingroup Mapbuf */
          }
          values {
-            Eina_Bool on; /*@ @c EINA_TRUE to enable auto mode or @c EINA_FALSE
+            bool on; /*@ @c EINA_TRUE to enable auto mode or @c EINA_FALSE
             to disable it. */
          }
       }
@@ -60,7 +60,7 @@ class Elm_Mapbuf (Elm_Container)
             @ingroup Mapbuf */
          }
          values {
-            Eina_Bool smooth; /*@ @c EINA_TRUE to enable smooth map rendering or @c EINA_FALSE
+            bool smooth; /*@ @c EINA_TRUE to enable smooth map rendering or @c EINA_FALSE
             to disable it. */
          }
       }
@@ -90,7 +90,7 @@ class Elm_Mapbuf (Elm_Container)
             @ingroup Mapbuf */
          }
          values {
-            Eina_Bool alpha; /*@ @c EINA_TRUE to enable alpha blending or @c EINA_FALSE
+            bool alpha; /*@ @c EINA_TRUE to enable alpha blending or @c EINA_FALSE
             to disable it. */
          }
       }
@@ -129,7 +129,7 @@ class Elm_Mapbuf (Elm_Container)
             @ingroup Mapbuf */
          }
          values {
-            Eina_Bool enabled; /*@ @c EINA_TRUE to enable map or @c EINA_FALSE to disable it. */
+            bool enabled; /*@ @c EINA_TRUE to enable map or @c EINA_FALSE to disable it. */
          }
       }
    }

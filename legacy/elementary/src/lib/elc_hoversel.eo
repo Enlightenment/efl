@@ -23,7 +23,7 @@ class Elm_Hoversel (Elm_Button, Evas.Selectable_Interface)
             @ingroup Hoversel */
          }
          values {
-            Eina_Bool horizontal; /*@ If true, the hover will expand horizontally to the
+            bool horizontal; /*@ If true, the hover will expand horizontally to the
             right. */
          }
       }
@@ -63,7 +63,7 @@ class Elm_Hoversel (Elm_Button, Evas.Selectable_Interface)
             @c EINA_FALSE if it is not expanded.
 
             @ingroup Hoversel */
-            return Eina_Bool;
+            return bool;
          }
       }
       items {

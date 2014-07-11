@@ -23,7 +23,7 @@ class Elm_Box (Elm_Widget)
             @ingroup Box */
          }
          values {
-            Eina_Bool homogeneous; /*@ The homogeneous flag */
+            bool homogeneous; /*@ The homogeneous flag */
          }
       }
       align {
@@ -71,7 +71,7 @@ class Elm_Box (Elm_Widget)
             @return @c EINA_TRUE if the box is set to horizontal mode, @c EINA_FALSE otherwise */
          }
          values {
-            Eina_Bool horizontal; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
+            bool horizontal; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
             @c EINA_FALSE = vertical) */
          }
       }

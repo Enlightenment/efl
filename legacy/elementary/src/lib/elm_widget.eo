@@ -11,7 +11,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool focus;
+            bool focus;
          }
       }
       drag_lock_y {
@@ -22,13 +22,13 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool lock;
+            bool lock;
          }
       }
       focus_highlight_style {
          set {
             /*@ This function set the widget focus highlight style. */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@ This function returns the widget focus highlight style. */
@@ -45,7 +45,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool tree_unfocusable;
+            bool tree_unfocusable;
          }
       }
       mirrored {
@@ -56,7 +56,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ Returns the widget's mirrored mode. */
          }
          values {
-            Eina_Bool mirrored;
+            bool mirrored;
          }
       }
       theme {
@@ -78,7 +78,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool disabled;
+            bool disabled;
          }
       }
       highlight_ignore {
@@ -89,7 +89,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool ignore;
+            bool ignore;
          }
       }
       mirrored_automatic {
@@ -100,7 +100,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ Returns the widget's mirrored mode setting. */
          }
          values {
-            Eina_Bool automatic;
+            bool automatic;
          }
       }
       orientation_mode_disabled {
@@ -111,13 +111,13 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool disabled;
+            bool disabled;
          }
       }
       style {
          set {
             /*@ No description supplied by the EAPI. */
-            return Eina_Bool;
+            return bool;
          }
          get {
             /*@ No description supplied by the EAPI. */
@@ -157,7 +157,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool can_focus;
+            bool can_focus;
          }
       }
       highlight_in_theme {
@@ -168,7 +168,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool highlight;
+            bool highlight;
          }
       }
       parent {
@@ -201,7 +201,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool lock;
+            bool lock;
          }
       }
       access_highlight_in_theme {
@@ -212,7 +212,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool highlight; /*@ highlight */
+            bool highlight; /*@ highlight */
          }
       }
       parent_highlight {
@@ -220,13 +220,13 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool highlighted;
+            bool highlighted;
          }
       }
       theme_object {
          set {
             /*@ No description supplied by the EAPI. */
-            return Eina_Bool;
+            return bool;
          }
          values {
             Evas_Object *edj;
@@ -267,7 +267,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          values {
             const(char)* part;
             const(char)* domain;
-            Eina_Bool translatable;
+            bool translatable;
          }
       }
       orientation {
@@ -284,7 +284,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          }
          values {
             Evas_Object *sobj;
-            Eina_Bool sub_obj;
+            bool sub_obj;
          }
       }
       domain_translatable_part_text {
@@ -325,13 +325,13 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ Get the value whether item loop feature is enabled or not. */
          }
          values {
-            Eina_Bool enable;
+            bool enable;
          }
       }
       child_can_focus {
          get {
             /*@ No description supplied by the EAPI. */
-            return Eina_Bool;
+            return bool;
          }
       }
       scroll_freeze {
@@ -343,7 +343,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       focus_region {
          get {
             /*@ No description supplied by the EAPI. */
-            return Eina_Bool;
+            return bool;
          }
          values {
             Evas_Coord x;
@@ -387,8 +387,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_Bool horiz;
-            Eina_Bool vert;
+            bool horiz;
+            bool vert;
          }
       }
       parent_widget {
@@ -401,7 +401,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       highlight {
          get {
             /*@ No description supplied by the EAPI. */
-            return Eina_Bool;
+            return bool;
          }
       }
       focused_object {
@@ -443,7 +443,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          return Evas_Object *;
          params {
             @out uint newest_focus_order;
-            @in Eina_Bool can_focus_only;
+            @in bool can_focus_only;
          }
       }
       scroll_hold_push {
@@ -503,19 +503,19 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          params {
             @in Elm_Activate act;
          }
-         return Eina_Bool;
+         return bool;
          legacy null; /* the legacy API has not the same number of parameter to we don't generate it. */
       }
       sub_object_add {
          /*@ 'Virtual' function handling sub objects being added. */
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *sobj;
          }
       }
       focus_direction_manager_is {
          /*@ 'Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget. */
-         return Eina_Bool;
+         return bool;
          legacy null;
       }
       event {
@@ -525,7 +525,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in Evas_Callback_Type type;
             @in void *event_info;
          }
-         return Eina_Bool;
+         return bool;
       }
       event_callback_add {
          /*@ No description supplied by the EAPI. */
@@ -537,7 +537,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       access {
          /*@ 'Virtual' function on the widget being set access. */
          params {
-            @in Eina_Bool acs;
+            @in bool acs;
          }
          legacy null;
       }
@@ -558,7 +558,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       on_focus {
          /*@ 'Virtual' function handling focus in/out events on the widget.
          return EINA_TRUE if this widget can handle focus, EINA_FALSE otherwise */
-         return Eina_Bool;
+         return bool;
       }
       on_focus_region {
          /*@ 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. */
@@ -568,7 +568,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @out Evas_Coord w;
             @out Evas_Coord h;
          }
-         return Eina_Bool;
+         return bool;
       }
       focus_cycle {
          /*@ No description supplied by the EAPI. */
@@ -584,11 +584,11 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @out Evas_Object *direction;
             @out double weight;
          }
-         return Eina_Bool;
+         return bool;
       }
       event_propagate {
          /*@ No description supplied by the EAPI. */
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Callback_Type type;
             @in void *event_info;
@@ -606,7 +606,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       }
       focus_next_manager_is {
          /*@ 'Virtual' function which checks if handling of passing focus to sub-objects is supported by widget. */
-         return Eina_Bool;
+         return bool;
       }
       name_find {
          /*@ No description supplied by the EAPI. */
@@ -620,7 +620,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       focus_list_direction_get {
          /*@ No description supplied by the EAPI. */
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(Evas_Object)* base;
             @in const(Eina_List)* items;
@@ -635,7 +635,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       }
       focus_direction_go {
          /*@ No description supplied by the EAPI. */
-         return Eina_Bool;
+         return bool;
          params {
             @in double degree;
          }
@@ -647,7 +647,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in Evas_Coord y;
             @in Evas_Coord w;
             @in Evas_Coord h;
-            @in Eina_Bool forceshow;
+            @in bool forceshow;
          }
       }
       show_region_get {
@@ -672,7 +672,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       focus_next_get {
          /*@ No description supplied by the EAPI. */
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in Elm_Focus_Direction dir;
             @out Evas_Object *next;
@@ -704,7 +704,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       }
       translate {
          /*@ 'Virtual' function handling language changes on Elementary. */
-         return Eina_Bool;
+         return bool;
          legacy null;
       }
       scroll_freeze_push {
@@ -725,12 +725,12 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in Elm_Focus_Direction dir;
             @out Evas_Object *next;
          }
-         return Eina_Bool;
+         return bool;
       }
       focus_list_next_get {
          /*@ No description supplied by the EAPI. */
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(Eina_List)* items;
             @in list_data_get_func_type list_data_get;
@@ -744,12 +744,12 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       }
       theme_apply {
          /*@ 'Virtual' function on the widget being re-themed. */
-         return Eina_Bool;
+         return bool;
       }
       focus_direction_get {
          /*@ No description supplied by the EAPI. */
          const;
-         return Eina_Bool;
+         return bool;
          params {
             @in const(Evas_Object)* base;
             @in double degree;
@@ -775,11 +775,11 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       }
       disable {
          /*@ 'Virtual' function on the widget being disabled. */
-         return Eina_Bool;
+         return bool;
       }
       sub_object_del {
          /*@ 'Virtual' function handling sub objects being removed. */
-         return Eina_Bool;
+         return bool;
          params {
             @in Evas_Object *sobj;
          }

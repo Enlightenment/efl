@@ -26,36 +26,36 @@ interface Elm_Interface_Atspi_Selection ()
          params {
             @in int child_index;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected selected_child_deselect {
          /* Removes selection for given child index */
          params {
             @in int child_index;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected is_child_selected {
          /* Determines if child specified by index is selected */
          params {
             @in int child_index;
          }
-         return Eina_Bool;
+         return bool;
       }
       protected all_children_select {
          /* Adds selection for all children */
-         return Eina_Bool;
+         return bool;
       }
       protected clear {
          /* Clears the current selection */
-         return Eina_Bool;
+         return bool;
       }
       protected child_deselect {
          /* Removes selection for given child index */
          params {
             @in int child_index;
          }
-         return Eina_Bool;
+         return bool;
       }
    }
    events {

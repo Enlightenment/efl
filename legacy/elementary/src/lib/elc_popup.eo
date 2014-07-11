@@ -49,7 +49,7 @@ class Elm_Popup (Elm_Layout)
             @note By default the Blocked event area is present */
          }
          values {
-            Eina_Bool allow; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
+            bool allow; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
          }
       }
       content_text_wrap_type {

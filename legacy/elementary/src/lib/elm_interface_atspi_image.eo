@@ -9,7 +9,7 @@ mixin Elm_Interface_Atspi_Image ()
             /*@ Gets an image extents. */
          }
          keys {
-            Eina_Bool screen_coords;
+            bool screen_coords;
          }
          values {
             int x;

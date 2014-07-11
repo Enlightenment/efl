@@ -29,7 +29,7 @@ class Elm_Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
             @ingroup File_Selector_Button */
          }
          values {
-            Eina_Bool value; /*@ @c EINA_TRUE to make it use an inner window, @c
+            bool value; /*@ @c EINA_TRUE to make it use an inner window, @c
             EINA_FALSE to make it use a dedicated window */
          }
       }

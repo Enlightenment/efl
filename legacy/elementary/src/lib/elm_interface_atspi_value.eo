@@ -9,7 +9,7 @@ interface Elm_Interface_Atspi_Value ()
             /*@ Gets value displayed by a accessible widget. */
          }
          set {
-            return Eina_Bool; /*@ EINA_TRUE if setting widgets value has
+            return bool; /*@ EINA_TRUE if setting widgets value has
                                 successed, EINA_FALSE otherwise. */
          }
          values {
