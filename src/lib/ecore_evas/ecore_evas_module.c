@@ -188,7 +188,7 @@ _ecore_evas_available_engines_get(void)
                          {
 #ifdef BUILD_ECORE_EVAS_FB
                             ADDENG("fb");
-#endif                            
+#endif
                          }
                        else if (!strcmp(name, "x"))
                          {
