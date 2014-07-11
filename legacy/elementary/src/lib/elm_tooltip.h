@@ -123,7 +123,7 @@ typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj
  * @param obj Target object
  *
  * Force show the tooltip and disable hide on mouse_out.
- * If another content is set as tooltip, the visible tooltip will hididen and
+ * If another content is set as tooltip, the visible tooltip will be hidden and
  * showed again with new content.
  * This can force show more than one tooltip at a time.
  *
