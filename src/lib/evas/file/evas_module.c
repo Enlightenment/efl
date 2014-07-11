@@ -112,6 +112,7 @@ evas_module_paths_init(void)
 #if !EVAS_MODULE_NO_ENGINES
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, buffer);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_sdl);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, psl1ght);
@@ -163,6 +164,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_FB
   EVAS_EINA_STATIC_MODULE_USE(engine, fb),
+#endif
+#ifdef EVAS_STATIC_BUILD_GL_COMMON
+  EVAS_EINA_STATIC_MODULE_USE(engine, gl_generic),
 #endif
 #ifdef EVAS_STATIC_BUILD_GL_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, gl_x11),
@@ -462,6 +466,8 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 
         en = eina_module_new(buffer);
         if (!en) continue;
+
+        if (type == EVAS_MODULE_TYPE_ENGINE) eina_module_global_set(en, EINA_TRUE);
 
         if (!eina_module_load(en))
           {
