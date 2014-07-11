@@ -11,8 +11,8 @@
 
 START_TEST(eolian_namespaces)
 {
-   Eolian_Class *class11, *class112, *class21, *class_no, *impl_class;
-   Eolian_Function *fid;
+   const Eolian_Class *class11, *class112, *class21, *class_no, *impl_class;
+   const Eolian_Function *fid;
    const Eina_List *list = NULL;
    Eolian_Function_Type func_type;
    const char *class_name;
@@ -85,9 +85,10 @@ END_TEST
 
 START_TEST(eolian_events)
 {
-   Eolian_Class *class;
+   const Eolian_Class *class;
    const Eina_List *list = NULL;
-   const char *name, *type, *comment;
+   const char *name, *comment, *type_name;
+   const Eolian_Type *type;
 
    eolian_init();
    /* Parsing */
@@ -107,7 +108,10 @@ START_TEST(eolian_events)
    /* Clicked,double */
    fail_if(!eolian_class_event_information_get(eina_list_nth(list, 1), &name, &type, &comment));
    fail_if(strcmp(name, "clicked,double"));
-   fail_if(strcmp(type, "Evas_Event_Clicked_Double_Info"));
+   fail_if(!type);
+   type_name = eolian_type_name_get(type);
+   fail_if(strcmp(type_name, "Evas_Event_Clicked_Double_Info"));
+   eina_stringshare_del(type_name);
    fail_if(comment);
 
    eolian_shutdown();
@@ -116,11 +120,11 @@ END_TEST
 
 START_TEST(eolian_override)
 {
-   Eolian_Function *fid = NULL;
+   const Eolian_Function *fid = NULL;
    const Eina_List *impls = NULL;
-   Eolian_Class *impl_class = NULL;
-   Eolian_Function *impl_func = NULL;
-   Eolian_Class *class, *base;
+   const Eolian_Class *impl_class = NULL;
+   const Eolian_Function *impl_func = NULL;
+   const Eolian_Class *class, *base;
 
    eolian_init();
    /* Parsing */
@@ -154,9 +158,9 @@ END_TEST
 
 START_TEST(eolian_consts)
 {
-   Eolian_Function *fid = NULL;
-   Eolian_Function_Parameter *param = NULL;
-   Eolian_Class *class;
+   const Eolian_Function *fid = NULL;
+   const Eolian_Function_Parameter *param = NULL;
+   const Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -180,9 +184,9 @@ END_TEST
 START_TEST(eolian_ctor_dtor)
 {
    const Eina_List *impls = NULL;
-   Eolian_Class *impl_class = NULL;
-   Eolian_Function *impl_func = NULL;
-   Eolian_Class *class, *base;
+   const Eolian_Class *impl_class = NULL;
+   const Eolian_Function *impl_func = NULL;
+   const Eolian_Class *class, *base;
 
    eolian_init();
    /* Parsing */
@@ -217,10 +221,10 @@ END_TEST
 
 START_TEST(eolian_typedef)
 {
-   Eolian_Type *type = NULL;
+   const Eolian_Type *type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
-   Eolian_Class *class;
+   const Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -259,13 +263,13 @@ END_TEST
 
 START_TEST(eolian_complex_type)
 {
-   Eolian_Function *fid = NULL;
-   Eolian_Function_Parameter *param = NULL;
+   const Eolian_Function *fid = NULL;
+   const Eolian_Function_Parameter *param = NULL;
    const Eina_List *params_list = NULL;
-   Eolian_Type *type = NULL;
+   const Eolian_Type *type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
-   Eolian_Class *class;
+   const Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -342,8 +346,8 @@ END_TEST
 
 START_TEST(eolian_scope)
 {
-   Eolian_Function *fid = NULL;
-   Eolian_Class *class;
+   const Eolian_Function *fid = NULL;
+   const Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
@@ -372,14 +376,14 @@ END_TEST
 
 START_TEST(eolian_simple_parsing)
 {
-   Eolian_Function *fid = NULL;
-   Eolian_Type *ptypep = NULL;
+   const Eolian_Function *fid = NULL;
+   const Eolian_Type *ptypep = NULL;
    const char *string = NULL, *ptype = NULL, *pname = NULL;
    Eolian_Parameter_Dir dir = EOLIAN_IN_PARAM;
    const Eina_List *list = NULL;
-   Eolian_Function_Parameter *param = NULL;
-   Eolian_Class *class;
-   Eolian_Type *tp;
+   const Eolian_Function_Parameter *param = NULL;
+   const Eolian_Class *class;
+   const Eolian_Type *tp;
 
    eolian_init();
    /* Parsing */
