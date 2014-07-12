@@ -333,7 +333,7 @@ mkdtemp(char *__template)
      {
         val = _mkstemp(suffix, val);
 
-        if (mkdir(__template))
+        if (mkdir(__template) == 0)
           return __template;
 
         if (errno == EFAULT ||
