@@ -446,7 +446,7 @@ eina_file_shutdown(void)
 
 /* ================================================================ *
  *   Simplified logic for portability layer with eina_file_common   *
- * ================================================================ */  
+ * ================================================================ */
 
 Eina_Bool
 eina_file_path_relative(const char *path)
@@ -757,7 +757,6 @@ eina_file_open(const char *path, Eina_Bool shared)
    Eina_File *n;
    char *filename;
    HANDLE handle;
-   HANDLE fm;
    WIN32_FILE_ATTRIBUTE_DATA fad;
    ULARGE_INTEGER length;
    ULARGE_INTEGER mtime;
@@ -775,19 +774,17 @@ eina_file_open(const char *path, Eina_Bool shared)
                          NULL);
    else
 #endif
-     handle = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ,
-                         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY,
+     handle = CreateFile(filename,
+                         GENERIC_READ | GENERIC_WRITE,
+                         FILE_SHARE_READ | FILE_SHARE_WRITE,
+                         NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL,
                          NULL);
 
    if (handle == INVALID_HANDLE_VALUE)
      goto close_file;
 
-   fm = CreateFileMapping(handle, NULL, PAGE_READONLY, 0, 0, NULL);
-   if (!fm)
-     goto close_handle;
-
    if (!GetFileAttributesEx(filename, GetFileExInfoStandard, &fad))
-     goto close_fm;
+     goto close_handle;
 
    length.u.LowPart = fad.nFileSizeLow;
    length.u.HighPart = fad.nFileSizeHigh;
@@ -812,7 +809,7 @@ eina_file_open(const char *path, Eina_Bool shared)
         if (!n)
           {
              eina_lock_release(&_eina_file_lock_cache);
-             goto close_fm;
+             goto close_handle;
           }
 
         memset(n, 0, sizeof(Eina_File));
@@ -828,16 +825,14 @@ eina_file_open(const char *path, Eina_Bool shared)
         n->length = length.QuadPart;
         n->mtime = mtime.QuadPart;
         n->handle = handle;
-        n->fm = fm;
         n->shared = shared;
         eina_lock_new(&n->lock);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
 
-	EINA_MAGIC_SET(n, EINA_FILE_MAGIC);
+        EINA_MAGIC_SET(n, EINA_FILE_MAGIC);
      }
    else
      {
-        CloseHandle(fm);
         CloseHandle(handle);
 
         n = file;
@@ -852,11 +847,8 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    return n;
 
- close_fm:
-   CloseHandle(fm);
  close_handle:
    CloseHandle(handle);
-
  close_file:
    ERR("Could not open file [%s].", filename);
    free(filename);
@@ -891,6 +883,18 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
    if (file->global_map == MAP_FAILED)
      {
         void  *data;
+        DWORD max_size_high;
+        DWORD max_size_low;
+
+        if (file->fm)
+          CloseHandle(file->fm);
+
+        max_size_high = (DWORD)((file->length & 0xffffffff00000000ULL) >> 32);
+        max_size_low = (DWORD)(file->length & 0x00000000ffffffffULL);
+        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READWRITE,
+                                     max_size_high, max_size_low, NULL);
+        if (!file->fm)
+          return NULL;
 
         data = MapViewOfFile(file->fm, FILE_MAP_READ,
                              0, 0, file->length);
@@ -903,7 +907,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
    if (file->global_map != MAP_FAILED)
      {
         file->global_refcount++;
-	eina_lock_release(&file->lock);
+        eina_lock_release(&file->lock);
         return file->global_map;
      }
 
@@ -947,6 +951,16 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
              eina_lock_release(&file->lock);
              return NULL;
           }
+
+        if (file->fm)
+          CloseHandle(file->fm);
+
+        /* the length parameter is unsigned long, that is a DWORD */
+        /* so the max size high parameter of CreateFileMapping is 0 */
+        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READWRITE,
+                                     0, (DWORD)length, NULL);
+        if (!file->fm)
+          return NULL;
 
         data = MapViewOfFile(file->fm, FILE_MAP_READ,
                              offset & 0xffff0000,
