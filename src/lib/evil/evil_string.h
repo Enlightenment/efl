@@ -14,30 +14,6 @@
  */
 
 
-#ifdef _WIN32_WCE
-
-/*
- * Environment variable related functions
- *
- */
-
-/**
- * @brief Return the static string "[Windows CE] error\n".
- *
- * @param errnum Unused parameter.
- * @return The static string "[Windows CE] error\n".
- *
- * This function just returns the static string "[Windows CE]
- * error\n".
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows CE (not cegcc).
- */
-EAPI char *strerror (int errnum);
-
-#endif /* _WIN32_WCE */
-
 /*
  * bit related functions
  *
@@ -57,35 +33,10 @@ EAPI char *strerror (int errnum);
  *
  * Conformity: BSD
  *
- * Supported OS: Windows XP, Windows CE (not cegcc).
+ * Supported OS: Windows XP.
  */
 EAPI int ffs(int i);
 
-
-#ifdef _WIN32_WCE
-
-/*
- * String manipulation related functions
- *
- */
-
-/**
- * @brief Compare two strings.
- *
- * @param s1 The first string to compare.
- * @param s2 The second string to compare.
- * @return < 0 if s1 < s2, >0 if s1 > s2, 0 otherwise.
- *
- * This function is exactly the same as strcmp(). No possible way to
- * achieve the behavior of strcoll() on Windows CE.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows CE.
- */
-EAPI int strcoll (const char *s1, const char *s2);
-
-#endif /* _WIN32_WCE */
 
 /**
  * @brief Get the last substring occurence.
@@ -100,7 +51,7 @@ EAPI int strcoll (const char *s1, const char *s2);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI char *strrstr (const char *str, const char *substr);
 
@@ -127,7 +78,7 @@ EAPI int strcasecmp(const char *s1, const char *s2);
 #endif /* _MSC_VER */
 
 /**
- * @brief Locatea substring into a string, ignoring case.
+ * @brief Locate a substring into a string, ignoring case.
  *
  * @param haystack The string to search in.
  * @param needle The substring to find.
@@ -140,7 +91,7 @@ EAPI int strcasecmp(const char *s1, const char *s2);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows XP, Windows CE
+ * Supported OS: Windows XP.
  */
 EAPI char *strcasestr(const char *haystack, const char *needle);
 

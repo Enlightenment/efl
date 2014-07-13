@@ -26,12 +26,6 @@
 extern "C" {
 #endif
 
-#ifdef _WIN32_WCE
-# ifndef PATH_MAX
-#  define PATH_MAX 260
-# endif
-#endif
-
 
 /**
  * @file dlfcn.h
@@ -39,7 +33,7 @@ extern "C" {
  * @defgroup Evil_Dlfcn Functions that manage dynamic-link libraries.
  * @ingroup Evil
  *
- * This header provides functions to load and unload dynamic-link
+x * This header provides functions to load and unload dynamic-link
  * libaries, to get the address of a symbol, and to get diagnostic
  * information.
  */

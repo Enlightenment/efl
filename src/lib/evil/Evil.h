@@ -137,12 +137,6 @@ typedef SSIZE_T ssize_t;
 
 #endif /* _MSC_VER */
 
-#ifdef _WIN32_WCE
-# ifndef offsetof
-#  define offsetof(type, ident) ((size_t)&(((type*)0)->ident))
-# endif
-#endif
-
 typedef unsigned long  uid_t;
 typedef unsigned long  gid_t;
 

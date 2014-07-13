@@ -87,9 +87,6 @@ lib/ecore/ecore_private.h
 if HAVE_WIN32
 lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_exe_win32.c
 else
-if HAVE_WINCE
-lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_exe_wince.c
-else
 EXTRA_DIST += lib/ecore/ecore_exe_ps3.c
 #if ECORE_HAVE_PS3
 #libecore_la_SOURCES += ecore_exe_ps3.c
@@ -100,7 +97,6 @@ EXTRA_DIST += lib/ecore/ecore_exe_ps3.c
 lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_signal.c lib/ecore/ecore_exe.c
 #endif
 #endif
-endif
 endif
 
 lib_ecore_libecore_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

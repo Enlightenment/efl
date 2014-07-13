@@ -87,14 +87,10 @@ lib/eina/eina_inline_unicode.x
 # lib/eina/eina_model.h
 # lib/eina/eina_object.h
 
-if HAVE_WINCE
-dist_installed_einaheaders_DATA += lib/eina/eina_inline_lock_wince.x
-else
 if HAVE_WIN32
 dist_installed_einaheaders_DATA += lib/eina/eina_inline_lock_win32.x
 else
 dist_installed_einaheaders_DATA += lib/eina/eina_inline_lock_posix.x
-endif
 endif
 
 lib_eina_libeina_la_SOURCES = \

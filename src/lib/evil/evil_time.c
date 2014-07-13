@@ -33,13 +33,3 @@ localtime_r(const time_t *timep, struct tm *result)
 }
 
 #endif /* localtime_r */
-
-#ifdef UNDER_CE
-
-void
-tzset(void)
-{
-   /* does nothing... */
-}
-
-#endif /* UNDER_CE */

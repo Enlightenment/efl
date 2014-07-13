@@ -26,10 +26,6 @@
 
 #define _(x)                 dgettext("ecore", x)
 
-#ifdef _WIN32_WCE
-# include <Evil.h>
-#endif
-
 #ifdef HAVE_EXOTIC
 # include <Exotic.h>
 #endif

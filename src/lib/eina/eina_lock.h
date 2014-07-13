@@ -106,9 +106,7 @@ typedef enum
 /** Type definition for deallocation callbacks for thread level sotrage data.  A simple function pointer. */
 typedef void (*Eina_TLS_Delete_Cb)(void *ptr);
 
-#ifdef _WIN32_WCE
-# include "eina_inline_lock_wince.x"
-#elif defined(_WIN32)
+#ifdef _WIN32
 # include "eina_inline_lock_win32.x"
 #else
 # include "eina_inline_lock_posix.x"

@@ -38,21 +38,6 @@ EAPI struct tm *localtime_r(const time_t *timep, struct tm *result);
 
 #endif /* localtime_r */
 
-#ifdef UNDER_CE
-
-/**
- * @brief Stub implementation of tzset().
- *
- * This function does nothing.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows CE.
- */
-EAPI void tzset(void);
-
-#endif
-
 
 /**
  * @}

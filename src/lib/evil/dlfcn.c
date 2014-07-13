@@ -4,9 +4,9 @@
 
 #include <stdlib.h>
 
-#if defined(__MINGW32CE__) || defined(_MSC_VER)
+#ifdef _MSC_VER
 # include <limits.h>
-#endif /* __MINGW32CE__ || _MSC_VER */
+#endif /* _MSC_VER */
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
@@ -14,11 +14,7 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#ifdef _WIN32_WCE
-# include <tlhelp32.h> /* CreateToolhelp32Snapshot */
-#else
-# include <psapi.h> /*  EnumProcessModules(Ex) */
-#endif
+#include <psapi.h> /*  EnumProcessModules(Ex) */
 
 #include "Evil.h"
 #include "evil_private.h"
@@ -141,26 +137,6 @@ dlsym(void *handle, const char *symbol)
 
    if (handle == RTLD_DEFAULT)
      {
-#ifdef _WIN32_WCE
-        HANDLE snapshot;
-        MODULEENTRY32 module;
-
-        snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS |
-                                            TH32CS_SNAPMODULE |
-                                            TH32CS_GETALLMODS,
-                                            0);
-        if (!snapshot)
-          return NULL;
-
-        module.dwSize = sizeof(module);
-        if (Module32First(snapshot, &module))
-          do {
-            fp = GetProcAddress(module.hModule, new_symbol);
-            if (fp) break;
-          } while (Module32Next(snapshot, &module));
-
-        CloseToolhelp32Snapshot(snapshot);
-#else
         HMODULE modules[1024];
         DWORD needed;
         DWORD i;
@@ -175,7 +151,6 @@ dlsym(void *handle, const char *symbol)
             fp = GetProcAddress(modules[i], new_symbol);
             if (fp) break;
           }
-#endif
      }
    else
      fp = GetProcAddress(handle, new_symbol);
@@ -202,7 +177,6 @@ dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
    if (!info)
      return 0;
 
-#ifdef _WIN32_WINNT
    length = VirtualQuery(addr, &mbi, sizeof(mbi));
    if (!length)
      return 0;
@@ -216,11 +190,6 @@ dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
    ret = GetModuleFileName((HMODULE)mbi.AllocationBase, (LPTSTR)&tpath, PATH_MAX);
    if (!ret)
      return 0;
-#else
-   ret = GetModuleFileName(NULL, (LPTSTR)&tpath, PATH_MAX);
-   if (!ret)
-     return 0;
-#endif
 
 #ifdef UNICODE
    path = evil_wchar_to_char(tpath);

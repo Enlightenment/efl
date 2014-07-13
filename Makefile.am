@@ -232,10 +232,6 @@ if HAVE_WIN32
 pkgconfig_DATA += pc/ecore-win32.pc
 endif
 
-if HAVE_WINCE
-pkgconfig_DATA += pc/ecore-wince.pc
-endif
-
 if HAVE_ECORE_X
 pkgconfig_DATA += pc/ecore-x.pc
 endif

@@ -85,7 +85,6 @@ evil_usleep(unsigned long usec)
    Sleep(usec / 1000);
    return 0;
 }
-#endif
 
 
 /*
@@ -93,7 +92,6 @@ evil_usleep(unsigned long usec)
  *
  */
 
-#if defined (_MSC_VER) || defined (_WIN32_WCE)
 pid_t
 getpid(void)
 {
@@ -109,180 +107,8 @@ getpid(void)
 char *
 evil_getcwd(char *buffer, size_t size)
 {
-#ifdef _WIN32_WCE
-   wchar_t wpath[PATH_MAX];
-   char   *cpath;
-   char   *delim;
-   DWORD   ret = 0;
-
-   if (size <= 0)
-     return NULL;
-
-   ret = GetModuleFileName(GetModuleHandle(NULL), (LPWSTR)&wpath, PATH_MAX);
-
-   if (!ret)
-     {
-        _evil_error_display(__FUNCTION__, ret);
-        return NULL;
-     }
-
-   cpath = evil_wchar_to_char(wpath);
-   if (!cpath)
-     return NULL;
-
-   if (strlen(cpath) >= (size - 1))
-     {
-        free(cpath);
-        return NULL;
-     }
-
-   delim = strrchr(cpath, '\\');
-   if (delim)
-     *delim = '\0';
-
-   if (!buffer)
-     {
-        buffer = (char *)malloc(sizeof(char) * size);
-        if (!buffer)
-          {
-             free(cpath);
-             return NULL;
-          }
-     }
-
-   strcpy(buffer, cpath);
-   free(cpath);
-
-   return buffer;
-#else
    return _getcwd(buffer, (int)size);
-#endif /* ! _WIN32_WCE */
 }
-
-#ifdef _WIN32_WCE
-
-int
-evil_stat(const char *file_name, struct stat *st)
-{
-   SYSTEMTIME      system_time;
-   FILETIME        local_time;
-   WIN32_FIND_DATA data;
-   HANDLE          handle;
-   char           *f;
-   wchar_t        *file;
-   int             permission = 0;
-
-   if (!file_name || !*file_name)
-     return -1;
-
-   f = strdup(file_name);
-   if (!f)
-     return -1;
-
-   EVIL_PATH_SEP_UNIX_TO_WIN32(f);
-
-   if (!strcmp(file_name, "\\"))
-     {
-        st->st_size = 1024;
-        st->st_mode = S_IFDIR;
-        permission = S_IREAD|S_IWRITE|S_IEXEC;
-
-        st->st_mode |= permission | (permission >> 3) | (permission >> 6);
-        return 0;
-     }
-
-   if (*f != '\\')
-     {
-        char  buf[PATH_MAX];
-        int   l1;
-        int   l2;
-
-        evil_getcwd(buf, PATH_MAX);
-        l1 = strlen(buf);
-        l2 = strlen(file_name);
-        tmp = (char *)malloc(l1 + 1 + l2 + 1);
-        if (!tmp)
-          return -1;
-        memcpy(tmp, buf, l1);
-        tmp[l1] = '\\';
-        memcpy(tmp + l1 + 1, file_name, l2);
-        tmp[l1 + 1 + l2] = '\0';
-        file = evil_char_to_wchar(tmp);
-        free(tmp);
-        if (!file)
-          return -1;
-     }
-   else
-     {
-        file = evil_char_to_wchar(f);
-        if (!file)
-          return -1;
-     }
-
-   free(f);
-
-   handle = FindFirstFile(file, &data);
-   if (handle == INVALID_HANDLE_VALUE)
-     {
-        free(file);
-        return -1;
-     }
-
-   free(file);
-
-   if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-     {
-        st->st_size = 1024;
-        st->st_mode = S_IFDIR;
-        st->st_nlink = 2;
-     }
-   else
-     {
-        st->st_size = data.nFileSizeLow;
-        st->st_mode = S_IFREG;
-        st->st_nlink = 1;
-     }
-
-   permission |= S_IREAD;
-
-   if (!(data.dwFileAttributes & FILE_ATTRIBUTE_READONLY))
-     permission |= S_IWRITE;
-
-   if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-     permission |= S_IEXEC;
-
-   st->st_mode |= permission | (permission >> 3) | (permission >> 6);
-
-   FileTimeToLocalFileTime(&data.ftLastWriteTime, &local_time);
-   FileTimeToSystemTime(&local_time, &system_time);
-
-   st->st_mtime = _evil_systemtime_to_time(system_time);
-
-   FileTimeToLocalFileTime(&data.ftCreationTime, &local_time);
-   FileTimeToSystemTime(&local_time, &system_time);
-
-   st->st_ctime = _evil_systemtime_to_time(system_time);
-
-   FileTimeToLocalFileTime(&data.ftLastAccessTime, &local_time);
-   FileTimeToSystemTime(&local_time, &system_time);
-
-   st->st_atime = _evil_systemtime_to_time(system_time);
-
-   if(st->st_atime == 0)
-     st->st_atime = st->st_mtime;
-   if (st->st_ctime == 0)
-     st->st_ctime = st->st_mtime;
-
-   st->st_rdev = 1;
-   st->st_ino = 0;
-
-   FindClose(handle);
-
-  return 0;
-}
-
-#endif /* _WIN32_WCE */
-
 
 
 /*
@@ -406,18 +232,3 @@ evil_pipe(int *fds)
 
    return -1;
 }
-
-
-/*
- * Exec related functions
- *
- */
-
-#ifdef _WIN32_WCE
-
-int execvp (const char *file EVIL_UNUSED, char *const argv[] EVIL_UNUSED)
-{
-   return 1;
-}
-
-#endif /* _WIN32_WCE */

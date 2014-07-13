@@ -57,7 +57,6 @@ include Makefile_Ecore_Psl1ght.am
 include Makefile_Ecore_SDL.am
 include Makefile_Ecore_Wayland.am
 include Makefile_Ecore_Win32.am
-include Makefile_Ecore_WinCE.am
 include Makefile_Ecore_X.am
 include Makefile_Ecore_Audio.am
 include Makefile_Ecore_IMF.am

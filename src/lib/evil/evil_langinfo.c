@@ -5,8 +5,6 @@
 #include "Evil.h"
 
 
-#ifndef __MINGW32CE__
-
 static char *
 replace(char *prev, char *value)
 {
@@ -49,5 +47,3 @@ nl_langinfo(nl_item index)
 
    return nothing;
 }
-
-#endif /* ! __MINGW32CE__ */

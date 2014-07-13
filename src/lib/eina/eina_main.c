@@ -117,7 +117,7 @@ static int _mt_enabled = 0;
 
 #ifdef EFL_HAVE_THREADS
 EAPI int _eina_threads_debug = 0;
-# if !defined(_WIN32_WCE) && !defined(_WIN32)
+# if !defined(_WIN32)
 EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
 # endif

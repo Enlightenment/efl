@@ -10,14 +10,6 @@
 # include <Evil.h>
 #endif
 
-#ifdef _WIN32_WCE
-# define E_FOPEN(file, mode) evil_fopen_native((file), (mode))
-# define E_FCLOSE(stream) evil_fclose_native(stream)
-#else
-# define E_FOPEN(file, mode) fopen((file), (mode))
-# define E_FCLOSE(stream) fclose(stream)
-#endif
-
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -43,7 +35,7 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
    if (!im || !im->image.data || !file)
       return 0;
 
-   f = E_FOPEN(file, "wb");
+   f = fopen(file, "wb");
    if (!f) return 0;
 
    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -147,11 +139,11 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
 
    if (im->cache_entry.flags.alpha)
      free(data);
-   E_FCLOSE(f);
+   fclose(f);
    return 1;
 
  close_file:
-   E_FCLOSE(f);
+   fclose(f);
    return 0;
 }
 

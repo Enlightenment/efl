@@ -192,9 +192,6 @@ _evil_last_error_display(const char *fct)
 const char *
 evil_tmpdir_get(void)
 {
-#ifdef _WIN32_WCE
-   return "\\temp";
-#else
    char *tmpdir;
 
    tmpdir = getenv("TMP");
@@ -204,15 +201,11 @@ evil_tmpdir_get(void)
    if (!tmpdir) tmpdir="C:\\";
 
    return tmpdir;
-#endif /* ! _WIN32_WCE */
 }
 
 const char *
 evil_homedir_get(void)
 {
-#ifdef _WIN32_WCE
-   return "\\my documents";
-#else
    char *homedir;
 
    homedir = getenv("HOME");
@@ -221,7 +214,6 @@ evil_homedir_get(void)
    if (!homedir) homedir="C:\\";
 
    return homedir;
-#endif /* ! _WIN32_WCE */
 }
 
 int

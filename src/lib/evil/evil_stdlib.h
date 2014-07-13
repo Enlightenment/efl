@@ -19,60 +19,6 @@
  *
  */
 
-#ifdef _WIN32_WCE
-
-/**
- * @brief Retrieve the value of environment variables.
- *
- * @param name The name of the environment variable.
- * @return The value of the environment variable.
- *
- * This function searches the environment variable @p name if it
- * exists and return a pointer to the value of the environment
- * variable. If the specified environment variable cannot be found,
- * @c NULL is returned.
- *
- * The returned value may be overwritten by a subsequent call to
- * getenv(), setenv(), or unsetenv().
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows CE.
- *
- * @note On Windows CE, there is no environment variable. This is
- * faked by storing a value in a key in the base registry.
- */
-EAPI char *getenv(const char *name);
-
-#endif /* _WIN32_WCE */
-
-
-#ifdef __MINGW32CE__
-
-/**
- * @brief Set the value of environment variables.
- *
- * @param string A formatted string.
- * @return 0 in success, non-zero otherwise.
- *
- * This function uses @p string to set environment variable values.
- * @p string should point to a string of the form "name=value". This
- * function makes the value of the environment variable name equal to
- * value by altering an existing variable or creating a new one. In
- * either case, the string pointed to by @p string becomes part of the
- * environment, so altering @p string shall change the environment.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows CE.
- *
- * @note On Windows CE, there is no environment variable. This is
- * faked by storing a value in a key in the base registry.
- */
-EAPI int putenv(const char *string);
-
-#endif /* __MINGW32CE__ */
-
 /**
  * @brief Create, modify, or remove environment variables.
  *
@@ -92,10 +38,7 @@ EAPI int putenv(const char *string);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows XP, Windows CE.
- *
- * @note On Windows CE, there is no environment variable. This is
- * faked by storing a value in a key in the base registry.
+ * Supported OS: Windows XP.
  */
 EAPI int setenv(const char *name,
                 const char *value,
@@ -114,10 +57,7 @@ EAPI int setenv(const char *name,
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows XP, Windows CE (not cegcc).
- *
- * @note On Windows CE, there is no environment variable. This is
- * faked by storing a value in a key in the base registry.
+ * Supported OS: Windows XP.
  */
 EAPI int unsetenv(const char *name);
 
@@ -155,7 +95,7 @@ EAPI int unsetenv(const char *name);
  *
  * Conformity: Should follow BSD conformity.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI int mkstemp(char *__template);
 
@@ -204,7 +144,7 @@ EAPI int mkstemps(char *__template, int suffixlen);
  *
  * Conformity: None.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI char *realpath(const char *file_name, char *resolved_name);
 

@@ -15,11 +15,6 @@
 #include "Evil.h"
 
 
-#ifdef __MINGW32CE__
-# define _get_osfhandle(FILEDES) ((HANDLE)FILEDES)
-#endif /* __MINGW32CE__ */
-
-
 /*
  * port of fcntl function
  *
@@ -39,14 +34,12 @@ int fcntl(int fd, int cmd, ...)
 
    if (cmd == F_GETFD)
      {
-#ifndef __MINGW32CE__
         DWORD flag;
 
 	if (!GetHandleInformation(h, &flag))
 	  return -1;
 
 	res = 0;
-#endif /* ! __MINGW32CE__ */
      }
 
    if (cmd == F_SETFD)
@@ -56,10 +49,8 @@ int fcntl(int fd, int cmd, ...)
         flag = va_arg(va, long);
         if (flag == FD_CLOEXEC)
           {
-#ifndef __MINGW32CE__
              if (SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
                res = 0;
-#endif /* ! __MINGW32CE__ */
           }
      }
    else if (cmd == F_GETFL)
@@ -87,7 +78,6 @@ int fcntl(int fd, int cmd, ...)
                }
           }
      }
-#ifndef __MINGW32CE__
    else if ((cmd == F_SETLK) || (cmd == F_SETLKW))
      {
         struct flock *fl;
@@ -119,8 +109,6 @@ int fcntl(int fd, int cmd, ...)
         if (fl->l_type == F_UNLCK)
           res = _locking(fd, _LK_UNLCK, fl->l_len);
      }
-
-#endif /* ! __MINGW32CE__ */
 
    va_end(va);
 

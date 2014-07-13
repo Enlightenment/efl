@@ -24,115 +24,16 @@
 /*
  * Environment variable related functions
  *
- * char *getenv (const char *name);
- * int putenv (const char *string);
  * int setenv (const char *name, const char *value, int overwrite);
  * void unsetenv (const char *name);
  *
  */
-
-#ifdef _WIN32_WCE
-
-static char _evil_stdlib_getenv_buffer[PATH_MAX];
-
-char *
-getenv(const char *name)
-{
-   HKEY     key;
-   wchar_t *wname;
-   LONG     res;
-   DWORD    type;
-   DWORD    disposition;
-   DWORD    size = PATH_MAX;
-
-   if (!name || !*name)
-     return NULL;
-
-   if ((res = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
-                             TEXT("Software\\Efl\\Environment"),
-                             0, NULL,
-                             REG_OPTION_VOLATILE,
-                             0, NULL,
-                             &key, &disposition)) != ERROR_SUCCESS)
-     {
-        _evil_error_display(__FUNCTION__, res);
-        return NULL;
-     }
-
-   wname = evil_char_to_wchar(name);
-   if (!wname)
-     {
-        if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(__FUNCTION__, res);
-        return NULL;
-     }
-
-   if ((res = RegQueryValueEx(key, wname,
-                              NULL, &type,
-                              (LPBYTE)&_evil_stdlib_getenv_buffer,
-                              &size)) != ERROR_SUCCESS)
-     {
-        if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(__FUNCTION__, res);
-        free(wname);
-        return NULL;
-     }
-
-   free(wname);
-
-   if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-     {
-        _evil_error_display(__FUNCTION__, res);
-        return NULL;
-     }
-
-   if (_evil_stdlib_getenv_buffer[0] == '\0')
-     return NULL;
-   else
-     {
-        return _evil_stdlib_getenv_buffer;
-     }
-}
-
-#endif /* _WIN32_WCE */
-
-#ifdef __MINGW32CE__
-
-int
-putenv(const char *string)
-{
-   char *str;
-   char *egal;
-   char *name;
-   char *value;
-
-   str = strdup(string);
-   if (!str)
-     return -1;
-   egal = strchr(str, '=');
-   if (!egal)
-     return -1;
-
-   value = egal + 1;
-   *egal = '\0';
-   name = str;
-   setenv(name, value, 1);
-   free(str);
-
-   return 0;
-}
-
-#endif /* __MINGW32CE__ */
-
-
 
 int
 setenv(const char *name,
        const char *value,
        int         overwrite)
 {
-#ifndef __MINGW32CE__
-
    char  *old_name;
    char  *str;
    size_t length;
@@ -169,92 +70,6 @@ setenv(const char *name,
    free(str);
 
    return res;
-
-#else /* __MINGW32CE__ */
-
-   HKEY     key;
-   LONG     res;
-   DWORD    disposition;
-   wchar_t *wname;
-   char    *data;
-   DWORD    size;
-
-   if (!name || !*name)
-     return -1;
-
-   /* if '=' is found, return an error */
-   if (strchr (name, '='))
-     return -1;
-
-   if ((res = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
-                             TEXT("Software\\Efl\\Environment"),
-                             0, NULL,
-                             REG_OPTION_VOLATILE,
-                             0, NULL,
-                             &key,
-                             &disposition)) != ERROR_SUCCESS)
-     {
-        _evil_error_display(__FUNCTION__, res);
-        return -1;
-     }
-
-   /* if name is already set and overwrite is 0, we exit with success */
-   if (!overwrite && (disposition == REG_OPENED_EXISTING_KEY))
-     return 0;
-
-   wname = evil_char_to_wchar(name);
-   if (!wname)
-     {
-        if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(__FUNCTION__, res);
-        return -1;
-     }
-
-   if (value)
-     {
-        size = strlen(value);
-        data = malloc(sizeof(char) * (size + 1));
-        if (!data)
-          return -1;
-        memcpy((void *)data, value, size);
-        data[size] = '\0';
-     }
-   else
-     {
-        size = 0;
-        data = malloc(sizeof(char));
-        if (!data)
-          return -1;
-        data[0] = '\0';
-     }
-   if (!data)
-     return -1;
-
-   if ((res = RegSetValueEx(key,
-                            (LPCWSTR)wname,
-                            0, REG_SZ,
-                            (const BYTE *)data,
-                            size + 1)) != ERROR_SUCCESS)
-     {
-        free(wname);
-        _evil_error_display(__FUNCTION__, res);
-        if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-          _evil_error_display(__FUNCTION__, res);
-        return -1;
-     }
-
-   free(data);
-   free(wname);
-
-   if ((res = RegCloseKey (key)) != ERROR_SUCCESS)
-     {
-        _evil_error_display(__FUNCTION__, res);
-        return -1;
-     }
-
-   return 0;
-
-#endif /* ! __MINGW32CE__ */
 }
 
 int
@@ -370,26 +185,7 @@ mkstemps(char *__template, int suffixlen)
 
         val = _mkstemp(suffix, val);
 
-#ifndef __MINGW32CE__
         fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
-#else /* ! __MINGW32CE__ */
-        {
-           FILE    *f;
-           wchar_t *wtemplate;
-
-           wtemplate = evil_char_to_wchar(__template);
-           if (!wtemplate)
-             return -1;
-           f = _wfopen(wtemplate, L"rwb");
-           free(wtemplate);
-           if (!f)
-             {
-                errno = EEXIST;
-                return -1;
-             }
-           fd = (int)_fileno(f);
-        }
-#endif /* __MINGW32CE__ */
         if (fd >= 0)
           return fd;
      }
@@ -407,7 +203,6 @@ mkstemp(char *__template)
 char *
 realpath(const char *file_name, char *resolved_name)
 {
-#ifndef __MINGW32CE__
    char *retname = NULL;  /* we will return this, if we fail */
 
    /* SUSv3 says we must set `errno = EINVAL', and return NULL,
@@ -471,29 +266,4 @@ realpath(const char *file_name, char *resolved_name)
     */
 
    return retname;
-#else
-   char   cwd[PATH_MAX];
-   size_t l1;
-   size_t l2;
-   size_t l;
-
-   if (!file_name || !resolved_name)
-     return NULL;
-
-   if (!getcwd(cwd, PATH_MAX))
-     return NULL;
-
-   l1 = strlen(cwd);
-   l2 = strlen(file_name);
-   l = l1 + l2 + 2;
-
-   if (l > PATH_MAX)
-     l = PATH_MAX - 1;
-   memcpy(resolved_name, cwd, l1);
-   resolved_name[l1] = '\\';
-   memcpy(resolved_name + l1 + 1, file_name, l2);
-   resolved_name[l] = '\0';
-
-   return resolved_name;
-#endif /* __MINGW32CE__ */
 }

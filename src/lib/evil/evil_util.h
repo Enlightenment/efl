@@ -123,7 +123,7 @@ EAPI const char *evil_homedir_get(void);
  * Conformity: Non applicable.
  *
  * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP, Windows CE.
+ * Windows XP.
  *
  * @since 1.7
  *

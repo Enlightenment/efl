@@ -1,10 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#ifdef _WIN32_WCE
-# undef remove
-#endif
-
 #define MY_CLASS_NAME "Evas_Box"
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Box"
 

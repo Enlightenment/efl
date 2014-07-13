@@ -160,12 +160,8 @@ AC_CANONICAL_HOST
 
 # TODO: move me to m4 file that setups module/so related variables
 case "$host_os" in
-   cegcc*)
+   cegcc*|mingw32ce*)
       AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
-   ;;
-   mingw32ce*)
-      MODULE_ARCH="v"
-      MODULE_EXT=".dll"
    ;;
    mingw*)
       have_win32="yes"
@@ -189,17 +185,12 @@ AC_SUBST(EFL_VERSION_MAJOR)
 AC_SUBST(EFL_VERSION_MINOR)
 
 have_systemd_pkg="no"
-have_wince="no"
 have_win32="no"
 have_windows="no"
 have_darwin="no"
 have_linux="no"
 have_ps3="no"
 case "$host_os" in
-   mingw32ce*)
-      have_wince="yes"
-      have_windows="yes"
-   ;;
    mingw*|cygwin*)
       # TODO: check cygwin* here
       have_win32="yes"
@@ -226,7 +217,6 @@ AC_DEFINE_UNQUOTED([MODULE_ARCH], ["${MODULE_ARCH}"], ["Module architecture"])
 AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["${MODULE_EXT}"], [Suffix for shared objects])
 
 # TODO: move me to m4 file that setups the windows related variables
-AM_CONDITIONAL([HAVE_WINCE], [test "x${have_wince}" = "xyes"])
 AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
@@ -680,14 +670,8 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EVIL_DLFCN_LIBS=""
-if test "${have_wince}" = "xyes"; then
-   EFL_ADD_LIBS([EVIL], [-lws2])
-   EVIL_DLFCN_LIBS="-ltoolhelp"
-else
-   EFL_ADD_LIBS([EVIL], [-lole32 -lws2_32 -lsecur32 -luuid])
-   EVIL_DLFCN_LIBS="-lpsapi"
-fi
+EFL_ADD_LIBS([EVIL], [-lole32 -lws2_32 -lsecur32 -luuid])
+EVIL_DLFCN_LIBS="-lpsapi"
 
 AC_SUBST([EVIL_DLFCN_LIBS])
 
@@ -1527,13 +1511,6 @@ want_evas_engine_gl_cocoa="${want_cocoa}"
 want_evas_engine_wayland_egl="no"
 if test "${want_wayland}" = "yes" && test "${want_egl}" = "yes" && test "${with_opengl}" = "es"; then
    want_evas_engine_wayland_egl="yes"
-fi
-
-if test "${have_wince}" = "yes"; then
-   want_fontconfig="no"
-   want_evas_image_loader_gif="no"
-   want_evas_image_loader_tiff="no"
-   want_evas_image_loader_webp="no"
 fi
 
 if test "${want_lua_old}" = "yes"; then
@@ -2381,11 +2358,7 @@ EFL_LIB_START([Ecore_Con])
 want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
-if test "${have_wince}" = "yes"; then
-   want_cares="no"
-   want_ecore_con_local_sockets="no"
-   want_ecore_con_abstract_sockets="no"
-elif test "${have_win32}" = "yes"; then
+if test "${have_win32}" = "yes"; then
    want_cares="yes"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_darwin}" = "yes"; then
@@ -3042,37 +3015,6 @@ EFL_LIB_END([Ecore_Avahi])
 
 #### End of Ecore_Avahi
 
-#### Ecore_WinCE
-EFL_LIB_START_OPTIONAL([Ecore_WinCE], [test "${have_wince}" = "yes"])
-
-### Additional options to configure
-
-### Default values
-
-### Checks for programs
-
-### Checks for libraries
-EFL_PLATFORM_DEPEND([ECORE_WINCE], [evil])
-EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [ecore-input])
-EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [ecore])
-EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [eo])
-EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [eina])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-EFL_LIB_END_OPTIONAL([Ecore_WinCE])
-#### End of Ecore_WinCE
-
 
 #### Ecore_X
 EFL_LIB_START_OPTIONAL([Ecore_X], [test "${want_x11_any}" = "yes"])
@@ -3369,20 +3311,15 @@ want_ecore_imf_xim="no"
 want_ecore_imf_scim="no"
 want_ecore_imf_ibus="no"
 want_ecore_imf_wayland="no"
+want_ecore_imf="yes"
 
-if test "${have_wince}" = "yes"; then
-   want_ecore_imf="no"
-else
+if test "${have_windows}" = "no" && test "${have_darwin}" = "no"; then
    want_ecore_imf="yes"
-
-   if test "${have_windows}" = "no" && test "${have_darwin}" = "no"; then
-      want_ecore_imf="yes"
-      want_ecore_imf_xim="yes"
-      want_ecore_imf_scim="yes"
-      want_ecore_imf_ibus="yes"
-      if test "${want_wayland}" = "yes"; then
-          want_ecore_imf_wayland="yes"
-      fi
+   want_ecore_imf_xim="yes"
+   want_ecore_imf_scim="yes"
+   want_ecore_imf_ibus="yes"
+   if test "${want_wayland}" = "yes"; then
+      want_ecore_imf_wayland="yes"
    fi
 fi
 
@@ -4436,7 +4373,6 @@ pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
 pc/ecore-wayland.pc
 pc/ecore-win32.pc
-pc/ecore-wince.pc
 pc/ecore-x.pc
 pc/ecore-evas.pc
 pc/ecore-imf.pc
@@ -4591,7 +4527,6 @@ elif test "${have_darwin}" = "yes"; then
 echo "Ecore_Cocoa.....: $efl_lib_optional_ecore_cocoa"
 elif test "${have_windows}" = "yes"; then
 echo "Ecore_Win32.....: $have_win32"
-echo "Ecore_WinCE.....: $have_wince"
 fi
 echo "Ecore_Audio.....: ${efl_lib_optional_ecore_audio} (${features_ecore_audio})"
 echo "Ecore_Avahi.....: yes (${features_ecore_avahi})"

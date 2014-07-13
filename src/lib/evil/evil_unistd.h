@@ -32,7 +32,7 @@
  *
  * Conformity: Not appliclable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI double evil_time_get(void);
 
@@ -54,7 +54,7 @@ EAPI double evil_time_get(void);
  *
  * Conformity: Not appliclable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
 
@@ -77,7 +77,7 @@ EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
  *
  * Conformity: Not appliclable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI int evil_usleep(unsigned long usec);
 
@@ -88,14 +88,11 @@ EAPI int evil_usleep(unsigned long usec);
  */
 #define usleep(usec) evil_usleep(usec);
 
-#endif /* _MSC_VER */
-
 /*
  * Process identifer related functions
  *
  */
 
-#if defined (_MSC_VER) || defined (_WIN32_WCE)
 /**
  * @brief Return the process identifier of the calling process.
  *
@@ -107,9 +104,10 @@ EAPI int evil_usleep(unsigned long usec);
  *
  * Conformity: Not appliclable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI pid_t getpid(void);
+
 #endif
 
 
@@ -139,7 +137,7 @@ EAPI pid_t getpid(void);
  *
  * Conformity: None.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI int symlink(const char *oldpath, const char *newpath);
 
@@ -164,7 +162,7 @@ EAPI int symlink(const char *oldpath, const char *newpath);
  *
  * Conformity: None.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
 
@@ -174,35 +172,6 @@ EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
  *
  */
 
-
-#ifdef _WIN32_WCE
-
-/**
- * @brief Return information about a file.
- *
- * @param file_name The file to retrieve information from.
- * @param st Buffer to fill
- * @return 0 on success, -1 otherwise.
- *
- * This function retrieves information about the file named
- * @p file_name and fill the structure @p st. If the function
- * succeeds, 0 is returned, otherwise -1 is returned.
- *
- * Conformity: None.
- *
- * Supported OS: Windows CE (not cegcc).
- */
-EAPI int evil_stat(const char *file_name, struct stat *st);
-
-/**
- * @def stat(f,st)
- *
- * Wrapper around evil_stat().
- */
-# define stat(f,st) evil_stat((f),(st))
-
-#endif /* _WIN32_WCE */
-
 /**
  * @brief Get the current directory.
  *
@@ -210,24 +179,11 @@ EAPI int evil_stat(const char *file_name, struct stat *st);
  * @param size Size of the buffer.
  * @return The current directory.
  *
- * On Windows desktop, use the _getcwd function in MSVCRT.
- *
- * On Windows CE, get the current directory by extracting the path
- * from the executable that is running and put the result in @p buffer
- * of length @p size. If @p size is less or equal than 0, return NULL.
- * If the current absolute path would require a buffer longer than
- * @p size elements, NULL is returned. If @p buffer is NULL, a buffer
- * of length @p size is allocated and is returned. If the allocation
- * fails, NULL is returned. On success, @p buffer is returned and
- * contains the current directory. The last '\' is not included.
- * If @p buffer is NULL, the returned value must be freed if not NULL.
- *
- * Specially usefull on WinCE where the current directory functionality
- * is not supported.
+ * Use the _getcwd function in MSVCRT.
  *
  * Conformity: Almost POSIX.1 (no errno set)
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI char *evil_getcwd(char *buffer, size_t size);
 
@@ -253,7 +209,7 @@ EAPI char *evil_getcwd(char *buffer, size_t size);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI int evil_sockets_init(void);
 
@@ -264,7 +220,7 @@ EAPI int evil_sockets_init(void);
  *
  * Conformity: Non applicable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI void evil_sockets_shutdown(void);
 
@@ -280,7 +236,7 @@ EAPI void evil_sockets_shutdown(void);
  *
  * Conformity: Not applicable.
  *
- * Supported OS: Windows XP, Windows CE.
+ * Supported OS: Windows XP.
  */
 EAPI int evil_pipe(int *fds);
 
@@ -290,33 +246,6 @@ EAPI int evil_pipe(int *fds);
  * Wrapper around evil_pipe().
  */
 #define pipe(fds) evil_pipe(fds)
-
-
-/*
- * Exec related functions
- *
- */
-
-
-#ifdef _WIN32_WCE
-
-/**
- * @brief Replace the current process image with a new process image.
- *
- * @param file The file name of the file being executed.
- * @param argv A @c NULL terminated array of strings.
- * @return Always 1.
- *
- * This function does nothing and returns always 1. It is defined for
- * ecore_app only for native Windows CE code.
- *
- * Conformity: Not appliclable.
- *
- * Supported OS: Windows CE (not cegcc).
- */
-EAPI int execvp( const char *file, char *const argv[]);
-
-#endif /* _WIN32_WCE */
 
 
 /**

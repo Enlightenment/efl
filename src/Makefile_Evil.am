@@ -24,10 +24,6 @@ lib/evil/fnmatch.h \
 lib/evil/dirent.h \
 lib/evil/dlfcn.h
 
-if HAVE_WINCE
-dist_install_evilheaders_DATA += lib/evil/mingw32ce/errno.h
-endif
-
 evilmmanheadersdir = $(includedir)/evil-@VMAJ@/sys
 dist_evilmmanheaders_DATA = \
 lib/evil/sys/mman.h
@@ -39,6 +35,7 @@ lib/evil/evil_fnmatch.c \
 lib/evil/evil_fnmatch_list_of_states.c \
 lib/evil/evil_inet.c \
 lib/evil/evil_langinfo.c \
+lib/evil/evil_link_xp.cpp \
 lib/evil/evil_main.c \
 lib/evil/evil_mman.c \
 lib/evil/evil_pwd.c \
@@ -52,22 +49,10 @@ lib/evil/evil_uuid.c \
 lib/evil/evil_private.h \
 lib/evil/evil_fnmatch_private.h
 
-if HAVE_WINCE
-lib_evil_libevil_la_SOURCES += lib/evil/evil_errno.c lib/evil/evil_link_ce.c
-else
-lib_evil_libevil_la_SOURCES += lib/evil/evil_link_xp.cpp
-endif
-
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@ -D__USE_MINGW_ANSI_STDIO
 lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@ @EVIL_CFLAGS@
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
-if HAVE_WINCE
-lib_evil_libevil_la_LINK = $(LINK) $(lib_evil_libevil_la_LDFLAGS)
-else
-lib_evil_libevil_la_LINK = $(CXXLINK) $(lib_evil_libevil_la_LDFLAGS)
-endif
 
 # regex
 
@@ -129,11 +114,7 @@ bin/evil/evil_test_print.h \
 bin/evil/evil_test_realpath.h \
 bin/evil/evil_test_util.h
 
-if HAVE_WINCE
-bin_evil_evil_suite_SOURCES +=  bin/evil/memcpy_glibc_arm.S
-#else
 #suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
-endif
 
 bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
 bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm

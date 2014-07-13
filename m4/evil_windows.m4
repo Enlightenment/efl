@@ -12,7 +12,7 @@ AC_DEFUN([EFL_SELECT_WINDOWS_VERSION],
 dnl configure option
 
 AC_ARG_WITH([windows-version],
-   [AC_HELP_STRING([--with-windows-version], [select the target Windows version (xp, vista, win7 or ce) @<:@default=xp@:>@])],
+   [AC_HELP_STRING([--with-windows-version], [select the target Windows version (xp, vista or win7) @<:@default=xp@:>@])],
    [
     if test "x${with_windows_version}" = "xvista" ; then
        _winver="vista"
@@ -34,10 +34,6 @@ AC_MSG_CHECKING([which Windows version to target])
 AC_MSG_RESULT([${_winver}])
 
 case "${_winver}" in
-  ce)
-     EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WCE=0x0420"
-     _efl_windows_version="Windows CE"
-     ;;
   vista)
      EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WINNT=0x0600"
      _efl_windows_version="Windows Vista"
