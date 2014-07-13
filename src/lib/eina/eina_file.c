@@ -1095,7 +1095,10 @@ eina_file_map_free(Eina_File *file, void *map)
    EINA_SAFETY_ON_NULL_RETURN(file);
 
    if (file->virtual)
-     return eina_file_virtual_map_free(file, map);
+     {
+        eina_file_virtual_map_free(file, map);
+        return;
+     }
 
    eina_lock_take(&file->lock);
 
