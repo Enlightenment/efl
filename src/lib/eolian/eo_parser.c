@@ -274,9 +274,10 @@ parse_struct(Eo_Lexer *ls, const char *name)
 static Eolian_Type *
 parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
 {
-   Eina_Bool    has_struct = EINA_FALSE;
+   Eina_Bool has_struct = EINA_FALSE;
    Eolian_Type *def;
-   const char  *ctype;
+   const char *ctype;
+   const char *sname = NULL;
    switch (ls->t.kw)
      {
       case KW_const:
@@ -315,16 +316,20 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
           {
              if (allow_anon && ls->t.token == '{')
                return parse_struct(ls, NULL);
+             check(ls, TOK_VALUE);
+             sname = eina_stringshare_add(ls->t.value);
              if (eo_lexer_lookahead(ls) == '{')
                {
-                  const char *name;
-                  check(ls, TOK_VALUE);
                   if (eo_lexer_get_c_type(ls->t.kw))
                     eo_lexer_syntax_error(ls, "invalid struct name");
-                  name = eina_stringshare_add(ls->t.value);
                   eo_lexer_get(ls);
-                  return parse_struct(ls, name);
+                  return parse_struct(ls, sname);
                }
+          }
+        else
+          {
+             check(ls, TOK_VALUE);
+             sname = eina_stringshare_add(ls->t.value);
           }
         has_struct = EINA_TRUE;
         break;
@@ -343,8 +348,11 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
         check(ls, TOK_VALUE);
         ctype = eo_lexer_get_c_type(ls->t.kw);
         if (ctype && has_struct)
-          eo_lexer_syntax_error(ls, "invalid struct name");
-        def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
+          {
+             eina_stringshare_del(sname);
+             eo_lexer_syntax_error(ls, "invalid struct name");
+          }
+        def->name = sname ? sname : eina_stringshare_add(ctype ? ctype : ls->t.value);
      }
    eo_lexer_get(ls);
 parse_ptr:

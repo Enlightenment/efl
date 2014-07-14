@@ -483,6 +483,66 @@ START_TEST(eolian_simple_parsing)
 }
 END_TEST
 
+START_TEST(eolian_struct)
+{
+   const Eolian_Type *type = NULL, *field = NULL;
+   const Eolian_Class *class;
+   const char *type_name;
+
+   eolian_init();
+
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/struct.eo"));
+
+   /* Check that the class Dummy is still readable */
+   fail_if(!(class = eolian_class_find_by_name("Dummy")));
+   fail_if(!eolian_class_function_find_by_name(class, "foo", EOLIAN_METHOD));
+
+   /* named struct */
+   fail_if(!(type = eolian_type_struct_find_by_name("Named")));
+   fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(eolian_type_is_own(type));
+   fail_if(eolian_type_is_const(type));
+   fail_if(strcmp(type_name, "Named"));
+   eina_stringshare_del(type_name);
+   fail_if(!(field = eolian_type_struct_field_get(type, "field")));
+   fail_if(!(type_name = eolian_type_name_get(field)));
+   fail_if(strcmp(type_name, "int"));
+   eina_stringshare_del(type_name);
+   fail_if(!(field = eolian_type_struct_field_get(type, "something")));
+   fail_if(!(type_name = eolian_type_c_type_get(field)));
+   fail_if(strcmp(type_name, "const char *"));
+   eina_stringshare_del(type_name);
+
+   /* referencing */
+   fail_if(!(type = eolian_type_struct_find_by_name("Another")));
+   fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(strcmp(type_name, "Another"));
+   eina_stringshare_del(type_name);
+   fail_if(!(field = eolian_type_struct_field_get(type, "field")));
+   fail_if(!(type_name = eolian_type_name_get(field)));
+   fail_if(strcmp(type_name, "Named"));
+   eina_stringshare_del(type_name);
+   fail_if(eolian_type_type_get(field) != EOLIAN_TYPE_REGULAR_STRUCT);
+
+   /* typedef */
+   fail_if(!(type = eolian_type_find_by_alias("Foo")));
+   fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(strcmp(type_name, "_Foo"));
+   eina_stringshare_del(type_name);
+
+   /* typedef - anon */
+   fail_if(!(type = eolian_type_find_by_alias("Bar")));
+   fail_if(!!(type_name = eolian_type_name_get(type)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -494,5 +554,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_override);
    tcase_add_test(tc, eolian_events);
    tcase_add_test(tc, eolian_namespaces);
+   tcase_add_test(tc, eolian_struct);
 }
 

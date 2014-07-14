@@ -27,7 +27,9 @@ database_typedef_del(Eolian_Typedef *def)
 {
    if (!def) return;
    eina_stringshare_del(def->alias);
-   database_type_del(def->type);
+   /* prevent deletion of named structs: stored in another hash */
+   if (def->type->type != EOLIAN_TYPE_STRUCT || !def->type->name)
+     database_type_del(def->type);
    free(def);
 }
 
