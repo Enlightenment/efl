@@ -182,9 +182,15 @@ _move_0_0(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED
 }
 
 static void
-my_win_print(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_win_state_print_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("WIN: %s\n", (char *)data);
+}
+
+static void
+_win_state_focus_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("WIN FOCUS: %s\n", (char *)data);
 }
 
 static void
@@ -212,25 +218,25 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _win_foc_out, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_SHOW, _win_show, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_HIDE, _win_hide, NULL);
-   evas_object_smart_callback_add(win, "withdrawn", my_win_print, "withdrawn");
-   evas_object_smart_callback_add(win, "iconified", my_win_print, "iconified");
-   evas_object_smart_callback_add(win, "normal", my_win_print, "normal");
-   evas_object_smart_callback_add(win, "stick", my_win_print, "stick");
-   evas_object_smart_callback_add(win, "unstick", my_win_print, "unstick");
-   evas_object_smart_callback_add(win, "fullscreen", my_win_print, "fullscreen");
-   evas_object_smart_callback_add(win, "unfullscreen", my_win_print, "unfullscreen");
-   evas_object_smart_callback_add(win, "maximized", my_win_print, "maximized");
-   evas_object_smart_callback_add(win, "unmaximized", my_win_print, "unmaximized");
-   evas_object_smart_callback_add(win, "ioerr", my_win_print, "ioerr");
-   evas_object_smart_callback_add(win, "indicator,prop,changed", my_win_print, "indicator,prop,changed");
-   evas_object_smart_callback_add(win, "rotation,changed", my_win_print, "rotation,changed");
-   evas_object_smart_callback_add(win, "profile,changed", my_win_print, "profile,changed");
-   evas_object_smart_callback_add(win, "focused", my_win_print, "focused");
-   evas_object_smart_callback_add(win, "unfocused", my_win_print, "unfocused");
-   evas_object_smart_callback_add(win, "focus,out", my_win_print, "focus,out");
-   evas_object_smart_callback_add(win, "focus,in", my_win_print, "focus,in");
-   evas_object_smart_callback_add(win, "delete,request", my_win_print, "delete,request");
-   evas_object_smart_callback_add(win, "wm,rotation,changed", my_win_print, "wm,rotation,changed");
+   evas_object_smart_callback_add(win, "withdrawn", _win_state_print_cb, "withdrawn");
+   evas_object_smart_callback_add(win, "iconified", _win_state_print_cb, "iconified");
+   evas_object_smart_callback_add(win, "normal", _win_state_print_cb, "normal");
+   evas_object_smart_callback_add(win, "stick", _win_state_print_cb, "stick");
+   evas_object_smart_callback_add(win, "unstick", _win_state_print_cb, "unstick");
+   evas_object_smart_callback_add(win, "fullscreen", _win_state_print_cb, "fullscreen");
+   evas_object_smart_callback_add(win, "unfullscreen", _win_state_print_cb, "unfullscreen");
+   evas_object_smart_callback_add(win, "maximized", _win_state_print_cb, "maximized");
+   evas_object_smart_callback_add(win, "unmaximized", _win_state_print_cb, "unmaximized");
+   evas_object_smart_callback_add(win, "ioerr", _win_state_print_cb, "ioerr");
+   evas_object_smart_callback_add(win, "indicator,prop,changed", _win_state_print_cb, "indicator,prop,changed");
+   evas_object_smart_callback_add(win, "rotation,changed", _win_state_print_cb, "rotation,changed");
+   evas_object_smart_callback_add(win, "profile,changed", _win_state_print_cb, "profile,changed");
+   evas_object_smart_callback_add(win, "focused", _win_state_focus_cb, "focused");
+   evas_object_smart_callback_add(win, "unfocused", _win_state_focus_cb, "unfocused");
+   evas_object_smart_callback_add(win, "focus,out", _win_state_focus_cb, "focus,out");
+   evas_object_smart_callback_add(win, "focus,in", _win_state_focus_cb, "focus,in");
+   evas_object_smart_callback_add(win, "delete,request", _win_state_print_cb, "delete,request");
+   evas_object_smart_callback_add(win, "wm,rotation,changed", _win_state_print_cb, "wm,rotation,changed");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
