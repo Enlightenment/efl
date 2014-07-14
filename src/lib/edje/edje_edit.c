@@ -3353,8 +3353,6 @@ edje_edit_part_restack_part_below(Evas_Object *obj, const char* part, const char
    rp_below = _edje_real_part_get(ed, below);
    if (!rp_below) return EINA_FALSE;
 
-   if (rp->part->id < 1) return EINA_FALSE;
-   if (rp_below->part->id < 1) return EINA_FALSE;
    group = ed->collection;
 
    while (rp->part->id != (rp_below->part->id - 1))
@@ -3427,8 +3425,6 @@ edje_edit_part_restack_part_above(Evas_Object *obj, const char* part, const char
    rp_above = _edje_real_part_get(ed, above);
    if (!rp_above) return EINA_FALSE;
 
-   if (rp->part->id < 1) return EINA_FALSE;
-   if (rp_above->part->id < 1) return EINA_FALSE;
    group = ed->collection;
 
    while (rp->part->id != rp_above->part->id + 1)
