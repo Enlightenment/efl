@@ -391,58 +391,6 @@ _eina_file_map_close(Eina_File_Map *map)
  * @endcond
  */
 
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-
-Eina_Bool
-eina_file_init(void)
-{
-   _eina_file_log_dom = eina_log_domain_register("eina_file",
-                                                 EINA_LOG_COLOR_DEFAULT);
-   if (_eina_file_log_dom < 0)
-     {
-        EINA_LOG_ERR("Could not register log domain: eina_file");
-        return EINA_FALSE;
-     }
-
-   _eina_file_cache = eina_hash_string_djb2_new(NULL);
-   if (!_eina_file_cache)
-     {
-        ERR("Could not create cache.");
-        eina_log_domain_unregister(_eina_file_log_dom);
-        _eina_file_log_dom = -1;
-        return EINA_FALSE;
-     }
-
-   eina_lock_new(&_eina_file_lock_cache);
-
-   return EINA_TRUE;
-}
-
-Eina_Bool
-eina_file_shutdown(void)
-{
-   if (eina_hash_population(_eina_file_cache) > 0)
-     {
-        Eina_Iterator *it;
-        const char *key;
-
-        it = eina_hash_iterator_key_new(_eina_file_cache);
-        EINA_ITERATOR_FOREACH(it, key)
-          ERR("File [%s] still open !", key);
-        eina_iterator_free(it);
-     }
-
-   eina_hash_free(_eina_file_cache);
-
-   eina_lock_free(&_eina_file_lock_cache);
-
-   eina_log_domain_unregister(_eina_file_log_dom);
-   _eina_file_log_dom = -1;
-   return EINA_TRUE;
-}
-
 
 /* ================================================================ *
  *   Simplified logic for portability layer with eina_file_common   *
