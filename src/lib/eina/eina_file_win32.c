@@ -451,8 +451,7 @@ eina_file_shutdown(void)
 Eina_Bool
 eina_file_path_relative(const char *path)
 {
-   if (!evil_path_is_absolute(path)) return EINA_TRUE;
-   return EINA_FALSE;
+   return !evil_path_is_absolute(path);
 }
 
 Eina_Tmpstr *
