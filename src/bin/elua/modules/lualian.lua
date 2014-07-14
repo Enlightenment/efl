@@ -20,24 +20,37 @@ end, function()
     dom = nil
 end)
 
--- char not included - manual disambiguation needed
-local isnum = {
-    ["short"   ] = true, ["int"      ] = true, ["long"       ] = true,
-    ["size_t"  ] = true, ["ptrdiff_t"] = true, ["int8_t"     ] = true,
-    ["int16_t" ] = true, ["int32_t"  ] = true, ["int64_t"    ] = true,
-    ["uint8_t" ] = true, ["uint16_t" ] = true, ["uint32_t"   ] = true,
-    ["uint64_t"] = true, ["intptr_t" ] = true, ["uintptr_t"  ] = true,
-    ["float"   ] = true, ["double"   ] = true, ["long double"] = true
+local int_builtin = {
+    ["byte" ] = true, ["short"] = true, ["int"] = true, ["long"] = true,
+    ["llong"] = true,
+
+    ["int8"  ] = true, ["int16"] = true, ["int32"] = true, ["int64"] = true,
+    ["int128"] = true
 }
 
+local num_others = {
+    ["size_t"   ] = true, ["intptr_t"] = true, ["uintptr_t"] = true,
+    ["ptrdiff_t"] = true,
+
+    ["float"] = true, ["double"] = true, ["ldouble"] = true
+}
+
+local is_num = function(x)
+    if num_others [x       ] then return true end
+    if int_builtin[x       ] then return true end
+    if int_builtin["u" .. x] then return true end
+    return false
+end
+
 local known_out = {
-    ["Eina_Bool" ] = function(expr) return ("((%s) ~= 0)"):format(expr) end,
-    ["Evas_Coord"] = function(expr) return ("tonumber(%s)"):format(expr) end
+    ["Evas_Coord"] = function(expr) return ("tonumber(%s)"):format(expr) end,
+    ["bool"] = function(expr) return ("((%s) ~= 0)"):format(expr) end,
+    ["char"] = function(expr) return ("string.char(%s)"):format(expr) end
 }
 
 local known_in = {
-    ["bool"] = function(expr) return expr end,
-    ["Evas_Coord"] = function(expr) return expr end
+    ["Evas_Coord"] = function(expr) return expr end,
+    ["bool"] = function(expr) return expr end
 }
 
 local known_ptr_out = {
@@ -68,7 +81,7 @@ local typeconv_in = function(tps, expr)
 
     local tp = tps:name_get()
 
-    if isnum[tp] then return expr end
+    if is_num(tp) then return expr end
 
     local f = known_in[tp]
     if f then
@@ -92,7 +105,7 @@ local typeconv = function(tps, expr, isin)
 
     local tp = tps:name_get()
 
-    if isnum[tp] then
+    if is_num(tp) then
         return ("tonumber(%s)"):format(expr)
     end
 
