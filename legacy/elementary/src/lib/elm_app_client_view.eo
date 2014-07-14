@@ -43,7 +43,7 @@ class Elm_App_Client_View (Eo.Base)
             uint w; /*@ icon width */
             uint h; /*@ icon height */
             bool has_alpha; /*@ if icon have alpha channel */
-            const(uchar)* pixels; /*@ uchar array, with all bytes of icon */
+            const(ubyte)* pixels; /*@ uchar array, with all bytes of icon */
          }
       }
       path {

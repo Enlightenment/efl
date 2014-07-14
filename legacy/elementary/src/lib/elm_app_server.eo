@@ -54,7 +54,7 @@ class Elm_App_Server (Eo.Base)
             uint w;
             uint h;
             bool has_alpha;
-            const(uchar)* pixels;
+            const(ubyte)* pixels;
          }
       }
    }
