@@ -1,6 +1,18 @@
 ==========
-EFL 1.10.1
+EFL 1.10.2
 ==========
+
+Changes since 1.10.1:
+---------------------
+
+Fixes:
+
+   * evas/textblock: check item's type before returning result.
+   * Evas textblock: Fix issue with edje fonts not being used. (T1331)
+   * Evas/Textblock: Introduce PS deletion bug test and fix
+   * evas/gl - fix to render grayscale with transparency format in gl backened.
+   * edje: textblock style loading changed
+   * lz4: fix possible security issue.
 
 Changes since 1.10.0:
 ---------------------
