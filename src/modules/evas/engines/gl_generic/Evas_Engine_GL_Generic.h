@@ -14,7 +14,6 @@ typedef Evas_Engine_GL_Context *(*Window_GL_Context_Get)(Outbuf *ob);
 typedef void *(*Window_EGL_Display_Get)(Outbuf *ob);
 typedef Context_3D *(*Window_GL_Context_New)(Outbuf *ob);
 typedef void (*Window_GL_Context_Use)(Context_3D *ctx);
-typedef int (*EVGL_Init)(Render_Engine_GL_Generic *re);
 
 struct _Render_Engine_GL_Generic
 {
