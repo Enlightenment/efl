@@ -59,6 +59,8 @@ static const char * const ctypes[] =
 
    "size_t", "ssize_t", "intptr_t", "uintptr_t", "ptrdiff_t",
 
+   "time_t",
+
    "float", "double", "long double",
 
    "Eina_Bool",

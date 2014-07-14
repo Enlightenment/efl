@@ -32,6 +32,8 @@ enum Tokens
     \
     KW(size), KW(ssize), KW(intptr), KW(uintptr), KW(ptrdiff), \
     \
+    KW(time), \
+    \
     KW(float), KW(double), KW(ldouble), \
     \
     KW(bool), \
