@@ -29,14 +29,93 @@ group { name: "elm/scroller/base/default";
    images.image: "sym_right_glow_normal.png" COMP;
    images.image: "sym_up_glow_normal.png" COMP;
    images.image: "sym_down_glow_normal.png" COMP;
-   
+   images.image: "sym_up_dark_normal.png" COMP;
+   images.image: "sym_down_dark_normal.png" COMP;
+   images.image: "sym_left_dark_normal.png" COMP;
+   images.image: "sym_right_dark_normal.png" COMP;
+
+
    data.item: "focus_highlight" "on";
+
+   script {
+      public action_on_pos_vbar(val) {
+         new x, y , w, h, x1, y1 , w1, h1;
+
+         get_geometry(PART:"y_vbar_up", x,y,w, h);
+         get_geometry(PART:"y_vbar_up_mapper", x1,y1,w1, h1);
+
+         if(y == y1)
+         {
+            set_state(PART:"arrow1_vbar", "hidden", 0.0);
+            set_state(PART:"sb_vbar_a1", "hidden", 0.0);
+         }
+         else
+         {
+            set_state(PART:"arrow1_vbar", "default", 0.0);
+            set_state(PART:"sb_vbar_a1", "default", 0.0);
+         }
+
+         get_geometry(PART:"y_vbar_down", x,y,w, h);
+         get_geometry(PART:"y_vbar_down_mapper", x1,y1,w1, h1);
+
+         if((y+h) == (y1+h1) )
+         {
+            set_state(PART:"arrow2_vbar", "hidden", 0.0);
+            set_state(PART:"sb_vbar_a2", "hidden", 0.0);
+         }
+         else
+         {
+            set_state(PART:"arrow2_vbar", "default", 0.0);
+            set_state(PART:"sb_vbar_a2", "default", 0.0);
+         }
+
+         if( val < 10)
+            timer(0.1,"action_on_pos_vbar", val+1);
+      }
+
+      public action_on_pos_hbar(val) {
+         new x, y , w, h, x1, y1 , w1, h1;
+
+         get_geometry(PART:"x_hbar_left", x,y,w, h);
+         get_geometry(PART:"x_hbar_left_mapper", x1,y1,w1, h1);
+
+         if(x == x1)
+         {
+            set_state(PART:"arrow1_hbar", "hidden", 0.0);
+            set_state(PART:"sb_hbar_a1", "hidden", 0.0);
+         }
+         else
+         {
+            set_state(PART:"arrow1_hbar", "default", 0.0);
+            set_state(PART:"sb_hbar_a1", "default", 0.0);
+         }
+
+         get_geometry(PART:"x_hbar_right", x,y,w, h);
+         get_geometry(PART:"x_hbar_right_mapper", x1,y1,w1, h1);
+
+         if((x+w) == (x1+w1))
+         {
+            set_state(PART:"arrow2_hbar", "hidden", 0.0);
+            set_state(PART:"sb_hbar_a2", "hidden", 0.0);
+         }
+         else
+         {
+            set_state(PART:"arrow2_hbar", "default", 0.0);
+            set_state(PART:"sb_hbar_a2", "default", 0.0);
+         }
+
+         if( val < 10)
+            timer(0.1,"action_on_pos_hbar", val+1);
+      }
+   }
 
    parts {
       program {
          signal: "load"; source: "";
          script {
             emit("reload", "elm");
+            action_on_pos_vbar(0);
+            action_on_pos_hbar(0);
          }
       }
 // vert bar ////////////////////////////////////////////////////////////////
@@ -118,6 +197,74 @@ group { name: "elm/scroller/base/default";
             min: 0 0;
          }
       }
+      part { name: "y_vbar_up_mapper"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 4 2;
+            max: 4 2;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1.to: "sb_vbar_base";
+            rel2.to: "sb_vbar_base";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
+      part { name: "y_vbar_up"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 4 2;
+            max: 4 2;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1.to: "elm.dragable.vbar";
+            rel2.to: "elm.dragable.vbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
+      part { name: "y_vbar_down_mapper"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 4 2;
+            max: 4 2;
+            fixed: 1 1;
+            align: 0.0 1.0;
+            rel1.to: "sb_vbar_base";
+            rel2.to: "sb_vbar_base";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
+      part { name: "y_vbar_down"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 4 2;
+            max: 4 2;
+            fixed: 1 1;
+            align: 0.0 1.0;
+            rel1.to: "elm.dragable.vbar";
+            rel2.to: "elm.dragable.vbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
       part { name: "sb_vbar_a1"; type: RECT;
          clip_to: "sb_vbar";
          description { state: "default" 0.0;
@@ -134,6 +281,7 @@ group { name: "elm/scroller/base/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             min: 0 0;
+            visible: 0;
          }
       }
       part { name: "sb_vbar_a2"; type: RECT;
@@ -152,6 +300,7 @@ group { name: "elm/scroller/base/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             min: 0 0;
+            visible: 0;
          }
       }
       program {
@@ -162,6 +311,13 @@ group { name: "elm/scroller/base/default";
          target: "elm.dragable.vbar";
          target: "sb_vbar_a1";
          target: "sb_vbar_a2";
+         target: "y_vbar_up_mapper";
+         target: "y_vbar_up";
+         target: "y_vbar_down_mapper";
+         target: "y_vbar_down";
+         target: "arrow1_vbar_indent";
+         target: "arrow2_vbar_indent";
+         after: "check_pos_vbar";
       }
       program {
          signal: "elm,action,hide,vbar"; source: "elm";
@@ -171,40 +327,44 @@ group { name: "elm/scroller/base/default";
          target: "elm.dragable.vbar";
          target: "sb_vbar_a1";
          target: "sb_vbar_a2";
+         target: "y_vbar_up_mapper";
+         target: "y_vbar_up";
+         target: "y_vbar_down_mapper";
+         target: "y_vbar_down";
+         target: "arrow1_vbar_indent";
+         target: "arrow2_vbar_indent";
       }
       program {
-         signal: "mouse,down,1*"; source: "sb_vbar_a1";
+         signal: "mouse,down,1*"; source: "sb_vbar_a1";//ok
          action: STATE_SET "clicked" 0.0;
-         target: "sb_vbar_a1";
          target: "arrow1_vbar";
+         after: "anim1_up";
       }
-      program {
-         signal: "mouse,down,1*"; source: "sb_vbar_a1";
+      program { name: "anim1_up";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.1;
+         target: "arrow1_vbar";
+         after: "drag_up";
+      }
+      program { name: "drag_up";
          action: DRAG_VAL_STEP 0.0 -1.0;
          target: "elm.dragable.vbar";
       }
       program {
-         signal: "mouse,up,1"; source: "sb_vbar_a1";
-         action: STATE_SET "default" 0.0;
-         target: "sb_vbar_a1";
-         target: "arrow1_vbar";
-      }
-      program {
-         signal: "mouse,down,1*"; source: "sb_vbar_a2";
+         signal: "mouse,down,1*"; source: "sb_vbar_a2";//ok
          action: STATE_SET "clicked" 0.0;
-         target: "sb_vbar_a2";
          target: "arrow2_vbar";
+         after: "anim1_down";
       }
-      program {
-         signal: "mouse,down,1*"; source: "sb_vbar_a2";
+      program { name: "anim1_down";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.1;
+         target: "arrow2_vbar";
+         after: "drag_down";
+      }
+      program { name: "drag_down";
          action: DRAG_VAL_STEP 0.0 1.0;
          target: "elm.dragable.vbar";
-      }
-      program {
-         signal: "mouse,up,1"; source: "sb_vbar_a2";
-         action: STATE_SET "default" 0.0;
-         target: "sb_vbar_a2";
-         target: "arrow2_vbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_p1";
@@ -215,6 +375,17 @@ group { name: "elm/scroller/base/default";
          signal: "mouse,down,1*"; source: "sb_vbar_p2";
          action: DRAG_VAL_PAGE  0.0 1.0;
          target: "elm.dragable.vbar";
+      }
+      program {
+         signal: "elm,action,scroll"; source: "elm";
+         script {
+            action_on_pos_vbar(10);
+         }
+      }
+      program { name: "check_pos_vbar";
+         script {
+            action_on_pos_vbar(10);
+         }
       }
 
 // horiz bar /////////////////////////////////////////////////////////////
@@ -296,6 +467,74 @@ group { name: "elm/scroller/base/default";
             min: 0 0;
          }
       }
+      part { name: "x_hbar_left_mapper"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 2 4;
+            max: 2 4;
+            fixed: 1 1;
+            align: 0.0 1.0;
+            rel1.to: "sb_hbar_base";
+            rel2.to: "sb_hbar_base";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
+      part { name: "x_hbar_left"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 2 4;
+            max: 2 4;
+            fixed: 1 1;
+            align: 0.0 1.0;
+            rel1.to: "elm.dragable.hbar";
+            rel2.to: "elm.dragable.hbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
+      part { name: "x_hbar_right_mapper"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 2 4;
+            max: 2 4;
+            fixed: 1 1;
+            align: 1.0 1.0;
+            rel1.to: "sb_hbar_base";
+            rel2.to: "sb_hbar_base";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
+      part { name: "x_hbar_right"; type: SPACER;
+         scale: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            min: 2 4;
+            max: 2 4;
+            fixed: 1 1;
+            align: 1.0 1.0;
+            rel1.to: "elm.dragable.hbar";
+            rel2.to: "elm.dragable.hbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 0;
+         }
+      }
       part { name: "sb_hbar_a1"; type: RECT;
          clip_to: "sb_hbar";
          description { state: "default" 0.0;
@@ -312,6 +551,7 @@ group { name: "elm/scroller/base/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             min: 0 0;
+            visible: 0;
          }
       }
       part { name: "sb_hbar_a2"; type: RECT;
@@ -330,6 +570,7 @@ group { name: "elm/scroller/base/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             min: 0 0;
+            visible: 0;
          }
       }
       program {
@@ -340,6 +581,13 @@ group { name: "elm/scroller/base/default";
          target: "elm.dragable.hbar";
          target: "sb_hbar_a1";
          target: "sb_hbar_a2";
+         target: "x_hbar_left_mapper";
+         target: "x_hbar_left";
+         target: "x_hbar_right_mapper";
+         target: "x_hbar_right";
+         target: "arrow1_hbar_indent";
+         target: "arrow2_hbar_indent";
+         after: "check_pos_hbar";
       }
       program {
          signal: "elm,action,hide,hbar"; source: "elm";
@@ -349,52 +597,68 @@ group { name: "elm/scroller/base/default";
          target: "elm.dragable.hbar";
          target: "sb_hbar_a1";
          target: "sb_hbar_a2";
+         target: "x_hbar_left_mapper";
+         target: "x_hbar_left";
+         target: "x_hbar_right_mapper";
+         target: "x_hbar_right";
+         target: "arrow1_hbar_indent";
+         target: "arrow2_hbar_indent";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_a1";
          action: STATE_SET "clicked" 0.0;
-         target: "sb_hbar_a1";
          target: "arrow1_hbar";
+         after: "anim1_left";
       }
-      program {
-         signal: "mouse,down,1*"; source: "sb_hbar_a1";
+      program { name: "anim1_left";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.1;
+         target: "arrow1_hbar";
+         after: "drag_left";
+      }
+      program { name: "drag_left";
          action: DRAG_VAL_STEP -1.0 0.0;
          target: "elm.dragable.hbar";
       }
       program {
-         signal: "mouse,up,1"; source: "sb_hbar_a1";
-         action: STATE_SET "default" 0.0;
-         target: "sb_hbar_a1";
-         target: "arrow1_hbar";
-      }
-      program {
          signal: "mouse,down,1*"; source: "sb_hbar_a2";
          action: STATE_SET "clicked" 0.0;
-         target: "sb_hbar_a2";
          target: "arrow2_hbar";
+         after: "anim2_left";
       }
-      program {
-         signal: "mouse,down,1*"; source: "sb_hbar_a2";
+      program { name: "anim2_left";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.1;
+         target: "arrow2_hbar";
+         after: "drag_right";
+      }
+      program { name: "drag_right";
          action: DRAG_VAL_STEP 1.0 0.0;
          target: "elm.dragable.hbar";
-      }
-      program {
-         signal: "mouse,up,1"; source: "sb_hbar_a2";
-         action: STATE_SET "default" 0.0;
-         target: "sb_hbar_a2";
-         target: "arrow2_hbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p1";
          action: DRAG_VAL_PAGE -1.0 0.0;
          target: "elm.dragable.hbar";
+         after: "check_pos_hbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p2";
          action: DRAG_VAL_PAGE  1.0 0.0;
          target: "elm.dragable.hbar";
+         after: "check_pos_hbar";
       }
-
+      program {
+         signal: "elm,action,scroll"; source: "elm";
+         script {
+            action_on_pos_hbar(10);
+         }
+      }
+      program { name: "check_pos_hbar";
+         script {
+            action_on_pos_hbar(10);
+         }
+      }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "elm.swallow.background";
@@ -460,7 +724,6 @@ group { name: "elm/scroller/base/default";
             rel2.to: "elm.swallow.content";
          }
       }
-      
       part { name: "runner_vbar"; mouse_events: 0;
          clip_to: "sb_vbar_show";
          description { state: "default" 0.0;
@@ -511,7 +774,18 @@ group { name: "elm/scroller/base/default";
             fixed: 1 1;
          }
       }
-
+      part { name: "arrow1_vbar_indent"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "sb_vbar_a1";
+            rel2.to: "sb_vbar_a1";
+            image.normal: "sym_up_dark_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "arrow1_vbar"; mouse_events: 0;
          clip_to: "sb_vbar_show";
          description { state: "default" 0.0;
@@ -523,6 +797,22 @@ group { name: "elm/scroller/base/default";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             image.normal: "sym_up_glow_normal.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "arrow2_vbar_indent"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "sb_vbar_a2";
+            rel2.to: "sb_vbar_a2";
+            image.normal: "sym_down_dark_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
          }
       }
       part { name: "arrow2_vbar"; mouse_events: 0;
@@ -536,6 +826,10 @@ group { name: "elm/scroller/base/default";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             image.normal: "sym_down_glow_normal.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
          }
       }
       part { name: "shadow_vbar"; mouse_events: 0;
@@ -640,7 +934,18 @@ group { name: "elm/scroller/base/default";
             visible: 1;
          }
       }
-
+      part { name: "arrow1_hbar_indent"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "sb_hbar_a1";
+            rel2.to: "sb_hbar_a1";
+            image.normal: "sym_left_dark_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "arrow1_hbar"; mouse_events: 0;
          clip_to: "sb_hbar_show";
          description { state: "default" 0.0;
@@ -652,6 +957,22 @@ group { name: "elm/scroller/base/default";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             image.normal: "sym_left_glow_normal.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "arrow2_hbar_indent"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "sb_hbar_a2";
+            rel2.to: "sb_hbar_a2";
+            image.normal: "sym_right_dark_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
          }
       }
       part { name: "arrow2_hbar"; mouse_events: 0;
@@ -665,6 +986,10 @@ group { name: "elm/scroller/base/default";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             image.normal: "sym_right_glow_normal.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
          }
       }
       part { name: "shadow_hbar"; mouse_events: 0;
