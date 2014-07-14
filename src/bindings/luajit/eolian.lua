@@ -6,6 +6,7 @@ local ffi = require("ffi")
 ffi.cdef [[
     typedef unsigned char Eina_Bool;
     typedef struct _Eina_List Eina_List;
+    typedef struct _Eina_Iterator Eina_Iterator;
 
     typedef struct _Eolian_Class Eolian_Class;
     typedef struct _Eolian_Function Eolian_Function;
@@ -86,7 +87,7 @@ ffi.cdef [[
     Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
     Eolian_Function_Scope eolian_function_scope_get(const Eolian_Function *function_id);
     const char *eolian_function_name_get(const Eolian_Function *function_id);
-    const char *eolian_function_full_c_name_get(const Eolian_Function function_id, const char *prefix);
+    const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
     const Eolian_Function *eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_data_get(const Eolian_Function *function_id, const char *key);
     Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -118,15 +119,15 @@ ffi.cdef [[
     Eina_Iterator *eolian_type_subtypes_list_get(const Eolian_Type *tp);
     Eina_Iterator *eolian_type_struct_field_names_list_get(const Eolian_Type *tp);
     const Eolian_Type *eolian_type_struct_field_get(const Eolian_Type *tp, const char *field);
-    Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field);
-    Eina_Stringshare *eolian_type_struct_description_get(const Eolian_Type *tp);
+    const char *eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field);
+    const char *eolian_type_struct_description_get(const Eolian_Type *tp);
     const Eolian_Type *eolian_type_return_type_get(const Eolian_Type *tp);
     const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
-    Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
-    Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
-    Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);
+    const char *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
+    const char *eolian_type_c_type_get(const Eolian_Type *tp);
+    const char *eolian_type_name_get(const Eolian_Type *tp);
 ]]
 
 local cutil = require("cutil")
@@ -160,6 +161,7 @@ end
 
 M.system_directory_scan = function()
     return eolian.eolian_system_directory_scan() ~= 0
+end
 
 M.all_eo_files_parse = function()
     return eolian.eolian_all_eo_files_parse() ~= 0
@@ -302,8 +304,8 @@ M.Function = ffi.metatype("Eolian_Function", {
             return ffi.string(v)
         end,
 
-        full_c_name_get = function(self)
-            local v = eolian.eolian_function_full_c_name_get(self)
+        full_c_name_get = function(self, prefix)
+            local v = eolian.eolian_function_full_c_name_get(self, prefix)
             if v == nil then return nil end
             return ffi.string(v)
         end,
@@ -423,8 +425,8 @@ ffi.metatype("Eolian_Implement", {
         end,
 
         information_get = function(self)
-            local cl = ffi.new("Eolian_Class[1]")
-            local fn = ffi.new("Eolian_Function[1]")
+            local cl = ffi.new("const Eolian_Class*[1]")
+            local fn = ffi.new("const Eolian_Function*[1]")
             local tp = ffi.new("Eolian_Function_Type[1]")
             eolian.eolian_implement_information_get(self, cl, fn, tp)
             return cl[0], fn[0], tp[0]

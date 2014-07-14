@@ -51,18 +51,10 @@ local known_ptr_in = {
 local convfuncs = {}
 
 local build_calln = function(tps, expr, isin)
-    local nm, own
-    local buf  = { "__convert", isin and "IN" or "OUT" }
-    local owns = {}
-    while tps do
-        tps, nm, own = tps:information_get()
-        owns[#owns + 1] = own and "true" or "false"
-        buf[#buf + 1] = nm:gsub("%s", "_"):gsub("%*", "_ptr"):gsub("__+", "_")
-    end
-    local funcn = table.concat(buf, "_")
+    local funcn = "__convert_type_wip"
     convfuncs[funcn] = true
     return table.concat {
-        funcn, "(", expr, ", ", table.concat(owns, ", "), ")"
+        funcn, "(", expr, ")"
     }
 end
 
@@ -86,7 +78,7 @@ local typeconv_in = function(tps, tp, expr, isconst, isptr)
 end
 
 local typeconv = function(tps, expr, isin)
-    local tp = select(2, tps:information_get())
+    local tp = tps:c_type_get()
     -- strip away type qualifiers
     local isconst, tpr = tp:match("^(const)[ ]+(.+)$")
     isconst = not not isconst
@@ -157,12 +149,12 @@ local Method = Node:clone {
 
         local meth = self.method
         local pars = meth:parameters_list_get()
-        local rett = meth:return_types_list_get(eolian.function_type.METHOD)
+        local rett = meth:return_type_get(eolian.function_type.METHOD)
 
         local proto = {
             name    = meth:name_get()
         }
-        proto.ret_type = rett and (select(2, rett:information_get())) or "void"
+        proto.ret_type = rett and rett:c_type_get() or "void"
         local args, cargs, vargs = { "self" }, {}, {}
         proto.args, proto.cargs, proto.vargs = args, cargs, vargs
         local rets = {}
@@ -182,8 +174,8 @@ local Method = Node:clone {
 
         if #pars > 0 then
             for i, v in ipairs(pars) do
-                local dir, tp, nm = v:information_get()
-                local tps = v:types_list_get()
+                local dir, tps, nm = v:information_get()
+                local tp = tps:c_type_get()
                 if dir == dirs.OUT or dir == dirs.INOUT then
                     if dir == dirs.INOUT then
                         args[#args + 1] = nm
@@ -276,8 +268,8 @@ local Property = Method:clone {
             local argn = (#keys > 1) and "keys" or "key"
             for i, v in ipairs(keys) do
                 local nm  = v:name_get()
-                local tps = v:types_list_get()
-                local tp  = select(2, tps:information_get())
+                local tps = v:type_get()
+                local tp  = tps:c_type_get()
                 cargs [#cargs  + 1] = tp .. " " .. nm
                 vargs [#vargs  + 1] = typeconv(tps, argn .. "[" .. i
                     .. "]", true)
@@ -289,13 +281,13 @@ local Property = Method:clone {
         if #vals > 0 then
             if self.isget then
                 if #vals == 1 and not rett then
-                    local tps = vals[1]:types_list_get()
-                    proto.ret_type = (select(2, tps:information_get()))
+                    local tps = vals[1]:type_get()
+                    proto.ret_type = tps:c_type_get()
                     rets[#rets + 1] = typeconv(tps, "v", false)
                 else
                     for i, v in ipairs(vals) do
-                        local dir, tp, nm = v:information_get()
-                        local tps = v:types_list_get()
+                        local dir, tps, nm = v:information_get()
+                        local tp = v:c_type_get()
                         cargs [#cargs  + 1] = tp .. " *" .. nm
                         vargs [#vargs  + 1] = nm
                         allocs[#allocs + 1] = { tp, nm }
@@ -306,8 +298,8 @@ local Property = Method:clone {
                 local argn = (#keys > 1) and "vals" or "val"
                 args[#args + 1] = argn
                 for i, v in ipairs(vals) do
-                    local dir, tp, nm = v:information_get()
-                    local tps = v:types_list_get()
+                    local dir, tps, nm = v:information_get()
+                    local tp = tps:c_type_get()
                     cargs[#cargs + 1] = tp .. " " .. nm
                     vargs[#vargs + 1] = typeconv(tps, argn .. "[" .. i .. "]",
                         true)
@@ -679,6 +671,10 @@ end
 
 M.load_eot_files = function()
     return eolian.all_eot_files_parse()
+end
+
+M.system_directory_scan = function()
+    return eolian.system_directory_scan()
 end
 
 M.generate = function(fname, modname, libname, fstream)
