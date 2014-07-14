@@ -1486,21 +1486,22 @@ EAPI const Eina_List *elm_config_color_overlay_list_get(void);
  * @param g Object Green value
  * @param b Object Blue value
  * @param a Object Alpha value
- * @param r2 Outline Red value
- * @param g2 Outline Green value
- * @param b2 Outline Blue value
- * @param a2 Outline Alpha value
- * @param r3 Shadow Red value
- * @param g3 Shadow Green value
- * @param b3 Shadow Blue value
- * @param a3 Shadow Alpha value
+ * @param r2 Text outline Red value
+ * @param g2 Text outline Green value
+ * @param b2 Text outline Blue value
+ * @param a2 Text outline Alpha value
+ * @param r3 Text shadow Red value
+ * @param g3 Text shadow Green value
+ * @param b3 Text shadow Blue value
+ * @param a3 Text shadow Alpha value
  *
  * @ingroup Colors
  * @since 1.10
 
- * The first color is the object, the second is the text outline, and
- * the third is the text shadow. (Note that the second two only apply
- * to text parts).
+ * The first color is for the object itself, the second color is for the text
+ * outline, and the third color is for the text shadow.
+ *
+ * @note The second two color are only for texts.
 
  * Setting color emits a signal "color_class,set" with source being
  * the given color class in all edje objects.
