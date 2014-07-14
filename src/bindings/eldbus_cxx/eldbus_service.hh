@@ -364,13 +364,13 @@ service_interface service_interface_register(connection& c, const char* path
     (
      _create_methods_specification(std::make_tuple(args...))
     );
-  Eldbus_Service_Interface_Desc description =
+  Eldbus_Service_Interface_Desc2 description =
     {
-      interface, 0, 0, 0, 0, 0, &(*methods)[0]
+      {interface, 0, 0, 0, 0, 0}, ELDBUS_INTERFACE_DESCRIPTOR_VERSION, &(*methods)[0]
     };
 
   Eldbus_Service_Interface* iface
-    = ::eldbus_service_interface_register(c.native_handle(), path, &description);
+    = ::eldbus_service_interface_register2(c.native_handle(), path, &description);
   return service_interface(iface);
 }
 

@@ -928,7 +928,7 @@ fail_signature:
 }
 
 static Eldbus_Service_Interface *
-_eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc, Eina_Bool fallback)
+_eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc, Eina_Bool fallback, unsigned int version)
 {
    Eldbus_Service_Object *obj;
    Eldbus_Service_Interface *iface;
@@ -966,8 +966,12 @@ _eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, co
    for (method = desc->methods; method && method->member; method++)
      _eldbus_service_method_add(iface, method);
 
-   for (method2 = desc->methods2; method2 && method2->method.member; method2++)
-     _eldbus_service_method_add(iface, &method2->method);
+   if(version >= 2)
+     {
+        Eldbus_Service_Interface_Desc2* desc2 = (void*)desc;
+        for (method2 = desc2->methods2; method2 && method2->method.member; method2++)
+           _eldbus_service_method_add(iface, &method2->method);
+     }
    
    iface->signals = desc->signals;
    iface->sign_of_signals = signatures;
@@ -992,13 +996,25 @@ fail:
 EAPI Eldbus_Service_Interface *
 eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
 {
-   return _eldbus_service_interface_register(conn, path, desc, EINA_FALSE);
+   return _eldbus_service_interface_register(conn, path, desc, EINA_FALSE, 1u);
+}
+
+EAPI Eldbus_Service_Interface *
+eldbus_service_interface_register2(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc2 *desc)
+{
+   return _eldbus_service_interface_register(conn, path, &desc->description, EINA_FALSE, desc->version);
 }
 
 EAPI Eldbus_Service_Interface *
 eldbus_service_interface_fallback_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
 {
-   return _eldbus_service_interface_register(conn, path, desc, EINA_TRUE);
+   return _eldbus_service_interface_register(conn, path, desc, EINA_TRUE, 1u);
+}
+
+EAPI Eldbus_Service_Interface *
+eldbus_service_interface_fallback_register2(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc2 *desc)
+{
+   return _eldbus_service_interface_register(conn, path, &desc->description, EINA_TRUE, desc->version);
 }
 
 static Eina_Bool

@@ -15,6 +15,8 @@
 
 #define ELDBUS_PROPERTY_FLAG_DEPRECATED 1
 
+#define ELDBUS_INTERFACE_DESCRIPTOR_VERSION 2
+
 typedef struct _Eldbus_Arg_Info
 {
    const char *signature;
@@ -105,8 +107,14 @@ typedef struct _Eldbus_Service_Interface_Desc
    const Eldbus_Property *properties; /**< array of property that this interface have, the last item of array should be filled with NULL  */
    const Eldbus_Property_Get_Cb default_get; /**< default get function, if a property don't have a get function this will be used */
    const Eldbus_Property_Set_Cb default_set; /**< default set function, if a property don't have a set function this will be used */
-  const Eldbus_Method2 *methods2; /**< array of the methods that should be registered in this interface, the last item of array should be filled with NULL @since 1.11 */
 } Eldbus_Service_Interface_Desc;
+
+typedef struct _Eldbus_Service_Interface_Desc2
+{
+  Eldbus_Service_Interface_Desc description;
+  int version; /**< version of the interface descriptor. Must be initialized with ELDBUS_INTERFACE_DESCRIPTOR_VERSION @since 1.11 >*/
+  const Eldbus_Method2 *methods2; /**< array of the methods that should be registered in this interface, the last item of array should be filled with NULL @since 1.11 */
+} Eldbus_Service_Interface_Desc2;
 
 /**
  * @brief Register an interface in the given path and connection.
@@ -133,6 +141,42 @@ EAPI Eldbus_Service_Interface *eldbus_service_interface_register(Eldbus_Connecti
  */
 EAPI Eldbus_Service_Interface *
 eldbus_service_interface_fallback_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Register an interface in the given path and connection. This
+ * extended register function allows the registration of stateful methods, with void* data.
+ *
+ * Note: Use eldbus_service_interface_unregister() to unregister a interface.
+ *
+ * @param conn where the interface should listen
+ * @param path object path
+ * @param desc description of interface
+ *
+ * @since 1.11
+ *
+ * @return Interface
+ */
+EAPI Eldbus_Service_Interface *eldbus_service_interface_register2(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc2 *desc) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Register a fallback interface handler for a given subsection
+ * of the object hierarchy.  This extended register function allows
+ * the registration of stateful methods, with void* data.
+ *
+ * Note: Use eldbus_service_interface_unregister() to unregister a interface.
+ *
+ * @param conn where the interface should listen
+ * @param path a '/' delimited string of path elements
+ * @param desc description of interface
+ * @see eldbus_service_interface_unregister()
+ *
+ * @since 1.11
+ *
+ * @return Interface
+ */
+EAPI Eldbus_Service_Interface *
+eldbus_service_interface_fallback_register2(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc2 *desc) EINA_ARG_NONNULL(1, 2, 3);
+
 
 /**
  * @brief Unregister a interface.
