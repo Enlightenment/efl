@@ -51,9 +51,8 @@ static const char * const tokens[] =
 
 static const char * const ctypes[] =
 {
-   "char", "unsigned char", "signed char", "short", "unsigned short",
-   "int", "unsigned int", "long", "unsigned long", "long long",
-   "unsigned long long",
+   "signed char", "unsigned char", "char", "short", "unsigned short", "int",
+   "unsigned int", "long", "unsigned long", "long long", "unsigned long long",
 
    "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t",
    "int64_t", "uint64_t", "int128_t", "uint128_t",
@@ -480,14 +479,14 @@ eo_lexer_keyword_str_get(int kw)
 Eina_Bool
 eo_lexer_is_type_keyword(int kw)
 {
-   return (kw >= KW_char && kw <= KW_void);
+   return (kw >= KW_byte && kw <= KW_void);
 }
 
 const char *
 eo_lexer_get_c_type(int kw)
 {
    if (!eo_lexer_is_type_keyword(kw)) return NULL;
-   return ctypes[kw - KW_char];
+   return ctypes[kw - KW_byte];
 }
 
 static int _init_counter = 0;

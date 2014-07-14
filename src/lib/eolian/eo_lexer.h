@@ -24,7 +24,7 @@ enum Tokens
     KW(type), KW(values), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), \
     KWAT(warn_unused), \
     \
-    KW(char), KW(uchar), KW(schar), KW(short), KW(ushort), KW(int), KW(uint), \
+    KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \
     \
     KW(int8), KW(uint8), KW(int16), KW(uint16), KW(int32), KW(uint32), \
