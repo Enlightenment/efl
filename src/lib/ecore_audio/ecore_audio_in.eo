@@ -142,10 +142,10 @@ class Ecore_Audio_In (Ecore_Audio)
          Read from the input
 
          @since 1.8 */
-         return ssize_t; /*The amount of samples written to buf*/
+         return ssize; /*The amount of samples written to buf*/
          params {
             @in void *buf; /*The buffer to read into*/
-            @in size_t len; /*The amount of samples to read*/
+            @in size len; /*The amount of samples to read*/
          }
       }
       read_internal {
@@ -153,10 +153,10 @@ class Ecore_Audio_In (Ecore_Audio)
          Internal read function
 
          @since 1.8 */
-         return ssize_t; /*The amount of samples written to buf*/
+         return ssize; /*The amount of samples written to buf*/
          params {
             @in void *buf; /*The buffer to read into*/
-            @in size_t len; /*The amount of samples to read*/
+            @in size len; /*The amount of samples to read*/
          }
       }
       seek {

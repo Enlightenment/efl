@@ -25,13 +25,13 @@ local int_builtin = {
     ["llong"] = true,
 
     ["int8"  ] = true, ["int16"] = true, ["int32"] = true, ["int64"] = true,
-    ["int128"] = true
+    ["int128"] = true,
+
+    ["intptr"] = true
 }
 
 local num_others = {
-    ["size_t"   ] = true, ["intptr_t"] = true, ["uintptr_t"] = true,
-    ["ptrdiff_t"] = true,
-
+    ["size" ] = true, ["ssize" ] = true, ["ptrdiff"] = true,
     ["float"] = true, ["double"] = true, ["ldouble"] = true
 }
 

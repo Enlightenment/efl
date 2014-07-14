@@ -30,6 +30,8 @@ enum Tokens
     KW(int8), KW(uint8), KW(int16), KW(uint16), KW(int32), KW(uint32), \
     KW(int64), KW(uint64), KW(int128), KW(uint128), \
     \
+    KW(size), KW(ssize), KW(intptr), KW(uintptr), KW(ptrdiff), \
+    \
     KW(float), KW(double), KW(ldouble), \
     \
     KW(bool), \
