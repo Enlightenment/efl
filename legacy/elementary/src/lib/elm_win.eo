@@ -1335,6 +1335,8 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
       indicator,prop,changed;
       rotation,changed;
       profile,changed;
+      focused;
+      unfocused;
       wm,rotation,changed;
    }
 
