@@ -99,4 +99,27 @@ M.Iterator = util.Readonly_Object:clone {
     end
 }
 
+local Iterator = M.Iterator
+
+M.Ptr_Iterator = Iterator:clone {
+    __ctor = function(self, selfmt, ptrtype, iter)
+        Iterator.__ctor(self, selfmt, iter)
+        selfmt.ptrtype = ptrtype
+    end,
+
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        return ffi.cast(dgetmt(self).ptrtype, v)
+    end
+}
+
+M.String_Iterator = Iterator:clone {
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        return ffi.string(v)
+    end
+}
+
 return M

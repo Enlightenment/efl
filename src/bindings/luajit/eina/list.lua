@@ -285,6 +285,7 @@ M.Ptr_List = List_Base:clone {
 
     data_get = function(self, ptr)
         ptr = List_Base.data_get(self, ptr)
+        if not ptr then return nil end
         return ffi.cast(dgetmt(self).ptrtype, ptr)
     end
 }
