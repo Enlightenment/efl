@@ -195,6 +195,16 @@ M.show_all = function()
     eolian.eolian_show_all()
 end
 
+M.type_type = {
+    UNKNOWN        = 0,
+    VOID           = 1,
+    REGULAR        = 2,
+    REGULAR_STRUCT = 3,
+    POINTER        = 4,
+    FUNCTION       = 5,
+    STRUCT         = 6
+}
+
 M.Type = ffi.metatype("Eolian_Type", {
     __index = {
         type_get = function(self)

@@ -36,7 +36,7 @@ local known_out = {
 }
 
 local known_in = {
-    ["Eina_Bool" ] = function(expr) return expr end,
+    ["bool"] = function(expr) return expr end,
     ["Evas_Coord"] = function(expr) return expr end
 }
 
@@ -58,16 +58,17 @@ local build_calln = function(tps, expr, isin)
     }
 end
 
-local typeconv_in = function(tps, tp, expr, isconst, isptr)
-    if isptr then
-        local passtp = (isconst and "const " or "") .. tp
-        local f = known_ptr_in[passtp]
+local typeconv_in = function(tps, expr)
+    if tps:type_get() == eolian.type_type.POINTER then
+        local base = tps:base_type_get()
+        local f = known_ptr_in[base:c_type_get()]
         if f then return f(expr) end
         return build_calln(tps, expr, true)
     end
-    if isnum[tp] then
-        return expr
-    end
+
+    local tp = tps:name_get()
+
+    if isnum[tp] then return expr end
 
     local f = known_in[tp]
     if f then
@@ -78,34 +79,23 @@ local typeconv_in = function(tps, tp, expr, isconst, isptr)
 end
 
 local typeconv = function(tps, expr, isin)
-    local tp = tps:c_type_get()
-    -- strip away type qualifiers
-    local isconst, tpr = tp:match("^(const)[ ]+(.+)$")
-    isconst = not not isconst
-    if tpr then tp = tpr end
-
-    -- check if it's a pointer
-    local basetype = (tp:match("(.+)[ ]+%*$"))
-
-    -- out val
     if isin then
-        return typeconv_in(tps, basetype or tp, expr, isconst, not not basetype)
+        return typeconv_in(tps, expr)
     end
 
-    -- pointer type
-    if basetype then
-        local passtp = (isconst and "const " or "") .. basetype
-        local f = known_ptr_out[passtp]
+    if tps:type_get() == eolian.type_type.POINTER then
+        local base = tps:base_type_get()
+        local f = known_ptr_out[base:c_type_get()]
         if f then return f(expr) end
         return build_calln(tps, expr, false)
     end
 
-    -- number?
+    local tp = tps:name_get()
+
     if isnum[tp] then
         return ("tonumber(%s)"):format(expr)
     end
 
-    -- known primitive EFL type?
     local f = known_out[tp]
     if f then
         return f(expr)
