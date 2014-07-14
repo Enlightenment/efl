@@ -467,7 +467,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Image
          }
          values {
             const(void)* img; /*@ The binary data that will be used as image source */
-            size_t size; /*@ The size of binary data blob @p img */
+            size size; /*@ The size of binary data blob @p img */
             const(char)* format; /*@ (Optional) expected format of @p img bytes */
             const(char)* key; /*@ Optional indexing key of @p img to be passed to the
             image loader (eg. if @p img is a memory-mapped EET file) */
