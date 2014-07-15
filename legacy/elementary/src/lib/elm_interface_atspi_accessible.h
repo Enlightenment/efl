@@ -20,8 +20,6 @@ typedef uint64_t Elm_Atspi_State_Set;
 #define STATE_TYPE_GET(state_set, type)   (state_set & (1 << type))
 
 
-typedef enum _Elm_Atspi_Role Elm_Atspi_Role;
-
 /**
  * @enum _Elm_Atspi_Role
  * Describes the role of an object visible to AT-SPI Clients.
@@ -134,7 +132,7 @@ enum _Elm_Atspi_Role
     ELM_ATSPI_ROLE_LAST_DEFINED,
 };
 
-typedef enum _Elm_Atspi_State_Type Elm_Atspi_State_Type;
+typedef enum _Elm_Atspi_Role Elm_Atspi_Role;
 
 /**
  * @enum _Elm_Atspi_State_Type
@@ -186,7 +184,7 @@ enum _Elm_Atspi_State_Type
     ELM_ATSPI_STATE_LAST_DEFINED,
 };
 
-typedef enum _Elm_Atspi_Relation_Type Elm_Atspi_Relation_Type;
+typedef enum _Elm_Atspi_State_Type Elm_Atspi_State_Type;
 
 /**
  * Elm_Atspi_Relation_Type describes relation between two objects.
@@ -214,8 +212,7 @@ enum _Elm_Atspi_Relation_Type {
      ELM_ATSPI_RELATION_LAST_DEFINED,
 };
 
-
-typedef struct _Elm_Atspi_Event_State_Changed_Data Elm_Atspi_Event_State_Changed_Data;
+typedef enum _Elm_Atspi_Relation_Type Elm_Atspi_Relation_Type;
 
 struct _Elm_Atspi_Event_State_Changed_Data
 {
@@ -223,7 +220,8 @@ struct _Elm_Atspi_Event_State_Changed_Data
    Eina_Bool new_value;
 };
 
-typedef struct _Elm_Atspi_Event_Children_Changed_Data Elm_Atspi_Event_Children_Changed_Data;
+
+typedef struct _Elm_Atspi_Event_State_Changed_Data Elm_Atspi_Event_State_Changed_Data;
 
 struct _Elm_Atspi_Event_Children_Changed_Data
 {
@@ -231,7 +229,7 @@ struct _Elm_Atspi_Event_Children_Changed_Data
    Eo *child;
 };
 
-typedef struct _Elm_Atspi_Attribute Elm_Atspi_Attribute;
+typedef struct _Elm_Atspi_Event_Children_Changed_Data Elm_Atspi_Event_Children_Changed_Data;
 
 struct _Elm_Atspi_Attribute
 {
@@ -239,13 +237,15 @@ struct _Elm_Atspi_Attribute
    const char *value;
 };
 
-typedef struct _Elm_Atspi_Relation Elm_Atspi_Relation;
+typedef struct _Elm_Atspi_Attribute Elm_Atspi_Attribute;
 
 struct _Elm_Atspi_Relation
 {
    Elm_Atspi_Relation_Type type;
    const Eo *obj;
 };
+
+typedef struct _Elm_Atspi_Relation Elm_Atspi_Relation;
 
 /**
  * Free Elm_Atspi_Attributes_List
