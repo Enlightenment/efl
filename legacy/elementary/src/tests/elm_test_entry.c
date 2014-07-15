@@ -268,7 +268,7 @@ START_TEST (elm_entry_atspi_text_text_get)
    entry = elm_entry_add(win);
    elm_object_text_set(entry, txt);
 
-   eo_do(entry, val = elm_interface_atspi_text_text_get(0, sizeof(txtnom)/sizeof(txtnom[0])));
+   eo_do(entry, val = elm_interface_atspi_text_get(0, sizeof(txtnom)/sizeof(txtnom[0])));
    ck_assert_str_eq(val, txtnom);
 
    if (val) free(val);
