@@ -1,0 +1,28 @@
+/* regular type */
+type Foo: int;
+
+/* extern type */
+type @extern Evas_Coord: int;
+
+/* regular struct */
+struct X
+{
+   field: int;
+}
+
+/* extern struct */
+struct @extern Y
+{
+   field: int;
+}
+
+class Dummy {
+   methods {
+      foo {
+         params {
+            int idx;
+         }
+         return own(char*);
+      }
+   }
+}

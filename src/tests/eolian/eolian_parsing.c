@@ -543,6 +543,38 @@ START_TEST(eolian_struct)
 }
 END_TEST
 
+START_TEST(eolian_extern)
+{
+   const Eolian_Type *type = NULL;
+   const Eolian_Class *class;
+
+   eolian_init();
+
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/extern.eo"));
+
+   /* Check that the class Dummy is still readable */
+   fail_if(!(class = eolian_class_find_by_name("Dummy")));
+   fail_if(!eolian_class_function_find_by_name(class, "foo", EOLIAN_METHOD));
+
+   /* regular type */
+   fail_if(eolian_typedef_is_extern("Foo"));
+
+   /* extern type */
+   fail_if(!eolian_typedef_is_extern("Evas_Coord"));
+
+   /* regular struct */
+   fail_if(!(type = eolian_type_struct_find_by_name("X")));
+   fail_if(eolian_type_struct_is_extern(type));
+
+   /* extern struct */
+   fail_if(!(type = eolian_type_struct_find_by_name("Y")));
+   fail_if(!eolian_type_struct_is_extern(type));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -555,5 +587,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_events);
    tcase_add_test(tc, eolian_namespaces);
    tcase_add_test(tc, eolian_struct);
+   tcase_add_test(tc, eolian_extern);
 }
 
