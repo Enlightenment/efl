@@ -772,7 +772,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
    edev->mt_slot = 0;
 
    if (ioctl(edev->fd, EVIOCGNAME(sizeof(name)), name) < 0)
-     DBG("Error getting device name: %m");
+     ERR("Error getting device name: %m");
 
    name[sizeof(name) - 1] = '\0';
    edev->name = eina_stringshare_add(name);
@@ -786,6 +786,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
 
    if (!_device_configure(edev))
      {
+        ERR("Could not configure input device");
         _ecore_drm_evdev_device_destroy(edev);
         return NULL;
      }
@@ -816,6 +817,8 @@ _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *dev)
    if (dev->path) eina_stringshare_del(dev->path);
    if (dev->name) eina_stringshare_del(dev->name);
    if (dev->hdlr) ecore_main_fd_handler_del(dev->hdlr);
+
+   close(dev->fd);
 
    free(dev);
 }

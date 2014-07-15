@@ -10,12 +10,16 @@
 # include <string.h>
 # include <unistd.h>
 # include <errno.h>
-# include <sys/mman.h>
 # include <fcntl.h>
+# include <sys/mman.h>
+# include <sys/stat.h>
+# include <sys/ioctl.h>
 
 # include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
+# include <dbus/dbus.h>
+# include <systemd/sd-login.h>
 # include <xkbcommon/xkbcommon.h>
 
 # include <xf86drm.h>
@@ -72,39 +76,11 @@ extern int _ecore_drm_log_dom;
 /* FIXME: Get slots from evdev device */
 #define EVDEV_MAX_SLOTS 32
 
-/* undef this for non-testing builds */
-//# define LOG_TO_FILE
-
-# ifdef LOG_TO_FILE
-extern FILE *lg;
-
-#  define ERR(...) \
-   EINA_LOG_DOM_ERR(_ecore_drm_log_dom, __VA_ARGS__); \
-   fflush(lg);
-
-#  define DBG(...) \
-   EINA_LOG_DOM_DBG(_ecore_drm_log_dom, __VA_ARGS__); \
-   fflush(lg);
-
-#  define INF(...) \
-   EINA_LOG_DOM_INFO(_ecore_drm_log_dom, __VA_ARGS__); \
-   fflush(lg);
-
-#  define WRN(...) \
-   EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__); \
-   fflush(lg);
-
-#  define CRIT(...) \
-   EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__); \
-   fflush(lg);
-
-# else
-#  define ERR(...) EINA_LOG_DOM_ERR(_ecore_drm_log_dom, __VA_ARGS__)
-#  define DBG(...) EINA_LOG_DOM_DBG(_ecore_drm_log_dom, __VA_ARGS__)
-#  define INF(...) EINA_LOG_DOM_INFO(_ecore_drm_log_dom, __VA_ARGS__)
-#  define WRN(...) EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__)
-#  define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__)
-# endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_drm_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_drm_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_drm_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__)
+#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__)
 
 extern struct udev *udev;
 
@@ -251,8 +227,9 @@ struct _Ecore_Drm_Sprite
    unsigned int formats[];
 };
 
-void _ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes);
-Eina_Bool _ecore_drm_message_receive(int opcode, int *fd, void **data, size_t bytes);
+Eina_Bool _ecore_drm_dbus_init(const char *session);
+void _ecore_drm_dbus_shutdown(void);
+int _ecore_drm_dbus_device_open(const char *device);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);

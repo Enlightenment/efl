@@ -113,11 +113,11 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    /*      return EINA_FALSE; */
    /*   } */
 
-   /* if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS)) */
-   /*   { */
-   /*      ERR("Could not set graphics mode: %m"); */
-   /*      return EINA_FALSE; */
-   /*   } */
+   if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS))
+     {
+        ERR("Could not set graphics mode: %m");
+        return EINA_FALSE;
+     }
 
    vtmode.mode = VT_PROCESS;
    vtmode.waitv = 0;

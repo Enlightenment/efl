@@ -16,6 +16,7 @@ lib/ecore_drm/ecore_drm_inputs.c \
 lib/ecore_drm/ecore_drm_output.c \
 lib/ecore_drm/ecore_drm_tty.c \
 lib/ecore_drm/ecore_drm_device.c \
+lib/ecore_drm/ecore_drm_dbus.c \
 lib/ecore_drm/ecore_drm.c \
 lib/ecore_drm/ecore_drm_private.h
 
@@ -28,29 +29,5 @@ lib_ecore_drm_libecore_drm_la_CPPFLAGS = \
 lib_ecore_drm_libecore_drm_la_LIBADD = @ECORE_DRM_LIBS@
 lib_ecore_drm_libecore_drm_la_DEPENDENCIES = @ECORE_DRM_INTERNAL_LIBS@
 lib_ecore_drm_libecore_drm_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
-### Drm Launch Binary
-
-ecoredrmlaunchinternal_bindir = $(libdir)/ecore_drm/bin/$(MODULE_ARCH)
-ecoredrmlaunchinternal_bin_PROGRAMS = bin/ecore_drm/ecore_drm_launch
-
-bin_ecore_drm_ecore_drm_launch_SOURCES = \
-  bin/ecore_drm/ecore_drm_launch.c
-
-bin_ecore_drm_ecore_drm_launch_CPPFLAGS = \
-  -I$(top_builddir)/src/lib/efl \
-  @ECORE_DRM_CFLAGS@ @SUID_CFLAGS@ \
-  -DPACKAGE_LIB_DIR=\"$(libdir)\" \
-  -DMODULE_ARCH=\"$(MODULE_ARCH)\"
-
-bin_ecore_drm_ecore_drm_launch_LDADD = \
-  @ECORE_DRM_LIBS@ \
-  @SUID_LDFLAGS@
-
-bin_ecore_drm_ecore_drm_launch_DEPENDENCIES = \
-  @USE_ECORE_DRM_INTERNAL_LIBS@
-
-setuid_root_mode = a=rx,u+xs
-EFL_INSTALL_EXEC_HOOK += @chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/ecore_drm/bin/$(MODULE_ARCH)/ecore_drm_launch$(EXEEXT) || true;
 
 endif
