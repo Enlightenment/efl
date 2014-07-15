@@ -336,7 +336,7 @@ _on_canvas_resize(Ecore_Evas *ee)
 }
 
 static void
-_key_down(void *data,
+_key_down(void *data EINA_UNUSED,
          Evas *e EINA_UNUSED,
          Evas_Object *eo EINA_UNUSED,
          void *event_info)
@@ -586,7 +586,7 @@ _stop_scene(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_3D_Node *n;
    Evas_3D_Mesh *m;
-   Evas_Real s, t, x, y, z;
+   Evas_Real s, t;
    Scene_Data *d = (Scene_Data *)data;
    Evas_3D_Node *pick;
    const Eina_List *nodes = NULL;
@@ -631,7 +631,7 @@ static void
 _play_scene(void *data EINA_UNUSED,
             Evas *e EINA_UNUSED,
             Evas_Object *eo EINA_UNUSED,
-            void *event_info)
+            void *event_info EINA_UNUSED)
 {
    d_angle_planet = 0.1;
    d_angle_cube = 0.5;
