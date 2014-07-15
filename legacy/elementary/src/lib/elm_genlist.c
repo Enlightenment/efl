@@ -7489,7 +7489,7 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Ge
 
    if ((item_x + item_w) > (ox + ow))
      {
-        *w = item_w - (item_w - ow);
+        *w = ow;
      }
    if (item_x < ox)
      {
