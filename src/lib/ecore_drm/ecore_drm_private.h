@@ -4,19 +4,21 @@
 # include "Ecore.h"
 # include "ecore_private.h"
 # include "Ecore_Input.h"
-# include "Eldbus.h"
 
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
 # include <errno.h>
-# include <sys/mman.h>
 # include <fcntl.h>
+# include <sys/mman.h>
+# include <sys/stat.h>
+# include <sys/ioctl.h>
 
 # include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
+# include <dbus/dbus.h>
 # include <systemd/sd-login.h>
 # include <xkbcommon/xkbcommon.h>
 
@@ -226,7 +228,8 @@ struct _Ecore_Drm_Sprite
 };
 
 Eina_Bool _ecore_drm_dbus_init(const char *session);
-void _ecore_drm_dbus_shutdown(const char *session);
+void _ecore_drm_dbus_shutdown(void);
+int _ecore_drm_dbus_device_open(const char *device);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
