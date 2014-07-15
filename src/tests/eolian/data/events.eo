@@ -1,6 +1,6 @@
 class Events {
    events {
       clicked; /*@ Comment for clicked */
-      clicked,double (Evas_Event_Clicked_Double_Info); /* No comment */
+      clicked,double: Evas_Event_Clicked_Double_Info; /* No comment */
    }
 }
