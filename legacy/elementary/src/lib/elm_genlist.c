@@ -5525,10 +5525,10 @@ _item_select(Elm_Gen_Item *it)
         Eina_List *l;
         EINA_LIST_FOREACH(it->content_objs, l, swallow_obj)
           {
-             if (elm_object_focus_get(swallow_obj))
+             if (elm_widget_is(swallow_obj) && elm_object_focus_get(swallow_obj))
                {
-                  elm_object_focus_set( obj, EINA_FALSE);
-                  elm_object_focus_set( obj, EINA_TRUE);
+                  elm_object_focus_set(obj, EINA_FALSE);
+                  elm_object_focus_set(obj, EINA_TRUE);
                   break;
                }
           }
