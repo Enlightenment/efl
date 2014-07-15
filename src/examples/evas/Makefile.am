@@ -212,6 +212,11 @@ evas_3d_aabb_SOURCES = evas-3d-aabb.c
 evas_3d_aabb_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_aabb_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_cube_rotate
+evas_3d_cube_rotate_SOURCES = evas-3d-cube-rotate.c
+evas_3d_cube_rotate_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_3d_cube_rotate_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_3d_obj
 evas_3d_obj_SOURCES = evas-3d-obj.c
 evas_3d_obj_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
