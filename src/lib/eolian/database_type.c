@@ -169,7 +169,7 @@ database_type_print(Eolian_Type *tp)
    if (tp->is_const)
      printf("const(");
    if (tp->type == EOLIAN_TYPE_REGULAR)
-     printf(tp->name);
+     printf("%s", tp->name);
    else if (tp->type == EOLIAN_TYPE_VOID)
      printf("void");
    else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
