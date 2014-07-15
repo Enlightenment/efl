@@ -229,10 +229,11 @@ _struct_field_free(Eolian_Struct_Field *def)
 }
 
 static Eolian_Type *
-parse_struct(Eo_Lexer *ls, const char *name)
+parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
 {
    int line = ls->line_number, column = ls->column;
    Eolian_Type *def = push_type(ls);
+   def->is_extern = is_extern;
    def->name = name;
    def->type = EOLIAN_TYPE_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
@@ -314,8 +315,18 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
         eo_lexer_get(ls);
         if (allow_struct)
           {
+             Eina_Bool is_extern = EINA_FALSE;
+             if (ls->t.kw == KW_at_extern)
+               {
+                  is_extern = EINA_TRUE;
+                  eo_lexer_get(ls);
+               }
              if (allow_anon && ls->t.token == '{')
-               return parse_struct(ls, NULL);
+               {
+                  if (is_extern)
+                    eo_lexer_syntax_error(ls, "extern anonymous struct");
+                  return parse_struct(ls, NULL, EINA_FALSE);
+               }
              check(ls, TOK_VALUE);
              sname = eina_stringshare_add(ls->t.value);
              if (eo_lexer_lookahead(ls) == '{')
@@ -323,7 +334,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
                   if (eo_lexer_get_c_type(ls->t.kw))
                     eo_lexer_syntax_error(ls, "invalid struct name");
                   eo_lexer_get(ls);
-                  return parse_struct(ls, sname);
+                  return parse_struct(ls, sname, is_extern);
                }
           }
         else
@@ -393,6 +404,11 @@ parse_typedef(Eo_Lexer *ls)
 {
    ls->tmp.typedef_def = calloc(1, sizeof(Eolian_Typedef));
    eo_lexer_get(ls);
+   if (ls->t.kw == KW_at_extern)
+     {
+        ls->tmp.typedef_def->is_extern = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    check(ls, TOK_VALUE);
    ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
    eo_lexer_get(ls);
@@ -1034,13 +1050,19 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_struct:
         {
            const char *name;
+           Eina_Bool is_extern = EINA_FALSE;
            eo_lexer_get(ls);
+           if (ls->t.kw == KW_at_extern)
+             {
+                is_extern = EINA_TRUE;
+                eo_lexer_get(ls);
+             }
            check(ls, TOK_VALUE);
            if (eo_lexer_get_c_type(ls->t.kw))
              eo_lexer_syntax_error(ls, "invalid struct name");
            name = eina_stringshare_add(ls->t.value);
            eo_lexer_get(ls);
-           parse_struct(ls, name);
+           parse_struct(ls, name, is_extern);
            pop_type(ls);
            break;
         }

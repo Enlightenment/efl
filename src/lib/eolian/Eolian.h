@@ -770,6 +770,16 @@ EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 EAPI const Eolian_Type *eolian_type_find_by_alias(const char *alias);
 
 /*
+ * @brief Check if a typedef is extern.
+ *
+ * @param[in] alias alias of the typedef
+ * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_typedef_is_extern(const char *alias);
+
+/*
  * @brief Find a struct by name
  *
  * @param[in] name the name of the struct
@@ -896,6 +906,16 @@ EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
+
+/*
+ * @brief Check if a struct type is extern.
+ *
+ * @param[in] tp the type.
+ * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_struct_is_extern(const Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type with a name.

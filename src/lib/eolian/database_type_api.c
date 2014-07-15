@@ -9,8 +9,19 @@ eolian_type_find_by_alias(const char *alias)
    Eina_Stringshare *shr = eina_stringshare_add(alias);
    Eolian_Typedef *cl = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
-   return cl?cl->type:NULL;
+   return cl ? cl->type : NULL;
 }
+
+EAPI Eina_Bool
+eolian_typedef_is_extern(const char *alias)
+{
+   if (!_types) return EINA_FALSE;
+   Eina_Stringshare *shr = eina_stringshare_add(alias);
+   Eolian_Typedef *cl = eina_hash_find(_types, shr);
+   eina_stringshare_del(shr);
+   return cl ? cl->is_extern : EINA_FALSE;
+}
+
 
 EAPI const Eolian_Type *
 eolian_type_struct_find_by_name(const char *name)
@@ -121,6 +132,13 @@ eolian_type_is_const(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
    return tp->is_const;
+}
+
+EAPI Eina_Bool
+eolian_type_struct_is_extern(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
+   return tp->is_extern;
 }
 
 EAPI Eina_Stringshare *

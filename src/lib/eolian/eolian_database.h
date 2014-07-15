@@ -116,6 +116,7 @@ struct _Eolian_Type
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
+   Eina_Bool is_extern :1;
 };
 
 struct _Eolian_Implement
@@ -134,6 +135,7 @@ typedef struct _Eolian_Typedef
 {
    Eina_Stringshare *alias;
    Eolian_Type *type;
+   Eina_Bool is_extern :1;
 } Eolian_Typedef;
 
 typedef struct _Eolian_Struct_Field
