@@ -1918,11 +1918,24 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
             && (xevent->xclient.format == 32)
             && (xevent->xclient.window == _ecore_x_private_win))
      {
+        int val = xevent->xclient.data.l[1] & 0xff;
+        int anymod = (xevent->xclient.data.l[1] >> 8) & 0xff;
+        int mod = xevent->xclient.data.l[4];
+        int b = xevent->xclient.data.l[3];
+        Ecore_X_Window swin = xevent->xclient.data.l[2];
+
         /* a grab sync marker */
-        if (xevent->xclient.data.l[1] == 0x10000001)
-          _ecore_x_window_grab_remove(xevent->xclient.data.l[2], -1, 0, 0);
-        else if (xevent->xclient.data.l[1] == 0x10000002)
-          _ecore_x_key_grab_remove(xevent->xclient.data.l[2], NULL, 0, 0);
+        if (val == 1)
+          {
+             _ecore_x_window_grab_remove(swin, b, mod, anymod);
+          }
+        else if (val == 2)
+          {
+             const char *str;
+
+             str = ecore_x_keysym_string_get(b);
+             if (str) _ecore_x_key_grab_remove(swin, str, mod, anymod);
+          }
      }
    else
      {

@@ -1714,9 +1714,8 @@ ecore_x_window_button_grab(Ecore_X_Window win,
    _ecore_window_grabs[_ecore_window_grabs_num - 1].any_mod = any_mod;
 }
 
-void
-_ecore_x_sync_magic_send(int val,
-                         Ecore_X_Window swin)
+static void
+_ecore_x_sync_magic_send(int val, Ecore_X_Window swin, int b, int mod, int anymod)
 {
    XEvent xev;
 
@@ -1728,10 +1727,10 @@ _ecore_x_sync_magic_send(int val,
    xev.xclient.format = 32;
    xev.xclient.message_type = 27777;
    xev.xclient.data.l[0] = 0x7162534;
-   xev.xclient.data.l[1] = 0x10000000 + val;
+   xev.xclient.data.l[1] = val | (anymod << 8);
    xev.xclient.data.l[2] = swin;
-   xev.xclient.data.l[3] = 0;
-   xev.xclient.data.l[4] = 0;
+   xev.xclient.data.l[3] = b;
+   xev.xclient.data.l[4] = mod;
    XSendEvent(_ecore_x_disp, _ecore_x_private_win, False, NoEventMask, &xev);
 }
 
@@ -1815,8 +1814,8 @@ ecore_x_window_button_ungrab(Ecore_X_Window win,
                              int any_mod)
 {
    _ecore_x_window_button_ungrab_internal(win, button, mod, any_mod);
-   _ecore_x_sync_magic_send(1, win);
-   _ecore_x_window_grab_remove(win, button, mod, any_mod);
+   _ecore_x_sync_magic_send(1, win, button, mod, any_mod);
+//   _ecore_x_window_grab_remove(win, button, mod, any_mod);
 }
 
 void _ecore_x_window_grab_suspend(void)
@@ -2025,8 +2024,8 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
                           int any_mod)
 {
    _ecore_x_window_key_ungrab_internal(win, key, mod, any_mod);
-   _ecore_x_sync_magic_send(2, win);
-   _ecore_x_key_grab_remove(win, key, mod, any_mod);
+   _ecore_x_sync_magic_send(2, win, XStringToKeysym(key), mod, any_mod);
+//   _ecore_x_key_grab_remove(win, key, mod, any_mod);
 }
 
 void

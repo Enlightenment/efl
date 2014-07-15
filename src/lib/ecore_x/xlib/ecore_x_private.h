@@ -299,8 +299,6 @@ void *_ecore_x_selection_parse(const char *target,
                                int size,
                                int format);
 
-void _ecore_x_sync_magic_send(int val,
-                              Ecore_X_Window swin);
 int _ecore_x_window_grab_remove(Ecore_X_Window win, int button, int mod, int any_mod);
 int _ecore_x_key_grab_remove(Ecore_X_Window win, const char *key, int mod, int any_mod);
 void _ecore_x_window_grab_suspend(void);
