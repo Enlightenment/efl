@@ -2778,6 +2778,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
    Elm_Object_Item *it = NULL;
 
    it = elm_object_focused_item_get(obj);
+   if (!it) return EINA_TRUE;
    elm_genlist_item_expanded_set(it, !elm_genlist_item_expanded_get(it));
    evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
 
