@@ -50,23 +50,18 @@ _device_add(Ecore_Drm_Input *input, struct udev_device *device)
 
    node = udev_device_get_devnode(device);
    strcpy(n, node);
-   fd = open(n, O_RDWR | O_NONBLOCK);
-   if (fd == -1)
+
+   fd = _ecore_drm_dbus_device_open(n);
+   if (fd < 0)
      {
         ERR("FAILED TO OPEN %s: %m", n);
         return EINA_FALSE;
      }
-   /* _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, -1, n, strlen(n)); */
-   /* _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0); */
-   /* DBG("Opened Restricted Input: %s %d", node, fd); */
+
+   DBG("Opened Restricted Input: %s %d", node, fd);
 
    if (!(edev = _ecore_drm_evdev_device_create(seat, node, fd)))
-     {
-        close(fd);
-        /* _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_CLOSE, fd, NULL, 0); */
-        /* _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0); */
-        return EINA_FALSE;
-     }
+     return EINA_FALSE;
 
    seat->devices = eina_list_append(seat->devices, edev);
 
