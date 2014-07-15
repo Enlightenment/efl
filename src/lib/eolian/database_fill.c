@@ -202,9 +202,9 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
 
    database_function_scope_set(foo_id, prop->scope);
 
-   if (!_db_fill_keys     (foo_id,      prop)) return EINA_FALSE;
-   if (!_db_fill_values   (foo_id,      prop)) return EINA_FALSE;
-   if (!_db_fill_accessors(foo_id, kls, prop)) return EINA_FALSE;
+   if (!_db_fill_keys     (foo_id,      prop)) goto failure;
+   if (!_db_fill_values   (foo_id,      prop)) goto failure;
+   if (!_db_fill_accessors(foo_id, kls, prop)) goto failure;
 
    if (!prop->accessors)
      {
@@ -216,6 +216,10 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
    database_class_function_add(cl, foo_id);
 
    return EINA_TRUE;
+
+failure:
+   database_function_del(foo_id);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
