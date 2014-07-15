@@ -30,26 +30,8 @@ Eo* generate_app(void)
    evas_object_show(g_bg);
    evas_object_show(g_win);
 
-   Eo *obj = NULL;
-
-   _elm_atspi_init();
-
-   obj = _elm_atspi_root_get();
-
-   return obj;
+   return _elm_atspi_bridge_root_get();
 }
-
-START_TEST (elm_atspi_root_get)
-{
-   elm_init(0, NULL);
-
-   Eo* obj = generate_app();
-
-   ck_assert(obj != NULL);
-
-   elm_shutdown();
-}
-END_TEST
 
 START_TEST (elm_atspi_name_get)
 {
@@ -259,7 +241,7 @@ START_TEST (elm_test_atspi_object_children_get)
 {
    elm_init(0, NULL);
 
-   Eo *root = _elm_atspi_root_get();
+   Eo *root = _elm_atspi_bridge_root_get();
 
    Eina_List *children = NULL;
    eo_do(root, children = elm_interface_atspi_accessible_children_get());
@@ -391,7 +373,6 @@ END_TEST
 
 void elm_test_atspi(TCase *tc)
 {
-   tcase_add_test(tc, elm_atspi_root_get);
    tcase_add_test(tc, elm_atspi_name_get);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_atspi_role_name_get);
