@@ -107,9 +107,9 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
    }
    events {
-      property,changed (const(char)*);
-      children,changed (Elm_Atspi_Event_Children_Changed_Data);
-      state,changed (Elm_Atspi_Event_State_Changed_Data);
+      property,changed: const(char)*;
+      children,changed: Elm_Atspi_Event_Children_Changed_Data;
+      state,changed: Elm_Atspi_Event_State_Changed_Data;
       visible,data,changed;
       active,descendants,changed;
    }
