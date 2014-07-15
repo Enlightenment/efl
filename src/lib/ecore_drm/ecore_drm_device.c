@@ -509,17 +509,15 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_master_get(Ecore_Drm_Device *dev)
 {
-   /* drm_magic_t mag; */
+   drm_magic_t mag;
 
    /* check for valid device */
    if ((!dev) || (dev->drm.fd < 0)) return EINA_FALSE;
 
-   /* FIXME: Remote this to the slave process !! */
-
    /* get if we are master or not */
-   /* if ((drmGetMagic(dev->drm.fd, &mag) == 0) &&  */
-   /*     (drmAuthMagic(dev->drm.fd, mag) == 0)) */
-   /*   return EINA_TRUE; */
+   if ((drmGetMagic(dev->drm.fd, &mag) == 0) && 
+       (drmAuthMagic(dev->drm.fd, mag) == 0))
+     return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -538,22 +536,12 @@ ecore_drm_device_master_get(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_master_set(Ecore_Drm_Device *dev)
 {
-   Eina_Bool ret = EINA_FALSE;
-   int dfd;
-
    /* check for valid device */
    if ((!dev) || (dev->drm.fd < 0)) return EINA_FALSE;
 
    DBG("Set Master On Fd: %d", dev->drm.fd);
 
-   /* try to close the device */
-   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_MASTER_SET, dev->drm.fd, 
-                           NULL, 0);
-
-   /* get the result of the close operation */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_MASTER_SET, &dfd,
-                                    NULL, 0);
-   if (!ret) return EINA_FALSE;
+   drmSetMaster(dev->drm.fd);
 
    return EINA_TRUE;
 }
@@ -572,22 +560,12 @@ ecore_drm_device_master_set(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
 {
-   Eina_Bool ret = EINA_FALSE;
-   int dfd;
-
    /* check for valid device */
    if ((!dev) || (dev->drm.fd < 0)) return EINA_FALSE;
 
    DBG("Drop Master On Fd: %d", dev->drm.fd);
 
-   /* try to close the device */
-   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_MASTER_DROP, dev->drm.fd,
-                           NULL, 0);
-
-   /* get the result of the close operation */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_MASTER_DROP, &dfd,
-                                    NULL, 0);
-   if (!ret) return EINA_FALSE;
+   drmDropMaster(dev->drm.fd);
 
    return EINA_TRUE;
 }
