@@ -275,7 +275,6 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
 static Eolian_Type *
 parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
 {
-   Eina_Bool has_struct = EINA_FALSE;
    Eolian_Type *def;
    const char *ctype;
    const char *sname = NULL;
@@ -328,42 +327,39 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
                   return parse_struct(ls, NULL, EINA_FALSE);
                }
              check(ls, TOK_VALUE);
+             if (eo_lexer_get_c_type(ls->t.kw))
+               eo_lexer_syntax_error(ls, "invalid struct name");
              sname = eina_stringshare_add(ls->t.value);
-             if (eo_lexer_lookahead(ls) == '{')
-               {
-                  if (eo_lexer_get_c_type(ls->t.kw))
-                    eo_lexer_syntax_error(ls, "invalid struct name");
-                  eo_lexer_get(ls);
-                  return parse_struct(ls, sname, is_extern);
-               }
+             eo_lexer_get(ls);
+             if (ls->t.token == '{')
+               return parse_struct(ls, sname, is_extern);
           }
         else
           {
              check(ls, TOK_VALUE);
+             if (eo_lexer_get_c_type(ls->t.kw))
+               eo_lexer_syntax_error(ls, "invalid struct name");
              sname = eina_stringshare_add(ls->t.value);
+             eo_lexer_get(ls);
           }
-        has_struct = EINA_TRUE;
-        break;
+        def = push_type(ls);
+        def->type = EOLIAN_TYPE_REGULAR_STRUCT;
+        def->name = sname;
+        goto parse_ptr;
       case KW_func:
         return parse_function_type(ls);
       default:
         break;
      }
    def = push_type(ls);
-   if (ls->t.kw == KW_void && !has_struct)
+   if (ls->t.kw == KW_void)
      def->type = EOLIAN_TYPE_VOID;
    else
      {
-        def->type = has_struct ? EOLIAN_TYPE_REGULAR_STRUCT : EOLIAN_TYPE_REGULAR;
-        def->is_const = EINA_FALSE;
+        def->type = EOLIAN_TYPE_REGULAR;
         check(ls, TOK_VALUE);
         ctype = eo_lexer_get_c_type(ls->t.kw);
-        if (ctype && has_struct)
-          {
-             eina_stringshare_del(sname);
-             eo_lexer_syntax_error(ls, "invalid struct name");
-          }
-        def->name = sname ? sname : eina_stringshare_add(ctype ? ctype : ls->t.value);
+        def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
      }
    eo_lexer_get(ls);
 parse_ptr:
