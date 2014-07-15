@@ -603,10 +603,10 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_EXISTS([libdrm],
+PKG_CHECK_EXISTS([ecore-drm],
    [
     have_dep="yes"
-    requirement="libdrm"
+    requirement="ecore-drm"
    ],
    [have_dep="no"])
 
@@ -616,7 +616,7 @@ if test "x${have_dep}" = "xyes" ; then
     PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
      [
       have_hw_dep="yes"
-      requirement="libdrm egl >= 7.10 ${gl_library}"
+      requirement="ecore-drm egl >= 7.10 ${gl_library}"
      ],
      [have_hw_dep="no"])
   fi

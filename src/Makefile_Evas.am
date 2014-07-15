@@ -1223,6 +1223,7 @@ modules_evas_engines_drm_module_la_SOURCES = $(DRM_SOURCES)
 modules_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_srcdir)/src/modules/evas/engines/drm \
 @EVAS_CFLAGS@ \
 @evas_engine_drm_cflags@
 modules_evas_engines_drm_module_la_LIBADD = \
