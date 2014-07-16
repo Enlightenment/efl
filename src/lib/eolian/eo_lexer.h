@@ -13,7 +13,7 @@
 
 enum Tokens
 {
-   TOK_COMMENT = START_CUSTOM, TOK_VALUE
+   TOK_COMMENT = START_CUSTOM, TOK_NUMBER, TOK_VALUE
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
@@ -59,14 +59,38 @@ enum Keywords
 #undef KW
 #undef KWAT
 
+enum Numbers
+{
+   NUM_INT,
+   NUM_UINT,
+   NUM_LONG,
+   NUM_ULONG,
+   NUM_LLONG,
+   NUM_ULLONG,
+   NUM_FLOAT,
+   NUM_DOUBLE,
+   NUM_LDOUBLE
+};
+
 /* a token - "token" is the actual token id, "value" is the value of a token
  * if needed - NULL otherwise - for example the value of a TOK_VALUE, "kw"
  * is the keyword id if this is a keyword, it's 0 when not a keyword */
 typedef struct _Eo_Token
 {
-   int         token;
-   const char *value;
-   int         kw;
+   int token, kw;
+   union
+   {
+      const    char     *value;
+      signed   int       value_i;
+      unsigned int       value_u;
+      signed   long      value_l;
+      unsigned long      value_ul;
+      signed   long long value_ll;
+      unsigned long long value_ull;
+      float              value_f;
+      double             value_d;
+      long double        value_ld;
+   };
 } Eo_Token;
 
 enum Nodes

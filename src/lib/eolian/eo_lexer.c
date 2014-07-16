@@ -44,7 +44,7 @@ next_char(Eo_Lexer *ls)
 
 static const char * const tokens[] =
 {
-   "<comment>", "<value>",
+   "<comment>", "<number>", "<value>",
 
    KEYWORDS
 };
@@ -104,9 +104,9 @@ init_hash(void)
    unsigned int i;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = 2; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = 3; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
-         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 1));
+         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 2));
      }
 }
 
@@ -437,7 +437,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 1];
+   return tokens[kw + 2];
 }
 
 Eina_Bool
