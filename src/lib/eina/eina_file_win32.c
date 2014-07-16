@@ -728,7 +728,21 @@ eina_file_open(const char *path, Eina_Bool shared)
                          NULL);
 
    if (handle == INVALID_HANDLE_VALUE)
-     goto close_file;
+     {
+        switch (GetLastError())
+          {
+           case ERROR_FILE_NOT_FOUND:
+              WRN("Could not open file [%s].", filename);
+              free(filename);
+              return NULL;
+           case ERROR_PATH_NOT_FOUND:
+              WRN("Could not find file path [%s].", filename);
+              free(filename);
+              return NULL;
+           default:
+              goto free_file;
+          }
+     }
 
    if (!GetFileAttributesEx(filename, GetFileExInfoStandard, &fad))
      goto close_handle;
@@ -796,7 +810,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
  close_handle:
    CloseHandle(handle);
- close_file:
+ free_file:
    ERR("Could not open file [%s].", filename);
    free(filename);
 
