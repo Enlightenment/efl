@@ -224,7 +224,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         obj->changed_move = EINA_FALSE;
      }
 
-   if (obj->smart.smart) printf("change smart %p %i\n", obj, obj->changed);
+//   if (obj->smart.smart) printf("change smart %p %i\n", obj, obj->changed);
    if (obj->changed) return;
 
    evas_render_object_recalc(eo_obj);
