@@ -46,8 +46,8 @@ operator<<(std::ostream& out, class_extensions const& x)
         if (it != first) out << ",";
         out << tab(2)
             << "efl::eo::detail::extension_inheritance<"
-            <<  *it << ">::type<"
-            <<  cls.name << ">";
+            <<  *it << ">::type< ::"
+            <<  cls.name_space << "::" << cls.name << ">";
      }
    out << endl;
    return out;
