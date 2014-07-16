@@ -38,6 +38,7 @@ bg_example_01.c \
 bg_example_02.c \
 bg_example_03.c \
 box_example_02.c \
+box_cxx_example_02.cc \
 bubble_example_01.c \
 button_example_00.c \
 button_example_01.c \
@@ -188,6 +189,7 @@ bg_example_01 \
 bg_example_02 \
 bg_example_03 \
 box_example_02 \
+box_cxx_example_02 \
 bubble_example_01 \
 button_example_00 \
 button_example_01 \
@@ -300,6 +302,17 @@ efl_thread_3_SOURCES = efl_thread_3.c
 efl_thread_4_SOURCES = efl_thread_4.c
 endif
 
+box_cxx_example_02_SOURCES = box_cxx_example_02.cc
+box_cxx_example_02_CXXFLAGS = -fPIC \
+@ELEMENTARY_ELOCATION_CFLAGS@ \
+@ELEMENTARY_EWEATHER_CFLAGS@ \
+@ELEMENTARY_EMAP_CFLAGS@ \
+@ELEMENTARY_X_CFLAGS@ \
+@ELEMENTARY_CFLAGS@ \
+@ELEMENTARY_CXX_CFLAGS@
+
+box_cxx_example_02_LDFLAGS = -fPIC
+
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
 # <example executable>:<screenshot filename>:<delay in seconds>
@@ -307,6 +320,7 @@ SCREENSHOTS = \
 actionslider_example_01:actionslider_01.png:0.0 \
 bg_example_02:bg_01.png:0.0 \
 box_example_02:box_example_02.png:1.3 \
+box_cxx_example_02:box_cxx_example_02.png:1.3 \
 bubble_example_01:bubble_example_01.png:0.0 \
 button_example_00:button_00.png:0.0 \
 button_example_01:button_01.png:0.0 \
