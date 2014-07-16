@@ -344,19 +344,22 @@ _transit_animate_cb(void *data)
                                                     0, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
-         transit->progress = ecore_animator_pos_map(transit->progress,
-                                                    ECORE_POS_MAP_ACCELERATE,
-                                                    transit->v1, 0);
+         transit->progress =
+            ecore_animator_pos_map(transit->progress,
+                                   ECORE_POS_MAP_ACCELERATE_FACTOR,
+                                   transit->v1, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
-         transit->progress = ecore_animator_pos_map(transit->progress,
-                                                    ECORE_POS_MAP_DECELERATE,
-                                                    transit->v1, 0);
+         transit->progress =
+            ecore_animator_pos_map(transit->progress,
+                                   ECORE_POS_MAP_DECELERATE_FACTOR,
+                                   transit->v1, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
-         transit->progress = ecore_animator_pos_map(transit->progress,
-                                                    ECORE_POS_MAP_SINUSOIDAL,
-                                                    transit->v1, 0);
+         transit->progress =
+            ecore_animator_pos_map(transit->progress,
+                                   ECORE_POS_MAP_SINUSOIDAL_FACTOR,
+                                   transit->v1, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_DIVISOR_INTERP:
          transit->progress = ecore_animator_pos_map(transit->progress,
