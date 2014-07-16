@@ -155,6 +155,14 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
    return container;
 }
 
+std::string get_class_name(std::string const& name)
+{
+  // "eo_base" is the Eolian name for EO_BASE_CLASS.
+  return (name == "eo_base" || name == "eo::base" || name == "")
+    ? "efl::eo::base"
+    : name;
+}
+
 void
 convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
@@ -171,21 +179,18 @@ convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klas
      }
    else
      {
+        // First element is the parent
         const char *ptr = static_cast<const char*>
           (eina_list_data_get(inheritances));
-        std::string parent = class_format_cxx(safe_lower(ptr));
+        cls.parent = get_class_name(class_format_cxx(safe_lower(ptr)));
 
-        // "eo_base" is the Eolian name for EO_BASE_CLASS.
-        cls.parent =
-          (parent == "eo_base" || parent == "eo::base" || parent == "")
-          ? "efl::eo::base"
-          : parent;
-     }
-   inheritances = eina_list_next(inheritances);
-   EINA_LIST_FOREACH (inheritances, it, curr)
-     {
-        std::string extension = safe_lower(static_cast<const char*>(curr));
-        cls.extensions.push_back(class_format_cxx(extension));
+        inheritances = eina_list_next(inheritances);
+
+        EINA_LIST_FOREACH (inheritances, it, curr)
+         {
+           std::string extension = safe_lower(static_cast<const char*>(curr));
+           cls.extensions.push_back(get_class_name(class_format_cxx(extension)));
+         }
      }
 }
 
