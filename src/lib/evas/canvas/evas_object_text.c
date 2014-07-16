@@ -1217,6 +1217,7 @@ _evas_text_style_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Text_Style_Type style)
 
    eo_do_super(eo_obj, MY_CLASS,
                evas_obj_size_set(w, h));
+   evas_object_change(eo_obj, obj);
 }
 
 EOLIAN static Evas_Text_Style_Type
