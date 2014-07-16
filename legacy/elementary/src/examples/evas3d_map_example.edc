@@ -1,0 +1,966 @@
+#define FIXED_SIZE(_WIDTH, _HEIGHT) \
+   min: _WIDTH _HEIGHT; max: _WIDTH _HEIGHT; fixed: 1 1;
+
+collections {
+group { name: "control_layout";
+   parts {
+      part { name: "base"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "control_bg"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 220 150;
+            max: 220 150;
+            fixed: 1 1;
+            align: 1.0 1.0;
+            rel1 { to: "base"; relative: 1.0 1.0; }
+            rel2 { to: "base"; relative: 1.0 1.0; }
+         }
+      }
+      part { name: "elm.swallow.hoversel"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 200 20;
+            max: 200 20;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1 { to: "control_bg"; relative: 0.0 0.0; }
+            rel2 { to: "control_bg"; relative: 1.0 0.0; }
+         }
+      }
+      part { name: "hoversel_bottom_padding"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 200 10;
+            max: 200 10;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1 { to_x: "control_bg"; to_y: "elm.swallow.hoversel"; relative: 0.0 1.0; }
+            rel2 { to_x: "control_bg"; to_y: "elm.swallow.hoversel"; relative: 1.0 1.0; }
+         }
+      }
+      part { name: "elm.swallow.rotation_toggle"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 200 30;
+            max: 200 30;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1 { to_x: "control_bg"; to_y: "hoversel_bottom_padding"; relative: 0.0 1.0; }
+            rel2 { to_x: "control_bg"; to_y: "hoversel_bottom_padding"; relative: 1.0 1.0; }
+         }
+      }
+      part { name: "elm.swallow.light_toggle"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 200 30;
+            max: 200 30;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1 { to_x: "control_bg"; to_y: "elm.swallow.rotation_toggle"; relative: 0.0 1.0; }
+            rel2 { to_x: "control_bg"; to_y: "elm.swallow.rotation_toggle"; relative: 1.0 1.0; }
+         }
+      }
+      part { name: "elm.swallow.zoom_slider"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 200 30;
+            max: 200 30;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1 { to_x: "control_bg"; to_y: "elm.swallow.light_toggle"; relative: 0.0 1.0; }
+            rel2 { to_x: "control_bg"; to_y: "elm.swallow.light_toggle"; relative: 1.0 1.0; }
+         }
+      }
+   }
+}
+
+group { name: "elm/scroller/base/evas3d";
+   data.item: "focus_highlight" "on";
+
+   parts {
+      program {
+         signal: "load"; source: "";
+         script {
+            emit("reload", "elm");
+         }
+      }
+// vert bar ////////////////////////////////////////////////////////////////
+      part { name: "sb_vbar_show"; type: RECT;
+         description { state: "default" 0.0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "sb_vbar"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 15 1;
+            align: 1.0 0.0;
+            rel1.relative: 1.0 0.0;
+            //rel1.offset: -1 0;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "sb_hbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 0 99999;
+         }
+      }
+      part { name: "sb_vbar_base"; type: RECT;
+         clip_to: "sb_vbar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "sb_vbar_a1";
+            rel2.relative: 1.0 0.0;
+            rel2.to: "sb_vbar_a2";
+            fixed: 1 1;
+         }
+      }
+      part { name: "sb_vbar_p1"; type: RECT;
+         clip_to: "sb_vbar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "sb_vbar_a1";
+            rel2.relative: 1.0 0.0;
+            rel2.to: "elm.dragable.vbar";
+            fixed: 1 1;
+         }
+      }
+      part { name: "sb_vbar_p2"; type: RECT;
+         clip_to: "sb_vbar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "elm.dragable.vbar";
+            rel2.relative: 1.0 0.0;
+            rel2.to: "sb_vbar_a2";
+            fixed: 1 1;
+         }
+      }
+      part { name: "elm.dragable.vbar"; type: RECT;
+         clip_to: "sb_vbar";
+         scale: 1;
+         dragable.x: 0 0 0;
+         dragable.y: 1 1 0;
+         dragable.confine: "sb_vbar_base";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 15 13;
+            rel1.relative: 0.5  0.5;
+            rel1.to: "sb_vbar_base";
+            rel2.relative: 0.5  0.5;
+            rel2.to: "sb_vbar_base";
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
+      }
+      part { name: "sb_vbar_a1"; type: RECT;
+         clip_to: "sb_vbar";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 15 15;
+            align: 0.5 0.0;
+            aspect: 1.0 1.0; aspect_preference: HORIZONTAL;
+            color: 0 0 0 0;
+            rel1.to: "sb_vbar";
+            rel2.to: "sb_vbar";
+            rel2.relative: 1.0 0.0;
+            //rel2.offset: -1 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
+      }
+      part { name: "sb_vbar_a2"; type: RECT;
+         clip_to: "sb_vbar";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 15 15;
+            align: 0.5 1.0;
+            aspect: 1.0 1.0; aspect_preference: HORIZONTAL;
+            color: 0 0 0 0;
+            rel1.to: "sb_vbar";
+            //rel1.offset: 0 -1;
+            rel1.relative: 0.0 1.0;
+            rel2.to: "sb_vbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
+      }
+      program {
+         signal: "elm,action,show,vbar"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "sb_vbar";
+         target: "sb_vbar_show";
+         target: "elm.dragable.vbar";
+         target: "sb_vbar_a1";
+         target: "sb_vbar_a2";
+      }
+      program {
+         signal: "elm,action,hide,vbar"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "sb_vbar";
+         target: "sb_vbar_show";
+         target: "elm.dragable.vbar";
+         target: "sb_vbar_a1";
+         target: "sb_vbar_a2";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_vbar_a1";
+         action: STATE_SET "clicked" 0.0;
+         target: "sb_vbar_a1";
+         target: "arrow1_vbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_vbar_a1";
+         action: DRAG_VAL_STEP 0.0 -1.0;
+         target: "elm.dragable.vbar";
+      }
+      program {
+         signal: "mouse,up,1"; source: "sb_vbar_a1";
+         action: STATE_SET "default" 0.0;
+         target: "sb_vbar_a1";
+         target: "arrow1_vbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_vbar_a2";
+         action: STATE_SET "clicked" 0.0;
+         target: "sb_vbar_a2";
+         target: "arrow2_vbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_vbar_a2";
+         action: DRAG_VAL_STEP 0.0 1.0;
+         target: "elm.dragable.vbar";
+      }
+      program {
+         signal: "mouse,up,1"; source: "sb_vbar_a2";
+         action: STATE_SET "default" 0.0;
+         target: "sb_vbar_a2";
+         target: "arrow2_vbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_vbar_p1";
+         action: DRAG_VAL_PAGE 0.0 -1.0;
+         target: "elm.dragable.vbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_vbar_p2";
+         action: DRAG_VAL_PAGE  0.0 1.0;
+         target: "elm.dragable.vbar";
+      }
+
+// horiz bar /////////////////////////////////////////////////////////////
+      part { name: "sb_hbar_show"; type: RECT;
+         description { state: "default" 0.0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "sb_hbar"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 1 15;
+            align: 0.0 1.0;
+            rel1.relative: 0.0 1.0;
+            //rel1.offset: 0 -1;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "sb_vbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+            max: 99999 0;
+         }
+      }
+      part { name: "sb_hbar_base"; type: RECT;
+         clip_to: "sb_hbar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to: "sb_hbar_a1";
+            rel2.relative: 0.0 1.0;
+            rel2.to: "sb_hbar_a2";
+            fixed: 1 1;
+         }
+      }
+      part { name: "sb_hbar_p1"; type: RECT;
+         clip_to: "sb_hbar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to: "sb_hbar_a1";
+            rel2.relative: 0.0 1.0;
+            rel2.to: "elm.dragable.hbar";
+            fixed: 1 1;
+         }
+      }
+      part { name: "sb_hbar_p2"; type: RECT;
+         clip_to: "sb_hbar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to: "elm.dragable.hbar";
+            rel2.relative: 0.0 1.0;
+            rel2.to: "sb_hbar_a2";
+            fixed: 1 1;
+         }
+      }
+      part { name: "elm.dragable.hbar"; type: RECT;
+         clip_to: "sb_hbar";
+         scale: 1;
+         dragable.x: 1 1 0;
+         dragable.y: 0 0 0;
+         dragable.confine: "sb_hbar_base";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 13 15;
+            rel1.relative: 0.5  0.5;
+            rel1.to: "sb_hbar_base";
+            rel2.relative: 0.5  0.5;
+            rel2.to: "sb_hbar_base";
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
+      }
+      part { name: "sb_hbar_a1"; type: RECT;
+         clip_to: "sb_hbar";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 15 15;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+            rel1.to: "sb_hbar";
+            rel2.to: "sb_hbar";
+            rel2.relative: 0.0 1.0;
+            //rel2.offset: 0 -1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
+      }
+      part { name: "sb_hbar_a2"; type: RECT;
+         clip_to: "sb_hbar";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 15 15;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+            rel1.to: "sb_hbar";
+            //rel1.offset: -1 0;
+            rel1.relative: 1.0 0.0;
+            rel2.to: "sb_hbar";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
+      }
+      program {
+         signal: "elm,action,show,hbar"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "sb_hbar";
+         target: "sb_hbar_show";
+         target: "elm.dragable.hbar";
+         target: "sb_hbar_a1";
+         target: "sb_hbar_a2";
+      }
+      program {
+         signal: "elm,action,hide,hbar"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "sb_hbar";
+         target: "sb_hbar_show";
+         target: "elm.dragable.hbar";
+         target: "sb_hbar_a1";
+         target: "sb_hbar_a2";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_hbar_a1";
+         action: STATE_SET "clicked" 0.0;
+         target: "sb_hbar_a1";
+         target: "arrow1_hbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_hbar_a1";
+         action: DRAG_VAL_STEP -1.0 0.0;
+         target: "elm.dragable.hbar";
+      }
+      program {
+         signal: "mouse,up,1"; source: "sb_hbar_a1";
+         action: STATE_SET "default" 0.0;
+         target: "sb_hbar_a1";
+         target: "arrow1_hbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_hbar_a2";
+         action: STATE_SET "clicked" 0.0;
+         target: "sb_hbar_a2";
+         target: "arrow2_hbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_hbar_a2";
+         action: DRAG_VAL_STEP 1.0 0.0;
+         target: "elm.dragable.hbar";
+      }
+      program {
+         signal: "mouse,up,1"; source: "sb_hbar_a2";
+         action: STATE_SET "default" 0.0;
+         target: "sb_hbar_a2";
+         target: "arrow2_hbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_hbar_p1";
+         action: DRAG_VAL_PAGE -1.0 0.0;
+         target: "elm.dragable.hbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "sb_hbar_p2";
+         action: DRAG_VAL_PAGE  1.0 0.0;
+         target: "elm.dragable.hbar";
+      }
+
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.background";
+            rel2.to: "elm.swallow.background";
+//            color: 64 64 64 200;
+            color: 0 0 0 0;
+            color_class: "scrollframe_base";
+         }
+      }
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.background";
+            rel2.to: "elm.swallow.background";
+         }
+      }
+      part { name: "elm.swallow.background"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            //rel1.offset: 1 1;
+            rel2.relative: 0.0 0.0;
+            //rel2.offset: -2 -2;
+            rel2.to_x: "sb_vbar";
+            rel2.to_y: "sb_hbar";
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            //rel1.offset: 1 1;
+            rel2.relative: 0.0 0.0;
+            //rel2.offset: -2 -2;
+            rel2.to_x: "sb_vbar";
+            rel2.to_y: "sb_hbar";
+         }
+      }
+      part { name: "inset"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            //rel1.offset: -1 -1;
+            rel2.to: "bg";
+            //rel2.offset: 0 0;
+         }
+      }
+      part { name: "shadow"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+         }
+      }
+      part { name: "elm.swallow.overlay"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.content";
+            rel2.to: "elm.swallow.content";
+         }
+      }
+      part { name: "runner_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "sb_vbar_base";
+            rel2.to: "sb_vbar_base";
+            min: 3 4;
+            max: 3 99999;
+            fixed: 1 1;
+         }
+      }
+      part { name: "runner_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "sb_hbar_base";
+            rel2.to: "sb_hbar_base";
+            min: 4 3;
+            max: 99999 3;
+            fixed: 1 1;
+         }
+      }
+      part { name: "runner_vbar_clip"; type: RECT;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            min: 1 1;
+            max: 1 99999;
+            rel1.to: "runner_vbar";
+            //rel1.offset: 0 1;
+            rel2.to: "runner_vbar";
+            //rel2.offset: -1 -2;
+            fixed: 1 1;
+         }
+      }
+      part { name: "runner_hbar_clip"; type: RECT;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            min: 1 1;
+            max: 99999 1;
+            rel1.to: "runner_hbar";
+            //rel1.offset: 1 0;
+            rel2.to: "runner_hbar";
+            //rel2.offset: -2 -1;
+            fixed: 1 1;
+         }
+      }
+
+      part { name: "arrow1_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "sb_vbar_a1";
+            rel2.to: "sb_vbar_a1";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "arrow2_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "sb_vbar_a2";
+            rel2.to: "sb_vbar_a2";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "shadow_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            //rel1.offset: -3 -2;
+            rel1.to: "base_vbar";
+            //rel2.offset: 2 4;
+            rel2.to: "base_vbar";
+            fixed: 1 1;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            //rel1.offset: -2 -2;
+            //rel2.offset: 1 1;
+         }
+      }
+      part { name: "glow_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            //rel1.offset: -3 -3;
+            rel1.to: "base_vbar";
+            //rel2.offset: 2 2;
+            rel2.to: "base_vbar";
+            fixed: 1 1;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "runner_glow_vbar"; type: SPACER;
+         clip_to: "runner_vbar_clip";
+         description { state: "default" 0.0;
+            rel1.offset: 0 -30;
+            rel1.to_x: "runner_vbar_clip";
+            rel1.to_y: "base_vbar";
+            rel2.offset: -1 29;
+            rel2.to_x: "runner_vbar_clip";
+            rel2.to_y: "base_vbar";
+            fixed: 1 1;
+         }
+      }
+      part { name: "base_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            //rel1.offset: 2 0;
+            rel1.to: "elm.dragable.vbar";
+            //rel2.offset: -3 -1;
+            rel2.to: "elm.dragable.vbar";
+            min: 3 13;
+            fixed: 1 1;
+         }
+      }
+      part { name: "bevel_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "base_vbar";
+            rel2.to: "base_vbar";
+            min: 3 3;
+            fixed: 1 1;
+         }
+      }
+      part { name: "center_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "base_vbar";
+            rel2.to: "base_vbar";
+            FIXED_SIZE(3, 11)
+         }
+      }
+      part { name: "center_glow_vbar"; type: SPACER;
+         clip_to: "sb_vbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "center_vbar";
+            rel2.to: "center_vbar";
+            FIXED_SIZE(11, 17)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+
+      part { name: "arrow1_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "sb_hbar_a1";
+            rel2.to: "sb_hbar_a1";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "arrow2_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "sb_hbar_a2";
+            rel2.to: "sb_hbar_a2";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "shadow_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            //rel1.offset: -3 -2;
+            rel1.to: "base_hbar";
+            //rel2.offset: 2 4;
+            rel2.to: "base_hbar";
+            fixed: 1 1;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            //rel1.offset: -2 -2;
+            //rel2.offset: 1 1;
+         }
+      }
+      part { name: "glow_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            //rel1.offset: -3 -3;
+            rel1.to: "base_hbar";
+            //rel2.offset: 2 2;
+            rel2.to: "base_hbar";
+            fixed: 1 1;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "runner_glow_hbar"; type: SPACER;
+         clip_to: "runner_hbar_clip";
+         description { state: "default" 0.0;
+            rel1.offset: -30 0;
+            rel1.to_x: "base_hbar";
+            rel1.to_y: "runner_hbar_clip";
+            rel2.offset: 29 -1;
+            rel2.to_x: "base_hbar";
+            rel2.to_y: "runner_hbar_clip";
+            fixed: 1 1;
+         }
+      }
+      part { name: "base_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            //rel1.offset: 0 2;
+            rel1.to: "elm.dragable.hbar";
+            //rel2.offset: -1 -3;
+            rel2.to: "elm.dragable.hbar";
+            min: 13 3;
+         }
+      }
+      part { name: "bevel_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "base_hbar";
+            rel2.to: "base_hbar";
+            min: 3 3;
+            fixed: 1 1;
+         }
+      }
+      part { name: "center_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "base_hbar";
+            rel2.to: "base_hbar";
+            FIXED_SIZE(11, 3)
+            fixed: 1 1;
+         }
+      }
+      part { name: "center_glow_hbar"; type: SPACER;
+         clip_to: "sb_hbar_show";
+         description { state: "default" 0.0;
+            rel1.to: "center_hbar";
+            rel2.to: "center_hbar";
+            FIXED_SIZE(17, 11)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "dim_effect"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "effect" 0.0;
+            color: 50 50 50 255;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,down,1*"; source: "elm.dragable.vbar";
+         action: STATE_SET "clicked" 0.0;
+         target: "elm.dragable.vbar";
+         target: "shadow_vbar";
+         target: "glow_vbar";
+         target: "center_glow_vbar";
+      }
+      program {
+         signal: "mouse,up,1"; source: "elm.dragable.vbar";
+         action: STATE_SET "default" 0.0;
+         target: "elm.dragable.vbar";
+         target: "shadow_vbar";
+         target: "glow_vbar";
+         target: "center_glow_vbar";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "elm.dragable.hbar";
+         action: STATE_SET "clicked" 0.0;
+         target: "elm.dragable.hbar";
+         target: "shadow_hbar";
+         target: "glow_hbar";
+         target: "center_glow_hbar";
+      }
+      program {
+         signal: "mouse,up,1"; source: "elm.dragable.hbar";
+         action: STATE_SET "default" 0.0;
+         target: "elm.dragable.hbar";
+         target: "shadow_hbar";
+         target: "glow_hbar";
+         target: "center_glow_hbar";
+      }
+      program {
+         signal: "elm,action,looping,left"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,left,done";
+      }
+      program { name: "looping,left,done";
+         action: SIGNAL_EMIT "elm,looping,left,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,left,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+      program {
+         signal: "elm,action,looping,right"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,right,done";
+      }
+      program { name: "looping,right,done";
+         action: SIGNAL_EMIT "elm,looping,right,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,right,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+      program {
+         signal: "elm,action,looping,up"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,up,done";
+      }
+      program { name: "looping,up,done";
+         action: SIGNAL_EMIT "elm,looping,up,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,up,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+      program {
+         signal: "elm,action,looping,down"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,down,done";
+      }
+      program { name: "looping,down,done";
+         action: SIGNAL_EMIT "elm,looping,down,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,down,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+   }
+}
+
+group { name: "elm/photocam/base/evas3d";
+   inherit: "elm/scroller/base/evas3d";
+   parts {
+      part { name: "busy_clip"; type: RECT;
+         description { state: "default" 0.0;
+            visible: 0;
+            color: 255 255 255 0;
+         }
+         description { state: "active" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "knob"; type: RECT;
+         mouse_events: 0;
+         clip_to: "busy_clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 40 40;
+            max: 40 40;
+            align: 0.0 0.0;
+            rel1.offset: 3 3;
+            rel2.offset: 3 3;
+            fixed: 1 1;
+            visible: 0;
+         }
+      }
+      part { name: "knob_spinner"; type: RECT;
+         mouse_events: 0;
+         clip_to: "busy_clip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "knob";
+            rel2.to: "knob";
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "knob";
+            visible: 0;
+         }
+         description { state: "spin" 0.0;
+            inherit: "default" 0.0;
+            map.rotation.z: 360;
+         }
+      }
+   }
+   programs {
+      program { name: "spin";
+         signal: "elm,state,busy,start"; source: "elm";
+         action: ACTION_STOP;
+         target: "spin";
+         target: "spin0";
+         target: "spin1";
+         target: "spin2";
+         target: "spin3";
+         target: "spin4";
+         after: "spin0";
+      }
+      program { name: "spin0";
+         action: STATE_SET "default" 0.0;
+         target: "knob_spinner";
+         after: "spin1";
+      }
+      program { name: "spin1";
+         action: STATE_SET "spin" 0.0;
+         transition: LINEAR 1.0;
+         target: "knob_spinner";
+         after: "spin2";
+      }
+      program { name: "spin2";
+         action: STATE_SET "default" 0.0;
+         target: "knob_spinner";
+         after: "spin1";
+      }
+      
+      program {
+         signal: "elm,state,busy,start"; source: "elm";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.25;
+         target: "busy_clip";
+      }
+      
+      program {
+         signal: "elm,state,busy,stop"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "busy_clip";
+         after: "spin3";
+      }
+      program { name: "spin3";
+         action: ACTION_STOP;
+         target: "spin";
+         target: "spin2";
+         after: "spin4";
+      }
+      program { name: "spin4";
+         action: STATE_SET "default" 0.0;
+         target: "knob_spinner";
+      }
+   }
+}
+
+group { name: "elm/map/base/evas3d";
+   inherit: "elm/photocam/base/evas3d";
+}
+}

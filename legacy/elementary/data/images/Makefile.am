@@ -50,7 +50,9 @@ bubble_sh.png \
 mystrale.jpg \
 mystrale_2.jpg \
 twofish.jpg \
-pt.png
+pt.png \
+earth_normal.png \
+space.png
 
 files_glayerdir = $(datadir)/elementary/images/g_layer
 files_glayer_DATA = \

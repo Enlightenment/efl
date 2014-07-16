@@ -141,6 +141,8 @@ web_example_02.c \
 win_example.c \
 evas3d_scene_on_button_example.c \
 evas3d_object_on_button_example.c \
+evas3d_map_example.edc \
+evas3d_map_example.c \
 track_example_01.c
 
 .edc.edj:
@@ -162,7 +164,8 @@ files_DATA += \
 	prefs_example_03.edj \
 	theme_example.edj \
 	layout_example.edj\
-	codegen_example.edj
+	codegen_example.edj \
+   evas3d_map_example.edj
 
 clean-local:
 	rm -f *.edj *.epb *.cfg *.cfg.bkp
@@ -282,6 +285,7 @@ web_example_02 \
 win_example \
 evas3d_scene_on_button_example \
 evas3d_object_on_button_example \
+evas3d_map_example \
 track_example_01
 
 if ELEMENTARY_WINDOWS_BUILD
@@ -401,4 +405,4 @@ screenshots:
 
 endif
 
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc
