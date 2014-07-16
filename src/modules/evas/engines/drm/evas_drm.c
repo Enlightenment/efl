@@ -311,7 +311,6 @@ _evas_drm_outbuf_planes_setup(Outbuf *ob, drmModePlaneResPtr pres)
 Eina_Bool
 evas_drm_init(Evas_Engine_Info_Drm *info)
 {
-
    /* check for valid engine info */
    if (!info) return EINA_FALSE;
 
