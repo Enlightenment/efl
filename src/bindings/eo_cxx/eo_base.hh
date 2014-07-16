@@ -230,6 +230,27 @@ inline bool operator!=(base const& lhs, base const& rhs)
   return !(lhs == rhs);
 }
 
+namespace detail {
+
+template <typename T>
+struct extension_inheritance;
+  
+template<>
+struct extension_inheritance<base>
+{
+   template <typename T>
+   struct type
+   {
+      operator base() const
+      {
+         return base(eo_ref(static_cast<T const*>(this)->_eo_ptr()));
+      }
+
+   };
+};
+
+}
+
 /// @brief Downcast @p U to @p T.
 ///
 /// @param T An <em>EO C++ Class</em>.
