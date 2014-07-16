@@ -816,15 +816,26 @@ static void
 parse_event(Eo_Lexer *ls)
 {
    Eolian_Event *ev = calloc(1, sizeof(Eolian_Event));
+   Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.event = ev;
    /* code path not in use yet
    if (ls->t.kw == KW_private)
      {
-        eo_lexer_get_ident(ls, "_,");
+        eo_lexer_get(ls);
      }*/
    check(ls, TOK_VALUE);
-   ev->name = eina_stringshare_add(ls->t.value);
+   eina_strbuf_append(buf, ls->t.value);
    eo_lexer_get(ls);
+   while (ls->t.token == ',')
+     {
+        eo_lexer_get(ls);
+        check(ls, TOK_VALUE);
+        eina_strbuf_append_char(buf, ',');
+        eina_strbuf_append(buf, ls->t.value);
+        eo_lexer_get(ls);
+     }
+   ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
+   pop_strbuf(ls);
    if (ls->t.token == ':')
      {
         eo_lexer_get(ls);
@@ -832,11 +843,11 @@ parse_event(Eo_Lexer *ls)
         pop_type(ls);
      }
    check(ls, ';');
-   eo_lexer_get_ident(ls, "_,");
+   eo_lexer_get(ls);
    if (ls->t.token == TOK_COMMENT)
      {
         ev->comment = eina_stringshare_add(ls->t.value);
-        eo_lexer_get_ident(ls, "_,");
+        eo_lexer_get(ls);
      }
 }
 
@@ -900,7 +911,7 @@ parse_events(Eo_Lexer *ls)
    line = ls->line_number;
    col = ls->column;
    check(ls, '{');
-   eo_lexer_get_ident(ls, "_,");
+   eo_lexer_get(ls);
    while (ls->t.token != '}')
      {
         parse_event(ls);
