@@ -1,14 +1,4 @@
-#include "evas_common_private.h"
-#include "evas_private.h"
-#include <math.h>
-#include <assert.h>
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
-
-#ifdef EVAS_RENDER_DEBUG_TIMING
-#include <sys/time.h>
-#endif
+#include "evas_render2.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // this is the start of a rewrite of the evas rendering infra. first port of
@@ -25,11 +15,11 @@
 
 // data types
 //////////////////////////////////////////////////////////////////////////////
-typedef struct Update Update;
+typedef struct _Update Update;
 
 struct _Update
 {
-   Eina_Rectangle area;
+   Eina_Rectangle *area;
    void *surface;
 };
 
@@ -47,11 +37,10 @@ static void _evas_render2_wakeup_cb(void *target, Evas_Callback_Type type, void 
 static void _evas_render2_wakeup_send(void *data);
 static void _evas_render2_always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info);
 static void _evas_render2_updates_clean(Evas_Public_Data *e);
-static void _evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates);
-static void _evas_render2_stage_generate_object_updates(Evas_Public_Data *e);
+static void _evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates, Eina_Bool do_async);
 static void _evas_render2_stage_explicit_updates(Evas_Public_Data *e);
 static void _evas_render2_stage_main_render_prepare(Evas_Public_Data *e);
-static void _evas_render2_stage_render_do(Evas_Public_Data *e);
+static void _evas_render2_stage_render_do(Evas_Public_Data *e, Eina_Bool do_async);
 static void _evas_render2_stage_reset(Evas_Public_Data *e);
 static void _evas_render2_stage_object_cleanup(Evas_Public_Data *e);
 static void _evas_render2_th_render(void *data);
@@ -93,7 +82,7 @@ _evas_render2_all_sync(void)
 {
    // wait for ALL canvases to stop rendering
    Eo *eo_e;
-   
+
    if (!_rendering) return;
    eo_e = eina_list_data_get(eina_list_last(_rendering));
    _evas_render2_wait(eo_e);
@@ -120,7 +109,7 @@ static void
 _evas_render2_always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info)
 {
    int freeze_num = 0, i;
-   
+
    eo_do(eo_e, freeze_num = eo_event_freeze_count_get());
    for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_thaw());
    evas_event_callback_call(eo_e, type, event_info);
@@ -130,21 +119,19 @@ _evas_render2_always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info)
 static void
 _evas_render2_updates_clean(Evas_Public_Data *e)
 {
-   Update *u;
+   void *u;
 
    // clean out updates and tmp surfaces we were holding/tracking
-   EINA_LIST_FREE(e->render.updates, u)
-     {
-        //evas_cache_image_drop(u->surface);
-        free(u);
-     }
+   EINA_LIST_FREE(e->render.updates, u) eina_rectangle_free(u);
 }
 
 static void
-_evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates)
+_evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates, Eina_Bool do_async)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   
+   Eina_List *ret_updates = NULL;
+   Evas_Event_Render_Post post;
+
    // XXX:
    // XXX: actually update screen from mainloop here if needed - eg software
    // XXX: engine needs to xshmputimage here - engine func does this
@@ -153,7 +140,22 @@ _evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates)
    // if we did do rendering flush output to target and call callbacks
    if (e->render.updates)
      {
+        Update *ru;
+
         _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+        EINA_LIST_FREE(e->render.updates, ru)
+          {
+             /* punch rect out */
+             e->engine.func->output_redraws_next_update_push
+             (e->engine.data.output, ru->surface,
+              ru->area->x, ru->area->y, ru->area->w, ru->area->h,
+              EVAS_RENDER_MODE_ASYNC_END);
+             ret_updates = eina_list_append(ret_updates, ru->area);
+             evas_cache_image_drop(ru->surface);
+             free(ru);
+          }
+        if (do_async) post.updated_area = ret_updates;
+        else e->render.updates = ret_updates;
         e->engine.func->output_flush(e->engine.data.output,
                                      EVAS_RENDER_MODE_ASYNC_END);
         _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
@@ -164,60 +166,14 @@ _evas_render2_stage_last(Eo *eo_e, Eina_Bool make_updates)
    _rendering = eina_list_remove(_rendering, eo_e);
    e->rendering = EINA_FALSE;
    // call the post render callback with info if appropriate
-   if ((1) || (e->render.updates))
-     {
-        Evas_Event_Render_Post post;
-        
-        post.updated_area = e->render.updates;
-        _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
-     }
+   if (do_async)
+     _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
    else
      _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
    // if we don't want to keep updates after this
    if (!make_updates) _evas_render2_updates_clean(e);
    // clean out modules we don't need anymore
    evas_module_clean();
-}
-
-static void
-_evas_render2_object_basic_process(Evas_Public_Data *e,
-                                   Evas_Object_Protected_Data *obj)
-{
-   printf("_evas_render2_object_basic_process %p %p\n", e, obj);
-}
-
-static void
-_evas_render2_object_process(Evas_Public_Data *e,
-                             Evas_Object_Protected_Data *obj)
-{
-   // process object OR walk through child objects if smart and process those
-   Evas_Object_Protected_Data *obj2;
-
-   // XXX: this needs to become parallel, BUT we need new object methods to
-   // call to make that possible as the current ones work on a single global
-   // engine handle and single orderted redraw queue.
-   if (obj->smart.smart)
-     {
-        EINA_INLIST_FOREACH
-        (evas_object_smart_members_get_direct(obj->object), obj2)
-          _evas_render2_object_process(e, obj2);
-     }
-   else _evas_render2_object_basic_process(e, obj);
-}
-
-static void
-_evas_render2_stage_generate_object_updates(Evas_Public_Data *e)
-{
-   Evas_Layer *lay;
-
-   // XXX: should time this
-   EINA_INLIST_FOREACH(e->layers, lay)
-     {
-        Evas_Object_Protected_Data *obj;
-        
-        EINA_INLIST_FOREACH(lay->objects, obj)
-          _evas_render2_object_process(e, obj);
-     }
 }
 
 static void
@@ -262,12 +218,48 @@ _evas_render2_stage_main_render_prepare(Evas_Public_Data *e)
 }
 
 static void
-_evas_render2_stage_render_do(Evas_Public_Data *e)
+_evas_render2_stage_render_do(Evas_Public_Data *e, Eina_Bool do_async EINA_UNUSED)
 {
-   // XXX:
+   void *surface;
+   int ux, uy, uw, uh;
+   int cx, cy, cw, ch;
+//   Evas_Render_Mode render_mode = EVAS_RENDER_MODE_UNDEF;
+
+//   if (!do_async) render_mode = EVAS_RENDER_MODE_SYNC;
+//   else render_mode = EVAS_RENDER_MODE_ASYNC_INIT;// XXX:
    // XXX: actually render now (either in thread or in mainloop)
    // XXX:
    printf("_evas_render2_stage_render_do %p\n", e);
+   while ((surface =
+           e->engine.func->output_redraws_next_update_get
+           (e->engine.data.output,
+            &ux, &uy, &uw, &uh,
+            &cx, &cy, &cw, &ch)))
+     {
+        Update *ru = NULL;
+        void *ctx;
+
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        e->engine.func->context_color_set
+          (e->engine.data.output, ctx,
+              rand() & 0xff, rand() & 0xff, rand() & 0xff, 0xff);
+        printf("%i %i %i %i\n", cx, cy, cw, ch);
+        e->engine.func->rectangle_draw(e->engine.data.output,
+                                       ctx, surface,
+                                       cx, cy, cw, ch,
+                                       EINA_FALSE);
+        e->engine.func->context_free(e->engine.data.output, ctx);
+        ru = malloc(sizeof(*ru));
+        ru->surface = surface;
+        NEW_RECT(ru->area, ux, uy, uw, uh);
+        e->render.updates = eina_list_append(e->render.updates, ru);
+        evas_cache_image_ref(surface);
+//        e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+//                                                        surface,
+//                                                        ux, uy, uw, uh,
+//                                                        render_mode);
+     }
+   e->engine.func->output_redraws_clear(e->engine.data.output);
 }
 
 static void
@@ -295,8 +287,8 @@ static void
 _evas_render2_th_render(void *data)
 {
    Evas_Public_Data *e = data;
-   printf("th rend %p\n", e);
-   _evas_render2_stage_render_do(e);
+   printf("th rend %p ......................................\n", e);
+   _evas_render2_stage_render_do(e, EINA_TRUE);
 }
 
 // major functions (called from evas_render.c)
@@ -310,7 +302,7 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
                     Eina_Bool do_draw, Eina_Bool do_async)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   
+
    // if nothing changed at all since last render - skip this frame
    if (!e->changed) return EINA_FALSE;
    // we are still rendering while being asked to render - skip this frame
@@ -344,15 +336,23 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
              evas_thread_queue_flush(_evas_render2_wakeup_send, eo_e);
           }
         // or if not async, do rendering inline now
-        else _evas_render2_stage_render_do(e);
+        else _evas_render2_stage_render_do(e, EINA_FALSE);
      }
    // reset flags since rendering is processed now
    _evas_render2_stage_reset(e);
    // clean/delete/gc objects here
    _evas_render2_stage_object_cleanup(e);
    // if we are not going to be async then do last render stage here
-   if (!do_async) _evas_render2_stage_last(eo_e, make_updates);
+   if (!do_async) _evas_render2_stage_last(eo_e, make_updates, EINA_FALSE);
    if (!do_draw) _evas_render2_updates_clean(e);
+
+   e->changed = EINA_FALSE;
+   e->viewport.changed = EINA_FALSE;
+   e->output.changed = EINA_FALSE;
+   e->framespace.changed = EINA_FALSE;
+   e->invalidate = EINA_FALSE;
+
+   evas_module_clean();
    return EINA_TRUE;
 }
 
@@ -365,7 +365,7 @@ _evas_render2_end(Eo *eo_e)
    // this is actually called if rendering was async and is done. this is
    // run in the mainloop where rendering began and may handle any cleanup
    // or pixel upload if needed here
-   _evas_render2_stage_last(eo_e, EINA_TRUE);
+   _evas_render2_stage_last(eo_e, EINA_TRUE, EINA_TRUE);
    // release canvas object ref
    eo_unref(eo_e);
 }

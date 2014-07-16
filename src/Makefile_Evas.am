@@ -240,6 +240,8 @@ lib/evas/canvas/evas_font_dir.c \
 lib/evas/canvas/evas_rectangle.c \
 lib/evas/canvas/evas_render.c \
 lib/evas/canvas/evas_render2.c \
+lib/evas/canvas/evas_render2.h \
+lib/evas/canvas/evas_render2_updates.c \
 lib/evas/canvas/evas_smart.c \
 lib/evas/canvas/evas_stack.c \
 lib/evas/canvas/evas_async_events.c \
