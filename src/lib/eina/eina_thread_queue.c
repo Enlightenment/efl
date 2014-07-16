@@ -160,14 +160,15 @@ _eina_thread_queue_msg_block_pool_shutdown(void)
    eina_spinlock_take(&(_eina_thread_queue_block_pool_lock));
    while (_eina_thread_queue_block_pool)
      {
-        Eina_Thread_Queue_Msg_Block *blk;
+        Eina_Thread_Queue_Msg_Block *blk, *blknext;
 
         for (;;)
           {
              blk = _eina_thread_queue_block_pool;
              if (!blk) break;
+             blknext = blk->next;
              _eina_thread_queue_msg_block_real_free(blk);
-             _eina_thread_queue_block_pool = blk->next;
+             _eina_thread_queue_block_pool = blknext;
           }
      }
    eina_spinlock_free(&_eina_thread_queue_block_pool_lock);
