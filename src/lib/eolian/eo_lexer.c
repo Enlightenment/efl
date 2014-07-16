@@ -44,7 +44,7 @@ next_char(Eo_Lexer *ls)
 
 static const char * const tokens[] =
 {
-   "<comment>", "<eof>", "<value>",
+   "<comment>", "<value>",
 
    KEYWORDS
 };
@@ -104,9 +104,9 @@ init_hash(void)
    unsigned int i;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = 3; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = 2; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
-         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 2));
+         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 1));
      }
 }
 
@@ -170,7 +170,7 @@ read_long_comment(Eo_Lexer *ls, const char **value)
    for (;;)
      {
         if (!ls->current)
-          eo_lexer_lex_error(ls, "unfinished long comment", TOK_EOF);
+          eo_lexer_lex_error(ls, "unfinished long comment", -1);
         if (ls->current == '*')
           {
              next_char(ls);
@@ -225,7 +225,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid)
           next_char(ls);
         continue;
       case '\0':
-        return TOK_EOF;
+        return -1;
       default:
         {
            if (isspace(ls->current))
@@ -306,7 +306,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
         ERR("%s", strerror(errno));
         longjmp(ls->err_jmp, EINA_TRUE);
      }
-   ls->lookahead.token = TOK_EOF;
+   ls->lookahead.token = -1;
    ls->buff            = eina_strbuf_new();
    ls->handle          = f;
    ls->stream          = eina_file_map_all(f, EINA_FILE_RANDOM);
@@ -367,17 +367,17 @@ eo_lexer_new(const char *source)
 int
 eo_lexer_get_balanced(Eo_Lexer *ls, char beg, char end)
 {
-   assert(ls->lookahead.token == TOK_EOF);
+   assert(ls->lookahead.token < 0);
    return (ls->t.token == lex_balanced(ls, &ls->t.value, &ls->t.kw, beg, end));
 }
 
 int
 eo_lexer_get(Eo_Lexer *ls)
 {
-   if (ls->lookahead.token != TOK_EOF)
+   if (ls->lookahead.token >= 0)
      {
         ls->t               = ls->lookahead;
-        ls->lookahead.token = TOK_EOF;
+        ls->lookahead.token = -1;
         return ls->t.token;
      }
    ls->t.kw = 0;
@@ -387,7 +387,7 @@ eo_lexer_get(Eo_Lexer *ls)
 int
 eo_lexer_lookahead(Eo_Lexer *ls)
 {
-   assert (ls->lookahead.token == TOK_EOF);
+   assert (ls->lookahead.token < 0);
    ls->lookahead.kw = 0;
    return (ls->lookahead.token = lex(ls, &ls->lookahead.value,
           &ls->lookahead.kw));
@@ -415,6 +415,10 @@ eo_lexer_syntax_error(Eo_Lexer *ls, const char *msg)
 void
 eo_lexer_token_to_str(int token, char *buf)
 {
+   if (token < 0)
+     {
+        memcpy(buf, "<eof>", 6);
+     }
    if (token < START_CUSTOM)
      {
         assert((unsigned char)token == token);
@@ -433,7 +437,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 2];
+   return tokens[kw + 1];
 }
 
 Eina_Bool

@@ -1085,7 +1085,7 @@ found_class:
 static void
 parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 {
-   while (ls->t.token != TOK_EOF)
+   while (ls->t.token >= 0)
      parse_unit(ls, eot);
 }
 
