@@ -961,8 +961,8 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
       case KW_data:
         CASE_LOCK(ls, data, "data definition")
         eo_lexer_get(ls);
-        check(ls, ':');
-        eo_lexer_get_until(ls, ';');
+        check_next(ls, ':');
+        check(ls, TOK_VALUE);
         ls->tmp.kls->data_type = eina_stringshare_add(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ';');

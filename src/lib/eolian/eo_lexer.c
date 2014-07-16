@@ -297,30 +297,6 @@ lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
    return TOK_VALUE;
 }
 
-static int
-lex_until(Eo_Lexer *ls, const char **value, int *kwid, char end)
-{
-   int col;
-   const char *str;
-   eina_strbuf_reset(ls->buff);
-   while (isspace(ls->current))
-     next_char(ls);
-   col = ls->column;
-   while (ls->current)
-     {
-        if (ls->current == end)
-          break;
-        eina_strbuf_append_char(ls->buff, ls->current);
-        next_char(ls);
-     }
-   eina_strbuf_trim(ls->buff);
-   str    = eina_strbuf_string_get(ls->buff);
-   *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
-   *value = str;
-   ls->column = col + 1;
-   return TOK_VALUE;
-}
-
 static void
 eo_lexer_set_input(Eo_Lexer *ls, const char *source)
 {
@@ -393,13 +369,6 @@ eo_lexer_get_balanced(Eo_Lexer *ls, char beg, char end)
 {
    assert(ls->lookahead.token == TOK_EOF);
    return (ls->t.token == lex_balanced(ls, &ls->t.value, &ls->t.kw, beg, end));
-}
-
-int
-eo_lexer_get_until(Eo_Lexer *ls, char end)
-{
-   assert(ls->lookahead.token == TOK_EOF);
-   return (ls->t.token == lex_until(ls, &ls->t.value, &ls->t.kw, end));
 }
 
 int
