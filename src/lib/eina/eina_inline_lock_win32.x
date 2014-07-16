@@ -537,6 +537,7 @@ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
    *sem = CreateSemaphore(NULL, count_init, 32767, NULL);
    if (!*sem)
      return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
@@ -546,6 +547,7 @@ eina_semaphore_free(Eina_Semaphore *sem)
      return EINA_FALSE;
 
   CloseHandle(*sem);
+  return EINA_TRUE;
 }
 
 static inline Eina_Bool
