@@ -69,12 +69,14 @@ START_TEST (elm_fileselector_selected)
 
    selected = EINA_FALSE;
    ck_assert(elm_fileselector_selected_set(fileselector, path));
-   while (!selected) ecore_main_loop_iterate();
+   ck_assert(elm_test_helper_wait_flag(&selected));
+
    ck_assert_str_eq(elm_fileselector_selected_get(fileselector), path);
 
    selected = EINA_FALSE;
    ck_assert(elm_fileselector_selected_set(fileselector, exist));
-   while (!selected) ecore_main_loop_iterate();
+   ck_assert(elm_test_helper_wait_flag(&selected));
+
    ck_assert_str_eq(elm_fileselector_selected_get(fileselector), exist);
 
    eina_stringshare_del(exist);

@@ -2,6 +2,7 @@
 #define _ELM_SUITE_H
 
 #include <check.h>
+#include "elm_test_helper.h"
 
 void elm_test_init(TCase *tc);
 void elm_test_check(TCase *tc);
