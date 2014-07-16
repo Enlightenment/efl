@@ -43,11 +43,13 @@ operator<<(std::ostream& out, class_extensions const& x)
    extensions_container_type::const_iterator last = cls.extensions.end();
    for (it = first; it != last; ++it)
      {
-        if (it != first) out << ",";
+        if (it != first) out << ",\n";
         out << tab(2)
             << "efl::eo::detail::extension_inheritance<"
-            <<  *it << ">::type< ::"
-            <<  cls.name_space << "::" << cls.name << ">";
+            <<  *it << ">::template type< ::";
+        if(!cls.name_space.empty())
+          out <<  cls.name_space << "::";
+        out << cls.name << ">";
      }
    out << endl;
    return out;
