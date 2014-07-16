@@ -148,12 +148,8 @@ int         eo_lexer_get_balanced   (Eo_Lexer *ls, char beg, char end);
 int         eo_lexer_get_until      (Eo_Lexer *ls, char end);
 /* gets a regular token, singlechar or one of TOK_something */
 int         eo_lexer_get            (Eo_Lexer *ls);
-/* like above, but allows you to specify a list of custom characters that can
- * be used as part of identifiers */
-int         eo_lexer_get_ident      (Eo_Lexer *ls, const char *chars);
 /* lookahead token - see Eo_Lexer */
 int         eo_lexer_lookahead      (Eo_Lexer *ls);
-int         eo_lexer_lookahead_ident(Eo_Lexer *ls, const char *chars);
 /* "throws" an error, with a custom message and custom token */
 void        eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
 /* like above, but uses the lexstate->t.token, aka current token */

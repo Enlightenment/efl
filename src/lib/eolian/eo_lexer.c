@@ -197,7 +197,7 @@ read_long_comment(Eo_Lexer *ls, const char **value)
 }
 
 static int
-lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
+lex(Eo_Lexer *ls, const char **value, int *kwid)
 {
    eina_strbuf_reset(ls->buff);
    for (;;) switch (ls->current)
@@ -235,8 +235,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                 continue;
              }
            if (ls->current && (isalnum(ls->current)
-               || ls->current == '@'
-               || strchr(chars, ls->current)))
+               || ls->current == '@' || ls->current == '_'))
              {
                 int col = ls->column;
                 Eina_Bool at_kw = (ls->current == '@');
@@ -248,7 +247,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid, const char *chars)
                      next_char(ls);
                   }
                 while (ls->current && (isalnum(ls->current)
-                              || strchr(chars, ls->current)));
+                       || ls->current == '_'));
                 str    = eina_strbuf_string_get(ls->buff);
                 *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
                                                         str);
@@ -406,27 +405,6 @@ eo_lexer_get_until(Eo_Lexer *ls, char end)
 int
 eo_lexer_get(Eo_Lexer *ls)
 {
-   return eo_lexer_get_ident(ls, "_");
-}
-
-int
-eo_lexer_lookahead(Eo_Lexer *ls)
-{
-   return eo_lexer_lookahead_ident(ls, "_");
-}
-
-int
-eo_lexer_lookahead_ident(Eo_Lexer *ls, const char *chars)
-{
-   assert (ls->lookahead.token == TOK_EOF);
-   ls->lookahead.kw = 0;
-   return (ls->lookahead.token = lex(ls, &ls->lookahead.value,
-          &ls->lookahead.kw, chars));
-}
-
-int
-eo_lexer_get_ident(Eo_Lexer *ls, const char *chars)
-{
    if (ls->lookahead.token != TOK_EOF)
      {
         ls->t               = ls->lookahead;
@@ -434,7 +412,16 @@ eo_lexer_get_ident(Eo_Lexer *ls, const char *chars)
         return ls->t.token;
      }
    ls->t.kw = 0;
-   return (ls->t.token = lex(ls, &ls->t.value, &ls->t.kw, chars));
+   return (ls->t.token = lex(ls, &ls->t.value, &ls->t.kw));
+}
+
+int
+eo_lexer_lookahead(Eo_Lexer *ls)
+{
+   assert (ls->lookahead.token == TOK_EOF);
+   ls->lookahead.kw = 0;
+   return (ls->lookahead.token = lex(ls, &ls->lookahead.value,
+          &ls->lookahead.kw));
 }
 
 void
