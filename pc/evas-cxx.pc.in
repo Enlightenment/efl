@@ -13,4 +13,4 @@ Requires.private: @requirements_pc_evas@
 Version: @VERSION@
 Libs: -L${libdir} -levas
 Libs.private: @requirements_libs_evas@
-Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/evas-@VMAJ@ -I${includedir}/evas-cxx-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/evas-@VMAJ@ -I${includedir}/evas-cxx-@VMAJ@ -I${includedir}/evas-cxx-@VMAJ@/canvas -I${includedir}/evas-@VMAJ@/canvas
