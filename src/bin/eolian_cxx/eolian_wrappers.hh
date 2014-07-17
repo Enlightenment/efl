@@ -180,8 +180,7 @@ function_type(Eolian_Function const& func)
 inline efl::eolian::eolian_type_instance
 function_return_type(Eolian_Function const& func, Eolian_Function_Type func_type = method_t::value)
 {
-   return type_lookup
-     (::eolian_function_return_type_get(&func, func_type));
+   return type_lookup(::eolian_function_return_type_get(&func, func_type));
 }
 
 inline efl::eolian::eolian_type_instance
@@ -286,11 +285,17 @@ parameter_type(Eolian_Function_Parameter const& parameter,
    efl::eolian::eolian_type_instance type
      (type_lookup(::eolian_parameter_type_get(&parameter)));
    assert(!type.empty());
-   // XXX implement complex types.
    if (parameter_is_out(parameter))
-     type = { type_to_native(type) + "*" };
+     {
+        type = { efl::eolian::type_to_native(type) };
+        type.front().native += "*";
+     }
    if (parameter_is_const(parameter, func_type))
-     type.insert(0, "const ");
+     {
+        type[0].native.insert(0, "const ");
+        if (!type[0].binding.empty())
+          type[0].binding.insert(0, "const ");
+     }
    return type;
 }
 
@@ -311,7 +316,9 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
 {
    efl::eolian::eo_event event;
    const char *name, *comment;
-   if(::eolian_class_event_information_get(event_, &name, NULL, &comment))
+   const Eolian_Type *type;
+   static_cast<void>(type); // XXX
+   if(::eolian_class_event_information_get(event_, &name, &type, &comment))
      {
         std::string name_ = safe_str(name);
         std::transform(name_.begin(), name_.end(), name_.begin(),

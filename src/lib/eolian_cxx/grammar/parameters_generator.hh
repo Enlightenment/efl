@@ -6,6 +6,7 @@
 
 #include "tab.hh"
 #include "eo_types.hh"
+#include "type_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -21,12 +22,20 @@ parameters_declaration
 inline std::ostream&
 operator<<(std::ostream& out, parameters_declaration const& x)
 {
-   parameters_container_type::const_iterator it, first = x._params.cbegin();
-   parameters_container_type::const_iterator last = x._params.cend();
-   for (it = first; it != last; ++it)
+   auto first = x._params.cbegin(),
+     last = x._params.cend();
+   for (auto it = first; it != last; ++it)
      {
-        if (it != first) out << ", ";
-        out << (*it).type << " " << (*it).name;
+        if (it != first)
+          out << ", ";
+        if (type_is_callback((*it).type))
+          {
+             out << "F && " << (*it).name;
+             assert(it+1 != last);
+             ++it; // skip next.
+          }
+        else
+          out << reinterpret_type((*it).type) << " " << (*it).name;
      }
    return out;
 }
@@ -49,7 +58,7 @@ operator<<(std::ostream& out, parameters_types const& x)
    for (it = first; it != last; ++it)
      {
         if(it != first) out << ", ";
-        out << (*it).type;
+        out << reinterpret_type((*it).type);
      }
    return out;
 }
@@ -66,15 +75,51 @@ parameters_list
 inline std::ostream&
 operator<<(std::ostream& out, parameters_list const& x)
 {
-   parameters_container_type::const_iterator it, first = x._params.cbegin();
-   parameters_container_type::const_iterator last = x._params.cend();
-   for (it = first; it != last; ++it)
+   auto first = x._params.cbegin(), last = x._params.cend();
+   for (auto it = first; it != last; ++it)
      {
-        if (it != first) out << ", ";
-        out << (*it).name;
+        if (it != first)
+          out << ", ";
+        out << to_c((*it).type, (*it).name);
+        if (type_is_callback((*it).type))
+          {
+             out << ", _tmp_f";
+             ++it; // skip next
+          }
      }
    return out;
 }
+
+struct
+parameters_cxx_list
+{
+   parameters_container_type const& _params;
+   parameters_cxx_list(parameters_container_type const& params)
+     : _params(params)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameters_cxx_list const& x)
+{
+   auto first = x._params.cbegin(),
+     last = x._params.cend();
+   for (auto it = first; it != last; ++it)
+     {
+        if (it != first)
+          out << ", ";
+        if (type_is_callback((*it).type))
+          {
+             out << "std::move(" << (*it).name << ")";
+             assert(it+1 != last);
+             ++it; // skip next.
+          }
+        else
+          out << (*it).name;
+     }
+   return out;
+}
+
 
 } } } // namespace efl { namespace eolian { namespace grammar {
 

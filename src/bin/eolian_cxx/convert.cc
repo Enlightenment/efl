@@ -116,7 +116,7 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
                      {
                         efl::eolian::eolian_type getter_param_type =
                           type_to_native(param.type);
-                        getter_param_type/*.native*/ += "*"; // XXX implement complex types
+                        getter_param_type.native += "*";
                         return efl::eolian::eo_parameter
                           { { getter_param_type }, param.name };
                      });

@@ -8,6 +8,7 @@
 #include "tab.hh"
 #include "comment.hh"
 #include "parameters_generator.hh"
+#include "type_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -21,10 +22,9 @@ inline std::ostream&
 operator<<(std::ostream& out, function_call const& x)
 {
    bool is_void = function_is_void(x._func);
-   out << (!is_void ? "_tmp_ret = " : "")
-       << "::" << x._func.impl
-       << "(" << parameters_list(x._func.params) << ")";
-   return out;
+   return out << (!is_void ? "_tmp_ret = " : "")
+              << "::" << x._func.impl
+              << "(" << parameters_list(x._func.params) << ")";
 }
 
 struct function
@@ -37,25 +37,30 @@ inline std::ostream&
 operator<<(std::ostream& out, function const& x)
 {
    eo_function const& func = x._func;
-   bool is_void = function_is_void(func);
-   out << comment(x._func.comment, 1)
-       << tab(1)
-       << ( func.type == eo_function::class_ ? "static " : "" )
-       << func.ret << " " << func.name << "("
+
+   out << comment(x._func.comment, 1);
+   if (parameters_count_callbacks(x._func.params) == 1)
+     out << tab(1) << "template <typename F>" << endl;
+
+   if (function_is_static(func))
+     out << tab(1) << "static ";
+
+   out << tab(1)
+       << reinterpret_type(func.ret) << " " << func.name << "("
        << parameters_declaration(func.params)
        << ") const" << endl
        << tab(1) << "{" << endl;
-   if (!is_void)
-     {
-        out << tab(2) << func.ret << " _tmp_ret;" << endl;
-     }
-   out << tab(2) << "eo_do(_eo_ptr(), "
-       << function_call(x._func)
-       << ");" << endl;
-   if (!is_void)
-     {
-        out << tab(2) << "return _tmp_ret;" << endl;
-     }
+
+   if (!function_is_void(func))
+     out << tab(2)
+         << func.ret.front().native << " _tmp_ret;" << endl;
+
+   out << tab(2)
+       << "eo_do(_eo_ptr(), " << function_call(x._func) << ");" << endl;
+
+   if (!function_is_void(func))
+     out << tab(2) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
+
    out << tab(1) << "}" << endl;
    return out;
 }

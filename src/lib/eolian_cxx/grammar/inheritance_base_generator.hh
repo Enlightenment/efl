@@ -96,7 +96,7 @@ inline std::ostream&
 operator<<(std::ostream& out, inheritance_wrapper const& x)
 {
    out << "template <typename T>" << endl
-       << x._func.ret << " "
+       << reinterpret_type(x._func.ret) << " "
        << _ns_as_prefix(x._cls) << "_"
        << x._cls.name << "_" << x._func.name
        << "_wrapper(Eo* objid EINA_UNUSED, "
@@ -130,7 +130,7 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
      {
         eo_function const& func = *it;
         out << "template <typename T>" << endl
-            << func.ret << " "
+            << reinterpret_type(func.ret) << " "
             << _ns_as_prefix(x._cls) << "_"
             << x._cls.name << "_" << func.name
             << "_wrapper(Eo* objid EINA_UNUSED, "
@@ -186,13 +186,13 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    eo_function const& func = x._func;
    bool is_void = function_is_void(func);
 
-   out << tab(2) << "virtual " << func.ret << " "
+   out << tab(2) << "virtual " << reinterpret_type(func.ret) << " "
        << func.name << "("
        << parameters_declaration(func.params) << ")" << endl
        << tab(2) << "{" << endl;
    if (!is_void)
      {
-        out << tab(3) << func.ret << " _tmp_ret = {};"  << endl;
+        out << tab(3) << reinterpret_type(func.ret) << " _tmp_ret = {};"  << endl;
      }
    out << tab(3)
        << "eo_do_super(static_cast<T*>(this)->_eo_ptr()" << endl
@@ -301,7 +301,7 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
 {
    bool is_void = function_is_void(x._func);
    out << tab(2)
-       << x._func.ret << " "
+       << reinterpret_type(x._func.ret) << " "
        << x._func.name << "("
        << parameters_declaration(x._func.params)
        << ")" << endl
@@ -309,7 +309,7 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
 
    if (!is_void)
      {
-        out << tab(3) << x._func.ret << " _tmp_ret = {};" << endl;
+        out << tab(3) << reinterpret_type(x._func.ret) << " _tmp_ret = {};" << endl;
      }
 
    out << tab(3) << "eo_do(static_cast<T*>(this)->_eo_ptr(), "

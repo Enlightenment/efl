@@ -16,6 +16,39 @@ _is_valid(std::string const& value)
    return !value.empty() and isalpha(value[0]);
 }
 
+inline bool
+_is_valid(eolian_type_instance const& type)
+{
+   if (type.empty() || (*type.rbegin()).category == eolian_type::complex_)
+     return false;
+   for (auto rit = ++type.rbegin(), last = type.rend(); rit != last; ++rit)
+     {
+        if ((*rit).binding.empty() || (*rit).category != eolian_type::complex_)
+          return false;
+        else if (rit != type.rbegin() && (*rit).category != eolian_type::complex_)
+          return false;
+     }
+   return true;
+}
+
+inline bool
+_is_valid(parameters_container_type const& parameters)
+{
+   unsigned int n_callbacks = parameters_count_callbacks(parameters);
+   return n_callbacks == 0 || n_callbacks == 1;
+}
+
+inline bool
+_is_valid(events_container_type const& events)
+{
+   for (eo_event event : events)
+     {
+        if (event.name.empty() || event.eo_name.empty())
+          return false;
+     }
+   return true;
+}
+
 template <typename T>
 inline void
 _validate(T val, const eo_class& cls)
@@ -44,6 +77,7 @@ eo_class_validate(const eo_class& cls)
         it != last; ++it)
      {
         _validate((*it).name, cls);
+        _validate((*it).params, cls);
         // parameters
         for (auto it_p = (*it).params.begin(), last_p = (*it).params.end();
              it_p != last_p; ++it_p)
@@ -59,6 +93,7 @@ eo_class_validate(const eo_class& cls)
         _validate((*it).name, cls);
         _validate((*it).impl, cls);
         _validate((*it).ret, cls);
+        _validate((*it).params, cls);
         // parameters
         for (auto it_p = (*it).params.begin(), last_p = (*it).params.end();
              it_p != last_p; ++it_p)
@@ -67,6 +102,8 @@ eo_class_validate(const eo_class& cls)
              _validate((*it_p).type, cls);
           }
      }
+   // events
+   _validate(cls.events, cls);
 }
 
 } } // namespace efl { namespace eolian {

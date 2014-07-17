@@ -22,6 +22,7 @@ lib/eolian_cxx/grammar/eo_class_generator.hh \
 lib/eolian_cxx/grammar/eo_header_generator.hh \
 lib/eolian_cxx/grammar/inheritance_base_generator.hh \
 lib/eolian_cxx/grammar/parameters_generator.hh \
+lib/eolian_cxx/grammar/type_generator.hh \
 lib/eolian_cxx/grammar/tab.hh
 
 ### Binary
@@ -35,7 +36,8 @@ bin_eolian_cxx_eolian_cxx_SOURCES = \
     bin/eolian_cxx/convert.hh \
     bin/eolian_cxx/eolian_wrappers.hh \
     bin/eolian_cxx/safe_strings.hh \
-    bin/eolian_cxx/type_lookup.hh \
+	  bin/eolian_cxx/type_lookup.hh \
+	  bin/eolian_cxx/type_lookup_table.cc \
     bin/eolian_cxx/eolian_cxx.cc
 
 bin_eolian_cxx_eolian_cxx_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
@@ -81,12 +83,5 @@ tests_eolian_cxx_eolian_cxx_suite_LDADD = \
 tests_eolian_cxx_eolian_cxx_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
 endif
-
-EXTRA_DIST += \
-tests/eolian_cxx/data/base.eo \
-tests/eolian_cxx/data/class_simple.eo \
-tests/eolian_cxx/data/scope.eo \
-tests/eolian_cxx/data/ctor_dtor.eo \
-tests/eolian_cxx/data/complex_type.eo
 
 endif

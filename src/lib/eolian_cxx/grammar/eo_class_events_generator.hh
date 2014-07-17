@@ -4,88 +4,76 @@
 
 #include <iosfwd>
 
-#include <algorithm>  // std::transform()
-#include <ctype.h>    // ::toupper()
-
 #include "eo_types.hh"
 #include "tab.hh"
 #include "comment.hh"
-#include "parameters_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
 struct event_callback_add
 {
    eo_event const& _event;
-   std::string const& _ev_name;
-   event_callback_add(eo_event const& event, std::string const& ev_name)
-     : _event(event),
-       _ev_name(ev_name)
+   eo_class const& _cls;
+   event_callback_add(eo_event const& event, eo_class const& cls)
+     : _event(event), _cls(cls)
    {}
 };
 
 inline std::ostream&
 operator<<(std::ostream& out, event_callback_add const& x)
 {
-   // TODO implement
-   return out;
-}
-
-struct event_callback_del
-{
-   eo_event const& _event;
-   std::string const& _ev_name;
-   event_callback_del(eo_event const& event, std::string const& ev_name)
-     : _event(event),
-       _ev_name(ev_name)
-   {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, event_callback_del const& x)
-{
-   // TODO: implement
+   out << tab(1) << "template <typename F>" << endl
+       << tab(1) << "::efl::eo::signal_connection" << endl
+       << tab(1) << "event_" << x._event.name << "_callback_add(F && callback_," << endl
+       << tab(11) << "::efl::eo::callback_priority priority_ =" << endl
+       << tab(11) << "::efl::eo::callback_priorities::default_)" << endl
+       << tab(1) << "{" << endl
+       << tab(2) << "::std::unique_ptr<F> f ( new F(std::move(callback_)) );" << endl
+       << tab(2) << "eo_do(_eo_ptr()," << endl
+       << tab(4) << "eo_event_callback_priority_add" << endl
+       << tab(4) << "(" << x._event.eo_name << ", priority_," << endl
+       << tab(4) << "&efl::eo::_detail::event_callback<" << x._cls.name << ", F>, f.get()));" << endl
+       << tab(2) << "return ::efl::eo::make_signal_connection" << endl
+       << tab(3) << "(f, this->_eo_ptr(), &efl::eo::_detail::event_callback<" << x._cls.name << ", F>," << endl
+       << tab(3) << x._event.eo_name << " );" << endl
+       << tab(1) << "}" << endl;
    return out;
 }
 
 struct event_callback_call
 {
    eo_event const& _event;
-   std::string const& _ev_name;
-   event_callback_call(eo_event const& event, std::string const& ev_name)
-     : _event(event),
-       _ev_name(ev_name)
+   event_callback_call(eo_event const& event)
+     : _event(event)
    {}
 };
 
 inline std::ostream&
 operator<<(std::ostream& out, event_callback_call const& x)
 {
-   // TODO implement
+   out << tab(1) << "template <typename T>" << endl
+       << tab(1) << "void" << endl
+       << tab(1) << "event_" << x._event.name << "_callback_call(T* info)" << endl
+       << tab(1) << "{" << endl
+       << tab(2) << "eo_do(_eo_ptr(), eo_event_callback_call" << endl
+       << tab(4) << "(" << x._event.eo_name << ", info));" << endl
+       << tab(1) << "}" << endl;
    return out;
 }
 
 struct events
 {
-   events_container_type const& _events;
-   events(events_container_type const& events) : _events(events) {}
+   eo_class const& _cls;
+   events(eo_class const& cls) : _cls(cls) {}
 };
 
 inline std::ostream&
 operator<<(std::ostream& out, events const& x)
 {
-   std::string prefix = x._cls.name + "_EVENT_";
-   std::transform(prefix.begin(), prefix.end(), prefix.begin(), ::toupper());
-   events_container_type::const_iterator it,
-     first = x._events.begin(),
-     last = x._events.end();
-   for (it = first; it != last; ++it)
+   for (eo_event const& e : x._cls.events)
      {
-        std::string ev_name = (*it).name;
-        std::transform(ev_name.begin(), ev_name.end(), ev_name.begin(), ::toupper());
-        out << event_callback_add((*it), prefix+ev_name)
-            << event_callback_del((*it), prefix+ev_name)
-            << event_callback_call((*it), prefix+ev_name);
+        out << event_callback_add(e, x._cls) << endl
+            << event_callback_call(e);
      }
    return out;
 }

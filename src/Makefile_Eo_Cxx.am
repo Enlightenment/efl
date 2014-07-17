@@ -16,6 +16,7 @@ bindings/eo_cxx/eo_inherit.hh \
 bindings/eo_cxx/eo_ops.hh \
 bindings/eo_cxx/eo_private.hh \
 bindings/eo_cxx/eo_inherit_bindings.hh \
-bindings/eo_cxx/Eo.hh
+bindings/eo_cxx/Eo.hh \
+bindings/eo_cxx/eo_cxx_interop.hh
 
 endif

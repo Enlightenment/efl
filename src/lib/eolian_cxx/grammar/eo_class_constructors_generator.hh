@@ -114,14 +114,16 @@ operator<<(std::ostream& out, constructors const& x)
    for (it = first; it != last; ++it)
      {
         eo_constructor const& ctor = *it;
-        out << comment(ctor.comment, 1)
-            << tab(1)
+        out << comment(ctor.comment, 1);
+        if (parameters_count_callbacks(ctor.params))
+          out << tab(1) << "template <typename F>" << endl;
+        out << tab(1)
             << x._cls.name
             << '(' << parameters_declaration(ctor.params)
             << (ctor.params.size() > 0 ? ", " : "")
             << "efl::eo::parent_type _p = (efl::eo::parent = nullptr))" << endl
             << tab(2) << ": " << class_name(x._cls.name)
-            << "(_c" << (it - first) << "(" << parameters_list(ctor.params)
+            << "(_c" << (it - first) << "(" << parameters_cxx_list(ctor.params)
             << (ctor.params.size() > 0 ? ", " : "")
             << "_p))" << endl
             << tab(1) << "{}" << endl << endl;
@@ -180,14 +182,26 @@ operator<<(std::ostream& out, eo_class_constructors const& x)
      last = x._cls.constructors.end();
    for (it = first; it != last; ++it)
      {
+        if (parameters_count_callbacks((*it).params))
+          out << tab(1) << "template <typename F>" << endl;
         out << tab(1)
             << "static Eo* _c" << (it - first) << "("
             << parameters_declaration((*it).params)
             << ((*it).params.size() > 0 ? ", " : "")
             << "efl::eo::parent_type _p"
             << ')' << endl
-            << tab(1) << "{" << endl
-            << tab(2) << "return eo_add_custom("
+            << tab(1) << "{" << endl;
+
+        parameters_container_type::const_iterator callback_iter =
+          parameters_find_callback((*it).params);
+        if (callback_iter != (*it).params.cend())
+          {
+             out << tab(2)
+                 << "F* _tmp_f = new F(std::move("
+                 << (*callback_iter).name << "));"
+                 << endl;
+          }
+        out << tab(2) << "return eo_add_custom("
             << x._cls.eo_name << ", _p._eo_raw, " << (*it).name
             << "(" << parameters_list((*it).params) << "));" << endl
             << tab(1) << "}" << endl << endl;

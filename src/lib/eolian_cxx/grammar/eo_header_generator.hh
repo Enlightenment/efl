@@ -38,6 +38,42 @@ _onceguard_key(efl::eolian::eo_class const& cls)
 
 namespace efl { namespace eolian { namespace grammar {
 
+struct include_dependencies
+{
+   eo_class const& _cls;
+   include_dependencies(eo_class const& cls)
+     : _cls(cls)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, include_dependencies const& x)
+{
+   std::set<std::string> headers;
+   eo_class const& cls = x._cls;
+
+   for (auto it = cls.constructors.cbegin(), last = cls.constructors.cend();
+        it != last; ++it)
+     for (auto it_p = (*it).params.begin(), last_p = (*it).params.end();
+          it_p != last_p; ++it_p)
+       for (eolian_type const& subtype : (*it_p).type)
+         for (std::string header : subtype.includes)
+           headers.insert(header);
+
+   for (auto it = cls.functions.begin(), last  = cls.functions.end();
+        it != last; ++it)
+        for (auto it_p = (*it).params.begin(), last_p = (*it).params.end();
+             it_p != last_p; ++it_p)
+          for (eolian_type const& subtype : (*it_p).type)
+            for (std::string header : subtype.includes)
+              headers.insert(header);
+
+   for (std::string header : headers)
+     out << "#include <" << header << ">" << endl;
+
+   return out;
+}
+
 inline void
 onceguard_head(std::ostream& out, eo_class const& cls)
 {
@@ -91,6 +127,7 @@ include_headers(std::ostream& out,
                 eo_generator_options const& opts)
 {
    out << "#include <Eo.hh>" << endl << endl
+       << "#include <eo_cxx_interop.hh>" << endl << endl
        << "extern \"C\"" << endl
        << "{" << endl;
    for (auto c_header : opts.c_headers)
@@ -102,6 +139,7 @@ include_headers(std::ostream& out,
      {
        out << "#include \"" << cxx_header << "\"" << endl;
      }
+   out << include_dependencies(cls) << endl;
 }
 
 inline void

@@ -12,6 +12,8 @@
 #include <cstddef>
 
 #include <Eolian.h>
+#include <eolian_database.h>
+
 #include <Eina.hh>
 
 #include "eo_types.hh"
@@ -19,18 +21,46 @@
 
 namespace eolian_cxx {
 
-inline std::string
-type_lookup(const Eolian_Type *type)
+typedef std::vector<efl::eolian::eolian_type> lookup_table_type;
+extern const lookup_table_type type_lookup_table;
+
+inline efl::eolian::eolian_type
+type_from_eolian(Eolian_Type const& type)
 {
-   if (type == NULL)
-     return "void";
-   // XXX add complex types implementation.
-   const char *tps = eolian_type_c_type_get(type);
-   std::string ret = safe_str(tps);
-   ::eina_stringshare_del(tps);
-   return ret;
+   efl::eolian::eolian_type x;
+   x.native = normalize_spaces(safe_str(type.name));
+   x.is_own = type.is_own;
+   return x;
 }
 
+template <typename Iterator>
+inline const efl::eolian::eolian_type&
+type_find(Iterator first, Iterator last, efl::eolian::eolian_type const& type)
+{
+   auto res = std::find_if
+     (first, last,
+      [&type] (efl::eolian::eolian_type const& x)
+      {
+        return (x.native == type.native && x.is_own == type.is_own);
+      });
+   return (res != last) ? *res : type;
+}
+
+inline efl::eolian::eolian_type_instance
+type_lookup(const Eolian_Type* type,
+            lookup_table_type const& lut = type_lookup_table)
+{
+   if (type == NULL) return { efl::eolian::void_type };
+   size_t n = ::eina_list_count(type->subtypes) + 1;
+   assert(n > 0);
+   efl::eolian::eolian_type_instance v(n);
+   for (size_t i=0; i<n; i++)
+     {
+        v[i] = type_find(lut.begin(), lut.end(), type_from_eolian(*type));
+        assert (i == n-1 || type_is_complex(v[i]));
+     }
+   return v;
+}
 
 } // namespace eolian_cxx {
 

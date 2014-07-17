@@ -12,6 +12,7 @@
 #include <eina_optional.hh>
 
 #include "eo_ops.hh"
+#include "eo_event.hh"
 
 
 namespace efl { namespace eo {

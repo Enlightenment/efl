@@ -10,6 +10,7 @@
 #include "comment.hh"
 #include "eo_class_constructors_generator.hh"
 #include "eo_class_functions_generator.hh"
+#include "eo_class_events_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -41,6 +42,7 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << copy_constructor(cls)
        << destructor(cls)
        << functions(cls.functions)
+       << events(cls)
        << eo_class_getter(cls)
         << "private:" << endl
        << eo_class_constructors(cls)
