@@ -51,13 +51,36 @@ type_lookup(const Eolian_Type* type,
             lookup_table_type const& lut = type_lookup_table)
 {
    if (type == NULL) return { efl::eolian::void_type }; // XXX shouldn't
-   size_t n = ::eina_list_count(type->subtypes) + 1;
-   assert(n > 0);
-   efl::eolian::eolian_type_instance v(n);
-   for (size_t i=0; i<n; i++)
+
+   Eina_List const* lt = NULL;
+   Eina_Iterator *it = NULL;
+   unsigned int n_;
+   if ( (it = ::eolian_type_subtypes_list_get(type)) != NULL)
+     {
+        lt = static_cast<Eina_List const*>(::eina_iterator_container_get(it));
+        n_ = ::eina_list_count(lt) + 1;
+        ::eina_iterator_free(it);
+     }
+   else
+     {
+        n_ = 1;
+     }
+   // assert(n_ > 0);
+   efl::eolian::eolian_type_instance v(n_);
+   for (size_t i=0; i<n_; i++)
      {
         v[i] = type_find(lut.begin(), lut.end(), type_from_eolian(*type));
-        assert (i == n-1 || type_is_complex(v[i]));
+        // XXX temporary workaround to allow incomplete complex-types until
+        //     we don't have a full support.
+        if (type_is_complex(v[i]))
+          {
+             assert(i == 0);
+             efl::eolian::eolian_type tmp = v[i];
+             v.clear();
+             v.push_back(efl::eolian::type_to_native(tmp));
+             return v;
+          }
+        assert(i == n_-1 || type_is_complex(v[i]));
      }
    return v;
 }

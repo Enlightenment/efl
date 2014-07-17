@@ -21,7 +21,7 @@ type_lookup_table
   {"Eina_List *", eolian_type::complex_, true, "efl::eina::ptr_list", {"eina-cxx/eina_ptrlist.hh"}},
   //{"Eina_List *", eolian_type::complex_, false, "efl::eina::ptr_list", {"eina-cxx/eina_ptrlist.hh"}},
   {"Eo *", eolian_type::simple_, true, "efl::eo::base", {"eo_base.hh"}},
-  {"Evas_Object *", eolian_type::simple_, false, "evas_object", {"canvas/evas_object.eo.hh"}},
+  //{"Evas_Object *", eolian_type::simple_, false, "evas::object", {"canvas/evas_object.eo.hh"}},
   {"char *", eolian_type::simple_, true, "std::unique_ptr<char*>", {"memory"}},
   {"const Eina_Inlist *", eolian_type::complex_, false, "efl::eina::range_inlist", {"eina-cxx/eina_inlist.hh"}},
   {"const Eina_List *", eolian_type::complex_, false, "efl::eina::range_ptr_list", {"eina-cxx/eina_ptrlist.hh"}},
