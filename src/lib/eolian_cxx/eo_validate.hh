@@ -13,7 +13,7 @@ namespace efl { namespace eolian {
 inline bool
 _is_valid(std::string const& value)
 {
-   return !value.empty() and isalpha(value[0]);
+   return !value.empty() and (isalpha(value[0]) || value[0] == '_');
 }
 
 inline bool
