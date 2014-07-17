@@ -51,7 +51,7 @@ _is_valid(events_container_type const& events)
 
 template <typename T>
 inline void
-_validate(T val, const eo_class& cls)
+_validate(T const& val, eo_class const& cls)
 {
    if(!_is_valid(val))
      {

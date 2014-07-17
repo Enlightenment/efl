@@ -114,7 +114,7 @@ type_is_binding(eolian_type_instance const& type)
 inline eolian_type
 type_to_native(eolian_type const& type)
 {
-   eolian_type native = type;
+   eolian_type native(type);
    native.binding.clear();
    native.category = eolian_type::simple_;
    return native;
