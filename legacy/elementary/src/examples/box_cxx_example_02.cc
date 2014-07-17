@@ -28,45 +28,48 @@
 #include <elm_box.eo.hh>
 #include <elm_button.eo.hh>
 
+#include <deque>
+
 typedef struct
 {
-   Eina_List *transitions;
-   Evas_Object *box;
+   efl::eo::wref<elm_box> box;
+   std::deque<Evas_Object_Box_Layout> transitions;
    Evas_Object_Box_Layout last_layout;
 } Transitions_Data;
 
 static void
 _add_cb(void *data, Evas_Object *obj, void *ev)
 {
-   Evas_Object *btn;
    Eina_List *children;
    Transitions_Data *tdata = static_cast<Transitions_Data*>(data);
 
-   btn = elm_button_add(tdata->box);
-   elm_object_text_set(btn, "I do nothing");
-   children = (Eina_List *)elm_box_children_get(tdata->box);
-   if (children)
-     {
-        elm_box_pack_after(tdata->box, btn, (Evas_Object *)children->data);
-        eina_list_free(children);
-     }
-   else
-     elm_box_pack_end(tdata->box, btn);
-   evas_object_show(btn);
+   if(efl::eina::optional<elm_box> box = tdata->box.lock())
+   {
+     elm_button btn ( efl::eo::parent = *box );
+     btn.text_set("I do nothing");
+     efl::eina::list<efl::eo::base> childrens (box->children_get());
+     if (!children.empty())
+       {
+         box->pack_after(btn._eo_ptr(), childrens.front());
+       }
+     else
+       box->pack_end(btn._eo_ptr());
+     btn.visibility_set(true);
+   }
 }
 
 static void
 _clear_cb(void *data, Evas_Object *obj, void *ev)
 {
    Transitions_Data *tdata = static_cast<Transitions_Data*>(data);
-   elm_box_clear(tdata->box);
+   tdata->box.lock()->clear();
 }
 
 static void
 _unpack_cb(void *data, Evas_Object *obj, void *ev)
 {
    Transitions_Data *tdata = static_cast<Transitions_Data*>(data);
-   elm_box_unpack(tdata->box, obj);
+   tdata->box.lock()->unpack(obj);
    evas_object_move(obj, 0, 50);
    evas_object_color_set(obj, 128, 64, 0, 128);
 }
@@ -78,122 +81,107 @@ _test_box_transition_change(void *data)
    Elm_Box_Transition *layout_data;
    Evas_Object_Box_Layout next_layout;
 
-   if (!data) return;
-   next_layout = reinterpret_cast<Evas_Object_Box_Layout>(eina_list_data_get(tdata->transitions));
-   layout_data = elm_box_transition_new(2.0, tdata->last_layout,
-                                        NULL, NULL, next_layout, NULL, NULL,
-                                        _test_box_transition_change, tdata);
-   elm_box_layout_set(tdata->box, elm_box_layout_transition, layout_data,
-                      elm_box_transition_free);
-   tdata->last_layout = next_layout;
+   assert (!!data);
+   assert (!tdata->transitions.empty());
 
-   tdata->transitions = eina_list_demote_list(tdata->transitions,
-                                              tdata->transitions);
+   if(efl::eina::optional<elm_box> box = tdata->box.lock())
+     {
+        next_layout = tdata->transitions.front();
+        layout_data = elm_box_transition_new(2.0, tdata->transitions.back(),
+                                             nullptr, nullptr, next_layout, nullptr, nullptr,
+                                             _test_box_transition_change, tdata);
+        box->layout_set(elm_box_layout_transition, layout_data,
+                        elm_box_transition_free);
+        tdata->last_layout = next_layout;
+       
+        tdata->transitions.push_back(tdata->transitions[0]);
+        tdata->transitions.pop_front();
+     }
 }
 
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   static Transitions_Data tdata = {
-        .transitions = NULL,
-        .box = NULL,
-        .last_layout = NULL
-   };
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   {
-   ::elm_win win ( ::eo_ref( elm_win_util_standard_add("box-transition", "Box Transition") ));
-   elm_win_autodel_set(win._eo_ptr(), EINA_TRUE);
-
-   elm_box bigbox ( ::eo_ref( elm_box_add(win._eo_ptr()) ));
-   bigbox.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(bigbox._eo_ptr());
-   bigbox.visibility_set(true);
+   Transitions_Data tdata
+     {
+        elm_box{nullptr}
+        , {}
+        , nullptr
+     };
 
    {
-     elm_box bx ( ::eo_ref( elm_box_add(win._eo_ptr()) ));
-     bx.horizontal_set(EINA_TRUE);
-     bigbox.pack_end(bx._eo_ptr());
-     bx.visibility_set(true);
+     ::elm_win win (elm_win_util_standard_add("box-transition", "Box Transition"));
+     win.autodel_set(true);
 
-     {
-       elm_button bt ( ::eo_ref(elm_button_add(win._eo_ptr()) ));
-       bt.text_set("Add");
-       bx.pack_end(bt._eo_ptr());
-       bt.visibility_set(true);
-       evas_object_smart_callback_add(bt._eo_ptr(), "clicked", _add_cb, &tdata);
-     }
+     elm_box bigbox ( efl::eo::parent = win );
+     bigbox.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+     win.resize_object_add(bigbox._eo_ptr());
+     bigbox.visibility_set(true);
 
-     {
-       elm_button bt ( ::eo_ref(elm_button_add(win._eo_ptr())));
-       bt.text_set("Clear");
-       bx.pack_end(bt._eo_ptr());
-       bt.visibility_set(true);
-       evas_object_smart_callback_add(bt._eo_ptr(), "clicked", _clear_cb, &tdata);
-     }
-   }
+     elm_box buttons ( efl::eo::parent = win );
+     buttons.horizontal_set(EINA_TRUE);
+     bigbox.pack_end(buttons._eo_ptr());
+     buttons.visibility_set(true);
 
-   {
-     elm_box bx ( ::eo_ref( elm_box_add(win._eo_ptr())));
-     bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-     bx.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-     bigbox.pack_end(bx._eo_ptr());
-     bx.visibility_set(true);
+     elm_button add ( efl::eo::parent = win );
+     add.text_set("Add");
+     buttons.pack_end(add._eo_ptr());
+     add.visibility_set(true);
+     evas_object_smart_callback_add(add._eo_ptr(), "clicked", _add_cb, &tdata);
 
-     {
-       elm_button bt ( ::eo_ref( elm_button_add(win._eo_ptr()) ));
-       bt.text_set("Button 1");
-       evas_object_smart_callback_add(bt._eo_ptr(), "clicked", _unpack_cb, &tdata);
-       bt.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-       bt.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-       bx.pack_end(bt._eo_ptr());
-       bt.visibility_set(true);
-     }
+     elm_button clear ( efl::eo::parent = win );
+     clear.text_set("Clear");
+     buttons.pack_end(clear._eo_ptr());
+     clear.visibility_set(true);
+     evas_object_smart_callback_add(clear._eo_ptr(), "clicked", _clear_cb, &tdata);
 
-     {
-       elm_button bt ( ::eo_ref( elm_button_add(win._eo_ptr()) ));
-       bt.text_set("Button 2");
-       bt.size_hint_weight_set(EVAS_HINT_EXPAND, 0.0);
-       bt.size_hint_align_set(1.0, 0.5);
-       evas_object_smart_callback_add(bt._eo_ptr(), "clicked", _unpack_cb, &tdata);
-       bx.pack_end(bt._eo_ptr());
-       bt.visibility_set(true);
-     }
+     elm_box dynamic ( efl::eo::parent = win );
+     dynamic.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+     dynamic.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
+     bigbox.pack_end(dynamic._eo_ptr());
+     dynamic.visibility_set(true);
 
-     {
-       elm_button bt ( ::eo_ref(elm_button_add(win._eo_ptr())));
-       bt.text_set("Button 3");
-       evas_object_smart_callback_add(bt._eo_ptr(), "clicked", _unpack_cb, &tdata);
-       bx.pack_end(bt._eo_ptr());
-       bt.visibility_set(true);
-     }
+     elm_button bt1 ( efl::eo::parent = win );
+     bt1.text_set("Button 1");
+     evas_object_smart_callback_add(bt1._eo_ptr(), "clicked", _unpack_cb, &tdata);
+     bt1.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+     bt1.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
+     dynamic.pack_end(bt1._eo_ptr());
+     bt1.visibility_set(true);
 
-     tdata.box = bx._eo_ptr();
+     elm_button bt2 ( efl::eo::parent = win );
+     bt2.text_set("Button 2");
+     bt2.size_hint_weight_set(EVAS_HINT_EXPAND, 0.0);
+     bt2.size_hint_align_set(1.0, 0.5);
+     evas_object_smart_callback_add(bt2._eo_ptr(), "clicked", _unpack_cb, &tdata);
+     dynamic.pack_end(bt2._eo_ptr());
+     bt2.visibility_set(true);
+
+     elm_button bt3 ( efl::eo::parent = win );
+     bt3.text_set("Button 3");
+     evas_object_smart_callback_add(bt3._eo_ptr(), "clicked", _unpack_cb, &tdata);
+     dynamic.pack_end(bt3._eo_ptr());
+     bt3.visibility_set(true);
+
+     tdata.box = dynamic;
      tdata.last_layout = evas_object_box_layout_horizontal;
-     tdata.transitions =
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_vertical));
-     tdata.transitions =
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_horizontal));
-     tdata.transitions =
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_stack));
-     tdata.transitions =
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_homogeneous_vertical));
-     tdata.transitions =
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_homogeneous_horizontal));
-     tdata.transitions =
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_flow_vertical));
-     tdata.transitions = 
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_flow_horizontal));
-     tdata.transitions = 
-       (eina_list_append(tdata.transitions, (void*)evas_object_box_layout_stack));
+     tdata.transitions.push_back(evas_object_box_layout_vertical);
+     tdata.transitions.push_back(evas_object_box_layout_horizontal);
+     tdata.transitions.push_back(evas_object_box_layout_stack);
+     tdata.transitions.push_back(evas_object_box_layout_homogeneous_vertical);
+     tdata.transitions.push_back(evas_object_box_layout_homogeneous_horizontal);
+     tdata.transitions.push_back(evas_object_box_layout_flow_vertical);
+     tdata.transitions.push_back(evas_object_box_layout_flow_horizontal);
+     tdata.transitions.push_back(evas_object_box_layout_stack);
 
-     bx.layout_set(evas_object_box_layout_horizontal, NULL, NULL);
+     dynamic.layout_set(evas_object_box_layout_horizontal, nullptr, nullptr);
      _test_box_transition_change(&tdata);
-   }
    
-   win.size_set(300, 320);
-   win.visibility_set(true);
+     win.size_set(300, 320);
+     win.visibility_set(true);
+     win._release();
    }
    
    elm_run();
