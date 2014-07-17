@@ -248,7 +248,7 @@ parameters_find_callback(parameters_container_type const& parameters)
      {
         if (type_is_callback((*it).type))
           return it;
-}
+     }
    return parameters.cend();
 }
 

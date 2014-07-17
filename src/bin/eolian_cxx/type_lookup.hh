@@ -28,8 +28,8 @@ inline efl::eolian::eolian_type
 type_from_eolian(Eolian_Type const& type)
 {
    efl::eolian::eolian_type x;
-   x.native = normalize_spaces(safe_str(type.name));
-   x.is_own = type.is_own;
+   x.native = normalize_spaces(safe_str(::eolian_type_c_type_get(&type)));
+   x.is_own = ::eolian_type_is_own(&type);
    return x;
 }
 
@@ -50,7 +50,7 @@ inline efl::eolian::eolian_type_instance
 type_lookup(const Eolian_Type* type,
             lookup_table_type const& lut = type_lookup_table)
 {
-   if (type == NULL) return { efl::eolian::void_type };
+   if (type == NULL) return { efl::eolian::void_type }; // XXX shouldn't
    size_t n = ::eina_list_count(type->subtypes) + 1;
    assert(n > 0);
    efl::eolian::eolian_type_instance v(n);
