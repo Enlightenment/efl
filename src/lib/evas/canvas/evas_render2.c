@@ -310,10 +310,10 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
    // check viewport size is same as output - not allowed to differ
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      ERR("viewport size != output size!");
-   // call canvas callbacks saying we are in the pre-render state
-   _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
    // we have to calculate smare objects before render so do that here
    evas_call_smarts_calculate(eo_e);
+   // call canvas callbacks saying we are in the pre-render state
+   _evas_render2_always_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
    // begin out actual rendering bits
    _evas_render2_stage_generate_object_updates(e);
    _evas_render2_stage_explicit_updates(e);
