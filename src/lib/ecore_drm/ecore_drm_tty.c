@@ -17,11 +17,13 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Device *dev;
    Ecore_Event_Signal_User *ev;
+   siginfo_t sigdata;
 
    dev = data;
    ev = event;
 
-   DBG("Caught user signal: %d", ev->number);
+   sigdata = ev->data;
+   if (sigdata.si_pid != getpid()) return ECORE_CALLBACK_RENEW;
 
    if (ev->number == 1)
      {
@@ -83,7 +85,7 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
           ERR("Could not acquire VT: %m");
      }
 
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool 
