@@ -160,7 +160,7 @@ static void next_line_ws(Eo_Lexer *ls)
 }
 
 static void
-read_long_comment(Eo_Lexer *ls, const char **value)
+read_long_comment(Eo_Lexer *ls, Eo_Token *tok)
 {
    eina_strbuf_reset(ls->buff);
 
@@ -193,11 +193,156 @@ read_long_comment(Eo_Lexer *ls, const char **value)
           }
      }
    eina_strbuf_trim(ls->buff);
-   if (value) *value = eina_strbuf_string_get(ls->buff);
+   if (tok) tok->value = eina_strbuf_string_get(ls->buff);
 }
 
 static int
-lex(Eo_Lexer *ls, const char **value, int *kwid)
+get_type(Eo_Lexer *ls, Eina_Bool is_float)
+{
+   if (is_float)
+     {
+        if (ls->current == 'f' || ls->current == 'F')
+          {
+             next_char(ls);
+             return NUM_FLOAT;
+          }
+        else if (ls->current == 'l' || ls->current == 'L')
+          {
+             next_char(ls);
+             return NUM_LDOUBLE;
+          }
+        return NUM_DOUBLE;
+     }
+   if (ls->current == 'u' || ls->current == 'U')
+     {
+        next_char(ls);
+        if (ls->current == 'l' || ls->current == 'L')
+          {
+             next_char(ls);
+             if (ls->current == 'l' || ls->current == 'L')
+               {
+                  next_char(ls);
+                  return NUM_ULLONG;
+               }
+             return NUM_ULONG;
+          }
+        return NUM_UINT;
+     }
+   if (ls->current == 'l' || ls->current == 'L')
+     {
+        next_char(ls);
+        if (ls->current == 'l' || ls->current == 'L')
+          {
+             next_char(ls);
+             return NUM_LLONG;
+          }
+        return NUM_LONG;
+     }
+   return NUM_INT;
+}
+
+static void
+write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
+{
+   const char *str = eina_strbuf_string_get(ls->buff);
+   int type = get_type(ls, is_float);
+   char *end;
+   if (is_float)
+     {
+        if (type == NUM_FLOAT)
+          tok->value_f = strtof(str, &end);
+        else if (type == NUM_DOUBLE)
+          tok->value_d = strtod(str, &end);
+        else if (type == NUM_LDOUBLE)
+          tok->value_ld = strtold(str, &end);
+     }
+   else
+     {
+        /* signed is always in the same memory location */
+        if (type == NUM_INT || type == NUM_UINT)
+          tok->value_u = strtoul(str, &end, 0);
+        else if (type == NUM_LONG || type == NUM_ULONG)
+          tok->value_ul = strtoul(str, &end, 0);
+        else if (type == NUM_LLONG || type == NUM_ULLONG)
+          tok->value_ull = strtoull(str, &end, 0);
+     }
+   if (end)
+     eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
+   tok->kw = type;
+}
+
+static void
+write_exp(Eo_Lexer *ls)
+{
+   eina_strbuf_append_char(ls->buff, ls->current);
+   next_char(ls);
+   if (ls->current == '+' || ls->current == '-')
+     {
+        eina_strbuf_append_char(ls->buff, ls->current);
+        next_char(ls);
+        while (isdigit(ls->current))
+          {
+             eina_strbuf_append_char(ls->buff, ls->current);
+             next_char(ls);
+          }
+     }
+}
+
+static void
+read_hex_number(Eo_Lexer *ls, Eo_Token *tok)
+{
+   Eina_Bool is_float = EINA_FALSE;
+   while (isxdigit(ls->current) || ls->current == '.')
+     {
+        eina_strbuf_append_char(ls->buff, ls->current);
+        if (ls->current == '.') is_float = EINA_TRUE;
+        next_char(ls);
+     }
+   if (is_float && (ls->current != 'p' && ls->current != 'P'))
+     {
+        eo_lexer_lex_error(ls, "hex float literals require an exponent",
+                           TOK_NUMBER);
+     }
+   if (ls->current == 'p' || ls->current == 'P')
+     {
+        is_float = EINA_TRUE;
+         write_exp(ls);
+     }
+   write_val(ls, tok, is_float);
+}
+
+static void
+read_number(Eo_Lexer *ls, Eo_Token *tok)
+{
+   Eina_Bool is_float = eina_strbuf_string_get(ls->buff)[0] == '.';
+   if (ls->current == '0' && !is_float)
+     {
+        eina_strbuf_append_char(ls->buff, ls->current);
+        next_char(ls);
+        if (ls->current == 'x' || ls->current == 'X')
+          {
+             eina_strbuf_append_char(ls->buff, ls->current);
+             next_char(ls);
+             read_hex_number(ls, tok);
+             return;
+          }
+     }
+   while (isdigit(ls->current || ls->current == '.'))
+     {
+        eina_strbuf_append_char(ls->buff, ls->current);
+        if (ls->current == '.') is_float = EINA_TRUE;
+        next_char(ls);
+     }
+   if (ls->current == 'e' || ls->current == 'e')
+     {
+        is_float = EINA_TRUE;
+         write_exp(ls);
+     }
+   write_val(ls, tok, is_float);
+}
+
+static int
+lex(Eo_Lexer *ls, Eo_Token *tok)
 {
    eina_strbuf_reset(ls->buff);
    for (;;) switch (ls->current)
@@ -214,7 +359,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid)
              next_char(ls);
              if ((doc = (ls->current == '@')))
                next_char(ls);
-             read_long_comment(ls, doc ? value : NULL);
+             read_long_comment(ls, doc ? tok : NULL);
              if (doc)
                return TOK_COMMENT;
              else
@@ -226,6 +371,13 @@ lex(Eo_Lexer *ls, const char **value, int *kwid)
         continue;
       case '\0':
         return -1;
+      case '.':
+        next_char(ls);
+        if (!isdigit(ls->current)) return '.';
+        eina_strbuf_reset(ls->buff);
+        eina_strbuf_append_char(ls->buff, '.');
+        read_number(ls, tok);
+        return TOK_NUMBER;
       default:
         {
            if (isspace(ls->current))
@@ -233,6 +385,12 @@ lex(Eo_Lexer *ls, const char **value, int *kwid)
                 assert(!is_newline(ls->current));
                 next_char(ls);
                 continue;
+             }
+           else if (isdigit(ls->current))
+             {
+                eina_strbuf_reset(ls->buff);
+                read_number(ls, tok);
+                return TOK_NUMBER;
              }
            if (ls->current && (isalnum(ls->current)
                || ls->current == '@' || ls->current == '_'))
@@ -248,13 +406,13 @@ lex(Eo_Lexer *ls, const char **value, int *kwid)
                   }
                 while (ls->current && (isalnum(ls->current)
                        || ls->current == '_'));
-                str    = eina_strbuf_string_get(ls->buff);
-                *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map,
+                str     = eina_strbuf_string_get(ls->buff);
+                tok->kw = (int)(uintptr_t)eina_hash_find(keyword_map,
                                                         str);
                 ls->column = col + 1;
-                if (at_kw && *kwid == 0)
+                if (at_kw && tok->kw == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
-                *value = str;
+                tok->value = str;
                 return TOK_VALUE;
              }
            else
@@ -268,7 +426,7 @@ lex(Eo_Lexer *ls, const char **value, int *kwid)
 }
 
 static int
-lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
+lex_balanced(Eo_Lexer *ls, Eo_Token *tok, char beg, char end)
 {
    int depth = 0, col;
    const char *str;
@@ -290,9 +448,9 @@ lex_balanced(Eo_Lexer *ls, const char **value, int *kwid, char beg, char end)
         next_char(ls);
      }
    eina_strbuf_trim(ls->buff);
-   str    = eina_strbuf_string_get(ls->buff);
-   *kwid  = (int)(uintptr_t)eina_hash_find(keyword_map, str);
-   *value = str;
+   str     = eina_strbuf_string_get(ls->buff);
+   tok->kw = (int)(uintptr_t)eina_hash_find(keyword_map, str);
+   tok->value = str;
    ls->column = col + 1;
    return TOK_VALUE;
 }
@@ -368,7 +526,7 @@ int
 eo_lexer_get_balanced(Eo_Lexer *ls, char beg, char end)
 {
    assert(ls->lookahead.token < 0);
-   return (ls->t.token == lex_balanced(ls, &ls->t.value, &ls->t.kw, beg, end));
+   return (ls->t.token == lex_balanced(ls, &ls->t, beg, end));
 }
 
 int
@@ -381,7 +539,7 @@ eo_lexer_get(Eo_Lexer *ls)
         return ls->t.token;
      }
    ls->t.kw = 0;
-   return (ls->t.token = lex(ls, &ls->t.value, &ls->t.kw));
+   return (ls->t.token = lex(ls, &ls->t));
 }
 
 int
@@ -389,8 +547,7 @@ eo_lexer_lookahead(Eo_Lexer *ls)
 {
    assert (ls->lookahead.token < 0);
    ls->lookahead.kw = 0;
-   return (ls->lookahead.token = lex(ls, &ls->lookahead.value,
-          &ls->lookahead.kw));
+   return (ls->lookahead.token = lex(ls, &ls->lookahead));
 }
 
 void
