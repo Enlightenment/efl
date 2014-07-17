@@ -389,6 +389,7 @@ struct _range_template : private std::conditional
   using _base_type::crend;
   using _base_type::empty;
   using _base_type::size;
+  using _base_type::swap;
 protected:
   using _base_type::_handle;
 };
