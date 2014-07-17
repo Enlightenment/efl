@@ -74,6 +74,12 @@ typedef struct _Eolian_Implement Eolian_Implement;
  */
 typedef struct _Eolian_Event Eolian_Event;
 
+/* Expression information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Expression Eolian_Expression;
+
 #define EOLIAN_LEGACY "legacy"
 #define EOLIAN_LEGACY_GET "legacy_get"
 #define EOLIAN_LEGACY_SET "legacy_set"
@@ -125,6 +131,59 @@ typedef enum
    EOLIAN_TYPE_ALIAS,
    EOLIAN_TYPE_CLASS
 } Eolian_Type_Type;
+
+typedef enum
+{
+   EOLIAN_EXPR_UNKNOWN,
+   EOLIAN_EXPR_INT,
+   EOLIAN_EXPR_UINT,
+   EOLIAN_EXPR_LONG,
+   EOLIAN_EXPR_ULONG,
+   EOLIAN_EXPR_LLONG,
+   EOLIAN_EXPR_ULLONG,
+   EOLIAN_EXPR_FLOAT,
+   EOLIAN_EXPR_DOUBLE,
+   EOLIAN_EXPR_LDOUBLE,
+   EOLIAN_EXPR_STRING,
+   EOLIAN_EXPR_BOOL,
+   EOLIAN_EXPR_NAME,
+   EOLIAN_EXPR_UNARY,
+   EOLIAN_EXPR_BINARY
+} Eolian_Expression_Type;
+
+typedef enum
+{
+   BOP_ADD, /* + */
+   BOP_SUB, /* - */
+   BOP_MUL, /* * */
+   BOP_DIV, /* / */
+   BOP_MOD, /* % */
+
+   BOP_EQ, /* == */
+   BOP_NQ, /* != */
+   BOP_GT, /* >  */
+   BOP_LT, /* <  */
+   BOP_GE, /* >= */
+   BOP_LE, /* <= */
+
+   BOP_AND, /* && */
+   BOP_OR,  /* || */
+
+   BOP_BAND, /* &  */
+   BOP_BOR,  /* |  */
+   BOP_BXOR, /* ^  */
+   BOP_LSH,  /* << */
+   BOP_RSH   /* >> */
+} Eolian_Binary_Operator;
+
+typedef enum
+{
+   UOP_UNM, /* - */
+   UOP_UNP, /* + */
+
+   UOP_NOT,  /* ! */
+   UOP_BNOT, /* ~ */
+} Eolian_Unary_Operator;
 
 /*
  * @brief Parse a given .eo file and fill the database.

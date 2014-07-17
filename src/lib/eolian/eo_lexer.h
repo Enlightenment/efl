@@ -13,7 +13,10 @@
 
 enum Tokens
 {
-   TOK_COMMENT = START_CUSTOM, TOK_STRING, TOK_NUMBER, TOK_VALUE
+   TOK_EQ = START_CUSTOM, TOK_NQ, TOK_GT, TOK_LT, TOK_GE, TOK_LE,
+   TOK_AND, TOK_OR, TOK_LSH, TOK_RSH,
+
+   TOK_COMMENT, TOK_STRING, TOK_NUMBER, TOK_VALUE
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
@@ -79,19 +82,7 @@ enum Numbers
 typedef struct _Eo_Token
 {
    int token, kw;
-   union
-   {
-      const    char     *value;
-      signed   int       value_i;
-      unsigned int       value_u;
-      signed   long      value_l;
-      unsigned long      value_ul;
-      signed   long long value_ll;
-      unsigned long long value_ull;
-      float              value_f;
-      double             value_d;
-      long double        value_ld;
-   };
+   Eolian_Value value;
 } Eo_Token;
 
 enum Nodes

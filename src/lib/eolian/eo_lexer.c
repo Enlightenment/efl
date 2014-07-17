@@ -44,6 +44,8 @@ next_char(Eo_Lexer *ls)
 
 static const char * const tokens[] =
 {
+   "==", "!=", ">", "<", ">=", "<=", "&&", "||", "<<", ">>",
+
    "<comment>", "<string>", "<number>", "<value>",
 
    KEYWORDS
@@ -101,12 +103,12 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
 static void
 init_hash(void)
 {
-   unsigned int i;
+   unsigned int i, u;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = 4; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = u = 14; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
-         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 3));
+         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - u + 1));
      }
 }
 
@@ -193,7 +195,7 @@ read_long_comment(Eo_Lexer *ls, Eo_Token *tok)
           }
      }
    eina_strbuf_trim(ls->buff);
-   if (tok) tok->value = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+   if (tok) tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
 }
 
 static void
@@ -302,8 +304,8 @@ skip:
      }
    eina_strbuf_append_char(ls->buff, ls->current);
    next_char(ls);
-   tok->value = eina_stringshare_add_length(eina_strbuf_string_get(ls->buff) + 1,
-                              (unsigned int)eina_strbuf_length_get(ls->buff) - 2);
+   tok->value.s = eina_stringshare_add_length(eina_strbuf_string_get(ls->buff) + 1,
+                                (unsigned int)eina_strbuf_length_get(ls->buff) - 2);
 }
 
 static int
@@ -360,21 +362,21 @@ write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
    if (is_float)
      {
         if (type == NUM_FLOAT)
-          tok->value_f = strtof(str, &end);
+          tok->value.f = strtof(str, &end);
         else if (type == NUM_DOUBLE)
-          tok->value_d = strtod(str, &end);
+          tok->value.d = strtod(str, &end);
         else if (type == NUM_LDOUBLE)
-          tok->value_ld = strtold(str, &end);
+          tok->value.ld = strtold(str, &end);
      }
    else
      {
         /* signed is always in the same memory location */
         if (type == NUM_INT || type == NUM_UINT)
-          tok->value_u = strtoul(str, &end, 0);
+          tok->value.u = strtoul(str, &end, 0);
         else if (type == NUM_LONG || type == NUM_ULONG)
-          tok->value_ul = strtoul(str, &end, 0);
+          tok->value.ul = strtoul(str, &end, 0);
         else if (type == NUM_LLONG || type == NUM_ULLONG)
-          tok->value_ull = strtoull(str, &end, 0);
+          tok->value.ull = strtoull(str, &end, 0);
      }
    if (end)
      eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
@@ -455,7 +457,7 @@ static int
 lex(Eo_Lexer *ls, Eo_Token *tok)
 {
    eina_strbuf_reset(ls->buff);
-   tok->value = NULL;
+   tok->value.s = NULL;
    for (;;) switch (ls->current)
      {
       case '\n':
@@ -526,7 +528,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 ls->column = col + 1;
                 if (at_kw && tok->kw == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
-                tok->value = eina_stringshare_add(str);
+                tok->value.s = eina_stringshare_add(str);
                 return TOK_VALUE;
              }
            else
@@ -564,7 +566,7 @@ lex_balanced(Eo_Lexer *ls, Eo_Token *tok, char beg, char end)
    eina_strbuf_trim(ls->buff);
    str     = eina_strbuf_string_get(ls->buff);
    tok->kw = (int)(uintptr_t)eina_hash_find(keyword_map, str);
-   tok->value = eina_stringshare_add(str);
+   tok->value.s = eina_stringshare_add(str);
    ls->column = col + 1;
    return TOK_VALUE;
 }
@@ -645,8 +647,8 @@ eo_lexer_get(Eo_Lexer *ls)
 {
    if (ls->t.token >= START_CUSTOM && ls->t.token != TOK_NUMBER)
      {
-        eina_stringshare_del(ls->t.value);
-        ls->t.value = NULL;
+        eina_stringshare_del(ls->t.value.s);
+        ls->t.value.s = NULL;
      }
    if (ls->lookahead.token >= 0)
      {
@@ -714,7 +716,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 3];
+   return tokens[kw + 13];
 }
 
 Eina_Bool

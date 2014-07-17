@@ -156,6 +156,41 @@ typedef struct _Eolian_Struct_Field
    Eina_Stringshare *comment;
 } Eolian_Struct_Field;
 
+typedef union
+{
+   Eina_Bool          b;
+   const    char     *s;
+   signed   int       i;
+   unsigned int       u;
+   signed   long      l;
+   unsigned long      ul;
+   signed   long long ll;
+   unsigned long long ull;
+   float              f;
+   double             d;
+   long double        ld;
+} Eolian_Value;
+
+struct _Eolian_Expression
+{
+   Eolian_Expression_Type type;
+   union
+   {
+      struct
+      {
+         Eolian_Binary_Operator binop;
+         Eolian_Expression *lhs;
+         Eolian_Expression *rhs;
+      };
+      struct
+      {
+         Eolian_Unary_Operator unop;
+         Eolian_Expression *expr;
+      };
+      Eolian_Value value;
+   };
+};
+
 int database_init();
 int database_shutdown();
 

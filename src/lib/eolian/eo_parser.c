@@ -170,7 +170,7 @@ parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
    eina_strbuf_reset(buf);
    for (;;)
      {
-        eina_strbuf_append(buf, ls->t.value);
+        eina_strbuf_append(buf, ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token != '.') break;
         eo_lexer_get(ls);
@@ -221,6 +221,203 @@ _fill_type_name(Eolian_Type *tp, const char *type_name)
    while (dot);
    tp->name = eina_stringshare_add(name);
    free(full_name);
+}
+
+static Eolian_Expression *
+push_expr(Eo_Lexer *ls)
+{
+   Eolian_Expression *def = calloc(1, sizeof(Eolian_Expression));
+   ls->tmp.expr_defs = eina_list_prepend(ls->tmp.expr_defs, def);
+   return def;
+}
+
+static void
+pop_expr(Eo_Lexer *ls)
+{
+   ls->tmp.expr_defs = eina_list_remove_list(ls->tmp.expr_defs, ls->tmp.expr_defs);
+}
+
+static Eolian_Binary_Operator
+get_binop_id(int tok)
+{
+   switch (tok)
+     {
+      case '+': return BOP_ADD;
+      case '-': return BOP_SUB;
+      case '*': return BOP_MUL;
+      case '/': return BOP_DIV;
+      case '%': return BOP_MOD;
+
+      case TOK_EQ: return BOP_EQ;
+      case TOK_NQ: return BOP_NQ;
+      case TOK_GT: return BOP_GT;
+      case TOK_LT: return BOP_LT;
+      case TOK_GE: return BOP_GE;
+      case TOK_LE: return BOP_LE;
+
+      case TOK_AND: return BOP_AND;
+      case TOK_OR : return BOP_OR;
+
+      case '&': return BOP_BAND;
+      case '|': return BOP_BOR;
+      case '^': return BOP_BXOR;
+
+      case TOK_LSH: return BOP_LSH;
+      case TOK_RSH: return BOP_RSH;
+
+      default: return -1;
+     }
+}
+
+static Eolian_Unary_Operator
+get_unop_id(int tok)
+{
+   switch (tok)
+     {
+      case '-': return UOP_UNM;
+      case '+': return UOP_UNP;
+      case '!': return UOP_NOT;
+      case '~': return UOP_BNOT;
+
+      default: return -1;
+     }
+}
+
+static const int binprec[] = {
+   8, /* + */
+   8, /* - */
+   9, /* * */
+   9, /* / */
+   9, /* % */
+
+   3, /* == */
+   3, /* != */
+   3, /* >  */
+   3, /* <  */
+   3, /* >= */
+   3, /* <= */
+
+   2, /* && */
+   1, /* || */
+
+   6, /* &  */
+   4, /* |  */
+   5, /* ^  */
+   7, /* << */
+   7  /* >> */
+};
+
+#define UNARY_PRECEDENCE 10
+
+static int
+get_binop_prec(Eolian_Binary_Operator id)
+{
+   if (id < 0) return -1;
+   return binprec[id];
+}
+
+static Eolian_Expression *parse_expr_bin(Eo_Lexer *ls, int min_prec);
+static Eolian_Expression *parse_expr(Eo_Lexer *ls);
+
+static Eolian_Expression *
+parse_expr_simple(Eo_Lexer *ls)
+{
+   Eolian_Expression *expr;
+   Eolian_Unary_Operator unop = get_unop_id(ls->t.token);
+   if (unop >= 0)
+     {
+        Eolian_Expression *exp = parse_expr_bin(ls, UNARY_PRECEDENCE);
+        pop_expr(ls);
+        expr = push_expr(ls);
+        expr->binop = unop;
+        expr->type = EOLIAN_EXPR_UNARY;
+        expr->expr = exp;
+        return expr;
+     }
+   switch (ls->t.token)
+     {
+      case TOK_NUMBER:
+        {
+           expr = push_expr(ls);
+           expr->type = ls->t.kw + 1; /* map Numbers from lexer to expr type */
+           expr->value = ls->t.value;
+           eo_lexer_get(ls);
+           break;
+        }
+      case TOK_STRING:
+        {
+           expr = push_expr(ls);
+           expr->type = EOLIAN_EXPR_STRING;
+           expr->value.s = eina_stringshare_ref(ls->t.value.s);
+           eo_lexer_get(ls);
+           break;
+        }
+      case TOK_VALUE:
+        {
+           switch (ls->t.kw)
+             {
+              case KW_true:
+              case KW_false:
+                {
+                   expr = push_expr(ls);
+                   expr->type = EOLIAN_EXPR_BOOL;
+                   expr->value.b = (ls->t.kw == KW_true);
+                    eo_lexer_get(ls);
+                   break;
+               }
+              default:
+                {
+                   expr = push_expr(ls);
+                   expr->type = EOLIAN_EXPR_NAME;
+                   expr->value.s = eina_stringshare_ref(ls->t.value.s);
+                   eo_lexer_get(ls);
+                   break;
+                }
+             }
+        }
+       case '(':
+         {
+            int line = ls->line_number, col = ls->column;
+            eo_lexer_get(ls);
+            expr = parse_expr(ls);
+            check_match(ls, ')', '(', line, col);
+         }
+       default:
+         eo_lexer_syntax_error(ls, "unexpected symbol");
+         break;
+     }
+
+   return expr;
+}
+
+static Eolian_Expression *
+parse_expr_bin(Eo_Lexer *ls, int min_prec)
+{
+   Eolian_Expression *lhs = parse_expr_simple(ls);
+   for (;;)
+     {
+        Eolian_Expression *rhs, *bin;
+        Eolian_Binary_Operator op = get_binop_id(ls->t.token);
+        int prec = get_binop_prec(op);
+        if ((op < 0) || (prec < 0) || (prec < min_prec))
+          break;
+        rhs = parse_expr_bin(ls, prec + 1);
+        pop_expr(ls);
+        pop_expr(ls);
+        bin = push_expr(ls);
+        bin->binop = op;
+        bin->type = EOLIAN_EXPR_BINARY;
+        bin->lhs = lhs;
+        bin->rhs = rhs;
+        lhs = bin;
+     }
+   return lhs;
+}
+
+static Eolian_Expression *
+parse_expr(Eo_Lexer *ls)
+{
+   return parse_expr_bin(ls, 1);
 }
 
 static Eolian_Type *parse_type_void(Eo_Lexer *ls);
@@ -310,7 +507,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        def->comment = eina_stringshare_ref(ls->t.value);
+        def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    while (ls->t.token != '}')
@@ -320,9 +517,9 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         Eolian_Type *tp;
         int fline = ls->line_number, fcol = ls->column;
         check(ls, TOK_VALUE);
-        if (eina_hash_find(def->fields, ls->t.value))
+        if (eina_hash_find(def->fields, ls->t.value.s))
           eo_lexer_syntax_error(ls, "double field definition");
-        fname = eina_stringshare_ref(ls->t.value);
+        fname = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ':');
         tp = parse_type(ls);
@@ -336,7 +533,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
           {
-             fdef->comment = eina_stringshare_ref(ls->t.value);
+             fdef->comment = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
           }
      }
@@ -570,7 +767,7 @@ parse_typedef(Eo_Lexer *ls)
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
-        def->comment = eina_stringshare_ref(ls->t.value);
+        def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    return def;
@@ -591,7 +788,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
      {
         int line = ls->line_number, col = ls->column;
         eo_lexer_get_balanced(ls, '(', ')');
-        ret->default_ret_val = eina_stringshare_ref(ls->t.value);
+        ret->default_ret_val = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_match(ls, ')', '(', line, col);
      }
@@ -603,7 +800,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
-        ret->comment = eina_stringshare_ref(ls->t.value);
+        ret->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
 }
@@ -641,7 +838,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
      par->type = parse_type(ls);
    pop_type(ls);
    check(ls, TOK_VALUE);
-   par->name = eina_stringshare_ref(ls->t.value);
+   par->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_nonull)
      {
@@ -651,7 +848,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
-        par->comment = eina_stringshare_ref(ls->t.value);
+        par->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
 }
@@ -661,7 +858,7 @@ parse_legacy(Eo_Lexer *ls)
 {
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
-   ls->tmp.legacy_def = eina_stringshare_ref(ls->t.value);
+   ls->tmp.legacy_def = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, ';');
 }
@@ -673,7 +870,7 @@ parse_attrs(Eo_Lexer *ls)
    Eina_Bool has_const = EINA_FALSE;
    acc = calloc(1, sizeof(Eo_Accessor_Param));
    ls->tmp.accessor_param = acc;
-   acc->name = eina_stringshare_ref(ls->t.value);
+   acc->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, ':');
    check(ls, TOK_VALUE);
@@ -710,7 +907,7 @@ parse_accessor(Eo_Lexer *ls)
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        acc->comment = eina_stringshare_ref(ls->t.value);
+        acc->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -775,7 +972,7 @@ parse_property(Eo_Lexer *ls)
    prop->base.column = ls->column;
    ls->tmp.prop = prop;
    check(ls, TOK_VALUE);
-   prop->name = eina_stringshare_ref(ls->t.value);
+   prop->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    for (;;) switch (ls->t.kw)
      {
@@ -848,7 +1045,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
      {
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "expected method name");
-        meth->name = eina_stringshare_ref(ls->t.value);
+        meth->name = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         for (;;) switch (ls->t.kw)
           {
@@ -864,7 +1061,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    else
      {
         check(ls, TOK_VALUE);
-        meth->name = eina_stringshare_ref(ls->t.value);
+        meth->name = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         for (;;) switch (ls->t.kw)
           {
@@ -897,7 +1094,7 @@ body:
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        meth->comment = eina_stringshare_ref(ls->t.value);
+        meth->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -966,7 +1163,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
           eo_lexer_syntax_error(ls, "name expected");
-        eina_strbuf_append(buf, ls->t.value);
+        eina_strbuf_append(buf, ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token == '.')
           {
@@ -989,7 +1186,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
      }
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
      eo_lexer_syntax_error(ls, "class name expected");
-   eina_strbuf_append(buf, ls->t.value);
+   eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, '.');
    eina_strbuf_append(buf, ".");
@@ -1010,7 +1207,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
              break;
           }
         check(ls, TOK_VALUE);
-        eina_strbuf_append(buf, ls->t.value);
+        eina_strbuf_append(buf, ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token != '.') break;
         eina_strbuf_append(buf, ".");
@@ -1036,14 +1233,14 @@ parse_event(Eo_Lexer *ls)
         eo_lexer_get(ls);
      }*/
    check(ls, TOK_VALUE);
-   eina_strbuf_append(buf, ls->t.value);
+   eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
    while (ls->t.token == ',')
      {
         eo_lexer_get(ls);
         check(ls, TOK_VALUE);
         eina_strbuf_append_char(buf, ',');
-        eina_strbuf_append(buf, ls->t.value);
+        eina_strbuf_append(buf, ls->t.value.s);
         eo_lexer_get(ls);
      }
    ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
@@ -1058,7 +1255,7 @@ parse_event(Eo_Lexer *ls)
    eo_lexer_get(ls);
    if (ls->t.token == TOK_COMMENT)
      {
-        ev->comment = eina_stringshare_ref(ls->t.value);
+        ev->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
 }
@@ -1147,7 +1344,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
              has_events        = EINA_FALSE;
    if (ls->t.token == TOK_COMMENT)
      {
-        ls->tmp.kls->comment = eina_stringshare_ref(ls->t.value);
+        ls->tmp.kls->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    if (type == EOLIAN_CLASS_INTERFACE)
@@ -1161,7 +1358,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ':');
         check(ls, TOK_VALUE);
-        ls->tmp.kls->legacy_prefix = eina_stringshare_ref(ls->t.value);
+        ls->tmp.kls->legacy_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
@@ -1170,7 +1367,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ':');
         check(ls, TOK_VALUE);
-        ls->tmp.kls->eo_prefix = eina_stringshare_ref(ls->t.value);
+        ls->tmp.kls->eo_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
@@ -1180,7 +1377,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ':');
         check(ls, TOK_VALUE);
-        ls->tmp.kls->data_type = eina_stringshare_ref(ls->t.value);
+        ls->tmp.kls->data_type = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
