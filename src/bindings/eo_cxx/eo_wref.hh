@@ -18,8 +18,16 @@ namespace efl { namespace eo {
 /// @brief Weak references to an <em>EO Object</em>.
 ///
 template<typename T>
-struct wref {
-
+struct wref
+{
+   /// @brief Default constructor.
+   ///
+   /// Create a empty weak reference.
+   ///
+   wref() : _eo_wref(nullptr)
+   {
+   }
+  
    /// @brief Class constructor.
    ///
    /// @param obj The <em>EO Object</em> to be referenced.
@@ -46,8 +54,9 @@ struct wref {
    ///
    ~wref()
    {
-      if(eina::optional<T> p = lock())
-        _del();
+      if(_eo_wref)
+        if(eina::optional<T> p = lock())
+          _del();
    }
 
    /// @brief Try to acquire a strong reference to the underlying
