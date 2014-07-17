@@ -240,7 +240,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        def->comment = eina_stringshare_add(ls->t.value);
+        def->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
    while (ls->t.token != '}')
@@ -251,7 +251,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value))
           eo_lexer_syntax_error(ls, "double field definition");
-        fname = eina_stringshare_add(ls->t.value);
+        fname = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ':');
         tp = parse_type_struct_nonvoid(ls, EINA_TRUE, EINA_FALSE);
@@ -263,7 +263,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
           {
-             fdef->comment = eina_stringshare_add(ls->t.value);
+             fdef->comment = eina_stringshare_ref(ls->t.value);
              eo_lexer_get(ls);
           }
      }
@@ -329,7 +329,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
              check(ls, TOK_VALUE);
              if (eo_lexer_get_c_type(ls->t.kw))
                eo_lexer_syntax_error(ls, "invalid struct name");
-             sname = eina_stringshare_add(ls->t.value);
+             sname = eina_stringshare_ref(ls->t.value);
              eo_lexer_get(ls);
              if (ls->t.token == '{')
                return parse_struct(ls, sname, is_extern);
@@ -339,7 +339,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
              check(ls, TOK_VALUE);
              if (eo_lexer_get_c_type(ls->t.kw))
                eo_lexer_syntax_error(ls, "invalid struct name");
-             sname = eina_stringshare_add(ls->t.value);
+             sname = eina_stringshare_ref(ls->t.value);
              eo_lexer_get(ls);
           }
         def = push_type(ls);
@@ -359,7 +359,8 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
         def->type = EOLIAN_TYPE_REGULAR;
         check(ls, TOK_VALUE);
         ctype = eo_lexer_get_c_type(ls->t.kw);
-        def->name = eina_stringshare_add(ctype ? ctype : ls->t.value);
+        def->name = ctype ? eina_stringshare_add(ctype)
+                          : eina_stringshare_ref(ls->t.value);
      }
    eo_lexer_get(ls);
 parse_ptr:
@@ -406,7 +407,7 @@ parse_typedef(Eo_Lexer *ls)
         eo_lexer_get(ls);
      }
    check(ls, TOK_VALUE);
-   ls->tmp.typedef_def->alias = eina_stringshare_add(ls->t.value);
+   ls->tmp.typedef_def->alias = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
    (void)!!test_next(ls, ':');
    ls->tmp.typedef_def->type = parse_type_struct_nonvoid(ls, EINA_TRUE,
@@ -430,7 +431,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
      {
         int line = ls->line_number, col = ls->column;
         eo_lexer_get_balanced(ls, '(', ')');
-        ret->default_ret_val = eina_stringshare_add(ls->t.value);
+        ret->default_ret_val = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
         check_match(ls, ')', '(', line, col);
      }
@@ -442,7 +443,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
-        ret->comment = eina_stringshare_add(ls->t.value);
+        ret->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
 }
@@ -478,7 +479,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
      par->type = parse_type(ls);
    pop_type(ls);
    check(ls, TOK_VALUE);
-   par->name = eina_stringshare_add(ls->t.value);
+   par->name = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_nonull)
      {
@@ -488,7 +489,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
-        par->comment = eina_stringshare_add(ls->t.value);
+        par->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
 }
@@ -498,7 +499,7 @@ parse_legacy(Eo_Lexer *ls)
 {
    eo_lexer_get(ls);
    check(ls, TOK_VALUE);
-   ls->tmp.legacy_def = eina_stringshare_add(ls->t.value);
+   ls->tmp.legacy_def = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
    check_next(ls, ';');
 }
@@ -510,7 +511,7 @@ parse_attrs(Eo_Lexer *ls)
    Eina_Bool has_const = EINA_FALSE;
    acc = calloc(1, sizeof(Eo_Accessor_Param));
    ls->tmp.accessor_param = acc;
-   acc->name = eina_stringshare_add(ls->t.value);
+   acc->name = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
    check_next(ls, ':');
    check(ls, TOK_VALUE);
@@ -545,7 +546,7 @@ parse_accessor(Eo_Lexer *ls)
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        acc->comment = eina_stringshare_add(ls->t.value);
+        acc->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -611,7 +612,7 @@ parse_property(Eo_Lexer *ls)
         prop->scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
      }
-   prop->name = eina_stringshare_add(ls->t.value);
+   prop->name = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
    line = ls->line_number;
    col = ls->column;
@@ -664,7 +665,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
      {
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "expected method name");
-        meth->name = eina_stringshare_add(ls->t.value);
+        meth->name = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
    else
@@ -675,7 +676,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
              eo_lexer_get(ls);
           }
         check(ls, TOK_VALUE);
-        meth->name = eina_stringshare_add(ls->t.value);
+        meth->name = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
    line = ls->line_number;
@@ -683,7 +684,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        meth->comment = eina_stringshare_add(ls->t.value);
+        meth->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -846,7 +847,7 @@ parse_event(Eo_Lexer *ls)
    eo_lexer_get(ls);
    if (ls->t.token == TOK_COMMENT)
      {
-        ev->comment = eina_stringshare_add(ls->t.value);
+        ev->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
 }
@@ -935,7 +936,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
              has_events        = EINA_FALSE;
    if (ls->t.token == TOK_COMMENT)
      {
-        ls->tmp.kls->comment = eina_stringshare_add(ls->t.value);
+        ls->tmp.kls->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -945,7 +946,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ':');
         check(ls, TOK_VALUE);
-        ls->tmp.kls->legacy_prefix = eina_stringshare_add(ls->t.value);
+        ls->tmp.kls->legacy_prefix = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
@@ -954,7 +955,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ':');
         check(ls, TOK_VALUE);
-        ls->tmp.kls->eo_prefix = eina_stringshare_add(ls->t.value);
+        ls->tmp.kls->eo_prefix = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
@@ -963,7 +964,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ':');
         check(ls, TOK_VALUE);
-        ls->tmp.kls->data_type = eina_stringshare_add(ls->t.value);
+        ls->tmp.kls->data_type = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
@@ -1065,7 +1066,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            check(ls, TOK_VALUE);
            if (eo_lexer_get_c_type(ls->t.kw))
              eo_lexer_syntax_error(ls, "invalid struct name");
-           name = eina_stringshare_add(ls->t.value);
+           name = eina_stringshare_ref(ls->t.value);
            eo_lexer_get(ls);
            parse_struct(ls, name, is_extern);
            pop_type(ls);

@@ -13,7 +13,7 @@
 
 enum Tokens
 {
-   TOK_COMMENT = START_CUSTOM, TOK_NUMBER, TOK_VALUE
+   TOK_COMMENT = START_CUSTOM, TOK_STRING, TOK_NUMBER, TOK_VALUE
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)

@@ -44,7 +44,7 @@ next_char(Eo_Lexer *ls)
 
 static const char * const tokens[] =
 {
-   "<comment>", "<number>", "<value>",
+   "<comment>", "<string>", "<number>", "<value>",
 
    KEYWORDS
 };
@@ -104,9 +104,9 @@ init_hash(void)
    unsigned int i;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = 3; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = 4; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
-         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 2));
+         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - 3));
      }
 }
 
@@ -193,7 +193,117 @@ read_long_comment(Eo_Lexer *ls, Eo_Token *tok)
           }
      }
    eina_strbuf_trim(ls->buff);
-   if (tok) tok->value = eina_strbuf_string_get(ls->buff);
+   if (tok) tok->value = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+}
+
+static void
+esc_error(Eo_Lexer *ls, int *c, int n, const char *msg)
+{
+   int i;
+   eina_strbuf_reset(ls->buff);
+   eina_strbuf_append_char(ls->buff, '\\');
+   for (i = 0; i < n && c[i]; ++i)
+     eina_strbuf_append_char(ls->buff, c[i]);
+   eo_lexer_lex_error(ls, msg, TOK_STRING);
+}
+
+static int
+hex_val(int c)
+{
+   if (c >= 'a') return c - 'a' + 10;
+   if (c >= 'A') return c - 'A' + 10;
+   return c - '0';
+}
+
+static int
+read_hex_esc(Eo_Lexer *ls)
+{
+   int c[3] = { 'x' };
+   int i, r = 0;
+   for (i = 1; i < 3; ++i)
+     {
+        next_char(ls);
+        c[i] = ls->current;
+        if (!isxdigit(c[i]))
+          esc_error(ls, c, i + 1, "hexadecimal digit expected");
+        r = (r << 4) + hex_val(c[i]);
+     }
+   return r;
+}
+
+static int
+read_dec_esc(Eo_Lexer *ls)
+{
+   int c[3];
+   int i, r = 0;
+   for (i = 0; i < 3 && isdigit(ls->current); ++i)
+     {
+        c[i] = ls->current;
+        r = r * 10 + (c[i] - '0');
+        next_char(ls);
+     }
+   if (r > UCHAR_MAX)
+     esc_error(ls, c, i, "decimal escape too large");
+   return r;
+}
+
+static void
+read_string(Eo_Lexer *ls, Eo_Token *tok)
+{
+   int del = ls->current;
+   eina_strbuf_reset(ls->buff);
+   eina_strbuf_append_char(ls->buff, del);
+   while (ls->current != del) switch (ls->current)
+     {
+      case '\0':
+        eo_lexer_lex_error(ls, "unfinished string", -1);
+        break;
+      case '\n': case '\r':
+        eo_lexer_lex_error(ls, "unfinished string", TOK_STRING);
+        break;
+      case '\\':
+        {
+           next_char(ls);
+           switch (ls->current)
+             {
+              case 'a': eina_strbuf_append_char(ls->buff, '\a'); goto next;
+              case 'b': eina_strbuf_append_char(ls->buff, '\b'); goto next;
+              case 'f': eina_strbuf_append_char(ls->buff, '\f'); goto next;
+              case 'n': eina_strbuf_append_char(ls->buff, '\n'); goto next;
+              case 'r': eina_strbuf_append_char(ls->buff, '\r'); goto next;
+              case 't': eina_strbuf_append_char(ls->buff, '\t'); goto next;
+              case 'v': eina_strbuf_append_char(ls->buff, '\v'); goto next;
+              case 'x':
+                eina_strbuf_append_char(ls->buff, read_hex_esc(ls));
+                goto next;
+              case '\n': case '\r':
+                next_line(ls);
+                eina_strbuf_append_char(ls->buff, '\n');
+                goto skip;
+              case '\\': case '"': case '\'':
+                eina_strbuf_append_char(ls->buff, ls->current);
+                goto skip;
+              case '\0':
+                goto skip;
+              default:
+                if (!isdigit(ls->current))
+                  esc_error(ls, &ls->current, 1, "invalid escape sequence");
+                eina_strbuf_append_char(ls->buff, read_dec_esc(ls));
+                goto skip;
+             }
+next:
+           next_char(ls);
+skip:
+           break;
+        }
+      default:
+        eina_strbuf_append_char(ls->buff, ls->current);
+        next_char(ls);
+     }
+   eina_strbuf_append_char(ls->buff, ls->current);
+   next_char(ls);
+   tok->value = eina_stringshare_add_length(eina_strbuf_string_get(ls->buff) + 1,
+                                            eina_strbuf_length_get(ls->buff) - 2);
 }
 
 static int
@@ -345,6 +455,7 @@ static int
 lex(Eo_Lexer *ls, Eo_Token *tok)
 {
    eina_strbuf_reset(ls->buff);
+   tok->value = NULL;
    for (;;) switch (ls->current)
      {
       case '\n':
@@ -371,6 +482,9 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         continue;
       case '\0':
         return -1;
+      case '"': case '\'':
+        read_string(ls, tok);
+        return TOK_STRING;
       case '.':
         next_char(ls);
         if (!isdigit(ls->current)) return '.';
@@ -412,7 +526,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 ls->column = col + 1;
                 if (at_kw && tok->kw == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
-                tok->value = str;
+                tok->value = eina_stringshare_add(str);
                 return TOK_VALUE;
              }
            else
@@ -450,7 +564,7 @@ lex_balanced(Eo_Lexer *ls, Eo_Token *tok, char beg, char end)
    eina_strbuf_trim(ls->buff);
    str     = eina_strbuf_string_get(ls->buff);
    tok->kw = (int)(uintptr_t)eina_hash_find(keyword_map, str);
-   tok->value = str;
+   tok->value = eina_stringshare_add(str);
    ls->column = col + 1;
    return TOK_VALUE;
 }
@@ -532,6 +646,11 @@ eo_lexer_get_balanced(Eo_Lexer *ls, char beg, char end)
 int
 eo_lexer_get(Eo_Lexer *ls)
 {
+   if (ls->t.token >= START_CUSTOM && ls->t.token != TOK_NUMBER)
+     {
+        eina_stringshare_del(ls->t.value);
+        ls->t.value = NULL;
+     }
    if (ls->lookahead.token >= 0)
      {
         ls->t               = ls->lookahead;
@@ -594,7 +713,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 2];
+   return tokens[kw + 3];
 }
 
 Eina_Bool
