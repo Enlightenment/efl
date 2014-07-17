@@ -95,7 +95,7 @@ struct _Eina_Module
 
    Eina_Bool global;
 
-   const char file[];
+   const char file[1];
 };
 
 typedef struct _Dir_List_Get_Cb_Data
@@ -273,6 +273,7 @@ EAPI Eina_Module *eina_module_new(const char *file)
    memcpy((char *)m->file, file, len + 1);
    m->ref = 0;
    m->handle = NULL;
+   m->global = EINA_FALSE;
    DBG("m=%p, file=%s", m, file);
 
    return m;
