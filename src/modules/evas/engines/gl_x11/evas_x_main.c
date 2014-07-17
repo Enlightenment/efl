@@ -45,7 +45,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    int major_version, minor_version;
    int num_config, n = 0;
 #endif
-   XVisualInfo *vi_use;
    const GLubyte *vendor, *renderer, *version;
    int blacklist = 0;
 
@@ -69,24 +68,10 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->info = info;
    gw->evas = e;
 
-   vi_use = _evas_gl_x11_vi;
-   if (gw->alpha)
-     {
-#ifdef GL_GLES
-        if (_evas_gl_x11_rgba_vi)
-          {
-             vi_use = _evas_gl_x11_rgba_vi;
-          }
-#else
-//#ifdef NEWGL
-        if (_evas_gl_x11_rgba_vi)
-          {
-             vi_use = _evas_gl_x11_rgba_vi;
-          }
-//#endif
-#endif
-     }
-   gw->visualinfo = vi_use;
+   if (gw->alpha && _evas_gl_x11_rgba_vi)
+     gw->visualinfo = _evas_gl_x11_rgba_vi;
+   else
+     gw->visualinfo = _evas_gl_x11_vi;
 
 // EGL / GLES
 #ifdef GL_GLES
