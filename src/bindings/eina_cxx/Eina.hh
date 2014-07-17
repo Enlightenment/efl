@@ -11,6 +11,8 @@
 #include <eina_ptrlist.hh>
 #include <eina_inarray.hh>
 #include <eina_inlist.hh>
+#include <eina_array.hh>
+#include <eina_list.hh>
 #include <eina_stringshare.hh>
 #include <eina_error.hh>
 #include <eina_accessor.hh>

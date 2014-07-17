@@ -517,6 +517,7 @@ struct _ptr_list_common_base
   struct _ptr_list_impl : CloneAllocator
   {
     _ptr_list_impl() : _list(0) {}
+    _ptr_list_impl(Eina_List* list) : _list(list) {}
     _ptr_list_impl(CloneAllocator allocator)
       : clone_allocator_type(allocator), _list(0) {}
 
