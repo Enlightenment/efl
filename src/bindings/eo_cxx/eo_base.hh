@@ -61,11 +61,6 @@ struct base
      other._eo_raw = nullptr;
    }
 
-   base(base const& other)
-     : _eo_raw( detail::ref(other._eo_ptr()) )
-   {
-   }
-
    /// @brief Assignment operator.
    ///
    base& operator=(base const& other)
