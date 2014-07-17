@@ -10,6 +10,7 @@ bindings/eo_cxx/Eo.hh
 installed_eocxxheadersdir = $(includedir)/eo-cxx-@VMAJ@/
 dist_installed_eocxxheaders_DATA = \
 bindings/eo_cxx/eo_base.hh \
+bindings/eo_cxx/eo_event.hh \
 bindings/eo_cxx/eo_init.hh \
 bindings/eo_cxx/eo_wref.hh \
 bindings/eo_cxx/eo_inherit.hh \

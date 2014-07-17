@@ -9,14 +9,17 @@ bindings/eina_cxx/Eina.hh
 installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@/eina-cxx
 dist_installed_einacxxheaders_DATA = \
 bindings/eina_cxx/eina_accessor.hh       \
+bindings/eina_cxx/eina_array.hh \
 bindings/eina_cxx/eina_clone_allocators.hh       \
 bindings/eina_cxx/eina_error.hh     \
+bindings/eina_cxx/eina_eo_base_fwd.hh     \
 bindings/eina_cxx/eina_fold.hh     \
 bindings/eina_cxx/eina_inarray.hh  \
 bindings/eina_cxx/eina_inlist.hh   \
 bindings/eina_cxx/eina_integer_sequence.hh \
 bindings/eina_cxx/eina_iterator.hh \
 bindings/eina_cxx/eina_lists_auxiliary.hh \
+bindings/eina_cxx/eina_list.hh \
 bindings/eina_cxx/eina_log.hh \
 bindings/eina_cxx/eina_optional.hh \
 bindings/eina_cxx/eina_ptrarray.hh \

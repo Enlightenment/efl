@@ -36,9 +36,9 @@ tests_eldbus_cxx_eldbus_cxx_suite_CPPFLAGS = \
 -I$(top_builddir)/src/bindings/eldbus_cxx \
 -I$(top_srcdir)/src/bindings/eldbus_cxx \
 -I$(top_builddir)/src/lib/efl \
-@CHECK_CFLAGS@ \
- @ELDBUS_CFLAGS@ \
--DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\" \
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \
+@ECORE_CFLAGS@ @EO_CFLAGS@ @EO_CXX_CFLAGS@ @ELDBUS_CFLAGS@
 
 tests_eldbus_cxx_eldbus_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
 tests_eldbus_cxx_eldbus_cxx_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
