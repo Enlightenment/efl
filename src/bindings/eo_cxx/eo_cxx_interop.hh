@@ -37,6 +37,12 @@ to_c(bool x)
    return x ? EINA_TRUE : EINA_FALSE;
 }
 
+template <typename T>
+T to_c(T const& v)
+{
+   return v;
+}
+    
 //// From C to C++
 
 template <typename T>
