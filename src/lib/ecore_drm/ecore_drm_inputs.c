@@ -58,7 +58,7 @@ _device_add(Ecore_Drm_Input *input, struct udev_device *device)
         return EINA_FALSE;
      }
 
-   DBG("Opened Restricted Input: %s %d", node, fd);
+   /* DBG("Opened Restricted Input: %s %d", node, fd); */
 
    if (!(edev = _ecore_drm_evdev_device_create(seat, node, fd)))
      return EINA_FALSE;
