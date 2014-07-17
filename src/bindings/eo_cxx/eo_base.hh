@@ -38,14 +38,27 @@ struct base
    ///
    explicit base(Eo* eo) : _eo_raw(eo)
    {
-      assert(eo != 0);
    }
 
    /// @brief Class destructor.
    ///
    ~base()
    {
-      detail::unref(_eo_raw);
+      if(_eo_raw)
+        detail::unref(_eo_raw);
+   }
+
+   base(base const& other)
+   {
+     if(other._eo_raw)
+       _eo_raw = detail::ref(other._eo_raw);
+   }
+
+   base(base&& other)
+   {
+     if(_eo_raw) detail::unref(_eo_raw);
+     _eo_raw = other._eo_raw;
+     other._eo_raw = nullptr;
    }
 
    base(base const& other)
@@ -57,10 +70,27 @@ struct base
    ///
    base& operator=(base const& other)
    {
-      _eo_raw = detail::ref(other._eo_ptr());
+      if(_eo_raw)
+        {
+           detail::unref(_eo_raw);
+           _eo_raw = nullptr;
+        }
+      if(other._eo_raw)
+        _eo_raw = detail::ref(other._eo_raw);
       return *this;
    }
 
+   base& operator=(base&& other)
+   {
+      if(_eo_raw)
+        {
+           detail::unref(_eo_raw);
+           _eo_raw = nullptr;
+        }
+      std::swap(_eo_raw, other._eo_raw);
+      return *this;
+   }
+  
    /// @brief Return a pointer to the <em>EO Object</em> stored in this
    /// instance.
    ///
@@ -68,6 +98,19 @@ struct base
    ///
    Eo* _eo_ptr() const { return _eo_raw; }
 
+   /// @brief Releases the reference from this wrapper object and
+   /// return the pointer to the <em>EO Object</em> stored in this
+   /// instance.
+   ///
+   /// @return A pointer to the opaque <em>EO Object</em>.
+   ///
+   Eo* _release()
+   {
+     Eo* tmp = _eo_raw;
+     _eo_raw = nullptr;
+     return tmp;
+   }
+  
    /// @brief Get the reference count of this object.
    ///
    /// @return The referencer count of this object.
@@ -168,6 +211,10 @@ struct base
       return info;
    }
 
+   explicit operator bool() const
+   {
+      return _eo_raw;
+   }
  protected:
    Eo* _eo_raw; ///< The opaque <em>EO Object</em>.
 

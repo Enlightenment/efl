@@ -94,6 +94,16 @@ operator<<(std::ostream& out, constructor_eo const& x)
        << "explicit " << x._cls.name << "(Eo* eo)" << endl
        << tab(2) << ": " << class_name(x._cls.parent) << "(eo)" << endl
        << tab(1) << "{}" << endl << endl;
+
+   out << comment(
+                  "@brief nullptr_t Constructor.\n\n"
+                  "Constructs an empty (null) object.\n\n"
+                  , 1
+                 )
+       << tab(1)
+       << "explicit " << x._cls.name << "(std::nullptr_t)" << endl
+       << tab(2) << ": " << class_name(x._cls.parent) << "(nullptr)" << endl
+       << tab(1) << "{}" << endl << endl;
    return out;
 }
 
