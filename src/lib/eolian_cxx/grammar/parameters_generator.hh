@@ -28,11 +28,11 @@ operator<<(std::ostream& out, parameters_declaration const& x)
      {
         if (it != first)
           out << ", ";
-        if (type_is_callback((*it).type))
+        if (type_is_callback((*it).type) && it+1 != last)
           {
-             out << "F && " << (*it).name;
-             assert(it+1 != last);
-             ++it; // skip next.
+            out << "F && " << (*it).name;
+            assert(it+1 != last);
+            ++it; // skip next.
           }
         else
           out << reinterpret_type((*it).type) << " " << (*it).name;
@@ -80,12 +80,19 @@ operator<<(std::ostream& out, parameters_list const& x)
      {
         if (it != first)
           out << ", ";
-        out << to_c((*it).type, (*it).name);
         if (type_is_callback((*it).type))
           {
-             out << ", _tmp_f";
-             ++it; // skip next
+            if(it + 1 != last)
+              {
+                out << to_c((*it).type, (*it).name)
+                    << ", _tmp_f";
+                ++it; // skip next
+              }
+            else
+              out << it->name;
           }
+        else
+          out << to_c((*it).type, (*it).name);
      }
    return out;
 }

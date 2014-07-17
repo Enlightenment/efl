@@ -234,8 +234,9 @@ inline unsigned int
 parameters_count_callbacks(parameters_container_type const& parameters)
 {
    unsigned int r = 0u;
-   for (eo_parameter const& param : parameters)
-     if(type_is_callback(param.type))
+   for (auto first = parameters.begin(), last = parameters.end()
+          ; first != last ; ++first)
+     if(type_is_callback(first->type) && first + 1 != last)
        ++r;
    return r;
 }

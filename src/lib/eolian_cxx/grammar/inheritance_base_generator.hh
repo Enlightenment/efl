@@ -250,7 +250,7 @@ operator<<(std::ostream& out, inheritance_call_constructor_arguments const& x)
    for (i=0; i<n; i++)
      {
         if(i!=0) out << ", ";
-        out << "args.get<" << i << ">()";
+        out << "::efl::eolian::to_c(args.get<" << i << ">())";
      }
    return out;
 }
