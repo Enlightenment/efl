@@ -20,14 +20,14 @@
 #include <ecore_poll.eo.hh>
 
 namespace efl { namespace ecore {
-using ::ecore_poller;
+using ::ecore::poller;
 } }
 
 void
 example_callbacks()
 {
    int count = 0;
-   efl::ecore::ecore_poller poller
+   efl::ecore::poller poller
       (ECORE_POLLER_CORE, 1,
        [&count, &poller]
       {

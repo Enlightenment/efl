@@ -17,19 +17,19 @@
 #include <Ecore.hh>
 #include <Evas.hh>
 
-#include <canvas/evas.eo.hh>
+#include <canvas/evas_canvas.eo.hh>
 #include <canvas/evas_text.eo.hh>
 #include <canvas/evas_rectangle.eo.hh>
 #include <canvas/evas_zoomable_interface.eo.hh>
 
 namespace efl { namespace evas { // XXX only while we don't have namespaces in EFL
-using evas_base = ::evas;
-using ::evas_object;
-using ::evas_text;
-using ::evas_grid;
-using ::evas_rectangle;
-using ::evas_common_interface;
-using ::evas_zoomable_interface;
+using ::evas::canvas;
+using ::evas::object;
+using ::evas::text;
+using ::evas::grid;
+using ::evas::rectangle;
+using ::evas::common_interface;
+using ::evas::zoomable_interface;
 } }
 
 namespace {
@@ -64,21 +64,21 @@ void
 example_complex_types()
 {
    _ecore_evas_init();
-   efl::evas::evas_base canvas(::eo_ref(::ecore_evas_get(ee)));
+   efl::evas::canvas canvas(::eo_ref(::ecore_evas_get(ee)));
 
-   ::evas_rectangle bg(efl::eo::parent = canvas);
+   efl::evas::rectangle bg(efl::eo::parent = canvas);
    bg.color_set(255, 255, 255, 255);
    bg.position_set(0, 0);
    bg.size_set(500, 250);
    bg.visibility_set(true);
 
-   efl::evas::evas_grid grid(efl::eo::parent = canvas);
+   efl::evas::grid grid(efl::eo::parent = canvas);
    grid.position_set(0, 0);
    grid.color_set(0, 0, 0, 255);
    grid.size_set(5, 5);
    grid.visibility_set(true);
 
-   efl::evas::evas_text text1(efl::eo::parent = canvas);
+   efl::evas::text text1(efl::eo::parent = canvas);
    text1.style_set(EVAS_TEXT_STYLE_OUTLINE);
    text1.color_set(255, 0, 0, 255);
    text1.font_set("DejaVu", 32);
@@ -86,9 +86,9 @@ example_complex_types()
    text1.visibility_set(true);
    int t1w, t1h;
    text1.size_get(&t1w, &t1h);
-   grid.pack(text1, 1, 1, t1w, t1h);
+   grid.pack(text1._eo_ptr(), 1, 1, t1w, t1h);
 
-   efl::evas::evas_text text2(efl::eo::parent = canvas);
+   efl::evas::text text2(efl::eo::parent = canvas);
    text2.style_set(EVAS_TEXT_STYLE_PLAIN);
    text2.color_set(0, 120, 0, 255);
    text2.position_set(t1w+50, t1h+50);

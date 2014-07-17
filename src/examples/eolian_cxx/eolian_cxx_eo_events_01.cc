@@ -17,20 +17,20 @@
 #include <Ecore.hh>
 #include <Evas.hh>
 
-#include <canvas/evas.eo.hh>
+#include <canvas/evas_canvas.eo.hh>
 #include <canvas/evas_text.eo.hh>
 #include <canvas/evas_image.eo.hh>
 #include <canvas/evas_box.eo.hh>
 
 
 namespace efl { namespace evas {
-using evas_base = ::evas;
-using ::evas_object;
-using ::evas_text;
-using ::evas_grid;
-using ::evas_rectangle;
-using ::evas_common_interface;
-using ::evas_zoomable_interface;
+using ::evas::canvas;
+using ::evas::object;
+using ::evas::text;
+using ::evas::grid;
+using ::evas::rectangle;
+using ::evas::common_interface;
+using ::evas::zoomable_interface;
 } }
 
 namespace {
@@ -67,9 +67,9 @@ example_complex_types()
    _ecore_evas_init();
 
    {
-     efl::evas::evas_base canvas(::eo_ref(::ecore_evas_get(ee)));
+     efl::evas::canvas canvas(::eo_ref(::ecore_evas_get(ee)));
 
-     ::evas_rectangle bg(efl::eo::parent = canvas);
+     efl::evas::rectangle bg(efl::eo::parent = canvas);
      bg.color_set(255, 255, 255, 255);
      bg.position_set(0, 0);
      bg.size_set(500, 250);
@@ -77,9 +77,9 @@ example_complex_types()
 
      efl::eo::signal_connection conn =
        bg.event_mouse_down_callback_add
-       ([] (::evas_object obj, Eo_Event_Description const& desc, void* info)
+       ([] (efl::evas::object obj, Eo_Event_Description const& desc, void* info)
         {
-          std::cout << "evas_box::mouse_down" << std::endl;
+          std::cout << "evas::box::mouse_down" << std::endl;
           return EO_CALLBACK_CONTINUE;
         });
 
