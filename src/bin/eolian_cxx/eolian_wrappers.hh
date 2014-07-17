@@ -316,15 +316,14 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
 {
    efl::eolian::eo_event event;
    const char *name, *comment;
-   const Eolian_Type *type;
-   static_cast<void>(type); // XXX
-   if(::eolian_class_event_information_get(event_, &name, &type, &comment))
+   if(::eolian_class_event_information_get(event_, &name, NULL, &comment))
      {
         std::string name_ = safe_str(name);
         std::transform(name_.begin(), name_.end(), name_.begin(),
                        [](int c) { return c != ',' ? c : '_'; });
         event.name = normalize_spaces(name_);
-        event.eo_name = safe_upper(class_name(klass) + "_EVENT_" + event.name);
+        event.eo_name = safe_upper
+          (find_replace(class_full_name(klass), ".", "_") + "_EVENT_" + event.name);
         event.comment = safe_str(comment);
      }
    return event;
