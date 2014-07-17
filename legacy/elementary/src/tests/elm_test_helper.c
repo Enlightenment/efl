@@ -5,8 +5,6 @@
 #include <Ecore.h>
 #include "elm_suite.h"
 
-const double timeout = 10;
-
 typedef struct _Callback_Data
 {
    Ecore_Timer *timer;
@@ -24,12 +22,12 @@ timer_expired_cb(void *user_data)
 }
 
 Eina_Bool
-elm_test_helper_wait_flag(Eina_Bool *done)
+elm_test_helper_wait_flag(double in, Eina_Bool *done)
 {
    Callback_Data data;
 
    data.did_timeout = EINA_FALSE;
-   data.timer = ecore_timer_add(timeout, timer_expired_cb, &data);
+   data.timer = ecore_timer_add(in, timer_expired_cb, &data);
 
    while (*done == EINA_FALSE && data.did_timeout == EINA_FALSE)
      ecore_main_loop_iterate();

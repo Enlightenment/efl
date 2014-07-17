@@ -3,6 +3,6 @@
 
 #include <Eina.h>
 
-Eina_Bool elm_test_helper_wait_flag(Eina_Bool *done);
+Eina_Bool elm_test_helper_wait_flag(double in, Eina_Bool *done);
 
 #endif /* _ELM_TEST_HELPER_H */
