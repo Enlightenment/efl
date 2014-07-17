@@ -3137,11 +3137,21 @@ elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute)
 EAPI void
 elm_config_all_flush(void)
 {
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+       ENGINE_COMPARE(ELM_XRENDER_X11) ||
+       ENGINE_COMPARE(ELM_OPENGL_X11) ||
+       ENGINE_COMPARE(ELM_OPENGL_COCOA) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
+#undef ENGINE_COMPARE
+     {
 #ifdef HAVE_ELEMENTARY_X
-   _prop_config_set();
-   ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
-                                  _elm_profile);
+        _prop_config_set();
+        ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
+                                       _elm_profile);
 #endif
+     }
 }
 
 static void
