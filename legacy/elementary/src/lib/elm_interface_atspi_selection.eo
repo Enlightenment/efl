@@ -2,7 +2,6 @@ interface Elm_Interface_Atspi_Selection ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_selection;
-   data: null;
    properties {
       protected selected_children_count {
          get {

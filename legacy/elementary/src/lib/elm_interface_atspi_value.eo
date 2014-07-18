@@ -2,7 +2,6 @@ interface Elm_Interface_Atspi_Value ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_value;
-   data: null;
    properties {
       protected value_and_text {
          get {
