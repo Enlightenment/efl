@@ -76,6 +76,7 @@ include Makefile_Eldbus_Cxx.am
 include Makefile_Eolian_Cxx.am
 include Makefile_Eet_Cxx.am
 include Makefile_Eo_Cxx.am
+include Makefile_Efl_Cxx.am
 
 include Makefile_Elua.am
 
