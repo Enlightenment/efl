@@ -29,12 +29,12 @@ _obj_process(Evas_Public_Data *e,
    // process object OR walk through child objects if smart and process those
    Evas_Object_Protected_Data *obj2;
    Evas_Object *eo_obj = obj->object;
-   Eina_Inlist *il;
+   const Eina_Inlist *il;
 
+   if (!obj->changed) return;
    il = evas_object_smart_members_get_direct(eo_obj);
    if (il)
      {
-        if (!evas_object_smart_changed_get(eo_obj)) return;
         obj->rect_del = EINA_FALSE;
         obj->render_pre = EINA_FALSE;
         if (obj->delete_me == 2) return;
@@ -44,7 +44,7 @@ _obj_process(Evas_Public_Data *e,
         obj->func->render_pre(eo_obj, obj, obj->private_data);
         obj->pre_render_done = EINA_TRUE;
         int i; for (i = 0; i < l; i++) printf(" ");
-        printf("SMART %p %p [%10s]\n", e, eo_obj, obj->type);
+        printf("SMART %p %p [%10s] ch %i\n", e, eo_obj, obj->type, obj->changed);
 
         EINA_INLIST_FOREACH(il, obj2) _obj_process(e, obj2, l + 1);
 
@@ -53,11 +53,7 @@ _obj_process(Evas_Public_Data *e,
         obj->pre_render_done = EINA_FALSE;
         evas_object_change_reset(eo_obj);
      }
-   else
-     {
-        if (!obj->changed) return;
-        _obj_basic_process(e, obj, l);
-     }
+   else _obj_basic_process(e, obj, l);
 }
 
 void
