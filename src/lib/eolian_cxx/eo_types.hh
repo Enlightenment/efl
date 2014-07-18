@@ -247,7 +247,7 @@ parameters_find_callback(parameters_container_type const& parameters)
    for (auto it = parameters.cbegin(), last = parameters.cend();
         it != last; ++it)
      {
-        if (type_is_callback((*it).type))
+        if (type_is_callback((*it).type) && it + 1 != last)
           return it;
      }
    return parameters.cend();
