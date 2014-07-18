@@ -2723,7 +2723,7 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
 {
    Eldbus_Service_Interface *events = data;
    const char *property = event_info;
-   char *path, *atspi_desc;
+   char *atspi_desc;
    enum _Atspi_Object_Property prop = ATSPI_OBJECT_PROPERTY_LAST;
 
    if (!events)
@@ -2752,7 +2752,11 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
         prop = ATSPI_OBJECT_PROPERTY_PARENT;
         atspi_desc = "accessible-role";
      }
-
+   else if (!strcmp(property, "value"))
+     {
+        prop = ATSPI_OBJECT_PROPERTY_VALUE;
+        atspi_desc = "accessible-value";
+     }
    if (prop == ATSPI_OBJECT_PROPERTY_LAST)
      {
         ERR("Unrecognized property name!");
@@ -2764,10 +2768,7 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
         return EINA_FALSE;
      }
 
-   path = _path_from_access_object(obj);
-
-   _object_signal_send(events, ATSPI_OBJECT_EVENT_PROPERTY_CHANGED, atspi_desc, 0, 0, "s", path);
-   free(path);
+   _object_signal_send(events, ATSPI_OBJECT_EVENT_PROPERTY_CHANGED, atspi_desc, 0, 0, NULL, NULL);
 
    DBG("signal sent PropertyChanged:%s", property);
 

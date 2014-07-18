@@ -98,6 +98,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
         if (user_event)
           {
              evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+             elm_interface_atspi_accessible_value_changed_signal_emit(obj);
              ecore_timer_del(sd->delay);
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
           }

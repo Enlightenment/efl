@@ -288,6 +288,12 @@ void elm_atspi_attributes_list_free(Eina_List *list);
    eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "role"));
 
 /**
+ * Emits ATSPI 'PropertyChanged' dbus signal for 'Value' property.
+ */
+#define elm_interface_atspi_accessible_value_changed_signal_emit(obj) \
+   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "value"));
+
+/**
  * Emits ATSPI 'ChildrenChanged' dbus signal with added child as argument.
  */
 #define elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, child) \
