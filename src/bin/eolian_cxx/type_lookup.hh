@@ -2,7 +2,6 @@
 #ifndef EOLIAN_CXX_TYPE_LOOKUP_HH
 #define EOLIAN_CXX_TYPE_LOOKUP_HH
 
-#include <iostream>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -52,36 +51,26 @@ type_lookup(const Eolian_Type* type,
 {
    if (type == NULL) return { efl::eolian::void_type }; // XXX shouldn't
 
-   Eina_List const* lt = NULL;
-   Eina_Iterator *it = NULL;
-   unsigned int n_;
-   if ( (it = ::eolian_type_subtypes_list_get(type)) != NULL)
+   std::vector<Eolian_Type const*> types; types.push_back(type);
+   efl::eina::iterator<Eolian_Type const> iterator ( ::eolian_type_subtypes_list_get(type) );
+   while(iterator != efl::eina::iterator<Eolian_Type const>())
+     if(Eolian_Type const* t = &*iterator)
+       types.push_back(t), ++iterator;
+
+   efl::eolian::eolian_type_instance v(types.size());
+   for (std::size_t i = 0; i != types.size(); ++i)
      {
-        lt = static_cast<Eina_List const*>(::eina_iterator_container_get(it));
-        n_ = ::eina_list_count(lt) + 1;
-        ::eina_iterator_free(it);
+        v[i] = type_find(lut.begin(), lut.end(), type_from_eolian(*types[i]));
      }
-   else
+
+   // Let's degrade to opaque classes when not enough information
+   // is available for complex types
+   if(v.size() == 1 && type_is_complex(v[0]))
      {
-        n_ = 1;
+       efl::eolian::eolian_type tmp = v[0];
+       return {efl::eolian::type_to_native(tmp)};
      }
-   // assert(n_ > 0);
-   efl::eolian::eolian_type_instance v(n_);
-   for (size_t i=0; i<n_; i++)
-     {
-        v[i] = type_find(lut.begin(), lut.end(), type_from_eolian(*type));
-        // XXX temporary workaround to allow incomplete complex-types until
-        //     we don't have a full support.
-        if (type_is_complex(v[i]))
-          {
-             assert(i == 0);
-             efl::eolian::eolian_type tmp = v[i];
-             v.clear();
-             v.push_back(efl::eolian::type_to_native(tmp));
-             return v;
-          }
-        assert(i == n_-1 || type_is_complex(v[i]));
-     }
+
    return v;
 }
 
