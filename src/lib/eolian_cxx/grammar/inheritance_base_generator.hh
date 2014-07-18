@@ -192,7 +192,7 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
        << tab(2) << "{" << endl;
    if (!is_void)
      {
-        out << tab(3) << reinterpret_type(func.ret) << " _tmp_ret = {};"  << endl;
+        out << tab(3) << func.ret.front().native << " _tmp_ret = {};"  << endl;
      }
    out << tab(3)
        << "eo_do_super(static_cast<T*>(this)->_eo_ptr()" << endl
@@ -202,10 +202,8 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
        << "(";
    parameter_names_enumerate(out, func.params)
        << "));" << endl;
-   if (!is_void)
-     {
-        out << tab(3) << "return _tmp_ret;" << endl;
-     }
+   if (!function_is_void(func))
+     out << tab(4) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
    out << tab(2) << "}" << endl << endl;
    return out;
 }
@@ -315,7 +313,7 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
 
    if (!is_void)
      {
-        out << tab(3) << reinterpret_type(x._func.ret) << " _tmp_ret = {};" << endl;
+        out << tab(3) << x._func.ret.front().native << " _tmp_ret = {};"  << endl;
      }
 
    parameters_container_type::const_iterator callback_iter =
@@ -332,10 +330,8 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
    out << tab(3) << "eo_do(static_cast<U*>(this)->_eo_ptr(), "
        << function_call(x._func) << ");" << endl;
 
-   if (!is_void)
-     {
-        out << tab(3) << "return _tmp_ret;" << endl;
-     }
+   if (!function_is_void(x._func))
+     out << tab(4) << "return " << to_cxx(x._func.ret, "_tmp_ret") << ";" << endl;
 
    out << tab(2) << "}" << endl
        << endl;
