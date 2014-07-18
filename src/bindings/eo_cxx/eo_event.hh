@@ -115,12 +115,27 @@ signal_connection make_signal_connection(std::unique_ptr<F>& data, Eo* eo, ::Eo_
 namespace _detail {
 
 template <typename T, typename F>
+Eina_Bool really_call_event(T& wrapper, F& f, Eo_Event_Description const& desc, void *info
+                            , std::true_type)
+{
+   f(wrapper, desc, info);
+   return true;
+}
+template <typename T, typename F>
+Eina_Bool really_call_event(T& wrapper, F& f, Eo_Event_Description const& desc, void *info
+                            , std::false_type)
+{
+   return f(wrapper, desc, info);
+}
+
+template <typename T, typename F>
 Eina_Bool
 event_callback(void *data, Eo *obj, Eo_Event_Description const* desc, void *info)
 {
    T wrapper(::eo_ref(obj));
    F *f = static_cast<F*>(data);
-   return (*f)(wrapper, *desc, info);
+   return _detail::really_call_event(wrapper, *f, *desc, info
+                                     , std::is_void<decltype((*f)(wrapper, *desc, info))>());
 }
 
 }
