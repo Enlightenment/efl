@@ -223,13 +223,10 @@ _evas_render2_stage_render_do(Evas_Public_Data *e, Eina_Bool do_async EINA_UNUSE
    void *surface;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
-//   Evas_Render_Mode render_mode = EVAS_RENDER_MODE_UNDEF;
 
-//   if (!do_async) render_mode = EVAS_RENDER_MODE_SYNC;
-//   else render_mode = EVAS_RENDER_MODE_ASYNC_INIT;// XXX:
    // XXX: actually render now (either in thread or in mainloop)
    // XXX:
-   printf("_evas_render2_stage_render_do %p\n", e);
+   printf(" _evas_render2_stage_render_do %p\n", e);
    while ((surface =
            e->engine.func->output_redraws_next_update_get
            (e->engine.data.output,
@@ -243,7 +240,7 @@ _evas_render2_stage_render_do(Evas_Public_Data *e, Eina_Bool do_async EINA_UNUSE
         e->engine.func->context_color_set
           (e->engine.data.output, ctx,
               rand() & 0xff, rand() & 0xff, rand() & 0xff, 0xff);
-        printf("%i %i %i %i\n", cx, cy, cw, ch);
+        printf("  %i %i %i %i\n", cx, cy, cw, ch);
         e->engine.func->rectangle_draw(e->engine.data.output,
                                        ctx, surface,
                                        cx, cy, cw, ch,
@@ -254,10 +251,6 @@ _evas_render2_stage_render_do(Evas_Public_Data *e, Eina_Bool do_async EINA_UNUSE
         NEW_RECT(ru->area, ux, uy, uw, uh);
         e->render.updates = eina_list_append(e->render.updates, ru);
         evas_cache_image_ref(surface);
-//        e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-//                                                        surface,
-//                                                        ux, uy, uw, uh,
-//                                                        render_mode);
      }
    e->engine.func->output_redraws_clear(e->engine.data.output);
 }
@@ -287,8 +280,9 @@ static void
 _evas_render2_th_render(void *data)
 {
    Evas_Public_Data *e = data;
-   printf("th rend %p ......................................\n", e);
+   printf(".....................................................%p\n", e);
    _evas_render2_stage_render_do(e, EINA_TRUE);
+   printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%p\n", e);
 }
 
 // major functions (called from evas_render.c)
@@ -345,13 +339,6 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
    // if we are not going to be async then do last render stage here
    if (!do_async) _evas_render2_stage_last(eo_e, make_updates, EINA_FALSE);
    if (!do_draw) _evas_render2_updates_clean(e);
-
-   e->changed = EINA_FALSE;
-   e->viewport.changed = EINA_FALSE;
-   e->output.changed = EINA_FALSE;
-   e->framespace.changed = EINA_FALSE;
-   e->invalidate = EINA_FALSE;
-
    evas_module_clean();
    return EINA_TRUE;
 }
