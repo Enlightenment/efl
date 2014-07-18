@@ -294,7 +294,6 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
    unsigned int i = 0;
    Eina_List *elist;
    char buf[1024], style[1024];
-   Eina_Bool int_ret = EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
