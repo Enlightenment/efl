@@ -3618,7 +3618,8 @@ ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
 ECORE_EVAS_MODULE([drm], [${want_drm}], 
-  [ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm]) ]
+  [ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm])
+    EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EVAS], [${want_drm}], [ecore-drm]) ]
 )
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 

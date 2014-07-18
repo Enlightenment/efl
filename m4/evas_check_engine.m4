@@ -592,7 +592,7 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DRM],
 [
 
 requirement=""
-have_dep="no"
+have_dep="yes"
 have_hw_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -603,20 +603,13 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_EXISTS([ecore-drm],
-   [
-    have_dep="yes"
-    requirement="ecore-drm"
-   ],
-   [have_dep="no"])
-
 if test "x${have_dep}" = "xyes" ; then
   AC_MSG_CHECKING([whether to enable Drm hardware acceleration])
   if test "x${want_drm_hw_accel}" = "xyes" ; then
     PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
      [
       have_hw_dep="yes"
-      requirement="ecore-drm egl >= 7.10 ${gl_library}"
+      requirement="egl >= 7.10 ${gl_library}"
      ],
      [have_hw_dep="no"])
   fi
@@ -626,7 +619,6 @@ if test "x${have_dep}" = "xyes" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([DRM], [${requirement}])
       evas_engine_[]$1[]_cflags="${DRM_CFLAGS}"
       evas_engine_[]$1[]_libs="${DRM_LIBS}"
    fi
