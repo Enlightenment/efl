@@ -19,8 +19,8 @@ _is_valid(std::string const& value)
 inline bool
 _is_valid(eolian_type_instance const& type)
 {
-   if (type.empty() || (*type.rbegin()).category == eolian_type::complex_)
-     return false;
+   // if (type.empty() || (*type.rbegin()).category == eolian_type::complex_)
+   //   return false;
    for (auto rit = ++type.rbegin(), last = type.rend(); rit != last; ++rit)
      {
         if ((*rit).binding.empty() || (*rit).category != eolian_type::complex_)
@@ -56,9 +56,7 @@ _validate(T const& val, eo_class const& cls)
    if(!_is_valid(val))
      {
         static_cast<void>(cls);
-#ifndef NDEBUG
-   std::abort();
-#endif
+        assert(false && "Failed identifier validation");
      }
 }
 
