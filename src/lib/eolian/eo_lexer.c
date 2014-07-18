@@ -44,7 +44,7 @@ next_char(Eo_Lexer *ls)
 
 static const char * const tokens[] =
 {
-   "==", "!=", ">", "<", ">=", "<=", "&&", "||", "<<", ">>",
+   "==", "!=", ">=", "<=", "&&", "||", "<<", ">>",
 
    "<comment>", "<string>", "<number>", "<value>",
 
@@ -106,7 +106,7 @@ init_hash(void)
    unsigned int i, u;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = u = 14; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = u = 12; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
          eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - u + 1));
      }
@@ -484,6 +484,52 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         continue;
       case '\0':
         return -1;
+      case '=':
+        next_char(ls);
+        if (ls->current != '=') return '=';
+        next_char(ls);
+        return TOK_EQ;
+      case '!':
+        next_char(ls);
+        if (ls->current != '=') return '!';
+        next_char(ls);
+        return TOK_NQ;
+      case '>':
+        next_char(ls);
+        if (ls->current == '=')
+          {
+             next_char(ls);
+             return TOK_GE;
+          }
+        else if (ls->current == '>')
+          {
+             next_char(ls);
+             return TOK_RSH;
+          }
+        return '>';
+      case '<':
+        next_char(ls);
+        if (ls->current == '=')
+          {
+             next_char(ls);
+             return TOK_LE;
+          }
+        else if (ls->current == '<')
+          {
+             next_char(ls);
+             return TOK_LSH;
+          }
+        return '<';
+      case '&':
+        next_char(ls);
+        if (ls->current != '&') return '&';
+        next_char(ls);
+        return TOK_AND;
+      case '|':
+        next_char(ls);
+        if (ls->current != '|') return '|';
+        next_char(ls);
+        return TOK_OR;
       case '"': case '\'':
         read_string(ls, tok);
         return TOK_STRING;
@@ -716,7 +762,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 13];
+   return tokens[kw + 11];
 }
 
 Eina_Bool

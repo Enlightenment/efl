@@ -250,8 +250,8 @@ get_binop_id(int tok)
 
       case TOK_EQ: return EOLIAN_BINOP_EQ;
       case TOK_NQ: return EOLIAN_BINOP_NQ;
-      case TOK_GT: return EOLIAN_BINOP_GT;
-      case TOK_LT: return EOLIAN_BINOP_LT;
+      case '>'   : return EOLIAN_BINOP_GT;
+      case '<'   : return EOLIAN_BINOP_LT;
       case TOK_GE: return EOLIAN_BINOP_GE;
       case TOK_LE: return EOLIAN_BINOP_LE;
 
