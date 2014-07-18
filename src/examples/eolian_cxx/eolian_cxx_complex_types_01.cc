@@ -86,7 +86,7 @@ example_complex_types()
    text1.visibility_set(true);
    int t1w, t1h;
    text1.size_get(&t1w, &t1h);
-   grid.pack(text1._eo_ptr(), 1, 1, t1w, t1h);
+   grid.pack(text1, 1, 1, t1w, t1h);
 
    efl::evas::text text2(efl::eo::parent = canvas);
    text2.style_set(EVAS_TEXT_STYLE_PLAIN);
