@@ -188,7 +188,7 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
 
    out << tab(2) << "virtual " << reinterpret_type(func.ret) << " "
        << func.name << "("
-       << parameters_declaration(func.params) << ")" << endl
+       << parameters_c_declaration(func.params) << ")" << endl
        << tab(2) << "{" << endl;
    if (!is_void)
      {
@@ -196,9 +196,12 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
      }
    out << tab(3)
        << "eo_do_super(static_cast<T*>(this)->_eo_ptr()" << endl
-       << tab(4) << ", static_cast<T*>(this)->_eo_class()" << endl
-       << tab(4) << ", " << function_call(func)
-       << ");" << endl;
+       << tab(4) << ", static_cast<T*>(this)->_eo_class()," << endl
+       << tab(4) << (!is_void ? "_tmp_ret = " : "")
+       << "::" << x._func.impl
+       << "(";
+   parameter_names_enumerate(out, func.params)
+       << "));" << endl;
    if (!is_void)
      {
         out << tab(3) << "return _tmp_ret;" << endl;
@@ -399,17 +402,12 @@ operator<<(std::ostream& out, inheritance_eo_class_getter const& x)
 inline void
 eo_inheritance_detail_generator(std::ostream& out, eo_class const& cls)
 {
-#if 0 // Will be fixed ASAP
    out << inheritance_wrappers(cls)
-#endif
-   out
        << "namespace efl { namespace eo { namespace detail {" << endl << endl
-#if 0 // Will be fixed ASAP
        << inheritance_base_operations(cls) << endl
        << inheritance_base_operations_size(cls)
        << inheritance_operations_description(cls)
        << inheritance_call_constructors(cls)
-#endif
        << inheritance_extension(cls)
        << inheritance_eo_class_getter(cls)
        <<  "} } }" << endl;

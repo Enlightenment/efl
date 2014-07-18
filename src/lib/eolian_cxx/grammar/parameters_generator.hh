@@ -86,6 +86,21 @@ operator<<(std::ostream& out, parameters_types const& x)
    return out;
 }
 
+inline
+std::ostream& parameter_names_enumerate(std::ostream& out
+                                        , parameters_container_type const& params)
+{
+   for (auto first = params.begin()
+          , iterator = first
+          , last = params.end()
+          ; iterator != last; ++iterator)
+     {
+        if(iterator != first) out << ", ";
+        out << iterator->name;
+     }
+   return out;
+}
+
 struct
 parameters_list
 {
@@ -160,10 +175,9 @@ operator<<(std::ostream& out, parameters_cxx_list const& x)
      {
         if (it != first)
           out << ", ";
-        if (type_is_callback((*it).type))
+        if (type_is_callback((*it).type) && it + 1 != last)
           {
-             out << "std::move(" << (*it).name << ")";
-             assert(it+1 != last);
+             out << "std::forward<F>(" << (*it).name << ")";
              ++it; // skip next.
           }
         else
