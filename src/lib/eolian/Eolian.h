@@ -153,36 +153,36 @@ typedef enum
 
 typedef enum
 {
-   BOP_ADD, /* + */
-   BOP_SUB, /* - */
-   BOP_MUL, /* * */
-   BOP_DIV, /* / */
-   BOP_MOD, /* % */
+   EOLIAN_BINOP_ADD, /* + */
+   EOLIAN_BINOP_SUB, /* - */
+   EOLIAN_BINOP_MUL, /* * */
+   EOLIAN_BINOP_DIV, /* / */
+   EOLIAN_BINOP_MOD, /* % */
 
-   BOP_EQ, /* == */
-   BOP_NQ, /* != */
-   BOP_GT, /* >  */
-   BOP_LT, /* <  */
-   BOP_GE, /* >= */
-   BOP_LE, /* <= */
+   EOLIAN_BINOP_EQ, /* == */
+   EOLIAN_BINOP_NQ, /* != */
+   EOLIAN_BINOP_GT, /* >  */
+   EOLIAN_BINOP_LT, /* <  */
+   EOLIAN_BINOP_GE, /* >= */
+   EOLIAN_BINOP_LE, /* <= */
 
-   BOP_AND, /* && */
-   BOP_OR,  /* || */
+   EOLIAN_BINOP_AND, /* && */
+   EOLIAN_BINOP_OR,  /* || */
 
-   BOP_BAND, /* &  */
-   BOP_BOR,  /* |  */
-   BOP_BXOR, /* ^  */
-   BOP_LSH,  /* << */
-   BOP_RSH   /* >> */
+   EOLIAN_BINOP_BAND, /* &  */
+   EOLIAN_BINOP_BOR,  /* |  */
+   EOLIAN_BINOP_BXOR, /* ^  */
+   EOLIAN_BINOP_LSH,  /* << */
+   EOLIAN_BINOP_RSH   /* >> */
 } Eolian_Binary_Operator;
 
 typedef enum
 {
-   UOP_UNM, /* - */
-   UOP_UNP, /* + */
+   EOLIAN_UNOP_UNM, /* - */
+   EOLIAN_UNOP_UNP, /* + */
 
-   UOP_NOT,  /* ! */
-   UOP_BNOT, /* ~ */
+   EOLIAN_UNOP_NOT,  /* ! */
+   EOLIAN_UNOP_BNOT, /* ~ */
 } Eolian_Unary_Operator;
 
 /*

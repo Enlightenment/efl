@@ -242,28 +242,28 @@ get_binop_id(int tok)
 {
    switch (tok)
      {
-      case '+': return BOP_ADD;
-      case '-': return BOP_SUB;
-      case '*': return BOP_MUL;
-      case '/': return BOP_DIV;
-      case '%': return BOP_MOD;
+      case '+': return EOLIAN_BINOP_ADD;
+      case '-': return EOLIAN_BINOP_SUB;
+      case '*': return EOLIAN_BINOP_MUL;
+      case '/': return EOLIAN_BINOP_DIV;
+      case '%': return EOLIAN_BINOP_MOD;
 
-      case TOK_EQ: return BOP_EQ;
-      case TOK_NQ: return BOP_NQ;
-      case TOK_GT: return BOP_GT;
-      case TOK_LT: return BOP_LT;
-      case TOK_GE: return BOP_GE;
-      case TOK_LE: return BOP_LE;
+      case TOK_EQ: return EOLIAN_BINOP_EQ;
+      case TOK_NQ: return EOLIAN_BINOP_NQ;
+      case TOK_GT: return EOLIAN_BINOP_GT;
+      case TOK_LT: return EOLIAN_BINOP_LT;
+      case TOK_GE: return EOLIAN_BINOP_GE;
+      case TOK_LE: return EOLIAN_BINOP_LE;
 
-      case TOK_AND: return BOP_AND;
-      case TOK_OR : return BOP_OR;
+      case TOK_AND: return EOLIAN_BINOP_AND;
+      case TOK_OR : return EOLIAN_BINOP_OR;
 
-      case '&': return BOP_BAND;
-      case '|': return BOP_BOR;
-      case '^': return BOP_BXOR;
+      case '&': return EOLIAN_BINOP_BAND;
+      case '|': return EOLIAN_BINOP_BOR;
+      case '^': return EOLIAN_BINOP_BXOR;
 
-      case TOK_LSH: return BOP_LSH;
-      case TOK_RSH: return BOP_RSH;
+      case TOK_LSH: return EOLIAN_BINOP_LSH;
+      case TOK_RSH: return EOLIAN_BINOP_RSH;
 
       default: return -1;
      }
@@ -274,10 +274,10 @@ get_unop_id(int tok)
 {
    switch (tok)
      {
-      case '-': return UOP_UNM;
-      case '+': return UOP_UNP;
-      case '!': return UOP_NOT;
-      case '~': return UOP_BNOT;
+      case '-': return EOLIAN_UNOP_UNM;
+      case '+': return EOLIAN_UNOP_UNP;
+      case '!': return EOLIAN_UNOP_NOT;
+      case '~': return EOLIAN_UNOP_BNOT;
 
       default: return -1;
      }
