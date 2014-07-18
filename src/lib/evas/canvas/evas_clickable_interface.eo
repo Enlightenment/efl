@@ -1,6 +1,5 @@
 interface Evas.Clickable_Interface (Evas.Signal_Interface)
 {
-   data: null;
    events {
       clicked;
       clicked,double;

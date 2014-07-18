@@ -1,6 +1,5 @@
 interface Evas.Zoomable_Interface (Evas.Signal_Interface)
 {
-   data: null;
    events {
       zoom,start;
       zoom,stop;

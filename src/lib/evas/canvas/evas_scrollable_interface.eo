@@ -1,6 +1,5 @@
 interface Evas.Scrollable_Interface (Evas.Signal_Interface)
 {
-   data: null;
    events {
       scroll;
       scroll,anim,start;

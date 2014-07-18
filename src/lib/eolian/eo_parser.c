@@ -939,6 +939,10 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         ls->tmp.kls->comment = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
      }
+   if (type == EOLIAN_CLASS_INTERFACE)
+     {
+        ls->tmp.kls->data_type = eina_stringshare_add("null");
+     }
    for (;;) switch (ls->t.kw)
      {
       case KW_legacy_prefix:
@@ -960,6 +964,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         check_next(ls, ';');
         break;
       case KW_data:
+        if (type == EOLIAN_CLASS_INTERFACE) return;
         CASE_LOCK(ls, data, "data definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
