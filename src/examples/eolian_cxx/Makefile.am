@@ -9,6 +9,7 @@ EOLIAN_FLAGS = \
   -I$(top_srcdir)/src/lib/eo \
   -I$(top_srcdir)/src/lib/evas/canvas \
   -I$(top_srcdir)/src/lib/edje \
+  -I$(top_srcdir)/src/lib/efl \
   -I$(top_srcdir)/src/lib/ecore_audio
 
 include $(top_srcdir)/src/Makefile_Eolian_Helper.am
@@ -79,7 +80,7 @@ SRCS = \
 	$(IMPL)
 
 EXTRA_PROGRAMS = \
-	eolian_cxx_simple_01 \
+	eolian_cxx_simple_01 #\
 	eolian_cxx_inherit_01
 
 DATA_FILES = Makefile.examples $(EOS)
@@ -91,12 +92,12 @@ eolian_cxx_simple_01_SOURCES = \
 
 eolian_cxx_simple_01.$(OBJEXT): $(GENERATED)
 
-eolian_cxx_inherit_01_SOURCES = \
-	eolian_cxx_inherit_01.cc \
-	colourable.c \
-	colourablesquare.c
+# eolian_cxx_inherit_01_SOURCES = \
+# 	eolian_cxx_inherit_01.cc \
+# 	colourable.c \
+# 	colourablesquare.c
 
-eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
+# eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
 
 %.eo.hh: %.eo
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
