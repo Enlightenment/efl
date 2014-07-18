@@ -1,0 +1,39 @@
+class Callback (Eo.Base)
+{
+   legacy_prefix: null;
+   data: Callback_Data;
+   constructors {
+      default_constructor {
+      }
+      constructor {
+         params {
+            @in Ecore_Cb cb;
+            @in void* data;
+         }
+      }
+      constructor2 {
+         params {
+            @in Ecore_Cb cb;
+            @in void* data;
+            @in Ecore_Cb cb2;
+         }
+      }
+   }
+   methods {
+      onecallback {
+         params {
+           @in Ecore_Cb cb;
+           @in void* data;
+         }
+      }
+      twocallback {
+         params {
+           @in Ecore_Cb cb;
+           @in void* data;
+           @in Ecore_Cb cb2;
+         }
+      }
+   }
+   
+}
+       

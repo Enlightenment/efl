@@ -49,12 +49,14 @@ bin_eolian_cxx_eolian_cxx_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
 
 bin_eolian_cxx_eolian_cxx_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
-include Makefile_Eolian_Cxx_Helper.am
-
 
 ### Unit tests
 
 if EFL_ENABLE_TESTS
+
+BUILT_SOURCES += \
+	tests/eolian_cxx/callback.eo.c \
+	tests/eolian_cxx/callback.eo.h
 
 check_PROGRAMS += tests/eolian_cxx/eolian_cxx_suite
 TESTS += tests/eolian_cxx/eolian_cxx_suite
@@ -62,19 +64,24 @@ TESTS += tests/eolian_cxx/eolian_cxx_suite
 tests_eolian_cxx_eolian_cxx_suite_SOURCES = \
 tests/eolian_cxx/eolian_cxx_suite.cc \
 tests/eolian_cxx/eolian_cxx_test_parse.cc \
+tests/eolian_cxx/callback.c \
+tests/eolian_cxx/eolian_cxx_test_callback.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc
+
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh
 
 tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = 	\
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bin/eolian_cxx \
--I$(top_srcdir)/src/lib/eolian_cxx \
+-I$(top_builddir)/src/tests/eolian_cxx \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian_cxx\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eolian_cxx\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eolian_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian_cxx\" \
 @CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ \
-@EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@
+@EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ \
+@EO_CXX_CFLAGS@
 
 tests_eolian_cxx_eolian_cxx_suite_CFLAGS = ${tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS}
 tests_eolian_cxx_eolian_cxx_suite_CPPFLAGS = ${tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS}
@@ -83,5 +90,7 @@ tests_eolian_cxx_eolian_cxx_suite_LDADD = \
 tests_eolian_cxx_eolian_cxx_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
 endif
+
+include Makefile_Eolian_Cxx_Helper.am
 
 endif

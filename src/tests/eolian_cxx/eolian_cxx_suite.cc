@@ -5,6 +5,7 @@
 
 void eolian_cxx_test_parse(TCase* tc);
 void eolian_cxx_test_generate(TCase* tc);
+void eolian_cxx_test_callback(TCase* tc);
 
 typedef struct _Eolian_Cxx_Test_Case Eolian_Cxx_Test_Case;
 struct _Eolian_Cxx_Test_Case
@@ -16,6 +17,7 @@ struct _Eolian_Cxx_Test_Case
 static const Eolian_Cxx_Test_Case etc[] = {
   { "Eolian-Cxx Parsing", eolian_cxx_test_parse },
   { "Eolian-Cxx Generation", eolian_cxx_test_generate },
+  { "Eolian-Cxx Callback", eolian_cxx_test_callback },
   { NULL, NULL }
 };
 
