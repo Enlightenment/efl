@@ -326,6 +326,9 @@ struct _ptr_list_common_base
     : _impl(_list)
   {}
 
+  _ptr_list_common_base<T, CloneAllocator>& operator=(_ptr_list_common_base<T, CloneAllocator>&& other) = default;
+  _ptr_list_common_base(_ptr_list_common_base<T, CloneAllocator>&& other) = default;
+
   /**
    * @brief Default constructor. Create an empty list.
    *
@@ -431,6 +434,9 @@ public:
   ptr_list(clone_allocator_type alloc)
     : _base_type(alloc)
   {}
+
+  ptr_list<T, CloneAllocator>& operator=(ptr_list<T, CloneAllocator>&& other) = default;
+  ptr_list(ptr_list<T, CloneAllocator>&& other) = default;
   
   /**
    * @brief Construct an list object with @p n copies of @p t.

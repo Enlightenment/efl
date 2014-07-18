@@ -190,6 +190,8 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
+  list& operator=(list&& other) = default;
+
   using _base_type::_base_type;
   using _base_type::clear;
   using _base_type::size;
@@ -282,6 +284,8 @@ public:
     insert(end(), other.begin(), other.end());
     return *this;
   }
+  list& operator=(list&& other) = default;
+  list(list&& other) = default;
   
   using _base_type::clear;
   using _base_type::size;
@@ -438,6 +442,8 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
+  range_list& operator=(range_list&& other) = default;
+
   using _base_type::_base_type;
   using _base_type::clear;
   using _base_type::size;
@@ -502,6 +508,8 @@ public:
     _base_type::_handle = other._handle;
     return *this;
   }
+  range_list& operator=(range_list&& other) = default;
+  range_list(range_list&& other) = default;
   
   using _base_type::size;
   using _base_type::empty;
