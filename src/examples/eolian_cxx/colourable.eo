@@ -59,6 +59,6 @@ class Colourable (Eo.Base)
         }
     }
     events {
-        colour_changed(int);
+        colour_changed: int;
     }
 }
