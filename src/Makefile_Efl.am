@@ -24,6 +24,16 @@ efleolianfiles_DATA = \
 EXTRA_DIST += \
               ${efleolianfiles_DATA}
 
+lib_LTLIBRARIES += lib/efl/libefl.la
+
+lib_efl_libefl_la_SOURCES = \
+              lib/efl/interfaces/efl_interfaces_main.c
+
+lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EFL_CFLAGS@
+lib_efl_libefl_la_LIBADD = @EFL_LIBS@
+lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
+lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
 installed_eflheadersdir = $(includedir)/efl-@VMAJ@
 dist_installed_eflheaders_DATA = \
-lib/efl/Efl_Config.h
+              lib/efl/Efl_Config.h

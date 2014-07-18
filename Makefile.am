@@ -128,6 +128,7 @@ pkgconfig_DATA += \
 pc/eina.pc \
 pc/eo.pc \
 pc/eolian.pc \
+pc/efl.pc \
 pc/eet.pc \
 pc/evas.pc \
 pc/ecore.pc \

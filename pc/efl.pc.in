@@ -1,0 +1,16 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+eoincludedir=@datadir@/eolian/include
+eolian_flags=-I${eoincludedir}/efl-@VMAJ@
+
+Name: Efl
+Description: EFL's general purpose library
+Version: @PACKAGE_VERSION@
+Requires.private: @requirements_pc_efl@
+Libs: -L${libdir} -lefl
+Libs.private:
+Cflags: -I${includedir}/efl-@VMAJ@
