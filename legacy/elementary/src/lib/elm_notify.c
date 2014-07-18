@@ -431,8 +431,6 @@ _elm_notify_evas_object_smart_add(Eo *obj, Elm_Notify_Data *priv)
    priv->allow_events = EINA_TRUE;
 
    priv->notify = edje_object_add(evas_object_evas_get(obj));
-   priv->horizontal_align = 0.5;
-   priv->vertical_align = 0.0;
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESTACK, _restack_cb, obj);
