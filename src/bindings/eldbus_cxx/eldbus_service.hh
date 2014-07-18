@@ -167,7 +167,7 @@ void _create_methods_specification(Tuple const&
                                    , std::integral_constant<std::size_t, I>
                                    , std::true_type)
 {
-  methods[I] = Eldbus_Method2 {0, 0, 0, 0, 0, 0};
+  methods[I] = Eldbus_Method2 {{0, 0, 0, 0, 0}, 0};
 };
 
 template <std::size_t, typename T>
@@ -293,12 +293,12 @@ void _create_methods_specification_impl(Method const& method, Eldbus_Method2& el
 
   eldbus::_fill_methods(*out_params, method.outs);
 
-  eldbus_method = {method.name, &(*in_params)[0], &(*out_params)[0]
+  eldbus_method = {{method.name, &(*in_params)[0], &(*out_params)[0]
                    , reinterpret_cast<Eldbus_Method_Cb>
                     (static_cast<Eldbus_Method_Data_Cb>
                      (&_method_callback<typename Method::function_type
                       , typename Method::ins_type, typename Method::outs_type>))
-                   , ELDBUS_METHOD_FLAG_HAS_DATA
+                   , ELDBUS_METHOD_FLAG_HAS_DATA}
                    , new std::tuple<typename Method::function_type
                    , typename Method::ins_type, typename Method::outs_type
                    >(std::move(method.f), method.ins, method.outs)};
