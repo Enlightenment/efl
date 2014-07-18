@@ -11,6 +11,27 @@ namespace efl { namespace eolian { namespace grammar {
 
 using std::endl;
 
+struct c_type
+{
+   eolian_type_instance const& _list;
+   c_type(eolian_type_instance const& list)
+     : _list(list)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, efl::eolian::grammar::c_type const& x)
+{
+   assert(x._list.size() > 0);
+   std::string res;
+   for (auto rit = x._list.rbegin(), last = x._list.rend(); rit != last; ++rit)
+     {
+       res = /*type_is_binding(*rit) ? (*rit).binding :*/ (*rit).native;
+     }
+   assert(!res.empty());
+   return out << res;
+}
+
 struct reinterpret_type
 {
    eolian_type_instance const& _list;
@@ -93,7 +114,7 @@ inline std::ostream&
 operator<<(std::ostream& out, to_c const& x)
 {
    if (type_is_callback(x._type))
-     out << "efl::eolian::get_callback<" << type_to_native_str(x._type) << ", F>()";
+     out << "efl::eolian::get_callback<" << type_to_native_str(x._type) << ", function_type>()";
    else if (type_is_binding(x._type))
      out << "efl::eolian::to_c(" << x._varname << ")";
    else

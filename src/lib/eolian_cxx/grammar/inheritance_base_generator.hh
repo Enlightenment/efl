@@ -102,13 +102,13 @@ operator<<(std::ostream& out, inheritance_wrapper const& x)
        << "_wrapper(Eo* objid EINA_UNUSED, "
        << "efl::eo::detail::Inherit_Private_Data* self"
        << (x._func.params.size() ? ", " : "")
-       << parameters_declaration(x._func.params)
+       << parameters_c_declaration(x._func.params)
        << ")" << endl
        << "{" << endl
        << tab(1)
        << (!function_is_void(x._func) ? "return ": "")
        << "static_cast<T*>(self->this_)->"
-       << x._func.name << "(" << parameters_list(x._func.params) << ");" << endl
+       << x._func.name << "(" << parameters_c_list(x._func.params) << ");" << endl
        << "}" << endl << endl;
 
    return out;
@@ -136,13 +136,13 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
             << "_wrapper(Eo* objid EINA_UNUSED, "
             << "efl::eo::detail::Inherit_Private_Data* self"
             << (func.params.size() ? ", " : "")
-            << parameters_declaration(func.params)
+            << parameters_c_declaration(func.params)
             << ")" << endl
             << "{" << endl
             << tab(1)
             << (!function_is_void(func) ? "return ": "")
             << "static_cast<T*>(self->this_)->"
-            << func.name << "(" << parameters_list(func.params) << ");" << endl
+            << func.name << "(" << parameters_c_list(func.params) << ");" << endl
             << "}" << endl << endl;
      }
    return out;
@@ -299,6 +299,9 @@ struct inheritance_extension_function
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_extension_function const& x)
 {
+   if (parameters_count_callbacks(x._func.params) == 1)
+     out << tab(1) << "template <typename F>" << endl;
+
    bool is_void = function_is_void(x._func);
    out << tab(2)
        << reinterpret_type(x._func.ret) << " "
@@ -312,7 +315,18 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
         out << tab(3) << reinterpret_type(x._func.ret) << " _tmp_ret = {};" << endl;
      }
 
-   out << tab(3) << "eo_do(static_cast<T*>(this)->_eo_ptr(), "
+   parameters_container_type::const_iterator callback_iter =
+     parameters_find_callback(x._func.params);
+   if (callback_iter != x._func.params.cend())
+     {
+       out << tab(2)
+           << "typedef typename std::remove_reference<F>::type function_type;" << endl
+           << "function_type* _tmp_f = new function_type(std::forward<F>("
+           << (*callback_iter).name << "));"
+           << endl;
+     }
+
+   out << tab(3) << "eo_do(static_cast<U*>(this)->_eo_ptr(), "
        << function_call(x._func) << ");" << endl;
 
    if (!is_void)
@@ -340,13 +354,13 @@ operator<<(std::ostream& out, inheritance_extension const& x)
        << "struct extension_inheritance< "
        << cls << ">" << endl
        << "{" << endl
-       << tab(1) << "template <typename T>" << endl
+       << tab(1) << "template <typename U>" << endl
        << tab(1) << "struct type" << endl
        << tab(1) << "{" << endl
        << tab(2) << "operator " << cls << "() const" << endl
        << tab(2) << "{" << endl
        << tab(3) << "return " << cls
-       << "(eo_ref(static_cast<T const*>(this)->_eo_ptr()));" << endl
+       << "(eo_ref(static_cast<U const*>(this)->_eo_ptr()));" << endl
        << tab(2) << "}" << endl
        << endl;
    functions_container_type::const_iterator it,
@@ -356,6 +370,7 @@ operator<<(std::ostream& out, inheritance_extension const& x)
      {
         out << inheritance_extension_function(*it);
      }
+   out << events(x._cls, true);
    out << tab(1) << "};" << endl
        << "};" << endl
        << endl;

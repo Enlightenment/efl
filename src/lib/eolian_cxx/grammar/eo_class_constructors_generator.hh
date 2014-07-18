@@ -209,7 +209,8 @@ operator<<(std::ostream& out, eo_class_constructors const& x)
         if (callback_iter != (*it).params.cend())
           {
              out << tab(2)
-                 << "F* _tmp_f = new F(std::move("
+                 << "typedef typename std::remove_reference<F>::type function_type;" << endl
+                 << "function_type* _tmp_f = new F(std::forward<F>("
                  << (*callback_iter).name << "));"
                  << endl;
           }

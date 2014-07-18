@@ -55,6 +55,17 @@ operator<<(std::ostream& out, function const& x)
      out << tab(2)
          << func.ret.front().native << " _tmp_ret;" << endl;
 
+   parameters_container_type::const_iterator callback_iter =
+     parameters_find_callback(func.params);
+   if (callback_iter != func.params.cend())
+     {
+       out << tab(2)
+           << "typedef typename std::remove_reference<F>::type function_type;" << endl
+           << tab(2) << "function_type* _tmp_f = new function_type(std::forward<F>("
+           << (*callback_iter).name << "));"
+           << endl;
+     }
+
    out << tab(2)
        << "eo_do(_eo_ptr(), " << function_call(x._func) << ");" << endl;
 

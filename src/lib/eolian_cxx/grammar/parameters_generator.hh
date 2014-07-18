@@ -41,6 +41,29 @@ operator<<(std::ostream& out, parameters_declaration const& x)
 }
 
 struct
+parameters_c_declaration
+{
+   parameters_container_type const& _params;
+   parameters_c_declaration(parameters_container_type const& params)
+     : _params(params)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameters_c_declaration const& x)
+{
+   auto first = x._params.cbegin(),
+     last = x._params.cend();
+   for (auto it = first; it != last; ++it)
+     {
+        if (it != first)
+          out << ", ";
+        out << c_type(it->type) << " " << (*it).name;
+     }
+   return out;
+}
+
+struct
 parameters_types
 {
    parameters_container_type const& _params;
@@ -93,6 +116,28 @@ operator<<(std::ostream& out, parameters_list const& x)
           }
         else
           out << to_c((*it).type, (*it).name);
+     }
+   return out;
+}
+
+struct
+parameters_c_list
+{
+   parameters_container_type const& _params;
+   parameters_c_list(parameters_container_type const& params)
+     : _params(params)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameters_c_list const& x)
+{
+   auto first = x._params.cbegin(), last = x._params.cend();
+   for (auto it = first; it != last; ++it)
+     {
+        if (it != first)
+          out << ", ";
+        out << it->name;
      }
    return out;
 }
