@@ -38,7 +38,7 @@ to_c(bool x)
 }
 
 template <typename T>
-T to_c(T const& v)
+T to_c(T const& v, typename std::enable_if<!std::is_base_of<efl::eo::base, T>::value>::type* = 0)
 {
    return v;
 }
@@ -121,53 +121,24 @@ struct traits
 };
 
 template <typename T, typename ...Args>
-inline efl::eina::range_ptr_list<T>
-to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_ptr_list<T> >)
+inline efl::eina::range_list<T>
+to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_list<T> >)
 {
-   efl::eina::ptr_list<T> list;
-   const Eina_List *l;
-   void *val;
-   EINA_LIST_FOREACH(x, l, val)
-     {
-        typedef typename traits<T>::type type;
-        list.push_back(new T (to_cxx(static_cast<type>(val), std::tuple<Args...>()
-                                     , tag<T>())));
-     }
-   return list;
+   return efl::eina::list<T> {x};
 }
 
 template <typename T, typename ...Args>
-inline efl::eina::range_ptr_list<T>
-to_cxx(Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_ptr_list<T> >)
+inline efl::eina::range_list<T>
+to_cxx(Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_list<T> >)
 {
-   efl::eina::ptr_list<T> list;
-   Eina_List *l;
-   void *val;
-   EINA_LIST_FOREACH(x, l, val)
-     {
-        typedef typename traits<T>::type type;
-        list.push_back(new T (to_cxx(static_cast<type>(val), std::tuple<Args...>()
-                                     , tag<T>())));
-     }
-   eina_list_free(x);
-   return list;
+   return efl::eina::range_list<T>{x};
 }
 
 template <typename T, typename ...Args>
-inline efl::eina::ptr_list<T>
-to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< efl::eina::ptr_list<T> >)
+inline efl::eina::list<T>
+to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< efl::eina::list<T> >)
 {
-   efl::eina::ptr_list<T> list;
-   Eina_List *l;
-   void *val;
-   EINA_LIST_FOREACH(x, l, val)
-     {
-        typedef typename traits<T>::type type;
-        list.push_back(new T (to_cxx(static_cast<type>(val), std::tuple<Args...>()
-                                     , tag<T>())));
-     }
-   eina_list_free(x);
-   return list;
+   return efl::eina::list<T> {x};
 }
 
 inline eina::stringshare
@@ -188,6 +159,24 @@ inline efl::eina::iterator<T>
 to_cxx(Eina_Iterator* x, std::tuple<std::false_type, Args...>, tag< efl::eina::iterator<T> >)
 {
    return efl::eina::iterator<T>(x);
+}
+
+template <typename T, typename ...Args>
+T
+to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< T >
+       , typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>* = 0)
+{
+   // Workaround for erroneous constness
+   return T{ ::eo_ref(const_cast<Eo*>(x))};
+}
+
+template <typename T, typename ...Args>
+T
+to_cxx(Eo const* x, std::tuple<std::true_type, Args...>, tag< T >
+       , typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>* = 0)
+{
+   // Workaround for erroneous constness
+   return T{const_cast<Eo*>(x)};
 }
 
 template <typename T, typename U, typename O>
