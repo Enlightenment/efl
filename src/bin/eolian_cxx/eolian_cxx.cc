@@ -183,7 +183,7 @@ run(options_type const& opts)
    EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
      << "Error generating: " << class_name(*klass)
      << std::endl;
-   std::abort();
+   assert(false && "error generating class");
 }
 
 static void
@@ -201,7 +201,7 @@ database_load(options_type const& opts)
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Eolian failed parsing eot files";
-        std::abort();
+        assert(false && "Error parsing eot files");
      }
    if (!opts.in_file.empty())
      {
@@ -209,14 +209,14 @@ database_load(options_type const& opts)
           {
              EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
                << "Failed parsing: " << opts.in_file << ".";
-             std::abort();
+             assert(false && "Error parsing input file");
           }
      }
    if (!::eolian_all_eo_files_parse())
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Eolian failed parsing input files";
-        std::abort();
+        assert(false && "Error parsing input files");
      }
 }
 
@@ -327,7 +327,7 @@ opts_get(int argc, char **argv)
    if (!eolian_cxx::opts_check(opts))
      {
         _usage(argv[0]);
-        std::abort();
+        assert(false && "Wrong options passed in command-line");
      }
 
    return opts;
