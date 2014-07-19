@@ -77,25 +77,20 @@ _tb_sel5_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 static void
 toolbar_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   Elm_Object_Item *it = elm_toolbar_more_item_get(obj);
+   Elm_Object_Item *more_it = elm_toolbar_more_item_get(obj);
 
-   if (event_info)
+   printf("toolbar item %p is clicked\n", event_info);
+
+   if (!strcmp(elm_object_item_text_get(more_it), "Open") &&
+       (more_it == elm_toolbar_selected_item_get(obj)))
      {
-        printf("toolbar item %p clicked", event_info);
-        if (elm_toolbar_item_selected_get(event_info))
-          printf(" (selected)\n");
-        else
-          printf(" (unselected)\n");
+        elm_toolbar_item_icon_set(more_it, "arrow_up");
+        elm_object_item_text_set(more_it, "Close");
      }
-   if (!strcmp(elm_object_item_text_get(it), "Open") && (it == elm_toolbar_selected_item_get(obj)))
+   else if (!strcmp(elm_object_item_text_get(more_it), "Close"))
      {
-        elm_toolbar_item_icon_set(it, "arrow_up");
-        elm_object_item_text_set(it, "Close");
-     }
-   else if (!strcmp(elm_object_item_text_get(it), "Close"))
-     {
-        elm_toolbar_item_icon_set(it, "arrow_down");
-        elm_object_item_text_set(it, "Open");
+        elm_toolbar_item_icon_set(more_it, "arrow_down");
+        elm_object_item_text_set(more_it, "Open");
      }
 }
 
