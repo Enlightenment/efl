@@ -297,7 +297,7 @@ elm_main(int argc, char **argv)
    elm_config_preferred_engine_set("opengl_x11");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_util_standard_add("__WIN__", " A button on the 3d object");
+   win = elm_win_util_standard_add("evas3d-object-button", "A button on the 3d object");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, WIDTH, HEIGHT);
    evas_object_show(win);

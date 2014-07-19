@@ -274,7 +274,7 @@ elm_main(int argc, char **argv)
    elm_config_preferred_engine_set("opengl_x11");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_util_standard_add("__WIN__", "3d object on the button");
+   win = elm_win_util_standard_add("evas3d-scene-button", "3d object on the button");
    if (!win) return 0;
 
    elm_win_autodel_set(win, EINA_TRUE);
