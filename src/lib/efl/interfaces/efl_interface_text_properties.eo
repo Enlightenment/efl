@@ -1,4 +1,6 @@
-interface Efl_Interface_Text_Properties {
+type Efl_Font_Size: int;
+
+interface Efl.Interface.Text_Properties {
    legacy_prefix: null;
    properties {
       font {
@@ -28,7 +30,31 @@ interface Efl_Interface_Text_Properties {
          }
          values {
             const(char) *font; /*@ The font family name or filename. */
-            Evas_Font_Size size; /*@ The font size, in points. */
+            Efl_Font_Size size; /*@ The font size, in points. */
+         }
+      }
+      font_source {
+         set {
+            /*@
+            Set the font (source) file to be used on a given text object.
+
+            This function allows the font file to be explicitly set for a given
+            text object, overriding system lookup, which will first occur in
+            the given file's contents.
+
+            @see evas_object_text_font_get() */
+         }
+         get {
+            /*@
+            Get the font file's path which is being used on a given text
+            object.
+
+            @return The font file's path.
+
+            @see evas_object_text_font_get() for more details */
+         }
+         values {
+            const(char)* font_source; /*@ The font file's path. */
          }
       }
    }

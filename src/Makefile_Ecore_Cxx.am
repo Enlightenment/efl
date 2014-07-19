@@ -51,6 +51,7 @@ tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
 tests_ecore_cxx_cxx_compile_test_SOURCES = tests/ecore_cxx/cxx_compile_test.cc
 tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces/ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
 @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \

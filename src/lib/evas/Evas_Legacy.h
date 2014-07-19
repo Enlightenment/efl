@@ -1288,6 +1288,67 @@ EAPI Evas_Object         *evas_object_text_add(Evas *e) EINA_WARN_UNUSED_RESULT 
 #include "canvas/evas_text.eo.legacy.h"
 
 /**
+ *
+ * Set the font (source) file to be used on a given text object.
+ *
+ * This function allows the font file to be explicitly set for a given
+ * text object, overriding system lookup, which will first occur in
+ * the given file's contents.
+ *
+ * @see evas_object_text_font_get()
+ *
+ * @param[in] font_source The font file's path.
+ */
+EAPI void evas_object_text_font_source_set(Eo *obj, const char *font_source);
+
+/**
+ *
+ * Get the font file's path which is being used on a given text
+ * object.
+ *
+ * @return The font file's path.
+ *
+ * @see evas_object_text_font_get() for more details
+ *
+ */
+EAPI const char *evas_object_text_font_source_get(const Eo *obj);
+
+/**
+ *
+ * Set the font family or filename, and size on a given text object.
+ *
+ * This function allows the font name and size of a text object to be
+ * set. The @p font string has to follow fontconfig's convention on
+ * naming fonts, as it's the underlying library used to query system
+ * fonts by Evas (see the @c fc-list command's output, on your system,
+ * to get an idea). Alternatively, one can use a full path to a font file.
+ *
+ * @see evas_object_text_font_get()
+ * @see evas_object_text_font_source_set()
+ *
+ * @param[in] font The font family name or filename.
+ * @param[in] size The font size, in points.
+ */
+EAPI void evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size);
+
+/**
+ *
+ * Retrieve the font family and size in use on a given text object.
+ *
+ * This function allows the font name and size of a text object to be
+ * queried. Be aware that the font name string is still owned by Evas
+ * and should @b not have free() called on it by the caller of the
+ * function.
+ *
+ * @see evas_object_text_font_set()
+ *
+ * @param[out] font The font family name or filename.
+ * @param[out] size The font size, in points.
+ */
+EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_Size *size);
+
+
+/**
  * @}
  */
 
@@ -1366,6 +1427,92 @@ EAPI void                                     evas_object_textblock_clear(Evas_O
 EAPI Evas_Object *evas_object_textgrid_add(Evas *e);
 
 #include "canvas/evas_textgrid.eo.legacy.h"
+
+/**
+ *
+ * @brief Set the font (source) file to be used on a given textgrid object.
+ *
+ * This function allows the font file @p font_source to be explicitly
+ * set for the textgrid object @p obj, overriding system lookup, which
+ * will first occur in the given file's contents. If @p font_source is
+ * @c NULL or is an empty string, or the same font_source has already
+ * been set, or on error, this function does nothing.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.7
+ *
+ * @param[in] font_source The font file's path.
+ */
+EAPI void evas_object_textgrid_font_source_set(Eo *obj, const char *font_source);
+
+/**
+ *
+ * @brief Get the font file's path which is being used on a given textgrid object.
+ *
+ * @return The font file's path.
+ *
+ * This function returns the font source path of the textgrid object
+ * @p obj. If the font source path has not been set, or on error,
+ * @c NULL is returned.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_set()
+ *
+ * @since 1.7
+ *
+ */
+EAPI const char *evas_object_textgrid_font_source_get(const Eo *obj);
+
+/**
+ *
+ * @brief Set the font family and size on a given textgrid object.
+ *
+ * This function allows the font name @p font_name and size
+ * @p font_size of the textgrid object @p obj to be set. The @p font_name
+ * string has to follow fontconfig's convention on naming fonts, as
+ * it's the underlying library used to query system fonts by Evas (see
+ * the @c fc-list command's output, on your system, to get an
+ * idea). It also has to be a monospace font. If @p font_name is
+ * @c NULL, or if it is an empty string, or if @p font_size is less or
+ * equal than 0, or on error, this function does nothing.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_source_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.7
+ *
+ * @param[in] font_name The font (family) name.
+ * @param[in] font_size The font size, in points.
+ */
+EAPI void evas_object_textgrid_font_set(Eo *obj, const char *font_name, Evas_Font_Size font_size);
+
+/**
+ *
+ * @brief Retrieve the font family and size in use on a given textgrid object.
+ *
+ * This function allows the font name and size of a textgrid object
+ * @p obj to be queried and stored respectively in the buffers
+ * @p font_name and @p font_size. Be aware that the font name string is
+ * still owned by Evas and should @b not have free() called on it by
+ * the caller of the function. On error, the font name is the empty
+ * string and the font size is 0. @p font_name and @p font_source can
+ * be @c NULL.
+ *
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.7
+ *
+ * @param[out] font_name The font (family) name.
+ * @param[out] font_size The font size, in points.
+ */
+EAPI void evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_Size *font_size);
 
 /**
  * @}
