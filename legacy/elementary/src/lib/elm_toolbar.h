@@ -33,6 +33,10 @@
  * - @c "unfocused" - When the toolbar has lost focus. (since 1.8)
  * - @c "item,focused" - When the toolbar item has received focus. (since 1.10)
  * - @c "item,unfocused" - When the toolbar item has lost focus. (since 1.10)
+ * - @c "selected" - when an item is selected. @p event_info is a selected
+ *   item. (since 1.11)
+ * - @c "unselected" - when an item is unselected. @p event_info is a
+ *   unselected item. (since 1.11)
  *
  * Available styles for it:
  * - @c "default"

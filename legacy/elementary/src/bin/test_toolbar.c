@@ -6,6 +6,17 @@
 Evas_Object * _focus_autoscroll_mode_frame_create(Evas_Object *parent);
 
 static void
+_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   const char *str = elm_object_item_text_get(event_info);
+   printf("item %p is %s.", event_info, (char *)data);
+   if (str)
+     printf(" string is \"%s\"\n", str);
+   else
+     printf("\n");
+}
+
+static void
 _tb_sel1_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
@@ -106,6 +117,8 @@ test_toolbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(bx);
 
    tb = elm_toolbar_add(win);
+   evas_object_smart_callback_add(tb, "selected", _selected_cb, "selected");
+   evas_object_smart_callback_add(tb, "unselected", _selected_cb, "unselected");
    elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);

@@ -523,6 +523,8 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
       scroll,drag,start;
       scroll,drag,stop;
       clicked;
+      selected;
+      unselected;
       longpressed;
       clicked,double;
       language,changed;

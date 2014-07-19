@@ -26,6 +26,8 @@ static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_CLICKED[] = "clicked";
+static const char SIG_SELECTED[] = "selected";
+static const char SIG_UNSELECTED[] = "unselected";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
 static const char SIG_ITEM_FOCUSED[] = "item,focused";
@@ -37,6 +39,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
    {SIG_CLICKED, ""},
+   {SIG_SELECTED, ""},
+   {SIG_UNSELECTED, ""},
    {SIG_LONGPRESSED, ""},
    {SIG_CLICKED_DOUBLE, ""},
    {SIG_ITEM_FOCUSED, ""},
@@ -153,6 +157,7 @@ _item_unselect(Elm_Toolbar_Item *item)
    edje_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
+   evas_object_smart_callback_call(WIDGET(item), SIG_UNSELECTED, item);
 }
 
 static void
@@ -1100,6 +1105,7 @@ _item_select(Elm_Toolbar_Item *it)
         if (it->func) it->func((void *)(it->base.data), WIDGET(it), it);
      }
    evas_object_smart_callback_call(obj, SIG_CLICKED, it);
+   evas_object_smart_callback_call(obj, SIG_SELECTED, it);
 }
 
 static void
