@@ -64,7 +64,7 @@ _tb_sel5_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 }
 
 static void
-toolbar_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+toolbar_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *it = elm_toolbar_more_item_get(obj);
 
