@@ -40,17 +40,17 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "activated" - the user activated a file. This can happen by
- *      double-clicking or pressing Enter key. (@c event_info is a
+ *      double-clicking or pressing Enter key. (@p event_info is a
  *      pointer to the activated file path)
  * - @c "selected" - the user has clicked on a file (when not in
  *      folders-only mode) or directory (when in folders-only mode)
  * - @c "selected,invalid" - the user has tried to access wrong path
  *      which does not exist.
  * - @c "directory,open" - the list has been populated with new
- *      content (@c event_info is a pointer to the directory's
+ *      content (@p event_info is a pointer to the directory's
  *      path, a @b stringshared string)
  * - @c "done" - the user has clicked on the "ok" or "cancel"
- *      buttons (@c event_info is a pointer to the selection's
+ *      buttons (@p event_info is a pointer to the selection's
  *      path, a @b stringshared string)
  * - @c "focused" - When the fileselector has received focus. (since 1.9)
  * - @c "unfocused" - When the fileselector has lost focus. (since 1.9)

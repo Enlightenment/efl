@@ -57,7 +57,7 @@ struct _Elm_Web_Menu_Item
 /**
  * Structure describing the menu of a popup
  *
- * This structure will be passed as the @c event_info for the "popup,create"
+ * This structure will be passed as the @p event_info for the "popup,create"
  * signal, which is emitted when a dropdown menu is opened. Users wanting
  * to handle these popups by themselves should listen to this signal and
  * set the @c handled property of the struct to @c EINA_TRUE. Leaving this
@@ -78,7 +78,7 @@ typedef struct _Elm_Web_Menu Elm_Web_Menu;
 /**
  * Structure describing the menu of a popup
  *
- * This structure will be passed as the @c event_info for the "popup,create"
+ * This structure will be passed as the @p event_info for the "popup,create"
  * signal, which is emitted when a dropdown menu is opened. Users wanting
  * to handle these popups by themselves should listen to this signal and
  * set the @c handled property of the struct to @c EINA_TRUE. Leaving this

@@ -1,4 +1,5 @@
 /**
+kkikk
  * @defgroup Check Check
  * @ingroup Elementary
  *
@@ -29,7 +30,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "changed" - This is called whenever the user changes the state of
- *             the check objects (@c event_info is always @c NULL).
+ *             the check objects (@p event_info is always @c NULL).
  * - @c "focused" - When the check has received focus. (since 1.8)
  * - @c "unfocused" - When the check has lost focus. (since 1.8)
  * - @c "language,changed" - the program's language changed (since 1.9)

@@ -164,25 +164,25 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "activated" - The user has double-clicked or pressed
- *   (enter|return|spacebar) on an item. The @c event_info parameter
+ *   (enter|return|spacebar) on an item. The @p event_info parameter
  *   is the gengrid item that was activated.
- * - @c "pressed" - The user pressed the an item. The @c event_info
+ * - @c "pressed" - The user pressed the an item. The @p event_info
  *   parameter is the item that was pressed.
- * - @c "released" - The user released the an item. The @c event_info
+ * - @c "released" - The user released the an item. The @p event_info
  *   parameter is the item that was released.
  * - @c "clicked,double" - The user has double-clicked an item.
- *   The @c event_info parameter is the gengrid item that was double-clicked.
+ *   The @p event_info parameter is the gengrid item that was double-clicked.
  * - @c "longpressed" - This is called when the item is pressed for a certain
  *   amount of time. By default it's 1 second.
  * - @c "selected" - The user has made an item selected. The
- *   @c event_info parameter is the gengrid item that was selected.
+ *   @p event_info parameter is the gengrid item that was selected.
  * - @c "unselected" - The user has made an item unselected. The
- *   @c event_info parameter is the gengrid item that was unselected.
+ *   @p event_info parameter is the gengrid item that was unselected.
  * - @c "realized" - This is called when the item in the gengrid
  *   has its implementing Evas object instantiated, de facto. @c
  *   event_info is the gengrid item that was created.
  * - @c "unrealized" - This is called when the implementing Evas
- *   object for this item is deleted. @c event_info is the gengrid
+ *   object for this item is deleted. @p event_info is the gengrid
  *   item that was deleted.
  * - @c "changed" - Called when an item is added, removed, resized
  *   or moved and when the gengrid is resized or gets "horizontal"

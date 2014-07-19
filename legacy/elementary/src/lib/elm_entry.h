@@ -101,7 +101,7 @@
  * used to identify the anchor and it can be any valid utf8 string.
  *
  * When an anchor is clicked, an @c "anchor,clicked" signal is emitted with
- * an #Elm_Entry_Anchor_Info in the @c event_info parameter for the
+ * an #Elm_Entry_Anchor_Info in the @p event_info parameter for the
  * callback function. The same applies for "anchor,in" (mouse in), "anchor,out"
  * (mouse out), "anchor,down" (mouse down), and "anchor,up" (mouse up) events on
  * an anchor.

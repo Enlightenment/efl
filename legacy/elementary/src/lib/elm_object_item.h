@@ -467,7 +467,7 @@ EAPI Eina_Bool                    elm_object_item_tooltip_window_mode_get(const 
  *        another callback replaces @a func, the tooltip is unset with
  *        elm_object_item_tooltip_unset() or the owner @a item
  *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
+ *        given @a data, and @p event_info is the item.
  *
  * @see elm_object_tooltip_content_cb_set() for more details.
  *

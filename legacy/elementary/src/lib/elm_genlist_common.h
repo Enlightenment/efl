@@ -319,7 +319,7 @@ EAPI void                          elm_genlist_item_tooltip_text_set(Elm_Object_
  *        another callback replaces @p func, the tooltip is unset with
  *        elm_genlist_item_tooltip_unset() or the owner @p item
  *        dies. This callback receives as its first parameter the
- *        given @p data, being @c event_info the item handle.
+ *        given @p data, being @p event_info the item handle.
  *
  * This call will setup the tooltip's contents to @p item
  * (analogous to elm_object_tooltip_content_cb_set(), but being

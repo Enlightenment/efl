@@ -1743,7 +1743,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_text_s
  *        another callback replaces @p func, the tooltip is unset with
  *        elm_diskselector_item_tooltip_unset() or the owner @a item
  *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
+ *        given @a data, and @p event_info is the item.
  *
  * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
  * @see elm_object_tooltip_content_cb_set() for more details.
@@ -2336,7 +2336,7 @@ EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const vo
  * @param it The item to set the callback on
  * @param func The function to call on the item's deletion
  *
- * When called, @p func will have both @c data and @c event_info
+ * When called, @p func will have both @c data and @p event_info
  * arguments with the @p it item's data value and, naturally, the
  * @c obj argument with a handle to the parent index widget.
  *
@@ -3372,7 +3372,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_del(Elm_Objec
  *        another callback replaces @a func, the tooltip is unset with
  *        elm_toolbar_item_tooltip_unset() or the owner @a item
  *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
+ *        given @a data, and @p event_info is the item.
  *
  * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
  * @see elm_object_tooltip_content_cb_set() for more details.
@@ -3959,7 +3959,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_text_set
  *        another callback replaces @a func, the tooltip is unset with
  *        elm_list_item_tooltip_unset() or the owner @a item
  *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
+ *        given @a data, and @p event_info is the item.
  *
  * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
  *

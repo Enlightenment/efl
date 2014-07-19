@@ -32,10 +32,10 @@
  * - @c "changed" - When the selected index item changes. @c
  *      event_info is the selected item's data pointer.
  * - @c "delay,changed" - When the selected index item changes, but
- *      after a small idling period. @c event_info is the selected
+ *      after a small idling period. @p event_info is the selected
  *      item's data pointer.
  * - @c "selected" - When the user releases a mouse button and
- *      selects an item. @c event_info is the selected item's pointer.
+ *      selects an item. @p event_info is the selected item's pointer.
  * - @c "level,up" - when the user moves a finger from the first
  *      level to the second level
  * - @c "level,down" - when the user moves a finger from the second

@@ -16,7 +16,7 @@
  * window (or inner window) <b> with a @ref Fileselector "file
  * selector widget" within</b>. When a file is chosen, the (inner)
  * window is closed and the button emits a signal having the
- * selected file as it's @c event_info.
+ * selected file as it's @p event_info.
  *
  * This widget encapsulates operations on its internal file
  * selector on its own API. There is less control over its file
@@ -34,7 +34,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Button:
  * - @c "file,chosen" - the user has selected a path, whose string
- *   pointer comes as the @c event_info data (a stringshared
+ *   pointer comes as the @p event_info data (a stringshared
  *   string)
  * - @c "language,changed" - the program's language changed
  * - @c "focused" - When the fileselector button has received focus. (since 1.8)

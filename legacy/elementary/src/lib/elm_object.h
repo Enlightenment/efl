@@ -417,7 +417,7 @@ EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *e
  * these event upwards in the tree of widgets to @b cease:
  * - Just return @c EINA_TRUE on @p func. @c EINA_FALSE will mean
  *   the event was @b not processed, so the propagation will go on.
- * - The @c event_info pointer passed to @p func will contain the
+ * - The @p event_info pointer passed to @p func will contain the
  *   event's structure and, if you OR its @c event_flags inner
  *   value to @c EVAS_EVENT_FLAG_ON_HOLD, you're telling Elementary
  *   one has already handled it, thus killing the event's

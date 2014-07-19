@@ -25,10 +25,10 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "activated" - The user has double-clicked or pressed
- *   (enter|return|spacebar) on an item. The @c event_info parameter
+ *   (enter|return|spacebar) on an item. The @p event_info parameter
  *   is the item that was activated.
  * - @c "clicked,double" - The user has double-clicked an item.
- *   The @c event_info parameter is the item that was double-clicked.
+ *   The @p event_info parameter is the item that was double-clicked.
  * - @c "selected" - when the user selected an item
  * - @c "unselected" - when the user unselected an item
  * - @c "longpressed" - an item in the list is long-pressed

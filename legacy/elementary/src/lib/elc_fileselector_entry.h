@@ -47,7 +47,7 @@
  *   after being pressed.
  * - @c "file,chosen" - The user has selected a path via the file
  *   selector entry's internal file selector, whose string pointer
- *   comes as the @c event_info data (a stringshared string)
+ *   comes as the @p event_info data (a stringshared string)
  * - @c "language,changed" - the program's language changed
  *
  * Default text parts of the fileselector_button widget that you can use for

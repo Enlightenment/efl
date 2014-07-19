@@ -270,11 +270,11 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "activated" - The user has double-clicked or pressed
- *   (enter|return|spacebar) on an item. The @c event_info parameter is the
+ *   (enter|return|spacebar) on an item. The @p event_info parameter is the
  *   item that was activated.
- * - @c "pressed" - The user pressed the an item. The @c event_info
+ * - @c "pressed" - The user pressed the an item. The @p event_info
  *   parameter is the item that was pressed.
- * - @c "released" - The user released the an item. The @c event_info
+ * - @c "released" - The user released the an item. The @p event_info
  *   parameter is the item that was released.
  * - @c "clicked,double" - The user has double-clicked an item.  The @c
  *   event_info parameter is the item that was double-clicked.

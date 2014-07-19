@@ -164,7 +164,7 @@ EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *ob
  *        another callback replaces @p func, the tooltip is unset with
  *        elm_object_tooltip_unset() or the owner object @a obj
  *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is NULL.
+ *        given @a data, and @p event_info is NULL.
  *
  * Setup the tooltip to object. The object can have only one tooltip,
  * so any previous tooltip data is removed. @p func(with @p data) will
