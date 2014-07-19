@@ -317,12 +317,13 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
                ftype = EOLIAN_PROP_GET;
           }
 
-        free(virtual_name);
-
         Eolian_Function *foo_id = (Eolian_Function*)
                                    eolian_class_function_find_by_name(cl,
                                                                       func,
                                                                       ftype);
+
+        free(virtual_name);
+
         if (!foo_id)
           {
              ERR("Error - %s not known in class %s", impl_name + 8,
