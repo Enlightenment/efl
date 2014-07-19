@@ -489,8 +489,10 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Table_Data 
 
         cx = x + ((opt->col * ww) / priv->size.cols);
         cw = x + (((opt->col + opt->colspan) * ww) / priv->size.cols) - cx;
+        cw += (opt->colspan - 1) * priv->pad.v;
         cy = y + ((opt->row * hh) / priv->size.rows);
         ch = y + (((opt->row + opt->rowspan) * hh) / priv->size.rows) - cy;
+        ch += (opt->rowspan - 1) * priv->pad.h;
 
         cx += (opt->col) * priv->pad.h;
         cy += (opt->row) * priv->pad.v;
