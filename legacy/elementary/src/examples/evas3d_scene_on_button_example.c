@@ -276,10 +276,7 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("evas3d-scene-button", "3d object on the button");
    if (!win) return 0;
-
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, WIDTH, HEIGHT);
-   evas_object_show(win);
 
    evas = evas_object_evas_get(win);
    if (!evas) return 0;
@@ -307,6 +304,9 @@ elm_main(int argc, char **argv)
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);
+
+   evas_object_resize(win, WIDTH, HEIGHT);
+   evas_object_show(win);
 
    /* Enter main loop. */
    elm_run();

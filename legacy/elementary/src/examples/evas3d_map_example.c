@@ -1244,15 +1244,13 @@ elm_main(int argc, char **argv)
    light_toggle_setup(control_layout);
    zoom_slider_setup(control_layout);
 
-   evas_object_resize(win, WIDTH, HEIGHT);
-   evas_object_show(win);
-
    /* Start rotating earth */
    animator = ecore_animator_add(animate_scene, mesh_node);
 
-   printf ("Enter main loop\n");
-   elm_run();
+   evas_object_resize(win, WIDTH, HEIGHT);
+   evas_object_show(win);
 
+   elm_run();
    elm_shutdown();
    sphere_fini();
 
