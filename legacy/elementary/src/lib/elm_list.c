@@ -1661,7 +1661,7 @@ _mouse_up_cb(void *data,
    _elm_list_walk(sd);
 
    if (sd->focused_item != (Elm_Object_Item *)it)
-        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+     elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
 
    if (sd->multi &&
        ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
