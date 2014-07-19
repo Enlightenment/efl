@@ -1008,7 +1008,7 @@ static void
 _item_select(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item *it2;
-   Evas_Object *obj2;
+   Evas_Object *obj;
    Eina_Bool sel;
 
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
@@ -1083,7 +1083,7 @@ _item_select(Elm_Toolbar_Item *it)
           }
      }
 
-   obj2 = WIDGET(it);
+   obj = WIDGET(it);
    if (it->menu && (!sel))
      {
         evas_object_show(it->o_menu);
@@ -1099,7 +1099,7 @@ _item_select(Elm_Toolbar_Item *it)
      {
         if (it->func) it->func((void *)(it->base.data), WIDGET(it), it);
      }
-   evas_object_smart_callback_call(obj2, SIG_CLICKED, it);
+   evas_object_smart_callback_call(obj, SIG_CLICKED, it);
 }
 
 static void
