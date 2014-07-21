@@ -92,6 +92,13 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
    eina_strbuf_append(buf, "struct ");
    if (tp->name)
      {
+        Eina_List *l;
+        const char *sp;
+        EINA_LIST_FOREACH(tp->namespaces, l, sp)
+          {
+             eina_strbuf_append(buf, sp);
+             eina_strbuf_append_char(buf, '_');
+          }
         eina_strbuf_append(buf, tp->name);
         eina_strbuf_append_char(buf, ' ');
      }
@@ -126,7 +133,16 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append(buf, "const ");
      }
    if (tp->type == EOLIAN_TYPE_REGULAR)
-     eina_strbuf_append(buf, tp->name);
+     {
+        Eina_List *l;
+        const char *sp;
+        EINA_LIST_FOREACH(tp->namespaces, l, sp)
+          {
+             eina_strbuf_append(buf, sp);
+             eina_strbuf_append_char(buf, '_');
+          }
+        eina_strbuf_append(buf, tp->name);
+     }
    else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
      {
         eina_strbuf_append(buf, "struct ");
