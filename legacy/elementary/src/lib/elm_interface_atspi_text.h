@@ -1,6 +1,4 @@
 
-typedef enum _Elm_Atspi_Text_Granulatity Elm_Atspi_Text_Granularity;
-
 enum _Elm_Atspi_Text_Granulatity
 {
    ELM_ATSPI_TEXT_GRANULARITY_CHAR,
@@ -10,7 +8,7 @@ enum _Elm_Atspi_Text_Granulatity
    ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH
 };
 
-typedef struct _Elm_Atspi_Text_Attribute Elm_Atspi_Text_Attribute;
+typedef enum _Elm_Atspi_Text_Granulatity Elm_Atspi_Text_Granularity;
 
 struct _Elm_Atspi_Text_Attribute
 {
@@ -18,7 +16,7 @@ struct _Elm_Atspi_Text_Attribute
    const char *value;
 };
 
-typedef struct _Elm_Atspi_Text_Range Elm_Atspi_Text_Range;
+typedef struct _Elm_Atspi_Text_Attribute Elm_Atspi_Text_Attribute;
 
 struct _Elm_Atspi_Text_Range
 {
@@ -27,7 +25,7 @@ struct _Elm_Atspi_Text_Range
    char *content;
 };
 
-typedef enum _Elm_Atspi_Text_Clip_Type Elm_Atspi_Text_Clip_Type;
+typedef struct _Elm_Atspi_Text_Range Elm_Atspi_Text_Range;
 
 enum _Elm_Atspi_Text_Clip_Type
 {
@@ -36,6 +34,8 @@ enum _Elm_Atspi_Text_Clip_Type
     ELM_ATSPI_TEXT_CLIP_MAX,
     ELM_ATSPI_TEXT_CLIP_BOTH
 };
+
+typedef enum _Elm_Atspi_Text_Clip_Type Elm_Atspi_Text_Clip_Type;
 
 /**
  * @brief Free Elm_Atspi_Text_Attribute structure
