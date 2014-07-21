@@ -123,6 +123,16 @@ append_node(Eo_Lexer *ls, int type, void *def)
    ls->nodes = eina_list_append(ls->nodes, nd);
 }
 
+static const char *
+get_filename(Eo_Lexer *ls)
+{
+   Eina_Array *arr = eina_file_split(strdup(ls->source));
+   const char *file = eina_stringshare_add(eina_array_data_get(arr,
+                                           eina_array_count_get(arr) - 1));
+   eina_array_free(arr);
+   return file;
+}
+
 static Eina_Strbuf *
 parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
@@ -234,6 +244,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
    int line = ls->line_number, column = ls->column;
    Eolian_Type *def = push_type(ls);
    def->is_extern = is_extern;
+   def->file = get_filename(ls);
    def->name = name;
    def->type = EOLIAN_TYPE_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
@@ -421,6 +432,7 @@ parse_typedef(Eo_Lexer *ls)
    if (eina_hash_find(_types, ls->t.value))
      eo_lexer_syntax_error(ls, "typedef redefinition");
    ls->tmp.typedef_def->alias = eina_stringshare_ref(ls->t.value);
+   ls->tmp.typedef_def->file = get_filename(ls);
    eo_lexer_get(ls);
    (void)!!test_next(ls, ':');
    ls->tmp.typedef_def->type = parse_type_struct_nonvoid(ls, EINA_TRUE,

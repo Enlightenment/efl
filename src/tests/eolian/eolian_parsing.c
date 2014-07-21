@@ -225,6 +225,7 @@ START_TEST(eolian_typedef)
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
    const Eolian_Class *class;
+   const char *file;
 
    eolian_init();
    /* Parsing */
@@ -242,6 +243,11 @@ START_TEST(eolian_typedef)
    fail_if(eolian_type_base_type_get(type));
    fail_if(strcmp(type_name, "int"));
    eina_stringshare_del(type_name);
+
+   /* File */
+   fail_if(!(file = eolian_typedef_file_get("Evas_Coord")));
+   fail_if(strcmp(file, "typedef.eo"));
+   eina_stringshare_del(file);
 
    /* Complex type */
    fail_if(!(type = eolian_type_find_by_alias("List_Objects")));
@@ -488,6 +494,7 @@ START_TEST(eolian_struct)
    const Eolian_Type *type = NULL, *field = NULL;
    const Eolian_Class *class;
    const char *type_name;
+   const char *file;
 
    eolian_init();
 
@@ -501,11 +508,14 @@ START_TEST(eolian_struct)
    /* named struct */
    fail_if(!(type = eolian_type_struct_find_by_name("Named")));
    fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(!(file = eolian_type_struct_file_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
    fail_if(eolian_type_is_own(type));
    fail_if(eolian_type_is_const(type));
    fail_if(strcmp(type_name, "Named"));
    eina_stringshare_del(type_name);
+   fail_if(strcmp(file, "struct.eo"));
+   eina_stringshare_del(file);
    fail_if(!(field = eolian_type_struct_field_get(type, "field")));
    fail_if(!(type_name = eolian_type_name_get(field)));
    fail_if(strcmp(type_name, "int"));
@@ -518,9 +528,12 @@ START_TEST(eolian_struct)
    /* referencing */
    fail_if(!(type = eolian_type_struct_find_by_name("Another")));
    fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(!(file = eolian_type_struct_file_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
    fail_if(strcmp(type_name, "Another"));
    eina_stringshare_del(type_name);
+   fail_if(strcmp(file, "struct.eo"));
+   eina_stringshare_del(file);
    fail_if(!(field = eolian_type_struct_field_get(type, "field")));
    fail_if(!(type_name = eolian_type_name_get(field)));
    fail_if(strcmp(type_name, "Named"));

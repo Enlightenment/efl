@@ -112,6 +112,7 @@ struct _Eolian_Type
       struct {
          Eina_Hash        *fields;
          Eina_Stringshare *comment;
+         Eina_Stringshare *file;
       };
    };
    Eina_Bool is_const  :1;
@@ -134,6 +135,7 @@ struct _Eolian_Event
 typedef struct _Eolian_Typedef
 {
    Eina_Stringshare *alias;
+   Eina_Stringshare *file;
    Eolian_Type *type;
    Eina_Bool is_extern :1;
 } Eolian_Typedef;

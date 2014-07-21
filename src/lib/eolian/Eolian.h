@@ -780,6 +780,16 @@ EAPI const Eolian_Type *eolian_type_find_by_alias(const char *alias);
 EAPI Eina_Bool eolian_typedef_is_extern(const char *alias);
 
 /*
+ * @brief Find the filename for a certain alias
+ *
+ * @param[in] alias alias of the type definition
+ * @return the filename or NULL if @c alias is not found
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eina_Stringshare *eolian_typedef_file_get(const char *alias);
+
+/*
  * @brief Find a struct by name
  *
  * @param[in] name the name of the struct
@@ -864,6 +874,16 @@ EAPI Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Typ
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_struct_description_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get the filename of a struct type.
+ *
+ * @param[in] tp the type.
+ * @return the filename when @c tp is EOLIAN_TYPE_STRUCT, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_struct_file_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the return type of a function type.
