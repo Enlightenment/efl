@@ -16,6 +16,8 @@
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
+#include <iostream>
+
 #include <Elementary.h>
 
 #include <Eo.h>
@@ -32,39 +34,45 @@
 
 #include <deque>
 
-// static void
-// _test_box_transition_change(void *data)
-// {
-//    Transitions_Data *tdata = static_cast<Transitions_Data*>(data);
-//    Elm_Box_Transition *layout_data;
-//    Evas_Object_Box_Layout next_layout;
+struct Transitions_Data
+{
+   efl::eo::wref<elm_box> box;
+   std::deque<Evas_Object_Box_Layout> transitions;
+   Evas_Object_Box_Layout last_layout;
+};
 
-//    assert (!!data);
-//    assert (!tdata->transitions.empty());
+static void
+_test_box_transition_change(void *data)
+{
+   Transitions_Data *tdata = static_cast<Transitions_Data*>(data);
+   Elm_Box_Transition *layout_data;
+   Evas_Object_Box_Layout next_layout;
 
-//    if(efl::eina::optional<elm_box> box = tdata->box.lock())
-//      {
-//         next_layout = tdata->transitions.front();
-//         layout_data = elm_box_transition_new(2.0, tdata->transitions.back(),
-//                                              nullptr, nullptr, next_layout, nullptr, nullptr,
-//                                              _test_box_transition_change, tdata);
-//         box->layout_set(elm_box_layout_transition, layout_data,
-//                         elm_box_transition_free);
-//         tdata->last_layout = next_layout;
+   assert (!!data);
+   assert (!tdata->transitions.empty());
+
+   if(efl::eina::optional<elm_box> box = tdata->box.lock())
+     {
+        next_layout = tdata->transitions.front();
+        layout_data = elm_box_transition_new(2.0, tdata->transitions.back(),
+                                             nullptr, nullptr, next_layout, nullptr, nullptr,
+                                             _test_box_transition_change, tdata);
+        box->layout_set(elm_box_layout_transition, layout_data,
+                        elm_box_transition_free);
+        tdata->last_layout = next_layout;
        
-//         tdata->transitions.push_back(tdata->transitions[0]);
-//         tdata->transitions.pop_front();
-//      }
-// }
+        tdata->transitions.push_back(tdata->transitions[0]);
+        tdata->transitions.pop_front();
+     }
+}
 
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   efl::eo::wref<elm_box> weak_box;
-   std::deque<Evas_Object_Box_Layout> transitions;
-   Evas_Object_Box_Layout last_layout;
+   Transitions_Data tdata;
+   Eo* test;
 
    {
      ::elm_win win (elm_win_util_standard_add("box-transition", "Box Transition"));
@@ -72,52 +80,52 @@ elm_main(int argc, char *argv[])
 
      elm_box bigbox ( efl::eo::parent = win );
      bigbox.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-     win.resize_object_add(bigbox._eo_ptr());
+     win.resize_object_add(bigbox);
      bigbox.visibility_set(true);
 
      elm_box buttons ( efl::eo::parent = win );
      buttons.horizontal_set(EINA_TRUE);
-     bigbox.pack_end(buttons._eo_ptr());
+     bigbox.pack_end(buttons);
      buttons.visibility_set(true);
 
      elm_button add ( efl::eo::parent = win );
      add.text_set("Add");
-     buttons.pack_end(add._eo_ptr());
+     buttons.pack_end(add);
      add.visibility_set(true);
      add.event_clicked_callback_add
-       (std::bind([&weak_box]
+       (std::bind([&tdata]
         {
-          if(efl::eina::optional<elm_box> box = weak_box.lock())
+          if(efl::eina::optional<elm_box> box = tdata.box.lock())
           {
             elm_button btn ( efl::eo::parent = *box );
             btn.text_set("I do nothing");
-            efl::eina::range_list<efl::eo::base> childrens (box->children_get());
+            efl::eina::list<evas::object> childrens = box->children_get();
             if (!childrens.empty())
               {
-                box->pack_after(btn._eo_ptr(), childrens.front()._eo_ptr());
+                box->pack_after(btn, childrens.front());
               }
             else
-              box->pack_end(btn._eo_ptr());
+              box->pack_end(btn);
             btn.visibility_set(true);
           }
         }));
 
      elm_button clear ( efl::eo::parent = win );
      clear.text_set("Clear");
-     buttons.pack_end(clear._eo_ptr());
+     buttons.pack_end(clear);
      clear.visibility_set(true);
-     clear.event_clicked_callback_add(std::bind([&weak_box] { weak_box.lock()->clear(); }));
+     clear.event_clicked_callback_add(std::bind([&tdata] { tdata.box.lock()->clear(); }));
 
      elm_box dynamic ( efl::eo::parent = win );
      dynamic.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
      dynamic.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-     bigbox.pack_end(dynamic._eo_ptr());
+     bigbox.pack_end(dynamic);
      dynamic.visibility_set(true);
 
-     auto unpack = std::bind([&weak_box] (evas::clickable_interface obj)
+     auto unpack = std::bind([&tdata] (evas::clickable_interface obj)
        {
-         weak_box.lock()->unpack(obj._eo_ptr());
          elm_button btn = efl::eo::downcast<elm_button>(obj);
+         tdata.box.lock()->unpack(btn);
          btn.position_set(0, 50);
          btn.color_set(128, 64, 0, 128);
        }, std::placeholders::_1)
@@ -128,7 +136,7 @@ elm_main(int argc, char *argv[])
      bt1.event_clicked_callback_add(unpack);
      bt1.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
      bt1.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-     dynamic.pack_end(bt1._eo_ptr());
+     dynamic.pack_end(bt1);
      bt1.visibility_set(true);
 
      elm_button bt2 ( efl::eo::parent = win );
@@ -136,34 +144,48 @@ elm_main(int argc, char *argv[])
      bt2.size_hint_weight_set(EVAS_HINT_EXPAND, 0.0);
      bt2.size_hint_align_set(1.0, 0.5);
      bt2.event_clicked_callback_add(unpack);
-     dynamic.pack_end(bt2._eo_ptr());
+     dynamic.pack_end(bt2);
      bt2.visibility_set(true);
 
      elm_button bt3 ( efl::eo::parent = win );
      bt3.text_set("Button 3");
      bt3.event_clicked_callback_add(unpack);
-     dynamic.pack_end(bt3._eo_ptr());
+     dynamic.pack_end(bt3);
      bt3.visibility_set(true);
 
-     weak_box = dynamic;
-     last_layout = evas_object_box_layout_horizontal;
-     transitions.push_back(evas_object_box_layout_vertical);
-     transitions.push_back(evas_object_box_layout_horizontal);
-     transitions.push_back(evas_object_box_layout_stack);
-     transitions.push_back(evas_object_box_layout_homogeneous_vertical);
-     transitions.push_back(evas_object_box_layout_homogeneous_horizontal);
-     transitions.push_back(evas_object_box_layout_flow_vertical);
-     transitions.push_back(evas_object_box_layout_flow_horizontal);
-     transitions.push_back(evas_object_box_layout_stack);
+     tdata.box = dynamic;
+     tdata.last_layout = evas_object_box_layout_horizontal;
+     tdata.transitions.push_back(evas_object_box_layout_vertical);
+     tdata.transitions.push_back(evas_object_box_layout_horizontal);
+     tdata.transitions.push_back(evas_object_box_layout_stack);
+     tdata.transitions.push_back(evas_object_box_layout_homogeneous_vertical);
+     tdata.transitions.push_back(evas_object_box_layout_homogeneous_horizontal);
+     tdata.transitions.push_back(evas_object_box_layout_flow_vertical);
+     tdata.transitions.push_back(evas_object_box_layout_flow_horizontal);
+     tdata.transitions.push_back(evas_object_box_layout_stack);
 
      dynamic.layout_set(evas_object_box_layout_horizontal, nullptr, nullptr);
-     // _test_box_transition_change(&tdata);
+     _test_box_transition_change(&tdata);
    
      win.size_set(300, 320);
      win.visibility_set(true);
-     win._release();
+
+     // bigbox._release();
+     // buttons._release();
+     // add._release();
+     // clear._release();
+     // dynamic._release();
+     // bt1._release();
+     // bt2._release();
+     // bt3._release();
+
+
+     std::cout << "references to win " << win.ref_get() << std::endl;
+     test = win._eo_ptr();
+     //win._release();
    }
-   
+   std::cout << "references to win " << ::eo_ref_get(test) << std::endl;
+  
    elm_run();
    elm_shutdown();
 
