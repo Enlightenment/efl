@@ -159,7 +159,7 @@ class_list_all()
 inline std::string
 function_name(Eolian_Function const& func)
 {
-   return safe_str(::eolian_function_name_get(&func));
+   return keyword_avoid(::eolian_function_name_get(&func));
 }
 
 inline std::string

@@ -122,4 +122,38 @@ find_replace(std::string const& s_,
    return s;
 }
 
+/// @brief Append '_' if @p key is a C++ keyword.
+///
+inline std::string
+keyword_avoid(std::string const& name)
+{
+   if (name == "delete" ||
+       name == "throw" ||
+       name == "break" ||
+       name == "friend" ||
+       name == "goto" ||
+       name == "default" ||
+       name == "new" ||
+       name == "auto" ||
+       name == "do" ||
+       name == "sizeof" ||
+       name == "try" ||
+       name == "this" ||
+       name == "virtual" ||
+       name == "typename" ||
+       name == "template")
+     {
+        return name + "_"; // XXX Warn?
+     }
+   return name;
+}
+
+/// @brief Append '_' if @p key is a C++ keyword.
+///
+inline std::string
+keyword_avoid(const char* name)
+{
+   return keyword_avoid(safe_str(name));
+}
+
 #endif // EOLIAN_CXX_BIN_SAFE_STRINGS_HH
