@@ -79,7 +79,7 @@ class Evas.Box (Evas.Smart_Clipped)
          values {
             Evas_Object_Box_Layout cb @nonull; /*@ The new layout function to set on @p o. */
             const(void)* data; /*@ Data pointer to be passed to @p cb. */
-            Eina_Free_Cb free_data; /*@ Function to free @p data, if need be. */
+            Eina.Free_Cb free_data; /*@ Function to free @p data, if need be. */
          }
       }
    }
@@ -276,7 +276,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note Do @b not remove or delete objects while walking the list. */
 
          const;
-         return Eina_Iterator * @warn_unused;
+         return Eina.Iterator * @warn_unused;
       }
       add_to {
          /*@
@@ -369,7 +369,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note Do not remove or delete objects while walking the list. */
 
          const;
-         return Eina_Accessor * @warn_unused;
+         return Eina.Accessor * @warn_unused;
       }
       internal_append {
          /*@ No description supplied by the EAPI. */

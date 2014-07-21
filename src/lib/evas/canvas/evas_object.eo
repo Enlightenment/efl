@@ -1171,7 +1171,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             clipper = evas_object_clip_get(obj);
             if (clipper)
             {
-            Eina_List *clippees, *l;
+            Eina.List *clippees, *l;
             Evas_Object *obj_tmp;
 
             clippees = evas_object_clipees_get(clipper);
@@ -1180,7 +1180,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             evas_object_show(obj_tmp);
             }
             @endcode */
-            return const(Eina_List)* @warn_unused;
+            return const(Eina.List)* @warn_unused;
          }
       }
       smart_parent {

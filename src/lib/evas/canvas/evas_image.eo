@@ -788,7 +788,7 @@ class Evas.Image (Evas.Object)
             @since 1.10 */
          }
          values {
-            const(Eina_File)* f; /*@ The mmaped file */
+            const(Eina.File)* f; /*@ The mmaped file */
             const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
             NULL, otherwise. */
          }

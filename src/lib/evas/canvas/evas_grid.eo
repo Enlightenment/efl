@@ -53,7 +53,7 @@ class Evas.Grid (Evas.Smart_Clipped)
             It's possible to remove objects from the grid when walking this
             list, but these removals won't be reflected on it.
             @since 1.1 */
-            return Eina_List * @warn_unused;
+            return Eina.List * @warn_unused;
          }
       }
    }
@@ -66,7 +66,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
 
          const;
-         return Eina_Accessor * @warn_unused;
+         return Eina.Accessor * @warn_unused;
       }
       clear {
          /*@
@@ -86,7 +86,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
 
          const;
-         return Eina_Iterator * @warn_unused;
+         return Eina.Iterator * @warn_unused;
       }
       add_to {
          /*@

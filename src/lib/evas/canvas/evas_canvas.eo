@@ -579,7 +579,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          It will not append to the list pass events as hidden objects.
          Call eina_list_free on the returned list after usage. */
 
-         return Eina_List * @warn_unused;
+         return Eina.List * @warn_unused;
          params {
             @in Evas_Object *stop; /*@ An Evas Object where to stop searching. */
             @in int x; /*@ The horizontal coordinate of the position. */
@@ -799,7 +799,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          object parenting. */
 
          const;
-         return Eina_List * @warn_unused;
+         return Eina.List * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
             @in Evas_Coord y; /*@ The vertical coordinate of the position */
@@ -1113,11 +1113,11 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Group */
 
          const;
-         return Eina_List * @warn_unused;
+         return Eina.List * @warn_unused;
       }
       objects_in_rectangle_get {
          const;
-         return Eina_List * @warn_unused;
+         return Eina.List * @warn_unused;
          params {
             @in Evas_Coord x;
             @in Evas_Coord y;
@@ -1274,7 +1274,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Path_Group */
 
          const;
-         return const(Eina_List)* @warn_unused;
+         return const(Eina.List)* @warn_unused;
       }
       image_cache_reload {
          /*@
@@ -1332,7 +1332,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          Force immediate renderization of the given Evas canvas.
 
          @return A newly allocated list of updated rectangles of the canvas
-         (@c Eina_Rectangle structs). Free this list with
+         (@c Eina.Rectangle structs). Free this list with
          evas_render_updates_free().
 
          This function forces an immediate renderization update of the given
@@ -1356,7 +1356,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          @ingroup Evas_Canvas */
 
-         return Eina_List * @warn_unused;
+         return Eina.List * @warn_unused;
       }
       image_cache_flush {
          /*@

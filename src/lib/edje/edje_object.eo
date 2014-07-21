@@ -251,7 +251,7 @@ class Edje.Object (Evas.Smart_Clipped)
             return bool;
          }
          values {
-            const(Eina_File)* file; /*@ The Eina_File pointing to the EDJ file to load @p from */
+            const(Eina.File)* file; /*@ The Eina.File pointing to the EDJ file to load @p from */
             const(char)* group; /*@ The name of the group, in @p file, which implements an
             Edje object */
          }
@@ -442,7 +442,7 @@ class Edje.Object (Evas.Smart_Clipped)
 
             @return A list all accessibility part names on @p obj
             @since 1.7.0 */
-            return Eina_List *;
+            return Eina.List *;
          }
       }
       load_error {
@@ -1270,7 +1270,7 @@ class Edje.Object (Evas.Smart_Clipped)
          rectangles. */
 
          const;
-         return const(Eina_List)*;
+         return const(Eina.List)*;
          params {
             @in const(char)* part; /*@ The part name */
             @in const(char)* anchor; /*@ The anchor name */
@@ -2302,7 +2302,7 @@ class Edje.Object (Evas.Smart_Clipped)
          This function returns a list of char anchor names. */
 
          const;
-         return const(Eina_List)*;
+         return const(Eina.List)*;
          params {
             @in const(char)* part; /*@ The part name */
          }
@@ -2447,7 +2447,7 @@ class Edje.Object (Evas.Smart_Clipped)
          This function returns a list of char item names. */
 
          const;
-         return const(Eina_List)*;
+         return const(Eina.List)*;
          params {
             @in const(char)* part; /*@ The part name */
          }

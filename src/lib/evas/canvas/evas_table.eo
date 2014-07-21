@@ -130,7 +130,7 @@ class Evas.Table (Evas.Smart_Clipped)
             It's up to the user to destroy it when it no longer needs it.
             It's possible to remove objects from the table when walking this
             list, but these removals won't be reflected on it. */
-            return Eina_List * @warn_unused;
+            return Eina.List * @warn_unused;
          }
       }
       child {
@@ -165,7 +165,7 @@ class Evas.Table (Evas.Smart_Clipped)
          @note Do not remove or delete objects while walking the list. */
 
          const;
-         return Eina_Accessor * @warn_unused;
+         return Eina.Accessor * @warn_unused;
       }
       iterator_new {
          /*@
@@ -174,7 +174,7 @@ class Evas.Table (Evas.Smart_Clipped)
          @note Do not remove or delete objects while walking the list. */
 
          const;
-         return Eina_Iterator * @warn_unused;
+         return Eina.Iterator * @warn_unused;
       }
       add_to {
          /*@
