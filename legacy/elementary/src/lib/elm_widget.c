@@ -161,6 +161,37 @@ _elm_widget_focus_highlight_start(const Evas_Object *obj)
      _elm_win_focus_highlight_start(top);
 }
 
+void
+_elm_widget_focus_highlight_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+{
+   Evas_Object *top = elm_widget_top_get(obj);
+
+   if (top && eo_isa(top, ELM_WIN_CLASS))
+     _elm_win_focus_highlight_signal_emit(top, emission, source);
+}
+
+void
+_elm_widget_focus_highlight_signal_callback_add(Evas_Object *obj, const char *emission,
+                                                const char *source, Edje_Signal_Cb _focus_highlight_signal_cb,
+                                                void *data)
+{
+   Evas_Object *top = elm_widget_top_get(obj);
+
+   if (top && eo_isa(top, ELM_WIN_CLASS))
+     _elm_win_focus_highlight_signal_callback_add(top, emission, source, _focus_highlight_signal_cb, data);
+}
+
+void
+_elm_widget_focus_highlight_signal_callback_del(Evas_Object *obj, const char *emission,
+                                                const char *source,
+                                                Edje_Signal_Cb _focus_highlight_signal_cb)
+{
+   Evas_Object *top = elm_widget_top_get(obj);
+
+   if (top && eo_isa(top, ELM_WIN_CLASS))
+     _elm_win_focus_highlight_signal_callback_del(obj, emission, source, _focus_highlight_signal_cb);
+}
+
 EAPI Eina_Bool
 elm_widget_focus_highlight_enabled_get(const Evas_Object *obj)
 {
