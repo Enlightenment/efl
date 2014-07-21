@@ -3,33 +3,13 @@
 #include "eo_definitions.h"
 
 EAPI const Eolian_Type *
-eolian_type_find_by_alias(const char *alias)
+eolian_type_alias_find_by_name(const char *name)
 {
    if (!_aliases) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Type *def = eina_hash_find(_aliases, shr);
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   Eolian_Type *tp = eina_hash_find(_aliases, shr);
    eina_stringshare_del(shr);
-   return def ? def->base_type : NULL;
-}
-
-EAPI Eina_Bool
-eolian_typedef_is_extern(const char *alias)
-{
-   if (!_aliases) return EINA_FALSE;
-   Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Type *def = eina_hash_find(_aliases, shr);
-   eina_stringshare_del(shr);
-   return def ? def->is_extern : EINA_FALSE;
-}
-
-EAPI Eina_Stringshare *
-eolian_typedef_file_get(const char *alias)
-{
-   if (!_aliases) return EINA_FALSE;
-   Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Type *def = eina_hash_find(_aliases, shr);
-   eina_stringshare_del(shr);
-   return def ? eina_stringshare_ref(def->file) : NULL;
+   return tp;
 }
 
 EAPI const Eolian_Type *

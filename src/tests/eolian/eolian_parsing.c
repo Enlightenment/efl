@@ -221,7 +221,7 @@ END_TEST
 
 START_TEST(eolian_typedef)
 {
-   const Eolian_Type *type = NULL;
+   const Eolian_Type *atype = NULL, *type = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
    const Eolian_Class *class;
@@ -236,7 +236,12 @@ START_TEST(eolian_typedef)
    fail_if(!eolian_class_function_find_by_name(class, "foo", EOLIAN_METHOD));
 
    /* Basic type */
-   fail_if(!(type = eolian_type_find_by_alias("Evas_Coord")));
+   fail_if(!(atype = eolian_type_alias_find_by_name("Evas.Coord")));
+   fail_if(eolian_type_type_get(atype) != EOLIAN_TYPE_ALIAS);
+   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(strcmp(type_name, "Coord"));
+   eina_stringshare_del(type_name);
+   fail_if(!(type = eolian_type_base_type_get(atype)));
    fail_if(!(type_name = eolian_type_name_get(type)));
    fail_if(eolian_type_is_own(type));
    fail_if(eolian_type_is_const(type));
@@ -245,12 +250,16 @@ START_TEST(eolian_typedef)
    eina_stringshare_del(type_name);
 
    /* File */
-   fail_if(!(file = eolian_typedef_file_get("Evas_Coord")));
+   fail_if(!(file = eolian_type_file_get(atype)));
    fail_if(strcmp(file, "typedef.eo"));
    eina_stringshare_del(file);
 
    /* Complex type */
-   fail_if(!(type = eolian_type_find_by_alias("List_Objects")));
+   fail_if(!(atype = eolian_type_alias_find_by_name("List_Objects")));
+   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(strcmp(type_name, "List_Objects"));
+   eina_stringshare_del(type_name);
+   fail_if(!(type = eolian_type_base_type_get(atype)));
    fail_if(!(type_name = eolian_type_c_type_get(type)));
    fail_if(!eolian_type_is_own(type));
    fail_if(strcmp(type_name, "Eina_List *"));
@@ -491,7 +500,7 @@ END_TEST
 
 START_TEST(eolian_struct)
 {
-   const Eolian_Type *type = NULL, *field = NULL;
+   const Eolian_Type *atype = NULL, *type = NULL, *field = NULL;
    const Eolian_Class *class;
    const char *type_name;
    const char *file;
@@ -541,14 +550,16 @@ START_TEST(eolian_struct)
    fail_if(eolian_type_type_get(field) != EOLIAN_TYPE_REGULAR_STRUCT);
 
    /* typedef */
-   fail_if(!(type = eolian_type_find_by_alias("Foo")));
+   fail_if(!(atype = eolian_type_alias_find_by_name("Foo")));
+   fail_if(!(type = eolian_type_base_type_get(atype)));
    fail_if(!(type_name = eolian_type_name_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
    fail_if(strcmp(type_name, "_Foo"));
    eina_stringshare_del(type_name);
 
    /* typedef - anon */
-   fail_if(!(type = eolian_type_find_by_alias("Bar")));
+   fail_if(!(atype = eolian_type_alias_find_by_name("Bar")));
+   fail_if(!(type = eolian_type_base_type_get(atype)));
    fail_if(!!(type_name = eolian_type_name_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
 
@@ -571,10 +582,12 @@ START_TEST(eolian_extern)
    fail_if(!eolian_class_function_find_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular type */
-   fail_if(eolian_typedef_is_extern("Foo"));
+   fail_if(!(type = eolian_type_alias_find_by_name("Foo")));
+   fail_if(eolian_type_is_extern(type));
 
    /* extern type */
-   fail_if(!eolian_typedef_is_extern("Evas_Coord"));
+   fail_if(!(type = eolian_type_alias_find_by_name("Evas.Coord")));
+   fail_if(!eolian_type_is_extern(type));
 
    /* regular struct */
    fail_if(!(type = eolian_type_struct_find_by_name("X")));

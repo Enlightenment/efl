@@ -761,37 +761,17 @@ EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
 EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 
 /*
- * @brief Find the type for a certain alias
+ * @brief Find the an alias type by name. Supports namespaces.
  *
- * @param[in] alias alias of the type definition
- * @return real type of the type definition
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Type *eolian_type_find_by_alias(const char *alias);
-
-/*
- * @brief Check if a typedef is extern.
- *
- * @param[in] alias alias of the typedef
- * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
+ * @param[in] name the name of the alias
+ * @return the alias type or NULL
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_typedef_is_extern(const char *alias);
+EAPI const Eolian_Type *eolian_type_alias_find_by_name(const char *name);
 
 /*
- * @brief Find the filename for a certain alias
- *
- * @param[in] alias alias of the type definition
- * @return the filename or NULL if @c alias is not found
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_typedef_file_get(const char *alias);
-
-/*
- * @brief Find a struct by name
+ * @brief Find a struct by name. Supports namespaces.
  *
  * @param[in] name the name of the struct
  * @return the struct or NULL

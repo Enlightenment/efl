@@ -2,7 +2,7 @@
 type Foo: int;
 
 /* extern type */
-type @extern Evas_Coord: int;
+type @extern Evas.Coord: int;
 
 /* regular struct */
 struct X

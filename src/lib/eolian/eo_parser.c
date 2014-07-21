@@ -471,6 +471,7 @@ parse_typedef(Eo_Lexer *ls)
         is_extern = EINA_TRUE;
         eo_lexer_get(ls);
      }
+   def->type = EOLIAN_TYPE_ALIAS;
    def->is_extern = is_extern;
    buf = push_strbuf(ls);
    line = ls->line_number;

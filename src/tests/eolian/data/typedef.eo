@@ -1,4 +1,4 @@
-type Evas_Coord: int; /* Simple type definition */
+type Evas.Coord: int; /* Simple type definition */
 type List_Objects: own(Eina.List*)< Eo *>; /* A little more complex */
 
 class Dummy {
