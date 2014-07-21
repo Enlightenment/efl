@@ -152,7 +152,7 @@ eolian_type_is_const(const Eolian_Type *tp)
 }
 
 EAPI Eina_Bool
-eolian_type_struct_is_extern(const Eolian_Type *tp)
+eolian_type_is_extern(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
    return tp->is_extern;

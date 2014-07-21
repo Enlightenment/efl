@@ -578,11 +578,11 @@ START_TEST(eolian_extern)
 
    /* regular struct */
    fail_if(!(type = eolian_type_struct_find_by_name("X")));
-   fail_if(eolian_type_struct_is_extern(type));
+   fail_if(eolian_type_is_extern(type));
 
    /* extern struct */
    fail_if(!(type = eolian_type_struct_find_by_name("Y")));
-   fail_if(!eolian_type_struct_is_extern(type));
+   fail_if(!eolian_type_is_extern(type));
 
    eolian_shutdown();
 }

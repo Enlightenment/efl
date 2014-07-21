@@ -929,14 +929,14 @@ EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
 
 /*
- * @brief Check if a struct type is extern.
+ * @brief Check if a struct or alias type is extern.
  *
  * @param[in] tp the type.
  * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_type_struct_is_extern(const Eolian_Type *tp);
+EAPI Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type with a name.
