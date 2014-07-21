@@ -99,3 +99,14 @@ group { name: "elm/cursor/hand1/default";
       }
    }
 }
+
+group { name: "elm/cursor/blank/default";
+   parts {
+      part { name: "elm.content.hotspot"; type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 0;
+            max: 1 1;
+         }
+      }
+   }
+}
