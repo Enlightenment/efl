@@ -87,17 +87,17 @@ START_TEST(eina_cxx_ptrlist_push_back)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
   }
   {
-    wrapper result[] = {w1, w2, w3};
-    wrapper rresult[] = {w3, w2, w1};
-  
+    wrapper result_[] = {w1, w2, w3};
+    wrapper rresult_[] = {w3, w2, w1};
+
     efl::eina::list<wrapper> list;
     list.push_back(w1);
     list.push_back(w2);
     list.push_back(w3);
 
     ck_assert(list.size() == 3);
-    ck_assert(std::equal(list.begin(), list.end(), result));
-    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+    ck_assert(std::equal(list.begin(), list.end(), result_));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult_));
   }
 }
 END_TEST
@@ -139,8 +139,8 @@ START_TEST(eina_cxx_ptrlist_pop_back)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
   }
   {
-    wrapper result[] = {w1, w2};
-    wrapper rresult[] = {w2, w1};
+    wrapper result_[] = {w1, w2};
+    wrapper rresult_[] = {w2, w1};
 
     efl::eina::list<wrapper> list;
 
@@ -150,8 +150,8 @@ START_TEST(eina_cxx_ptrlist_pop_back)
     list.pop_back();
 
     ck_assert(list.size() == 2);
-    ck_assert(std::equal(list.begin(), list.end(), result));
-    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+    ck_assert(std::equal(list.begin(), list.end(), result_));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult_));
   }
 }
 END_TEST
@@ -233,8 +233,8 @@ START_TEST(eina_cxx_ptrlist_pop_front)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
   }
   {
-    wrapper result[] = {w2, w1};
-    wrapper rresult[] = {w1, w2};
+    wrapper result_[] = {w2, w1};
+    wrapper rresult_[] = {w1, w2};
 
     efl::eina::list<wrapper> list;
 
@@ -244,8 +244,8 @@ START_TEST(eina_cxx_ptrlist_pop_front)
     list.pop_front();
 
     ck_assert(list.size() == 2);
-    ck_assert(std::equal(list.begin(), list.end(), result));
-    ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
+    ck_assert(std::equal(list.begin(), list.end(), result_));
+    ck_assert(std::equal(list.rbegin(), list.rend(), rresult_));
   }
 }
 END_TEST

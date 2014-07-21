@@ -57,7 +57,7 @@ START_TEST(eina_cxx_ptrarray_push_back)
   }
   {
     wrapper result_[] = {w1, w2, w3};
-    wrapper rresult[] = {w3, w2, w1};
+    wrapper rresult_[] = {w3, w2, w1};
 
     efl::eina::array<wrapper> array;
 
@@ -67,7 +67,7 @@ START_TEST(eina_cxx_ptrarray_push_back)
 
     ck_assert(array.size() == 3);
     ck_assert(std::equal(array.begin(), array.end(), result_));
-    ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
+    ck_assert(std::equal(array.rbegin(), array.rend(), rresult_));
   }
 }
 END_TEST
@@ -117,11 +117,11 @@ START_TEST(eina_cxx_ptrarray_pop_back)
     array.pop_back();
 
     wrapper result_[] = {w1, w2};
-    wrapper rresult[] = {w2, w1};
+    wrapper rresult_[] = {w2, w1};
 
     ck_assert(array.size() == 2);
     ck_assert(std::equal(array.begin(), array.end(), result_));
-    ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
+    ck_assert(std::equal(array.rbegin(), array.rend(), rresult_));
   }
 }
 END_TEST
