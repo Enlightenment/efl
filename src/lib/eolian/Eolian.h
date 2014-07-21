@@ -787,7 +787,7 @@ EAPI Eina_Bool eolian_typedef_is_extern(const char *alias);
  *
  * @ingroup Eolian
  */
-EAPI const Eina_Stringshare *eolian_typedef_file_get(const char *alias);
+EAPI Eina_Stringshare *eolian_typedef_file_get(const char *alias);
 
 /*
  * @brief Find a struct by name
