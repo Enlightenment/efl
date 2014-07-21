@@ -113,8 +113,8 @@ struct _Eolian_Type
       /* structs, aliases, regular types */
       struct {
          Eina_Stringshare *name;       /* all */
-         Eina_Stringshare *full_name;  /* structs, aliases */
-         Eina_List        *namespaces; /* structs, aliases */
+         Eina_Stringshare *full_name;  /* all */
+         Eina_List        *namespaces; /* all */
          Eina_Hash        *fields;     /* structs */
          Eina_Stringshare *comment;    /* structs, aliases */
          Eina_Stringshare *file;       /* structs, aliases */

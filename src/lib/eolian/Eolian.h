@@ -975,16 +975,40 @@ EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const
 EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
 
 /*
- * @brief Get the type name of the given type. You have to manually delete
- * the stringshare.
+ * @brief Get the name of the given type. You have to manually delete
+ * the stringshare. For EOLIAN_TYPE_REGULAR and EOLIAN_TYPE_REGULAR_STRUCT,
+ * this is for example "int". For EOLIAN_TYPE_STRUCT and EOLIAN_TYPE_ALIAS,
+ * this is the name of the alias or of the struct. Keep in mind that the name
+ * doesn't include namespaces for structs and aliases.
  *
  * @param[in] tp the type.
- * @return the name assuming @c tp is an EOLIAN_TYPE_REGULAR, NULL otherwise.
- * The name may include a "struct" keyword.
+ * @return the name.
  *
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get the full (namespaced) name of a function. Only works on named
+ * types (not pointers, not functions, not void).
+ *
+ * @param[in] tp the type.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get an iterator to the list of namespaces of the given type. Only
+ * works on named types (not pointers, not functions, not void).
+ *
+ * @param[in] tp the type.
+ * @return the iterator.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_namespaces_list_get(const Eolian_Type *tp);
 
 #endif
 

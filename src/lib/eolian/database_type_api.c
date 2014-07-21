@@ -180,7 +180,36 @@ eolian_type_c_type_get(const Eolian_Type *tp)
 EAPI Eina_Stringshare *
 eolian_type_name_get(const Eolian_Type *tp)
 {
+   Eolian_Type_Type tpp;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   eina_stringshare_ref(tp->name);
-   return tp->name;
+   tpp = eolian_type_type_get(tp);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
+                                && tpp != EOLIAN_TYPE_FUNCTION
+                                && tpp != EOLIAN_TYPE_VOID, NULL);
+   return eina_stringshare_ref(tp->name);
+}
+
+EAPI Eina_Stringshare *
+eolian_type_full_name_get(const Eolian_Type *tp)
+{
+   Eolian_Type_Type tpp;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   tpp = eolian_type_type_get(tp);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
+                                && tpp != EOLIAN_TYPE_FUNCTION
+                                && tpp != EOLIAN_TYPE_VOID, NULL);
+   return eina_stringshare_ref(tp->full_name);
+}
+
+EAPI Eina_Iterator *
+eolian_type_namespaces_list_get(const Eolian_Type *tp)
+{
+   Eolian_Type_Type tpp;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   tpp = eolian_type_type_get(tp);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
+                                && tpp != EOLIAN_TYPE_FUNCTION
+                                && tpp != EOLIAN_TYPE_VOID, NULL);
+   if (!tp->namespaces) return NULL;
+   return eina_list_iterator_new(tp->namespaces);
 }
