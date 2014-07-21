@@ -104,18 +104,26 @@ eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *fiel
 }
 
 EAPI Eina_Stringshare *
-eolian_type_struct_description_get(const Eolian_Type *tp)
+eolian_type_description_get(const Eolian_Type *tp)
 {
+   Eolian_Type_Type tpp;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
-   return tp->comment;
+   tpp = eolian_type_type_get(tp);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
+                                && tpp != EOLIAN_TYPE_FUNCTION
+                                && tpp != EOLIAN_TYPE_VOID, NULL);
+   return eina_stringshare_ref(tp->comment);
 }
 
 EAPI Eina_Stringshare *
-eolian_type_struct_file_get(const Eolian_Type *tp)
+eolian_type_file_get(const Eolian_Type *tp)
 {
+   Eolian_Type_Type tpp;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
+   tpp = eolian_type_type_get(tp);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
+                                && tpp != EOLIAN_TYPE_FUNCTION
+                                && tpp != EOLIAN_TYPE_VOID, NULL);
    return eina_stringshare_ref(tp->file);
 }
 

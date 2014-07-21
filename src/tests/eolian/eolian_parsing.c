@@ -508,7 +508,7 @@ START_TEST(eolian_struct)
    /* named struct */
    fail_if(!(type = eolian_type_struct_find_by_name("Named")));
    fail_if(!(type_name = eolian_type_name_get(type)));
-   fail_if(!(file = eolian_type_struct_file_get(type)));
+   fail_if(!(file = eolian_type_file_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
    fail_if(eolian_type_is_own(type));
    fail_if(eolian_type_is_const(type));
@@ -528,7 +528,7 @@ START_TEST(eolian_struct)
    /* referencing */
    fail_if(!(type = eolian_type_struct_find_by_name("Another")));
    fail_if(!(type_name = eolian_type_name_get(type)));
-   fail_if(!(file = eolian_type_struct_file_get(type)));
+   fail_if(!(file = eolian_type_file_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
    fail_if(strcmp(type_name, "Another"));
    eina_stringshare_del(type_name);

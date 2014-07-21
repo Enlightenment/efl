@@ -100,7 +100,7 @@ struct _Eolian_Type
 {
    Eolian_Type_Type type;
    union {
-      /* pointers */
+      /* pointers and regular types */
       struct {
          Eina_List   *subtypes;
          Eolian_Type *base_type;
@@ -112,6 +112,7 @@ struct _Eolian_Type
       };
       /* structs, aliases, regular types */
       struct {
+         void *pad; /* make space for subtypes */
          Eina_Stringshare *name;       /* all */
          Eina_Stringshare *full_name;  /* all */
          Eina_List        *namespaces; /* all */
