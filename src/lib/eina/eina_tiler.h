@@ -338,10 +338,10 @@ EAPI Eina_Bool          eina_tiler_subtract(Eina_Tiler *dst, Eina_Tiler *src);
  *
  * @param   t1 The first tile.
  * @param   t2 The second tiler.
- * @return  A pointer of intersection result. @c NULL on failure.
+ * @return  A pointer of intersection result. @c NULL if intersection doesn't exist.
  *
  * This fuction gest intersection of two tilers @p t1 and @p t2.
- * It returns a pointer of result if it succeeds., otherwise returns NULL.
+ * It returns a pointer of result if intersection of two tilers exists., otherwise returns NULL.
  */
 EAPI Eina_Tiler        *eina_tiler_intersection(Eina_Tiler *t1, Eina_Tiler *t2);
 

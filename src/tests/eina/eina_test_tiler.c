@@ -224,7 +224,7 @@ START_TEST(eina_test_tiler_calculation)
 {
    Eina_Tiler *t1, *t2, *t;
    Eina_Iterator *itr;
-   Eina_Rectangle r1, r2, *rp;
+   Eina_Rectangle r1, r2, r3, *rp;
    int i = 0;
 
    eina_init();
@@ -288,6 +288,13 @@ START_TEST(eina_test_tiler_calculation)
 
    fail_if(i != 4);
 
+   EINA_RECTANGLE_SET(&r3, 0, 0, 50, 50);
+   eina_tiler_rect_add(t1, &r3);
+
+   t = eina_tiler_intersection(t1, t2);
+   fail_if(t);
+
+   eina_tiler_clear(t1);
 
    eina_tiler_rect_add(t1, &r1);
 

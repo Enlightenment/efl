@@ -1444,10 +1444,6 @@ eina_tiler_intersection(Eina_Tiler *t1,
    if (!(eina_rectangles_intersect(&t1->area, &t2->area)))
      return NULL;
 
-   w = MIN(t1->area.w, t2->area.w);
-   h = MIN(t1->area.h, t2->area.h);
-   t = eina_tiler_new(w, h);
-
    itr1 = eina_tiler_iterator_new(t1);
    itr2 = eina_tiler_iterator_new(t2);
 
@@ -1458,6 +1454,10 @@ eina_tiler_intersection(Eina_Tiler *t1,
      goto cleanup;
    if ((!eina_iterator_next(itr2, (void**)(void*)(&rect2))) && (!rect2))
      goto cleanup;
+
+   w = MIN(t1->area.w, t2->area.w);
+   h = MIN(t1->area.h, t2->area.h);
+   t = eina_tiler_new(w, h);
 
    while((rect1) && (rect2))
      {
@@ -1496,6 +1496,12 @@ eina_tiler_intersection(Eina_Tiler *t1,
           continue;
 
         break;
+     }
+
+   if (eina_tiler_empty(t))
+     {
+        eina_tiler_free(t);
+        t = NULL;
      }
 
 cleanup:
