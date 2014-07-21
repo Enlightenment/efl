@@ -315,6 +315,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
         if (allow_struct)
           {
              Eina_Bool is_extern = EINA_FALSE;
+             int line, col;
              if (ls->t.kw == KW_at_extern)
                {
                   is_extern = EINA_TRUE;
@@ -330,12 +331,18 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
              if (eo_lexer_get_c_type(ls->t.kw))
                eo_lexer_syntax_error(ls, "invalid struct name");
              /* todo: see typedef */
-             if (eina_hash_find(_structs, ls->t.value))
-               eo_lexer_syntax_error(ls, "struct redefinition");
+             line = ls->line_number;
+             col = ls->column;
              sname = eina_stringshare_ref(ls->t.value);
              eo_lexer_get(ls);
              if (ls->t.token == '{')
-               return parse_struct(ls, sname, is_extern);
+               {
+                  ls->line_number = line;
+                  ls->column = col;
+                  if (eina_hash_find(_structs, ls->t.value))
+                    eo_lexer_syntax_error(ls, "struct redefinition");
+                  return parse_struct(ls, sname, is_extern);
+               }
           }
         else
           {
