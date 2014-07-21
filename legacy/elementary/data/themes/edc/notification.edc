@@ -82,7 +82,7 @@ group { name: "e/modules/notification/main";
             rel1.to_y: "notification.text.title";
             rel1.relative: 1.0 1.0;
             rel1.offset: 4 4;
-            rel2.offset: -27 -13;
+            rel2.offset: -27 -11;
             text { style: "notification_style";
                min: 0 1;
             }
@@ -97,7 +97,7 @@ group { name: "e/modules/notification/main";
             rel1.to_y: "notification.text.title";
             rel1.relative: 1.0 1.0;
             rel1.offset: 4 4;
-            rel2.offset: -27 -13;
+            rel2.offset: -27 -11;
             text { style: "notification_style_nowrap";
                text_source: "notification.textblock.message";
                min: 0 1;
