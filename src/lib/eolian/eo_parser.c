@@ -329,6 +329,9 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
              check(ls, TOK_VALUE);
              if (eo_lexer_get_c_type(ls->t.kw))
                eo_lexer_syntax_error(ls, "invalid struct name");
+             /* todo: see typedef */
+             if (eina_hash_find(_structs, ls->t.value))
+               eo_lexer_syntax_error(ls, "struct redefinition");
              sname = eina_stringshare_ref(ls->t.value);
              eo_lexer_get(ls);
              if (ls->t.token == '{')
@@ -407,6 +410,9 @@ parse_typedef(Eo_Lexer *ls)
         eo_lexer_get(ls);
      }
    check(ls, TOK_VALUE);
+   /* todo: store info about the previous definition and mention it here */
+   if (eina_hash_find(_types, ls->t.value))
+     eo_lexer_syntax_error(ls, "typedef redefinition");
    ls->tmp.typedef_def->alias = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
    (void)!!test_next(ls, ':');
@@ -1071,6 +1077,9 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            check(ls, TOK_VALUE);
            if (eo_lexer_get_c_type(ls->t.kw))
              eo_lexer_syntax_error(ls, "invalid struct name");
+           /* todo: see typedef */
+           if (eina_hash_find(_structs, ls->t.value))
+             eo_lexer_syntax_error(ls, "struct redefinition");
            name = eina_stringshare_ref(ls->t.value);
            eo_lexer_get(ls);
            parse_struct(ls, name, is_extern);

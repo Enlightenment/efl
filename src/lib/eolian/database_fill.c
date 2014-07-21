@@ -459,18 +459,12 @@ nodeloop:
              break;
            case NODE_TYPEDEF:
              if (!database_type_add(nd->def_typedef))
-               {
-                  ERR("Redefinition of typedef %s\n", nd->def_typedef->alias);
-                  goto error;
-               }
+               goto error;
              nd->def_typedef = NULL;
              break;
            case NODE_STRUCT:
              if (!database_struct_add(nd->def_struct))
-               {
-                  ERR("Redefinition of struct %s\n", nd->def_struct->name);
-                  goto error;
-               }
+               goto error;
              nd->def_struct = NULL;
              break;
            default:
