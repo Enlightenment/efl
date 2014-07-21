@@ -101,7 +101,7 @@ elm_suite_LDADD = \
 
 if HAVE_CXX11
 TESTS += elm_cxx_suite
-check_PROGRAMS = elm_cxx_suite
+check_PROGRAMS += elm_cxx_suite
 
 elm_cxx_suite_SOURCES = elm_cxx_suite.cc
 elm_cxx_suite_CPPFLAGS = \
