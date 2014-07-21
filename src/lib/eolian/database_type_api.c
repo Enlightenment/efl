@@ -7,9 +7,9 @@ eolian_type_find_by_alias(const char *alias)
 {
    if (!_types) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Typedef *def = eina_hash_find(_types, shr);
+   Eolian_Type *def = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
-   return def ? def->type : NULL;
+   return def ? def->base_type : NULL;
 }
 
 EAPI Eina_Bool
@@ -17,7 +17,7 @@ eolian_typedef_is_extern(const char *alias)
 {
    if (!_types) return EINA_FALSE;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Typedef *def = eina_hash_find(_types, shr);
+   Eolian_Type *def = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
    return def ? def->is_extern : EINA_FALSE;
 }
@@ -27,7 +27,7 @@ eolian_typedef_file_get(const char *alias)
 {
    if (!_types) return EINA_FALSE;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Typedef *def = eina_hash_find(_types, shr);
+   Eolian_Type *def = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
    return def ? eina_stringshare_ref(def->file) : NULL;
 }
@@ -141,7 +141,7 @@ eolian_type_base_type_get(const Eolian_Type *tp)
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    tpt = eolian_type_type_get(tp);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_POINTER, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_POINTER || tpt == EOLIAN_TYPE_ALIAS, NULL);
    return tp->base_type;
 }
 

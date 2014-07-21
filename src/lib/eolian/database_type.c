@@ -28,23 +28,11 @@ database_type_del(Eolian_Type *tp)
    free(tp);
 }
 
-void
-database_typedef_del(Eolian_Typedef *def)
-{
-   if (!def) return;
-   eina_stringshare_del(def->alias);
-   eina_stringshare_del(def->file);
-   /* prevent deletion of named structs: stored in another hash */
-   if (def->type->type != EOLIAN_TYPE_STRUCT || !def->type->name)
-     database_type_del(def->type);
-   free(def);
-}
-
 Eina_Bool
-database_type_add(Eolian_Typedef *def)
+database_type_add(Eolian_Type *def)
 {
    if (!_types) return EINA_FALSE;
-   eina_hash_set(_types, def->alias, def);
+   eina_hash_set(_types, def->full_name, def);
    return EINA_TRUE;
 }
 

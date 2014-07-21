@@ -100,25 +100,21 @@ struct _Eolian_Type
 {
    Eolian_Type_Type type;
    union {
-      /* pointers and regular types */
-      struct {
-         Eina_List   *subtypes;
-         Eolian_Type *base_type;
-      };
       /* functions */
       struct {
          Eina_List   *arguments;
          Eolian_Type *ret_type;
       };
-      /* structs, aliases, regular types */
+      /* everything else */
       struct {
-         void *pad; /* make space for subtypes */
-         Eina_Stringshare *name;       /* all */
-         Eina_Stringshare *full_name;  /* all */
-         Eina_List        *namespaces; /* all */
-         Eina_Hash        *fields;     /* structs */
-         Eina_Stringshare *comment;    /* structs, aliases */
-         Eina_Stringshare *file;       /* structs, aliases */
+         Eina_List   *subtypes;
+         Eolian_Type *base_type;
+         Eina_Stringshare *name;
+         Eina_Stringshare *full_name;
+         Eina_List        *namespaces;
+         Eina_Hash        *fields;
+         Eina_Stringshare *comment;
+         Eina_Stringshare *file;
       };
    };
    Eina_Bool is_const  :1;
@@ -138,14 +134,6 @@ struct _Eolian_Event
    Eolian_Type *type;
 };
 
-typedef struct _Eolian_Typedef
-{
-   Eina_Stringshare *alias;
-   Eina_Stringshare *file;
-   Eolian_Type *type;
-   Eina_Bool is_extern :1;
-} Eolian_Typedef;
-
 typedef struct _Eolian_Struct_Field
 {
    Eolian_Type      *type;
@@ -157,10 +145,9 @@ int database_shutdown();
 
 /* types */
 
-Eina_Bool database_type_add(Eolian_Typedef *def);
+Eina_Bool database_type_add(Eolian_Type *def);
 Eina_Bool database_struct_add(Eolian_Type *type);
 void database_type_del(Eolian_Type *type);
-void database_typedef_del(Eolian_Typedef *def);
 
 void database_type_print(Eolian_Type *type);
 void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);

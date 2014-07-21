@@ -375,10 +375,12 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
              pop_strbuf(ls);
              if (ls->t.token == '{')
                {
-                  ls->line_number = line;
-                  ls->column = col;
-                  if (eina_hash_find(_structs, ls->t.value))
-                    eo_lexer_syntax_error(ls, "struct redefinition");
+                  if (eina_hash_find(_structs, sname))
+                    {
+                       ls->line_number = line;
+                       ls->column = col;
+                       eo_lexer_syntax_error(ls, "struct redefinition");
+                    }
                   return parse_struct(ls, sname, is_extern);
                }
           }
@@ -456,28 +458,38 @@ parse_type_void(Eo_Lexer *ls)
    return parse_type_struct(ls, EINA_FALSE, EINA_FALSE);
 }
 
-static void
+static Eolian_Type *
 parse_typedef(Eo_Lexer *ls)
 {
-   ls->tmp.typedef_def = calloc(1, sizeof(Eolian_Typedef));
+   Eolian_Type *def = push_type(ls);
+   Eina_Bool is_extern = EINA_FALSE;
+   Eina_Strbuf *buf;
+   int line, col;
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_extern)
      {
-        ls->tmp.typedef_def->is_extern = EINA_TRUE;
+        is_extern = EINA_TRUE;
         eo_lexer_get(ls);
      }
-   check(ls, TOK_VALUE);
+   def->is_extern = is_extern;
+   buf = push_strbuf(ls);
+   line = ls->line_number;
+   col = ls->column;
+   parse_name(ls, buf);
+   _fill_type_name(def, eina_stringshare_add(eina_strbuf_string_get(buf)));
    /* todo: store info about the previous definition and mention it here */
-   if (eina_hash_find(_types, ls->t.value))
-     eo_lexer_syntax_error(ls, "typedef redefinition");
-   ls->tmp.typedef_def->alias = eina_stringshare_ref(ls->t.value);
-   ls->tmp.typedef_def->file = get_filename(ls);
-   eo_lexer_get(ls);
+   if (eina_hash_find(_types, eina_strbuf_string_get(buf)))
+     {
+        ls->line_number = line;
+        ls->column = col;
+        eo_lexer_syntax_error(ls, "type alias redefinition");
+     }
+   def->file = get_filename(ls);
    (void)!!test_next(ls, ':');
-   ls->tmp.typedef_def->type = parse_type_struct_nonvoid(ls, EINA_TRUE,
-                                                         EINA_TRUE);
+   def->base_type = parse_type_struct_nonvoid(ls, EINA_TRUE, EINA_TRUE);
    pop_type(ls);
    check_next(ls, ';');
+   return def;
 }
 
 static void
@@ -1117,13 +1129,13 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         goto found_class;
       case KW_type:
         {
-           parse_typedef(ls);
-           database_type_add(ls->tmp.typedef_def);
-           ls->tmp.typedef_def = NULL;
+           database_type_add(parse_typedef(ls));
+           pop_type(ls);
            break;
         }
       case KW_struct:
         {
+           int line, col;
            const char *name;
            Eina_Bool is_extern = EINA_FALSE;
            Eina_Strbuf *buf;
@@ -1134,10 +1146,16 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 eo_lexer_get(ls);
              }
            buf = push_strbuf(ls);
+           line = ls->line_number;
+           col = ls->column;
            parse_name(ls, buf);
            /* todo: see typedef */
-           if (eina_hash_find(_structs, ls->t.value))
-             eo_lexer_syntax_error(ls, "struct redefinition");
+           if (eina_hash_find(_structs, eina_strbuf_string_get(buf)))
+             {
+                ls->line_number = line;
+                ls->column = col;
+                eo_lexer_syntax_error(ls, "struct redefinition");
+             }
            name = eina_stringshare_add(eina_strbuf_string_get(buf));
            pop_strbuf(ls);
            parse_struct(ls, name, is_extern);

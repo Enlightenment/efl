@@ -105,10 +105,8 @@ typedef struct _Eo_Node
 {
    unsigned char type;
    union {
-      void           *def;
-      Eo_Class_Def   *def_class;
-      Eolian_Typedef *def_typedef;
-      Eolian_Type    *def_struct;
+      void         *def;
+      Eo_Class_Def *def_class;
    };
 } Eo_Node;
 

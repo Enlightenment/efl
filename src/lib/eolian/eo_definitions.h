@@ -101,7 +101,6 @@ typedef struct _Eo_Lexer_Temps
    Eina_Stringshare *legacy_def;
    Eo_Class_Def *kls;
    Eo_Ret_Def *ret_def;
-   Eolian_Typedef *typedef_def;
    Eina_List *type_defs;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;

@@ -15,7 +15,7 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _types = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
+   _types = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
    _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
    _filenames = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);

@@ -153,9 +153,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    if (tmp->ret_def)
      eo_definitions_ret_free(tmp->ret_def);
 
-   if (tmp->typedef_def)
-    database_typedef_del(tmp->typedef_def);
-
    EINA_LIST_FREE(tmp->type_defs, tp)
      database_type_del(tp);
 

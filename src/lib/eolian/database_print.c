@@ -283,11 +283,11 @@ eolian_show_class(const Eolian_Class *class)
 
 static Eina_Bool
 _typedef_cb(Eina_Hash *hash EINA_UNUSED, const char *alias,
-            const Eolian_Typedef *tp, const void *fdata EINA_UNUSED)
+            const Eolian_Type *tp, const void *fdata EINA_UNUSED)
 {
    printf("Typedef: %s\n", alias);
    printf("  type: <");
-   database_type_print(tp->type);
+   database_type_print(tp->base_type);
    printf(">\n");
    return EINA_TRUE;
 }
@@ -300,7 +300,7 @@ eolian_show_typedef(const char *alias)
    else
      {
         Eina_Stringshare *shr = eina_stringshare_add(alias);
-        Eolian_Typedef *tp = eina_hash_find(_types, shr);
+        Eolian_Type *tp = eina_hash_find(_types, shr);
         eina_stringshare_del(shr);
         if (!tp) return EINA_FALSE;
         _typedef_cb(NULL, alias, tp, NULL);
