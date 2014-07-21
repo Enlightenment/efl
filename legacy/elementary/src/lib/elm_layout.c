@@ -1663,7 +1663,7 @@ _elm_layout_eo_base_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNU
         const char *file, *edje_group;
         Evas_Object *edje_obj = wd->resize_obj;
 
-        eo_do(edje_obj, edje_obj_file_get(&file, &edje_group));
+        eo_do(edje_obj, efl_file_get(&file, &edje_group));
         EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
         EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
