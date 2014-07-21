@@ -183,7 +183,7 @@ START_TEST (elm_entry_atspi_text_string_get_paragraph)
    char *val;
    int start, end;
 
-   const char *txt = "Lorem ipśum<br>   dolor sit\n amęt";
+   const char *txt = "Lorem ipśum<br>   dolor sit<br> amęt";
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
@@ -198,18 +198,18 @@ START_TEST (elm_entry_atspi_text_string_get_paragraph)
    ck_assert(end == 11);
    if (val) free(val);
 
-   start = 22;
+   start = 20;
    eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end));
    ck_assert_str_eq(val, "   dolor sit");
-   ck_assert(start == 11);
-   ck_assert(end == 22);
+   ck_assert(start == 12);
+   ck_assert(end == 24);
    if (val) free(val);
 
-   start = 27;
+   start = 25;
    eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end));
    ck_assert_str_eq(val, " amęt");
-   ck_assert(start == 23);
-   ck_assert(end == 27);
+   ck_assert(start == 25);
+   ck_assert(end == 30);
    if (val) free(val);
 
    start = 111;
@@ -229,16 +229,19 @@ START_TEST (elm_entry_atspi_text_string_get_line)
    char *val;
    int start, end;
 
-   const char *txt = "Lorem ipśum<br>   dolor sit\n amęt";
+   const char *txt = "Lorem ipśum<br>   dolor sit amęt";
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
+   evas_object_resize(entry, 500, 500);
+
    elm_object_text_set(entry, txt);
 
    start = 1;
    eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_LINE, &start, &end));
+
    ck_assert_str_eq(val, "Lorem ipśum");
    ck_assert(start == 0);
    ck_assert(end == 11);
@@ -246,9 +249,9 @@ START_TEST (elm_entry_atspi_text_string_get_line)
 
    start = 13;
    eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_LINE, &start, &end));
-   ck_assert_str_eq(val, "   dolor sit");
-   ck_assert(start == 11);
-   ck_assert(end == 23);
+   ck_assert_str_eq(val, "   dolor sit amęt");
+   ck_assert(start == 12);
+   ck_assert(end == 29);
    if (val) free(val);
 
    elm_shutdown();
@@ -259,8 +262,7 @@ START_TEST (elm_entry_atspi_text_text_get)
 {
    Evas_Object *win, *entry;
    char *val;
-   const char *txt = "Lorem ipśum<br>   dolor sit\n amęt";
-   const char *txtnom = "Lorem ipśum   dolor sit\n amęt";
+   const char *txt = "Lorem Xpśum dolor sit amęt";
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
@@ -268,8 +270,19 @@ START_TEST (elm_entry_atspi_text_text_get)
    entry = elm_entry_add(win);
    elm_object_text_set(entry, txt);
 
-   eo_do(entry, val = elm_interface_atspi_text_get(0, sizeof(txtnom)/sizeof(txtnom[0])));
-   ck_assert_str_eq(val, txtnom);
+   // invalid ranges
+   eo_do(entry, val = elm_interface_atspi_text_get(6, 100));
+   ck_assert(val == NULL);
+   eo_do(entry, val = elm_interface_atspi_text_get(-6, 10));
+   ck_assert(val == NULL);
+   eo_do(entry, val = elm_interface_atspi_text_get(-6, -10));
+   ck_assert(val == NULL);
+   eo_do(entry, val = elm_interface_atspi_text_get(60, 100));
+   ck_assert(val == NULL);
+
+   // proper range
+   eo_do(entry, val = elm_interface_atspi_text_get(6, 17));
+   ck_assert_str_eq(val, "Xpśum dolor");
 
    if (val) free(val);
    elm_shutdown();

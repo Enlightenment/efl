@@ -19,9 +19,13 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
 
    glview = elm_glview_add(win);
-   eo_do(glview, role = elm_interface_atspi_accessible_role_get());
 
-   ck_assert(role == ELM_ATSPI_ROLE_ANIMATION);
+   // if no gl backend skip test
+   if (glview)
+     {
+        eo_do(glview, role = elm_interface_atspi_accessible_role_get());
+        ck_assert(role == ELM_ATSPI_ROLE_ANIMATION);
+     }
 
    elm_shutdown();
 }

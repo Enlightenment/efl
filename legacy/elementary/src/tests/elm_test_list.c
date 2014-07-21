@@ -12,6 +12,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#if 0
+// Skip following tests until Elm_Widget_Item will migrate to Eo infrastructure
+// and following features can be implemented
+
 START_TEST (elm_list_atspi_selection_selected_children_count_get)
 {
  Evas_Object *win, *list;
@@ -182,6 +186,8 @@ START_TEST (elm_list_atspi_selection_child_deselect)
 }
 END_TEST
 
+#endif
+
 START_TEST (elm_atspi_role_get)
 {
  Evas_Object *win, *list;
@@ -201,6 +207,8 @@ END_TEST
 
 void elm_test_list(TCase *tc)
 {
+ tcase_add_test(tc, elm_atspi_role_get);
+#if 0
  tcase_add_test(tc, elm_list_atspi_selection_selected_children_count_get);
  tcase_add_test(tc, elm_list_atspi_selection_child_select);
  tcase_add_test(tc, elm_list_atspi_selection_selected_child_deselect);
@@ -208,5 +216,5 @@ void elm_test_list(TCase *tc)
  tcase_add_test(tc, elm_list_atspi_selection_all_children_select);
  tcase_add_test(tc, elm_list_atspi_selection_clear);
  tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
- tcase_add_test(tc, elm_atspi_role_get);
+#endif
 }
