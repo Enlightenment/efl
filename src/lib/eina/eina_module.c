@@ -257,7 +257,9 @@ EAPI Eina_Module *eina_module_new(const char *file)
    size_t len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-   /* TODO check that the file exists. Update doc too */
+
+   /* check that the file exists. */
+   if (access(file, F_OK)) return NULL;
 
    len = strlen(file);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(len > 0, NULL);
