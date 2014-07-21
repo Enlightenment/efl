@@ -146,10 +146,10 @@ EFL_WITH_BIN_SUFFIX([elua], [elua], [_bin])
 
 #### Default values
 
-requirements_pc_efl=""
-requirements_pc_deps_efl=""
-requirements_libs_efl=""
-requirements_cflags_efl=""
+requirements_pc_eflall=""
+requirements_pc_deps_eflall=""
+requirements_libs_eflall=""
+requirements_cflags_eflall=""
 
 requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
@@ -424,8 +424,8 @@ AC_CHECK_TYPES([siginfo_t], [], [],
 
 AC_C_BIGENDIAN
 AC_C_INLINE
-EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
-EFL_CHECK_LINKER_FLAGS([EFL], [-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
+EFL_CHECK_COMPILER_FLAGS([EFLALL], [-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
+EFL_CHECK_LINKER_FLAGS([EFLALL], [-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
 case "${build_profile}" in
    dev)
      dnl Check if compiler has a dodgy -Wshadow that emits errors when shadowing a global
@@ -433,7 +433,7 @@ case "${build_profile}" in
      CFLAGS_save="${CFLAGS}"
      CFLAGS="${CFLAGS} -Werror -Wshadow"
      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[int x;]], [[int x = 0; (void)x;]])],[AC_MSG_RESULT([no])
-        EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])],[AC_MSG_RESULT([yes])])
+        EFL_CHECK_COMPILER_FLAGS([EFLALL], [-Wshadow])],[AC_MSG_RESULT([yes])])
      CFLAGS="${CFLAGS_save}"
      ;;
 
@@ -578,7 +578,7 @@ pause \
 
 AC_FUNC_ALLOCA
 
-EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday dirfd fcntl])
+EFL_CHECK_FUNCS([EFLALL], [fnmatch gettimeofday dirfd fcntl])
 
 have_atfile_source="${ac_cv_func_fstatat}"
 AC_DEFINE_IF([HAVE_ATFILE_SOURCE],

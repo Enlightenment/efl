@@ -361,14 +361,14 @@ m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 libdirname="m4_defn([DOWN])"
 libname="m4_defn([DOWN])"
 
-m4_defn([UP])_LDFLAGS="${EFL_COV_LDFLAGS} ${EFL_LDFLAGS} ${m4_defn([UP])_LDFLAGS}"
-m4_defn([UP])_LIBS=" ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${m4_defn([UP])_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_public_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
+m4_defn([UP])_LDFLAGS="${EFLALL_COV_LDFLAGS} ${EFLALL_LDFLAGS} ${m4_defn([UP])_LDFLAGS}"
+m4_defn([UP])_LIBS=" ${m4_defn([UP])_LDFLAGS} ${EFLALL_COV_LIBS} ${EFLALL_LIBS} ${m4_defn([UP])_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_public_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_eflall} "
 m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])}"
 USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} lib/${libdirname}/lib${libname}.la"
 USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la"
-m4_defn([UP])_CFLAGS="${EFL_COV_CFLAGS} ${EFL_CFLAGS} ${m4_defn([UP])_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} -I\$(top_srcdir)/src/bindings/${libdirname} -I\$(top_builddir)/src/bindings/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl} -DEFL_[]m4_defn([UP])_BUILD=1"
-requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_efl}"
-requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_efl}"
+m4_defn([UP])_CFLAGS="${EFLALL_COV_CFLAGS} ${EFLALL_CFLAGS} ${m4_defn([UP])_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} -I\$(top_srcdir)/src/bindings/${libdirname} -I\$(top_builddir)/src/bindings/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_eflall} -DEFL_[]m4_defn([UP])_BUILD=1"
+requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_eflall}"
+requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_eflall}"
 
 AC_MSG_NOTICE([Finished $1 checks])dnl
 m4_popdef([UP])dnl
