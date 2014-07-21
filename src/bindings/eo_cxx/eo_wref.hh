@@ -112,6 +112,7 @@ struct wref
         {
            _eo_wref = 0;
         }
+      return *this;
    }
 
 private:
