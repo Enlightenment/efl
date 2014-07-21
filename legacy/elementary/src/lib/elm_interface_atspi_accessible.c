@@ -277,10 +277,11 @@ void elm_atspi_attributes_list_free(Eina_List *list)
 {
    Elm_Atspi_Attribute *attr;
    EINA_LIST_FREE(list, attr)
-	 {
-		eina_stringshare_del(attr->key);
-		eina_stringshare_del(attr->value);
-	 }
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
 }
 
 #include "elm_interface_atspi_accessible.eo.c"
