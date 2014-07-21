@@ -2268,7 +2268,7 @@ _item_move_cb(void *data, double pos)
           _free_reorder_normal_data(sd->reorder.data);
         elm_gengrid_item_show((Elm_Object_Item *)sd->reorder.it1,
                               ELM_GENGRID_ITEM_SCROLLTO_IN);
-        evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_START,
+        evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_STOP,
                                         sd->reorder.it1);
         sd->reorder.running = EINA_FALSE;
      }
@@ -2394,7 +2394,7 @@ _swap_items(Elm_Gen_Item *it1, Elm_Gen_Item *it2, Elm_Focus_Direction dir)
           evas_object_raise(VIEW(rnd->corner_item));
      }
    evas_object_raise(VIEW(it1));
-   evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_STOP,
+   evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_START,
                                    sd->reorder.it1);
    //TODO: Add elm config for time
    ecore_animator_timeline_add(0.3, _item_move_cb, sd);
