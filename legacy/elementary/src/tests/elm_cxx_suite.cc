@@ -17,7 +17,10 @@
 #include <Eo.h>
 #include <Evas.h>
 #include <Elementary.h>
+
 #include <elm_widget.h>
+#include <elm_interface_scrollable.h>
+#include <elm_interface_atspi_text.h>
 #include <elm_interface_atspi_accessible.h>
 
 #include <elc_ctxpopup.eo.hh>
