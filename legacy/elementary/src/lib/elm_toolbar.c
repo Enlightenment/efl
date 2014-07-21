@@ -740,10 +740,10 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd)
      {
         if (sd->last_focused_item)
           it = sd->last_focused_item;
-        /* TODO: make it optional on 1.11. Disable this until then
-        else
-          it = (Elm_Object_Item *)ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
-        */
+        else if (_elm_config->first_item_focus_on_first_focus_in &&
+                 elm_widget_focus_highlight_enabled_get(obj))
+          it = elm_toolbar_first_item_get(obj);
+
         if (it)
           {
              it = _elm_toolbar_nearest_visible_item_get(obj, it);

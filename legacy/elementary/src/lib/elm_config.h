@@ -1343,6 +1343,28 @@ EAPI Eina_Bool elm_config_item_select_on_focus_disabled_get(void);
 EAPI void elm_config_item_select_on_focus_disabled_set(Eina_Bool enabled);
 
 /**
+ * Get status of first item focus on first focusin feature.
+ *
+ * @return The first item focus on first focusin status
+ *
+ * @see elm_config_first_item_focus_on_first_focusin_set
+ * @since 1.11
+ * @ingroup Focus
+ */
+EAPI Eina_Bool elm_config_first_item_focus_on_first_focusin_get(void);
+
+/**
+ * Set the first item focus on first focusin feature.
+ *
+ * @param enable first_item_focus_on_first_focusin if @c EINA_TRUE, enable otherwise
+ *
+ * @see elm_config_first_item_focus_on_first_focusin_get
+ * @since 1.11
+ * @ingroup Focus
+ */
+EAPI void elm_config_first_item_focus_on_first_focusin_set(Eina_Bool enabled);
+
+/**
  * Get the system mirrored mode. This determines the default mirrored mode
  * of widgets.
  *

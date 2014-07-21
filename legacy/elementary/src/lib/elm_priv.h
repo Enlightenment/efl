@@ -230,6 +230,7 @@ struct _Elm_Config
    unsigned char focus_highlight_clip_disable; /**< This shows disabled status of focus highlight clip feature. This value is false by default so the focus highlight is clipped. */
    unsigned char focus_move_policy; /**< This show how the elementary focus is moved to another object. Focus can be moved by click or mouse_in. */
    unsigned char item_select_on_focus_disable; /**< This shows the disabled status of select on focus feature. This value is false by default so that select on focus feature is enabled by default.*/
+   unsigned char first_item_focus_on_first_focus_in;  /**< This sets the first item focus on first focus in feature*/
    Elm_Focus_Autoscroll_Mode focus_autoscroll_mode; /**< This shows the focus auto scroll mode. By default, @c ELM_FOCUS_AUTOSCROLL_MODE_SHOW is set. */
    int           toolbar_shrink_mode;
    unsigned char fileselector_expand_enable;

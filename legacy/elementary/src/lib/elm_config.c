@@ -529,6 +529,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_move_policy, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_autoscroll_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, item_select_on_focus_disable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, first_item_focus_on_first_focus_in, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, fileselector_double_tap_navigation_enable, T_UCHAR);
@@ -1546,6 +1547,7 @@ _config_load(void)
    _elm_config->focus_highlight_animate = EINA_TRUE;
    _elm_config->focus_highlight_clip_disable = EINA_FALSE;
    _elm_config->focus_move_policy = ELM_FOCUS_MOVE_POLICY_CLICK;
+   _elm_config->first_item_focus_on_first_focus_in = EINA_FALSE;
    _elm_config->item_select_on_focus_disable = EINA_TRUE;
    _elm_config->toolbar_shrink_mode = 2;
    _elm_config->fileselector_expand_enable = EINA_FALSE;
@@ -2166,6 +2168,9 @@ _env_get(void)
    s = getenv("ELM_ITEM_SELECT_ON_FOCUS_DISABLE");
    if (s) _elm_config->item_select_on_focus_disable = !!atoi(s);
 
+   s = getenv("ELM_FIRST_ITEM_FOCUS_ON_FIRST_FOCUS_IN");
+   if (s) _elm_config->first_item_focus_on_first_focus_in = !!atoi(s);
+
    s = getenv("ELM_TOOLBAR_SHRINK_MODE");
    if (s) _elm_config->toolbar_shrink_mode = atoi(s);
 
@@ -2733,6 +2738,18 @@ EAPI void
 elm_config_item_select_on_focus_disabled_set(Eina_Bool disable)
 {
    _elm_config->item_select_on_focus_disable = !!disable;
+}
+
+EAPI Eina_Bool
+elm_config_first_item_focus_on_first_focusin_get(void)
+{
+   return _elm_config->first_item_focus_on_first_focus_in;
+}
+
+EAPI void
+elm_config_first_item_focus_on_first_focusin_set(Eina_Bool enable)
+{
+   _elm_config->first_item_focus_on_first_focus_in = !!enable;
 }
 
 EAPI Eina_Bool
