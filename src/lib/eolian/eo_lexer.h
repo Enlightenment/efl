@@ -95,9 +95,7 @@ typedef struct _Eo_Token
 
 enum Nodes
 {
-   NODE_CLASS = 0,
-   NODE_TYPEDEF,
-   NODE_STRUCT
+   NODE_CLASS = 0
 };
 
 /* represents a node, aka a result of parsing - currently class, typedef

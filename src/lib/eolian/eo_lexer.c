@@ -607,11 +607,6 @@ eo_lexer_free(Eo_Lexer *ls)
            case NODE_CLASS:
              eo_definitions_class_def_free(nd->def_class);
              break;
-           case NODE_TYPEDEF:
-             database_typedef_del(nd->def_typedef);
-             break;
-           case NODE_STRUCT:
-             database_type_del(nd->def_struct);
            default:
              break;
           }

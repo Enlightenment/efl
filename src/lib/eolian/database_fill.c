@@ -433,7 +433,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
         return EINA_FALSE;
      }
 
-   if (eot) goto nodeloop;
+   if (eot) goto done;
 
    EINA_LIST_FOREACH(ls->nodes, k, nd) if (nd->type == NODE_CLASS)
      {
@@ -448,7 +448,6 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
         return EINA_FALSE;
      }
 
-nodeloop:
    EINA_LIST_FOREACH(ls->nodes, k, nd)
      {
         switch (nd->type)
@@ -457,21 +456,12 @@ nodeloop:
              if (!_db_fill_class(nd->def_class, filename))
                goto error;
              break;
-           case NODE_TYPEDEF:
-             if (!database_type_add(nd->def_typedef))
-               goto error;
-             nd->def_typedef = NULL;
-             break;
-           case NODE_STRUCT:
-             if (!database_struct_add(nd->def_struct))
-               goto error;
-             nd->def_struct = NULL;
-             break;
            default:
              break;
           }
      }
 
+done:
    eo_lexer_free(ls);
    return EINA_TRUE;
 

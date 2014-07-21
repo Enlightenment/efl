@@ -268,7 +268,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern)
           }
      }
    check_match(ls, '}', '{', line, column);
-   if (name) append_node(ls, NODE_STRUCT, def);
+   if (name) database_struct_add(def);
    return def;
 }
 
@@ -1060,7 +1060,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_type:
         {
            parse_typedef(ls);
-           append_node(ls, NODE_TYPEDEF, ls->tmp.typedef_def);
+           database_type_add(ls->tmp.typedef_def);
            ls->tmp.typedef_def = NULL;
            break;
         }
