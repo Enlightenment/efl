@@ -41,45 +41,6 @@ _filename_get(const char *path)
 }
 
 static Eina_Bool
-_check_same(const char *filename EINA_UNUSED, Eina_Strbuf *buf EINA_UNUSED)
-{
-#if 0
-   /* because of our build system, this code will do no good yet; disable
-    * for the time being */
-   Eina_File *f = eina_file_open(filename, EINA_FALSE);
-   size_t olen, nlen;
-   const char *buf1, *buf2;
-
-   if (!f)
-     goto end;
-
-   olen = eina_file_size_get(f);
-   nlen = eina_strbuf_length_get(buf);
-   if (olen != nlen)
-     goto close_end;
-
-   if (!(buf1 = eina_file_map_all(f, EINA_FILE_RANDOM)))
-     goto close_end;
-
-   if (!(buf2 = eina_strbuf_string_get(buf)))
-     goto close_end;
-
-   if (strncmp(buf1, buf2, nlen))
-     goto close_end;
-
-   eina_file_close(f);
-   return EINA_TRUE;
-
-close_end:
-   eina_file_close(f);
-end:
-   return EINA_FALSE;
-#else
-   return EINA_FALSE;
-#endif
-}
-
-static Eina_Bool
 _generate_eo_h_file(char *filename, const Eolian_Class *class)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -91,12 +52,6 @@ _generate_eo_h_file(char *filename, const Eolian_Class *class)
      }
 
    hfile = _include_guard_enclose(_filename_get(filename), hfile);
-
-   if (_check_same(filename, hfile))
-     {
-        ret = EINA_TRUE;
-        goto end;
-     }
 
    FILE *fd = fopen(filename, "wb");
    if (!fd)
@@ -132,12 +87,6 @@ _generate_c_file(char *filename, const Eolian_Class *class, Eina_Bool legacy_sup
    if (legacy_support) if (!legacy_source_generate(class, hfile))
      {
         ERR("Failed to generate source for %s", eolian_class_name_get(class));
-        goto end;
-     }
-
-   if (_check_same(filename, hfile))
-     {
-        ret = EINA_TRUE;
         goto end;
      }
 
@@ -210,12 +159,6 @@ _generate_impl_c_file(char *filename, const Eolian_Class *class)
         goto end;
      }
 
-   if (_check_same(filename, buffer))
-     {
-        ret = EINA_TRUE;
-        goto end;
-     }
-
    fd = fopen(filename, "wb");
    if (!fd)
      {
@@ -250,13 +193,7 @@ _generate_legacy_header_file(char *filename, const Eolian_Class *class)
 
    lfile = _include_guard_enclose(_filename_get(filename), lfile);
 
-   if (_check_same(filename, lfile))
-     {
-        ret = EINA_TRUE;
-        goto end;
-     }
-
-   FILE*fd = fopen(filename, "wb");
+   FILE *fd = fopen(filename, "wb");
    if (!fd)
      {
         const char *err = strerror(errno);
