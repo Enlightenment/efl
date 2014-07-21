@@ -213,6 +213,7 @@ struct _Elm_Win_Data
    Eina_Bool    maximized : 1;
    Eina_Bool    skip_focus : 1;
    Eina_Bool    floating : 1;
+   Eina_Bool    noblank : 1;
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
@@ -309,6 +310,33 @@ _elm_win_first_frame_do(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
 }
 
 static void
+_win_noblank_eval(void)
+{
+   Eina_List *l;
+   Evas_Object *obj;
+   int noblanks = 0;
+
+#ifdef HAVE_ELEMENTARY_X
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     {
+        ELM_WIN_DATA_GET(obj, sd);
+
+        if (sd->x.xwin)
+          {
+             if ((sd->noblank) && (!sd->iconified) && (!sd->withdrawn) &&
+                 evas_object_visible_get(obj))
+             noblanks++;
+          }
+     }
+   if (noblanks > 0) ecore_x_screensaver_supend();
+   else ecore_x_screensaver_resume();
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   // XXX: no wl implementation of this yet - maybe higher up at prop level
+#endif
+}
+
+static void
 _elm_win_state_eval(void *data EINA_UNUSED)
 {
    Eina_List *l;
@@ -398,6 +426,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
                }
           }
      }
+   _win_noblank_eval();
 }
 
 static void
@@ -3359,6 +3388,22 @@ _elm_win_type_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
    return sd->type;
 }
+
+EOLIAN static void
+_elm_win_noblank_set(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, Eina_Bool noblank)
+{
+   noblank = !!noblank;
+   if (pd->noblank == noblank) return;
+   pd->noblank = noblank;
+   _win_noblank_eval();
+}
+
+EOLIAN static Eina_Bool
+_elm_win_noblank_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd)
+{
+   return pd->noblank;
+}
+
 
 EAPI Evas_Object *
 elm_win_util_standard_add(const char *name,

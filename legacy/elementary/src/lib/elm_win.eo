@@ -1149,6 +1149,36 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
             return Elm_Win_Type;
          }
       }
+      noblank {
+         set {
+            /*@
+            Set the noblank property of a window.
+
+            The "noblank" property is a way to request the display on which
+            the windowis shown does not blank, screensave or otherwise hide
+            or obscure the window. It is intended for uses such as media
+            playback on a television where a user may not want to be
+            interrupted by an idle screen. The noblank property may have no
+            effect if the window is iconified/minimized or hidden.
+
+            @since 1.11
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the noblank property of a window.
+
+            @return If true, the window has "noblank" set.
+
+            @since 1.11
+
+            @ingroup Win */
+         }
+         values {
+            bool noblank; /*@ If true, the window is set to noblank */
+         }
+      }
    }
    methods {
       wm_manual_rotation_done {
