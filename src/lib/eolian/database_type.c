@@ -36,22 +36,18 @@ database_typedef_del(Eolian_Typedef *def)
 Eina_Bool
 database_type_add(Eolian_Typedef *def)
 {
-   if (_types)
-     {
-        eina_hash_set(_types, def->alias, def);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   if (!_types) return EINA_FALSE;
+   if (eina_hash_find(_types, def->alias)) return EINA_FALSE;
+   eina_hash_set(_types, def->alias, def);
+   return EINA_TRUE;
 }
 
 Eina_Bool database_struct_add(Eolian_Type *tp)
 {
-   if (_structs)
-     {
-        eina_hash_set(_structs, tp->name, tp);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   if (!_structs) return EINA_FALSE;
+   if (eina_hash_find(_structs, tp->name)) return EINA_FALSE;
+   eina_hash_set(_structs, tp->name, tp);
+   return EINA_TRUE;
 }
 
 static void

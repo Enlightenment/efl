@@ -410,18 +410,6 @@ _db_fill_class(Eo_Class_Def *kls, const char *filename)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_db_fill_type(Eolian_Typedef *type_def)
-{
-   return database_type_add(type_def);
-}
-
-static Eina_Bool
-_db_fill_struct(Eolian_Type *struct_def)
-{
-   return database_struct_add(struct_def);
-}
-
 Eina_Bool
 eo_parser_database_fill(const char *filename, Eina_Bool eot)
 {
@@ -470,21 +458,21 @@ nodeloop:
                goto error;
              break;
            case NODE_TYPEDEF:
-             {
-                Eolian_Typedef *def = nd->def_typedef;
-                nd->def_typedef = NULL;
-                if (!_db_fill_type(def))
+             if (!database_type_add(nd->def_typedef))
+               {
+                  ERR("Redefinition of typedef %s\n", nd->def_typedef->alias);
                   goto error;
-                break;
-             }
+               }
+             nd->def_typedef = NULL;
+             break;
            case NODE_STRUCT:
-             {
-                Eolian_Type *def = nd->def_struct;
-                nd->def_struct = NULL;
-                if (!_db_fill_struct(def))
+             if (!database_struct_add(nd->def_struct))
+               {
+                  ERR("Redefinition of struct %s\n", nd->def_struct->name);
                   goto error;
-                break;
-             }
+               }
+             nd->def_struct = NULL;
+             break;
            default:
              break;
           }
