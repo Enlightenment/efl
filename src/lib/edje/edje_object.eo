@@ -1,4 +1,4 @@
-class Edje.Object (Evas.Smart_Clipped, Efl.Interface.File)
+class Edje.Object (Evas.Smart_Clipped, Efl.File)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
@@ -2348,7 +2348,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.Interface.File)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Efl.Interface.File.file.set;
-      Efl.Interface.File.file.get;
+      Efl.File.file.set;
+      Efl.File.file.get;
    }
 }

@@ -73,7 +73,7 @@ static int _sort_defined_boxes(const void *a, const void *b);
 /************************** API Routines **************************/
 
 EOLIAN void
-_edje_object_efl_interface_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file, const char **group)
+_edje_object_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file, const char **group)
 {
    if (file) *file = ed->path;
    if (group) *group = ed->group;

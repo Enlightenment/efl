@@ -1,4 +1,4 @@
-class Evas.Text (Evas.Object, Efl.Interface.Text_Properties)
+class Evas.Text (Evas.Object, Efl.Text_Properties)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
@@ -385,9 +385,9 @@ class Evas.Text (Evas.Object, Efl.Interface.Text_Properties)
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Evas.Object.size.set;
-      Efl.Interface.Text_Properties.font.get;
-      Efl.Interface.Text_Properties.font.set;
-      Efl.Interface.Text_Properties.font_source.get;
-      Efl.Interface.Text_Properties.font_source.set;
+      Efl.Text_Properties.font.get;
+      Efl.Text_Properties.font.set;
+      Efl.Text_Properties.font_source.get;
+      Efl.Text_Properties.font_source.set;
    }
 }

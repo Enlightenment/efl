@@ -3,8 +3,8 @@ if HAVE_CXX11
 ### Generated headers
 
 generated_efl_cxx_bindings = \
-                 lib/efl/interfaces/efl_interface_file.eo.hh \
-                 lib/efl/interfaces/efl_interface_text_properties.eo.hh
+                 lib/efl/interfaces/efl_file.eo.hh \
+                 lib/efl/interfaces/efl_text_properties.eo.hh
 
 lib/efl/Efl.hh: $(generated_efl_cxx_bindings)
 	@echo -e "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/efl/Efl.hh

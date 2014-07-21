@@ -1,25 +1,25 @@
 BUILT_SOURCES += \
                  lib/efl/interfaces/efl_interface_color.eo.c \
                  lib/efl/interfaces/efl_interface_color.eo.h \
-                 lib/efl/interfaces/efl_interface_file.eo.c \
-                 lib/efl/interfaces/efl_interface_file.eo.h \
+                 lib/efl/interfaces/efl_file.eo.c \
+                 lib/efl/interfaces/efl_file.eo.h \
                  lib/efl/interfaces/efl_interface_gui_object.eo.c \
                  lib/efl/interfaces/efl_interface_gui_object.eo.h \
                  lib/efl/interfaces/efl_interface_image.eo.c \
                  lib/efl/interfaces/efl_interface_image.eo.h \
                  lib/efl/interfaces/efl_interface_text.eo.c \
                  lib/efl/interfaces/efl_interface_text.eo.h \
-                 lib/efl/interfaces/efl_interface_text_properties.eo.c \
-                 lib/efl/interfaces/efl_interface_text_properties.eo.h
+                 lib/efl/interfaces/efl_text_properties.eo.c \
+                 lib/efl/interfaces/efl_text_properties.eo.h
 
 efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
 efleolianfiles_DATA = \
               lib/efl/interfaces/efl_interface_color.eo \
-              lib/efl/interfaces/efl_interface_file.eo \
+              lib/efl/interfaces/efl_file.eo \
               lib/efl/interfaces/efl_interface_gui_object.eo \
               lib/efl/interfaces/efl_interface_image.eo \
               lib/efl/interfaces/efl_interface_text.eo \
-              lib/efl/interfaces/efl_interface_text_properties.eo
+              lib/efl/interfaces/efl_text_properties.eo
 
 EXTRA_DIST += \
               ${efleolianfiles_DATA}

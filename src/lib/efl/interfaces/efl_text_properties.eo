@@ -1,6 +1,6 @@
 type Efl_Font_Size: int;
 
-interface Efl.Interface.Text_Properties {
+interface Efl.Text_Properties {
    legacy_prefix: null;
    properties {
       font {
