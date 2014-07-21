@@ -8,10 +8,11 @@
 #include "impl_generator.h"
 #include "common_funcs.h"
 
-static char*
-_include_guard_enclose(const char *fname, const char *fbody)
+static Eina_Strbuf *
+_include_guard_enclose(const char *fname, Eina_Strbuf *fbody)
 {
    char incname[255];
+   if (!fbody || !eina_strbuf_string_get(fbody)) return fbody;
    memset(incname, 0, sizeof(incname));
    strncpy (incname, fname, sizeof(incname) - 1);
    char *p = incname;
@@ -23,10 +24,9 @@ _include_guard_enclose(const char *fname, const char *fbody)
          incname,
          incname);
    eina_strbuf_replace_all(incguard, ".", "_");
-   eina_strbuf_replace_all(incguard, "_code_", fbody);
-   char *ret = eina_strbuf_string_steal(incguard);
-   eina_strbuf_free(incguard);
-   return ret;
+   eina_strbuf_replace_all(incguard, "_code_", eina_strbuf_string_get(fbody));
+   eina_strbuf_free(fbody);
+   return incguard;
 }
 
 static const char *
@@ -41,6 +41,45 @@ _filename_get(const char *path)
 }
 
 static Eina_Bool
+_check_same(const char *filename EINA_UNUSED, Eina_Strbuf *buf EINA_UNUSED)
+{
+#if 0
+   /* because of our build system, this code will do no good yet; disable
+    * for the time being */
+   Eina_File *f = eina_file_open(filename, EINA_FALSE);
+   size_t olen, nlen;
+   const char *buf1, *buf2;
+
+   if (!f)
+     goto end;
+
+   olen = eina_file_size_get(f);
+   nlen = eina_strbuf_length_get(buf);
+   if (olen != nlen)
+     goto close_end;
+
+   if (!(buf1 = eina_file_map_all(f, EINA_FILE_RANDOM)))
+     goto close_end;
+
+   if (!(buf2 = eina_strbuf_string_get(buf)))
+     goto close_end;
+
+   if (strncmp(buf1, buf2, nlen))
+     goto close_end;
+
+   eina_file_close(f);
+   return EINA_TRUE;
+
+close_end:
+   eina_file_close(f);
+end:
+   return EINA_FALSE;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+static Eina_Bool
 _generate_eo_h_file(char *filename, const Eolian_Class *class)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -51,9 +90,15 @@ _generate_eo_h_file(char *filename, const Eolian_Class *class)
         goto end;
      }
 
-   const char *htext = eina_strbuf_string_get(hfile);
+   hfile = _include_guard_enclose(_filename_get(filename), hfile);
 
-   FILE* fd = fopen(filename, "wb");
+   if (_check_same(filename, hfile))
+     {
+        ret = EINA_TRUE;
+        goto end;
+     }
+
+   FILE *fd = fopen(filename, "wb");
    if (!fd)
      {
         const char *err = strerror(errno);
@@ -61,12 +106,8 @@ _generate_eo_h_file(char *filename, const Eolian_Class *class)
         goto end;
      }
 
-   if (htext)
-     {
-        char *fcontent = _include_guard_enclose(_filename_get(filename), htext);
-        fputs(fcontent, fd);
-        free(fcontent);
-     }
+   if (eina_strbuf_string_get(hfile))
+     fputs(eina_strbuf_string_get(hfile), fd);
 
    fclose(fd);
 
@@ -81,41 +122,42 @@ static Eina_Bool
 _generate_c_file(char *filename, const Eolian_Class *class, Eina_Bool legacy_support)
 {
    Eina_Bool ret = EINA_FALSE;
-
-   Eina_Strbuf *eo_buf = eina_strbuf_new();
-   Eina_Strbuf *legacy_buf = eina_strbuf_new();
-
-   if (!eo_source_generate(class, eo_buf))
+   Eina_Strbuf *hfile = eina_strbuf_new();
+   if (!eo_source_generate(class, hfile))
      {
         ERR("Failed to generate source for %s", eolian_class_name_get(class));
         goto end;
      }
 
-   if (legacy_support)
-      if (!legacy_source_generate(class, legacy_buf))
-        {
-           ERR("Failed to generate source for %s", eolian_class_name_get(class));
-           goto end;
-        }
-
-   FILE* fd = fopen(filename, "wb");
-   if (!fd)
+   if (legacy_support) if (!legacy_source_generate(class, hfile))
      {
-        ERR("Couldnt open file %s for writing", filename);
+        ERR("Failed to generate source for %s", eolian_class_name_get(class));
         goto end;
      }
 
-   const char *text = eina_strbuf_string_get(eo_buf);
-   if (text) fputs(text, fd);
-   text = eina_strbuf_string_get(legacy_buf);
-   if (text) fputs(text, fd);
+   if (_check_same(filename, hfile))
+     {
+        ret = EINA_TRUE;
+        goto end;
+     }
+
+   FILE *fd = fopen(filename, "wb");
+   if (!fd)
+     {
+        const char *err = strerror(errno);
+        ERR ("Couldn't open file %s for writing. Reason: '%s'", filename, err);
+        goto end;
+     }
+
+   if (eina_strbuf_string_get(hfile))
+     fputs(eina_strbuf_string_get(hfile), fd);
 
    fclose(fd);
 
    ret = EINA_TRUE;
 end:
-   eina_strbuf_free(legacy_buf);
-   eina_strbuf_free(eo_buf);
+   eina_strbuf_free(hfile);
+
    return ret;
 }
 
@@ -126,7 +168,7 @@ _generate_impl_c_file(char *filename, const Eolian_Class *class)
    long file_size = 0;
    Eina_Strbuf *buffer = NULL;
 
-   FILE* fd = fopen(filename, "rb");
+   FILE *fd = fopen(filename, "rb");
    if (fd)
      {
         fseek(fd, 0, SEEK_END);
@@ -168,20 +210,29 @@ _generate_impl_c_file(char *filename, const Eolian_Class *class)
         goto end;
      }
 
-   fd = fopen(filename, "wb");
-   if (!fd)
+   if (_check_same(filename, buffer))
      {
-        ERR("Couldnt open file %s for writing", filename);
+        ret = EINA_TRUE;
         goto end;
      }
 
-   const char *text = eina_strbuf_string_get(buffer);
-   if (text) fputs(text, fd);
+   fd = fopen(filename, "wb");
+   if (!fd)
+     {
+        const char *err = strerror(errno);
+        ERR ("Couldn't open file %s for writing. Reason: '%s'", filename, err);
+        goto end;
+     }
+
+   if (eina_strbuf_string_get(buffer))
+     fputs(eina_strbuf_string_get(buffer), fd);
+
+   fclose(fd);
 
    ret = EINA_TRUE;
 end:
-   if (fd) fclose(fd);
    eina_strbuf_free(buffer);
+
    return ret;
 }
 
@@ -190,36 +241,38 @@ static Eina_Bool
 _generate_legacy_header_file(char *filename, const Eolian_Class *class)
 {
    Eina_Bool ret = EINA_FALSE;
-
    Eina_Strbuf *lfile = eina_strbuf_new();
-
    if (!legacy_header_generate(class, lfile))
      {
         ERR("Failed to generate header for %s", eolian_class_name_get(class));
         goto end;
      }
 
-   FILE* fd = fopen(filename, "wb");
-   if (!fd)
+   lfile = _include_guard_enclose(_filename_get(filename), lfile);
+
+   if (_check_same(filename, lfile))
      {
-        ERR ("Couldnt open file %s for writing", filename);
+        ret = EINA_TRUE;
         goto end;
      }
 
-   const char *ltext = eina_strbuf_string_get(lfile);
-
-   if (ltext)
+   FILE*fd = fopen(filename, "wb");
+   if (!fd)
      {
-        char *fcontent = _include_guard_enclose(_filename_get(filename), ltext);
-        fputs(fcontent, fd);
-        free(fcontent);
+        const char *err = strerror(errno);
+        ERR ("Couldn't open file %s for writing. Reason: '%s'", filename, err);
+        goto end;
      }
+
+   if (eina_strbuf_string_get(lfile))
+     fputs(eina_strbuf_string_get(lfile), fd);
 
    fclose(fd);
 
    ret = EINA_TRUE;
 end:
    eina_strbuf_free(lfile);
+
    return ret;
 }
 
