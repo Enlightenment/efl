@@ -8,6 +8,7 @@ database_class_del(Eolian_Class *cl)
    Eina_List *inherits = cl->inherits;
    Eolian_Function *fid;
    Eolian_Event *ev;
+   const char *sp;
 
    EINA_LIST_FREE(inherits, inherit_name)
      eina_stringshare_del(inherit_name);
@@ -32,6 +33,9 @@ database_class_del(Eolian_Class *cl)
    eina_stringshare_del(cl->legacy_prefix);
    eina_stringshare_del(cl->eo_prefix);
    eina_stringshare_del(cl->data_type);
+
+   if (cl->namespaces) EINA_LIST_FREE(cl->namespaces, sp)
+      eina_stringshare_del(sp);
 
    free(cl);
 }

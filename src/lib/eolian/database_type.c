@@ -6,20 +6,25 @@ void
 database_type_del(Eolian_Type *tp)
 {
    if (!tp) return;
-   Eolian_Type *stp;
-   if (tp->name) eina_stringshare_del(tp->name);
-   if (tp->type == EOLIAN_TYPE_STRUCT)
+   if (tp->type == EOLIAN_TYPE_POINTER || tp->type == EOLIAN_TYPE_FUNCTION)
      {
-        eina_hash_free(tp->fields);
-        eina_stringshare_del(tp->file);
-        free(tp);
-        return;
+        Eolian_Type *stp;
+        if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
+          database_type_del(stp);
+        if (tp->base_type)
+          database_type_del(tp->base_type);
      }
-   /* for function types, this will map to arguments and ret_type */
-   if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
-     database_type_del(stp);
-   if (tp->base_type)
-     database_type_del(tp->base_type);
+   else
+     {
+        const char *sp;
+        if (tp->name) eina_stringshare_del(tp->name);
+        if (tp->full_name) eina_stringshare_del(tp->full_name);
+        if (tp->fields) eina_hash_free(tp->fields);
+        if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
+           eina_stringshare_del(sp);
+        if (tp->comment) eina_stringshare_del(tp->comment);
+        if (tp->file) eina_stringshare_del(tp->file);
+     }
    free(tp);
 }
 

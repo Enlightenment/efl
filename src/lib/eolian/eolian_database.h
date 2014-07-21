@@ -98,21 +98,26 @@ struct _Eolian_Function_Parameter
 
 struct _Eolian_Type
 {
-   Eina_Stringshare  *name;
-   Eolian_Type_Type   type;
+   Eolian_Type_Type type;
    union {
+      /* pointers */
       struct {
          Eina_List   *subtypes;
          Eolian_Type *base_type;
       };
+      /* functions */
       struct {
          Eina_List   *arguments;
          Eolian_Type *ret_type;
       };
+      /* structs, aliases, regular types */
       struct {
-         Eina_Hash        *fields;
-         Eina_Stringshare *comment;
-         Eina_Stringshare *file;
+         Eina_Stringshare *name;       /* all */
+         Eina_Stringshare *full_name;  /* structs, aliases */
+         Eina_List        *namespaces; /* structs, aliases */
+         Eina_Hash        *fields;     /* structs */
+         Eina_Stringshare *comment;    /* structs, aliases */
+         Eina_Stringshare *file;       /* structs, aliases */
       };
    };
    Eina_Bool is_const  :1;
