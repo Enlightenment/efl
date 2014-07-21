@@ -79,16 +79,19 @@ elm_main(int argc, char *argv[])
      win.autodel_set(true);
 
      elm_box bigbox ( efl::eo::parent = win );
+     ::eo_unref(bigbox._eo_ptr());
      bigbox.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
      win.resize_object_add(bigbox);
      bigbox.visibility_set(true);
 
      elm_box buttons ( efl::eo::parent = win );
+     ::eo_unref(buttons._eo_ptr());
      buttons.horizontal_set(EINA_TRUE);
      bigbox.pack_end(buttons);
      buttons.visibility_set(true);
 
      elm_button add ( efl::eo::parent = win );
+     ::eo_unref(add._eo_ptr());
      add.text_set("Add");
      buttons.pack_end(add);
      add.visibility_set(true);
@@ -111,12 +114,14 @@ elm_main(int argc, char *argv[])
         }));
 
      elm_button clear ( efl::eo::parent = win );
+     ::eo_unref(clear._eo_ptr());
      clear.text_set("Clear");
      buttons.pack_end(clear);
      clear.visibility_set(true);
      clear.event_clicked_callback_add(std::bind([&tdata] { tdata.box.lock()->clear(); }));
 
      elm_box dynamic ( efl::eo::parent = win );
+     ::eo_unref(dynamic._eo_ptr());
      dynamic.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
      dynamic.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
      bigbox.pack_end(dynamic);
@@ -132,6 +137,7 @@ elm_main(int argc, char *argv[])
      ;
 
      elm_button bt1 ( efl::eo::parent = win );
+     ::eo_unref(bt1._eo_ptr());
      bt1.text_set("Button 1");
      bt1.event_clicked_callback_add(unpack);
      bt1.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -140,6 +146,7 @@ elm_main(int argc, char *argv[])
      bt1.visibility_set(true);
 
      elm_button bt2 ( efl::eo::parent = win );
+     ::eo_unref(bt2._eo_ptr());
      bt2.text_set("Button 2");
      bt2.size_hint_weight_set(EVAS_HINT_EXPAND, 0.0);
      bt2.size_hint_align_set(1.0, 0.5);
@@ -148,6 +155,7 @@ elm_main(int argc, char *argv[])
      bt2.visibility_set(true);
 
      elm_button bt3 ( efl::eo::parent = win );
+     ::eo_unref(bt3._eo_ptr());
      bt3.text_set("Button 3");
      bt3.event_clicked_callback_add(unpack);
      dynamic.pack_end(bt3);
@@ -170,19 +178,9 @@ elm_main(int argc, char *argv[])
      win.size_set(300, 320);
      win.visibility_set(true);
 
-     // bigbox._release();
-     // buttons._release();
-     // add._release();
-     // clear._release();
-     // dynamic._release();
-     // bt1._release();
-     // bt2._release();
-     // bt3._release();
-
-
      std::cout << "references to win " << win.ref_get() << std::endl;
      test = win._eo_ptr();
-     //win._release();
+     win._release();
    }
    std::cout << "references to win " << ::eo_ref_get(test) << std::endl;
   
