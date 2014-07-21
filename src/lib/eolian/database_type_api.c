@@ -5,9 +5,9 @@
 EAPI const Eolian_Type *
 eolian_type_find_by_alias(const char *alias)
 {
-   if (!_types) return NULL;
+   if (!_aliases) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Type *def = eina_hash_find(_types, shr);
+   Eolian_Type *def = eina_hash_find(_aliases, shr);
    eina_stringshare_del(shr);
    return def ? def->base_type : NULL;
 }
@@ -15,9 +15,9 @@ eolian_type_find_by_alias(const char *alias)
 EAPI Eina_Bool
 eolian_typedef_is_extern(const char *alias)
 {
-   if (!_types) return EINA_FALSE;
+   if (!_aliases) return EINA_FALSE;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Type *def = eina_hash_find(_types, shr);
+   Eolian_Type *def = eina_hash_find(_aliases, shr);
    eina_stringshare_del(shr);
    return def ? def->is_extern : EINA_FALSE;
 }
@@ -25,9 +25,9 @@ eolian_typedef_is_extern(const char *alias)
 EAPI Eina_Stringshare *
 eolian_typedef_file_get(const char *alias)
 {
-   if (!_types) return EINA_FALSE;
+   if (!_aliases) return EINA_FALSE;
    Eina_Stringshare *shr = eina_stringshare_add(alias);
-   Eolian_Type *def = eina_hash_find(_types, shr);
+   Eolian_Type *def = eina_hash_find(_aliases, shr);
    eina_stringshare_del(shr);
    return def ? eina_stringshare_ref(def->file) : NULL;
 }

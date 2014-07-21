@@ -897,10 +897,10 @@ EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
 EAPI const Eolian_Type *eolian_type_return_type_get(const Eolian_Type *tp);
 
 /*
- * @brief Get the base type of a function type.
+ * @brief Get the base type of a pointer or alias type.
  *
  * @param[in] tp the type.
- * @return the base type when @c tp is an EOLIAN_TYPE_POINTER, NULL otherwise.
+ * @return the base type when @c tp is a pointer or alias, NULL otherwise.
  *
  * @ingroup Eolian
  */

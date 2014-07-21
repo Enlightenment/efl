@@ -40,7 +40,7 @@ extern Eina_Prefix *_eolian_prefix;
 #define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
 
 extern Eina_List *_classes;
-extern Eina_Hash *_types;
+extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
 extern Eina_Hash *_tfilenames;

@@ -478,7 +478,7 @@ parse_typedef(Eo_Lexer *ls)
    parse_name(ls, buf);
    _fill_type_name(def, eina_stringshare_add(eina_strbuf_string_get(buf)));
    /* todo: store info about the previous definition and mention it here */
-   if (eina_hash_find(_types, eina_strbuf_string_get(buf)))
+   if (eina_hash_find(_aliases, eina_strbuf_string_get(buf)))
      {
         ls->line_number = line;
         ls->column = col;

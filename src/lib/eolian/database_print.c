@@ -296,11 +296,11 @@ EAPI Eina_Bool
 eolian_show_typedef(const char *alias)
 {
    if (!alias)
-     eina_hash_foreach(_types, (Eina_Hash_Foreach)_typedef_cb, NULL);
+     eina_hash_foreach(_aliases, (Eina_Hash_Foreach)_typedef_cb, NULL);
    else
      {
         Eina_Stringshare *shr = eina_stringshare_add(alias);
-        Eolian_Type *tp = eina_hash_find(_types, shr);
+        Eolian_Type *tp = eina_hash_find(_aliases, shr);
         eina_stringshare_del(shr);
         if (!tp) return EINA_FALSE;
         _typedef_cb(NULL, alias, tp, NULL);

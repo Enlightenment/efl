@@ -3,7 +3,7 @@
 #include "eolian_database.h"
 
 Eina_List *_classes = NULL;
-Eina_Hash *_types = NULL;
+Eina_Hash *_aliases = NULL;
 Eina_Hash *_structs = NULL;
 Eina_Hash *_filenames = NULL;
 Eina_Hash *_tfilenames = NULL;
@@ -15,7 +15,7 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _types = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _aliases = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
    _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
    _filenames = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
@@ -37,7 +37,7 @@ database_shutdown()
         Eolian_Class *class;
         EINA_LIST_FREE(_classes, class)
            database_class_del(class);
-        eina_hash_free(_types);
+        eina_hash_free(_aliases);
         eina_hash_free(_structs);
         eina_hash_free(_filenames);
         eina_hash_free(_tfilenames);

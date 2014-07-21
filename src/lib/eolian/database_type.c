@@ -31,15 +31,15 @@ database_type_del(Eolian_Type *tp)
 Eina_Bool
 database_type_add(Eolian_Type *def)
 {
-   if (!_types) return EINA_FALSE;
-   eina_hash_set(_types, def->full_name, def);
+   if (!_aliases) return EINA_FALSE;
+   eina_hash_set(_aliases, def->full_name, def);
    return EINA_TRUE;
 }
 
 Eina_Bool database_struct_add(Eolian_Type *tp)
 {
    if (!_structs) return EINA_FALSE;
-   eina_hash_set(_structs, tp->name, tp);
+   eina_hash_set(_structs, tp->full_name, tp);
    return EINA_TRUE;
 }
 
