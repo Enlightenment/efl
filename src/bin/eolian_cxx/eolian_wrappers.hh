@@ -213,8 +213,9 @@ function_return_is_explicit_void(Eolian_Function const& func, getter_t func_type
    // XXX This function shouldn't be necessary. Eolian database should
    //     forge functions as desired and the bindings generator shouldn't
    //     be required to convert and understand this.
-   Eolian_Type const* type = ::eolian_function_return_type_get(&func, func_type.value);
-   return !!type && safe_str(type->name) == "void";
+   Eolian_Type const* type =
+     ::eolian_function_return_type_get(&func, func_type.value);
+   return !!type && type->type == EOLIAN_TYPE_VOID;
 }
 
 inline bool
