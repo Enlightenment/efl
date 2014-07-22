@@ -600,6 +600,8 @@ eo_lexer_free(Eo_Lexer *ls)
    if (ls->buff  ) eina_strbuf_free    (ls->buff);
    if (ls->handle) eina_file_close     (ls->handle);
 
+   eo_lexer_context_clear(ls);
+
    EINA_LIST_FREE(ls->nodes, nd)
      {
         switch (nd->type)
@@ -661,7 +663,11 @@ eo_lexer_lookahead(Eo_Lexer *ls)
 {
    assert (ls->lookahead.token < 0);
    ls->lookahead.kw = 0;
-   return (ls->lookahead.token = lex(ls, &ls->lookahead));
+   eo_lexer_context_push(ls);
+   ls->lookahead.token = lex(ls, &ls->lookahead);
+   eo_lexer_context_restore(ls);
+   eo_lexer_context_pop(ls);
+   return ls->lookahead.token;
 }
 
 void
@@ -752,4 +758,39 @@ eo_lexer_shutdown()
         eina_shutdown();
      }
    return _init_counter;
+}
+
+void
+eo_lexer_context_push(Eo_Lexer *ls)
+{
+   Lexer_Ctx *ctx = malloc(sizeof(Lexer_Ctx));
+   ctx->line = ls->line_number;
+   ctx->column = ls->column;
+   ctx->linestr = ls->stream_line;
+   ls->saved_ctxs = eina_list_prepend(ls->saved_ctxs, ctx);
+}
+
+void
+eo_lexer_context_pop(Eo_Lexer *ls)
+{
+   Lexer_Ctx *ctx = (Lexer_Ctx*)eina_list_data_get(ls->saved_ctxs);
+   free(ctx);
+   ls->saved_ctxs = eina_list_remove_list(ls->saved_ctxs, ls->saved_ctxs);
+}
+
+void
+eo_lexer_context_restore(Eo_Lexer *ls)
+{
+   if (!eina_list_count(ls->saved_ctxs)) return;
+   Lexer_Ctx *ctx = (Lexer_Ctx*)eina_list_data_get(ls->saved_ctxs);
+   ls->line_number = ctx->line;
+   ls->column      = ctx->column;
+   ls->stream_line = ctx->linestr;
+}
+
+void
+eo_lexer_context_clear(Eo_Lexer *ls)
+{
+   Lexer_Ctx *ctx;
+   EINA_LIST_FREE(ls->saved_ctxs, ctx) free(ctx);
 }
