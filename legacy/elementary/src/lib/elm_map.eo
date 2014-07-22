@@ -613,6 +613,23 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in void *data; /*@ The user callback data. */
          }
       }
+      name_search {
+         /*@
+         @brief Requests a list of addresses corresponding to a given name.
+
+         @since 1.8
+
+         @remarks This is used if you want to search the address from a name.
+
+         @internal
+         @ingroup Map */
+         const;
+         params {
+            @in const(char)* address; /*@ The address. */
+            @in Elm_Map_Name_List_Cb name_cb; /*@ The callback function. */
+            @in void *data; /*@ The user callback data. */
+         }
+      }
       region_bring_in {
          /*@
          Animatedly bring in given coordinates to the center of the map.

@@ -4612,13 +4612,9 @@ _elm_map_name_add(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, d
                           name_cb, data);
 }
 
-EAPI void
-elm_map_name_search(const Evas_Object *obj,
-                  const char *address,
-                  Elm_Map_Name_List_Cb name_cb,
-                  void *data)
+EOLIAN static void
+_elm_map_name_search(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, Elm_Map_Name_List_Cb name_cb, void *data)
 {
-   ELM_MAP_CHECK(obj);
    if (address)
      _name_list_request(obj, ELM_MAP_NAME_METHOD_SEARCH, address, 0, 0,
                         name_cb, data);
