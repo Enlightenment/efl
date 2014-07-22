@@ -822,7 +822,7 @@ _parts_cursors_find(Elm_Layout_Smart_Data *sd,
  * widget inheriting from elm_layout */
 
 EOLIAN static Eina_Bool
-_elm_layout_file_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *file, const char *group)
+_elm_layout_efl_file_file_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *file, const char *group)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1700,6 +1700,12 @@ _elm_layout_eo_base_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
 EOLIAN static void _elm_layout_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EAPI Eina_Bool
+elm_layout_file_set(Eo *obj, const char *file, const char *group)
+{
+   return eo_do((Eo *) obj, efl_file_set(file, group));
 }
 
 #include "elm_layout.eo.c"

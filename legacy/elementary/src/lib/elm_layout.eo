@@ -1,4 +1,4 @@
-class Elm_Layout (Elm_Container)
+class Elm_Layout (Elm_Container, Efl.File)
 {
    eo_prefix: elm_obj_layout;
    data: Elm_Layout_Smart_Data;
@@ -33,21 +33,6 @@ class Elm_Layout (Elm_Container)
          values {
             bool can_access; /*@ makes all textblock(text) parts in the layout @p obj possible
             to have accessibility. @c EINA_TRUE means textblock(text) parts can be accessible */
-         }
-      }
-      file {
-         set {
-            /*@
-            Set the file that will be used as layout
-
-            @return (1 = success, 0 = error)
-
-            @ingroup Layout */
-            return: bool;
-         }
-         values {
-            const(char)* file; /*@ The path to file (edj) that will be used as layout */
-            const(char)* group; /*@ The group that the layout belongs in edje file */
          }
       }
       theme {
@@ -642,6 +627,7 @@ class Elm_Layout (Elm_Container)
       class.constructor;
       Eo.Base.constructor;
       Eo.Base.dbg_info_get;
+      Efl.File.file.set;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
       Evas.Object_Smart.calculate;
