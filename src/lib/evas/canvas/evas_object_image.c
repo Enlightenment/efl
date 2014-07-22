@@ -568,8 +568,8 @@ _evas_image_mmap_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const Eina_File
      *key = o->cur->key;
 }
 
-EOLIAN static void
-_evas_image_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key)
+EOLIAN static Eina_Bool
+_evas_image_efl_file_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Load_Opts lo;
@@ -577,9 +577,9 @@ _evas_image_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, const cha
    if ((o->cur->u.file) && (file) && (!strcmp(o->cur->u.file, file)))
      {
         if ((!o->cur->key) && (!key))
-          return;
+          return EINA_FALSE;
         if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
-          return;
+          return EINA_FALSE;
      }
    /*
     * WTF? why cancel a null image preload? this is just silly (tm)
@@ -595,10 +595,12 @@ _evas_image_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, const cha
                                                               &o->load_error,
                                                               &lo);
    _image_done_set(eo_obj, obj, o);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
-_evas_image_file_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const char **file, const char **key)
+_evas_image_efl_file_file_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const char **file, const char **key)
 {
    if (file) *file = o->cur->u.file;
    if (key) *key = o->cur->key;
@@ -1508,7 +1510,7 @@ _evas_image_reload(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_evas_image_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
+_evas_image_efl_file_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
 {
    DATA32 *data = NULL;
    int quality = 80, compress = 9, ok = 0;
@@ -4957,5 +4959,24 @@ _evas_image_filter_padding_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o,
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+
+EAPI void
+evas_object_image_file_set(Eo *obj, const char *file, const char *key)
+{
+   eo_do((Eo *) obj, efl_file_set(file, key));
+}
+
+EAPI void
+evas_object_image_file_get(const Eo *obj, const char **file, const char **key)
+{
+   eo_do((Eo *) obj, efl_file_get(file, key));
+}
+
+
+EAPI Eina_Bool
+evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)
+{
+   return eo_do((Eo *) obj, efl_file_save(file, key, flags));
+}
 
 #include "canvas/evas_image.eo.c"

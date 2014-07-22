@@ -1257,6 +1257,77 @@ EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *o
  */
 EAPI void                          evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1);
 
+/**
+ *
+ * Set the source file from where an image object must fetch the real
+ * image data (it may be an Eet file, besides pure image ones).
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can specify the key to be used as the index of the image in
+ * this file.
+ *
+ * Example:
+ * @code
+ * img = evas_object_image_add(canvas);
+ * evas_object_image_file_set(img, "/path/to/img", NULL);
+ * err = evas_object_image_load_error_get(img);
+ * if (err != EVAS_LOAD_ERROR_NONE)
+ * {
+ * fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
+ * valid_path, evas_load_error_str(err));
+ * }
+ * else
+ * {
+ * evas_object_image_fill_set(img, 0, 0, w, h);
+ * evas_object_resize(img, w, h);
+ * evas_object_show(img);
+ * }
+ * @endcode
+ *
+ * @param[in] file The image file path.
+ * @param[in] key The image key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ */
+EAPI void evas_object_image_file_set(Eo *obj, const char *file, const char *key);
+
+/**
+ *
+ * Retrieve the source file from where an image object is to fetch the
+ * real image data (it may be an Eet file, besides pure image ones).
+ *
+ * You must @b not modify the strings on the returned pointers.
+ *
+ * @note Use @c NULL pointers on the file components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @param[out] file The image file path.
+ * @param[out] key The image key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ */
+EAPI void evas_object_image_file_get(const Eo *obj, const char **file, const char **key);
+
+/**
+ *
+ * Save the given image object's contents to an (image) file.
+ *
+ * The extension suffix on @p file will determine which <b>saver
+ * module</b> Evas is to use when saving, thus the final file's
+ * format. If the file supports multiple data stored in it (Eet ones),
+ * you can specify the key to be used as the index of the image in it.
+ *
+ * You can specify some flags when saving the image.  Currently
+ * acceptable flags are @c quality and @c compress. Eg.: @c
+ * "quality=100 compress=9"
+ *
+ * @param[in] file The filename to be used to save the image (extension
+obligatory).
+ * @param[in] key The image key in the file (if an Eet one), or @c NULL,
+otherwise.
+ * @param[in] flags String containing the flags to be used (@c NULL for
+none).
+ */
+EAPI Eina_Bool evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags) EINA_ARG_NONNULL(2);
+
 #include "canvas/evas_image.eo.legacy.h"
 
 /**
