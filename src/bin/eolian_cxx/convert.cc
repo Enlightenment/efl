@@ -101,7 +101,8 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
              // if the getter has a single parameter and a void return
              // it is transformed into a getter with no parameters
              // that actually returns what would be the first argument.
-             if (params.size() == 1 && efl::eolian::type_is_void(ret))
+             if (params.size() == 1 && efl::eolian::type_is_void(ret) &&
+                 !function_return_is_explicit_void(*prop_, eolian_cxx::getter))
                {
                   get_.ret = params[0].type;
                   get_.params.clear();
