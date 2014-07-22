@@ -140,6 +140,7 @@ keyword_avoid(std::string const& name)
        name == "try" ||
        name == "this" ||
        name == "virtual" ||
+       name == "register" ||
        name == "typename" ||
        name == "template")
      {
