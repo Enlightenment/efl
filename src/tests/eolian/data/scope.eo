@@ -1,6 +1,6 @@
 class Simple {
    properties {
-      protected a {
+      a @protected {
          get {
          }
       }
@@ -16,7 +16,7 @@ class Simple {
    methods {
       foo {
       }
-      protected  bar  {
+      bar @protected {
       }
       foobar {
       }

@@ -715,13 +715,14 @@ parse_property(Eo_Lexer *ls)
              has_keys = EINA_FALSE, has_values = EINA_FALSE;
    prop = calloc(1, sizeof(Eo_Property_Def));
    ls->tmp.prop = prop;
-   if (ls->t.kw == KW_protected)
+   check(ls, TOK_VALUE);
+   prop->name = eina_stringshare_ref(ls->t.value);
+   eo_lexer_get(ls);
+   if (ls->t.kw == KW_at_protected)
      {
         prop->scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
      }
-   prop->name = eina_stringshare_ref(ls->t.value);
-   eo_lexer_get(ls);
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
@@ -778,14 +779,14 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
      }
    else
      {
-        if (ls->t.kw == KW_protected)
+        check(ls, TOK_VALUE);
+        meth->name = eina_stringshare_ref(ls->t.value);
+        eo_lexer_get(ls);
+        if (ls->t.kw == KW_at_protected)
           {
              meth->scope = EOLIAN_SCOPE_PROTECTED;
              eo_lexer_get(ls);
           }
-        check(ls, TOK_VALUE);
-        meth->name = eina_stringshare_ref(ls->t.value);
-        eo_lexer_get(ls);
      }
    line = ls->line_number;
    col = ls->column;
