@@ -126,9 +126,11 @@ append_node(Eo_Lexer *ls, int type, void *def)
 static const char *
 get_filename(Eo_Lexer *ls)
 {
-   Eina_Array *arr = eina_file_split(strdup(ls->source));
+   char *s = strdup(ls->source);
+   Eina_Array *arr = eina_file_split(s);
    const char *file = eina_stringshare_add(eina_array_data_get(arr,
                                            eina_array_count_get(arr) - 1));
+   free(s);
    eina_array_free(arr);
    return file;
 }
