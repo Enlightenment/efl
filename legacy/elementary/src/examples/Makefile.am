@@ -303,15 +303,13 @@ efl_thread_4_SOURCES = efl_thread_4.c
 endif
 
 box_cxx_example_02_SOURCES = box_cxx_example_02.cc
-box_cxx_example_02_CXXFLAGS = -fPIC \
+box_cxx_example_02_CXXFLAGS = \
 @ELEMENTARY_ELOCATION_CFLAGS@ \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_CXX_CFLAGS@
-
-box_cxx_example_02_LDFLAGS = -fPIC
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
