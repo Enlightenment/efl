@@ -77,7 +77,7 @@ example_complex_types()
 
      efl::eo::signal_connection conn =
        bg.event_mouse_down_callback_add
-       ([] (efl::evas::object obj, Eo_Event_Description const& desc, void* info)
+       ([] (efl::evas::object obj EINA_UNUSED, Eo_Event_Description const& desc EINA_UNUSED, void* info EINA_UNUSED)
         {
           std::cout << "evas::box::mouse_down" << std::endl;
           return EO_CALLBACK_CONTINUE;
