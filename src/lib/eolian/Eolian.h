@@ -928,7 +928,8 @@ EAPI Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
  * Providing the name is useful for function types, as in C a function
  * pointer type alone is not valid syntax. For non-function types, the
  * name is simply appended to the type (with a space). C type names do
- * not include subtypes as C doesn't support them.
+ * not include subtypes as C doesn't support them. Name is ignored for
+ * alias types. Alias types are turned into C typedefs.
  *
  * Keep in mind that if @c name is NULL, the name won't be included.
  *
