@@ -166,7 +166,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             object's lifetime. */
          }
       }
-      callbacks_descriptions_get {
+      callbacks_descriptions_get @const {
          /*@
          Retrieve an smart object's know smart callback descriptions (both
          instance and class ones).
@@ -187,8 +187,6 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
          @see evas_smart_callbacks_descriptions_get()
 
          @ingroup Evas_Smart_Object_Group */
-
-         const;
          params {
             @out const(Evas_Smart_Cb_Description)** class_descriptions; /*@ Where to store class callbacks
             descriptions array, if any is known. If no descriptions are
@@ -202,7 +200,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             descriptions are known. */
          }
       }
-      iterator_new {
+      iterator_new @const {
          /*@
          Retrieves an iterator of the member objects of a given Evas smart
          object
@@ -214,19 +212,15 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
          @see evas_object_smart_member_add()
          @see evas_object_smart_member_del()
          @see evas_object_smart_members_get() */
-
-         const;
          return Eina.Iterator * @warn_unused;
       }
-      callback_description_find {
+      callback_description_find @const {
          /*@
          Find callback description for callback called @a name.
 
          or @c NULL if not found. If parameter is @c NULL, no search
          will be done on instance descriptions.
          @return reference to description if found, @c NULL if not found. */
-
-         const;
          params {
             @in const(char)* name @nonull; /*@ name of desired callback, must @b not be @c NULL.  The
             search have a special case for @a name being the same

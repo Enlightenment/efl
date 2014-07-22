@@ -204,13 +204,11 @@ class Evas.Textblock (Evas.Object)
       }
    }
    methods {
-      line_number_geometry_get {
+      line_number_geometry_get @const {
          /*@
          Get the geometry of a line number.
 
          @return @c EINA_TRUE on success, @c EINA_FALSE otherwise. */
-
-         const;
          return bool;
          params {
             @in int line; /*@ the line number. */
@@ -237,7 +235,7 @@ class Evas.Textblock (Evas.Object)
          @since 1.2 */
 
       }
-      cursor_new {
+      cursor_new @const {
          /*@
          Create a new cursor, associate it to the obj and init it to point
          to the start of the textblock. Association to the object means the cursor
@@ -246,28 +244,23 @@ class Evas.Textblock (Evas.Object)
          @note if you need speed and you know what you are doing, it's slightly faster to just allocate the cursor yourself and not associate it. (only people developing the actual object, and not users of the object).
 
          @return the new cursor. */
-
-         const;
          return Evas_Textblock_Cursor *;
       }
-      node_format_list_get {
+      node_format_list_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          legacy evas_textblock_node_format_list_get;
          return const(Eina.List)*;
          params {
             @in const(char)* anchor;
          }
       }
-      style_user_peek {
+      style_user_peek @const {
          /*@
          Get (don't remove) the style at the top of the user style stack.
 
          @return the style of the object.
          @see evas_object_textblock_style_get
          @since 1.2 */
-
-         const;
          return const(Evas_Textblock_Style)*;
       }
       node_format_remove_pair {

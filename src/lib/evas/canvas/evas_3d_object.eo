@@ -12,11 +12,10 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
            @in Evas_3D_Object *ref; /*@ The Object that caused the change */
          }
       }
-      type_get {
+      type_get @const {
          /*@
            Returns the type of the object.
           */
-          const;
           return Evas_3D_Object_Type;
       }
 
@@ -29,11 +28,10 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
           }
       }
 
-      dirty_get {
+      dirty_get @const {
          /*@
            Returns the status of a particular state of the object.
           */
-          const;
           return bool;
          params {
            @in Evas_3D_State state; /*@ State whose status is being asked */

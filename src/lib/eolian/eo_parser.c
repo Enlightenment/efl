@@ -767,7 +767,8 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    int line, col;
    Eo_Method_Def *meth = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
-             has_return      = EINA_FALSE, has_legacy = EINA_FALSE;
+             has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
+             has_protected   = EINA_FALSE;
    meth = calloc(1, sizeof(Eo_Method_Def));
    ls->tmp.meth = meth;
    if (ctor)
@@ -782,12 +783,23 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
         check(ls, TOK_VALUE);
         meth->name = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
-        if (ls->t.kw == KW_at_protected)
+        for (;;) switch (ls->t.kw)
           {
+           case KW_at_protected:
+             CASE_LOCK(ls, protected, "protected qualifier")
              meth->scope = EOLIAN_SCOPE_PROTECTED;
              eo_lexer_get(ls);
+             break;
+           case KW_at_const:
+             CASE_LOCK(ls, const, "const qualifier")
+             meth->obj_const = EINA_TRUE;
+             eo_lexer_get(ls);
+             break;
+           default:
+             goto body;
           }
      }
+body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
@@ -798,12 +810,6 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
      }
    for (;;) switch (ls->t.kw)
      {
-      case KW_const:
-        CASE_LOCK(ls, const, "const qualifier")
-        meth->obj_const = EINA_TRUE;
-        eo_lexer_get(ls);
-        check_next(ls, ';');
-        break;
       case KW_return:
         CASE_LOCK(ls, return, "return")
         parse_return(ls, EINA_FALSE);

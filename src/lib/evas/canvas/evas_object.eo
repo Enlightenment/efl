@@ -1235,14 +1235,12 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
       }
    }
    methods {
-      clipees_has {
+      clipees_has @const {
          /*@
          Test if any object is clipped by @p obj.
 
          @return EINA_TRUE if @p obj clip any object.
          @since 1.8 */
-
-         const;
          return bool @warn_unused;
       }
       key_grab {
@@ -1365,7 +1363,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @in Evas_Object *above @nonull; /*@ the object above which to stack */
          }
       }
-      smart_type_check {
+      smart_type_check @const {
          /*@
          Checks whether a given smart object or any of its smart object
          parents is of a given smart class.
@@ -1389,14 +1387,12 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @see eo_isa
 
          @ingroup Evas_Smart_Object_Group */
-
-         const;
          return bool @warn_unused;
          params {
             @in const(char)* type @nonull; /*@ The @b name (type) of the smart class to check for */
          }
       }
-      name_child_find {
+      name_child_find @const {
          /*@
          Retrieves the object from children of the given object with the given name.
          @return  If successful, the Evas object with the given name.  Otherwise,
@@ -1412,8 +1408,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @since 1.2
 
          @ingroup Evas_Object_Group_Find */
-
-         const;
          return Evas_Object * @warn_unused;
          params {
             @in const(char)* name; /*@ The given name. */
@@ -1490,7 +1484,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @in Evas_Coord dy; /*@ vertical offset (delta). */
          }
       }
-      smart_type_check_ptr {
+      smart_type_check_ptr @const {
          /*@
          Checks whether a given smart object or any of its smart object
          parents is of a given smart class, <b>using pointer comparison</b>.
@@ -1502,8 +1496,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          @see eo_isa
 
          @ingroup Evas_Smart_Object_Group */
-
-         const;
          return bool @warn_unused;
          params {
             @in const(char)* type @nonull; /*@ The type (name string) to check for. Must be the name */

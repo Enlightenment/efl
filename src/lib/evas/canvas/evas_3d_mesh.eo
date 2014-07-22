@@ -121,7 +121,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      frame_vertex_stride_get {
+      frame_vertex_stride_get @const {
          /*
            Get the vertex buffer stride of the key frame of the given mesh.
 
@@ -135,7 +135,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-         const;
          return int ;
          params {
             @in int frame; /*@ The number of the key frame. */
@@ -183,7 +182,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      index_format_get {
+      index_format_get @const {
          /*
            Get the format of the index data of the given mesh.
 
@@ -200,11 +199,10 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-          const;
          return Evas_3D_Index_Format ;
       }
 
-      index_count_get {
+      index_count_get @const {
          /*
            Get the count of the index data of the given mesh.
 
@@ -217,7 +215,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-          const;
          return int ;
       }
 
@@ -298,7 +295,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      vertex_count_get {
+      vertex_count_get @const {
          /*@
            Get the vertex count of the given mesh.
 
@@ -306,7 +303,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-          const;
           return int;
       }
 

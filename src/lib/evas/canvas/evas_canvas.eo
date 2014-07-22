@@ -635,7 +635,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in const(void)* data; /*@ Data for canvas. */
          }
       }
-      key_modifier_mask_get {
+      key_modifier_mask_get @const {
          /*@
          Creates a bit mask from the @p keyname @b modifier key. Values
          returned from different calls to it may be ORed together,
@@ -655,8 +655,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_modifier_is_set
          @see evas_object_key_grab
          @see evas_object_key_ungrab */
-
-         const;
          return Evas_Modifier_Mask @warn_unused;
          params {
             @in const(char)* keyname @nonull; /*@ The name of the modifier key to create the mask for. */
@@ -781,7 +779,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in const(void)* data;
          }
       }
-      objects_at_xy_get {
+      objects_at_xy_get @const {
          /*@
          Retrieve a list of Evas objects lying over a given position in
          a canvas
@@ -797,8 +795,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-
-         const;
          return Eina.List * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
@@ -995,21 +991,19 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Group */
 
       }
-      font_hinting_can_hint {
+      font_hinting_can_hint @const {
          /*@
          Checks if the font hinting is supported by the given evas.
 
          #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
          @return @c EINA_TRUE if it is supported, @c EINA_FALSE otherwise.
          @ingroup Evas_Font_Group */
-
-         const;
          return bool @warn_unused;
          params {
             @in Evas_Font_Hinting_Flags hinting; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
       }
-      object_top_at_xy_get {
+      object_top_at_xy_get @const {
          /*@
          Retrieve the Evas object stacked at the top of a given position in
          a canvas
@@ -1025,8 +1019,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-
-         const;
          return Evas_Object * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
@@ -1098,7 +1090,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in Evas_Callback_Type event_type; /*@ Event type */
          }
       }
-      font_available_list {
+      font_available_list @const {
          /*@
          List of available font descriptions known or found by this evas.
 
@@ -1111,12 +1103,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          after you're done.
 
          @ingroup Evas_Font_Group */
-
-         const;
          return Eina.List * @warn_unused;
       }
-      objects_in_rectangle_get {
-         const;
+      objects_in_rectangle_get @const {
          return Eina.List * @warn_unused;
          params {
             @in Evas_Coord x;
@@ -1127,7 +1116,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in bool include_hidden_objects;
          }
       }
-      object_name_find {
+      object_name_find @const {
          /*@
          Retrieves the object on the given evas with the given name.
          @return  If successful, the Evas object with the given name.  Otherwise,
@@ -1139,8 +1128,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          the object name is unique.
 
          @ingroup Evas_Object_Group_Find */
-
-         const;
          return Evas_Object * @warn_unused;
          params {
             @in const(char)* name; /*@ The given name. */
@@ -1267,13 +1254,11 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       sync {
          /*@ No description supplied by the EAPI. */
       }
-      font_path_list {
+      font_path_list @const {
          /*@
          Retrieves the list of font paths used by the given evas.
          @return  The list of font paths used.
          @ingroup Evas_Font_Path_Group */
-
-         const;
          return const(Eina.List)* @warn_unused;
       }
       image_cache_reload {
@@ -1283,7 +1268,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          This function reloads the image cache of canvas. */
 
       }
-      coord_world_x_to_screen {
+      coord_world_x_to_screen @const {
          /*@
          Convert/scale a canvas co-ordinate into output screen co-ordinates
 
@@ -1303,8 +1288,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          screen_x = evas_coord_world_x_to_screen(evas, canvas_x);
          @endcode */
-
-         const;
          return int @warn_unused;
          params {
             @in Evas_Coord x; /*@ The canvas x co-ordinate */
@@ -1365,7 +1348,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          This function flushes image cache of canvas. */
 
       }
-      coord_screen_y_to_world {
+      coord_screen_y_to_world @const {
          /*@
          Convert/scale an output screen co-ordinate into canvas co-ordinates
 
@@ -1385,8 +1368,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          canvas_y = evas_coord_screen_y_to_world(evas, screen_y);
          @endcode */
-
-         const;
          return Evas_Coord @warn_unused;
          params {
             @in int y; /*@ The screen/output y co-ordinate */
@@ -1532,7 +1513,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
-      object_top_in_rectangle_get {
+      object_top_in_rectangle_get @const {
          /*@
          Retrieve the Evas object stacked at the top of a given rectangular
          region in a canvas
@@ -1549,8 +1530,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-
-         const;
          return Evas_Object * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The top left corner's horizontal coordinate for the
@@ -1634,7 +1613,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in const(void)* data; /*@ The data for canvas. */
          }
       }
-      coord_screen_x_to_world {
+      coord_screen_x_to_world @const {
          /*@
          Convert/scale an output screen co-ordinate into canvas co-ordinates
 
@@ -1654,8 +1633,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          canvas_x = evas_coord_screen_x_to_world(evas, screen_x);
          @endcode */
-
-         const;
          return Evas_Coord @warn_unused;
          params {
             @in int x; /*@ The screen/output x co-ordinate */
@@ -1703,7 +1680,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Canvas */
 
       }
-      coord_world_y_to_screen {
+      coord_world_y_to_screen @const {
          /*@
          Convert/scale a canvas co-ordinate into output screen co-ordinates
 
@@ -1723,8 +1700,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          screen_y = evas_coord_world_y_to_screen(evas, canvas_y);
          @endcode */
-
-         const;
          return int @warn_unused;
          params {
             @in Evas_Coord y; /*@ The canvas y co-ordinate */

@@ -1100,7 +1100,7 @@ class Evas.Image (Evas.Object)
             @in int h; /*@ Height of the region to be updated. */
          }
       }
-      animated_frame_duration_get {
+      animated_frame_duration_get @const {
          /*@
          Get the duration of a sequence of frames.
 
@@ -1118,15 +1118,13 @@ class Evas.Image (Evas.Object)
          @see evas_object_image_animated_frame_duration_get()
          @see evas_object_image_animated_frame_set()
          @since 1.1 */
-
-         const;
          return double;
          params {
             @in int start_frame; /*@ The first frame */
             @in int frame_num; /*@ Number of frames in the sequence */
          }
       }
-      save {
+      save @const {
          /*@
          Save the given image object's contents to an (image) file.
 
@@ -1138,8 +1136,6 @@ class Evas.Image (Evas.Object)
          You can specify some flags when saving the image.  Currently
          acceptable flags are @c quality and @c compress. Eg.: @c
          "quality=100 compress=9" */
-
-         const;
          return bool;
          params {
             @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
@@ -1167,7 +1163,7 @@ class Evas.Image (Evas.Object)
             @in void *data; /*@ The raw data, or @c NULL. */
          }
       }
-      data_get {
+      data_get @const {
          /*@
          Get a pointer to the raw image data of the given image object.
 
@@ -1193,8 +1189,6 @@ class Evas.Image (Evas.Object)
          inform data changes, if you did any.
 
          @see evas_object_image_data_set() */
-
-         const;
          return void * @warn_unused;
          params {
             @in bool for_writing; /*@ Whether the data being retrieved will be

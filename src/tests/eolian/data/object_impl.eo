@@ -45,13 +45,12 @@ class Object (Base) {
          }
          return char *(NULL); /*@ comment for method return */
       }
-      foo2 {
+      foo2 @const {
          /*@ comment foo */
          params {
             @in int a;
             @in const(char)* b;
          }
-         const;
       }
       pure_foo3 {
          /* set as virtual pure - no implementation expected */

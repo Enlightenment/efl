@@ -11,7 +11,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
    }
    methods {
-      type_get {
+      type_get @const {
          /*
            Get the type of the given node.
 
@@ -21,7 +21,6 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-         const;
          return Evas_3D_Node_Type ;
       }
       member_add {
@@ -54,7 +53,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      parent_get {
+      parent_get @const {
          /*
            Get the parent node of the given node.
 
@@ -64,11 +63,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-          const;
          return Evas_3D_Node * ;
       }
 
-      member_list_get {
+      member_list_get @const {
          /*
            Get the list of member nodes of the given node.
 
@@ -78,7 +76,6 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-          const;
          return const(Eina.List)*;
       }
       position_set {
@@ -170,7 +167,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      position_get {
+      position_get @const {
          /*
            Get the position of the given node.
 
@@ -183,7 +180,6 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
-          const;
          params {
             @in Evas_3D_Space space; /*@  */
             @out Evas_Real x;      /*@ Pointer to receive X coordinate of the position.*/
@@ -192,7 +188,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      orientation_get {
+      orientation_get @const {
          /*
            Get the orientation of the given node as quaternion.
 
@@ -206,7 +202,6 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
-          const;
          params {
             @in Evas_3D_Space space; /*@  */
             @out Evas_Real x;      /*@ Pointer to receive X term of the orientation quaternion.*/
@@ -216,7 +211,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      scale_get {
+      scale_get @const {
          /*
            Get the scale of the given node.
 
@@ -229,7 +224,6 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
-          const;
          params {
             @in Evas_3D_Space space; /*@  */
             @out Evas_Real x;      /*@ Pointer to receive Scale factor along X-axis.*/
@@ -311,7 +305,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      mesh_list_get {
+      mesh_list_get @const {
          /*
            Get the list of meshes of the given node.
 
@@ -326,7 +320,6 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-          const;
          return const(Eina.List)*;
       }
 

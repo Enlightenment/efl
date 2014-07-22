@@ -32,7 +32,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      color_get {
+      color_get @const {
          /*
            Get the material attribute color of the given material.
 
@@ -40,8 +40,6 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Material
           */
-
-         const;
          params {
             @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
             @out Evas_Real r; /*@ Pointer to receive red component of the color. */

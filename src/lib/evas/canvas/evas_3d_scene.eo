@@ -18,13 +18,12 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      size_get {
+      size_get @const {
          /*
            Get the internal resolution of a scene.
 
            @ingroup Evas_3D_Scene
           */
-         const;
          params {
             @out int w;  /*@ Pointer to receive width of the resolution. */
             @out int h; /*@ Pointer to receive height of the resolution. */
@@ -51,14 +50,12 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      background_color_get {
+      background_color_get @const {
          /*
            Get the background color of a scene.
 
            @ingroup Evas_3D_Scene
           */
-
-         const;
          params {
             @out Evas_Real r; /*@ Pointer to receive red component of the background color.*/
             @out Evas_Real g; /*@ Pointer to receive green component of the background color. */
@@ -67,7 +64,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      pick {
+      pick @const {
          /*
            Get information on the most front visible mesh for the given position.
 
@@ -77,7 +74,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Scene
           */
-          const;
          return bool ;
          params {
             @in Evas_Real x;         /*@ X coordinate of the picking position. */
@@ -89,13 +85,12 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      exist {
+      exist @const {
          /*
            Search given node in the given position.
 
            @ingroup Evas_3D_Scene
          */
-         const;
          return Evas_3D_Node *;
          params {
             @in Evas_Real x;         /*@ X coordinate of the picking position. */
@@ -104,13 +99,12 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      pick_member_list_get {
+      pick_member_list_get @const {
          /*
            Get list of the all root members from scene in the given position.
 
            @ingroup Evas_3D_Scene
          */
-         const;
          return Eina.List *;
          params {
             @in Evas_Real x;         /*@ X coordinate of the picking position. */

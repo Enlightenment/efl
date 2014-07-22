@@ -58,14 +58,12 @@ class Evas.Grid (Evas.Smart_Clipped)
       }
    }
    methods {
-      accessor_new {
+      accessor_new @const {
          /*@
          Get an accessor to get random access to the list of children for the grid.
 
          @note Do not remove or delete objects while walking the list.
          @since 1.1 */
-
-         const;
          return Eina.Accessor * @warn_unused;
       }
       clear {
@@ -78,14 +76,12 @@ class Evas.Grid (Evas.Smart_Clipped)
             @in bool clear; /*@ if true, it will delete just removed children. */
          }
       }
-      iterator_new {
+      iterator_new @const {
          /*@
          Get an iterator to walk the list of children for the grid.
 
          @note Do not remove or delete objects while walking the list.
          @since 1.1 */
-
-         const;
          return Eina.Iterator * @warn_unused;
       }
       add_to {
@@ -113,7 +109,7 @@ class Evas.Grid (Evas.Smart_Clipped)
             @in Evas_Object *child @nonull;
          }
       }
-      pack_get {
+      pack_get @const {
          /*@
          Get the pack options for a grid child
 
@@ -121,8 +117,6 @@ class Evas.Grid (Evas.Smart_Clipped)
          evas_object_grid_pack()
          @return 1 on success, 0 on failure.
          @since 1.1 */
-
-         const;
          return bool;
          params {
             @in Evas_Object *child; /*@ The grid child to query for coordinates */

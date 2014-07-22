@@ -192,13 +192,13 @@ class Evas.Textgrid (Evas.Object)
          @see evas_object_textgrid_update_add()
 
          @since 1.7 */
-   
+
          params {
             @in int y; /*@ The row index of the grid. */
             @in const(Evas_Textgrid_Cell)* row; /*@ The string as a sequence of #Evas_Textgrid_Cell. */
          }
       }
-      cellrow_get {
+      cellrow_get @const {
          /*@
          @brief Get the string at the given row of the given textgrid object.
 
@@ -213,8 +213,6 @@ class Evas.Textgrid (Evas.Object)
          @see evas_object_textgrid_update_add()
 
          @since 1.7 */
-   
-         const;
          return Evas_Textgrid_Cell*;
          params {
             @in int y; /*@ The row index of the grid. */
@@ -238,7 +236,7 @@ class Evas.Textgrid (Evas.Object)
          @see evas_object_textgrid_palette_get()
 
          @since 1.7 */
-   
+
          params {
             @in Evas_Textgrid_Palette pal; /*@ The type of the palette to set the color. */
             @in int idx; /*@ The index of the paletter to which the color is stored. */
@@ -248,7 +246,7 @@ class Evas.Textgrid (Evas.Object)
             @in int a; /*@ The alpha component of the color. */
          }
       }
-      palette_get {
+      palette_get @const {
          /*@
          @brief The retrieve color to the given palette at the given index of the given textgrid object.
 
@@ -263,8 +261,6 @@ class Evas.Textgrid (Evas.Object)
          @see evas_object_textgrid_palette_set()
 
          @since 1.7 */
-   
-         const;
          params {
             @in Evas_Textgrid_Palette pal; /*@ The type of the palette to set the color. */
             @in int idx; /*@ The index of the palette to which the color is stored. */

@@ -23,7 +23,7 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      projection_matrix_get {
+      projection_matrix_get @const {
          /*@
           Get the projection matrix of the given camera.
 
@@ -34,7 +34,6 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
 
           @ingroup Evas_3D_Camera
          */
-         const;
          params {
            @out Evas_Real matrix; /*@ Projection Matrix */
          }

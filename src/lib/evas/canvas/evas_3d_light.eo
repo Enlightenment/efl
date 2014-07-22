@@ -134,7 +134,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @in Evas_Real a; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
          }
       }
-      ambient_get {
+      ambient_get @const {
          /*@
            Get the ambient color of the given light.
 
@@ -142,7 +142,6 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Light
           */
-         const;
          params {
            @out Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
            @out Evas_Real g; /*@ Green component of the ambient color between [0.0, 1.0]. */
@@ -166,7 +165,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @in Evas_Real a; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
          }
       }
-      diffuse_get {
+      diffuse_get @const {
          /*@
            Get the diffuse color of the given light.
 
@@ -174,7 +173,6 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Light
           */
-         const;
          params {
            @out Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
            @out Evas_Real g; /*@ Green component of the diffuse color between [0.0, 1.0]. */
@@ -198,7 +196,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @in Evas_Real a; /*@ Alpha component of the specular color between [0.0, 1.0]. */
          }
       }
-      specular_get {
+      specular_get @const {
          /*@
            Get the specular color of the given light.
 
@@ -206,7 +204,6 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Light
           */
-         const;
          params {
            @out Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
            @out Evas_Real g; /*@ Green component of the specular color between [0.0, 1.0]. */
@@ -238,7 +235,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      attenuation_get {
+      attenuation_get @const {
          /*@
            Get the attenuation of the given light.
 
@@ -246,7 +243,6 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Light
           */
-         const;
          params {
             @out Evas_Real constant; /*@ Constant attenuation term..*/
             @out Evas_Real linear; /*@ Linear attenuation term..*/

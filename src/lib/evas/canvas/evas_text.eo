@@ -394,17 +394,15 @@ class Evas.Text (Evas.Object)
       }
    }
    methods {
-      last_up_to_pos {
+      last_up_to_pos @const {
          /*@ Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text. */
-         const;
          return int;
          params {
             @in Evas_Coord x; /*@ in */
             @in Evas_Coord y; /*@ in */
          }
       }
-      char_coords_get {
-         const;
+      char_coords_get @const {
          return int;
          params {
             @in Evas_Coord x; /*@ in */
@@ -415,7 +413,7 @@ class Evas.Text (Evas.Object)
             @out Evas_Coord ch; /*@ out */
          }
       }
-      char_pos_get {
+      char_pos_get @const {
          /*@
          Retrieve position and dimension information of a character within a text @c Evas_Object.
 
@@ -426,8 +424,6 @@ class Evas.Text (Evas.Object)
          parameter.
 
          @return @c EINA_FALSE on success, @c EINA_TRUE on error. */
-
-         const;
          return bool;
          params {
             @in int pos; /*@ The character position to request co-ordinates for. */

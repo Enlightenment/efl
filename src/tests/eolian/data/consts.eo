@@ -14,14 +14,13 @@ class Const {
       }
    }
    methods {
-      foo {
+      foo @const {
          /*@ comment foo */
          params {
             @in int a; /*@ a */
             @inout char b;
             @out double c;
          }
-         const;
          return char *(NULL); /*@ comment for method return */
       }
    }

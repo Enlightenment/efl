@@ -83,7 +83,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      color_format_get {
+      color_format_get @const {
          /*
            Get the color format of the given texture.
 
@@ -96,11 +96,10 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
-         const;
          return Evas_3D_Color_Format ;
       }
 
-      size_get {
+      size_get @const {
          /*
            Get the size of the given texture.
 
@@ -113,7 +112,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
-         const;
          params {
             @out int w; /*@ Pointer to receive the width of the texture size. */
             @out int h; /*@ Pointer to receive the height of the texture size. */
@@ -166,7 +164,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      filter_get {
+      filter_get @const {
          /*
            Get the filter of the given texture.
 
@@ -178,8 +176,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
-
-         const;
          params {
             @out Evas_3D_Texture_Filter min; /*@ Pointer to receive the minification filter. */
             @out Evas_3D_Texture_Filter mag; /*@ Pointer to receive the magnification filter. */
