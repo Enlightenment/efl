@@ -16,7 +16,7 @@ AH_BOTTOM([
 
 AC_USE_SYSTEM_EXTENSIONS
 
-AM_INIT_AUTOMAKE([1.6 dist-bzip2 dist-xz -Wall -Wno-portability color-tests])
+AM_INIT_AUTOMAKE([1.6 dist-bzip2 dist-xz -Wall color-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 CFOPT_WARNING=""
