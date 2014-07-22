@@ -12,14 +12,14 @@
 
 START_TEST (elm_atspi_role_get)
 {
-   Evas_Object *win, *index;
+   Evas_Object *win, *idx;
    Elm_Atspi_Role role;
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
 
-   index = elm_index_add(win);
-   eo_do(index, role = elm_interface_atspi_accessible_role_get());
+   idx = elm_index_add(win);
+   eo_do(idx, role = elm_interface_atspi_accessible_role_get());
 
    ck_assert(role == ELM_ATSPI_ROLE_LIST);
 

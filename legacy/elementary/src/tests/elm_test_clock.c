@@ -12,14 +12,14 @@
 
 START_TEST (elm_atspi_role_get)
 {
-   Evas_Object *win, *clock;
+   Evas_Object *win, *clk;
    Elm_Atspi_Role role;
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
 
-   clock = elm_clock_add(win);
-   eo_do(clock, role = elm_interface_atspi_accessible_role_get());
+   clk = elm_clock_add(win);
+   eo_do(clk, role = elm_interface_atspi_accessible_role_get());
 
    ck_assert(role == ELM_ATSPI_ROLE_TEXT);
 
