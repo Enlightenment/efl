@@ -89,6 +89,8 @@ tests_eolian_cxx_eolian_cxx_suite_LDADD = \
 @CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
 tests_eolian_cxx_eolian_cxx_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
+EXTRA_DIST += tests/eolian_cxx/callback.eo
+
 endif
 
 include Makefile_Eolian_Cxx_Helper.am
