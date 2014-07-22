@@ -303,7 +303,7 @@ skip:
    eina_strbuf_append_char(ls->buff, ls->current);
    next_char(ls);
    tok->value = eina_stringshare_add_length(eina_strbuf_string_get(ls->buff) + 1,
-                                            eina_strbuf_length_get(ls->buff) - 2);
+                              (unsigned int)eina_strbuf_length_get(ls->buff) - 2);
 }
 
 static int
@@ -443,7 +443,7 @@ read_number(Eo_Lexer *ls, Eo_Token *tok)
         if (ls->current == '.') is_float = EINA_TRUE;
         next_char(ls);
      }
-   if (ls->current == 'e' || ls->current == 'e')
+   if (ls->current == 'e' || ls->current == 'E')
      {
         is_float = EINA_TRUE;
          write_exp(ls);
