@@ -4,7 +4,7 @@ mixin Elm_Interface_Atspi_Accessible ()
    eo_prefix: elm_interface_atspi_accessible;
    data: null;
    properties {
-      protected localized_role_name {
+      localized_role_name @protected {
          get {
             /*@ Gets an localized string describing ATSPI widget role name. */
          }
@@ -12,7 +12,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             const(char)* localized_name;
          }
       }
-      protected name {
+      name @protected {
          get {
             /*@ Gets an string describing ATSPI widget role name. */
          }
@@ -22,7 +22,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             const(char)* name; /*@ obj name */
          }
       }
-      protected relation_set {
+      relation_set @protected {
          get {
             /*@ Gets an string describing ATSPI widget role name. Lists and
             elements Should be free by a user. */
@@ -31,7 +31,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             Eina_List *relations;
          }
       }
-      protected role {
+      role @protected {
          get {
             /*@ Gets the role of the widget in ATSPI Accessibility domain. */
          }
@@ -41,7 +41,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             Elm_Atspi_Role role;
          }
       }
-      protected children {
+      children @protected {
          get {
             /*@ Gets widget's accessible children. */
          }
@@ -49,7 +49,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             Eina_List *children;
          }
       }
-      protected role_name {
+      role_name @protected {
          get {
             /*@ Gets human-readable string indentifying widget accessibility
             role. */
@@ -58,7 +58,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             const(char)* role_name;
          }
       }
-      protected attributes {
+      attributes @protected {
          get {
             /*@ Gets key-value pairs indentifying widget extra 
             attributes. Must be free by a user. */
@@ -67,7 +67,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             Eina_List *attributes;
          }
       }
-      protected index_in_parent {
+      index_in_parent @protected {
          get {
             /*@ Gets index of the child in parent's children list. */
          }
@@ -86,7 +86,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             const(char)* description;
          }
       }
-      protected parent {
+      parent @protected {
          get {
             /*@ Gets widget accessible parent. */
          }
@@ -97,7 +97,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             Eo *parent;
          }
       }
-      protected state_set {
+      state_set @protected {
          get {
             /*@ Gets set describing widget accessible states. */
          }

@@ -3,13 +3,13 @@ interface Elm_Interface_Atspi_Selection ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_selection;
    properties {
-      protected selected_children_count {
+      selected_children_count @protected {
          get {
             /* Gets the number of currently selected children */
             return int;
          }
       }
-      protected selected_child {
+      selected_child @protected {
          /* Gets child for given child index */
          get {
             return Eo*;
@@ -20,36 +20,36 @@ interface Elm_Interface_Atspi_Selection ()
      }
    }
    methods {
-      protected child_select {
+      child_select @protected {
          /* Adds selection for given child index */
          params {
             @in int child_index;
          }
          return bool;
       }
-      protected selected_child_deselect {
+      selected_child_deselect @protected {
          /* Removes selection for given child index */
          params {
             @in int child_index;
          }
          return bool;
       }
-      protected is_child_selected {
+      is_child_selected @protected {
          /* Determines if child specified by index is selected */
          params {
             @in int child_index;
          }
          return bool;
       }
-      protected all_children_select {
+      all_children_select @protected {
          /* Adds selection for all children */
          return bool;
       }
-      protected clear {
+      clear @protected {
          /* Clears the current selection */
          return bool;
       }
-      protected child_deselect {
+      child_deselect @protected {
          /* Removes selection for given child index */
          params {
             @in int child_index;

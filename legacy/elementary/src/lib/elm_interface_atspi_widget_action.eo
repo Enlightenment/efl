@@ -4,7 +4,7 @@ mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
    eo_prefix: elm_interface_atspi_widget_action;
    data: null;
    properties {
-      protected elm_actions {
+      elm_actions @protected {
          get {
          }
          values {

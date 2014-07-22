@@ -4,7 +4,7 @@ mixin Elm_Interface_Atspi_Action ()
    eo_prefix: elm_interface_atspi_action;
    data: null;
    properties {
-      protected name {
+      name @protected {
          get {
             /*@ Gets action name for given id */
          }
@@ -15,7 +15,7 @@ mixin Elm_Interface_Atspi_Action ()
             int id;
          }
       }
-      protected localized_name {
+      localized_name @protected {
          get {
             /*@ Gets localized action name for given id */
          }
@@ -26,7 +26,7 @@ mixin Elm_Interface_Atspi_Action ()
             int id;
          }
       }
-      protected description {
+      description @protected {
          get {
             /*@ Gets action description for given id */
          }
@@ -41,7 +41,7 @@ mixin Elm_Interface_Atspi_Action ()
             int id;
          }
       }
-      protected actions {
+      actions @protected {
          get {
             /*@ Get list of available widget actions */
          }
@@ -51,14 +51,14 @@ mixin Elm_Interface_Atspi_Action ()
       }
    }
    methods {
-      protected action_do {
+      action_do @protected {
          /*@ Performs action on given widget. */
          params {
             @in int id;
          }
          return bool;
       }
-      protected keybinding_get {
+      keybinding_get @protected {
          /*@ Gets configured keybinding for specific action and widget. */
          params {
             @in  int id;

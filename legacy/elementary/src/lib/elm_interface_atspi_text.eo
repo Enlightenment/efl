@@ -3,7 +3,7 @@ interface Elm_Interface_Atspi_Text ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_text;
    properties {
-      protected character {
+      character @protected {
          get {
             /*@ Gets single character present in accessible widget's text
                 at given offset. */
@@ -18,7 +18,7 @@ interface Elm_Interface_Atspi_Text ()
                                       that string includes invalid UTF8 chars. */
          }
       }
-      protected string {
+      string @protected {
          get {
             /*@ Gets string, start and end offset in text according to
               given initial offset and granulatity. */
@@ -36,7 +36,7 @@ interface Elm_Interface_Atspi_Text ()
                             Must be free by a user. */
          }
       }
-      protected text {
+      text @protected {
          get {
             /*@ Gets text of accessible widget. */
          }
@@ -48,7 +48,7 @@ interface Elm_Interface_Atspi_Text ()
             char *text; /*@ UTF-8 encoded text. */
          }
       }
-      protected caret_offset {
+      caret_offset @protected {
          get {
             /*@ Gets offset position of caret (cursor) */
          }
@@ -60,7 +60,7 @@ interface Elm_Interface_Atspi_Text ()
             int offset;
          }
       }
-      protected attribute {
+      attribute @protected {
          get {
             /*@ Indicate if a text attribute with a given name is set */
             return bool;
@@ -76,7 +76,7 @@ interface Elm_Interface_Atspi_Text ()
             char *value; /* Value of text attribute. Should be free() */
          }
       }
-      protected attributes {
+      attributes @protected {
          get {
             /* Gets list of all text attributes. */
          }
@@ -88,14 +88,14 @@ interface Elm_Interface_Atspi_Text ()
             own(Eina_List*) attributes;
          }
       }
-      protected default_attributes {
+      default_attributes @protected {
          get {
          }
          values {
             own(Eina_List*) attributes;
          }
       }
-      protected character_extents {
+      character_extents @protected {
          get {
             return bool;
          }
@@ -107,14 +107,14 @@ interface Elm_Interface_Atspi_Text ()
             Eina_Rectangle rect;
          }
       }
-      protected character_count {
+      character_count @protected {
          get {
          }
          values {
             int count;
          }
       }
-      protected offset_at_point {
+      offset_at_point @protected {
          get {
          }
          keys {
@@ -126,7 +126,7 @@ interface Elm_Interface_Atspi_Text ()
             int offset;
          }
       }
-      protected bounded_ranges {
+      bounded_ranges @protected {
          get {
          }
          keys {
@@ -139,7 +139,7 @@ interface Elm_Interface_Atspi_Text ()
             Eina_List *ranges;
          }
       }
-      protected range_extents {
+      range_extents @protected {
          get {
             return bool;
          }
@@ -154,14 +154,14 @@ interface Elm_Interface_Atspi_Text ()
             Eina_Rectangle rect;
          }
       }
-      protected selections_count {
+      selections_count @protected {
          get {
          }
          values {
             int count;
          }
       }
-      protected selection {
+      selection @protected {
          get {
          }
          set {
@@ -177,14 +177,14 @@ interface Elm_Interface_Atspi_Text ()
       }
    }
    methods {
-      protected selection_add {
+      selection_add @protected {
          params {
             @in int start_offset;
             @in int end_offset;
          }
          return bool;
       }
-      protected selection_remove  {
+      selection_remove @protected {
          params {
             @in int selection_number;
          }

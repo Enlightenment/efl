@@ -4,7 +4,7 @@ mixin Elm_Interface_Atspi_Image ()
    eo_prefix: elm_interface_atspi_image;
    data: null;
    properties {
-      protected extents {
+      extents @protected {
          get {
             /*@ Gets an image extents. */
          }
@@ -28,7 +28,7 @@ mixin Elm_Interface_Atspi_Image ()
             const(char)* description;
          }
       }
-      protected locale {
+      locale @protected {
          get {
             /* Gets locale of the image description. */
          }

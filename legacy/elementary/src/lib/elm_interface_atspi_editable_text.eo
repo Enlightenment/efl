@@ -3,7 +3,7 @@ interface Elm_Interface_Atspi_Editable_Text ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_editable_text;
    properties {
-      protected content {
+      content @protected {
          set {
             return bool;
          }
@@ -13,35 +13,35 @@ interface Elm_Interface_Atspi_Editable_Text ()
       }
    }
    methods {
-      protected insert {
+      insert @protected {
          params {
             @in const(char)* string;
             @in int position;
          }
          return bool;
       }
-      protected copy {
-         params {
-            @in int start;
-            @in int end;
-         }
-		 return bool;
-      }
-      protected cut {
+      copy @protected {
          params {
             @in int start;
             @in int end;
          }
          return bool;
       }
-      protected delete {
+      cut @protected {
          params {
             @in int start;
             @in int end;
          }
          return bool;
       }
-      protected paste {
+      delete @protected {
+         params {
+            @in int start;
+            @in int end;
+         }
+         return bool;
+      }
+      paste @protected {
          params {
             @in int position;
          }

@@ -4,7 +4,7 @@ mixin Elm_Interface_Atspi_Component ()
    eo_prefix: elm_interface_atspi_component;
    data: null;
    properties {
-      protected size {
+      size @protected {
          set {
             /*@ Sets size of accessible widget. */
             return bool;
@@ -17,7 +17,7 @@ mixin Elm_Interface_Atspi_Component ()
             int h;
          }
       }
-      protected layer {
+      layer @protected {
          get {
             /*@ Sets evas layer of accessible widget. */
          }
@@ -25,7 +25,7 @@ mixin Elm_Interface_Atspi_Component ()
             int layer;
          }
       }
-      protected alpha {
+      alpha @protected {
          get {
             /*@ Gets alpha of accessible widget. */
          }
@@ -33,7 +33,7 @@ mixin Elm_Interface_Atspi_Component ()
             double alpha; /*@ alpha value in [0, 1] range. */
          }
       }
-      protected z_order {
+      z_order @protected {
          get {
             /*@ Gets the depth at which the component is shown in relation to
             other components in the same container. */
@@ -42,7 +42,7 @@ mixin Elm_Interface_Atspi_Component ()
             int z_order;
          }
       }
-      protected extents {
+      extents @protected {
          get {
             /*@ Gets geometry of accessible widget. */
          }
@@ -62,7 +62,7 @@ mixin Elm_Interface_Atspi_Component ()
             int h;
          }
       }
-      protected position {
+      position @protected {
          set {
             /*@ Sets position of accessible widget. */
             return bool;
@@ -82,7 +82,7 @@ mixin Elm_Interface_Atspi_Component ()
       }
    }
    methods {
-      protected contains {
+      contains @protected {
          params {
             bool screen_coords; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
@@ -99,7 +99,7 @@ mixin Elm_Interface_Atspi_Component ()
 
          return bool;
       }
-      protected accessible_at_point_get {
+      accessible_at_point_get @protected {
          /*@ Gets top component object occupying space at given coordinates. */
          params {
             bool screen_coords; /*@ If true x and y values will be relative

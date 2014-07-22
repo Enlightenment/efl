@@ -3,7 +3,7 @@ interface Elm_Interface_Atspi_Value ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_value;
    properties {
-      protected value_and_text {
+      value_and_text @protected {
          get {
             /*@ Gets value displayed by a accessible widget. */
          }
@@ -17,7 +17,7 @@ interface Elm_Interface_Atspi_Value ()
                                eg. small, enough */
          }
       }
-      protected range {
+      range @protected {
          get {
             /* Gets a range of all possible values and its description */
          }
@@ -27,7 +27,7 @@ interface Elm_Interface_Atspi_Value ()
             const(char)* description;
          }
       }
-      protected increment {
+      increment @protected {
          get {
             /* Gets an minimal incrementation value */
          }
