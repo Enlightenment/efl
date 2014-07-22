@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+# include <libgen.h>
+#endif
+
 #ifdef HAVE_FEATURES_H
 #include <features.h>
 #endif
