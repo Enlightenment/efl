@@ -26,9 +26,7 @@ tmpl_eapi_body[] ="\
 EAPI @#ret_type\n\
 @#eapi_func(@#is_constEo *obj@#full_params)\n\
 {\n\
-@#ret_init_val\
-   eo_do((Eo *) obj, @#eo_ret_assign@#eo_func(@#eo_params));\n\
-   return @#ret_val;\n\
+   return eo_do((Eo *) obj, @#eo_func(@#eo_params));\n\
 }\n\
 ";
 static const char
@@ -300,9 +298,6 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
 
              eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
              eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);
-             tmp_ret_str[0] = '\0';
-             if (rettype && !ret_is_void) sprintf(tmp_ret_str, "%s = ", retname);
-             eina_strbuf_replace_all(fbody, "@#eo_ret_assign", tmp_ret_str);
      }
 
    eina_strbuf_replace_all(fbody, "@#full_params", eina_strbuf_string_get(fparam));
