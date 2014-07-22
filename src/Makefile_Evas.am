@@ -720,6 +720,10 @@ modules/evas/engines/gl_common/shader/nv12_nomul_vert.h \
 modules/evas/engines/gl_common/shader/nv12_vert.h \
 modules/evas/engines/gl_common/shader/rect_frag.h \
 modules/evas/engines/gl_common/shader/rect_vert.h \
+modules/evas/engines/gl_common/shader/rgb_a_pair_frag.h \
+modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_frag.h \
+modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_vert.h \
+modules/evas/engines/gl_common/shader/rgb_a_pair_vert.h \
 modules/evas/engines/gl_common/shader/tex_12_frag.h \
 modules/evas/engines/gl_common/shader/tex_12_nomul_frag.h \
 modules/evas/engines/gl_common/shader/tex_12_nomul_vert.h \
@@ -812,6 +816,10 @@ modules/evas/engines/gl_common/shader/nv12_nomul_vert.shd \
 modules/evas/engines/gl_common/shader/nv12_vert.shd \
 modules/evas/engines/gl_common/shader/rect_frag.shd \
 modules/evas/engines/gl_common/shader/rect_vert.shd \
+modules/evas/engines/gl_common/shader/rgb_a_pair_frag.shd \
+modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_frag.shd \
+modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_vert.shd \
+modules/evas/engines/gl_common/shader/rgb_a_pair_vert.shd \
 modules/evas/engines/gl_common/shader/tex_12_frag.shd \
 modules/evas/engines/gl_common/shader/tex_12_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/tex_12_nomul_vert.shd \
