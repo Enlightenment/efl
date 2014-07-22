@@ -2636,14 +2636,20 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
 
    focus_only = _elm_config->item_select_on_focus_disable && elm_widget_focus_highlight_enabled_get(obj);
    // handle item loop feature
-   if (sd->item_loop_enable)
+   if (sd->item_loop_enable && !sd->item_looping_on)
      {
         if (min > v)
           {
              if (dir == ELM_FOCUS_UP)
-               elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
+               {
+                  elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
+                  sd->item_looping_on = EINA_TRUE;
+               }
              else if (dir == ELM_FOCUS_DOWN)
-               elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
+               {
+                  elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
+                  sd->item_looping_on = EINA_TRUE;
+               }
           }
         else
           {
@@ -2659,6 +2665,8 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
           }
         return EINA_TRUE;
      }
+   else if (sd->item_looping_on)
+     return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -5185,12 +5193,16 @@ _elm_genlist_looping_up_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Evas_Object *genlist = data;
+
+   ELM_GENLIST_DATA_GET(genlist, sd);
+
    Elm_Object_Item *it = elm_genlist_last_item_get(genlist);
    if (!_elm_config->item_select_on_focus_disable)
      elm_genlist_item_selected_set(it, EINA_TRUE);
    else
      elm_object_item_focus_set(it, EINA_TRUE);
    elm_layout_signal_emit(genlist, "elm,action,looping,up,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
 }
 
 static void
@@ -5200,12 +5212,16 @@ _elm_genlist_looping_down_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Evas_Object *genlist = data;
+
+   ELM_GENLIST_DATA_GET(genlist, sd);
+
    Elm_Object_Item *it = elm_genlist_first_item_get(genlist);
    if (!_elm_config->item_select_on_focus_disable)
      elm_genlist_item_selected_set(it, EINA_TRUE);
    else
      elm_object_item_focus_set(it, EINA_TRUE);
    elm_layout_signal_emit(genlist, "elm,action,looping,down,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
 }
 
 

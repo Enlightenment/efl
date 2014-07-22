@@ -54,6 +54,7 @@ struct _Elm_List_Data
    Eina_Bool                             delete_me : 1;
    Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the list at the moment. this flag is set to true on mouse and reset to false on mouse up */
    Eina_Bool                             item_loop_enable : 1; /**< value whether item loop feature is enabled or not. */
+   Eina_Bool                             item_looping_on : 1;
 };
 
 typedef struct _Elm_List_Item Elm_List_Item;

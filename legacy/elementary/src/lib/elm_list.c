@@ -392,18 +392,30 @@ _elm_list_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, 
      return EINA_TRUE;
 
    // handle item loop feature
-   if (sd->item_loop_enable)
+   if (sd->item_loop_enable && !sd->item_looping_on)
      {
         if (min > v)
           {
              if (dir == ELM_FOCUS_LEFT)
-               elm_layout_signal_emit(obj, "elm,action,looping,left", "elm");
+               {
+                  elm_layout_signal_emit(obj, "elm,action,looping,left", "elm");
+                  sd->item_looping_on = EINA_TRUE;
+               }
              else if (dir == ELM_FOCUS_RIGHT)
-               elm_layout_signal_emit(obj, "elm,action,looping,right", "elm");
+               {
+                  elm_layout_signal_emit(obj, "elm,action,looping,right", "elm");
+                  sd->item_looping_on = EINA_TRUE;
+               }
              else if (dir == ELM_FOCUS_UP)
-               elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
+               {
+                  elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
+                  sd->item_looping_on = EINA_TRUE;
+               }
              else if (dir == ELM_FOCUS_DOWN)
-               elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
+               {
+                  elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
+                  sd->item_looping_on = EINA_TRUE;
+               }
           }
         else
           {
@@ -419,6 +431,8 @@ _elm_list_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, 
           }
         return EINA_TRUE;
      }
+   else if (sd->item_looping_on)
+     return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -1719,12 +1733,16 @@ _elm_list_looping_left_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Evas_Object *list = data;
+
+   ELM_LIST_DATA_GET(list, sd);
+
    Elm_List_Item *it = (Elm_List_Item *)elm_list_last_item_get(list);
    if (!_elm_config->item_select_on_focus_disable)
      elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
    else
      elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
    elm_layout_signal_emit(list, "elm,action,looping,left,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
 }
 
 static void
@@ -1734,12 +1752,16 @@ _elm_list_looping_right_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Evas_Object *list = data;
+
+   ELM_LIST_DATA_GET(list, sd);
+
    Elm_List_Item *it = (Elm_List_Item *)elm_list_first_item_get(list);
    if (!_elm_config->item_select_on_focus_disable)
      elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
    else
      elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
    elm_layout_signal_emit(list, "elm,action,looping,right,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
 }
 
 static void
@@ -1749,12 +1771,16 @@ _elm_list_looping_up_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Evas_Object *list = data;
+
+   ELM_LIST_DATA_GET(list, sd);
+
    Elm_List_Item *it = (Elm_List_Item *)elm_list_last_item_get(list);
    if (!_elm_config->item_select_on_focus_disable)
      elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
    else
      elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
    elm_layout_signal_emit(list, "elm,action,looping,up,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
 }
 
 static void
@@ -1764,12 +1790,16 @@ _elm_list_looping_down_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Evas_Object *list = data;
+
+   ELM_LIST_DATA_GET(list, sd);
+
    Elm_List_Item *it = (Elm_List_Item *)elm_list_first_item_get(list);
    if (!_elm_config->item_select_on_focus_disable)
      elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
    else
      elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
    elm_layout_signal_emit(list, "elm,action,looping,down,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
 }
 
 static void

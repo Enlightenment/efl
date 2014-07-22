@@ -185,6 +185,7 @@ struct _Elm_Genlist_Data
    Eina_Bool                             swipe : 1;
    /**< value whether item loop feature is enabled or not. */
    Eina_Bool                             item_loop_enable : 1;
+   Eina_Bool                             item_looping_on : 1;
 };
 
 typedef struct _Item_Block Item_Block;
