@@ -5,7 +5,7 @@ group { name: "elm/focus_highlight/top/default";
    script {
       public s_x, s_y, s_w, s_h; /* source */
       public difx, dify, difw, difh;
-      
+
       public animator1(val, Float:pos) {
          new x, y, w, h, dx, dy, dw, dh, Float:p;
          p = 1.0 - ((1.0 - pos) * (1.0 - pos) * (1.0 - pos));
@@ -19,16 +19,16 @@ group { name: "elm/focus_highlight/top/default";
          h = get_int(s_h) + dh;
          update_offset(x, y, w, h);
       }
-      
+
       public update_offset(x, y, w, h) {
          set_state_val(PART:"base", STATE_REL1_OFFSET, x, y);
          set_state_val(PART:"base", STATE_REL2_OFFSET, x + w, y + h);
       }
-      
+
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new x1, y1, w1, h1, x2, y2, w2, h2;
-            
+
             x1 = getarg(2);
             y1 = getarg(3);
             w1 = getarg(4);
@@ -37,7 +37,7 @@ group { name: "elm/focus_highlight/top/default";
             y2 = getarg(7);
             w2 = getarg(8);
             h2 = getarg(9);
-            
+
             set_int(s_x, x1);
             set_int(s_y, y1);
             set_int(s_w, w1);
@@ -46,31 +46,56 @@ group { name: "elm/focus_highlight/top/default";
             set_int(dify, y2 - y1);
             set_int(difw, w2 - w1);
             set_int(difh, h2 - h1);
-            
+
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 0.0, 0.0);
             set_state_val(PART:"base", STATE_REL2, 0.0, 0.0);
             update_offset(x1, y1, w1, h1);
             set_state(PART:"base", "custom", 0.0);
-            
+
             anim(0.2, "animator1", 1);
          }
       }
    }
    parts {
-      part { name: "base"; type: SPACER;
+      part { name: "base"; type: RECT;
+         clip_to: "clip";
          description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "move_down" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0 1;
+            rel2.relative: 1 2;
+         }
+         description { state: "move_up" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0 -1;
+            rel2.relative: 1 0;
          }
       }
       part { name: "clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "glow";
-            rel2.to: "glow";
-            color: 255 255 255 0;
+         scale: 1;
+         description {
+            state: "default" 0.0;
+            color: 255 255 255 255;
+            rel1.relative: -1 -1;
+            rel2.relative: 2 2;
+         }
+         description { state: "move_down" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "move_up" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0 ;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+         }
+         description { state: "invisible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
          }
       }
       part { name: "glow"; mouse_events: 0;
@@ -121,7 +146,7 @@ group { name: "elm/focus_highlight/top/default";
       }
       program {
          signal: "elm,action,focus,hide"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "invisible" 0.0;
          transition: DECELERATE 0.4;
          target: "clip";
          after: "stop2";
@@ -152,6 +177,58 @@ group { name: "elm/focus_highlight/top/default";
          signal: "elm,state,anim,stop"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+      }
+      program { name: "move_down";
+         signal: "elm,action,focus,move,down";
+         source: "elm";
+         transition: LIN 0.3;
+         action: STATE_SET "move_down" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_down_end";
+      }
+      program { name: "move_down_end";
+         action: SIGNAL_EMIT "elm,focus,move,down,end" "elm";
+      }
+      program { name: "move_up";
+         signal: "elm,action,focus,move,up";
+         source: "elm";
+         transition: LIN 0.3;
+         action: STATE_SET "move_up" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_up_end";
+      }
+      program { name: "move_up_end";
+         action: SIGNAL_EMIT "elm,focus,move,up,end" "elm";
+      }
+      program { name: "move_home_from_up";
+         signal: "elm,action,focus,move,home,up";
+         source: "elm";
+         action: STATE_SET "move_up" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_home_from_up2";
+      }
+      program { name: "move_home_from_up2";
+         action: STATE_SET "default" 0.0;
+         transition: LIN 0.3;
+         target: "base";
+         target: "clip";
+      }
+      program { name: "move_home_from_down";
+         signal: "elm,action,focus,move,home,down";
+         source: "elm";
+         action: STATE_SET "move_down" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_home_from_down2";
+      }
+      program { name: "move_home_from_down2";
+         action: STATE_SET "default" 0.0;
+         transition: LIN 0.3;
+         target: "base";
+         target: "clip";
       }
    }
 }

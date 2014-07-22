@@ -2269,7 +2269,7 @@ _elm_genlist_pan_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Elm_Genlist_Pa
    else if (sd->reorder_fast == -1)
       eo_do((sd)->obj, elm_interface_scrollable_content_region_show(vx, vy + 10, vw, vh));
 
-   if (sd->focused_item)
+   if (sd->focused_item && !sd->item_loop_enable)
      _elm_widget_focus_highlight_start(psd->wobj);
 
    evas_event_thaw(evas_object_evas_get(obj));
@@ -5188,42 +5188,73 @@ _decorate_item_unset(Elm_Genlist_Data *sd)
 
 static void
 _elm_genlist_looping_up_cb(void *data,
-                          Evas_Object *obj EINA_UNUSED,
-                          const char *emission EINA_UNUSED,
-                          const char *source EINA_UNUSED)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Evas_Object *genlist = data;
 
    ELM_GENLIST_DATA_GET(genlist, sd);
 
    Elm_Object_Item *it = elm_genlist_last_item_get(genlist);
-   if (!_elm_config->item_select_on_focus_disable)
-     elm_genlist_item_selected_set(it, EINA_TRUE);
-   else
-     elm_object_item_focus_set(it, EINA_TRUE);
+
+   elm_genlist_item_show((Elm_Object_Item *)it, ELM_GENLIST_ITEM_SCROLLTO_IN);
+   _elm_widget_focus_highlight_signal_emit(genlist, "elm,action,focus,move,up", "elm");
    elm_layout_signal_emit(genlist, "elm,action,looping,up,end", "elm");
    sd->item_looping_on = EINA_FALSE;
 }
 
 static void
 _elm_genlist_looping_down_cb(void *data,
-                          Evas_Object *obj EINA_UNUSED,
-                          const char *emission EINA_UNUSED,
-                          const char *source EINA_UNUSED)
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *emission EINA_UNUSED,
+                             const char *source EINA_UNUSED)
 {
    Evas_Object *genlist = data;
 
    ELM_GENLIST_DATA_GET(genlist, sd);
 
    Elm_Object_Item *it = elm_genlist_first_item_get(genlist);
-   if (!_elm_config->item_select_on_focus_disable)
-     elm_genlist_item_selected_set(it, EINA_TRUE);
-   else
-     elm_object_item_focus_set(it, EINA_TRUE);
+
+   elm_genlist_item_show((Elm_Object_Item *)it, ELM_GENLIST_ITEM_SCROLLTO_IN);
+   _elm_widget_focus_highlight_signal_emit(genlist, "elm,action,focus,move,down", "elm");
    elm_layout_signal_emit(genlist, "elm,action,looping,down,end", "elm");
    sd->item_looping_on = EINA_FALSE;
 }
 
+static void
+_elm_genlist_focus_highlight_move_down_end_cb(void *data,
+                                              Evas_Object *obj EINA_UNUSED,
+                                              const char *emission EINA_UNUSED,
+                                              const char *source EINA_UNUSED)
+{
+      Evas_Object *gl = data;
+      Elm_Gen_Item *it = (Elm_Gen_Item *)elm_genlist_first_item_get(gl);
+
+      if (!_elm_config->item_select_on_focus_disable)
+        elm_genlist_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+      else
+        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+
+      _elm_widget_focus_highlight_signal_emit(gl, "elm,action,focus,move,home,up", "elm");
+}
+
+static void
+_elm_genlist_focus_highlight_move_up_end_cb(void *data,
+                                            Evas_Object *obj EINA_UNUSED,
+                                            const char *emission EINA_UNUSED,
+                                            const char *source EINA_UNUSED)
+{
+      Evas_Object *gl = data;
+      Elm_Gen_Item *it = (Elm_Gen_Item *)elm_genlist_last_item_get(gl);
+
+      if (!_elm_config->item_select_on_focus_disable)
+        elm_genlist_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+      else
+        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+
+      _elm_widget_focus_highlight_signal_emit(gl, "elm,action,focus,move,home,down", "elm");
+}
 
 EOLIAN static void
 _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
@@ -7551,6 +7582,14 @@ _elm_genlist_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *
 EOLIAN static void
 _elm_genlist_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bool enable)
 {
+   if (enable == EINA_TRUE)
+      {
+         _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,down,end",
+                                                         "elm", _elm_genlist_focus_highlight_move_down_end_cb, obj);
+         _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,up,end",
+                                                         "elm", _elm_genlist_focus_highlight_move_up_end_cb, obj);
+      }
+
    sd->item_loop_enable = !!enable;
 }
 
