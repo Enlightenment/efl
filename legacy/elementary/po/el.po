@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-06-23 08:13+0900\n"
+"POT-Creation-Date: 2014-07-22 18:31+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -48,23 +48,23 @@ msgstr ""
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:410
+#: src/lib/elc_naviframe.c:413
 msgid "Title"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:937 src/lib/elc_naviframe.c:1132
+#: src/lib/elc_naviframe.c:940 src/lib/elc_naviframe.c:1135
 msgid "Back"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:1213
+#: src/lib/elc_naviframe.c:1216
 msgid "Next"
 msgstr ""
 
-#: src/lib/elc_popup.c:290 src/lib/elc_popup.c:924
+#: src/lib/elc_popup.c:259 src/lib/elc_popup.c:880
 msgid "Popup Title"
 msgstr ""
 
-#: src/lib/elc_popup.c:300 src/lib/elc_popup.c:992
+#: src/lib/elc_popup.c:269 src/lib/elc_popup.c:946
 msgid "Popup Body Text"
 msgstr ""
 
@@ -77,10 +77,10 @@ msgstr "Πλαίσιο"
 msgid "Clicked"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_button.c:276 src/lib/elm_check.c:237 src/lib/elm_gengrid.c:723
-#: src/lib/elm_genlist.c:1455 src/lib/elm_list.c:2017 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:276 src/lib/elm_check.c:240 src/lib/elm_gengrid.c:723
+#: src/lib/elm_genlist.c:1455 src/lib/elm_list.c:2043 src/lib/elm_radio.c:257
 #: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:576
-#: src/lib/elm_toolbar.c:2210
+#: src/lib/elm_toolbar.c:2208
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
 
@@ -133,20 +133,20 @@ msgstr "Μηνας Ημερολογίου"
 msgid "calendar year"
 msgstr "αντικείμενο ημερολογίου"
 
-#: src/lib/elm_check.c:64 src/lib/elm_check.c:250 src/lib/elm_radio.c:103
+#: src/lib/elm_check.c:67 src/lib/elm_check.c:253 src/lib/elm_radio.c:103
 #: src/lib/elm_radio.c:258
 msgid "State: On"
 msgstr "Κατάσταση: Ενεργό"
 
-#: src/lib/elm_check.c:70 src/lib/elm_check.c:262 src/lib/elm_radio.c:260
+#: src/lib/elm_check.c:73 src/lib/elm_check.c:265 src/lib/elm_radio.c:260
 msgid "State: Off"
 msgstr "Κατάσταση: Ανενεργό"
 
-#: src/lib/elm_check.c:246 src/lib/elm_check.c:259
+#: src/lib/elm_check.c:249 src/lib/elm_check.c:262
 msgid "State"
 msgstr "Κατάσταση"
 
-#: src/lib/elm_check.c:337
+#: src/lib/elm_check.c:340
 msgid "Check"
 msgstr "Επιλογή"
 
@@ -172,7 +172,7 @@ msgstr "Ρολοι"
 msgid "color selector palette item"
 msgstr "παλέτα επιλογής χρώματος"
 
-#: src/lib/elm_config.c:3176
+#: src/lib/elm_config.c:3203
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -201,7 +201,7 @@ msgstr "Επικόλληση"
 msgid "Select"
 msgstr "Επιλογή"
 
-#: src/lib/elm_entry.c:3471
+#: src/lib/elm_entry.c:3474
 msgid "Entry"
 msgstr "Καταχώριση"
 
@@ -221,15 +221,23 @@ msgstr "Αντικείμενο Καταλόγου"
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: src/lib/elm_panel.c:65
+#: src/lib/elm_panel.c:70
 msgid "state: opened"
 msgstr "Κατάσταση: Ανοικτό"
 
-#: src/lib/elm_panel.c:66
+#: src/lib/elm_panel.c:71
 msgid "state: closed"
 msgstr "Κατάσταση: Κλειστό"
 
-#: src/lib/elm_panel.c:129
+#: src/lib/elm_panel.c:111
+msgid "A drawer is open"
+msgstr ""
+
+#: src/lib/elm_panel.c:113
+msgid "Double tap to close drawer menu"
+msgstr ""
+
+#: src/lib/elm_panel.c:183
 msgid "panel button"
 msgstr "κουμπί πινακα"
 
@@ -241,7 +249,7 @@ msgstr "Μπάρα Προόδου"
 msgid "Radio"
 msgstr "Επιλογή"
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2212
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2210
 msgid "State: Selected"
 msgstr "Κατάσταση: Επιλεγμένο"
 
@@ -254,7 +262,7 @@ msgstr "Κατάσταση: Επιλεγμένο"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:877
+#: src/lib/elm_slider.c:878
 msgid "slider"
 msgstr "μπάρα κύλισης"
 
@@ -273,23 +281,23 @@ msgstr "κουμπί spinner προηγούμενο"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1672 src/lib/elm_toolbar.c:2271
+#: src/lib/elm_toolbar.c:1670 src/lib/elm_toolbar.c:2269
 msgid "Selected"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:2208
+#: src/lib/elm_toolbar.c:2206
 msgid "Separator"
 msgstr "Διαχωριστικό"
 
-#: src/lib/elm_toolbar.c:2214
+#: src/lib/elm_toolbar.c:2212
 msgid "Has menu"
 msgstr "Έχει μενού"
 
-#: src/lib/elm_toolbar.c:2266
+#: src/lib/elm_toolbar.c:2264
 msgid "Unselected"
 msgstr "Μη Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:2283
+#: src/lib/elm_toolbar.c:2281
 msgid "Toolbar Item"
 msgstr "Αντικείμενο μπάρας εργαλείων"
 
