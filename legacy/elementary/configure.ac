@@ -251,6 +251,8 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
    )
 fi
 AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" = "xyes"])
+AM_CONDITIONAL([HAVE_CXX11], [LDFLAGS="${LDFLAGS} -shared -fPIC -DPIC"])
+AM_CONDITIONAL([HAVE_CXX11], [CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"])
 
 have_elementary_x="no"
 want_elementary_x="auto"
