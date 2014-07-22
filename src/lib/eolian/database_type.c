@@ -38,6 +38,8 @@ database_type_add(Eolian_Type *def)
 {
    if (!_aliases) return EINA_FALSE;
    eina_hash_set(_aliases, def->full_name, def);
+   eina_hash_set(_aliasesf, def->file, eina_list_append
+                ((Eina_List*)eina_hash_find(_aliasesf, def->file), def));
    return EINA_TRUE;
 }
 
@@ -45,6 +47,8 @@ Eina_Bool database_struct_add(Eolian_Type *tp)
 {
    if (!_structs) return EINA_FALSE;
    eina_hash_set(_structs, tp->full_name, tp);
+   eina_hash_set(_structsf, tp->file, eina_list_append
+                ((Eina_List*)eina_hash_find(_structsf, tp->file), tp));
    return EINA_TRUE;
 }
 

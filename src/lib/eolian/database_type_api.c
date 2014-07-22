@@ -22,6 +22,28 @@ eolian_type_struct_find_by_name(const char *name)
    return tp;
 }
 
+EAPI Eina_Iterator *
+eolian_type_aliases_get_by_file(const char *fname)
+{
+   if (!_aliasesf) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(fname);
+   Eina_List *l = eina_hash_find(_aliasesf, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
+eolian_type_structs_get_by_file(const char *fname)
+{
+   if (!_structsf) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(fname);
+   Eina_List *l = eina_hash_find(_structsf, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
 EAPI Eolian_Type_Type
 eolian_type_type_get(const Eolian_Type *tp)
 {

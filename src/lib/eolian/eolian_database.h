@@ -42,6 +42,8 @@ extern Eina_Prefix *_eolian_prefix;
 extern Eina_List *_classes;
 extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
+extern Eina_Hash *_aliasesf;
+extern Eina_Hash *_structsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
 extern Eina_Hash *_tfilenames;
 

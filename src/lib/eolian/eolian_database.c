@@ -5,10 +5,18 @@
 Eina_List *_classes = NULL;
 Eina_Hash *_aliases = NULL;
 Eina_Hash *_structs = NULL;
+Eina_Hash *_aliasesf = NULL;
+Eina_Hash *_structsf = NULL;
 Eina_Hash *_filenames = NULL;
 Eina_Hash *_tfilenames = NULL;
 
 static int _database_init_count = 0;
+
+static void
+_hashlist_free(void *data)
+{
+   eina_list_free((Eina_List*)data);
+}
 
 int
 database_init()
@@ -17,6 +25,8 @@ database_init()
    eina_init();
    _aliases = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
    _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _aliasesf = eina_hash_stringshared_new(_hashlist_free);
+   _structsf = eina_hash_stringshared_new(_hashlist_free);
    _filenames = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
@@ -39,6 +49,8 @@ database_shutdown()
            database_class_del(class);
         eina_hash_free(_aliases);
         eina_hash_free(_structs);
+        eina_hash_free(_aliasesf);
+        eina_hash_free(_structsf);
         eina_hash_free(_filenames);
         eina_hash_free(_tfilenames);
         eina_shutdown();

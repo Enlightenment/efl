@@ -275,6 +275,18 @@ START_TEST(eolian_typedef)
    eina_stringshare_del(type_name);
    eina_iterator_free(iter);
 
+   /* List */
+   fail_if(!(iter = eolian_type_aliases_get_by_file("typedef.eo")));
+   fail_if(!eina_iterator_next(iter, (void**)&atype));
+   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(strcmp(type_name, "Coord"));
+   eina_stringshare_del(type_name);
+   fail_if(!eina_iterator_next(iter, (void**)&atype));
+   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(strcmp(type_name, "List_Objects"));
+   eina_stringshare_del(type_name);
+   fail_if(eina_iterator_next(iter, (void**)&atype));
+
    eolian_shutdown();
 }
 END_TEST

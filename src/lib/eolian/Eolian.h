@@ -781,6 +781,30 @@ EAPI const Eolian_Type *eolian_type_alias_find_by_name(const char *name);
 EAPI const Eolian_Type *eolian_type_struct_find_by_name(const char *name);
 
 /*
+ * @brief Get an iterator to all aliases contained in a file.
+ *
+ * @param[in] fname the file name without full path
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_aliases_get_by_file(const char *fname);
+
+/*
+ * @brief Get an iterator to all named structs contained in a file.
+ *
+ * @param[in] fname the file name without full path
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_structs_get_by_file(const char *fname);
+
+/*
  * @brief Get the type of a type (regular, function, pointer)
  *
  * @param[in] tp the type.
