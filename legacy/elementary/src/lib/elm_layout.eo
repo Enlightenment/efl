@@ -163,15 +163,13 @@ class Elm_Layout (Elm_Container)
             or should also search on widget's theme as well (EINA_FALSE) */
          }
       }
-      part_cursor_engine_only_get {
+      part_cursor_engine_only_get @const {
          /*@
          Get a specific cursor engine_only for an edje part.
 
          @return whenever the cursor is just provided by engine or also from theme.
 
          @ingroup Layout */
-
-         const;
          return bool;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
@@ -291,7 +289,7 @@ class Elm_Layout (Elm_Container)
             @in const(char)* style; /*@ the theme style to use (default, transparent, ...) */
          }
       }
-      part_cursor_style_get {
+      part_cursor_style_get @const {
          /*@
          Get a specific cursor style for an edje part.
 
@@ -299,8 +297,6 @@ class Elm_Layout (Elm_Container)
          object does not have a cursor set, then NULL is returned.
 
          @ingroup Layout */
-
-         const;
          return const(char)*;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
@@ -320,15 +316,13 @@ class Elm_Layout (Elm_Container)
             @in const(char)* text; /*@ The text to set */
          }
       }
-      text_get {
+      text_get @const {
          /*@
          Get the text set in the given part
 
          @return The text set in @p part
 
          @ingroup Layout */
-
-         const;
          return const(char)*;
          params {
             @in const(char)* part; /*@ The TEXT part to retrieve the text off */
@@ -369,15 +363,13 @@ class Elm_Layout (Elm_Container)
             @in const(char)* cursor; /*@ cursor name to use, see Elementary_Cursor.h */
          }
       }
-      part_cursor_get {
+      part_cursor_get @const {
          /*@
          Get the cursor to be shown when mouse is over an edje part
 
          @return the cursor name.
 
          @ingroup Layout */
-
-         const;
          return const(char)*;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
@@ -438,7 +430,7 @@ class Elm_Layout (Elm_Container)
          legacy null;
          return bool;
       }
-      data_get {
+      data_get @const {
          /*@
          Get the edje data from the given layout
 
@@ -463,8 +455,6 @@ class Elm_Layout (Elm_Container)
          @endcode
 
          @ingroup Layout */
-
-         const;
          return const(char)*;
          params {
             @in const(char)* key; /*@ The data key */

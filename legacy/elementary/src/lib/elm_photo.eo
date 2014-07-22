@@ -93,12 +93,11 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
       }
    }
    methods {
-      thumb_set {
+      thumb_set @const {
          /*@
            Set the file that will be used as thumbnail in the photo.
 
            @ingroup Photo */
-         const;
          params {
             @in const(char)* file; /*@ The path to file that will be used as thumbnail. */
             @in const(char)* group; /*@ The key used in case of an EET file. */

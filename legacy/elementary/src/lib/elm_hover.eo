@@ -27,7 +27,7 @@ class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
       }
    }
    methods {
-      best_content_location_get {
+      best_content_location_get @const {
          /*@
          @brief Returns the best swallow location for content in the hover.
 
@@ -53,8 +53,6 @@ class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
          @see elm_object_part_content_set()
 
          @ingroup Hover */
-
-         const;
          return const(char)*;
          params {
             @in Elm_Hover_Axis pref_axis; /*@ The preferred orientation axis for the hover object to use */

@@ -329,7 +329,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in const(char)* source_name; /*@ The source to be used. */
          }
       }
-      source_get {
+      source_get @const {
          /*@
          Get the name of currently used source for a specific type.
 
@@ -339,8 +339,6 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          @see elm_map_source_set()
 
          @ingroup Map */
-
-         const;
          return const(char)*;
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
@@ -402,7 +400,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in void *emap; /*@ The emap route object. */
          }
       }
-      region_to_canvas_convert {
+      region_to_canvas_convert @const {
          /*@
          Convert geographic coordinates (longitude, latitude)
          into canvas coordinates.
@@ -413,8 +411,6 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          see elm_map_canvas_to_region_convert()
 
          @ingroup Map */
-
-         const;
          params {
             @in double lon; /*@ The longitude to convert. */
             @in double lat; /*@ The latitude to convert. */
@@ -494,7 +490,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
 
          return Elm_Map_Overlay *;
       }
-      sources_get {
+      sources_get @const {
          /*@
          Get the names of available sources for a specific type.
 
@@ -520,8 +516,6 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          @see elm_map_source_get()
 
          @ingroup Map */
-
-         const;
          return const(char)**;
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
@@ -584,7 +578,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in double lat; /*@ Latitude to center at. */
          }
       }
-      name_add {
+      name_add @const {
          /*@
          Request a address or geographic coordinates(longitude, latitude)
          from a given address or geographic coordinate(longitude, latitude).
@@ -602,8 +596,6 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          should be used.
 
          @ingroup Map */
-
-         const;
          return Elm_Map_Name *;
          params {
             @in const(char)* address; /*@ The address. */
@@ -613,7 +605,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in void *data; /*@ The user callback data. */
          }
       }
-      name_search {
+      name_search @const {
          /*@
          @brief Requests a list of addresses corresponding to a given name.
 
@@ -623,7 +615,6 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
 
          @internal
          @ingroup Map */
-         const;
          params {
             @in const(char)* address; /*@ The address. */
             @in Elm_Map_Name_List_Cb name_cb; /*@ The callback function. */
@@ -759,7 +750,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in double lat; /*@ The latitude of the overlay. */
          }
       }
-      canvas_to_region_convert {
+      canvas_to_region_convert @const {
          /*@
          Convert canvas coordinates into geographic coordinates
          (longitude, latitude).
@@ -770,8 +761,6 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
          see elm_map_region_to_canvas_convert()
 
          @ingroup Map */
-
-         const;
          params {
             @in Evas_Coord x; /*@ horizontal coordinate of the point to convert. */
             @in Evas_Coord y; /*@ vertical coordinate of the point to convert. */

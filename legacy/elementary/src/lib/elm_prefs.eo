@@ -177,7 +177,7 @@ class Elm_Prefs (Elm_Widget)
             take place */
          }
       }
-      item_value_get {
+      item_value_get @const {
          /*@
          Retrieve the value of a given prefs widget's item.
 
@@ -188,8 +188,6 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_value_set()
 
          @since 1.8 */
-
-         const;
          return bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
@@ -238,7 +236,7 @@ class Elm_Prefs (Elm_Widget)
             otherwise */
          }
       }
-      item_disabled_get {
+      item_disabled_get @const {
          /*@
          Retrieve whether the widget bound to a given prefs widget's item is
          disabled or not.
@@ -249,8 +247,6 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_disabled_set()
 
          @since 1.8 */
-
-         const;
          return bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
@@ -294,7 +290,7 @@ class Elm_Prefs (Elm_Widget)
             otherwise */
          }
       }
-      item_editable_get {
+      item_editable_get @const {
          /*@
          Retrieve whether the widget bound to a given prefs widget's item is
          editable or not.
@@ -305,8 +301,6 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_editable_set() for more details
 
          @since 1.8 */
-
-         const;
          return bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
@@ -349,7 +343,7 @@ class Elm_Prefs (Elm_Widget)
             otherwise */
          }
       }
-      item_visible_get {
+      item_visible_get @const {
          /*@
          Retrieve whether the widget bound to a given prefs widget's item is
          visible or not.
@@ -360,8 +354,6 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_visible_set() for more details
 
          @since 1.8 */
-
-         const;
          return bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs

@@ -294,15 +294,13 @@ class Elm_Index (Elm_Layout)
             @in const(void)* data; /*@ The item data to set for the index's item */
          }
       }
-      selected_item_get {
+      selected_item_get @const {
          /*@
          Returns the last selected item, for a given index widget.
 
          @return The last item @b selected on @p obj (or @c NULL, on errors).
 
          @ingroup Index */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in int level; /*@ @c 0 or @c 1, the currently implemented levels. */

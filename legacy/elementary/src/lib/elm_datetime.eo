@@ -107,7 +107,7 @@ class Elm_Datetime (Elm_Layout)
             @in int max; /*@ Reference to field's maximum value */
          }
       }
-      field_limit_get {
+      field_limit_get @const {
          /*@
          @brief Get the field limits of a field.
 
@@ -120,8 +120,6 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_field_limit_set()
          @ingroup Datetime */
-
-         const;
          params {
             @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. ELM_DATETIME_YEAR etc. */
             @out int min; /*@ Reference to field's minimum value */
@@ -153,7 +151,7 @@ class Elm_Datetime (Elm_Layout)
             @in const(struct tm)* mintime; /*@ Time structure containing the minimum time value. */
          }
       }
-      value_min_get {
+      value_min_get @const {
          /*@
          @brief Get the lower boundary of a field.
 
@@ -172,8 +170,6 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_value_min_set()
          @ingroup Datepicker */
-
-         const;
          return bool;
          params {
             @inout struct tm mintime; /*@ Time structure. */
@@ -205,7 +201,7 @@ class Elm_Datetime (Elm_Layout)
             @in const(struct tm)* newtime; /*@ Time structure filled with values to be set. */
          }
       }
-      value_get {
+      value_get @const {
          /*@
          @brief Get the current value of a Datetime object.
 
@@ -224,8 +220,6 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_value_set()
          @ingroup Datetime */
-
-         const;
          return bool;
          params {
             @inout struct tm currtime; /*@ Time structure. */
@@ -251,7 +245,7 @@ class Elm_Datetime (Elm_Layout)
             @in bool visible; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
          }
       }
-      field_visible_get {
+      field_visible_get @const {
          /*@
          @brief Get whether a field can be visible/not
 
@@ -259,8 +253,6 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_field_visible_set()
          @ingroup Datetime */
-
-         const;
          return bool;
          params {
             @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. ELM_DATETIME_YEAR etc */
@@ -291,7 +283,7 @@ class Elm_Datetime (Elm_Layout)
             @in const(struct tm)* maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
-      value_max_get {
+      value_max_get @const {
          /*@
          @brief Get the upper boundary of a field.
 
@@ -310,8 +302,6 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_value_max_set()
          @ingroup Datetime */
-
-         const;
          return bool;
          params {
             @inout struct tm maxtime; /*@ Time structure containing the maximum time value. */

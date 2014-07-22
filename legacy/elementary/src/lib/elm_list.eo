@@ -390,7 +390,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
             @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
-      at_xy_item_get {
+      at_xy_item_get @const {
          /*@
          Get the item that is at the x, y canvas coords.
 
@@ -408,8 +408,6 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
 
 
          @ingroup List */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in Evas_Coord x; /*@ The input x coordinate */

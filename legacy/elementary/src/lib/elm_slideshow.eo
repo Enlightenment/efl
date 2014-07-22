@@ -321,7 +321,7 @@ class Elm_Slideshow (Elm_Layout)
          @ingroup Slideshow */
 
       }
-      item_nth_get {
+      item_nth_get @const {
          /*@
          Get the the item, in a given slideshow widget, placed at
          position @p nth, in its internal items list
@@ -330,8 +330,6 @@ class Elm_Slideshow (Elm_Layout)
          if there's no item with that index (and on errors)
 
          @ingroup Slideshow */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in uint nth; /*@ The number of the item to grab a handle to (0 being

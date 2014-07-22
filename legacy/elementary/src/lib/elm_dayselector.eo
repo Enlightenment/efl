@@ -110,7 +110,7 @@ class Elm_Dayselector (Elm_Layout)
             @warning The strings must be NULL terminated ('@\0'). */
          }
       }
-      weekdays_names_get {
+      weekdays_names_get @const {
          /*@
          Get weekdays names displayed by the calendar.
 
@@ -125,8 +125,6 @@ class Elm_Dayselector (Elm_Layout)
          @since 1.8
 
          @ingroup Dayselector */
-
-         const;
          return Eina_List *;
       }
       day_selected_set {
@@ -143,7 +141,7 @@ class Elm_Dayselector (Elm_Layout)
             @in bool selected; /*@ state of the day. @c EINA_TRUE is selected. */
          }
       }
-      day_selected_get {
+      day_selected_get @const {
          /*@
          Get the state of given Dayselector_Day.
 
@@ -153,8 +151,6 @@ class Elm_Dayselector (Elm_Layout)
          @see elm_dayselector_day_selected_set()
 
          @ingroup Dayselector */
-
-         const;
          return bool;
          params {
             @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to know state. */

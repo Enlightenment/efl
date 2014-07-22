@@ -34,7 +34,7 @@ class Elm_Segment_Control (Elm_Layout)
       }
    }
    methods {
-      item_label_get {
+      item_label_get @const {
          /*@
          Get the label of item.
 
@@ -49,8 +49,6 @@ class Elm_Segment_Control (Elm_Layout)
          @see elm_segment_control_item_add()
 
          @ingroup SegmentControl */
-
-         const;
          return const(char)*;
          params {
             @in int idx; /*@ The index of the segment item. */
@@ -91,7 +89,7 @@ class Elm_Segment_Control (Elm_Layout)
             @in int idx; /*@ Item position. Value should be between 0 and items count. */
          }
       }
-      item_get {
+      item_get @const {
          /*@
          Get the item placed at specified index.
 
@@ -103,8 +101,6 @@ class Elm_Segment_Control (Elm_Layout)
          elm_segment_control_item_count_get().
 
          @ingroup SegmentControl */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in int idx; /*@ The index of the segment item. */
@@ -169,7 +165,7 @@ class Elm_Segment_Control (Elm_Layout)
             Note that, NULL is different from empty string "". */
          }
       }
-      item_icon_get {
+      item_icon_get @const {
          /*@
          Get the icon associated to the item.
 
@@ -184,8 +180,6 @@ class Elm_Segment_Control (Elm_Layout)
          @see elm_object_item_part_content_set()
 
          @ingroup SegmentControl */
-
-         const;
          return Evas_Object *;
          params {
             @in int idx; /*@ The index of the segment item. */

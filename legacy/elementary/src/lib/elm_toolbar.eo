@@ -434,13 +434,11 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
             @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
-      items_count {
+      items_count @const {
          /*@
          Get the number of items in a toolbar
          @return The number of items in @p obj toolbar
          @ingroup Toolbar */
-
-         const;
          return uint;
       }
       item_prepend {
@@ -482,7 +480,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
             @in const(void)* data; /*@ The data to associate with the item for related callbacks. */
          }
       }
-      item_find_by_label {
+      item_find_by_label @const {
          /*@
          Returns a pointer to a toolbar item by its label.
 
@@ -490,8 +488,6 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
          on failure.
 
          @ingroup Toolbar */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The label of the item to find. */

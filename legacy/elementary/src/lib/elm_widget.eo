@@ -437,9 +437,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       }
    }
    methods {
-      newest_focus_order_get {
+      newest_focus_order_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return Evas_Object *;
          params {
             @out uint newest_focus_order;
@@ -462,9 +461,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in Elm_Focus_Direction dir;
          }
       }
-      focus_next_object_get {
+      focus_next_object_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return Evas_Object *;
          params {
             @in Elm_Focus_Direction dir;
@@ -488,9 +486,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in const(char)* text;
          }
       }
-      focus_highlight_geometry_get {
+      focus_highlight_geometry_get @const {
          /*@ Get the focus highlight geometry of widget. */
-         const;
          params {
             @in Evas_Coord *x;
             @in Evas_Coord *y;
@@ -608,18 +605,16 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          /*@ 'Virtual' function which checks if handling of passing focus to sub-objects is supported by widget. */
          return bool;
       }
-      name_find {
+      name_find @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return Evas_Object *;
          params {
             @in const(char)* name;
             @in int recurse;
          }
       }
-      focus_list_direction_get {
+      focus_list_direction_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return bool;
          params {
             @in const(Evas_Object)* base;
@@ -650,9 +645,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in bool forceshow;
          }
       }
-      show_region_get {
+      show_region_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          params {
             @out Evas_Coord x;
             @out Evas_Coord y;
@@ -669,18 +663,16 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in Elm_Tooltip *tt;
          }
       }
-      focus_next_get {
+      focus_next_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return bool;
          params {
             @in Elm_Focus_Direction dir;
             @out Evas_Object *next;
          }
       }
-      translatable_part_text_get {
+      translatable_part_text_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return const(char)*;
          params {
             @in const(char)* part;
@@ -727,9 +719,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          }
          return bool;
       }
-      focus_list_next_get {
+      focus_list_next_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return bool;
          params {
             @in const(Eina_List)* items;
@@ -746,9 +737,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          /*@ 'Virtual' function on the widget being re-themed. */
          return bool;
       }
-      focus_direction_get {
+      focus_direction_get @const {
          /*@ No description supplied by the EAPI. */
-         const;
          return bool;
          params {
             @in const(Evas_Object)* base;
@@ -790,9 +780,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             @in Elm_Tooltip *tt;
          }
       }
-      focus_region_show {
+      focus_region_show @const {
          /*@ No description supplied by the EAPI. */
-         const;
       }
       focus_disabled_handle {
          /*@ No description supplied by the EAPI. */

@@ -528,7 +528,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
-      items_count {
+      items_count @const {
          /*@
          Return how many items are currently in a list
 
@@ -537,11 +537,9 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          This behavior is O(1) and includes items which may or may not be realized.
 
          @ingroup Gengrid */
-
-         const;
          return uint;
       }
-      at_xy_item_get {
+      at_xy_item_get @const {
          /*@
          Get the item that is at the x, y canvas coords.
 
@@ -562,8 +560,6 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          the gengrid.
 
          @ingroup Gengrid */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in Evas_Coord x; /*@ The input x coordinate */

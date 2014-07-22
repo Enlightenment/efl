@@ -56,13 +56,11 @@ class Elm_Table (Elm_Widget)
             @in bool clear; /*@ If true, will delete children, else just remove from table. */
          }
       }
-      child_get {
+      child_get @const {
          /*@
          @brief Get child object of table at given coordinates.
 
          @return Child of object if find if not return NULL. */
-
-         const;
          return Evas_Object *;
          params {
             @in int col; /*@ Column number of child object */

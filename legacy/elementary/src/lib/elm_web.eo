@@ -507,7 +507,7 @@ class Elm_Web (Elm_Widget)
             @in const(char)* unreachable_url; /*@ URL that could not be reached (optional) */
          }
       }
-      text_search {
+      text_search @const {
          /*@
          Searches the given string in a document.
 
@@ -515,8 +515,6 @@ class Elm_Web (Elm_Widget)
          or failure
 
          @ingroup Web */
-
-         const;
          return bool;
          params {
             @in const(char)* string; /*@ String to search */

@@ -891,7 +891,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @in void *data; /*@ The data passed to @p func */
          }
       }
-      text_style_user_peek {
+      text_style_user_peek @const {
          /*@
          Retrieve the style on the top of user style stack.
 
@@ -901,8 +901,6 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry
          @since 1.7 */
-
-         const;
          return const(char)*;
       }
       context_menu_clear {
@@ -962,15 +960,13 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @in int len; /*@ the length of data, in bytes, to send to the input panel */
          }
       }
-      input_panel_imdata_get {
+      input_panel_imdata_get @const {
          /*@
          Get the specific data of the current input panel.
 
          See @ref elm_entry_input_panel_imdata_set for more details.
 
          @ingroup Entry */
-
-         const;
          params {
             @out void data; /*@ The specific data to be got from the input panel */
             @out int len; /*@ The length of data */
@@ -1032,7 +1028,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
       }
-      is_empty {
+      is_empty @const {
          /*@
          Get whether the entry is empty.
 
@@ -1043,8 +1039,6 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @return EINA_TRUE if the entry is empty, EINA_FALSE otherwise.
 
          @ingroup Entry */
-
-         const;
          return bool;
       }
       markup_filter_remove {

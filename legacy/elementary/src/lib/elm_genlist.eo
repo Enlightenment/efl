@@ -551,7 +551,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @in const(void)* func_data; /*@ Data passed to @p func above. */
          }
       }
-      at_xy_item_get {
+      at_xy_item_get @const {
          /*@
          Get the item that is at the x, y canvas coords.
 
@@ -568,8 +568,6 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          the genlist.
 
          @ingroup Genlist */
-
-         const;
          return Elm_Object_Item *;
          params {
             @in Evas_Coord x; /*@ The input x coordinate */
@@ -577,7 +575,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @out int posret; /*@ The position relative to the item returned here */
          }
       }
-      items_count {
+      items_count @const {
          /*@
          Return how many items are currently in a list
 
@@ -586,8 +584,6 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          This behavior is O(1) and includes items which may or may not be realized.
 
          @ingroup Genlist */
-
-         const;
          return uint;
       }
       item_prepend {

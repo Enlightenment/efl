@@ -239,7 +239,7 @@ class Elm_Progressbar (Elm_Layout)
             1.0) */
          }
       }
-      part_value_get {
+      part_value_get @const {
          /*@
          Get the progress value (in percentage) on a given progress bar
          widget for a particular part
@@ -251,8 +251,6 @@ class Elm_Progressbar (Elm_Layout)
          @see elm_progressbar_value_set() for more details
 
          @ingroup Progressbar */
-
-         const;
          return double;
          params {
             @in const(char)* part; /*@ The part name of the progress bar */

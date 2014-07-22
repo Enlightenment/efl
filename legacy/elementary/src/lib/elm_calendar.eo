@@ -268,7 +268,7 @@ class Elm_Calendar (Elm_Layout)
             @in struct tm *selected_time; /*@ A @b tm struct to represent the selected date. */
          }
       }
-      selected_time_get {
+      selected_time_get @const {
          /*@
          Get selected date.
 
@@ -285,8 +285,6 @@ class Elm_Calendar (Elm_Layout)
          @ref calendar_example_05
 
          @ingroup Calendar */
-
-         const;
          return bool;
          params {
             @inout struct tm selected_time; /*@ A @b tm struct to point to selected date */
@@ -376,7 +374,7 @@ class Elm_Calendar (Elm_Layout)
          @ingroup Calendar */
 
       }
-      displayed_time_get {
+      displayed_time_get @const {
          /*@
          Get the current time displayed in the widget
 
@@ -385,8 +383,6 @@ class Elm_Calendar (Elm_Layout)
 
          @ingroup Calendar
          @since 1.8 */
-
-         const;
          return bool;
          params {
             @inout struct tm displayed_time; /*@ A @b tm struct to point to displayed date */
