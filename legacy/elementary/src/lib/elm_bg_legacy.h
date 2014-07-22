@@ -48,4 +48,49 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
  */
 EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
+/**
+ *
+ * Set the file (image or edje collection) to give life for the
+ * background
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * This sets the image file used in the background object. If the
+ * image comes from an Edje group, it will be stretched to completely
+ * fill the background object. If it comes from a traditional image file, it
+ * will by default be centered in this widget's are (thus retaining
+ * its aspect), what could lead to some parts being not visible. You
+ * may change the mode of exhibition for a real image file with
+ * elm_bg_option_set().
+ *
+ * @note Once the image of @p obj is set, a previously set one will be
+ * deleted, even if @p file is @c NULL.
+ *
+ * @note This will only affect the contents of one of the background's
+ * swallow spots, namely @c "elm.swallow.background". If you want to
+ * achieve the @c Layout's file setting behavior, you'll have to call
+ * that method on this object.
+ *
+ * @ingroup Bg
+ *
+ * @param[in] file The file path
+ * @param[in] group Optional key (group in Edje) within the file
+ */
+EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
+
+/**
+ *
+ * Get the file (image or edje collection) set on a given background
+ * widget
+ *
+ * @note Use @c NULL pointers on the file components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @ingroup Bg
+ *
+ * @param[out] file The file path
+ * @param[out] group Optional key (group in Edje) within the file
+ */
+EAPI void elm_bg_file_get(const Eo *obj, const char **file, const char **group);
+
 #include "elm_bg.eo.legacy.h"
