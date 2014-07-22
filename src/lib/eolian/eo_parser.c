@@ -77,22 +77,11 @@ check_match(Eo_Lexer *ls, int what, int who, int where, int col)
              eo_lexer_token_to_str(what, tbuf);
              eo_lexer_token_to_str(who , vbuf);
              snprintf(buf, sizeof(buf),
-                      "'%s' expected (to close '%s' at line %d at column %d)",
+                      "'%s' expected (to close '%s' at line %d, column %d)",
                       tbuf, vbuf, where, col);
              eo_lexer_syntax_error(ls, buf);
           }
      }
-}
-
-static void
-redef_error(Eo_Lexer *ls, const char *type, const char *name, int line,
-            int column)
-{
-   char  buf[256];
-   snprintf(buf, sizeof(buf),
-            "%s '%s' redefined (originally at line %d at column %d)",
-            type, name, line, column);
-   eo_lexer_syntax_error(ls, buf);
 }
 
 static Eina_Strbuf *
@@ -144,6 +133,22 @@ get_filename(Eo_Lexer *ls)
    free(s);
    eina_array_free(arr);
    return file;
+}
+
+static void
+redef_error(Eo_Lexer *ls, Eolian_Type_Type type, Eolian_Type *old)
+{
+   char  buf[256];
+   char fbuf[256] = { '\0' };
+   const char *file = get_filename(ls);
+   if (file != old->file)
+     snprintf(fbuf, sizeof(fbuf), " in file '%s'", old->file);
+   eina_stringshare_del(file);
+   snprintf(buf, sizeof(buf),
+            "%s '%s' redefined (originally at line %d, column %d%s)",
+            (type == EOLIAN_TYPE_STRUCT) ? "struct" : "type alias",
+            old->full_name, old->line, old->column, fbuf);
+   eo_lexer_syntax_error(ls, buf);
 }
 
 static Eina_Strbuf *
@@ -399,7 +404,7 @@ parse_type_struct(Eo_Lexer *ls, Eina_Bool allow_struct, Eina_Bool allow_anon)
                        ls->line_number = line;
                        ls->column = col;
                        eina_stringshare_del(sname);
-                       redef_error(ls, "struct", sname, tp->line, tp->column);
+                       redef_error(ls, EOLIAN_TYPE_STRUCT, tp);
                     }
                   return parse_struct(ls, sname, is_extern, line, col);
                }
@@ -503,7 +508,7 @@ parse_typedef(Eo_Lexer *ls)
      {
         ls->line_number = def->line;
         ls->column = def->column;
-        redef_error(ls, "type alias", def->full_name, tp->line, tp->column);
+        redef_error(ls, EOLIAN_TYPE_ALIAS, tp);
      }
    def->file = get_filename(ls);
    (void)!!test_next(ls, ':');
@@ -1179,8 +1184,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 ls->line_number = line;
                 ls->column = col;
                 eina_stringshare_del(name);
-                redef_error(ls, "struct", eina_strbuf_string_get(buf),
-                            tp->line, tp->column);
+                redef_error(ls, EOLIAN_TYPE_STRUCT, tp);
              }
            pop_strbuf(ls);
            parse_struct(ls, name, is_extern, line, col);
