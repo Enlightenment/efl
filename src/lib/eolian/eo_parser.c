@@ -265,6 +265,7 @@ _struct_field_free(Eolian_Struct_Field *def)
 {
    database_type_del(def->type);
    if (def->comment) eina_stringshare_del(def->comment);
+   free(def);
 }
 
 static Eolian_Type *
