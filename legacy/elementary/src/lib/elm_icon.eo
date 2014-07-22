@@ -102,7 +102,7 @@ class Elm_Icon (Elm_Image)
       Elm_Widget.theme_apply;
       Elm_Image.memfile.set;
       Elm_Image.sizing_eval;
-      Elm_Image.file.set;
+      Efl.File.file.set;
    }
    events {
       thumb,done;

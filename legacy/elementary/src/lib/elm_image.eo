@@ -1,4 +1,4 @@
-class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
+class Elm_Image (Elm_Widget, Efl.File, Evas.Clickable_Interface,
                  Elm_Interface_Atspi_Image, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_image;
@@ -233,43 +233,6 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
          }
          values {
             double scale;
-         }
-      }
-      file {
-         set {
-            /*@
-            Set the file that will be used as the image's source.
-
-            @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
-
-            @see elm_image_file_get()
-
-            @note This function will trigger the Edje file case based on the
-            extension of the @a file string (expects @c ".edj", for this
-            case).
-
-            @note If you use animated gif image and create multiple image objects with
-            one gif image file, you should set the @p group differently for each object.
-            Or image objects will share one evas image cache entry and you will get
-            unwanted frames.
-
-            @ingroup Image */
-            return: bool;
-            legacy: null;
-         }
-         get {
-            /*@
-            Get the file that will be used as image.
-
-            @see elm_image_file_set()
-
-            @ingroup Image */
-         }
-         values {
-            const(char)* file; /*@ The path to file that will be used as image source */
-            const(char)* group; /*@ The group that the image belongs to, in case it's an
-            EET (including Edje case) file. This can be used as a key inside
-            evas image cache if this is a normal image file not eet file. */
          }
       }
       fill_inside {
@@ -536,6 +499,8 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Efl.File.file.set;
+      Efl.File.file.get;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.clip.set;
       Evas.Object_Smart.clip_unset;

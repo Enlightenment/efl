@@ -412,7 +412,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
                           Elm_Selection_Data *drop)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, ret = elm_obj_image_file_set(drop->data, NULL));
+   eo_do(obj, ret = efl_file_set(drop->data, NULL));
    if (ret)
      {
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
@@ -751,9 +751,15 @@ elm_image_file_set(Evas_Object *obj,
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
-   eo_do(obj, ret = elm_obj_image_file_set(file, group));
+   eo_do(obj, ret = efl_file_set(file, group));
    eo_do(obj, elm_obj_image_sizing_eval());
    return ret;
+}
+
+EAPI void
+elm_image_file_get(const Eo *obj, const char **file, const char **group)
+{
+   eo_do((Eo *) obj, efl_file_get(file, group));
 }
 
 EAPI Eina_Bool
@@ -879,7 +885,7 @@ static const char *remote_uri[] = {
 };
 
 EOLIAN static Eina_Bool
-_elm_image_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const char *key)
+_elm_image_efl_file_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const char *key)
 {
    Eina_Bool ret = EINA_FALSE;
    unsigned int i;
@@ -927,7 +933,7 @@ _elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char 
 }
 
 EOLIAN static void
-_elm_image_file_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char **file, const char **key)
+_elm_image_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char **file, const char **key)
 {
    if (sd->edje)
      edje_object_file_get(sd->img, file, key);
