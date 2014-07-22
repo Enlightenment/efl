@@ -291,7 +291,7 @@ _elm_video_eo_base_constructor(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_video_file_set(Eo *obj, Elm_Video_Data *sd, const char *filename)
+_elm_video_efl_file_file_set(Eo *obj, Elm_Video_Data *sd, const char *filename, const char *key EINA_UNUSED)
 {
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
    sd->stop = EINA_FALSE;
@@ -451,5 +451,12 @@ _elm_video_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    };
    return &atspi_actions[0];
 }
+
+EAPI Eina_Bool
+elm_video_file_set(Eo *obj, const char *filename)
+{
+   return eo_do((Eo *) obj, efl_file_set(filename, NULL));
+}
+
 
 #include "elm_video.eo.c"
