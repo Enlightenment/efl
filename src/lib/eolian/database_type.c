@@ -6,26 +6,31 @@ void
 database_type_del(Eolian_Type *tp)
 {
    if (!tp) return;
-   if (tp->type == EOLIAN_TYPE_POINTER || tp->type == EOLIAN_TYPE_FUNCTION)
-     {
-        Eolian_Type *stp;
-        if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
-          database_type_del(stp);
-        if (tp->base_type)
-          database_type_del(tp->base_type);
-     }
-   else
-     {
-        const char *sp;
-        if (tp->name) eina_stringshare_del(tp->name);
-        if (tp->full_name) eina_stringshare_del(tp->full_name);
-        if (tp->fields) eina_hash_free(tp->fields);
-        if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
-           eina_stringshare_del(sp);
-        if (tp->comment) eina_stringshare_del(tp->comment);
-        if (tp->file) eina_stringshare_del(tp->file);
-     }
+   const char *sp;
+   Eolian_Type *stp;
+   if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
+     database_type_del(stp);
+   if (tp->base_type)
+     database_type_del(tp->base_type);
+   if (tp->name) eina_stringshare_del(tp->name);
+   if (tp->full_name) eina_stringshare_del(tp->full_name);
+   if (tp->fields) eina_hash_free(tp->fields);
+   if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
+      eina_stringshare_del(sp);
+   if (tp->comment) eina_stringshare_del(tp->comment);
+   if (tp->file) eina_stringshare_del(tp->file);
    free(tp);
+}
+
+void
+database_typedef_del(Eolian_Type *tp)
+{
+   if (!tp) return;
+   Eolian_Type *btp = tp->base_type;
+   /* prevent deletion of named structs as they're deleted later on */
+   if (btp && btp->type == EOLIAN_TYPE_STRUCT && btp->name)
+     tp->base_type = NULL;
+   database_type_del(tp);
 }
 
 Eina_Bool
