@@ -2009,4 +2009,13 @@ tests/evas/images/Temple3-10.tgv \
 tests/evas/images/Temple3.jpg \
 tests/evas/images/Train-10.tgv \
 tests/evas/images/Train.jpg \
-tests/evas/images/mars_rover_panorama_half-size.jpg
+tests/evas/images/mars_rover_panorama_half-size.jpg \
+tests/evas/images/Light_exif.jpg \
+tests/evas/images/Light_exif_flip_h.jpg \
+tests/evas/images/Light_exif_180.jpg \
+tests/evas/images/Light_exif_flip_v.jpg \
+tests/evas/images/Light_exif_transpose.jpg \
+tests/evas/images/Light_exif_90.jpg \
+tests/evas/images/Light_exif_transverse.jpg \
+tests/evas/images/Light_exif_270.jpg
+
