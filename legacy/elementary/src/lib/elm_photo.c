@@ -324,7 +324,7 @@ _elm_photo_eo_base_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_photo_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file)
+_elm_photo_efl_file_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file, const char *key EINA_UNUSED)
 {
    if (!file)
      {
@@ -408,6 +408,12 @@ static void
 _elm_photo_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EAPI Eina_Bool
+elm_photo_file_set(Eo *obj, const char *file)
+{
+   return eo_do((Eo *) obj, efl_file_set(file, NULL));
 }
 
 #include "elm_photo.eo.c"
