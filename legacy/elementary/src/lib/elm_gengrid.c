@@ -102,6 +102,31 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
+EOLIAN static Elm_Object_Item *
+_elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
+                                     Elm_Gengrid_Data *sd,
+                                     Elm_Object_Item * item_to_search_from,
+                                     Elm_Gen_Item_Text_Get_Cb _text_get,
+                                     const char * part_name,
+                                     const char * pattern,
+                                     int flags)
+{
+   Elm_Gen_Item *it = NULL;
+   const char * str = NULL;
+   Eina_Inlist * start = NULL;
+
+   if (!_text_get || !pattern) return NULL;
+   if (!sd->items) return NULL;
+
+   start = (item_to_search_from) ? EINA_INLIST_GET((Elm_Gen_Item *)item_to_search_from) : sd->items;
+   EINA_INLIST_FOREACH(start, it)
+     {
+        str = _text_get((void *)it->base.data, VIEW(it), part_name);
+        if (!fnmatch(pattern, str, flags)) return (Elm_Object_Item *)it;
+     }
+   return NULL;
+}
+
 static void
 _item_show_region(void *data)
 {

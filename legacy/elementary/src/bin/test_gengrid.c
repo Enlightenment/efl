@@ -1344,6 +1344,204 @@ test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(win);
 }
 
+typedef struct _grid5_Event_Data grid5_Event_Data;
+struct _grid5_Event_Data
+{
+   Evas_Object *grid_obj;
+   Evas_Object *en_obj;
+   Elm_Object_Item *last_item_found;
+};
+
+static const char *_grid5_items_text[] = {
+   "Albany", "Annapolis",
+   "Atlanta", "Augusta",
+   "Austin", "Baton Rouge",
+   "Bismarck", "Boise",
+   "Boston", "Carson City",
+   "Charleston", "Cheyenne",
+   "Columbia", "Columbus",
+   "Concord", "Denver",
+   "Des Moines", "Dover",
+   "Frankfort", "Harrisburg",
+   "Hartford", "Helena",
+   "Honolulu", "Indianapolis",
+   "Jackson", "Jefferson City",
+   "Juneau", "Lansing",
+   "Lincoln", "Little Rock",
+   "Madison", "Montgomery",
+   "Montpelier", "Nashville",
+   "Oklahoma City", "Olympia",
+   "Phoenix", "Pierre",
+   "Providence", "Raleigh",
+   "Richmond", "Sacramento",
+   "Saint Paul", "Salem",
+   "Salt Lake City", "Santa Fe",
+   "Springfield", "Tallahassee",
+   "Topeka", "Trenton"
+};
+
+static char *
+_grid5_search_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[32];
+   Item_Data *id = data;
+
+   snprintf(buf, sizeof(buf), "%s", _grid5_items_text[id->mode]);
+   return strdup(buf);
+}
+
+static char *
+_grid5_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[64];
+   snprintf(buf, sizeof(buf), "%s", _grid5_search_text_get(data, NULL, NULL));
+   return strdup(buf);
+}
+
+static void
+_grid5_search_item(grid5_Event_Data *event_data, Elm_Object_Item * it)
+{
+   const char *str = elm_entry_entry_get(event_data->en_obj);
+   if (!str || !strlen(str)) return;
+
+   printf("Looking for \"%s\". ", str);
+   event_data->last_item_found = elm_gengrid_search_by_text_item_get(event_data->grid_obj, it, _grid5_search_text_get, NULL, str, 0);
+
+   if (event_data->last_item_found)
+     {
+        printf("Found.\n");
+        elm_gengrid_item_selected_set(event_data->last_item_found, EINA_TRUE);
+        elm_gengrid_item_bring_in(event_data->last_item_found, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+        elm_object_focus_set(event_data->en_obj, EINA_TRUE);
+     }
+   else
+     printf("Not Found.\n");
+}
+
+static void
+_grid5_search_settings_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *einfo EINA_UNUSED)
+{
+   _grid5_search_item(data, NULL);
+}
+
+static void
+_grid5_on_keydown(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   grid5_Event_Data * event_data = (grid5_Event_Data *)data;
+
+   if (!strcmp(ev->key, "Return"))
+     {
+        printf("Looking for next item\n");
+        _grid5_search_item(data, event_data->last_item_found);
+     }
+}
+
+static Elm_Gengrid_Item_Class *
+_grid5_item_class_create(const char *item_style)
+{
+   Elm_Gengrid_Item_Class * itc = elm_gengrid_item_class_new();
+   itc->item_style = item_style;
+   itc->func.text_get = _grid5_text_get;
+   itc->func.content_get = grid_content_get;
+   itc->func.state_get = grid_state_get;
+   itc->func.del = NULL;
+   return itc;
+}
+
+void
+test_gengrid5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *grid;
+   Evas_Object *fr, *lb_frame;
+   Evas_Object *en, *bx_entry, *lb_entry;
+   grid5_Event_Data *event_data;
+   Elm_Gengrid_Item_Class *itc = NULL;
+   static Item_Data id[50];
+   char buf[PATH_MAX];
+   int i, n;
+
+   win = elm_win_util_standard_add("gengrid-item-search-by-text", "Gengrid Item Search By Text");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(fr, "Information");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb_frame = elm_label_add(fr);
+   elm_object_text_set(lb_frame,
+   "<align=left>This is an example of elm_gengrid_search_by_text_item_get() usage.<br>"
+   "Enter search string to the entry and press Enter to show next search result.<br>");
+   elm_object_content_set(fr, lb_frame);
+   evas_object_show(lb_frame);
+
+   bx_entry = elm_box_add(win);
+   elm_box_horizontal_set(bx_entry, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx_entry, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx_entry, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, bx_entry);
+   evas_object_show(bx_entry);
+
+   lb_entry = elm_label_add(win);
+   elm_object_text_set(lb_entry, " Search:");
+   evas_object_size_hint_weight_set(lb_entry, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lb_entry, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_entry, lb_entry);
+   evas_object_show(lb_entry);
+
+   en = elm_entry_add(win);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_object_part_text_set(en, "guide", "Type item's name here to search.");
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_entry, en);
+   evas_object_show(en);
+   elm_object_focus_set(en, EINA_TRUE);
+
+   grid = elm_gengrid_add(bx);
+   elm_gengrid_item_size_set(grid, elm_config_scale_get() * 200, elm_config_scale_get() * 150);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_box_pack_end(bx, grid);
+   evas_object_show(grid);
+
+   event_data = calloc(1, sizeof(grid5_Event_Data));
+   event_data->en_obj = en;
+   event_data->grid_obj = grid;
+   event_data->last_item_found = NULL;
+
+   evas_object_event_callback_add(en, EVAS_CALLBACK_KEY_DOWN, _grid5_on_keydown, (void*)event_data);
+   evas_object_smart_callback_add(en, "changed,user", _grid5_search_settings_changed_cb, (void*)event_data);
+   evas_object_event_callback_add(grid, EVAS_CALLBACK_FREE, _cleanup_cb, (void*)event_data);
+
+   itc = _grid5_item_class_create("default");
+
+   for (i = 0, n = 0; i < 50; i++)
+     {
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
+        n = (n + 1) % 9;
+        id[i].mode = i;
+        id[i].path = eina_stringshare_add(buf);
+        id[i].item = elm_gengrid_item_append(grid, itc, &(id[i]), grid_sel, NULL);
+        if (!(i % 5))
+          elm_gengrid_item_selected_set(id[i].item, EINA_TRUE);
+     }
+   elm_gengrid_item_class_free(itc);
+
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
+}
+
 void
 test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
