@@ -51,8 +51,8 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    Eina_Bool add_star = EINA_FALSE;
    Eina_Bool ret_const = EINA_FALSE;
    char tmpstr[0xFF];
-   const Eina_List *l;
-   void *data;
+   Eina_Iterator *itr;
+   void *data, *data2;
    Eina_Strbuf *flags = NULL;
    int leg_param_idx = 1; /* Index of the parameter inside the legacy function. It begins from 1 since obj is the first. */
 
@@ -68,14 +68,15 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             l = eolian_parameters_list_get(funcid);
-             if (eina_list_count(l) == 1)
+             itr = eolian_parameters_list_get(funcid);
+             /* We want to check if there is only one parameter */
+             if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
-                  data = eina_list_data_get(l);
                   eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &rettypet, NULL, NULL);
                   var_as_ret = EINA_TRUE;
                   ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
+             eina_iterator_free(itr);
           }
      }
 
@@ -102,7 +103,8 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    eina_strbuf_replace_all(fbody, "@#desc", eina_strbuf_string_get(linedesc));
    eina_strbuf_free(linedesc);
 
-   EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
+   itr = eolian_property_keys_list_get(funcid);
+   EINA_ITERATOR_FOREACH(itr, data)
      {
         const Eolian_Type *ptypet;
         const char *pname;
@@ -127,9 +129,11 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
                 eina_strbuf_append_printf(flags, ", %d", leg_param_idx);
           }
      }
+   eina_iterator_free(itr);
    if (!var_as_ret)
      {
-       EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)
+       itr = eolian_parameters_list_get(funcid);
+       EINA_ITERATOR_FOREACH(itr, data)
          {
             const Eolian_Type *ptypet;
             const char *pname;
@@ -161,6 +165,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
                     eina_strbuf_append_printf(flags, ", %d", leg_param_idx);
               }
          }
+       eina_iterator_free(itr);
      }
    if (flags) eina_strbuf_append_printf(flags, ")");
 
@@ -212,6 +217,9 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
    Eina_Strbuf *fparam = eina_strbuf_new();
    Eina_Strbuf *eoparam = eina_strbuf_new();
 
+   Eina_Iterator *itr;
+   void *data, *data2;
+
    _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
    rettypet = eolian_function_return_type_get(funcid, ftype);
    if (rettypet) rettype = eolian_type_c_type_get(rettypet);
@@ -222,14 +230,15 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             const Eina_List *l = eolian_parameters_list_get(funcid);
-             if (eina_list_count(l) == 1)
+             itr = eolian_parameters_list_get(funcid);
+             /* We want to check if there is only one parameter */
+             if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
-                  void* data = eina_list_data_get(l);
                   eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &rettypet, &retname, NULL);
                   var_as_ret = EINA_TRUE;
                   ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
+             eina_iterator_free(itr);
           }
      }
 
@@ -245,12 +254,10 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
    eina_strbuf_replace_all(fbody, "@#eapi_func", func_env.legacy_func);
    eina_strbuf_replace_all(fbody, "@#eo_func", func_env.lower_eo_func);
 
-   const Eina_List *l;
-   void *data;
-
    tmpstr[0] = '\0';
 
-   EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
+   itr = eolian_property_keys_list_get(funcid);
+   EINA_ITERATOR_FOREACH(itr, data)
      {
         const Eolian_Type *ptypet;
         const char *pname;
@@ -264,9 +271,11 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
         if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
         eina_strbuf_append_printf(eoparam, "%s", pname);
      }
+   eina_iterator_free(itr);
    if (!var_as_ret)
    {
-       EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)
+       itr = eolian_parameters_list_get(funcid);
+       EINA_ITERATOR_FOREACH(itr, data)
          {
             const Eolian_Type *ptypet;
             const char *pname;
@@ -283,6 +292,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
             if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
             eina_strbuf_append_printf(eoparam, "%s", pname);
          }
+       eina_iterator_free(itr);
    }
 
    if (rettype && (!ret_is_void))
@@ -320,8 +330,6 @@ Eina_Bool
 legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    const Eolian_Function_Type ftype_order[] = {EOLIAN_PROPERTY, EOLIAN_METHOD};
-   const Eina_List *l;
-   void *data;
 
    _class_env_create(class, NULL, &class_env);
 
@@ -340,25 +348,30 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
    int i;
    for (i = 0; i < 2; i++)
-      EINA_LIST_FOREACH(eolian_class_functions_list_get(class, ftype_order[i]), l, data)
-        {
-           const Eolian_Function_Type ftype = eolian_function_type_get((Eolian_Function*)data);
-           Eina_Bool prop_read = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_GET ) ? EINA_TRUE : EINA_FALSE ;
-           Eina_Bool prop_write = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_SET ) ? EINA_TRUE : EINA_FALSE ;
+     {
+        void *data;
+        Eina_Iterator *itr = eolian_class_functions_list_get(class, ftype_order[i]);
+        EINA_ITERATOR_FOREACH(itr, data)
+          {
+             const Eolian_Function_Type ftype = eolian_function_type_get((Eolian_Function*)data);
+             Eina_Bool prop_read = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_GET ) ? EINA_TRUE : EINA_FALSE ;
+             Eina_Bool prop_write = (ftype == EOLIAN_PROPERTY || ftype == EOLIAN_PROP_SET ) ? EINA_TRUE : EINA_FALSE ;
 
-           if (!prop_read && !prop_write)
-             {
-                _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_METHOD, buf);
-             }
-           if (prop_write)
-             {
-                _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_PROP_SET, buf);
-             }
-           if (prop_read)
-             {
-                _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_PROP_GET, buf);
-             }
-        }
+             if (!prop_read && !prop_write)
+               {
+                  _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_METHOD, buf);
+               }
+             if (prop_write)
+               {
+                  _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_PROP_SET, buf);
+               }
+             if (prop_read)
+               {
+                  _eapi_decl_func_generate(class, (Eolian_Function*)data, EOLIAN_PROP_GET, buf);
+               }
+          }
+        eina_iterator_free(itr);
+     }
    return EINA_TRUE;
 }
 
@@ -366,7 +379,7 @@ Eina_Bool
 legacy_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
-   const Eina_List *itr;
+   Eina_Iterator *itr;
    Eolian_Function *fn;
 
    _class_env_create(class, NULL, &class_env);
@@ -375,7 +388,8 @@ legacy_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 
    //Properties
-   EINA_LIST_FOREACH(eolian_class_functions_list_get(class, EOLIAN_PROPERTY), itr, fn)
+   itr = eolian_class_functions_list_get(class, EOLIAN_PROPERTY);
+   EINA_ITERATOR_FOREACH(itr, fn)
      {
         const Eolian_Function_Type ftype = eolian_function_type_get(fn);
 
@@ -391,12 +405,15 @@ legacy_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              _eapi_func_generate(class, fn, EOLIAN_PROP_GET, str_bodyf);
           }
      }
+   eina_iterator_free(itr);
 
    //Methods
-   EINA_LIST_FOREACH(eolian_class_functions_list_get(class, EOLIAN_METHOD), itr, fn)
+   itr = eolian_class_functions_list_get(class, EOLIAN_METHOD);
+   EINA_ITERATOR_FOREACH(itr, fn)
      {
         _eapi_func_generate(class, fn, EOLIAN_UNRESOLVED, str_bodyf);
      }
+   eina_iterator_free(itr);
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_bodyf));
 

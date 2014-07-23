@@ -132,7 +132,7 @@ eolian_eot_file_parse(const char *filepath)
 EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
-   const Eina_List *itr;
+   Eina_Iterator *itr;
    const Eolian_Class *class = eolian_class_find_by_file(filepath);
    const char *inherit_name;
    Eolian_Implement *impl;
@@ -146,7 +146,8 @@ eolian_eo_file_parse(const char *filepath)
              return EINA_FALSE;
           }
      }
-   EINA_LIST_FOREACH(eolian_class_inherits_list_get(class), itr, inherit_name)
+   itr = eolian_class_inherits_list_get(class);
+   EINA_ITERATOR_FOREACH(itr, inherit_name)
      {
         if (!eolian_class_find_by_name(inherit_name))
           {
@@ -166,7 +167,9 @@ eolian_eo_file_parse(const char *filepath)
              free(filename);
           }
      }
-   EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl)
+   eina_iterator_free(itr);
+   itr = eolian_class_implements_list_get(class);
+   EINA_ITERATOR_FOREACH(itr, impl)
      {
         const Eolian_Class *impl_class;
         const Eolian_Function *impl_func;
@@ -178,6 +181,7 @@ eolian_eo_file_parse(const char *filepath)
              return EINA_FALSE;
           }
      }
+   eina_iterator_free(itr);
    return EINA_TRUE;
 }
 

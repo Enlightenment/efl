@@ -88,24 +88,24 @@ eolian_function_parameter_get(const Eolian_Function *fid, const char *param_name
    return NULL;
 }
 
-EAPI const Eina_List *
+EAPI Eina_Iterator *
 eolian_property_keys_list_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   return fid->keys;
+   return eina_list_iterator_new(fid->keys);
 }
 
-EAPI const Eina_List *
+EAPI Eina_Iterator *
 eolian_property_values_list_get(const Eolian_Function *fid)
 {
    return eolian_parameters_list_get(fid);
 }
 
-EAPI const Eina_List *
+EAPI Eina_Iterator *
 eolian_parameters_list_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   return fid->params;
+   return eina_list_iterator_new(fid->params);
 }
 
 EAPI const Eolian_Type *
