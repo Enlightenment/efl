@@ -521,6 +521,11 @@ parse_typedef(Eo_Lexer *ls)
    def->base_type = parse_type_struct_nonvoid(ls, EINA_TRUE, EINA_TRUE);
    pop_type(ls);
    check_next(ls, ';');
+   if (ls->t.token == TOK_COMMENT)
+     {
+        def->comment = eina_stringshare_ref(ls->t.value);
+        eo_lexer_get(ls);
+     }
    return def;
 }
 
