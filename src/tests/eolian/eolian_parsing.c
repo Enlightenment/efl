@@ -354,7 +354,7 @@ START_TEST(eolian_complex_type)
    eina_stringshare_del(type_name);
    eina_iterator_free(iter);
    /* Properties parameter type */
-   fail_if(!(iter = eolian_parameters_get(fid)));
+   fail_if(!(iter = eolian_function_parameters_get(fid)));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
@@ -387,7 +387,7 @@ START_TEST(eolian_complex_type)
    eina_stringshare_del(type_name);
    eina_iterator_free(iter);
    /* Methods parameter type */
-   fail_if(!(iter = eolian_parameters_get(fid)));
+   fail_if(!(iter = eolian_function_parameters_get(fid)));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);

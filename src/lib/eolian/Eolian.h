@@ -528,6 +528,16 @@ EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_i
 EAPI const Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian_Function *function_id, const char *param_name);
 
 /*
+ * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
+ *
+ * @param[in] function_id Id of the function
+ * @return the iterator
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
+
+/*
  * @brief Returns an iterator to the keys params of a given function.
  *
  * @param[in] function_id Id of the function
@@ -546,16 +556,6 @@ EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id);
-
-/*
- * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
- *
- * @param[in] function_id Id of the function
- * @return the iterator
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_parameters_get(const Eolian_Function *function_id);
 
 /*
  * @brief Get information about a function parameter

@@ -102,7 +102,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
         fsuffix = "_get";
         if (!rettypet)
           {
-             itr = eolian_parameters_get(func);
+             itr = eolian_function_parameters_get(func);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -172,7 +172,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
 
    if (!var_as_ret)
      {
-        itr = eolian_parameters_get(func);
+        itr = eolian_function_parameters_get(func);
         EINA_ITERATOR_FOREACH(itr, data)
           {
              const Eolian_Type *ptypet;
@@ -365,7 +365,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             itr = eolian_parameters_get(funcid);
+             itr = eolian_function_parameters_get(funcid);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -402,7 +402,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    eina_iterator_free(itr);
    if (!var_as_ret)
      {
-        itr = eolian_parameters_get(funcid);
+        itr = eolian_function_parameters_get(funcid);
         EINA_ITERATOR_FOREACH(itr, data)
           {
              const Eolian_Type *ptypet;
@@ -452,7 +452,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
 
         if (!has_params && !var_as_ret)
           {
-             itr = eolian_parameters_get(funcid);
+             itr = eolian_function_parameters_get(funcid);
              has_params |= (eina_iterator_next(itr, &data));
              eina_iterator_free(itr);
           }

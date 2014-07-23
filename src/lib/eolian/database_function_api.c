@@ -98,11 +98,11 @@ eolian_property_keys_get(const Eolian_Function *fid)
 EAPI Eina_Iterator *
 eolian_property_values_get(const Eolian_Function *fid)
 {
-   return eolian_parameters_get(fid);
+   return eolian_function_parameters_get(fid);
 }
 
 EAPI Eina_Iterator *
-eolian_parameters_get(const Eolian_Function *fid)
+eolian_function_parameters_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    return (fid->params ? eina_list_iterator_new(fid->params) : NULL);

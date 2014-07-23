@@ -49,7 +49,7 @@ static efl::eolian::parameters_container_type
 convert_eolian_parameters(Eolian_Function const& func, getter_t func_type)
 {
    return convert_eolian_parameters
-     (::eolian_parameters_get(&func), func_type.value);
+     (::eolian_function_parameters_get(&func), func_type.value);
 }
 
 static efl::eolian::parameters_container_type
@@ -69,7 +69,7 @@ convert_eolian_parameters(Eolian_Function const& func)
 {
    assert(function_type(func) != EOLIAN_PROPERTY);
    return convert_eolian_parameters
-     (::eolian_parameters_get(&func), function_type(func));
+     (::eolian_function_parameters_get(&func), function_type(func));
 }
 
 static efl::eolian::functions_container_type
@@ -144,7 +144,7 @@ convert_eolian_property_to_functions(Eolian_Class const& klass)
                convert_eolian_parameters(::eolian_property_keys_get(prop_),
                                          eolian_cxx::setter);
              efl::eolian::parameters_container_type params =
-               convert_eolian_parameters(::eolian_parameters_get(prop_),
+               convert_eolian_parameters(::eolian_function_parameters_get(prop_),
                                          eolian_cxx::setter);
              set_.params = params;
              if (!keys.empty())
