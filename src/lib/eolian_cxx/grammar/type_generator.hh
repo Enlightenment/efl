@@ -97,7 +97,7 @@ operator<<(std::ostream& out, to_cxx const& x)
             << ", " << type_ownership(x._type) << ");";
      }
    else
-     out << "_tmp_ret";
+     out << x._varname;
    return out;
 }
 
