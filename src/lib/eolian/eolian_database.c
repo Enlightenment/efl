@@ -1,3 +1,4 @@
+#include <libgen.h>
 #include <Eina.h>
 #include "eo_parser.h"
 #include "eolian_database.h"
@@ -133,7 +134,8 @@ EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
    Eina_Iterator *itr;
-   char *bfilename = eina_file_path_basename(filepath, NULL);
+   char *bfiledup = strdup(filepath);
+   char *bfilename = basename(bfiledup);
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
    const char *inherit_name;
    Eolian_Implement *impl;
@@ -141,18 +143,18 @@ eolian_eo_file_parse(const char *filepath)
      {
         if (!eo_parser_database_fill(filepath, EINA_FALSE))
           {
-             free(bfilename);
+             free(bfiledup);
              return EINA_FALSE;
           }
         class = eolian_class_get_by_file(bfilename);
         if (!class)
           {
              ERR("No class for file %s", bfilename);
-             free(bfilename);
+             free(bfiledup);
              return EINA_FALSE;
           }
      }
-   free(bfilename);
+   free(bfiledup);
    itr = eolian_class_inherits_get(class);
    EINA_ITERATOR_FOREACH(itr, inherit_name)
      {

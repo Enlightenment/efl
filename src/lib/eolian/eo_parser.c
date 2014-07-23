@@ -1,3 +1,5 @@
+#include <libgen.h>
+
 #include "eo_parser.h"
 
 #define CASE_LOCK(ls, var, msg) \
@@ -126,9 +128,10 @@ append_node(Eo_Lexer *ls, int type, void *def)
 static const char *
 get_filename(Eo_Lexer *ls)
 {
-   char *s = eina_file_path_basename(ls->source, NULL);
+   char *dup = strdup(ls->source);
+   char *s = basename(dup);
    const char *file = eina_stringshare_add(s);
-   free(s);
+   free(dup);
    return file;
 }
 

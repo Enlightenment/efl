@@ -2,6 +2,7 @@
 #define EOLIAN_CXX_EOLIAN_WRAPPERS_HH
 
 #include <cassert>
+#include <libgen.h>
 
 #include <Eolian.h>
 
@@ -30,9 +31,10 @@ ctor_t const ctor = {};
 inline const Eolian_Class*
 class_from_file(std::string const& file)
 {
-   char *bn = eina_file_path_basename(file.c_str(), NULL);
+   char *dup = strdup(file.c_str());
+   char *bn = basename(dup);
    const Eolian_Class *cl = ::eolian_class_get_by_file(bn);
-   free(bn);
+   free(dup);
    return cl;
 }
 

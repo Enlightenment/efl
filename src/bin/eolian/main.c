@@ -1,4 +1,5 @@
 #include <getopt.h>
+#include <libgen.h>
 
 #include <Eina.h>
 
@@ -327,9 +328,10 @@ int main(int argc, char **argv)
      {
         EINA_LIST_FOREACH(files4gen, itr, filename)
           {
-             char *bn = eina_file_path_basename(filename, NULL);
+             char *dup = strdup(filename);
+             char *bn = basename(dup);
              class = eolian_class_get_by_file(bn);
-             free(bn);
+             free(dup);
              if (class) eolian_show_class(class);
           }
      }
@@ -340,9 +342,10 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   char *bn = eina_file_path_basename(eina_list_data_get(files4gen), NULL);
+   char *dup = strdup(eina_list_data_get(files4gen));
+   char *bn = basename(dup);
    class = eolian_class_get_by_file(bn);
-   free(bn);
+   free(dup);
 
    if (gen_opt)
      {
