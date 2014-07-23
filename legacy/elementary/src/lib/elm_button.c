@@ -433,26 +433,6 @@ _elm_button_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
    return &key_actions[0];
 }
 
-EOLIAN const char* _elm_button_part_text_get(Eo* obj, Elm_Button_Data* pd EINA_UNUSED, const char* part)
-{
-  return elm_object_part_text_get(obj, part);
-}
-
-EOLIAN void _elm_button_part_text_set(Eo* obj, Elm_Button_Data* pd EINA_UNUSED, const char* part, const char* text)
-{
-  return elm_object_part_text_set(obj, part, text);
-}
-
-EOLIAN const char* _elm_button_text_get(Eo* obj, Elm_Button_Data* pd EINA_UNUSED)
-{
-  return _elm_button_part_text_get(obj, pd, NULL);
-}
-
-EOLIAN void _elm_button_text_set(Eo* obj, Elm_Button_Data* pd EINA_UNUSED, const char* text)
-{
-  return _elm_button_part_text_set(obj, pd, NULL, text);
-}
-
 static void
 _elm_button_class_constructor(Eo_Class *klass)
 {
