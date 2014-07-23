@@ -42,6 +42,7 @@ struct Efreet_Menu
 
     Efreet_Desktop *desktop;   /**< The desktop we refer too */
     Eina_List      *entries;   /**< The menu items */
+    int             references; /**< refcount (keeps menu util ref is at 0) @since 1.11 */
 };
 
 /**
@@ -122,9 +123,26 @@ EAPI int              efreet_menu_save(Efreet_Menu *menu, const char *path);
 /**
  * @param menu The Efreet_Menu to free
  * @return Returns no value
- * @brief Frees the given structure
+ * @brief Frees the given structure (if refcount at 1 at the time of this call)
  */
 EAPI void             efreet_menu_free(Efreet_Menu *menu);
+
+/**
+ * @param menu The Efreet_Menu to reference
+ * @return Returns no value
+ * @brief Incriments refcount for the menu
+ * @since 1.11
+ */
+EAPI void             efreet_menu_ref(Efreet_Menu *menu);
+
+
+/**
+ * @param menu The Efreet_Menu to unreference
+ * @return Returns no value
+ * @brief Decrements refcount for the menu, and on 0 frees
+ * @since 1.11
+ */
+EAPI void             efreet_menu_unref(Efreet_Menu *menu);
 
 
 /**

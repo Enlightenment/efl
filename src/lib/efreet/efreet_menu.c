@@ -2363,7 +2363,7 @@ efreet_menu_entry_new(void)
     Efreet_Menu *entry;
 
     entry = NEW(Efreet_Menu, 1);
-
+    entry->references = 1;
     return entry;
 }
 
@@ -2374,6 +2374,8 @@ efreet_menu_free(Efreet_Menu *entry)
 
     if (!entry) return;
 
+    entry->references--;
+    if (entry->references > 0) return;
     IF_RELEASE(entry->name);
     IF_RELEASE(entry->icon);
     EINA_LIST_FREE(entry->entries, sub)
@@ -2381,6 +2383,25 @@ efreet_menu_free(Efreet_Menu *entry)
     IF_RELEASE(entry->id);
     if (entry->desktop) efreet_desktop_free(entry->desktop);
     FREE(entry);
+}
+
+EAPI void
+efreet_menu_ref(Efreet_Menu *entry)
+{
+    Efreet_Menu *sub;
+    Eina_List *l;
+
+    if (!entry) return;
+
+    EINA_LIST_FOREACH(entry->entries, l, sub)
+        efreet_menu_ref(sub);
+    entry->references++;
+}
+
+EAPI void
+efreet_menu_unref(Efreet_Menu *entry)
+{
+    efreet_menu_free(entry);
 }
 
 /**
