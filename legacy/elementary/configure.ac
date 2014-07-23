@@ -246,13 +246,15 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
           evas-cxx >= efl_version \
         "
         have_cxx11="yes"
+        LDFLAGS="${LDFLAGS} -shared -fPIC -DPIC"
+        CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
       ],
       [have_cxx11="no"]
    )
+else
+   have_cxx11="no"
 fi
 AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" = "xyes"])
-AM_CONDITIONAL([HAVE_CXX11], [LDFLAGS="${LDFLAGS} -shared -fPIC -DPIC"])
-AM_CONDITIONAL([HAVE_CXX11], [CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"])
 
 have_elementary_x="no"
 want_elementary_x="auto"
@@ -772,7 +774,9 @@ echo
 echo "Compilation................: make (or gmake)"
 echo "  CPPFLAGS.................: $CPPFLAGS"
 echo "  CFLAGS...................: $CFLAGS"
+if test "x${have_cxx11}" = "xyes"; then
 echo "  CXXFLAGS.................: $CXXFLAGS"
+fi
 echo "  LDFLAGS..................: $LDFLAGS"
 echo
 if test "${build_tests}" = "none"; then
