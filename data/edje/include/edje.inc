@@ -68,6 +68,22 @@ native       reset_timer(id);
 native       anim       (Float:len, fname[], val);
 native       cancel_anim(id);
 
+enum Tween_Mode_Type
+{
+   TWEEN_MODE_LINEAR,
+   TWEEN_MODE_ACCELERATE,
+   TWEEN_MODE_DECELERATE,
+   TWEEN_MODE_SINUSOIDAL,
+   TWEEN_MODE_ACCELERATE_FACTOR,
+   TWEEN_MODE_DECELERATE_FACTOR,
+   TWEEN_MODE_SINUSOIDAL_FACTOR,
+   TWEEN_MODE_DIVISOR_INTERP,
+   TWEEN_MODE_BOUNCE,
+   TWEEN_MODE_SPRING
+};
+
+native       get_anim_pos_map(Float:pos, Tween_Mode_Type:tween, Float:v1, Float:v2, &Float:ret);
+
 /***********************************************************/
 /* Edje utility calls for dealing with edjes/programs etc. */
 /***********************************************************/

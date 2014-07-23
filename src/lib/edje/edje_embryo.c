@@ -687,6 +687,54 @@ _edje_embryo_fn_cancel_anim(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* get_anim_pos_map(Float:pos, Tween_Mode_Type:tween, Float:v1, Float:v2, &Float:ret) */
+static Embryo_Cell
+_edje_embryo_fn_get_anim_pos_map(Embryo_Program *ep, Embryo_Cell *params)
+{
+   double pos;
+   Ecore_Pos_Map tween;
+   double v1, v2;
+
+   CHKPARAM(5);
+   pos = EMBRYO_CELL_TO_FLOAT(params[1]);
+   tween = params[2];
+   v1 = EMBRYO_CELL_TO_FLOAT(params[3]);
+   v2 = EMBRYO_CELL_TO_FLOAT(params[4]);
+
+   switch(tween)
+     {
+      case ECORE_POS_MAP_LINEAR:
+      case ECORE_POS_MAP_ACCELERATE:
+      case ECORE_POS_MAP_DECELERATE:
+      case ECORE_POS_MAP_SINUSOIDAL:
+        pos = ecore_animator_pos_map(pos, tween, 0, 0);
+        break;
+      case ECORE_POS_MAP_ACCELERATE_FACTOR:
+        pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE_FACTOR,
+                                     v1, 0);
+        break;
+      case ECORE_POS_MAP_DECELERATE_FACTOR:
+        pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_DECELERATE_FACTOR,
+                                     v1, 0);
+        break;
+      case ECORE_POS_MAP_SINUSOIDAL_FACTOR:
+        pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_SINUSOIDAL_FACTOR,
+                                     v1, 0);
+        break;
+      case ECORE_POS_MAP_DIVISOR_INTERP:
+      case ECORE_POS_MAP_BOUNCE:
+      case ECORE_POS_MAP_SPRING:
+        pos = ecore_animator_pos_map(pos, tween, v1, v2);
+        break;
+      default:
+        break;
+     }
+
+   SETFLOAT(pos, params[5]);
+
+   return 0;
+}
+
 /* set_min_size(Float:w, Float:h) */
 static Embryo_Cell
 _edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
@@ -3741,6 +3789,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 
    embryo_program_native_call_add(ep, "anim", _edje_embryo_fn_anim);
    embryo_program_native_call_add(ep, "cancel_anim", _edje_embryo_fn_cancel_anim);
+   embryo_program_native_call_add(ep, "get_anim_pos_map", _edje_embryo_fn_get_anim_pos_map);
 
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
    embryo_program_native_call_add(ep, "get_part_id", _edje_embryo_fn_get_part_id);
