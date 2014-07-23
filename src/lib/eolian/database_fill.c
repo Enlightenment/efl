@@ -158,7 +158,7 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
    EINA_LIST_FOREACH(accessor->params, l, acc_param)
      {
         Eolian_Function_Parameter *desc = (Eolian_Function_Parameter*)
-            eolian_function_parameter_get(foo_id, acc_param->name);
+            eolian_function_parameter_get_by_name(foo_id, acc_param->name);
 
         if (!desc)
           {

@@ -76,7 +76,7 @@ eolian_function_data_get(const Eolian_Function *fid, const char *key)
 }
 
 EAPI const Eolian_Function_Parameter *
-eolian_function_parameter_get(const Eolian_Function *fid, const char *param_name)
+eolian_function_parameter_get_by_name(const Eolian_Function *fid, const char *param_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    Eina_List *itr;

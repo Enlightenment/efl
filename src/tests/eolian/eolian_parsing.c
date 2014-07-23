@@ -190,7 +190,7 @@ START_TEST(eolian_consts)
 
    /* Property */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
-   fail_if(!(param = eolian_function_parameter_get(fid, "buffer")));
+   fail_if(!(param = eolian_function_parameter_get_by_name(fid, "buffer")));
    fail_if(eolian_parameter_const_attribute_get(param, EINA_FALSE));
    fail_if(!eolian_parameter_const_attribute_get(param, EINA_TRUE));
 

@@ -525,7 +525,7 @@ EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_i
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian_Function *function_id, const char *param_name);
+EAPI const Eolian_Function_Parameter *eolian_function_parameter_get_by_name(const Eolian_Function *function_id, const char *param_name);
 
 /*
  * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
