@@ -102,7 +102,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
         fsuffix = "_get";
         if (!rettypet)
           {
-             itr = eolian_parameters_list_get(func);
+             itr = eolian_parameters_get(func);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -151,7 +151,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
    Eina_Strbuf *str_retdesc = eina_strbuf_new();
    Eina_Strbuf *str_typecheck = eina_strbuf_new();
 
-   itr = eolian_property_keys_list_get(func);
+   itr = eolian_property_keys_get(func);
    EINA_ITERATOR_FOREACH(itr, data)
      {
         const Eolian_Type *ptypet;
@@ -172,7 +172,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
 
    if (!var_as_ret)
      {
-        itr = eolian_parameters_list_get(func);
+        itr = eolian_parameters_get(func);
         EINA_ITERATOR_FOREACH(itr, data)
           {
              const Eolian_Type *ptypet;
@@ -272,7 +272,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *str_extrn_ev = eina_strbuf_new();
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
 
-   itr = eolian_class_events_list_get(class);
+   itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
         const char *evname = NULL;
@@ -298,7 +298,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    int i;
    for (i = 0; i < 3; i++)
      {
-        itr = eolian_class_functions_list_get(class, ftype_order[i]);
+        itr = eolian_class_functions_get(class, ftype_order[i]);
         EINA_ITERATOR_FOREACH(itr, fid)
           {
              const Eolian_Function_Type ftype = eolian_function_type_get(fid);
@@ -365,7 +365,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             itr = eolian_parameters_list_get(funcid);
+             itr = eolian_parameters_get(funcid);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -381,7 +381,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         suffix = "_set";
      }
 
-   itr = eolian_property_keys_list_get(funcid);
+   itr = eolian_property_keys_get(funcid);
    EINA_ITERATOR_FOREACH(itr, data)
      {
         const Eolian_Type *ptypet;
@@ -402,7 +402,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    eina_iterator_free(itr);
    if (!var_as_ret)
      {
-        itr = eolian_parameters_list_get(funcid);
+        itr = eolian_parameters_get(funcid);
         EINA_ITERATOR_FOREACH(itr, data)
           {
              const Eolian_Type *ptypet;
@@ -446,13 +446,13 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         Eina_Strbuf *eo_func_decl = eina_strbuf_new();
         Eina_Bool has_params = EINA_FALSE;
 
-        itr = eolian_property_keys_list_get(funcid);
+        itr = eolian_property_keys_get(funcid);
         has_params |= (eina_iterator_next(itr, &data));
         eina_iterator_free(itr);
 
         if (!has_params && !var_as_ret)
           {
-             itr = eolian_parameters_list_get(funcid);
+             itr = eolian_parameters_get(funcid);
              has_params |= (eina_iterator_next(itr, &data));
              eina_iterator_free(itr);
           }
@@ -541,7 +541,7 @@ eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *str_ev = eina_strbuf_new();
 
    Eolian_Event *event;
-   itr = eolian_class_events_list_get(class);
+   itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
         const char *evname;
@@ -645,7 +645,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_strbuf_reset(tmpbuf);
 
    //Implements - TODO one generate func def for all
-   itr = eolian_class_implements_list_get(class);
+   itr = eolian_class_implements_get(class);
    EINA_ITERATOR_FOREACH(itr, impl_desc)
      {
         _eolian_class_vars impl_env;
@@ -702,7 +702,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 
    //Constructors
-   itr = eolian_class_functions_list_get(class, EOLIAN_CTOR);
+   itr = eolian_class_functions_get(class, EOLIAN_CTOR);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
         char *desc = _source_desc_get(eolian_function_description_get(fn, "comment"));
@@ -715,7 +715,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 
    //Properties
-   itr = eolian_class_functions_list_get(class, EOLIAN_PROPERTY);
+   itr = eolian_class_functions_get(class, EOLIAN_PROPERTY);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
         const char *funcname = eolian_function_name_get(fn);
@@ -747,7 +747,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 
    //Methods
-   itr = eolian_class_functions_list_get(class, EOLIAN_METHOD);
+   itr = eolian_class_functions_get(class, EOLIAN_METHOD);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
         char *desc = _source_desc_get(eolian_function_description_get(fn, "comment"));
@@ -757,7 +757,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
      }
    eina_iterator_free(itr);
 
-   itr = eolian_class_events_list_get(class);
+   itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
         const char *evname;
@@ -791,10 +791,10 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_strbuf_replace_all(str_end, "@#Events_Desc", eina_strbuf_string_get(tmpbuf));
 
    eina_strbuf_reset(tmpbuf);
-   itr = eolian_class_inherits_list_get(class);
+   itr = eolian_class_inherits_get(class);
    EINA_ITERATOR_FOREACH(itr, inherit_name)
      {
-        const Eolian_Class *inherit_class = eolian_class_find_by_name(inherit_name);
+        const Eolian_Class *inherit_class = eolian_class_get_by_name(inherit_name);
         _eolian_class_vars inherit_env;
         _class_env_create(inherit_class, NULL, &inherit_env);
         eina_strbuf_append_printf(tmpbuf, "%s_%s, ", inherit_env.upper_classname,
@@ -865,7 +865,7 @@ eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    if (!eo_source_beginning_generate(class, buf)) goto end;
 
    //Properties
-   itr = eolian_class_functions_list_get(class, EOLIAN_PROPERTY);
+   itr = eolian_class_functions_get(class, EOLIAN_PROPERTY);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
         const Eolian_Function_Type ftype = eolian_function_type_get(fn);
@@ -885,7 +885,7 @@ eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 
    //Methods
-   itr = eolian_class_functions_list_get(class, EOLIAN_METHOD);
+   itr = eolian_class_functions_get(class, EOLIAN_METHOD);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
         if (!eo_bind_func_generate(class, fn, EOLIAN_UNRESOLVED, str_bodyf, NULL)) goto end;

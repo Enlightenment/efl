@@ -20,14 +20,14 @@ eolian_class_name_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Iterator *
-eolian_class_namespaces_list_get(const Eolian_Class *cl)
+eolian_class_namespaces_get(const Eolian_Class *cl)
 {
    return ((cl && cl->namespaces) ? eina_list_iterator_new(cl->namespaces)
                                   : NULL);
 }
 
 EAPI const Eolian_Class *
-eolian_class_find_by_name(const char *class_name)
+eolian_class_get_by_name(const char *class_name)
 {
    Eina_List *itr;
    Eolian_Class *cl;
@@ -41,7 +41,7 @@ end:
 }
 
 EAPI const Eolian_Class *
-eolian_class_find_by_file(const char *file_name)
+eolian_class_get_by_file(const char *file_name)
 {
    Eina_List *itr;
    Eolian_Class *cl;
@@ -62,7 +62,7 @@ eolian_class_type_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Iterator *
-eolian_all_classes_list_get(void)
+eolian_all_classes_get(void)
 {
    return (_classes ? eina_list_iterator_new(_classes) : NULL);
 }
@@ -96,21 +96,21 @@ eolian_class_data_type_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Iterator *
-eolian_class_inherits_list_get(const Eolian_Class *cl)
+eolian_class_inherits_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return (cl->inherits ? eina_list_iterator_new(cl->inherits) : NULL);
 }
 
 EAPI Eina_Iterator*
-eolian_class_implements_list_get(const Eolian_Class *cl)
+eolian_class_implements_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return (cl->implements ? eina_list_iterator_new(cl->implements) : NULL);
 }
 
 EAPI const Eolian_Function *
-eolian_class_function_find_by_name(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
+eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
 {
    Eina_List *itr;
    Eolian_Function *fid;
@@ -147,7 +147,7 @@ eolian_class_function_find_by_name(const Eolian_Class *cl, const char *func_name
 }
 
 EAPI Eina_Iterator *
-eolian_class_functions_list_get(const Eolian_Class *cl, Eolian_Function_Type foo_type)
+eolian_class_functions_get(const Eolian_Class *cl, Eolian_Function_Type foo_type)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    switch (foo_type)
@@ -163,7 +163,7 @@ eolian_class_functions_list_get(const Eolian_Class *cl, Eolian_Function_Type foo
 }
 
 EAPI Eina_Iterator *
-eolian_class_events_list_get(const Eolian_Class *cl)
+eolian_class_events_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return (cl->events ? eina_list_iterator_new(cl->events) : NULL);

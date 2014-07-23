@@ -94,10 +94,10 @@ generator_options(const Eolian_Class& klass)
    gen_opts.c_headers.push_back(class_base_file(klass) + ".h");
 
    void *cur = NULL;
-   Eina_Iterator *inheritances = ::eolian_class_inherits_list_get(&klass);
+   Eina_Iterator *inheritances = ::eolian_class_inherits_get(&klass);
    EINA_ITERATOR_FOREACH(inheritances, cur)
      {
-        const Eolian_Class *ext = ::eolian_class_find_by_name(static_cast<const char*>(cur));
+        const Eolian_Class *ext = ::eolian_class_get_by_name(static_cast<const char*>(cur));
         std::string eo_parent_file = class_base_file(*ext);
         if (!eo_parent_file.empty())
           {

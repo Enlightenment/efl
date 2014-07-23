@@ -318,7 +318,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
           }
 
         Eolian_Function *foo_id = (Eolian_Function*)
-                                   eolian_class_function_find_by_name(cl,
+                                   eolian_class_function_get_by_name(cl,
                                                                       func,
                                                                       ftype);
 

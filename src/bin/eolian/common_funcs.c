@@ -8,7 +8,7 @@ Eolian_Class *current_class;
 static void
 _class_name_concatenate(const Eolian_Class *class, char *buffer)
 {
-   Eina_Iterator *itr = eolian_class_namespaces_list_get(class);
+   Eina_Iterator *itr = eolian_class_namespaces_get(class);
    const char *name;
    buffer[0] = '\0';
    EINA_ITERATOR_FOREACH(itr, name)
@@ -75,7 +75,7 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    const char *ret;
    const char *suffix = "";
    const char *legacy = NULL;
-   const Eolian_Function *funcid = eolian_class_function_find_by_name(class, funcname, ftype);
+   const Eolian_Function *funcid = eolian_class_function_get_by_name(class, funcname, ftype);
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";

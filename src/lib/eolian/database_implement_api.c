@@ -27,7 +27,7 @@ eolian_implement_information_get(const Eolian_Implement *impl, const Eolian_Clas
         else if (!strcmp(colon+1, "get")) type = EOLIAN_PROP_GET;
      }
 
-   const Eolian_Function *fid = eolian_class_function_find_by_name(class, func_name, type);
+   const Eolian_Function *fid = eolian_class_function_get_by_name(class, func_name, type);
    if (func_out) *func_out = fid;
    if (type == EOLIAN_UNRESOLVED) type = eolian_function_type_get(fid);
    if (type_out) *type_out = type;

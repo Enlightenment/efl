@@ -91,7 +91,7 @@ Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Clas
      {
         colon = strchr(colon, '.');
         if (colon) *colon = '\0';
-        candidate = eolian_class_find_by_name(name);
+        candidate = eolian_class_get_by_name(name);
         if (candidate)
           {
              if (found_class)

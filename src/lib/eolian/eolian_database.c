@@ -133,23 +133,23 @@ EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
    Eina_Iterator *itr;
-   const Eolian_Class *class = eolian_class_find_by_file(filepath);
+   const Eolian_Class *class = eolian_class_get_by_file(filepath);
    const char *inherit_name;
    Eolian_Implement *impl;
    if (!class)
      {
         if (!eo_parser_database_fill(filepath, EINA_FALSE)) return EINA_FALSE;
-        class = eolian_class_find_by_file(filepath);
+        class = eolian_class_get_by_file(filepath);
         if (!class)
           {
              ERR("No class for file %s", filepath);
              return EINA_FALSE;
           }
      }
-   itr = eolian_class_inherits_list_get(class);
+   itr = eolian_class_inherits_get(class);
    EINA_ITERATOR_FOREACH(itr, inherit_name)
      {
-        if (!eolian_class_find_by_name(inherit_name))
+        if (!eolian_class_get_by_name(inherit_name))
           {
              char *filename = _eolian_class_to_filename(inherit_name);
              filepath = eina_hash_find(_filenames, filename);
@@ -159,7 +159,7 @@ eolian_eo_file_parse(const char *filepath)
                   return EINA_FALSE;
                }
              if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
-             if (!eolian_class_find_by_name(inherit_name))
+             if (!eolian_class_get_by_name(inherit_name))
                {
                   ERR("Unable to find class %s", inherit_name);
                   return EINA_FALSE;
@@ -168,7 +168,7 @@ eolian_eo_file_parse(const char *filepath)
           }
      }
    eina_iterator_free(itr);
-   itr = eolian_class_implements_list_get(class);
+   itr = eolian_class_implements_get(class);
    EINA_ITERATOR_FOREACH(itr, impl)
      {
         const Eolian_Class *impl_class;

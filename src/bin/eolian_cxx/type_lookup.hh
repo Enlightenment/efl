@@ -52,7 +52,7 @@ type_lookup(const Eolian_Type* type,
    if (type == NULL) return { efl::eolian::void_type }; // XXX shouldn't
 
    std::vector<Eolian_Type const*> types; types.push_back(type);
-   efl::eina::iterator<Eolian_Type const> iterator ( ::eolian_type_subtypes_list_get(type) );
+   efl::eina::iterator<Eolian_Type const> iterator ( ::eolian_type_subtypes_get(type) );
    while(iterator != efl::eina::iterator<Eolian_Type const>())
      if(Eolian_Type const* t = &*iterator)
        types.push_back(t), ++iterator;

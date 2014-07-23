@@ -30,7 +30,7 @@ ctor_t const ctor = {};
 inline const Eolian_Class*
 class_from_file(std::string const& file)
 {
-   return ::eolian_class_find_by_file(file.c_str());
+   return ::eolian_class_get_by_file(file.c_str());
 }
 
 inline std::string
@@ -60,7 +60,7 @@ class_full_name(Eolian_Class const& klass)
 inline const Eolian_Class *
 class_from_name(std::string const& classname)
 {
-   return ::eolian_class_find_by_name(classname.c_str());
+   return ::eolian_class_get_by_name(classname.c_str());
 }
 
 inline std::string
@@ -137,7 +137,7 @@ inline std::string
 class_namespace_full(Eolian_Class const& klass)
 {
    std::string s;
-   Eina_Iterator* itr = ::eolian_class_namespaces_list_get(&klass);
+   Eina_Iterator* itr = ::eolian_class_namespaces_get(&klass);
    void* name;
    EINA_ITERATOR_FOREACH(itr, name)
      {
@@ -173,7 +173,7 @@ private:
 inline iterator_iterator<const Eolian_Class>
 class_list_all()
 {
-   return iterator_iterator<const Eolian_Class>(::eolian_all_classes_list_get());
+   return iterator_iterator<const Eolian_Class>(::eolian_all_classes_get());
 }
 
 inline std::string
@@ -364,7 +364,7 @@ inline efl::eolian::events_container_type
 event_list(Eolian_Class const& klass)
 {
    efl::eolian::events_container_type events;
-   Eina_Iterator *itr = ::eolian_class_events_list_get(&klass);
+   Eina_Iterator *itr = ::eolian_class_events_get(&klass);
    Eolian_Event *e;
    EINA_ITERATOR_FOREACH(itr, e)
      {

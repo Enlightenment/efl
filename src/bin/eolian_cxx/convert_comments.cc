@@ -50,7 +50,7 @@ _comment_brief_and_params(Eolian_Function const& function,
      {
         doc += "@brief " + func + "\n\n";
      }
-   std::string params = _comment_parameters_list(::eolian_parameters_list_get(&function));
+   std::string params = _comment_parameters_list(::eolian_parameters_get(&function));
    if (params != "")
      {
         doc += params + "\n";

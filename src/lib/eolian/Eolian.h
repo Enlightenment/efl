@@ -287,24 +287,24 @@ EAPI Eina_Bool eolian_show_struct(const char *name);
 EAPI void eolian_show_all();
 
 /*
- * @brief Finds a class by its name
+ * @brief Gets a class by its name
  *
- * @param[in] class_name name of the class to find.
+ * @param[in] class_name name of the class to get.
  * @return the class
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_find_by_name(const char *class_name);
+EAPI const Eolian_Class *eolian_class_get_by_name(const char *class_name);
 
 /*
- * @brief Finds a class by its location (.eo file)
+ * @brief Gets a class by its location (.eo file)
  *
  * @param[in] file_name filename where the class is stored.
  * @return the class stored in the file
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_find_by_file(const char *file_name);
+EAPI const Eolian_Class *eolian_class_get_by_file(const char *file_name);
 
 /*
  * @brief Returns the name of the file containing the given class.
@@ -347,7 +347,7 @@ EAPI Eina_Stringshare *eolian_class_name_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_namespaces_list_get(const Eolian_Class *klass);
+EAPI Eina_Iterator *eolian_class_namespaces_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the class type of the given class
@@ -366,7 +366,7 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_classes_list_get(void);
+EAPI Eina_Iterator *eolian_all_classes_get(void);
 
 /*
  * @brief Returns the description of a class.
@@ -416,7 +416,7 @@ EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_inherits_list_get(const Eolian_Class *klass);
+EAPI Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns an iterator to functions of a class.
@@ -427,7 +427,7 @@ EAPI Eina_Iterator *eolian_class_inherits_list_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_functions_list_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
+EAPI Eina_Iterator *eolian_class_functions_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
 
 /*
  * @brief Returns the type of a function
@@ -473,7 +473,7 @@ EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_
 EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
 
 /*
- * @brief Find a function in a class by its name and type
+ * @brief Get a function in a class by its name and type
  *
  * @param[in] klass the class
  * @param[in] func_name name of the function
@@ -482,7 +482,7 @@ EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *fu
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Function *eolian_class_function_find_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
+EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific data for a function.
@@ -535,7 +535,7 @@ EAPI const Eolian_Function_Parameter *eolian_function_parameter_get(const Eolian
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_property_keys_list_get(const Eolian_Function *foo_id);
+EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id);
 
 /*
  * @brief Returns an iterator to the values params of a given function.
@@ -545,7 +545,7 @@ EAPI Eina_Iterator *eolian_property_keys_list_get(const Eolian_Function *foo_id)
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_property_values_list_get(const Eolian_Function *foo_id);
+EAPI Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id);
 
 /*
  * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
@@ -555,7 +555,7 @@ EAPI Eina_Iterator *eolian_property_values_list_get(const Eolian_Function *foo_i
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_parameters_list_get(const Eolian_Function *function_id);
+EAPI Eina_Iterator *eolian_parameters_get(const Eolian_Function *function_id);
 
 /*
  * @brief Get information about a function parameter
@@ -713,7 +713,7 @@ EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl, co
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_implements_list_get(const Eolian_Class *klass);
+EAPI Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
 
 /*
  * @brief Get an iterator to the events defined in a class.
@@ -723,7 +723,7 @@ EAPI Eina_Iterator *eolian_class_implements_list_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_events_list_get(const Eolian_Class *klass);
+EAPI Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
 
 /*
  * @brief Get information about an event.
@@ -761,24 +761,24 @@ EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
 EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 
 /*
- * @brief Find the an alias type by name. Supports namespaces.
+ * @brief Get an alias type by name. Supports namespaces.
  *
  * @param[in] name the name of the alias
  * @return the alias type or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_alias_find_by_name(const char *name);
+EAPI const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
 
 /*
- * @brief Find a struct by name. Supports namespaces.
+ * @brief Get a struct by name. Supports namespaces.
  *
  * @param[in] name the name of the struct
  * @return the struct or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_struct_find_by_name(const char *name);
+EAPI const Eolian_Type *eolian_type_struct_get_by_name(const char *name);
 
 /*
  * @brief Get an iterator to all aliases contained in a file.
@@ -823,7 +823,7 @@ EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_arguments_list_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_type_arguments_get(const Eolian_Type *tp);
 
 /*
  * @brief Get an iterator to all subtypes of a type.
@@ -834,7 +834,7 @@ EAPI Eina_Iterator *eolian_type_arguments_list_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_subtypes_list_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
 
 /*
  * @brief Get an iterator to all field names of a struct type.
@@ -844,7 +844,7 @@ EAPI Eina_Iterator *eolian_type_subtypes_list_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_struct_field_names_list_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_type_struct_field_names_get(const Eolian_Type *tp);
 
 /*
  * @brief Get a field of a struct type.
@@ -1013,7 +1013,7 @@ EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_namespaces_list_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
 
 #endif
 

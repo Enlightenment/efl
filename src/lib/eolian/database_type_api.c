@@ -3,7 +3,7 @@
 #include "eo_definitions.h"
 
 EAPI const Eolian_Type *
-eolian_type_alias_find_by_name(const char *name)
+eolian_type_alias_get_by_name(const char *name)
 {
    if (!_aliases) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
@@ -13,7 +13,7 @@ eolian_type_alias_find_by_name(const char *name)
 }
 
 EAPI const Eolian_Type *
-eolian_type_struct_find_by_name(const char *name)
+eolian_type_struct_get_by_name(const char *name)
 {
    if (!_structs) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
@@ -52,7 +52,7 @@ eolian_type_type_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_arguments_list_get(const Eolian_Type *tp)
+eolian_type_arguments_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eolian_type_type_get(tp) == EOLIAN_TYPE_FUNCTION, NULL);
@@ -61,7 +61,7 @@ eolian_type_arguments_list_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_subtypes_list_get(const Eolian_Type *tp)
+eolian_type_subtypes_get(const Eolian_Type *tp)
 {
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
@@ -74,7 +74,7 @@ eolian_type_subtypes_list_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_struct_field_names_list_get(const Eolian_Type *tp)
+eolian_type_struct_field_names_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
@@ -212,7 +212,7 @@ eolian_type_full_name_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_namespaces_list_get(const Eolian_Type *tp)
+eolian_type_namespaces_get(const Eolian_Type *tp)
 {
    Eolian_Type_Type tpp;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);

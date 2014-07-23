@@ -327,7 +327,7 @@ int main(int argc, char **argv)
      {
         EINA_LIST_FOREACH(files4gen, itr, filename)
           {
-             class = eolian_class_find_by_file(filename);
+             class = eolian_class_get_by_file(filename);
              if (class) eolian_show_class(class);
           }
      }
@@ -338,7 +338,7 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   class = eolian_class_find_by_file(eina_list_data_get(files4gen));
+   class = eolian_class_get_by_file(eina_list_data_get(files4gen));
 
    if (gen_opt)
      {
