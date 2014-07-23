@@ -79,6 +79,7 @@ typedef struct _Eo_Method_Def
 typedef struct _Eo_Class_Def
 {
    Eina_Stringshare *name;
+   Eina_Stringshare *file;
    Eolian_Class_Type type;
    Eina_Stringshare *comment;
    Eina_Stringshare *legacy_prefix;

@@ -126,12 +126,9 @@ append_node(Eo_Lexer *ls, int type, void *def)
 static const char *
 get_filename(Eo_Lexer *ls)
 {
-   char *s = strdup(ls->source);
-   Eina_Array *arr = eina_file_split(s);
-   const char *file = eina_stringshare_add(eina_array_data_get(arr,
-                                           eina_array_count_get(arr) - 1));
+   char *s = eina_file_path_basename(ls->source, NULL);
+   const char *file = eina_stringshare_add(s);
    free(s);
-   eina_array_free(arr);
    return file;
 }
 
@@ -1131,6 +1128,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    parse_name(ls, buf);
    ls->tmp.kls->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
+   ls->tmp.kls->file = get_filename(ls);
    if (ls->t.token != '{')
      {
         line = ls->line_number;

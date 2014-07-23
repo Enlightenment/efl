@@ -30,7 +30,10 @@ ctor_t const ctor = {};
 inline const Eolian_Class*
 class_from_file(std::string const& file)
 {
-   return ::eolian_class_get_by_file(file.c_str());
+   char *bn = eina_file_path_basename(file.c_str(), NULL);
+   const Eolian_Class *cl = ::eolian_class_get_by_file(bn);
+   free(bn);
+   return cl;
 }
 
 inline std::string

@@ -297,9 +297,9 @@ EAPI void eolian_show_all();
 EAPI const Eolian_Class *eolian_class_get_by_name(const char *class_name);
 
 /*
- * @brief Gets a class by its location (.eo file)
+ * @brief Gets a class by its filename (name.eo)
  *
- * @param[in] file_name filename where the class is stored.
+ * @param[in] file_name the filename
  * @return the class stored in the file
  *
  * @ingroup Eolian

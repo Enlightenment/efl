@@ -370,13 +370,13 @@ _db_fill_events(Eolian_Class *cl, Eo_Class_Def *kls)
 }
 
 static Eina_Bool
-_db_fill_class(Eo_Class_Def *kls, const char *filename)
+_db_fill_class(Eo_Class_Def *kls)
 {
    Eolian_Class *cl = database_class_add(kls->name, kls->type);
    const char *s;
    Eina_List *l;
 
-   database_class_file_set(cl, filename);
+   database_class_file_set(cl, kls->file);
 
    if (kls->comment)
      {
@@ -453,7 +453,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
         switch (nd->type)
           {
            case NODE_CLASS:
-             if (!_db_fill_class(nd->def_class, filename))
+             if (!_db_fill_class(nd->def_class))
                goto error;
              break;
            default:
