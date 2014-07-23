@@ -247,7 +247,7 @@ _elm_image_edje_file_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_image_smooth_scale_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool smooth)
+_elm_image_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool smooth)
 {
    if (sd->edje) return;
 
@@ -255,7 +255,7 @@ _elm_image_smooth_scale_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool s
 }
 
 EOLIAN static Eina_Bool
-_elm_image_smooth_scale_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+_elm_image_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    if (sd->edje) return EINA_FALSE;
 
@@ -408,15 +408,15 @@ _elm_image_smart_rotate_180(Evas_Object *obj, Elm_Image_Data *sd)
 
 static Eina_Bool
 _elm_image_drag_n_drop_cb(void *elm_obj,
-                          Evas_Object *obj,
-                          Elm_Selection_Data *drop)
+      Evas_Object *obj,
+      Elm_Selection_Data *drop)
 {
    Eina_Bool ret = EINA_FALSE;
    eo_do(obj, ret = efl_file_set(drop->data, NULL));
    if (ret)
      {
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
-               SIG_DND, (char *)drop->data);
+              SIG_DND, (char *)drop->data);
 
         evas_object_smart_callback_call(elm_obj, SIG_DND, drop->data);
         return EINA_TRUE;
@@ -441,7 +441,7 @@ _elm_image_evas_object_smart_add(Eo *obj, Elm_Image_Data *priv)
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
    evas_object_event_callback_add
-     (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
+      (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
 
    /* starts as an Evas image. may switch to an Edje object */
    priv->img = _img_new(obj);
@@ -604,12 +604,12 @@ _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
 
    _elm_image_internal_sizing_eval(obj, sd);
 
-   eo_do(obj, elm_obj_image_smooth_scale_set(sd->smooth));
+   eo_do(obj, efl_image_smooth_scale_set(sd->smooth));
 
    if (sd->no_scale)
      eo_do(obj, elm_obj_image_scale_set(1.0));
    else
-     eo_do(obj, elm_obj_image_smooth_scale_set(elm_widget_scale_get(obj) * elm_config_scale_get()));
+     eo_do(obj, efl_image_smooth_scale_set(elm_widget_scale_get(obj) * elm_config_scale_get()));
 
    ts = sd->scale;
    sd->scale = 1.0;
@@ -1047,13 +1047,16 @@ elm_image_prescale_set(Evas_Object *obj,
                        int size)
 {
    ELM_IMAGE_CHECK(obj);
-   eo_do(obj, elm_obj_image_load_size_set(size));
+   eo_do(obj, efl_image_load_size_set(size, size));
 }
 
 EOLIAN static void
-_elm_image_load_size_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int size)
+_elm_image_efl_image_load_size_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int w, int h)
 {
-   sd->load_size = size;
+   if (w > h)
+      sd->load_size = w;
+   else
+      sd->load_size = h;
 }
 
 EAPI int
@@ -1061,15 +1064,16 @@ elm_image_prescale_get(const Evas_Object *obj)
 {
    ELM_IMAGE_CHECK(obj) 0;
 
-   int ret = 0;
-   eo_do((Eo *)obj, ret = elm_obj_image_load_size_get());
-   return ret;
+   int w = 0;
+   eo_do((Eo *)obj, efl_image_load_size_get(&w, NULL));
+   return w;
 }
 
-EOLIAN static int
-_elm_image_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+EOLIAN static void
+_elm_image_efl_image_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
 {
-   return sd->load_size;
+   if (w) *w = sd->load_size;
+   if (h) *h = sd->load_size;
 }
 
 EOLIAN static void

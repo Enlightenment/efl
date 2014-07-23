@@ -1,4 +1,4 @@
-class Elm_Image (Elm_Widget, Efl.File, Evas.Clickable_Interface,
+class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
                  Elm_Interface_Atspi_Image, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_image;
@@ -28,19 +28,6 @@ class Elm_Image (Elm_Widget, Efl.File, Evas.Clickable_Interface,
             bool set; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
          }
       }
-      smooth_scale {
-         set {
-            /*@ No description supplied by the EAPI. */
-            legacy: null;
-         }
-         get {
-            /*@ No description supplied by the EAPI. */
-            legacy: null;
-         }
-         values {
-            bool smooth;
-         }
-      }
       resize_down {
          set {
             /*@ No description supplied by the EAPI. */
@@ -52,19 +39,6 @@ class Elm_Image (Elm_Widget, Efl.File, Evas.Clickable_Interface,
          }
          values {
             bool resize_down;
-         }
-      }
-      load_size {
-         set {
-            /*@ No description supplied by the EAPI. */
-            legacy: null;
-         }
-         get {
-            /*@ No description supplied by the EAPI. */
-            legacy: null;
-         }
-         values {
-            int size;
          }
       }
       animated_play {
@@ -501,6 +475,10 @@ class Elm_Image (Elm_Widget, Efl.File, Evas.Clickable_Interface,
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.Image.load_size.set;
+      Efl.Image.load_size.get;
+      Efl.Image.smooth_scale.set;
+      Efl.Image.smooth_scale.get;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.clip.set;
       Evas.Object_Smart.clip_unset;
