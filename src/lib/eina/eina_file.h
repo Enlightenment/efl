@@ -415,22 +415,6 @@ EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT
  */
 EAPI char *eina_file_path_sanitize(const char *path);
 
-/**
- * @brief When given a path, delete everything up to last slash and return
- * the result.
- *
- * @param path The path string
- * @param suffix An optional suffix to strip out
- *
- * @return an allocated string with the base name.
- *
- * When @c suffix is not NULL, it's stripped out from the final path. When
- * the suffix doesn't match the actual suffix of the base name, nothing is
- * stripped. Path delimiters used depend on the operating system.
- *
- * @since 1.11
- */
-EAPI char *eina_file_path_basename(const char *path, const char *suffix);
 
 /**
  * @typedef Eina_File_Copy_Progress

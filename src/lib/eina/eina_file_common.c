@@ -361,33 +361,6 @@ eina_file_path_sanitize(const char *path)
    return _eina_file_escape(eina_file_cleanup(result), len);
 }
 
-EAPI char *
-eina_file_path_basename(const char *path, const char *suffix)
-{
-   char       *str = eina_file_path_sanitize(path), *fname, *ret;
-   Eina_Array *arr = eina_file_split(str);
-   if (!arr)
-     {
-        free(str);
-        return NULL;
-     }
-   fname = eina_array_data_get(arr, eina_array_count_get(arr) - 1);
-   if (suffix && suffix[0])
-     {
-        size_t flen = strlen(fname);
-        size_t slen = strlen(suffix);
-        if (slen <= flen)
-          {
-             char *sf = fname + flen - slen;
-             if (!strcmp(suffix, sf)) *sf = '\0';
-          }
-     }
-   ret = strdup(fname);
-   free(str);
-   eina_array_free(arr);
-   return ret;
-}
-
 EAPI Eina_File *
 eina_file_virtualize(const char *virtual_name, const void *data, unsigned long long length, Eina_Bool copy)
 {
