@@ -5,4 +5,5 @@
 #include <Efl.h>
 
 #include "interfaces/efl_file.eo.c"
+#include "interfaces/efl_image.eo.c"
 #include "interfaces/efl_text_properties.eo.c"

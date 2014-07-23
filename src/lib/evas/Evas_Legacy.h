@@ -1328,6 +1328,121 @@ none).
  */
 EAPI Eina_Bool evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags) EINA_ARG_NONNULL(2);
 
+/**
+ *
+ * Check if an image object can be animated (have multiple frames)
+ *
+ * @return whether obj support animation
+ *
+ * This returns if the image file of an image object is capable of animation
+ * such as an animated gif file might. This is only useful to be called once
+ * the image object file has been set.
+ *
+ * Example:
+ * @code
+ * extern Evas_Object *obj;
+ *
+ * if (evas_object_image_animated_get(obj))
+ * {
+ * int frame_count;
+ * int loop_count;
+ * Evas_Image_Animated_Loop_Hint loop_type;
+ * double duration;
+ *
+ * frame_count = evas_object_image_animated_frame_count_get(obj);
+ * printf("This image has %d frames\n",frame_count);
+ *
+ * duration = evas_object_image_animated_frame_duration_get(obj,1,0);
+ * printf("Frame 1's duration is %f. You had better set object's frame to 2 after this duration using timer\n");
+ *
+ * loop_count = evas_object_image_animated_loop_count_get(obj);
+ * printf("loop count is %d. You had better run loop %d times\n",loop_count,loop_count);
+ *
+ * loop_type = evas_object_image_animated_loop_type_get(obj);
+ * if (loop_type == EVAS_IMAGE_ANIMATED_HINT_LOOP)
+ * printf("You had better set frame like 1->2->3->1->2->3...\n");
+ * else if (loop_type == EVAS_IMAGE_ANIMATED_HINT_PINGPONG)
+ * printf("You had better set frame like 1->2->3->2->1->2...\n");
+ * else
+ * printf("Unknown loop type\n");
+ *
+ * evas_object_image_animated_frame_set(obj,1);
+ * printf("You set image object's frame to 1. You can see frame 1\n");
+ * }
+ * @endcode
+ *
+ * @see evas_object_image_animated_get()
+ * @see evas_object_image_animated_frame_count_get()
+ * @see evas_object_image_animated_loop_type_get()
+ * @see evas_object_image_animated_loop_count_get()
+ * @see evas_object_image_animated_frame_duration_get()
+ * @see evas_object_image_animated_frame_set()
+ * @since 1.1
+ *
+ */
+EAPI Eina_Bool evas_object_image_animated_get(const Eo *obj);
+
+/**
+ *
+ * Set the size of a given image object's source image, when loading
+ * it.
+ *
+ * This function sets a new (loading) size for the given canvas
+ * image.
+ *
+ * @see evas_object_image_load_size_get()
+ *
+ * @param[in] w The new width of the image's load size.
+ * @param[in] h The new height of the image's load size.
+ */
+EAPI void evas_object_image_load_size_set(Eo *obj, int w, int h);
+
+/**
+ *
+ * Get the size of a given image object's source image, when loading
+ * it.
+ *
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see evas_object_image_load_size_set() for more details
+ *
+ * @param[out] w The new width of the image's load size.
+ * @param[out] h The new height of the image's load size.
+ */
+EAPI void evas_object_image_load_size_get(const Eo *obj, int *w, int *h);
+
+/**
+ *
+ * Sets whether to use high-quality image scaling algorithm on the
+ * given image object.
+ *
+ * When enabled, a higher quality image scaling algorithm is used when
+ * scaling images to sizes other than the source image's original
+ * one. This gives better results but is more computationally
+ * expensive.
+ *
+ * @note Image objects get created originally with smooth scaling @b
+ * on.
+ *
+ * @see evas_object_image_smooth_scale_get()
+ *
+ * @param[in] smooth_scale Whether to use smooth scale or not.
+ */
+EAPI void evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale);
+
+/**
+ *
+ * Retrieves whether the given image object is using high-quality
+ * image scaling algorithm.
+ *
+ * @return Whether smooth scale is being used.
+ *
+ * See @ref evas_object_image_smooth_scale_set() for more details.
+ *
+ */
+EAPI Eina_Bool evas_object_image_smooth_scale_get(const Eo *obj);
+
 #include "canvas/evas_image.eo.legacy.h"
 
 /**

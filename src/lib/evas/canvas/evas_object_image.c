@@ -1455,7 +1455,7 @@ _evas_image_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static void
-_evas_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool smooth_scale)
+_evas_image_efl_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool smooth_scale)
 {
    Evas_Object_Protected_Data *obj;
 
@@ -1472,7 +1472,7 @@ _evas_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool smooth_sc
 }
 
 EOLIAN static Eina_Bool
-_evas_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->smooth_scale;
 }
@@ -1694,7 +1694,7 @@ _evas_image_load_dpi_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static void
-_evas_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
+_evas_image_efl_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 {
    if ((o->load_opts->w == w) && (o->load_opts->h == h)) return;
 
@@ -1718,7 +1718,7 @@ _evas_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 }
 
 EOLIAN static void
-_evas_image_load_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
+_evas_image_efl_image_load_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
 {
    if (w) *w = o->load_opts->w;
    if (h) *h = o->load_opts->h;
@@ -2055,7 +2055,7 @@ _evas_image_region_support_get(Eo *eo_obj, Evas_Image_Data *o)
 
 /* animated feature */
 EOLIAN static Eina_Bool
-_evas_image_animated_get(Eo *eo_obj, Evas_Image_Data *o)
+_evas_image_efl_image_animated_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    Eina_Bool animated;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -4977,6 +4977,36 @@ EAPI Eina_Bool
 evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)
 {
    return eo_do((Eo *) obj, efl_file_save(file, key, flags));
+}
+
+EAPI Eina_Bool
+evas_object_image_animated_get(const Eo *obj)
+{
+   return eo_do((Eo *) obj, efl_image_animated_get());
+}
+
+EAPI void
+evas_object_image_load_size_set(Eo *obj, int w, int h)
+{
+   eo_do((Eo *) obj, efl_image_load_size_set(w, h));
+}
+
+EAPI void
+evas_object_image_load_size_get(const Eo *obj, int *w, int *h)
+{
+   eo_do((Eo *) obj, efl_image_load_size_get(w, h));
+}
+
+EAPI void
+evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale)
+{
+   eo_do((Eo *) obj, efl_image_smooth_scale_set(smooth_scale));
+}
+
+EAPI Eina_Bool
+evas_object_image_smooth_scale_get(const Eo *obj)
+{
+   return eo_do((Eo *) obj, efl_image_smooth_scale_get());
 }
 
 #include "canvas/evas_image.eo.c"

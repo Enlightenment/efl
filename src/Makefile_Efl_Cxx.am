@@ -4,6 +4,7 @@ if HAVE_CXX11
 
 generated_efl_cxx_bindings = \
                  lib/efl/interfaces/efl_file.eo.hh \
+                 lib/efl/interfaces/efl_image.eo.hh \
                  lib/efl/interfaces/efl_text_properties.eo.hh
 
 lib/efl/Efl.hh: $(generated_efl_cxx_bindings)
