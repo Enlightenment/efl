@@ -15,9 +15,9 @@
                    backing: (NSBackingStoreType) bufferingType
                      defer: (BOOL) flag
 {
-    if (![super initWithContentRect: contentRect 
-                          styleMask: aStyle 
-                            backing: bufferingType 
+    if (![super initWithContentRect: contentRect
+                          styleMask: aStyle
+                            backing: bufferingType
                               defer: flag]) return nil;
 
     [self setBackgroundColor: [NSColor whiteColor]];
@@ -25,7 +25,14 @@
     [self setDelegate:self];
     [self setAcceptsMouseMovedEvents:YES];
 
+    [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+
     return self;
+}
+
+- (BOOL)isFullScreen
+{
+   return (([self styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask);
 }
 
 - (BOOL)acceptsFirstResponder
@@ -38,12 +45,12 @@
     return YES;
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *) EINA_UNUSED notification
 {
    NSLog(@"window is going to be closed");
 }
 
-- (void)windowDidResize:(NSNotification *)notif
+- (void)windowDidResize:(NSNotification *) EINA_UNUSED notif
 {
    Ecore_Cocoa_Event_Video_Resize *event;
    NSSize size = self.frame.size;
@@ -56,7 +63,9 @@
         return;
      }
    event->w = size.width;
-   event->h = size.height - ecore_cocoa_titlebar_height_get();
+   event->h = size.height -
+      (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
+   printf("Is fullscreen: %i\n", [self isFullScreen]);
    ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
 }
 
@@ -66,17 +75,6 @@
 #include "Ecore_Cocoa.h"
 #include "ecore_cocoa_private.h"
 
-static float _title_bar_height(void)
-{
-  NSRect frame = NSMakeRect (0, 0, 100, 100);
-  NSRect contentRect;
-
-  contentRect = [NSWindow contentRectForFrameRect: frame
-			  styleMask: NSTitledWindowMask];
-
-  return (frame.size.height - contentRect.size.height);
-}
-
 Ecore_Cocoa_Window *
 ecore_cocoa_window_new(int x,
 		       int y,
@@ -85,27 +83,29 @@ ecore_cocoa_window_new(int x,
 {
   Ecore_Cocoa_Window *w;
 
-  EcoreCocoaWindow *window = [[EcoreCocoaWindow alloc] 
-  								initWithContentRect:NSMakeRect(x, y, width, height)
-  									      styleMask:(NSTitledWindowMask |
-  									      			 NSClosableWindowMask |
-  									      			 NSResizableWindowMask |
-  									      			 NSMiniaturizableWindowMask)
-  									      	backing:NSBackingStoreBuffered
-  									      	  defer:NO];
+  EcoreCocoaWindow *window = [[EcoreCocoaWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
+                                                                 styleMask:(NSTitledWindowMask    |
+                                                                            NSClosableWindowMask  |
+                                                                            NSResizableWindowMask |
+                                                                            NSMiniaturizableWindowMask)
+                                                                    backing:NSBackingStoreBuffered
+                                                                    defer:NO];
 
   if (!window)
     return NULL;
 
   //Set the process to be a foreground process,
   //without that it prevents the window to become the key window and
-  //receive all mouse mouve events.  
-  ProcessSerialNumber psn;
-  GetCurrentProcess(&psn);
-  TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-  SetFrontProcess(&psn);
+  //receive all mouse mouve events.
+  [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+  [NSApp activateIgnoringOtherApps:YES];
+
 
   w = calloc(1, sizeof(Ecore_Cocoa_Window));
+  if (w == NULL)
+    {
+       return NULL;
+    }
   w->window = window;
   w->borderless = 0;
 
@@ -150,9 +150,9 @@ ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
 
   NSRect win_frame;
 
-
   win_frame = [window->window frame];
-  win_frame.size.height = height + _title_bar_height();
+  win_frame.size.height = height +
+     (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
   win_frame.size.width = width;
 
   [window->window setFrame:win_frame display:YES];
@@ -165,16 +165,13 @@ ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
 			       int                 width,
 			       int                 height)
 {
-  if (!window)
-    return;
+  if (!window) return;
 
   NSRect win_frame;
 
-  if (!window)
-    return;
-
   win_frame = [window->window frame];
-  win_frame.size.height = height + _title_bar_height();
+  win_frame.size.height = height +
+     (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
   win_frame.size.width = width;
   win_frame.origin.x = x;
   win_frame.origin.y = y;
@@ -232,15 +229,16 @@ ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
     return;
 
   //[[window->window contentView] addSubview:view];
+  NSView *v = view;
   [window->window setContentView:view];
 
-  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:[view frame]
-                                                      options:NSTrackingMouseMoved | 
+  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:[v frame]
+                                                      options:NSTrackingMouseMoved |
                                                               NSTrackingActiveInActiveApp |
                                                               NSTrackingInVisibleRect
-                                                        owner:view
+                                                        owner:v
                                                      userInfo:nil];
-  [view addTrackingArea:area];
-  
+  [v addTrackingArea:area];
+
   [area release];
 }

@@ -3,7 +3,7 @@
 
 struct _Ecore_Cocoa_Window
 {
-   NSWindow *window;
+   EcoreCocoaWindow *window;
    unsigned int borderless : 1;
 };
 

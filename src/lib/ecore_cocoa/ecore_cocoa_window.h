@@ -11,4 +11,8 @@
                  styleMask: (unsigned int) aStyle
                    backing: (NSBackingStoreType) bufferingType
                      defer: (BOOL) flag;
+
+- (BOOL)isFullScreen;
+
 @end
+

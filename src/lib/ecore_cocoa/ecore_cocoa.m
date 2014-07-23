@@ -75,6 +75,20 @@ _ecore_cocoa_event_modifiers(unsigned int mod)
    return modifiers;
 }
 
+static inline Eina_Bool
+_nsevent_window_is_type_of(NSEvent *event, Class class)
+{
+   /* An NSPeriodic event has no window (undefined behaviour) */
+   if ([event type] == NSPeriodic) return EINA_FALSE;
+   return [[[event window] class] isKindOfClass:class];
+}
+
+static inline Eina_Bool
+_has_ecore_cocoa_window(NSEvent *event)
+{
+   return _nsevent_window_is_type_of(event, [EcoreCocoaWindow class]);
+}
+
 EAPI void
 ecore_cocoa_feed_events(void)
 {
@@ -96,24 +110,31 @@ ecore_cocoa_feed_events(void)
       case NSRightMouseDragged:
       case NSOtherMouseDragged:
       {
-         Ecore_Event_Mouse_Move * ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
-         if (!ev) return;
+         if (_has_ecore_cocoa_window(event))
+           {
+              Ecore_Event_Mouse_Move * ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+              if (!ev) return;
 
-         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
-         NSView *view = [window contentView];
-         NSPoint pt = [event locationInWindow];
+              EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+              NSView *view = [window contentView];
+              NSPoint pt = [event locationInWindow];
 
-         ev->x = pt.x;
-         ev->y = [view frame].size.height - pt.y;
-         ev->root.x = ev->x;
-         ev->root.y = ev->y;
-         ev->timestamp = time;
-         ev->window = window.ecore_window_data;
-         ev->event_window = ev->window;
-         ev->modifiers = 0; /* FIXME: keep modifier around. */
+              ev->x = pt.x;
+              ev->y = [view frame].size.height - pt.y;
+              ev->root.x = ev->x;
+              ev->root.y = ev->y;
+              ev->timestamp = time;
+              ev->window = window.ecore_window_data;
+              ev->event_window = ev->window;
+              ev->modifiers = 0; /* FIXME: keep modifier around. */
 
-         ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
-
+              ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+           }
+         else
+           {
+              // We might want to handle cases such as events on the menubar.
+              // If so, let's do it here.
+           }
          [NSApp sendEvent:event]; // pass along mouse events, for window manager
          break;
       }
@@ -121,40 +142,47 @@ ecore_cocoa_feed_events(void)
       case NSRightMouseDown:
       case NSOtherMouseDown:
       {
-         Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
-         if (!ev) return;
+         if (_has_ecore_cocoa_window(event))
+           {
+              Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+              if (!ev) return;
 
-         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
-         NSView *view = [window contentView];
-         NSPoint pt = [event locationInWindow];
+              EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+              NSView *view = [window contentView];
+              NSPoint pt = [event locationInWindow];
 
-         ev->x = pt.x;
-         ev->y = [view frame].size.height - pt.y;
-         ev->root.x = ev->x;
-         ev->root.y = ev->y;
-         ev->timestamp = time;
-         switch ([event buttonNumber])
-         {
-            case 0: ev->buttons = 1; break;
-            case 1: ev->buttons = 3; break;
-            case 2: ev->buttons = 2; break;
-            default: ev->buttons = 0; break;
-         }
-         ev->window = window.ecore_window_data;
-         ev->event_window = ev->window;
+              ev->x = pt.x;
+              ev->y = [view frame].size.height - pt.y;
+              ev->root.x = ev->x;
+              ev->root.y = ev->y;
+              ev->timestamp = time;
+              switch ([event buttonNumber])
+                {
+                 case 0: ev->buttons = 1; break;
+                 case 1: ev->buttons = 3; break;
+                 case 2: ev->buttons = 2; break;
+                 default: ev->buttons = 0; break;
+                }
+              ev->window = window.ecore_window_data;
+              ev->event_window = ev->window;
 
-         if ([event clickCount] == 2)
-            ev->double_click = 1;
+              if ([event clickCount] == 2)
+                ev->double_click = 1;
+              else
+                ev->double_click = 0;
+
+              if ([event clickCount] >= 3)
+                ev->triple_click = 1;
+              else
+                ev->triple_click = 0;
+
+              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+           }
          else
-            ev->double_click = 0;
-
-         if ([event clickCount] >= 3)
-            ev->triple_click = 1;
-         else
-            ev->triple_click = 0;
-
-         ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
-
+           {
+              // We might want to handle cases such as events on the menubar.
+              // If so, let's do it here.
+           }
          [NSApp sendEvent:event]; // pass along mouse events, for window manager
          break;
       }
@@ -165,37 +193,44 @@ ecore_cocoa_feed_events(void)
          Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
          if (!ev) return;
 
-         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
-         NSView *view = [window contentView];
-         NSPoint pt = [event locationInWindow];
+         if (_has_ecore_cocoa_window(event))
+           {
+              EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+              NSView *view = [window contentView];
+              NSPoint pt = [event locationInWindow];
 
-         ev->x = pt.x;
-         ev->y = [view frame].size.height - pt.y;
-         ev->root.x = ev->x;
-         ev->root.y = ev->y;
-         ev->timestamp = time;
-         switch ([event buttonNumber])
-         {
-            case 0: ev->buttons = 1; break;
-            case 1: ev->buttons = 3; break;
-            case 2: ev->buttons = 2; break;
-            default: ev->buttons = 0; break;
-         }
-         ev->window = window.ecore_window_data;
-         ev->event_window = ev->window;
+              ev->x = pt.x;
+              ev->y = [view frame].size.height - pt.y;
+              ev->root.x = ev->x;
+              ev->root.y = ev->y;
+              ev->timestamp = time;
+              switch ([event buttonNumber])
+                {
+                 case 0: ev->buttons = 1; break;
+                 case 1: ev->buttons = 3; break;
+                 case 2: ev->buttons = 2; break;
+                 default: ev->buttons = 0; break;
+                }
+              ev->window = window.ecore_window_data;
+              ev->event_window = ev->window;
 
-         if ([event clickCount] == 2)
-            ev->double_click = 1;
+              if ([event clickCount] == 2)
+                ev->double_click = 1;
+              else
+                ev->double_click = 0;
+
+              if ([event clickCount] >= 3)
+                ev->triple_click = 1;
+              else
+                ev->triple_click = 0;
+
+              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+           }
          else
-            ev->double_click = 0;
-
-         if ([event clickCount] >= 3)
-            ev->triple_click = 1;
-         else
-            ev->triple_click = 0;
-
-         ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
-
+           {
+              // We might want to handle cases such as events on the menubar.
+              // If so, let's do it here.
+           }
          [NSApp sendEvent:event]; // pass along mouse events, for window manager
          break;
       }
