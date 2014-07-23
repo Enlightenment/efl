@@ -275,7 +275,8 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
      }
    eina_iterator_free(itr);
 
-   if (eolian_class_implements_get(class))
+   itr = eolian_class_implements_get(class);
+   if (itr)
      {
         Eolian_Implement *impl_desc;
         EINA_ITERATOR_FOREACH(itr, impl_desc)

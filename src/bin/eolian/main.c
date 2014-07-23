@@ -171,10 +171,9 @@ _generate_impl_c_file(char *filename, const Eolian_Class *class)
    if (eina_strbuf_string_get(buffer))
      fputs(eina_strbuf_string_get(buffer), fd);
 
-   fclose(fd);
-
    ret = EINA_TRUE;
 end:
+   fclose(fd);
    eina_strbuf_free(buffer);
 
    return ret;
