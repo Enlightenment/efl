@@ -150,10 +150,30 @@ class_namespace_full(Eolian_Class const& klass)
    return safe_lower(s);
 }
 
-inline efl::eina::iterator<const Eolian_Class>
+/* proxy struct for neater iteration */
+template<typename T>
+struct iterator_iterator
+{
+   iterator_iterator(Eina_Iterator *iter): p_iter(iter) {}
+
+   efl::eina::iterator<T> begin()
+   {
+      return efl::eina::iterator<T>(p_iter);
+   }
+
+   efl::eina::iterator<T> end()
+   {
+      return efl::eina::iterator<T>();
+   }
+
+private:
+   Eina_Iterator *p_iter;
+};
+
+inline iterator_iterator<const Eolian_Class>
 class_list_all()
 {
-   return ::eolian_all_classes_list_get();
+   return iterator_iterator<const Eolian_Class>(::eolian_all_classes_list_get());
 }
 
 inline std::string
