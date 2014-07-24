@@ -110,6 +110,14 @@ struct inherit
    {
       detail::parent_set(_eo_raw, p_._eo_ptr());
    }
+
+   Eo* _release()
+   {
+      Eo* tmp = _eo_raw;
+      _eo_raw = nullptr;
+      return tmp;
+   }
+
 protected:
    /// @brief Copy constructor.
    ///
