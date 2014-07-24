@@ -185,7 +185,7 @@ evas_image_load_file_head_dds(void *loader_data,
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
    if (strncmp(m, "DDS ", 4) != 0)
      // TODO: Add support for DX10
-     FAIL();
+     goto on_error;
    m += 4;
 
    // Read DDS_HEADER
