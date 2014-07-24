@@ -97,6 +97,7 @@ EXTRA_PROGRAMS = \
 	eolian_cxx_complex_types_01
 
 DATA_FILES = Makefile.examples $(EOS)
+EXTRA_DIST = $(DATA_FILES)
 
 eolian_cxx_simple_01_SOURCES = \
 	eolian_cxx_simple_01.cc \
@@ -107,7 +108,9 @@ eolian_cxx_simple_01.$(OBJEXT): $(GENERATED)
 eolian_cxx_simple_01_cxx_impl_SOURCES = \
 	eolian_cxx_simple_01.cc \
 	colourable_stub.c \
+	colourable_stub.h \
 	colourablesquare_stub.c \
+	colourablesquare_stub.h \
 	colourable_cxx.cc \
 	colourablesquare_cxx.cc
 eolian_cxx_simple_01_cxx_impl.$(OBJEXT): $(GENERATED)
