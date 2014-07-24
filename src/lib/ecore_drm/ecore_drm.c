@@ -67,7 +67,7 @@ ecore_drm_init(void)
      eina_log_domain_level_set("ecore_drm", EINA_LOG_LEVEL_DBG);
 
    /* get sd-login properties we need */
-   if (sd_pid_get_session(getpid(), &sid) < 0) goto log_err;
+   if (sd_pid_get_session(getpid(), &sid) < 0) goto sd_err;
 
    /* try to init dbus */
    if (!_ecore_drm_dbus_init(sid)) goto dbus_err;
@@ -81,12 +81,13 @@ ecore_drm_init(void)
 udev_err:
    _ecore_drm_dbus_shutdown();
 dbus_err:
-   ecore_event_shutdown();
-   ecore_shutdown();
+   free(sid);
+sd_err:
    eina_log_domain_unregister(_ecore_drm_log_dom);
    _ecore_drm_log_dom = -1;
-   free(sid);
 log_err:
+   ecore_event_shutdown();
+   ecore_shutdown();
    eina_shutdown();
    return --_ecore_drm_init_count;
 }
