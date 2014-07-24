@@ -64,6 +64,13 @@ database_function_set_as_virtual_pure(Eolian_Function *fid, Eolian_Function_Type
 }
 
 void
+database_function_set_as_class(Eolian_Function *fid, Eina_Bool is_class)
+{
+   EINA_SAFETY_ON_NULL_RETURN(fid);
+   fid->is_class = is_class;
+}
+
+void
 database_function_data_set(Eolian_Function *fid, const char *key, const char *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(key);

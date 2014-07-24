@@ -68,6 +68,13 @@ eolian_function_is_virtual_pure(const Eolian_Function *fid, Eolian_Function_Type
      }
 }
 
+EAPI Eina_Bool
+eolian_function_is_class(const Eolian_Function *fid)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   return fid->is_class;
+}
+
 EAPI Eina_Stringshare *
 eolian_function_data_get(const Eolian_Function *fid, const char *key)
 {

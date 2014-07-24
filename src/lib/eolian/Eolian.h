@@ -506,6 +506,16 @@ EAPI Eina_Stringshare *eolian_function_data_get(const Eolian_Function *function_
 EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
+ * @brief Get whether a function is a class method/property.
+ *
+ * @param[in] function_id Id of the function
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
+
+/*
  * @brief Returns a specific description for a function.
  *
  * @param[in] function_id Id of the function

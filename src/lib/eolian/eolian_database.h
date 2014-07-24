@@ -83,6 +83,7 @@ struct _Eolian_Function
    Eina_Bool set_virtual_pure :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
+   Eina_Bool is_class :1;
 };
 
 struct _Eolian_Function_Parameter
@@ -191,6 +192,7 @@ void database_function_return_default_val_set(Eolian_Function *foo_id, Eolian_Fu
 void database_function_return_flag_set_as_warn_unused(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eina_Bool warn_unused);
 
 void database_function_object_set_as_const(Eolian_Function *foo_id, Eina_Bool is_const);
+void database_function_set_as_class(Eolian_Function *foo_id, Eina_Bool is_class);
 Eina_Bool database_function_set_as_virtual_pure(Eolian_Function *function_id, Eolian_Function_Type type);
 void database_function_scope_set(Eolian_Function *function_id, Eolian_Function_Scope scope);
 

@@ -716,18 +716,28 @@ parse_property(Eo_Lexer *ls)
 {
    int line, col;
    Eo_Property_Def *prop = NULL;
-   Eina_Bool has_get  = EINA_FALSE, has_set    = EINA_FALSE,
-             has_keys = EINA_FALSE, has_values = EINA_FALSE;
+   Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
+             has_keys      = EINA_FALSE, has_values = EINA_FALSE,
+             has_protected = EINA_FALSE, has_class  = EINA_FALSE;
    prop = calloc(1, sizeof(Eo_Property_Def));
    ls->tmp.prop = prop;
    check(ls, TOK_VALUE);
    prop->name = eina_stringshare_ref(ls->t.value);
    eo_lexer_get(ls);
-   if (ls->t.kw == KW_at_protected)
+   for (;;) switch (ls->t.kw)
      {
+      case KW_at_protected:
+        CASE_LOCK(ls, protected, "protected qualifier")
         prop->scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
+        break;
+      case KW_at_class:
+        CASE_LOCK(ls, class, "class qualifier");
+        prop->is_class = EINA_TRUE;
+      default:
+        goto body;
      }
+body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
@@ -773,7 +783,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    Eo_Method_Def *meth = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
-             has_protected   = EINA_FALSE;
+             has_protected   = EINA_FALSE, has_class  = EINA_FALSE;
    meth = calloc(1, sizeof(Eo_Method_Def));
    ls->tmp.meth = meth;
    if (ctor)
@@ -800,6 +810,9 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
              meth->obj_const = EINA_TRUE;
              eo_lexer_get(ls);
              break;
+           case KW_at_class:
+             CASE_LOCK(ls, class, "class qualifier");
+             meth->is_class = EINA_TRUE;
            default:
              goto body;
           }

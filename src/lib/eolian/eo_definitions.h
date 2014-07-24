@@ -59,6 +59,7 @@ typedef struct _Eo_Property_Def
    Eina_List *values;
    Eina_List *accessors;
    int scope;
+   Eina_Bool is_class:1;
 } Eo_Property_Def;
 
 /* METHOD */
@@ -72,6 +73,7 @@ typedef struct _Eo_Method_Def
    Eina_Stringshare *legacy;
    Eina_Bool obj_const;
    int scope;
+   Eina_Bool is_class:1;
 } Eo_Method_Def;
 
 /* CLASS */

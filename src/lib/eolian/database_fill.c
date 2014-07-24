@@ -201,6 +201,7 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
                                                    EOLIAN_UNRESOLVED);
 
    database_function_scope_set(foo_id, prop->scope);
+   database_function_set_as_class(foo_id, prop->is_class);
 
    if (!_db_fill_keys     (foo_id,      prop)) goto failure;
    if (!_db_fill_values   (foo_id,      prop)) goto failure;
@@ -259,6 +260,7 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
    database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
    database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
    database_function_object_set_as_const(foo_id, meth->obj_const);
+   database_function_set_as_class(foo_id, meth->is_class);
 
    _db_fill_params(foo_id, meth);
 
