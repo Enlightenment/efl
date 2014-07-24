@@ -106,8 +106,27 @@ START_TEST(eolian_dev_impl_code)
 }
 END_TEST
 
+START_TEST(eolian_types_generation)
+{
+   char output_filepath[PATH_MAX] = "";
+   snprintf(output_filepath, PATH_MAX, "%s/types_output.c",
+#ifdef HAVE_EVIL
+         (char *)evil_tmpdir_get()
+#else
+         "/tmp"
+#endif
+         );
+   remove(output_filepath);
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/typedef.eo", "--eo --gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/typedef_ref.c", output_filepath));
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/struct.eo", "--eo --gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/struct_ref.c", output_filepath));
+}
+END_TEST
+
 void eolian_generation_test(TCase *tc)
 {
+   tcase_add_test(tc, eolian_types_generation);
    tcase_add_test(tc, eolian_dev_impl_code);
 }
 

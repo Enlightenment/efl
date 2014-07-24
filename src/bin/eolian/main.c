@@ -7,6 +7,7 @@
 #include "legacy_generator.h"
 #include "eo_generator.h"
 #include "impl_generator.h"
+#include "types_generator.h"
 #include "common_funcs.h"
 
 static Eina_Strbuf *
@@ -113,6 +114,16 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
 
    Eina_Strbuf *buffer = eina_strbuf_new();
 
+   if (!types_header_generate(eo_filename, buffer))
+     {
+        ERR("Failed to generate types of file %s", eo_filename);
+        goto end;
+     }
+   else
+     {
+        buffer = _include_guard_enclose(eo_filename, "TYPES", buffer);
+     }
+
    const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
    if (class)
      {
@@ -198,6 +209,12 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
    Eina_Bool ret = EINA_FALSE;
 
    Eina_Strbuf *buffer = eina_strbuf_new();
+
+   if (!types_header_generate(eo_filename, buffer))
+     {
+        ERR("Failed to generate types of file %s", eo_filename);
+        goto end;
+     }
 
    const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
    if (class)

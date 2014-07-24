@@ -52,6 +52,8 @@ bin_eolian_eolian_gen_SOURCES = \
                 bin/eolian/impl_generator.h \
                 bin/eolian/legacy_generator.c \
                 bin/eolian/legacy_generator.h \
+                bin/eolian/types_generator.c \
+                bin/eolian/types_generator.h \
                 bin/eolian/main.c
 
 bin_eolian_eolian_gen_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
@@ -102,5 +104,7 @@ tests/eolian/data/override.eo \
 tests/eolian/data/events.eo \
 tests/eolian/data/namespace.eo \
 tests/eolian/data/extern.eo \
-tests/eolian/data/struct.eo
+tests/eolian/data/struct.eo \
+tests/eolian/data/typedef_ref.c \
+tests/eolian/data/struct_ref.c
 
