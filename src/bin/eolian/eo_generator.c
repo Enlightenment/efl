@@ -523,7 +523,9 @@ eo_op_desc_generate(const Eolian_Class *class, Eolian_Function *fid, Eolian_Func
    if (ftype == EOLIAN_PROP_GET) suffix = "_get";
    if (ftype == EOLIAN_PROP_SET) suffix = "_set";
    Eina_Bool is_virtual_pure = eolian_function_is_virtual_pure(fid, ftype);
-   eina_strbuf_append_printf(buf, "\n     EO_OP_FUNC(%s, ", func_env.lower_eo_func);
+   const char *class_str = "";
+   if (eolian_function_is_class(fid)) class_str = "CLASS_";
+   eina_strbuf_append_printf(buf, "\n     EO_OP_%sFUNC(%s, ", class_str, func_env.lower_eo_func);
    if (!is_virtual_pure)
       eina_strbuf_append_printf(buf, "_%s_%s%s, \"%s\"),", class_env.lower_classname, funcname, suffix, desc);
    else
@@ -674,26 +676,30 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
           }
 
         rets = eolian_function_full_c_name_get(fnid, impl_env.lower_eo_prefix);
+
+        const char *class_str = "";
+        if (eolian_function_is_class(fnid)) class_str = "CLASS_";
+
         switch (ftype)
           {
            case EOLIAN_PROP_SET: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY:
               if (ftype != EOLIAN_PROP_GET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_set, _%s_%s_set),",
-                         rets, implname, funcname);
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_set, _%s_%s_set),",
+                         class_str, rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, &impl_env);
                 }
 
               if (ftype != EOLIAN_PROP_SET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_get, _%s_%s_get),",
-                         rets, implname, funcname);
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_get, _%s_%s_get),",
+                         class_str, rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, &impl_env);
                 }
               break;
            default:
-              eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s, _%s_%s),",
-                    rets, implname, funcname);
+              eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, _%s_%s),",
+                    class_str, rets, implname, funcname);
               eo_bind_func_generate(class, fnid, ftype, str_bodyf, &impl_env);
               break;
           }
