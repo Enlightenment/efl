@@ -328,8 +328,15 @@ _win_noblank_eval(void)
              noblanks++;
           }
      }
-   if (noblanks > 0) ecore_x_screensaver_supend();
-   else ecore_x_screensaver_resume();
+
+   if (ENGINE_COMPARE(ELM_SOFTWARE_X11) || 
+       ENGINE_COMPARE(ELM_SOFTWARE_16_X11) || 
+       ENGINE_COMPARE(ELM_XRENDER_X11) || ENGINE_COMPARE(ELM_OPENGL_X11) ||
+       ENGINE_COMPARE(ELM_OPENGL_COCOA) || ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
+     {
+        if (noblanks > 0) ecore_x_screensaver_supend();
+        else ecore_x_screensaver_resume();
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    // XXX: no wl implementation of this yet - maybe higher up at prop level
