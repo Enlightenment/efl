@@ -656,14 +656,28 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @in const(void)* func_data; /*@ Data to be passed to @p func. */
          }
       }
-	  search_by_text_item_get {
+      search_by_text_item_get {
+         /*@
+         Get gengrid item by given string.
+
+         @return Pointer to the gengrid item which matches search_string in case of success, otherwise returns NULL.
+
+         It takes pointer to the gengrid item that will be used to start
+         search from it.
+
+         This function uses globs (like "*.jpg") for searching and takes
+         search flags as last parameter That is a bitfield with values
+         to be ored together or 0 for no flags.
+
+         @ingroup Gengrid
+         @since 1.11 */
+
          return Elm_Object_Item *;
          params {
-            @in Elm_Object_Item * item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
-            @in Elm_Gen_Item_Text_Get_Cb _text_get; /*@ Pointer to Elm_Gen_Item_Text_Get_Cb function to get text for comparison. */
-            @in const(char)* part_name; /*@ Name of the TEXT part of genlist item to search string in. */
-            @in const(char)* pattern; /*@ The search pattern. */
-            @in int flags; /*@ fnmatch search flags */
+            @in Elm_Object_Item *item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the gengrid. */
+            @in const(char) *part_name; /*@ Name of the TEXT part of gengrid item to search string in. */
+            @in const(char) *pattern; /*@ The search pattern. */
+            @in Elm_Glob_Match_Flags flags; /*@ Search flags */
          }
       }
    }

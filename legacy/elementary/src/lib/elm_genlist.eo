@@ -683,43 +683,22 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @return Pointer to the genlist item which matches search_string in case of success, otherwise returns NULL.
 
-         This function takes pointer to the function that returns
-         comparison string for item (it could be the same function as used for setting text for labels).
-         Also it takes pointer to the genlist item that will be used to start search from it.
+         It takes pointer to the genlist item that will be used to start
+         search from it.
 
-         This function uses fnmatch() for searching and takes it's seatcing flags as last parameter.
-         The list of available flags:
-         <dl>
-            <dt>FNM_NOESCAPE</dt>
-            <dd>If this flag is set, treat backslash as an ordinary character, instead of an escape character.</dd>
-            <dt>FNM_PATHNAME</dt>
-            <dd>If this flag is set, match a slash in string only with a slash in pattern and not by an asterisk (*)
-                or a question mark (?) metacharacter, nor by a bracket expression ([]) containing a slash.</dd>
-            <dt>FNM_PERIOD</dt>
-            <dd>If this flag is set, a leading period in string has to be matched exactly by a period in pattern.
-                A period is considered to be leading if it is the first character in string, or if both
-                FNM_PATHNAME is set and the period immediately follows a slash.</dd>
-            <dt>FNM_FILE_NAME</dt>
-            <dd>This is a GNU synonym for FNM_PATHNAME.</dd>
-            <dt>FNM_LEADING_DIR</dt>
-            <dd>If this flag (a GNU extension) is set, the pattern is considered to be matched if it matches an
-                initial segment of string which is followed by a slash. This flag is mainly for the internal
-                use of glibc and is only implemented in certain cases.</dd>
-            <dt>FNM_CASEFOLD</dt>
-            <dd>If this flag (a GNU extension) is set, the pattern is matched case-insensitively.</dd>
-         </dl>
-         For more details see <a href=http://man7.org/linux/man-pages/man3/fnmatch.3.html>Linux Programmer's Manual. FNMATCH()</a>
+         This function uses globs (like "*.jpg") for searching and takes
+         search flags as last parameter That is a bitfield with values
+          to be ored together or 0 for no flags.
 
          @ingroup Genlist
-         @since 1.10 */
+         @since 1.11 */
 
          return Elm_Object_Item *;
          params {
             @in Elm_Object_Item * item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
-            @in Elm_Gen_Item_Text_Get_Cb _text_get; /*@ Pointer to Elm_Gen_Item_Text_Get_Cb function to get text for comparison. */
-            @in const(char)*  part_name; /*@ Name of the TEXT part of genlist item to search string in. */
-            @in const(char)*  pattern; /*@ The search pattern. */
-            @in int flags; /*@ fnmatch search flags */
+            @in const(char)* part_name; /*@ Name of the TEXT part of genlist item to search string in. */
+            @in const(char)* pattern; /*@ The search pattern. */
+            @in Elm_Glob_Match_Flags flags; /*@ Search flags */
          }
       }
    }

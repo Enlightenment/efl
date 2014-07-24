@@ -3508,8 +3508,8 @@ static const char *_gl20_items_text[] = {
          "Topeka",          "Trenton" };
 
 static char *
-_gl20_search_text_get(void *data, Evas_Object *obj EINA_UNUSED,
-                      const char *part EINA_UNUSED)
+_gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+               const char *part EINA_UNUSED)
 {
    char buf[32];
    int item_index = (int)(uintptr_t)data;
@@ -3530,29 +3530,18 @@ _gl20_search_text_get(void *data, Evas_Object *obj EINA_UNUSED,
    return NULL;
 }
 
-static char *
-_gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED,
-               const char *part EINA_UNUSED)
-{
-   char buf[64];
-   snprintf(buf, sizeof(buf), "(this text is not uset for search)     %s",
-      _gl20_search_text_get(data, NULL, NULL));
-   return strdup(buf);
-}
-
 static void
-_gl20_searsh_item(gl20_Event_Data *event_data, Elm_Object_Item * it)
+_gl20_search_item(gl20_Event_Data *event_data, Elm_Object_Item * it)
 {
    const char *str = elm_entry_entry_get(event_data->en_obj);
    if (!str || !strlen(str)) return;
 
-   int flag = 0;
-   if (!elm_check_state_get(event_data->tg_obj))
-     flag = FNM_CASEFOLD;
+   Elm_Glob_Match_Flags flag = 0;
+   if (!elm_check_state_get(event_data->tg_obj)) flag = ELM_GLOB_MATCH_NOCASE;
 
    printf("Looking for \"%s\". ", str);
-   event_data->last_item_found = elm_genlist_search_by_text_item_get(event_data->gl_obj,
-                                    it, _gl20_search_text_get, NULL, str, flag);
+   event_data->last_item_found = elm_genlist_search_by_text_item_get
+   (event_data->gl_obj, it, NULL, str, flag);
 
    if (event_data->last_item_found)
      {
@@ -3570,7 +3559,7 @@ static void
 _gl20_search_settings_changed_cb(void *data, Evas_Object *obj EINA_UNUSED,
                                  void *einfo EINA_UNUSED)
 {
-   _gl20_searsh_item(data, NULL);
+   _gl20_search_item(data, NULL);
 }
 
 static Elm_Genlist_Item_Class *
@@ -3616,7 +3605,7 @@ static void _gl20_on_keydown(void *data, Evas *evas EINA_UNUSED,
    if (!strcmp(ev->key, "Return"))
      {
         printf("Looking for next item\n");
-        _gl20_searsh_item(data, event_data->last_item_found);
+        _gl20_search_item(data, event_data->last_item_found);
      }
 }
 

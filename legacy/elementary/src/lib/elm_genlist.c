@@ -7547,28 +7547,41 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Ge
 EOLIAN static Elm_Object_Item *
 _elm_genlist_search_by_text_item_get(Eo *obj EINA_UNUSED,
                                      Elm_Genlist_Data *sd,
-                                     Elm_Object_Item * item_to_search_from,
-                                     Elm_Gen_Item_Text_Get_Cb _text_get,
-                                     const char * part_name,
-                                     const char * pattern,
-                                     int flags)
+                                     Elm_Object_Item *item_to_search_from,
+                                     const char *part_name,
+                                     const char *pattern,
+                                     Elm_Glob_Match_Flags flags)
 {
    Elm_Gen_Item *it = NULL;
-   const char * str = NULL;
-   Eina_Bool search_flag = (item_to_search_from) ? EINA_FALSE : EINA_TRUE;
+   char *str = NULL;
+   Eina_Inlist *start = NULL;
+   int fnflags = 0;
 
-   if (!_text_get || !pattern) return NULL;
+   if (!pattern) return NULL;
    if (!sd->items) return NULL;
 
-   EINA_INLIST_FOREACH(sd->items, it)
+   if (flags & ELM_GLOB_MATCH_NO_ESCAPE) fnflags |= FNM_NOESCAPE;
+   if (flags & ELM_GLOB_MATCH_PATH) fnflags |= FNM_PATHNAME;
+   if (flags & ELM_GLOB_MATCH_PERIOD) fnflags |= FNM_PERIOD;
+#ifdef FNM_CASEFOLD
+   if (flags & ELM_GLOB_MATCH_NOCASE) fnflags |= FNM_CASEFOLD;
+#endif
+
+   start = (item_to_search_from) ?
+   EINA_INLIST_GET((Elm_Gen_Item *)item_to_search_from) :
+   sd->items;
+   EINA_INLIST_FOREACH(start, it)
      {
-        if (search_flag)
+        if (!it->itc->func.text_get) continue;
+        str = it->itc->func.text_get((void *)it->base.data,
+                                                                                     VIEW(it), part_name);
+        if (!str) continue;
+        if (!fnmatch(pattern, str, fnflags))
           {
-             str = _text_get((void *)it->base.data, VIEW(it), part_name);
-             if (!fnmatch(pattern, str, flags)) return (Elm_Object_Item *)it;
+             free(str);
+             return (Elm_Object_Item *)it;
           }
-        else if (item_to_search_from == (Elm_Object_Item *)it)
-          search_flag = EINA_TRUE;
+        free(str);
      }
    return NULL;
 }

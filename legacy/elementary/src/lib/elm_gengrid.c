@@ -105,24 +105,41 @@ static const Elm_Action key_actions[] = {
 EOLIAN static Elm_Object_Item *
 _elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
                                      Elm_Gengrid_Data *sd,
-                                     Elm_Object_Item * item_to_search_from,
-                                     Elm_Gen_Item_Text_Get_Cb _text_get,
-                                     const char * part_name,
-                                     const char * pattern,
-                                     int flags)
+                                     Elm_Object_Item *item_to_search_from,
+                                     const char *part_name,
+                                     const char *pattern,
+                                     Elm_Glob_Match_Flags flags)
 {
    Elm_Gen_Item *it = NULL;
-   const char * str = NULL;
-   Eina_Inlist * start = NULL;
+   char *str = NULL;
+   Eina_Inlist *start = NULL;
+   int fnflags = 0;
 
-   if (!_text_get || !pattern) return NULL;
+   if (!pattern) return NULL;
    if (!sd->items) return NULL;
 
-   start = (item_to_search_from) ? EINA_INLIST_GET((Elm_Gen_Item *)item_to_search_from) : sd->items;
+   if (flags & ELM_GLOB_MATCH_NO_ESCAPE) fnflags |= FNM_NOESCAPE;
+   if (flags & ELM_GLOB_MATCH_PATH) fnflags |= FNM_PATHNAME;
+   if (flags & ELM_GLOB_MATCH_PERIOD) fnflags |= FNM_PERIOD;
+#ifdef FNM_CASEFOLD
+   if (flags & ELM_GLOB_MATCH_NOCASE) fnflags |= FNM_CASEFOLD;
+#endif
+
+   start = (item_to_search_from) ?
+     EINA_INLIST_GET((Elm_Gen_Item *)item_to_search_from) :
+     sd->items;
    EINA_INLIST_FOREACH(start, it)
      {
-        str = _text_get((void *)it->base.data, VIEW(it), part_name);
-        if (!fnmatch(pattern, str, flags)) return (Elm_Object_Item *)it;
+        if (!it->itc->func.text_get) continue;
+        str = it->itc->func.text_get((void *)it->base.data,
+                                     VIEW(it), part_name);
+        if (!str) continue;
+        if (!fnmatch(pattern, str, fnflags))
+          {
+             free(str);
+             return (Elm_Object_Item *)it;
+          }
+        free(str);
      }
    return NULL;
 }

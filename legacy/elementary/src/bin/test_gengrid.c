@@ -1381,20 +1381,11 @@ static const char *_grid5_items_text[] = {
 };
 
 static char *
-_grid5_search_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
-{
-   char buf[32];
-   Item_Data *id = data;
-
-   snprintf(buf, sizeof(buf), "%s", _grid5_items_text[id->mode]);
-   return strdup(buf);
-}
-
-static char *
 _grid5_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
+   Item_Data *id = data;
    char buf[64];
-   snprintf(buf, sizeof(buf), "%s", _grid5_search_text_get(data, NULL, NULL));
+   snprintf(buf, sizeof(buf), "%s", _grid5_items_text[id->mode]);
    return strdup(buf);
 }
 
@@ -1405,7 +1396,8 @@ _grid5_search_item(grid5_Event_Data *event_data, Elm_Object_Item * it)
    if (!str || !strlen(str)) return;
 
    printf("Looking for \"%s\". ", str);
-   event_data->last_item_found = elm_gengrid_search_by_text_item_get(event_data->grid_obj, it, _grid5_search_text_get, NULL, str, 0);
+   event_data->last_item_found = elm_gengrid_search_by_text_item_get
+   (event_data->grid_obj, it, NULL, str, 0);
 
    if (event_data->last_item_found)
      {

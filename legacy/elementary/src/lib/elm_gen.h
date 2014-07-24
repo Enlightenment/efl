@@ -61,3 +61,11 @@ struct _Elm_Gen_Item_Class
 
 #define ELM_GEN_ITEM_CLASS_VERSION 2
 #define ELM_GEN_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_VERSION, 0, 0
+
+typedef enum
+{
+   ELM_GLOB_MATCH_NO_ESCAPE = (1 << 0), /**< Treat backslash as an ordinary character instead of escape */
+   ELM_GLOB_MATCH_PATH = (1 << 1), /**< Match a slash in string only with a slash in pattern and not by an asterisk (*) or a question mark (?) metacharacter, nor by a bracket expression ([]) containing a slash. */
+   ELM_GLOB_MATCH_PERIOD = (1 << 2), /**< Leading  period in string has to be matched exactly by a period in pattern. A period is considered to be leading if it is the first character in string, or if both ELM_GLOB_MATCH_PATH is set and the period immediately follows a slash. */
+   ELM_GLOB_MATCH_NOCASE = (1 << 3) /**< The pattern is matched case-insensitively. */
+} Elm_Glob_Match_Flags; /**< Glob matching bitfiled flags. @since 1.11 */
