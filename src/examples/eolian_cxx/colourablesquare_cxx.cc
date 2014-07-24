@@ -44,6 +44,6 @@ _colourablesquare_size_print(Eo *obj EINA_UNUSED, ColourableSquare_Data *self)
 void
 _colourablesquare_size_set(Eo *obj EINA_UNUSED, ColourableSquare_Data *self EINA_UNUSED, int size)
 {
-   EINA_CXX_DOM_LOG_DBG(domain) << __func__ << " [ size = " << self->size << " ]" << std::endl;
+   EINA_CXX_DOM_LOG_DBG(domain) << __func__ << " [ size = " << size << " ]" << std::endl;
 }
 
