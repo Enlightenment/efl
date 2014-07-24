@@ -1,0 +1,22 @@
+class Simple {
+   properties {
+      a @class {
+         get {
+         }
+      }
+      b {
+         get {
+         }
+      }
+   }
+   methods {
+      foo @class {
+      }
+      bar {
+      }
+      baz @protected @class {
+      }
+      bah @protected {
+      }
+   }
+}

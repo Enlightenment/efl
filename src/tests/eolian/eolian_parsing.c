@@ -647,6 +647,40 @@ START_TEST(eolian_extern)
 }
 END_TEST
 
+START_TEST(eolian_class_funcs)
+{
+   const Eolian_Function *fid = NULL;
+   const Eolian_Class *class;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/class_funcs.eo"));
+   fail_if(!(class = eolian_class_get_by_name("Simple")));
+
+   /* Class properties */
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
+   fail_if(!eolian_function_is_class(fid));
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "b", EOLIAN_PROPERTY)));
+   fail_if(eolian_function_is_class(fid));
+
+   /* Class methods */
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_class(fid));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PUBLIC);
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
+   fail_if(eolian_function_is_class(fid));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PUBLIC);
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "baz", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_class(fid));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PROTECTED);
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "bah", EOLIAN_METHOD)));
+   fail_if(eolian_function_is_class(fid));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PROTECTED);
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -660,5 +694,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_namespaces);
    tcase_add_test(tc, eolian_struct);
    tcase_add_test(tc, eolian_extern);
+   tcase_add_test(tc, eolian_class_funcs);
 }
 

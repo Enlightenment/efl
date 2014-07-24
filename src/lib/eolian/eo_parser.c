@@ -734,6 +734,8 @@ parse_property(Eo_Lexer *ls)
       case KW_at_class:
         CASE_LOCK(ls, class, "class qualifier");
         prop->is_class = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
       default:
         goto body;
      }
