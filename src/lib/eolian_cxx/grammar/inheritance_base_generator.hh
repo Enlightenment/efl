@@ -83,37 +83,6 @@ operator<<(std::ostream& out, inheritance_operations_description const& x)
    return out;
 }
 
-struct inheritance_wrapper
-{
-   eo_class const& _cls;
-   eo_function const& _func;
-   inheritance_wrapper(eo_class const& cls, eo_function const& func)
-     : _cls(cls), _func(func)
-   {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, inheritance_wrapper const& x)
-{
-   out << "template <typename T>" << endl
-       << reinterpret_type(x._func.ret) << " "
-       << _ns_as_prefix(x._cls) << "_"
-       << x._cls.name << "_" << x._func.name
-       << "_wrapper(Eo* objid EINA_UNUSED, "
-       << "efl::eo::detail::Inherit_Private_Data* self"
-       << (x._func.params.size() ? ", " : "")
-       << parameters_c_declaration(x._func.params)
-       << ")" << endl
-       << "{" << endl
-       << tab(1)
-       << (!function_is_void(x._func) ? "return ": "")
-       << "static_cast<T*>(self->this_)->"
-       << x._func.name << "(" << parameters_c_list(x._func.params) << ");" << endl
-       << "}" << endl << endl;
-
-   return out;
-}
-
 struct inheritance_wrappers
 {
    eo_class const& _cls;
