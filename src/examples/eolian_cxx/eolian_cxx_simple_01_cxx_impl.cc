@@ -22,7 +22,7 @@ main()
    obj1.colour_set(0xc0ffee);
    obj1.composite_colour_get(&r, &g, &b);
 
-   ::colourablesquare obj2(10);
+   ::colourablesquare obj2(0x123456);
    obj2.composite_colour_set(r, g, b);
    obj2.size_set(11);
    assert(obj1.colour_get() == obj2.colour_get());

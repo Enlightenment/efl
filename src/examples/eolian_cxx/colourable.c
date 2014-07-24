@@ -17,16 +17,6 @@ static int _colourable_impl_logdomain;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_colourable_impl_logdomain, __VA_ARGS__)
 
-#ifdef INFO
-#undef INFO
-#endif
-#define INFO(...) EINA_LOG_DOM_INFO(_colourable_impl_logdomain, __VA_ARGS__)
-
-#ifdef ERR
-#undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_colourable_impl_logdomain, __VA_ARGS__)
-
 struct _Colourable_Data
 {
    int r;
@@ -35,9 +25,6 @@ struct _Colourable_Data
 };
 
 typedef struct _Colourable_Data  Colourable_Data;
-
-#define COLOURABLE_DATA_GET(o, wd)                             \
-  Colourable_Data *wd = eo_data_scope_get(o, MY_CLASS)
 
 void
 _colourable_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)

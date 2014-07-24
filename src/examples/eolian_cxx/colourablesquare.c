@@ -18,25 +18,11 @@ static int _colourablesquare_impl_logdomain;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_colourablesquare_impl_logdomain, __VA_ARGS__)
 
-#ifdef INFO
-#undef INFO
-#endif
-#define INFO(...) EINA_LOG_DOM_INFO(_colourablesquare_impl_logdomain, __VA_ARGS__)
-
-#ifdef ERR
-#undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_colourablesquare_impl_logdomain, __VA_ARGS__)
-
 struct _ColourableSquare_Data
 {
    int size;
 };
-
 typedef struct _ColourableSquare_Data  ColourableSquare_Data;
-
-#define COLOURABLESQUARE_DATA_GET(o, wd)                        \
-  ColourableSquare_Data *wd = eo_data_scope_get(o, MY_CLASS)
 
 static void
 _colourablesquare_size_constructor(Eo *obj, ColourableSquare_Data *self, int size)
