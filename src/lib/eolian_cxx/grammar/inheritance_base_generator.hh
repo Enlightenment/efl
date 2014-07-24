@@ -111,7 +111,7 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
             << tab(1)
             << (!function_is_void(func) ? "return ": "")
             << "static_cast<T*>(self->this_)->"
-            << func.name << "(" << parameters_c_list(func.params) << ");" << endl
+            << func.name << "(" << parameters_cxx_list(func.params) << ");" << endl
             << "}" << endl << endl;
      }
    return out;
