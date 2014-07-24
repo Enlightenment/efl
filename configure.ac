@@ -185,6 +185,7 @@ AC_SUBST(EFL_VERSION_MAJOR)
 AC_SUBST(EFL_VERSION_MINOR)
 
 have_systemd_pkg="no"
+have_libinput="no"
 have_win32="no"
 have_windows="no"
 have_freebsd="no"
@@ -207,6 +208,7 @@ case "$host_os" in
    linux*)
       have_linux="yes"
       have_systemd_pkg="auto"
+      have_libinput="auto"
    ;;
 esac
 
@@ -684,6 +686,33 @@ if test "x${want_systemd}" = "xyes" -a "x${have_systemd_pkg}" = "xno"; then
 fi
 
 AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
+
+
+AC_ARG_ENABLE([libinput],
+   [AS_HELP_STRING([--enable-libinput],[Enable libinput support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libinput="yes"
+    else
+       want_libinput="no"
+    fi
+   ], [
+    want_libinput="no"
+   ])
+
+if test "x${have_libinput}" = "xauto" -o "x${have_libinput}" = "xyes"; then
+   PKG_CHECK_MODULES([LIBINPUT], [libinput >= 0.2.0],
+   [have_libinput="yes"],
+   [have_libinput="no"])
+fi
+
+# check for libinput library if requested
+if test "x${want_libinput}" = "xyes" -a "x${have_libinput}" = "xno"; then
+   AC_MSG_ERROR([libinput dependencie requested but not found])
+fi
+
+AM_CONDITIONAL([WANT_LIBINPUT], [test "${want_libinput}" = "yes"])
+
 
 #### Platform-dependent
 DL_LIBS=""
@@ -2628,6 +2657,9 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
 ### Checks for library functions
 EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_systemd}], [SYSTEMD], [libsystemd-login])
 EFL_ADD_FEATURE([ECORE_INPUT], [systemd-login], [${want_systemd}])
+
+EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_libinput}], [LIBINPUT], [libinput])
+EFL_ADD_FEATURE([ECORE_INPUT], [libinput], [${want_libinput}])
 
 EFL_LIB_END_OPTIONAL([Ecore_Input])
 #### End of Ecore_Input
