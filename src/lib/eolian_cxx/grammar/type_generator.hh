@@ -94,7 +94,7 @@ operator<<(std::ostream& out, to_cxx const& x)
         out << "efl::eolian::to_cxx<"
             << reinterpret_type(x._type)
             << ">(" << x._varname
-            << ", " << type_ownership(x._type) << ");";
+            << ", " << type_ownership(x._type) << ")";
      }
    else
      out << x._varname;

@@ -155,26 +155,35 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    eo_function const& func = x._func;
    bool is_void = function_is_void(func);
 
-   out << tab(2) << "virtual " << reinterpret_type(func.ret) << " "
+   if (parameters_count_callbacks(func.params) == 1)
+     out << tab(2) << "template <typename F>" << tab(2) << endl;
+   else
+     out << tab(2) << "virtual ";
+
+   out << reinterpret_type(func.ret) << " "
        << func.name << "("
-       << parameters_c_declaration(func.params) << ")" << endl
+       << parameters_declaration(func.params) << ")" << endl
        << tab(2) << "{" << endl;
+
    if (!is_void)
-     {
-        out << tab(3) << func.ret.front().native << " _tmp_ret = {};"  << endl;
-     }
+     out << tab(3) << func.ret.front().native << " _tmp_ret = {};"  << endl;
+
+   parameters_container_type::const_iterator
+     callback_iter = parameters_find_callback(func.params);
+   if (callback_iter != func.params.cend())
+     out << tab(3) << "typedef typename std::remove_reference<F>::type function_type;" << endl
+         << tab(3) << "function_type* _tmp_f = new function_type(std::forward<F>("
+         << (*callback_iter).name << "));" << endl;
+
    out << tab(3)
-       << "eo_do_super(static_cast<T*>(this)->_eo_ptr()" << endl
-       << tab(4) << ", static_cast<T*>(this)->_eo_class()," << endl
-       << tab(4) << (!is_void ? "_tmp_ret = " : "")
-       << "::" << x._func.impl
-       << "(";
-   parameter_names_enumerate(out, func.params)
-       << "));" << endl;
-   if (!function_is_void(func))
+       << "eo_do_super(static_cast<T*>(this)->_eo_ptr()," << endl
+       << tab(5) << "static_cast<T*>(this)->_eo_class()," << endl
+       << tab(5) << function_call(func) << ");" << endl;
+
+   if (!is_void)
      out << tab(4) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
-   out << tab(2) << "}" << endl << endl;
-   return out;
+
+   return out << tab(2) << "}" << endl << endl;
 }
 
 struct inheritance_base_operations
@@ -301,7 +310,6 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
 
    if (!function_is_void(x._func))
      out << tab(4) << "return " << to_cxx(x._func.ret, "_tmp_ret") << ";" << endl;
-
    out << tab(2) << "}" << endl
        << endl;
 
