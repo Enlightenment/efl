@@ -1471,6 +1471,30 @@ EAPI Eina_Bool evas_object_image_smooth_scale_get(const Eo *obj);
  */
 EAPI Evas_Object         *evas_object_text_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+/**
+ *
+ * Sets the text string to be displayed by the given text object.
+ *
+ * @see evas_object_text_text_get()
+ *
+ * @param[in] text Text string to display on it.
+ */
+EAPI void evas_object_text_text_set(Eo *obj, const char *text);
+
+/**
+ *
+ * Retrieves the text string currently being displayed by the given
+ * text object.
+ *
+ * @return The text string currently being displayed on it.
+ *
+ * @note Do not free() the return value.
+ *
+ * @see evas_object_text_text_set()
+ *
+ */
+EAPI const char *evas_object_text_text_get(const Eo *obj);
+
 #include "canvas/evas_text.eo.legacy.h"
 
 /**

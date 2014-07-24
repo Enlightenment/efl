@@ -1,4 +1,4 @@
-class Evas.Text (Evas.Object, Efl.Text_Properties)
+class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
@@ -120,28 +120,6 @@ class Evas.Text (Evas.Object, Efl.Text_Properties)
             int g; /*@ The green component of the given color. */
             int b; /*@ The blue component of the given color. */
             int a; /*@ The alpha component of the given color. */
-         }
-      }
-      text {
-         set {
-            /*@
-            Sets the text string to be displayed by the given text object.
-
-            @see evas_object_text_text_get() */
-         }
-         get {
-            /*@
-            Retrieves the text string currently being displayed by the given
-            text object.
-
-            @return The text string currently being displayed on it.
-
-            @note Do not free() the return value.
-
-            @see evas_object_text_text_set() */
-         }
-         values {
-            const(char)* text; /*@ Text string to display on it. */
          }
       }
       glow2_color {
@@ -385,6 +363,8 @@ class Evas.Text (Evas.Object, Efl.Text_Properties)
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Evas.Object.size.set;
+      Efl.Text.text.set;
+      Efl.Text.text.get;
       Efl.Text_Properties.font.get;
       Efl.Text_Properties.font.set;
       Efl.Text_Properties.font_source.get;

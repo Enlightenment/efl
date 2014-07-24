@@ -100,7 +100,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    eo_do(ep->object,
          evas_obj_text_ellipsis_set(chosen_desc->text.min_x ? -1 : params->type.text.ellipsis),
          efl_text_properties_font_set(font, size),
-         evas_obj_text_set(text),
+         efl_text_set(text),
          evas_obj_size_set(sw, sh));
 
    return text;
@@ -295,7 +295,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
               if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
               efl_text_properties_font_set(font, size);
-              evas_obj_text_set(text));
+              efl_text_set(text));
 
         part_get_geometry(ep, &tw, &th);
         /* Find the wanted font size */
@@ -335,7 +335,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
               if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
               efl_text_properties_font_set(font, size);
-              evas_obj_text_set(text));
+              efl_text_set(text));
         part_get_geometry(ep, &tw, &th);
 
         /* only grow the font size if we didn't already reach the max size
@@ -479,7 +479,7 @@ arrange_text:
          if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
          efl_text_properties_font_set(font, size),
-         evas_obj_text_set(text));
+         efl_text_set(text));
    part_get_geometry(ep, &tw, &th);
 
    /* filters */
