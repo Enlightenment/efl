@@ -115,8 +115,8 @@ evas_image_load_file_close_ico(void *loader_data)
 
 static Eina_Bool
 evas_image_load_file_head_ico(void *loader_data,
-			      Evas_Image_Property *prop,
-			      int *error)
+                              Evas_Image_Property *prop,
+                              int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
    Evas_Image_Load_Opts *opts;
@@ -145,7 +145,7 @@ evas_image_load_file_head_ico(void *loader_data,
 
    opts = loader->opts;
    f = loader->f;
-   key = loader->key;   
+   key = loader->key;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -344,13 +344,13 @@ static Eina_Bool
 evas_image_load_file_data_ico(void *loader_data,
                               Evas_Image_Property *prop,
                               void *pixels,
-			      int *error)
+                              int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   Evas_Image_Load_Opts *opts;   
+   Evas_Image_Load_Opts *opts;
    const char *key;
    Eina_File *f;
-			      
+
    void *map = NULL;
    size_t position = 0;
    unsigned short word;
@@ -551,7 +551,7 @@ evas_image_load_file_data_ico(void *loader_data,
 
    // changed since we loaded header?
    if (((int)prop->w != w) || ((int)prop->h != h)) goto close_file;
-   
+
    // read bmp header time... let's do some checking
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // headersize - dont care
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // width
