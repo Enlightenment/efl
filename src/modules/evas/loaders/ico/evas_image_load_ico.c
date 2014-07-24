@@ -554,246 +554,227 @@ evas_image_load_file_data_ico(void *loader_data,
 
    // read bmp header time... let's do some checking
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // headersize - dont care
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // width
-   if (dword > 0)
+   if (dword != 40) // must be 40 if bmp entry - if not, something else
      {
-        if ((int)dword != w)
-          {
-             w = dword;
-             diff_size = 1;
-          }
-     }
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // height
-   if (dword > 0)
-     {
-        if ((int)dword != (h * 2))
-          {
-             h = dword / 2;
-             diff_size = 1;
-          }
-     }
-   if (diff_size)
-     {
-        ERR("Broken ICO file: %s - "
-            "  Reporting size of %ix%i in index, but bitmap is %ix%i. "
-            "  May be expanded or cropped.",
-            eina_file_filename_get(f), prop->w, prop->h, w, h);
-     }
-   if (!read_ushort(map, fsize, &position, &word)) goto close_file; // planes
-   //planes2 = word;
-   if (!read_ushort(map, fsize, &position, &word)) goto close_file; // bitcount
-   bitcount = word;
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // compression
-   //compression = dword;
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // imagesize
-   //imagesize = dword;
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // z pixels per m
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // y pizels per m
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors used
-   //colorsused = dword;
-   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors important
-   //colorsimportant = dword;
-
-   surface = pixels;
-   memset(surface, 0, prop->w * prop->h * 4);
-
-   if (!((bitcount == 1) || (bitcount == 4) || (bitcount == 8) ||
-         (bitcount == 24) || (bitcount == 32)))
-      goto close_file;
-   if (bitcount <= 8)
-     {
-        cols2 = 1 << bitcount;
-        if (cols == 0) cols = cols2;
-        if (cols > cols2) cols = cols2;
-        if (cols > 256) cols = 256;
+        ERR("ICO at %i offset, size %i in %s is not a standard ico bmp "
+            " file entry. It may be PNG (new as of Vista - not in original spec)",
+            (int)position, (int)chosen.bmsize,
+            eina_file_filename_get(f));
      }
    else
-      cols = 0;
-   if (bitcount > 8) cols = 0;
-
-   pal = alloca(256 * 4);
-   for (i = 0; i < cols; i++)
      {
-        unsigned char a, r, g, b;
-
-        if (!read_uchar(map, fsize, &position, &b)) goto close_file;
-        if (!read_uchar(map, fsize, &position, &g)) goto close_file;
-        if (!read_uchar(map, fsize, &position, &r)) goto close_file;
-        if (!read_uchar(map, fsize, &position, &a)) goto close_file;
-        a = 0xff;
-        pal[i] = ARGB_JOIN(a, r, g, b);
-     }
-   stride = ((w + 31) / 32);
-   maskbuf = alloca(stride * h);
-   pixbuf = alloca(stride * 32 * 4); // more than enough
-   if (bitcount == 1)
-     {
-        pstride = stride * 4;
-        for (i = 0; i < h; i++)
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // width
+        if (dword > 0)
           {
-             pix = surface + (i * w);
-             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
-             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
-             p = pixbuf;
-             if (i >= h) continue;
-             for (j = 0; j < w; j++)
+             if ((int)dword != w)
                {
-                  if (j >= w) break;
-                  if ((j & 0x7) == 0x0)
+                  w = dword;
+                  diff_size = 1;
+               }
+          }
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // height
+        if (dword > 0)
+          {
+             if ((int)dword != (h * 2))
+               {
+                  h = dword / 2;
+                  diff_size = 1;
+               }
+          }
+        if (diff_size)
+          {
+             ERR("Broken ICO file: %s - "
+                 "  Reporting size of %ix%i in index, but bitmap is %ix%i. "
+                 "  May be expanded or cropped.",
+                 eina_file_filename_get(f), prop->w, prop->h, w, h);
+          }
+        if (!read_ushort(map, fsize, &position, &word)) goto close_file; // planes
+        //planes2 = word;
+        if (!read_ushort(map, fsize, &position, &word)) goto close_file; // bitcount
+        bitcount = word;
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // compression
+        //compression = dword;
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // imagesize
+        //imagesize = dword;
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // z pixels per m
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // y pizels per m
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors used
+        //colorsused = dword;
+        if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors important
+        //colorsimportant = dword;
+
+        surface = pixels;
+        memset(surface, 0, prop->w * prop->h * 4);
+
+        if (!((bitcount == 1) || (bitcount == 4) || (bitcount == 8) ||
+              (bitcount == 24) || (bitcount == 32)))
+          goto close_file;
+        if (bitcount <= 8)
+          {
+             cols2 = 1 << bitcount;
+             if (cols == 0) cols = cols2;
+             if (cols > cols2) cols = cols2;
+             if (cols > 256) cols = 256;
+          }
+        else cols = 0;
+        if (bitcount > 8) cols = 0;
+
+        pal = alloca(256 * 4);
+        for (i = 0; i < cols; i++)
+          {
+             unsigned char a, r, g, b;
+
+             if (!read_uchar(map, fsize, &position, &b)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &g)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &r)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &a)) goto close_file;
+             a = 0xff;
+             pal[i] = ARGB_JOIN(a, r, g, b);
+          }
+        stride = ((w + 31) / 32);
+        maskbuf = alloca(stride * h);
+        pixbuf = alloca(stride * 32 * 4); // more than enough
+        if (bitcount == 1)
+          {
+             pstride = stride * 4;
+             for (i = 0; i < h; i++)
+               {
+                  pix = surface + (i * w);
+                  if (!right_way_up) pix = surface + ((h - 1 - i) * w);
+                  if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
+                  p = pixbuf;
+                  if (i >= h) continue;
+                  for (j = 0; j < w; j++)
                     {
-                       *pix = pal[*p >> 7];
+                       if (j >= w) break;
+                       if ((j & 0x7) == 0x0) *pix = pal[*p >> 7];
+                       else if ((j & 0x7) == 0x1) *pix = pal[(*p >> 6) & 0x1];
+                       else if ((j & 0x7) == 0x2) *pix = pal[(*p >> 5) & 0x1];
+                       else if ((j & 0x7) == 0x3) *pix = pal[(*p >> 4) & 0x1];
+                       else if ((j & 0x7) == 0x4) *pix = pal[(*p >> 3) & 0x1];
+                       else if ((j & 0x7) == 0x5) *pix = pal[(*p >> 2) & 0x1];
+                       else if ((j & 0x7) == 0x6) *pix = pal[(*p >> 1) & 0x1];
+                       else
+                         {
+                            *pix = pal[*p & 0x1];
+                            p++;
+                         }
+                       pix++;
                     }
-                  else if ((j & 0x7) == 0x1)
+               }
+          }
+        else if (bitcount == 4)
+          {
+             pstride = ((w + 7) / 8) * 4;
+             for (i = 0; i < h; i++)
+               {
+                  pix = surface + (i * w);
+                  if (!right_way_up) pix = surface + ((h - 1 - i) * w);
+                  if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
+                  p = pixbuf;
+                  if (i >= h) continue;
+                  for (j = 0; j < w; j++)
                     {
-                       *pix = pal[(*p >> 6) & 0x1];
+                       if (j >= w) break;
+                       if ((j & 0x1) == 0x1)
+                         {
+                            *pix = pal[*p & 0x0f];
+                            p++;
+                         }
+                       else
+                         {
+                            *pix = pal[*p >> 4];
+                         }
+                       pix++;
                     }
-                  else if ((j & 0x7) == 0x2)
+               }
+          }
+        else if (bitcount == 8)
+          {
+             pstride = ((w + 3) / 4) * 4;
+             for (i = 0; i < h; i++)
+               {
+                  pix = surface + (i * w);
+                  if (!right_way_up) pix = surface + ((h - 1 - i) * w);
+                  if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
+                  p = pixbuf;
+                  if (i >= h) continue;
+                  for (j = 0; j < w; j++)
                     {
-                       *pix = pal[(*p >> 5) & 0x1];
-                    }
-                  else if ((j & 0x7) == 0x3)
-                    {
-                       *pix = pal[(*p >> 4) & 0x1];
-                    }
-                  else if ((j & 0x7) == 0x4)
-                    {
-                       *pix = pal[(*p >> 3) & 0x1];
-                    }
-                  else if ((j & 0x7) == 0x5)
-                    {
-                       *pix = pal[(*p >> 2) & 0x1];
-                    }
-                  else if ((j & 0x7) == 0x6)
-                    {
-                       *pix = pal[(*p >> 1) & 0x1];
-                    }
-                  else
-                    {
-                       *pix = pal[*p & 0x1];
+                       if (j >= w) break;
+                       *pix = pal[*p];
                        p++;
+                       pix++;
                     }
-                  pix++;
                }
           }
-     }
-   else if (bitcount == 4)
-     {
-        pstride = ((w + 7) / 8) * 4;
-        for (i = 0; i < h; i++)
+        else if (bitcount == 24)
           {
-             pix = surface + (i * w);
-             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
-             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
-             p = pixbuf;
-             if (i >= h) continue;
-             for (j = 0; j < w; j++)
+             pstride = w * 3;
+             for (i = 0; i < h; i++)
                {
-                  if (j >= w) break;
-                  if ((j & 0x1) == 0x1)
+                  pix = surface + (i * w);
+                  if (!right_way_up) pix = surface + ((h - 1 - i) * w);
+                  if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
+                  p = pixbuf;
+                  if (i >= h) continue;
+                  for (j = 0; j < w; j++)
                     {
-                       *pix = pal[*p & 0x0f];
-                       p++;
+                       unsigned char a, r, g, b;
+
+                       if (j >= w) break;
+                       b = p[0]; g = p[1]; r = p[2];
+                       p += 3;
+                       a = 0xff;
+                       *pix = ARGB_JOIN(a, r, g, b);
+                       pix++;
                     }
-                  else
+               }
+          }
+        else if (bitcount == 32)
+          {
+             pstride = w * 4;
+             for (i = 0; i < h; i++)
+               {
+                  pix = surface + (i * w);
+                  if (!right_way_up) pix = surface + ((h - 1 - i) * w);
+                  if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
+                  p = pixbuf;
+                  if (i >= h) continue;
+                  for (j = 0; j < w; j++)
                     {
-                       *pix = pal[*p >> 4];
+                       unsigned char a, r, g, b;
+
+                       if (j >= w) break;
+                       b = p[0]; g = p[1]; r = p[2]; a = p[3];
+                       p += 4;
+                       if (a) none_zero_alpha = 1;
+                       *pix = ARGB_JOIN(a, r, g, b);
+                       pix++;
                     }
-                  pix++;
                }
           }
-     }
-   else if (bitcount == 8)
-     {
-        pstride = ((w + 3) / 4) * 4;
-        for (i = 0; i < h; i++)
+        if (!none_zero_alpha)
           {
-             pix = surface + (i * w);
-             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
-             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
-             p = pixbuf;
-             if (i >= h) continue;
-             for (j = 0; j < w; j++)
+             if (!read_mem(map, fsize, &position, maskbuf, stride * 4 * h)) goto close_file;
+             // apply mask
+             pix = surface;
+             for (i = 0; i < h; i++)
                {
-                  if (j >= w) break;
-                  *pix = pal[*p];
-                  p++;
-                  pix++;
-               }
-          }
-     }
-   else if (bitcount == 24)
-     {
-        pstride = w * 3;
-        for (i = 0; i < h; i++)
-          {
-             pix = surface + (i * w);
-             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
-             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
-             p = pixbuf;
-             if (i >= h) continue;
-             for (j = 0; j < w; j++)
-               {
-                  unsigned char a, r, g, b;
+                  unsigned char *m;
 
-                  if (j >= w) break;
-                  b = p[0];
-                  g = p[1];
-                  r = p[2];
-                  p += 3;
-                  a = 0xff;
-                  *pix = ARGB_JOIN(a, r, g, b);
-                  pix++;
-               }
-          }
-     }
-   else if (bitcount == 32)
-     {
-        pstride = w * 4;
-        for (i = 0; i < h; i++)
-          {
-             pix = surface + (i * w);
-             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
-             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
-             p = pixbuf;
-             if (i >= h) continue;
-             for (j = 0; j < w; j++)
-               {
-                  unsigned char a, r, g, b;
-
-                  if (j >= w) break;
-                  b = p[0];
-                  g = p[1];
-                  r = p[2];
-                  a = p[3];
-                  p += 4;
-                  if (a) none_zero_alpha = 1;
-                  *pix = ARGB_JOIN(a, r, g, b);
-                  pix++;
-               }
-          }
-     }
-   if (!none_zero_alpha)
-     {
-        if (!read_mem(map, fsize, &position, maskbuf, stride * 4 * h)) goto close_file;
-        // apply mask
-        pix = surface;
-        for (i = 0; i < h; i++)
-          {
-             unsigned char *m;
-
-             pix = surface + (i * w);
-             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
-             m = maskbuf + (stride * i * 4);
-             if (i >= h) continue;
-             for (j = 0; j < w; j++)
-               {
-                  if (j >= w) break;
-                  if (*m & (1 << (7 - (j & 0x7))))
-                     A_VAL(pix) = 0x00;
-                  else
-                     A_VAL(pix) = 0xff;
-                  if ((j & 0x7) == 0x7) m++;
-                  pix++;
+                  pix = surface + (i * w);
+                  if (!right_way_up) pix = surface + ((h - 1 - i) * w);
+                  m = maskbuf + (stride * i * 4);
+                  if (i >= h) continue;
+                  for (j = 0; j < w; j++)
+                    {
+                       if (j >= w) break;
+                       if (*m & (1 << (7 - (j & 0x7)))) *pix = 0;
+                       else A_VAL(pix) = 0xff;
+                       if ((j & 0x7) == 0x7) m++;
+                       pix++;
+                    }
                }
           }
      }
