@@ -105,6 +105,11 @@ struct inherit
    ///
    Eo_Class const* _eo_class() const { return _eo_cls; }
 
+   template <typename T>
+   void parent_set(T& p_)
+   {
+      detail::parent_set(_eo_raw, p_._eo_ptr());
+   }
 protected:
    /// @brief Copy constructor.
    ///

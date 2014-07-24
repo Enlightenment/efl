@@ -291,6 +291,11 @@ struct parent_expr
       return { parent._eo_ptr() };
    }
 
+   template <typename T>
+   parent_type operator=(T const& parent) const
+   {
+      return { parent._eo_ptr() };
+   }
    parent_type operator=(std::nullptr_t) const
    {
       return { nullptr };
