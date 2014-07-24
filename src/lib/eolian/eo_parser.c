@@ -792,6 +792,16 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
           eo_lexer_syntax_error(ls, "expected method name");
         meth->name = eina_stringshare_ref(ls->t.value);
         eo_lexer_get(ls);
+        for (;;) switch (ls->t.kw)
+          {
+           case KW_at_protected:
+             CASE_LOCK(ls, protected, "protected qualifier")
+             meth->scope = EOLIAN_SCOPE_PROTECTED;
+             eo_lexer_get(ls);
+             break;
+           default:
+             goto body;
+          }
      }
    else
      {
