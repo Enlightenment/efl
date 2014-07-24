@@ -154,6 +154,18 @@ parameters_cxx_list
 inline std::ostream&
 operator<<(std::ostream& out, parameters_cxx_list const& x)
 {
+struct
+constructor_parameters_list
+{
+   parameters_container_type const& _params;
+   constructor_parameters_list(parameters_container_type const& params)
+     : _params(params)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, constructor_parameters_list const& x)
+{
    auto first = x._params.cbegin(),
      last = x._params.cend();
    for (auto it = first; it != last; ++it)

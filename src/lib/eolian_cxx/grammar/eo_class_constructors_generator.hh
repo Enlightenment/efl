@@ -135,7 +135,7 @@ operator<<(std::ostream& out, constructors const& x)
             << (ctor.params.size() > 0 ? ", " : "")
             << "efl::eo::parent_type _p = (efl::eo::parent = nullptr))" << endl
             << tab(2) << ": " << class_name(x._cls.name)
-            << "(_c" << (it - first) << "(" << parameters_cxx_list(ctor.params)
+            << "(_c" << (it - first) << "(" << constructor_parameters_list(ctor.params)
             << (ctor.params.size() > 0 ? ", " : "")
             << "_p))" << endl
             << tab(1) << "{}" << endl << endl;
