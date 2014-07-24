@@ -25,8 +25,9 @@ enum Tokens
     KW(destructor), KW(eo_prefix), KW(events), KW(func), KW(get), \
     KW(implements), KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), \
     KW(methods), KW(mixin), KW(own), KW(params), KW(properties), KW(set), \
-    KW(type), KW(values), KWAT(class), KWAT(const), KWAT(extern), KWAT(in), \
-    KWAT(inout), KWAT(nonull), KWAT(out), KWAT(protected), KWAT(warn_unused), \
+    KW(type), KW(values), KWAT(class), KWAT(const), KWAT(constructor), \
+    KWAT(extern), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), \
+    KWAT(protected), KWAT(warn_unused), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \

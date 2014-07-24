@@ -783,7 +783,8 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    Eo_Method_Def *meth = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
-             has_protected   = EINA_FALSE, has_class  = EINA_FALSE;
+             has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
+             has_constructor = EINA_FALSE;
    meth = calloc(1, sizeof(Eo_Method_Def));
    ls->tmp.meth = meth;
    if (ctor)
@@ -823,6 +824,12 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
            case KW_at_class:
              CASE_LOCK(ls, class, "class qualifier");
              meth->is_class = EINA_TRUE;
+             eo_lexer_get(ls);
+             break;
+           case KW_at_constructor:
+             CASE_LOCK(ls, constructor, "constructor qualifier");
+             eo_lexer_get(ls);
+             break;
            default:
              goto body;
           }
