@@ -2626,6 +2626,8 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_systemd}], [SYSTEMD], [libsystemd-login])
+EFL_ADD_FEATURE([ECORE_INPUT], [systemd-login], [${want_systemd}])
 
 EFL_LIB_END_OPTIONAL([Ecore_Input])
 #### End of Ecore_Input
@@ -4601,6 +4603,7 @@ echo "Eina............: yes (${features_eina})"
 echo "Ecore...........: yes (${features_ecore})"
 echo "Ecore_Con.......: yes (${features_ecore_con})"
 echo "Ecore_File......: yes"
+echo "Ecore_Input.....: ${efl_lib_optional_ecore_input} (${features_ecore_input})"
 echo "Ecore_IMF.......: ${efl_lib_optional_ecore_imf} (${features_ecore_imf})"
 echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
 echo "Ecore_SDL.......: $want_sdl"
