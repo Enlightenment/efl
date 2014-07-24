@@ -2,9 +2,6 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-#include <string.h>
-
 #include "Ecore.h"
 #include "ecore_private.h"
 
@@ -16,8 +13,8 @@
 // isolate compose tree into its own file - hand crafted into static const c
 #include "ecore_input_compose.h"
 
-EAPI Ecore_Compose_State
-ecore_compose_get(const Eina_List *seq, char **seqstr_ret)
+EAPI Ecore_Compose_State 
+ecore_input_compose_get(const Eina_List *seq, char **seqstr_ret)
 {
    const char *p, *pend;
    const unsigned char *psz;
@@ -101,4 +98,11 @@ ecore_compose_get(const Eina_List *seq, char **seqstr_ret)
      }
    if (i == 0) return ECORE_COMPOSE_NONE;
    return ECORE_COMPOSE_MIDDLE;
+}
+
+/* deprecated functions */
+EINA_DEPRECATED EAPI Ecore_Compose_State
+ecore_compose_get(const Eina_List *seq, char **seqstr_ret)
+{
+   return ecore_input_compose_get(seq, seqstr_ret);
 }

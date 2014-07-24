@@ -233,16 +233,27 @@ struct _Ecore_Event_Modifiers
    unsigned int array[ECORE_LAST];
 };
 
-EAPI int                  ecore_event_init(void);
-EAPI int                  ecore_event_shutdown(void);
+EINA_DEPRECATED EAPI int  ecore_event_init(void);
+EINA_DEPRECATED EAPI int  ecore_event_shutdown(void);
 
-EAPI unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
-EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
+EINA_DEPRECATED EAPI unsigned int ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
+EINA_DEPRECATED EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 
 /**
  * @since 1.7
  */
-EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
+EINA_DEPRECATED EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
+
+/*
+ * @since 1.11
+ */
+EAPI int ecore_input_init(void);
+EAPI int ecore_input_shutdown(void);
+
+EAPI unsigned int ecore_input_event_modifier_mask(Ecore_Event_Modifier modifier);
+EAPI Ecore_Event_Modifier ecore_input_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
+
+EAPI Ecore_Compose_State ecore_input_compose_get(const Eina_List *seq, char **seqstr_ret);
 
 #ifdef __cplusplus
 }
