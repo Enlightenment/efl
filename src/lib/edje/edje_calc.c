@@ -1437,8 +1437,8 @@ _edje_textblock_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 {
    /* FIXME: this is just an hack. */
    FLOAT_T sc;
-   sc = ed->scale;
-   if (sc == ZERO) sc = _edje_scale;
+   sc = DIV(ed->scale, ed->file->base_scale);
+   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
    if (chosen_desc->text.fit_x || chosen_desc->text.fit_y)
      {
         _edje_part_recalc_single_textblock(sc, ed, ep, chosen_desc, params,
@@ -2267,8 +2267,8 @@ _edje_part_recalc_single(Edje *ed,
    int minw = 0, minh = 0, maxw = 0, maxh = 0;
    FLOAT_T sc;
 
-   sc = ed->scale;
-   if (sc == ZERO) sc = _edje_scale;
+   sc = DIV(ed->scale, ed->file->base_scale);
+   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
    _edje_part_recalc_single_min_max(sc, ed, ep, desc, &minw, &minh, &maxw, &maxh);
    if (minw < mmw) minw = mmw;
    if (minh < mmh) minh = mmh;
@@ -2651,8 +2651,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 {
    FLOAT_T sc;
 
-   sc = ed->scale;
-   if (sc == 0.0) sc = _edje_scale;
+   sc = DIV(ed->scale, ed->file->base_scale);
+   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
    eo_do(ep->object,
 	 evas_obj_image_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
 				 p3->type.common.fill.w, p3->type.common.fill.h),

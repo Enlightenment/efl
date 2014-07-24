@@ -478,6 +478,7 @@ struct _Edje_File
    int                             version;
    int				   minor;
    int                             feature_ver;
+   FLOAT_T                         base_scale;
 
    Eina_Hash                      *data;
    Eina_Hash			  *fonts;

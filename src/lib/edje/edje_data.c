@@ -427,6 +427,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "minor", minor, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "feature_ver", feature_ver, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "base_scale", base_scale, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "external_dir", external_dir, _edje_edd_edje_external_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "sound_dir", sound_dir, _edje_edd_edje_sound_directory);

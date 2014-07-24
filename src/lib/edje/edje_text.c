@@ -85,8 +85,8 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 {
    FLOAT_T sc;
 
-   sc = ed->scale;
-   if (sc == ZERO) sc = _edje_scale;
+   sc = DIV(ed->scale, ed->file->base_scale);
+   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
 
    *free_text = 0;
    if (sw <= 1) return "";
@@ -179,8 +179,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if ((ep->type != EDJE_RP_TYPE_TEXT) ||
        (!ep->typedata.text)) return;
-   sc = ed->scale;
-   if (sc == 0.0) sc = _edje_scale;
+   sc = DIV(ed->scale, ed->file->base_scale);
+   if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
    text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
    filter = chosen_desc->text.filter.str;

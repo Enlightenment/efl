@@ -364,6 +364,7 @@ main(int argc, char **argv)
 				* does not load nicely as a NULL or 0 value
 				* and needs a special fallback initialization
 				*/
+   edje_file->base_scale = FROM_INT(1);
 
    source_edd();
    source_fetch();

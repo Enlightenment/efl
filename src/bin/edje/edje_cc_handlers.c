@@ -201,6 +201,7 @@ static void st_color_class_color2(void);
 static void st_color_class_color3(void);
 
 static void ob_collections(void);
+static void st_collections_base_scale(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
@@ -516,6 +517,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_SET_STATEMENTS("collections")
      {"collections.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.")
+     {"collections.base_scale", st_collections_base_scale},
 
      {"collections.sounds.sample.name", st_collections_group_sound_sample_name},
      {"collections.sounds.sample.source", st_collections_group_sound_sample_source},
@@ -2460,6 +2462,37 @@ ob_collections(void)
      {
         edje_file->collection = eina_hash_string_small_new(NULL);
         edje_collections_lookup = eina_hash_int32_new(NULL);
+     }
+}
+
+/**
+    @page edcref
+    @block
+        base_scale
+    @context
+        collections {
+            ..
+            base_scale: 1.2;
+            ..
+        }
+    @description
+        The base_scale is the standard scale value of the collection.
+        The default base_scale is 1.0. It means the collection is made in the environment
+        which is same with a desktop(The monitor has 96 dpi).
+        If you make a collection in another environment(ex: 115 dpi), you have to
+        set the base_scale(ex: 1.2). Then it will be shown same size in the desktop.
+    @endblock
+*/
+static void
+st_collections_base_scale(void)
+{
+   check_min_arg_count(1);
+
+   edje_file->base_scale = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
+   if (edje_file->base_scale == ZERO)
+     {
+        ERR("The base_scale is 0.0. The value should be bigger than 0.0.");
+        exit(-1);
      }
 }
 

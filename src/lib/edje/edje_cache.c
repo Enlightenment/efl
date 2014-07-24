@@ -300,6 +300,11 @@ _edje_file_open(const Eina_File *f, const char *coll, int *error_ret, Edje_Part_
 	WRN("`%s` may use feature from a newer edje and could not show up as expected.",
             eina_file_filename_get(f));
      }
+   if (edf->base_scale <= ZERO)
+     {
+        edf->base_scale = FROM_INT(1);
+        WRN("The base_scale can not be a 0.0. It is changed the default value(1.0)");
+     }
 
    edf->path = eina_stringshare_add(eina_file_filename_get(f));
    edf->references = 1;
