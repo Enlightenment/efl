@@ -22,7 +22,7 @@ Parents keep references to their children so in order to delete objects that hav
             Eo* parent; /*@ the new parent */
          }
       }
-      event_global_freeze_count {
+      event_global_freeze_count @class {
          get {
             /*@ return freeze events of object.
 Return event freeze count. */
@@ -57,7 +57,7 @@ Lets event callbacks be called for the object. */
          /*@ freeze events of object.
 Prevents event callbacks from being called for the object. */
       }
-      event_global_freeze {
+      event_global_freeze @class {
          /*@ freeze events of object.
 Prevents event callbacks from being called for the object. */
       }
@@ -105,7 +105,7 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
             @in const(void)* user_data; /*@ The data to compare */
          }
       }
-      event_global_thaw {
+      event_global_thaw @class {
          /*@ thaw events of object.
 Lets event callbacks be called for the object. */
       }

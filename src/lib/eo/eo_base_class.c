@@ -781,13 +781,13 @@ _eo_base_event_freeze_count_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 }
 
 EOLIAN static void
-_eo_base_event_global_freeze(Eo *klass EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED)
+_eo_base_event_global_freeze(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    event_freeze_count++;
 }
 
 EOLIAN static void
-_eo_base_event_global_thaw(Eo *klass EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED)
+_eo_base_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (event_freeze_count > 0)
      {
@@ -800,7 +800,7 @@ _eo_base_event_global_thaw(Eo *klass EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static int
-_eo_base_event_global_freeze_count_get(Eo *klass EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED)
+_eo_base_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return event_freeze_count;
 }
