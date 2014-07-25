@@ -73,7 +73,6 @@
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
 #include <Ecore_Input.h>
-#include <Ecore_Input.h>
 #include <Ecore_IMF.h>
 #include <Ecore_Con.h>
 #include <Edje.h>
