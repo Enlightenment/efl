@@ -271,6 +271,8 @@ elua_shutdown(lua_State *L, int c)
    if (elua_prefix) eina_prefix_free(elua_prefix);
 
    if (L) lua_close(L);
+   if (el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
+     eina_log_domain_unregister(el_log_domain);
    eina_shutdown();
    exit(c);
 }
