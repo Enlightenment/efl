@@ -1,11 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include "Ecore.h"
-#include "ecore_private.h"
-
-#include "Ecore_Input.h"
 #include "ecore_input_private.h"
 
 typedef struct _Ecore_Event_Modifier_Match Ecore_Event_Modifier_Match;
@@ -33,8 +25,15 @@ static const Ecore_Event_Modifier_Match matchs[] = {
 /* local variables */
 static int _ecore_input_init_count = 0;
 
+#ifdef HAVE_SYSTEMD_LOGIN
+static char *_ecore_input_session_id;
+#endif
+
 /* externval variables */
 int _ecore_input_log_dom = -1;
+#ifdef HAVE_LIBINPUT
+struct udev *_ecore_input_udev;
+#endif
 
 EAPI int ECORE_EVENT_KEY_DOWN = 0;
 EAPI int ECORE_EVENT_KEY_UP = 0;
@@ -77,6 +76,24 @@ ecore_input_init(void)
    ECORE_EVENT_MOUSE_IN = ecore_event_type_new();
    ECORE_EVENT_MOUSE_OUT = ecore_event_type_new();
 
+#ifdef HAVE_SYSTEMD_LOGIN
+   /* try to get the systemd session id */
+   if (sd_pid_get_session(getpid(), &_ecore_input_session_id) < 0)
+     ERR("Could not get systemd session id: %m");
+#endif
+
+#ifdef HAVE_LIBINPUT
+   /* try to init udev */
+   if (!(_ecore_input_udev = udev_new()))
+     ERR("Could not initialize udev: %m");
+   else
+     {
+        /* try to init libinput seat */
+        if (!ecore_input_seat_init("seat0"))
+          ERR("Could not init input seat");
+     }
+#endif
+
    return _ecore_input_init_count;
 }
 
@@ -99,6 +116,19 @@ ecore_input_shutdown(void)
    _ecore_input_log_dom = -1;
 
    ecore_shutdown();
+
+#ifdef HAVE_LIBINPUT
+   /* shutdown libinput seat */
+   ecore_input_seat_shutdown(NULL);
+
+   /* free udev */
+   if (_ecore_input_udev) udev_unref(_ecore_input_udev);
+#endif
+
+#ifdef HAVE_SYSTEMD_LOGIN
+   /* free the stored systemd session id */
+   free(_ecore_input_session_id);
+#endif
 
    return _ecore_input_init_count;
 }
