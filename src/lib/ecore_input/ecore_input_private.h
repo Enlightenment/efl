@@ -24,6 +24,7 @@ extern int _ecore_input_log_dom;
 
 #ifdef HAVE_LIBINPUT
 extern struct udev *_ecore_input_udev;
+extern Eina_List *_ecore_input_devices;
 #endif
 
 # ifdef ECORE_INPUT_DEFAULT_LOG_COLOR
