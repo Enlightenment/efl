@@ -1127,7 +1127,7 @@ _elm_prefs_values_get_user(Elm_Prefs_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, const char *page)
+_elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, const char *page)
 {
    const char *prefix;
 
@@ -1178,13 +1178,11 @@ _elm_prefs_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, const char *p
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_prefs_file_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
+EOLIAN static void
+_elm_prefs_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
 {
    if (file) *file = sd->file;
    if (page) *page = sd->page;
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -1872,6 +1870,20 @@ static void
 _elm_prefs_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EAPI Eina_Bool
+elm_prefs_file_set(Eo *obj, const char *file, const char *page)
+{
+   return eo_do((Eo *) obj, efl_file_set(file, page));
+}
+
+EAPI Eina_Bool
+elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
+{
+   eo_do((Eo *) obj, efl_file_get(file, page));
+
+   return EINA_TRUE;
 }
 
 #include "elm_prefs.eo.c"
