@@ -515,10 +515,9 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --enable-always-build-examples \
     --enable-systemd \
     --enable-lua-old \
-    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa \
-    #eol
+    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa
 
-make %{?_smp_mflags}
+%__make %{?_smp_mflags}
 
 
 %install
