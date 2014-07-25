@@ -57,6 +57,4 @@ extern struct udev *_ecore_input_udev;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_input_log_dom, __VA_ARGS__)
 
-Eina_Bool ecore_input_udev_enable(void);
-
 #endif
