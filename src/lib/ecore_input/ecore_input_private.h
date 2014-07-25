@@ -1,6 +1,10 @@
 #ifndef _ECORE_INPUT_PRIVATE_H
 # define _ECORE_INPUT_PRIVATE_H
 
+# ifdef HAVE_SYSTEMD_LOGIN
+#  include <systemd/sd-login.h>
+# endif
+
 extern int _ecore_input_log_dom;
 
 # ifdef ECORE_INPUT_DEFAULT_LOG_COLOR
