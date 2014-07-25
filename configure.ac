@@ -2655,10 +2655,10 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_systemd}], [SYSTEMD], [libsystemd-login])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_systemd}], [SYSTEMD_LOGIN], [libsystemd-login])
 EFL_ADD_FEATURE([ECORE_INPUT], [systemd-login], [${want_systemd}])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_libinput}], [LIBINPUT], [libinput])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_libinput}], [LIBINPUT], [libinput libudev >= 148])
 EFL_ADD_FEATURE([ECORE_INPUT], [libinput], [${want_libinput}])
 
 EFL_LIB_END_OPTIONAL([Ecore_Input])
