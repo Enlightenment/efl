@@ -404,7 +404,7 @@ ecore_x_init(const char *name)
 
    if (!ecore_init())
      goto shutdown_eina;
-   if (!ecore_event_init())
+   if (!ecore_input_init())
      goto shutdown_ecore;
 
 #ifdef EVAS_FRAME_QUEUING
@@ -412,7 +412,7 @@ ecore_x_init(const char *name)
 #endif /* ifdef EVAS_FRAME_QUEUING */
    _ecore_x_disp = XOpenDisplay((char *)name);
    if (!_ecore_x_disp)
-     goto shutdown_ecore_event;
+     goto shutdown_ecore_input;
 
    _ecore_x_error_handler_init();
    _ecore_x_event_handlers_num = LASTEvent;
@@ -712,8 +712,8 @@ close_display:
    XCloseDisplay(_ecore_x_disp);
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_disp = NULL;
-shutdown_ecore_event:
-   ecore_event_shutdown();
+shutdown_ecore_input:
+   ecore_input_shutdown();
 shutdown_ecore:
    ecore_shutdown();
 shutdown_eina:
@@ -756,7 +756,7 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
 
-   ecore_event_shutdown();
+   ecore_input_shutdown();
    ecore_shutdown();
 
    eina_log_domain_unregister(_ecore_xlib_log_dom);
