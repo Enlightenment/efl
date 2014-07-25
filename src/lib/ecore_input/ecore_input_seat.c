@@ -3,19 +3,80 @@
 #ifdef HAVE_LIBINPUT
 static struct libinput *_libinput;
 static Ecore_Fd_Handler *_libinput_hdlr;
+Eina_List *_ecore_input_devices;
 #endif
 
 #ifdef HAVE_LIBINPUT
 static void 
-_ecore_input_device_added(struct libinput_device *dev EINA_UNUSED)
+_ecore_input_device_added(struct libinput_device *dev)
 {
-   DBG("Device Added");
+   Ecore_Input_Device *edev;
+   struct libinput_seat *seat;
+   const char *sname;
+
+   /* allocate space for new input device */
+   if (!(edev = calloc(1, sizeof(Ecore_Input_Device))))
+     {
+        ERR("Failed to allocate space for input device");
+        return;
+     }
+
+   seat = libinput_device_get_seat(dev);
+   sname = libinput_seat_get_logical_name(seat);
+
+   edev->seat = eina_stringshare_add(sname);
+   edev->name = eina_stringshare_add(libinput_device_get_sysname(dev));
+   edev->output = eina_stringshare_add(libinput_device_get_output_name(dev));
+
+   DBG("Device Added: %s", edev->name);
+
+   /* check input device capabilities */
+   if (libinput_device_has_capability(dev, LIBINPUT_DEVICE_CAP_KEYBOARD))
+     edev->type |= ECORE_INPUT_DEVICE_KEYBOARD;
+
+   if (libinput_device_has_capability(dev, LIBINPUT_DEVICE_CAP_POINTER))
+     edev->type |= ECORE_INPUT_DEVICE_POINTER;
+
+   if (libinput_device_has_capability(dev, LIBINPUT_DEVICE_CAP_TOUCH))
+     edev->type |= ECORE_INPUT_DEVICE_TOUCH;
+
+   libinput_device_set_user_data(dev, edev);
+   libinput_device_ref(dev);
+
+   /* append this device to internal list */
+   _ecore_input_devices = eina_list_append(_ecore_input_devices, edev);
+
+   /* FIXME: Raise an Ecore_Input_Event here for device added and pass it the 
+    * Ecore_Input_Device */
 }
 
 static void 
-_ecore_input_device_removed(struct libinput_device *dev EINA_UNUSED)
+_ecore_input_device_removed(struct libinput_device *dev)
 {
-   DBG("Device Removed");
+   Ecore_Input_Device *edev;
+
+   /* try to get the ecore_input device from this libinput device */
+   if (!(edev = libinput_device_get_user_data(dev)))
+     {
+        ERR("Could not get Ecore_Input_Device from libinput device: %m");
+        return;
+     }
+
+   DBG("Device Removed: %s", edev->name);
+
+   /* FIXME: Raise an Ecore_Input_Event here for device removed */
+
+   /* remove this device from our internal list */
+   _ecore_input_devices = eina_list_remove(_ecore_input_devices, edev);
+
+   /* unreference the libinput device */
+   libinput_device_unref(dev);
+
+   /* free our input device structure */
+   eina_stringshare_del(edev->output);
+   eina_stringshare_del(edev->name);
+   eina_stringshare_del(edev->seat);
+   free(edev);
 }
 
 static int 
@@ -45,6 +106,7 @@ _ecore_input_event_process(struct libinput_event *ev)
 
    dev = libinput_event_get_device(ev);
 
+   /* TODO: handle other events */
    switch (libinput_event_get_type(ev))
      {
       case LIBINPUT_EVENT_DEVICE_ADDED:
@@ -52,6 +114,24 @@ _ecore_input_event_process(struct libinput_event *ev)
         break;
       case LIBINPUT_EVENT_DEVICE_REMOVED:
         _ecore_input_device_removed(dev);
+        break;
+      case LIBINPUT_EVENT_KEYBOARD_KEY:
+        break;
+      case LIBINPUT_EVENT_POINTER_MOTION:
+        break;
+      case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
+        break;
+      case LIBINPUT_EVENT_POINTER_BUTTON:
+        break;
+      case LIBINPUT_EVENT_POINTER_AXIS:
+        break;
+      case LIBINPUT_EVENT_TOUCH_DOWN:
+        break;
+      case LIBINPUT_EVENT_TOUCH_MOTION:
+        break;
+      case LIBINPUT_EVENT_TOUCH_UP:
+        break;
+      case LIBINPUT_EVENT_TOUCH_FRAME:
         break;
       default:
         ret = EINA_FALSE;
