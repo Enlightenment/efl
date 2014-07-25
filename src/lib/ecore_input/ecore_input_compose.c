@@ -1,11 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include "Ecore.h"
-#include "ecore_private.h"
-
-#include "Ecore_Input.h"
 #include "ecore_input_private.h"
 
 // some info on a big big big compose table
