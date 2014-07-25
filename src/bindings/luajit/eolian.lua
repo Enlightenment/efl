@@ -106,7 +106,7 @@ ffi.cdef [[
     const char *eolian_function_return_comment_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
-    EAPI Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
+    Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
     const char *eolian_implement_full_name_get(const Eolian_Implement *impl);
     Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl, const Eolian_Class *klass, const Eolian_Function *function, Eolian_Function_Type *type);
     Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
@@ -133,7 +133,7 @@ ffi.cdef [[
     const char *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
     const char *eolian_type_c_type_get(const Eolian_Type *tp);
     const char *eolian_type_name_get(const Eolian_Type *tp);
-    const cahr *eolian_type_full_name_get(const Eolian_Type *tp);
+    const char *eolian_type_full_name_get(const Eolian_Type *tp);
     Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
 ]]
 

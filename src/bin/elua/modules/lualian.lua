@@ -151,7 +151,7 @@ local Method = Node:clone {
         if self.cached_proto then return self.cached_proto end
 
         local meth = self.method
-        local pars = meth:parameters_list_get()
+        local pars = meth:parameters_get()
         local rett = meth:return_type_get(eolian.function_type.METHOD)
 
         local proto = {
@@ -175,24 +175,22 @@ local Method = Node:clone {
             rets[#rets + 1] = typeconv(rett, "v", false)
         end
 
-        if #pars > 0 then
-            for i, v in ipairs(pars) do
-                local dir, tps, nm = v:information_get()
-                local tp = tps:c_type_get()
-                if dir == dirs.OUT or dir == dirs.INOUT then
-                    if dir == dirs.INOUT then
-                        args[#args + 1] = nm
-                    end
-                    cargs [#cargs  + 1] = tp .. " *" .. nm
-                    vargs [#vargs  + 1] = nm
-                    allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
-                        and typeconv(tps, nm, true) or nil }
-                    rets  [#rets   + 1] = typeconv(tps, nm .. "[0]", false)
-                else
-                    args  [#args   + 1] = nm
-                    cargs [#cargs  + 1] = tp .. " " .. nm
-                    vargs [#vargs  + 1] = typeconv(tps, nm, true)
+        for v in pars do
+            local dir, tps, nm = v:information_get()
+            local tp = tps:c_type_get()
+            if dir == dirs.OUT or dir == dirs.INOUT then
+                if dir == dirs.INOUT then
+                    args[#args + 1] = nm
                 end
+                cargs [#cargs  + 1] = tp .. " *" .. nm
+                vargs [#vargs  + 1] = nm
+                allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
+                    and typeconv(tps, nm, true) or nil }
+                rets  [#rets   + 1] = typeconv(tps, nm .. "[0]", false)
+            else
+                args  [#args   + 1] = nm
+                cargs [#cargs  + 1] = tp .. " " .. nm
+                vargs [#vargs  + 1] = typeconv(tps, nm, true)
             end
         end
 
@@ -245,8 +243,8 @@ local Property = Method:clone {
         if self.cached_proto then return self.cached_proto end
 
         local prop = self.property
-        local keys = prop:property_keys_list_get()
-        local vals = prop:property_values_list_get()
+        local keys = prop:property_keys_get():to_array()
+        local vals = prop:property_values_get():to_array()
         local rett = prop:return_type_get(self.ftype)
 
         local proto = {
@@ -433,7 +431,7 @@ local Mixin = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        local nspaces = self.klass:namespaces_list_get()
+        local nspaces = self.klass:namespaces_get():to_array()
         local mname
         if #nspaces > 1 then
             local lnspaces = {}
@@ -499,7 +497,7 @@ local Class = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        local nspaces = self.klass:namespaces_list_get()
+        local nspaces = self.klass:namespaces_get():to_array()
         local mname
         if #nspaces > 1 then
             local lnspaces = {}
@@ -602,7 +600,7 @@ local gen_contents = function(klass)
     local cnt = {}
     local ft  = eolian.function_type
     -- first try properties
-    local props = klass:functions_list_get(ft.PROPERTY)
+    local props = klass:functions_get(ft.PROPERTY):to_array()
     for i, v in ipairs(props) do
         if v:scope_get() == eolian.function_scope.PUBLIC then
             local ftype  = v:type_get()
@@ -617,14 +615,14 @@ local gen_contents = function(klass)
         end
     end
     -- then methods
-    local meths = klass:functions_list_get(ft.METHOD)
+    local meths = klass:functions_get(ft.METHOD):to_array()
     for i, v in ipairs(meths) do
         if v:scope_get() == eolian.function_scope.PUBLIC then
             cnt[#cnt + 1] = Method(v)
         end
     end
     -- and constructors
-    local ctors = klass:functions_list_get(ft.CTOR)
+    local ctors = klass:functions_get(ft.CTOR):to_array()
     for i, v in ipairs(ctors) do
         cnt[#cnt + 1] = Constructor(v)
     end
@@ -633,7 +631,7 @@ local gen_contents = function(klass)
     end
     -- events
     local evs = {}
-    local events = klass:events_list_get()
+    local events = klass:events_get():to_array()
     for i, v in ipairs(events) do
         local en, et, ed = v:information_get()
         evs[#evs + 1] = Event(en, et, ed)
@@ -646,12 +644,12 @@ local gen_mixin = function(klass)
 end
 
 local gen_class = function(klass)
-    local inherits = klass:inherits_list_get()
+    local inherits = klass:inherits_get()
     local parent
     local mixins   = {}
     local ct = eolian.class_type
-    for i, v in ipairs(inherits) do
-        local tp = eolian.class_find_by_name(v):type_get()
+    for v in inherits do
+        local tp = eolian.class_get_by_name(v):type_get()
         if tp == ct.REGULAR or tp == ct.ABSTRACT then
             if parent then
                 error(klass:full_name_get() .. ": more than 1 parent!")
@@ -684,7 +682,8 @@ M.generate = function(fname, modname, libname, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
     end
-    local klass = eolian.class_find_by_file(fname)
+    local sfn = fname:match(".*[\\/](.+)$") or fname
+    local klass = eolian.class_get_by_file(sfn)
     local tp = klass:type_get()
     local ct = eolian.class_type
     local cl

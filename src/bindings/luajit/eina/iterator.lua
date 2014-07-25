@@ -96,6 +96,14 @@ M.Iterator = util.Readonly_Object:clone {
         self = dgetmt(self)
         if not self.__iterator then return nil end
         return self.__iterator:container_get()
+    end,
+
+    to_array = function(self)
+        local ret = {}
+        for v in self do
+            ret[#ret + 1] = v
+        end
+        return ret
     end
 }
 
