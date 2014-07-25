@@ -266,6 +266,19 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
             << "));" << endl
             << "}" << endl << endl;
      }
+
+   out << "inline void" << endl
+       << "call_constructor(tag< "
+       << x._cls.name_space << "::" << x._cls.name << " >" << endl
+       << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
+       << tab(5) << "args_class<"
+       << x._cls.name_space << "::" << x._cls.name
+       << ", ::std::tuple<efl::eo::parent_type> > const& args)" << endl
+       << "{" << endl
+       << tab(1) << "eo_do_super(eo, cls, ::eo_constructor());" << endl
+       << tab(1) << "eo_do(eo, ::eo_parent_set(args.get<0>()._eo_raw));" << endl
+       << "}" << endl << endl;
+
    return out;
 }
 
