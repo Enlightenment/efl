@@ -1823,7 +1823,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           {
              _compose_seq_reset(en);
              en->seq = eina_list_append(en->seq, eina_stringshare_add(ev->key));
-             state = ecore_compose_get(en->seq, &compres);
+             state = ecore_input_compose_get(en->seq, &compres);
              if (state == ECORE_COMPOSE_MIDDLE) en->composing = EINA_TRUE;
              else en->composing = EINA_FALSE;
              if (!en->composing)
