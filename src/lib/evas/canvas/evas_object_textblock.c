@@ -7378,6 +7378,9 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
 
+   if (cur->pos == len)
+      return EINA_TRUE;
+
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
      {
@@ -7385,9 +7388,6 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
         breaks = malloc(len);
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
-
-   if (cur->pos == len)
-      return EINA_TRUE;
 
    for (i = cur->pos; text[i] && _is_white(text[i]) && (BREAK_AFTER(i)) ; i++);
 
