@@ -409,7 +409,7 @@ EAPI Eina_Stringshare* eolian_class_eo_prefix_get(const Eolian_Class *klass);
 EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns an interator to the names of inherit classes of a class
+ * @brief Returns an iterator to the names of inherit classes of a class
  *
  * @param[in] klass the class
  * @return the iterator
