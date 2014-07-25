@@ -1,4 +1,5 @@
-class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
+class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
+                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_toolbar;
    properties {
@@ -511,6 +512,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable)
       Elm_Widget.event;
       Elm_Widget.focus_highlight_geometry_get;
       Elm_Widget.focused_item.get;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       scroll;

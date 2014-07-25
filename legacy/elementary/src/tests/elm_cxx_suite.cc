@@ -22,6 +22,7 @@
 #include <elm_interface_scrollable.h>
 #include <elm_interface_atspi_text.h>
 #include <elm_interface_atspi_accessible.h>
+#include <elm_interface_atspi_widget_action.h>
 
 #include <elc_ctxpopup.eo.hh>
 #include <elc_fileselector_button.eo.hh>

@@ -1,4 +1,5 @@
-class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface)
+class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
+                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_genlist;
    properties {
@@ -727,6 +728,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
       Elm_Layout.sizing_eval;
       Elm_Interface_Scrollable.bounce_allow;
       Elm_Interface_Scrollable.policy;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       language,changed;

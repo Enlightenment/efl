@@ -17,6 +17,10 @@
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #include "elm_interface_atspi_value.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_SPINNER_CLASS
 
 #define MY_CLASS_NAME "Elm_Spinner"
@@ -1106,6 +1110,20 @@ EOLIAN static const char*
 _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
 {
    return elm_layout_text_get(obj, "elm.text");
+}
+
+EOLIAN static const Elm_Atspi_Action*
+_elm_spinner_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "spin,left", "spin", "left", _key_action_spin},
+          { "spin,right", "spin", "right", _key_action_spin},
+          { "spin,up", "spin", "up", _key_action_spin},
+          { "spin,down", "spin", "down", _key_action_spin},
+          { "toggle", "toggle", NULL, _key_action_toggle},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 // A11Y Accessibility - END
 

@@ -11,6 +11,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_FLIPSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Flipselector"
@@ -860,6 +864,17 @@ EOLIAN static void
 _elm_flipselector_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN const Elm_Atspi_Action *
+_elm_flipselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *pd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "flip,up", "flip", "up", _key_action_flip},
+          { "flip,down", "flip", "down", _key_action_flip},
+          { NULL, NULL, NULL, NULL}
+   };
+   return &atspi_actions[0];
 }
 
 #include "elm_flipselector.eo.c"

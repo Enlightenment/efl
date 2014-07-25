@@ -1,4 +1,4 @@
-class Elm_Calendar (Elm_Layout)
+class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_calendar;
    properties {
@@ -402,6 +402,7 @@ class Elm_Calendar (Elm_Layout)
       Elm_Widget.focus_next;
       Elm_Widget.event;
       Elm_Layout.sizing_eval;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;

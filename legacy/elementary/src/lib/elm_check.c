@@ -13,6 +13,7 @@
 #include "elm_interface_atspi_accessible.eo.h"
 
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
 #include "elm_interface_atspi_widget_action.eo.h"
 
 #define MY_CLASS ELM_CHECK_CLASS
@@ -437,10 +438,14 @@ _elm_check_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Check_
    return EINA_FALSE;
 }
 
-EOLIAN const Elm_Action *
+EOLIAN const Elm_Atspi_Action *
 _elm_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED)
 {
-   return &key_actions[0];
+   static Elm_Atspi_Action atspi_action[] = {
+          { "activate", "activate", NULL, _key_action_activate },
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_action[0];
 }
 
 static void

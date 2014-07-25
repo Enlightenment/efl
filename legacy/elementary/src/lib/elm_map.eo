@@ -1,4 +1,5 @@
-class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
+class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
+               Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_map;
    properties {
@@ -780,6 +781,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
       Elm_Widget.theme_apply;
       Elm_Widget.on_focus;
       Elm_Widget.event;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       clicked;

@@ -1,4 +1,4 @@
-class Elm_Spinner (Elm_Layout, Elm_Interface_Atspi_Value)
+class Elm_Spinner (Elm_Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_spinner;
    properties {
@@ -379,6 +379,7 @@ class Elm_Spinner (Elm_Layout, Elm_Interface_Atspi_Value)
       Elm_Interface_Atspi_Value.value_and_text.set;
       Elm_Interface_Atspi_Value.range.get;
       Elm_Interface_Atspi_Value.increment.get;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;
@@ -390,5 +391,4 @@ class Elm_Spinner (Elm_Layout, Elm_Interface_Atspi_Value)
       focused;
       unfocused;
    }
-
 }

@@ -1,4 +1,4 @@
-class Elm_Ctxpopup (Elm_Layout)
+class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_ctxpopup;
    properties {
@@ -263,6 +263,7 @@ class Elm_Ctxpopup (Elm_Layout)
       Elm_Container.content_unset;
       Elm_Layout.sub_object_add_enable;
       Elm_Layout.sizing_eval;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       language,changed;

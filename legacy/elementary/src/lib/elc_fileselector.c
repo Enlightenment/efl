@@ -18,6 +18,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_FILESELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector"
@@ -2318,6 +2322,17 @@ _elm_fileselector_class_destructor(Eo_Class *klass EINA_UNUSED)
         elm_genlist_item_class_free(list_itc[i]);
         elm_gengrid_item_class_free(grid_itc[i]);
      }
+}
+
+EOLIAN const Elm_Atspi_Action *
+_elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "select", "select", NULL, _key_action_select },
+          { "escape", "escape", NULL, _key_action_escape},
+          { NULL, NULL, NULL, NULL}
+   };
+   return &atspi_actions[0];
 }
 
 #include "elc_fileselector.eo.c"

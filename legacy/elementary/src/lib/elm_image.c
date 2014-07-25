@@ -15,6 +15,7 @@
 #include "elm_interface_atspi_accessible.eo.h"
 
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
 #include "elm_interface_atspi_widget_action.eo.h"
 
 #define FMT_SIZE_T "%zu"
@@ -1345,10 +1346,14 @@ _elm_image_elm_interface_atspi_image_extents_get(Eo *obj, Elm_Image_Data *sd EIN
    elm_image_object_size_get(obj, w, h);
 }
 
-EOLIAN const Elm_Action *
+EOLIAN const Elm_Atspi_Action *
 _elm_image_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Image_Data *pd EINA_UNUSED)
 {
-   return &key_actions[0];
+   static Elm_Atspi_Action atspi_actions[] = {
+        { "activate", "activate", NULL, _key_action_activate },
+        { NULL, NULL, NULL, NULL },
+   };
+   return &atspi_actions[0];
 }
 
 

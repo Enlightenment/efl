@@ -1,4 +1,5 @@
-class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
+class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
+                    Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_photocam;
    properties {
@@ -234,6 +235,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
       Elm_Widget.on_focus;
       Elm_Widget.event;
       Elm_Interface_Scrollable.region_bring_in;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       clicked;

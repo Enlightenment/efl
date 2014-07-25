@@ -12,6 +12,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #include "elm_interface_atspi_value.eo.h"
 
@@ -1234,6 +1238,19 @@ EOLIAN static double
 _elm_slider_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
    return sd->step;
+}
+
+EOLIAN const Elm_Atspi_Action *
+_elm_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "drag,left", "drag", "left", _key_action_drag},
+          { "drag,right", "drag", "right", _key_action_drag},
+          { "drag,up", "drag", "up", _key_action_drag},
+          { "drag,down", "drag", "down", _key_action_drag},
+          { NULL, NULL, NULL, NULL}
+   };
+   return &atspi_actions[0];
 }
 
 // A11Y Accessibility - END

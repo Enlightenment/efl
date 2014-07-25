@@ -1,4 +1,5 @@
-class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
+class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector,
+                        Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_fileselector;
    properties {
@@ -61,6 +62,7 @@ class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
       Elm_Interface_Fileselector.multi_select;
       Elm_Interface_Fileselector.folder_only;
       Elm_Interface_Fileselector.mode;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       focused;

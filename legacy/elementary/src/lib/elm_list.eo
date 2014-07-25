@@ -1,4 +1,5 @@
-class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
+class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
+                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_list;
    properties {
@@ -607,6 +608,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable)
       Elm_Widget.item_loop_enabled.get;
       Elm_Layout.sizing_eval;
       Elm_Interface_Scrollable.policy.set;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       activated;

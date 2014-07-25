@@ -921,7 +921,8 @@ _action_localized_name_get(const Eldbus_Service_Interface *iface, const Eldbus_M
 static Eldbus_Message *
 _action_key_binding_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
-   const char *key, *obj_path = eldbus_service_object_path_get(iface);
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   char *key;
    Eo *obj = _access_object_from_path(obj_path);
    int idx;
    Eldbus_Message *ret;
@@ -933,8 +934,8 @@ _action_key_binding_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    eo_do(obj, key = elm_interface_atspi_action_keybinding_get(idx));
-   key = key ? key : "";
-   eldbus_message_arguments_append(ret, "s", key);
+   eldbus_message_arguments_append(ret, "s", key ? key : "");
+   if (key) free(key);
 
    return ret;
 }
@@ -962,12 +963,13 @@ _action_actions_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    int id = 0;
    EINA_LIST_FREE(actions, action)
      {
-        const char *key, *descr;
+        const char *descr;
+        char *key;
         eo_do(obj, key = elm_interface_atspi_action_keybinding_get(id));
-        key = key ? key : "";
         eo_do(obj, descr = elm_interface_atspi_action_description_get(id));
         descr = descr ? descr : "";
-        eldbus_message_iter_arguments_append(iter_array, "sss", action, descr, key);
+        eldbus_message_iter_arguments_append(iter_array, "sss", action, descr, key ? key : "");
+        if (key) free(key);
         id++;
      }
 

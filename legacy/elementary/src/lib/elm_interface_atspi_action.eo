@@ -59,11 +59,12 @@ mixin Elm_Interface_Atspi_Action ()
          return bool;
       }
       keybinding_get @protected {
-         /*@ Gets configured keybinding for specific action and widget. */
+         /*@ Gets configured keybinding for specific action and widget.
+             returned pointer should be free by a user.*/
          params {
             @in  int id;
          }
-         return const(char)*;
+         return char*;
       }
    }
    implements {

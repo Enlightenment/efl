@@ -11,6 +11,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define DISPLAY_ITEM_NUM_MIN 3
 
 #define MY_CLASS ELM_DISKSELECTOR_CLASS
@@ -1785,6 +1789,19 @@ _elm_diskselector_class_constructor(Eo_Class *klass)
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
       _elm_diskselector_smart_focus_next_enable = EINA_TRUE;
+}
+
+EOLIAN static const Elm_Atspi_Action*
+_elm_diskselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "move,previous", "move", "prev", _key_action_move},
+          { "move,next", "move", "next", _key_action_move},
+          { "move,first", "move", "first", _key_action_move},
+          { "move,last", "move", "last", _key_action_move},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 #include "elm_diskselector.eo.c"

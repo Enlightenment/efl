@@ -10,6 +10,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_COLORSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Colorselector"
@@ -2143,6 +2147,19 @@ _elm_colorselector_class_constructor(Eo_Class *klass)
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
       _elm_colorselector_smart_focus_next_enable = EINA_TRUE;
+}
+
+EOLIAN static const Elm_Atspi_Action*
+_elm_colorselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "move,left", "move", "left", _key_action_move},
+          { "move,right", "move", "right", _key_action_move},
+          { "move,up", "move", "up", _key_action_move},
+          { "move,down", "move", "down", _key_action_move},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 #include "elm_colorselector.eo.c"

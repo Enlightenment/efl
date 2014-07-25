@@ -11,6 +11,10 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS ELM_CTXPOPUP_CLASS
 
 #define MY_CLASS_NAME "Elm_Ctxpopup"
@@ -1434,6 +1438,21 @@ _item_new(Eo *obj,
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
    return item;
+}
+
+EOLIAN static const Elm_Atspi_Action*
+_elm_ctxpopup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "move,previous", "move", "previous", _key_action_move},
+          { "move,next", "move", "next", _key_action_move},
+          { "move,left", "move", "left", _key_action_move},
+          { "move,right", "move", "right", _key_action_move},
+          { "move,up", "move", "up", _key_action_move},
+          { "move,down", "move", "down", _key_action_move},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 #include "elc_ctxpopup.eo.c"

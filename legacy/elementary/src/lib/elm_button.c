@@ -11,6 +11,7 @@
 
 // ATSPI Accessibility
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.h"
 #include "elm_interface_atspi_widget_action.eo.h"
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
@@ -427,10 +428,14 @@ _elm_button_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Butto
    return EINA_FALSE;
 }
 
-EOLIAN const Elm_Action *
+EOLIAN const Elm_Atspi_Action *
 _elm_button_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Button_Data *pd EINA_UNUSED)
 {
-   return &key_actions[0];
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "activate", "activate", NULL, _key_action_activate },
+          { NULL, NULL, NULL, NULL}
+   };
+   return &atspi_actions[0];
 }
 
 static void

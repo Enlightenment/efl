@@ -1,4 +1,4 @@
-class Elm_Radio (Elm_Layout)
+class Elm_Radio (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_radio;
    properties {
@@ -112,6 +112,7 @@ class Elm_Radio (Elm_Layout)
       Elm_Layout.text_aliases.get;
       Elm_Layout.content_aliases.get;
       Elm_Layout.sizing_eval;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;
