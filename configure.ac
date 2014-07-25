@@ -221,6 +221,8 @@ AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 
+AM_CONDITIONAL([HAVE_OSX], [test "x${have_darwin}" = "xyes"])
+AM_CONDITIONAL([HAVE_X86_64], [test "x${host_cpu}" = "xx86_64"])
 
 #### Checks for programs
 
@@ -3994,6 +3996,7 @@ if test "${want_lua_old}" = "yes"; then
 else
    EFL_DEPEND_PKG([EDJE], [LUAJIT], [luajit >= 2.0.0])
    EFL_DEPEND_PKG([EVAS], [LUAJIT], [luajit >= 2.0.0])
+   EFL_DEPEND_PKG([EVAS_CXX], [LUAJIT], [luajit >= 2.0.0])
 fi
 
 EFL_ADD_LIBS([EDJE], [-lm])
