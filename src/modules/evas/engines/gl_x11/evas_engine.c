@@ -61,6 +61,7 @@ Evas_GL_Common_Context_Call glsym_evas_gl_common_image_all_unload = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_init = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_shutdown = NULL;
 EVGL_Engine_Call glsym_evgl_engine_shutdown = NULL;
+Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
 
 Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_flush = NULL;
@@ -629,6 +630,7 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_init);
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
+   LINK2GENERIC(evas_gl_symbols);
 
 #ifdef GL_GLES
 #define FINDSYM(dst, sym, typ) \
@@ -642,6 +644,8 @@ gl_symbols(void)
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+
+   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
 
    FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
    FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
@@ -671,6 +675,8 @@ gl_symbols(void)
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
+
+   glsym_evas_gl_symbols((void*)glsym_glXGetProcAddress);
 
    FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", glsym_func_void);
    FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", glsym_func_void);
@@ -958,8 +964,6 @@ eng_setup(Evas *eo_e, void *in)
 
         if (!initted)
           {
-             gl_symbols();
-
              evas_common_cpu_init();
              evas_common_blend_init();
              evas_common_image_init();
@@ -1846,7 +1850,6 @@ module_open(Evas_Module *em)
         xrm_inited = EINA_TRUE;
         XrmInitialize();
      }
-
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
@@ -1877,6 +1880,8 @@ module_open(Evas_Module *em)
    ORD(output_dump);
 
    ORD(image_native_set);
+
+   gl_symbols();
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

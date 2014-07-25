@@ -750,6 +750,7 @@ EAPI int          evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const c
 EAPI void         evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
+EAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name));
 
 typedef int (*Evas_GL_Preload)(void);
 typedef void (*Evas_GL_Common_Image_Call)(Evas_GL_Image *im);
@@ -759,6 +760,7 @@ typedef void (*Evas_GL_Preload_Render_Call)(evas_gl_make_current_cb make_current
 typedef Evas_Engine_GL_Context *(*Evas_GL_Common_Context_New)(void);
 typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, int w, int h, int rot);
 typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const char* dname, const char* fname, int frame, const char* suffix);
+typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
 
 void glerr(int err, const char *file, const char *func, int line, const char *op);
 
