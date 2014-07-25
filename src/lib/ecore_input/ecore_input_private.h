@@ -1,12 +1,30 @@
 #ifndef _ECORE_INPUT_PRIVATE_H
 # define _ECORE_INPUT_PRIVATE_H
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 # ifdef HAVE_SYSTEMD_LOGIN
 #  include <unistd.h>
 #  include <systemd/sd-login.h>
 # endif
 
+# ifdef HAVE_LIBINPUT
+#  include <libudev.h>
+#  include <libinput.h>
+# endif
+
+#include "Ecore.h"
+#include "ecore_private.h"
+
+#include "Ecore_Input.h"
+
 extern int _ecore_input_log_dom;
+
+#ifdef HAVE_LIBINPUT
+extern struct udev *_ecore_input_udev;
+#endif
 
 # ifdef ECORE_INPUT_DEFAULT_LOG_COLOR
 #  undef ECORE_INPUT_DEFAULT_LOG_COLOR 
@@ -38,5 +56,7 @@ extern int _ecore_input_log_dom;
 #  undef CRI
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_input_log_dom, __VA_ARGS__)
+
+Eina_Bool ecore_input_udev_enable(void);
 
 #endif
