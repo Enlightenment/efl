@@ -126,9 +126,9 @@ ecore_wl_init(const char *name)
         return --_ecore_wl_init_count;
      }
 
-   if (!ecore_event_init())
+   if (!ecore_input_init())
      {
-        ERR("Could not initialize ecore_event");
+        ERR("Could not initialize ecore_input");
         eina_log_domain_unregister(_ecore_wl_log_dom);
         _ecore_wl_log_dom = -1;
         ecore_shutdown();
@@ -161,7 +161,7 @@ ecore_wl_init(const char *name)
         ERR("Could not allocate memory for Ecore_Wl_Display structure");
         eina_log_domain_unregister(_ecore_wl_log_dom);
         _ecore_wl_log_dom = -1;
-        ecore_event_shutdown();
+        ecore_input_shutdown();
         ecore_shutdown();
         eina_shutdown();
         return --_ecore_wl_init_count;
@@ -174,7 +174,7 @@ ecore_wl_init(const char *name)
         ERR("Could not connect to Wayland display");
         eina_log_domain_unregister(_ecore_wl_log_dom);
         _ecore_wl_log_dom = -1;
-        ecore_event_shutdown();
+        ecore_input_shutdown();
         ecore_shutdown();
         eina_shutdown();
         return --_ecore_wl_init_count;
@@ -201,7 +201,7 @@ ecore_wl_init(const char *name)
         free(_ecore_wl_disp);
         eina_log_domain_unregister(_ecore_wl_log_dom);
         _ecore_wl_log_dom = -1;
-        ecore_event_shutdown();
+        ecore_input_shutdown();
         ecore_shutdown();
         eina_shutdown();
         return --_ecore_wl_init_count;
@@ -496,7 +496,7 @@ _ecore_wl_shutdown(Eina_Bool close)
         free(_ecore_wl_disp);
      }
 
-   ecore_event_shutdown();
+   ecore_input_shutdown();
    ecore_shutdown();
 
    eina_log_domain_unregister(_ecore_wl_log_dom);
