@@ -497,6 +497,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
           }
 
         ecore_x_window_pixel_gravity_set(win, ECORE_X_GRAVITY_FORGET);
+        ecore_x_vsync_animator_tick_source_set(win);
 
         /* attr.backing_store = NotUseful; */
         /* attr.override_redirect = override; */
@@ -2510,6 +2511,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
         if (edata->mask) ecore_x_pixmap_free(edata->mask);
         edata->mask = 0;
         ecore_x_window_shape_input_mask_set(ee->prop.window, 0);
+        ecore_x_vsync_animator_tick_source_set(ee->prop.window);
      }
 
    einfo->info.destination_alpha = alpha;
@@ -3877,6 +3879,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
      }
    else
      ee->prop.window = ecore_x_window_new(parent, x, y, w, h);
+   ecore_x_vsync_animator_tick_source_set(ee->prop.window);
    if ((id = getenv("DESKTOP_STARTUP_ID")))
      {
         ecore_x_netwm_startup_id_set(ee->prop.window, id);

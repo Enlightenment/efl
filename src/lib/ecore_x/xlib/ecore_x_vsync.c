@@ -198,7 +198,6 @@ _dri_drm_link(void)
   do {                                          \
        sym_ ## xx = dlsym(lib, #xx);            \
        if (!(sym_ ## xx)) {                     \
-            fprintf(stderr, "%s\n", dlerror()); \
             fail = 1;                           \
          }                                      \
     } while (0)
