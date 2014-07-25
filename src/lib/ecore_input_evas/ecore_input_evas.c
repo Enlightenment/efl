@@ -560,7 +560,7 @@ ecore_event_evas_init(void)
         return --_ecore_event_evas_init_count;
      }
 
-   if (!ecore_event_init())
+   if (!ecore_input_init())
      {
         goto shutdown_ecore;
      }
@@ -605,7 +605,7 @@ ecore_event_evas_init(void)
 
    return _ecore_event_evas_init_count;
 
-   shutdown_ecore:
+shutdown_ecore:
    ecore_shutdown();
 
    return --_ecore_event_evas_init_count;
@@ -627,7 +627,7 @@ ecore_event_evas_shutdown(void)
         ecore_event_evas_handlers[i] = NULL;
      }
 
-   ecore_event_shutdown();
+   ecore_input_shutdown();
    ecore_shutdown();
 
    eina_log_domain_unregister(_ecore_input_evas_log_dom);
