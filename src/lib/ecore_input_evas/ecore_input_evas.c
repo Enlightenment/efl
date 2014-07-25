@@ -160,7 +160,9 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
              if (!eel->ev) eel->ev = malloc(sizeof (Ecore_Event_Mouse_Button));
              if (!eel->ev) return;
              memcpy(eel->ev, e, sizeof (Ecore_Event_Mouse_Button));
-             eel->timer = ecore_timer_add(_last_events_timeout, _ecore_event_evas_push_fake, eel);
+             eel->timer = 
+               ecore_timer_add(_last_events_timeout, 
+                               _ecore_event_evas_push_fake, eel);
           }
         else
           {
@@ -332,23 +334,15 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    if (press == ECORE_DOWN)
-     evas_event_feed_key_down_with_keycode(lookup->evas,
-                                           e->keyname,
-                                           e->key,
-                                           e->string,
-                                           e->compose,
-                                           e->timestamp,
-                                           e->data,
-                                           e->keycode);
+     evas_event_feed_key_down_with_keycode(lookup->evas, e->keyname,
+                                           e->key, e->string,
+                                           e->compose, e->timestamp,
+                                           e->data, e->keycode);
    else
-     evas_event_feed_key_up_with_keycode(lookup->evas,
-                                         e->keyname,
-                                         e->key,
-                                         e->string,
-                                         e->compose,
-                                         e->timestamp,
-                                         e->data,
-                                         e->keycode);
+     evas_event_feed_key_up_with_keycode(lookup->evas, e->keyname,
+                                         e->key, e->string,
+                                         e->compose, e->timestamp,
+                                         e->data, e->keycode);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -565,30 +559,30 @@ ecore_event_evas_init(void)
         goto shutdown_ecore;
      }
 
-   ecore_event_evas_handlers[0] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                                                          ecore_event_evas_key_down,
-                                                          NULL);
-   ecore_event_evas_handlers[1] = ecore_event_handler_add(ECORE_EVENT_KEY_UP,
-                                                          ecore_event_evas_key_up,
-                                                          NULL);
-   ecore_event_evas_handlers[2] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                                                          ecore_event_evas_mouse_button_down,
-                                                          NULL);
-   ecore_event_evas_handlers[3] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-                                                          ecore_event_evas_mouse_button_up,
-                                                          NULL);
-   ecore_event_evas_handlers[4] = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
-                                                          ecore_event_evas_mouse_move,
-                                                          NULL);
-   ecore_event_evas_handlers[5] = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
-                                                          ecore_event_evas_mouse_wheel,
-                                                          NULL);
-   ecore_event_evas_handlers[6] = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
-                                                          ecore_event_evas_mouse_in,
-                                                          NULL);
-   ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
-                                                          ecore_event_evas_mouse_out,
-                                                          NULL);
+   ecore_event_evas_handlers[0] = 
+     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, 
+                             ecore_event_evas_key_down, NULL);
+   ecore_event_evas_handlers[1] = 
+     ecore_event_handler_add(ECORE_EVENT_KEY_UP,
+                             ecore_event_evas_key_up, NULL);
+   ecore_event_evas_handlers[2] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                             ecore_event_evas_mouse_button_down, NULL);
+   ecore_event_evas_handlers[3] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
+                             ecore_event_evas_mouse_button_up, NULL);
+   ecore_event_evas_handlers[4] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
+                             ecore_event_evas_mouse_move, NULL);
+   ecore_event_evas_handlers[5] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
+                             ecore_event_evas_mouse_wheel, NULL);
+   ecore_event_evas_handlers[6] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
+                             ecore_event_evas_mouse_in, NULL);
+   ecore_event_evas_handlers[7] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
+                             ecore_event_evas_mouse_out, NULL);
 
    _window_hash = eina_hash_pointer_new(free);
 
