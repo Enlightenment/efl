@@ -2,6 +2,7 @@
 # define _ECORE_INPUT_PRIVATE_H
 
 # ifdef HAVE_SYSTEMD_LOGIN
+#  include <unistd.h>
 #  include <systemd/sd-login.h>
 # endif
 
