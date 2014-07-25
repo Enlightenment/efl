@@ -42,8 +42,8 @@ ecore_drm_init(void)
         return --_ecore_drm_init_count;
      }
 
-   /* try to init ecore_event */
-   if (!ecore_event_init())
+   /* try to init ecore_input */
+   if (!ecore_input_init())
      {
         ecore_shutdown();
         eina_shutdown();
@@ -86,7 +86,7 @@ sd_err:
    eina_log_domain_unregister(_ecore_drm_log_dom);
    _ecore_drm_log_dom = -1;
 log_err:
-   ecore_event_shutdown();
+   ecore_input_shutdown();
    ecore_shutdown();
    eina_shutdown();
    return --_ecore_drm_init_count;
@@ -112,8 +112,8 @@ ecore_drm_shutdown(void)
    /* cleanup dbus */
    _ecore_drm_dbus_shutdown();
 
-   /* shutdown ecore_event */
-   ecore_event_shutdown();
+   /* shutdown ecore_input */
+   ecore_input_shutdown();
 
    /* shutdown ecore */
    ecore_shutdown();
