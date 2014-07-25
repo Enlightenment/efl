@@ -255,6 +255,9 @@ EAPI Ecore_Event_Modifier ecore_input_event_update_modifier(const char *key, Eco
 
 EAPI Ecore_Compose_State ecore_input_compose_get(const Eina_List *seq, char **seqstr_ret);
 
+EAPI Eina_Bool ecore_input_seat_init(const char *seat);
+EAPI void ecore_input_seat_shutdown(const char *seat);
+
 #ifdef __cplusplus
 }
 #endif
