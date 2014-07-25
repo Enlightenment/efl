@@ -14,6 +14,9 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_accessible.eo.h"
 
+#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
+#include "elm_interface_atspi_value.eo.h"
+
 #define MY_CLASS ELM_SPINNER_CLASS
 
 #define MY_CLASS_NAME "Elm_Spinner"
@@ -115,6 +118,7 @@ _label_write(Evas_Object *obj)
 
 apply:
    elm_layout_text_set(obj, "elm.text", buf);
+   elm_interface_atspi_accessible_name_changed_signal_emit(obj);
    if (sd->entry_visible) _entry_show(sd);
 }
 
@@ -158,6 +162,7 @@ _value_set(Evas_Object *obj,
    sd->val = new_val;
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   elm_interface_atspi_accessible_value_changed_signal_emit(obj);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
                                             _delay_change_timer_cb, obj);
@@ -1061,5 +1066,47 @@ _elm_spinner_class_constructor(Eo_Class *klass)
    if (_elm_config->access_mode)
       _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 }
+
+// A11Y Accessibility
+
+EOLIAN static void
+_elm_spinner_elm_interface_atspi_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
+{
+   if (value) *value = sd->val;
+   if (text) *text = NULL;
+}
+
+EOLIAN static Eina_Bool
+_elm_spinner_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Spinner_Data *sd, double value, const char *text EINA_UNUSED)
+{
+   if (sd->val_min > value) return EINA_FALSE;
+   if (sd->val_max < value) return EINA_FALSE;
+
+   sd->val = value;
+   _val_set(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_elm_spinner_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
+{
+   if (lower) *lower = sd->val_min;
+   if (upper) *upper = sd->val_max;
+   if (descr) *descr = NULL;
+}
+
+EOLIAN static double
+_elm_spinner_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+{
+   return sd->step;
+}
+
+EOLIAN static const char*
+_elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
+{
+   return elm_layout_text_get(obj, "elm.text");
+}
+// A11Y Accessibility - END
 
 #include "elm_spinner.eo.c"
