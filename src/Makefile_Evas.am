@@ -949,17 +949,11 @@ modules_evas_engines_gl_sdl_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 @EVAS_CFLAGS@ \
 @evas_engine_gl_sdl_cflags@
-modules_evas_engines_gl_sdl_module_la_LIBADD =
-if ! EVAS_STATIC_BUILD_GL_COMMON
-modules_evas_engines_gl_sdl_module_la_LIBADD += \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la
-endif
-modules_evas_engines_gl_sdl_module_la_LIBADD += \
+modules_evas_engines_gl_sdl_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
 @evas_engine_gl_sdl_libs@
 modules_evas_engines_gl_sdl_module_la_DEPENDENCIES = \
-@USE_EVAS_INTERNAL_LIBS@ \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la
+@USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_gl_sdl_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_gl_sdl_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif

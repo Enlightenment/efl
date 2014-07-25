@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include <Eina.h>
 #include <Ecore.h>
@@ -19,7 +19,7 @@ struct _Ecore_SDL_Pressed
 {
    EINA_RBTREE;
 
-   SDLKey key;
+   SDL_Keycode key;
 };
 
 EAPI int ECORE_SDL_EVENT_GOT_FOCUS = 0;
@@ -40,7 +40,7 @@ _ecore_sdl_pressed_key(const Ecore_SDL_Pressed *left,
 
 static int
 _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
-                        const SDLKey *key,
+                        const SDL_Keycode *key,
                         EINA_UNUSED int length,
                         EINA_UNUSED void *data)
 {
@@ -76,12 +76,12 @@ ecore_sdl_init(const char *name EINA_UNUSED)
    if (!ecore_event_init())
      return --_ecore_sdl_init_count;
 
+   SDL_Init(SDL_INIT_EVENTS);
+
    ECORE_SDL_EVENT_GOT_FOCUS  = ecore_event_type_new();
    ECORE_SDL_EVENT_LOST_FOCUS = ecore_event_type_new();
    ECORE_SDL_EVENT_RESIZE     = ecore_event_type_new();
    ECORE_SDL_EVENT_EXPOSE     = ecore_event_type_new();
-
-   SDL_EnableKeyRepeat(200, 100);
 
    return _ecore_sdl_init_count;
 }
@@ -97,6 +97,8 @@ ecore_sdl_shutdown(void)
 {
    if (--_ecore_sdl_init_count != 0)
      return _ecore_sdl_init_count;
+
+   SDL_Quit();
 
    ecore_event_shutdown();
    eina_log_domain_unregister(_ecore_sdl_log_dom);
@@ -131,7 +133,7 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
    if (!ev) return NULL;
 
    ev->timestamp = timestamp;
-   ev->window = 0;
+   ev->window = event->key.windowID;
    ev->event_window = 0;
    ev->modifiers = _ecore_sdl_event_modifiers(SDL_GetModState());
    ev->key = NULL;
@@ -169,8 +171,8 @@ ecore_sdl_feed_events(void)
              if (!ev) return;
 
              ev->timestamp = timestamp;
-             ev->window = 0;
-             ev->event_window = 0;
+             ev->window = event.motion.windowID;
+             ev->event_window = event.motion.windowID;
              ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->x = event.motion.x;
              ev->y = event.motion.y;
@@ -188,46 +190,44 @@ ecore_sdl_feed_events(void)
           }
           case SDL_MOUSEBUTTONDOWN:
           {
-             if (event.button.button == SDL_BUTTON_WHEELUP ||
-                 event.button.button == SDL_BUTTON_WHEELDOWN)
-               {
-                  Ecore_Event_Mouse_Wheel *ev;
+             Ecore_Event_Mouse_Button *ev;
 
-                  ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
-                  if (!ev) return;
+             ev = malloc(sizeof(Ecore_Event_Mouse_Button));
+             if (!ev) return;
 
-                  ev->timestamp = timestamp;
-                  ev->window = 0;
-                  ev->event_window = 0;
-                  ev->modifiers = 0; /* FIXME: keep modifier around. */
-                  ev->direction = 0;
-                  ev->z = event.button.button == SDL_BUTTON_WHEELDOWN ? -1 : 1;
+             ev->timestamp = timestamp;
+             ev->window = event.button.windowID;
+             ev->event_window = event.button.windowID;
+             ev->modifiers = 0; /* FIXME: keep modifier around. */
+             ev->buttons = event.button.button;
+             ev->double_click = 0;
+             ev->triple_click = 0;
 
-                  ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
-               }
-             else
-               {
-                  Ecore_Event_Mouse_Button *ev;
+             /* Must set multi touch device to 0 or it will get ignored */
+             ev->multi.device = 0;
+             ev->multi.radius = ev->multi.radius_x = ev->multi.radius_y = 0;
+             ev->multi.pressure = ev->multi.angle = 0;
+             ev->multi.x = ev->multi.y = ev->multi.root.x = ev->multi.root.y = 0;
 
-                  ev = malloc(sizeof(Ecore_Event_Mouse_Button));
-                  if (!ev) return;
+             ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+             break;
+          }
+          case SDL_MOUSEWHEEL:
+          {
+             Ecore_Event_Mouse_Wheel *ev;
 
-                  ev->timestamp = timestamp;
-                  ev->window = 0;
-                  ev->event_window = 0;
-                  ev->modifiers = 0; /* FIXME: keep modifier around. */
-                  ev->buttons = event.button.button;
-                  ev->double_click = 0;
-                  ev->triple_click = 0;
+             ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+             if (!ev) return;
 
-                  /* Must set multi touch device to 0 or it will get ignored */
-                  ev->multi.device = 0;
-                  ev->multi.radius = ev->multi.radius_x = ev->multi.radius_y = 0;
-                  ev->multi.pressure = ev->multi.angle = 0;
-                  ev->multi.x = ev->multi.y = ev->multi.root.x = ev->multi.root.y = 0;
+             ev->timestamp = timestamp;
+             ev->window = event.wheel.windowID;
+             ev->event_window = event.wheel.windowID;
+             ev->modifiers = 0; /* FIXME: keep modifier around. */
+             ev->direction = 0;
+             ev->z = event.wheel.x != 0 ? event.wheel.x : event.wheel.y;
+             ev->direction = event.wheel.x != 0 ? 0 : 1;
 
-                  ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
-               }
+             ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
              break;
           }
           case SDL_MOUSEBUTTONUP:
@@ -237,8 +237,8 @@ ecore_sdl_feed_events(void)
              ev = malloc(sizeof(Ecore_Event_Mouse_Button));
              if (!ev) return;
              ev->timestamp = timestamp;
-             ev->window = 0;
-             ev->event_window = 0;
+             ev->window = event.button.windowID;
+             ev->event_window = event.button.windowID;
              ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->buttons = event.button.button;
              ev->double_click = 0;
@@ -253,20 +253,6 @@ ecore_sdl_feed_events(void)
              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
              break;
           }
-          case SDL_VIDEORESIZE:
-          {
-             Ecore_Sdl_Event_Video_Resize       *ev;
-
-             ev = malloc(sizeof (Ecore_Sdl_Event_Video_Resize));
-             ev->w = event.resize.w;
-             ev->h = event.resize.h;
-
-             ecore_event_add(ECORE_SDL_EVENT_RESIZE, ev, NULL, NULL);
-             break;
-          }
-          case SDL_VIDEOEXPOSE:
-             ecore_event_add(ECORE_SDL_EVENT_EXPOSE, NULL, NULL, NULL);
-             break;
           case SDL_QUIT:
              ecore_main_loop_quit();
              break;
@@ -317,8 +303,59 @@ ecore_sdl_feed_events(void)
              if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
              break;
           }
-          case SDL_ACTIVEEVENT:
-             /* FIXME: Focus gain. */
+          case SDL_WINDOWEVENT:
+             switch (event.window.event)
+               {
+                case SDL_WINDOWEVENT_RESIZED:
+                  {
+                     Ecore_Sdl_Event_Video_Resize *ev;
+
+                     ev = calloc(1, sizeof (Ecore_Sdl_Event_Video_Resize));
+                     ev->windowID = event.window.windowID;
+                     ev->w = event.window.data1;
+                     ev->h = event.window.data2;
+
+                     ecore_event_add(ECORE_SDL_EVENT_RESIZE, ev, NULL, NULL);
+                     break;
+                  }
+                case SDL_WINDOWEVENT_EXPOSED:
+                  {
+                     Ecore_Sdl_Event_Window *ev;
+
+                     ev = calloc(1, sizeof (Ecore_Sdl_Event_Window));
+                     ev->windowID = event.window.windowID;
+
+                     ecore_event_add(ECORE_SDL_EVENT_EXPOSE, ev, NULL, NULL);
+                     break;
+                  }
+                case SDL_WINDOWEVENT_ENTER:
+                case SDL_WINDOWEVENT_LEAVE:
+                  {
+                     Ecore_Event_Mouse_IO *ev;
+
+                     ev = calloc(1, sizeof (Ecore_Event_Mouse_IO));
+                     ev->window = event.window.windowID;
+                     ev->event_window = event.window.windowID;
+
+                     ecore_event_add(event.window.event == SDL_WINDOWEVENT_ENTER ?
+                                     ECORE_EVENT_MOUSE_IN : ECORE_EVENT_MOUSE_OUT,
+                                     ev, NULL, NULL);
+                     break;
+                  }
+                case SDL_WINDOWEVENT_FOCUS_GAINED:
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+                  {
+                     Ecore_Sdl_Event_Window *ev;
+
+                     ev = calloc(1, sizeof (Ecore_Sdl_Event_Window));
+                     ev->windowID = event.window.windowID;
+
+                     ecore_event_add(event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED ?
+                                     ECORE_SDL_EVENT_GOT_FOCUS : ECORE_SDL_EVENT_LOST_FOCUS,
+                                     ev, NULL, NULL);
+                     break;
+                  }
+               }
              break;
           case SDL_SYSWMEVENT:
           case SDL_USEREVENT:

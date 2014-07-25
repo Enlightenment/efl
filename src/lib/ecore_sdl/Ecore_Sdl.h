@@ -41,6 +41,26 @@ EAPI extern int ECORE_SDL_EVENT_LOST_FOCUS;
 EAPI extern int ECORE_SDL_EVENT_RESIZE;
 EAPI extern int ECORE_SDL_EVENT_EXPOSE;
 
+typedef struct _Ecore_Sdl_Event_Video_Resize Ecore_Sdl_Event_Video_Resize;
+struct _Ecore_Sdl_Event_Video_Resize
+{
+   unsigned int    windowID;
+   int             w;
+   int             h;
+};
+
+typedef struct _Ecore_Sdl_Event_Window Ecore_Sdl_Event_Window;
+struct _Ecore_Sdl_Event_Window
+{
+   unsigned int    windowID;
+};
+
+EAPI int        ecore_sdl_init(const char *name);
+EAPI int        ecore_sdl_shutdown(void);
+EAPI void       ecore_sdl_feed_events(void);
+
+  /* The following data structure have been deprecated since a long time */
+
 typedef struct _Ecore_Sdl_Event_Key_Down Ecore_Sdl_Event_Key_Down;
 struct _Ecore_Sdl_Event_Key_Down /** SDL Key Down event */
 {
@@ -95,17 +115,6 @@ struct _Ecore_Sdl_Event_Mouse_Wheel /** SDL Mouse Wheel event */
    int             wheel; /* value 1 (left/up), -1 (right/down) */
    unsigned int    time;
 };
-
-typedef struct _Ecore_Sdl_Event_Video_Resize Ecore_Sdl_Event_Video_Resize;
-struct _Ecore_Sdl_Event_Video_Resize
-{
-   int             w;
-   int             h;
-};
-
-EAPI int        ecore_sdl_init(const char *name);
-EAPI int        ecore_sdl_shutdown(void);
-EAPI void       ecore_sdl_feed_events(void);
 
 #ifdef __cplusplus
 }

@@ -1239,7 +1239,7 @@ AC_ARG_ENABLE([sdl],
    [want_sdl="no"])
 
 if test "${want_sdl}" = "yes"; then
-   EFL_PKG_CHECK_STRICT([sdl >= 1.2.0])
+   EFL_PKG_CHECK_STRICT([sdl2 >= 2.0.0])
 fi
 
 # We only enable SDL with opengl if it is not the full version and not ES
@@ -2734,10 +2734,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [eina])
 
-EFL_DEPEND_PKG([ECORE_SDL], [SDL], [sdl >= 1.2.0])
-
-PKG_CHECK_EXISTS([sdl >= 1.3.0],
-   [AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL])])
+EFL_DEPEND_PKG([ECORE_SDL], [SDL], [sdl2 >= 2.0.0])
 
 EFL_EVAL_PKGS([ECORE_SDL])
 

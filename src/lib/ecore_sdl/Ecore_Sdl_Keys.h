@@ -3,7 +3,7 @@
 
 struct _ecore_sdl_keys_s
 {
-   unsigned int code;
+   SDL_Keycode code;
    const char*  name;
    const char*  compose;
 };
@@ -11,9 +11,6 @@ struct _ecore_sdl_keys_s
 static const struct _ecore_sdl_keys_s  keystable[] =
 {
    { SDLK_UNKNOWN,      "0x00",         "" },
-#ifndef BUILD_ECORE_EVAS_SDL_130
-   { SDLK_FIRST,        "First",        "First" },
-#endif
    { SDLK_BACKSPACE,    "BackSpace",    "\010" },
    { SDLK_TAB,          "Tab",          "\011" },
    { SDLK_CLEAR,        "Clear",        "Clear" },
@@ -89,116 +86,17 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_DELETE,       "Delete",       "\177" },
    /* End of ASCII mapped keysyms */
 
-#ifndef BUILD_ECORE_EVAS_SDL_130
-   /* International keyboard syms */
-   { SDLK_WORLD_0,      "w0",           "" }, /* 0xA0 */
-   { SDLK_WORLD_1,      "w1",           "" },
-   { SDLK_WORLD_2,      "w2",           "" },
-   { SDLK_WORLD_3,      "w3",           "" },
-   { SDLK_WORLD_4,      "w4",           "" },
-   { SDLK_WORLD_5,      "w5",           "" },
-   { SDLK_WORLD_6,      "w6",           "" },
-   { SDLK_WORLD_7,      "w7",           "" },
-   { SDLK_WORLD_8,      "w8",           "" },
-   { SDLK_WORLD_9,      "w9",           "" },
-   { SDLK_WORLD_10,     "w10",          "" },
-   { SDLK_WORLD_11,     "w11",          "" },
-   { SDLK_WORLD_12,     "w12",          "" },
-   { SDLK_WORLD_13,     "w13",          "" },
-   { SDLK_WORLD_14,     "w14",          "" },
-   { SDLK_WORLD_15,     "w15",          "" },
-   { SDLK_WORLD_16,     "w16",          "" },
-   { SDLK_WORLD_17,     "w17",          "" },
-   { SDLK_WORLD_18,     "w18",          "" },
-   { SDLK_WORLD_19,     "w19",          "" },
-   { SDLK_WORLD_20,     "w20",          "" },
-   { SDLK_WORLD_21,     "w21",          "" },
-   { SDLK_WORLD_22,     "w22",          "" },
-   { SDLK_WORLD_23,     "w23",          "" },
-   { SDLK_WORLD_24,     "w24",          "" },
-   { SDLK_WORLD_25,     "w25",          "" },
-   { SDLK_WORLD_26,     "w26",          "" },
-   { SDLK_WORLD_27,     "w27",          "" },
-   { SDLK_WORLD_28,     "w28",          "" },
-   { SDLK_WORLD_29,     "w29",          "" },
-   { SDLK_WORLD_30,     "w30",          "" },
-   { SDLK_WORLD_31,     "w31",          "" },
-   { SDLK_WORLD_32,     "w32",          "" },
-   { SDLK_WORLD_33,     "w33",          "" },
-   { SDLK_WORLD_34,     "w34",          "" },
-   { SDLK_WORLD_35,     "w35",          "" },
-   { SDLK_WORLD_36,     "w36",          "" },
-   { SDLK_WORLD_37,     "w37",          "" },
-   { SDLK_WORLD_38,     "w38",          "" },
-   { SDLK_WORLD_39,     "w39",          "" },
-   { SDLK_WORLD_40,     "w40",          "" },
-   { SDLK_WORLD_41,     "w41",          "" },
-   { SDLK_WORLD_42,     "w42",          "" },
-   { SDLK_WORLD_43,     "w43",          "" },
-   { SDLK_WORLD_44,     "w44",          "" },
-   { SDLK_WORLD_45,     "w45",          "" },
-   { SDLK_WORLD_46,     "w46",          "" },
-   { SDLK_WORLD_47,     "w47",          "" },
-   { SDLK_WORLD_48,     "w48",          "" },
-   { SDLK_WORLD_49,     "w49",          "" },
-   { SDLK_WORLD_50,     "w50",          "" },
-   { SDLK_WORLD_51,     "w51",          "" },
-   { SDLK_WORLD_52,     "w52",          "" },
-   { SDLK_WORLD_53,     "w53",          "" },
-   { SDLK_WORLD_54,     "w54",          "" },
-   { SDLK_WORLD_55,     "w55",          "" },
-   { SDLK_WORLD_56,     "w56",          "" },
-   { SDLK_WORLD_57,     "w57",          "" },
-   { SDLK_WORLD_58,     "w58",          "" },
-   { SDLK_WORLD_59,     "w59",          "" },
-   { SDLK_WORLD_60,     "w60",          "" },
-   { SDLK_WORLD_61,     "w61",          "" },
-   { SDLK_WORLD_62,     "w62",          "" },
-   { SDLK_WORLD_63,     "w63",          "" },
-   { SDLK_WORLD_64,     "w64",          "" },
-   { SDLK_WORLD_65,     "w65",          "" },
-   { SDLK_WORLD_66,     "w66",          "" },
-   { SDLK_WORLD_67,     "w67",          "" },
-   { SDLK_WORLD_68,     "w68",          "" },
-   { SDLK_WORLD_69,     "w69",          "" },
-   { SDLK_WORLD_70,     "w70",          "" },
-   { SDLK_WORLD_71,     "w71",          "" },
-   { SDLK_WORLD_72,     "w72",          "" },
-   { SDLK_WORLD_73,     "w73",          "" },
-   { SDLK_WORLD_74,     "w74",          "" },
-   { SDLK_WORLD_75,     "w75",          "" },
-   { SDLK_WORLD_76,     "w76",          "" },
-   { SDLK_WORLD_77,     "w77",          "" },
-   { SDLK_WORLD_78,     "w78",          "" },
-   { SDLK_WORLD_79,     "w79",          "" },
-   { SDLK_WORLD_80,     "w80",          "" },
-   { SDLK_WORLD_81,     "w81",          "" },
-   { SDLK_WORLD_82,     "w82",          "" },
-   { SDLK_WORLD_83,     "w83",          "" },
-   { SDLK_WORLD_84,     "w84",          "" },
-   { SDLK_WORLD_85,     "w85",          "" },
-   { SDLK_WORLD_86,     "w86",          "" },
-   { SDLK_WORLD_87,     "w87",          "" },
-   { SDLK_WORLD_88,     "w88",          "" },
-   { SDLK_WORLD_89,     "w89",          "" },
-   { SDLK_WORLD_90,     "w90",          "" },
-   { SDLK_WORLD_91,     "w91",          "" },
-   { SDLK_WORLD_92,     "w92",          "" },
-   { SDLK_WORLD_93,     "w93",          "" },
-   { SDLK_WORLD_94,     "w94",          "" },
-   { SDLK_WORLD_95,     "w95",          "" },
-#endif
    /* Numeric keypad */
-   { SDLK_KP0,          "KP0",          "0" },
-   { SDLK_KP1,          "KP1",          "1" },
-   { SDLK_KP2,          "KP2",          "2" },
-   { SDLK_KP3,          "KP3",          "3" },
-   { SDLK_KP4,          "KP4",          "4" },
-   { SDLK_KP5,          "KP5",          "5" },
-   { SDLK_KP6,          "KP6",          "6" },
-   { SDLK_KP7,          "KP7",          "7" },
-   { SDLK_KP8,          "KP8",          "8" },
-   { SDLK_KP9,          "KP9",          "9" },
+   { SDLK_KP_0,         "KP0",          "0" },
+   { SDLK_KP_1,         "KP1",          "1" },
+   { SDLK_KP_2,         "KP2",          "2" },
+   { SDLK_KP_3,         "KP3",          "3" },
+   { SDLK_KP_4,         "KP4",          "4" },
+   { SDLK_KP_5,         "KP5",          "5" },
+   { SDLK_KP_6,         "KP6",          "6" },
+   { SDLK_KP_7,         "KP7",          "7" },
+   { SDLK_KP_8,         "KP8",          "8" },
+   { SDLK_KP_9,         "KP9",          "9" },
    { SDLK_KP_PERIOD,    "period",       "." },
    { SDLK_KP_DIVIDE,    "KP_Divide",    "/" },
    { SDLK_KP_MULTIPLY,  "KP_Multiply",  "*" },
@@ -236,30 +134,25 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_F15,          "F15",          "F15" },
 
    /* Key state modifier keys */
-   { SDLK_NUMLOCK,      "Num_Lock",     "Num_Lock" },
+   { SDLK_NUMLOCKCLEAR, "Num_Lock",     "Num_Lock" },
    { SDLK_CAPSLOCK,     "Caps_Lock",    "Caps_Lock" },
-   { SDLK_SCROLLOCK,    "Scroll_Lock",  "Scroll_Lock" },
+   { SDLK_SCROLLLOCK,   "Scroll_Lock",  "Scroll_Lock" },
    { SDLK_RSHIFT,       "Shift_R",      "Shift_R" },
    { SDLK_LSHIFT,       "Shift_L",      "Shift_L" },
    { SDLK_RCTRL,        "Control_R",    "Control_R" },
    { SDLK_LCTRL,        "Control_L",    "Control_L" },
    { SDLK_RALT,         "Alt_R",        "Alt_R" },
    { SDLK_LALT,         "Alt_L",        "Alt_L" },
-   { SDLK_RMETA,        "Meta_R",       "Meta_R" },
-   { SDLK_LMETA,        "Meta_L",       "Meta_L" },
-   { SDLK_LSUPER,       "Super_L",      "Super_L" },   /* Left "Windows" key */
-   { SDLK_RSUPER,       "Super_R",      "Super_R" },   /* Right "Windows" key */
+   { SDLK_LGUI,         "Super_L",      "Super_L" },   /* Left "Windows" key */
+   { SDLK_RGUI,         "Super_R",      "Super_R" },   /* Right "Windows" key */
    { SDLK_MODE,         "Mode",         "Mode" },   /* "Alt Gr" key */
-   { SDLK_COMPOSE,      "Compose",      "Compose" },   /* Multi-key compose key */
 
    /* Miscellaneous function keys */
    { SDLK_HELP,         "Help",         "Help" },
-   { SDLK_PRINT,        "Print",        "Print" },
+   { SDLK_PRINTSCREEN,  "Print",        "Print" },
    { SDLK_SYSREQ,       "SysReq",       "SysReq" },
-   { SDLK_BREAK,        "Break",        "Break" },
    { SDLK_MENU,         "Menu",         "Menu" },
    { SDLK_POWER,        "Power",        "Power" },   /* Power Macintosh power key */
-   { SDLK_EURO,         "Euro",         "\200" },   /* Some european keyboards */
    { SDLK_UNDO,         "Undo",         "Undo" }    /* Atari keyboard has Undo */
 };
 

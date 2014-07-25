@@ -419,10 +419,10 @@ have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-PKG_CHECK_EXISTS([sdl >= 1.2.0],
+PKG_CHECK_EXISTS([sdl2 >= 2.0.0],
    [
     have_dep="yes"
-    requirement="sdl >= 1.2.0"
+    requirement="sdl2 >= 2.0.0"
    ],
    [have_dep="no"])
 

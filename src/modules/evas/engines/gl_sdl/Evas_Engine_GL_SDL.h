@@ -11,14 +11,13 @@ struct _Evas_Engine_Info_GL_SDL
    /* at you and make nasty noises */
    Evas_Engine_Info magic;
 
+   SDL_Window *window;
+
    /* engine specific data & parameters it needs to set up */
    struct {
      int rotation;
      int fullscreen : 1;
      int noframe : 1;
    } flags;
-   
 };
 #endif
-
-

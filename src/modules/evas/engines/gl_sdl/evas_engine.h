@@ -4,17 +4,16 @@
 #define _EVAS_ENGINE_SDL_H
 
 #include "config.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #ifdef GL_GLES
-# include <EGL/egl.h>
-# include <SDL/SDL_opengles.h>
+# include <SDL2/SDL_opengles.h>
 # ifdef HAVE_SDL_FLAG_OPENGLES
 #  define EVAS_SDL_GL_FLAG SDL_OPENGLES
 # else
 #  define EVAS_SDL_GL_FLAG SDL_OPENGL /* This probably won't work? */
 # endif
 #else
-# include <SDL/SDL_opengl.h>
+# include <SDL2/SDL_opengl.h>
 # define EVAS_SDL_GL_FLAG SDL_OPENGL
 #endif
 #include "evas_common_private.h"
@@ -22,6 +21,8 @@
 #include "evas_gl_common.h"
 #include "Evas.h"
 #include "Evas_Engine_GL_SDL.h"
+
+#include "../gl_generic/Evas_Engine_GL_Generic.h"
 
 extern int _evas_engine_GL_SDL_log_dom ;
 #ifdef ERR
@@ -50,10 +51,12 @@ extern int _evas_engine_GL_SDL_log_dom ;
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_SDL_log_dom, __VA_ARGS__)
 
 typedef struct _Render_Engine Render_Engine;
-struct _Render_Engine
+
+struct _Outbuf
 {
-   Evas_Engine_Info_GL_SDL	*info;
-   int			w, h;
+   Evas_Engine_Info_GL_SDL *info;
+   SDL_Window *window;
+   SDL_GLContext *context;
 
    Evas_Engine_GL_Context *gl_context;
    struct {
@@ -68,6 +71,12 @@ struct _Render_Engine
    EGLDisplay       egl_disp;
 #endif
 
+   int w, h;
+};
+
+struct _Render_Engine
+{
+   Render_Engine_GL_Generic generic;
 };
 
 #endif
