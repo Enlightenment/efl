@@ -2658,7 +2658,13 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
 EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_systemd}], [SYSTEMD_LOGIN], [libsystemd-login])
 EFL_ADD_FEATURE([ECORE_INPUT], [systemd-login], [${want_systemd}])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_libinput}], [LIBINPUT], [libinput libudev >= 148])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_INPUT], [${want_libinput}], 
+  [LIBINPUT], [libinput libudev >= 148], 
+  [
+    EFL_ADD_LIBS([ECORE_INPUT], [-linput])
+    EFL_ADD_LIBS([ECORE_INPUT], [-ludev])
+  ]
+)
 EFL_ADD_FEATURE([ECORE_INPUT], [libinput], [${want_libinput}])
 
 EFL_LIB_END_OPTIONAL([Ecore_Input])
