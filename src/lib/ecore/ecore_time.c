@@ -120,6 +120,12 @@ ecore_loop_time_get(void)
    return _ecore_time_loop_time;
 }
 
+EAPI void
+ecore_loop_time_set(double t)
+{
+   _ecore_time_loop_time = t;
+}
+
 /**
  * @}
  */

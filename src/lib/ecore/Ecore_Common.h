@@ -984,6 +984,28 @@ EAPI double ecore_time_unix_get(void);
 EAPI double ecore_loop_time_get(void);
 
 /**
+ * Set the loop time
+ * 
+ * @param t The new loop time
+ * 
+ * You should never need/call this, unless you are implementing a custom
+ * tick source for an ecore animator. Only then inside your function that
+ * calls ecore_animator_custom_tick(), just before it, if you are able to
+ * get accurate timing information as to when the source of your tick
+ * woke up, use this to adjust the ecore loop time to be perfectly
+ * accurate. It is not a requirement, but makes things smoother. You should
+ * not use it otherwise as it could harm timeline handling throughout the
+ * application. Also note that the time point must match whatever zero time
+ * you get from ecore_time_get() and ecore_loop_time_get() (same 0 point).
+ * What this point is is undefined, sou unless your source uses the same
+ * 0 time, then you may have to adjust and do some guessing.
+ * 
+ * @see ecore_animator_custom_tick()
+ * @see ecore_loop_time_get()
+ */
+EAPI void ecore_loop_time_set(double t);
+
+/**
  * @}
  */
 
