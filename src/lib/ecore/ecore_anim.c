@@ -680,8 +680,16 @@ _ecore_animator_run(void *data)
 static Eina_Bool
 _ecore_animator(void *data EINA_UNUSED)
 {
+   double t;
+
    Eina_Bool r;
    _ecore_lock();
+   // set _ecore_time_loop_time to the EXACT time that the timer
+   // should have ticked off (even if it didn't)
+   // if you have a custom animator tick, you may need to adjust inside
+   // it before calling ecore_animator_custom_tick()
+   t = fmod(_ecore_time_loop_time, animators_frametime);
+   _ecore_time_loop_time -= t;
    r = _do_tick();
    _ecore_unlock();
    return r;
