@@ -65,17 +65,6 @@ static Ecore_Timer_Data *suspended = NULL;
 static double last_check = 0.0;
 static double precision = 10.0 / 1000000.0;
 
-/**
- * @addtogroup Ecore_Timer_Group
- *
- * @{
- */
-
-/**
- * Retrieves the current precision used by timer infrastructure.
- * @return Current precision.
- * @see ecore_timer_precision_set()
- */
 EAPI double
 ecore_timer_precision_get(void)
 {
@@ -83,31 +72,6 @@ ecore_timer_precision_get(void)
    return precision;
 }
 
-/**
- * @brief Sets the precision to be used by timer infrastructure.
- *
- * @param value allowed introduced timeout delay, in seconds.
- *
- * This sets the precision for @b all timers. The precision determines how much
- * of an difference from the requested interval is acceptable. One common reason
- * to use this function is to @b increase the allowed timeout and thus @b
- * decrease precision of the timers, this is because less precise the timers
- * result in the system waking up less often and thus consuming less resources.
- *
- * Be aware that kernel may delay delivery even further, these delays
- * are always possible due other tasks having higher priorities or
- * other scheduler policies.
- *
- * Example:
- *  We have 2 timers, one that expires in a 2.0s and another that
- *  expires in 2.1s, if precision is 0.1s, then the Ecore will request
- *  for the next expire to happen in 2.1s and not 2.0s and another one
- *  of 0.1 as it would before.
- *
- * @note Ecore is smart enough to see if there are timers in the
- * precision range, if it does not, in our example if no second timer
- * in (T + precision) existed, then it would use the minimum timeout.
- */
 EAPI void
 ecore_timer_precision_set(double value)
 {
@@ -125,24 +89,6 @@ unlock:
    _ecore_unlock();
 }
 
-/**
- * Creates a timer to call the given function in the given period of time.
- * @param   in   The interval in seconds.
- * @param   func The given function.  If @p func returns 1, the timer is
- *               rescheduled for the next interval @p in.
- * @param   data Data to pass to @p func when it is called.
- * @return  A timer object on success.  @c NULL on failure.
- *
- * This function adds a timer and returns its handle on success and NULL on
- * failure. The function @p func will be called every @p in seconds. The
- * function will be passed the @p data pointer as its parameter.
- *
- * When the timer @p func is called, it must return a value of either 1
- * (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL).
- * If it returns 1, it will be called again at the next tick, or if it returns
- * 0 it will be deleted automatically making any references/handles for it
- * invalid.
- */
 EAPI Ecore_Timer *
 ecore_timer_add(double        in,
                 Ecore_Task_Cb func,
@@ -221,18 +167,6 @@ _ecore_timer_eo_base_constructor(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED)
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-/**
- * Creates a timer to call the given function in the given period of time.
- * @param   in   The interval in seconds from current loop time.
- * @param   func The given function.  If @p func returns 1, the timer is
- *               rescheduled for the next interval @p in.
- * @param   data Data to pass to @p func when it is called.
- * @return  A timer object on success.  @c NULL on failure.
- *
- * This is the same as ecore_timer_add(), but "now" is the time from
- * ecore_loop_time_get() not ecore_time_get() as ecore_timer_add() uses. See
- * ecore_timer_add() for more details.
- */
 EAPI Ecore_Timer *
 ecore_timer_loop_add(double        in,
                      Ecore_Task_Cb func,
@@ -247,15 +181,6 @@ ecore_timer_loop_add(double        in,
    return timer;
 }
 
-/**
- * Delete the specified timer from the timer list.
- * @param   timer The timer to delete.
- * @return  The data pointer set for the timer when @ref ecore_timer_add was
- *          called.  @c NULL is returned if the function is unsuccessful.
- *
- * Note: @p timer must be a valid handle. If the timer function has already
- * returned 0, the handle is no longer valid (and does not need to be delete).
- */
 EAPI void *
 ecore_timer_del(Ecore_Timer *timer)
 {
@@ -271,13 +196,6 @@ ecore_timer_del(Ecore_Timer *timer)
    return data;
 }
 
-/**
- * Change the interval the timer ticks of. If set during
- * a timer call, this will affect the next interval.
- *
- * @param   timer The timer to change.
- * @param   in    The interval in seconds.
- */
 EOLIAN static void
 _ecore_timer_interval_set(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer, double in)
 {
@@ -289,12 +207,6 @@ _ecore_timer_interval_set(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer, double i
    _ecore_unlock();
 }
 
-/**
- * Get the interval the timer ticks on.
- *
- * @param   timer The timer to retrieve the interval from
- * @return  The interval on success. -1 on failure.
- */
 EOLIAN static double
 _ecore_timer_interval_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
@@ -308,13 +220,6 @@ _ecore_timer_interval_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
    return ret;
 }
 
-/**
- * Add some delay for the next occurrence of a timer.
- * This doesn't affect the interval of a timer.
- *
- * @param   timer The timer to change.
- * @param   add   The delay to add to the next iteration.
- */
 EOLIAN static void
 _ecore_timer_delay(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED, double add)
 {
@@ -325,16 +230,6 @@ _ecore_timer_delay(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED, double add)
    _ecore_unlock();
 }
 
-/**
- * Reset a timer to its full interval
- * This doesn't affect the interval of a timer
- * @param timer The timer
- * @since 1.2
- * @note This is equivalent to (but faster than)
- * @code
- * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
- * @endcode
- */
 EOLIAN static void
 _ecore_timer_reset(Eo *obj, Ecore_Timer_Data *timer)
 {
@@ -352,13 +247,6 @@ _ecore_timer_reset(Eo *obj, Ecore_Timer_Data *timer)
    _ecore_unlock();
 }
 
-/**
- * Get the pending time regarding a timer.
- *
- * @param        timer The timer to learn from.
- * @return The pending time.
- * @ingroup        Ecore_Timer_Group
- */
 EOLIAN static double
 _ecore_timer_pending_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
@@ -380,20 +268,6 @@ _ecore_timer_pending_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
    return ret;
 }
 
-/**
- * Pauses a running timer.
- *
- * @param timer The timer to be paused.
- *
- * The timer callback won't be called while the timer is paused. The remaining
- * time until the timer expires will be saved, so the timer can be resumed with
- * that same remaining time to expire, instead of expiring instantly.  Use
- * ecore_timer_thaw() to resume it.
- *
- * @note Nothing happens if the timer was already paused.
- *
- * @see ecore_timer_thaw()
- */
 EAPI void
 ecore_timer_freeze(Ecore_Timer *timer)
 {
@@ -443,19 +317,6 @@ _ecore_timer_eo_base_event_freeze_count_get(Eo *obj EINA_UNUSED, Ecore_Timer_Dat
    return timer->frozen;
 }
 
-/**
- * Resumes a frozen (paused) timer.
- *
- * @param timer The timer to be resumed.
- *
- * The timer will be resumed from its previous relative position in time. That
- * means, if it had X seconds remaining until expire when it was paused, it will
- * be started now with those same X seconds remaining to expire again. But
- * notice that the interval time won't be touched by this call or by
- * ecore_timer_freeze().
- *
- * @see ecore_timer_freeze()
- */
 EAPI void
 ecore_timer_thaw(Ecore_Timer *timer)
 {
@@ -539,10 +400,6 @@ ecore_timer_dump(void)
    return NULL;
 #endif
 }
-
-/**
- * @}
- */
 
 Ecore_Timer *
 _ecore_timer_loop_add(double        in,

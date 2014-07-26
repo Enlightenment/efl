@@ -115,7 +115,7 @@ static Ecore_Timer *_systemd_watchdog = NULL;
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
 
-/** OpenBSD does not define CODESET
+/* OpenBSD does not define CODESET
  * FIXME ??
  */
 
@@ -197,34 +197,6 @@ ecore_app_no_system_modules(void)
    _no_system_modules = EINA_TRUE;
 }
 
-/**
- * @addtogroup Ecore_Init_Group
- *
- * @{
- */
-
-/**
- * Set up connections, signal handlers, sockets etc.
- * @return 1 or greater on success, 0 otherwise
- *
- * This function sets up all singal handlers and the basic event loop. If it
- * succeeds, 1 will be returned, otherwise 0 will be returned.
- *
- * @code
- * #include <Ecore.h>
- *
- * int main(int argc, char **argv)
- * {
- *   if (!ecore_init())
- *   {
- *     printf("ERROR: Cannot init Ecore!\n");
- *     return -1;
- *   }
- *   ecore_main_loop_begin();
- *   ecore_shutdown();
- * }
- * @endcode
- */
 EAPI int
 ecore_init(void)
 {
@@ -312,14 +284,14 @@ ecore_init(void)
      {
         double sec;
 
-	sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
+        sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
 
-	_systemd_watchdog = ecore_timer_add(sec / 2, _systemd_watchdog_cb, NULL);
-	unsetenv("WATCHDOG_USEC");
+        _systemd_watchdog = ecore_timer_add(sec / 2, _systemd_watchdog_cb, NULL);
+        unsetenv("WATCHDOG_USEC");
 
-	INF("Setup systemd watchdog to : %f", sec);
+        INF("Setup systemd watchdog to : %f", sec);
 
-	_systemd_watchdog_cb(NULL);
+        _systemd_watchdog_cb(NULL);
      }
 #endif
 
@@ -329,8 +301,8 @@ ecore_init(void)
    _ecore_init_count_threshold = _ecore_init_count;
 
    eina_log_timing(_ecore_log_dom,
-		   EINA_LOG_STATE_STOP,
-		   EINA_LOG_STATE_INIT);
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
 
    return _ecore_init_count;
 
@@ -347,17 +319,6 @@ shutdown_evil:
    return --_ecore_init_count;
 }
 
-/**
- * Shut down connections, signal handlers sockets etc.
- *
- * @return 0 if ecore shuts down, greater than 0 otherwise.
- * This function shuts down all things set up in ecore_init() and cleans up all
- * event queues, handlers, filters, timers, idlers, idle enterers/exiters
- * etc. set up after ecore_init() was called.
- *
- * Do not call this function from any callback that may be called from the main
- * loop, as the main loop will then fall over and not function properly.
- */
 EAPI int
 ecore_shutdown(void)
 {
@@ -378,14 +339,14 @@ ecore_shutdown(void)
      ecore_system_modules_unload();
 
      eina_log_timing(_ecore_log_dom,
-		     EINA_LOG_STATE_START,
-		     EINA_LOG_STATE_SHUTDOWN);
+                     EINA_LOG_STATE_START,
+                     EINA_LOG_STATE_SHUTDOWN);
 
 #ifdef HAVE_SYSTEMD
      if (_systemd_watchdog)
        {
-	  ecore_timer_del(_systemd_watchdog);
-	  _systemd_watchdog = NULL;
+          ecore_timer_del(_systemd_watchdog);
+          _systemd_watchdog = NULL;
        }
 #endif
 
@@ -556,10 +517,6 @@ ecore_fork_reset(void)
    unsetenv("NOTIFY_SOCKET");
 #endif
 }
-
-/**
- * @}
- */
 
 EAPI void
 ecore_main_loop_thread_safe_call_async(Ecore_Cb callback,

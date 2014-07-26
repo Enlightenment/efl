@@ -92,14 +92,6 @@ ecore_idler_del(Ecore_Idler *idler)
    return data;
 }
 
-/**
- * @}
- */
-
-/**
- * @}
- */
-
 static void *
 _ecore_idler_del(Ecore_Idler *obj)
 {

@@ -25,27 +25,6 @@ static double _ecore_time_clock_conversion = 1e-9;
 #endif
 double _ecore_time_loop_time = -1.0;
 
-/**
- * @addtogroup Ecore_Time_Group
- *
- * @{
- */
-
-/**
- * Retrieves the current system time as a floating point value in seconds.
- *
- * This uses a monotonic clock and thus never goes back in time while
- * machine is live (even if user changes time or timezone changes,
- * however it may be reset whenever the machine is restarted).
- *
- * @see ecore_loop_time_get().
- * @see ecore_time_unix_get().
- *
- * @return The number of seconds. Start time is not defined (it may be
- *         when the machine was booted, unix time, etc), all it is
- *         defined is that it never goes backwards (unless you got big critical
- *         messages when the application started).
- */
 EAPI double
 ecore_time_get(void)
 {
@@ -72,14 +51,6 @@ ecore_time_get(void)
 #endif
 }
 
-/**
- * Retrieves the current UNIX time as a floating point value in seconds.
- *
- * @see ecore_time_get().
- * @see ecore_loop_time_get().
- *
- * @return  The number of seconds since 12.00AM 1st January 1970.
- */
 EAPI double
 ecore_time_unix_get(void)
 {
@@ -93,27 +64,6 @@ ecore_time_unix_get(void)
 #endif
 }
 
-/**
- * Retrieves the time at which the last loop stopped waiting for timeouts or
- * events.
- *
- * This gets the time that the main loop ceased waiting for timouts and/or
- * events to come in or for signals or any other interrupt source. This should
- * be considered a reference point for all time based activity that should
- * calculate its timepoint from the return of ecore_loop_time_get(). Use this
- * UNLESS you absolutely must get the current actual timepoint - then use
- * ecore_time_get(). Note that this time is meant to be used as relative to
- * other times obtained on this run. If you need absolute time references, use
- * ecore_time_unix_get() instead.
- *
- * This function can be called before any loop has ever been run, but either
- * ecore_init() or ecore_time_get() must have been called once.
- *
- * @return The number of seconds. Start time is not defined (it may be
- *         when the machine was booted, unix time, etc), all it is
- *         defined is that it never goes backwards (unless you got big critical
- *         messages when the application started).
- */
 EAPI double
 ecore_loop_time_get(void)
 {
@@ -126,11 +76,7 @@ ecore_loop_time_set(double t)
    _ecore_time_loop_time = t;
 }
 
-/**
- * @}
- */
-
-/**********************   Internal methods   ********************************/
+/*-********************   Internal methods   ********************************/
 
 /* TODO: Documentation says "All  implementations  support  the  system-wide
  * real-time clock, which is identified by CLOCK_REALTIME. Check if the fallback

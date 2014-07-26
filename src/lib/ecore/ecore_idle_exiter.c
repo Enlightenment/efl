@@ -32,21 +32,6 @@ static int idle_exiters_delete_me = 0;
 static void *
 _ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
-/**
- * @addtogroup Ecore_Idle_Group
- *
- * @{
- */
-
-/**
- * Add an idle exiter handler.
- * @param func The function to call when exiting an idle state.
- * @param data The data to be passed to the @p func call
- * @return A handle to the idle exiter callback on success.  NULL otherwise.
- * @note The function func will be called every time the main loop is exiting
- * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idle exiter.
- */
 EAPI Ecore_Idle_Exiter *
 ecore_idle_exiter_add(Ecore_Task_Cb func,
                       const void   *data)
@@ -93,12 +78,6 @@ _ecore_idle_exiter_eo_base_constructor(Eo *obj, Ecore_Idle_Exiter_Data *_pd EINA
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-/**
- * Delete an idle exiter handler from the list to be run on exiting idle state.
- * @param idle_exiter The idle exiter to delete
- * @return The data pointer that was being being passed to the handler if
- *         successful.  NULL otherwise.
- */
 EAPI void *
 ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 {
@@ -113,9 +92,6 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
    return data;
 }
 
-/**
- * @}
- */
 static void *
 _ecore_idle_exiter_del(Ecore_Idle_Exiter *obj)
 {

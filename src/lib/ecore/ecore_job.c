@@ -45,21 +45,6 @@ _ecore_job_shutdown(void)
    _ecore_job_handler = NULL;
 }
 
-/**
- * @addtogroup Ecore_Job_Group
- *
- * @{
- */
-
-/**
- * Add a job to the event queue.
- * @param   func The function to call when the job gets handled.
- * @param   data Data pointer to be passed to the job function when the job is
- *               handled.
- * @return  The handle of the job.  @c NULL is returned if the job could not be
- *          added to the queue.
- * @note    Once the job has been executed, the job handle is invalid.
- */
 EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
@@ -105,11 +90,6 @@ _ecore_job_eo_base_constructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-/**
- * Delete a queued job that has not yet been executed.
- * @param   obj  Handle of the job to delete.
- * @return  The data pointer that was to be passed to the job.
- */
 EAPI void *
 ecore_job_del(Ecore_Job *obj)
 {
@@ -130,10 +110,6 @@ _ecore_job_eo_base_destructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
    /*FIXME: check if ecore_event_del should be called from here*/
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
-
-/**
- * @}
- */
 
 static Eina_Bool
 _ecore_job_event_handler(void *data EINA_UNUSED,

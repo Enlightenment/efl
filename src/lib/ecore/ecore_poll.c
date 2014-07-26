@@ -385,10 +385,6 @@ _ecore_poller_eo_base_destructor(Eo *obj, Ecore_Poller_Data *pd)
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-/**
- * @}
- */
-
 void
 _ecore_poller_shutdown(void)
 {

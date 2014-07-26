@@ -29,7 +29,9 @@ class Ecore.Timer (Eo.Base)
    properties {
       interval {
          set {
-            /*@ Change the interval the timer ticks off. */
+            /*@ Change the interval the timer ticks off. If set during
+             * a timer call, this will affect the next interval.
+             */
          }
          get {
             /*@ Get the interval the timer ticks on. */
@@ -48,10 +50,18 @@ class Ecore.Timer (Eo.Base)
    methods {
       reset {
          /*@ Reset a timer to its full interval. This effectively makes
-          *  the timer start ticking off from zero now. */
+          *  the timer start ticking off from zero now.
+          *  @note This is equivalent to (but faster than)
+          * @code
+          * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
+          * @endcode
+          * @since 1.2
+          */
       }
       delay {
-         /*@ Add some delay for the next occurrence of a timer. */
+         /*@ Add some delay for the next occurrence of a timer.
+          * This doesn't affect the interval of a timer.
+          */
          params {
             @in double add; /*@ The amount of time to delay the timer by in seconds */
          }
@@ -61,7 +71,34 @@ class Ecore.Timer (Eo.Base)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.event_freeze;
+      /* XXX: can't document overriden methods
+       * Pauses a running timer.
+       *
+       * @param timer The timer to be paused.
+       *
+       * The timer callback won't be called while the timer is paused. The remaining
+       * time until the timer expires will be saved, so the timer can be resumed with
+       * that same remaining time to expire, instead of expiring instantly. Use
+       * ecore_timer_thaw() to resume it.
+       *
+       * @note Nothing happens if the timer was already paused.
+       *
+       * @see ecore_timer_thaw()
+       */
       Eo.Base.event_freeze_count.get;
       Eo.Base.event_thaw;
-   }
+      /* XXX: can't document overriden methods
+       * Resumes a frozen (paused) timer.
+       *
+       * @param timer The timer to be resumed.
+       *
+       * The timer will be resumed from its previous relative position in time. That
+       * means, if it had X seconds remaining until expire when it was paused, it will
+       * be started now with those same X seconds remaining to expire again. But
+       * notice that the interval time won't be touched by this call or by
+       * ecore_timer_freeze().
+       *
+       * @see ecore_timer_freeze()
+       */
+     }
 }

@@ -102,23 +102,6 @@ GENERIC_ALLOC_SIZE_DECLARE(Ecore_Pipe);
 static Eina_Bool _ecore_pipe_read(void             *data,
                                   Ecore_Fd_Handler *fd_handler);
 
-/**
- * @addtogroup Ecore_Pipe_Group
- *
- * @{
- */
-
-/**
- * Create two file descriptors (sockets on Windows). Add
- * a callback that will be called when the file descriptor that
- * is listened receives data. An event is also put in the event
- * queue when data is received.
- *
- * @param handler The handler called when data is received.
- * @param data    Data to pass to @p handler when it is called.
- * @return        A newly created Ecore_Pipe object if successful.
- *                @c NULL otherwise.
- */
 EAPI Ecore_Pipe *
 ecore_pipe_add(Ecore_Pipe_Cb handler,
                const void   *data)
@@ -132,12 +115,6 @@ ecore_pipe_add(Ecore_Pipe_Cb handler,
    return p;
 }
 
-/**
- * Free an Ecore_Pipe object created with ecore_pipe_add().
- *
- * @param p The Ecore_Pipe object to be freed.
- * @return The pointer to the private data
- */
 EAPI void *
 ecore_pipe_del(Ecore_Pipe *p)
 {
@@ -150,11 +127,6 @@ ecore_pipe_del(Ecore_Pipe *p)
    return r;
 }
 
-/**
- * Close the read end of an Ecore_Pipe object created with ecore_pipe_add().
- *
- * @param p The Ecore_Pipe object.
- */
 EAPI void
 ecore_pipe_read_close(Ecore_Pipe *p)
 {
@@ -186,13 +158,6 @@ ecore_pipe_read_fd(Ecore_Pipe *p)
    return p->fd_read;
 }
 
-/**
- * Stop monitoring if necessary the pipe for reading. See ecore_pipe_thaw()
- * for monitoring it again.
- *
- * @param p The Ecore_Pipe object.
- * @since 1.1
- */
 EAPI void
 ecore_pipe_freeze(Ecore_Pipe *p)
 {
@@ -212,14 +177,6 @@ out:
    _ecore_unlock();
 }
 
-/**
- * Start monitoring again the pipe for reading. See ecore_pipe_freeze() for
- * stopping the monitoring activity. This will not work if
- * ecore_pipe_read_close() was previously called on the same pipe.
- *
- * @param p The Ecore_Pipe object.
- * @since 1.1
- */
 EAPI void
 ecore_pipe_thaw(Ecore_Pipe *p)
 {
@@ -242,17 +199,6 @@ out:
    _ecore_unlock();
 }
 
-/**
- * @brief Wait from another thread on the read side of a pipe.
- *
- * @param p The pipe to watch on.
- * @param message_count The minimal number of message to wait before exiting.
- * @param wait The amount of time in second to wait before exiting.
- * @return the number of message catched during that wait call.
- * @since 1.1
- *
- * Negative value for @p wait means infite wait.
- */
 EAPI int
 ecore_pipe_wait(Ecore_Pipe *p,
                 int         message_count,
@@ -265,11 +211,6 @@ ecore_pipe_wait(Ecore_Pipe *p,
    return r;
 }
 
-/**
- * Close the write end of an Ecore_Pipe object created with ecore_pipe_add().
- *
- * @param p The Ecore_Pipe object.
- */
 EAPI void
 ecore_pipe_write_close(Ecore_Pipe *p)
 {
@@ -295,14 +236,6 @@ ecore_pipe_write_fd(Ecore_Pipe *p)
    return p->fd_write;
 }
 
-/**
- * Write on the file descriptor the data passed as parameter.
- *
- * @param p      The Ecore_Pipe object.
- * @param buffer The data to write into the pipe.
- * @param nbytes The size of the @p buffer in bytes
- * @return       @c EINA_TRUE on a successful write, @c EINA_FALSE on error.
- */
 EAPI Eina_Bool
 ecore_pipe_write(Ecore_Pipe  *p,
                  const void  *buffer,
@@ -406,7 +339,7 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
                     int fd_read,
                     int fd_write,
                     Eina_Bool read_survive_fork,
-		    Eina_Bool write_survive_fork)
+                    Eina_Bool write_survive_fork)
 {
    Ecore_Pipe *p = NULL;
    int fds[2];
@@ -452,12 +385,8 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
                                              p,
                                              NULL, NULL);
 
-   return p;   
+   return p;
 }
-
-/**
- * @}
- */
 
 /* Private functions */
 Ecore_Pipe *
@@ -466,7 +395,7 @@ _ecore_pipe_add(Ecore_Pipe_Cb handler,
 {
    return ecore_pipe_full_add(handler, data,
                               -1, -1,
-			      EINA_FALSE, EINA_FALSE);
+                              EINA_FALSE, EINA_FALSE);
 }
 
 void *

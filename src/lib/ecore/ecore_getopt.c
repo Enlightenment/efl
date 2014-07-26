@@ -814,14 +814,6 @@ _ecore_getopt_help_prepare(const Ecore_Getopt *parser)
    return EINA_TRUE;
 }
 
-/**
- * Show nicely formatted help message for the given parser.
- *
- * @param fp The file the message will be printed on.
- * @param parser The parser to be used.
- *
- * @see ecore_getopt_help_category()
- */
 EAPI void
 ecore_getopt_help(FILE               *fp,
                   const Ecore_Getopt *parser)
@@ -834,17 +826,6 @@ ecore_getopt_help(FILE               *fp,
    _ecore_getopt_help_options(fp, parser);
 }
 
-/**
- * Show help for a single category (along with program usage and description).
- *
- * @param fp The file the message will be printed on.
- * @param parser The parser to be used.
- * @param category The category to print.
- *
- * @return @c EINA_TRUE when the category exists, @c EINA_FALSE otherwise.
- *
- * @see ecore_getopt_help()
- */
 EAPI Eina_Bool
 ecore_getopt_help_category(FILE               *fp,
                            const Ecore_Getopt *parser,
@@ -1980,12 +1961,6 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
    return NULL;
 }
 
-/**
- * Check parser for duplicate entries, print them out.
- *
- * @return @c EINA_TRUE if there are duplicates, @c EINA_FALSE otherwise.
- * @param parser The parser to be checked.
- */
 EAPI Eina_Bool
 ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
 {
@@ -2037,68 +2012,6 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
    return NULL;
 }
 
-/**
- * Parse command line parameters.
- *
- * Walks the command line parameters and parse them based on @a parser
- * description, doing actions based on @c parser->descs->action, like
- * showing help text, license, copyright, storing values in values and
- * so on.
- *
- * It is expected that values is of the same size than @c parser->descs,
- * options that do not need a value it will be left untouched.
- *
- * All values are expected to be initialized before use. Options with
- * action @c ECORE_GETOPT_ACTION_STORE and non required arguments
- * (others than @c ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES), are expected
- * to provide a value in @c def to be used.
- *
- * The following actions will store @c 1 on value as a boolean
- * (@c value->boolp) if it's not @c NULL to indicate these actions were
- * executed:
- *   - @c ECORE_GETOPT_ACTION_HELP
- *   - @c ECORE_GETOPT_ACTION_VERSION
- *   - @c ECORE_GETOPT_ACTION_COPYRIGHT
- *   - @c ECORE_GETOPT_ACTION_LICENSE
- *
- * Just @c ECORE_GETOPT_ACTION_APPEND will allocate memory and thus
- * need to be freed. For consistency between all of appended subtypes,
- * @c eina_list->data will contain an allocated memory with the value,
- * that is, for @c ECORE_GETOPT_TYPE_STR it will contain a copy of the
- * argument, @c ECORE_GETOPT_TYPE_INT a pointer to an allocated
- * integer and so on.
- *
- * If parser is in strict mode (see @c Ecore_Getopt->strict), then any
- * error will abort parsing and @c -1 is returned. Otherwise it will try
- * to continue as far as possible.
- *
- * This function may reorder @a argv elements.
- *
- * Translation of help strings (description), metavar, usage, license
- * and copyright may be translated, standard/global gettext() call
- * will be applied on them if ecore was compiled with such support.
- *
- * This function will @b not parse positional arguments! If these are
- * declared (metavar is defined with both shortname and longname being
- * empty), then you must call ecore_getopt_parse_positional() with the
- * last argument (@c start) being the result of this function. This is
- * done so you can have "quit options", those that once called you
- * want to exit without doing further parsing, as is the case with
- * help, license, copyright, version and eventually others you may
- * define.
- *
- * @param parser description of how to work.
- * @param values where to store values, it is assumed that this is a vector
- *        of the same size as @c parser->descs. Values should be previously
- *        initialized.
- * @param argc how many elements in @a argv. If not provided it will be
- *        retrieved with ecore_app_args_get().
- * @param argv command line parameters.
- *
- * @return index of first non-option parameter or -1 on error.
- *
- * @see ecore_getopt_parse_positional()
- */
 EAPI int
 ecore_getopt_parse(const Ecore_Getopt *parser,
                    Ecore_Getopt_Value *values,
@@ -2163,57 +2076,6 @@ error:
    return -1;
 }
 
-/**
- * Parse command line positional parameters.
- *
- * Walks the command line positional parameters (those that do not
- * start with "-" or "--") and parse them based on @a parser
- * description, doing actions based on @c parser->descs->action, like
- * storing values of some type.
- *
- * It is expected that @a values is of the same size than @c
- * parser->descs, same as with ecore_getopt_parse().
- *
- * All values are expected to be initialized before use.
- *
- * Unlike the ecore_getopt_parse(), only the following options are
- * supported:
- *  - @c ECORE_GETOPT_ACTION_STORE
- *  - @c ECORE_GETOPT_ACTION_CHOICE
- *  - @c ECORE_GETOPT_ACTION_APPEND
- *  - @c ECORE_GETOPT_ACTION_CALLBACK
- *
- * There is a special case for @c ECORE_GETOPT_ACTION_APPEND as it
- * will consume all remaining elements. It is also special in the
- * sense that it will allocate memory and thus need to be freed. For
- * consistency between all of appended subtypes, @c eina_list->data
- * will contain an allocated memory with the value, that is, for @c
- * ECORE_GETOPT_TYPE_STR it will contain a copy of the argument, @c
- * ECORE_GETOPT_TYPE_INT a pointer to an allocated integer and so on.
- *
- * If parser is in strict mode (see @c Ecore_Getopt->strict), then any
- * error will abort parsing and @c -1 is returned. Otherwise it will try
- * to continue as far as possible.
- *
- * Translation of help strings (description) and metavar may be done,
- * standard/global gettext() call will be applied on them if ecore was
- * compiled with such support.
- *
- * @param parser description of how to work.
- * @param values where to store values, it is assumed that this is a vector
- *        of the same size as @c parser->descs. Values should be previously
- *        initialized.
- * @param argc how many elements in @a argv. If not provided it will be
- *        retrieved with ecore_app_args_get().
- * @param argv command line parameters.
- * @param start the initial position argument to look at, usually the
- *        return of ecore_getopt_parse(). If less than 1, will try to
- *        find it automatically.
- *
- * @return index of first non-option parameter or -1 on error. If the
- *         last positional argument is of action @c
- *         ECORE_GETOPT_ACTION_APPEND then it will be the same as @a argc.
- */
 EAPI int
 ecore_getopt_parse_positional(const Ecore_Getopt *parser,
                               Ecore_Getopt_Value *values,
@@ -2280,12 +2142,6 @@ error:
    return -1;
 }
 
-/**
- * Utility to free list and nodes allocated by @a ECORE_GETOPT_ACTION_APPEND.
- *
- * @param list pointer to list to be freed.
- * @return always @c NULL, so you can easily make your list head @c NULL.
- */
 EAPI Eina_List *
 ecore_getopt_list_free(Eina_List *list)
 {
@@ -2296,19 +2152,6 @@ ecore_getopt_list_free(Eina_List *list)
    return NULL;
 }
 
-/**
- * Helper ecore_getopt callback to parse geometry (x:y:w:h).
- *
- * @param parser This parameter isn't in use.
- * @param desc This parameter isn't in use.
- * @param str Geometry value
- * @param data This parameter isn't in use.
- * @param storage must be a pointer to @c Eina_Rectangle and will be used to
- * store the four values passed in the given string.
- * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect geometry value.
- *
- * @c callback_data value is ignored, you can safely use @c NULL.
- */
 EAPI Eina_Bool
 ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser EINA_UNUSED,
                                      const Ecore_Getopt_Desc *desc EINA_UNUSED,
@@ -2327,20 +2170,6 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser EINA_UNUSED
    return EINA_TRUE;
 }
 
-/**
- * Helper ecore_getopt callback to parse geometry size (WxH).
- *
- * @param parser This parameter isn't in use.
- * @param desc This parameter isn't in use.
- * @param str size value
- * @param data This parameter isn't in use.
- * @param storage must be a pointer to @c Eina_Rectangle and will be used to
- * store the two values passed in the given string and @c 0 in the x and y
- * fields.
- * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect size value.
- *
- * @c callback_data value is ignored, you can safely use @c NULL.
- */
 EAPI Eina_Bool
 ecore_getopt_callback_size_parse(const Ecore_Getopt      *parser EINA_UNUSED,
                                  const Ecore_Getopt_Desc *desc EINA_UNUSED,
@@ -2360,4 +2189,3 @@ ecore_getopt_callback_size_parse(const Ecore_Getopt      *parser EINA_UNUSED,
 
    return EINA_TRUE;
 }
-

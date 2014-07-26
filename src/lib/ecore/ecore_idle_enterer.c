@@ -31,12 +31,6 @@ static int idle_enterers_delete_me = 0;
 static void *
 _ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
-/**
- * @addtogroup Ecore_Idle_Group
- *
- * @{
- */
-
 static Eina_Bool
 _ecore_idle_enterer_add(Ecore_Idle_Enterer *obj,
                     Ecore_Idle_Enterer_Data *ie,
@@ -65,16 +59,6 @@ _ecore_idle_enterer_add(Ecore_Idle_Enterer *obj,
    return EINA_TRUE;
 }
 
-/**
- * Add an idle enterer handler.
- * @param   func The function to call when entering an idle state.
- * @param   data The data to be passed to the @p func call
- * @return  A handle to the idle enterer callback if successful.  Otherwise,
- *          NULL is returned.
- * @note The function func will be called every time the main loop is entering
- * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idle enterer.
- */
 EAPI Ecore_Idle_Enterer *
 ecore_idle_enterer_add(Ecore_Task_Cb func,
                        const void   *data)
@@ -97,16 +81,6 @@ unlock:
    _ecore_unlock();
 }
 
-/**
- * Add an idle enterer handler at the start of the list so it gets called earlier than others.
- * @param   func The function to call when entering an idle state.
- * @param   data The data to be passed to the @p func call
- * @return  A handle to the idle enterer callback if successful.  Otherwise,
- *          NULL is returned.
- * @note The function func will be called every time the main loop is entering
- * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idle enterer.
- */
 EAPI Ecore_Idle_Enterer *
 ecore_idle_enterer_before_add(Ecore_Task_Cb func,
                               const void   *data)
@@ -136,12 +110,6 @@ _ecore_idle_enterer_eo_base_constructor(Eo *obj, Ecore_Idle_Enterer_Data *_pd EI
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-/**
- * Delete an idle enterer callback.
- * @param   idle_enterer The idle enterer to delete
- * @return  The data pointer passed to the idler enterer callback on success.
- *          NULL otherwise.
- */
 EAPI void *
 ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 {
@@ -155,11 +123,6 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
    _ecore_unlock();
    return data;
 }
-
-/**
- * @}
- */
-
 
 static void *
 _ecore_idle_enterer_del(Ecore_Idle_Enterer *obj)

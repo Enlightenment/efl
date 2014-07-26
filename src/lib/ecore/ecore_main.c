@@ -938,25 +938,6 @@ _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
    return fd_handler->data;
 }
 
-/**
- * @addtogroup Ecore_Main_Loop_Group
- *
- * @{
- */
-
-/**
- * Runs a single iteration of the main loop to process everything on the
- * queue.
- *
- * It does everything that is already done inside an @c Ecore main loop, like
- * checking for expired timers, idlers, etc. But it will do it only once and
- * return, instead of keep watching for new events.
- *
- * DO NOT use this function unless you are the person God comes to ask for
- * advice when He has trouble managing the Universe.
- *
- * @see ecore_main_loop_iterate_may_block()
- */
 EAPI void
 ecore_main_loop_iterate(void)
 {
@@ -971,23 +952,6 @@ ecore_main_loop_iterate(void)
 #endif
 }
 
-/**
- * Runs a single iteration of the main loop to process everything on the
- * queue with block/non-blocking status.
- *
- * @param may_block A flag if the main loop has a possibility of blocking.
- * (@c EINA_TRUE = may block/@c EINA_FALSE = non block)
- *
- * This is an extension API for ecore_main_loop_iterate() with additional
- * parameter. It does everything that is already done inside an
- * @c Ecore main loop, like checking for expired timers, idlers, etc. But it
- * will do it only once and return, instead of keep watching for new events.
- *
- * DO NOT use this function unless you are the person God comes to ask for
- * advice when He has trouble managing the Universe.
- *
- * @see ecore_main_loop_iterate()
- */
 EAPI int
 ecore_main_loop_iterate_may_block(int may_block)
 {
@@ -1005,24 +969,6 @@ in_main_loop--;
 #endif
 }
 
-/**
- * Runs the application main loop.
- *
- * This function will not return until @ref ecore_main_loop_quit is called. It
- * will check for expired timers, idlers, file descriptors being watched by fd
- * handlers, etc. Once everything is done, before entering again on idle state,
- * any callback set as @c Idle_Enterer will be called.
- *
- * Each main loop iteration is done by calling ecore_main_loop_iterate()
- * internally.
- *
- * The polling (select) function used can be changed with
- * ecore_main_loop_select_func_set().
- *
- * The function used to check for file descriptors, events, and that has a
- * timeout for the timers can be changed using
- * ecore_main_loop_select_func_set().
- */
 EAPI void
 ecore_main_loop_begin(void)
 {
@@ -1049,13 +995,6 @@ ecore_main_loop_begin(void)
 #endif
 }
 
-/**
- * Quits the main loop once all the events currently on the queue have
- * been processed.
- *
- * This function returns immediately, but will mark the ecore_main_loop_begin()
- * function to return at the end of the current main loop iteration.
- */
 EAPI void
 ecore_main_loop_quit(void)
 {
@@ -1067,34 +1006,12 @@ ecore_main_loop_quit(void)
 #endif
 }
 
-/**
- * Returns if an animator has ticked off during this loop iteration
- *
- * @return EINA_TRUE if an animator has been called, EINA_FALSE otherwise.
- *
- * There should be little need for anyone to use this - ever.
- *
- * @since 1.9
- */
 EAPI Eina_Bool
 ecore_main_loop_animator_ticked_get(void)
 {
    return _ecore_animator_run_get();
 }
 
-/**
- * Sets the function to use when monitoring multiple file descriptors,
- * and waiting until one of more of the file descriptors before ready
- * for some class of I/O operation.
- *
- * This function will be used instead of the system call select and
- * could possible be used to integrate the Ecore event loop with an
- * external event loop.
- *
- * @warning you don't know how to use, don't even try to use it.
- *
- * @param func The function to be used.
- */
 EAPI void
 ecore_main_loop_select_func_set(Ecore_Select_Function func)
 {
@@ -1102,11 +1019,6 @@ ecore_main_loop_select_func_set(Ecore_Select_Function func)
    main_loop_select = func;
 }
 
-/**
- * Gets the select function set by ecore_select_func_set(),
- * or the native select function if none was set.
- *
- */
 EAPI Ecore_Select_Function
 ecore_main_loop_select_func_get(void)
 {
@@ -1395,10 +1307,6 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
 unlock:
    _ecore_unlock();
 }
-
-/**
- * @}
- */
 
 void
 _ecore_main_shutdown(void)
@@ -1982,7 +1890,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    _ecore_fps_marker_1();
 
    /* start of the sleeping or looping section */
-start_loop: /***************************************************************/
+start_loop: /*-*************************************************************/
    /* any timers re-added as a result of these are allowed to go */
    _ecore_timer_enable_new();
    /* if we have been asked to quit the mainloop then exit at this point */
@@ -2015,7 +1923,7 @@ start_loop: /***************************************************************/
    _ecore_fps_marker_2();
 
    /* actually wake up and deal with input, events etc. */
-process_all: /***********************************************************/
+process_all: /*-*********************************************************/
 
    /* we came out of our "wait state" so idle has exited */
    if (!once_only)
@@ -2041,7 +1949,7 @@ process_all: /***********************************************************/
         _ecore_throttle();
      }
 
-done: /*******************************************************************/
+done: /*-*****************************************************************/
    in_main_loop--;
 }
 

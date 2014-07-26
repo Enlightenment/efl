@@ -262,63 +262,6 @@ _ecore_glib_shutdown(void)
 #endif
 }
 
-/**
- * @addtogroup Ecore_Main_Loop_Group
- *
- * @}
- */
-
-/**
- * Request ecore to integrate GLib's main loop.
- *
- * This will add a small overhead during every main loop interaction
- * by checking glib's default main context (used by its main loop). If
- * it have events to be checked (timers, file descriptors or idlers),
- * then these will be polled alongside with Ecore's own events, then
- * dispatched before Ecore's. This is done by calling
- * ecore_main_loop_select_func_set().
- *
- * This will cooperate with previously set
- * ecore_main_loop_select_func_set() by calling the old
- * function. Similarly, if you want to override
- * ecore_main_loop_select_func_set() after main loop is integrated,
- * call the new select function set by this call (get it by calling
- * ecore_main_loop_select_func_get() right after
- * ecore_main_loop_glib_integrate()).
- *
- * This is useful to use GMainLoop libraries, like GTK, GUPnP,
- * LibSoup, GConf and more. Adobe Flash plugin and other plugins
- * systems depend on this as well.
- *
- * Once initialized/integrated, it will be valid until Ecore is
- * completely shut down.
- *
- * Example of use:
- * @code
- *
- * int main(void)
- * {
- *    ecore_init();
- *    ecore_main_loop_glib_integrate();
- *
- *    // some code here
- *
- *    ecore_main_loop_begin();
- *
- *    ecore_shutdown();
- *
- *    return 0;
- * }
- *
- * @endcode
- *
- * @note This is only available if Ecore was compiled with GLib support.
- * @note You don't need to call this function if Ecore was compiled with
- * --with-glib=always.
- *
- * @return @c EINA_TRUE on success of @c EINA_FALSE if it failed,
- *         likely no GLib support in Ecore.
- */
 EAPI Eina_Bool
 ecore_main_loop_glib_integrate(void)
 {
@@ -340,21 +283,8 @@ ecore_main_loop_glib_integrate(void)
 
 Eina_Bool _ecore_glib_always_integrate = 1;
 
-/**
- * Disable always integrating glib
- *
- * If ecore is compiled with --with-glib=always (to always call
- * ecore_main_loop_glib_integrate() when ecore_init() is called), then calling
- * this before calling ecore_init() will disable the integration.
- * This is for apps that explicitly do not want this to happen for whatever
- * reasons they may have.
- */
 EAPI void
 ecore_main_loop_glib_always_integrate_disable(void)
 {
    _ecore_glib_always_integrate = 0;
 }
-
-/**
- * @}
- */
