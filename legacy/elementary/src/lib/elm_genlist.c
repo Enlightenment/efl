@@ -265,6 +265,120 @@ _elm_genlist_pan_evas_object_smart_resize(Eo *obj, Elm_Genlist_Pan_Data *psd, Ev
      sd->calc_job = NULL;
 }
 
+static void
+_item_text_realize(Elm_Gen_Item *it,
+                   Evas_Object *target,
+                   Eina_List **source,
+                   const char *parts)
+{
+   if (it->itc->func.text_get)
+     {
+        const Eina_List *l;
+        const char *key;
+
+        if (!(*source))
+          *source = elm_widget_stringlist_get
+              (edje_object_data_get(target, "texts"));
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             char *s = it->itc->func.text_get
+                 ((void *)it->base.data, WIDGET(it), key);
+
+             if (s)
+               {
+                  edje_object_part_text_escaped_set(target, key, s);
+                  free(s);
+               }
+             else
+               {
+                  edje_object_part_text_set(target, key, "");
+               }
+          }
+     }
+}
+
+static Eina_List *
+_item_content_realize(Elm_Gen_Item *it,
+                      Evas_Object *target,
+                      Eina_List **source,
+                      const char *parts)
+{
+   Eina_List *res = it->content_objs;
+
+   if (it->itc->func.content_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        Evas_Object *ic = NULL;
+
+        if (!(*source))
+          *source = elm_widget_stringlist_get
+              (edje_object_data_get(target, "contents"));
+
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             if (it->itc->func.content_get)
+               ic = it->itc->func.content_get
+                   ((void *)it->base.data, WIDGET(it), key);
+             if (ic)
+               {
+                  res = eina_list_append(res, ic);
+                  edje_object_part_swallow(target, key, ic);
+                  evas_object_show(ic);
+                  elm_widget_sub_object_add(WIDGET(it), ic);
+                  if (elm_widget_item_disabled_get(it))
+                    elm_widget_disabled_set(ic, EINA_TRUE);
+               }
+          }
+     }
+
+   return res;
+}
+
+static void
+_item_state_realize(Elm_Gen_Item *it,
+                    Evas_Object *target,
+                    Eina_List **source,
+                    const char *parts)
+{
+   if (it->itc->func.state_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        char buf[4096];
+
+        if (!(*source))
+          *source = elm_widget_stringlist_get
+              (edje_object_data_get(target, "states"));
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             Eina_Bool on = it->itc->func.state_get
+                 ((void *)it->base.data, WIDGET(it), key);
+
+             if (on)
+               {
+                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+                  edje_object_signal_emit(target, buf, "elm");
+               }
+             else
+               {
+                  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
+                  edje_object_signal_emit(target, buf, "elm");
+               }
+          }
+        edje_object_message_signal_process(target);
+     }
+}
+
 /**
  * Apply the right style for the created item view.
  */
@@ -1085,41 +1199,6 @@ _elm_genlist_item_index_update(Elm_Gen_Item *it)
      }
 }
 
-static void
-_item_text_realize(Elm_Gen_Item *it,
-                   Evas_Object *target,
-                   Eina_List **source,
-                   const char *parts)
-{
-   if (it->itc->func.text_get)
-     {
-        const Eina_List *l;
-        const char *key;
-
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "texts"));
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             char *s = it->itc->func.text_get
-                 ((void *)it->base.data, WIDGET(it), key);
-
-             if (s)
-               {
-                  edje_object_part_text_escaped_set(target, key, s);
-                  free(s);
-               }
-             else
-               {
-                  edje_object_part_text_set(target, key, "");
-               }
-          }
-     }
-}
-
 static Eina_List *
 _item_mode_content_realize(Elm_Gen_Item *it,
                            Evas_Object *target,
@@ -1156,44 +1235,6 @@ _item_mode_content_realize(Elm_Gen_Item *it,
      }
 
    return res;
-}
-
-static void
-_item_state_realize(Elm_Gen_Item *it,
-                    Evas_Object *target,
-                    Eina_List **source,
-                    const char *parts)
-{
-   if (it->itc->func.state_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        char buf[4096];
-
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "states"));
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             Eina_Bool on = it->itc->func.state_get
-                 ((void *)it->base.data, WIDGET(it), key);
-
-             if (on)
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
-                  edje_object_signal_emit(target, buf, "elm");
-               }
-             else
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
-                  edje_object_signal_emit(target, buf, "elm");
-               }
-          }
-        edje_object_message_signal_process(target);
-     }
 }
 
 static void
@@ -1462,47 +1503,6 @@ _item_cache_find(Elm_Gen_Item *it)
           }
      }
    return NULL;
-}
-
-static Eina_List *
-_item_content_realize(Elm_Gen_Item *it,
-                      Evas_Object *target,
-                      Eina_List **source,
-                      const char *parts)
-{
-   Eina_List *res = it->content_objs;
-
-   if (it->itc->func.content_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        Evas_Object *ic = NULL;
-
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "contents"));
-
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             if (it->itc->func.content_get)
-               ic = it->itc->func.content_get
-                   ((void *)it->base.data, WIDGET(it), key);
-             if (ic)
-               {
-                  res = eina_list_append(res, ic);
-                  edje_object_part_swallow(target, key, ic);
-                  evas_object_show(ic);
-                  elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (elm_widget_item_disabled_get(it))
-                    elm_widget_disabled_set(ic, EINA_TRUE);
-               }
-          }
-     }
-
-   return res;
 }
 
 static char *
