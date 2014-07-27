@@ -25,12 +25,11 @@ static const Ecore_Event_Modifier_Match matchs[] = {
 /* local variables */
 static int _ecore_input_init_count = 0;
 
-#ifdef HAVE_SYSTEMD_LOGIN
-static char *_ecore_input_session_id;
-#endif
-
 /* externval variables */
 int _ecore_input_log_dom = -1;
+#ifdef HAVE_SYSTEMD_LOGIN
+char *_ecore_input_session_id;
+#endif
 #ifdef HAVE_LIBINPUT
 struct udev *_ecore_input_udev;
 #endif
@@ -83,6 +82,10 @@ ecore_input_init(void)
 #endif
 
 #ifdef HAVE_LIBINPUT
+   /* try to init dbus */
+   if (!_ecore_input_dbus_init())
+     ERR("Could not initialize dbus");
+
    /* try to init udev */
    if (!(_ecore_input_udev = udev_new()))
      ERR("Could not initialize udev: %m");
@@ -103,6 +106,22 @@ ecore_input_shutdown(void)
    if (--_ecore_input_init_count != 0)
      return _ecore_input_init_count;
 
+#ifdef HAVE_LIBINPUT
+   /* shutdown libinput seat */
+   ecore_input_seat_shutdown(NULL);
+
+   /* free udev */
+   if (_ecore_input_udev) udev_unref(_ecore_input_udev);
+#endif
+
+#ifdef HAVE_SYSTEMD_LOGIN
+   /* shutdown dbus */
+   _ecore_input_dbus_shutdown();
+
+   /* free the stored systemd session id */
+   free(_ecore_input_session_id);
+#endif
+
    ECORE_EVENT_KEY_DOWN = 0;
    ECORE_EVENT_KEY_UP = 0;
    ECORE_EVENT_MOUSE_BUTTON_DOWN = 0;
@@ -116,19 +135,6 @@ ecore_input_shutdown(void)
    _ecore_input_log_dom = -1;
 
    ecore_shutdown();
-
-#ifdef HAVE_LIBINPUT
-   /* shutdown libinput seat */
-   ecore_input_seat_shutdown(NULL);
-
-   /* free udev */
-   if (_ecore_input_udev) udev_unref(_ecore_input_udev);
-#endif
-
-#ifdef HAVE_SYSTEMD_LOGIN
-   /* free the stored systemd session id */
-   free(_ecore_input_session_id);
-#endif
 
    return _ecore_input_init_count;
 }
