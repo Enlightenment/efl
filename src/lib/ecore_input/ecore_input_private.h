@@ -1,9 +1,9 @@
 #ifndef _ECORE_INPUT_PRIVATE_H
 # define _ECORE_INPUT_PRIVATE_H
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+# ifdef HAVE_CONFIG_H
+#  include <config.h>
+# endif
 
 # ifdef HAVE_SYSTEMD_LOGIN
 #  include <unistd.h>
@@ -13,19 +13,24 @@
 # ifdef HAVE_LIBINPUT
 #  include <libudev.h>
 #  include <libinput.h>
+#  include <dbus/dbus.h>
 # endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
+# include "Ecore.h"
+# include "ecore_private.h"
 
-#include "Ecore_Input.h"
+# include "Ecore_Input.h"
 
 extern int _ecore_input_log_dom;
 
-#ifdef HAVE_LIBINPUT
+# ifdef HAVE_SYSTEMD_LOGIN
+extern char *_ecore_input_session_id;
+# endif
+
+# ifdef HAVE_LIBINPUT
 extern struct udev *_ecore_input_udev;
 extern Eina_List *_ecore_input_devices;
-#endif
+# endif
 
 # ifdef ECORE_INPUT_DEFAULT_LOG_COLOR
 #  undef ECORE_INPUT_DEFAULT_LOG_COLOR 
@@ -57,5 +62,10 @@ extern Eina_List *_ecore_input_devices;
 #  undef CRI
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_input_log_dom, __VA_ARGS__)
+
+Eina_Bool _ecore_input_dbus_init(void);
+void _ecore_input_dbus_shutdown(void);
+int _ecore_input_dbus_device_open(const char *device);
+void _ecore_input_dbus_device_close(int fd);
 
 #endif
