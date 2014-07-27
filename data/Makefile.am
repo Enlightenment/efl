@@ -28,6 +28,12 @@ ecorefiles_DATA = ecore/checkme
 EXTRA_DIST += $(ecorefiles_DATA)
 
 ########################################################################
+# Ecore_X
+ecore_xfilesdir = $(datadir)/ecore_x
+ecore_xfiles_DATA = ecore_x/checkme
+EXTRA_DIST += $(ecore_xfiles_DATA)
+
+########################################################################
 # Ecore_Imf
 ecoreimffilesdir = $(datadir)/ecore_imf
 ecoreimffiles_DATA = ecore_imf/checkme

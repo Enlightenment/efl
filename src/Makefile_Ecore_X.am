@@ -1,5 +1,19 @@
 if HAVE_ECORE_X
 
+ecore_x_vsync_bin_PROGRAMS = lib/ecore_x/ecore_x_vsync
+ecore_x_vsync_bindir = $(libdir)/ecore_x/bin/$(MODULE_ARCH)
+lib_ecore_x_ecore_x_vsync_SOURCES = \
+lib/ecore_x/ecore_x_vsync_tool.c \
+lib/ecore_x/ecore_x_vsync_tool_glx.c
+lib_ecore_x_ecore_x_vsync_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@ECORE_CFLAGS@ @ECORE_CON_CFLAGS@ @EINA_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ecore_x\"
+lib_ecore_x_ecore_x_vsync_LDADD = @USE_EINA_LIBS@ @USE_ECORE_LIBS@ @USE_ECORE_CON_LIBS@
+lib_ecore_x_ecore_x_vsync_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @ECORE_INTERNAL_LIBS@ @ECORE_CON_INTERNAL_LIBS@
+
 ### Library
 
 lib_LTLIBRARIES += lib/ecore_x/libecore_x.la
@@ -93,12 +107,17 @@ lib/ecore_x/xlib/ecore_x_gesture.c \
 lib/ecore_x/xlib/ecore_x_private.h
 endif
 
-lib_ecore_x_libecore_x_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_X_CFLAGS@
+lib_ecore_x_libecore_x_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@ECORE_X_CFLAGS@ @ECORE_CON_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ecore_x\"
 if HAVE_ECORE_X_XCB
 lib_ecore_x_libecore_x_la_CPPFLAGS += -I$(top_builddir)/src/lib/ecore_x/xcb
 endif
 
-lib_ecore_x_libecore_x_la_LIBADD = @ECORE_X_LIBS@
+lib_ecore_x_libecore_x_la_LIBADD = @ECORE_X_LIBS@ @USE_ECORE_CON_LIBS@
 lib_ecore_x_libecore_x_la_DEPENDENCIES = @ECORE_X_INTERNAL_LIBS@
 lib_ecore_x_libecore_x_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
@@ -125,4 +144,3 @@ utils_ecore_makekeys_CFLAGS = @ECORE_X_CFLAGS@
 
 endif
 EXTRA_DIST += utils/ecore/mkks.sh
-
