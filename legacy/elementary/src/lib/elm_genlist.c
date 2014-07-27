@@ -462,6 +462,25 @@ _view_create(Elm_Gen_Item *it, const char *style)
 }
 
 static void
+_view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents,
+            Eina_List **states, Eina_List **content_objs)
+{
+   const char *part;
+   Evas_Object *c;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(*texts, l, part)
+     edje_object_part_text_set(view, part, NULL);
+
+   ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(*contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(*states, elm_widget_stringlist_free);
+
+   EINA_LIST_FREE(*content_objs, c)
+     evas_object_del(c);
+}
+
+static void
 _item_scroll(Elm_Genlist_Data *sd)
 {
    Evas_Coord gith = 0;
@@ -527,10 +546,6 @@ static void
 _elm_genlist_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool calc)
 {
-   Evas_Object *content;
-   Eina_List *l;
-   const char *part;
-
    if (!it->realized) return;
    if (GL_IT(it)->wsd->reorder_it == it) return;
 
@@ -539,15 +554,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
-   EINA_LIST_FOREACH(it->texts, l, part)
-     edje_object_part_text_set(VIEW(it), part, NULL);
-
-   ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
-
-   EINA_LIST_FREE(it->content_objs, content)
-     evas_object_del(content);
+   _view_clear(VIEW(it), &(it->texts), &(it->contents), &(it->states), &(it->content_objs));
 
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
@@ -3299,8 +3306,6 @@ _item_block_del(Elm_Gen_Item *it)
 static void
 _decorate_all_item_unrealize(Elm_Gen_Item *it)
 {
-   Evas_Object *icon;
-
    if ((!it) || (!it->item->decorate_all_item_realized)) return;
 
    edje_object_part_unswallow(it->deco_all_view, VIEW(it));
@@ -3317,16 +3322,15 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
           (it->deco_all_view, "elm,state,reorder,mode_unset", "elm");
      }
 
-   ELM_SAFE_FREE(it->deco_all_view, evas_object_del);
-   ELM_SAFE_FREE(it->item->deco_all_texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_all_contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_all_states, elm_widget_stringlist_free);
+   _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts),
+               &(GL_IT(it)->deco_all_contents), &(GL_IT(it)->deco_all_states),
+               &(GL_IT(it)->deco_all_content_objs));
 
-   EINA_LIST_FREE(it->item->deco_all_content_objs, icon)
-     evas_object_del(icon);
    edje_object_message_signal_process(it->deco_all_view);
    _item_mouse_callbacks_del(it, it->deco_all_view);
    _item_mouse_callbacks_add(it, VIEW(it));
+
+   ELM_SAFE_FREE(it->deco_all_view, evas_object_del);
 
    it->item->decorate_all_item_realized = EINA_FALSE;
 }
@@ -4645,17 +4649,15 @@ static void
 _decorate_item_unrealize(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-   Evas_Object *content, *obj = sd->obj;
+   Evas_Object *obj = sd->obj;
 
    if (!it->item->deco_it_view) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   ELM_SAFE_FREE(it->item->deco_it_texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_it_contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_it_states, elm_widget_stringlist_free);
 
-   EINA_LIST_FREE(it->item->deco_it_content_objs, content)
-     evas_object_del(content);
+   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts),
+               &(GL_IT(it)->deco_it_contents), &(GL_IT(it)->deco_it_states),
+               &(GL_IT(it)->deco_it_content_objs));
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), sd->pan_obj);
