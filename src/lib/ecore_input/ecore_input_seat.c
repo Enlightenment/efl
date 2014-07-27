@@ -83,13 +83,14 @@ static int
 _ecore_input_restricted_cb_open(const char *path, int flags EINA_UNUSED, void *data EINA_UNUSED)
 {
    DBG("Open Restricted: %s", path);
-   return 1;
+   return _ecore_input_dbus_device_open(path);
 }
 
 static void 
-_ecore_input_restricted_cb_close(int fd EINA_UNUSED, void *data EINA_UNUSED)
+_ecore_input_restricted_cb_close(int fd, void *data EINA_UNUSED)
 {
-   DBG("Close Restricted");
+   DBG("Close Restricted: %d", fd);
+   _ecore_input_dbus_device_close(fd);
 }
 
 const struct libinput_interface _interface = 
