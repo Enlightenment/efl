@@ -10,6 +10,7 @@ lib/ecore_input/Ecore_Input.h
 
 lib_ecore_input_libecore_input_la_SOURCES = \
 lib/ecore_input/ecore_input.c \
+lib/ecore_input/ecore_input_dbus.c \
 lib/ecore_input/ecore_input_seat.c \
 lib/ecore_input/ecore_input_compose.c \
 lib/ecore_input/ecore_input_compose.h \
