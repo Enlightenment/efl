@@ -265,6 +265,87 @@ _elm_genlist_pan_evas_object_smart_resize(Eo *obj, Elm_Genlist_Pan_Data *psd, Ev
      sd->calc_job = NULL;
 }
 
+/**
+ * Apply the right style for the created item view.
+ */
+static void
+_view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
+{
+   char buf[1024];
+   const char *stacking_even;
+   const char *stacking;
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   // FIXME:  There exists
+   // item, item_compress, item_odd, item_compress_odd,
+   // tree, tree_compress, tree_odd, tree_odd_compress
+   // But those used case by case. :-(
+   // Anyway, belows codes are for backward..
+   if (it->decorate_it_set)
+     {
+        // item, item_compress, item_odd, item_compress_odd
+        strncpy(buf, "item", sizeof(buf));
+        if (sd->mode == ELM_LIST_COMPRESS)
+           strncat(buf, "_compress", sizeof(buf) - strlen(buf) - 1);
+
+        if (it->item->order_num_in & 0x1)
+           strncat(buf, "_odd", sizeof(buf) - strlen(buf) - 1);
+        strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
+        strncat(buf, style, sizeof(buf) - strlen(buf) - 1);
+     }
+   else
+     {
+        // item, item_compress, tree, tree_compress
+        if (it->item->type & ELM_GENLIST_ITEM_TREE)
+           snprintf(buf, sizeof(buf), "tree%s/%s",
+                    sd->mode == ELM_LIST_COMPRESS ? "_compress" :
+                    "", style ? : "default");
+        else
+           snprintf(buf, sizeof(buf), "item%s/%s",
+                    sd->mode == ELM_LIST_COMPRESS ? "_compress" :
+                    "",style ? : "default");
+     }
+
+   if (!elm_widget_theme_object_set(WIDGET(it), view,
+                                    "genlist", buf,
+                                    elm_widget_style_get(WIDGET(it))))
+     {
+        ERR("%s is not a valid genlist item style. "
+            "Automatically falls back into default style.",
+            style);
+        elm_widget_theme_object_set
+          (WIDGET(it), VIEW(it), "genlist", "item/default", "default");
+     }
+
+   edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it))
+                         * elm_config_scale_get());
+
+   stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
+   if (!stacking_even) stacking_even = "above";
+   it->item->stacking_even = !!strcmp("above", stacking_even);
+
+   stacking = edje_object_data_get(VIEW(it), "stacking");
+   if (!stacking) stacking = "yes";
+   it->item->nostacking = !!strcmp("yes", stacking);
+}
+
+/**
+ * Create a VIEW(it) during _item_realize()
+ */
+static Evas_Object *
+_view_create(Elm_Gen_Item *it, const char *style)
+{
+   Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
+   evas_object_smart_member_add(view, GL_IT(it)->wsd->pan_obj);
+   elm_widget_sub_object_add(WIDGET(it), view);
+   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+                         elm_config_scale_get());
+
+   _view_style_update(it, view, style);
+   return view;
+}
+
 static void
 _item_scroll(Elm_Genlist_Data *sd)
 {
@@ -1514,7 +1595,6 @@ _item_realize(Elm_Gen_Item *it,
 {
    Item_Cache *itc = NULL;
    const char *treesize;
-   char buf[1024];
    int tsize = 20;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
@@ -1543,49 +1623,7 @@ _item_realize(Elm_Gen_Item *it,
         itc->spacer = NULL;
      }
    else
-     {
-        const char *stacking_even;
-        const char *stacking;
-
-        VIEW(it) = edje_object_add(evas_object_evas_get(WIDGET(it)));
-        edje_object_scale_set(VIEW(it),
-                              elm_widget_scale_get(WIDGET(it)) *
-                              elm_config_scale_get());
-        evas_object_smart_member_add(VIEW(it), sd->pan_obj);
-        elm_widget_sub_object_add(WIDGET(it), VIEW(it));
-
-        if (it->item->type & ELM_GENLIST_ITEM_TREE)
-          snprintf(buf, sizeof(buf), "tree%s/%s",
-                   sd->mode == ELM_LIST_COMPRESS ? "_compress" :
-                   "", it->itc->item_style ? : "default");
-        else
-          snprintf(buf, sizeof(buf), "item%s/%s",
-                   sd->mode == ELM_LIST_COMPRESS ? "_compress" :
-                   "", it->itc->item_style ? : "default");
-
-        if (!elm_widget_theme_object_set(WIDGET(it), VIEW(it),
-                                         "genlist", buf,
-                                         elm_widget_style_get(WIDGET(it))))
-          {
-             ERR("%s is not a valid genlist item style. "
-                 "Automatically falls back into default style.",
-                 it->itc->item_style);
-             elm_widget_theme_object_set
-                (WIDGET(it), VIEW(it), "genlist", "item/default", "default");
-          }
-
-
-        stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
-        if (!stacking_even) stacking_even = "above";
-        it->item->stacking_even = !!strcmp("above", stacking_even);
-
-        stacking = edje_object_data_get(VIEW(it), "stacking");
-        if (!stacking) stacking = "yes";
-        it->item->nostacking = !!strcmp("yes", stacking);
-
-        edje_object_mirrored_set
-          (VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
-     }
+     VIEW(it) = _view_create(it, it->itc->item_style);
 
    /* access */
    if (_elm_config->access_mode) _access_widget_item_register(it);
@@ -5081,7 +5119,6 @@ _hbar_unpress_cb(Evas_Object *obj,
 static void
 _decorate_item_realize(Elm_Gen_Item *it)
 {
-   char buf[1024];
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
 
@@ -5089,37 +5126,7 @@ _decorate_item_realize(Elm_Gen_Item *it)
                                     sd->generation)) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   it->item->deco_it_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set
-     (it->item->deco_it_view, elm_widget_scale_get(WIDGET(it)) *
-     elm_config_scale_get());
-   evas_object_smart_member_add
-     (it->item->deco_it_view, sd->pan_obj);
-   elm_widget_sub_object_add(WIDGET(it), it->item->deco_it_view);
-
-   strncpy(buf, "item", sizeof(buf));
-   if (sd->mode == ELM_LIST_COMPRESS)
-     strncat(buf, "_compress", sizeof(buf) - strlen(buf) - 1);
-
-   if (it->item->order_num_in & 0x1)
-     strncat(buf, "_odd", sizeof(buf) - strlen(buf) - 1);
-   strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
-   strncat(buf, it->itc->decorate_item_style, sizeof(buf) - strlen(buf) - 1);
-
-   if (!elm_widget_theme_object_set
-       (WIDGET(it), it->item->deco_it_view, "genlist", buf,
-        elm_widget_style_get(WIDGET(it))))
-     {
-
-        ERR("%s is not a valid genlist item style. "
-            "Automatically falls back into default style.",
-            it->itc->decorate_item_style);
-        elm_widget_theme_object_set
-           (WIDGET(it), it->item->deco_it_view,
-            "genlist", "item/default", "default");
-     }
-   edje_object_mirrored_set
-      (it->item->deco_it_view, elm_widget_mirrored_get(WIDGET(it)));
+   it->item->deco_it_view = _view_create(it, it->itc->decorate_item_style);
 
    /* signal callback add */
    evas_object_event_callback_add
