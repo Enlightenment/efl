@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include <Ecore_Con.h>
-
 #include "ecore_suite.h"
 
 #include <stdio.h>
