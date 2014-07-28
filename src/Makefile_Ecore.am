@@ -183,6 +183,7 @@ tests_ecore_ecore_suite_SOURCES = \
 tests/ecore/ecore_suite.c \
 tests/ecore/ecore_test_ecore.c \
 tests/ecore/ecore_test_ecore_con.c \
+tests/ecore/ecore_test_ecore_con_url.c \
 tests/ecore/ecore_test_ecore_x.c \
 tests/ecore/ecore_test_ecore_imf.c \
 tests/ecore/ecore_test_timer.c \
