@@ -466,6 +466,15 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
           {
              const char *default_ret_val =
                 eolian_function_return_default_value_get(funcid, ftype);
+             if (default_ret_val)
+               {
+                  if (!strcmp(default_ret_val, "true"))
+                    default_ret_val = "EINA_TRUE";
+                  else if (!strcmp(default_ret_val, "false"))
+                    default_ret_val = "EINA_FALSE";
+                  else if (!strcmp(default_ret_val, "null"))
+                    default_ret_val = "NULL";
+               }
              eina_strbuf_append_printf(eo_func_decl, ", %s%s, %s",
                    ret_const ? "const " : "", rettype,
                    default_ret_val?default_ret_val:"0");

@@ -2,7 +2,7 @@ class Const {
    properties {
       a {
          set {
-            return bool (EINA_TRUE); /*@ comment for property set return */
+            return bool (true); /*@ comment for property set return */
          }
          get {
             buffer: const;
@@ -21,7 +21,7 @@ class Const {
             @inout char b;
             @out double c;
          }
-         return char *(NULL); /*@ comment for method return */
+         return char * (null); /*@ comment for method return */
       }
    }
 }

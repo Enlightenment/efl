@@ -12,7 +12,7 @@ class Object (Base) {
    properties {
       a {
          set {
-            return bool(EINA_FALSE);
+            return bool (false);
             value: const;
          }
          get {
@@ -43,7 +43,7 @@ class Object (Base) {
             @inout char b;
             @out double c;
          }
-         return char *(NULL); /*@ comment for method return */
+         return char * (null); /*@ comment for method return */
       }
       foo2 @const {
          /*@ comment foo */

@@ -475,7 +475,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_type_name_get(tp), "Eina_Bool"));
    string = eolian_function_return_default_value_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
-   fail_if(strcmp(string, "EINA_TRUE"));
+   fail_if(strcmp(string, "true"));
    string = eolian_function_return_comment_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "comment for property set return"));
@@ -510,7 +510,7 @@ START_TEST(eolian_simple_parsing)
    eina_stringshare_del(string);
    string = eolian_function_return_default_value_get(fid, EOLIAN_METHOD);
    fail_if(!string);
-   fail_if(strcmp(string, "NULL"));
+   fail_if(strcmp(string, "null"));
    string = eolian_function_return_comment_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "comment for method return"));
