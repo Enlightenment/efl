@@ -353,6 +353,7 @@ EAPI int
 ecore_con_url_init(void)
 {
    if (++_init_count > 1) return _init_count;
+   if (!ecore_init()) return --_init_count;
    ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
    ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
    ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
@@ -377,6 +378,7 @@ ecore_con_url_shutdown(void)
    EINA_LIST_FREE(_fd_hd_list, fd_handler)
      ecore_main_fd_handler_del(fd_handler);
    _c_shutdown();
+   ecore_shutdown();
    return 0;
 }
 
