@@ -105,6 +105,7 @@ old/README.evil \
 spec/efl.spec \
 pkgbuild/PKGBUILD \
 pkgbuild/efl.install \
+po/xgettext_wrapper.sh \
 po/Makevars.in
 
 pkgconfigdir = $(libdir)/pkgconfig
