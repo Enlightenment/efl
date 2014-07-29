@@ -515,6 +515,8 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
 
    /* surface commit */
    wl_surface_commit(ws->surface);
+
+   eina_rectangle_free(rect);
 }
 
 static void 
