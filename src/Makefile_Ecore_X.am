@@ -12,7 +12,7 @@ lib_ecore_x_ecore_x_vsync_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_x\"
 lib_ecore_x_ecore_x_vsync_LDADD = @USE_EINA_LIBS@ @USE_ECORE_LIBS@ @USE_ECORE_CON_LIBS@
-lib_ecore_x_ecore_x_vsync_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @ECORE_INTERNAL_LIBS@ @ECORE_CON_INTERNAL_LIBS@
+lib_ecore_x_ecore_x_vsync_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 
 ### Library
 
