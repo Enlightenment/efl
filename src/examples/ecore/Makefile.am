@@ -109,7 +109,8 @@ ecore_client_bench_SOURCES = ecore_client_bench.c
 ecore_client_bench_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 ecore_compose_get_example_SOURCES = ecore_compose_get_example.c
-ecore_compose_get_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+ecore_compose_get_example_LDADD = $(ECORE_EVAS_COMMON_LDADD) \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la
 
 ecore_con_client_example_SOURCES = ecore_con_client_example.c
 ecore_con_client_example_LDADD = $(ECORE_CON_COMMON_LDADD)
