@@ -188,6 +188,15 @@ static void *disp = NULL;
 static long gwin = 0;
 static void *context = NULL;
 
+static int _vsync_init_glx2(void);
+
+static void
+_vsync_shutdown_glx(void)
+{
+   if (disp) sym_XCloseDisplay(disp);
+   disp = NULL;
+}
+
 static void *
 lib_load(const char *files[])
 {
@@ -206,22 +215,6 @@ int
 _vsync_init_glx(void)
 {
    int fail = 0;
-   GLXFBConfig *fbconfigs;
-   int num = 0;
-   int attr[] =
-     {
-        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-        GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-        GLX_DOUBLEBUFFER,  1,
-        GLX_RED_SIZE,      1,
-        GLX_GREEN_SIZE,    1,
-        GLX_BLUE_SIZE,     1,
-        0
-     };
-   XVisualInfo *vi;
-   XSetWindowAttributes wa;
-   long win;
-   const char *extns;
 
    /*---------------------------*/
    lib_x11 = lib_load(lib_x11_files);
@@ -252,35 +245,9 @@ _vsync_init_glx(void)
    if (fail) goto err;
 
    /*---------------------------*/
-   disp = sym_XOpenDisplay(NULL);
-   if (!disp) goto err;
-   fbconfigs = sym_glXChooseFBConfig(disp, 0, attr, &num);
-   if (!fbconfigs) goto err;
-   vi = sym_glXGetVisualFromFBConfig(disp, fbconfigs[0]);
-   if (!vi) goto err;
-   wa.override_redirect = 1;
-   wa.border_pixel = 0;
-   wa.colormap = sym_XCreateColormap(disp, RootWindow(disp, vi->screen),
-                                     vi->visual, AllocNone);
-   if (!wa.colormap) goto err;
-   win = sym_XCreateWindow(disp, RootWindow(disp, vi->screen),
-                           -77, -777, 1, 1, 0, vi->depth, InputOutput,
-                           vi->visual,
-                           CWBorderPixel | CWColormap | CWOverrideRedirect, &wa);
-   if (!win) goto err;
-   context = sym_glXCreateNewContext(disp, fbconfigs[0], GLX_RGBA_TYPE,
-                                     NULL, 1);
-   if (!context) goto err;
-   gwin = sym_glXCreateWindow(disp, fbconfigs[0], win, NULL);
-   if (!gwin) goto err;
-   extns = sym_glXQueryExtensionsString(disp, 0);
-   if (!extns) goto err;
-   if (!strstr(extns, "GLX_SGI_swap_control")) goto err;
-   sym_glXGetVideoSyncSGI = sym_glXGetProcAddressARB("glXGetVideoSyncSGI");
-   sym_glXWaitVideoSyncSGI = sym_glXGetProcAddressARB("glXWaitVideoSyncSGI");
-   if ((!sym_glXGetVideoSyncSGI) || (!sym_glXWaitVideoSyncSGI)) goto err;
-
+   if (!_vsync_init_glx2()) goto err;
    return 1;
+
 err:
    if (disp) sym_XCloseDisplay(disp);
    if (lib_gl) dlclose(lib_gl);
@@ -288,15 +255,76 @@ err:
    return 0;
 }
 
+static int
+_vsync_init_glx2(void)
+{
+   GLXFBConfig *fbconfigs;
+   int num = 0;
+   int attr[] =
+     {
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+        GLX_DOUBLEBUFFER,  1,
+        GLX_RED_SIZE,      1,
+        GLX_GREEN_SIZE,    1,
+        GLX_BLUE_SIZE,     1,
+        0
+     };
+   XVisualInfo *vi;
+   XSetWindowAttributes wa;
+   long win;
+   const char *extns;
+
+   disp = sym_XOpenDisplay(NULL);
+   if (!disp) return 0;
+   fbconfigs = sym_glXChooseFBConfig(disp, 0, attr, &num);
+   if (!fbconfigs) return 0;
+   vi = sym_glXGetVisualFromFBConfig(disp, fbconfigs[0]);
+   if (!vi) return 0;
+   wa.override_redirect = 1;
+   wa.border_pixel = 0;
+   wa.colormap = sym_XCreateColormap(disp, RootWindow(disp, vi->screen),
+                                     vi->visual, AllocNone);
+   if (!wa.colormap) return 0;
+   win = sym_XCreateWindow(disp, RootWindow(disp, vi->screen),
+                           -77, -777, 1, 1, 0, vi->depth, InputOutput,
+                           vi->visual,
+                           CWBorderPixel | CWColormap | CWOverrideRedirect, &wa);
+   if (!win) return 0;
+   context = sym_glXCreateNewContext(disp, fbconfigs[0], GLX_RGBA_TYPE,
+                                     NULL, 1);
+   if (!context) return 0;
+   gwin = sym_glXCreateWindow(disp, fbconfigs[0], win, NULL);
+   if (!gwin) return 0;
+   extns = sym_glXQueryExtensionsString(disp, 0);
+   if (!extns) return 0;
+   if (!strstr(extns, "GLX_SGI_swap_control")) return 0;
+   sym_glXGetVideoSyncSGI = sym_glXGetProcAddressARB("glXGetVideoSyncSGI");
+   sym_glXWaitVideoSyncSGI = sym_glXGetProcAddressARB("glXWaitVideoSyncSGI");
+   if ((!sym_glXGetVideoSyncSGI) || (!sym_glXWaitVideoSyncSGI)) return 0;
+
+   return 1;
+}
+
 double
 _vsync_wait_glx(void)
 {
    double t;
    unsigned int rc = 0;
+   static unsigned int prc = 0;
 
+again:
    sym_glXMakeContextCurrent(disp, gwin, gwin, context);
    sym_glXGetVideoSyncSGI(&rc);
    sym_glXWaitVideoSyncSGI(1, 0, &rc);
+   if (prc == rc)
+     {
+        _vsync_shutdown_glx();
+        usleep(200000);
+        if (!_vsync_init_glx2()) exit(1);
+        goto again;
+     }
+   prc = rc;
    t = ecore_time_get();
    return t;
 }

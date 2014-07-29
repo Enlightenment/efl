@@ -88,9 +88,11 @@ static void
 _tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
    double *t = msg;
+   static double pt = 0.0;
 
    if (t)
      {
+        pt = *t;
         _svr_broadcast_time(*t);
         free(t);
      }
@@ -228,8 +230,8 @@ _svr_init(void)
      {
         if (*s == ':') *s = '=';
      }
-   svr = ecore_con_server_add(ECORE_CON_LOCAL_USER, buf, 1, NULL);
-   if (!svr) exit(0);
+//   svr = ecore_con_server_add(ECORE_CON_LOCAL_USER, buf, 1, NULL);
+//   if (!svr) exit(0);
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, _svr_add, NULL);
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, _svr_del, NULL);
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA, _svr_data, NULL);
@@ -248,6 +250,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    if (!_vsync_init()) return 7;
    _svr_init();
    _tick_init();
+   _tick_start();
 
     ecore_main_loop_begin();
    _tick_send(-1);
