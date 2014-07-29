@@ -497,6 +497,14 @@ Requires: eolian = %{version}-%{release}
 %description -n eolian-devel
 Development files for eolian
 
+%package -n eolian-examples
+Summary:  Examples for the eolian package
+Group:    Graphics & UI Framework/Testing
+Requires: eolian = %{version}-%{release}
+
+%description -n eolian-examples
+Example files for eolian
+
 
 %prep
 %setup -q
@@ -611,11 +619,11 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n eina-devel
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_includedir}/eina*-1/*.h*
-%{_includedir}/eina*-1/eina*/*
+%{_includedir}/eina-*1/*.h*
+%{_includedir}/eina-*1/eina*/*
 %{_libdir}/libeina.so
 %{_libdir}/pkgconfig/eina*.pc
-%{_libdir}/cmake/Eina/*.cmake
+%{_libdir}/cmake/Eina*/*.cmake
 
 %files -n eet
 %manifest %{name}.manifest
@@ -637,10 +645,11 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n eet-devel
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_includedir}/eet-1/*.h
+%{_includedir}/eet-*1/*.h*
+%{_includedir}/eet-*1/*/*.h*
 %{_libdir}/libeet.so
 %{_libdir}/pkgconfig/eet*.pc
-%{_libdir}/cmake/Eet/*.cmake
+%{_libdir}/cmake/Eet*/*.cmake
 
 %files -n eo
 %manifest %{name}.manifest
@@ -656,17 +665,19 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n eo-devel
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_includedir}/eo-1/*.h
+%{_includedir}/eo-*1/*.h*
 %{_libdir}/libeo.so
 %{_libdir}/pkgconfig/eo*.pc
 %{_datadir}/eo/gdb/eo_gdb.py
 %{_datadir}/gdb/auto-load/usr/lib*/*
 %{_libdir}/cmake/Eo/*.cmake
+%{_libdir}/cmake/EoCxx/*.cmake
 
 %files -n evas
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %license COPYING
+%{_bindir}/ecore_evas_*
 %{_bindir}/evas_cserve2_client
 %{_bindir}/evas_cserve2_debug
 %{_bindir}/evas_cserve2_shm_debug
@@ -685,11 +696,11 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n evas-devel
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_includedir}/evas-1/*.h
-%{_includedir}/evas-1/*/*.h
+%{_includedir}/evas-*1/*.h*
+%{_includedir}/evas-*1/*/*.h*
 %{_libdir}/libevas.so
 %{_libdir}/pkgconfig/evas*.pc
-%{_libdir}/cmake/Evas/*.cmake
+%{_libdir}/cmake/Evas*/*.cmake
 
 %files -n ecore
 %manifest %{name}.manifest
@@ -752,7 +763,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_libdir}/libecore_x.so
 %endif
 %{_libdir}/pkgconfig/ecore*.pc
-%{_libdir}/cmake/Ecore/*.cmake
+%{_libdir}/cmake/Ecore*/*.cmake
 
 %files -n eldbus
 %manifest %{name}.manifest
@@ -832,7 +843,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n edje-devel
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_includedir}/edje-1/*.h
+%{_includedir}/edje*-1/*.h*
 %{_libdir}/libedje.so
 %{_libdir}/pkgconfig/edje*.pc
 %{_libdir}/cmake/Edje/*.cmake
@@ -953,11 +964,16 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 
 
 %files -n eolian
-%{_bindir}/eolian_gen
+%{_bindir}/eolian*
 %{_libdir}/libeolian.so.*
 
 %files -n eolian-devel
-%{_includedir}/eolian-1/Eolian.h
+%{_includedir}/eolian-*1/*.h*
+%{_includedir}/eolian-*1/*/*.h*
 %{_datadir}/eolian/include/*/*.eo
 %{_libdir}/libeolian.so*
+%{_libdir}/cmake/Eolian*/*.cmake
+
+%files -n eolian-examples
+%{_datadir}/eolian_*/examples/*
 
