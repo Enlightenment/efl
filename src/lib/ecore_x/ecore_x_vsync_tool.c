@@ -222,7 +222,7 @@ _svr_init(void)
    char buf[4096], *disp, *s;
 
    disp = getenv("DISPLAY");
-   if (disp) disp = ":0";
+   if (!disp) disp = ":0";
    snprintf(buf, sizeof(buf), "ecore-x-vsync-%s", disp);
    for (s = buf; *s; s++)
      {
