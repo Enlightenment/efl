@@ -502,7 +502,6 @@ parse_typedef(Eo_Lexer *ls)
    def->column = ls->column;
    parse_name(ls, buf);
    _fill_type_name(def, eina_stringshare_add(eina_strbuf_string_get(buf)));
-   /* todo: store info about the previous definition and mention it here */
    Eolian_Type *tp = (Eolian_Type*)eina_hash_find(_aliases, def->full_name);
    if (tp)
      {
@@ -1223,7 +1222,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            col = ls->column;
            parse_name(ls, buf);
            name = eina_stringshare_add(eina_strbuf_string_get(buf));
-           /* todo: see typedef */
            tp = (Eolian_Type*)eina_hash_find(_structs, name);
            if (tp)
              {
