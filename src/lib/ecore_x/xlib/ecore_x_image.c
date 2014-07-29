@@ -86,7 +86,7 @@ _ecore_x_image_error_handler(Display *d EINA_UNUSED, XErrorEvent *ev)
    return 0;
 }
 
-static void
+int
 _ecore_x_image_shm_check(void)
 {
    XErrorHandler ph;
@@ -94,12 +94,12 @@ _ecore_x_image_shm_check(void)
    XImage *xim;
 
    if (_ecore_x_image_shm_can != -1)
-     return;
+     return _ecore_x_image_shm_can;
 
    if (!XShmQueryExtension(_ecore_x_disp))
      {
         _ecore_x_image_shm_can = 0;
-        return;
+        return _ecore_x_image_shm_can;
      }
    
    XSync(_ecore_x_disp, False);
@@ -116,7 +116,7 @@ _ecore_x_image_shm_check(void)
    if (!xim)
      {
         _ecore_x_image_shm_can = 0;
-        return;
+        return _ecore_x_image_shm_can;
      }
 
    shminfo.shmid = shmget(IPC_PRIVATE, xim->bytes_per_line * xim->height,
@@ -126,7 +126,7 @@ _ecore_x_image_shm_check(void)
         ERR("%s", strerror(errno));
         XDestroyImage(xim);
         _ecore_x_image_shm_can = 0;
-        return;
+        return _ecore_x_image_shm_can;
      }
 
    shminfo.readOnly = False;
@@ -137,7 +137,7 @@ _ecore_x_image_shm_check(void)
      {
         XDestroyImage(xim);
         _ecore_x_image_shm_can = 0;
-        return;
+        return _ecore_x_image_shm_can;
      }
 
    ph = XSetErrorHandler((XErrorHandler)_ecore_x_image_error_handler);
@@ -153,7 +153,7 @@ _ecore_x_image_shm_check(void)
         shmdt(shminfo.shmaddr);
         shmctl(shminfo.shmid, IPC_RMID, 0);
         _ecore_x_image_shm_can = 0;
-        return;
+        return _ecore_x_image_shm_can;
      }
 
    XShmDetach(_ecore_x_disp, &shminfo);
@@ -162,6 +162,7 @@ _ecore_x_image_shm_check(void)
    shmctl(shminfo.shmid, IPC_RMID, 0);
 
    _ecore_x_image_shm_can = 1;
+   return _ecore_x_image_shm_can;
 }
 
 struct _Ecore_X_Image
