@@ -846,7 +846,8 @@ modules/evas/engines/gl_common/shader/yuy2_nomul_vert.shd \
 modules/evas/engines/gl_common/shader/yuy2_vert.shd
 
 GL_GENERIC_SOURCES = \
-modules/evas/engines/gl_generic/evas_engine.c
+modules/evas/engines/gl_generic/evas_engine.c \
+modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h
 
 if EVAS_STATIC_BUILD_GL_COMMON
 lib_evas_libevas_la_SOURCES += $(GL_COMMON_SOURCES) $(GL_GENERIC_SOURCES)
