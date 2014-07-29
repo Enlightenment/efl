@@ -24,7 +24,12 @@
 #include <Evas.h>
 #include <Elementary.h>
 #include <elm_widget.h>
-#include <elm_interface_atspi_accessible.h>
+
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
+#include "elm_interface_atspi_widget_action.h"
+#include "elm_interface_atspi_widget_action.eo.h"
 
 #include <elm_win.eo.hh>
 #include <elm_box.eo.hh>
