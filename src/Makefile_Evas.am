@@ -845,7 +845,6 @@ modules/evas/engines/gl_common/shader/yuy2_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/yuy2_nomul_vert.shd \
 modules/evas/engines/gl_common/shader/yuy2_vert.shd
 
-dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c
 
