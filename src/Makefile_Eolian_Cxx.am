@@ -56,7 +56,8 @@ if EFL_ENABLE_TESTS
 
 BUILT_SOURCES += \
 	tests/eolian_cxx/callback.eo.c \
-	tests/eolian_cxx/callback.eo.h
+	tests/eolian_cxx/callback.eo.h \
+	tests/eolian_cxx/callback.eo.hh
 
 check_PROGRAMS += tests/eolian_cxx/eolian_cxx_suite
 TESTS += tests/eolian_cxx/eolian_cxx_suite
