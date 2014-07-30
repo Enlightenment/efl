@@ -10,9 +10,9 @@ typedef Eina_List *List_Objects;
 
 
 #endif
-#define DUMMY_CLASS dummy_class_get()
+#define TYPEDEF_CLASS typedef_class_get()
 
-const Eo_Class *dummy_class_get(void) EINA_CONST;
+const Eo_Class *typedef_class_get(void) EINA_CONST;
 
 /**
  *
@@ -21,7 +21,7 @@ const Eo_Class *dummy_class_get(void) EINA_CONST;
  * @param[in] idx No description supplied.
  *
  */
-EOAPI char * dummy_foo(int idx);
+EOAPI char * typedef_foo(int idx);
 
 
 #endif

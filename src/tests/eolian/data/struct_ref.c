@@ -30,9 +30,9 @@ struct _Foo {
 
 
 #endif
-#define DUMMY_CLASS dummy_class_get()
+#define STRUCT_CLASS struct_class_get()
 
-const Eo_Class *dummy_class_get(void) EINA_CONST;
+const Eo_Class *struct_class_get(void) EINA_CONST;
 
 /**
  *
@@ -41,7 +41,7 @@ const Eo_Class *dummy_class_get(void) EINA_CONST;
  * @param[in] idx No description supplied.
  *
  */
-EOAPI char * dummy_foo(int idx);
+EOAPI char * struct_foo(int idx);
 
 
 #endif

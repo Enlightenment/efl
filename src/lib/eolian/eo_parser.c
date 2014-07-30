@@ -445,6 +445,7 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
              const char *bnm, *nm;
              char *fnm;
              buf = push_strbuf(ls);
+             eo_lexer_context_push(ls);
              parse_name(ls, buf);
              nm = eina_strbuf_string_get(buf);
              bnm = get_filename(ls);
@@ -456,8 +457,13 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
                   free(fnm);
                   if (fname)
                     {
-                       if (!eolian_class_get_by_name(nm) && !eolian_eo_file_parse(fname))
-                         eo_lexer_syntax_error(ls, "failed to parse dependency");
+                       if (!eolian_class_get_by_name(nm)
+                        && !eolian_eo_file_parse(fname))
+                         {
+                            eo_lexer_context_restore(ls);
+                            eo_lexer_syntax_error(ls,
+                                "failed to parse dependency");
+                         }
                        def->type = EOLIAN_TYPE_CLASS;
                     }
                }
@@ -467,6 +473,7 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
                   free(fnm);
                   def->type = EOLIAN_TYPE_CLASS;
                }
+             eo_lexer_context_pop(ls);
              _fill_type_name(def, eina_stringshare_add(nm));
              pop_strbuf(ls);
           }
@@ -1178,6 +1185,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    ls->tmp.kls = calloc(1, sizeof(Eo_Class_Def));
    eo_lexer_get(ls);
    ls->tmp.kls->type = type;
+   eo_lexer_context_push(ls);
    parse_name(ls, buf);
    bnm = get_filename(ls);
    fnm = database_class_to_filename(eina_strbuf_string_get(buf));
@@ -1185,7 +1193,11 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    eina_stringshare_del(bnm);
    free(fnm);
    if (!same)
-     eo_lexer_syntax_error(ls, "class and file names differ");
+     {
+        eo_lexer_context_restore(ls);
+        eo_lexer_syntax_error(ls, "class and file names differ");
+     }
+   eo_lexer_context_pop(ls);
    ls->tmp.kls->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
    ls->tmp.kls->file = get_filename(ls);
