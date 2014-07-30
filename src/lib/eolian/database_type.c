@@ -155,7 +155,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      {
         eina_strbuf_append(buf, "const ");
      }
-   if (tp->type == EOLIAN_TYPE_REGULAR || tp->type == EOLIAN_TYPE_CLASS)
+   if (tp->type == EOLIAN_TYPE_REGULAR)
      {
         Eina_List *l;
         const char *sp;
@@ -173,6 +173,8 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    else if (tp->type == EOLIAN_TYPE_VOID)
      eina_strbuf_append(buf, "void");
+   else if (tp->type == EOLIAN_TYPE_CLASS)
+     eina_strbuf_append(buf, "Eo");
    else
      {
         Eolian_Type *btp = tp->base_type;
