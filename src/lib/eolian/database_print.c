@@ -248,23 +248,6 @@ _class_print(const Eolian_Class *cl)
 }
 
 EAPI Eina_Bool
-eolian_show(const Eolian_Class *class)
-{
-   if (!class)
-     {
-        Eina_List *itr;
-        Eolian_Class *cl;
-        EINA_LIST_FOREACH(_classes, itr, cl)
-          _class_print(cl);
-     }
-   else
-     {
-        _class_print(class);
-     }
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
 eolian_show_class(const Eolian_Class *class)
 {
    if (!class)
