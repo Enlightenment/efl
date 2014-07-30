@@ -247,20 +247,21 @@ _class_print(const Eolian_Class *cl)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_cl_print_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+             void *data, void *fdata EINA_UNUSED)
+{
+   _class_print((Eolian_Class*)data);
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 eolian_show_class(const Eolian_Class *class)
 {
    if (!class)
-     {
-        Eina_List *itr;
-        Eolian_Class *cl;
-        EINA_LIST_FOREACH(_classes, itr, cl)
-          _class_print(cl);
-     }
+     eina_hash_foreach(_classes, _cl_print_cb, NULL);
    else
-     {
-        _class_print(class);
-     }
+     _class_print(class);
    return EINA_TRUE;
 }
 

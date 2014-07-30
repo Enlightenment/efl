@@ -63,7 +63,7 @@ database_class_add(const char *class_name, Eolian_Class_Type type)
      }
    while(colon);
    cl->name = eina_stringshare_add(name);
-   _classes = eina_list_append(_classes, cl);
+   eina_hash_set(_classes, cl->full_name, cl);
    free(full_name);
    return cl;
 }
@@ -73,6 +73,7 @@ database_class_file_set(Eolian_Class *cl, const char *file_name)
 {
    EINA_SAFETY_ON_NULL_RETURN(cl);
    cl->file = eina_stringshare_add(file_name);
+   eina_hash_set(_classesf, cl->file, cl);
 }
 
 /*

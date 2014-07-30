@@ -68,7 +68,8 @@ eolian_type_subtypes_get(const Eolian_Type *tp)
    tpt = tp->type;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR
                                 || tpt == EOLIAN_TYPE_POINTER
-                                || tpt == EOLIAN_TYPE_REGULAR_STRUCT, NULL);
+                                || tpt == EOLIAN_TYPE_REGULAR_STRUCT
+                                || tpt == EOLIAN_TYPE_CLASS, NULL);
    if (!tp->subtypes) return NULL;
    return eina_list_iterator_new(tp->subtypes);
 }
@@ -145,6 +146,14 @@ eolian_type_base_type_get(const Eolian_Type *tp)
    tpt = eolian_type_type_get(tp);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_POINTER || tpt == EOLIAN_TYPE_ALIAS, NULL);
    return tp->base_type;
+}
+
+EAPI const Eolian_Class *
+eolian_type_class_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eolian_type_type_get(tp) == EOLIAN_TYPE_CLASS, NULL);
+   return eolian_class_get_by_name(tp->full_name);
 }
 
 EAPI Eina_Bool

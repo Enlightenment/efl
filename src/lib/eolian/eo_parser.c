@@ -442,10 +442,24 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
           }
         else
           {
+             const char *nm, *fpath;
+             char *fname;
              buf = push_strbuf(ls);
              parse_name(ls, buf);
-             _fill_type_name(def, eina_stringshare_add(eina_strbuf_string_get
-                            (buf)));
+             nm = eina_strbuf_string_get(buf);
+             fname = database_class_to_filename(nm);
+             fpath = eina_hash_find(_filenames, fname);
+             free(fname);
+             if (fpath)
+               {
+                  def->type = EOLIAN_TYPE_CLASS;
+                  if (strcmp(ls->source, fpath))
+                    {
+                       if (!eolian_class_get_by_name(nm) && !eolian_eo_file_parse(fpath))
+                         eo_lexer_syntax_error(ls, "failed to parse dependency");
+                    }
+               }
+             _fill_type_name(def, eina_stringshare_add(nm));
              pop_strbuf(ls);
           }
      }
@@ -1148,12 +1162,22 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 static void
 parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 {
+   const char *bnm;
+   char *fnm;
+   Eina_Bool same;
    int line, col;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.kls = calloc(1, sizeof(Eo_Class_Def));
    eo_lexer_get(ls);
    ls->tmp.kls->type = type;
    parse_name(ls, buf);
+   bnm = get_filename(ls);
+   fnm = database_class_to_filename(eina_strbuf_string_get(buf));
+   same = !!strcmp(bnm, fnm);
+   eina_stringshare_del(bnm);
+   free(fnm);
+   if (!same)
+     eo_lexer_syntax_error(ls, "class and file names differ");
    ls->tmp.kls->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
    ls->tmp.kls->file = get_filename(ls);
@@ -1176,7 +1200,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    check_match(ls, '}', '{', line, col);
 }
 
-static void
+static Eina_Bool
 parse_unit(Eo_Lexer *ls, Eina_Bool eot)
 {
    switch (ls->t.kw)
@@ -1240,17 +1264,20 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         eo_lexer_syntax_error(ls, "invalid token");
         break;
      }
-   return;
+   return EINA_FALSE;
 found_class:
    append_node(ls, NODE_CLASS, ls->tmp.kls);
    ls->tmp.kls = NULL;
+   return EINA_TRUE;
 }
 
 static void
 parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 {
    while (ls->t.token >= 0)
-     parse_unit(ls, eot);
+     /* set eot to EINA_TRUE so that we only allow parsing of one class */
+     if (parse_unit(ls, eot))
+       eot = EINA_TRUE;
 }
 
 Eina_Bool

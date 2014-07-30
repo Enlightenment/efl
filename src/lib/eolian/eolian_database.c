@@ -3,9 +3,10 @@
 #include "eo_parser.h"
 #include "eolian_database.h"
 
-Eina_List *_classes = NULL;
+Eina_Hash *_classes = NULL;
 Eina_Hash *_aliases = NULL;
 Eina_Hash *_structs = NULL;
+Eina_Hash *_classesf = NULL;
 Eina_Hash *_aliasesf = NULL;
 Eina_Hash *_structsf = NULL;
 Eina_Hash *_filenames = NULL;
@@ -24,8 +25,10 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
+   _classes = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
    _aliases = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
    _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _classesf = eina_hash_stringshared_new(NULL);
    _aliasesf = eina_hash_stringshared_new(_hashlist_free);
    _structsf = eina_hash_stringshared_new(_hashlist_free);
    _filenames = eina_hash_string_small_new(free);
@@ -45,11 +48,10 @@ database_shutdown()
 
    if (_database_init_count == 0)
      {
-        Eolian_Class *class;
-        EINA_LIST_FREE(_classes, class)
-           database_class_del(class);
+        eina_hash_free(_classes);
         eina_hash_free(_aliases);
         eina_hash_free(_structs);
+        eina_hash_free(_classesf);
         eina_hash_free(_aliasesf);
         eina_hash_free(_structsf);
         eina_hash_free(_filenames);
@@ -108,12 +110,12 @@ eolian_system_directory_scan()
    return ret;
 }
 
-static char *
-_eolian_class_to_filename(const char *filename)
+char *
+database_class_to_filename(const char *cname)
 {
    char *ret;
    Eina_Strbuf *strbuf = eina_strbuf_new();
-   eina_strbuf_append(strbuf, filename);
+   eina_strbuf_append(strbuf, cname);
    eina_strbuf_replace_all(strbuf, ".", "_");
 
    ret = eina_strbuf_string_steal(strbuf);
@@ -160,7 +162,7 @@ eolian_eo_file_parse(const char *filepath)
      {
         if (!eolian_class_get_by_name(inherit_name))
           {
-             char *filename = _eolian_class_to_filename(inherit_name);
+             char *filename = database_class_to_filename(inherit_name);
              filepath = eina_hash_find(_filenames, filename);
              free(filename);
              if (!filepath)
@@ -169,11 +171,6 @@ eolian_eo_file_parse(const char *filepath)
                   return EINA_FALSE;
                }
              if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
-             if (!eolian_class_get_by_name(inherit_name))
-               {
-                  ERR("Unable to find class %s", inherit_name);
-                  return EINA_FALSE;
-               }
           }
      }
    eina_iterator_free(itr);

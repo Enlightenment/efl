@@ -122,7 +122,8 @@ typedef enum
    EOLIAN_TYPE_POINTER,
    EOLIAN_TYPE_FUNCTION,
    EOLIAN_TYPE_STRUCT,
-   EOLIAN_TYPE_ALIAS
+   EOLIAN_TYPE_ALIAS,
+   EOLIAN_TYPE_CLASS
 } Eolian_Type_Type;
 
 /*
@@ -818,8 +819,7 @@ EAPI Eina_Iterator *eolian_type_structs_get_by_file(const char *fname);
  * @brief Get the type of a type (regular, function, pointer)
  *
  * @param[in] tp the type.
- * @return EOLIAN_TYPE_UNKNOWN_TYPE when @c tp is NULL, otherwise
- * EOLIAN_TYPE_REGULAR, EOLIAN_TYPE_POINTER or EOLIAN_TYPE_FUNCTION.
+ * @return an Eolian_Type_Type.
  *
  * @ingroup Eolian
  */
@@ -839,8 +839,8 @@ EAPI Eina_Iterator *eolian_type_arguments_get(const Eolian_Type *tp);
  * @brief Get an iterator to all subtypes of a type.
  *
  * @param[in] tp the type.
- * @return the iterator when @c tp is an EOLIAN_TYPE_REGULAR or
- * EOLIAN_TYPE_POINTER and has subtypes, NULL otherwise.
+ * @return the iterator when @c tp is a regular/regular struct/class/pointer
+ * type.
  *
  * @ingroup Eolian
  */
@@ -921,6 +921,16 @@ EAPI const Eolian_Type *eolian_type_return_type_get(const Eolian_Type *tp);
 EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
 
 /*
+ * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
+ *
+ * @param[in] tp the type.
+ * @return the class or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
+
+/*
  * @brief Get whether the given type is @own.
  *
  * @param[in] tp the type.
@@ -993,8 +1003,9 @@ EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
  * @brief Get the name of the given type. You have to manually delete
  * the stringshare. For EOLIAN_TYPE_REGULAR and EOLIAN_TYPE_REGULAR_STRUCT,
  * this is for example "int". For EOLIAN_TYPE_STRUCT and EOLIAN_TYPE_ALIAS,
- * this is the name of the alias or of the struct. Keep in mind that the name
- * doesn't include namespaces for structs and aliases.
+ * this is the name of the alias or of the struct. For EOLIAN_TYPE_CLASS,
+ * this can be "Button". Keep in mind that the name doesn't include
+ * namespaces for structs and aliases.
  *
  * @param[in] tp the type.
  * @return the name.

@@ -149,12 +149,13 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    if ((tp->type == EOLIAN_TYPE_REGULAR
      || tp->type == EOLIAN_TYPE_REGULAR_STRUCT
-     || tp->type == EOLIAN_TYPE_VOID)
+     || tp->type == EOLIAN_TYPE_VOID
+     || tp->type == EOLIAN_TYPE_CLASS)
      && tp->is_const)
      {
         eina_strbuf_append(buf, "const ");
      }
-   if (tp->type == EOLIAN_TYPE_REGULAR)
+   if (tp->type == EOLIAN_TYPE_REGULAR || tp->type == EOLIAN_TYPE_CLASS)
      {
         Eina_List *l;
         const char *sp;
@@ -219,7 +220,7 @@ database_type_print(Eolian_Type *tp)
      printf("own(");
    if (tp->is_const)
      printf("const(");
-   if (tp->type == EOLIAN_TYPE_REGULAR)
+   if (tp->type == EOLIAN_TYPE_REGULAR || tp->type == EOLIAN_TYPE_CLASS)
      printf("%s", tp->full_name);
    else if (tp->type == EOLIAN_TYPE_VOID)
      printf("void");

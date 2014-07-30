@@ -39,9 +39,10 @@ extern Eina_Prefix *_eolian_prefix;
 #define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
 #define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
 
-extern Eina_List *_classes;
+extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
+extern Eina_Hash *_classesf;
 extern Eina_Hash *_aliasesf;
 extern Eina_Hash *_structsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
@@ -161,6 +162,8 @@ void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *n
 
 Eolian_Class *database_class_add(const char *class_name, Eolian_Class_Type type);
 void database_class_del(Eolian_Class *cl);
+
+char *database_class_to_filename(const char *cname);
 
 Eina_Bool database_class_inherit_add(Eolian_Class *cl, const char *inherit_class_name);
 Eina_Bool database_class_function_add(Eolian_Class *cl, Eolian_Function *foo_id);
