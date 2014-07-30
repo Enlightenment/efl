@@ -1,4 +1,6 @@
 
+if HAVE_CXX11
+
 ### Library
 
 installed_eldbuscxxmainheadersdir = $(includedir)/eldbus_cxx-@VMAJ@
@@ -18,7 +20,6 @@ bindings/eldbus_cxx/eldbus_signature_traits.hh
 ### Unit tests
 
 if EFL_ENABLE_TESTS
-if HAVE_CXX11
 
 check_PROGRAMS += tests/eldbus_cxx/eldbus_cxx_suite
 TESTS += tests/eldbus_cxx/eldbus_cxx_suite
@@ -44,4 +45,5 @@ tests_eldbus_cxx_eldbus_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
 tests_eldbus_cxx_eldbus_cxx_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
 
 endif
+
 endif
