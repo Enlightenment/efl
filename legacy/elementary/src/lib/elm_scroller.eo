@@ -43,9 +43,9 @@ class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable,
    methods {
       page_scroll_limit_set @const {
          /*@
-         @brief Set the maxium of the movable page at a flicking.
+         @brief Set the maximum of the movable page at a flicking.
 
-         The value of maxium movable page should be more than 1.
+         The value of maximum movable page should be more than 1.
 
          @see elm_scroller_page_scroll_limit_get()
 
@@ -53,13 +53,13 @@ class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup Scroller */
          params {
-            @in int page_limit_h; /*@ The maxium of the movable horizontal page */
-            @in int page_limit_v; /*@ The maxium of the movable vertical page */
+            @in int page_limit_h; /*@ The maximum of the movable horizontal page */
+            @in int page_limit_v; /*@ The maximum of the movable vertical page */
          }
       }
       page_scroll_limit_get @const {
          /*@
-         @brief Get the maxium of the movable page at a flicking.
+         @brief Get the maximum of the movable page at a flicking.
 
          @see elm_scroller_page_scroll_limit_set()
 
@@ -67,8 +67,8 @@ class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup Scroller */
          params {
-            @in int *page_limit_h; /*@ The maxium of the movable horizontal page */
-            @in int *page_limit_v; /*@ The maxium of the movable vertical page */
+            @in int *page_limit_h; /*@ The maximum of the movable horizontal page */
+            @in int *page_limit_v; /*@ The maximum of the movable vertical page */
          }
       }
    }
