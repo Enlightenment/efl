@@ -158,6 +158,7 @@ _extnbuf_lock_file_set(Extnbuf *b, const char *file)
    if (b->am_owner) return EINA_FALSE;
    if (b->lock) eina_stringshare_del(b->lock);
    if (b->lockfd >= 0) close(b->lockfd);
+   b->lockfd = -1;
    if (!file)
      {
         b->lock = NULL;
