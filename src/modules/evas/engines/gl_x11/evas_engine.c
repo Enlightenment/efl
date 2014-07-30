@@ -774,7 +774,7 @@ gl_extn_veto(Render_Engine *re)
              glsym_glXBindTexImage = NULL;
              glsym_glXReleaseTexImage = NULL;
           }
-        if (!strstr(str, "_video_sync"))
+        if (!strstr(str, "GLX_SGI_video_sync"))
           {
              glsym_glXGetVideoSync = NULL;
              glsym_glXWaitVideoSync = NULL;
