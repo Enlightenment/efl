@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 MAINTAINERCLEANFILES = Makefile.in
 
 include ../../Makefile_Edje_Helper.am
