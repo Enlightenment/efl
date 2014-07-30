@@ -1,0 +1,12 @@
+class nmsp1.nmsp11.class2
+{
+   properties {
+      a {
+         set {
+         }
+      }
+   }
+   implements {
+      virtual.a.set;
+   }
+}

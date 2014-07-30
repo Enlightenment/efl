@@ -442,22 +442,30 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
           }
         else
           {
-             const char *nm, *fpath;
-             char *fname;
+             const char *bnm, *nm;
+             char *fnm;
              buf = push_strbuf(ls);
              parse_name(ls, buf);
              nm = eina_strbuf_string_get(buf);
-             fname = database_class_to_filename(nm);
-             fpath = eina_hash_find(_filenames, fname);
-             free(fname);
-             if (fpath)
+             bnm = get_filename(ls);
+             fnm = database_class_to_filename(nm);
+             if (strncmp(bnm, fnm, strlen(bnm) - 3))
                {
-                  def->type = EOLIAN_TYPE_CLASS;
-                  if (strcmp(ls->source, fpath))
+                  const char *fname = eina_hash_find(_filenames, fnm);
+                  eina_stringshare_del(bnm);
+                  free(fnm);
+                  if (fname)
                     {
-                       if (!eolian_class_get_by_name(nm) && !eolian_eo_file_parse(fpath))
+                       if (!eolian_class_get_by_name(nm) && !eolian_eo_file_parse(fname))
                          eo_lexer_syntax_error(ls, "failed to parse dependency");
+                       def->type = EOLIAN_TYPE_CLASS;
                     }
+               }
+             else
+               {
+                  eina_stringshare_del(bnm);
+                  free(fnm);
+                  def->type = EOLIAN_TYPE_CLASS;
                }
              _fill_type_name(def, eina_stringshare_add(nm));
              pop_strbuf(ls);
@@ -1173,7 +1181,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    parse_name(ls, buf);
    bnm = get_filename(ls);
    fnm = database_class_to_filename(eina_strbuf_string_get(buf));
-   same = !!strcmp(bnm, fnm);
+   same = !strncmp(bnm, fnm, strlen(bnm) - 3);
    eina_stringshare_del(bnm);
    free(fnm);
    if (!same)

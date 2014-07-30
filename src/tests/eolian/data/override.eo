@@ -1,4 +1,4 @@
-class Simple (Base) {
+class Override (Base) {
    properties {
       a {
          set {

@@ -1,0 +1,7 @@
+class no_nmsp
+{
+   methods {
+      foo {
+      }
+   }
+}

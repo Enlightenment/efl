@@ -1,4 +1,4 @@
-class Simple {
+class Scope {
    properties {
       a @protected {
          get {

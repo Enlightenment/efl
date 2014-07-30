@@ -16,7 +16,7 @@ struct @extern Y
    field: int;
 }
 
-class Dummy {
+class Extern {
    methods {
       foo {
          params {

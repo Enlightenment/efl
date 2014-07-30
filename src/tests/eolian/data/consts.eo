@@ -1,4 +1,4 @@
-class Const {
+class Consts {
    properties {
       a {
          set {

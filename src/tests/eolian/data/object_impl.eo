@@ -1,4 +1,4 @@
-class Object (Base) {
+class Object_Impl (Base) {
    constructors {
       constructor_1 {
          params {

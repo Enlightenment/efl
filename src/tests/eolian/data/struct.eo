@@ -19,7 +19,7 @@ type Bar: struct {
     b: struct _Foo;
 };
 
-class Dummy {
+class Struct {
    methods {
       foo {
          params {

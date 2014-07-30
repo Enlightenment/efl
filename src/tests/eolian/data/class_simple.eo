@@ -1,4 +1,4 @@
-class Simple {
+class Class_Simple {
    /*@ Class Desc Simple */
    legacy_prefix: evas_object_simple;
    eo_prefix: evas_obj_simple;
