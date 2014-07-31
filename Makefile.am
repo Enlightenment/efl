@@ -425,4 +425,3 @@ pkgbuild::
 
 clean-local:
 	rm -rf benchmark coverage
-	rm -f po/Makevars
