@@ -280,6 +280,27 @@ _access_object_get(Elm_Naviframe_Item *it, const char* part)
    return ao;
 }
 
+static Eina_Bool
+_access_info_has(Evas_Object *obj, int type)
+{
+   Elm_Access_Info *ac;
+   Elm_Access_Item *ai;
+   Eina_List *l;
+
+   ac = _elm_access_info_get(obj);
+   if (!ac) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ac->items, l, ai)
+     {
+        if (ai->type == type)
+          {
+             if (ai->func || ai->data) return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _item_signals_emit(Elm_Naviframe_Item *it)
 {
@@ -1203,9 +1224,15 @@ _item_new(Evas_Object *obj,
         _item_content_set_hook((Elm_Object_Item *)it, PREV_BTN_PART, prev_btn);
 
         if (!elm_layout_text_get(prev_btn, NULL))
-          _elm_access_callback_set
-            (_elm_access_info_get(prev_btn), ELM_ACCESS_INFO,
-             _access_prev_btn_info_cb, it);
+          {
+             if (!_access_info_has(prev_btn, ELM_ACCESS_INFO))
+               {
+                  /* set access info */
+                  _elm_access_callback_set
+                     (_elm_access_info_get(prev_btn), ELM_ACCESS_INFO,
+                      _access_prev_btn_info_cb, it);
+               }
+          }
      }
 
    if (next_btn)
@@ -1213,8 +1240,14 @@ _item_new(Evas_Object *obj,
         _item_content_set_hook((Elm_Object_Item *)it, NEXT_BTN_PART, next_btn);
 
         if (!elm_layout_text_get(next_btn, NULL))
-          _elm_access_text_set
-            (_elm_access_info_get(next_btn), ELM_ACCESS_INFO, E_("Next"));
+          {
+             if (!_access_info_has(next_btn, ELM_ACCESS_INFO))
+               {
+                  /* set access info */
+                  _elm_access_text_set
+                     (_elm_access_info_get(next_btn), ELM_ACCESS_INFO, E_("Next"));
+               }
+          }
      }
 
    _item_content_set(it, content);
