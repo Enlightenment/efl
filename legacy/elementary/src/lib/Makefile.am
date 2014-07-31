@@ -1218,6 +1218,6 @@ nodist_includesunstable_HEADERS += \
 	     elm_web.eo.hh \
 	     elm_win.eo.hh
 
-CLEANFILES += $(nodist_includesunstable_HEADERS)
-
 endif
+
+CLEANFILES += $(nodist_includesunstable_HEADERS)
