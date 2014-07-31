@@ -1503,7 +1503,7 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    Extn *extn;
    Ipc_Data_Resize ipc;
    Ipc_Data_Update ipc2;
-   int i;
+   int i, prev_b;
 
    if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
      return ECORE_CALLBACK_PASS_ON;
@@ -1536,8 +1536,10 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    ipc2.x = 0; ipc2.y = 0; ipc2.w = ee->w; ipc2.h = ee->h;
    ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc2,
                          sizeof(ipc2));
+   prev_b = extn->cur_b - 1;
+   if (prev_b < 0) prev_b = NBUF - 1;
    ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE_DONE, 0, 0,
-                         extn->cur_b, NULL, 0);
+                         prev_b, NULL, 0);
    _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_ADD);
    return ECORE_CALLBACK_PASS_ON;
 }
