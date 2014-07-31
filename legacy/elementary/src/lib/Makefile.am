@@ -1217,4 +1217,7 @@ nodist_includesunstable_HEADERS += \
 	     elm_video.eo.hh \
 	     elm_web.eo.hh \
 	     elm_win.eo.hh
+
+CLEANFILES += $(nodist_includesunstable_HEADERS)
+
 endif
