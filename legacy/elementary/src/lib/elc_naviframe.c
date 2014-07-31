@@ -985,9 +985,12 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
 EOLIAN static void
 _elm_naviframe_elm_layout_signal_emit(Eo *obj, Elm_Naviframe_Data *sd, const char *emission, const char *source)
 {
-   if (!sd->stack) return;
+   Elm_Naviframe_Item *top_it;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_emit(emission, source));
+   top_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
+   if (!top_it) return;
+
+   eo_do(VIEW(top_it), elm_obj_layout_signal_emit(emission, source));
 }
 
 /* content/text smart functions proxying things to the top item, which
