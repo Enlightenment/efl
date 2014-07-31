@@ -398,7 +398,7 @@ _glvsync_animator_tick_source_set(void)
 {
    if (!vsync_server)
      {
-        char buf[4096], *disp, *s;
+        char buf[4096], run[4096], *disp, *s;
         int tries = 0;
 
         if (!handlers)
@@ -417,15 +417,18 @@ _glvsync_animator_tick_source_set(void)
              if (*s == ':') *s = '=';
           }
         vsync_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, buf, 1, NULL);
+        if (!vsync_server)
+          {
+             snprintf(run, sizeof(run), "%s/ecore_x/bin/%s/ecore_x_vsync",
+                      eina_prefix_lib_get(_prefix), MODULE_ARCH);
+             ecore_exe_run(run, NULL);
+          }
         while (!vsync_server)
           {
              tries++;
              if (tries > 50) return EINA_FALSE;
-             snprintf(buf, sizeof(buf), "%s/ecore_x/bin/%s/ecore_x_vsync",
-                      eina_prefix_lib_get(_prefix), MODULE_ARCH);
-             ecore_exe_run(buf, NULL);
              usleep(10000);
-             vsync_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, buf, 0, NULL);
+             vsync_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, buf, 1, NULL);
           }
         if (!handlers)
           {
