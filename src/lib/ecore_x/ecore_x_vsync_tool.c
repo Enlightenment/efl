@@ -125,6 +125,7 @@ _tick_start(void)
 static void
 _tick_end(void)
 {
+   if (tick <= 0) return;
    tick--;
    if (tick > 0) return;
    _tick_send(0);
@@ -135,7 +136,7 @@ _tick_end(void)
 typedef struct
 {
    Ecore_Con_Client *client;
-   Eina_Bool enabled : 1;
+   int enabled;
 } Clientdata;
 
 static Ecore_Con_Server *svr = NULL;
@@ -177,7 +178,11 @@ _svr_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (cdat)
      {
         clients = eina_list_remove(clients, cdat);
-        if (cdat->enabled) _tick_end();
+        while (cdat->enabled > 0)
+          {
+             _tick_end();
+             cdat->enabled--;
+          }
         free(cdat);
      }
    return EINA_FALSE;
@@ -192,24 +197,19 @@ _svr_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (cdat)
      {
         char *dat = ev->data;
+        int i;
 
-        if (ev->size > 0)
+        for (i = 0; i < ev->size; i++)
           {
-             if (dat[ev->size - 1])
+             if (dat[i])
                {
-                  if (!cdat->enabled)
-                    {
-                       _tick_start();
-                       cdat->enabled = EINA_TRUE;
-                    }
+                  cdat->enabled++;
+                  _tick_start();
                }
              else
                {
-                  if (cdat->enabled)
-                    {
-                       _tick_end();
-                       cdat->enabled = EINA_FALSE;
-                    }
+                  cdat->enabled--;
+                  _tick_end();
                }
           }
      }
