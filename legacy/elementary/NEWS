@@ -1,6 +1,45 @@
 =================
-Elementary 1.10.0
+Elementary 1.11.0
 =================
+
+Changes since 1.10.0:
+---------------------
+
+Features:
+
+   * elm_map: Add new elm_map_region_zoom_bring_in() API
+   * Gengrid: Added horizontal item loop feature.
+   * atspi: add AtspiText and AtspiEditableText interface support.
+   * fileselector: Adding search entry for realtime filename search
+   * panel: add scrollable feature
+   * panel: add scrollable feature
+   * gengrid: Added normal reorder type
+   * toolbar: added selected and unselected smartcallbacks to toolbar.
+   * elm win noblank property added - to disable screen blanking/saving
+
+Fixes:
+
+   * genlist: fixed wrong item focus set on item_focus_set API call.
+   * scroller - emits the missed signals
+   * elm win - if no ELM_DISPLAY is set, try more engines before giving up (T1294)
+   * Remove autogen.sh from the dist tarball.
+   * config: always create a themes directory for user.
+   * po: Set all initial values for Language and Language-Team
+   * win: fix borderless_set behavior
+   * dnd: rotate dragwin if main window is rotated when draging
+   * fix theme to not self-feed emit signals in a loop
+   * fix check colorclasses for disabled text
+   * elm object item: fix the comparison of eo class name in case of edje object.
+   * fileselector: Make selected_set actually select the file
+   * tooltip: corrected the typo in documentation of elm_object_tooltip_show
+   * elm theme - fix wayland borders to be sized and colored correctly
+   * transit - fix to adopt the tween_mode factor.
+   * elementary: Don't segfault if we are not using an X11-compatible engine
+   * list: call "selected" callback after set focus to the selected item
+   * gengrid: corrected the reorder start and end evas smart callback call.
+   * fix notification theme to not clip text
+   * map: Add missing legacy API into legacy header
+   * elc_naviframe: Fix warning caused by elm_obj_layout_signal_emit override function in naviframe
 
 Changes since Elementary 1.9.0:
 -------------------------------
