@@ -1,4 +1,9 @@
-Emotion Generic Players 1.10.0
+Emotion Generic Players 1.11.0
+
+Changes since Emotion Generic Players 1.10.0:
+---------------------------------------------
+
+No changes since version 1.10.0
 
 Changes since Emotion Generic Players 1.9.0:
 --------------------------------------------
@@ -30,3 +35,10 @@ Fixes:
    * Emotion VLC: fix send position_change while paused.
    * Emotion VLC: recreate the player when end reached.
    * Emotion VLC: fix the volume/mute bug.
+Changes since 1.10.0:
+---------------------
+Features:
+
+Fixes:
+
+   * Add autogen.sh to EXTRA_DIST.
