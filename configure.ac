@@ -307,12 +307,12 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 if test "${want_coverage}" = "yes" ; then
    AC_CHECK_PROG([have_lcov], [lcov], [yes], [no])
    if test "x${have_lcov}" = "xyes" ; then
-      EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -fprofile-arcs -ftest-coverage"
-      EFL_COV_LIBS="${EFL_COV_LIBS} -lgcov"
+      EFLALL_COV_CFLAGS="${EFLALL_COV_CFLAGS} -fprofile-arcs -ftest-coverage"
+      EFLALL_COV_LIBS="${EFLALL_COV_LIBS} -lgcov"
       if test "x${prefer_assert}" = "xno"; then
-         EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -DNDEBUG"
+         EFLALL_COV_CFLAGS="${EFLALL_COV_CFLAGS} -DNDEBUG"
       else
-         EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -g -O0 -DDEBUG"
+         EFLALL_COV_CFLAGS="${EFLALL_COV_CFLAGS} -g -O0 -DDEBUG"
       fi
    else
       AC_MSG_ERROR([lcov is not found])
@@ -1877,7 +1877,7 @@ if test "x${want_evas_cserve2}" = "xyes"; then
    if test "x${ac_cv_header_sys_epoll_h}" = "xno" || test "x${ac_cv_header_sys_inotify_h}" = "xno" || test "x${ac_cv_header_sys_signalfd_h}" = "xno"; then
       want_evas_cserve2="no"
    else
-      EVAS_CSERVE2_SLAVE_LIBS="${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_shm}"
+      EVAS_CSERVE2_SLAVE_LIBS="${EFLALL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_shm}"
       AC_SUBST([EVAS_CSERVE2_SLAVE_LIBS])
    fi
 fi
