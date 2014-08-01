@@ -63,10 +63,3 @@ Additions:
 Fixes:
 
    * distcheck for parallel builds
-Changes since 1.10.0:
----------------------
-Features:
-
-Fixes:
-
-   * Remove autogen.sh from the dist tarball.
