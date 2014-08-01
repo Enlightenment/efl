@@ -89,7 +89,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
      {
         if (ftype == EOLIAN_PROP_GET || eolian_function_object_is_const(funcid))
            eina_strbuf_append(fparam, "const ");
-        eina_strbuf_append(fparam, "Eo *obj");
+        eina_strbuf_append_printf(fparam, "%s *obj", class_env.full_classname);
      }
    sprintf (tmpstr, "comment%s", suffix);
    const char *desc = eolian_function_description_get(funcid, tmpstr);
@@ -263,8 +263,10 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
      {
         if (ftype == EOLIAN_PROP_GET || eolian_function_object_is_const(funcid))
            eina_strbuf_append(fparam, "const ");
-        eina_strbuf_append(fparam, "Eo *obj");
-        eina_strbuf_replace_all(fbody, "@#eo_obj", "(Eo *)obj");
+        eina_strbuf_append_printf(fparam, "%s *obj", class_env.full_classname);
+        char buf[256];
+        snprintf(buf, sizeof(buf), "(%s *)obj", class_env.full_classname);
+        eina_strbuf_replace_all(fbody, "@#eo_obj", buf);
      }
    else
      {

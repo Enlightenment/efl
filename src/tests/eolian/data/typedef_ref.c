@@ -1,6 +1,13 @@
 #ifndef _TYPES_OUTPUT_C_
 #define _TYPES_OUTPUT_C_
 
+#ifndef _TYPEDEF_EO_CLASS_TYPE
+#define _TYPEDEF_EO_CLASS_TYPE
+
+typedef Eo Typedef;
+
+#endif
+
 #ifndef _TYPEDEF_EO_TYPES
 #define _TYPEDEF_EO_TYPES
 

@@ -1,6 +1,13 @@
 #ifndef _TYPES_OUTPUT_C_
 #define _TYPES_OUTPUT_C_
 
+#ifndef _STRUCT_EO_CLASS_TYPE
+#define _STRUCT_EO_CLASS_TYPE
+
+typedef Eo Struct;
+
+#endif
+
 #ifndef _STRUCT_EO_TYPES
 #define _STRUCT_EO_TYPES
 
