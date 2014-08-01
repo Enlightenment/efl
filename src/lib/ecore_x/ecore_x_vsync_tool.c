@@ -118,8 +118,7 @@ static void
 _tick_start(void)
 {
    tick++;
-   if (tick > 1) return;
-   _tick_send(1);
+   if (tick == 1) _tick_send(1);
 }
 
 static void
@@ -127,8 +126,7 @@ _tick_end(void)
 {
    if (tick <= 0) return;
    tick--;
-   if (tick > 0) return;
-   _tick_send(0);
+   if (tick == 0) _tick_send(0);
 }
 
 /*--------------------------------------------------------------------*/
@@ -150,7 +148,8 @@ _svr_broadcast_time(double t)
 
    EINA_LIST_FOREACH(clients, l, cdat)
      {
-        ecore_con_client_send(cdat->client, &t, sizeof(t));
+        if (cdat->enabled > 0)
+          ecore_con_client_send(cdat->client, &t, sizeof(t));
      }
 }
 
@@ -177,12 +176,12 @@ _svr_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Clientdata *cdat = ecore_con_client_data_get(ev->client);
    if (cdat)
      {
-        clients = eina_list_remove(clients, cdat);
         while (cdat->enabled > 0)
           {
-             _tick_end();
              cdat->enabled--;
+             if (cdat->enabled == 0) _tick_end();
           }
+        clients = eina_list_remove(clients, cdat);
         free(cdat);
      }
    return EINA_FALSE;
@@ -204,12 +203,15 @@ _svr_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              if (dat[i])
                {
                   cdat->enabled++;
-                  _tick_start();
+                  if (cdat->enabled == 1) _tick_start();
                }
              else
                {
-                  cdat->enabled--;
-                  _tick_end();
+                  if (cdat->enabled > 0)
+                    {
+                       cdat->enabled--;
+                       if (cdat->enabled == 0) _tick_end();
+                    }
                }
           }
      }
