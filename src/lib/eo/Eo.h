@@ -493,12 +493,13 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
        Hook(call.klass, call.obj, call.func, __VA_ARGS__);
 
 // cache OP id, get real fct and object data then do the call
-#define EO_FUNC_COMMON_OP(Name, DefRet)                                \
-     Eo_Op_Call_Data call;                                             \
+#define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
+     Eo_Op_Call_Data call;                                              \
+     Eina_Bool is_main_loop = eina_main_loop_is();                      \
      static Eo_Op op = EO_NOOP;                                         \
      if (op == EO_NOOP)                                                 \
-        op = _eo_api_op_id_get((void*) Name, __FILE__, __LINE__);      \
-     if (!_eo_call_resolve(#Name, op, &call, __FILE__, __LINE__)) return DefRet; \
+       op = _eo_api_op_id_get((void*) Name, is_main_loop, __FILE__, __LINE__); \
+     if (!_eo_call_resolve(#Name, op, &call, is_main_loop, __FILE__, __LINE__)) return DefRet; \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) call.func;        \
 
 // to define an EAPI function
@@ -566,13 +567,13 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 #define EO_OP_SENTINEL { _EO_OP_API_ENTRY(NULL), NULL, 0, EO_OP_TYPE_INVALID, NULL }
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op _eo_api_op_id_get(const void *api_func, const char *file, int line);
+EAPI Eo_Op _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file, int line);
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line);
+EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eina_Bool is_main_loop, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
+  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, Eina_Bool is_main_loop, const char *file, const char *func, int line);
 
 // end of the eo_do barrier, unref the obj, move the stack pointer
 EAPI void _eo_do_end(const Eo **ojb);
@@ -581,11 +582,12 @@ EAPI void _eo_do_end(const Eo **ojb);
 
 // eo object method calls batch,
 
-#define _eo_do_common(eoid, clsid, is_super, ...)                         \
-    ({                                                                      \
-       const Eo *_eoid_ EO_DO_CLEANUP = eoid;                             \
-       _eo_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__);  \
-       __VA_ARGS__;                                                   \
+#define _eo_do_common(eoid, clsid, is_super, ...)                       \
+  ({                                                                    \
+       Eina_Bool is_main_loop = eina_main_loop_is();                    \
+       const Eo *_eoid_ EO_DO_CLEANUP = eoid;                           \
+       _eo_do_start(_eoid_, clsid, is_super, is_main_loop, __FILE__, __FUNCTION__, __LINE__); \
+       __VA_ARGS__;                                                     \
     })
 
 

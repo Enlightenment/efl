@@ -390,9 +390,11 @@ _eo_call_stack_free(void *ptr)
 }
 
 static inline Eo_Call_Stack *
-_eo_call_stack_get()
+_eo_call_stack_get(Eina_Bool is_main_loop)
 {
-   Eo_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
+   static Eo_Call_Stack *main_loop_stack = NULL;
+   Eo_Call_Stack *stack = is_main_loop ?
+     main_loop_stack : eina_tls_get(_eo_call_stack_key);
 
    if (stack) return stack;
 
@@ -403,7 +405,11 @@ _eo_call_stack_get()
         return NULL;
      }
 
-   if (!eina_tls_set(_eo_call_stack_key, stack))
+   if (is_main_loop)
+     {
+        main_loop_stack = stack;
+     }
+   else if (!eina_tls_set(_eo_call_stack_key, stack))
      {
         EINA_LOG_ERR("Could not set eo call stack in TLS key.");
         _eo_call_stack_free(stack);
@@ -511,11 +517,11 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 }
 
 EAPI Eina_Bool
-_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, Eina_Bool is_main_loop, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr, *pfptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get();
+   Eo_Call_Stack *stack = _eo_call_stack_get(is_main_loop);
 
    if (stack->frame_ptr == stack->last_frame)
      _eo_call_stack_resize(stack, EINA_TRUE);
@@ -542,7 +548,7 @@ EAPI void
 _eo_do_end(const Eo **eo_id EINA_UNUSED)
 {
    Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get();
+   Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is()); // Is it possible to extract information from the scope ?
 
    fptr = stack->frame_ptr;
 
@@ -564,7 +570,7 @@ _eo_do_end(const Eo **eo_id EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line)
+  _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eina_Bool is_main_loop, const char *file, int line)
 {
    Eo_Stack_Frame *fptr;
    const _Eo_Class *klass;
@@ -573,7 +579,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
 
    if (op == EO_NOOP) return EINA_FALSE;
 
-   fptr = _eo_call_stack_get()->frame_ptr;
+   fptr = _eo_call_stack_get(is_main_loop)->frame_ptr;
 
    if (EINA_UNLIKELY(!fptr->o.obj))
       return EINA_FALSE;
@@ -755,11 +761,11 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
 }
 
 EAPI Eo_Op
-_eo_api_op_id_get(const void *api_func, const char *file, int line)
+_eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file, int line)
 {
    const Eo_Op_Description *desc;
    const _Eo_Class *klass;
-   Eo_Call_Stack *stack = _eo_call_stack_get();
+   Eo_Call_Stack *stack = _eo_call_stack_get(is_main_loop);
 
    Eina_Bool class_ref = _eo_is_a_class(stack->frame_ptr->eo_id);
 
@@ -926,7 +932,7 @@ Eo *
 _eo_add_internal_end(Eo *eo_id)
 {
    Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get();
+   Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is());
 
    fptr = stack->frame_ptr;
 
