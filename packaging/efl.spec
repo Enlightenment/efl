@@ -2,7 +2,7 @@
 %bcond_with x
 
 Name:           efl
-Version:        1.10.2
+Version:        1.11.0+alpha1
 Release:        0
 License:        LGPL-2.1
 Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
@@ -543,7 +543,8 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --enable-always-build-examples \
     --enable-systemd \
     --enable-lua-old \
-    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa
+    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba
+
 
 %__make %{?_smp_mflags}
 
