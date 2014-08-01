@@ -1,6 +1,5 @@
 class Ecore.Poller (Eo.Base)
 {
-   eo_prefix: ecore_poller;
    constructors {
       constructor {
          /*@ Contructor with parameters for Ecore Poller. */
