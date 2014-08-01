@@ -246,7 +246,7 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
           evas-cxx >= efl_version \
         "
         have_cxx11="yes"
-        LDFLAGS="${LDFLAGS} -shared -fPIC -DPIC"
+        LDFLAGS="${LDFLAGS} -fPIC -DPIC"
         CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
       ],
       [have_cxx11="no"]
