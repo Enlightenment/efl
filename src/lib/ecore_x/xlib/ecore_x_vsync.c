@@ -175,8 +175,11 @@ _drm_vblank_handler(int fd EINA_UNUSED,
 
 static Eina_Bool
 _drm_cb(void *data EINA_UNUSED,
-            Ecore_Fd_Handler *fd_handler EINA_UNUSED)
+        Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
+   // XXX: move this to a thread whose only job it is to select on the drm
+   // fd and get the first vsync and send it back to the mainloop to wakeup
+   // and ignore the others
    sym_drmHandleEvent(drm_fd, &drm_evctx);
    return ECORE_CALLBACK_RENEW;
 }
@@ -504,6 +507,8 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 {
    Ecore_X_Window root;
 
+// XXX: disable vsync for now until i fix this
+   return EINA_FALSE;
    root = ecore_x_window_root_get(win);
    if (root != vsync_root)
      {
