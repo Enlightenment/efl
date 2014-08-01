@@ -52,6 +52,7 @@ collections {
                   font: "Sans:style=Bold";
                   size: 14;
                   min: 1 1;
+                  ellipsis: -1;
                   text: "some edje text here";
                }
             }
@@ -205,6 +206,7 @@ collections {
                   font: "Sans:style=Bold";
                   size: 14;
                   min: 1 1;
+                  ellipsis: -1;
                   text: "some edje text here";
                }
             }
