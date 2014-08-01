@@ -132,3 +132,17 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf)
    eina_iterator_free(itr);
    return EINA_TRUE;
 }
+
+Eina_Bool
+types_class_typedef_generate(const char *eo_filename, Eina_Strbuf *buf)
+{
+   const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
+   if (!class)
+     return EINA_FALSE;
+
+   static _eolian_class_vars class_env;
+   _class_env_create(class, NULL, &class_env);
+
+   eina_strbuf_append_printf(buf, "typedef Eo %s;\n", class_env.full_classname);
+   return EINA_TRUE;
+}

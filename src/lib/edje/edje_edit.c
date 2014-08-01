@@ -7,6 +7,8 @@
  *
  */
 
+#define _EDJE_EDIT_EO_CLASS_TYPE
+
 #include "edje_private.h"
 
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT

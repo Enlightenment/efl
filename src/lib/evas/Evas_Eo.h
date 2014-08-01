@@ -344,6 +344,8 @@ typedef double   Evas_Real;
  */
 typedef Eo    Evas_3D_Object;
 
+#define _EVAS_3D_OBJECT_EO_CLASS_TYPE
+
 /**
  * @typedef Evas_3D_Scene
  *
@@ -353,6 +355,8 @@ typedef Eo    Evas_3D_Object;
  * @ingroup Evas_3D_Scene
  */
 typedef Eo    Evas_3D_Scene;
+
+#define _EVAS_3D_SCENE_EO_CLASS_TYPE
 
 /**
  * @typedef Evas_3D_Node
@@ -364,6 +368,8 @@ typedef Eo    Evas_3D_Scene;
  */
 typedef Eo     Evas_3D_Node;
 
+#define _EVAS_3D_NODE_EO_CLASS_TYPE
+
 /**
  * @typedef Evas_3D_Camera
  *
@@ -373,6 +379,8 @@ typedef Eo     Evas_3D_Node;
  * @ingroup Evas_3D_Camera
  */
 typedef Eo   Evas_3D_Camera;
+
+#define _EVAS_3D_CAMERA_EO_CLASS_TYPE
 
 /**
  * @typedef Evas_3D_Light
@@ -384,6 +392,8 @@ typedef Eo   Evas_3D_Camera;
  */
 typedef Eo    Evas_3D_Light;
 
+#define _EVAS_3D_LIGHT_EO_CLASS_TYPE
+
 /**
  * @typedef Evas_3D_Mesh
  *
@@ -393,6 +403,8 @@ typedef Eo    Evas_3D_Light;
  * @ingroup Evas_3D_Mesh
  */
 typedef Eo     Evas_3D_Mesh;
+
+#define _EVAS_3D_MESH_EO_CLASS_TYPE
 
 /**
  * @typedef Evas_3D_Texture
@@ -404,6 +416,8 @@ typedef Eo     Evas_3D_Mesh;
  */
 typedef Eo    Evas_3D_Texture;
 
+#define _EVAS_3D_TEXTURE_EO_CLASS_TYPE
+
 /**
  * @typedef Evas_3D_Material
  *
@@ -413,6 +427,8 @@ typedef Eo    Evas_3D_Texture;
  * @ingroup Evas_3D_Material
  */
 typedef Eo     Evas_3D_Material;
+
+#define _EVAS_3D_MATERIAL_EO_CLASS_TYPE
 
 /**
  * Type of 3D Object

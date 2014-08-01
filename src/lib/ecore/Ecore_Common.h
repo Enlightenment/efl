@@ -2525,6 +2525,8 @@ typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
 typedef Eo    Ecore_Poller; /**< A handle for pollers */
 
+#define _ECORE_POLLER_EO_CLASS_TYPE
+
 /**
  * @brief Sets the time(in seconds) between ticks for the given poller type.
  * @param type The poller type to adjust.
@@ -2626,6 +2628,8 @@ typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
  * @since 1.8
  */
 typedef Eo Ecore_Animator; /**< A handle for animators */
+
+#define _ECORE_ANIMATOR_EO_CLASS_TYPE
 
 /**
  * @brief Set the animator call interval in seconds.
@@ -2901,6 +2905,8 @@ EAPI void ecore_animator_custom_tick(void);
  */
 typedef Eo Ecore_Timer; /**< A handle for timers */
 
+#define _ECORE_TIMER_EO_CLASS_TYPE
+
 /**
  * Retrieves the current precision used by timer infrastructure.
  * @return Current precision.
@@ -3009,15 +3015,21 @@ EAPI char *ecore_timer_dump(void);
  */
 typedef Eo Ecore_Idler; /**< A handle for idlers */
 
+#define _ECORE_IDLER_EO_CLASS_TYPE
+
 /*
  * @since 1.8
  */
 typedef Eo Ecore_Idle_Enterer; /**< A handle for idle enterers */
 
+#define _ECORE_IDLE_ENTERER_EO_CLASS_TYPE
+
 /*
  * @since 1.8
  */
 typedef Eo Ecore_Idle_Exiter; /**< A handle for idle exiters */
+
+#define _ECORE_IDLE_EXITER_EO_CLASS_TYPE
 
 /**
  * @}
@@ -3051,6 +3063,8 @@ typedef Eo Ecore_Idle_Exiter; /**< A handle for idle exiters */
  * @since 1.8
  */
 typedef Eo Ecore_Job;    /**< A job handle */
+
+#define _ECORE_JOB_EO_CLASS_TYPE
 /**
  * @}
  */

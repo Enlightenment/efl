@@ -276,6 +276,8 @@ typedef struct _Evas_Public_Data  Evas_Public_Data;
  */
 typedef Eo                 Evas_Object;
 
+#define _EVAS_OBJECT_EO_CLASS_TYPE
+
 typedef void                        Evas_Performance; /**< An Evas Performance handle */
 typedef struct _Evas_Modifier       Evas_Modifier; /**< An opaque type containing information on which modifier keys are registered in an Evas canvas */
 typedef struct _Evas_Lock           Evas_Lock; /**< An opaque type containing information on which lock keys are registered in an Evas canvas */
@@ -5240,6 +5242,8 @@ EAPI Eina_Bool            evas_key_lock_is_set(const Evas_Lock *l, const char *k
  */
 
 typedef Eo Evas_Out;
+
+#define _EVAS_OUT_EO_CLASS_TYPE
 
 /**
  * @ingroup Evas_Font_Group

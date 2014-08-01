@@ -14,5 +14,7 @@
  */
 Eina_Bool types_header_generate(const char *eo_filename, Eina_Strbuf *buf);
 
+Eina_Bool types_class_typedef_generate(const char *eo_filename, Eina_Strbuf *buf);
+
 #endif
 

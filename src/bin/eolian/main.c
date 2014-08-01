@@ -126,6 +126,15 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
         buffer = _include_guard_enclose(eo_filename, "TYPES", buffer);
      }
 
+   Eina_Strbuf *ctbuf = eina_strbuf_new();
+   if (types_class_typedef_generate(eo_filename, ctbuf))
+     {
+        ctbuf = _include_guard_enclose(eo_filename, "CLASS_TYPE", ctbuf);
+        eina_strbuf_append_char(ctbuf, '\n');
+        eina_strbuf_prepend(buffer, eina_strbuf_string_get(ctbuf));
+     }
+   eina_strbuf_free(ctbuf);
+
    const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
    if (class)
      {
@@ -217,6 +226,15 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
         ERR("Failed to generate types of file %s", eo_filename);
         goto end;
      }
+
+   Eina_Strbuf *ctbuf = eina_strbuf_new();
+   if (types_class_typedef_generate(eo_filename, ctbuf))
+     {
+        ctbuf = _include_guard_enclose(eo_filename, "CLASS_TYPE", ctbuf);
+        eina_strbuf_append_char(ctbuf, '\n');
+        eina_strbuf_prepend(buffer, eina_strbuf_string_get(ctbuf));
+     }
+   eina_strbuf_free(ctbuf);
 
    const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
    if (class)

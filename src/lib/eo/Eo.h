@@ -1109,6 +1109,7 @@ struct _Eo_Callback_Array_Item
  * @}
  */
 
+#define _EO_BASE_EO_CLASS_TYPE
 #include "eo_base.eo.h"
 
 #define EO_CLASS EO_BASE_CLASS
