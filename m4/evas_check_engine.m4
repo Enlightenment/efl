@@ -604,6 +604,8 @@ else
 fi
 
 if test "x${have_dep}" = "xyes" ; then
+  EFL_INTERNAL_DEPEND_PKG([EVAS], [ecore-drm])
+
   AC_MSG_CHECKING([whether to enable Drm hardware acceleration])
   if test "x${want_drm_hw_accel}" = "xyes" ; then
     PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
