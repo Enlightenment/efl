@@ -7577,8 +7577,7 @@ _elm_genlist_search_by_text_item_get(Eo *obj EINA_UNUSED,
    EINA_INLIST_FOREACH(start, it)
      {
         if (!it->itc->func.text_get) continue;
-        str = it->itc->func.text_get((void *)it->base.data,
-                                                                                     VIEW(it), part_name);
+        str = it->itc->func.text_get((void *)it->base.data, WIDGET(it), part_name);
         if (!str) continue;
         if (!fnmatch(pattern, str, fnflags))
           {
