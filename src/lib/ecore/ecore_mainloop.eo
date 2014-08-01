@@ -31,4 +31,10 @@ class Ecore_Mainloop (Eo.Base)
          return Eina_Bool;
       }
    }
+   events {
+      idle,enter;
+      idle,exit;
+      idle; /* FIXME: We need to make sure we can get it work. */
+      /* TODO: All of the legacy ecore events. (Ecore.h header) */
+   }
 }
