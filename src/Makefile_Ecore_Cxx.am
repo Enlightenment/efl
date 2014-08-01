@@ -7,7 +7,7 @@ installed_ecorecxxmainheadersdir = $(includedir)/ecore-cxx-@VMAJ@
 dist_installed_ecorecxxmainheaders_DATA = bindings/ecore_cxx/Ecore.hh
 
 generated_ecore_cxx_bindings = \
-lib/ecore/ecore_poll.eo.hh \
+lib/ecore/ecore_poller.eo.hh \
 lib/ecore/ecore_job.eo.hh \
 lib/ecore/ecore_idler.eo.hh \
 lib/ecore/ecore_idle_exiter.eo.hh \

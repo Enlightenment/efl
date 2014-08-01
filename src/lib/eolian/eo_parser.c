@@ -135,6 +135,16 @@ get_filename(Eo_Lexer *ls)
    return file;
 }
 
+static Eina_Bool
+compare_class_file(const char *fn_ext, const char *fn_noext)
+{
+   int fnlen = strlen(fn_ext);
+   int cnlen = strlen(fn_noext);
+   if (cnlen != (fnlen - 3))
+     return EINA_FALSE;
+   return !strncmp(fn_noext, fn_ext, cnlen);
+}
+
 static void
 redef_error(Eo_Lexer *ls, Eolian_Type_Type type, Eolian_Type *old)
 {
@@ -450,7 +460,7 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
              nm = eina_strbuf_string_get(buf);
              bnm = get_filename(ls);
              fnm = database_class_to_filename(nm);
-             if (strncmp(bnm, fnm, strlen(bnm) - 3))
+             if (!compare_class_file(bnm, fnm))
                {
                   const char *fname = eina_hash_find(_filenames, fnm);
                   eina_stringshare_del(bnm);
@@ -1189,7 +1199,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    parse_name(ls, buf);
    bnm = get_filename(ls);
    fnm = database_class_to_filename(eina_strbuf_string_get(buf));
-   same = !strncmp(bnm, fnm, strlen(bnm) - 3);
+   same = compare_class_file(bnm, fnm);
    eina_stringshare_del(bnm);
    free(fnm);
    if (!same)

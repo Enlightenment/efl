@@ -11,7 +11,7 @@ extern "C" {
  * @{
  */
 
-#include "ecore_poll.eo.h"
+#include "ecore_poller.eo.h"
 
 /**
  * @}

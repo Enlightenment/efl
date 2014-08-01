@@ -46,7 +46,7 @@ EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_
  */
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
 
-#include "ecore_poll.eo.legacy.h"
+#include "ecore_poller.eo.legacy.h"
 
 /**
  * @}
