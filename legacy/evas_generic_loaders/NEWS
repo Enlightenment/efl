@@ -1,4 +1,16 @@
-Evas Generic Loaders 1.10.0
+Evas Generic Loaders 1.11.0
+
+Changes since Evas Generic Loaders 1.10.0:
+------------------------------------------
+
+Features:
+
+   * Trying to port evas_generic_loaders to gstreamer1.0
+   * Add in older gst 0.10 support in evas_generic_loaders
+
+Fixes:
+
+   * gst1 support fixed now to do argb properly
 
 Changes since Evas Generic Loaders 1.9.0:
 -----------------------------------------
@@ -51,3 +63,10 @@ Additions:
 Fixes:
 
    * distcheck for parallel builds
+Changes since 1.10.0:
+---------------------
+Features:
+
+Fixes:
+
+   * Remove autogen.sh from the dist tarball.
