@@ -43,6 +43,7 @@ static Eina_Bool _ecore_animator(void *data);
 static int animators_delete_me = 0;
 static Ecore_Animator_Data *animators = NULL;
 static double animators_frametime = 1.0 / 30.0;
+static unsigned int animators_suspended = 0;
 
 static Ecore_Animator_Source src = ECORE_ANIMATOR_SOURCE_TIMER;
 static Ecore_Timer *timer = NULL;
@@ -52,6 +53,16 @@ static const void *begin_tick_data = NULL;
 static Ecore_Cb end_tick_cb = NULL;
 static const void *end_tick_data = NULL;
 static Eina_Bool animator_ran = EINA_FALSE;
+
+static Eina_Bool
+_have_animators(void)
+{
+   if ((animators) &&
+       (animators_suspended < eina_inlist_count(EINA_INLIST_GET(animators)))
+      )
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
 
 static void
 _begin_tick(void)
@@ -131,6 +142,7 @@ _do_tick(void)
              l = (Ecore_Animator_Data *)EINA_INLIST_GET(l)->next;
              if (animator->delete_me)
                {
+                  if (animator->suspended) animators_suspended--;
                   animators = (Ecore_Animator_Data *)
                     eina_inlist_remove(EINA_INLIST_GET(animators),
                                        EINA_INLIST_GET(animator));
@@ -146,7 +158,7 @@ _do_tick(void)
                }
           }
      }
-   if (!animators)
+   if (!_have_animators())
      {
         _end_tick();
         return ECORE_CALLBACK_CANCEL;
@@ -521,7 +533,7 @@ ecore_animator_frametime_set(double frametime)
    if (animators_frametime == frametime) goto unlock;
    animators_frametime = frametime;
    _end_tick();
-   if (animators) _begin_tick();
+   if (_have_animators()) _begin_tick();
 unlock:
    _ecore_unlock();
 }
@@ -545,9 +557,13 @@ _ecore_animator_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Animator_Data *a
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
-
    if (animator->delete_me) goto unlock;
-   animator->suspended = EINA_TRUE;
+   if (!animator->suspended)
+     {
+        animator->suspended = EINA_TRUE;
+        animators_suspended++;
+        if (!_have_animators()) _end_tick();
+     }
 unlock:
    _ecore_unlock();
 }
@@ -566,7 +582,12 @@ _ecore_animator_eo_base_event_thaw(Eo *obj EINA_UNUSED, Ecore_Animator_Data *ani
 
    _ecore_lock();
    if (animator->delete_me) goto unlock;
-   animator->suspended = EINA_FALSE;
+   if (animator->suspended)
+     {
+        animator->suspended = EINA_FALSE;
+        animators_suspended--;
+        if (_have_animators()) _begin_tick();
+     }
 unlock:
    _ecore_unlock();
 }
@@ -578,7 +599,7 @@ ecore_animator_source_set(Ecore_Animator_Source source)
    _ecore_lock();
    src = source;
    _end_tick();
-   if (animators) _begin_tick();
+   if (_have_animators()) _begin_tick();
    _ecore_unlock();
 }
 
@@ -598,7 +619,7 @@ ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb    func,
    begin_tick_cb = func;
    begin_tick_data = data;
    _end_tick();
-   if (animators) _begin_tick();
+   if (_have_animators()) _begin_tick();
    _ecore_unlock();
 }
 
@@ -611,7 +632,7 @@ ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb    func,
    end_tick_cb = func;
    end_tick_data = data;
    _end_tick();
-   if (animators) _begin_tick();
+   if (_have_animators()) _begin_tick();
    _ecore_unlock();
 }
 
@@ -633,6 +654,7 @@ _ecore_animator_shutdown(void)
         Ecore_Animator_Data *animator;
 
         animator = animators;
+        if (animator->suspended) animators_suspended--;
         animators = (Ecore_Animator_Data *)eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
 
         eo_do(animator->obj, eo_parent_set(NULL));
