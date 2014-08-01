@@ -1,6 +1,161 @@
 ==========
-EFL 1.10.0
+EFL 1.11.0
 ==========
+
+Changes since 1.10.0:
+---------------------
+
+Features:
+
+   * Eolian: add support for typedefs.
+   * Eolian/Generator: add support for implementation source file.
+   * Eolian: add support of namespaces.
+   * eina-tiler:add union, subtract, intersection, equal apis for tilers
+   * Evas/Textblock: add support for ellipsis values
+   * Eo: Add eo_finalize. A func that's called at the end of eo_add.
+   * edje: Edje_Edit - add sounds list accessor.
+   * edje: Edje_Edit - add edje_edit_part_copy function that copy parts within whole group.
+   * edje: Edje_Edit - add edje_edit_part_pointer_mode functions.
+   * evas: Evas_3D - Revision frustum culling.
+   * edje: Edje_Edit - add edje_edit_part_precide_is_inside functions.
+   * edje: Edje_Edit - add edje_edit_part_access functions.
+   * edje: Edje_Edit - add edje_edit_group_orientation_set/_get.
+   * edje: Edje_Edit - add edje_edit_part_multiline functions.
+   * edje: Edje_Edit - add edje_edit_part_cursor_mode functions.
+   * evas: Evas_3D - add .obj export/import.
+   * evas: Evas_3D - add evas_box3_ray3_intersect and evas_box2_intersect_2d functions.
+   * edje: Edje_Edit - add parameters to generate source code for part.
+   * Evas ETC2: Add ETC2 encoder skeletton
+   * Evas TGV: Add ETC2 support to the TGV saver
+   * Evas ETC2: Implement T mode encoding
+   * Evas ETC2: Implement H mode encoding
+   * Evas ETC2: Implement Planar mode
+   * Evas: Implement full ETC2 encoder
+   * Ecore_Evas: add new API for unset the cursor from Ecore_Evas.
+   * Elua: initial commit
+   * Introducing Elua: an EFL-LuaJIT app runtime
+   * edje: Edje_Edit - edje_edit_state_text_class_xet()
+   * edje: Edje_Edit - edje_edit_state_text_text_source_xeg()
+   * edje: Edje_Edit - add edje_edit_part_item_append functions.
+   * edje: Edje_Edit - add edje_edit_state_minmul functions.
+   * edje: Edje_Edit - edje_edit_state_text_repch_xet()
+   * edje: Edje_Edit - edje_edit_state_text_size_range_min_max_xet()
+   * Evas gl: Enable texture atlasses with ETC1/2
+   * edje: Edje_Edit - add edje_edit_sound_sample_add() function that allows user to add new sound sample to collection
+   * edje: Edje_Edit - edje_edit_sound_compression_rate_xet()
+   * edje: Edje_Edit - add edje_edit_part_items_list_get.
+   * Evas: Add encoding parameter to the savers
+   * Eet: Add support for ETC2 encoding and decoding
+   * Edje: Add support for ETC2 through LOSSY_ETC2 images
+   * edje: Edje_Edit - add functions that allows user to set and get frequency value of tones in collection
+   * edje: Edje_Edit - add edje_edit_part_item_source functions.
+   * edje: Edje_Edit - add bunch of BOX and TABLE param get/set functions.
+   * edje: Edje_Edit - edje_edit_part_select_mode_xet()
+   * edje: Edje_Edit - edje_edit_sound_compression_type_xet()
+   * edje: Edje_Edit - add edje_edit_state_map_light_xet()
+   * edje: Edje_Edit - add edje_edit_part_item_align functions.
+   * edje: Edje_Edit - add edje_edit_state_map_rotation_center_xet()
+   * edje: Edje_Edit - add edje_edit_part_entry_mode_xet()
+   * eolian: introducing a new lexer/parser
+   * Introducing new lexer/parser for Eolian
+   * edje: Edje_Edit - add API for missing map properties
+   * edje: Edje_Edit - add edje_edit_part_item_del.
+   * edje: Edje_Edit - add missed iterator and object deletion in _delete_play_actions() function
+   * edje: Edje_Edit - add functions that provide the ability to set and get source for proxy parts state
+   * edje: Edje_Edit - add edje_edit_sound_tone_add() function that allows user to add new tone to collection
+   * eolian: introducing support for .eot files
+   * eolian: new type API
+   * Evas: Add DDS image file loader
+   * Evas gl: Add support for S3TC textures (T5, T3, T1)
+   * edje: Edje-Edit: edje_edit_state_map_perspective_xet()
+   * edje_edit: Add edje_edit_part_item_aspect_mode functions.
+   * edje_edit: Add edje_edit_state_map_point_color functions.
+   * edje: Edje-Edit: edje_edit_state_map_on_xet()
+   * evas: jpeg loader - support flip, transpose, transverse
+   * edje: Edje_Edit - add edje_edit_part_item_weight functions.
+   * edje: Edje_Edit - add edje_edit_part_item_spread functions.
+   * eolian: new API for struct types
+   * Evas TGV: Add support for ETC1+Alpha
+   * Evas gl: Add support for ETC1+Alpha textures
+   * Eet: Add support for ETC1+Alpha
+   * new eina api/object - eina thread queues
+   * ecore-drm: Add necessary headers for dbus and systemd-login
+   * Merge branch 'devs/devilhorns/systemd'
+   * edje embryo: Now supports get_anim_pos_map
+   * efreet - add menu ref/unref calls and refcounting to try solve e issue
+   * edje: Add dpi feature.
+   * ecore animator - adjust ecore loop time when animtor ticks to be exact
+   * add function to set ecore loop time
+
+Fixes:
+
+   * Eolian: fix generation when optimization is set.
+   * recursively hide edje group objects on edje hide
+   * Evas textblock: Fix wrong advance calculation when bidi is disabled.
+   * Eo/evas events: Fix support of mixing legacy smart events and eo events.
+   * evas loader - redo gif fix so it doesn't break everything
+   * Evas: Remove invalid cast and fix warning/bug on windows
+   * Win64: Fix a bunch of warnings
+   * eina/file - revert 18be4c50d9990c82ed9ce4269b7820e61f772699
+   * Eolian: Fix class look up.
+   * Eolian: Fix bad behavior when the .eo is incorrect
+   * evas: Examples - fix Evsa3D Eo classnames.
+   * Evas textblock: Fix crash when cutting ligatures with formats. (T1308)
+   * edje: Edje_Edit - fix edje_edit_part_source_set
+   * Remove autogen.sh from the dist tarball.
+   * eo: force zeroing memory on non Linux system.
+   * edje: Edje_Edit - fix func edje_edit_state_text_source_set()
+   * evas gl: distinguish between IMG and EXT MSAA extensions
+   * evas/textblock: check item's type before returning result.
+   * remove unnecessary second checks on validity
+   * elua: Fix building of binary
+   * eina-cxx: fix compilation error on clang in eina_thread.hh (T1328)
+   * eina-cxx: fix compilation error on clang (T1328)
+   * Evas textblock: Fix issue with edje fonts not being used. (T1331)
+   * edje: Edje_Edit - some minor edits
+   * configure: Add dl to edje libs
+   * Evas/Textblock: Introduce PS deletion bug test and fix
+   * edje: Edje_Edit - fix compiler warnings for edje_edit_part_item_source_get/set
+   * ecore-evas-wayland: Remove useless variable.
+   * ecore_win32: fix key events on Windows.
+   * ecore: fix ecore main loop on Windows when number of objects is greater that MAXIMUM_WAIT_OBJECTS
+   * eina: fix build on windows.
+   * Documentation: adding missed documentation to edcref (map.color param)
+   * evas/gl - fix to render grayscale with transparency format in gl backened.
+   * ecore-evas: Fix cursor position getting reset to 0,0 when using ecore_evas_cursor_object_set
+   * edje: textblock style loading changed
+   * evas/gl: improve the rendering quality.
+   * lz4: fix possible security issue.
+   * jpeg loader: exif parsing bug fix
+   * evas: fix jpeg loader rotation by metadata (exif)
+   * lz4: fix shadow issue
+   * configure.ac: Remove obsolete macros
+   * evas - gl common - fix drop of image on cache hit in gl engine images
+   * this fixes crazy french altgr setups that confuse binding masks (T1273)
+   * edje_edit: adding @since 1.11
+   * evas: gl_common fix make dist
+   * ecore-drm: Shutdown ecore_event on udev error.
+   * edje: Edje_Edit - fix Documentation generation error's and warning's
+   * ethumb: fix setup related API problem
+   * ethumb: support ETHUMB_THUMB_ORIENT_ORIGINAL without libexif
+   * evas-engine-drm: Fix drm engine breakage from Frenchie
+   * evas-engine-drm: Fix invalid variable check
+   * ethumb: dbus reply message handling minor bug fix ("queue_remove" method call)
+   * evas-engine-drm: Fix software_generic_update to use the correct size.
+   * evas-engine-drm: Fix update of output buffer size
+   * evas-engine-drm: Fix evas drm engine bufer depth
+   * evas-engine-wayland-shm: Check for depth being INHERIT on reconfigure
+   * edje: Edje_Edit - fix size memory calculating for realloc array of tweens.
+   * ecore-evas: Fix missing drm engine in list
+   * evil: fix mistaken check of returned value by mkdir.
+   * eina: (Windows) fix creation of files with eina_file_open() in some cases
+   * evas: mark the evas text object as dirty, when text style is changed.
+   * ecore-drm: Fix trapping of SIGUSR1 for VT switching signals
+   * Evas textblock: Fix memory leak
+   * evas-wayland-shm: Free allocated rectangle after sending damages
+   * ecore_evas_extn: do not double close fd in case of memory starvation. (CID1039885)
+   * ecore_evas_extn: fix wrong plug image display after connect
+   * ecore animator - this fixes suspended animators still waking up
 
 Changes since 1.9.0:
 --------------------
