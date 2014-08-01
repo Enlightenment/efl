@@ -983,7 +983,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
 }
 
 EOLIAN static void
-_elm_naviframe_elm_layout_signal_emit(Eo *obj, Elm_Naviframe_Data *sd, const char *emission, const char *source)
+_elm_naviframe_elm_layout_signal_emit(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *emission, const char *source)
 {
    Elm_Naviframe_Item *top_it;
 
