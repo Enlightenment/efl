@@ -411,6 +411,18 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return bool;
          }
       }
+      changed {
+         get {
+            /*@
+            Get the changed marker for the canvas
+
+            @return @c EINA_TRUE if something has been marked as changed, @c EINA_FALSE otherwise.
+            @ingroup Evas_Canvas
+            @since 1.11
+             */
+            return bool;
+         }
+      }
       pointer_output_xy {
          get {
             /*@

@@ -572,6 +572,12 @@ _evas_canvas_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return e->focus;
 }
 
+EOLIAN static Eina_Bool
+_evas_canvas_changed_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return e->changed;
+}
+
 EOLIAN static void
 _evas_canvas_nochange_push(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
