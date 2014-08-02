@@ -199,15 +199,17 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
           }
         else
           {
-again:
-             DBG("poll...\n");
-             msg = eina_thread_queue_poll(thq, &ref);
-             if (msg)
+             do
                {
-                  tick = msg->val;
-                  eina_thread_queue_wait_done(thq, ref);
+                  DBG("poll...\n");
+                  msg = eina_thread_queue_poll(thq, &ref);
+                  if (msg)
+                    {
+                       tick = msg->val;
+                       eina_thread_queue_wait_done(thq, ref);
+                    }
                }
-             if (msg) goto again;
+             while (msg);
           }
         DBG("tick = %i\n", tick);
         if (tick == -1)
@@ -412,6 +414,8 @@ vsync_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return EINA_FALSE;
 }
 
+static int ticking = 0;
+
 static Eina_Bool
 vsync_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -420,12 +424,15 @@ vsync_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    double t;
    char *d;
    if (ev->server != vsync_server) return EINA_TRUE;
-   d = ev->data;;
-   for (i = 0; i < ev->size - (int)(sizeof(double) - 1); i++)
+   d = ev->data;
+   if (ticking)
      {
-        memcpy(&t, &(d[i]), sizeof(double));
-        ecore_loop_time_set(t);
-        ecore_animator_custom_tick();
+        for (i = 0; i < ev->size - (int)(sizeof(double) - 1); i++)
+          {
+             memcpy(&t, &(d[i]), sizeof(double));
+             ecore_loop_time_set(t);
+             ecore_animator_custom_tick();
+          }
      }
    return EINA_FALSE;
 }
@@ -434,6 +441,7 @@ static void
 vsync_tick_begin(void *data EINA_UNUSED)
 {
    char val = 1;
+   ticking = val;
    ecore_con_server_send(vsync_server, &val, 1);
 }
 
@@ -441,6 +449,7 @@ static void
 vsync_tick_end(void *data EINA_UNUSED)
 {
    char val = 0;
+   ticking = val;
    ecore_con_server_send(vsync_server, &val, 1);
 }
 
