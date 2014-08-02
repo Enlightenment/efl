@@ -38,14 +38,15 @@ typedef struct
    char val;
 } Msg;
 
-static int tick = 0;
 static Eina_Thread_Queue *thq = NULL;
+static volatile int ticking = 0;
 
 static void
 _tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
    Msg *msg;
    void *ref;
+   int tick = 0;
 
    for (;;)
      {
@@ -60,14 +61,16 @@ _tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
           }
         else
           {
-again:
-             msg = eina_thread_queue_poll(thq, &ref);
-             if (msg)
+             do
                {
-                  tick = msg->val;
-                  eina_thread_queue_wait_done(thq, ref);
+                  msg = eina_thread_queue_poll(thq, &ref);
+                  if (msg)
+                    {
+                       tick = msg->val;
+                       eina_thread_queue_wait_done(thq, ref);
+                    }
                }
-             if (msg) goto again;
+             while (msg);
           }
         if (tick == -1) exit(0);
         if (tick)
@@ -78,7 +81,17 @@ again:
              if (t)
                {
                   *t = _vsync_wait();
-                  ecore_thread_feedback(thread, t);
+                  do
+                    {
+                       msg = eina_thread_queue_poll(thq, &ref);
+                       if (msg)
+                         {
+                            tick = msg->val;
+                            eina_thread_queue_wait_done(thq, ref);
+                         }
+                    }
+                  while (msg);
+                  if (tick) ecore_thread_feedback(thread, t);
                }
           }
      }
@@ -91,6 +104,9 @@ _tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg
 
    if (t)
      {
+        static double pt = 0.0;
+
+        pt = *t;
         _svr_broadcast_time(*t);
         free(t);
      }
@@ -117,16 +133,16 @@ _tick_send(char val)
 static void
 _tick_start(void)
 {
-   tick++;
-   if (tick == 1) _tick_send(1);
+   ticking++;
+   if (ticking == 1) _tick_send(1);
 }
 
 static void
 _tick_end(void)
 {
-   if (tick <= 0) return;
-   tick--;
-   if (tick == 0) _tick_send(0);
+   if (ticking <= 0) return;
+   ticking--;
+   if (ticking == 0) _tick_send(0);
 }
 
 /*--------------------------------------------------------------------*/
@@ -197,21 +213,19 @@ _svr_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         char *dat = ev->data;
         int i;
+        int penabled = cdat->enabled;
 
         for (i = 0; i < ev->size; i++)
           {
-             if (dat[i])
+             if (dat[i]) cdat->enabled++;
+             else if (cdat->enabled > 0) cdat->enabled--;
+          }
+        if (ev->size > 0)
+          {
+             if (penabled != cdat->enabled)
                {
-                  cdat->enabled++;
                   if (cdat->enabled == 1) _tick_start();
-               }
-             else
-               {
-                  if (cdat->enabled > 0)
-                    {
-                       cdat->enabled--;
-                       if (cdat->enabled == 0) _tick_end();
-                    }
+                  else if (cdat->enabled == 0) _tick_end();
                }
           }
      }
