@@ -14,6 +14,7 @@
 #include <dlfcn.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/select.h>
 #include <fcntl.h>
 
 #define ECORE_X_VSYNC_DRM 1
@@ -85,22 +86,30 @@ static int (*sym_drmWaitVBlank)(int fd,
 static int (*sym_drmHandleEvent)(int fd,
                                  drmEventContext *evctx) = NULL;
 static int drm_fd = -1;
-static int drm_event_is_busy = 0;
+static volatile int drm_event_is_busy = 0;
 static int drm_animators_interval = 1;
 static drmEventContext drm_evctx;
-static Ecore_Fd_Handler *dri_drm_fdh = NULL;
-static Ecore_Timer *_drm_fail_timer = NULL;
 static double _drm_fail_time = 0.1;
 static double _drm_fail_time2 = 1.0 / 60.0;
 static int _drm_fail_count = 0;
 
 static void *drm_lib = NULL;
 
+static Eina_Thread_Queue *thq = NULL;
+static Ecore_Thread *drm_thread = NULL;
+typedef struct
+{
+   Eina_Thread_Queue_Msg head;
+   char val;
+} Msg;
+
+
 static Eina_Bool
 _drm_tick_schedule(void)
 {
    drmVBlank vbl;
 
+   DBG("sched...\n");
    vbl.request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT;
    vbl.request.sequence = drm_animators_interval;
    vbl.request.signal = 0;
@@ -109,39 +118,42 @@ _drm_tick_schedule(void)
 }
 
 static void
+_tick_send(char val)
+{
+   Msg *msg;
+   void *ref;
+   DBG("_tick_send(%i)\n", val);
+   msg = eina_thread_queue_send(thq, sizeof(Msg), &ref);
+   msg->val = val;
+   eina_thread_queue_send_done(thq, ref);
+}
+
+static void
 _drm_tick_begin(void *data EINA_UNUSED)
 {
+   _drm_fail_count = 0;
    drm_event_is_busy = 1;
-   _drm_tick_schedule();
+   _tick_send(1);
 }
 
 static void
 _drm_tick_end(void *data EINA_UNUSED)
 {
-   if (_drm_fail_timer)
-     {
-        ecore_timer_del(_drm_fail_timer);
-        _drm_fail_timer = NULL;
-     }
+   _drm_fail_count = 0;
    drm_event_is_busy = 0;
+   _tick_send(0);
 }
 
-static Eina_Bool
-_drm_fail_cb(void *data EINA_UNUSED)
+static void
+_drm_send_time(double t)
 {
-   if (drm_event_is_busy)
+   double *tim = malloc(sizeof(*tim));
+   if (tim)
      {
-        _drm_fail_count++;
-        DBG("VSYNC FAIL %i %3.8f", _drm_fail_count, ecore_loop_time_get());
-        ecore_animator_custom_tick();
-        _drm_tick_schedule();
-        if (_drm_fail_count == 10)
-          {
-             _drm_fail_timer = ecore_timer_add(_drm_fail_time2, _drm_fail_cb, NULL);
-             return EINA_FALSE;
-          }
+        *tim = t;
+        DBG("   ... send %1.8f\n", t);
+        ecore_thread_feedback(drm_thread, tim);
      }
-   return EINA_TRUE;
 }
 
 static void
@@ -153,35 +165,108 @@ _drm_vblank_handler(int fd EINA_UNUSED,
 {
    if (drm_event_is_busy)
      {
-        double tim;
-        static double ptim = 0.0;
         static unsigned int pframe = 0;
 
+        DBG("vblank %i\n", frame);
         if (pframe != frame)
           {
-             tim = (double)sec + ((double)usec / 1000000);
-             DBG("VSYNC %1.8f [%i] = delt %1.8f\n", tim, frame - pframe, tim - ptim);
-             ecore_loop_time_set(tim);
-             ecore_animator_custom_tick();
+             _drm_send_time((double)sec + ((double)usec / 1000000));
              _drm_tick_schedule();
              pframe = frame;
-             ptim = tim;
-             if (_drm_fail_timer) ecore_timer_del(_drm_fail_timer);
-             _drm_fail_timer = ecore_timer_add(_drm_fail_time, _drm_fail_cb, NULL);
-             _drm_fail_count = 0;
           }
      }
 }
 
-static Eina_Bool
-_drm_cb(void *data EINA_UNUSED,
-        Ecore_Fd_Handler *fd_handler EINA_UNUSED)
+static void
+_drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   // XXX: move this to a thread whose only job it is to select on the drm
-   // fd and get the first vsync and send it back to the mainloop to wakeup
-   // and ignore the others
-   sym_drmHandleEvent(drm_fd, &drm_evctx);
-   return ECORE_CALLBACK_RENEW;
+   Msg *msg;
+   void *ref;
+   int tick = 0;
+
+   for (;;)
+     {
+        DBG("------- drm_event_is_busy=%i\n", drm_event_is_busy);
+        if (!drm_event_is_busy)
+          {
+             DBG("wait...\n");
+             msg = eina_thread_queue_wait(thq, &ref);
+             if (msg)
+               {
+                  tick = msg->val;
+                  eina_thread_queue_wait_done(thq, ref);
+               }
+          }
+        else
+          {
+again:
+             DBG("poll...\n");
+             msg = eina_thread_queue_poll(thq, &ref);
+             if (msg)
+               {
+                  tick = msg->val;
+                  eina_thread_queue_wait_done(thq, ref);
+               }
+             if (msg) goto again;
+          }
+        DBG("tick = %i\n", tick);
+        if (tick == -1)
+          {
+             drm_thread = NULL;
+             eina_thread_queue_free(thq);
+             thq = NULL;
+             return;
+          }
+        else if (tick)
+          {
+             fd_set rfds, wfds, exfds;
+             int max_fd;
+             int ret;
+             struct timeval tv;
+
+             _drm_tick_schedule();
+             max_fd = 0;
+             FD_ZERO(&rfds);
+             FD_ZERO(&wfds);
+             FD_ZERO(&exfds);
+             FD_SET(drm_fd, &rfds);
+             max_fd = drm_fd;
+             tv.tv_sec = 0;
+             if (_drm_fail_count >= 10)
+               tv.tv_usec = _drm_fail_time2 * 1000000;
+             else
+               tv.tv_usec = _drm_fail_time * 1000000;
+             ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
+             if ((ret == 1) && (FD_ISSET(drm_fd, &rfds)))
+               {
+                  sym_drmHandleEvent(drm_fd, &drm_evctx);
+                  _drm_fail_count = 0;
+               }
+             else if (ret == 0)
+               {
+                  // timeout
+                  _drm_send_time(ecore_time_get());
+                  _drm_fail_count++;
+               }
+          }
+     }
+}
+
+static void
+_drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
+{
+   DBG("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
+   if (drm_event_is_busy)
+     {
+        double *t = msg;
+        static double pt = 0.0;
+
+        DBG("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
+        ecore_loop_time_set(*t);
+        ecore_animator_custom_tick();
+        pt = *t;
+     }
+   free(msg);
 }
 
 // yes. most evil. we dlopen libdrm and libGL etc. to manually find smbols
@@ -258,35 +343,10 @@ _drm_init(void)
         return 0;
      }
 
-   dri_drm_fdh = ecore_main_fd_handler_add(drm_fd, ECORE_FD_READ,
-                                           _drm_cb, NULL, NULL, NULL);
-   if (!dri_drm_fdh)
-     {
-        close(drm_fd);
-        drm_fd = -1;
-        return 0;
-     }
+   thq = eina_thread_queue_new();
+   drm_thread = ecore_thread_feedback_run(_drm_tick_core, _drm_tick_notify,
+                                          NULL, NULL, NULL, EINA_TRUE);
    return 1;
-}
-
-static void
-_drm_shutdown(void)
-{
-   if (drm_fd >= 0)
-     {
-        close(drm_fd);
-        drm_fd = -1;
-     }
-   if (dri_drm_fdh)
-     {
-        ecore_main_fd_handler_del(dri_drm_fdh);
-        dri_drm_fdh = NULL;
-     }
-   if (_drm_fail_timer)
-     {
-        ecore_timer_del(_drm_fail_timer);
-        _drm_fail_timer = NULL;
-     }
 }
 
 static Eina_Bool
@@ -294,18 +354,6 @@ _drm_animator_tick_source_set(void)
 {
    if (vsync_root)
      {
-        if (!_drm_link())
-          {
-             ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
-             return EINA_FALSE;
-          }
-        _drm_shutdown();
-        if (!_drm_init())
-          {
-             vsync_root = 0;
-             ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
-             return EINA_FALSE;
-          }
         ecore_animator_custom_source_tick_begin_callback_set
           (_drm_tick_begin, NULL);
         ecore_animator_custom_source_tick_end_callback_set
@@ -316,7 +364,7 @@ _drm_animator_tick_source_set(void)
      {
         if (drm_fd >= 0)
           {
-             _drm_shutdown();
+             _drm_tick_end(NULL);
              ecore_animator_custom_source_tick_begin_callback_set
                (NULL, NULL);
              ecore_animator_custom_source_tick_end_callback_set
@@ -482,7 +530,6 @@ _vsync_init(void)
           {
              if (_drm_link())
                {
-                  _drm_shutdown();
                   if (_drm_init())
                     {
                        mode = 1;
@@ -507,8 +554,6 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 {
    Ecore_X_Window root;
 
-// XXX: disable vsync for now until i fix this
-   return EINA_FALSE;
    root = ecore_x_window_root_get(win);
    if (root != vsync_root)
      {
