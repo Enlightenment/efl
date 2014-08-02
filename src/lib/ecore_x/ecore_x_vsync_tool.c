@@ -104,9 +104,6 @@ _tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg
 
    if (t)
      {
-        static double pt = 0.0;
-
-        pt = *t;
         _svr_broadcast_time(*t);
         free(t);
      }
