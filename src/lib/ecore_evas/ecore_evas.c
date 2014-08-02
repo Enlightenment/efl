@@ -63,6 +63,31 @@ _ecore_evas_animator(void *data EINA_UNUSED)
      }
    return EINA_TRUE;
 }
+
+static Eina_Bool
+_ecore_evas_changes_get(Ecore_Evas *ee)
+{
+   Eina_List *l;
+
+   if (evas_changed_get(ee->evas)) return EINA_TRUE;
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, l, ee)
+     {
+        if (evas_changed_get(ee->evas)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_evas_changes_check(void)
+{
+   Ecore_Evas *ee;
+
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     {
+        if (_ecore_evas_changes_get(ee)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
 #endif
 
 static Eina_Bool
@@ -84,10 +109,13 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
         if ((!ecore_evas_animator_ticked) &&
             (!ecore_main_loop_animator_ticked_get()))
           {
-             if (!ecore_evas_animator)
+             if (_ecore_evas_changes_check())
                {
-                  overtick = 1;
-                  ecore_evas_animator = ecore_animator_add(_ecore_evas_animator, NULL);
+                  if (!ecore_evas_animator)
+                    {
+                       overtick = 1;
+                       ecore_evas_animator = ecore_animator_add(_ecore_evas_animator, NULL);
+                    }
                }
              return ECORE_CALLBACK_RENEW;
           }
