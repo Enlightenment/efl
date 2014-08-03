@@ -1891,7 +1891,7 @@ EOLIAN static Eina_Bool
 _elm_fileselector_elm_interface_fileselector_selected_set(Eo *obj, Elm_Fileselector_Data *sd, const char *_path)
 {
    Eina_Bool ret = EINA_TRUE;
-   char *selected;
+   char *dir;
    char *path;
 
    path = ecore_file_realpath(_path);
@@ -1905,10 +1905,10 @@ _elm_fileselector_elm_interface_fileselector_selected_set(Eo *obj, Elm_Fileselec
              goto clean_up;
           }
 
-        selected = ecore_file_dir_get(path);
-        _populate(obj, selected, NULL, path);
+        dir = ecore_file_dir_get(path);
+        _populate(obj, dir, NULL, path);
         eina_stringshare_replace(&sd->selection, path);
-        free(selected);
+        free(dir);
      }
 
 clean_up:
