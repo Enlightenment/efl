@@ -119,6 +119,7 @@ _gst_init(const char *filename)
    gst_element_query_duration (pipeline, format, &duration);
    if (duration == -1)
      {
+        fprintf(stderr, "duration fetch err\n");
         D("could not retrieve the duration, set it to 1s\n");
         duration = 1 * GST_SECOND;
      }
@@ -219,13 +220,13 @@ main(int argc, char **argv)
              numonly = 1;
              for (p = argv[i]; *p; p++)
                {
-                  if ((!*p < '0') || (*p > 9))
+                  if ((*p < '0') || (*p > '9'))
                     {
                        numonly = 0;
                        break;
                     }
                }
-             if (numonly) pos = (double)(atoll(argv[i])) / 1000.0;
+             if (numonly) pos = atoll(argv[i]) * 1000000;
              i++;
           }
         else if (!strcmp(argv[i], "-opt-scale-down-by"))
@@ -253,6 +254,8 @@ main(int argc, char **argv)
    if (!_gst_init(file))
      return -1;
    D("_gst_init done\n");
+
+   if ((pos >= 0) && (pos > duration)) return -1;
 
    if (!head_only)
      {
