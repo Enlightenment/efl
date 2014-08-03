@@ -178,7 +178,7 @@ _gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED, double pos)
    D("load image\n");
    if (pos >= 0.0)
      gst_element_seek_simple(pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-                             pos * 1000000000.0);
+                             pos);
    else
      gst_element_seek_simple(pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
                              duration / 2);
