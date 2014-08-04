@@ -228,7 +228,10 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
         Ecore_Drm_Evdev *edev;
 
         EINA_LIST_FREE(seat->devices, edev)
-          _ecore_drm_evdev_device_destroy(edev);
+          {
+             _ecore_drm_dbus_device_close(edev->path);
+             _ecore_drm_evdev_device_destroy(edev);
+          }
      }
 }
 
@@ -300,4 +303,15 @@ EAPI void
 ecore_drm_inputs_disable(Ecore_Drm_Input *input)
 {
    if (!input) return;
+
+   udev_monitor_unref(input->monitor);
+   input->monitor = NULL;
+
+   if (input->hdlr)
+     {
+        ecore_main_fd_handler_del(input->hdlr);
+        input->hdlr = NULL;
+     }
+
+   ecore_drm_inputs_destroy(input->dev);
 }

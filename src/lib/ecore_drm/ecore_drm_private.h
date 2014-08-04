@@ -230,6 +230,7 @@ struct _Ecore_Drm_Sprite
 Eina_Bool _ecore_drm_dbus_init(const char *session);
 void _ecore_drm_dbus_shutdown(void);
 int _ecore_drm_dbus_device_open(const char *device);
+void _ecore_drm_dbus_device_close(const char *device);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);

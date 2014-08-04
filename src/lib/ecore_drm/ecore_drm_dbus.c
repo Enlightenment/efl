@@ -363,6 +363,18 @@ flag_err:
    return -1;
 }
 
+static void 
+_dbus_device_close(const char *path)
+{
+   struct stat st;
+   int ret;
+
+   if ((ret = stat(path, &st)) < 0) return;
+   if (!S_ISCHR(st.st_mode)) return;
+
+   _dbus_device_release(major(st.st_rdev), minor(st.st_rdev));
+}
+
 static DBusHandlerResult 
 _dbus_cb_filter(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *data EINA_UNUSED)
 {
@@ -816,4 +828,10 @@ int
 _ecore_drm_dbus_device_open(const char *device)
 {
    return _dbus_device_open(device);
+}
+
+void
+_ecore_drm_dbus_device_close(const char *device)
+{
+   _dbus_device_close(device);
 }
