@@ -74,16 +74,7 @@ mime_DATA = edje/edje.xml
 EXTRA_DIST += $(mime_DATA)
 
 EXTRA_DIST += \
-edje/edje-mode.el \
-edje/edc.vim \
-edje/vim/autoload/edccomplete.vim \
-edje/vim/ftplugin/edc.vim \
-edje/vim/indent/edc.vim \
-edje/vim/ftdetect/edc.vim \
-edje/vim/plugin-info.txt \
-edje/vim/snippets/edc.snippets \
-edje/vim/syntax/edc.vim \
-edje/vim/syntax/embryo.vim
+edje/edje-mode.el
 
 # Helper for people using EDJ
 include ../src/Makefile_Edje_Helper.am
