@@ -656,9 +656,20 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
         if ((list_size.x >= rect.w) || (list_size.y >= rect.h))
           {
              elm_list_mode_set(sd->list, ELM_LIST_COMPRESS);
-             evas_object_size_hint_min_set(sd->box, rect.w, rect.h);
-             evas_object_size_hint_min_set(obj, rect.w, rect.h);
+             evas_object_size_hint_min_set(obj, list_size.x, list_size.y);
           }
+        /*
+            Decrease height of main object initiate recalc of size (sizing_eval).
+            At each iteration of calculating size height of the object
+            will be closer to the height of the list.
+         */
+        if (list_size.y < rect.h) rect.h--;
+     }
+   else if (sd->content)
+     {
+        evas_object_geometry_get(sd->content, 0, 0, &list_size.x, &list_size.y);
+        if ((list_size.x >= rect.w) || (list_size.y >= rect.h))
+          evas_object_size_hint_min_set(obj, list_size.x, list_size.y);
      }
 
    evas_object_geometry_get(sd->parent, NULL, NULL, &parent_size.x, &parent_size.y);
