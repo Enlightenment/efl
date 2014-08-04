@@ -128,7 +128,6 @@ struct _Eolian_Type
          Eina_Hash        *fields;
          Eina_Stringshare *comment;
          Eina_Stringshare *file;
-         int line, column;
       };
    };
    Eina_Bool is_const  :1;
