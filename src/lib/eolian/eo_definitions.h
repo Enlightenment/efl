@@ -20,6 +20,7 @@ typedef struct _Eo_Ret_Def
 
 typedef struct _Eo_Param_Def
 {
+   Eolian_Object base;
    Eolian_Parameter_Dir way;
    Eolian_Type *type;
    Eina_Stringshare *name;
@@ -43,6 +44,7 @@ typedef struct _Eo_Accessor_Param
 
 typedef struct _Eo_Accessor_Def
 {
+   Eolian_Object base;
    Eo_Accessor_Type type;
    Eo_Ret_Def *ret;
    Eina_Stringshare *comment;
@@ -54,6 +56,7 @@ typedef struct _Eo_Accessor_Def
 
 typedef struct _Eo_Property_Def
 {
+   Eolian_Object base;
    Eina_Stringshare *name;
    Eina_List *keys;
    Eina_List *values;
@@ -66,6 +69,7 @@ typedef struct _Eo_Property_Def
 
 typedef struct _Eo_Method_Def
 {
+   Eolian_Object base;
    Eo_Ret_Def *ret;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
@@ -80,6 +84,7 @@ typedef struct _Eo_Method_Def
 
 typedef struct _Eo_Class_Def
 {
+   Eolian_Object base;
    Eina_Stringshare *name;
    Eina_Stringshare *file;
    Eolian_Class_Type type;

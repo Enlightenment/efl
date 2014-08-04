@@ -25,6 +25,8 @@ _db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
         param->type = NULL;
      }
 
+   foo_id->base = meth->base;
+
    return EINA_TRUE;
 }
 
@@ -51,6 +53,8 @@ _db_fill_key(Eolian_Function *foo_id, Eo_Param_Def *param)
    database_parameter_nonull_set(p, param->nonull);
    param->type = NULL;
 
+   p->base = param->base;
+
    return EINA_TRUE;
 }
 
@@ -75,6 +79,8 @@ _db_fill_value(Eolian_Function *foo_id, Eo_Param_Def *param)
                                                               param->comment);
    database_parameter_nonull_set(p, param->nonull);
    param->type = NULL;
+
+   p->base = param->base;
 
    return EINA_TRUE;
 }
@@ -101,6 +107,8 @@ _db_fill_param(Eolian_Function *foo_id, Eo_Param_Def *param)
                                                                 param->comment);
    database_parameter_nonull_set(p, param->nonull);
    param->type = NULL;
+
+   p->base = param->base;
 
    return EINA_TRUE;
 }
@@ -177,6 +185,11 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
    if (kls->type == EOLIAN_CLASS_INTERFACE)
       database_function_set_as_virtual_pure(foo_id, ftype);
 
+   if (ftype == EOLIAN_PROP_GET)
+     foo_id->base = accessor->base;
+   else
+     foo_id->set_base = accessor->base;
+
    return EINA_TRUE;
 }
 
@@ -212,6 +225,7 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
         database_function_type_set(foo_id, EOLIAN_PROPERTY);
         if (kls->type == EOLIAN_CLASS_INTERFACE)
           database_function_set_as_virtual_pure(foo_id, EOLIAN_UNRESOLVED);
+        foo_id->base = prop->base;
      }
 
    database_class_function_add(cl, foo_id);
@@ -266,6 +280,8 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
 
    if (kls->type == EOLIAN_CLASS_INTERFACE)
      database_function_set_as_virtual_pure(foo_id, EOLIAN_METHOD);
+
+   foo_id->base = meth->base;
 
    return EINA_TRUE;
 }
@@ -408,6 +424,8 @@ _db_fill_class(Eo_Class_Def *kls)
    if (!_db_fill_methods   (cl, kls)) return EINA_FALSE;
    if (!_db_fill_implements(cl, kls)) return EINA_FALSE;
    if (!_db_fill_events    (cl, kls)) return EINA_FALSE;
+
+   cl->base = kls->base;
 
    return EINA_TRUE;
 }

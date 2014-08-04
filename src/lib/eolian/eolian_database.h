@@ -48,8 +48,15 @@ extern Eina_Hash *_structsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
 extern Eina_Hash *_tfilenames;
 
+typedef struct _Eolian_Object
+{
+   int line;
+   int column;
+} Eolian_Object;
+
 struct _Eolian_Class
 {
+   Eolian_Object base;
    Eina_Stringshare *full_name;
    Eina_List *namespaces; /* List Eina_Stringshare * */
    Eina_Stringshare *name;
@@ -71,6 +78,8 @@ struct _Eolian_Class
 
 struct _Eolian_Function
 {
+   Eolian_Object base;
+   Eolian_Object set_base;
    Eina_Stringshare *name;
    Eina_List *keys; /* list of Eolian_Function_Parameter */
    Eina_List *params; /* list of Eolian_Function_Parameter */
@@ -89,6 +98,7 @@ struct _Eolian_Function
 
 struct _Eolian_Function_Parameter
 {
+   Eolian_Object base;
    Eina_Stringshare *name;
    Eolian_Type *type;
    Eina_Stringshare *description;
@@ -98,10 +108,9 @@ struct _Eolian_Function_Parameter
    Eina_Bool nonull :1; /* True if this argument cannot be NULL */
 };
 
-/* maps directly to Eo_Type_Def */
-
 struct _Eolian_Type
 {
+   Eolian_Object base;
    Eolian_Type_Type type;
    union {
       /* functions */
@@ -129,11 +138,13 @@ struct _Eolian_Type
 
 struct _Eolian_Implement
 {
+   Eolian_Object base;
    Eina_Stringshare *full_name;
 };
 
 struct _Eolian_Event
 {
+   Eolian_Object base;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eolian_Type *type;
@@ -141,6 +152,7 @@ struct _Eolian_Event
 
 typedef struct _Eolian_Struct_Field
 {
+   Eolian_Object     base;
    Eolian_Type      *type;
    Eina_Stringshare *comment;
 } Eolian_Struct_Field;
