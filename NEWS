@@ -156,6 +156,9 @@ Fixes:
    * ecore_evas_extn: do not double close fd in case of memory starvation. (CID1039885)
    * ecore_evas_extn: fix wrong plug image display after connect
    * ecore animator - this fixes suspended animators still waking up
+   * ecore-evas - fix continual wakeups with unchanged canvases
+   * ecore_x: don't go below 0. (T1467)
+   * Evas textblock: Correct word start/end moving at new line or line begins with spaces
 
 Changes since 1.9.0:
 --------------------
