@@ -32,7 +32,7 @@ struct _Render_Engine
    Tilebuf_Rect *rects_prev[3];
    Eina_Inlist *cur_rect;
 
-   Evas_GL_Wl_Window *win;
+   Outbuf *win;
    Evas_Engine_Info_Wayland_Egl *info;
    Evas *evas;
 

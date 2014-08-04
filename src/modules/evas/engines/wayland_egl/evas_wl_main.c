@@ -3,14 +3,14 @@
 /* local function prototypes */
 
 /* local variables */
-static Evas_GL_Wl_Window *_evas_gl_wl_window = NULL;
+static Outbuf *_evas_gl_wl_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
 
-Evas_GL_Wl_Window *
+Outbuf *
 eng_window_new(struct wl_display *display, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect EINA_UNUSED, int alpha, int rot)
 {
-   Evas_GL_Wl_Window *gw;
+   Outbuf *gw;
    int context_attrs[3];
    int config_attrs[40];
    int major_version, minor_version;
@@ -19,7 +19,7 @@ eng_window_new(struct wl_display *display, struct wl_surface *surface, int scree
    Eina_Bool blacklist = EINA_FALSE;
 
    /* try to allocate space for our window */
-   if (!(gw = calloc(1, sizeof(Evas_GL_Wl_Window))))
+   if (!(gw = calloc(1, sizeof(Outbuf))))
      return NULL;
 
    win_count++;
@@ -182,7 +182,7 @@ eng_window_new(struct wl_display *display, struct wl_surface *surface, int scree
 }
 
 void 
-eng_window_free(Evas_GL_Wl_Window *gw)
+eng_window_free(Outbuf *gw)
 {
    int ref = 0;
 
@@ -220,7 +220,7 @@ eng_window_free(Evas_GL_Wl_Window *gw)
 }
 
 void 
-eng_window_use(Evas_GL_Wl_Window *gw)
+eng_window_use(Outbuf *gw)
 {
    Eina_Bool force = EINA_FALSE;
 
@@ -258,7 +258,7 @@ eng_window_use(Evas_GL_Wl_Window *gw)
 }
 
 void 
-eng_window_unsurf(Evas_GL_Wl_Window *gw)
+eng_window_unsurf(Outbuf *gw)
 {
    if (!gw->surf) return;
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
@@ -281,7 +281,7 @@ eng_window_unsurf(Evas_GL_Wl_Window *gw)
 }
 
 void 
-eng_window_resurf(Evas_GL_Wl_Window *gw)
+eng_window_resurf(Outbuf *gw)
 {
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
@@ -307,7 +307,7 @@ eng_window_resurf(Evas_GL_Wl_Window *gw)
 Eina_Bool 
 eng_window_make_current(void *data, void *doit)
 {
-   Evas_GL_Wl_Window *gw;
+   Outbuf *gw;
 
    if (!(gw = data)) return EINA_FALSE;
 

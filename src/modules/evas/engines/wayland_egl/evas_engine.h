@@ -47,9 +47,9 @@ extern int _evas_engine_wl_egl_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_wl_egl_log_dom, __VA_ARGS__)
 
-typedef struct _Evas_GL_Wl_Window Evas_GL_Wl_Window;
+typedef struct _Outbuf Outbuf;
 
-struct _Evas_GL_Wl_Window
+struct _Outbuf
 {
    struct wl_display *disp;
    struct wl_egl_window *win;
@@ -74,11 +74,11 @@ struct _Evas_GL_Wl_Window
    Eina_Bool surf : 1;
 };
 
-Evas_GL_Wl_Window *eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect, int alpha, int rot);
-void eng_window_free(Evas_GL_Wl_Window *gw);
-void eng_window_use(Evas_GL_Wl_Window *gw);
-void eng_window_unsurf(Evas_GL_Wl_Window *gw);
-void eng_window_resurf(Evas_GL_Wl_Window *gw);
+Outbuf *eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect, int alpha, int rot);
+void eng_window_free(Outbuf *gw);
+void eng_window_use(Outbuf *gw);
+void eng_window_unsurf(Outbuf *gw);
+void eng_window_resurf(Outbuf *gw);
 Eina_Bool eng_window_make_current(void *data, void *doit);
 
 #endif
