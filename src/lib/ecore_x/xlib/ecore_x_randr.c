@@ -2458,7 +2458,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
         if (i < ncrtc)
           {
              /* something went wrong somewhere. move everything back */
-             while (i-- >= 0)
+             while ((--i) >= 0)
                {
                   if (info[i])
                     ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL, -1, 
