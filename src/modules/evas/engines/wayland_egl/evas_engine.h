@@ -2,24 +2,23 @@
 # define EVAS_ENGINE_H
 
 # include "config.h"
+# include "evas_common_private.h"
+# include "evas_private.h"
+# include "Evas.h"
+# include "Evas_Engine_Wayland_Egl.h"
 
 /* NB: This already includes wayland-client.h */
 # include <wayland-egl.h>
 
+# define GL_GLEXT_PROTOTYPES
+
 # ifdef GL_GLES
 #  include <EGL/egl.h>
-/* NB: These are already included from gl_common */
-/* #  include <GLES2/gl2.h> */
-/* #  include <GLES2/gl2ext.h> */
+#  include <GLES2/gl2.h>
+#  include <GLES2/gl2ext.h>
 # endif
 
-# include "evas_common_private.h"
-# include "evas_private.h"
-# include "evas_gl_common.h"
-# include "Evas.h"
-# include "Evas_Engine_Wayland_Egl.h"
-
-# define GL_GLEXT_PROTOTYPES
+# include "../gl_generic/Evas_Engine_GL_Generic.h"
 
 extern int _evas_engine_wl_egl_log_dom;
 
