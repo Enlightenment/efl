@@ -67,7 +67,8 @@ _read_file(char *filename, Eina_Strbuf *buffer)
              ERR("Couldnt allocate memory for file %s", filename);
              goto end;
           }
-        if (!fread(content, file_size, 1, fd))
+        long actual_size = (long)fread(content, file_size, 1, fd);
+        if (actual_size != file_size)
           {
              ERR("Couldnt read the %ld bytes of file %s", file_size, filename);
              free(content);
