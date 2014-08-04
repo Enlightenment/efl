@@ -220,8 +220,8 @@ _base_geometry_calc(Evas_Object *obj,
 
    if (!rect || !sd->parent) return ELM_CTXPOPUP_DIRECTION_DOWN;
 
-   edje_object_part_geometry_get
-     (sd->arrow, "ctxpopup_arrow", NULL, NULL, &arrow_size.x, &arrow_size.y);
+   edje_object_part_geometry_get(sd->arrow, "base", NULL, NULL,
+                                 &arrow_size.x, &arrow_size.y);
    evas_object_resize(sd->arrow, arrow_size.x, arrow_size.y);
 
    //Initialize Area Rectangle.
