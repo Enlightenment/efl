@@ -130,7 +130,7 @@ _ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
 {
    int size;
    int r;
-   char buf[PATH_MAX];
+   char buf[PATH_MAX] = { '\0' };
 
    r = _ec_read_safe(STDIN_FILENO, &size, sizeof(size));
    if (!r)
