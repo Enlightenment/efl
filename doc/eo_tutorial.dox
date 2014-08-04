@@ -6,83 +6,83 @@
  *
  * @section Description
  * Eo is an Object oriented infrastructure for the EFL. It is a API/ABI safe library.
- * 
+ *
  * It supports inheritance, mixins, interfaces and composite objects.\n
  * Every class can implement functions from every other class.\n
  * It supports event signals, function overrides, private/protected/public/etc. variables and functions.
- * 
+ *
  * At the creation of the class, a "virtual table" is filled with the needed functions.\n
  * The key of this table is a (class id, function id) tuple.
- * 
+ *
  * eo_do() is invoked with a list of op ids and their parameters and is in charge to dispatch the relevant functions. Finding the correct function is fast because it is just a lookup table.
  *
- * @section How to use it?
+ * @section howto How to use it?
  * - Creation of an instance of a class
  *
  *   - Old way:
- * @code
- * object = evas_object_line_add(canvas);
- * @endcode
- * 
+   @code
+   object = evas_object_line_add(canvas);
+   @endcode
+ *
  *   - Eo way:
- * @code
- * object = eo_add(EVAS_OBJ_LINE_CLASS, canvas);
- * @endcode
- * 
+   @code
+   object = eo_add(EVAS_OBJ_LINE_CLASS, canvas);
+   @endcode
+ *
  * - Call to function
  *
  *   - Old way:
- * @code
- *    evas_object_move(obj, 120, 120);
- *    evas_object_resize(obj, 200, 200);
- * @endcode
- * 
+   @code
+      evas_object_move(obj, 120, 120);
+      evas_object_resize(obj, 200, 200);
+   @endcode
+ *
  *   - Eo way:
- * @code
- *    eo_do(obj,
- *          evas_obj_move(120, 120),
- *          evas_obj_resize(200, 200));
- * @endcode
- * 
+   @code
+      eo_do(obj,
+            evas_obj_move(120, 120),
+            evas_obj_resize(200, 200));
+   @endcode
+ *
  * - Extract specific data
  *
  *   - Old way:
- * @code
- *    Evas_Object_Line *o = (Evas_Object_Line *)(obj->object_data);
- *    MAGIC_CHECK(o, Evas_Object_Line, MAGIC_OBJ_LINE);
- *    return;
- *    MAGIC_CHECK_END();
- * @endcode
- * 
+   @code
+      Evas_Object_Line *o = (Evas_Object_Line *)(obj->object_data);
+      MAGIC_CHECK(o, Evas_Object_Line, MAGIC_OBJ_LINE);
+      return;
+      MAGIC_CHECK_END();
+   @endcode
+ *
  *   - Eo way:
  *     Two functions can be used to extract object data. The use depends if you want to store the data or not. If you just need to access data in the function (most of the time), just use eo_data_scope_get. If you need to store the data (for example in a list of objects data), you have to use eo_data_ref. This function references the data. If you don't need the referenced data anymore, call eo_data_unref.
  *     This reference mechanism will be used in the future to detect bad usage of objects, defragment the memory space used by the objects...
- * @code
- *    Evas_Object_Line *o = eo_data_scope_get(obj, EVAS_OBJ_LINE_CLASS);
- *    if (!o) return;
- * @endcode
+   @code
+      Evas_Object_Line *o = eo_data_scope_get(obj, EVAS_OBJ_LINE_CLASS);
+      if (!o) return;
+   @endcode
  *    or
- * @code
- *    Evas_Object_Line *o = eo_data_ref(obj, EVAS_OBJ_LINE_CLASS);
- *    if (!o) return;
- *    ...
- *    eo_data_unref(obj, o);
- * @endcode
- * 
+   @code
+      Evas_Object_Line *o = eo_data_ref(obj, EVAS_OBJ_LINE_CLASS);
+      if (!o) return;
+      ...
+      eo_data_unref(obj, o);
+   @endcode
+ *
  * - Call function of parent
  *   - Old way:
- * @code
- *    ELM_WIDGET_CLASS(_elm_button_parent_sc)->theme(obj));
- * @endcode
- * 
- *   - New way:
- * @code
- *    eo_do_super(obj, elm_wdg_theme(&int_ret));
- * @endcode
+   @code
+      ELM_WIDGET_CLASS(_elm_button_parent_sc)->theme(obj));
+   @endcode
  *
- * @section Important to know
+ *   - New way:
+   @code
+      eo_do_super(obj, elm_wdg_theme(&int_ret));
+   @endcode
+ *
+ * @section important Important to know
  * - eo_do() is the function used to invoke functions of a specific class on an object.
- * 
+ *
  * - eo_data_scope_get() and eo_data_ref() receives an object and a class and returns the data of the given class for the object. The class must belong to the object class hierarchy.
  *
  * - eo_data_unref() receives an object and the data to unreference. The data MUST belong to this object.
@@ -91,34 +91,34 @@
  *
  * - eo_do_super() is in charge to invoke a function in the next parents that implement it. It is recommended to use eo_do_super() only from a function with the same op id.\n
  * In addition, there is no way to jump over classes who implement the function. If A inherits from B, B from C and A, B and C implement a virtual function defined in C, the function calls order will be A, then B and finally C. It is impossible to pass over B.
- * 
+ *
  * - eo_do() returns if the operation succeeded or failed (function found, object deleted...), not the result of the called function. Pay attention to this detail when you call eo_do(). The return value needs to be an additional parameter which will hold a return value.
- * 
+ *
  * - Don't do this:
- * @code
- *    int w, h;
- *    eo_do(obj,
- *          evas_obj_size_get(&w, &h),
- *          evas_obj_size_set(w+10, h+20));
- * @endcode
+   @code
+      int w, h;
+      eo_do(obj,
+            evas_obj_size_get(&w, &h),
+            evas_obj_size_set(w+10, h+20));
+   @endcode
  *    w+10 and h+20 are evaluated before the call to size_get.
  *    Instead, separate it in two calls to eo_do().
- * 
+ *
  * - When creating an object with eo_add(), the reference counter of this one is incremented. If it is called with a parent, two references are on the object. eo_del() removes both of these references.\n
  * When there is no more references on an object, this one is deleted and then can be freed. The deletion calls to the destructor (see eo_destructor()). When done, Eo checks if the object can be freed. The free mechanism can be "disabled" through eo_manual_free_set(). If this is the case, it is the responsibility of the developer to call eo_manual_free() on the object in order to free it. This mechanism has been used for example in @ref Evas on the Evas objects and in @ref Ecore.
- * 
+ *
  * - When eo_do() reaches a function of a class, it is the responsibility of the user to extract from the va_list ALL the parameters needed for this function, NO MORE, NO LESS. Otherwise, unknown behavior can occur. eo_do() is called with a list of op id, params, op id, params... A bad extraction of parameters can bring to the parsing of a wrong op id and so in the best case, to an error, in the worst case, to another function not in relation with the actual use case.
- * 
+ *
  * - Always pay attention to:
  *    - the pairing between function id and the function itself. Using the same function for two ids occurs and is hard to debug.
  *    - the definition of the function macros in the H file and their parameters order/type
  *    - to extract all the parameters of a function from the va_list
- * 
+ *
  * - Enum of the op ids in H file and descriptions in C file must be synchronized, i.e same number of ids and same order. If you change the order by adding, removing or moving ids, you break ABI of your library.
- * 
+ *
  * - Avoid exposing your class data to prevent ABI break. Supply access functions instead.
  *
- * @section How to create a class - H side?
+ * @section create_class_h_side How to create a class - H side?
  * - If the object is new, establish the public APIs
  * - #define \$(CLASS_NAME) \$(class_name)_class_get(): will be used to access data/inherit from this class...
  * - const Eo_Class *\$(class_name)_class_get(void) EINA_CONST: declaration of the function that will create the class (not the instance), i.e virtual table...
@@ -131,82 +131,84 @@
  *    - \$(CLASS_NAME)_ID(\$(CLASS_NAME)_SUB_ID_FUNCTION
  *    - EO_TYPECHECK for each parameter: type and variable name
  * - And don't forget to document each function
- * 
- * - Example (Evas Object Line):
- * @code
- * #define EVAS_OBJ_LINE_CLASS evas_object_line_class_get()
  *
- * const Eo_Class *evas_object_line_class_get(void) EINA_CONST;
- * 
- * extern EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID;
- * 
- * enum
- * {
- *    EVAS_OBJ_LINE_SUB_ID_XY_SET,
- *    EVAS_OBJ_LINE_SUB_ID_XY_GET,
- *    EVAS_OBJ_LINE_SUB_ID_LAST
- * }
- * 
- * #define EVAS_OBJ_LINE_ID(sub_id) (EVAS_OBJ_LINE_BASE_ID + sub_id)
- * 
- * /*
- *  * @def evas_obj_line_xy_set
- *  * @since 1.8
- *  *
- *  * Sets the coordinates of the end points of the given evas line object.
- *  *
- *  * @param[in] x1
- *  * @param[in] y1
- *  * @param[in] x2
- *  * @param[in] y2
- *  *
- *  */
- * #define evas_obj_line_xy_set(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_SET), EO_TYPECHECK(Evas_Coord, x1), EO_TYPECHECK(Evas_Coord, y1), EO_TYPECHECK(Evas_Coord, x2), EO_TYPECHECK(Evas_Coord, y2)
- * 
- * /*
- *  * @def evas_obj_line_xy_get
- *  * @since 1.8
- *  *
- *  * Retrieves the coordinates of the end points of the given evas line object.
- *  *
- *  * @param[out] x1
- *  * @param[out] y1
- *  * @param[out] x2
- *  * @param[out] y2
- *  *
- *  */
- * #define evas_obj_line_xy_get(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), EO_TYPECHECK(Evas_Coord *, x1), EO_TYPECHECK(Evas_Coord *, y1), EO_TYPECHECK(Evas_Coord *, x2), EO_TYPECHECK(Evas_Coord *, y2)
+ * - Example (Evas Object Line):
+   @code
+   #define EVAS_OBJ_LINE_CLASS evas_object_line_class_get()
+
+   const Eo_Class *evas_object_line_class_get(void) EINA_CONST;
+
+   extern EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID;
+
+   enum
+   {
+      EVAS_OBJ_LINE_SUB_ID_XY_SET,
+      EVAS_OBJ_LINE_SUB_ID_XY_GET,
+      EVAS_OBJ_LINE_SUB_ID_LAST
+   }
+
+   #define EVAS_OBJ_LINE_ID(sub_id) (EVAS_OBJ_LINE_BASE_ID + sub_id)
+
+   /*
+    * @def evas_obj_line_xy_set
+    * @since 1.8
+    *
+    * Sets the coordinates of the end points of the given evas line object.
+    *
+    * @param[in] x1
+    * @param[in] y1
+    * @param[in] x2
+    * @param[in] y2
+    *
+    */
+   #define evas_obj_line_xy_set(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_SET), EO_TYPECHECK(Evas_Coord, x1), EO_TYPECHECK(Evas_Coord, y1), EO_TYPECHECK(Evas_Coord, x2), EO_TYPECHECK(Evas_Coord, y2)
+
+   /*
+    * @def evas_obj_line_xy_get
+    * @since 1.8
+    *
+    * Retrieves the coordinates of the end points of the given evas line object.
+    *
+    * @param[out] x1
+    * @param[out] y1
+    * @param[out] x2
+    * @param[out] y2
+    *
+    */
+   #define evas_obj_line_xy_get(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), EO_TYPECHECK(Evas_Coord *, x1), EO_TYPECHECK(Evas_Coord *, y1), EO_TYPECHECK(Evas_Coord *, x2), EO_TYPECHECK(Evas_Coord *, y2)
    @endcode
  *
- * @section How to create a class - C side?
+ * @section create_class_c_size How to create a class - C side?
  * Below, the object line as example.
- * 
- * #include "Eo.h"\n
- * EAPI Eo_Op \$(CLASS_NAME)_BASE_ID = EO_NOOP; // Initialisation of the class id to 0. Will be set dynamically by Eo itself.\n
- * #define MY_CLASS \$(CLASS_NAME)
- * 
- * ...
- * 
+ *
+   @code
+   #include "Eo.h"\n
+   EAPI Eo_Op \$(CLASS_NAME)_BASE_ID = EO_NOOP; // Initialisation of the class id to 0. Will be set dynamically by Eo itself.\n
+   #define MY_CLASS \$(CLASS_NAME)
+
+   ...
+   @endcode
+ *
  * Example for a developer function called by Eo:\n
  * This function receives the Eo object, the data corresponding to this class and the list of parameters.
- * @code
- * static void
- * _foo(Eo *eo_obj, void *_pd, va_list *list)
- * {
- *    int param_1 = va_arg(*list, int);
- *    Eina_Bool param_2 = va_arg(*list, int);
- *    Eina_Bool ret = va_arg(*list, Eina_Bool *);
- *    foo_data obj = _pd;
- * 
- *    if (ret) *ret = EINA_FALSE;
- *    ...
- * }
- * @endcode
- * 
+   @code
+   static void
+   _foo(Eo *eo_obj, void *_pd, va_list *list)
+   {
+      int param_1 = va_arg(*list, int);
+      Eina_Bool param_2 = va_arg(*list, int);
+      Eina_Bool ret = va_arg(*list, Eina_Bool *);
+      foo_data obj = _pd;
+
+      if (ret) *ret = EINA_FALSE;
+      ...
+   }
+   @endcode
+ *
  * You can (not a must) implement a constructor. This constructor MUST call the parent constructor (eo_do_super()). It is the same for the destructor.\n
  * See eo_constructor() and eo_destructor().\n
  * If you don't have anything to do in constructor (like malloc, variables init...) or in destructor (free), don't implement them.
- * 
+ *
  * At the end of the file, you need to describe the class.\n
  * First, you need to supply the class constructor that sets the list of the functions that are implemented in this class. It includes functions overriden (constructor, destructor, member_add...) and functions specific to this class. If there is no function implemented in this class, you don't need a class constructor.\n
  * Then, you need a list to describe the new functions. For each one, the op id and a description.\n
@@ -224,91 +226,91 @@
  *    - size of the data of the class
  *    - the class constructor, if exists, else NULL
  *    - the class destructor (NULL most of the time)
- * 
+ *
  * Finally, we define the class with:
  *    - the function name to give to the function that creates/returns the class
  *    - the class description explained above
  *    - the parent and the interfaces/mixins, finished by NULL
- * 
- * 
+ *
+ *
  * Example (Evas Object Line):
- * @code
- * #include "Eo.h"
+   @code
+   #include "Eo.h"
+
+   EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID = EO_NOOP;
+
+   #define MY_CLASS EVAS_OBJ_LINE_CLASS
+   @endcode
  *
- * EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID = EO_NOOP;
+ * ...
  *
- * #define MY_CLASS EVAS_OBJ_LINE_CLASS
- * @endcode
- * 
- * ...
- * 
- * @code
- * static void
- * _line_xy_get(Eo *eo_obj, void *_pd, va_list *list)
- * {
- *    const Evas_Object_Line *o = _pd;
- * 
- *    Evas_Coord *x1 = va_arg(*list, Evas_Coord *);
- *    Evas_Coord *y1 = va_arg(*list, Evas_Coord *);
- *    Evas_Coord *x2 = va_arg(*list, Evas_Coord *);
- *    Evas_Coord *y2 = va_arg(*list, Evas_Coord *);
- * 
- *    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
- *    if (x1) *x1 = obj->cur.geometry.x + o->cur.x1;
- *    if (y1) *y1 = obj->cur.geometry.y + o->cur.y1;
- *    if (x2) *x2 = obj->cur.geometry.x + o->cur.x2;
- *    if (y2) *y2 = obj->cur.geometry.y + o->cur.y2;
- * }
- * 
- * static void
- * _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
- * {
- *    eo_do_super(eo_obj, eo_constructor());
- * 
- *    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
- *    evas_object_line_init(eo_obj);
- * }
- * 
- * ...
- * 
- * /* class constructor */
- * static void
- * _class_constructor(Eo_Class *klass)
- * {
- *    const Eo_Op_Func_Description func_desc[] = {
- *         /* Virtual functions of parent class implemented in this class */
- *         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
- *         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
- *         /* Specific functions to this class */
- *         EO_OP_FUNC(EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_SET), _line_xy_set),
- *         EO_OP_FUNC(EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), _line_xy_get),
- *         EO_OP_FUNC_SENTINEL
- *    };
- * 
- *    eo_class_funcs_set(klass, func_desc);
- * }
- * 
- * /* Descriptions for the functions specific to this class */
- * static const Eo_Op_Description op_desc[] = {
- *      EO_OP_DESCRIPTION(EVAS_OBJ_LINE_SUB_ID_XY_SET, "Sets the coordinates of the end points of the given evas line object."),
- *      EO_OP_DESCRIPTION(EVAS_OBJ_LINE_SUB_ID_XY_GET, "Retrieves the coordinates of the end points of the given evas line object."),
- *      EO_OP_DESCRIPTION_SENTINEL
- * };
- * 
- * /* Description of the class */
- * static const Eo_Class_Description class_desc = {
- *      EO_VERSION,
- *      "Evas_Object_Line",
- *      EO_CLASS_TYPE_REGULAR,
- *      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_LINE_BASE_ID, op_desc, EVAS_OBJ_LINE_SUB_ID_LAST),
- *      NULL,
- *      sizeof(Evas_Object_Line),
- *      _class_constructor,
- *      NULL
- * };
- * 
- * /* Definition of the class */
- * EO_DEFINE_CLASS(evas_object_line_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
- * @endcode
+   @code
+   static void
+   _line_xy_get(Eo *eo_obj, void *_pd, va_list *list)
+   {
+      const Evas_Object_Line *o = _pd;
+
+      Evas_Coord *x1 = va_arg(*list, Evas_Coord *);
+      Evas_Coord *y1 = va_arg(*list, Evas_Coord *);
+      Evas_Coord *x2 = va_arg(*list, Evas_Coord *);
+      Evas_Coord *y2 = va_arg(*list, Evas_Coord *);
+
+      Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+      if (x1) *x1 = obj->cur.geometry.x + o->cur.x1;
+      if (y1) *y1 = obj->cur.geometry.y + o->cur.y1;
+      if (x2) *x2 = obj->cur.geometry.x + o->cur.x2;
+      if (y2) *y2 = obj->cur.geometry.y + o->cur.y2;
+   }
+
+   static void
+   _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
+   {
+      eo_do_super(eo_obj, eo_constructor());
+
+      Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+      evas_object_line_init(eo_obj);
+   }
+
+   ...
+
+   /* class constructor */
+   static void
+   _class_constructor(Eo_Class *klass)
+   {
+      const Eo_Op_Func_Description func_desc[] = {
+           /* Virtual functions of parent class implemented in this class */
+           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+           /* Specific functions to this class */
+           EO_OP_FUNC(EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_SET), _line_xy_set),
+           EO_OP_FUNC(EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), _line_xy_get),
+           EO_OP_FUNC_SENTINEL
+      };
+
+      eo_class_funcs_set(klass, func_desc);
+   }
+
+   /* Descriptions for the functions specific to this class */
+   static const Eo_Op_Description op_desc[] = {
+        EO_OP_DESCRIPTION(EVAS_OBJ_LINE_SUB_ID_XY_SET, "Sets the coordinates of the end points of the given evas line object."),
+        EO_OP_DESCRIPTION(EVAS_OBJ_LINE_SUB_ID_XY_GET, "Retrieves the coordinates of the end points of the given evas line object."),
+        EO_OP_DESCRIPTION_SENTINEL
+   };
+
+   /* Description of the class */
+   static const Eo_Class_Description class_desc = {
+        EO_VERSION,
+        "Evas_Object_Line",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_LINE_BASE_ID, op_desc, EVAS_OBJ_LINE_SUB_ID_LAST),
+        NULL,
+        sizeof(Evas_Object_Line),
+        _class_constructor,
+        NULL
+   };
+
+   /* Definition of the class */
+   EO_DEFINE_CLASS(evas_object_line_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
+   @endcode
  */
 

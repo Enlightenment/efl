@@ -154,6 +154,11 @@ dl.el {
   line-height: 0%;
 }
 
+/* To avoid packed effect on bullet lists */
+li .line:first-child {
+   margin-top: 10px;
+}
+
 pre.fragment {
   border: 1px solid #cccccc;
   background-color: #eeeeee;
