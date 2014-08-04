@@ -5582,10 +5582,12 @@ static void st_collections_group_parts_part_box_items_item_type(void)
 	s = parse_str(0);
 	if (strcmp(s, "GROUP"))
 	  {
+	     free(s);
 	     ERR("parse error %s:%i. token %s not one of: GROUP.",
 		 file_in, line - 1, s);
 	     exit(-1);
 	  }
+	free(s);
 	/* FIXME: handle the enum, once everything else is supported */
 	current_item->type = EDJE_PART_TYPE_GROUP;
      }
@@ -6719,11 +6721,13 @@ st_collections_group_parts_part_description_min(void)
       if ((current_part->type != EDJE_PART_TYPE_IMAGE && current_part->type != EDJE_PART_TYPE_GROUP) ||
           !tmp || strcmp(tmp, "SOURCE") != 0)
         {
+           free(tmp);
            ERR("parse error %s:%i. "
                "Only IMAGE and GROUP part can have a min: SOURCE; defined",
                file_in, line - 1);
            exit(-1);
         }
+      free(tmp);
 
       current_desc->min.limit = EINA_TRUE;
    }
@@ -6779,11 +6783,13 @@ st_collections_group_parts_part_description_max(void)
       if (current_part->type != EDJE_PART_TYPE_IMAGE ||
           !tmp || strcmp(tmp, "SOURCE") != 0)
         {
+           free(tmp);
            ERR("parse error %s:%i. "
                "Only IMAGE part can have a max: SOURCE; defined",
                file_in, line - 1);
            exit(-1);
         }
+      free(tmp);
 
       current_desc->max.limit = EINA_TRUE;
    }
@@ -9959,7 +9965,7 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
    Edje_Part_Description_External *ed;
    Edje_External_Param *param;
    Eina_List *l;
-   const char *name;
+   char *name;
    int found = 0;
 
    check_arg_count(2);
@@ -10017,6 +10023,8 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
 
    if (!found)
      ed->external_params = eina_list_append(ed->external_params, param);
+
+   free(name);
 }
 
 /**
@@ -10659,6 +10667,8 @@ st_collections_group_programs_program_action(void)
 static void
 st_collections_group_programs_program_transition(void)
 {
+   char *tmp = NULL;
+
    check_min_arg_count(2);
 
    _program_sequence_check();
@@ -10696,10 +10706,15 @@ st_collections_group_programs_program_transition(void)
    if ((current_program->tween.mode >= EDJE_TWEEN_MODE_LINEAR) &&
        (current_program->tween.mode <= EDJE_TWEEN_MODE_DECELERATE))
      {
-        if ((get_arg_count() == 3) && (!strcmp(parse_str(2), "CURRENT")))
-          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        tmp = NULL;
+        if ((get_arg_count() == 3) && (!strcmp((tmp = parse_str(2)), "CURRENT")))
+          {
+             free(tmp);
+             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
         else if (get_arg_count() != 2)
           {
+             free(tmp);
              ERR("parse error %s:%i. Need 2rd parameter to set time",
                  file_in, line - 1);
              exit(-1);
@@ -10713,10 +10728,15 @@ st_collections_group_programs_program_transition(void)
    else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_ACCELERATE_FACTOR) &&
        (current_program->tween.mode <= EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR))
      {
-        if ((get_arg_count() == 4) && (!strcmp(parse_str(3), "CURRENT")))
-          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        tmp = NULL;
+        if ((get_arg_count() == 4) && (!strcmp((tmp = parse_str(3)), "CURRENT")))
+          {
+             free(tmp);
+             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
         else if (get_arg_count() != 3)
           {
+             free(tmp);
 	     ERR("parse error %s:%i. Need 3rd parameter to set factor",
 		 file_in, line - 1);
 	     exit(-1);
@@ -10731,10 +10751,15 @@ st_collections_group_programs_program_transition(void)
    else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_DIVISOR_INTERP) &&
             (current_program->tween.mode <= EDJE_TWEEN_MODE_SPRING))
      {
-        if ((get_arg_count() == 5) && (!strcmp(parse_str(4), "CURRENT")))
-          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        tmp = NULL;
+        if ((get_arg_count() == 5) && (!strcmp((tmp = parse_str(4)), "CURRENT")))
+          {
+             free(tmp);
+             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
         else if (get_arg_count() != 4)
           {
+             free(tmp);
 	     ERR("parse error %s:%i. "
 		 "Need 3rd and 4th parameters to set factor and counts",
 		 file_in, line - 1);
@@ -10745,10 +10770,15 @@ st_collections_group_programs_program_transition(void)
      }
    else if (current_program->tween.mode == EDJE_TWEEN_MODE_CUBIC_BEZIER)
      {
-        if ((get_arg_count() == 7) && (!strcmp(parse_str(4), "CURRENT")))
-          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        tmp = NULL;
+        if ((get_arg_count() == 7) && (!strcmp((tmp = parse_str(4)), "CURRENT")))
+          {
+             free(tmp);
+             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
         else if (get_arg_count() != 6)
           {
+             free(tmp);
              ERR("parse error %s:%i. "
              "Need 3rd, 4th, 5th and 6th parameters to set x1, y1, x2 and y2",
              file_in, line - 1);
