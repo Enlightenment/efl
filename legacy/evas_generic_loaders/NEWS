@@ -11,6 +11,8 @@ Features:
 Fixes:
 
    * gst1 support fixed now to do argb properly
+   * Remove autogen.sh from the dist tarball.
+   * fix gst video loader in generic to have key actually work
 
 Changes since Evas Generic Loaders 1.9.0:
 -----------------------------------------
