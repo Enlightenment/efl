@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-20 12:20+0900\n"
+"POT-Creation-Date: 2014-08-04 13:29+0100\n"
 "PO-Revision-Date: 2012-12-22 03:45+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -17,192 +17,192 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/ecore/ecore_getopt.c:93
+#: src/lib/ecore/ecore_getopt.c:89
 msgid "Version:"
 msgstr "版本："
 
-#: src/lib/ecore/ecore_getopt.c:102
+#: src/lib/ecore/ecore_getopt.c:98
 msgid "Usage:"
 msgstr "用法："
 
-#: src/lib/ecore/ecore_getopt.c:109
+#: src/lib/ecore/ecore_getopt.c:105
 #, fuzzy, c-format
 msgid "%s [options]"
 msgstr "%s [选项]\n"
 
-#: src/lib/ecore/ecore_getopt.c:309
+#: src/lib/ecore/ecore_getopt.c:305
 msgid "Copyright:"
 msgstr "版权信息："
 
-#: src/lib/ecore/ecore_getopt.c:321
+#: src/lib/ecore/ecore_getopt.c:317
 msgid "License:"
 msgstr "许可证："
 
-#: src/lib/ecore/ecore_getopt.c:507
+#: src/lib/ecore/ecore_getopt.c:503
 msgid "Type: "
 msgstr "类型："
 
-#: src/lib/ecore/ecore_getopt.c:583
+#: src/lib/ecore/ecore_getopt.c:579
 msgid "Default: "
 msgstr "默认："
 
-#: src/lib/ecore/ecore_getopt.c:610
+#: src/lib/ecore/ecore_getopt.c:606
 msgid "Choices: "
 msgstr "可选项："
 
-#: src/lib/ecore/ecore_getopt.c:648 src/lib/ecore/ecore_getopt.c:649
+#: src/lib/ecore/ecore_getopt.c:644 src/lib/ecore/ecore_getopt.c:645
 msgid "No categories available."
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:653
+#: src/lib/ecore/ecore_getopt.c:649
 #, fuzzy
 msgid "Categories: "
 msgstr "可选项："
 
-#: src/lib/ecore/ecore_getopt.c:775
+#: src/lib/ecore/ecore_getopt.c:771
 msgid "Options:\n"
 msgstr "选项：\n"
 
-#: src/lib/ecore/ecore_getopt.c:784
+#: src/lib/ecore/ecore_getopt.c:780
 msgid "Positional arguments:\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:870
+#: src/lib/ecore/ecore_getopt.c:847
 #, fuzzy, c-format
 msgid "ERROR: unknown category '%s'.\n"
 msgstr "错误：未知选项 --%s。\n"
 
-#: src/lib/ecore/ecore_getopt.c:974
+#: src/lib/ecore/ecore_getopt.c:951
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "错误：未知选项 --%s。\n"
 
-#: src/lib/ecore/ecore_getopt.c:976
+#: src/lib/ecore/ecore_getopt.c:953
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "错误：未知选项 -%c。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1039
+#: src/lib/ecore/ecore_getopt.c:1016
 msgid "ERROR: "
 msgstr "错误："
 
-#: src/lib/ecore/ecore_getopt.c:1132 src/lib/ecore/ecore_getopt.c:1269
-#: src/lib/ecore/ecore_getopt.c:1285 src/lib/ecore/ecore_getopt.c:1300
-#: src/lib/ecore/ecore_getopt.c:1317 src/lib/ecore/ecore_getopt.c:1364
-#: src/lib/ecore/ecore_getopt.c:1484 src/lib/ecore/ecore_getopt.c:1525
+#: src/lib/ecore/ecore_getopt.c:1109 src/lib/ecore/ecore_getopt.c:1246
+#: src/lib/ecore/ecore_getopt.c:1262 src/lib/ecore/ecore_getopt.c:1277
+#: src/lib/ecore/ecore_getopt.c:1294 src/lib/ecore/ecore_getopt.c:1341
+#: src/lib/ecore/ecore_getopt.c:1461 src/lib/ecore/ecore_getopt.c:1502
 msgid "value has no pointer set.\n"
 msgstr "值没有设置指针。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1164 src/lib/ecore/ecore_getopt.c:1384
+#: src/lib/ecore/ecore_getopt.c:1141 src/lib/ecore/ecore_getopt.c:1361
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "未知的布尔值 %s。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1215 src/lib/ecore/ecore_getopt.c:1472
+#: src/lib/ecore/ecore_getopt.c:1192 src/lib/ecore/ecore_getopt.c:1449
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "无效的数字格式 %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1330
+#: src/lib/ecore/ecore_getopt.c:1307
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "无效选项 %s。有效的值有："
 
-#: src/lib/ecore/ecore_getopt.c:1358
+#: src/lib/ecore/ecore_getopt.c:1335
 msgid "missing parameter to append.\n"
 msgstr "缺少要附加的参数。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1462
+#: src/lib/ecore/ecore_getopt.c:1439
 msgid "could not parse value.\n"
 msgstr "无法解析值。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1519
+#: src/lib/ecore/ecore_getopt.c:1496
 msgid "missing parameter.\n"
 msgstr "缺少参数。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1532
+#: src/lib/ecore/ecore_getopt.c:1509
 msgid "missing callback function!\n"
 msgstr "缺少 callback 功能！\n"
 
-#: src/lib/ecore/ecore_getopt.c:1563
+#: src/lib/ecore/ecore_getopt.c:1540
 msgid "no version was defined.\n"
 msgstr "未指定版本。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1580
+#: src/lib/ecore/ecore_getopt.c:1557
 msgid "no copyright was defined.\n"
 msgstr "未定义版权信息。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1597
+#: src/lib/ecore/ecore_getopt.c:1574
 msgid "no license was defined.\n"
 msgstr "未定义许可证。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1687
+#: src/lib/ecore/ecore_getopt.c:1664
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "错误：未知选项 --%s，忽略。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1720
+#: src/lib/ecore/ecore_getopt.c:1697
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "错误：选项 --%s 需要一个参数！\n"
 
-#: src/lib/ecore/ecore_getopt.c:1762
+#: src/lib/ecore/ecore_getopt.c:1739
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "错误：未知选项 -%c，忽略。\n"
 
-#: src/lib/ecore/ecore_getopt.c:1800
+#: src/lib/ecore/ecore_getopt.c:1777
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "错误：选项 -%c 需要一个参数！\n"
 
-#: src/lib/ecore/ecore_getopt.c:1895
+#: src/lib/ecore/ecore_getopt.c:1872
 #, fuzzy, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr "错误：选项 -%c 需要一个参数！\n"
 
-#: src/lib/ecore/ecore_getopt.c:1927
+#: src/lib/ecore/ecore_getopt.c:1904
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2116 src/lib/ecore/ecore_getopt.c:2233
+#: src/lib/ecore/ecore_getopt.c:2025 src/lib/ecore/ecore_getopt.c:2091
 msgid "ERROR: no parser provided.\n"
 msgstr "错误：未提供解析器。\n"
 
-#: src/lib/ecore/ecore_getopt.c:2121 src/lib/ecore/ecore_getopt.c:2238
+#: src/lib/ecore/ecore_getopt.c:2030 src/lib/ecore/ecore_getopt.c:2096
 msgid "ERROR: no values provided.\n"
 msgstr "错误：未提供值。\n"
 
-#: src/lib/ecore/ecore_getopt.c:2130 src/lib/ecore/ecore_getopt.c:2247
+#: src/lib/ecore/ecore_getopt.c:2039 src/lib/ecore/ecore_getopt.c:2105
 msgid "ERROR: no arguments provided.\n"
 msgstr "错误：未提供参数。\n"
 
-#: src/lib/ecore/ecore_getopt.c:2156
+#: src/lib/ecore/ecore_getopt.c:2065
 msgid "ERROR: invalid options found."
 msgstr "错误：无效的选项。"
 
-#: src/lib/ecore/ecore_getopt.c:2162 src/lib/ecore/ecore_getopt.c:2279
+#: src/lib/ecore/ecore_getopt.c:2071 src/lib/ecore/ecore_getopt.c:2137
 #, c-format
 msgid " See --%s.\n"
 msgstr " 参看 --%s\n"
 
-#: src/lib/ecore/ecore_getopt.c:2164 src/lib/ecore/ecore_getopt.c:2281
+#: src/lib/ecore/ecore_getopt.c:2073 src/lib/ecore/ecore_getopt.c:2139
 #, c-format
 msgid " See -%c.\n"
 msgstr " 参看 -%c\n"
 
-#: src/lib/ecore/ecore_getopt.c:2273
+#: src/lib/ecore/ecore_getopt.c:2131
 #, fuzzy
 msgid "ERROR: invalid positional arguments found."
 msgstr "错误：无效的选项。"
 
-#: src/lib/ecore/ecore_getopt.c:2327
+#: src/lib/ecore/ecore_getopt.c:2166
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "错误：不正确的形状 %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:2359
+#: src/lib/ecore/ecore_getopt.c:2184
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "错误：不正确的大小 %s\n"

@@ -1,8 +1,0 @@
-{
-  "name" : "edje",
-  "version" : "dev",
-  "author" : "viktor kojouharov <vkojouharov at gmail.com>",
-  "repository" : {"type": "svn", "url": "http://svn.enlightenment.org/svn/e/trunk/edje/data/vim/"},
-  "dependencies" : {},
-  "description" : "Edje vim support addon"
-}
