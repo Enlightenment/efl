@@ -7349,7 +7349,23 @@ evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
 
    for (i = cur->pos ; _is_white(text[i]) && BREAK_AFTER(i) ; i--)
      {
-        if (i == 0) break;
+        if (i == 0)
+          {
+             Evas_Object_Textblock_Node_Text *pnode;
+             pnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->prev);
+             if (pnode)
+               {
+                  cur->node = pnode;
+                  len = eina_ustrbuf_length_get(cur->node->unicode);
+                  cur->pos = len - 1;
+                  free(breaks);
+                  return evas_textblock_cursor_word_start(cur);
+               }
+             else
+               {
+                  break;
+               }
+          }
      }
 
    for ( ; i > 0 ; i--)
@@ -7390,6 +7406,18 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
      }
 
    for (i = cur->pos; text[i] && _is_white(text[i]) && (BREAK_AFTER(i)) ; i++);
+   if (i == len)
+     {
+        Evas_Object_Textblock_Node_Text *nnode;
+        nnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->next);
+        if (nnode)
+          {
+             cur->node = nnode;
+             cur->pos = 0;
+             free(breaks);
+             return evas_textblock_cursor_word_end(cur);
+          }
+     }
 
    for ( ; text[i] ; i++)
      {

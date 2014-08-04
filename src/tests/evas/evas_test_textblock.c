@@ -637,6 +637,18 @@ START_TEST(evas_textblock_cursor)
 
         evas_textblock_cursor_word_end(cur);
         ck_assert_int_eq(5, evas_textblock_cursor_pos_get(cur));
+
+        /* moving across paragraphs */
+        evas_object_textblock_text_markup_set(tb,
+                                              "test<ps/>"
+                                              "  case");
+        evas_textblock_cursor_pos_set(cur, 4);
+        evas_textblock_cursor_word_end(cur);
+        ck_assert_int_eq(10, evas_textblock_cursor_pos_get(cur));
+
+        evas_textblock_cursor_pos_set(cur, 6);
+        evas_textblock_cursor_word_start(cur);
+        ck_assert_int_eq(0, evas_textblock_cursor_pos_get(cur));
      }
 
    /* Make sure coords are correct for ligatures */
