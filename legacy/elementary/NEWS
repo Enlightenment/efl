@@ -40,6 +40,8 @@ Fixes:
    * fix notification theme to not clip text
    * map: Add missing legacy API into legacy header
    * elc_naviframe: Fix warning caused by elm_obj_layout_signal_emit override function in naviframe
+   * ctxpopup: fix arrow geometry set.
+   * ctxpopup: Fix wrong popup size.
 
 Changes since Elementary 1.9.0:
 -------------------------------
