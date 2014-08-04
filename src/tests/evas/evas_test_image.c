@@ -188,7 +188,6 @@ static int _compare_img_transverse(const uint32_t *d1, const uint32_t *d2, int w
    return 0;
 }
 
-/* TODO: flip test code for 2, 4, 5, 7 */
 START_TEST(evas_object_image_loader_orientation)
 {
    Evas *e = _setup_evas();
