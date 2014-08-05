@@ -3379,10 +3379,24 @@ _cb_accel_override(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNU
 }
 
 static void
+_cb_vsync(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool sb = elm_config_vsync_get();
+
+   if (val != sb)
+     {
+        elm_config_vsync_set(val);
+        elm_config_all_flush();
+        elm_config_save();
+     }
+}
+
+static void
 _status_config_rendering(Evas_Object *win,
                          Evas_Object *naviframe)
 {
-   Evas_Object *li, *bx, *ck;
+   Evas_Object *li, *bx, *ck, *sp;
    Elm_Object_Item *it;
 
    bx = elm_box_add(win);
@@ -3430,6 +3444,21 @@ _status_config_rendering(Evas_Object *win,
              "configured acceleration as above",
              _cb_accel_override, NULL);
    elm_check_state_set(ck, elm_config_accel_preference_override_get());
+
+   /////////////////////////////////////////////
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   CHECK_ADD("Tear-free rendering (VSync)",
+             "This enables Vsync hints for some<br>"
+             "rendering engines to try keep display<br>"
+             "VSynced and from Tearing",
+             _cb_vsync, NULL);
+   elm_check_state_set(ck, elm_config_vsync_get());
 
    evas_object_data_set(win, "rendering", bx);
    elm_naviframe_item_simple_push(naviframe, bx);
