@@ -1124,46 +1124,34 @@ _ecore_x_key_mask_get(KeySym sym)
 {
    XModifierKeymap *mod;
    KeySym sym2;
-   int i, j;
+   int i, j, mask = 0;
    const int masks[8] =
-   {
-      ShiftMask, LockMask, ControlMask,
-      Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, Mod5Mask
-   };
+     {
+        ShiftMask, LockMask, ControlMask,
+        Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, Mod5Mask
+     };
 
    mod = XGetModifierMapping(_ecore_x_disp);
    if ((mod) && (mod->max_keypermod > 0))
-     for (i = 0; i < (8 * mod->max_keypermod); i++)
-       {
-          for (j = 0; j < 8; j++)
-            {
-               sym2 = _ecore_x_XKeycodeToKeysym(_ecore_x_disp,
-                                                mod->modifiermap[i], j);
-               if (sym2 != 0)
-                 break;
-            }
-          if (sym2 == sym)
-            {
-               int mask;
-
-               mask = masks[i / mod->max_keypermod];
-               if (mod->modifiermap)
-                 XFree(mod->modifiermap);
-
-               XFree(mod);
-               return mask;
-            }
-       }
-
+     {
+        for (i = 0; i < (8 * mod->max_keypermod); i++)
+          {
+             for (j = 0; j < 8; j++)
+               {
+                  sym2 = _ecore_x_XKeycodeToKeysym(_ecore_x_disp,
+                                                   mod->modifiermap[i], j);
+                  if (sym2 != 0)
+                  break;
+               }
+             if (sym2 == sym) mask = masks[i / mod->max_keypermod];
+          }
+     }
    if (mod)
      {
-        if (mod->modifiermap)
-          XFree(mod->modifiermap);
-
+        if (mod->modifiermap) XFree(mod->modifiermap);
         XFree(mod);
      }
-
-   return 0;
+   return mask;
 }
 
 /*****************************************************************************/

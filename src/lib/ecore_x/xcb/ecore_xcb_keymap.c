@@ -361,19 +361,13 @@ _ecore_xcb_keymap_mask_get(void        *reply,
 
              for (j = 0; j < 8; j++)
                {
-                  sym2 =
-                    xcb_key_symbols_get_keysym(_ecore_xcb_keysyms,
-                                               modmap[i], j);
+                  sym2 = xcb_key_symbols_get_keysym(_ecore_xcb_keysyms,
+                                                    modmap[i], j);
                   if (sym2 != 0) break;
                }
-             if (sym2 == sym)
-               {
-                  mask = masks[i / rep->keycodes_per_modifier];
-                  break;
-               }
+             if (sym2 == sym) mask = masks[i / rep->keycodes_per_modifier];
           }
      }
-
    return mask;
 }
 
