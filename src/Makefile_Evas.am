@@ -1233,7 +1233,7 @@ modules_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @evas_engine_drm_cflags@
 modules_evas_engines_drm_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
-@ECORE_DRM_LIBS@ \
+@USE_ECORE_DRM_LIBS@ \
 @evas_engine_drm_libs@
 modules_evas_engines_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
