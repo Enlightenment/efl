@@ -2936,7 +2936,7 @@ _layout_format_pop(Ctxt *c, const char *format)
         Eina_List *redo_nodes = NULL;
 
         /* Generic pop, should just pop. */
-        if (((format[0] == ' ') && !format[1]) ||
+        if (((format[0] == '/') && !format[1]) ||
               !format[0])
           {
              _format_unref_free(c->obj, fmt);
@@ -2962,7 +2962,7 @@ _layout_format_pop(Ctxt *c, const char *format)
                    * starting tag, and the starting tag's next char is either
                    * NULL or white. Skip the starting '+'. */
                   if (_FORMAT_IS_CLOSER_OF(
-                           fmt->fnode->orig_format, format, len))
+                           fmt->fnode->orig_format, format + 1, len - 1))
                     {
                        _format_unref_free(c->obj, fmt);
                        break;
@@ -4993,7 +4993,7 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
                   size_t fstr_len;
                   fstr_len = strlen(fstr);
                   /* Generic popper, just pop */
-                  if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
+                  if (((fstr[0] == '/') && !fstr[1]) || !fstr[0])
                     {
                        fstack = eina_list_remove_list(fstack, fstack);
                        balance--;
@@ -5007,7 +5007,7 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
                        EINA_LIST_FOREACH(fstack, i, fnode2)
                          {
                             if (_FORMAT_IS_CLOSER_OF(
-                                     fnode2->orig_format, fstr, fstr_len))
+                                     fnode2->orig_format, fstr + 1, fstr_len - 1))
                               {
                                  fstack = eina_list_remove_list(fstack, i);
                                  break;
@@ -5901,21 +5901,11 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
         const char *match;
         size_t format_len = eina_stringshare_strlen(fnode->orig_format);
         /* Is this safe to use alloca here? Strings might possibly get large */
-        char *format = alloca(format_len + 2);
 
-        if (!fnode->opener)
-          {
-             format[0] = '/';
-             format[1] = '\0';
-          }
-        else
-          {
-             format[0] = '\0';
-          }
+        if (fnode->own_closer)
+          format_len--;
 
-        strcat(format, fnode->orig_format);
-
-        match = _textblock_format_node_from_style_tag(o, fnode, format,
+        match = _textblock_format_node_from_style_tag(o, fnode, fnode->orig_format,
               format_len);
 
         if (match && fnode->format && strcmp(match, fnode->format))
@@ -6401,11 +6391,7 @@ _markup_get_format_append(Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *f
 
         // FIXME: need to escape
         s = fnode->orig_format;
-        if (!fnode->opener && !fnode->own_closer)
-           eina_strbuf_append_char(txt, '/');
         eina_strbuf_append(txt, s);
-        if (fnode->own_closer)
-           eina_strbuf_append_char(txt, '/');
      }
    eina_strbuf_append_char(txt, '>');
 }
@@ -7077,7 +7063,7 @@ _evas_textblock_node_format_remove_pair(Eo *eo_obj, Evas_Textblock_Data *o, Evas
              size_t fstr_len;
              fstr_len = strlen(fstr);
              /* Generic popper, just pop */
-             if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
+             if (((fstr[0] == '/') && !fstr[1]) || !fstr[0])
                {
                   fstack = eina_list_remove_list(fstack, fstack);
                   if (!fstack)
@@ -7095,7 +7081,7 @@ _evas_textblock_node_format_remove_pair(Eo *eo_obj, Evas_Textblock_Data *o, Evas
                   EINA_LIST_FOREACH(fstack, i, fnode)
                     {
                        if (_FORMAT_IS_CLOSER_OF(
-                                fnode->orig_format, fstr, fstr_len))
+                                fnode->orig_format, fstr + 1, fstr_len - 1))
                          {
                             /* Last one, this is our item! */
                             if (!eina_list_next(i))
@@ -7723,7 +7709,7 @@ _evas_textblock_node_format_remove_matching(Evas_Textblock_Data *o,
              size_t fstr_len;
              fstr_len = strlen(fstr);
              /* Generic popper, just pop (if there's anything to pop). */
-             if (formats && (((fstr[0] == ' ') && !fstr[1]) || !fstr[0]))
+             if (formats && (((fstr[0] == '/') && !fstr[1]) || !fstr[0]))
                {
                   fnode = eina_list_data_get(formats);
                   formats = eina_list_remove_list(formats, formats);
@@ -7738,7 +7724,7 @@ _evas_textblock_node_format_remove_matching(Evas_Textblock_Data *o,
                   EINA_LIST_FOREACH_SAFE(formats, i, next, fnode)
                     {
                        if (_FORMAT_IS_CLOSER_OF(
-                                fnode->orig_format, fstr, fstr_len))
+                                fnode->orig_format, fstr + 1, fstr_len - 1))
                          {
                             fnode = eina_list_data_get(i);
                             formats = eina_list_remove_list(formats, i);
@@ -8519,6 +8505,7 @@ _evas_textblock_node_format_new(Evas_Textblock_Data *o, const char *_format)
         if ((format_len > 0) && format[format_len - 1] == '>')
           {
              format_len--; /* We don't care about '>' */
+             n->orig_format = eina_stringshare_add_length(format, format_len);
              /* Check if it closes itself, i.e. one of the following:
               * 1. Ends with a "/" e.g. "<my_tag/>"
               * 2. Is a paragraph separator */
@@ -8562,8 +8549,6 @@ _evas_textblock_node_format_new(Evas_Textblock_Data *o, const char *_format)
                }
           }
 
-        n->orig_format = eina_stringshare_add_length(format, format_len);
-
         if (!pre_stripped_format)
            pre_stripped_format = n->orig_format;
      }
@@ -8591,12 +8576,23 @@ _evas_textblock_node_format_new(Evas_Textblock_Data *o, const char *_format)
    /* Strip format */
      {
         const char *tmp = pre_stripped_format;
+        int len = strlen(tmp);
         if ((*tmp == '+') || (*tmp == '-'))
           {
+             len--;
              tmp++;
              while (*tmp == ' ') tmp++;
           }
-        n->format = eina_stringshare_add(tmp);
+        if (tmp[len - 1] == '/')
+          {
+             len--;
+          }
+        else if (tmp[0] == '/')
+          {
+             len--;
+             tmp++;
+          }
+        n->format = eina_stringshare_add_length(tmp, len);
      }
    format = n->format;
 
@@ -9286,11 +9282,25 @@ evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt
 {
    static char *ret = NULL;
    char *tmp;
+   const char *stripped;
+   size_t stripped_len;
 
    if (!fmt) return NULL;
 
    if (ret) free(ret);
-   ret = malloc(strlen(fmt->orig_format) + 2 + 1);
+   stripped = fmt->orig_format;
+   stripped_len = strlen(fmt->orig_format);
+   if (stripped[stripped_len - 1] == '/')
+     {
+        stripped_len--;
+     }
+   else if (stripped[0] == '/')
+     {
+        stripped++;
+        stripped_len--;
+     }
+
+   ret = calloc(stripped_len + 2 + 1, sizeof(char));
    tmp = ret;
 
    if (fmt->opener && !fmt->own_closer)
@@ -9303,7 +9313,7 @@ evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt
         *(tmp++) = '-';
         *(tmp++) = ' ';
      }
-   strcpy(tmp, fmt->orig_format);
+   strncpy(tmp, stripped, stripped_len);
    return ret;
 }
 

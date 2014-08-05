@@ -2662,6 +2662,11 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_size_formatted_get(tb, &nw, &nh);
    fail_if((w >= nw) || (h >= nh));
 
+   /* Style tag test */
+   buf = "Test <br><br/><ps><ps/><tab><tab/>";
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(strcmp(buf, evas_object_textblock_text_markup_get(tb)));
+
    /* Style padding. */
    evas_object_textblock_text_markup_set(tb, "Test");
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
