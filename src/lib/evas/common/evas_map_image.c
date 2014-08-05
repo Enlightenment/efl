@@ -86,10 +86,10 @@ _interpolated_clip_span(Span *s, int c1, int c2, Eina_Bool interp_col)
 static void
 _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy EINA_UNUSED, int cw, int ch EINA_UNUSED)
 {
-   int i, y, yp, yy;
+   int i, y, yp;
    int py[4];
    int edge[4][4], edge_num, order[4];
-   FPc uv[4][2], u, v, x, t, uu, vv, edge_h;
+   FPc uv[4][2], u, v, x, t, edge_h;
    DATA32 col[4];
    Eina_Bool interp_col = EINA_FALSE;
    Eina_Bool swapped;
@@ -227,43 +227,11 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
  */
              //compute texture u coordinate
              u = p[e2].u - p[e1].u;
-             uu = u >> FP;
-             if (uu < 0) uu = -uu;
-             if (uu == edge_h)
-               {
-                  yy = ((y << FP) - p[e1].y) >> FP;
-                  if (u > 0)
-                     u = p[e1].u + (yy << FP);
-                  else
-                     u = p[e1].u - (yy << FP) - (FP1 - 1);
-               }
-             else
-               {
-                  if (u >= 0)
-                     u = p[e1].u + ((u * t) / edge_h);
-                  else
-                     u = p[e1].u + (((u * t) - (FP1 / 2)) / edge_h);
-               }
+             u = p[e1].u + ((u * t) / edge_h);
 
              //compute texture v coordinate
              v = p[e2].v - p[e1].v;
-             vv = v >> FP;
-             if (vv < 0) vv = -vv;
-             if (vv == edge_h)
-               {
-                  yy = ((y << FP) - p[e1].y) >> FP;
-                  if (v > 0)
-                     v = p[e1].v + (yy << FP);
-                  else
-                     v = p[e1].v - (yy << FP) - (FP1 - 1);
-               }
-             else
-               {
-                  if (v >= 0)
-                     v = p[e1].v + ((v * t) / edge_h);
-                  else
-                     v = p[e1].v + (((v * t) - (FP1 / 2)) / edge_h);
-               }
+             v = p[e1].v + ((v * t) / edge_h);
 
              // FIXME: 3d accuracy for color too
              t256 = (t << 8) / edge_h; // maybe * 255?
