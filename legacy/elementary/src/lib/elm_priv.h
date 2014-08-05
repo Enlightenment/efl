@@ -182,6 +182,8 @@ struct _Elm_Config
 {
    int           config_version;
    const char   *engine;
+   const char   *accel;
+   unsigned char accel_override;
    unsigned char vsync;
    unsigned char thumbscroll_enable;
    int           thumbscroll_threshold;

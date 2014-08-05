@@ -1304,25 +1304,6 @@ _config_all_changed(void *data,
 }
 
 static void
-_engine_use(void            *data,
-            Evas_Object *obj EINA_UNUSED,
-            void *event_info EINA_UNUSED)
-{
-   Evas_Object *li;
-   const char *selection;
-
-   li = data;
-   selection = elm_object_item_data_get(elm_list_selected_item_get(li));
-
-   if (!strcmp(elm_config_engine_get(), selection))
-     return;
-
-   elm_config_engine_set(selection);
-   elm_config_all_flush();
-   elm_config_save(); /* make sure new engine has its data dir */
-}
-
-static void
 _profile_use(void            *data,
              Evas_Object *obj EINA_UNUSED,
              void *event_info EINA_UNUSED)
@@ -2629,14 +2610,6 @@ _status_config_fonts(Evas_Object *win,
 }
 
 static void
-_engines_list_item_del_cb(void            *data,
-                          Evas_Object *obj EINA_UNUSED,
-                          void *event_info EINA_UNUSED)
-{
-   free(data);
-}
-
-static void
 _profiles_list_item_del_cb(void            *data,
                            Evas_Object *obj EINA_UNUSED,
                            void *event_info EINA_UNUSED)
@@ -3377,148 +3350,86 @@ _status_config_scrolling(Evas_Object *win,
    elm_naviframe_item_simple_push(naviframe, sc);
 }
 
-static char *
-_engine_name_prettify(const char *engine)
+static void
+_cb_accel(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
-   char *ret, *ptr;
+   const char *val = data;
+   const char *ss = elm_config_accel_preference_get();
 
-   ret = strdup(engine);
-   ret[0] -= 0x20;
-
-   while ((ptr = strpbrk(ret, "_")))
+   if ((!ss) || (ss && (strcasecmp(ss, val))))
      {
-        *ptr = ' ';
+        elm_config_accel_preference_set(val);
+        elm_config_all_flush();
+        elm_config_save();
      }
-
-   return ret;
-}
-
-/* FIXME! ideally, we would trim elm_config.c's _elm_engines list at
-   build time, making a getter for is as in ecore-evas. */
-static Eina_Bool
-_elm_engine_supported(const char *engine)
-{
-   const char *engines[] = {
-      "software_x11",
-      "fb",
-      "directfb",
-      "software_16_x11",
-      "software_8_x11",
-      "xrender_x11",
-      "opengl_x11",
-      "software_gdi",
-      "sdl",
-      "software_16_sdl",
-      "opengl_sdl",
-      "ews",
-      "opengl_cocoa",
-      "psl1ght",
-      "wayland_shm",
-      "wayland_egl",
-      NULL
-   };
-
-   unsigned int i;
-
-   for (i = 0; engines[i]; i++)
-     {
-#define ENGINE_COMPARE(name) (!strcmp(engines[i], name))
-        if (ENGINE_COMPARE(engine))
-          return EINA_TRUE;
-#undef ENGINE_COMPARE
-     }
-
-   return EINA_FALSE;
 }
 
 static void
-_engines_list_fill(Evas_Object *l_widget,
-                   Eina_List   *e_names)
+_cb_accel_override(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
-   const char *engine, *cur_engine;
-   void *sel_it = NULL;
-   Eina_List *l;
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool sb = elm_config_accel_preference_override_get();
 
-   if (!e_names)
-     return;
-
-   cur_engine = elm_config_engine_get();
-
-   EINA_LIST_FOREACH(e_names, l, engine)
+   if (val != sb)
      {
-        const char *label;
-        Elm_Object_Item *list_it;
-
-        if (!_elm_engine_supported(engine))
-          continue;
-
-        label = _engine_name_prettify(engine);
-
-        list_it = elm_list_item_append(l_widget, label, NULL, NULL, NULL,
-                                  strdup(engine));
-        elm_object_item_del_cb_set(list_it, _engines_list_item_del_cb);
-        free((void *)label);
-
-        if (!strcmp(cur_engine, engine))
-          sel_it = list_it;
+        elm_config_accel_preference_override_set(val);
+        elm_config_all_flush();
+        elm_config_save();
      }
-
-   if (sel_it) elm_list_item_selected_set(sel_it, EINA_TRUE);
-   elm_list_go(l_widget);
 }
 
 static void
 _status_config_rendering(Evas_Object *win,
                          Evas_Object *naviframe)
 {
-   Evas_Object *li, *bx, *fr, *sp, *pd, *bt;
-   Eina_List *engines;
+   Evas_Object *li, *bx, *ck;
+   Elm_Object_Item *it;
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   fr = elm_frame_add(win);
-   elm_object_text_set(fr, "Available Engines");
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
-
    li = elm_list_add(win);
-   elm_object_content_set(fr, li);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   engines = ecore_evas_engines_get();
-   _engines_list_fill(li, engines);
-   ecore_evas_engines_free(engines);
-
+   elm_box_pack_end(bx, li);
    evas_object_show(li);
-   evas_object_data_set(win, "engines_list", li);
 
-   /////////////////////////////////////////////
-   sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, EINA_TRUE);
-   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, sp);
-   evas_object_show(sp);
+   it = elm_list_item_append(li, "No Acceleration", NULL, NULL,
+                             _cb_accel, "none");
+   if (!elm_config_accel_preference_get() ||
+       (!strcasecmp(elm_config_accel_preference_get(), "none")))
+     elm_list_item_selected_set(it, EINA_TRUE);
 
-   pd = elm_frame_add(win);
-   elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 0.0, 0.0);
-   evas_object_size_hint_align_set(pd, 0.5, 0.5);
-   elm_box_pack_end(bx, pd);
-   evas_object_show(pd);
+   it = elm_list_item_append(li, "OpenGL / OpenGL-ES", NULL, NULL,
+                             _cb_accel, "gl");
+   if (elm_config_accel_preference_get() &&
+       ((!strcasecmp(elm_config_accel_preference_get(), "gl")) ||
+        (!strcasecmp(elm_config_accel_preference_get(), "opengl"))))
+     elm_list_item_selected_set(it, EINA_TRUE);
 
-   bt = elm_button_add(win);
-   evas_object_smart_callback_add(bt, "clicked", _engine_use, li);
-   elm_object_text_set(bt, "Use Engine");
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_object_content_set(pd, bt);
-   evas_object_show(bt);
+   it = elm_list_item_append(li, "3D (any 3D hardware)", NULL, NULL,
+                             _cb_accel, "3d");
+   if (elm_config_accel_preference_get() &&
+       (!strcasecmp(elm_config_accel_preference_get(), "3d")))
+     elm_list_item_selected_set(it, EINA_TRUE);
+
+   it = elm_list_item_append(li, "Hardware (any hardware)", NULL, NULL,
+                             _cb_accel, "hw");
+   if (elm_config_accel_preference_get() &&
+       ((!strcasecmp(elm_config_accel_preference_get(), "hw")) ||
+        (!strcasecmp(elm_config_accel_preference_get(), "hardware")) ||
+        (!strcasecmp(elm_config_accel_preference_get(), "accel"))))
+     elm_list_item_selected_set(it, EINA_TRUE);
+
+   elm_list_go(li);
+
+   CHECK_ADD("Override Preferred Acceleration",
+             "Force any application requesting<br>"
+             "acceleration to use the system<br>"
+             "configured acceleration as above",
+             _cb_accel_override, NULL);
+   elm_check_state_set(ck, elm_config_accel_preference_override_get());
 
    evas_object_data_set(win, "rendering", bx);
    elm_naviframe_item_simple_push(naviframe, bx);

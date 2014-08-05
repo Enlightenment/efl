@@ -1197,6 +1197,56 @@ EAPI int       elm_config_cache_edje_collection_cache_size_get(void);
 EAPI void       elm_config_cache_edje_collection_cache_size_set(int size);
 
 /**
+ * Get the configured vsync flag
+ *
+ * This gets the globally configured vsync flag that asks some backend
+ * engines to use vsync display if possible.
+ *
+ * @return If vsync is enabled
+ * 
+ * @since 1.11
+ */
+EAPI Eina_Bool  elm_config_vsync_get(void);
+
+/**
+ * Set the configured vsync flag
+ *
+ * This sets the globally configured vsync flag that asks some backend
+ * engines to use vsync display if possible.
+ *
+ * @param enabled This should be EINA_TRUE if enabled, or EINA_FALSE if not.
+ *
+ * @since 1.11
+ */
+EAPI void       elm_config_vsync_set(Eina_Bool enabled);
+
+/**
+ * Get the acceleration override preference flag
+ *
+ * This gets the acceleration override preference. This is a flag that
+ * has the global system acceleration preference configureation forcibly
+ * override whatever acceleration preference the application may want.
+ *
+ * @return If acceleration override is enabled
+ *
+ * @since 1.11
+ */
+EAPI Eina_Bool  elm_config_accel_preference_override_get(void);
+
+/**
+ * Set the acceleration override preference flag
+ *
+ * This sets the acceleration override preference. This is a flag that
+ * has the global system acceleration preference configureation forcibly
+ * override whatever acceleration preference the application may want.
+ *
+ * @param enabled This should be EINA_TRUE if enabled, or EINA_FALSE if not.
+ *
+ * @since 1.11
+ */
+EAPI void       elm_config_accel_preference_override_set(Eina_Bool enabled);
+
+/**
  * Get the enable status of the focus highlight
  *
  * This gets whether the highlight on focused objects is enabled or not

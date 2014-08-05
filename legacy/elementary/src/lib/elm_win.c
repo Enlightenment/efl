@@ -2932,8 +2932,11 @@ _accel_is_gl(void)
 {
    const char *env = NULL;
    const char *str;
-   
-   str = _elm_accel_preference;
+
+   if (_elm_config->accel) str = _elm_config->accel;
+   if (_elm_accel_preference) str = _elm_accel_preference;
+   if ((_elm_config->accel_override) && (_elm_config->accel))
+     str = _elm_config->accel;
    env = getenv("ELM_ACCEL");
    if (env) str = env;
    if ((str) &&
@@ -3076,6 +3079,36 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
           {
              enginelist[0] = ENGINE_GET();
              enginelist[1] = NULL;
+          }
+        else if (getenv("DISPLAY"))
+          {
+             if (_accel_is_gl())
+               {
+                  enginelist[0] = ELM_OPENGL_X11;
+                  enginelist[1] = ELM_SOFTWARE_X11;
+                  enginelist[2] = NULL;
+               }
+             else
+               {
+                  enginelist[0] = ELM_SOFTWARE_X11;
+                  enginelist[1] = ELM_OPENGL_X11;
+                  enginelist[2] = NULL;
+               }
+          }
+        else if (getenv("WAYLAND_DISPLAY"))
+          {
+             if (_accel_is_gl())
+               {
+                  enginelist[0] = ELM_WAYLAND_EGL;
+                  enginelist[1] = ELM_WAYLAND_SHM;
+                  enginelist[2] = NULL;
+               }
+             else
+               {
+                  enginelist[0] = ELM_WAYLAND_SHM;
+                  enginelist[1] = ELM_WAYLAND_EGL;
+                  enginelist[2] = NULL;
+               }
           }
         else
           {

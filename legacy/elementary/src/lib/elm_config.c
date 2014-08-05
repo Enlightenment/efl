@@ -480,6 +480,8 @@ _desc_init(void)
 #define D _config_edd
    ELM_CONFIG_VAL(D, T, config_version, T_INT);
    ELM_CONFIG_VAL(D, T, engine, T_STRING);
+   ELM_CONFIG_VAL(D, T, accel, T_STRING);
+   ELM_CONFIG_VAL(D, T, accel_override, T_UCHAR);
    ELM_CONFIG_VAL(D, T, vsync, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_threshold, T_INT);
@@ -1311,6 +1313,7 @@ _config_free(Elm_Config *cfg)
         eina_stringshare_del(fontdir);
      }
    eina_stringshare_del(cfg->engine);
+   eina_stringshare_del(cfg->accel);
    EINA_LIST_FREE(cfg->font_overlays, fo)
      {
         eina_stringshare_del(fo->text_class);
@@ -1501,6 +1504,8 @@ _config_load(void)
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->config_version = ELM_CONFIG_VERSION;
    _elm_config->engine = eina_stringshare_add(DEFAULT_ENGINE);
+   _elm_config->accel = NULL;
+   _elm_config->accel_override = 0;
    _elm_config->vsync = 0;
    _elm_config->thumbscroll_enable = EINA_TRUE;
    _elm_config->thumbscroll_threshold = 24;
@@ -2681,6 +2686,30 @@ elm_config_cache_edje_collection_cache_size_set(int size)
 }
 
 EAPI Eina_Bool
+elm_config_vsync_get(void)
+{
+   return _elm_config->vsync;
+}
+
+EAPI void
+elm_config_vsync_set(Eina_Bool enabled)
+{
+   _elm_config->vsync = enabled;
+}
+
+EAPI Eina_Bool
+elm_config_accel_preference_override_get(void)
+{
+   return _elm_config->accel_override;
+}
+
+EAPI void
+elm_config_accel_preference_override_set(Eina_Bool enabled)
+{
+   _elm_config->accel_override = enabled;
+}
+
+EAPI Eina_Bool
 elm_config_focus_highlight_enabled_get(void)
 {
    return _elm_config->focus_highlight_enable;
@@ -3362,17 +3391,22 @@ elm_config_preferred_engine_set(const char *engine)
 EAPI const char *
 elm_config_accel_preference_get(void)
 {
-   return _elm_accel_preference;
+   if (_elm_accel_preference) return _elm_accel_preference;
+   return _elm_config->accel;
 }
 
 EAPI void
 elm_config_accel_preference_set(const char *pref)
 {
    if (pref)
-     eina_stringshare_replace(&(_elm_accel_preference), pref);
+     {
+        eina_stringshare_replace(&(_elm_accel_preference), pref);
+        eina_stringshare_replace(&(_elm_config->accel), pref);
+     }
    else
      {
         ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
+        ELM_SAFE_FREE(_elm_config->accel, eina_stringshare_del);
      }
 }
 
