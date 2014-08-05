@@ -54,10 +54,6 @@ bin_eolian_cxx_eolian_cxx_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
 if EFL_ENABLE_TESTS
 
-BUILT_SOURCES += \
-	tests/eolian_cxx/callback.eo.c \
-	tests/eolian_cxx/callback.eo.h
-
 check_PROGRAMS += tests/eolian_cxx/eolian_cxx_suite
 TESTS += tests/eolian_cxx/eolian_cxx_suite
 
@@ -68,7 +64,10 @@ tests/eolian_cxx/callback.c \
 tests/eolian_cxx/eolian_cxx_test_callback.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc
 
-tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh
+
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-callback.$(OBJEXT): tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
+
 CLEANFILES += tests/eolian_cxx/callback.eo.hh tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
 
 tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = 	\
