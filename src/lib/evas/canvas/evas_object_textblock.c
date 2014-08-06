@@ -10482,6 +10482,7 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
 {
    Evas_Object_Textblock_Item *it, *last_it = NULL;
    Eina_List *i;
+   Eina_Bool is_bidi = EINA_FALSE;
 
    it = eina_list_data_get(items);
    *w = 0;
@@ -10505,8 +10506,10 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
         /* Add margins. */
         if (it->format)
            *w = it->format->margin.l + it->format->margin.r;
-      }
 
+        if (it->ln && it->ln->par)
+          is_bidi = it->ln->par->is_bidi;
+      }
 
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
@@ -10539,11 +10542,21 @@ loop_advance:
         *w += it->adv;
 
         /* Only conditional if we have bidi support, otherwise, just set it. */
-#ifdef BIDI_SUPPORT
-        if (!last_it || (it->visual_pos > last_it->visual_pos))
-#endif
+        if (it->w > 0)
           {
-             last_it = it;
+#ifdef BIDI_SUPPORT
+             if (is_bidi)
+               {
+                  if (!last_it || (it->visual_pos > last_it->visual_pos))
+                    {
+                       last_it = it;
+                    }
+               }
+             else
+#endif
+               {
+                  last_it = it;
+               }
           }
      }
 
@@ -10645,6 +10658,7 @@ _evas_textblock_size_native_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord *
         EINA_INLIST_FOREACH(o->paragraphs, par)
           {
              Evas_Coord tw, th;
+             _layout_paragraph_render(o, par);
              _size_native_calc_paragraph_size(eo_obj, o, par, &position, &tw, &th);
              if (tw > wmax)
                 wmax = tw;

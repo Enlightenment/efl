@@ -2898,6 +2898,18 @@ START_TEST(evas_textblock_size)
    fail_if((w != nw) || (h != nh));
    fail_if(w <= 0);
 
+   evas_object_textblock_text_markup_set(tb, "i<b>。</b>");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   ck_assert_int_eq(w, nw);
+   ck_assert_int_eq(h, nh);
+
+   evas_object_textblock_text_markup_set(tb, "。<b>i</b>");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   ck_assert_int_eq(w, nw);
+   ck_assert_int_eq(h, nh);
+
    /* This time with margins. */
      {
         Evas_Textblock_Style *newst;
