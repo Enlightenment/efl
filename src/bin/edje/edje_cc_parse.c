@@ -715,14 +715,6 @@ parse(char *data, off_t size)
                     }
                   else
                     {
-                       if (do_params)
-                         {
-                            ERR("parse error %s:%i. additional parameters required for '%s' statement",
-                                file_in, line - 1, (char*)eina_list_last_data_get(stack));
-                            err_show();
-                            exit(-1);
-                         }
-
                        if (new_statement_single())
                          stack_pop();
                     }

@@ -5582,9 +5582,9 @@ static void st_collections_group_parts_part_box_items_item_type(void)
 	s = parse_str(0);
 	if (strcmp(s, "GROUP"))
 	  {
+             ERR("parse error %s:%i. token %s not one of: GROUP.",
+                 file_in, line - 1, s);
 	     free(s);
-	     ERR("parse error %s:%i. token %s not one of: GROUP.",
-		 file_in, line - 1, s);
 	     exit(-1);
 	  }
 	free(s);

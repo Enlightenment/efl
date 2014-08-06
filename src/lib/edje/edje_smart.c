@@ -295,7 +295,7 @@ _edje_object_evas_object_smart_show(Eo *obj, Edje *ed)
 
              if (edg == ed) continue;
              rp = evas_object_data_get(edg->obj, "\377 edje.part_obj");
-             if (rp->chosen_description->visible)
+             if ((rp) && (rp->chosen_description->visible))
                evas_object_show(edg->obj);
           }
      }
