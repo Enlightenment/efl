@@ -72,5 +72,12 @@ interface Efl.File {
             none). */
          }
       }
+      eject @const {
+           /*@
+             Eject the represented object.
+
+             Get rid of and clean the pointed resource.
+             */
+      }
    }
 }
