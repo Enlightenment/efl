@@ -406,7 +406,7 @@ table_example_02:table_example_02.png:0.0 \
 menu_example_01:menu_example_01.png:0.5
 
 if HAVE_CXX11
-SCREENSHOTS = \
+SCREENSHOTS += \
 box_cxx_example_02:box_cxx_example_02.png:1.3
 endif
 
