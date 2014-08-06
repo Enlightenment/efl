@@ -5667,18 +5667,18 @@ _item_del_pre_hook(Elm_Object_Item *item)
 
    if (it->walking > 0)
      {
-     // FIXME: relative will be better to be fixed. it is too harsh.
-      if (it->item->rel)
-        {
-           it->item->rel->item->rel_revs =
-             eina_list_remove(it->item->rel->item->rel_revs, it);
-           it->item->rel = NULL;
-        }
-      if (it->item->rel_revs)
-         {
-           Elm_Gen_Item *tmp;
-           EINA_LIST_FREE(it->item->rel_revs, tmp) tmp->item->rel = NULL;
-         }
+        // FIXME: relative will be better to be fixed. it is too harsh.
+        if (it->item->rel)
+          {
+             it->item->rel->item->rel_revs =
+               eina_list_remove(it->item->rel->item->rel_revs, it);
+             it->item->rel = NULL;
+          }
+        if (it->item->rel_revs)
+          {
+             Elm_Gen_Item *tmp;
+             EINA_LIST_FREE(it->item->rel_revs, tmp) tmp->item->rel = NULL;
+          }
         elm_genlist_item_subitems_clear(item);
         if (sd->show_item == it)
           sd->show_item = NULL;
