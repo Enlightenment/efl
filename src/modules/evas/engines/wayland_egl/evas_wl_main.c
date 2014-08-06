@@ -495,3 +495,52 @@ eng_outbuf_egl_display_get(Outbuf *ob)
 {
    return ob->egl_disp;
 }
+
+Context_3D *
+eng_gl_context_new(Outbuf *ob)
+{
+   Context_3D *ctx;
+   int attrs[3];
+
+   if (!ob) return NULL;
+
+   attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
+   attrs[1] = 2;
+   attrs[3] = EGL_NONE;
+
+   if (!(ctx = calloc(1, sizeof(Context_3D)))) return NULL;
+
+   ctx->context = 
+     eglCreateContext(ob->egl_disp, ob->egl_config, ob->egl_context[0], attrs);
+   if (!ctx->context)
+     {
+        ERR("Could not create egl context %#x", eglGetError());
+        goto err;
+     }
+
+   ctx->display = ob->egl_disp;
+   ctx->surface = ob->egl_surface[0];
+
+   return ctx;
+
+err:
+   free(ctx);
+   return NULL;
+}
+
+void 
+eng_gl_context_free(Context_3D *ctx)
+{
+   eglDestroyContext(ctx->display, ctx->context);
+}
+
+void 
+eng_gl_context_use(Context_3D *ctx)
+{
+   if (eglMakeCurrent(ctx->display, ctx->surface, 
+                      ctx->surface, ctx->context) == EGL_FALSE)
+     {
+        ERR("eglMakeCurrent Failed: %#x", eglGetError());
+     }
+}
+
