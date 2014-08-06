@@ -1968,3 +1968,4 @@ _smart_clip_unset(Evas_Object * obj)
    evas_object_clip_unset(sd->bg);
 }
 
+#include "emotion_object.eo.h"

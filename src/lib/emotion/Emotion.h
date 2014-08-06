@@ -360,6 +360,8 @@ extern "C" {
 EAPI Eina_Bool emotion_init(void);
 EAPI Eina_Bool emotion_shutdown(void);
 
+#include "emotion_object.eo.h"
+
 /**
  * @brief Add an emotion object to the canvas.
  *
