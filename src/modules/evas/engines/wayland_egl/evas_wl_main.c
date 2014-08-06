@@ -8,7 +8,7 @@ static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(struct wl_display *display, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect EINA_UNUSED, int alpha, int rot)
+eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect EINA_UNUSED, int alpha, int rot, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -23,7 +23,7 @@ eng_window_new(struct wl_display *display, struct wl_surface *surface, int scree
      return NULL;
 
    win_count++;
-   gw->disp = display;
+   gw->disp = disp;
    gw->surface = surface;
    gw->screen = screen;
    gw->depth = depth;
@@ -31,6 +31,7 @@ eng_window_new(struct wl_display *display, struct wl_surface *surface, int scree
    gw->h = h;
    gw->alpha = alpha;
    gw->rot = rot;
+   gw->swap_mode = swap_mode;
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = 2;
@@ -164,7 +165,7 @@ eng_window_new(struct wl_display *display, struct wl_surface *surface, int scree
         return NULL;
      }
 
-   if (!(gw->gl_context = evas_gl_common_context_new()))
+   if (!(gw->gl_context = glsym_evas_gl_common_context_new()))
      {
         eng_window_free(gw);
         return NULL;
@@ -174,7 +175,7 @@ eng_window_new(struct wl_display *display, struct wl_surface *surface, int scree
    gw->gl_context->eglctxt = gw->egl_context[0];
 
    eng_window_use(gw);
-   evas_gl_common_context_resize(gw->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
 
    gw->surf = EINA_TRUE;
 
@@ -194,7 +195,7 @@ eng_window_free(Outbuf *gw)
    if (gw->gl_context)
      {
         ref = gw->gl_context->references - 1;
-        evas_gl_common_context_free(gw->gl_context);
+        glsym_evas_gl_common_context_free(gw->gl_context);
      }
 
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
@@ -224,7 +225,7 @@ eng_window_use(Outbuf *gw)
 {
    Eina_Bool force = EINA_FALSE;
 
-   evas_gl_preload_render_lock(eng_window_make_current, gw);
+   glsym_evas_gl_preload_render_lock(eng_preload_make_current, gw);
 
    if (_evas_gl_wl_window)
      {
@@ -236,8 +237,8 @@ eng_window_use(Outbuf *gw)
      {
         if (_evas_gl_wl_window)
           {
-             evas_gl_common_context_use(_evas_gl_wl_window->gl_context);
-             evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
+             glsym_evas_gl_common_context_use(_evas_gl_wl_window->gl_context);
+             glsym_evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
           }
 
         _evas_gl_wl_window = gw;
@@ -254,7 +255,7 @@ eng_window_use(Outbuf *gw)
           }
      }
 
-   if (gw) evas_gl_common_context_use(gw->gl_context);
+   if (gw) glsym_evas_gl_common_context_use(gw->gl_context);
 }
 
 void 
@@ -265,13 +266,14 @@ eng_window_unsurf(Outbuf *gw)
    if (getenv("EVAS_GL_INFO")) printf("unsurf %p\n", gw);
 
    if (_evas_gl_wl_window)
-      evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
+     glsym_evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
+
    if (_evas_gl_wl_window == gw)
      {
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
                        EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface[0] != EGL_NO_SURFACE)
-           eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+          eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
         gw->egl_surface[0] = EGL_NO_SURFACE;
 
         _evas_gl_wl_window = NULL;
@@ -304,25 +306,192 @@ eng_window_resurf(Outbuf *gw)
    gw->surf = EINA_TRUE;
 }
 
-Eina_Bool 
-eng_window_make_current(void *data, void *doit)
+void 
+eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
 {
-   Outbuf *gw;
+   ob->w = w;
+   ob->h = h;
+   ob->rot = rot;
+   eng_window_use(ob);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+}
 
-   if (!(gw = data)) return EINA_FALSE;
+int 
+eng_outbuf_rotation_get(Outbuf *ob)
+{
+   return ob->rot;
+}
 
-   if (doit)
+Render_Engine_Swap_Mode 
+eng_outbuf_swap_mode_get(Outbuf *ob)
+{
+   if ((ob->swap_mode == MODE_AUTO) && (extn_have_buffer_age))
      {
-        if (!eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], 
-                            gw->egl_surface[0], gw->egl_context[0]))
-          return EINA_FALSE;
+        Render_Engine_Swap_Mode swap_mode;
+        EGLint age = 0;
+
+        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface[0], 
+                             EGL_BUFFER_AGE_EXT, &age))
+          age = 0;
+
+        if (age == 1) swap_mode = MODE_COPY;
+        else if (age == 2) swap_mode = MODE_DOUBLE;
+        else if (age == 3) swap_mode = MODE_TRIPLE;
+        else if (age == 4) swap_mode = MODE_QUADRUPLE;
+        else swap_mode = MODE_FULL;
+
+        if ((int)age != ob->prev_age) swap_mode = MODE_FULL;
+        ob->prev_age = age;
+ 
+        return swap_mode;
      }
+
+   return ob->swap_mode;
+}
+
+Eina_Bool 
+eng_outbuf_region_first_rect(Outbuf *ob)
+{
+   ob->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
+
+   glsym_evas_gl_preload_render_lock(eng_preload_make_current, ob);
+
+   eng_window_use(ob);
+   if (!_re_wincheck(ob)) return EINA_TRUE;
+
+   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rot);
+   glsym_evas_gl_common_context_flush(ob->gl_context);
+   glsym_evas_gl_common_context_newframe(ob->gl_context);
+
+   return EINA_FALSE;
+}
+
+void *
+eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx EINA_UNUSED, int *cy EINA_UNUSED, int *cw EINA_UNUSED, int *ch EINA_UNUSED)
+{
+   if ((ob->w == w) && (ob->h == h))
+     ob->gl_context->master_clip.enabled = EINA_FALSE;
    else
      {
-        if (!eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
-                            EGL_NO_SURFACE, EGL_NO_CONTEXT))
-          return EINA_FALSE;
+        ob->gl_context->master_clip.enabled = EINA_TRUE;
+        ob->gl_context->master_clip.x = x;
+        ob->gl_context->master_clip.y = y;
+        ob->gl_context->master_clip.w = w;
+        ob->gl_context->master_clip.h = h;
      }
 
-   return EINA_TRUE;
+   return ob->gl_context->def_surface;
+}
+
+void 
+eng_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
+{
+
+}
+
+void 
+eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+{
+   if (!_re_wincheck(ob)) return;
+   ob->draw.drew = EINA_TRUE;
+   glsym_evas_gl_common_context_flush(ob->gl_context);
+}
+
+void 
+eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
+{
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
+
+   if (!_re_wincheck(ob)) goto end;
+   if (!ob->draw.drew) goto end;
+
+   ob->draw.drew = EINA_FALSE;
+   eng_window_use(ob);
+   glsym_evas_gl_common_context_done(ob->gl_context);
+
+   if (!ob->vsync)
+     {
+        if (ob->info->vsync) eglSwapInterval(ob->egl_disp, 1);
+        else eglSwapInterval(ob->egl_disp, 0);
+        ob->vsync = EINA_TRUE;
+     }
+
+   if (ob->info->callback.pre_swap)
+     ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
+
+   if ((glsym_eglSwapBuffersWithDamage) && (ob->swap_mode != MODE_FULL))
+     {
+        EGLint num = 0, *result = NULL, i = 0;
+        Tilebuf_Rect *r;
+
+        // if partial swaps can be done use re->rects
+        num = eina_inlist_count(EINA_INLIST_GET(rects));
+        if (num > 0)
+          {
+             result = alloca(sizeof(EGLint) * 4 * num);
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+               {
+                  int gw, gh;
+
+                  gw = ob->gl_context->w;
+                  gh = ob->gl_context->h;
+                  switch (ob->rot)
+                    {
+                     case 0:
+                       result[i + 0] = r->x;
+                       result[i + 1] = gh - (r->y + r->h);
+                       result[i + 2] = r->w;
+                       result[i + 3] = r->h;
+                       break;
+                     case 90:
+                       result[i + 0] = r->y;
+                       result[i + 1] = r->x;
+                       result[i + 2] = r->h;
+                       result[i + 3] = r->w;
+                       break;
+                     case 180:
+                       result[i + 0] = gw - (r->x + r->w);
+                       result[i + 1] = r->y;
+                       result[i + 2] = r->w;
+                       result[i + 3] = r->h;
+                       break;
+                     case 270:
+                       result[i + 0] = gh - (r->y + r->h);
+                       result[i + 1] = gw - (r->x + r->w);
+                       result[i + 2] = r->h;
+                       result[i + 3] = r->w;
+                       break;
+                     default:
+                       result[i + 0] = r->x;
+                       result[i + 1] = gh - (r->y + r->h);
+                       result[i + 2] = r->w;
+                       result[i + 3] = r->h;
+                       break;
+                    }
+                  i += 4;
+               }
+             glsym_eglSwapBuffersWithDamage(ob->egl_disp, ob->egl_surface[0],
+                                            result, num);
+          }
+     }
+   else
+      eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+
+   if (ob->info->callback.post_swap)
+     ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
+
+ end:
+   glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
+}
+
+Evas_Engine_GL_Context *
+eng_outbuf_gl_context_get(Outbuf *ob)
+{
+   return ob->gl_context;
+}
+
+void *
+eng_outbuf_egl_display_get(Outbuf *ob)
+{
+   return ob->egl_disp;
 }
