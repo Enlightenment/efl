@@ -1370,6 +1370,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
       focused;
       unfocused;
       wm,rotation,changed;
+      animator,tick;
    }
 
 }
