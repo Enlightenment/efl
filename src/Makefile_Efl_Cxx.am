@@ -5,6 +5,7 @@ if HAVE_CXX11
 generated_efl_cxx_bindings = \
                  lib/efl/interfaces/efl_file.eo.hh \
                  lib/efl/interfaces/efl_image.eo.hh \
+                 lib/efl/interfaces/efl_player.eo.hh \
                  lib/efl/interfaces/efl_text.eo.hh \
                  lib/efl/interfaces/efl_text_properties.eo.hh
 

@@ -1,0 +1,109 @@
+interface Efl.Player {
+   legacy_prefix: null;
+   properties {
+        play {
+             set {
+                  /*@
+                   * @brief Set play/pause state of the media file.
+                   *
+                   * This functions sets the currently playing status of the video. Using this
+                   * function to play or pause the video doesn't alter it's current position.
+                   */
+             }
+             get {
+                  /*@
+                   * @brief Get play/pause state of the media file.
+                   */
+             }
+             values {
+                  bool play; /*@ true if playing, false otherwise. */
+             }
+        }
+        position {
+             set {
+                  /*@
+                   * @brief Set the position in the media file.
+                   *
+                   * @param obj The emotion object whose position will be changed.
+                   * @param sec The position(in seconds) to which the media file will be set.
+                   *
+                   * This functions sets the current position of the media file to @p sec, this
+                   * only works on seekable streams. Setting the position doesn't change the
+                   * playing state of the media file.
+                   */
+             }
+             get {
+                  /*@
+                   * @brief Get the position in the media file.
+                   *
+                   * @param obj The emotion object from which the position will be retrieved.
+                   * @return The position of the media file.
+                   *
+                   * The position is returned as the number of seconds since the beginning of the
+                   * media file.
+                   */
+             }
+             values {
+                  double second; /*@ The position (in seconds). */
+             }
+        }
+        progress {
+             get {
+                  /*@
+                   * @brief Get how much of the file has been played.
+                   *
+                   * This function gets the progress in playing the file, the return value is in
+                   * the [0, 1] range.
+                   */
+             }
+             values {
+                  double progress; /*@ The progress within the [0, 1] range. */
+             }
+        }
+        play_speed {
+             /**
+              * @brief Control the play speed of the media file.
+              *
+              * This function control the speed with which the media file will be played. 1.0
+              * represents the normal speed, 2 double speed, 0.5 half speed and so on.
+              *
+              */
+             set {
+             }
+             get {
+             }
+             values {
+                  double speed; /*@ The play speed in the [0, infinity) range. */
+             }
+        }
+        audio_volume {
+             /**
+              * @brief Control the audio volume.
+              *
+              * Controls the audio volume of the stream being played. This has nothing to do with
+              * the system volume. This volume will be multiplied by the system volume. e.g.:
+              * if the current volume level is 0.5, and the system volume is 50%, it will be
+              * 0.5 * 0.5 = 0.25.
+              */
+             set {
+             }
+             get {
+             }
+             values {
+                  double volume; /*@ The volume level */
+             }
+        }
+        audio_mute {
+             /**
+              * @brief This property controls the audio mute state.
+              */
+             set {
+             }
+             get {
+             }
+             values {
+                  bool mute; /*@ The mute state. True or false. */
+             }
+        }
+   }
+}
