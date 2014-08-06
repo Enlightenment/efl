@@ -2184,7 +2184,7 @@ _item_block_realize(Item_Block *itb)
 }
 
 EOLIAN static void
-_elm_genlist_pan_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Elm_Genlist_Pan_Data *psd)
+_elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
 {
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh;
    Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0;
