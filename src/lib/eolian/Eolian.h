@@ -134,7 +134,7 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_EXPR_UNKNOWN,
+   EOLIAN_EXPR_UNKNOWN = 0,
    EOLIAN_EXPR_INT,
    EOLIAN_EXPR_UINT,
    EOLIAN_EXPR_LONG,
@@ -150,40 +150,6 @@ typedef enum
    EOLIAN_EXPR_UNARY,
    EOLIAN_EXPR_BINARY
 } Eolian_Expression_Type;
-
-typedef enum
-{
-   EOLIAN_BINOP_ADD, /* + */
-   EOLIAN_BINOP_SUB, /* - */
-   EOLIAN_BINOP_MUL, /* * */
-   EOLIAN_BINOP_DIV, /* / */
-   EOLIAN_BINOP_MOD, /* % */
-
-   EOLIAN_BINOP_EQ, /* == */
-   EOLIAN_BINOP_NQ, /* != */
-   EOLIAN_BINOP_GT, /* >  */
-   EOLIAN_BINOP_LT, /* <  */
-   EOLIAN_BINOP_GE, /* >= */
-   EOLIAN_BINOP_LE, /* <= */
-
-   EOLIAN_BINOP_AND, /* && */
-   EOLIAN_BINOP_OR,  /* || */
-
-   EOLIAN_BINOP_BAND, /* &  */
-   EOLIAN_BINOP_BOR,  /* |  */
-   EOLIAN_BINOP_BXOR, /* ^  */
-   EOLIAN_BINOP_LSH,  /* << */
-   EOLIAN_BINOP_RSH   /* >> */
-} Eolian_Binary_Operator;
-
-typedef enum
-{
-   EOLIAN_UNOP_UNM, /* - */
-   EOLIAN_UNOP_UNP, /* + */
-
-   EOLIAN_UNOP_NOT,  /* ! */
-   EOLIAN_UNOP_BNOT, /* ~ */
-} Eolian_Unary_Operator;
 
 /*
  * @brief Parse a given .eo file and fill the database.

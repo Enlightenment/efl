@@ -50,6 +50,7 @@ extern Eina_Hash *_tfilenames;
 
 typedef struct _Eolian_Object
 {
+   const char *file;
    int line;
    int column;
 } Eolian_Object;
@@ -171,8 +172,56 @@ typedef union
    long double        ld;
 } Eolian_Value;
 
+typedef enum
+{
+   EOLIAN_BINOP_ADD, /* + int, float */
+   EOLIAN_BINOP_SUB, /* - int, float */
+   EOLIAN_BINOP_MUL, /* * int, float */
+   EOLIAN_BINOP_DIV, /* / int, float */
+   EOLIAN_BINOP_MOD, /* % int */
+
+   EOLIAN_BINOP_EQ, /* == all types */
+   EOLIAN_BINOP_NQ, /* != all types */
+   EOLIAN_BINOP_GT, /* >  int, float */
+   EOLIAN_BINOP_LT, /* <  int, float */
+   EOLIAN_BINOP_GE, /* >= int, float */
+   EOLIAN_BINOP_LE, /* <= int, float */
+
+   EOLIAN_BINOP_AND, /* && all types */
+   EOLIAN_BINOP_OR,  /* || all types */
+
+   EOLIAN_BINOP_BAND, /* &  int */
+   EOLIAN_BINOP_BOR,  /* |  int */
+   EOLIAN_BINOP_BXOR, /* ^  int */
+   EOLIAN_BINOP_LSH,  /* << int */
+   EOLIAN_BINOP_RSH   /* >> int */
+} Eolian_Binary_Operator;
+
+typedef enum
+{
+   EOLIAN_UNOP_UNM, /* - sint */
+   EOLIAN_UNOP_UNP, /* + sint */
+
+   EOLIAN_UNOP_NOT,  /* ! int, float, bool */
+   EOLIAN_UNOP_BNOT, /* ~ int */
+} Eolian_Unary_Operator;
+
+typedef enum
+{
+   EOLIAN_TYPE_SINT   = 1 << 0,
+   EOLIAN_TYPE_UINT   = 1 << 1,
+   EOLIAN_TYPE_INT    = EOLIAN_TYPE_SINT | EOLIAN_TYPE_UINT,
+   EOLIAN_TYPE_FLOAT  = 1 << 2,
+   EOLIAN_TYPE_BOOL   = 1 << 3,
+   EOLIAN_TYPE_STRING = 1 << 4,
+   EOLIAN_TYPE_NUMBER = EOLIAN_TYPE_INT    | EOLIAN_TYPE_FLOAT,
+   EOLIAN_TYPE_ALL    = EOLIAN_TYPE_NUMBER | EOLIAN_TYPE_BOOL
+                      | EOLIAN_TYPE_STRING
+} Eolian_Type_Mask;
+
 struct _Eolian_Expression
 {
+   Eolian_Object base;
    Eolian_Expression_Type type;
    union
    {

@@ -326,9 +326,13 @@ parse_expr_simple(Eo_Lexer *ls)
    Eolian_Unary_Operator unop = get_unop_id(ls->t.token);
    if (unop >= 0)
      {
+        int line = ls->line_number, col = ls->column;
         Eolian_Expression *exp = parse_expr_bin(ls, UNARY_PRECEDENCE);
         pop_expr(ls);
         expr = push_expr(ls);
+        expr->base.file = get_filename(ls);
+        expr->base.line = line;
+        expr->base.column = col;
         expr->binop = unop;
         expr->type = EOLIAN_EXPR_UNARY;
         expr->expr = exp;
@@ -338,7 +342,11 @@ parse_expr_simple(Eo_Lexer *ls)
      {
       case TOK_NUMBER:
         {
+           int line = ls->line_number, col = ls->column;
            expr = push_expr(ls);
+           expr->base.file = get_filename(ls);
+           expr->base.line = line;
+           expr->base.column = col;
            expr->type = ls->t.kw + 1; /* map Numbers from lexer to expr type */
            expr->value = ls->t.value;
            eo_lexer_get(ls);
@@ -346,7 +354,11 @@ parse_expr_simple(Eo_Lexer *ls)
         }
       case TOK_STRING:
         {
+           int line = ls->line_number, col = ls->column;
            expr = push_expr(ls);
+           expr->base.file = get_filename(ls);
+           expr->base.line = line;
+           expr->base.column = col;
            expr->type = EOLIAN_EXPR_STRING;
            expr->value.s = eina_stringshare_ref(ls->t.value.s);
            eo_lexer_get(ls);
@@ -354,6 +366,7 @@ parse_expr_simple(Eo_Lexer *ls)
         }
       case TOK_VALUE:
         {
+           int line = ls->line_number, col = ls->column;
            switch (ls->t.kw)
              {
               case KW_true:
@@ -374,6 +387,9 @@ parse_expr_simple(Eo_Lexer *ls)
                    break;
                 }
              }
+           expr->base.file = get_filename(ls);
+           expr->base.line = line;
+           expr->base.column = col;
         }
        case '(':
          {
@@ -393,6 +409,7 @@ parse_expr_simple(Eo_Lexer *ls)
 static Eolian_Expression *
 parse_expr_bin(Eo_Lexer *ls, int min_prec)
 {
+   int line = ls->line_number, col = ls->column;
    Eolian_Expression *lhs = parse_expr_simple(ls);
    for (;;)
      {
@@ -405,6 +422,9 @@ parse_expr_bin(Eo_Lexer *ls, int min_prec)
         pop_expr(ls);
         pop_expr(ls);
         bin = push_expr(ls);
+        bin->base.file = get_filename(ls);
+        bin->base.line = line;
+        bin->base.column = col;
         bin->binop = op;
         bin->type = EOLIAN_EXPR_BINARY;
         bin->lhs = lhs;
