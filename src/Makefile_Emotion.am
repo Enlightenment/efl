@@ -16,10 +16,13 @@ lib_LTLIBRARIES += \
 lib/emotion/libemotion.la
 
 installed_emotionmainheadersdir = $(includedir)/emotion-@VMAJ@
-dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h
+dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h \
+                                         lib/emotion/Emotion_Legacy.h \
+                                         lib/emotion/Emotion_Eo.h
 
 nodist_installed_emotionmainheaders_DATA = \
-                                        lib/emotion/emotion_object.eo.h
+                                        lib/emotion/emotion_object.eo.h \
+                                        lib/emotion/emotion_object.eo.legacy.h
 
 # libemotion.la
 lib_emotion_libemotion_la_SOURCES = \

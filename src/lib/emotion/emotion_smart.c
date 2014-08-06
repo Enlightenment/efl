@@ -21,33 +21,37 @@
 
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \
-	char *_e_smart_str; \
-	\
 	if (!o) return; \
-	smart = evas_object_smart_data_get(o); \
+        if (!eo_isa(o, MY_CLASS)) { \
+             ERR("Tried calling on a non-emotion object."); \
+             return; \
+        } \
+	smart = eo_data_scope_get(o, MY_CLASS); \
 	if (!smart) return; \
-	_e_smart_str = (char *)evas_object_type_get(o); \
-	if (!_e_smart_str) return; \
-	if (strcmp(_e_smart_str, type)) return; \
      }
 
 #define E_SMART_OBJ_GET_RETURN(smart, o, type, ret) \
    { \
-      char *_e_smart_str; \
-      \
       if (!o) return ret; \
-      smart = evas_object_smart_data_get(o); \
+      if (!eo_isa(o, MY_CLASS)) { \
+           ERR("Tried calling on a non-emotion object."); \
+           return ret; \
+      } \
+      smart = eo_data_scope_get(o, MY_CLASS); \
       if (!smart) return ret; \
-      _e_smart_str = (char *)evas_object_type_get(o); \
-      if (!_e_smart_str) return ret; \
-      if (strcmp(_e_smart_str, type)) return ret; \
    }
 
 #define E_OBJ_NAME "emotion_object"
 
-typedef struct _Smart_Data Smart_Data;
+#ifdef MY_CLASS
+# undef MY_CLASS
+#endif
 
-struct _Smart_Data
+#define MY_CLASS EMOTION_OBJECT_CLASS
+
+typedef struct _Emotion_Object_Data Emotion_Object_Data;
+
+struct _Emotion_Object_Data
 {
    EINA_REFCOUNT;
    Emotion_Engine_Instance *engine_instance;
@@ -118,22 +122,9 @@ static void _mouse_down(void *data, Evas *ev, Evas_Object *obj, void *event_info
 static void _pos_set_job(void *data);
 static void _pixels_get(void *data, Evas_Object *obj);
 
-static void _smart_init(void);
-static void _smart_add(Evas_Object * obj);
-static void _smart_del(Evas_Object * obj);
-static void _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y);
-static void _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h);
-static void _smart_show(Evas_Object * obj);
-static void _smart_hide(Evas_Object * obj);
-static void _smart_color_set(Evas_Object * obj, int r, int g, int b, int a);
-static void _smart_clip_set(Evas_Object * obj, Evas_Object * clip);
-static void _smart_clip_unset(Evas_Object * obj);
-
 /**********************************/
 /* Globals for the E Video Object */
 /**********************************/
-static Evas_Smart  *smart = NULL;
-
 static const char SIG_FRAME_DECODE[] = "frame_decode";
 static const char SIG_POSITION_UPDATE[] = "position_update";
 static const char SIG_LENGTH_CHANGE[] = "length_change";
@@ -153,25 +144,6 @@ static const char SIG_POSITION_SAVE_SUCCEED[] = "position_save,succeed";
 static const char SIG_POSITION_SAVE_FAILED[] = "position_save,failed";
 static const char SIG_POSITION_LOAD_SUCCEED[] = "position_load,succeed";
 static const char SIG_POSITION_LOAD_FAILED[] = "position_load,failed";
-
-static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-  {SIG_FRAME_DECODE, ""},
-  {SIG_POSITION_UPDATE, ""},
-  {SIG_LENGTH_CHANGE, ""},
-  {SIG_FRAME_RESIZE, ""},
-  {SIG_DECODE_STOP, ""},
-  {SIG_PLAYBACK_STARTED, ""},
-  {SIG_PLAYBACK_FINISHED, ""},
-  {SIG_AUDIO_LEVEL_CHANGE, ""},
-  {SIG_CHANNELS_CHANGE, ""},
-  {SIG_TITLE_CHANGE, ""},
-  {SIG_PROGRESS_CHANGE, ""},
-  {SIG_REF_CHANGE, ""},
-  {SIG_BUTTON_NUM_CHANGE, ""},
-  {SIG_BUTTON_CHANGE, ""},
-  {SIG_OPEN_DONE, ""},
-  {NULL, NULL}
-};
 
 static void
 _emotion_image_data_zero(Evas_Object *img)
@@ -197,7 +169,7 @@ _emotion_image_data_zero(Evas_Object *img)
 }
 
 static void
-_smart_data_free(Smart_Data *sd)
+_smart_data_free(Emotion_Object_Data *sd)
 {
 #ifdef HAVE_EIO
    /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
@@ -229,7 +201,6 @@ _smart_data_free(Smart_Data *sd)
    sd->progress.info = NULL;
    eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
-   free(sd);
 
    /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
    emotion_shutdown();
@@ -238,7 +209,7 @@ _smart_data_free(Smart_Data *sd)
 static void
 _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int vid_w, int vid_h)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    double scale_w, scale_h;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
@@ -276,26 +247,34 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
 EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
-   _smart_init();
-   return evas_object_smart_add(evas, smart);
+   Evas_Object *e;
+   e = eo_add(MY_CLASS, evas);
+   eo_unref(e);
+   return e;
+}
+
+EOLIAN static void
+_emotion_object_eo_base_constructor(Eo *obj, Emotion_Object_Data *pd EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_do(obj, evas_obj_type_set(E_OBJ_NAME));
 }
 
 EAPI Evas_Object *
 emotion_object_image_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return NULL;
    return sd->obj;
 }
 
-EAPI void
-emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *val)
+EOLIAN static void
+_emotion_object_option_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *pd, const char *opt, const char *val)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd = pd;
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if ((!opt) || (!val)) return;
 
    if (strcmp(opt, "video") == 0)
@@ -324,10 +303,10 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
      ERR("Unsupported %s=%s", opt, val);
 }
 
-EAPI Eina_Bool
-emotion_object_init(Evas_Object *obj, const char *module_filename)
+EOLIAN static Eina_Bool
+_emotion_object_engine_set(Eo *obj, Emotion_Object_Data *pd, const char *module_filename)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd = pd;
    const char *file;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
@@ -381,10 +360,12 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
 EAPI Eina_Bool
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_file_set(file, NULL));
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
-
+EOLIAN static Eina_Bool
+_emotion_object_efl_file_file_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, const char *file, const char *key EINA_UNUSED)
+{
    DBG("file=%s", file);
 
    if (!eina_stringshare_replace(&sd->file, file))
@@ -441,14 +422,20 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 EAPI const char *
 emotion_object_file_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   const char *file = NULL;
+   eo_do(obj, efl_file_get(&file, NULL));
+   return file;
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   return sd->file;
+EOLIAN void
+_emotion_object_efl_file_file_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, const char **file, const char **key)
+{
+   if (file) *file = sd->file;
+   if (key) *key = NULL;
 }
 
 static void
-_emotion_aspect_borders_apply(Evas_Object *obj, Smart_Data *sd, int w, int h, int iw, int ih)
+_emotion_aspect_borders_apply(Evas_Object *obj, Emotion_Object_Data *sd, int w, int h, int iw, int ih)
 {
    int x, y;
 
@@ -488,7 +475,7 @@ _emotion_aspect_borders_apply(Evas_Object *obj, Smart_Data *sd, int w, int h, in
 }
 
 static void
-_emotion_object_aspect_border_apply(Evas_Object *obj, Smart_Data *sd, int w, int h)
+_emotion_object_aspect_border_apply(Evas_Object *obj, Emotion_Object_Data *sd, int w, int h)
 {
    int iw, ih;
    double ir;
@@ -575,7 +562,7 @@ _emotion_object_aspect_border_apply(Evas_Object *obj, Smart_Data *sd, int w, int
 EAPI void
 emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    int w, h;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
@@ -592,7 +579,7 @@ emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
 EAPI void
 emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    *l = -sd->crop.l;
@@ -604,7 +591,7 @@ emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b
 EAPI void
 emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
@@ -622,7 +609,7 @@ emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
 EAPI void
 emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_color_get(sd->bg, r, g, b, a);
@@ -631,7 +618,7 @@ emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int 
 EAPI void
 emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    int w, h;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
@@ -647,7 +634,7 @@ emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a)
 EAPI Emotion_Aspect
 emotion_object_keep_aspect_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_ASPECT_KEEP_NONE);
 
@@ -657,9 +644,12 @@ emotion_object_keep_aspect_get(const Evas_Object *obj)
 EAPI void
 emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
-   Smart_Data *sd;
+   eo_do(obj, efl_player_play_set(play));
+}
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+EOLIAN static void
+_emotion_object_efl_player_play_set(Eo *obj, Emotion_Object_Data *sd, Eina_Bool play)
+{
    DBG("play=" FMT_UCHAR ", was=" FMT_UCHAR, play, sd->play);
    if (!sd->engine_instance) return;
    if (!sd->open)
@@ -678,9 +668,12 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 EAPI Eina_Bool
 emotion_object_play_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_player_play_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+EOLIAN static Eina_Bool
+_emotion_object_efl_player_play_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    if (!sd->engine_instance) return EINA_FALSE;
 
    return sd->play;
@@ -689,9 +682,12 @@ emotion_object_play_get(const Evas_Object *obj)
 EAPI void
 emotion_object_position_set(Evas_Object *obj, double sec)
 {
-   Smart_Data *sd;
+   eo_do(obj, efl_player_position_set(sec));
+}
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+EOLIAN static void
+_emotion_object_efl_player_position_set(Eo *obj, Emotion_Object_Data *sd, double sec)
+{
    DBG("sec=%f", sec);
    if (!sd->engine_instance) return;
    if (!sd->open)
@@ -710,9 +706,12 @@ emotion_object_position_set(Evas_Object *obj, double sec)
 EAPI double
 emotion_object_position_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_player_position_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
+EOLIAN static double
+_emotion_object_efl_player_position_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    sd->pos = emotion_engine_instance_pos_get(sd->engine_instance);
    return sd->pos;
 }
@@ -720,7 +719,7 @@ emotion_object_position_get(const Evas_Object *obj)
 EAPI double
 emotion_object_buffer_size_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
    return emotion_engine_instance_buffer_size_get(sd->engine_instance);
@@ -729,7 +728,7 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_seekable_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_seekable(sd->engine_instance);
@@ -738,7 +737,7 @@ emotion_object_seekable_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_video_handled_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_video_handled(sd->engine_instance);
@@ -747,7 +746,7 @@ emotion_object_video_handled_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_audio_handled_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_audio_handled(sd->engine_instance);
@@ -756,7 +755,7 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
 EAPI double
 emotion_object_play_length_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
    sd->len = emotion_engine_instance_len_get(sd->engine_instance);
@@ -766,11 +765,15 @@ emotion_object_play_length_get(const Evas_Object *obj)
 EAPI void
 emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 {
-   Smart_Data *sd;
-
    if (iw) *iw = 0;
    if (ih) *ih = 0;
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+
+   eo_do(obj, efl_image_load_size_get(iw, ih));
+}
+
+EOLIAN static void
+_emotion_object_efl_image_load_size_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, int *iw, int *ih)
+{
    if (iw) *iw = sd->video.w;
    if (ih) *ih = sd->video.h;
 }
@@ -778,27 +781,36 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 EAPI void
 emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
-   Smart_Data *sd;
+   eo_do(obj, efl_image_smooth_scale_set(smooth));
+}
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+EOLIAN static void
+_emotion_object_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, Eina_Bool smooth)
+{
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
 EAPI Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_image_smooth_scale_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+EOLIAN static Eina_Bool
+_emotion_object_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    return evas_object_image_smooth_scale_get(sd->obj);
 }
 
 EAPI double
 emotion_object_ratio_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_image_ratio_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
+EOLIAN static double
+_emotion_object_efl_image_ratio_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    if (!sd->engine_instance) return 0.0;
    return sd->ratio;
 }
@@ -809,7 +821,7 @@ emotion_object_ratio_get(const Evas_Object *obj)
 EAPI void
 emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    emotion_engine_instance_event_feed(sd->engine_instance, ev);
@@ -818,9 +830,12 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 EAPI void
 emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 {
-   Smart_Data *sd;
+   eo_do(obj, efl_player_audio_volume_set(vol));
+}
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+EOLIAN static void
+_emotion_object_efl_player_audio_volume_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, double vol)
+{
    DBG("vol=%f", vol);
    emotion_engine_instance_audio_channel_volume_set(sd->engine_instance, vol);
 }
@@ -828,18 +843,24 @@ emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 EAPI double
 emotion_object_audio_volume_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_player_audio_volume_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
+EOLIAN static double
+_emotion_object_efl_player_audio_volume_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
 }
 
 EAPI void
 emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   Smart_Data *sd;
+   eo_do(obj, efl_player_audio_mute_set(mute));
+}
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+EOLIAN static void
+_emotion_object_efl_player_audio_mute_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, Eina_Bool mute)
+{
    DBG("mute=" FMT_UCHAR, mute);
    emotion_engine_instance_audio_channel_mute_set(sd->engine_instance, mute);
 }
@@ -847,16 +868,19 @@ emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 EAPI Eina_Bool
 emotion_object_audio_mute_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_player_audio_mute_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+EOLIAN static Eina_Bool
+_emotion_object_efl_player_audio_mute_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);
 }
 
 EAPI int
 emotion_object_audio_channel_count(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_audio_channel_count(sd->engine_instance);
@@ -865,7 +889,7 @@ emotion_object_audio_channel_count(const Evas_Object *obj)
 EAPI const char *
 emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return emotion_engine_instance_audio_channel_name_get(sd->engine_instance, channel);
@@ -874,7 +898,7 @@ emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
 EAPI void
 emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
@@ -884,7 +908,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 EAPI int
 emotion_object_audio_channel_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_audio_channel_get(sd->engine_instance);
@@ -893,7 +917,7 @@ emotion_object_audio_channel_get(const Evas_Object *obj)
 EAPI void
 emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
@@ -903,7 +927,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 EAPI Eina_Bool
 emotion_object_video_mute_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_video_channel_mute_get(sd->engine_instance);
@@ -912,7 +936,7 @@ emotion_object_video_mute_get(const Evas_Object *obj)
 EAPI void
 emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("subtitle=%s", filepath);
@@ -922,7 +946,7 @@ emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
 EAPI const char *
 emotion_object_video_subtitle_file_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_video_subtitle_file_get(sd->engine_instance);
@@ -931,7 +955,7 @@ emotion_object_video_subtitle_file_get(const Evas_Object *obj)
 EAPI int
 emotion_object_video_channel_count(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_video_channel_count(sd->engine_instance);
@@ -940,7 +964,7 @@ emotion_object_video_channel_count(const Evas_Object *obj)
 EAPI const char *
 emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return emotion_engine_instance_video_channel_name_get(sd->engine_instance, channel);
@@ -949,7 +973,7 @@ emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
 EAPI void
 emotion_object_video_channel_set(Evas_Object *obj, int channel)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
@@ -959,7 +983,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
 EAPI int
 emotion_object_video_channel_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_video_channel_get(sd->engine_instance);
@@ -968,7 +992,7 @@ emotion_object_video_channel_get(const Evas_Object *obj)
 EAPI void
 emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
@@ -978,7 +1002,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 EAPI Eina_Bool
 emotion_object_spu_mute_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_spu_channel_mute_get(sd->engine_instance);
@@ -987,7 +1011,7 @@ emotion_object_spu_mute_get(const Evas_Object *obj)
 EAPI int
 emotion_object_spu_channel_count(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_spu_channel_count(sd->engine_instance);
@@ -996,7 +1020,7 @@ emotion_object_spu_channel_count(const Evas_Object *obj)
 EAPI const char *
 emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return emotion_engine_instance_spu_channel_name_get(sd->engine_instance, channel);
@@ -1005,7 +1029,7 @@ emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
 EAPI void
 emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
@@ -1015,7 +1039,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 EAPI int
 emotion_object_spu_channel_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_spu_channel_get(sd->engine_instance);
@@ -1024,7 +1048,7 @@ emotion_object_spu_channel_get(const Evas_Object *obj)
 EAPI int
 emotion_object_chapter_count(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_chapter_count(sd->engine_instance);
@@ -1033,7 +1057,7 @@ emotion_object_chapter_count(const Evas_Object *obj)
 EAPI void
 emotion_object_chapter_set(Evas_Object *obj, int chapter)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("chapter=%d", chapter);
@@ -1043,7 +1067,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
 EAPI int
 emotion_object_chapter_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_chapter_get(sd->engine_instance);
@@ -1052,7 +1076,7 @@ emotion_object_chapter_get(const Evas_Object *obj)
 EAPI const char *
 emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return emotion_engine_instance_chapter_name_get(sd->engine_instance, chapter);
@@ -1061,7 +1085,7 @@ emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
 EAPI void
 emotion_object_play_speed_set(Evas_Object *obj, double speed)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("speed=%f", speed);
@@ -1071,7 +1095,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
 EAPI double
 emotion_object_play_speed_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
    return emotion_engine_instance_speed_get(sd->engine_instance);
@@ -1080,7 +1104,7 @@ emotion_object_play_speed_get(const Evas_Object *obj)
 EAPI void
 emotion_object_eject(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    emotion_engine_instance_eject(sd->engine_instance);
@@ -1089,7 +1113,7 @@ emotion_object_eject(Evas_Object *obj)
 EAPI const char *
 emotion_object_title_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return sd->title;
@@ -1098,7 +1122,7 @@ emotion_object_title_get(const Evas_Object *obj)
 EAPI const char *
 emotion_object_progress_info_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return sd->progress.info;
@@ -1107,16 +1131,19 @@ emotion_object_progress_info_get(const Evas_Object *obj)
 EAPI double
 emotion_object_progress_status_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   return eo_do(obj, efl_player_progress_get());
+}
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
+EOLIAN static double
+_emotion_object_efl_player_progress_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
    return sd->progress.stat;
 }
 
 EAPI const char *
 emotion_object_ref_file_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return sd->ref.file;
@@ -1125,7 +1152,7 @@ emotion_object_ref_file_get(const Evas_Object *obj)
 EAPI int
 emotion_object_ref_num_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return sd->ref.num;
@@ -1134,7 +1161,7 @@ emotion_object_ref_num_get(const Evas_Object *obj)
 EAPI int
 emotion_object_spu_button_count_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return sd->spu.button_num;
@@ -1143,7 +1170,7 @@ emotion_object_spu_button_count_get(const Evas_Object *obj)
 EAPI int
 emotion_object_spu_button_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return sd->spu.button;
@@ -1152,7 +1179,7 @@ emotion_object_spu_button_get(const Evas_Object *obj)
 EAPI const char *
 emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    int id;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
@@ -1190,7 +1217,7 @@ emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 EAPI void
 emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("visualization=%d", visualization);
@@ -1200,7 +1227,7 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 EAPI Emotion_Vis
 emotion_object_vis_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_VIS_NONE);
    return emotion_engine_instance_vis_get(sd->engine_instance);
@@ -1209,7 +1236,7 @@ emotion_object_vis_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_vis_supported(sd->engine_instance, visualization);
@@ -1218,7 +1245,7 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 EAPI void
 emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    emotion_engine_instance_priority_set(sd->engine_instance, priority);
@@ -1227,7 +1254,7 @@ emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
 EAPI Eina_Bool
 emotion_object_priority_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    return emotion_engine_instance_priority_get(sd->engine_instance);
@@ -1235,7 +1262,7 @@ emotion_object_priority_get(const Evas_Object *obj)
 
 #ifdef HAVE_EIO
 static void
-_eio_load_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
+_eio_load_xattr_cleanup(Emotion_Object_Data *sd, Eio_File *handler)
 {
    if (handler == sd->load_xattr) sd->load_xattr = NULL;
 
@@ -1250,7 +1277,7 @@ _eio_load_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
 static void
 _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
 {
-   Smart_Data *sd = data;
+   Emotion_Object_Data *sd = data;
 
    emotion_object_position_set(evas_object_smart_parent_get(sd->obj), xattr_double);
    evas_object_smart_callback_call(evas_object_smart_parent_get(sd->obj), SIG_POSITION_LOAD_SUCCEED, NULL);
@@ -1260,7 +1287,7 @@ _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
 static void
 _eio_load_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
-   Smart_Data *sd = data;
+   Emotion_Object_Data *sd = data;
 
    evas_object_smart_callback_call(evas_object_smart_parent_get(sd->obj), SIG_POSITION_LOAD_FAILED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
@@ -1270,7 +1297,7 @@ _eio_load_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 EAPI void
 emotion_object_last_position_load(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    const char *tmp;
 #ifndef HAVE_EIO
    double xattr;
@@ -1311,7 +1338,7 @@ emotion_object_last_position_load(Evas_Object *obj)
 
 #ifdef HAVE_EIO
 static void
-_eio_save_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
+_eio_save_xattr_cleanup(Emotion_Object_Data *sd, Eio_File *handler)
 {
    if (handler == sd->save_xattr) sd->save_xattr = NULL;
 
@@ -1326,7 +1353,7 @@ _eio_save_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
 static void
 _eio_save_xattr_done(void *data, Eio_File *handler)
 {
-   Smart_Data *sd = data;
+   Emotion_Object_Data *sd = data;
 
    evas_object_smart_callback_call(sd->obj, SIG_POSITION_SAVE_SUCCEED, NULL);
    _eio_save_xattr_cleanup(sd, handler);
@@ -1335,7 +1362,7 @@ _eio_save_xattr_done(void *data, Eio_File *handler)
 static void
 _eio_save_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
-   Smart_Data *sd = data;
+   Emotion_Object_Data *sd = data;
 
    evas_object_smart_callback_call(sd->obj, SIG_POSITION_SAVE_FAILED, NULL);
    _eio_save_xattr_cleanup(sd, handler);
@@ -1345,7 +1372,7 @@ _eio_save_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 EAPI void
 emotion_object_last_position_save(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    const char *tmp;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
@@ -1381,7 +1408,7 @@ emotion_object_last_position_save(Evas_Object *obj)
 EAPI void
 emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    switch (state)
@@ -1404,7 +1431,7 @@ emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
 EAPI Emotion_Suspend
 emotion_object_suspend_get(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_WAKEUP);
    return sd->state;
@@ -1417,7 +1444,7 @@ emotion_object_suspend_get(Evas_Object *obj)
 EAPI void *
 _emotion_video_get(const Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
    return emotion_engine_instance_data_get(sd->engine_instance);
@@ -1427,7 +1454,7 @@ static Eina_Bool
 _emotion_frame_anim(void *data)
 {
    Evas_Object *obj = data;
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
 
@@ -1441,7 +1468,7 @@ _emotion_frame_anim(void *data)
 EAPI void
 _emotion_frame_new(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
@@ -1451,7 +1478,7 @@ _emotion_frame_new(Evas_Object *obj)
 EAPI void
 _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    int npos = 0, nlen = 0;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
@@ -1466,7 +1493,7 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
 EAPI void
 _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    double tmp;
    int changed = 0;
 
@@ -1498,7 +1525,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 EAPI void
 _emotion_image_reset(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    _emotion_image_data_zero(sd->obj);
@@ -1507,7 +1534,7 @@ _emotion_image_reset(Evas_Object *obj)
 EAPI void
 _emotion_decode_stop(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (sd->play)
@@ -1520,7 +1547,7 @@ _emotion_decode_stop(Evas_Object *obj)
 EAPI void
 _emotion_open_done(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->open = 1;
@@ -1553,7 +1580,7 @@ _emotion_audio_level_change(Evas_Object *obj)
 EAPI void
 _emotion_channels_change(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_smart_callback_call(obj, SIG_CHANNELS_CHANGE, NULL);
@@ -1562,7 +1589,7 @@ _emotion_channels_change(Evas_Object *obj)
 EAPI void
 _emotion_title_set(Evas_Object *obj, char *title)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    eina_stringshare_replace(&sd->title, title);
@@ -1572,7 +1599,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
 EAPI void
 _emotion_progress_set(Evas_Object *obj, char *info, double st)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    eina_stringshare_replace(&sd->progress.info, info);
@@ -1583,7 +1610,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double st)
 EAPI void
 _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    eina_stringshare_replace(&sd->ref.file, file);
@@ -1594,7 +1621,7 @@ _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
 EAPI void
 _emotion_spu_button_num_set(Evas_Object *obj, int num)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->spu.button_num = num;
@@ -1604,7 +1631,7 @@ _emotion_spu_button_num_set(Evas_Object *obj, int num)
 EAPI void
 _emotion_spu_button_set(Evas_Object *obj, int button)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->spu.button = button;
@@ -1614,7 +1641,7 @@ _emotion_spu_button_set(Evas_Object *obj, int button)
 EAPI void
 _emotion_seek_done(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (sd->seeking)
@@ -1627,7 +1654,7 @@ _emotion_seek_done(Evas_Object *obj)
 EAPI void
 _emotion_frame_refill(Evas_Object *obj, double w, double h)
 {
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (sd->fill.w != w || sd->fill.h != h)
@@ -1665,7 +1692,7 @@ static void
 _mouse_move(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *e;
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    int x, y, iw, ih;
    Evas_Coord ox, oy, ow, oh;
 
@@ -1683,7 +1710,7 @@ static void
 _mouse_down(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *e;
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    int x, y, iw, ih;
    Evas_Coord ox, oy, ow, oh;
 
@@ -1701,7 +1728,7 @@ static void
 _pos_set_job(void *data)
 {
    Evas_Object *obj;
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
 
    obj = data;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
@@ -1720,7 +1747,7 @@ static void
 _pixels_get(void *data, Evas_Object *obj)
 {
    int iw, ih, w, h;
-   Smart_Data *sd;
+   Emotion_Object_Data *sd;
    Emotion_Format format;
    unsigned char *bgra_data;
 
@@ -1776,38 +1803,10 @@ _pixels_get(void *data, Evas_Object *obj)
 /* Internal smart object required routines */
 /*******************************************/
 
-static void
-_smart_init(void)
+EOLIAN static void
+_emotion_object_evas_object_smart_add(Evas_Object *obj, Emotion_Object_Data *sd)
 {
-   static Evas_Smart_Class sc =
-     EVAS_SMART_CLASS_INIT_NAME_VERSION(E_OBJ_NAME);
-
-   if (smart) return;
-
-   if (!sc.add)
-     {
-        sc.add = _smart_add;
-        sc.del = _smart_del;
-        sc.move = _smart_move;
-        sc.resize = _smart_resize;
-        sc.show = _smart_show;
-        sc.hide = _smart_hide;
-        sc.color_set = _smart_color_set;
-        sc.clip_set = _smart_clip_set;
-        sc.clip_unset = _smart_clip_unset;
-        sc.callbacks = _smart_callbacks;
-     }
-   smart = evas_smart_class_new(&sc);
-}
-
-static void
-_smart_add(Evas_Object * obj)
-{
-   Smart_Data *sd;
    unsigned int *pixel;
-
-   sd = calloc(1, sizeof(Smart_Data));
-   if (!sd) return;
 
    /* TODO: remove legacy: emotion used to have no init, call automatically */
    emotion_init();
@@ -1838,12 +1837,9 @@ _smart_add(Evas_Object * obj)
    evas_object_smart_data_set(obj, sd);
 }
 
-static void
-_smart_del(Evas_Object * obj)
+EOLIAN static void
+_emotion_object_evas_object_smart_del(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
-   Smart_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (sd->engine_instance)
      {
@@ -1873,40 +1869,28 @@ _smart_del(Evas_Object * obj)
      _smart_data_free(sd);
 }
 
-static void
-_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
+EOLIAN static void
+_emotion_object_evas_object_smart_move(Evas_Object *obj, Emotion_Object_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   Smart_Data *sd;
    int w, h;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    _clipper_position_size_update(obj, x, y, w, h, sd->video.w, sd->video.h);
    evas_object_move(sd->bg, x, y);
 }
 
-static void
-_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
+EOLIAN static void
+_emotion_object_evas_object_smart_resize(Evas_Object *obj, Emotion_Object_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   Smart_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-
    _emotion_object_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
 }
 
-static void
-_smart_show(Evas_Object * obj)
+EOLIAN static void
+_emotion_object_evas_object_smart_show(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
-   Smart_Data *sd;
    int a;
 
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
    evas_object_show(sd->obj);
    if (sd->crop.clipper)
      evas_object_show(sd->crop.clipper);
@@ -1916,37 +1900,25 @@ _smart_show(Evas_Object * obj)
      evas_object_show(sd->bg);
 }
 
-static void
-_smart_hide(Evas_Object * obj)
+EOLIAN static void
+_emotion_object_evas_object_smart_hide(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
-   Smart_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
    evas_object_hide(sd->obj);
    if (sd->crop.clipper)
      evas_object_hide(sd->crop.clipper);
    evas_object_hide(sd->bg);
 }
 
-static void
-_smart_color_set(Evas_Object * obj, int r, int g, int b, int a)
+EOLIAN static void
+_emotion_object_evas_object_smart_color_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, int r, int g, int b, int a)
 {
-   Smart_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
    evas_object_color_set(sd->obj, r, g, b, a);
    evas_object_color_set(sd->crop.clipper, r, g, b, a);
 }
 
-static void
-_smart_clip_set(Evas_Object * obj, Evas_Object * clip)
+EOLIAN static void
+_emotion_object_evas_object_smart_clip_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, Evas_Object * clip)
 {
-   Smart_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
    if (sd->crop.clipper)
      evas_object_clip_set(sd->crop.clipper, clip);
    else
@@ -1954,13 +1926,9 @@ _smart_clip_set(Evas_Object * obj, Evas_Object * clip)
    evas_object_clip_set(sd->bg, clip);
 }
 
-static void
-_smart_clip_unset(Evas_Object * obj)
+EOLIAN static void
+_emotion_object_evas_object_smart_clip_unset(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
-   Smart_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
    if (sd->crop.clipper)
      evas_object_clip_unset(sd->crop.clipper);
    else
@@ -1968,4 +1936,4 @@ _smart_clip_unset(Evas_Object * obj)
    evas_object_clip_unset(sd->bg);
 }
 
-#include "emotion_object.eo.h"
+#include "emotion_object.eo.c"

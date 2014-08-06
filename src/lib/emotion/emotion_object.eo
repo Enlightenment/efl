@@ -1,4 +1,4 @@
-class Emotion.Object (Efl.File, Efl.Player, Efl.Image) {
+class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
    eo_prefix: emotion_obj;
    properties {
         option {
@@ -53,6 +53,16 @@ class Emotion.Object (Efl.File, Efl.Player, Efl.Image) {
         }
    }
    implements {
+        Eo.Base.constructor;
+        Evas.Object_Smart.add;
+        Evas.Object_Smart.del;
+        Evas.Object_Smart.move;
+        Evas.Object_Smart.resize;
+        Evas.Object_Smart.show;
+        Evas.Object_Smart.hide;
+        Evas.Object_Smart.color.set;
+        Evas.Object_Smart.clip.set;
+        Evas.Object_Smart.clip_unset;
         Efl.File.file.set;
         Efl.File.file.get;
         Efl.Player.play.set;
@@ -68,6 +78,27 @@ class Emotion.Object (Efl.File, Efl.Player, Efl.Image) {
         Efl.Image.ratio.get;
         Efl.Image.smooth_scale.set;
         Efl.Image.smooth_scale.get;
+   }
+   events {
+        frame_decode;
+        position_update;
+        length_change;
+        frame_resize;
+        decode_stop;
+        playback_started;
+        playback_finished;
+        audio_level_change;
+        channels_change;
+        title_change;
+        progress_change;
+        ref_change;
+        button_num_change;
+        button_change;
+        open_done;
+        position_save,succeed;
+        position_save,failed;
+        position_load,succeed;
+        position_load,failed;
    }
 }
 
