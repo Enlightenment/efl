@@ -25,7 +25,8 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 
         ee2 = evas_object_data_get(bdata->image, "Ecore_Evas_Parent");
         evas_object_del(bdata->image);
-        ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
+        if (ee2)
+          ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
      }
    else
      {
