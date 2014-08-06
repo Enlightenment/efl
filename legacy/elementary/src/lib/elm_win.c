@@ -2931,7 +2931,7 @@ static Eina_Bool
 _accel_is_gl(void)
 {
    const char *env = NULL;
-   const char *str;
+   const char *str = NULL;
 
    if (_elm_config->accel) str = _elm_config->accel;
    if (_elm_accel_preference) str = _elm_accel_preference;
