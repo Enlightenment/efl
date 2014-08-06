@@ -1036,6 +1036,11 @@ body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
+   if (ls->t.token == TOK_COMMENT)
+     {
+        /* just consume the comment for now */
+        eo_lexer_get(ls);
+     }
    for (;;) switch (ls->t.kw)
      {
       case KW_get:
