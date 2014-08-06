@@ -52,5 +52,15 @@ interface Efl.Image {
             bool smooth_scale; /*@ Whether to use smooth scale or not. */
          }
       }
+      ratio {
+         get {
+            /*@
+              The native ration of the image object
+            */
+         }
+         values {
+            double ratio; /*@ The image's ratio */
+         }
+      }
    }
 }
