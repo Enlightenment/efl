@@ -51,6 +51,9 @@ m4_define([_EFL_CXX_COMPILE_STDCXX_11_testbody], [
     check_type c;
     check_type&& cr = static_cast<check_type&&>(c);
 
+    struct A { A(int); };
+    struct B : A { using A::A; };  // inheriting constructors
+
     auto d = a;
 ])
 
