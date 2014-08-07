@@ -1881,11 +1881,11 @@ st_images_set_image_size(void)
         border
     @parameters
         [left] [right] [top] [bottom]
-    @since 1.8
     @effect
         If set, the area (in pixels) of each side of the image will be
         displayed as a fixed size border, from the side -> inwards, preventing
         the corners from being changed on a resize.
+    @since 1.8
     @endproperty
 */
 static void
@@ -1910,7 +1910,6 @@ st_images_set_image_border(void)
         border_scale_by
     @parameters
         0.0 or bigger (0.0 or 1.0 to turn it off)
-    @since 1.8
     @effect
         If border scaling is enabled then normally the OUTPUT border sizes
         (e.g. if 3 pixels on the left edge are set as a border, then normally
@@ -1920,6 +1919,7 @@ st_images_set_image_border(void)
         factor by this multiplier, allowing the creation of "supersampled"
         borders to make much higher resolution outputs possible by always using
         the highest resolution artwork and then runtime scaling it down.
+    @since 1.8
     @endproperty
 */
 static void
@@ -2551,8 +2551,9 @@ st_collections_base_scale(void)
         @li COMP: Lossless compression.
         @li LOSSY [-0.1  - 1.0]: Lossy compression with quality from 0 to 1.0.
         @li AS_IS: Check for re-encoding, no compression/encoding, just write the file information as it is.
+
+    @since 1.1
     @endproperty
-    @since 1.1.0
  */
 static void
 st_collections_group_sound_sample_name(void)
@@ -2619,8 +2620,8 @@ st_collections_group_sound_sample_name(void)
     @effect
         The Sound source file name (Source can be mono/stereo WAV file.
         Only files with 44.1 KHz sample rate supported now)
+    @since 1.1
     @endproperty
-    @since 1.1.0
  */
 static void
 st_collections_group_sound_sample_source(void)
@@ -2648,8 +2649,8 @@ st_collections_group_sound_sample_source(void)
         [tone name] [frequency]
     @effect
         sound of specific frequency
+    @since 1.1
     @endproperty
-    @since 1.1.0
  */
 static void
 st_collections_group_sound_tone(void)
@@ -2721,8 +2722,8 @@ st_collections_group_sound_tone(void)
 
     @description
         The "vibrations" block contains a list of one or more vibration sample.
-    @endblock
     @since 1.10
+    @endblock
 */
 
 /**
@@ -2748,8 +2749,8 @@ st_collections_group_sound_tone(void)
     @effect
         Used to include each vibration file. The full path to the directory holding
         the vibrations can be defined later with edje_cc's "-vd" option.
-    @endproperty
     @since 1.10
+    @endproperty
  */
 static void
 st_collections_group_vibration_sample_name(void)
@@ -2802,8 +2803,8 @@ st_collections_group_vibration_sample_name(void)
         [vibration file name]
     @effect
         The Vibration source file name
-    @endproperty
     @since 1.10
+    @endproperty
  */
 static void
 st_collections_group_vibration_sample_source(void)
@@ -3167,8 +3168,8 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
         will inhibit edje_cc resolving of programs and parts that may
         not exist in this group, but are located in the group which is inheriting
         this group.
-    @endproperty
     @since 1.10
+    @endproperty
 */
 static void
 st_collections_group_inherit_only(void)
@@ -3193,8 +3194,8 @@ st_collections_group_inherit_only(void)
         The resulting program will have all of the parts/programs within the specified
         group added as targets.
         At least one part/program MUST be specified.
-    @endproperty
     @since 1.10
+    @endproperty
 */
 static void
 st_collections_group_target_group(void)
@@ -3241,8 +3242,8 @@ st_collections_group_target_group(void)
         to fix that).
         @warning When inheriting any parts, descriptions without state names are NOT
         allowed.
+    @since 1.10
     @endproperty
-    @since 1.1.0
 */
 static void
 st_collections_group_inherit(void)
@@ -3523,7 +3524,7 @@ st_collections_group_script_only(void)
         For example, running an Embryo script which calls EDC which has a
         script{} block is unsafe, and the outer-most (first) Embryo stack is GUARANTEED
         to be corrupted. Only use this flag if you are sure that you know what you are doing.
-        @since 1.10
+    @since 1.10
     @endproperty
 */
 static void
@@ -4262,8 +4263,8 @@ _part_free(Edje_Part *ep)
         ALL existing attributes, except part name, are overwritten.
         @warning When inheriting any parts, descriptions without state names are NOT
         allowed.
-    @endproperty
     @since 1.10
+    @endproperty
 */
 static void
 st_collections_group_parts_part_inherit(void)
@@ -4357,8 +4358,8 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
         Removes the listed programs from an inherited group. Removing nonexistent
         programs is not allowed.
         This will break program sequences if a program in the middle of the sequence is removed.
-    @endproperty
     @since 1.10
+    @endproperty
 */
 static void
 st_collections_group_program_remove(void)
@@ -4450,8 +4451,8 @@ _part_name_check(void)
     @effect
         Removes the listed parts from an inherited group. Removing nonexistent
         parts is not allowed.
-    @endproperty
     @since 1.10
+    @endproperty
 */
 static void
 st_collections_group_part_remove(void)
@@ -4606,8 +4607,9 @@ st_collections_group_parts_part_type(void)
             @li BOUNDARY_LEFT
             @li BOUNDARY_FRONT
             @li BOUNDARY_BACK
+
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -4673,8 +4675,8 @@ st_collections_group_parts_part_physics_body(void)
         Nested part inherits it's location relatively to the parent part.
         To declare a nested part just start a new part within current part decl.
         You must define parent part name before adding nested parts.
+    @since 1.7
     @endproperty
-    @since 1.7.0
 */
 
 /**
@@ -4687,8 +4689,8 @@ st_collections_group_parts_part_physics_body(void)
         The part's name which this part is inserted before. One part cannot
         have both insert_before and insert_after. One part cannot refer
         more than one by insert_before.
+    @since 1.1
     @endproperty
-    @since 1.1.0
 */
 static void
 st_collections_group_parts_part_insert_before(void)
@@ -4710,8 +4712,8 @@ st_collections_group_parts_part_insert_before(void)
         The part's name which this part is inserted after. One part cannot
         have both insert_before and insert_after. One part cannot refer
         more than one by insert_after.
+    @since 1.1
     @endproperty
-    @since 1.1.0
 */
 static void
 st_collections_group_parts_part_insert_after(void)
@@ -6605,8 +6607,8 @@ st_collections_group_parts_part_description_hid(void)
 	Emit a signal when the part size change from zero or to a zero size
 	('limit,width,over', 'limit,width,zero'). By default no signal are
 	emitted.
+    @since 1.7
     @endproperty
-    @since 1.7.0
 */
 static void
 st_collections_group_parts_part_description_limit(void)
@@ -6732,8 +6734,8 @@ st_collections_group_parts_part_description_min(void)
     @effect
         A multiplier FORCIBLY applied to whatever minimum size is only during
         minimum size calculation.
-    @endproperty
     @since 1.2
+    @endproperty
 */
 static void
 st_collections_group_parts_part_description_minmul(void)
@@ -8176,8 +8178,8 @@ st_collections_group_parts_part_description_text_size(void)
     @effect
         Sets the allowed font size for the text part. Setting min and max to 0
         means we won't restrict the sizing (default).
+    @since 1.1
     @endproperty
-    @since 1.1.0
 */
 static void
 st_collections_group_parts_part_description_text_size_range(void)
@@ -8951,8 +8953,8 @@ st_collections_group_parts_part_description_table_min(void)
         It is a quantitative measure of an object's resistance to the change of
         its speed. If mass is set to 0 the body will have infinite mass,
         so it will be immovable, static.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 
 #ifdef HAVE_EPHYSICS
@@ -8981,8 +8983,8 @@ st_collections_group_parts_part_description_physics_mass(void)
         @li inelastically collide for 0 < COR < 1;
         @li completelly stop (no bouncing at all) for COR == 0.
 
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 
 #ifdef HAVE_EPHYSICS
@@ -9011,8 +9013,8 @@ st_collections_group_parts_part_description_physics_restitution(void)
         By default friction value is 0.5 and simulation resulsts will be better
         when friction in non-zero.
 
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 
 #ifdef HAVE_EPHYSICS
@@ -9037,8 +9039,8 @@ st_collections_group_parts_part_description_physics_friction(void)
         If disabled, when the state is set, the body will be moved to
         the position described by the blocks rel1/rel2.
         Default is 1 (enabled).
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9063,8 +9065,8 @@ st_collections_group_parts_part_description_physics_ignore_part_pos(void)
         reduction, with a force applied to it - "like" air resistance.
         The force is applied to slow it down.
         Values should be between 0.0 and 1.0, and are set to 0 by default.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9095,8 +9097,8 @@ st_collections_group_parts_part_description_physics_damping(void)
         the rigid body is to be deactivated.
         By default linear threshold is 24 pixels / second and angular is
         57.29 degrees / sec (1 rad/sec).
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9123,15 +9125,16 @@ st_collections_group_parts_part_description_physics_sleep(void)
         So if a material different of CUSTOM is set, the properties cited above
         won't be considered.
         Valid types:
-          * CUSTOM
-          * CONCRETE
-          * IRON
-          * PLASTIC
-          * POLYSTYRENE
-          * RUBBER
-          * WOOD
+          @li CUSTOM
+          @li CONCRETE
+          @li IRON
+          @li PLASTIC
+          @li POLYSTYRENE
+          @li RUBBER
+          @li WOOD
+
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9161,8 +9164,8 @@ st_collections_group_parts_part_description_physics_material(void)
         It will set the body mass considering its volume. While a density is
         set, resizing a body will always recalculate its mass.
         When a mass is explicitely set the density will be unset.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9187,8 +9190,8 @@ st_collections_group_parts_part_description_physics_density(void)
         soft body deformation, so bare in mind that the bodies mass must also
         be changed to have different deformation results.
         Valid values vary from 0.0 to 1.0. Only works on soft bodies and cloths.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9210,8 +9213,8 @@ st_collections_group_parts_part_description_physics_hardness(void)
         Set body to be affected by world's light or not.
         It won't be respected if world's property "all_bodies" is enabled.
         Disabled by default (0).
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9231,8 +9234,8 @@ st_collections_group_parts_part_description_physics_light_on(void)
         [body position in z axis]
     @effect
         Defines body position in z axis. It's set to -15 by default.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9252,8 +9255,8 @@ st_collections_group_parts_part_description_physics_z(void)
         [body's depth]
     @effect
         Defines body's depth (z axis). It's set to 30 by default.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9275,8 +9278,8 @@ st_collections_group_parts_part_description_physics_depth(void)
         This enables backface culling (when the rotated part that normally faces
         the camera is facing away after being rotated etc.).
         This means that the object will be hidden when "backface culled".
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9324,8 +9327,8 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
         Block "linear" can be used to allow linear movements in the three
         axes. Allowed values are 0 or 1.
         Axes x and y are enabled by default.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9349,8 +9352,8 @@ st_collections_group_parts_part_description_physics_movement_freedom_linear(void
         Block "angular" can be used to allow angular movements around the three
         axes. Allowed values are 0 or 1.
         Z axis is enabled by default.
+    @since 1.8
     @endproperty
-    @since 1.8.0
 */
 #ifdef HAVE_EPHYSICS
 static void
@@ -9412,23 +9415,23 @@ st_collections_group_parts_part_description_physics_face(void)
     @effect
         Set the face (all caps) from among the available body's shape faces.
         Valid faces:
-            * BOX_MIDDLE_FRONT
-            * BOX_MIDDLE_BACK
-            * BOX_FRONT
-            * BOX_BACK
-            * BOX_LEFT
-            * BOX_RIGHT
-            * BOX_TOP
-            * BOX_BOTTOM
-            * CLOTH_FRONT
-            * CLOTH_BACK
-            * CYLINDER_MIDDLE_FRONT
-            * CYLINDER_MIDDLE_BACK
-            * CYLINDER_FRONT
-            * CYLINDER_BACK
-            * CYLINDER_CURVED
-            * SPHERE_FRONT
-            * SPHERE_BACK
+            @li BOX_MIDDLE_FRONT
+            @li BOX_MIDDLE_BACK
+            @li BOX_FRONT
+            @li BOX_BACK
+            @li BOX_LEFT
+            @li BOX_RIGHT
+            @li BOX_TOP
+            @li BOX_BOTTOM
+            @li CLOTH_FRONT
+            @li CLOTH_BACK
+            @li CYLINDER_MIDDLE_FRONT
+            @li CYLINDER_MIDDLE_BACK
+            @li CYLINDER_FRONT
+            @li CYLINDER_BACK
+            @li CYLINDER_CURVED
+            @li SPHERE_FRONT
+            @li SPHERE_BACK
     @endproperty
 */
 #ifdef HAVE_EPHYSICS
@@ -10650,7 +10653,7 @@ st_collections_group_programs_program_action(void)
         Valid option is CURRENT.
 
         CURRENT is the option which causes the edje object to move from its current position.
-        It can be used as the last parameter of any transition type. (@since 1.1.0)
+        It can be used as the last parameter of any transition type. (since 1.1.0)
 
     @endproperty
 */
@@ -10868,11 +10871,11 @@ st_collections_group_programs_program_target(void)
         target
     @parameters
         [target1] [target2] [target3] ...
-    @since 1.10
     @effect
         Programs or parts upon which the specified action will act. Multiple target
         or targets keywords may be specified. SIGNAL_EMITs can have
         targets.
+    @since 1.10
     @endproperty
 */
 static void
@@ -10895,10 +10898,10 @@ st_collections_group_programs_program_targets(void)
         groups
     @parameters
         [group1] [group2] [group3] ...
-    @since 1.10
     @effect
         Groups of programs or parts upon which the specified action will act. Multiple 'groups', 'target',
         and 'targets' keywords may be specified. SIGNAL_EMITs can have targets.
+    @since 1.10
     @endproperty
 */
 static void
@@ -11183,8 +11186,8 @@ ob_collections_group_programs_program_script(void)
         Its unit is Evas Coordinates per second ^ 2.
         The default value is 0, 294, 0, since we've a default rate of
         30 pixels.
+    @since 1.8
     @endproperty
-    @since 1.8.0
  */
 #ifdef HAVE_EPHYSICS
 static void
@@ -11212,8 +11215,8 @@ st_collections_group_physics_world_gravity(void)
         It will be used by automatic updates of evas objects associated to
         physics bodies.
         By default rate is 30 pixels per meter.
+    @since 1.8
     @endproperty
-    @since 1.8.0
  */
 #ifdef HAVE_EPHYSICS
 static void
@@ -11238,8 +11241,8 @@ st_collections_group_physics_world_rate(void)
         World's depth, in pixels. It's only relevant if boundaries are used,
         since their size depends on this.
         By default world's depth is 100 pixels.
+    @since 1.8
     @endproperty
-    @since 1.8.0
  */
 #ifdef HAVE_EPHYSICS
 static void
@@ -11265,8 +11268,8 @@ st_collections_group_physics_world_depth(void)
         It's only relevant if boundaries are used, since their position
         depends on this.
         By default world's z is -50 pixels.
+    @since 1.8
     @endproperty
-    @since 1.8.0
  */
 #ifdef HAVE_EPHYSICS
 static void
