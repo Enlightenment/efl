@@ -55,7 +55,7 @@
  *      <ul>
  *        <li>@ref sec_toplevel_images_set "Set"</li>
  *        <ul>
- *          <li>@ref sec_toplevel_images_image "Image"</li>
+ *          <li>@ref sec_toplevel_images_set_image "Image"</li>
  *        </ul>
  *      </ul>
  *      <li>@ref sec_toplevel_fonts "Fonts"</li>

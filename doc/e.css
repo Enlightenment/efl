@@ -25,6 +25,10 @@ dt {
   font-weight: bold;
 }
 
+ul {
+  padding-left: 30px;
+}
+
 div.multicol {
   -moz-column-gap: 1em;
   -webkit-column-gap: 1em;
