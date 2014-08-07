@@ -3,6 +3,12 @@
 
 #include "elm_interface_scrollable.h"
 
+/* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
+ * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
+ * FINAL. CALL elm_widget_api_check(ELM_INTERNAL_API_VERSION) TO CHECK
+ * IT AT RUNTIME.
+ */
+
 /**
  * @addtogroup Widget
  * @{
