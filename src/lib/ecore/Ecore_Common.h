@@ -1473,6 +1473,7 @@ EAPI double ecore_loop_time_get(void);
  * 
  * @see ecore_animator_custom_tick()
  * @see ecore_loop_time_get()
+ * @since 1.11
  */
 EAPI void ecore_loop_time_set(double t);
 
