@@ -108,7 +108,12 @@ pkgbuild/efl.install \
 po/xgettext_wrapper.sh \
 po/Makevars.in
 
+if HAVE_FREEBSD
+pkgconfigdir = $(libdir)data/pkgconfig
+else
 pkgconfigdir = $(libdir)/pkgconfig
+endif
+
 pkgconfig_DATA =
 
 if HAVE_WINDOWS

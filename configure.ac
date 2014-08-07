@@ -187,6 +187,7 @@ AC_SUBST(EFL_VERSION_MINOR)
 have_systemd_pkg="no"
 have_win32="no"
 have_windows="no"
+have_freebsd="no"
 have_darwin="no"
 have_linux="no"
 have_ps3="no"
@@ -196,6 +197,9 @@ case "$host_os" in
       have_win32="yes"
       have_windows="yes"
       EFL_CFLAGS="${EFL_CFLAGS} -D__USE_MINGW_ANSI_STDIO"
+   ;;
+   freebsd*)
+      have_freebsd="yes"
    ;;
    darwin*)
       have_darwin="yes"
@@ -221,6 +225,7 @@ AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 
+AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AM_CONDITIONAL([HAVE_OSX], [test "x${have_darwin}" = "xyes"])
 AM_CONDITIONAL([HAVE_X86_64], [test "x${host_cpu}" = "xx86_64"])
 
