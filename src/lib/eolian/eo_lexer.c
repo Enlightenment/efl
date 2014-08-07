@@ -46,7 +46,7 @@ static const char * const tokens[] =
 {
    "==", "!=", ">=", "<=", "&&", "||", "<<", ">>",
 
-   "<comment>", "<string>", "<number>", "<value>",
+   "<comment>", "<string>", "<char>", "<number>", "<value>",
 
    KEYWORDS
 };
@@ -106,7 +106,7 @@ init_hash(void)
    unsigned int i, u;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = u = 12; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = u = 13; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
          eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - u + 1));
      }
@@ -252,10 +252,10 @@ read_dec_esc(Eo_Lexer *ls)
 static void
 read_string(Eo_Lexer *ls, Eo_Token *tok)
 {
-   int del = ls->current;
    eina_strbuf_reset(ls->buff);
-   eina_strbuf_append_char(ls->buff, del);
-   while (ls->current != del) switch (ls->current)
+   eina_strbuf_append_char(ls->buff, '"');
+   next_char(ls);
+   while (ls->current != '"') switch (ls->current)
      {
       case '\0':
         eo_lexer_lex_error(ls, "unfinished string", -1);
@@ -282,7 +282,7 @@ read_string(Eo_Lexer *ls, Eo_Token *tok)
                 next_line(ls);
                 eina_strbuf_append_char(ls->buff, '\n');
                 goto skip;
-              case '\\': case '"': case '\'':
+              case '\\': case '"':
                 eina_strbuf_append_char(ls->buff, ls->current);
                 goto skip;
               case '\0':
@@ -358,7 +358,7 @@ write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
 {
    const char *str = eina_strbuf_string_get(ls->buff);
    int type = get_type(ls, is_float);
-   char *end;
+   char *end = NULL;
    if (is_float)
      {
         if (type == NUM_FLOAT)
@@ -378,7 +378,7 @@ write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
         else if (type == NUM_LLONG || type == NUM_ULLONG)
           tok->value.ull = strtoull(str, &end, 0);
      }
-   if (end)
+   if (end && end[0])
      eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
    tok->kw = type;
 }
@@ -439,7 +439,7 @@ read_number(Eo_Lexer *ls, Eo_Token *tok)
              return;
           }
      }
-   while (isdigit(ls->current || ls->current == '.'))
+   while (isdigit(ls->current) || ls->current == '.')
      {
         eina_strbuf_append_char(ls->buff, ls->current);
         if (ls->current == '.') is_float = EINA_TRUE;
@@ -530,9 +530,17 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         if (ls->current != '|') return '|';
         next_char(ls);
         return TOK_OR;
-      case '"': case '\'':
+      case '"':
         read_string(ls, tok);
         return TOK_STRING;
+      case '\'':
+        next_char(ls);
+        tok->value.c = ls->current;
+        next_char(ls);
+        if (ls->current != '\'')
+          eo_lexer_lex_error(ls, "unfinished character", TOK_CHAR);
+        next_char(ls);
+        return TOK_CHAR;
       case '.':
         next_char(ls);
         if (!isdigit(ls->current)) return '.';
@@ -762,13 +770,19 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 11];
+   return tokens[kw + 12];
 }
 
 Eina_Bool
 eo_lexer_is_type_keyword(int kw)
 {
    return (kw >= KW_byte && kw <= KW_void);
+}
+
+int
+eo_lexer_keyword_str_to_id(const char *kw)
+{
+   return (int)(uintptr_t)eina_hash_find(keyword_map, kw);
 }
 
 const char *

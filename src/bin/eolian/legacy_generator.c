@@ -326,21 +326,21 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
      {
         char tmp_ret_str[0xFF];
         sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype);
-             const char *default_ret_val =
+             const Eolian_Expression *default_ret_val =
                 eolian_function_return_default_value_get(funcid, ftype);
+             const char *val_str = NULL;
              if (default_ret_val)
                {
-                  if (!strcmp(default_ret_val, "true"))
-                    default_ret_val = "EINA_TRUE";
-                  else if (!strcmp(default_ret_val, "false"))
-                    default_ret_val = "EINA_FALSE";
-                  else if (!strcmp(default_ret_val, "null"))
-                    default_ret_val = "NULL";
+                  Eina_Value *val = NULL;
+                  Eolian_Expression_Type etp = eolian_expression_eval_type
+                    (default_ret_val, rettypet, &val);
+                  if (etp)
+                    val_str = eolian_expression_value_to_literal(val, etp);
                }
              Eina_Bool had_star = !!strchr(rettype, '*');
              sprintf (tmpstr, "   %s%s%s%s = %s;\n",
                    ret_const?"const ":"", rettype, had_star?"":" ", retname,
-                   default_ret_val?default_ret_val:"0");
+                   val_str?val_str:"0");
 
              eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
              eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);

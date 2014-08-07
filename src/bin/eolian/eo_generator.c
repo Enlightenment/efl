@@ -464,20 +464,20 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
               func_env.lower_eo_func);
         if (!ret_is_void)
           {
-             const char *default_ret_val =
+             const Eolian_Expression *default_ret_val =
                 eolian_function_return_default_value_get(funcid, ftype);
+             const char *val_str = NULL;
              if (default_ret_val)
                {
-                  if (!strcmp(default_ret_val, "true"))
-                    default_ret_val = "EINA_TRUE";
-                  else if (!strcmp(default_ret_val, "false"))
-                    default_ret_val = "EINA_FALSE";
-                  else if (!strcmp(default_ret_val, "null"))
-                    default_ret_val = "NULL";
+                  Eina_Value *val = NULL;
+                  Eolian_Expression_Type etp = eolian_expression_eval_type
+                    (default_ret_val, rettypet, &val);
+                  if (etp)
+                    val_str = eolian_expression_value_to_literal(val, etp);
                }
              eina_strbuf_append_printf(eo_func_decl, ", %s%s, %s",
                    ret_const ? "const " : "", rettype,
-                   default_ret_val?default_ret_val:"0");
+                   val_str?val_str:"0");
 
           }
         if (has_params)

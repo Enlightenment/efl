@@ -8,13 +8,14 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
    if (ret->type) database_type_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
-   if (ret->default_ret_val) eina_stringshare_del(ret->default_ret_val);
+   database_expr_del(ret->default_ret_val);
    free(ret);
 }
 
 static void
 eo_definitions_param_free(Eo_Param_Def *param)
 {
+   if (param->base.file) eina_stringshare_del(param->base.file);
    if (param->type) database_type_del(param->type);
    if (param->name) eina_stringshare_del(param->name);
    if (param->comment) eina_stringshare_del(param->comment);
@@ -31,6 +32,9 @@ eo_definitions_accessor_param_free(Eo_Accessor_Param *param)
 static void
 eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
 {
+   if (accessor->base.file)
+     eina_stringshare_del(accessor->base.file);
+
    if (accessor->comment)
      eina_stringshare_del(accessor->comment);
 
@@ -53,6 +57,9 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
 
+   if (prop->base.file)
+     eina_stringshare_del(prop->base.file);
+
    if (prop->name)
      eina_stringshare_del(prop->name);
 
@@ -72,6 +79,9 @@ static void
 eo_definitions_method_def_free(Eo_Method_Def *meth)
 {
    Eo_Param_Def *param;
+
+   if (meth->base.file)
+     eina_stringshare_del(meth->base.file);
 
    if (meth->ret)
      eo_definitions_ret_free(meth->ret);
@@ -97,6 +107,9 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    Eo_Method_Def *meth;
    Eolian_Event *sgn;
    Eolian_Implement *impl;
+
+   if (kls->base.file)
+     eina_stringshare_del(kls->base.file);
 
    if (kls->name)
      eina_stringshare_del(kls->name);

@@ -26,6 +26,7 @@ _db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
      }
 
    foo_id->base = meth->base;
+   meth->base.file = NULL;
 
    return EINA_TRUE;
 }
@@ -54,6 +55,7 @@ _db_fill_key(Eolian_Function *foo_id, Eo_Param_Def *param)
    param->type = NULL;
 
    p->base = param->base;
+   param->base.file = NULL;
 
    return EINA_TRUE;
 }
@@ -81,6 +83,7 @@ _db_fill_value(Eolian_Function *foo_id, Eo_Param_Def *param)
    param->type = NULL;
 
    p->base = param->base;
+   param->base.file = NULL;
 
    return EINA_TRUE;
 }
@@ -109,6 +112,7 @@ _db_fill_param(Eolian_Function *foo_id, Eo_Param_Def *param)
    param->type = NULL;
 
    p->base = param->base;
+   param->base.file = NULL;
 
    return EINA_TRUE;
 }
@@ -148,6 +152,7 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
         database_function_return_default_val_set(foo_id, ftype,
                                              accessor->ret->default_ret_val);
         accessor->ret->type = NULL;
+        accessor->ret->default_ret_val = NULL;
      }
 
    if (accessor->legacy)
@@ -190,6 +195,8 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
    else
      foo_id->set_base = accessor->base;
 
+   accessor->base.file = NULL;
+
    return EINA_TRUE;
 }
 
@@ -226,6 +233,7 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
         if (kls->type == EOLIAN_CLASS_INTERFACE)
           database_function_set_as_virtual_pure(foo_id, EOLIAN_UNRESOLVED);
         foo_id->base = prop->base;
+        prop->base.file = NULL;
      }
 
    database_class_function_add(cl, foo_id);
@@ -269,6 +277,7 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
         database_function_return_default_val_set(foo_id, EOLIAN_METHOD,
                                           meth->ret->default_ret_val);
         meth->ret->type = NULL;
+        meth->ret->default_ret_val = NULL;
      }
 
    database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
@@ -282,6 +291,7 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
      database_function_set_as_virtual_pure(foo_id, EOLIAN_METHOD);
 
    foo_id->base = meth->base;
+   meth->base.file = NULL;
 
    return EINA_TRUE;
 }
@@ -426,6 +436,7 @@ _db_fill_class(Eo_Class_Def *kls)
    if (!_db_fill_events    (cl, kls)) return EINA_FALSE;
 
    cl->base = kls->base;
+   kls->base.file = NULL;
 
    return EINA_TRUE;
 }

@@ -12,7 +12,7 @@ typedef struct _Eo_Ret_Def
 {
    Eolian_Type *type;
    Eina_Stringshare *comment;
-   Eina_Stringshare *default_ret_val;
+   Eolian_Expression *default_ret_val;
    Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
 

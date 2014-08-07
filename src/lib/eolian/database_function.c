@@ -6,12 +6,16 @@ database_function_del(Eolian_Function *fid)
 {
    Eolian_Function_Parameter *param;
    if (!fid) return;
+
+   if (fid->base.file) eina_stringshare_del(fid->base.file);
    eina_stringshare_del(fid->name);
    eina_hash_free(fid->data);
    EINA_LIST_FREE(fid->keys, param) database_parameter_del(param);
    EINA_LIST_FREE(fid->params, param) database_parameter_del(param);
    database_type_del(fid->get_ret_type);
    database_type_del(fid->set_ret_type);
+   database_expr_del(fid->get_ret_val);
+   database_expr_del(fid->set_ret_val);
    free(fid);
 }
 
@@ -124,17 +128,14 @@ void database_function_return_type_set(Eolian_Function *fid, Eolian_Function_Typ
      }
 }
 
-void database_function_return_default_val_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *ret_default_value)
+void database_function_return_default_val_set(Eolian_Function *fid, Eolian_Function_Type ftype, Eolian_Expression *ret_default_value)
 {
-   const char *key = NULL;
    switch (ftype)
      {
-      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DEFAULT_VAL; break;
-      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DEFAULT_VAL; break;
-      case EOLIAN_METHOD: key = METHOD_RETURN_DEFAULT_VAL; break;
+      case EOLIAN_PROP_SET: fid->set_ret_val = ret_default_value; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROP_GET: fid->get_ret_val = ret_default_value; break;
       default: return;
      }
-   database_function_data_set(fid, key, ret_default_value);
 }
 
 void database_function_return_comment_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *ret_comment)

@@ -364,6 +364,18 @@ parse_expr_simple(Eo_Lexer *ls)
            eo_lexer_get(ls);
            break;
         }
+      case TOK_CHAR:
+        {
+           int line = ls->line_number, col = ls->column;
+           expr = push_expr(ls);
+           expr->base.file = get_filename(ls);
+           expr->base.line = line;
+           expr->base.column = col;
+           expr->type = EOLIAN_EXPR_CHAR;
+           expr->value.c = ls->t.value.c;
+           eo_lexer_get(ls);
+           break;
+        }
       case TOK_VALUE:
         {
            int line = ls->line_number, col = ls->column;
@@ -375,9 +387,16 @@ parse_expr_simple(Eo_Lexer *ls)
                    expr = push_expr(ls);
                    expr->type = EOLIAN_EXPR_BOOL;
                    expr->value.b = (ls->t.kw == KW_true);
-                    eo_lexer_get(ls);
+                   eo_lexer_get(ls);
                    break;
-               }
+                }
+              case KW_null:
+                {
+                   expr = push_expr(ls);
+                   expr->type = EOLIAN_EXPR_NULL;
+                   eo_lexer_get(ls);
+                   break;
+                }
               default:
                 {
                    expr = push_expr(ls);
@@ -390,17 +409,19 @@ parse_expr_simple(Eo_Lexer *ls)
            expr->base.file = get_filename(ls);
            expr->base.line = line;
            expr->base.column = col;
+           break;
         }
-       case '(':
-         {
-            int line = ls->line_number, col = ls->column;
-            eo_lexer_get(ls);
-            expr = parse_expr(ls);
-            check_match(ls, ')', '(', line, col);
-         }
-       default:
-         eo_lexer_syntax_error(ls, "unexpected symbol");
-         break;
+      case '(':
+        {
+           int line = ls->line_number, col = ls->column;
+           eo_lexer_get(ls);
+           expr = parse_expr(ls);
+           check_match(ls, ')', '(', line, col);
+        }
+      default:
+        expr = NULL; /* shut up compiler */
+        eo_lexer_syntax_error(ls, "unexpected symbol");
+        break;
      }
 
    return expr;
@@ -508,6 +529,7 @@ parse_function_type(Eo_Lexer *ls)
 static void
 _struct_field_free(Eolian_Struct_Field *def)
 {
+   if (def->base.file) eina_stringshare_del(def->base.file);
    database_type_del(def->type);
    if (def->comment) eina_stringshare_del(def->comment);
    free(def);
@@ -807,9 +829,8 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    if (ls->t.token == '(')
      {
         int line = ls->line_number, col = ls->column;
-        eo_lexer_get_balanced(ls, '(', ')');
-        ret->default_ret_val = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
+        ret->default_ret_val = parse_expr(ls);
         check_match(ls, ')', '(', line, col);
      }
    if (ls->t.kw == KW_at_warn_unused)

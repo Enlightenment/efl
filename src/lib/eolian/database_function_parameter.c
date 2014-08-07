@@ -15,6 +15,7 @@ database_parameter_add(Eolian_Type *type, const char *name, const char *descript
 void
 database_parameter_del(Eolian_Function_Parameter *pdesc)
 {
+   if (pdesc->base.file) eina_stringshare_del(pdesc->base.file);
    eina_stringshare_del(pdesc->name);
 
    database_type_del(pdesc->type);

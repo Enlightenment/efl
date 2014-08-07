@@ -8,6 +8,7 @@ database_type_del(Eolian_Type *tp)
    if (!tp) return;
    const char *sp;
    Eolian_Type *stp;
+   if (tp->base.file) eina_stringshare_del(tp->base.file);
    if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
      database_type_del(stp);
    if (tp->base_type)

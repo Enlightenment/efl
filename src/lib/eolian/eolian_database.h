@@ -31,10 +31,6 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-#define PROP_GET_RETURN_DEFAULT_VAL "property_get_return_default_val"
-#define PROP_SET_RETURN_DEFAULT_VAL "property_set_return_default_val"
-#define METHOD_RETURN_DEFAULT_VAL "method_return_default_val"
-
 #define EOLIAN_METHOD_RETURN_COMMENT "method_return_comment"
 #define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
 #define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
@@ -88,6 +84,8 @@ struct _Eolian_Function
    Eolian_Function_Scope scope;
    Eolian_Type *get_ret_type;
    Eolian_Type *set_ret_type;
+   Eolian_Expression *get_ret_val;
+   Eolian_Expression *set_ret_val;
    Eina_Hash *data;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_virtual_pure :1;
@@ -159,6 +157,7 @@ typedef struct _Eolian_Struct_Field
 
 typedef union
 {
+   char               c;
    Eina_Bool          b;
    const    char     *s;
    signed   int       i;
@@ -174,6 +173,8 @@ typedef union
 
 typedef enum
 {
+   EOLIAN_BINOP_INVALID = -1,
+
    EOLIAN_BINOP_ADD, /* + int, float */
    EOLIAN_BINOP_SUB, /* - int, float */
    EOLIAN_BINOP_MUL, /* * int, float */
@@ -199,6 +200,8 @@ typedef enum
 
 typedef enum
 {
+   EOLIAN_UNOP_INVALID = -1,
+
    EOLIAN_UNOP_UNM, /* - sint */
    EOLIAN_UNOP_UNP, /* + sint */
 
@@ -242,7 +245,8 @@ void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *n
 
 /* expressions */
 
-Eina_Value *database_expr_eval(Eolian_Expression *expr, Eolian_Expression_Mask mask);
+Eolian_Expression_Type database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask, Eina_Value **out);
+void database_expr_del(Eolian_Expression *expr);
 
 /* classes */
 
@@ -277,7 +281,7 @@ void database_function_data_set(Eolian_Function *function_id, const char *key, c
 
 void database_function_return_type_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Type *ret_type);
 void database_function_return_comment_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_comment);
-void database_function_return_default_val_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_default_value);
+void database_function_return_default_val_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Expression *ret_default_value);
 void database_function_return_flag_set_as_warn_unused(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eina_Bool warn_unused);
 
 void database_function_object_set_as_const(Eolian_Function *foo_id, Eina_Bool is_const);

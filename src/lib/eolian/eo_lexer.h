@@ -16,7 +16,7 @@ enum Tokens
    TOK_EQ = START_CUSTOM, TOK_NQ, TOK_GE, TOK_LE,
    TOK_AND, TOK_OR, TOK_LSH, TOK_RSH,
 
-   TOK_COMMENT, TOK_STRING, TOK_NUMBER, TOK_VALUE
+   TOK_COMMENT, TOK_STRING, TOK_CHAR, TOK_NUMBER, TOK_VALUE
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
@@ -179,6 +179,8 @@ void        eo_lexer_token_to_str   (int token, char *buf);
 const char *eo_lexer_keyword_str_get(int kw);
 /* checks if the given keyword is a builtin type */
 Eina_Bool   eo_lexer_is_type_keyword(int kw);
+/* gets a keyword id from the keyword string */
+int         eo_lexer_keyword_str_to_id(const char *kw);
 /* gets the C type name for a builtin type name - e.g. uchar -> unsigned char */
 const char *eo_lexer_get_c_type     (int kw);
 /* save, restore and clear context (line, column, line string) */

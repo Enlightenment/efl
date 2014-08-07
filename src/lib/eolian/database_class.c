@@ -10,6 +10,8 @@ database_class_del(Eolian_Class *cl)
    Eolian_Event *ev;
    const char *sp;
 
+   if (cl->base.file) eina_stringshare_del(cl->base.file);
+
    EINA_LIST_FREE(inherits, inherit_name)
      eina_stringshare_del(inherit_name);
 
