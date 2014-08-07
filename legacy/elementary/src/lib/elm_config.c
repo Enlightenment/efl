@@ -207,7 +207,10 @@ _prop_config_get(void)
    /* Most obvious case, new version and we are still linked to
     * whatever was there before, we just ignore until user restarts us */
    if (config_data->config_version > ELM_CONFIG_VERSION)
-     return EINA_TRUE;
+     {
+        _config_free(config_data);
+        return EINA_TRUE;
+     }
    /* What in the case the version is older? Do we even support those
     * cases or we only check for equality above? */
 
