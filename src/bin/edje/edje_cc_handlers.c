@@ -1565,25 +1565,8 @@ st_externals_external(void)
             image: "filename1.ext" COMP;
             image: "filename2.ext" LOSSY 99;
             image: "filename2.ext" LOSSY_ETC1 50;
-	    set {
-	       name: "image_name_used";
-               image {
-                  image: "filename3.ext" LOSSY 90;
-                  size: 201 201 500 500;
-               }
-               image {
-                  image: "filename4.ext" COMP;
-                  size: 51 51 200 200;
-               }
-               image {
-                  image: "filename5.ext" COMP;
-                  size: 11 11 50 50;
-               }
-               image {
-                  image: "filename6.ext" RAW;
-                  size: 0 0 10 10;
-               }
-            }
+            set { }
+            set { }
             ..
         }
     @description
@@ -1781,7 +1764,7 @@ st_images_set_name(void)
 }
 
 /**
-   @edcsubsection{toplevel_images_image,Image}
+   @edcsubsection{toplevel_images_set_image,Image}
  */
 
 /**
@@ -1789,9 +1772,16 @@ st_images_set_name(void)
 
     @block
         image
+    @context
+    image {
+       image: "filename4.ext" COMP;
+       size: 51 51 200 200;
+       border: 0 0 0 0;
+       border_scale_by: 0.0;
+    }
     @description
         The "image" block inside a "set" block define the characteristic of an image.
-	Every block will describe one image and the size rule to use it.
+        Every block will describe one image and the size rule to use it.
     @endblock
 **/
 static void
