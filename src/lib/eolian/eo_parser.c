@@ -697,7 +697,7 @@ parse_type_struct_void(Eo_Lexer *ls, Eina_Bool allow_struct)
         ctype = eo_lexer_get_c_type(ls->t.kw);
         if (ctype)
           {
-             _fill_type_name(def, eina_stringshare_add(ctype));
+             _fill_type_name(def, eina_stringshare_add(ls->t.value.s));
              eo_lexer_get(ls);
           }
         else

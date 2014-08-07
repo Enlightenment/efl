@@ -116,6 +116,30 @@ _append_char_escaped(Eina_Strbuf *buf, char c)
      }
 }
 
+static const char *
+_get_literal_suffix(Eolian_Expression_Type etp)
+{
+   switch (etp)
+     {
+      case EOLIAN_EXPR_UINT:
+        return "U";
+      case EOLIAN_EXPR_LONG:
+        return "L";
+      case EOLIAN_EXPR_ULONG:
+        return "UL";
+      case EOLIAN_EXPR_LLONG:
+        return "LL";
+      case EOLIAN_EXPR_ULLONG:
+        return "ULL";
+      case EOLIAN_EXPR_FLOAT:
+        return "f";
+      case EOLIAN_EXPR_LDOUBLE:
+        return "L";
+      default:
+        return "";
+     }
+}
+
 EAPI Eina_Stringshare *
 eolian_expression_value_to_literal(const Eina_Value *v,
                                    Eolian_Expression_Type etp)
@@ -167,9 +191,14 @@ eolian_expression_value_to_literal(const Eina_Value *v,
       case EOLIAN_EXPR_DOUBLE:
       case EOLIAN_EXPR_LDOUBLE:
         {
+           const char *ret;
            char *str = eina_value_to_string(v);
-           const char *ret = eina_stringshare_add(str);
+           Eina_Strbuf *buf = eina_strbuf_new();
+           eina_strbuf_append(buf, str);
            free(str);
+           eina_strbuf_append(buf, _get_literal_suffix(etp));
+           ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+           eina_strbuf_free(buf);
            return ret;
         }
       default:

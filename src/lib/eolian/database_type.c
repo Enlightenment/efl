@@ -1,6 +1,5 @@
 #include <Eina.h>
-#include "eolian_database.h"
-#include "eo_definitions.h"
+#include "eo_lexer.h"
 
 void
 database_type_del(Eolian_Type *tp)
@@ -165,7 +164,9 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
              eina_strbuf_append(buf, sp);
              eina_strbuf_append_char(buf, '_');
           }
-        eina_strbuf_append(buf, tp->name);
+        int kw = eo_lexer_keyword_str_to_id(tp->name);
+        if (kw) eina_strbuf_append(buf, eo_lexer_get_c_type(kw));
+        else eina_strbuf_append(buf, tp->name);
      }
    else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
      {
