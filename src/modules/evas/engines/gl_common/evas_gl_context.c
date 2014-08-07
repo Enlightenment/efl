@@ -918,7 +918,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              evas_gl_common_image_free(gc->shared->images->data);
           }
 
-        for (j = 0; j < 6; j++)
+        for (j = 0; j < ATLAS_FORMATS_COUNT; j++)
           {
               EINA_LIST_FOREACH(gc->shared->tex.atlas[j], l, pt)
                  evas_gl_texture_pool_empty(pt);
