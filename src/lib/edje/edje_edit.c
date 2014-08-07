@@ -8109,6 +8109,8 @@ edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_n
 
    if (!new_name) return EINA_FALSE;
 
+   if (!strcmp(prog, new_name)) return EINA_TRUE;
+
    if (_edje_program_get_byname(obj, new_name)) return EINA_FALSE;
 
    //printf("SET NAME for program: %s [new name: %s]\n", prog, new_name);
