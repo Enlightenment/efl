@@ -1572,6 +1572,7 @@ _elm_photocam_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file)
    free(sd->remote_data);
    if (sd->remote) _elm_url_cancel(sd->remote);
    sd->remote = NULL;
+   sd->preload_num = 0;
 
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
      if (!strncmp(remote_uri[i], file, strlen(remote_uri[i])))
