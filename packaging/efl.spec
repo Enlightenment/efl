@@ -567,7 +567,15 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %post -n evas -p /sbin/ldconfig
 %postun -n evas -p /sbin/ldconfig
 
-%post -n ecore -p /sbin/ldconfig
+%post -n ecore
+/sbin/ldconfig
+
+%if %{with wayland}
+f="/etc/profile.d/ecore.sh"
+grep EFL_WAYLAND_USE_XDG_SHELL "$f" 2>/dev/null \
+    || printf "\nEFL_WAYLAND_USE_XDG_SHELL='defined'\nexport EFL_WAYLAND_USE_XDG_SHELL\n" >> "$f"
+%endif
+
 %postun -n ecore -p /sbin/ldconfig
 
 %post -n eldbus -p /sbin/ldconfig
