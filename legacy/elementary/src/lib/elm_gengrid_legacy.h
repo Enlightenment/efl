@@ -250,7 +250,7 @@ EAPI void                        elm_gengrid_reorder_mode_stop(Evas_Object *obj)
  * @param type Elm_Gengrid_Reorder_Type value
  *
  * @see Elm_Gengrid_Reorder_Type
- * @since 1.10
+ * @since 1.11
  *
  * @ingroup Gengrid
  */
