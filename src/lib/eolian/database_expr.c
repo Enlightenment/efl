@@ -24,18 +24,18 @@ mask_to_str(int mask, char *buf)
 
    Eina_Bool append_sep = EINA_FALSE;
 
-   if ((mask & EOLIAN_TYPE_SINT) && (mask & EOLIAN_TYPE_UINT))
+   if ((mask & EOLIAN_MASK_SINT) && (mask & EOLIAN_MASK_UINT))
      APPEND_TP("integer")
-   else if (mask & EOLIAN_TYPE_SINT)
+   else if (mask & EOLIAN_MASK_SINT)
      APPEND_TP("signed integer")
-   else if (mask & EOLIAN_TYPE_SINT)
+   else if (mask & EOLIAN_MASK_SINT)
      APPEND_TP("signed integer")
 
-   if (mask & EOLIAN_TYPE_FLOAT)
+   if (mask & EOLIAN_MASK_FLOAT)
      APPEND_TP("float")
-   if (mask & EOLIAN_TYPE_BOOL)
+   if (mask & EOLIAN_MASK_BOOL)
      APPEND_TP("boolean")
-   if (mask & EOLIAN_TYPE_STRING)
+   if (mask & EOLIAN_MASK_STRING)
      APPEND_TP("string")
 
    *buf = '\0';
@@ -64,19 +64,19 @@ expr_type_to_mask(Eolian_Expression *expr)
       case EOLIAN_EXPR_ULLONG:
       case EOLIAN_EXPR_ULONG:
       case EOLIAN_EXPR_UINT:
-        return EOLIAN_TYPE_UINT;
+        return EOLIAN_MASK_UINT;
       case EOLIAN_EXPR_LLONG:
       case EOLIAN_EXPR_LONG:
       case EOLIAN_EXPR_INT:
-        return EOLIAN_TYPE_SINT;
+        return EOLIAN_MASK_SINT;
       case EOLIAN_EXPR_LDOUBLE:
       case EOLIAN_EXPR_DOUBLE:
       case EOLIAN_EXPR_FLOAT:
-        return EOLIAN_TYPE_FLOAT;
+        return EOLIAN_MASK_FLOAT;
       case EOLIAN_EXPR_BOOL:
-        return EOLIAN_TYPE_BOOL;
+        return EOLIAN_MASK_BOOL;
       case EOLIAN_EXPR_STRING:
-        return EOLIAN_TYPE_STRING;
+        return EOLIAN_MASK_STRING;
       default:
         return 0;
      }
@@ -135,9 +135,9 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
    assert(a->type && b->type);
    /* not a number */
    if (a->type >= EOLIAN_EXPR_STRING)
-     return expr_type_error(a, expr_type_to_mask(a), EOLIAN_TYPE_NUMBER);
+     return expr_type_error(a, expr_type_to_mask(a), EOLIAN_MASK_NUMBER);
    if (b->type >= EOLIAN_EXPR_STRING)
-     return expr_type_error(b, expr_type_to_mask(b), EOLIAN_TYPE_NUMBER);
+     return expr_type_error(b, expr_type_to_mask(b), EOLIAN_MASK_NUMBER);
    /* no need for promotion */
    if (a->type == b->type) return EINA_TRUE;
    /* if either operand is floating point, everything has to be */
@@ -163,10 +163,10 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
 #undef CONVERT_CASE
 }
 
-static Eina_Bool eval(Eolian_Expression *expr, Eolian_Type_Mask mask, Eolian_Expression *out);
+static Eina_Bool eval_exp(Eolian_Expression *expr, Eolian_Expression_Mask mask, Eolian_Expression *out);
 
 static Eina_Bool
-eval_unary(Eolian_Expression *expr, Eolian_Type_Mask mask,
+eval_unary(Eolian_Expression *expr, Eolian_Expression_Mask mask,
            Eolian_Expression *out)
 {
    switch (expr->unop)
@@ -174,19 +174,19 @@ eval_unary(Eolian_Expression *expr, Eolian_Type_Mask mask,
       case EOLIAN_UNOP_UNP:
         {
            /* no-op, but still typecheck */
-           if (!(mask & EOLIAN_TYPE_SINT))
-             return expr_type_error(expr, EOLIAN_TYPE_SINT, mask);
+           if (!(mask & EOLIAN_MASK_SINT))
+             return expr_type_error(expr, EOLIAN_MASK_SINT, mask);
 
-           return eval(expr->expr, EOLIAN_TYPE_SINT, out);
+           return eval_exp(expr->expr, EOLIAN_MASK_SINT, out);
         }
       case EOLIAN_UNOP_UNM:
         {
            Eolian_Expression exp;
 
-           if (!(mask & EOLIAN_TYPE_SINT))
-             return expr_type_error(expr, EOLIAN_TYPE_SINT, mask);
+           if (!(mask & EOLIAN_MASK_SINT))
+             return expr_type_error(expr, EOLIAN_MASK_SINT, mask);
 
-           if (!eval(expr->expr, EOLIAN_TYPE_SINT, &exp))
+           if (!eval_exp(expr->expr, EOLIAN_MASK_SINT, &exp))
              return EINA_FALSE;
 
            switch (exp.type)
@@ -204,10 +204,10 @@ eval_unary(Eolian_Expression *expr, Eolian_Type_Mask mask,
         {
            Eolian_Expression exp;
 
-           if (!(mask & EOLIAN_TYPE_BOOL))
-             return expr_type_error(expr, EOLIAN_TYPE_BOOL, mask);
+           if (!(mask & EOLIAN_MASK_BOOL))
+             return expr_type_error(expr, EOLIAN_MASK_BOOL, mask);
 
-           if (!eval(expr->expr, EOLIAN_TYPE_NUMBER | EOLIAN_TYPE_BOOL, &exp))
+           if (!eval_exp(expr->expr, EOLIAN_MASK_NUMBER | EOLIAN_MASK_BOOL, &exp))
              return EINA_FALSE;
 
            exp.value.b = !(exp.value.ull);
@@ -220,10 +220,10 @@ eval_unary(Eolian_Expression *expr, Eolian_Type_Mask mask,
         {
            Eolian_Expression exp;
 
-           if (!(mask & EOLIAN_TYPE_INT))
-             return expr_type_error(expr, EOLIAN_TYPE_INT, mask);
+           if (!(mask & EOLIAN_MASK_INT))
+             return expr_type_error(expr, EOLIAN_MASK_INT, mask);
 
-           if (!eval(expr->expr, EOLIAN_TYPE_INT, &exp))
+           if (!eval_exp(expr->expr, EOLIAN_MASK_INT, &exp))
              return EINA_FALSE;
 
            switch (exp.type)
@@ -250,14 +250,14 @@ eval_promote_num(Eolian_Expression *expr, Eolian_Expression *lhs,
                  Eolian_Expression *rhs, int mask, int emask)
 {
    /* make sure the output can be a number */
-   if (!(mask & EOLIAN_TYPE_NUMBER))
-     return expr_type_error(expr, EOLIAN_TYPE_NUMBER, mask);
+   if (!(mask & EOLIAN_MASK_NUMBER))
+     return expr_type_error(expr, EOLIAN_MASK_NUMBER, mask);
 
    /* eval into primitive value */
-   if (!eval(expr->lhs, emask, lhs))
+   if (!eval_exp(expr->lhs, emask, lhs))
      return EINA_FALSE;
 
-   if (!eval(expr->rhs, emask, rhs))
+   if (!eval_exp(expr->rhs, emask, rhs))
      return EINA_FALSE;
 
    /* promote so both sides are of the same type */
@@ -268,7 +268,7 @@ eval_promote_num(Eolian_Expression *expr, Eolian_Expression *lhs,
 }
 
 static Eina_Bool
-eval_binary(Eolian_Expression *expr, Eolian_Type_Mask mask,
+eval_binary(Eolian_Expression *expr, Eolian_Expression_Mask mask,
             Eolian_Expression *out)
 {
 #define APPLY_CASE(id, expr, lhs, rhs, fnm, op) \
@@ -312,9 +312,9 @@ eval_binary(Eolian_Expression *expr, Eolian_Type_Mask mask,
      { \
         Eolian_Expression lhs; \
         Eolian_Expression rhs; \
-        int emask = (mask & EOLIAN_TYPE_FLOAT) \
-                    ? EOLIAN_TYPE_NUMBER \
-                    : EOLIAN_TYPE_INT; \
+        int emask = (mask & EOLIAN_MASK_FLOAT) \
+                    ? EOLIAN_MASK_NUMBER \
+                    : EOLIAN_MASK_INT; \
         if (!eval_promote_num(expr, &lhs, &rhs, mask, emask)) \
           return EINA_FALSE; \
         APPLY_NUM(out, lhs, rhs, op) \
@@ -326,7 +326,7 @@ eval_binary(Eolian_Expression *expr, Eolian_Type_Mask mask,
      { \
         Eolian_Expression lhs; \
         Eolian_Expression rhs; \
-        if (!eval_promote_num(expr, &lhs, &rhs, mask, EOLIAN_TYPE_INT)) \
+        if (!eval_promote_num(expr, &lhs, &rhs, mask, EOLIAN_MASK_INT)) \
           return EINA_FALSE; \
         APPLY_INT(out, lhs, rhs, op) \
         return EINA_TRUE; \
@@ -337,11 +337,11 @@ eval_binary(Eolian_Expression *expr, Eolian_Type_Mask mask,
      { \
         Eolian_Expression lhs; \
         Eolian_Expression rhs; \
-        if (!(mask & EOLIAN_TYPE_BOOL)) \
-          return expr_type_error(expr, EOLIAN_TYPE_BOOL, mask); \
-        if (!eval(expr->lhs, allowed, &lhs)) \
+        if (!(mask & EOLIAN_MASK_BOOL)) \
+          return expr_type_error(expr, EOLIAN_MASK_BOOL, mask); \
+        if (!eval_exp(expr->lhs, allowed, &lhs)) \
           return EINA_FALSE; \
-        if (!eval(expr->rhs, allowed, &rhs)) \
+        if (!eval_exp(expr->rhs, allowed, &rhs)) \
           return EINA_FALSE; \
         if (lhs.type >= EOLIAN_EXPR_STRING && rhs.type != lhs.type) \
           return expr_type_mismatch_error(&lhs, &rhs); \
@@ -362,15 +362,15 @@ eval_binary(Eolian_Expression *expr, Eolian_Type_Mask mask,
 
       CASE_ARITH_INT(MOD, %)
 
-      CASE_COMP(EQ, ==, EOLIAN_TYPE_ALL)
-      CASE_COMP(NQ, !=, EOLIAN_TYPE_ALL)
-      CASE_COMP(GT, > , EOLIAN_TYPE_NUMBER)
-      CASE_COMP(LT, < , EOLIAN_TYPE_NUMBER)
-      CASE_COMP(GE, >=, EOLIAN_TYPE_NUMBER)
-      CASE_COMP(LE, <=, EOLIAN_TYPE_NUMBER)
+      CASE_COMP(EQ, ==, EOLIAN_MASK_ALL)
+      CASE_COMP(NQ, !=, EOLIAN_MASK_ALL)
+      CASE_COMP(GT, > , EOLIAN_MASK_NUMBER)
+      CASE_COMP(LT, < , EOLIAN_MASK_NUMBER)
+      CASE_COMP(GE, >=, EOLIAN_MASK_NUMBER)
+      CASE_COMP(LE, <=, EOLIAN_MASK_NUMBER)
 
-      CASE_COMP(AND, &&, EOLIAN_TYPE_ALL)
-      CASE_COMP(OR,  ||, EOLIAN_TYPE_ALL)
+      CASE_COMP(AND, &&, EOLIAN_MASK_ALL)
+      CASE_COMP(OR,  ||, EOLIAN_MASK_ALL)
 
       CASE_ARITH_INT(BAND, &)
       CASE_ARITH_INT(BOR , |)
@@ -391,7 +391,7 @@ eval_binary(Eolian_Expression *expr, Eolian_Type_Mask mask,
 }
 
 static Eina_Bool
-eval(Eolian_Expression *expr, Eolian_Type_Mask mask, Eolian_Expression *out)
+eval_exp(Eolian_Expression *expr, Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
    switch (expr->type)
      {
@@ -399,8 +399,8 @@ eval(Eolian_Expression *expr, Eolian_Type_Mask mask, Eolian_Expression *out)
       case EOLIAN_EXPR_LONG:
       case EOLIAN_EXPR_LLONG:
         {
-           if (!(mask & EOLIAN_TYPE_SINT))
-             return expr_type_error(expr, EOLIAN_TYPE_SINT, mask);
+           if (!(mask & EOLIAN_MASK_SINT))
+             return expr_type_error(expr, EOLIAN_MASK_SINT, mask);
            *out = *expr;
            return EINA_TRUE;
         }
@@ -408,8 +408,8 @@ eval(Eolian_Expression *expr, Eolian_Type_Mask mask, Eolian_Expression *out)
       case EOLIAN_EXPR_ULONG:
       case EOLIAN_EXPR_ULLONG:
         {
-           if (!(mask & EOLIAN_TYPE_UINT))
-             return expr_type_error(expr, EOLIAN_TYPE_UINT, mask);
+           if (!(mask & EOLIAN_MASK_UINT))
+             return expr_type_error(expr, EOLIAN_MASK_UINT, mask);
            *out = *expr;
            return EINA_TRUE;
         }
@@ -417,22 +417,22 @@ eval(Eolian_Expression *expr, Eolian_Type_Mask mask, Eolian_Expression *out)
       case EOLIAN_EXPR_DOUBLE:
       case EOLIAN_EXPR_LDOUBLE:
         {
-           if (!(mask & EOLIAN_TYPE_FLOAT))
-             return expr_type_error(expr, EOLIAN_TYPE_FLOAT, mask);
+           if (!(mask & EOLIAN_MASK_FLOAT))
+             return expr_type_error(expr, EOLIAN_MASK_FLOAT, mask);
            *out = *expr;
            return EINA_TRUE;
         }
       case EOLIAN_EXPR_STRING:
         {
-           if (!(mask & EOLIAN_TYPE_STRING))
-             return expr_type_error(expr, EOLIAN_TYPE_STRING, mask);
+           if (!(mask & EOLIAN_MASK_STRING))
+             return expr_type_error(expr, EOLIAN_MASK_STRING, mask);
            *out = *expr;
            return EINA_TRUE;
         }
       case EOLIAN_EXPR_BOOL:
         {
-           if (!(mask & EOLIAN_TYPE_BOOL))
-             return expr_type_error(expr, EOLIAN_TYPE_BOOL, mask);
+           if (!(mask & EOLIAN_MASK_BOOL))
+             return expr_type_error(expr, EOLIAN_MASK_BOOL, mask);
            *out = *expr;
            return EINA_TRUE;
         }
@@ -446,4 +446,63 @@ eval(Eolian_Expression *expr, Eolian_Type_Mask mask, Eolian_Expression *out)
      }
 
    return EINA_TRUE;
+}
+
+Eina_Value *
+database_expr_eval(Eolian_Expression *expr, Eolian_Expression_Mask mask)
+{
+   Eina_Value *ret = NULL;
+   Eolian_Expression out;
+   if (!eval_exp(expr, mask, &out))
+     return NULL;
+   switch (out.type)
+     {
+      case EOLIAN_EXPR_INT:
+        ret = eina_value_new(EINA_VALUE_TYPE_INT);
+        eina_value_set(ret, out.value.i);
+        break;
+      case EOLIAN_EXPR_UINT:
+        ret = eina_value_new(EINA_VALUE_TYPE_UINT);
+        eina_value_set(ret, out.value.u);
+        break;
+      case EOLIAN_EXPR_LONG:
+        ret = eina_value_new(EINA_VALUE_TYPE_LONG);
+        eina_value_set(ret, out.value.l);
+        break;
+      case EOLIAN_EXPR_ULONG:
+        ret = eina_value_new(EINA_VALUE_TYPE_ULONG);
+        eina_value_set(ret, out.value.ul);
+        break;
+      case EOLIAN_EXPR_LLONG:
+        ret = eina_value_new(EINA_VALUE_TYPE_INT64);
+        eina_value_set(ret, out.value.ll);
+        break;
+      case EOLIAN_EXPR_ULLONG:
+        ret = eina_value_new(EINA_VALUE_TYPE_UINT64);
+        eina_value_set(ret, out.value.ull);
+        break;
+      case EOLIAN_EXPR_FLOAT:
+        ret = eina_value_new(EINA_VALUE_TYPE_FLOAT);
+        eina_value_set(ret, out.value.f);
+        break;
+      case EOLIAN_EXPR_DOUBLE:
+        ret = eina_value_new(EINA_VALUE_TYPE_DOUBLE);
+        eina_value_set(ret, out.value.d);
+        break;
+      case EOLIAN_EXPR_LDOUBLE:
+        ret = eina_value_new(EINA_VALUE_TYPE_DOUBLE);
+        eina_value_set(ret, (double)out.value.ld);
+        break;
+      case EOLIAN_EXPR_STRING:
+        ret = eina_value_new(EINA_VALUE_TYPE_STRINGSHARE);
+        eina_value_set(ret, eina_stringshare_ref(out.value.s));
+        break;
+      case EOLIAN_EXPR_BOOL:
+        ret = eina_value_new(EINA_VALUE_TYPE_UCHAR);
+        eina_value_set(ret, out.value.b);
+        break;
+      default:
+        return NULL;
+     }
+   return ret;
 }

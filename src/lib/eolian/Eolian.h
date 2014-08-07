@@ -151,6 +151,19 @@ typedef enum
    EOLIAN_EXPR_BINARY
 } Eolian_Expression_Type;
 
+typedef enum
+{
+   EOLIAN_MASK_SINT   = 1 << 0,
+   EOLIAN_MASK_UINT   = 1 << 1,
+   EOLIAN_MASK_INT    = EOLIAN_MASK_SINT | EOLIAN_MASK_UINT,
+   EOLIAN_MASK_FLOAT  = 1 << 2,
+   EOLIAN_MASK_BOOL   = 1 << 3,
+   EOLIAN_MASK_STRING = 1 << 4,
+   EOLIAN_MASK_NUMBER = EOLIAN_MASK_INT    | EOLIAN_MASK_FLOAT,
+   EOLIAN_MASK_ALL    = EOLIAN_MASK_NUMBER | EOLIAN_MASK_BOOL
+                      | EOLIAN_MASK_STRING
+} Eolian_Expression_Mask;
+
 /*
  * @brief Parse a given .eo file and fill the database.
  *

@@ -206,19 +206,6 @@ typedef enum
    EOLIAN_UNOP_BNOT, /* ~ int */
 } Eolian_Unary_Operator;
 
-typedef enum
-{
-   EOLIAN_TYPE_SINT   = 1 << 0,
-   EOLIAN_TYPE_UINT   = 1 << 1,
-   EOLIAN_TYPE_INT    = EOLIAN_TYPE_SINT | EOLIAN_TYPE_UINT,
-   EOLIAN_TYPE_FLOAT  = 1 << 2,
-   EOLIAN_TYPE_BOOL   = 1 << 3,
-   EOLIAN_TYPE_STRING = 1 << 4,
-   EOLIAN_TYPE_NUMBER = EOLIAN_TYPE_INT    | EOLIAN_TYPE_FLOAT,
-   EOLIAN_TYPE_ALL    = EOLIAN_TYPE_NUMBER | EOLIAN_TYPE_BOOL
-                      | EOLIAN_TYPE_STRING
-} Eolian_Type_Mask;
-
 struct _Eolian_Expression
 {
    Eolian_Object base;
@@ -252,6 +239,10 @@ void database_typedef_del(Eolian_Type *tp);
 
 void database_type_print(Eolian_Type *type);
 void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
+
+/* expressions */
+
+Eina_Value *database_expr_eval(Eolian_Expression *expr, Eolian_Expression_Mask mask);
 
 /* classes */
 
