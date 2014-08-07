@@ -2431,7 +2431,7 @@ st_styles_style_tag(void)
         collections
     @context
         collections {
-            ..
+            base_scale: 1.2;
             sounds { }
             vibrations { }
             group { }
@@ -2457,21 +2457,18 @@ ob_collections(void)
 
 /**
     @page edcref
-    @block
+    @property
         base_scale
-    @context
-        collections {
-            ..
-            base_scale: 1.2;
-            ..
-        }
-    @description
+    @parameters
+        [scale val]
+    @effect
         The base_scale is the standard scale value of the collection.
         The default base_scale is 1.0. It means the collection is made in the environment
         which is same with a desktop(The monitor has 96 dpi).
         If you make a collection in another environment(ex: 115 dpi), you have to
         set the base_scale(ex: 1.2). Then it will be shown same size in the desktop.
-    @endblock
+    @since 1.11
+    @endproperty
 */
 static void
 st_collections_base_scale(void)
