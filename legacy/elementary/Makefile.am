@@ -71,7 +71,12 @@ m4/efl_doxygen.m4 \
 config.rpath \
 pkgbuild/PKGBUILD
 
+if HAVE_FREEBSD
+pkgconfigdir = $(libdir)data/pkgconfig
+else
 pkgconfigdir = $(libdir)/pkgconfig
+endif
+
 pkgconfig_DATA = elementary.pc
 
 cmakeconfigdir = $(libdir)/cmake/Elementary

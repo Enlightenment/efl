@@ -37,6 +37,12 @@ ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
 have_windows="no"
 have_dlopen="no"
+have_freebsd="no"
+case "$host_os" in
+   freebsd*)
+      have_freebsd="yes"
+   ;;
+esac
 case "$host_os" in
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil])
@@ -88,6 +94,7 @@ esac
 
 AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
 AM_CONDITIONAL([BUILD_MODULES], [test "x$have_dlopen" = "xyes"])
+AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 
 AC_SUBST([default_engine])
 AC_DEFINE_UNQUOTED([DEFAULT_ENGINE], ["$default_engine"], ["Default engine according to host"])
