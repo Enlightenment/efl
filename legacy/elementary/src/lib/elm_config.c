@@ -1345,7 +1345,10 @@ _config_free(Elm_Config *cfg)
              eina_stringshare_del(kb->action);
              eina_stringshare_del(kb->params);
              EINA_LIST_FREE(kb->modifiers, mb)
-                eina_stringshare_del(mb->mod);
+               {
+                  eina_stringshare_del(mb->mod);
+                  free(mb);
+               }
              free(kb);
           }
         free(wb);
