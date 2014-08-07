@@ -1427,6 +1427,7 @@ _ecore_exe_data_generic_handler(void             *data,
    Ecore_Exe *obj = data;
    int child_fd;
    int event_type;
+   const Eo_Event_Description *eo_event = NULL;
 
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
 
@@ -1435,12 +1436,14 @@ _ecore_exe_data_generic_handler(void             *data,
    {
       flags = ECORE_EXE_PIPE_READ;
       event_type = ECORE_EXE_EVENT_DATA;
+      eo_event = ECORE_EXE_EVENT_DATA_GET;
       child_fd = exe->child_fd_read;
    }
    else
    {
       flags = ECORE_EXE_PIPE_ERROR;
       event_type = ECORE_EXE_EVENT_ERROR;
+      eo_event = ECORE_EXE_EVENT_DATA_ERROR;
       child_fd = exe->child_fd_error;
    }
 
@@ -1513,9 +1516,12 @@ _ecore_exe_data_generic_handler(void             *data,
                {
                   e = ecore_exe_event_data_get(obj, flags);
                   if (e) /* Send the event. */
-                    ecore_event_add(event_type, e,
-                                    _ecore_exe_event_exe_data_free,
-                                    NULL);
+                    {
+                       ecore_event_add(event_type, e,
+                             _ecore_exe_event_exe_data_free,
+                             NULL);
+                       eo_do(obj, eo_event_callback_call(eo_event, e));
+                    }
                }
             }
             if (lost_exe)

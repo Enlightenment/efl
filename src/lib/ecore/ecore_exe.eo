@@ -22,6 +22,10 @@ class Ecore.Exe (Eo.Base)
    implements {
         Eo.Base.finalize;
    }
+   events {
+        data,get: Ecore_Exe_Event_Data;
+        data,error: Ecore_Exe_Event_Data;
+   }
 }
 
 /* FIXME: Notes:
