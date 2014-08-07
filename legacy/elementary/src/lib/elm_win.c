@@ -319,6 +319,7 @@ _win_noblank_eval(void)
    Eina_List *l;
    Evas_Object *obj;
    int noblanks = 0;
+   Eina_Bool change = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_X
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
@@ -329,9 +330,13 @@ _win_noblank_eval(void)
           {
              if ((sd->noblank) && (!sd->iconified) && (!sd->withdrawn) &&
                  evas_object_visible_get(obj))
-             noblanks++;
+               noblanks++;
+
+             change = EINA_TRUE;
           }
      }
+
+   if (!change) return;
 
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11) || 
        ENGINE_COMPARE(ELM_SOFTWARE_16_X11) || 
