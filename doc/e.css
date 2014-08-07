@@ -953,3 +953,17 @@ dl.citelist dd {
   background-color: #a0a0a0;
   text-shadow: 0px 1px 0px #cccccc;
 }
+
+/* EdcRef page specific styles */
+
+table.edcref td {
+  vertical-align: top;
+}
+
+table.edcref td.property, table.edcref td.parameters  {
+  font-weight: bold;
+}
+
+
+
+
