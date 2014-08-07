@@ -250,6 +250,39 @@ read_dec_esc(Eo_Lexer *ls)
 }
 
 static void
+read_escape(Eo_Lexer *ls)
+{
+   switch (ls->current)
+     {
+      case 'a': eina_strbuf_append_char(ls->buff, '\a'); next_char(ls); break;
+      case 'b': eina_strbuf_append_char(ls->buff, '\b'); next_char(ls); break;
+      case 'f': eina_strbuf_append_char(ls->buff, '\f'); next_char(ls); break;
+      case 'n': eina_strbuf_append_char(ls->buff, '\n'); next_char(ls); break;
+      case 'r': eina_strbuf_append_char(ls->buff, '\r'); next_char(ls); break;
+      case 't': eina_strbuf_append_char(ls->buff, '\t'); next_char(ls); break;
+      case 'v': eina_strbuf_append_char(ls->buff, '\v'); next_char(ls); break;
+      case 'x':
+        eina_strbuf_append_char(ls->buff, read_hex_esc(ls));
+        next_char(ls);
+        break;
+      case '\n': case '\r':
+        next_line(ls);
+        eina_strbuf_append_char(ls->buff, '\n');
+        break;
+      case '\\': case '"': case '\'':
+        eina_strbuf_append_char(ls->buff, ls->current);
+        break;
+      case '\0':
+        break;
+      default:
+        if (!isdigit(ls->current))
+          esc_error(ls, &ls->current, 1, "invalid escape sequence");
+        eina_strbuf_append_char(ls->buff, read_dec_esc(ls));
+        break;
+     }
+}
+
+static void
 read_string(Eo_Lexer *ls, Eo_Token *tok)
 {
    eina_strbuf_reset(ls->buff);
@@ -266,36 +299,7 @@ read_string(Eo_Lexer *ls, Eo_Token *tok)
       case '\\':
         {
            next_char(ls);
-           switch (ls->current)
-             {
-              case 'a': eina_strbuf_append_char(ls->buff, '\a'); goto next;
-              case 'b': eina_strbuf_append_char(ls->buff, '\b'); goto next;
-              case 'f': eina_strbuf_append_char(ls->buff, '\f'); goto next;
-              case 'n': eina_strbuf_append_char(ls->buff, '\n'); goto next;
-              case 'r': eina_strbuf_append_char(ls->buff, '\r'); goto next;
-              case 't': eina_strbuf_append_char(ls->buff, '\t'); goto next;
-              case 'v': eina_strbuf_append_char(ls->buff, '\v'); goto next;
-              case 'x':
-                eina_strbuf_append_char(ls->buff, read_hex_esc(ls));
-                goto next;
-              case '\n': case '\r':
-                next_line(ls);
-                eina_strbuf_append_char(ls->buff, '\n');
-                goto skip;
-              case '\\': case '"':
-                eina_strbuf_append_char(ls->buff, ls->current);
-                goto skip;
-              case '\0':
-                goto skip;
-              default:
-                if (!isdigit(ls->current))
-                  esc_error(ls, &ls->current, 1, "invalid escape sequence");
-                eina_strbuf_append_char(ls->buff, read_dec_esc(ls));
-                goto skip;
-             }
-next:
-           next_char(ls);
-skip:
+           read_escape(ls);
            break;
         }
       default:
@@ -535,8 +539,18 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         return TOK_STRING;
       case '\'':
         next_char(ls);
-        tok->value.c = ls->current;
-        next_char(ls);
+        if (ls->current == '\\')
+          {
+             next_char(ls);
+             eina_strbuf_reset(ls->buff);
+             read_escape(ls);
+             tok->value.c = (char)*eina_strbuf_string_get(ls->buff);
+          }
+        else
+          {
+             tok->value.c = ls->current;
+             next_char(ls);
+          }
         if (ls->current != '\'')
           eo_lexer_lex_error(ls, "unfinished character", TOK_CHAR);
         next_char(ls);
@@ -699,7 +713,8 @@ eo_lexer_get_balanced(Eo_Lexer *ls, char beg, char end)
 int
 eo_lexer_get(Eo_Lexer *ls)
 {
-   if (ls->t.token >= START_CUSTOM && ls->t.token != TOK_NUMBER)
+   if (ls->t.token >= START_CUSTOM && ls->t.token != TOK_NUMBER
+                                   && ls->t.token != TOK_CHAR)
      {
         eina_stringshare_del(ls->t.value.s);
         ls->t.value.s = NULL;

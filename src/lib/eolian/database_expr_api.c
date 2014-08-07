@@ -91,6 +91,31 @@ eolian_expression_eval_type(const Eolian_Expression *expr,
    return _eval_type(expr, type, val);
 }
 
+static void
+_append_char_escaped(Eina_Strbuf *buf, char c)
+{
+   switch (c)
+     {
+      case '\'': eina_strbuf_append(buf, "\\\'"); break;
+      case '\"': eina_strbuf_append(buf, "\\\""); break;
+      case '\?': eina_strbuf_append(buf, "\\\?"); break;
+      case '\\': eina_strbuf_append(buf, "\\\\"); break;
+      case '\a': eina_strbuf_append(buf, "\\a"); break;
+      case '\b': eina_strbuf_append(buf, "\\b"); break;
+      case '\f': eina_strbuf_append(buf, "\\f"); break;
+      case '\n': eina_strbuf_append(buf, "\\n"); break;
+      case '\r': eina_strbuf_append(buf, "\\r"); break;
+      case '\t': eina_strbuf_append(buf, "\\t"); break;
+      case '\v': eina_strbuf_append(buf, "\\v"); break;
+      default:
+         if ((c < 32) || (c > 126))
+           eina_strbuf_append_printf(buf, "\\x%X", (unsigned char)c);
+         else
+           eina_strbuf_append_char(buf, c);
+         break;
+     }
+}
+
 EAPI Eina_Stringshare *
 eolian_expression_value_to_literal(const Eina_Value *v,
                                    Eolian_Expression_Type etp)
@@ -109,14 +134,27 @@ eolian_expression_value_to_literal(const Eina_Value *v,
       case EOLIAN_EXPR_CHAR:
         {
            char c;
+           Eina_Strbuf *buf = eina_strbuf_new();
+           const char *ret;
            eina_value_get(v, &c);
-           return eina_stringshare_printf("'%c'", c);
+           eina_strbuf_append_char(buf, '\'');
+           _append_char_escaped(buf, c);
+           eina_strbuf_append_char(buf, '\'');
+           ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+           eina_strbuf_free(buf);
+           return ret;
         }
       case EOLIAN_EXPR_STRING:
         {
+           const char *ret;
            char *str = eina_value_to_string(v);
-           const char *ret = eina_stringshare_printf("\"%s\"", str);
-           free(str);
+           char *c = str;
+           Eina_Strbuf *buf = eina_strbuf_new();
+           eina_strbuf_append_char(buf, '\"');
+           while (*c) _append_char_escaped(buf, *(c++));
+           eina_strbuf_append_char(buf, '\"');
+           ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+           eina_strbuf_free(buf);
            return ret;
         }
       case EOLIAN_EXPR_INT:
