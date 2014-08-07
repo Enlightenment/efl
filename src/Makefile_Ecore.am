@@ -8,6 +8,9 @@ BUILT_SOURCES += \
                  lib/ecore/ecore_poller.eo.c \
                  lib/ecore/ecore_poller.eo.h \
                  lib/ecore/ecore_poller.eo.legacy.h \
+                 lib/ecore/ecore_exe.eo.c \
+                 lib/ecore/ecore_exe.eo.h \
+                 lib/ecore/ecore_exe.eo.legacy.h \
                  lib/ecore/ecore_job.eo.c \
                  lib/ecore/ecore_job.eo.h \
                  lib/ecore/ecore_job.eo.legacy.h \
@@ -31,6 +34,7 @@ ecoreeolianfiles_DATA = \
               lib/ecore/ecore_timer.eo \
               lib/ecore/ecore_poller.eo \
               lib/ecore/ecore_job.eo \
+              lib/ecore/ecore_exe.eo \
               lib/ecore/ecore_idler.eo \
               lib/ecore/ecore_idle_enterer.eo \
               lib/ecore/ecore_idle_exiter.eo \
@@ -54,6 +58,8 @@ lib/ecore/Ecore_Getopt.h
 nodist_installed_ecoremainheaders_DATA = \
                                         lib/ecore/ecore_timer.eo.h \
                                         lib/ecore/ecore_poller.eo.h \
+                                        lib/ecore/ecore_exe.eo.h \
+                                        lib/ecore/ecore_exe.eo.legacy.h \
                                         lib/ecore/ecore_job.eo.h \
                                         lib/ecore/ecore_idler.eo.h \
                                         lib/ecore/ecore_idle_enterer.eo.h \

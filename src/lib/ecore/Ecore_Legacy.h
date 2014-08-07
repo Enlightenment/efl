@@ -291,6 +291,18 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  */
 
 /**
+ * @ingroup Ecore_Exe_Group
+ *
+ * @{
+ */
+
+#include "ecore_exe.eo.legacy.h"
+
+/**
+ * @}
+ */
+
+/**
  * @ingroup Ecore_Job_Group
  *
  * @{

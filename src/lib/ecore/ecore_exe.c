@@ -23,6 +23,8 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+#define MY_CLASS ECORE_EXE_CLASS
+
 /* FIXME: Getting respawn to work
  *
  * There is no way that we can do anything about the internal state info of
@@ -45,7 +47,6 @@
  *
  * These structure members don't need to change -
  *   __list_data       - we stay on the list
- *   ECORE_MAGIC       - this is a constant
  *   data              - passed in originally
  *   cmd               - passed in originally
  *   flags             - passed in originally
@@ -84,10 +85,8 @@
  * hurt.  The user code may need to be informed that a timeout is in progress.
  */
 
-struct _Ecore_Exe
+struct _Ecore_Exe_Data
 {
-   EINA_INLIST;
-                     ECORE_MAGIC;
    pid_t             pid;
    void             *data;
    char             *tag, *cmd;
@@ -120,6 +119,8 @@ struct _Ecore_Exe
    Ecore_Exe_Cb      pre_free_cb;
 };
 
+typedef struct _Ecore_Exe_Data Ecore_Exe_Data;
+
 /* TODO: Something to let people build a command line and does auto escaping -
  *
  * ecore_exe_snprintf()
@@ -149,7 +150,7 @@ static Eina_Bool            _ecore_exe_data_read_handler(void             *data,
                                                          Ecore_Fd_Handler *fd_handler);
 static Eina_Bool            _ecore_exe_data_write_handler(void             *data,
                                                           Ecore_Fd_Handler *fd_handler);
-static void                 _ecore_exe_flush(Ecore_Exe *exe);
+static void                 _ecore_exe_flush(Ecore_Exe *obj);
 static void                 _ecore_exe_event_exe_data_free(void *data EINA_UNUSED,
                                                            void *ev);
 static Ecore_Exe           *_ecore_exe_is_it_alive(pid_t pid);
@@ -158,14 +159,14 @@ static Eina_Bool            _ecore_exe_make_sure_its_really_dead(void *data);
 static Ecore_Exe_Event_Add *_ecore_exe_event_add_new(void);
 static void                 _ecore_exe_event_add_free(void *data,
                                                       void *ev);
-static void                 _ecore_exe_dead_attach(Ecore_Exe *exe);
+static void                 _ecore_exe_dead_attach(Ecore_Exe *obj);
 
 EAPI int ECORE_EXE_EVENT_ADD = 0;
 EAPI int ECORE_EXE_EVENT_DEL = 0;
 EAPI int ECORE_EXE_EVENT_DATA = 0;
 EAPI int ECORE_EXE_EVENT_ERROR = 0;
 
-static Ecore_Exe *exes = NULL;
+static Eina_List *exes = NULL;
 static const char *shell = NULL;
 
 /* FIXME: This errno checking stuff should be put elsewhere for everybody to use.
@@ -343,7 +344,33 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                    Ecore_Exe_Flags flags,
                    const void     *data)
 {
-   Ecore_Exe *exe = NULL;
+   Ecore_Exe *ret = eo_add(MY_CLASS, NULL, ecore_obj_exe_command_set(exe_cmd, flags));
+   if (ret)
+     {
+        Ecore_Exe_Data *pd = eo_data_scope_get(ret, MY_CLASS);
+        pd->data = (void *) data;
+     }
+
+   return ret;
+}
+
+EOLIAN static void
+_ecore_exe_command_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char *cmd, Ecore_Exe_Flags flags)
+{
+   pd->cmd = strdup(cmd);
+   pd->flags = flags;
+}
+
+EOLIAN static void
+_ecore_exe_command_get(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd, Ecore_Exe_Flags *flags)
+{
+   if (cmd) *cmd = pd->cmd;
+   if (flags) *flags = pd->flags;
+}
+
+EOLIAN static Eo *
+_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
+{
    int statusPipe[2] = { -1, -1 };
    int errorPipe[2] = { -1, -1 };
    int readPipe[2] = { -1, -1 };
@@ -353,9 +380,10 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    int result;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!exe_cmd) return NULL;
-   exe = calloc(1, sizeof(Ecore_Exe));
-   if (!exe) return NULL;
+   if (!exe->cmd) return NULL;
+
+   const char *exe_cmd = exe->cmd;
+   Ecore_Exe_Flags flags = exe->flags;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
@@ -521,15 +549,13 @@ ecore_exe_pipe_run(const char     *exe_cmd,
       if (pid)
       {
          /* Setup the exe structure. */
-          ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
           exe->start_bytes = -1;
           exe->end_bytes = -1;
           exe->start_lines = -1;
           exe->end_lines = -1;
           exe->pid = pid;
           exe->flags = flags;
-          exe->data = (void *)data;
-          if ((exe->cmd = strdup(exe_cmd)))
+          if (exe->cmd)
           {
              if (flags & ECORE_EXE_PIPE_ERROR) /* Setup the error stuff. */
              {
@@ -550,7 +576,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                      ecore_main_fd_handler_add(exe->child_fd_error,
                                                ECORE_FD_READ,
                                                _ecore_exe_data_error_handler,
-                                               exe, NULL, NULL);
+                                               obj, NULL, NULL);
                    if (!exe->error_fd_handler)
                      ok = 0;
                 }
@@ -574,7 +600,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                      ecore_main_fd_handler_add(exe->child_fd_read,
                                                ECORE_FD_READ,
                                                _ecore_exe_data_read_handler,
-                                               exe, NULL, NULL);
+                                               obj, NULL, NULL);
                    if (!exe->read_fd_handler)
                      ok = 0;
                 }
@@ -598,7 +624,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                      ecore_main_fd_handler_add(exe->child_fd_write,
                                                ECORE_FD_WRITE,
                                                _ecore_exe_data_write_handler,
-                                               exe, NULL, NULL);
+                                               obj, NULL, NULL);
                    if (exe->write_fd_handler)
                      ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);  /* Nothing to write to start with. */
                    else
@@ -606,7 +632,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                 }
              }
 
-             exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
+             exes = eina_list_append(exes, obj);
              n = 0;
           }
           else
@@ -618,8 +644,8 @@ ecore_exe_pipe_run(const char     *exe_cmd,
 
    if (!ok) /* Something went wrong, so pull down everything. */
    {
-      if (exe->pid) ecore_exe_terminate(exe);
-      IF_FN_DEL(ecore_exe_free, exe);
+      if (exe->pid) ecore_exe_terminate(obj);
+      IF_FN_DEL(ecore_exe_free, obj);
    }
    else
    {
@@ -628,7 +654,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
       e = _ecore_exe_event_add_new();
       if (e)
         {
-           e->exe = exe;
+           e->exe = obj;
            /* Send the event. */
            ecore_event_add(ECORE_EXE_EVENT_ADD, e,
                            _ecore_exe_event_add_free, NULL);
@@ -637,36 +663,31 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    }
 
    errno = n;
-   return exe;
+   return obj;
 }
 
 EAPI void
-ecore_exe_callback_pre_free_set(Ecore_Exe   *exe,
+ecore_exe_callback_pre_free_set(Ecore_Exe   *obj,
                                 Ecore_Exe_Cb func)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-                       "ecore_exe_callback_pre_free_set");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
    exe->pre_free_cb = func;
 }
 
 EAPI Eina_Bool
-ecore_exe_send(Ecore_Exe  *exe,
+ecore_exe_send(Ecore_Exe  *obj,
                const void *data,
                int         size)
 {
-   void *buf;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_send");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return EINA_FALSE;
-   }
+
+   void *buf;
 
    if (exe->close_stdin)
    {
@@ -696,30 +717,27 @@ ecore_exe_send(Ecore_Exe  *exe,
 }
 
 EAPI void
-ecore_exe_close_stdin(Ecore_Exe *exe)
+ecore_exe_close_stdin(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_close_stdin");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
+
    exe->close_stdin = 1;
 }
 
 EAPI void
-ecore_exe_auto_limits_set(Ecore_Exe *exe,
+ecore_exe_auto_limits_set(Ecore_Exe *obj,
                           int        start_bytes,
                           int        end_bytes,
                           int        start_lines,
                           int        end_lines)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_auto_limits_set");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
    /* FIXME: sanitize the input. */
    exe->start_bytes = start_bytes;
    exe->end_bytes = end_bytes;
@@ -767,7 +785,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe,
 }
 
 EAPI Ecore_Exe_Event_Data *
-ecore_exe_event_data_get(Ecore_Exe      *exe,
+ecore_exe_event_data_get(Ecore_Exe      *obj,
                          Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
@@ -776,11 +794,9 @@ ecore_exe_event_data_get(Ecore_Exe      *exe,
    int inbuf_num;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_event_data_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return NULL;
-   }
 
    /* Sort out what sort of event we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -815,7 +831,7 @@ ecore_exe_event_data_get(Ecore_Exe      *exe,
    e = calloc(1, sizeof(Ecore_Exe_Event_Data));
    if (e)
    {
-      e->exe = exe;
+      e->exe = obj;
       e->data = inbuf;
       e->size = inbuf_num;
 
@@ -893,15 +909,14 @@ ecore_exe_event_data_get(Ecore_Exe      *exe,
 }
 
 EAPI void
-ecore_exe_tag_set(Ecore_Exe  *exe,
+ecore_exe_tag_set(Ecore_Exe  *obj,
                   const char *tag)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_set");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
+
    IF_FREE(exe->tag);
    if (tag)
      exe->tag = strdup(tag);
@@ -910,36 +925,32 @@ ecore_exe_tag_set(Ecore_Exe  *exe,
 }
 
 EAPI const char *
-ecore_exe_tag_get(const Ecore_Exe *exe)
+ecore_exe_tag_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return NULL;
-   }
+
    return exe->tag;
 }
 
 EAPI void *
-ecore_exe_free(Ecore_Exe *exe)
+ecore_exe_free(Ecore_Exe *obj)
 {
    void *data;
    int ok = 0;
    int result;
 
-   if (!exe) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_free");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return NULL;
-   }
 
    data = exe->data;
 
    if (exe->pre_free_cb)
-     exe->pre_free_cb(data, exe);
+     exe->pre_free_cb(data, obj);
 
    if (exe->doomsday_clock)
    {
@@ -975,10 +986,8 @@ ecore_exe_free(Ecore_Exe *exe)
    IF_FREE(exe->error_data_buf);
    IF_FREE(exe->cmd);
 
-   exes = (Ecore_Exe *)eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
-   ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
+   exes = eina_list_remove(exes, obj);
    IF_FREE(exe->tag);
-   free(exe);
    return data;
 }
 
@@ -992,144 +1001,131 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 }
 
 EAPI pid_t
-ecore_exe_pid_get(const Ecore_Exe *exe)
+ecore_exe_pid_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pid_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return -1;
-   }
+
    return exe->pid;
 }
 
 EAPI const char *
-ecore_exe_cmd_get(const Ecore_Exe *exe)
+ecore_exe_cmd_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_cmd_get");
-      return NULL;
-   }
-   return exe->cmd;
+   const char *ret = NULL;
+
+   eo_do(obj, ecore_obj_exe_command_get(&ret, NULL));
+
+   return ret;
 }
 
 EAPI void *
-ecore_exe_data_get(const Ecore_Exe *exe)
+ecore_exe_data_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return NULL;
-   }
+
    return exe->data;
 }
 
 EAPI void *
-ecore_exe_data_set(Ecore_Exe *exe,
+ecore_exe_data_set(Ecore_Exe *obj,
                    void      *data)
 {
    void *ret;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, __func__);
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return NULL;
-   }
+
    ret = exe->data;
    exe->data = data;
    return ret;
 }
 
 EAPI Ecore_Exe_Flags
-ecore_exe_flags_get(const Ecore_Exe *exe)
+ecore_exe_flags_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return 0;
-   }
+
    return exe->flags;
 }
 
 EAPI void
-ecore_exe_pause(Ecore_Exe *exe)
+ecore_exe_pause(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pause");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
+
    kill(exe->pid, SIGSTOP);
 }
 
 EAPI void
-ecore_exe_continue(Ecore_Exe *exe)
+ecore_exe_continue(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_continue");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
+
    kill(exe->pid, SIGCONT);
 }
 
 EAPI void
-ecore_exe_interrupt(Ecore_Exe *exe)
+ecore_exe_interrupt(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_interrupt");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
-   _ecore_exe_dead_attach(exe);
+
+   _ecore_exe_dead_attach(obj);
    kill(exe->pid, SIGINT);
 }
 
 EAPI void
-ecore_exe_quit(Ecore_Exe *exe)
+ecore_exe_quit(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_quit");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
-   _ecore_exe_dead_attach(exe);
+
+   _ecore_exe_dead_attach(obj);
    kill(exe->pid, SIGQUIT);
 }
 
 EAPI void
-ecore_exe_terminate(Ecore_Exe *exe)
+ecore_exe_terminate(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_terminate");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
-   _ecore_exe_dead_attach(exe);
+
+   _ecore_exe_dead_attach(obj);
    INF("Sending TERM signal to %s (%d).", exe->cmd, exe->pid);
    kill(exe->pid, SIGTERM);
 }
 
 EAPI void
-ecore_exe_kill(Ecore_Exe *exe)
+ecore_exe_kill(Ecore_Exe *obj)
 {
    struct _ecore_exe_dead_exe *dead;
-
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_kill");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
 
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
    if (dead)
@@ -1146,15 +1142,14 @@ ecore_exe_kill(Ecore_Exe *exe)
 }
 
 EAPI void
-ecore_exe_signal(Ecore_Exe *exe,
+ecore_exe_signal(Ecore_Exe *obj,
                  int        num)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_signal");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
+
    if (num == 1)
      kill(exe->pid, SIGUSR1);
    else if (num == 2)
@@ -1162,14 +1157,13 @@ ecore_exe_signal(Ecore_Exe *exe,
 }
 
 EAPI void
-ecore_exe_hup(Ecore_Exe *exe)
+ecore_exe_hup(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_hup");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
+   if (!eo_isa(obj, MY_CLASS))
       return;
-   }
+
    kill(exe->pid, SIGHUP);
 }
 
@@ -1201,11 +1195,6 @@ _ecore_exe_is_it_alive(pid_t pid)
     * I will probably copy my urunlevel code into here someday.
     */
    exe = _ecore_exe_find(pid);
-   if (exe)
-   {
-      if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-        exe = NULL;
-   }
 
    return exe;
 }
@@ -1218,10 +1207,11 @@ _ecore_exe_make_sure_its_dead(void *data)
    dead = data;
    if (dead)
    {
-      Ecore_Exe *exe = NULL;
+      Ecore_Exe *obj = NULL;
 
-      if ((exe = _ecore_exe_is_it_alive(dead->pid)))
+      if ((obj = _ecore_exe_is_it_alive(dead->pid)))
       {
+         Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
          if (dead->cmd)
            INF("Sending KILL signal to allegedly dead %s (%d).",
                dead->cmd, dead->pid);
@@ -1250,10 +1240,11 @@ _ecore_exe_make_sure_its_really_dead(void *data)
    dead = data;
    if (dead)
    {
-      Ecore_Exe *exe = NULL;
+      Ecore_Exe *obj = NULL;
 
-      if ((exe = _ecore_exe_is_it_alive(dead->pid)))
+      if ((obj = _ecore_exe_is_it_alive(dead->pid)))
       {
+         Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
          ERR("RUN!  The zombie wants to eat your brains!  And your CPU!");
          if (dead->cmd)
            INF("%s (%d) is not really dead.", dead->cmd, dead->pid);
@@ -1279,33 +1270,39 @@ _ecore_exe_init(void)
 void
 _ecore_exe_shutdown(void)
 {
-   while (exes)
-     ecore_exe_free(exes);
+   Ecore_Exe *exe = NULL;
+   Eina_List *l1, *l2;
+   EINA_LIST_FOREACH_SAFE(exes, l1, l2, exe)
+      ecore_exe_free(exe);
 }
 
 Ecore_Exe *
 _ecore_exe_find(pid_t pid)
 {
-   Ecore_Exe *exe;
+   Eina_List *itr;
+   Ecore_Exe *obj;
 
-   EINA_INLIST_FOREACH(exes, exe)
+   EINA_LIST_FOREACH(exes, itr, obj)
    {
+      Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
       if (exe->pid == pid)
-        return exe;
+        return obj;
    }
    return NULL;
 }
 
 Ecore_Timer *
-_ecore_exe_doomsday_clock_get(Ecore_Exe *exe)
+_ecore_exe_doomsday_clock_get(Ecore_Exe *obj)
 {
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
    return exe->doomsday_clock;
 }
 
 void
-_ecore_exe_doomsday_clock_set(Ecore_Exe   *exe,
+_ecore_exe_doomsday_clock_set(Ecore_Exe   *obj,
                               Ecore_Timer *dc)
 {
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
    exe->doomsday_clock = dc;
 }
 
@@ -1427,11 +1424,11 @@ _ecore_exe_data_generic_handler(void             *data,
                                 Ecore_Fd_Handler *fd_handler,
                                 Ecore_Exe_Flags   flags)
 {
-   Ecore_Exe *exe;
+   Ecore_Exe *obj = data;
    int child_fd;
    int event_type;
 
-   exe = data;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
 
    /* Sort out what sort of handler we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -1514,7 +1511,7 @@ _ecore_exe_data_generic_handler(void             *data,
 
                if (!(exe->flags & ECORE_EXE_PIPE_AUTO))
                {
-                  e = ecore_exe_event_data_get(exe, flags);
+                  e = ecore_exe_event_data_get(obj, flags);
                   if (e) /* Send the event. */
                     ecore_event_add(event_type, e,
                                     _ecore_exe_event_exe_data_free,
@@ -1542,7 +1539,7 @@ _ecore_exe_data_generic_handler(void             *data,
                 * mechenism should kick in.  But let's give it a good
                 * kick in the head anyway.
                 */
-               ecore_exe_terminate(exe);
+               ecore_exe_terminate(obj);
             }
             break;
          }
@@ -1572,13 +1569,13 @@ static Eina_Bool
 _ecore_exe_data_write_handler(void             *data,
                               Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
-   Ecore_Exe *exe;
+   Ecore_Exe *obj = data;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
 
-   exe = data;
    if ((exe->write_fd_handler) &&
        (ecore_main_fd_handler_active_get
           (exe->write_fd_handler, ECORE_FD_WRITE)))
-     _ecore_exe_flush(exe);
+     _ecore_exe_flush(obj);
 
    /* If we have sent all there is to send, and we need to close the pipe, then close it. */
    if ((exe->close_stdin == 1)
@@ -1600,9 +1597,10 @@ _ecore_exe_data_write_handler(void             *data,
 }
 
 static void
-_ecore_exe_flush(Ecore_Exe *exe)
+_ecore_exe_flush(Ecore_Exe *obj)
 {
    int count;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
 
    /* check whether we need to write anything at all. */
    if ((exe->child_fd_write == -1) || (!exe->write_data_buf))
@@ -1617,7 +1615,7 @@ _ecore_exe_flush(Ecore_Exe *exe)
    {
       if (errno == EIO || errno == EBADF || errno == EPIPE || errno == EINVAL || errno == ENOSPC) /* we lost our exe! */
       {
-         ecore_exe_terminate(exe);
+         ecore_exe_terminate(obj);
          if (exe->write_fd_handler)
            ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
       }
@@ -1687,9 +1685,10 @@ _ecore_exe_event_del_free(void *data EINA_UNUSED,
 }
 
 static void
-_ecore_exe_dead_attach(Ecore_Exe *exe)
+_ecore_exe_dead_attach(Ecore_Exe *obj)
 {
    struct _ecore_exe_dead_exe *dead;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
 
    if (exe->doomsday_clock_dead) return;
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
@@ -1704,3 +1703,4 @@ _ecore_exe_dead_attach(Ecore_Exe *exe)
    }
 }
 
+#include "ecore_exe.eo.c"

@@ -891,7 +891,7 @@ enum _Ecore_Exe_Win32_Priority
 };
 typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
 
-typedef struct _Ecore_Exe              Ecore_Exe; /**< A handle for spawned processes */
+typedef Eo              Ecore_Exe; /**< A handle for spawned processes */
 
 /**
  * @typedef Ecore_Exe_Cb Ecore_Exe_Cb
