@@ -1966,15 +1966,16 @@ EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, 
 /**
  * @brief Unset the Ecore_Evas cursor
  *
- * @param ee The Ecore_Evas to uset the cursor.
+ * @param ee The Ecore_Evas to unset the cursor.
  *
- * This function unsets the cursor from the Ecore_Evas, and returns the cursor 
- * object. If the cursor was set from ecore_evas_cursor_set(), this function 
- * returns the image. In this case, the image should be deleted when it is 
+ * This function unsets the cursor from the Ecore_Evas, and returns the cursor
+ * object. If the cursor was set from ecore_evas_cursor_set(), this function
+ * returns the image. In this case, the image should be deleted when it is
  * no longer needed.
  *
  * @see ecore_evas_cursor_set()
  * @see ecore_evas_object_cursor_set()
+ * @since 1.11
  */
 EAPI Evas_Object*        ecore_evas_cursor_unset(Ecore_Evas *ee);
 
