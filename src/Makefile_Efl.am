@@ -1,4 +1,6 @@
 BUILT_SOURCES += \
+                 lib/efl/interfaces/efl_control.eo.c \
+                 lib/efl/interfaces/efl_control.eo.h \
                  lib/efl/interfaces/efl_file.eo.c \
                  lib/efl/interfaces/efl_file.eo.h \
                  lib/efl/interfaces/efl_image.eo.c \
@@ -12,6 +14,7 @@ BUILT_SOURCES += \
 
 efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
 efleolianfiles_DATA = \
+              lib/efl/interfaces/efl_control.eo \
               lib/efl/interfaces/efl_file.eo \
               lib/efl/interfaces/efl_image.eo \
               lib/efl/interfaces/efl_player.eo \
@@ -38,6 +41,7 @@ dist_installed_eflheaders_DATA = \
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
 nodist_installed_eflinterfaces_DATA = \
+              lib/efl/interfaces/efl_control.eo.h \
               lib/efl/interfaces/efl_file.eo.h \
               lib/efl/interfaces/efl_image.eo.h \
               lib/efl/interfaces/efl_player.eo.h \

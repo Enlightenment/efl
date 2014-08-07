@@ -4,6 +4,7 @@
 #include <Eo.h>
 
 /* Interfaces */
+#include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"
 #include "interfaces/efl_image.eo.h"
 #include "interfaces/efl_player.eo.h"
