@@ -562,6 +562,14 @@ EAPI Eina_Bool
 ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 {
    Ecore_X_Window root;
+   static int vsync_veto = -1;
+
+   if (vsync_veto == -1)
+     {
+        if (getenv("ECORE_NO_VSYNC")) vsync_veto = 1;
+        else vsync_veto = 0;
+     }
+   if (vsync_veto == 1) return EINA_FALSE;
 
    root = ecore_x_window_root_get(win);
    if (root != vsync_root)
