@@ -128,7 +128,6 @@ polygon_edge_sorter(const void *a, const void *b)
 void
 evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int dx, int dy)
 {
-   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int c, cx, cy, cw, ch, cr, cg, cb, ca, i;
    int x = 0, y = 0, w = 0, h = 0;
@@ -277,10 +276,10 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
              /* our clip is 0 size.. abort */
              if ((gc->dc->clip.w > 0) && (gc->dc->clip.h > 0))
                {
-		 rects = evas_common_draw_context_apply_cutouts(gc->dc, rects);
-                  for (i = 0; i < rects->active; ++i)
+                  _evas_gl_common_cutout_rects = evas_common_draw_context_apply_cutouts(gc->dc, _evas_gl_common_cutout_rects);
+                  for (i = 0; i < _evas_gl_common_cutout_rects->active; ++i)
                     {
-                       r = rects->rects + i;
+                       r = _evas_gl_common_cutout_rects->rects + i;
                        if ((r->w > 0) && (r->h > 0))
                          {
                             EINA_INLIST_FOREACH(spans, span)
@@ -295,6 +294,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                               }
                          }
                     }
+                  evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);
                }
           }
         while (spans)

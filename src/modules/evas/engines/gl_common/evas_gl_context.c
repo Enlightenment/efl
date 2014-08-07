@@ -11,6 +11,7 @@
 
 static int sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
+Cutout_Rects *_evas_gl_common_cutout_rects = NULL;
 
 typedef void       (*glsym_func_void) ();
 typedef void      *(*glsym_func_void_ptr) ();
@@ -934,6 +935,11 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
      }
    if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
    free(gc);
+   if (_evas_gl_common_cutout_rects)
+     {
+        evas_common_draw_context_apply_clear_cutouts(_evas_gl_common_cutout_rects);
+        _evas_gl_common_cutout_rects = NULL;
+     }
 }
 
 EAPI void
@@ -949,6 +955,11 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 {
    int i;
 
+   if (_evas_gl_common_cutout_rects)
+     {
+        evas_common_draw_context_apply_clear_cutouts(_evas_gl_common_cutout_rects);
+        _evas_gl_common_cutout_rects = NULL;
+     }
    if (dbgflushnum < 0)
      {
         dbgflushnum = 0;
@@ -3331,7 +3342,6 @@ finish:
    if (ok) return 1;
    else return 0;
 }
-
 
 Eina_Bool
 evas_gl_common_module_open(void)

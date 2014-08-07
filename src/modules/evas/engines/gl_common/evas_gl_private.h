@@ -29,4 +29,6 @@ extern int _evas_engine_GL_common_log_dom;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_common_log_dom, __VA_ARGS__)
 
+extern Cutout_Rects *_evas_gl_common_cutout_rects;
+
 #endif

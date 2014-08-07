@@ -62,7 +62,6 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    Evas_Engine_GL_Context *gc = context;
    RGBA_Draw_Context *dc = draw_context;
    Evas_GL_Texture *tex;
-   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *rct;
    int r, g, b, a;
    double ssx, ssy, ssw, ssh;
@@ -130,12 +129,12 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
         gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
         return;
      }
-   rects = evas_common_draw_context_apply_cutouts(dc, rects);
-   for (i = 0; i < rects->active; ++i)
+   _evas_gl_common_cutout_rects = evas_common_draw_context_apply_cutouts(dc, _evas_gl_common_cutout_rects);
+   for (i = 0; i < _evas_gl_common_cutout_rects->active; ++i)
      {
         int nx, ny, nw, nh;
 
-        rct = rects->rects + i;
+        rct = _evas_gl_common_cutout_rects->rects + i;
         nx = x; ny = y; nw = tex->w; nh = tex->h;
         RECTS_CLIP_TO_RECT(nx, ny, nw, nh, rct->x, rct->y, rct->w, rct->h);
         if ((nw < 1) || (nh < 1)) continue;
@@ -157,6 +156,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                          nx, ny, nw, nh,
                                          r, g, b, a);
      }
+   evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
 }
