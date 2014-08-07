@@ -447,15 +447,29 @@ eng_window_free(Outbuf *gw)
         context = EGL_NO_CONTEXT;
      }
 #else
-   if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
+   if (gw->glxwin)
+     {
+        glXMakeContextCurrent(gw->disp, 0, 0, gw->context);
+        glXDestroyWindow(gw->disp, gw->glxwin);
+     }
    if (ref == 0)
      {
+        if (!gw->glxwin)
+          {
+             if (glXGetCurrentContext() == gw->context)
+               glXMakeCurrent(gw->disp, 0, NULL);
+          }
         if (context) glXDestroyContext(gw->disp, context);
         if (rgba_context) glXDestroyContext(gw->disp, rgba_context);
         context = 0;
         rgba_context = 0;
         fbconf = 0;
         rgba_fbconf = 0;
+     }
+   else if (!gw->glxwin)
+     {
+        if (glXGetCurrentDrawable() == gw->win)
+          glXMakeCurrent(gw->disp, 0, gw->context);
      }
 #endif
    free(gw);
