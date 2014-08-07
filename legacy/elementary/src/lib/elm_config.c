@@ -1979,9 +1979,11 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, s);
         else if ((!strcasecmp(s, "ews")))
           eina_stringshare_replace(&_elm_config->engine, ELM_EWS);
-        else if ((!strcasecmp(s, "wayland_shm")))
+        else if ((!strcasecmp(s, "wayland_shm")) || 
+                 (!strcasecmp(s, "wayland-shm")))
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_SHM);
-        else if ((!strcasecmp(s, "wayland_egl")))
+        else if ((!strcasecmp(s, "wayland_egl")) || 
+                 (!strcasecmp(s, "wayland-egl")))
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_EGL);
         else if ((!strcasecmp(s, "drm")))
           eina_stringshare_replace(&_elm_config->engine, ELM_DRM);
