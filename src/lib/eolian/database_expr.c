@@ -540,6 +540,8 @@ database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
         *outval = eina_value_new(EINA_VALUE_TYPE_UCHAR);
         eina_value_set(*outval, out.value.b);
         break;
+      case EOLIAN_EXPR_NULL:
+        break;
       default:
         return EOLIAN_EXPR_UNKNOWN;
      }

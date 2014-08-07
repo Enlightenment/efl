@@ -144,7 +144,8 @@ EAPI Eina_Stringshare *
 eolian_expression_value_to_literal(const Eina_Value *v,
                                    Eolian_Expression_Type etp)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(v, NULL);
+   if (etp != EOLIAN_EXPR_NULL)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(v, NULL);
    switch (etp)
      {
       case EOLIAN_EXPR_BOOL:
