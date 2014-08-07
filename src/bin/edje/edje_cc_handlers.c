@@ -1855,7 +1855,7 @@ st_images_set_image_image(void)
     @property
         size
     @parameters
-        [minw minh maxw mawh]
+        [minw minh maxw maxh]
     @effect
         Define the minimal and maximal size that will select the specified image.
     @endproperty
