@@ -494,8 +494,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    if (need_implementation)
      {
         Eina_Bool is_cf = eolian_function_is_class(funcid);
-        if (is_cf)
-           eina_strbuf_append(full_params, " EINA_UNUSED");
         eina_strbuf_replace_all(fbody, "@#full_params", eina_strbuf_string_get(full_params));
         const char *data_type = eolian_class_data_type_get(class);
         if (is_cf || (data_type && !strcmp(data_type, "null")))
