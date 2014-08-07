@@ -100,6 +100,7 @@ evas_object_change_reset(Evas_Object *eo_obj)
    obj->changed_color = EINA_FALSE;
    obj->changed_pchange = EINA_FALSE;
    obj->changed_src_visible = EINA_FALSE;
+   obj->need_surface_clear = EINA_FALSE;
 }
 
 void
@@ -223,6 +224,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         movch = EINA_TRUE;
         obj->changed_move = EINA_FALSE;
      }
+   else obj->need_surface_clear = EINA_TRUE;
 
    if (obj->changed) return;
 

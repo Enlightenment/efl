@@ -920,6 +920,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   changed_map : 1;
    Eina_Bool                   changed_pchange : 1;
    Eina_Bool                   changed_src_visible : 1;
+   Eina_Bool                   need_surface_clear : 1;
    Eina_Bool                   del_ref : 1;
 
    Eina_Bool                   is_frame : 1;

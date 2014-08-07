@@ -973,6 +973,7 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *o2;
+   Eina_Bool has_map = EINA_FALSE;
 
    if (!evas_object_is_visible(eo_obj, obj) &&
        !evas_object_was_visible(eo_obj, obj))
@@ -980,16 +981,18 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
 
    if (!obj->clip.clipees)
      {
-        if (obj->changed && !obj->is_smart) return EINA_TRUE;
-        if (_evas_render_has_map(eo_obj, obj))
+        has_map = _evas_render_has_map(eo_obj, obj);
+        if (obj->changed && !obj->is_smart && !has_map) return EINA_TRUE;
+
+        if (has_map)
           {
-             if (((obj->changed_pchange) && (obj->changed_map)) ||
-                 (obj->changed_color)) return EINA_TRUE;
+             if (obj->need_surface_clear || ((obj->changed_pchange) && (obj->changed_map)))
+               return EINA_TRUE;
           }
      }
 
    EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
-     if (evas_object_smart_changed_get(o2->object)) return EINA_TRUE;
+      if (evas_object_smart_changed_get(o2->object)) return EINA_TRUE;
 
    return EINA_FALSE;
 }
