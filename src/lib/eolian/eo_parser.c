@@ -1009,7 +1009,8 @@ parse_property(Eo_Lexer *ls)
    Eo_Property_Def *prop = NULL;
    Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
-             has_protected = EINA_FALSE, has_class  = EINA_FALSE;
+             has_protected = EINA_FALSE, has_class  = EINA_FALSE,
+             has_constructor = EINA_FALSE;
    prop = calloc(1, sizeof(Eo_Property_Def));
    prop->base.line = ls->line_number;
    prop->base.column = ls->column;
@@ -1029,6 +1030,11 @@ parse_property(Eo_Lexer *ls)
         prop->is_class = EINA_TRUE;
         eo_lexer_get(ls);
         break;
+      case KW_at_constructor:
+        CASE_LOCK(ls, constructor, "constructor qualifier");
+        eo_lexer_get(ls);
+        break;
+
       default:
         goto body;
      }
