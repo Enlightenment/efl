@@ -3080,7 +3080,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
              enginelist[0] = ENGINE_GET();
              enginelist[1] = NULL;
           }
-        else if (getenv("DISPLAY"))
+        else if ((getenv("DISPLAY")) && (!getenv("ELM_ENGINE")))
           {
              if (_accel_is_gl())
                {
@@ -3095,7 +3095,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                   enginelist[2] = NULL;
                }
           }
-        else if (getenv("WAYLAND_DISPLAY"))
+        else if ((getenv("WAYLAND_DISPLAY")) && (!getenv("ELM_ENGINE")))
           {
              if (_accel_is_gl())
                {
