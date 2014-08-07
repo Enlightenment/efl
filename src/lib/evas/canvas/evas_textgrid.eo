@@ -213,7 +213,7 @@ class Evas.Textgrid (Evas.Object)
          @see evas_object_textgrid_update_add()
 
          @since 1.7 */
-         return Evas_Textgrid_Cell*;
+         return: Evas_Textgrid_Cell*;
          params {
             @in int y; /*@ The row index of the grid. */
          }

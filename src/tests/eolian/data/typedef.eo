@@ -7,7 +7,7 @@ class Typedef {
          params {
             int idx;
          }
-         return own(char*); /*@ comment for method return */
+         return: own(char*); /*@ comment for method return */
       }
    }
 }

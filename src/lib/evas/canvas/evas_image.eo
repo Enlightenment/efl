@@ -76,7 +76,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_source_get()
             @see evas_object_image_source_unset()
             @see evas_object_image_source_visible_set() */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -631,7 +631,7 @@ class Evas.Image (Evas.Object)
 
             This function sets a native surface of a given canvas image. */
             
-            legacy null;
+            legacy: null;
          }
          get {
             /*@
@@ -847,7 +847,7 @@ class Evas.Image (Evas.Object)
             @since 1.2
 
             This function returns the state of the region support of given image */
-            return bool @warn_unused;
+            return: bool @warn_unused;
          }
       }
       load_error {
@@ -859,7 +859,7 @@ class Evas.Image (Evas.Object)
             @return A value giving the last error that occurred. It should be
             one of the #Evas_Load_Error values. #EVAS_LOAD_ERROR_NONE
             is returned if there was no error. */
-            return Evas_Load_Error @warn_unused;
+            return: Evas_Load_Error @warn_unused;
          }
       }
       animated_frame_count {
@@ -878,7 +878,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_animated_frame_duration_get()
             @see evas_object_image_animated_frame_set()
             @since 1.1 */
-            return int;
+            return: int;
          }
       }
       stride {
@@ -890,7 +890,7 @@ class Evas.Image (Evas.Object)
 
             The row stride is the number of bytes between the start of a row
             and the start of the next row for image data. */
-            return int @warn_unused;
+            return: int @warn_unused;
          }
       }
       animated {
@@ -944,7 +944,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_animated_frame_duration_get()
             @see evas_object_image_animated_frame_set()
             @since 1.1 */
-            return bool;
+            return: bool;
          }
       }
       animated_loop_type {
@@ -970,7 +970,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_animated_frame_duration_get()
             @see evas_object_image_animated_frame_set()
             @since 1.1 */
-            return Evas_Image_Animated_Loop_Hint;
+            return: Evas_Image_Animated_Loop_Hint;
          }
       }
       animated_loop_count {
@@ -994,7 +994,7 @@ class Evas.Image (Evas.Object)
             @see evas_object_image_animated_frame_duration_get()
             @see evas_object_image_animated_frame_set()
             @since 1.1 */
-            return int;
+            return: int;
          }
       }
 
@@ -1007,7 +1007,7 @@ class Evas.Image (Evas.Object)
 
             @see evas_object_image_scene_set
             @since 1.10 */
-	    legacy null;
+	    legacy: null;
          }
          get {
             /*@
@@ -1019,7 +1019,7 @@ class Evas.Image (Evas.Object)
 
             @see evas_object_image_scene_get
             @since 1.10 */
-	    legacy null;
+	    legacy: null;
          }
          values {
             Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
@@ -1039,7 +1039,7 @@ class Evas.Image (Evas.Object)
             please use only for testing purposes.
             @see @ref evasfiltersref "Evas filters reference"
             */
-            legacy null;
+            legacy: null;
          }
          values {
             const(char)* program; /*@ The program code, as defined
@@ -1060,7 +1060,7 @@ class Evas.Image (Evas.Object)
 
             This will create automatically a new RGBA buffer containing
             the source object's pixels (as it is rendered). */
-            legacy null;
+            legacy: null;
          }
          values {
             const(char)* name; /*@ Object name as used in the program code */
@@ -1070,8 +1070,8 @@ class Evas.Image (Evas.Object)
       filter_padding {
          get {
             /*@ Get the value of the extra padding set when a filter is used. */
-            return bool; /*@ Returns false if the filter is invalid and padding is 0 */
-            legacy null;
+            return: bool; /*@ Returns false if the filter is invalid and padding is 0 */
+            legacy: null;
          }
          values {
             int l; /*@ Left padding in pixels */
@@ -1084,7 +1084,7 @@ class Evas.Image (Evas.Object)
    methods {
       preload_begin {
          /*@ Begin preloading an image object's image data in the background */
-         legacy null;
+         legacy: null;
       }
       data_update_add {
          /*@
@@ -1118,7 +1118,7 @@ class Evas.Image (Evas.Object)
          @see evas_object_image_animated_frame_duration_get()
          @see evas_object_image_animated_frame_set()
          @since 1.1 */
-         return double;
+         return: double;
          params {
             @in int start_frame; /*@ The first frame */
             @in int frame_num; /*@ Number of frames in the sequence */
@@ -1136,7 +1136,7 @@ class Evas.Image (Evas.Object)
          You can specify some flags when saving the image.  Currently
          acceptable flags are @c quality and @c compress. Eg.: @c
          "quality=100 compress=9" */
-         return bool;
+         return: bool;
          params {
             @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
             obligatory). */
@@ -1189,7 +1189,7 @@ class Evas.Image (Evas.Object)
          inform data changes, if you did any.
 
          @see evas_object_image_data_set() */
-         return void * @warn_unused;
+         return: void * @warn_unused;
          params {
             @in bool for_writing; /*@ Whether the data being retrieved will be
             modified (@c EINA_TRUE) or not (@c EINA_FALSE). */
@@ -1197,7 +1197,7 @@ class Evas.Image (Evas.Object)
       }
       preload_cancel {
          /*@ Cancel preloading an image object's image data in the background */
-         legacy null;
+         legacy: null;
       }
       data_convert {
          /*@
@@ -1214,7 +1214,7 @@ class Evas.Image (Evas.Object)
 
          @return data A newly allocated data in the format specified by to_cspace. */
 
-         return void * @warn_unused;
+         return: void * @warn_unused;
          params {
             @in Evas_Colorspace to_cspace; /*@ The colorspace to which the image raw data will be converted. */
          }
@@ -1225,7 +1225,7 @@ class Evas.Image (Evas.Object)
 
          This function imports pixels from a given source to a given canvas image. */
 
-         return bool;
+         return: bool;
          params {
             @in Evas_Pixel_Import_Source *pixels @nonull; /*@ The pixel's source to be imported. */
          }

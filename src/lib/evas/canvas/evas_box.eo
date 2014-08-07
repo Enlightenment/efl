@@ -200,8 +200,8 @@ class Evas.Box (Evas.Smart_Clipped)
       }
       internal_remove {
          /*@ No description supplied by the EAPI. */
-         return Evas_Object *;
-         legacy null;
+         return: Evas_Object *;
+         legacy: null;
          params {
             @in Evas_Object *child;
          }
@@ -220,7 +220,7 @@ class Evas.Box (Evas.Smart_Clipped)
       }
       internal_option_free {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
          params {
             @in Evas_Object_Box_Option *opt;
          }
@@ -244,7 +244,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's
          _Evas_Object_Box_Api.insert_after smart function. */
 
-         return Evas_Object_Box_Option *;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
             @in const(Evas_Object)* reference @nonull; /*@ The child object to place this new one after */
@@ -261,7 +261,7 @@ class Evas.Box (Evas.Smart_Clipped)
          each of @p o's child objects, in sequence. If, and only if, all
          those calls succeed, so does this one. */
 
-         return bool;
+         return: bool;
          params {
             @in bool clear; /*@ if true, it will delete just removed children. */
          }
@@ -274,7 +274,7 @@ class Evas.Box (Evas.Smart_Clipped)
          on errors
 
          @note Do @b not remove or delete objects while walking the list. */
-         return Eina.Iterator * @warn_unused;
+         return: Eina.Iterator * @warn_unused;
       }
       add_to {
          /*@
@@ -288,7 +288,7 @@ class Evas.Box (Evas.Smart_Clipped)
 
          @see evas_object_box_add() */
 
-         return Evas_Object * @warn_unused;
+         return: Evas_Object * @warn_unused;
       }
       append {
          /*@
@@ -307,7 +307,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's _Evas_Object_Box_Api.append
          smart function. */
 
-         return Evas_Object_Box_Option *;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
          }
@@ -326,7 +326,7 @@ class Evas.Box (Evas.Smart_Clipped)
          function. They'd have to implement it and set it to be the
          _Evas_Object_Box_Api.property_id_get smart class function of the
          box, which is originally set to @c NULL. */
-         return int @warn_unused;
+         return: int @warn_unused;
          params {
             @in const(char)* name @nonull; /*@ The name string of the option being searched, for
             its ID */
@@ -349,7 +349,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's
          _Evas_Object_Box_Api.prepend smart function. */
 
-         return Evas_Object_Box_Option *;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
          }
@@ -363,12 +363,12 @@ class Evas.Box (Evas.Smart_Clipped)
          on errors
 
          @note Do not remove or delete objects while walking the list. */
-         return Eina.Accessor * @warn_unused;
+         return: Eina.Accessor * @warn_unused;
       }
       internal_append {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object_Box_Option *;
+         legacy: null;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
          }
@@ -384,7 +384,7 @@ class Evas.Box (Evas.Smart_Clipped)
          evas_object_box_option_property_set(). See its documentation for
          more details. */
 
-         return bool;
+         return: bool;
          params {
             @in Evas_Object_Box_Option *opt @nonull; /*@ The box option structure bound to the child box element
             to set a property on */
@@ -393,12 +393,12 @@ class Evas.Box (Evas.Smart_Clipped)
             be set for this property. It @b must be of the same type the user has
             defined for it. */
          }
-         legacy null;
+         legacy: null;
       }
       internal_remove_at {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object *;
+         legacy: null;
+         return: Evas_Object *;
          params {
             @in uint pos;
          }
@@ -421,7 +421,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's
          _Evas_Object_Box_Api.remove_at smart function. */
 
-         return bool;
+         return: bool;
          params {
             @in uint pos; /*@ The numeric position (starting from @c 0) of the child
             object to be removed */
@@ -437,7 +437,7 @@ class Evas.Box (Evas.Smart_Clipped)
          This is a variable argument list variant of the
          evas_object_box_option_property_get(). See its documentation for
          more details. */
-         return bool;
+         return: bool;
          params {
             @in Evas_Object_Box_Option *opt @nonull; /*@ The box option structure bound to the child box element
             to get a property from */
@@ -446,12 +446,12 @@ class Evas.Box (Evas.Smart_Clipped)
             store the values of this property. They @b must point to variables
             of the same type the user has defined for them. */
          }
-         legacy null;
+         legacy: null;
       }
       internal_insert_at {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object_Box_Option *;
+         legacy: null;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
             @in uint pos;
@@ -476,7 +476,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's
          _Evas_Object_Box_Api.insert_before smart function. */
 
-         return Evas_Object_Box_Option *;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
             @in const(Evas_Object)* reference @nonull; /*@ The child object to place this new one before */
@@ -495,7 +495,7 @@ class Evas.Box (Evas.Smart_Clipped)
          function. They'd have to implement it and set it to be the
          _Evas_Object_Box_Api.property_name_get smart class function of the
          box, which is originally set to @c NULL. */
-         return const(char)* @warn_unused;
+         return: const(char)* @warn_unused;
          params {
             @in int property; /*@ The numerical identifier of the option being searched,
             for its name */
@@ -503,8 +503,8 @@ class Evas.Box (Evas.Smart_Clipped)
       }
       internal_insert_before {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object_Box_Option *;
+         legacy: null;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
             @in const(Evas_Object)* reference;
@@ -550,8 +550,8 @@ class Evas.Box (Evas.Smart_Clipped)
       }
       internal_option_new {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object_Box_Option*;
+         legacy: null;
+         return: Evas_Object_Box_Option*;
          params {
             @in Evas_Object *child;
          }
@@ -572,8 +572,8 @@ class Evas.Box (Evas.Smart_Clipped)
       }
       internal_insert_after {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object_Box_Option *;
+         legacy: null;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
             @in const(Evas_Object)* reference;
@@ -598,7 +598,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's
          _Evas_Object_Box_Api.insert_at smart function. */
 
-         return Evas_Object_Box_Option *;
+         return: Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
             @in uint pos; /*@ The numeric position (starting from @c 0) to place the
@@ -607,8 +607,8 @@ class Evas.Box (Evas.Smart_Clipped)
       }
       internal_prepend {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return Evas_Object_Box_Option*;
+         legacy: null;
+         return: Evas_Object_Box_Option*;
          params {
             @in Evas_Object *child;
          }
@@ -628,7 +628,7 @@ class Evas.Box (Evas.Smart_Clipped)
          @note This call will trigger the box's _Evas_Object_Box_Api.remove
          smart function. */
 
-         return bool;
+         return: bool;
          params {
             @in Evas_Object *child @nonull; /*@ The handle to the child object to be removed */
          }

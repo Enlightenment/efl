@@ -142,7 +142,7 @@ class Ecore_Audio_In (Ecore_Audio)
          Read from the input
 
          @since 1.8 */
-         return ssize; /*The amount of samples written to buf*/
+         return: ssize; /*The amount of samples written to buf*/
          params {
             @in void *buf; /*The buffer to read into*/
             @in size len; /*The amount of samples to read*/
@@ -153,7 +153,7 @@ class Ecore_Audio_In (Ecore_Audio)
          Internal read function
 
          @since 1.8 */
-         return ssize; /*The amount of samples written to buf*/
+         return: ssize; /*The amount of samples written to buf*/
          params {
             @in void *buf; /*The buffer to read into*/
             @in size len; /*The amount of samples to read*/
@@ -164,7 +164,7 @@ class Ecore_Audio_In (Ecore_Audio)
          Seek within the input
 
          @since 1.8 */
-         return double; /*The current absolute position in seconds within the input*/
+         return: double; /*The current absolute position in seconds within the input*/
          params {
             @in double offs; /*The offset in seconds*/
             @in int mode; /*mode The seek mode. Is absolute with SEEK_SET, relative to the

@@ -2,7 +2,7 @@ class Complex_Type {
    properties {
       a {
          set {
-            return  own(Eina.List*)<Eina.Array*<own(Eo**)>>;
+            return: own(Eina.List*)<Eina.Array*<own(Eo**)>>;
          }
          get {
          }
@@ -16,7 +16,7 @@ class Complex_Type {
          params {
             own(char*) buf;
          }
-         return own(Eina.List*)<Eina.Stringshare *>; /*@ comment for method return */
+         return: own(Eina.List*)<Eina.Stringshare *>; /*@ comment for method return */
       }
    }
 }

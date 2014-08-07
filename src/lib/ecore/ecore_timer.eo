@@ -43,7 +43,7 @@ class Ecore.Timer (Eo.Base)
       pending {
          get {
             /*@ Get the pending time regarding a timer. */
-            return double;
+            return: double;
          }
       }
    }

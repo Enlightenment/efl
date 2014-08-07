@@ -22,7 +22,7 @@ class Extern {
          params {
             int idx;
          }
-         return own(char*);
+         return: own(char*);
       }
    }
 }

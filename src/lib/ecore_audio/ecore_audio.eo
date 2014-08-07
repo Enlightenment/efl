@@ -64,7 +64,7 @@ class Ecore_Audio (Eo.Base)
             the libsndfile class accepts WAV, OGG, FLAC files as source.
             
             @since 1.8 */
-            return bool; /*EINA_TRUE if the source was set correctly (i.e. the file was opened), EINA_FALSE otherwise*/
+            return: bool; /*EINA_TRUE if the source was set correctly (i.e. the file was opened), EINA_FALSE otherwise*/
          }
          get {
             /*@
@@ -85,7 +85,7 @@ class Ecore_Audio (Eo.Base)
             ECORE_AUDIO_FORMAT_AUTO
             
             @since 1.8 */
-            return bool; /*EINA_TRUE if the format was supported, EINA_FALSE otherwise*/
+            return: bool; /*EINA_TRUE if the format was supported, EINA_FALSE otherwise*/
          }
          get {
             /*@

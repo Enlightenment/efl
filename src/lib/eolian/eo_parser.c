@@ -821,6 +821,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    Eo_Ret_Def *ret = calloc(1, sizeof(Eo_Ret_Def));
    ls->tmp.ret_def = ret;
    eo_lexer_get(ls);
+   check_next(ls, ':');
    if (allow_void)
      ret->type = parse_type_void(ls);
    else
@@ -898,6 +899,7 @@ static void
 parse_legacy(Eo_Lexer *ls)
 {
    eo_lexer_get(ls);
+   check_next(ls, ':');
    check(ls, TOK_VALUE);
    ls->tmp.legacy_def = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);

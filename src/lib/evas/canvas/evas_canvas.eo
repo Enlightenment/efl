@@ -245,7 +245,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return  @c EINA_TRUE if no error occurred, @c EINA_FALSE otherwise.
             @ingroup Evas_Output_Method */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -302,7 +302,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             focused rectangle. See the full @ref Example_Evas_Events "example".
 
             @ingroup Evas_Object_Group_Find */
-            return Evas_Object * @warn_unused;
+            return: Evas_Object * @warn_unused;
          }
       }
       object_top {
@@ -325,7 +325,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @warning This function will @b skip objects parented by smart
             objects, acting only on the ones at the "top level", with regard to
             object parenting. */
-            return Evas_Object * @warn_unused;
+            return: Evas_Object * @warn_unused;
          }
       }
       key_lock {
@@ -343,7 +343,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return An .Evas_Lock handle to query Evas' keys subsystem with
             evas_key_lock_is_set(), or @c NULL on error. */
-            return const(Evas_Lock)* @warn_unused;
+            return: const(Evas_Lock)* @warn_unused;
          }
       }
       pointer_canvas_xy {
@@ -380,7 +380,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @return The number of presses (0 if none active).
 
             @since 1.2 */
-            return int;
+            return: int;
          }
       }
       smart_objects_calculate_count {
@@ -398,7 +398,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @ingroup Evas_Smart_Object_Group
             @since 1.1 */
-            return int;
+            return: int;
          }
       }
       focus_state {
@@ -408,7 +408,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return @c EINA_TRUE if it got the focus, @c EINA_FALSE otherwise.
             @ingroup Evas_Canvas */
-            return bool;
+            return: bool;
          }
       }
       changed {
@@ -420,7 +420,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Canvas
             @since 1.11
              */
-            return bool;
+            return: bool;
          }
       }
       pointer_output_xy {
@@ -476,7 +476,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             if (evas_pointer_inside_get(evas)) printf("Mouse is in!\n");
             else printf("Mouse is out!\n");
             @endcode */
-            return bool @warn_unused;
+            return: bool @warn_unused;
          }
       }
       image_max_size {
@@ -491,7 +491,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             a limit, just a much higher one.
 
             @since 1.1 */
-            return bool;
+            return: bool;
          }
          values {
             int maxw; /*@ Pointer to hold the return value in pixels of the maximum width */
@@ -517,7 +517,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @warning This function will @b skip objects parented by smart
             objects, acting only on the ones at the "top level", with regard to
             object parenting. */
-            return Evas_Object * @warn_unused;
+            return: Evas_Object * @warn_unused;
          }
       }
       key_modifier {
@@ -535,7 +535,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return An .Evas_Modifier handle to query Evas' keys subsystem
             with evas_key_modifier_is_set(), or @c NULL on error. */
-            return const(Evas_Modifier)* @warn_unused;
+            return: const(Evas_Modifier)* @warn_unused;
          }
       }
       pointer_button_down_mask {
@@ -575,7 +575,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             if ((button_mask & (1 << i)) != 0) printf("Button %i\n", i + 1);
             }
             @endcode */
-            return int @warn_unused;
+            return: int @warn_unused;
          }
       }
    }
@@ -591,7 +591,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          It will not append to the list pass events as hidden objects.
          Call eina_list_free on the returned list after usage. */
 
-         return Eina.List * @warn_unused;
+         return: Eina.List * @warn_unused;
          params {
             @in Evas_Object *stop; /*@ An Evas Object where to stop searching. */
             @in int x; /*@ The horizontal coordinate of the position. */
@@ -667,7 +667,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_modifier_is_set
          @see evas_object_key_grab
          @see evas_object_key_ungrab */
-         return Evas_Modifier_Mask @warn_unused;
+         return: Evas_Modifier_Mask @warn_unused;
          params {
             @in const(char)* keyname @nonull; /*@ The name of the modifier key to create the mask for. */
          }
@@ -807,7 +807,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-         return Eina.List * @warn_unused;
+         return: Eina.List * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
             @in Evas_Coord y; /*@ The vertical coordinate of the position */
@@ -873,7 +873,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Canvas
          @since 1.8 */
 
-         return bool;
+         return: bool;
       }
       focus_out {
          /*@
@@ -939,7 +939,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_touch_point_list_nth_id_get()
          @see evas_touch_point_list_nth_state_get() */
 
-         return uint;
+         return: uint;
       }
       event_input_multi_down {
          /*@ No description supplied by the EAPI. */
@@ -1010,7 +1010,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
          @return @c EINA_TRUE if it is supported, @c EINA_FALSE otherwise.
          @ingroup Evas_Font_Group */
-         return bool @warn_unused;
+         return: bool @warn_unused;
          params {
             @in Evas_Font_Hinting_Flags hinting; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
@@ -1031,7 +1031,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-         return Evas_Object * @warn_unused;
+         return: Evas_Object * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
             @in Evas_Coord y; /*@ The vertical coordinate of the position */
@@ -1115,10 +1115,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          after you're done.
 
          @ingroup Evas_Font_Group */
-         return Eina.List * @warn_unused;
+         return: Eina.List * @warn_unused;
       }
       objects_in_rectangle_get @const {
-         return Eina.List * @warn_unused;
+         return: Eina.List * @warn_unused;
          params {
             @in Evas_Coord x;
             @in Evas_Coord y;
@@ -1140,7 +1140,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          the object name is unique.
 
          @ingroup Evas_Object_Group_Find */
-         return Evas_Object * @warn_unused;
+         return: Evas_Object * @warn_unused;
          params {
             @in const(char)* name; /*@ The given name. */
          }
@@ -1180,7 +1180,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_touch_point_list_nth_xy_get()
          @see evas_touch_point_list_nth_state_get() */
 
-         return int;
+         return: int;
          params {
             @in uint n; /*@ The number of the touched point (0 being the first). */
          }
@@ -1271,7 +1271,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          Retrieves the list of font paths used by the given evas.
          @return  The list of font paths used.
          @ingroup Evas_Font_Path_Group */
-         return const(Eina.List)* @warn_unused;
+         return: const(Eina.List)* @warn_unused;
       }
       image_cache_reload {
          /*@
@@ -1300,7 +1300,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          screen_x = evas_coord_world_x_to_screen(evas, canvas_x);
          @endcode */
-         return int @warn_unused;
+         return: int @warn_unused;
          params {
             @in Evas_Coord x; /*@ The canvas x co-ordinate */
          }
@@ -1351,7 +1351,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          @ingroup Evas_Canvas */
 
-         return Eina.List * @warn_unused;
+         return: Eina.List * @warn_unused;
       }
       image_cache_flush {
          /*@
@@ -1380,7 +1380,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          canvas_y = evas_coord_screen_y_to_world(evas, screen_y);
          @endcode */
-         return Evas_Coord @warn_unused;
+         return: Evas_Coord @warn_unused;
          params {
             @in int y; /*@ The screen/output y co-ordinate */
          }
@@ -1428,7 +1428,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_touch_point_list_nth_xy_get()
          @see evas_touch_point_list_nth_id_get() */
 
-         return Evas_Touch_Point_State;
+         return: Evas_Touch_Point_State;
          params {
             @in uint n; /*@ The number of the touched point (0 being the first). */
          }
@@ -1542,7 +1542,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-         return Evas_Object * @warn_unused;
+         return: Evas_Object * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The top left corner's horizontal coordinate for the
             rectangular region */
@@ -1645,7 +1645,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          canvas_x = evas_coord_screen_x_to_world(evas, screen_x);
          @endcode */
-         return Evas_Coord @warn_unused;
+         return: Evas_Coord @warn_unused;
          params {
             @in int x; /*@ The screen/output x co-ordinate */
          }
@@ -1712,7 +1712,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          screen_y = evas_coord_world_y_to_screen(evas, canvas_y);
          @endcode */
-         return int @warn_unused;
+         return: int @warn_unused;
          params {
             @in Evas_Coord y; /*@ The canvas y co-ordinate */
          }

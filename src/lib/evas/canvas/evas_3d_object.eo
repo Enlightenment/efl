@@ -16,7 +16,7 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
          /*@
            Returns the type of the object.
           */
-          return Evas_3D_Object_Type;
+          return: Evas_3D_Object_Type;
       }
 
       type_set {
@@ -32,7 +32,7 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
          /*@
            Returns the status of a particular state of the object.
           */
-          return bool;
+          return: bool;
          params {
            @in Evas_3D_State state; /*@ State whose status is being asked */
          }

@@ -5,7 +5,7 @@ interface Evas.Common_Interface ()
       evas {
          get {
             /*@ No description supplied by the EAPI. */
-            legacy evas_object_evas_get;
+            legacy: evas_object_evas_get;
          }
          values {
             Evas *ret;

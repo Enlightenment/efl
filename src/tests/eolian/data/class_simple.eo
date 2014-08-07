@@ -8,7 +8,7 @@ class Class_Simple {
          set {
             /*@
             comment a.set */
-            return bool (true); /*@ comment for property set return */
+            return: bool (true); /*@ comment for property set return */
          }
          get {
          }
@@ -25,7 +25,7 @@ class Class_Simple {
             @inout char b;
             @out double c;
          }
-         return char * (null); /*@ comment for method return */
+         return: char * (null); /*@ comment for method return */
       }
    }
 }

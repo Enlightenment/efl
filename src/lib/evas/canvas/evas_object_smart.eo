@@ -52,7 +52,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
       clip {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             Evas_Object *clip;
@@ -61,7 +61,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
       color {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             int r;
@@ -102,7 +102,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             @see evas_object_smart_member_add()
             @see evas_object_smart_member_del()
             @see evas_object_smart_iterator_new() */
-            return Eina.List * @warn_unused;
+            return: Eina.List * @warn_unused;
          }
       }
       smart {
@@ -113,18 +113,18 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             @return the #Evas_Smart handle or @c NULL, on errors
 
             @ingroup Evas_Smart_Object_Group */
-            return Evas_Smart * @warn_unused;
+            return: Evas_Smart * @warn_unused;
          }
       }
    }
    methods {
       show {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
       }
       move {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
          params {
             @in Evas_Coord x;
             @in Evas_Coord y;
@@ -157,7 +157,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
 
          @ingroup Evas_Smart_Object_Group */
 
-         return bool;
+         return: bool;
          params {
             @in const(Evas_Smart_Cb_Description)* descriptions; /*@ @c NULL terminated array with
             #Evas_Smart_Cb_Description descriptions. Array elements won't be
@@ -212,7 +212,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
          @see evas_object_smart_member_add()
          @see evas_object_smart_member_del()
          @see evas_object_smart_members_get() */
-         return Eina.Iterator * @warn_unused;
+         return: Eina.Iterator * @warn_unused;
       }
       callback_description_find @const {
          /*@
@@ -234,7 +234,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
       }
       hide {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
       }
       calculate {
          /*@
@@ -264,7 +264,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
          #EVAS_SMART_SUBCLASS_NEW, for example.
 
          @ingroup Evas_Smart_Object_Group */
-         legacy null;
+         legacy: null;
       }
       member_add {
          /*@
@@ -287,11 +287,11 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
          params {
             @in Evas_Object *sub_obj @nonull; /*@ The member object */
          }
-         legacy null;
+         legacy: null;
       }
       resize {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
          params {
             @in Evas_Coord w;
             @in Evas_Coord h;
@@ -299,7 +299,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
       }
       clip_unset {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
       }
       changed {
          /*@
@@ -330,18 +330,18 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             @in Evas_Object *sub_obj; /*@ the member object
             @ingroup Evas_Smart_Object_Group */
          }
-         legacy null;
+         legacy: null;
       }
       del {
          /*@ Deletes a smart object. */
-         legacy null;
+         legacy: null;
       }
       attach {
          /*@ Attach a given smart data to a given smart object. */
          params {
             @in Evas_Smart *s;
          }
-         legacy null;
+         legacy: null;
       }
    }
    implements {

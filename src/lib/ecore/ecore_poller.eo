@@ -20,8 +20,8 @@ class Ecore.Poller (Eo.Base)
 
             This allows the changing of a poller's polling interval. It is useful when
             you want to alter a poll rate without deleting and re-creating a poller. */
-            legacy ecore_poller_poller_interval_set;
-            return bool;
+            legacy: ecore_poller_poller_interval_set;
+            return: bool;
          }
          get {
             /*@
@@ -29,7 +29,7 @@ class Ecore.Poller (Eo.Base)
             @return Returns the interval, in ticks, that @p poller polls at.
 
             This returns a poller's polling interval, or 0 on error. */
-            legacy ecore_poller_poller_interval_get;
+            legacy: ecore_poller_poller_interval_get;
          }
          values {
             int interval; /*@ The tick interval to set; must be a power of 2 and <= 32768. */

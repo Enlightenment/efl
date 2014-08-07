@@ -309,7 +309,7 @@ class Evas.Text (Evas.Object)
             please use only for testing purposes.
             @see @ref evasfiltersref "Evas filters reference"
             */
-            legacy null;
+            legacy: null;
          }
          values {
             const(char)* program; /*@ The program code, as defined
@@ -329,7 +329,7 @@ class Evas.Text (Evas.Object)
             @note EXPERIMENTAL FEATURE. This is an unstable API,
             please use only for testing purposes.
             @see @ref evasfiltersref "Evas filters reference" */
-            legacy null;
+            legacy: null;
          }
          values {
             const(char)* name; /*@ Object name as used in the program code */
@@ -338,7 +338,7 @@ class Evas.Text (Evas.Object)
       }
       max_descent {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
       style_pad {
@@ -359,51 +359,51 @@ class Evas.Text (Evas.Object)
             Retrieves the direction of the text currently being displayed in the
             text object.
             @return the direction of the text */
-            return Evas_BiDi_Direction;
+            return: Evas_BiDi_Direction;
          }
       }
       ascent {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
       horiz_advance {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
       inset {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
       max_ascent {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
       vert_advance {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
       descent {
          get {
-            return Evas_Coord;
+            return: Evas_Coord;
          }
       }
    }
    methods {
       last_up_to_pos @const {
          /*@ Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text. */
-         return int;
+         return: int;
          params {
             @in Evas_Coord x; /*@ in */
             @in Evas_Coord y; /*@ in */
          }
       }
       char_coords_get @const {
-         return int;
+         return: int;
          params {
             @in Evas_Coord x; /*@ in */
             @in Evas_Coord y; /*@ in */
@@ -424,7 +424,7 @@ class Evas.Text (Evas.Object)
          parameter.
 
          @return @c EINA_FALSE on success, @c EINA_TRUE on error. */
-         return bool;
+         return: bool;
          params {
             @in int pos; /*@ The character position to request co-ordinates for. */
             @out Evas_Coord cx; /*@ A pointer to an @c Evas_Coord to store the X value in (can be NULL). */

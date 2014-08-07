@@ -80,7 +80,7 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
       }
       finalize {
          /*@ Called at the end of #eo_add. Should not be called, just overridden. */
-         return Eo *; /*@ The new object created, can be NULL if the finalize func decided to abort (though it should free the created object on it's own). */
+         return: Eo *; /*@ The new object created, can be NULL if the finalize func decided to abort (though it should free the created object on it's own). */
       }
       key_data_set {
          /*@ Set generic data to object. */
@@ -95,7 +95,7 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
          params {
             @in const(char)* key; /*@ the key associated with the data */
          }
-         return void *; /* the data for the key */
+         return: void *; /* the data for the key */
       }
       event_callback_del {
          /*@ Del a callback with a specific data associated to it for an event. */
@@ -150,7 +150,7 @@ This function registers the object handle pointed by wref to obj so when obj is 
             @in const(Eo_Event_Description)* desc; /*@ The description of the event to call */
             @in void *event_info; /*@ Extra event info to pass to the callbacks */
          }
-         return bool; /* @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
+         return: bool; /* @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
       }
       event_callback_priority_add {
          /*@ Add a callback for an event with a specific priority.
@@ -164,7 +164,7 @@ callbacks of the same priority are called in reverse order of creation. */
       }
       children_iterator_new {
          /*@ Get an iterator on all childrens */
-         return Eina.Iterator *;
+         return: Eina.Iterator *;
       }
    }
    implements {

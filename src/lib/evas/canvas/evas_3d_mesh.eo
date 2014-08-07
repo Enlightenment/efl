@@ -99,7 +99,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Mesh
           */
 
-         return void *;
+         return: void *;
          params {
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
@@ -135,7 +135,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-         return int ;
+         return: int;
          params {
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
@@ -199,7 +199,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-         return Evas_3D_Index_Format ;
+         return: Evas_3D_Index_Format;
       }
 
       index_count_get @const {
@@ -215,7 +215,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-         return int ;
+         return: int;
       }
 
       index_data_map {
@@ -233,7 +233,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-         return void * ;
+         return: void *;
       }
 
       index_data_unmap {
@@ -303,7 +303,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-          return int;
+          return: int;
       }
 
       fog_color_set {
@@ -344,7 +344,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
            Get fog effect status for the given mesh.
            @ingroup Evas_3D_Mesh
           */
-         return bool;
+         return: bool;
          params {
          }
       }

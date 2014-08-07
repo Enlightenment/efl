@@ -29,7 +29,7 @@ class Colourable (Eo.Base)
             params {
                 @in int mask; /*@ The colour mask to be applied to current RGB value. */
             }
-            return int; /*@ The RGB colour. */
+            return: int; /*@ The RGB colour. */
         }
     }
     properties {

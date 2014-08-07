@@ -21,7 +21,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-         return Evas_3D_Node_Type ;
+         return: Evas_3D_Node_Type ;
       }
       member_add {
          /*
@@ -63,7 +63,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-         return Evas_3D_Node * ;
+         return: Evas_3D_Node *;
       }
 
       member_list_get @const {
@@ -76,7 +76,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-         return const(Eina.List)*;
+         return: const(Eina.List)*;
       }
       position_set {
 
@@ -320,7 +320,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Node
           */
-         return const(Eina.List)*;
+         return: const(Eina.List)*;
       }
 
       bounding_box_get{
@@ -362,7 +362,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
           * @ingroup Evas_3D_Node
           */
-         return int;
+         return: int;
          params {
             @in Evas_3D_Node *camera_node;
          }

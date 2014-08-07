@@ -96,7 +96,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
-         return Evas_3D_Color_Format ;
+         return: Evas_3D_Color_Format;
       }
 
       size_get @const {
