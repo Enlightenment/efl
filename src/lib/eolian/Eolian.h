@@ -1111,12 +1111,18 @@ EAPI Eolian_Expression_Type eolian_expression_eval(const Eolian_Expression *expr
 EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type, Eina_Value **val);
 
 /*
- * @brief Convert the result of expression evaluation to string.
+ * @brief Convert the result of expression evaluation to a literal as in how
+ * it would appear in C (e.g. strings are quoted and escaped).
  *
  * @param[in] v the value.
  * @param[in] etp the eolian type of the value.
  * @return a stringshare containing the literal (quoted and escaped as needed)
  * or NULL.
+ *
+ * For e.g. strings this only uses a subset of regular C escape sequences
+ * so that interoperability is wider than just C (no octal escapes). For
+ * languages that differ too much, you can write an equivalent function
+ * using the Eina_Value pointer provided by the eval.
  *
  * @ingroup Eolian
  */
