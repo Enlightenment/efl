@@ -323,6 +323,25 @@ _drm_init(void)
    struct stat st;
    char buf[512];
 
+   // vboxvideo 4.3.14 is crashing when calls drmWaitVBlank()
+   // https://www.virtualbox.org/ticket/13265
+   if (stat("/sys/module/vboxvideo", &st) == 0)
+     {
+        FILE *fp = fopen("/sys/module/vboxvideo/version", "r");
+        if (fp)
+          {
+             if (fgets(buf, sizeof(buf), fp))
+               {
+                  if (eina_str_has_prefix(buf, "4.3.14"))
+                    {
+                       fclose(fp);
+                       return 0;
+                    }
+               }
+             fclose(fp);
+          }
+     }
+
    snprintf(buf, sizeof(buf), "/dev/dri/card1");
    if (stat(buf, &st) == 0)
      {
