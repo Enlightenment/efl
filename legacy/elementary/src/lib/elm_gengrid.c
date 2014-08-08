@@ -2505,7 +2505,7 @@ _item_horizontal_loop(Evas_Object *obj, Elm_Focus_Direction dir)
         else
           return EINA_FALSE;
      }
-   
+   if (!item) return EINA_FALSE;
    if (sd->reorder_mode && !(sd->focused_item == item))
      {
         _swap_items((Elm_Gen_Item *)sd->focused_item, (Elm_Gen_Item *)item, ELM_FOCUS_RIGHT);
@@ -2516,6 +2516,7 @@ _item_horizontal_loop(Evas_Object *obj, Elm_Focus_Direction dir)
         elm_gengrid_item_selected_set(item, EINA_TRUE);
         return EINA_TRUE;
      }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
