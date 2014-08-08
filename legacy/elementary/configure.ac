@@ -99,6 +99,10 @@ AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AC_SUBST([default_engine])
 AC_DEFINE_UNQUOTED([DEFAULT_ENGINE], ["$default_engine"], ["Default engine according to host"])
 
+
+EFL_COMPILER_FLAG([-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
+EFL_LINKER_FLAG([-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
+
 m4_ifdef([v_mic],
    [
     EFL_COMPILER_FLAG([-Wshadow])
