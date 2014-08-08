@@ -1401,7 +1401,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
      }
    if (tex->ptt)
      {
-        tex->ptt->allocations = eina_list_remove(tex->pt->allocations, tex->aptt);
+        tex->ptt->allocations = eina_list_remove(tex->ptt->allocations, tex->aptt);
         if (tex->aptt)
           eina_rectangle_pool_release(tex->aptt);
         tex->aptt = NULL;
