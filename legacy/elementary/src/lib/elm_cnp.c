@@ -1704,21 +1704,13 @@ found:
           }
      }
 
-   if (dropable->last.type)
-     {
-        cnp_debug("doing a request then: %s\n", dropable->last.type);
-        _x11_selections[ELM_SEL_TYPE_XDND].xwin = drop->win;
-        _x11_selections[ELM_SEL_TYPE_XDND].requestwidget = dropable->obj;
-        _x11_selections[ELM_SEL_TYPE_XDND].requestformat = dropable->last.format;
-        _x11_selections[ELM_SEL_TYPE_XDND].active = EINA_TRUE;
-        _x11_selections[ELM_SEL_TYPE_XDND].action = act;
-
-        ecore_x_selection_xdnd_request(drop->win, dropable->last.type);
-     }
-   else
-     {
-        cnp_debug("cannot match format\n");
-     }
+   cnp_debug("doing a request then: %s\n", dropable->last.type);
+   _x11_selections[ELM_SEL_TYPE_XDND].xwin = drop->win;
+   _x11_selections[ELM_SEL_TYPE_XDND].requestwidget = dropable->obj;
+   _x11_selections[ELM_SEL_TYPE_XDND].requestformat = dropable->last.format;
+   _x11_selections[ELM_SEL_TYPE_XDND].active = EINA_TRUE;
+   _x11_selections[ELM_SEL_TYPE_XDND].action = act;
+   ecore_x_selection_xdnd_request(drop->win, dropable->last.type);
    return EINA_TRUE;
 }
 
