@@ -132,6 +132,8 @@ typedef struct _Eo_Lexer
    Eina_File   *handle;
    /* the source file name */
    const char  *source;
+   /* only basename */
+   const char  *filename;
    /* points to the current character in our mmapped file being lexed, just
     * incremented until the end */
    const char  *stream;

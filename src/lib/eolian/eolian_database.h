@@ -38,9 +38,13 @@ extern Eina_Prefix *_eolian_prefix;
 extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
+extern Eina_Hash *_globals;
+extern Eina_Hash *_constants;
 extern Eina_Hash *_classesf;
 extern Eina_Hash *_aliasesf;
 extern Eina_Hash *_structsf;
+extern Eina_Hash *_globalsf;
+extern Eina_Hash *_constantsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
 extern Eina_Hash *_tfilenames;
 
@@ -57,7 +61,6 @@ struct _Eolian_Class
    Eina_Stringshare *full_name;
    Eina_List *namespaces; /* List Eina_Stringshare * */
    Eina_Stringshare *name;
-   Eina_Stringshare *file;
    Eolian_Class_Type type;
    Eina_Stringshare *description;
    Eina_Stringshare *legacy_prefix;
@@ -126,7 +129,6 @@ struct _Eolian_Type
          Eina_List        *namespaces;
          Eina_Hash        *fields;
          Eina_Stringshare *comment;
-         Eina_Stringshare *file;
       };
    };
    Eina_Bool is_const  :1;
@@ -230,6 +232,18 @@ struct _Eolian_Expression
    };
 };
 
+struct _Eolian_Variable
+{
+   Eolian_Object         base;
+   Eolian_Variable_Type  type;
+   Eina_Stringshare     *name;
+   Eina_Stringshare     *full_name;
+   Eina_List            *namespaces;
+   Eolian_Type          *base_type;
+   Eolian_Expression    *value;
+   Eina_Stringshare     *comment;
+};
+
 int database_init();
 int database_shutdown();
 
@@ -248,6 +262,12 @@ void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *n
 Eolian_Expression_Type database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask, Eina_Value **out);
 void database_expr_del(Eolian_Expression *expr);
 
+/* variables */
+
+void database_var_del(Eolian_Variable *var);
+Eina_Bool database_var_global_add(Eolian_Variable *var);
+Eina_Bool database_var_constant_add(Eolian_Variable *var);
+
 /* classes */
 
 Eolian_Class *database_class_add(const char *class_name, Eolian_Class_Type type);
@@ -264,7 +284,6 @@ void database_class_description_set(Eolian_Class *cl, const char *description);
 void database_class_legacy_prefix_set(Eolian_Class *cl, const char *legacy_prefix);
 void database_class_eo_prefix_set(Eolian_Class *cl, const char *eo_prefix);
 void database_class_data_type_set(Eolian_Class *cl, const char *data_type);
-void database_class_file_set(Eolian_Class *cl, const char *file_name);
 Eina_Bool database_class_ctor_enable_set(Eolian_Class *cl, Eina_Bool enable);
 Eina_Bool database_class_dtor_enable_set(Eolian_Class *cl, Eina_Bool enable);
 

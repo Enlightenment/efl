@@ -18,7 +18,6 @@ database_type_del(Eolian_Type *tp)
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
       eina_stringshare_del(sp);
    if (tp->comment) eina_stringshare_del(tp->comment);
-   if (tp->file) eina_stringshare_del(tp->file);
    free(tp);
 }
 
@@ -38,8 +37,8 @@ database_type_add(Eolian_Type *def)
 {
    if (!_aliases) return EINA_FALSE;
    eina_hash_set(_aliases, def->full_name, def);
-   eina_hash_set(_aliasesf, def->file, eina_list_append
-                ((Eina_List*)eina_hash_find(_aliasesf, def->file), def));
+   eina_hash_set(_aliasesf, def->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(_aliasesf, def->base.file), def));
    return EINA_TRUE;
 }
 
@@ -47,8 +46,8 @@ Eina_Bool database_struct_add(Eolian_Type *tp)
 {
    if (!_structs) return EINA_FALSE;
    eina_hash_set(_structs, tp->full_name, tp);
-   eina_hash_set(_structsf, tp->file, eina_list_append
-                ((Eina_List*)eina_hash_find(_structsf, tp->file), tp));
+   eina_hash_set(_structsf, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(_structsf, tp->base.file), tp));
    return EINA_TRUE;
 }
 

@@ -6,9 +6,13 @@
 Eina_Hash *_classes = NULL;
 Eina_Hash *_aliases = NULL;
 Eina_Hash *_structs = NULL;
+Eina_Hash *_globals = NULL;
+Eina_Hash *_constants = NULL;
 Eina_Hash *_classesf = NULL;
 Eina_Hash *_aliasesf = NULL;
 Eina_Hash *_structsf = NULL;
+Eina_Hash *_globalsf = NULL;
+Eina_Hash *_constantsf = NULL;
 Eina_Hash *_filenames = NULL;
 Eina_Hash *_tfilenames = NULL;
 
@@ -28,9 +32,13 @@ database_init()
    _classes = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
    _aliases = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
    _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _globals = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   _constants = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    _classesf = eina_hash_stringshared_new(NULL);
    _aliasesf = eina_hash_stringshared_new(_hashlist_free);
    _structsf = eina_hash_stringshared_new(_hashlist_free);
+   _globalsf = eina_hash_stringshared_new(_hashlist_free);
+   _constantsf = eina_hash_stringshared_new(_hashlist_free);
    _filenames = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
@@ -51,9 +59,13 @@ database_shutdown()
         eina_hash_free(_classes);
         eina_hash_free(_aliases);
         eina_hash_free(_structs);
+        eina_hash_free(_globals);
+        eina_hash_free(_constants);
         eina_hash_free(_classesf);
         eina_hash_free(_aliasesf);
         eina_hash_free(_structsf);
+        eina_hash_free(_globalsf);
+        eina_hash_free(_constantsf);
         eina_hash_free(_filenames);
         eina_hash_free(_tfilenames);
         eina_shutdown();

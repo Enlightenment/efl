@@ -404,7 +404,7 @@ _db_fill_class(Eo_Class_Def *kls)
    const char *s;
    Eina_List *l;
 
-   database_class_file_set(cl, kls->file);
+   eina_hash_set(_classesf, kls->base.file, cl);
 
    if (kls->comment)
      {

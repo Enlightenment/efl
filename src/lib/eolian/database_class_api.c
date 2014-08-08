@@ -4,7 +4,7 @@
 EAPI Eina_Stringshare *
 eolian_class_file_get(const Eolian_Class *cl)
 {
-   return cl ? cl->file : NULL;
+   return cl ? cl->base.file : NULL;
 }
 
 EAPI Eina_Stringshare *

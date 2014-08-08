@@ -80,6 +80,12 @@ typedef struct _Eolian_Event Eolian_Event;
  */
 typedef struct _Eolian_Expression Eolian_Expression;
 
+/* Variable information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Variable Eolian_Variable;
+
 #define EOLIAN_LEGACY "legacy"
 #define EOLIAN_LEGACY_GET "legacy_get"
 #define EOLIAN_LEGACY_SET "legacy_set"
@@ -168,6 +174,13 @@ typedef enum
                       | EOLIAN_MASK_STRING | EOLIAN_MASK_CHAR
                       | EOLIAN_MASK_NULL
 } Eolian_Expression_Mask;
+
+typedef enum
+{
+   EOLIAN_VAR_UNKNOWN = 0,
+   EOLIAN_VAR_CONSTANT,
+   EOLIAN_VAR_GLOBAL
+} Eolian_Variable_Type;
 
 /*
  * @brief Parse a given .eo file and fill the database.

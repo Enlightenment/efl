@@ -31,7 +31,9 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/database_event_api.c \
                                   lib/eolian/database_print.c \
                                   lib/eolian/database_expr.c \
-                                  lib/eolian/database_expr_api.c
+                                  lib/eolian/database_expr_api.c \
+                                  lib/eolian/database_var.c \
+                                  lib/eolian/database_var_api.c
 
 lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@ \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/eolian\"

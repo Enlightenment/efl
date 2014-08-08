@@ -127,7 +127,7 @@ eolian_type_file_get(const Eolian_Type *tp)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
                                 && tpp != EOLIAN_TYPE_FUNCTION
                                 && tpp != EOLIAN_TYPE_VOID, NULL);
-   return eina_stringshare_ref(tp->file);
+   return eina_stringshare_ref(tp->base.file);
 }
 
 EAPI const Eolian_Type *

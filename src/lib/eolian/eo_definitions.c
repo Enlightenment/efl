@@ -113,8 +113,6 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
 
    if (kls->name)
      eina_stringshare_del(kls->name);
-   if (kls->file)
-     eina_stringshare_del(kls->file);
    if (kls->comment)
      eina_stringshare_del(kls->comment);
    if (kls->legacy_prefix)

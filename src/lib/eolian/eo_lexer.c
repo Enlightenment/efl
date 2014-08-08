@@ -3,6 +3,7 @@
 
 #include <setjmp.h>
 #include <assert.h>
+#include <libgen.h>
 
 #include "eo_lexer.h"
 
@@ -663,6 +664,16 @@ lex_balanced(Eo_Lexer *ls, Eo_Token *tok, char beg, char end)
    return TOK_VALUE;
 }
 
+static const char *
+get_filename(Eo_Lexer *ls)
+{
+   char *dup = strdup(ls->source);
+   char *s = basename(dup);
+   const char *file = eina_stringshare_add(s);
+   free(dup);
+   return file;
+}
+
 static void
 eo_lexer_set_input(Eo_Lexer *ls, const char *source)
 {
@@ -679,6 +690,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->stream_end      = ls->stream + eina_file_size_get(f);
    ls->stream_line     = ls->stream;
    ls->source          = eina_stringshare_add(source);
+   ls->filename        = get_filename(ls);
    ls->line_number     = 1;
    ls->icolumn         = ls->column = 0;
    next_char(ls);
@@ -690,9 +702,10 @@ eo_lexer_free(Eo_Lexer *ls)
    Eo_Node *nd;
 
    if (!ls) return;
-   if (ls->source) eina_stringshare_del(ls->source);
-   if (ls->buff  ) eina_strbuf_free    (ls->buff);
-   if (ls->handle) eina_file_close     (ls->handle);
+   if (ls->source  ) eina_stringshare_del(ls->source);
+   if (ls->filename) eina_stringshare_del(ls->filename);
+   if (ls->buff    ) eina_strbuf_free    (ls->buff);
+   if (ls->handle  ) eina_file_close     (ls->handle);
 
    eo_lexer_context_clear(ls);
 
