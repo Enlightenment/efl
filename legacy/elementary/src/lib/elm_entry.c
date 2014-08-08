@@ -2871,6 +2871,11 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
      }
 
    len = strlen(entry);
+   if (sd->append_text_left)
+     {
+        free(sd->append_text_left);
+        sd->append_text_left = NULL;
+     }
    /* Split to ~ ELM_ENTRY_CHUNK_SIZE chunks */
    if (len > ELM_ENTRY_CHUNK_SIZE)
      {
