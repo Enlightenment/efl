@@ -9699,7 +9699,7 @@ st_collections_group_parts_part_description_map_rotation_center(void)
 */
 static void
 st_collections_group_parts_part_description_map_rotation_x(void)
-
+{
    check_arg_count(1);
 
    current_desc->map.rot.x = FROM_DOUBLE(parse_float(0));
