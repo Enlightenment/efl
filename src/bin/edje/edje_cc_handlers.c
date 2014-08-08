@@ -89,7 +89,6 @@
  *            <li>@ref sec_collections_group_parts_description "Description"</li>
  *            <ul>
  *              <li>@ref sec_collections_group_parts_description_relatives "Relatives (rel1/rel2)"</li>
- *              <li>@ref sec_collections_group_parts_description_links "Links"</li>
  *              <li>@ref sec_collections_group_parts_description_image "Image"</li>
  *              <ul>
  *                <li>@ref sec_collections_group_parts_description_image_fill "Fill"</li>
@@ -115,6 +114,7 @@
  *              </ul>
  *              <li>@ref sec_collections_group_parts_description_perspective "Perspective"</li>
  *              <li>@ref sec_collections_group_parts_descriptions_params "Params"</li>
+ *              <li>@ref sec_collections_group_parts_description_links "Links"</li>
  *            </ul>
  *          </ul>
  *        </ul>
@@ -5112,7 +5112,7 @@ st_collections_group_parts_part_source6(void)
         effect
     @parameters
         [EFFECT]
-        (optional) [SHADOW DIRECTION]
+        (SHADOW DIRECTION)
     @effect
         Causes Edje to draw the selected effect among:
         @li PLAIN
@@ -5307,7 +5307,7 @@ st_collections_group_parts_part_access(void)
             ..
             dragable {
                 confine: "another part";
-		threshold: "another part";
+                threshold: "another part";
                 events:  "another dragable part";
                 x: 0 0 0;
                 y: 0 0 0;
@@ -5469,7 +5469,7 @@ st_collections_group_parts_part_dragable_events(void)
     @context
         part {
             ..
-	    box {
+            box/table {
                 items {
                     item {
                         type: TYPE;
@@ -5486,13 +5486,13 @@ st_collections_group_parts_part_dragable_events(void)
                     }
                     ..
                 }
-	    }
+            }
             ..
         }
     @description
         On a part of type BOX, this block can be used to set other groups
-	as elements of the box. These can be mixed with external objects set
-	by the application through the edje_object_part_box_* API.
+        as elements of the box. These can be mixed with external objects set
+        by the application through the edje_object_part_box_* API.
     @endblock
 */
 static void ob_collections_group_parts_part_box_items_item(void)
@@ -6078,115 +6078,6 @@ ob_collections_group_parts_part_desc(void)
    stack_pop_quick(EINA_TRUE, EINA_TRUE);
    stack_push_quick("description");
    ob_collections_group_parts_part_description();
-}
-
-static void
-ob_collections_group_parts_part_description_link(void)
-{
-   Edje_Part_Collection_Parser *pcp;
-   Edje_Part_Parser *epp;
-   Edje_Part_Description_Link *el;
-
-   pcp = eina_list_last_data_get(edje_collections);
-   epp = (Edje_Part_Parser*)current_part;
-
-   ob_collections_group_programs_program();
-   _edje_program_remove((Edje_Part_Collection*)pcp, current_program);
-   el = mem_alloc(SZ(Edje_Part_Description_Link));
-   el->pr = current_program;
-   el->ed = current_desc;
-   el->epp = epp;
-   pcp->links = eina_list_append(pcp->links, el);
-   current_program->action = EDJE_ACTION_TYPE_STATE_SET;
-	  current_program->state = strdup(current_desc->state.name ?: "default");
-   current_program->value = current_desc->state.value;
-}
-
-/**
-   @edcsubsection{collections_group_parts_description_links,Links}
- */
-
-/**
-    @page edcref
-    @block
-        link
-    @context
-        desc { "default";
-            ..
-            link {
-                base: "edje,signal" "edje";
-                transition: LINEAR 0.2;
-                in: 0.5 0.1;
-                after: "some_program";
-            }
-            ..
-        }
-    @description
-        The link block can be used to create transitions to the enclosing part description state.
-        The result of the above block is identical to creating a program with
-        action: STATE_SET "default";
-        signal: "edje,signal"; source: "edje";
-    @since 1.10
-    @endblock
-
-    @property
-        base
-    @parameters
-        [signal] [source]
-    @effect
-        Defines the signal and source which will trigger the transition to this state.
-        The source parameter is optional here and will be filled with the current group's
-        default value if it is not provided.
-    @since 1.10
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_link_base(void)
-{
-   char *name;
-   char buf[4096];
-   Edje_Part_Collection_Parser *pcp;
-   Edje_Part_Description_Link *el, *ell;
-   Eina_List *l;
-
-   pcp = eina_list_last_data_get(edje_collections);
-   el = eina_list_last_data_get(pcp->links);
-
-   if ((!el) || (el->pr != current_program) ||
-       (el->ed != current_desc) || (el->epp != (Edje_Part_Parser*)current_part) ||
-       el->pr->source)
-     ob_collections_group_parts_part_description_link();
-   el = eina_list_last_data_get(pcp->links);
-
-   check_min_arg_count(1);
-   name = parse_str(0);
-   if (current_program->signal && pcp->link_hash)
-     {
-        snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
-        eina_hash_list_remove(pcp->link_hash, buf, el);
-     }
-   if (!pcp->link_hash)
-     pcp->link_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
-   free((void*)current_program->signal);
-   current_program->signal = name;
-   if (get_arg_count() == 2)
-     {
-        name = parse_str(1);
-        free((void*)current_program->source);
-        current_program->source = name;
-     }
-   snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
-   EINA_LIST_FOREACH(eina_hash_find(pcp->link_hash, buf), l, ell)
-     {
-        if (ell->epp == el->epp)
-          {
-             ERR("parse error %s:%i. "
-                 "cannot have multiple links with the same signal on the same part",
-                 file_in, line - 1);
-             exit(-1);
-          }
-     }
-   eina_hash_list_append(pcp->link_hash, buf, el);
 }
 
 /**
@@ -10108,6 +9999,118 @@ st_collections_group_parts_part_description_params_choice(void)
 {
    _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_CHOICE);
 }
+
+/**
+   @edcsubsection{collections_group_parts_description_links,Links}
+ */
+
+/**
+    @page edcref
+    @block
+        link
+    @context
+        desc { "default";
+            ..
+            link {
+                base: "edje,signal" "edje";
+                transition: LINEAR 0.2;
+                in: 0.5 0.1;
+                after: "some_program";
+            }
+            ..
+        }
+    @description
+        The link block can be used to create transitions to the enclosing part description state.
+        The result of the above block is identical to creating a program with
+        action: STATE_SET "default";
+        signal: "edje,signal"; source: "edje";
+    @since 1.10
+    @endblock
+*/
+static void
+ob_collections_group_parts_part_description_link(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+   Edje_Part_Parser *epp;
+   Edje_Part_Description_Link *el;
+
+   pcp = eina_list_last_data_get(edje_collections);
+   epp = (Edje_Part_Parser*)current_part;
+
+   ob_collections_group_programs_program();
+   _edje_program_remove((Edje_Part_Collection*)pcp, current_program);
+   el = mem_alloc(SZ(Edje_Part_Description_Link));
+   el->pr = current_program;
+   el->ed = current_desc;
+   el->epp = epp;
+   pcp->links = eina_list_append(pcp->links, el);
+   current_program->action = EDJE_ACTION_TYPE_STATE_SET;
+   current_program->state = strdup(current_desc->state.name ?: "default");
+   current_program->value = current_desc->state.value;
+}
+
+/**
+    @page edcref
+    @property
+        base
+    @parameters
+        [signal] [source]
+    @effect
+        Defines the signal and source which will trigger the transition to this state.
+        The source parameter is optional here and will be filled with the current group's
+        default value if it is not provided.
+    @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_link_base(void)
+{
+   char *name;
+   char buf[4096];
+   Edje_Part_Collection_Parser *pcp;
+   Edje_Part_Description_Link *el, *ell;
+   Eina_List *l;
+
+   pcp = eina_list_last_data_get(edje_collections);
+   el = eina_list_last_data_get(pcp->links);
+
+   if ((!el) || (el->pr != current_program) ||
+       (el->ed != current_desc) || (el->epp != (Edje_Part_Parser*)current_part) ||
+       el->pr->source)
+     ob_collections_group_parts_part_description_link();
+   el = eina_list_last_data_get(pcp->links);
+
+   check_min_arg_count(1);
+   name = parse_str(0);
+   if (current_program->signal && pcp->link_hash)
+     {
+        snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
+        eina_hash_list_remove(pcp->link_hash, buf, el);
+     }
+   if (!pcp->link_hash)
+     pcp->link_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
+   free((void*)current_program->signal);
+   current_program->signal = name;
+   if (get_arg_count() == 2)
+     {
+        name = parse_str(1);
+        free((void*)current_program->source);
+        current_program->source = name;
+     }
+   snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
+   EINA_LIST_FOREACH(eina_hash_find(pcp->link_hash, buf), l, ell)
+     {
+        if (ell->epp == el->epp)
+          {
+             ERR("parse error %s:%i. "
+                 "cannot have multiple links with the same signal on the same part",
+                 file_in, line - 1);
+             exit(-1);
+          }
+     }
+   eina_hash_list_append(pcp->link_hash, buf, el);
+}
+
 
 static void
 _program_sequence_check(void)
