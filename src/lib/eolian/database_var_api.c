@@ -93,3 +93,10 @@ eolian_variable_namespaces_get(const Eolian_Variable *var)
    if (!var->namespaces) return NULL;
    return eina_list_iterator_new(var->namespaces);
 }
+
+EAPI Eina_Bool
+eolian_variable_is_extern(const Eolian_Variable *var)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(var, EINA_FALSE);
+   return var->is_extern;
+}

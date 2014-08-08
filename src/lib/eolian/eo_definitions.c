@@ -149,6 +149,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    Eina_Strbuf *buf;
    Eo_Param_Def *par;
    Eolian_Type *tp;
+   Eolian_Variable *var;
    const char *s;
 
    EINA_LIST_FREE(tmp->str_bufs, buf)
@@ -168,6 +169,9 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->type_defs, tp)
      database_type_del(tp);
+
+   EINA_LIST_FREE(tmp->var_defs, var)
+     database_var_del(var);
 
    if (tmp->prop)
      eo_definitions_property_def_free(tmp->prop);

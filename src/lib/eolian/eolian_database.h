@@ -242,6 +242,7 @@ struct _Eolian_Variable
    Eolian_Type          *base_type;
    Eolian_Expression    *value;
    Eina_Stringshare     *comment;
+   Eina_Bool is_extern :1;
 };
 
 int database_init();
@@ -265,8 +266,7 @@ void database_expr_del(Eolian_Expression *expr);
 /* variables */
 
 void database_var_del(Eolian_Variable *var);
-Eina_Bool database_var_global_add(Eolian_Variable *var);
-Eina_Bool database_var_constant_add(Eolian_Variable *var);
+Eina_Bool database_var_add(Eolian_Variable *var);
 
 /* classes */
 

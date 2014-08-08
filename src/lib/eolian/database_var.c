@@ -18,7 +18,7 @@ database_var_del(Eolian_Variable *var)
    free(var);
 }
 
-Eina_Bool
+static Eina_Bool
 database_var_global_add(Eolian_Variable *var)
 {
    if (!_globals) return EINA_FALSE;
@@ -28,7 +28,7 @@ database_var_global_add(Eolian_Variable *var)
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 database_var_constant_add(Eolian_Variable *var)
 {
    if (!_constants) return EINA_FALSE;
@@ -36,4 +36,12 @@ database_var_constant_add(Eolian_Variable *var)
    eina_hash_set(_constantsf, var->base.file, eina_list_append
                  ((Eina_List*)eina_hash_find(_constantsf, var->base.file), var));
    return EINA_TRUE;
+}
+
+Eina_Bool
+database_var_add(Eolian_Variable *var)
+{
+   if (var->type == EOLIAN_VAR_GLOBAL)
+     return database_var_global_add(var);
+   return database_var_constant_add(var);
 }

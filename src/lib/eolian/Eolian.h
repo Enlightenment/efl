@@ -1255,6 +1255,16 @@ EAPI Eina_Stringshare *eolian_variable_full_name_get(const Eolian_Variable *var)
  */
 EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
 
+/*
+ * @brief Check if a variable is extern.
+ *
+ * @param[in] var the variable.
+ * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
+
 #endif
 
 #ifdef __cplusplus
