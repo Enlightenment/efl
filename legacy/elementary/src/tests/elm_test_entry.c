@@ -335,36 +335,6 @@ START_TEST (elm_entry_atspi_text_selections)
 }
 END_TEST
 
-START_TEST (elm_entry_atspi_text_attributes)
-{
-   Evas_Object *win, *entry;
-   Eina_List *formats;
-   const char txt[] = "<font_weight=Bold>Lorem ipśum<br></>  dolor sit\n amęt";
-   int start = 0, end = sizeof(txt);
-   Elm_Atspi_Text_Attribute *attr;
-
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-
-   entry = elm_entry_add(win);
-   elm_object_text_set(entry, txt);
-
-   eo_do(entry, formats = elm_interface_atspi_text_attributes_get(&start, &end));
-   EINA_LIST_FREE(formats, attr)
-     {
-        elm_atspi_text_text_attribute_free(attr);
-     }
-
-   eo_do(entry, formats = elm_interface_atspi_text_default_attributes_get());
-   EINA_LIST_FREE(formats, attr)
-     {
-        elm_atspi_text_text_attribute_free(attr);
-     }
-
-   elm_shutdown();
-}
-END_TEST
-
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *entry;
@@ -393,6 +363,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_atspi_text_string_get_line);
    tcase_add_test(tc, elm_entry_atspi_text_text_get);
    tcase_add_test(tc, elm_entry_atspi_text_selections);
-   tcase_add_test(tc, elm_entry_atspi_text_attributes);
    tcase_add_test(tc, elm_atspi_role_get);
 }

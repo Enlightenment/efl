@@ -11,7 +11,7 @@
 #include "elm_interface_atspi_text.h"
 #include "elm_interface_atspi_text.eo.h"
 
-EAPI void
+void
 elm_atspi_text_text_attribute_free(Elm_Atspi_Text_Attribute *attr)
 {
    if (!attr) return;
