@@ -613,7 +613,7 @@ ecore_file_mv(const char *src, const char *dst)
                     goto FAIL;
 
                   // Set file permissions of temp file to match src
-                  chmod(buf, st.st_mode);
+                  if (chmod(buf, st.st_mode) == -1) goto FAIL;
 
                   // Try to atomically move temp file to dst
                   if (rename(buf, dst))
