@@ -213,7 +213,7 @@ database_load(options_type const& opts)
              assert(false && "Error parsing input file");
           }
      }
-   if (!::eolian_all_eo_files_parse())
+   else if (!::eolian_all_eo_files_parse())
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Eolian failed parsing input files";
