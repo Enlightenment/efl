@@ -21,8 +21,7 @@ enum Tokens
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
  * they just fill in the "kw" field of the token */
-#define KEYWORDS KW(class), KW(const), KW(private), KW(return), KW(struct), \
-    KW(virtual), \
+#define KEYWORDS KW(class), KW(const), KW(return), KW(struct), KW(virtual), \
     \
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
     KW(destructor), KW(eo_prefix), KW(events), KW(func), KW(get), \
@@ -30,7 +29,7 @@ enum Tokens
     KW(methods), KW(mixin), KW(own), KW(params), KW(properties), KW(set), \
     KW(type), KW(values), KWAT(class), KWAT(const), KWAT(constructor), \
     KWAT(extern), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), \
-    KWAT(protected), KWAT(warn_unused), \
+    KWAT(private), KWAT(protected), KWAT(warn_unused), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \

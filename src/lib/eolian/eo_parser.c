@@ -1283,11 +1283,6 @@ parse_event(Eo_Lexer *ls)
    ev->base.column = ls->column;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.event = ev;
-   /* code path not in use yet
-   if (ls->t.kw == KW_private)
-     {
-        eo_lexer_get(ls);
-     }*/
    check(ls, TOK_VALUE);
    eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
@@ -1301,6 +1296,8 @@ parse_event(Eo_Lexer *ls)
      }
    ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
+   if (ls->t.kw == KW_at_private || ls->t.kw == KW_at_protected)
+     eo_lexer_get(ls);
    if (ls->t.token == ':')
      {
         eo_lexer_get(ls);
