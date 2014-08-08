@@ -69,6 +69,21 @@ static const Evas_Colorspace cspaces_etc1[2] = {
   EVAS_COLORSPACE_ARGB8888
 };
 
+static const Evas_Colorspace cspaces_etc1_alpha[] = {
+  EVAS_COLORSPACE_ETC1_ALPHA,
+  EVAS_COLORSPACE_ARGB8888
+};
+
+static const Evas_Colorspace cspaces_etc2_rgb[] = {
+  EVAS_COLORSPACE_RGB8_ETC2,
+  EVAS_COLORSPACE_ARGB8888
+};
+
+static const Evas_Colorspace cspaces_etc2_rgba[] = {
+  EVAS_COLORSPACE_RGBA8_ETC2_EAC,
+  EVAS_COLORSPACE_ARGB8888
+};
+
 static Eina_Bool
 evas_image_load_file_head_eet(void *loader_data,
 			      Evas_Image_Property *prop,
@@ -94,11 +109,28 @@ evas_image_load_file_head_eet(void *loader_data,
 	if (cspaces != NULL)
 	  {
 	    for (i = 0; cspaces[i] != EET_COLORSPACE_ARGB8888; i++)
-	      if (cspaces[i] == EET_COLORSPACE_ETC1)
-		{
-		  prop->cspaces = cspaces_etc1;
-		  break;
-		}
+              {
+                 if (cspaces[i] == EET_COLORSPACE_ETC1)
+                   {
+                      prop->cspaces = cspaces_etc1;
+                      break;
+                   }
+                 else if (cspaces[i] == EET_COLORSPACE_ETC1_ALPHA)
+                   {
+                      prop->cspaces = cspaces_etc1_alpha;
+                      break;
+                   }
+                 else if (cspaces[i] == EET_COLORSPACE_RGB8_ETC2)
+                   {
+                      prop->cspaces = cspaces_etc2_rgb;
+                      break;
+                   }
+                 else if (cspaces[i] == EET_COLORSPACE_RGBA8_ETC2_EAC)
+                   {
+                      prop->cspaces = cspaces_etc2_rgba;
+                      break;
+                   }
+              }
 	  }
      }
 
@@ -124,6 +156,9 @@ evas_image_load_file_data_eet(void *loader_data,
    switch (prop->cspace)
      {
       case EVAS_COLORSPACE_ETC1: cspace = EET_COLORSPACE_ETC1; break;
+      case EVAS_COLORSPACE_ETC1_ALPHA: cspace = EET_COLORSPACE_ETC1_ALPHA; break;
+      case EVAS_COLORSPACE_RGB8_ETC2: cspace = EET_COLORSPACE_RGB8_ETC2; break;
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC: cspace = EET_COLORSPACE_RGBA8_ETC2_EAC; break;
       case EVAS_COLORSPACE_ARGB8888: cspace = EET_COLORSPACE_ARGB8888; break;
       default:
          return _evas_image_load_return_error(EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED, error);
