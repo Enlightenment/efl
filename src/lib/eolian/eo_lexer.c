@@ -469,23 +469,38 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         next_line(ls);
         continue;
       case '/':
-        next_char(ls);
-        if (ls->current == '*')
-          {
-             Eina_Bool doc;
+        {
+           Eina_Bool doc = EINA_FALSE;
+           next_char(ls);
+           if (ls->current == '*')
+             {
+                next_char(ls);
+                if ((doc = (ls->current == '@')))
+                  next_char(ls);
+                read_long_comment(ls, doc ? tok : NULL);
+                if (doc)
+                  return TOK_COMMENT;
+                else
+                  continue;
+             }
+           else if (ls->current != '/') return '/';
+           next_char(ls);
+           if ((doc = (ls->current == '@')))
              next_char(ls);
-             if ((doc = (ls->current == '@')))
-               next_char(ls);
-             read_long_comment(ls, doc ? tok : NULL);
-             if (doc)
-               return TOK_COMMENT;
-             else
-               continue;
-          }
-        else if (ls->current != '/') return '/';
-        while (ls->current && !is_newline(ls->current))
-          next_char(ls);
-        continue;
+           eina_strbuf_reset(ls->buff);
+           while (ls->current && !is_newline(ls->current))
+             {
+                eina_strbuf_append_char(ls->buff, ls->current);
+                next_char(ls);
+             }
+           eina_strbuf_trim(ls->buff);
+           if (doc)
+             {
+                tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+                return TOK_COMMENT;
+             }
+           continue;
+        }
       case '\0':
         return -1;
       case '=':
