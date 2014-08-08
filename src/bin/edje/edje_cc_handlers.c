@@ -4560,8 +4560,8 @@ st_collections_group_parts_part_name(void)
             @li BOX
             @li TABLE
             @li EXTERNAL
-	    @li PROXY
-	    @li SPACER
+            @li PROXY
+            @li SPACER
     @endproperty
 */
 static void
@@ -4810,9 +4810,9 @@ st_collections_group_parts_part_norepeat(void)
         [FLAG] ...
     @effect
         Specifies whether events with the given flags should be ignored,
-	i.e., will not have the signals emitted to the parts. Multiple flags
-	must be separated by spaces, the effect will be ignoring all events
-	with one of the flags specified. Possible flags:
+        i.e., will not have the signals emitted to the parts. Multiple flags
+        must be separated by spaces, the effect will be ignoring all events
+        with one of the flags specified. Possible flags:
             @li NONE (default value, no event will be ignored)
             @li ON_HOLD
     @endproperty
@@ -5410,7 +5410,7 @@ st_collections_group_parts_part_dragable_confine(void)
         [another part's name]
     @effect
         When set, the movement of the dragged part can only start when it get
-	moved enough to be outside of the threshold part.
+        moved enough to be outside of the threshold part.
     @endproperty
 */
 static void
@@ -6502,9 +6502,9 @@ st_collections_group_parts_part_description_hid(void)
     @parameters
         [NONE, WIDTH, HEIGHT or BOTH]
     @effect
-	Emit a signal when the part size change from zero or to a zero size
-	('limit,width,over', 'limit,width,zero'). By default no signal are
-	emitted.
+        Emit a signal when the part size change from zero or to a zero size
+        ('limit,width,over', 'limit,width,zero'). By default no signal are
+        emitted.
     @since 1.7
     @endproperty
 */
@@ -9834,17 +9834,17 @@ st_collections_group_parts_part_description_perspective_focal(void)
     @block
         params
     @context
-    description {
-        ..
-        params {
-            int: "name" 0;
-            double: "other_name" 0.0;
-            string: "another_name" "some text";
-	    bool: "name" 1;
-	    choice: "some_name" "value";
+        description {
+            ..
+            params {
+                int: "name" 0;
+                double: "other_name" 0.0;
+                string: "another_name" "some text";
+                bool: "name" 1;
+                choice: "some_name" "value";
+            }
+            ..
         }
-        ..
-    }
     @description
         Set parameters for EXTERNAL parts. The value overwrites previous
         definitions with the same name.
@@ -10175,21 +10175,21 @@ _program_sequence_new(void)
     @context
         group {
             programs {
-               ..
-                  program {
-                     name: "programname";
-                     signal: "signalname";
-                     source: "partname";
-                     filter: "partname" "statename";
-                     in: 0.3 0.0;
-                     action: STATE_SET "statename" state_value;
-                     transition: LINEAR 0.5;
-                     target: "partname";
-                     target: "anotherpart";
-                     after: "programname";
-                     after: "anotherprogram";
-                  }
-               ..
+                ..
+                program {
+                    name: "programname";
+                    signal: "signalname";
+                    source: "partname";
+                    filter: "partname" "statename";
+                    in: 0.3 0.0;
+                    action: STATE_SET "statename" state_value;
+                    transition: LINEAR 0.5;
+                    target: "partname";
+                    target: "anotherpart";
+                    after: "programname";
+                    after: "anotherprogram";
+                }
+                ..
             }
         }
     @description
