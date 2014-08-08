@@ -1839,7 +1839,7 @@ st_images_set_image_image(void)
     @property
         size
     @parameters
-        [minw minh maxw maxh]
+        [minw] [minh] [maxw] [maxh]
     @effect
         Define the minimal and maximal size that will select the specified image.
     @endproperty
@@ -1897,13 +1897,12 @@ st_images_set_image_border(void)
    entry->border.b = parse_int_range(3, 0, 0x7fffffff);
 }
 
-
 /**
     @page edcref
     @property
         border_scale_by
     @parameters
-        0.0 or bigger (0.0 or 1.0 to turn it off)
+        [value]
     @effect
         If border scaling is enabled then normally the OUTPUT border sizes
         (e.g. if 3 pixels on the left edge are set as a border, then normally
@@ -1913,6 +1912,8 @@ st_images_set_image_border(void)
         factor by this multiplier, allowing the creation of "supersampled"
         borders to make much higher resolution outputs possible by always using
         the highest resolution artwork and then runtime scaling it down.
+
+        Valid values are: 0.0 or bigger (0.0 or 1.0 to turn it off)
     @since 1.8
     @endproperty
 */
@@ -2582,13 +2583,14 @@ st_collections_group_sound_tone(void)
     @property
         name
     @parameters
-        [sample name] [compression type] [if lossy, then quality]
+        [sample name] [compression type] (quality)
     @effect
         Used to include each sound file. The full path to the directory holding
         the sounds can be defined later with edje_cc's "-sd" option.
+        Valid types are:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [-0.1  - 1.0]: Lossy compression with quality from 0 to 1.0.
+        @li LOSSY [-0.1  - 1.0]: Lossy compression with quality from 0.0 to 1.0.
         @li AS_IS: Check for re-encoding, no compression/encoding, just write the file information as it is.
 
     @since 1.1
@@ -3163,13 +3165,12 @@ st_collections_group_inherit_only(void)
     @property
         target_group
     @parameters
-        [name] [part/program1] [part/program2] [part/program3] ...
+        [name] [part or program] (part or program) (part or program) ...
     @effect
         This creates a group of parts/programs which can then be referenced
         by a single 'groups' or 'target_groups' statement inside a program.
         The resulting program will have all of the parts/programs within the specified
         group added as targets.
-        At least one part/program MUST be specified.
     @since 1.10
     @endproperty
 */
@@ -4335,7 +4336,7 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
     @property
         program_remove
     @parameters
-        [program name] [program name] [program name] ...
+        [program name] (program name) (program name) ...
     @effect
         Removes the listed programs from an inherited group. Removing nonexistent
         programs is not allowed.
@@ -4429,7 +4430,7 @@ _part_name_check(void)
     @property
         part_remove
     @parameters
-        [part name] [part name] [part name] ...
+        [part name] (part name) (part name) ...
     @effect
         Removes the listed parts from an inherited group. Removing nonexistent
         parts is not allowed.
@@ -5086,8 +5087,8 @@ st_collections_group_parts_part_source6(void)
     @property
         effect
     @parameters
-        [EFFECT]
-        (SHADOW DIRECTION)
+        [effect]
+        (shadow direction)
     @effect
         Causes Edje to draw the selected effect among:
         @li PLAIN
@@ -5153,7 +5154,7 @@ st_collections_group_parts_part_effect(void)
     @property
         entry_mode
     @parameters
-        [MODE]
+        [mode]
     @effect
         Sets the edit mode for a textblock part to one of:
         @li NONE
@@ -5185,7 +5186,7 @@ st_collections_group_parts_part_entry_mode(void)
     @property
         select_mode
     @parameters
-        [MODE]
+        [mode]
     @effect
         Sets the selection mode for a textblock part to one of:
         @li DEFAULT selection mode is what you would expect on any desktop. Press
@@ -5211,7 +5212,7 @@ st_collections_group_parts_part_select_mode(void)
     @property
         cursor_mode
     @parameters
-        [MODE]
+        [mode]
     @effect
         Sets the cursor mode for a textblock part to one of:
         @li UNDER cursor mode means the cursor will draw below the character pointed
@@ -5537,9 +5538,11 @@ static void ob_collections_group_parts_part_box_items_item(void)
     @property
         type
     @parameters
-        Only GROUP for now (defaults to it)
+        [item type]
     @effect
         Sets the type of the object this item will hold.
+        Supported types are:
+        @li GROUP
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_type(void)
@@ -5807,9 +5810,14 @@ static void st_collections_group_parts_part_box_items_item_aspect(void)
     @property
         aspect_mode
     @parameters
-        NONE, NEITHER, HORIZONTAL, VERTICAL, BOTH
+        [mode]
     @effect
-        Sets the aspect control hints for this object.
+        Sets the aspect control hints for this object. Mode can be one of:
+        @li NONE
+        @li NEITHER
+        @li HORIZONTAL
+        @li VERTICAL
+        @li BOTH
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
@@ -6371,7 +6379,7 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
     @property
         state
     @parameters
-        [a name for the description] [an index]
+        [name for the description] [index]
     @effect
         Sets a name used to identify a description inside a given part.
         Multiple descriptions are used to declare different states of the same
@@ -6472,11 +6480,16 @@ st_collections_group_parts_part_description_hid(void)
     @property
         limit
     @parameters
-        [NONE, WIDTH, HEIGHT or BOTH]
+        [mode]
     @effect
         Emit a signal when the part size change from zero or to a zero size
         ('limit,width,over', 'limit,width,zero'). By default no signal are
-        emitted.
+        emitted. Valid values are:
+        @li NONE
+        @li WIDTH
+        @li HEIGHT
+        @li BOTH
+
     @since 1.7
     @endproperty
 */
@@ -7225,11 +7238,15 @@ st_collections_group_parts_part_description_image_border(void)
     @property
         middle
     @parameters
-        0, 1, NONE, DEFAULT, SOLID
+        [mode]
     @effect
         If border is set, this value tells Edje if the rest of the
         image (not covered by the defined border) will be displayed or not
         or be assumed to be solid (without alpha). The default is 1/DEFAULT.
+        Valid values are:
+        @li 0 or NONE
+        @li 1 or DEFAULT
+        @li SOLID
     @endproperty
 */
 static void
@@ -7262,7 +7279,7 @@ st_collections_group_parts_part_description_image_middle(void)
     @property
         border_scale_by
     @parameters
-        0.0 or bigger (0.0 or 1.0 to turn it off)
+        [value]
     @effect
         If border scaling is enabled then normally the OUTPUT border sizes
         (e.g. if 3 pixels on the left edge are set as a border, then normally
@@ -7272,6 +7289,8 @@ st_collections_group_parts_part_description_image_middle(void)
         factor by this multiplier, allowing the creation of "supersampled"
         borders to make much higher resolution outputs possible by always using
         the highest resolution artwork and then runtime scaling it down.
+
+        value can be: 0.0 or bigger (0.0 or 1.0 to turn it off)
     @endproperty
 */
 static void
@@ -7298,7 +7317,7 @@ st_collections_group_parts_part_description_image_border_scale_by(void)
     @property
         border_scale
     @parameters
-        0, 1
+        [0/1]
     @effect
         If border is set, this value tells Edje if the border should be scaled
         by the object/global edje scale factors
@@ -7331,10 +7350,14 @@ st_collections_group_parts_part_description_image_border_scale(void)
     @property
         scale_hint
     @parameters
-        0, NONE, DYNAMIC, STATIC
+        [mode]
     @effect
         Sets the evas image scale hint letting the engine more effectively save
-        cached copies of the scaled image if it makes sense
+        cached copies of the scaled image if it makes sense.
+        Valid values are:
+        @li 0 or NONE
+        @li DYNAMIC
+        @li STATIC
     @endproperty
 */
 static void
@@ -7386,20 +7409,6 @@ st_collections_group_parts_part_description_image_scale_hint(void)
         part of an image. See @ref evas_object_image_fill_set() documentation
         for more details.
     @endblock
-
-    @property
-        type
-    @parameters
-        SCALE, TILE.
-    @effect
-        Sets the image fill type. SCALE - image will be scaled accordingly params
-        value 'relative' and 'offset' from 'origin' and 'size' blocks.
-        TILE - image will be tiled accordingly params value 'relative' and
-        'offset' from 'origin' and 'size' blocks. Important: the part parameter
-        'min' must be setted, it's size of tiled image. If parameter 'max' setted
-        tiled area will has the size accordingly 'max' values.
-        SCALE is default type.
-    @endproperty
 
     @property
         smooth
@@ -7497,6 +7506,26 @@ st_collections_group_parts_part_description_fill_spread(void)
 #endif
 }
 
+/**
+    @page edcref
+    @property
+        type
+    @parameters
+        [fill type]
+    @effect
+        Sets the image fill type. SCALE - image will be scaled accordingly params
+        value 'relative' and 'offset' from 'origin' and 'size' blocks.
+        TILE - image will be tiled accordingly params value 'relative' and
+        'offset' from 'origin' and 'size' blocks. Important: the part parameter
+        'min' must be setted, it's size of tiled image. If parameter 'max' setted
+        tiled area will has the size accordingly 'max' values.
+        SCALE is default type.
+
+        Valid values are:
+        @li SCALE
+        @li TILE
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_fill_type(void)
 {
@@ -8438,21 +8467,21 @@ st_collections_group_parts_part_description_text_filter(void)
                     layout: "vertical";
                     padding: 0 2;
                     align: 0.5 0.5;
-		    min: 0 0;
+                    min: 0 0;
                 }
                 ..
             }
         }
     @description
         A box block can contain other objects and display them in different
-	layouts, any of the predefined set, or a custom one, set by the
-	application.
+        layouts, any of the predefined set, or a custom one, set by the
+        application.
     @endblock
 
     @property
         layout
     @parameters
-        [primary layout] [fallback layout]
+        [primary layout] (fallback layout)
     @effect
         Sets the layout for the box:
             @li horizontal (default)
@@ -10345,37 +10374,42 @@ st_collections_group_programs_program_in(void)
     @property
         action
     @parameters
-        [type] [param1] [param2]
+        [type] (param1) (param2) (param3) (param4)
     @effect
-        Action to be performed by the program. Valid actions are: STATE_SET,
-        ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
-        FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE, PLAY_VIBRATION,
-        PHYSICS_IMPULSE, PHYSICS_TORQUE_IMPULSE, PHYSICS_FORCE, PHYSICS_TORQUE,
-        PHYSICS_FORCES_CLEAR, PHYSICS_VEL_SET, PHYSICS_ANG_VEL_SET,
-        PHYSICS_STOP, PHYSICS_ROT_SET
-        Only one action can be specified per program. Examples:\n
-           action: STATE_SET "statename" 0.5;\n
-           action: ACTION_STOP;\n
-           action: SIGNAL_EMIT "signalname" "emitter";\n
-           action: DRAG_VAL_SET 0.5 0.0;\n
-           action: DRAG_VAL_STEP 1.0 0.0;\n
-           action: DRAG_VAL_PAGE 0.0 0.0;\n
-           action: FOCUS_SET;\n
-           action: FOCUS_OBJECT;\n
-           action: PARAM_COPY "src_part" "src_param" "dst_part" "dst_param";\n
-           action: PARAM_SET "part" "param" "value";\n
-           action: PLAY_SAMPLE "sample name" speed (speed of sample - 1.0 is original speed - faster is higher pitch) [channel optional EFFECT/FX | BACKGROUND/BG | MUSIC/MUS | FOREGROUND/FG | INTERFACE/UI | INPUT | ALERT;\n
-           action: PLAY_TONE "tone name" duration in seconds ( Range 0.1 to 10.0 );\n
-           action: PLAY_VIBRATION "sample name" repeat (repeat count);\n
-           action: PHYSICS_IMPULSE 10 -23.4 0;\n
-           action: PHYSICS_TORQUE_IMPULSE 0 2.1 0.95;\n
-           action: PHYSICS_FORCE -20.8 0 30.85;\n
-           action: PHYSICS_TORQUE 0 0 4.8;\n
-           action: PHYSICS_FORCES_CLEAR;\n
-           action: PHYSICS_VEL_SET 40.9 0 0;\n
-           action: PHYSICS_ANG_VEL_SET 12.4 0 0.66;\n
-           action: PHYSICS_STOP;\n
-           action: PHYSICS_ROT_SET 0.707 0 0 0.707;\n
+        Action to be performed by the program. Valid actions are:
+        @li STATE_SET "state name" (state value)
+        @li ACTION_STOP
+        @li SIGNAL_EMIT "signalname" "emitter"
+        @li DRAG_VAL_SET 0.5 0.0
+        @li DRAG_VAL_STEP 1.0 0.0
+        @li DRAG_VAL_PAGE 0.0 0.0
+        @li FOCUS_SET
+        @li PARAM_COPY "src_part" "src_param" "dst_part" "dst_param"
+        @li PARAM_SET "part" "param" "value"
+        @li PLAY_SAMPLE "sample name" speed (channel)
+        @li PLAY_TONE "tone name" duration_in_seconds( Range 0.1 to 10.0 )
+        @li PLAY_VIBRATION "sample name" repeat (repeat count)
+        @li PHYSICS_IMPULSE 10 -23.4 0
+        @li PHYSICS_TORQUE_IMPULSE 0 2.1 0.95
+        @li PHYSICS_FORCE -20.8 0 30.85
+        @li PHYSICS_TORQUE 0 0 4.8
+        @li PHYSICS_FORCES_CLEAR
+        @li PHYSICS_VEL_SET 40.9 0 0
+        @li PHYSICS_ANG_VEL_SET 12.4 0 0.66
+        @li PHYSICS_STOP
+        @li PHYSICS_ROT_SET 0.707 0 0 0.707
+
+        Only one action can be specified per program.
+        
+        PLAY_SAMPLE (optional) channel can be one of:
+        @li EFFECT/FX
+        @li BACKGROUND/BG
+        @li MUSIC/MUS
+        @li FOREGROUND/FG
+        @li INTERFACE/UI
+        @li INPUT
+        @li ALERT
+
     @endproperty
 */
 static void
@@ -10587,16 +10621,22 @@ st_collections_group_programs_program_action(void)
     @property
         transition
     @parameters
-        [type] [length] [[interp val 1]] [[interp val 2]] [[option]]
+        [type] [length] (interp val 1) (interp val 2) (option)
     @effect
         Defines how transitions occur using STATE_SET action.\n
         Where 'type' is the style of the transition and 'length' is a double
         specifying the number of seconds in which to preform the transition.\n
-        Valid types are: LIN or LINEAR, SIN or SINUSOIDAL, 
-        ACCEL or ACCELERATE, DECEL or DECELERATE, 
-        ACCEL_FAC or ACCELERATE_FACTOR, DECEL_FAC or DECELERATE_FACTOR,
-        SIN_FAC or SINUSOIDAL_FACTOR, DIVIS or DIVISOR_INTERP,
-        BOUNCE, SPRING.
+        Valid types are:
+        @li LIN or LINEAR
+        @li SIN or SINUSOIDAL
+        @li ACCEL or ACCELERATE
+        @li DECEL or DECELERATE
+        @li ACCEL_FAC or ACCELERATE_FACTOR
+        @li DECEL_FAC or DECELERATE_FACTOR
+        @li SIN_FAC or SINUSOIDAL_FACTOR
+        @li DIVIS or DIVISOR_INTERP
+        @li BOUNCE
+        @li SPRING
         
         ACCEL_FAC, DECEL_FAC and SIN_FAC need the extra optional
         "interp val 1" to determine the "factor" of curviness. 1.0 is the same
@@ -10623,10 +10663,9 @@ st_collections_group_programs_program_action(void)
         spring "swings" and val 1 specifies the decay, but it can exceed 1.0
         on the outer swings.
 
-        Valid option is CURRENT.
-
-        CURRENT is the option which causes the edje object to move from its current position.
-        It can be used as the last parameter of any transition type. (since 1.1.0)
+        Valid options are:
+        @li CURRENT causes the object to move from its current position.
+        Can be used as the last parameter of any transition type. (since 1.1.0)
 
     @endproperty
 */

@@ -976,19 +976,20 @@ table.edcref td.subsection a {
   font-size: 1.5em;
 }
 
-table.edcref td {
+table.edcref td.property {
   vertical-align: top;
+  width: 1%;
 }
 
 table.edcref .fragment {
   width: 90%;
+  border: 1px solid #AAAAAA;
+  background-color: #F6F6F6;
   padding-top: 10px;
   padding-left: 3px;
   margin-right: 100px;
-  border: 1px solid #AAAAAA;
   margin-top: 10px;
   margin-bottom: 10px;
-  background-color: #F6F6F6;
 }
 
 table.edcref td.description {
