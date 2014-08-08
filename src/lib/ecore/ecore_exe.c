@@ -25,6 +25,8 @@
 
 #define MY_CLASS ECORE_EXE_CLASS
 
+#include <Efl.h>
+
 /* FIXME: Getting respawn to work
  *
  * There is no way that we can do anything about the internal state info of
@@ -1062,23 +1064,24 @@ ecore_exe_flags_get(const Ecore_Exe *obj)
 EAPI void
 ecore_exe_pause(Ecore_Exe *obj)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
-      return;
-
-   kill(exe->pid, SIGSTOP);
+   eo_do(obj, efl_control_suspend_set(EINA_TRUE));
 }
 
 EAPI void
 ecore_exe_continue(Ecore_Exe *obj)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
-   if (!eo_isa(obj, MY_CLASS))
-      return;
+   eo_do(obj, efl_control_suspend_set(EINA_FALSE));
+}
 
-   kill(exe->pid, SIGCONT);
+EOLIAN static void
+_ecore_exe_efl_control_suspend_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *exe, Eina_Bool suspend)
+{
+   EINA_MAIN_LOOP_CHECK_RETURN;
+
+   if (suspend)
+      kill(exe->pid, SIGSTOP);
+   else
+      kill(exe->pid, SIGCONT);
 }
 
 EAPI void

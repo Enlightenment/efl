@@ -1,4 +1,4 @@
-class Ecore.Exe (Eo.Base)
+class Ecore.Exe (Eo.Base, Efl.Control)
 {
    eo_prefix: ecore_obj_exe;
    properties {
@@ -21,6 +21,7 @@ class Ecore.Exe (Eo.Base)
    }
    implements {
         Eo.Base.finalize;
+        Efl.Control.suspend.set;
    }
    events {
         data,get: Ecore_Exe_Event_Data;
