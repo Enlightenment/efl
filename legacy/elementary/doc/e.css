@@ -25,6 +25,10 @@ dt {
   font-weight: bold;
 }
 
+ul {
+  padding-left: 30px;
+}
+
 div.multicol {
   -moz-column-gap: 1em;
   -webkit-column-gap: 1em;
@@ -152,6 +156,11 @@ dl.el {
   font-family: monospace, mono, fixed;
   font-size: 9pt;
   line-height: 0%;
+}
+
+/* To avoid packed effect on bullet lists */
+li .line:first-child {
+   margin-top: 10px;
 }
 
 pre.fragment {
@@ -707,10 +716,24 @@ div.ingroups a {
   color: #ffffff;
 }
 
-div.header {
+div.header, div.footer {
   margin-left: auto;
   margin-right: auto;
   width: 980px;
+}
+
+div.footer {
+  font-size: 10px;
+  text-align: center;
+}
+
+div.footer span.copyright {
+  padding-right: 50px;
+  padding-left: 50px;
+}
+
+div.footer a {
+  color: black;
 }
 
 div.headertitle {
@@ -774,7 +797,7 @@ dl {
   padding: 0 0 0 10px;
 }
 
-dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug {
+dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug, dl.since {
   border-left: 4px solid;
   padding: 0 0 0 6px;
 }
@@ -791,8 +814,12 @@ dl.pre, dl.post, dl.invariant {
   border-color: #00D000;
 }
 
-dl.deprecated {
+dl.deprecated, dl.since {
   border-color: #505050;
+}
+
+dl.since dt {
+  height: 0;
 }
 
 dl.todo {

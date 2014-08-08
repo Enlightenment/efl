@@ -1,5 +1,5 @@
 PROJECT_NAME           = Elementary
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = @PACKAGE_VERSION@
 OUTPUT_DIRECTORY       = .
 INPUT                  = @srcdir@/examples.dox @top_srcdir@/src/lib @srcdir@/index.doxy @top_srcdir@/src/bin/elm_prefs_cc_handlers.c
 IMAGE_PATH             = @srcdir@/img
