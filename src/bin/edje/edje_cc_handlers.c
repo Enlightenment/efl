@@ -2414,7 +2414,7 @@ st_styles_style_tag(void)
 /** @edcsection{collections,Collections Blocks} */
 
 /** @edcsubsection{collections,
- *                 Collections Blocks} */
+ *                 Collections} */
 
 /**
     @page edcref
@@ -3975,15 +3975,25 @@ st_collections_group_limits_horizontal(void)
         group {
             parts {
                 alias: "theme_part_path" "somegroup:real_part_path";
-                group { "theme_part_path"; }
+                part { "theme_part_path"; }
+                part {  }
+                ..
             }
         }
     @description
+        The parts block is the container for all the parts in the group.
+
+    @property
+        alias
+    @parameters
+        [alias name] [other_group:part name]
+    @effect
         Allows for a part to be referenced externally as though
         it had the name of the alias.
         In the above example, swallowing an object into part "theme_part_path"
         will result in the object actually being swallowed into the part
         "real_part_path" in the "somegroup" group.
+    @endproperty
     @endblock
 */
 static void
