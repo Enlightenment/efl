@@ -145,6 +145,9 @@ typedef struct _Eo_Lexer
    /* this is jumped to when an error happens */
    jmp_buf      err_jmp;
 
+   /* whether we allow lexing expression related tokens */
+   Eina_Bool expr_mode;
+
    /* saved context info */
    Eina_List *saved_ctxs;
 

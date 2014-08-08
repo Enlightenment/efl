@@ -490,16 +490,17 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         return -1;
       case '=':
         next_char(ls);
-        if (ls->current != '=') return '=';
+        if (!ls->expr_mode || (ls->current != '=')) return '=';
         next_char(ls);
         return TOK_EQ;
       case '!':
         next_char(ls);
-        if (ls->current != '=') return '!';
+        if (!ls->expr_mode || (ls->current != '=')) return '!';
         next_char(ls);
         return TOK_NQ;
       case '>':
         next_char(ls);
+        if (!ls->expr_mode) return '>';
         if (ls->current == '=')
           {
              next_char(ls);
@@ -513,6 +514,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         return '>';
       case '<':
         next_char(ls);
+        if (!ls->expr_mode) return '<';
         if (ls->current == '=')
           {
              next_char(ls);
@@ -526,19 +528,25 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         return '<';
       case '&':
         next_char(ls);
-        if (ls->current != '&') return '&';
+        if (!ls->expr_mode || (ls->current != '&')) return '&';
         next_char(ls);
         return TOK_AND;
       case '|':
         next_char(ls);
-        if (ls->current != '|') return '|';
+        if (!ls->expr_mode || (ls->current != '|')) return '|';
         next_char(ls);
         return TOK_OR;
       case '"':
+        if (!ls->expr_mode)
+          {
+             next_char(ls);
+             return '"';
+          }
         read_string(ls, tok);
         return TOK_STRING;
       case '\'':
         next_char(ls);
+        if (!ls->expr_mode) return '\'';
         if (ls->current == '\\')
           {
              next_char(ls);
@@ -557,6 +565,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         return TOK_CHAR;
       case '.':
         next_char(ls);
+        if (!ls->expr_mode) return '.';
         if (!isdigit(ls->current)) return '.';
         eina_strbuf_reset(ls->buff);
         eina_strbuf_append_char(ls->buff, '.');
@@ -570,7 +579,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 next_char(ls);
                 continue;
              }
-           else if (isdigit(ls->current))
+           else if (ls->expr_mode && isdigit(ls->current))
              {
                 eina_strbuf_reset(ls->buff);
                 read_number(ls, tok);

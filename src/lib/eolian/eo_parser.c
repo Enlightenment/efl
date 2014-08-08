@@ -830,8 +830,10 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
    if (ls->t.token == '(')
      {
         int line = ls->line_number, col = ls->column;
+        ls->expr_mode = EINA_TRUE;
         eo_lexer_get(ls);
         ret->default_ret_val = parse_expr(ls);
+        ls->expr_mode = EINA_FALSE;
         check_match(ls, ')', '(', line, col);
      }
    if (ls->t.kw == KW_at_warn_unused)
