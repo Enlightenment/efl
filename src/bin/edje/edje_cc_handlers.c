@@ -3169,7 +3169,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
     @property
         inherit_only
     @parameters
-        1 or 0
+        [1 or 0]
     @effect
         This flags a group as being used only for inheriting, which
         will inhibit edje_cc resolving of programs and parts that may
@@ -3638,7 +3638,7 @@ st_collections_group_max(void)
    @property
        broadcast_signal
    @parameters
-       [broadcast]
+       [on/off]
    @effect
        Signal got automatically broadcasted to all sub group part. Default to
        true since 1.1.
