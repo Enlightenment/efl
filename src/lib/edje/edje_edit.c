@@ -9987,7 +9987,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                BUF_APPENDF(I7"x: %g;\n", TO_DOUBLE(pd->map.rot.x));
              if (TO_DOUBLE(pd->map.rot.y) != 0.0)
                BUF_APPENDF(I7"y: %g;\n", TO_DOUBLE(pd->map.rot.y));
-             if (TO_DOUBLE(pd->map.rot.x) != 0.0)
+             if (TO_DOUBLE(pd->map.rot.z) != 0.0)
                BUF_APPENDF(I7"z: %g;\n", TO_DOUBLE(pd->map.rot.z));
 
              BUF_APPEND(I6"}\n");
