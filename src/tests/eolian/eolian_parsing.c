@@ -440,6 +440,7 @@ START_TEST(eolian_simple_parsing)
    const char *string = NULL, *ptype = NULL, *pname = NULL;
    Eolian_Parameter_Dir dir = EOLIAN_IN_PARAM;
    const Eolian_Function_Parameter *param = NULL;
+   const Eolian_Expression *expr = NULL;
    const Eolian_Class *class;
    const Eolian_Type *tp;
    Eina_Iterator *iter;
@@ -473,10 +474,10 @@ START_TEST(eolian_simple_parsing)
    /* Set return */
    tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
    fail_if(!tp);
-   fail_if(strcmp(eolian_type_name_get(tp), "Eina_Bool"));
-   string = eolian_function_return_default_value_get(fid, EOLIAN_PROP_SET);
-   fail_if(!string);
-   fail_if(strcmp(string, "true"));
+   fail_if(strcmp(eolian_type_name_get(tp), "bool"));
+   expr = eolian_function_return_default_value_get(fid, EOLIAN_PROP_SET);
+   fail_if(!expr);
+   fail_if(eolian_expression_eval(expr, EOLIAN_MASK_BOOL, NULL) != EOLIAN_EXPR_BOOL);
    string = eolian_function_return_comment_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "comment for property set return"));
@@ -509,9 +510,9 @@ START_TEST(eolian_simple_parsing)
    fail_if(!string);
    fail_if(strcmp(string, "char *"));
    eina_stringshare_del(string);
-   string = eolian_function_return_default_value_get(fid, EOLIAN_METHOD);
-   fail_if(!string);
-   fail_if(strcmp(string, "null"));
+   expr = eolian_function_return_default_value_get(fid, EOLIAN_METHOD);
+   fail_if(!expr);
+   fail_if(eolian_expression_eval(expr, EOLIAN_MASK_NULL, NULL) != EOLIAN_EXPR_NULL);
    string = eolian_function_return_comment_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "comment for method return"));
