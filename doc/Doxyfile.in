@@ -1709,15 +1709,16 @@ GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 
 # Aliases used by edcref
+
 ALIASES                = block="<tr><td class=\"block\"><b>"
 ALIASES               += context="</b></td><td class=\"context\" colspan=2>\code"
 ALIASES               += description="\endcode</td></tr><tr><td>&nbsp;</td><td class=\"description\" colspan=2>"
 ALIASES               += endblock="</td></tr>"
-ALIASES               += property="<tr><td>&nbsp;</td><td><table class=\"edcref\" border=\"0\"><tr><td class=\"property\"><tt>"
+ALIASES               += property="<tr><td>&nbsp;</td><td><table class=\"edcref_prop\" border=\"0\"><tr><td class=\"property\"><tt>"
 ALIASES               += parameters="</tt></td><td class=\"parameters\"><tt>"
 ALIASES               += effect="</tt></td></tr><tr><td>&nbsp;</td><td class=\"effect\">"
 ALIASES               += endproperty="</td></tr></table></td></tr>"
-ALIASES               += edcsection{2}="<tr class=\"section\"><td class=\"section\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
+ALIASES               += edcsection{2}="</table><table class=\"edcref\"><tr class=\"section\"><td class=\"section\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
 ALIASES               += edcsubsection{2}="<tr class=\"subsection\"><td class=\"subsection\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
 
 # Aliases used by luaref

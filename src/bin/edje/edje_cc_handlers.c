@@ -13,6 +13,7 @@
         code sample of the block
     \@description
         the block's description
+    \@since X.X
     \@endblock
 
     \@property
@@ -21,6 +22,7 @@
         property's parameter list
     \@effect
         the property description (lol)
+    \@since X.X
     \@endproperty
 */
 
@@ -758,6 +760,10 @@ New_Statement_Handler statement_handlers[] =
 };
 
 /**
+   @edcsection{lazedc,LazEDC}
+ */
+
+/**
    @edcsubsection{lazedc,LazEDC}
  */
 
@@ -1492,7 +1498,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
         }
     @description
         The "externals" block is used to list each external module file that will be used in others
-	programs.
+        programs.
     @endblock
 
     @property
@@ -2423,6 +2429,10 @@ st_styles_style_tag(void)
 
 /**
    @edcsection{collections,Collections Blocks}
+ */
+
+/**
+   @edcsubsection{collections,Collections Blocks}
  */
 
 /**

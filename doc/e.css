@@ -954,16 +954,57 @@ dl.citelist dd {
   text-shadow: 0px 1px 0px #cccccc;
 }
 
+
 /* EdcRef page specific styles */
+
+table.edcref {
+  border-collapse:collapse;
+  border: 1px solid #AAAAAA;
+  margin-bottom: 30px;
+}
+
+table.edcref td.section a  {
+  font-size: 2.0em;
+}
+
+table.edcref td.subsection  {
+  background-color: #EEEEEE;
+  border: 1px solid #AAAAAA;
+}
+
+table.edcref td.subsection a {
+  font-size: 1.5em;
+}
 
 table.edcref td {
   vertical-align: top;
 }
 
-table.edcref td.property, table.edcref td.parameters  {
-  font-weight: bold;
+table.edcref .fragment {
+  width: 90%;
+  padding-top: 10px;
+  padding-left: 3px;
+  margin-right: 100px;
+  border: 1px solid #AAAAAA;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #F6F6F6;
 }
 
+table.edcref td.description {
+  padding-right: 95px;
+}
 
+table.edcref td.property, table.edcref td.parameters  {
+  font-weight: bold;
+  background-color: #DDDDDD;
+  border-top: 1px solid #AAAAAA;
+  padding: 2px;
+}
 
-
+table.edcref_prop {
+  width: 90%;
+  border-collapse:collapse;
+  border: 1px solid #AAAAAA;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
+}
