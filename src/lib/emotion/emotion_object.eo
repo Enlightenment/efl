@@ -16,7 +16,7 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
                    *
                    * @ingroup Emotion_Init
                    */
-                  legacy emotion_object_module_option_set;
+                  legacy: emotion_object_module_option_set;
              }
              values {
                   const(char) *opt; /*@ The option that is being set. Currently supported optiosn: "video" and "audio". */
@@ -44,8 +44,8 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
                    *
                    * @ingroup Emotion_Init
                    */
-                  legacy emotion_object_init;
-                  return bool; /*@ @c EINA_TRUE if the specified module was successfully initialized for this object, @c EINA_FALSE otherwise. */
+                  legacy: emotion_object_init;
+                  return: bool; /*@ @c EINA_TRUE if the specified module was successfully initialized for this object, @c EINA_FALSE otherwise. */
              }
              values {
                   const(char) *module_filename; /*@ The name of the module to be used (gstreamer or xine). */

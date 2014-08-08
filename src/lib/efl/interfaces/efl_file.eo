@@ -29,7 +29,7 @@ interface Efl.File {
             }
             @endcode */
 
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -62,7 +62,7 @@ interface Efl.File {
          acceptable flags are @c quality and @c compress. Eg.: @c
          "quality=100 compress=9" */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
             obligatory). */

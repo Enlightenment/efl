@@ -17,7 +17,7 @@ class Ecore_Mainloop (Eo.Base)
       iterate {
       }
       iterate_may_block {
-         return int;
+         return: int;
          params {
             int may_block;
          }
@@ -28,7 +28,7 @@ class Ecore_Mainloop (Eo.Base)
       }
       animator_ticked {
          /* FIXME: Should it be a prooperty? */
-         return Eina_Bool;
+         return: Eina_Bool;
       }
    }
    events {
