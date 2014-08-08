@@ -1226,6 +1226,16 @@ EAPI Eina_Stringshare *eolian_variable_file_get(const Eolian_Variable *var);
 EAPI const Eolian_Type *eolian_variable_base_type_get(const Eolian_Variable *var);
 
 /*
+ * @brief Get the value of a variable.
+ *
+ * @param[in] var the variable.
+ * @return the value or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_variable_value_get(const Eolian_Variable *var);
+
+/*
  * @brief Get the name of the given variable (without namespaces).
  *
  * @param[in] var the variable.

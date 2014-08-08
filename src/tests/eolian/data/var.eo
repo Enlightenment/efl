@@ -1,0 +1,22 @@
+// regular constant
+const Foo: int = 5;
+
+// regular global
+var Bar: float = 10.3f;
+
+// no-value global
+var Baz: long;
+
+// extern global
+var @extern Bah: double;
+
+class Var {
+   methods {
+      foo {
+         params {
+            int idx;
+         }
+         return: own(char*);
+      }
+   }
+}

@@ -841,6 +841,8 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_extern)
      {
+        if (!global)
+          eo_lexer_syntax_error(ls, "extern constant");
         is_extern = EINA_TRUE;
         eo_lexer_get(ls);
      }
@@ -856,7 +858,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    check_next(ls, ':');
    def->base_type = parse_type(ls);
    pop_type(ls);
-   if (ls->t.token == '=')
+   if ((ls->t.token == '=') && !is_extern)
      {
         ls->expr_mode = EINA_TRUE;
         eo_lexer_get(ls);

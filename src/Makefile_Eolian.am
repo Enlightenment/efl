@@ -109,6 +109,7 @@ tests/eolian/data/events.eo \
 tests/eolian/data/namespace.eo \
 tests/eolian/data/extern.eo \
 tests/eolian/data/struct.eo \
+tests/eolian/data/var.eo \
 tests/eolian/data/class_funcs.eo \
 tests/eolian/data/typedef_ref.c \
 tests/eolian/data/struct_ref.c

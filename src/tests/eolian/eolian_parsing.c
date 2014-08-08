@@ -649,6 +649,76 @@ START_TEST(eolian_extern)
 }
 END_TEST
 
+START_TEST(eolian_var)
+{
+   const Eolian_Variable *var = NULL;
+   const Eolian_Expression *exp = NULL;
+   const Eolian_Type *type = NULL;
+   const Eolian_Class *class;
+   const char *name;
+   Eina_Value *v = NULL;
+   int i = 0;
+   float f = 0.0f;
+
+   eolian_init();
+
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/var.eo"));
+
+   /* Check that the class Dummy is still readable */
+   fail_if(!(class = eolian_class_get_by_name("Var")));
+   fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
+
+   /* regular constant */
+   fail_if(!(var = eolian_variable_constant_get_by_name("Foo")));
+   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
+   fail_if(eolian_variable_is_extern(var));
+   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(!(name = eolian_type_name_get(type)));
+   fail_if(strcmp(name, "int"));
+   eina_stringshare_del(name);
+   fail_if(!(exp = eolian_variable_value_get(var)));
+   fail_if(eolian_expression_eval_type(exp, type, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != 5);
+
+   /* regular global */
+   fail_if(!(var = eolian_variable_global_get_by_name("Bar")));
+   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
+   fail_if(eolian_variable_is_extern(var));
+   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(!(name = eolian_type_name_get(type)));
+   fail_if(strcmp(name, "float"));
+   eina_stringshare_del(name);
+   fail_if(!(exp = eolian_variable_value_get(var)));
+   fail_if(eolian_expression_eval_type(exp, type, &v) != EOLIAN_EXPR_FLOAT);
+   eina_value_get(v, &f);
+   fail_if(((int)f) != 10);
+
+   /* no-value global */
+   fail_if(!(var = eolian_variable_global_get_by_name("Baz")));
+   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
+   fail_if(eolian_variable_is_extern(var));
+   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(!(name = eolian_type_name_get(type)));
+   fail_if(strcmp(name, "long"));
+   eina_stringshare_del(name);
+   fail_if(eolian_variable_value_get(var));
+
+   /* extern global  */
+   fail_if(!(var = eolian_variable_global_get_by_name("Bah")));
+   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
+   fail_if(!eolian_variable_is_extern(var));
+   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(!(name = eolian_type_name_get(type)));
+   fail_if(strcmp(name, "double"));
+   eina_stringshare_del(name);
+   fail_if(eolian_variable_value_get(var));
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_class_funcs)
 {
    const Eolian_Function *fid = NULL;
@@ -696,6 +766,7 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_namespaces);
    tcase_add_test(tc, eolian_struct);
    tcase_add_test(tc, eolian_extern);
+   tcase_add_test(tc, eolian_var);
    tcase_add_test(tc, eolian_class_funcs);
 }
 
