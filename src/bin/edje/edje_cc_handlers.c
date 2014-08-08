@@ -3678,6 +3678,104 @@ st_collections_group_nobroadcast(void)
 }
 
 /**
+    @page edcref
+    @property
+        orientation
+    @parameters
+        [AUTO/LTR/RTL]
+    @effect
+        This defines GROUP orientation.
+        This is useful if you want match interface orientation with language.
+        @li AUTO  - Follow system defs.
+        @li LTR  - suitable for Left To Right Languages (latin)
+        @li RTL - suitable for Right To Left Languages (Hebrew, Arabic interface)
+    @endproperty
+*/
+static void
+st_collections_group_orientation(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->prop.orientation = parse_enum(0,
+         "AUTO", EDJE_ORIENTATION_AUTO,
+         "LTR", EDJE_ORIENTATION_LTR,
+         "RTL", EDJE_ORIENTATION_RTL,
+         NULL);
+}
+
+/**
+    @page edcref
+    @property
+        mouse_events
+    @parameters
+        [1 or 0]
+    @effect
+        Change the default value of mouse_events for every part in this group.
+        Defaults to 1 if not set, to maintain compatibility.
+    @endproperty
+ */
+static void
+st_collections_group_mouse_events(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(1);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->default_mouse_events = parse_bool(0);
+}
+
+static void
+st_collections_group_mouse(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(0);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->default_mouse_events = 1;
+}
+
+static void
+st_collections_group_nomouse(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(0);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->default_mouse_events = 0;
+}
+
+/**
+    @page edcref
+    @property
+        program_source
+    @parameters
+        [source name]
+    @effect
+        Change the default value of source for every program in the current group
+        which is declared after this value is set.
+        Defaults to an unset value to maintain compatibility.
+    @since 1.10
+    @endproperty
+ */
+static void
+st_collections_group_program_source(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(1);
+
+   pcp = eina_list_last_data_get(edje_collections);
+   free(pcp->default_source);
+   pcp->default_source = parse_str(0);
+}
+
+/**
    @edcsubsection{collections_group_script,Script}
  */
 
@@ -3793,104 +3891,6 @@ st_collections_group_data_item(void)
      eina_hash_modify(pc->data, key, es);
    else
      eina_hash_direct_add(pc->data, key, es);
-}
-
-/**
-    @page edcref
-    @property
-        orientation
-    @parameters
-    enum AUTO, LTR, RTL
-    @effect
-        This defines GROUP orientation.
-        This is useful if you want match interface orientation with language.
-        AUTO  - Follow system defs.
-        LTR  - suitable for Left To Right Languages (latin)
-        RTL - suitable for Right To Left Languages (Hebrew, Arabic interface)
-    @endproperty
-*/
-static void
-st_collections_group_orientation(void)
-{
-   Edje_Part_Collection *pc;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   pc->prop.orientation = parse_enum(0,
-         "AUTO", EDJE_ORIENTATION_AUTO,
-         "LTR", EDJE_ORIENTATION_LTR,
-         "RTL", EDJE_ORIENTATION_RTL,
-         NULL);
-}
-
-/**
-    @page edcref
-    @property
-        mouse_events
-    @parameters
-        [1 or 0]
-    @effect
-        Change the default value of mouse_events for every part in this group.
-        Defaults to 1 if not set, to maintain compatibility.
-    @endproperty
- */
-static void
-st_collections_group_mouse_events(void)
-{
-   Edje_Part_Collection_Parser *pcp;
-
-   check_arg_count(1);
-
-   pcp = eina_list_data_get(eina_list_last(edje_collections));
-   pcp->default_mouse_events = parse_bool(0);
-}
-
-static void
-st_collections_group_mouse(void)
-{
-   Edje_Part_Collection_Parser *pcp;
-
-   check_arg_count(0);
-
-   pcp = eina_list_data_get(eina_list_last(edje_collections));
-   pcp->default_mouse_events = 1;
-}
-
-static void
-st_collections_group_nomouse(void)
-{
-   Edje_Part_Collection_Parser *pcp;
-
-   check_arg_count(0);
-
-   pcp = eina_list_data_get(eina_list_last(edje_collections));
-   pcp->default_mouse_events = 0;
-}
-
-/**
-    @page edcref
-    @property
-        program_source
-    @parameters
-        [source name]
-    @effect
-        Change the default value of source for every program in the current group
-        which is declared after this value is set.
-        Defaults to an unset value to maintain compatibility.
-    @since 1.10
-    @endproperty
- */
-static void
-st_collections_group_program_source(void)
-{
-   Edje_Part_Collection_Parser *pcp;
-
-   check_arg_count(1);
-
-   pcp = eina_list_last_data_get(edje_collections);
-   free(pcp->default_source);
-   pcp->default_source = parse_str(0);
 }
 
 /**
