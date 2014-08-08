@@ -1141,6 +1141,120 @@ EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression 
  */
 EAPI Eina_Stringshare *eolian_expression_value_to_literal(const Eina_Value *v, Eolian_Expression_Type etp);
 
+/*
+ * @brief Get a global variable by name. Supports namespaces.
+ *
+ * @param[in] name the name of the variable
+ * @return the variable handle or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const char *name);
+
+/*
+ * @brief Get a constant variable by name. Supports namespaces.
+ *
+ * @param[in] name the name of the variable
+ * @return the variable handle or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const char *name);
+
+/*
+ * @brief Get an iterator to all global variables contained in a file.
+ *
+ * @param[in] fname the file name without full path
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
+
+/*
+ * @brief Get an iterator to all constant variables contained in a file.
+ *
+ * @param[in] fname the file name without full path
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
+
+/*
+ * @brief Get the type of a variable (global, constant)
+ *
+ * @param[in] var the variable.
+ * @return an Eolian_Type_Type.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
+
+/*
+ * @brief Get the description of a variable.
+ *
+ * @param[in] var the variable.
+ * @return the description or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_variable_description_get(const Eolian_Variable *var);
+
+/*
+ * @brief Get the filename of a variable.
+ *
+ * @param[in] var the variable.
+ * @return the filename or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_variable_file_get(const Eolian_Variable *var);
+
+/*
+ * @brief Get the base type of a variable.
+ *
+ * @param[in] var the variable.
+ * @return the base type or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_variable_base_type_get(const Eolian_Variable *var);
+
+/*
+ * @brief Get the name of the given variable (without namespaces).
+ *
+ * @param[in] var the variable.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_variable_name_get(const Eolian_Variable *var);
+
+/*
+ * @brief Get the name of the given variable (with namespaces).
+ *
+ * @param[in] var the variable.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_variable_full_name_get(const Eolian_Variable *var);
+
+/*
+ * @brief Get an iterator to the list of namespaces of the given variable.
+ *
+ * @param[in] var the variable.
+ * @return the iterator.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
+
 #endif
 
 #ifdef __cplusplus
