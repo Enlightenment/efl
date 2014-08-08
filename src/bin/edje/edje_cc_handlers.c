@@ -42,6 +42,7 @@
 
 /**
  * @page edcref Edje Data Collection reference
+ *
  * An Edje Data Collection, it's a plain text file (normally identified with the
  * .edc extension), consisting of instructions for the Edje Compiler.
  *
@@ -131,6 +132,7 @@
  *    </ul>
  *    <li>@ref sec_lazedc "LazEDC"</li>
  *    <ul>
+ *       <li>@ref sec_lazedc_intro "Intro"</li>
  *       <li>@ref sec_lazedc_synonyms "Synonyms"</li>
  *       <li>@ref sec_lazedc_shorthand "Shorthand"</li>
  *    </ul>
@@ -759,13 +761,11 @@ New_Statement_Handler statement_handlers[] =
      PROGRAM_STATEMENTS("collections.group")
 };
 
-/**
-   @edcsection{lazedc,LazEDC}
- */
+/** @edcsection{lazedc,
+ *              LazEDC} */
 
-/**
-   @edcsubsection{lazedc,LazEDC}
- */
+/** @edcsubsection{lazedc_intro,
+ *                 LazEDC Intro} */
 
 /**
     @page edcref
@@ -823,9 +823,8 @@ New_Statement_Handler statement_handlers[] =
     @endblock
 */
 
-/**
-   @edcsubsection{lazedc_synonyms,Synonyms}
- */
+/** @edcsubsection{lazedc_synonyms,
+ *                 LazEDC Synonyms} */
 
 /**
     @page edcref
@@ -862,9 +861,8 @@ New_Statement_Handler statement_handlers_short[] =
      {"collections.group.parts.part.clip", st_collections_group_parts_part_clip_to_id},
 };
 
-/**
-   @edcsubsection{lazedc_shorthand,Shorthand}
- */
+/** @edcsubsection{lazedc_shorthand,
+ *                 LazEDC Shorthand} */
 
 /**
     @page edcref
@@ -1060,9 +1058,8 @@ New_Object_Handler object_handlers[] =
      PROGRAM_OBJECTS("collections.group")
 };
 
-/**
-   @edcsubsection{lazedc_blocks,Blocks}
- */
+/** @edcsubsection{lazedc_blocks,
+ *                 LazEDC Blocks} */
 
 /**
     @page edcref
@@ -1479,13 +1476,10 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
 /*****/
 
-/**
-   @edcsection{toplevel,Top-Level blocks}
- */
+/** @edcsection{toplevel,Top-Level blocks} */
 
-/**
-   @edcsubsection{toplevel_externals,Externals}
- */
+/** @edcsubsection{toplevel_externals,
+ *                 Externals} */
 
 /**
     @page edcref
@@ -1557,9 +1551,8 @@ st_externals_external(void)
      }
 }
 
-/**
-   @edcsubsection{toplevel_images,Images}
- */
+/** @edcsubsection{toplevel_images,
+ *                 Images} */
 
 /**
     @page edcref
@@ -1690,9 +1683,8 @@ st_images_image(void)
      }
 }
 
-/**
-   @edcsubsection{toplevel_images_set,Set}
- */
+/** @edcsubsection{toplevel_images_set,
+ *                 Images.Set} */
 
 /**
     @page edcref
@@ -1700,31 +1692,21 @@ st_images_image(void)
     @block
         set
     @context
-    set {
-       name: "image_name_used";
-       image {
-          image: "filename3.ext" LOSSY 90;
-          size: 201 201 500 500;
-       }
-       image {
-          image: "filename4.ext" COMP;
-          size: 51 51 200 200;
-       }
-       image {
-          image: "filename5.ext" COMP;
-          size: 11 11 50 50;
-       }
-       image {
-          image: "filename6.ext" RAW;
-          size: 0 0 10 10;
-       }
-    }
+        images {
+            ..
+            set {
+                name: "image_name_used";
+                image { }
+                image { }
+                ...
+            }
+        }
     @description
-        The "set" block is used to define an image with different content depending on their size.
-        Besides the document's root, additional "set" blocks can be
-        included inside other blocks, normally "collections", "group" and
-        "part", easing maintenance of the file list when the theme is split
-        among multiple files.
+        The "set" block is used to define an image with different content
+        depending on their size. Besides the document's root, additional
+        "set" blocks can be included inside other blocks, normally
+        "collections", "group" and "part", easing maintenance of the file
+        list when the theme is split among multiple files.
     @endblock
  */
 static void
@@ -1769,9 +1751,8 @@ st_images_set_name(void)
    edje_file->image_dir->sets[edje_file->image_dir->sets_count - 1].name = parse_str(0);
 }
 
-/**
-   @edcsubsection{toplevel_images_set_image,Image}
- */
+/**  @edcsubsection{toplevel_images_set_image,
+ *                  Images.Set.Image} */
 
 /**
     @page edcref
@@ -1779,12 +1760,19 @@ st_images_set_name(void)
     @block
         image
     @context
-    image {
-       image: "filename4.ext" COMP;
-       size: 51 51 200 200;
-       border: 0 0 0 0;
-       border_scale_by: 0.0;
-    }
+        images {
+            ..
+            set {
+                ..
+                image {
+                   image: "filename4.ext" COMP;
+                   size: 51 51 200 200;
+                   border: 0 0 0 0;
+                   border_scale_by: 0.0;
+                }
+                ..
+            }
+        }
     @description
         The "image" block inside a "set" block define the characteristic of an image.
         Every block will describe one image and the size rule to use it.
@@ -1947,9 +1935,8 @@ st_images_set_image_border_scale_by(void)
    ed->image.border.scale_by = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
-/**
-   @edcsubsection{toplevel_fonts,Fonts}
- */
+/** @edcsubsection{toplevel_fonts,
+ *                 Fonts} */
 
 /**
     @page edcref
@@ -2002,9 +1989,8 @@ st_fonts_font(void)
    eina_hash_direct_add(edje_file->fonts, fn->name, fn);
 }
 
-/**
-   @edcsubsection{toplevel_data,Data}
- */
+/** @edcsubsection{toplevel_data,
+ *                 Data} */
 
 /**
     @page edcref
@@ -2151,9 +2137,8 @@ st_data_file(void)
    free(filename);
 }
 
-/**
-   @edcsubsection{toplevel_color_classes,Color Classes}
- */
+/** @edcsubsection{toplevel_color_classes,
+ *                 Color Classes} */
 
 /**
     @page edcref
@@ -2301,9 +2286,8 @@ st_color_class_color3(void)
    cc->a3 = parse_int_range(3, 0, 255);
 }
 
-/**
-   @edcsubsection{toplevel_styles,Styles}
- */
+/** @edcsubsection{toplevel_styles,
+ *                 Styles} */
 
 /**
     @page edcref
@@ -2427,13 +2411,10 @@ st_styles_style_tag(void)
    stl->tags = eina_list_append(stl->tags, tag);
 }
 
-/**
-   @edcsection{collections,Collections Blocks}
- */
+/** @edcsection{collections,Collections Blocks} */
 
-/**
-   @edcsubsection{collections,Collections Blocks}
- */
+/** @edcsubsection{collections,
+ *                 Collections Blocks} */
 
 /**
     @page edcref
@@ -2493,9 +2474,8 @@ st_collections_base_scale(void)
      }
 }
 
-/**
-   @edcsubsection{collections_sounds,Sounds}
- */
+/** @edcsubsection{collections_sounds,
+ *                 Sounds} */
 
 /**
     @page edcref
@@ -2503,47 +2483,99 @@ st_collections_base_scale(void)
         sounds
     @context
         sounds {
-           sample {
-              name: "sound_file1" COMP;
-              source: "sound_file1.wav";
-           }
-           sample {
-              name: "sound_file2" LOSSY 0.4;
-              source: "sound_file2.wav";
-           }
-           tone: "tone-1"  2300;
+            tone: "tone-1"  2300;
+            tone: "tone-2"  2300;
+            sample { }
+            sample { }
+            ..
         }
-
     @description
         The "sounds" block contains a list of one or more sound sample and tones items.
     @endblock
 */
 
 /**
-   @edcsubsection{collections_sounds_sample,Sample}
+    @page edcref
+    @property
+        tone
+    @parameters
+        [tone name] [frequency]
+    @effect
+        sound of specific frequency
+    @since 1.1
+    @endproperty
  */
+static void
+st_collections_group_sound_tone(void)
+{
+   Edje_Sound_Tone *tone;
+   const char *tmp;
+   unsigned int i;
+   int value;
+
+   check_arg_count(2);
+   
+   if (!edje_file->sound_dir)
+     edje_file->sound_dir = mem_alloc(SZ(Edje_Sound_Directory));
+   
+   tmp = parse_str(0);
+   /* Audible range 20 to 20KHz */
+   value = parse_int_range(1, 20, 20000);
+   
+   /* Check for Tone duplication */
+   for (i = 0; i < edje_file->sound_dir->tones_count; i++)
+     {
+        if (!strcmp(edje_file->sound_dir->tones[i].name, tmp))
+          {
+             ERR("Tone name: %s already exist.", tmp);
+             free((char *)tmp);
+             exit(-1);
+          }
+        if (edje_file->sound_dir->tones[i].value == value)
+          {
+             ERR("Tone name %s with same frequency %d exist.",
+                 edje_file->sound_dir->tones[i].name, value);
+             exit(-1);
+          }
+     }
+   edje_file->sound_dir->tones_count++;
+   tone = realloc(edje_file->sound_dir->tones,
+                  sizeof (Edje_Sound_Tone) * 
+                  edje_file->sound_dir->tones_count);
+   if (!tone)
+     {
+        ERR("No enough memory.");
+        exit(-1);
+     }
+   edje_file->sound_dir->tones = tone;
+   
+   tone = edje_file->sound_dir->tones + edje_file->sound_dir->tones_count - 1;
+   memset(tone, 0, sizeof (Edje_Sound_Tone));
+   
+   tone->name = tmp;
+   tone->value = value;
+   tone->id = edje_file->sound_dir->tones_count - 1;
+}
+
+/** @edcsubsection{collections_sounds_sample,
+ *                 Sounds.Sample} */
 
 /**
     @page edcref
     @block
         sample
     @context
-       sample {
-          name: "sound_file1" RAW;
-          source: "sound_file1.wav";
-       }
-       sample {
-          name: "sound_file2" LOSSY 0.5;
-          source: "sound_file2.wav";
-       }
-       sample {
-          name: "sound_file3" COMP;
-          source: "sound_file3.wav";
-       }
-       sample {
-          name: "sound_file4" AS_IS;
-          source: "sound_file1.wav";
-       }
+        sounds {
+            ..
+            sample {
+                name: "sound_file1" RAW;
+                source: "sound_file1.wav";
+            }
+            sample {
+                name: "sound_file2" LOSSY 0.5;
+                source: "sound_file2.wav";
+            }
+        }
     @description
         The sample block defines the sound sample.
     @endblock
@@ -2648,72 +2680,9 @@ st_collections_group_sound_sample_source(void)
    check_arg_count(1);
 }
 
-/**
-    @page edcref
-    @property
-        tone
-    @parameters
-        [tone name] [frequency]
-    @effect
-        sound of specific frequency
-    @since 1.1
-    @endproperty
- */
-static void
-st_collections_group_sound_tone(void)
-{
-   Edje_Sound_Tone *tone;
-   const char *tmp;
-   unsigned int i;
-   int value;
 
-   check_arg_count(2);
-   
-   if (!edje_file->sound_dir)
-     edje_file->sound_dir = mem_alloc(SZ(Edje_Sound_Directory));
-   
-   tmp = parse_str(0);
-   /* Audible range 20 to 20KHz */
-   value = parse_int_range(1, 20, 20000);
-   
-   /* Check for Tone duplication */
-   for (i = 0; i < edje_file->sound_dir->tones_count; i++)
-     {
-        if (!strcmp(edje_file->sound_dir->tones[i].name, tmp))
-          {
-             ERR("Tone name: %s already exist.", tmp);
-             free((char *)tmp);
-             exit(-1);
-          }
-        if (edje_file->sound_dir->tones[i].value == value)
-          {
-             ERR("Tone name %s with same frequency %d exist.",
-                 edje_file->sound_dir->tones[i].name, value);
-             exit(-1);
-          }
-     }
-   edje_file->sound_dir->tones_count++;
-   tone = realloc(edje_file->sound_dir->tones,
-                  sizeof (Edje_Sound_Tone) * 
-                  edje_file->sound_dir->tones_count);
-   if (!tone)
-     {
-        ERR("No enough memory.");
-        exit(-1);
-     }
-   edje_file->sound_dir->tones = tone;
-   
-   tone = edje_file->sound_dir->tones + edje_file->sound_dir->tones_count - 1;
-   memset(tone, 0, sizeof (Edje_Sound_Tone));
-   
-   tone->name = tmp;
-   tone->value = value;
-   tone->id = edje_file->sound_dir->tones_count - 1;
-}
-
-/**
-   @edcsubsection{collections_vibrations,Vibrations}
- */
+/** @edcsubsection{collections_vibrations,
+ *                 Vibrations} */
 
 /**
     @page edcref
@@ -2721,10 +2690,9 @@ st_collections_group_sound_tone(void)
         vibrations
     @context
         vibrations {
-           sample {
-              name: "vibration_file1";
-              source: "vibration_file1.xxx";
-           }
+           sample { }
+           sample { }
+           ..
         }
 
     @description
@@ -2733,19 +2701,21 @@ st_collections_group_sound_tone(void)
     @endblock
 */
 
-/**
-   @edcsubsection{collections_vibrations_sample,Sample}
- */
+/** @edcsubsection{collections_vibrations_sample,
+ *                 Vibrations.Sample} */
 
 /**
     @page edcref
     @block
         sample
     @context
-       sample {
-          name: "vibration_file1";
-          source: "vibration_file1.xxx";
-       }
+        vibrations {
+            sample {
+                name: "vibration_file1";
+                source: "vibration_file1.xxx";
+            }
+            ..
+        }
     @description
         The sample block defines the vibration sample.
     @endblock
@@ -2893,9 +2863,8 @@ _link_combine(void)
    current_program = NULL;
 }
 
-/**
-   @edcsubsection{collections_group,Group}
- */
+/** @edcsubsection{collections_group,
+ *                 Group} */
 
 /**
     @page edcref
@@ -3775,9 +3744,8 @@ st_collections_group_program_source(void)
    pcp->default_source = parse_str(0);
 }
 
-/**
-   @edcsubsection{collections_group_script,Script}
- */
+/** @edcsubsection{collections_group_script,
+ *                 Group.Script} */
 
 /**
     @page edcref
@@ -3893,9 +3861,8 @@ st_collections_group_data_item(void)
      eina_hash_direct_add(pc->data, key, es);
 }
 
-/**
-   @edcsubsection{collections_group_limits,Limits}
- */
+/** @edcsubsection{collections_group_limits,
+ *                 Group.Limits} */
 
 /**
     @page edcref
@@ -3997,9 +3964,8 @@ st_collections_group_limits_horizontal(void)
    el->value = parse_int_range(1, 1, 0xffff);
 }
 
-/**
-   @edcsubsection{collections_group_parts,Parts}
- */
+/** @edcsubsection{collections_group_parts,
+ *                 Group.Parts} */
 
 /**
     @page edcref
@@ -4041,9 +4007,8 @@ st_collections_group_parts_alias(void)
    eina_hash_add(pc->aliased, aliased, alias);
 }
 
-/**
-   @edcsubsection{collections_group_parts_part,Part}
- */
+/** @edcsubsection{collections_group_parts_part,
+ *                 Group.Parts.Part} */
 
 /**
     @page edcref
@@ -5294,9 +5259,8 @@ st_collections_group_parts_part_access(void)
    current_part->access = parse_bool(0);
 }
 
-/**
-   @edcsubsection{collections_group_parts_dragable,Dragable}
- */
+/** @edcsubsection{collections_group_parts_dragable,
+ *                 Group.Parts.Part.Dragable} */
 
 /**
     @page edcref
@@ -5458,9 +5422,8 @@ st_collections_group_parts_part_dragable_events(void)
      }
 }
 
-/**
-   @edcsubsection{collections_group_parts_items,Items}
- */
+/** @edcsubsection{collections_group_parts_items,
+ *                 Group.Parts.Part.Box/Table.Items} */
 
 /**
     @page edcref
@@ -5956,9 +5919,8 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
    return colors;
 }
 
-/**
-   @edcsubsection{collections_group_parts_description,Description}
- */
+/** @edcsubsection{collections_group_parts_description,
+ *                 Group.Parts.Part.Description} */
 
 /**
     @page edcref
@@ -6873,9 +6835,8 @@ st_collections_group_parts_part_description_color3(void)
    ed->text.color3.a = parse_int_range(3, 0, 255);
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_relatives,Relatives (rel1/rel2)}
- */
+/** @edcsubsection{collections_group_parts_description_relatives,
+ *                 Group.Parts.Part.Description.Relatives (rel1/rel2)} */
 
 /**
     @page edcref
@@ -7109,9 +7070,8 @@ st_collections_group_parts_part_description_rel2_to_y(void)
    }
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_image,Image}
- */
+/** @edcsubsection{collections_group_parts_description_image,
+ *                 Group.Parts.Part.Description.Image} */
 
 /**
     @page edcref
@@ -7391,28 +7351,21 @@ st_collections_group_parts_part_description_image_scale_hint(void)
 				      NULL);
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_image_fill,Fill}
- */
+/** @edcsubsection{collections_group_parts_description_image_fill,
+ *                 Group.Parts.Part.Description.Image.Fill} */
 
 /**
     @page edcref
     @block
         fill
     @context
-        description {
+        image {
             ..
             fill {
                 type: SCALE;
                 smooth: 0-1;
-                origin {
-                    relative: X-axis Y-axis;
-                    offset:   X-axis Y-axis;
-                }
-                size {
-                    relative: width  height;
-                    offset:   width  height;
-                }
+                origin { }
+                size { }
             }
             ..
         }
@@ -7576,16 +7529,15 @@ st_collections_group_parts_part_description_fill_type(void)
                            NULL);
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_image_fill_origin,Origin}
- */
+/** @edcsubsection{collections_group_parts_description_image_fill_origin,
+ *                 Group.Parts.Part.Description.Image.Fill.Origin} */
 
 /**
     @page edcref
     @block
         origin
     @context
-        description {
+        image {
             ..
             fill {
                 ..
@@ -7701,16 +7653,15 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    fill->pos_abs_y = parse_int(1);
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_image_fill_size,Size}
- */
+/** @edcsubsection{collections_group_parts_description_image_fill_size,
+ *                 Group.Parts.Part.Description.Image.Fill.Size} */
 
 /**
     @page edcref
     @block
         size
     @context
-        description {
+        image {
             ..
             fill {
                 ..
@@ -7829,9 +7780,8 @@ st_collections_group_parts_part_description_fill_size_offset(void)
 }
 
 
-/**
-   @edcsubsection{collections_group_parts_description_text,Text}
- */
+/** @edcsubsection{collections_group_parts_description_text,
+ *                 Group.Parts.Part.Description.Text} */
 
 /**
     @page edcref
@@ -8462,9 +8412,8 @@ st_collections_group_parts_part_description_text_filter(void)
 }
 
 
-/**
-   @edcsubsection{collections_group_parts_description_box,Box}
- */
+/** @edcsubsection{collections_group_parts_description_box,
+ *                 Group.Parts.Part.Description.Box} */
 
 /**
     @page edcref
@@ -8617,9 +8566,8 @@ st_collections_group_parts_part_description_box_min(void)
 }
 
 
-/**
-   @edcsubsection{collections_group_parts_description_table,Table}
- */
+/** @edcsubsection{collections_group_parts_description_table,
+ *                 Group.Parts.Part.Description.Table} */
 
 /**
     @page edcref
@@ -8799,9 +8747,8 @@ st_collections_group_parts_part_description_table_min(void)
    ed->table.min.v = parse_bool(1);
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_physics,Physics}
- */
+/** @edcsubsection{collections_group_parts_description_physics,
+ *                 Group.Parts.Part.Description.Physics} */
 
 /**
     @page edcref
@@ -8823,12 +8770,8 @@ st_collections_group_parts_part_description_table_min(void)
             light_on: 1;
             z: -15;
             depth: 30;
-            movement_freedom {
-                ..
-            }
-            faces {
-                ..
-            }
+            movement_freedom { }
+            faces { }
         }
         ..
     }
@@ -9189,17 +9132,14 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
 }
 #endif
 
-/**
-   @edcsubsection{collections_group_parts_description_physics_movement_freedom,Movement Freedom}
- */
+/** @edcsubsection{collections_group_parts_description_physics_movement_freedom,
+ *                 Group.Parts.Part.Description.Physics.Movement Freedom} */
 
 /**
     @page edcref
     @block
         movement_freedom
     @context
-    description {
-        ..
         physics {
             ...
             movement_freedom {
@@ -9208,8 +9148,6 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
             }
         }
         ..
-    }
-
     @description
         The "movement_freedom" block consists of two blocks to describe all
         the allowed movements for a body.
@@ -9265,19 +9203,22 @@ st_collections_group_parts_part_description_physics_movement_freedom_angular(voi
 }
 #endif
 
-/**
-   @edcsubsection{collections_group_parts_description_physics_faces,Faces}
- */
+/** @edcsubsection{collections_group_parts_description_physics_faces,
+ *                 Group.Parts.Part.Description.Physics.Faces} */
 
 /**
     @page edcref
     @block
         faces
     @context
-        faces {
-            face {
-                type: BOX_FRONT;
-                source:  "groupname";
+        physics {
+            ...
+            faces {
+                face {
+                    type: BOX_FRONT;
+                    source:  "groupname";
+                }
+                ..
             }
             ..
         }
@@ -9397,9 +9338,8 @@ st_collections_group_parts_part_description_physics_face_source(void)
 }
 #endif
 
-/**
-   @edcsubsection{collections_group_parts_description_map,Map}
- */
+/** @edcsubsection{collections_group_parts_description_map,
+ *                 Group.Parts.Part.Description.Map} */
 
 /**
     @page edcref
@@ -9655,9 +9595,8 @@ st_collections_group_parts_part_description_map_color(void)
 }
 
 
-/**
-   @edcsubsection{collections_group_parts_description_map_rotation,Rotation}
- */
+/** @edcsubsection{collections_group_parts_description_map_rotation,
+ *                 Group.Parts.Part.Description.Map.Rotation} */
 
 /**
     @page edcref
@@ -9721,7 +9660,7 @@ st_collections_group_parts_part_description_map_rotation_center(void)
 */
 static void
 st_collections_group_parts_part_description_map_rotation_x(void)
-{
+
    check_arg_count(1);
 
    current_desc->map.rot.x = FROM_DOUBLE(parse_float(0));
@@ -9765,9 +9704,8 @@ st_collections_group_parts_part_description_map_rotation_z(void)
    current_desc->map.rot.z = FROM_DOUBLE(parse_float(0));
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_perspective,Perspective}
- */
+/** @edcsubsection{collections_group_parts_description_perspective,
+ *                 Group.Parts.Part.Description.Perspective} */
 
 /**
     @page edcref
@@ -9825,9 +9763,8 @@ st_collections_group_parts_part_description_perspective_focal(void)
 }
 
 
-/**
-   @edcsubsection{collections_group_parts_descriptions_params,Params}
- */
+/** @edcsubsection{collections_group_parts_descriptions_params,
+ *                 Group.Parts.Part.Description.Params} */
 
 /**
     @page edcref
@@ -10000,16 +9937,15 @@ st_collections_group_parts_part_description_params_choice(void)
    _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_CHOICE);
 }
 
-/**
-   @edcsubsection{collections_group_parts_description_links,Links}
- */
+/** @edcsubsection{collections_group_parts_description_links,
+ *                 Group.Parts.Part.Description.Links} */
 
 /**
     @page edcref
     @block
         link
     @context
-        desc { "default";
+        description {
             ..
             link {
                 base: "edje,signal" "edje";
@@ -10111,7 +10047,27 @@ st_collections_group_parts_part_description_link_base(void)
    eina_hash_list_append(pcp->link_hash, buf, el);
 }
 
+/** @edcsubsection{collections_group_programs,
+ *                 Group.Programs} */
 
+/**
+    @page edcref
+    @block
+        programs
+    @context
+        group {
+            programs {
+                ..
+                program { }
+                program { }
+                program { }
+                ..
+            }
+        }
+    @description
+        The programs group contain one ore more program.
+    @endblock
+*/
 static void
 _program_sequence_check(void)
 {
@@ -10164,33 +10120,30 @@ _program_sequence_new(void)
    return current_program = ep;
 }
 
-/**
-   @edcsubsection{collections_group_programs,Programs}
- */
+/** @edcsubsection{collections_group_programs_program,
+ *                 Group.Programs.Program} */
 
 /**
     @page edcref
     @block
-        programs
+        program
     @context
-        group {
-            programs {
-                ..
-                program {
-                    name: "programname";
-                    signal: "signalname";
-                    source: "partname";
-                    filter: "partname" "statename";
-                    in: 0.3 0.0;
-                    action: STATE_SET "statename" state_value;
-                    transition: LINEAR 0.5;
-                    target: "partname";
-                    target: "anotherpart";
-                    after: "programname";
-                    after: "anotherprogram";
-                }
-                ..
+        programs {
+            ..
+            program {
+                name: "programname";
+                signal: "signalname";
+                source: "partname";
+                filter: "partname" "statename";
+                in: 0.3 0.0;
+                action: STATE_SET "statename" state_value;
+                transition: LINEAR 0.5;
+                target: "partname";
+                target: "anotherpart";
+                after: "programname";
+                after: "anotherprogram";
             }
+            ..
         }
     @description
         Programs define how your interface reacts to events.
@@ -11004,9 +10957,8 @@ st_collections_group_programs_program_api(void)
      }
 }
 
-/**
-   @edcsubsection{collections_group_program_sequence,Sequence}
- */
+/** @edcsubsection{collections_group_program_sequence,
+ *                 Group.Programs.Program.Sequence} */
 
 /**
     @page edcref
@@ -11139,9 +11091,8 @@ ob_collections_group_programs_program_script(void)
      }
 }
 
-/**
-   @edcsubsection{collections_group_physics,Physics}
- */
+/** @edcsubsection{collections_group_physics,
+ *                 Group.Physics} */
 
 /**
     @page edcref
@@ -11163,9 +11114,8 @@ ob_collections_group_programs_program_script(void)
     @endblock
  */
 
-/**
-   @edcsubsection{collections_group_physics_world,World}
- */
+/** @edcsubsection{collections_group_physics_world,
+ *                Group.Physics.World} */
 
 /**
     @page edcref
