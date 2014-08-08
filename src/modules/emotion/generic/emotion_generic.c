@@ -1406,7 +1406,7 @@ em_video_channel_mute_set(void *data, int mute)
 
    ev->video_mute = !!mute;
 
-   if (!ev || !ev->file_ready)
+   if (!ev->file_ready)
      return;
 
    _player_send_cmd(ev, EM_CMD_VIDEO_MUTE_SET);
@@ -1471,7 +1471,7 @@ em_audio_channel_mute_set(void *data, int mute)
 
    ev->audio_mute = !!mute;
 
-   if (!ev || !ev->file_ready)
+   if (!ev->file_ready)
      return;
 
    _player_send_cmd(ev, EM_CMD_AUDIO_MUTE_SET);
@@ -1495,7 +1495,7 @@ em_audio_channel_volume_set(void *data, double vol)
 
    ev->volume = vol;
 
-   if (!ev || !ev->file_ready)
+   if (!ev->file_ready)
      return;
 
    _player_send_cmd(ev, EM_CMD_VOLUME_SET);
@@ -1560,7 +1560,7 @@ em_spu_channel_mute_set(void *data, int mute)
 
    ev->spu_mute = !!mute;
 
-   if (!ev || !ev->file_ready)
+   if (!ev->file_ready)
      return;
 
    _player_send_cmd(ev, EM_CMD_SPU_MUTE_SET);
@@ -1606,7 +1606,7 @@ em_speed_set(void *data, double speed)
    float rate = speed;
    ev->speed = rate;
 
-   if (!ev || !ev->file_ready)
+   if (!ev->file_ready)
      return;
 
    _player_send_cmd(ev, EM_CMD_SPEED_SET);
