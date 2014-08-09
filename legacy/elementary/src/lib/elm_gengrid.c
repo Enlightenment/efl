@@ -173,8 +173,7 @@ _item_show_region(void *data)
                row = cvh / sd->item_height;
                if (row <= 0) row = 1;
                x = (it->position - 1) / row;
-               if (x == 0) y = it->position - 1;
-               else if (x > 0) y = (it->position - 1) % x;
+               y = (it->position - 1) % row;
                if (x >= 1)
                  it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
                     + (GG_IT(it)->prev_group * sd->group_item_width)
@@ -189,10 +188,10 @@ _item_show_region(void *data)
           else if (sd->item_width > 0)
             {
                col = cvw / sd->item_width;
+               
                if (col <= 0) col = 1;
                y = (it->position - 1) / col;
-               if (y == 0) x = it->position - 1;
-               else if (y > 0) x = (it->position - 1) % y;
+               x = (it->position - 1) % col;
                it_xpos = x * sd->item_width + minx;
                if (y >= 1)
                  it_ypos = ((y - GG_IT(it)->prev_group) * sd->item_height)
