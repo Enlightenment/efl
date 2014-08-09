@@ -305,7 +305,7 @@ efreet_dirs_init(void)
 
     /* xdg_data_dirs */
 #ifdef _WIN32
-    snprintf(buf, 4096, "%s\\Efl;" DATA_DIR ";/usr/share;/usr/local/share", getenv("APPDATA"));
+    snprintf(buf, sizeof(buf), "%s\\Efl;" DATA_DIR ";/usr/share;/usr/local/share", getenv("APPDATA"));
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", buf);
 #else
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
