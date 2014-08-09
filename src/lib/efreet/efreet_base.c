@@ -277,17 +277,16 @@ efreet_dirs_init(void)
 
     /* efreet_home_dir */
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     efreet_home_dir = getenv("HOME");
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   else
+   if (getuid() != geteuid())
      {
         struct passwd *pw = getpwent();
 
         if ((pw) && (pw->pw_dir)) efreet_home_dir = pw->pw_dir;
      }
+   else
 #endif
+     efreet_home_dir = getenv("HOME");
+
 #ifdef _WIN32
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
       {
