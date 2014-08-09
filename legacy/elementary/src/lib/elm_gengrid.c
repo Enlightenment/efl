@@ -188,7 +188,6 @@ _item_show_region(void *data)
           else if (sd->item_width > 0)
             {
                col = cvw / sd->item_width;
-               
                if (col <= 0) col = 1;
                y = (it->position - 1) / col;
                x = (it->position - 1) % col;
