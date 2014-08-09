@@ -3868,15 +3868,7 @@ _item_mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
    if (sd->on_hold) return;
    sd->wasselected = it->selected;
-   it->highlight_cb(it);
-   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     if ((!elm_widget_item_disabled_get(it)) &&
-         (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
-       {
-          evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
-          evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
-       }
-   evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
+   
    ecore_timer_del(it->item->swipe_timer);
    it->item->swipe_timer = ecore_timer_add(SWIPE_TIME, _swipe_cancel, it);
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -3887,6 +3879,19 @@ _item_mouse_down_cb(void *data,
      it->long_timer = NULL;
    sd->swipe = EINA_FALSE;
    sd->movements = 0;
+
+   // and finally call the user callbacks.
+   // NOTE: keep this code at the bottom, as the user can change the
+   //       list at this point (clear, delete, etc...)
+   it->highlight_cb(it);
+   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     if ((!elm_widget_item_disabled_get(it)) &&
+         (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+       {
+          evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
+          evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
+       }
+   evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
 }
 
 static Item_Block *

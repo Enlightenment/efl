@@ -3750,6 +3750,16 @@ _gl_del_unrealized_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    printf("unrealized item # %d\n", num);
 }
 
+static void
+_gl_del_doubleclick_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                       void *event_info)
+{
+   int num = (int)(uintptr_t)elm_object_item_data_get(event_info);
+   int num_category = num % 4;
+
+   if (num_category == 3)
+     elm_genlist_clear(obj);
+}
 static Evas_Object *
 _gl_del_genlist_add(Evas_Object *bx)
 {
@@ -3762,6 +3772,8 @@ _gl_del_genlist_add(Evas_Object *bx)
    evas_object_show(gl);
    evas_object_smart_callback_add(gl, "unrealized",
                                   _gl_del_unrealized_cb, NULL);
+   evas_object_smart_callback_add(gl, "clicked,double",
+                                  _gl_del_doubleclick_cb, NULL);
 
    return gl;
 }
@@ -3786,15 +3798,20 @@ char *_gl_del_text_get(void *data, Evas_Object *obj EINA_UNUSED,
 {
    char buf[256] = { 0 };
    int num = (int)(uintptr_t)data;
-   int num_category = num % 3;
+   int num_category = num % 4;
 
    if (num_category == 0)
-     snprintf(buf, sizeof(buf), "Item # %i - Item Del", num);
+     snprintf(buf, sizeof(buf),
+              "Item #%.02i - 1. Item Del", num);
    else if (num_category == 1)
-     snprintf(buf, sizeof(buf), "Item # %i - Genlist Clear and Item Append",
-              num);
+     snprintf(buf, sizeof(buf),
+              "Item #%.02i - 2. Genlist Clear and Item Append", num);
    else if (num_category == 2)
-     snprintf(buf, sizeof(buf), "Item # %i - Genlist Del", num);
+     snprintf(buf, sizeof(buf),
+              "Item #%.02i - 3. Genlist Del", num);
+   else if (num_category == 3)
+     snprintf(buf, sizeof(buf),
+              "Item #%.02i - 4. Genlist Clear on double-click", num);
 
    return strdup(buf);
 }
@@ -3803,7 +3820,7 @@ static void
 _gl_del_sel(void *data, Evas_Object *obj, void *event_info)
 {
    int num = (int)(uintptr_t)data;
-   int num_category = num % 3;
+   int num_category = num % 4;
    Elm_Object_Item *it = event_info;
    Elm_Genlist_Item_Class *itc =
       (Elm_Genlist_Item_Class *)elm_genlist_item_item_class_get(it);
@@ -3856,7 +3873,8 @@ test_genlist_del(void *data EINA_UNUSED,
                        " on item selection.<br/>"
                        "   1. genlist item deletion<br/>"
                        "   2. genlist clear and item append<br/>"
-                       "   3. genlist del</align>");
+                       "   3. genlist del<br/>"
+                       "   4. genlist clear on double-click</align>");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
 
