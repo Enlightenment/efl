@@ -291,9 +291,6 @@ efreet_dirs_init(void)
 #ifdef _WIN32
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
       {
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-         if (getuid() == geteuid())
-#endif
            efreet_home_dir = getenv("USERPROFILE");
       }
 #endif
