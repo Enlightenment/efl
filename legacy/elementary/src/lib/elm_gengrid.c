@@ -2587,8 +2587,8 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         else
           {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT) ||
-                 !elm_gengrid_item_prev_get(sd->focused_item))
+             if (sd->focused_item && (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT) ||
+                 !elm_gengrid_item_prev_get(sd->focused_item)))
                {
                   if (sd->item_loop_enable)
                     {
@@ -2654,7 +2654,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         if (sd->horizontal)
           {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
+             if (sd->focused_item && _elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
                {
                   if (sd->item_loop_enable)
                     {
@@ -2672,8 +2672,8 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         else
           {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT) ||
-                 !elm_gengrid_item_next_get(sd->focused_item))
+             if (sd->focused_item && (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT) ||
+                 !elm_gengrid_item_next_get(sd->focused_item)))
                {
                   if (sd->item_loop_enable)
                     {
@@ -2727,7 +2727,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         if (sd->horizontal)
           {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
+             if (sd->focused_item && _elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
                return EINA_FALSE;
              if (!_elm_config->item_select_on_focus_disable)
                {
@@ -2784,7 +2784,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         if (sd->horizontal)
           {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
+             if (sd->focused_item && _elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
                return EINA_FALSE;
              if (!_elm_config->item_select_on_focus_disable)
                {
