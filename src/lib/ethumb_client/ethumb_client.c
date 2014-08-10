@@ -1112,8 +1112,12 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
              continue;
           }
         if (pending_add->pending_call)
-          eldbus_pending_cancel(pending_add->pending_call);
-        pending_add->pending_call = NULL;
+          {
+             Eldbus_Pending *call = pending_add->pending_call;
+
+             pending_add->pending_call = NULL;
+             eldbus_pending_cancel(call);
+          }
         found = 1;
         break;
      }
