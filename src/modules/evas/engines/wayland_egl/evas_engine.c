@@ -82,6 +82,7 @@ static int gl_wins = 0;
 static Evas_Func func, pfunc;
 
 /* external variables */
+int _evas_engine_wl_egl_log_dom = -1;
 Eina_Bool extn_have_buffer_age = EINA_TRUE;
 Eina_Bool extn_have_y_inverted = EINA_TRUE;
 
