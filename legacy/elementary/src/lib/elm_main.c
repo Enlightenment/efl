@@ -796,7 +796,7 @@ elm_quicklaunch_seed(void)
 #undef ENGINE_COMPARE
           {
 # ifdef HAVE_ELEMENTARY_X
-             ecore_x_sync();
+             if (ecore_x_display_get()) ecore_x_sync();
 # endif
           }
         ecore_main_loop_iterate();
@@ -964,7 +964,7 @@ elm_quicklaunch_fork(int    argc,
 #undef ENGINE_COMPARE
           {
 # ifdef HAVE_ELEMENTARY_X
-             ecore_x_init(NULL);
+             if (getenv("DISPLAY")) ecore_x_init(NULL);
 # endif
           }
         ecore_evas_init(); // FIXME: check errors

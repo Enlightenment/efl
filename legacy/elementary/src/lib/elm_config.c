@@ -3280,7 +3280,7 @@ _elm_config_sub_shutdown(void)
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
-        ecore_x_shutdown();
+        if (ecore_x_display_get()) ecore_x_shutdown();
 #endif
      }
 }
@@ -3298,57 +3298,60 @@ _elm_config_sub_init(void)
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (ecore_x_init(NULL))
+        if (getenv("DISPLAY"))
           {
-             Ecore_X_Window win = 0, win2 = 0, root;
-
-             if (!ecore_x_screen_is_composited(0))
-               _elm_config->compositing = 0;
-             ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
-             root = ecore_x_window_root_first_get();
-             if (ecore_x_window_prop_window_get(root,
-                                                _atom[ATOM_E_CONFIG_WIN],
-                                                &win, 1) == 1)
+             if (ecore_x_init(NULL))
                {
-                  if (ecore_x_window_prop_window_get(win,
+                  Ecore_X_Window win = 0, win2 = 0, root;
+
+                  if (!ecore_x_screen_is_composited(0))
+                  _elm_config->compositing = 0;
+                  ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
+                  root = ecore_x_window_root_first_get();
+                  if (ecore_x_window_prop_window_get(root,
                                                      _atom[ATOM_E_CONFIG_WIN],
-                                                     &win2, 1) == 1)
+                                                     &win, 1) == 1)
                     {
-                       if (win2 == win) _config_win = win;
-                    }
-               }
-             if (_config_win == 0)
-               _config_win = ecore_x_window_permanent_new
-                             (root, _atom[ATOM_E_CONFIG_WIN]);
-
-             ecore_x_event_mask_set(_config_win,
-                                    ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
-             _prop_change_handler = ecore_event_handler_add
-               (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
-             if (!getenv("ELM_PROFILE"))
-               {
-                  char *s;
-
-                  s = ecore_x_window_prop_string_get(_config_win,
-                                                     _atom[ATOM_E_PROFILE]);
-                  if (s)
-                    {
-                       int changed = 0;
-
-                       if (_elm_profile)
+                       if (ecore_x_window_prop_window_get(win,
+                                                          _atom[ATOM_E_CONFIG_WIN],
+                                                          &win2, 1) == 1)
                          {
-                            if (strcmp(_elm_profile, s)) changed = 1;
-                            free(_elm_profile);
+                            if (win2 == win) _config_win = win;
                          }
-                       _elm_profile = s;
-                       if (changed) _prop_config_get();
-                       s = strchr(_elm_profile, '/');
-                       if (s) *s = 0;
+                    }
+                  if (_config_win == 0)
+                    _config_win = ecore_x_window_permanent_new
+                      (root, _atom[ATOM_E_CONFIG_WIN]);
+
+                  ecore_x_event_mask_set(_config_win,
+                                         ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
+                  _prop_change_handler = ecore_event_handler_add
+                  (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
+                  if (!getenv("ELM_PROFILE"))
+                    {
+                       char *s;
+
+                       s = ecore_x_window_prop_string_get(_config_win,
+                                                          _atom[ATOM_E_PROFILE]);
+                       if (s)
+                         {
+                            int changed = 0;
+
+                            if (_elm_profile)
+                              {
+                                 if (strcmp(_elm_profile, s)) changed = 1;
+                                 free(_elm_profile);
+                              }
+                            _elm_profile = s;
+                            if (changed) _prop_config_get();
+                            s = strchr(_elm_profile, '/');
+                            if (s) *s = 0;
+                         }
                     }
                }
+             else
+               ERR("Cannot connect to X11 display. check $DISPLAY variable");
           }
-        else
-          ERR("Cannot connect to X11 display. check $DISPLAY variable");
 #endif
      }
    _config_sub_apply();
