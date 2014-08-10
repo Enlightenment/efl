@@ -96,7 +96,6 @@ static const Elm_Win_Trap *trap = NULL;
     }
 
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : (_elm_config->engine ? _elm_config->engine : ""))
-#define ENGINE_COMPARE(name) (!strcmp(ENGINE_GET(), name))
 
 typedef struct _Elm_Win_Data Elm_Win_Data;
 
@@ -338,14 +337,8 @@ _win_noblank_eval(void)
 
    if (!change) return;
 
-   if (ENGINE_COMPARE(ELM_SOFTWARE_X11) || 
-       ENGINE_COMPARE(ELM_SOFTWARE_16_X11) || 
-       ENGINE_COMPARE(ELM_XRENDER_X11) || ENGINE_COMPARE(ELM_OPENGL_X11) ||
-       ENGINE_COMPARE(ELM_OPENGL_COCOA) || ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
-     {
-        if (noblanks > 0) ecore_x_screensaver_supend();
-        else ecore_x_screensaver_resume();
-     }
+   if (noblanks > 0) ecore_x_screensaver_supend();
+   else ecore_x_screensaver_resume();
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    // XXX: no wl implementation of this yet - maybe higher up at prop level
@@ -3264,8 +3257,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 #endif
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   if ((ENGINE_COMPARE(ELM_WAYLAND_SHM)) || (ENGINE_COMPARE(ELM_WAYLAND_EGL)))
-     _elm_win_wlwindow_get(sd);
+   _elm_win_wlwindow_get(sd);
 #endif
 
    if ((_elm_config->bgpixmap)
@@ -3622,12 +3614,10 @@ _elm_win_center(Eo *obj, Elm_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 EOLIAN static void
 _elm_win_borderless_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool borderless)
 {
-   Eina_Bool need_frame = EINA_FALSE;
-
    const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-   need_frame = engine_name &&
-                ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-                 (!strcmp(engine_name, ELM_WAYLAND_EGL)));
+   Eina_Bool need_frame = engine_name &&
+                          ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+                           (!strcmp(engine_name, ELM_WAYLAND_EGL)));
 
    if (need_frame)
      need_frame = !sd->fullscreen;
@@ -3736,9 +3726,11 @@ _elm_win_override_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 EOLIAN static void
 _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscreen)
 {
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
    // YYY: handle if sd->img_obj
-   if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
-       ENGINE_COMPARE(ELM_DRM))
+   if (engine_name &&
+       ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
+        (!strcmp(engine_name, ELM_DRM))))
      {
         // these engines... can ONLY be fullscreen
         return;
@@ -3746,13 +3738,9 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
    else
      {
 //        sd->fullscreen = fullscreen;
-
-        Eina_Bool need_frame = EINA_FALSE;
-
-        const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-        need_frame = engine_name &&
-                     ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-                      (!strcmp(engine_name, ELM_WAYLAND_EGL)));
+        Eina_Bool need_frame = engine_name &&
+                               ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+                                (!strcmp(engine_name, ELM_WAYLAND_EGL)));
 
         if (need_frame)
           need_frame = !ecore_evas_borderless_get(sd->ee);
@@ -3781,7 +3769,7 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
 EOLIAN static Eina_Bool
 _elm_win_fullscreen_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
-   const char* engine_name = ecore_evas_engine_name_get(sd->ee);
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
 
    if (engine_name &&
        ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
@@ -4766,10 +4754,13 @@ _elm_win_xwindow_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 EAPI Ecore_Wl_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
-   if (!obj) return NULL;
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
 
-   if ((!ENGINE_COMPARE(ELM_WAYLAND_SHM)) &&
-       (!ENGINE_COMPARE(ELM_WAYLAND_EGL)))
+   if (!(engine_name &&
+         ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+          (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
      return NULL;
 
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
@@ -4778,7 +4769,6 @@ elm_win_wl_window_get(const Evas_Object *obj)
         return _elm_ee_wlwin_get(ee);
      }
 
-   ELM_WIN_CHECK(obj) NULL;
    Ecore_Wl_Window *ret = NULL;
    eo_do((Eo *) obj, ret = elm_obj_win_wl_window_get());
    return ret;
@@ -4847,7 +4837,11 @@ elm_win_floating_mode_get(const Evas_Object *obj)
 EOLIAN static Ecore_Window
 _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
-   if ((ENGINE_COMPARE(ELM_WAYLAND_SHM)) || (ENGINE_COMPARE(ELM_WAYLAND_EGL)))
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+
+   if ((engine_name &&
+        ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+         (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
      {
 #if HAVE_ELEMENTARY_WAYLAND
         if (sd->wl.win) return (Ecore_Window)ecore_wl_window_surface_id_get(sd->wl.win);
@@ -4861,7 +4855,9 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
           }
 #endif
      }
-   else
+   else if ((engine_name &&
+             ((!strcmp(engine_name, ELM_SOFTWARE_X11)) ||
+              (!strcmp(engine_name, ELM_OPENGL_X11)))))
      {
 #ifdef HAVE_ELEMENTARY_X
         _internal_elm_win_xwindow_get(sd);
