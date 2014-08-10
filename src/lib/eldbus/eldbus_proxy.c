@@ -652,6 +652,20 @@ eldbus_proxy_property_get(Eldbus_Proxy *proxy, const char *name, Eldbus_Message_
                            "ss", proxy->interface, name);
 }
 
+static inline Eina_Bool
+_type_is_number(char sig)
+{
+   switch (sig)
+     {
+      case 'y': case 'b': case 'n': case 'q': case 'i':
+      case 'u': case 'x': case 't': case 'd': case 'h':
+        return EINA_TRUE;
+      default:
+        break;
+     }
+   return EINA_FALSE;
+}
+
 EAPI Eldbus_Pending *
 eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const void *value, Eldbus_Message_Cb cb, const void *data)
 {
@@ -662,7 +676,7 @@ eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sig, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_signature_validate_single(sig, NULL), NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((_type_is_number(sig[0]) || value), NULL);
 
    msg = eldbus_proxy_method_call_new(proxy->obj->properties, "Set");
    iter = eldbus_message_iter_get(msg);
