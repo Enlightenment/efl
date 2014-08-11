@@ -38,11 +38,13 @@ extern Eina_Prefix *_eolian_prefix;
 extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
+extern Eina_Hash *_enums;
 extern Eina_Hash *_globals;
 extern Eina_Hash *_constants;
 extern Eina_Hash *_classesf;
 extern Eina_Hash *_aliasesf;
 extern Eina_Hash *_structsf;
+extern Eina_Hash *_enumsf;
 extern Eina_Hash *_globalsf;
 extern Eina_Hash *_constantsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
@@ -129,6 +131,7 @@ struct _Eolian_Type
          Eina_List        *namespaces;
          Eina_Hash        *fields;
          Eina_Stringshare *comment;
+         Eina_Stringshare *legacy;
       };
    };
    Eina_Bool is_const  :1;
@@ -156,6 +159,13 @@ typedef struct _Eolian_Struct_Field
    Eolian_Type      *type;
    Eina_Stringshare *comment;
 } Eolian_Struct_Field;
+
+typedef struct _Eolian_Enum_Field
+{
+   Eolian_Object      base;
+   Eolian_Expression *value;
+   Eina_Stringshare  *comment;
+} Eolian_Enum_Field;
 
 typedef union
 {
@@ -252,6 +262,7 @@ int database_shutdown();
 
 Eina_Bool database_type_add(Eolian_Type *def);
 Eina_Bool database_struct_add(Eolian_Type *tp);
+Eina_Bool database_enum_add(Eolian_Type *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedef_del(Eolian_Type *tp);
 

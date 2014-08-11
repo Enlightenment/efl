@@ -18,6 +18,7 @@ database_type_del(Eolian_Type *tp)
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
       eina_stringshare_del(sp);
    if (tp->comment) eina_stringshare_del(tp->comment);
+   if (tp->legacy) eina_stringshare_del(tp->legacy);
    free(tp);
 }
 

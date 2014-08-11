@@ -131,9 +131,11 @@ typedef enum
    EOLIAN_TYPE_VOID,
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_REGULAR_STRUCT,
+   EOLIAN_TYPE_REGULAR_ENUM,
    EOLIAN_TYPE_POINTER,
    EOLIAN_TYPE_FUNCTION,
    EOLIAN_TYPE_STRUCT,
+   EOLIAN_TYPE_ENUM,
    EOLIAN_TYPE_ALIAS,
    EOLIAN_TYPE_CLASS
 } Eolian_Type_Type;
@@ -848,6 +850,16 @@ EAPI const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
 EAPI const Eolian_Type *eolian_type_struct_get_by_name(const char *name);
 
 /*
+ * @brief Get an enum by name. Supports namespaces.
+ *
+ * @param[in] name the name of the struct
+ * @return the struct or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_type_enum_get_by_name(const char *name);
+
+/*
  * @brief Get an iterator to all aliases contained in a file.
  *
  * @param[in] fname the file name without full path
@@ -870,6 +882,18 @@ EAPI Eina_Iterator *eolian_type_aliases_get_by_file(const char *fname);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_structs_get_by_file(const char *fname);
+
+/*
+ * @brief Get an iterator to all enums contained in a file.
+ *
+ * @param[in] fname the file name without full path
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_enums_get_by_file(const char *fname);
 
 /*
  * @brief Get the type of a type (regular, function, pointer)
@@ -935,6 +959,54 @@ EAPI const Eolian_Type *eolian_type_struct_field_get(const Eolian_Type *tp, cons
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field);
+
+/*
+ * @brief Get an iterator to all field names of an enum type.
+ *
+ * @param[in] tp the type.
+ * @return the iterator when @c tp is EOLIAN_TYPE_ENUM, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_enum_field_names_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get whether an enum field exists.
+ *
+ * @param[in] tp the type.
+ * @param[in] field the field name.
+ * @return EINA_TRUE when the field exists, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_enum_field_exists(const Eolian_Type *tp, const char *field);
+
+/*
+ * @brief Get a field of an enum type.
+ *
+ * @param[in] tp the type.
+ * @param[in] field the field name.
+ * @return the field when @c tp is EOLIAN_TYPE_ENUM, @c field is not NULL,
+ * field exists and has a value set, NULL otherwise.
+ *
+ * Keep in mind that this can return NULL for an existing field, particularly
+ * when the field has no value set (i.e. increments by 1 over previous value).
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
+
+/*
+ * @brief Get the description of a field of an enum type.
+ *
+ * @param[in] tp the type.
+ * @param[in] field the field name.
+ * @return the description when @c tp is EOLIAN_TYPE_ENUM, @c field is not NULL
+ * and the field exists, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Type *tp, const char *field);
 
 /*
  * @brief Get the description of a struct/alias type.
