@@ -801,6 +801,9 @@ eet_data_image_etc2_decode(const void *data,
 
    m = data;
 
+   // Fix for ABI incompatibility between 1.10 and 1.11
+   if (cspace == 8) cspace = 9;
+
    if (strncmp(m, "TGV1", 4) != 0)
      return 0;
 
