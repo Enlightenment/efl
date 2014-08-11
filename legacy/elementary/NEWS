@@ -42,6 +42,11 @@ Fixes:
    * elc_naviframe: Fix warning caused by elm_obj_layout_signal_emit override function in naviframe
    * ctxpopup: fix arrow geometry set.
    * ctxpopup: Fix wrong popup size.
+   * elementary: Handle case where ELM_ENGINE environment variable is misspelled.
+   * photocam should reset its preload when a new file is loaded
+   * Gengrid: fix position calculation
+   * Genlist: do not segv if the user clear the list on item double-click
+   * gengrid once again selects items using keyboard when no item was previously selected
 
 Changes since Elementary 1.9.0:
 -------------------------------
