@@ -190,7 +190,7 @@ class Elm_Index (Elm_Layout)
 
          @ingroup Index */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is selected. */
@@ -225,7 +225,7 @@ class Elm_Index (Elm_Layout)
 
          @ingroup Index */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The index item to insert after. */
             @in const(char)* letter; /*@ Letter under which the item should be indexed */
@@ -241,7 +241,7 @@ class Elm_Index (Elm_Layout)
 
          @ingroup Index */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(void)* data; /*@ The item data pointed to by the desired index item */
          }
@@ -264,7 +264,7 @@ class Elm_Index (Elm_Layout)
 
          @ingroup Index */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The index item to insert after. */
             @in const(char)* letter; /*@ Letter under which the item should be indexed */
@@ -287,7 +287,7 @@ class Elm_Index (Elm_Layout)
 
          @ingroup Index */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is selected. */
@@ -301,7 +301,7 @@ class Elm_Index (Elm_Layout)
          @return The last item @b selected on @p obj (or @c NULL, on errors).
 
          @ingroup Index */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in int level; /*@ @c 0 or @c 1, the currently implemented levels. */
          }
@@ -322,7 +322,7 @@ class Elm_Index (Elm_Layout)
 
          @ingroup Index */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* letter; /*@ Letter under which the item should be indexed */
             @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked. */

@@ -126,7 +126,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             ingroup Win
             @since 1.9 */
-            legacy elm_win_wm_rotation_available_rotations_set;
+            legacy: elm_win_wm_rotation_available_rotations_set;
             rotations: const;
          }
          get {
@@ -139,8 +139,8 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             ingroup Win
             @since 1.9 */
-            legacy elm_win_wm_rotation_available_rotations_get;
-            return bool;
+            legacy: elm_win_wm_rotation_available_rotations_get;
+            return: bool;
          }
          values {
             int *rotations; /*@ The array of rotation value. */
@@ -380,7 +380,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win
             @since 1.8 */
-            return bool;
+            return: bool;
          }
          values {
             char **profiles; /*@ The string array of available profiles */
@@ -721,7 +721,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             ingroup Win
             @since 1.9 */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@
@@ -736,7 +736,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             ingroup Win
             @since 1.9 */
-            legacy elm_win_wm_rotation_preferred_rotation_get;
+            legacy: elm_win_wm_rotation_preferred_rotation_get;
          }
          values {
             int rotation; /*@ The preferred rotation of the window in degrees (0-360),
@@ -857,7 +857,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             ingroup Win
             @since 1.9 */
-            legacy elm_win_wm_rotation_manual_rotation_done_set;
+            legacy: elm_win_wm_rotation_manual_rotation_done_set;
          }
          get {
             /*@
@@ -872,7 +872,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             ingroup Win
             @since 1.9 */
-            legacy elm_win_wm_rotation_manual_rotation_done_get;
+            legacy: elm_win_wm_rotation_manual_rotation_done_get;
          }
          values {
             bool set; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
@@ -1035,7 +1035,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win
             @since 1.9 */
-            return bool;
+            return: bool;
          }
       }
       xwindow {
@@ -1046,7 +1046,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The Ecore_X_Window of @p obj
 
             @ingroup Win */
-            return Ecore_X_Window;
+            return: Ecore_X_Window;
          }
       }
       focus {
@@ -1056,7 +1056,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return EINA_TRUE if the window exists and has focus, else EINA_FALSE
 
             @ingroup Win */
-            return bool;
+            return: bool;
          }
       }
       screen_size {
@@ -1080,7 +1080,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The Main Menu of the window (NULL if error).
 
             @ingroup Win */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       wl_window {
@@ -1091,8 +1091,8 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The Ecore_Wl_Window of @p obj
 
             @ingroup Win */
-            return Ecore_Wl_Window *;
-            legacy null;
+            return: Ecore_Wl_Window *;
+            legacy: null;
          }
       }
       window_id {
@@ -1106,8 +1106,8 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win
             @since 1.8 */
-            return Ecore_Window;
-            legacy null;
+            return: Ecore_Window;
+            legacy: null;
          }
       }
       screen_dpi {
@@ -1136,7 +1136,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The inlined image object, or NULL if none exists
 
             @ingroup Win */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       type {
@@ -1147,7 +1147,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The type of a window object. If the object is not window object, return ELM_WIN_UNKNOWN.
 
             @ingroup Win */
-            return Elm_Win_Type;
+            return: Elm_Win_Type;
          }
       }
       noblank {
@@ -1194,7 +1194,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
          ingroup Win
          @since 1.9 */
 
-         legacy elm_win_wm_rotation_manual_rotation_done;
+         legacy: elm_win_wm_rotation_manual_rotation_done;
       }
       socket_listen {
          /*@
@@ -1204,7 +1204,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
          @ingroup Win */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* svcname; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
             @in int svcnum; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */

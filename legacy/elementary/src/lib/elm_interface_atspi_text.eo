@@ -53,7 +53,7 @@ interface Elm_Interface_Atspi_Text ()
             /*@ Gets offset position of caret (cursor) */
          }
          set {
-            return bool; /*@ EINA_TRUE if caret was successfully moved,
+            return: bool; /*@ EINA_TRUE if caret was successfully moved,
                                EINA_FASLE otherwise. */
          }
          values {
@@ -63,7 +63,7 @@ interface Elm_Interface_Atspi_Text ()
       attribute @protected {
          get {
             /*@ Indicate if a text attribute with a given name is set */
-            return bool;
+            return: bool;
          }
          keys {
             const(char)* name @nonull; /*@ text attribute name */
@@ -97,7 +97,7 @@ interface Elm_Interface_Atspi_Text ()
       }
       character_extents @protected {
          get {
-            return bool;
+            return: bool;
          }
          keys {
             int offset;
@@ -141,7 +141,7 @@ interface Elm_Interface_Atspi_Text ()
       }
       range_extents @protected {
          get {
-            return bool;
+            return: bool;
          }
          keys {
             bool screen_coords; /*@ If true x and y values will be relative
@@ -165,7 +165,7 @@ interface Elm_Interface_Atspi_Text ()
          get {
          }
          set {
-            return bool;
+            return: bool;
          }
          keys {
             int selection_number;
@@ -182,13 +182,13 @@ interface Elm_Interface_Atspi_Text ()
             @in int start_offset;
             @in int end_offset;
          }
-         return bool;
+         return: bool;
       }
       selection_remove @protected {
          params {
             @in int selection_number;
          }
-         return bool;
+         return: bool;
       }
    }
    events {

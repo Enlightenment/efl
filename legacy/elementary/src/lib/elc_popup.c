@@ -1711,4 +1711,4 @@ _elm_popup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    return &atspi_actions[0];
 }
 
-#include "elc_popup.eo.c"
+#include "elm_popup.eo.c"

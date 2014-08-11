@@ -22,7 +22,7 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
             @see elm_thumb_compress_set()
 
             @ingroup Thumb */
-            return void; /* Force the return type to be sure the argument doesn't become the return */
+            return: void; /* Force the return type to be sure the argument doesn't become the return */
          }
          values {
             int compress; /*@ The compression of the thumb. */
@@ -169,7 +169,7 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
             @see elm_thumb_editable_get()
 
             @ingroup Thumb */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -233,7 +233,7 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
             @see elm_thumb_quality_set()
 
             @ingroup Thumb */
-            return void; /* Force the return type to be sure the argument doesn't become the return */
+            return: void; /* Force the return type to be sure the argument doesn't become the return */
          }
          values {
             int quality; /*@ The quality of the thumb. */

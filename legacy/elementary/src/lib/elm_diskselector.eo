@@ -114,7 +114,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
             @see elm_diskselector_items_get()
 
             @ingroup Diskselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       items {
@@ -130,7 +130,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
             @see elm_diskselector_clear()
 
             @ingroup Diskselector */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       last_item {
@@ -147,7 +147,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
             @see elm_diskselector_items_get()
 
             @ingroup Diskselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       selected_item {
@@ -167,7 +167,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
             elm_diskselector_side_text_max_length_set().
 
             @ingroup Diskselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -212,7 +212,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Diskselector */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The label of the diskselector item. */
             @in Evas_Object *icon; /*@ The icon object to use at left side of the item. An

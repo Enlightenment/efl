@@ -94,7 +94,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @note The returned list MUST be freed.
 
             @ingroup Naviframe */
-            return Eina_List * @warn_unused;
+            return: Eina_List * @warn_unused;
          }
       }
       top_item {
@@ -106,7 +106,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             empty
 
             @ingroup Naviframe */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       bottom_item {
@@ -118,7 +118,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             empty
 
             @ingroup Naviframe */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -139,7 +139,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return Evas_Object *;
+         return: Evas_Object *;
       }
       item_insert_before {
          /*@
@@ -159,7 +159,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The naviframe item to insert before. */
             @in const(char)* title_label; /*@ The label in the title area. The name of the title
@@ -193,7 +193,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* title_label; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
@@ -236,7 +236,7 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The naviframe item to insert after. */
             @in const(char)* title_label; /*@ The label in the title area. The name of the title

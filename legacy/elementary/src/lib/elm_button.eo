@@ -89,7 +89,7 @@ class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
       admits_autorepeat {
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             bool ret;

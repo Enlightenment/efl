@@ -251,7 +251,7 @@ class Elm_Progressbar (Elm_Layout)
          @see elm_progressbar_value_set() for more details
 
          @ingroup Progressbar */
-         return double;
+         return: double;
          params {
             @in const(char)* part; /*@ The part name of the progress bar */
          }

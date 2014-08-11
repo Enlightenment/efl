@@ -17,7 +17,7 @@ interface Elm_Interface_Fileselector ()
       selected {
          set {
             /*@ Set, programmatically, the currently selected file/directory in the given file selector widget */
-            return bool;
+            return: bool;
          }
          get {
             /*@ Get the currently selected item's (full) path, in the given file the given file selector widget */
@@ -132,7 +132,7 @@ interface Elm_Interface_Fileselector ()
             @in void *data;
             @in const(char)* filter_name;
          }
-         return bool;
+         return: bool;
       }
       filters_clear {
          /*@ Clear all filters registered */
@@ -143,7 +143,7 @@ interface Elm_Interface_Fileselector ()
             @in const(char)* mime_types;
             @in const(char)* filter_name;
          }
-         return bool;
+         return: bool;
       }
    }
 }

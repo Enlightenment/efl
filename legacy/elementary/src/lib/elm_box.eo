@@ -149,7 +149,7 @@ class Elm_Box (Elm_Widget)
             You must free this list with eina_list_free() once you are done with it.
 
             @ingroup Box */
-            return own(Eina_List *)<Evas_Object *>;
+            return: own(Eina_List *)<Evas_Object *>;
          }
       }
    }

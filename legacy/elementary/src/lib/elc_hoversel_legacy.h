@@ -44,4 +44,4 @@ EAPI void                         elm_hoversel_item_icon_set(Elm_Object_Item *it
  */
 EAPI void                         elm_hoversel_item_icon_get(const Elm_Object_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
-#include "elc_hoversel.eo.legacy.h"
+#include "elm_hoversel.eo.legacy.h"

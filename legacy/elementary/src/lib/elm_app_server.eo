@@ -67,7 +67,7 @@ class Elm_App_Server (Eo.Base)
          params {
             @in const(char)* id; /*@ view identifier */
          }
-         return bool; /* @c EINA_TRUE if id is valid or @c EINA_FALSE if not */
+         return: bool; /* @c EINA_TRUE if id is valid or @c EINA_FALSE if not */
       }
       view_add {
          /*@ Add a view to elm_app_server. This should only be used if the application open a view that was not requested by create_view_cb. */
@@ -83,7 +83,7 @@ class Elm_App_Server (Eo.Base)
       }
       title_get {
          /*@ Get title of application */
-         return Eina_Stringshare *; /* title of application */
+         return: Eina_Stringshare *; /* title of application */
       }
       save {
          /*@ Save the state of all views */

@@ -14,7 +14,7 @@ class Elm_Layout (Elm_Container)
             @since 1.7
 
             @ingroup Layout */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -43,7 +43,7 @@ class Elm_Layout (Elm_Container)
             @return (1 = success, 0 = error)
 
             @ingroup Layout */
-            return bool;
+            return: bool;
          }
          values {
             const(char)* file; /*@ The path to file (edj) that will be used as layout */
@@ -61,7 +61,7 @@ class Elm_Layout (Elm_Container)
             elm_object_style_set() call.
 
             @ingroup Layout */
-            return bool;
+            return: bool;
          }
          values {
             const(char)* klass; /*@ the class of the group */
@@ -72,7 +72,7 @@ class Elm_Layout (Elm_Container)
       text_aliases {
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             const(Elm_Layout_Part_Alias_Description)* aliases;
@@ -81,7 +81,7 @@ class Elm_Layout (Elm_Container)
       content_aliases {
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             const(Elm_Layout_Part_Alias_Description)* aliases;
@@ -114,7 +114,7 @@ class Elm_Layout (Elm_Container)
             @see elm_layout_data_get()
 
             @ingroup Layout */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
    }
@@ -134,7 +134,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ The box part name to remove child. */
             @in bool clear; /*@ If EINA_TRUE, then all objects will be deleted as
@@ -156,7 +156,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
             @in bool engine_only; /*@ if cursors should be just provided by the engine (EINA_TRUE)
@@ -170,7 +170,7 @@ class Elm_Layout (Elm_Container)
          @return whenever the cursor is just provided by engine or also from theme.
 
          @ingroup Layout */
-         return bool;
+         return: bool;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
          }
@@ -190,7 +190,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return Evas_Object *;
+         return: Evas_Object *;
          params {
             @in const(char)* part; /*@ The table part name to remove child. */
             @in Evas_Object *child; /*@ The object to remove from table. */
@@ -207,12 +207,12 @@ class Elm_Layout (Elm_Container)
 
          @see elm_layout_thaw() */
 
-         return int;
+         return: int;
       }
       theme_enable {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return bool;
+         legacy: null;
+         return: bool;
       }
       sizing_eval {
          /*@
@@ -250,7 +250,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return Evas_Object *;
+         return: Evas_Object *;
          params {
             @in const(char)* part; /*@ The box part name to remove child. */
             @in Evas_Object *child; /*@ The object to remove from box. */
@@ -283,7 +283,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
             @in const(char)* style; /*@ the theme style to use (default, transparent, ...) */
@@ -297,7 +297,7 @@ class Elm_Layout (Elm_Container)
          object does not have a cursor set, then NULL is returned.
 
          @ingroup Layout */
-         return const(char)*;
+         return: const(char)*;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
          }
@@ -310,7 +310,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ The TEXT part where to set the text */
             @in const(char)* text; /*@ The text to set */
@@ -323,7 +323,7 @@ class Elm_Layout (Elm_Container)
          @return The text set in @p part
 
          @ingroup Layout */
-         return const(char)*;
+         return: const(char)*;
          params {
             @in const(char)* part; /*@ The TEXT part to retrieve the text off */
          }
@@ -357,7 +357,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
             @in const(char)* cursor; /*@ cursor name to use, see Elementary_Cursor.h */
@@ -370,7 +370,7 @@ class Elm_Layout (Elm_Container)
          @return the cursor name.
 
          @ingroup Layout */
-         return const(char)*;
+         return: const(char)*;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group. */
          }
@@ -393,7 +393,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ the box part to insert. */
             @in Evas_Object *child; /*@ the child object to insert into box. */
@@ -418,7 +418,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ the box part to insert. */
             @in Evas_Object *child; /*@ the child object to insert into box. */
@@ -427,8 +427,8 @@ class Elm_Layout (Elm_Container)
       }
       sub_object_add_enable {
          /*@ No description supplied by the EAPI. */
-         legacy null;
-         return bool;
+         legacy: null;
+         return: bool;
       }
       data_get @const {
          /*@
@@ -455,7 +455,7 @@ class Elm_Layout (Elm_Container)
          @endcode
 
          @ingroup Layout */
-         return const(char)*;
+         return: const(char)*;
          params {
             @in const(char)* key; /*@ The data key */
          }
@@ -478,7 +478,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ the box part to which the object will be appended. */
             @in Evas_Object *child; /*@ the child object to append to box. */
@@ -499,7 +499,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return void *;
+         return: void *;
          params {
             @in const(char)* emission; /*@ The signal's name string */
             @in const(char)* source; /*@ The signal's source string */
@@ -520,7 +520,7 @@ class Elm_Layout (Elm_Container)
 
          @see elm_layout_freeze() */
 
-         return int;
+         return: int;
       }
       box_prepend {
          /*@
@@ -540,7 +540,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ the box part to prepend. */
             @in Evas_Object *child; /*@ the child object to prepend to box. */
@@ -589,7 +589,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ the box part to pack child. */
             @in Evas_Object *child; /*@ the child object to pack into table. */
@@ -608,7 +608,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part_name; /*@ a part from loaded edje group, that had a cursor set
             with elm_layout_part_cursor_set(). */
@@ -629,7 +629,7 @@ class Elm_Layout (Elm_Container)
 
          @ingroup Layout */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* part; /*@ The table part name to remove child. */
             @in bool clear; /*@ If EINA_TRUE, then all objects will be deleted as

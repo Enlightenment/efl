@@ -146,7 +146,7 @@ class Elm_Datetime (Elm_Layout)
          @see elm_datetime_value_min_get()
          @ingroup Datetime */
 
-         return bool;
+         return: bool;
          params {
             @in const(struct tm)* mintime; /*@ Time structure containing the minimum time value. */
          }
@@ -170,7 +170,7 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_value_min_set()
          @ingroup Datepicker */
-         return bool;
+         return: bool;
          params {
             @inout struct tm mintime; /*@ Time structure. */
          }
@@ -196,7 +196,7 @@ class Elm_Datetime (Elm_Layout)
          @see elm_datetime_value_set()
          @ingroup Datetime */
 
-         return bool;
+         return: bool;
          params {
             @in const(struct tm)* newtime; /*@ Time structure filled with values to be set. */
          }
@@ -220,7 +220,7 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_value_set()
          @ingroup Datetime */
-         return bool;
+         return: bool;
          params {
             @inout struct tm currtime; /*@ Time structure. */
          }
@@ -253,7 +253,7 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_field_visible_set()
          @ingroup Datetime */
-         return bool;
+         return: bool;
          params {
             @in Elm_Datetime_Field_Type fieldtype; /*@ Type of the field. ELM_DATETIME_YEAR etc */
          }
@@ -278,7 +278,7 @@ class Elm_Datetime (Elm_Layout)
          @see elm_datetime_value_max_get()
          @ingroup Datetime */
 
-         return bool;
+         return: bool;
          params {
             @in const(struct tm)* maxtime; /*@ Time structure containing the maximum time value. */
          }
@@ -302,7 +302,7 @@ class Elm_Datetime (Elm_Layout)
 
          @see elm_datetime_value_max_set()
          @ingroup Datetime */
-         return bool;
+         return: bool;
          params {
             @inout struct tm maxtime; /*@ Time structure containing the maximum time value. */
          }

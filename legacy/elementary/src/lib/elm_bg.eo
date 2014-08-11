@@ -48,7 +48,7 @@ class Elm_Bg (Elm_Layout)
             @see elm_bg_color_get()
 
             @ingroup Bg */
-            legacy null; /* legacy doesn't have 'a' param */
+            legacy: null; /* legacy doesn't have 'a' param */
          }
          get {
             /*@
@@ -60,7 +60,7 @@ class Elm_Bg (Elm_Layout)
             @see elm_bg_color_get() for more details
 
             @ingroup Bg */
-            legacy null; /* legacy doesn't have 'a' param */
+            legacy: null; /* legacy doesn't have 'a' param */
          }
          values {
             int r; /*@ The red color component's value */
@@ -94,7 +94,7 @@ class Elm_Bg (Elm_Layout)
             that method on this object.
 
             @ingroup Bg */
-            return bool;
+            return: bool;
          }
          get {
             /*@

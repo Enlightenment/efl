@@ -63,7 +63,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Flipselector */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       first_item {
@@ -79,7 +79,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_flipselector_last_item_get()
 
             @ingroup Flipselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       last_item {
@@ -95,7 +95,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_flipselector_first_item_get()
 
             @ingroup Flipselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       selected_item {
@@ -107,7 +107,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             (and on errors)
 
             @ingroup Flipselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -132,7 +132,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Flipselector */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The (text) label of the new item */
             @in Evas_Smart_Cb func; /*@ Convenience callback function to take place when
@@ -171,7 +171,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Flipselector */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The (text) label of the new item */
             @in Evas_Smart_Cb func; /*@ Convenience callback function to take place when

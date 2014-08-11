@@ -99,7 +99,7 @@ class Elm_Video (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_player_add()
 
             @ingroup Video */
-            return bool;
+            return: bool;
          }
          values {
             const(char)* filename; /*@ The file or URI to target.
@@ -120,7 +120,7 @@ class Elm_Video (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             the object state.
 
             @ingroup Video */
-            return bool;
+            return: bool;
          }
       }
       play_length {
@@ -131,7 +131,7 @@ class Elm_Video (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @return The total duration (in seconds) of the media file.
 
             @ingroup Video */
-            return double;
+            return: double;
          }
       }
       emotion {
@@ -142,7 +142,7 @@ class Elm_Video (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @return the underlying Emotion object.
 
             @ingroup Video */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       is_seekable {
@@ -153,7 +153,7 @@ class Elm_Video (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @return @c EINA_TRUE if is possible to seek inside the video.
 
             @ingroup Video */
-            return bool;
+            return: bool;
          }
       }
       title {
@@ -168,7 +168,7 @@ class Elm_Video (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @note Don't change or free the string returned by this function.
 
             @ingroup Video */
-            return const(char)*;
+            return: const(char)*;
          }
       }
    }

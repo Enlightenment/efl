@@ -110,7 +110,7 @@ class Elm_Gesture_Layer (Elm_Widget)
 
          @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise. */
 
-         return bool;
+         return: bool;
          params {
             @in Evas_Object *target; /*@ Object to attach to @a obj (target) */
          }

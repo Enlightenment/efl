@@ -2335,4 +2335,4 @@ _elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    return &atspi_actions[0];
 }
 
-#include "elc_fileselector.eo.c"
+#include "elm_fileselector.eo.c"

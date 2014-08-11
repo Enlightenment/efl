@@ -245,7 +245,7 @@ class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_calendar_marks_clear()
 
             @ingroup Calendar */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
    }
@@ -285,7 +285,7 @@ class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
          @ref calendar_example_05
 
          @ingroup Calendar */
-         return bool;
+         return: bool;
          params {
             @inout struct tm selected_time; /*@ A @b tm struct to point to selected date */
          }
@@ -331,7 +331,7 @@ class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Calendar */
 
-         return Elm_Calendar_Mark *;
+         return: Elm_Calendar_Mark *;
          params {
             @in const(char)* mark_type; /*@ A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
@@ -383,7 +383,7 @@ class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Calendar
          @since 1.8 */
-         return bool;
+         return: bool;
          params {
             @inout struct tm displayed_time; /*@ A @b tm struct to point to displayed date */
          }

@@ -5,7 +5,7 @@ interface Elm_Interface_Atspi_Editable_Text ()
    properties {
       content @protected {
          set {
-            return bool;
+            return: bool;
          }
          values {
             const(char)* string;
@@ -18,34 +18,34 @@ interface Elm_Interface_Atspi_Editable_Text ()
             @in const(char)* string;
             @in int position;
          }
-         return bool;
+         return: bool;
       }
       copy @protected {
          params {
             @in int start;
             @in int end;
          }
-         return bool;
+         return: bool;
       }
       cut @protected {
          params {
             @in int start;
             @in int end;
          }
-         return bool;
+         return: bool;
       }
       delete @protected {
          params {
             @in int start;
             @in int end;
          }
-         return bool;
+         return: bool;
       }
       paste @protected {
          params {
             @in int position;
          }
-         return bool;
+         return: bool;
       }
    }
 }

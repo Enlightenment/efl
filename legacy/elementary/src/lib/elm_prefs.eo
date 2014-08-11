@@ -34,7 +34,7 @@ class Elm_Prefs (Elm_Widget)
             @see elm_prefs_data_get()
 
             @since 1.8 */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -80,7 +80,7 @@ class Elm_Prefs (Elm_Widget)
             @see elm_prefs_file_get()
 
             @since 1.8 */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -94,7 +94,7 @@ class Elm_Prefs (Elm_Widget)
             @see elm_prefs_file_set() for more information
 
             @since 1.8 */
-            return bool;
+            return: bool;
          }
          values {
             const(char)* file; /*@ The @b .epb (binary) file to get contents from */
@@ -168,7 +168,7 @@ class Elm_Prefs (Elm_Widget)
 
          @since 1.8 */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) */
@@ -188,7 +188,7 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_value_set()
 
          @since 1.8 */
-         return bool;
+         return: bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get value from */
@@ -214,7 +214,7 @@ class Elm_Prefs (Elm_Widget)
 
          @since 1.8 */
 
-         return const(Evas_Object)*;
+         return: const(Evas_Object)*;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get object from */
@@ -247,7 +247,7 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_disabled_set()
 
          @since 1.8 */
-         return bool;
+         return: bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get disabled state from */
@@ -263,7 +263,7 @@ class Elm_Prefs (Elm_Widget)
 
          @since 1.8 */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* name; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
@@ -301,7 +301,7 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_editable_set() for more details
 
          @since 1.8 */
-         return bool;
+         return: bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get editable state from */
@@ -317,7 +317,7 @@ class Elm_Prefs (Elm_Widget)
 
          @since 1.8 */
 
-         return Evas_Object *;
+         return: Evas_Object *;
          params {
             @in const(char)* name; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
@@ -354,7 +354,7 @@ class Elm_Prefs (Elm_Widget)
          @see elm_prefs_item_visible_set() for more details
 
          @since 1.8 */
-         return bool;
+         return: bool;
          params {
             @in const(char)* name; /*@ The name of the item (as declared in the prefs
             collection) to get visibility state from */

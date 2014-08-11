@@ -1903,4 +1903,4 @@ _elm_multibuttonentry_class_constructor(Eo_Class *klass)
       _elm_multibuttonentry_smart_focus_next_enable = EINA_TRUE;
 }
 
-#include "elc_multibuttonentry.eo.c"
+#include "elm_multibuttonentry.eo.c"

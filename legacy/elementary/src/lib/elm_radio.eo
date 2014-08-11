@@ -75,7 +75,7 @@ class Elm_Radio (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @return The selected radio object
 
             @ingroup Radio */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
    }

@@ -6,13 +6,13 @@ interface Elm_Interface_Atspi_Selection ()
       selected_children_count @protected {
          get {
             /* Gets the number of currently selected children */
-            return int;
+            return: int;
          }
       }
       selected_child @protected {
          /* Gets child for given child index */
          get {
-            return Eo*;
+            return: Eo *;
          }
          keys {
             int selected_child_index; /*@ index of selected child */
@@ -25,36 +25,36 @@ interface Elm_Interface_Atspi_Selection ()
          params {
             @in int child_index;
          }
-         return bool;
+         return: bool;
       }
       selected_child_deselect @protected {
          /* Removes selection for given child index */
          params {
             @in int child_index;
          }
-         return bool;
+         return: bool;
       }
       is_child_selected @protected {
          /* Determines if child specified by index is selected */
          params {
             @in int child_index;
          }
-         return bool;
+         return: bool;
       }
       all_children_select @protected {
          /* Adds selection for all children */
-         return bool;
+         return: bool;
       }
       clear @protected {
          /* Clears the current selection */
-         return bool;
+         return: bool;
       }
       child_deselect @protected {
          /* Removes selection for given child index */
          params {
             @in int child_index;
          }
-         return bool;
+         return: bool;
       }
    }
    events {

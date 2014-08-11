@@ -42,7 +42,7 @@ class Elm_App_Client (Eo.Base)
             @in Elm_App_Client_Open_View_Cb view_open_cb; /*@ callback to be called when view open */
             @in const(void)* data; /*@ calback user data */
          }
-         return Elm_App_Client_Pending *; /* handler to cancel the view opening if it takes to long */
+         return: Elm_App_Client_Pending *; /* handler to cancel the view opening if it takes to long */
       }
       view_open_cancel {
          /*@ Cancel a pending elm_app_client_view_open(). */

@@ -13,7 +13,7 @@ class Elm_Web (Elm_Widget)
             @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
 
             @ingroup Web */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -58,7 +58,7 @@ class Elm_Web (Elm_Widget)
             @return @c EINA_TRUE if the URL could be set, @c EINA_FALSE if an error occurred.
 
             @ingroup Web */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -364,7 +364,7 @@ class Elm_Web (Elm_Widget)
             otherwise
 
             @ingroup Web */
-            return bool;
+            return: bool;
          }
       }
       webkit_view {
@@ -384,7 +384,7 @@ class Elm_Web (Elm_Widget)
             @see elm_web_add()
 
             @ingroup Web */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       back_possible {
@@ -396,7 +396,7 @@ class Elm_Web (Elm_Widget)
             otherwise
 
             @ingroup Web */
-            return bool;
+            return: bool;
          }
       }
       load_progress {
@@ -412,7 +412,7 @@ class Elm_Web (Elm_Widget)
             failure
 
             @ingroup Web */
-            return double;
+            return: double;
          }
       }
       selection {
@@ -426,7 +426,7 @@ class Elm_Web (Elm_Widget)
             error occurred
 
             @ingroup Web */
-            return const(char)*;
+            return: const(char)*;
          }
       }
       title {
@@ -441,7 +441,7 @@ class Elm_Web (Elm_Widget)
             failure
 
             @ingroup Web */
-            return const(char)*;
+            return: const(char)*;
          }
       }
    }
@@ -462,7 +462,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
          params {
             @in int steps; /*@ The number of steps to jump */
          }
@@ -482,7 +482,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
       html_string_load {
          /*@
@@ -500,7 +500,7 @@ class Elm_Web (Elm_Widget)
          @since 1.9
          @ingroup Web */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* html; /*@ HTML data to load */
             @in const(char)* base_url; /*@ Base URL used for relative paths to external objects (optional) */
@@ -515,7 +515,7 @@ class Elm_Web (Elm_Widget)
          or failure
 
          @ingroup Web */
-         return bool;
+         return: bool;
          params {
             @in const(char)* string; /*@ String to search */
             @in bool case_sensitive; /*@ If search should be case sensitive or not */
@@ -537,7 +537,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
       region_show {
          /*@
@@ -567,7 +567,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
       text_matches_mark {
          /*@
@@ -577,7 +577,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return uint;
+         return: uint;
          params {
             @in const(char)* string; /*@ String to match */
             @in bool case_sensitive; /*@ If match should be case sensitive or not */
@@ -613,7 +613,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
       navigate_possible_get {
          /*@
@@ -627,7 +627,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
          params {
             @in int steps; /*@ The number of steps to check for */
          }
@@ -640,7 +640,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
       text_matches_unmark_all {
          /*@
@@ -650,7 +650,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
       reload {
          /*@
@@ -660,7 +660,7 @@ class Elm_Web (Elm_Widget)
 
          @ingroup Web */
 
-         return bool;
+         return: bool;
       }
    }
    implements {

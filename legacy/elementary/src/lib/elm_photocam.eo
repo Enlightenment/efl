@@ -46,7 +46,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
             quality needed.
 
             @ingroup Photocam */
-            return Evas_Load_Error;
+            return: Evas_Load_Error;
          }
          get {
             /*@
@@ -186,7 +186,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
             deleted at any time as well.
 
             @ingroup Photocam */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       image_size {

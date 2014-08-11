@@ -17,7 +17,7 @@ class Elm_Inwin (Elm_Layout)
 
          @ingroup Inwin */
 
-         legacy elm_win_inwin_activate;
+         legacy: elm_win_inwin_activate;
       }
    }
    implements {

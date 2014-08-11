@@ -37,7 +37,7 @@ class Elm_Glview (Elm_Widget)
             object and not the underlying GL Surface.
 
             @ingroup GLView */
-            return bool;
+            return: bool;
          }
          values {
             Elm_GLView_Resize_Policy policy; /*@ The scaling policy. */
@@ -111,7 +111,7 @@ class Elm_Glview (Elm_Widget)
             whether it is visible or needs redrawing.
 
             @ingroup GLView */
-            return bool;
+            return: bool;
          }
          values {
             Elm_GLView_Render_Policy policy; /*@ The render policy. */
@@ -130,7 +130,7 @@ class Elm_Glview (Elm_Widget)
             window.
 
             @ingroup GLView */
-            return bool;
+            return: bool;
          }
          values {
             Elm_GLView_Mode mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
@@ -159,7 +159,7 @@ class Elm_Glview (Elm_Widget)
             @return The api object or NULL if it cannot be created
 
             @ingroup GLView */
-            return Evas_GL_API *;
+            return: Evas_GL_API *;
          }
       }
    }

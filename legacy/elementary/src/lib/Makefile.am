@@ -684,9 +684,9 @@ BUILT_SOURCES = \
 		elm_colorselector.eo.legacy.h \
 		elm_conformant.eo.c \
 		elm_conformant.eo.h \
-		elc_ctxpopup.eo.c \
-		elc_ctxpopup.eo.h \
-		elc_ctxpopup.eo.legacy.h \
+		elm_ctxpopup.eo.c \
+		elm_ctxpopup.eo.h \
+		elm_ctxpopup.eo.legacy.h \
 		elm_datetime.eo.c \
 		elm_datetime.eo.h \
 		elm_datetime.eo.legacy.h \
@@ -699,15 +699,15 @@ BUILT_SOURCES = \
 		elm_entry.eo.c \
 		elm_entry.eo.h \
 		elm_entry.eo.legacy.h \
-		elc_fileselector.eo.c \
-		elc_fileselector.eo.h \
-		elc_fileselector.eo.legacy.h \
-		elc_fileselector_button.eo.c \
-		elc_fileselector_button.eo.h \
-		elc_fileselector_button.eo.legacy.h \
-		elc_fileselector_entry.eo.c \
-		elc_fileselector_entry.eo.h \
-		elc_fileselector_entry.eo.legacy.h \
+		elm_fileselector.eo.c \
+		elm_fileselector.eo.h \
+		elm_fileselector.eo.legacy.h \
+		elm_fileselector_button.eo.c \
+		elm_fileselector_button.eo.h \
+		elm_fileselector_button.eo.legacy.h \
+		elm_fileselector_entry.eo.c \
+		elm_fileselector_entry.eo.h \
+		elm_fileselector_entry.eo.legacy.h \
 		elm_flipselector.eo.c \
 		elm_flipselector.eo.h \
 		elm_flipselector.eo.legacy.h \
@@ -733,9 +733,9 @@ BUILT_SOURCES = \
 		elm_grid.eo.c \
 		elm_grid.eo.h \
 		elm_grid.eo.legacy.h \
-		elc_hoversel.eo.c \
-		elc_hoversel.eo.h \
-		elc_hoversel.eo.legacy.h \
+		elm_hoversel.eo.c \
+		elm_hoversel.eo.h \
+		elm_hoversel.eo.legacy.h \
 		elm_image.eo.c \
 		elm_image.eo.h \
 		elm_image.eo.legacy.h \
@@ -786,12 +786,12 @@ BUILT_SOURCES = \
 		elm_menu.eo.c \
 		elm_menu.eo.h \
 		elm_menu.eo.legacy.h \
-		elc_multibuttonentry.eo.c \
-		elc_multibuttonentry.eo.h \
-		elc_multibuttonentry.eo.legacy.h \
-		elc_naviframe.eo.c \
-		elc_naviframe.eo.h \
-		elc_naviframe.eo.legacy.h \
+		elm_multibuttonentry.eo.c \
+		elm_multibuttonentry.eo.h \
+		elm_multibuttonentry.eo.legacy.h \
+		elm_naviframe.eo.c \
+		elm_naviframe.eo.h \
+		elm_naviframe.eo.legacy.h \
 		elm_panel.eo.c \
 		elm_panel.eo.h \
 		elm_panel.eo.legacy.h \
@@ -812,14 +812,14 @@ BUILT_SOURCES = \
 		elm_photo.eo.c \
 		elm_photo.eo.h \
 		elm_photo.eo.legacy.h \
-		elc_player.eo.c \
-		elc_player.eo.h \
+		elm_player.eo.c \
+		elm_player.eo.h \
 		elm_plug.eo.c \
 		elm_plug.eo.h \
 		elm_plug.eo.legacy.h \
-		elc_popup.eo.c \
-		elc_popup.eo.h \
-		elc_popup.eo.legacy.h \
+		elm_popup.eo.c \
+		elm_popup.eo.h \
+		elm_popup.eo.legacy.h \
 		elm_prefs.eo.c \
 		elm_prefs.eo.h \
 		elm_prefs.eo.legacy.h \
@@ -907,14 +907,14 @@ elementaryeolianfiles_DATA = \
 	     elm_clock.eo \
 	     elm_colorselector.eo \
 	     elm_conformant.eo \
-	     elc_ctxpopup.eo \
+	     elm_ctxpopup.eo \
 	     elm_datetime.eo \
 	     elm_dayselector.eo \
 	     elm_diskselector.eo \
 	     elm_entry.eo \
-	     elc_fileselector.eo \
-	     elc_fileselector_button.eo \
-	     elc_fileselector_entry.eo \
+	     elm_fileselector.eo \
+	     elm_fileselector_button.eo \
+	     elm_fileselector_entry.eo \
 	     elm_flipselector.eo \
 	     elm_flip.eo \
 	     elm_gengrid.eo \
@@ -924,7 +924,7 @@ elementaryeolianfiles_DATA = \
 	     elm_gesture_layer.eo \
 	     elm_glview.eo \
 	     elm_grid.eo \
-	     elc_hoversel.eo \
+	     elm_hoversel.eo \
 	     elm_image.eo \
 	     elm_icon.eo \
 	     elm_index.eo \
@@ -935,8 +935,8 @@ elementaryeolianfiles_DATA = \
 	     elm_map_pan.eo \
 	     elm_map.eo \
 	     elm_menu.eo \
-	     elc_multibuttonentry.eo \
-	     elc_naviframe.eo \
+	     elm_multibuttonentry.eo \
+	     elm_naviframe.eo \
 	     elm_panel.eo \
 	     elm_mapbuf.eo \
 	     elm_notify.eo \
@@ -944,9 +944,9 @@ elementaryeolianfiles_DATA = \
 	     elm_photocam.eo \
 	     elm_photocam_pan.eo \
 	     elm_photo.eo \
-	     elc_player.eo \
+	     elm_player.eo \
 	     elm_plug.eo \
-	     elc_popup.eo \
+	     elm_popup.eo \
 	     elm_prefs.eo \
 	     elm_progressbar.eo \
 	     elm_radio.eo \
@@ -1002,14 +1002,14 @@ nodist_includesunstable_HEADERS = \
 				  elm_clock.eo.h \
 				  elm_conformant.eo.h \
 				  elm_colorselector.eo.h \
-				  elc_ctxpopup.eo.h \
+				  elm_ctxpopup.eo.h \
 				  elm_datetime.eo.h \
 				  elm_dayselector.eo.h \
 				  elm_diskselector.eo.h \
 				  elm_entry.eo.h \
-				  elc_fileselector.eo.h \
-				  elc_fileselector_button.eo.h \
-				  elc_fileselector_entry.eo.h \
+				  elm_fileselector.eo.h \
+				  elm_fileselector_button.eo.h \
+				  elm_fileselector_entry.eo.h \
 				  elm_flipselector.eo.h \
 				  elm_flip.eo.h \
 				  elm_gengrid.eo.h \
@@ -1019,7 +1019,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_gesture_layer.eo.h \
 				  elm_glview.eo.h \
 				  elm_grid.eo.h \
-				  elc_hoversel.eo.h \
+				  elm_hoversel.eo.h \
 				  elm_image.eo.h \
 				  elm_icon.eo.h \
 				  elm_index.eo.h \
@@ -1030,8 +1030,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_map_pan.eo.h \
 				  elm_map.eo.h \
 				  elm_menu.eo.h \
-				  elc_multibuttonentry.eo.h \
-				  elc_naviframe.eo.h \
+				  elm_multibuttonentry.eo.h \
+				  elm_naviframe.eo.h \
 				  elm_panel.eo.h \
 				  elm_mapbuf.eo.h \
 				  elm_notify.eo.h \
@@ -1039,9 +1039,9 @@ nodist_includesunstable_HEADERS = \
 				  elm_photocam.eo.h \
 				  elm_photocam_pan.eo.h \
 				  elm_photo.eo.h \
-				  elc_player.eo.h \
+				  elm_player.eo.h \
 				  elm_plug.eo.h \
-				  elc_popup.eo.h \
+				  elm_popup.eo.h \
 				  elm_prefs.eo.h \
 				  elm_progressbar.eo.h \
 				  elm_radio.eo.h \
@@ -1072,14 +1072,14 @@ nodist_includesunstable_HEADERS = \
 				  elm_check.eo.legacy.h \
 				  elm_clock.eo.legacy.h \
 				  elm_colorselector.eo.legacy.h \
-				  elc_ctxpopup.eo.legacy.h \
+				  elm_ctxpopup.eo.legacy.h \
 				  elm_datetime.eo.legacy.h \
 				  elm_dayselector.eo.legacy.h \
 				  elm_diskselector.eo.legacy.h \
 				  elm_entry.eo.legacy.h \
-				  elc_fileselector.eo.legacy.h \
-				  elc_fileselector_button.eo.legacy.h \
-				  elc_fileselector_entry.eo.legacy.h \
+				  elm_fileselector.eo.legacy.h \
+				  elm_fileselector_button.eo.legacy.h \
+				  elm_fileselector_entry.eo.legacy.h \
 				  elm_flipselector.eo.legacy.h \
 				  elm_flip.eo.legacy.h \
 				  elm_gengrid.eo.legacy.h \
@@ -1087,7 +1087,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_gesture_layer.eo.legacy.h \
 				  elm_glview.eo.legacy.h \
 				  elm_grid.eo.legacy.h \
-				  elc_hoversel.eo.legacy.h \
+				  elm_hoversel.eo.legacy.h \
 				  elm_image.eo.legacy.h \
 				  elm_icon.eo.legacy.h \
 				  elm_index.eo.legacy.h \
@@ -1096,8 +1096,8 @@ nodist_includesunstable_HEADERS = \
 				  elm_list.eo.legacy.h \
 				  elm_map.eo.legacy.h \
 				  elm_menu.eo.legacy.h \
-				  elc_multibuttonentry.eo.legacy.h \
-				  elc_naviframe.eo.legacy.h \
+				  elm_multibuttonentry.eo.legacy.h \
+				  elm_naviframe.eo.legacy.h \
 				  elm_panel.eo.legacy.h \
 				  elm_mapbuf.eo.legacy.h \
 				  elm_notify.eo.legacy.h \
@@ -1105,7 +1105,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_photocam.eo.legacy.h \
 				  elm_photo.eo.legacy.h \
 				  elm_plug.eo.legacy.h \
-				  elc_popup.eo.legacy.h \
+				  elm_popup.eo.legacy.h \
 				  elm_prefs.eo.legacy.h \
 				  elm_progressbar.eo.legacy.h \
 				  elm_radio.eo.legacy.h \
@@ -1160,14 +1160,14 @@ nodist_includesunstable_HEADERS += \
 	     elm_clock.eo.hh \
 	     elm_colorselector.eo.hh \
 	     elm_conformant.eo.hh \
-	     elc_ctxpopup.eo.hh \
+	     elm_ctxpopup.eo.hh \
 	     elm_datetime.eo.hh \
 	     elm_dayselector.eo.hh \
 	     elm_diskselector.eo.hh \
 	     elm_entry.eo.hh \
-	     elc_fileselector.eo.hh \
-	     elc_fileselector_button.eo.hh \
-	     elc_fileselector_entry.eo.hh \
+	     elm_fileselector.eo.hh \
+	     elm_fileselector_button.eo.hh \
+	     elm_fileselector_entry.eo.hh \
 	     elm_flipselector.eo.hh \
 	     elm_flip.eo.hh \
 	     elm_gengrid.eo.hh \
@@ -1177,7 +1177,7 @@ nodist_includesunstable_HEADERS += \
 	     elm_gesture_layer.eo.hh \
 	     elm_glview.eo.hh \
 	     elm_grid.eo.hh \
-	     elc_hoversel.eo.hh \
+	     elm_hoversel.eo.hh \
 	     elm_image.eo.hh \
 	     elm_icon.eo.hh \
 	     elm_index.eo.hh \
@@ -1188,8 +1188,8 @@ nodist_includesunstable_HEADERS += \
 	     elm_map_pan.eo.hh \
 	     elm_map.eo.hh \
 	     elm_menu.eo.hh \
-	     elc_multibuttonentry.eo.hh \
-	     elc_naviframe.eo.hh \
+	     elm_multibuttonentry.eo.hh \
+	     elm_naviframe.eo.hh \
 	     elm_panel.eo.hh \
 	     elm_mapbuf.eo.hh \
 	     elm_notify.eo.hh \
@@ -1197,9 +1197,9 @@ nodist_includesunstable_HEADERS += \
 	     elm_photocam.eo.hh \
 	     elm_photocam_pan.eo.hh \
 	     elm_photo.eo.hh \
-	     elc_player.eo.hh \
+	     elm_player.eo.hh \
 	     elm_plug.eo.hh \
-	     elc_popup.eo.hh \
+	     elm_popup.eo.hh \
 	     elm_prefs.eo.hh \
 	     elm_progressbar.eo.hh \
 	     elm_radio.eo.hh \

@@ -121,7 +121,7 @@ class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @warning Once the ctxpopup showed up, the direction would be determined
 
             @ingroup Ctxpopup */
-            return Elm_Ctxpopup_Direction;
+            return: Elm_Ctxpopup_Direction;
          }
       }
       items {
@@ -144,7 +144,7 @@ class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Ctxpopup */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       first_item {
@@ -161,7 +161,7 @@ class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_ctxpopup_last_item_get()
 
             @ingroup Ctxpopup */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       last_item {
@@ -178,7 +178,7 @@ class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_ctxpopup_first_item_get()
 
             @ingroup Ctxpopup */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -212,7 +212,7 @@ class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Ctxpopup */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The Label of the new item */
             @in Evas_Object *icon; /*@ Icon to be set on new item */
@@ -234,7 +234,7 @@ class Elm_Ctxpopup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Ctxpopup */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The Label of the new item */
             @in Evas_Object *icon; /*@ Icon to be set on new item */

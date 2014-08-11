@@ -555,4 +555,4 @@ _elm_fileselector_entry_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-#include "elc_fileselector_entry.eo.c"
+#include "elm_fileselector_entry.eo.c"

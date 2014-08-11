@@ -353,7 +353,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             useful. For that case, see elm_gengrid_selected_items_get().
 
             @ingroup Gengrid */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       realized_items {
@@ -372,7 +372,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_gengrid_realized_items_update()
 
             @ingroup Gengrid */
-            return Eina_List *;
+            return: Eina_List *;
          }
       }
       first_item {
@@ -389,7 +389,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_gengrid_last_item_get()
 
             @ingroup Gengrid */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       selected_items {
@@ -409,7 +409,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_gengrid_selected_item_get()
 
             @ingroup Gengrid */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       last_item {
@@ -426,7 +426,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_gengrid_first_item_get()
 
             @ingroup Gengrid */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       wheel_disabled {
@@ -477,7 +477,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Gengrid */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
@@ -518,7 +518,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Gengrid */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
@@ -537,7 +537,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          This behavior is O(1) and includes items which may or may not be realized.
 
          @ingroup Gengrid */
-         return uint;
+         return: uint;
       }
       at_xy_item_get @const {
          /*@
@@ -560,7 +560,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          the gengrid.
 
          @ingroup Gengrid */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Evas_Coord x; /*@ The input x coordinate */
             @in Evas_Coord y; /*@ The input y coordinate */
@@ -583,7 +583,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Gengrid */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
@@ -607,7 +607,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Gengrid */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
@@ -646,7 +646,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Gengrid */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
@@ -672,7 +672,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          @ingroup Gengrid
          @since 1.11 */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the gengrid. */
             @in const(char) *part_name; /*@ Name of the TEXT part of gengrid item to search string in. */

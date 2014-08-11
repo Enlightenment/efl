@@ -147,7 +147,7 @@ class Elm_Popup (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
          of the content area is deleted. At a time, only one of content, content-text
          and item(s) can be there in a popup content area. */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The Label of the new item */
             @in Evas_Object *icon; /*@ Icon to be set on new item */

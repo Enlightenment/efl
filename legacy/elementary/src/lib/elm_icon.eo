@@ -54,7 +54,7 @@ class Elm_Icon (Elm_Image)
             @see elm_image_file_set()
 
             @ingroup Icon */
-            return bool;
+            return: bool;
          }
          get {
             /*@

@@ -608,4 +608,4 @@ _elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
    return &atspi_actions[0];
 }
 
-#include "elc_hoversel.eo.c"
+#include "elm_hoversel.eo.c"

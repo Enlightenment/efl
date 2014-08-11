@@ -738,4 +738,4 @@ _elm_player_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
    return &atspi_actions[0];
 }
 
-#include "elc_player.eo.c"
+#include "elm_player.eo.c"

@@ -82,7 +82,7 @@ class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @since 1.9
 
             @ingroup Colorselector */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       palette_selected_item {
@@ -94,7 +94,7 @@ class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
             @since 1.9
             @ingroup Colorselector */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -107,7 +107,7 @@ class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Colorselector */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in int r; /*@ r-value of color */
             @in int g; /*@ g-value of color */

@@ -214,7 +214,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @see elm_list_selected_items_get()
 
             @ingroup List */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       items {
@@ -230,7 +230,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @see elm_list_clear()
 
             @ingroup List */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       first_item {
@@ -243,7 +243,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @return The first item, or NULL if none
 
             @ingroup List */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       selected_items {
@@ -261,7 +261,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @see elm_list_multi_select_set()
 
             @ingroup List */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       last_item {
@@ -274,7 +274,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @return The last item, or NULL if none
 
             @ingroup List */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -313,7 +313,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The list item to insert before. */
             @in const(char)* label; /*@ The label of the list item. */
@@ -378,7 +378,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The list item to insert after. */
             @in const(char)* label; /*@ The label of the list item. */
@@ -409,7 +409,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
 
 
          @ingroup List */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Evas_Coord x; /*@ The input x coordinate */
             @in Evas_Coord y; /*@ The input y coordinate */
@@ -460,7 +460,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The label of the list item. */
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
@@ -506,7 +506,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The label of the list item. */
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
@@ -566,7 +566,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The label of the list item. */
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An

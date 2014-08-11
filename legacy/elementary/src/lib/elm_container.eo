@@ -20,21 +20,21 @@ class Elm_Container (Elm_Widget)
             @in const(char)* name;
             @in Evas_Object *content;
          }
-         return bool;
+         return: bool;
       }
       content_get {
          /*@ No description supplied by the EAPI. */
          params {
             @in const(char)* name;
          }
-         return Evas_Object *;
+         return: Evas_Object *;
       }
       content_unset {
          /*@ No description supplied by the EAPI. */
          params {
             @in const(char)* name;
          }
-         return Evas_Object *;
+         return: Evas_Object *;
       }
    }
    implements {

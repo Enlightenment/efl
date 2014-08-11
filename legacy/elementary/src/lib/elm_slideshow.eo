@@ -201,7 +201,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Slideshow */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       transitions {
@@ -243,7 +243,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_transition_set()
 
             @ingroup Slideshow */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       count {
@@ -254,7 +254,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @return The number of items on @p obj, at the moment of this call
 
             @ingroup Slideshow */
-            return uint;
+            return: uint;
          }
       }
       item_current {
@@ -266,7 +266,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @c NULL, if none is (and on errors)
 
             @ingroup Slideshow */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       layouts {
@@ -303,7 +303,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_layout_set()
 
             @ingroup Slideshow */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
    }
@@ -330,7 +330,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
          if there's no item with that index (and on errors)
 
          @ingroup Slideshow */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in uint nth; /*@ The number of the item to grab a handle to (0 being
             the first) */
@@ -380,7 +380,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Slideshow */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item's data */
@@ -406,7 +406,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Slideshow */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item's data */

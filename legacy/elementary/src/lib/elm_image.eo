@@ -31,11 +31,11 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
       smooth_scale {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             bool smooth;
@@ -44,11 +44,11 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
       resize_down {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             bool resize_down;
@@ -57,11 +57,11 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
       load_size {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             int size;
@@ -114,11 +114,11 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
       resize_up {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             bool resize_up;
@@ -225,11 +225,11 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
       scale {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             double scale;
@@ -254,8 +254,8 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
             unwanted frames.
 
             @ingroup Image */
-            return bool;
-            legacy null;
+            return: bool;
+            legacy: null;
          }
          get {
             /*@
@@ -275,11 +275,11 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
       fill_inside {
          set {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          get {
             /*@ No description supplied by the EAPI. */
-            legacy null;
+            legacy: null;
          }
          values {
             bool fill_inside;
@@ -434,8 +434,8 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
             unwanted frames.
 
             @ingroup Image */
-            return bool;
-            legacy null;
+            return: bool;
+            legacy: null;
          }
          values {
             const(Eina_File)* file; /*@ The handler to an Eina_File that will be used as image source */
@@ -464,7 +464,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
             @since 1.7
 
             @ingroup Image */
-            return bool;
+            return: bool;
          }
          values {
             const(void)* img; /*@ The binary data that will be used as image source */
@@ -491,7 +491,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
 
             @ingroup Image
             @since 1.7 */
-            return bool;
+            return: bool;
          }
       }
       object {
@@ -509,7 +509,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
             elementary.
 
             @ingroup Image */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       object_size {
@@ -530,7 +530,7 @@ class Elm_Image (Elm_Widget, Evas.Clickable_Interface,
    methods {
       sizing_eval {
          /*@ No description supplied by the EAPI. */
-         legacy null;
+         legacy: null;
       }
    }
    implements {

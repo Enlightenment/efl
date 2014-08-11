@@ -1935,4 +1935,4 @@ _elm_naviframe_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
    return &atspi_actions[0];
 }
 
-#include "elc_naviframe.eo.c"
+#include "elm_naviframe.eo.c"

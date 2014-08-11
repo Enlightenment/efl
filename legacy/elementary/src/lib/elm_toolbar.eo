@@ -263,7 +263,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             The selected item always will be highlighted on toolbar.
 
             @ingroup Toolbar */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       first_item {
@@ -279,7 +279,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             @see elm_toolbar_last_item_get()
 
             @ingroup Toolbar */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       more_item {
@@ -295,7 +295,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             elm_object_item_content_set.
 
             @ingroup Toolbar */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       last_item {
@@ -311,7 +311,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             @see elm_toolbar_first_item_get()
 
             @ingroup Toolbar */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -347,7 +347,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Toolbar */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *before; /*@ The toolbar item to insert before. */
             @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
@@ -387,7 +387,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Toolbar */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *after; /*@ The toolbar item to insert after. */
             @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
@@ -427,7 +427,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Toolbar */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
             @in const(char)* label; /*@ The label of the item. */
@@ -440,7 +440,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
          Get the number of items in a toolbar
          @return The number of items in @p obj toolbar
          @ingroup Toolbar */
-         return uint;
+         return: uint;
       }
       item_prepend {
          /*@
@@ -473,7 +473,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Toolbar */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* icon; /*@ A string with icon name or the absolute path of an image file. */
             @in const(char)* label; /*@ The label of the item. */
@@ -489,7 +489,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
          on failure.
 
          @ingroup Toolbar */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The label of the item to find. */
          }

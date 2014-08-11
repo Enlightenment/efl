@@ -125,7 +125,7 @@ class Elm_Dayselector (Elm_Layout)
          @since 1.8
 
          @ingroup Dayselector */
-         return Eina_List *;
+         return: Eina_List *;
       }
       day_selected_set {
          /*@
@@ -151,7 +151,7 @@ class Elm_Dayselector (Elm_Layout)
          @see elm_dayselector_day_selected_set()
 
          @ingroup Dayselector */
-         return bool;
+         return: bool;
          params {
             @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to know state. */
          }

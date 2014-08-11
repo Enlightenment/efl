@@ -388,7 +388,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_mode_get()
 
             @ingroup Genlist */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       selected_item {
@@ -408,7 +408,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_selected_items_get()
 
             @ingroup Genlist */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       first_item {
@@ -421,7 +421,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @return The first item, or NULL if none
 
             @ingroup Genlist */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       realized_items {
@@ -440,7 +440,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_realized_items_update()
 
             @ingroup Genlist */
-            return Eina_List *;
+            return: Eina_List *;
          }
       }
       selected_items {
@@ -464,7 +464,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_selected_item_get()
 
             @ingroup Genlist */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       last_item {
@@ -477,7 +477,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @return The last item, or NULL if none
 
             @ingroup Genlist */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -498,7 +498,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Genlist */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
@@ -541,7 +541,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Genlist */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
@@ -569,7 +569,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          the genlist.
 
          @ingroup Genlist */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Evas_Coord x; /*@ The input x coordinate */
             @in Evas_Coord y; /*@ The input y coordinate */
@@ -585,7 +585,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          This behavior is O(1) and includes items which may or may not be realized.
 
          @ingroup Genlist */
-         return uint;
+         return: uint;
       }
       item_prepend {
          /*@
@@ -603,7 +603,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Genlist */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
@@ -640,7 +640,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Genlist */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
@@ -667,7 +667,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          @ingroup Genlist */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
@@ -694,7 +694,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          @ingroup Genlist
          @since 1.11 */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item * item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
             @in const(char)* part_name; /*@ Name of the TEXT part of genlist item to search string in. */

@@ -278,7 +278,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
             @since 1.7
 
             @ingroup Map */
-            return Eina_List *;
+            return: Eina_List *;
          }
       }
       tile_load_status {
@@ -340,7 +340,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
          @see elm_map_source_set()
 
          @ingroup Map */
-         return const(char)*;
+         return: const(char)*;
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
          }
@@ -374,7 +374,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Route *;
+         return: Elm_Map_Route *;
          params {
             @in Elm_Map_Route_Type type; /*@ The type of transport to be considered when tracing a route. */
             @in Elm_Map_Route_Method method; /*@ The routing method, what should be prioritized. */
@@ -396,7 +396,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Evas_Object *;
+         return: Evas_Object *;
          params {
             @in void *emap; /*@ The emap route object. */
          }
@@ -432,7 +432,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
          params {
             @in double lon; /*@ The center longitude. */
             @in double lat; /*@ The center latitude. */
@@ -464,7 +464,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
       }
       overlay_bubble_add {
          /*@
@@ -489,7 +489,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
       }
       sources_get @const {
          /*@
@@ -517,7 +517,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
          @see elm_map_source_get()
 
          @ingroup Map */
-         return const(char)**;
+         return: const(char)**;
          params {
             @in Elm_Map_Source_Type type; /*@ source type. */
          }
@@ -538,7 +538,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
       }
       overlay_line_add {
          /*@
@@ -553,7 +553,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
          params {
             @in double flon; /*@ The start longitude. */
             @in double flat; /*@ The start latitude. */
@@ -597,7 +597,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
          should be used.
 
          @ingroup Map */
-         return Elm_Map_Name *;
+         return: Elm_Map_Name *;
          params {
             @in const(char)* address; /*@ The address. */
             @in double lon; /*@ The longitude. */
@@ -694,7 +694,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
          params {
             @in const(Elm_Map_Route)* route; /*@ The route object to make a overlay. */
          }
@@ -714,7 +714,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
          params {
             @in Evas_Coord x; /*@ horizontal pixel coordinate. */
             @in Evas_Coord y; /*@ vertical pixel coordinate */
@@ -747,7 +747,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return Elm_Map_Overlay *;
+         return: Elm_Map_Overlay *;
          params {
             @in double lon; /*@ The longitude of the overlay. */
             @in double lat; /*@ The latitude of the overlay. */

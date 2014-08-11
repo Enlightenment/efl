@@ -49,4 +49,4 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_prev_get(const Elm_Object_Item *
  */
 EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *it);
 
-#include "elc_multibuttonentry.eo.legacy.h"
+#include "elm_multibuttonentry.eo.legacy.h"

@@ -4,7 +4,7 @@
  * @{
  */
 
-#include "elc_naviframe.eo.h"
+#include "elm_naviframe.eo.h"
 
 /**
  * @}

@@ -12,7 +12,7 @@ class Elm_Segment_Control (Elm_Layout)
             It will just return the number of items added to segment control @p obj.
 
             @ingroup SegmentControl */
-            return int;
+            return: int;
          }
       }
       item_selected {
@@ -29,7 +29,7 @@ class Elm_Segment_Control (Elm_Layout)
             The selected item always will be highlighted on segment control.
 
             @ingroup SegmentControl */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -49,7 +49,7 @@ class Elm_Segment_Control (Elm_Layout)
          @see elm_segment_control_item_add()
 
          @ingroup SegmentControl */
-         return const(char)*;
+         return: const(char)*;
          params {
             @in int idx; /*@ The index of the segment item. */
          }
@@ -80,7 +80,7 @@ class Elm_Segment_Control (Elm_Layout)
 
          @ingroup SegmentControl */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
@@ -101,7 +101,7 @@ class Elm_Segment_Control (Elm_Layout)
          elm_segment_control_item_count_get().
 
          @ingroup SegmentControl */
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in int idx; /*@ The index of the segment item. */
          }
@@ -156,7 +156,7 @@ class Elm_Segment_Control (Elm_Layout)
 
          @ingroup SegmentControl */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
@@ -180,7 +180,7 @@ class Elm_Segment_Control (Elm_Layout)
          @see elm_object_item_part_content_set()
 
          @ingroup SegmentControl */
-         return Evas_Object *;
+         return: Evas_Object *;
          params {
             @in int idx; /*@ The index of the segment item. */
          }

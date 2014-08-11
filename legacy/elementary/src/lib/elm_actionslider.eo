@@ -71,7 +71,7 @@ class Elm_Actionslider (Elm_Layout)
             @return The selected label
 
             @ingroup Actionslider */
-            return const(char)*;
+            return: const(char)*;
          }
       }
    }

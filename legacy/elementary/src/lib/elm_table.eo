@@ -61,7 +61,7 @@ class Elm_Table (Elm_Widget)
          @brief Get child object of table at given coordinates.
 
          @return Child of object if find if not return NULL. */
-         return Evas_Object *;
+         return: Evas_Object *;
          params {
             @in int col; /*@ Column number of child object */
             @in int row; /*@ Row number of child object */
@@ -86,7 +86,7 @@ class Elm_Table (Elm_Widget)
             @in int colspan; /*@ colspan */
             @in int rowspan; /*@ rowspan */
          }
-         legacy null;
+         legacy: null;
       }
       pack_get {
          /*@
@@ -103,7 +103,7 @@ class Elm_Table (Elm_Widget)
             @out int colspan; /*@ colspan */
             @out int rowspan; /*@ rowspan */
          }
-         legacy null;
+         legacy: null;
       }
       unpack {
          /*@

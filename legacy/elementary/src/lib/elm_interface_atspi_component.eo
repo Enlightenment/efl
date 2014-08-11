@@ -7,7 +7,7 @@ mixin Elm_Interface_Atspi_Component ()
       size @protected {
          set {
             /*@ Sets size of accessible widget. */
-            return bool;
+            return: bool;
          }
          get {
             /*@ Gets size of accessible widget. */
@@ -48,7 +48,7 @@ mixin Elm_Interface_Atspi_Component ()
          }
          set {
             /*@ Sets geometry of accessible widget. */
-            return bool;
+            return: bool;
          }
          keys {
             bool screen_coords; /*@ If true x and y values will be relative
@@ -65,7 +65,7 @@ mixin Elm_Interface_Atspi_Component ()
       position @protected {
          set {
             /*@ Sets position of accessible widget. */
-            return bool;
+            return: bool;
          }
          get {
             /*@ Gets position of accessible widget. */
@@ -90,14 +90,14 @@ mixin Elm_Interface_Atspi_Component ()
             @in int x;
             @in int y;
          }
-         return bool;
+         return: bool;
       }
       focus_grab {
          /*@ Focuses accessible widget.
 
          @return true if focus grab focus has successed, false otherwise. */
 
-         return bool;
+         return: bool;
       }
       accessible_at_point_get @protected {
          /*@ Gets top component object occupying space at given coordinates. */
@@ -108,7 +108,7 @@ mixin Elm_Interface_Atspi_Component ()
             @in int x;
             @in int y;
          }
-         return Evas_Object *;
+         return: Evas_Object *;
       }
    }
 }

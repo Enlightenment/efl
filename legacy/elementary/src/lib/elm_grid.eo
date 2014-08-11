@@ -32,7 +32,7 @@ class Elm_Grid (Elm_Widget)
             list, but these removals won't be reflected on it.
 
             @ingroup Grid */
-            return Eina_List *;
+            return: Eina_List *;
          }
       }
    }

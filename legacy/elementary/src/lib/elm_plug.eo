@@ -18,7 +18,7 @@ class Elm_Plug (Elm_Widget)
             elementary.
 
             @ingroup Plug */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
    }
@@ -31,7 +31,7 @@ class Elm_Plug (Elm_Widget)
 
          @ingroup Plug */
 
-         return bool;
+         return: bool;
          params {
             @in const(char)* svcname; /*@ The service name to connect to set up by the socket. */
             @in int svcnum; /*@ The service number to connect to (set up by socket). */

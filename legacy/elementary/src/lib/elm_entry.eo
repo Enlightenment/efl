@@ -130,7 +130,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          }
          get {
             /*@ This returns whether the entry's selection handlers are disabled. */
-            legacy null;
+            legacy: null;
          }
          values {
             bool disabled; /*@ If true, the selection handlers are disabled. */
@@ -310,7 +310,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
 
             @ingroup Entry */
-            return bool;
+            return: bool;
          }
          get {
             /*@
@@ -643,7 +643,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The textblock object.
 
             @ingroup Entry */
-            return Evas_Object *;
+            return: Evas_Object *;
          }
       }
       cursor_geometry {
@@ -658,7 +658,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return EINA_TRUE upon success, EINA_FALSE upon failure
 
             @ingroup Entry */
-            return bool;
+            return: bool;
          }
          values {
             Evas_Coord x; /*@ returned geometry */
@@ -680,7 +680,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The input method context (Ecore_IMF_Context *) in entry.
 
             @ingroup Entry */
-            return void *;
+            return: void *;
          }
       }
       cursor_is_format {
@@ -700,7 +700,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @see elm_entry_cursor_is_visible_format_get()
 
             @ingroup Entry */
-            return bool;
+            return: bool;
          }
       }
       cursor_content {
@@ -716,7 +716,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The text pointed by the cursors.
 
             @ingroup Entry */
-            return char *;
+            return: char *;
          }
       }
       selection {
@@ -735,7 +735,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The selected text within the entry or NULL on failure
 
             @ingroup Entry */
-            return const(char)*;
+            return: const(char)*;
          }
       }
       cursor_is_visible_format {
@@ -749,7 +749,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @see elm_entry_cursor_is_format_get()
 
             @ingroup Entry */
-            return bool;
+            return: bool;
          }
       }
    }
@@ -762,7 +762,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return bool;
+         return: bool;
       }
       text_style_user_pop {
          /*@
@@ -846,7 +846,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return bool;
+         return: bool;
       }
       file_save {
          /*@
@@ -901,7 +901,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry
          @since 1.7 */
-         return const(char)*;
+         return: const(char)*;
       }
       context_menu_clear {
          /*@
@@ -921,7 +921,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return bool;
+         return: bool;
       }
       entry_insert {
          /*@
@@ -987,7 +987,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          @ingroup Entry */
 
-         return bool;
+         return: bool;
       }
       select_none {
          /*@
@@ -1039,7 +1039,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @return EINA_TRUE if the entry is empty, EINA_FALSE otherwise.
 
          @ingroup Entry */
-         return bool;
+         return: bool;
       }
       markup_filter_remove {
          /*@

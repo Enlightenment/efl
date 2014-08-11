@@ -13,7 +13,7 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
             @see elm_menu_item_selected_set()
 
             @ingroup Menu */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       items {
@@ -24,7 +24,7 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
             @return An Eina_List* of @p item's items
 
             @ingroup Menu */
-            return const(Eina_List)*;
+            return: const(Eina_List)*;
          }
       }
       first_item {
@@ -35,7 +35,7 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
             @return The first item, or NULL if none
 
             @ingroup Menu */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
       last_item {
@@ -46,7 +46,7 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
             @return The last item, or NULL if none
 
             @ingroup Menu */
-            return Elm_Object_Item *;
+            return: Elm_Object_Item *;
          }
       }
    }
@@ -76,7 +76,7 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
 
          @ingroup Menu */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *parent; /*@ The parent menu item (optional) */
             @in const(char)* icon; /*@ An icon display on the item. The icon will be destroyed by the menu. */
@@ -106,7 +106,7 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
 
          @ingroup Menu */
 
-         return Elm_Object_Item *;
+         return: Elm_Object_Item *;
          params {
             @in Elm_Object_Item *parent; /*@ The item to add the separator under */
          }

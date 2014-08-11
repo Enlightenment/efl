@@ -4,7 +4,7 @@
  * @{
  */
 
-#include "elc_popup.eo.h"
+#include "elm_popup.eo.h"
 
 /**
  * @}

@@ -11,4 +11,4 @@
  */
 EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent);
 
-#include "elc_fileselector_entry.eo.legacy.h"
+#include "elm_fileselector_entry.eo.legacy.h"
