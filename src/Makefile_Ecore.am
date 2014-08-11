@@ -134,7 +134,7 @@ modules_ecore_system_systemd_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 # upower
-
+if ! HAVE_WIN32
 ecoreupowerpkgdir = $(libdir)/ecore/system/upower/$(MODULE_ARCH)
 ecoreupowerpkg_LTLIBRARIES = modules/ecore/system/upower/module.la
 modules_ecore_system_upower_module_la_SOURCES = \
@@ -151,6 +151,7 @@ modules_ecore_system_upower_module_la_DEPENDENCIES = \
 @USE_ELDBUS_INTERNAL_LIBS@
 modules_ecore_system_upower_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_system_upower_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
 
 # tizen
 
