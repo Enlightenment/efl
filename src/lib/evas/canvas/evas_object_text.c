@@ -1088,7 +1088,7 @@ _evas_text_vert_advance_get(Eo *eo_obj, Evas_Text_Data *o)
    if (!o->font) return vert;
    if (!o->items)
      {
-        vert = o->ascent + o->descent;
+        vert = o->max_ascent + o->max_descent;
         return vert;
      }
    vert = _evas_object_text_vert_advance_get(eo_obj, o);
