@@ -359,10 +359,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    if (!svr)
      return NULL;
 
-   svr->name = strdup(name);
-   if (!svr->name)
-     goto error;
-
+   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
+   svr->fd = -1;
    svr->start_time = ecore_time_get();
    svr->type = compl_type;
    svr->port = port;
@@ -373,6 +371,11 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->client_limit = -1;
    svr->clients = NULL;
    svr->ppid = getpid();
+
+   svr->name = strdup(name);
+   if (!svr->name)
+     goto error;
+
    if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
      goto error;
 
@@ -407,31 +410,12 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
        goto error;
 
    servers = eina_list_append(servers, svr);
-   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
 
    return svr;
 
 error:
-   if (svr->name)
-     free(svr->name);
-
-   if (svr->path)
-     free(svr->path);
-
-   if (svr->fd_handler)
-     ecore_main_fd_handler_del(svr->fd_handler);
-
-   if (svr->fd > 0)
-     close(svr->fd);
-
-   if (svr->buf)
-     eina_binbuf_free(svr->buf);
-
-   if (svr->ip)
-     eina_stringshare_del(svr->ip);
-
-   ecore_con_ssl_server_shutdown(svr);
-   free(svr);
+   if (svr->delete_me) return NULL;
+   _ecore_con_server_kill(svr);
    return NULL;
 }
 
@@ -453,10 +437,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if (!svr)
      return NULL;
 
-   svr->name = strdup(name);
-   if (!svr->name)
-     goto error;
-
+   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
+   svr->fd = -1;
    svr->type = compl_type;
    svr->port = port;
    svr->data = (void *)data;
@@ -466,6 +448,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
+
+   svr->name = strdup(name);
+   if (!svr->name)
+     goto error;
 
    type = compl_type & ECORE_CON_TYPE;
 
@@ -517,25 +503,12 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
      EINA_SAFETY_ON_FALSE_GOTO(ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr), error);
 
    servers = eina_list_append(servers, svr);
-   ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
 
    return svr;
 
 error:
-   if (svr->name)
-     free(svr->name);
-
-   if (svr->path)
-     free(svr->path);
-
-   if (svr->fd_handler)
-     ecore_main_fd_handler_del(svr->fd_handler);
-
-   if (svr->fd > 0)
-     close(svr->fd);
-
-   ecore_con_ssl_server_shutdown(svr);
-   free(svr);
+   if (svr->delete_me) return NULL;
+   _ecore_con_server_kill(svr);
    return NULL;
 }
 
@@ -1302,7 +1275,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
-   if (svr->fd > 0)
+   if (svr->fd >= 0)
      close(svr->fd);
 
    if (svr->until_deletion)
@@ -1352,7 +1325,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
 
-   if (cl->fd > 0)
+   if (cl->fd >= 0)
      close(cl->fd);
 
    free(cl->client_addr);
