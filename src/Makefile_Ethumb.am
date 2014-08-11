@@ -49,7 +49,7 @@ modules_ethumb_emotion_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ethumb_emotion_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 modules/ethumb/emotion/template.edj: modules/ethumb/emotion/template.edc modules/ethumb/emotion/placeholder.png bin/edje/edje_cc${EXEEXT}
-	@$(MKDIR_P) modules/ethumb/emotion
+	@$(mkdir_p) modules/ethumb/emotion
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/modules/ethumb/emotion $< $@
 
 ethumbmoduleemotion_DATA = modules/ethumb/emotion/template.edj

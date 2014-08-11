@@ -263,7 +263,7 @@ tests_edje_edje_suite_LDADD = @CHECK_LIBS@  $(USE_EDJE_BIN_LIBS)
 tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
-	@$(MKDIR_P) tests/edje/data
+	@$(mkdir_p) tests/edje/data
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/edje/data $< $@
 
 EDJE_DATA_FILES = tests/edje/data/test_layout.edc \

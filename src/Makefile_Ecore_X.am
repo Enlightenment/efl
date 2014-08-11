@@ -130,7 +130,7 @@ BUILT_SOURCES += \
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
 
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h: $(KEYSYMDEFS) utils/ecore/makekeys$(EXEEXT)
-	$(MKDIR_P) $(top_builddir)/src/lib/ecore_x/xcb
+	$(mkdir_p) $(top_builddir)/src/lib/ecore_x/xcb
 	$(top_builddir)/src/utils/ecore/makekeys $(KEYSYMDEFS) > $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h
 	mv -f $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
 endif

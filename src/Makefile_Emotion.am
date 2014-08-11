@@ -188,7 +188,7 @@ tests_emotion_emotion_test_LDADD = @USE_EDJE_LIBS@ @USE_EMOTION_LIBS@
 tests_emotion_emotion_test_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ @USE_EMOTION_INTERNAL_LIBS@
 
 tests/emotion/data/theme.edj: tests/emotion/data/theme.edc bin/edje/edje_cc${EXEEXT}
-	@$(MKDIR_P) tests/emotion/data
+	@$(mkdir_p) tests/emotion/data
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/emotion/data $< $@
 
 emotiondatafilesdir = $(datadir)/emotion/data

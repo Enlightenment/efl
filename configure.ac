@@ -273,6 +273,7 @@ AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
 ### compilers
 
+AC_PROG_MKDIR_P
 AM_PROG_AS
 AC_PROG_CXX
 AC_PROG_OBJC
