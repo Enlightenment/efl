@@ -100,6 +100,14 @@ gl_symbols(void)
 
    if (done) return;
 
+   /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
+    * gets fixed. Currently it is incorrectly detecting wl_display and
+    * returning _EGL_PLATFORM_X11 instead of _EGL_PLATFORM_WAYLAND.
+    *
+    * See ticket #1972 for more info.
+    */
+   setenv("EGL_PLATFORM", "wayland", 1);
+
 #define LINK2GENERIC(sym) \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
