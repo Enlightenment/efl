@@ -336,7 +336,7 @@ evgl_eng_context_create(void *data, void *ctxt)
 
    attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    attrs[1] = 2;
-   attrs[3] = EGL_NONE;
+   attrs[2] = EGL_NONE;
 
    if (ctxt)
      {

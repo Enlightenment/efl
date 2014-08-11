@@ -508,7 +508,7 @@ eng_gl_context_new(Outbuf *ob)
 
    attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    attrs[1] = 2;
-   attrs[3] = EGL_NONE;
+   attrs[2] = EGL_NONE;
 
    if (!(ctx = calloc(1, sizeof(Context_3D)))) return NULL;
 
