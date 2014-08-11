@@ -211,7 +211,7 @@ EAPI const char *
  * @param module The module to turn off/on symbol to be exposed
  * @since 1.11
  */
-EAPI void eina_module_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
+EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Return the path built from the location of a library and a

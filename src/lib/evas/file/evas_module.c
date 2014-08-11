@@ -467,7 +467,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         en = eina_module_new(buffer);
         if (!en) continue;
 
-        if (type == EVAS_MODULE_TYPE_ENGINE) eina_module_global_set(en, EINA_TRUE);
+        if (type == EVAS_MODULE_TYPE_ENGINE) eina_module_symbol_global_set(en, EINA_TRUE);
 
         if (!eina_module_load(en))
           {

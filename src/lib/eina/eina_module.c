@@ -391,7 +391,7 @@ EAPI const char *eina_module_file_get(const Eina_Module *m)
    return m->file;
 }
 
-EAPI void eina_module_global_set(Eina_Module *module, Eina_Bool global)
+EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global)
 {
    module->global = !!global;
 }
