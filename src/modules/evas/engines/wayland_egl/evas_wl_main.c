@@ -8,7 +8,7 @@ static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect EINA_UNUSED, int alpha, int rot, Render_Engine_Swap_Mode swap_mode)
+eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -23,15 +23,17 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, 
      return NULL;
 
    win_count++;
-   gw->disp = disp;
-   gw->surface = surface;
-   gw->screen = screen;
-   gw->depth = depth;
+   gw->info = einfo;
+   gw->evas = evas;
    gw->w = w;
    gw->h = h;
-   gw->alpha = alpha;
-   gw->rot = rot;
    gw->swap_mode = swap_mode;
+   gw->disp = einfo->info.display;
+   gw->surface = einfo->info.surface;
+   gw->screen = einfo->info.screen;
+   gw->depth = einfo->info.depth;
+   gw->alpha = einfo->info.destination_alpha;
+   gw->rot = einfo->info.rotation;
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = 2;
@@ -175,7 +177,7 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, 
    gw->gl_context->eglctxt = gw->egl_context[0];
 
    eng_window_use(gw);
-   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, gw->rot);
 
    gw->surf = EINA_TRUE;
 
