@@ -325,8 +325,10 @@ _drm_init(void)
 
    // vboxvideo 4.3.14 is crashing when calls drmWaitVBlank()
    // https://www.virtualbox.org/ticket/13265
+   // also affects 4.3.12
    if (stat("/sys/module/vboxvideo", &st) == 0)
      {
+/*
         FILE *fp = fopen("/sys/module/vboxvideo/version", "r");
         if (fp)
           {
@@ -340,6 +342,8 @@ _drm_init(void)
                }
              fclose(fp);
           }
+ */
+        return 0;
      }
 
    snprintf(buf, sizeof(buf), "/dev/dri/card1");
