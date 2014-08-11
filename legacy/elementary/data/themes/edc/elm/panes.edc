@@ -298,6 +298,7 @@ group { name: "elm/panes/vertical/flush";
          description { state: "default" 0.0;
             rel2.to_x: "elm.bar";
             rel2.relative: 1.0 1.0;
+            fixed: 1 0;
          }
       }
       part { name: "elm.swallow.right"; type: SWALLOW;
@@ -305,6 +306,7 @@ group { name: "elm/panes/vertical/flush";
          description { state: "default" 0.0;
             rel1.to_x: "elm.bar";
             rel1.relative: 0.0 0.0;
+            fixed: 1 0;
          }
       }
       part { name: "elm.bar"; type: SPACER;
@@ -510,6 +512,7 @@ group { name: "elm/panes/horizontal/flush";
          description { state: "default" 0.0;
             rel2.to_y: "elm.bar";
             rel2.relative: 1.0 1.0;
+            fixed: 0 1;
          }
       }
       part { name: "elm.swallow.right"; type: SWALLOW;
@@ -517,6 +520,7 @@ group { name: "elm/panes/horizontal/flush";
          description { state: "default" 0.0;
             rel1.to_y: "elm.bar";
             rel1.relative: 0.0 0.0;
+            fixed: 0 1;
          }
       }
       part { name: "elm.bar"; type: SPACER;
