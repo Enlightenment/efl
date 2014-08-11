@@ -104,7 +104,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 
 extern unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c);
 
-Outbuf *eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect, int alpha, int rot, Render_Engine_Swap_Mode swap_mode);
+Outbuf *eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode);
 void eng_window_free(Outbuf *gw);
 void eng_window_use(Outbuf *gw);
 void eng_window_unsurf(Outbuf *gw);
