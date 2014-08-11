@@ -73,9 +73,11 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
      }
    else
      {
-        if (getenv("DISPLAY")) id = "scim";
-        else if (getenv("WAYLAND_DISPLAY")) id = "wayland";
-        if (ecore_imf_module_get(id)) return id;
+        if (getenv("WAYLAND_DISPLAY"))
+          {
+             id = "wayland";
+             if (ecore_imf_module_get(id)) return id;
+          }
         return NULL;
      }
 
