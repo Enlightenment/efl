@@ -615,12 +615,7 @@ eng_setup(Evas *evas, void *info)
              glsym_evas_gl_preload_init();
           }
 
-        ob = eng_window_new(inf->info.display, inf->info.surface, 
-                            inf->info.screen, inf->info.depth, 
-                            epd->output.w, epd->output.h, 
-                            inf->indirect, 
-                            inf->info.destination_alpha, 
-                            inf->info.rotation, swap_mode);
+        ob = eng_window_new(evas, inf, epd->output.w, epd->output.h, swap_mode);
         if (!ob) goto ob_err;
 
         if (!evas_render_engine_gl_generic_init(&re->generic, ob, 
@@ -681,12 +676,7 @@ eng_setup(Evas *evas, void *info)
                   ob->gl_context->references++;
                   gl_wins--;
 
-                  ob = eng_window_new(inf->info.display, inf->info.surface, 
-                                      inf->info.screen, inf->info.depth, 
-                                      epd->output.w, epd->output.h, 
-                                      inf->indirect, 
-                                      inf->info.destination_alpha, 
-                                      inf->info.rotation, swap_mode);
+                  ob = eng_window_new(evas, inf, epd->output.w, epd->output.h, swap_mode);
                   if (!ob) goto ob_err;
 
                   eng_window_free(eng_get_ob(re));
