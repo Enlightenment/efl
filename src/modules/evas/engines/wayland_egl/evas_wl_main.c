@@ -534,6 +534,7 @@ void
 eng_gl_context_free(Context_3D *ctx)
 {
    eglDestroyContext(ctx->display, ctx->context);
+   free(ctx);
 }
 
 void 
