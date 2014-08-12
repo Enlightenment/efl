@@ -1394,25 +1394,25 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
    if (tex->pt)
      {
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex->apt);
-        if (tex->apt)
-          eina_rectangle_pool_release(tex->apt);
+        if (tex->apt) eina_rectangle_pool_release(tex->apt);
         tex->apt = NULL;
         pt_unref(tex->pt);
+        tex->pt = NULL;
      }
    if (tex->ptt)
      {
         tex->ptt->allocations = eina_list_remove(tex->ptt->allocations, tex->aptt);
-        if (tex->aptt)
-          eina_rectangle_pool_release(tex->aptt);
+        if (tex->aptt) eina_rectangle_pool_release(tex->aptt);
         tex->aptt = NULL;
         pt_unref(tex->ptt);
+        tex->ptt = NULL;
      }
-   if (tex->ptu)
-     pt_unref(tex->ptu);
-   if (tex->ptv)
-     pt_unref(tex->ptv);
-   if (tex->ptuv)
-     pt_unref(tex->ptuv);
+   if (tex->ptu) pt_unref(tex->ptu);
+   if (tex->ptv) pt_unref(tex->ptv);
+   if (tex->ptuv) pt_unref(tex->ptuv);
+   tex->ptu = NULL;
+   tex->ptv = NULL;
+   tex->ptuv = NULL;
 
    evas_gl_common_texture_light_free(tex);
 }
