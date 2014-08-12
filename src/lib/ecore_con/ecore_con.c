@@ -372,6 +372,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->clients = NULL;
    svr->ppid = getpid();
 
+   servers = eina_list_append(servers, svr);
+
    svr->name = strdup(name);
    if (!svr->name)
      goto error;
@@ -408,8 +410,6 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
      if (!ecore_con_info_udp_listen(svr, _ecore_con_cb_udp_listen,
                                     svr))
        goto error;
-
-   servers = eina_list_append(servers, svr);
 
    return svr;
 
@@ -448,6 +448,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
+
+   servers = eina_list_append(servers, svr);
 
    svr->name = strdup(name);
    if (!svr->name)
@@ -501,8 +503,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    else if ((type == ECORE_CON_REMOTE_UDP) || (type == ECORE_CON_REMOTE_BROADCAST))
      /* UDP and MCAST */
      EINA_SAFETY_ON_FALSE_GOTO(ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr), error);
-
-   servers = eina_list_append(servers, svr);
 
    return svr;
 
