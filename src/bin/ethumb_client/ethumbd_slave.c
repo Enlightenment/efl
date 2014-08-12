@@ -151,6 +151,7 @@ _ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
 	*str = NULL;
 	return 0;
      }
+   buf[size] = 0;
 
    *str = strdup(buf);
    return 1;
