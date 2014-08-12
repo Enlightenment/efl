@@ -951,11 +951,11 @@ evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    Evas_GL_Texture *tex;
    int lformat;
 
-   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
-   if (!tex) return NULL;
-
    lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    if (lformat < 0) return NULL;
+
+   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
+   if (!tex) return NULL;
    tex->pt = _pool_tex_native_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format,
@@ -975,11 +975,11 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    Evas_GL_Texture *tex;
    int lformat;
 
-   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
-   if (!tex) return NULL;
-
    lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    if (lformat < 0) return NULL;
+
+   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
+   if (!tex) return NULL;
    tex->pt = _pool_tex_render_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format);
@@ -998,11 +998,11 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
    Evas_GL_Texture *tex;
    int lformat;
 
-   tex = evas_gl_common_texture_alloc(gc, im->w, im->h, im->alpha);
-   if (!tex) return NULL;
-
    lformat = _evas_gl_texture_search_format(tex->alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    if (lformat < 0) return NULL;
+
+   tex = evas_gl_common_texture_alloc(gc, im->w, im->h, im->alpha);
+   if (!tex) return NULL;
    tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h,
                                    *matching_format[lformat].intformat,
                                    *matching_format[lformat].format);
