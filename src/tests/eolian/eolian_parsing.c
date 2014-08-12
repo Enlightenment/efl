@@ -721,8 +721,13 @@ END_TEST
 
 START_TEST(eolian_enum)
 {
+   const Eolian_Variable *var = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
+   const Eolian_Expression *exp;
+   const char *name;
+   Eina_Value *v = NULL;
+   int i = 0;
 
    eolian_init();
 
@@ -732,6 +737,64 @@ START_TEST(eolian_enum)
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Enum")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
+
+   fail_if(!(type = eolian_type_enum_get_by_name("Foo")));
+
+   fail_if(!(eolian_type_enum_field_exists(type, "first")));
+   fail_if(!(exp = eolian_type_enum_field_get(type, "first")));
+   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != 0);
+
+   fail_if(!(eolian_type_enum_field_exists(type, "bar")));
+   fail_if(eolian_type_enum_field_get(type, "bar"));
+
+   fail_if(!(eolian_type_enum_field_exists(type, "baz")));
+   fail_if(!(exp = eolian_type_enum_field_get(type, "baz")));
+   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != 15);
+
+   fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
+
+   fail_if(!(eolian_type_enum_field_exists(type, "foo")));
+   fail_if(!(exp = eolian_type_enum_field_get(type, "foo")));
+   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != 15);
+
+   fail_if(!(type = eolian_type_alias_get_by_name("Baz")));
+   fail_if(!(type = eolian_type_base_type_get(type)));
+
+   fail_if(!(eolian_type_enum_field_exists(type, "flag1")));
+   fail_if(!(exp = eolian_type_enum_field_get(type, "flag1")));
+   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != (1 << 0));
+
+   fail_if(!(eolian_type_enum_field_exists(type, "flag2")));
+   fail_if(!(exp = eolian_type_enum_field_get(type, "flag2")));
+   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != (1 << 1));
+
+   fail_if(!(eolian_type_enum_field_exists(type, "flag3")));
+   fail_if(!(exp = eolian_type_enum_field_get(type, "flag3")));
+   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != (1 << 2));
+
+   fail_if(!(var = eolian_variable_constant_get_by_name("Bah")));
+   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
+   fail_if(eolian_variable_is_extern(var));
+   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(!(name = eolian_type_name_get(type)));
+   fail_if(strcmp(name, "int"));
+   eina_stringshare_del(name);
+   fail_if(!(exp = eolian_variable_value_get(var)));
+   fail_if(eolian_expression_eval_type(exp, type, &v) != EOLIAN_EXPR_INT);
+   eina_value_get(v, &i);
+   fail_if(i != (1 << 0));
 
    eolian_shutdown();
 }

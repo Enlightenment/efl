@@ -1,5 +1,6 @@
 // regular named enum
 enum Foo {
+    first,
     bar,
     baz = 5 * 3
 }
@@ -14,7 +15,7 @@ type Baz: enum _Baz {
     flag3 = 1 << 2
 };
 
-const foo: int = Baz.flag1;
+const Bah: int = Baz.flag1;
 
 class Enum {
     methods {
