@@ -427,7 +427,6 @@ parse_expr_simple(Eo_Lexer *ls)
                    expr->value.s = eina_stringshare_add(eina_strbuf_string_get
                        (buf));
                    pop_strbuf(ls);
-                   eo_lexer_get(ls);
                    break;
                 }
              }
@@ -464,6 +463,7 @@ parse_expr_bin(Eo_Lexer *ls, int min_prec)
         int prec = get_binop_prec(op);
         if ((op < 0) || (prec < 0) || (prec < min_prec))
           break;
+        eo_lexer_get(ls);
         rhs = parse_expr_bin(ls, prec + 1);
         pop_expr(ls);
         pop_expr(ls);
@@ -598,7 +598,6 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         eina_hash_add(def->fields, fname, fdef);
         def->field_names = eina_list_append(def->field_names, fname);
         pop_type(ls);
-        eina_stringshare_del(fname);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
           {
@@ -694,7 +693,6 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
           }
         eina_hash_add(def->fields, fname, fdef);
         def->field_names = eina_list_append(def->field_names, fname);
-        eina_stringshare_del(fname);
         Eina_Bool want_next = (ls->t.token == ',');
         if (want_next)
           eo_lexer_get(ls);

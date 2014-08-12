@@ -107,6 +107,9 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf)
    Eina_Iterator *itr = eolian_type_aliases_get_by_file(eo_filename);
    EINA_ITERATOR_FOREACH(itr, tp)
      {
+        /* avoid for the time being */
+        if (eolian_type_type_get(eolian_type_base_type_get(tp)) == EOLIAN_TYPE_ENUM)
+          continue;
         Eina_Strbuf *type_buf = _type_generate(tp);
         if (type_buf)
           {

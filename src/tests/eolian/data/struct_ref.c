@@ -22,8 +22,8 @@ typedef struct {
 } Bar;
 
 struct Named {
-  const char *something;
   int field;
+  const char *something;
 };
 
 struct Another {

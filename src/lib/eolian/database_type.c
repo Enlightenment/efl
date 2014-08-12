@@ -15,9 +15,10 @@ database_type_del(Eolian_Type *tp)
    if (tp->name) eina_stringshare_del(tp->name);
    if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->fields) eina_hash_free(tp->fields);
-   if (tp->field_names) eina_list_free(tp->field_names);
+   if (tp->field_names) EINA_LIST_FREE(tp->field_names, sp)
+     eina_stringshare_del(sp);
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
-      eina_stringshare_del(sp);
+     eina_stringshare_del(sp);
    if (tp->comment) eina_stringshare_del(tp->comment);
    if (tp->legacy) eina_stringshare_del(tp->legacy);
    free(tp);
@@ -158,7 +159,7 @@ _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         if (l != eina_list_last(tp->field_names))
           eina_strbuf_append(buf, ", ");
      }
-   eina_strbuf_append(buf, "}");
+   eina_strbuf_append(buf, " }");
    if (name)
      {
         eina_strbuf_append_char(buf, ' ');
@@ -359,7 +360,7 @@ database_type_print(Eolian_Type *tp)
              if (l != eina_list_last(tp->field_names))
                printf(", ");
           }
-        printf("}");
+        printf(" }");
      }
    if (tp->is_own)
      putchar(')');

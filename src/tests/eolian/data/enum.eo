@@ -1,0 +1,28 @@
+// regular named enum
+enum Foo {
+    bar,
+    baz = 5 * 3
+}
+
+enum Bar {
+    foo = enum Foo.baz
+}
+
+type Baz: enum _Baz {
+    flag1 = 1 << 0,
+    flag2 = 1 << 1,
+    flag3 = 1 << 2
+};
+
+const foo: int = Baz.flag1;
+
+class Enum {
+    methods {
+        foo {
+            params {
+                int idx;
+            }
+            return: own(char*);
+        }
+    }
+}

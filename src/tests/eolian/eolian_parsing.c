@@ -719,6 +719,24 @@ START_TEST(eolian_var)
 }
 END_TEST
 
+START_TEST(eolian_enum)
+{
+   const Eolian_Type *type = NULL;
+   const Eolian_Class *class;
+
+   eolian_init();
+
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/enum.eo"));
+
+   /* Check that the class Dummy is still readable */
+   fail_if(!(class = eolian_class_get_by_name("Enum")));
+   fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_class_funcs)
 {
    const Eolian_Function *fid = NULL;
@@ -767,6 +785,7 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_struct);
    tcase_add_test(tc, eolian_extern);
    tcase_add_test(tc, eolian_var);
+   tcase_add_test(tc, eolian_enum);
    tcase_add_test(tc, eolian_class_funcs);
 }
 
