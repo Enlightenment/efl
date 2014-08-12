@@ -413,9 +413,13 @@ parse_expr_simple(Eo_Lexer *ls)
                 }
               default:
                 {
+                   Eina_Strbuf *buf = push_strbuf(ls);
                    expr = push_expr(ls);
                    expr->type = EOLIAN_EXPR_NAME;
-                   expr->value.s = eina_stringshare_ref(ls->t.value.s);
+                   parse_name(ls, buf);
+                   expr->value.s = eina_stringshare_add(eina_strbuf_string_get
+                       (buf));
+                   pop_strbuf(ls);
                    eo_lexer_get(ls);
                    break;
                 }
