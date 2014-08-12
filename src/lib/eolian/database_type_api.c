@@ -90,6 +90,7 @@ eolian_type_subtypes_get(const Eolian_Type *tp)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_REGULAR
                                 || tpt == EOLIAN_TYPE_POINTER
                                 || tpt == EOLIAN_TYPE_REGULAR_STRUCT
+                                || tpt == EOLIAN_TYPE_REGULAR_ENUM
                                 || tpt == EOLIAN_TYPE_CLASS, NULL);
    if (!tp->subtypes) return NULL;
    return eina_list_iterator_new(tp->subtypes);
