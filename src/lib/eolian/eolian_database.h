@@ -274,6 +274,7 @@ void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *n
 
 Eolian_Expression_Type database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask, Eina_Value **out);
 void database_expr_del(Eolian_Expression *expr);
+void database_expr_print(Eolian_Expression *expr);
 
 /* variables */
 

@@ -294,7 +294,7 @@ eolian_show_typedef(const char *alias)
 
 static Eina_Bool
 _struct_cb(Eina_Hash *hash EINA_UNUSED, const char *name,
-            const Eolian_Type *tp, const void *fdata EINA_UNUSED)
+           const Eolian_Type *tp, const void *fdata EINA_UNUSED)
 {
    printf("Struct: %s\n", name);
    printf("  type: <");
@@ -315,6 +315,79 @@ eolian_show_struct(const char *name)
         eina_stringshare_del(shr);
         if (!tp) return EINA_FALSE;
         _struct_cb(NULL, name, tp, NULL);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_enum_cb(Eina_Hash *hash EINA_UNUSED, const char *name,
+         const Eolian_Type *tp, const void *fdata EINA_UNUSED)
+{
+   printf("Enum: %s\n", name);
+   printf("  type: <");
+   database_type_print((Eolian_Type*)tp);
+   printf(">\n");
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eolian_show_enum(const char *name)
+{
+   if (!name)
+     eina_hash_foreach(_enums, (Eina_Hash_Foreach)_enum_cb, NULL);
+   else
+     {
+        Eina_Stringshare *shr = eina_stringshare_add(name);
+        Eolian_Type *tp = eina_hash_find(_enums, shr);
+        eina_stringshare_del(shr);
+        if (!tp) return EINA_FALSE;
+        _enum_cb(NULL, name, tp, NULL);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_var_cb(Eina_Hash *hash EINA_UNUSED, const char *name,
+        const Eolian_Variable *var, const void *fdata EINA_UNUSED)
+{
+   if (var->type == EOLIAN_VAR_CONSTANT)
+     printf("Constant: %s\n", name);
+   else
+     printf("Global: %s\n", name);
+   printf("  value: <");
+   database_expr_print(var->value);
+   printf(">\n");
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eolian_show_global(const char *name)
+{
+   if (!name)
+     eina_hash_foreach(_globals, (Eina_Hash_Foreach)_var_cb, NULL);
+   else
+     {
+        Eina_Stringshare *shr = eina_stringshare_add(name);
+        Eolian_Variable *var = eina_hash_find(_globals, shr);
+        eina_stringshare_del(shr);
+        if (!var) return EINA_FALSE;
+        _var_cb(NULL, name, var, NULL);
+     }
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eolian_show_constant(const char *name)
+{
+   if (!name)
+     eina_hash_foreach(_constants, (Eina_Hash_Foreach)_var_cb, NULL);
+   else
+     {
+        Eina_Stringshare *shr = eina_stringshare_add(name);
+        Eolian_Variable *var = eina_hash_find(_constants, shr);
+        eina_stringshare_del(shr);
+        if (!var) return EINA_FALSE;
+        _var_cb(NULL, name, var, NULL);
      }
    return EINA_TRUE;
 }

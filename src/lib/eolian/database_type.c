@@ -268,6 +268,17 @@ _typedef_print(Eolian_Type *tp)
 }
 
 void
+database_expr_print(Eolian_Expression *exp)
+{
+   Eina_Value *val = NULL;
+   Eolian_Expression_Type et = eolian_expression_eval(exp, EOLIAN_MASK_ALL,
+       &val);
+   const char *ret = eolian_expression_value_to_literal(val, et);
+   printf("%s", ret);
+   eina_stringshare_del(ret);
+}
+
+void
 database_type_print(Eolian_Type *tp)
 {
    Eina_List *l;
@@ -342,14 +353,8 @@ database_type_print(Eolian_Type *tp)
              printf("%s", fname);
              if (ef->value)
                {
-                  Eina_Value *val = NULL;
-                  Eolian_Expression_Type et = eolian_expression_eval(ef->value,
-                      EOLIAN_MASK_INT, &val);
-                  const char *ret;
                   printf(" = ");
-                  ret = eolian_expression_value_to_literal(val, et);
-                  printf("%s", ret);
-                  eina_stringshare_del(ret);
+                  database_expr_print(ef->value);
                }
              if (l != eina_list_last(tp->field_names))
                printf(", ");

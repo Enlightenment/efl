@@ -288,6 +288,9 @@ EAPI Eina_Bool eolian_all_eot_files_parse();
  *
  * @see eolian_show_typedef
  * @see eolian_show_struct
+ * @see eolian_show_enum
+ * @see eolian_show_global
+ * @see eolian_show_constant
  * @see eolian_show_all
  *
  * @ingroup Eolian
@@ -307,6 +310,9 @@ EAPI Eina_Bool eolian_show_class(const Eolian_Class *klass);
  *
  * @see eolian_show_class
  * @see eolian_show_struct
+ * @see eolian_show_enum
+ * @see eolian_show_global
+ * @see eolian_show_constant
  * @see eolian_show_all
  *
  * @ingroup Eolian
@@ -326,11 +332,80 @@ EAPI Eina_Bool eolian_show_typedef(const char *alias);
  *
  * @see eolian_show_class
  * @see eolian_show_typedef
+ * @see eolian_show_enum
+ * @see eolian_show_global
+ * @see eolian_show_constant
  * @see eolian_show_all
  *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_show_struct(const char *name);
+
+/*
+ * @brief Show information about a given enum.
+ *
+ * If @c name is NULL, this function will print information of
+ * all the enums.
+ *
+ * @param[in] name the enum to show.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise (when enum is not
+ * found).
+ *
+ * @see eolian_show_class
+ * @see eolian_show_typedef
+ * @see eolian_show_struct
+ * @see eolian_show_global
+ * @see eolian_show_constant
+ * @see eolian_show_all
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_show_enum(const char *name);
+
+/*
+ * @brief Show information about a given global.
+ *
+ * If @c name is NULL, this function will print information of
+ * all the globals.
+ *
+ * @param[in] name the global to show.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise (when global is not
+ * found).
+ *
+ * @see eolian_show_class
+ * @see eolian_show_typedef
+ * @see eolian_show_struct
+ * @see eolian_show_enum
+ * @see eolian_show_constant
+ * @see eolian_show_all
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_show_global(const char *name);
+
+/*
+ * @brief Show information about a given constant.
+ *
+ * If @c name is NULL, this function will print information of
+ * all the constants.
+ *
+ * @param[in] name the constant to show.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise (when constant is not
+ * found).
+ *
+ * @see eolian_show_class
+ * @see eolian_show_typedef
+ * @see eolian_show_struct
+ * @see eolian_show_enum
+ * @see eolian_show_global
+ * @see eolian_show_all
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_show_constant(const char *name);
 
 /*
  * @brief Show information about everything.
@@ -341,6 +416,7 @@ EAPI Eina_Bool eolian_show_struct(const char *name);
  * @see eolian_show_class
  * @see eolian_show_typedef
  * @see eolian_show_struct
+ * @see eolian_show_enum
  *
  * @ingroup Eolian
  */
