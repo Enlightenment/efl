@@ -596,6 +596,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->base.column = fcol;
         fdef->type = tp;
         eina_hash_add(def->fields, fname, fdef);
+        def->field_names = eina_list_append(def->field_names, fname);
         pop_type(ls);
         eina_stringshare_del(fname);
         check_next(ls, ';');
@@ -692,6 +693,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              pop_expr(ls);
           }
         eina_hash_add(def->fields, fname, fdef);
+        def->field_names = eina_list_append(def->field_names, fname);
         eina_stringshare_del(fname);
         Eina_Bool want_next = (ls->t.token == ',');
         if (want_next)

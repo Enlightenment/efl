@@ -15,6 +15,7 @@ database_type_del(Eolian_Type *tp)
    if (tp->name) eina_stringshare_del(tp->name);
    if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->fields) eina_hash_free(tp->fields);
+   if (tp->field_names) eina_list_free(tp->field_names);
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
       eina_stringshare_del(sp);
    if (tp->comment) eina_stringshare_del(tp->comment);
@@ -87,19 +88,11 @@ _ftype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
 }
 
-static Eina_Bool
-_stype_field_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
-                void *fdata)
-{
-   database_type_to_str((Eolian_Type*)((Eolian_Struct_Field*)data)->type,
-                        (Eina_Strbuf*)fdata, (const char*)key);
-   eina_strbuf_append((Eina_Strbuf*)fdata, "; ");
-   return EINA_TRUE;
-}
-
 static void
 _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 {
+   const char *fname;
+   Eina_List *l;
    eina_strbuf_append(buf, "struct ");
    if (tp->name)
      {
@@ -114,7 +107,12 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append_char(buf, ' ');
      }
    eina_strbuf_append(buf, "{ ");
-   eina_hash_foreach(tp->fields, _stype_field_cb, buf);
+   EINA_LIST_FOREACH(tp->field_names, l, fname)
+     {
+        Eolian_Struct_Field *sf = eina_hash_find(tp->fields, fname);
+        database_type_to_str(sf->type, buf, fname);
+        eina_strbuf_append(buf, "; ");
+     }
    eina_strbuf_append(buf, "}");
    if (name)
      {
@@ -123,32 +121,11 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
 }
 
-static Eina_Bool
-_etype_field_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
-                void *fdata)
-{
-   Eina_Strbuf *buf = (Eina_Strbuf*)fdata;
-   const char *fname = (const char*)key;
-   Eolian_Enum_Field *ef = (Eolian_Enum_Field*)data;
-   eina_strbuf_append(buf, fname);
-   if (ef->value)
-     {
-        Eina_Value *val = NULL;
-        Eolian_Expression_Type et = eolian_expression_eval(ef->value,
-            EOLIAN_MASK_INT, &val);
-        const char *ret;
-        eina_strbuf_append(buf, " = ");
-        ret = eolian_expression_value_to_literal(val, et);
-        eina_strbuf_append(buf, ret);
-        eina_stringshare_del(ret);
-     }
-   eina_strbuf_append(buf, ", ");
-   return EINA_TRUE;
-}
-
 static void
 _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 {
+   const char *fname;
+   Eina_List *l;
    eina_strbuf_append(buf, "enum ");
    if (tp->name)
      {
@@ -163,7 +140,24 @@ _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append_char(buf, ' ');
      }
    eina_strbuf_append(buf, "{ ");
-   eina_hash_foreach(tp->fields, _etype_field_cb, buf);
+   EINA_LIST_FOREACH(tp->field_names, l, fname)
+     {
+        Eolian_Enum_Field *ef = eina_hash_find(tp->fields, fname);
+        eina_strbuf_append(buf, fname);
+        if (ef->value)
+          {
+             Eina_Value *val = NULL;
+             Eolian_Expression_Type et = eolian_expression_eval(ef->value,
+                 EOLIAN_MASK_INT, &val);
+             const char *ret;
+             eina_strbuf_append(buf, " = ");
+             ret = eolian_expression_value_to_literal(val, et);
+             eina_strbuf_append(buf, ret);
+             eina_stringshare_del(ret);
+          }
+        if (l != eina_list_last(tp->field_names))
+          eina_strbuf_append(buf, ", ");
+     }
    eina_strbuf_append(buf, "}");
    if (name)
      {
@@ -266,38 +260,6 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
 }
 
-static Eina_Bool
-_print_field(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data,
-             void *fdata EINA_UNUSED)
-{
-   Eolian_Struct_Field *sf = (Eolian_Struct_Field*)data;
-   printf("%s: ", (const char*)key);
-   database_type_print(sf->type);
-   printf("; ");
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_print_enum_field(const Eina_Hash *hash EINA_UNUSED, const void *key,
-                  void *data, void *fdata EINA_UNUSED)
-{
-   Eolian_Enum_Field *ef = (Eolian_Enum_Field*)data;
-   printf("%s", (const char*)key);
-   if (ef->value)
-     {
-        Eina_Value *val = NULL;
-        Eolian_Expression_Type et = eolian_expression_eval(ef->value,
-            EOLIAN_MASK_INT, &val);
-        const char *ret;
-        printf(" = ");
-        ret = eolian_expression_value_to_literal(val, et);
-        printf("%s", ret);
-        eina_stringshare_del(ret);
-     }
-   printf(", ");
-   return EINA_TRUE;
-}
-
 static void
 _typedef_print(Eolian_Type *tp)
 {
@@ -354,17 +316,44 @@ database_type_print(Eolian_Type *tp)
      }
    else if (tp->type == EOLIAN_TYPE_STRUCT)
      {
+        const char *fname;
+        Eina_List *l;
         printf("struct ");
         if (tp->full_name) printf("%s ", tp->full_name);
         printf("{ ");
-        eina_hash_foreach(tp->fields, _print_field, NULL);
+        EINA_LIST_FOREACH(tp->field_names, l, fname)
+          {
+             Eolian_Struct_Field *sf = eina_hash_find(tp->fields, fname);
+             printf("%s: ", fname);
+             database_type_print(sf->type);
+             printf("; ");
+          }
         printf("}");
      }
    else if (tp->type == EOLIAN_TYPE_ENUM)
      {
+        const char *fname;
+        Eina_List *l;
         printf("enum %s ", tp->full_name);
         printf("{ ");
-        eina_hash_foreach(tp->fields, _print_enum_field, NULL);
+        EINA_LIST_FOREACH(tp->field_names, l, fname)
+          {
+             Eolian_Enum_Field *ef = eina_hash_find(tp->fields, fname);
+             printf("%s", fname);
+             if (ef->value)
+               {
+                  Eina_Value *val = NULL;
+                  Eolian_Expression_Type et = eolian_expression_eval(ef->value,
+                      EOLIAN_MASK_INT, &val);
+                  const char *ret;
+                  printf(" = ");
+                  ret = eolian_expression_value_to_literal(val, et);
+                  printf("%s", ret);
+                  eina_stringshare_del(ret);
+               }
+             if (l != eina_list_last(tp->field_names))
+               printf(", ");
+          }
         printf("}");
      }
    if (tp->is_own)

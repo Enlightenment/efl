@@ -101,7 +101,7 @@ eolian_type_struct_field_names_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
-   return eina_hash_iterator_key_new(tp->fields);
+   return eina_list_iterator_new(tp->field_names);
 }
 
 EAPI const Eolian_Type *
@@ -133,7 +133,7 @@ eolian_type_enum_field_names_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, NULL);
-   return eina_hash_iterator_key_new(tp->fields);
+   return eina_list_iterator_new(tp->field_names);
 }
 
 EAPI Eina_Bool
