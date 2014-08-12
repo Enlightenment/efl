@@ -171,7 +171,6 @@ group { name: "elm/button/base/default";
                text_class: "button";
             }
             visible: 0;
-            fixed: 1 1;
          }
          desc { "visible";
             inherit: "default";
@@ -179,14 +178,12 @@ group { name: "elm/button/base/default";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
          desc { "textonly";
             inherit: "default";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
          desc { "disabled_visible";
             inherit: "default";
@@ -196,7 +193,6 @@ group { name: "elm/button/base/default";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
          desc { "disabled_textonly";
             inherit: "default";
@@ -205,7 +201,6 @@ group { name: "elm/button/base/default";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
       }
       rect { "event";
