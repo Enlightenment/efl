@@ -146,7 +146,7 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
 
    /* Convert back */
 #ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
-   eina_ustr = _evas_bidi_fribidichar_to_unicode(eina_ustr, ustr);
+   _evas_bidi_fribidichar_to_unicode(eina_ustr, ustr);
    if (base_ustr) free(base_ustr);
 #endif
    return EINA_TRUE;
