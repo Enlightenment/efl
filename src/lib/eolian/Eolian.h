@@ -1086,6 +1086,17 @@ EAPI const Eolian_Expression *eolian_type_enum_field_get(const Eolian_Type *tp, 
 EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Type *tp, const char *field);
 
 /*
+ * @brief Get the legacy prefix of enum field names. When not specified,
+ * enum name is used.
+ *
+ * @param[in] tp the type.
+ * @return the legacy prefix or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp);
+
+/*
  * @brief Get the description of a struct/alias type.
  *
  * @param[in] tp the type.

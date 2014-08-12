@@ -11,10 +11,7 @@ typedef Eo Struct;
 #ifndef _STRUCT_EO_TYPES
 #define _STRUCT_EO_TYPES
 
-typedef struct _Foo {
-  int field;
-  float another;
-} Foo;
+typedef struct _Foo Foo;
 
 typedef struct {
   Foo a;

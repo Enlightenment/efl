@@ -173,6 +173,14 @@ eolian_type_enum_field_description_get(const Eolian_Type *tp, const char *field)
 }
 
 EAPI Eina_Stringshare *
+eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, NULL);
+   return tp->legacy;
+}
+
+EAPI Eina_Stringshare *
 eolian_type_description_get(const Eolian_Type *tp)
 {
    Eolian_Type_Type tpp;
