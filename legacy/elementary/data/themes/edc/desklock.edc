@@ -89,9 +89,10 @@ group { name: "e/desklock/login_box";
             color: FN_COL_DEFAULT;
             align: 0.5 0.0;
             text { font: FNBD; size: 10;
-               min: 0 1;
+               min: 1 1;
                align: 0.5 0.5;
                text_class: "desklock_title";
+               ellipsis: -1;
             }
             fixed: 0 1;
          }
