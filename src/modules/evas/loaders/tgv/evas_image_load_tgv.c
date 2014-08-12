@@ -10,7 +10,12 @@
 # include <winsock2.h>
 #endif /* ifdef _WIN32 */
 
-#include "lz4.h"
+#ifdef ENABLE_LIBLZ4
+# include <lz4.h>
+#else
+# include "lz4.h"
+#endif
+
 #include "rg_etc1.h"
 #include "Evas_Loader.h"
 

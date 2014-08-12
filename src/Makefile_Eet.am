@@ -17,27 +17,38 @@ lib/eet/eet_image.c \
 lib/eet/eet_lib.c \
 lib/eet/eet_node.c \
 lib/eet/eet_utils.c \
-static_libs/lz4/lz4.c \
-static_libs/lz4/lz4.h \
-static_libs/lz4/lz4hc.c \
-static_libs/lz4/lz4hc.h \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/etc2_encoder.c \
 static_libs/rg_etc/rg_etc1.h
+if ! ENABLE_LIBLZ4
+lib_eet_libeet_la_SOURCES += \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h \
+static_libs/lz4/lz4hc.c \
+static_libs/lz4/lz4hc.h
+endif
 
 lib_eet_libeet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/static_libs/lz4 \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
 @EET_CFLAGS@
+if ! ENABLE_LIBLZ4
+lib_eet_libeet_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
 lib_eet_libeet_la_LIBADD = @EET_LIBS@ @EVIL_LIBS@
+if ENABLE_LIBLZ4
+lib_eet_libeet_la_LIBADD += @LIBLZ4_LIBS@
+endif
 lib_eet_libeet_la_DEPENDENCIES = @EET_INTERNAL_LIBS@
 lib_eet_libeet_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
+if ! ENABLE_LIBLZ4
 EXTRA_DIST += static_libs/lz4/README
+endif
 
 ### Binary
 

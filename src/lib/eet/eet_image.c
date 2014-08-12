@@ -25,8 +25,13 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
-#include "lz4.h"
-#include "lz4hc.h"
+#ifdef ENABLE_LIBLZ4
+# include <lz4.h>
+# include <lz4hc.h>
+#else
+# include "lz4.h"
+# include "lz4hc.h"
+#endif
 
 #include "rg_etc1.h"
 

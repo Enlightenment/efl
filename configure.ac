@@ -374,6 +374,28 @@ AC_DEFINE_IF([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"],
   [1], [Use interpreted Lua (5.1 or 5.2)])
 AC_SUBST([want_lua_old])
 
+
+want_liblz4="no"
+AC_ARG_ENABLE([liblz4],
+   [AS_HELP_STRING([--enable-liblz4],[Enable usage of liblz4 instead of our embedded copy. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+	# Only ships pc file since r120
+	PKG_CHECK_MODULES([LIBLZ4], [liblz4])
+	EFL_DEPEND_PKG([EET], [LIBLZ4], [liblz4])
+	EFL_DEPEND_PKG([EVAS], [LIBLZ4], [liblz4])
+       want_liblz4="yes"
+    else
+       want_liblz4="no"
+    fi
+   ],
+   [want_liblz4="no"])
+
+AM_CONDITIONAL([ENABLE_LIBLZ4], [test "${want_liblz4}" = "yes"])
+AC_DEFINE_IF([ENABLE_LIBLZ4], [test "${want_liblz4}" = "yes"], [1], [Use liblz4 external library instead of embedded copy])
+AC_SUBST([want_liblz4])
+AC_SUBST([ENABLE_LIBLZ4])
+
 #### Checks for header files
 
 # Common Checks (keep names sorted for ease of use):

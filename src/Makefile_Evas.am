@@ -1904,30 +1904,42 @@ modules/evas/savers/tgv/evas_image_save_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/rg_etc1.h \
-static_libs/rg_etc/etc2_encoder.c \
+static_libs/rg_etc/etc2_encoder.c
+if ! ENABLE_LIBLZ4
+lib_evas_libevas_la_SOURCES += \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h \
 static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h
+endif
 lib_evas_libevas_la_CPPFLAGS += \
--I$(top_srcdir)/src/static_libs/lz4 \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 @evas_image_loader_tgv_cflags@
+if ! ENABLE_LIBLZ4
+lib_evas_libevas_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
 lib_evas_libevas_la_LIBADD += @evas_image_loader_tgv_libs@
 if EVAS_CSERVE2
 bin_evas_evas_cserve2_slave_SOURCES += \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc2.c \
-static_libs/rg_etc/rg_etc1.h \
+static_libs/rg_etc/rg_etc1.h
+if ! ENABLE_LIBLZ4
+bin_evas_evas_cserve2_slave_SOURCES += \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h
+endif
 bin_evas_evas_cserve2_slave_CPPFLAGS +=  \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/static_libs/lz4 \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
 @evas_image_loader_tgv_cflags@
+if ! ENABLE_LIBLZ4
+bin_evas_evas_cserve2_slave_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
 bin_evas_evas_cserve2_slave_LDADD += @evas_image_loader_tgv_libs@
 endif
 else
@@ -1937,16 +1949,22 @@ modules_evas_loaders_tgv_module_la_SOURCES = \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc2.c \
-static_libs/rg_etc/rg_etc1.h \
+static_libs/rg_etc/rg_etc1.h
+if ! ENABLE_LIBLZ4
+modules_evas_loaders_tgv_module_la_SOURCES += \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h
+endif
 modules_evas_loaders_tgv_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/static_libs/lz4 \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
 @EVAS_CFLAGS@ \
 @evas_image_loader_tgv_cflags@
+if ! ENABLE_LIBLZ4
+modules_evas_loaders_tgv_module_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
 modules_evas_loaders_tgv_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
 @evas_image_loader_tgv_libs@
@@ -1960,18 +1978,24 @@ modules_evas_savers_tgv_module_la_SOURCES = \
 modules/evas/savers/tgv/evas_image_save_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc1.h \
-static_libs/rg_etc/etc2_encoder.c \
+static_libs/rg_etc/etc2_encoder.c
+if ! ENABLE_LIBLZ4
+modules_evas_savers_tgv_module_la_SOURCES += \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h \
 static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h
+endif
 modules_evas_savers_tgv_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/static_libs/lz4 \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
 @EVAS_CFLAGS@ \
 @evas_image_saver_tgv_cflags@
+if ! ENABLE_LIBLZ4
+modules_evas_savers_tgv_module_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
 modules_evas_savers_tgv_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
 @evas_image_saver_tgv_libs@

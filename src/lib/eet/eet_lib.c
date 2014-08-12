@@ -44,8 +44,13 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #include "Eet.h"
 #include "Eet_private.h"
 
-#include "lz4.h"
-#include "lz4hc.h"
+#ifdef ENABLE_LIBLZ4
+# include <lz4.h>
+# include <lz4hc.h>
+#else
+# include "lz4.h"
+# include "lz4hc.h"
+#endif
 
 #ifndef O_BINARY
 # define O_BINARY 0
