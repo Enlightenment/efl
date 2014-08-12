@@ -411,11 +411,18 @@ parse_expr_simple(Eo_Lexer *ls)
                    eo_lexer_get(ls);
                    break;
                 }
+              case KW_enum:
               default:
                 {
                    Eina_Strbuf *buf = push_strbuf(ls);
+                   Eolian_Expression_Type tp = EOLIAN_EXPR_NAME;
+                   if (ls->t.kw == KW_enum)
+                     {
+                        eo_lexer_get(ls);
+                        tp = EOLIAN_EXPR_ENUM;
+                     }
                    expr = push_expr(ls);
-                   expr->type = EOLIAN_EXPR_NAME;
+                   expr->type = tp;
                    parse_name(ls, buf);
                    expr->value.s = eina_stringshare_add(eina_strbuf_string_get
                        (buf));
@@ -701,7 +708,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->base.file = eina_stringshare_ref(ls->filename);
    def->base.line = line;
    def->base.column = column;
-   if (name) database_struct_add(def);
+   if (name) database_enum_add(def);
    return def;
 }
 

@@ -27,9 +27,14 @@ database_typedef_del(Eolian_Type *tp)
 {
    if (!tp) return;
    Eolian_Type *btp = tp->base_type;
-   /* prevent deletion of named structs as they're deleted later on */
-   if (btp && btp->type == EOLIAN_TYPE_STRUCT && btp->name)
-     tp->base_type = NULL;
+   /* prevent deletion of named structs/enums as they're deleted later on */
+   if (btp)
+     {
+        if (btp->type == EOLIAN_TYPE_ENUM)
+          tp->base_type = NULL;
+        else if (btp->type == EOLIAN_TYPE_STRUCT && btp->name)
+          tp->base_type = NULL;
+     }
    database_type_del(tp);
 }
 
@@ -49,6 +54,15 @@ Eina_Bool database_struct_add(Eolian_Type *tp)
    eina_hash_set(_structs, tp->full_name, tp);
    eina_hash_set(_structsf, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_structsf, tp->base.file), tp));
+   return EINA_TRUE;
+}
+
+Eina_Bool database_enum_add(Eolian_Type *tp)
+{
+   if (!_enums) return EINA_FALSE;
+   eina_hash_set(_enums, tp->full_name, tp);
+   eina_hash_set(_enumsf, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(_enumsf, tp->base.file), tp));
    return EINA_TRUE;
 }
 

@@ -59,6 +59,14 @@ expr_type_error(const Eolian_Expression *expr, int type, int mask)
    return node_error((const Eolian_Object*)expr, buf);
 }
 
+static Eina_Bool
+expr_error(const Eolian_Expression *expr, const char *msg)
+{
+   char buf[512];
+   snprintf(buf, sizeof(buf), "%s '%s'", msg, expr->value.s);
+   return node_error((const Eolian_Object*)expr, buf);
+}
+
 static int
 expr_type_to_mask(const Eolian_Expression *expr)
 {
@@ -407,6 +415,22 @@ eval_binary(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
 }
 
 static Eina_Bool
+split_enum_name(const char *str, char **ename, char **memb)
+{
+   char *fulln  = strdup(str);
+   char *memb_s = strrchr(fulln, '.');
+   if  (!memb_s)
+     {
+        free(fulln);
+        return EINA_FALSE;
+     }
+   *(memb_s++) = '\0';
+   *ename = fulln;
+   *memb  = memb_s;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
          Eolian_Expression *out)
 {
@@ -466,6 +490,90 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
              return expr_type_error(expr, EOLIAN_MASK_BOOL, mask);
            *out = *expr;
            return EINA_TRUE;
+        }
+      case EOLIAN_EXPR_NAME:
+        {
+           const Eolian_Variable *var = eolian_variable_constant_get_by_name
+             (expr->value.s);
+           const Eolian_Expression *exp = NULL;
+
+           if (!var)
+             {
+                const Eolian_Type *etp;
+
+                /* try aliases, hoping it'll be enum */
+                char *fulln = NULL, *memb = NULL;
+
+                if (!split_enum_name(expr->value.s, &fulln, &memb))
+                  return expr_error(expr, "undefined variable");
+
+                etp = eolian_type_alias_get_by_name(fulln);
+                while (etp && etp->type == EOLIAN_TYPE_ALIAS)
+                  {
+                     etp = eolian_type_base_type_get(etp);
+                     if (etp->type == EOLIAN_TYPE_ENUM)
+                       break;
+                     if (etp->type == EOLIAN_TYPE_REGULAR_ENUM)
+                       break;
+                     if (etp->type != EOLIAN_TYPE_REGULAR)
+                       {
+                          etp = NULL;
+                          break;
+                       }
+                     etp = eolian_type_alias_get_by_name(etp->full_name);
+                  }
+
+                if (etp && etp->type == EOLIAN_TYPE_REGULAR_ENUM)
+                  etp = eolian_type_enum_get_by_name(etp->full_name);
+
+                if (!etp || etp->type != EOLIAN_TYPE_ENUM)
+                  {
+                     free(fulln);
+                     return expr_error(expr, "undefined variable");
+                  }
+
+                exp = eolian_type_enum_field_get(etp, memb);
+                free(fulln);
+
+                if (!exp)
+                  return expr_error(expr, "invalid enum field");
+             }
+           else
+             exp = var->value;
+
+           if (!exp)
+             return expr_error(expr, "undefined variable");
+
+           return eval_exp(exp, mask, out);
+        }
+      case EOLIAN_EXPR_ENUM:
+        {
+           const Eolian_Type *etp;
+           const Eolian_Expression *exp;
+
+           char *fulln = NULL, *memb = NULL;
+           if (!split_enum_name(expr->value.s, &fulln, &memb))
+             {
+                return expr_error(expr, "invalid enum");
+             }
+
+           etp = eolian_type_enum_get_by_name(fulln);
+           if (etp && etp->type == EOLIAN_TYPE_REGULAR_ENUM)
+             etp = eolian_type_enum_get_by_name(etp->full_name);
+
+           if (!etp)
+             {
+                free(fulln);
+                return expr_error(expr, "invalid enum");
+             }
+
+           exp = eolian_type_enum_field_get(etp, memb);
+           free(fulln);
+
+           if (!exp)
+             return expr_error(expr, "invalid enum field");
+
+           return eval_exp(exp, mask, out);
         }
       case EOLIAN_EXPR_UNARY:
         return eval_unary(expr, mask, out);
