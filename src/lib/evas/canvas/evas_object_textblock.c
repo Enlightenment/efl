@@ -6137,7 +6137,7 @@ _escaped_char_get(const char *s, const char *s_end)
           return NULL;
 
         utf8_char = eina_unicode_unicode_to_utf8(uchar, NULL);
-        strcpy(utf8_escape, utf8_char);
+        strncpy(utf8_escape, utf8_char, sizeof(utf8_escape));
         free(utf8_char);
 
         return utf8_escape;
