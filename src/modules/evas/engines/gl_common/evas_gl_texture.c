@@ -998,7 +998,7 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
    Evas_GL_Texture *tex;
    int lformat;
 
-   lformat = _evas_gl_texture_search_format(tex->alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
+   lformat = _evas_gl_texture_search_format(im->alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    if (lformat < 0) return NULL;
 
    tex = evas_gl_common_texture_alloc(gc, im->w, im->h, im->alpha);
