@@ -1487,8 +1487,16 @@ parse_event(Eo_Lexer *ls)
      }
    ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
-   if (ls->t.kw == KW_at_private || ls->t.kw == KW_at_protected)
-     eo_lexer_get(ls);
+   if (ls->t.kw == KW_at_private)
+     {
+        ev->scope = EOLIAN_SCOPE_PRIVATE;
+        eo_lexer_get(ls);
+     }
+   else if (ls->t.kw == KW_at_protected)
+     {
+        ev->scope = EOLIAN_SCOPE_PROTECTED;
+        eo_lexer_get(ls);
+     }
    if (ls->t.token == ':')
      {
         eo_lexer_get(ls);

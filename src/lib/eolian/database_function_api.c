@@ -1,7 +1,7 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eolian_Function_Scope
+EAPI Eolian_Object_Scope
 eolian_function_scope_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EOLIAN_SCOPE_PUBLIC);

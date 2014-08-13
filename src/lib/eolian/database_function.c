@@ -30,7 +30,7 @@ database_function_new(const char *function_name, Eolian_Function_Type foo_type)
 }
 
 void
-database_function_scope_set(Eolian_Function *fid, Eolian_Function_Scope scope)
+database_function_scope_set(Eolian_Function *fid, Eolian_Object_Scope scope)
 {
    EINA_SAFETY_ON_NULL_RETURN(fid);
    fid->scope = scope;

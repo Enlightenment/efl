@@ -122,8 +122,9 @@ typedef enum
 typedef enum
 {
    EOLIAN_SCOPE_PUBLIC,
+   EOLIAN_SCOPE_PRIVATE,
    EOLIAN_SCOPE_PROTECTED
-} Eolian_Function_Scope;
+} Eolian_Object_Scope;
 
 typedef enum
 {
@@ -583,7 +584,7 @@ EAPI Eolian_Function_Type eolian_function_type_get(const Eolian_Function *functi
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function_Scope eolian_function_scope_get(const Eolian_Function *function_id);
+EAPI Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id);
 
 /*
  * @brief Returns the name of a function
@@ -883,6 +884,16 @@ EAPI Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_class_event_information_get(const Eolian_Event *event, const char **event_name, const Eolian_Type **event_type, const char **event_desc);
+
+/*
+ * @brief Returns the scope of an event
+ *
+ * @param[in] event the event handle
+ * @return the event scope
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Object_Scope eolian_class_event_scope_get(const Eolian_Event *event);
 
 /*
  * @brief Indicates if the class constructor has to invoke

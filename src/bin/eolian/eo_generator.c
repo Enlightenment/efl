@@ -92,7 +92,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
    const Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
    Eina_Bool ret_const = EINA_FALSE;
-   Eolian_Function_Scope scope = eolian_function_scope_get(func);
+   Eolian_Object_Scope scope = eolian_function_scope_get(func);
 
    _class_func_env_create(class, eolian_function_name_get(func), ftype, &func_env);
    char *fsuffix = "";

@@ -10,3 +10,10 @@ eolian_class_event_information_get(const Eolian_Event *event, const char **event
    if (event_comment) *event_comment = event->comment;
    return EINA_TRUE;
 }
+
+EAPI Eolian_Object_Scope
+eolian_class_event_scope_get(const Eolian_Event *event)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EOLIAN_SCOPE_PUBLIC);
+   return event->scope;
+}

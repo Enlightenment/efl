@@ -86,7 +86,7 @@ struct _Eolian_Function
    Eina_List *keys; /* list of Eolian_Function_Parameter */
    Eina_List *params; /* list of Eolian_Function_Parameter */
    Eolian_Function_Type type;
-   Eolian_Function_Scope scope;
+   Eolian_Object_Scope scope;
    Eolian_Type *get_ret_type;
    Eolian_Type *set_ret_type;
    Eolian_Expression *get_ret_val;
@@ -152,6 +152,7 @@ struct _Eolian_Event
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eolian_Type *type;
+   int scope;
 };
 
 typedef struct _Eolian_Struct_Field
@@ -319,7 +320,7 @@ void database_function_return_flag_set_as_warn_unused(Eolian_Function *foo_id, E
 void database_function_object_set_as_const(Eolian_Function *foo_id, Eina_Bool is_const);
 void database_function_set_as_class(Eolian_Function *foo_id, Eina_Bool is_class);
 Eina_Bool database_function_set_as_virtual_pure(Eolian_Function *function_id, Eolian_Function_Type type);
-void database_function_scope_set(Eolian_Function *function_id, Eolian_Function_Scope scope);
+void database_function_scope_set(Eolian_Function *function_id, Eolian_Object_Scope scope);
 
 Eolian_Function_Parameter *database_property_key_add(Eolian_Function *foo_id, Eolian_Type *type, const char *name, const char *description);
 Eolian_Function_Parameter *database_property_value_add(Eolian_Function *foo_id, Eolian_Type *type, const char *name, const char *description);
