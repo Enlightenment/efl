@@ -273,13 +273,25 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
      {
         const char *evname = eolian_event_name_get(event);
         const char *evdesc = eolian_event_description_get(event);
+        Eolian_Object_Scope scope = eolian_event_scope_get(event);
+
+        if (scope == EOLIAN_SCOPE_PRIVATE)
+          continue;
+
+        if (scope == EOLIAN_SCOPE_PROTECTED)
+          {
+             eina_strbuf_append_printf(str_ev, "\n#ifdef %s_PROTECTED\n", class_env.upper_classname);
+             eina_strbuf_append_printf(str_extrn_ev, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
+          }
+        else
+          eina_strbuf_append_char(str_ev, '\n');
 
         if (!evdesc) evdesc = "No description";
         eina_strbuf_reset(tmpbuf);
         eina_strbuf_append(tmpbuf, evdesc);
         eina_strbuf_replace_all(tmpbuf, "\n", "\n * ");
         eina_strbuf_prepend(tmpbuf," * ");
-        eina_strbuf_append_printf(str_ev, "\n/**\n%s\n */\n", eina_strbuf_string_get(tmpbuf));
+        eina_strbuf_append_printf(str_ev, "/**\n%s\n */\n", eina_strbuf_string_get(tmpbuf));
 
         eina_strbuf_reset(tmpbuf);
         eina_strbuf_append_printf(tmpbuf, "%s_EVENT_%s", class_env.upper_classname, evname);
@@ -288,6 +300,12 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         eina_str_toupper(&s);
         eina_strbuf_append_printf(str_ev, "#define %s (&(_%s))\n", s, s);
         eina_strbuf_append_printf(str_extrn_ev, "EOAPI extern const Eo_Event_Description _%s;\n", s);
+
+        if (scope == EOLIAN_SCOPE_PROTECTED)
+          {
+             eina_strbuf_append(str_ev, "#endif\n");
+             eina_strbuf_append(str_extrn_ev, "#endif\n");
+          }
      }
 
    int i;
