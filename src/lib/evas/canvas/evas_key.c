@@ -151,8 +151,7 @@ _evas_canvas_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const ch
 
    n = (Evas_Modifier_Mask)evas_key_modifier_number(&(e->modifiers), keyname);
    if (n < 0 || n > 63) return;
-   num = (Evas_Modifier_Mask)n;
-   num = 1 << num;
+   num = 1 << n;
    e->modifiers.mask |= num;
 }
 
@@ -164,8 +163,7 @@ _evas_canvas_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const c
 
    n = evas_key_modifier_number(&(e->modifiers), keyname);
    if (n < 0 || n > 63) return;
-   num = (Evas_Modifier_Mask)n;
-   num = 1 << num;
+   num = 1 << n;
    e->modifiers.mask &= ~num;
 }
 
@@ -177,8 +175,7 @@ _evas_canvas_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *
 
    n = evas_key_lock_number(&(e->locks), keyname);
    if (n < 0 || n > 63) return;
-   num = (Evas_Modifier_Mask)n;
-   num = 1 << num;
+   num = 1 << n;
    e->locks.mask |= num;
 }
 
@@ -190,8 +187,7 @@ _evas_canvas_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char 
 
    n = evas_key_lock_number(&(e->locks), keyname);
    if (n < 0 || n > 63) return;
-   num = (Evas_Modifier_Mask)n;
-   num = 1 << num;
+   num = 1 << n;
    e->locks.mask &= ~num;
 }
 
