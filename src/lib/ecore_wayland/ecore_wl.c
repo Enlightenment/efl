@@ -65,7 +65,7 @@ static const struct wl_callback_listener _ecore_wl_anim_listener =
 };
 
 static void 
-xdg_shell_ping(void *data EINA_UNUSED, struct xdg_shell *shell, uint32_t serial)
+xdg_shell_ping(void *data, struct xdg_shell *shell, uint32_t serial)
 {
    xdg_shell_pong(shell, serial);
 }
