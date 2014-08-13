@@ -437,9 +437,7 @@ END_TEST
 START_TEST(eolian_simple_parsing)
 {
    const Eolian_Function *fid = NULL;
-   const Eolian_Type *ptypep = NULL;
-   const char *string = NULL, *ptype = NULL, *pname = NULL;
-   Eolian_Parameter_Dir dir = EOLIAN_IN_PARAM;
+   const char *string = NULL, *ptype = NULL;
    const Eolian_Function_Parameter *param = NULL;
    const Eolian_Expression *expr = NULL;
    const Eolian_Class *class;
@@ -494,10 +492,9 @@ START_TEST(eolian_simple_parsing)
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
-   eolian_parameter_information_get(param, NULL, &ptypep, &pname, &string);
-   fail_if(strcmp(eolian_type_name_get(ptypep), "int"));
-   fail_if(strcmp(pname, "value"));
-   fail_if(strcmp(string, "Value description"));
+   fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "int"));
+   fail_if(strcmp(eolian_parameter_name_get(param), "value"));
+   fail_if(strcmp(eolian_parameter_description_get(param), "Value description"));
 
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
@@ -521,25 +518,22 @@ START_TEST(eolian_simple_parsing)
    /* Function parameters */
    fail_if(!(iter = eolian_property_values_get(fid)));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   eolian_parameter_information_get(param, &dir, &ptypep, &pname, &string);
-   fail_if(dir != EOLIAN_IN_PARAM);
-   fail_if(strcmp(eolian_type_name_get(ptypep), "int"));
-   fail_if(strcmp(pname, "a"));
-   fail_if(!string || strcmp(string, "a"));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
+   fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "int"));
+   fail_if(strcmp(eolian_parameter_name_get(param), "a"));
+   fail_if(strcmp(eolian_parameter_description_get(param), "a"));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   eolian_parameter_information_get(param, &dir, &ptypep, &pname, &string);
-   fail_if(dir != EOLIAN_INOUT_PARAM);
-   ptype = eolian_type_name_get(ptypep);
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_INOUT_PARAM);
+   ptype = eolian_type_name_get(eolian_parameter_type_get(param));
    fail_if(strcmp(ptype, "char"));
    eina_stringshare_del(ptype);
-   fail_if(strcmp(pname, "b"));
-   fail_if(string);
+   fail_if(strcmp(eolian_parameter_name_get(param), "b"));
+   fail_if(eolian_parameter_description_get(param));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   eolian_parameter_information_get(param, &dir, &ptypep, &pname, &string);
-   fail_if(dir != EOLIAN_OUT_PARAM);
-   fail_if(strcmp(eolian_type_name_get(ptypep), "double"));
-   fail_if(strcmp(pname, "c"));
-   fail_if(string);
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_OUT_PARAM);
+   fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "double"));
+   fail_if(strcmp(eolian_parameter_name_get(param), "c"));
+   fail_if(eolian_parameter_description_get(param));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 

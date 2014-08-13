@@ -276,8 +276,7 @@ parameter_name(Eolian_Function_Parameter const& parameter)
 inline bool
 parameter_is_out(Eolian_Function_Parameter const& parameter)
 {
-   Eolian_Parameter_Dir direction;
-   ::eolian_parameter_information_get(&parameter, &direction, NULL, NULL, NULL);
+   Eolian_Parameter_Dir direction = eolian_parameter_direction_get(&parameter);
    return direction == EOLIAN_OUT_PARAM || direction == EOLIAN_INOUT_PARAM;
 }
 

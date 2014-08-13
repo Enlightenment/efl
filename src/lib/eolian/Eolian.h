@@ -705,17 +705,14 @@ EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id);
 EAPI Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id);
 
 /*
- * @brief Get information about a function parameter
+ * @brief Get direction of a parameter
  *
  * @param[in] param_desc parameter handle
- * @param[out] param_dir in/out/inout
- * @param[out] type type of the parameter
- * @param[out] name name of the parameter
- * @param[out] description description of the parameter
+ * @return the direction of the parameter
  *
  * @ingroup Eolian
  */
-EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, const Eolian_Type **type, const char **name, const char **description);
+EAPI Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
 
 /*
  * @brief Get type of a parameter
@@ -736,6 +733,16 @@ EAPI const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Paramete
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
+
+/*
+ * @brief Get description of a parameter
+ *
+ * @param[in] param_desc parameter handle
+ * @return the description of the parameter or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_parameter_description_get(const Eolian_Function_Parameter *param);
 
 /*
  * @brief Indicates if a parameter has a const attribute.

@@ -106,7 +106,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
-                  eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &rettypet, NULL, NULL);
+                  rettypet = eolian_parameter_type_get((Eolian_Function_Parameter*)data);
                   var_as_ret = EINA_TRUE;
                   ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
@@ -154,13 +154,11 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
    itr = eolian_property_keys_get(func);
    EINA_ITERATOR_FOREACH(itr, data)
      {
-        const Eolian_Type *ptypet;
-        const char *pname;
-        const char *ptype;
-        const char *pdesc = NULL;
-        eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &ptypet, &pname, &pdesc);
-
-        ptype = eolian_type_c_type_get(ptypet);
+        Eolian_Function_Parameter *param = data;
+        const Eolian_Type *ptypet = eolian_parameter_type_get(param);
+        const char *pname = eolian_parameter_name_get(param);
+        const char *ptype = eolian_type_c_type_get(ptypet);
+        const char *pdesc = eolian_parameter_description_get(param);
 
         eina_strbuf_append_printf(str_pardesc, tmpl_eo_pardesc, "in", pname, pdesc?pdesc:"No description supplied.");
 
@@ -175,15 +173,13 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
         itr = eolian_function_parameters_get(func);
         EINA_ITERATOR_FOREACH(itr, data)
           {
-             const Eolian_Type *ptypet;
-             const char *pname;
-             const char *ptype;
-             const char *pdesc;
+             Eolian_Function_Parameter *param = data;
+             const Eolian_Type *ptypet = eolian_parameter_type_get(param);
+             const char *pname = eolian_parameter_name_get(param);
+             const char *ptype = eolian_type_c_type_get(ptypet);
+             const char *pdesc = eolian_parameter_description_get(param);
              Eina_Bool add_star = EINA_FALSE;
-             Eolian_Parameter_Dir pdir;
-             eolian_parameter_information_get((Eolian_Function_Parameter*)data, &pdir, &ptypet, &pname, &pdesc);
-
-             ptype = eolian_type_c_type_get(ptypet);
+             Eolian_Parameter_Dir pdir = eolian_parameter_direction_get(param);
 
              Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET);
              if (ftype == EOLIAN_PROP_GET) {
@@ -342,7 +338,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Bool var_as_ret = EINA_FALSE;
    const Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
-   const char *retname = NULL;
    Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
    Eina_Iterator *itr;
@@ -357,7 +352,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Strbuf *full_params = eina_strbuf_new(); /* variables types + names */
 
    rettypet = eolian_function_return_type_get(funcid, ftype);
-   retname = "ret";
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";
@@ -368,7 +362,8 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
-                  eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &rettypet, &retname, NULL);
+                  Eolian_Function_Parameter *param = data;
+                  rettypet = eolian_parameter_type_get(param);
                   var_as_ret = EINA_TRUE;
                   ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
@@ -383,13 +378,10 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    itr = eolian_property_keys_get(funcid);
    EINA_ITERATOR_FOREACH(itr, data)
      {
-        const Eolian_Type *ptypet;
-        const char *pname;
-        const char *ptype;
-        eolian_parameter_information_get((Eolian_Function_Parameter*)data, NULL, &ptypet, &pname, NULL);
-
-        ptype = eolian_type_c_type_get(ptypet);
-
+        Eolian_Function_Parameter *param = data;
+        const Eolian_Type *ptypet = eolian_parameter_type_get(param);
+        const char *pname = eolian_parameter_name_get(param);
+        const char *ptype = eolian_type_c_type_get(ptypet);
         Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET);
         if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
         eina_strbuf_append_printf(params, "%s", pname);
@@ -404,14 +396,11 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         itr = eolian_function_parameters_get(funcid);
         EINA_ITERATOR_FOREACH(itr, data)
           {
-             const Eolian_Type *ptypet;
-             const char *pname;
-             const char *ptype;
-             Eolian_Parameter_Dir pdir;
-             eolian_parameter_information_get((Eolian_Function_Parameter*)data, &pdir, &ptypet, &pname, NULL);
-
-             ptype = eolian_type_c_type_get(ptypet);
-
+             Eolian_Function_Parameter *param = data;
+             const Eolian_Type *ptypet = eolian_parameter_type_get(param);
+             const char *pname = eolian_parameter_name_get(param);
+             const char *ptype = eolian_type_c_type_get(ptypet);
+             Eolian_Parameter_Dir pdir = eolian_parameter_direction_get(param);
              Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET);
              Eina_Bool had_star = !!strchr(ptype, '*');
              if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);

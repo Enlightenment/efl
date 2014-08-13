@@ -7,11 +7,8 @@ namespace eolian_cxx {
 static std::string
 _comment_parameter(Eolian_Function_Parameter *param)
 {
-   Eolian_Parameter_Dir direction;
-   Eina_Stringshare *description;
-
-   ::eolian_parameter_information_get
-     (param, &direction, NULL, NULL, &description);
+   Eolian_Parameter_Dir direction = eolian_parameter_direction_get(param);
+   Eina_Stringshare *description = eolian_parameter_description_get(param);
 
    std::string doc = "@param";
    if (direction == EOLIAN_IN_PARAM) doc += " ";

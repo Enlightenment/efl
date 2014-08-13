@@ -17,11 +17,9 @@ _params_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina_Bo
    itr = eolian_property_keys_get(foo);
    EINA_ITERATOR_FOREACH(itr, param)
      {
-        const Eolian_Type *ptypet;
-        const char *pname;
-        const char *ptype;
-        eolian_parameter_information_get(param, NULL, &ptypet, &pname, NULL);
-        ptype = eolian_type_c_type_get(ptypet);
+        const Eolian_Type *ptypet = eolian_parameter_type_get(param);
+        const char *pname = eolian_parameter_name_get(param);
+        const char *ptype = eolian_type_c_type_get(ptypet);
         Eina_Bool had_star = !!strchr(ptype, '*');
         Eina_Bool is_const = eolian_parameter_const_attribute_get(param, ftype == EOLIAN_PROP_GET);
         if (eina_strbuf_length_get(params))
@@ -43,12 +41,10 @@ _params_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina_Bo
         itr = eolian_function_parameters_get(foo);
         EINA_ITERATOR_FOREACH(itr, param)
           {
-             const Eolian_Type *ptypet;
-             const char *pname;
-             const char *ptype;
-             Eolian_Parameter_Dir pdir;
-             eolian_parameter_information_get(param, &pdir, &ptypet, &pname, NULL);
-             ptype = eolian_type_c_type_get(ptypet);
+             const Eolian_Type *ptypet = eolian_parameter_type_get(param);
+             const char *pname = eolian_parameter_name_get(param);
+             const char *ptype = eolian_type_c_type_get(ptypet);
+             Eolian_Parameter_Dir pdir = eolian_parameter_direction_get(param);
              Eina_Bool is_const = eolian_parameter_const_attribute_get(param, ftype == EOLIAN_PROP_GET);
              Eina_Bool had_star = !!strchr(ptype, '*');
              if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
@@ -153,7 +149,7 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
         if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
           {
              Eolian_Function_Parameter *param = data;
-             eolian_parameter_information_get(param, NULL, &rettypet, NULL, NULL);
+             rettypet = eolian_parameter_type_get(param);
              var_as_ret = EINA_TRUE;
              ret_const = eolian_parameter_const_attribute_get(param, EINA_TRUE);
           }
