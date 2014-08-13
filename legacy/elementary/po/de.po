@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-07-22 18:31+0900\n"
+"POT-Creation-Date: 2014-08-14 00:45+0900\n"
 "PO-Revision-Date: 2011-02-25 20:22+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:1396
+#: src/lib/elc_fileselector.c:1400
 msgid "Up"
 msgstr "Aufwärts"
 
-#: src/lib/elc_fileselector.c:1411
+#: src/lib/elc_fileselector.c:1415
 msgid "Home"
 msgstr "Persönlicher Ordner"
 
-#: src/lib/elc_fileselector.c:1627 src/lib/elm_entry.c:1481
+#: src/lib/elc_fileselector.c:1631 src/lib/elm_entry.c:1481
 #: src/lib/elm_entry.c:1506
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/lib/elc_fileselector.c:1636
+#: src/lib/elc_fileselector.c:1640
 msgid "OK"
 msgstr "OK"
 
@@ -47,23 +47,23 @@ msgstr ""
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:413
+#: src/lib/elc_naviframe.c:435
 msgid "Title"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:940 src/lib/elc_naviframe.c:1135
+#: src/lib/elc_naviframe.c:962 src/lib/elc_naviframe.c:1160
 msgid "Back"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:1216
+#: src/lib/elc_naviframe.c:1251
 msgid "Next"
 msgstr ""
 
-#: src/lib/elc_popup.c:259 src/lib/elc_popup.c:880
+#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:884
 msgid "Popup Title"
 msgstr ""
 
-#: src/lib/elc_popup.c:269 src/lib/elc_popup.c:946
+#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:950
 msgid "Popup Body Text"
 msgstr ""
 
@@ -71,75 +71,75 @@ msgstr ""
 msgid "Bubble"
 msgstr ""
 
-#: src/lib/elm_button.c:71
+#: src/lib/elm_button.c:72
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:276 src/lib/elm_check.c:240 src/lib/elm_gengrid.c:723
-#: src/lib/elm_genlist.c:1455 src/lib/elm_list.c:2043 src/lib/elm_radio.c:257
-#: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:576
-#: src/lib/elm_toolbar.c:2208
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:767
+#: src/lib/elm_genlist.c:1459 src/lib/elm_list.c:2047 src/lib/elm_radio.c:261
+#: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
+#: src/lib/elm_toolbar.c:2212
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:301
+#: src/lib/elm_button.c:302
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:154
+#: src/lib/elm_calendar.c:158
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:163
+#: src/lib/elm_calendar.c:167
 msgid "%B"
 msgstr ""
 
-#: src/lib/elm_calendar.c:172
+#: src/lib/elm_calendar.c:176
 msgid "%Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:287
+#: src/lib/elm_calendar.c:291
 msgid "calendar item"
 msgstr ""
 
-#: src/lib/elm_calendar.c:313
+#: src/lib/elm_calendar.c:317
 msgid "calendar decrement month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:318
+#: src/lib/elm_calendar.c:322
 msgid "calendar decrement year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:323
+#: src/lib/elm_calendar.c:327
 msgid "calendar increment month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:328
+#: src/lib/elm_calendar.c:332
 msgid "calendar increment year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:333
+#: src/lib/elm_calendar.c:337
 msgid "calendar month"
 msgstr ""
 
-#: src/lib/elm_calendar.c:338
+#: src/lib/elm_calendar.c:342
 msgid "calendar year"
 msgstr ""
 
-#: src/lib/elm_check.c:67 src/lib/elm_check.c:253 src/lib/elm_radio.c:103
-#: src/lib/elm_radio.c:258
+#: src/lib/elm_check.c:68 src/lib/elm_check.c:254 src/lib/elm_radio.c:107
+#: src/lib/elm_radio.c:262
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:73 src/lib/elm_check.c:265 src/lib/elm_radio.c:260
+#: src/lib/elm_check.c:74 src/lib/elm_check.c:266 src/lib/elm_radio.c:264
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:249 src/lib/elm_check.c:262
+#: src/lib/elm_check.c:250 src/lib/elm_check.c:263
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:340
+#: src/lib/elm_check.c:341
 msgid "Check"
 msgstr ""
 
@@ -159,11 +159,11 @@ msgstr ""
 msgid "Clock"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1368
+#: src/lib/elm_colorselector.c:1372
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:3203
+#: src/lib/elm_config.c:3240
 msgid "default:LTR"
 msgstr "Standard: LTR"
 
@@ -171,7 +171,7 @@ msgstr "Standard: LTR"
 msgid "day selector item"
 msgstr ""
 
-#: src/lib/elm_diskselector.c:676
+#: src/lib/elm_diskselector.c:680
 msgid "diskselector item"
 msgstr ""
 
@@ -191,11 +191,11 @@ msgstr "Einfügen"
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/lib/elm_entry.c:3474
+#: src/lib/elm_entry.c:3479
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:753
+#: src/lib/elm_gengrid.c:797
 msgid "Gengrid Item"
 msgstr ""
 
@@ -211,23 +211,23 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
-#: src/lib/elm_panel.c:70
+#: src/lib/elm_panel.c:74
 msgid "state: opened"
 msgstr ""
 
-#: src/lib/elm_panel.c:71
+#: src/lib/elm_panel.c:75
 msgid "state: closed"
 msgstr ""
 
-#: src/lib/elm_panel.c:111
-msgid "A drawer is open"
+#: src/lib/elm_panel.c:115
+msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elm_panel.c:113
-msgid "Double tap to close drawer menu"
+#: src/lib/elm_panel.c:117
+msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elm_panel.c:183
+#: src/lib/elm_panel.c:187
 msgid "panel button"
 msgstr ""
 
@@ -235,11 +235,11 @@ msgstr ""
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elm_radio.c:286
+#: src/lib/elm_radio.c:290
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2210
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2214
 msgid "State: Selected"
 msgstr ""
 
@@ -252,40 +252,40 @@ msgstr "Auswählen"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:878
+#: src/lib/elm_slider.c:882
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:665
+#: src/lib/elm_spinner.c:674
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:674
+#: src/lib/elm_spinner.c:683
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:682
+#: src/lib/elm_spinner.c:691
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1670 src/lib/elm_toolbar.c:2269
+#: src/lib/elm_toolbar.c:1674 src/lib/elm_toolbar.c:2273
 #, fuzzy
 msgid "Selected"
 msgstr "Auswählen"
 
-#: src/lib/elm_toolbar.c:2206
+#: src/lib/elm_toolbar.c:2210
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2212
+#: src/lib/elm_toolbar.c:2216
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2264
+#: src/lib/elm_toolbar.c:2268
 #, fuzzy
 msgid "Unselected"
 msgstr "Auswählen"
 
-#: src/lib/elm_toolbar.c:2281
+#: src/lib/elm_toolbar.c:2285
 msgid "Toolbar Item"
 msgstr ""

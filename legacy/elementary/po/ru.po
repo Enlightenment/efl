@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-07-31 19:14+0400\n"
+"POT-Creation-Date: 2014-08-14 00:45+0900\n"
 "PO-Revision-Date: 2014-07-31 19:14+0400\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -77,7 +77,7 @@ msgstr "Облачко"
 msgid "Clicked"
 msgstr "Нажато"
 
-#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:769
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:767
 #: src/lib/elm_genlist.c:1459 src/lib/elm_list.c:2047 src/lib/elm_radio.c:261
 #: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
 #: src/lib/elm_toolbar.c:2212
@@ -165,7 +165,7 @@ msgstr "Часы"
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:3203
+#: src/lib/elm_config.c:3240
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -193,11 +193,11 @@ msgstr "Вставить"
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elm_entry.c:3474
+#: src/lib/elm_entry.c:3479
 msgid "Entry"
 msgstr "Запись"
 
-#: src/lib/elm_gengrid.c:799
+#: src/lib/elm_gengrid.c:797
 msgid "Gengrid Item"
 msgstr "Элемент сетки"
 
@@ -223,12 +223,12 @@ msgstr "состояние: закрыто"
 
 #: src/lib/elm_panel.c:115
 #, fuzzy
-msgid "A drawer is open"
+msgid "A panel is open"
 msgstr "Отрисовщик открыт"
 
 #: src/lib/elm_panel.c:117
 #, fuzzy
-msgid "Double tap to close drawer menu"
+msgid "Double tap to close panel menu"
 msgstr "Двойной щелчёк, чтобы закрыть меню отрисовщика"
 
 #: src/lib/elm_panel.c:187
