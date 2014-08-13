@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_wl_private.h"
+#include "xdg-shell-client-protocol.h"
 
 /* local function prototypes */
 static void _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial);
@@ -12,6 +13,9 @@ static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *sur
 static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
+static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
+static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial);
+
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -28,6 +32,14 @@ static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener =
    _ecore_wl_window_cb_ping,
    _ecore_wl_window_cb_configure,
    _ecore_wl_window_cb_popup_done
+};
+
+static const struct xdg_surface_listener _ecore_xdg_surface_listener = {
+   _ecore_xdg_handle_surface_configure,
+};
+
+static const struct xdg_popup_listener _ecore_xdg_popup_listener = {
+   _ecore_xdg_handle_popup_done,
 };
 
 /* internal functions */
@@ -787,6 +799,53 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
      }
 }
 
+static void
+_ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height, struct wl_array *states, uint32_t serial)
+{
+   Ecore_Wl_Window *win = data;
+   uint32_t *p;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   win->maximized = EINA_FALSE;
+   win->fullscreen = EINA_FALSE;
+   win->resizing = EINA_FALSE;
+   win->focused = EINA_FALSE;
+
+   wl_array_for_each(p, states)
+     {
+        uint32_t state = *p;
+        switch (state)
+          {
+            case XDG_SURFACE_STATE_MAXIMIZED:
+              win->maximized = EINA_TRUE;
+              break;
+            case XDG_SURFACE_STATE_FULLSCREEN:
+               win->fullscreen = EINA_TRUE;
+               break;
+            case XDG_SURFACE_STATE_RESIZING:
+               win->resizing = EINA_TRUE;
+               break;
+             case XDG_SURFACE_STATE_ACTIVATED:
+               win->focused = EINA_TRUE;
+               break;
+             default:
+               break;
+           }
+     }
+   if ((width > 0) && (height > 0))
+     {
+        _ecore_wl_window_configure_send(win, width, height, 0);
+     }
+   else
+     {
+        if ((win->saved.w != 1) || (win->saved.h != 1))
+           _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
+     }
+
+   xdg_surface_ack_configure(win->xdg_surface, serial);
+}
+
 static void 
 _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED)
 {
@@ -795,6 +854,18 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!shell_surface) return;
+   if (!(win = data)) return;
+   ecore_wl_input_ungrab(win->pointer_device);
+}
+
+static void
+_ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial)
+{
+   Ecore_Wl_Window *win;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!xdg_popup) return;
    if (!(win = data)) return;
    ecore_wl_input_ungrab(win->pointer_device);
 }

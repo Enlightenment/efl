@@ -60,6 +60,7 @@ struct _Ecore_Wl_Display
         struct wl_compositor *compositor;
         struct wl_subcompositor *subcompositor;
         struct wl_shell *shell;
+        struct xdg_shell *xdg_shell;
         struct wl_shell *desktop_shell;
         struct wl_shm *shm;
         struct wl_data_device_manager *data_device_manager;
@@ -99,6 +100,14 @@ struct _Ecore_Wl_Window
 
    struct wl_surface *surface;
    struct wl_shell_surface *shell_surface;
+
+   struct xdg_surface *xdg_surface;
+   struct xdg_popup *xdg_popup;
+   Eina_Bool focused : 1;
+   Eina_Bool resizing : 1;
+
+   Eina_Bool fullscreen : 1;
+   Eina_Bool maximized : 1;
 
    struct
      {
