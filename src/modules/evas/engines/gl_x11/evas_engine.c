@@ -1125,7 +1125,9 @@ eng_setup(Evas *eo_e, void *in)
         return 0;
      }
 
-   evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
+   if (re->generic.software.tb)
+     evas_render_engine_software_generic_tile_strict_set
+       (&re->generic.software, EINA_TRUE);
 
    if (!e->engine.data.context)
      e->engine.data.context =
