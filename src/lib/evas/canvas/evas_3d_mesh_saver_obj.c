@@ -43,6 +43,11 @@ _save_mesh(Evas_3D_Mesh_Data *pd, const char *file, Evas_3D_Mesh_Frame *f)
    float *src;
 
    OPEN_FILE(obj)
+   if (!_obj_file)
+     {
+        ERR("File open '%s' for save failed", file);
+        return;
+     }
    fprintf(_obj_file, "# Evas_3D saver OBJ v0.03 \n");//_obj_file created in macro
    /* Adding time comment to .obj file. */
    current_time = time(NULL);
