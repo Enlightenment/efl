@@ -239,7 +239,9 @@ _svr_init(void)
    snprintf(buf, sizeof(buf), "ecore-x-vsync-%s", disp);
    for (s = buf; *s; s++)
      {
-        if (*s == ':') *s = '=';
+        if (!(((*s >= 'a') && (*s <= 'z')) ||
+              ((*s >= 'A') && (*s <= 'Z')) ||
+              ((*s >= '0') && (*s <= '9')))) *s = '-';
      }
    svr = ecore_con_server_add(ECORE_CON_LOCAL_USER, buf, 1, NULL);
    if (!svr) exit(0);

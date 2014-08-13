@@ -497,7 +497,9 @@ _glvsync_animator_tick_source_set(void)
         snprintf(buf, sizeof(buf), "ecore-x-vsync-%s", disp);
         for (s = buf; *s; s++)
           {
-             if (*s == ':') *s = '=';
+             if (!(((*s >= 'a') && (*s <= 'z')) ||
+                   ((*s >= 'A') && (*s <= 'Z')) ||
+                   ((*s >= '0') && (*s <= '9')))) *s = '-';
           }
         vsync_server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, buf, 1, NULL);
         if (!vsync_server)
