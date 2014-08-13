@@ -777,7 +777,7 @@ _edje_pick_images_add(Edje_File *edf, Edje_File *o)
              /* Concatinate current file sets to re-allocaed array */
              memcpy(&o->image_dir->sets[k], edf->image_dir->sets,
                    edf->image_dir->sets_count *
-                   sizeof(Edje_Image_Directory_Set_Entry));
+                   sizeof(Edje_Image_Directory_Set));
 
              for (; k < o->image_dir->sets_count; k++)
                {  /* Fix IDs in sets to new assigned IDs of entries */
