@@ -49,8 +49,8 @@ START_TEST(eolian_cxx_test_callback_event_add)
   bool called1 = false, called2 = false;
 
 
-  c.event_call_on_add_callback_add(std::bind([&called1] { called1 = true; }));
-  c.event_call_on_add_callback_add(std::bind([&called2] { called2 = true; }));
+  c.callback_call_on_add_add(std::bind([&called1] { called1 = true; }));
+  c.callback_call_on_add_add(std::bind([&called2] { called2 = true; }));
 
   fail_if(!called1);
   fail_if(!called2);
@@ -65,7 +65,7 @@ START_TEST(eolian_cxx_test_callback_event_del)
 
   int called1 = 0, called2 = 0, called3 = 0, called4 = 0;
 
-  efl::eo::signal_connection s1 = c.event_call_on_add_callback_add
+  efl::eo::signal_connection s1 = c.callback_call_on_add_add
     (std::bind([&]
      {
        std::cerr << "called1 " << called1 << " called2 " << called2 << " called3 " << called3
@@ -75,7 +75,7 @@ START_TEST(eolian_cxx_test_callback_event_del)
                ));
        ++called1;
      }));
-  efl::eo::signal_connection s2 = c.event_call_on_add_callback_add
+  efl::eo::signal_connection s2 = c.callback_call_on_add_add
     (std::bind([&]
      {
        std::cerr << "called1 " << called1 << " called2 " << called2 << " called3 " << called3
@@ -89,7 +89,7 @@ START_TEST(eolian_cxx_test_callback_event_del)
 
   s1.disconnect();
 
-  c.event_call_on_add_callback_add
+  c.callback_call_on_add_add
     (
      std::bind([&]
      {
@@ -103,7 +103,7 @@ START_TEST(eolian_cxx_test_callback_event_del)
 
   s2.disconnect();
 
-  c.event_call_on_add_callback_add
+  c.callback_call_on_add_add
     (
      std::bind([&]
      {

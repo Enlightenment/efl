@@ -44,7 +44,7 @@ operator<<(std::ostream& out, event_callback_add const& x)
 {
    out << tab(1) << "template <typename F>" << endl
        << tab(1) << "::efl::eo::signal_connection" << endl
-       << tab(1) << "event_" << x._event.name << "_callback_add(F && callback_," << endl
+       << tab(1) << "callback_" << x._event.name << "_add(F && callback_," << endl
        << tab(11) << "::efl::eo::callback_priority priority_ =" << endl
        << tab(11) << "::efl::eo::callback_priorities::default_)" << endl
        << tab(1) << "{" << endl
@@ -77,7 +77,7 @@ operator<<(std::ostream& out, event_callback_call const& x)
 {
    out << tab(1) << "template <typename T>" << endl
        << tab(1) << "void" << endl
-       << tab(1) << "event_" << x._event.name << "_callback_call(T* info)" << endl
+       << tab(1) << "callback_" << x._event.name << "_call(T* info)" << endl
        << tab(1) << "{" << endl
        << tab(2) << "eo_do(" << add_cast_to_t(x._add_cast_to_t) << "_eo_ptr(), eo_event_callback_call" << endl
        << tab(4) << "(" << x._event.eo_name << ", info));" << endl
