@@ -209,11 +209,9 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
    EINA_ITERATOR_FOREACH(itr, impl_desc_)
      {
         const Eolian_Implement *impl_desc = static_cast<Eolian_Implement*>(impl_desc_);
-        const Eolian_Class *impl_class;
-        const Eolian_Function *impl_func;
+        const Eolian_Class *impl_class = eolian_implement_class_get(impl_desc);
         Eolian_Function_Type impl_type;
-        eolian_implement_information_get
-          (impl_desc, &impl_class, &impl_func, &impl_type);
+        const Eolian_Function *impl_func = eolian_implement_function_get(impl_desc, &impl_type);
         if (impl_type == EOLIAN_CTOR)
           {
              efl::eolian::eo_constructor constructor;

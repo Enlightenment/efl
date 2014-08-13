@@ -4,12 +4,10 @@
 static void
 _implements_print(Eolian_Implement *impl, int nb_spaces)
 {
-   const Eolian_Class *class;
-   const Eolian_Function *func;
-   const char *t;
    Eolian_Function_Type ft;
+   const char *t;
 
-   eolian_implement_information_get(impl, &class, &func, &ft);
+   eolian_implement_function_get(impl, &ft);
    switch (ft)
      {
       case EOLIAN_PROP_SET: t = "SET"; break;

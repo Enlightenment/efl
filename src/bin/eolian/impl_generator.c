@@ -131,11 +131,7 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    super_invok = eina_strbuf_new();
    if (impl_desc)
      {
-        const Eolian_Class *impl_class;
-        eolian_implement_information_get(impl_desc, &impl_class, NULL, NULL);
-
-        _class_env_create(impl_class, NULL, &impl_env);
-
+        _class_env_create(eolian_implement_class_get(impl_desc), NULL, &impl_env);
         char *tmp = impl_name;
         sprintf(impl_name, "%s_%s", class_env.full_classname, impl_env.full_classname);
         eina_str_tolower(&tmp);
@@ -303,12 +299,8 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
         Eolian_Implement *impl_desc;
         EINA_ITERATOR_FOREACH(itr, impl_desc)
           {
-             const Eolian_Class *impl_class = NULL;
              Eolian_Function_Type ftype;
-
-             foo = NULL;
-             eolian_implement_information_get(impl_desc, &impl_class, &foo, &ftype);
-             if (!foo)
+             if (!(foo = eolian_implement_function_get(impl_desc, &ftype)))
                {
                   ERR ("Failed to generate implementation of %s - missing form super class",
                         eolian_implement_full_name_get(impl_desc));

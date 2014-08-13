@@ -71,18 +71,15 @@ START_TEST(eolian_namespaces)
    /* Implements */
    fail_if(!(iter = eolian_class_implements_get(class11)));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(!eolian_implement_information_get(impl,
-            &impl_class, &fid, &func_type));
+   fail_if(!(impl_class = eolian_implement_class_get(impl)));
+   fail_if(!(fid = eolian_implement_function_get(impl, &func_type)));
    fail_if(impl_class != class112);
    fail_if(strcmp(eolian_function_name_get(fid), "a"));
    fail_if(func_type != EOLIAN_PROP_SET);
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(eolian_implement_information_get(impl,
-            &impl_class, &fid, &func_type));
-   fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(!eolian_implement_information_get(impl,
-            &impl_class, &fid, &func_type));
+   fail_if(!(impl_class = eolian_implement_class_get(impl)));
+   fail_if(!(fid = eolian_implement_function_get(impl, &func_type)));
    fail_if(impl_class != class_no);
    fail_if(strcmp(eolian_function_name_get(fid), "foo"));
    fail_if(func_type != EOLIAN_METHOD);
@@ -117,19 +114,20 @@ START_TEST(eolian_events)
    fail_if(!(iter = eolian_class_events_get(class)));
    /* Clicked */
    fail_if(!(eina_iterator_next(iter, (void**)&ev)));
-   fail_if(!eolian_class_event_information_get(ev, &name, &type, &comment));
+   fail_if(!(name = eolian_event_name_get(ev)));
+   fail_if(eolian_event_type_get(ev));
+   fail_if(!(comment = eolian_event_description_get(ev)));
    fail_if(strcmp(name, "clicked"));
-   fail_if(type);
    fail_if(strcmp(comment, "Comment for clicked"));
    /* Clicked,double */
    fail_if(!(eina_iterator_next(iter, (void**)&ev)));
-   fail_if(!eolian_class_event_information_get(ev, &name, &type, &comment));
+   fail_if(!(name = eolian_event_name_get(ev)));
+   fail_if(!(type = eolian_event_type_get(ev)));
+   fail_if(comment = eolian_event_description_get(ev));
    fail_if(strcmp(name, "clicked,double"));
-   fail_if(!type);
    type_name = eolian_type_name_get(type);
    fail_if(strcmp(type_name, "Evas_Event_Clicked_Double_Info"));
    eina_stringshare_del(type_name);
-   fail_if(comment);
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 
@@ -160,7 +158,8 @@ START_TEST(eolian_override)
    fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_UNRESOLVED));
    fail_if(!(iter = eolian_class_implements_get(class)));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(!eolian_implement_information_get(impl, &impl_class, &impl_func, NULL));
+   fail_if(!(impl_class = eolian_implement_class_get(impl)));
+   fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
    fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
    eina_iterator_free(iter);
@@ -226,11 +225,13 @@ START_TEST(eolian_ctor_dtor)
    /* Base ctor/dtor */
    fail_if(!(iter = eolian_class_implements_get(class)));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(!eolian_implement_information_get(impl, &impl_class, &impl_func, NULL));
+   fail_if(!(impl_class = eolian_implement_class_get(impl)));
+   fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
    fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(!eolian_implement_information_get(impl, &impl_class, &impl_func, NULL));
+   fail_if(!(impl_class = eolian_implement_class_get(impl)));
+   fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
    fail_if(strcmp(eolian_function_name_get(impl_func), "destructor"));
    fail_if(eina_iterator_next(iter, &dummy));

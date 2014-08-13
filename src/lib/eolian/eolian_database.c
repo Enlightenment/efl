@@ -195,10 +195,8 @@ eolian_eo_file_parse(const char *filepath)
    itr = eolian_class_implements_get(class);
    EINA_ITERATOR_FOREACH(itr, impl)
      {
-        const Eolian_Class *impl_class;
-        const Eolian_Function *impl_func;
         Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
-        eolian_implement_information_get(impl, &impl_class, &impl_func, &impl_type);
+        const Eolian_Function *impl_func = eolian_implement_function_get(impl, &impl_type);
         if (!impl_func)
           {
              ERR("Unable to find function %s", eolian_implement_full_name_get(impl));

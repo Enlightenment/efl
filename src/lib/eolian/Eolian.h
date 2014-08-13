@@ -837,20 +837,28 @@ EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_i
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement *impl);
+EAPI Eina_Stringshare *eolian_implement_full_name_get(const Eolian_Implement *impl);
 
 /*
- * @brief Get information about an overriding function (implement).
+ * @brief Get the class of an overriding function (implement).
  *
  * @param[in] impl handle of the implement
- * @param[out] class overridden class
- * @param[out] func overridden function
- * @param[out] type type of the overridden function
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return the class handle or NULL.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement *impl, const Eolian_Class **klass, const Eolian_Function **function, Eolian_Function_Type *type);
+EAPI const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
+
+/*
+ * @brief Get the function of an implement.
+ *
+ * @param[in] impl handle of the implement
+ * @param[out] func_type the function type.
+ * @return the function handle or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
 
 /*
  * @brief Get an iterator to the overriding functions defined in a class.
@@ -890,7 +898,7 @@ EAPI Eina_Stringshare *eolian_event_name_get(const Eolian_Event *event);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
+EAPI const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
 
 /*
  * @brief Get the description of an event.

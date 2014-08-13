@@ -143,6 +143,7 @@ struct _Eolian_Type
 struct _Eolian_Implement
 {
    Eolian_Object base;
+   const Eolian_Class *klass;
    Eina_Stringshare *full_name;
 };
 
