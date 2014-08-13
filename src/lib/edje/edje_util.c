@@ -2508,15 +2508,10 @@ _edje_object_part_swallow(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_
 
    if (rp->typedata.swallow->swallowed_object)
      {
-        if (!eud)
-          {
-             eud = _edje_user_definition_new(EDJE_USER_SWALLOW, part, ed);
-             evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-          }
-        else ed->user_defined = eina_list_append(ed->user_defined, eud);
-
+        eud = _edje_user_definition_new(EDJE_USER_SWALLOW, part, ed);
         if (eud)
           {
+             evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
              eud->u.swallow.child = obj_swallow;
           }
      }
