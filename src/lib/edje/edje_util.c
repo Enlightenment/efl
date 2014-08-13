@@ -2779,6 +2779,7 @@ _edje_object_part_unswallow(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swal
                {
                   ERR("edje_object_part_unswallow called on a non Edje object ('%s').",
                       evas_object_type_get(obj));
+                  return;
                }
              else
                {
