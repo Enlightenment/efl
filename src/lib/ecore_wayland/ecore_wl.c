@@ -16,6 +16,9 @@
 # include <subsurface-client-protocol.h>
 #endif
 
+#include "xdg-shell-client-protocol.h"
+#define XDG_VERSION 3
+
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
 static Eina_Bool _ecore_wl_cb_idle_enterer(void *data);
@@ -60,6 +63,17 @@ static const struct wl_callback_listener _ecore_wl_anim_listener =
 {
    _ecore_wl_animator_callback
 };
+
+static void xdg_shell_ping(void *data, struct xdg_shell *shell, uint32_t serial)
+{
+   xdg_shell_pong(shell, serial);
+}
+
+static const struct xdg_shell_listener xdg_shell_listener =
+{
+   xdg_shell_ping,
+};
+
 
 /* external variables */
 int _ecore_wl_log_dom = -1;
@@ -478,6 +492,8 @@ _ecore_wl_shutdown(Eina_Bool close)
         if (_ecore_wl_disp->wl.ivi_application)
           ivi_application_destroy(_ecore_wl_disp->wl.ivi_application);
 #endif
+        if (_ecore_wl_disp->wl.xdg_shell)
+          xdg_shell_destroy(_ecore_wl_disp->wl.xdg_shell);
         if (_ecore_wl_disp->wl.shell)
           wl_shell_destroy(_ecore_wl_disp->wl.shell);
         if (_ecore_wl_disp->wl.shm) wl_shm_destroy(_ecore_wl_disp->wl.shm);
@@ -626,6 +642,14 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
           wl_registry_bind(registry, id, &ivi_application_interface, 1);
      }
 #endif
+   else if (!strcmp(interface, "xdg_shell"))
+     {
+        ewd->wl.xdg_shell = wl_registry_bind(registry, id,
+                                             &xdg_shell_interface, 1);
+        xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
+        xdg_shell_add_listener(ewd->wl.xdg_shell, &xdg_shell_listener,
+                               ewd->wl.display);
+     }
    else if (!strcmp(interface, "wl_shell"))
      {
         ewd->wl.shell =
