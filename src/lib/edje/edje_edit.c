@@ -3801,12 +3801,12 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
         // this fall through case is intentional
       case EDJE_PART_TYPE_TEXTBLOCK:
         _edje_if_string_free(ed, rp->part->source);
-        if (source)
-          rp->part->source = eina_stringshare_add(source);
-        else
-          rp->part->source = NULL;
+        if (source) rp->part->source = eina_stringshare_add(source);
+        else rp->part->source = NULL;
         return EINA_TRUE;
       case EDJE_PART_TYPE_EXTERNAL: //EXTERNAL part has source property but it cannot be changed
+        break;
+      default:
         break;
      }
    return EINA_FALSE;
