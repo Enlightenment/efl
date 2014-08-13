@@ -16,7 +16,6 @@ static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial);
 
-
 /* local variables */
 static Eina_Hash *_windows = NULL;
 
@@ -34,11 +33,13 @@ static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener =
    _ecore_wl_window_cb_popup_done
 };
 
-static const struct xdg_surface_listener _ecore_xdg_surface_listener = {
+static const struct xdg_surface_listener _ecore_xdg_surface_listener = 
+{
    _ecore_xdg_handle_surface_configure,
 };
 
-static const struct xdg_popup_listener _ecore_xdg_popup_listener = {
+static const struct xdg_popup_listener _ecore_xdg_popup_listener = 
+{
    _ecore_xdg_handle_popup_done,
 };
 
@@ -134,9 +135,9 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    win->ivi_surface = NULL;
 #endif
    if (win->xdg_surface) xdg_surface_destroy(win->xdg_surface);
-      win->xdg_surface = NULL;
+   win->xdg_surface = NULL;
    if (win->xdg_popup) xdg_popup_destroy(win->xdg_popup);
-      win->xdg_popup = NULL;
+   win->xdg_popup = NULL;
 
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
@@ -173,27 +174,29 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
    _ecore_wl_input_grab_release(input, win);
 
    if (win->xdg_surface)
-      xdg_surface_move(win->xdg_surface, input->seat, input->display->serial);
+     xdg_surface_move(win->xdg_surface, input->seat, input->display->serial);
    else if (win->shell_surface)
-      wl_shell_surface_move(win->shell_surface, input->seat,
-                            input->display->serial);
+     wl_shell_surface_move(win->shell_surface, input->seat,
+                           input->display->serial);
 }
 
 EAPI void 
 ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 {
+   Ecore_Wl_Input *input;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
 
+   input = win->keyboard_device;
+
    ecore_wl_window_update_size(win, w, h);
 
-   Ecore_Wl_Input *input = win->keyboard_device;
-
-   if ((!input) && win->parent)
+   if ((!input) && (win->parent))
      {
         if (!(input = win->parent->keyboard_device))
-           input = win->parent->pointer_device;
+          input = win->parent->pointer_device;
      }
 
    if ((!input) || (!input->seat)) return;
@@ -201,15 +204,11 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
    _ecore_wl_input_grab_release(input, win);
 
    if (win->xdg_surface)
-     {
-        xdg_surface_resize(win->xdg_surface, input->seat,
-                           input->display->serial, location);
-     }
+     xdg_surface_resize(win->xdg_surface, input->seat,
+                        input->display->serial, location);
    else if (win->shell_surface)
-     {
-        wl_shell_surface_resize(win->shell_surface, input->seat,
-                                input->display->serial, location);
-     }
+     wl_shell_surface_resize(win->shell_surface, input->seat,
+                             input->display->serial, location);
 }
 
 EAPI void 
@@ -335,6 +334,28 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 #ifdef USE_IVI_SHELL
           }
 #endif
+             win->xdg_surface =
+               xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
+                                         win->surface);
+             if (!win->xdg_surface) return;
+             xdg_surface_set_user_data(win->xdg_surface, win);
+             xdg_surface_add_listener(win->xdg_surface,
+                                      &_ecore_xdg_surface_listener, win);
+          }
+        else if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
+          {
+             win->shell_surface = 
+               wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell,
+                                          win->surface);
+             if (!win->shell_surface) return;
+
+             if (win->title)
+               wl_shell_surface_set_title(win->shell_surface, win->title);
+
+             if (win->class_name)
+               wl_shell_surface_set_class(win->shell_surface, win->class_name);
+           }
+
         if (win->shell_surface)
           wl_shell_surface_add_listener(win->shell_surface,
                                         &_ecore_wl_shell_surface_listener,
@@ -348,54 +369,54 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
      {
       case ECORE_WL_WINDOW_TYPE_FULLSCREEN:
         if (win->xdg_surface)
-           xdg_surface_set_fullscreen(win->xdg_surface, NULL);
+          xdg_surface_set_fullscreen(win->xdg_surface, NULL);
         else if (win->shell_surface)
-           wl_shell_surface_set_fullscreen(win->shell_surface,
-                                   WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
-                                   0, NULL);
+          wl_shell_surface_set_fullscreen(win->shell_surface,
+                                          WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
+                                          0, NULL);
         break;
       case ECORE_WL_WINDOW_TYPE_MAXIMIZED:
         if (win->xdg_surface)
-           xdg_surface_set_maximized(win->xdg_surface);
+          xdg_surface_set_maximized(win->xdg_surface);
         else if (win->shell_surface)
-           wl_shell_surface_set_maximized(win->shell_surface, NULL);
+          wl_shell_surface_set_maximized(win->shell_surface, NULL);
         break;
       case ECORE_WL_WINDOW_TYPE_TRANSIENT:
         if (win->xdg_surface)
-           xdg_surface_set_parent(win->xdg_surface, win->parent->surface);
+          xdg_surface_set_parent(win->xdg_surface, win->parent->surface);
         else if (win->shell_surface)
-           wl_shell_surface_set_transient(win->shell_surface,
-                                          win->parent->surface,
-                                          win->allocation.x,
-                                          win->allocation.y, 0);
+          wl_shell_surface_set_transient(win->shell_surface,
+                                         win->parent->surface,
+                                         win->allocation.x,
+                                         win->allocation.y, 0);
         break;
       case ECORE_WL_WINDOW_TYPE_MENU:
-       if (win->xdg_surface)
-         {
-            win->xdg_popup = 
-                          xdg_shell_get_xdg_popup(_ecore_wl_disp->wl.xdg_shell,
-                                                  win->surface, 
-                                                  win->parent->surface,
-                                                  _ecore_wl_disp->input->seat,
-                                                  _ecore_wl_disp->serial,
-                                                  win->allocation.x,
-                                                  win->allocation.y, 0);
-            xdg_popup_set_user_data(win->xdg_popup, win);
-            xdg_popup_add_listener(win->xdg_popup, 
-                                   &_ecore_xdg_popup_listener, win);
-         }
+        if (win->xdg_surface)
+          {
+             win->xdg_popup = 
+               xdg_shell_get_xdg_popup(_ecore_wl_disp->wl.xdg_shell,
+                                       win->surface, 
+                                       win->parent->surface,
+                                       _ecore_wl_disp->input->seat,
+                                       _ecore_wl_disp->serial,
+                                       win->allocation.x,
+                                       win->allocation.y, 0);
+             xdg_popup_set_user_data(win->xdg_popup, win);
+             xdg_popup_add_listener(win->xdg_popup, 
+                                    &_ecore_xdg_popup_listener, win);
+          }
         else if (win->shell_surface)
-           wl_shell_surface_set_popup(win->shell_surface,
-                                      _ecore_wl_disp->input->seat,
-                                      _ecore_wl_disp->serial,
-                                      win->parent->surface,
-                                      win->allocation.x, win->allocation.y, 0);
+          wl_shell_surface_set_popup(win->shell_surface,
+                                     _ecore_wl_disp->input->seat,
+                                     _ecore_wl_disp->serial,
+                                     win->parent->surface,
+                                     win->allocation.x, win->allocation.y, 0);
         break;
       case ECORE_WL_WINDOW_TYPE_TOPLEVEL:
         if (win->xdg_surface)
-           xdg_surface_set_parent(win->xdg_surface, NULL);
+          xdg_surface_set_parent(win->xdg_surface, NULL);
         else if (win->shell_surface)
-           wl_shell_surface_set_toplevel(win->shell_surface);
+          wl_shell_surface_set_toplevel(win->shell_surface);
         break;
       default:
         break;
@@ -511,7 +532,7 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
    else 
      {
 	if (win->xdg_surface)
-           xdg_surface_unset_fullscreen(win->xdg_surface);
+          xdg_surface_unset_fullscreen(win->xdg_surface);
         else if (win->shell_surface)
           wl_shell_surface_set_toplevel(win->shell_surface);
 
@@ -923,9 +944,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
    if ((w <= 0) || (h <= 0)) return;
 
    if ((win->allocation.w != w) || (win->allocation.h != h))
-     {
-        _ecore_wl_window_configure_send(win, w, h, edges);
-     }
+     _ecore_wl_window_configure_send(win, w, h, edges);
 }
 
 static void
@@ -963,13 +982,11 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface,
            }
      }
    if ((width > 0) && (height > 0))
-     {
-        _ecore_wl_window_configure_send(win, width, height, 0);
-     }
+     _ecore_wl_window_configure_send(win, width, height, 0);
    else
      {
         if ((win->saved.w != 1) || (win->saved.h != 1))
-           _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
+          _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
      }
 
    xdg_surface_ack_configure(win->xdg_surface, serial);
