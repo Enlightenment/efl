@@ -589,7 +589,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
 
 Eolian_Expression_Type
 database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
-                   Eina_Value **outval)
+                   Eina_Value *outval)
 {
    Eolian_Expression out;
    if (!mask)
@@ -601,52 +601,64 @@ database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
    switch (out.type)
      {
       case EOLIAN_EXPR_INT:
-        *outval = eina_value_new(EINA_VALUE_TYPE_INT);
-        eina_value_set(*outval, out.value.i);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_INT))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.i);
         break;
       case EOLIAN_EXPR_UINT:
-        *outval = eina_value_new(EINA_VALUE_TYPE_UINT);
-        eina_value_set(*outval, out.value.u);
+       if (!eina_value_setup(outval, EINA_VALUE_TYPE_UINT))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.u);
         break;
       case EOLIAN_EXPR_LONG:
-        *outval = eina_value_new(EINA_VALUE_TYPE_LONG);
-        eina_value_set(*outval, out.value.l);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_LONG))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.l);
         break;
       case EOLIAN_EXPR_ULONG:
-        *outval = eina_value_new(EINA_VALUE_TYPE_ULONG);
-        eina_value_set(*outval, out.value.ul);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_ULONG))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.ul);
         break;
       case EOLIAN_EXPR_LLONG:
-        *outval = eina_value_new(EINA_VALUE_TYPE_INT64);
-        eina_value_set(*outval, out.value.ll);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_INT64))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.ll);
         break;
       case EOLIAN_EXPR_ULLONG:
-        *outval = eina_value_new(EINA_VALUE_TYPE_UINT64);
-        eina_value_set(*outval, out.value.ull);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_UINT64))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.ull);
         break;
       case EOLIAN_EXPR_FLOAT:
-        *outval = eina_value_new(EINA_VALUE_TYPE_FLOAT);
-        eina_value_set(*outval, out.value.f);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_FLOAT))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.f);
         break;
       case EOLIAN_EXPR_DOUBLE:
-        *outval = eina_value_new(EINA_VALUE_TYPE_DOUBLE);
-        eina_value_set(*outval, out.value.d);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_DOUBLE))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.d);
         break;
       case EOLIAN_EXPR_LDOUBLE:
-        *outval = eina_value_new(EINA_VALUE_TYPE_DOUBLE);
-        eina_value_set(*outval, (double)out.value.ld);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_DOUBLE))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, (double)out.value.ld);
         break;
       case EOLIAN_EXPR_STRING:
-        *outval = eina_value_new(EINA_VALUE_TYPE_STRINGSHARE);
-        eina_value_set(*outval, eina_stringshare_ref(out.value.s));
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_STRINGSHARE))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, eina_stringshare_ref(out.value.s));
         break;
       case EOLIAN_EXPR_CHAR:
-        *outval = eina_value_new(EINA_VALUE_TYPE_CHAR);
-        eina_value_set(*outval, out.value.c);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_CHAR))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.c);
         break;
       case EOLIAN_EXPR_BOOL:
-        *outval = eina_value_new(EINA_VALUE_TYPE_UCHAR);
-        eina_value_set(*outval, out.value.b);
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_UCHAR))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, out.value.b);
         break;
       case EOLIAN_EXPR_NULL:
         break;

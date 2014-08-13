@@ -134,11 +134,12 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                      eina_strbuf_append_printf(buf, "  %s", eina_strbuf_string_get(membuf));
                    else
                      {
-                        Eina_Value *v = NULL;
+                        Eina_Value v;
                         Eolian_Expression_Type et = eolian_expression_eval(member, EOLIAN_MASK_INT, &v);
-                        const char *lit = eolian_expression_value_to_literal(v, et);
+                        const char *lit = eolian_expression_value_to_literal(&v, et);
                         eina_strbuf_append_printf(buf, "  %s = %s", eina_strbuf_string_get(membuf), lit);
                         eina_stringshare_del(lit);
+                        eina_value_flush(&v);
                      }
                    next = eina_iterator_next(members, (void**)&member_name);
                    if (next)

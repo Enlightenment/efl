@@ -1266,7 +1266,7 @@ EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Expression_Type eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m, Eina_Value **val);
+EAPI Eolian_Expression_Type eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m, Eina_Value *val);
 
 /*
  * @brief Evaluate an Eolian expression given a type instead of a mask.
@@ -1281,7 +1281,7 @@ EAPI Eolian_Expression_Type eolian_expression_eval(const Eolian_Expression *expr
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type, Eina_Value **val);
+EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type, Eina_Value *val);
 
 /*
  * @brief Convert the result of expression evaluation to a literal as in how

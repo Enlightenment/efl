@@ -3,7 +3,7 @@
 
 EAPI Eolian_Expression_Type
 eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m,
-                       Eina_Value **val)
+                       Eina_Value *val)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_EXPR_UNKNOWN);
    return database_expr_eval(expr, m, val);
@@ -11,7 +11,7 @@ eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m,
 
 static Eolian_Expression_Type
 _eval_type(const Eolian_Expression *expr, const Eolian_Type *type,
-           Eina_Value **val)
+           Eina_Value *val)
 {
    if (!type)
      return EOLIAN_EXPR_UNKNOWN;
@@ -85,7 +85,7 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type,
 EAPI Eolian_Expression_Type
 eolian_expression_eval_type(const Eolian_Expression *expr,
                             const Eolian_Type *type,
-                            Eina_Value **val)
+                            Eina_Value *val)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_EXPR_UNKNOWN);
    return _eval_type(expr, type, val);

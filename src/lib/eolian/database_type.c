@@ -147,14 +147,15 @@ _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append(buf, fname);
         if (ef->value)
           {
-             Eina_Value *val = NULL;
+             Eina_Value val;
              Eolian_Expression_Type et = eolian_expression_eval(ef->value,
                  EOLIAN_MASK_INT, &val);
              const char *ret;
              eina_strbuf_append(buf, " = ");
-             ret = eolian_expression_value_to_literal(val, et);
+             ret = eolian_expression_value_to_literal(&val, et);
              eina_strbuf_append(buf, ret);
              eina_stringshare_del(ret);
+             eina_value_flush(&val);
           }
         if (l != eina_list_last(tp->field_names))
           eina_strbuf_append(buf, ", ");
@@ -271,12 +272,13 @@ _typedef_print(Eolian_Type *tp)
 void
 database_expr_print(Eolian_Expression *exp)
 {
-   Eina_Value *val = NULL;
+   Eina_Value val;
    Eolian_Expression_Type et = eolian_expression_eval(exp, EOLIAN_MASK_ALL,
        &val);
-   const char *ret = eolian_expression_value_to_literal(val, et);
+   const char *ret = eolian_expression_value_to_literal(&val, et);
    printf("%s", ret);
    eina_stringshare_del(ret);
+   eina_value_flush(&val);
 }
 
 void
