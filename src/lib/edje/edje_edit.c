@@ -3783,38 +3783,33 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
    Evas_Object *child_obj;
    //printf("Set source for part: %s [source: %s]\n", part, source);
 
-   switch(rp->part->type)
+   switch (rp->part->type)
      {
       case EDJE_PART_TYPE_GROUP:
-         {
-            if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
-              {
-                 _edje_real_part_swallow_clear(ed, rp);
-                 evas_object_del(rp->typedata.swallow->swallowed_object);
-                 rp->typedata.swallow->swallowed_object = NULL;
-              }
-            if (source)
-              {
-                 child_obj = edje_object_add(ed->base->evas);
-                 edje_object_file_set(child_obj, ed->file->path, source);
-                 _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
-              }
-         }
+        if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+          {
+             _edje_real_part_swallow_clear(ed, rp);
+             evas_object_del(rp->typedata.swallow->swallowed_object);
+             rp->typedata.swallow->swallowed_object = NULL;
+          }
+        if (source)
+          {
+             child_obj = edje_object_add(ed->base->evas);
+             edje_object_file_set(child_obj, ed->file->path, source);
+             _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
+          }
+        // this fall through case is intentional
       case EDJE_PART_TYPE_TEXTBLOCK:
-         {
-            _edje_if_string_free(ed, rp->part->source);
-            if (source)
-               rp->part->source = eina_stringshare_add(source);
-            else
-               rp->part->source = NULL;
-            return EINA_TRUE;
-         }
+        _edje_if_string_free(ed, rp->part->source);
+        if (source)
+          rp->part->source = eina_stringshare_add(source);
+        else
+          rp->part->source = NULL;
+        return EINA_TRUE;
       case EDJE_PART_TYPE_EXTERNAL: //EXTERNAL part has source property but it cannot be changed
-      default:
-         {
-            return EINA_FALSE;
-         }
+        break;
      }
+   return EINA_FALSE;
 }
 
 #define TEXT_BLOCK_SOURCE_GET(N) \
