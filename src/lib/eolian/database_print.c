@@ -29,13 +29,11 @@ _implements_print(Eolian_Implement *impl, int nb_spaces)
 static void
 _event_print(Eolian_Event *ev, int nb_spaces)
 {
-   const char *name, *comment;
-   const Eolian_Type *type;
-
-   eolian_class_event_information_get(ev, &name, &type, &comment);
-   printf("%*s <%s> <",  nb_spaces + 5, "", name);
+   const Eolian_Type *type = eolian_event_type_get(ev);
+   const char *desc = eolian_event_description_get(ev);
+   printf("%*s <%s> <",  nb_spaces + 5, "", eolian_event_name_get(ev));
    if (type) database_type_print((Eolian_Type*)type);
-   printf("> <%s>\n", comment);
+   printf("> <%s>\n", desc ? desc : "");
 }
 
 static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)

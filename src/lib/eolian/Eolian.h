@@ -873,17 +873,34 @@ EAPI Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
 EAPI Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
 
 /*
- * @brief Get information about an event.
+ * @brief Get the name of an event.
  *
- * @param[in] event handle of the event
- * @param[out] event_name name of the event
- * @param[out] event_type type of the event
- * @param[out] event_desc description of the event
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @param[in] event the event handle
+ * @return the name or NULL
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_event_information_get(const Eolian_Event *event, const char **event_name, const Eolian_Type **event_type, const char **event_desc);
+EAPI Eina_Stringshare *eolian_event_name_get(const Eolian_Event *event);
+
+/*
+ * @brief Get the type of an event.
+ *
+ * @param[in] event the event handle
+ * @return the type or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
+
+/*
+ * @brief Get the description of an event.
+ *
+ * @param[in] event the event handle
+ * @return the description or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_event_description_get(const Eolian_Event *event);
 
 /*
  * @brief Returns the scope of an event
@@ -893,7 +910,7 @@ EAPI Eina_Bool eolian_class_event_information_get(const Eolian_Event *event, con
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Object_Scope eolian_class_event_scope_get(const Eolian_Event *event);
+EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 
 /*
  * @brief Indicates if the class constructor has to invoke

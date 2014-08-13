@@ -275,9 +275,8 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
-        const char *evname = NULL;
-        const char *evdesc = NULL;
-        eolian_class_event_information_get(event, &evname, NULL, &evdesc);
+        const char *evname = eolian_event_name_get(event);
+        const char *evdesc = eolian_event_description_get(event);
 
         if (!evdesc) evdesc = "No description";
         eina_strbuf_reset(tmpbuf);
@@ -556,13 +555,12 @@ eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
-        const char *evname;
-        const char *evdesc;
+        const char *evname = eolian_event_name_get(event);
+        const char *evdesc = eolian_event_description_get(event);
         char *evdesc_line1;
         char *p;
 
         eina_strbuf_reset(str_ev);
-        eolian_class_event_information_get(event, &evname, NULL, &evdesc);
         evdesc_line1 = _source_desc_get(evdesc);
         eina_strbuf_append_printf(str_ev, "%s_EVENT_%s", class_env.upper_classname, evname);
         p = (char *)eina_strbuf_string_get(str_ev);
@@ -776,11 +774,10 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
-        const char *evname;
+        const char *evname = eolian_event_name_get(event);
         char *p;
 
         eina_strbuf_reset(tmpbuf);
-        eolian_class_event_information_get(event, &evname, NULL, NULL);
         eina_strbuf_append_printf(tmpbuf, "%s_EVENT_%s", class_env.upper_classname, evname);
         p = (char *)eina_strbuf_string_get(tmpbuf);
         eina_str_toupper(&p);

@@ -1,18 +1,29 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eina_Bool
-eolian_class_event_information_get(const Eolian_Event *event, const char **event_name, const Eolian_Type **event_type, const char **event_comment)
+EAPI Eina_Stringshare *
+eolian_event_name_get(const Eolian_Event *event)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_FALSE);
-   if (event_name) *event_name = event->name;
-   if (event_type) *event_type = event->type;
-   if (event_comment) *event_comment = event->comment;
-   return EINA_TRUE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   return event->name;
+}
+
+EAPI Eolian_Type *
+eolian_event_type_get(const Eolian_Event *event)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   return event->type;
+}
+
+EAPI Eina_Stringshare *
+eolian_event_description_get(const Eolian_Event *event)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   return event->comment;
 }
 
 EAPI Eolian_Object_Scope
-eolian_class_event_scope_get(const Eolian_Event *event)
+eolian_event_scope_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EOLIAN_SCOPE_PUBLIC);
    return event->scope;
