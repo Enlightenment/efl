@@ -2132,10 +2132,10 @@ _access_widget_item_register(Elm_List_Item *it, Eina_Bool is_access)
 {
    Elm_Access_Info *ai;
 
-   if (!is_access) _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+   if (!is_access) _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
    else
      {
-        _elm_access_widget_item_register((Elm_Widget_Item *)it);
+        _elm_access_widget_item_register((Elm_Widget_Item_Data *)it);
 
         ai = _elm_access_info_get(it->base.access_obj);
 

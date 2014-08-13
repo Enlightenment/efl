@@ -431,13 +431,13 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
             _elm_access_callback_set(_elm_access_info_get(ao),
                                      ELM_ACCESS_INFO, _access_info_cb, it);
             /* to access title access object, any idea? */
-            ((Elm_Widget_Item *)it)->access_obj = ao;
+            ((Elm_Widget_Item_Data *)it)->access_obj = ao;
          }
      }
    else
      {
         /* to access title access object, any idea? */
-        ao = ((Elm_Widget_Item *)it)->access_obj;
+        ao = ((Elm_Widget_Item_Data *)it)->access_obj;
         if (!ao) return;
 
         if (it->title_label || it->subtitle_label)

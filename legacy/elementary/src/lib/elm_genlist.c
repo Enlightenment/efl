@@ -1543,7 +1543,7 @@ _access_widget_item_register(Elm_Gen_Item *it)
 {
    Elm_Access_Info *ai;
 
-   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   _elm_access_widget_item_register((Elm_Widget_Item_Data *)it);
 
    ai = _elm_access_info_get(it->base.access_obj);
 
@@ -1692,7 +1692,7 @@ _item_realize(Elm_Gen_Item *it,
 
         /* access: unregister item which have no text and content */
         if (_elm_config->access_mode && !it->texts && !it->contents)
-          _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+          _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
 
         if (!it->item->mincalcd)
           {
@@ -4772,7 +4772,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
 
    /* access */
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+     _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
 
    // unswallow VIEW(it) first then manipulate VIEW(it)
    _decorate_item_unrealize(it);
@@ -5399,7 +5399,7 @@ _access_obj_process(Elm_Genlist_Data *sd, Eina_Bool is_access)
                   if (!it->realized) continue;
                   if (is_access) _access_widget_item_register(it);
                   else
-                    _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+                    _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
                }
           }
         else if (done) break;

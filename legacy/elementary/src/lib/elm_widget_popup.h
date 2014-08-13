@@ -57,7 +57,7 @@ struct _Elm_Popup_Data
 typedef struct _Elm_Popup_Item Elm_Popup_Item;
 struct _Elm_Popup_Item
 {
-   Elm_Widget_Item base;
+   Elm_Widget_Item_Data base;
 
    const char     *label;
    Evas_Object    *icon;
@@ -102,11 +102,11 @@ struct _Action_Area_Data
     return
 
 #define ELM_POPUP_ITEM_CHECK(it)                            \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
   ELM_POPUP_CHECK(it->base.widget);
 
 #define ELM_POPUP_ITEM_CHECK_OR_RETURN(it, ...)                        \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
   ELM_POPUP_CHECK(it->base.widget) __VA_ARGS__;
 
 #endif

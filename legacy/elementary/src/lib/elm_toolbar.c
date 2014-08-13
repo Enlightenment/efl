@@ -2189,7 +2189,7 @@ static char *
 _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
-   const char *txt = ((Elm_Widget_Item *)it)->access_info;
+   const char *txt = ((Elm_Widget_Item_Data *)it)->access_info;
 
    if (!txt) txt = it->label;
    if (txt) return strdup(txt);
@@ -2275,7 +2275,7 @@ static void
 _access_widget_item_register(Elm_Toolbar_Item *it)
 {
    Elm_Access_Info *ai;
-   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   _elm_access_widget_item_register((Elm_Widget_Item_Data *)it);
    ai = _elm_access_info_get(it->base.access_obj);
 
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Toolbar Item"));
@@ -2912,7 +2912,7 @@ _access_obj_process(Elm_Toolbar_Data * sd, Eina_Bool is_access)
    EINA_INLIST_FOREACH (sd->items, it)
      {
         if (is_access) _access_widget_item_register(it);
-        else _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+        else _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
      }
 }
 

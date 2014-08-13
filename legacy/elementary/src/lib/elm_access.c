@@ -129,7 +129,7 @@ _elm_access_elm_widget_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act
 
    if (ac->activate)
      ac->activate(ac->activate_data, ac->part_object,
-                  (Elm_Object_Item *)ac->widget_item);
+                  (Elm_Object_Item *)ac->widget_item->eo_obj);
 
    return EINA_TRUE;
 }
@@ -413,13 +413,13 @@ _access_order_del_cb(void *data,
                      Evas_Object *obj,
                      void *event_info EINA_UNUSED)
 {
-   Elm_Widget_Item *item = data;
+   Elm_Widget_Item_Data *item = data;
 
    item->access_order = eina_list_remove(item->access_order, obj);
 }
 
 void
-_elm_access_widget_item_access_order_set(Elm_Widget_Item *item,
+_elm_access_widget_item_access_order_set(Elm_Widget_Item_Data *item,
                                          Eina_List *objs)
 {
    Eina_List *l;
@@ -439,14 +439,14 @@ _elm_access_widget_item_access_order_set(Elm_Widget_Item *item,
 }
 
 const Eina_List *
-_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item)
+_elm_access_widget_item_access_order_get(const Elm_Widget_Item_Data *item)
 {
    if (!item) return NULL;
    return item->access_order;
 }
 
 void
-_elm_access_widget_item_access_order_unset(Elm_Widget_Item *item)
+_elm_access_widget_item_access_order_unset(Elm_Widget_Item_Data *item)
 {
    Eina_List *l, *l_next;
    Evas_Object *o;
@@ -1156,7 +1156,7 @@ _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
 }
 
 EAPI void
-_elm_access_widget_item_register(Elm_Widget_Item *item)
+_elm_access_widget_item_register(Elm_Widget_Item_Data *item)
 {
    Evas_Object *ao, *ho;
    Evas_Coord x, y, w, h;
@@ -1194,7 +1194,7 @@ _elm_access_widget_item_register(Elm_Widget_Item *item)
 }
 
 EAPI void
-_elm_access_widget_item_unregister(Elm_Widget_Item *item)
+_elm_access_widget_item_unregister(Elm_Widget_Item_Data *item)
 {
    Evas_Object *ao;
 

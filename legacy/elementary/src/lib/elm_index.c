@@ -111,7 +111,7 @@ _access_widget_item_register(Elm_Index_Item *it)
 {
    Elm_Access_Info *ai;
 
-   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   _elm_access_widget_item_register((Elm_Widget_Item_Data *)it);
 
    ai = _elm_access_info_get(it->base.access_obj);
 
@@ -1031,7 +1031,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
      {
         if (it->level != 0) continue;
         if (is_access) _access_widget_item_register(it);
-        else _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+        else _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
      }
 
    if (is_access)

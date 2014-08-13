@@ -447,7 +447,7 @@ typedef struct _Elm_Tooltip     Elm_Tooltip;
 typedef struct _Elm_Cursor      Elm_Cursor;
 
 /**< base structure for all widget items that are not Elm_Widget themselves */
-typedef struct _Elm_Widget_Item Elm_Widget_Item;
+typedef struct _Elm_Widget_Item_Data Elm_Widget_Item_Data;
 typedef struct _Elm_Widget_Item_Signal_Data Elm_Widget_Item_Signal_Data;
 
 /**< accessibility information to be able to set and get from the access API */
@@ -466,7 +466,7 @@ typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, c
 typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
-typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Widget_Item *item, const char *emission, const char *source);
+typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Widget_Item_Data *item, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
 typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
 typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool focused);
@@ -496,7 +496,7 @@ struct _Elm_Access_Info
    Elm_Access_Activate_Cb    activate;
 
    /* the owner widget item that owns this access info */
-   Elm_Widget_Item           *widget_item;
+   Elm_Widget_Item_Data      *widget_item;
 
    /* the owner part object that owns this access info */
    Evas_Object               *part_object;
@@ -517,9 +517,9 @@ void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
 /* if auto_higlight is EINA_TRUE, it  does not steal a focus, it just moves a highlight */
 void                  _elm_access_auto_highlight_set(Eina_Bool enabled);
 Eina_Bool             _elm_access_auto_highlight_get(void);
-void                  _elm_access_widget_item_access_order_set(Elm_Widget_Item *item, Eina_List *objs);
-const Eina_List      *_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item);
-void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item);
+void                  _elm_access_widget_item_access_order_set(Elm_Widget_Item_Data *item, Eina_List *objs);
+const Eina_List      *_elm_access_widget_item_access_order_get(const Elm_Widget_Item_Data *item);
+void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item_Data *item);
 
 // widget focus highlight
 void                  _elm_widget_focus_highlight_start(const Evas_Object *obj);
@@ -551,8 +551,8 @@ EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 EAPI void             _elm_access_highlight_set(Evas_Object* obj);
 EAPI Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *obj, const Evas_Object *partobj, const char* part);
 EAPI void             _elm_access_edje_object_part_object_unregister(Evas_Object* obj, const Evas_Object *eobj, const char* part);
-EAPI void             _elm_access_widget_item_register(Elm_Widget_Item *item);
-EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item *item);
+EAPI void             _elm_access_widget_item_register(Elm_Widget_Item_Data *item);
+EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item_Data *item);
 EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
 EAPI void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb func, void *data);
 EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act);
@@ -563,18 +563,18 @@ EINA_DEPRECATED EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *
 #define ELM_PREFS_DATA_MAGIC 0xe1f5da7a
 
 /**< put this as the first member in your widget item struct */
-#define ELM_WIDGET_ITEM       Elm_Widget_Item base
+#define ELM_WIDGET_ITEM       Elm_Widget_Item_Data base
 
 struct _Elm_Widget_Item_Signal_Data
 {
-   Elm_Widget_Item *item;
+   Elm_Widget_Item_Data *item;
    Elm_Widget_Item_Signal_Cb func;
    const char *emission;
    const char *source;
    void *data;
 };
 
-struct _Elm_Widget_Item
+struct _Elm_Widget_Item_Data
 {
 /* ef1 ~~ efl, el3 ~~ elm */
 #define ELM_WIDGET_ITEM_MAGIC 0xef1e1301
@@ -582,8 +582,11 @@ struct _Elm_Widget_Item
 /* simple accessor macros */
 #define VIEW(X)   X->base.view
 #define WIDGET(X) X->base.widget
+#define EO_OBJ(X) (Elm_Object_Item *)((X)?X->base->eo_obj:NULL)
    /**< the owner widget that owns this item */
    Evas_Object                   *widget;
+   /**< The Eo item, useful to invoke eo_do when only the item data is available */
+   Eo                            *eo_obj;
    /**< the base view object */
    Evas_Object                   *view;
    /**< item specific data. used for del callback */
@@ -768,69 +771,69 @@ EAPI Elm_Object_Item *elm_widget_focused_item_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
-EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
-EAPI Evas_Object     *_elm_widget_item_widget_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_pre_notify_del(Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb);
-EAPI void             _elm_widget_item_data_set(Elm_Widget_Item *item, const void *data);
-EAPI void            *_elm_widget_item_data_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text);
-EAPI void             _elm_widget_item_tooltip_translatable_text_set(Elm_Widget_Item *item, const char *text);
-EAPI void             _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
-EAPI void             _elm_widget_item_tooltip_unset(Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style);
-EAPI Eina_Bool        _elm_widget_item_tooltip_window_mode_set(Elm_Widget_Item *item, Eina_Bool disable);
-EAPI Eina_Bool        _elm_widget_item_tooltip_window_mode_get(const Elm_Widget_Item *item);
-EAPI const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor);
-EAPI const char      *_elm_widget_item_cursor_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_cursor_unset(Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style);
-EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_only);
-EAPI Eina_Bool        _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_part_content_set(Elm_Widget_Item *item, const char *part, Evas_Object *content);
-EAPI Evas_Object     *_elm_widget_item_part_content_get(const Elm_Widget_Item *item, const char *part);
-EAPI Evas_Object     *_elm_widget_item_part_content_unset(Elm_Widget_Item *item, const char *part);
-EAPI void             _elm_widget_item_part_text_set(Elm_Widget_Item *item, const char *part, const char *label);
-EAPI const char      *_elm_widget_item_part_text_get(const Elm_Widget_Item *item, const char *part);
-EAPI void             _elm_widget_item_part_text_custom_set(Elm_Widget_Item *item, const char *part, const char *label);
-EAPI const char      *_elm_widget_item_part_text_custom_get(Elm_Widget_Item *item, const char *part);
-EAPI void             _elm_widget_item_part_text_custom_update(Elm_Widget_Item *item);
-EAPI void            _elm_widget_item_focus_set(Elm_Widget_Item *item, Eina_Bool focused);
-EAPI Eina_Bool       _elm_widget_item_focus_get(const Elm_Widget_Item *item);
-EAPI void            _elm_widget_item_style_set(Elm_Widget_Item *item, const char *style);
-EAPI const char      *_elm_widget_item_style_get(Elm_Widget_Item *item);
+EAPI Elm_Widget_Item_Data *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
+EAPI void             _elm_widget_item_free(Elm_Widget_Item_Data *item);
+EAPI Evas_Object     *elm_widget_item_internal_widget_get(const Elm_Widget_Item_Data *item);
+EAPI void             _elm_widget_item_internal_del(Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_pre_notify_del(Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_del_cb_set(Elm_Widget_Item_Data *item, Evas_Smart_Cb del_cb);
+EAPI void             elm_widget_item_internal_data_set(Elm_Widget_Item_Data *item, const void *data);
+EAPI void            *elm_widget_item_internal_data_get(const Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_tooltip_text_set(Elm_Widget_Item_Data *item, const char *text);
+EAPI void             elm_widget_item_internal_tooltip_translatable_text_set(Elm_Widget_Item_Data *item, const char *text);
+EAPI void             elm_widget_item_internal_tooltip_content_cb_set(Elm_Widget_Item_Data *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+EAPI void             elm_widget_item_internal_tooltip_unset(Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_tooltip_style_set(Elm_Widget_Item_Data *item, const char *style);
+EAPI Eina_Bool        elm_widget_item_internal_tooltip_window_mode_set(Elm_Widget_Item_Data *item, Eina_Bool disable);
+EAPI Eina_Bool        elm_widget_item_internal_tooltip_window_mode_get(const Elm_Widget_Item_Data *item);
+EAPI const char      *elm_widget_item_internal_tooltip_style_get(const Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_cursor_set(Elm_Widget_Item_Data *item, const char *cursor);
+EAPI const char      *elm_widget_item_internal_cursor_get(const Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_cursor_unset(Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_cursor_style_set(Elm_Widget_Item_Data *item, const char *style);
+EAPI const char      *elm_widget_item_internal_cursor_style_get(const Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_cursor_engine_only_set(Elm_Widget_Item_Data *item, Eina_Bool engine_only);
+EAPI Eina_Bool        elm_widget_item_internal_cursor_engine_only_get(const Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_part_content_set(Elm_Widget_Item_Data *item, const char *part, Evas_Object *content);
+EAPI Evas_Object     *elm_widget_item_internal_part_content_get(const Elm_Widget_Item_Data *item, const char *part);
+EAPI Evas_Object     *elm_widget_item_internal_part_content_unset(Elm_Widget_Item_Data *item, const char *part);
+EAPI void             elm_widget_item_internal_part_text_set(Elm_Widget_Item_Data *item, const char *part, const char *label);
+EAPI const char      *elm_widget_item_internal_part_text_get(const Elm_Widget_Item_Data *item, const char *part);
+EAPI void             _elm_widget_item_internal_part_text_custom_set(Elm_Widget_Item_Data *item, const char *part, const char *label);
+EAPI const char      *_elm_widget_item_internal_part_text_custom_get(Elm_Widget_Item_Data *item, const char *part);
+EAPI void             _elm_widget_item_internal_part_text_custom_update(Elm_Widget_Item_Data *item);
+EAPI void            elm_widget_item_internal_focus_set(Elm_Widget_Item_Data *item, Eina_Bool focused);
+EAPI Eina_Bool       elm_widget_item_internal_focus_get(const Elm_Widget_Item_Data *item);
+EAPI void            elm_widget_item_internal_style_set(Elm_Widget_Item_Data *item, const char *style);
+EAPI const char      *elm_widget_item_internal_style_get(Elm_Widget_Item_Data *item);
 
-EAPI void             _elm_widget_item_signal_callback_add(Elm_Widget_Item *item, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func, void *data);
-EAPI void            *_elm_widget_item_signal_callback_del(Elm_Widget_Item *it, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func);
-EAPI void             _elm_widget_item_signal_emit(Elm_Widget_Item *item, const char *emission, const char *source);
-EAPI void             _elm_widget_item_content_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Content_Set_Cb func);
-EAPI void             _elm_widget_item_content_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Content_Get_Cb func);
-EAPI void             _elm_widget_item_content_unset_hook_set(Elm_Widget_Item *item, Elm_Widget_Content_Unset_Cb func);
-EAPI void             _elm_widget_item_text_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Text_Set_Cb func);
-EAPI void             _elm_widget_item_text_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Text_Get_Cb func);
-EAPI void             _elm_widget_item_signal_emit_hook_set(Elm_Widget_Item *it, Elm_Widget_Signal_Emit_Cb func);
-EAPI void             _elm_widget_item_access_info_set(Elm_Widget_Item *item, const char *txt);
-EAPI void             _elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_Bool disabled);
-EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, Elm_Widget_Disable_Cb func);
-EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
-EAPI void             _elm_widget_item_style_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Style_Set_Cb func);
-EAPI void             _elm_widget_item_style_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Style_Get_Cb func);
-EAPI void             _elm_widget_item_focus_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Focus_Get_Cb func);
-EAPI void             _elm_widget_item_focus_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Focus_Set_Cb func);
-EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item, const char *part, const char *domain, const char *label);
-EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
-EAPI void             _elm_widget_item_translate(Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_domain_part_text_translatable_set(Elm_Widget_Item *item, const char *part, const char *domain, Eina_Bool translatable);
+EAPI void             elm_widget_item_internal_signal_callback_add(Elm_Widget_Item_Data *item, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func, void *data);
+EAPI void            *elm_widget_item_internal_signal_callback_del(Elm_Widget_Item_Data *it, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func);
+EAPI void             elm_widget_item_internal_signal_emit(Elm_Widget_Item_Data *item, const char *emission, const char *source);
+EAPI void             _elm_widget_item_content_set_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Content_Set_Cb func);
+EAPI void             _elm_widget_item_content_get_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Content_Get_Cb func);
+EAPI void             _elm_widget_item_content_unset_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Content_Unset_Cb func);
+EAPI void             _elm_widget_item_text_set_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Text_Set_Cb func);
+EAPI void             _elm_widget_item_text_get_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Text_Get_Cb func);
+EAPI void             _elm_widget_item_signal_emit_hook_set(Elm_Widget_Item_Data *it, Elm_Widget_Signal_Emit_Cb func);
+EAPI void             _elm_widget_item_internal_access_info_set(Elm_Widget_Item_Data *item, const char *txt);
+EAPI void             elm_widget_item_internal_disabled_set(Elm_Widget_Item_Data *item, Eina_Bool disabled);
+EAPI Eina_Bool        elm_widget_item_internal_disabled_get(const Elm_Widget_Item_Data *item);
+EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Disable_Cb func);
+EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Del_Pre_Cb func);
+EAPI void             _elm_widget_item_style_set_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Style_Set_Cb func);
+EAPI void             _elm_widget_item_style_get_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Style_Get_Cb func);
+EAPI void             _elm_widget_item_focus_get_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Focus_Get_Cb func);
+EAPI void             _elm_widget_item_focus_set_hook_set(Elm_Widget_Item_Data *item, Elm_Widget_Focus_Set_Cb func);
+EAPI void             elm_widget_item_internal_domain_translatable_part_text_set(Elm_Widget_Item_Data *item, const char *part, const char *domain, const char *label);
+EAPI const char *     elm_widget_item_internal_translatable_part_text_get(const Elm_Widget_Item_Data *item, const char *part);
+EAPI void             elm_widget_item_internal_translate(Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_domain_part_text_translatable_set(Elm_Widget_Item_Data *item, const char *part, const char *domain, Eina_Bool translatable);
 
-EAPI Evas_Object     *elm_widget_item_track(Elm_Widget_Item *item);
-EAPI void             elm_widget_item_untrack(Elm_Widget_Item *item);
-EAPI int              elm_widget_item_track_get(const Elm_Widget_Item *item);
-EAPI void             _elm_widget_item_track_cancel(Elm_Widget_Item *item);
+EAPI Evas_Object     *elm_widget_item_track(Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_untrack(Elm_Widget_Item_Data *item);
+EAPI int              elm_widget_item_track_get(const Elm_Widget_Item_Data *item);
+EAPI void             elm_widget_item_internal_track_cancel(Elm_Widget_Item_Data *item);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 
 /**
@@ -859,7 +862,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 
 /**
  * Convenience macro to create new widget item, doing casts for you.
- * @see _elm_widget_item_new()
+ * @see elm_widget_item_internal_new()
  * @param parent a valid elm_widget variant.
  * @param type the C type that extends Elm_Widget_Item
  */
@@ -867,279 +870,173 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
   (type *)_elm_widget_item_new((parent), sizeof(type))
 /**
  * Convenience macro to free widget item, doing casts for you.
- * @see _elm_widget_item_free()
+ * @see elm_widget_item_internal_free()
  * @param item a valid item.
  */
 #define elm_widget_item_free(item) \
-  _elm_widget_item_free((Elm_Widget_Item *)item)
+  _elm_widget_item_free((Elm_Widget_Item_Data *)item)
 
 /**
  * Convenience macro to delete widget item, doing casts for you.
- * @see _elm_widget_item_del()
+ * @see elm_widget_item_internal_del()
  * @param item a valid item.
  */
 #define elm_widget_item_del(item) \
-  _elm_widget_item_del((Elm_Widget_Item *)item)
-/**
- * Convenience macro to notify deletion of widget item, doing casts for you.
- * @see _elm_widget_item_pre_notify_del()
- */
+  _elm_widget_item_internal_del((Elm_Widget_Item_Data *)item)
 #define elm_widget_item_pre_notify_del(item) \
-  _elm_widget_item_pre_notify_del((Elm_Widget_Item *)item)
-/**
- * Convenience macro to set deletion callback of widget item, doing casts for you.
- * @see _elm_widget_item_del_cb_set()
- */
+  elm_widget_item_internal_pre_notify_del((Elm_Widget_Item_Data *)item)
 #define elm_widget_item_del_cb_set(item, del_cb) \
-  _elm_widget_item_del_cb_set((Elm_Widget_Item *)item, del_cb)
-
-/**
- * Get item's owner widget
- * @see _elm_widget_item_widget_get()
- */
+  elm_widget_item_internal_del_cb_set((Elm_Widget_Item_Data *)item, del_cb)
 #define elm_widget_item_widget_get(item) \
-  _elm_widget_item_widget_get((const Elm_Widget_Item *)item)
-
-/**
- * Set item's data
- * @see _elm_widget_item_data_set()
- */
+  elm_widget_item_internal_widget_get((const Elm_Widget_Item_Data *)item)
 #define elm_widget_item_data_set(item, data) \
-  _elm_widget_item_data_set((Elm_Widget_Item *)item, data)
-/**
- * Get item's data
- * @see _elm_widget_item_data_get()
- */
+  elm_widget_item_internal_data_set((Elm_Widget_Item_Data *)item, data)
 #define elm_widget_item_data_get(item) \
-  _elm_widget_item_data_get((const Elm_Widget_Item *)item)
+  elm_widget_item_internal_data_get((const Elm_Widget_Item_Data *)item)
 
-/**
- * Convenience function to set widget item tooltip as a text string.
- * @see _elm_widget_item_tooltip_text_set()
- */
 #define elm_widget_item_tooltip_text_set(item, text) \
-  _elm_widget_item_tooltip_text_set((Elm_Widget_Item *)item, text)
-/**
- * Convenience function to set widget item tooltip as a text string.
- * @see _elm_widget_item_tooltip_text_set()
- */
+  elm_widget_item_internal_tooltip_text_set((Elm_Widget_Item_Data *)item, text)
 #define elm_widget_item_tooltip_translatable_text_set(item, text) \
-  _elm_widget_item_tooltip_translatable_text_set((Elm_Widget_Item *)item, text)
-/**
- * Convenience function to set widget item tooltip.
- * @see _elm_widget_item_tooltip_content_cb_set()
- */
+  elm_widget_item_internal_tooltip_translatable_text_set((Elm_Widget_Item_Data *)item, text)
 #define elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb) \
-  _elm_widget_item_tooltip_content_cb_set((Elm_Widget_Item *)item,       \
+  elm_widget_item_internal_tooltip_content_cb_set((Elm_Widget_Item_Data *)item,       \
                                           func, data, del_cb)
-/**
- * Convenience function to unset widget item tooltip.
- * @see _elm_widget_item_tooltip_unset()
- */
 #define elm_widget_item_tooltip_unset(item) \
-  _elm_widget_item_tooltip_unset((Elm_Widget_Item *)item)
-/**
- * Convenience function to change item's tooltip style.
- * @see _elm_widget_item_tooltip_style_set()
- */
+  elm_widget_item_internal_tooltip_unset((Elm_Widget_Item_Data *)item)
 #define elm_widget_item_tooltip_style_set(item, style) \
-  _elm_widget_item_tooltip_style_set((Elm_Widget_Item *)item, style)
+  elm_widget_item_internal_tooltip_style_set((Elm_Widget_Item_Data *)item, style)
 
 #define elm_widget_item_tooltip_window_mode_set(item, disable) \
-  _elm_widget_item_tooltip_window_mode_set((Elm_Widget_Item *)item, disable)
+  elm_widget_item_internal_tooltip_window_mode_set((Elm_Widget_Item_Data *)item, disable)
 
 #define elm_widget_item_tooltip_window_mode_get(item) \
-  _elm_widget_item_tooltip_window_mode_get((Elm_Widget_Item *)item)
-/**
- * Convenience function to query item's tooltip style.
- * @see _elm_widget_item_tooltip_style_get()
- */
+  elm_widget_item_internal_tooltip_window_mode_get((Elm_Widget_Item_Data *)item)
 #define elm_widget_item_tooltip_style_get(item) \
-  _elm_widget_item_tooltip_style_get((const Elm_Widget_Item *)item)
-/**
- * Convenience function to set widget item cursor.
- * @see _elm_widget_item_cursor_set()
- */
+  elm_widget_item_internal_tooltip_style_get((const Elm_Widget_Item_Data *)item)
 #define elm_widget_item_cursor_set(item, cursor) \
-  _elm_widget_item_cursor_set((Elm_Widget_Item *)item, cursor)
-/**
- * Convenience function to get widget item cursor.
- * @see _elm_widget_item_cursor_get()
- */
+  elm_widget_item_internal_cursor_set((Elm_Widget_Item_Data *)item, cursor)
 #define elm_widget_item_cursor_get(item) \
-  _elm_widget_item_cursor_get((const Elm_Widget_Item *)item)
-/**
- * Convenience function to unset widget item cursor.
- * @see _elm_widget_item_cursor_unset()
- */
+  elm_widget_item_internal_cursor_get((const Elm_Widget_Item_Data *)item)
 #define elm_widget_item_cursor_unset(item) \
-  _elm_widget_item_cursor_unset((Elm_Widget_Item *)item)
-/**
- * Convenience function to change item's cursor style.
- * @see _elm_widget_item_cursor_style_set()
- */
+  elm_widget_item_internal_cursor_unset((Elm_Widget_Item_Data *)item)
 #define elm_widget_item_cursor_style_set(item, style) \
-  _elm_widget_item_cursor_style_set((Elm_Widget_Item *)item, style)
-/**
- * Convenience function to query item's cursor style.
- * @see _elm_widget_item_cursor_style_get()
- */
+  elm_widget_item_internal_cursor_style_set((Elm_Widget_Item_Data *)item, style)
 #define elm_widget_item_cursor_style_get(item) \
-  _elm_widget_item_cursor_style_get((const Elm_Widget_Item *)item)
-/**
- * Convenience function to change item's cursor engine_only.
- * @see _elm_widget_item_cursor_engine_only_set()
- */
+  elm_widget_item_internal_cursor_style_get((const Elm_Widget_Item_Data *)item)
 #define elm_widget_item_cursor_engine_only_set(item, engine_only) \
-  _elm_widget_item_cursor_engine_only_set((Elm_Widget_Item *)item, engine_only)
-/**
- * Convenience function to query item's cursor engine_only.
- * @see _elm_widget_item_cursor_engine_only_get()
- */
+  elm_widget_item_internal_cursor_engine_only_set((Elm_Widget_Item_Data *)item, engine_only)
 #define elm_widget_item_cursor_engine_only_get(item) \
-  _elm_widget_item_cursor_engine_only_get((const Elm_Widget_Item *)item)
+  elm_widget_item_internal_cursor_engine_only_get((const Elm_Widget_Item_Data *)item)
 /**
  * Convenience function to query item's content set hook.
- * @see _elm_widget_item_content_set_hook_set()
+ * @see elm_widget_item_internal_content_set_hook_set()
  */
 #define elm_widget_item_content_set_hook_set(item, func) \
-  _elm_widget_item_content_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Content_Set_Cb)func)
+  _elm_widget_item_content_set_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Content_Set_Cb)func)
 /**
  * Convenience function to query item's content get hook.
- * @see _elm_widget_item_content_get_hook_set()
+ * @see elm_widget_item_internal_content_get_hook_set()
  */
 #define elm_widget_item_content_get_hook_set(item, func) \
-  _elm_widget_item_content_get_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Content_Get_Cb)func)
+  _elm_widget_item_content_get_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Content_Get_Cb)func)
 /**
  * Convenience function to query item's content unset hook.
- * @see _elm_widget_item_content_unset_hook_set()
+ * @see elm_widget_item_internal_content_unset_hook_set()
  */
 #define elm_widget_item_content_unset_hook_set(item, func) \
-  _elm_widget_item_content_unset_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Content_Unset_Cb)func)
+  _elm_widget_item_content_unset_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Content_Unset_Cb)func)
 /**
  * Convenience function to query item's text set hook.
- * @see _elm_widget_item_text_set_hook_set()
+ * @see elm_widget_item_internal_text_set_hook_set()
  */
 #define elm_widget_item_text_set_hook_set(item, func) \
-  _elm_widget_item_text_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Text_Set_Cb)func)
+  _elm_widget_item_text_set_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Text_Set_Cb)func)
 /**
  * Convenience function to query item's text get hook.
- * @see _elm_widget_item_text_get_hook_set()
+ * @see elm_widget_item_internal_text_get_hook_set()
  */
 #define elm_widget_item_text_get_hook_set(item, func) \
-  _elm_widget_item_text_get_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Text_Get_Cb)func)
+  _elm_widget_item_text_get_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Text_Get_Cb)func)
 /**
  * Convenience function to query item's signal emit hook.
- * @see _elm_widget_item_signal_emit_hook_set()
+ * @see elm_widget_item_internal_signal_emit_hook_set()
  */
 #define elm_widget_item_signal_emit_hook_set(item, func) \
-  _elm_widget_item_signal_emit_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Signal_Emit_Cb)func)
+  _elm_widget_item_signal_emit_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Signal_Emit_Cb)func)
 /**
  * Convenience function to query disable get hook.
- * @see _elm_widget_item_disabled_get()
+ * @see elm_widget_item_internal_disabled_get()
  */
 #define elm_widget_item_disabled_get(item) \
-  _elm_widget_item_disabled_get((Elm_Widget_Item *)item)
+  elm_widget_item_internal_disabled_get((Elm_Widget_Item_Data *)item)
 /**
  * Convenience function to query disable set hook.
- * @see _elm_widget_item_disable_hook_set()
+ * @see elm_widget_item_internal_disable_hook_set()
  */
 #define elm_widget_item_disable_hook_set(item, func) \
-  _elm_widget_item_disable_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Disable_Cb)func)
+  _elm_widget_item_disable_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Disable_Cb)func)
 /**
  * Convenience function to query del pre hook.
- * @see _elm_widget_item_del_pre_hook_set()
+ * @see elm_widget_item_internal_del_pre_hook_set()
  */
 #define elm_widget_item_del_pre_hook_set(item, func) \
-  _elm_widget_item_del_pre_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Del_Pre_Cb)func)
+  _elm_widget_item_del_pre_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Del_Pre_Cb)func)
 /**
  * Convenience function to query style set hook.
- * @see _elm_widget_item_style_set_hook_set()
+ * @see elm_widget_item_internal_style_set_hook_set()
  */
 #define elm_widget_item_style_set_hook_set(item, func) \
-  _elm_widget_item_style_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Style_Set_Cb)func)
+  _elm_widget_item_style_set_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Style_Set_Cb)func)
 /**
  * Convenience function to query style get hook.
- * @see _elm_widget_item_style_get_hook_set()
+ * @see elm_widget_item_internal_style_get_hook_set()
  */
 #define elm_widget_item_style_get_hook_set(item, func) \
-  _elm_widget_item_style_get_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Style_Get_Cb)func)
+  _elm_widget_item_style_get_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Style_Get_Cb)func)
 
-/**
- * Convenience function to set style .
- * @see _elm_widget_item_style_set()
- */
 #define elm_widget_item_style_set(item, style) \
-  _elm_widget_item_style_set((Elm_Widget_Item *)item, style)
-/**
- * Convenience function to get style .
- * @see _elm_widget_item_style_get()
- */
+  elm_widget_item_internal_style_set((Elm_Widget_Item_Data *)item, style)
 #define elm_widget_item_style_get(item) \
-  _elm_widget_item_style_get((Elm_Widget_Item *)item)
+  elm_widget_item_internal_style_get((Elm_Widget_Item_Data *)item)
 
 /**
  * Convenience function to query focus set hook.
- * @see _elm_widget_item_focus_set_hook_set()
+ * @see elm_widget_item_internal_focus_set_hook_set()
  */
 #define elm_widget_item_focus_set_hook_set(item, func) \
-  _elm_widget_item_focus_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Focus_Set_Cb)func)
+  _elm_widget_item_focus_set_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Focus_Set_Cb)func)
 
 /**
  * Convenience function to query focus get hook.
- * @see _elm_widget_item_focus_get_hook_set()
+ * @see elm_widget_item_internal_focus_get_hook_set()
  */
 #define elm_widget_item_focus_get_hook_set(item, func) \
-  _elm_widget_item_focus_get_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Focus_Get_Cb)func)
+  _elm_widget_item_focus_get_hook_set((Elm_Widget_Item_Data *)item, (Elm_Widget_Focus_Get_Cb)func)
 
 /**
  * Convenience function to query track_cancel.
- * @see _elm_widget_item_del_pre_hook_set()
+ * @see elm_widget_item_internal_del_pre_hook_set()
  */
 #define elm_widget_item_track_cancel(item) \
-  _elm_widget_item_track_cancel((Elm_Widget_Item *)item)
+  elm_widget_item_internal_track_cancel((Elm_Widget_Item_Data *)item)
 
-/**
- * Convenience function to query translate hook.
- * @see _elm_widget_item_track_cancel()
- */
 #define elm_widget_item_translate(item) \
-  _elm_widget_item_translate((Elm_Widget_Item *)item)
+  elm_widget_item_internal_translate((Elm_Widget_Item_Data *)item)
 
-/**
- * Convenience function to save additional text part content.
- * @see _elm_widget_item_part_text_custom_set()
- */
 #define elm_widget_item_part_text_custom_set(item, part, text) \
-  _elm_widget_item_part_text_custom_set((Elm_Widget_Item *)item, part, text)
+  _elm_widget_item_internal_part_text_custom_set((Elm_Widget_Item_Data *)item, part, text)
 
-/**
- * Convenience function to get additional text part content.
- * @see _elm_widget_item_part_text_custom_set()
- */
 #define elm_widget_item_part_text_custom_get(item, part) \
-  _elm_widget_item_part_text_custom_get((Elm_Widget_Item *)item, part)
+  _elm_widget_item_internal_part_text_custom_get((Elm_Widget_Item_Data *)item, part)
 
-/**
- * Convenience function to update additional text part content.
- * @see _elm_widget_item_part_text_custom_set()
- */
 #define elm_widget_item_part_text_custom_update(item) \
-  _elm_widget_item_part_text_custom_update((Elm_Widget_Item *)item)
+  _elm_widget_item_internal_part_text_custom_update((Elm_Widget_Item_Data *)item)
 
-/**
- * Convenience function to set the focus on widget item.
- * @see _elm_widget_item_focus_set()
- */
 #define elm_widget_item_focus_set(item, focused) \
-  _elm_widget_item_focus_set((Elm_Widget_Item *)item, focused)
+  elm_widget_item_internal_focus_set((Elm_Widget_Item_Data *)item, focused)
 
-/**
- * Convenience function to query focus set hook.
- * @see _elm_widget_item_focus_get()
- */
 #define elm_widget_item_focus_get(item) \
-  _elm_widget_item_focus_get((const Elm_Widget_Item *)item)
+  elm_widget_item_internal_focus_get((const Elm_Widget_Item_Data *)item)
 
 #define ELM_WIDGET_CHECK_OR_RETURN(obj, ...)                    \
    do {                                                         \
@@ -1164,6 +1061,8 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
              CRI("Elm_Widget_Item " # item " is NULL");    \
              return __VA_ARGS__;                                \
         }                                                       \
+       if ((item)->eo_obj &&                                   \
+           eo_isa((item)->eo_obj, ELM_WIDGET_ITEM_CLASS)) break; \
        if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \
             EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
             return __VA_ARGS__;                                 \
@@ -1176,6 +1075,8 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
              CRI("Elm_Widget_Item " # item " is NULL");    \
              goto label;                                        \
         }                                                       \
+       if ((item)->eo_obj &&                                    \
+           eo_isa((item)->eo_obj, ELM_WIDGET_ITEM_CLASS)) break; \
        if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \
             EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
             goto label;                                         \
@@ -1192,5 +1093,8 @@ typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 #include "elm_widget.eo.h"
+
+#define ELM_WIDGET_ITEM_PROTECTED
+#include "elm_widget_item.eo.h"
 
 #endif

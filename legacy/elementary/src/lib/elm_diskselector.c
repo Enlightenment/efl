@@ -669,7 +669,7 @@ _item_new(Evas_Object *obj,
    //XXX: ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      {
-        _elm_access_widget_item_register((Elm_Widget_Item *)it);
+        _elm_access_widget_item_register((Elm_Widget_Item_Data *)it);
 
         _elm_access_text_set(_elm_access_info_get(it->base.access_obj),
                              ELM_ACCESS_TYPE, E_("diskselector item"));

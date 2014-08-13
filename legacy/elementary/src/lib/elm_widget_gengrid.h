@@ -192,15 +192,15 @@ struct _Elm_Gengrid_Pan_Data
     return
 
 #define ELM_GENGRID_ITEM_CHECK(it)                          \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
   ELM_GENGRID_CHECK(it->base.widget);
 
 #define ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, ...)                      \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
   ELM_GENGRID_CHECK(it->base.widget) __VA_ARGS__;
 
 #define ELM_GENGRID_ITEM_CHECK_OR_GOTO(it, label)              \
-  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
+  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item_Data *)it, label); \
   if (!it->base.widget || !eo_isa                              \
         ((it->base.widget), ELM_GENGRID_CLASS)) goto label;
 

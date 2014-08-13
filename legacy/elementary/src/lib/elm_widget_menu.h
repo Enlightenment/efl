@@ -93,11 +93,11 @@ struct _Elm_Menu_Item
     return
 
 #define ELM_MENU_ITEM_CHECK(it)                             \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
   ELM_MENU_CHECK(it->base.widget);
 
 #define ELM_MENU_ITEM_CHECK_OR_RETURN(it, ...)                         \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
   ELM_MENU_CHECK(it->base.widget) __VA_ARGS__;
 
 #endif

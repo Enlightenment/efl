@@ -1653,9 +1653,27 @@ elm_coords_finger_size_adjust(int times_w,
      *h = elm_config_finger_size_get() * times_h;
 }
 
+
+// Object item Eo migration defines, will be removed later
+#define IF_EO_DO(obj, func)                            \
+       if (eo_isa((Eo *)obj, ELM_WIDGET_ITEM_CLASS))   \
+         {                                             \
+            eo_do ((Eo *)obj, func);                   \
+            return;                                    \
+         }
+
+#define IF_EO_RETURN(obj, type, func)                  \
+       if (eo_isa((Eo *)obj, ELM_WIDGET_ITEM_CLASS))   \
+         {                                             \
+            type ret;                                  \
+            eo_do ((Eo *)obj, ret = func);             \
+            return ret;                                \
+         }
+
 EAPI Evas_Object *
 elm_object_item_widget_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, Evas_Object *, elm_wdg_item_widget_get());
    return elm_widget_item_widget_get(it);
 }
 
@@ -1664,20 +1682,23 @@ elm_object_item_part_content_set(Elm_Object_Item *it,
                                  const char *part,
                                  Evas_Object *content)
 {
-   _elm_widget_item_part_content_set((Elm_Widget_Item *)it, part, content);
+   IF_EO_DO(it, elm_wdg_item_part_content_set(part, content));
+   elm_widget_item_internal_part_content_set((Elm_Widget_Item_Data *)it, part, content);
 }
 
 EAPI Evas_Object *
 elm_object_item_part_content_get(const Elm_Object_Item *it,
                                  const char *part)
 {
-   return _elm_widget_item_part_content_get((Elm_Widget_Item *)it, part);
+   IF_EO_RETURN(it, Evas_Object *, elm_wdg_item_part_content_get(part));
+   return elm_widget_item_internal_part_content_get((Elm_Widget_Item_Data *)it, part);
 }
 
 EAPI Evas_Object *
 elm_object_item_part_content_unset(Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_part_content_unset((Elm_Widget_Item *)it, part);
+   IF_EO_RETURN(it, Evas_Object *, elm_wdg_item_part_content_unset(part));
+   return elm_widget_item_internal_part_content_unset((Elm_Widget_Item_Data *)it, part);
 }
 
 EAPI void
@@ -1685,31 +1706,36 @@ elm_object_item_part_text_set(Elm_Object_Item *it,
                               const char *part,
                               const char *label)
 {
-   _elm_widget_item_part_text_set((Elm_Widget_Item *)it, part, label);
+   IF_EO_DO(it, elm_wdg_item_part_text_set(part, label));
+   elm_widget_item_internal_part_text_set((Elm_Widget_Item_Data *)it, part, label);
 }
 
 EAPI const char *
 elm_object_item_part_text_get(const Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_part_text_get((Elm_Widget_Item *)it, part);
+   IF_EO_RETURN(it, const char *, elm_wdg_item_part_text_get(part));
+   return elm_widget_item_internal_part_text_get((Elm_Widget_Item_Data *)it, part);
 }
 
 EAPI void
 elm_object_item_domain_translatable_part_text_set(Elm_Object_Item *it, const char *part, const char *domain, const char *text)
 {
-   _elm_widget_item_domain_translatable_part_text_set((Elm_Widget_Item *)it, part, domain, text);
+   IF_EO_DO(it, elm_wdg_item_domain_translatable_part_text_set(part, domain, text));
+   elm_widget_item_internal_domain_translatable_part_text_set((Elm_Widget_Item_Data *)it, part, domain, text);
 }
 
 EAPI const char *
 elm_object_item_translatable_part_text_get(const Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_translatable_part_text_get((Elm_Widget_Item *)it, part);
+   IF_EO_RETURN(it, const char *, elm_wdg_item_translatable_part_text_get(part));
+   return elm_widget_item_internal_translatable_part_text_get((Elm_Widget_Item_Data *)it, part);
 }
 
 EAPI void
 elm_object_item_domain_part_text_translatable_set(Elm_Object_Item *it, const char *part, const char *domain, Eina_Bool translatable)
 {
-   _elm_widget_item_domain_part_text_translatable_set((Elm_Widget_Item *)it, part, domain, translatable);
+   IF_EO_DO(it, elm_wdg_item_domain_part_text_translatable_set(part, domain, translatable));
+   elm_widget_item_internal_domain_part_text_translatable_set((Elm_Widget_Item_Data *)it, part, domain, translatable);
 }
 
 EAPI void
@@ -1746,15 +1772,18 @@ elm_object_focused_item_get(const Evas_Object *obj)
 EAPI void
 elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
 {
-   _elm_widget_item_access_info_set((Elm_Widget_Item *)it, txt);
+   IF_EO_DO(it, elm_wdg_item_access_info_set(txt));
+   _elm_widget_item_internal_access_info_set((Elm_Widget_Item_Data *)it, txt);
 }
 
 EAPI Evas_Object *
 elm_object_item_access_register(Elm_Object_Item *item)
 {
-   Elm_Widget_Item *it;
+   IF_EO_RETURN(item, Evas_Object *, elm_wdg_item_access_register());
 
-   it = (Elm_Widget_Item *)item;
+   Elm_Widget_Item_Data *it;
+
+   it = (Elm_Widget_Item_Data *)item;
 
    _elm_access_widget_item_register(it);
 
@@ -1765,208 +1794,243 @@ elm_object_item_access_register(Elm_Object_Item *item)
 EAPI void
 elm_object_item_access_unregister(Elm_Object_Item *item)
 {
-   _elm_access_widget_item_unregister((Elm_Widget_Item *)item);
+   IF_EO_DO(item, elm_wdg_item_access_unregister());
+   _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)item);
 }
 
 EAPI Evas_Object *
 elm_object_item_access_object_get(const Elm_Object_Item *item)
 {
+   IF_EO_RETURN(item, Evas_Object *, elm_wdg_item_access_object_get());
    if (!item) return NULL;
 
-   return ((Elm_Widget_Item *)item)->access_obj;
+   return ((Elm_Widget_Item_Data *)item)->access_obj;
 }
 
 EAPI void
 elm_object_item_access_order_set(Elm_Object_Item *item, Eina_List *objs)
 {
-   _elm_access_widget_item_access_order_set((Elm_Widget_Item *)item, objs);
+   IF_EO_DO(item, elm_wdg_item_access_order_set(objs));
+   _elm_access_widget_item_access_order_set((Elm_Widget_Item_Data *)item, objs);
 }
 
 EAPI const Eina_List *
 elm_object_item_access_order_get(const Elm_Object_Item *item)
 {
-   return _elm_access_widget_item_access_order_get((Elm_Widget_Item *)item);
+   IF_EO_RETURN(item, const Eina_List *, elm_wdg_item_access_order_get());
+   return _elm_access_widget_item_access_order_get((Elm_Widget_Item_Data *)item);
 }
 
 EAPI void
 elm_object_item_access_order_unset(Elm_Object_Item *item)
 {
-   _elm_access_widget_item_access_order_unset((Elm_Widget_Item *)item);
+   IF_EO_DO(item, elm_wdg_item_access_order_unset());
+   _elm_access_widget_item_access_order_unset((Elm_Widget_Item_Data *)item);
 }
 
 EAPI void *
 elm_object_item_data_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, Evas_Object *, elm_wdg_item_data_get());
    return elm_widget_item_data_get(it);
 }
 
 EAPI void
 elm_object_item_data_set(Elm_Object_Item *it, void *data)
 {
+   IF_EO_DO(it, elm_wdg_item_data_set(data));
    elm_widget_item_data_set(it, data);
 }
 
 EAPI void
 elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source)
 {
-   _elm_widget_item_signal_emit((Elm_Widget_Item *)it, emission, source);
+   IF_EO_DO(it, elm_wdg_item_signal_emit(emission, source));
+   elm_widget_item_internal_signal_emit((Elm_Widget_Item_Data *)it, emission, source);
 }
 
 EAPI void
 elm_object_item_signal_callback_add(Elm_Object_Item *it, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func, void *data)
 {
-   _elm_widget_item_signal_callback_add((Elm_Widget_Item *)it, emission, source, (Elm_Widget_Item_Signal_Cb) func, data);
+   IF_EO_DO(it, elm_wdg_item_signal_callback_add(emission, source, func, data));
+   elm_widget_item_internal_signal_callback_add((Elm_Widget_Item_Data *)it, emission, source, (Elm_Widget_Item_Signal_Cb) func, data);
 }
 
 EAPI void *
 elm_object_item_signal_callback_del(Elm_Object_Item *it, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func)
 {
-   return _elm_widget_item_signal_callback_del((Elm_Widget_Item *)it, emission, source, (Elm_Widget_Item_Signal_Cb) func);
+   IF_EO_RETURN(it, void *, elm_wdg_item_signal_callback_del(emission, source, func));
+   return elm_widget_item_internal_signal_callback_del((Elm_Widget_Item_Data *)it, emission, source, (Elm_Widget_Item_Signal_Cb) func);
 }
 
 EAPI void
 elm_object_item_style_set(Elm_Object_Item *it, const char *style)
 {
+   IF_EO_DO(it, elm_wdg_item_style_set(style));
    elm_widget_item_style_set(it, style);
 }
 
 EAPI const char *
 elm_object_item_style_get(Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, const char *, elm_wdg_item_style_get());
    return elm_widget_item_style_get(it);
 }
 
 EAPI void elm_object_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
 {
-   _elm_widget_item_disabled_set((Elm_Widget_Item *)it, disabled);
+   IF_EO_DO(it, elm_wdg_item_disabled_set(disabled));
+   elm_widget_item_internal_disabled_set((Elm_Widget_Item_Data *)it, disabled);
 }
 
 EAPI Eina_Bool elm_object_item_disabled_get(const Elm_Object_Item *it)
 {
-   return _elm_widget_item_disabled_get((Elm_Widget_Item *)it);
+   IF_EO_RETURN(it, Eina_Bool, elm_wdg_item_disabled_get());
+   return elm_widget_item_internal_disabled_get((Elm_Widget_Item_Data *)it);
 }
 
 EAPI void elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb)
 {
-   _elm_widget_item_del_cb_set((Elm_Widget_Item *)it, del_cb);
+   IF_EO_DO(it, elm_wdg_item_del_cb_set(del_cb));
+   elm_widget_item_internal_del_cb_set((Elm_Widget_Item_Data *)it, del_cb);
 }
 
 EAPI void elm_object_item_del(Elm_Object_Item *it)
 {
    if (!it) return;
-   _elm_widget_item_del((Elm_Widget_Item *)it);
+   IF_EO_DO(it, elm_wdg_item_del());
+   _elm_widget_item_internal_del((Elm_Widget_Item_Data *)it);
 }
 
 EAPI void
 elm_object_item_tooltip_text_set(Elm_Object_Item *it, const char *text)
 {
+   IF_EO_DO(it, elm_wdg_item_tooltip_text_set(text));
    elm_widget_item_tooltip_text_set(it, text);
 }
 
 EAPI void
 elm_object_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
+   IF_EO_DO(it, elm_wdg_item_tooltip_content_cb_set(func, data, del_cb));
    elm_widget_item_tooltip_content_cb_set(it, func, data, del_cb);
 }
 
 EAPI void
 elm_object_item_tooltip_unset(Elm_Object_Item *it)
 {
+   IF_EO_DO(it, elm_wdg_item_tooltip_unset());
    elm_widget_item_tooltip_unset(it);
 }
 
 EAPI Eina_Bool
 elm_object_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable)
 {
+   IF_EO_RETURN(it, Eina_Bool, elm_wdg_item_tooltip_window_mode_set(disable));
    return elm_widget_item_tooltip_window_mode_set(it, disable);
 }
 
 EAPI Eina_Bool
 elm_object_item_tooltip_window_mode_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, Eina_Bool, elm_wdg_item_tooltip_window_mode_get());
    return elm_widget_item_tooltip_window_mode_get(it);
 }
 
 EAPI void
 elm_object_item_tooltip_style_set(Elm_Object_Item *it, const char *style)
 {
+   IF_EO_DO(it, elm_wdg_item_tooltip_style_set(style));
    elm_widget_item_tooltip_style_set(it, style);
 }
 
 EAPI const char *
 elm_object_item_tooltip_style_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, const char *, elm_wdg_item_tooltip_style_get());
    return elm_widget_item_tooltip_style_get(it);
 }
 
 EAPI void
 elm_object_item_cursor_set(Elm_Object_Item *it, const char *cursor)
 {
+   IF_EO_DO(it, elm_wdg_item_cursor_set(cursor));
    elm_widget_item_cursor_set(it, cursor);
 }
 
 EAPI const char *
 elm_object_item_cursor_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, const char *, elm_wdg_item_cursor_get());
    return elm_widget_item_cursor_get(it);
 }
 
 EAPI void
 elm_object_item_cursor_unset(Elm_Object_Item *it)
 {
+   IF_EO_DO(it, elm_wdg_item_cursor_unset());
    elm_widget_item_cursor_unset(it);
 }
 
 EAPI void
 elm_object_item_cursor_style_set(Elm_Object_Item *it, const char *style)
 {
+   IF_EO_DO(it, elm_wdg_item_cursor_style_set(style));
    elm_widget_item_cursor_style_set(it, style);
 }
 
 EAPI const char *
 elm_object_item_cursor_style_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, const char *, elm_wdg_item_cursor_style_get());
    return elm_widget_item_cursor_style_get(it);
 }
 
 EAPI void
 elm_object_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only)
 {
+   IF_EO_DO(it, elm_wdg_item_cursor_engine_only_set(engine_only));
    elm_widget_item_cursor_engine_only_set(it, engine_only);
 }
 
 EAPI Eina_Bool
 elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
+   IF_EO_RETURN(it, Eina_Bool, elm_wdg_item_cursor_engine_only_get());
    return elm_widget_item_cursor_engine_only_get(it);
 }
 
 EAPI Evas_Object *
 elm_object_item_track(Elm_Object_Item *it)
 {
-   return elm_widget_item_track((Elm_Widget_Item *)it);
+   IF_EO_RETURN(it, Evas_Object *, elm_wdg_item_track());
+   return elm_widget_item_track((Elm_Widget_Item_Data *)it);
 }
 
 void
 elm_object_item_untrack(Elm_Object_Item *it)
 {
-   elm_widget_item_untrack((Elm_Widget_Item *)it);
+   IF_EO_DO(it, elm_wdg_item_untrack());
+   elm_widget_item_untrack((Elm_Widget_Item_Data *)it);
 }
 
 int
 elm_object_item_track_get(const Elm_Object_Item *it)
 {
-   return elm_widget_item_track_get((Elm_Widget_Item *)it);
+   IF_EO_RETURN(it, int, elm_wdg_item_track_get());
+   return elm_widget_item_track_get((Elm_Widget_Item_Data *)it);
 }
 
 EAPI void
 elm_object_item_focus_set(Elm_Object_Item *item, Eina_Bool focused)
 {
+   IF_EO_DO(item, elm_wdg_item_focus_set(focused));
    elm_widget_item_focus_set(item, focused);
 }
 
 EAPI Eina_Bool
 elm_object_item_focus_get(const Elm_Object_Item *item)
 {
+   IF_EO_RETURN(item, Eina_Bool, elm_wdg_item_focus_get());
    return elm_widget_item_focus_get(item);
 }

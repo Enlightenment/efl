@@ -603,7 +603,8 @@ elm_toolbar.eo \
 elm_video.eo \
 elm_web.eo \
 elm_widget.eo \
-elm_win.eo
+elm_win.eo \
+elm_widget_item.eo
 
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
 elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
@@ -621,6 +622,103 @@ EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
 nodist_includesunstable_HEADERS = $(elm_eolian_h) $(elm_eolian_legacy_h)
 CLEANFILES += $(nodist_includesunstable_HEADERS)
+
+elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
+elementaryeolianfiles_DATA = \
+	     elm_widget.eo \
+	     elm_container.eo \
+	     elm_layout.eo \
+	     elm_interface_scrollable.eo \
+	     elm_pan.eo \
+	     elm_frame.eo \
+	     elm_hover.eo \
+	     elm_access.eo \
+	     elm_actionslider.eo \
+	     elm_app_client.eo \
+	     elm_app_client_view.eo \
+	     elm_app_server.eo \
+	     elm_app_server_view.eo \
+	     elm_atspi_app_object.eo \
+	     elm_interface_atspi_accessible.eo \
+	     elm_interface_atspi_action.eo \
+	     elm_interface_atspi_component.eo \
+	     elm_interface_atspi_editable_text.eo \
+	     elm_interface_atspi_image.eo \
+	     elm_interface_atspi_selection.eo \
+	     elm_interface_atspi_text.eo \
+	     elm_interface_atspi_value.eo \
+	     elm_interface_atspi_widget.eo \
+	     elm_interface_atspi_widget_action.eo \
+	     elm_interface_atspi_window.eo \
+	     elm_bg.eo \
+	     elm_box.eo \
+	     elm_bubble.eo \
+	     elm_button.eo \
+	     elm_calendar.eo \
+	     elm_check.eo \
+	     elm_clock.eo \
+	     elm_colorselector.eo \
+	     elm_conformant.eo \
+	     elm_ctxpopup.eo \
+	     elm_datetime.eo \
+	     elm_dayselector.eo \
+	     elm_diskselector.eo \
+	     elm_entry.eo \
+	     elm_fileselector.eo \
+	     elm_fileselector_button.eo \
+	     elm_fileselector_entry.eo \
+	     elm_flipselector.eo \
+	     elm_flip.eo \
+	     elm_gengrid.eo \
+	     elm_gengrid_pan.eo \
+	     elm_genlist.eo \
+	     elm_genlist_pan.eo \
+	     elm_gesture_layer.eo \
+	     elm_glview.eo \
+	     elm_grid.eo \
+	     elm_hoversel.eo \
+	     elm_image.eo \
+	     elm_icon.eo \
+	     elm_index.eo \
+	     elm_interface_fileselector.eo \
+	     elm_inwin.eo \
+	     elm_label.eo \
+	     elm_list.eo \
+	     elm_map_pan.eo \
+	     elm_map.eo \
+	     elm_menu.eo \
+	     elm_multibuttonentry.eo \
+	     elm_naviframe.eo \
+	     elm_panel.eo \
+	     elm_mapbuf.eo \
+	     elm_notify.eo \
+	     elm_panes.eo \
+	     elm_photocam.eo \
+	     elm_photocam_pan.eo \
+	     elm_photo.eo \
+	     elm_player.eo \
+	     elm_plug.eo \
+	     elm_popup.eo \
+	     elm_prefs.eo \
+	     elm_progressbar.eo \
+	     elm_radio.eo \
+	     elm_route.eo \
+	     elm_scroller.eo \
+	     elm_segment_control.eo \
+	     elm_separator.eo \
+	     elm_slider.eo \
+	     elm_slideshow.eo \
+	     elm_spinner.eo \
+	     elm_systray.eo \
+	     elm_table.eo \
+	     elm_thumb.eo \
+	     elm_toolbar.eo \
+	     elm_video.eo \
+	     elm_web.eo \
+	     elm_win.eo \
+	     elm_widget_item.eo
+
+EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
 includecxxbindingsdir = $(includedir)/elementary-cxx-@VMAJ@
 if HAVE_CXX11

@@ -1360,7 +1360,7 @@ _access_widget_item_register(Elm_Color_Item *it)
 {
    Elm_Access_Info *ai;
 
-   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   _elm_access_widget_item_register((Elm_Widget_Item_Data *)it);
 
    ai = _elm_access_info_get(it->base.access_obj);
 
@@ -1800,7 +1800,7 @@ _elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, El
 {
    Eina_List *items = NULL;
    Eina_List *l;
-   Elm_Widget_Item *item;
+   Elm_Widget_Item_Data *item;
    int i = 0;
 
    if (!sd) return EINA_FALSE;
@@ -1842,7 +1842,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
    else
      {
         EINA_LIST_FOREACH(sd->items, l, it)
-          _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+          _elm_access_widget_item_unregister((Elm_Widget_Item_Data *)it);
 
         //TODO: _elm_access_edje_object_part_object_unregister() ?
      }
