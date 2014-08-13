@@ -425,7 +425,7 @@ eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
      }
    buf2[len] = 0;
    if (_len) *_len = len;
-   return buf;
+   return buf2;
 }
 
 
