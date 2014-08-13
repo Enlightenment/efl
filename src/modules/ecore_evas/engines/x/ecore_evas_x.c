@@ -373,7 +373,7 @@ _ecore_evas_x_aux_hints_supprted_update(Ecore_Evas *ee)
                eina_list_append(ee->prop.aux_hint.supported_list, hint);
           }
 
-        if ((str) && (str[0]))
+        if (str)
           {
              free(str[0]);
              free(str);
