@@ -49,6 +49,11 @@ _file_to_buf(const char *file, long *length)//prepare text file for reading
    if (!file_for_print) return NULL;
    fseek(file_for_print, 0, SEEK_END);//set file_for_print to the end of file
    *length = ftell(file_for_print);//set current position of file_for_print
+   if (*length < 0)
+     {
+        fclose(file_for_print);
+        return NULL;
+     }
    buf = malloc(*length + 1);
    fseek(file_for_print, 0, SEEK_SET);//set file_for_print to the begining of file
    unused = fread(buf, *length, 1, file_for_print);
