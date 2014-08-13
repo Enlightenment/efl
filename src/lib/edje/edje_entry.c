@@ -1828,17 +1828,30 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              else en->composing = EINA_FALSE;
              if (!en->composing)
                {
+                  free(compres);
+                  compres = NULL;
                   _compose_seq_reset(en);
-                  if (ev->string && (!ev->string[1]) && (ev->string[0] < 0x20)) goto end;
+                  if (ev->string && (!ev->string[1]) && (ev->string[0] < 0x20))
+                    goto end;
                }
-             else goto end;
+             else
+               {
+                  free(compres);
+                  compres = NULL;
+                  goto end;
+               }
           }
         else
           {
              if (_is_modifier(ev->key)) goto end;
              en->seq = eina_list_append(en->seq, eina_stringshare_add(ev->key));
              state = ecore_compose_get(en->seq, &compres);
-             if (state == ECORE_COMPOSE_NONE) _compose_seq_reset(en);
+             if (state == ECORE_COMPOSE_NONE)
+               {
+                  _compose_seq_reset(en);
+                  free(compres);
+                  compres = NULL;
+               }
              else if (state == ECORE_COMPOSE_DONE)
                {
                   _compose_seq_reset(en);
@@ -1847,8 +1860,15 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        string = compres;
                        free_string = EINA_TRUE;
                     }
+                  else free(compres);
+                  compres = NULL;
                }
-             else goto end;
+             else
+               {
+                  free(compres);
+                  compres = NULL;
+                  goto end;
+               }
           }
         if (string)
           {
@@ -1889,8 +1909,8 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   cursor_changed = EINA_TRUE;
                   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                }
+             if (free_string) free(string);
           }
-        if (free_string) free(string);
      }
 end:
    if (!cursor_changed &&
