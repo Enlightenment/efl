@@ -6137,8 +6137,13 @@ _escaped_char_get(const char *s, const char *s_end)
           return NULL;
 
         utf8_char = eina_unicode_unicode_to_utf8(uchar, NULL);
-        strncpy(utf8_escape, utf8_char, sizeof(utf8_escape));
-        free(utf8_char);
+        // eina_unicode_unicode_to_utf8() always creates a string that
+        // is nul terminated - guaranteed
+        if (utf8_char)
+          {
+             strcpy(utf8_escape, utf8_char);
+             free(utf8_char);
+          }
 
         return utf8_escape;
      }
