@@ -1774,6 +1774,25 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
              }
            eo_lexer_context_pop(ls);
            pop_strbuf(ls);
+           if (ls->t.token == ';')
+             {
+                Eolian_Type *def = push_type(ls);
+                def->is_extern = is_extern;
+                def->type = EOLIAN_TYPE_STRUCT_OPAQUE;
+                _fill_type_name(def, name);
+                eo_lexer_get(ls);
+                if (ls->t.token == TOK_COMMENT)
+                  {
+                     def->comment = eina_stringshare_ref(ls->t.value.s);
+                     eo_lexer_get(ls);
+                  }
+                def->base.file = eina_stringshare_ref(ls->filename);
+                def->base.line = line;
+                def->base.column = col;
+                database_struct_add(def);
+                pop_type(ls);
+                break;
+             }
            if (is_enum)
              parse_enum(ls, name, is_extern, line, col);
            else

@@ -19,6 +19,9 @@ type Bar: struct {
     b: struct _Foo;
 };
 
+/* opaque struct */
+struct Opaque;
+
 class Struct {
    methods {
       foo {

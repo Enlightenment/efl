@@ -606,6 +606,10 @@ START_TEST(eolian_struct)
    fail_if(!!(type_name = eolian_type_name_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
 
+   /* opaque struct */
+   fail_if(!(type = eolian_type_struct_get_by_name("Opaque")));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT_OPAQUE);
+
    eolian_shutdown();
 }
 END_TEST

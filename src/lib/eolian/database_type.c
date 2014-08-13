@@ -34,7 +34,8 @@ database_typedef_del(Eolian_Type *tp)
      {
         if (btp->type == EOLIAN_TYPE_ENUM)
           tp->base_type = NULL;
-        else if (btp->type == EOLIAN_TYPE_STRUCT && btp->name)
+        else if ((btp->type == EOLIAN_TYPE_STRUCT
+               || btp->type == EOLIAN_TYPE_STRUCT_OPAQUE) && btp->name)
           tp->base_type = NULL;
      }
    database_type_del(tp);
@@ -107,6 +108,8 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append(buf, tp->name);
         eina_strbuf_append_char(buf, ' ');
      }
+   if (tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
+     goto append_name;
    eina_strbuf_append(buf, "{ ");
    EINA_LIST_FOREACH(tp->field_names, l, fname)
      {
@@ -115,6 +118,7 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append(buf, "; ");
      }
    eina_strbuf_append(buf, "}");
+append_name:
    if (name)
      {
         eina_strbuf_append_char(buf, ' ');
@@ -201,7 +205,8 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         _ftype_to_str(tp, buf, name);
         return;
      }
-   else if (tp->type == EOLIAN_TYPE_STRUCT)
+   else if (tp->type == EOLIAN_TYPE_STRUCT
+         || tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
      {
         _stype_to_str(tp, buf, name);
         return;
@@ -299,7 +304,8 @@ database_type_print(Eolian_Type *tp)
      printf("%s", tp->full_name);
    else if (tp->type == EOLIAN_TYPE_VOID)
      printf("void");
-   else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
+   else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT
+         || tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
      printf("struct %s", tp->full_name);
    else if (tp->type == EOLIAN_TYPE_REGULAR_ENUM)
      printf("enum %s", tp->full_name);

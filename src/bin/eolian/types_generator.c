@@ -69,10 +69,11 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
               break;
            }
       case EOLIAN_TYPE_STRUCT:
+      case EOLIAN_TYPE_STRUCT_OPAQUE:
            {
               const char *member_name;
               char *name = _concat_name(tp);
-              if (in_typedef && name)
+              if ((in_typedef && name) || tp_type == EOLIAN_TYPE_STRUCT_OPAQUE)
                 {
                    eina_strbuf_append_printf(buf, "struct %s", name);
                    free(name);

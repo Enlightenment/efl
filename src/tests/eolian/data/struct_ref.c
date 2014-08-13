@@ -32,6 +32,8 @@ struct _Foo {
   float another;
 };
 
+struct Opaque;
+
 
 #endif
 #define STRUCT_CLASS struct_class_get()
