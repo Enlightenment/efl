@@ -661,6 +661,10 @@ database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
         eina_value_set(outval, out.value.b);
         break;
       case EOLIAN_EXPR_NULL:
+        /* we need to initialize to prevent crashes */
+        if (!eina_value_setup(outval, EINA_VALUE_TYPE_UCHAR))
+          return EOLIAN_EXPR_UNKNOWN;
+        eina_value_set(outval, 0);
         break;
       default:
         return EOLIAN_EXPR_UNKNOWN;

@@ -1302,6 +1302,21 @@ EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression 
 EAPI Eina_Stringshare *eolian_expression_value_to_literal(const Eina_Value *v, Eolian_Expression_Type etp);
 
 /*
+ * @brief Serialize an expression.
+ *
+ * @param[in] expr the expression.
+ * @return the serialized expression or NULL.
+ *
+ * This serializes the expression into the original form as written in the .eo
+ * file (but with parens on binary operators explicitly specifying precedence).
+ * Keep in mind that it cannot be used alone pasted into C code as it doesn't
+ * resolve namespaces and enum field names.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_expression_serialize(const Eolian_Expression *expr);
+
+/*
  * @brief Get a global variable by name. Supports namespaces.
  *
  * @param[in] name the name of the variable

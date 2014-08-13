@@ -138,6 +138,12 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                         Eolian_Expression_Type et = eolian_expression_eval(member, EOLIAN_MASK_INT, &v);
                         const char *lit = eolian_expression_value_to_literal(&v, et);
                         eina_strbuf_append_printf(buf, "  %s = %s", eina_strbuf_string_get(membuf), lit);
+                        const char *exp = eolian_expression_serialize(member);
+                        if (exp && strcmp(lit, exp))
+                          {
+                             eina_strbuf_append_printf(buf, " /* %s */", exp);
+                             eina_stringshare_del(exp);
+                          }
                         eina_stringshare_del(lit);
                         eina_value_flush(&v);
                      }
