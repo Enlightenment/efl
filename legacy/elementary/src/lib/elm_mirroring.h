@@ -17,7 +17,7 @@
  * Get the widget's mirrored mode.
  *
  * @param obj The widget.
- * @return EINA_TRUE if mirrored is set, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if mirrored is set, @c EINA_FALSE otherwise
  *
  * @ingroup Mirroring
  */
@@ -27,7 +27,7 @@ EAPI Eina_Bool elm_object_mirrored_get(const Evas_Object *obj);
  * Set the widget's mirrored mode.
  *
  * @param obj The widget.
- * @param mirrored EINA_TRUE to set mirrored mode, EINA_FALSE to unset it.
+ * @param mirrored @c EINA_TRUE to set mirrored mode, @c EINA_FALSE to unset it.
  *
  * @ingroup Mirroring
  */
@@ -48,7 +48,8 @@ EAPI Eina_Bool elm_object_mirrored_automatic_get(const Evas_Object *obj);
  * When widget in automatic mode, it follows the system mirrored mode set by
  * elm_mirrored_set().
  * @param obj The widget.
- * @param automatic EINA_TRUE for auto mirrored mode. EINA_FALSE for manual.
+ * @param automatic @c EINA_TRUE for auto mirrored mode. @c EINA_FALSE for
+ * manual.
  *
  * @ingroup Mirroring
  */

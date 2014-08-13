@@ -73,7 +73,7 @@ struct _Elm_Fileselector_Data
    Eina_Bool                multi : 1;
 
    /* this flag is only for multi selection.
-    * If this flag is set to EINA_TRUE, it means directory is selected
+    * If this flag is set to @c EINA_TRUE, it means directory is selected
     * so that fileselector will clear current selection when user clicked
     * another item. */
    Eina_Bool                dir_selected : 1;

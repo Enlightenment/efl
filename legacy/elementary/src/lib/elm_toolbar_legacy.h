@@ -16,7 +16,7 @@ EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
  *
  * @param obj The toolbar object
  * @param reorder_mode The reorder mode
- * (EINA_TRUE = on, EINA_FALSE = off)
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
  * @ingroup Toolbar
  */
@@ -27,7 +27,7 @@ EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj
  *
  * @param obj The toolbar object
  * @return The reorder mode
- * (EINA_TRUE = on, EINA_FALSE = off)
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
  * @ingroup Toolbar
  */
@@ -38,7 +38,7 @@ EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Objec
  *
  * @param obj The toolbar object.
  * @param transverse_expanded The transverse expansion of the item.
- * (EINA_TRUE = on, EINA_FALSE = off, default = EINA_FALSE)
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off, default = @c EINA_FALSE)
  *
  * This will expand the transverse length of the item according the transverse length of the toolbar.
  * The default is what the transverse length of the item is set according its min value.
@@ -52,7 +52,7 @@ EAPI void                         elm_toolbar_transverse_expanded_set(Evas_Objec
  *
  * @param obj The toolbar object.
  * @return The transverse expansion of the item.
- * (EINA_TRUE = on, EINA_FALSE = off, default = EINA_FALSE)
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off, default = @c EINA_FALSE)
  *
  * @see elm_toolbar_transverse_expand_set() for details.
  *

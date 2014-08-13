@@ -98,7 +98,7 @@ EAPI void                          elm_gengrid_item_selected_set(Elm_Object_Item
  * @param it The gengrid item
  * @return @c EINA_TRUE, if it's selected, @c EINA_FALSE otherwise
  *
- * This API returns EINA_TRUE for all the items selected in multi-select mode as well.
+ * This API returns @c EINA_TRUE for all the items selected in multi-select mode as well.
  *
  * @see elm_gengrid_item_selected_set() for more details
  *
@@ -357,8 +357,8 @@ EAPI const char                   *elm_gengrid_item_tooltip_style_get(const Elm_
 /**
  * @brief Disable size restrictions on an object's tooltip
  * @param it The tooltip's anchor object
- * @param disable If EINA_TRUE, size restrictions are disabled
- * @return EINA_FALSE on failure, EINA_TRUE on success
+ * @param disable If @c EINA_TRUE, size restrictions are disabled
+ * @return @c EINA_FALSE on failure, @c EINA_TRUE on success
  *
  * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
@@ -368,7 +368,7 @@ EAPI Eina_Bool                     elm_gengrid_item_tooltip_window_mode_set(Elm_
 /**
  * @brief Retrieve size restriction state of an object's tooltip
  * @param it The tooltip's anchor object
- * @return If EINA_TRUE, size restrictions are disabled
+ * @return If @c EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
  * its parent window's canvas.

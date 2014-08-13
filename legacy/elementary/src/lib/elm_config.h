@@ -1214,7 +1214,8 @@ EAPI Eina_Bool  elm_config_vsync_get(void);
  * This sets the globally configured vsync flag that asks some backend
  * engines to use vsync display if possible.
  *
- * @param enabled This should be EINA_TRUE if enabled, or EINA_FALSE if not.
+ * @param enabled This should be @c EINA_TRUE if enabled, or @c EINA_FALSE if
+ * not.
  *
  * @since 1.11
  */
@@ -1240,7 +1241,8 @@ EAPI Eina_Bool  elm_config_accel_preference_override_get(void);
  * has the global system acceleration preference configureation forcibly
  * override whatever acceleration preference the application may want.
  *
- * @param enabled This should be EINA_TRUE if enabled, or EINA_FALSE if not.
+ * @param enabled This should be @c EINA_TRUE if enabled, or @c EINA_FALSE if
+ * not.
  *
  * @since 1.11
  */

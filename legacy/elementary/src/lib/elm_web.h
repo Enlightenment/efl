@@ -40,8 +40,8 @@
  * @li "load,provisional": Started provisional load
  * @li "load,started": Loading of a document started
  * @li "menubar,visible,get": Queries if the menubar is visible. Event info
- * is a pointer to Eina_Bool where the callback should set EINA_TRUE if
- * the menubar is visible, or EINA_FALSE in case it's not
+ * is a pointer to Eina_Bool where the callback should set @c EINA_TRUE if
+ * the menubar is visible, or @c EINA_FALSE in case it's not
  * @li "menubar,visible,set": Informs menubar visibility. Event info is
  * an Eina_Bool indicating the visibility
  * @li "popup,created": A dropdown widget was activated, requesting its

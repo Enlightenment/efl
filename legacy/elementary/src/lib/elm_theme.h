@@ -397,8 +397,8 @@ EAPI const Eina_List *elm_theme_list_get(const Elm_Theme *th);
  * path is the full path to the file, if searched, and the file exists, or it
  * is simply the full path given in the element or a resolved path if
  * relative to home. The @p in_search_path boolean pointed to is set to
- * EINA_TRUE if the file was a search-able file and is in the search path,
- * and EINA_FALSE otherwise.
+ * @c EINA_TRUE if the file was a search-able file and is in the search path,
+ * and @c EINA_FALSE otherwise.
  *
  * @ingroup Theme
  */

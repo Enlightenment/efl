@@ -301,8 +301,8 @@ EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit
  * @see elm_transit_objects_final_state_keep_set()
  *
  * @param transit The transit object.
- * @return EINA_TRUE means the states of the objects will be reset.
- * If @p transit is NULL, EINA_FALSE is returned
+ * @return @c EINA_TRUE means the states of the objects will be reset.
+ * If @p transit is NULL, @c EINA_FALSE is returned
  *
  * @ingroup Transit
  */
@@ -311,7 +311,7 @@ EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_T
 /**
  * Set the event enabled when transit is operating.
  *
- * If @p enabled is EINA_TRUE, the objects of the transit will receive
+ * If @p enabled is @c EINA_TRUE, the objects of the transit will receive
  * events from mouse and keyboard during the animation.
  * @note When you add an object with elm_transit_object_add(), its state from
  * evas_object_freeze_events_get(obj) is saved, and it is applied when the
@@ -333,8 +333,8 @@ EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, 
  * @see elm_transit_event_enabled_set()
  *
  * @param transit The Transit object
- * @return EINA_TRUE, when event is enabled. If @p transit is NULL
- * EINA_FALSE is returned
+ * @return @c EINA_TRUE, when event is enabled. If @p transit is NULL
+ * @c EINA_FALSE is returned
  *
  * @ingroup Transit
  */
@@ -365,7 +365,7 @@ EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Tra
  * the repeat with the function elm_transit_repeat_times_set().
  *
  * @param transit The transit object.
- * @param reverse EINA_TRUE means the auto_reverse is on.
+ * @param reverse @c EINA_TRUE means the auto_reverse is on.
  *
  * @ingroup Transit
  */
@@ -377,8 +377,8 @@ EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, E
  * @see elm_transit_auto_reverse_set()
  *
  * @param transit The transit object.
- * @return EINA_TRUE means auto reverse is on. If @p transit is NULL
- * EINA_FALSE is returned
+ * @return @c EINA_TRUE means auto reverse is on. If @p transit is NULL
+ * @c EINA_FALSE is returned
  *
  * @ingroup Transit
  */
@@ -561,8 +561,8 @@ EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bo
  * @note @p transit can not be NULL
  *
  * @param transit The transit object.
- * @return EINA_TRUE means transition is paused. If @p transit is NULL
- * EINA_FALSE is returned
+ * @return @c EINA_TRUE means transition is paused. If @p transit is NULL
+ * @c EINA_FALSE is returned
  *
  * @ingroup Transit
  */
@@ -738,7 +738,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_zoom_add(Elm_Transit *transit, fl
  *
  * @param transit Transit object.
  * @param axis Flipping Axis(X or Y).
- * @param cw Flipping Direction. EINA_TRUE is clock-wise.
+ * @param cw Flipping Direction. @c EINA_TRUE is clock-wise.
  * @return Flip effect context data.
  *
  * @ingroup Transit
@@ -762,7 +762,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, El
  *
  * @param transit Transit object.
  * @param axis Flipping Axis(X or Y).
- * @param cw Flipping Direction. EINA_TRUE is clock-wise.
+ * @param cw Flipping Direction. @c EINA_TRUE is clock-wise.
  * @return Resizeable flip effect context data.
  *
  * @ingroup Transit

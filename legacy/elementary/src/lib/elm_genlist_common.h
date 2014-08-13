@@ -394,8 +394,8 @@ EAPI const char                   *elm_genlist_item_tooltip_style_get(const Elm_
 /**
  * @brief Disable size restrictions on an object's tooltip
  * @param it The tooltip's anchor object
- * @param disable If EINA_TRUE, size restrictions are disabled
- * @return EINA_FALSE on failure, EINA_TRUE on success
+ * @param disable If @c EINA_TRUE, size restrictions are disabled
+ * @return @c EINA_FALSE on failure, @c EINA_TRUE on success
  *
  * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
@@ -405,7 +405,7 @@ EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_
 /**
  * @brief Retrieve size restriction state of an object's tooltip
  * @param it The tooltip's anchor object
- * @return If EINA_TRUE, size restrictions are disabled
+ * @return If @c EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
  * its parent window's canvas.
@@ -775,7 +775,7 @@ EAPI Elm_Genlist_Item_Type        elm_genlist_item_type_get(const Elm_Object_Ite
  *
  * @param it The genlist item object
  * @param flip The flip mode
- * (EINA_TRUE = on, EINA_FALSE = off)
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
  * This function sets the flip state of a given genlist item.
  * Flip mode overrides current item object.
@@ -794,7 +794,7 @@ EAPI void elm_genlist_item_flip_set(Elm_Object_Item *it, Eina_Bool flip);
  * @param it The genlist item object
  *
  * This function returns the flip state of a given genlist item.
- * If the parameter is invalid, it returns EINA_FALSE.
+ * If the parameter is invalid, it returns @c EINA_FALSE.
  *
  * @see elm_genlist_item_flip_set()
  *

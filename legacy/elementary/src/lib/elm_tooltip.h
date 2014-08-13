@@ -220,8 +220,8 @@ EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
  * @brief Disable size restrictions on an object's tooltip
  *
  * @param obj The tooltip's anchor object
- * @param disable If EINA_TRUE, size restrictions are disabled
- * @return EINA_FALSE on failure, EINA_TRUE on success
+ * @param disable If @c EINA_TRUE, size restrictions are disabled
+ * @return @c EINA_FALSE on failure, @c EINA_TRUE on success
  *
  * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
@@ -234,7 +234,7 @@ EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool 
  * @brief Retrieve size restriction state of an object's tooltip
  *
  * @param obj The tooltip's anchor object
- * @return If EINA_TRUE, size restrictions are disabled
+ * @return If @c EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
  * its parent window's canvas.

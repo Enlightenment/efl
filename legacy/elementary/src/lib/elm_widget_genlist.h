@@ -154,7 +154,7 @@ struct _Elm_Genlist_Data
                                                             * mode
                                                             * enable/disable */
    /* this flag means genlist is supposed to be scrolled. if this flag
-    * is set to EINA_TRUE, genlist checks whether it's ok to scroll
+    * is set to @c EINA_TRUE, genlist checks whether it's ok to scroll
     * genlist now or not. */
    Eina_Bool                             check_scroll : 1;
    Eina_Bool                             pan_changed : 1;
@@ -179,7 +179,7 @@ struct _Elm_Genlist_Data
                                                         * animation. (show,
                                                         * bring in) */
 
-   /* this is set to EINA_TRUE when the item is re-queued. this
+   /* this is set to @c EINA_TRUE when the item is re-queued. this
     * happens when the item is un-queued but the rel item is still in
     * the queue. this item will be processed later. */
    Eina_Bool                             requeued : 1;

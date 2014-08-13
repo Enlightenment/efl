@@ -30,8 +30,8 @@ EAPI void                       *elm_thumb_ethumb_client_get(void);
 /**
  * Get the ethumb_client connection state.
  *
- * @return EINA_TRUE if the client is connected to the server or EINA_FALSE
- * otherwise.
+ * @return @c EINA_TRUE if the client is connected to the server or @c
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                   elm_thumb_ethumb_client_connected_get(void);
 

@@ -25,8 +25,8 @@
  *
  * The list function may look at filename, may open the file or do
  * anything it likes to determine something about the file. Either it
- * filters it out (returns EINA_FALSE) and it is discarded or it
- * returns EINA_TRUE and also provides a "sort id" which is a string
+ * filters it out (returns @c EINA_FALSE) and it is discarded or it
+ * returns @c EINA_TRUE and also provides a "sort id" which is a string
  * store uses to figure out sorting. This string could be the filename, or
  * some data based on its contents. The strings are sorted alphabetically
  * like any normal ASCII strings, with case being important. As this listing
@@ -85,11 +85,11 @@ struct _Elm_Store_Item_Mapping_Icon
 {
    int                   w, h; /**< The desired icon size in addition to the file path returned from the mapping */
    Elm_Icon_Lookup_Order lookup_order; /**< The order in which to find the icon */
-   Eina_Bool             standard_name : 1; /**< Use a standard name to find it (EINA_TRUE) or not */
-   Eina_Bool             no_scale : 1; /**< EINA_TRUE is you don't want the icon scaled */
-   Eina_Bool             smooth : 1; /**< EINA_TRUE if icon is to be smooth scaled */
-   Eina_Bool             scale_up : 1; /**< EINA_TRUE if scaling up is allowed */
-   Eina_Bool             scale_down : 1; /**< EINA_TRUE if scaling down is allowed */
+   Eina_Bool             standard_name : 1; /**< Use a standard name to find it (@c EINA_TRUE) or not */
+   Eina_Bool             no_scale : 1; /**< @c EINA_TRUE is you don't want the icon scaled */
+   Eina_Bool             smooth : 1; /**< @c EINA_TRUE if icon is to be smooth scaled */
+   Eina_Bool             scale_up : 1; /**< @c EINA_TRUE if scaling up is allowed */
+   Eina_Bool             scale_down : 1; /**< @c EINA_TRUE if scaling down is allowed */
 };
 
 struct _Elm_Store_Item_Mapping_Empty
@@ -254,8 +254,8 @@ EAPI int                     elm_store_cache_get(const Elm_Store *st);
  * Set the function used to deal with listing of items
  *
  * This function is called per item that is found so it can examine the item
- * and discard it (return EINA_FALSE to discard, or EINA_TRUE to accept), and
- * work out some sorting ID (that may be filename or anything else based on
+ * and discard it (return @c EINA_FALSE to discard, or @c EINA_TRUE to accept),
+ * and work out some sorting ID (that may be filename or anything else based on
  * content). This function is always called from a thread.
  *
  * @param st The store to set the function of
@@ -304,7 +304,8 @@ EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store
  * Enable or disable fetching in a thread for Store
  *
  * @param st The store to modify
- * @param use_thread EINA_TRUE to use a thread to fetch, EINA_FALSE don't use a thread.
+ * @param use_thread @c EINA_TRUE to use a thread to fetch, @c EINA_FALSE don't
+ * use a thread.
  *
  * @ingroup Store
  */
@@ -330,7 +331,7 @@ EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st);
  * in the store and then never change it again.
  *
  * @param st The store to modify
- * @param sorted EINA_TRUE if we are to sort, EINA_FALSE if not.
+ * @param sorted @c EINA_TRUE if we are to sort, @c EINA_FALSE if not.
  *
  * @ingroup Store
  */
@@ -342,7 +343,7 @@ EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorte
  * Get the sorted flag as set by elm_store_sorted_set().
  *
  * @param st The store to query
- * @return EINA_TRUE if sorted, EINA_FALSE if not.
+ * @return @c EINA_TRUE if sorted, @c EINA_FALSE if not.
  *
  * @ingroup Store
  */
