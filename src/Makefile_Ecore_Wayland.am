@@ -17,9 +17,7 @@ lib/ecore_wayland/ecore_wl_window.c \
 lib/ecore_wayland/ecore_wl_subsurf.c \
 lib/ecore_wayland/ecore_wl_private.h \
 lib/ecore_wayland/subsurface-protocol.c \
-lib/ecore_wayland/subsurface-client-protocol.h \
-lib/ecore_wayland/xdg-shell-client-protocol.h \
-lib/ecore_wayland/xdg-shell-protocol.c
+lib/ecore_wayland/subsurface-client-protocol.h
 
 lib_ecore_wayland_libecore_wayland_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WAYLAND_CFLAGS@
 lib_ecore_wayland_libecore_wayland_la_LIBADD = @ECORE_WAYLAND_LIBS@
