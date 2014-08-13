@@ -376,6 +376,12 @@ _evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
         return;
      }
 
+   if (stride < (int)sizeof(float))
+     {
+        ERR("Stride too small");
+        return;
+     }
+
    if (attrib == EVAS_3D_VERTEX_POSITION)
      {
         int i = 0, j = 0, size = stride/sizeof(float);
