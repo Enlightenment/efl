@@ -73,6 +73,7 @@ error(int number, ...)
 
    if (number < 100)
      {
+	if (number > 74) number = 74;
 	msg = errmsg[number - 1];
 	errflag = TRUE;	/* set errflag (skip rest of erroneous expression) */
 	errnum++;
