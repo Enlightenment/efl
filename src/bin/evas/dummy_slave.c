@@ -110,13 +110,11 @@ _cserve2_shm_map(const char *name, size_t length, off_t offset)
    return map;
 }
 
-/*
 static void
 _cserve2_shm_unmap(void *map, size_t length)
 {
    munmap(map, length);
 }
-*/
 
 static Error_Type
 image_open(const char *file EINA_UNUSED, const char *key EINA_UNUSED, Slave_Msg_Image_Opened *result)
@@ -140,6 +138,7 @@ image_load(const char *shmfile, Slave_Msg_Image_Load *params)
      return CSERVE2_RESOURCE_ALLOCATION_FAILED;
 
    memset(map + params->shm.image_offset, 'A', params->shm.image_size);
+   _cserve2_shm_unmap(map, params->shm.mmap_size);
 
    return CSERVE2_NONE;
 }
