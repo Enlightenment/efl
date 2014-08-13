@@ -138,7 +138,6 @@ struct _Eolian_Type
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
    Eina_Bool is_extern :1;
-   Eina_Bool is_opaque :1;
 };
 
 struct _Eolian_Implement
