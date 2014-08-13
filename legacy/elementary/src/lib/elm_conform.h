@@ -25,13 +25,13 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li "virtualkeypad,state,on": if virtualkeypad state is switched to "on".
- * (@since 1.8)
+ * (since 1.8)
  * @li "virtualkeypad,state,off": if virtualkeypad state is switched to "off".
- * (@since 1.8)
+ * (since 1.8)
  * @li "clipboard,state,on": if clipboard state is switched to "on".
- * (@since 1.8)
+ * (since 1.8)
  * @li "clipboard,state,off": if clipboard state is switched to "off".
- * (@since 1.8)
+ * (since 1.8)
  * In all cases, the @c event parameter of the callback will be
  * @c NULL.
  *

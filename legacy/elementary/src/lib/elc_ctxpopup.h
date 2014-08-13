@@ -19,8 +19,7 @@
  * number of items (hence the use of list, not genlist).
  *
  * This widget inherits from the Layout one, so that all the
- * functions acting on it also work for context popup objects
- * (@since 1.8).
+ * functions acting on it also work for context popup objects (since 1.8).
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:

@@ -28,11 +28,11 @@
  * formatted markup text.
  *
  * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for entry objects (@since 1.8).
+ * functions acting on it also work for entry objects (since 1.8).
  *
  * This widget implements the @b @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base
- * @ref Scroller widget also work for entries (@since 1.8).
+ * @ref Scroller widget also work for entries (since 1.8).
  *
  * Some calls on the entry's API are marked as @b deprecated, as they
  * just wrap the scrollable widgets counterpart functions. Use the

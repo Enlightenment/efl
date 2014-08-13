@@ -21,8 +21,7 @@
  * a smart event and as the new text on the entry.
  *
  * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for file selector entry objects
- * (@since 1.8).
+ * functions acting on it also work for file selector entry objects (since 1.8).
  *
  * This widget encapsulates operations on its internal file
  * selector on its own API. There is less control over its file
