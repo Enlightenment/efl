@@ -16,7 +16,6 @@ static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial);
 
-
 /* local variables */
 static Eina_Hash *_windows = NULL;
 
@@ -34,11 +33,13 @@ static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener =
    _ecore_wl_window_cb_popup_done
 };
 
-static const struct xdg_surface_listener _ecore_xdg_surface_listener = {
+static const struct xdg_surface_listener _ecore_xdg_surface_listener = 
+{
    _ecore_xdg_handle_surface_configure,
 };
 
-static const struct xdg_popup_listener _ecore_xdg_popup_listener = {
+static const struct xdg_popup_listener _ecore_xdg_popup_listener = 
+{
    _ecore_xdg_handle_popup_done,
 };
 
@@ -794,9 +795,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
    if ((w <= 0) || (h <= 0)) return;
 
    if ((win->allocation.w != w) || (win->allocation.h != h))
-     {
-        _ecore_wl_window_configure_send(win, w, h, edges);
-     }
+     _ecore_wl_window_configure_send(win, w, h, edges);
 }
 
 static void
@@ -834,9 +833,7 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface,
            }
      }
    if ((width > 0) && (height > 0))
-     {
-        _ecore_wl_window_configure_send(win, width, height, 0);
-     }
+     _ecore_wl_window_configure_send(win, width, height, 0);
    else
      {
         if ((win->saved.w != 1) || (win->saved.h != 1))
