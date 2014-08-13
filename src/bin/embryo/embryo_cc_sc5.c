@@ -80,6 +80,7 @@ error(int number, ...)
      }
    else if (number < 200)
      {
+	if (number > 107) number = 107;
 	msg = fatalmsg[number - 100];
 	errnum++; /* a fatal error also counts as an error */
      }
