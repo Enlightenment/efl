@@ -112,9 +112,9 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
              ao = _elm_access_edje_object_part_object_register
                 (obj, elm_layout_edje_get(sd->scr_ly), ACCESS_OUTLINE_PART);
              _elm_access_text_set(_elm_access_info_get(ao),
-                                  ELM_ACCESS_TYPE, E_("A drawer is open"));
+                                  ELM_ACCESS_TYPE, E_("A panel is open"));
              _elm_access_text_set(_elm_access_info_get(ao),
-                                  ELM_ACCESS_CONTEXT_INFO, E_("Double tap to close drawer menu"));
+                                  ELM_ACCESS_CONTEXT_INFO, E_("Double tap to close panel menu"));
              _elm_access_activate_callback_set
                 (_elm_access_info_get(ao), _access_activate_cb, obj);
           }
