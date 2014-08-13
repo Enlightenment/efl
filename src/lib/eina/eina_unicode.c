@@ -335,6 +335,7 @@ eina_unicode_utf8_to_unicode(const char *utf, int *_len)
      {
         *uind = eina_unicode_utf8_next_get(utf, &ind);
      }
+   *uind = 0;
 
    return buf;
 }
