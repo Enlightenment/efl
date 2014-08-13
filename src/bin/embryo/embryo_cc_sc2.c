@@ -1164,7 +1164,7 @@ command(void)
      case tpEMIT:
 	{
 	   /* write opcode to output file */
-	   char                name[40];
+	   char                name[41];
 	   int                 i;
 
 	   while (*lptr <= ' ' && *lptr != '\0')
