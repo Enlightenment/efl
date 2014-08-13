@@ -943,7 +943,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 }
 
 static void
-_ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height, struct wl_array *states, uint32_t serial)
+_ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSED, int32_t width, int32_t height, struct wl_array *states, uint32_t serial)
 {
    Ecore_Wl_Window *win = data;
    uint32_t *p;
@@ -988,7 +988,7 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface,
 }
 
 static void 
-_ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED)
+_ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface)
 {
    Ecore_Wl_Window *win;
 
@@ -1000,7 +1000,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
 }
 
 static void
-_ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial)
+_ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial EINA_UNUSED)
 {
    Ecore_Wl_Window *win;
 
