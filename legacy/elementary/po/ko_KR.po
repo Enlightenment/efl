@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-08-14 00:45+0900\n"
-"PO-Revision-Date: 2013-11-27 11:32+0900\n"
-"Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
+"PO-Revision-Date: 2014-08-14 00:50+0900\n"
+"Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
 "Language-Team: General\n"
 "Language: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.5.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/lib/elc_fileselector.c:1400
@@ -222,11 +222,11 @@ msgstr "상태: 닫힘"
 
 #: src/lib/elm_panel.c:115
 msgid "A panel is open"
-msgstr ""
+msgstr "패널 열림"
 
 #: src/lib/elm_panel.c:117
 msgid "Double tap to close panel menu"
-msgstr ""
+msgstr "더블탭으로 패널 메뉴 닫기"
 
 #: src/lib/elm_panel.c:187
 msgid "panel button"
