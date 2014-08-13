@@ -2585,8 +2585,10 @@ eng_output_resize(void *data, int w, int h)
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
-   evas_common_tilebuf_tile_strict_set(re->tb, re->tile_strict);
+     {
+        evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+        evas_common_tilebuf_tile_strict_set(re->tb, re->tile_strict);
+     }
    re->w = w;
    re->h = h;
 }
