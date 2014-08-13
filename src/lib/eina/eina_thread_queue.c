@@ -415,7 +415,8 @@ eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref)
    if (thq->fd >= 0)
      {
         char dummy = 0;
-        write(thq->fd, &dummy, 1);
+        if (write(thq->fd, &dummy, 1) != 1)
+          fprintf(stderr, "Eina Threadqueue write to fd %i failed\n", thq->fd);
      }
 }
 
