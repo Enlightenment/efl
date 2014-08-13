@@ -568,9 +568,8 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
    static int current_group_id = 0;
    Edje_Part_Collection_Directory_Entry *ce;
    Eina_Bool status = EDJE_PICK_NO_ERROR;
-   Eina_List *l;
+   Eina_List *l, *alist = NULL;
    char *name1 = NULL;
-
 
    /* Build file header */
    if (context.current_file->append)
@@ -592,10 +591,10 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
              ce = eina_hash_find(edf->collection, name1);
              ce_out = malloc(sizeof(*ce_out));
              memcpy(ce_out, ce, sizeof(*ce_out));
+             if (ce_out->group_alias)
+               alist = eina_list_append(alist, eina_stringshare_add(name1));
 
              ce_out->id = current_group_id;
-             EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n",
-                   ce->id, ce_out->id);
              current_group_id++;
 
              eina_hash_direct_add(out_file->collection, ce_out->entry, ce_out);
@@ -606,6 +605,24 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
           }
 
         eina_iterator_free(i);
+        EINA_LIST_FOREACH(alist, l, name1)
+          {
+             Edje_Part_Collection_Directory_Entry *ce_cor;
+
+             ce = eina_hash_find(edf->collection, name1);
+             i = eina_hash_iterator_data_new(edf->collection);
+             EINA_ITERATOR_FOREACH(i, ce_cor)
+               {
+                  if ((ce->id == ce_cor->id) && (!ce_cor->group_alias))
+                    break;
+               }
+             ce = eina_hash_find(out_file->collection, ce_cor->entry);
+             ce_cor = eina_hash_find(out_file->collection, name1);
+             ce_cor->id = ce->id;
+          }
+        eina_iterator_free(i);
+        EINA_LIST_FREE(alist, name1)
+          eina_stringshare_del(name1);
      }
    else
      {
