@@ -64,7 +64,8 @@ static const struct wl_callback_listener _ecore_wl_anim_listener =
    _ecore_wl_animator_callback
 };
 
-static void xdg_shell_ping(void *data, struct xdg_shell *shell, uint32_t serial)
+static void 
+xdg_shell_ping(void *data, struct xdg_shell *shell, uint32_t serial)
 {
    xdg_shell_pong(shell, serial);
 }
@@ -73,7 +74,6 @@ static const struct xdg_shell_listener xdg_shell_listener =
 {
    xdg_shell_ping,
 };
-
 
 /* external variables */
 int _ecore_wl_log_dom = -1;
@@ -197,7 +197,8 @@ ecore_wl_init(const char *name)
    _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
 
    _ecore_wl_disp->fd_hdl =
-     ecore_main_fd_handler_add(_ecore_wl_disp->fd, ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
+     ecore_main_fd_handler_add(_ecore_wl_disp->fd, 
+                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
                                _ecore_wl_cb_handle_data, _ecore_wl_disp,
                                NULL, NULL);
 
@@ -463,12 +464,12 @@ _ecore_wl_shutdown(Eina_Bool close)
           _ecore_wl_input_del(in);
 
         EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->globals, tmp, global)
-        {
-           _ecore_wl_disp->globals = eina_inlist_remove
-              (_ecore_wl_disp->globals, EINA_INLIST_GET(global));
-           free(global->interface);
-           free(global);
-        }
+          {
+             _ecore_wl_disp->globals = eina_inlist_remove
+               (_ecore_wl_disp->globals, EINA_INLIST_GET(global));
+             free(global->interface);
+             free(global);
+          }
 
         _ecore_wl_xkb_shutdown(_ecore_wl_disp);
 
@@ -675,8 +676,8 @@ _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_
    EINA_INLIST_FOREACH_SAFE(ewd->globals, tmp, global)
      {
         if (global->id != id) continue;
-        ewd->globals = eina_inlist_remove(ewd->globals,
-                                          EINA_INLIST_GET(global));
+        ewd->globals = 
+          eina_inlist_remove(ewd->globals, EINA_INLIST_GET(global));
         free(global->interface);
         free(global);
      }
