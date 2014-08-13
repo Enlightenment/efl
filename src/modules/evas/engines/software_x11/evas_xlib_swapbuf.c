@@ -315,7 +315,7 @@ evas_software_xlib_swapbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_
 }
 
 void
-evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
+evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
