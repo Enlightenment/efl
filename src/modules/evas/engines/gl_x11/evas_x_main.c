@@ -33,7 +33,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
                int      depth,
                int      w,
                int      h,
-               int      indirect,
+               int      indirect EINA_UNUSED,
                int      alpha,
                int      rot,
                Render_Engine_Swap_Mode swap_mode)
@@ -418,7 +418,8 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
    return gw;
-   (void) (indirect = 0);
+// unused warnign handled in mcro above 
+//   (void) (indirect = 0);
 }
 
 void
