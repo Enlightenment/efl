@@ -1297,7 +1297,6 @@ main(int argc, char **argv)
    Eina_List *samples = NULL;
    Eina_List *tones = NULL;
    Eina_List *vibrations = NULL;
-   Edje_Image_Directory_Set *sets = NULL; /* ALL files sets composed here */
 
    Edje_Part_Collection *edc;
    Edje_Part_Collection_Directory_Entry *ce;
@@ -1527,9 +1526,6 @@ main(int argc, char **argv)
      }
 
    free(fl);
-
-   if (sets)
-     free(sets);
 
    if (output_filename)
      printf("Wrote <%s> output file.\n", output_filename);
