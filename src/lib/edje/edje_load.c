@@ -1097,17 +1097,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
         evas_event_thaw_eval(tev);
         return 1;
      }
-   else
-     {
-        evas_event_thaw(tev);
-        evas_event_thaw_eval(tev);
-        return 0;
-     }
-   ed->load_error = EDJE_LOAD_ERROR_NONE;
-   _edje_entry_init(ed);
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
-   return 1;
+   return 0;
 
 on_error:
    eina_list_free(textblocks);
