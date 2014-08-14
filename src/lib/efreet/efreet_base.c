@@ -277,24 +277,24 @@ efreet_dirs_init(void)
 
     /* efreet_home_dir */
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() != geteuid())
-     {
-        struct passwd *pw = getpwent();
+    if (getuid() != geteuid())
+      {
+         struct passwd *pw = getpwent();
 
-        if ((pw) && (pw->pw_dir)) efreet_home_dir = pw->pw_dir;
-     }
-   else
+         if ((pw) && (pw->pw_dir)) efreet_home_dir = pw->pw_dir;
+      }
+    else
 #endif
-     efreet_home_dir = getenv("HOME");
+      efreet_home_dir = getenv("HOME");
 
 #ifdef _WIN32
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
       {
-           efreet_home_dir = getenv("USERPROFILE");
+         efreet_home_dir = getenv("USERPROFILE");
       }
 #endif
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
-        efreet_home_dir = "/tmp";
+      efreet_home_dir = "/tmp";
 
     efreet_home_dir = eina_stringshare_add(efreet_home_dir);
 
@@ -322,9 +322,9 @@ efreet_dirs_init(void)
 
     /* hostname */
     if (gethostname(buf, sizeof(buf)) < 0)
-        hostname = eina_stringshare_add("");
+      hostname = eina_stringshare_add("");
     else
-        hostname = eina_stringshare_add(buf);
+      hostname = eina_stringshare_add(buf);
 }
 
 /**
