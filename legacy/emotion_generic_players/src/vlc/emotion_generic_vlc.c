@@ -717,11 +717,14 @@ main(int argc, const char *argv[])
         "--no-stats",                   /* no stats                          */
         "--no-inhibit",                 /* we don't want interfaces          */
         "--no-disable-screensaver",     /* we don't want interfaces          */
-        "--codec", "avcodec",
-        "--demux", "avformat"
+// XXX: causes newer vlcs to segv!
+//        "--codec", "avcodec",
+// XXX: disable this just in case
+//        "--demux", "avformat"
      };
    vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
 
+   memset(&app, 0, sizeof(app));
    if (!eina_init())
      {
         EINA_LOG_CRIT("Can't initialize generic vlc player, eina failed.");
