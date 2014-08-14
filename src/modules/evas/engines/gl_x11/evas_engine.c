@@ -366,7 +366,7 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
 // Theoretically, we wouldn't need this functoin if the surfaceless context
 // is supported. But, until then... 
 static void *
-evgl_eng_window_surface_create(void *data, void *native_window)
+evgl_eng_window_surface_create(void *data, void *native_window EINA_UNUSED)
 {
    Render_Engine *re = (Render_Engine *)data;
 
@@ -401,7 +401,8 @@ evgl_eng_window_surface_create(void *data, void *native_window)
 
    return (void *)surface;
    */
-   return (void*)native_window;
+// handled by EINA_UNUSED above
+//   return (void*)native_window;
 #endif
 
 }
