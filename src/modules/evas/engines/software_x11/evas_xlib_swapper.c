@@ -557,7 +557,7 @@ _drm_init(Display *disp, int scr)
         goto err;
      }
    if (drv_name) XFree(drv_name);
-   if (dev_name) XFree(dev_name);
+   XFree(dev_name);
    return EINA_TRUE;
 err:
    if (drm_fd >= 0)
