@@ -314,7 +314,7 @@ _text_filter_format_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, const
           {
              s++;
              while (*s == ' ') s++;
-             if (!s)
+             if (!*s)
                {
                   free(text2);
                   return;
@@ -332,7 +332,7 @@ _text_filter_format_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, const
           {
              s++;
              while (*s == ' ') s++;
-             if (!s)
+             if (!*s)
                {
                   free(text2);
                   return;
