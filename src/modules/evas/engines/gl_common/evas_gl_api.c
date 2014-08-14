@@ -66,6 +66,11 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
         ERR("No current context set.");
         return;
      }
+   if (!rsc)
+     {
+        ERR("No current TLS resource.");
+        return;
+     }
 
    // Take care of BindFramebuffer 0 issue
    if (framebuffer==0)
