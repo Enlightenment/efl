@@ -5288,7 +5288,7 @@ add_import(cpp_reader * pfile, int fd, char *fname)
    struct stat         sb;
 
    hashval = import_hash(fname);
-   fstat(fd, &sb);
+   if (fstat(fd, &sb) < 0) return;
    i = (struct import_file *)xmalloc(sizeof(struct import_file));
 
    i->name = (char *)xmalloc(strlen(fname) + 1);
