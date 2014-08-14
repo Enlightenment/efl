@@ -4470,6 +4470,7 @@ _edje_real_part_text_text_source_description_get(Edje_Real_Part *ep, Edje_Real_P
 
         et = (Edje_Part_Description_Text *)ep->param1.description;
         ed2 = _edje_fetch(ep->typedata.text->text_source->typedata.swallow->swallowed_object);
+        if (!ed2) return NULL;
         rp = _edje_real_part_recursive_get(&ed2, et->text.id_text_source_part);
         et = (Edje_Part_Description_Text *)rp->chosen_description;
      }
