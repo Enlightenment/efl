@@ -5008,11 +5008,11 @@ _edje_object_part_swallow_image_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_
    Evas_Map *map;
 
    if (!rp->chosen_description->map.on) return;
+   if (rp->type != EDJE_RP_TYPE_SWALLOW) return;
+   if (!rp->typedata.swallow) return;
    if (evas_object_image_source_get(rp->typedata.swallow->swallowed_object))
      return;
 
-   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return;
    map = (Evas_Map *)evas_object_map_get(rp->typedata.swallow->swallowed_object);
    if (!map) return;
 
