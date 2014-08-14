@@ -39,15 +39,14 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
         goto on_error;
 
       /* check if we already opened the drm device with ecore_evas */
-      if (info->info.fd < 0)
-        {
-           /* try to open the drm ourselfs (most likely because we get called from expedite) */
-           if (!ecore_drm_device_open(drm_dev))
-             goto on_error;
-           info->info.own_fd = EINA_TRUE;
-           info->info.fd = ecore_drm_device_fd_get(drm_dev);
-        }
-        /* try to init drm (this includes openening tty) */
+      /* try to open the drm ourselfs (most likely because we get called from expedite) */
+      if (!ecore_drm_device_open(drm_dev))
+        goto on_error;
+
+      info->info.own_fd = EINA_TRUE;
+      info->info.fd = ecore_drm_device_fd_get(drm_dev);
+
+       /* try to init drm (this includes openening tty) */
        /* FIXME replace with ecore_drm_tty */
         if (!evas_drm_init(info))
           goto on_error;
