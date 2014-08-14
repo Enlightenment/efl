@@ -305,7 +305,7 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
                int length_source, int length_dest,
                Eina_Bool rmdir_source)
 {
-   const char *dir;
+   const char *dir = NULL;
    char target[PATH_MAX];
    struct stat buffer;
 
@@ -343,6 +343,7 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
           goto on_cancel;
 
         eina_stringshare_del(dir);
+        dir = NULL;
      }
 
    return EINA_TRUE;
