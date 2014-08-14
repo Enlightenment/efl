@@ -532,16 +532,7 @@ _evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int fra
         float *dst = (float *)vb->data;
         float *src = (float *)data;
 
-        if (element_count == 1)
-          {
-             for (i = 0; i <pd->vertex_count; i++)
-               {
-                  *dst++ = src[0];
-
-                  src = (float *)((char *)src + stride);
-               }
-          }
-        else if (element_count == 2)
+        if (element_count == 2)
           {
              for (i = 0; i <pd->vertex_count; i++)
                {
