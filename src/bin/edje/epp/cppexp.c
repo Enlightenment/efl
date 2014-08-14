@@ -412,9 +412,10 @@ cpp_lex(struct operation *op, cpp_reader * pfile)
 	     {
 		int                 num_bits = num_chars * width;
 
-		if (cpp_lookup("__CHAR_UNSIGNED__",
+		if ((num_bits > 0) &&
+		    (cpp_lookup("__CHAR_UNSIGNED__",
 			       sizeof("__CHAR_UNSIGNED__") - 1, -1)
-		    || ((result >> (num_bits - 1)) & 1) == 0)
+		    || ((result >> (num_bits - 1)) & 1) == 0))
 		   op->value =
 		      result & ((unsigned long)~0 >>
 				(HOST_BITS_PER_LONG - num_bits));
