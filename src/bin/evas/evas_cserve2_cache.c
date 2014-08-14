@@ -2898,7 +2898,11 @@ cserve2_cache_image_entry_create(Client *client, int rid,
    if (!ientry)
      return -1;
 
+   if (!ref)
+     return -1;
    fentry = _file_entry_find(ref->entry->id);
+   if (!fentry)
+     return -1;
    fentry->images = eina_list_append(fentry->images, ientry);
 
    if (opts && opts->scale_load.dst_w && opts->scale_load.dst_h)
