@@ -788,10 +788,11 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           {
              static RGBA_Draw_Context *ct = NULL;
 
-             SLKL(cache_lock);
              im->cache.orig_usage++;
              im->cache.usage_count = use_counter;
              im->cache.populate_count--;
+             SLKU(im->cache.lock);
+             SLKL(cache_lock);
 //             pops++;
              if (!ct)
                {
@@ -800,7 +801,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
                   ct = evas_common_draw_context_new();
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
                }
-             SLKU(im->cache.lock);
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
                {
 #ifdef EVAS_CSERVE2
