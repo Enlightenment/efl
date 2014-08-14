@@ -1028,7 +1028,6 @@ evas_cache_image_alone(Image_Entry *im)
    return im_dirty;
 
 on_error:
-   if (im_dirty) _evas_cache_image_entry_delete(cache, im_dirty);
    evas_cache_image_drop(im);
    return NULL;
 }
