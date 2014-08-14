@@ -114,8 +114,6 @@ _evas_cache_engine_image_alloc(Evas_Cache_Engine_Image *cache,
    return eim;
 
  on_error:
-   if (eim)
-     evas_cache_engine_image_drop(eim);
    eina_stringshare_del(hkey);
    if (ie) evas_cache_image_drop(ie);
    return NULL;
