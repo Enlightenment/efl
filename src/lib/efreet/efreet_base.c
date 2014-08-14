@@ -92,7 +92,6 @@ efreet_base_shutdown(void)
     IF_RELEASE(xdg_data_home);
     IF_RELEASE(xdg_config_home);
     IF_RELEASE(xdg_cache_home);
-    IF_RELEASE(xdg_runtime_dir);
 
     IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
     IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
@@ -275,7 +274,6 @@ static void
 efreet_dirs_init(void)
 {
     char buf[4096];
-    struct stat st;
 
     /* efreet_home_dir */
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
@@ -325,59 +323,7 @@ efreet_dirs_init(void)
    if (getuid() == geteuid())
 #endif
      xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
-    if (!xdg_runtime_dir)
-    {
-        snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
-        xdg_runtime_dir = mkdtemp(buf);
-        if (!xdg_runtime_dir)
-        {
-            perror("efreet mkdtemp");
-            xdg_runtime_dir = "/tmp";
-        }
-    }
-    xdg_runtime_dir = eina_stringshare_add(xdg_runtime_dir);
 
-    if (stat(xdg_runtime_dir, &st) == -1)
-    {
-        ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
-            xdg_runtime_dir);
-        if (ecore_file_mkpath(xdg_runtime_dir))
-        {
-            if (chmod(xdg_runtime_dir, 0700) < 0)
-            {
-                CRI("Cannot set XDG_RUNTIME_DIR=%s to mode 0700: %s",
-                         xdg_runtime_dir, strerror(errno));
-                eina_stringshare_replace(&xdg_runtime_dir, NULL);
-            }
-        }
-        else
-        {
-            CRI("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
-            eina_stringshare_replace(&xdg_runtime_dir, NULL);
-        }
-    }
-    else if (!S_ISDIR(st.st_mode))
-    {
-        CRI("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
-        eina_stringshare_replace(&xdg_runtime_dir, NULL);
-    }
-    else if ((st.st_mode & 0777) != 0700)
-    {
-#ifdef HAVE_GETEUID
-        if ((!(!strcmp(xdg_runtime_dir, "/tmp"))) &&
-            (st.st_uid == geteuid()))
-        {
-            ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
-                xdg_runtime_dir, st.st_mode & 0777);
-            if (chmod(xdg_runtime_dir, 0700) != 0)
-            {
-                CRI("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
-                         xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
-                eina_stringshare_replace(&xdg_runtime_dir, NULL);
-            }
-        }
-#endif
-    }
     /* hostname */
     if (gethostname(buf, sizeof(buf)) < 0)
         hostname = eina_stringshare_add("");
