@@ -130,7 +130,7 @@ evas_image_load_file_head_ico(void *loader_data,
    unsigned wanted_w = 0, wanted_h = 0;
    int cols, i, planes = 0,
       bpp = 0, pdelta, search = -1, have_choice = 0,
-      hasa = 1;
+      hasa = 1, icount;
    unsigned int bmoffset, bmsize, fsize;
    unsigned short reserved, type, count;
    struct {
@@ -174,9 +174,11 @@ evas_image_load_file_head_ico(void *loader_data,
    if (!read_ushort(map, fsize, &position, &reserved)) goto close_file;
    if (!read_ushort(map, fsize, &position, &type)) goto close_file;
    if (!read_ushort(map, fsize, &position, &count)) goto close_file;
-   if (!((reserved == 0) && 
-         ((type == ICON) || (type == CURSOR)) && (count > 0)))
-      goto close_file;
+   icount = count;
+   if (!((reserved == 0) &&
+         ((type == ICON) || (type == CURSOR)) &&
+          (icount > 0) && (icount <= 10000))) // between 1 and 10000 images
+     goto close_file;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
    if (key)
@@ -206,7 +208,7 @@ evas_image_load_file_head_ico(void *loader_data,
              search = BIGGER;
           }
      }
-   for (i = 0; i < count; i++)
+   for (i = 0; i < icount; i++)
      {
         unsigned char tw = 0, th = 0, tcols = 0;
         if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
@@ -358,7 +360,7 @@ evas_image_load_file_data_ico(void *loader_data,
    unsigned int dword;
    int wanted_w = 0, wanted_h = 0, w, h, cols, i, planes = 0,
       bpp = 0, pdelta, search = -1, have_choice = 0,
-      stride, pstride, j, right_way_up = 0, diff_size = 0, cols2;
+      stride, pstride, j, right_way_up = 0, diff_size = 0, cols2, icount;
    unsigned int bmoffset, bmsize, bitcount, fsize,
       *pal, *surface, *pix, none_zero_alpha = 0;
    unsigned short reserved, type, count;
@@ -404,9 +406,11 @@ evas_image_load_file_data_ico(void *loader_data,
    if (!read_ushort(map, fsize, &position, &reserved)) goto close_file;
    if (!read_ushort(map, fsize, &position, &type)) goto close_file;
    if (!read_ushort(map, fsize, &position, &count)) goto close_file;
+   icount = count;
    if (!((reserved == 0) &&
-         ((type == ICON) || (type == CURSOR)) && (count > 0)))
-      goto close_file;
+         ((type == ICON) || (type == CURSOR)) &&
+          (icount > 0) && (icount <= 10000))) // between 1 and 10000 images
+     goto close_file;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
    if (key)
@@ -436,7 +440,7 @@ evas_image_load_file_data_ico(void *loader_data,
              search = BIGGER;
           }
      }
-   for (i = 0; i < count; i++)
+   for (i = 0; i < icount; i++)
      {
         unsigned char tw = 0, th = 0, tcols = 0;
         if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
