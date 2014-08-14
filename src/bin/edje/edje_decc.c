@@ -457,9 +457,10 @@ output(void)
                   fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", 
                           edje_file->compiler, sf->name, outdir);
                   fclose(f);
-                  chmod(out,
-                        S_IRUSR | S_IWUSR | S_IXUSR |
-                        S_IRGRP | S_IWGRP | S_IXGRP);
+                  if (chmod(out,
+                            S_IRUSR | S_IWUSR | S_IXUSR |
+                            S_IRGRP | S_IWGRP | S_IXGRP) < 0)
+                    ERR("chmod on %s failed", out);
                }
 
 	     WRN("*** CAUTION ***\n"
