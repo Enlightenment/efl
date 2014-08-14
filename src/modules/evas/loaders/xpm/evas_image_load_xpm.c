@@ -632,7 +632,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
              if (!tl) break;
 	     line = tl;
           }
-        if (((ptr) && ((ptr - head) >= (w * h * (int)sizeof(DATA32)))) ||
+        if (((ptr) && ((ptr - head) >= (w * h))) ||
             ((context > 1) && (count >= size)))
 	  break;
      }
