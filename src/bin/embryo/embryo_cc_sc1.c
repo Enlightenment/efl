@@ -179,7 +179,8 @@ sc_getpossrc(void *handle)
    static fpos_t       lastpos;	/* may need to have a LIFO stack of
 				 * such positions */
 
-   fgetpos((FILE *) handle, &lastpos);
+   if (fgetpos((FILE *) handle, &lastpos) != 0)
+     fprintf(stderr, "embryo_xx - ERR - fgetpos()\n");
    return &lastpos;
 }
 
