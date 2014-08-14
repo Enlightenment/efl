@@ -743,7 +743,7 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
    // FIXME: In the long term we should certainly merge both mmap and filename path
    //  by just using the mmap path. But for the time being, let's just have two path
    //  as it is unlikely to really have an impact on real world application
-   if ((!f) || (!f && !key))
+   if (!f)
      {
         *error = EVAS_LOAD_ERROR_GENERIC;
         return NULL;
