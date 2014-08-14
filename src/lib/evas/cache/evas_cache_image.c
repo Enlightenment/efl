@@ -805,7 +805,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    struct stat           st;
    Image_Timestamp       tstamp;
 
-   if ((!file) || ((!file) && (!key)))
+   if (!file)
      {
         *error = EVAS_LOAD_ERROR_GENERIC;
         return NULL;
