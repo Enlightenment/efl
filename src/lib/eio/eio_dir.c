@@ -309,7 +309,7 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
    char target[PATH_MAX];
    struct stat buffer;
 
-   while(order->dirs)
+   while (order->dirs)
      {
         /* destroy in reverse order so that we don't prevent change of lower dir */
         dir = eina_list_data_get(eina_list_last(order->dirs));
