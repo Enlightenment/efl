@@ -11,7 +11,7 @@ extern const DATA8 _evas_dither_128128[128][128];
 #endif
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
 #ifndef BUILD_NO_DITHER_MASK
    DATA16 *d = (DATA16 *)dst;
@@ -114,8 +114,6 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	d += dst_jump;
      }
 #endif   
-   return;
-   (void)pal;
 #else
    DATA16 *d = (DATA16 *)dst;
    int w0 = w;
@@ -141,13 +139,11 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	src += src_jump;
 	d += dst_jump;
      }
-   return;
-   (void)pal;
 #endif
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
 #ifndef BUILD_NO_DITHER_MASK
    DATA16 *d = (DATA16 *)dst;
@@ -209,8 +205,6 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 	d += dst_jump;
      }
 #endif   
-   return;
-   (void)pal;
 #else
    DATA16 *d = (DATA16 *)dst;
    int w0 = w;
@@ -226,13 +220,11 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 	src += src_jump;
 	d += dst_jump;
      }
-   return;
-   (void)pal;
 #endif
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -284,12 +276,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -318,12 +308,10 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -375,12 +363,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -409,12 +395,10 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -466,12 +450,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
 #endif
 
    CONVERT_LOOP2_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -500,12 +482,10 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    *dst_ptr = (r << 11) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -557,12 +537,10 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int sr
 #endif
 
    CONVERT_LOOP2_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -591,12 +569,10 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
    CONVERT_LOOP_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -648,12 +624,10 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -684,12 +658,10 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
    CONVERT_LOOP_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -741,12 +713,10 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -775,12 +745,10 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
    CONVERT_LOOP_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -832,12 +800,10 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
 #endif
 
    CONVERT_LOOP2_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -866,12 +832,10 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    *dst_ptr = (b << 11) | (g << 5) | (r);
 
    CONVERT_LOOP_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -921,12 +885,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int sr
 #endif
 
    CONVERT_LOOP2_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -954,12 +916,10 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
    CONVERT_LOOP_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1009,12 +969,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1042,12 +1000,10 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
    CONVERT_LOOP_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1097,12 +1053,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1130,12 +1084,10 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
    CONVERT_LOOP_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1185,12 +1137,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst,
 #endif
 
    CONVERT_LOOP2_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1218,12 +1168,10 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    *dst_ptr = (r << 8) | (g << 4) | (b);
 
    CONVERT_LOOP_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1273,12 +1221,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int
 #endif
 
    CONVERT_LOOP2_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1306,12 +1252,10 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int 
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
    CONVERT_LOOP_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1361,12 +1305,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *
 #endif
 
    CONVERT_LOOP2_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1394,12 +1336,10 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *d
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
    CONVERT_LOOP_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1449,12 +1389,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *
 #endif
 
    CONVERT_LOOP2_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1482,12 +1420,10 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *d
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
    CONVERT_LOOP_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1537,12 +1473,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *d
 #endif
 
    CONVERT_LOOP2_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1570,12 +1504,10 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *ds
    *dst_ptr = (r << 12) | (g << 7) | (b << 1);
 
    CONVERT_LOOP_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1625,12 +1557,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int sr
 #endif
 
    CONVERT_LOOP2_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1658,12 +1588,10 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_0();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1713,12 +1641,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1746,12 +1672,10 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_180();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1801,12 +1725,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst
 #endif
 
    CONVERT_LOOP2_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1834,12 +1756,10 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst,
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_270();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1889,12 +1809,10 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst,
 #endif
 
    CONVERT_LOOP2_END_ROT_90();
-   return;
-   (void)pal;
 }
 
 void
-evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal EINA_UNUSED)
 {
    DATA32 *src_ptr;
    DATA16 *dst_ptr;
@@ -1922,6 +1840,4 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, 
    *dst_ptr = (r << 10) | (g << 5) | (b);
 
    CONVERT_LOOP_END_ROT_90();
-   return;
-   (void)pal;
 }
