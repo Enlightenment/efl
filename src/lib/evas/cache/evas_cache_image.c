@@ -1193,21 +1193,23 @@ evas_cache_image_unload_data(Image_Entry *im)
    if (im->flags.in_progress) return;
    evas_cache_image_preload_cancel(im, NULL);
    
-   SLKL(im->lock_cancel);
    if (SLKT(im->lock) == EINA_FALSE) /* can't get image lock - busy async load */
      {
+        SLKL(im->lock_cancel);
         im->flags.unload_cancel = EINA_TRUE;
         SLKU(im->lock_cancel);
         return;
      }
-   SLKU(im->lock_cancel);
 
+   SLKL(im->lock_cancel);
    if ((!im->flags.loaded) || (!im->file && !im->f) || (!im->info.module) || 
        (im->flags.dirty))
      {
+        SLKU(im->lock_cancel);
         SLKU(im->lock);
         return;
      }
+   SLKU(im->lock_cancel);
    im->cache->func.destructor(im);
    SLKU(im->lock);
    //FIXME: imagedataunload - inform owners
