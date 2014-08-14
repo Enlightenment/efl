@@ -598,8 +598,8 @@ eet_init(void)
 
 #ifdef HAVE_GNUTLS
 shutdown_eet:
-#endif
    eet_node_shutdown();
+#endif
 shutdown_mempool:
    eet_mempool_shutdown();
 unregister_log_domain:
