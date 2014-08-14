@@ -2700,8 +2700,9 @@ addvariable(char *name, cell addr, int ident, int vclass, int tag,
    symbol             *sym, *parent, *top;
    int                 level;
 
+   sym = findglb(name);
    /* global variables may only be defined once */
-   assert(vclass != sGLOBAL || (sym = findglb(name)) == NULL
+   assert(vclass != sGLOBAL || sym  == NULL
 	  || (sym->usage & uDEFINE) == 0);
 
    if (ident == iARRAY || ident == iREFARRAY)
