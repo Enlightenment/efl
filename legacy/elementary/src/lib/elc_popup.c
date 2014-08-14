@@ -756,11 +756,11 @@ _elm_popup_item_elm_widget_item_part_content_unset(Eo *eo_it EINA_UNUSED, Elm_Po
 }
 
 EOLIAN static void
-_elm_popup_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Popup_Item_Data *it)
+_elm_popup_item_elm_widget_item_disable(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
-   if (elm_widget_item_disabled_get(it))
+   if (eo_do((Eo *)eo_it, elm_wdg_item_disabled_get()))
      elm_layout_signal_emit(VIEW(it), "elm,state,item,disabled", "elm");
    else
      elm_layout_signal_emit(VIEW(it), "elm,state,item,enabled", "elm");
