@@ -26,6 +26,7 @@ static void
 _op_blend_pas_dp_mmx(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    _op_blend_p_dp_mmx(s, m, c, d, l);
    return;
+/*   
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_A2R(ALPHA_256, mm6)
@@ -53,6 +54,7 @@ _op_blend_pas_dp_mmx(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA
 	  }
 	s++;  d++;
      }
+ */
 }
 
 #define _op_blend_pan_dp_mmx NULL
