@@ -51,11 +51,6 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
            info->info.own_tty = EINA_TRUE;
            info->info.tty = ecore_drm_tty_get(drm_dev);
 	}
-
-       /* try to init drm (this includes openening tty) */
-       /* FIXME replace with ecore_drm_tty */
-        if (!evas_drm_init(info))
-          goto on_error;
      }
 
    /* try to allocate space for our render engine structure */
@@ -91,10 +86,6 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
         info->info.fd = -1;
         ecore_drm_device_free(drm_dev);
      }
-
-   /* shutdown tty */
-   /* FIXME use ecore_drm_tty */
-   evas_drm_shutdown(info);
 
    free(re);
    return NULL;
@@ -211,8 +202,6 @@ eng_output_free(void *data)
         ecore_drm_device_free(drm_dev);
      }
 
-   /* FIXME use ecore_drm_tty */
-   evas_drm_shutdown(re->info);
    evas_render_engine_software_generic_clean(&re->generic);
    free(re);
 
