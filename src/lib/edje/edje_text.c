@@ -80,6 +80,7 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 static const char *
 _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
                  Edje_Calc_Params *params,
+                 Edje_Part_Description_Text *chosen_desc,
                  const char *text, const char *font, int size,
                  Evas_Coord sw, Evas_Coord sh, int *free_text)
 {
@@ -91,13 +92,13 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    *free_text = 0;
    if (sw <= 1) return "";
 
-   if (params->type.text.ellipsis < 0)
+   if ((params->type.text.ellipsis < 0) && (!chosen_desc->text.min_x))
      return text;
 
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
    eo_do(ep->object,
-         evas_obj_text_ellipsis_set(params->type.text.ellipsis),
+         chosen_desc->text.min_x ? 0 : evas_obj_text_ellipsis_set(params->type.text.ellipsis),
          evas_obj_text_font_set(font, size),
          evas_obj_text_set(text),
          evas_obj_size_set(sw, sh));
@@ -432,7 +433,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
               if (inlined_font) evas_obj_text_font_source_set(ed->path);
               else evas_obj_text_font_source_set(NULL));
 
-        text = _edje_text_fit_x(ed, ep, params,
+        text = _edje_text_fit_x(ed, ep, params, chosen_desc,
                                 text, font, size,
                                 sw, sh, &free_text);
      }
@@ -457,7 +458,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    else if (((ed->file->version >= 3) && (ed->file->minor >= 6)) ||
             params->type.text.ellipsis)
      eo_do(ep->object,
-           evas_obj_text_ellipsis_set(params->type.text.ellipsis));
+           chosen_desc->text.min_x ? 0 : evas_obj_text_ellipsis_set(params->type.text.ellipsis));
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
    ep->typedata.text->cache.in_w = sw;
