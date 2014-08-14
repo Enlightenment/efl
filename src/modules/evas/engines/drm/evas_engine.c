@@ -46,6 +46,12 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
       info->info.own_fd = EINA_TRUE;
       info->info.fd = ecore_drm_device_fd_get(drm_dev);
 
+      if (info->info.tty < 0)
+        {
+           info->info.own_tty = EINA_TRUE;
+           info->info.tty = ecore_drm_tty_get(drm_dev);
+	}
+
        /* try to init drm (this includes openening tty) */
        /* FIXME replace with ecore_drm_tty */
         if (!evas_drm_init(info))
