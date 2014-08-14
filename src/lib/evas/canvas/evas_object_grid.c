@@ -208,7 +208,7 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
 {
    Eina_List *l;
    Evas_Object_Grid_Option *opt;
-   Evas_Coord x, y, w, h, vw, vh, t;
+   Evas_Coord x, y, w, h, vw, vh;
    Eina_Bool mirror;
    
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, priv);
@@ -222,15 +222,18 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
      {
         Evas_Coord x1, y1, x2, y2;
         
-        x1 = x + ((w * opt->x) / vw);
-        y1 = y + ((h * opt->y) / vh);
-        x2 = x + ((w * (opt->x + opt->w)) / vw);
-        y2 = y + ((h * (opt->y + opt->h)) / vh);
-        if (mirror)
+        if (!mirror)
           {
-             t = x1; x1 = x2; x2 = t;
-             t = y1; y1 = y2; y2 = t;
+             x1 = x + ((w * opt->x) / vw);
+             x2 = x + ((w * (opt->x + opt->w)) / vw);
           }
+        else
+          {
+             x1 = x + ((w * (vw - (opt->x + opt->w))) / vw);
+             x2 = x + ((w * (vw - opt->x)) / vw);
+          }
+        y1 = y + ((h * opt->y) / vh);
+        y2 = y + ((h * (opt->y + opt->h)) / vh);
         evas_object_move(opt->obj, x1, y1);
         evas_object_resize(opt->obj, x2 - x1, y2 - y1);
      }
