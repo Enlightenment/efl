@@ -5257,7 +5257,11 @@ lookup_import(cpp_reader * pfile, char *filename, file_name_list * searchptr)
    fd = open_include_file(pfile, filename, searchptr);
    if (fd < 0)
       return fd;
-   fstat(fd, &sb);
+   if (fstat(fd, &sb) < 0)
+     {
+        close(fd);
+        return -2;
+     }
    for (h = 0; h < IMPORT_HASH_SIZE; h++)
      {
 	i = pfile->import_hash_table[h];
