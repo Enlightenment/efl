@@ -603,15 +603,13 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
           break ;
         else if (cmp < 0)
           inf = cur + 1;
-        else if (cmp > 0)
+        else
           {
              if (cur > 0)
                sup = cur - 1;
              else
                break;
           }
-        else
-          break;
      }
 
    /* If at the beginning of the table and cmp < 0,
