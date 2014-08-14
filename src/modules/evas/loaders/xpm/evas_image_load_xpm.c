@@ -50,7 +50,7 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
         int                 len;
 
         len = strlen(color) - 1;
-        if (len < 96)
+        if (len < 13)
           {
 
              len /= 3;
