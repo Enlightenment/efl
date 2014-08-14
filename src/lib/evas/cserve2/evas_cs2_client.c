@@ -648,6 +648,7 @@ _server_dispatch_until(unsigned int rid)
                        ERR("Could not reconnect to cserve2!");
                        return EINA_FALSE;
                     }
+                  if (socketfd == -1) return EINA_FALSE;
                }
 
              //DBG("Waiting for request %d...", rid);
