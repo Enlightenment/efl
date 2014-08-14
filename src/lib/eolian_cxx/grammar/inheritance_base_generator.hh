@@ -107,12 +107,28 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
             << (func.params.size() ? ", " : "")
             << parameters_c_declaration(func.params)
             << ")" << endl
-            << "{" << endl
-            << tab(1)
-            << (!function_is_void(func) ? "return ": "")
+            << "{" << endl;
+
+        if (!function_is_void(func))
+          out << tab(1) << reinterpret_type(func.ret) << " _tmp_ret{};" << endl;
+
+        out << tab(1)
+            << "try" << endl
+            << tab(2) << "{" << endl
+            << tab(3)
+            << (!function_is_void(func) ? "_tmp_ret = ": "")
             << "static_cast<T*>(self->this_)->"
             << func.name << "(" << parameters_cxx_list(func.params) << ");" << endl
-            << "}" << endl << endl;
+            << tab(2) << "}" << endl
+            << tab(1) << "catch (...)" << endl
+            << tab(2) << "{" << endl
+            << tab(3) << "eina_error_set( efl::eina::unknown_error() );" << endl
+            << tab(2) << "}" << endl;
+
+        if (!function_is_void(func))
+          out << tab(1) << "return _tmp_ret;" << endl;
+
+        out << "}" << endl << endl;
      }
    return out;
 }
