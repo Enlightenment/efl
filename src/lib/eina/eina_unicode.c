@@ -402,7 +402,7 @@ eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
              *ind++ = 0x80 | (unsigned char) (*uind & 0x3F);
              len += 5;
           }
-        else if (*uind <= 0x7FFFFFFF) /* 6 byte char */
+        else /* 6 byte char */
           {
              *ind++ = 0xFC | (unsigned char) ((*uind >> 30) & 0x01);
              *ind++ = 0x80 | (unsigned char) ((*uind >> 24) & 0x3F);
@@ -411,10 +411,6 @@ eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
              *ind++ = 0x80 | (unsigned char) ((*uind >> 6) & 0x3F);
              *ind++ = 0x80 | (unsigned char) (*uind & 0x3F);
              len += 6;
-          }
-        else /* error */
-          {
-             /* Do something */
           }
      }
    buf2 = realloc(buf, len + 1);
