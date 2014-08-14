@@ -163,7 +163,8 @@ void
 sc_resetsrc(void *handle, void *position)
 {
    assert(handle != NULL);
-   fsetpos((FILE *) handle, (fpos_t *) position);
+   if (fsetpos((FILE *) handle, (fpos_t *) position) != 0)
+     fprintf(stderr, "embryo_xx - ERR - fsetpos()\n");
 }
 
 char               *
