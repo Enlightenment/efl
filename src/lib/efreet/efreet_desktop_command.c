@@ -74,8 +74,6 @@ struct Efreet_Desktop_Command_File
   int pending;
 };
 
-static int efreet_desktop_command_file_id = 0;
-
 static void *efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
                                             char *exec, int remaining);
 static int efreet_desktop_command_flags_get(Efreet_Desktop *desktop);
@@ -647,14 +645,21 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_FULLPATH)
         {
             char buf[PATH_MAX];
+            Eina_Tmpstr *dest;
+            int fd;
 
-            snprintf(buf, sizeof(buf), "/tmp/%d-%d-%s", getpid(),
-                            efreet_desktop_command_file_id++, base);
-            f->fullpath = strdup(buf);
-            f->pending = 1;
+            snprintf(buf, sizeof(buf), "%s_XXXXXX", base);
+            fd = eina_file_mkstemp(buf, &dest);
+            if (fd >= 0)
+            {
+                close(fd);
+                f->fullpath = strdup(dest);
+                f->pending = 1;
+                eina_tmpstr_del(dest);
 
-            ecore_file_download(uri, f->fullpath, efreet_desktop_cb_download_complete,
-                                            efreet_desktop_cb_download_progress, f, NULL);
+                ecore_file_download(uri, f->fullpath, efreet_desktop_cb_download_complete,
+                                    efreet_desktop_cb_download_progress, f, NULL);
+            }
         }
 
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI)
