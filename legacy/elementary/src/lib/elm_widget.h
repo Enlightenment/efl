@@ -620,11 +620,6 @@ struct _Elm_Widget_Item_Data
    Eina_Bool                      on_translate : 1;
 };
 
-struct _Elm_Object_Item
-{
-   ELM_WIDGET_ITEM;
-};
-
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
 EAPI Evas_Object     *elm_widget_add(Evas_Smart *, Evas_Object *);

@@ -3,7 +3,7 @@
  * An Elementary Object item handle.
  * @ingroup General
  */
-typedef struct _Elm_Object_Item Elm_Object_Item;
+typedef Eo Elm_Object_Item;
 
 /**
  * @typedef Elm_Object_Item_Signal_Cb
