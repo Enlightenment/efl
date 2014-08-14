@@ -1,5 +1,5 @@
 EFL 1.11.0
-=========
+==========
 
 ******************************************************************************
  FOR ANY ISSUES PLEASE EMAIL:
@@ -437,8 +437,8 @@ You will find documentation in the doc/ directory.
 REQUIREMENTS
 ------------
 
-EFL requires a C and C++ compiler by default. Very little C++ exists
-and is mostly to interface to C++ libraries like Bullet.
+EFL requires a C and C++ compiler by default. C++ exists mostly to interface 
+to C++ libraries like Bullet and our C++ bindings.
 
 Required by default:
 
