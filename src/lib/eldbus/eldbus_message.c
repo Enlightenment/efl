@@ -717,7 +717,11 @@ eldbus_message_iter_get_and_next(Eldbus_Message_Iter *iter, char signature, ...)
         Eldbus_Message_Iter **iter_var = va_arg(vl, Eldbus_Message_Iter**);
 
         sub = _message_iterator_new(EINA_FALSE);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(sub, EINA_FALSE);
+        if (!sub)
+          {
+             va_end(vl);
+             return EINA_FALSE;
+          }
         dbus_message_iter_recurse(&iter->dbus_iterator,
                                   &sub->dbus_iterator);
         iter->iterators = eina_inlist_append(iter->iterators,
