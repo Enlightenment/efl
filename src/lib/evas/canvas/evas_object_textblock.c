@@ -2618,12 +2618,13 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
      }
    else
      {
-        Evas_Object_Protected_Data *obj =
-           eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-        asc =
-           ENFN->font_ascent_get(ENDT, fmt->font.font);
-        desc =
-           ENFN->font_descent_get(ENDT, fmt->font.font);
+        if (fmt)
+          {
+             Evas_Object_Protected_Data *obj =
+               eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+             asc = ENFN->font_ascent_get(ENDT, fmt->font.font);
+             desc = ENFN->font_descent_get(ENDT, fmt->font.font);
+          }
      }
 
    if (ascent && (asc > *ascent))
@@ -2631,7 +2632,7 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
    if (descent && (desc > *descent))
       *descent = desc;
 
-   _layout_format_ascent_descent_adjust(eo_obj, ascent, descent, fmt);
+   if (fmt) _layout_format_ascent_descent_adjust(eo_obj, ascent, descent, fmt);
 }
 
 /**
