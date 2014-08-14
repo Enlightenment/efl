@@ -362,7 +362,6 @@ evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
    if (!eim)
      {
         if (im) evas_cache_image_drop(im);
-        if (ekey) eina_stringshare_del(ekey);
      }
    else
      {
