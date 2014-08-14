@@ -92,7 +92,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    *free_text = 0;
    if (sw <= 1) return "";
 
-   if ((params->type.text.ellipsis < 0) && (!chosen_desc->text.min_x))
+   if ((params->type.text.ellipsis < 0) || (chosen_desc->text.min_x))
      return text;
 
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
