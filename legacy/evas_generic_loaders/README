@@ -1,5 +1,5 @@
-Evas generic loaders 1.9.0
-==========================
+Evas generic loaders 1.11.0
+===========================
 
 ******************************************************************************
  FOR ANY ISSUES PLEASE EMAIL:
@@ -26,7 +26,7 @@ Required by default:
 
 Highly recommended:
 
-  * gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
+  * gstreamer (1.x or 0.10) (ensure you have all the gstreamer codecs you need/want)
   * poppler
   * libraw
   * libspectre
