@@ -31,10 +31,6 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-#define EOLIAN_METHOD_RETURN_COMMENT "method_return_comment"
-#define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
-#define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
-
 extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
@@ -91,7 +87,12 @@ struct _Eolian_Function
    Eolian_Type *set_ret_type;
    Eolian_Expression *get_ret_val;
    Eolian_Expression *set_ret_val;
-   Eina_Hash *data;
+   Eina_Stringshare *get_legacy;
+   Eina_Stringshare *set_legacy;
+   Eina_Stringshare *get_description;
+   Eina_Stringshare *set_description;
+   Eina_Stringshare *get_return_comment;
+   Eina_Stringshare *set_return_comment;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_virtual_pure :1;
    Eina_Bool set_virtual_pure :1;
@@ -310,9 +311,8 @@ Eolian_Function *database_function_new(const char *function_name, Eolian_Functio
 void database_function_del(Eolian_Function *fid);
 
 void database_function_type_set(Eolian_Function *function_id, Eolian_Function_Type foo_type);
-void database_function_data_set(Eolian_Function *function_id, const char *key, const char *description);
-#define database_function_description_set(foo_id, key, desc) database_function_data_set((foo_id), (key), (desc))
-
+void database_function_legacy_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *legacy);
+void database_function_description_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *desc);
 void database_function_return_type_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Type *ret_type);
 void database_function_return_comment_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_comment);
 void database_function_return_default_val_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Expression *ret_default_value);

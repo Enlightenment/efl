@@ -465,10 +465,10 @@ START_TEST(eolian_simple_parsing)
    /* Property */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
    fail_if(strcmp(eolian_function_name_get(fid), "a"));
-   string = eolian_function_description_get(fid, EOLIAN_COMMENT_SET);
+   string = eolian_function_description_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "comment a.set"));
-   string = eolian_function_description_get(fid, EOLIAN_COMMENT_GET);
+   string = eolian_function_description_get(fid, EOLIAN_PROP_GET);
    fail_if(string);
    /* Set return */
    tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
@@ -498,7 +498,7 @@ START_TEST(eolian_simple_parsing)
 
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
-   string = eolian_function_description_get(fid, EOLIAN_COMMENT);
+   string = eolian_function_description_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "comment foo"));
    /* Function return */

@@ -79,14 +79,14 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";
-        legacy = eolian_function_data_get(funcid, EOLIAN_LEGACY_GET);
+        legacy = eolian_function_legacy_get(funcid, ftype);
      }
    if (ftype == EOLIAN_PROP_SET)
      {
         suffix = "_set";
-        legacy = eolian_function_data_get(funcid, EOLIAN_LEGACY_SET);
+        legacy = eolian_function_legacy_get(funcid, ftype);
      }
-   if (!legacy) legacy = eolian_function_data_get(funcid, EOLIAN_LEGACY);
+   if (!legacy) legacy = eolian_function_legacy_get(funcid, EOLIAN_METHOD);
 
    _eolian_class_vars tmp_env;
    _class_env_create(class, NULL, &tmp_env);

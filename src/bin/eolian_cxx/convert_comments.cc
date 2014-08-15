@@ -38,11 +38,10 @@ _comment_parameters_list(Eina_Iterator *params)
 }
 
 static std::string
-_comment_brief_and_params(Eolian_Function const& function,
-                          const char *key = EOLIAN_COMMENT)
+_comment_brief_and_params(Eolian_Function const& function, Eolian_Function_Type ftype = EOLIAN_METHOD)
 {
    std::string doc = "";
-   std::string func = safe_str(::eolian_function_description_get(&function, key));
+   std::string func = safe_str(::eolian_function_description_get(&function, ftype));
    if (func != "")
      {
         doc += "@brief " + func + "\n\n";

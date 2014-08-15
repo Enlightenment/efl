@@ -44,13 +44,11 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
 {
    _eolian_class_func_vars func_env;
    const char *funcname = eolian_function_name_get(funcid);
-   const char *suffix = "";
    const Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
    Eina_Bool ret_const = EINA_FALSE;
-   char tmpstr[0xFF];
    Eina_Iterator *itr;
    void *data, *data2;
    Eina_Strbuf *flags = NULL;
@@ -64,7 +62,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    rettypet = eolian_function_return_type_get(funcid, ftype);
    if (ftype == EOLIAN_PROP_GET)
      {
-        suffix = "_get";
         add_star = EINA_TRUE;
         if (!rettypet)
           {
@@ -80,8 +77,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
           }
      }
 
-   if (ftype == EOLIAN_PROP_SET) suffix = "_set";
-
    if (func_env.legacy_func[0] == '\0') goto end;
    eina_strbuf_append_printf(fbody, tmpl_eapi_funcdef, func_env.legacy_func);
 
@@ -91,8 +86,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
            eina_strbuf_append(fparam, "const ");
         eina_strbuf_append_printf(fparam, "%s *obj", class_env.full_classname);
      }
-   sprintf (tmpstr, "comment%s", suffix);
-   const char *desc = eolian_function_description_get(funcid, tmpstr);
+   const char *desc = eolian_function_description_get(funcid, ftype);
    Eina_Strbuf *linedesc = eina_strbuf_new();
    eina_strbuf_append(linedesc, desc ? desc : "No description supplied.");
    if (eina_strbuf_length_get(linedesc))

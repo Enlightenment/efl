@@ -15,8 +15,8 @@ _db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
         database_function_return_comment_set(foo_id, EOLIAN_METHOD,
                                              meth->ret->comment);
      }
- 
-   database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
+
+   database_function_legacy_set(foo_id, EOLIAN_METHOD, meth->legacy);
 
    EINA_LIST_FOREACH(meth->params, l, param)
      {
@@ -156,17 +156,9 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
      }
 
    if (accessor->legacy)
-     {
-        database_function_data_set(foo_id, ((accessor->type == SETTER)
-                                            ? EOLIAN_LEGACY_SET
-                                            : EOLIAN_LEGACY_GET),
-                                   accessor->legacy);
-     }
+     database_function_legacy_set(foo_id, ftype, accessor->legacy);
 
-   database_function_description_set(foo_id, ((accessor->type == SETTER)
-                                              ? EOLIAN_COMMENT_SET
-                                              : EOLIAN_COMMENT_GET),
-                                     accessor->comment);
+   database_function_description_set(foo_id, ftype, accessor->comment);
 
    EINA_LIST_FOREACH(accessor->params, l, acc_param)
      {
@@ -280,8 +272,8 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
         meth->ret->default_ret_val = NULL;
      }
 
-   database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
-   database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
+   database_function_description_set(foo_id, EOLIAN_METHOD, meth->comment);
+   database_function_legacy_set(foo_id, EOLIAN_METHOD, meth->legacy);
    database_function_object_set_as_const(foo_id, meth->obj_const);
    database_function_set_as_class(foo_id, meth->is_class);
 

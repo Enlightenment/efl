@@ -85,8 +85,6 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
    const char *str_dir[] = {"in", "out", "inout"};
    Eina_Iterator *itr;
    void *data, *data2;
-   char funcname[0xFF];
-   char descname[0xFF];
    char *tmpstr = malloc(0x1FF);
    Eina_Bool var_as_ret = EINA_FALSE;
    const Eolian_Type *rettypet = NULL;
@@ -95,30 +93,20 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
    Eolian_Object_Scope scope = eolian_function_scope_get(func);
 
    _class_func_env_create(class, eolian_function_name_get(func), ftype, &func_env);
-   char *fsuffix = "";
    rettypet = eolian_function_return_type_get(func, ftype);
-   if (ftype == EOLIAN_PROP_GET)
+   if (ftype == EOLIAN_PROP_GET && !rettypet)
      {
-        fsuffix = "_get";
-        if (!rettypet)
+        itr = eolian_function_parameters_get(func);
+        /* We want to check if there is only one parameter */
+        if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
           {
-             itr = eolian_function_parameters_get(func);
-             /* We want to check if there is only one parameter */
-             if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
-               {
-                  rettypet = eolian_parameter_type_get((Eolian_Function_Parameter*)data);
-                  var_as_ret = EINA_TRUE;
-                  ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
-               }
-             eina_iterator_free(itr);
+             rettypet = eolian_parameter_type_get((Eolian_Function_Parameter*)data);
+             var_as_ret = EINA_TRUE;
+             ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
           }
+        eina_iterator_free(itr);
      }
-   if (ftype == EOLIAN_PROP_SET) fsuffix = "_set";
-
-   sprintf (funcname, "%s%s", eolian_function_name_get(func), fsuffix);
-   sprintf (descname, "comment%s", fsuffix);
-   const char *funcdesc = eolian_function_description_get(func, descname);
-
+   const char *funcdesc = eolian_function_description_get(func, ftype);
    Eina_Strbuf *str_func = eina_strbuf_new();
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
@@ -727,7 +715,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_functions_get(class, EOLIAN_CTOR);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
-        char *desc = _source_desc_get(eolian_function_description_get(fn, "comment"));
+        char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_METHOD));
         eo_op_desc_generate(class, fn, EOLIAN_CTOR, desc, tmpbuf);
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
         free(desc);
@@ -749,7 +737,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
         if (prop_write)
           {
-             char *desc = _source_desc_get(eolian_function_description_get(fn, "comment_set"));
+             char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_PROP_SET));
 
              sprintf(tmpstr, "%s_set", funcname);
              eo_op_desc_generate(class, fn, EOLIAN_PROP_SET, desc, tmpbuf);
@@ -758,7 +746,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
           }
         if (prop_read)
           {
-             char *desc = _source_desc_get(eolian_function_description_get(fn, "comment_get"));
+             char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_PROP_GET));
 
              sprintf(tmpstr, "%s_get", funcname);
              eo_op_desc_generate(class, fn, EOLIAN_PROP_GET, desc, tmpbuf);
@@ -772,7 +760,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_functions_get(class, EOLIAN_METHOD);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
-        char *desc = _source_desc_get(eolian_function_description_get(fn, "comment"));
+        char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_METHOD));
         eo_op_desc_generate(class, fn, EOLIAN_METHOD, desc, tmpbuf);
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
         free(desc);

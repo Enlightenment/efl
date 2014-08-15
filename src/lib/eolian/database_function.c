@@ -9,13 +9,18 @@ database_function_del(Eolian_Function *fid)
 
    if (fid->base.file) eina_stringshare_del(fid->base.file);
    eina_stringshare_del(fid->name);
-   eina_hash_free(fid->data);
    EINA_LIST_FREE(fid->keys, param) database_parameter_del(param);
    EINA_LIST_FREE(fid->params, param) database_parameter_del(param);
    database_type_del(fid->get_ret_type);
    database_type_del(fid->set_ret_type);
    database_expr_del(fid->get_ret_val);
    database_expr_del(fid->set_ret_val);
+   if (fid->get_legacy) eina_stringshare_del(fid->get_legacy);
+   if (fid->set_legacy) eina_stringshare_del(fid->set_legacy);
+   if (fid->get_description) eina_stringshare_del(fid->get_description);
+   if (fid->set_description) eina_stringshare_del(fid->set_description);
+   if (fid->get_return_comment) eina_stringshare_del(fid->get_return_comment);
+   if (fid->set_return_comment) eina_stringshare_del(fid->set_return_comment);
    free(fid);
 }
 
@@ -25,7 +30,6 @@ database_function_new(const char *function_name, Eolian_Function_Type foo_type)
    Eolian_Function *fid = calloc(1, sizeof(*fid));
    fid->name = eina_stringshare_add(function_name);
    fid->type = foo_type;
-   fid->data = eina_hash_string_superfast_new(free);
    return fid;
 }
 
@@ -72,22 +76,6 @@ database_function_set_as_class(Eolian_Function *fid, Eina_Bool is_class)
 {
    EINA_SAFETY_ON_NULL_RETURN(fid);
    fid->is_class = is_class;
-}
-
-void
-database_function_data_set(Eolian_Function *fid, const char *key, const char *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(key);
-   EINA_SAFETY_ON_NULL_RETURN(fid);
-   if (data)
-     {
-        if (!eina_hash_find(fid->data, key))
-          eina_hash_set(fid->data, key, strdup(data));
-     }
-   else
-     {
-        eina_hash_del(fid->data, key, NULL);
-     }
 }
 
 Eolian_Function_Parameter *
@@ -140,15 +128,12 @@ void database_function_return_default_val_set(Eolian_Function *fid, Eolian_Funct
 
 void database_function_return_comment_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *ret_comment)
 {
-   const char *key = NULL;
    switch (ftype)
      {
-      case EOLIAN_PROP_SET: key = EOLIAN_PROP_SET_RETURN_COMMENT; break;
-      case EOLIAN_PROP_GET: key = EOLIAN_PROP_GET_RETURN_COMMENT; break;
-      case EOLIAN_METHOD: key = EOLIAN_METHOD_RETURN_COMMENT; break;
+      case EOLIAN_PROP_SET: fid->set_return_comment = eina_stringshare_ref(ret_comment); break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROP_GET: fid->get_return_comment = eina_stringshare_ref(ret_comment); break;
       default: return;
      }
-   database_function_data_set(fid, key, ret_comment);
 }
 
 void database_function_return_flag_set_as_warn_unused(Eolian_Function *fid,
@@ -168,4 +153,24 @@ database_function_object_set_as_const(Eolian_Function *fid, Eina_Bool is_const)
 {
    EINA_SAFETY_ON_NULL_RETURN(fid);
    fid->obj_is_const = is_const;
+}
+
+void database_function_legacy_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *legacy)
+{
+   switch (ftype)
+     {
+      case EOLIAN_PROP_SET: fid->set_legacy = eina_stringshare_ref(legacy); break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_CTOR: case EOLIAN_PROP_GET: fid->get_legacy = eina_stringshare_ref(legacy); break;
+      default: return;
+     }
+}
+
+void database_function_description_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *desc)
+{
+   switch (ftype)
+     {
+      case EOLIAN_PROP_SET: fid->set_description = eina_stringshare_ref(desc); break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_CTOR: case EOLIAN_PROP_GET: fid->get_description = eina_stringshare_ref(desc); break;
+      default: return;
+     }
 }

@@ -44,13 +44,13 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
       case EOLIAN_PROPERTY:
            {
               printf("%*s<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
-              const char *str = eolian_function_description_get(fid, EOLIAN_COMMENT_GET);
+              const char *str = eolian_function_description_get(fid, EOLIAN_PROP_GET);
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_description_get(fid, EOLIAN_COMMENT_SET);
+              str = eolian_function_description_get(fid, EOLIAN_PROP_SET);
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_LEGACY_GET);
+              str = eolian_function_legacy_get(fid, EOLIAN_PROP_GET);
               if (str) printf("%*slegacy_get: <%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_LEGACY_SET);
+              str = eolian_function_legacy_get(fid, EOLIAN_PROP_SET);
               if (str) printf("%*slegacy_set: <%s>\n", nb_spaces + 5, "", str);
               tp = eolian_function_return_type_get(fid, EOLIAN_PROP_GET);
               if (tp)
@@ -71,9 +71,9 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
       case EOLIAN_PROP_GET:
            {
               printf("%*sGET:<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
-              const char *str = eolian_function_description_get(fid, EOLIAN_COMMENT_GET);
+              const char *str = eolian_function_description_get(fid, EOLIAN_PROP_GET);
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_LEGACY_GET);
+              str = eolian_function_legacy_get(fid, EOLIAN_PROP_GET);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
               tp = eolian_function_return_type_get(fid, EOLIAN_PROP_GET);
               if (tp)
@@ -87,9 +87,9 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
       case EOLIAN_PROP_SET:
            {
               printf("%*sSET:<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
-              const char *str = eolian_function_description_get(fid, EOLIAN_COMMENT_SET);
+              const char *str = eolian_function_description_get(fid, EOLIAN_PROP_SET);
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_LEGACY_SET);
+              str = eolian_function_legacy_get(fid, EOLIAN_PROP_SET);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
               tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
               if (tp)
@@ -103,9 +103,9 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
       case EOLIAN_METHOD:
            {
               printf("%*s<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
-              const char *str = eolian_function_description_get(fid, EOLIAN_COMMENT);
+              const char *str = eolian_function_description_get(fid, EOLIAN_METHOD);
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_LEGACY);
+              str = eolian_function_legacy_get(fid, EOLIAN_METHOD);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
               tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
               if (tp)
@@ -120,11 +120,11 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
       case EOLIAN_CTOR:
            {
               //char *str = eina_hash_find(fid->data, "comment");
-              const char *str = eolian_function_description_get(fid, EOLIAN_COMMENT);
+              const char *str = eolian_function_description_get(fid, EOLIAN_METHOD);
               if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_data_get(fid, EOLIAN_LEGACY);
+              str = eolian_function_legacy_get(fid, EOLIAN_METHOD);
               if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
-              tp = eolian_function_return_type_get(fid, EOLIAN_CTOR);
+              tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
               if (tp)
                 {
                    printf("%*sreturn type: <", nb_spaces + 5, "");

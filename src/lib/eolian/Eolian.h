@@ -86,13 +86,6 @@ typedef struct _Eolian_Expression Eolian_Expression;
  */
 typedef struct _Eolian_Variable Eolian_Variable;
 
-#define EOLIAN_LEGACY "legacy"
-#define EOLIAN_LEGACY_GET "legacy_get"
-#define EOLIAN_LEGACY_SET "legacy_set"
-#define EOLIAN_COMMENT "comment"
-#define EOLIAN_COMMENT_SET "comment_set"
-#define EOLIAN_COMMENT_GET "comment_get"
-
 typedef enum
 {
    EOLIAN_UNRESOLVED,
@@ -623,20 +616,32 @@ EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *fu
 EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
- * @brief Returns a specific data for a function.
+ * @brief Returns a legacy name for a function.
  *
  * @param[in] function_id Id of the function
- * @param[in] key key to access the data
- * @return the data.
+ * @param[in] f_type The function type, for property get/set distinction.
+ * @return the legacy name or NULL.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_function_data_get(const Eolian_Function *function_id, const char *key);
+EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+
+/*
+ * @brief Returns a description for a function.
+ *
+ * @param[in] function_id Id of the function
+ * @param[in] f_type The function type, for property get/set distinction.
+ * @return the description or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_function_description_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
  * @brief Indicates if a function is virtual pure.
  *
  * @param[in] function_id Id of the function
+ * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE if virtual pure, EINA_FALSE othrewise..
  *
  * @ingroup Eolian
@@ -652,17 +657,6 @@ EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_i
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
-
-/*
- * @brief Returns a specific description for a function.
- *
- * @param[in] function_id Id of the function
- * @param[in] key key to access the description
- * @return the description.
- *
- * @ingroup Eolian
- */
-#define eolian_function_description_get(function_id, key) eolian_function_data_get((function_id), (key))
 
 /*
  * @brief Returns a parameter of a function pointed by its id.
