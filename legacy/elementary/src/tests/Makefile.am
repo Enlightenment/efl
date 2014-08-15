@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
-EXTRA_DIST = elm_suite.h
+EXTRA_DIST = \
+	elm_suite.h \
+	elm_test_helper.h
 
 TESTS = elm_suite
 check_PROGRAMS = elm_suite
