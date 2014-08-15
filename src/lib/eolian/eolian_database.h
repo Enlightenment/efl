@@ -310,23 +310,6 @@ Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Clas
 Eolian_Function *database_function_new(const char *function_name, Eolian_Function_Type foo_type);
 void database_function_del(Eolian_Function *fid);
 
-void database_function_type_set(Eolian_Function *function_id, Eolian_Function_Type foo_type);
-void database_function_legacy_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *legacy);
-void database_function_description_set(Eolian_Function *fid, Eolian_Function_Type ftype, const char *desc);
-void database_function_return_type_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Type *ret_type);
-void database_function_return_comment_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, const char *ret_comment);
-void database_function_return_default_val_set(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eolian_Expression *ret_default_value);
-void database_function_return_flag_set_as_warn_unused(Eolian_Function *foo_id, Eolian_Function_Type ftype, Eina_Bool warn_unused);
-
-void database_function_object_set_as_const(Eolian_Function *foo_id, Eina_Bool is_const);
-void database_function_set_as_class(Eolian_Function *foo_id, Eina_Bool is_class);
-Eina_Bool database_function_set_as_virtual_pure(Eolian_Function *function_id, Eolian_Function_Type type);
-void database_function_scope_set(Eolian_Function *function_id, Eolian_Object_Scope scope);
-
-Eolian_Function_Parameter *database_property_key_add(Eolian_Function *foo_id, Eolian_Type *type, const char *name, const char *description);
-Eolian_Function_Parameter *database_property_value_add(Eolian_Function *foo_id, Eolian_Type *type, const char *name, const char *description);
-Eolian_Function_Parameter *database_method_parameter_add(Eolian_Function *foo_id, Eolian_Parameter_Dir param_dir, Eolian_Type *type, const char *name, const char *description);
-
 /* func parameters */
 
 Eolian_Function_Parameter *database_parameter_add(Eolian_Type *type, const char *name, const char *description);

@@ -1,56 +1,12 @@
 #include "eo_parser.h"
 
 static Eina_Bool
-_db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
-{
-   Eo_Param_Def *param;
-   Eina_List *l;
-
-   Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_CTOR);
-
-   database_class_function_add(cl, foo_id);
-
-   if (meth->ret)
-     {
-        database_function_return_comment_set(foo_id, EOLIAN_METHOD,
-                                             meth->ret->comment);
-     }
-
-   database_function_legacy_set(foo_id, EOLIAN_METHOD, meth->legacy);
-
-   EINA_LIST_FOREACH(meth->params, l, param)
-     {
-        database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way,
-                                      param->type, param->name, param->comment);
-        param->type = NULL;
-     }
-
-   foo_id->base = meth->base;
-   meth->base.file = NULL;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_ctors(Eolian_Class *cl, Eo_Class_Def *kls)
-{
-   Eo_Method_Def *meth;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(kls->constructors, l, meth)
-     if (!_db_fill_ctor(cl, meth)) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
-
-static Eina_Bool
 _db_fill_key(Eolian_Function *foo_id, Eo_Param_Def *param)
 {
-   Eolian_Function_Parameter *p = database_property_key_add(foo_id,
-                                                            param->type,
-                                                            param->name,
-                                                            param->comment);
+   Eolian_Function_Parameter *p = database_parameter_add(param->type,
+                                                         param->name,
+                                                         param->comment);
+   foo_id->keys = eina_list_append(foo_id->keys, p);
    database_parameter_nonull_set(p, param->nonull);
    param->type = NULL;
 
@@ -75,10 +31,10 @@ _db_fill_keys(Eolian_Function *foo_id, Eo_Property_Def *prop)
 static Eina_Bool
 _db_fill_value(Eolian_Function *foo_id, Eo_Param_Def *param)
 {
-   Eolian_Function_Parameter *p = database_property_value_add(foo_id,
-                                                              param->type,
-                                                              param->name,
-                                                              param->comment);
+   Eolian_Function_Parameter *p = database_parameter_add(param->type,
+                                                         param->name,
+                                                         param->comment);
+   foo_id->params = eina_list_append(foo_id->params, p);
    database_parameter_nonull_set(p, param->nonull);
    param->type = NULL;
 
@@ -103,11 +59,11 @@ _db_fill_values(Eolian_Function *foo_id, Eo_Property_Def *prop)
 static Eina_Bool
 _db_fill_param(Eolian_Function *foo_id, Eo_Param_Def *param)
 {
-   Eolian_Function_Parameter *p = database_method_parameter_add(foo_id,
-                                                                param->way,
-                                                                param->type,
-                                                                param->name,
-                                                                param->comment);
+   Eolian_Function_Parameter *p = database_parameter_add(param->type,
+                                                         param->name,
+                                                         param->comment);
+   p->param_dir = param->way;
+   foo_id->params = eina_list_append(foo_id->params, p);
    database_parameter_nonull_set(p, param->nonull);
    param->type = NULL;
 
@@ -136,29 +92,45 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
    Eo_Accessor_Param *acc_param;
    Eina_List *l;
 
-   database_function_type_set(foo_id, ((accessor->type == SETTER)
-                                        ? EOLIAN_PROP_SET : EOLIAN_PROP_GET));
-
-   Eolian_Function_Type ftype = (accessor->type == SETTER)
-                                 ? EOLIAN_PROP_SET : EOLIAN_PROP_GET;
+   if (accessor->type == SETTER)
+     foo_id->type = (foo_id->type == EOLIAN_PROP_GET) ? EOLIAN_PROPERTY
+                                                      : EOLIAN_PROP_SET;
+   else
+     foo_id->type = (foo_id->type == EOLIAN_PROP_SET) ? EOLIAN_PROPERTY
+                                                      : EOLIAN_PROP_GET;
 
    if (accessor->ret && accessor->ret->type)
      {
-        database_function_return_type_set(foo_id, ftype, accessor->ret->type);
-        database_function_return_comment_set(foo_id, ftype,
-                                             accessor->ret->comment);
-        database_function_return_flag_set_as_warn_unused(foo_id, ftype,
-                                             accessor->ret->warn_unused);
-        database_function_return_default_val_set(foo_id, ftype,
-                                             accessor->ret->default_ret_val);
+        if (accessor->type == SETTER)
+          {
+             foo_id->set_ret_type = accessor->ret->type;
+             foo_id->set_ret_val  = accessor->ret->default_ret_val;
+             foo_id->set_return_comment = eina_stringshare_ref(accessor->ret->comment);
+             foo_id->set_return_warn_unused = accessor->ret->warn_unused;
+          }
+        else
+          {
+             foo_id->get_ret_type = accessor->ret->type;
+             foo_id->get_ret_val  = accessor->ret->default_ret_val;
+             foo_id->get_return_comment = eina_stringshare_ref(accessor->ret->comment);
+             foo_id->get_return_warn_unused = accessor->ret->warn_unused;
+          }
         accessor->ret->type = NULL;
         accessor->ret->default_ret_val = NULL;
      }
 
-   if (accessor->legacy)
-     database_function_legacy_set(foo_id, ftype, accessor->legacy);
-
-   database_function_description_set(foo_id, ftype, accessor->comment);
+   if (accessor->type == SETTER)
+     {
+        foo_id->set_description = eina_stringshare_ref(accessor->comment);
+        if (accessor->legacy)
+          foo_id->set_legacy = eina_stringshare_ref(accessor->legacy);
+     }
+   else
+     {
+        foo_id->get_description = eina_stringshare_ref(accessor->comment);
+        if (accessor->legacy)
+          foo_id->get_legacy = eina_stringshare_ref(accessor->legacy);
+     }
 
    EINA_LIST_FOREACH(accessor->params, l, acc_param)
      {
@@ -180,9 +152,14 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
      }
 
    if (kls->type == EOLIAN_CLASS_INTERFACE)
-      database_function_set_as_virtual_pure(foo_id, ftype);
+     {
+        if (accessor->type == SETTER)
+          foo_id->set_virtual_pure = EINA_TRUE;
+        else
+          foo_id->get_virtual_pure = EINA_TRUE;
+     }
 
-   if (ftype == EOLIAN_PROP_GET)
+   if (accessor->type == GETTER)
      foo_id->base = accessor->base;
    else
      foo_id->set_base = accessor->base;
@@ -212,8 +189,8 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
    Eolian_Function *foo_id = database_function_new(prop->name,
                                                    EOLIAN_UNRESOLVED);
 
-   database_function_scope_set(foo_id, prop->scope);
-   database_function_set_as_class(foo_id, prop->is_class);
+   foo_id->scope = prop->scope;
+   foo_id->is_class = prop->is_class;
 
    if (!_db_fill_keys     (foo_id,      prop)) goto failure;
    if (!_db_fill_values   (foo_id,      prop)) goto failure;
@@ -221,9 +198,9 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
 
    if (!prop->accessors)
      {
-        database_function_type_set(foo_id, EOLIAN_PROPERTY);
+        foo_id->type = EOLIAN_PROPERTY;
         if (kls->type == EOLIAN_CLASS_INTERFACE)
-          database_function_set_as_virtual_pure(foo_id, EOLIAN_UNRESOLVED);
+          foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
         foo_id->base = prop->base;
         prop->base.file = NULL;
      }
@@ -254,33 +231,29 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
 {
    Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_METHOD);
 
-   database_function_scope_set(foo_id, meth->scope);
+   foo_id->scope = meth->scope;
 
    database_class_function_add(cl, foo_id);
 
    if (meth->ret)
      {
-        database_function_return_type_set(foo_id, EOLIAN_METHOD,
-                                          meth->ret->type);
-        database_function_return_comment_set(foo_id, EOLIAN_METHOD,
-                                          meth->ret->comment);
-        database_function_return_flag_set_as_warn_unused(foo_id, EOLIAN_METHOD,
-                                          meth->ret->warn_unused);
-        database_function_return_default_val_set(foo_id, EOLIAN_METHOD,
-                                          meth->ret->default_ret_val);
+        foo_id->get_ret_type = meth->ret->type;
+        foo_id->get_return_comment = eina_stringshare_ref(meth->ret->comment);
+        foo_id->get_return_warn_unused = meth->ret->warn_unused;
+        foo_id->get_ret_val = meth->ret->default_ret_val;
         meth->ret->type = NULL;
         meth->ret->default_ret_val = NULL;
      }
 
-   database_function_description_set(foo_id, EOLIAN_METHOD, meth->comment);
-   database_function_legacy_set(foo_id, EOLIAN_METHOD, meth->legacy);
-   database_function_object_set_as_const(foo_id, meth->obj_const);
-   database_function_set_as_class(foo_id, meth->is_class);
+   foo_id->get_description = eina_stringshare_ref(meth->comment);
+   foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
+   foo_id->obj_is_const = meth->obj_const;
+   foo_id->is_class = meth->is_class;
 
    _db_fill_params(foo_id, meth);
 
    if (kls->type == EOLIAN_CLASS_INTERFACE)
-     database_function_set_as_virtual_pure(foo_id, EOLIAN_METHOD);
+     foo_id->get_virtual_pure = EINA_TRUE;
 
    foo_id->base = meth->base;
    meth->base.file = NULL;
@@ -296,6 +269,38 @@ _db_fill_methods(Eolian_Class *cl, Eo_Class_Def *kls)
 
    EINA_LIST_FOREACH(kls->methods, l, meth)
      if (!_db_fill_method(cl, kls, meth)) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
+{
+   Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_CTOR);
+
+   database_class_function_add(cl, foo_id);
+
+   if (meth->ret)
+     foo_id->get_return_comment = eina_stringshare_ref(meth->ret->comment);
+
+   foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
+
+   _db_fill_params(foo_id, meth);
+
+   foo_id->base = meth->base;
+   meth->base.file = NULL;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_db_fill_ctors(Eolian_Class *cl, Eo_Class_Def *kls)
+{
+   Eo_Method_Def *meth;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(kls->constructors, l, meth)
+     if (!_db_fill_ctor(cl, meth)) return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -350,7 +355,10 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
                  eolian_class_name_get(cl));
              return -1;
           }
-        database_function_set_as_virtual_pure(foo_id, ftype);
+        if (ftype == EOLIAN_PROP_SET)
+          foo_id->set_virtual_pure = EINA_TRUE;
+        else
+          foo_id->get_virtual_pure = EINA_TRUE;
         return 1;
      }
    database_class_implement_add(cl, impl);
