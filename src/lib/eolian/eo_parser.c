@@ -586,17 +586,17 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value.s))
           eo_lexer_syntax_error(ls, "double field definition");
+        fdef = calloc(1, sizeof(Eolian_Struct_Field));
         fname = eina_stringshare_ref(ls->t.value.s);
+        eina_hash_add(def->fields, fname, fdef);
+        def->field_names = eina_list_append(def->field_names, fname);
         eo_lexer_get(ls);
         check_next(ls, ':');
         tp = parse_type(ls);
-        fdef = calloc(1, sizeof(Eolian_Struct_Field));
         fdef->base.file = eina_stringshare_ref(ls->filename);
         fdef->base.line = fline;
         fdef->base.column = fcol;
         fdef->type = tp;
-        eina_hash_add(def->fields, fname, fdef);
-        def->field_names = eina_list_append(def->field_names, fname);
         pop_type(ls);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
@@ -661,9 +661,11 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value.s))
           eo_lexer_syntax_error(ls, "double field definition");
-        fname = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
         fdef = calloc(1, sizeof(Eolian_Enum_Field));
+        fname = eina_stringshare_ref(ls->t.value.s);
+        eina_hash_add(def->fields, fname, fdef);
+        def->field_names = eina_list_append(def->field_names, fname);
+        eo_lexer_get(ls);
         fdef->base.file = eina_stringshare_ref(ls->filename);
         fdef->base.line = fline;
         fdef->base.column = fcol;
@@ -691,8 +693,6 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
                prev_exp = fdef->value;
              pop_expr(ls);
           }
-        eina_hash_add(def->fields, fname, fdef);
-        def->field_names = eina_list_append(def->field_names, fname);
         Eina_Bool want_next = (ls->t.token == ',');
         if (want_next)
           eo_lexer_get(ls);
