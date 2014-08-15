@@ -37,21 +37,21 @@ struct _Evas_Loader_Internal
 };
 
 static void
-_jp2k_error_cb(const char *msg, void *data EINA_UNUSED)
+_jp2k_error_cb(const char *msg EINA_UNUSED, void *data EINA_UNUSED)
 {
-   ERR("OpenJPEG internal error: '%s'.", msg);
+//   ERR("OpenJPEG internal error: '%s'.", msg);
 }
 
 static void
-_jp2k_warning_cb(const char *msg, void *data EINA_UNUSED)
+_jp2k_warning_cb(const char *msg EINA_UNUSED, void *data EINA_UNUSED)
 {
-   WRN("OpenJPEG internal warning: '%s'.", msg);
+//   WRN("OpenJPEG internal warning: '%s'.", msg);
 }
 
 static void
-_jp2k_info_cb(const char *msg, void *data EINA_UNUSED)
+_jp2k_info_cb(const char *msg EINA_UNUSED, void *data EINA_UNUSED)
 {
-   INF("OpenJPEG internal information: '%s'.", msg);
+//   INF("OpenJPEG internal information: '%s'.", msg);
 }
 
 static Eina_Bool

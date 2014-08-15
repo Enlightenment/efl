@@ -168,7 +168,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
    if (length < 9)
      {
-        ERR("XPM ERROR: file size, %zd, is to small", length);
+//        ERR("XPM ERROR: file size, %zd, is to small", length);
         goto on_error;
      }
 
@@ -234,39 +234,39 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                     {
                        /* Header */
                        if (sscanf(line, "%i %i %i %i", &w, &h, &ncolors, &cpp) != 4)
-			 {
-			    ERR("XPM ERROR: XPM file malformed header");
-			    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+                         {
+//                            ERR("XPM ERROR: XPM file malformed header");
+                            *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
                             goto on_error;
-			 }
+                         }
                        if ((ncolors > 32766) || (ncolors < 1))
                          {
                             ERR("XPM ERROR: XPM files with colors > 32766 or < 1 not supported");
-			    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+                            *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
                             goto on_error;
                          }
                        if ((cpp > 5) || (cpp < 1))
                          {
-			    ERR("XPM ERROR: XPM files with characters per pixel > 5 or < 1not supported");
-			    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+                            ERR("XPM ERROR: XPM files with characters per pixel > 5 or < 1not supported");
+                            *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
                             goto on_error;
                          }
                        if ((w > IMG_MAX_SIZE) || (w < 1))
                          {
-			    ERR("XPM ERROR: Image width > IMG_MAX_SIZE or < 1 pixels for file");
-			    *error = EVAS_LOAD_ERROR_GENERIC;
+                            ERR("XPM ERROR: Image width > IMG_MAX_SIZE or < 1 pixels for file");
+                            *error = EVAS_LOAD_ERROR_GENERIC;
                             goto on_error;
                          }
                        if ((h > IMG_MAX_SIZE) || (h < 1))
                          {
-			    ERR("XPM ERROR: Image height > IMG_MAX_SIZE or < 1 pixels for file");
-			    *error = EVAS_LOAD_ERROR_GENERIC;
+                            ERR("XPM ERROR: Image height > IMG_MAX_SIZE or < 1 pixels for file");
+                            *error = EVAS_LOAD_ERROR_GENERIC;
                             goto on_error;
                          }
                        if (IMG_TOO_BIG(w, h))
                          {
                             ERR("XPM ERROR: Image just too big to ever allocate");
-			    *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                            *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                             goto on_error;
                          }
 
@@ -275,7 +275,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                             cmap = malloc(sizeof(CMap) * ncolors);
                             if (!cmap)
                               {
-				*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                                 *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                                 goto on_error;
                               }
                          }

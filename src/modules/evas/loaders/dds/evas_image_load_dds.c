@@ -157,8 +157,7 @@ _dword_read(const char **m)
    return val;
 }
 
-#define FAIL() do { fprintf(stderr, "DDS: ERROR at %s:%d\n", \
-   __FUNCTION__, __LINE__); goto on_error; } while (0)
+#define FAIL() do { /*fprintf(stderr, "DDS: ERROR at %s:%d\n", __FUNCTION__, __LINE__);*/ goto on_error; } while (0)
 
 static Eina_Bool
 evas_image_load_file_head_dds(void *loader_data,
