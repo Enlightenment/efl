@@ -7,7 +7,7 @@ _db_fill_key(Eolian_Function *foo_id, Eo_Param_Def *param)
                                                          param->name,
                                                          param->comment);
    foo_id->keys = eina_list_append(foo_id->keys, p);
-   database_parameter_nonull_set(p, param->nonull);
+   p->nonull = param->nonull;
    param->type = NULL;
 
    p->base = param->base;
@@ -35,7 +35,7 @@ _db_fill_value(Eolian_Function *foo_id, Eo_Param_Def *param)
                                                          param->name,
                                                          param->comment);
    foo_id->params = eina_list_append(foo_id->params, p);
-   database_parameter_nonull_set(p, param->nonull);
+   p->nonull = param->nonull;
    param->type = NULL;
 
    p->base = param->base;
@@ -64,7 +64,7 @@ _db_fill_param(Eolian_Function *foo_id, Eo_Param_Def *param)
                                                          param->comment);
    p->param_dir = param->way;
    foo_id->params = eina_list_append(foo_id->params, p);
-   database_parameter_nonull_set(p, param->nonull);
+   p->nonull = param->nonull;
    param->type = NULL;
 
    p->base = param->base;
@@ -145,9 +145,10 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
           }
         else if (acc_param->is_const)
           {
-             database_parameter_const_attribute_set(desc,
-                                                    accessor->type == GETTER,
-                                                    EINA_TRUE);
+             if (accessor->type == GETTER)
+               desc->is_const_on_get = EINA_TRUE;
+             else
+               desc->is_const_on_set = EINA_TRUE;
           }
      }
 
@@ -205,7 +206,7 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
         prop->base.file = NULL;
      }
 
-   database_class_function_add(cl, foo_id);
+   cl->properties = eina_list_append(cl->properties, foo_id);
 
    return EINA_TRUE;
 
@@ -233,7 +234,7 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
 
    foo_id->scope = meth->scope;
 
-   database_class_function_add(cl, foo_id);
+   cl->methods = eina_list_append(cl->methods, foo_id);
 
    if (meth->ret)
      {
@@ -278,7 +279,7 @@ _db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
 {
    Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_CTOR);
 
-   database_class_function_add(cl, foo_id);
+   cl->constructors = eina_list_append(cl->constructors, foo_id);
 
    if (meth->ret)
      foo_id->get_return_comment = eina_stringshare_ref(meth->ret->comment);
@@ -312,13 +313,13 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 
    if (!strcmp(impl_name, "class.constructor"))
      {
-        database_class_ctor_enable_set(cl, EINA_TRUE);
+        cl->class_ctor_enable = EINA_TRUE;
         return 1;
      }
 
    if (!strcmp(impl_name, "class.destructor"))
      {
-        database_class_dtor_enable_set(cl, EINA_TRUE);
+        cl->class_dtor_enable = EINA_TRUE;
         return 1;
      }
 
@@ -361,7 +362,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
           foo_id->get_virtual_pure = EINA_TRUE;
         return 1;
      }
-   database_class_implement_add(cl, impl);
+   cl->implements = eina_list_append(cl->implements, impl);
    return 0;
 }
 
@@ -390,7 +391,7 @@ _db_fill_events(Eolian_Class *cl, Eo_Class_Def *kls)
 
    EINA_LIST_FOREACH(kls->events, l, event)
      {
-        database_class_event_add(cl, event);
+        cl->events = eina_list_append(cl->events, event);
         eina_list_data_set(l, NULL); /* prevent double free */
      }
 
@@ -407,27 +408,17 @@ _db_fill_class(Eo_Class_Def *kls)
    eina_hash_set(_classesf, kls->base.file, cl);
 
    if (kls->comment)
-     {
-        database_class_description_set(cl, kls->comment);
-     }
+     cl->description = eina_stringshare_ref(kls->comment);
 
    EINA_LIST_FOREACH(kls->inherits, l, s)
-     {
-        database_class_inherit_add(cl, s);
-     }
+     cl->inherits = eina_list_append(cl->inherits, eina_stringshare_add(s));
 
    if (kls->legacy_prefix)
-     {
-        database_class_legacy_prefix_set(cl, kls->legacy_prefix);
-     }
+     cl->legacy_prefix = eina_stringshare_ref(kls->legacy_prefix);
    if (kls->eo_prefix)
-     {
-        database_class_eo_prefix_set(cl, kls->eo_prefix);
-     }
+     cl->eo_prefix = eina_stringshare_ref(kls->eo_prefix);
    if (kls->data_type)
-     {
-        database_class_data_type_set(cl, kls->data_type);
-     }
+     cl->data_type = eina_stringshare_ref(kls->data_type);
 
    if (!_db_fill_ctors     (cl, kls)) return EINA_FALSE;
    if (!_db_fill_properties(cl, kls)) return EINA_FALSE;

@@ -8,13 +8,51 @@ eolian_implement_full_name_get(const Eolian_Implement *impl)
    return impl->full_name;
 }
 
+/*
+ * ret false -> clash, class = NULL
+ * ret true && class -> only one class corresponding
+ * ret true && !class -> no class corresponding
+ */
+static Eina_Bool
+_class_name_validate(const char *class_name, const Eolian_Class **cl)
+{
+   char *name = strdup(class_name);
+   char *colon = name + 1;
+   const Eolian_Class *found_class = NULL;
+   const Eolian_Class *candidate;
+   if (cl) *cl = NULL;
+   do
+     {
+        colon = strchr(colon, '.');
+        if (colon) *colon = '\0';
+        candidate = eolian_class_get_by_name(name);
+        if (candidate)
+          {
+             if (found_class)
+               {
+                  ERR("Name clash between class %s and class %s",
+                        candidate->full_name,
+                        found_class->full_name);
+                  free(name);
+                  return EINA_FALSE; // Names clash
+               }
+             found_class = candidate;
+          }
+        if (colon) *colon++ = '.';
+     }
+   while(colon);
+   if (cl) *cl = found_class;
+   free(name);
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _fill_class(Eolian_Implement *impl)
 {
    const Eolian_Class *class = NULL;
    if (impl->klass)
      return EINA_TRUE;
-   if (!database_class_name_validate(impl->full_name, &class) || !class)
+   if (!_class_name_validate(impl->full_name, &class) || !class)
      return EINA_FALSE;
    impl->klass = class;
    return EINA_TRUE;

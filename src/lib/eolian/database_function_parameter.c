@@ -22,27 +22,3 @@ database_parameter_del(Eolian_Function_Parameter *pdesc)
    eina_stringshare_del(pdesc->description);
    free(pdesc);
 }
-
-void
-database_parameter_const_attribute_set(Eolian_Function_Parameter *param, Eina_Bool is_get, Eina_Bool is_const)
-{
-   EINA_SAFETY_ON_NULL_RETURN(param);
-   if (is_get)
-      param->is_const_on_get = is_const;
-   else
-      param->is_const_on_set = is_const;
-}
-
-void
-database_parameter_type_set(Eolian_Function_Parameter *param, Eolian_Type *types)
-{
-   EINA_SAFETY_ON_NULL_RETURN(param);
-   param->type = types;
-}
-
-void
-database_parameter_nonull_set(Eolian_Function_Parameter *param, Eina_Bool nonull)
-{
-   EINA_SAFETY_ON_NULL_RETURN(param);
-   param->nonull = nonull;
-}
