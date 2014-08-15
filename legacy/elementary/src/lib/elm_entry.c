@@ -3972,6 +3972,11 @@ _elm_entry_select_region_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int start,
         edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
      }
 
+   /* Set have selection false to not be cleared handler in
+      selection_cleared_signal_cb() since that callback will be called while
+      resetting edje text. */
+   sd->have_selection = EINA_FALSE;
+
    edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, start);
    edje_object_part_text_select_begin(sd->entry_edje, "elm.text");
    edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, end);
