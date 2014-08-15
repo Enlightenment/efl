@@ -3,7 +3,8 @@ Emotion Generic Players 1.11.0
 Changes since Emotion Generic Players 1.10.0:
 ---------------------------------------------
 
-No changes since version 1.10.0
+Fixes:
+   * emotion generic players - work around vlc bug that segvs (T1530)
 
 Changes since Emotion Generic Players 1.9.0:
 --------------------------------------------
