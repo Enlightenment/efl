@@ -3114,8 +3114,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glActiveTexture(GL_TEXTURE0);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                   glActiveTexture(GL_TEXTURE0);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
              else
                {
@@ -3151,6 +3151,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (gc->pipe[i].shader.cur_texu_dyn)
                     secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
 #endif
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
                   glActiveTexture(GL_TEXTURE2);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -3160,6 +3168,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (gc->pipe[i].shader.cur_texv_dyn)
                     secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv_dyn);
 #endif
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glActiveTexture(GL_TEXTURE0);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
@@ -3179,6 +3195,28 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     secsym_glEGLImageTargetTexture2DOES
                     (GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
 #endif
+                  if (gc->pipe[i].shader.smooth)
+                    {
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                    }
+                  else
+                    {
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                    }
                   glActiveTexture(GL_TEXTURE0);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
