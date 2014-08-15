@@ -86,11 +86,12 @@ Features:
    * edje: Add dpi feature.
    * ecore animator - adjust ecore loop time when animtor ticks to be exact
    * add function to set ecore loop time
+   * add simple ecore-con-url test suite
 
 Fixes:
 
    * Eolian: fix generation when optimization is set.
-   * recursively hide edje group objects on edje hide
+   * Edje GROUP objects now recursively hide child objects when parent is hidden
    * Evas textblock: Fix wrong advance calculation when bidi is disabled.
    * Eo/evas events: Fix support of mixing legacy smart events and eo events.
    * evas loader - redo gif fix so it doesn't break everything
