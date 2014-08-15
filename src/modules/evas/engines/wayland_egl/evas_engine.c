@@ -1043,9 +1043,6 @@ module_open(Evas_Module *em)
    /* check for valid module */
    if (!em) return 0;
 
-   /* try to init evas_gl_common */
-   if (!evas_gl_common_module_open()) return 0;
-
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
 

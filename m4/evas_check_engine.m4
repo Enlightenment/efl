@@ -575,6 +575,7 @@ if test "x${have_dep}" = "xyes" ; then
       PKG_CHECK_MODULES([WAYLAND_EGL], [${requirement}])
       evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
       evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
+      evas_engine_gl_common_libs="$evas_engine_[]$1[]_libdirs -lGLESv2 -lm -lEGL"
    fi
 fi
 
