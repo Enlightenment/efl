@@ -52,13 +52,14 @@ _object_constructor_2(Eo *obj, Object_Data *pd)
 EOLIAN static void
 _object_base_constructor(Eo *obj, Object_Data *pd)
 {
-   eo_do_super(obj, OBJECT_CLASS, base_constructor();
+   eo_do_super(obj, OBJECT_CLASS, base_constructor());
 
 }
 
 EOLIAN static void
 _object_base_destructor(Eo *obj, Object_Data *pd)
 {
+   eo_do_super(obj, OBJECT_CLASS, base_destructor());
 
 }
 
@@ -74,3 +75,4 @@ _object_class_destructor(Eo_Class *klass)
 
 }
 
+#include "object.eo.c"

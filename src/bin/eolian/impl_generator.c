@@ -122,6 +122,8 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    Eina_Strbuf *params = NULL, *short_params = NULL, *super_invok = NULL;
    char func_name[PATH_MAX];
    char impl_name[PATH_MAX];
+   const char *fname;
+   int flen;
    _eolian_class_vars impl_env;
 
    if (!impl_desc && eolian_function_is_virtual_pure(foo, ftype)) return EINA_TRUE;
@@ -171,10 +173,24 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    if (impl_desc && ftype == EOLIAN_CTOR)
      {
         eina_strbuf_append_printf(super_invok,
-              "   eo_do_super(obj, %s_%s, %s_%s(%s);\n",
+              "   eo_do_super(obj, %s_%s, %s_%s(%s));\n",
               class_env.upper_eo_prefix, class_env.upper_classtype,
-              impl_env.lower_classname, eolian_function_name_get(foo),
+              impl_env.lower_eo_prefix, eolian_function_name_get(foo),
               eina_strbuf_string_get(short_params));
+     }
+
+   fname = eolian_function_name_get(foo);
+   flen = strlen(fname);
+   if ((fname) && (flen >= strlen("destructor")))
+     {
+        if (impl_desc && !strcmp(fname + flen - strlen("destructor"), "destructor"))
+          {
+             eina_strbuf_append_printf(super_invok,
+                   "   eo_do_super(obj, %s_%s, %s_%s(%s));\n",
+                   class_env.upper_eo_prefix, class_env.upper_classtype,
+                   impl_env.lower_eo_prefix, eolian_function_name_get(foo),
+                   eina_strbuf_string_get(short_params));
+          }
      }
 
    const char *rettype = NULL;
@@ -209,6 +225,7 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
    const Eolian_Function *foo;
    Eina_Strbuf *begin = eina_strbuf_new();
    const char *class_name = eolian_class_name_get(class);
+   char core_incl[PATH_MAX];
 
    _class_env_create(class, NULL, &class_env);
 
@@ -329,6 +346,13 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
                    class_env.lower_classname);
           }
      }
+   printf("Removal of all inline instances of #include \"%s.eo.c\"\n", class_env.lower_classname);
+   snprintf(core_incl, sizeof(core_incl), "\n#include \"%s.eo.c\"\n", class_env.lower_classname);
+   eina_strbuf_replace_all(buffer, core_incl, "\n");
+
+   snprintf(core_incl, sizeof(core_incl), "\"%s.eo.c\"", class_env.lower_classname);
+   printf("Generation of #include \"%s.eo.c\"\n", class_env.lower_classname);
+   eina_strbuf_append_printf(buffer, "#include \"%s.eo.c\"\n", class_env.lower_classname);
 
    ret = EINA_TRUE;
 end:
