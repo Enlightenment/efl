@@ -235,14 +235,15 @@ _tex_format_index(GLuint format)
       case GL_LUMINANCE12:
       case GL_LUMINANCE16:
         return 10;
+      case GL_LUMINANCE_ALPHA:
       case GL_LUMINANCE4_ALPHA4:
       case GL_LUMINANCE8_ALPHA8:
       case GL_LUMINANCE12_ALPHA12:
       case GL_LUMINANCE16_ALPHA16:
         return 11;
       default:
-        // abort?
-        return 0;
+        ERR("Unknown format returned specified by GL stack: %x", format);
+        return -1;
      }
    return 0;
 }
@@ -465,14 +466,13 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
      }
 
    th2 = _tex_format_index(intformat);
+   if (th2 < 0) return NULL;
    EINA_LIST_FOREACH(gc->shared->tex.atlas[th2], l, pt)
      {
         if ((*apt = _pool_tex_alloc(pt, w, h, u, v)) != NULL)
           {
              gc->shared->tex.atlas[th2] =
-               eina_list_remove_list(gc->shared->tex.atlas[th2], l);
-             gc->shared->tex.atlas[th2] =
-               eina_list_prepend(gc->shared->tex.atlas[th2], pt);
+               eina_list_promote_list(gc->shared->tex.atlas[th2], l);
              return pt;
           }
      }
@@ -483,7 +483,6 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
         pool_h = gc->shared->info.tune.atlas.max_h;
      }
    pt = _pool_tex_new(gc, atlas_w, pool_h, intformat, format);
-
    if (!pt) return NULL;
    gc->shared->tex.atlas[th2] =
      eina_list_prepend(gc->shared->tex.atlas[th2], pt);
