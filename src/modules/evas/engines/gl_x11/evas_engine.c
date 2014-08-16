@@ -401,10 +401,8 @@ evgl_eng_window_surface_create(void *data, void *native_window EINA_UNUSED)
 
    return (void *)surface;
    */
-// handled by EINA_UNUSED above
-//   return (void*)native_window;
+   return (void *)native_window;
 #endif
-
 }
 
 static int
