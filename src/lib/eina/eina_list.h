@@ -56,10 +56,10 @@
  * that the return value is attributed to the @a list variable, this needs to
  * be done every time we use a a function that alters the contents of the list.
  * 
- * Now that we have a list with some elements in it we can look at it's contents.
+ * Now that we have a list with some elements in it we can look at its contents.
  * @until printf
  * 
- * There are many ways of accessing elements in the list, including by it's
+ * There are many ways of accessing elements in the list, including by its
  * index:
  * @until nth
  * @note It should be noted that the index starts at 0.
@@ -1004,7 +1004,7 @@ EAPI Eina_List            *eina_list_split_list(Eina_List *list, Eina_List *rela
  * greater than 0. It is the last value returned by func().
  * @return the nearest node, @c NULL if not found.
  *
- * This function searches for a node containing @p data as it's data in @p list,
+ * This function searches for a node containing @p data as its data in @p list,
  * if such a node exists it will be returned and @p result_cmp will be @p 0. If
  * the data of no node in @p list is equal to @p data, the node with the nearest
  * value to that will be returned and @p result_cmp will be the return value of

@@ -15,10 +15,15 @@ main(int argc, char **argv)
 
    eina_init();
 
+   printf("%p\n", list);
    list = eina_list_append(list, "tigh");
+   printf("%p\n", list);
    list = eina_list_append(list, "adar");
+   printf("%p\n", list);
    list = eina_list_append(list, "baltar");
+   printf("%p\n", list);
    list = eina_list_append(list, "roslin");
+   printf("%p\n", list);
 
    EINA_LIST_FOREACH(list, l, list_data)
      printf("%s\n", (char*)list_data);

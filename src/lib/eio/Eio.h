@@ -307,7 +307,7 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
                                 const void *data);
 
 /**
- * @brief List the content of a directory and all it's sub-content asynchronously
+ * @brief List the content of a directory and all its sub-content asynchronously
  * @param dir The directory to list.
  * @param filter_cb Callback used to decide if the file will be passed to main_cb
  * @param main_cb Callback called from the main loop for each accepted file (not filtered).
@@ -331,7 +331,7 @@ EAPI Eio_File *eio_dir_stat_ls(const char *dir,
                                const void *data);
 
 /**
- * @brief List the content of a directory and all it's sub-content asynchronously
+ * @brief List the content of a directory and all its sub-content asynchronously
  * @param dir The directory to list.
  * @param filter_cb Callback used to decide if the file will be passed to main_cb
  * @param main_cb Callback called from the main loop for each accepted file (not filtered).
@@ -479,7 +479,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
 			     const void *data);
 
 /**
- * @brief Move a directory and it's content asynchronously
+ * @brief Move a directory and its content asynchronously
  * @param source Should be the name of the directory to copy the data from.
  * @param dest Should be the name of the directory to copy the data to.
  * @param filter_cb Possible to deny the move of some files/directories.
@@ -488,7 +488,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
  *
- * This function will move a directory and all it's content from source to dest.
+ * This function will move a directory and all its content from source to dest.
  * It will try first to rename the directory, if not it will try to use splice
  * if possible, if not it will fallback to mmap/write.
  * It will try to preserve access right, but not user/group identity.
@@ -507,7 +507,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
 			    const void *data);
 
 /**
- * @brief Copy a directory and it's content asynchronously
+ * @brief Copy a directory and its content asynchronously
  * @param source Should be the name of the directory to copy the data from.
  * @param dest Should be the name of the directory to copy the data to.
  * @param filter_cb Possible to deny the move of some files/directories.
@@ -516,7 +516,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
  *
- * This function will copy a directory and all it's content from source to dest.
+ * This function will copy a directory and all its content from source to dest.
  * It will try to use splice if possible, if not it will fallback to mmap/write.
  * It will try to preserve access right, but not user/group identity.
  * Every file will be passed to the filter_cb, so it's your job to decide if you
@@ -532,7 +532,7 @@ EAPI Eio_File *eio_dir_copy(const char *source,
 			    const void *data);
 
 /**
- * @brief Remove a directory and it's content asynchronously
+ * @brief Remove a directory and its content asynchronously
  * @param path Should be the name of the directory to destroy.
  * @param filter_cb Possible to deny the move of some files/directories.
  * @param progress_cb Callback called to know the progress of the copy.
@@ -540,7 +540,7 @@ EAPI Eio_File *eio_dir_copy(const char *source,
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
  *
- * This function will remove a directory and all it's content.
+ * This function will remove a directory and all its content.
  * Every file will be passed to the filter_cb, so it's your job to decide if you
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
@@ -755,13 +755,13 @@ EAPI Eio_File *eio_file_xattr_string_get(const char *path,
 
 
 /**
- * @brief Initialize eio and all it's required submodule.
+ * @brief Initialize eio and all its required submodule.
  * @return the current number of eio users.
  */
 EAPI int eio_init(void);
 
 /**
- * @brief Shutdown eio and all it's submodule if possible.
+ * @brief Shutdown eio and all its submodule if possible.
  * @return the number of pending users of eio.
  */
 EAPI int eio_shutdown(void);

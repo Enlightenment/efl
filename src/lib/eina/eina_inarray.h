@@ -282,7 +282,7 @@ EAPI void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * @return the index of the new member or -1 on errors.
  *
  * Copies the given pointer contents at the end of the array. The
- * pointer is not referenced, instead it's contents is copied to the
+ * pointer is not referenced, instead its contents is copied to the
  * members array using the previously defined @c member_size.
  *
  * @see eina_inarray_insert_at().
@@ -313,7 +313,7 @@ EAPI void *eina_inarray_grow(Eina_Inarray *array, unsigned int size);
  *
  * Copies the given pointer contents at the array position defined by
  * given @a compare function. The pointer is not referenced, instead
- * it's contents is copied to the members array using the previously
+ * its contents is copied to the members array using the previously
  * defined @c member_size.
  *
  * The data given to @a compare function are the pointer to member
@@ -338,7 +338,7 @@ EAPI int eina_inarray_insert(Eina_Inarray *array,
  *
  * Copies the given pointer contents at the array position defined by
  * given @a compare function. The pointer is not referenced, instead
- * it's contents is copied to the members array using the previously
+ * its contents is copied to the members array using the previously
  * defined @c member_size.
  *
  * The data given to @a compare function are the pointer to member
@@ -410,7 +410,7 @@ EAPI void *eina_inarray_nth(const Eina_Inarray *array,
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * Copies the given pointer contents at the given @a position in the
- * array. The pointer is not referenced, instead it's contents is
+ * array. The pointer is not referenced, instead its contents is
  * copied to the members array using the previously defined
  * @c member_size.
  *
@@ -465,7 +465,7 @@ EAPI void *eina_inarray_alloc_at(Eina_Inarray *array,
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * Copies the given pointer contents at the given @a position in the
- * array. The pointer is not referenced, instead it's contents is
+ * array. The pointer is not referenced, instead its contents is
  * copied to the members array using the previously defined
  * @c member_size.
  *

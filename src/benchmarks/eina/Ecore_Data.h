@@ -204,7 +204,7 @@ EAPI int              ecore_list_empty_is(Ecore_List *list);
 
 /* Remove every node in the list without freeing the list itself */
 EAPI int              ecore_list_clear(Ecore_List *list);
-/* Free the list and it's contents */
+/* Free the list and its contents */
 EAPI void             ecore_list_destroy(Ecore_List *list);
 
 /* Creating and initializing list nodes */
