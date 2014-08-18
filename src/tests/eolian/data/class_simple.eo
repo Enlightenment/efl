@@ -16,6 +16,11 @@ class Class_Simple {
             int value; /*@ Value description */
          }
       }
+      b {
+        set {
+           eo: null;
+        }
+      }
    }
    methods {
       foo {
@@ -26,6 +31,13 @@ class Class_Simple {
             @out double c;
          }
          return: char * (null); /*@ comment for method return */
+      }
+      bar {
+         eo: null;
+         params {
+            int x;
+         }
+         return: int;
       }
    }
 }

@@ -498,6 +498,11 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_parameter_name_get(param), "value"));
    fail_if(strcmp(eolian_parameter_description_get(param), "Value description"));
 
+   /* legacy only */
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "b", EOLIAN_PROPERTY)));
+   fail_if(eolian_function_is_legacy_only(fid, EOLIAN_PROP_GET));
+   fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_PROP_SET));
+
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
    string = eolian_function_description_get(fid, EOLIAN_METHOD);
@@ -517,6 +522,7 @@ START_TEST(eolian_simple_parsing)
    string = eolian_function_return_comment_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "comment for method return"));
+   fail_if(eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
 
    /* Function parameters */
    fail_if(!(iter = eolian_property_values_get(fid)));
@@ -539,6 +545,10 @@ START_TEST(eolian_simple_parsing)
    fail_if(eolian_parameter_description_get(param));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
+
+   /* legacy only */
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
 
    eolian_shutdown();
 }
