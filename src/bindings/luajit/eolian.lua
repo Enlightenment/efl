@@ -5,6 +5,10 @@ local ffi = require("ffi")
 local bit = require("bit")
 
 ffi.cdef [[
+    void eina_stringshare_del(const char *str);
+]]
+
+ffi.cdef [[
     typedef unsigned char Eina_Bool;
     typedef struct _Eina_Iterator Eina_Iterator;
 
@@ -251,15 +255,24 @@ local Ptr_Iterator = iterator.Ptr_Iterator
 local M = {}
 
 local eolian
+local eina
 
 local init = function()
     eolian = util.lib_load("eolian")
+    eina = util.lib_load("eina")
     eolian.eolian_init()
 end
 
 local shutdown = function()
     eolian.eolian_shutdown()
     util.lib_unload("eolian")
+    util.lib_unload("eina")
+end
+
+local ffi_stringshare = function(s)
+    local r = ffi.string(s)
+    eina.eina_stringshare_del(s)
+    return r
 end
 
 cutil.init_module(init, shutdown)
@@ -442,13 +455,13 @@ M.Type = ffi.metatype("Eolian_Type", {
         c_type_named_get = function(self, name)
             local v = eolian.eolian_type_c_type_named_get(self, name)
             if v == nil then return v end
-            return ffi.string(v)
+            return ffi_stringshare(v)
         end,
 
         c_type_get = function(self)
             local v = eolian.eolian_type_c_type_get(self)
             if v == nil then return v end
-            return ffi.string(v)
+            return ffi_stringshare(v)
         end,
 
         name_get = function(self)
@@ -498,7 +511,7 @@ M.Function = ffi.metatype("Eolian_Function", {
         full_c_name_get = function(self, prefix)
             local v = eolian.eolian_function_full_c_name_get(self, prefix)
             if v == nil then return nil end
-            return ffi.string(v)
+            return ffi_stringshare(v)
         end,
 
         legacy_get = function(self, ftype)
@@ -892,7 +905,7 @@ M.Value = ffi.metatype("Eolian_Value", {
         to_literal = function(self)
             local v = eolian.eolian_expression_value_to_literal(self)
             if v == nil then return nil end
-            return ffi.string(v)
+            return ffi_stringshare(v)
         end
     }
 })
@@ -915,7 +928,7 @@ M.Expression = ffi.metatype("Eolian_Expression", {
         serialize = function(self)
             local v = eolian.eolian_expression_serialize(self)
             if v == nil then return nil end
-            return ffi.string(v)
+            return ffi_stringshare(v)
         end
     }
 })

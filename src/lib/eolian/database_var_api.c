@@ -55,14 +55,14 @@ EAPI Eina_Stringshare *
 eolian_variable_description_get(const Eolian_Variable *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return eina_stringshare_ref(var->comment);
+   return var->comment;
 }
 
 EAPI Eina_Stringshare *
 eolian_variable_file_get(const Eolian_Variable *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return eina_stringshare_ref(var->base.file);
+   return var->base.file;
 }
 
 EAPI const Eolian_Type *
@@ -83,14 +83,14 @@ EAPI Eina_Stringshare *
 eolian_variable_name_get(const Eolian_Variable *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return eina_stringshare_ref(var->name);
+   return var->name;
 }
 
 EAPI Eina_Stringshare *
 eolian_variable_full_name_get(const Eolian_Variable *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return eina_stringshare_ref(var->full_name);
+   return var->full_name;
 }
 
 EAPI Eina_Iterator *

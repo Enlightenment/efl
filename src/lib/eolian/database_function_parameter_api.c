@@ -19,7 +19,6 @@ EAPI Eina_Stringshare *
 eolian_parameter_name_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
-   eina_stringshare_ref(param->name);
    return param->name;
 }
 

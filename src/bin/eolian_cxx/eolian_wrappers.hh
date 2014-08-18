@@ -270,7 +270,7 @@ property_is_setter(Eolian_Function const& func)
 inline std::string
 parameter_name(Eolian_Function_Parameter const& parameter)
 {
-   return safe_strshare(::eolian_parameter_name_get(&parameter)) + "_";
+   return safe_str(::eolian_parameter_name_get(&parameter)) + "_";
 }
 
 inline bool

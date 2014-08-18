@@ -16,7 +16,7 @@ _comment_parameter(Eolian_Function_Parameter *param)
    else if (direction == EOLIAN_INOUT_PARAM) doc += "[inout] ";
    else assert(false);
 
-   doc += safe_strshare(::eolian_parameter_name_get(param));
+   doc += safe_str(::eolian_parameter_name_get(param));
    doc += " ";
    doc += safe_str(description);
 
