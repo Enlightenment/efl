@@ -717,7 +717,11 @@ eng_setup(Evas *evas, void *info)
         goto ob_err;
      }
 
-   evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
+   if (re->generic.software.tb)
+     {
+        evas_render_engine_software_generic_tile_strict_set
+          (&re->generic.software, EINA_TRUE);
+     }
 
    if (!epd->engine.data.context)
      {
