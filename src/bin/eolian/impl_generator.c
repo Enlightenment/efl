@@ -123,7 +123,7 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    char func_name[PATH_MAX];
    char impl_name[PATH_MAX];
    const char *fname;
-   int flen;
+   size_t flen;
    _eolian_class_vars impl_env;
 
    if (!impl_desc && eolian_function_is_virtual_pure(foo, ftype)) return EINA_TRUE;
