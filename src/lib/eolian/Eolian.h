@@ -146,7 +146,6 @@ typedef enum
    EOLIAN_EXPR_ULLONG,
    EOLIAN_EXPR_FLOAT,
    EOLIAN_EXPR_DOUBLE,
-   EOLIAN_EXPR_LDOUBLE,
    EOLIAN_EXPR_STRING,
    EOLIAN_EXPR_CHAR,
    EOLIAN_EXPR_NULL,
@@ -179,6 +178,27 @@ typedef enum
    EOLIAN_VAR_CONSTANT,
    EOLIAN_VAR_GLOBAL
 } Eolian_Variable_Type;
+
+typedef union
+{
+   char               c;
+   Eina_Bool          b;
+   const    char     *s;
+   signed   int       i;
+   unsigned int       u;
+   signed   long      l;
+   unsigned long      ul;
+   signed   long long ll;
+   unsigned long long ull;
+   float              f;
+   double             d;
+} Eolian_Value_Union;
+
+typedef struct _Eolian_Value
+{
+   Eolian_Expression_Type type;
+   Eolian_Value_Union value;
+} Eolian_Value;
 
 /*
  * @brief Parse a given .eo file and fill the database.
@@ -1296,31 +1316,28 @@ EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
  *
  * @param[in] expr the expression.
  * @param[in] mask the mask of allowed values (can combine with bitwise OR).
- * @param[out] val the resulting value of the expression.
- * @return the type of the resulting value or EOLIAN_EXPR_UNKNOWN on error.
+ * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
  *
  * Represents value types from Eolian_Expression_Type. Booleans
  * are represented as unsigned char, strings as a stringshare.
- * The Eina_Value pointer must be freed manually.
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Expression_Type eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m, Eina_Value *val);
+EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
 
 /*
  * @brief Evaluate an Eolian expression given a type instead of a mask.
  *
  * @param[in] expr the expression.
  * @param[in] type the type the expression is assigned to.
- * @param[out] val the resulting value of the expression.
- * @return the type of the resulting value or EOLIAN_EXPR_UNKNOWN on error.
+ * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
  *
  * The mask is automatically decided from the given type, allowing only values
  * that can be assigned to that type.
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type, Eina_Value *val);
+EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type);
 
 /*
  * @brief Convert the result of expression evaluation to a literal as in how
@@ -1334,11 +1351,11 @@ EAPI Eolian_Expression_Type eolian_expression_eval_type(const Eolian_Expression 
  * For e.g. strings this only uses a subset of regular C escape sequences
  * so that interoperability is wider than just C (no octal escapes). For
  * languages that differ too much, you can write an equivalent function
- * using the Eina_Value pointer provided by the eval.
+ * yourself.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_expression_value_to_literal(const Eina_Value *v, Eolian_Expression_Type etp);
+EAPI Eina_Stringshare *eolian_expression_value_to_literal(const Eolian_Value *v);
 
 /*
  * @brief Serialize an expression.

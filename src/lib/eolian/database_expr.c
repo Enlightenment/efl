@@ -81,7 +81,6 @@ expr_type_to_mask(const Eolian_Expression *expr)
       case EOLIAN_EXPR_LONG:
       case EOLIAN_EXPR_INT:
         return EOLIAN_MASK_SINT;
-      case EOLIAN_EXPR_LDOUBLE:
       case EOLIAN_EXPR_DOUBLE:
       case EOLIAN_EXPR_FLOAT:
         return EOLIAN_MASK_FLOAT;
@@ -122,15 +121,14 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
 #define CONVERT(dtp, expr, field) \
    switch (expr->type) \
      { \
-      CONVERT_CASE(LDOUBLE, dtp, expr, field, ld ) \
-      CONVERT_CASE(DOUBLE , dtp, expr, field, d  ) \
-      CONVERT_CASE(FLOAT  , dtp, expr, field, f  ) \
-      CONVERT_CASE(ULLONG , dtp, expr, field, ull) \
-      CONVERT_CASE(LLONG  , dtp, expr, field, ll ) \
-      CONVERT_CASE(ULONG  , dtp, expr, field, ul ) \
-      CONVERT_CASE(LONG   , dtp, expr, field, l  ) \
-      CONVERT_CASE(UINT   , dtp, expr, field, u  ) \
-      CONVERT_CASE(INT    , dtp, expr, field, i  ) \
+      CONVERT_CASE(DOUBLE, dtp, expr, field, d  ) \
+      CONVERT_CASE(FLOAT , dtp, expr, field, f  ) \
+      CONVERT_CASE(ULLONG, dtp, expr, field, ull) \
+      CONVERT_CASE(LLONG , dtp, expr, field, ll ) \
+      CONVERT_CASE(ULONG , dtp, expr, field, ul ) \
+      CONVERT_CASE(LONG  , dtp, expr, field, l  ) \
+      CONVERT_CASE(UINT  , dtp, expr, field, u  ) \
+      CONVERT_CASE(INT   , dtp, expr, field, i  ) \
       default: \
         break; \
      }
@@ -158,9 +156,8 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
    /* no need for promotion */
    if (a->type == b->type) return EINA_TRUE;
    /* if either operand is floating point, everything has to be */
-   PROMOTE(a, b, EOLIAN_EXPR_LDOUBLE, long double, ld)
-   PROMOTE(a, b, EOLIAN_EXPR_DOUBLE,       double, d)
-   PROMOTE(a, b, EOLIAN_EXPR_FLOAT,         float, f)
+   PROMOTE(a, b, EOLIAN_EXPR_DOUBLE, double, d)
+   PROMOTE(a, b, EOLIAN_EXPR_FLOAT,   float, f)
    /* if either operand is unsigned with rank >= the other one, convert to
     * unsigned; if either signed operand can represent all values of the
     * other signed or unsigned operand, convert to the larger one; our
@@ -305,9 +302,8 @@ eval_binary(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
    APPLY_CASE(INT   , expr, lhs, rhs, i  , op)
 
 #define APPLY_CASE_FLOAT(expr, lhs, rhs, op) \
-   APPLY_CASE(LDOUBLE, expr, lhs, rhs, ld, op) \
-   APPLY_CASE(DOUBLE , expr, lhs, rhs, d , op) \
-   APPLY_CASE(FLOAT  , expr, lhs, rhs, f , op)
+   APPLY_CASE(DOUBLE, expr, lhs, rhs, d , op) \
+   APPLY_CASE(FLOAT , expr, lhs, rhs, f , op)
 
 #define APPLY_NUM(expr, lhs, rhs, op) \
    expr->type = lhs.type; \
@@ -456,7 +452,6 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
         }
       case EOLIAN_EXPR_FLOAT:
       case EOLIAN_EXPR_DOUBLE:
-      case EOLIAN_EXPR_LDOUBLE:
         {
            if (!(mask & EOLIAN_MASK_FLOAT))
              return expr_type_error(expr, EOLIAN_MASK_FLOAT, mask);
@@ -587,89 +582,19 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
    return EINA_TRUE;
 }
 
-Eolian_Expression_Type
-database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
-                   Eina_Value *outval)
+Eolian_Value
+database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask)
 {
    Eolian_Expression out;
+   Eolian_Value ret;
+   ret.type = EOLIAN_EXPR_UNKNOWN;
    if (!mask)
-     return EOLIAN_EXPR_UNKNOWN;
+     return ret;
    if (!eval_exp(expr, mask, &out))
-     return EOLIAN_EXPR_UNKNOWN;
-   if (!outval)
-     return out.type;
-   switch (out.type)
-     {
-      case EOLIAN_EXPR_INT:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_INT))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.i);
-        break;
-      case EOLIAN_EXPR_UINT:
-       if (!eina_value_setup(outval, EINA_VALUE_TYPE_UINT))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.u);
-        break;
-      case EOLIAN_EXPR_LONG:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_LONG))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.l);
-        break;
-      case EOLIAN_EXPR_ULONG:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_ULONG))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.ul);
-        break;
-      case EOLIAN_EXPR_LLONG:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_INT64))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.ll);
-        break;
-      case EOLIAN_EXPR_ULLONG:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_UINT64))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.ull);
-        break;
-      case EOLIAN_EXPR_FLOAT:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_FLOAT))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.f);
-        break;
-      case EOLIAN_EXPR_DOUBLE:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_DOUBLE))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.d);
-        break;
-      case EOLIAN_EXPR_LDOUBLE:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_DOUBLE))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, (double)out.value.ld);
-        break;
-      case EOLIAN_EXPR_STRING:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_STRINGSHARE))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, eina_stringshare_ref(out.value.s));
-        break;
-      case EOLIAN_EXPR_CHAR:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_CHAR))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.c);
-        break;
-      case EOLIAN_EXPR_BOOL:
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_UCHAR))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, out.value.b);
-        break;
-      case EOLIAN_EXPR_NULL:
-        /* we need to initialize to prevent crashes */
-        if (!eina_value_setup(outval, EINA_VALUE_TYPE_UCHAR))
-          return EOLIAN_EXPR_UNKNOWN;
-        eina_value_set(outval, 0);
-        break;
-      default:
-        return EOLIAN_EXPR_UNKNOWN;
-     }
-   return out.type;
+     return ret;
+   ret.type = out.type;
+   ret.value = out.value;
+   return ret;
 }
 
 void

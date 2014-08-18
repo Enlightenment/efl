@@ -135,9 +135,8 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                      eina_strbuf_append_printf(buf, "  %s", eina_strbuf_string_get(membuf));
                    else
                      {
-                        Eina_Value v;
-                        Eolian_Expression_Type et = eolian_expression_eval(member, EOLIAN_MASK_INT, &v);
-                        const char *lit = eolian_expression_value_to_literal(&v, et);
+                        Eolian_Value val = eolian_expression_eval(member, EOLIAN_MASK_INT);
+                        const char *lit = eolian_expression_value_to_literal(&val);
                         eina_strbuf_append_printf(buf, "  %s = %s", eina_strbuf_string_get(membuf), lit);
                         const char *exp = eolian_expression_serialize(member);
                         if (exp && strcmp(lit, exp))
@@ -146,7 +145,6 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                              eina_stringshare_del(exp);
                           }
                         eina_stringshare_del(lit);
-                        eina_value_flush(&v);
                      }
                    next = eina_iterator_next(members, (void**)&member_name);
                    if (next)

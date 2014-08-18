@@ -463,11 +463,10 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              const char *val_str = NULL;
              if (default_ret_val)
                {
-                  Eina_Value val;
-                  Eolian_Expression_Type etp = eolian_expression_eval_type
-                    (default_ret_val, rettypet, &val);
-                  if (etp)
-                    val_str = eolian_expression_value_to_literal(&val, etp);
+                  Eolian_Value val = eolian_expression_eval_type
+                    (default_ret_val, rettypet);
+                  if (val.type)
+                    val_str = eolian_expression_value_to_literal(&val);
                }
              eina_strbuf_append_printf(eo_func_decl, ", %s%s, %s",
                    ret_const ? "const " : "", rettype,

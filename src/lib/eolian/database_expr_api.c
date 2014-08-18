@@ -1,24 +1,26 @@
 #include <Eina.h>
 #include "eo_lexer.h"
 
-EAPI Eolian_Expression_Type
-eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m,
-                       Eina_Value *val)
+EAPI Eolian_Value
+eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_EXPR_UNKNOWN);
-   return database_expr_eval(expr, m, val);
+   Eolian_Value err;
+   err.type = EOLIAN_EXPR_UNKNOWN;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, err);
+   return database_expr_eval(expr, m);
 }
 
-static Eolian_Expression_Type
-_eval_type(const Eolian_Expression *expr, const Eolian_Type *type,
-           Eina_Value *val)
+static Eolian_Value
+_eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
 {
+   Eolian_Value err;
+   err.type = EOLIAN_EXPR_UNKNOWN;
    if (!type)
-     return EOLIAN_EXPR_UNKNOWN;
+     return err;
    switch (type->type)
      {
       case EOLIAN_TYPE_ALIAS:
-        return _eval_type(expr, eolian_type_base_type_get(type), val);
+        return _eval_type(expr, eolian_type_base_type_get(type));
       case EOLIAN_TYPE_POINTER:
         {
            int mask = EOLIAN_MASK_NULL;
@@ -26,15 +28,15 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type,
            int kw = base->name ? eo_lexer_keyword_str_to_id(base->name) : 0;
            if (kw == KW_char)
              mask |= EOLIAN_MASK_STRING;
-           return database_expr_eval(expr, mask, val);
+           return database_expr_eval(expr, mask);
         }
       case EOLIAN_TYPE_CLASS:
-        return database_expr_eval(expr, EOLIAN_MASK_NULL, val);
+        return database_expr_eval(expr, EOLIAN_MASK_NULL);
       case EOLIAN_TYPE_REGULAR:
         {
            int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (!kw || kw < KW_byte || kw >= KW_void)
-             return EOLIAN_EXPR_UNKNOWN;
+             return err;
            switch (kw)
              {
               case KW_byte:
@@ -50,7 +52,7 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type,
               case KW_ssize:
               case KW_intptr:
               case KW_ptrdiff:
-                return database_expr_eval(expr, EOLIAN_MASK_SINT, val);
+                return database_expr_eval(expr, EOLIAN_MASK_SINT);
               case KW_ubyte:
               case KW_ushort:
               case KW_uint:
@@ -64,31 +66,31 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type,
               case KW_size:
               case KW_uintptr:
               case KW_time:
-                return database_expr_eval(expr, EOLIAN_MASK_UINT, val);
+                return database_expr_eval(expr, EOLIAN_MASK_UINT);
               case KW_float:
               case KW_double:
-              case KW_ldouble:
-                return database_expr_eval(expr, EOLIAN_MASK_FLOAT, val);
+                return database_expr_eval(expr, EOLIAN_MASK_FLOAT);
               case KW_bool:
-                return database_expr_eval(expr, EOLIAN_MASK_BOOL, val);
+                return database_expr_eval(expr, EOLIAN_MASK_BOOL);
               case KW_char:
-                return database_expr_eval(expr, EOLIAN_MASK_CHAR, val);
+                return database_expr_eval(expr, EOLIAN_MASK_CHAR);
               default:
-                return EOLIAN_EXPR_UNKNOWN;
+                return err;
              }
         }
       default:
-        return EOLIAN_EXPR_UNKNOWN;
+        return err;
      }
 }
 
-EAPI Eolian_Expression_Type
+EAPI Eolian_Value
 eolian_expression_eval_type(const Eolian_Expression *expr,
-                            const Eolian_Type *type,
-                            Eina_Value *val)
+                            const Eolian_Type *type)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_EXPR_UNKNOWN);
-   return _eval_type(expr, type, val);
+   Eolian_Value err;
+   err.type = EOLIAN_EXPR_UNKNOWN;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, err);
+   return _eval_type(expr, type);
 }
 
 static void
@@ -116,52 +118,49 @@ _append_char_escaped(Eina_Strbuf *buf, char c)
      }
 }
 
-static const char *
-_get_literal_suffix(Eolian_Expression_Type etp)
+static void
+_number_to_str(const Eolian_Value *v, Eina_Strbuf *buf)
 {
-   switch (etp)
+   switch (v->type)
      {
+      case EOLIAN_EXPR_INT:
+        eina_strbuf_append_printf(buf, "%d", v->value.i); break;
       case EOLIAN_EXPR_UINT:
-        return "U";
+        eina_strbuf_append_printf(buf, "%uU", v->value.u); break;
       case EOLIAN_EXPR_LONG:
-        return "L";
+        eina_strbuf_append_printf(buf, "%ldL", v->value.l); break;
       case EOLIAN_EXPR_ULONG:
-        return "UL";
+        eina_strbuf_append_printf(buf, "%luUL", v->value.ul); break;
       case EOLIAN_EXPR_LLONG:
-        return "LL";
+        eina_strbuf_append_printf(buf, "%ldLL", (long)v->value.ll); break;
       case EOLIAN_EXPR_ULLONG:
-        return "ULL";
+        eina_strbuf_append_printf(buf, "%luULL", (unsigned long)v->value.ull);
+        break;
       case EOLIAN_EXPR_FLOAT:
-        return "f";
-      case EOLIAN_EXPR_LDOUBLE:
-        return "L";
+        eina_strbuf_append_printf(buf, "%ff", v->value.f); break;
+      case EOLIAN_EXPR_DOUBLE:
+        eina_strbuf_append_printf(buf, "%f", v->value.d); break;
       default:
-        return "";
+        break;
      }
 }
 
 EAPI Eina_Stringshare *
-eolian_expression_value_to_literal(const Eina_Value *v,
-                                   Eolian_Expression_Type etp)
+eolian_expression_value_to_literal(const Eolian_Value *val)
 {
-   if (etp != EOLIAN_EXPR_NULL)
-     EINA_SAFETY_ON_NULL_RETURN_VAL(v, NULL);
-   switch (etp)
+   EINA_SAFETY_ON_NULL_RETURN_VAL(val, NULL);
+   switch (val->type)
      {
       case EOLIAN_EXPR_BOOL:
-        {
-           unsigned char b;
-           eina_value_get(v, &b);
-           return eina_stringshare_add(b ? "EINA_TRUE" : "EINA_FALSE");
-        }
+        return eina_stringshare_add(val->value.b ? "EINA_TRUE"
+                                                 : "EINA_FALSE");
       case EOLIAN_EXPR_NULL:
         return eina_stringshare_add("NULL");
       case EOLIAN_EXPR_CHAR:
         {
-           char c;
+           char c = val->value.c;
            Eina_Strbuf *buf = eina_strbuf_new();
            const char *ret;
-           eina_value_get(v, &c);
            eina_strbuf_append_char(buf, '\'');
            _append_char_escaped(buf, c);
            eina_strbuf_append_char(buf, '\'');
@@ -172,8 +171,7 @@ eolian_expression_value_to_literal(const Eina_Value *v,
       case EOLIAN_EXPR_STRING:
         {
            const char *ret;
-           char *str = eina_value_to_string(v);
-           char *c = str;
+           char *c = (char*)val->value.s;
            Eina_Strbuf *buf = eina_strbuf_new();
            eina_strbuf_append_char(buf, '\"');
            while (*c) _append_char_escaped(buf, *(c++));
@@ -190,14 +188,10 @@ eolian_expression_value_to_literal(const Eina_Value *v,
       case EOLIAN_EXPR_ULLONG:
       case EOLIAN_EXPR_FLOAT:
       case EOLIAN_EXPR_DOUBLE:
-      case EOLIAN_EXPR_LDOUBLE:
         {
            const char *ret;
-           char *str = eina_value_to_string(v);
            Eina_Strbuf *buf = eina_strbuf_new();
-           eina_strbuf_append(buf, str);
-           free(str);
-           eina_strbuf_append(buf, _get_literal_suffix(etp));
+           _number_to_str(val, buf);
            ret = eina_stringshare_add(eina_strbuf_string_get(buf));
            eina_strbuf_free(buf);
            return ret;
@@ -233,25 +227,19 @@ _expr_serialize(const Eolian_Expression *expr, Eina_Strbuf *buf, Eina_Bool outer
       case EOLIAN_EXPR_ULLONG:
       case EOLIAN_EXPR_FLOAT:
       case EOLIAN_EXPR_DOUBLE:
-      case EOLIAN_EXPR_LDOUBLE:
       case EOLIAN_EXPR_STRING:
       case EOLIAN_EXPR_CHAR:
       case EOLIAN_EXPR_NULL:
       case EOLIAN_EXPR_BOOL:
         {
-           Eina_Value v;
-           Eolian_Expression_Type etp;
-           if (!(etp = eolian_expression_eval(expr, EOLIAN_MASK_ALL, &v)))
+           Eolian_Value v = eolian_expression_eval(expr, EOLIAN_MASK_ALL);
+           if (!v.type)
              return EINA_FALSE;
-           const char *x = eolian_expression_value_to_literal(&v, etp);
+           const char *x = eolian_expression_value_to_literal(&v);
            if (!x)
-             {
-                eina_value_flush(&v);
-                return EINA_FALSE;
-             }
+             return EINA_FALSE;
            eina_strbuf_append(buf, x);
            eina_stringshare_del(x);
-           eina_value_flush(&v);
            break;
         }
       case EOLIAN_EXPR_NAME:

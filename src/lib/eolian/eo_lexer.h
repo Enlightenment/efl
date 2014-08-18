@@ -42,7 +42,7 @@ enum Tokens
     \
     KW(time), \
     \
-    KW(float), KW(double), KW(ldouble), \
+    KW(float), KW(double), \
     \
     KW(bool), \
     \
@@ -72,8 +72,7 @@ enum Numbers
    NUM_LLONG,
    NUM_ULLONG,
    NUM_FLOAT,
-   NUM_DOUBLE,
-   NUM_LDOUBLE
+   NUM_DOUBLE
 };
 
 /* a token - "token" is the actual token id, "value" is the value of a token
@@ -82,7 +81,7 @@ enum Numbers
 typedef struct _Eo_Token
 {
    int token, kw;
-   Eolian_Value value;
+   Eolian_Value_Union value;
 } Eo_Token;
 
 enum Nodes

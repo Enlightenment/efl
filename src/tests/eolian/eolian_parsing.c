@@ -443,6 +443,7 @@ START_TEST(eolian_simple_parsing)
    const Eolian_Class *class;
    const Eolian_Type *tp;
    Eina_Iterator *iter;
+   Eolian_Value v;
    void *dummy;
 
    eolian_init();
@@ -476,7 +477,8 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_type_name_get(tp), "bool"));
    expr = eolian_function_return_default_value_get(fid, EOLIAN_PROP_SET);
    fail_if(!expr);
-   fail_if(eolian_expression_eval(expr, EOLIAN_MASK_BOOL, NULL) != EOLIAN_EXPR_BOOL);
+   v = eolian_expression_eval(expr, EOLIAN_MASK_BOOL);
+   fail_if(v.type != EOLIAN_EXPR_BOOL);
    string = eolian_function_return_comment_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "comment for property set return"));
@@ -510,7 +512,8 @@ START_TEST(eolian_simple_parsing)
    eina_stringshare_del(string);
    expr = eolian_function_return_default_value_get(fid, EOLIAN_METHOD);
    fail_if(!expr);
-   fail_if(eolian_expression_eval(expr, EOLIAN_MASK_NULL, NULL) != EOLIAN_EXPR_NULL);
+   v = eolian_expression_eval(expr, EOLIAN_MASK_NULL);
+   fail_if(v.type != EOLIAN_EXPR_NULL);
    string = eolian_function_return_comment_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "comment for method return"));
@@ -654,10 +657,8 @@ START_TEST(eolian_var)
    const Eolian_Expression *exp = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
+   Eolian_Value v;
    const char *name;
-   Eina_Value v;
-   int i = 0;
-   float f = 0.0f;
 
    eolian_init();
 
@@ -677,10 +678,9 @@ START_TEST(eolian_var)
    fail_if(strcmp(name, "int"));
    eina_stringshare_del(name);
    fail_if(!(exp = eolian_variable_value_get(var)));
-   fail_if(eolian_expression_eval_type(exp, type, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != 5);
-   eina_value_flush(&v);
+   v = eolian_expression_eval_type(exp, type);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != 5);
 
    /* regular global */
    fail_if(!(var = eolian_variable_global_get_by_name("Bar")));
@@ -691,10 +691,9 @@ START_TEST(eolian_var)
    fail_if(strcmp(name, "float"));
    eina_stringshare_del(name);
    fail_if(!(exp = eolian_variable_value_get(var)));
-   fail_if(eolian_expression_eval_type(exp, type, &v) != EOLIAN_EXPR_FLOAT);
-   eina_value_get(&v, &f);
-   fail_if(((int)f) != 10);
-   eina_value_flush(&v);
+   v = eolian_expression_eval_type(exp, type);
+   fail_if(v.type != EOLIAN_EXPR_FLOAT);
+   fail_if(((int)v.value.f) != 10);
 
    /* no-value global */
    fail_if(!(var = eolian_variable_global_get_by_name("Baz")));
@@ -727,8 +726,7 @@ START_TEST(eolian_enum)
    const Eolian_Class *class;
    const Eolian_Expression *exp;
    const char *name;
-   Eina_Value v;
-   int i = 0;
+   Eolian_Value v;
 
    eolian_init();
 
@@ -743,53 +741,47 @@ START_TEST(eolian_enum)
 
    fail_if(!(eolian_type_enum_field_exists(type, "first")));
    fail_if(!(exp = eolian_type_enum_field_get(type, "first")));
-   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != 0);
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != 0);
 
    fail_if(!(eolian_type_enum_field_exists(type, "bar")));
    fail_if(eolian_type_enum_field_get(type, "bar"));
 
    fail_if(!(eolian_type_enum_field_exists(type, "baz")));
    fail_if(!(exp = eolian_type_enum_field_get(type, "baz")));
-   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != 15);
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != 15);
 
    fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
 
    fail_if(!(eolian_type_enum_field_exists(type, "foo")));
    fail_if(!(exp = eolian_type_enum_field_get(type, "foo")));
-   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != 15);
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != 15);
 
    fail_if(!(type = eolian_type_alias_get_by_name("Baz")));
    fail_if(!(type = eolian_type_base_type_get(type)));
 
    fail_if(!(eolian_type_enum_field_exists(type, "flag1")));
    fail_if(!(exp = eolian_type_enum_field_get(type, "flag1")));
-   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != (1 << 0));
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != (1 << 0));
 
    fail_if(!(eolian_type_enum_field_exists(type, "flag2")));
    fail_if(!(exp = eolian_type_enum_field_get(type, "flag2")));
-   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != (1 << 1));
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != (1 << 1));
 
    fail_if(!(eolian_type_enum_field_exists(type, "flag3")));
    fail_if(!(exp = eolian_type_enum_field_get(type, "flag3")));
-   fail_if(eolian_expression_eval(exp, EOLIAN_MASK_ALL, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != (1 << 2));
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != (1 << 2));
 
    fail_if(!(var = eolian_variable_constant_get_by_name("Bah")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
@@ -799,10 +791,9 @@ START_TEST(eolian_enum)
    fail_if(strcmp(name, "int"));
    eina_stringshare_del(name);
    fail_if(!(exp = eolian_variable_value_get(var)));
-   fail_if(eolian_expression_eval_type(exp, type, &v) != EOLIAN_EXPR_INT);
-   eina_value_get(&v, &i);
-   fail_if(i != (1 << 0));
-   eina_value_flush(&v);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != (1 << 0));
 
    eolian_shutdown();
 }

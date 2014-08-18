@@ -64,7 +64,7 @@ static const char * const ctypes[] =
 
    "time_t",
 
-   "float", "double", "long double",
+   "float", "double",
 
    "Eina_Bool",
 
@@ -323,11 +323,6 @@ get_type(Eo_Lexer *ls, Eina_Bool is_float)
              next_char(ls);
              return NUM_FLOAT;
           }
-        else if (ls->current == 'l' || ls->current == 'L')
-          {
-             next_char(ls);
-             return NUM_LDOUBLE;
-          }
         return NUM_DOUBLE;
      }
    if (ls->current == 'u' || ls->current == 'U')
@@ -370,8 +365,6 @@ write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
           tok->value.f = strtof(str, &end);
         else if (type == NUM_DOUBLE)
           tok->value.d = strtod(str, &end);
-        else if (type == NUM_LDOUBLE)
-          tok->value.ld = strtold(str, &end);
      }
    else
      {

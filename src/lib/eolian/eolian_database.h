@@ -171,22 +171,6 @@ typedef struct _Eolian_Enum_Field
    Eina_Stringshare  *comment;
 } Eolian_Enum_Field;
 
-typedef union
-{
-   char               c;
-   Eina_Bool          b;
-   const    char     *s;
-   signed   int       i;
-   unsigned int       u;
-   signed   long      l;
-   unsigned long      ul;
-   signed   long long ll;
-   unsigned long long ull;
-   float              f;
-   double             d;
-   long double        ld;
-} Eolian_Value;
-
 typedef enum
 {
    EOLIAN_BINOP_INVALID = -1,
@@ -242,7 +226,7 @@ struct _Eolian_Expression
          Eolian_Unary_Operator unop;
          Eolian_Expression *expr;
       };
-      Eolian_Value value;
+      Eolian_Value_Union value;
    };
 };
 
@@ -277,7 +261,7 @@ void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *n
 
 /* expressions */
 
-Eolian_Expression_Type database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask, Eina_Value *out);
+Eolian_Value database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask);
 void database_expr_del(Eolian_Expression *expr);
 void database_expr_print(Eolian_Expression *expr);
 
