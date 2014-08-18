@@ -380,7 +380,7 @@ M.Type = ffi.metatype("Eolian_Type", {
 
         enum_field_get = function(self, field)
             local v = eolian.eolian_type_enum_field_get(self, field)
-            if v == nil thenr eturn nil end
+            if v == nil then return nil end
             return v
         end,
 
@@ -465,13 +465,6 @@ M.Type = ffi.metatype("Eolian_Type", {
         namespaces_get = function(self)
             return iterator.String_Iterator(
                 eolian.eolian_type_namespaces_get(self))
-        end
-    }
-})
-
-M.Expression = ffi.metatype("Eolian_Expression", {
-    __index = {
-        eval = function(self, mask)
         end
     }
 })

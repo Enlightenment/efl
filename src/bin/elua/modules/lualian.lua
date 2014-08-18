@@ -176,7 +176,7 @@ local Method = Node:clone {
         end
 
         for v in pars do
-            local dir, tps, nm = v:information_get()
+            local dir, tps, nm = v:direction_get(), v:type_get(), v:name_get()
             local tp = tps:c_type_get()
             if dir == dirs.OUT or dir == dirs.INOUT then
                 if dir == dirs.INOUT then
@@ -287,8 +287,9 @@ local Property = Method:clone {
                     rets[#rets + 1] = typeconv(tps, "v", false)
                 else
                     for i, v in ipairs(vals) do
-                        local dir, tps, nm = v:information_get()
-                        local tp = v:c_type_get()
+                        local dir, tps, nm = v:direction_get(), v:type_get(),
+                            v:name_get()
+                        local tp = tps:c_type_get()
                         cargs [#cargs  + 1] = tp .. " *" .. nm
                         vargs [#vargs  + 1] = nm
                         allocs[#allocs + 1] = { tp, nm }
@@ -299,7 +300,8 @@ local Property = Method:clone {
                 local argn = (#keys > 1) and "vals" or "val"
                 args[#args + 1] = argn
                 for i, v in ipairs(vals) do
-                    local dir, tps, nm = v:information_get()
+                    local dir, tps, nm = v:direction_get(), v:type_get(),
+                        v:name_get()
                     local tp = tps:c_type_get()
                     cargs[#cargs + 1] = tp .. " " .. nm
                     vargs[#vargs + 1] = typeconv(tps, argn .. "[" .. i .. "]",
@@ -602,7 +604,7 @@ local gen_contents = function(klass)
     -- first try properties
     local props = klass:functions_get(ft.PROPERTY):to_array()
     for i, v in ipairs(props) do
-        if v:scope_get() == eolian.function_scope.PUBLIC then
+        if v:scope_get() == eolian.object_scope.PUBLIC then
             local ftype  = v:type_get()
             local fread  = (ftype == ft.PROPERTY or ftype == ft.PROP_GET)
             local fwrite = (ftype == ft.PROPERTY or ftype == ft.PROP_SET)
@@ -617,7 +619,7 @@ local gen_contents = function(klass)
     -- then methods
     local meths = klass:functions_get(ft.METHOD):to_array()
     for i, v in ipairs(meths) do
-        if v:scope_get() == eolian.function_scope.PUBLIC then
+        if v:scope_get() == eolian.object_scope.PUBLIC then
             cnt[#cnt + 1] = Method(v)
         end
     end
@@ -633,8 +635,7 @@ local gen_contents = function(klass)
     local evs = {}
     local events = klass:events_get():to_array()
     for i, v in ipairs(events) do
-        local en, et, ed = v:information_get()
-        evs[#evs + 1] = Event(en, et, ed)
+        evs[#evs + 1] = Event(v:name_get(), v:type_get(), v:description_get())
     end
     return cnt, evs
 end
