@@ -2151,8 +2151,8 @@ _evas_image_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
      return;
 
    if (!obj->layer->evas->engine.func->image_animated_frame_set) return;
-   if (!obj->layer->evas->engine.func->image_animated_frame_set(obj->layer->evas->engine.data.output, o->engine_data, frame_index))
-     return;
+   obj->layer->evas->engine.func->image_animated_frame_set(obj->layer->evas->engine.data.output, o->engine_data, frame_index);
+//   if (!obj->layer->evas->engine.func->image_animated_frame_set(obj->layer->evas->engine.data.output, o->engine_data, frame_index)) return;
 
    EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, prev_write)
      prev_write->frame = o->cur->frame;
