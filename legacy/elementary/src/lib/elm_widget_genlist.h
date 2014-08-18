@@ -1,8 +1,6 @@
 #ifndef ELM_WIDGET_GENLIST_H
 #define ELM_WIDGET_GENLIST_H
 
-#define OBJECT_ITEMS_MIGRATION
-
 #include "elm_gen_common.h"
 #include "Elementary.h"
 

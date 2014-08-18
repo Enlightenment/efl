@@ -25,11 +25,7 @@ struct Elm_Gen_Item_Tooltip
 
 struct Elm_Gen_Item
 {
-#ifndef OBJECT_ITEMS_MIGRATION
-   ELM_WIDGET_ITEM;
-#else
    Elm_Widget_Item_Data     *base;
-#endif
    EINA_INLIST;
 
    Elm_Gen_Item_Type        *item;
