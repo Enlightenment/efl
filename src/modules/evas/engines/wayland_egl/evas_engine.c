@@ -637,7 +637,7 @@ eng_setup(Evas *evas, void *info)
                                                 &evgl_funcs, 
                                                 epd->output.w, epd->output.h))
           {
-             /* TODO: free Outbuf */
+             eng_window_free(ob);
              goto ob_err;
           }
 
