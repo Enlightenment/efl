@@ -482,6 +482,8 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    if (ob->info->callback.post_swap)
      ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
 
+   ob->frame_cnt++;
+
  end:
    glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
 }
@@ -546,4 +548,3 @@ eng_gl_context_use(Context_3D *ctx)
         ERR("eglMakeCurrent Failed: %#x", eglGetError());
      }
 }
-
