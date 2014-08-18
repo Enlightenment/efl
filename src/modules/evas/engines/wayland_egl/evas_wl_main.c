@@ -354,14 +354,11 @@ eng_outbuf_swap_mode_get(Outbuf *ob)
 Eina_Bool 
 eng_outbuf_region_first_rect(Outbuf *ob)
 {
-   ob->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
-
    glsym_evas_gl_preload_render_lock(eng_preload_make_current, ob);
 
    eng_window_use(ob);
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rot);
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
 
