@@ -714,6 +714,9 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_functions_get(class, EOLIAN_CTOR);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
+        if (eolian_function_is_legacy_only(fn, EOLIAN_CTOR))
+          continue;
+
         char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_METHOD));
         eo_op_desc_generate(class, fn, EOLIAN_CTOR, desc, tmpbuf);
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
@@ -734,7 +737,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         Eina_Bool prop_read = ( ftype == EOLIAN_PROP_SET ) ? EINA_FALSE : EINA_TRUE;
         Eina_Bool prop_write = ( ftype == EOLIAN_PROP_GET ) ? EINA_FALSE : EINA_TRUE;
 
-        if (prop_write)
+        if (prop_write && !eolian_function_is_legacy_only(fn, EOLIAN_PROP_SET))
           {
              char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_PROP_SET));
 
@@ -743,7 +746,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
              free(desc);
           }
-        if (prop_read)
+        if (prop_read && !eolian_function_is_legacy_only(fn, EOLIAN_PROP_GET))
           {
              char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_PROP_GET));
 
@@ -759,6 +762,9 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_functions_get(class, EOLIAN_METHOD);
    EINA_ITERATOR_FOREACH(itr, fn)
      {
+        if (eolian_function_is_legacy_only(fn, EOLIAN_METHOD))
+          continue;
+
         char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_METHOD));
         eo_op_desc_generate(class, fn, EOLIAN_METHOD, desc, tmpbuf);
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
