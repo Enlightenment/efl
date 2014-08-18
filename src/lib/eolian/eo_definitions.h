@@ -50,6 +50,7 @@ typedef struct _Eo_Accessor_Def
    Eina_Stringshare *comment;
    Eina_Stringshare* legacy;
    Eina_List *params; /* List of Eo_Accessor_Param */
+   Eina_Bool only_legacy:1;
 } Eo_Accessor_Def;
 
 /* PROPERTY */
@@ -78,6 +79,7 @@ typedef struct _Eo_Method_Def
    Eina_Bool obj_const;
    int scope;
    Eina_Bool is_class:1;
+   Eina_Bool only_legacy:1;
 } Eo_Method_Def;
 
 /* CLASS */

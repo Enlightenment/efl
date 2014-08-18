@@ -662,11 +662,22 @@ EAPI Eina_Stringshare *eolian_function_description_get(const Eolian_Function *fu
  *
  * @param[in] function_id Id of the function
  * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if virtual pure, EINA_FALSE othrewise..
+ * @return EINA_TRUE if virtual pure, EINA_FALSE othrewise.
  *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+
+/*
+ * @brief Indicates if a function is legacy only.
+ *
+ * @param[in] function_id Id of the function
+ * @param[in] f_type The function type, for property get/set distinction.
+ * @return EINA_TRUE if legacy only, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get whether a function is a class method/property.

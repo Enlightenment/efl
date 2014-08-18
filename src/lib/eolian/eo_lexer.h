@@ -25,7 +25,7 @@ enum Tokens
     KW(virtual), \
     \
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
-    KW(destructor), KW(eo_prefix), KW(events), KW(func), KW(get), \
+    KW(destructor), KW(eo), KW(eo_prefix), KW(events), KW(func), KW(get), \
     KW(implements), KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), \
     KW(methods), KW(mixin), KW(own), KW(params), KW(properties), KW(set), \
     KW(type), KW(values), KW(var), KWAT(class), KWAT(const), \

@@ -98,6 +98,8 @@ struct _Eolian_Function
    Eina_Bool set_virtual_pure :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
+   Eina_Bool get_only_legacy: 1;
+   Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
 };
 

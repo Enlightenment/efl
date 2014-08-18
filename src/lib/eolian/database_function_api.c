@@ -93,6 +93,18 @@ eolian_function_is_virtual_pure(const Eolian_Function *fid, Eolian_Function_Type
 }
 
 EAPI Eina_Bool
+eolian_function_is_legacy_only(const Eolian_Function *fid, Eolian_Function_Type ftype)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   switch (ftype)
+     {
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_CTOR: case EOLIAN_PROP_GET: return fid->get_only_legacy; break;
+      case EOLIAN_PROP_SET: return fid->set_only_legacy; break;
+      default: return EINA_FALSE;
+     }
+}
+
+EAPI Eina_Bool
 eolian_function_is_class(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);

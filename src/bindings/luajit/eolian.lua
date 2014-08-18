@@ -163,6 +163,7 @@ ffi.cdef [[
     const char *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     const char *eolian_function_description_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+    Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
     const Eolian_Function_Parameter *eolian_function_parameter_get_by_name(const Eolian_Function *function_id, const char *param_name);
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id);
@@ -514,6 +515,10 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         is_virtual_pure = function(self, ftype)
             return eolian.eolian_function_is_virtual_pure(self, ftype) ~= 0
+        end,
+
+        is_legacy_only = function(self, ftype)
+            return eolian.eolian_function_is_legacy_only(self, ftype) ~= 0
         end,
 
         is_class = function(self)

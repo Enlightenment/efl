@@ -1126,7 +1126,8 @@ parse_accessor(Eo_Lexer *ls)
 {
    int line, col;
    Eo_Accessor_Def *acc = NULL;
-   Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE;
+   Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
+             has_eo     = EINA_FALSE;
    acc = calloc(1, sizeof(Eo_Accessor_Def));
    acc->base.file = eina_stringshare_ref(ls->filename);
    acc->base.line = ls->line_number;
@@ -1155,6 +1156,14 @@ parse_accessor(Eo_Lexer *ls)
         parse_legacy(ls);
         acc->legacy = ls->tmp.legacy_def;
         ls->tmp.legacy_def = NULL;
+        break;
+      case KW_eo:
+        CASE_LOCK(ls, eo, "eo name")
+        eo_lexer_get(ls);
+        check_next(ls, ':');
+        check_kw_next(ls, KW_null);
+        check_next(ls, ';');
+        acc->only_legacy = EINA_TRUE;
         break;
       default:
         if (ls->t.token != '}')
@@ -1280,7 +1289,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
-             has_constructor = EINA_FALSE;
+             has_constructor = EINA_FALSE, has_eo     = EINA_FALSE;
    meth = calloc(1, sizeof(Eo_Method_Def));
    meth->base.file = eina_stringshare_ref(ls->filename);
    meth->base.line = ls->line_number;
@@ -1355,6 +1364,14 @@ body:
         parse_legacy(ls);
         meth->legacy = ls->tmp.legacy_def;
         ls->tmp.legacy_def = NULL;
+        break;
+      case KW_eo:
+        CASE_LOCK(ls, eo, "eo name")
+        eo_lexer_get(ls);
+        check_next(ls, ':');
+        check_kw_next(ls, KW_null);
+        check_next(ls, ';');
+        meth->only_legacy = EINA_TRUE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")

@@ -124,12 +124,14 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
         foo_id->set_description = eina_stringshare_ref(accessor->comment);
         if (accessor->legacy)
           foo_id->set_legacy = eina_stringshare_ref(accessor->legacy);
+        foo_id->set_only_legacy = accessor->only_legacy;
      }
    else
      {
         foo_id->get_description = eina_stringshare_ref(accessor->comment);
         if (accessor->legacy)
           foo_id->get_legacy = eina_stringshare_ref(accessor->legacy);
+        foo_id->get_only_legacy = accessor->only_legacy;
      }
 
    EINA_LIST_FOREACH(accessor->params, l, acc_param)
@@ -250,6 +252,9 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
    foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
    foo_id->obj_is_const = meth->obj_const;
    foo_id->is_class = meth->is_class;
+
+   if (meth->only_legacy)
+     foo_id->get_only_legacy = EINA_TRUE;
 
    _db_fill_params(foo_id, meth);
 
