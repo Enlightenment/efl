@@ -666,6 +666,7 @@ eng_setup(Evas *evas, void *info)
         ob = eng_get_ob(re);
         if ((ob) && (_re_wincheck(ob)))
           {
+             ob->info = inf;
              if ((ob->info->info.display != ob->disp) || 
                  (ob->info->info.surface != ob->surface) || 
                  (ob->info->info.win != ob->win) || 
@@ -678,9 +679,6 @@ eng_setup(Evas *evas, void *info)
 
                   ob = eng_window_new(evas, inf, epd->output.w, epd->output.h, swap_mode);
                   if (!ob) goto ob_err;
-
-                  eng_window_free(eng_get_ob(re));
-                  re->generic.software.ob = NULL;
  
                   eng_window_use(ob);
 
@@ -694,13 +692,6 @@ eng_setup(Evas *evas, void *info)
                {
                   eng_outbuf_reconfigure(ob, epd->output.w, epd->output.h, 
                                          ob->info->info.rotation, 0);
-                  if (re->generic.software.tb)
-                    evas_common_tilebuf_free(re->generic.software.tb);
-                  re->generic.software.tb = 
-                    evas_common_tilebuf_new(epd->output.w, epd->output.h);
-                  if (re->generic.software.tb)
-                    evas_common_tilebuf_set_tile_size(re->generic.software.tb, 
-                                                      TILESIZE, TILESIZE);
                }
           }
      }
@@ -718,7 +709,14 @@ eng_setup(Evas *evas, void *info)
      }
 
    if (re->generic.software.tb)
+     evas_common_tilebuf_free(re->generic.software.tb);
+   re->generic.software.tb = 
+     evas_common_tilebuf_new(epd->output.w, epd->output.h);
+
+   if (re->generic.software.tb)
      {
+        evas_common_tilebuf_set_tile_size(re->generic.software.tb, 
+                                          TILESIZE, TILESIZE);
         evas_render_engine_software_generic_tile_strict_set
           (&re->generic.software, EINA_TRUE);
      }
@@ -816,9 +814,9 @@ eng_output_resize(void *data, int w, int h)
           wl_egl_window_resize(ob->win, h, w, dx, dy);
         else
           wl_egl_window_resize(ob->win, w, h, dx, dy);
-
-        glsym_evas_gl_common_context_resize(ob->gl_context, w, h, ob->rot);
      }
+
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, ob->rot);
 
    if (re->generic.software.tb)
      evas_common_tilebuf_free(re->generic.software.tb);
