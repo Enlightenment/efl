@@ -1089,7 +1089,7 @@ _on_text_activated(void *data,
              Elm_Object_Item *item = elm_genlist_first_item_get(sd->files_view);
              while (item)
                {
-                  const char *item_path = eo_do((Eo *)item, elm_wdg_item_data_get());
+                  const char *item_path = eo_do(item, elm_wdg_item_data_get());
                   if (!strcmp(item_path, path))
                     {
                        elm_genlist_item_selected_set(item, EINA_TRUE);
@@ -1324,7 +1324,7 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
           }
      }
 
-   if (it) eo_do((Eo *)it, elm_wdg_item_del());
+   if (it) eo_do(it, elm_wdg_item_del());
 
    if (selected)
      {

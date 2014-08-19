@@ -129,7 +129,7 @@ _elm_access_elm_widget_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act
 
    if (ac->activate)
      ac->activate(ac->activate_data, ac->part_object,
-                  (Elm_Object_Item *)ac->widget_item->eo_obj);
+                  ac->widget_item->eo_obj);
 
    return EINA_TRUE;
 }

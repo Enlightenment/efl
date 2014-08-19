@@ -190,7 +190,7 @@ _all_items_unselect(Elm_List_Data *sd)
 
    while (sd->selected)
      elm_list_item_selected_set
-       ((Elm_Object_Item *)sd->selected->data, EINA_FALSE);
+       (sd->selected->data, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -644,7 +644,7 @@ _elm_list_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
    Eina_List *l;
 
    EINA_LIST_FOREACH(sd->items, l, it)
-     eo_do((Eo *)it, elm_wdg_item_translate());
+     eo_do(it, elm_wdg_item_translate());
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
@@ -664,7 +664,7 @@ _elm_list_deletions_process(Elm_List_Data *sd)
 
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
-        eo_del((Eo *)EO_OBJ(it));
+        eo_del(EO_OBJ(it));
      }
 
    sd->walking--;
@@ -909,7 +909,7 @@ _items_fix(Evas_Object *obj)
                {
                   edje_object_part_text_escaped_set
                      (VIEW(it), "elm.text", it->label);
-                  eo_do((Eo *)EO_OBJ(it), elm_wdg_item_part_text_custom_update());
+                  eo_do(EO_OBJ(it), elm_wdg_item_part_text_custom_update());
 
                   if ((!it->icon) && (minh[0] > 0))
                     {
@@ -1255,7 +1255,7 @@ _elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd)
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)
      {
         Elm_Object_Item *sel = eina_list_data_get(sd->selected);
-        sd->last_selected_item = eo_data_scope_get((Eo *)sel, ELM_LIST_ITEM_CLASS);
+        sd->last_selected_item = eo_data_scope_get(sel, ELM_LIST_ITEM_CLASS);
      }
 
    if (!sd->items) return EINA_FALSE;
@@ -2071,7 +2071,7 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 static void
 _access_on_highlight_cb(void *data)
 {
-   Elm_Object_Item *it = (Elm_Object_Item *)data;
+   Elm_Object_Item *it = data;
    if (!it) return;
 
    elm_list_item_bring_in(it);
@@ -2369,7 +2369,7 @@ _elm_list_evas_object_smart_del(Eo *obj, Elm_List_Data *sd)
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
-        eo_del((Eo *)EO_OBJ(it));
+        eo_del(EO_OBJ(it));
      }
 
    _elm_list_unwalk(obj, sd);
@@ -2621,7 +2621,7 @@ _elm_list_clear(Eo *obj, Elm_List_Data *sd)
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
-        eo_del((Eo *)EO_OBJ(it));
+        eo_del(EO_OBJ(it));
      }
 
    _elm_list_unwalk(obj, sd);
@@ -2641,7 +2641,7 @@ _elm_list_items_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 EOLIAN static Elm_Object_Item*
 _elm_list_selected_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
-   if (sd->selected) return (Elm_Object_Item *)sd->selected->data;
+   if (sd->selected) return sd->selected->data;
    else return NULL;
 }
 
@@ -2747,7 +2747,7 @@ EAPI void
 elm_list_item_separator_set(Elm_Object_Item *it,
                             Eina_Bool setting)
 {
-   eo_do((Eo *)it, elm_obj_list_item_separator_set(setting));
+   eo_do(it, elm_obj_list_item_separator_set(setting));
 }
 
 EOLIAN static void
@@ -2762,7 +2762,7 @@ _elm_list_item_separator_set(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *it,
 EAPI Eina_Bool
 elm_list_item_separator_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_list_item_separator_get());
+   return eo_do(it, elm_obj_list_item_separator_get());
 }
 
 EOLIAN static Eina_Bool
@@ -2777,7 +2777,7 @@ EAPI void
 elm_list_item_selected_set(Elm_Object_Item *it,
                            Eina_Bool selected)
 {
-   eo_do((Eo *)it, elm_obj_list_item_selected_set(selected));
+   eo_do(it, elm_obj_list_item_selected_set(selected));
 }
 
 EOLIAN static void
@@ -2825,7 +2825,7 @@ _elm_list_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item,
 EAPI Eina_Bool
 elm_list_item_selected_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_list_item_selected_get());
+   return eo_do(it, elm_obj_list_item_selected_get());
 }
 
 EOLIAN static Eina_Bool
@@ -2839,7 +2839,7 @@ _elm_list_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *it)
 EAPI void
 elm_list_item_show(Elm_Object_Item *it)
 {
-   eo_do((Eo *)it, elm_obj_list_item_show());
+   eo_do(it, elm_obj_list_item_show());
 }
 
 EOLIAN static void
@@ -2863,7 +2863,7 @@ _elm_list_item_show(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
 EAPI void
 elm_list_item_bring_in(Elm_Object_Item *it)
 {
-   eo_do((Eo *)it, elm_obj_list_item_bring_in());
+   eo_do(it, elm_obj_list_item_bring_in());
 }
 
 EOLIAN static void
@@ -2887,7 +2887,7 @@ _elm_list_item_bring_in(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
 EAPI Evas_Object *
 elm_list_item_object_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_list_item_object_get());
+   return eo_do(it, elm_obj_list_item_object_get());
 }
 
 EOLIAN static Evas_Object *
@@ -2901,7 +2901,7 @@ _elm_list_item_object_get(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
 EAPI Elm_Object_Item *
 elm_list_item_prev(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_list_item_prev_get());
+   return eo_do(it, elm_obj_list_item_prev_get());
 }
 
 EOLIAN static Elm_Object_Item *
@@ -2915,7 +2915,7 @@ _elm_list_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item)
 EAPI Elm_Object_Item *
 elm_list_item_next(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_list_item_next_get());
+   return eo_do(it, elm_obj_list_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

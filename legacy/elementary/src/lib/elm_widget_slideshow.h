@@ -100,6 +100,6 @@ struct _Elm_Slideshow_Data
     return __VA_ARGS__;
 
 #define ELM_SLIDESHOW_ITEM_DATA_GET(o, sd) \
-  Elm_Slideshow_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_SLIDESHOW_ITEM_CLASS)
+  Elm_Slideshow_Item_Data *sd = eo_data_scope_get(o, ELM_SLIDESHOW_ITEM_CLASS)
 
 #endif

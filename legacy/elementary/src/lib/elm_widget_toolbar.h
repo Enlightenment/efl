@@ -140,6 +140,6 @@ struct _Elm_Toolbar_Item_State
   if (!it->base->widget || !eo_isa ((it->base->widget), ELM_TOOLBAR_CLASS)) goto label;
 
 #define ELM_TOOLBAR_ITEM_DATA_GET(o, sd) \
-  Elm_Toolbar_Item_Data* sd = eo_data_scope_get((Eo *)o, ELM_TOOLBAR_ITEM_CLASS)
+  Elm_Toolbar_Item_Data *sd = eo_data_scope_get(o, ELM_TOOLBAR_ITEM_CLASS)
 
 #endif

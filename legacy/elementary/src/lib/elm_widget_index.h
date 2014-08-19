@@ -109,6 +109,6 @@ struct _Elm_Index_Omit
     return __VA_ARGS__;
 
 #define ELM_INDEX_ITEM_DATA_GET(o, sd) \
-  Elm_Index_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_INDEX_ITEM_CLASS)
+  Elm_Index_Item_Data *sd = eo_data_scope_get(o, ELM_INDEX_ITEM_CLASS)
 
 #endif

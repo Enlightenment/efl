@@ -59,7 +59,7 @@ _items_del(Elm_Colorselector_Data *sd)
 
    EINA_LIST_FREE(sd->items, item)
      {
-        eo_del ((Eo *)item);
+        eo_del (item);
      }
 
    sd->items = NULL;
@@ -1355,7 +1355,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
    Elm_Color_Item_Data *it = data;
    ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
 
-   elm_colorselector_palette_item_color_get((Elm_Object_Item *)EO_OBJ(it), &r, &g, &b, &a);
+   elm_colorselector_palette_item_color_get(EO_OBJ(it), &r, &g, &b, &a);
 
    buf = eina_strbuf_new();
    eina_strbuf_append_printf(buf, "red %d, green %d, blue %d, alpha %d", r, g, b, a);
@@ -1660,7 +1660,7 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
    for (l = ref_item; l; l = dir_func(l))
      {
         eo_item = eina_list_data_get(l);
-        item = eo_data_scope_get((Eo *)eo_item, ELM_COLOR_ITEM_CLASS);
+        item = eo_data_scope_get(eo_item, ELM_COLOR_ITEM_CLASS);
         evas_object_geometry_get(VIEW(item), &x, &y, NULL, NULL);
         if (basey != y) break;
      }
@@ -1671,7 +1671,7 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
    for (; l; l = dir_func(l))
      {
         eo_item = eina_list_data_get(l);
-        item = eo_data_scope_get((Eo *)eo_item, ELM_COLOR_ITEM_CLASS);
+        item = eo_data_scope_get(eo_item, ELM_COLOR_ITEM_CLASS);
         evas_object_geometry_get(VIEW(item), &x, &y, NULL, NULL);
         if (basey != y) break;
 
@@ -1834,7 +1834,7 @@ _elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, El
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
-        Elm_Widget_Item_Data *witem = eo_data_scope_get((Eo *)eo_item, ELM_WIDGET_ITEM_CLASS);
+        Elm_Widget_Item_Data *witem = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
         items = eina_list_append(items, witem->access_obj);
      }
 
@@ -1861,7 +1861,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
    if (is_access)
      {
         EINA_LIST_FOREACH(sd->items, l, eo_it)
-          eo_do((Eo *)eo_it, elm_wdg_item_access_register());
+          eo_do(eo_it, elm_wdg_item_access_register());
 
         for (i = 0; i < 4; i++)
           _access_colorbar_register(obj, sd->cb_data[i],
@@ -1870,7 +1870,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
    else
      {
         EINA_LIST_FOREACH(sd->items, l, eo_it)
-          eo_do((Eo *)eo_it, elm_wdg_item_access_unregister());
+          eo_do(eo_it, elm_wdg_item_access_unregister());
 
         //TODO: _elm_access_edje_object_part_object_unregister() ?
      }
@@ -2006,7 +2006,7 @@ elm_colorselector_palette_item_color_get(const Elm_Object_Item *it,
                                          int *b,
                                          int *a)
 {
-   eo_do((Eo *) it, elm_obj_color_item_color_get(r, g, b, a));
+   eo_do( it, elm_obj_color_item_color_get(r, g, b, a));
 }
 
 EOLIAN static void
@@ -2030,7 +2030,7 @@ elm_colorselector_palette_item_color_set(Elm_Object_Item *it,
                                          int b,
                                          int a)
 {
-   eo_do((Eo *) it, elm_obj_color_item_color_set(r, g, b, a));
+   eo_do( it, elm_obj_color_item_color_set(r, g, b, a));
 }
 
 EOLIAN static void
@@ -2108,7 +2108,7 @@ EAPI void
 elm_colorselector_palette_item_selected_set(Elm_Object_Item *it,
                               Eina_Bool selected)
 {
-   eo_do((Eo *) it, elm_obj_color_item_selected_set(selected));
+   eo_do( it, elm_obj_color_item_selected_set(selected));
 }
 
 EOLIAN static void
@@ -2147,7 +2147,7 @@ _elm_color_item_selected_set(Eo *eo_item,
 EAPI Eina_Bool
 elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *) it, elm_obj_color_item_selected_get());
+   return eo_do( it, elm_obj_color_item_selected_get());
 }
 
 EOLIAN static Eina_Bool

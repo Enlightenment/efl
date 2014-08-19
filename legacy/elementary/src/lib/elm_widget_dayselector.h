@@ -73,6 +73,6 @@ struct _Elm_Dayselector_Item_Data
     return
 
 #define ELM_DAYSELECTOR_ITEM_DATA_GET(o, sd) \
-  Elm_Dayselector_Item_Data * sd = eo_data_scope_get((Eo *)o, ELM_DAYSELECTOR_ITEM_CLASS)
+  Elm_Dayselector_Item_Data * sd = eo_data_scope_get(o, ELM_DAYSELECTOR_ITEM_CLASS)
 
 #endif

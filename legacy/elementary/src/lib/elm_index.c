@@ -321,7 +321,7 @@ _index_box_auto_fill(Evas_Object *obj,
         // ACCESS
         if ((it->level == 0) &&
             (_elm_config->access_mode == ELM_ACCESS_MODE_ON))
-          eo_do((Eo *)eo_item, elm_wdg_item_access_register());
+          eo_do(eo_item, elm_wdg_item_access_register());
      }
 
    evas_object_smart_calculate(sd->bx[level]);
@@ -462,7 +462,7 @@ _item_new(Evas_Object *obj,
    it->base->data = data;
    it->level = sd->level;
 
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 static Elm_Index_Item_Data *
@@ -523,7 +523,7 @@ _sel_eval(Evas_Object *obj,
 
         EINA_LIST_FOREACH(sd->items, l, eo_item)
           {
-             it = eo_data_scope_get((Eo *)eo_item, ELM_INDEX_ITEM_CLASS);
+             it = eo_data_scope_get(eo_item, ELM_INDEX_ITEM_CLASS);
              if (it->level != i) continue;
              if (it->level != sd->level)
                {
@@ -1060,8 +1060,8 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
      {
         ELM_INDEX_ITEM_DATA_GET(eo_item, it);
         if (it->level != 0) continue;
-        if (is_access) eo_do((Eo *)eo_item, elm_wdg_item_access_register());
-        else eo_do((Eo *)eo_item, elm_wdg_item_access_unregister());
+        if (is_access) eo_do(eo_item, elm_wdg_item_access_register());
+        else eo_do(eo_item, elm_wdg_item_access_unregister());
      }
 
    if (is_access)
@@ -1157,7 +1157,7 @@ _elm_index_item_level_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 EAPI void
 elm_index_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
 {
-   eo_do((Eo*)it, elm_obj_index_item_selected_set(selected));
+   eo_do(it, elm_obj_index_item_selected_set(selected));
 }
 
 EOLIAN static void
@@ -1237,7 +1237,7 @@ _elm_index_selected_item_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, int level)
         ELM_INDEX_ITEM_DATA_GET(eo_item, it);
         if ((it->selected) && (it->level == level))
           {
-             return (Elm_Object_Item *)eo_item;
+             return eo_item;
           }
      }
 
@@ -1255,7 +1255,7 @@ _elm_index_item_append(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Sma
    sd->items = eina_list_append(sd->items, it);
    _index_box_clear(obj, sd->level);
 
-   return (Elm_Object_Item *)it;
+   return it;
 }
 
 EOLIAN static Elm_Object_Item*
@@ -1269,7 +1269,7 @@ _elm_index_item_prepend(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Sm
    sd->items = eina_list_prepend(sd->items, it);
    _index_box_clear(obj, sd->level);
 
-   return (Elm_Object_Item *)it;
+   return it;
 }
 
 EINA_DEPRECATED EAPI Elm_Object_Item *
@@ -1296,7 +1296,7 @@ _elm_index_item_insert_after(Eo *obj, Elm_Index_Data *sd, Elm_Object_Item *after
    sd->items = eina_list_append_relative(sd->items, it, after);
    _index_box_clear(obj, sd->level);
 
-   return (Elm_Object_Item *)it;
+   return it;
 }
 
 EOLIAN static Elm_Object_Item*
@@ -1312,7 +1312,7 @@ _elm_index_item_insert_before(Eo *obj, Elm_Index_Data *sd, Elm_Object_Item *befo
    sd->items = eina_list_prepend_relative(sd->items, it, before);
    _index_box_clear(obj, sd->level);
 
-   return (Elm_Object_Item *)it;
+   return it;
 }
 
 EOLIAN static Elm_Object_Item*
@@ -1344,14 +1344,14 @@ _elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, E
              ELM_INDEX_ITEM_DATA_GET(eo_item, it);
              if (cmp_data_func(p_it->base->data, it->base->data) >= 0)
                p_it->base->data = it->base->data;
-             eo_do((Eo *)eo_item, elm_wdg_item_del());
+             eo_do(eo_item, elm_wdg_item_del());
              eo_item = NULL;
           }
      }
    _index_box_clear(obj, sd->level);
 
    if (!eo_item) return NULL;
-   else return (Elm_Object_Item *)eo_item;
+   else return eo_item;
 }
 
 EOLIAN static Elm_Object_Item*
@@ -1375,7 +1375,7 @@ _elm_index_item_clear(Eo *obj, Elm_Index_Data *sd)
         clear = eina_list_append(clear, eo_item);
      }
    EINA_LIST_FREE(clear, eo_item)
-     eo_do((Eo *)eo_item, elm_wdg_item_del());
+     eo_do(eo_item, elm_wdg_item_del());
 }
 
 EOLIAN static void
@@ -1413,7 +1413,7 @@ _elm_index_indicator_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 EAPI const char *
 elm_index_item_letter_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_index_item_letter_get());
+   return eo_do(it, elm_obj_index_item_letter_get());
 }
 
 EOLIAN static const char *

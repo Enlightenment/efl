@@ -122,7 +122,7 @@ struct _Elm_List_Item_Data
 #define ELM_LIST_ITEM_CHECK(it)                             \
   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, ); \
   ELM_LIST_CHECK(it->base->widget);                          \
-  if (((Elm_List_Item_Data *)it)->deleted)                       \
+  if (it->deleted)                       \
     {                                                       \
        ERR("ERROR: " #it " has been DELETED.\n");           \
        return;                                              \
@@ -131,13 +131,13 @@ struct _Elm_List_Item_Data
 #define ELM_LIST_ITEM_CHECK_OR_RETURN(it, ...)                         \
   ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, __VA_ARGS__); \
   ELM_LIST_CHECK(it->base->widget) __VA_ARGS__;                         \
-  if (((Elm_List_Item_Data *)it)->deleted)                                  \
+  if (it->deleted)                                  \
     {                                                                  \
        ERR("ERROR: " #it " has been DELETED.\n");                      \
        return __VA_ARGS__;                                             \
     }
 
 #define ELM_LIST_ITEM_DATA_GET(o, sd) \
-  Elm_List_Item_Data* sd = eo_data_scope_get((Eo *)o, ELM_LIST_ITEM_CLASS)
+  Elm_List_Item_Data* sd = eo_data_scope_get(o, ELM_LIST_ITEM_CLASS)
 
 #endif

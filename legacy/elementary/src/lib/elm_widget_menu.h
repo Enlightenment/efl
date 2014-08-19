@@ -90,7 +90,7 @@ struct _Elm_Menu_Item_Data
     }
 
 #define ELM_MENU_ITEM_DATA_GET(o, sd) \
-  Elm_Menu_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_MENU_ITEM_CLASS)
+  Elm_Menu_Item_Data *sd = eo_data_scope_get(o, ELM_MENU_ITEM_CLASS)
 
 #define ELM_MENU_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_MENU_CLASS))) \

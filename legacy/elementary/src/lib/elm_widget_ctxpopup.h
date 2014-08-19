@@ -97,6 +97,6 @@ struct _Elm_Ctxpopup_Data
   ELM_CTXPOPUP_CHECK(it->base->widget) __VA_ARGS__;
 
 #define ELM_CTXPOPUP_ITEM_DATA_GET(o, sd) \
-  Elm_Ctxpopup_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_CTXPOPUP_ITEM_CLASS)
+  Elm_Ctxpopup_Item_Data *sd = eo_data_scope_get(o, ELM_CTXPOPUP_ITEM_CLASS)
 
 #endif

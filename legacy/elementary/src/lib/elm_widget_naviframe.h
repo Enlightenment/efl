@@ -122,6 +122,6 @@ struct _Elm_Naviframe_Text_Item_Pair
     return __VA_ARGS__;
 
 #define ELM_NAVIFRAME_ITEM_DATA_GET(o, sd) \
-  Elm_Naviframe_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_NAVIFRAME_ITEM_CLASS)
+  Elm_Naviframe_Item_Data *sd = eo_data_scope_get(o, ELM_NAVIFRAME_ITEM_CLASS)
 
 #endif

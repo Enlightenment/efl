@@ -58,7 +58,7 @@ _elm_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
    Eina_List *l;
 
    EINA_LIST_FOREACH(sd->items, l, it)
-      eo_do((Eo *)EO_OBJ(it), elm_wdg_item_translate());
+      eo_do(EO_OBJ(it), elm_wdg_item_translate());
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
    eo_do(sd->main_layout, elm_obj_widget_translate());
@@ -184,7 +184,7 @@ _items_remove(Elm_Popup_Data *sd)
    if (!sd->items) return;
 
    EINA_LIST_FREE(sd->items, it)
-     eo_do((Eo *)EO_OBJ(it), elm_wdg_item_del());
+     eo_do(EO_OBJ(it), elm_wdg_item_del());
 
    sd->items = NULL;
 }
@@ -760,7 +760,7 @@ _elm_popup_item_elm_widget_item_disable(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
-   if (eo_do((Eo *)eo_it, elm_wdg_item_disabled_get()))
+   if (eo_do(eo_it, elm_wdg_item_disabled_get()))
      elm_layout_signal_emit(VIEW(it), "elm,state,item,disabled", "elm");
    else
      elm_layout_signal_emit(VIEW(it), "elm,state,item,enabled", "elm");

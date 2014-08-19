@@ -310,7 +310,7 @@ _elm_slideshow_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Slideshow_Item_Data
    sd->items_built = eina_list_remove_list(sd->items_built, item->l_built);
 
    if ((VIEW(item)) && (item->itc->func.del))
-     item->itc->func.del(elm_object_item_data_get((Elm_Object_Item *)eo_item), VIEW(item));
+     item->itc->func.del(elm_object_item_data_get(eo_item), VIEW(item));
 
    return EINA_TRUE;
 }
@@ -415,9 +415,9 @@ _elm_slideshow_item_add(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Slideshow_Ite
 
    sd->items = eina_list_merge(sd->items, item->l);
 
-   if (!sd->current) elm_slideshow_item_show((Elm_Object_Item *)eo_item);
+   if (!sd->current) elm_slideshow_item_show(eo_item);
 
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 EOLIAN static Elm_Object_Item*
@@ -436,15 +436,15 @@ _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Sli
 
    sd->items = eina_list_sorted_merge(sd->items, item->l, func);
 
-   if (!sd->current) elm_slideshow_item_show((Elm_Object_Item *)eo_item);
+   if (!sd->current) elm_slideshow_item_show(eo_item);
 
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 EAPI void
 elm_slideshow_item_show(Elm_Object_Item *it)
 {
-   eo_do((Eo*)it, elm_obj_slideshow_item_show());
+   eo_do(it, elm_obj_slideshow_item_show());
 }
 
 EOLIAN static void
@@ -658,7 +658,7 @@ _elm_slideshow_items_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 EOLIAN static Elm_Object_Item*
 _elm_slideshow_item_current_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
-   return (Elm_Object_Item *)EO_OBJ(sd->current);
+   return EO_OBJ(sd->current);
 }
 
 EOLIAN static Evas_Object *

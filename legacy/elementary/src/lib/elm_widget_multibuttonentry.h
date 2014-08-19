@@ -132,7 +132,7 @@ struct _Elm_Multibuttonentry_Data
     }
 
 #define ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(o, sd) \
-  Elm_Multibuttonentry_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_MULTIBUTTONENTRY_ITEM_CLASS)
+  Elm_Multibuttonentry_Item_Data *sd = eo_data_scope_get(o, ELM_MULTIBUTTONENTRY_ITEM_CLASS)
 
 #define ELM_MULTIBUTTONENTRY_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_MULTIBUTTONENTRY_CLASS))) \

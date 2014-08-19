@@ -109,6 +109,6 @@ struct _Elm_Diskselector_Item_Data
            goto label;
 
 #define ELM_DISKSELECTOR_ITEM_DATA_GET(o, sd) \
-  Elm_Diskselector_Item_Data* sd = eo_data_scope_get((Eo *)o, ELM_DISKSELECTOR_ITEM_CLASS)
+  Elm_Diskselector_Item_Data* sd = eo_data_scope_get(o, ELM_DISKSELECTOR_ITEM_CLASS)
 
 #endif

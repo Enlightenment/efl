@@ -110,6 +110,6 @@ struct _Action_Area_Data
   ELM_POPUP_CHECK(it->base->widget) __VA_ARGS__;
 
 #define ELM_POPUP_ITEM_DATA_GET(o, sd) \
-  Elm_Popup_Item_Data* sd = eo_data_scope_get((Eo *)o, ELM_POPUP_ITEM_CLASS)
+  Elm_Popup_Item_Data* sd = eo_data_scope_get(o, ELM_POPUP_ITEM_CLASS)
 
 #endif

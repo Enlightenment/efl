@@ -337,6 +337,6 @@ struct _Elm_Genlist_Pan_Data
         ((it->base->widget), ELM_GENLIST_CLASS)) goto label;
 
 #define ELM_GENLIST_ITEM_DATA_GET(o, sd) \
-  Elm_Gen_Item* sd = eo_data_scope_get((Eo *)o, ELM_GENLIST_ITEM_CLASS)
+  Elm_Gen_Item* sd = eo_data_scope_get(o, ELM_GENLIST_ITEM_CLASS)
 
 #endif

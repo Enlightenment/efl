@@ -201,7 +201,7 @@ _property_exists(Elm_Menu_Item_Data *item,
         return EINA_FALSE;
 
       case ELM_DBUS_PROPERTY_ENABLED:
-        return elm_object_item_disabled_get((Elm_Object_Item *)EO_OBJ(item));
+        return elm_object_item_disabled_get(EO_OBJ(item));
 
       case ELM_DBUS_PROPERTY_ICON_NAME:
         return _freedesktop_icon_exists(item);
@@ -229,7 +229,7 @@ _property_append(Elm_Menu_Item_Data *item,
      {
       case ELM_DBUS_PROPERTY_LABEL:
         variant = eldbus_message_iter_container_new(iter, 'v', "s");
-        t = elm_object_item_part_text_get((Elm_Object_Item *)EO_OBJ(item), NULL);
+        t = elm_object_item_part_text_get(EO_OBJ(item), NULL);
         if (!t)
           {
              t = elm_object_part_text_get(item->content, NULL);
@@ -409,7 +409,7 @@ _event_handle(Elm_DBus_Menu *dbus_menu, Eldbus_Message_Iter *iter, int *error_id
      }
 
    if (!strcmp(event, "clicked"))
-     _elm_dbus_menu_item_select_cb((Elm_Object_Item *)EO_OBJ(item));
+     _elm_dbus_menu_item_select_cb(EO_OBJ(item));
 
    return EINA_TRUE;
 }

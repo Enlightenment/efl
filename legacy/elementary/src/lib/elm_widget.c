@@ -145,9 +145,9 @@ _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *eo_it)
    const char *str;
 
    if (!eo_it) return;
-   if (eo_isa((Eo *)eo_it, ELM_WIDGET_ITEM_CLASS))
+   if (eo_isa(eo_it, ELM_WIDGET_ITEM_CLASS))
      {
-        Elm_Widget_Item_Data *it = eo_data_scope_get((Eo *)eo_it, ELM_WIDGET_ITEM_CLASS);
+        Elm_Widget_Item_Data *it = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
         str = edje_object_data_get(it->view, "focus_highlight");
      }
    else

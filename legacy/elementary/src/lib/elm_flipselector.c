@@ -230,7 +230,7 @@ _flipselector_process_deletions(Elm_Flipselector_Data *sd)
 
         if (!sd->current) sd->current = sd->items;
 
-        eo_do((Eo *)eo_item, elm_wdg_item_del());
+        eo_do(eo_item, elm_wdg_item_del());
         skip = EINA_FALSE;
 
         if (eina_list_count(sd->items) <= 1)
@@ -314,7 +314,7 @@ _elm_flipselector_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Flipselector_Ite
 
    EINA_LIST_FOREACH(sd->items, l, eo_item2)
      {
-        if ((Eo *)eo_item2 == eo_item)
+        if (eo_item2 == eo_item)
           {
              if (sd->current == l)
                {
@@ -372,7 +372,7 @@ _item_new(Evas_Object *obj,
 
    /* TODO: no view here, but if one desires general contents in the
     * future... */
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 EOLIAN static Eina_Bool
@@ -751,7 +751,7 @@ EAPI void
 elm_flipselector_item_selected_set(Elm_Object_Item *it,
                                    Eina_Bool selected)
 {
-   eo_do((Eo*)it, elm_obj_flipselector_item_selected_set(selected));
+   eo_do(it, elm_obj_flipselector_item_selected_set(selected));
 }
 
 EOLIAN static void
@@ -766,11 +766,11 @@ _elm_flipselector_item_selected_set(Eo *eo_item,
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    eo_cur = DATA_GET(sd->current);
-   if ((selected) && ((Eo *)eo_cur == eo_item)) return;
+   if ((selected) && (eo_cur == eo_item)) return;
 
    _flipselector_walk(sd);
 
-   if ((!selected) && ((Eo *)eo_cur == eo_item))
+   if ((!selected) && (eo_cur == eo_item))
      {
         EINA_LIST_FOREACH(sd->items, l, _eo_item)
           {
@@ -790,7 +790,7 @@ _elm_flipselector_item_selected_set(Eo *eo_item,
      {
         if (_eo_item == eo_cur) flipside = MSG_FLIP_DOWN;
 
-        if ((Eo *)_eo_item == eo_item)
+        if (_eo_item == eo_item)
           {
              ELM_FLIPSELECTOR_ITEM_DATA_GET(_eo_item, _item);
              sd->current = l;
@@ -805,7 +805,7 @@ _elm_flipselector_item_selected_set(Eo *eo_item,
 EAPI Eina_Bool
 elm_flipselector_item_selected_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_flipselector_item_selected_get());
+   return eo_do(it, elm_obj_flipselector_item_selected_get());
 }
 
 EOLIAN static Eina_Bool
@@ -820,7 +820,7 @@ _elm_flipselector_item_selected_get(Eo *eo_item,
 EAPI Elm_Object_Item *
 elm_flipselector_item_prev_get(const Elm_Object_Item *it)
 {
-   return (Elm_Object_Item *)eo_do((Eo *)it, elm_obj_flipselector_item_prev_get());
+   return eo_do(it, elm_obj_flipselector_item_prev_get());
 }
 
 EOLIAN static Elm_Object_Item *
@@ -842,7 +842,7 @@ _elm_flipselector_item_prev_get(Eo *eo_item,
 EAPI Elm_Object_Item *
 elm_flipselector_item_next_get(const Elm_Object_Item *it)
 {
-   return (Elm_Object_Item *)eo_do((Eo *)it, elm_obj_flipselector_item_next_get());
+   return eo_do(it, elm_obj_flipselector_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

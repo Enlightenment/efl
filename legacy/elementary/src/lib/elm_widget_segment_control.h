@@ -76,7 +76,7 @@ struct _Elm_Segment_Control_Item_Data
     return
 
 #define ELM_SEGMENT_ITEM_DATA_GET(o, sd) \
-  Elm_Segment_Control_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_SEGMENT_CONTROL_ITEM_CLASS)
+  Elm_Segment_Control_Item_Data *sd = eo_data_scope_get(o, ELM_SEGMENT_CONTROL_ITEM_CLASS)
 
 #define ELM_SEGMENT_CONTROL_ITEM_CHECK(it)                  \
  if (EINA_UNLIKELY(!eo_isa((it)->base->eo_obj, ELM_SEGMENT_CONTROL_ITEM_CLASS)))   \

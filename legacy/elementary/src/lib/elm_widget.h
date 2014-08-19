@@ -582,7 +582,7 @@ struct _Elm_Widget_Item_Data
 /* simple accessor macros */
 #define VIEW(X)   X->base->view
 #define WIDGET(X) X->base->widget
-#define EO_OBJ(X) (Elm_Object_Item *)((X)?X->base->eo_obj:NULL)
+#define EO_OBJ(X) ((X)?X->base->eo_obj:NULL)
    /**< the owner widget that owns this item */
    Evas_Object                   *widget;
    /**< The Eo item, useful to invoke eo_do when only the item data is available */
@@ -795,7 +795,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * @param item a valid item.
  */
 #define elm_widget_item_free(item) \
-  _elm_widget_item_free((Elm_Widget_Item_Data *)item)
+  _elm_widget_item_free(item)
 
 /**
  * Convenience macro to delete widget item, doing casts for you.
@@ -803,86 +803,87 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * @param item a valid item.
  */
 #define elm_widget_item_del(item) \
-  _elm_widget_item_internal_del((Elm_Widget_Item_Data *)item)
+  _elm_widget_item_internal_del(item)
 #define elm_widget_item_pre_notify_del(item) \
-  elm_widget_item_internal_pre_notify_del((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_pre_notify_del(item)
 #define elm_widget_item_del_cb_set(item, del_cb) \
-  elm_widget_item_internal_del_cb_set((Elm_Widget_Item_Data *)item, del_cb)
+  elm_widget_item_internal_del_cb_set(item, del_cb)
 #define elm_widget_item_widget_get(item) \
-  elm_widget_item_internal_widget_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_widget_get(item)
 #define elm_widget_item_data_set(item, data) \
-  elm_widget_item_internal_data_set((Elm_Widget_Item_Data *)item, data)
+  elm_widget_item_internal_data_set(item, data)
 #define elm_widget_item_data_get(item) \
-  elm_widget_item_internal_data_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_data_get(item)
 
 #define elm_widget_item_tooltip_text_set(item, text) \
-  elm_widget_item_internal_tooltip_text_set((Elm_Widget_Item_Data *)item, text)
+  elm_widget_item_internal_tooltip_text_set(item, text)
 #define elm_widget_item_tooltip_translatable_text_set(item, text) \
-  elm_widget_item_internal_tooltip_translatable_text_set((Elm_Widget_Item_Data *)item, text)
+  elm_widget_item_internal_tooltip_translatable_text_set(item, text)
 #define elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb) \
-  elm_widget_item_internal_tooltip_content_cb_set((Elm_Widget_Item_Data *)item,       \
+  elm_widget_item_internal_tooltip_content_cb_set(item,       \
                                           func, data, del_cb)
 #define elm_widget_item_tooltip_unset(item) \
-  elm_widget_item_internal_tooltip_unset((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_tooltip_unset(item)
 #define elm_widget_item_tooltip_style_set(item, style) \
-  elm_widget_item_internal_tooltip_style_set((Elm_Widget_Item_Data *)item, style)
+  elm_widget_item_internal_tooltip_style_set(item, style)
 
 #define elm_widget_item_tooltip_window_mode_set(item, disable) \
-  elm_widget_item_internal_tooltip_window_mode_set((Elm_Widget_Item_Data *)item, disable)
+  elm_widget_item_internal_tooltip_window_mode_set(item, disable)
 
 #define elm_widget_item_tooltip_window_mode_get(item) \
-  elm_widget_item_internal_tooltip_window_mode_get((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_tooltip_window_mode_get(item)
 #define elm_widget_item_tooltip_style_get(item) \
-  elm_widget_item_internal_tooltip_style_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_tooltip_style_get(item)
 #define elm_widget_item_cursor_set(item, cursor) \
-  elm_widget_item_internal_cursor_set((Elm_Widget_Item_Data *)item, cursor)
+  elm_widget_item_internal_cursor_set(item, cursor)
 #define elm_widget_item_cursor_get(item) \
-  elm_widget_item_internal_cursor_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_cursor_get(item)
 #define elm_widget_item_cursor_unset(item) \
-  elm_widget_item_internal_cursor_unset((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_cursor_unset(item)
 #define elm_widget_item_cursor_style_set(item, style) \
-  elm_widget_item_internal_cursor_style_set((Elm_Widget_Item_Data *)item, style)
+  elm_widget_item_internal_cursor_style_set(item, style)
 #define elm_widget_item_cursor_style_get(item) \
-  elm_widget_item_internal_cursor_style_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_cursor_style_get(item)
 #define elm_widget_item_cursor_engine_only_set(item, engine_only) \
-  elm_widget_item_internal_cursor_engine_only_set((Elm_Widget_Item_Data *)item, engine_only)
+  elm_widget_item_internal_cursor_engine_only_set(item, engine_only)
 #define elm_widget_item_cursor_engine_only_get(item) \
-  elm_widget_item_internal_cursor_engine_only_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_cursor_engine_only_get(item)
 /**
  * Convenience function to query disable get hook.
  * @see elm_widget_item_internal_disabled_get()
  */
 #define elm_widget_item_disabled_get(item) \
+  elm_widget_item_internal_disabled_get(item)
 
 #define elm_widget_item_style_set(item, style) \
-  elm_widget_item_internal_style_set((Elm_Widget_Item_Data *)item, style)
+  elm_widget_item_internal_style_set(item, style)
 #define elm_widget_item_style_get(item) \
-  elm_widget_item_internal_style_get((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_style_get(item)
 
 /**
  * Convenience function to query track_cancel.
  * @see elm_widget_item_internal_del_pre_hook_set()
  */
 #define elm_widget_item_track_cancel(item) \
-  elm_widget_item_internal_track_cancel((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_track_cancel(item)
 
 #define elm_widget_item_translate(item) \
-  elm_widget_item_internal_translate((Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_translate(item)
 
 #define elm_widget_item_part_text_custom_set(item, part, text) \
-  _elm_widget_item_internal_part_text_custom_set((Elm_Widget_Item_Data *)item, part, text)
+  _elm_widget_item_internal_part_text_custom_set(item, part, text)
 
 #define elm_widget_item_part_text_custom_get(item, part) \
-  _elm_widget_item_internal_part_text_custom_get((Elm_Widget_Item_Data *)item, part)
+  _elm_widget_item_internal_part_text_custom_get(item, part)
 
 #define elm_widget_item_part_text_custom_update(item) \
-  _elm_widget_item_internal_part_text_custom_update((Elm_Widget_Item_Data *)item)
+  _elm_widget_item_internal_part_text_custom_update(item)
 
 #define elm_widget_item_focus_set(item, focused) \
-  elm_widget_item_internal_focus_set((Elm_Widget_Item_Data *)item, focused)
+  elm_widget_item_internal_focus_set(item, focused)
 
 #define elm_widget_item_focus_get(item) \
-  elm_widget_item_internal_focus_get((const Elm_Widget_Item_Data *)item)
+  elm_widget_item_internal_focus_get(item)
 
 #define ELM_WIDGET_CHECK_OR_RETURN(obj, ...)                    \
    do {                                                         \

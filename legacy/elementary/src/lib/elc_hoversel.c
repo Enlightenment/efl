@@ -308,7 +308,7 @@ _elm_hoversel_evas_object_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
         eina_stringshare_del(item->label);
         eina_stringshare_del(item->icon_file);
         eina_stringshare_del(item->icon_group);
-        eo_del((Eo *)eo_item);
+        eo_del(eo_item);
      }
    elm_hoversel_hover_parent_set(obj, NULL);
 
@@ -441,7 +441,7 @@ _elm_hoversel_clear(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 
    EINA_LIST_FOREACH_SAFE(sd->items, l, ll, it)
      {
-        eo_do((Eo *)it, elm_wdg_item_del());
+        eo_do(it, elm_wdg_item_del());
      }
 }
 
@@ -474,7 +474,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
 
    sd->items = eina_list_append(sd->items, eo_item);
 
-   return (Elm_Object_Item *)eo_item;
+   return eo_item;
 }
 
 EAPI void
@@ -483,7 +483,7 @@ elm_hoversel_item_icon_set(Elm_Object_Item *it,
                            const char *icon_group,
                            Elm_Icon_Type icon_type)
 {
-   eo_do((Eo *)it, elm_obj_hoversel_item_icon_set(icon_file, icon_group, icon_type));
+   eo_do(it, elm_obj_hoversel_item_icon_set(icon_file, icon_group, icon_type));
 }
 
 EOLIAN static void
@@ -505,7 +505,7 @@ elm_hoversel_item_icon_get(const Elm_Object_Item *it,
                            const char **icon_group,
                            Elm_Icon_Type *icon_type)
 {
-   eo_do((Eo *)it, elm_obj_hoversel_item_icon_get(icon_file, icon_group, icon_type));
+   eo_do(it, elm_obj_hoversel_item_icon_get(icon_file, icon_group, icon_type));
 }
 
 EOLIAN static void

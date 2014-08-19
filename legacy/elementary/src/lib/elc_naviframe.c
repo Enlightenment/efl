@@ -84,7 +84,7 @@ _elm_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
    Elm_Naviframe_Item_Data *it;
 
    EINA_INLIST_FOREACH(sd->stack, it)
-     eo_do((Eo *)EO_OBJ(it), elm_wdg_item_translate());
+     eo_do(EO_OBJ(it), elm_wdg_item_translate());
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
@@ -540,7 +540,7 @@ _elm_naviframe_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Naviframe_Item_Data
 
    ecore_animator_del(nit->animator);
 
-   top = (eo_item == (Eo *)elm_naviframe_top_item_get(WIDGET(nit)));
+   top = (eo_item == elm_naviframe_top_item_get(WIDGET(nit)));
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
      goto end;
 
@@ -1100,7 +1100,7 @@ _on_item_pop_finished(void *data,
      elm_widget_tree_unfocusable_set(VIEW(it), EINA_FALSE);
    sd->popping = eina_list_remove(sd->popping, it);
 
-   eo_do((Eo *)EO_OBJ(it), elm_wdg_item_del());
+   eo_do(EO_OBJ(it), elm_wdg_item_del());
 }
 
 /* "elm,state,new,pushed",
@@ -1400,14 +1400,14 @@ _elm_naviframe_evas_object_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
    while (sd->stack)
      {
         it = EINA_INLIST_CONTAINER_GET(sd->stack, Elm_Naviframe_Item_Data);
-        eo_do((Eo *)EO_OBJ(it), elm_wdg_item_del());
+        eo_do(EO_OBJ(it), elm_wdg_item_del());
      }
 
    //All popping items which are not called yet by animator.
    EINA_LIST_FREE(sd->popping, it)
      {
         ecore_animator_del(it->animator);
-        eo_do((Eo *)EO_OBJ(it), elm_wdg_item_del());
+        eo_do(EO_OBJ(it), elm_wdg_item_del());
      }
 
    evas_object_del(sd->dummy_edje);
@@ -1421,7 +1421,7 @@ _elm_naviframe_evas_object_smart_show(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSE
 {
    Elm_Object_Item *eo_top;
 
-   eo_top = (Elm_Object_Item *)elm_naviframe_top_item_get(obj);
+   eo_top = elm_naviframe_top_item_get(obj);
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_top, top);
 
    if (top && !top->delete_me)
@@ -1584,7 +1584,7 @@ _elm_naviframe_item_insert_before(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_It
                   title_label, prev_btn, next_btn, content, item_style);
    if (!eo_it) return NULL;
 
-   it = eo_data_scope_get((Eo *)eo_it, ELM_NAVIFRAME_ITEM_CLASS);
+   it = eo_data_scope_get(eo_it, ELM_NAVIFRAME_ITEM_CLASS);
 
    sd->stack = eina_inlist_prepend_relative
        (sd->stack, EINA_INLIST_GET(it),
@@ -1619,7 +1619,7 @@ _elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Ite
 
    sd->stack = eina_inlist_append_relative
        (sd->stack, EINA_INLIST_GET(it),
-       EINA_INLIST_GET(((Elm_Naviframe_Item_Data *)after)));
+       EINA_INLIST_GET(after));
 
 
    if (top_inserted)
@@ -1669,7 +1669,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
           {
              it->ref--;
              if (it->delete_me)
-               eo_do((Eo *)eo_item, elm_wdg_item_del());
+               eo_do(eo_item, elm_wdg_item_del());
              else
                it->popping = EINA_FALSE;
              evas_object_unref(obj);
@@ -1716,7 +1716,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         sd->popping = eina_list_append(sd->popping, it);
      }
    else
-     eo_do((Eo *)eo_item, elm_wdg_item_del());
+     eo_do(eo_item, elm_wdg_item_del());
 
    return content;
 }
@@ -1724,7 +1724,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
 EAPI void
 elm_naviframe_item_pop_to(Elm_Object_Item *it)
 {
-   eo_do((Eo *)it, elm_obj_naviframe_item_pop_to());
+   eo_do(it, elm_obj_naviframe_item_pop_to());
 }
 
 EOLIAN static void
@@ -1734,7 +1734,7 @@ _elm_naviframe_item_pop_to(Eo *eo_it, Elm_Naviframe_Item_Data *it)
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   if (eo_it == (Eo *)elm_naviframe_top_item_get(WIDGET(it))) return;
+   if (eo_it == elm_naviframe_top_item_get(WIDGET(it))) return;
 
    l = sd->stack->last->prev;
 
@@ -1749,7 +1749,7 @@ _elm_naviframe_item_pop_to(Eo *eo_it, Elm_Naviframe_Item_Data *it)
 
         l = l->prev;
 
-        eo_do((Eo *)EO_OBJ(iit), elm_wdg_item_del());
+        eo_do(EO_OBJ(iit), elm_wdg_item_del());
      }
 
    sd->on_deletion = EINA_FALSE;
@@ -1760,7 +1760,7 @@ _elm_naviframe_item_pop_to(Eo *eo_it, Elm_Naviframe_Item_Data *it)
 EAPI void
 elm_naviframe_item_promote(Elm_Object_Item *it)
 {
-   eo_do((Eo *)it, elm_obj_naviframe_item_promote());
+   eo_do(it, elm_obj_naviframe_item_promote());
 }
 
 EOLIAN static void
@@ -1772,7 +1772,7 @@ _elm_naviframe_item_promote(Eo *eo_it, Elm_Naviframe_Item_Data *it)
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
    eo_prev_top = elm_naviframe_top_item_get(WIDGET(nit));
-   if (eo_it == (Eo *)eo_prev_top) return;
+   if (eo_it == eo_prev_top) return;
 
    sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(nit));
    _item_push_helper(nit);
@@ -1785,9 +1785,9 @@ _elm_naviframe_item_simple_promote(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, 
 
    EINA_INLIST_FOREACH(sd->stack, itr)
      {
-        if (elm_object_item_content_get((Elm_Object_Item *)EO_OBJ(itr)) == content)
+        if (elm_object_item_content_get(EO_OBJ(itr)) == content)
           {
-             elm_naviframe_item_promote((Elm_Object_Item *)EO_OBJ(itr));
+             elm_naviframe_item_promote(EO_OBJ(itr));
              break;
           }
      }
@@ -1827,7 +1827,7 @@ EAPI void
 elm_naviframe_item_style_set(Elm_Object_Item *it,
                              const char *item_style)
 {
-   eo_do((Eo *)it, elm_obj_naviframe_item_style_set(item_style));
+   eo_do(it, elm_obj_naviframe_item_style_set(item_style));
 }
 
 EOLIAN static void
@@ -1848,7 +1848,7 @@ _elm_naviframe_item_style_set(Eo *eo_item EINA_UNUSED,
 EAPI const char *
 elm_naviframe_item_style_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_naviframe_item_style_get());
+   return eo_do(it, elm_obj_naviframe_item_style_get());
 }
 
 EOLIAN static const char *
@@ -1876,7 +1876,7 @@ elm_naviframe_item_title_enabled_set(Elm_Object_Item *it,
                                      Eina_Bool enabled,
                                      Eina_Bool transition)
 {
-   eo_do((Eo *)it, elm_obj_naviframe_item_title_enabled_set(enabled, transition));
+   eo_do(it, elm_obj_naviframe_item_title_enabled_set(enabled, transition));
 }
 
 EOLIAN static void
@@ -1897,7 +1897,7 @@ _elm_naviframe_item_title_enabled_set(Eo *eo_item EINA_UNUSED,
 EAPI Eina_Bool
 elm_naviframe_item_title_enabled_get(const Elm_Object_Item *it)
 {
-   return eo_do((Eo *)it, elm_obj_naviframe_item_title_enabled_get());
+   return eo_do(it, elm_obj_naviframe_item_title_enabled_get());
 }
 
 EOLIAN static Eina_Bool
@@ -1909,7 +1909,7 @@ _elm_naviframe_item_title_enabled_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Ite
 EAPI void
 elm_naviframe_item_pop_cb_set(Elm_Object_Item *it, Elm_Naviframe_Item_Pop_Cb func, void *data)
 {
-   eo_do((Eo *)it, elm_obj_naviframe_item_pop_cb_set(func, data));
+   eo_do(it, elm_obj_naviframe_item_pop_cb_set(func, data));
 }
 
 EOLIAN static void
