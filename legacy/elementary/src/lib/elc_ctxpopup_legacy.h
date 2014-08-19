@@ -8,4 +8,5 @@
  */
 EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent);
 
+#include "elm_ctxpopup_item.eo.legacy.h"
 #include "elm_ctxpopup.eo.legacy.h"

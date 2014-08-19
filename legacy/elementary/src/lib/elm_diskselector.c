@@ -10,7 +10,6 @@
 #include "elm_priv.h"
 #include "elm_widget_diskselector.h"
 #include "elm_interface_scrollable.h"
-#include "elm_diskselector_item.eo.h"
 
 #define DISPLAY_ITEM_NUM_MIN 3
 
@@ -1689,13 +1688,6 @@ _elm_diskselector_selected_item_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *
    return EO_OBJ(sd->selected_item);
 }
 
-EAPI void
-elm_diskselector_item_selected_set(Elm_Object_Item *item,
-                                   Eina_Bool selected)
-{
-   eo_do(item, elm_obj_diskselector_item_selected_set(selected));
-}
-
 EOLIAN static void
 _elm_diskselector_item_selected_set(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item_Data *it,
                                Eina_Bool selected)
@@ -1718,12 +1710,6 @@ _elm_diskselector_item_selected_set(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item
      sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, WIDGET(it));
 }
 
-EAPI Eina_Bool
-elm_diskselector_item_selected_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_diskselector_item_selected_get());
-}
-
 EOLIAN static Eina_Bool
 _elm_diskselector_item_selected_get(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item_Data *it)
 {
@@ -1731,12 +1717,6 @@ _elm_diskselector_item_selected_get(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item
    ELM_DISKSELECTOR_DATA_GET(WIDGET(it), sd);
 
    return sd->selected_item == it;
-}
-
-EAPI Elm_Object_Item *
-elm_diskselector_item_prev_get(const Elm_Object_Item *item)
-{
-   return eo_do(item, elm_obj_diskselector_item_prev_get());
 }
 
 EOLIAN static Elm_Object_Item *
@@ -1748,12 +1728,6 @@ _elm_diskselector_item_prev_get(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item_Dat
    if (it->node->prev) prev_it = it->node->prev->data;
    if (prev_it) return EO_OBJ(prev_it);
    else return NULL;
-}
-
-EAPI Elm_Object_Item *
-elm_diskselector_item_next_get(const Elm_Object_Item *item)
-{
-   return eo_do(item, elm_obj_diskselector_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

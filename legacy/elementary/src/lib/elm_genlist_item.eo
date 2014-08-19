@@ -1,6 +1,5 @@
 class Elm_Genlist_Item(Elm_Widget_Item)
 {
-      legacy_prefix: null;
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;
       properties {

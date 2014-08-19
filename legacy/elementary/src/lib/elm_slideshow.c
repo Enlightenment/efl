@@ -441,12 +441,6 @@ _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Sli
    return eo_item;
 }
 
-EAPI void
-elm_slideshow_item_show(Elm_Object_Item *it)
-{
-   eo_do(it, elm_obj_slideshow_item_show());
-}
-
 EOLIAN static void
 _elm_slideshow_item_show(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *item)
 {

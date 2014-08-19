@@ -1154,12 +1154,6 @@ _elm_index_item_level_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 }
 
 //FIXME: Should update indicator based on the autohidden status & indicator visibility
-EAPI void
-elm_index_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
-{
-   eo_do(it, elm_obj_index_item_selected_set(selected));
-}
-
 EOLIAN static void
 _elm_index_item_selected_set(Eo *eo_it,
                              Elm_Index_Item_Data *it,
@@ -1408,12 +1402,6 @@ EOLIAN static Eina_Bool
 _elm_index_indicator_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->indicator_disabled;
-}
-
-EAPI const char *
-elm_index_item_letter_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_index_item_letter_get());
 }
 
 EOLIAN static const char *

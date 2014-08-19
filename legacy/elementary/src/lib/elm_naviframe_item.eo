@@ -1,6 +1,5 @@
 class Elm_Naviframe_Item(Elm_Widget_Item)
 {
-   legacy_prefix: null;
    eo_prefix: elm_obj_naviframe_item;
    properties {
         style {

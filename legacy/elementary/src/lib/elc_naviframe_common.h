@@ -21,19 +21,7 @@ typedef Eina_Bool (*Elm_Naviframe_Item_Pop_Cb)(void *data, Elm_Object_Item *it);
  */
 EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent);
 
-EAPI void             elm_naviframe_item_pop_to(Elm_Object_Item *it);
-
-EAPI void             elm_naviframe_item_promote(Elm_Object_Item *it);
-
-EAPI void             elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style);
-
-EAPI const char      *elm_naviframe_item_style_get(const Elm_Object_Item *it);
-
 EAPI void             elm_naviframe_item_title_enabled_set(Elm_Object_Item *it, Eina_Bool enabled, Eina_Bool transition);
-
-EAPI Eina_Bool        elm_naviframe_item_title_enabled_get(const Elm_Object_Item *it);
-
-EAPI void             elm_naviframe_item_pop_cb_set(Elm_Object_Item *it, Elm_Naviframe_Item_Pop_Cb func, void *data);
 
 Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
 /**

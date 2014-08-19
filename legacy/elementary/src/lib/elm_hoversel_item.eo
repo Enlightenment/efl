@@ -1,6 +1,5 @@
 class Elm_Hoversel_Item(Elm_Widget_Item)
 {
-   legacy_prefix: null;
    eo_prefix: elm_obj_hoversel_item;
    properties {
         icon {

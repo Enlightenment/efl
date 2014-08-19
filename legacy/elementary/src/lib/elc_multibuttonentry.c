@@ -1745,13 +1745,6 @@ _elm_multibuttonentry_selected_item_get(Eo *obj EINA_UNUSED, Elm_Multibuttonentr
    return EO_OBJ(sd->selected_it);
 }
 
-EAPI void
-elm_multibuttonentry_item_selected_set(Elm_Object_Item *it,
-                                       Eina_Bool selected)
-{
-   eo_do(it, elm_obj_multibuttonentry_item_selected_set(selected));
-}
-
 EOLIAN static void
 _elm_multibuttonentry_item_selected_set(Eo *eo_item EINA_UNUSED,
                                         Elm_Multibuttonentry_Item_Data *item,
@@ -1759,12 +1752,6 @@ _elm_multibuttonentry_item_selected_set(Eo *eo_item EINA_UNUSED,
 {
    if (selected) _button_select(WIDGET(item), item->button);
    else _button_select(WIDGET(item), NULL);
-}
-
-EAPI Eina_Bool
-elm_multibuttonentry_item_selected_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_multibuttonentry_item_selected_get());
 }
 
 EOLIAN static Eina_Bool
@@ -1797,12 +1784,6 @@ _elm_multibuttonentry_clear(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
    _view_update(sd);
 }
 
-EAPI Elm_Object_Item *
-elm_multibuttonentry_item_prev_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_multibuttonentry_item_prev_get());
-}
-
 EOLIAN static Elm_Object_Item *
 _elm_multibuttonentry_item_prev_get(Eo *eo_it,
                                    Elm_Multibuttonentry_Item_Data *it)
@@ -1822,12 +1803,6 @@ _elm_multibuttonentry_item_prev_get(Eo *eo_it,
           }
      }
    return NULL;
-}
-
-EAPI Elm_Object_Item *
-elm_multibuttonentry_item_next_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_multibuttonentry_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

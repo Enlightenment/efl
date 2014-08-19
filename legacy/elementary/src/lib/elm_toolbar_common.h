@@ -41,44 +41,6 @@ typedef enum
 
 typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State;    /**< State of a Elm_Toolbar_Item. Can be created with elm_toolbar_item_state_add() and removed with elm_toolbar_item_state_del(). */
 
-EAPI Elm_Object_Item             *elm_toolbar_item_next_get(const Elm_Object_Item *it);
-
-EAPI Elm_Object_Item             *elm_toolbar_item_prev_get(const Elm_Object_Item *it);
-
-EAPI void                         elm_toolbar_item_priority_set(Elm_Object_Item *it, int priority);
-
-EAPI int                          elm_toolbar_item_priority_get(const Elm_Object_Item *it);
-
-EAPI Eina_Bool                    elm_toolbar_item_selected_get(const Elm_Object_Item *it);
-
-EAPI void                         elm_toolbar_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
-
-EAPI void                         elm_toolbar_item_icon_set(Elm_Object_Item *it, const char *icon);
-
-EAPI const char                  *elm_toolbar_item_icon_get(const Elm_Object_Item *it);
-
-EAPI Evas_Object                 *elm_toolbar_item_object_get(const Elm_Object_Item *it);
-
-EAPI Evas_Object                 *elm_toolbar_item_icon_object_get(Elm_Object_Item *it);
-
-EAPI Eina_Bool                    elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t size, const char *format, const char *key);
-
-EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char *key);
-
-EAPI void                         elm_toolbar_item_separator_set(Elm_Object_Item *it, Eina_Bool separator);
-
-EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Object_Item *it);
-
-EAPI void                         elm_toolbar_item_menu_set(Elm_Object_Item *it, Eina_Bool menu);
-
-EAPI Evas_Object                 *elm_toolbar_item_menu_get(const Elm_Object_Item *it);
-
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_add(Elm_Object_Item *it, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
-
-EAPI Eina_Bool                    elm_toolbar_item_state_del(Elm_Object_Item *it, Elm_Toolbar_Item_State *state);
-
-EAPI Eina_Bool                    elm_toolbar_item_state_set(Elm_Object_Item *it, Elm_Toolbar_Item_State *state);
-
 /**
  * Unset the state of @p it.
  *
@@ -91,14 +53,3 @@ EAPI Eina_Bool                    elm_toolbar_item_state_set(Elm_Object_Item *it
  * @ingroup Toolbar
  */
 EAPI void                         elm_toolbar_item_state_unset(Elm_Object_Item *it);
-
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_get(const Elm_Object_Item *it);
-
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_next(Elm_Object_Item *it);
-
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_prev(Elm_Object_Item *it);
-
-EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type scrollto);
-
-EAPI void                          elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type scrollto);
-

@@ -2,7 +2,6 @@
 #define ELM_WIDGET_CTXPOPUP_H
 
 #include "elm_widget_layout.h"
-#include "elm_ctxpopup_item.eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

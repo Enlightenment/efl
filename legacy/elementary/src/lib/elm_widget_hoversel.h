@@ -2,7 +2,6 @@
 #define ELM_WIDGET_HOVERSEL_H
 
 #include "Elementary.h"
-#include "elm_hoversel_item.eo.h"
 
 
 #include <Eio.h>

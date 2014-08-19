@@ -12,8 +12,6 @@
 #include "elm_widget_list.h"
 #include "elm_interface_scrollable.h"
 
-#include "elm_list_item.eo.h"
-
 #define MY_CLASS ELM_LIST_CLASS
 
 #define MY_CLASS_NAME "Elm_List"
@@ -2743,13 +2741,6 @@ _elm_list_item_sorted_insert(Eo *obj, Elm_List_Data *sd, const char *label, Evas
    return EO_OBJ(it);
 }
 
-EAPI void
-elm_list_item_separator_set(Elm_Object_Item *it,
-                            Eina_Bool setting)
-{
-   eo_do(it, elm_obj_list_item_separator_set(setting));
-}
-
 EOLIAN static void
 _elm_list_item_separator_set(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *it,
       Eina_Bool setting)
@@ -2759,25 +2750,12 @@ _elm_list_item_separator_set(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *it,
    it->is_separator = !!setting;
 }
 
-EAPI Eina_Bool
-elm_list_item_separator_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_list_item_separator_get());
-}
-
 EOLIAN static Eina_Bool
 _elm_list_item_separator_get(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *it)
 {
    ELM_LIST_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    return it->is_separator;
-}
-
-EAPI void
-elm_list_item_selected_set(Elm_Object_Item *it,
-                           Eina_Bool selected)
-{
-   eo_do(it, elm_obj_list_item_selected_set(selected));
 }
 
 EOLIAN static void
@@ -2822,24 +2800,12 @@ _elm_list_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item,
    evas_object_unref(obj);
 }
 
-EAPI Eina_Bool
-elm_list_item_selected_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_list_item_selected_get());
-}
-
 EOLIAN static Eina_Bool
 _elm_list_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *it)
 {
    ELM_LIST_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    return it->selected;
-}
-
-EAPI void
-elm_list_item_show(Elm_Object_Item *it)
-{
-   eo_do(it, elm_obj_list_item_show());
 }
 
 EOLIAN static void
@@ -2860,12 +2826,6 @@ _elm_list_item_show(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
    eo_do(WIDGET(it), elm_interface_scrollable_content_region_show(x, y, w, h));
 }
 
-EAPI void
-elm_list_item_bring_in(Elm_Object_Item *it)
-{
-   eo_do(it, elm_obj_list_item_bring_in());
-}
-
 EOLIAN static void
 _elm_list_item_bring_in(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
 {
@@ -2884,12 +2844,6 @@ _elm_list_item_bring_in(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
    eo_do(WIDGET(it), elm_interface_scrollable_region_bring_in(x, y, w, h));
 }
 
-EAPI Evas_Object *
-elm_list_item_object_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_list_item_object_get());
-}
-
 EOLIAN static Evas_Object *
 _elm_list_item_object_get(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
 {
@@ -2898,24 +2852,12 @@ _elm_list_item_object_get(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it)
    return VIEW(it);
 }
 
-EAPI Elm_Object_Item *
-elm_list_item_prev(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_list_item_prev_get());
-}
-
 EOLIAN static Elm_Object_Item *
 _elm_list_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item)
 {
    if (item->node->prev)
      return item->node->prev->data;
    return NULL;
-}
-
-EAPI Elm_Object_Item *
-elm_list_item_next(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_list_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

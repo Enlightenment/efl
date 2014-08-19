@@ -1,6 +1,5 @@
 class Elm_Index_Item(Elm_Widget_Item)
 {
-   legacy_prefix: null;
    eo_prefix: elm_obj_index_item;
    properties {
         selected {

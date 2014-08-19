@@ -21,21 +21,3 @@ typedef enum
    ELM_LIST_LAST /**< Indicates error if returned by elm_list_mode_get() */
 } Elm_List_Mode;
 
-EAPI void                         elm_list_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
-
-EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_Object_Item *it);
-
-EAPI void                         elm_list_item_separator_set(Elm_Object_Item *it, Eina_Bool setting);
-
-EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_Object_Item *it);
-
-EAPI void                         elm_list_item_show(Elm_Object_Item *it);
-
-EAPI void                         elm_list_item_bring_in(Elm_Object_Item *it);
-
-EAPI Evas_Object                 *elm_list_item_object_get(const Elm_Object_Item *it);
-
-EAPI Elm_Object_Item               *elm_list_item_prev(const Elm_Object_Item *it);
-
-EAPI Elm_Object_Item               *elm_list_item_next(const Elm_Object_Item *it);
-

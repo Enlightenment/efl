@@ -1721,12 +1721,6 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
    return content;
 }
 
-EAPI void
-elm_naviframe_item_pop_to(Elm_Object_Item *it)
-{
-   eo_do(it, elm_obj_naviframe_item_pop_to());
-}
-
 EOLIAN static void
 _elm_naviframe_item_pop_to(Eo *eo_it, Elm_Naviframe_Item_Data *it)
 {
@@ -1755,12 +1749,6 @@ _elm_naviframe_item_pop_to(Eo *eo_it, Elm_Naviframe_Item_Data *it)
    sd->on_deletion = EINA_FALSE;
 
    elm_naviframe_item_pop(WIDGET(it));
-}
-
-EAPI void
-elm_naviframe_item_promote(Elm_Object_Item *it)
-{
-   eo_do(it, elm_obj_naviframe_item_promote());
 }
 
 EOLIAN static void
@@ -1823,13 +1811,6 @@ _elm_naviframe_bottom_item_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
    return EO_OBJ(ret_it);
 }
 
-EAPI void
-elm_naviframe_item_style_set(Elm_Object_Item *it,
-                             const char *item_style)
-{
-   eo_do(it, elm_obj_naviframe_item_style_set(item_style));
-}
-
 EOLIAN static void
 _elm_naviframe_item_style_set(Eo *eo_item EINA_UNUSED,
                               Elm_Naviframe_Item_Data *nit,
@@ -1843,12 +1824,6 @@ _elm_naviframe_item_style_set(Eo *eo_item EINA_UNUSED,
    _item_style_set(nit, item_style);
    _item_signals_emit(nit);
    _item_title_enabled_update(nit, EINA_FALSE);
-}
-
-EAPI const char *
-elm_naviframe_item_style_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_naviframe_item_style_get());
 }
 
 EOLIAN static const char *
@@ -1871,14 +1846,6 @@ elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
    return elm_naviframe_item_title_enabled_get(it);
 }
 
-EAPI void
-elm_naviframe_item_title_enabled_set(Elm_Object_Item *it,
-                                     Eina_Bool enabled,
-                                     Eina_Bool transition)
-{
-   eo_do(it, elm_obj_naviframe_item_title_enabled_set(enabled, transition));
-}
-
 EOLIAN static void
 _elm_naviframe_item_title_enabled_set(Eo *eo_item EINA_UNUSED,
                                       Elm_Naviframe_Item_Data *nit,
@@ -1894,22 +1861,10 @@ _elm_naviframe_item_title_enabled_set(Eo *eo_item EINA_UNUSED,
    _item_title_enabled_update(nit, transition);
 }
 
-EAPI Eina_Bool
-elm_naviframe_item_title_enabled_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_naviframe_item_title_enabled_get());
-}
-
 EOLIAN static Eina_Bool
 _elm_naviframe_item_title_enabled_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
 {
    return nit->title_enabled;
-}
-
-EAPI void
-elm_naviframe_item_pop_cb_set(Elm_Object_Item *it, Elm_Naviframe_Item_Pop_Cb func, void *data)
-{
-   eo_do(it, elm_obj_naviframe_item_pop_cb_set(func, data));
 }
 
 EOLIAN static void

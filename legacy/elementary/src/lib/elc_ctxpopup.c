@@ -1366,12 +1366,6 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
    return eo_item;
 }
 
-EAPI Elm_Object_Item *
-elm_ctxpopup_item_prev_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_ctxpopup_item_prev_get());
-}
-
 EOLIAN static Elm_Object_Item *
 _elm_ctxpopup_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_Ctxpopup_Item_Data *item)
 {
@@ -1385,12 +1379,6 @@ _elm_ctxpopup_item_prev_get(Eo *eo_item EINA_UNUSED, Elm_Ctxpopup_Item_Data *ite
    if (l && l->prev) return eina_list_data_get(l->prev);
 
    return NULL;
-}
-
-EAPI Elm_Object_Item *
-elm_ctxpopup_item_next_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_ctxpopup_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

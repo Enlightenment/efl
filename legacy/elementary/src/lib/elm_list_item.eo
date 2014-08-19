@@ -1,6 +1,5 @@
 class Elm_List_Item(Elm_Widget_Item)
 {
-      legacy_prefix: null;
       eo_prefix: elm_obj_list_item;
       properties {
            separator {
@@ -95,7 +94,7 @@ class Elm_List_Item(Elm_Widget_Item)
 
                       @ingroup List
                       */
-                     /*legacy: elm_list_item_prev;*/
+                     legacy: elm_list_item_prev;
                 }
                 values {
                      Elm_Object_Item *item; /*@ The item before @p it, or @c NULL if none or on failure. */
@@ -113,7 +112,7 @@ class Elm_List_Item(Elm_Widget_Item)
 
                       @ingroup List
                       */
-                     /*legacy: elm_list_item_next;*/
+                     legacy: elm_list_item_next;
                 }
                 values {
                      Elm_Object_Item *item; /*@ The item after @p it, or @c NULL if none or on failure. */

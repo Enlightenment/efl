@@ -8,7 +8,6 @@
  * FINAL. CALL elm_widget_api_check(ELM_INTERNAL_API_VERSION) TO CHECK
  * IT AT RUNTIME.
  */
-#include "elm_flipselector_item.eo.h"
 
 /**
  * @addtogroup Widget

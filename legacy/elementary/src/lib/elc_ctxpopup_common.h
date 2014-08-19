@@ -7,7 +7,3 @@ typedef enum
    ELM_CTXPOPUP_DIRECTION_UNKNOWN, /**< ctxpopup does not determine it's direction yet*/
 } Elm_Ctxpopup_Direction; /**< Direction in which to show the popup */
 
-EAPI Elm_Object_Item *elm_ctxpopup_item_prev_get(const Elm_Object_Item *it);
-
-EAPI Elm_Object_Item *elm_ctxpopup_item_next_get(const Elm_Object_Item *it);
-

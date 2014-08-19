@@ -2,8 +2,6 @@
 #define ELM_WIDGET_SLIDESHOW_H
 
 #include "Elementary.h"
-#include "elm_slideshow_item.eo.h"
-
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

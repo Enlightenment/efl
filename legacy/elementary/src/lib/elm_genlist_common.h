@@ -69,26 +69,6 @@ typedef Elm_Gen_Item_State_Get_Cb Elm_Genlist_Item_State_Get_Cb;
  */
 typedef Elm_Gen_Item_Del_Cb Elm_Genlist_Item_Del_Cb;
 
-EAPI Elm_Object_Item             *elm_genlist_item_next_get(const Elm_Object_Item *it);
-
-EAPI Elm_Object_Item             *elm_genlist_item_prev_get(const Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
-
-EAPI Eina_Bool                     elm_genlist_item_selected_get(const Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_show(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type);
-
-EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type);
-
-EAPI void                          elm_genlist_item_update(Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_item_class_update(Elm_Object_Item *it, const Elm_Genlist_Item_Class *itc);
-
-EAPI const Elm_Genlist_Item_Class *elm_genlist_item_item_class_get(const Elm_Object_Item *it);
-
-EAPI int                           elm_genlist_item_index_get(const Elm_Object_Item *it);
-
 /**
  * Create a new genlist item class in a given genlist widget.
  *
@@ -406,43 +386,4 @@ EAPI void                          elm_genlist_item_cursor_engine_only_set(Elm_O
  * @ingroup Genlist
  */
 EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *it);
-
-EAPI Elm_Object_Item             *elm_genlist_item_parent_get(const Elm_Object_Item *it);
-
-EAPI unsigned int                 elm_genlist_item_subitems_count(const Elm_Object_Item *it);
-
-EAPI const Eina_List             *elm_genlist_item_subitems_get(const Elm_Object_Item *it);
-EAPI void                          elm_genlist_item_subitems_clear(Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_expanded_set(Elm_Object_Item *it, Eina_Bool expanded);
-
-EAPI Eina_Bool                     elm_genlist_item_expanded_get(const Elm_Object_Item *it);
-
-EAPI int                           elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_all_contents_unset(Elm_Object_Item *it, Eina_List **l);
-
-EAPI void                          elm_genlist_item_promote(Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_demote(Elm_Object_Item *it);
-
-EAPI void                          elm_genlist_item_fields_update(Elm_Object_Item *it, const char *parts, Elm_Genlist_Item_Field_Type itf);
-
-EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object_Item *it, const char *decorate_it_type, Eina_Bool decorate_it_set);
-
-EAPI const char                   *elm_genlist_item_decorate_mode_get(const Elm_Object_Item *it);
-
-EAPI Elm_Genlist_Item_Type        elm_genlist_item_type_get(const Elm_Object_Item *it);
-
-EAPI void elm_genlist_item_flip_set(Elm_Object_Item *it, Eina_Bool flip);
-
-EAPI Eina_Bool elm_genlist_item_flip_get(const Elm_Object_Item *it);
-
-EAPI void
-elm_genlist_item_select_mode_set(Elm_Object_Item *it,
-                                 Elm_Object_Select_Mode mode);
-
-EAPI Elm_Object_Select_Mode
-elm_genlist_item_select_mode_get(const Elm_Object_Item *it);
-
 

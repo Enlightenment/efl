@@ -747,13 +747,6 @@ _elm_flipselector_selected_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *
    return DATA_GET(sd->current);
 }
 
-EAPI void
-elm_flipselector_item_selected_set(Elm_Object_Item *it,
-                                   Eina_Bool selected)
-{
-   eo_do(it, elm_obj_flipselector_item_selected_set(selected));
-}
-
 EOLIAN static void
 _elm_flipselector_item_selected_set(Eo *eo_item,
                                     Elm_Flipselector_Item_Data *item,
@@ -802,12 +795,6 @@ _elm_flipselector_item_selected_set(Eo *eo_item,
    _flipselector_unwalk(sd);
 }
 
-EAPI Eina_Bool
-elm_flipselector_item_selected_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_flipselector_item_selected_get());
-}
-
 EOLIAN static Eina_Bool
 _elm_flipselector_item_selected_get(Eo *eo_item,
                                     Elm_Flipselector_Item_Data *item)
@@ -815,12 +802,6 @@ _elm_flipselector_item_selected_get(Eo *eo_item,
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
    return eina_list_data_get(sd->current) == eo_item;
-}
-
-EAPI Elm_Object_Item *
-elm_flipselector_item_prev_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_flipselector_item_prev_get());
 }
 
 EOLIAN static Elm_Object_Item *
@@ -837,12 +818,6 @@ _elm_flipselector_item_prev_get(Eo *eo_item,
    if (l && l->prev) return DATA_GET(l->prev);
 
    return NULL;
-}
-
-EAPI Elm_Object_Item *
-elm_flipselector_item_next_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_flipselector_item_next_get());
 }
 
 EOLIAN static Elm_Object_Item *

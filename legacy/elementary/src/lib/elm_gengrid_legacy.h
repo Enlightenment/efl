@@ -256,4 +256,5 @@ EAPI void                        elm_gengrid_reorder_mode_stop(Evas_Object *obj)
  */
 EAPI void                        elm_gengrid_reorder_type_set(Evas_Object *obj, Elm_Gengrid_Reorder_Type type);
 
+#include "elm_gengrid_item.eo.legacy.h"
 #include "elm_gengrid.eo.legacy.h"

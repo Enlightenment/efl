@@ -2,7 +2,6 @@
 #define ELM_WIDGET_SEGMENT_CONTROL_H
 
 #include "Elementary.h"
-#include "elm_segment_control_item.eo.h"
 
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR

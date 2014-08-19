@@ -1,6 +1,5 @@
 class Elm_Popup_Item(Elm_Widget_Item)
 {
-      legacy_prefix: null;
       eo_prefix: elm_obj_popup_item;
       implements {
            Eo.Base.constructor;

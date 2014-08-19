@@ -60,4 +60,5 @@ EAPI void                         elm_toolbar_transverse_expanded_set(Evas_Objec
  */
 EAPI Eina_Bool                    elm_toolbar_transverse_expanded_get(const Evas_Object *obj);
 
+#include "elm_toolbar_item.eo.legacy.h"
 #include "elm_toolbar.eo.legacy.h"

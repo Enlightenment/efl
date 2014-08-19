@@ -781,12 +781,6 @@ _elm_segment_control_item_count_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Dat
    return eina_list_count(sd->items);
 }
 
-EAPI Evas_Object *
-elm_segment_control_item_object_get(const Elm_Object_Item *it)
-{
-   return eo_do(it, elm_obj_segment_control_item_object_get());
-}
-
 EOLIAN static Evas_Object *
 _elm_segment_control_item_object_get(Eo *eo_it EINA_UNUSED, Elm_Segment_Control_Item_Data *it)
 {
@@ -797,13 +791,6 @@ EOLIAN static Elm_Object_Item*
 _elm_segment_control_item_selected_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    return EO_OBJ(sd->selected_item);
-}
-
-EAPI void
-elm_segment_control_item_selected_set(Elm_Object_Item *it,
-                                      Eina_Bool selected)
-{
-   eo_do((Eo*)it, elm_obj_segment_control_item_selected_set(selected));
 }
 
 EOLIAN static void

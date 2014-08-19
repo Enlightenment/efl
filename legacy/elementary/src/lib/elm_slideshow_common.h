@@ -18,6 +18,3 @@ struct _Elm_Slideshow_Item_Class
      } func;
 };   /**< member definitions of #Elm_Slideshow_Item_Class */
 
-EAPI void                  elm_slideshow_item_show(Elm_Object_Item *it);
-
-EAPI Evas_Object          *elm_slideshow_item_object_get(const Elm_Object_Item *it);

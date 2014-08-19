@@ -11,4 +11,5 @@
  */
 EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent);
 
+#include "elm_flipselector_item.eo.legacy.h"
 #include "elm_flipselector.eo.legacy.h"
