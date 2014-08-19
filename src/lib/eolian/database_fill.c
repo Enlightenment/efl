@@ -1,69 +1,13 @@
 #include "eo_parser.h"
 
 static Eina_Bool
-_db_fill_key(Eolian_Function *foo_id, Eo_Param_Def *param)
-{
-   Eolian_Function_Parameter *p = database_parameter_add(param->type,
-                                                         param->name,
-                                                         param->comment);
-   foo_id->keys = eina_list_append(foo_id->keys, p);
-   p->nonull = param->nonull;
-   param->type = NULL;
-
-   p->base = param->base;
-   param->base.file = NULL;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_keys(Eolian_Function *foo_id, Eo_Property_Def *prop)
-{
-   Eo_Param_Def *param;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(prop->keys, l, param)
-     if (!_db_fill_key(foo_id, param)) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_value(Eolian_Function *foo_id, Eo_Param_Def *param)
-{
-   Eolian_Function_Parameter *p = database_parameter_add(param->type,
-                                                         param->name,
-                                                         param->comment);
-   foo_id->params = eina_list_append(foo_id->params, p);
-   p->nonull = param->nonull;
-   param->type = NULL;
-
-   p->base = param->base;
-   param->base.file = NULL;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_values(Eolian_Function *foo_id, Eo_Property_Def *prop)
-{
-   Eo_Param_Def *param;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(prop->values, l, param)
-     if (!_db_fill_value(foo_id, param)) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_param(Eolian_Function *foo_id, Eo_Param_Def *param)
+_db_fill_param(Eina_List **plist, Eo_Param_Def *param)
 {
    Eolian_Function_Parameter *p = database_parameter_add(param->type,
                                                          param->name,
                                                          param->comment);
    p->param_dir = param->way;
-   foo_id->params = eina_list_append(foo_id->params, p);
+   *plist = eina_list_append(*plist, p);
    p->nonull = param->nonull;
    param->type = NULL;
 
@@ -74,13 +18,13 @@ _db_fill_param(Eolian_Function *foo_id, Eo_Param_Def *param)
 }
 
 static Eina_Bool
-_db_fill_params(Eolian_Function *foo_id, Eo_Method_Def *meth)
+_db_fill_params(Eina_List *oplist, Eina_List **plist)
 {
    Eo_Param_Def *param;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(meth->params, l, param)
-     if (!_db_fill_param(foo_id, param)) return EINA_FALSE;
+   EINA_LIST_FOREACH(oplist, l, param)
+     if (!_db_fill_param(plist, param)) return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -195,8 +139,8 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
    foo_id->scope = prop->scope;
    foo_id->is_class = prop->is_class;
 
-   if (!_db_fill_keys     (foo_id,      prop)) goto failure;
-   if (!_db_fill_values   (foo_id,      prop)) goto failure;
+   if (!_db_fill_params   (prop->keys  , &(foo_id->keys  ))) goto failure;
+   if (!_db_fill_params   (prop->values, &(foo_id->params))) goto failure;
    if (!_db_fill_accessors(foo_id, kls, prop)) goto failure;
 
    if (!prop->accessors)
@@ -256,7 +200,7 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
    if (meth->only_legacy)
      foo_id->get_only_legacy = EINA_TRUE;
 
-   _db_fill_params(foo_id, meth);
+   _db_fill_params(meth->params, &(foo_id->params));
 
    if (kls->type == EOLIAN_CLASS_INTERFACE)
      foo_id->get_virtual_pure = EINA_TRUE;
@@ -291,7 +235,7 @@ _db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
 
    foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
 
-   _db_fill_params(foo_id, meth);
+   _db_fill_params(meth->params, &(foo_id->params));
 
    foo_id->base = meth->base;
    meth->base.file = NULL;
