@@ -128,6 +128,20 @@ pop_var(Eo_Lexer *ls)
    ls->tmp.var_defs = eina_list_remove_list(ls->tmp.var_defs, ls->tmp.var_defs);
 }
 
+static Eina_Stringshare *
+push_str(Eo_Lexer *ls, const char *val)
+{
+   Eina_Stringshare *shr = eina_stringshare_add(val);
+   ls->tmp.strs = eina_list_prepend(ls->tmp.strs, shr);
+   return shr;
+}
+
+static void
+pop_str(Eo_Lexer *ls)
+{
+   ls->tmp.strs = eina_list_remove_list(ls->tmp.strs, ls->tmp.strs);
+}
+
 static void
 append_node(Eo_Lexer *ls, int type, void *def)
 {
@@ -572,6 +586,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->type = EOLIAN_TYPE_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
    def->freefunc = freefunc;
+   pop_str(ls);
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
@@ -717,7 +732,6 @@ static void
 parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool allow_named,
                         Eina_Bool *is_extern, const char **freefunc)
 {
-   /* TODO: handle freefunc deref on error */
    Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
    *freefunc = NULL;
    *is_extern = EINA_FALSE;
@@ -746,7 +760,7 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool allow_named,
            int pline = ls->line_number, pcol = ls->column;
            check_next(ls, '(');
            check(ls, TOK_VALUE);
-           *freefunc = eina_stringshare_ref(ls->t.value.s);
+           *freefunc = push_str(ls, ls->t.value.s);
            eo_lexer_get(ls);
            check_match(ls, ')', '(', pline, pcol);
            break;
@@ -849,7 +863,7 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
            line = ls->line_number;
            col = ls->column;
            parse_name(ls, buf);
-           sname = eina_stringshare_add(eina_strbuf_string_get(buf));
+           sname = push_str(ls, eina_strbuf_string_get(buf));
            pop_strbuf(ls);
            /* if we're extern and allow structs, gotta enforce it */
            if (allow_named && (has_extern || freefunc))
@@ -860,12 +874,12 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
                                                                sname);
                 if (tp)
                   {
-                     eina_stringshare_del(sname);
                      eo_lexer_context_restore(ls);
                      redef_error(ls, is_enum ? EOLIAN_TYPE_ENUM
                                              : EOLIAN_TYPE_STRUCT, tp);
                   }
                 eo_lexer_context_pop(ls);
+                pop_str(ls);
                 if (is_enum)
                   return parse_enum(ls, sname, has_extern, line, col);
                 return parse_struct(ls, sname, has_extern, line, col, freefunc);
@@ -874,6 +888,7 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
            def = push_type(ls);
            def->type = is_enum ? EOLIAN_TYPE_REGULAR_ENUM
                                : EOLIAN_TYPE_REGULAR_STRUCT;
+           pop_str(ls);
            _fill_type_name(def, sname);
            goto parse_ptr;
         }
@@ -985,6 +1000,7 @@ parse_typedef(Eo_Lexer *ls)
    eo_lexer_get(ls);
    parse_struct_attrs(ls, EINA_FALSE, EINA_TRUE, &has_extern, &freefunc);
    def->freefunc = freefunc;
+   pop_str(ls);
    def->type = EOLIAN_TYPE_ALIAS;
    def->is_extern = has_extern;
    buf = push_strbuf(ls);
@@ -1851,6 +1867,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 def->is_extern = has_extern;
                 def->type = EOLIAN_TYPE_STRUCT_OPAQUE;
                 def->freefunc = freefunc;
+                pop_str(ls);
                 _fill_type_name(def, name);
                 eo_lexer_get(ls);
                 if (ls->t.token == TOK_COMMENT)

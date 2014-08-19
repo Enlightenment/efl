@@ -196,4 +196,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    if (tmp->impl)
      database_implement_del(tmp->impl);
+
+   EINA_LIST_FREE(tmp->strs, s)
+     if (s) eina_stringshare_del(s);
 }

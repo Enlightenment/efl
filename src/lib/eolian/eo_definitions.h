@@ -122,6 +122,7 @@ typedef struct _Eo_Lexer_Temps
    Eolian_Event *event;
    Eolian_Implement *impl;
    Eina_List *expr_defs;
+   Eina_List *strs;
 } Eo_Lexer_Temps;
 
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
