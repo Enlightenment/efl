@@ -2,7 +2,6 @@
 #define ELM_WIDGET_MULTIBUTTONENTRY_H
 
 #include "elm_widget_layout.h"
-#include "elm_object_item_migration_temp.h"
 
 #include "elm_multibuttonentry_item.eo.h"
 

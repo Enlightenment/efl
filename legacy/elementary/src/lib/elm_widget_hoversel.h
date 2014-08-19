@@ -4,7 +4,6 @@
 #include "Elementary.h"
 #include "elm_hoversel_item.eo.h"
 
-#include "elm_object_item_migration_temp.h"
 
 #include <Eio.h>
 

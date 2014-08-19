@@ -9,7 +9,6 @@
  * IT AT RUNTIME.
  */
 
-#include "elm_object_item_migration_temp.h"
 /**
  * @addtogroup Widget
  * @{

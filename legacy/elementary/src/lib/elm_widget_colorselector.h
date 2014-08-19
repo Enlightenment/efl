@@ -4,7 +4,6 @@
 #include "Elementary.h"
 #include "elm_color_item.eo.h"
 
-#include "elm_object_item_migration_temp.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
