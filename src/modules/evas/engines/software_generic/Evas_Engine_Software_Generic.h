@@ -25,18 +25,18 @@ typedef enum _Outbuf_Depth
 
 typedef enum 
 {
-  MODE_FULL,
-  MODE_COPY,
-  MODE_DOUBLE,
-  MODE_TRIPLE,
-  MODE_QUADRUPLE,
-  MODE_AUTO
+   MODE_FULL,
+   MODE_COPY,
+   MODE_DOUBLE,
+   MODE_TRIPLE,
+   MODE_QUADRUPLE,
+   MODE_AUTO
 } Render_Engine_Swap_Mode;
 
 typedef enum 
 {
-  MERGE_BOUNDING,
-  MERGE_FULL
+   MERGE_BOUNDING,
+   MERGE_FULL
 } Render_Engine_Merge_Mode;
 
 typedef struct _Render_Engine_Software_Generic Render_Engine_Software_Generic;
