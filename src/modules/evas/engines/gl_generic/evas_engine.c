@@ -561,7 +561,8 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 #ifdef GL_GLES
    re->window_use(re->software.ob);
 
-   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && (im->cs.space == EVAS_COLORSPACE_ARGB8888))
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && 
+       (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
         void *disp;
 
@@ -573,10 +574,11 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
              return im;
           }
         disp = re->window_egl_display_get(re->software.ob);
-        *image_data = im->tex->pt->dyn.data = secsym_eglMapImageSEC(disp,
-                                                                    im->tex->pt->dyn.img, 
-                                                                    EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC, 
-                                                                    EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
+        *image_data = im->tex->pt->dyn.data = 
+          secsym_eglMapImageSEC(disp,
+                                im->tex->pt->dyn.img, 
+                                EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC, 
+                                EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
 
         if (!im->tex->pt->dyn.data)
           {
