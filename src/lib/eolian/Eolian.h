@@ -1323,6 +1323,20 @@ EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
 EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
 
 /*
+ * @brief Get the name of the function used to free this type.
+ *
+ * @param[in] tp the type.
+ * @return the free func name.
+ *
+ * For pointer types, this returns name of the func used to free the pointer.
+ * For struct and alias types, this returns name of the func used to free a
+ * pointer to that type. For other types, this returns NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
+
+/*
  * @brief Evaluate an Eolian expression.
  *
  * @param[in] expr the expression.

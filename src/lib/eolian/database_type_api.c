@@ -306,3 +306,10 @@ eolian_type_namespaces_get(const Eolian_Type *tp)
    if (!tp->namespaces) return NULL;
    return eina_list_iterator_new(tp->namespaces);
 }
+
+EAPI Eina_Stringshare *
+eolian_type_free_func_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->freefunc;
+}

@@ -136,6 +136,7 @@ struct _Eolian_Type
          Eina_List        *field_names;
          Eina_Stringshare *comment;
          Eina_Stringshare *legacy;
+         Eina_Stringshare *freefunc;
       };
    };
    Eina_Bool is_const  :1;

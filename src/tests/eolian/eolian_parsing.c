@@ -823,6 +823,58 @@ START_TEST(eolian_class_funcs)
 }
 END_TEST
 
+START_TEST(eolian_free_func)
+{
+   const Eolian_Class *class;
+   const Eolian_Type *type;
+
+   eolian_init();
+
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/free_func.eo"));
+
+   /* Check that the class Dummy is still readable */
+   fail_if(!(class = eolian_class_get_by_name("Free_Func")));
+   fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
+
+   /* regular struct */
+   fail_if(!(type = eolian_type_struct_get_by_name("Named1")));
+   fail_if(eolian_type_free_func_get(type));
+   fail_if(!(type = eolian_type_struct_get_by_name("Named2")));
+   fail_if(strcmp(eolian_type_free_func_get(type), "test_free"));
+
+   /* typedef */
+   fail_if(!(type = eolian_type_alias_get_by_name("Typedef1")));
+   fail_if(eolian_type_free_func_get(type));
+   fail_if(!(type = eolian_type_alias_get_by_name("Typedef2")));
+   fail_if(strcmp(eolian_type_free_func_get(type), "def_free"));
+
+   /* anon struct */
+   fail_if(!(type = eolian_type_alias_get_by_name("Anon1")));
+   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(eolian_type_free_func_get(type));
+   fail_if(!(type = eolian_type_alias_get_by_name("Anon2")));
+   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(strcmp(eolian_type_free_func_get(type), "anon_free"));
+
+   /* opaque struct */
+   fail_if(!(type = eolian_type_struct_get_by_name("Opaque1")));
+   fail_if(eolian_type_free_func_get(type));
+   fail_if(!(type = eolian_type_struct_get_by_name("Opaque2")));
+   fail_if(strcmp(eolian_type_free_func_get(type), "opaque_free"));
+
+   /* pointer */
+   fail_if(!(type = eolian_type_alias_get_by_name("Pointer1")));
+   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(eolian_type_free_func_get(type));
+   fail_if(!(type = eolian_type_alias_get_by_name("Pointer2")));
+   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(strcmp(eolian_type_free_func_get(type), "ptr_free"));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -839,5 +891,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_var);
    tcase_add_test(tc, eolian_enum);
    tcase_add_test(tc, eolian_class_funcs);
+   tcase_add_test(tc, eolian_free_func);
 }
 
