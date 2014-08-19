@@ -241,7 +241,6 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
       glBindTexture(GL_TEXTURE_2D, n->data.opengl.texture_id);
       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
-   return;
 }
 
 static void
@@ -255,7 +254,6 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
       glBindTexture(GL_TEXTURE_2D, 0);
       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
-  return;
 }
 
 static void
