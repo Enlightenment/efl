@@ -568,6 +568,9 @@ PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client >= 1.3.0 wayland-egl 
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
+   if test "${gl_library}" != "gl" ; then
+      have_egl="yes"
+   fi
    if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
