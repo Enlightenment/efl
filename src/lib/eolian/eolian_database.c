@@ -3,19 +3,19 @@
 #include "eo_parser.h"
 #include "eolian_database.h"
 
-Eina_Hash *_classes = NULL;
-Eina_Hash *_aliases = NULL;
-Eina_Hash *_structs = NULL;
-Eina_Hash *_enums = NULL;
-Eina_Hash *_globals = NULL;
-Eina_Hash *_constants = NULL;
-Eina_Hash *_classesf = NULL;
-Eina_Hash *_aliasesf = NULL;
-Eina_Hash *_structsf = NULL;
-Eina_Hash *_enumsf = NULL;
-Eina_Hash *_globalsf = NULL;
+Eina_Hash *_classes    = NULL;
+Eina_Hash *_aliases    = NULL;
+Eina_Hash *_structs    = NULL;
+Eina_Hash *_enums      = NULL;
+Eina_Hash *_globals    = NULL;
+Eina_Hash *_constants  = NULL;
+Eina_Hash *_classesf   = NULL;
+Eina_Hash *_aliasesf   = NULL;
+Eina_Hash *_structsf   = NULL;
+Eina_Hash *_enumsf     = NULL;
+Eina_Hash *_globalsf   = NULL;
 Eina_Hash *_constantsf = NULL;
-Eina_Hash *_filenames = NULL;
+Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 
 static int _database_init_count = 0;
@@ -31,19 +31,19 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _classes = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
-   _aliases = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
-   _structs = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
-   _enums = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
-   _globals = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
-   _constants = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
-   _classesf = eina_hash_stringshared_new(NULL);
-   _aliasesf = eina_hash_stringshared_new(_hashlist_free);
-   _structsf = eina_hash_stringshared_new(_hashlist_free);
-   _enumsf = eina_hash_stringshared_new(_hashlist_free);
-   _globalsf = eina_hash_stringshared_new(_hashlist_free);
+   _classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
+   _aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
+   _structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   _constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   _classesf   = eina_hash_stringshared_new(NULL);
+   _aliasesf   = eina_hash_stringshared_new(_hashlist_free);
+   _structsf   = eina_hash_stringshared_new(_hashlist_free);
+   _enumsf     = eina_hash_stringshared_new(_hashlist_free);
+   _globalsf   = eina_hash_stringshared_new(_hashlist_free);
    _constantsf = eina_hash_stringshared_new(_hashlist_free);
-   _filenames = eina_hash_string_small_new(free);
+   _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
 }
@@ -60,20 +60,20 @@ database_shutdown()
 
    if (_database_init_count == 0)
      {
-        eina_hash_free(_classes);
-        eina_hash_free(_aliases);
-        eina_hash_free(_structs);
-        eina_hash_free(_enums);
-        eina_hash_free(_globals);
-        eina_hash_free(_constants);
-        eina_hash_free(_classesf);
-        eina_hash_free(_aliasesf);
-        eina_hash_free(_structsf);
-        eina_hash_free(_enumsf);
-        eina_hash_free(_globalsf);
-        eina_hash_free(_constantsf);
-        eina_hash_free(_filenames);
-        eina_hash_free(_tfilenames);
+        eina_hash_free(_classes   ); _classes    = NULL;
+        eina_hash_free(_aliases   ); _aliases    = NULL;
+        eina_hash_free(_structs   ); _structs    = NULL;
+        eina_hash_free(_enums     ); _enums      = NULL;
+        eina_hash_free(_globals   ); _globals    = NULL;
+        eina_hash_free(_constants ); _constants  = NULL;
+        eina_hash_free(_classesf  ); _classesf   = NULL;
+        eina_hash_free(_aliasesf  ); _aliasesf   = NULL;
+        eina_hash_free(_structsf  ); _structsf   = NULL;
+        eina_hash_free(_enumsf    ); _enumsf     = NULL;
+        eina_hash_free(_globalsf  ); _globalsf   = NULL;
+        eina_hash_free(_constantsf); _constantsf = NULL;
+        eina_hash_free(_filenames ); _filenames  = NULL;
+        eina_hash_free(_tfilenames); _tfilenames = NULL;
         eina_shutdown();
      }
    return _database_init_count;
