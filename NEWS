@@ -80,7 +80,6 @@ Features:
    * Eet: Add support for ETC1+Alpha
    * new eina api/object - eina thread queues
    * ecore-drm: Add necessary headers for dbus and systemd-login
-   * Merge branch 'devs/devilhorns/systemd'
    * edje embryo: Now supports get_anim_pos_map
    * efreet - add menu ref/unref calls and refcounting to try solve e issue
    * edje: Add dpi feature.
@@ -168,6 +167,31 @@ Fixes:
    * evas-wayland-egl: Fix wayland egl engine to work again (T1478)
    * evas-wayland-egl: Fix evas wayland_egl engine not loading due to missing symbol
    * eldbus: do not ignore numeric "0" in property_set
+   * Evas text: fix text object size with empty texts.
+   * evas-wayland-egl: Fix evas wayland_egl engine crash on mesa driver
+   * wayland-egl: Fix eng_window_new function prototype
+   * wayland-egl: Fix calls to eng_window_new
+   * wayland-egl: Fix Outbuf structure not having evas & engine info
+   * evas-wayland-egl: Fix typos about egl context attribute list
+   * evas-wayland-egl: Add missing free
+   * evas-gl-common: Fix invalid use of Texture
+   * ecore-wayland: Calloc Can fail, so check that it works (or return if not).
+   * evas-software-x11: Remove EINA_UNUSED for function paramater that is used
+   * edje_pick: fix a segfault on 'set' copy
+   * edje_pick: fix a copied aliases
+   * Grid: fix a mirroring bug
+   * evas gl - fix yuv smooth rendering
+   * evas image loaders - silence noisy warnings that are just not needed
+   * evas-wayland-egl: Fix segmentation fault on dynamic loaded gl related functions.
+   * evas-wayland-egl: Free Outbuf if gl_generic_init fails
+   * evas-wayland-egl: Check for valid tilebuffer before setting tile size
+   * evas-wayland-egl: Increment frame count after flush
+   * evas-wayland-egl: Don't resize gl_context during first_rect
+   * evas-wayland-egl: Fix wayland egl engine not rendering
+   * efl: Fixed unwanted configure.ac warning.
+   * evas textblock: fixed ellipsis character cut off issue with complex markup text. (T1213)
+   * evas-gl-generic: Remove useless returns
+   * ecore_imf_context: fixing default id getter
 
 Changes since 1.9.0:
 --------------------
