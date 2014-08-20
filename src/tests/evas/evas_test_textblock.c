@@ -1752,6 +1752,10 @@ START_TEST(evas_textblock_wrapping)
 
 
    /* Ellipsis */
+   int ellip_w = 0;
+   evas_object_textblock_text_markup_set(tb, "…");
+   evas_object_textblock_size_native_get(tb, &ellip_w, NULL);
+
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa<br/>b");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=word");
    evas_object_textblock_size_native_get(tb, &nw, &nh);
@@ -1800,6 +1804,19 @@ START_TEST(evas_textblock_wrapping)
            ck_assert_int_eq(h, nh);
         }
    }
+
+   evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=char");
+   nw /= 3;
+   nh *= 2;
+   evas_object_resize(tb, nw, nh);
+
+     {
+        evas_object_textblock_line_number_geometry_get(tb, 1, NULL, NULL, &w, NULL);
+        ck_assert_int_gt(w, ellip_w);
+     }
 
    /* Word wrap ending with whites. */
    evas_object_resize(tb, 322, 400);
