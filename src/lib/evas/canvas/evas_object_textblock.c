@@ -4433,19 +4433,6 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    _layout_line_finalize(c, ellip_ti->parent.format);
 }
 
-#ifdef BIDI_SUPPORT
-static void
-_layout_paragraph_reorder_lines(Evas_Object_Textblock_Paragraph *par)
-{
-   Evas_Object_Textblock_Line *ln;
-
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(par->lines), ln)
-     {
-        _layout_line_reorder(ln);
-     }
-}
-#endif
-
 /* Don't do much for the meanwhile. */
 static inline void
 _layout_paragraph_render(Evas_Textblock_Data *o,
