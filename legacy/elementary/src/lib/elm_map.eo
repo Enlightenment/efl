@@ -650,6 +650,8 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
          given @p lat and @p lon coordinates and show it (by scrolling) in the
          center of the viewport concurrently.
 
+         @since 1.11
+
          @see elm_map_region_bring_in()
          @see elm_map_zoom_set()
 
