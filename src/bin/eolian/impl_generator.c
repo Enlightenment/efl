@@ -180,16 +180,21 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
      }
 
    fname = eolian_function_name_get(foo);
-   flen = strlen(fname);
-   if ((fname) && (flen >= strlen("destructor")))
+   if (fname)
      {
-        if (impl_desc && !strcmp(fname + flen - strlen("destructor"), "destructor"))
+        flen = strlen(fname);
+        if (flen >= strlen("destructor"))
           {
-             eina_strbuf_append_printf(super_invok,
+             if (impl_desc &&
+                 (!strcmp(fname + flen - strlen("destructor"), "destructor")))
+               {
+                  eina_strbuf_append_printf
+                  (super_invok,
                    "   eo_do_super(obj, %s_%s, %s_%s(%s));\n",
                    class_env.upper_eo_prefix, class_env.upper_classtype,
                    impl_env.lower_eo_prefix, eolian_function_name_get(foo),
                    eina_strbuf_string_get(short_params));
+               }
           }
      }
 
