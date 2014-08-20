@@ -3316,6 +3316,10 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
       _layout_item_ascent_descent_adjust(c->obj, &c->ascent, &c->descent,
             NULL, fmt);
 
+#ifdef BIDI_SUPPORT
+   _layout_line_reorder(c->ln);
+#endif
+
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
    EINA_INLIST_FOREACH(c->ln->items, it)
@@ -4442,6 +4446,7 @@ _layout_paragraph_reorder_lines(Evas_Object_Textblock_Paragraph *par)
 }
 #endif
 
+/* Don't do much for the meanwhile. */
 static inline void
 _layout_paragraph_render(Evas_Textblock_Data *o,
 			 Evas_Object_Textblock_Paragraph *par)
@@ -4450,21 +4455,7 @@ _layout_paragraph_render(Evas_Textblock_Data *o,
       return;
    par->rendered = EINA_TRUE;
 
-#ifdef BIDI_SUPPORT
-   if (par->is_bidi)
-     {
-        _layout_update_bidi_props(o, par);
-        _layout_paragraph_reorder_lines(par);
-        /* Clear the bidi props because we don't need them anymore. */
-        if (par->bidi_props)
-          {
-             evas_bidi_paragraph_props_unref(par->bidi_props);
-             par->bidi_props = NULL;
-          }
-     }
-#else
    (void) o;
-#endif
 }
 
 /* calculates items width in current paragraph */
@@ -4677,6 +4668,14 @@ _layout_par(Ctxt *c)
      }
 
    c->y = c->par->y;
+
+
+#ifdef BIDI_SUPPORT
+   if (c->par->is_bidi)
+     {
+        _layout_update_bidi_props(c->o, c->par);
+     }
+#endif
 
    it = _ITEM(eina_list_data_get(c->par->logical_items));
    _layout_line_new(c, it->format);
@@ -4949,6 +4948,14 @@ _layout_par(Ctxt *c)
 end:
    if (line_breaks)
       free(line_breaks);
+
+#ifdef BIDI_SUPPORT
+   if (c->par->bidi_props)
+     {
+        evas_bidi_paragraph_props_unref(c->par->bidi_props);
+        c->par->bidi_props = NULL;
+     }
+#endif
 
    return ret;
 }

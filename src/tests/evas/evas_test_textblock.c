@@ -2933,6 +2933,12 @@ START_TEST(evas_textblock_size)
               (nw != oldnw + 8) || (nh != oldnh));
      }
 
+   evas_object_resize(tb, 1000, 1000);
+   evas_object_textblock_text_markup_set(tb, "\u200fHello שלום");
+   evas_object_textblock_size_formatted_get(tb, &w, NULL);
+   evas_object_textblock_size_native_get(tb, &nw, NULL);
+   ck_assert_int_eq(nw, w);
+
    /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
 }
