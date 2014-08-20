@@ -1305,8 +1305,8 @@ parse_property(Eo_Lexer *ls)
       case KW_at_constructor:
         CASE_LOCK(ls, constructor, "constructor qualifier");
         eo_lexer_get(ls);
+        prop->is_constructing = EINA_TRUE;
         break;
-
       default:
         goto body;
      }
@@ -1409,6 +1409,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
              break;
            case KW_at_constructor:
              CASE_LOCK(ls, constructor, "constructor qualifier");
+             meth->is_constructing = EINA_TRUE;
              eo_lexer_get(ls);
              break;
            default:
