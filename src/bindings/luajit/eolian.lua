@@ -486,6 +486,7 @@ M.Type = ffi.metatype("Eolian_Type", {
             local v = eolian.eolian_type_free_func_get(self)
             if v == nil then return nil end
             return ffi.string(v)
+        end,
     }
 })
 
