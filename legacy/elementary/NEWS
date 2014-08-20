@@ -44,6 +44,7 @@ Fixes:
    * gengrid: Fixed position calculation routine.
    * genlist: Do not segv if the user clear the list on item double-click.
    * gengrid: Once again selects items using keyboard when no item was previously selected
+   * entry: fix clearing selection region problem while it's already selected.
 
 Changes since Elementary 1.9.0:
 -------------------------------
