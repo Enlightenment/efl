@@ -29,6 +29,7 @@ static void
 _notify_theme_apply(Evas_Object *obj)
 {
    const char *style = elm_widget_style_get(obj);
+   const char *position;
    double ax, ay;
 
    ELM_NOTIFY_DATA_GET(obj, sd);
@@ -37,16 +38,32 @@ _notify_theme_apply(Evas_Object *obj)
    ay = sd->vertical_align;
    if ((elm_widget_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
 
-   if (ay == 0.0)
-     elm_widget_theme_object_set(obj, sd->notify, "notify", "top", style);
-   else if (ay == 1.0)
-     elm_widget_theme_object_set(obj, sd->notify, "notify", "bottom", style);
-   else if (ax == 0.0)
-     elm_widget_theme_object_set(obj, sd->notify, "notify", "left", style);
-   else if (ax == 1.0)
-     elm_widget_theme_object_set(obj, sd->notify, "notify", "right", style);
+   if (ay <= 0.3)
+     {
+        if (ax <= 0.3)
+          position = "top_left";
+        else if (ax >= 0.7)
+          position = "top_right";
+        else
+          position = "top";
+     }
+   else if (ay >= 0.7)
+     {
+        if (ax <= 0.3)
+          position = "bottom_left";
+        else if (ax >= 0.7)
+          position = "bottom_right";
+        else
+          position = "bottom";
+     }
+   else if (ax <= 0.3)
+     position = "left";
+   else if (ax >= 0.7)
+     position = "right";
    else
-     elm_widget_theme_object_set(obj, sd->notify, "notify", "center", style);
+     position = "center";
+
+   elm_widget_theme_object_set(obj, sd->notify, "notify", position, style);
 }
 
 /**
