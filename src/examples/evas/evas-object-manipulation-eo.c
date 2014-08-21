@@ -192,7 +192,7 @@ main(void)
    eo_unref(d.img);
 
    eo_do(d.img, evas_obj_image_filled_set(EINA_TRUE),
-                evas_obj_image_file_set(img_path, NULL),
+                efl_file_set(img_path, NULL),
                 err = evas_obj_image_load_error_get());
 
    if (err != EVAS_LOAD_ERROR_NONE)
@@ -213,7 +213,7 @@ main(void)
    /* border on the image's clipper, here just to emphasize its position */
    d.clipper_border = eo_add(EVAS_IMAGE_CLASS, d.canvas);
    eo_do(d.clipper_border, evas_obj_image_filled_set(EINA_TRUE),
-                           evas_obj_image_file_set(border_img_path, NULL),
+                           efl_file_set(border_img_path, NULL),
                            err = evas_obj_image_load_error_get());
 
    if (err != EVAS_LOAD_ERROR_NONE)
