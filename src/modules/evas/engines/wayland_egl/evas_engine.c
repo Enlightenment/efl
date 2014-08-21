@@ -775,62 +775,6 @@ eng_output_free(void *data)
 }
 
 static void 
-eng_output_resize(void *data, int w, int h)
-{
-   Render_Engine *re;
-   Outbuf *ob;
-
-   if (!(re = (Render_Engine *)data)) return;
-   if (!(ob = eng_get_ob(re))) return;
-
-   eng_window_use(ob);
-
-   if (ob->win)
-     {
-        int aw, ah, dx = 0, dy = 0;
-
-        if ((ob->rot == 90) || (ob->rot == 270))
-          wl_egl_window_get_attached_size(ob->win, &ah, &aw);
-        else
-          wl_egl_window_get_attached_size(ob->win, &aw, &ah);
-
-        if (ob->info->info.edges & 4) // resize from left
-          {
-             if ((ob->rot == 90) || (ob->rot == 270))
-               dx = ah - h;
-             else
-               dx = aw - w;
-          }
-
-        if (ob->info->info.edges & 1) // resize from top
-          {
-             if ((ob->rot == 90) || (ob->rot == 270))
-               dy = aw - w;
-             else
-               dy = ah - h;
-          }
-
-        if ((ob->rot == 90) || (ob->rot == 270))
-          wl_egl_window_resize(ob->win, h, w, dx, dy);
-        else
-          wl_egl_window_resize(ob->win, w, h, dx, dy);
-     }
-
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, ob->rot);
-
-   if (re->generic.software.tb)
-     evas_common_tilebuf_free(re->generic.software.tb);
-
-   re->generic.software.tb = evas_common_tilebuf_new(w, h);
-   if (re->generic.software.tb)
-     {
-        evas_common_tilebuf_set_tile_size(re->generic.software.tb, 
-                                          TILESIZE, TILESIZE);
-        evas_common_tilebuf_tile_strict_set(re->generic.software.tb, EINA_TRUE);
-     }
-}
-
-static void 
 eng_output_dump(void *data)
 {
    Render_Engine *re;
@@ -1072,7 +1016,6 @@ module_open(Evas_Module *em)
    ORD(canvas_alpha_get);
 
    ORD(output_free);
-   ORD(output_resize);
    ORD(output_dump);
 
    ORD(image_native_set);
