@@ -340,7 +340,7 @@ _item_unselect(Elm_Gen_Item *it)
    Elm_Gen_Item_Type *item = GG_IT(it);
    Elm_Gengrid_Data *sd = item->wsd;
 
-   if ((it->generation < sd->generation) || (!it->highlighted))
+   if ((it->generation < sd->generation) || (!it->selected))
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
