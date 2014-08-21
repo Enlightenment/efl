@@ -109,7 +109,7 @@ _drm_tick_schedule(void)
 {
    drmVBlank vbl;
 
-   DBG("sched...\n");
+   DBG("sched...");
    vbl.request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT;
    vbl.request.sequence = drm_animators_interval;
    vbl.request.signal = 0;
@@ -122,7 +122,7 @@ _tick_send(char val)
 {
    Msg *msg;
    void *ref;
-   DBG("_tick_send(%i)\n", val);
+   DBG("_tick_send(%i)", val);
    msg = eina_thread_queue_send(thq, sizeof(Msg), &ref);
    msg->val = val;
    eina_thread_queue_send_done(thq, ref);
@@ -151,7 +151,7 @@ _drm_send_time(double t)
    if (tim)
      {
         *tim = t;
-        DBG("   ... send %1.8f\n", t);
+        DBG("   ... send %1.8f", t);
         ecore_thread_feedback(drm_thread, tim);
      }
 }
@@ -167,7 +167,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
      {
         static unsigned int pframe = 0;
 
-        DBG("vblank %i\n", frame);
+        DBG("vblank %i", frame);
         if (pframe != frame)
           {
              _drm_send_time((double)sec + ((double)usec / 1000000));
@@ -178,18 +178,18 @@ _drm_vblank_handler(int fd EINA_UNUSED,
 }
 
 static void
-_drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+_drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
    Msg *msg;
    void *ref;
    int tick = 0;
 
-   for (;;)
+   while (!ecore_thread_check(thread))
      {
-        DBG("------- drm_event_is_busy=%i\n", drm_event_is_busy);
+        DBG("------- drm_event_is_busy=%i", drm_event_is_busy);
         if (!drm_event_is_busy)
           {
-             DBG("wait...\n");
+             DBG("wait...");
              msg = eina_thread_queue_wait(thq, &ref);
              if (msg)
                {
@@ -201,7 +201,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
           {
              do
                {
-                  DBG("poll...\n");
+                  DBG("poll...");
                   msg = eina_thread_queue_poll(thq, &ref);
                   if (msg)
                     {
@@ -211,7 +211,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
                }
              while (msg);
           }
-        DBG("tick = %i\n", tick);
+        DBG("tick = %i", tick);
         if (tick == -1)
           {
              drm_thread = NULL;
@@ -257,13 +257,13 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 static void
 _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   DBG("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
+   DBG("notify.... %3.3f %i", *((double *)msg), drm_event_is_busy);
    if (drm_event_is_busy)
      {
         double *t = msg;
         static double pt = 0.0;
 
-        DBG("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
+        DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
         ecore_loop_time_set(*t);
         ecore_animator_custom_tick();
         pt = *t;
