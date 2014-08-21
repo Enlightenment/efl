@@ -19,6 +19,7 @@ Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 
 static int _database_init_count = 0;
+static int _parse_depth = 0;
 
 static void
 _hashlist_free(void *data)
@@ -159,19 +160,20 @@ eolian_eo_file_parse(const char *filepath)
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
    const char *inherit_name;
    Eolian_Implement *impl;
+   ++_parse_depth;
    if (!class)
      {
         if (!eo_parser_database_fill(filepath, EINA_FALSE))
           {
              free(bfiledup);
-             return EINA_FALSE;
+             goto error;
           }
         class = eolian_class_get_by_file(bfilename);
         if (!class)
           {
              ERR("No class for file %s", bfilename);
              free(bfiledup);
-             return EINA_FALSE;
+             goto error;
           }
      }
    free(bfiledup);
@@ -186,9 +188,9 @@ eolian_eo_file_parse(const char *filepath)
              if (!filepath)
                {
                   ERR("Unable to find a file for class %s", inherit_name);
-                  return EINA_FALSE;
+                  goto error;
                }
-             if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
+             if (!eolian_eo_file_parse(filepath)) goto error;
           }
      }
    eina_iterator_free(itr);
@@ -200,11 +202,21 @@ eolian_eo_file_parse(const char *filepath)
         if (!impl_func)
           {
              ERR("Unable to find function %s", eolian_implement_full_name_get(impl));
-             return EINA_FALSE;
+             goto error;
           }
      }
    eina_iterator_free(itr);
+
+   --_parse_depth;
+   if (!_parse_depth && !database_validate())
+     goto error;
+
+    _parse_depth = 0;
    return EINA_TRUE;
+
+error:
+   _parse_depth = 0;
+   return EINA_FALSE;
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)

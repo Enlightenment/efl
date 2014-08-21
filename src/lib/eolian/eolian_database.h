@@ -251,6 +251,7 @@ int database_init();
 int database_shutdown();
 
 char *database_class_to_filename(const char *cname);
+Eina_Bool database_validate(void);
 
 /* types */
 
