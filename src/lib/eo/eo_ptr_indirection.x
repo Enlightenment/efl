@@ -1,5 +1,5 @@
 #include <assert.h>
-#if defined (__linux__) || defined (__MacOSX__)
+#ifdef HAVE_MMAP
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -119,7 +119,7 @@ typedef struct _Mem_Header
 static void *
 _eo_id_mem_alloc(size_t size)
 {
-#if defined (__linux__) || defined (__MacOSX__)
+#ifdef HAVE_MMAP
    void *ptr;
    Mem_Header *hdr;
    size_t newsize;
@@ -154,7 +154,7 @@ _eo_id_mem_calloc(size_t num, size_t size)
 static void
 _eo_id_mem_free(void *ptr)
 {
-#if defined (__linux__) || defined (__MacOSX__)
+#ifdef HAVE_MMAP
    Mem_Header *hdr;
    if (!ptr) return;
    hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
@@ -173,7 +173,7 @@ _eo_id_mem_free(void *ptr)
 static void
 _eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
 {
-# if defined (__linux__) || defined (__MacOSX__)
+# ifdef HAVE_MMAP
    Mem_Header *hdr;
    if (!ptr) return;
    hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);

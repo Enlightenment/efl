@@ -289,7 +289,7 @@ typedef struct _Eo_Call_Stack {
 static void *
 _eo_call_stack_mem_alloc(size_t maxsize)
 {
-#if defined (__linux__) || defined (__MacOSX__)
+#ifdef HAVE_MMAP
    // allocate eo call stack via mmped anon segment if on linux - more
    // secure and safe. also gives page aligned memory allowing madvise
    void *ptr;
@@ -310,7 +310,7 @@ _eo_call_stack_mem_alloc(size_t maxsize)
 #endif
 }
 
-#if defined (__linux__) || defined (__MacOSX__)
+#ifdef HAVE_MMAP
 static void
 _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize)
 {
@@ -331,7 +331,7 @@ _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize EINA_UNUSED, si
 #endif
 }
 
-#if defined (__linux__) || defined (__MacOSX__)
+#ifdef HAVE_MMAP
 static void
 _eo_call_stack_mem_free(void *ptr, size_t maxsize)
 {
