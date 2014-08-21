@@ -1960,13 +1960,16 @@ data_write(void)
    data_write_lua_scripts(ef);
    INF("lua scripts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
 
-   pending_threads++;
-   if (threads)
-     ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
-   else
+   if (!no_save)
      {
-        data_thread_source(ef, NULL);
-        data_thread_source_end(ef, NULL);
+        pending_threads++;
+        if (threads)
+          ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
+        else
+          {
+             data_thread_source(ef, NULL);
+             data_thread_source_end(ef, NULL);
+          }
      }
    INF("source: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads++;
