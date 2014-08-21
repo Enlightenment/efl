@@ -191,7 +191,7 @@ _item_show_region(void *data)
                     + minx;
                else it_xpos = minx;
                miny = miny + ((cvh - (sd->item_height * row))
-                    * GG_IT(it)->wsd->align_y);
+                    * sd->align_y);
                it_ypos = y * sd->item_height + miny;
                it->x = x;
                it->y = y;
@@ -209,7 +209,7 @@ _item_show_region(void *data)
                     + miny;
                else it_ypos = miny;
                minx = minx + ((cvw - (sd->item_width * col))
-                    * GG_IT(it)->wsd->align_x);
+                    * sd->align_x);
                it->x = x;
                it->y = y;
             }
@@ -389,7 +389,7 @@ _item_mouse_move_cb(void *data,
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ox, oy, ow, oh, it_scrl_x, it_scrl_y;
    Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
@@ -469,7 +469,7 @@ _item_mouse_move_cb(void *data,
 
         it->dragging = 1;
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        if (!GG_IT(it)->wsd->was_selected)
+        if (!sd->was_selected)
           it->unsel_cb(it);
 
         if (dy < 0)
@@ -504,7 +504,7 @@ static Eina_Bool
 _long_press_cb(void *data)
 {
    Elm_Gen_Item *it = data;
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    it->long_timer = NULL;
    if (elm_widget_item_disabled_get(it) || (it->dragging))
@@ -518,8 +518,8 @@ _long_press_cb(void *data)
         evas_object_raise(VIEW(it));
         eo_do(WIDGET(it), elm_interface_scrollable_hold_set(EINA_TRUE));
         eo_do(WIDGET(it), elm_interface_scrollable_bounce_allow_get(
-          &(GG_IT(it)->wsd->old_h_bounce),
-          &(GG_IT(it)->wsd->old_v_bounce)));
+          &(sd->old_h_bounce),
+          &(sd->old_v_bounce)));
 
         eo_do(WIDGET(it), elm_interface_scrollable_bounce_allow_set(EINA_FALSE, EINA_FALSE));
         edje_object_signal_emit(VIEW(it), "elm,state,reorder,enabled", "elm");
@@ -532,7 +532,7 @@ static void
 _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise = NULL;
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (_is_no_select(it) ||
        (!sd->highlight) || (it->highlighted) ||
@@ -558,7 +558,7 @@ _item_mouse_down_cb(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Elm_Gen_Item *it = data;
    Evas_Coord x, y;
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (ev->button != 1) return;
 
@@ -632,12 +632,10 @@ _item_mouse_up_cb(void *data,
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_Bool dragged = EINA_FALSE;
-   Elm_Gengrid_Data *sd;
    Elm_Gen_Item *it = data;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (ev->button != 1) return;
-
-   sd = GG_IT(it)->wsd;
 
    it->down = EINA_FALSE;
    sd->mouse_down = EINA_FALSE;
@@ -672,8 +670,7 @@ _item_mouse_up_cb(void *data,
 
         eo_do(WIDGET(it), elm_interface_scrollable_hold_set(EINA_FALSE));
         eo_do(WIDGET(it), elm_interface_scrollable_bounce_allow_set(
-          GG_IT(it)->wsd->old_h_bounce,
-          GG_IT(it)->wsd->old_v_bounce));
+              sd->old_h_bounce, sd->old_v_bounce));
 
         edje_object_signal_emit(VIEW(it), "elm,state,reorder,disabled", "elm");
      }
@@ -816,7 +813,7 @@ _item_realize(Elm_Gen_Item *it)
 {
    char buf[1024];
    char style[1024];
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if ((it->realized) ||
        (it->generation < sd->generation))
@@ -980,7 +977,7 @@ _reorder_item_move_animator_cb(void *data)
    Elm_Gen_Item *it = data;
    Evas_Coord dx, dy;
    double tt, t;
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    tt = REORDER_EFFECT_TIME;
    t = ((0.0 > (t = ecore_loop_time_get() -
@@ -1053,14 +1050,13 @@ _item_place(Elm_Gen_Item *it,
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih, ww;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
    Eina_Bool reorder_item_move_forward = EINA_FALSE;
-   Elm_Gengrid_Data *wsd;
    Eina_Bool was_realized;
    Elm_Gen_Item_Type *item;
    long items_count;
    int item_pos;
 
    item = GG_IT(it);
-   wsd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, wsd);
 
    it->x = cx;
    it->y = cy;
@@ -3114,7 +3110,7 @@ _item_position_update(Eina_Inlist *list,
 static void
 _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 {
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    elm_widget_item_pre_notify_del(it);
    it->generation = sd->generation - 1; /* This means that the item is deleted */
@@ -3137,7 +3133,7 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 static void
 _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
 {
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    _elm_gengrid_item_del_not_serious(it);
    sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
@@ -3161,9 +3157,10 @@ static void
 _item_del(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    evas_event_freeze(evas_object_evas_get(obj));
-   GG_IT(it)->wsd->selected = eina_list_remove(GG_IT(it)->wsd->selected, it);
+   sd->selected = eina_list_remove(sd->selected, it);
    if (it->realized) _elm_gengrid_item_unrealize(it, EINA_FALSE);
    _elm_gengrid_item_del_serious(it);
    elm_gengrid_item_class_unref((Elm_Gengrid_Item_Class *)it->itc);
@@ -3416,7 +3413,7 @@ static void
 _item_select(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
-   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (_is_no_select(it) ||
        (it->generation < sd->generation) ||
@@ -3972,11 +3969,10 @@ elm_gengrid_item_selected_set(Elm_Object_Item *item,
                               Eina_Bool selected)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-   Elm_Gengrid_Data *sd;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
-   sd = GG_IT(it)->wsd;
    if ((it->generation < sd->generation) || elm_widget_item_disabled_get(it))
      return;
    selected = !!selected;
@@ -4534,10 +4530,9 @@ elm_gengrid_item_show(Elm_Object_Item *item,
                       Elm_Gengrid_Item_Scrollto_Type type)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-   Elm_Gengrid_Data *sd;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
-   sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if ((it->generation < sd->generation)) return;
 
@@ -4552,11 +4547,10 @@ EAPI void
 elm_gengrid_item_bring_in(Elm_Object_Item *item,
                           Elm_Gengrid_Item_Scrollto_Type type)
 {
-   Elm_Gengrid_Data *sd;
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
-   sd = GG_IT(it)->wsd;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->generation < sd->generation) return;
 

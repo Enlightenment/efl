@@ -92,7 +92,7 @@ _is_no_select(Elm_List_Item *it)
 static inline void
 _elm_list_item_free(Elm_List_Item *it)
 {
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (sd->focused_item == (Elm_Object_Item *)it)
      sd->focused_item = NULL;
@@ -251,7 +251,7 @@ _elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
                                  Eina_Bool h_mode)
 {
    if (!it) return EINA_FALSE;
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (!sd->focus_on_selection_enabled) return EINA_FALSE;
    if ((h_mode && (dir != ELM_FOCUS_UP) && (dir != ELM_FOCUS_DOWN)) ||
@@ -1113,7 +1113,7 @@ _elm_list_elm_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
 static void
 _elm_list_item_focused(Elm_List_Item *it)
 {
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Coord x, y, w, h, sx, sy, sw, sh;
    const char *focus_raise;
 
@@ -1464,7 +1464,7 @@ _swipe_cancel(void *data)
    Elm_List_Item *it = data;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it, ECORE_CALLBACK_CANCEL);
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    sd->swipe = EINA_FALSE;
    sd->movements = 0;
@@ -1526,7 +1526,7 @@ _swipe_do(Elm_List_Item *it)
    int i, sum = 0;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    sd->swipe = EINA_FALSE;
    for (i = 0; i < sd->movements; i++)
@@ -2802,7 +2802,7 @@ elm_list_item_show(Elm_Object_Item *it)
    Evas_Coord x, y, w, h;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    evas_smart_objects_calculate(evas_object_evas_get(sd->box));
    evas_object_geometry_get(sd->box, &bx, &by, &bw, &bh);
@@ -2820,7 +2820,7 @@ elm_list_item_bring_in(Elm_Object_Item *it)
    Evas_Coord x, y, w, h;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    evas_smart_objects_calculate(evas_object_evas_get(sd->box));
    evas_object_geometry_get(sd->box, &bx, &by, &bw, &bh);
@@ -2937,7 +2937,7 @@ _elm_list_item_coordinates_adjust(Elm_List_Item *it,
                                   Evas_Coord *w,
                                   Evas_Coord *h)
 {
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
 
    Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
 
