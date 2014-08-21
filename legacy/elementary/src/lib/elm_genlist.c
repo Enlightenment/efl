@@ -5546,7 +5546,8 @@ _item_select(Elm_Gen_Item *it)
         sd->selected =
           eina_list_append(sd->selected, it);
      }
-   else if (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS)
+   else if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
+            (it->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS))
      return;
 
    evas_object_ref(obj);
