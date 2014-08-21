@@ -1421,6 +1421,8 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
         Eina_List *ll;
         Code_Program *cp;
 
+        WRN("You are removing source from Edje file. This may break some use case. Be aware of your choice and the poor kitten you are arming with it !");
+
         if (sc->cd->original)
           {
              snprintf(buf, PATH_MAX, "edje/scripts/embryo/source/%i", sc->i);
