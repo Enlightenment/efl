@@ -56,12 +56,40 @@ extern "C" {
  */
 
 /**
+ * @ingroup Ecore_Exe_Group
+ *
+ * @{
+ */
+
+#include "ecore_exe.eo.h"
+
+/**
+ * @}
+ */
+
+
+/**
  * @ingroup Ecore_Job_Group
  *
  * @{
  */
 
 #include "ecore_job.eo.h"
+
+/**
+ * @}
+ */
+
+/**
+ * @ingroup Ecore_MainLoop_Group
+ *
+ * @{
+ */
+
+#include "ecore_mainloop.eo.h"
+
+/* We ue the factory pattern here, so you shouldn't call eo_add directly. */
+EAPI Eo *ecore_main_loop_get(void);
 
 /**
  * @}

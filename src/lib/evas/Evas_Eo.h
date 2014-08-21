@@ -4,6 +4,8 @@
 
 #include <Eo.h>
 
+#include <Efl.h>
+
 EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN;
 EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT;
 EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;

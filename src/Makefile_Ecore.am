@@ -8,6 +8,9 @@ BUILT_SOURCES += \
                  lib/ecore/ecore_poller.eo.c \
                  lib/ecore/ecore_poller.eo.h \
                  lib/ecore/ecore_poller.eo.legacy.h \
+                 lib/ecore/ecore_exe.eo.c \
+                 lib/ecore/ecore_exe.eo.h \
+                 lib/ecore/ecore_exe.eo.legacy.h \
                  lib/ecore/ecore_job.eo.c \
                  lib/ecore/ecore_job.eo.h \
                  lib/ecore/ecore_job.eo.legacy.h \
@@ -21,6 +24,8 @@ BUILT_SOURCES += \
                  lib/ecore/ecore_animator.eo.c \
                  lib/ecore/ecore_animator.eo.h \
                  lib/ecore/ecore_animator.eo.legacy.h \
+                 lib/ecore/ecore_mainloop.eo.c \
+                 lib/ecore/ecore_mainloop.eo.h \
                  lib/ecore/ecore_parent.eo.c \
                  lib/ecore/ecore_parent.eo.h
 
@@ -29,10 +34,12 @@ ecoreeolianfiles_DATA = \
               lib/ecore/ecore_timer.eo \
               lib/ecore/ecore_poller.eo \
               lib/ecore/ecore_job.eo \
+              lib/ecore/ecore_exe.eo \
               lib/ecore/ecore_idler.eo \
               lib/ecore/ecore_idle_enterer.eo \
               lib/ecore/ecore_idle_exiter.eo \
               lib/ecore/ecore_animator.eo \
+              lib/ecore/ecore_mainloop.eo \
               lib/ecore/ecore_parent.eo
 
 EXTRA_DIST += \
@@ -51,11 +58,14 @@ lib/ecore/Ecore_Getopt.h
 nodist_installed_ecoremainheaders_DATA = \
                                         lib/ecore/ecore_timer.eo.h \
                                         lib/ecore/ecore_poller.eo.h \
+                                        lib/ecore/ecore_exe.eo.h \
+                                        lib/ecore/ecore_exe.eo.legacy.h \
                                         lib/ecore/ecore_job.eo.h \
                                         lib/ecore/ecore_idler.eo.h \
                                         lib/ecore/ecore_idle_enterer.eo.h \
                                         lib/ecore/ecore_idle_exiter.eo.h \
                                         lib/ecore/ecore_animator.eo.h \
+                                        lib/ecore/ecore_mainloop.eo.h \
                                         lib/ecore/ecore_parent.eo.h \
                                         lib/ecore/ecore_timer.eo.legacy.h \
                                         lib/ecore/ecore_poller.eo.legacy.h \

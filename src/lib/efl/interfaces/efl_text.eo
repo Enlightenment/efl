@@ -1,0 +1,27 @@
+interface Efl.Text {
+   legacy_prefix: null;
+   properties {
+      text {
+         set {
+            /*@
+            Sets the text string to be displayed by the given text object.
+
+            @see evas_object_text_text_get() */
+         }
+         get {
+            /*@
+            Retrieves the text string currently being displayed by the given
+            text object.
+
+            @return The text string currently being displayed on it.
+
+            @note Do not free() the return value.
+
+            @see evas_object_text_text_set() */
+         }
+         values {
+            const(char)* text; /*@ Text string to display on it. */
+         }
+      }
+   }
+}

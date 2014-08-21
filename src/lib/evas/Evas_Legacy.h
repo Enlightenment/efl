@@ -1257,6 +1257,192 @@ EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *o
  */
 EAPI void                          evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1);
 
+/**
+ *
+ * Set the source file from where an image object must fetch the real
+ * image data (it may be an Eet file, besides pure image ones).
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can specify the key to be used as the index of the image in
+ * this file.
+ *
+ * Example:
+ * @code
+ * img = evas_object_image_add(canvas);
+ * evas_object_image_file_set(img, "/path/to/img", NULL);
+ * err = evas_object_image_load_error_get(img);
+ * if (err != EVAS_LOAD_ERROR_NONE)
+ * {
+ * fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
+ * valid_path, evas_load_error_str(err));
+ * }
+ * else
+ * {
+ * evas_object_image_fill_set(img, 0, 0, w, h);
+ * evas_object_resize(img, w, h);
+ * evas_object_show(img);
+ * }
+ * @endcode
+ *
+ * @param[in] file The image file path.
+ * @param[in] key The image key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ */
+EAPI void evas_object_image_file_set(Eo *obj, const char *file, const char *key);
+
+/**
+ *
+ * Retrieve the source file from where an image object is to fetch the
+ * real image data (it may be an Eet file, besides pure image ones).
+ *
+ * You must @b not modify the strings on the returned pointers.
+ *
+ * @note Use @c NULL pointers on the file components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @param[out] file The image file path.
+ * @param[out] key The image key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ */
+EAPI void evas_object_image_file_get(const Eo *obj, const char **file, const char **key);
+
+/**
+ *
+ * Save the given image object's contents to an (image) file.
+ *
+ * The extension suffix on @p file will determine which <b>saver
+ * module</b> Evas is to use when saving, thus the final file's
+ * format. If the file supports multiple data stored in it (Eet ones),
+ * you can specify the key to be used as the index of the image in it.
+ *
+ * You can specify some flags when saving the image.  Currently
+ * acceptable flags are @c quality and @c compress. Eg.: @c
+ * "quality=100 compress=9"
+ *
+ * @param[in] file The filename to be used to save the image (extension
+obligatory).
+ * @param[in] key The image key in the file (if an Eet one), or @c NULL,
+otherwise.
+ * @param[in] flags String containing the flags to be used (@c NULL for
+none).
+ */
+EAPI Eina_Bool evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags) EINA_ARG_NONNULL(2);
+
+/**
+ *
+ * Check if an image object can be animated (have multiple frames)
+ *
+ * @return whether obj support animation
+ *
+ * This returns if the image file of an image object is capable of animation
+ * such as an animated gif file might. This is only useful to be called once
+ * the image object file has been set.
+ *
+ * Example:
+ * @code
+ * extern Evas_Object *obj;
+ *
+ * if (evas_object_image_animated_get(obj))
+ * {
+ * int frame_count;
+ * int loop_count;
+ * Evas_Image_Animated_Loop_Hint loop_type;
+ * double duration;
+ *
+ * frame_count = evas_object_image_animated_frame_count_get(obj);
+ * printf("This image has %d frames\n",frame_count);
+ *
+ * duration = evas_object_image_animated_frame_duration_get(obj,1,0);
+ * printf("Frame 1's duration is %f. You had better set object's frame to 2 after this duration using timer\n");
+ *
+ * loop_count = evas_object_image_animated_loop_count_get(obj);
+ * printf("loop count is %d. You had better run loop %d times\n",loop_count,loop_count);
+ *
+ * loop_type = evas_object_image_animated_loop_type_get(obj);
+ * if (loop_type == EVAS_IMAGE_ANIMATED_HINT_LOOP)
+ * printf("You had better set frame like 1->2->3->1->2->3...\n");
+ * else if (loop_type == EVAS_IMAGE_ANIMATED_HINT_PINGPONG)
+ * printf("You had better set frame like 1->2->3->2->1->2...\n");
+ * else
+ * printf("Unknown loop type\n");
+ *
+ * evas_object_image_animated_frame_set(obj,1);
+ * printf("You set image object's frame to 1. You can see frame 1\n");
+ * }
+ * @endcode
+ *
+ * @see evas_object_image_animated_get()
+ * @see evas_object_image_animated_frame_count_get()
+ * @see evas_object_image_animated_loop_type_get()
+ * @see evas_object_image_animated_loop_count_get()
+ * @see evas_object_image_animated_frame_duration_get()
+ * @see evas_object_image_animated_frame_set()
+ * @since 1.1
+ *
+ */
+EAPI Eina_Bool evas_object_image_animated_get(const Eo *obj);
+
+/**
+ *
+ * Set the size of a given image object's source image, when loading
+ * it.
+ *
+ * This function sets a new (loading) size for the given canvas
+ * image.
+ *
+ * @see evas_object_image_load_size_get()
+ *
+ * @param[in] w The new width of the image's load size.
+ * @param[in] h The new height of the image's load size.
+ */
+EAPI void evas_object_image_load_size_set(Eo *obj, int w, int h);
+
+/**
+ *
+ * Get the size of a given image object's source image, when loading
+ * it.
+ *
+ * @note Use @c NULL pointers on the size components you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see evas_object_image_load_size_set() for more details
+ *
+ * @param[out] w The new width of the image's load size.
+ * @param[out] h The new height of the image's load size.
+ */
+EAPI void evas_object_image_load_size_get(const Eo *obj, int *w, int *h);
+
+/**
+ *
+ * Sets whether to use high-quality image scaling algorithm on the
+ * given image object.
+ *
+ * When enabled, a higher quality image scaling algorithm is used when
+ * scaling images to sizes other than the source image's original
+ * one. This gives better results but is more computationally
+ * expensive.
+ *
+ * @note Image objects get created originally with smooth scaling @b
+ * on.
+ *
+ * @see evas_object_image_smooth_scale_get()
+ *
+ * @param[in] smooth_scale Whether to use smooth scale or not.
+ */
+EAPI void evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale);
+
+/**
+ *
+ * Retrieves whether the given image object is using high-quality
+ * image scaling algorithm.
+ *
+ * @return Whether smooth scale is being used.
+ *
+ * See @ref evas_object_image_smooth_scale_set() for more details.
+ *
+ */
+EAPI Eina_Bool evas_object_image_smooth_scale_get(const Eo *obj);
+
 #include "canvas/evas_image.eo.legacy.h"
 
 /**
@@ -1285,7 +1471,92 @@ EAPI void                          evas_object_image_alpha_mask_set(Evas_Object 
  */
 EAPI Evas_Object         *evas_object_text_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+/**
+ *
+ * Sets the text string to be displayed by the given text object.
+ *
+ * @see evas_object_text_text_get()
+ *
+ * @param[in] text Text string to display on it.
+ */
+EAPI void evas_object_text_text_set(Eo *obj, const char *text);
+
+/**
+ *
+ * Retrieves the text string currently being displayed by the given
+ * text object.
+ *
+ * @return The text string currently being displayed on it.
+ *
+ * @note Do not free() the return value.
+ *
+ * @see evas_object_text_text_set()
+ *
+ */
+EAPI const char *evas_object_text_text_get(const Eo *obj);
+
 #include "canvas/evas_text.eo.legacy.h"
+
+/**
+ *
+ * Set the font (source) file to be used on a given text object.
+ *
+ * This function allows the font file to be explicitly set for a given
+ * text object, overriding system lookup, which will first occur in
+ * the given file's contents.
+ *
+ * @see evas_object_text_font_get()
+ *
+ * @param[in] font_source The font file's path.
+ */
+EAPI void evas_object_text_font_source_set(Eo *obj, const char *font_source);
+
+/**
+ *
+ * Get the font file's path which is being used on a given text
+ * object.
+ *
+ * @return The font file's path.
+ *
+ * @see evas_object_text_font_get() for more details
+ *
+ */
+EAPI const char *evas_object_text_font_source_get(const Eo *obj);
+
+/**
+ *
+ * Set the font family or filename, and size on a given text object.
+ *
+ * This function allows the font name and size of a text object to be
+ * set. The @p font string has to follow fontconfig's convention on
+ * naming fonts, as it's the underlying library used to query system
+ * fonts by Evas (see the @c fc-list command's output, on your system,
+ * to get an idea). Alternatively, one can use a full path to a font file.
+ *
+ * @see evas_object_text_font_get()
+ * @see evas_object_text_font_source_set()
+ *
+ * @param[in] font The font family name or filename.
+ * @param[in] size The font size, in points.
+ */
+EAPI void evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size);
+
+/**
+ *
+ * Retrieve the font family and size in use on a given text object.
+ *
+ * This function allows the font name and size of a text object to be
+ * queried. Be aware that the font name string is still owned by Evas
+ * and should @b not have free() called on it by the caller of the
+ * function.
+ *
+ * @see evas_object_text_font_set()
+ *
+ * @param[out] font The font family name or filename.
+ * @param[out] size The font size, in points.
+ */
+EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_Size *size);
+
 
 /**
  * @}
@@ -1366,6 +1637,92 @@ EAPI void                                     evas_object_textblock_clear(Evas_O
 EAPI Evas_Object *evas_object_textgrid_add(Evas *e);
 
 #include "canvas/evas_textgrid.eo.legacy.h"
+
+/**
+ *
+ * @brief Set the font (source) file to be used on a given textgrid object.
+ *
+ * This function allows the font file @p font_source to be explicitly
+ * set for the textgrid object @p obj, overriding system lookup, which
+ * will first occur in the given file's contents. If @p font_source is
+ * @c NULL or is an empty string, or the same font_source has already
+ * been set, or on error, this function does nothing.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.7
+ *
+ * @param[in] font_source The font file's path.
+ */
+EAPI void evas_object_textgrid_font_source_set(Eo *obj, const char *font_source);
+
+/**
+ *
+ * @brief Get the font file's path which is being used on a given textgrid object.
+ *
+ * @return The font file's path.
+ *
+ * This function returns the font source path of the textgrid object
+ * @p obj. If the font source path has not been set, or on error,
+ * @c NULL is returned.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_set()
+ *
+ * @since 1.7
+ *
+ */
+EAPI const char *evas_object_textgrid_font_source_get(const Eo *obj);
+
+/**
+ *
+ * @brief Set the font family and size on a given textgrid object.
+ *
+ * This function allows the font name @p font_name and size
+ * @p font_size of the textgrid object @p obj to be set. The @p font_name
+ * string has to follow fontconfig's convention on naming fonts, as
+ * it's the underlying library used to query system fonts by Evas (see
+ * the @c fc-list command's output, on your system, to get an
+ * idea). It also has to be a monospace font. If @p font_name is
+ * @c NULL, or if it is an empty string, or if @p font_size is less or
+ * equal than 0, or on error, this function does nothing.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_source_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.7
+ *
+ * @param[in] font_name The font (family) name.
+ * @param[in] font_size The font size, in points.
+ */
+EAPI void evas_object_textgrid_font_set(Eo *obj, const char *font_name, Evas_Font_Size font_size);
+
+/**
+ *
+ * @brief Retrieve the font family and size in use on a given textgrid object.
+ *
+ * This function allows the font name and size of a textgrid object
+ * @p obj to be queried and stored respectively in the buffers
+ * @p font_name and @p font_size. Be aware that the font name string is
+ * still owned by Evas and should @b not have free() called on it by
+ * the caller of the function. On error, the font name is the empty
+ * string and the font size is 0. @p font_name and @p font_source can
+ * be @c NULL.
+ *
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.7
+ *
+ * @param[out] font_name The font (family) name.
+ * @param[out] font_size The font size, in points.
+ */
+EAPI void evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_Size *font_size);
 
 /**
  * @}

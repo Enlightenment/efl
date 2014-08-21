@@ -6,6 +6,7 @@ EOLIAN_FLAGS = \
 	       -I$(srcdir)/lib/eo \
 	       -I$(srcdir)/lib/evas/canvas \
 	       -I$(srcdir)/lib/edje \
+	       -I$(srcdir)/lib/efl/interfaces \
 	       -I$(srcdir)/lib/ecore_audio
 
 ELUA_GEN_FLAGS =
@@ -24,13 +25,12 @@ EXTRA_DIST =
 
 EFL_INSTALL_EXEC_HOOK=
 
-include Makefile_Efl.am
-
 include Makefile_Evil.am
 include Makefile_Escape.am
 
 include Makefile_Eina.am
 include Makefile_Eo.am
+include Makefile_Efl.am
 include Makefile_Eet.am
 include Makefile_Eolian.am
 include Makefile_Ecore.am
@@ -77,6 +77,7 @@ include Makefile_Eldbus_Cxx.am
 include Makefile_Eolian_Cxx.am
 include Makefile_Eet_Cxx.am
 include Makefile_Eo_Cxx.am
+include Makefile_Efl_Cxx.am
 
 include Makefile_Elua.am
 

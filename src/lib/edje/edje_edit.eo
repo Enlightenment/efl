@@ -5,6 +5,6 @@ class Edje.Edit (Edje.Object)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Evas.Object_Smart.del;
-      Edje.Object.file.set;
+      Efl.File.file.set;
    }
 }

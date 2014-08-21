@@ -1,0 +1,27 @@
+/* FIXME: Rename */
+
+interface Efl.Control {
+   legacy_prefix: null;
+   properties {
+        priority {
+             /*@ Control the priority of the object. */
+             set {
+             }
+             get {
+             }
+             values {
+                  int priority; /*@ The priority of the object */
+             }
+        }
+        suspend {
+             /*@ Controls whether the object is suspended or not. */
+             set {
+             }
+             get {
+             }
+             values {
+                  bool suspend; /*@ Controls whether the object is suspended or not. */
+             }
+        }
+   }
+}

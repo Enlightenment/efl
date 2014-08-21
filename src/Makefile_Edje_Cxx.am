@@ -32,6 +32,7 @@ TESTS += tests/edje_cxx/cxx_compile_test
 tests_edje_cxx_cxx_compile_test_SOURCES = tests/edje_cxx/cxx_compile_test.cc
 tests_edje_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/evas/canvas/ \
+-I$(top_builddir)/src/lib/efl/interfaces/ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/edje_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/edje_cxx\" \
 @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EDJE_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \

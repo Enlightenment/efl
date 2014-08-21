@@ -1,0 +1,40 @@
+class Ecore_Mainloop (Eo.Base)
+{
+   legacy_prefix: null;
+   data: null;
+   properties {
+      select_func {
+         set {
+         }
+         get {
+         }
+         values {
+            Ecore_Select_Function select_func;
+         }
+      }
+   }
+   methods {
+      iterate {
+      }
+      iterate_may_block {
+         return: int;
+         params {
+            int may_block;
+         }
+      }
+      begin {
+      }
+      quit {
+      }
+      animator_ticked {
+         /* FIXME: Should it be a prooperty? */
+         return: Eina_Bool;
+      }
+   }
+   events {
+      idle,enter;
+      idle,exit;
+      idle; /* FIXME: We need to make sure we can get it work. */
+      /* TODO: All of the legacy ecore events. (Ecore.h header) */
+   }
+}

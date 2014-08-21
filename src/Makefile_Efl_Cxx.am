@@ -1,0 +1,28 @@
+if HAVE_CXX11
+
+### Generated headers
+
+generated_efl_cxx_bindings = \
+                 lib/efl/interfaces/efl_control.eo.hh \
+                 lib/efl/interfaces/efl_file.eo.hh \
+                 lib/efl/interfaces/efl_image.eo.hh \
+                 lib/efl/interfaces/efl_player.eo.hh \
+                 lib/efl/interfaces/efl_text.eo.hh \
+                 lib/efl/interfaces/efl_text_properties.eo.hh
+
+lib/efl/Efl.hh: $(generated_efl_cxx_bindings)
+	@echo -e "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/efl/Efl.hh
+	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/efl/Efl.hh
+	@for i in $(generated_efl_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/efl/Efl.hh; done
+	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/efl/Efl.hh
+
+generated_efl_cxx_all = \
+	$(generated_efl_cxx_bindings) \
+	lib/efl/Efl.hh
+
+CLEANFILES += $(generated_efl_cxx_all)
+
+installed_eflcxxmainheadersdir = $(includedir)/efl-cxx-@VMAJ@/
+nodist_installed_eflcxxmainheaders_DATA = $(generated_efl_cxx_all)
+
+endif

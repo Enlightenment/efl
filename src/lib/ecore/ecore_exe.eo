@@ -1,0 +1,37 @@
+class Ecore.Exe (Eo.Base, Efl.Control)
+{
+   eo_prefix: ecore_obj_exe;
+   properties {
+        command @constructor {
+             /*@ Control the command that's executed. FIXME: May need a split/rename. */
+             set {
+                  legacy: null;
+             }
+             get {
+                  legacy: null;
+             }
+             values {
+                  const(char) *exe_cmd; /*@ The command to execute. */
+                  Ecore_Exe_Flags flags; /*@ The execution flags. */
+             }
+        }
+   }
+   methods {
+
+   }
+   implements {
+        Eo.Base.finalize;
+        Efl.Control.suspend.set;
+   }
+   events {
+        data,get: Ecore_Exe_Event_Data;
+        data,error: Ecore_Exe_Event_Data;
+   }
+}
+
+/* FIXME: Notes:
+   Should run_priority be a class function?
+   Instead of having quit, interrupt, bla bla bla, just have an enum and one function? As it's essentially a signal send.
+
+   Rename the events.
+*/

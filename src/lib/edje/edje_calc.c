@@ -2641,7 +2641,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
                                  p3->type.common.fill.y,
                                  p3->type.common.fill.w,
                                  p3->type.common.fill.h),
-         evas_obj_image_smooth_scale_set(p3->smooth),
+         efl_image_smooth_scale_set(p3->smooth),
          evas_obj_image_source_visible_set(chosen_desc->proxy.source_visible),
          evas_obj_image_source_clip_set(chosen_desc->proxy.source_clip));
 }
@@ -2656,7 +2656,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    eo_do(ep->object,
 	 evas_obj_image_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
 				 p3->type.common.fill.w, p3->type.common.fill.h),
-	 evas_obj_image_smooth_scale_set(p3->smooth));
+	 efl_image_smooth_scale_set(p3->smooth));
    if (chosen_desc->image.border.scale)
      {
         if (p3->type.common.spec.image.border_scale_by > FROM_DOUBLE(0.0))

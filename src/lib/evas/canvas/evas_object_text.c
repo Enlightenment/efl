@@ -388,7 +388,7 @@ _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *class_data EINA_UNUSE
 }
 
 EOLIAN static void
-_evas_text_font_source_set(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char *font_source)
+_evas_text_efl_text_properties_font_source_set(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char *font_source)
 {
    if ((o->cur.source) && (font_source) &&
        (!strcmp(o->cur.source, font_source)))
@@ -402,14 +402,14 @@ _evas_text_font_source_set(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char
 }
 
 EOLIAN static const char*
-_evas_text_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
+_evas_text_efl_text_properties_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
 
    return o->cur.source;
 }
 
 EOLIAN static void
-_evas_text_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_Size size)
+_evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_Size size)
 {
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
@@ -497,7 +497,7 @@ _evas_text_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_S
 }
 
 EOLIAN static void
-_evas_text_font_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char **font, Evas_Font_Size *size)
+_evas_text_efl_text_properties_font_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char **font, Evas_Font_Size *size)
 {
    if (font) *font = o->cur.font;
    if (size) *size = o->cur.size;
@@ -955,19 +955,19 @@ _evas_text_eo_base_dbg_info_get(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED, Eo_Db
 
    const char *text;
    int size;
-   eo_do(eo_obj, evas_obj_text_font_get(&text, &size));
+   eo_do(eo_obj, efl_text_properties_font_get(&text, &size));
    EO_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
    EO_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
-   eo_do(eo_obj, text = evas_obj_text_font_source_get());
+   eo_do(eo_obj, text = efl_text_properties_font_source_get());
    EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
 
-   eo_do(eo_obj, text = evas_obj_text_get());
+   eo_do(eo_obj, text = efl_text_get());
    EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, text);
 }
 
 EOLIAN static void
-_evas_text_text_set(Eo *eo_obj, Evas_Text_Data *o, const char *_text)
+_evas_text_efl_text_text_set(Eo *eo_obj, Evas_Text_Data *o, const char *_text)
 {
    int is, was, len;
    Eina_Unicode *text;
@@ -1022,7 +1022,7 @@ _evas_text_bidi_delimiters_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 }
 
 EOLIAN static const char*
-_evas_text_text_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
+_evas_text_efl_text_text_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
    return o->cur.utf8_text;
 }
@@ -2474,5 +2474,43 @@ update:
 }
 
 /* EXPERIMENTAL CODE END */
+
+EAPI void
+evas_object_text_font_source_set(Eo *obj, const char *font_source)
+{
+   eo_do((Eo *) obj, efl_text_properties_font_source_set(font_source));
+}
+
+EAPI const char *
+evas_object_text_font_source_get(const Eo *obj)
+{
+   const char *font_source = 0;
+   eo_do((Eo *) obj, font_source = efl_text_properties_font_source_get());
+   return font_source;
+}
+
+EAPI void
+evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size)
+{
+   eo_do((Eo *) obj, efl_text_properties_font_set(font, size));
+}
+
+EAPI void
+evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_Size *size)
+{
+   eo_do((Eo *) obj, efl_text_properties_font_get(font, size));
+}
+
+EAPI void
+evas_object_text_text_set(Eo *obj, const char *text)
+{
+   eo_do((Eo *) obj, efl_text_set(text));
+}
+
+EAPI const char *
+evas_object_text_text_get(const Eo *obj)
+{
+   return eo_do((Eo *) obj, efl_text_get());
+}
 
 #include "canvas/evas_text.eo.c"

@@ -1,0 +1,66 @@
+interface Efl.Image {
+   legacy_prefix: null;
+   properties {
+      animated {
+         get {
+            /*@
+              Check if an image  can be animated (have multiple frames)
+
+              @return whether the image support animation
+             */
+         }
+         values {
+              bool is_animated; /*@ If it's animated or not. */
+         }
+      }
+      load_size {
+         set {
+            /*@
+              Set the loading size of an image. The image will be loaded into memory as if it was
+              the set size instead of the original size. This can save a lot of memory, and is
+              important for scalable types like svg.
+            */
+         }
+         get {
+         }
+         values {
+            int w; /*@ The new width of the image's load size. */
+            int h; /*@ The new height of the image's load size. */
+         }
+      }
+      smooth_scale {
+         set {
+            /*@
+            Sets whether to use high-quality image scaling algorithm on the
+            given image.
+
+            When enabled, a higher quality image scaling algorithm is used when
+            scaling images to sizes other than the source image's original
+            one. This gives better results but is more computationally
+            expensive.
+            */
+         }
+         get {
+            /*@
+            Retrieves whether the given image is using high-quality
+            image scaling algorithm.
+
+            @return Whether smooth scale is being used.
+            */
+         }
+         values {
+            bool smooth_scale; /*@ Whether to use smooth scale or not. */
+         }
+      }
+      ratio {
+         get {
+            /*@
+              The native ration of the image object
+            */
+         }
+         values {
+            double ratio; /*@ The image's ratio */
+         }
+      }
+   }
+}

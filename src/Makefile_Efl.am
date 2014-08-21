@@ -1,3 +1,49 @@
+BUILT_SOURCES += \
+                 lib/efl/interfaces/efl_control.eo.c \
+                 lib/efl/interfaces/efl_control.eo.h \
+                 lib/efl/interfaces/efl_file.eo.c \
+                 lib/efl/interfaces/efl_file.eo.h \
+                 lib/efl/interfaces/efl_image.eo.c \
+                 lib/efl/interfaces/efl_image.eo.h \
+                 lib/efl/interfaces/efl_player.eo.c \
+                 lib/efl/interfaces/efl_player.eo.h \
+                 lib/efl/interfaces/efl_text.eo.c \
+                 lib/efl/interfaces/efl_text.eo.h \
+                 lib/efl/interfaces/efl_text_properties.eo.c \
+                 lib/efl/interfaces/efl_text_properties.eo.h
+
+efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
+efleolianfiles_DATA = \
+              lib/efl/interfaces/efl_control.eo \
+              lib/efl/interfaces/efl_file.eo \
+              lib/efl/interfaces/efl_image.eo \
+              lib/efl/interfaces/efl_player.eo \
+              lib/efl/interfaces/efl_text.eo \
+              lib/efl/interfaces/efl_text_properties.eo
+
+EXTRA_DIST += \
+              ${efleolianfiles_DATA}
+
+lib_LTLIBRARIES += lib/efl/libefl.la
+
+lib_efl_libefl_la_SOURCES = \
+              lib/efl/interfaces/efl_interfaces_main.c
+
+lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EFL_CFLAGS@
+lib_efl_libefl_la_LIBADD = @EFL_LIBS@
+lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
+lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
 installed_eflheadersdir = $(includedir)/efl-@VMAJ@
 dist_installed_eflheaders_DATA = \
-lib/efl/Efl_Config.h
+              lib/efl/Efl_Config.h \
+              lib/efl/Efl.h
+
+installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
+nodist_installed_eflinterfaces_DATA = \
+              lib/efl/interfaces/efl_control.eo.h \
+              lib/efl/interfaces/efl_file.eo.h \
+              lib/efl/interfaces/efl_image.eo.h \
+              lib/efl/interfaces/efl_player.eo.h \
+              lib/efl/interfaces/efl_text.eo.h \
+              lib/efl/interfaces/efl_text_properties.eo.h

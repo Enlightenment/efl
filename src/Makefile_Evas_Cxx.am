@@ -52,6 +52,7 @@ TESTS += tests/evas_cxx/cxx_compile_test
 
 tests_evas_cxx_cxx_compile_test_SOURCES = tests/evas_cxx/cxx_compile_test.cc
 tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+ -I$(top_builddir)/src/lib/efl/interfaces/ \
  -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas_cxx\" \
  -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas_cxx\" \
  @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \

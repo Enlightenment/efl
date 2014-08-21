@@ -1,0 +1,83 @@
+interface Efl.File {
+   legacy_prefix: null;
+   properties {
+      file {
+         set {
+            /*@
+            Set the source file from where an image object must fetch the real
+            image data (it may be an Eet file, besides pure image ones).
+
+            If the file supports multiple data stored in it (as Eet files do),
+            you can specify the key to be used as the index of the image in
+            this file.
+
+            Example:
+            @code
+            img = evas_object_image_add(canvas);
+            evas_object_image_file_set(img, "/path/to/img", NULL);
+            err = evas_object_image_load_error_get(img);
+            if (err != EVAS_LOAD_ERROR_NONE)
+            {
+            fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
+            valid_path, evas_load_error_str(err));
+            }
+            else
+            {
+            evas_object_image_fill_set(img, 0, 0, w, h);
+            evas_object_resize(img, w, h);
+            evas_object_show(img);
+            }
+            @endcode */
+
+            return: bool;
+         }
+         get {
+            /*@
+            Retrieve the source file from where an image object is to fetch the
+            real image data (it may be an Eet file, besides pure image ones).
+
+            You must @b not modify the strings on the returned pointers.
+
+            @note Use @c NULL pointers on the file components you're not
+            interested in: they'll be ignored by the function. */
+         }
+         values {
+            const(char)* file; /*@ The image file path. */
+            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
+            NULL, otherwise. */
+         }
+      }
+   }
+   methods {
+      save @const {
+         /*@
+         Save the given image object's contents to an (image) file.
+
+         The extension suffix on @p file will determine which <b>saver
+         module</b> Evas is to use when saving, thus the final file's
+         format. If the file supports multiple data stored in it (Eet ones),
+         you can specify the key to be used as the index of the image in it.
+
+         You can specify some flags when saving the image.  Currently
+         acceptable flags are @c quality and @c compress. Eg.: @c
+         "quality=100 compress=9" */
+
+         return: bool;
+         params {
+            @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
+            obligatory). */
+            @in const(char)* key; /*@ The image key in the file (if an Eet one), or @c NULL,
+            otherwise. */
+            @in const(char)* flags; /*@ String containing the flags to be used (@c NULL for
+            none). */
+         }
+      }
+      eject @const {
+           /*@
+             Eject the represented object.
+
+             Get rid of and clean the pointed resource.
+             */
+      }
+   }
+}

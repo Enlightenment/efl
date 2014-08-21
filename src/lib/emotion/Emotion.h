@@ -120,6 +120,13 @@
 # endif
 #endif /* ! _WIN32 */
 
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "Emotion_Legacy.h"
+#endif
+#ifdef EFL_EO_API_SUPPORT
+#include "Emotion_Eo.h"
+#endif
+
 /**
  * @file Emotion.h
  * @brief The file that provides Emotion the API, with functions available for
@@ -386,52 +393,6 @@ EAPI Eina_Bool emotion_shutdown(void);
  * @ingroup Emotion_Init
  */
 EAPI Evas_Object *emotion_object_add                   (Evas *evas);
-
-/**
- * @brief Set the specified option for the current module.
- *
- * @param obj The emotion object which the option is being set to.
- * @param opt The option that is being set. Currently supported optiosn: "video"
- * and "audio".
- * @param val The value of the option. Currently only supports "off" (?!?!?!)
- *
- * This function allows one to mute the video or audio of the emotion object.
- *
- * @note Please don't use this function, consider using
- * emotion_object_audio_mute_set() and emotion_object_video_mute_set() instead.
- *
- * @see emotion_object_audio_mute_set()
- * @see emotion_object_video_mute_set()
- *
- * @ingroup Emotion_Init
- */
-EAPI void         emotion_object_module_option_set     (Evas_Object *obj, const char *opt, const char *val);
-
-/**
- * @brief Initializes an emotion object with the specified module.
- *
- * @param obj The emotion object to be initialized.
- * @param module_filename The name of the module to be used (gstreamer or xine).
- * @return @c EINA_TRUE if the specified module was successfully initialized for
- * this object, @c EINA_FALSE otherwise.
- *
- * This function is required after creating the emotion object, in order to
- * specify which module will be used with this object. Different objects can
- * use different modules to play a media file. The current supported modules are
- * @b gstreamer and @b xine.
- *
- * To use any of them, you need to make sure that support for them was compiled
- * correctly.
- *
- * @note It's possible to disable the build of a module with
- * --disable-module_name.
- *
- * @see emotion_object_add()
- * @see emotion_object_file_set()
- *
- * @ingroup Emotion_Init
- */
-EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
 
 /**
  * @brief Set borders for the emotion object.

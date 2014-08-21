@@ -48,7 +48,7 @@ _edje_object_eo_base_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Eo_Dbg_Info
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *edje_group;
-   eo_do(eo_obj, edje_obj_file_get(&file, &edje_group));
+   eo_do(eo_obj, efl_file_get(&file, &edje_group));
    EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
    EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
@@ -332,7 +332,7 @@ _edje_object_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN static Eina_Bool
-_edje_object_file_set(Eo *obj, Edje *_pd EINA_UNUSED, const char *file, const char *group)
+_edje_object_efl_file_file_set(Eo *obj, Edje *_pd EINA_UNUSED, const char *file, const char *group)
 {
    Eina_Bool ret;
    Eina_File *f = NULL;
@@ -383,4 +383,19 @@ _edje_object_mmap_set(Eo *obj, Edje *_pd EINA_UNUSED, const Eina_File *f, const 
    return ret;
 }
 
+EAPI Eina_Bool
+edje_object_file_set(Eo *obj, const char *file, const char *group)
+{
+   Eina_Bool ret = 0;
+   eo_do((Eo *) obj, ret = efl_file_set(file, group));
+   return ret;
+}
+
+EAPI void
+edje_object_file_get(const Eo *obj, const char **file, const char **group)
+{
+   eo_do((Eo *) obj, efl_file_get(file, group));
+}
+
 #include "edje_object.eo.c"
+
