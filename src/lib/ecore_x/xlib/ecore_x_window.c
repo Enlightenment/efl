@@ -1683,7 +1683,6 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                        CWWinGravity,
                        &attr);
    if (_ecore_xlib_sync) ecore_x_sync();
-   XFreeColormap(_ecore_x_disp, attr.colormap);
 
    if (parent == DefaultRootWindow(_ecore_x_disp))
      ecore_x_window_defaults_set(win);
