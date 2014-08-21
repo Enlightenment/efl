@@ -138,6 +138,7 @@ ffi.cdef [[
     Eina_Bool eolian_system_directory_scan();
     Eina_Bool eolian_all_eo_files_parse();
     Eina_Bool eolian_all_eot_files_parse();
+    Eina_Bool eolian_database_validate(void);
     Eina_Bool eolian_show_class(const Eolian_Class *klass);
     Eina_Bool eolian_show_typedef(const char *alias);
     Eina_Bool eolian_show_struct(const char *name);
@@ -302,6 +303,10 @@ end
 
 M.all_eot_files_parse = function()
     return eolian.eolian_all_eot_files_parse() ~= 0
+end
+
+M.database_validate = function()
+    return eolian.eolian_databasE_validate() ~= 0
 end
 
 M.eot_file_parse = function(fname)

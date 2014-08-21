@@ -677,6 +677,9 @@ M.generate = function(fname, libname, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
     end
+    if not eolian.database_validate() then
+        error("Failed validating database.")
+    end
     local sfn = fname:match(".*[\\/](.+)$") or fname
     local klass = eolian.class_get_by_file(sfn)
     local tp = klass:type_get()

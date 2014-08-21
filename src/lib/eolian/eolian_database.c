@@ -19,7 +19,6 @@ Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 
 static int _database_init_count = 0;
-static int _parse_depth = 0;
 
 static void
 _hashlist_free(void *data)
@@ -160,7 +159,6 @@ eolian_eo_file_parse(const char *filepath)
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
    const char *inherit_name;
    Eolian_Implement *impl;
-   ++_parse_depth;
    if (!class)
      {
         if (!eo_parser_database_fill(filepath, EINA_FALSE))
@@ -207,15 +205,9 @@ eolian_eo_file_parse(const char *filepath)
      }
    eina_iterator_free(itr);
 
-   --_parse_depth;
-   if (!_parse_depth && !database_validate())
-     goto error;
-
-    _parse_depth = 0;
    return EINA_TRUE;
 
 error:
-   _parse_depth = 0;
    return EINA_FALSE;
 }
 
@@ -249,3 +241,8 @@ eolian_all_eo_files_parse()
    return ret;
 }
 
+EAPI Eina_Bool
+eolian_database_validate(void)
+{
+   return database_validate();
+}

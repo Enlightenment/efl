@@ -291,6 +291,17 @@ EAPI Eina_Bool eolian_all_eo_files_parse();
 EAPI Eina_Bool eolian_all_eot_files_parse();
 
 /*
+ * @brief Validates the database, printing errors and warnings.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * Useful to catch type errors etc. early on.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_database_validate(void);
+
+/*
  * @brief Show information about a given class.
  *
  * If klass is NULL, this function will print information of

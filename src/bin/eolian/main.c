@@ -358,6 +358,12 @@ int main(int argc, char **argv)
         goto end;
      }
 
+   if (!eolian_database_validate())
+     {
+        ERR("Error validating database.\n");
+        goto end;
+     }
+
    eo_filename_copy = strdup(eo_filename);
    eo_file_basename = basename(eo_filename_copy);
    if (show)
