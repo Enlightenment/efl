@@ -125,8 +125,37 @@ if test "x${efl_have_posix_threads_spinlock}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS_SPINLOCK], [1], [Define to mention that POSIX threads spinlocks are supported])
 fi
 
+
+dnl checks if the compiler supports OSX spinlock
+
+efl_have_osx_spinlock="no"
+
+if test "x${_efl_have_posix_threads}" = "xyes" ; then
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <libkern/OSAtomic.h>
+                       ]],
+                       [[
+OSSpinLock spin_lock = 0;
+OSSpinLockTry(&spin_lock);
+                       ]])],
+      [efl_have_osx_spinlock="yes"],
+      [efl_have_osx_spinlock="no"])
+fi
+
+AC_MSG_CHECKING([whether to build OSX spinlock code])
+AC_MSG_RESULT([${efl_have_osx_spinlock}])
+
+if test "x${efl_have_osx_spinlock}" = "xyes" ; then
+   AC_DEFINE([EFL_HAVE_OSX_SPINLOCK], [1], [Define to mention that OSX spinlocks are supported])
+fi
+
+
+
 AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"],
    [$1],
    [m4_if([$2], [$2], [AC_MSG_ERROR([Threads are required.])])])
 
+
 ])
+

@@ -97,6 +97,11 @@
 #endif
 @EINA_CONFIGURE_HAVE_POSIX_SPINLOCK@
 
+#ifndef EINA_HAVE_OSX_SPINLOCK
+# undef EINA_HAVE_OSX_SPINLOCK
+#endif
+@EINA_CONFIGURE_HAVE_OSX_SPINLOCK@
+
 /* Do not turn the following #define as meaning EFL64. We are only 
    interested to know if sizeof (void*) == 64bits or not. Those means
    something else.

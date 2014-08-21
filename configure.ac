@@ -936,6 +936,7 @@ EINA_CONFIG([HAVE_PTHREAD_BARRIER], [test "x${efl_have_pthread_barrier}" = "xyes
 EINA_CONFIG([HAVE_PTHREAD_AFFINITY], [test "x${efl_have_setaffinity}" = "xyes"])
 EINA_CONFIG([HAVE_DEBUG_THREADS], [test "x${want_debug_threads}" = "xyes"])
 EINA_CONFIG([HAVE_POSIX_SPINLOCK], [test "x${efl_have_posix_threads_spinlock}" = "xyes"])
+EINA_CONFIG([HAVE_OSX_SPINLOCK], [test "x${efl_have_osx_spinlock}" = "xyes"])
 
 ### Modules
 
@@ -4498,7 +4499,12 @@ elif test "${have_windows}" = "yes"; then
 fi
 EFL_ADD_FEATURE([system], [ipv6])
 
-EFL_ADD_FEATURE([thread], [spinlocks], [${efl_have_posix_threads_spinlock}])
+if test "x${efl_have_posix_threads_spinlock}" = "xyes" || test "x${efl_have_osx_spinlock}" = "xyes"; then
+   efl_have_spinlock="yes"
+else
+   efl_have_spinlock="no"
+fi
+EFL_ADD_FEATURE([thread], [spinlocks], [${efl_have_spinlock}])
 EFL_ADD_FEATURE([thread], [barrier], [${efl_have_pthread_barrier}])
 EFL_ADD_FEATURE([thread], [affinity], [${efl_have_setaffinity}])
 

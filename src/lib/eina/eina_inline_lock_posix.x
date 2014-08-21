@@ -38,6 +38,10 @@
 # include <pthread.h>
 #endif
 
+#ifdef EINA_HAVE_OSX_SPINLOCK
+# include <libkern/OSAtomic.h>
+#endif
+
 #include <semaphore.h>
 
 #include <sys/time.h>
@@ -59,8 +63,10 @@ typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
 typedef pthread_key_t Eina_TLS;
 typedef sem_t Eina_Semaphore;
-#ifdef EINA_HAVE_POSIX_SPINLOCK
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
 typedef pthread_spinlock_t Eina_Spinlock;
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+typedef OSSpinLock Eina_Spinlock;
 #else
 typedef Eina_Lock Eina_Spinlock;
 #endif
@@ -603,8 +609,13 @@ eina_barrier_wait(Eina_Barrier *barrier)
 static inline Eina_Bool
 eina_spinlock_new(Eina_Spinlock *spinlock)
 {
-#ifdef EINA_HAVE_POSIX_SPINLOCK
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
    return pthread_spin_init(spinlock, PTHREAD_PROCESS_PRIVATE) == 0 ? EINA_TRUE : EINA_FALSE;
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+   /* OSSpinLock is an integer type.  The convention is that unlocked is
+    * zero, and locked is nonzero. */
+   *spinlock = 0;
+   return EINA_LOCK_SUCCEED;
 #else
    return eina_lock_new(spinlock);
 #endif
@@ -613,7 +624,7 @@ eina_spinlock_new(Eina_Spinlock *spinlock)
 static inline Eina_Lock_Result
 eina_spinlock_take(Eina_Spinlock *spinlock)
 {
-#ifdef EINA_HAVE_POSIX_SPINLOCK
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
    int t;
 
    do {
@@ -626,6 +637,12 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
    } while (t != 0);
 
    return EINA_LOCK_SUCCEED;
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+   /* void OSSpinLockLock(OSSpinLock *lock);
+    * Will spin if the lock is already held, but employs various strategies to
+    * back off, making it immune to most priority-inversion livelocks. */
+   OSSpinLockLock(spinlock);
+   return EINA_LOCK_SUCCEED;
 #else
    return eina_lock_take(spinlock);
 #endif
@@ -634,11 +651,16 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
 static inline Eina_Lock_Result
 eina_spinlock_take_try(Eina_Spinlock *spinlock)
 {
-#ifdef EINA_HAVE_POSIX_SPINLOCK
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
    int t;
 
    t = pthread_spin_trylock(spinlock);
    return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+   /* bool OSSpinLockTry(OSSpinLock *lock);
+    * Immediately returns false if the lock was held, true if it took the
+    * lock.  It does not spin. */
+   return (OSSpinLockTry(spinlock)) ? EINA_LOCK_SUCCEED : EINA_LOCK_FAIL;
 #else
    return eina_lock_take_try(spinlock);
 #endif
@@ -647,8 +669,13 @@ eina_spinlock_take_try(Eina_Spinlock *spinlock)
 static inline Eina_Lock_Result
 eina_spinlock_release(Eina_Spinlock *spinlock)
 {
-#ifdef EINA_HAVE_POSIX_SPINLOCK
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
    return pthread_spin_unlock(spinlock) ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+   /* void OSSpinLockUnlock(OSSpinLock *lock);
+    * Unconditionally unlocks the lock by zeroing it. */
+   OSSpinLockUnlock(spinlock);
+   return EINA_LOCK_SUCCEED;
 #else
    return eina_lock_release(spinlock);
 #endif
@@ -657,8 +684,11 @@ eina_spinlock_release(Eina_Spinlock *spinlock)
 static inline void
 eina_spinlock_free(Eina_Spinlock *spinlock)
 {
-#ifdef EINA_HAVE_POSIX_SPINLOCK
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
    pthread_spin_destroy(spinlock);
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+   /* Not applicable */
+   (void) spinlock;
 #else
    eina_lock_free(spinlock);
 #endif
@@ -669,5 +699,20 @@ eina_spinlock_free(Eina_Spinlock *spinlock)
 #ifdef EINA_XOPEN_SOURCE
 # define _XOPEN_SOURCE EINA_XOPEN_SOURCE
 #endif
+
+#ifdef EINA_HAVE_OSX_SPINLOCK
+/* The inclusion of libkern/OSAtomic.h is a mess because it includes stdbool
+ * which #defines bool. #undef bool is not sufficient because then other
+ * headers (dlfcn.h) require it and #include stdbool.h to get it. It is
+ * therefore important to "undo" the whole stdbool.h inclusion. */
+# undef true
+# undef false
+# undef bool
+# undef __bool_true_false_are_defined
+# undef _STDBOOL_H_ // OSX SDK
+# undef __STDBOOL_H // Clang 5.1
+# undef _STDBOOL_H  // GCC
+#endif
+
 
 #endif
