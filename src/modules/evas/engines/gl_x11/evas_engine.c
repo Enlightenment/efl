@@ -1022,6 +1022,7 @@ eng_setup(Evas *eo_e, void *in)
                                                 &evgl_funcs,
                                                 e->output.w, e->output.h))
           {
+             eng_window_free(ob);
              free(re);
              return 0;
           }
