@@ -1,2 +1,8 @@
 #!/bin/sh
-/usr/lib/libreoffice/program/soffice.bin --headless --convert-to pdf --outdir "$2" "$1"
+LOBIN=soffice
+if [ -x /usr/lib/libreoffice/program/soffice.bin ]; then
+  LOBIN=/usr/lib/libreoffice/program/soffice.bin
+elif [ -x /usr/lib64/libreoffice/program/soffice.bin ]; then
+  LOBIN=/usr/lib64/libreoffice/program/soffice.bin
+fi
+$LOBIN --headless --convert-to pdf --outdir "$2" "$1"
