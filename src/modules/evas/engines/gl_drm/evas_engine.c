@@ -246,9 +246,9 @@ evgl_eng_display_get(void *data)
      }
 
    if (eng_get_ob(re))
-      return (void*)eng_get_ob(re)->egl_disp;
+     return (void*)eng_get_ob(re)->egl_disp;
    else
-      return NULL;
+     return NULL;
 }
 
 static void *
@@ -263,9 +263,9 @@ evgl_eng_evas_surface_get(void *data)
      }
 
    if (eng_get_ob(re))
-      return (void*)eng_get_ob(re)->egl_surface[0];
+     return (void*)eng_get_ob(re)->egl_surface[0];
    else
-      return NULL;
+     return NULL;
 }
 
 static int
@@ -513,7 +513,7 @@ evgl_eng_rotation_angle_get(void *data)
      }
 
    if ((eng_get_ob(re)) && (eng_get_ob(re)->gl_context))
-      return eng_get_ob(re)->gl_context->rot;
+     return eng_get_ob(re)->gl_context->rot;
    else
      {
         ERR("Unable to retrieve rotation angle.");
@@ -572,23 +572,18 @@ eng_setup(Evas *eo_e, void *in)
 
    if ((s = getenv("EVAS_GL_SWAP_MODE")))
      {
-        if ((!strcasecmp(s, "full")) ||
-            (!strcasecmp(s, "f")))
+        if ((!strcasecmp(s, "full")) || (!strcasecmp(s, "f")))
           swap_mode = MODE_FULL;
-        else if ((!strcasecmp(s, "copy")) ||
-                 (!strcasecmp(s, "c")))
+        else if ((!strcasecmp(s, "copy")) || (!strcasecmp(s, "c")))
           swap_mode = MODE_COPY;
         else if ((!strcasecmp(s, "double")) ||
-                 (!strcasecmp(s, "d")) ||
-                 (!strcasecmp(s, "2")))
+                 (!strcasecmp(s, "d")) || (!strcasecmp(s, "2")))
           swap_mode = MODE_DOUBLE;
         else if ((!strcasecmp(s, "triple")) ||
-                 (!strcasecmp(s, "t")) ||
-                 (!strcasecmp(s, "3")))
+                 (!strcasecmp(s, "t")) || (!strcasecmp(s, "3")))
           swap_mode = MODE_TRIPLE;
         else if ((!strcasecmp(s, "quadruple")) ||
-                 (!strcasecmp(s, "q")) ||
-                 (!strcasecmp(s, "4")))
+                 (!strcasecmp(s, "q")) || (!strcasecmp(s, "4")))
           swap_mode = MODE_QUADRUPLE;
      }
 
@@ -618,8 +613,7 @@ eng_setup(Evas *eo_e, void *in)
         if (info->info.fd < 0)
           {
              /* try to init drm (this includes openening the card & tty) */
-             if (!ecore_drm_init())
-                return 0;
+             if (!ecore_drm_init()) return 0;
 
              /* try getting the default drm device */
              if (!(drm_dev = ecore_drm_device_find(NULL, NULL)))
@@ -659,24 +653,19 @@ eng_setup(Evas *eo_e, void *in)
                }
           }
 
-         DBG("FD: %d, GBM_DEVICE: 0x%x, GBM_SURFACE: 0x%x",
-             info->info.fd, (unsigned int)info->info.gbm,
-             (unsigned int)info->info.surface);
+        DBG("FD: %d, GBM_DEVICE: 0x%x, GBM_SURFACE: 0x%x",
+            info->info.fd, (unsigned int)info->info.gbm,
+            (unsigned int)info->info.surface);
 
         re = calloc(1, sizeof(Render_Engine));
         if (!re) return 0;
 
         /* try to create new outbuf */
-        ob = eng_window_new(info, eo_e,
-                            info->info.gbm,
-                            info->info.surface,
-                            info->info.screen,
-                            info->info.depth,
-                            epd->output.w, epd->output.h,
-                            info->indirect,
+        ob = eng_window_new(info, eo_e, info->info.gbm, info->info.surface,
+                            info->info.screen,info->info.depth,
+                            epd->output.w, epd->output.h, info->indirect,
                             info->info.destination_alpha,
-                            info->info.rotation,
-                            swap_mode);
+                            info->info.rotation, swap_mode);
         if (!ob)
           {
              /* shutdown destroy gbm surface & shutdown gbm device */
@@ -688,7 +677,6 @@ eng_setup(Evas *eo_e, void *in)
              free(re);
              return 0;
           }
-
 
         if (!evas_render_engine_gl_generic_init(&re->generic, ob,
                                                 eng_outbuf_swap_mode,
@@ -727,11 +715,9 @@ eng_setup(Evas *eo_e, void *in)
 
         if ((s = getenv("EVAS_GL_PARTIAL_MERGE")))
           {
-             if ((!strcmp(s, "bounding")) ||
-                 (!strcmp(s, "b")))
+             if ((!strcmp(s, "bounding")) || (!strcmp(s, "b")))
                merge_mode = MERGE_BOUNDING;
-             else if ((!strcmp(s, "full")) ||
-                      (!strcmp(s, "f")))
+             else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
                merge_mode = MERGE_FULL;
           }
 
@@ -803,16 +789,13 @@ eng_setup(Evas *eo_e, void *in)
                       info->info.fd, (unsigned int)info->info.gbm,
                       (unsigned int)info->info.surface);
 
-                  ob = eng_window_new(info, eo_e,
-                                      info->info.gbm,
-                                      info->info.surface,
-                                      info->info.screen,
+                  ob = eng_window_new(info, eo_e, info->info.gbm,
+                                      info->info.surface, info->info.screen,
                                       info->info.depth,
                                       epd->output.w, epd->output.h,
                                       info->indirect,
                                       info->info.destination_alpha,
-                                      info->info.rotation,
-                                      swap_mode);
+                                      info->info.rotation, swap_mode);
 
                   eng_window_use(ob);
                   if (ob)
@@ -826,6 +809,7 @@ eng_setup(Evas *eo_e, void *in)
                }
           }
      }
+
    if (!eng_get_ob(re))
      {
         free(re);
@@ -855,6 +839,7 @@ eng_setup(Evas *eo_e, void *in)
         epd->engine.data.context =
            epd->engine.func->context_new(epd->engine.data.output);
      }
+
    eng_window_use(eng_get_ob(re));
 
    return 1;
@@ -951,8 +936,8 @@ module_open(Evas_Module *em)
    /* try to create eina logging domain */
    if (_evas_engine_gl_drm_log_dom < 0)
      {
-      _evas_engine_gl_drm_log_dom =
-         eina_log_domain_register("evas-gl-drm", EVAS_DEFAULT_LOG_COLOR);
+        _evas_engine_gl_drm_log_dom =
+          eina_log_domain_register("evas-gl-drm", EVAS_DEFAULT_LOG_COLOR);
      }
 
    /* if we could not create a logging domain, error out */
@@ -975,8 +960,7 @@ module_open(Evas_Module *em)
    ORD(output_dump);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
-	* implicit env set (EGL_PLATFORM=drm) prevent that.
-	*/
+    * implicit env set (EGL_PLATFORM=drm) prevent that. */
    setenv("EGL_PLATFORM", "drm", 1);
    gl_symbols();
 
@@ -994,13 +978,7 @@ module_close(Evas_Module *em EINA_UNUSED)
 
 static Evas_Module_Api evas_modapi =
 {
-   EVAS_MODULE_API_VERSION,
-   "gl_drm",
-   "none",
-   {
-     module_open,
-     module_close
-   }
+   EVAS_MODULE_API_VERSION, "gl_drm", "none", { module_open, module_close }
 };
 
 EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_drm);
