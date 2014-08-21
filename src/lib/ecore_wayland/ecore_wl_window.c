@@ -154,13 +154,14 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
 EAPI void 
 ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 {
+   Ecore_Wl_Input *input;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
 
+   input = win->keyboard_device;
    ecore_wl_window_update_location(win, x, y);
-
-   Ecore_Wl_Input *input = win->keyboard_device;
 
    if ((!input) && (win->parent))
      {
@@ -349,17 +350,16 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
                                           win->surface);
              if (!win->shell_surface) return;
 
+             wl_shell_surface_add_listener(win->shell_surface,
+                                           &_ecore_wl_shell_surface_listener,
+                                           win);
+
              if (win->title)
                wl_shell_surface_set_title(win->shell_surface, win->title);
 
              if (win->class_name)
                wl_shell_surface_set_class(win->shell_surface, win->class_name);
            }
-
-        if (win->shell_surface)
-          wl_shell_surface_add_listener(win->shell_surface,
-                                        &_ecore_wl_shell_surface_listener,
-                                        win);
      }
 
    /* trap for valid shell surface */
@@ -449,6 +449,7 @@ ecore_wl_window_raise(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+   /* FIXME: This should raise the xdg surface also */
    if (win->shell_surface) 
      wl_shell_surface_set_toplevel(win->shell_surface);
 }
