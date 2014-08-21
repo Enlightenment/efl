@@ -2,7 +2,7 @@
 %bcond_with x
 
 Name:           efl
-Version:        1.11.0+beta1
+Version:        1.11.0
 Release:        0
 License:        LGPL-2.1
 Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
@@ -736,17 +736,17 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so.*
 %{_libdir}/libecore_drm.so.*
-%{_libdir}/ecore_drm/bin/v-*/ecore_drm_*
 %endif
 %if %{with x}
 %{_libdir}/libecore_x.so.*
+%{_libdir}/ecore_x/*/*/*
 %endif
 %{_libdir}/ecore_evas/engines/*/*/module.so
 %{_libdir}/ecore_imf/modules/*/*/module.so
 %{_libdir}/ecore/system/tizen/*/module.so
 %{_libdir}/ecore/system/systemd/v-*/module.so
 %{_datadir}/ecore/checkme
-%{_datadir}/ecore_imf/checkme
+%{_datadir}/ecore_*/checkme
 
 %files -n ecore-examples
 %manifest %{name}.manifest
