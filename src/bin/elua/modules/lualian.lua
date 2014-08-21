@@ -535,10 +535,9 @@ local Parent  = eo.class_get("%s")
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, klass, modname, libname, ch)
+    __ctor = function(self, fname, klass, libname, ch)
         self.fname    = fname:match(".+/(.+)") or fname
         self.klass    = klass
-        self.modname  = (modname and #modname > 0) and modname or nil
         self.libname  = libname
         self.children = ch
     end,
@@ -548,12 +547,8 @@ local File = Node:clone {
         dom:log(log.level.INFO, "  Class            : "
             .. self.klass:full_name_get())
 
-        local modn = self.modname
-        if    modn then
-              modn = ("require(\"%s\")"):format(modn)
-        else
-              modn = "{}"
-        end
+        local modn = ("require(\"%s\")"):format(self.klass:namespaces_get()()
+            :lower())
 
         s:write(([[
 -- EFL LuaJIT bindings: %s (class %s)
@@ -640,7 +635,7 @@ local gen_contents = function(klass)
     return cnt, evs
 end
 
-local gen_mixin = function(klass)
+local gen_mixin = function(kliass)
     return Mixin(klass, gen_contents(klass))
 end
 
@@ -679,7 +674,7 @@ M.system_directory_scan = function()
     return eolian.system_directory_scan()
 end
 
-M.generate = function(fname, modname, libname, fstream)
+M.generate = function(fname, libname, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
     end
@@ -695,8 +690,7 @@ M.generate = function(fname, modname, libname, fstream)
     else
         error(klass:full_name_get() .. ": unknown type")
     end
-    File(fname, klass, modname, libname, { cl })
-        :generate(fstream or io.stdout)
+    File(fname, klass, libname, { cl }):generate(fstream or io.stdout)
 end
 
 return M
