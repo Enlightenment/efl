@@ -909,7 +909,9 @@ ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name)
    if (!win) return;
    eina_stringshare_replace(&win->class_name, class_name);
 
-   if ((win->shell_surface) && (win->class_name))
+   if ((win->xdg_surface) && (win->class_name))
+     xdg_surface_set_app_id(win->xdg_surface, win->class_name);
+   else if ((win->shell_surface) && (win->class_name))
      wl_shell_surface_set_class(win->shell_surface, win->class_name);
 }
 
