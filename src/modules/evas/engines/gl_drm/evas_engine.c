@@ -591,10 +591,6 @@ eng_setup(Evas *eo_e, void *in)
                  (!strcasecmp(s, "4")))
           swap_mode = MODE_QUADRUPLE;
      }
-   else
-     {
-        swap_mode = MODE_FULL;
-     }
 
    /* check for existing engine output */
    if (!epd->engine.data.output)
