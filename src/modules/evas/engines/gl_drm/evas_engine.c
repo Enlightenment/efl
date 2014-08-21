@@ -492,7 +492,6 @@ evgl_eng_string_get(void *data)
      }
 
    return eglQueryString(eng_get_ob(re)->egl_disp, EGL_EXTENSIONS);
-
 }
 
 static void *
