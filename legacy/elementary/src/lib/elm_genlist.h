@@ -351,7 +351,7 @@
  *   pinched in.
  * - @c "swipe" - This is called when the genlist is swiped.
  * - @c "moved" - This is called when a genlist item is moved by a user
- *   interaction in a reorder mode. The %c event_info parameter is the item that
+ *   interaction in a reorder mode. The @p event_info parameter is the item that
  *   was moved.
  * - @c "moved,after" - This is called when a genlist item is moved after
  *   another item in reorder mode. The event_info parameter is the reordered
@@ -369,11 +369,11 @@
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
  * - @c "highlighted" - an item in the list is highlighted. This is called when
  *   the user presses an item or keyboard selection is done so the item is
- *   physically highlighted. The %c event_info parameter is the item that was
+ *   physically highlighted. The @p event_info parameter is the item that was
  *   highlighted.
  * - @c "unhighlighted" - an item in the list is unhighlighted. This is called
  *   when the user releases an item or keyboard selection is moved so the item
- *   is physically unhighlighted. The %c event_info parameter is the item that
+ *   is physically unhighlighted. The @p event_info parameter is the item that
  *   was unhighlighted.
  * - @c "focused" - When the genlist has received focus. (since 1.8)
  * - @c "unfocused" - When the genlist has lost focus. (since 1.8)

@@ -220,17 +220,17 @@
  * - @c "edge,right" - This is called when the gengrid is scrolled
  *   until the right edge.
  * - @c "moved" - This is called when a gengrid item is moved by a user
- *   interaction in a reorder mode. The %c event_info parameter is the item that
+ *   interaction in a reorder mode. The @p event_info parameter is the item that
  *   was moved.
  * - @c "index,update" - This is called when a gengrid item index is changed.
  *   Note that this callback is called while each item is being realized.
  * - @c "highlighted" - an item in the list is highlighted. This is called when
  *   the user presses an item or keyboard selection is done so the item is
- *   physically highlighted. The %c event_info parameter is the item that was
+ *   physically highlighted. The @p event_info parameter is the item that was
  *   highlighted.
  * - @c "unhighlighted" - an item in the list is unhighlighted. This is called
  *   when the user releases an item or keyboard selection is moved so the item
- *   is physically unhighlighted. The %c event_info parameter is the item that
+ *   is physically unhighlighted. The @p event_info parameter is the item that
  *   was unhighlighted.
  * - @c "language,changed" - This is called when the program's language is
  *   changed. Call the elm_gengrid_realized_items_update() if items text should
@@ -240,10 +240,10 @@
  * - @c "item,focused" - When the gengrid item has received focus. (since 1.10)
  * - @c "item,unfocused" - When the gengrid item has lost focus. (since 1.10)
  * - @c "item,reorder,anim,start" - This is called when a gengrid item movement
-     has just started by keys in reorder mode. The %c event_info parameter
+     has just started by keys in reorder mode. The @p event_info parameter
  *   is the item that is going to move. (since 1.10)
  * - @c "item,reorder,anim,stop" - This is called when a gengrid item movement just
-     stopped in reorder mode. The %c event_info parameter is the item
+     stopped in reorder mode. The @p event_info parameter is the item
      that was moved. (since 1.10)
  *
  * Supported elm_object common APIs
