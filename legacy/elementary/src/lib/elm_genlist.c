@@ -131,6 +131,19 @@ static void      _access_activate_cb(void *data EINA_UNUSED,
                                      Elm_Object_Item *item);
 static void _decorate_item_set(Elm_Gen_Item *);
 
+static Eina_Bool
+_is_no_select(Elm_Gen_Item *it)
+{
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 EOLIAN static void
 _elm_genlist_pan_elm_pan_pos_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
 {
@@ -2442,8 +2455,7 @@ _elm_genlist_item_focused(Elm_Gen_Item *it)
    if (it->generation < sd->generation)
      return;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (it == (Elm_Gen_Item *)sd->focused_item) ||
        (elm_widget_item_disabled_get(it)))
      return;
@@ -2485,8 +2497,7 @@ _elm_genlist_item_unfocused(Elm_Gen_Item *it)
    if (it->generation < sd->generation)
      return;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+   if (_is_no_select(it))
      return;
 
    if ((!sd->focused_item) ||
@@ -3106,10 +3117,7 @@ _item_highlight(Elm_Gen_Item *it)
    const char *selectraise;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (!sd->highlight) ||
        (it->generation < sd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
@@ -3618,9 +3626,9 @@ _long_press_cb(void *data)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    it->long_timer = NULL;
-   if (elm_widget_item_disabled_get(it) || (it->dragging) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
-     return ECORE_CALLBACK_CANCEL;
+   if (_is_no_select(it) ||
+       elm_widget_item_disabled_get(it) || (it->dragging))
+       return ECORE_CALLBACK_CANCEL;
 
    sd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
@@ -3662,7 +3670,7 @@ _swipe_do(Elm_Gen_Item *it)
    int i, sum = 0;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if ((it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        elm_widget_item_disabled_get(it)) return;
 
    sd->swipe = EINA_FALSE;
@@ -3881,17 +3889,19 @@ _item_mouse_down_cb(void *data,
    sd->swipe = EINA_FALSE;
    sd->movements = 0;
 
+   if (_is_no_select(it) ||
+       !elm_widget_item_disabled_get(it))
+     return;
+
    // and finally call the user callbacks.
    // NOTE: keep this code at the bottom, as the user can change the
    //       list at this point (clear, delete, etc...)
    it->highlight_cb(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     if ((!elm_widget_item_disabled_get(it)) &&
-         (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
-       {
-          evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
-          evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
-       }
+     {
+        evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
+     }
    evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
 }
 
@@ -4531,10 +4541,10 @@ _item_mouse_up_cb(void *data,
                _item_block_unrealize(it->item->block);
           }
      }
-   if (elm_widget_item_disabled_get(it) || (dragged) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
-     return;
+
+   if (_is_no_select(it) ||
+       (elm_widget_item_disabled_get(it) || (dragged)))
+       return;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
@@ -5536,10 +5546,7 @@ _item_select(Elm_Gen_Item *it)
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (it->generation < sd->generation) ||
        (it->decorate_it_set))
      return;
