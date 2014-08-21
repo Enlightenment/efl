@@ -8,11 +8,11 @@ static Evas_Engine_Info_GL_Drm *siginfo;
 static void
 _evas_drm_fb_destroy_callback(struct gbm_bo *bo, void *data)
 {
-    Buffer *buffer = data;
-    struct gbm_device *gbm = gbm_bo_get_device(bo);
+   Buffer *buffer = data;
+   struct gbm_device *gbm = gbm_bo_get_device(bo);
 
-    if (buffer->fb)
-      drmModeRmFB(gbm_device_get_fd(gbm), buffer->fb);
+   if (buffer->fb)
+     drmModeRmFB(gbm_device_get_fd(gbm), buffer->fb);
 }
 
 static int
@@ -363,9 +363,9 @@ evas_drm_gbm_init(Evas_Engine_Info_GL_Drm *info, int w, int h)
         return EINA_FALSE;
      }
 
-   if (!(info->info.surface = gbm_surface_create(info->info.gbm, w, h,
-                                                 info->info.format,
-                                                 info->info.flags)))
+   if (!(info->info.surface = 
+         gbm_surface_create(info->info.gbm, w, h,
+                            info->info.format, info->info.flags)))
      {
         gbm_device_destroy(info->info.gbm);
         info->info.gbm = NULL;
@@ -544,7 +544,6 @@ evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer)
 
    ret = drmModeAddFB2(ob->priv.fd, width, height, format, handles,
                        pitches, offsets, &(buffer->fb), 0);
-
    if (ret)
      {
         ret = drmModeAddFB(ob->priv.fd, width, height, 24, 32,
@@ -554,7 +553,6 @@ evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer)
 
    ret = drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, buffer->fb, 0, 0,
                         &ob->priv.conn, 1, &ob->priv.mode);
-
    if (ret) ERR("Failed to set crtc: %m");
 
    gbm_bo_set_user_data(buffer->bo, buffer, _evas_drm_fb_destroy_callback);

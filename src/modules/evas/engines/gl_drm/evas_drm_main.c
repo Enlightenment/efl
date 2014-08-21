@@ -453,8 +453,7 @@ eng_outbuf_swap_mode(Outbuf *ob)
 
         EGLint age = 0;
 
-        if (!eglQuerySurface(ob->egl_disp,
-                             ob->egl_surface[0],
+        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface[0],
                              EGL_BUFFER_AGE_EXT, &age))
           age = 0;
 
@@ -481,10 +480,7 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    eng_window_use(ob);
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   glsym_evas_gl_common_context_resize(ob->gl_context,
-                                       ob->w, ob->h,
-                                       ob->rot);
-
+   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rot);
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
 
@@ -601,8 +597,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
                     }
                   i += 4;
                }
-             glsym_eglSwapBuffersWithDamage(ob->egl_disp,
-                                            ob->egl_surface[0],
+             glsym_eglSwapBuffersWithDamage(ob->egl_disp, ob->egl_surface[0],
                                             result, num);
           }
      }
