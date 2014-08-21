@@ -180,6 +180,10 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
    if (buf->priv.pal)
       evas_software_xlib_x_color_deallocate(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.cmap,
 					   buf->priv.x11.xlib.vis, buf->priv.pal);
+
+   /* safe because no effect on the default colormap */
+   XFreeColormap (buf->priv.x11.xlib.disp, buf->priv.x11.xlib.cmap);
+
    eina_array_flush(&buf->priv.onebuf_regions);
    free(buf);
    _clear_xob(0);
