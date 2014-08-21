@@ -75,7 +75,6 @@ static const struct xdg_shell_listener xdg_shell_listener =
    xdg_shell_ping,
 };
 
-
 /* external variables */
 int _ecore_wl_log_dom = -1;
 Ecore_Wl_Display *_ecore_wl_disp = NULL;
@@ -674,7 +673,8 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, 1);
      }
 
-   if ((ewd->wl.compositor) && (ewd->wl.shm) && (ewd->wl.shell))
+   if ((ewd->wl.compositor) && (ewd->wl.shm) && 
+       ((ewd->wl.shell) || (ewd->wl.xdg_shell)))
      {
         Ecore_Wl_Event_Interfaces_Bound *ev;
 
@@ -683,7 +683,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 
         ev->compositor = (ewd->wl.compositor != NULL);
         ev->shm = (ewd->wl.shm != NULL);
-        ev->shell = (ewd->wl.shell != NULL);
+        ev->shell = ((ewd->wl.shell != NULL) || (ewd->wl.xdg_shell != NULL));
         ev->output = (ewd->output != NULL);
         ev->seat = (ewd->input != NULL);
         ev->data_device_manager = (ewd->wl.data_device_manager != NULL);
