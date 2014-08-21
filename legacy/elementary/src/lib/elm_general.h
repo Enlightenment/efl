@@ -122,10 +122,10 @@ typedef enum
 
 typedef enum
 {
-   ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode */
-   ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode */
-   ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode */
-   ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size rule*/
+   ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode. Once an item is selected, it would stay highlighted and not going to call selected callback again even it was clicked. Items can get focus. */
+   ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode. Item selected callbacks will be called every time for click events, even after the item was already selected. Items can get focus. */
+   ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode. Items will never be highlighted and selected but the size will be adjusted by the finger size configuration. Items can't get focus. */
+   ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size rule. Items will never be highlighted and selected and ignore the finger size. So the item size can be reduced below than the finger size configuration. Items can't get focus. */
    ELM_OBJECT_SELECT_MODE_MAX
 } Elm_Object_Select_Mode;
 
