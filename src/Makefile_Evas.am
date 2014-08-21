@@ -886,6 +886,9 @@ endif
 if BUILD_ENGINE_WAYLAND_EGL
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_wayland_egl_cflags@
 endif
+if BUILD_ENGINE_GL_DRM
+modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_gl_drm_cflags@
+endif
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_LIBADD = @USE_EVAS_LIBS@
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -1239,6 +1242,38 @@ modules_evas_engines_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
+if BUILD_ENGINE_GL_DRM
+dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
+GL_DRM_SOURCES = \
+modules/evas/engines/gl_drm/evas_drm.c \
+modules/evas/engines/gl_drm/evas_drm_main.c \
+modules/evas/engines/gl_drm/evas_engine.c \
+modules/evas/engines/gl_drm/evas_engine.h \
+modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
+if EVAS_STATIC_BUILD_GL_DRM
+lib_evas_libevas_la_SOURCES += $(GL_DRM_SOURCES)
+lib_evas_libevas_la_CPPFLAGS += @evas_engine_gl_drm_cflags@
+lib_evas_libevas_la_LIBADD += @evas_engine_gl_drm_libs@
+else
+enginegl_drmpkgdir = $(libdir)/evas/modules/engines/gl_drm/$(MODULE_ARCH)
+enginegl_drmpkg_LTLIBRARIES = modules/evas/engines/gl_drm/module.la
+modules_evas_engines_gl_drm_module_la_SOURCES = $(GL_DRM_SOURCES)
+modules_evas_engines_gl_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+-I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_srcdir)/src/modules/evas/engines/gl_drm \
+@EVAS_CFLAGS@ \
+@ECORE_DRM_CFLAGS@ \
+@evas_engine_gl_drm_cflags@
+modules_evas_engines_gl_drm_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@USE_ECORE_DRM_LIBS@ \
+@evas_engine_gl_drm_libs@
+modules_evas_engines_gl_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_engines_gl_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_engines_gl_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
 
 ### Cserve2 binary
 

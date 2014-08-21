@@ -1335,6 +1335,17 @@ AC_ARG_ENABLE([drm-hw-accel],
    [want_drm_hw_accel="no"])
 
 
+AC_ARG_ENABLE([gl-drm],
+   [AC_HELP_STRING([--enable-gl-drm],
+       [enable gl drm engine. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_gl_drm="yes"
+    else
+       want_gl_drm="no"
+    fi
+   ],
+   [want_gl_drm="no"])
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AS_HELP_STRING([--disable-fontconfig],[disable fontconfig for finding fonts. @<:@default=enabled@:>@])],
@@ -1622,6 +1633,7 @@ EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], 
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
 EVAS_CHECK_ENGINE([wayland-shm], [${want_wayland}], [no], [Wayland Shm])
 EVAS_CHECK_ENGINE([drm], [${want_drm}], [no], [Drm])
+EVAS_CHECK_ENGINE([gl-drm], [${want_gl_drm}], [no], [OpenGL Drm])
 
 
 # Software XCB
@@ -1755,6 +1767,7 @@ if test "x$have_evas_engine_gl_xlib" = "xyes" || \
    test "x$have_evas_engine_gl_xcb" = "xyes" || \
    test "x$have_evas_engine_gl_sdl" = "xyes" || \
    test "x$have_evas_engine_gl_cocoa" = "xyes" || \
+   test "x$have_evas_engine_gl_drm" = "xyes" || \
    test "x$have_evas_engine_wayland_egl" = "xyes"; then
    have_evas_engine_gl_common="yes"
 fi
@@ -1762,6 +1775,7 @@ if test "x$have_evas_engine_gl_xlib" = "xstatic" || \
    test "x$have_evas_engine_gl_xcb" = "xstatic" || \
    test "x$have_evas_engine_gl_sdl" = "xstatic" || \
    test "x$have_evas_engine_gl_cocoa" = "xstatic" || \
+   test "x$have_evas_engine_gl_drm" = "xstatic" || \
    test "x$have_evas_engine_wayland_egl" = "xstatic"; then
    have_evas_engine_gl_common="yes"
    have_static_evas_engine_gl_common="yes"
@@ -2813,7 +2827,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
-EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libudev >= 148 libdrm >= 2.4 xkbcommon >= 0.3.0 libsystemd-login >= 192 dbus-1])
+EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libudev >= 148 libdrm >= 2.4 xkbcommon >= 0.3.0 libsystemd-login >= 192 dbus-1 gbm])
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
@@ -3623,8 +3637,9 @@ ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
 ECORE_EVAS_MODULE([drm], [${want_drm}], 
-  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm])]
-)
+  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm],[gbm])])
+ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
+  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm],[gbm])])
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
@@ -3730,6 +3745,8 @@ if test "x$have_ecore_evas_software_x11" = "xyes" || \
    build_ecore_evas_x11="yes"
 fi
 AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
+
+AC_DEFINE([BUILD_ECORE_EVAS_OPENGL_DRM], [1], [Build support for DRM based OpenGL])
 
 EFL_EVAL_PKGS([ECORE_EVAS])
 

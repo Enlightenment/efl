@@ -213,7 +213,9 @@ ecoreevasenginedrmpkg_LTLIBRARIES = modules/ecore_evas/engines/drm/module.la
 modules_ecore_evas_engines_drm_module_la_SOURCES = $(DRMSOURCES)
 modules_ecore_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
--I$(top_srcdir)/src/modules/evas/engines/drm
+@ECORE_DRM_CFLAGS@ \
+-I$(top_srcdir)/src/modules/evas/engines/drm \
+-I$(top_srcdir)/src/modules/evas/engines/gl_drm
 modules_ecore_evas_engines_drm_module_la_LIBADD = @USE_ECORE_EVAS_LIBS@
 modules_ecore_evas_engines_drm_module_la_DEPENDENCIES = @USE_ECORE_EVAS_INTERNAL_LIBS@
 modules_ecore_evas_engines_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@

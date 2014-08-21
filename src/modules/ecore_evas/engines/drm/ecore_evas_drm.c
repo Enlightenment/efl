@@ -4,7 +4,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-
 #include <Eina.h>
 #include <Ecore.h>
 #include "ecore_private.h"
@@ -13,11 +12,14 @@
 #include <Ecore_Evas.h>
 #include "ecore_evas_private.h"
 #include "ecore_evas_drm.h"
+#include <Ecore_Drm.h>
+#include <Evas_Engine_Drm.h>
 
-//#ifdef BUILD_ECORE_EVAS_DRM
-# include <Evas_Engine_Drm.h>
-# include <Ecore_Drm.h>
-//#endif
+#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
+# include <Evas_Engine_GL_Drm.h>
+# include <gbm.h>
+# include <dlfcn.h>
+#endif
 
 typedef struct _Ecore_Evas_Engine_Drm_Data Ecore_Evas_Engine_Drm_Data;
 
@@ -30,7 +32,6 @@ struct _Ecore_Evas_Engine_Drm_Data
 static int _ecore_evas_drm_init(const char *device);
 static int _ecore_evas_drm_shutdown(void);
 static Ecore_Evas_Interface_Drm *_ecore_evas_drm_interface_new(void);
-
 static void _ecore_evas_drm_free(Ecore_Evas *ee);
 static void _ecore_evas_drm_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 static void _ecore_evas_drm_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
@@ -62,6 +63,7 @@ static void _ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore);
 static void _ecore_evas_drm_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent);
 static void _ecore_evas_drm_aspect_set(Ecore_Evas *ee, double aspect);
+
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -70,7 +72,7 @@ static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *upd
 static int _ecore_evas_init_count = 0;
 static Ecore_Drm_Device *dev = NULL;
 
-static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func = 
+static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 {
    _ecore_evas_drm_free,
    _ecore_evas_drm_callback_resize_set,
@@ -120,14 +122,14 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_transparent_set,
    NULL, //void (*fn_profiles_set) (Ecore_Evas *ee, const char **profiles, int count);
    NULL, //void (*fn_profile_set) (Ecore_Evas *ee, const char *profile);
-   
+
    NULL, //void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
    _ecore_evas_drm_aspect_set,
    NULL, //void (*fn_urgent_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_modal_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_demands_attention_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_focus_skip_set) (Ecore_Evas *ee, Eina_Bool on);
-   
+
    _ecore_evas_drm_render,
 
    NULL, //void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
@@ -223,7 +225,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (ee->can_async_render)
-     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, 
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
                              _ecore_evas_drm_render_updates, ee);
 
    if ((einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas)))
@@ -260,9 +262,9 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   evas_event_feed_mouse_in(ee->evas, 
+   evas_event_feed_mouse_in(ee->evas,
                             (unsigned int)((unsigned long long)
-                                           (ecore_time_get() * 1000.0) & 
+                                           (ecore_time_get() * 1000.0) &
                                            0xffffffff), NULL);
 
    return ee;
@@ -274,8 +276,168 @@ ee_err:
    return NULL;
 }
 
+#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
+EAPI Ecore_Evas *
+ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED, int x, int y, int w, int h)
+{
+   Ecore_Evas *ee;
+   Evas_Engine_Info_GL_Drm *einfo;
+   Ecore_Evas_Interface_Drm *iface;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   int method;
+   uint32_t format = GBM_FORMAT_ARGB8888;
+   uint32_t flags  = GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING;
+   char *num;
+
+   /* try to find the evas drm engine */
+   if (!(method = evas_render_method_lookup("gl_drm")))
+     {
+        ERR("Render method lookup failed for GL Drm");
+        return NULL;
+     }
+
+   /* try to init drm */
+   if (_ecore_evas_drm_init(device) < 1) return NULL;
+
+   /* try to load gl libary, gbm libary */
+   /* Typically, gbm loads the dri driver However some versions of Mesa
+    * do not have libglapi symbols linked in the driver. Because of this,
+    * using hardware accel for our drm code Could fail with a
+    * message that the driver could not load. Let's be proactive and
+    * work around this for the user by preloading the glapi library */
+   dlopen("libglapi.so.0", (RTLD_LAZY | RTLD_GLOBAL));
+   if (dlerror())
+     {
+        _ecore_evas_drm_shutdown();
+        return NULL;
+     }
+
+   /* try to allocate space for new ecore_evas */
+   if (!(ee = calloc(1, sizeof(Ecore_Evas))))
+     {
+        ERR("Failed to allocate space for new Ecore_Evas");
+        goto ee_err;
+     }
+
+   if (!(edata = calloc(1, sizeof(Ecore_Evas_Engine_Drm_Data))))
+     {
+        ERR("Failed to allocate space for new Ecore_Evas_Engine_Data");
+        free(ee);
+        goto ee_err;
+     }
+
+   ee->engine.data = edata;
+
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
+
+   iface = _ecore_evas_drm_interface_new();
+   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
+
+   /* set some engine properties */
+   ee->driver = "gl_drm";
+   if (device) ee->name = strdup(device);
+   else
+     ee->name = strdup(ecore_drm_device_name_get(dev));
+
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+
+   ee->x = ee->req.x = x;
+   ee->y = ee->req.y = y;
+   ee->w = ee->req.w = w;
+   ee->h = ee->req.h = h;
+
+   ee->prop.max.w = 32767;
+   ee->prop.max.h = 32767;
+   ee->prop.layer = 4;
+   ee->prop.request_pos = 0;
+   ee->prop.sticky = 0;
+   ee->alpha = EINA_FALSE;
+
+   ee->can_async_render = 1;
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+
+   /* try to initialize evas */
+   ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
+   evas_output_method_set(ee->evas, method);
+
+   /* FIXME: Support initial rotation ?? */
+   evas_output_size_set(ee->evas, w, h);
+   evas_output_viewport_set(ee->evas, 0, 0, w, h);
+
+   if (ee->can_async_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
+                             _ecore_evas_drm_render_updates, ee);
+
+   if ((einfo = (Evas_Engine_Info_GL_Drm *)evas_engine_info_get(ee->evas)))
+     {
+        einfo->info.depth = 32;
+        einfo->info.destination_alpha = ee->alpha;
+        einfo->info.rotation = ee->rotation;
+
+        if ((num = getenv("EVAS_DRM_VSYNC")))
+          {
+             if (!atoi(num)) einfo->vsync = EINA_FALSE;
+             else einfo->vsync = EINA_TRUE;
+          }
+        else einfo->vsync = EINA_TRUE;
+
+        einfo->info.fd = ecore_drm_device_fd_get(dev);
+        einfo->info.format = format;
+        einfo->info.flags = flags;
+        if (einfo->info.fd) einfo->info.gbm = gbm_create_device(einfo->info.fd);
+        if (einfo->info.gbm)
+          {
+             einfo->info.surface = gbm_surface_create(einfo->info.gbm, w, h,
+                                                      format, flags);
+          }
+
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             goto eng_err;
+          }
+     }
+   else
+     {
+        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+        goto eng_err;
+     }
+
+   ee->prop.window = einfo->info.output;
+
+   _ecore_evas_register(ee);
+   ecore_evas_input_event_register(ee);
+
+   ecore_drm_device_window_set(dev, ee->prop.window);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+
+   evas_event_feed_mouse_in(ee->evas,
+                            (unsigned int)((unsigned long long)
+                                           (ecore_time_get() * 1000.0) &
+                                           0xffffffff), NULL);
+
+   return ee;
+
+eng_err:
+   ecore_evas_free(ee);
+ee_err:
+   _ecore_evas_drm_shutdown();
+
+   return NULL;
+}
+#endif
+
 /* local functions */
-static int 
+static int
 _ecore_evas_drm_init(const char *device)
 {
    if (++_ecore_evas_init_count != 1) return _ecore_evas_init_count;
@@ -318,7 +480,7 @@ _ecore_evas_drm_init(const char *device)
         goto sprite_err;
      }
 
-   /* NB: We don't need to create outputs here. Evas will create the 
+   /* NB: We don't need to create outputs here. Evas will create the
     * framebuffers it needs */
    /* try to create outputs */
    /* if (!ecore_drm_outputs_create(dev)) */
@@ -351,7 +513,7 @@ dev_err:
    return --_ecore_evas_init_count;
 }
 
-static int 
+static int
 _ecore_evas_drm_shutdown(void)
 {
    if (--_ecore_evas_init_count != 0) return _ecore_evas_init_count;
@@ -369,6 +531,7 @@ _ecore_evas_drm_shutdown(void)
    return _ecore_evas_init_count;
 }
 
+#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
 static Ecore_Evas_Interface_Drm *
 _ecore_evas_drm_interface_new(void)
 {
@@ -386,9 +549,10 @@ _ecore_evas_drm_interface_new(void)
 
    return iface;
 }
+#endif
 
 /* local ecore_evas functions */
-static void 
+static void
 _ecore_evas_drm_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Drm_Data *data;
@@ -399,49 +563,49 @@ _ecore_evas_drm_free(Ecore_Evas *ee)
    _ecore_evas_drm_shutdown();
 }
 
-static void 
+static void
 _ecore_evas_drm_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_resize = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_move = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_focus_in = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_focus_out = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_mouse_in = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_mouse_out = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    ee->func.fn_delete_request = func;
 }
 
-static void 
+static void
 _ecore_evas_drm_move(Ecore_Evas *ee, int x, int y)
 {
    ee->req.x = x;
@@ -452,7 +616,7 @@ _ecore_evas_drm_move(Ecore_Evas *ee, int x, int y)
    if (ee->func.fn_move) ee->func.fn_move(ee);
 }
 
-static void 
+static void
 _ecore_evas_drm_resize(Ecore_Evas *ee, int w, int h)
 {
    ee->req.w = w;
@@ -465,7 +629,7 @@ _ecore_evas_drm_resize(Ecore_Evas *ee, int w, int h)
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
-static void 
+static void
 _ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    if ((ee->x != x) || (ee->y != y))
@@ -474,7 +638,7 @@ _ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
      _ecore_evas_drm_resize(ee, w, h);
 }
 
-static void 
+static void
 _ecore_evas_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
 {
    Evas_Engine_Info_Drm *einfo;
@@ -487,7 +651,7 @@ _ecore_evas_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSE
      ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 }
 
-static void 
+static void
 _ecore_evas_drm_show(Ecore_Evas *ee)
 {
    if ((!ee) || (ee->visible)) return;
@@ -496,7 +660,7 @@ _ecore_evas_drm_show(Ecore_Evas *ee)
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
-static void 
+static void
 _ecore_evas_drm_hide(Ecore_Evas *ee)
 {
    if ((!ee) || (!ee->visible)) return;
@@ -506,7 +670,7 @@ _ecore_evas_drm_hide(Ecore_Evas *ee)
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
-static void 
+static void
 _ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title)
 {
    if (ee->prop.title) free(ee->prop.title);
@@ -514,7 +678,7 @@ _ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title)
    if (title) ee->prop.title = strdup(title);
 }
 
-static void 
+static void
 _ecore_evas_drm_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 {
    if (ee->prop.name) free(ee->prop.name);
@@ -525,7 +689,7 @@ _ecore_evas_drm_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
    if (c) ee->prop.clas = strdup(c);
 }
 
-static void 
+static void
 _ecore_evas_drm_size_min_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
@@ -535,7 +699,7 @@ _ecore_evas_drm_size_min_set(Ecore_Evas *ee, int w, int h)
    ee->prop.min.h = h;
 }
 
-static void 
+static void
 _ecore_evas_drm_size_max_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
@@ -545,7 +709,7 @@ _ecore_evas_drm_size_max_set(Ecore_Evas *ee, int w, int h)
    ee->prop.max.h = h;
 }
 
-static void 
+static void
 _ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
@@ -555,7 +719,7 @@ _ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h)
    ee->prop.base.h = h;
 }
 
-static void 
+static void
 _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
@@ -565,7 +729,7 @@ _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h)
    ee->prop.step.h = h;
 }
 
-static void 
+static void
 _ecore_evas_drm_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
@@ -573,8 +737,8 @@ _ecore_evas_drm_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *
    if ((ee = data)) ee->prop.cursor.object = NULL;
 }
 
-static void 
-_ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
+static void
+_ecore_evas_drm_object_cursor_set(Ecore_Evas  *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
    Evas_Object *old;
@@ -618,7 +782,7 @@ end:
      }
 }
 
-static void 
+static void
 _ecore_evas_drm_layer_set(Ecore_Evas *ee, int layer)
 {
    if (layer < 1) layer = 1;
@@ -627,28 +791,28 @@ _ecore_evas_drm_layer_set(Ecore_Evas *ee, int layer)
    ee->prop.layer = layer;
 }
 
-static void 
+static void
 _ecore_evas_drm_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.iconified == on) return;
    ee->prop.iconified = on;
 }
 
-static void 
+static void
 _ecore_evas_drm_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.borderless == on) return;
    ee->prop.borderless = on;
 }
 
-static void 
+static void
 _ecore_evas_drm_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.maximized == on) return;
    ee->prop.maximized = on;
 }
 
-static void 
+static void
 _ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Eina_Bool resized = EINA_FALSE;
@@ -695,7 +859,7 @@ _ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
      }
 }
 
-static void 
+static void
 _ecore_evas_drm_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.withdrawn == on) return;
@@ -704,14 +868,14 @@ _ecore_evas_drm_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
    else ecore_evas_show(ee);
 }
 
-static void 
+static void
 _ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore)
 {
    if (ee->ignore_events == ignore) return;
    ee->ignore_events = ignore;
 }
 
-static void 
+static void
 _ecore_evas_drm_alpha_set(Ecore_Evas *ee, int alpha)
 {
    if (ee->in_async_render)
@@ -724,7 +888,7 @@ _ecore_evas_drm_alpha_set(Ecore_Evas *ee, int alpha)
    /* FIXME: TODO: Finish */
 }
 
-static void 
+static void
 _ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent)
 {
    if (ee->in_async_render)
@@ -737,14 +901,14 @@ _ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent)
    /* FIXME: TODO: Finish */
 }
 
-static void 
+static void
 _ecore_evas_drm_aspect_set(Ecore_Evas *ee, double aspect)
 {
    if (ee->prop.aspect == aspect) return;
    ee->prop.aspect = aspect;
 }
 
-static int 
+static int
 _ecore_evas_drm_render(Ecore_Evas *ee)
 {
    int rend = 0;
@@ -786,7 +950,7 @@ _ecore_evas_drm_render(Ecore_Evas *ee)
    return rend;
 }
 
-static void 
+static void
 _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
 {
    Evas_Event_Render_Post *ev;
@@ -802,7 +966,7 @@ _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
    /* TODO: handle delayed changes */
 }
 
-static int 
+static int
 _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {
    int rend = 0;
