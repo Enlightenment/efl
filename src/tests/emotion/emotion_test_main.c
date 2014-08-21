@@ -714,6 +714,7 @@ main(int argc, char **argv)
      }
    if (geometry.w == 0) geometry.w = 320;
    if (geometry.h == 0) geometry.h = 240;
+   vis = visual;
 
    printf("evas engine: %s\n", engine ? engine : "<auto>");
    printf("emotion backend: %s\n", backend ? backend : "<auto>");
