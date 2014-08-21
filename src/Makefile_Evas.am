@@ -1387,6 +1387,7 @@ bin_evas_dummy_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
 
+bin_evas_dummy_slave_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 bin_evas_dummy_slave_LDADD = \
 @EVAS_LDFLAGS@ \
 @EVAS_CSERVE2_SLAVE_LIBS@
