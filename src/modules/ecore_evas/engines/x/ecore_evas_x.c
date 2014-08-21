@@ -712,6 +712,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
         ee->in_async_render = EINA_TRUE;
         rend = 1;
      }
+   else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
    return rend;
 }
