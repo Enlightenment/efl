@@ -1,4 +1,4 @@
-class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
+class Elm_Photo (Elm_Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_Interface)
 {
    eo_prefix: elm_obj_photo;
    properties {
@@ -74,23 +74,6 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
             int size; /*@ The size of the photo */
          }
       }
-      file {
-         set {
-            /*@
-            Set the file that will be used as the photo widget's image.
-
-            @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
-
-            @note Use @c NULL on @a file to set the photo widget back to it's
-            initial state, which indicates "no photo".
-
-            @ingroup Photo */
-            return: bool;
-         }
-         values {
-            const(char)* file; /*@ The path to file that will be used as @a obj's image. */
-         }
-      }
    }
    methods {
       thumb_set @const {
@@ -107,6 +90,7 @@ class Elm_Photo (Elm_Widget, Evas.Clickable_Interface, Evas.Draggable_Interface)
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Efl.File.file.set;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Elm_Widget.theme_apply;

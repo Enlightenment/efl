@@ -76,4 +76,17 @@ EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj,
  */
 EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
 
+/**
+ *
+ * Set the file that will be used as layout
+ *
+ * @return (1 = success, 0 = error)
+ *
+ * @ingroup Layout
+ *
+ * @param[in] file The path to file (edj) that will be used as layout
+ * @param[in] group The group that the layout belongs in edje file
+ */
+EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group);
+
 #include "elm_layout.eo.legacy.h"

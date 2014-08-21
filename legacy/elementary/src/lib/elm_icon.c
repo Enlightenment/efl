@@ -367,7 +367,7 @@ _edje_signals_free(Elm_Icon_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_icon_elm_image_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const char *key)
+_elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const char *key)
 {
    Evas_Object *pclip;
 
@@ -383,7 +383,7 @@ _elm_icon_elm_image_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const
    if (!sd->is_video)
      {
         Eina_Bool int_ret = EINA_FALSE;
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_image_file_set(file, key));
+        eo_do_super(obj, MY_CLASS, int_ret = efl_file_set(file, key));
         return int_ret;
      }
 
@@ -728,7 +728,7 @@ elm_icon_file_set(Evas_Object *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, ret = elm_obj_image_file_set(file, group));
+   eo_do(obj, ret = efl_file_set(file, group));
    return ret;
 }
 

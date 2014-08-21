@@ -143,7 +143,7 @@ _elm_bg_eo_base_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_bg_file_set(Eo *obj, Elm_Bg_Data *sd, const char *file, const char *group)
+_elm_bg_efl_file_file_set(Eo *obj, Elm_Bg_Data *sd, const char *file, const char *group)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -197,7 +197,7 @@ _elm_bg_file_set(Eo *obj, Elm_Bg_Data *sd, const char *file, const char *group)
 }
 
 EOLIAN static void
-_elm_bg_file_get(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, const char **file, const char **group)
+_elm_bg_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, const char **file, const char **group)
 {
    if (file) *file = sd->file;
    if (group) *group = sd->group;
@@ -285,6 +285,18 @@ static void
 _elm_bg_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EAPI Eina_Bool
+elm_bg_file_set(Eo *obj, const char *file, const char *group)
+{
+   return eo_do((Eo *) obj, efl_file_set(file, group));
+}
+
+EAPI void
+elm_bg_file_get(const Eo *obj, const char **file, const char **group)
+{
+   eo_do((Eo *) obj, efl_file_get(file, group));
 }
 
 #include "elm_bg.eo.c"

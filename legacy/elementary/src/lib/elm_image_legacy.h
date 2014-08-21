@@ -37,6 +37,21 @@ EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
+ *
+ * Get the file that will be used as image.
+ *
+ * @see elm_image_file_set()
+ *
+ * @ingroup Image
+ *
+ * @param[out] file The path to file that will be used as image source
+ * @param[out] group The group that the image belongs to, in case it's an
+EET (including Edje case) file. This can be used as a key inside
+evas image cache if this is a normal image file not eet file.
+ */
+EAPI void elm_image_file_get(const Eo *obj, const char **file, const char **group);
+
+/**
  * Set the prescale size for the image
  *
  * @param obj The image object

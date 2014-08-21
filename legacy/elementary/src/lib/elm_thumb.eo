@@ -1,4 +1,4 @@
-class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
+class Elm_Thumb (Elm_Layout, Efl.File, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_thumb;
    properties {
@@ -102,35 +102,6 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
          }
          values {
             Ethumb_Thumb_FDO_Size size; /*@ The FDO size setting. */
-         }
-      }
-      file {
-         set {
-            /*@
-            Set the file that will be used as thumbnail @b source.
-
-            The file can be an image or a video (in that case, acceptable
-            extensions are: avi, mp4, ogv, mov, mpg and wmv). To start the
-            video animation, use the function elm_thumb_animate().
-
-            @see elm_thumb_file_get()
-            @see elm_thumb_reload()
-            @see elm_thumb_animate()
-
-            @ingroup Thumb */
-         }
-         get {
-            /*@
-            Get the image or video path and key used to generate the thumbnail.
-
-            @see elm_thumb_file_set()
-            @see elm_thumb_path_get()
-
-            @ingroup Thumb */
-         }
-         values {
-            const(char)* file; /*@ The path to file that will be used as thumbnail source. */
-            const(char)* key; /*@ The key used in case of an EET file. */
          }
       }
       orientation {
@@ -331,6 +302,8 @@ class Elm_Thumb (Elm_Layout, Evas.Clickable_Interface)
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Efl.File.file.set;
+      Efl.File.file.get;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;

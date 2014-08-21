@@ -614,8 +614,8 @@ _elm_thumb_reload(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
      _thumb_show(sd);
 }
 
-EOLIAN static void
-_elm_thumb_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *file, const char *key)
+EOLIAN static Eina_Bool
+_elm_thumb_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *file, const char *key)
 {
    Eina_Bool file_replaced, key_replaced;
 
@@ -651,10 +651,12 @@ _elm_thumb_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *file, c
 
    if (((file_replaced) || (key_replaced)) && (evas_object_visible_get(obj)))
      _thumb_show(sd);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
-_elm_thumb_file_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
+_elm_thumb_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
 {
    if (file)
      *file = sd->file;
@@ -847,5 +849,18 @@ _elm_thumb_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+EAPI void
+elm_thumb_file_set(Eo *obj, const char *file, const char *key)
+{
+   eo_do((Eo *) obj, efl_file_set(file, key));
+}
+
+EAPI void
+elm_thumb_file_get(const Eo *obj, const char **file, const char **key)
+{
+   eo_do((Eo *) obj, efl_file_get(file, key));
+}
+
 
 #include "elm_thumb.eo.c"
