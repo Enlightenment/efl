@@ -499,6 +499,15 @@ EAPI Eina_Hash *eina_hash_int64_new(Eina_Free_Cb data_free_cb);
  * original key pointer that was used to add values. This method may
  * appear to be able to match string keys, actually it only matches
  * the first character. On failure, this function returns @c NULL.
+ *
+ * @code
+ * // For a hash that will have only one pointer to each structure
+ * extern Eina_Hash *hash;
+ * extern void *data;
+ *
+ * if (!eina_hash_find(hash, &data))
+ *    eina_hash_add(hash, &data, data);
+ * @endcode
  */
 EAPI Eina_Hash *eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
 
@@ -523,7 +532,7 @@ EAPI Eina_Hash *eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
  * const char *a = eina_stringshare_add("key");
  *
  * eina_hash_add(hash, a, value);
- * eina_hash_find(hash, "key")
+ * eina_hash_find(hash, "key");
  * @endcode
  */
 EAPI Eina_Hash *eina_hash_stringshared_new(Eina_Free_Cb data_free_cb);
