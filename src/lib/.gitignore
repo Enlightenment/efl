@@ -1,5 +1,6 @@
 /ecore_x/ecore_x_version.h
 /efl/Efl_Config.h
+/efl/Efl.hh
 /eina/eina_config.h
 /ecore_audio/Ecore_Audio.hh
 /ecore/Ecore.eo.hh
