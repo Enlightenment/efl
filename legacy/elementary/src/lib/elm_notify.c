@@ -56,15 +56,12 @@ _notify_theme_apply(Evas_Object *obj)
         else
           position = "bottom";
      }
+   else if (ax <= 0.3)
+     position = "left";
+   else if (ax >= 0.7)
+     position = "right";
    else
-     {
-        if (ax <= 0.3)
-          position = "left";
-        else if (ax >= 0.7)
-          position = "right";
-        else
-          position = "center";
-     }
+     position = "center";
 
    elm_widget_theme_object_set(obj, sd->notify, "notify", position, style);
 }
