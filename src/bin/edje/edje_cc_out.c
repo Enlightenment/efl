@@ -1416,12 +1416,12 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
      }
    fclose(f);
 
-   if (!no_save)
+   if (no_save)
+     WRN("You are removing the source from this Edje file. This may break some use cases.\nBe aware of your choice and the poor kitten you are harming with it!");
+   else
      {
         Eina_List *ll;
         Code_Program *cp;
-
-        WRN("You are removing the source from this Edje file. This may break some use cases.\nBe aware of your choice and the poor kitten you are harming with it!");
 
         if (sc->cd->original)
           {
