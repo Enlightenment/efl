@@ -1315,8 +1315,10 @@ _item_highlight(Elm_List_Item *it)
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
 
-   if ((it->highlighted) || (it->base.disabled) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)) return;
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->highlighted) || (it->base.disabled))
+       return;
 
    evas_object_ref(obj);
    _elm_list_walk(sd);

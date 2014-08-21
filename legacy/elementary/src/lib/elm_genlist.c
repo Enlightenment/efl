@@ -3107,12 +3107,13 @@ _item_highlight(Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
        (!sd->highlight) ||
        (it->generation < sd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->item->deco_it_view) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+       (it->item->deco_it_view))
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
@@ -4531,7 +4532,8 @@ _item_mouse_up_cb(void *data,
           }
      }
    if (elm_widget_item_disabled_get(it) || (dragged) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -5534,10 +5536,12 @@ _item_select(Elm_Gen_Item *it)
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if ((it->generation < sd->generation) ||
-       (it->decorate_it_set) ||
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->generation < sd->generation) ||
+       (it->decorate_it_set))
      return;
 
    if (!it->selected)

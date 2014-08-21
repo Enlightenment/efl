@@ -523,8 +523,11 @@ _item_highlight(Elm_Gen_Item *it)
    const char *selectraise = NULL;
    Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
-       || (!sd->highlight) || (it->highlighted) ||
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (!sd->highlight) || (it->highlighted) ||
        (it->generation < sd->generation))
      return;
 
@@ -3409,10 +3412,14 @@ _item_select(Elm_Gen_Item *it)
    Evas_Object *obj = WIDGET(it);
    Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
-   if ((it->generation < sd->generation) || (it->decorate_it_set) ||
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->generation < sd->generation) ||
+       (it->decorate_it_set))
      return;
+
    if (!it->selected)
      {
         it->selected = EINA_TRUE;

@@ -1026,7 +1026,8 @@ _item_select(Elm_Toolbar_Item *it)
      return;
    sel = it->selected;
 
-   if (sd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+   if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_NONE) &&
+       (sd->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      {
         if (sel)
           {
