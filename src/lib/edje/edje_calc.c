@@ -3610,10 +3610,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               break;
           }
 
-        p3->mapped = p1->mapped;
+        /* mapped is a special case like visible */
+        if ((p1->mapped) && (!p2->mapped))
+          p3->mapped = (pos != FROM_INT(1));
+        else if ((!p1->mapped) && (p2->mapped))
+          p3->mapped = (pos != ZERO);
+        else
+          p3->mapped = p1->mapped;
+
         p3->persp_on = p3->mapped ? p1->persp_on | p2->persp_on : 0;
         p3->lighted = p3->mapped ? p1->lighted | p2->lighted : 0;
-        if (p1->mapped)
+        if (p3->mapped)
           {
              EINA_COW_CALC_MAP_BEGIN(p3, p3_write)
                {
