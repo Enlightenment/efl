@@ -40,8 +40,6 @@
 EAPI const char ELM_GENGRID_SMART_NAME[] = "elm_gengrid";
 EAPI const char ELM_GENGRID_PAN_SMART_NAME[] = "elm_gengrid_pan";
 
-#define GG_IT(_it) (_it->item)
-
 #define ELM_PRIV_GENGRID_SIGNALS(cmd) \
    cmd(SIG_ACTIVATED, "activated", "") \
    cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
@@ -105,6 +103,19 @@ static const Elm_Action key_actions[] = {
    {"escape", _key_action_escape},
    {NULL, NULL}
 };
+
+static Eina_Bool
+_is_no_select(Elm_Gen_Item *it)
+{
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
 
 EOLIAN static Elm_Object_Item *
 _elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
@@ -523,10 +534,7 @@ _item_highlight(Elm_Gen_Item *it)
    const char *selectraise = NULL;
    Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (!sd->highlight) || (it->highlighted) ||
        (it->generation < sd->generation))
      return;
@@ -1543,8 +1551,7 @@ _elm_gengrid_item_focused(Elm_Gen_Item *it)
    if (it->generation < sd->generation)
      return;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (it == (Elm_Gen_Item *)sd->focused_item) ||
        (elm_widget_item_disabled_get(it)))
      return;
@@ -1586,8 +1593,7 @@ _elm_gengrid_item_unfocused(Elm_Gen_Item *it)
    if (it->generation < sd->generation)
      return;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+   if (_is_no_select(it))
      return;
 
    if ((!sd->focused_item) ||
@@ -3412,10 +3418,7 @@ _item_select(Elm_Gen_Item *it)
    Evas_Object *obj = WIDGET(it);
    Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (it->generation < sd->generation) ||
        (it->decorate_it_set))
      return;

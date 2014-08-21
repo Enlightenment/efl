@@ -158,11 +158,16 @@ struct _Elm_Gengrid_Pan_Data
  * @}
  */
 
+#define GG_IT(_it) (_it->item)
+
 #define ELM_GENGRID_DATA_GET(o, sd) \
   Elm_Gengrid_Data * sd = eo_data_scope_get(o, ELM_GENGRID_CLASS)
 
 #define ELM_GENGRID_PAN_DATA_GET(o, sd) \
   Elm_Gengrid_Pan_Data * sd = eo_data_scope_get(o, ELM_GENGRID_PAN_CLASS)
+
+#define ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd) \
+  Elm_Gengrid_Data * sd = GG_IT(it)->wsd
 
 #define ELM_GENGRID_DATA_GET_OR_RETURN(o, ptr)       \
   ELM_GENGRID_DATA_GET(o, ptr);                      \
