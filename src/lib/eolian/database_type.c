@@ -99,9 +99,9 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
    eina_strbuf_append(buf, "struct ");
    if (tp->name)
      {
-        Eina_List *l;
+        Eina_List *m;
         const char *sp;
-        EINA_LIST_FOREACH(tp->namespaces, l, sp)
+        EINA_LIST_FOREACH(tp->namespaces, m, sp)
           {
              eina_strbuf_append(buf, sp);
              eina_strbuf_append_char(buf, '_');
@@ -135,9 +135,9 @@ _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
    eina_strbuf_append(buf, "enum ");
    if (tp->name)
      {
-        Eina_List *l;
+        Eina_List *m;
         const char *sp;
-        EINA_LIST_FOREACH(tp->namespaces, l, sp)
+        EINA_LIST_FOREACH(tp->namespaces, m, sp)
           {
              eina_strbuf_append(buf, sp);
              eina_strbuf_append_char(buf, '_');
@@ -333,11 +333,11 @@ database_type_print(Eolian_Type *tp)
    else if (tp->type == EOLIAN_TYPE_STRUCT)
      {
         const char *fname;
-        Eina_List *l;
+        Eina_List *m;
         printf("struct ");
         if (tp->full_name) printf("%s ", tp->full_name);
         printf("{ ");
-        EINA_LIST_FOREACH(tp->field_names, l, fname)
+        EINA_LIST_FOREACH(tp->field_names, m, fname)
           {
              Eolian_Struct_Field *sf = eina_hash_find(tp->fields, fname);
              printf("%s: ", fname);
@@ -349,10 +349,10 @@ database_type_print(Eolian_Type *tp)
    else if (tp->type == EOLIAN_TYPE_ENUM)
      {
         const char *fname;
-        Eina_List *l;
+        Eina_List *m;
         printf("enum %s ", tp->full_name);
         printf("{ ");
-        EINA_LIST_FOREACH(tp->field_names, l, fname)
+        EINA_LIST_FOREACH(tp->field_names, m, fname)
           {
              Eolian_Enum_Field *ef = eina_hash_find(tp->fields, fname);
              printf("%s", fname);
@@ -361,7 +361,7 @@ database_type_print(Eolian_Type *tp)
                   printf(" = ");
                   database_expr_print(ef->value);
                }
-             if (l != eina_list_last(tp->field_names))
+             if (m != eina_list_last(tp->field_names))
                printf(", ");
           }
         printf(" }");

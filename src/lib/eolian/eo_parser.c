@@ -782,17 +782,17 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
      {
       case KW_const:
         {
-           int line, col;
+           int pline, pcol;
            eo_lexer_get(ls);
-           line = ls->line_number;
-           col = ls->column;
+           pline = ls->line_number;
+           pcol = ls->column;
            check_next(ls, '(');
            def = parse_type_void(ls);
            def->base.file = eina_stringshare_ref(ls->filename);
            def->base.line = line;
            def->base.column = col;
            def->is_const = EINA_TRUE;
-           check_match(ls, ')', '(', line, col);
+           check_match(ls, ')', '(', pline, pcol);
            goto parse_ptr;
         }
       case KW_own:
@@ -970,7 +970,7 @@ parse_ptr:
      }
    if (ls->t.token == '<')
      {
-        int line = ls->line_number, col = ls->column;
+        int bline = ls->line_number, bcol = ls->column;
         eo_lexer_get(ls);
         def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
         pop_type(ls);
@@ -979,7 +979,7 @@ parse_ptr:
              def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
              pop_type(ls);
           }
-        check_match(ls, '>', '<', line, col);
+        check_match(ls, '>', '<', bline, bcol);
      }
    return def;
 }

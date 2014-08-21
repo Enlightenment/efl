@@ -258,9 +258,9 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
         if (ftype == EOLIAN_PROP_GET || eolian_function_object_is_const(funcid))
            eina_strbuf_append(fparam, "const ");
         eina_strbuf_append_printf(fparam, "%s *obj", class_env.full_classname);
-        char buf[256];
-        snprintf(buf, sizeof(buf), "(%s *)obj", class_env.full_classname);
-        eina_strbuf_replace_all(fbody, "@#eo_obj", buf);
+        char cbuf[256];
+        snprintf(cbuf, sizeof(cbuf), "(%s *)obj", class_env.full_classname);
+        eina_strbuf_replace_all(fbody, "@#eo_obj", cbuf);
      }
    else
      {
