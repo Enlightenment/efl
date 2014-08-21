@@ -558,7 +558,7 @@ local cutil = require("cutil")
 local util  = require("util")
 local eo    = require("eo")
 
-local M     = %s
+local M     = ...
 
 local __lib
 
@@ -572,8 +572,7 @@ end
 
 cutil.init_module(init, shutdown)
 
-]]):format(self.fname, self.klass:full_name_get(), modn, self.libname,
-        self.libname))
+]]):format(self.fname, self.klass:full_name_get(), self.libname, self.libname))
 
         self:gen_children(s)
 

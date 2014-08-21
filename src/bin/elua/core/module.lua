@@ -86,12 +86,12 @@ local find_loader = function(modname, env)
     return nil, table.concat(err)
 end
 
-M.require = function(modname)
+M.require = function(modname, ...)
     local v = loaded[modname]
     if v ~= nil then return v end
     local  loader, err = find_loader(modname)
     if not loader then error(err, 2) end
-    local ret = loader(modname)
+    local ret = loader(modname, ...)
     if ret ~= nil then
         loaded[modname] = ret
         return ret
