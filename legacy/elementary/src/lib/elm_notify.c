@@ -38,30 +38,33 @@ _notify_theme_apply(Evas_Object *obj)
    ay = sd->vertical_align;
    if ((elm_widget_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
 
-   if (ay <= 0.3)
+   if (ay == 0.0)
      {
-        if (ax <= 0.3)
+        if (ax == 0.0)
           position = "top_left";
-        else if (ax >= 0.7)
+        else if (ax == 1.0)
           position = "top_right";
         else
           position = "top";
      }
-   else if (ay >= 0.7)
+   else if (ay == 1.0)
      {
-        if (ax <= 0.3)
+        if (ax == 0.0)
           position = "bottom_left";
-        else if (ax >= 0.7)
+        else if (ax == 1.0)
           position = "bottom_right";
         else
           position = "bottom";
      }
-   else if (ax <= 0.3)
-     position = "left";
-   else if (ax >= 0.7)
-     position = "right";
    else
-     position = "center";
+     {
+        if (ax == 0.0)
+          position = "left";
+        else if (ax == 1.0)
+          position = "right";
+        else
+          position = "center";
+     }
 
    elm_widget_theme_object_set(obj, sd->notify, "notify", position, style);
 }
