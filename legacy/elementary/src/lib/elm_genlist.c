@@ -3890,7 +3890,7 @@ _item_mouse_down_cb(void *data,
    sd->movements = 0;
 
    if (_is_no_select(it) ||
-       !elm_widget_item_disabled_get(it))
+       elm_widget_item_disabled_get(it))
      return;
 
    // and finally call the user callbacks.
