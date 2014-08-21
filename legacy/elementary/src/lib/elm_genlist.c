@@ -266,6 +266,221 @@ _elm_genlist_pan_evas_object_smart_resize(Eo *obj, Elm_Genlist_Pan_Data *psd, Ev
 }
 
 static void
+_item_text_realize(Elm_Gen_Item *it,
+                   Evas_Object *target,
+                   Eina_List **source,
+                   const char *parts)
+{
+   if (it->itc->func.text_get)
+     {
+        const Eina_List *l;
+        const char *key;
+
+        if (!(*source))
+          *source = elm_widget_stringlist_get
+              (edje_object_data_get(target, "texts"));
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             char *s = it->itc->func.text_get
+                 ((void *)it->base.data, WIDGET(it), key);
+
+             if (s)
+               {
+                  edje_object_part_text_escaped_set(target, key, s);
+                  free(s);
+               }
+             else
+               {
+                  edje_object_part_text_set(target, key, "");
+               }
+          }
+     }
+}
+
+static Eina_List *
+_item_content_realize(Elm_Gen_Item *it,
+                      Evas_Object *target,
+                      Eina_List **source,
+                      const char *parts,
+                      Eina_List **contents_list)
+{
+   Eina_List *res = *contents_list;
+
+   if (it->itc->func.content_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        Evas_Object *ic = NULL;
+
+        if (!(*source))
+          *source = elm_widget_stringlist_get
+              (edje_object_data_get(target, "contents"));
+
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             if (it->itc->func.content_get)
+               ic = it->itc->func.content_get
+                   ((void *)it->base.data, WIDGET(it), key);
+             if (ic)
+               {
+                  res = eina_list_append(res, ic);
+                  edje_object_part_swallow(target, key, ic);
+                  evas_object_show(ic);
+                  elm_widget_sub_object_add(WIDGET(it), ic);
+                  if (elm_widget_item_disabled_get(it))
+                    elm_widget_disabled_set(ic, EINA_TRUE);
+               }
+          }
+     }
+
+   return res;
+}
+
+static void
+_item_state_realize(Elm_Gen_Item *it,
+                    Evas_Object *target,
+                    Eina_List **source,
+                    const char *parts)
+{
+   if (it->itc->func.state_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        char buf[4096];
+
+        if (!(*source))
+          *source = elm_widget_stringlist_get
+              (edje_object_data_get(target, "states"));
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             Eina_Bool on = it->itc->func.state_get
+                 ((void *)it->base.data, WIDGET(it), key);
+
+             if (on)
+               {
+                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+                  edje_object_signal_emit(target, buf, "elm");
+               }
+             else
+               {
+                  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
+                  edje_object_signal_emit(target, buf, "elm");
+               }
+          }
+        edje_object_message_signal_process(target);
+     }
+}
+
+/**
+ * Apply the right style for the created item view.
+ */
+static void
+_view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
+{
+   char buf[1024];
+   const char *stacking_even;
+   const char *stacking;
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   // FIXME:  There exists
+   // item, item_compress, item_odd, item_compress_odd,
+   // tree, tree_compress, tree_odd, tree_odd_compress
+   // But those used case by case. :-(
+   // Anyway, belows codes are for backward..
+   if (it->decorate_it_set)
+     {
+        // item, item_compress, item_odd, item_compress_odd
+        strncpy(buf, "item", sizeof(buf));
+        if (sd->mode == ELM_LIST_COMPRESS)
+           strncat(buf, "_compress", sizeof(buf) - strlen(buf) - 1);
+
+        if (it->item->order_num_in & 0x1)
+           strncat(buf, "_odd", sizeof(buf) - strlen(buf) - 1);
+        strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
+        strncat(buf, style, sizeof(buf) - strlen(buf) - 1);
+     }
+   else
+     {
+        // item, item_compress, tree, tree_compress
+        if (it->item->type & ELM_GENLIST_ITEM_TREE)
+           snprintf(buf, sizeof(buf), "tree%s/%s",
+                    sd->mode == ELM_LIST_COMPRESS ? "_compress" :
+                    "", style ? : "default");
+        else
+           snprintf(buf, sizeof(buf), "item%s/%s",
+                    sd->mode == ELM_LIST_COMPRESS ? "_compress" :
+                    "",style ? : "default");
+     }
+
+   if (!elm_widget_theme_object_set(WIDGET(it), view,
+                                    "genlist", buf,
+                                    elm_widget_style_get(WIDGET(it))))
+     {
+        ERR("%s is not a valid genlist item style. "
+            "Automatically falls back into default style.",
+            style);
+        elm_widget_theme_object_set
+          (WIDGET(it), VIEW(it), "genlist", "item/default", "default");
+     }
+
+   edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it))
+                         * elm_config_scale_get());
+
+   stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
+   if (!stacking_even) stacking_even = "above";
+   it->item->stacking_even = !!strcmp("above", stacking_even);
+
+   stacking = edje_object_data_get(VIEW(it), "stacking");
+   if (!stacking) stacking = "yes";
+   it->item->nostacking = !!strcmp("yes", stacking);
+}
+
+/**
+ * Create a VIEW(it) during _item_realize()
+ */
+static Evas_Object *
+_view_create(Elm_Gen_Item *it, const char *style)
+{
+   Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
+   evas_object_smart_member_add(view, GL_IT(it)->wsd->pan_obj);
+   elm_widget_sub_object_add(WIDGET(it), view);
+   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+                         elm_config_scale_get());
+
+   _view_style_update(it, view, style);
+   return view;
+}
+
+static void
+_view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents,
+            Eina_List **states, Eina_List **content_objs)
+{
+   const char *part;
+   Evas_Object *c;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(*texts, l, part)
+     edje_object_part_text_set(view, part, NULL);
+
+   ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(*contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(*states, elm_widget_stringlist_free);
+
+   EINA_LIST_FREE(*content_objs, c)
+     evas_object_del(c);
+}
+
+static void
 _item_scroll(Elm_Genlist_Data *sd)
 {
    Evas_Coord gith = 0;
@@ -331,10 +546,6 @@ static void
 _elm_genlist_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool calc)
 {
-   Evas_Object *content;
-   Eina_List *l;
-   const char *part;
-
    if (!it->realized) return;
    if (GL_IT(it)->wsd->reorder_it == it) return;
 
@@ -343,15 +554,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
-   EINA_LIST_FOREACH(it->texts, l, part)
-     edje_object_part_text_set(VIEW(it), part, NULL);
-
-   ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
-
-   EINA_LIST_FREE(it->content_objs, content)
-     evas_object_del(content);
+   _view_clear(VIEW(it), &(it->texts), &(it->contents), &(it->states), &(it->content_objs));
 
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
@@ -1005,117 +1208,6 @@ _elm_genlist_item_index_update(Elm_Gen_Item *it)
 }
 
 static void
-_item_text_realize(Elm_Gen_Item *it,
-                   Evas_Object *target,
-                   Eina_List **source,
-                   const char *parts)
-{
-   if (it->itc->func.text_get)
-     {
-        const Eina_List *l;
-        const char *key;
-
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "texts"));
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             char *s = it->itc->func.text_get
-                 ((void *)it->base.data, WIDGET(it), key);
-
-             if (s)
-               {
-                  edje_object_part_text_escaped_set(target, key, s);
-                  free(s);
-               }
-             else
-               {
-                  edje_object_part_text_set(target, key, "");
-               }
-          }
-     }
-}
-
-static Eina_List *
-_item_mode_content_realize(Elm_Gen_Item *it,
-                           Evas_Object *target,
-                           Eina_List **source,
-                           const char *parts,
-                           Eina_List **contents_list)
-{
-   Eina_List *res = *contents_list;
-
-   if (it->itc->func.content_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        Evas_Object *ic;
-
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             ic = it->itc->func.content_get
-                 ((void *)it->base.data, WIDGET(it), key);
-
-             if (ic)
-               {
-                  res = eina_list_append(res, ic);
-                  edje_object_part_swallow(target, key, ic);
-                  evas_object_show(ic);
-                  elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (elm_widget_item_disabled_get(it))
-                    elm_widget_disabled_set(ic, EINA_TRUE);
-               }
-          }
-     }
-
-   return res;
-}
-
-static void
-_item_state_realize(Elm_Gen_Item *it,
-                    Evas_Object *target,
-                    Eina_List **source,
-                    const char *parts)
-{
-   if (it->itc->func.state_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        char buf[4096];
-
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "states"));
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             Eina_Bool on = it->itc->func.state_get
-                 ((void *)it->base.data, WIDGET(it), key);
-
-             if (on)
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
-                  edje_object_signal_emit(target, buf, "elm");
-               }
-             else
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
-                  edje_object_signal_emit(target, buf, "elm");
-               }
-          }
-        edje_object_message_signal_process(target);
-     }
-}
-
-static void
 _decorate_all_item_position(Elm_Gen_Item *it,
                             int itx,
                             int ity)
@@ -1190,11 +1282,11 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
      it->item->deco_all_contents = elm_widget_stringlist_get
          (edje_object_data_get(it->deco_all_view, "contents"));
    it->item->deco_all_content_objs =
-     _item_mode_content_realize(it, it->deco_all_view,
-                                &it->item->deco_all_contents, NULL,
-                                &it->item->deco_all_content_objs);
+      _item_content_realize(it, it->deco_all_view,
+                            &it->item->deco_all_contents, NULL,
+                            &it->item->deco_all_content_objs);
    _item_state_realize
-     (it, it->deco_all_view, &it->item->deco_all_states, NULL);
+      (it, it->deco_all_view, &it->item->deco_all_states, NULL);
    edje_object_part_swallow
      (it->deco_all_view, "elm.swallow.decorate.content", VIEW(it));
 
@@ -1383,47 +1475,6 @@ _item_cache_find(Elm_Gen_Item *it)
    return NULL;
 }
 
-static Eina_List *
-_item_content_realize(Elm_Gen_Item *it,
-                      Evas_Object *target,
-                      Eina_List **source,
-                      const char *parts)
-{
-   Eina_List *res = it->content_objs;
-
-   if (it->itc->func.content_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        Evas_Object *ic = NULL;
-
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "contents"));
-
-        EINA_LIST_FOREACH(*source, l, key)
-          {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             if (it->itc->func.content_get)
-               ic = it->itc->func.content_get
-                   ((void *)it->base.data, WIDGET(it), key);
-             if (ic)
-               {
-                  res = eina_list_append(res, ic);
-                  edje_object_part_swallow(target, key, ic);
-                  evas_object_show(ic);
-                  elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (elm_widget_item_disabled_get(it))
-                    elm_widget_disabled_set(ic, EINA_TRUE);
-               }
-          }
-     }
-
-   return res;
-}
-
 static char *
 _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
@@ -1514,7 +1565,6 @@ _item_realize(Elm_Gen_Item *it,
 {
    Item_Cache *itc = NULL;
    const char *treesize;
-   char buf[1024];
    int tsize = 20;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
@@ -1543,49 +1593,7 @@ _item_realize(Elm_Gen_Item *it,
         itc->spacer = NULL;
      }
    else
-     {
-        const char *stacking_even;
-        const char *stacking;
-
-        VIEW(it) = edje_object_add(evas_object_evas_get(WIDGET(it)));
-        edje_object_scale_set(VIEW(it),
-                              elm_widget_scale_get(WIDGET(it)) *
-                              elm_config_scale_get());
-        evas_object_smart_member_add(VIEW(it), sd->pan_obj);
-        elm_widget_sub_object_add(WIDGET(it), VIEW(it));
-
-        if (it->item->type & ELM_GENLIST_ITEM_TREE)
-          snprintf(buf, sizeof(buf), "tree%s/%s",
-                   sd->mode == ELM_LIST_COMPRESS ? "_compress" :
-                   "", it->itc->item_style ? : "default");
-        else
-          snprintf(buf, sizeof(buf), "item%s/%s",
-                   sd->mode == ELM_LIST_COMPRESS ? "_compress" :
-                   "", it->itc->item_style ? : "default");
-
-        if (!elm_widget_theme_object_set(WIDGET(it), VIEW(it),
-                                         "genlist", buf,
-                                         elm_widget_style_get(WIDGET(it))))
-          {
-             ERR("%s is not a valid genlist item style. "
-                 "Automatically falls back into default style.",
-                 it->itc->item_style);
-             elm_widget_theme_object_set
-                (WIDGET(it), VIEW(it), "genlist", "item/default", "default");
-          }
-
-
-        stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
-        if (!stacking_even) stacking_even = "above";
-        it->item->stacking_even = !!strcmp("above", stacking_even);
-
-        stacking = edje_object_data_get(VIEW(it), "stacking");
-        if (!stacking) stacking = "yes";
-        it->item->nostacking = !!strcmp("yes", stacking);
-
-        edje_object_mirrored_set
-          (VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
-     }
+     VIEW(it) = _view_create(it, it->itc->item_style);
 
    /* access */
    if (_elm_config->access_mode) _access_widget_item_register(it);
@@ -1669,7 +1677,8 @@ _item_realize(Elm_Gen_Item *it,
 
         _item_text_realize(it, VIEW(it), &it->texts, NULL);
         it->content_objs =
-          _item_content_realize(it, VIEW(it), &it->contents, NULL);
+           _item_content_realize(it, VIEW(it), &it->contents, NULL,
+                                 &it->content_objs);
         if (it->has_contents != (!!it->content_objs))
           it->item->mincalcd = EINA_FALSE;
         it->has_contents = !!it->content_objs;
@@ -1681,7 +1690,7 @@ _item_realize(Elm_Gen_Item *it,
              if (!(it->item->flip_contents))
                it->item->flip_contents = elm_widget_stringlist_get
                    (edje_object_data_get(VIEW(it), "flips"));
-             it->item->flip_content_objs = _item_mode_content_realize
+             it->item->flip_content_objs = _item_content_realize
                  (it, VIEW(it), &it->item->flip_contents, NULL,
                  &it->item->flip_content_objs);
           }
@@ -3297,8 +3306,6 @@ _item_block_del(Elm_Gen_Item *it)
 static void
 _decorate_all_item_unrealize(Elm_Gen_Item *it)
 {
-   Evas_Object *icon;
-
    if ((!it) || (!it->item->decorate_all_item_realized)) return;
 
    edje_object_part_unswallow(it->deco_all_view, VIEW(it));
@@ -3315,16 +3322,15 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
           (it->deco_all_view, "elm,state,reorder,mode_unset", "elm");
      }
 
-   ELM_SAFE_FREE(it->deco_all_view, evas_object_del);
-   ELM_SAFE_FREE(it->item->deco_all_texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_all_contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_all_states, elm_widget_stringlist_free);
+   _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts),
+               &(GL_IT(it)->deco_all_contents), &(GL_IT(it)->deco_all_states),
+               &(GL_IT(it)->deco_all_content_objs));
 
-   EINA_LIST_FREE(it->item->deco_all_content_objs, icon)
-     evas_object_del(icon);
    edje_object_message_signal_process(it->deco_all_view);
    _item_mouse_callbacks_del(it, it->deco_all_view);
    _item_mouse_callbacks_add(it, VIEW(it));
+
+   ELM_SAFE_FREE(it->deco_all_view, evas_object_del);
 
    it->item->decorate_all_item_realized = EINA_FALSE;
 }
@@ -4643,17 +4649,15 @@ static void
 _decorate_item_unrealize(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-   Evas_Object *content, *obj = sd->obj;
+   Evas_Object *obj = sd->obj;
 
    if (!it->item->deco_it_view) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   ELM_SAFE_FREE(it->item->deco_it_texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_it_contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->item->deco_it_states, elm_widget_stringlist_free);
 
-   EINA_LIST_FREE(it->item->deco_it_content_objs, content)
-     evas_object_del(content);
+   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts),
+               &(GL_IT(it)->deco_it_contents), &(GL_IT(it)->deco_it_states),
+               &(GL_IT(it)->deco_it_content_objs));
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), sd->pan_obj);
@@ -5081,7 +5085,6 @@ _hbar_unpress_cb(Evas_Object *obj,
 static void
 _decorate_item_realize(Elm_Gen_Item *it)
 {
-   char buf[1024];
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
 
@@ -5089,37 +5092,7 @@ _decorate_item_realize(Elm_Gen_Item *it)
                                     sd->generation)) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   it->item->deco_it_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set
-     (it->item->deco_it_view, elm_widget_scale_get(WIDGET(it)) *
-     elm_config_scale_get());
-   evas_object_smart_member_add
-     (it->item->deco_it_view, sd->pan_obj);
-   elm_widget_sub_object_add(WIDGET(it), it->item->deco_it_view);
-
-   strncpy(buf, "item", sizeof(buf));
-   if (sd->mode == ELM_LIST_COMPRESS)
-     strncat(buf, "_compress", sizeof(buf) - strlen(buf) - 1);
-
-   if (it->item->order_num_in & 0x1)
-     strncat(buf, "_odd", sizeof(buf) - strlen(buf) - 1);
-   strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
-   strncat(buf, it->itc->decorate_item_style, sizeof(buf) - strlen(buf) - 1);
-
-   if (!elm_widget_theme_object_set
-       (WIDGET(it), it->item->deco_it_view, "genlist", buf,
-        elm_widget_style_get(WIDGET(it))))
-     {
-
-        ERR("%s is not a valid genlist item style. "
-            "Automatically falls back into default style.",
-            it->itc->decorate_item_style);
-        elm_widget_theme_object_set
-           (WIDGET(it), it->item->deco_it_view,
-            "genlist", "item/default", "default");
-     }
-   edje_object_mirrored_set
-      (it->item->deco_it_view, elm_widget_mirrored_get(WIDGET(it)));
+   it->item->deco_it_view = _view_create(it, it->itc->decorate_item_style);
 
    /* signal callback add */
    evas_object_event_callback_add
@@ -5143,8 +5116,8 @@ _decorate_item_realize(Elm_Gen_Item *it)
        elm_widget_stringlist_get
          (edje_object_data_get(it->item->deco_it_view, "contents"));
    it->item->deco_it_content_objs =
-     _item_mode_content_realize
-       (it, it->item->deco_it_view, &it->item->deco_it_contents, NULL,
+      _item_content_realize
+      (it, it->item->deco_it_view, &it->item->deco_it_contents, NULL,
        &it->item->deco_it_content_objs);
    _item_state_realize
      (it, it->item->deco_it_view, &it->item->deco_it_states, NULL);
@@ -6706,7 +6679,8 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
         it->content_objs = _item_content_unrealize(it, VIEW(it),
                                                    &it->contents, parts);
         it->content_objs = _item_content_realize(it, VIEW(it),
-                                                 &it->contents, parts);
+                                                 &it->contents, parts,
+                                                 &it->content_objs);
         if (it->has_contents != (!!it->content_objs))
           it->item->mincalcd = EINA_FALSE;
         it->has_contents = !!it->content_objs;
@@ -6727,9 +6701,9 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
                                             &it->item->flip_contents, parts,
                                             &it->item->flip_content_objs);
              it->item->flip_content_objs =
-               _item_mode_content_realize(it, VIEW(it),
-                                          &it->item->flip_contents, parts,
-                                          &it->item->flip_content_objs);
+                _item_content_realize(it, VIEW(it),
+                                      &it->item->flip_contents, parts,
+                                      &it->item->flip_content_objs);
           }
         if (it->item->deco_it_view)
           {
@@ -6738,9 +6712,9 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
                                             &it->item->deco_it_contents, parts,
                                             &it->item->deco_it_content_objs);
              it->item->deco_it_content_objs =
-               _item_mode_content_realize(it, it->item->deco_it_view,
-                                          &it->item->deco_it_contents, parts,
-                                          &it->item->deco_it_content_objs);
+                _item_content_realize(it, it->item->deco_it_view,
+                                      &it->item->deco_it_contents, parts,
+                                      &it->item->deco_it_content_objs);
           }
         if (GL_IT(it)->wsd->decorate_all_mode)
           {
@@ -6749,9 +6723,9 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
                  (it, it->deco_all_view, &it->item->deco_all_contents, parts,
                  &it->item->deco_all_content_objs);
              it->item->deco_all_content_objs =
-               _item_mode_content_realize(it, it->deco_all_view,
-                                          &it->item->deco_all_contents, parts,
-                                          &it->item->deco_all_content_objs);
+                _item_content_realize(it, it->deco_all_view,
+                                      &it->item->deco_all_contents, parts,
+                                      &it->item->deco_all_content_objs);
           }
      }
 
