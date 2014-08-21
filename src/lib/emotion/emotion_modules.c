@@ -9,7 +9,7 @@
 Eina_Bool xine_module_init(void);
 void      xine_module_shutdown(void);
 #endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
+#if defined(EMOTION_STATIC_BUILD_GSTREAMER) || defined(EMOTION_STATIC_BUILD_GSTREAMER1)
 Eina_Bool gstreamer_module_init(void);
 void      gstreamer_module_shutdown(void);
 #endif
@@ -73,6 +73,9 @@ _emotion_modules_load(void)
 #ifdef EMOTION_BUILD_GSTREAMER
                      "gstreamer",
 #endif
+#ifdef EMOTION_BUILD_GSTREAMER1
+                     "gstreamer1",
+#endif
 #ifdef EMOTION_BUILD_XINE
                      "xine",
 #endif
@@ -112,7 +115,7 @@ emotion_modules_init(void)
 #ifdef EMOTION_STATIC_BUILD_XINE
    xine_module_init();
 #endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
+#if defined(EMOTION_STATIC_BUILD_GSTREAMER) || defined(EMOTION_STATIC_BUILD_GSTREAMER1)
    gstreamer_module_init();
 #endif
 #ifdef EMOTION_STATIC_BUILD_GENERIC
@@ -130,7 +133,7 @@ emotion_modules_shutdown(void)
 #ifdef EMOTION_STATIC_BUILD_XINE
    xine_module_shutdown();
 #endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
+#if defined(EMOTION_STATIC_BUILD_GSTREAMER) || defined(EMOTION_STATIC_BUILD_GSTREAMER1)
    gstreamer_module_shutdown();
 #endif
 #ifdef EMOTION_STATIC_BUILD_GENERIC
