@@ -167,6 +167,11 @@ evas_table_SOURCES = evas-table.c
 evas_table_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_table_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_transparent
+evas_transparent_SOURCES = evas-transparent.c
+evas_transparent_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_transparent_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_multi_touch
 evas_multi_touch_SOURCES = evas-multi-touch.c
 evas_multi_touch_LDADD = $(ECORE_EVAS_COMMON_LDADD)
