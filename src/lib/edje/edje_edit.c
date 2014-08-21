@@ -8475,6 +8475,33 @@ edje_edit_program_action_set(Evas_Object *obj, const char *prog, Edje_Action_Typ
           }
      }
 
+   switch (action)
+     {
+      case EDJE_ACTION_TYPE_STATE_SET:
+      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+#ifdef HAVE_EPHYSICS
+      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+      case EDJE_ACTION_TYPE_PHYSICS_STOP:
+      case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
+#endif
+         /*This actions have part as a target so targets list can be leaved untouched
+           if it was not list of programs (EDJE_ACTION_TYPE_ACTION_STOP) */
+         if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
+           edje_edit_program_targets_clear(obj, prog);
+         break;
+
+      case EDJE_ACTION_TYPE_ACTION_STOP:
+         /*this action needs programs as targets*/
+      default:
+         /*other actions do not need targets so we need to delete them all */
+         edje_edit_program_targets_clear(obj, prog);
+     }
+
    epr->action = action;
    return EINA_TRUE;
 }
@@ -8545,30 +8572,42 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
 {
    int id;
    Edje_Program_Target *t;
+   Edje_Program *tar;
+   Edje_Real_Part *rp;
 
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
+   switch (epr->action)
      {
-	/* the target is a part */
-	Edje_Real_Part *rp;
+      case EDJE_ACTION_TYPE_STATE_SET:
+      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+#ifdef HAVE_EPHYSICS
+      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+      case EDJE_ACTION_TYPE_PHYSICS_STOP:
+      case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
+#endif
+         /* the target is a part */
+         rp = _edje_real_part_get(ed, target);
+         if (!rp) return EINA_FALSE;
+         id = rp->part->id;
+         break;
 
-	rp = _edje_real_part_get(ed, target);
-	if (!rp) return EINA_FALSE;
-	id = rp->part->id;
-     }
-   else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
-     {
-	/* the target is a program */
-	Edje_Program *tar;
+      case EDJE_ACTION_TYPE_ACTION_STOP:
+         /* the target is a program */
+         tar = _edje_program_get_byname(obj, target);
+         if (!tar) return EINA_FALSE;
+         id = tar->id;
+         break;
 
-	tar = _edje_program_get_byname(obj, target);
-	if (!tar) return EINA_FALSE;
-	id = tar->id;
+      default:
+         return EINA_FALSE;
      }
-   else
-     return EINA_FALSE;
 
    t = _alloc(sizeof(Edje_Program_Target));
    if (!t) return EINA_FALSE;
@@ -8584,35 +8623,45 @@ edje_edit_program_target_del(Evas_Object *obj, const char *prog, const char *tar
 {
    int id;
    Eina_List *l;
+   Edje_Real_Part *rp;
+   Edje_Program *tar;
    Edje_Program_Target *t;
 
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
+   switch (epr->action)
      {
-	/* the target is a part */
-	Edje_Real_Part *rp;
+      case EDJE_ACTION_TYPE_STATE_SET:
+      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+#ifdef HAVE_EPHYSICS
+      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+      case EDJE_ACTION_TYPE_PHYSICS_STOP:
+      case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
+#endif
+         /* the target is a part */
+         rp = _edje_real_part_get(ed, target);
+         if (!rp) return EINA_FALSE;
+         id = rp->part->id;
+         break;
 
-	rp = _edje_real_part_get(ed, target);
-	if (!rp) return EINA_FALSE;
-	id = rp->part->id;
+      case EDJE_ACTION_TYPE_ACTION_STOP:
+         /* the target is a program */
+         tar = _edje_program_get_byname(obj, target);
+         if (!tar) return EINA_FALSE;
+         id = tar->id;
+         break;
+      default:
+         return EINA_FALSE;
      }
-   else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
-     {
-	/* the target is a program */
-	Edje_Program *tar;
-
-	tar = _edje_program_get_byname(obj, target);
-	if (!tar) return EINA_FALSE;
-	id = tar->id;
-     }
-   else
-     return EINA_FALSE;
-
    EINA_LIST_FOREACH(epr->targets, l, t)
       if (t->id == id)
-	break;
+        break;
    epr->targets = eina_list_remove_list(epr->targets, l);
    free(t);
 
