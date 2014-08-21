@@ -78,6 +78,17 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool
+_is_no_select(Elm_List_Item *it)
+{
+   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static inline void
 _elm_list_item_free(Elm_List_Item *it)
 {
@@ -1106,7 +1117,7 @@ _elm_list_item_focused(Elm_List_Item *it)
    Evas_Coord x, y, w, h, sx, sy, sw, sh;
    const char *focus_raise;
 
-   if ((!sd) || (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if ((!sd) || _is_no_select(it) ||
        (it == (Elm_List_Item *)sd->focused_item))
      return;
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
@@ -1148,7 +1159,7 @@ _elm_list_item_unfocused(Elm_List_Item *it)
        (it != (Elm_List_Item *)sd->focused_item))
      return;
 
-   if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
+   if (_is_no_select(it))
      return;
 
    if (elm_widget_focus_highlight_enabled_get(obj))
@@ -1315,8 +1326,7 @@ _item_highlight(Elm_List_Item *it)
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if (_is_no_select(it) ||
        (it->highlighted) || (it->base.disabled))
        return;
 
@@ -1342,7 +1352,7 @@ _item_select(Elm_List_Item *it)
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
 
-   if (it->base.disabled || (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
+   if (it->base.disabled || _is_no_select(it))
      return;
    if (!sd->focus_on_selection_enabled)
      {

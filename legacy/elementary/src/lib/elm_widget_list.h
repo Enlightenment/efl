@@ -94,6 +94,9 @@ struct _Elm_List_Item
 #define ELM_LIST_DATA_GET(o, sd) \
   Elm_List_Data * sd = eo_data_scope_get(o, ELM_LIST_CLASS)
 
+#define ELM_LIST_DATA_GET_FROM_ITEM(it, sd) \
+  ELM_LIST_DATA_GET(WIDGET(it), sd)
+
 #define ELM_LIST_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_LIST_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                           \
