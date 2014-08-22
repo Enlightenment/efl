@@ -5074,6 +5074,7 @@ _ephysics_body_soft_sphere_face_evas_object_del_cb(void *data, Evas *evas EINA_U
              break;
           }
      }
+   if (!face_obj) return;
 
    _ephysics_body_face_evas_object_del(body, face_obj,
                                   _ephysics_body_soft_sphere_face_obj_resize_cb);
