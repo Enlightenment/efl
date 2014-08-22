@@ -1458,10 +1458,14 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 
    if (!ee->can_async_render)
      {
+        Eina_List *updates;
+
+        updates = evas_render_updates(ee->evas);
+        rend = _ecore_evas_wl_common_render_updates_process(ee, updates);
+        evas_render_updates_free(updates);
+
         if (!wdata->frame_pending)
           {
-             Eina_List *updates;
-
              if (!wdata->frame_callback)
                {
                   wdata->frame_callback = 
@@ -1469,10 +1473,6 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
                   wl_callback_add_listener(wdata->frame_callback, 
                                            &frame_listener, ee);
                }
-
-             updates = evas_render_updates(ee->evas);
-             rend = _ecore_evas_wl_common_render_updates_process(ee, updates);
-             evas_render_updates_free(updates);
 
              if (rend) 
                wdata->frame_pending = EINA_TRUE;
@@ -1483,6 +1483,8 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
         ee->in_async_render = EINA_TRUE;
         rend = 1;
      }
+   else if (ee->func.fn_post_render)
+     ee->func.fn_post_render(ee);
 
    return rend;
 }
