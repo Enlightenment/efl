@@ -1049,6 +1049,9 @@ static Eina_Bool
 _ecore_getopt_parse_bool(const char *str,
                          Eina_Bool  *v)
 {
+   if (!str)
+     return EINA_FALSE;
+
    if ((strcmp(str, "0") == 0) ||
        (strcasecmp(str, "f") == 0) ||
        (strcasecmp(str, "false") == 0) ||
