@@ -1273,7 +1273,7 @@ struct _Native
 //#define GLX_TEX_PIXMAP_RECREATE 1
 
 static void
-_native_bind_cb(void *data, void *image)
+_native_bind_cb(void *data EINA_UNUSED, void *image)
 {
    Evas_GL_Image *im = image;
    Native *n = im->native.data;
@@ -1312,12 +1312,10 @@ _native_bind_cb(void *data, void *image)
       glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
-   return;
-   (void *) (data = NULL);
 }
 
 static void
-_native_unbind_cb(void *data, void *image)
+_native_unbind_cb(void *data EINA_UNUSED, void *image)
 {
   Evas_GL_Image *im = image;
   Native *n = im->native.data;
@@ -1346,8 +1344,6 @@ _native_unbind_cb(void *data, void *image)
       glBindTexture(GL_TEXTURE_2D, 0);
       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
-   return;
-   (void *) (data = NULL);
 }
 
 static void
