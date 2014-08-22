@@ -21,13 +21,13 @@
 
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \
-	if (!o) return; \
+        if (!o) return; \
         if (!eo_isa(o, MY_CLASS)) { \
              ERR("Tried calling on a non-emotion object."); \
              return; \
         } \
-	smart = eo_data_scope_get(o, MY_CLASS); \
-	if (!smart) return; \
+        smart = eo_data_scope_get(o, MY_CLASS); \
+        if (!smart) return; \
      }
 
 #define E_SMART_OBJ_GET_RETURN(smart, o, type, ret) \
@@ -56,6 +56,7 @@ struct _Emotion_Object_Data
    EINA_REFCOUNT;
    Emotion_Engine_Instance *engine_instance;
 
+   const char    *engine;
    const char    *file;
    Evas_Object   *smartobj;
    Evas_Object   *obj;
@@ -146,6 +147,14 @@ static const char SIG_POSITION_LOAD_SUCCEED[] = "position_load,succeed";
 static const char SIG_POSITION_LOAD_FAILED[] = "position_load,failed";
 
 static void
+_engine_init(Eo *obj, Emotion_Object_Data *sd)
+{
+   if (sd->engine_instance) return;
+   sd->engine_instance = emotion_engine_instance_new(sd->engine, obj,
+                                                     &(sd->module_options));
+}
+
+static void
 _emotion_image_data_zero(Evas_Object *img)
 {
    void *data = NULL;
@@ -178,13 +187,13 @@ _smart_data_free(Emotion_Object_Data *sd)
    if (sd->save_xattr) eio_file_cancel(sd->save_xattr);
    sd->save_xattr = NULL;
 #endif
-   
+
    if (sd->engine_instance)
      {
         emotion_engine_instance_file_close(sd->engine_instance);
         emotion_engine_instance_del(sd->engine_instance);
+        sd->engine_instance = NULL;
      }
-   sd->engine_instance = NULL;
    if (sd->obj) evas_object_del(sd->obj);
    sd->obj = NULL;
    if (sd->crop.clipper) evas_object_del(sd->crop.clipper);
@@ -201,6 +210,8 @@ _smart_data_free(Emotion_Object_Data *sd)
    sd->progress.info = NULL;
    eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
+   if (sd->file) eina_stringshare_del(sd->engine);
+   sd->engine = NULL;
 
    /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
    emotion_shutdown();
@@ -304,18 +315,17 @@ _emotion_object_option_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *pd, const c
 }
 
 EOLIAN static Eina_Bool
-_emotion_object_engine_set(Eo *obj, Emotion_Object_Data *pd, const char *module_filename)
+_emotion_object_engine_set(Eo *obj, Emotion_Object_Data *pd, const char *engine)
 {
    Emotion_Object_Data *sd = pd;
    const char *file;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
-   if (emotion_engine_instance_name_equal(sd->engine_instance, module_filename))
-     {
-        DBG("no need to reset engine, already set: %s", module_filename);
-        return EINA_TRUE;
-     }
+   if (!engine) engine = "gstreamer1";
+   if (!strcmp(engine, sd->engine)) return EINA_TRUE;
+
+   eina_stringshare_replace(&(sd->engine), engine);
 
    file = sd->file;
    sd->file = NULL;
@@ -341,7 +351,8 @@ _emotion_object_engine_set(Eo *obj, Emotion_Object_Data *pd, const char *module_
    sd->anim = NULL;
 
    if (sd->engine_instance) emotion_engine_instance_del(sd->engine_instance);
-   sd->engine_instance = emotion_engine_instance_new(module_filename, obj, &(sd->module_options));
+   sd->engine_instance = NULL;
+   _engine_init(obj, sd);
    if (!sd->engine_instance)
      {
         sd->file = file;
@@ -368,12 +379,12 @@ _emotion_object_efl_file_file_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, 
 {
    DBG("file=%s", file);
 
-   if (!eina_stringshare_replace(&sd->file, file))
-     return EINA_TRUE;
+   if (!eina_stringshare_replace(&sd->file, file)) return EINA_TRUE;
 
+   if (!sd->engine_instance) _engine_init(obj, sd);
    if (!sd->engine_instance)
      {
-        WRN("No engine choosen. Call emotion_object_init()?");
+        WRN("No engine choosen. Please set an engine.");
         return EINA_FALSE;
      }
 
@@ -442,34 +453,34 @@ _emotion_aspect_borders_apply(Evas_Object *obj, Emotion_Object_Data *sd, int w, 
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
 
    /* applying calculated borders */
-   if (sd->crop.l == 0 && sd->crop.r == 0 &&
-       sd->crop.t == 0 && sd->crop.b == 0)
+   if ((sd->crop.l == 0) && (sd->crop.r == 0) &&
+       (sd->crop.t == 0) && (sd->crop.b == 0))
      {
-	Evas_Object *old_clipper;
-	if (sd->crop.clipper)
-	  {
-	     old_clipper = evas_object_clip_get(sd->crop.clipper);
-	     evas_object_clip_unset(sd->obj);
-	     evas_object_clip_set(sd->obj, old_clipper);
-	     evas_object_del(sd->crop.clipper);
-	     sd->crop.clipper = NULL;
-	  }
+        Evas_Object *old_clipper;
+        if (sd->crop.clipper)
+          {
+             old_clipper = evas_object_clip_get(sd->crop.clipper);
+             evas_object_clip_unset(sd->obj);
+             evas_object_clip_set(sd->obj, old_clipper);
+             evas_object_del(sd->crop.clipper);
+             sd->crop.clipper = NULL;
+          }
      }
    else
      {
-	if (!sd->crop.clipper)
-	  {
-	     Evas_Object *old_clipper;
-	     sd->crop.clipper = evas_object_rectangle_add(
-		evas_object_evas_get(obj));
-	     evas_object_color_set(sd->crop.clipper, 255, 255, 255, 255);
-	     evas_object_smart_member_add(sd->crop.clipper, obj);
-	     old_clipper = evas_object_clip_get(sd->obj);
-	     evas_object_clip_set(sd->obj, sd->crop.clipper);
-	     evas_object_clip_set(sd->crop.clipper, old_clipper);
-	     if (evas_object_visible_get(sd->obj))
-	       evas_object_show(sd->crop.clipper);
-	  }
+        if (!sd->crop.clipper)
+          {
+             Evas_Object *old_clipper;
+             sd->crop.clipper = evas_object_rectangle_add
+               (evas_object_evas_get(obj));
+             evas_object_color_set(sd->crop.clipper, 255, 255, 255, 255);
+             evas_object_smart_member_add(sd->crop.clipper, obj);
+             old_clipper = evas_object_clip_get(sd->obj);
+             evas_object_clip_set(sd->obj, sd->crop.clipper);
+             evas_object_clip_set(sd->crop.clipper, old_clipper);
+             if (evas_object_visible_get(sd->obj))
+               evas_object_show(sd->crop.clipper);
+          }
      }
    _clipper_position_size_update(obj, x, y, w, h, iw, ih);
 }
@@ -496,64 +507,60 @@ _emotion_object_aspect_border_apply(Evas_Object *obj, Emotion_Object_Data *sd, i
     */
    if (sd->aspect == EMOTION_ASPECT_KEEP_NONE)
      {
-	sd->crop.l = 0;
-	sd->crop.r = 0;
-	sd->crop.t = 0;
-	sd->crop.b = 0;
-	aspect_opt = 0; // just ignore keep_aspect
+        sd->crop.l = 0;
+        sd->crop.r = 0;
+        sd->crop.t = 0;
+        sd->crop.b = 0;
+        aspect_opt = 0; // just ignore keep_aspect
      }
    else if (sd->aspect == EMOTION_ASPECT_KEEP_WIDTH)
      {
-	aspect_opt = 1;
+        aspect_opt = 1;
      }
    else if (sd->aspect == EMOTION_ASPECT_KEEP_HEIGHT)
      {
-	aspect_opt = 2;
+        aspect_opt = 2;
      }
    else if (sd->aspect == EMOTION_ASPECT_KEEP_BOTH)
      {
-	if (ir > r)
-	  aspect_opt = 1;
-	else
-	  aspect_opt = 2;
+        if (ir > r) aspect_opt = 1;
+        else aspect_opt = 2;
      }
    else if (sd->aspect == EMOTION_ASPECT_CROP)
      {
-	if (ir > r)
-	  aspect_opt = 2;
-	else
-	  aspect_opt = 1;
+        if (ir > r) aspect_opt = 2;
+        else aspect_opt = 1;
      }
    else if (sd->aspect == EMOTION_ASPECT_CUSTOM)
      {
-	// nothing to do, just respect the border settings
-	aspect_opt = 0;
+        // nothing to do, just respect the border settings
+        aspect_opt = 0;
      }
 
    /* updating borders based on keep_aspect settings */
    if (aspect_opt == 1) // keep width
      {
-	int th, dh;
-	double scale;
+        int th, dh;
+        double scale;
 
-	sd->crop.l = 0;
-	sd->crop.r = 0;
-	scale = (double)iw / w;
-	th = h * scale;
-	dh = ih - th;
-	sd->crop.t = sd->crop.b = dh / 2;
+        sd->crop.l = 0;
+        sd->crop.r = 0;
+        scale = (double)iw / w;
+        th = h * scale;
+        dh = ih - th;
+        sd->crop.t = sd->crop.b = dh / 2;
      }
    else if (aspect_opt == 2) // keep height
      {
-	int tw, dw;
-	double scale;
+        int tw, dw;
+        double scale;
 
-	sd->crop.t = 0;
-	sd->crop.b = 0;
-	scale = (double)ih / h;
-	tw = w * scale;
-	dw = iw - tw;
-	sd->crop.l = sd->crop.r = dw / 2;
+        sd->crop.t = 0;
+        sd->crop.b = 0;
+        scale = (double)ih / h;
+        tw = w * scale;
+        dw = iw - tw;
+        sd->crop.l = sd->crop.r = dw / 2;
      }
 
    _emotion_aspect_borders_apply(obj, sd, w, h, iw, ih);
@@ -597,13 +604,10 @@ emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
 
    evas_object_color_set(sd->bg, r, g, b, a);
 
-   if (!evas_object_visible_get(obj))
-     return;
+   if (!evas_object_visible_get(obj)) return;
 
-   if (a > 0)
-     evas_object_show(sd->bg);
-   else
-     evas_object_hide(sd->bg);
+   if (a > 0) evas_object_show(sd->bg);
+   else evas_object_hide(sd->bg);
 }
 
 EAPI void
@@ -622,9 +626,7 @@ emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a)
    int w, h;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-
-   if (a == sd->aspect)
-     return;
+   if (a == sd->aspect) return;
 
    sd->aspect = a;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -637,7 +639,6 @@ emotion_object_keep_aspect_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_ASPECT_KEEP_NONE);
-
    return sd->aspect;
 }
 
@@ -675,7 +676,6 @@ EOLIAN static Eina_Bool
 _emotion_object_efl_player_play_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
-
    return sd->play;
 }
 
@@ -712,6 +712,7 @@ emotion_object_position_get(const Evas_Object *obj)
 EOLIAN static double
 _emotion_object_efl_player_position_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
+   if (!sd->engine_instance) return 0.0;
    sd->pos = emotion_engine_instance_pos_get(sd->engine_instance);
    return sd->pos;
 }
@@ -722,6 +723,7 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
+   if (!sd->engine_instance) return 0.0;
    return emotion_engine_instance_buffer_size_get(sd->engine_instance);
 }
 
@@ -731,6 +733,7 @@ emotion_object_seekable_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_seekable(sd->engine_instance);
 }
 
@@ -740,6 +743,7 @@ emotion_object_video_handled_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_video_handled(sd->engine_instance);
 }
 
@@ -749,6 +753,7 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_audio_handled(sd->engine_instance);
 }
 
@@ -758,6 +763,7 @@ emotion_object_play_length_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
+   if (!sd->engine_instance) return 0.0;
    sd->len = emotion_engine_instance_len_get(sd->engine_instance);
    return sd->len;
 }
@@ -824,6 +830,7 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_event_feed(sd->engine_instance, ev);
 }
 
@@ -837,6 +844,7 @@ EOLIAN static void
 _emotion_object_efl_player_audio_volume_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, double vol)
 {
    DBG("vol=%f", vol);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_audio_channel_volume_set(sd->engine_instance, vol);
 }
 
@@ -849,6 +857,7 @@ emotion_object_audio_volume_get(const Evas_Object *obj)
 EOLIAN static double
 _emotion_object_efl_player_audio_volume_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
+   if (!sd->engine_instance) return 0.0;
    return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
 }
 
@@ -862,6 +871,7 @@ EOLIAN static void
 _emotion_object_efl_player_audio_mute_set(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, Eina_Bool mute)
 {
    DBG("mute=" FMT_UCHAR, mute);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_audio_channel_mute_set(sd->engine_instance, mute);
 }
 
@@ -874,6 +884,7 @@ emotion_object_audio_mute_get(const Evas_Object *obj)
 EOLIAN static Eina_Bool
 _emotion_object_efl_player_audio_mute_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);
 }
 
@@ -883,6 +894,7 @@ emotion_object_audio_channel_count(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_audio_channel_count(sd->engine_instance);
 }
 
@@ -892,6 +904,7 @@ emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->engine_instance) return NULL;
    return emotion_engine_instance_audio_channel_name_get(sd->engine_instance, channel);
 }
 
@@ -902,6 +915,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_audio_channel_set(sd->engine_instance, channel);
 }
 
@@ -911,6 +925,7 @@ emotion_object_audio_channel_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_audio_channel_get(sd->engine_instance);
 }
 
@@ -921,6 +936,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_video_channel_mute_set(sd->engine_instance, mute);
 }
 
@@ -930,6 +946,7 @@ emotion_object_video_mute_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_video_channel_mute_get(sd->engine_instance);
 }
 
@@ -940,6 +957,8 @@ emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("subtitle=%s", filepath);
+   if (!sd->engine_instance) _engine_init(obj, sd);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_video_subtitle_file_set(sd->engine_instance, filepath);
 }
 
@@ -949,6 +968,7 @@ emotion_object_video_subtitle_file_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return NULL;
    return emotion_engine_instance_video_subtitle_file_get(sd->engine_instance);
 }
 
@@ -958,6 +978,7 @@ emotion_object_video_channel_count(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_video_channel_count(sd->engine_instance);
 }
 
@@ -967,6 +988,7 @@ emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->engine_instance) return NULL;
    return emotion_engine_instance_video_channel_name_get(sd->engine_instance, channel);
 }
 
@@ -977,6 +999,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_video_channel_set(sd->engine_instance, channel);
 }
 
@@ -986,6 +1009,7 @@ emotion_object_video_channel_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_video_channel_get(sd->engine_instance);
 }
 
@@ -996,6 +1020,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_spu_channel_mute_set(sd->engine_instance, mute);
 }
 
@@ -1005,6 +1030,7 @@ emotion_object_spu_mute_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_spu_channel_mute_get(sd->engine_instance);
 }
 
@@ -1014,6 +1040,7 @@ emotion_object_spu_channel_count(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_spu_channel_count(sd->engine_instance);
 }
 
@@ -1023,6 +1050,7 @@ emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->engine_instance) return NULL;
    return emotion_engine_instance_spu_channel_name_get(sd->engine_instance, channel);
 }
 
@@ -1033,6 +1061,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_spu_channel_set(sd->engine_instance, channel);
 }
 
@@ -1042,6 +1071,7 @@ emotion_object_spu_channel_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_spu_channel_get(sd->engine_instance);
 }
 
@@ -1051,6 +1081,7 @@ emotion_object_chapter_count(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_chapter_count(sd->engine_instance);
 }
 
@@ -1061,6 +1092,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("chapter=%d", chapter);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_chapter_set(sd->engine_instance, chapter);
 }
 
@@ -1070,6 +1102,7 @@ emotion_object_chapter_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->engine_instance) return 0;
    return emotion_engine_instance_chapter_get(sd->engine_instance);
 }
 
@@ -1079,6 +1112,7 @@ emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->engine_instance) return NULL;
    return emotion_engine_instance_chapter_name_get(sd->engine_instance, chapter);
 }
 
@@ -1089,6 +1123,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("speed=%f", speed);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_speed_set(sd->engine_instance, speed);
 }
 
@@ -1098,6 +1133,7 @@ emotion_object_play_speed_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
+   if (!sd->engine_instance) return 0.0;
    return emotion_engine_instance_speed_get(sd->engine_instance);
 }
 
@@ -1107,6 +1143,7 @@ emotion_object_eject(Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_eject(sd->engine_instance);
 }
 
@@ -1183,6 +1220,7 @@ emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
    int id;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->engine_instance) return NULL;
    switch (meta)
      {
       case EMOTION_META_INFO_TRACK_TITLE:
@@ -1221,6 +1259,7 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("visualization=%d", visualization);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_vis_set(sd->engine_instance, visualization);
 }
 
@@ -1230,6 +1269,7 @@ emotion_object_vis_get(const Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_VIS_NONE);
+   if (!sd->engine_instance) return EMOTION_VIS_NONE;
    return emotion_engine_instance_vis_get(sd->engine_instance);
 }
 
@@ -1238,7 +1278,8 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 {
    Emotion_Object_Data *sd;
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_vis_supported(sd->engine_instance, visualization);
 }
 
@@ -1248,6 +1289,7 @@ emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (!sd->engine_instance) return;
    emotion_engine_instance_priority_set(sd->engine_instance, priority);
 }
 
@@ -1256,7 +1298,8 @@ emotion_object_priority_get(const Evas_Object *obj)
 {
    Emotion_Object_Data *sd;
 
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
+   if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_priority_get(sd->engine_instance);
 }
 
@@ -1306,12 +1349,9 @@ emotion_object_last_position_load(Evas_Object *obj)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->file) return;
 
-   if (!strncmp(sd->file, "file://", 7))
-     tmp = sd->file + 7;
-   else if (!strstr(sd->file, "://"))
-     tmp = sd->file;
-   else
-     return;
+   if (!strncmp(sd->file, "file://", 7)) tmp = sd->file + 7;
+   else if (!strstr(sd->file, "://")) tmp = sd->file;
+   else return;
 
 #ifdef HAVE_EIO
    if (sd->load_xattr) return;
@@ -1319,10 +1359,10 @@ emotion_object_last_position_load(Evas_Object *obj)
    EINA_REFCOUNT_REF(sd);
 
    sd->load_xattr = eio_file_xattr_double_get(tmp,
-					      "user.e.time_seek",
-					      _eio_load_xattr_done,
-					      _eio_load_xattr_error,
-					      sd);
+                                              "user.e.time_seek",
+                                              _eio_load_xattr_done,
+                                              _eio_load_xattr_error,
+                                              sd);
 #else
    if (eina_xattr_double_get(tmp, "user.e.time_seek", &xattr))
      {
@@ -1330,9 +1370,7 @@ emotion_object_last_position_load(Evas_Object *obj)
         evas_object_smart_callback_call(obj, SIG_POSITION_LOAD_SUCCEED, NULL);
      }
    else
-     {
-        evas_object_smart_callback_call(obj, SIG_POSITION_LOAD_FAILED, NULL);
-     }
+     evas_object_smart_callback_call(obj, SIG_POSITION_LOAD_FAILED, NULL);
 #endif
 }
 
@@ -1378,18 +1416,13 @@ emotion_object_last_position_save(Evas_Object *obj)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->file) return;
 
-   if (!strncmp(sd->file, "file://", 7))
-     tmp = sd->file + 7;
-   else if (!strstr(sd->file, "://"))
-     tmp = sd->file;
-   else
-     return;
-
+   if (!strncmp(sd->file, "file://", 7)) tmp = sd->file + 7;
+   else if (!strstr(sd->file, "://")) tmp = sd->file;
+   else return;
 #ifdef HAVE_EIO
    if (sd->save_xattr) return;
 
    EINA_REFCOUNT_REF(sd);
-
    sd->save_xattr = eio_file_xattr_double_set(tmp,
                                               "user.e.time_seek",
                                               emotion_object_position_get(obj),
@@ -1424,7 +1457,6 @@ emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
       default:
          break;
      }
-
    sd->state = state;
 }
 
@@ -1461,7 +1493,6 @@ _emotion_frame_anim(void *data)
    evas_object_image_pixels_dirty_set(sd->obj, 1);
    evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
    sd->anim = NULL;
-
    return EINA_FALSE;
 }
 
@@ -1471,7 +1502,6 @@ _emotion_frame_new(Evas_Object *obj)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-
    if (!sd->anim) sd->anim = ecore_animator_add(_emotion_frame_anim, obj);
 }
 
@@ -1503,22 +1533,22 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
         sd->video.w = w;
         sd->video.h = h;
         _emotion_image_data_zero(sd->obj);
-	changed = 1;
+        changed = 1;
      }
    if (h > 0) tmp  = (double)w / (double)h;
    else tmp = 1.0;
    if (ratio != tmp) tmp = ratio;
    if (tmp != sd->ratio)
      {
-	sd->ratio = tmp;
-	changed = 1;
+        sd->ratio = tmp;
+        changed = 1;
      }
    if (changed)
      {
-	evas_object_size_hint_request_set(obj, w, h);
-	evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
-	evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-	_emotion_object_aspect_border_apply(obj, sd, w, h);
+        evas_object_size_hint_request_set(obj, w, h);
+        evas_object_smart_callback_call(obj, SIG_FRAME_RESIZE, NULL);
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+        _emotion_object_aspect_border_apply(obj, sd, w, h);
      }
 }
 
@@ -1539,8 +1569,8 @@ _emotion_decode_stop(Evas_Object *obj)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (sd->play)
      {
-	sd->play = 0;
-	evas_object_smart_callback_call(obj, SIG_DECODE_STOP, NULL);
+        sd->play = 0;
+        evas_object_smart_callback_call(obj, SIG_DECODE_STOP, NULL);
      }
 }
 
@@ -1657,28 +1687,26 @@ _emotion_frame_refill(Evas_Object *obj, double w, double h)
    Emotion_Object_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (sd->fill.w != w || sd->fill.h != h)
+   if ((sd->fill.w != w) || (sd->fill.h != h))
      {
         Evas_Coord ow, oh;
 
         evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-        if (w <= 0 || h <= 0)
+        if ((w <= 0) || (h <= 0))
           {
              double scale_w, scale_h;
 
              sd->fill.w = -1;
              sd->fill.h = -1;
 
-             scale_w = (double) ow / (double)(sd->video.w - sd->crop.l - sd->crop.r);
-             scale_h = (double) oh / (double)(sd->video.h - sd->crop.t - sd->crop.b);
-
+             scale_w = (double)ow / (double)(sd->video.w - sd->crop.l - sd->crop.r);
+             scale_h = (double)oh / (double)(sd->video.h - sd->crop.t - sd->crop.b);
              evas_object_image_fill_set(sd->obj, 0, 0, scale_w * sd->video.w, scale_h * sd->video.h);
           }
         else
           {
              sd->fill.w = w;
              sd->fill.h = h;
-
              evas_object_image_fill_set(sd->obj, 0, 0, w * ow, h * oh);
           }
      }
@@ -1698,6 +1726,7 @@ _mouse_move(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info
 
    e = event_info;
    sd = data;
+   if (!sd->engine_instance) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
@@ -1716,6 +1745,7 @@ _mouse_down(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info
 
    e = event_info;
    sd = data;
+   if (!sd->engine_instance) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
@@ -1733,12 +1763,13 @@ _pos_set_job(void *data)
    obj = data;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->job = NULL;
+   if (!sd->engine_instance) return;
    if (sd->seeking) return;
    if (sd->seek)
      {
         sd->seeking = 1;
-	emotion_engine_instance_pos_set(sd->engine_instance, sd->seek_pos);
-	sd->seek = 0;
+        emotion_engine_instance_pos_set(sd->engine_instance, sd->seek_pos);
+        sd->seek = 0;
      }
 }
 
@@ -1752,6 +1783,7 @@ _pixels_get(void *data, Evas_Object *obj)
    unsigned char *bgra_data;
 
    sd = data;
+   if (!sd->engine_instance) return;
    emotion_engine_instance_video_data_size_get(sd->engine_instance, &w, &h);
    w = (w >> 1) << 1;
    h = (h >> 1) << 1;
@@ -1765,37 +1797,37 @@ _pixels_get(void *data, Evas_Object *obj)
    if ((iw <= 1) || (ih <= 1))
      {
         _emotion_image_data_zero(sd->obj);
-	evas_object_image_pixels_dirty_set(obj, 0);
+        evas_object_image_pixels_dirty_set(obj, 0);
      }
    else
      {
-	format = emotion_engine_instance_format_get(sd->engine_instance);
-	if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
-	  {
-	     unsigned char **rows;
+        format = emotion_engine_instance_format_get(sd->engine_instance);
+        if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
+          {
+             unsigned char **rows;
 
-	     evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
-	     rows = evas_object_image_data_get(obj, 1);
-	     if (rows)
-	       {
-		  if (emotion_engine_instance_yuv_rows_get(sd->engine_instance, iw, ih,
+             evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
+             rows = evas_object_image_data_get(obj, 1);
+             if (rows)
+               {
+                  if (emotion_engine_instance_yuv_rows_get(sd->engine_instance, iw, ih,
                                                            rows,
                                                            &rows[ih],
                                                            &rows[ih + (ih / 2)]))
-		    evas_object_image_data_update_add(obj, 0, 0, iw, ih);
-	       }
-	     evas_object_image_data_set(obj, rows);
-	     evas_object_image_pixels_dirty_set(obj, 0);
-	  }
-	else if (format == EMOTION_FORMAT_BGRA)
-	  {
-	     evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
-	     if (emotion_engine_instance_bgra_data_get(sd->engine_instance, &bgra_data))
-	       {
-		  evas_object_image_data_set(obj, bgra_data);
-		  evas_object_image_pixels_dirty_set(obj, 0);
-	       }
-	  }
+                  evas_object_image_data_update_add(obj, 0, 0, iw, ih);
+               }
+             evas_object_image_data_set(obj, rows);
+             evas_object_image_pixels_dirty_set(obj, 0);
+          }
+        else if (format == EMOTION_FORMAT_BGRA)
+          {
+             evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
+             if (emotion_engine_instance_bgra_data_get(sd->engine_instance, &bgra_data))
+               {
+                  evas_object_image_data_set(obj, bgra_data);
+                  evas_object_image_pixels_dirty_set(obj, 0);
+               }
+          }
      }
 }
 
@@ -1816,6 +1848,7 @@ _emotion_object_evas_object_smart_add(Evas_Object *obj, Emotion_Object_Data *sd)
    sd->smartobj = obj;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    sd->bg = evas_object_rectangle_add(evas_object_evas_get(obj));
+   sd->engine = eina_stringshare_add("gstreamer1");
    evas_object_color_set(sd->bg, 0, 0, 0, 0);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, sd);
    evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, sd);
@@ -1831,8 +1864,8 @@ _emotion_object_evas_object_smart_add(Evas_Object *obj, Emotion_Object_Data *sd)
    pixel = evas_object_image_data_get(sd->obj, 1);
    if (pixel)
      {
-	*pixel = 0xff000000;
-	evas_object_image_data_set(obj, pixel);
+        *pixel = 0xff000000;
+        evas_object_image_data_set(obj, pixel);
      }
    evas_object_smart_data_set(obj, sd);
 }
@@ -1865,8 +1898,7 @@ _emotion_object_evas_object_smart_del(Evas_Object *obj EINA_UNUSED, Emotion_Obje
    sd->ref.file = NULL;
    if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
    sd->smartobj = NULL;
-   EINA_REFCOUNT_UNREF(sd)
-     _smart_data_free(sd);
+   EINA_REFCOUNT_UNREF(sd) _smart_data_free(sd);
 }
 
 EOLIAN static void
@@ -1892,20 +1924,17 @@ _emotion_object_evas_object_smart_show(Evas_Object *obj EINA_UNUSED, Emotion_Obj
    int a;
 
    evas_object_show(sd->obj);
-   if (sd->crop.clipper)
-     evas_object_show(sd->crop.clipper);
+   if (sd->crop.clipper) evas_object_show(sd->crop.clipper);
 
    evas_object_color_get(sd->bg, NULL, NULL, NULL, &a);
-   if (a > 0)
-     evas_object_show(sd->bg);
+   if (a > 0) evas_object_show(sd->bg);
 }
 
 EOLIAN static void
 _emotion_object_evas_object_smart_hide(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    evas_object_hide(sd->obj);
-   if (sd->crop.clipper)
-     evas_object_hide(sd->crop.clipper);
+   if (sd->crop.clipper) evas_object_hide(sd->crop.clipper);
    evas_object_hide(sd->bg);
 }
 
@@ -1919,20 +1948,16 @@ _emotion_object_evas_object_smart_color_set(Evas_Object *obj EINA_UNUSED, Emotio
 EOLIAN static void
 _emotion_object_evas_object_smart_clip_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, Evas_Object * clip)
 {
-   if (sd->crop.clipper)
-     evas_object_clip_set(sd->crop.clipper, clip);
-   else
-     evas_object_clip_set(sd->obj, clip);
+   if (sd->crop.clipper) evas_object_clip_set(sd->crop.clipper, clip);
+   else evas_object_clip_set(sd->obj, clip);
    evas_object_clip_set(sd->bg, clip);
 }
 
 EOLIAN static void
 _emotion_object_evas_object_smart_clip_unset(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
-   if (sd->crop.clipper)
-     evas_object_clip_unset(sd->crop.clipper);
-   else
-     evas_object_clip_unset(sd->obj);
+   if (sd->crop.clipper) evas_object_clip_unset(sd->crop.clipper);
+   else evas_object_clip_unset(sd->obj);
    evas_object_clip_unset(sd->bg);
 }
 

@@ -579,7 +579,7 @@ init_video_object(const char *module_filename, const char *filename)
 
    /* basic video object setup */
    o = emotion_object_add(evas);
-   if (!emotion_object_init(o, module_filename))
+   if ((module_filename) && (!emotion_object_init(o, module_filename)))
      return;
    emotion_object_vis_set(o, vis);
    if (!emotion_object_file_set(o, filename))
