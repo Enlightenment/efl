@@ -893,6 +893,8 @@ typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
 
 typedef Eo              Ecore_Exe; /**< A handle for spawned processes */
 
+#define _ECORE_EXE_EO_CLASS_TYPE
+
 /**
  * @typedef Ecore_Exe_Cb Ecore_Exe_Cb
  * A callback to run with the associated @ref Ecore_Exe, usually
