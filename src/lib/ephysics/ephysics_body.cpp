@@ -2122,13 +2122,7 @@ _ephysics_body_soft_body_add(EPhysics_World *world, btCollisionShape *collision_
 
    body = _ephysics_body_rigid_body_add(world, collision_shape, "soft box", 0.5,
                                         0.5, 0.5);
-   if (!body)
-     {
-        if (body->deleted) return NULL;
-        body->deleted = EINA_TRUE;
-        ephysics_world_body_del(body->world, body);
-        return NULL;
-     }
+   if (!body) return NULL;
 
    body->material_index = 0;
    body->type = EPHYSICS_BODY_TYPE_SOFT;
