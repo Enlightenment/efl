@@ -548,7 +548,8 @@ END_TEST
 
 START_TEST(eolian_struct)
 {
-   const Eolian_Type *atype = NULL, *type = NULL, *field = NULL;
+   const Eolian_Struct_Type_Field *field = NULL;
+   const Eolian_Type *atype = NULL, *type = NULL, *ftype = NULL;
    const Eolian_Class *class;
    const char *type_name;
    const char *file;
@@ -572,10 +573,12 @@ START_TEST(eolian_struct)
    fail_if(strcmp(type_name, "Named"));
    fail_if(strcmp(file, "struct.eo"));
    fail_if(!(field = eolian_type_struct_field_get(type, "field")));
-   fail_if(!(type_name = eolian_type_name_get(field)));
+   fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
+   fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "int"));
    fail_if(!(field = eolian_type_struct_field_get(type, "something")));
-   fail_if(!(type_name = eolian_type_c_type_get(field)));
+   fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
+   fail_if(!(type_name = eolian_type_c_type_get(ftype)));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
 
@@ -587,9 +590,10 @@ START_TEST(eolian_struct)
    fail_if(strcmp(type_name, "Another"));
    fail_if(strcmp(file, "struct.eo"));
    fail_if(!(field = eolian_type_struct_field_get(type, "field")));
-   fail_if(!(type_name = eolian_type_name_get(field)));
+   fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
+   fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "Named"));
-   fail_if(eolian_type_type_get(field) != EOLIAN_TYPE_REGULAR_STRUCT);
+   fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_REGULAR_STRUCT);
 
    /* typedef */
    fail_if(!(atype = eolian_type_alias_get_by_name("Foo")));
@@ -712,6 +716,7 @@ END_TEST
 
 START_TEST(eolian_enum)
 {
+   const Eolian_Enum_Type_Field *field = NULL;
    const Eolian_Variable *var = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
@@ -730,25 +735,25 @@ START_TEST(eolian_enum)
 
    fail_if(!(type = eolian_type_enum_get_by_name("Foo")));
 
-   fail_if(!(eolian_type_enum_field_exists(type, "first")));
-   fail_if(!(exp = eolian_type_enum_field_get(type, "first")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "first")));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 0);
 
-   fail_if(!(eolian_type_enum_field_exists(type, "bar")));
-   fail_if(eolian_type_enum_field_get(type, "bar"));
+   fail_if(!(field = eolian_type_enum_field_get(type, "bar")));
+   fail_if(eolian_type_enum_field_value_get(field));
 
-   fail_if(!(eolian_type_enum_field_exists(type, "baz")));
-   fail_if(!(exp = eolian_type_enum_field_get(type, "baz")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "baz")));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
    fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
 
-   fail_if(!(eolian_type_enum_field_exists(type, "foo")));
-   fail_if(!(exp = eolian_type_enum_field_get(type, "foo")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "foo")));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
@@ -756,20 +761,20 @@ START_TEST(eolian_enum)
    fail_if(!(type = eolian_type_alias_get_by_name("Baz")));
    fail_if(!(type = eolian_type_base_type_get(type)));
 
-   fail_if(!(eolian_type_enum_field_exists(type, "flag1")));
-   fail_if(!(exp = eolian_type_enum_field_get(type, "flag1")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "flag1")));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
-   fail_if(!(eolian_type_enum_field_exists(type, "flag2")));
-   fail_if(!(exp = eolian_type_enum_field_get(type, "flag2")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "flag2")));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 1));
 
-   fail_if(!(eolian_type_enum_field_exists(type, "flag3")));
-   fail_if(!(exp = eolian_type_enum_field_get(type, "flag3")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "flag3")));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 2));

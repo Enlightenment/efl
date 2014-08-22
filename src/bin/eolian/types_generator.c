@@ -69,7 +69,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
       case EOLIAN_TYPE_STRUCT:
       case EOLIAN_TYPE_STRUCT_OPAQUE:
            {
-              const char *member_name;
+              const Eolian_Struct_Type_Field *member;
               char *name = _concat_name(tp);
               if ((in_typedef && name) || tp_type == EOLIAN_TYPE_STRUCT_OPAQUE)
                 {
@@ -79,15 +79,15 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                 }
               eina_strbuf_append_printf(buf, "struct%s%s {\n", name?" ":"", name?name:"");
               free(name);
-              Eina_Iterator *members = eolian_type_struct_field_names_get(tp);
-              EINA_ITERATOR_FOREACH(members, member_name)
+              Eina_Iterator *members = eolian_type_struct_fields_get(tp);
+              EINA_ITERATOR_FOREACH(members, member)
                 {
-                   const char *desc = eolian_type_struct_field_description_get(tp, member_name);
-                   const Eolian_Type *member = eolian_type_struct_field_get(tp, member_name);
-                   Eina_Stringshare *c_type = eolian_type_c_type_get(member);
+                   const char *desc = eolian_type_struct_field_description_get(member);
+                   const Eolian_Type *type = eolian_type_struct_field_type_get(member);
+                   Eina_Stringshare *c_type = eolian_type_c_type_get(type);
                    eina_strbuf_append_printf(buf, "  %s%s%s;",
                          c_type, strchr(c_type, '*')?"":" ",
-                         member_name);
+                         eolian_type_struct_field_name_get(member));
                    if (desc) eina_strbuf_append_printf(buf, " /** %s */", desc);
                    eina_strbuf_append(buf, "\n");
                 }
@@ -97,7 +97,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
            }
       case EOLIAN_TYPE_ENUM:
            {
-              const char *member_name;
+              const Eolian_Enum_Type_Field *member;
               char *name = _concat_name(tp);
               if (in_typedef)
                 {
@@ -115,28 +115,28 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
               else
                 pre = name;
               eina_str_toupper(&pre);
-              Eina_Iterator *members = eolian_type_enum_field_names_get(tp);
-              Eina_Bool next = eina_iterator_next(members, (void**)&member_name);
+              Eina_Iterator *members = eolian_type_enum_fields_get(tp);
+              Eina_Bool next = eina_iterator_next(members, (void**)&member);
               Eina_Strbuf *membuf = eina_strbuf_new();
               while (next)
                 {
-                   const char *desc = eolian_type_enum_field_description_get(tp, member_name);
-                   const Eolian_Expression *member = eolian_type_enum_field_get(tp, member_name);
-                   char *memb_u = strdup(member_name);
+                   const char *desc = eolian_type_enum_field_description_get(member);
+                   const Eolian_Expression *value = eolian_type_enum_field_value_get(member);
+                   char *memb_u = strdup(eolian_type_enum_field_name_get(member));
                    eina_str_toupper(&memb_u);
                    eina_strbuf_reset(membuf);
                    eina_strbuf_append(membuf, pre);
                    eina_strbuf_append_char(membuf, '_');
                    eina_strbuf_append(membuf, memb_u);
                    free(memb_u);
-                   if (!member)
+                   if (!value)
                      eina_strbuf_append_printf(buf, "  %s", eina_strbuf_string_get(membuf));
                    else
                      {
-                        Eolian_Value val = eolian_expression_eval(member, EOLIAN_MASK_INT);
+                        Eolian_Value val = eolian_expression_eval(value, EOLIAN_MASK_INT);
                         const char *lit = eolian_expression_value_to_literal(&val);
                         eina_strbuf_append_printf(buf, "  %s = %s", eina_strbuf_string_get(membuf), lit);
-                        const char *exp = eolian_expression_serialize(member);
+                        const char *exp = eolian_expression_serialize(value);
                         if (exp && strcmp(lit, exp))
                           {
                              eina_strbuf_append_printf(buf, " /* %s */", exp);
@@ -144,7 +144,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                           }
                         eina_stringshare_del(lit);
                      }
-                   next = eina_iterator_next(members, (void**)&member_name);
+                   next = eina_iterator_next(members, (void**)&member);
                    if (next)
                      eina_strbuf_append(buf, ",");
                    if (desc) eina_strbuf_append_printf(buf, " /** %s */", desc);

@@ -161,19 +161,21 @@ struct _Eolian_Event
    int scope;
 };
 
-typedef struct _Eolian_Struct_Field
+struct _Eolian_Struct_Type_Field
 {
+   Eina_Stringshare *name;
    Eolian_Object     base;
    Eolian_Type      *type;
    Eina_Stringshare *comment;
-} Eolian_Struct_Field;
+};
 
-typedef struct _Eolian_Enum_Field
+struct _Eolian_Enum_Type_Field
 {
+   Eina_Stringshare  *name;
    Eolian_Object      base;
    Eolian_Expression *value;
    Eina_Stringshare  *comment;
-} Eolian_Enum_Field;
+};
 
 typedef enum
 {

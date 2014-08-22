@@ -495,6 +495,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
            if (!var)
              {
                 const Eolian_Type *etp;
+                const Eolian_Enum_Type_Field *fl;
 
                 /* try aliases, hoping it'll be enum */
                 char *fulln = NULL, *memb = NULL;
@@ -527,7 +528,8 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                      return expr_error(expr, "undefined variable");
                   }
 
-                exp = eolian_type_enum_field_get(etp, memb);
+                fl = eolian_type_enum_field_get(etp, memb);
+                if (fl) exp = eolian_type_enum_field_value_get(fl);
                 free(fulln);
 
                 if (!exp)
@@ -545,6 +547,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
         {
            const Eolian_Type *etp;
            const Eolian_Expression *exp;
+           const Eolian_Enum_Type_Field *fl;
 
            char *fulln = NULL, *memb = NULL;
            if (!split_enum_name(expr->value.s, &fulln, &memb))
@@ -562,7 +565,8 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                 return expr_error(expr, "invalid enum");
              }
 
-           exp = eolian_type_enum_field_get(etp, memb);
+           fl = eolian_type_enum_field_get(etp, memb);
+           if (fl) exp = eolian_type_enum_field_value_get(fl);
            free(fulln);
 
            if (!exp)

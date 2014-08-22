@@ -7,7 +7,7 @@ static Eina_Bool _validate_expr(const Eolian_Expression *expr,
 
 static Eina_Bool
 _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-           const Eolian_Struct_Field *sf, Eina_Bool *success)
+           const Eolian_Struct_Type_Field *sf, Eina_Bool *success)
 {
    *success = _validate_type(sf->type);
    return *success;
@@ -15,7 +15,7 @@ _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 
 static Eina_Bool
 _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-           const Eolian_Enum_Field *ef, Eina_Bool *success)
+           const Eolian_Enum_Type_Field *ef, Eina_Bool *success)
 {
    *success = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
    return *success;

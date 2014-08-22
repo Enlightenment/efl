@@ -568,9 +568,10 @@ parse_function_type(Eo_Lexer *ls)
 }
 
 static void
-_struct_field_free(Eolian_Struct_Field *def)
+_struct_field_free(Eolian_Struct_Type_Field *def)
 {
    if (def->base.file) eina_stringshare_del(def->base.file);
+   if (def->name) eina_stringshare_del(def->name);
    database_type_del(def->type);
    if (def->comment) eina_stringshare_del(def->comment);
    free(def);
@@ -597,16 +598,16 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    while (ls->t.token != '}')
      {
         const char *fname;
-        Eolian_Struct_Field *fdef;
+        Eolian_Struct_Type_Field *fdef;
         Eolian_Type *tp;
         int fline = ls->line_number, fcol = ls->column;
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value.s))
           eo_lexer_syntax_error(ls, "double field definition");
-        fdef = calloc(1, sizeof(Eolian_Struct_Field));
+        fdef = calloc(1, sizeof(Eolian_Struct_Type_Field));
         fname = eina_stringshare_ref(ls->t.value.s);
         eina_hash_add(def->fields, fname, fdef);
-        def->field_list = eina_list_append(def->field_list, fname);
+        def->field_list = eina_list_append(def->field_list, fdef);
         eo_lexer_get(ls);
         check_next(ls, ':');
         tp = parse_type(ls);
@@ -614,6 +615,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->base.line = fline;
         fdef->base.column = fcol;
         fdef->type = tp;
+        fdef->name = eina_stringshare_ref(fname);
         pop_type(ls);
         check_next(ls, ';');
         if (ls->t.token == TOK_COMMENT)
@@ -631,9 +633,10 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
 }
 
 static void
-_enum_field_free(Eolian_Enum_Field *def)
+_enum_field_free(Eolian_Enum_Type_Field *def)
 {
    if (def->base.file) eina_stringshare_del(def->base.file);
+   if (def->name) eina_stringshare_del(def->name);
    database_expr_del(def->value);
    if (def->comment) eina_stringshare_del(def->comment);
    free(def);
@@ -673,19 +676,20 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    for (;;)
      {
         const char *fname;
-        Eolian_Enum_Field *fdef;
+        Eolian_Enum_Type_Field *fdef;
         int fline = ls->line_number, fcol = ls->column;
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value.s))
           eo_lexer_syntax_error(ls, "double field definition");
-        fdef = calloc(1, sizeof(Eolian_Enum_Field));
+        fdef = calloc(1, sizeof(Eolian_Enum_Type_Field));
         fname = eina_stringshare_ref(ls->t.value.s);
         eina_hash_add(def->fields, fname, fdef);
-        def->field_list = eina_list_append(def->field_list, fname);
+        def->field_list = eina_list_append(def->field_list, fdef);
         eo_lexer_get(ls);
         fdef->base.file = eina_stringshare_ref(ls->filename);
         fdef->base.line = fline;
         fdef->base.column = fcol;
+        fdef->name = eina_stringshare_ref(fname);
         if (ls->t.token != '=')
           {
              if (!prev_exp)

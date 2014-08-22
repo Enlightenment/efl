@@ -86,6 +86,18 @@ typedef struct _Eolian_Expression Eolian_Expression;
  */
 typedef struct _Eolian_Variable Eolian_Variable;
 
+/* Struct field information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Struct_Type_Field Eolian_Struct_Type_Field;
+
+/* Enum field information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Enum_Type_Field Eolian_Enum_Type_Field;
+
 typedef enum
 {
    EOLIAN_UNRESOLVED,
@@ -1094,14 +1106,14 @@ EAPI Eina_Iterator *eolian_type_arguments_get(const Eolian_Type *tp);
 EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
 
 /*
- * @brief Get an iterator to all field names of a struct type.
+ * @brief Get an iterator to all fields of a struct type.
  *
  * @param[in] tp the type.
  * @return the iterator when @c tp is EOLIAN_TYPE_STRUCT, NULL otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_struct_field_names_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_type_struct_fields_get(const Eolian_Type *tp);
 
 /*
  * @brief Get a field of a struct type.
@@ -1113,40 +1125,47 @@ EAPI Eina_Iterator *eolian_type_struct_field_names_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_struct_field_get(const Eolian_Type *tp, const char *field);
+EAPI const Eolian_Struct_Type_Field *eolian_type_struct_field_get(const Eolian_Type *tp, const char *field);
+
+/*
+ * @brief Get the name of a field of a struct type.
+ *
+ * @param[in] fl the field.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_struct_field_name_get(const Eolian_Struct_Type_Field *fl);
 
 /*
  * @brief Get the description of a field of a struct type.
  *
- * @param[in] tp the type.
- * @param[in] field the field name.
- * @return the description when @c tp is EOLIAN_TYPE_STRUCT, @c field is not NULL
- * and the field exists, NULL otherwise.
+ * @param[in] fl the field.
+ * @return the description.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field);
+EAPI Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Struct_Type_Field *fl);
 
 /*
- * @brief Get an iterator to all field names of an enum type.
+ * @brief Get the type of a field of a struct type.
+ *
+ * @param[in] fl the field.
+ * @return the type.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_type_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
+
+/*
+ * @brief Get an iterator to all fields of an enum type.
  *
  * @param[in] tp the type.
  * @return the iterator when @c tp is EOLIAN_TYPE_ENUM, NULL otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_enum_field_names_get(const Eolian_Type *tp);
-
-/*
- * @brief Get whether an enum field exists.
- *
- * @param[in] tp the type.
- * @param[in] field the field name.
- * @return EINA_TRUE when the field exists, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_type_enum_field_exists(const Eolian_Type *tp, const char *field);
+EAPI Eina_Iterator *eolian_type_enum_fields_get(const Eolian_Type *tp);
 
 /*
  * @brief Get a field of an enum type.
@@ -1161,19 +1180,37 @@ EAPI Eina_Bool eolian_type_enum_field_exists(const Eolian_Type *tp, const char *
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Expression *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
+EAPI const Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
+
+/*
+ * @brief Get the name of a field of an enum type.
+ *
+ * @param[in] fl the field.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl);
 
 /*
  * @brief Get the description of a field of an enum type.
  *
- * @param[in] tp the type.
- * @param[in] field the field name.
- * @return the description when @c tp is EOLIAN_TYPE_ENUM, @c field is not NULL
- * and the field exists, NULL otherwise.
+ * @param[in] fl the field.
+ * @return the description.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Type *tp, const char *field);
+EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl);
+
+/*
+ * @brief Get the value of a field of an enum type.
+ *
+ * @param[in] fl the field.
+ * @return the description.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl);
 
 /*
  * @brief Get the legacy prefix of enum field names. When not specified,

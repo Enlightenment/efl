@@ -97,79 +97,85 @@ eolian_type_subtypes_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_struct_field_names_get(const Eolian_Type *tp)
+eolian_type_struct_fields_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
    return eina_list_iterator_new(tp->field_list);
+}
+
+EAPI const Eolian_Struct_Type_Field *
+eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
+{
+   Eolian_Struct_Type_Field *sf = NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
+   sf = eina_hash_find(tp->fields, field);
+   if (!sf) return NULL;
+   return sf;
+}
+
+EAPI Eina_Stringshare *
+eolian_type_struct_field_name_get(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   return fl->name;
+}
+
+EAPI Eina_Stringshare *
+eolian_type_struct_field_description_get(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   return fl->comment;
 }
 
 EAPI const Eolian_Type *
-eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
+eolian_type_struct_field_type_get(const Eolian_Struct_Type_Field *fl)
 {
-   Eolian_Struct_Field *sf = NULL;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
-   sf = eina_hash_find(tp->fields, field);
-   if (!sf) return NULL;
-   return sf->type;
-}
-
-EAPI Eina_Stringshare *
-eolian_type_struct_field_description_get(const Eolian_Type *tp, const char *field)
-{
-   Eolian_Struct_Field *sf = NULL;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_STRUCT, NULL);
-   sf = eina_hash_find(tp->fields, field);
-   if (!sf) return NULL;
-   return sf->comment;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   return fl->type;
 }
 
 EAPI Eina_Iterator *
-eolian_type_enum_field_names_get(const Eolian_Type *tp)
+eolian_type_enum_fields_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, NULL);
    return eina_list_iterator_new(tp->field_list);
 }
 
-EAPI Eina_Bool
-eolian_type_enum_field_exists(const Eolian_Type *tp, const char *field)
-{
-   Eolian_Enum_Field *ef = NULL;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, EINA_FALSE);
-   ef = eina_hash_find(tp->fields, field);
-   if (!ef)
-     return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-EAPI const Eolian_Expression *
+EAPI const Eolian_Enum_Type_Field *
 eolian_type_enum_field_get(const Eolian_Type *tp, const char *field)
 {
-   Eolian_Enum_Field *ef = NULL;
+   Eolian_Enum_Type_Field *ef = NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, NULL);
    ef = eina_hash_find(tp->fields, field);
    if (!ef) return NULL;
-   return ef->value;
+   return ef;
 }
 
 EAPI Eina_Stringshare *
-eolian_type_enum_field_description_get(const Eolian_Type *tp, const char *field)
+eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl)
 {
-   Eolian_Enum_Field *ef = NULL;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, NULL);
-   ef = eina_hash_find(tp->fields, field);
-   if (!ef) return NULL;
-   return ef->comment;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   return fl->name;
+}
+
+EAPI Eina_Stringshare *
+eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   return fl->comment;
+}
+
+EAPI const Eolian_Expression *
+eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   return fl->value;
 }
 
 EAPI Eina_Stringshare *
