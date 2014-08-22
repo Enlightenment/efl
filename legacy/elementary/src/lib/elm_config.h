@@ -780,19 +780,19 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
  * The following are the available engines:
  * @li "software_x11"
  * @li "fb"
- * @li "directfb"
- * @li "software_16_x11"
- * @li "software_8_x11"
- * @li "xrender_x11"
  * @li "opengl_x11"
  * @li "software_gdi"
  * @li "sdl"
- * @li "software_16_sdl"
  * @li "opengl_sdl"
  * @li "buffer"
  * @li "ews"
  * @li "opengl_cocoa"
  * @li "psl1ght"
+ * @li "wayland_shm"
+ * @li "wayland_egl"
+ * @li "drm"
+ *
+ * @deprecated Please use elm_config_accel_preference_override_set() instead
  *
  * @{
  */
@@ -807,8 +807,10 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
  * applications.
  *
  * @see elm_config_engine_set()
+ * 
+ * @deprecated Please use elm_config_accel_preference_override_get() instead
  */
-EAPI const char *elm_config_engine_get(void);
+EINA_DEPRECATED EAPI const char *elm_config_engine_get(void);
 
 /**
  * @brief Set Elementary's rendering engine for use.
@@ -819,8 +821,10 @@ EAPI const char *elm_config_engine_get(void);
  * this is called.
  *
  * @see elm_win_add()
+ * 
+ * @deprecated Please use elm_config_accel_preference_override_set() instead
  */
-EAPI void        elm_config_engine_set(const char *engine);
+EINA_DEPRECATED EAPI void        elm_config_engine_set(const char *engine);
 
 /**
  * @brief Get Elementary's preferred engine to use.
@@ -833,8 +837,10 @@ EAPI void        elm_config_engine_set(const char *engine);
  * override the engine configured for all applications which.
  *
  * @see elm_config_preferred_engine_set()
+ * 
+ * @deprecated Please use elm_config_accel_preference_override_get() instead
  */
-EAPI const char *elm_config_preferred_engine_get(void);
+EINA_DEPRECATED EAPI const char *elm_config_preferred_engine_get(void);
 
 /**
  * @brief Set Elementary's preferred rendering engine for use.
@@ -846,8 +852,10 @@ EAPI const char *elm_config_preferred_engine_get(void);
  * application startup. Note that it is a hint and may not be honored.
  *
  * @see elm_win_add()
+ * 
+ * @deprecated Please use elm_config_accel_preference_override_set() instead
  */
-EAPI void        elm_config_preferred_engine_set(const char *engine);
+EINA_DEPRECATED EAPI void        elm_config_preferred_engine_set(const char *engine);
 
 /**
  * @brief Get Elementary's preferred engine to use.

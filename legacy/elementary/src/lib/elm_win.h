@@ -15,7 +15,14 @@
  * testing.  Engines that may be supported (depending on Evas and Ecore-Evas
  * compilation setup and modules actually installed at runtime) are (listed
  * in order of best supported and most likely to be complete and work to
- * lowest quality).
+ * lowest quality). Note that ELM_ENGINE is really only needed for special
+ * cases and debugging. you should normally use ELM_DISPLAY and ELM_ACCEL
+ * environment variables, or core elementary config. ELM_DISPLAY can be set to
+ * "x11" or "wl" to indicate the target display system (as on Linux systems
+ * you may have both display systems available, so this selects which to use).
+ * ELM_ACCEL may also be set to indicate if you want accelerations and which
+ * kind to use. see elm_config_accel_preference_set(0 for details on this
+ * environment variable values.
  *
  * @li "x11", "x", "software-x11", "software_x11" (Software rendering in X11)
  * @li "gl", "opengl", "opengl-x11", "opengl_x11" (OpenGL or OpenGL-ES2
@@ -30,16 +37,11 @@
  * rendering using SDL as the buffer)
  * @li "gdi", "software-gdi", "software_gdi" (Windows WIN32 rendering via
  * GDI with software)
- * @li "dfb", "directfb" (Rendering to a DirectFB window)
- * @li "x11-8", "x8", "software-8-x11", "software_8_x11" (Rendering in
- * grayscale using dedicated 8bit software engine in X11)
- * @li "x11-16", "x16", "software-16-x11", "software_16_x11" (Rendering in
- * X11 using 16bit software engine)
- * @li "sdl-16", "software-16-sdl", "software_16_sdl" (Rendering to SDL
- * buffer with 16bit software renderer)
  * @li "ews" (rendering to EWS - Ecore + Evas Single Process Windowing System)
  * @li "gl-cocoa", "gl_cocoa", "opengl-cocoa", "opengl_cocoa" (OpenGL rendering in Cocoa)
- * @li "psl1ght" (PS3 rendering using PSL1GHT)
+ * @li "wayland_shm" (Wayland client SHM rendering)
+ * @li "wayland_egl" (Wayland client OpenGL/EGL rendering)
+ * @li "drm" (Linux drm/kms etc. direct display)
  *
  * All engines use a simple string to select the engine to render, EXCEPT
  * the "shot" engine. This actually encodes the output of the virtual
