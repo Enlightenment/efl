@@ -889,6 +889,9 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
            def = push_type(ls);
            def->type = is_enum ? EOLIAN_TYPE_REGULAR_ENUM
                                : EOLIAN_TYPE_REGULAR_STRUCT;
+           def->base.file = eina_stringshare_ref(ls->filename);
+           def->base.line = line;
+           def->base.column = col;
            pop_str(ls);
            _fill_type_name(def, sname);
            goto parse_ptr;

@@ -87,7 +87,7 @@ _validate_type(const Eolian_Type *tp)
         {
            Eina_List *l;
            Eolian_Type *tpp;
-           if (!_validate_type(tp->ret_type))
+           if (tp->ret_type && !_validate_type(tp->ret_type))
              return EINA_FALSE;
            EINA_LIST_FOREACH(tp->arguments, l, tpp)
              if (!_validate_type(tpp))
