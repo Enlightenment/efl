@@ -361,7 +361,7 @@ parse_expr_simple(Eo_Lexer *ls)
         expr->base.file = eina_stringshare_ref(ls->filename);
         expr->base.line = line;
         expr->base.column = col;
-        expr->binop = unop;
+        expr->unop = unop;
         expr->type = EOLIAN_EXPR_UNARY;
         expr->expr = exp;
         return expr;
