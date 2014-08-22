@@ -1,5 +1,8 @@
 typedef Eo Elm_App_Client;
+#define _ELM_APP_CLIENT_EO_CLASS_TYPE
+
 typedef Eo Elm_App_Client_View;
+#define _ELM_APP_CLIENT_VIEW_EO_CLASS_TYPE
 
 typedef Eldbus_Pending Elm_App_Client_Pending;
 

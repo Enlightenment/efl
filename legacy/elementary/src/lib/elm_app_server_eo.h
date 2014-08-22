@@ -5,7 +5,10 @@
 #define ELM_APP_SERVER_VIEW_CREATE_DUPLICATE "org.enlightenment.Application.ViewDuplicate"
 
 typedef Eo Elm_App_Server;
+#define _ELM_APP_SERVER_EO_CLASS_TYPE
+
 typedef Eo Elm_App_Server_View;
+#define _ELM_APP_SERVER_VIEW_EO_CLASS_TYPE
 
 typedef Elm_App_Server_View *(*Elm_App_Server_Create_View_Cb)(Elm_App_Server *app, const Eina_Value *args, Eina_Stringshare **error_name, Eina_Stringshare **error_message);
 
