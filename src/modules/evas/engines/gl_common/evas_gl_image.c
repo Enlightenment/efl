@@ -69,12 +69,6 @@ _evas_gl_image_cache_trim(Evas_Engine_GL_Context *gc)
                   break;
                }
           }
-        if ((gc->shared->images_size > size) && (l))
-          {
-//             printf("EEK %i > %i, no 0 ref imgs\n",
-//                    gc->shared->images_size, size);
-             break;
-          }
         if (!gc->shared->images)
           {
 //             printf("EEK %i > %i, no imgs\n",
