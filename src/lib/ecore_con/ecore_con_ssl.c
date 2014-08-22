@@ -486,19 +486,21 @@ ecore_con_ssl_server_prepare(Ecore_Con_Server *svr,
 }
 
 Ecore_Con_Ssl_Error
-ecore_con_ssl_server_init(Ecore_Con_Server *svr)
+ecore_con_ssl_server_init(Ecore_Con_Server *obj)
 {
-   if (!(svr->type & ECORE_CON_SSL))
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr || !(svr->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
-   return SSL_SUFFIX(_ecore_con_ssl_server_init) (svr);
+   return SSL_SUFFIX(_ecore_con_ssl_server_init) (obj);
 }
 
 Ecore_Con_Ssl_Error
-ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr)
+ecore_con_ssl_server_shutdown(Ecore_Con_Server *obj)
 {
-   if (!(svr->type & ECORE_CON_SSL))
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr || !(svr->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
-   return SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (svr);
+   return SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (obj);
 }
 
 int
@@ -521,7 +523,10 @@ Ecore_Con_Ssl_Error
 ecore_con_ssl_client_init(Ecore_Con_Client *obj)
 {
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
-   if (!(cl->host_server->type & ECORE_CON_SSL))
+   if (!cl)
+     return ECORE_CON_SSL_ERROR_NONE;
+   Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+   if (host_server || !(host_server->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_init) (obj);
 }
@@ -530,7 +535,10 @@ Ecore_Con_Ssl_Error
 ecore_con_ssl_client_shutdown(Ecore_Con_Client *obj)
 {
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
-   if (!(cl->host_server->type & ECORE_CON_SSL))
+   if (!cl)
+     return ECORE_CON_SSL_ERROR_NONE;
+   Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+   if (!host_server || !(host_server->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_shutdown) (obj);
 }
@@ -579,13 +587,11 @@ ecore_con_ssl_available_get(void)
  * @param svr The server object
  */
 EAPI void
-ecore_con_ssl_server_verify(Ecore_Con_Server *svr)
+ecore_con_ssl_server_verify(Ecore_Con_Server *obj)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_verify");
-        return;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return;
+
    svr->verify = EINA_TRUE;
 }
 
@@ -600,13 +606,11 @@ ecore_con_ssl_server_verify(Ecore_Con_Server *svr)
  * @since 1.1
  */
 EAPI void
-ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr)
+ecore_con_ssl_server_verify_basic(Ecore_Con_Server *obj)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
-        return;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return;
+
    svr->verify_basic = EINA_TRUE;
 }
 
@@ -624,13 +628,11 @@ ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr)
  * @since 1.2
  */
 EAPI void
-ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name)
+ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *obj, const char *name)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
-        return;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return;
+
    eina_stringshare_replace(&svr->verify_name, name);
 }
 
@@ -645,13 +647,11 @@ ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name)
  * @since 1.2
  */
 EAPI const char *
-ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr)
+ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *obj)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
-        return NULL;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return NULL;
+
    return svr->verify_name ? : svr->name;
 }
 
@@ -667,24 +667,21 @@ ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr)
  */
 
 EAPI Eina_Bool
-ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
+ecore_con_ssl_server_cert_add(Ecore_Con_Server *obj,
                               const char *cert)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_cert_add");
-        return EINA_FALSE;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
      {
         svr->use_cert = EINA_TRUE;
         svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
-        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+        if (ecore_con_ssl_server_prepare(obj, svr->type & ECORE_CON_SSL))
           return EINA_FALSE;
      }
 
-   return SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (svr, cert);
+   return SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (obj, cert);
 }
 
 /**
@@ -700,24 +697,21 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
  */
 
 EAPI Eina_Bool
-ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr,
+ecore_con_ssl_server_cafile_add(Ecore_Con_Server *obj,
                                 const char *ca_file)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_cafile_add");
-        return EINA_FALSE;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
      {
         svr->use_cert = EINA_TRUE;
         svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
-        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+        if (ecore_con_ssl_server_prepare(obj, svr->type & ECORE_CON_SSL))
           return EINA_FALSE;
      }
 
-   return SSL_SUFFIX(_ecore_con_ssl_server_cafile_add) (svr, ca_file);
+   return SSL_SUFFIX(_ecore_con_ssl_server_cafile_add) (obj, ca_file);
 }
 
 /**
@@ -732,24 +726,21 @@ ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr,
  */
 
 EAPI Eina_Bool
-ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr,
+ecore_con_ssl_server_privkey_add(Ecore_Con_Server *obj,
                                  const char *key_file)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_privkey_add");
-        return EINA_FALSE;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
      {
         svr->use_cert = EINA_TRUE;
         svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
-        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+        if (ecore_con_ssl_server_prepare(obj, svr->type & ECORE_CON_SSL))
           return EINA_FALSE;
      }
 
-   return SSL_SUFFIX(_ecore_con_ssl_server_privkey_add) (svr, key_file);
+   return SSL_SUFFIX(_ecore_con_ssl_server_privkey_add) (obj, key_file);
 }
 
 /**
@@ -764,24 +755,21 @@ ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr,
  */
 
 EAPI Eina_Bool
-ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
+ecore_con_ssl_server_crl_add(Ecore_Con_Server *obj,
                              const char *crl_file)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_crl_add");
-        return EINA_FALSE;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return EINA_FALSE;
 
    if (!svr->ssl_prepared)
      {
         svr->use_cert = EINA_TRUE;
         svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
-        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+        if (ecore_con_ssl_server_prepare(obj, svr->type & ECORE_CON_SSL))
           return EINA_FALSE;
      }
 
-   return SSL_SUFFIX(_ecore_con_ssl_server_crl_add) (svr, crl_file);
+   return SSL_SUFFIX(_ecore_con_ssl_server_crl_add) (obj, crl_file);
 }
 
 /**
@@ -799,20 +787,17 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
  */
 
 EAPI Eina_Bool
-ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type ssl_type)
+ecore_con_ssl_server_upgrade(Ecore_Con_Server *obj, Ecore_Con_Type ssl_type)
 {
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
-        return EINA_FALSE;
-     }
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return EINA_FALSE;
 #if _ECORE_CON_SSL_AVAILABLE == 0
    return EINA_FALSE;
 #endif
 
    if (!svr->ssl_prepared)
      {
-        if (ecore_con_ssl_server_prepare(svr, ssl_type))
+        if (ecore_con_ssl_server_prepare(obj, ssl_type))
           return EINA_FALSE;
      }
    if (!svr->use_cert)
@@ -820,7 +805,7 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type ssl_type)
    svr->upgrade = EINA_TRUE;
    svr->handshaking = EINA_TRUE;
    svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
-   return !SSL_SUFFIX(_ecore_con_ssl_server_init) (svr);
+   return !SSL_SUFFIX(_ecore_con_ssl_server_init) (obj);
 }
 
 /**
@@ -848,15 +833,16 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
    return EINA_FALSE;
 #endif
 
-   if (!cl->host_server->ssl_prepared)
+   Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+   if (!host_server->ssl_prepared)
      {
         if (ecore_con_ssl_server_prepare(cl->host_server, ssl_type))
           return EINA_FALSE;
      }
-   if (!cl->host_server->use_cert)
-     cl->host_server->type |= ssl_type;
+   if (!host_server->use_cert)
+     host_server->type |= ssl_type;
    cl->upgrade = EINA_TRUE;
-   cl->host_server->upgrade = EINA_TRUE;
+   host_server->upgrade = EINA_TRUE;
    cl->handshaking = EINA_TRUE;
    cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
    return SSL_SUFFIX(_ecore_con_ssl_client_init) (obj);
@@ -1527,9 +1513,10 @@ _ecore_con_ssl_shutdown_openssl(void)
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *obj,
                                       int ssl_type)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    long options;
    int dh = 0;
 
@@ -1599,13 +1586,14 @@ error:
      }
    else
      _openssl_print_errors(svr, ECORE_CON_EVENT_SERVER_ERROR);
-   _ecore_con_ssl_server_shutdown_openssl(svr);
+   _ecore_con_ssl_server_shutdown_openssl(obj);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_init_openssl(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int ret = -1;
 
    switch (svr->ssl_state)
@@ -1692,14 +1680,15 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 
 error:
    _openssl_print_errors(svr, ECORE_CON_EVENT_SERVER_ERROR);
-   _ecore_con_ssl_server_shutdown_openssl(svr);
+   _ecore_con_ssl_server_shutdown_openssl(obj);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cafile_add_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_cafile_add_openssl(Ecore_Con_Server *obj,
                                          const char *ca_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    struct stat st;
 
    if (stat(ca_file, &st)) return EINA_FALSE;
@@ -1715,9 +1704,10 @@ error:
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *obj,
                                       const char *crl_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    X509_STORE *st;
    X509_LOOKUP *lu;
    static Eina_Bool flag = EINA_FALSE;
@@ -1739,9 +1729,10 @@ error:
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_privkey_add_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_privkey_add_openssl(Ecore_Con_Server *obj,
                                           const char *key_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    FILE *fp = NULL;
    EVP_PKEY *privkey = NULL;
 
@@ -1765,9 +1756,10 @@ error:
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cert_add_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_cert_add_openssl(Ecore_Con_Server *obj,
                                        const char *cert_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    FILE *fp = NULL;
    X509 *cert = NULL;
 
@@ -1790,8 +1782,9 @@ error:
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    if (svr->ssl)
      {
         if (!SSL_shutdown(svr->ssl))
@@ -1811,10 +1804,11 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
 }
 
 static int
-_ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_read_openssl(Ecore_Con_Server *obj,
                                    unsigned char *buf,
                                    int size)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int num;
 
    if (!svr->ssl) return -1;
@@ -1841,10 +1835,11 @@ _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr,
 }
 
 static int
-_ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_write_openssl(Ecore_Con_Server *obj,
                                     const unsigned char *buf,
                                     int size)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int num;
 
    num = SSL_write(svr->ssl, buf, size);
@@ -1873,6 +1868,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *obj)
 {
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
    int ret = -1;
    switch (cl->ssl_state)
      {
@@ -1880,7 +1876,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *obj)
         return ECORE_CON_SSL_ERROR_NONE;
 
       case ECORE_CON_SSL_STATE_INIT:
-        SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->host_server->ssl_ctx)));
+        SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(host_server->ssl_ctx)));
 
         SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
         SSL_set_accept_state(cl->ssl);
@@ -1914,7 +1910,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *obj)
      }
 
    _openssl_print_session(cl->ssl);
-   if (!cl->host_server->verify)
+   if (!host_server->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
    SSL_set_verify(cl->ssl, SSL_VERIFY_PEER, NULL);

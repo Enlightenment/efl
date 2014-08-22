@@ -124,9 +124,8 @@ struct _Ecore_Con_Client_Data
 
 typedef struct _Ecore_Con_Client_Data Ecore_Con_Client_Data;
 
-struct _Ecore_Con_Server
+struct _Ecore_Con_Server_Data
 {
-   ECORE_MAGIC;
    int fd;
    Ecore_Con_Type type;
    char *name;
@@ -196,6 +195,8 @@ struct _Ecore_Con_Server
    DWORD nbr_bytes;
 #endif
 };
+
+typedef struct _Ecore_Con_Server_Data Ecore_Con_Server_Data;
 
 struct _Ecore_Con_Url
 {

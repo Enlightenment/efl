@@ -2,7 +2,7 @@ class Ecore.Con.Client (Ecore.Con) {
    eo_prefix: ecore_con_client_obj;
    properties {
       server {
-         /**
+         /*@
           * Controls the server representing the socket the client has
           * connected to.
           *
@@ -10,8 +10,7 @@ class Ecore.Con.Client (Ecore.Con) {
          get {
          }
          values {
-            /* FIXME: Should be Ecore.Con.Server. */
-            Ecore_Con_Server *svr; /*@ The server the client is connected to. */
+            Ecore.Con.Server *svr; /*@ The server the client is connected to. */
          }
       }
    }

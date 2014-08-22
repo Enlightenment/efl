@@ -222,14 +222,6 @@ extern "C" {
 #define ECORE_CON_USE_SSL ECORE_CON_USE_SSL2
 #define ECORE_CON_REMOTE_SYSTEM ECORE_CON_REMOTE_TCP
 
-
-/**
- * @typedef Ecore_Con_Server
- * A connection handle to a server
- * @ingroup Ecore_Con_Server_Group
- */
-typedef struct _Ecore_Con_Server Ecore_Con_Server;
-
 /**
  * @typedef Ecore_Con_Socks
  * An object representing a SOCKS proxy
@@ -897,28 +889,7 @@ EAPI void *            ecore_con_server_data_set(Ecore_Con_Server *svr,
  * @param   svr The given server.
  * @return @c EINA_TRUE if the server is connected, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool         ecore_con_server_connected_get(Ecore_Con_Server *svr);
-/**
- * Retrieves the current list of clients.
- *
- * @param   svr The given server.
- * @return  The list of clients on this server.
- *
- * Each node in the returned list points to an @ref Ecore_Con_Client. This list
- * cannot be modified or freed. It can also change if new clients are connected
- * or disconnected, and will become invalid when the server is deleted/freed.
- */
-EAPI const Eina_List * ecore_con_server_clients_get(Ecore_Con_Server *svr);
-
-/**
- * Retrieves the name of server.
- *
- * @param   svr The given server.
- * @return  The name of the server.
- *
- * The name returned is the name used to connect on this server.
- */
-EAPI const char *      ecore_con_server_name_get(Ecore_Con_Server *svr);
+EAPI Eina_Bool         ecore_con_server_connected_get(const Ecore_Con_Server *svr);
 
 /**
  * Retrieves the server port in use.
@@ -928,7 +899,7 @@ EAPI const char *      ecore_con_server_name_get(Ecore_Con_Server *svr);
  *
  * The port where the server is listening for connections.
  */
-EAPI int               ecore_con_server_port_get(Ecore_Con_Server *svr);
+EAPI int               ecore_con_server_port_get(const Ecore_Con_Server *svr);
 /**
  * @brief Check how long a server has been connected
  *
@@ -939,7 +910,7 @@ EAPI int               ecore_con_server_port_get(Ecore_Con_Server *svr);
  * This function is used to find out the time that has been elapsed since
  * ecore_con_server_add() succeeded.
  */
-EAPI double            ecore_con_server_uptime_get(Ecore_Con_Server *svr);
+EAPI double            ecore_con_server_uptime_get(const Ecore_Con_Server *svr);
 /**
  * Sends the given data to the given server.
  *
@@ -996,7 +967,7 @@ EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
  *          deletion for the @p svr object. If no IP is known @c NULL is
  *          returned.
  */
-EAPI const char *      ecore_con_server_ip_get(Ecore_Con_Server *svr);
+EAPI const char *      ecore_con_server_ip_get(const Ecore_Con_Server *svr);
 /**
  * Flushes all pending data to the given server.
  *
@@ -1039,7 +1010,7 @@ EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, doubl
  * @see ecore_con_server_timeout_set()
  * @see ecore_con_client_timeout_get()
  */
-EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
+EAPI double            ecore_con_server_timeout_get(const Ecore_Con_Server *svr);
 
 /**
  * Get the fd that the server is connected to
@@ -1053,7 +1024,7 @@ EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
  * @warning Seriously. Don't use this unless you know what you are doing.
  * @since 1.1
  */
-EAPI int               ecore_con_server_fd_get(Ecore_Con_Server *svr);
+EAPI int               ecore_con_server_fd_get(const Ecore_Con_Server *svr);
 
 /**
  * Get the fd that the client is connected to

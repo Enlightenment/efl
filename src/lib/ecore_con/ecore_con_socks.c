@@ -134,8 +134,9 @@ _ecore_con_socks_free(Ecore_Con_Socks *ecs)
 }
 
 static Eina_Bool
-_ecore_con_socks_svr_init_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4)
+_ecore_con_socks_svr_init_v4(Ecore_Con_Server *obj, Ecore_Con_Socks_v4 *v4)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    size_t addrlen, buflen, ulen = 1;
    unsigned char *sbuf;
 
@@ -145,8 +146,8 @@ _ecore_con_socks_svr_init_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4)
    sbuf = malloc(buflen);
    if (!sbuf)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure!");
-        _ecore_con_server_kill(svr);
+        ecore_con_event_server_error(obj, "Memory allocation failure!");
+        _ecore_con_server_kill(obj);
         return EINA_FALSE;
      }
    /* http://en.wikipedia.org/wiki/SOCKS */
@@ -173,8 +174,9 @@ _ecore_con_socks_svr_init_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4)
 }
 
 static Eina_Bool
-_ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
+_ecore_con_socks_svr_init_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    size_t buflen;
    unsigned int x;
    unsigned char *sbuf;
@@ -186,8 +188,8 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
    sbuf = malloc(buflen);
    if (!sbuf)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure!");
-        _ecore_con_server_kill(svr);
+        ecore_con_event_server_error(obj, "Memory allocation failure!");
+        _ecore_con_server_kill(obj);
         return EINA_FALSE;
      }
    /* http://en.wikipedia.org/wiki/SOCKS
@@ -226,8 +228,9 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
     data = buf
 
 static void
-_ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUSED, const unsigned char *buf, unsigned int num)
+_ecore_con_socks_read_v4(Ecore_Con_Server *obj, Ecore_Con_Socks_v4 *v4 EINA_UNUSED, const unsigned char *buf, unsigned int num)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    const unsigned char *data;
    DBG("SOCKS: %d bytes", num);
    ECORE_CON_SOCKS_READ(8);
@@ -241,19 +244,19 @@ _ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUS
         break;
 
       case 91:
-        ecore_con_event_server_error(svr, "proxy request rejected or failed");
+        ecore_con_event_server_error(obj, "proxy request rejected or failed");
         goto error;
 
       case 92:
-        ecore_con_event_server_error(svr, "proxying SOCKS server could not perform authentication");
+        ecore_con_event_server_error(obj, "proxying SOCKS server could not perform authentication");
         goto error;
 
       case 93:
-        ecore_con_event_server_error(svr, "proxy request authentication rejected");
+        ecore_con_event_server_error(obj, "proxy request authentication rejected");
         goto error;
 
       default:
-        ecore_con_event_server_error(svr, "garbage data from proxy");
+        ecore_con_event_server_error(obj, "garbage data from proxy");
         goto error;
      }
    if (svr->ecs->bind)
@@ -266,7 +269,7 @@ _ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUS
 
         if (!inet_ntop(AF_INET, &data[4], naddr, sizeof(naddr))) goto error;
         svr->proxyip = eina_stringshare_add(naddr);
-        ecore_con_event_proxy_bind(svr);
+        ecore_con_event_proxy_bind(obj);
      }
    svr->ecs_state = ECORE_CON_PROXY_STATE_DONE;
    INF("PROXY CONNECTED");
@@ -275,17 +278,18 @@ _ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUS
    svr->ecs_buf_offset = svr->ecs_addrlen = 0;
    memset(svr->ecs_addr, 0, sizeof(svr->ecs_addr));
    if (!svr->ssl_state)
-     ecore_con_event_server_add(svr);
+     ecore_con_event_server_add(obj);
    if (svr->ssl_state || (svr->buf && eina_binbuf_length_get(svr->buf)))
      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
    return;
 error:
-   _ecore_con_server_kill(svr);
+   _ecore_con_server_kill(obj);
 }
 
 static Eina_Bool
-_ecore_con_socks_auth_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
+_ecore_con_socks_auth_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    size_t size;
    unsigned char *data;
    switch (v5->method)
@@ -322,8 +326,9 @@ _ecore_con_socks_auth_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
 }
 
 static void
-_ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const unsigned char *buf, unsigned int num)
+_ecore_con_socks_read_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5, const unsigned char *buf, unsigned int num)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    const unsigned char *data;
 
    DBG("SOCKS: %d bytes", num);
@@ -335,15 +340,15 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
         if (data[0] != 5) goto error;
         if (data[1] == 0xFF)
           {
-             ecore_con_event_server_error(svr, "proxy authentication methods rejected");
+             ecore_con_event_server_error(obj, "proxy authentication methods rejected");
              goto error;
           }
         v5->method = data[1];
-        if (!_ecore_con_socks_auth_v5(svr, v5)) goto error;
+        if (!_ecore_con_socks_auth_v5(obj, v5)) goto error;
         if (svr->ecs_state == ECORE_CON_PROXY_STATE_REQUEST)
           {
              /* run again to skip auth reading */
-             _ecore_con_socks_read_v5(svr, v5, NULL, 0);
+             _ecore_con_socks_read_v5(obj, v5, NULL, 0);
              return;
           }
         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
@@ -365,12 +370,12 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
            case ECORE_CON_SOCKS_V5_METHOD_USERPASS:
              if (data[0] != 1)
                {
-                  ecore_con_event_server_error(svr, "protocol error");
+                  ecore_con_event_server_error(obj, "protocol error");
                   goto error;   /* wrong version */
                }
              if (data[1])
                {
-                  ecore_con_event_server_error(svr, "proxy request authentication rejected");
+                  ecore_con_event_server_error(obj, "proxy request authentication rejected");
                   goto error;
                }
 
@@ -387,7 +392,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
          sbuf = malloc(buflen);
          if (!sbuf)
            {
-              ecore_con_event_server_error(svr, "Memory allocation failure!");
+              ecore_con_event_server_error(obj, "Memory allocation failure!");
               goto error;
            }
          sbuf[0] = 5;
@@ -448,7 +453,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
               break;
 
             default:
-              ecore_con_event_server_error(svr, "protocol error");
+              ecore_con_event_server_error(obj, "protocol error");
               goto error;
            }
          /* at this point, we finally know exactly how much we need to read */
@@ -456,7 +461,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
 
          if (data[0] != 5)
            {
-              ecore_con_event_server_error(svr, "protocol error");
+              ecore_con_event_server_error(obj, "protocol error");
               goto error;     /* wrong version */
            }
          switch (data[1])
@@ -465,47 +470,47 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
               break;
 
             case 1:
-              ecore_con_event_server_error(svr, "general proxy failure");
+              ecore_con_event_server_error(obj, "general proxy failure");
               goto error;
 
             case 2:
-              ecore_con_event_server_error(svr, "connection not allowed by ruleset");
+              ecore_con_event_server_error(obj, "connection not allowed by ruleset");
               goto error;
 
             case 3:
-              ecore_con_event_server_error(svr, "network unreachable");
+              ecore_con_event_server_error(obj, "network unreachable");
               goto error;
 
             case 4:
-              ecore_con_event_server_error(svr, "host unreachable");
+              ecore_con_event_server_error(obj, "host unreachable");
               goto error;
 
             case 5:
-              ecore_con_event_server_error(svr, "connection refused by destination host");
+              ecore_con_event_server_error(obj, "connection refused by destination host");
               goto error;
 
             case 6:
-              ecore_con_event_server_error(svr, "TTL expired");
+              ecore_con_event_server_error(obj, "TTL expired");
               goto error;
 
             case 7:
-              ecore_con_event_server_error(svr, "command not supported / protocol error");
+              ecore_con_event_server_error(obj, "command not supported / protocol error");
               goto error;
 
             case 8:
-              ecore_con_event_server_error(svr, "address type not supported");
+              ecore_con_event_server_error(obj, "address type not supported");
 
             default:
               goto error;
            }
          if (data[2])
            {
-              ecore_con_event_server_error(svr, "protocol error");
+              ecore_con_event_server_error(obj, "protocol error");
               goto error;
            }
          memset(svr->ecs_addr, 0, sizeof(svr->ecs_addr));
          if (!svr->ssl_state)
-           ecore_con_event_server_add(svr);
+           ecore_con_event_server_add(obj);
          if (svr->ssl_state || (svr->buf && eina_binbuf_length_get(svr->buf)))
            ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
          svr->ecs_buf_offset = svr->ecs_addrlen = 0;
@@ -522,7 +527,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
 
    return;
 error:
-   _ecore_con_server_kill(svr);
+   _ecore_con_server_kill(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -537,20 +542,22 @@ ecore_con_socks_shutdown(void)
 }
 
 void
-ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num)
+ecore_con_socks_read(Ecore_Con_Server *obj, unsigned char *buf, int num)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    ECORE_CON_SOCKS_VERSION_CHECK(svr->ecs);
    ECORE_CON_SOCKS_CAST(svr->ecs);
 
    if (svr->ecs_state < ECORE_CON_PROXY_STATE_READ) return;
 
-   if (v4) _ecore_con_socks_read_v4(svr, v4, buf, (unsigned int)num);
-   else _ecore_con_socks_read_v5(svr, v5, buf, (unsigned int)num);
+   if (v4) _ecore_con_socks_read_v4(obj, v4, buf, (unsigned int)num);
+   else _ecore_con_socks_read_v5(obj, v5, buf, (unsigned int)num);
 }
 
 Eina_Bool
-ecore_con_socks_svr_init(Ecore_Con_Server *svr)
+ecore_con_socks_svr_init(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    ECORE_CON_SOCKS_VERSION_CHECK_RETURN(svr->ecs, EINA_FALSE);
    ECORE_CON_SOCKS_CAST(svr->ecs);
 
@@ -558,13 +565,14 @@ ecore_con_socks_svr_init(Ecore_Con_Server *svr)
    if (svr->ecs_buf) return EINA_FALSE;
    if (svr->ecs_state != ECORE_CON_PROXY_STATE_INIT) return EINA_FALSE;
    ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
-   if (v4) return _ecore_con_socks_svr_init_v4(svr, v4);
-   return _ecore_con_socks_svr_init_v5(svr, v5);
+   if (v4) return _ecore_con_socks_svr_init_v4(obj, v4);
+   return _ecore_con_socks_svr_init_v5(obj, v5);
 }
 
 void
-ecore_con_socks_dns_cb(const char *canonname EINA_UNUSED, const char *ip, struct sockaddr *addr, int addrlen EINA_UNUSED, Ecore_Con_Server *svr)
+ecore_con_socks_dns_cb(const char *canonname EINA_UNUSED, const char *ip, struct sockaddr *addr, int addrlen EINA_UNUSED, Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    svr->ip = eina_stringshare_add(ip);
    svr->ecs_state++;
    if (addr->sa_family == AF_INET)
@@ -579,7 +587,7 @@ ecore_con_socks_dns_cb(const char *canonname EINA_UNUSED, const char *ip, struct
         svr->ecs_addrlen = 16;
      }
 #endif
-   ecore_con_socks_svr_init(svr);
+   ecore_con_socks_svr_init(obj);
 }
 
 void

@@ -57,7 +57,10 @@ _ecore_con_dns_free(Ecore_Con_DNS *dns)
 static void
 _ecore_con_dns_del(Ecore_Con_DNS *dns)
 {
-   if (dns->svr && dns->svr->infos) dns->svr->infos = eina_list_remove(dns->svr->infos, dns);
+   Ecore_Con_Server_Data *svr = NULL;
+   if (dns->svr)
+      svr = eo_data_scope_get(dns->svr, ECORE_CON_CLIENT_CLASS);
+   if (svr->infos) svr->infos = eina_list_remove(svr->infos, dns);
    _ecore_con_dns_free(dns);
 }
 
@@ -284,18 +287,22 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
 }
 
 EAPI int
-ecore_con_info_get(Ecore_Con_Server *svr,
+ecore_con_info_get(Ecore_Con_Server *obj,
                    Ecore_Con_Info_Cb done_cb,
                    void *data,
                    struct addrinfo *hints)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    Ecore_Con_DNS *dns;
    int error = 0;
+
+   if (!svr)
+      return 0;
 
    dns = calloc(1, sizeof(Ecore_Con_DNS));
    if (!dns) return 0;
 
-   dns->svr = svr;
+   dns->svr = obj;
    dns->done_cb = done_cb;
    dns->data = data;
 
@@ -308,7 +315,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         goto reserr;
      }
 
-   error = _dns_addrinfo_get(dns, svr->ecs ? svr->ecs->ip : svr->name, dns->svr->ecs ? dns->svr->ecs->port : dns->svr->port);
+   error = _dns_addrinfo_get(dns, svr->ecs ? svr->ecs->ip : svr->name, svr->ecs ? svr->ecs->port : svr->port);
    if (error && (error != EAGAIN))
      {
         ERR("resolver: %s", dns_strerror(error));

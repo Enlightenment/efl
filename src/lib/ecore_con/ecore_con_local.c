@@ -56,13 +56,14 @@ ecore_con_local_shutdown(void)
 }
 
 int
-ecore_con_local_connect(Ecore_Con_Server *svr,
+ecore_con_local_connect(Ecore_Con_Server *obj,
                         Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
                         void *data EINA_UNUSED)
 {
 #ifndef HAVE_LOCAL_SOCKETS
    return 0;
 #else
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    char buf[4096];
    struct sockaddr_un socket_unix;
    int curstate = 0;
@@ -182,7 +183,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
      return 0;
 
    if (svr->type & ECORE_CON_SSL)
-     ecore_con_ssl_server_init(svr);
+     ecore_con_ssl_server_init(obj);
 
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
@@ -190,7 +191,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
    if (!svr->fd_handler)
      return 0;
 
-   if (!svr->delete_me) ecore_con_event_server_add(svr);
+   if (!svr->delete_me) ecore_con_event_server_add(obj);
 
    return 1;
 #endif
@@ -198,7 +199,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
 int
 ecore_con_local_listen(
-  Ecore_Con_Server *svr,
+  Ecore_Con_Server *obj,
   Eina_Bool (*
              cb_listen)(void *data,
                         Ecore_Fd_Handler *
@@ -207,6 +208,7 @@ ecore_con_local_listen(
   EINA_UNUSED)
 {
 #ifdef HAVE_LOCAL_SOCKETS
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    char buf[4096];
    struct sockaddr_un socket_unix;
    struct linger lin;
