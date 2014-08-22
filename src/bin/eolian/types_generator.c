@@ -61,8 +61,9 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef)
                 {
                    char *name = _concat_name(tp);
                    Eina_Stringshare *c_type = eolian_type_c_type_get(base_tp);
+                   Eina_Bool space = eolian_type_type_get(base_tp) != EOLIAN_TYPE_POINTER;
                    eina_strbuf_append_printf(buf, "typedef %s%s%s",
-                         c_type, !name || strchr(c_type, '*')?"":" ",
+                         c_type, !name || space ? " " : "",
                          name?name:"");
                    free(name);
                 }

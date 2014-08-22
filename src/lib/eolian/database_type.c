@@ -89,6 +89,7 @@ _ftype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         first = EINA_FALSE;
         database_type_to_str(stp, buf, NULL);
      }
+   eina_strbuf_append(buf, ")");
 }
 
 static void
