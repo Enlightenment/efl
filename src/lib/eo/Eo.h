@@ -1056,7 +1056,7 @@ struct _Eo_Callback_Array_Item
   {                                                                     \
      static Eo_Callback_Array_Item internal[sizeof ((Eo_Callback_Array_Item[]) { __VA_ARGS__ }) / \
                                             sizeof (Eo_Callback_Array_Item) + \
-                                            1] = { { 0 } };             \
+                                            1] = { { 0, 0 } };          \
      if (internal[0].desc == NULL)                                      \
        {                                                                \
           memcpy(internal,                                              \
