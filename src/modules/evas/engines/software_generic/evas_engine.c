@@ -2800,10 +2800,10 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
            case MODE_AUTO:
            case MODE_FULL:
              re->cur_rect = NULL;
-             if (x) *x = 0;
-             if (y) *y = 0;
-             if (w) *w = re->w;
-             if (h) *h = re->h;
+             *x = 0;
+             *y = 0;
+             *w = re->w;
+             *h = re->h;
              if (cx) *cx = 0;
              if (cy) *cy = 0;
              if (cw) *cw = re->w;
