@@ -784,7 +784,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
 {
    Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
-   ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
+   ELM_POPUP_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    ELM_POPUP_DATA_GET(WIDGET(it), sd);
 
    evas_object_del(it->icon);
