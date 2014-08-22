@@ -1187,24 +1187,27 @@ _edje_object_collect(Edje *ed)
                    int idx = 0;
 
                    rp = _edje_real_part_recursive_get(&ed, eud->part);
-                   if (rp->part->type != EDJE_PART_TYPE_BOX) continue ;
+                   if (rp)
+                     {
+                        if (rp->part->type != EDJE_PART_TYPE_BOX) continue;
 
-                   children = evas_object_box_children_get(rp->object);
-                   EINA_LIST_FREE(children, child)
-                      if (!evas_object_data_get(child, "\377 edje.box_item"))
-                        {
-                           EINA_LIST_FOREACH(l, ls, search)
-                             {
-                                if (search->type == EDJE_USER_BOX_PACK &&
-                                    search->u.box.child == child &&
-                                    search->part == eud->part /* beauty of stringshare ! */)
-                                  {
-                                     search->u.box.index = idx++;
-                                     break;
-                                  }
-                             }
-                           _edje_real_part_box_remove(eud->ed, rp, child);
-                        }
+                        children = evas_object_box_children_get(rp->object);
+                        EINA_LIST_FREE(children, child)
+                        if (!evas_object_data_get(child, "\377 edje.box_item"))
+                          {
+                             EINA_LIST_FOREACH(l, ls, search)
+                               {
+                                  if (search->type == EDJE_USER_BOX_PACK &&
+                                      search->u.box.child == child &&
+                                      search->part == eud->part /* beauty of stringshare ! */)
+                                    {
+                                       search->u.box.index = idx++;
+                                       break;
+                                    }
+                               }
+                             _edje_real_part_box_remove(eud->ed, rp, child);
+                          }
+                     }
                 }
               break;
            case EDJE_USER_TABLE_PACK:
