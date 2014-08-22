@@ -1233,7 +1233,7 @@ EAPI void       elm_config_vsync_set(Eina_Bool enabled);
  * Get the acceleration override preference flag
  *
  * This gets the acceleration override preference. This is a flag that
- * has the global system acceleration preference configureation forcibly
+ * has the global system acceleration preference configuration forcibly
  * override whatever acceleration preference the application may want.
  *
  * @return If acceleration override is enabled
@@ -1246,7 +1246,7 @@ EAPI Eina_Bool  elm_config_accel_preference_override_get(void);
  * Set the acceleration override preference flag
  *
  * This sets the acceleration override preference. This is a flag that
- * has the global system acceleration preference configureation forcibly
+ * has the global system acceleration preference configuration forcibly
  * override whatever acceleration preference the application may want.
  *
  * @param enabled This should be @c EINA_TRUE if enabled, or @c EINA_FALSE if
