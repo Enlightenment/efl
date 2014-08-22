@@ -103,7 +103,7 @@ _elm_interface_atspi_widget_action_elm_interface_atspi_action_name_get(Eo *obj, 
    int tmp = 0;
 
    eo_do(obj, actions = elm_interface_atspi_widget_action_elm_actions_get());
-   if (!actions) return EINA_FALSE;
+   if (!actions) return NULL;
 
    while (actions[tmp].name)
      {

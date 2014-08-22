@@ -5430,7 +5430,7 @@ _elm_entry_elm_interface_atspi_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd 
    evas_textblock_cursor_free(cur1);
    evas_textblock_cursor_free(cur2);
 
-   if (!formats) return EINA_FALSE;
+   if (!formats) return NULL;
 
    EINA_LIST_FOREACH(formats, l , format)
      {
@@ -5454,7 +5454,7 @@ _elm_entry_elm_interface_atspi_text_default_attributes_get(Eo *obj EINA_UNUSED, 
    if (!txtblk) return NULL;
 
    format = evas_textblock_node_format_first_get(txtblk);
-   if (!format) return EINA_FALSE;
+   if (!format) return NULL;
 
    do
      {

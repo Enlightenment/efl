@@ -1867,7 +1867,7 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
    const char *obj_path = eldbus_service_object_path_get(interface);
    Eo *obj = _access_object_from_path(obj_path);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    if (!eldbus_message_iter_arguments_get(iter, "d", &value))
      {
