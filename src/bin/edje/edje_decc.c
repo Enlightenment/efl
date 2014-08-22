@@ -548,6 +548,11 @@ output(void)
                   snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->src);
                   pp = strdup(out1);
                   p = strrchr(pp, '/');
+                  if (!p)
+                    {
+                       ERR("Cannot find '/' in file");
+                       exit(-1);
+                    }
                   *p = 0;
                   if (strstr(pp, "../"))
                     {
