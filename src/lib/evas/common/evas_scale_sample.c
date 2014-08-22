@@ -347,11 +347,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
      }
    if (dst_region_w <= 0) return EINA_FALSE;
    if (src_region_w <= 0) return EINA_FALSE;
-   if (dst_clip_x < 0)
-     {
-	dst_clip_w += dst_clip_x;
-	dst_clip_x = 0;
-     }
    if (dst_clip_w <= 0) return EINA_FALSE;
    if (dst_clip_x >= dst_w) return EINA_FALSE;
    if (dst_clip_x < dst_region_x)
@@ -381,11 +376,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
      }
    if (dst_region_h <= 0) return EINA_FALSE;
    if (src_region_h <= 0) return EINA_FALSE;
-   if (dst_clip_y < 0)
-     {
-	dst_clip_h += dst_clip_y;
-	dst_clip_y = 0;
-     }
    if (dst_clip_h <= 0) return EINA_FALSE;
    if (dst_clip_y >= dst_h) return EINA_FALSE;
    if (dst_clip_y < dst_region_y)
