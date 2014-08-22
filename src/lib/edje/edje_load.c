@@ -565,6 +565,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           break;
                        case EDJE_PART_TYPE_GROUP:
                           sources = eina_list_append(sources, rp);
+                         // fallthrough intentional
                        case EDJE_PART_TYPE_SWALLOW:
                        case EDJE_PART_TYPE_EXTERNAL:
                           if (ep->type == EDJE_PART_TYPE_EXTERNAL)
