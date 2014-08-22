@@ -3443,8 +3443,7 @@ test(int label, int parens, int inv)
       needtoken(')');
    if (lval.ident == iARRAY || lval.ident == iREFARRAY)
      {
-	char               *ptr =
-	   (lval.sym->name) ? lval.sym->name : "-unknown-";
+	char               *ptr = lval.sym->name;
 	error(33, ptr);		/* array must be indexed */
      }				/* if */
    if (lval.ident == iCONSTEXPR)
