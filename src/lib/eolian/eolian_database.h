@@ -134,7 +134,7 @@ struct _Eolian_Type
          Eina_Stringshare *full_name;
          Eina_List        *namespaces;
          Eina_Hash        *fields;
-         Eina_List        *field_names;
+         Eina_List        *field_list;
          Eina_Stringshare *comment;
          Eina_Stringshare *legacy;
          Eina_Stringshare *freefunc;
