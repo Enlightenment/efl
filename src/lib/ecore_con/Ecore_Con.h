@@ -9,6 +9,7 @@
 # include <netdb.h>
 #endif
 #include <Eina.h>
+#include <Eo.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -684,28 +685,6 @@ EAPI int               ecore_con_init(void);
  * need to call it explicitly unless you called ecore_init() explicitly too.
  */
 EAPI int               ecore_con_shutdown(void);
-
-/**
- * Do an asynchronous DNS lookup.
- *
- * @param name IP address or server name to translate.
- * @param done_cb Callback to notify when done.
- * @param data User data to be given to done_cb.
- * @return @c EINA_TRUE if the request did not fail to be set up, @c EINA_FALSE
- * if it failed.
- *
- * This function performs a DNS lookup on the hostname specified by @p name,
- * then calls @p done_cb with the result and the @p data given as parameter.
- * The result will be given to the @p done_cb as follows:
- * @li @c canonname - the canonical name of the address
- * @li @c ip - the resolved ip address
- * @li @c addr - a pointer to the socket address
- * @li @c addrlen - the length of the socket address, in bytes
- * @li @c data - the data pointer given as parameter to ecore_con_lookup()
- */
-EAPI Eina_Bool         ecore_con_lookup(const char *name,
-                                            Ecore_Con_Dns_Cb done_cb,
-                                            const void *data);
 
 /**
  * @}
@@ -1949,6 +1928,13 @@ EAPI int ecore_con_url_status_code_get(Ecore_Con_Url *url_con);
 /**
  * @}
  */
+
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "Ecore_Con_Legacy.h"
+#endif
+#ifdef EFL_EO_API_SUPPORT
+#include "Ecore_Con_Eo.h"
+#endif
 
 #ifdef __cplusplus
 }

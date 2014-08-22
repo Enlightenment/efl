@@ -269,10 +269,8 @@ ecore_con_shutdown(void)
    return _ecore_con_init_count;
 }
 
-EAPI Eina_Bool
-ecore_con_lookup(const char *name,
-                 Ecore_Con_Dns_Cb done_cb,
-                 const void *data)
+EOLIAN static Eina_Bool
+_ecore_con_lookup(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
 {
    Ecore_Con_Server *svr;
    Ecore_Con_Lookup *lk;
@@ -2725,3 +2723,4 @@ _ecore_con_lookup_done(void *data,
    free(svr);
 }
 
+#include "ecore_con.eo.c"

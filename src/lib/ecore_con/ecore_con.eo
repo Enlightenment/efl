@@ -1,0 +1,166 @@
+abstract Ecore.Con (Eo.Base) {
+   eo_prefix: ecore_con_obj;
+   data: null;
+   properties {
+      ip {
+         /**
+          * Control the IP address of a server that has been connected to.
+          *
+          * The param is a pointer to an internal string that contains the IP address of
+          * the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
+          * This string should not be modified or trusted to stay valid after
+          * deletion for the @p svr object. If no IP is known @c NULL is
+          * returned.
+          */
+         get {
+             legacy: null;
+         }
+         values {
+            const(char)* ip; /*@ The IP address */
+         }
+      }
+      uptime {
+         /*@
+          * @brief Check how long the object has been connected
+          *
+          * This function is used to find out how long a client has been connected for.
+          */
+         get {
+             legacy: null;
+         }
+         values {
+            double uptime; /*@ The total time, in seconds, that the object has been connected. */
+         }
+      }
+      port {
+         /*@
+          * @brief Return the port that the obj is connected to
+          *
+          */
+         get {
+             legacy: null;
+         }
+         values {
+            int port; /*@ The The port that obj is connected to, or -1 on error. */
+         }
+      }
+      fd {
+         /*@
+          * Get the fd that the server is connected to
+          *
+          * This function returns the fd which is used by the underlying server connection.
+          * It should not be tampered with unless you REALLY know what you are doing.
+          * @note This function is only valid for servers created with ecore_con_server_connect()
+          * @warning Seriously. Don't use this unless you know what you are doing.
+          * @since 1.1
+          */
+         get {
+             legacy: null;
+         }
+         values {
+            int fd; /*@ The fd, or -1 on failure. */
+         }
+      }
+      connected {
+         /*@
+          * Returns whether the client is still connected
+          */
+         get {
+             legacy: null;
+         }
+         values {
+            bool connected; /*@ Returns True if connected, False otherwise. */
+         }
+      }
+      timeout {
+         /*@
+          * Control the default time after which an inactive client will be disconnected
+          *
+          * This function is used by the server to set the default idle timeout on
+          * clients. If the any of the clients becomes idle for a time higher than this
+          * value, it will be disconnected. A value of < 1 disables the idle timeout.
+          *
+          * This timeout is not affected by the one set by
+          * ecore_con_client_timeout_set(). A client will be disconnected whenever the
+          * client or the server timeout is reached. That means, the lower timeout value
+          * will be used for that client if ecore_con_client_timeout_set() is used on it.
+          */
+         set {
+             legacy: null;
+         }
+         get {
+             legacy: null;
+         }
+         values {
+            double timeout; /*@ The timeout, in seconds, to disconnect after. */
+         }
+      }
+   }
+   methods {
+      flush {
+         /*@
+          * Flushes all pending data to the given server.
+          *
+          * This function will block until all data is sent to the server.
+          */
+         legacy: null;
+      }
+      send {
+         /**
+          * Sends the given data to the given server.
+          *
+          * This function will send the given data to the server as soon as the program
+          * is back to the main loop. Thus, this function returns immediately
+          * (non-blocking). If the data needs to be sent @b now, call
+          * ecore_con_server_flush() after this one.
+          *
+          * @see ecore_con_client_send()
+          * @see ecore_con_server_flush()
+          */
+         legacy: null;
+
+         params {
+            const(void)* data; /*@ The given data */
+            int size; /*@ Length of the data, in bytes. */
+         }
+         return: int; /*@ The number of bytes sent.  @c 0 will be returned if there is an error. */
+      }
+      lookup @class {
+         /*@
+          * Do an asynchronous DNS lookup.
+          *
+          * @param name IP address or server name to translate.
+          * @param done_cb Callback to notify when done.
+          * @param data User data to be given to done_cb.
+          * @return @c EINA_TRUE if the request did not fail to be set up, @c EINA_FALSE
+          * if it failed.
+          *
+          * This function performs a DNS lookup on the hostname specified by @p name,
+          * then calls @p done_cb with the result and the @p data given as parameter.
+          * The result will be given to the @p done_cb as follows:
+          * @li @c canonname - the canonical name of the address
+          * @li @c ip - the resolved ip address
+          * @li @c addr - a pointer to the socket address
+          * @li @c addrlen - the length of the socket address, in bytes
+          * @li @c data - the data pointer given as parameter to ecore_con_lookup()
+          */
+         params {
+            const(char)* name @nonull; /*@ Hostname to lookup. */
+            Ecore_Con_Dns_Cb done_cb; /*@ The callback to be called wehn lookup is done. */
+            const(void)* data; /*@ User data for the callback. */
+         }
+         return: bool;
+      }
+   }
+   implements {
+      virtual.ip.get;
+      virtual.uptime.get;
+      virtual.port.get;
+      virtual.fd.get;
+      virtual.connected.get;
+      virtual.timeout.set;
+      virtual.timeout.get;
+      virtual.flush;
+      virtual.send;
+   }
+}
