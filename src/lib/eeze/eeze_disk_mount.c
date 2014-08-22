@@ -252,7 +252,9 @@ eeze_disk_mount(Eeze_Disk *disk)
    struct stat st;
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
 
-   if ((!disk->mount_point) && eeze_disk_libmount_mounted_get(disk))
+   if (!disk->mount_point)
+     return EINA_FALSE;
+   if (eeze_disk_libmount_mounted_get(disk))
      return EINA_FALSE;
 
    if (!disk->mount_cmd)
