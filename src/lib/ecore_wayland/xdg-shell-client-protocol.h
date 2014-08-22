@@ -59,7 +59,7 @@ extern const struct wl_interface xdg_popup_interface;
  * static_assert to ensure the protocol and implementation versions match.
  */
 enum xdg_shell_version {
-	XDG_SHELL_VERSION_CURRENT = 3,
+	XDG_SHELL_VERSION_CURRENT = 4,
 };
 #endif /* XDG_SHELL_VERSION_ENUM */
 
