@@ -382,7 +382,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
        file);
 
    ie->info.module = em;
-   ie->info.loader = (void*) em ? em->functions : NULL;
+   ie->info.loader = em->functions;
    evas_module_ref(ie->info.module);
    return ret;
 }
