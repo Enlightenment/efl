@@ -68,6 +68,7 @@ evas_key_grab_find(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const c
 void
 evas_object_grabs_cleanup(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
+   if (!obj->layer) return;
    if (obj->layer->evas->walking_grabs)
      {
         Eina_List *l;
