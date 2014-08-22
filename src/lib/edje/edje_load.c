@@ -1212,9 +1212,11 @@ _edje_object_collect(Edje *ed)
                    Edje_Real_Part *rp;
 
                    rp = _edje_real_part_recursive_get(&ed, eud->part);
-                   if (rp->part->type != EDJE_PART_TYPE_TABLE) continue ;
-
-                   _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
+                   if (rp)
+                     {
+                        if (rp->part->type != EDJE_PART_TYPE_TABLE) continue;
+                        _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
+                     }
                    break;
                 }
            case EDJE_USER_SWALLOW:
