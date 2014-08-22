@@ -222,6 +222,8 @@ extern "C" {
 #define ECORE_CON_USE_SSL ECORE_CON_USE_SSL2
 #define ECORE_CON_REMOTE_SYSTEM ECORE_CON_REMOTE_TCP
 
+typedef Eo Ecore_Con;
+
 /**
  * @typedef Ecore_Con_Socks
  * An object representing a SOCKS proxy

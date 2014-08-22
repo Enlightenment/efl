@@ -273,7 +273,7 @@ ecore_con_shutdown(void)
 }
 
 EOLIAN static Eina_Bool
-_ecore_con_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
+_ecore_con_base_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
 {
    Ecore_Con_Server *obj;
    Ecore_Con_Lookup *lk;
@@ -517,7 +517,7 @@ ecore_con_server_timeout_set(Ecore_Con *obj, double timeout)
 }
 
 EOLIAN static void
-_ecore_con_server_ecore_con_timeout_set(Eo *obj, Ecore_Con_Server_Data *svr, double timeout)
+_ecore_con_server_ecore_con_base_timeout_set(Eo *obj, Ecore_Con_Server_Data *svr, double timeout)
 {
    if (svr->created)
      svr->client_disconnect_time = timeout;
@@ -534,7 +534,7 @@ ecore_con_server_timeout_get(const Ecore_Con *obj)
 }
 
 EOLIAN static double
-_ecore_con_server_ecore_con_timeout_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+_ecore_con_server_ecore_con_base_timeout_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    return svr->created ? svr->client_disconnect_time : svr->disconnect_time;
 }
@@ -583,7 +583,7 @@ ecore_con_server_connected_get(const Ecore_Con *obj)
 }
 
 EOLIAN static Eina_Bool
-_ecore_con_server_ecore_con_connected_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+_ecore_con_server_ecore_con_base_connected_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    return !svr->connecting;
 }
@@ -607,7 +607,7 @@ ecore_con_server_port_get(const Ecore_Con *obj)
 }
 
 EOLIAN static int
-_ecore_con_server_ecore_con_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+_ecore_con_server_ecore_con_base_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    return svr->port;
 }
@@ -619,7 +619,7 @@ ecore_con_server_send(Ecore_Con *obj, const void *data, int size)
 }
 
 EOLIAN static int
-_ecore_con_server_ecore_con_send(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, const void *data, int size)
+_ecore_con_server_ecore_con_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, const void *data, int size)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(svr->delete_me, 0);
 
@@ -675,7 +675,7 @@ ecore_con_server_ip_get(const Ecore_Con *obj)
 }
 
 EOLIAN static const char *
-_ecore_con_server_ecore_con_ip_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+_ecore_con_server_ecore_con_base_ip_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    return svr->ip;
 }
@@ -687,7 +687,7 @@ ecore_con_server_uptime_get(const Ecore_Con *obj)
 }
 
 EOLIAN static double
-_ecore_con_server_ecore_con_uptime_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+_ecore_con_server_ecore_con_base_uptime_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    return ecore_time_get() - svr->start_time;
 }
@@ -699,7 +699,7 @@ ecore_con_server_flush(Ecore_Con *obj)
 }
 
 EOLIAN static void
-_ecore_con_server_ecore_con_flush(Eo *obj, Ecore_Con_Server_Data *svr EINA_UNUSED)
+_ecore_con_server_ecore_con_base_flush(Eo *obj, Ecore_Con_Server_Data *svr EINA_UNUSED)
 {
    _ecore_con_server_flush(obj);
 }
@@ -728,7 +728,7 @@ ecore_con_client_send(Ecore_Con *obj, const void *data, int size)
 }
 
 EOLIAN static int
-_ecore_con_client_ecore_con_send(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl, const void *data, int size)
+_ecore_con_client_ecore_con_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl, const void *data, int size)
 {
    Ecore_Con_Server_Data *host_server = NULL;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cl->delete_me, 0);
@@ -776,7 +776,7 @@ _ecore_con_client_server_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 }
 
 EOLIAN static Eina_Bool
-_ecore_con_client_ecore_con_connected_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
+_ecore_con_client_ecore_con_base_connected_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
    return !cl->delete_me;
 }
@@ -788,7 +788,7 @@ ecore_con_client_connected_get(const Ecore_Con *obj)
 }
 
 EOLIAN static void
-_ecore_con_client_ecore_con_timeout_set(Eo *obj, Ecore_Con_Client_Data *cl, double timeout)
+_ecore_con_client_ecore_con_base_timeout_set(Eo *obj, Ecore_Con_Client_Data *cl, double timeout)
 {
    cl->disconnect_time = timeout;
 
@@ -802,7 +802,7 @@ ecore_con_client_timeout_set(Ecore_Con *obj, double timeout)
 }
 
 EOLIAN static double
-_ecore_con_client_ecore_con_timeout_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
+_ecore_con_client_ecore_con_base_timeout_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
    return cl->disconnect_time;
 }
@@ -846,7 +846,7 @@ ecore_con_client_data_get(Ecore_Con_Client *obj)
 }
 
 EOLIAN static const char *
-_ecore_con_client_ecore_con_ip_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
+_ecore_con_client_ecore_con_base_ip_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
    if (!cl->ip)
      cl->ip = _ecore_con_pretty_ip(cl->client_addr);
@@ -861,7 +861,7 @@ ecore_con_client_ip_get(const Ecore_Con *obj)
 }
 
 EOLIAN static int
-_ecore_con_client_ecore_con_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
+_ecore_con_client_ecore_con_base_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
    if (cl->client_addr->sa_family == AF_INET)
      return ((struct sockaddr_in *)cl->client_addr)->sin_port;
@@ -879,7 +879,7 @@ ecore_con_client_port_get(const Ecore_Con *obj)
 }
 
 EOLIAN static double
-_ecore_con_client_ecore_con_uptime_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
+_ecore_con_client_ecore_con_base_uptime_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
    return ecore_time_get() - cl->start_time;
 }
@@ -891,7 +891,7 @@ ecore_con_client_uptime_get(const Ecore_Con *obj)
 }
 
 EOLIAN static void
-_ecore_con_client_ecore_con_flush(Eo *obj, Ecore_Con_Client_Data *cl EINA_UNUSED)
+_ecore_con_client_ecore_con_base_flush(Eo *obj, Ecore_Con_Client_Data *cl EINA_UNUSED)
 {
    _ecore_con_client_flush(obj);
 }
@@ -909,7 +909,7 @@ ecore_con_server_fd_get(const Ecore_Con *obj)
 }
 
 EOLIAN static int
-_ecore_con_server_ecore_con_fd_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+_ecore_con_server_ecore_con_base_fd_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    if (svr->created) return -1;
    if (svr->delete_me) return -1;
@@ -917,7 +917,7 @@ _ecore_con_server_ecore_con_fd_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *s
 }
 
 EOLIAN static int
-_ecore_con_client_ecore_con_fd_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
+_ecore_con_client_ecore_con_base_fd_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
    return ecore_main_fd_handler_fd_get(cl->fd_handler);
 }
@@ -971,7 +971,7 @@ ecore_con_event_server_add(Ecore_Con_Server *obj)
    if (svr->upgrade) ev = ECORE_CON_EVENT_SERVER_UPGRADE;
    ecore_event_add(ev, e,
                    _ecore_con_event_server_add_free, NULL);
-   eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_CONNECTION_UPGRADED, NULL));
+   eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_CONNECTION_UPGRADED, NULL));
    _ecore_con_event_count++;
 }
 
@@ -1050,7 +1050,7 @@ ecore_con_event_server_data(Ecore_Con_Server *obj, unsigned char *buf, int num, 
         Ecore_Con_Event_Data_Received event_info = { 0 };
         event_info.data = e->data;
         event_info.size = e->size;
-        eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_DATA_RECEIVED, &event_info));
+        eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_DATA_RECEIVED, &event_info));
      }
    _ecore_con_event_count++;
 }
@@ -1075,7 +1075,7 @@ ecore_con_event_client_add(Ecore_Con_Client *obj)
    if (cl->upgrade) ev = ECORE_CON_EVENT_CLIENT_UPGRADE;
    ecore_event_add(ev, e,
                    (Ecore_End_Cb)_ecore_con_event_client_add_free, cl->host_server);
-   eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_CONNECTION_UPGRADED, NULL));
+   eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_CONNECTION_UPGRADED, NULL));
    _ecore_con_event_count++;
 }
 
@@ -1157,7 +1157,7 @@ ecore_con_event_client_data(Ecore_Con_Client *obj, unsigned char *buf, int num, 
         Ecore_Con_Event_Data_Received event_info = { 0 };
         event_info.data = e->data;
         event_info.size = e->size;
-        eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_DATA_RECEIVED, &event_info));
+        eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_DATA_RECEIVED, &event_info));
      }
    _ecore_con_event_count++;
 }
@@ -1183,7 +1183,7 @@ _ecore_con_event_server_error(Ecore_Con_Server *obj, char *error, Eina_Bool dupl
    DBG("%s", error);
    svr->event_count = eina_list_append(svr->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_SERVER_ERROR, e, (Ecore_End_Cb)_ecore_con_event_server_error_free, NULL);
-   eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_CONNECTION_ERROR, e->error));
+   eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_CONNECTION_ERROR, e->error));
    _ecore_con_event_count++;
 }
 
@@ -1204,7 +1204,7 @@ ecore_con_event_client_error(Ecore_Con_Client *obj, const char *error)
    cl->event_count = eina_list_append(cl->event_count, e);
    host_server->event_count = eina_list_append(host_server->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_CLIENT_ERROR, e, (Ecore_End_Cb)_ecore_con_event_client_error_free, cl->host_server);
-   eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_CONNECTION_ERROR, e->error));
+   eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_CONNECTION_ERROR, e->error));
    _ecore_con_event_count++;
 }
 
@@ -2770,6 +2770,6 @@ _ecore_con_lookup_done(void *data,
    free(svr);
 }
 
-#include "ecore_con.eo.c"
+#include "ecore_con_base.eo.c"
 #include "ecore_con_client.eo.c"
 #include "ecore_con_server.eo.c"

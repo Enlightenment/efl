@@ -1,4 +1,5 @@
-abstract Ecore.Con (Eo.Base) {
+abstract Ecore.Con.Base (Eo.Base) {
+   legacy_prefix: ecore_con;
    eo_prefix: ecore_con_obj;
    data: null;
    properties {

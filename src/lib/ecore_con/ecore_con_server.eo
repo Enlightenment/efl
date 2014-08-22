@@ -1,5 +1,5 @@
 /* FIXME: make abstract. */
-class Ecore.Con.Server (Ecore.Con) {
+class Ecore.Con.Server (Ecore.Con.Base) {
    eo_prefix: ecore_con_server_obj;
    properties {
       name {
@@ -49,20 +49,21 @@ class Ecore.Con.Server (Ecore.Con) {
          get {
          }
          values {
-            const(Eina_List <const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
+            /* FIXME: Change to Ecore.Con.Client when eolian cycle bug is fixed. */
+            const(Eina_List <const(Ecore.Con.Base) *>) *clients; /*@ The list of clients on this server. */
          }
       }
    }
    implements {
       Eo.Base.destructor;
-      Ecore.Con.ip.get;
-      Ecore.Con.uptime.get;
-      Ecore.Con.port.get;
-      Ecore.Con.fd.get;
-      Ecore.Con.connected.get;
-      Ecore.Con.timeout.set;
-      Ecore.Con.timeout.get;
-      Ecore.Con.flush;
-      Ecore.Con.send;
+      Ecore.Con.Base.ip.get;
+      Ecore.Con.Base.uptime.get;
+      Ecore.Con.Base.port.get;
+      Ecore.Con.Base.fd.get;
+      Ecore.Con.Base.connected.get;
+      Ecore.Con.Base.timeout.set;
+      Ecore.Con.Base.timeout.get;
+      Ecore.Con.Base.flush;
+      Ecore.Con.Base.send;
    }
 }

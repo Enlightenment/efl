@@ -1,4 +1,4 @@
-class Ecore.Con.Client (Ecore.Con) {
+class Ecore.Con.Client (Ecore.Con.Base) {
    eo_prefix: ecore_con_client_obj;
    properties {
       server {
@@ -16,15 +16,15 @@ class Ecore.Con.Client (Ecore.Con) {
    }
    implements {
       Eo.Base.destructor;
-      Ecore.Con.ip.get;
-      Ecore.Con.uptime.get;
-      Ecore.Con.port.get;
-      Ecore.Con.fd.get;
-      Ecore.Con.connected.get;
-      Ecore.Con.timeout.set;
-      Ecore.Con.timeout.get;
-      Ecore.Con.flush;
-      Ecore.Con.send;
+      Ecore.Con.Base.ip.get;
+      Ecore.Con.Base.uptime.get;
+      Ecore.Con.Base.port.get;
+      Ecore.Con.Base.fd.get;
+      Ecore.Con.Base.connected.get;
+      Ecore.Con.Base.timeout.set;
+      Ecore.Con.Base.timeout.get;
+      Ecore.Con.Base.flush;
+      Ecore.Con.Base.send;
    }
 }
 
