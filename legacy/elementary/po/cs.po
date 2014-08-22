@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-14 00:45+0900\n"
+"POT-Creation-Date: 2014-08-23 02:26+0900\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -58,11 +58,11 @@ msgstr "Zpět"
 msgid "Next"
 msgstr "Další"
 
-#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:884
+#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:885
 msgid "Popup Title"
 msgstr "Titulek vyskakujícího okna"
 
-#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:950
+#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:951
 msgid "Popup Body Text"
 msgstr "Text vyskakovacího okna"
 
@@ -74,10 +74,10 @@ msgstr "Bublina"
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:767
-#: src/lib/elm_genlist.c:1459 src/lib/elm_list.c:2047 src/lib/elm_radio.c:261
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:775
+#: src/lib/elm_genlist.c:1523 src/lib/elm_list.c:2059 src/lib/elm_radio.c:261
 #: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
-#: src/lib/elm_toolbar.c:2212
+#: src/lib/elm_toolbar.c:2213
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -162,7 +162,7 @@ msgstr "Hodiny"
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:3240
+#: src/lib/elm_config.c:3228
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
@@ -194,7 +194,7 @@ msgstr "Vybrat"
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elm_gengrid.c:797
+#: src/lib/elm_gengrid.c:805
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
@@ -238,7 +238,7 @@ msgstr "ukazatel průběhu"
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2214
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2215
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
@@ -266,22 +266,22 @@ msgstr "odečítací tlačítko spinneru"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1674 src/lib/elm_toolbar.c:2273
+#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2274
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:2210
+#: src/lib/elm_toolbar.c:2211
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:2216
+#: src/lib/elm_toolbar.c:2217
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:2268
+#: src/lib/elm_toolbar.c:2269
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:2286
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"

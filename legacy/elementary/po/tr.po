@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-14 00:45+0900\n"
+"POT-Creation-Date: 2014-08-23 02:26+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -59,11 +59,11 @@ msgstr "Geri"
 msgid "Next"
 msgstr "Sonraki"
 
-#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:884
+#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:885
 msgid "Popup Title"
 msgstr "Pencere başlığı"
 
-#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:950
+#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:951
 msgid "Popup Body Text"
 msgstr "Pencere gövde metni"
 
@@ -75,10 +75,10 @@ msgstr "Balon"
 msgid "Clicked"
 msgstr "Tıklanmış"
 
-#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:767
-#: src/lib/elm_genlist.c:1459 src/lib/elm_list.c:2047 src/lib/elm_radio.c:261
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:775
+#: src/lib/elm_genlist.c:1523 src/lib/elm_list.c:2059 src/lib/elm_radio.c:261
 #: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
-#: src/lib/elm_toolbar.c:2212
+#: src/lib/elm_toolbar.c:2213
 msgid "State: Disabled"
 msgstr "Durum: Kapalı"
 
@@ -163,7 +163,7 @@ msgstr "Saat"
 msgid "color selector palette item"
 msgstr "renk seçici paleti öğesi"
 
-#: src/lib/elm_config.c:3240
+#: src/lib/elm_config.c:3228
 msgid "default:LTR"
 msgstr "varsayılan:LTR"
 
@@ -195,7 +195,7 @@ msgstr "Seç"
 msgid "Entry"
 msgstr "Girdi"
 
-#: src/lib/elm_gengrid.c:797
+#: src/lib/elm_gengrid.c:805
 msgid "Gengrid Item"
 msgstr "Izgara öğesi"
 
@@ -239,7 +239,7 @@ msgstr "ilerleme çubuğu"
 msgid "Radio"
 msgstr "Radyo"
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2214
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2215
 msgid "State: Selected"
 msgstr "Durum: Seçili"
 
@@ -267,22 +267,22 @@ msgstr "değiştirici azaltma düğmesi"
 msgid "spinner"
 msgstr "değiştirici"
 
-#: src/lib/elm_toolbar.c:1674 src/lib/elm_toolbar.c:2273
+#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2274
 msgid "Selected"
 msgstr "Seçili"
 
-#: src/lib/elm_toolbar.c:2210
+#: src/lib/elm_toolbar.c:2211
 msgid "Separator"
 msgstr "Ayraç"
 
-#: src/lib/elm_toolbar.c:2216
+#: src/lib/elm_toolbar.c:2217
 msgid "Has menu"
 msgstr "menü"
 
-#: src/lib/elm_toolbar.c:2268
+#: src/lib/elm_toolbar.c:2269
 msgid "Unselected"
 msgstr "Seçili değil"
 
-#: src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:2286
 msgid "Toolbar Item"
 msgstr "Araç Çubuğu Öğesi"

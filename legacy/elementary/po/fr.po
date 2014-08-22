@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-14 00:45+0900\n"
+"POT-Creation-Date: 2014-08-23 02:26+0900\n"
 "PO-Revision-Date: 2013-06-20 07:08+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -62,11 +62,11 @@ msgstr "Retour"
 msgid "Next"
 msgstr "Suivant"
 
-#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:884
+#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:885
 msgid "Popup Title"
 msgstr "Titre du Popup"
 
-#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:950
+#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:951
 msgid "Popup Body Text"
 msgstr "Corps du texte du Popup"
 
@@ -78,10 +78,10 @@ msgstr "Bulle"
 msgid "Clicked"
 msgstr "Cliqué"
 
-#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:767
-#: src/lib/elm_genlist.c:1459 src/lib/elm_list.c:2047 src/lib/elm_radio.c:261
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:775
+#: src/lib/elm_genlist.c:1523 src/lib/elm_list.c:2059 src/lib/elm_radio.c:261
 #: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
-#: src/lib/elm_toolbar.c:2212
+#: src/lib/elm_toolbar.c:2213
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -166,7 +166,7 @@ msgstr "Horloge"
 msgid "color selector palette item"
 msgstr "élément de palette de choix de couleur"
 
-#: src/lib/elm_config.c:3240
+#: src/lib/elm_config.c:3228
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -198,7 +198,7 @@ msgstr "Sélectionner"
 msgid "Entry"
 msgstr "Entrée"
 
-#: src/lib/elm_gengrid.c:797
+#: src/lib/elm_gengrid.c:805
 msgid "Gengrid Item"
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr "barre de progression"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2214
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2215
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
@@ -270,22 +270,22 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1674 src/lib/elm_toolbar.c:2273
+#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2274
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:2210
+#: src/lib/elm_toolbar.c:2211
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:2216
+#: src/lib/elm_toolbar.c:2217
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:2268
+#: src/lib/elm_toolbar.c:2269
 msgid "Unselected"
 msgstr "Désélectionné"
 
-#: src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:2286
 msgid "Toolbar Item"
 msgstr "Élément de barre d'outils"
