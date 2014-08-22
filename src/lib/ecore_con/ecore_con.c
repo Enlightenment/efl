@@ -1083,6 +1083,7 @@ ecore_con_event_client_add(Ecore_Con_Client *obj)
    if (cl->upgrade) ev = ECORE_CON_EVENT_CLIENT_UPGRADE;
    ecore_event_add(ev, e,
                    (Ecore_End_Cb)_ecore_con_event_client_add_free, cl->host_server);
+   eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_CONNECTION_UPGRADED, NULL));
    _ecore_con_event_count++;
 }
 
@@ -1154,6 +1155,12 @@ ecore_con_event_client_data(Ecore_Con_Client *obj, unsigned char *buf, int num, 
    e->size = num;
    ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
                    (Ecore_End_Cb)_ecore_con_event_client_data_free, cl->host_server);
+     {
+        Ecore_Con_Event_Data_Received event_info = { 0 };
+        event_info.data = e->data;
+        event_info.size = e->size;
+        eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_DATA_RECEIVED, &event_info));
+     }
    _ecore_con_event_count++;
 }
 
@@ -1194,6 +1201,7 @@ ecore_con_event_client_error(Ecore_Con_Client *obj, const char *error)
    cl->event_count = eina_list_append(cl->event_count, e);
    cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_CLIENT_ERROR, e, (Ecore_End_Cb)_ecore_con_event_client_error_free, cl->host_server);
+   eo_do(obj, eo_event_callback_call(ECORE_CON_EVENT_CONNECTION_ERROR, e->error));
    _ecore_con_event_count++;
 }
 

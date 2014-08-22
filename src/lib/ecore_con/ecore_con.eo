@@ -163,7 +163,18 @@ abstract Ecore.Con (Eo.Base) {
       virtual.flush;
       virtual.send;
    }
+   events {
+        data,received: Ecore_Con_Event_Data_Received;
+        connection,upgraded;
+        connection,error: const(char) *;
+   }
 }
+
+/* FIXME: Should actually be a binbuf. */
+type Ecore_Con_Event_Data_Received: struct {
+    data: void *; /*@ The data thet got sent. */
+    size: int; /*@ The length of the data sent. */
+};
 
 type Ecore_Con_Dns_Cb: func void (const(char) *,
                                  const(char) *,
