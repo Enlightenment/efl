@@ -262,7 +262,8 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    if (name)
      {
-        eina_strbuf_append_char(buf, ' ');
+        if (tp->type != EOLIAN_TYPE_POINTER)
+          eina_strbuf_append_char(buf, ' ');
         eina_strbuf_append(buf, name);
      }
 }
