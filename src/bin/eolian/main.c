@@ -226,6 +226,10 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
         ERR("Failed to generate types of file %s", eo_filename);
         goto end;
      }
+   else
+     {
+        buffer = _include_guard_enclose(eo_filename, "TYPES", buffer);
+     }
 
    Eina_Strbuf *ctbuf = eina_strbuf_new();
    if (types_class_typedef_generate(eo_filename, ctbuf))
