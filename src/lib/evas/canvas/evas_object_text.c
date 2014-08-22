@@ -700,10 +700,14 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
       o->bidi_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
 
 #ifdef BIDI_SUPPORT
-   if (o->bidi_delimiters)
-      segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
+   if (text)
+     {
+        if (o->bidi_delimiters)
+          segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
+     }
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
-   o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs);
+   if (text)
+     o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs);
 
    if (o->bidi_par_props)
       o->bidi_dir = EVAS_BIDI_PAR_TYPE_TO_DIRECTION(o->bidi_par_props->direction);
@@ -713,44 +717,46 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 #endif
    visual_pos = pos = 0;
 
-   while (len > 0)
+   if (text)
      {
-        Evas_Font_Instance *script_fi = NULL;
-        int script_len = len, tmp_cut;
-        Evas_Script_Type script;
-        tmp_cut = evas_common_language_script_end_of_run_get(
-              text + pos,
-              o->bidi_par_props,
-              pos, len);
-        if (tmp_cut > 0)
-           script_len = tmp_cut;
-
-        script = evas_common_language_script_type_get(text + pos, script_len);
-
-        while (script_len > 0)
+        while (len > 0)
           {
-             const Evas_Object_Text_Item *it;
-             Evas_Font_Instance *cur_fi = NULL;
-             int run_len = script_len;
-             if (o->font)
-               {
-                  run_len = ENFN->font_run_end_get(ENDT,
-                        o->font, &script_fi, &cur_fi,
-                        script, text + pos, script_len);
-               }
-#ifdef BIDI_SUPPORT
-             visual_pos = evas_bidi_position_logical_to_visual(
-                   v_to_l, par_len, pos);
-#else
-             visual_pos = pos;
-#endif
-             it = _evas_object_text_item_new(obj, o, cur_fi, text, script,
-                                             pos, visual_pos, run_len);
+             Evas_Font_Instance *script_fi = NULL;
+             int script_len = len, tmp_cut;
+             Evas_Script_Type script;
+             tmp_cut = evas_common_language_script_end_of_run_get
+               (text + pos,
+                o->bidi_par_props,
+                pos, len);
+             if (tmp_cut > 0) script_len = tmp_cut;
 
-             advance += it->adv;
-             pos += run_len;
-             script_len -= run_len;
-             len -= run_len;
+             script = evas_common_language_script_type_get(text + pos, script_len);
+
+             while (script_len > 0)
+               {
+                  const Evas_Object_Text_Item *it;
+                  Evas_Font_Instance *cur_fi = NULL;
+                  int run_len = script_len;
+                  if (o->font)
+                    {
+                       run_len = ENFN->font_run_end_get
+                         (ENDT, o->font, &script_fi, &cur_fi,
+                          script, text + pos, script_len);
+                    }
+#ifdef BIDI_SUPPORT
+                  visual_pos = evas_bidi_position_logical_to_visual
+                    (v_to_l, par_len, pos);
+#else
+                  visual_pos = pos;
+#endif
+                  it = _evas_object_text_item_new(obj, o, cur_fi, text, script,
+                                                  pos, visual_pos, run_len);
+
+                  advance += it->adv;
+                  pos += run_len;
+                  script_len -= run_len;
+                  len -= run_len;
+               }
           }
      }
    o->last_computed.advance_without_ellipsis = advance;
