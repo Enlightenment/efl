@@ -1094,8 +1094,7 @@ hier13(value * lval)
 	array2 = (lval2.ident == iARRAY || lval2.ident == iREFARRAY);
 	if (array1 && !array2)
 	  {
-	     char               *ptr =
-		(lval->sym->name) ? lval->sym->name : "-unknown-";
+	     char               *ptr = lval->sym->name;
 	     error(33, ptr);	/* array must be indexed */
 	  }
 	else if (!array1 && array2)
