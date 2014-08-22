@@ -974,6 +974,7 @@ _ethumb_dbus_ethumb_new_cb(const Eldbus_Service_Interface *interface, const Eldb
    Ethumbd *ed;
 
    ed = eldbus_service_object_data_get(interface, DAEMON);
+   if (!ed) goto end_new;
    client = eldbus_message_sender_get(msg);
    if (!client)
      goto end_new;
