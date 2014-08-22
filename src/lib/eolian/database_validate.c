@@ -89,10 +89,39 @@ _validate_class(const Eolian_Class *cl)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_validate_variable(const Eolian_Variable *var)
+{
+   if (!_validate_type(var->base_type))
+     return EINA_FALSE;
+
+   if (var->value && !_validate_expr(var->value, var->base_type))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_type_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+             const Eolian_Type *tp, Eina_Bool *success)
+{
+   *success = _validate_type(tp);
+   return *success;
+}
+
+static Eina_Bool
+_var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+             const Eolian_Variable *var, Eina_Bool *success)
+{
+   *success = _validate_variable(var);
+   return *success;
+}
+
 Eina_Bool
 database_validate(void)
 {
    const Eolian_Class *cl;
+
    Eina_Iterator *iter = eolian_all_classes_get();
    EINA_ITERATOR_FOREACH(iter, cl)
      if (!_validate_class(cl))
@@ -101,5 +130,28 @@ database_validate(void)
           return EINA_FALSE;
        }
    eina_iterator_free(iter);
+
+   Eina_Bool succ = EINA_TRUE;
+
+   eina_hash_foreach(_aliases, (Eina_Hash_Foreach)_type_map_cb, &succ);
+   if (!succ)
+     return EINA_FALSE;
+
+   eina_hash_foreach(_structs, (Eina_Hash_Foreach)_type_map_cb, &succ);
+   if (!succ)
+     return EINA_FALSE;
+
+   eina_hash_foreach(_enums, (Eina_Hash_Foreach)_type_map_cb, &succ);
+   if (!succ)
+     return EINA_FALSE;
+
+   eina_hash_foreach(_globals, (Eina_Hash_Foreach)_var_map_cb, &succ);
+   if (!succ)
+     return EINA_FALSE;
+
+   eina_hash_foreach(_constants, (Eina_Hash_Foreach)_var_map_cb, &succ);
+   if (!succ)
+     return EINA_FALSE;
+
    return EINA_TRUE;
 }
