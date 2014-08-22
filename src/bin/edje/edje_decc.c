@@ -515,9 +515,13 @@ output(void)
                        exit(-1);
                     }
                   f = fopen(out1, "wb");
-                  if (fwrite(sound_data, sound_data_size, 1, f) != 1)
-                    ERR("Could not write sound: %s", strerror(errno));
-                  fclose(f);
+                  if (f)
+                    {
+                       if (fwrite(sound_data, sound_data_size, 1, f) != 1)
+                         ERR("Could not write sound: %s: %s", out1, strerror(errno));
+                       fclose(f);
+                    }
+                  else ERR("Could not open for writing sound: %s: %s", out1, strerror(errno));
               }
           }
 
