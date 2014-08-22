@@ -1,0 +1,33 @@
+class Ecore.Con.Client (Ecore.Con) {
+   eo_prefix: ecore_con_client_obj;
+   properties {
+      server {
+         /**
+          * Controls the server representing the socket the client has
+          * connected to.
+          *
+          */
+         get {
+         }
+         values {
+            /* FIXME: Should be Ecore.Con.Server. */
+            Ecore_Con_Server *svr; /*@ The server the client is connected to. */
+         }
+      }
+   }
+   implements {
+      Eo.Base.destructor;
+      Ecore.Con.ip.get;
+      Ecore.Con.uptime.get;
+      Ecore.Con.port.get;
+      Ecore.Con.fd.get;
+      Ecore.Con.connected.get;
+      Ecore.Con.timeout.set;
+      Ecore.Con.timeout.get;
+      Ecore.Con.flush;
+      Ecore.Con.send;
+   }
+}
+
+/* FIXME: Should SSL inherit from client? What's exactly the interaction here?
+ Fix clients to be children of server when created .*/

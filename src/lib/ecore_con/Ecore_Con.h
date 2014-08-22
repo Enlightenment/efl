@@ -231,13 +231,6 @@ extern "C" {
 typedef struct _Ecore_Con_Server Ecore_Con_Server;
 
 /**
- * @typedef Ecore_Con_Client
- * A connection handle to a client
- * @ingroup Ecore_Con_Client_Group
- */
-typedef struct _Ecore_Con_Client Ecore_Con_Client;
-
-/**
  * @typedef Ecore_Con_Socks
  * An object representing a SOCKS proxy
  * @ingroup Ecore_Con_Socks_Group
@@ -252,6 +245,12 @@ typedef struct Ecore_Con_Socks Ecore_Con_Socks;
  */
 typedef struct _Ecore_Con_Url Ecore_Con_Url;
 
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "Ecore_Con_Legacy.h"
+#endif
+#ifdef EFL_EO_API_SUPPORT
+#include "Ecore_Con_Eo.h"
+#endif
 
 /**
  * @addtogroup Ecore_Con_Events_Group
@@ -604,16 +603,6 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
  *
  * @{
  */
-
-/**
- * @typedef Ecore_Con_Dns_Cb
- * A callback type for use with @ref ecore_con_lookup.
- */
-typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
-                                 const char *ip,
-                                 struct sockaddr *addr,
-                                 int addrlen,
-                                 void *data);
 
 /**
  * @typedef Ecore_Con_Type
@@ -1076,7 +1065,7 @@ EAPI int               ecore_con_server_fd_get(Ecore_Con_Server *svr);
  * It should not be tampered with unless you REALLY know what you are doing.
  * @since 1.1
  */
-EAPI int               ecore_con_client_fd_get(Ecore_Con_Client *cl);
+EAPI int               ecore_con_client_fd_get(const Ecore_Con_Client *cl);
 /**
  * @}
  */
@@ -1122,14 +1111,6 @@ EAPI int               ecore_con_client_send(Ecore_Con_Client *cl,
                                              const void *data,
                                              int size);
 /**
- * Retrieves the server representing the socket the client has
- * connected to.
- *
- * @param   cl The given client.
- * @return  The server that the client connected to.
- */
-EAPI Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
-/**
  * Closes the connection and frees memory allocated to the given client.
  *
  * @param   cl The given client.
@@ -1162,7 +1143,7 @@ EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
  * The returned string should not be modified, freed or trusted to stay valid
  * after deletion for the @p cl object. If no IP is known @c NULL is returned.
  */
-EAPI const char *      ecore_con_client_ip_get(Ecore_Con_Client *cl);
+EAPI const char *      ecore_con_client_ip_get(const Ecore_Con_Client *cl);
 /**
  * Flushes all pending data to the given client.
  *
@@ -1183,7 +1164,7 @@ EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
  *
  * This function is used to find out how long a client has been connected for.
  */
-EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
+EAPI double            ecore_con_client_uptime_get(const Ecore_Con_Client *cl);
 /**
  * Get the default time after which the client will be disconnected when
  * inactive
@@ -1196,7 +1177,7 @@ EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
  *
  * @see ecore_con_client_timeout_set()
  */
-EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
+EAPI double            ecore_con_client_timeout_get(const Ecore_Con_Client *cl);
 /**
  * Set the time after which the client will be disconnected when inactive
  *
@@ -1223,7 +1204,7 @@ EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double
  * @param   cl The given client.
  * @return @c EINA_TRUE if connected, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
+EAPI Eina_Bool         ecore_con_client_connected_get(const Ecore_Con_Client *cl);
 /**
  * @brief Return the port that the client has connected to
  *
@@ -1231,7 +1212,7 @@ EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
  * @return The port that @p cl has connected to, or -1 on error
  * Use this function to return the port on which a given client has connected.
  */
-EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
+EAPI int               ecore_con_client_port_get(const Ecore_Con_Client *cl);
 
 
 
@@ -1928,13 +1909,6 @@ EAPI int ecore_con_url_status_code_get(Ecore_Con_Url *url_con);
 /**
  * @}
  */
-
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "Ecore_Con_Legacy.h"
-#endif
-#ifdef EFL_EO_API_SUPPORT
-#include "Ecore_Con_Eo.h"
-#endif
 
 #ifdef __cplusplus
 }

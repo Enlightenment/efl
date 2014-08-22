@@ -1,14 +1,21 @@
 
 ### Library
 
-BUILT_SOURCES += \
-                 lib/ecore_con/ecore_con.eo.c \
+ecorecon_eobuiltheaders = \
                  lib/ecore_con/ecore_con.eo.h \
-                 lib/ecore_con/ecore_con.eo.legacy.h
+                 lib/ecore_con/ecore_con.eo.legacy.h \
+                 lib/ecore_con/ecore_con_client.eo.h \
+                 lib/ecore_con/ecore_con_client.eo.legacy.h
+
+BUILT_SOURCES += \
+                 ${ecorecon_eobuiltheaders} \
+                 lib/ecore_con/ecore_con.eo.c \
+                 lib/ecore_con/ecore_con_client.eo.c
 
 ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreconeolianfiles_DATA = \
-              lib/ecore_con/ecore_con.eo
+              lib/ecore_con/ecore_con.eo \
+              lib/ecore_con/ecore_con_client.eo
 
 EXTRA_DIST += \
               ${ecoreconeolianfiles_DATA}
@@ -23,7 +30,7 @@ lib/ecore_con/Ecore_Con_Eo.h \
 lib/ecore_con/Ecore_Con_Eet.h
 
 nodist_installed_ecoreconmainheaders_DATA = \
-                                            lib/ecore_con/ecore_con.eo.h
+                                            ${ecorecon_eobuiltheaders}
 
 lib_ecore_con_libecore_con_la_SOURCES = \
 lib/ecore_con/ecore_con_alloc.c \

@@ -164,3 +164,20 @@ abstract Ecore.Con (Eo.Base) {
       virtual.send;
    }
 }
+
+type Ecore_Con_Dns_Cb: func void (const(char) *,
+                                 const(char) *,
+                                 struct sockaddr *,
+                                 int,
+                                 void *);
+
+/* FIXME: Ecore_Con_Dns_Cb should be like this:
+type Ecore_Con_Dns_Cb: func void (const(char) *canonname,
+                                 const(char) *ip,
+                                 struct sockaddr *addr,
+                                 int addrlen,
+                                 void *data);
+
+
+* Add events
+*/

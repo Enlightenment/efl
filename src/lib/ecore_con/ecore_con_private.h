@@ -94,9 +94,8 @@ typedef enum Ecore_Con_Proxy_State
    ECORE_CON_PROXY_STATE_CONFIRM,
 } Ecore_Con_Proxy_State;
 
-struct _Ecore_Con_Client
+struct _Ecore_Con_Client_Data
 {
-   ECORE_MAGIC;
    int fd;
    Ecore_Con_Server *host_server;
    void *data;
@@ -122,6 +121,8 @@ struct _Ecore_Con_Client
    Eina_Bool upgrade : 1; /* STARTTLS queued */
    Eina_Bool delete_me : 1; /* del event has been queued */
 };
+
+typedef struct _Ecore_Con_Client_Data Ecore_Con_Client_Data;
 
 struct _Ecore_Con_Server
 {
