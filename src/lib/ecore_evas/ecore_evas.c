@@ -658,7 +658,7 @@ static Ecore_Evas *
 _ecore_evas_constructor_wayland_shm(int x, int y, int w, int h, const char *extra_options)
 {
    char *disp_name = NULL;
-   unsigned int frame = 1, parent = 0;
+   unsigned int frame = 0, parent = 0;
    Ecore_Evas *ee;
 
    _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
@@ -674,7 +674,7 @@ static Ecore_Evas *
 _ecore_evas_constructor_wayland_egl(int x, int y, int w, int h, const char *extra_options)
 {
    char *disp_name = NULL;
-   unsigned int frame = 1, parent = 0;
+   unsigned int frame = 0, parent = 0;
    Ecore_Evas *ee;
 
    _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
