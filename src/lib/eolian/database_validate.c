@@ -135,7 +135,7 @@ _validate_expr(const Eolian_Expression *expr, const Eolian_Type *tp,
       val = eolian_expression_eval_type(expr, tp);
    else
       val = eolian_expression_eval(expr, msk);
-   return (val.type == EOLIAN_EXPR_UNKNOWN);
+   return (val.type != EOLIAN_EXPR_UNKNOWN);
 }
 
 static Eina_Bool
