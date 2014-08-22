@@ -779,7 +779,7 @@ _item_disable_hook(Elm_Object_Item *item)
      elm_layout_signal_emit(VIEW(it), "elm,state,item,enabled", "elm");
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *item)
 {
    Elm_Popup_Item *it = (Elm_Popup_Item *)item;
@@ -795,6 +795,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
         sd->items = NULL;
         _list_del(sd);
      }
+   return EINA_TRUE;
 }
 
 static void

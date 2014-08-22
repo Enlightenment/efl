@@ -3275,7 +3275,7 @@ _item_disable_hook(Elm_Object_Item *item)
      }
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *item)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
@@ -3283,10 +3283,11 @@ _item_del_pre_hook(Elm_Object_Item *item)
    if (it->walking > 0)
      {
         _elm_gengrid_item_del_not_serious(it);
-        return;
+        return EINA_FALSE;
      }
 
    _item_del(it);
+   return EINA_TRUE;
 }
 
 static Evas_Object *
