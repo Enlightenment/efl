@@ -1004,8 +1004,8 @@ _ephysics_body_soft_body_mass_set(EPhysics_Body *body, double mass)
    double inverse_mass;
 
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
-        body->soft_body->setTotalMass(mass);
-   else
+     body->soft_body->setTotalMass(mass);
+   else if (mass > 0.0)
      {
         valid_nodes = 0;
         for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
@@ -1015,12 +1015,15 @@ _ephysics_body_soft_body_mass_set(EPhysics_Body *body, double mass)
                valid_nodes++;
           }
 
-        inverse_mass = 1 / (mass / valid_nodes);
-        if (body->dragging_data.dragging)
+        if (valid_nodes > 0)
           {
-             valid_nodes++;
              inverse_mass = 1 / (mass / valid_nodes);
-             body->dragging_data.mass = inverse_mass;
+             if (body->dragging_data.dragging)
+               {
+                  valid_nodes++;
+                  inverse_mass = 1 / (mass / valid_nodes);
+                  body->dragging_data.mass = inverse_mass;
+               }
           }
 
         for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
