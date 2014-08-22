@@ -618,7 +618,6 @@ evas_image_load_file_data_ico(void *loader_data,
              cols2 = 1 << bitcount;
              if (cols == 0) cols = cols2;
              if (cols > cols2) cols = cols2;
-             if (cols > 256) cols = 256;
           }
         else cols = 0;
         if (bitcount > 8) cols = 0;
