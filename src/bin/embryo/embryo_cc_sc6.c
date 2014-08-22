@@ -827,7 +827,8 @@ assemble(FILE * fout, FILE * fin)
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
-	     fseek(fout, publics + count * sizeof(FUNCSTUB), SEEK_SET);
+	     if (fseek(fout, publics + count * sizeof(FUNCSTUB), SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, &func, sizeof func);
 	     fseek(fout, nameofs, SEEK_SET);
 	     sc_writebin(fout, sym->name, strlen(sym->name) + 1);
