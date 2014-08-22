@@ -538,6 +538,7 @@ parse_function_type(Eo_Lexer *ls)
 {
    int line, col;
    Eolian_Type *def = push_type(ls);
+   def->type = EOLIAN_TYPE_FUNCTION;
    def->base.file = eina_stringshare_ref(ls->filename);
    def->base.line = ls->line_number;
    def->base.column = ls->column;
