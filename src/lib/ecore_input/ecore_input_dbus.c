@@ -6,7 +6,7 @@
 #endif
 
 #ifdef HAVE_LIBINPUT
-static DBusConnection *conn;
+static DBusConnection *dconn;
 static DBusPendingCall *dpending;
 static Ecore_Fd_Handler *_dbus_hdlr;
 static Ecore_Fd_Handler *_watch_hdlr;
@@ -84,7 +84,7 @@ _dbus_active_get(void)
                                   DBUS_TYPE_STRING, &n, DBUS_TYPE_INVALID);
    if (!ret) goto err;
 
-   ret = dbus_connection_send_with_reply(conn, msg, &pend, -1);
+   ret = dbus_connection_send_with_reply(dconn, msg, &pend, -1);
    if (!ret) goto err;
 
    ret = dbus_pending_call_set_notify(pend, _dbus_cb_notify, NULL, NULL);
@@ -185,7 +185,7 @@ _dbus_device_pause_done(uint32_t major, uint32_t minor)
                                        DBUS_TYPE_UINT32, &minor, 
                                        DBUS_TYPE_INVALID);
         if (ret)
-          dbus_connection_send(conn, msg, NULL);
+          dbus_connection_send(dconn, msg, NULL);
 
         dbus_message_unref(msg);
      }
@@ -216,8 +216,9 @@ _dbus_device_resumed(DBusMessage *msg)
    dbus_bool_t ret;
    uint32_t maj;
 
-   ret = dbus_message_get_args(msg, NULL, 
-                               DBUS_TYPE_UINT32, &maj, DBUS_TYPE_INVALID);
+   ret = 
+     dbus_message_get_args(msg, NULL, DBUS_TYPE_UINT32, &maj, 
+                           DBUS_TYPE_INVALID);
    if (!ret) return;
 
    /* if (maj == DRM_MAJOR) */
@@ -239,7 +240,7 @@ _dbus_device_release(uint32_t major, uint32_t minor)
         ret = dbus_message_append_args(msg, DBUS_TYPE_UINT32, &major, 
                                        DBUS_TYPE_UINT32, &minor, 
                                        DBUS_TYPE_INVALID);
-        if (ret) dbus_connection_send(conn, msg, NULL);
+        if (ret) dbus_connection_send(dconn, msg, NULL);
         dbus_message_unref(msg);
      }
 }
@@ -264,7 +265,7 @@ _dbus_device_take(uint32_t major, uint32_t minor)
    dbus_error_init(&err);
 
    rep = 
-     dbus_connection_send_with_reply_and_block(conn, msg, -1, &err);
+     dbus_connection_send_with_reply_and_block(dconn, msg, -1, &err);
    if (!rep)
      {
         if (dbus_error_has_name(&err, DBUS_ERROR_UNKNOWN_METHOD))
@@ -589,29 +590,29 @@ _dbus_setup(void)
                   _ecore_input_session_id);
    if (ret < 0) return EINA_FALSE;
 
-   res = dbus_connection_add_filter(conn, _dbus_cb_filter, NULL, NULL);
+   res = dbus_connection_add_filter(dconn, _dbus_cb_filter, NULL, NULL);
    if (!res)
      {
         ERR("Could not setup dbus filter: %m\n");
         goto err;
      }
 
-   res = _dbus_signal_add(conn, "org.freedesktop.login1", 
+   res = _dbus_signal_add(dconn, "org.freedesktop.login1", 
                           "org.freedesktop.login1.Manager", 
                           "SessionRemoved", "/org/freedesktop/login1");
    if (!res) goto err;
 
-   res = _dbus_signal_add(conn, "org.freedesktop.login1", 
+   res = _dbus_signal_add(dconn, "org.freedesktop.login1", 
                           "org.freedesktop.login1.Session", 
                           "PauseDevice", dpath);
    if (!res) goto err;
 
-   res = _dbus_signal_add(conn, "org.freedesktop.login1", 
+   res = _dbus_signal_add(dconn, "org.freedesktop.login1", 
                           "org.freedesktop.login1.Session", 
                           "ResumeDevice", dpath);
    if (!res) goto err;
 
-   res = _dbus_signal_add(conn, "org.freedesktop.login1", 
+   res = _dbus_signal_add(dconn, "org.freedesktop.login1", 
                           "org.freedesktop.DBus.Properties", 
                           "PropertiesChanged", dpath);
    if (!res) goto err;
@@ -641,7 +642,7 @@ _dbus_control_take(void)
    if (!dbus_message_append_args(msg, DBUS_TYPE_BOOLEAN, &f, DBUS_TYPE_INVALID))
      goto msg_err;
 
-   rep = dbus_connection_send_with_reply_and_block(conn, msg, -1, &err);
+   rep = dbus_connection_send_with_reply_and_block(dconn, msg, -1, &err);
    if (!rep)
      {
         if (dbus_error_has_name(&err, DBUS_ERROR_UNKNOWN_METHOD))
@@ -675,7 +676,7 @@ _dbus_control_release(void)
                                   "ReleaseControl");
    if (msg)
      {
-        dbus_connection_send(conn, msg, NULL);
+        dbus_connection_send(dconn, msg, NULL);
         dbus_message_unref(msg);
      }
 }
@@ -765,14 +766,14 @@ conn_err:
 static void 
 _dbus_close(void)
 {
-   dbus_connection_set_timeout_functions(conn, NULL, NULL, NULL, NULL, NULL);
-   dbus_connection_set_watch_functions(conn, NULL, NULL, NULL, NULL, NULL);
+   dbus_connection_set_timeout_functions(dconn, NULL, NULL, NULL, NULL, NULL);
+   dbus_connection_set_watch_functions(dconn, NULL, NULL, NULL, NULL, NULL);
 
    if (_dbus_hdlr) ecore_main_fd_handler_del(_dbus_hdlr);
    _dbus_hdlr = NULL;
 
-   dbus_connection_close(conn);
-   dbus_connection_unref(conn);
+   dbus_connection_close(dconn);
+   dbus_connection_unref(dconn);
 }
 #endif
 
@@ -780,10 +781,10 @@ Eina_Bool
 _ecore_input_dbus_init(void)
 {
 #ifdef HAVE_LIBINPUT
-   if (conn) return EINA_TRUE;
+   if (dconn) return EINA_TRUE;
 
    /* try to init dbus */
-   if (!(conn = _dbus_open())) return EINA_FALSE;
+   if (!(dconn = _dbus_open())) return EINA_FALSE;
 
    /* try to setup signal handlers */
    if (!_dbus_setup()) goto setup_err;
