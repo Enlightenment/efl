@@ -253,7 +253,7 @@ EINA_DEPRECATED EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char
 EINA_DEPRECATED EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
 
 /*
- * @since 1.11
+ * @since 1.12
  */
 EAPI int ecore_input_init(void);
 EAPI int ecore_input_shutdown(void);
@@ -265,6 +265,12 @@ EAPI Ecore_Compose_State ecore_input_compose_get(const Eina_List *seq, char **se
 
 EAPI Eina_Bool ecore_input_seat_init(const char *seat);
 EAPI void ecore_input_seat_shutdown(const char *seat);
+
+EAPI Eina_Bool ecore_input_device_enable(Ecore_Input_Device *device);
+EAPI void ecore_input_device_disable(Ecore_Input_Device *device);
+
+EAPI Eina_Bool ecore_input_session_init(void);
+EAPI Eina_Bool ecore_input_session_shutdown(void);
 
 #ifdef __cplusplus
 }
