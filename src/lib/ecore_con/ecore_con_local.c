@@ -187,7 +187,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
 
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                               cb_done, svr, NULL, NULL);
+                               cb_done, obj, NULL, NULL);
    if (!svr->fd_handler)
      return 0;
 
@@ -387,7 +387,7 @@ fd_ready:
 
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                               cb_listen, svr, NULL, NULL);
+                               cb_listen, obj, NULL, NULL);
    umask(pmode);
    if (!svr->fd_handler)
      goto error;
