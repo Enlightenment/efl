@@ -105,6 +105,13 @@ typedef enum _Ecore_Compose_State
    ECORE_COMPOSE_DONE
 } Ecore_Compose_State;
 
+typedef enum _Ecore_Input_Device_Type
+{
+   ECORE_INPUT_DEVICE_TYPE_POINTER = (1 << 0),
+   ECORE_INPUT_DEVICE_TYPE_KEYBOARD = (1 << 1),
+   ECORE_INPUT_DEVICE_TYPE_TOUCH = (1 << 2)
+} Ecore_Input_Device_Type;
+
 struct _Ecore_Event_Key
 {
    const char   *keyname;
