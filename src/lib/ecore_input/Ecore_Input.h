@@ -72,7 +72,6 @@ typedef struct _Ecore_Event_Mouse_Wheel  Ecore_Event_Mouse_Wheel;
 typedef struct _Ecore_Event_Mouse_Move   Ecore_Event_Mouse_Move;
 typedef struct _Ecore_Event_Mouse_IO     Ecore_Event_Mouse_IO;
 typedef struct _Ecore_Event_Modifiers    Ecore_Event_Modifiers;
-typedef struct _Ecore_Input_Device       Ecore_Input_Device;
 
 typedef enum _Ecore_Event_Modifier
 {
@@ -105,13 +104,6 @@ typedef enum _Ecore_Compose_State
    ECORE_COMPOSE_MIDDLE,
    ECORE_COMPOSE_DONE
 } Ecore_Compose_State;
-
-typedef enum _Ecore_Input_Device_Type
-{
-   ECORE_INPUT_DEVICE_POINTER = (1 << 0),
-   ECORE_INPUT_DEVICE_KEYBOARD = (1 << 1), 
-   ECORE_INPUT_DEVICE_TOUCH = (1 << 2)
-} Ecore_Input_Device_Type;
 
 struct _Ecore_Event_Key
 {
@@ -239,15 +231,6 @@ struct _Ecore_Event_Modifiers
 {
    unsigned int size;
    unsigned int array[ECORE_LAST];
-};
-
-struct _Ecore_Input_Device
-{
-   const char *seat;
-   const char *name;
-   const char *output;
-
-   Ecore_Input_Device_Type type;
 };
 
 EINA_DEPRECATED EAPI int  ecore_event_init(void);
