@@ -63,6 +63,26 @@ extern Eina_List *_ecore_input_devices;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_input_log_dom, __VA_ARGS__)
 
+struct _Ecore_Input_Device
+{
+   int fd;
+
+   const char *seat;
+   const char *name;
+   const char *output;
+
+   Ecore_Input_Device_Type type;
+
+   Ecore_Fd_Handler *hdlr;
+
+#ifdef HAVE_LIBINPUT
+   struct udev_monitor *monitor;
+#endif
+
+   Eina_Bool enabled : 1;
+   Eina_Bool suspended : 1;
+};
+
 Eina_Bool _ecore_input_dbus_init(void);
 void _ecore_input_dbus_shutdown(void);
 int _ecore_input_dbus_device_open(const char *device);
