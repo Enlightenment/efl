@@ -3318,8 +3318,8 @@ _elm_config_sub_init(void)
                }
           }
         else ERR("Cannot connect to X11 display. check $DISPLAY variable");
-#endif
      }
+#endif
    _config_sub_apply();
 }
 
