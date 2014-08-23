@@ -32,13 +32,13 @@ _ecore_input_device_added(struct libinput_device *dev)
 
    /* check input device capabilities */
    if (libinput_device_has_capability(dev, LIBINPUT_DEVICE_CAP_KEYBOARD))
-     edev->type |= ECORE_INPUT_DEVICE_KEYBOARD;
+     edev->type |= ECORE_INPUT_DEVICE_TYPE_KEYBOARD;
 
    if (libinput_device_has_capability(dev, LIBINPUT_DEVICE_CAP_POINTER))
-     edev->type |= ECORE_INPUT_DEVICE_POINTER;
+     edev->type |= ECORE_INPUT_DEVICE_TYPE_POINTER;
 
    if (libinput_device_has_capability(dev, LIBINPUT_DEVICE_CAP_TOUCH))
-     edev->type |= ECORE_INPUT_DEVICE_TOUCH;
+     edev->type |= ECORE_INPUT_DEVICE_TYPE_TOUCH;
 
    libinput_device_set_user_data(dev, edev);
    libinput_device_ref(dev);
