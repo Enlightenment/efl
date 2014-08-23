@@ -105,6 +105,8 @@ EAPI Eina_Bool
 ecore_input_session_init(void)
 {
 #ifdef HAVE_SYSTEMD_LOGIN
+   if (_ecore_input_session_id) return EINA_TRUE;
+
    /* try to get the systemd session id */
    if (sd_pid_get_session(getpid(), &_ecore_input_session_id) < 0)
      {
@@ -114,6 +116,8 @@ ecore_input_session_init(void)
 #endif
 
 #ifdef HAVE_LIBINPUT
+   if (_ecore_input_udev) return EINA_TRUE;
+
    /* try to init dbus */
    if (!_ecore_input_dbus_init())
      {
