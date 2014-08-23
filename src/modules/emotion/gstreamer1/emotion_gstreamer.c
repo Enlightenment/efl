@@ -13,11 +13,11 @@ static int _emotion_init_count = 0;
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
 
-static GstElement * _create_pipeline (Emotion_Gstreamer *ev, Evas_Object *o, const char *uri);
+static GstElement * _create_pipeline (Emotion_Gstreamer *ev, Evas_Object *o, const char *uri, const char *suburi);
 
 static GstBusSyncReply _bus_sync_handler(GstBus *bus,
-				     GstMessage *message,
-				     gpointer data);
+                                         GstMessage *message,
+                                         gpointer data);
 
 static void em_audio_channel_volume_set(void *video, double vol);
 static void em_audio_channel_mute_set(void *video, int mute);
@@ -84,16 +84,22 @@ emotion_gstreamer_unref(Emotion_Gstreamer *ev)
 {
   if (g_atomic_int_dec_and_test(&ev->ref_count))
     {
+       if (ev->subtitle)
+         {
+            eina_stringshare_del(ev->subtitle);
+            ev->subtitle = NULL;
+         }
        free(ev);
     }
 }
 
 static Eina_Bool
 em_file_open(void *video,
-             const char   *file)
+             const char *file)
 {
    Emotion_Gstreamer *ev = video;
    char *uri;
+   char *suburi = NULL;
 
    if (!file) return EINA_FALSE;
 
@@ -107,7 +113,10 @@ em_file_open(void *video,
    ev->buffering = EINA_FALSE;
 
    DBG("setting file to '%s'", uri);
-   ev->pipeline = _create_pipeline(ev, ev->obj, uri);
+
+   if (gst_uri_is_valid(ev->subtitle)) suburi = strdup(ev->subtitle);
+   else suburi = gst_filename_to_uri(ev->subtitle, NULL);
+   ev->pipeline = _create_pipeline(ev, ev->obj, uri, suburi);
    g_free(uri);
 
    if (!ev->pipeline)
@@ -711,17 +720,20 @@ em_video_channel_get(void *video)
 }
 
 static void
-em_video_subtitle_file_set(void *video EINA_UNUSED,
-                           const char *filepath EINA_UNUSED)
+em_video_subtitle_file_set(void *video,
+                           const char *filepath)
 {
-   DBG("video_subtitle_file_set not implemented for gstreamer yet.");
+   Emotion_Gstreamer *ev = video;
+
+   eina_stringshare_replace(&(ev->subtitle), filepath);
 }
 
 static const char *
-em_video_subtitle_file_get(void *video EINA_UNUSED)
+em_video_subtitle_file_get(void *video)
 {
-   DBG("video_subtitle_file_get not implemented for gstreamer yet.");
-   return NULL;
+   Emotion_Gstreamer *ev = video;
+
+   return ev->subtitle;
 }
 
 static const char *
@@ -999,7 +1011,7 @@ em_add(const Emotion_Engine *api,
 
    ev->api = api;
    ev->obj = obj;
-   
+
    ev->ref_count = 1;
 
    /* Default values */
@@ -1619,9 +1631,10 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
 }
 
 static GstElement *
-_create_pipeline (Emotion_Gstreamer *ev,
-			 Evas_Object *o,
-			 const char *uri)
+_create_pipeline(Emotion_Gstreamer *ev,
+                 Evas_Object *o,
+                 const char *uri,
+                 const char *suburi)
 {
    GstElement *playbin;
    GstElement *vsink;
@@ -1651,6 +1664,11 @@ _create_pipeline (Emotion_Gstreamer *ev,
    g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
    g_object_set(G_OBJECT(playbin), "video-sink", vsink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
+   if (suburi)
+     {
+        g_object_set(G_OBJECT(playbin), "suburi", suburi, NULL);
+        g_object_set(G_OBJECT(playbin), "subtitle-font-desc", "Sans, 10", NULL);
+     }
 
    bus = gst_element_get_bus(playbin);
    gst_bus_set_sync_handler(bus, _bus_sync_handler, ev, NULL);

@@ -51,6 +51,7 @@ struct _Emotion_Gstreamer
 
    volatile int     ref_count;
 
+   const char       *subtitle;
    /* Gstreamer elements */
    GstElement       *pipeline;
    GstElement       *vsink;
