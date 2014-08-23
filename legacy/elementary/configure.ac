@@ -189,6 +189,7 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY],
    [
+    efl >= efl_version
     eina >= efl_version
     eet >= efl_version
     evas >= efl_version
@@ -215,6 +216,7 @@ EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
 
 requirement_elm="\
+    efl >= efl_version \
     eina >= efl_version \
     eet >= efl_version \
     evas >= efl_version \
