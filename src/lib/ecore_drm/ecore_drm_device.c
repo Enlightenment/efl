@@ -5,49 +5,6 @@
 #include "ecore_drm_private.h"
 #include <dlfcn.h>
 
-/* #ifdef HAVE_GBM */
-/* static Eina_Bool  */
-/* _ecore_drm_device_egl_config_get(Ecore_Drm_Device *dev, const EGLint *attribs, const EGLint *visual) */
-/* { */
-/*    EGLint c = 0, m = 0; */
-/*    EGLConfig *cfgs; */
-/*    int i = 0; */
-
-/*    if (!eglGetConfigs(dev->egl.disp, NULL, 0, &c) || (c < 1)) */
-/*      return EINA_FALSE; */
-
-/*    if (!(cfgs = calloc(c, sizeof(*cfgs)))) return EINA_FALSE; */
-
-/*    if (!eglChooseConfig(dev->egl.disp, attribs, cfgs, c, &m)) */
-/*      { */
-/*         free(cfgs); */
-/*         return EINA_FALSE; */
-/*      } */
-
-/*    for (i = 0; i < m; i++) */
-/*      { */
-/*         EGLint id; */
-
-/*         if (visual) */
-/*           { */
-/*              if (!eglGetConfigAttrib(dev->egl.disp, cfgs[i],  */
-/*                                      EGL_NATIVE_VISUAL_ID, &id)) */
-/*                continue; */
-
-/*              if ((id != 0) && (id != *visual)) */
-/*                continue; */
-/*           } */
-
-/*         dev->egl.cfg = cfgs[i]; */
-/*         free(cfgs); */
-/*         return EINA_TRUE; */
-/*      } */
-
-/*    free(cfgs); */
-/*    return EINA_FALSE; */
-/* } */
-/* #endif */
-
 static void 
 _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
@@ -361,76 +318,6 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
-/* #ifdef HAVE_GBM */
-/*    if (getenv("ECORE_DRM_HW_ACCEL")) */
-/*      { */
-        /* Typically, gbm loads the dri driver However some versions of Mesa 
-         * do not have libglapi symbols linked in the driver. Because of this, 
-         * using hardware accel for our drm code Could fail with a 
-         * message that the driver could not load. Let's be proactive and 
-         * work around this for the user by preloading the glapi library */
-        /* dlopen("libglapi.so.0", (RTLD_LAZY | RTLD_GLOBAL)); */
-
-        /* if ((dev->gbm = gbm_create_device(dev->drm.fd))) */
-        /*   { */
-        /*      EGLint major, minor, visual; */
-        /*      const EGLint attribs[] =  */
-        /*        { */
-        /*           EGL_SURFACE_TYPE, EGL_WINDOW_BIT,  */
-        /*           EGL_RED_SIZE, 1, EGL_GREEN_SIZE, 1,  */
-        /*           EGL_BLUE_SIZE, 1, EGL_ALPHA_SIZE, 0,  */
-        /*           EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_NONE */
-        /*        }; */
-
-        /*      dev->use_hw_accel = EINA_TRUE; */
-        /*      dev->format = GBM_FORMAT_XRGB8888; */
-
-        /*      dev->egl.disp = eglGetDisplay(dev->gbm); */
-        /*      if (dev->egl.disp == EGL_NO_DISPLAY) */
-        /*        { */
-        /*           ERR("Could not get egl display"); */
-        /*           goto init_software; */
-        /*        } */
-
-        /*      if (!eglInitialize(dev->egl.disp, &major, &minor)) */
-        /*        { */
-        /*           ERR("Could not initialize egl"); */
-        /*           goto init_software; */
-        /*        } */
-
-        /*      visual = dev->format; */
-        /*      if (!_ecore_drm_device_egl_config_get(dev, attribs, &visual)) */
-        /*        { */
-        /*           ERR("Could not get egl config"); */
-        /*           goto init_software; */
-        /*        } */
-        /*   } */
-        /* else */
-        /*   { */
-        /*      WRN("Failed to create gbm device"); */
-        /*      goto init_software; */
-        /*   } */
-     /* } */
-   /* else */
-/* #endif */
-     /* { */
-        /* TODO: init software */
-/* init_software: */
-/*         DBG("Init Software Engine"); */
-/* #ifdef HAVE_GBM */
-/*         if (dev->egl.disp)  */
-/*           { */
-/*              eglMakeCurrent(dev->egl.disp, EGL_NO_SURFACE, EGL_NO_SURFACE,  */
-/*                             EGL_NO_CONTEXT); */
-/*              eglTerminate(dev->egl.disp); */
-/*              eglReleaseThread(); */
-/*           } */
-
-/*         if (dev->gbm) gbm_device_destroy(dev->gbm); */
-/*         dev->gbm = NULL; */
-/* #endif */
-/*      } */
-
    /* try to create xkb context */
    if (!(dev->xkb_ctx = xkb_context_new(0)))
      {
@@ -464,22 +351,6 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
    if (!dev) return EINA_FALSE;
-
-/* #ifdef HAVE_GBM */
-/*    if (dev->use_hw_accel) */
-/*      { */
-/*         if (dev->egl.disp)  */
-/*           { */
-/*              eglMakeCurrent(dev->egl.disp, EGL_NO_SURFACE, EGL_NO_SURFACE,  */
-/*                             EGL_NO_CONTEXT); */
-/*              eglTerminate(dev->egl.disp); */
-/*              eglReleaseThread(); */
-/*           } */
-
-/*         if (dev->gbm) gbm_device_destroy(dev->gbm); */
-/*         dev->gbm = NULL; */
-/*      } */
-/* #endif */
 
    /* close xkb context */
    if (dev->xkb_ctx) xkb_context_unref(dev->xkb_ctx);
