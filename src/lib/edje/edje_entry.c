@@ -1845,7 +1845,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           {
              if (_is_modifier(ev->key)) goto end;
              en->seq = eina_list_append(en->seq, eina_stringshare_add(ev->key));
-             state = ecore_compose_get(en->seq, &compres);
+             state = ecore_input_compose_get(en->seq, &compres);
              if (state == ECORE_COMPOSE_NONE)
                {
                   _compose_seq_reset(en);
