@@ -114,8 +114,11 @@ em_file_open(void *video,
 
    DBG("setting file to '%s'", uri);
 
-   if (gst_uri_is_valid(ev->subtitle)) suburi = strdup(ev->subtitle);
-   else suburi = gst_filename_to_uri(ev->subtitle, NULL);
+   if (ev->subtitle)
+     {
+        if (gst_uri_is_valid(ev->subtitle)) suburi = strdup(ev->subtitle);
+        else suburi = gst_filename_to_uri(ev->subtitle, NULL);
+     }
    ev->pipeline = _create_pipeline(ev, ev->obj, uri, suburi);
    g_free(uri);
 
