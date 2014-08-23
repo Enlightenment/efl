@@ -575,6 +575,17 @@ EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char 
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
+/**
+ * Iconify a window
+ * 
+ * @param win The window to iconifiy
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.12
+ */
+EAPI void ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified);
+EAPI Eina_Bool ecore_wl_window_iconified_get(Ecore_Wl_Window *win);
+
 
 EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title);
