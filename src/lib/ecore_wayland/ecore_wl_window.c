@@ -733,6 +733,52 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
    win->parent = parent;
 }
 
+/* @since 1.12 */
+EAPI void 
+ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+
+   if (iconified)
+     {
+        if (win->xdg_surface)
+          {
+             xdg_surface_set_minimized(win->xdg_surface);
+             win->minimized = iconified;
+          }
+        else if (win->shell_surface)
+          {
+             /* TODO: handle case of iconifying a wl_shell surface */
+          }
+     }
+   else
+     {
+        if (win->xdg_surface)
+          {
+             /* TODO: Handle case of UnIconifying an xdg_surface
+              * 
+              * NB: This will be needed for Enlightenment IBox scenario */
+          }
+        else if (win->shell_surface)
+          {
+             wl_shell_surface_set_toplevel(win->shell_surface);
+             win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
+             _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
+          }
+     }
+}
+
+EAPI Eina_Bool 
+ecore_wl_window_iconified_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return EINA_FALSE;
+   return win->minimized;
+}
+
 EAPI Ecore_Wl_Window *
 ecore_wl_window_surface_find(struct wl_surface *surface)
 {
@@ -968,21 +1014,22 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface 
         uint32_t state = *p;
         switch (state)
           {
-            case XDG_SURFACE_STATE_MAXIMIZED:
-              win->maximized = EINA_TRUE;
-              break;
-            case XDG_SURFACE_STATE_FULLSCREEN:
-               win->fullscreen = EINA_TRUE;
-               break;
-            case XDG_SURFACE_STATE_RESIZING:
-               win->resizing = EINA_TRUE;
-               break;
-             case XDG_SURFACE_STATE_ACTIVATED:
-               win->focused = EINA_TRUE;
-               break;
-             default:
-               break;
-           }
+           case XDG_SURFACE_STATE_MAXIMIZED:
+             win->maximized = EINA_TRUE;
+             break;
+           case XDG_SURFACE_STATE_FULLSCREEN:
+             win->fullscreen = EINA_TRUE;
+             break;
+           case XDG_SURFACE_STATE_RESIZING:
+             win->resizing = EINA_TRUE;
+             break;
+           case XDG_SURFACE_STATE_ACTIVATED:
+             win->focused = EINA_TRUE;
+             win->minimized = EINA_FALSE;
+             break;
+           default:
+             break;
+          }
      }
    if ((width > 0) && (height > 0))
      _ecore_wl_window_configure_send(win, width, height, 0);
