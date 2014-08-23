@@ -205,13 +205,20 @@ ecore_input_seat_init(const char *seat)
 #ifdef HAVE_LIBINPUT
    if (!_ecore_input_udev) return EINA_FALSE;
 
-   /* try to create a seat */
+   /* try to create a reference to libinput */
    _libinput = 
-     libinput_udev_create_for_seat(&_interface, NULL, 
-                                   _ecore_input_udev, seat);
+     libinput_udev_create_context(&_interface, NULL, _ecore_input_udev);
    if (!_libinput)
      {
         ERR("libinput failed to create %s for udev: %m", seat);
+        return EINA_FALSE;
+     }
+
+   /* try to assign this seat to libinput */
+   if (libinput_udev_assign_seat(_libinput, seat) != 0)
+     {
+        ERR("libinput failed to assign seat %s: %m", seat);
+        libinput_unref(_libinput);
         return EINA_FALSE;
      }
 
@@ -232,6 +239,6 @@ ecore_input_seat_shutdown(const char *seat EINA_UNUSED)
    _libinput_hdlr = NULL;
 
    /* destroy the libinput reference */
-   if (_libinput) libinput_destroy(_libinput);
+   if (_libinput) libinput_unref(_libinput);
 #endif
 }
