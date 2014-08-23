@@ -1239,12 +1239,15 @@ _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
 void
 _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (ee->prop.iconified == on) return;
    ee->prop.iconified = on;
-   /* FIXME: Implement this in Wayland someshow */
+
+   wdata = ee->engine.data;
+   ecore_wl_window_iconified_set(wdata->win, on);
 }
 
 static void
