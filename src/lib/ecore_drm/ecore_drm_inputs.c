@@ -201,7 +201,7 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
      return EINA_FALSE;
 
    /* FIXME: Hardcoded seat name */
-   input->seat = eina_stringshare_add("seat0");
+   input->seat = eina_stringshare_add(dev->seat);
    input->dev = dev;
 
    /* try to enable this input */
