@@ -75,28 +75,6 @@ ecore_input_init(void)
    ECORE_EVENT_MOUSE_IN = ecore_event_type_new();
    ECORE_EVENT_MOUSE_OUT = ecore_event_type_new();
 
-#ifdef HAVE_SYSTEMD_LOGIN
-   /* try to get the systemd session id */
-   if (sd_pid_get_session(getpid(), &_ecore_input_session_id) < 0)
-     ERR("Could not get systemd session id: %m");
-#endif
-
-#ifdef HAVE_LIBINPUT
-   /* try to init dbus */
-   if (!_ecore_input_dbus_init())
-     ERR("Could not initialize dbus");
-
-   /* try to init udev */
-   if (!(_ecore_input_udev = udev_new()))
-     ERR("Could not initialize udev: %m");
-   else
-     {
-        /* try to init libinput seat */
-        if (!ecore_input_seat_init("seat0"))
-          ERR("Could not init input seat");
-     }
-#endif
-
    return _ecore_input_init_count;
 }
 
@@ -105,22 +83,6 @@ ecore_input_shutdown(void)
 {
    if (--_ecore_input_init_count != 0)
      return _ecore_input_init_count;
-
-#ifdef HAVE_LIBINPUT
-   /* shutdown libinput seat */
-   ecore_input_seat_shutdown(NULL);
-
-   /* free udev */
-   if (_ecore_input_udev) udev_unref(_ecore_input_udev);
-#endif
-
-#ifdef HAVE_SYSTEMD_LOGIN
-   /* shutdown dbus */
-   _ecore_input_dbus_shutdown();
-
-   /* free the stored systemd session id */
-   free(_ecore_input_session_id);
-#endif
 
    ECORE_EVENT_KEY_DOWN = 0;
    ECORE_EVENT_KEY_UP = 0;
@@ -137,6 +99,76 @@ ecore_input_shutdown(void)
    ecore_shutdown();
 
    return _ecore_input_init_count;
+}
+
+EAPI Eina_Bool 
+ecore_input_session_init(void)
+{
+#ifdef HAVE_SYSTEMD_LOGIN
+   /* try to get the systemd session id */
+   if (sd_pid_get_session(getpid(), &_ecore_input_session_id) < 0)
+     {
+        ERR("Could not get systemd session id: %m");
+        return EINA_FALSE;
+     }
+#endif
+
+#ifdef HAVE_LIBINPUT
+   /* try to init dbus */
+   if (!_ecore_input_dbus_init())
+     {
+        ERR("Could not initialize dbus");
+        goto dbus_err;
+     }
+
+   /* try to init udev */
+   if (!(_ecore_input_udev = udev_new()))
+     {
+        ERR("Could not initialize udev: %m");
+        goto udev_err;
+     }
+   else
+     {
+        /* try to init libinput seat */
+        if (!ecore_input_seat_init("seat0"))
+          ERR("Could not init input seat");
+     }
+#endif
+
+   return EINA_TRUE;
+
+#ifdef HAVE_LIBINPUT
+udev_err:
+   _ecore_input_dbus_shutdown();
+dbus_err:
+# ifdef HAVE_SYSTEMD_LOGIN
+   /* free the stored systemd session id */
+   free(_ecore_input_session_id);
+# endif
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool 
+ecore_input_session_shutdown(void)
+{
+#ifdef HAVE_LIBINPUT
+   /* shutdown libinput seat */
+   ecore_input_seat_shutdown(NULL);
+
+   /* free udev */
+   if (_ecore_input_udev) udev_unref(_ecore_input_udev);
+
+   /* shutdown dbus */
+   _ecore_input_dbus_shutdown();
+#endif
+
+#ifdef HAVE_SYSTEMD_LOGIN
+   /* free the stored systemd session id */
+   free(_ecore_input_session_id);
+#endif
+
+   return EINA_TRUE;
 }
 
 EAPI unsigned int
