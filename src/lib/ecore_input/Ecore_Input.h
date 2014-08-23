@@ -72,6 +72,7 @@ typedef struct _Ecore_Event_Mouse_Wheel  Ecore_Event_Mouse_Wheel;
 typedef struct _Ecore_Event_Mouse_Move   Ecore_Event_Mouse_Move;
 typedef struct _Ecore_Event_Mouse_IO     Ecore_Event_Mouse_IO;
 typedef struct _Ecore_Event_Modifiers    Ecore_Event_Modifiers;
+typedef struct _Ecore_Input_Device       Ecore_Input_Device;
 
 typedef enum _Ecore_Event_Modifier
 {
