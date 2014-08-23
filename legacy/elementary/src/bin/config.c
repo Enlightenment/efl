@@ -1176,10 +1176,8 @@ _config_display_update(Evas_Object *win)
           ts_sensitivity_friction, ts_acceleration_threshold,
           ts_acceleration_time_limit, ts_acceleration_weight, page_friction,
           bring_in_friction, zoom_friction;
-   const char *curr_theme, *curr_engine;
-   const Eina_List *l_items, *l;
+   const char *curr_theme;
    Eina_Bool s_bounce, ts;
-   Elm_Object_Item *list_it;
    Elm_Theme *th;
    int fs;
 
@@ -1280,17 +1278,6 @@ _config_display_update(Evas_Object *win)
    elm_object_theme_set(evas_object_data_get(win, "theme_preview"), th);
    elm_theme_free(th);
    eina_stringshare_del(curr_theme);
-
-   curr_engine = elm_config_engine_get();
-   l_items = elm_list_items_get(evas_object_data_get(win, "engines_list"));
-   EINA_LIST_FOREACH(l_items, l, list_it)
-     {
-        if (!strcmp(elm_object_item_data_get(list_it), curr_engine))
-          {
-             elm_list_item_selected_set(list_it, EINA_TRUE);
-             break;
-          }
-     }
 }
 
 static Eina_Bool
