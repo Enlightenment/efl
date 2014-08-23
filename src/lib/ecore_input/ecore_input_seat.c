@@ -214,6 +214,23 @@ ecore_input_seat_init(const char *seat)
         return EINA_FALSE;
      }
 
+   /* get existing eina log level for this domain and set libinput log level */
+   switch (eina_log_domain_level_get("ecore_input"))
+     {
+      case EINA_LOG_LEVEL_DBG:
+        libinput_log_set_priority(_libinput, LIBINPUT_LOG_PRIORITY_DEBUG);
+        break;
+      case EINA_LOG_LEVEL_WARN:
+      case EINA_LOG_LEVEL_ERR:
+      case EINA_LOG_LEVEL_CRITICAL:
+        libinput_log_set_priority(_libinput, LIBINPUT_LOG_PRIORITY_ERROR);
+        break;
+      case EINA_LOG_LEVEL_INFO:
+      default:
+        libinput_log_set_priority(_libinput, LIBINPUT_LOG_PRIORITY_INFO);
+        break;
+     }
+
    /* try to assign this seat to libinput */
    if (libinput_udev_assign_seat(_libinput, seat) != 0)
      {
