@@ -226,7 +226,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              int ret;
              struct timeval tv;
 
-             _drm_tick_schedule();
+             if (!_drm_tick_schedule()) _drm_fail_count = 999999;
              max_fd = 0;
              FD_ZERO(&rfds);
              FD_ZERO(&wfds);
