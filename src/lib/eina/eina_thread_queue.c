@@ -294,7 +294,7 @@ _eina_thread_queue_msg_fetch(Eina_Thread_Queue *thq, Eina_Thread_Queue_Msg_Block
         if (thq->last == blk) thq->last = blk->next;
         thq->data = blk->next;
         blk->next = NULL;
-        eina_lock_release(&(blk->lock_non_0_ref));
+        if (ref > 0) eina_lock_release(&(blk->lock_non_0_ref));
         RWLOCK_UNLOCK(&(thq->lock_write));
      }
    blk = thq->read;
