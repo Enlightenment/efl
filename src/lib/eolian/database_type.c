@@ -15,8 +15,7 @@ database_type_del(Eolian_Type *tp)
    if (tp->name) eina_stringshare_del(tp->name);
    if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->fields) eina_hash_free(tp->fields);
-   if (tp->field_list) EINA_LIST_FREE(tp->field_list, sp)
-     eina_stringshare_del(sp);
+   if (tp->field_list) eina_list_free(tp->field_list);
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
      eina_stringshare_del(sp);
    if (tp->comment) eina_stringshare_del(tp->comment);
