@@ -458,6 +458,10 @@ _ecore_wl_shutdown(Eina_Bool close)
 
         _ecore_wl_xkb_shutdown(_ecore_wl_disp);
 
+#ifdef USE_IVI_SHELL
+        if (_ecore_wl_disp->wl.ivi_application)
+          ivi_application_destroy(_ecore_wl_disp->wl.ivi_application);
+#endif
         if (_ecore_wl_disp->wl.shell)
           wl_shell_destroy(_ecore_wl_disp->wl.shell);
         if (_ecore_wl_disp->wl.shm) wl_shm_destroy(_ecore_wl_disp->wl.shm);
@@ -599,6 +603,13 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      _ecore_wl_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl_input_add(ewd, id);
+#ifdef USE_IVI_SHELL
+   else if (!strcmp(interface, "ivi_application"))
+     {
+        ewd->wl.ivi_application =
+          wl_registry_bind(registry, id, &ivi_application_interface, 1);
+     }
+#endif
    else if (!strcmp(interface, "wl_shell"))
      {
         ewd->wl.shell =

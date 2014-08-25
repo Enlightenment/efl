@@ -7,6 +7,10 @@
 # include "Ecore.h"
 # include "Ecore_Input.h"
 # include "Ecore_Wayland.h"
+# ifdef USE_IVI_SHELL
+# include "ivi-application-client-protocol.h"
+# define IVI_SURFACE_ID 6000
+# endif
 
 //# define LOGFNS 1
 
@@ -61,6 +65,9 @@ struct _Ecore_Wl_Display
         struct wl_subcompositor *subcompositor;
         struct wl_shell *shell;
         struct wl_shell *desktop_shell;
+# ifdef USE_IVI_SHELL
+        struct ivi_application *ivi_application;
+# endif
         struct wl_shm *shm;
         struct wl_data_device_manager *data_device_manager;
      } wl;
@@ -99,6 +106,10 @@ struct _Ecore_Wl_Window
 
    struct wl_surface *surface;
    struct wl_shell_surface *shell_surface;
+# ifdef USE_IVI_SHELL
+   struct ivi_surface *ivi_surface;
+   int ivi_surface_id;
+# endif
 
    struct
      {

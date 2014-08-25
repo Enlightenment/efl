@@ -1255,6 +1255,18 @@ if test "${want_wayland}" = "yes"; then
    EFL_PKG_CHECK_STRICT([wayland-client >= 1.3.0])
 fi
 
+# Wayland IVI-Shell
+AC_ARG_ENABLE([wayland-ivi-shell],
+   [AS_HELP_STRING([--enable-wayland-ivi-shell],[enable ivi-shell support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_wayland_ivi_shell="yes"
+    else
+       want_wayland_ivi_shell="no"
+    fi
+   ],
+   [want_wayland_ivi_shell="no"])
+
 # Fb
 AC_ARG_ENABLE([fb],
    [AS_HELP_STRING([--enable-fb],[enable raw Framebuffer access. @<:@default=disabled@:>@])],
@@ -2814,6 +2826,10 @@ EFL_LIB_END_OPTIONAL([Ecore_SDL])
 
 #### Ecore_Wayland
 EFL_LIB_START_OPTIONAL([Ecore_Wayland], [test "${want_wayland}" = "yes"])
+
+if test "x${want_wayland_ivi_shell}" = "xyes" ; then
+   AC_DEFINE(USE_IVI_SHELL, 1, [Ecore_Wayland IVI-Shell Support])
+fi
 
 ### Additional options to configure
 
@@ -4593,6 +4609,7 @@ echo "Ecore_IMF.......: ${efl_lib_optional_ecore_imf} (${features_ecore_imf})"
 echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
 echo "Ecore_SDL.......: $want_sdl"
 echo "Ecore_Wayland...: $want_wayland"
+echo "IVI-Shell.......: $want_wayland_ivi_shell"
 if test "${have_linux}" = "yes"; then
 echo "Ecore_FB........: $want_fb (${features_ecore_fb})"
 elif test "${have_ps3}" = "yes"; then

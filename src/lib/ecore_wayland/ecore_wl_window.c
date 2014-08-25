@@ -117,6 +117,10 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
 
    if (win->subsurfs) _ecore_wl_subsurfs_del_all(win);
 
+#ifdef USE_IVI_SHELL
+   if (win->ivi_surface) ivi_surface_destroy(win->ivi_surface);
+   win->ivi_surface = NULL;
+#endif
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
@@ -250,6 +254,10 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 EAPI void 
 ecore_wl_window_show(Ecore_Wl_Window *win)
 {
+#ifdef USE_IVI_SHELL
+   char *env;
+#endif
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
@@ -259,6 +267,22 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
    if ((win->type != ECORE_WL_WINDOW_TYPE_DND) &&
        (win->type != ECORE_WL_WINDOW_TYPE_NONE))
      {
+#ifdef USE_IVI_SHELL
+        if ((!win->ivi_surface) && (_ecore_wl_disp->wl.ivi_application))
+          {
+             if (win->parent && win->parent->ivi_surface)
+               win->ivi_surface_id = win->parent->ivi_surface_id + 1;
+             else if ((env = getenv("ECORE_IVI_SURFACE_ID")))
+               win->ivi_surface_id = atoi(env);
+             else
+               win->ivi_surface_id = IVI_SURFACE_ID + getpid();
+
+             win->ivi_surface =
+               ivi_application_surface_create(_ecore_wl_disp->wl.ivi_application,
+                                              win->ivi_surface_id, win->surface);
+          }
+        if (!win->ivi_surface) {
+#endif
         if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
           {
              win->shell_surface = 
@@ -275,6 +299,9 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         if (win->shell_surface)
           wl_shell_surface_add_listener(win->shell_surface, 
                                         &_ecore_wl_shell_surface_listener, win);
+#ifdef USE_IVI_SHELL
+        }
+#endif
      }
 
    /* trap for valid shell surface */
