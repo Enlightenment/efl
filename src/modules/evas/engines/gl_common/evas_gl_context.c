@@ -315,7 +315,7 @@ _evas_gl_common_version_check()
 
    /* OpenGL ES 1.* ? */
 
-   if ((tmp = strstr(version, "OpenGL ES-CM ")) || (tmp = strstr(version, "OpenGL ES-CL ")))
+   if (strstr(version, "OpenGL ES-CM ") || strstr(version, "OpenGL ES-CL "))
      {
         /* Not supported */
         return 0;
@@ -323,7 +323,7 @@ _evas_gl_common_version_check()
 
    /* OpenGL ES 2.* ? */
 
-   if ((tmp = strstr(version, "OpenGL ES ")))
+   if (strstr(version, "OpenGL ES "))
      {
         /* Supported */
         return 1;
