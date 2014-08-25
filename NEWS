@@ -1,6 +1,15 @@
 ==========
-EFL 1.10.2
+EFL 1.10.3
 ==========
+
+Changes since 1.10.2:
+---------------------
+
+Fixes:
+
+   * Evas textblock: Fix memory leak
+   * Evas text: fix text object size with empty texts.
+   * ecore_evas: Ecore_Evas_X - make sure that ecore evas post render is always called.
 
 Changes since 1.10.1:
 ---------------------
