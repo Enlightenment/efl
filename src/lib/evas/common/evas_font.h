@@ -36,7 +36,7 @@ EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi,
 EAPI void              evas_common_font_draw_init            (void);
 EAPI void	       evas_common_font_draw_prepare         (Evas_Text_Props *text_props);
 EAPI void              evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, RGBA_Gfx_Func func, RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props);
-EAPI Eina_Bool         evas_common_font_draw_prepare_cutout(Cutout_Rects *reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func);
+EAPI Eina_Bool         evas_common_font_draw_prepare_cutout(Cutout_Rects **reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func);
 
 /* load */
 EAPI void              evas_common_font_dpi_set              (int dpi);

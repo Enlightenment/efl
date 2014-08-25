@@ -442,7 +442,7 @@ evas_common_pipe_text_draw_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op
    Eina_Bool r;
 
    recycle = evas_pipe_cutout_rects_pop(info);
-   r = evas_common_font_draw_prepare_cutout(recycle, dst, &(op->context),
+   r = evas_common_font_draw_prepare_cutout(&recycle, dst, &(op->context),
 					    &(op->op.text.func));
    if (recycle->active) op->rects = recycle;
    else evas_pipe_cutout_rects_push(info, recycle);

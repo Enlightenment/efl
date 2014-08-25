@@ -359,7 +359,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
 }
 
 EAPI Eina_Bool
-evas_common_font_draw_prepare_cutout(Cutout_Rects *reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func)
+evas_common_font_draw_prepare_cutout(Cutout_Rects **reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func)
 {
    int im_w, im_h;
 
@@ -374,7 +374,7 @@ evas_common_font_draw_prepare_cutout(Cutout_Rects *reuse, RGBA_Image *dst, RGBA_
 
    if (dc->cutout.rects)
      {
-        reuse = evas_common_draw_context_apply_cutouts(dc, reuse);
+        *reuse = evas_common_draw_context_apply_cutouts(dc, *reuse);
      }
 
    return EINA_TRUE;
