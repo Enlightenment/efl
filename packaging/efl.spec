@@ -572,8 +572,15 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 
 %if %{with wayland}
 f="/etc/profile.d/ecore.sh"
-grep EFL_WAYLAND_USE_XDG_SHELL "$f" 2>/dev/null \
+grep --silent EFL_WAYLAND_USE_XDG_SHELL "$f" \
     || printf "\nEFL_WAYLAND_USE_XDG_SHELL='defined'\nexport EFL_WAYLAND_USE_XDG_SHELL\n" >> "$f"
+
+grep --silent ECORE_EVAS_ENGINE "$f" \
+    || printf "\nECORE_EVAS_ENGINE=wayland_shm\n[ ! -d /dev/dri ] || ECORE_EVAS_ENGINE=wayland_egl\nexport ECORE_EVAS_ENGINE" >> "$f"
+
+grep --silent ECORE_IMF_MODULE "$f" \
+    || printf "\nECORE_IMF_MODULE=wayland\nexport ECORE_IMF_MODULE\n" >> "$f"
+
 %endif
 
 %postun -n ecore -p /sbin/ldconfig
