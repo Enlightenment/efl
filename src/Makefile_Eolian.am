@@ -107,7 +107,6 @@ tests/eolian/data/object_impl_add_ref.c \
 tests/eolian/data/consts.eo \
 tests/eolian/data/override.eo \
 tests/eolian/data/events.eo \
-tests/eolian/data/namespace.eo \
 tests/eolian/data/extern.eo \
 tests/eolian/data/struct.eo \
 tests/eolian/data/var.eo \
