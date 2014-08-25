@@ -546,7 +546,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
       case EOLIAN_EXPR_ENUM:
         {
            const Eolian_Type *etp;
-           const Eolian_Expression *exp;
+           const Eolian_Expression *exp = NULL;
            const Eolian_Enum_Type_Field *fl;
 
            char *fulln = NULL, *memb = NULL;
