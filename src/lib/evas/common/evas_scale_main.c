@@ -7,7 +7,7 @@ evas_common_scale_init(void)
 }
 
 EAPI Eina_Bool
-evas_common_scale_rgba_in_to_out_clip_prepare(Cutout_Rects *reuse, const RGBA_Image *src EINA_UNUSED,
+evas_common_scale_rgba_in_to_out_clip_prepare(Cutout_Rects **reuse, const RGBA_Image *src EINA_UNUSED,
 					      const RGBA_Image *dst,
 					      RGBA_Draw_Context *dc,
 					      int dst_region_x, int dst_region_y,
@@ -26,7 +26,7 @@ evas_common_scale_rgba_in_to_out_clip_prepare(Cutout_Rects *reuse, const RGBA_Im
    /* our clip is 0 size.. abort */
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
      return EINA_FALSE;
-   reuse = evas_common_draw_context_apply_cutouts(dc, reuse);
+   *reuse = evas_common_draw_context_apply_cutouts(dc, *reuse);
 
    return EINA_TRUE;
 }

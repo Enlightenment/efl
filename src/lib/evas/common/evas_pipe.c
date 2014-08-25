@@ -490,7 +490,7 @@ evas_common_pipe_op_image_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op)
    Eina_Bool r;
 
    recycle = evas_pipe_cutout_rects_pop(info);
-   r = evas_common_scale_rgba_in_to_out_clip_prepare(recycle,
+   r = evas_common_scale_rgba_in_to_out_clip_prepare(&recycle,
 						     op->op.image.src, dst,
 						     &(op->context),
                                                      op->op.image.dx, op->op.image.dy,
