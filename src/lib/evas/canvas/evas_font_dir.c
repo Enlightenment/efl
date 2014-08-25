@@ -764,7 +764,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	  }
 	eina_stringshare_del(nm);
      }
-   fonts = eina_list_free(fonts);
+   eina_list_free(fonts);
 
 #ifdef HAVE_FONTCONFIG
    if (!font) /* Search using fontconfig */
