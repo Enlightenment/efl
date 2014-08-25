@@ -2427,7 +2427,7 @@ special_symbol(HASHNODE * hp, cpp_reader * pfile)
 	  }
 	if (!is_idstart[*ip->cur])
 	   goto oops;
-	if ((hp = cpp_lookup((const char *)ip->cur, -1, -1)))
+	if (cpp_lookup((const char *)ip->cur, -1, -1))
 	  {
 	     buf = " 1 ";
 	  }
