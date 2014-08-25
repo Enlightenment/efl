@@ -4239,11 +4239,11 @@ eet_data_get_union(Eet_Free_Context     *context,
    else
      {
         /* FIXME: generate node structure. */
-         data_ret = _eet_data_descriptor_decode(context,
-                                                ed, NULL,
-                                                echnk->data, echnk->size,
-                                                NULL, 0);
-         goto on_error;
+        _eet_data_descriptor_decode(context,
+                                    ed, NULL,
+                                    echnk->data, echnk->size,
+                                    NULL, 0);
+        goto on_error;
      }
 
    return 1;
