@@ -706,6 +706,7 @@ eldbus_message_iter_get_and_next(Eldbus_Message_Iter *iter, char signature, ...)
      {
         if (signature == '(') signature = 'r';
         else if (signature == '{') signature = 'e';
+        va_end(vl);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(type == signature, EINA_FALSE);
      }
 
