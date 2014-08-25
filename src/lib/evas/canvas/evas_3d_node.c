@@ -1381,7 +1381,7 @@ _evas_3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_
 EOLIAN static int
 _evas_3d_node_obb_frustum_check(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_3D_Node *camera_node)
 {
-   Evas_Mat4  matrix_eye;
+   Evas_Mat4  matrix_eye = { { 0 } };
    Evas_Mat4  matrix_local_to_world;
    Evas_Mat4  matrix_mv;
    Evas_Mat4  matrix_mvp;
