@@ -196,7 +196,7 @@ case "$host_os" in
       # TODO: check cygwin* here
       have_win32="yes"
       have_windows="yes"
-      EFL_CFLAGS="${EFL_CFLAGS} -D__USE_MINGW_ANSI_STDIO"
+      EFLALL_CFLAGS="${EFLALL_CFLAGS} -D__USE_MINGW_ANSI_STDIO"
    ;;
    freebsd*)
       have_freebsd="yes"
@@ -477,8 +477,8 @@ esac
 EFL_ATTRIBUTE_VECTOR
 EFL_ATTRIBUTE_ALWAYS_INLINE
 
-EFL_LIBS="${EFL_LIBS}"
-EFL_CFLAGS="${EFL_CFLAGS}"
+EFLALL_LIBS="${EFLALL_LIBS}"
+EFLALL_CFLAGS="${EFLALL_CFLAGS}"
 
 ## CPU architecture specific assembly
 
