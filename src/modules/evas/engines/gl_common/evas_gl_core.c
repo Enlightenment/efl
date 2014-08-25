@@ -1199,7 +1199,7 @@ _evgl_tls_resource_destroy(void *eng_data)
         return;
      }
 
-   if (!(rsc = _evgl_tls_resource_get()))
+   if (!_evgl_tls_resource_get())
      {
         ERR("Error retrieving resource from TLS");
         return;
