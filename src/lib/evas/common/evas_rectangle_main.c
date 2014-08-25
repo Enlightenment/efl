@@ -55,7 +55,7 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 }
 
 EAPI Eina_Bool
-evas_common_rectangle_draw_prepare(Cutout_Rects *reuse, const RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
+evas_common_rectangle_draw_prepare(Cutout_Rects **reuse, const RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    if ((w <= 0) || (h <= 0)) return EINA_FALSE;
    if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
@@ -68,7 +68,7 @@ evas_common_rectangle_draw_prepare(Cutout_Rects *reuse, const RGBA_Image *dst, R
        evas_common_draw_context_clip_clip(dc, x, y, w, h);
        /* our clip is 0 size.. abort */
        if ((dc->clip.w > 0) && (dc->clip.h > 0))
-	 reuse = evas_common_draw_context_apply_cutouts(dc, reuse);
+	 *reuse = evas_common_draw_context_apply_cutouts(dc, *reuse);
      }
 
    return EINA_TRUE;

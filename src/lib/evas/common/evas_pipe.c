@@ -295,7 +295,7 @@ evas_common_pipe_rectangle_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op
    Eina_Bool r;
 
    recycle = evas_pipe_cutout_rects_pop(info);
-   r = evas_common_rectangle_draw_prepare(recycle, dst, &(op->context),
+   r = evas_common_rectangle_draw_prepare(&recycle, dst, &(op->context),
                                           op->op.rect.x, op->op.rect.y,
                                           op->op.rect.w, op->op.rect.h);
    if (recycle->active) op->rects = recycle;

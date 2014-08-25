@@ -8,7 +8,7 @@ EAPI void	evas_common_rectangle_draw_cb	(RGBA_Image *dst, RGBA_Draw_Context *dc,
 EAPI void	evas_common_rectangle_draw	(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 EAPI void evas_common_rectangle_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
-EAPI Eina_Bool evas_common_rectangle_draw_prepare(Cutout_Rects *reuse, const RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
+EAPI Eina_Bool evas_common_rectangle_draw_prepare(Cutout_Rects **reuse, const RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 EAPI void evas_common_rectangle_rgba_draw       (RGBA_Image *dst, DATA32 color, int render_op, int x, int y, int w, int h);
 
