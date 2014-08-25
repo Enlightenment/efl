@@ -246,6 +246,7 @@ void test_dnd_types(void *data, Evas_Object *obj, void *event_info);
 void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_message(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_phone(void *data, Evas_Object *obj, void *event_info);
+void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -344,7 +345,7 @@ _menu_create(const char *option_str)
           }
         elm_box_pack_end(tbx2, bt);
         evas_object_show(bt);
-        evas_object_smart_callback_add(bt, "clicked", t->cb, NULL);
+        evas_object_smart_callback_add(bt, "clicked", t->cb, win);
         pcat = t->category;
         if (t == tt) tt = cfr;
      }
@@ -524,6 +525,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Socket", test_win_socket);
    ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
    ADD_TEST(NULL, "Window / Background", "Window WM Rotation", test_win_wm_rotation);
+   ADD_TEST(NULL, "Window / Background", "Window Dialog", test_win_dialog);
 
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon", test_icon);
