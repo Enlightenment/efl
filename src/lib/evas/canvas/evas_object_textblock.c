@@ -10623,7 +10623,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
    if (*position == TEXTBLOCK_POSITION_START)
       *position = TEXTBLOCK_POSITION_ELSE;
 
-   line_items = eina_list_free(line_items);
+   eina_list_free(line_items);
 
    /* Do the last addition */
    if (ascent + descent > h)
