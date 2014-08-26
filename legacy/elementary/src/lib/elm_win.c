@@ -2958,7 +2958,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    Evas *e;
    const Eina_List *l;
    const char *fontpath, *engine = NULL, *enginelist[32], *disp;
-   int i;
+   int i, p = 0;
 
    Elm_Win_Data tmp_sd;
 
@@ -2997,150 +2997,220 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 
       default:
         disp = getenv("ELM_DISPLAY");
-        if ((disp) && (!strcmp(disp, "x11")))
+        if ((disp) && (!strcmp(disp, "ews")))
+          {
+             enginelist[p++] = ELM_EWS;
+          }
+        else if ((disp) && (!strcmp(disp, "buffer")))
+          {
+             enginelist[p++] = ELM_BUFFER;
+          }
+        else if ((disp) && (!strcmp(disp, "shot")))
+          {
+             enginelist[p++] = ENGINE_GET();
+          }
+// welcome to ifdef hell! :)
+
+#ifdef HAVE_ELEMENTARY_X
+        else if ((disp) && (!strcmp(disp, "x11")))
           {
              if (_accel_is_gl())
                {
-                  enginelist[0] = ELM_OPENGL_X11;
-                  enginelist[1] = ELM_SOFTWARE_X11;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_OPENGL_X11;
+                  enginelist[p++] = ELM_SOFTWARE_X11;
                }
              else
                {
-                  enginelist[0] = ELM_SOFTWARE_X11;
-                  enginelist[1] = ELM_OPENGL_X11;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_SOFTWARE_X11;
+                  enginelist[p++] = ELM_OPENGL_X11;
                }
           }
+#endif
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
         else if ((disp) && (!strcmp(disp, "wl")))
           {
              if (_accel_is_gl())
                {
-                  enginelist[0] = ELM_WAYLAND_EGL;
-                  enginelist[1] = ELM_WAYLAND_SHM;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_WAYLAND_EGL;
+                  enginelist[p++] = ELM_WAYLAND_SHM;
                }
              else
                {
-                  enginelist[0] = ELM_WAYLAND_SHM;
-                  enginelist[1] = ELM_WAYLAND_EGL;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_WAYLAND_SHM;
+                  enginelist[p++] = ELM_WAYLAND_EGL;
                }
           }
+#endif
+
+#ifdef HAVE_ELEMENTARY_WIN32
         else if ((disp) && (!strcmp(disp, "win")))
           {
-             enginelist[1] = ELM_SOFTWARE_WIN32;
-             enginelist[2] = NULL;
+             enginelist[p++] = ELM_SOFTWARE_WIN32;
+             enginelist[p++] = ELM_SOFTWARE_DDRAW;
           }
+#endif
+
+#ifdef HAVE_ELEMENTARY_SDL
         else if ((disp) && (!strcmp(disp, "sdl")))
           {
              if (_accel_is_gl())
                {
-                  enginelist[0] = ELM_OPENGL_SDL;
-                  enginelist[1] = ELM_SOFTWARE_SDL;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_OPENGL_SDL;
+                  enginelist[p++] = ELM_SOFTWARE_SDL;
                }
              else
                {
-                  enginelist[0] = ELM_SOFTWARE_SDL;
-                  enginelist[1] = ELM_OPENGL_SDL;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_SOFTWARE_SDL;
+                  enginelist[p++] = ELM_OPENGL_SDL;
                }
           }
+#endif
+
+#ifdef HAVE_ELEMENTARY_COCOA
         else if ((disp) && (!strcmp(disp, "mac")))
           {
-             enginelist[0] = ELM_OPENGL_COCOA;
-             enginelist[1] = NULL;
+             enginelist[p++] = ELM_OPENGL_COCOA;
           }
-        else if ((disp) && (!strcmp(disp, "ews")))
-          {
-             enginelist[0] = ELM_EWS;
-             enginelist[1] = NULL;
-          }
+#endif
+
+#if defined(HAVE_ELEMENTARY_DRM) || defined(HAVE_ELEMENTARY_FB)
         else if ((disp) && (!strcmp(disp, "fb")))
           {
-             enginelist[0] = ELM_DRM;
-             enginelist[1] = ELM_SOFTWARE_FB;
-             enginelist[2] = NULL;
+#ifdef HAVE_ELEMENTARY_DRM
+             enginelist[p++] = ELM_DRM;
+#endif
+#ifdef HAVE_ELEMENTARY_FB
+             enginelist[p++] = ELM_SOFTWARE_FB;
+#endif
           }
-        else if ((disp) && (!strcmp(disp, "buffer")))
-          {
-             enginelist[0] = ELM_BUFFER;
-             enginelist[1] = NULL;
-          }
+#endif
+
+#ifdef HAVE_ELEMENTARY_PSL1GHT
         else if ((disp) && (!strcmp(disp, "ps3")))
           {
-             enginelist[0] = ELM_SOFTWARE_PSL1GHT;
-             enginelist[1] = NULL;
+             enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
           }
-        else if ((disp) && (!strcmp(disp, "shot")))
-          {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = NULL;
-          }
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
         else if ((getenv("DISPLAY")) && (!getenv("ELM_ENGINE")))
           {
              if (_accel_is_gl())
                {
-                  enginelist[0] = ELM_OPENGL_X11;
-                  enginelist[1] = ELM_SOFTWARE_X11;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_OPENGL_X11;
+                  enginelist[p++] = ELM_SOFTWARE_X11;
                }
              else
                {
-                  enginelist[0] = ELM_SOFTWARE_X11;
-                  enginelist[1] = ELM_OPENGL_X11;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_SOFTWARE_X11;
+                  enginelist[p++] = ELM_OPENGL_X11;
                }
           }
+#endif
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
         else if ((getenv("WAYLAND_DISPLAY")) && (!getenv("ELM_ENGINE")))
           {
              if (_accel_is_gl())
                {
-                  enginelist[0] = ELM_WAYLAND_EGL;
-                  enginelist[1] = ELM_WAYLAND_SHM;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_WAYLAND_EGL;
+                  enginelist[p++] = ELM_WAYLAND_SHM;
                }
              else
                {
-                  enginelist[0] = ELM_WAYLAND_SHM;
-                  enginelist[1] = ELM_WAYLAND_EGL;
-                  enginelist[2] = NULL;
+                  enginelist[p++] = ELM_WAYLAND_SHM;
+                  enginelist[p++] = ELM_WAYLAND_EGL;
                }
           }
+#endif
         else
           {
              if (_accel_is_gl())
                {
-                  enginelist[ 0] = ELM_OPENGL_X11;
-                  enginelist[ 1] = ELM_WAYLAND_EGL;
-                  enginelist[ 2] = ELM_DRM;
-                  enginelist[ 3] = ELM_SOFTWARE_FB;
-                  enginelist[ 4] = ELM_OPENGL_COCOA;
-                  enginelist[ 5] = ELM_OPENGL_SDL;
-                  enginelist[ 6] = ELM_SOFTWARE_X11;
-                  enginelist[ 7] = ELM_WAYLAND_SHM;
-                  enginelist[ 8] = ELM_SOFTWARE_SDL;
-                  enginelist[ 9] = ELM_SOFTWARE_PSL1GHT;
-                  enginelist[10] = NULL;
+
+// add all engines with gl/accelerated ones first - only engines compiled
+#ifdef HAVE_ELEMENTARY_X
+                  enginelist[p++] = ELM_OPENGL_X11;
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+                  enginelist[p++] = ELM_WAYLAND_EGL;
+#endif
+#ifdef HAVE_ELEMENTARY_DRM
+                  enginelist[p++] = ELM_DRM;
+#endif
+#ifdef HAVE_ELEMENTARY_FB
+                  enginelist[p++] = ELM_SOFTWARE_FB;
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+                  enginelist[p++] = ELM_OPENGL_COCOA;
+#endif
+#ifdef HAVE_ELEMENTARY_SDL
+                  enginelist[p++] = ELM_OPENGL_SDL;
+#endif
+#ifdef HAVE_ELEMENTARY_X
+                  enginelist[p++] = ELM_SOFTWARE_X11;
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+                  enginelist[p++] = ELM_WAYLAND_SHM;
+#endif
+#ifdef HAVE_ELEMENTARY_WIN32
+                  enginelist[p++] = ELM_SOFTWARE_WIN32;
+                  enginelist[p++] = ELM_SOFTWARE_DDRAW;
+#endif
+#ifdef HAVE_ELEMENTARY_SDL
+                  enginelist[p++] = ELM_SOFTWARE_SDL;
+#endif
+#ifdef HAVE_ELEMENTARY_PSL1GHT
+                  enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
+#endif
                }
              else
                {
-                  enginelist[ 0] = ENGINE_GET();
-                  enginelist[ 1] = ELM_SOFTWARE_X11;
-                  enginelist[ 2] = ELM_WAYLAND_SHM;
-                  enginelist[ 3] = ELM_DRM;
-                  enginelist[ 4] = ELM_SOFTWARE_FB;
-                  enginelist[ 5] = ELM_OPENGL_COCOA;
-                  enginelist[ 6] = ELM_SOFTWARE_SDL;
-                  enginelist[ 7] = ELM_OPENGL_X11;
-                  enginelist[ 8] = ELM_WAYLAND_EGL;
-                  enginelist[ 9] = ELM_DRM;
-                  enginelist[10] = ELM_OPENGL_SDL;
-                  enginelist[11] = ELM_SOFTWARE_WIN32;
-                  enginelist[12] = NULL;
+// add all engines with selected engine first - if any
+                  enginelist[p++] = ENGINE_GET();
+
+// add all engines with gl/accelerated ones first - only engines compiled
+#ifdef HAVE_ELEMENTARY_X
+                  enginelist[p++] = ELM_SOFTWARE_X11;
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+                  enginelist[p++] = ELM_WAYLAND_SHM;
+#endif
+#ifdef HAVE_ELEMENTARY_DRM
+                  enginelist[p++] = ELM_DRM;
+#endif
+#ifdef HAVE_ELEMENTARY_FB
+                  enginelist[p++] = ELM_SOFTWARE_FB;
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+                  enginelist[p++] = ELM_OPENGL_COCOA;
+#endif
+#ifdef HAVE_ELEMENTARY_WIN32
+                  enginelist[p++] = ELM_SOFTWARE_WIN32;
+                  enginelist[p++] = ELM_SOFTWARE_DDRAW;
+#endif
+#ifdef HAVE_ELEMENTARY_SDL
+                  enginelist[p++] = ELM_SOFTWARE_SDL;
+#endif
+#ifdef HAVE_ELEMENTARY_X
+                  enginelist[p++] = ELM_OPENGL_X11;
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+                  enginelist[p++] = ELM_WAYLAND_EGL;
+#endif
+#ifdef HAVE_ELEMENTARY_DRM
+                  enginelist[p++] = ELM_DRM;
+#endif
+#ifdef HAVE_ELEMENTARY_SDL
+                  enginelist[p++] = ELM_OPENGL_SDL;
+#endif
+#ifdef HAVE_ELEMENTARY_PSL1GHT
+                  enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
+#endif
                }
           }
+        enginelist[p++] = NULL;
         for (i = 0; i < 30; i++)
           {
              if ((i > 0) && (!enginelist[i])) break;
@@ -3167,6 +3237,8 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))
+               tmp_sd.ee = ecore_evas_software_ddraw_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_SDL))
                tmp_sd.ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
              else if (!strcmp(enginelist[i], ELM_OPENGL_SDL))
