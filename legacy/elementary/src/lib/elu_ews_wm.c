@@ -466,7 +466,7 @@ _elm_ews_wm_init(void)
    Evas *e;
    Evas_Object *o;
 
-   if ((!_elm_config->engine) || (!strcmp(_elm_config->engine, ELM_EWS)))
+   if ((!_elm_config->engine) || (!(!strcmp(_elm_config->engine, ELM_EWS))))
      {
         _ews_used = EINA_FALSE;
         return EINA_TRUE;
