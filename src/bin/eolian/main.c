@@ -116,7 +116,7 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
 
    Eina_Strbuf *buffer = eina_strbuf_new();
 
-   if (!types_header_generate(eo_filename, buffer))
+   if (!types_header_generate(eo_filename, buffer, EINA_TRUE))
      {
         ERR("Failed to generate types of file %s", eo_filename);
         goto end;
@@ -146,6 +146,36 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
      }
 
    buffer = _include_guard_enclose(_filename_get(filename), NULL, buffer);
+   if (_write_file(filename, buffer, EINA_FALSE))
+      ret = EINA_TRUE;
+end:
+   eina_strbuf_free(buffer);
+
+   return ret;
+}
+
+static Eina_Bool
+_generate_stub_header_file(char *filename, const char *eo_filename)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   Eina_Strbuf *buffer = eina_strbuf_new();
+
+   if (!types_header_generate(eo_filename, buffer, EINA_FALSE))
+     {
+        ERR("Failed to generate types of file %s", eo_filename);
+        goto end;
+     }
+
+   Eina_Strbuf *ctbuf = eina_strbuf_new();
+   if (types_class_typedef_generate(eo_filename, ctbuf))
+     {
+        eina_strbuf_append_char(ctbuf, '\n');
+        eina_strbuf_prepend(buffer, eina_strbuf_string_get(ctbuf));
+     }
+   eina_strbuf_free(ctbuf);
+
+   buffer = _include_guard_enclose(_filename_get(filename), "STUBS", buffer);
    if (_write_file(filename, buffer, EINA_FALSE))
       ret = EINA_TRUE;
 end:
@@ -221,7 +251,7 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
 
    Eina_Strbuf *buffer = eina_strbuf_new();
 
-   if (!types_header_generate(eo_filename, buffer))
+   if (!types_header_generate(eo_filename, buffer, EINA_TRUE))
      {
         ERR("Failed to generate types of file %s", eo_filename);
         goto end;
@@ -262,6 +292,7 @@ enum
 {
    NO_WAY_GEN,
    H_GEN,
+   H_STUB_GEN,
    C_GEN,
    C_IMPL_GEN
 };
@@ -301,6 +332,7 @@ int main(int argc, char **argv)
           {"gh",         no_argument,         &gen_opt, H_GEN},
           {"gc",         no_argument,         &gen_opt, C_GEN},
           {"gi",         no_argument,         &gen_opt, C_IMPL_GEN},
+          {"gs",         no_argument,         &gen_opt, H_STUB_GEN},
           {"output",     required_argument,   0, 'o'},
           {"legacy",     no_argument,         &legacy_support, 1},
           {"include",    required_argument,   0, 'I'},
@@ -341,6 +373,7 @@ int main(int argc, char **argv)
         printf("       --output/-o Force output filename to 'outfile'\n");
         printf("       --eo Set generator to eo mode. Must be specified\n");
         printf("       --gh Generate C header file [.h]\n");
+        printf("       --gs Generate C type stubs [.h]\n");
         printf("       --gc Generate C source file [.c]\n");
         printf("       --gi Generate C implementation source file [.c]. The output will be a series of functions that have to be filled.\n");
         printf("       --legacy Generate legacy\n");
@@ -398,6 +431,12 @@ int main(int argc, char **argv)
                      ret = ( _generate_legacy_header_file(output_filename, eo_file_basename) ? 0 : 1 );
                    else
                      ret = ( _generate_eo_header_file(output_filename, eo_file_basename) ? 0 : 1 );
+                   break;
+                }
+           case H_STUB_GEN:
+                {
+                   INF("Generating stubs header file %s\n", output_filename);
+                   ret = _generate_stub_header_file(output_filename, eo_file_basename) ? 0 : 1;
                    break;
                 }
            case C_GEN:
