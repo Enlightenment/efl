@@ -52,8 +52,8 @@ _ecore_wl_output_del(Ecore_Wl_Output *output)
    if (!output) return;
    if (output->destroy) (*output->destroy)(output, output->data);
    if (output->output) wl_output_destroy(output->output);
-   _ecore_wl_disp->outputs = eina_inlist_remove
-      (_ecore_wl_disp->outputs, EINA_INLIST_GET(output));
+   _ecore_wl_disp->outputs = 
+     eina_inlist_remove(_ecore_wl_disp->outputs, EINA_INLIST_GET(output));
    free(output);
 }
 

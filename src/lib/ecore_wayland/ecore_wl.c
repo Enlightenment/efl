@@ -458,12 +458,12 @@ _ecore_wl_shutdown(Eina_Bool close)
           _ecore_wl_input_del(in);
 
         EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->globals, tmp, global)
-        {
-           _ecore_wl_disp->globals = eina_inlist_remove
-              (_ecore_wl_disp->globals, EINA_INLIST_GET(global));
-           free(global->interface);
-           free(global);
-        }
+          {
+             _ecore_wl_disp->globals = eina_inlist_remove
+               (_ecore_wl_disp->globals, EINA_INLIST_GET(global));
+             free(global->interface);
+             free(global);
+          }
 
         _ecore_wl_xkb_shutdown(_ecore_wl_disp);
 
