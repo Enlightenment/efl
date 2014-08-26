@@ -20,6 +20,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
 
    }
    implements {
+        Eo.Base.destructor;
         Eo.Base.finalize;
         Efl.Control.suspend.set;
    }

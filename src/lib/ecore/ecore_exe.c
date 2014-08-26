@@ -940,14 +940,23 @@ ecore_exe_tag_get(const Ecore_Exe *obj)
 EAPI void *
 ecore_exe_free(Ecore_Exe *obj)
 {
-   void *data;
-   int ok = 0;
-   int result;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
    if (!eo_isa(obj, MY_CLASS))
       return NULL;
+
+   void *data = exe->data;
+   eo_del(obj);
+
+   return data;
+}
+
+EOLIAN static void
+_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
+{
+   void *data;
+   int ok = 0;
+   int result;
 
    data = exe->data;
 
@@ -990,10 +999,6 @@ ecore_exe_free(Ecore_Exe *obj)
 
    exes = eina_list_remove(exes, obj);
    IF_FREE(exe->tag);
-
-   eo_del(obj);
-
-   return data;
 }
 
 EAPI void
