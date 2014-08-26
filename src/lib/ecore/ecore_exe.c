@@ -991,7 +991,7 @@ ecore_exe_free(Ecore_Exe *obj)
    exes = eina_list_remove(exes, obj);
    IF_FREE(exe->tag);
 
-   eo_del(exe);
+   eo_del(obj);
 
    return data;
 }
