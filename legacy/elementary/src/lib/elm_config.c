@@ -3200,15 +3200,9 @@ static void
 _translation_init()
 {
 #ifdef ENABLE_NLS
-
-   /* How does it decide translation with current domain??
-      Application could use their own text domain.
-      This is insane to me.
-
    const char *cur_dom = textdomain(NULL);
    const char *trans_comment = gettext("");
    const char *msg_locale = setlocale(LC_MESSAGES, NULL);
-   */
 
    /* Same concept as what glib does:
     * We shouldn't translate if there are no translations for the
@@ -3216,11 +3210,9 @@ _translation_init()
     * en_/C where translating only parts of the interface make some
     * sense).
     */
-   /*
-      _elm_config->translate = !(strcmp (cur_dom, "messages") &&
-      !*trans_comment && strncmp (msg_locale, "en_", 3) &&
-      strcmp (msg_locale, "C"));
-    */
+   _elm_config->translate = !(strcmp (cur_dom, "messages") &&
+         !*trans_comment && strncmp (msg_locale, "en_", 3) &&
+         strcmp (msg_locale, "C"));
    /* Get RTL orientation from system */
    if (_elm_config->translate)
      {
