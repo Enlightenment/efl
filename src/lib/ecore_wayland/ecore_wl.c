@@ -317,6 +317,15 @@ ecore_wl_screen_size_get(int *w, int *h)
 
    _ecore_wl_init_wait();
 
+   // XXX: this code is dumb - screen size doesnt allow for > 1 output.
+   // the first sync is in case registry replies are not back yet
+   if (!_ecore_wl_disp->output)
+     {
+        // second sync is in case bound object replies in registry are not back
+        ecore_wl_sync();
+        if (!_ecore_wl_disp->output) ecore_wl_sync();
+     }
+
    if (!_ecore_wl_disp->output) return;
 
    switch (_ecore_wl_disp->output->transform)
