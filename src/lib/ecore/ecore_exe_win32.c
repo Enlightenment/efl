@@ -44,11 +44,8 @@ static Ecore_Exe *exes = NULL;
 
 static int run_pri = NORMAL_PRIORITY_CLASS;
 
-struct _Ecore_Exe
+struct _Ecore_Exe_Data
 {
-   EINA_INLIST;
-   ECORE_MAGIC;
-
    char *cmd;
    char *tag;
 
@@ -93,6 +90,7 @@ struct _Ecore_Exe
    Eina_Bool is_suspended : 1;
 };
 
+typedef struct _Ecore_Exe_Data Ecore_Exe_Data;
 
 static void
 _ecore_exe_event_add_free(void *data EINA_UNUSED,
@@ -128,13 +126,12 @@ _ecore_exe_close_cb(void *data,
                     Ecore_Win32_Handler *wh EINA_UNUSED)
 {
    Ecore_Exe_Event_Del *e;
-   Ecore_Exe *exe;
+   Ecore_Exe *obj = data;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD exit_code = 0;
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Del));
    if (!e) return 0;
-
-   exe = (Ecore_Exe *)data;
 
    /* FIXME : manage the STILL_ACTIVE returned error */
    if (!GetExitCodeProcess(exe->process, &exit_code))
@@ -149,7 +146,7 @@ _ecore_exe_close_cb(void *data,
    e->exit_code = exit_code;
    e->exited = 1;
    e->pid = exe->process_id;
-   e->exe = exe;
+   e->exe = obj;
 
    ecore_event_add(ECORE_EXE_EVENT_DEL, e,
                    _ecore_exe_event_del_free, NULL);
@@ -163,14 +160,13 @@ static unsigned int __stdcall
 _ecore_exe_pipe_read_thread_cb(void *data)
 {
    char buf[64];
-   Ecore_Exe *exe;
+   Ecore_Exe *obj = data;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    Ecore_Exe_Event_Data *event_data;
    char *current_buf = NULL;
    DWORD size;
    DWORD current_size = 0;
    BOOL res;
-
-   exe = (Ecore_Exe *)data;
 
    while (!exe->close_threads)
      {
@@ -200,12 +196,13 @@ _ecore_exe_pipe_read_thread_cb(void *data)
         exe->pipe_read.data_buf = current_buf;
         exe->pipe_read.data_size = current_size;
 
-        event_data = ecore_exe_event_data_get(exe, ECORE_EXE_PIPE_READ);
+        event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_READ);
         if (event_data)
           {
              ecore_event_add(ECORE_EXE_EVENT_DATA, event_data,
                              _ecore_exe_event_exe_data_free,
                              NULL);
+             eo_do(obj, eo_event_callback_call(ECORE_EXE_EVENT_DATA_GET, event_data));
           }
 
         current_buf = NULL;
@@ -221,14 +218,13 @@ static unsigned int __stdcall
 _ecore_exe_pipe_error_thread_cb(void *data)
 {
    char buf[64];
-   Ecore_Exe *exe;
+   Ecore_Exe *obj = data;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    Ecore_Exe_Event_Data *event_data;
    char *current_buf = NULL;
    DWORD size;
    DWORD current_size = 0;
    BOOL res;
-
-   exe = (Ecore_Exe *)data;
 
    while (!exe->close_threads)
      {
@@ -258,12 +254,13 @@ _ecore_exe_pipe_error_thread_cb(void *data)
         exe->pipe_error.data_buf = current_buf;
         exe->pipe_error.data_size = current_size;
 
-        event_data = ecore_exe_event_data_get(exe, ECORE_EXE_PIPE_ERROR);
+        event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_ERROR);
         if (event_data)
           {
              ecore_event_add(ECORE_EXE_EVENT_ERROR, event_data,
                              _ecore_exe_event_exe_data_free,
                              NULL);
+             eo_do(obj, eo_event_callback_call(ECORE_EXE_EVENT_DATA_ERROR, event_data));
           }
 
         current_buf = NULL;
@@ -276,8 +273,9 @@ _ecore_exe_pipe_error_thread_cb(void *data)
 }
 
 static void
-_ecore_exe_threads_terminate(Ecore_Exe *exe)
+_ecore_exe_threads_terminate(Ecore_Exe *obj)
 {
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    HANDLE threads[2] = { NULL, NULL };
    int i = 0;
 
@@ -320,10 +318,10 @@ static BOOL CALLBACK
 _ecore_exe_enum_windows_procedure(HWND window,
                                   LPARAM data)
 {
-   Ecore_Exe *exe;
+   Ecore_Exe *exe = data;
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD thread_id;
 
-   exe = (Ecore_Exe *)data;
    thread_id = GetWindowThreadProcessId(window, NULL);
 
    if (thread_id == exe->thread_id)
@@ -486,7 +484,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
    PROCESS_INFORMATION pi;
-   Ecore_Exe *exe;
+   Ecore_Exe *obj;
    Ecore_Exe_Event_Add *e;
    Eina_Bool use_sh = EINA_FALSE;
    const char *shell = NULL;
@@ -498,8 +496,9 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    if (!exe_cmd || !*exe_cmd)
      return NULL;
 
-   exe = calloc(1, sizeof(Ecore_Exe));
-   if (!exe)
+   obj = eo_add(MY_CLASS, NULL, ecore_obj_exe_command_set(exe_cmd, flags));
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!obj)
      return NULL;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
@@ -609,7 +608,6 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    /* if (WaitForInputIdle(pi.hProcess, INFINITE) == WAIT_FAILED) */
    /*   goto close_pipe_write; */
 
-   ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
    exe->process = pi.hProcess;
    exe->process_thread = pi.hThread;
    exe->process_id = pi.dwProcessId;
@@ -617,7 +615,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    exe->data = (void *)data;
 
    exe->h_close = ecore_main_win32_handler_add(exe->process,
-                                               _ecore_exe_close_cb, exe);
+                                               _ecore_exe_close_cb, obj);
    if (!exe->h_close)
      goto close_process;
 
@@ -628,17 +626,17 @@ ecore_exe_pipe_run(const char     *exe_cmd,
      }
 
    exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes),
-                                          EINA_INLIST_GET(exe));
+                                          EINA_INLIST_GET(obj));
 
    e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
    if (!e) goto delete_h_close;
 
-   e->exe = exe;
+   e->exe = obj;
 
    ecore_event_add(ECORE_EXE_EVENT_ADD, e,
                    _ecore_exe_event_add_free, NULL);
 
-   return exe;
+   return obj;
 
 delete_h_close:
    ecore_main_win32_handler_del(exe->h_close);
@@ -651,13 +649,13 @@ delete_h_close:
    if (exe->pipe_write.child_pipe_x)
      CloseHandle(exe->pipe_write.child_pipe_x);
  close_pipe_error:
-   _ecore_exe_threads_terminate(exe);
+   _ecore_exe_threads_terminate(obj);
    if (exe->pipe_error.child_pipe)
      CloseHandle(exe->pipe_error.child_pipe);
    if (exe->pipe_error.child_pipe_x)
      CloseHandle(exe->pipe_error.child_pipe_x);
  close_pipe_read:
-   _ecore_exe_threads_terminate(exe);
+   _ecore_exe_threads_terminate(obj);
    if (exe->pipe_read.child_pipe)
      CloseHandle(exe->pipe_read.child_pipe);
    if (exe->pipe_read.child_pipe_x)
@@ -665,27 +663,24 @@ delete_h_close:
  free_exe_cmd:
    free(exe->cmd);
  free_exe:
-   free(exe);
+   eo_del(obj);
 
    return NULL;
 }
 
 EAPI void
-ecore_exe_callback_pre_free_set(Ecore_Exe   *exe,
+ecore_exe_callback_pre_free_set(Ecore_Exe   *obj,
                                 Ecore_Exe_Cb func)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-                         "ecore_exe_callback_pre_free_set");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
+
    exe->pre_free_cb = func;
 }
 
 EAPI Eina_Bool
-ecore_exe_send(Ecore_Exe  *exe,
+ecore_exe_send(Ecore_Exe  *obj,
                const void *data,
                int         size)
 {
@@ -693,17 +688,14 @@ ecore_exe_send(Ecore_Exe  *exe,
    DWORD num_exe;
    BOOL res;
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_send");
-        return EINA_FALSE;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return EINA_FALSE;
 
    if (exe->close_stdin)
      {
         ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
-            exe, size, data);
+            obj, size, data);
         return EINA_FALSE;
      }
 
@@ -719,7 +711,7 @@ ecore_exe_send(Ecore_Exe  *exe,
    if (!res || num_exe == 0)
      {
         ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
-            exe, size, data);
+            obj, size, data);
         return EINA_FALSE;
      }
 
@@ -727,14 +719,13 @@ ecore_exe_send(Ecore_Exe  *exe,
 }
 
 EAPI void
-ecore_exe_close_stdin(Ecore_Exe *exe)
+ecore_exe_close_stdin(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_close_stdin");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
+
    exe->close_stdin = 1;
 }
 
@@ -749,20 +740,16 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe EINA_UNUSED,
 }
 
 EAPI Ecore_Exe_Event_Data *
-ecore_exe_event_data_get(Ecore_Exe      *exe,
+ecore_exe_event_data_get(Ecore_Exe      *obj,
                          Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
    unsigned char *inbuf;
    DWORD inbuf_num;
    Eina_Bool is_buffered = EINA_FALSE;
-
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_event_data_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
       return NULL;
-   }
 
    /* Sort out what sort of event we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -797,7 +784,7 @@ ecore_exe_event_data_get(Ecore_Exe      *exe,
    e = calloc(1, sizeof(Ecore_Exe_Event_Data));
    if (e)
    {
-      e->exe = exe;
+      e->exe = obj;
       e->data = inbuf;
       e->size = inbuf_num;
 
@@ -876,17 +863,14 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 }
 
 EAPI void *
-ecore_exe_free(Ecore_Exe *exe)
+ecore_exe_free(Ecore_Exe *obj)
 {
    void *data;
 
    if (!exe) return NULL;
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_free");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
       return NULL;
-   }
 
    data = exe->data;
 
@@ -914,34 +898,31 @@ ecore_exe_free(Ecore_Exe *exe)
 
    exes = (Ecore_Exe *)eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
    IF_FREE(exe->tag);
-   ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
-   free(exe);
+   eo_del(exe);
 
    return data;
 }
 
 EAPI pid_t
-ecore_exe_pid_get(const Ecore_Exe *exe)
+ecore_exe_pid_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pid_get");
-        return -1;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return -1;
+
    return exe->process_id;
 }
 
 EAPI void
-ecore_exe_tag_set(Ecore_Exe  *exe,
+ecore_exe_tag_set(Ecore_Exe  *obj,
                   const char *tag)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_set");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
       return;
-   }
+
    IF_FREE(exe->tag);
    if (tag)
      exe->tag = strdup(tag);
@@ -950,79 +931,71 @@ ecore_exe_tag_set(Ecore_Exe  *exe,
 }
 
 EAPI const char *
-ecore_exe_tag_get(const Ecore_Exe *exe)
+ecore_exe_tag_get(const Ecore_Exe *obj)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
       return NULL;
-   }
+
    return exe->tag;
 }
 
 EAPI const char *
-ecore_exe_cmd_get(const Ecore_Exe *exe)
+ecore_exe_cmd_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_cmd_get");
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
       return NULL;
-   }
+
    return exe->cmd;
 }
 
 EAPI void *
-ecore_exe_data_get(const Ecore_Exe *exe)
+ecore_exe_data_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
-        return NULL;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return NULL;
+
    return exe->data;
 }
 
 EAPI void *
-ecore_exe_data_set(Ecore_Exe *exe,
+ecore_exe_data_set(Ecore_Exe *obj,
                    void      *data)
 {
    void *ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-   {
-      ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, __func__);
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
       return NULL;
-   }
+
    ret = exe->data;
    exe->data = data;
    return ret;
 }
 
 EAPI Ecore_Exe_Flags
-ecore_exe_flags_get(const Ecore_Exe *exe)
+ecore_exe_flags_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
-        return 0;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return 0;
+
    return exe->flags;
 }
 
 EAPI void
-ecore_exe_pause(Ecore_Exe *exe)
+ecore_exe_pause(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pause");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
 
    if (exe->is_suspended)
      return;
@@ -1032,14 +1005,12 @@ ecore_exe_pause(Ecore_Exe *exe)
 }
 
 EAPI void
-ecore_exe_continue(Ecore_Exe *exe)
+ecore_exe_continue(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_continue");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
 
    if (!exe->is_suspended)
      return;
@@ -1049,99 +1020,80 @@ ecore_exe_continue(Ecore_Exe *exe)
 }
 
 EAPI void
-ecore_exe_interrupt(Ecore_Exe *exe)
+ecore_exe_interrupt(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_interrupt");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
 
    CloseHandle(exe->process_thread);
    exe->process_thread = NULL;
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGINT;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe)) ;
+   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
 EAPI void
-ecore_exe_quit(Ecore_Exe *exe)
+ecore_exe_quit(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_quit");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
 
    CloseHandle(exe->process_thread);
    exe->process_thread = NULL;
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGQUIT;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe)) ;
+   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
 EAPI void
-ecore_exe_terminate(Ecore_Exe *exe)
+ecore_exe_terminate(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_terminate");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
+
 
 /*    CloseHandle(exe->thread); */
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGTERM;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe)) ;
+   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
 EAPI void
-ecore_exe_kill(Ecore_Exe *exe)
+ecore_exe_kill(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_kill");
-        return;
-     }
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   if (!exe)
+      return;
 
    CloseHandle(exe->process_thread);
    exe->process_thread = NULL;
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGKILL;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)exe)) ;
+   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
 EAPI void
-ecore_exe_signal(Ecore_Exe *exe,
+ecore_exe_signal(Ecore_Exe *exe EINA_UNUSED,
                  int        num EINA_UNUSED)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_signal");
-        return;
-     }
-
    /* does nothing */
 }
 
 EAPI void
-ecore_exe_hup(Ecore_Exe *exe)
+ecore_exe_hup(Ecore_Exe *exe EINA_UNUSED)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_hup");
-        return;
-     }
-
    /* does nothing */
 }
+
+#include "ecore_exe.eo.c"
