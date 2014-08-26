@@ -40,7 +40,7 @@ typedef enum
    ECORE_EXE_WIN32_SIGKILL
 } Ecore_Exe_Win32_Signal;
 
-static Ecore_Exe *exes = NULL;
+static Eina_List *exes = NULL;
 
 static int run_pri = NORMAL_PRIORITY_CLASS;
 
@@ -393,7 +393,10 @@ _ecore_exe_init(void)
 void
 _ecore_exe_shutdown(void)
 {
-   while (exes)
+   Eina_List *l1, *l2;
+   Ecore_Exe *exe;
+
+   EINA_LIST_FOREACH_SAFE(exes, l1, l2, exe)
      ecore_exe_free(exes);
 }
 
@@ -625,8 +628,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
         goto delete_h_close;
      }
 
-   exes = (Ecore_Exe *)eina_inlist_append(EINA_INLIST_GET(exes),
-                                          EINA_INLIST_GET(obj));
+   exes = eina_list_append(exes, obj);
 
    e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
    if (!e) goto delete_h_close;
@@ -896,7 +898,7 @@ ecore_exe_free(Ecore_Exe *obj)
      CloseHandle(exe->pipe_read.child_pipe_x);
    free(exe->cmd);
 
-   exes = (Ecore_Exe *)eina_inlist_remove(EINA_INLIST_GET(exes), EINA_INLIST_GET(exe));
+   exes = eina_list_remove(exes, obj);
    IF_FREE(exe->tag);
    eo_del(exe);
 
