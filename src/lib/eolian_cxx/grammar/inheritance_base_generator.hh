@@ -65,6 +65,12 @@ struct inheritance_operations_description
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_operations_description const& x)
 {
+   extensions_container_type::const_iterator it, first, last;
+   std::string s;
+
+   first = x._cls.extensions.begin();
+   last = x._cls.extensions.end();
+
    out << "template <typename T>"
        << endl << "int initialize_operation_description(::efl::eo::detail::tag<"
        << full_name(x._cls) << ">" << endl
@@ -77,6 +83,24 @@ operator<<(std::ostream& out, inheritance_operations_description const& x)
      {
         out << inheritance_operation(x._cls, i);
      }
+
+   out << tab(1)
+       << "initialize_operation_description<T>(efl::eo::detail::tag<"
+       << x._cls.parent
+       << ">(), &ops["
+       << x._cls.functions.size() << "]);" << endl;
+
+   s += " + operation_description_class_size<" + x._cls.parent + ">::value";
+
+   for (it = first; it != last; ++it)
+     {
+        out << tab(1)
+            << "initialize_operation_description<T>(efl::eo::detail::tag<"
+            << *it << ">(), &ops[" << x._cls.functions.size() << s << "]);" << endl;
+
+        s += " + operation_description_class_size< " + *it + ">::value";
+     }
+
    out << tab(1) << "return 0;" << endl
        << "}" << endl;
 
@@ -144,16 +168,55 @@ struct inheritance_base_operations_size
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_base_operations_size const& x)
 {
+   extensions_container_type::const_iterator it, first = x._cls.extensions.begin();
+   extensions_container_type::const_iterator last = x._cls.extensions.end();
+   first = x._cls.extensions.begin();
+
    out << "template<>"
        << endl << "struct operation_description_class_size< "
        << full_name(x._cls) << " >" << endl
        << "{" << endl
        << tab(1) << "static const int value = "
        << x._cls.functions.size()
-       << ";" << endl
+       << " + operation_description_class_size<" << class_name(x._cls.parent) << ">::value";
+
+   for (it = first; it != last; ++it)
+     {
+        out << " + operation_description_class_size< " << *it << " >::value";
+     }
+
+   out << ";" << endl
        << "};" << endl
        << endl;
+
    return out;
+}
+
+
+struct inheritance_base_operations_extensions
+{
+   eo_class const& _cls;
+   inheritance_base_operations_extensions(eo_class const& cls)
+     : _cls(cls)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, inheritance_base_operations_extensions const& x)
+{
+   eo_class const& cls = x._cls;
+   extensions_container_type::const_iterator it, first = cls.extensions.begin();
+   extensions_container_type::const_iterator last = cls.extensions.end();
+
+   out << endl << tab(3) << ": operations< " << class_name(cls.parent) << " >::template type<T>";
+   for (it = first; it != last; ++it)
+     {
+        out << "," << endl << tab(3)
+            << "operations< " << *it
+            << " >::template type<T>";
+     }
+
+   return out << endl;
 }
 
 struct inheritance_base_operations_function
@@ -212,7 +275,7 @@ operator<<(std::ostream& out, inheritance_base_operations const& x)
        << full_name(x._cls) << " >" << endl
        << "{" << endl
        << tab(1) << "template <typename T>" << endl
-       << tab(1) << "struct type" << endl
+       << tab(1) << "struct type" << inheritance_base_operations_extensions(x._cls)
        << tab(1) << "{" << endl;
    functions_container_type::const_iterator it,
      first = x._cls.functions.begin(),

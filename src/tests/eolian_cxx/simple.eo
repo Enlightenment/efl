@@ -1,0 +1,19 @@
+class Simple (Eo.Base)
+{
+   legacy_prefix: null;
+   data: null;
+   methods {
+      simple_get {
+         return bool;
+      }
+      name_get {
+         params {
+            @out const(char)* name;
+         }
+         return bool;
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+   }
+}

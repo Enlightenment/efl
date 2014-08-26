@@ -2,7 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES =
 BUILT_SOURCES =
 
-EOLIAN_FLAGS = \
+EOLIAN_FLAGS = -I$(srcdir)\
 	       -I$(srcdir)/lib/eo \
 	       -I$(srcdir)/lib/evas/canvas \
 	       -I$(srcdir)/lib/edje \

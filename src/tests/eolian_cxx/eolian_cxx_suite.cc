@@ -8,6 +8,7 @@ void eolian_cxx_test_wrapper(TCase* tc);
 void eolian_cxx_test_generate(TCase* tc);
 void eolian_cxx_test_callback(TCase* tc);
 void eolian_cxx_test_address_of(TCase* tc);
+void eolian_cxx_test_inheritance(TCase* tc);
 
 typedef struct _Eolian_Cxx_Test_Case Eolian_Cxx_Test_Case;
 struct _Eolian_Cxx_Test_Case
@@ -22,6 +23,7 @@ static const Eolian_Cxx_Test_Case etc[] = {
   { "Eolian-Cxx Generation", eolian_cxx_test_generate },
   { "Eolian-Cxx Callback", eolian_cxx_test_callback },
   { "Eolian-Cxx Address_of", eolian_cxx_test_address_of },
+  { "Eolian-Cxx Inheritance", eolian_cxx_test_inheritance },
   { NULL, NULL }
 };
 
