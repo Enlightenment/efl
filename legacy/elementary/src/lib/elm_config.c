@@ -1504,7 +1504,7 @@ _config_load(void)
    // config recovery app i guess...
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->config_version = ELM_CONFIG_VERSION;
-   _elm_config->engine = eina_stringshare_add(DEFAULT_ENGINE);
+   _elm_config->engine = NULL;
    _elm_config->accel = NULL;
    _elm_config->accel_override = 0;
    _elm_config->vsync = 0;
@@ -3342,10 +3342,7 @@ _elm_config_reload(void)
 void
 _elm_config_engine_set(const char *engine)
 {
-   if (_elm_config->engine && strcmp(_elm_config->engine, engine))
-     eina_stringshare_del(_elm_config->engine);
-
-   _elm_config->engine = eina_stringshare_add(engine);
+   eina_stringshare_replace(&(_elm_config->engine), engine);
 }
 
 EAPI const char *

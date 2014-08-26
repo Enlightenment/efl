@@ -55,14 +55,12 @@ dnl managed by evil
       dlopen_libs=-ldl
       requirement_elm="evil"
       have_socket="no"
-      default_engine=software_gdi
       ;;
    *solaris*)
       ELM_UNIX_DEF="#define"
       have_socket="yes"
       have_dlopen="yes"
       AC_CHECK_LIB([socket], [connect], [], [have_socket="no"])
-      default_engine=software_x11
       ;;
    darwin*)
       ELM_UNIX_DEF="#define"
@@ -70,7 +68,6 @@ dnl managed by evil
       have_dlopen="yes"
       AC_CHECK_HEADERS([crt_externs.h])
       AC_DEFINE([environ], [(*_NSGetEnviron())], ["apple doesn't follow POSIX in this case."])
-      default_engine=opengl_cocoa
       ;;
    *)
       ELM_UNIX_DEF="#define"
@@ -88,17 +85,12 @@ dnl managed by evil
         fi
       fi
       have_socket="yes"
-      default_engine=software_x11
       ;;
 esac
 
 AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
 AM_CONDITIONAL([BUILD_MODULES], [test "x$have_dlopen" = "xyes"])
 AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
-
-AC_SUBST([default_engine])
-AC_DEFINE_UNQUOTED([DEFAULT_ENGINE], ["$default_engine"], ["Default engine according to host"])
-
 
 EFL_COMPILER_FLAG([-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
 EFL_LINKER_FLAG([-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
