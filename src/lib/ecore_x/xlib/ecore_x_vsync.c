@@ -103,6 +103,11 @@ typedef struct
    char val;
 } Msg;
 
+#if 0
+# define D(args...) fprintf(stderr, ##args)
+#else
+# define D(args...)
+#endif
 
 static Eina_Bool
 _drm_tick_schedule(void)
@@ -171,7 +176,6 @@ _drm_vblank_handler(int fd EINA_UNUSED,
         if (pframe != frame)
           {
              _drm_send_time((double)sec + ((double)usec / 1000000));
-             _drm_tick_schedule();
              pframe = frame;
           }
      }
@@ -226,7 +230,11 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              int ret;
              struct timeval tv;
 
-             if (!_drm_tick_schedule()) _drm_fail_count = 999999;
+             if (!_drm_tick_schedule())
+               {
+                  D("@%1.5f schedule fail\n", ecore_time_get());
+                  _drm_fail_count = 999999;
+               }
              max_fd = 0;
              FD_ZERO(&rfds);
              FD_ZERO(&wfds);
@@ -238,9 +246,11 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                tv.tv_usec = _drm_fail_time2 * 1000000;
              else
                tv.tv_usec = _drm_fail_time * 1000000;
+             D("@%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
              ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
              if ((ret == 1) && (FD_ISSET(drm_fd, &rfds)))
                {
+                  D("@%1.5f have event\n", ecore_time_get());
                   sym_drmHandleEvent(drm_fd, &drm_evctx);
                   _drm_fail_count = 0;
                }
@@ -249,6 +259,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                   // timeout
                   _drm_send_time(ecore_time_get());
                   _drm_fail_count++;
+                  D("@%1.5f fail count %i\n", ecore_time_get(), _drm_fail_count);
                }
           }
      }
