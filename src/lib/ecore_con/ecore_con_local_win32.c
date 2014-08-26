@@ -35,12 +35,11 @@ ecore_con_local_shutdown(void)
 static Eina_Bool
 _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handler *wh)
 {
-   Ecore_Con_Client *cl;
+   Ecore_Con_Client *obj = data;
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    void *buf;
    DWORD n;
    Eina_Bool broken_pipe = EINA_FALSE;
-
-   cl = (Ecore_Con_Client *)data;
 
    if (!ResetEvent(cl->host_server->event_read))
      return ECORE_CALLBACK_RENEW;
@@ -88,12 +87,11 @@ _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handle
 static Eina_Bool
 _ecore_con_local_win32_server_peek_client_handler(void *data, Ecore_Win32_Handler *wh)
 {
-   Ecore_Con_Client *cl;
+   Ecore_Con_Client *obj = data;
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
 #if 0
    char *msg;
 #endif
-
-   cl = (Ecore_Con_Client *)data;
 
    if (!ResetEvent(cl->host_server->event_peek))
      return ECORE_CALLBACK_RENEW;
@@ -117,12 +115,10 @@ _ecore_con_local_win32_server_peek_client_handler(void *data, Ecore_Win32_Handle
 static Eina_Bool
 _ecore_con_local_win32_client_peek_server_handler(void *data, Ecore_Win32_Handler *wh)
 {
-   Ecore_Con_Server *svr;
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
 #if 0
    char *msg;
 #endif
-
-   svr = (Ecore_Con_Server *)data;
 
    if (!ResetEvent(svr->event_peek))
      return ECORE_CALLBACK_RENEW;
@@ -134,7 +130,7 @@ _ecore_con_local_win32_client_peek_server_handler(void *data, Ecore_Win32_Handle
         free(msg);
      }
 #endif
-   _ecore_con_server_kill(svr);
+   _ecore_con_server_kill(obj);
    return ECORE_CALLBACK_CANCEL;
 
    ecore_main_win32_handler_del(wh);
@@ -145,12 +141,10 @@ _ecore_con_local_win32_client_peek_server_handler(void *data, Ecore_Win32_Handle
 static Eina_Bool
 _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handler *wh)
 {
-   Ecore_Con_Server *svr;
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    void *buf;
    DWORD n;
    Eina_Bool broken_pipe = EINA_FALSE;
-
-   svr = (Ecore_Con_Server *)data;
 
    if (!ResetEvent(svr->event_read))
      return ECORE_CALLBACK_RENEW;
@@ -162,7 +156,7 @@ _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handle
    if (ReadFile(svr->pipe, buf, svr->nbr_bytes, &n, NULL))
      {
         if (!svr->delete_me)
-          ecore_con_event_server_data(svr, buf, svr->nbr_bytes, EINA_FALSE);
+          ecore_con_event_server_data(obj, buf, svr->nbr_bytes, EINA_FALSE);
         svr->want_write = 1;
      }
    else
@@ -183,12 +177,12 @@ _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handle
              free(msg);
           }
 #endif
-        _ecore_con_server_kill(svr);
+        _ecore_con_server_kill(obj);
         return ECORE_CALLBACK_CANCEL;
      }
 
    if (svr->want_write)
-     ecore_con_local_win32_server_flush(svr);
+     ecore_con_local_win32_server_flush(obj);
 
    ecore_main_win32_handler_del(wh);
 
@@ -199,10 +193,8 @@ _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handle
 static unsigned int __stdcall
 _ecore_con_local_win32_client_read_server_thread(void *data)
 {
-   Ecore_Con_Server *svr;
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    DWORD nbr_bytes = 0;
-
-   svr = (Ecore_Con_Server *)data;
 
    svr->read_stopped = EINA_FALSE;
 
@@ -238,10 +230,9 @@ _ecore_con_local_win32_client_read_server_thread(void *data)
 static unsigned int __stdcall
 _ecore_con_local_win32_server_read_client_thread(void *data)
 {
-   Ecore_Con_Client *cl;
+   Ecore_Con_Client *obj = data;
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    DWORD nbr_bytes = 0;
-
-   cl = (Ecore_Con_Client *)data;
 
    cl->host_server->read_stopped = EINA_FALSE;
 
@@ -277,11 +268,10 @@ static Eina_Bool
 _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
 {
    Ecore_Con_Client *cl = NULL;
-   Ecore_Con_Server *svr;
+   Ecore_Con_Server *obj = data;
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    Ecore_Win32_Handler *handler_read;
    Ecore_Win32_Handler *handler_peek;
-
-   svr = (Ecore_Con_Server *)data;
 
    if (!svr->pipe)
      return ECORE_CALLBACK_CANCEL;
@@ -293,75 +283,75 @@ _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
        (svr->client_count >= (unsigned int)svr->client_limit))
      return ECORE_CALLBACK_CANCEL;
 
-   cl = calloc(1, sizeof(Ecore_Con_Client));
+   cl_obj = eo_add(ECORE_CON_CLIENT_CLASS, NULL);
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    if (!cl)
      {
         ERR("allocation failed");
         return ECORE_CALLBACK_CANCEL;
      }
 
-   cl->host_server = svr;
-   ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
+   cl->host_server = obj;
 
-   cl->host_server->event_read = CreateEvent(NULL, TRUE, FALSE, NULL);
-   if (!cl->host_server->event_read)
+   svr->event_read = CreateEvent(NULL, TRUE, FALSE, NULL);
+   if (!svr->event_read)
      {
         ERR("Can not create event read");
         goto free_cl;
      }
 
-   handler_read = ecore_main_win32_handler_add(cl->host_server->event_read,
+   handler_read = ecore_main_win32_handler_add(svr->event_read,
                                                _ecore_con_local_win32_server_read_client_handler,
-                                               cl);
+                                               obj);
    if (!handler_read)
      {
         ERR("Can not create handler read");
         goto close_event_read;
      }
 
-   cl->host_server->event_peek = CreateEvent(NULL, TRUE, FALSE, NULL);
-   if (!cl->host_server->event_peek)
+   svr->event_peek = CreateEvent(NULL, TRUE, FALSE, NULL);
+   if (!svr->event_peek)
      {
         ERR("Can not create event peek");
         goto del_handler_read;
      }
 
-   handler_peek = ecore_main_win32_handler_add(cl->host_server->event_peek,
+   handler_peek = ecore_main_win32_handler_add(svr->event_peek,
                                                _ecore_con_local_win32_server_peek_client_handler,
-                                               cl);
+                                               obj);
    if (!handler_peek)
      {
         ERR("Can not create handler peek");
         goto close_event_peek;
      }
 
-   cl->host_server->read_stopped = EINA_TRUE;
-   cl->host_server->thread_read = (HANDLE)_beginthreadex(NULL, 0, _ecore_con_local_win32_server_read_client_thread, cl, CREATE_SUSPENDED, NULL);
-   if (!cl->host_server->thread_read)
+   svr->read_stopped = EINA_TRUE;
+   svr->thread_read = (HANDLE)_beginthreadex(NULL, 0, _ecore_con_local_win32_server_read_client_thread, cl, CREATE_SUSPENDED, NULL);
+   if (!svr->thread_read)
      {
         ERR("Can not launch thread");
         goto del_handler_peek;
      }
 
-   svr->clients = eina_list_append(svr->clients, cl);
+   svr->clients = eina_list_append(svr->clients, obj);
    svr->client_count++;
 
    if (!cl->delete_me)
-     ecore_con_event_client_add(cl);
+     ecore_con_event_client_add(obj);
 
    ecore_main_win32_handler_del(wh);
 
-   ResumeThread(cl->host_server->thread_read);
+   ResumeThread(svr->thread_read);
    return ECORE_CALLBACK_DONE;
 
 del_handler_peek:
    ecore_main_win32_handler_del(handler_peek);
 close_event_peek:
-   CloseHandle(cl->host_server->event_peek);
+   CloseHandle(svr->event_peek);
 del_handler_read:
    ecore_main_win32_handler_del(handler_read);
 close_event_read:
-   CloseHandle(cl->host_server->event_read);
+r  CloseHandle(svr->event_read);
 free_cl:
    free(cl);
 
@@ -371,10 +361,9 @@ free_cl:
 static unsigned int __stdcall
 _ecore_con_local_win32_listening(void *data)
 {
-   Ecore_Con_Server *svr;
+   Ecore_Con_Server *obj = data;
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    BOOL res;
-
-   svr = (Ecore_Con_Server *)data;
 
    while (1)
      {
@@ -396,8 +385,9 @@ _ecore_con_local_win32_listening(void *data)
 }
 
 Eina_Bool
-ecore_con_local_listen(Ecore_Con_Server *svr)
+ecore_con_local_listen(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    char buf[256];
    HANDLE thread_listening;
    Ecore_Win32_Handler *handler;
@@ -449,7 +439,7 @@ ecore_con_local_listen(Ecore_Con_Server *svr)
     * As the function is blocking, to let the main loop continuing
     * its iterations, we call ConnectNamedPipe() in a thread
     */
-   thread_listening = (HANDLE)_beginthreadex(NULL, 0, _ecore_con_local_win32_listening, svr, CREATE_SUSPENDED, NULL);
+   thread_listening = (HANDLE)_beginthreadex(NULL, 0, _ecore_con_local_win32_listening, obj, CREATE_SUSPENDED, NULL);
    if (!thread_listening)
      {
         ERR("Creation of the listening thread failed");
@@ -458,7 +448,7 @@ ecore_con_local_listen(Ecore_Con_Server *svr)
 
    handler = ecore_main_win32_handler_add(thread_listening,
                                           _ecore_con_local_win32_client_add,
-                                          svr);
+                                          obj);
    if (!handler)
      {
         ERR("Creation of the client add handler failed");
@@ -482,8 +472,9 @@ free_path:
 }
 
 void
-ecore_con_local_win32_server_del(Ecore_Con_Server *svr)
+ecore_con_local_win32_server_del(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      return;
 
@@ -509,38 +500,42 @@ ecore_con_local_win32_server_del(Ecore_Con_Server *svr)
 }
 
 void
-ecore_con_local_win32_client_del(Ecore_Con_Client *cl)
+ecore_con_local_win32_client_del(Ecore_Con_Client *obj)
 {
-   if ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
+
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      return;
 
-   if (((cl->host_server->type & ECORE_CON_TYPE) != ECORE_CON_LOCAL_USER) &&
-       ((cl->host_server->type & ECORE_CON_TYPE) != ECORE_CON_LOCAL_SYSTEM))
+   if (((svr->type & ECORE_CON_TYPE) != ECORE_CON_LOCAL_USER) &&
+       ((svr->type & ECORE_CON_TYPE) != ECORE_CON_LOCAL_SYSTEM))
      return;
 
-   cl->host_server->read_stop = 1;
-   while (!cl->host_server->read_stopped)
+   svr->read_stop = 1;
+   while (!svr->read_stopped)
      Sleep(100);
 
-   if (cl->host_server->event_peek)
-     CloseHandle(cl->host_server->event_peek);
-   cl->host_server->event_peek = NULL;
-   if (cl->host_server->event_read)
-     CloseHandle(cl->host_server->event_read);
-   cl->host_server->event_read = NULL;
-   free(cl->host_server->path);
-   cl->host_server->path = NULL;
-   if (cl->host_server->pipe)
-     CloseHandle(cl->host_server->pipe);
-   cl->host_server->pipe = NULL;
+   if (svr->event_peek)
+     CloseHandle(svr->event_peek);
+   svr->event_peek = NULL;
+   if (svr->event_read)
+     CloseHandle(svr->event_read);
+   svr->event_read = NULL;
+   free(svr->path);
+   svr->path = NULL;
+   if (svr->pipe)
+     CloseHandle(svr->pipe);
+   svr->pipe = NULL;
 }
 
 Eina_Bool
-ecore_con_local_connect(Ecore_Con_Server *svr,
+ecore_con_local_connect(Ecore_Con_Server *obj,
                         Eina_Bool (*cb_done)(void *data,
                                              Ecore_Fd_Handler *fd_handler))
 {
 #warning "I am pretty sure cb_done should be used."
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    char buf[256];
    Ecore_Win32_Handler *handler_read;
    Ecore_Win32_Handler *handler_peek;
@@ -604,7 +599,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    handler_read = ecore_main_win32_handler_add(svr->event_read,
                                                _ecore_con_local_win32_client_read_server_handler,
-                                               svr);
+                                               obj);
    if (!handler_read)
      {
         ERR("Can not create handler read");
@@ -620,21 +615,21 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    handler_peek = ecore_main_win32_handler_add(svr->event_peek,
                                                _ecore_con_local_win32_client_peek_server_handler,
-                                               svr);
+                                               obj);
    if (!handler_peek)
      {
         ERR("Can not create handler peek");
         goto close_event_peek;
      }
 
-   svr->thread_read = (HANDLE)_beginthreadex(NULL, 0, _ecore_con_local_win32_client_read_server_thread, svr, CREATE_SUSPENDED, NULL);
+   svr->thread_read = (HANDLE)_beginthreadex(NULL, 0, _ecore_con_local_win32_client_read_server_thread, obj, CREATE_SUSPENDED, NULL);
    if (!svr->thread_read)
      {
         ERR("Can not launch thread");
         goto del_handler_peek;
      }
 
-   if (!svr->delete_me) ecore_con_event_server_add(svr);
+   if (!svr->delete_me) ecore_con_event_server_add(obj);
 
    ResumeThread(svr->thread_read);
 
@@ -658,8 +653,9 @@ close_pipe:
 }
 
 Eina_Bool
-ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
+ecore_con_local_win32_server_flush(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    size_t num;
    BOOL res;
    DWORD written;
@@ -683,10 +679,10 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
         msg = evil_last_error_get();
         if (msg)
           {
-             ecore_con_event_server_error(svr, msg);
+             ecore_con_event_server_error(obj, msg);
              free(msg);
           }
-        _ecore_con_server_kill(svr);
+        _ecore_con_server_kill(obj);
      }
 
    svr->write_buf_offset += written;
@@ -704,14 +700,16 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
 }
 
 Eina_Bool
-ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
+ecore_con_local_win32_client_flush(Ecore_Con_Client *obj)
 {
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    Ecore_Con_Type type;
    size_t num;
    BOOL res;
    DWORD written;
+   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
 
-   type = cl->host_server->type & ECORE_CON_TYPE;
+   type = svr->type & ECORE_CON_TYPE;
 
    /* This check should never be true */
    if (type == ECORE_CON_LOCAL_ABSTRACT)
@@ -724,7 +722,7 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
    num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
    if (num <= 0) return EINA_TRUE;
 
-   res = WriteFile(cl->host_server->pipe, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, &written, NULL);
+   res = WriteFile(svr->pipe, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, &written, NULL);
    if (!res)
      {
         char *msg;
@@ -732,10 +730,10 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
         msg = evil_last_error_get();
         if (msg)
           {
-             ecore_con_event_client_error(cl, msg);
+             ecore_con_event_client_error(obj, msg);
              free(msg);
           }
-        _ecore_con_client_kill(cl);
+        _ecore_con_client_kill(obj);
      }
 
    cl->buf_offset += written;
@@ -744,10 +742,10 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
         cl->buf_offset = 0;
         eina_binbuf_free(cl->buf);
         cl->buf = NULL;
-        cl->host_server->want_write = 0;
+        svr->want_write = 0;
      }
    else if (written < (DWORD)num)
-     cl->host_server->want_write = 1;
+     svr->want_write = 1;
 
    return EINA_TRUE;
 }
