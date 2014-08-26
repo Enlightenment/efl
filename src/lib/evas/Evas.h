@@ -252,6 +252,8 @@
 
 /* This include has been added to support Eo in Evas */
 #include <Eo.h>
+#include <Efl.h>
+
 
 #include <Evas_Loader.h>
 
