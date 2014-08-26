@@ -27,8 +27,8 @@ _hashlist_free(void *data)
    eina_list_free((Eina_List*)data);
 }
 
-void
-database_deplist_free(Eina_List *data)
+static void
+_deplist_free(Eina_List *data)
 {
    Eolian_Dependency *dep;
    EINA_LIST_FREE(data, dep)
@@ -59,7 +59,7 @@ database_init()
    _constantsf = eina_hash_stringshared_new(_hashlist_free);
    _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
-   _depclasses = eina_hash_stringshared_new(EINA_FREE_CB(database_deplist_free));
+   _depclasses = eina_hash_stringshared_new(EINA_FREE_CB(_deplist_free));
    return ++_database_init_count;
 }
 

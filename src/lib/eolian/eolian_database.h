@@ -264,7 +264,6 @@ int database_shutdown();
 
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(void);
-void database_deplist_free(Eina_List *data);
 
 /* types */
 
