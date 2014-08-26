@@ -10,6 +10,8 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+#include "ecore_exe_private.h"
+
 /*
  * TESTS
  *
@@ -39,87 +41,6 @@ typedef enum
    ECORE_EXE_WIN32_SIGTERM,
    ECORE_EXE_WIN32_SIGKILL
 } Ecore_Exe_Win32_Signal;
-
-static Eina_List *exes = NULL;
-
-static int run_pri = NORMAL_PRIORITY_CLASS;
-
-struct _Ecore_Exe_Data
-{
-   char *cmd;
-   char *tag;
-
-   HANDLE process;
-   HANDLE process_thread;
-   DWORD process_id;
-   DWORD thread_id;
-   void *data;
-   Ecore_Win32_Handler *h_close;
-   Ecore_Exe_Flags flags;
-   Ecore_Exe_Win32_Signal sig;
-   Ecore_Exe_Cb pre_free_cb;
-
-   struct
-   {
-      HANDLE child_pipe;
-      HANDLE child_pipe_x;
-      HANDLE thread;
-      void *data_buf;
-      DWORD data_size;
-   } pipe_read;
-
-   struct
-   {
-      HANDLE child_pipe;
-      HANDLE child_pipe_x;
-      void *data_buf;
-      int data_size;
-   } pipe_write;
-
-   struct
-   {
-      HANDLE child_pipe;
-      HANDLE child_pipe_x;
-      HANDLE thread;
-      void *data_buf;
-      DWORD data_size;
-   } pipe_error;
-
-   Eina_Bool close_threads : 1;
-   Eina_Bool close_stdin : 1;
-   Eina_Bool is_suspended : 1;
-};
-
-typedef struct _Ecore_Exe_Data Ecore_Exe_Data;
-
-static void
-_ecore_exe_event_add_free(void *data EINA_UNUSED,
-                          void *ev)
-{
-   free(ev);
-}
-
-static void
-_ecore_exe_event_del_free(void *data EINA_UNUSED,
-                          void *ev)
-{
-   Ecore_Exe_Event_Del *e;
-
-   e = (Ecore_Exe_Event_Del *)ev;
-   if (e->exe)
-     ecore_exe_free(e->exe);
-   free(e);
-}
-
-static void
-_ecore_exe_event_exe_data_free(void *data EINA_UNUSED,
-                               void *ev)
-{
-   Ecore_Exe_Event_Data *e;
-
-   e = (Ecore_Exe_Event_Data *)ev;
-   ecore_exe_event_data_free(e);
-}
 
 static Eina_Bool
 _ecore_exe_close_cb(void *data,
@@ -318,7 +239,7 @@ static BOOL CALLBACK
 _ecore_exe_enum_windows_procedure(HWND window,
                                   LPARAM data)
 {
-   Ecore_Exe *exe = data;
+   Ecore_Exe *obj = (Ecore_Exe *) data;
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD thread_id;
 
@@ -382,33 +303,8 @@ _ecore_exe_enum_windows_procedure(HWND window,
 }
 
 void
-_ecore_exe_init(void)
+_win32_ecore_exe_run_priority_set(int pri)
 {
-   ECORE_EXE_EVENT_ADD = ecore_event_type_new();
-   ECORE_EXE_EVENT_DEL = ecore_event_type_new();
-   ECORE_EXE_EVENT_DATA = ecore_event_type_new();
-   ECORE_EXE_EVENT_ERROR = ecore_event_type_new();
-}
-
-void
-_ecore_exe_shutdown(void)
-{
-   Eina_List *l1, *l2;
-   Ecore_Exe *exe;
-
-   EINA_LIST_FOREACH_SAFE(exes, l1, l2, exe)
-     ecore_exe_free(exes);
-}
-
-EAPI int ECORE_EXE_EVENT_ADD = 0;
-EAPI int ECORE_EXE_EVENT_DEL = 0;
-EAPI int ECORE_EXE_EVENT_DATA = 0;
-EAPI int ECORE_EXE_EVENT_ERROR = 0;
-
-EAPI void
-ecore_exe_run_priority_set(int pri)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN;
    switch (pri)
      {
       case ECORE_EXE_WIN32_PRIORITY_IDLE:
@@ -440,10 +336,9 @@ ecore_exe_run_priority_set(int pri)
      }
 }
 
-EAPI int
-ecore_exe_run_priority_get(void)
+int
+_win32_ecore_exe_run_priority_get(void)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    switch (run_pri)
      {
       case IDLE_PRIORITY_CLASS:
@@ -470,24 +365,13 @@ ecore_exe_run_priority_get(void)
      }
 }
 
-EAPI Ecore_Exe *
-ecore_exe_run(const char *exe_cmd,
-              const void *data)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   return ecore_exe_pipe_run(exe_cmd, 0, data);
-}
-
-EAPI Ecore_Exe *
-ecore_exe_pipe_run(const char     *exe_cmd,
-                   Ecore_Exe_Flags flags,
-                   const void     *data)
+Eo *
+_win32_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe);
 {
    char exe_cmd_buf[PATH_MAX];
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
    PROCESS_INFORMATION pi;
-   Ecore_Exe *obj;
    Ecore_Exe_Event_Add *e;
    Eina_Bool use_sh = EINA_FALSE;
    const char *shell = NULL;
@@ -495,14 +379,8 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    DBG("Creating process %s", exe_cmd);
-
-   if (!exe_cmd || !*exe_cmd)
-     return NULL;
-
-   obj = eo_add(MY_CLASS, NULL, ecore_obj_exe_command_set(exe_cmd, flags));
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!obj)
-     return NULL;
+   const char     *exe_cmd = exe->cmd;
+   Ecore_Exe_Flags flags = exe->flags;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
@@ -539,8 +417,6 @@ ecore_exe_pipe_run(const char     *exe_cmd,
           exe_cmd_buf[sizeof(exe_cmd_buf) - 1] = '\0';
      }
 
-   exe->flags = flags;
-   exe->cmd = strdup(exe_cmd_buf);
    if (!exe->cmd)
      goto free_exe;
 
@@ -615,7 +491,6 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    exe->process_thread = pi.hThread;
    exe->process_id = pi.dwProcessId;
    exe->thread_id = pi.dwThreadId;
-   exe->data = (void *)data;
 
    exe->h_close = ecore_main_win32_handler_add(exe->process,
                                                _ecore_exe_close_cb, obj);
@@ -670,36 +545,15 @@ delete_h_close:
    return NULL;
 }
 
-EAPI void
-ecore_exe_callback_pre_free_set(Ecore_Exe   *obj,
-                                Ecore_Exe_Cb func)
-{
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
-   exe->pre_free_cb = func;
-}
-
-EAPI Eina_Bool
-ecore_exe_send(Ecore_Exe  *obj,
+Eina_Bool
+_win32_ecore_exe_send(Ecore_Exe  *obj,
+               Ecore_Exe_Data *exe,
                const void *data,
                int         size)
 {
    void *buf = NULL;
    DWORD num_exe;
    BOOL res;
-
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return EINA_FALSE;
-
-   if (exe->close_stdin)
-     {
-        ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
-            obj, size, data);
-        return EINA_FALSE;
-     }
 
    buf = realloc(exe->pipe_write.data_buf, exe->pipe_write.data_size + size);
    if (!buf) return EINA_FALSE;
@@ -720,38 +574,15 @@ ecore_exe_send(Ecore_Exe  *obj,
    return EINA_TRUE;
 }
 
-EAPI void
-ecore_exe_close_stdin(Ecore_Exe *obj)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
-   exe->close_stdin = 1;
-}
-
-/* Not used on Windows */
-EAPI void
-ecore_exe_auto_limits_set(Ecore_Exe *exe EINA_UNUSED,
-                          int        start_bytes EINA_UNUSED,
-                          int        end_bytes EINA_UNUSED,
-                          int        start_lines EINA_UNUSED,
-                          int        end_lines EINA_UNUSED)
-{
-}
-
-EAPI Ecore_Exe_Event_Data *
-ecore_exe_event_data_get(Ecore_Exe      *obj,
+Ecore_Exe_Event_Data *
+_win32_ecore_exe_event_data_get(Ecore_Exe      *obj,
+                         Ecore_Exe_Data *exe,
                          Ecore_Exe_Flags flags)
 {
    Ecore_Exe_Event_Data *e = NULL;
    unsigned char *inbuf;
    DWORD inbuf_num;
    Eina_Bool is_buffered = EINA_FALSE;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return NULL;
 
    /* Sort out what sort of event we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -855,29 +686,14 @@ ecore_exe_event_data_get(Ecore_Exe      *obj,
    return e;
 }
 
-EAPI void
-ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
-{
-   if (!e) return;
-   IF_FREE(e->lines);
-   IF_FREE(e->data);
-   free(e);
-}
-
-EAPI void *
-ecore_exe_free(Ecore_Exe *obj)
+void
+_win32_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
    void *data;
 
-   if (!exe) return NULL;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return NULL;
-
    data = exe->data;
-
    if (exe->pre_free_cb)
-     exe->pre_free_cb(data, exe);
+     exe->pre_free_cb(data, obj);
 
    /* if (exe->h_close) */
    /*   ecore_main_win32_handler_del(exe->h_close); */
@@ -887,7 +703,7 @@ ecore_exe_free(Ecore_Exe *obj)
      CloseHandle(exe->pipe_write.child_pipe);
    if (exe->pipe_write.child_pipe_x)
      CloseHandle(exe->pipe_write.child_pipe_x);
-   _ecore_exe_threads_terminate(exe);
+   _ecore_exe_threads_terminate(obj);
    if (exe->pipe_error.child_pipe)
      CloseHandle(exe->pipe_error.child_pipe);
    if (exe->pipe_error.child_pipe_x)
@@ -900,105 +716,11 @@ ecore_exe_free(Ecore_Exe *obj)
 
    exes = eina_list_remove(exes, obj);
    IF_FREE(exe->tag);
-   eo_del(exe);
-
-   return data;
 }
 
-EAPI pid_t
-ecore_exe_pid_get(const Ecore_Exe *obj)
+void
+_win32_ecore_exe_pause(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return -1;
-
-   return exe->process_id;
-}
-
-EAPI void
-ecore_exe_tag_set(Ecore_Exe  *obj,
-                  const char *tag)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
-   IF_FREE(exe->tag);
-   if (tag)
-     exe->tag = strdup(tag);
-   else
-     exe->tag = NULL;
-}
-
-EAPI const char *
-ecore_exe_tag_get(const Ecore_Exe *obj)
-{
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return NULL;
-
-   return exe->tag;
-}
-
-EAPI const char *
-ecore_exe_cmd_get(const Ecore_Exe *obj)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return NULL;
-
-   return exe->cmd;
-}
-
-EAPI void *
-ecore_exe_data_get(const Ecore_Exe *obj)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return NULL;
-
-   return exe->data;
-}
-
-EAPI void *
-ecore_exe_data_set(Ecore_Exe *obj,
-                   void      *data)
-{
-   void *ret;
-
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return NULL;
-
-   ret = exe->data;
-   exe->data = data;
-   return ret;
-}
-
-EAPI Ecore_Exe_Flags
-ecore_exe_flags_get(const Ecore_Exe *obj)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return 0;
-
-   return exe->flags;
-}
-
-EAPI void
-ecore_exe_pause(Ecore_Exe *obj)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
    if (exe->is_suspended)
      return;
 
@@ -1006,14 +728,9 @@ ecore_exe_pause(Ecore_Exe *obj)
      exe->is_suspended = 1;
 }
 
-EAPI void
-ecore_exe_continue(Ecore_Exe *obj)
+void
+_win32_ecore_exe_continue(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
    if (!exe->is_suspended)
      return;
 
@@ -1021,8 +738,8 @@ ecore_exe_continue(Ecore_Exe *obj)
      exe->is_suspended = 0;
 }
 
-EAPI void
-ecore_exe_interrupt(Ecore_Exe *obj)
+void
+_win32_ecore_exe_interrupt(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
@@ -1037,8 +754,8 @@ ecore_exe_interrupt(Ecore_Exe *obj)
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
-EAPI void
-ecore_exe_quit(Ecore_Exe *obj)
+void
+_win32_ecore_exe_quit(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
@@ -1053,8 +770,8 @@ ecore_exe_quit(Ecore_Exe *obj)
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
-EAPI void
-ecore_exe_terminate(Ecore_Exe *obj)
+void
+_win32_ecore_exe_terminate(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
@@ -1069,8 +786,8 @@ ecore_exe_terminate(Ecore_Exe *obj)
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
 
-EAPI void
-ecore_exe_kill(Ecore_Exe *obj)
+void
+_win32_ecore_exe_kill(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
@@ -1084,18 +801,3 @@ ecore_exe_kill(Ecore_Exe *obj)
    exe->sig = ECORE_EXE_WIN32_SIGKILL;
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
 }
-
-EAPI void
-ecore_exe_signal(Ecore_Exe *exe EINA_UNUSED,
-                 int        num EINA_UNUSED)
-{
-   /* does nothing */
-}
-
-EAPI void
-ecore_exe_hup(Ecore_Exe *exe EINA_UNUSED)
-{
-   /* does nothing */
-}
-
-#include "ecore_exe.eo.c"

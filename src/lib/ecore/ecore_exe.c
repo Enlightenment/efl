@@ -27,101 +27,7 @@
 
 #include <Efl.h>
 
-/* FIXME: Getting respawn to work
- *
- * There is no way that we can do anything about the internal state info of
- * an external exe.  The same can be said about the state of user code.  User
- * code in this context means the code that is using ecore_exe to manage exe's
- * for it.
- *
- * Document that the exe must be respawnable, in other words, there is no
- * state that it cannot regenerate by just killing it and starting it again.
- * This includes state that the user code knows about, as the respawn is
- * transparent to that code.  On the other hand, maybe a respawn event might
- * be useful, or maybe resend the currently non existent add event.  For
- * consistancy with ecore_con, an add event is good anyway.
- *
- * The Ecore_exe structure is reused for respawning, so that the (opaque)
- * pointer held by the user remains valid.  This means that the Ecore_Exe
- * init and del functions may need to be split into two parts each to avoid
- * duplicating code - common code part, and the rest.  This implies that
- * the unchanging members mentioned next should NEVER change.
- *
- * These structure members don't need to change -
- *   __list_data       - we stay on the list
- *   data              - passed in originally
- *   cmd               - passed in originally
- *   flags             - passed in originally
- *
- * These structure members need to change -
- *   tag               - state that must be regenerated, zap it
- *   pid               - it will be different
- *   child_fd_write    - it will be different
- *   child_fd_read     - it will be different
- *   child_fd_error    - it will be different
- *   write_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
- *   read_fd_handler   - we cannot change the fd used by a handler, this changes coz the fd changes.
- *   error_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
- *
- * Hmm, the read, write, and error buffers could be tricky.
- * They are not atomic, and could be in a semi complete state.
- * They fall into the "state must be regenerated" mentioned above.
- * A respawn/add event should take care of it.
- *
- * These structure members need to change -
- *   write_data_buf    - state that must be regenerated, zap it
- *   write_data_size   - state that must be regenerated, zap it
- *   write_data_offset - state that must be regenerated, zap it
- *   read_data_buf     - state that must be regenerated, zap it
- *   read_data_size    - state that must be regenerated, zap it
- *   error_data_buf    - state that must be regenerated, zap it
- *   error_data_size   - state that must be regenerated, zap it
- *   close_write       - state that must be regenerated, zap it
- *
- * There is the problem that an exe that fell over and needs respawning
- * might keep falling over, keep needing to be respawned, and tie up system
- * resources with the constant respawning.  An exponentially increasing
- * timeout (with maximum timeout) between respawns should take care of that.
- * Although this is not a "contention for a resource" problem, the exe falling
- * over may be, so a random element added to the timeout may help, and won't
- * hurt.  The user code may need to be informed that a timeout is in progress.
- */
-
-struct _Ecore_Exe_Data
-{
-   pid_t             pid;
-   void             *data;
-   char             *tag, *cmd;
-   Ecore_Exe_Flags   flags;
-   Ecore_Fd_Handler *write_fd_handler; /* the fd_handler to handle write to child - if this was used, or NULL if not */
-   Ecore_Fd_Handler *read_fd_handler; /* the fd_handler to handle read from child - if this was used, or NULL if not */
-   Ecore_Fd_Handler *error_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
-   void             *write_data_buf; /* a data buffer for data to write to the child -
-                                      * realloced as needed for more data and flushed when the fd handler says writes are possible
-                                      */
-   int               write_data_size; /* the size in bytes of the data buffer */
-   int               write_data_offset; /* the offset in bytes in the data buffer */
-   void             *read_data_buf; /* data read from the child awating delivery to an event */
-   int               read_data_size; /* data read from child in bytes */
-   void             *error_data_buf; /* errors read from the child awating delivery to an event */
-   int               error_data_size; /* errors read from child in bytes */
-   int               child_fd_write; /* fd to write TO to send data to the child */
-   int               child_fd_read; /* fd to read FROM when child has sent us (the parent) data */
-   int               child_fd_error; /* fd to read FROM when child has sent us (the parent) errors */
-   int               child_fd_write_x; /* fd to write TO to send data to the child */
-   int               child_fd_read_x; /* fd to read FROM when child has sent us (the parent) data */
-   int               child_fd_error_x; /* fd to read FROM when child has sent us (the parent) errors */
-   Eina_Bool         close_stdin : 1;
-
-   int               start_bytes, end_bytes, start_lines, end_lines; /* Number of bytes/lines to auto pipe at start/end of stdout/stderr. */
-
-   Ecore_Timer      *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
-   void             *doomsday_clock_dead; /* data for the doomsday clock */
-
-   Ecore_Exe_Cb      pre_free_cb;
-};
-
-typedef struct _Ecore_Exe_Data Ecore_Exe_Data;
+#include "ecore_exe_private.h"
 
 /* TODO: Something to let people build a command line and does auto escaping -
  *
@@ -323,14 +229,22 @@ EAPI void
 ecore_exe_run_priority_set(int pri)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+#ifdef _WIN32
+   _win32_ecore_exe_run_priority_set(pri);
+#else
    run_pri = pri;
+#endif
 }
 
 EAPI int
 ecore_exe_run_priority_get(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
+#ifdef _WIN32
+   return _win32_ecore_exe_run_priority_get();
+#else
    return run_pri;
+#endif
 }
 
 EAPI Ecore_Exe *
@@ -373,6 +287,10 @@ _ecore_exe_command_get(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd
 EOLIAN static Eo *
 _ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+#ifdef _WIN32
+   return _win32_ecore_exe_eo_base_finalize(obj, exe);
+#else
    int statusPipe[2] = { -1, -1 };
    int errorPipe[2] = { -1, -1 };
    int readPipe[2] = { -1, -1 };
@@ -381,7 +299,6 @@ _ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    int ok = 1;
    int result;
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!exe->cmd) return NULL;
 
    const char *exe_cmd = exe->cmd;
@@ -666,6 +583,7 @@ _ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    errno = n;
    return obj;
+#endif
 }
 
 EAPI void
@@ -689,14 +607,17 @@ ecore_exe_send(Ecore_Exe  *obj,
    if (!eo_isa(obj, MY_CLASS))
       return EINA_FALSE;
 
-   void *buf;
-
    if (exe->close_stdin)
    {
       ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
           exe, size, data);
       return EINA_FALSE;
    }
+
+#if _WIN32
+   return _win32_ecore_exe_send(obj, exe, data, size);
+#else
+   void *buf;
 
    if (exe->child_fd_write == -1)
    {
@@ -716,6 +637,7 @@ ecore_exe_send(Ecore_Exe  *obj,
      ecore_main_fd_handler_active_set(exe->write_fd_handler, ECORE_FD_WRITE);
 
    return EINA_TRUE;
+#endif
 }
 
 EAPI void
@@ -790,15 +712,18 @@ EAPI Ecore_Exe_Event_Data *
 ecore_exe_event_data_get(Ecore_Exe      *obj,
                          Ecore_Exe_Flags flags)
 {
-   Ecore_Exe_Event_Data *e = NULL;
-   int is_buffered = 0;
-   unsigned char *inbuf;
-   int inbuf_num;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, MY_CLASS);
    if (!eo_isa(obj, MY_CLASS))
       return NULL;
+
+#ifdef _WIN32
+   return _win32_ecore_exe_event_data_get(obj, exe, flags);
+#else
+   Ecore_Exe_Event_Data *e = NULL;
+   int is_buffered = 0;
+   unsigned char *inbuf;
+   int inbuf_num;
 
    /* Sort out what sort of event we are. */
    if (flags & ECORE_EXE_PIPE_READ)
@@ -908,6 +833,7 @@ ecore_exe_event_data_get(Ecore_Exe      *obj,
    }
 
    return e;
+#endif
 }
 
 EAPI void
@@ -1087,9 +1013,21 @@ _ecore_exe_efl_control_suspend_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *exe, Ein
    EINA_MAIN_LOOP_CHECK_RETURN;
 
    if (suspend)
-      kill(exe->pid, SIGSTOP);
+     {
+#ifdef _WIN32
+        _win32_ecore_exe_pause(obj, exe);
+#else
+        kill(exe->pid, SIGSTOP);
+#endif
+     }
    else
-      kill(exe->pid, SIGCONT);
+     {
+#ifdef _WIN32
+        _win32_ecore_exe_continue(obj, exe);
+#else
+        kill(exe->pid, SIGCONT);
+#endif
+     }
 }
 
 EAPI void
@@ -1100,8 +1038,12 @@ ecore_exe_interrupt(Ecore_Exe *obj)
    if (!eo_isa(obj, MY_CLASS))
       return;
 
+#ifdef _WIN32
+   _win32_ecore_exe_interrupt(obj, exe);
+#else
    _ecore_exe_dead_attach(obj);
    kill(exe->pid, SIGINT);
+#endif
 }
 
 EAPI void
@@ -1112,8 +1054,12 @@ ecore_exe_quit(Ecore_Exe *obj)
    if (!eo_isa(obj, MY_CLASS))
       return;
 
+#ifdef _WIN32
+   _win32_ecore_exe_quit(obj, exe);
+#else
    _ecore_exe_dead_attach(obj);
    kill(exe->pid, SIGQUIT);
+#endif
 }
 
 EAPI void
@@ -1124,9 +1070,13 @@ ecore_exe_terminate(Ecore_Exe *obj)
    if (!eo_isa(obj, MY_CLASS))
       return;
 
+#ifdef _WIN32
+   _win32_ecore_exe_terminate(obj, exe);
+#else
    _ecore_exe_dead_attach(obj);
    INF("Sending TERM signal to %s (%d).", exe->cmd, exe->pid);
    kill(exe->pid, SIGTERM);
+#endif
 }
 
 EAPI void
@@ -1138,6 +1088,9 @@ ecore_exe_kill(Ecore_Exe *obj)
    if (!eo_isa(obj, MY_CLASS))
       return;
 
+#ifdef _WIN32
+   _win32_ecore_exe_kill(obj, exe);
+#else
    dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
    if (dead)
    {
@@ -1150,6 +1103,7 @@ ecore_exe_kill(Ecore_Exe *obj)
 
    INF("Sending KILL signal to %s (%d).", exe->cmd, exe->pid);
    kill(exe->pid, SIGKILL);
+#endif
 }
 
 EAPI void
