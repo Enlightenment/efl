@@ -4,11 +4,51 @@
 
 #include "ecore_wl_private.h"
 
-/* local function prototypes */
-static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED);
-static void _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED);
-static void _ecore_wl_output_cb_done(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED);
-static void _ecore_wl_output_cb_scale(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED, int scale EINA_UNUSED);
+static void 
+_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform)
+{
+   Ecore_Wl_Output *output;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   output = data;
+   output->allocation.x = x;
+   output->allocation.y = y;
+   output->mw = w;
+   output->mh = h;
+   output->transform = transform;
+}
+
+static void 
+_ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED)
+{
+   Ecore_Wl_Output *output;
+   Ecore_Wl_Display *ewd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   output = data;
+   ewd = output->display;
+   if (flags & WL_OUTPUT_MODE_CURRENT)
+     {
+        output->allocation.w = w;
+        output->allocation.h = h;
+        _ecore_wl_disp->output = output;
+        if (ewd->output_configure) (*ewd->output_configure)(output, ewd->data);
+     }
+}
+
+static void 
+_ecore_wl_output_cb_done(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED)
+{
+
+}
+
+static void 
+_ecore_wl_output_cb_scale(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED, int scale EINA_UNUSED)
+{
+
+}
 
 /* wayland listeners */
 static const struct wl_output_listener _ecore_wl_output_listener = 
@@ -55,51 +95,4 @@ _ecore_wl_output_del(Ecore_Wl_Output *output)
    _ecore_wl_disp->outputs = 
      eina_inlist_remove(_ecore_wl_disp->outputs, EINA_INLIST_GET(output));
    free(output);
-}
-
-/* local functions */
-static void 
-_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform)
-{
-   Ecore_Wl_Output *output;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   output = data;
-   output->allocation.x = x;
-   output->allocation.y = y;
-   output->mw = w;
-   output->mh = h;
-   output->transform = transform;
-}
-
-static void 
-_ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED)
-{
-   Ecore_Wl_Output *output;
-   Ecore_Wl_Display *ewd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   output = data;
-   ewd = output->display;
-   if (flags & WL_OUTPUT_MODE_CURRENT)
-     {
-        output->allocation.w = w;
-        output->allocation.h = h;
-        _ecore_wl_disp->output = output;
-        if (ewd->output_configure) (*ewd->output_configure)(output, ewd->data);
-     }
-}
-
-static void 
-_ecore_wl_output_cb_done(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED)
-{
-
-}
-
-static void 
-_ecore_wl_output_cb_scale(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED, int scale EINA_UNUSED)
-{
-
 }
