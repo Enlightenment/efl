@@ -1244,7 +1244,7 @@ _ecore_con_server_eo_base_destructor(Eo *obj, Ecore_Con_Server_Data *svr)
      }
 
 #ifdef _WIN32
-   ecore_con_local_win32_server_del(svr);
+   ecore_con_local_win32_server_del(obj);
 #endif
    if (svr->event_count) return;
 
@@ -1325,7 +1325,7 @@ _ecore_con_client_eo_base_destructor(Eo *obj, Ecore_Con_Client_Data *cl)
    --host_server->client_count;
 
 #ifdef _WIN32
-   ecore_con_local_win32_client_del(cl);
+   ecore_con_local_win32_client_del(obj);
 #endif
 
    if (cl->event_count) return;
@@ -1701,9 +1701,9 @@ _ecore_con_cb_tcp_connect(void *data,
           {
              char *err;
              err = evil_format_message(WSAGetLastError());
-             _ecore_con_event_server_error(svr, err, EINA_FALSE);
-             ecore_con_ssl_server_shutdown(svr);
-             _ecore_con_server_kill(svr);
+             _ecore_con_event_server_error(obj, err, EINA_FALSE);
+             ecore_con_ssl_server_shutdown(obj);
+             _ecore_con_server_kill(obj);
              return;
           }
 
@@ -2297,7 +2297,7 @@ _ecore_con_server_flush(Ecore_Con_Server *obj)
    DBG("(svr=%p,buf=%p)", svr, svr->buf);
    if (!svr->fd_handler) return;
 #ifdef _WIN32
-   if (ecore_con_local_win32_server_flush(svr))
+   if (ecore_con_local_win32_server_flush(obj))
      return;
 #endif
 
@@ -2403,7 +2403,7 @@ _ecore_con_client_flush(Ecore_Con_Client *obj)
 
    if (!cl->fd_handler) return;
 #ifdef _WIN32
-   if (ecore_con_local_win32_client_flush(cl))
+   if (ecore_con_local_win32_client_flush(obj))
      return;
 #endif
 
