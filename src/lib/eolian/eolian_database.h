@@ -46,12 +46,22 @@ extern Eina_Hash *_constantsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
 extern Eina_Hash *_tfilenames;
 
+/* a hash holding lists of deps */
+extern Eina_Hash *_depclasses;
+
 typedef struct _Eolian_Object
 {
    const char *file;
    int line;
    int column;
 } Eolian_Object;
+
+typedef struct _Eolian_Dependency
+{
+   Eolian_Object base;
+   Eina_Stringshare *filename;
+   Eina_Stringshare *name;
+} Eolian_Dependency;
 
 struct _Eolian_Class
 {
@@ -254,6 +264,7 @@ int database_shutdown();
 
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(void);
+void database_deplist_free(Eina_List *data);
 
 /* types */
 

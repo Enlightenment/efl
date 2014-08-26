@@ -17,6 +17,7 @@ Eina_Hash *_globalsf   = NULL;
 Eina_Hash *_constantsf = NULL;
 Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
+Eina_Hash *_depclasses = NULL;
 
 static int _database_init_count = 0;
 
@@ -24,6 +25,19 @@ static void
 _hashlist_free(void *data)
 {
    eina_list_free((Eina_List*)data);
+}
+
+void
+database_deplist_free(Eina_List *data)
+{
+   Eolian_Dependency *dep;
+   EINA_LIST_FREE(data, dep)
+     {
+        eina_stringshare_del(dep->base.file);
+        eina_stringshare_del(dep->filename);
+        eina_stringshare_del(dep->name);
+        free(dep);
+     }
 }
 
 int
@@ -45,6 +59,7 @@ database_init()
    _constantsf = eina_hash_stringshared_new(_hashlist_free);
    _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
+   _depclasses = eina_hash_stringshared_new(EINA_FREE_CB(database_deplist_free));
    return ++_database_init_count;
 }
 
@@ -74,6 +89,7 @@ database_shutdown()
         eina_hash_free(_constantsf); _constantsf = NULL;
         eina_hash_free(_filenames ); _filenames  = NULL;
         eina_hash_free(_tfilenames); _tfilenames = NULL;
+        eina_hash_free(_depclasses); _depclasses = NULL;
         eina_shutdown();
      }
    return _database_init_count;
@@ -154,11 +170,14 @@ EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
    Eina_Iterator *itr;
+   Eina_List *depl;
+   Eolian_Dependency *dep;
    char *bfiledup = strdup(filepath);
    char *bfilename = basename(bfiledup);
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
    const char *inherit_name;
    Eolian_Implement *impl;
+   Eina_Bool failed_dep = EINA_FALSE;
    if (!class)
      {
         if (!eo_parser_database_fill(filepath, EINA_FALSE))
@@ -175,6 +194,32 @@ eolian_eo_file_parse(const char *filepath)
           }
      }
    free(bfiledup);
+   /* parse dependencies first */
+   depl = eina_hash_find(_depclasses, eolian_class_file_get(class));
+   if (!depl)
+     goto inherits;
+   eina_hash_set(_depclasses, eolian_class_file_get(class), NULL);
+   EINA_LIST_FREE(depl, dep)
+     {
+        if (failed_dep) goto free;
+        if (!eolian_class_get_by_name(dep->name) &&
+            !eolian_eo_file_parse(dep->filename))
+          {
+             eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR,
+                 dep->base.file, "", dep->base.line, "failed to parse "
+                   "dependency '%s' at column %d", dep->name, dep->base.column);
+             failed_dep = EINA_TRUE; /* do not parse anymore stuff */
+          }
+free:
+        eina_stringshare_del(dep->base.file);
+        eina_stringshare_del(dep->filename);
+        eina_stringshare_del(dep->name);
+        free(dep);
+     }
+   if (failed_dep)
+     goto error;
+   /* and then inherits */
+inherits:
    itr = eolian_class_inherits_get(class);
    EINA_ITERATOR_FOREACH(itr, inherit_name)
      {

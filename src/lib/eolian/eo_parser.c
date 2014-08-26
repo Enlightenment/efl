@@ -775,6 +775,19 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool allow_named,
      }
 }
 
+static void
+_append_dep(Eo_Lexer *ls, const char *fname, const char *name, int line, int col)
+{
+   Eolian_Dependency *dep = calloc(1, sizeof(Eolian_Dependency));
+   dep->base.file = eina_stringshare_ref(ls->filename);
+   dep->base.line = line;
+   dep->base.column = col;
+   dep->filename = eina_stringshare_add(fname);
+   dep->name     = eina_stringshare_add(name);
+   eina_hash_set(_depclasses, ls->filename, eina_list_append((Eina_List*)
+       eina_hash_find(_depclasses, ls->filename), dep));
+}
+
 static Eolian_Type *
 parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
 {
@@ -926,10 +939,10 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
           }
         else
           {
+             int dline = ls->line_number, dcol = ls->column;
              const char *bnm, *nm;
              char *fnm;
              buf = push_strbuf(ls);
-             eo_lexer_context_push(ls);
              parse_name(ls, buf);
              nm = eina_strbuf_string_get(buf);
              bnm = eina_stringshare_ref(ls->filename);
@@ -941,13 +954,8 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
                   free(fnm);
                   if (fname)
                     {
-                       if (!eolian_class_get_by_name(nm)
-                        && !eolian_eo_file_parse(fname))
-                         {
-                            eo_lexer_context_restore(ls);
-                            eo_lexer_syntax_error(ls,
-                                "failed to parse dependency");
-                         }
+                       if (!eolian_class_get_by_name(nm))
+                         _append_dep(ls, fname, nm, dline, dcol);
                        def->type = EOLIAN_TYPE_CLASS;
                     }
                }
@@ -957,7 +965,6 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
                   free(fnm);
                   def->type = EOLIAN_TYPE_CLASS;
                }
-             eo_lexer_context_pop(ls);
              _fill_type_name(def, eina_stringshare_add(nm));
              pop_strbuf(ls);
           }
