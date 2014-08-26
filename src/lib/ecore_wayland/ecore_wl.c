@@ -308,6 +308,10 @@ _ecore_wl_subcompositor_get(void)
 EAPI void
 ecore_wl_screen_size_get(int *w, int *h)
 {
+   Ecore_Wl_Output *out;
+   Eina_Inlist *tmp;
+   int ow = 0, oh = 0;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (w) *w = 0;
@@ -317,7 +321,6 @@ ecore_wl_screen_size_get(int *w, int *h)
 
    _ecore_wl_init_wait();
 
-   // XXX: this code is dumb - screen size doesnt allow for > 1 output.
    // the first sync is in case registry replies are not back yet
    if (!_ecore_wl_disp->output)
      {
@@ -326,22 +329,26 @@ ecore_wl_screen_size_get(int *w, int *h)
         if (!_ecore_wl_disp->output) ecore_wl_sync();
      }
 
-   if (!_ecore_wl_disp->output) return;
-
-   switch (_ecore_wl_disp->output->transform)
+   EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->outputs, tmp, out)
      {
-      case WL_OUTPUT_TRANSFORM_90:
-      case WL_OUTPUT_TRANSFORM_270:
-      case WL_OUTPUT_TRANSFORM_FLIPPED_90:
-      case WL_OUTPUT_TRANSFORM_FLIPPED_270:
-         /* Swap width and height */
-         if (w) *w = _ecore_wl_disp->output->allocation.h;
-         if (h) *h = _ecore_wl_disp->output->allocation.w;
-         break;
-      default:
-         if (w) *w = _ecore_wl_disp->output->allocation.w;
-         if (h) *h = _ecore_wl_disp->output->allocation.h;
+        switch (out->transform)
+          {
+           case WL_OUTPUT_TRANSFORM_90:
+           case WL_OUTPUT_TRANSFORM_270:
+           case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+           case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+             /* Swap width and height */
+             ow += out->allocation.h;
+             oh += out->allocation.w;
+             break;
+           default:
+             ow += out->allocation.w;
+             oh += out->allocation.h;
+          }
      }
+
+   if (w) *w = ow;
+   if (h) *h = oh;
 }
 
 /* @since 1.2 */
