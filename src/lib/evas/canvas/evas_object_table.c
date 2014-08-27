@@ -480,7 +480,7 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Table_Data 
    hh = h - ((priv->size.rows - 1) * priv->pad.v);
 
    if (ww < 0) ww = 0;
-   if (ww < 0) ww = 0;
+   if (hh < 0) hh = 0;
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
