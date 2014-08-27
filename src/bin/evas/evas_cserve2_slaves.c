@@ -568,11 +568,11 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
    sb->write_fd = child[1];
    flags = fcntl(sb->write_fd, F_GETFL);
    flags |= O_NONBLOCK;
-   fcntl(sb->write_fd, F_SETFL, flags);
+   if (fcntl(sb->write_fd, F_SETFL, flags) < 0) ERR("fcntl NONBLOCK failed");
    sb->read_fd = parent[0];
    flags = fcntl(sb->read_fd, F_GETFL);
    flags |= O_NONBLOCK;
-   fcntl(sb->read_fd, F_SETFL, flags);
+   if (fcntl(sb->read_fd, F_SETFL, flags) < 0) ERR("fcntl NONBLOCK failed");
    sb->read_cb = read_cb;
    sb->dead_cb = dead_cb;
    sb->data = data;
