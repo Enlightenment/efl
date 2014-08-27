@@ -252,11 +252,15 @@ ecore_con_local_listen(
         mask = S_IRUSR | S_IWUSR | S_IXUSR;
         snprintf(buf, sizeof(buf), "%s/.ecore", homedir);
         if (stat(buf, &st) < 0)
-          mkdir(buf, mask);
+          {
+             if (mkdir(buf, mask) < 0) ERR("mkdir '%s' failed", buf);
+          }
 
         snprintf(buf, sizeof(buf), "%s/.ecore/%s", homedir, svr->name);
         if (stat(buf, &st) < 0)
-          mkdir(buf, mask);
+          {
+             if (mkdir(buf, mask) < 0) ERR("mkdir '%s' failed", buf);
+          }
 
         snprintf(buf,
                  sizeof(buf),
