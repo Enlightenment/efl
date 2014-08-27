@@ -1337,7 +1337,7 @@ _ethumb_dbus_crop_set(Ethumbd_Object *eobject EINA_UNUSED, Eldbus_Message_Iter *
 	return 0;
      }
 
-   eldbus_message_iter_arguments_get(st, "dd", &x, &y);
+   if (!eldbus_message_iter_arguments_get(st, "dd", &x, &y)) return 0;
    DBG("setting crop to: %3.2f,%3.2f", x, y);
    request->setup.flags.crop = 1;
    request->setup.cx = x;
