@@ -96,7 +96,7 @@ evas_async_events_init(void)
    _fd_write = filedes[1];
 
 #ifdef HAVE_FCNTL
-   fcntl(_fd_read, F_SETFL, O_NONBLOCK);
+   if (fcntl(_fd_read, F_SETFL, O_NONBLOCK) < 0) ERR("Can't set NONBLOCK on async fd");
 #endif
 
    eina_spinlock_new(&async_lock);
