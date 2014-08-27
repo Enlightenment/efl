@@ -60,15 +60,17 @@ Eina_Bool
 evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
 {
    Evas_3D_Mesh_Frame *curframe = evas_3d_mesh_frame_find(pd, frame);
-   int i = 0, j = 0, step = 0, size = 0;
+   int i = 0, j = 0, step = 0, size = 0, max;
    float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
    float *minmaxdata = NULL;
    Evas_Box3 box3;
 
+   if (stride <= 0) return EINA_FALSE;
+
    if (!curframe)
      {
         ERR("Invalid frame %i.", frame);
-	return EINA_FALSE;
+        return EINA_FALSE;
      }
 
    step = curframe->vertices[EVAS_3D_VERTEX_POSITION].element_count;
@@ -86,7 +88,8 @@ evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
    vzmax = vzmin = minmaxdata[2];
    j += step;
 
-   for (i = 1; i < size/stride; ++i)
+   max = size / stride;
+   for (i = 1; i < max; ++i)
      {
         vxmin > minmaxdata[j] ? vxmin = minmaxdata[j] : 0;
         vxmax < minmaxdata[j] ? vxmax = minmaxdata[j] : 0;
