@@ -55,7 +55,6 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
                        int             hash,
                        int            *previous)
 {
-   Eina_Bool found = EINA_FALSE;
    int prev = -1;
    int current;
 
@@ -69,7 +68,6 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
                  ((ed->all[current].str == string) ||
                      (!strcmp(ed->all[current].str, string))))
                {
-                  found = EINA_TRUE;
                   break;
                }
           }
