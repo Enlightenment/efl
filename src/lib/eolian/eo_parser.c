@@ -455,6 +455,7 @@ parse_expr_simple(Eo_Lexer *ls)
            eo_lexer_get(ls);
            expr = parse_expr(ls);
            check_match(ls, ')', '(', line, col);
+           break;
         }
       default:
         expr = NULL; /* shut up compiler */
