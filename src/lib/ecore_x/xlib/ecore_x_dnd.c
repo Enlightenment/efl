@@ -264,8 +264,9 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    atom = ecore_x_atom_get(type);
-   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
-                                    XA_ATOM, 32, &old_data, &num);
+   if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
+                                        XA_ATOM, 32, &old_data, &num) == 0)
+     return;
    oldset = (Ecore_X_Atom *)old_data;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
