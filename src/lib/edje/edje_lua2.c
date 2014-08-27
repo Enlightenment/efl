@@ -2026,7 +2026,7 @@ _elua_top(lua_State *L)                                         // Stack usage [
    Evas_Object *o;
    Eina_List *list, *l;
    if (!_elua_isa(obj, _elua_evas_meta)) return 0;
-   if (!(list = (Eina_List *)evas_object_smart_members_get(obj->ed->obj))) return 0;
+   list = evas_object_smart_members_get(obj->ed->obj);
    if (!list) return 0;
    for (l = eina_list_last(list); l; l = l->prev)
      {
