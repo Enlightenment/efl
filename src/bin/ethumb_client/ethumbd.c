@@ -1588,7 +1588,8 @@ _ethumb_dbus_ethumb_setup_parse_element(Ethumbd_Object *eobject, Eldbus_Message_
    const char *option;
    int i, r;
 
-   eldbus_message_iter_arguments_get(data, "sv", &option, &variant);
+   if (!eldbus_message_iter_arguments_get(data, "sv", &option, &variant))
+     return 0;
 
    r = 0;
    for (i = 0; _option_cbs[i].option; i++)
