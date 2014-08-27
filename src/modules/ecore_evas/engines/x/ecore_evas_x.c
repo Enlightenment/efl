@@ -2197,7 +2197,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 
                   ecore_x_window_size_get(ee->prop.window, &w, &h);
                   ecore_x_window_resize(ee->prop.window, h, w);
-                  if (ECORE_EVAS_PORTRAIT(ee))
+                  if (PORTRAIT_CHECK(rotation))
                     {
                        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
                        evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
@@ -2209,7 +2209,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                     }
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
                }
-             if (ECORE_EVAS_PORTRAIT(ee))
+             if (PORTRAIT_CHECK(rotation))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
@@ -2219,7 +2219,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
              /* int w, h; */
 
              /* ecore_x_window_size_get(ee->prop.window, &w, &h); */
-             if (ECORE_EVAS_PORTRAIT(ee))
+             if (PORTRAIT_CHECK(rotation))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -2230,7 +2230,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                   evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
-             if (ECORE_EVAS_PORTRAIT(ee))
+             if (PORTRAIT_CHECK(rotation))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
