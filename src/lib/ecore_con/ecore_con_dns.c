@@ -57,10 +57,14 @@ _ecore_con_dns_free(Ecore_Con_DNS *dns)
 static void
 _ecore_con_dns_del(Ecore_Con_DNS *dns)
 {
-   Ecore_Con_Server_Data *svr = NULL;
    if (dns->svr)
-      svr = eo_data_scope_get(dns->svr, ECORE_CON_CLIENT_CLASS);
-   if (svr->infos) svr->infos = eina_list_remove(svr->infos, dns);
+     {
+        Ecore_Con_Server_Data *svr;
+
+        svr = eo_data_scope_get(dns->svr, ECORE_CON_CLIENT_CLASS);
+        if ((svr) && (svr->infos))
+          svr->infos = eina_list_remove(svr->infos, dns);
+     }
    _ecore_con_dns_free(dns);
 }
 
