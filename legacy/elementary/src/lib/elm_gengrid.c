@@ -4325,7 +4325,7 @@ elm_gengrid_last_page_get(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_scrollable_last_page_get(h_pagenumber, v_pagenumber));
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_gengrid_page_show(const Evas_Object *obj,
                       int h_pagenumber,
                       int v_pagenumber)
@@ -4334,7 +4334,7 @@ elm_gengrid_page_show(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_scrollable_page_show(h_pagenumber, v_pagenumber));
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_gengrid_page_bring_in(const Evas_Object *obj,
                           int h_pagenumber,
                           int v_pagenumber)

@@ -53,9 +53,11 @@ EAPI Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned 
  * elm_gengrid_page_show(sc, h_page + 1, v_page);
  * @endcode
  *
- * @see elm_gengrid_page_bring_in()
+ * @deprecated Use elm_scroller_page_show() instead.
+ *
+ * @see elm_scroller_page_bring_in()
  */
-EAPI void                          elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+EINA_DEPRECATED EAPI void                          elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
 /**
  * Set the scrollbar policy
@@ -158,8 +160,8 @@ EINA_DEPRECATED EAPI void          elm_gengrid_bounce_get(const Evas_Object *obj
  * @see elm_scroller_current_page_set()
  *
  * @see elm_gengrid_last_page_get()
- * @see elm_gengrid_page_show()
- * @see elm_gengrid_page_bring_in()
+ * @see elm_scroller_page_show()
+ * @see elm_scroller_page_bring_in()
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -178,8 +180,8 @@ EINA_DEPRECATED EAPI void          elm_gengrid_current_page_get(const Evas_Objec
  * @see elm_scroller_last_page_set()
  *
  * @see elm_gengrid_current_page_get()
- * @see elm_gengrid_page_show()
- * @see elm_gengrid_page_bring_in()
+ * @see elm_scroller_page_show()
+ * @see elm_scroller_page_bring_in()
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -205,9 +207,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *
  *
  * @deprecated Use elm_scroller_page_bring_in() instead.
  *
- * @see elm_scroller_page_bring_in()
- *
- * @see elm_gengrid_page_show()
+ * @see elm_scroller_page_show()
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
