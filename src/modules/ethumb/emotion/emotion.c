@@ -352,6 +352,7 @@ _thumb_generate(Ethumb *e)
    int r;
    const char *file;
    Ethumb_Thumb_Format f;
+   double dv;
    struct _emotion_plugin *_plugin = calloc(sizeof(struct _emotion_plugin), 1);
 
    o = emotion_object_add(ethumb_evas_get(e));
@@ -376,7 +377,9 @@ _thumb_generate(Ethumb *e)
    _plugin->video = o;
    _plugin->e = e;
 
-   _plugin->ptotal = ethumb_video_time_get(e) / ethumb_video_ntimes_get(e);
+   dv = ethumb_video_ntimes_get(e);
+   if (dv > 0.0) _plugin->ptotal = ethumb_video_time_get(e) / dv;
+   else _plugin->ptotal = 0.0;
    _plugin->pcount = 1;
 
    _resize_movie(_plugin);
