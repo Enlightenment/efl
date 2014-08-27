@@ -1001,7 +1001,7 @@ _ephysics_body_soft_body_mass_set(EPhysics_Body *body, double mass)
 {
    int valid_nodes;
    btSoftBody::Node node;
-   double inverse_mass;
+   double inverse_mass = 0.0;
 
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      body->soft_body->setTotalMass(mass);
@@ -1030,7 +1030,7 @@ _ephysics_body_soft_body_mass_set(EPhysics_Body *body, double mass)
           {
              node = body->soft_body->m_nodes[i];
              if (node.m_im && !node.m_battach)
-                  node.m_im = inverse_mass;
+               node.m_im = inverse_mass;
           }
      }
 }
