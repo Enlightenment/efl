@@ -40,7 +40,7 @@ _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handle
    void *buf;
    DWORD n;
    Eina_Bool broken_pipe = EINA_FALSE;
-   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
 
    if (!ResetEvent(host_svr->event_read))
      return ECORE_CALLBACK_RENEW;
@@ -90,7 +90,7 @@ _ecore_con_local_win32_server_peek_client_handler(void *data, Ecore_Win32_Handle
 {
    Ecore_Con_Client *obj = data;
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
-   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
 #if 0
    char *msg;
 #endif
@@ -237,7 +237,7 @@ _ecore_con_local_win32_server_read_client_thread(void *data)
 {
    Ecore_Con_Client *obj = data;
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
-   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *host_svr = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
    DWORD nbr_bytes = 0;
 
    host_svr->read_stopped = EINA_FALSE;
@@ -508,7 +508,7 @@ void
 ecore_con_local_win32_client_del(Ecore_Con_Client *obj)
 {
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      return;
@@ -712,7 +712,7 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *obj)
    size_t num;
    BOOL res;
    DWORD written;
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(cl->host_server, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
 
    type = svr->type & ECORE_CON_TYPE;
 
