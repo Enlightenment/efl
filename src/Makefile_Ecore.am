@@ -97,6 +97,7 @@ lib/ecore/ecore_exe_private.h \
 lib/ecore/ecore_private.h
 
 if HAVE_WIN32
+lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_exe_win32.c
 else
 EXTRA_DIST += lib/ecore/ecore_exe_ps3.c
 #if ECORE_HAVE_PS3
@@ -105,7 +106,7 @@ EXTRA_DIST += lib/ecore/ecore_exe_ps3.c
 #if ECORE_HAVE_EXOTIC
 #libecore_la_SOURCES +=
 #else
-lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_signal.c
+lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_signal.c lib/ecore/ecore_exe_posix.c
 #endif
 #endif
 endif

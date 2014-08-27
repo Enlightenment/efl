@@ -1,3 +1,11 @@
+typedef enum
+{
+   ECORE_EXE_WIN32_SIGINT,
+   ECORE_EXE_WIN32_SIGQUIT,
+   ECORE_EXE_WIN32_SIGTERM,
+   ECORE_EXE_WIN32_SIGKILL
+} Ecore_Exe_Win32_Signal;
+
 /* FIXME: Getting respawn to work
  *
  * There is no way that we can do anything about the internal state info of
@@ -101,9 +109,7 @@ struct _Ecore_Exe_Data
 
    Eina_Bool close_threads : 1;
    Eina_Bool is_suspended : 1;
-#endif
-// FIXME: For now just waste memory on windows.
-// #else
+#else
    Ecore_Fd_Handler *write_fd_handler; /* the fd_handler to handle write to child - if this was used, or NULL if not */
    Ecore_Fd_Handler *read_fd_handler; /* the fd_handler to handle read from child - if this was used, or NULL if not */
    Ecore_Fd_Handler *error_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
@@ -127,7 +133,7 @@ struct _Ecore_Exe_Data
 
    Ecore_Timer      *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
    void             *doomsday_clock_dead; /* data for the doomsday clock */
-//#endif
+#endif
 
    Ecore_Exe_Cb      pre_free_cb;
    Eina_Bool         close_stdin : 1;
@@ -135,18 +141,32 @@ struct _Ecore_Exe_Data
 
 typedef struct _Ecore_Exe_Data Ecore_Exe_Data;
 
+EAPI extern int ECORE_EXE_EVENT_ADD;
+EAPI extern int ECORE_EXE_EVENT_DEL;
+EAPI extern int ECORE_EXE_EVENT_DATA;
+EAPI extern int ECORE_EXE_EVENT_ERROR;
+extern Eina_List *_ecore_exe_exes;
 
-#ifdef _WIN32
-void _win32_ecore_exe_run_priority_set(int pri);
-int _win32_ecore_exe_run_priority_get(void);
-Eo *_win32_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe);
-Eina_Bool _win32_ecore_exe_send(Ecore_Exe *obj, Ecore_Exe_Data *exe, const void *data, int size);
-Ecore_Exe_Event_Data *ecore_exe_event_data_get(Ecore_Exe *obj, Ecore_Exe_Data *exe, Ecore_Exe_Flags flags);
-void _win32_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe);
-void _win32_ecore_exe_pause(Ecore_Exe *obj, Ecore_Exe_Data *exe);
-void _win32_ecore_exe_continue(Ecore_Exe *obj, Ecore_Exe_Data *exe);
-void _win32_ecore_exe_interrupt(Ecore_Exe *obj, Ecore_Exe_Data *exe);
-void _win32_ecore_exe_quit(Ecore_Exe *obj, Ecore_Exe_Data *exe);
-void _win32_ecore_exe_terminate(Ecore_Exe *obj, Ecore_Exe_Data *exe);
-void _win32_ecore_exe_kill(Ecore_Exe *obj, Ecore_Exe_Data *exe);
-#endif
+Ecore_Exe *_ecore_exe_find(pid_t pid);
+void *_ecore_exe_event_del_new(void);
+void _ecore_exe_event_del_free(void *data EINA_UNUSED, void *ev);
+void _ecore_exe_event_exe_data_free(void *data EINA_UNUSED, void *ev);
+Ecore_Exe_Event_Add * _ecore_exe_event_add_new(void);
+void _ecore_exe_event_add_free(void *data EINA_UNUSED, void *ev);
+
+void _impl_ecore_exe_run_priority_set(int pri);
+int _impl_ecore_exe_run_priority_get(void);
+void _impl_ecore_exe_auto_limits_set(Ecore_Exe *obj, Ecore_Exe_Data *exe, int start_bytes, int end_bytes, int start_lines, int end_lines);
+Eo *_impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_efl_control_suspend_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *exe, Eina_Bool suspend);
+Eina_Bool _impl_ecore_exe_send(Ecore_Exe *obj, Ecore_Exe_Data *exe, const void *data, int size);
+Ecore_Exe_Event_Data *_impl_ecore_exe_event_data_get(Ecore_Exe *obj, Ecore_Exe_Data *exe, Ecore_Exe_Flags flags);
+void _impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_pause(Ecore_Exe *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_continue(Ecore_Exe *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_interrupt(Ecore_Exe *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_quit(Ecore_Exe *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_terminate(Ecore_Exe *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_kill(Ecore_Exe *obj, Ecore_Exe_Data *exe);
+void _impl_ecore_exe_signal(Ecore_Exe *obj, Ecore_Exe_Data *exe, int num);
+void _impl_ecore_exe_hup(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe);

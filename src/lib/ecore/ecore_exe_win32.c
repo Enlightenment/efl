@@ -34,13 +34,7 @@
 
 #define ECORE_EXE_WIN32_TIMEOUT 3000
 
-typedef enum
-{
-   ECORE_EXE_WIN32_SIGINT,
-   ECORE_EXE_WIN32_SIGQUIT,
-   ECORE_EXE_WIN32_SIGTERM,
-   ECORE_EXE_WIN32_SIGKILL
-} Ecore_Exe_Win32_Signal;
+static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
 
 static Eina_Bool
 _ecore_exe_close_cb(void *data,
@@ -303,7 +297,7 @@ _ecore_exe_enum_windows_procedure(HWND window,
 }
 
 void
-_win32_ecore_exe_run_priority_set(int pri)
+_impl_ecore_exe_run_priority_set(int pri)
 {
    switch (pri)
      {
@@ -337,7 +331,7 @@ _win32_ecore_exe_run_priority_set(int pri)
 }
 
 int
-_win32_ecore_exe_run_priority_get(void)
+_impl_ecore_exe_run_priority_get(void)
 {
    switch (run_pri)
      {
@@ -366,7 +360,7 @@ _win32_ecore_exe_run_priority_get(void)
 }
 
 Eo *
-_win32_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe);
+_impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
    char exe_cmd_buf[PATH_MAX];
    SECURITY_ATTRIBUTES sa;
@@ -378,8 +372,8 @@ _win32_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe);
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   DBG("Creating process %s", exe_cmd);
    const char     *exe_cmd = exe->cmd;
+   DBG("Creating process %s", exe_cmd);
    Ecore_Exe_Flags flags = exe->flags;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
@@ -503,7 +497,7 @@ _win32_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe);
         goto delete_h_close;
      }
 
-   exes = eina_list_append(exes, obj);
+   _ecore_exe_exes = eina_list_append(_ecore_exe_exes, obj);
 
    e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
    if (!e) goto delete_h_close;
@@ -546,7 +540,7 @@ delete_h_close:
 }
 
 Eina_Bool
-_win32_ecore_exe_send(Ecore_Exe  *obj,
+_impl_ecore_exe_send(Ecore_Exe  *obj,
                Ecore_Exe_Data *exe,
                const void *data,
                int         size)
@@ -575,7 +569,7 @@ _win32_ecore_exe_send(Ecore_Exe  *obj,
 }
 
 Ecore_Exe_Event_Data *
-_win32_ecore_exe_event_data_get(Ecore_Exe      *obj,
+_impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
                          Ecore_Exe_Data *exe,
                          Ecore_Exe_Flags flags)
 {
@@ -687,7 +681,7 @@ _win32_ecore_exe_event_data_get(Ecore_Exe      *obj,
 }
 
 void
-_win32_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
    void *data;
 
@@ -714,12 +708,12 @@ _win32_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
      CloseHandle(exe->pipe_read.child_pipe_x);
    free(exe->cmd);
 
-   exes = eina_list_remove(exes, obj);
+   _ecore_exe_exes = eina_list_remove(_ecore_exe_exes, obj);
    IF_FREE(exe->tag);
 }
 
 void
-_win32_ecore_exe_pause(Ecore_Exe *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_pause(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe)
 {
    if (exe->is_suspended)
      return;
@@ -729,7 +723,7 @@ _win32_ecore_exe_pause(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 }
 
 void
-_win32_ecore_exe_continue(Ecore_Exe *obj, Ecore_Exe_Data *exe)
+_impl_ecore_exe_continue(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe)
 {
    if (!exe->is_suspended)
      return;
@@ -739,13 +733,8 @@ _win32_ecore_exe_continue(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 }
 
 void
-_win32_ecore_exe_interrupt(Ecore_Exe *obj)
+_impl_ecore_exe_interrupt(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
    CloseHandle(exe->process_thread);
    exe->process_thread = NULL;
    CloseHandle(exe->process);
@@ -755,13 +744,8 @@ _win32_ecore_exe_interrupt(Ecore_Exe *obj)
 }
 
 void
-_win32_ecore_exe_quit(Ecore_Exe *obj)
+_impl_ecore_exe_quit(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
    CloseHandle(exe->process_thread);
    exe->process_thread = NULL;
    CloseHandle(exe->process);
@@ -771,14 +755,8 @@ _win32_ecore_exe_quit(Ecore_Exe *obj)
 }
 
 void
-_win32_ecore_exe_terminate(Ecore_Exe *obj)
+_impl_ecore_exe_terminate(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
-
 /*    CloseHandle(exe->thread); */
    CloseHandle(exe->process);
    exe->process = NULL;
@@ -787,17 +765,38 @@ _win32_ecore_exe_terminate(Ecore_Exe *obj)
 }
 
 void
-_win32_ecore_exe_kill(Ecore_Exe *obj)
+_impl_ecore_exe_kill(Ecore_Exe *obj, Ecore_Exe_Data *exe)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   if (!exe)
-      return;
-
    CloseHandle(exe->process_thread);
    exe->process_thread = NULL;
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGKILL;
    while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
+}
+
+void
+_impl_ecore_exe_auto_limits_set(Ecore_Exe *obj EINA_UNUSED,
+                          Ecore_Exe_Data *exe EINA_UNUSED,
+                          int        start_bytes EINA_UNUSED,
+                          int        end_bytes EINA_UNUSED,
+                          int        start_lines EINA_UNUSED,
+                          int        end_lines EINA_UNUSED)
+{
+   ERR("Not implemented on windows!");
+}
+
+void
+_impl_ecore_exe_signal(Ecore_Exe *obj EINA_UNUSED,
+                          Ecore_Exe_Data *exe EINA_UNUSED,
+                          int num EINA_UNUSED)
+{
+   ERR("Not implemented on windows!");
+}
+
+void
+_impl_ecore_exe_hup(Ecore_Exe *obj EINA_UNUSED,
+                          Ecore_Exe_Data *exe EINA_UNUSED)
+{
+   ERR("Not implemented on windows!");
 }
