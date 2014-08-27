@@ -236,7 +236,7 @@ _evas_async_events_fd_blocking_set(Eina_Bool blocking)
    if (blocking) flags &= ~O_NONBLOCK;
    else flags |= O_NONBLOCK;
 
-   fcntl(_fd_read, F_SETFL, flags);
+   if (fcntl(_fd_read, F_SETFL, flags) < 0) ERR("cannot set fd flags");
 #else
    (void) blocking;
 #endif
