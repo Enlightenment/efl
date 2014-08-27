@@ -1395,7 +1395,8 @@ _ethumb_dbus_frame_set(Ethumbd_Object *eobject EINA_UNUSED, Eldbus_Message_Iter 
 	return 0;
      }
 
-   eldbus_message_iter_arguments_get(_struct, "ayayay", &file_iter, &group_iter, &swallow_iter);
+   if (!eldbus_message_iter_arguments_get(_struct, "ayayay", &file_iter, &group_iter, &swallow_iter))
+     return 0;
 
    file = _ethumb_dbus_get_bytearray(file_iter);
    group = _ethumb_dbus_get_bytearray(group_iter);
