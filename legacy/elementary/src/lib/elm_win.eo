@@ -2,15 +2,6 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_win;
-   constructors {
-      constructor {
-         /*@ No description supplied by the EAPI. */
-         params {
-            @in const(char)* name;
-            @in Elm_Win_Type type;
-         }
-      }
-   }
    properties {
       keyboard_win {
          set {
@@ -1182,6 +1173,14 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
       }
    }
    methods {
+      constructor @constructor {
+         /*@ No description supplied by the EAPI. */
+         legacy: null;
+         params {
+            @in const(char)* name;
+            @in Elm_Win_Type type;
+         }
+      }
       wm_manual_rotation_done {
          /*@
          To notify the rotation done to WM manually.

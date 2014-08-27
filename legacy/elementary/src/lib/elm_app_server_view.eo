@@ -2,14 +2,6 @@ class Elm_App_Server_View (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server_view;
-   constructors {
-      constructor {
-         /*@ Class constructor of elm_app_server_view */
-         params {
-            @in const(char)* id; /*@ identifier of view */
-         }
-      }
-   }
    properties {
       progress {
          set {
@@ -91,6 +83,13 @@ class Elm_App_Server_View (Eo.Base)
       }
    }
    methods {
+      constructor @constructor {
+         /*@ Class constructor of elm_app_server_view */
+         legacy: null;
+         params {
+            @in const(char)* id; /*@ identifier of view */
+         }
+      }
       pause {
       }
       resume {

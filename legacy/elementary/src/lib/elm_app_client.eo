@@ -2,14 +2,6 @@ class Elm_App_Client (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_client;
-   constructors {
-      constructor {
-         /*@ Class constructor of elm_app_client. */
-         params {
-            @in const(char)* package; /*@ Package of application */
-         }
-      }
-   }
    properties {
       views {
          get {
@@ -29,6 +21,13 @@ class Elm_App_Client (Eo.Base)
       }
    }
    methods {
+      constructor @constructor {
+         /*@ Class constructor of elm_app_client. */
+         legacy: null;
+         params {
+            @in const(char)* package; /*@ Package of application */
+         }
+      }
       view_all_close {
          /*@ Close all views of application. */
       }

@@ -2,14 +2,6 @@ class Elm_App_Client_View (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_client_view;
-   constructors {
-      constructor {
-         /*@ Class constructor of elm_app_client_view */
-         params {
-            @in const(char)* path; /*@ DBus path of view */
-         }
-      }
-   }
    properties {
       state {
          get {
@@ -88,6 +80,13 @@ class Elm_App_Client_View (Eo.Base)
       }
    }
    methods {
+      constructor @constructor {
+         /*@ Class constructor of elm_app_client_view */
+         legacy: null;
+         params {
+            @in const(char)* path; /*@ DBus path of view */
+         }
+      }
       pause {
          /*@ Pause view */
          params {

@@ -2,15 +2,6 @@ class Elm_App_Server (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server;
-   constructors {
-      constructor {
-         /*@ Class constructor of elm_app_server */
-         params {
-            @in const(char)* packageid; /*@ package of application */
-            @in Elm_App_Server_Create_View_Cb create_view_cb; /*@ callback to be called when user whants to open some application view */
-         }
-      }
-   }
    properties {
       icon {
          set {
@@ -59,6 +50,14 @@ class Elm_App_Server (Eo.Base)
       }
    }
    methods {
+      constructor @constructor {
+         /*@ Class constructor of elm_app_server */
+         legacy: null;
+         params {
+            @in const(char)* packageid; /*@ package of application */
+            @in Elm_App_Server_Create_View_Cb create_view_cb; /*@ callback to be called when user whants to open some application view */
+         }
+      }
       close_all {
          /*@ Close all views of application */
       }
