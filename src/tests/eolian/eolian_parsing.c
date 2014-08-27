@@ -237,10 +237,13 @@ START_TEST(eolian_ctor_dtor)
    eina_iterator_free(iter);
 
    /* Custom ctors/dtors */
-   fail_if(!eolian_class_function_get_by_name(base, "constructor", EOLIAN_CTOR));
+   fail_if(!(impl_func = eolian_class_function_get_by_name(base, "constructor", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_constructing(impl_func));
    fail_if(!eolian_class_function_get_by_name(base, "destructor", EOLIAN_METHOD));
-   fail_if(!eolian_class_function_get_by_name(class, "custom_constructor_1", EOLIAN_CTOR));
-   fail_if(!eolian_class_function_get_by_name(class, "custom_constructor_2", EOLIAN_CTOR));
+   fail_if(!(impl_func = eolian_class_function_get_by_name(class, "custom_constructor_1", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_constructing(impl_func));
+   fail_if(!(impl_func = eolian_class_function_get_by_name(class, "custom_constructor_2", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_constructing(impl_func));
 
    eolian_shutdown();
 }
