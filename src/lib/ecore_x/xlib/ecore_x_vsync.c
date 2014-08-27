@@ -356,6 +356,27 @@ _drm_init(void)
  */
         return 0;
      }
+   // only do this on new kernels = let's say 3.14 and up. 3.16 definitely
+   // works
+     {
+        Eina_Bool ok = EINA_FALSE;
+
+        FILE *fp = fopen("/proc/sys/kernel/osrelease", "r");
+        if (fp)
+          {
+             if (fgets(buf, sizeof(buf), fp))
+               {
+                  int vmaj = 0, vmin = 0;
+
+                  if (sscanf(buf, "%i.%i.%*s", &vmaj, &vmin) == 2)
+                    {
+                       if ((vmaj >= 3) && (vmin >= 14)) ok = EINA_TRUE;
+                    }
+               }
+             fclose(fp);
+          }
+        if (!ok) return 0;
+     }
 
    snprintf(buf, sizeof(buf), "/dev/dri/card1");
    if (stat(buf, &st) == 0)
