@@ -880,6 +880,11 @@ ecore_exe_free(Ecore_Exe *obj)
 EOLIAN static void
 _ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
+   eo_do_super(obj, ECORE_EXE_CLASS, eo_destructor());
+
+#ifdef _WIN32
+   _win32_ecore_exe_eo_base_destructor(obj, exe);
+#else
    void *data;
    int ok = 0;
    int result;
@@ -925,6 +930,7 @@ _ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
 
    exes = eina_list_remove(exes, obj);
    IF_FREE(exe->tag);
+#endif
 }
 
 EAPI void
