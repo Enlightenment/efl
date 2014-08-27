@@ -436,11 +436,11 @@ _cserve2_slave_proc_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb de
    sb->write_fd = child[1];
    flags = fcntl(sb->write_fd, F_GETFL);
    flags |= O_NONBLOCK;
-   fcntl(sb->write_fd, F_SETFL, flags);
+   if (fcntl(sb->write_fd, F_SETFL, flags) < 0) ERR("fcntl NONBLOCK failed");
    sb->read_fd = parent[0];
    flags = fcntl(sb->read_fd, F_GETFL);
    flags |= O_NONBLOCK;
-   fcntl(sb->read_fd, F_SETFL, flags);
+   if (fcntl(sb->read_fd, F_SETFL, flags) < 0) ERR("fcntl NONBLOCK failed");
    sb->read_cb = read_cb;
    sb->dead_cb = dead_cb;
    sb->data = data;
