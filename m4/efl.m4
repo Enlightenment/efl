@@ -58,17 +58,10 @@ case "$TERM" in
 esac
 
 if test "${want_color}" = "yes"; then
-   if test `echo -e x` = x; then
-      echoopt=-e
-   else
-      echoopt=
-   fi
-
-   COLOR_YES=`echo $echoopt "\033@<:@1;32m"`
-   COLOR_NO=`echo $echoopt "\033@<:@1;31m"`
-   COLOR_OTHER=`echo $echoopt "\033@<:@1;36m"`
-   COLOR_RESET=`echo $echoopt "\033@<:@0m"`
-
+   COLOR_YES=`echo $echo_e "\033@<:@1;32m"`
+   COLOR_NO=`echo $echo_e "\033@<:@1;31m"`
+   COLOR_OTHER=`echo $echo_e "\033@<:@1;36m"`
+   COLOR_RESET=`echo $echo_e "\033@<:@0m"`
 else
    COLOR_YES=""
    COLOR_NO=""

@@ -28,10 +28,10 @@ lib/evas/canvas/evas_zoomable_interface.eo.hh \
 lib/evas/canvas/evas_box.eo.hh
 
 lib/evas/Evas.hh: $(generated_evas_canvas_cxx_bindings)
-	@echo -e "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
-	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/evas/Evas.hh
+	@echo @ECHO_E@ "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/evas/Evas.hh
 	@for i in $(generated_evas_canvas_cxx_bindings); do echo "#include <canvas/$$(basename $$i)>" >> $(top_builddir)/src/lib/evas/Evas.hh; done
-	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/evas/Evas.hh
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/evas/Evas.hh
 
 CLEANFILES += \
 $(generated_evas_canvas_cxx_bindings) \

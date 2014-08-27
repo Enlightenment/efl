@@ -271,6 +271,16 @@ fi
 
 AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
+### echo compatibility
+
+## the BSD echo does not have the -e option (it is the default behaviour)
+echo_e=
+if test "`echo -e x`" = "x"; then
+   echo_e=-e
+fi
+AC_SUBST([ECHO_E], [${echo_e}])
+
+
 ### compilers
 
 AC_PROG_MKDIR_P

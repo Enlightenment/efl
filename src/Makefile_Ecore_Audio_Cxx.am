@@ -13,10 +13,10 @@ lib/ecore_audio/ecore_audio_out_pulse.eo.hh \
 lib/ecore_audio/ecore_audio_in_tone.eo.hh
 
 lib/ecore_audio/Ecore_Audio.hh: $(generated_ecore_audio_cxx_bindings)
-	@echo -e "#ifndef EFL_CXX_ECORE_AUDIO_HH\n#define EFL_CXX_ECORE_AUDIO_HH\n" > $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
-	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
+	@echo @ECHO_E@ "#ifndef EFL_CXX_ECORE_AUDIO_HH\n#define EFL_CXX_ECORE_AUDIO_HH\n" > $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
 	@for i in $(generated_ecore_audio_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh; done
-	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
 
 generated_ecore_audio_cxx_all = \
 	$(generated_ecore_audio_cxx_bindings) \
