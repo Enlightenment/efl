@@ -1,9 +1,10 @@
 class Ecore.Job (Eo.Base)
 {
    eo_prefix: ecore_job;
-   constructors {
-      constructor {
-         /*@ Contructor. */
+   methods {
+      constructor @constructor {
+         /*@ Constructor. */
+         legacy: null;
          params {
             @in Ecore_Cb func;
             @in const(void)* data;

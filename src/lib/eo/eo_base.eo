@@ -3,12 +3,6 @@ abstract Eo.Base ()
    eo_prefix: eo;
    legacy_prefix: null;
 
-   constructors {
-      constructor {
-         /*@ Call the object's constructor.
-Should not be used with #eo_do. Only use it with #eo_do_super. */
-      }
-   }
    properties {
       parent {
          set {
@@ -42,6 +36,11 @@ Return event freeze count. */
       }
    }
    methods {
+      constructor @constructor {
+         /*@ Call the object's constructor.
+Should not be used with #eo_do. Only use it with #eo_do_super. */
+         legacy: null;
+      }
       event_callback_forwarder_del {
          /*@ Remove an event callback forwarder for an event and an object. */
          params {

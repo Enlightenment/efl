@@ -3,26 +3,27 @@ class Colourable (Eo.Base)
     /*@ Colourable class. */
     legacy_prefix: legacy;
     data: Colourable_Data;
-    constructors {
-        constructor {
+    methods {
+        constructor @constructor {
             /*@ Default constructor. */
+            legacy: null;
         }
-        rgb_composite_constructor {
+        rgb_composite_constructor @constructor {
             /*@ Composite RGB Constructor. */
+            legacy: null;
             params {
                 @in int r; /*@ The red component. */
                 @in int g; /*@ The green component. */
                 @in int b; /*@ The blue component. */
                }
         }
-        rgb_24bits_constructor {
+        rgb_24bits_constructor @constructor {
             /*@ RGB Constructor. */
+            legacy: null;
             params {
                 @in int rgb; /*@ 24-bit RGB Component. */
             }
         }
-    }
-    methods {
         print_colour { /*@ Print the RGB colour. */ }
         colour_mask {
             /*@ The masked RGB value. */

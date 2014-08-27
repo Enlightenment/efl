@@ -1,17 +1,19 @@
 class Ecore.Animator (Eo.Base)
 {
    eo_prefix: ecore_animator;
-   constructors {
-      timeline_constructor {
-         /*@ Contructor. */
+   methods {
+      timeline_constructor @constructor {
+         /*@ Constructor. */
+         legacy: null;
          params {
             @in double runtime;
             @in Ecore_Timeline_Cb func;
             @in const(void)* data;
          }
       }
-      constructor {
-         /*@ Contructor. */
+      constructor @constructor {
+         /*@ Constructor. */
+         legacy: null;
          params {
             @in Ecore_Task_Cb func;
             @in const(void)* data;

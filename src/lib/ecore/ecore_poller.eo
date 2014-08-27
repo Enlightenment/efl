@@ -1,8 +1,9 @@
 class Ecore.Poller (Eo.Base)
 {
-   constructors {
-      constructor {
-         /*@ Contructor with parameters for Ecore Poller. */
+   methods {
+      constructor @constructor {
+         /*@ Constructor with parameters for Ecore Poller. */
+         legacy: null;
          params {
             @in Ecore_Poller_Type type;
             @in int interval;

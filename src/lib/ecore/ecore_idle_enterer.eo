@@ -1,16 +1,18 @@
 class Ecore.Idle.Enterer (Eo.Base)
 {
    eo_prefix: ecore_idle_enterer;
-   constructors {
-      before_constructor {
+   methods {
+      before_constructor @constructor {
          /*@ Contructor. Will insert the handler at the beginning of the list. */
+         legacy: null;
          params {
             @in Ecore_Task_Cb func;
             @in const(void)* data;
          }
       }
-      after_constructor {
+      after_constructor @constructor {
          /*@ Contructor. Will insert the handler at the end of the list. */
+         legacy: null;
          params {
             @in Ecore_Task_Cb func;
             @in const(void)* data;

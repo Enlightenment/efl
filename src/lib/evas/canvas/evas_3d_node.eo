@@ -2,15 +2,14 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data: Evas_3D_Node_Data;
-   constructors {
-      constructor {
-         /*@ Contructor. */
+   methods {
+      constructor @constructor {
+         /*@ Constructor. */
+         legacy: null;
          params {
             @in Evas_3D_Node_Type type;
          }
       }
-   }
-   methods {
       type_get @const {
          /*
            Get the type of the given node.

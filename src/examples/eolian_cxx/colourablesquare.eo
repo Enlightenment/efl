@@ -2,14 +2,13 @@ class ColourableSquare (Colourable)
 {
     legacy_prefix: legacy;
     data: ColourableSquare_Data;
-    constructors {
-       size_constructor {
+    properties {
+       size_constructor @constructor {
+           legacy: null;
            params {
               @in int size;
            }
        }
-    }
-    properties {
         size {
             set {
                 /*@ Sets size. */

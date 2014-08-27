@@ -8,24 +8,6 @@ class Ecore.Timer (Eo.Base)
     *  guarantee exact timing, but try to work on a "best effort basis.
     */
    eo_prefix: ecore_obj_timer;
-   constructors {
-      loop_constructor {
-         /*@ Create a timer to call in a given time from now */
-         params {
-            @in double in; /*@ The time, in seconds, from now when to go off */
-            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
-            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
-         }
-      }
-      constructor {
-         /*@ Create a timer to call in a given time from when the mainloop woke up from sleep */
-         params {
-            @in double in; /*@ The time, in seconds, from when the main loop woke up, to go off */
-            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
-            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
-         }
-      }
-   }
    properties {
       interval {
          set {
@@ -48,6 +30,24 @@ class Ecore.Timer (Eo.Base)
       }
    }
    methods {
+      loop_constructor @constructor {
+         /*@ Create a timer to call in a given time from now */
+         legacy: null;
+         params {
+            @in double in; /*@ The time, in seconds, from now when to go off */
+            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
+            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
+         }
+      }
+      constructor @constructor {
+         /*@ Create a timer to call in a given time from when the mainloop woke up from sleep */
+         legacy: null;
+         params {
+            @in double in; /*@ The time, in seconds, from when the main loop woke up, to go off */
+            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
+            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
+         }
+      }
       reset {
          /*@ Reset a timer to its full interval. This effectively makes
           *  the timer start ticking off from zero now.

@@ -1,14 +1,4 @@
 class Object_Impl (Base) {
-   constructors {
-      constructor_1 {
-         params {
-            @in int a;
-            @in char b;
-         }
-      }
-      constructor_2 {
-      }
-   }
    properties {
       a {
          set {
@@ -36,6 +26,14 @@ class Object_Impl (Base) {
       }
    }
    methods {
+      constructor_1 @constructor {
+         params {
+            @in int a;
+            @in char b;
+         }
+      }
+      constructor_2 @constructor {
+      }
       foo1 {
          /*@ comment foo */
          params {

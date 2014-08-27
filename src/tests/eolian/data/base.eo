@@ -1,9 +1,7 @@
 class Base {
-   constructors {
-      constructor {
-      }
-   }
    methods {
+      constructor @constructor {
+      }
       destructor {
       }
    }
