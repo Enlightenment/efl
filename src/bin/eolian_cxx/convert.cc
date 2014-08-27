@@ -232,10 +232,12 @@ convert_eolian_constructors(efl::eolian::eo_class& cls, Eolian_Class const& klas
    void *curr;
    std::string prefix(class_prefix(klass));
    Eina_Iterator *constructors =
-     ::eolian_class_functions_get(&klass, EOLIAN_CTOR);
+     ::eolian_class_functions_get(&klass, EOLIAN_METHOD);
    EINA_ITERATOR_FOREACH(constructors, curr)
      {
         Eolian_Function *eo_constructor = static_cast<Eolian_Function*>(curr);
+        if (!eolian_function_is_constructing(eo_constructor))
+          continue;
         efl::eolian::eo_constructor constructor;
         constructor.name = function_impl(*eo_constructor, prefix);
         constructor.params = convert_eolian_parameters(*eo_constructor);
@@ -256,6 +258,8 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
      {
         efl::eolian::eo_function func_;
         Eolian_Function *eol_func = static_cast<Eolian_Function*>(curr);
+        if (eolian_function_is_constructing(eol_func))
+          continue;
         // XXX Eolian only provides regular methods so far
         func_.type = efl::eolian::eo_function::regular_;
         func_.name = function_name(*eol_func);
