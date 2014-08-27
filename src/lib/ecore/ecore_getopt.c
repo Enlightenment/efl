@@ -1292,6 +1292,9 @@ _ecore_getopt_parse_choice(const Ecore_Getopt      *parser EINA_UNUSED,
 {
    const char *const *pchoice;
 
+   if (!arg_val)
+     return EINA_FALSE;
+
    if (!val->strp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
