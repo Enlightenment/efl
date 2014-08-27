@@ -1789,7 +1789,9 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser,
 
         desc_idx = desc - parser->descs;
         value = values + desc_idx;
-        ret = _ecore_getopt_desc_handle(parser, desc, value, arg_val);
+        if (arg_val)
+          ret = _ecore_getopt_desc_handle(parser, desc, value, arg_val);
+        else ret = EINA_FALSE;
         if ((!ret) && parser->strict)
           return EINA_FALSE;
      }
