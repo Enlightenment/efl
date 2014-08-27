@@ -216,7 +216,7 @@ _socketfd_handler(int fd EINA_UNUSED, Fd_Flags flags EINA_UNUSED, void *data EIN
    /* TODO: when porting to windows, do:
     * SetHandleInformation(s, HANDLE_FLAG_INHERIT, 0)
     */
-   fcntl(s, F_SETFD, FD_CLOEXEC);
+   if (fcntl(s, F_SETFD, FD_CLOEXEC) < 0) ERR("Cannot set CLOEXEC on fd");
 
    cserve2_client_accept(s);
 }
