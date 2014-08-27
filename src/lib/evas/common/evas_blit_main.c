@@ -59,7 +59,6 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
      }
    if (h <= 0) return;
 
-   if (w <= 0) return;
    if (dst_x + w > (int)dst->cache_entry.w) w = dst->cache_entry.w - dst_x;
    if (w <= 0) return;
    if (dst_x < 0)
