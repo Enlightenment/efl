@@ -297,7 +297,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
      }
 
    int i;
-   for (i = 0; i < 3; i++)
+   for (i = 0; i < 2; i++)
      {
         itr = eolian_class_functions_get(class, ftype_order[i]);
         EINA_ITERATOR_FOREACH(itr, fid)
