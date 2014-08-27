@@ -128,6 +128,7 @@ evas_image_load_file_head_tga(void *loader_data,
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
+   if ((bpp == 16) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
    // don't handle colormapped images
    if ((header->colorMapType) != 0)
      goto close_file;
@@ -228,6 +229,7 @@ evas_image_load_file_data_tga(void *loader_data,
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
+   if ((bpp == 16) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
    abits = header->descriptor & TGA_DESC_ABITS;
    // don't handle colormapped images
    if ((header->colorMapType) != 0)
