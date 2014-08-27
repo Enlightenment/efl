@@ -526,7 +526,7 @@ ecore_con_ssl_client_init(Ecore_Con_Client *obj)
    if (!cl)
      return ECORE_CON_SSL_ERROR_NONE;
    Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-   if (host_server || !(host_server->type & ECORE_CON_SSL))
+   if (!host_server || !(host_server->type & ECORE_CON_SSL))
      return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_init) (obj);
 }
