@@ -745,9 +745,15 @@ _ecore_con_client_ecore_con_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data
 
 
    if (cl->host_server && ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
-     sendto(host_server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
-            cl->client_addr_len);
-   else 
+     {
+        int ret;
+
+        ret = (int)sendto(host_server->fd, data, size, 0,
+                          (struct sockaddr *)cl->client_addr,
+                          cl->client_addr_len);
+        return ret;
+     }
+   else
      {
         if (!cl->buf)
           {
