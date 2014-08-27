@@ -838,6 +838,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
 
    /* Check if any one is the stack make this object mapped */
    eo_tmp = eo_obj;
+   tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
    while (tmp && !_evas_render_has_map(eo_tmp, tmp))
      {
         tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
