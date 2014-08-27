@@ -55,7 +55,7 @@ evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
    if (n < 0) return 0;
    else if (n >= 64) return 0;
    num = (Evas_Modifier_Mask)n;
-   num = 1 << num;
+   num = 1ULL << num;
    if (m->mask & num) return 1;
    return 0;
 }
@@ -72,7 +72,7 @@ evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
    if (n < 0) return 0;
    else if (n >= 64) return 0;
    num = (Evas_Modifier_Mask)n;
-   num = 1 << num;
+   num = 1ULL << num;
    if (l->mask & num) return 1;
    return 0;
 }
