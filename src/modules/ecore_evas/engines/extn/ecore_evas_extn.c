@@ -1852,7 +1852,8 @@ _ecore_evas_extn_socket_alpha_set(Ecore_Evas *ee, int alpha)
                einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
              else
                einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               ERR("Cannot set ecore_evas_ext alpha");
              evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
           }
         EINA_LIST_FOREACH(extn->ipc.clients, l, client)
