@@ -78,14 +78,6 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
         current = ed->all[current].next;
      }
 
-   if ((current == -1) && found)
-     {
-        // WTF ?!? How can current == -1 and found == EINA_TRUE
-        // If you happen to trigger this abort, contact enlightenment developer mailing list
-        abort();
-        return prev;
-     }
-
    if (previous) *previous = prev;
    return current;
 }
