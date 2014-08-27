@@ -212,7 +212,6 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
    Eina_Bool mirror;
    
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, priv);
-   if (!priv) return;
    if (!priv->children) return;
    evas_object_geometry_get(o, &x, &y, &w, &h);
    mirror = priv->is_mirrored;
