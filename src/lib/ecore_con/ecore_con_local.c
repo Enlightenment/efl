@@ -183,7 +183,9 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
      return 0;
 
    if (svr->type & ECORE_CON_SSL)
-     ecore_con_ssl_server_init(obj);
+     {
+        if (!ecore_con_ssl_server_init(obj)) ERR("Can't init SSL");
+     }
 
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
