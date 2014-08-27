@@ -210,7 +210,7 @@ _smart_data_free(Emotion_Object_Data *sd)
    sd->progress.info = NULL;
    eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
-   if (sd->file) eina_stringshare_del(sd->engine);
+   if (sd->engine) eina_stringshare_del(sd->engine);
    sd->engine = NULL;
 
    /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
