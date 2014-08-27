@@ -2890,8 +2890,7 @@ _eet_data_dump_token_get(const char *src,
         return tok;
      }
 
-   if (tok)
-     free(tok);
+   free(tok);
 
    return NULL;
 }
