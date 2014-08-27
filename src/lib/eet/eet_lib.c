@@ -363,7 +363,7 @@ eet_flush2(Eet_File *ef)
         if (!fp)
           return EET_ERROR_NOT_WRITABLE;
 
-        fcntl(fd, F_SETFD, FD_CLOEXEC);
+        if (fcntl(fd, F_SETFD, FD_CLOEXEC)) ERR("can't set CLOEXEC on write fd");
      }
    else
      return EET_ERROR_NOT_WRITABLE;
