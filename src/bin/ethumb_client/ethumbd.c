@@ -1262,7 +1262,7 @@ _ethumb_dbus_size_set(Ethumbd_Object *eobject EINA_UNUSED, Eldbus_Message_Iter *
 	return 0;
      }
 
-   eldbus_message_iter_arguments_get(st, "ii", &w, &h);
+   if (!eldbus_message_iter_arguments_get(st, "ii", &w, &h)) return 0;
    DBG("setting size to: %dx%d", w, h);
    request->setup.flags.size = 1;
    request->setup.tw = w;
