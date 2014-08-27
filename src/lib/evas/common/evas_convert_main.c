@@ -163,10 +163,6 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h EINA_UNUSED, int depth, D
      {
 	if (depth == 8)
 	  {
-	     if (pal_mode == PAL_MODE_NONE)
-	       return evas_common_convert_rgba_to_8bpp_gry_256_dith;
-	     if (pal_mode == PAL_MODE_NONE)
-	       return evas_common_convert_rgba_to_8bpp_gry_16_dith;
 	     if (pal_mode == PAL_MODE_RGB332)
 	       return evas_common_convert_rgba_to_8bpp_rgb_332_dith;
 	     if (pal_mode == PAL_MODE_RGB666)
@@ -183,6 +179,10 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h EINA_UNUSED, int depth, D
 	       return evas_common_convert_rgba_to_8bpp_rgb_111_dith;
              if (pal_mode == PAL_MODE_GRAY64)
                return evas_common_convert_rgba_to_8bpp_pal_gray64;
+	     if (pal_mode == PAL_MODE_GRAY16)
+	       return evas_common_convert_rgba_to_8bpp_gry_16_dith;
+	     if (pal_mode == PAL_MODE_NONE)
+	       return evas_common_convert_rgba_to_8bpp_gry_256_dith;
 	  }
      }
    else
