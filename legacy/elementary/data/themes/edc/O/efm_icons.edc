@@ -71,8 +71,36 @@
 
    EFM_MIME_ICON("application/x-python-bytecode", "efm_generic_icon_content_python.png", (114/115), (114/115), ".PYC", 240, 0.5);
    EFM_MIME_ICON("application/x-python", "efm_generic_icon_content_python.png", (114/115), (114/115), ".PY", 240, 0.5);
-   
+   EFM_MIME_ICON("text/x-python", "efm_generic_icon_content_python.png", (114/115), (114/115), ".PY", 240, 0.5);
+
    //.pyo .pyd??????????????????//
+
+//Ruby//
+
+   EFM_MIME_ICON("application/x-ruby", "efm_generic_icon_content_ruby.png", (114/114), (114/114), ".RB", 240, 0.5);
+   EFM_MIME_ICON("text/x-ruby", "efm_generic_icon_content_ruby.png", (114/114), (114/114), ".RB", 240, 0.5);
+
+   //.rbw???//
+
+//CAD//
+
+   EFM_MIME_ICON("application/acad", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("application/x-acad", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("application/autocad_dwg", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("image/x-dwg", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("application/dwg", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("application/x-dwg", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("application/x-autocad", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("image/vnd.dwg", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+   EFM_MIME_ICON("drawing/dwg", "efm_generic_icon_content_cad.png", (114/130), (114/130), ".DWG", 240, 0.5);
+
+//ISO//
+
+   EFM_MIME_ICON("application/x-iso9660-image", "efm_generic_icon_content_iso.png", (114/114), (114/114), ".ISO", 240, 0.5);
+
+//Cue//
+
+   EFM_MIME_ICON("application/x-cue", "efm_generic_icon_content_iso.png", (114/114), (114/114), ".CUE", 240, 0.5);
 
 //Audio//
 
@@ -85,6 +113,7 @@
    EFM_MIME_ICON("application/x-audacity-project","efm_generic_icon_content_audio.png",(54/154), (54/154), ".AUP", 240, 0.5);
    EFM_MIME_ICON("audio/x-ms-wma","efm_generic_icon_content_audio.png", (54/154), (54/154),".WMA", 240, 0.5);
    EFM_MIME_ICON("audio/opus","efm_generic_icon_content_audio.png", (54/154), (54/154),".OPUS", 240, 0.5);
+   EFM_MIME_ICON("audio/ogg","efm_generic_icon_content_audio.png", (54/154), (54/154),".OPUS", 240, 0.5);
    EFM_MIME_ICON("audio/ape","efm_generic_icon_content_audio.png", (54/154), (54/154), ".APE", 240, 0.5);
    EFM_MIME_ICON("audio/webm","efm_generic_icon_content_audio.png", (54/154), (54/154), ".WEBA", 240, 0.5);
    EFM_MIME_ICON("audio/mp4","efm_generic_icon_content_audio.png", (54/154), (54/154), ".MP4", 240, 0.5);
@@ -93,6 +122,9 @@
    EFM_MIME_ICON("audio/aac","efm_generic_icon_content_audio.png", (54/154), (54/154),".AAC", 240, 0.5);
    EFM_MIME_ICON("audio/vnd.rn-realaudio","efm_generic_icon_content_audio.png", (54/154), (54/154),".RA", 240, 0.5);
 
+   EFM_MIME_ICON("application/x-mpegurl","efm_generic_icon_content_audio.png", (54/154), (54/154),".M3U", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.apple.mpegurl","efm_generic_icon_content_audio.png", (54/154), (54/154),".M3U", 240, 0.5);
+
 //Code//
 
    EFM_MIME_ICON("text/x-csrc","efm_generic_icon_content_code.png", (114/88), (114/88), ".C", 240, 0.3);
@@ -100,7 +132,10 @@
    EFM_MIME_ICON("text/x-c++src","efm_generic_icon_content_code.png", (114/88), (114/88), ".C++", 240, 0.3);
    EFM_MIME_ICON("text/x-csharp","efm_generic_icon_content_code.png", (114/88), (114/88), ".C#", 240, 0.3);
    EFM_MIME_ICON("application/x-awk","efm_generic_icon_content_code.png", (114/88), (114/88), ".AWK", 240, 0.3);
-   
+   EFM_MIME_ICON("text/x-hdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".HPP", 240, 0.3);
+   EFM_MIME_ICON("text/x-fortran","efm_generic_icon_content_code.png", (114/88), (114/88), ".F", 240, 0.3);
+   EFM_MIME_ICON("text/x-perl","efm_generic_icon_content_code.png", (114/88), (114/88), ".PL", 240, 0.3);
+
    //add moreeeeeee//
 
 //Text//   
@@ -108,6 +143,7 @@
    EFM_MIME_ICON("text/x-patch","efm_generic_icon_content_text.png", (114/126), (114/126), ".PATCH", 240, 0.5);
    EFM_MIME_ICON("text/plain","efm_generic_icon_content_text.png", (114/126), (114/126), ".TXT", 240, 0.5);
    EFM_MIME_ICON("text/x-log","efm_generic_icon_content_text.png",  (114/126), (114/126), ".LOG", 240, 0.5);
+   EFM_MIME_ICON("application/x-md5","efm_generic_icon_content_text.png",  (114/126), (114/126), ".MD5", 240, 0.5);
 
 //Web//
 
@@ -192,9 +228,10 @@
 
 //Font//
    
-   EFM_MIME_ICON("application/x-font-ttf","efm_generic_icon_content_image.png", (114/93), (114/93), ".TTF", 240, 0.5);
-   EFM_MIME_ICON("application/x-font-pcf","efm_generic_icon_content_image.png", (114/93), (114/93), ".PCF", 240, 0.5);
-   EFM_MIME_ICON("application/x-font-bdf","efm_generic_icon_content_image.png", (114/93), (114/93), ".BDF", 240, 0.5);
+   EFM_MIME_ICON("application/x-font-ttf","efm_generic_icon_content_font.png", (114/93), (114/93), ".TTF", 240, 0.5);
+   EFM_MIME_ICON("application/x-font-pcf","efm_generic_icon_content_font.png", (114/93), (114/93), ".PCF", 240, 0.5);
+   EFM_MIME_ICON("application/x-font-bdf","efm_generic_icon_content_font.png", (114/93), (114/93), ".BDF", 240, 0.5);
+   EFM_MIME_ICON("application/x-font-otf","efm_generic_icon_content_font.png", (114/93), (114/93), ".BDF", 240, 0.5);
 
 //PS (fallback)//
    
@@ -267,9 +304,17 @@
    EFM_MIME_ICON_SIMPLE("application/x-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
    EFM_MIME_ICON_SIMPLE("application/x-ms-dos-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
 
+//Libraries//
+
+   EFM_MIME_ICON_SIMPLE("application/x-sharedlib","efm_generic_icon_content_lib.png", (114/114), (114/114), 240, 0.5);
+
 //Unknown//
    
    EFM_MIME_ICON_SIMPLE("application/x-object","efm_generic_icon_content_unknown.png", (100/154), (100/154), 240, 0.5);
+
+//Trash//
+
+   EFM_MIME_ICON_SIMPLE("application/x-trash","efm_generic_icon_content_trash.png", (114/142), (114/142), 240, 0.5);
 
 //Octet-Stream//
    
@@ -346,4 +391,5 @@
 
    MIMEICON("application/x-7z-compressed","icon_mime_package.png", 128);
    MIMEICON("application/vnd.ms-cab-compressed","icon_mime_package.png", 128);
+
 

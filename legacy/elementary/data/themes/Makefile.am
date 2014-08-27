@@ -279,6 +279,11 @@ img/efm_generic_icon_over_empty.png \
 img/efm_generic_icon_over.png \
 img/efm_generic_icon_shadow_empty.png \
 img/efm_generic_icon_shadow.png \
+img/efm_generic_icon_content_cad.png \
+img/efm_generic_icon_content_iso.png \
+img/efm_generic_icon_content_lib.png \
+img/efm_generic_icon_content_ruby.png \
+img/efm_generic_icon_content_trash.png \
 img/emo-angry.png \
 img/emo-angry-shout.png \
 img/emo-crazy-laugh.png \
