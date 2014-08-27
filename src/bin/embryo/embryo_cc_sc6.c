@@ -830,7 +830,8 @@ assemble(FILE * fout, FILE * fin)
 	     if (fseek(fout, publics + count * sizeof(FUNCSTUB), SEEK_SET) < 0)
                fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, &func, sizeof func);
-	     fseek(fout, nameofs, SEEK_SET);
+	     if (fseek(fout, nameofs, SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, sym->name, strlen(sym->name) + 1);
 	     nameofs += strlen(sym->name) + 1;
 	     count++;
@@ -884,9 +885,11 @@ assemble(FILE * fout, FILE * fin)
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
-	     fseek(fout, natives + count * sizeof(FUNCSTUB), SEEK_SET);
+	     if (fseek(fout, natives + count * sizeof(FUNCSTUB), SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, &func, sizeof func);
-	     fseek(fout, nameofs, SEEK_SET);
+	     if (fseek(fout, nameofs, SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, alias, strlen(alias) + 1);
 	     nameofs += strlen(alias) + 1;
 	     count++;
@@ -908,9 +911,11 @@ assemble(FILE * fout, FILE * fin)
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
-	     fseek(fout, libraries + count * sizeof(FUNCSTUB), SEEK_SET);
+	     if (fseek(fout, libraries + count * sizeof(FUNCSTUB), SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, &func, sizeof func);
-	     fseek(fout, nameofs, SEEK_SET);
+	     if (fseek(fout, nameofs, SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, constptr->name, strlen(constptr->name) + 1);
 	     nameofs += strlen(constptr->name) + 1;
 	     count++;
@@ -931,9 +936,11 @@ assemble(FILE * fout, FILE * fin)
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
-	     fseek(fout, pubvars + count * sizeof(FUNCSTUB), SEEK_SET);
+	     if (fseek(fout, pubvars + count * sizeof(FUNCSTUB), SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, &func, sizeof func);
-	     fseek(fout, nameofs, SEEK_SET);
+	     if (fseek(fout, nameofs, SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, sym->name, strlen(sym->name) + 1);
 	     nameofs += strlen(sym->name) + 1;
 	     count++;
@@ -954,9 +961,11 @@ assemble(FILE * fout, FILE * fin)
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
-	     fseek(fout, tags + count * sizeof(FUNCSTUB), SEEK_SET);
+	     if (fseek(fout, tags + count * sizeof(FUNCSTUB), SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, &func, sizeof func);
-	     fseek(fout, nameofs, SEEK_SET);
+	     if (fseek(fout, nameofs, SEEK_SET) < 0)
+               fprintf(stderr, "Error seeking\n");
 	     sc_writebin(fout, constptr->name, strlen(constptr->name) + 1);
 	     nameofs += strlen(constptr->name) + 1;
 	     count++;
@@ -965,13 +974,15 @@ assemble(FILE * fout, FILE * fin)
 
    /* write the "maximum name length" field in the name table */
    assert(nameofs == nametable + nametablesize);
-   fseek(fout, nametable, SEEK_SET);
+   if (fseek(fout, nametable, SEEK_SET) < 0)
+     fprintf(stderr, "Error seeking\n");
    count = sNAMEMAX;
 #ifdef WORDS_BIGENDIAN
    align16(&count);
 #endif
    sc_writebin(fout, &count, sizeof count);
-   fseek(fout, cod, SEEK_SET);
+   if (fseek(fout, cod, SEEK_SET) < 0)
+     fprintf(stderr, "Error seeking\n");
 
    /* First pass: relocate all labels */
    /* This pass is necessary because the code addresses of labels is only known
