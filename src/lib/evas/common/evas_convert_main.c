@@ -337,7 +337,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h EINA_UNUSED, int depth, D
 		       else
 			 return evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270;
 		    }
-		  if (rotation == 270)
+		  if (rotation == 90)
 		    {
 		       if ((!(w & 0x1)) && (!((intptr_t)dest & 0x3)))
 			 return evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90;
