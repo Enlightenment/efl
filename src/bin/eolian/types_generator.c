@@ -103,12 +103,10 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef, Eina_Bool full)
       case EOLIAN_TYPE_ENUM:
            {
               const Eolian_Enum_Type_Field *member;
-              char *name = _concat_name(tp);
+              char *name;
               if (!full)
-                {
-                   free(name);
-                   break;
-                }
+                break;
+              name = _concat_name(tp);
               if (in_typedef)
                 {
                    eina_strbuf_append_printf(buf, "enum %s", name);
