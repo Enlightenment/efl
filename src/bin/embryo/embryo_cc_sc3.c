@@ -1099,8 +1099,7 @@ hier13(value * lval)
 	  }
 	else if (!array1 && array2)
 	  {
-	     char               *ptr =
-		(lval2.sym->name) ? lval2.sym->name : "-unknown-";
+	     char               *ptr = lval2.sym->name;
 	     error(33, ptr);	/* array must be indexed */
 	  }			/* if */
 	/* ??? if both are arrays, should check dimensions */
