@@ -23,7 +23,6 @@ database_class_del(Eolian_Class *cl)
         free(impl);
      }
 
-   EINA_LIST_FREE(cl->constructors, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->methods, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->properties, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->events, ev) database_event_del(ev);

@@ -212,7 +212,8 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
         const Eolian_Class *impl_class = eolian_implement_class_get(impl_desc);
         Eolian_Function_Type impl_type;
         const Eolian_Function *impl_func = eolian_implement_function_get(impl_desc, &impl_type);
-        if (impl_type == EOLIAN_CTOR)
+        /* fixme */
+        if (eolian_function_is_constructing(impl_func))
           {
              efl::eolian::eo_constructor constructor;
              std::string parent = safe_lower(eolian_class_full_name_get(impl_class));
@@ -236,6 +237,7 @@ convert_eolian_constructors(efl::eolian::eo_class& cls, Eolian_Class const& klas
    EINA_ITERATOR_FOREACH(constructors, curr)
      {
         Eolian_Function *eo_constructor = static_cast<Eolian_Function*>(curr);
+        /* fixme */
         if (!eolian_function_is_constructing(eo_constructor))
           continue;
         efl::eolian::eo_constructor constructor;
@@ -258,6 +260,7 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
      {
         efl::eolian::eo_function func_;
         Eolian_Function *eol_func = static_cast<Eolian_Function*>(curr);
+        /* fixme */
         if (eolian_function_is_constructing(eol_func))
           continue;
         // XXX Eolian only provides regular methods so far

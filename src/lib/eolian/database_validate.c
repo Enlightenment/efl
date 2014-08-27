@@ -201,10 +201,6 @@ _validate_class(const Eolian_Class *cl)
      if (!_validate_function(func))
        return EINA_FALSE;
 
-   EINA_LIST_FOREACH(cl->constructors, l, func)
-     if (!_validate_function(func))
-       return EINA_FALSE;
-
    EINA_LIST_FOREACH(cl->events, l, event)
      if (!_validate_event(event))
        return EINA_FALSE;

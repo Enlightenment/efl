@@ -125,15 +125,6 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
           }
      }
 
-   if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_CTOR)
-     {
-        EINA_LIST_FOREACH(cl->constructors, itr, fid)
-          {
-             if (!strcmp(fid->name, func_name))
-                return fid;
-          }
-     }
-
    ERR("Function %s not found in class %s", func_name, cl->name);
    return NULL;
 }
@@ -148,8 +139,6 @@ eolian_class_functions_get(const Eolian_Class *cl, Eolian_Function_Type foo_type
          return (cl->properties ? eina_list_iterator_new(cl->properties) : NULL);
       case EOLIAN_METHOD:
          return (cl->methods ? eina_list_iterator_new(cl->methods) : NULL);
-      case EOLIAN_CTOR:
-         return (cl->constructors ? eina_list_iterator_new(cl->constructors) : NULL);
       default: return NULL;
      }
 }

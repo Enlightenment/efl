@@ -1620,19 +1620,6 @@ parse_event(Eo_Lexer *ls)
 }
 
 static void
-parse_constructors(Eo_Lexer *ls)
-{
-   PARSE_SECTION
-     {
-        parse_method(ls, EINA_TRUE);
-        ls->tmp.kls->constructors = eina_list_append(ls->tmp.kls->constructors,
-                                                     ls->tmp.meth);
-        ls->tmp.meth = NULL;
-     }
-   check_match(ls, '}', '{', line, col);
-}
-
-static void
 parse_methods(Eo_Lexer *ls)
 {
    PARSE_SECTION
@@ -1691,12 +1678,11 @@ parse_events(Eo_Lexer *ls)
 }
 
 static void
-parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
+parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    Eina_Bool has_legacy_prefix = EINA_FALSE,
              has_eo_prefix     = EINA_FALSE,
              has_data          = EINA_FALSE,
-             has_constructors  = EINA_FALSE,
              has_properties    = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_implements    = EINA_FALSE,
@@ -1740,12 +1726,6 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
-      case KW_constructors:
-        if (!allow_ctors)
-          return;
-        CASE_LOCK(ls, constructors, "constructors definition")
-        parse_constructors(ls);
-        break;
       case KW_properties:
         CASE_LOCK(ls, properties, "properties definition")
         parse_properties(ls);
@@ -1768,7 +1748,7 @@ parse_class_body(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
 }
 
 static void
-parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
+parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    const char *bnm;
    char *fnm;
@@ -1811,7 +1791,7 @@ parse_class(Eo_Lexer *ls, Eina_Bool allow_ctors, Eolian_Class_Type type)
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   parse_class_body(ls, allow_ctors, type);
+   parse_class_body(ls, type);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1822,19 +1802,19 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
      {
       case KW_abstract:
         if (eot) goto def;
-        parse_class(ls, EINA_TRUE, EOLIAN_CLASS_ABSTRACT);
+        parse_class(ls, EOLIAN_CLASS_ABSTRACT);
         goto found_class;
       case KW_class:
         if (eot) goto def;
-        parse_class(ls, EINA_TRUE, EOLIAN_CLASS_REGULAR);
+        parse_class(ls, EOLIAN_CLASS_REGULAR);
         goto found_class;
       case KW_mixin:
         if (eot) goto def;
-        parse_class(ls, EINA_FALSE, EOLIAN_CLASS_MIXIN);
+        parse_class(ls, EOLIAN_CLASS_MIXIN);
         goto found_class;
       case KW_interface:
         if (eot) goto def;
-        parse_class(ls, EINA_FALSE, EOLIAN_CLASS_INTERFACE);
+        parse_class(ls, EOLIAN_CLASS_INTERFACE);
         goto found_class;
       case KW_type:
         {

@@ -62,7 +62,7 @@ eolian_function_legacy_get(const Eolian_Function *fid, Eolian_Function_Type ftyp
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    switch (ftype)
      {
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_CTOR: case EOLIAN_PROP_GET: return fid->get_legacy; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_legacy; break;
       case EOLIAN_PROP_SET: return fid->set_legacy; break;
       default: return NULL;
      }
@@ -74,7 +74,7 @@ eolian_function_description_get(const Eolian_Function *fid, Eolian_Function_Type
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    switch (ftype)
      {
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_CTOR: case EOLIAN_PROP_GET: return fid->get_description; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_description; break;
       case EOLIAN_PROP_SET: return fid->set_description; break;
       default: return NULL;
      }
@@ -86,7 +86,7 @@ eolian_function_is_virtual_pure(const Eolian_Function *fid, Eolian_Function_Type
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_CTOR: case EOLIAN_PROP_GET: return fid->get_virtual_pure; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_virtual_pure; break;
       case EOLIAN_PROP_SET: return fid->set_virtual_pure; break;
       default: return EINA_FALSE;
      }
@@ -98,7 +98,7 @@ eolian_function_is_legacy_only(const Eolian_Function *fid, Eolian_Function_Type 
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_CTOR: case EOLIAN_PROP_GET: return fid->get_only_legacy; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_only_legacy; break;
       case EOLIAN_PROP_SET: return fid->set_only_legacy; break;
       default: return EINA_FALSE;
      }
@@ -157,7 +157,7 @@ eolian_function_return_type_get(const Eolian_Function *fid, Eolian_Function_Type
    switch (ftype)
      {
       case EOLIAN_PROP_SET: return fid->set_ret_type;
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_CTOR: case EOLIAN_PROP_GET: return fid->get_ret_type;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROP_GET: return fid->get_ret_type;
       default: return NULL;
      }
 }
@@ -168,7 +168,7 @@ eolian_function_return_default_value_get(const Eolian_Function *fid, Eolian_Func
    switch (ftype)
      {
       case EOLIAN_PROP_SET: return fid->set_ret_val;
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_CTOR: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_ret_val;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_ret_val;
       default: return NULL;
      }
 }
@@ -179,7 +179,7 @@ eolian_function_return_comment_get(const Eolian_Function *fid, Eolian_Function_T
    switch (ftype)
      {
       case EOLIAN_PROP_SET: return fid->set_return_comment; break;
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_CTOR: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_return_comment; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_return_comment; break;
       default: return NULL;
      }
 }
@@ -191,7 +191,7 @@ eolian_function_return_is_warn_unused(const Eolian_Function *fid,
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case EOLIAN_METHOD: case EOLIAN_PROP_GET: case EOLIAN_CTOR: case EOLIAN_PROPERTY: return fid->get_return_warn_unused;
+      case EOLIAN_METHOD: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY: return fid->get_return_warn_unused;
       case EOLIAN_PROP_SET: return fid->set_return_warn_unused;
       default: return EINA_FALSE;
      }

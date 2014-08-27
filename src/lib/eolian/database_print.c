@@ -117,22 +117,6 @@ static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)
               if (fid->obj_is_const) printf("%*sobj const: <true>\n", nb_spaces + 5, "");
               break;
            }
-      case EOLIAN_CTOR:
-           {
-              //char *str = eina_hash_find(fid->data, "comment");
-              const char *str = eolian_function_description_get(fid, EOLIAN_METHOD);
-              if (str) printf("%*s<%s>\n", nb_spaces + 5, "", str);
-              str = eolian_function_legacy_get(fid, EOLIAN_METHOD);
-              if (str) printf("%*slegacy: <%s>\n", nb_spaces + 5, "", str);
-              tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
-              if (tp)
-                {
-                   printf("%*sreturn type: <", nb_spaces + 5, "");
-                   database_type_print((Eolian_Type*)tp);
-                   printf(">\n");
-                }
-              break;
-           }
       default:
          return EINA_FALSE;
      }
@@ -201,14 +185,6 @@ _class_print(const Eolian_Class *cl)
      {
         printf("  Data type: <%s>\n", cl->data_type);
      }
-
-   // Constructors
-   printf("  constructors:\n");
-   EINA_LIST_FOREACH(cl->constructors, itr, function)
-     {
-        _function_print(function, 4);
-     }
-   printf("\n");
 
    // Properties
    printf("  properties:\n");

@@ -77,7 +77,6 @@ struct _Eolian_Class
    Eina_List *inherits; /* List Eina_Stringshare * */
    Eina_List *properties; /* List prop_name -> Eolian_Function */
    Eina_List *methods; /* List meth_name -> Eolian_Function */
-   Eina_List *constructors; /* List constructor_name -> Eolian_Function */
    Eina_List *implements; /* List implements name -> Eolian_Implement */
    Eina_List *events; /* List event_name -> Eolian_Event */
    Eina_Bool class_ctor_enable:1;

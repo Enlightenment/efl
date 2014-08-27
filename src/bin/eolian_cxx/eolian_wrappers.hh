@@ -25,7 +25,8 @@ getter_t const getter = {};
 struct method_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_METHOD; };
 method_t const method = {};
 
-struct ctor_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_CTOR; };
+/* fixme */
+struct ctor_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_METHOD; };
 ctor_t const ctor = {};
 
 inline const Eolian_Class*

@@ -225,38 +225,6 @@ _db_fill_methods(Eolian_Class *cl, Eo_Class_Def *kls)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_db_fill_ctor(Eolian_Class *cl, Eo_Method_Def *meth)
-{
-   Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_CTOR);
-
-   cl->constructors = eina_list_append(cl->constructors, foo_id);
-
-   if (meth->ret)
-     foo_id->get_return_comment = eina_stringshare_ref(meth->ret->comment);
-
-   foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
-
-   _db_fill_params(meth->params, &(foo_id->params));
-
-   foo_id->base = meth->base;
-   meth->base.file = NULL;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_ctors(Eolian_Class *cl, Eo_Class_Def *kls)
-{
-   Eo_Method_Def *meth;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(kls->constructors, l, meth)
-     if (!_db_fill_ctor(cl, meth)) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 static int
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
@@ -371,7 +339,6 @@ _db_fill_class(Eo_Class_Def *kls)
    if (kls->data_type)
      cl->data_type = eina_stringshare_ref(kls->data_type);
 
-   if (!_db_fill_ctors     (cl, kls)) return EINA_FALSE;
    if (!_db_fill_properties(cl, kls)) return EINA_FALSE;
    if (!_db_fill_methods   (cl, kls)) return EINA_FALSE;
    if (!_db_fill_implements(cl, kls)) return EINA_FALSE;

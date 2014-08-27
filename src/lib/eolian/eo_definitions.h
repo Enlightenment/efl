@@ -99,7 +99,6 @@ typedef struct _Eo_Class_Def
    Eina_List *inherits;
    Eina_List *implements;
    Eina_List *events;
-   Eina_List *constructors;
    Eina_List *properties;
    Eina_List *methods;
 } Eo_Class_Def;
