@@ -57,6 +57,15 @@ case "$TERM" in
       ;;
 esac
 
+### echo compatibility
+
+## the BSD echo does not have the -e option (it is the default behaviour)
+echo_e=
+if test "`echo -e x`" = "x"; then
+   echo_e=-e
+fi
+AC_SUBST([ECHO_E], [${echo_e}])
+
 if test "${want_color}" = "yes"; then
    COLOR_YES=`echo $echo_e "\033@<:@1;32m"`
    COLOR_NO=`echo $echo_e "\033@<:@1;31m"`
