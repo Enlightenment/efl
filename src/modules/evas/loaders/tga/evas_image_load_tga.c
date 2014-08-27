@@ -58,9 +58,9 @@ struct _tga_footer
 
 static void *
 evas_image_load_file_open_tga(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      int *error EINA_UNUSED)
+                              Evas_Image_Load_Opts *opts EINA_UNUSED,
+                              Evas_Image_Animated *animated EINA_UNUSED,
+                              int *error EINA_UNUSED)
 {
    return f;
 }
@@ -72,8 +72,8 @@ evas_image_load_file_close_tga(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_tga(void *loader_data,
-			      Evas_Image_Property *prop,
-			      int *error)
+                              Evas_Image_Property *prop,
+                              int *error)
 {
    Eina_File *f = loader_data;
    unsigned char *seg = NULL, *filedata;
@@ -109,7 +109,7 @@ evas_image_load_file_head_tga(void *loader_data,
      }
 //   else goto close_file;
    //printf("1\n");
-   
+
    filedata = (unsigned char *)filedata + sizeof(tga_header);
    switch (header->imageType)
      {
@@ -148,11 +148,11 @@ evas_image_load_file_head_tga(void *loader_data,
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
      goto close_file;
-   
+
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      goto close_file;
-   
+
    prop->w = w;
    prop->h = h;
    if (hasa) prop->alpha = 1;
@@ -167,9 +167,9 @@ close_file:
 
 static Eina_Bool
 evas_image_load_file_data_tga(void *loader_data,
-			      Evas_Image_Property *prop,
-			      void *pixels,
-			      int *error)
+                              Evas_Image_Property *prop,
+                              void *pixels,
+                              int *error)
 {
    Eina_File *f = loader_data;
    unsigned char *seg = NULL, *filedata;
@@ -208,7 +208,7 @@ evas_image_load_file_data_tga(void *loader_data,
              footer_present = 1;
           }
      }
-   
+
    filedata = (unsigned char *)filedata + sizeof(tga_header);
    vinverted = !(header->descriptor & TGA_DESC_VERTICAL);
    switch (header->imageType)
@@ -249,15 +249,15 @@ evas_image_load_file_data_tga(void *loader_data,
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
      goto close_file;
-   
+
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      goto close_file;
-   
+
    if ((w != (int)prop->w) || (h != (int)prop->h))
      {
-	*error = EVAS_LOAD_ERROR_GENERIC;
-	goto close_file;
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        goto close_file;
      }
    surface = pixels;
 
@@ -285,7 +285,7 @@ evas_image_load_file_data_tga(void *loader_data,
                        if (hasa)
                          {
                             int a = bufptr[3];
-                            
+
                             switch (abits)
                               {
                                case 1:
@@ -326,9 +326,9 @@ evas_image_load_file_data_tga(void *loader_data,
                     {
                        unsigned char r, g, b, a;
                        unsigned short tmp;
-                       
-                       tmp = 
-                         (((unsigned short)bufptr[1]) << 8) | 
+
+                       tmp =
+                         (((unsigned short)bufptr[1]) << 8) |
                          (((unsigned short)bufptr[0]));
                        r = (tmp >> 7) & 0xf8; r |= r >> 5;
                        g = (tmp >> 2) & 0xf8; g |= g >> 5;
@@ -358,7 +358,7 @@ evas_image_load_file_data_tga(void *loader_data,
         int count, i;
         unsigned char val;
         unsigned int *dataend;
-        
+
         dataptr = surface;
         dataend = dataptr + (w * h);
         while ((bufptr < bufend) && (dataptr < dataend))
@@ -375,7 +375,7 @@ evas_image_load_file_data_tga(void *loader_data,
                          {
                             unsigned char r, g, b;
                             int a = bufptr[3];
-                            
+
                             switch (abits)
                               {
                                case 1:
@@ -411,7 +411,7 @@ evas_image_load_file_data_tga(void *loader_data,
                        if (bufptr < (bufend - 3))
                          {
                             unsigned char r, g, b;
-                            
+
                             r = bufptr[2];
                             g = bufptr[1];
                             b = bufptr[0];
@@ -428,9 +428,9 @@ evas_image_load_file_data_tga(void *loader_data,
                          {
                             unsigned char r, g, b, a;
                             unsigned short tmp;
-                            
-                            tmp = 
-                              (((unsigned short)bufptr[1]) << 8) | 
+
+                            tmp =
+                              (((unsigned short)bufptr[1]) << 8) |
                               (((unsigned short)bufptr[0]));
                             r = (tmp >> 7) & 0xf8; r |= r >> 5;
                             g = (tmp >> 2) & 0xf8; g |= g >> 5;
@@ -449,7 +449,7 @@ evas_image_load_file_data_tga(void *loader_data,
                        if (bufptr < (bufend - 1))
                          {
                             unsigned char g;
-                            
+
                             g = bufptr[0];
                             bufptr += 1;
                             for (i = 0; (i < count) && (dataptr < dataend); i++)
@@ -492,9 +492,9 @@ evas_image_load_file_data_tga(void *loader_data,
                          {
                             unsigned char r, g, b, a;
                             unsigned short tmp;
-                            
-                            tmp = 
-                              (((unsigned short)bufptr[1]) << 8) | 
+
+                            tmp =
+                              (((unsigned short)bufptr[1]) << 8) |
                               (((unsigned short)bufptr[0]));
                             r = (tmp >> 7) & 0xf8; r |= r >> 5;
                             g = (tmp >> 2) & 0xf8; g |= g >> 5;
@@ -522,7 +522,7 @@ evas_image_load_file_data_tga(void *loader_data,
         if (vinverted)
           {
              unsigned int *adv, *adv2, tmp;
-             
+
              adv = surface;
              adv2 = surface + (w * (h - 1));
              for (y = 0; y < (h / 2); y++)
@@ -535,7 +535,7 @@ evas_image_load_file_data_tga(void *loader_data,
                     }
                   adv2 -= w;
                   adv += w;
-               }                                        
+               }
           }
      }
 
