@@ -328,7 +328,7 @@ output(void)
 		  INF("Output Image: %s", out);
 		  pp = strdup(out);
 		  p = strrchr(pp, '/');
-		  *p = 0;
+		  if (p) *p = 0;
 		  if (strstr(pp, "../"))
 		    {
 		       ERR("Potential security violation. attempt to write in parent dir.");
@@ -359,7 +359,7 @@ output(void)
 	INF("Output Source File: %s", out);
 	pp = strdup(out);
 	p = strrchr(pp, '/');
-	*p = 0;
+	if (p) *p = 0;
 	if (strstr(pp, "../"))
 	  {
 	     ERR("Potential security violation. attempt to write in parent dir.");
@@ -410,7 +410,7 @@ output(void)
 		  INF("Output Font: %s", out);
 		  pp = strdup(out);
 		  p = strrchr(pp, '/');
-		  *p = 0;
+		  if (p) *p = 0;
 		  if (strstr(pp, "../"))
 		    {
 		       ERR("Potential security violation. attempt to write in parent dir.");
@@ -501,7 +501,7 @@ output(void)
                   snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->snd_src);
                   pp = strdup(out1);
                   p = strrchr(pp, '/');
-                  *p = 0;
+                  if (p) *p = 0;
                   if (strstr(pp, "../"))
                     {
                        ERR("Potential security violation. attempt to write in parent dir.");
@@ -548,12 +548,7 @@ output(void)
                   snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->src);
                   pp = strdup(out1);
                   p = strrchr(pp, '/');
-                  if (!p)
-                    {
-                       ERR("Cannot find '/' in file");
-                       exit(-1);
-                    }
-                  *p = 0;
+                  if (p) *p = 0;
                   if (strstr(pp, "../"))
                     {
                        ERR("Potential security violation. attempt to write in parent dir.");
