@@ -162,15 +162,6 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    if (eina_strbuf_length_get(params))
       eina_strbuf_prepend_printf(params, ", ");
 
-   if (impl_desc && ftype == EOLIAN_CTOR)
-     {
-        eina_strbuf_append_printf(super_invok,
-              "   eo_do_super(obj, %s_%s, %s_%s(%s));\n",
-              class_env.upper_eo_prefix, class_env.upper_classtype,
-              impl_env.lower_eo_prefix, eolian_function_name_get(foo),
-              eina_strbuf_string_get(short_params));
-     }
-
    fname = eolian_function_name_get(foo);
    if (fname)
      {
@@ -278,14 +269,6 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
    EINA_ITERATOR_FOREACH(itr, foo)
      {
         _prototype_generate(foo, EOLIAN_METHOD, data_type_buf, NULL, buffer);
-     }
-   eina_iterator_free(itr);
-
-   /* Custom constructors */
-   itr = eolian_class_functions_get(class, EOLIAN_CTOR);
-   EINA_ITERATOR_FOREACH(itr, foo)
-     {
-        _prototype_generate(foo, EOLIAN_CTOR, data_type_buf, NULL, buffer);
      }
    eina_iterator_free(itr);
 

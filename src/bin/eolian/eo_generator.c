@@ -225,7 +225,7 @@ eo_fundef_generate(const Eolian_Class *class, Eolian_Function *func, Eolian_Func
 Eina_Bool
 eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
-   const Eolian_Function_Type ftype_order[] = {EOLIAN_CTOR, EOLIAN_PROPERTY, EOLIAN_METHOD};
+   const Eolian_Function_Type ftype_order[] = {EOLIAN_PROPERTY, EOLIAN_METHOD};
    Eina_Iterator *itr;
    Eolian_Event *event;
    Eolian_Function *fid;
@@ -707,22 +707,6 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
               break;
           }
         eina_stringshare_del(rets);
-     }
-   eina_iterator_free(itr);
-
-   //Constructors
-   itr = eolian_class_functions_get(class, EOLIAN_CTOR);
-   EINA_ITERATOR_FOREACH(itr, fn)
-     {
-        if (eolian_function_is_legacy_only(fn, EOLIAN_CTOR))
-          continue;
-
-        char *desc = _source_desc_get(eolian_function_description_get(fn, EOLIAN_METHOD));
-        eo_op_desc_generate(class, fn, EOLIAN_CTOR, desc, tmpbuf);
-        eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
-        free(desc);
-
-        eo_bind_func_generate(class, fn, EOLIAN_UNRESOLVED, str_bodyf, NULL);
      }
    eina_iterator_free(itr);
 
