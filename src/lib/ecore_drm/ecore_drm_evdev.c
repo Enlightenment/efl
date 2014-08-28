@@ -786,7 +786,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
 
    if (!_device_configure(edev))
      {
-        ERR("Could not configure input device");
+        ERR("Could not configure input device: %s", name);
         _ecore_drm_evdev_device_destroy(edev);
         return NULL;
      }
