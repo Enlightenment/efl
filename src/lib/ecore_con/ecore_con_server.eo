@@ -1,4 +1,3 @@
-/* FIXME: make abstract. */
 class Ecore.Con.Server (Ecore.Con.Base) {
    eo_prefix: ecore_con_server_obj;
    properties {
@@ -8,6 +7,9 @@ class Ecore.Con.Server (Ecore.Con.Base) {
           *
           * The name returned is the name used to connect on this server.
           */
+         set {
+            legacy: null;
+         }
          get {
          }
          values {
@@ -52,11 +54,25 @@ class Ecore.Con.Server (Ecore.Con.Base) {
             const(Eina_List <const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
          }
       }
+      connection_type {
+        get {
+            legacy: null;
+        }
+        set {
+            legacy: null;
+        }
+        values {
+            Ecore_Con_Type conn_type;
+        }
+      }
    }
    implements {
+      Eo.Base.constructor;
       Eo.Base.destructor;
+      Eo.Base.finalize;
       Ecore.Con.Base.ip.get;
       Ecore.Con.Base.uptime.get;
+      Ecore.Con.Base.port.set;
       Ecore.Con.Base.port.get;
       Ecore.Con.Base.fd.get;
       Ecore.Con.Base.connected.get;
