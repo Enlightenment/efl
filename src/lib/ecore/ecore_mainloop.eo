@@ -28,7 +28,7 @@ class Ecore_Mainloop (Eo.Base)
       }
       animator_ticked {
          /* FIXME: Should it be a prooperty? */
-         return: Eina_Bool;
+         return: bool;
       }
    }
    events {
