@@ -531,7 +531,6 @@ _ecore_evas_drm_shutdown(void)
    return _ecore_evas_init_count;
 }
 
-#ifdef BUILD_ECORE_EVAS_GL_DRM
 static Ecore_Evas_Interface_Drm *
 _ecore_evas_drm_interface_new(void)
 {
@@ -549,7 +548,6 @@ _ecore_evas_drm_interface_new(void)
 
    return iface;
 }
-#endif
 
 /* local ecore_evas functions */
 static void
