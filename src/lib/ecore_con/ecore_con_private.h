@@ -198,33 +198,6 @@ struct _Ecore_Con_Server_Data
 
 typedef struct _Ecore_Con_Server_Data Ecore_Con_Server_Data;
 
-struct _Ecore_Con_Url
-{
-   ECORE_MAGIC;
-   void *curl_easy;
-   struct curl_slist *headers;
-   Eina_List *additional_headers;
-   Eina_List *response_headers;
-   const char *url;
-   long proxy_type;
-   int status;
-
-   Ecore_Timer *timer;
-
-   Ecore_Con_Url_Time time_condition;
-   double timestamp;
-   void *data;
-   
-   void *post_data;
-
-   int received;
-   int write_fd;
-
-   unsigned int event_count;
-   Eina_Bool dead : 1;
-   Eina_Bool multi : 1;
-};
-
 struct _Ecore_Con_Info
 {
    unsigned int size;

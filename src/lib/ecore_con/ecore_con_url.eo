@@ -1,0 +1,25 @@
+class Ecore.Con.Url (Eo.Base) {
+   eo_prefix: ecore_con_url_obj;
+   properties {
+      url {
+         /**
+          * Controls the URL to send the request to.
+          */
+         set {
+            return: bool (false); /* true on success, false on error. */
+         }
+         get {
+         }
+         values {
+            const(char) *url; /*@ The URL */
+         }
+      }
+   }
+   implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Eo.Base.finalize;
+   }
+}
+
+/* FIXME: Actually migrate all of the functions. */

@@ -232,13 +232,6 @@ typedef Eo Ecore_Con;
  */
 typedef struct Ecore_Con_Socks Ecore_Con_Socks;
 
-/**
- * @typedef Ecore_Con_Url
- * A handle to an http upload/download object
- * @ingroup Ecore_Con_Url_Group
- */
-typedef struct _Ecore_Con_Url Ecore_Con_Url;
-
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Ecore_Con_Legacy.h"
 #endif
@@ -1397,25 +1390,7 @@ EAPI Ecore_Con_Url *   ecore_con_url_custom_new(const char *url,
  * @see ecore_con_url_new()
  */
 EAPI void              ecore_con_url_free(Ecore_Con_Url *url_con);
-/**
- * Sets the URL to send the request to.
- *
- * @param url_con Connection object through which the request will be sent.
- * @param url URL that will receive the request
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
- */
-EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
-                                             const char *url);
-/**
- * Gets the URL to send the request to.
- *
- * @param url_con Connection object through which the request will be sent.
- * @return URL that will receive the request, @c NULL on failure. URL is
- * stringshared.
- * @since 1.1
- */
-EAPI const char       *ecore_con_url_url_get(Ecore_Con_Url *url_con);
+
 /**
  * Associates data with a connection object.
  *
