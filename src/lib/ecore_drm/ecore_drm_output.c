@@ -366,8 +366,11 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
           }
      }
 
-   if (!output->current_mode)
-     output->current_mode = _ecore_drm_output_mode_add(output, &crtc_mode);
+   if ((!output->current_mode) && (crtc_mode.clock != 0))
+     {
+        output->current_mode = _ecore_drm_output_mode_add(output, &crtc_mode);
+        if (!output->current_mode) goto mode_err;
+     }
 
 /* #ifdef HAVE_GBM */
 /*    if ((dev->use_hw_accel) && (dev->gbm)) */
@@ -394,17 +397,40 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
           DBG("Setup Output %d for Software Rendering", output->crtc_id);
      }
 
-   /* TODO */
+   /* TODO: Backlight */
 
    return output;
 
 mode_err:
+   eina_stringshare_del(output->make);
+   eina_stringshare_del(output->model);
+   eina_stringshare_del(output->name);
    EINA_LIST_FREE(output->modes, mode)
      free(mode);
    drmModeFreeCrtc(output->crtc);
    dev->crtc_allocator &= ~(1 << output->crtc_id);
    free(output);
    return NULL;
+}
+
+static void 
+_ecore_drm_output_free(Ecore_Drm_Output *output)
+{
+   Ecore_Drm_Output_Mode *mode;
+
+   if (!output) return;
+
+   eina_stringshare_del(output->make);
+   eina_stringshare_del(output->model);
+   eina_stringshare_del(output->name);
+
+   EINA_LIST_FREE(output->modes, mode)
+     free(mode);
+
+   drmModeFreeCrtc(output->crtc);
+   dev->crtc_allocator &= ~(1 << output->crtc_id);
+
+   free(output);
 }
 
 void 
@@ -521,15 +547,16 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
                {
                   /* free the connector */
                   drmModeFreeConnector(conn);
+                  _ecore_drm_output_free(output);
                   continue;
                }
 
              output->drm_fd = dev->drm.fd;
-             dev->outputs = eina_list_append(dev->outputs, output);
 
              if (!(enc = drmModeGetEncoder(dev->drm.fd, conn->encoder_id)))
                {
                   drmModeFreeConnector(conn);
+                  _ecore_drm_output_free(output);
                   continue;
                }
 
@@ -537,6 +564,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
                {
                   drmModeFreeEncoder(enc);
                   drmModeFreeConnector(conn);
+                  _ecore_drm_output_free(output);
                   continue;
                }
 
@@ -544,6 +572,8 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
+
+             dev->outputs = eina_list_append(dev->outputs, output);
           }
 
         /* free the connector */
