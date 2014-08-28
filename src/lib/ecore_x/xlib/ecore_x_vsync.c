@@ -23,6 +23,22 @@ static Ecore_X_Window vsync_root = 0;
 
 int _ecore_x_image_shm_check(void);
 
+static int _vsync_log_dom = -1;
+
+#undef ERR
+#define ERR(...) EINA_LOG_DOM_ERR(_vsync_log_dom, __VA_ARGS__)
+
+#undef DBG
+#define DBG(...) EINA_LOG_DOM_DBG(_vsync_log_dom, __VA_ARGS__)
+
+#undef INF
+#define INF(...) EINA_LOG_DOM_INFO(_vsync_log_dom, __VA_ARGS__)
+
+#undef WRN
+#define WRN(...) EINA_LOG_DOM_WARN(_vsync_log_dom, __VA_ARGS__)
+
+#undef CRI
+#define CRI(...) EINA_LOG_DOM_CRIT(_vsync_log_dom, __VA_ARGS__)
 
 
 
@@ -577,6 +593,7 @@ _vsync_init(void)
 
    if (done) return;
 
+   _vsync_log_dom = eina_log_domain_register("ecore_x_vsync", EINA_COLOR_LIGHTRED);
    if (_ecore_x_image_shm_check())
      {
 #ifdef ECORE_X_VSYNC_DRM
