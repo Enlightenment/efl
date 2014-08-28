@@ -191,5 +191,10 @@ type Ecore_Con_Dns_Cb: func void (const(char) *canonname,
                                  void *data);
 
 
-* Add events
+* Add events (to all of the ecore con stuff, e.g url).
+* Make server the father of the client - make sure I don't leak references.
+*
+* Still need to add constructors to server/client, and most likely migrate ecore_con_eet.
+*
+* Split server to two classes, listener and connector (or w/e).
 */
