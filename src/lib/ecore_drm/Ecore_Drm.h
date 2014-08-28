@@ -25,24 +25,6 @@
 
 #include <Ecore.h>
 
-typedef enum _Ecore_Drm_Op
-{
-   ECORE_DRM_OP_READ_FD_SET,
-   ECORE_DRM_OP_WRITE_FD_SET,
-   ECORE_DRM_OP_DEVICE_OPEN,
-   ECORE_DRM_OP_DEVICE_CLOSE,
-   ECORE_DRM_OP_DEVICE_MASTER_DROP,
-   ECORE_DRM_OP_DEVICE_MASTER_SET,
-   ECORE_DRM_OP_TTY_OPEN,
-   ECORE_DRM_OP_TTY_CLOSE
-} Ecore_Drm_Op;
-
-typedef enum _Ecore_Drm_Op_Result 
-{
-   ECORE_DRM_OP_SUCCESS,
-   ECORE_DRM_OP_FAILURE
-} Ecore_Drm_Op_Result;
-
 typedef enum _Ecore_Drm_Evdev_Capabilities
 {
    EVDEV_KEYBOARD = (1 << 0),
