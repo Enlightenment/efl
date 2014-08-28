@@ -49,8 +49,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
          get {
          }
          values {
-            /* FIXME: Change to Ecore.Con.Client when eolian cycle bug is fixed. */
-            const(Eina_List <const(Ecore.Con.Base) *>) *clients; /*@ The list of clients on this server. */
+            const(Eina_List <const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
          }
       }
    }
