@@ -232,6 +232,8 @@ typedef Eo Ecore_Con;
  */
 typedef struct Ecore_Con_Socks Ecore_Con_Socks;
 
+typedef enum _Ecore_Con_Type Ecore_Con_Type;
+
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Ecore_Con_Legacy.h"
 #endif

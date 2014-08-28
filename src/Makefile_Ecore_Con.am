@@ -8,6 +8,8 @@ ecorecon_eobuiltheaders = \
                  lib/ecore_con/ecore_con_client.eo.legacy.h \
                  lib/ecore_con/ecore_con_server.eo.h \
                  lib/ecore_con/ecore_con_server.eo.legacy.h \
+                 lib/ecore_con/ecore_con_connector.eo.h \
+                 lib/ecore_con/ecore_con_connector.eo.legacy.h \
                  lib/ecore_con/ecore_con_url.eo.h \
                  lib/ecore_con/ecore_con_url.eo.legacy.h
 
@@ -16,6 +18,7 @@ BUILT_SOURCES += \
                  lib/ecore_con/ecore_con_base.eo.c \
                  lib/ecore_con/ecore_con_client.eo.c \
                  lib/ecore_con/ecore_con_server.eo.c \
+                 lib/ecore_con/ecore_con_connector.eo.c \
                  lib/ecore_con/ecore_con_url.eo.c
 
 ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
@@ -23,6 +26,7 @@ ecoreconeolianfiles_DATA = \
               lib/ecore_con/ecore_con_base.eo \
               lib/ecore_con/ecore_con_client.eo \
               lib/ecore_con/ecore_con_server.eo \
+              lib/ecore_con/ecore_con_connector.eo \
               lib/ecore_con/ecore_con_url.eo
 
 EXTRA_DIST += \

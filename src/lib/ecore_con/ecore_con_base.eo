@@ -38,6 +38,9 @@ abstract Ecore.Con.Base (Eo.Base) {
           * @brief Return the port that the obj is connected to
           *
           */
+         set {
+             legacy: null;
+         }
          get {
              legacy: null;
          }
@@ -156,6 +159,7 @@ abstract Ecore.Con.Base (Eo.Base) {
    implements {
       virtual.ip.get;
       virtual.uptime.get;
+      virtual.port.set;
       virtual.port.get;
       virtual.fd.get;
       virtual.connected.get;
@@ -194,7 +198,9 @@ type Ecore_Con_Dns_Cb: func void (const(char) *canonname,
 * Add events (to all of the ecore con stuff, e.g url).
 * Make server the father of the client - make sure I don't leak references.
 *
-* Still need to add constructors to server/client, and most likely migrate ecore_con_eet.
+* Still need to add constructor client, and most likely migrate ecore_con_eet.
 *
 * Split server to two classes, listener and connector (or w/e).
+*
+* Mark the constructing properties all around.
 */

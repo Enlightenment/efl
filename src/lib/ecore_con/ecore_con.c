@@ -282,7 +282,10 @@ _ecore_con_base_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char
    if (!name || !done_cb)
      return EINA_FALSE;
 
-   obj = eo_add(ECORE_CON_SERVER_CLASS, NULL);
+   obj = eo_add(ECORE_CON_SERVER_CLASS, NULL,
+         ecore_con_server_obj_connection_type_set(ECORE_CON_REMOTE_TCP),
+         ecore_con_server_obj_name_set(name),
+         ecore_con_obj_port_set(1025));
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    if (!svr)
      return EINA_FALSE;
@@ -301,14 +304,7 @@ _ecore_con_base_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char
    if (!svr->name)
      goto on_error;
 
-   svr->type = ECORE_CON_REMOTE_TCP;
-   svr->port = 1025;
    svr->data = lk;
-   svr->created = EINA_TRUE;
-   svr->reject_excess_clients = EINA_FALSE;
-   svr->client_limit = -1;
-   svr->clients = NULL;
-   svr->ppid = getpid();
 
    memset(&hints, 0, sizeof(struct addrinfo));
    hints.ai_family = AF_UNSPEC;
@@ -350,38 +346,52 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
                      const void *data)
 {
    Ecore_Con_Server *obj;
-   Ecore_Con_Type type;
-
-   if (port < 0 || !name)
-     return NULL;  /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
 
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = eo_add(ECORE_CON_SERVER_CLASS, NULL);
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   obj = eo_add(ECORE_CON_SERVER_CLASS, NULL,
+         ecore_con_server_obj_connection_type_set(compl_type),
+         ecore_con_server_obj_name_set(name),
+         ecore_con_obj_port_set(port));
+
+   ecore_con_server_data_set(obj, (void *) data);
+
+   return obj;
+}
+
+EOLIAN static void
+_ecore_con_server_eo_base_constructor(Ecore_Con_Server *obj, Ecore_Con_Server_Data *svr)
+{
+   eo_do_super(obj, ECORE_CON_SERVER_CLASS, eo_constructor());
 
    svr->fd = -1;
    svr->start_time = ecore_time_get();
-   svr->type = compl_type;
-   svr->port = port;
-   svr->data = (void *)data;
    svr->created = EINA_TRUE;
-   svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
    svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
    svr->ppid = getpid();
+}
+
+EOLIAN static Eo *
+_ecore_con_server_eo_base_finalize(Ecore_Con_Server *obj, Ecore_Con_Server_Data *svr)
+{
+   Ecore_Con_Type compl_type = svr->type;
+   Ecore_Con_Type type;
+
+   eo_do_super(obj, ECORE_CON_SERVER_CLASS, eo_finalize());
+
+   svr->use_cert = (svr->type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
 
    servers = eina_list_append(servers, obj);
 
-   svr->name = strdup(name);
+   type = compl_type & ECORE_CON_TYPE;
+
    if (!svr->name)
      goto error;
 
    if (ecore_con_ssl_server_prepare(obj, compl_type & ECORE_CON_SSL))
      goto error;
-
-   type = compl_type & ECORE_CON_TYPE;
 
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM) ||
@@ -426,31 +436,36 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
                          const void *data)
 {
    Ecore_Con_Server *obj;
-   Ecore_Con_Type type;
-
-   if ((!name) || (!name[0]))
-     return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = eo_add(ECORE_CON_SERVER_CLASS, NULL);
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   obj = eo_add(ECORE_CON_CONNECTOR_CLASS, NULL,
+         ecore_con_server_obj_connection_type_set(compl_type),
+         ecore_con_server_obj_name_set(name),
+         ecore_con_obj_port_set(port));
 
-   svr->fd = -1;
-   svr->type = compl_type;
-   svr->port = port;
-   svr->data = (void *)data;
-   svr->created = EINA_FALSE;
+   ecore_con_server_data_set(obj, (void *) data);
+
+   return obj;
+}
+
+EOLIAN static Eo *
+_ecore_con_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSED)
+{
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   Ecore_Con_Type compl_type = svr->type;
+   Ecore_Con_Type type;
+
+   /* XXX: We intentionally put SERVER class here and not connector, as we'd
+    * like to skip that one. */
+   eo_do_super(obj, ECORE_CON_SERVER_CLASS, eo_finalize());
+
+
    svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
    svr->disable_proxy = (compl_type & ECORE_CON_SUPER_SSL & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY;
-   svr->reject_excess_clients = EINA_FALSE;
-   svr->clients = NULL;
-   svr->client_limit = -1;
-
    servers = eina_list_append(servers, obj);
 
-   svr->name = strdup(name);
-   if (!svr->name)
+   if (!svr->name || (svr->port < 0))
      goto error;
 
    type = compl_type & ECORE_CON_TYPE;
@@ -479,7 +494,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
                              (type == ECORE_CON_REMOTE_CORK) ||
                              (type == ECORE_CON_REMOTE_UDP) ||
                              (type == ECORE_CON_REMOTE_BROADCAST)) &&
-                            (port < 0), error);
+                            (svr->port < 0), error);
 
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM) ||
@@ -594,6 +609,29 @@ _ecore_con_server_clients_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
    return svr->clients;
 }
 
+EOLIAN static void
+_ecore_con_server_connection_type_set(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, Ecore_Con_Type type)
+{
+   /* FIXME: Add a check that only allows this during construction. */
+   svr->type = type;
+}
+
+EOLIAN static Ecore_Con_Type
+_ecore_con_server_connection_type_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
+{
+   return svr->type;
+}
+
+EOLIAN static void
+_ecore_con_server_name_set(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, const char *name)
+{
+   /* FIXME: Add a check that only allows this during construction. */
+   if (svr->name)
+      free(svr->name);
+
+   svr->name = strdup(name);
+}
+
 EOLIAN static const char *
 _ecore_con_server_name_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
@@ -604,6 +642,13 @@ EAPI int
 ecore_con_server_port_get(const Ecore_Con *obj)
 {
    return eo_do((Ecore_Con *)obj, ecore_con_obj_port_get());
+}
+
+EOLIAN static void
+_ecore_con_server_ecore_con_base_port_set(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, int port)
+{
+   /* FIXME: Add a check that only allows this during construction. */
+   svr->port = port;
 }
 
 EOLIAN static int
@@ -2780,3 +2825,4 @@ _ecore_con_lookup_done(void *data,
 #include "ecore_con_base.eo.c"
 #include "ecore_con_client.eo.c"
 #include "ecore_con_server.eo.c"
+#include "ecore_con_connector.eo.c"
