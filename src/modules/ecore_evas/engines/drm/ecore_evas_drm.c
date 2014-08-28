@@ -15,7 +15,7 @@
 #include <Ecore_Drm.h>
 #include <Evas_Engine_Drm.h>
 
-#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
+#ifdef BUILD_ECORE_EVAS_GL_DRM
 # include <Evas_Engine_GL_Drm.h>
 # include <gbm.h>
 # include <dlfcn.h>
@@ -276,7 +276,7 @@ ee_err:
    return NULL;
 }
 
-#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
+#ifdef BUILD_ECORE_EVAS_GL_DRM
 EAPI Ecore_Evas *
 ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED, int x, int y, int w, int h)
 {
@@ -531,7 +531,7 @@ _ecore_evas_drm_shutdown(void)
    return _ecore_evas_init_count;
 }
 
-#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
+#ifdef BUILD_ECORE_EVAS_GL_DRM
 static Ecore_Evas_Interface_Drm *
 _ecore_evas_drm_interface_new(void)
 {

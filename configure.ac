@@ -3693,9 +3693,9 @@ ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
 ECORE_EVAS_MODULE([drm], [${want_drm}], 
-  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm],[gbm])])
+  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm])])
 ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
-  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm],[gbm])])
+  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm])])
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
@@ -3801,8 +3801,6 @@ if test "x$have_ecore_evas_software_x11" = "xyes" || \
    build_ecore_evas_x11="yes"
 fi
 AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
-
-AC_DEFINE([BUILD_ECORE_EVAS_OPENGL_DRM], [1], [Build support for DRM based OpenGL])
 
 EFL_EVAL_PKGS([ECORE_EVAS])
 

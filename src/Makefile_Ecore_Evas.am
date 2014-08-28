@@ -215,8 +215,10 @@ modules_ecore_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/ef
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_DRM_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/drm \
--I$(top_srcdir)/src/modules/evas/engines/gl_drm
-modules_ecore_evas_engines_drm_module_la_LIBADD = @USE_ECORE_EVAS_LIBS@
+-I$(top_srcdir)/src/modules/evas/engines/gl_drm \
+@ecore_evas_engines_gl_drm_cflags@
+modules_ecore_evas_engines_drm_module_la_LIBADD = @USE_ECORE_EVAS_LIBS@ \
+@ecore_evas_engines_gl_drm_libs@
 modules_ecore_evas_engines_drm_module_la_DEPENDENCIES = @USE_ECORE_EVAS_INTERNAL_LIBS@
 modules_ecore_evas_engines_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
