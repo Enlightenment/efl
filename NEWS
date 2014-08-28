@@ -1,6 +1,18 @@
 ==========
-EFL 1.11.0
+EFL 1.11.1
 ==========
+
+Changes since 1.11.0:
+---------------------
+
+Fixes:
+
+   * evas: Evas_Wayland_Egl - change size of common gl context after egl make current according to current Outbuf's size
+   * evas: Evas_wayland_Egl - fix black surface during resize
+   * ecore_evas: Ecore_Evas_X - make sure that ecore evas post render is always called.
+   * fix efl deadlock with thread queues
+   * ecore_evas: Ecore_Evas_X - Fix broken rendering during rotation with resize (T1371)
+   * eina_file: fixing wrong return value on access problems in file copy process
 
 Changes since 1.10.0:
 ---------------------
