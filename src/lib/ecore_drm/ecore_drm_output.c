@@ -428,7 +428,6 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
      free(mode);
 
    drmModeFreeCrtc(output->crtc);
-   dev->crtc_allocator &= ~(1 << output->crtc_id);
 
    free(output);
 }
