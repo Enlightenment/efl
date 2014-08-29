@@ -90,6 +90,17 @@ eolian_implement_function_get(const Eolian_Implement *impl,
    const Eolian_Function *fid = eolian_class_function_get_by_name(klass,
                                                                   func_name,
                                                                   tp);
+
+   if (fid && tp == EOLIAN_UNRESOLVED && (fid->type == EOLIAN_PROP_GET
+                                       || fid->type == EOLIAN_PROP_SET))
+     {
+        eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR,
+            impl->base.file, "", impl->base.line, "both get and set required "
+              "for property '%s' at column %d", func_name, impl->base.column);
+        free(func_name);
+        return NULL;
+     }
+
    free(func_name);
 
    if (func_type)
