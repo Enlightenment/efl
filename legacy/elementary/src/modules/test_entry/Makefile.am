@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
 @ELEMENTARY_FB_CFLAGS@ \
@@ -19,10 +20,6 @@ AM_CPPFLAGS = \
 @ELEMENTARY_WEB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_WAYLAND_CFLAGS@
-
-if ELEMENTARY_WINDOWS_BUILD
-AM_CPPFLAGS += -DELEMENTARY_BUILD
-endif
 
 pkgdir = $(libdir)/elementary/modules/test_entry/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
