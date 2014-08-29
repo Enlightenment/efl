@@ -1562,7 +1562,6 @@ fullclass:
    eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, '.');
-   eina_strbuf_append_char(buf, '.');
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
      eo_lexer_syntax_error(ls, "name or constructor/destructor expected");
    for (;;)
@@ -1571,19 +1570,26 @@ fullclass:
           {
            case KW_constructor:
            case KW_destructor:
-           case KW_get:
-           case KW_set:
+             eina_strbuf_append_char(buf, '.');
              eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
+             eo_lexer_get(ls);
+             goto end;
+           case KW_get:
+             impl->is_prop_get = EINA_TRUE;
+             eo_lexer_get(ls);
+             goto end;
+           case KW_set:
+             impl->is_prop_set = EINA_TRUE;
              eo_lexer_get(ls);
              goto end;
            default:
              break;
           }
+        eina_strbuf_append_char(buf, '.');
         check(ls, TOK_VALUE);
         eina_strbuf_append(buf, ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token != '.') break;
-        eina_strbuf_append(buf, ".");
         eo_lexer_get(ls);
      }
 end:

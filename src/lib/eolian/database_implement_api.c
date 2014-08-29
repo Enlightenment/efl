@@ -76,16 +76,14 @@ eolian_implement_function_get(const Eolian_Implement *impl,
    if (!klass)
      return NULL;
 
-   char *func_name = strdup(impl->full_name + strlen(klass->full_name) + 1);
-   char *dot = strchr(func_name, '.');
+   const char *func_name = impl->full_name + strlen(klass->full_name) + 1;
 
    Eolian_Function_Type tp = EOLIAN_UNRESOLVED;
-   if (dot)
-     {
-        *dot = '\0';
-        if      (!strcmp(dot + 1, "set")) tp = EOLIAN_PROP_SET;
-        else if (!strcmp(dot + 1, "get")) tp = EOLIAN_PROP_GET;
-     }
+
+   if (impl->is_prop_get)
+     tp = EOLIAN_PROP_GET;
+   else if (impl->is_prop_set)
+     tp = EOLIAN_PROP_SET;
 
    const Eolian_Function *fid = eolian_class_function_get_by_name(klass,
                                                                   func_name,
@@ -97,11 +95,8 @@ eolian_implement_function_get(const Eolian_Implement *impl,
         eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR,
             impl->base.file, "", impl->base.line, "both get and set required "
               "for property '%s' at column %d", func_name, impl->base.column);
-        free(func_name);
         return NULL;
      }
-
-   free(func_name);
 
    if (func_type)
      {
