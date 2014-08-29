@@ -1505,10 +1505,11 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, ';');
         return;
      }
-   else if (ls->t.kw == KW_at_virtual)
+   /* . parsing prepared for more tags */
+   else if (ls->t.kw == KW_at_virtual)// || ls->t.token == '.')
      {
-        impl->is_virtual = EINA_TRUE;
-        eo_lexer_get(ls);
+        impl->is_virtual = ls->t.kw == KW_at_virtual;
+        if (impl->is_virtual) eo_lexer_get(ls);
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
           eo_lexer_syntax_error(ls, "name expected");
@@ -1527,6 +1528,13 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
                   check_kw_next(ls, KW_get);
                   impl->is_prop_get = EINA_TRUE;
                }
+             if (!impl->is_virtual)
+               {
+                  const char *ofname = impl->full_name;
+                  impl->full_name = eina_stringshare_printf("%s%s", ofname,
+                      impl->is_prop_get ? ".get" : "set");
+                  eina_stringshare_del(ofname);
+               }
           }
         check_next(ls, ';');
         return;
@@ -1537,7 +1545,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
    eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, '.');
-   eina_strbuf_append(buf, ".");
+   eina_strbuf_append_char(buf, '.');
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
      eo_lexer_syntax_error(ls, "name or constructor/destructor expected");
    for (;;)

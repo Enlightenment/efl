@@ -269,6 +269,13 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         return 1;
      }
 
+   if (impl_name[0] == '.')
+     {
+        impl->full_name = eina_stringshare_printf("%s%s", cl->full_name,
+                                                  impl_name);
+        eina_stringshare_del(impl_name);
+     }
+
    cl->implements = eina_list_append(cl->implements, impl);
    return 0;
 }
