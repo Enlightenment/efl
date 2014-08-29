@@ -121,3 +121,17 @@ eolian_implement_is_empty(const Eolian_Implement *impl)
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
    return impl->is_empty;
 }
+
+EAPI Eina_Bool
+eolian_implement_is_prop_get(const Eolian_Implement *impl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
+   return impl->is_prop_get;
+}
+
+EAPI Eina_Bool
+eolian_implement_is_prop_set(const Eolian_Implement *impl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
+   return impl->is_prop_set;
+}

@@ -946,6 +946,26 @@ EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl);
 EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl);
 
 /*
+ * @brief Get whether an implement references a property getter.
+ *
+ * @param[in] impl the handle of the implement
+ * @return EINA_TRUE when it does, EINA_FALSE when it's not.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_implement_is_prop_get(const Eolian_Implement *impl);
+
+/*
+ * @brief Get whether an implement references a property setter.
+ *
+ * @param[in] impl the handle of the implement
+ * @return EINA_TRUE when it does, EINA_FALSE when it's not.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
+
+/*
  * @brief Get an iterator to the overriding functions defined in a class.
  *
  * @param[in] klass the class.

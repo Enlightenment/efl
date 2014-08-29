@@ -661,6 +661,8 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         const char *rets;
         char *tp = implname;
 
+        const char *names[] = { "", "getter ", "setter " };
+
         if ((impl_class = eolian_implement_class_get(impl_desc)))
           {
              fnid = eolian_implement_function_get(impl_desc, &ftype);
@@ -673,8 +675,10 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
         if (!fnid)
           {
-             ERR ("Failed to generate implementation of %s - missing form super class",
-                   eolian_implement_full_name_get(impl_desc));
+             const char *name = names[eolian_implement_is_prop_get(impl_desc)
+                                   | (eolian_implement_is_prop_set(impl_desc) << 1)];
+             ERR ("Failed to generate implementation of %s%s - missing form super class",
+                   name, eolian_implement_full_name_get(impl_desc));
              goto end;
           }
 
