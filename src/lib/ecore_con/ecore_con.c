@@ -107,6 +107,14 @@ static void        _ecore_con_lookup_done(void *data,
 
 static const char *_ecore_con_pretty_ip(struct sockaddr *client_addr);
 
+#define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
+     if (eo_do(obj, eo_finalized_get())) \
+       { \
+          ERR("This function is only allowed during construction."); \
+          return; \
+       } \
+} while (0)
+
 #ifdef HAVE_SYSTEMD
 int sd_fd_index = 0;
 int sd_fd_max = 0;
@@ -610,9 +618,10 @@ _ecore_con_server_clients_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 }
 
 EOLIAN static void
-_ecore_con_server_connection_type_set(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, Ecore_Con_Type type)
+_ecore_con_server_connection_type_set(Eo *obj, Ecore_Con_Server_Data *svr, Ecore_Con_Type type)
 {
-   /* FIXME: Add a check that only allows this during construction. */
+   EO_CONSTRUCTOR_CHECK_RETURN(obj);
+
    svr->type = type;
 }
 
@@ -625,7 +634,8 @@ _ecore_con_server_connection_type_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data
 EOLIAN static void
 _ecore_con_server_name_set(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, const char *name)
 {
-   /* FIXME: Add a check that only allows this during construction. */
+   EO_CONSTRUCTOR_CHECK_RETURN(obj);
+
    if (svr->name)
       free(svr->name);
 
@@ -647,7 +657,8 @@ ecore_con_server_port_get(const Ecore_Con *obj)
 EOLIAN static void
 _ecore_con_server_ecore_con_base_port_set(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr, int port)
 {
-   /* FIXME: Add a check that only allows this during construction. */
+   EO_CONSTRUCTOR_CHECK_RETURN(obj);
+
    svr->port = port;
 }
 
