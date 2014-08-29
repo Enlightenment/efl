@@ -1227,7 +1227,7 @@ _ecore_con_server_eo_base_destructor(Eo *obj, Ecore_Con_Server_Data *svr)
    Ecore_Con_Client *cl_obj;
    double t_start, t;
 
-   if (svr->event_count) return;
+   if (svr->event_count) goto end;
 
    while (svr->infos)
      {
@@ -1253,7 +1253,7 @@ _ecore_con_server_eo_base_destructor(Eo *obj, Ecore_Con_Server_Data *svr)
 #ifdef _WIN32
    ecore_con_local_win32_server_del(obj);
 #endif
-   if (svr->event_count) return;
+   if (svr->event_count) goto end;
 
    if (svr->buf)
      eina_binbuf_free(svr->buf);
@@ -1296,6 +1296,7 @@ _ecore_con_server_eo_base_destructor(Eo *obj, Ecore_Con_Server_Data *svr)
    servers = eina_list_remove(servers, obj);
    svr->data = NULL;
 
+end:
    eo_do_super(obj, ECORE_CON_SERVER_CLASS, eo_destructor());
 }
 
