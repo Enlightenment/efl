@@ -1,6 +1,8 @@
 #ifndef _EVAS_ENGINE_DRM_H
 # define _EVAS_ENGINE_DRM_H
 
+#include <Ecore_Drm.h>
+
 typedef struct _Evas_Engine_Info_Drm Evas_Engine_Info_Drm;
 
 struct _Evas_Engine_Info_Drm
@@ -27,6 +29,7 @@ struct _Evas_Engine_Info_Drm
         int plane;
 
         Eina_Bool use_hw_accel : 1;
+        Ecore_Drm_Device *dev;
      } info;
 
    /* non-blocking or blocking mode */
