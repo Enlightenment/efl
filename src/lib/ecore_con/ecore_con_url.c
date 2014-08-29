@@ -446,6 +446,14 @@ _ecore_con_url_eo_base_constructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *u
 
    if (!_init_count) eo_error_set(url_obj);
    if (!_c_init()) eo_error_set(url_obj);
+
+   url_con->curl_easy = _c->curl_easy_init();
+   if (!url_con->curl_easy)
+     {
+        eo_error_set(url_obj);
+        return;
+     }
+
 }
 
 EOLIAN static Eo *
@@ -454,13 +462,6 @@ _ecore_con_url_eo_base_finalize(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *url_
    CURLcode ret;
 
    url_con->write_fd = -1;
-
-   url_con->curl_easy = _c->curl_easy_init();
-   if (!url_con->curl_easy)
-     {
-        eo_del(url_obj);
-        return NULL;
-     }
 
    if (!url_con->url)
      {
