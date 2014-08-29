@@ -18,10 +18,10 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/imported \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
--DLOCALE_DIR=\"@LOCALE_DIR@\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DLOCALE_DIR=\"$(localedir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DICON_DIR=\"$(elementary_icon_dir)\" \
+-DICON_DIR=\"$(datadir)/icons\" \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
 @ELEMENTARY_FB_CFLAGS@ \
@@ -32,8 +32,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_WEB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_WAYLAND_CFLAGS@ \
-@ELEMENTARY_DRM_CFLAGS@ \
-@EVIL_CFLAGS@
+@ELEMENTARY_DRM_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -514,7 +513,6 @@ elu_ews_wm.c
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
 @my_libs@ \
-@dlopen_libs@ \
 @ELEMENTARY_LIBS@ \
 @ELEMENTARY_X_LIBS@ \
 @ELEMENTARY_FB_LIBS@ \
@@ -525,7 +523,6 @@ libelementary_la_LIBADD = \
 @ELEMENTARY_EMAP_LIBS@ \
 @ELEMENTARY_WAYLAND_LIBS@ \
 @ELEMENTARY_DRM_LIBS@ \
-@EVIL_LIBS@ \
 @LTLIBINTL@
 
 libelementary_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

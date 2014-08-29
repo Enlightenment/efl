@@ -88,8 +88,7 @@ elm_suite_CPPFLAGS = \
 	@ELEMENTARY_EWEATHER_CFLAGS@ \
 	@ELEMENTARY_WEB_CFLAGS@ \
 	@ELEMENTARY_EMAP_CFLAGS@ \
-	@ELEMENTARY_WAYLAND_CFLAGS@ \
-	@EVIL_CFLAGS@
+	@ELEMENTARY_WAYLAND_CFLAGS@
 
 elm_suite_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
@@ -121,8 +120,7 @@ elm_cxx_suite_CPPFLAGS = \
 	@ELEMENTARY_EWEATHER_CFLAGS@ \
 	@ELEMENTARY_WEB_CFLAGS@ \
 	@ELEMENTARY_EMAP_CFLAGS@ \
-	@ELEMENTARY_WAYLAND_CFLAGS@ \
-	@EVIL_CFLAGS@
+	@ELEMENTARY_WAYLAND_CFLAGS@
 
 elm_cxx_suite_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \

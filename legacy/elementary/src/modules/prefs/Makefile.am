@@ -19,8 +19,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
--DLOCALE_DIR=\"@LOCALE_DIR@\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DLOCALE_DIR=\"$(localedir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
@@ -30,8 +30,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_ELOCATION_CFLAGS@ \
 @ELEMENTARY_WEB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
-@ELEMENTARY_WAYLAND_CFLAGS@ \
-@EVIL_CFLAGS@
+@ELEMENTARY_WAYLAND_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -59,7 +58,7 @@ elm_horizontal_box.c \
 elm_vertical_frame.c \
 elm_horizontal_frame.c
 
-module_la_LIBADD = @ELEMENTARY_LIBS@ $(top_builddir)/src/lib/libelementary.la @EVIL_LIBS@
+module_la_LIBADD = @ELEMENTARY_LIBS@ $(top_builddir)/src/lib/libelementary.la
 module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
