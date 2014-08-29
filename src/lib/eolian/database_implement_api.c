@@ -107,3 +107,17 @@ eolian_implement_function_get(const Eolian_Implement *impl,
      }
    return fid;
 }
+
+EAPI Eina_Bool
+eolian_implement_is_auto(const Eolian_Implement *impl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
+   return impl->is_auto;
+}
+
+EAPI Eina_Bool
+eolian_implement_is_empty(const Eolian_Implement *impl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
+   return impl->is_empty;
+}

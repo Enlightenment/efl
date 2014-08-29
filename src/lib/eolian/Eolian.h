@@ -897,7 +897,7 @@ EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_i
 /*
  * @brief Get full string of an overriding function (implement).
  *
- * @param[in] impl handle of the implement
+ * @param[in] impl the handle of the implement
  * @return the full string.
  *
  * @ingroup Eolian
@@ -907,7 +907,7 @@ EAPI Eina_Stringshare *eolian_implement_full_name_get(const Eolian_Implement *im
 /*
  * @brief Get the class of an overriding function (implement).
  *
- * @param[in] impl handle of the implement
+ * @param[in] impl the handle of the implement
  * @return the class handle or NULL.
  *
  * @ingroup Eolian
@@ -917,13 +917,33 @@ EAPI const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl
 /*
  * @brief Get the function of an implement.
  *
- * @param[in] impl handle of the implement
+ * @param[in] impl the handle of the implement
  * @param[out] func_type the function type.
  * @return the function handle or NULL.
  *
  * @ingroup Eolian
  */
 EAPI const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
+
+/*
+ * @brief Get whether an implement is tagged with @auto.
+ *
+ * @param[in] impl the handle of the implement
+ * @return EINA_TRUE when it is, EINA_FALSE when it's not.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl);
+
+/*
+ * @brief Get whether an implement is tagged with @empty.
+ *
+ * @param[in] impl the handle of the implement
+ * @return EINA_TRUE when it is, EINA_FALSE when it's not.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl);
 
 /*
  * @brief Get an iterator to the overriding functions defined in a class.
