@@ -53,13 +53,6 @@ typedef enum _Ecore_Drm_Seat_Capabilities
    EVDEV_SEAT_TOUCH = (1 << 2),
 } Ecore_Drm_Seat_Capabilities;
 
-/* structure for message passing */
-typedef struct _Ecore_Drm_Message 
-{
-   int opcode, size;
-   void *data;
-} Ecore_Drm_Message;
-
 /* structure for fb objects */
 typedef struct _Ecore_Drm_Fb
 {
