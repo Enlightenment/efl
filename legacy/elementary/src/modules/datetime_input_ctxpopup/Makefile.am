@@ -24,7 +24,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_DRM_CFLAGS@
 
-pkgdir = $(libdir)/elementary/modules/datetime_input_ctxpopup/$(MODULE_ARCH)
+pkgdir = $(pkglibdir)/modules/datetime_input_ctxpopup/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = datetime_input_ctxpopup.c

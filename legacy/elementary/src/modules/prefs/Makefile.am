@@ -5,7 +5,7 @@ include ../../../Makefile_Elm_Helpers.am
 EXTRA_DIST = \
 elm_prefs_swallow.edc
 
-filesdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
+filesdir = $(pkglibdir)/modules/prefs/$(MODULE_ARCH)
 files_DATA = elm_prefs_swallow.edj
 
 elm_prefs_swallow.edj: Makefile elm_prefs_swallow.edc
@@ -33,7 +33,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_WAYLAND_CFLAGS@
 
-pkgdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
+pkgdir = $(pkglibdir)/modules/prefs/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = \

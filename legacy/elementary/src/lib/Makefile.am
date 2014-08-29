@@ -11,7 +11,7 @@ include $(top_srcdir)/Makefile_Eolian_Cxx_Helper.am
 
 AM_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
--DMODULES_PATH=\"$(libdir)/elementary/modules\" \
+-DMODULES_PATH=\"$(pkglibdir)/modules\" \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \

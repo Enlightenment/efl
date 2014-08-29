@@ -21,7 +21,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_WAYLAND_CFLAGS@
 
-pkgdir = $(libdir)/elementary/modules/access_output/$(MODULE_ARCH)
+pkgdir = $(pkglibdir)/modules/access_output/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = mod.c
