@@ -788,6 +788,14 @@ START_TEST(eo_add_do_and_custom)
    fail_if(pd->a != 7);
    eo_unref(obj);
 
+   Eina_Bool finalized;
+   obj = eo_add(SIMPLE_CLASS, NULL, finalized = eo_finalized_get());
+   fail_if(finalized);
+
+   finalized = eo_do(obj, eo_finalized_get());
+   fail_if(!finalized);
+   eo_unref(obj);
+
    eo_shutdown();
 }
 END_TEST

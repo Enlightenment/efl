@@ -162,6 +162,14 @@ _eo_base_parent_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
    return pd->parent;
 }
 
+EOLIAN static Eina_Bool
+_eo_base_finalized_get(Eo *obj_id, Eo_Base_Data *pd EINA_UNUSED)
+{
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+
+   return obj->finalized;
+}
+
 /* Children accessor */
 typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
 struct _Eo_Children_Iterator

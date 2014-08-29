@@ -951,6 +951,8 @@ _eo_add_internal_end(Eo *eo_id)
         return NULL;
      }
 
+   fptr->o.obj->finalized = EINA_TRUE;
+
    _eo_unref(fptr->o.obj);
 
    return (Eo *)eo_id;

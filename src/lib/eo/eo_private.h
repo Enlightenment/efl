@@ -100,6 +100,7 @@ struct _Eo_Object
 
      Eina_Bool do_error:1;
      Eina_Bool condtor_done:1;
+     Eina_Bool finalized:1;
 
      Eina_Bool composite:1;
      Eina_Bool del:1;

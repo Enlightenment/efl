@@ -34,6 +34,14 @@ Return event freeze count. */
             int fcount; /*@ The event freeze count of the object */
          }
       }
+      finalized {
+         /*@ True if the object is already finalized, false otherwise. */
+         get {
+         }
+         values {
+            bool finalized;
+         }
+      }
    }
    methods {
       constructor @constructor {
