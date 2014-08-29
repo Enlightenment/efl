@@ -1505,11 +1505,27 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, ';');
         return;
      }
-   /* . parsing prepared for more tags */
-   else if (ls->t.kw == KW_at_virtual)// || ls->t.token == '.')
+   switch (ls->t.kw)
      {
-        impl->is_virtual = ls->t.kw == KW_at_virtual;
-        if (impl->is_virtual) eo_lexer_get(ls);
+        case KW_at_virtual:
+          impl->is_virtual = EINA_TRUE;
+          eo_lexer_get(ls);
+          break;
+        case KW_at_auto:
+          impl->is_auto = EINA_TRUE;
+          eo_lexer_get(ls);
+          break;
+        case KW_at_empty:
+          impl->is_empty = EINA_TRUE;
+          eo_lexer_get(ls);
+          break;
+        default:
+          break;
+     }
+   if (ls->t.token == '.')
+     {
+        if (!impl->is_virtual && !impl->is_auto && !impl->is_empty)
+          goto fullclass;
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
           eo_lexer_syntax_error(ls, "name expected");
@@ -1539,6 +1555,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, ';');
         return;
      }
+fullclass:
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
      eo_lexer_syntax_error(ls, "class name expected");
    buf = push_strbuf(ls);

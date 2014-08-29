@@ -164,6 +164,8 @@ struct _Eolian_Implement
    Eina_Bool is_prop_set :1;
    Eina_Bool is_class_ctor :1;
    Eina_Bool is_class_dtor :1;
+   Eina_Bool is_auto: 1;
+   Eina_Bool is_empty: 1;
 };
 
 struct _Eolian_Event
