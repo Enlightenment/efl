@@ -1,6 +1,4 @@
 #include "evas_engine.h"
-#include <linux/vt.h>
-#include <linux/kd.h>
 #include <sys/mman.h>
 
 static int 
