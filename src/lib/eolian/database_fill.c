@@ -238,7 +238,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
           ftype = EOLIAN_PROP_GET;
         else if (impl->is_prop_set)
           ftype = EOLIAN_PROP_SET;
-      printf("name: %s\n", impl_name);
 
         Eolian_Function *foo_id = (Eolian_Function*)
                                    eolian_class_function_get_by_name(cl,
