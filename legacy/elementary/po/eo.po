@@ -6,17 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-23 02:26+0900\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2014-08-14 11:30+0200\n"
 "PO-Revision-Date: 2013-11-05 18:59+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-12-31 04:56+0000\n"
-"X-Generator: Launchpad (build 16877)\n"
+"X-Launchpad-Export-Date: 2014-08-16 05:45+0000\n"
+"X-Generator: Launchpad (build 17156)\n"
+"Language: eo\n"
 
 #: src/lib/elc_fileselector.c:1400
 msgid "Up"
@@ -59,11 +59,11 @@ msgstr "Reen"
 msgid "Next"
 msgstr "Antaŭen"
 
-#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:885
+#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:884
 msgid "Popup Title"
 msgstr "Titolo de spruĉfenestro"
 
-#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:951
+#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:950
 msgid "Popup Body Text"
 msgstr "Enhava teksto de spruĉfenestro"
 
@@ -75,10 +75,10 @@ msgstr "Veziko"
 msgid "Clicked"
 msgstr "Alklakita"
 
-#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:775
-#: src/lib/elm_genlist.c:1523 src/lib/elm_list.c:2059 src/lib/elm_radio.c:261
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:767
+#: src/lib/elm_genlist.c:1459 src/lib/elm_list.c:2047 src/lib/elm_radio.c:261
 #: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
-#: src/lib/elm_toolbar.c:2213
+#: src/lib/elm_toolbar.c:2212
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
@@ -163,7 +163,7 @@ msgstr "Horloĝo"
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:3228
+#: src/lib/elm_config.c:3240
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -195,7 +195,7 @@ msgstr "Elekti"
 msgid "Entry"
 msgstr "Ero"
 
-#: src/lib/elm_gengrid.c:805
+#: src/lib/elm_gengrid.c:797
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
@@ -239,13 +239,13 @@ msgstr "progresbreto"
 msgid "Radio"
 msgstr "Radiobutono"
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2215
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2214
 msgid "State: Selected"
 msgstr "Stato: elektita"
 
 #: src/lib/elm_segment_control.c:528
 msgid "State: Unselected"
-msgstr ""
+msgstr "Stato: ne elektita"
 
 #: src/lib/elm_segment_control.c:540
 msgid "Segment Control Item"
@@ -267,22 +267,22 @@ msgstr "dekrementa sago-butono"
 msgid "spinner"
 msgstr "sago-butono"
 
-#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2274
+#: src/lib/elm_toolbar.c:1674 src/lib/elm_toolbar.c:2273
 msgid "Selected"
 msgstr "Elektita"
 
-#: src/lib/elm_toolbar.c:2211
+#: src/lib/elm_toolbar.c:2210
 msgid "Separator"
 msgstr "Disigilo"
 
-#: src/lib/elm_toolbar.c:2217
+#: src/lib/elm_toolbar.c:2216
 msgid "Has menu"
 msgstr "Ĝi havas menuo"
 
-#: src/lib/elm_toolbar.c:2269
+#: src/lib/elm_toolbar.c:2268
 msgid "Unselected"
 msgstr "Malelektita"
 
-#: src/lib/elm_toolbar.c:2286
+#: src/lib/elm_toolbar.c:2285
 msgid "Toolbar Item"
 msgstr "Ilobretero"
