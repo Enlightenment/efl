@@ -159,6 +159,11 @@ struct _Eolian_Implement
    Eolian_Object base;
    const Eolian_Class *klass;
    Eina_Stringshare *full_name;
+   Eina_Bool is_virtual :1;
+   Eina_Bool is_prop_get :1;
+   Eina_Bool is_prop_set :1;
+   Eina_Bool is_class_ctor :1;
+   Eina_Bool is_class_dtor :1;
 };
 
 struct _Eolian_Event

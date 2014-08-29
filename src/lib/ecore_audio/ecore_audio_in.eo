@@ -176,10 +176,10 @@ class Ecore_Audio_In (Ecore_Audio)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Ecore_Audio.vio_set;
-      virtual.preloaded.get;
-      virtual.preloaded.set;
-      virtual.seek;
-      virtual.length.set;
+      @virtual .preloaded.get;
+      @virtual .preloaded.set;
+      @virtual .seek;
+      @virtual .length.set;
    }
    events {
       in,looped; /*@ Called when an input has looped. */

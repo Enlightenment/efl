@@ -116,10 +116,10 @@ class Ecore_Audio (Eo.Base)
    }
    implements {
       Eo.Base.constructor;
-      virtual.source.get;
-      virtual.source.set;
-      virtual.format.get;
-      virtual.format.set;
-      virtual.vio_set;
+      @virtual .source.get;
+      @virtual .source.set;
+      @virtual .format.get;
+      @virtual .format.set;
+      @virtual .vio_set;
    }
 }

@@ -1481,7 +1481,6 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
 {
    Eina_Strbuf *buf = NULL;
    Eolian_Implement *impl = NULL;
-   buf = push_strbuf(ls);
    impl = calloc(1, sizeof(Eolian_Implement));
    impl->base.file = eina_stringshare_ref(ls->filename);
    impl->base.line = ls->line_number;
@@ -1491,54 +1490,50 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
      check_kw(ls, KW_class);
    if (ls->t.kw == KW_class)
      {
-        eina_strbuf_append(buf, "class.");
         eo_lexer_get(ls);
         check_next(ls, '.');
         if (ls->t.kw == KW_destructor)
           {
-             eina_strbuf_append(buf, "destructor");
+             impl->is_class_dtor = EINA_TRUE;
              eo_lexer_get(ls);
           }
         else
           {
              check_kw_next(ls, KW_constructor);
-             eina_strbuf_append(buf, "constructor");
+             impl->is_class_ctor = EINA_TRUE;
           }
         check_next(ls, ';');
-        impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
-        pop_strbuf(ls);
         return;
      }
-   else if (ls->t.kw == KW_virtual)
+   else if (ls->t.kw == KW_at_virtual)
      {
-        eina_strbuf_append(buf, "virtual.");
+        impl->is_virtual = EINA_TRUE;
         eo_lexer_get(ls);
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
           eo_lexer_syntax_error(ls, "name expected");
-        eina_strbuf_append(buf, ls->t.value.s);
+        impl->full_name = eina_stringshare_add(ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token == '.')
           {
              eo_lexer_get(ls);
              if (ls->t.kw == KW_set)
                {
-                  eina_strbuf_append(buf, ".set");
+                  impl->is_prop_set = EINA_TRUE;
                   eo_lexer_get(ls);
                }
              else
                {
                   check_kw_next(ls, KW_get);
-                  eina_strbuf_append(buf, ".get");
+                  impl->is_prop_get = EINA_TRUE;
                }
           }
         check_next(ls, ';');
-        impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
-        pop_strbuf(ls);
         return;
      }
    if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
      eo_lexer_syntax_error(ls, "class name expected");
+   buf = push_strbuf(ls);
    eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, '.');

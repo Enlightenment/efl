@@ -230,57 +230,46 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
    const char *impl_name = impl->full_name;
 
-   if (!strcmp(impl_name, "class.constructor"))
+   if (impl->is_virtual)
+     {
+        Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+
+        if (impl->is_prop_get)
+          ftype = EOLIAN_PROP_GET;
+        else if (impl->is_prop_set)
+          ftype = EOLIAN_PROP_SET;
+      printf("name: %s\n", impl_name);
+
+        Eolian_Function *foo_id = (Eolian_Function*)
+                                   eolian_class_function_get_by_name(cl,
+                                                                     impl_name,
+                                                                     ftype);
+        if (!foo_id)
+          {
+             ERR("Error - %s%s not known in class %s", impl_name,
+                 eolian_class_name_get(cl), (impl->is_prop_get ? ".get"
+                        : (impl->is_prop_set ? ".set" : "")));
+             return -1;
+          }
+
+        if (impl->is_prop_set)
+          foo_id->set_virtual_pure = EINA_TRUE;
+        else
+          foo_id->get_virtual_pure = EINA_TRUE;
+
+        return 1;
+     }
+   else if (impl->is_class_ctor)
      {
         cl->class_ctor_enable = EINA_TRUE;
         return 1;
      }
-
-   if (!strcmp(impl_name, "class.destructor"))
+   else if (impl->is_class_dtor)
      {
         cl->class_dtor_enable = EINA_TRUE;
         return 1;
      }
 
-   if (!strncmp(impl_name, "virtual.", 8))
-     {
-        Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
-        char *type_as_str  = NULL;
-        char *virtual_name = strdup(impl_name);
-        char *func         = strchr(virtual_name, '.');
-
-        if (func) *func = '\0';
-        func += 1;
-
-        if ((type_as_str = strchr(func, '.')))
-          {
-             *type_as_str = '\0';
-
-             if (!strcmp(type_as_str+1, "set"))
-               ftype = EOLIAN_PROP_SET;
-             else if (!strcmp(type_as_str+1, "get"))
-               ftype = EOLIAN_PROP_GET;
-          }
-
-        Eolian_Function *foo_id = (Eolian_Function*)
-                                   eolian_class_function_get_by_name(cl,
-                                                                      func,
-                                                                      ftype);
-
-        free(virtual_name);
-
-        if (!foo_id)
-          {
-             ERR("Error - %s not known in class %s", impl_name + 8,
-                 eolian_class_name_get(cl));
-             return -1;
-          }
-        if (ftype == EOLIAN_PROP_SET)
-          foo_id->set_virtual_pure = EINA_TRUE;
-        else
-          foo_id->get_virtual_pure = EINA_TRUE;
-        return 1;
-     }
    cl->implements = eina_list_append(cl->implements, impl);
    return 0;
 }

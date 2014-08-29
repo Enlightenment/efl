@@ -59,7 +59,7 @@ class Object_Impl (Base) {
       class.destructor;
       Base.constructor;
       Base.destructor;
-      virtual.pure_foo3;
-      virtual.b.get;
+      @virtual .pure_foo3;
+      @virtual .b.get;
    }
 }

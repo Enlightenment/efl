@@ -157,16 +157,16 @@ abstract Ecore.Con.Base (Eo.Base) {
       }
    }
    implements {
-      virtual.ip.get;
-      virtual.uptime.get;
-      virtual.port.set;
-      virtual.port.get;
-      virtual.fd.get;
-      virtual.connected.get;
-      virtual.timeout.set;
-      virtual.timeout.get;
-      virtual.flush;
-      virtual.send;
+      @virtual .ip.get;
+      @virtual .uptime.get;
+      @virtual .port.set;
+      @virtual .port.get;
+      @virtual .fd.get;
+      @virtual .connected.get;
+      @virtual .timeout.set;
+      @virtual .timeout.get;
+      @virtual .flush;
+      @virtual .send;
    }
    events {
         data,received: Ecore_Con_Event_Data_Received;

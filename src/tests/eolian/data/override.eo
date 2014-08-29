@@ -13,7 +13,7 @@ class Override (Base) {
    }
    implements {
       Base.constructor;
-      virtual.a.set;
-      virtual.foo;
+      @virtual .a.set;
+      @virtual .foo;
    }
 }

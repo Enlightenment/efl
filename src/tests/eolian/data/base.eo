@@ -6,6 +6,6 @@ class Base {
       }
    }
    implements {
-      virtual.constructor;
+      @virtual .constructor;
    }
 }

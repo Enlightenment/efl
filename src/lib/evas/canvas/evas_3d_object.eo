@@ -65,8 +65,8 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
    implements {
       Eo.Base.constructor;
       Evas.Common_Interface.evas.get;
-      virtual.update_notify;
-      virtual.change_notify;
+      @virtual .update_notify;
+      @virtual .change_notify;
    }
 
 }

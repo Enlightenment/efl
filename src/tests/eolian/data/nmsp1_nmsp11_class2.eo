@@ -7,6 +7,6 @@ class nmsp1.nmsp11.class2
       }
    }
    implements {
-      virtual.a.set;
+      @virtual .a.set;
    }
 }
