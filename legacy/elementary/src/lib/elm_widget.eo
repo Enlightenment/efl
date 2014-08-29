@@ -810,8 +810,8 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       Evas.Object_Smart.clip.set;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.resize;
-      virtual.focus_direction;
-      virtual.focus_next;
-      virtual.parent_widget.get;
+      @virtual .focus_direction;
+      @virtual .focus_next;
+      @virtual .parent_widget.get;
    }
 }

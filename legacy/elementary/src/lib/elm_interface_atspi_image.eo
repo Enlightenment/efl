@@ -38,6 +38,6 @@ mixin Elm_Interface_Atspi_Image ()
       }
    }
    implements {
-      virtual.extents.get;
+      @virtual .extents.get;
    }
 }

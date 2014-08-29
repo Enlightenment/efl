@@ -20,6 +20,6 @@ mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
       Elm_Interface_Atspi_Action.description.set;
       Elm_Interface_Atspi_Action.description.get;
       Elm_Interface_Atspi_Action.actions.get;
-      virtual.elm_actions.get;
+      @virtual .elm_actions.get;
    }
 }
