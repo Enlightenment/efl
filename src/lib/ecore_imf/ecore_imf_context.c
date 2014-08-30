@@ -408,10 +408,13 @@ ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool predict
         return;
      }
 
-   ctx->allow_prediction = prediction;
+   if (ctx->allow_prediction != prediction)
+     {
+        ctx->allow_prediction = prediction;
 
-   if (ctx->klass->prediction_allow_set)
-     ctx->klass->prediction_allow_set(ctx, prediction);
+        if (ctx->klass->prediction_allow_set)
+          ctx->klass->prediction_allow_set(ctx, prediction);
+     }
 }
 
 EAPI Eina_Bool
@@ -437,9 +440,12 @@ ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocap
         return;
      }
 
-   ctx->autocapital_type = autocapital_type;
+   if (ctx->autocapital_type != autocapital_type)
+     {
+        ctx->autocapital_type = autocapital_type;
 
-   if (ctx->klass->autocapital_type_set) ctx->klass->autocapital_type_set(ctx, autocapital_type);
+        if (ctx->klass->autocapital_type_set) ctx->klass->autocapital_type_set(ctx, autocapital_type);
+     }
 }
 
 EAPI Ecore_IMF_Autocapital_Type
