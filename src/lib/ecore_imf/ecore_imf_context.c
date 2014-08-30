@@ -153,6 +153,9 @@ ecore_imf_context_add(const char *id)
     * set on the immodule */
    ecore_imf_context_autocapital_type_set(ctx, ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE);
 
+   /* default input hint */
+   ecore_imf_context_input_hint_set(ctx, ECORE_IMF_INPUT_HINT_AUTO_COMPLETE);
+
    /* default input panel enabled status is EINA_TRUE, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_input_panel_enabled_set(ctx, EINA_TRUE);
@@ -827,6 +830,38 @@ ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx)
      }
 
    if (ctx->klass->control_panel_hide) ctx->klass->control_panel_hide(ctx);
+}
+
+EAPI void
+ecore_imf_context_input_hint_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints)
+{
+    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+      {
+         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                          "ecore_imf_context_input_hint_set");
+         return;
+      }
+
+   if (ctx->input_hints != input_hints)
+     {
+        if (ctx->klass->input_hint_set)
+          ctx->klass->input_hint_set(ctx, input_hints);
+
+        ctx->input_hints = input_hints;
+     }
+}
+
+EAPI Ecore_IMF_Input_Hints
+ecore_imf_context_input_hint_get(Ecore_IMF_Context *ctx)
+{
+    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+      {
+         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                          "ecore_imf_context_input_hint_get");
+         return ECORE_IMF_INPUT_HINT_NONE;
+      }
+
+    return ctx->input_hints;
 }
 
 EAPI void

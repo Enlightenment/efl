@@ -312,6 +312,18 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
 } Ecore_IMF_Input_Panel_Return_Key_Type;
 
+/**
+ * @typedef Ecore_IMF_Input_Hints
+ * @brief Enumeration that defines the types of Ecore_IMF Input Hints.
+ * @since 1.12
+ */
+typedef enum
+{
+   ECORE_IMF_INPUT_HINT_NONE                = 0,        /**< No active hints @since 1.12 */
+   ECORE_IMF_INPUT_HINT_AUTO_COMPLETE       = 1 << 0,   /**< Suggest word auto completion @since 1.12 */
+   ECORE_IMF_INPUT_HINT_SENSITIVE_DATA      = 1 << 1,   /**< Typed text should not be stored. @since 1.12 */
+} Ecore_IMF_Input_Hints;
+
 enum
 {
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,            /**< The plain normal number layout @since 1.8 */
@@ -522,6 +534,7 @@ struct _Ecore_IMF_Context_Class
    void (*input_panel_event_callback_del) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value));
    void (*input_panel_language_locale_get) (Ecore_IMF_Context *ctx, char **lang);
    void (*candidate_panel_geometry_get)(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
+   void (*input_hint_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -1270,6 +1283,27 @@ EAPI void                          ecore_imf_context_autocapital_type_set(Ecore_
  * @since 1.1.0
  */
 EAPI Ecore_IMF_Autocapital_Type    ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx);
+
+/**
+ * @brief Sets the input hint which allows input methods to fine-tune their behavior.
+ *
+ * @param ctx An #Ecore_IMF_Context
+ * @param hints input hint
+ * @note The default input hint is @c ECORE_IMF_INPUT_HINT_AUTO_COMPLETE.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.12
+ */
+EAPI void                          ecore_imf_context_input_hint_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints hints);
+
+/**
+ * @brief Gets the value of input hint.
+ *
+ * @param ctx An #Ecore_IMF_Context
+ * @return The value of input hint
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.12
+ */
+EAPI Ecore_IMF_Input_Hints         ecore_imf_context_input_hint_get(Ecore_IMF_Context *ctx);
 
 /**
  * Ask the Input Method Context to show the control panel of using Input Method.
