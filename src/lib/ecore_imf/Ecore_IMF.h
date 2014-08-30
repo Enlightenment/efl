@@ -149,7 +149,8 @@ typedef enum
    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. @since 1.2 */
    ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user @since 1.2 */
    ECORE_IMF_CALLBACK_DELETE_SURROUNDING, /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor @since 1.2 */
-   ECORE_IMF_CALLBACK_SELECTION_SET       /**< "SELECTION_SET" is called when the input method needs to set the selection @since 1.9 */
+   ECORE_IMF_CALLBACK_SELECTION_SET,      /**< "SELECTION_SET" is called when the input method needs to set the selection @since 1.9 */
+   ECORE_IMF_CALLBACK_PRIVATE_COMMAND_SEND /**< "PRIVATE_COMMAND_SEND" is called when the input method sends a private command @since 1.12 */
 } Ecore_IMF_Callback_Type;
 
 /**
