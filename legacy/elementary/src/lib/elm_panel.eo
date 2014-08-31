@@ -16,15 +16,15 @@ class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable,
             /*@
             @brief Get the orientation of the panel.
 
-            @return The Elm_Panel_Orient, or ELM_PANEL_ORIENT_LEFT on failure.
+            @return The Elm_Panel_Orient, or #ELM_PANEL_ORIENT_LEFT on failure.
 
             @ingroup Panel */
          }
          values {
             Elm_Panel_Orient orient; /*@ The panel orientation. Can be one of the following:
-            @li ELM_PANEL_ORIENT_TOP
-            @li ELM_PANEL_ORIENT_LEFT
-            @li ELM_PANEL_ORIENT_RIGHT */
+            @li #ELM_PANEL_ORIENT_TOP
+            @li #ELM_PANEL_ORIENT_LEFT
+            @li #ELM_PANEL_ORIENT_RIGHT */
          }
       }
       hidden {

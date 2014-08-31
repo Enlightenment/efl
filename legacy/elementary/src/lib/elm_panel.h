@@ -13,10 +13,10 @@
  * button on its edge.
  *
  * Orientations are as follows:
- * @li @c ELM_PANEL_ORIENT_TOP
- * @li @c ELM_PANEL_ORIENT_LEFT
- * @li @c ELM_PANEL_ORIENT_RIGHT
- * @li @c ELM_PANEL_ORIENT_BOTTOM
+ * @li #ELM_PANEL_ORIENT_TOP
+ * @li #ELM_PANEL_ORIENT_LEFT
+ * @li #ELM_PANEL_ORIENT_RIGHT
+ * @li #ELM_PANEL_ORIENT_BOTTOM
  *
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for panel objects (since 1.8).
