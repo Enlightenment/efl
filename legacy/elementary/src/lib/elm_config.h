@@ -585,7 +585,7 @@ EAPI Elm_Focus_Autoscroll_Mode elm_config_focus_autoscroll_mode_get(void);
  * When a region or an item is focused and it resides inside any scroller,
  * elementary will automatically scroll the focused area to the visible
  * viewport.
- * Focus auto scroll mode is set to @c ELM_FOCUS_AUTOSCROLL_MODE_SHOW by
+ * Focus auto scroll mode is set to #ELM_FOCUS_AUTOSCROLL_MODE_SHOW by
  * default historically.
  *
  * @see elm_config_focus_autoscroll_mode_get()
@@ -1332,8 +1332,8 @@ EAPI void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
  */
 typedef enum
 {
-   ELM_FOCUS_MOVE_POLICY_CLICK,
-   ELM_FOCUS_MOVE_POLICY_IN
+   ELM_FOCUS_MOVE_POLICY_CLICK, /**< move focus by mouse click or touch. Elementary focus is set on mouse click and this is checked at mouse up time. (default) */
+   ELM_FOCUS_MOVE_POLICY_IN /**< move focus by mouse in. Elementary focus is set on mouse move when the mouse pointer is moved into an object. */
 } Elm_Focus_Move_Policy;
 
 /**
@@ -1341,8 +1341,8 @@ typedef enum
  *
  * @return The focus movement policy
  *
- * Get how the focus is moved to another object. It can be @c
- * ELM_FOCUS_MOVE_POLICY_CLICK or @c ELM_FOCUS_MOVE_POLICY_IN. The first means
+ * Get how the focus is moved to another object. It can be
+ * #ELM_FOCUS_MOVE_POLICY_CLICK or #ELM_FOCUS_MOVE_POLICY_IN. The first means
  * elementary focus is moved on elementary object click. The second means
  * elementary focus is moved on elementary object mouse in.
  *
