@@ -128,8 +128,8 @@ EAPI int                   elm_win_norender_get(Evas_Object *obj);
  * You should NEVER call this unless you really know what you are doing and
  * why. Never call this unless you are asking for performance degredation
  * and possibly weird behavior. Windows get automatically rendered when the
- * application goes idle so there is never a need to call this UNLESS you
- * have enabled "norender" mode.
+ * application goes into the idle enter state so there is never a need to call
+ * this UNLESS you have enabled "norender" mode.
  *
  * @see elm_win_norender_push()
  * @see elm_win_norender_pop()
