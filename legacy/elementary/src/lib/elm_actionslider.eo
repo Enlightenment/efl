@@ -25,7 +25,7 @@ class Elm_Actionslider (Elm_Layout)
          set {
             /*@
             Set actionslider magnet position. To make multiple positions magnets @c or
-            them together(e.g.: ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
+            them together(e.g.: #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT)
 
             @ingroup Actionslider */
          }
@@ -45,7 +45,7 @@ class Elm_Actionslider (Elm_Layout)
          set {
             /*@
             Set actionslider enabled position. To set multiple positions as enabled @c or
-            them together(e.g.: ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT).
+            them together(e.g.: #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT).
 
             @note All the positions are enabled by default.
 
