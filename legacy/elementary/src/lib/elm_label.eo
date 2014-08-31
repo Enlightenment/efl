@@ -61,14 +61,14 @@ class Elm_Label (Elm_Layout)
 
             elm_label_slide_mode_set() changes label slide mode.
             By default, slide mode is none. Possible values for @p mode are:
-            @li ELM_LABEL_SLIDE_MODE_NONE - no slide effect
-            @li ELM_LABEL_SLIDE_MODE_AUTO - slide only if the label area is bigger than
+            @li #ELM_LABEL_SLIDE_MODE_NONE - no slide effect
+            @li #ELM_LABEL_SLIDE_MODE_AUTO - slide only if the label area is bigger than
             the text width length
-            @li ELM_LABEL_SLIDE_MODE_ALWAYS -slide always
+            @li #ELM_LABEL_SLIDE_MODE_ALWAYS -slide always
 
-            @warning ELM_LABEL_SLIDE_MODE_AUTO, ELM_LABEL_SLIDE_MODE_ALWAYS only work
+            @warning #ELM_LABEL_SLIDE_MODE_AUTO, #ELM_LABEL_SLIDE_MODE_ALWAYS only work
             with the themes "slide_short", "slide_long" and "slide_bounce".
-            @warning ELM_LABEL_SLIDE_MODE_AUTO, ELM_LABEL_SLIDE_MODE_ALWAYS don't work
+            @warning #ELM_LABEL_SLIDE_MODE_AUTO, #ELM_LABEL_SLIDE_MODE_ALWAYS don't work
             if the line wrap(elm_label_line_wrap_set()) or
             ellipsis(elm_label_ellipsis_set()) is set.
 
@@ -126,10 +126,10 @@ class Elm_Label (Elm_Layout)
             @brief Set the wrapping behavior of the label
 
             By default no wrapping is done. Possible values for @p wrap are:
-            @li ELM_WRAP_NONE - No wrapping
-            @li ELM_WRAP_CHAR - wrap between characters
-            @li ELM_WRAP_WORD - wrap between words
-            @li ELM_WRAP_MIXED - Word wrap, and if that fails, char wrap
+            @li #ELM_WRAP_NONE - No wrapping
+            @li #ELM_WRAP_CHAR - wrap between characters
+            @li #ELM_WRAP_WORD - wrap between words
+            @li #ELM_WRAP_MIXED - Word wrap, and if that fails, char wrap
 
             @ingroup Label */
          }

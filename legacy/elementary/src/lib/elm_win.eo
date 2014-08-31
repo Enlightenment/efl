@@ -1118,7 +1118,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the inlined image object handle
 
-            When you create a window with elm_win_add() of type ELM_WIN_INLINED_IMAGE,
+            When you create a window with elm_win_add() of type #ELM_WIN_INLINED_IMAGE,
             then the window is in fact an evas image object inlined in the parent
             canvas. You can get this object (be careful to not manipulate it as it
             is under control of elementary), and use it to do things like get pixel
@@ -1135,7 +1135,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the type of a window.
 
-            @return The type of a window object. If the object is not window object, return ELM_WIN_UNKNOWN.
+            @return The type of a window object. If the object is not window object, return #ELM_WIN_UNKNOWN.
 
             @ingroup Win */
             return: Elm_Win_Type;

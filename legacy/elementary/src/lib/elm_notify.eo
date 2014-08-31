@@ -10,7 +10,7 @@ class Elm_Notify (Elm_Container)
             Sets the alignment in which the notify will appear in its parent.
 
             @note To fill the notify box in the parent area, please pass the
-            @c ELM_NOTIFY_ALIGN_FILL to @p horizontal, @p vertical.
+            #ELM_NOTIFY_ALIGN_FILL to @p horizontal, @p vertical.
 
             @since 1.8
             @ingroup Notify */

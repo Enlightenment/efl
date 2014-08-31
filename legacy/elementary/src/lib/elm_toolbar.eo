@@ -66,12 +66,12 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             Set the toolbar select mode.
 
             elm_toolbar_select_mode_set() changes item select mode in the toolbar widget.
-            - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
+            - #ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
             callback when first becoming selected. Any further clicks will
             do nothing, unless you set always select mode.
-            - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+            - #ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
             every click will make the selected callbacks be called.
-            - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
+            - #ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
             entirely and they will neither appear selected nor call selected
             callback functions.
 
@@ -84,7 +84,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             Get the toolbar select mode.
 
             @return The select mode
-            (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+            (If getting mode is failed, it returns #ELM_OBJECT_SELECT_MODE_MAX)
 
             @see elm_toolbar_select_mode_set()
 
@@ -290,7 +290,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             @return The toolbar more item.
 
             Toolbar generates 'more' item when there is no more space to fit items in
-            and toolbar is in ELM_TOOLBAR_SHRINK_MENU or ELM_TOOLBAR_SHRINK_EXPAND mode.
+            and toolbar is in #ELM_TOOLBAR_SHRINK_MENU or #ELM_TOOLBAR_SHRINK_EXPAND mode.
             The more item can be manipulated by elm_object_item_text_set() and
             elm_object_item_content_set.
 

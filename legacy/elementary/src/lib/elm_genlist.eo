@@ -46,12 +46,12 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Set the genlist select mode.
 
             elm_genlist_select_mode_set() changes item select mode in the genlist widget.
-            - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will call their selection func and
+            - #ELM_OBJECT_SELECT_MODE_DEFAULT : Items will call their selection func and
             callback once when first becoming selected. Any further clicks will
             do nothing, unless you set always select mode.
-            - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+            - #ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
             every click will make the selected callbacks be called.
-            - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
+            - #ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
             entirely and they will neither appear selected nor call selected
             callback functions.
 
@@ -64,7 +64,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get the genlist select mode.
 
             @return The select mode
-            (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+            (If getting mode is failed, it returns #ELM_OBJECT_SELECT_MODE_MAX)
 
             @see elm_genlist_select_mode_set()
 
@@ -213,9 +213,9 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             /*@
             Set the genlist multi select mode.
 
-            - ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
+            - #ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
             item is clicked.
-            - ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+            - #ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
             although multi-selection is enabled, if clicked without pressing control
             key. This mode is only available with multi-selection.
 
@@ -230,7 +230,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get the genlist multi select mode.
 
             @return The multi select mode
-            (If getting mode is failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+            (If getting mode is failed, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
 
             @see elm_genlist_multi_select_set()
             @see elm_genlist_multi_select_mode_set()
@@ -336,20 +336,20 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
             This sets the mode used for sizing items horizontally. Valid modes
             are #ELM_LIST_LIMIT, #ELM_LIST_SCROLL, and #ELM_LIST_COMPRESS. The default is
-            ELM_LIST_SCROLL. This mode means that if items are too wide to fit,
+            #ELM_LIST_SCROLL. This mode means that if items are too wide to fit,
             the scroller will scroll horizontally. Otherwise items are expanded
             to fill the width of the viewport of the scroller. If it is
-            ELM_LIST_LIMIT, items will be expanded to the viewport width and
-            limited to that size. If it is ELM_LIST_COMPRESS, the item width will be
+            #ELM_LIST_LIMIT, items will be expanded to the viewport width and
+            limited to that size. If it is #ELM_LIST_COMPRESS, the item width will be
             fixed (restricted to a minimum of) to the list width when calculating its
             size in order to allow the height to be calculated based on it. This allows,
             for instance, text block to wrap lines if the Edje part is configured with
             "text.min: 0 1".
-            @note ELM_LIST_COMPRESS will make list resize slower as it will have to
+            @note #ELM_LIST_COMPRESS will make list resize slower as it will have to
             recalculate every item height again whenever the list width
             changes!
             @note Homogeneous mode is for that all items in the genlist same
-            width/height. With ELM_LIST_COMPRESS, it makes genlist items to fast
+            width/height. With #ELM_LIST_COMPRESS, it makes genlist items to fast
             initializing. However there's no sub-objects in genlist which can be
             on the flying resizable (such as TEXTBLOCK). If then, some dynamic
             resizable objects in genlist would not diplayed properly.

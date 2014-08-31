@@ -42,12 +42,12 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             Set the list select mode.
 
             elm_list_select_mode_set() changes item select mode in the list widget.
-            - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
+            - #ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
             callback when first becoming selected. Any further clicks will
             do nothing, unless you set always select mode.
-            - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+            - #ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
             every click will make the selected callbacks be called.
-            - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
+            - #ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
             entirely and they will neither appear selected nor call selected
             callback functions.
 
@@ -60,7 +60,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             Get the list select mode.
 
             @return The select mode
-            (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+            (If getting mode is failed, it returns #ELM_OBJECT_SELECT_MODE_MAX)
 
             @see elm_list_select_mode_set()
 
@@ -133,9 +133,9 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             /*@
             Set the list multi select mode.
 
-            - ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
+            - #ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
             item is clicked.
-            - ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+            - #ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
             although multi-selection is enabled, if clicked without pressing control
             key. This mode is only available with multi-selection.
 
@@ -150,7 +150,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             Get the list multi select mode.
 
             @return The multi select mode
-            (If getting mode is failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+            (If getting mode is failed, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
 
             @see elm_list_multi_select_set()
             @see elm_list_multi_select_mode_set()

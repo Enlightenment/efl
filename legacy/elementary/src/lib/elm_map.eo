@@ -303,17 +303,17 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
          Map widget retrieves tile images that composes the map from a web service.
          This web service can be set with this method
-         for ELM_MAP_SOURCE_TYPE_TILE type.
+         for #ELM_MAP_SOURCE_TYPE_TILE type.
          A different service can return a different maps with different
          information and it can use different zoom values.
 
          Map widget provides route data based on a external web service.
          This web service can be set with this method
-         for ELM_MAP_SOURCE_TYPE_ROUTE type.
+         for #ELM_MAP_SOURCE_TYPE_ROUTE type.
 
          Map widget also provide geoname data based on a external web service.
          This web service can be set with this method
-         for ELM_MAP_SOURCE_TYPE_NAME type.
+         for #ELM_MAP_SOURCE_TYPE_NAME type.
 
          The @p source_name need to match one of the names provided by
          elm_map_sources_get().

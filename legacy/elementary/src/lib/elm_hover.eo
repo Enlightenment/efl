@@ -38,16 +38,16 @@ class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
          space.
 
          @p pref_axis may be one of
-         - @c ELM_HOVER_AXIS_NONE -- no preferred orientation
-         - @c ELM_HOVER_AXIS_HORIZONTAL -- horizontal
-         - @c ELM_HOVER_AXIS_VERTICAL -- vertical
-         - @c ELM_HOVER_AXIS_BOTH -- both
+         - #ELM_HOVER_AXIS_NONE -- no preferred orientation
+         - #ELM_HOVER_AXIS_HORIZONTAL -- horizontal
+         - #ELM_HOVER_AXIS_VERTICAL -- vertical
+         - #ELM_HOVER_AXIS_BOTH -- both
 
-         If ELM_HOVER_AXIS_HORIZONTAL is chosen the returned position will
+         If #ELM_HOVER_AXIS_HORIZONTAL is chosen the returned position will
          necessarily be along the horizontal axis("left" or "right"). If
-         ELM_HOVER_AXIS_VERTICAL is chosen the returned position will necessarily
+         #ELM_HOVER_AXIS_VERTICAL is chosen the returned position will necessarily
          be along the vertical axis("top" or "bottom"). Choosing
-         ELM_HOVER_AXIS_BOTH or ELM_HOVER_AXIS_NONE has the same effect and the
+         #ELM_HOVER_AXIS_BOTH or #ELM_HOVER_AXIS_NONE has the same effect and the
          returned position may be in either axis.
 
          @see elm_object_part_content_set()

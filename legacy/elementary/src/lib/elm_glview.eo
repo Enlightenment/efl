@@ -15,7 +15,7 @@ class Elm_Glview (Elm_Widget)
 
             Note that this function returns the actual image size of the
             glview. This means that when the scale policy is set to
-            ELM_GLVIEW_RESIZE_POLICY_SCALE, it'll return the non-scaled
+            #ELM_GLVIEW_RESIZE_POLICY_SCALE, it'll return the non-scaled
             size.
 
             @ingroup GLView */
@@ -30,10 +30,10 @@ class Elm_Glview (Elm_Widget)
             /*@
             Set the resize policy for the glview object.
 
-            By default, the resize policy is set to ELM_GLVIEW_RESIZE_POLICY_RECREATE.
+            By default, the resize policy is set to #ELM_GLVIEW_RESIZE_POLICY_RECREATE.
             When resize is called it destroys the previous surface and recreates the
             newly specified size. If the policy is set to
-            ELM_GLVIEW_RESIZE_POLICY_SCALE, however, glview only scales the image
+            #ELM_GLVIEW_RESIZE_POLICY_SCALE, however, glview only scales the image
             object and not the underlying GL Surface.
 
             @ingroup GLView */
@@ -104,10 +104,10 @@ class Elm_Glview (Elm_Widget)
             /*@
             Set the render policy for the glview object.
 
-            By default, the render policy is set to ELM_GLVIEW_RENDER_POLICY_ON_DEMAND.
+            By default, the render policy is set to #ELM_GLVIEW_RENDER_POLICY_ON_DEMAND.
             This policy is set such that during the render loop, glview is only
             redrawn if it needs to be redrawn. (i.e. when it is visible) If the policy
-            is set to ELM_GLVIEWW_RENDER_POLICY_ALWAYS, it redraws regardless of
+            is set to #ELM_GLVIEWW_RENDER_POLICY_ALWAYS, it redraws regardless of
             whether it is visible or needs redrawing.
 
             @ingroup GLView */

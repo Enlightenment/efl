@@ -15,13 +15,13 @@ class Elm_Flip (Elm_Container)
             and elm_flip_interaction_direction_hitsize_set()
 
             The four available mode of interaction are:
-            @li ELM_FLIP_INTERACTION_NONE - No interaction is allowed
-            @li ELM_FLIP_INTERACTION_ROTATE - Interaction will cause rotate animation
-            @li ELM_FLIP_INTERACTION_CUBE - Interaction will cause cube animation
-            @li ELM_FLIP_INTERACTION_PAGE - Interaction will cause page animation
+            @li #ELM_FLIP_INTERACTION_NONE - No interaction is allowed
+            @li #ELM_FLIP_INTERACTION_ROTATE - Interaction will cause rotate animation
+            @li #ELM_FLIP_INTERACTION_CUBE - Interaction will cause cube animation
+            @li #ELM_FLIP_INTERACTION_PAGE - Interaction will cause page animation
 
-            @note ELM_FLIP_INTERACTION_ROTATE won't cause
-            ELM_FLIP_ROTATE_XZ_CENTER_AXIS or ELM_FLIP_ROTATE_YZ_CENTER_AXIS to
+            @note #ELM_FLIP_INTERACTION_ROTATE won't cause
+            #ELM_FLIP_ROTATE_XZ_CENTER_AXIS or #ELM_FLIP_ROTATE_YZ_CENTER_AXIS to
             happen, those can only be achieved with elm_flip_go();
 
             @ingroup Flip */
@@ -142,37 +142,37 @@ class Elm_Flip (Elm_Container)
          effectively hides the currently visible content and shows the hidden one.
 
          There a number of possible animations to use for the flipping:
-         @li ELM_FLIP_ROTATE_X_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_X_CENTER_AXIS - Rotate the currently visible content
          around a horizontal axis in the middle of its height, the other content
          is shown as the other side of the flip.
-         @li ELM_FLIP_ROTATE_Y_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_Y_CENTER_AXIS - Rotate the currently visible content
          around a vertical axis in the middle of its width, the other content is
          shown as the other side of the flip.
-         @li ELM_FLIP_ROTATE_XZ_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_XZ_CENTER_AXIS - Rotate the currently visible content
          around a diagonal axis in the middle of its width, the other content is
          shown as the other side of the flip.
-         @li ELM_FLIP_ROTATE_YZ_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_YZ_CENTER_AXIS - Rotate the currently visible content
          around a diagonal axis in the middle of its height, the other content is
          shown as the other side of the flip.
-         @li ELM_FLIP_CUBE_LEFT - Rotate the currently visible content to the left
+         @li #ELM_FLIP_CUBE_LEFT - Rotate the currently visible content to the left
          as if the flip was a cube, the other content is show as the right face of
          the cube.
-         @li ELM_FLIP_CUBE_RIGHT - Rotate the currently visible content to the
+         @li #ELM_FLIP_CUBE_RIGHT - Rotate the currently visible content to the
          right as if the flip was a cube, the other content is show as the left
          face of the cube.
-         @li ELM_FLIP_CUBE_UP - Rotate the currently visible content up as if the
+         @li #ELM_FLIP_CUBE_UP - Rotate the currently visible content up as if the
          flip was a cube, the other content is show as the bottom face of the cube.
-         @li ELM_FLIP_CUBE_DOWN - Rotate the currently visible content down as if
+         @li #ELM_FLIP_CUBE_DOWN - Rotate the currently visible content down as if
          the flip was a cube, the other content is show as the upper face of the
          cube.
-         @li ELM_FLIP_PAGE_LEFT - Move the currently visible content to the left as
+         @li #ELM_FLIP_PAGE_LEFT - Move the currently visible content to the left as
          if the flip was a book, the other content is shown as the page below that.
-         @li ELM_FLIP_PAGE_RIGHT - Move the currently visible content to the right
+         @li #ELM_FLIP_PAGE_RIGHT - Move the currently visible content to the right
          as if the flip was a book, the other content is shown as the page below
          that.
-         @li ELM_FLIP_PAGE_UP - Move the currently visible content up as if the
+         @li #ELM_FLIP_PAGE_UP - Move the currently visible content up as if the
          flip was a book, the other content is shown as the page below that.
-         @li ELM_FLIP_PAGE_DOWN - Move the currently visible content down as if the
+         @li #ELM_FLIP_PAGE_DOWN - Move the currently visible content down as if the
          flip was a book, the other content is shown as the page below that.
 
          @image html elm_flip.png
@@ -194,37 +194,37 @@ class Elm_Flip (Elm_Container)
          effectively hides the currently visible content and shows the hidden one.
 
          There a number of possible animations to use for the flipping:
-         @li ELM_FLIP_ROTATE_X_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_X_CENTER_AXIS - Rotate the currently visible content
          around a horizontal axis in the middle of its height, the other content
          is shown as the other side of the flip.
-         @li ELM_FLIP_ROTATE_Y_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_Y_CENTER_AXIS - Rotate the currently visible content
          around a vertical axis in the middle of its width, the other content is
          shown as the other side of the flip.
-         @li ELM_FLIP_ROTATE_XZ_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_XZ_CENTER_AXIS - Rotate the currently visible content
          around a diagonal axis in the middle of its width, the other content is
          shown as the other side of the flip.
-         @li ELM_FLIP_ROTATE_YZ_CENTER_AXIS - Rotate the currently visible content
+         @li #ELM_FLIP_ROTATE_YZ_CENTER_AXIS - Rotate the currently visible content
          around a diagonal axis in the middle of its height, the other content is
          shown as the other side of the flip.
-         @li ELM_FLIP_CUBE_LEFT - Rotate the currently visible content to the left
+         @li #ELM_FLIP_CUBE_LEFT - Rotate the currently visible content to the left
          as if the flip was a cube, the other content is show as the right face of
          the cube.
-         @li ELM_FLIP_CUBE_RIGHT - Rotate the currently visible content to the
+         @li #ELM_FLIP_CUBE_RIGHT - Rotate the currently visible content to the
          right as if the flip was a cube, the other content is show as the left
          face of the cube.
-         @li ELM_FLIP_CUBE_UP - Rotate the currently visible content up as if the
+         @li #ELM_FLIP_CUBE_UP - Rotate the currently visible content up as if the
          flip was a cube, the other content is show as the bottom face of the cube.
-         @li ELM_FLIP_CUBE_DOWN - Rotate the currently visible content down as if
+         @li #ELM_FLIP_CUBE_DOWN - Rotate the currently visible content down as if
          the flip was a cube, the other content is show as the upper face of the
          cube.
-         @li ELM_FLIP_PAGE_LEFT - Move the currently visible content to the left as
+         @li #ELM_FLIP_PAGE_LEFT - Move the currently visible content to the left as
          if the flip was a book, the other content is shown as the page below that.
-         @li ELM_FLIP_PAGE_RIGHT - Move the currently visible content to the right
+         @li #ELM_FLIP_PAGE_RIGHT - Move the currently visible content to the right
          as if the flip was a book, the other content is shown as the page below
          that.
-         @li ELM_FLIP_PAGE_UP - Move the currently visible content up as if the
+         @li #ELM_FLIP_PAGE_UP - Move the currently visible content up as if the
          flip was a book, the other content is shown as the page below that.
-         @li ELM_FLIP_PAGE_DOWN - Move the currently visible content down as if the
+         @li #ELM_FLIP_PAGE_DOWN - Move the currently visible content down as if the
          flip was a book, the other content is shown as the page below that.
 
          @image html elm_flip.png

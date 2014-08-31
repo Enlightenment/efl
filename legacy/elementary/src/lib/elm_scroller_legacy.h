@@ -49,9 +49,9 @@ EAPI void                          elm_scroller_region_show(Evas_Object *obj, Ev
  * @param policy_v Vertical scrollbar policy
  *
  * This sets the scrollbar visibility policy for the given scroller.
- * ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it is
- * needed, and otherwise kept hidden. ELM_SCROLLER_POLICY_ON turns it on all
- * the time, and ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
+ * #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it is
+ * needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns it on all
+ * the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
  * respectively for the horizontal and vertical scrollbars.
  *
  * @ingroup Scroller
@@ -432,7 +432,7 @@ EAPI void                          elm_scroller_gravity_get(const Evas_Object *o
  *
  * This function will block scrolling movement (by input of a user) in
  * a given direction. One can disable movements in the X axis, the Y
- * axis or both. The default value is @c ELM_SCROLLER_MOVEMENT_NO_BLOCK,
+ * axis or both. The default value is #ELM_SCROLLER_MOVEMENT_NO_BLOCK,
  * where movements are allowed in both directions.
  *
  * What makes this function different from

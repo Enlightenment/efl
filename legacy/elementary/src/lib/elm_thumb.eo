@@ -68,7 +68,7 @@ class Elm_Thumb (Elm_Layout, Efl.File, Evas.Clickable_Interface)
             /*@
             Get the animation state for the thumb object.
 
-            @return getting The animation setting or @c ELM_THUMB_ANIMATION_LAST,
+            @return getting The animation setting or #ELM_THUMB_ANIMATION_LAST,
             on errors.
 
             @see elm_thumb_animate_set()

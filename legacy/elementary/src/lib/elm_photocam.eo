@@ -110,7 +110,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
             @return The current zoom level
 
             This returns the current zoom level of the photocam object. Note that if
-            you set the fill mode to other than ELM_PHOTOCAM_ZOOM_MODE_MANUAL
+            you set the fill mode to other than #ELM_PHOTOCAM_ZOOM_MODE_MANUAL
             (which is the default), the zoom level may be changed at any time by the
             photocam object itself to account for photo size and photocam viewport
             size.
@@ -134,9 +134,9 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
             elm_photocam_zoom_set() and will stay at that level until changed by code
             or until zoom mode is changed. This is the default mode. The Automatic
             modes will allow the photocam object to automatically adjust zoom mode
-            based on properties. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so
+            based on properties. #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so
             the photo fits EXACTLY inside the scroll frame with no pixels outside this
-            region. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no
+            region. #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no
             pixels within the frame are left unfilled.
 
             @ingroup Photocam */
