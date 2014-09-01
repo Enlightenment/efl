@@ -212,6 +212,8 @@ struct _EVGL_Resource
    EVGL_Context        *current_ctx;
    void                *current_eng;
 
+   int error_state;
+
    struct {
         EVGLNative_Surface   surface;
         int                  rendered;
@@ -286,5 +288,7 @@ extern void           _evgl_tls_resource_destroy(void *data);
 extern EVGL_Context  *_evgl_current_context_get();
 extern int            _evgl_not_in_pixel_get();
 extern int            _evgl_direct_enabled();
+extern void           _evgl_error_set(int error_enum);
+extern int            _evgl_error_get();
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

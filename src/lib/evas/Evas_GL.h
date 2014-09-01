@@ -436,8 +436,8 @@ typedef enum _Evas_GL_Options_Bits
 typedef enum _Evas_GL_Multisample_Bits
 {
    EVAS_GL_MULTISAMPLE_NONE = 0, /**< No multisample rendering */
-   EVAS_GL_MULTISAMPLE_LOW  = 1, /**< MSAA with mininum number of samples */
-   EVAS_GL_MULTISAMPLE_MED  = 2, /**< MSAA with half the number of max samples */
+   EVAS_GL_MULTISAMPLE_LOW  = 1, /**< MSAA with minimum number of samples */
+   EVAS_GL_MULTISAMPLE_MED  = 2, /**< MSAA with half the maximum number of samples */
    EVAS_GL_MULTISAMPLE_HIGH = 3  /**< MSAA with maximum allowed samples */
 } Evas_GL_Multisample_Bits;
 
@@ -455,6 +455,7 @@ struct _Evas_GL_Config
    Evas_GL_Multisample_Bits   multisample_bits; /**< Optional Surface MSAA Bits */
 };
 
+/** @brief Constant to use when calling @ref evas_gl_string_query to retrieve the available Evas_GL extensions. */
 #define EVAS_GL_EXTENSIONS       1
 
 
@@ -574,6 +575,26 @@ EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas
  *
  */
 EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Returns the last error of any evas_gl function called in the current thread.
+ *        Initially, the error is set to @ref EVAS_GL_SUCCESS. A call to @ref evas_gl_error_get
+ *        resets the error to @ref EVAS_GL_SUCCESS.
+ *
+ * @param[in] evas_gl The given Evas_GL object
+ *
+ * @return @ref EVAS_GL_SUCCESS in case of no error, or any other @c EVAS_GL error code.
+ *
+ * Since Evas GL is a glue layer for GL imitating EGL, the error codes returned
+ * have the same meaning as those defined in EGL.
+ *
+ * @note At the moment of writing, this API is only partially implemented
+ *       and might return @c EVAS_GL_SUCCESS even when the last call(s) to
+ *       Evas_GL failed.
+ *
+ * @since 1.12
+ */
+EAPI int                      evas_gl_error_get          (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
 #if !defined(__gl_h_) && !defined(__gl2_h_)
 # define __gl_h_
@@ -1298,6 +1319,40 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 #  error "You may only include either Evas_GL.h OR use your native OpenGL's headers. If you use Evas to do GL, then you cannot use the native gl headers."
 # endif
 #endif
+
+/**
+ * @name Evas GL error codes
+ *
+ * These are the possible return values of @ref evas_gl_error_get.
+ * The values are the same as EGL error codes - @c EGL_SUCCESS.
+ *
+ * Some of the values may be set directly by Evas GL when an obvious error was
+ * detected (eg. @c NULL pointers or invalid dimensions), otherwise Evas GL will
+ * call the backend's GetError() function and translate to a valid @c EVAS_GL_
+ * error code.
+ *
+ * @since 1.12
+ *
+ * @{
+ */
+#define EVAS_GL_SUCCESS                         0x0000  /**< The last evas_gl_ operation succeeded. A call to @c evas_gl_error_get() will reset the error. */
+#define EVAS_GL_NOT_INITIALIZED                 0x0001  /**< Evas GL was not initialized or a @c NULL pointer was passed */
+#define EVAS_GL_BAD_ACCESS                      0x0002  /**< Bad access; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_ALLOC                       0x0003  /**< Bad allocation; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_ATTRIBUTE                   0x0004  /**< Bad attribute; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_CONFIG                      0x0005  /**< Bad configuration; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_CONTEXT                     0x0006  /**< Bad context; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_CURRENT_SURFACE             0x0007  /**< Bad current surface; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_DISPLAY                     0x0008  /**< Bad display; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_MATCH                       0x0009  /**< Bad match; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_NATIVE_PIXMAP               0x000A  /**< Bad native pixmap; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_NATIVE_WINDOW               0x000B  /**< Bad native window; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_PARAMETER                   0x000C  /**< Bad parameter; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_SURFACE                     0x000D  /**< Bad surface; for more information, please refer to its EGL counterpart */
+/* EGL 1.1 - IMG_power_management */
+#define EVAS_GL_CONTEXT_LOST                    0x000E  /**< Context lost; for more information, please refer to its EGL counterpart */
+
+/** @} */
 
 #define EVAS_GL_API_VERSION 1
 struct _Evas_GL_API

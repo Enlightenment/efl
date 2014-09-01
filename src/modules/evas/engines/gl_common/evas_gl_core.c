@@ -66,6 +66,8 @@ _internal_resources_create(void *eng_data)
         goto error;
      }
 
+   rsc->error_state = EVAS_GL_SUCCESS;
+
    return rsc;
 
 error:
@@ -1270,6 +1272,34 @@ _evgl_direct_enabled()
    return _evgl_direct_renderable(rsc, sfc);
 }
 
+void
+_evgl_error_set(int error_enum)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        WRN("evgl: Unable to set error!");
+        return;
+     }
+
+   rsc->error_state = error_enum;
+}
+
+int
+_evgl_error_get()
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        WRN("evgl: Unable to get error!");
+        return EVAS_GL_NOT_INITIALIZED;
+     }
+
+   return rsc->error_state;
+}
+
 //---------------------------------------------------------------//
 // Exported functions for evas_engine to use
 
@@ -1428,12 +1458,14 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!evgl_engine)
      {
         ERR("Invalid EVGL Engine!");
+        _evgl_error_set(EVAS_GL_BAD_ACCESS);
         return NULL;
      }
 
    if (!cfg)
      {
         ERR("Invalid Config!");
+        _evgl_error_set(EVAS_GL_BAD_CONFIG);
         return NULL;
      }
 
@@ -1442,6 +1474,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      {
         ERR("Requested surface size [%d, %d] is greater than max supported size [%d, %d]",
              w, h, evgl_engine->caps.max_w, evgl_engine->caps.max_h);
+        _evgl_error_set(EVAS_GL_BAD_PARAMETER);
         return NULL;
      }
 
@@ -1469,6 +1502,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!sfc)
      {
         ERR("Surface allocation failed.");
+        _evgl_error_set(EVAS_GL_BAD_ALLOC);
         goto error;
      }
 
@@ -1480,6 +1514,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!_internal_config_set(sfc, cfg))
      {
         ERR("Unsupported Format!");
+        _evgl_error_set(EVAS_GL_BAD_CONFIG);
         goto error;
      }
 
@@ -1487,6 +1522,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!_internal_resource_make_current(eng_data, NULL))
      {
         ERR("Error doing an internal resource make current");
+        _evgl_error_set(EVAS_GL_BAD_CONTEXT);
         goto error;
      }
 
@@ -1494,6 +1530,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!_surface_buffers_create(sfc))
      {
         ERR("Unable Create Specificed Surfaces.");
+        _evgl_error_set(EVAS_GL_BAD_ALLOC);
         goto error;
      };
 
@@ -1503,6 +1540,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
           {
              ERR("Unable Create Allocate Memory for Surface.");
+             _evgl_error_set(EVAS_GL_BAD_ALLOC);
              goto error;
           }
      }
@@ -1510,6 +1548,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
      {
         ERR("Error doing make_current(NULL, NULL).");
+        _evgl_error_set(EVAS_GL_BAD_CONTEXT);
         goto error;
      }
 
@@ -1601,6 +1640,7 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
    if (!evgl_engine)
      {
         ERR("Invalid EVGL Engine!");
+        _evgl_error_set(EVAS_GL_BAD_ACCESS);
         return NULL;
      }
 
@@ -1609,6 +1649,7 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
    if (!ctx)
      {
         ERR("Error allocating context object.");
+        _evgl_error_set(EVAS_GL_BAD_ALLOC);
         return NULL;
      }
 
@@ -1694,6 +1735,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         (sfc && (!ctx)) )
      {
         ERR("Invalid Inputs. Engine: %p  Surface: %p   Context: %p!", evgl_engine, sfc, ctx);
+        if(!sfc) _evgl_error_set(EVAS_GL_BAD_SURFACE);
+        if(!ctx) _evgl_error_set(EVAS_GL_BAD_CONTEXT);
         return 0;
      }
 
@@ -1743,6 +1786,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                   if (!_surface_buffers_allocate(eng_data, sfc, 0, 0, 1))
                     {
                        ERR("Unable to destroy surface buffers!");
+                       _evgl_error_set(EVAS_GL_BAD_ALLOC);
                        return 0;
                     }
                   sfc->buffers_allocated = 0;
@@ -1762,6 +1806,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                        if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 1))
                          {
                             ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+                            _evgl_error_set(EVAS_GL_BAD_ALLOC);
                             return 0;
                          };
                        sfc->buffers_allocated = 1;
@@ -1774,6 +1819,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    if (!_internal_resource_make_current(eng_data, ctx))
      {
         ERR("Error doing a make current with internal surface. Context: %p", ctx);
+        _evgl_error_set(EVAS_GL_BAD_CONTEXT);
         return 0;
      }
 
@@ -1828,6 +1874,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                   if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo))
                     {
                        ERR("Attaching buffers to context fbo failed. Engine: %p  Surface: %p Context FBO: %u", evgl_engine, sfc, ctx->surface_fbo);
+                       _evgl_error_set(EVAS_GL_BAD_CONTEXT);
                        return 0;
                     }
                }

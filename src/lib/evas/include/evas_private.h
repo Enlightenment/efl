@@ -1244,6 +1244,7 @@ struct _Evas_Func
    Eina_Bool (*gl_surface_lock)          (void *data, void *surface);
    Eina_Bool (*gl_surface_read_pixels)   (void *data, void *surface, int x, int y, int w, int h, Evas_Colorspace cspace, void *pixels);
    Eina_Bool (*gl_surface_unlock)        (void *data, void *surface);
+   int  (*gl_error_get)                  (void *data);
 
    int  (*image_load_error_get)          (void *data, void *image);
    int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
