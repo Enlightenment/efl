@@ -1,13 +1,14 @@
 #include "evas_engine.h"
 
-static Outbuf *_evas_gl_x11_window = NULL;
+static Eina_TLS _outbuf_key = 0;
+static Eina_TLS _context_key = 0;
 
 #ifdef GL_GLES
-static EGLContext context = EGL_NO_CONTEXT;
+typedef EGLContext GLContext;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
-static GLXContext context = 0;
-static GLXContext rgba_context = 0;
+typedef GLXContext GLContext;
+static Eina_TLS _rgba_context_key = 0;
 static GLXFBConfig fbconf = 0;
 static GLXFBConfig rgba_fbconf = 0;
 #endif
@@ -21,6 +22,80 @@ static Colormap     _evas_gl_x11_cmap = 0;
 static Colormap     _evas_gl_x11_rgba_cmap = 0;
 
 static int win_count = 0;
+static Eina_Bool initted = EINA_FALSE;
+
+Eina_Bool
+eng_init(void)
+{
+   if (initted)
+     return EINA_TRUE;
+
+   // FIXME: These resources are never released
+   if (!eina_tls_new(&_outbuf_key))
+     goto error;
+   if (!eina_tls_new(&_context_key))
+     goto error;
+
+   eina_tls_set(_outbuf_key, NULL);
+   eina_tls_set(_context_key, NULL);
+
+#ifndef GL_GLES
+   if (!eina_tls_new(&_rgba_context_key))
+     goto error;
+   eina_tls_set(_rgba_context_key, NULL);
+#endif
+
+   initted = EINA_TRUE;
+   return EINA_TRUE;
+
+error:
+   ERR("Could not create TLS key!");
+   return EINA_FALSE;
+}
+
+static inline Outbuf *
+tls_outbuf_get(void)
+{
+   if (!initted) eng_init();
+   return eina_tls_get(_outbuf_key);
+}
+
+static inline Eina_Bool
+_tls_Outbuf_set(Outbuf *xwin)
+{
+   if (!initted) eng_init();
+   return eina_tls_set(_outbuf_key, xwin);
+}
+
+static inline GLContext
+_tls_context_get(void)
+{
+   if (!initted) eng_init();
+   return eina_tls_get(_context_key);
+}
+
+static inline Eina_Bool
+_tls_context_set(GLContext ctx)
+{
+   if (!initted) eng_init();
+   return eina_tls_set(_context_key, ctx);
+}
+
+#ifndef GL_GLES
+static inline GLXContext
+_tls_rgba_context_get(void)
+{
+   if (!initted) eng_init();
+   return eina_tls_get(_rgba_context_key);
+}
+
+static inline Eina_Bool
+_tls_rgba_context_set(GLXContext ctx)
+{
+   if (!initted) eng_init();
+   return eina_tls_set(_rgba_context_key, ctx);
+}
+#endif
 
 Outbuf *
 eng_window_new(Evas_Engine_Info_GL_X11 *info,
@@ -38,11 +113,16 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
                Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
+   GLContext context;
 #ifdef GL_GLES
    int context_attrs[3];
    int config_attrs[40];
    int major_version, minor_version;
    int num_config, n = 0;
+#else
+# ifdef NEWGL
+   GLXContext rgbactx;
+# endif
 #endif
    const GLubyte *vendor, *renderer, *version;
    int blacklist = 0;
@@ -140,6 +220,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         return NULL;
      }
    
+   context = _tls_context_get();
    gw->egl_context[0] = eglCreateContext
      (gw->egl_disp, gw->egl_config, context, context_attrs);
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
@@ -148,7 +229,8 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
-   if (context == EGL_NO_CONTEXT) context = gw->egl_context[0];
+   if (context == EGL_NO_CONTEXT)
+     _tls_context_set(gw->egl_context[0]);
    
    if (eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface[0],
@@ -193,6 +275,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
      }
 // GLX
 #else
+   context = _tls_context_get();
    if (!context)
      {
 #ifdef NEWGL
@@ -212,16 +295,18 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 #endif
      }
 #ifdef NEWGL
-   if ((gw->alpha) && (!rgba_context))
+   rgbactx = _tls_rgba_context_get();
+   if ((gw->alpha) && (!rgbactx))
      {
         if (indirect)
-          rgba_context = glXCreateNewContext(gw->disp, rgba_fbconf,
-                                             GLX_RGBA_TYPE, context,
-                                             GL_FALSE);
+          rgbactx = glXCreateNewContext(gw->disp, rgba_fbconf,
+                                        GLX_RGBA_TYPE, context,
+                                        GL_FALSE);
         else
-          rgba_context = glXCreateNewContext(gw->disp, rgba_fbconf,
-                                             GLX_RGBA_TYPE, context,
-                                             GL_TRUE);
+          rgbactx = glXCreateNewContext(gw->disp, rgba_fbconf,
+                                        GLX_RGBA_TYPE, context,
+                                        GL_TRUE);
+        _tls_rgba_context_set(rgbactx);
      }
    if (gw->alpha)
      gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
@@ -234,7 +319,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         return NULL;
      }
 
-   if (gw->alpha) gw->context = rgba_context;
+   if (gw->alpha) gw->context = rgbactx;
    else gw->context = context;
 #else
    gw->context = context;
@@ -404,10 +489,16 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 void
 eng_window_free(Outbuf *gw)
 {
+   Outbuf *xwin;
+   GLContext context;
    int ref = 0;
    win_count--;
    eng_window_use(gw);
-   if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
+
+   context = _tls_context_get();
+   xwin = tls_outbuf_get();
+
+   if (gw == xwin) _tls_Outbuf_set(NULL);
    if (gw->gl_context)
      {
         ref = gw->gl_context->references - 1;
@@ -417,6 +508,8 @@ eng_window_free(Outbuf *gw)
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+   if (gw->egl_surface[1] != EGL_NO_SURFACE)
+      eglDestroySurface(gw->egl_disp, gw->egl_surface[1]);
    if (gw->egl_context[0] != context)
      eglDestroyContext(gw->egl_disp, gw->egl_context[0]);
    if (ref == 0)
@@ -424,7 +517,7 @@ eng_window_free(Outbuf *gw)
         if (context) eglDestroyContext(gw->egl_disp, context);
         eglTerminate(gw->egl_disp);
         eglReleaseThread();
-        context = EGL_NO_CONTEXT;
+        _tls_context_set(EGL_NO_CONTEXT);
      }
 #else
    if (gw->glxwin)
@@ -434,15 +527,16 @@ eng_window_free(Outbuf *gw)
      }
    if (ref == 0)
      {
+        GLXContext rgbactx = _tls_rgba_context_get();
         if (!gw->glxwin)
           {
              if (glXGetCurrentContext() == gw->context)
                glXMakeCurrent(gw->disp, 0, NULL);
           }
         if (context) glXDestroyContext(gw->disp, context);
-        if (rgba_context) glXDestroyContext(gw->disp, rgba_context);
-        context = 0;
-        rgba_context = 0;
+        if (rgbactx) glXDestroyContext(gw->disp, rgbactx);
+        _tls_context_set(0);
+        _tls_rgba_context_set(0);
         fbconf = 0;
         rgba_fbconf = 0;
      }
@@ -504,29 +598,39 @@ void
 eng_window_use(Outbuf *gw)
 {
    Eina_Bool force_use = EINA_FALSE;
+   Outbuf *xwin;
+
+   xwin = tls_outbuf_get();
 
    glsym_evas_gl_preload_render_lock(eng_window_make_current, gw);
 #ifdef GL_GLES
-   if (_evas_gl_x11_window)
+   if (xwin)
      {
-        if (eglGetCurrentContext() != _evas_gl_x11_window->egl_context[0])
-           force_use = EINA_TRUE;
+        if ((eglGetCurrentDisplay() !=
+             xwin->egl_disp) ||
+            (eglGetCurrentContext() !=
+             xwin->egl_context[0]) ||
+            (eglGetCurrentSurface(EGL_READ) !=
+             xwin->egl_surface[xwin->offscreen]) ||
+            (eglGetCurrentSurface(EGL_DRAW) !=
+             xwin->egl_surface[xwin->offscreen]))
+          force_use = EINA_TRUE;
      }
 #else
-   if (_evas_gl_x11_window)
+   if (xwin)
      {
-        if (glXGetCurrentContext() != _evas_gl_x11_window->context)
+        if (glXGetCurrentContext() != xwin->context)
            force_use = EINA_TRUE;
      }
 #endif
-   if ((_evas_gl_x11_window != gw) || (force_use))
+   if ((xwin != gw) || (force_use))
      {
-        if (_evas_gl_x11_window)
+        if (xwin)
           {
-             glsym_evas_gl_common_context_use(_evas_gl_x11_window->gl_context);
-             glsym_evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+             glsym_evas_gl_common_context_use(xwin->gl_context);
+             glsym_evas_gl_common_context_flush(xwin->gl_context);
           }
-        _evas_gl_x11_window = gw;
+        _tls_Outbuf_set(gw);
         if (gw)
           {
 // EGL / GLES
@@ -571,16 +675,23 @@ eng_window_unsurf(Outbuf *gw)
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
    if (getenv("EVAS_GL_INFO"))
       printf("unsurf %p\n", gw);
+
 #ifdef GL_GLES
-   if (_evas_gl_x11_window)
-      glsym_evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
-   if (_evas_gl_x11_window == gw)
+   Outbuf *xwin;
+
+   xwin = _tls_Outbuf_get();
+   if (xwin)
+      evas_gl_common_context_flush(xwin->gl_context);
+   if (xwin == gw)
      {
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface[0] != EGL_NO_SURFACE)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
         gw->egl_surface[0] = EGL_NO_SURFACE;
-        _evas_gl_x11_window = NULL;
+        if (gw->egl_surface[1] != EGL_NO_SURFACE)
+           eglDestroySurface(gw->egl_disp, gw->egl_surface[1]);
+        gw->egl_surface[1] = EGL_NO_SURFACE;
+        _tls_Outbuf_set(NULL);
      }
 #else
    if (gw->glxwin)
