@@ -100,7 +100,11 @@ _save_material(Evas_3D_Mesh_Data *pd EINA_UNUSED, const char *file, Evas_3D_Mesh
    Evas_3D_Material_Data *mat = eo_data_scope_get(f->material, EVAS_3D_MATERIAL_CLASS);
 
    OPEN_FILE(mtl)
-
+   if (!_mtl_file)
+     {
+        ERR("File open '%s' for save failed", file);
+        return;
+     }
    fprintf(_mtl_file, "# Evas_3D saver OBJ v0.03 \n");//_mtl_file created in macro
    fprintf(_mtl_file, "# Material Count: 1 \n\n");
    fprintf(_mtl_file, "newmtl Material \n");
