@@ -21,7 +21,7 @@ class Elm_App_Client (Eo.Base)
       }
    }
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Class constructor of elm_app_client. */
          legacy: null;
          params {
@@ -53,6 +53,9 @@ class Elm_App_Client (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .constructor;
    }
    events {
       view,created; /*@ Called when a view of this application is created. */

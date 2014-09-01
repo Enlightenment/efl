@@ -80,7 +80,7 @@ class Elm_App_Client_View (Eo.Base)
       }
    }
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Class constructor of elm_app_client_view */
          legacy: null;
          params {
@@ -112,6 +112,9 @@ class Elm_App_Client_View (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .constructor;
    }
    events {
       state,changed; /*@ State of view changed. */

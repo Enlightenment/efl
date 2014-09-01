@@ -50,7 +50,7 @@ class Elm_App_Server (Eo.Base)
       }
    }
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Class constructor of elm_app_server */
          legacy: null;
          params {
@@ -91,6 +91,9 @@ class Elm_App_Server (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .constructor;
    }
    events {
       terminate; /*@ Called when application must be terminated. */

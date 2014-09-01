@@ -1173,7 +1173,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
       }
    }
    methods {
-      constructor @constructor {
+      constructor {
          /*@ No description supplied by the EAPI. */
          legacy: null;
          params {
@@ -1347,6 +1347,9 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
       Elm_Widget.event;
       Elm_Interface_Atspi_Accessible.parent.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   constructors {
+      .constructor;
    }
    events {
       delete,request;
