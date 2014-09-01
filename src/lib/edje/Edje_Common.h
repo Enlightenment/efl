@@ -1007,6 +1007,13 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_EMOTICON         /**< Emoticon layout @since 1.10 */
 } Edje_Input_Panel_Layout;
 
+typedef enum
+{
+   EDJE_INPUT_HINT_NONE                = 0,        /**< No active hints @since 1.12 */
+   EDJE_INPUT_HINT_AUTO_COMPLETE       = 1 << 0,   /**< Suggest word auto completion @since 1.12 */
+   EDJE_INPUT_HINT_SENSITIVE_DATA      = 1 << 1,   /**< Typed text should not be stored. @since 1.12 */
+} Edje_Input_Hints;
+
 enum
 {
    EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,

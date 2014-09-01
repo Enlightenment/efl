@@ -2131,6 +2131,35 @@ _edje_object_part_text_prediction_allow_get(Eo *obj EINA_UNUSED, Edje *ed, const
 }
 
 EOLIAN void
+_edje_object_part_text_input_hint_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Hints input_hints)
+{
+   Edje_Real_Part *rp;
+
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_input_hint_set(rp, input_hints);
+     }
+}
+
+EOLIAN Edje_Input_Hints
+_edje_object_part_text_input_hint_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+{
+   Edje_Real_Part *rp;
+
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_input_hint_get(rp);
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN void
 _edje_object_part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool enabled)
 {
    Edje_Real_Part *rp;

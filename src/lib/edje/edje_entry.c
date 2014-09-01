@@ -3192,6 +3192,40 @@ _edje_entry_prediction_allow_get(Edje_Real_Part *rp)
 }
 
 void
+_edje_entry_input_hint_set(Edje_Real_Part *rp, Edje_Input_Hints input_hints)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return;
+   en = rp->typedata.text->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_hint_set(en->imf_context, input_hints);
+#else
+   (void) input_hints;
+#endif
+}
+
+Edje_Input_Hints
+_edje_entry_input_hint_get(const Edje_Real_Part *rp)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EDJE_INPUT_HINT_NONE;
+   en = rp->typedata.text->entry_data;
+   if (!en) return EDJE_INPUT_HINT_NONE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_hint_get(en->imf_context);
+#endif
+
+   return EDJE_INPUT_HINT_NONE;
+}
+
+void
 _edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled)
 {
    Entry *en;
