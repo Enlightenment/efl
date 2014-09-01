@@ -239,6 +239,8 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
 EOLIAN static void
 _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
    // Call delete func if it's registered
    if (sd->del_func)
      {
@@ -248,7 +250,11 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
 
    ecore_idle_enterer_del(sd->render_idle_enterer);
 
-   if (sd->surface) evas_gl_surface_destroy(sd->evasgl, sd->surface);
+   if (sd->surface)
+     {
+        evas_object_image_native_surface_set(wd->resize_obj, NULL);
+        evas_gl_surface_destroy(sd->evasgl, sd->surface);
+     }
    if (sd->context) evas_gl_context_destroy(sd->evasgl, sd->context);
    if (sd->config) evas_gl_config_free(sd->config);
    if (sd->evasgl) evas_gl_free(sd->evasgl);
