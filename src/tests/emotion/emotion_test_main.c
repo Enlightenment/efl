@@ -364,19 +364,21 @@ video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
 static void
 video_obj_length_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   printf("len change!\n");
    video_obj_time_changed(obj, data);
 }
 
 static void
 video_obj_position_update_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   printf("pos up!\n");
    video_obj_time_changed(obj, data);
 }
 
 static void
 video_obj_stopped_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   printf("video stopped!\n");
+   printf("video stopped!!!\n");
    if (loop)
      {
         emotion_object_position_set(obj, 0.0);
