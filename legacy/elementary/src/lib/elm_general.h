@@ -141,13 +141,13 @@ typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas
 extern EAPI double _elm_startup_time;
 
 #ifndef ELM_LIB_QUICKLAUNCH
-#define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); return ret; } /**< macro to be used after the elm_main() function */
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
 #else
 /** @deprecated macro to be used after the elm_main() function.
  * Do not define ELM_LIB_QUICKLAUNCH
  * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
  */
-#define ELM_MAIN() int main(int argc, char **argv) { _elm_startup_time = ecore_time_unix_get(); return elm_quicklaunch_fallback(argc, argv); }
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_get(); ret = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
 #endif
 
 /**************************************************************************/

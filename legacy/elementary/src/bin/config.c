@@ -3750,7 +3750,6 @@ elm_main(int    argc,
      }
    elm_run(); /* and run the program now and handle all events, etc. */
    /* if the mainloop that elm_run() runs exists, we exit the app */
-   elm_shutdown(); /* clean up and shut down */
    /* exit code */
    return 0;
 }

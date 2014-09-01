@@ -297,7 +297,7 @@ EAPI double _elm_startup_time = 0;
 static void
 _elm_win_first_frame_do(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   double end = ecore_time_unix_get();
+   double end = ecore_time_get();
    char *first = data;
 
    switch (*first)
