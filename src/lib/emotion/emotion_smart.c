@@ -1490,9 +1490,12 @@ _emotion_frame_anim(void *data)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
 
-   evas_object_image_pixels_dirty_set(sd->obj, 1);
-   evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
    sd->anim = NULL;
+   evas_object_image_pixels_dirty_set(sd->obj, 1);
+   _emotion_video_pos_update(obj,
+                             emotion_engine_instance_pos_get(sd->engine_instance),
+                             emotion_engine_instance_len_get(sd->engine_instance));
+   evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
    return EINA_FALSE;
 }
 
