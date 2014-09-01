@@ -701,7 +701,11 @@ eldbus_message_iter_get_and_next(Eldbus_Message_Iter *iter, char signature, ...)
    va_start(vl, signature);
 
    type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
-   if (type == DBUS_TYPE_INVALID) return EINA_FALSE;
+   if (type == DBUS_TYPE_INVALID)
+     {
+        va_end(vl);
+        return EINA_FALSE;
+     }
    if (type != signature)
      {
         if (signature == '(') signature = 'r';
