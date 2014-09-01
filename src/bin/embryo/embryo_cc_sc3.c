@@ -170,7 +170,8 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	       {
 		  if (oper == op1[i])
 		    {
-		       strcpy(opername, binoperstr[i]);
+		       strncpy(opername, binoperstr[i], sizeof(opername) - 1);
+                       opername[sizeof(opername) - 1] = 0;
 		       savepri = binoper_savepri[i];
 		       break;
 		    }		/* if */
@@ -190,7 +191,8 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	       {
 		  if (oper == unopers[i])
 		    {
-		       strcpy(opername, unoperstr[i]);
+		       strncpy(opername, unoperstr[i], sizeof(opername) - 1);
+                       opername[sizeof(opername) - 1] = 0;
 		       break;
 		    }		/* if */
 	       }		/* for */
