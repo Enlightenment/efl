@@ -1560,7 +1560,8 @@ decl_const(int vclass)
    if (lex(&val, &str) != tSYMBOL)	/* read in (new) token */
       error(20, str);		/* invalid symbol name */
    symbolline = fline;		/* save line where symbol was found */
-   strcpy(constname, str);	/* save symbol name */
+   strncpy(constname, str, sizeof(constname) - 1);	/* save symbol name */
+   constname[sizeof(constname) - 1] = 0;
    needtoken('=');
    constexpr(&val, &exprtag);	/* get value */
    needtoken(tTERM);
