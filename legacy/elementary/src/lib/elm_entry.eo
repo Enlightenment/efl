@@ -414,6 +414,27 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool prediction; /*@ Whether the entry should allow to use the text prediction. */
          }
       }
+      input_hint {
+         set {
+            /*@
+            Sets the input hint which allows input methods to fine-tune their behavior.
+
+            @ingroup Entry */
+         }
+         get {
+            /*@
+            Gets the value of input hint.
+
+            @return the value of input hint.
+
+            @see elm_entry_input_hint_set
+
+            @ingroup Entry */
+         }
+         values {
+            Elm_Input_Hints hints; /*@ input hint. */
+         }
+      }
       input_panel_layout {
          set {
             /*@

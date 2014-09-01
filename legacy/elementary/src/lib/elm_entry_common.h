@@ -109,6 +109,18 @@ typedef enum
 } Elm_Input_Panel_Return_Key_Type;
 
 /**
+ * @typedef Elm_Input_Hints
+ * @brief Enumeration that defines the types of Input Hints.
+ * @since 1.12
+ */
+typedef enum
+{
+   ELM_INPUT_HINT_NONE                = 0,        /**< No active hints @since 1.12 */
+   ELM_INPUT_HINT_AUTO_COMPLETE       = 1 << 0,   /**< suggest word auto completion @since 1.12 */
+   ELM_INPUT_HINT_SENSITIVE_DATA      = 1 << 1,   /**< typed text should not be stored. @since 1.12 */
+} Elm_Input_Hints;
+
+/**
  * @typedef Elm_Entry_Anchor_Info
  *
  * The info sent in the callback for the "anchor,clicked" signals emitted

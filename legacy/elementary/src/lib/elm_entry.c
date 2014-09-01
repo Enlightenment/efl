@@ -736,6 +736,8 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      (sd->entry_edje, "elm.text", (Edje_Text_Autocapital_Type)sd->autocapital_type);
    edje_object_part_text_prediction_allow_set
      (sd->entry_edje, "elm.text", sd->prediction_allow);
+   edje_object_part_text_input_hint_set
+     (sd->entry_edje, "elm.text", sd->input_hints);
    edje_object_part_text_input_panel_enabled_set
      (sd->entry_edje, "elm.text", sd->input_panel_enable);
    edje_object_part_text_input_panel_imdata_set
@@ -3447,6 +3449,7 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
    elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
    elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
    elm_entry_prediction_allow_set(obj, EINA_TRUE);
+   elm_entry_input_hint_set(obj, ELM_INPUT_HINT_AUTO_COMPLETE);
 
    priv->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
        (priv->entry_edje, "elm.text");
@@ -3738,6 +3741,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
      {
         sd->single_line = EINA_TRUE;
         sd->line_wrap = ELM_WRAP_NONE;
+        elm_entry_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_unregister(obj);
      }
    else
@@ -3749,6 +3753,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
                             NULL, NULL,
                             _drag_drop_cb, NULL);
 
+        elm_entry_input_hint_set(obj, ((sd->input_hints | ELM_INPUT_HINT_AUTO_COMPLETE) & ~ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_register(obj);
      }
 
@@ -4733,6 +4738,11 @@ _elm_entry_input_panel_layout_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_I
 
    edje_object_part_text_input_panel_layout_set
      (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)layout);
+
+   if (layout == ELM_INPUT_PANEL_LAYOUT_PASSWORD)
+     elm_entry_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
+   else if (layout == ELM_INPUT_PANEL_LAYOUT_TERMINAL)
+     elm_entry_input_hint_set(obj, (sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE));
 }
 
 EOLIAN static Elm_Input_Panel_Layout
@@ -4782,6 +4792,21 @@ EOLIAN static Eina_Bool
 _elm_entry_prediction_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->prediction_allow;
+}
+
+EOLIAN static void
+_elm_entry_input_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Hints hints)
+{
+   sd->input_hints = hints;
+
+   edje_object_part_text_input_hint_set
+     (sd->entry_edje, "elm.text", hints);
+}
+
+EOLIAN static Elm_Input_Hints
+_elm_entry_input_hint_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+{
+   return sd->input_hints;
 }
 
 EOLIAN static void

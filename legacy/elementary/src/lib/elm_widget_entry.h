@@ -67,6 +67,7 @@ struct _Elm_Entry_Data
    Elm_Autocapital_Type                  autocapital_type;
    Elm_Input_Panel_Lang                  input_panel_lang;
    Elm_Input_Panel_Return_Key_Type       input_panel_return_key_type;
+   Elm_Input_Hints                       input_hints;
    Edje_Cursor                           sel_handler_cursor;
    void                                 *input_panel_imdata;
    int                                   input_panel_imdata_len;
