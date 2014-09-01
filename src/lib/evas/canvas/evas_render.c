@@ -421,7 +421,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
    else
      {
        is_active = evas_object_is_active(eo_obj, obj);
-       src_changed = is_active;
+       if (is_active && obj->proxy->proxies) src_changed = is_active;
      }
    obj->is_active = is_active;
 
