@@ -308,6 +308,27 @@ compute_gl_coordinates(int win_w, int win_h, int rot, int clip_image,
 }
 
 static void
+_evgl_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (_evgl_direct_enabled())
+     {
+        rsc->clear_color.a = alpha;
+        rsc->clear_color.r = red;
+        rsc->clear_color.g = green;
+        rsc->clear_color.b = blue;
+     }
+   glClearColor(red, green, blue, alpha);
+}
+
+static void
 _evgl_glClear(GLbitfield mask)
 {
    EVGL_Resource *rsc;
@@ -338,6 +359,29 @@ _evgl_glClear(GLbitfield mask)
      {
         if (!(rsc->current_ctx->current_fbo))
           {
+             /* Skip glClear() if clearing with transparent color
+              * Note: There will be side effects if the object itself is not
+              * marked as having an alpha channel!
+              */
+             if (ctx->current_sfc->alpha && (mask & GL_COLOR_BUFFER_BIT))
+               {
+                  if ((rsc->clear_color.a == 0) &&
+                      (rsc->clear_color.r == 0) &&
+                      (rsc->clear_color.g == 0) &&
+                      (rsc->clear_color.b == 0))
+                    {
+                       // Skip clear color as we don't want to write black
+                       mask &= ~GL_COLOR_BUFFER_BIT;
+                    }
+                  else if (rsc->clear_color.a != 1.0)
+                    {
+                       // TODO: Draw a rectangle? This will never be the perfect solution though.
+                       WRN("glClear() used with a semi-transparent color and direct rendering. "
+                           "This will erase the previous contents of the evas!");
+                    }
+                  if (!mask) return;
+               }
+
              if ((!ctx->direct_scissor))
                {
                   glEnable(GL_SCISSOR_TEST);
@@ -374,6 +418,8 @@ _evgl_glClear(GLbitfield mask)
                }
 
              glClear(mask);
+
+             // TODO/FIXME: Restore previous client-side scissors.
           }
         else
           {
@@ -887,7 +933,7 @@ void
 _evgld_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
    EVGL_FUNC_BEGIN();
-   glClearColor(red, green, blue, alpha);
+   _evgl_glClearColor(red, green, blue, alpha);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    EVGL_FUNC_END();
 }
@@ -2386,7 +2432,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glBufferSubData);
    ORD(glCheckFramebufferStatus);
 //   ORD(glClear);
-   ORD(glClearColor);
+//   ORD(glClearColor);
 //   ORD(glClearDepthf);
    ORD(glClearStencil);
    ORD(glColorMask);
@@ -2525,6 +2571,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
 
    // For Direct Rendering
    ORD(glClear);
+   ORD(glClearColor);
    ORD(glDisable);
    ORD(glEnable);
    ORD(glGetIntegerv);
@@ -2551,6 +2598,7 @@ _direct_scissor_off_api_get(Evas_GL_API *funcs)
 #define ORD(f) EVAS_API_OVERRIDE(f, funcs,)
    // For Direct Rendering
    ORD(glClear);
+   ORD(glClearColor);
    ORD(glDisable);
    ORD(glEnable);
    ORD(glGetIntegerv);
@@ -2719,6 +2767,8 @@ _debug_gl_api_get(Evas_GL_API *funcs)
 void
 _evgl_api_get(Evas_GL_API *funcs, int debug)
 {
+   memset(funcs, 0, sizeof(Evas_GL_API));
+
    if (debug)
       _debug_gl_api_get(funcs);
    else

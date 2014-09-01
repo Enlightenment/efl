@@ -93,8 +93,9 @@ struct _EVGL_Surface
    GLuint  depth_stencil_buf;
    GLenum  depth_stencil_fmt;
 
-   // Direct Rendering Option
-   int     direct_fb_opt;
+   // Direct Rendering Options
+   unsigned direct_fb_opt : 1;
+   unsigned alpha : 1;
 
    int     cfg_index;
 
@@ -237,6 +238,9 @@ struct _EVGL_Resource
 
         Eina_Bool            enabled : 1;
    } direct;
+   struct {
+        GLclampf r, g, b, a;
+   } clear_color;
 
 };
 

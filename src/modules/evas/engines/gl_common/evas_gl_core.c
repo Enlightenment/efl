@@ -1092,9 +1092,14 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
              sfc->depth_stencil_fmt = evgl_engine->caps.fbo_fmts[i].depth_stencil_fmt;
              sfc->msaa_samples      = evgl_engine->caps.fbo_fmts[i].samples;
 
+             // TODO: Implement surface reconfigure and add depth+stencil support
+
              // Direct Rendering Option
              if ( (!stencil_bit) || (evgl_engine->direct_override) )
                 sfc->direct_fb_opt = cfg->options_bits & EVAS_GL_OPTIONS_DIRECT;
+
+             // Extra flags for direct rendering
+             sfc->alpha = (cfg->color_format == EVAS_GL_RGBA_8888);
 
              cfg_index = i;
              break;
