@@ -1,0 +1,74 @@
+
+### Library
+
+if HAVE_CXX11
+lib_LTLIBRARIES += lib/eina_js/libeina_js.la
+
+lib_eina_js_libeina_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+@EINA_JS_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eina_js\" \
+@VALGRIND_CFLAGS@
+
+lib_eina_js_libeina_js_la_LIBADD = @EINA_LIBS@ @DL_LIBS@
+lib_eina_js_libeina_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_eina_js_libeina_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+lib_eina_js_libeina_js_la_SOURCES = \
+bindings/eina_js/eina_list.cc
+
+#installed_einacxxmainheadersdir = $(includedir)/eina-cxx-@VMAJ@
+#dist_installed_einacxxmainheaders_DATA = \
+bindings/eina_cxx/Eina.hh
+
+#installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@/eina-cxx
+#dist_installed_einacxxheaders_DATA = \
+bindings/eina_cxx/eina_accessor.hh       \
+bindings/eina_cxx/eina_array.hh \
+bindings/eina_cxx/eina_clone_allocators.hh       \
+bindings/eina_cxx/eina_error.hh     \
+bindings/eina_cxx/eina_eo_base_fwd.hh     \
+bindings/eina_cxx/eina_fold.hh     \
+bindings/eina_cxx/eina_inarray.hh  \
+bindings/eina_cxx/eina_inlist.hh   \
+bindings/eina_cxx/eina_integer_sequence.hh \
+bindings/eina_cxx/eina_iterator.hh \
+bindings/eina_cxx/eina_lists_auxiliary.hh \
+bindings/eina_cxx/eina_list.hh \
+bindings/eina_cxx/eina_log.hh \
+bindings/eina_cxx/eina_optional.hh \
+bindings/eina_cxx/eina_ptrarray.hh \
+bindings/eina_cxx/eina_ptrlist.hh \
+bindings/eina_cxx/eina_range_types.hh \
+bindings/eina_cxx/eina_ref.hh \
+bindings/eina_cxx/eina_stringshare.hh \
+bindings/eina_cxx/eina_thread.hh \
+bindings/eina_cxx/eina_tuple.hh \
+bindings/eina_cxx/eina_tuple_unwrap.hh \
+bindings/eina_cxx/eina_type_traits.hh \
+bindings/eina_cxx/eina_value.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eina_js/eina_js_suite
+TESTS += tests/eina_js/eina_js_suite
+
+tests_eina_js_eina_js_suite_SOURCES = \
+tests/eina_js/eina_js_suite.cc
+
+tests_eina_js_eina_js_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina_js\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_js\" \
+@CHECK_CFLAGS@ \
+@EINA_JS_CFLAGS@
+tests_eina_js_eina_js_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@ @USE_EINA_JS_LIBS@
+tests_eina_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@
+
+endif
+endif
+
