@@ -2168,16 +2168,30 @@ needtoken(int token)
      {
 	/* token already pushed back */
 	assert(_pushed);
-	if (token < 256)
-	   sprintf(s1, "%c", (char)token);	/* single character token */
-	else
-	   strcpy(s1, sc_tokens[token - tFIRST]);	/* multi-character symbol */
-	if (!freading)
-	   strcpy(s2, "-end of file-");
-	else if (_lextok < 256)
-	   sprintf(s2, "%c", (char)_lextok);
-	else
-	   strcpy(s2, sc_tokens[_lextok - tFIRST]);
+        if (token < 256)
+          {
+             s1[0] = (char)token; /* single character token */
+             s1[1] = 0;
+          }
+        else
+          {
+             strncpy(s1, sc_tokens[token - tFIRST], 19); /* multi-character symbol */
+          }
+        s1[19] = 0;
+        if (!freading)
+          {
+             strncpy(s2, "-end of file-", 19);
+          }
+        else if (_lextok < 256)
+          {
+             s2[0] = (char)_lextok;
+             s2[1] = 0;
+          }
+        else
+          {
+             strncpy(s2, sc_tokens[_lextok - tFIRST], 19);
+          }
+        s2[19] = 0;
 	error(1, s1, s2);	/* expected ..., but found ... */
 	return FALSE;
      }				/* if */
