@@ -1610,7 +1610,8 @@ decl_enum(int vclass)
     * tag was set) */
    if (lex(&lexval, &str) == tSYMBOL)
      {				/* read in (new) token */
-	strcpy(enumname, str);	/* save enum name (last constant) */
+	strncpy(enumname, str, sizeof(enumname) - 1);	/* save enum name (last constant) */
+        enumname[sizeof(enumname) - 1] = 0;
 	if (!explicittag)
 	   tag = sc_addtag(enumname);
      }
