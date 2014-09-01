@@ -2693,7 +2693,8 @@ addsym(char *name, cell addr, int ident, int vclass, int tag, int usage)
    *refer = NULL;
 
    /* first fill in the entry */
-   strcpy(entry.name, name);
+   strncpy(entry.name, name, sizeof(entry.name) - 1);
+   entry.name[sizeof(entry.name) - 1] = 0;
    entry.hash = namehash(name);
    entry.addr = addr;
    entry.vclass = (char)vclass;
