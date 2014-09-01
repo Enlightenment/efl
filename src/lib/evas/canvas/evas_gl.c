@@ -365,6 +365,68 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
    return ret;
 }
 
+EAPI Evas_GL_Context *
+evas_gl_current_context_get(Evas_GL *evas_gl)
+{
+   Evas_GL_Context *comp;
+   void *internal_ctx;
+   Eina_List *li;
+
+   // Magic
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   internal_ctx = evas_gl->evas->engine.func->gl_current_context_get(evas_gl->evas->engine.data.output);
+   if (!internal_ctx)
+     return NULL;
+
+   LKL(evas_gl->lck);
+   EINA_LIST_FOREACH(evas_gl->contexts, li, comp)
+     {
+        if (comp->data == internal_ctx)
+          {
+             LKU(evas_gl->lck);
+             return comp;
+          }
+     }
+
+   ERR("The currently bound context could not be found.");
+   LKU(evas_gl->lck);
+   return NULL;
+}
+
+EAPI Evas_GL_Surface *
+evas_gl_current_surface_get(Evas_GL *evas_gl)
+{
+   Evas_GL_Surface *comp;
+   void *internal_sfc;
+   Eina_List *li;
+
+   // Magic
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   internal_sfc = evas_gl->evas->engine.func->gl_current_surface_get(evas_gl->evas->engine.data.output);
+   if (!internal_sfc)
+     return NULL;
+
+   LKL(evas_gl->lck);
+   EINA_LIST_FOREACH(evas_gl->surfaces, li, comp)
+     {
+        if (comp->data == internal_sfc)
+          {
+             LKU(evas_gl->lck);
+             return comp;
+          }
+     }
+
+   ERR("The currently bound surface could not be found.");
+   LKU(evas_gl->lck);
+   return NULL;
+}
+
 EAPI const char *
 evas_gl_string_query(Evas_GL *evas_gl, int name)
 {

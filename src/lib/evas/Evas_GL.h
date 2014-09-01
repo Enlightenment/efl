@@ -596,6 +596,36 @@ EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA
  */
 EAPI int                      evas_gl_error_get          (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Returns the Evas GL context object in use or set by @ref evas_gl_make_current.
+ *
+ * @param[in] evas_gl The given Evas_GL object
+ *
+ * @return The current context for the calling thread, or @c NULL in case of
+ *         failure and when there is no current context in this thread.
+ *
+ * @since 1.12
+ */
+EAPI Evas_GL_Context         *evas_gl_current_context_get (Evas_GL *evas_gl) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Returns the Evas GL surface object in use or set by @ref evas_gl_make_current
+ *
+ * @param evas_gl The given Evas_GL object
+ *
+ * @return The current surface for the calling thread, or @c NULL in case of
+ *         failure and when there is no current surface in this thread.
+ *
+ * This can be used to get a handle to the current surface, so as to switch
+ * between contexts back and forth. Note that the OpenGL driver may stall when
+ * doing so.
+ *
+ * @see evas_gl_make_current
+ *
+ * @since 1.12
+ */
+EAPI Evas_GL_Surface         *evas_gl_current_surface_get (Evas_GL *evas_gl) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
 #if !defined(__gl_h_) && !defined(__gl2_h_)
 # define __gl_h_
 # define __gl2_h_

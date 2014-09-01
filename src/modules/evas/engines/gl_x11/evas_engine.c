@@ -1264,6 +1264,28 @@ eng_output_dump(void *data)
    _re_winfree(re);
 }
 
+static void *
+eng_gl_current_context_get(void *data EINA_UNUSED)
+{
+   EVGL_Context *ctx;
+
+   ctx = _evgl_current_context_get();
+   if (!ctx)
+     return NULL;
+
+#ifdef GL_GLES
+   if (eglGetCurrentContext() == (ctx->context))
+     return ctx;
+   else
+     return NULL;
+#else
+   if (glXGetCurrentContext() == (ctx->context))
+     return ctx;
+   else
+     return NULL;
+#endif
+}
+
 static int
 eng_gl_error_get(void *data EINA_UNUSED)
 {

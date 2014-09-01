@@ -1147,6 +1147,8 @@ eng_gl_make_current(void *data, void *surface, void *context)
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
+   // TODO: Add check for main thread before flush
+
    EVGLINIT(data, 0);
    if ((sfc) && (ctx))
      {
@@ -1164,6 +1166,20 @@ eng_gl_make_current(void *data, void *surface, void *context)
      }
 
    return evgl_make_current(data, sfc, ctx);
+}
+
+static void *
+eng_gl_current_surface_get(void *data EINA_UNUSED)
+{
+   EVGL_Context *ctx;
+
+   ctx = _evgl_current_context_get();
+   if (!ctx)
+     return NULL;
+
+   // Note: We could verify with a call to eglGetCurrentSurface
+
+   return ctx->current_sfc;
 }
 
 static void *
@@ -1782,6 +1798,11 @@ module_open(Evas_Module *em)
    ORD(gl_surface_lock);
    ORD(gl_surface_read_pixels);
    ORD(gl_surface_unlock);
+   //ORD(gl_error_get);
+   //ORD(gl_surface_query);
+   // gl_current_context_get is in engine
+   ORD(gl_current_surface_get);
+   //ORD(gl_rotation_angle_get);
 
    ORD(image_load_error_get);
 
