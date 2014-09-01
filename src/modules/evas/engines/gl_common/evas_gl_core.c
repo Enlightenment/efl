@@ -817,6 +817,8 @@ _surface_context_list_print()
 #define YELLOW "\e[1;33m"
 #define RED "\e[1;31m"
 
+   LKL(evgl_engine->resource_lock);
+
    DBG( YELLOW "-----------------------------------------------" RESET);
    DBG("Total Number of active Evas GL Surfaces: %d", eina_list_count(evgl_engine->surfaces));
 
@@ -863,6 +865,8 @@ _surface_context_list_print()
         DBG( RED "\t[Context %d]" YELLOW " Ptr: %p", count++, c);
      }
    DBG( YELLOW "-----------------------------------------------" RESET);
+
+   LKU(evgl_engine->resource_lock);
 
 #undef RESET
 #undef GREEN
@@ -1315,6 +1319,8 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
         goto error;
      }
 
+   LKI(evgl_engine->resource_lock);
+
    // Assign functions
    evgl_engine->funcs = efunc;
 
@@ -1381,6 +1387,7 @@ error:
      {
         if (evgl_engine->resource_key)
           eina_tls_free(evgl_engine->resource_key);
+        LKD(evgl_engine->resource_lock);
         free(evgl_engine);
      }
    evgl_engine = NULL;
@@ -1402,6 +1409,8 @@ evgl_engine_shutdown(void *eng_data)
 
    // Destroy internal resources
    _evgl_tls_resource_destroy(eng_data);
+
+   LKD(evgl_engine->resource_lock);
 
    // Free engine
    free(evgl_engine);
@@ -1505,7 +1514,9 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      }
 
    // Keep track of all the created surfaces
+   LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
+   LKU(evgl_engine->resource_lock);
 
    return sfc;
 
@@ -1570,7 +1581,9 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
      }
 
    // Remove it from the list
+   LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
+   LKU(evgl_engine->resource_lock);
 
    free(sfc);
    sfc = NULL;
@@ -1613,7 +1626,9 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
      }
 
    // Keep track of all the created context
+   LKL(evgl_engine->resource_lock);
    evgl_engine->contexts = eina_list_prepend(evgl_engine->contexts, ctx);
+   LKU(evgl_engine->resource_lock);
 
    return ctx;
 }
@@ -1655,7 +1670,9 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
      }
 
    // Remove it from the list
+   LKL(evgl_engine->resource_lock);
    evgl_engine->contexts = eina_list_remove(evgl_engine->contexts, ctx);
+   LKU(evgl_engine->resource_lock);
 
    // Free context
    free(ctx);

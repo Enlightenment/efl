@@ -10,6 +10,7 @@ struct _Evas_GL
 
    Eina_List  *contexts;
    Eina_List  *surfaces;
+   Eina_Lock   lck;
 };
 
 struct _Evas_GL_Context
@@ -36,6 +37,7 @@ evas_gl_new(Evas *e)
 
    evas_gl->magic = MAGIC_EVAS_GL;
    evas_gl->evas = eo_data_ref(e, EVAS_CANVAS_CLASS);
+   LKI(evas_gl->lck);
 
    if (!evas_gl->evas->engine.func->gl_context_create)
      {
@@ -54,7 +56,6 @@ evas_gl_free(Evas_GL *evas_gl)
    return;
    MAGIC_CHECK_END();
 
-
    // Delete undeleted surfaces
    while (evas_gl->surfaces)
      evas_gl_surface_destroy(evas_gl, evas_gl->surfaces->data);
@@ -65,6 +66,7 @@ evas_gl_free(Evas_GL *evas_gl)
 
    eo_data_unref(evas_gl->evas->evas, evas_gl->evas);
    evas_gl->magic = 0;
+   LKD(evas_gl->lck);
    free(evas_gl);
 }
 
@@ -101,7 +103,7 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
         return NULL;
      }
 
-   if ( (width <= 0) || (height <= 0))
+   if ((width <= 0) || (height <= 0))
      {
         ERR("Invalid surface dimensions: %d, %d", width, height);
         return NULL;
@@ -121,7 +123,9 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
      }
 
    // Keep track of the surface creations
+   LKL(evas_gl->lck);
    evas_gl->surfaces = eina_list_prepend(evas_gl->surfaces, surf);
+   LKU(evas_gl->lck);
 
    return surf;
 }
@@ -144,7 +148,9 @@ evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
    evas_gl->evas->engine.func->gl_surface_destroy(evas_gl->evas->engine.data.output, surf->data);
 
    // Remove it from the list
+   LKL(evas_gl->lck);
    evas_gl->surfaces = eina_list_remove(evas_gl->surfaces, surf);
+   LKU(evas_gl->lck);
 
    // Delete the object
    free(surf);
@@ -188,7 +194,9 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
      }
 
    // Keep track of the context creations
+   LKL(evas_gl->lck);
    evas_gl->contexts = eina_list_prepend(evas_gl->contexts, ctx);
+   LKU(evas_gl->lck);
 
    return ctx;
 
@@ -212,7 +220,9 @@ evas_gl_context_destroy(Evas_GL *evas_gl, Evas_GL_Context *ctx)
    evas_gl->evas->engine.func->gl_context_destroy(evas_gl->evas->engine.data.output, ctx->data);
 
    // Remove it from the list
+   LKL(evas_gl->lck);
    evas_gl->contexts = eina_list_remove(evas_gl->contexts, ctx);
+   LKU(evas_gl->lck);
 
    // Delete the object
    free(ctx);
@@ -227,7 +237,7 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
    return EINA_FALSE;
    MAGIC_CHECK_END();
-   
+
    if ((surf) && (ctx))
      ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, surf->data, ctx->data);
    else if ((!surf) && (!ctx))
@@ -268,7 +278,13 @@ evas_gl_native_surface_get(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   if ((!surf) || (!ns))
+   if (!surf)
+     {
+        ERR("Invalid surface!");
+        return EINA_FALSE;
+     }
+
+   if (!ns)
      {
         ERR("Invalid input parameters!");
         return EINA_FALSE;
@@ -286,5 +302,4 @@ evas_gl_api_get(Evas_GL *evas_gl)
    MAGIC_CHECK_END();
 
    return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(evas_gl->evas->engine.data.output);
-
 }
