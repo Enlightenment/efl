@@ -79,7 +79,7 @@ _server_connect(void)
         return EINA_FALSE;
      }
 
-   fcntl(s, F_SETFL, O_NONBLOCK);
+   if (fcntl(s, F_SETFL, O_NONBLOCK) < 0) ERR("fcntl failed");
 
    socketfd = s;
 
