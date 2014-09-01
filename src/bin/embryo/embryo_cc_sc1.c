@@ -2481,7 +2481,8 @@ declargs(symbol * sym)
 	       case tSYMBOL:
 		  if (argcnt >= sMAXARGS)
 		     error(45);	/* too many function arguments */
-		  strcpy(name, ptr);	/* save symbol name */
+		  strncpy(name, ptr, sizeof(name) - 1);	/* save symbol name */
+                  name[sizeof(name) - 1] = 0;
 		  if (name[0] == PUBLIC_CHAR)
 		     error(56, name);	/* function arguments cannot be public */
 		  if (numtags == 0)
