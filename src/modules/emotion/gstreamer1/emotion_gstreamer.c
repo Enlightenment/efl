@@ -100,6 +100,8 @@ em_file_open(void *video,
    Emotion_Gstreamer *ev = video;
    char *uri;
    char *suburi = NULL;
+   gboolean mute = 0;
+   gdouble vol = 0.0;
 
    if (!file) return EINA_FALSE;
 
@@ -125,8 +127,10 @@ em_file_open(void *video,
    if (!ev->pipeline)
      return EINA_FALSE;
 
-   em_audio_channel_volume_set(ev, ev->volume);
-   em_audio_channel_mute_set(ev, ev->audio_mute);
+   g_object_get(ev->pipeline, "volume", &vol, NULL);
+   g_object_get(ev->pipeline, "mute", &mute, NULL);
+   ev->volume = vol;
+   ev->audio_mute = mute;
 
    ev->position = 0.0;
 
