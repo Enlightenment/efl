@@ -8,7 +8,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
          /**
           * Load mesh data from file.
           *
-          * Loading a mesh from existing file is supported. Currently, only MD2 and OBJ file
+          * Loading a mesh from existing file is supported. Currently, only MD2, OBJ and EET file
           * formats are supported.
           *
           * @ingroup Evas_3D_Mesh
@@ -24,8 +24,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
          /**
           * Save mesh data to file.
           *
-          * Saving a mesh to file is supported. Currently, only OBJ file
-          * format is supported.
+          * Saving a mesh to file is supported. Currently, only OBJ and EET file
+          * formats are supported.
           *
           * @ingroup Evas_3D_Mesh
           */

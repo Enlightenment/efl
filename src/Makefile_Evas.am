@@ -299,7 +299,9 @@ lib/evas/canvas/evas_3d_texture.c \
 lib/evas/canvas/evas_3d_material.c \
 lib/evas/canvas/evas_3d_mesh_loader_md2.c \
 lib/evas/canvas/evas_3d_mesh_loader_obj.c \
-lib/evas/canvas/evas_3d_mesh_saver_obj.c
+lib/evas/canvas/evas_3d_mesh_saver_obj.c \
+lib/evas/canvas/evas_3d_mesh_loader_eet.c \
+lib/evas/canvas/evas_3d_mesh_saver_eet.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \
