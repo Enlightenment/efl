@@ -68,6 +68,7 @@ elementary.spec \
 elementary.spec.in \
 m4/efl_binary.m4 \
 m4/efl_doxygen.m4 \
+m4/elm_check_backend.m4 \
 config.rpath \
 pkgbuild/PKGBUILD
 

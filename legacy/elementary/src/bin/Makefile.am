@@ -11,16 +11,10 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 @ELEMENTARY_CFLAGS@ \
-@ELEMENTARY_X_CFLAGS@ \
-@ELEMENTARY_FB_CFLAGS@ \
-@ELEMENTARY_SDL_CFLAGS@ \
-@ELEMENTARY_WIN32_CFLAGS@ \
 @ELEMENTARY_ELOCATION_CFLAGS@ \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_WEB_CFLAGS@ \
-@ELEMENTARY_EMAP_CFLAGS@ \
-@ELEMENTARY_WAYLAND_CFLAGS@ \
-@ELEMENTARY_DRM_CFLAGS@
+@ELEMENTARY_EMAP_CFLAGS@
 
 bin_PROGRAMS = \
 @ELEMENTARY_TEST_PRG@ \
@@ -139,13 +133,11 @@ test_win_dialog.c \
 test.h
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
-        @ELEMENTARY_WAYLAND_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
-	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_test_CFLAGS =
 elementary_test_LDFLAGS =
@@ -154,13 +146,11 @@ elementary_config_SOURCES = \
 config.c
 
 elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
-        @ELEMENTARY_WAYLAND_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
-	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_config_LDFLAGS =
 
@@ -169,13 +159,11 @@ elementary_codegen.c
 
 elementary_codegen_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
-        @ELEMENTARY_WAYLAND_LIBS@ \
+	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
-	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
-	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_codegen_LDFLAGS =
 
@@ -197,13 +185,11 @@ $(top_builddir)/src/lib/libelementary.la \
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
-        @ELEMENTARY_WAYLAND_LIBS@ \
+	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
-	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
-	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_quicklaunch_LDFLAGS =
 

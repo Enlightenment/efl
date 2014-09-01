@@ -226,6 +226,15 @@ requirement_elm="\
     eio >= efl_version \
     "
 
+ELM_CHECK_BACKEND([X])
+ELM_CHECK_BACKEND([FB])
+ELM_CHECK_BACKEND([PSL1GHT])
+ELM_CHECK_BACKEND([SDL])
+ELM_CHECK_BACKEND([Cocoa])
+ELM_CHECK_BACKEND([Win32])
+ELM_CHECK_BACKEND([Wayland])
+ELM_CHECK_BACKEND([DRM])
+
 PKG_CHECK_MODULES([ELEMENTARY],
    [${requirement_elm}])
 
@@ -431,191 +440,6 @@ esac
 
 
 
-
-have_elementary_x="no"
-want_elementary_x="auto"
-AC_ARG_ENABLE([ecore-x],
-   [AC_HELP_STRING([--disable-ecore-x], [disable ecore-x support. @<:@default=detect@:>@])],
-   [want_elementary_x=$enableval], [])
-
-if test "x$want_elementary_x" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
-       have_elementary_x="yes"
-       requirement_elm="ecore-x >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_x="no"]
-   )
-else
-    have_elementary_x="no"
-fi
-if test "x$want_elementary_x" = "xyes" -a "x$have_elementary_x" = "xno"; then
-    AC_MSG_ERROR([ecore-x support requested, but ecore-x was not found by pkg-config.])
-fi
-
-
-have_elementary_fb="no"
-want_elementary_fb="auto"
-AC_ARG_ENABLE([ecore-fb],
-   [AC_HELP_STRING([--disable-ecore-fb], [disable ecore-fb support. @<:@default=detect@:>@])],
-   [want_elementary_fb=$enableval], [])
-
-if test "x$want_elementary_fb" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_FB],
-      [ecore-fb >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
-       have_elementary_fb="yes"
-       requirement_elm="ecore-fb >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_fb="no"]
-   )
-else
-    have_elementary_fb="no"
-fi
-if test "x$want_elementary_fb" = "xyes" -a "x$have_elementary_fb" = "xno"; then
-    AC_MSG_ERROR([ecore-fb support requested, but ecore-fb was not found by pkg-config.])
-fi
-
-have_elementary_psl1ght="no"
-want_elementary_psl1ght="auto"
-AC_ARG_ENABLE([ecore-psl1ght],
-   [AC_HELP_STRING([--disable-ecore-psl1ght], [disable ecore-psl1ght support. @<:@default=detect@:>@])],
-   [want_elementary_psl1ght=$enableval], [])
-
-if test "x$want_elementary_psl1ght" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_PSL1GHT],
-      [ecore-psl1ght >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_PSL1GHT, 1, [PSL1GHT support for Elementary])
-       have_elementary_psl1ght="yes"
-       requirement_elm="ecore-psl1ght >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_psl1ght="no"]
-   )
-else
-    have_elementary_psl1ght="no"
-fi
-if test "x$want_elementary_psl1ght" = "xyes" -a "x$have_elementary_psl1ght" = "xno"; then
-    AC_MSG_ERROR([ecore-psl1ght support requested, but ecore-psl1ght was not found by pkg-config.])
-fi
-
-have_elementary_sdl="no"
-want_elementary_sdl="auto"
-AC_ARG_ENABLE([ecore-sdl],
-   [AC_HELP_STRING([--disable-ecore-sdl], [disable ecore-sdl support. @<:@default=detect@:>@])],
-   [want_elementary_sdl=$enableval], [])
-
-if test "x$want_elementary_sdl" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_SDL],
-      [ecore-sdl >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
-       have_elementary_sdl="yes"
-       requirement_elm="ecore-sdl >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_sdl="no"]
-   )
-else
-    have_elementary_sdl="no"
-fi
-if test "x$want_elementary_sdl" = "xyes" -a "x$have_elementary_sdl" = "xno"; then
-    AC_MSG_ERROR([ecore-sdl support requested, but ecore-sdl was not found by pkg-config.])
-fi
-
-have_elementary_cocoa="no"
-want_elementary_cocoa="auto"
-AC_ARG_ENABLE([ecore-cocoa],
-   [AC_HELP_STRING([--disable-ecore-cocoa], [disable ecore-cocoa support. @<:@default=detect@:>@])],
-   [want_elementary_cocoa=$enableval], [])
-
-if test "x$want_elementary_cocoa" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_COCOA],
-      [ecore-cocoa >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_COCOA, 1, [COCOA support for Elementary])
-       have_elementary_cocoa="yes"
-       requirement_elm="ecore-cocoa >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_cocoa="no"]
-   )
-else
-    have_elementary_cocoa="no"
-fi
-if test "x$want_elementary_cocoa" = "xyes" -a "x$have_elementary_cocoa" = "xno"; then
-    AC_MSG_ERROR([ecore-cocoa support requested, but ecore-cocoa was not found by pkg-config.])
-fi
-
-have_elementary_win32="no"
-want_elementary_win32="auto"
-AC_ARG_ENABLE([ecore-win32],
-   [AC_HELP_STRING([--disable-ecore-win32], [disable ecore-win32 support. @<:@default=detect@:>@])],
-   [want_elementary_win32=$enableval], [])
-
-if test "x$want_elementary_win32" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32 >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
-       have_elementary_win32="yes"
-       requirement_elm="ecore-win32 >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_win32="no"]
-   )
-else
-    have_elementary_win32="no"
-fi
-if test "x$want_elementary_win32" = "xyes" -a "x$have_elementary_win32" = "xno"; then
-    AC_MSG_ERROR([ecore-win32 support requested, but ecore-win32 was not found by pkg-config.])
-fi
-
-have_elementary_wayland="no"
-want_elementary_wayland="auto"
-AC_ARG_ENABLE([ecore-wayland],
-   [AC_HELP_STRING([--disable-ecore-wayland], [disable ecore-wayland support. @<:@default=detect@:>@])],
-   [want_elementary_wayland=$enableval], [])
-
-if test "x$want_elementary_wayland" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_WAYLAND],
-      [ecore-wayland],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_WAYLAND, 1, [Wayland support for Elementary])
-       have_elementary_wayland="yes"
-       requirement_elm="ecore-wayland ${requirement_elm}"
-      ],
-      [have_elementary_wayland="no"]
-   )
-else
-    have_elementary_wayland="no"
-fi
-if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "xno"; then
-    AC_MSG_ERROR([ecore-wayland support requested, but ecore-wayland was not found by pkg-config.])
-fi
-
-have_elementary_drm="no"
-want_elementary_drm="auto"
-AC_ARG_ENABLE([ecore-drm],
-   [AC_HELP_STRING([--disable-ecore-drm], [disable ecore-drm support. @<:@default=detect@:>@])],
-   [want_elementary_drm=$enableval], [])
-
-if test "x$want_elementary_drm" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_DRM],
-      [ecore-drm >= efl_version],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_DRM, 1, [DRM support for Elementary])
-       have_elementary_drm="yes"
-       requirement_elm="ecore-drm >= efl_version ${requirement_elm}"
-      ],
-      [have_elementary_drm="no"]
-   )
-else
-    have_elementary_drm="no"
-fi
-if test "x$want_elementary_drm" = "xyes" -a "x$have_elementary_drm" = "xno"; then
-    AC_MSG_ERROR([ecore-drm support requested, but ecore-drm was not found by pkg-config.])
-fi
 
 
 ELM_ELOCATION_DEF="#undef"
