@@ -3030,7 +3030,8 @@ insert_constval(constvalue * prev, constvalue * next, char *name,
    if (!(cur = (constvalue *)malloc(sizeof(constvalue))))
       error(103);		/* insufficient memory (fatal error) */
    memset(cur, 0, sizeof(constvalue));
-   strcpy(cur->name, name);
+   strncpy(cur->name, name, sizeof(cur->name) - 1);
+   cur->name[sizeof(cur->name) - 1] = 0;
    cur->value = val;
    cur->index = idx;
    cur->next = next;
