@@ -1214,10 +1214,16 @@ command(void)
 			char                s2[20];
 			extern char        *sc_tokens[];	/* forward declaration */
 
-			if (tok < 256)
-			   sprintf(s2, "%c", (char)tok);
-			else
-			   strcpy(s2, sc_tokens[tok - tFIRST]);
+                        if (tok < 256)
+                          {
+                             s2[0] = (char)tok;
+                             s2[1] = 0;
+                          }
+                        else
+                          {
+                             strncpy(s2, sc_tokens[tok - tFIRST], 19);
+                             s2[19] = 0;
+                          }
 			error(1, sc_tokens[tSYMBOL - tFIRST], s2);
 			break;
 		     }		/* case */
