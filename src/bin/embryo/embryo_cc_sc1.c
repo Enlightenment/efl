@@ -3803,12 +3803,14 @@ doswitch(void)
    if (swdefault == FALSE)
      {
 	/* store lbl_exit as the "none-matched" label in the switch table */
-	strcpy(labelname, itoh(lbl_exit));
+	strncpy(labelname, itoh(lbl_exit), sizeof(labelname) - 1);
+        labelname[sizeof(labelname) - 1] = 0;
      }
    else
      {
 	/* lbl_case holds the label of the "default" clause */
-	strcpy(labelname, itoh(lbl_case));
+	strncpy(labelname, itoh(lbl_case), sizeof(labelname) - 1);
+        labelname[sizeof(labelname) - 1] = 0;
      }				/* if */
    ffcase(casecount, labelname, TRUE);
    /* generate the rest of the table */
