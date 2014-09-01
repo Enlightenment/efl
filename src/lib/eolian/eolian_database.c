@@ -160,6 +160,44 @@ database_class_to_filename(const char *cname)
    return ret;
 }
 
+/*
+ * ret false -> clash, class = NULL
+ * ret true && class -> only one class corresponding
+ * ret true && !class -> no class corresponding
+ */
+Eina_Bool
+database_class_name_validate(const char *class_name, const Eolian_Class **cl)
+{
+   char *name = strdup(class_name);
+   char *colon = name + 1;
+   const Eolian_Class *found_class = NULL;
+   const Eolian_Class *candidate;
+   if (cl) *cl = NULL;
+   do
+     {
+        colon = strchr(colon, '.');
+        if (colon) *colon = '\0';
+        candidate = eolian_class_get_by_name(name);
+        if (candidate)
+          {
+             if (found_class)
+               {
+                  ERR("Name clash between class %s and class %s",
+                        candidate->full_name,
+                        found_class->full_name);
+                  free(name);
+                  return EINA_FALSE; // Names clash
+               }
+             found_class = candidate;
+          }
+        if (colon) *colon++ = '.';
+     }
+   while(colon);
+   if (cl) *cl = found_class;
+   free(name);
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 eolian_eot_file_parse(const char *filepath)
 {
@@ -177,6 +215,7 @@ eolian_eo_file_parse(const char *filepath)
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
    const char *inherit_name;
    Eolian_Implement *impl;
+   Eolian_Constructor *ctor;
    Eina_Bool failed_dep = EINA_FALSE;
    if (!class)
      {
@@ -245,6 +284,17 @@ inherits:
         if (!impl_func)
           {
              ERR("Unable to find function %s", eolian_implement_full_name_get(impl));
+             goto error;
+          }
+     }
+   eina_iterator_free(itr);
+   itr = eolian_class_constructors_get(class);
+   EINA_ITERATOR_FOREACH(itr, ctor)
+     {
+        const Eolian_Function *ctor_func = eolian_constructor_function_get(ctor);
+        if (!ctor_func)
+          {
+             ERR("Unable to find function %s", eolian_constructor_full_name_get(ctor));
              goto error;
           }
      }

@@ -94,11 +94,18 @@ eolian_class_inherits_get(const Eolian_Class *cl)
    return (cl->inherits ? eina_list_iterator_new(cl->inherits) : NULL);
 }
 
-EAPI Eina_Iterator*
+EAPI Eina_Iterator *
 eolian_class_implements_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return (cl->implements ? eina_list_iterator_new(cl->implements) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_class_constructors_get(const Eolian_Class *cl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   return (cl->constructors ? eina_list_iterator_new(cl->constructors) : NULL);
 }
 
 EAPI const Eolian_Function *

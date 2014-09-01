@@ -23,6 +23,14 @@ database_class_del(Eolian_Class *cl)
         free(impl);
      }
 
+   Eolian_Constructor *ctor;
+   Eina_List *constructors = cl->constructors;
+   EINA_LIST_FREE(constructors, ctor)
+     {
+        eina_stringshare_del(ctor->full_name);
+        free(ctor);
+     }
+
    EINA_LIST_FREE(cl->methods, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->properties, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->events, ev) database_event_del(ev);

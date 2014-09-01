@@ -297,6 +297,35 @@ _db_fill_implements(Eolian_Class *cl, Eo_Class_Def *kls)
    return EINA_TRUE;
 }
 
+static void
+_db_fill_constructor(Eolian_Class *cl, Eolian_Constructor *ctor)
+{
+   const char *ctor_name = ctor->full_name;
+   if (ctor_name[0] == '.')
+     {
+        ctor->full_name = eina_stringshare_printf("%s%s", cl->full_name,
+                                                  ctor_name);
+        eina_stringshare_del(ctor_name);
+     }
+
+   cl->constructors = eina_list_append(cl->constructors, ctor);
+}
+
+static Eina_Bool
+_db_fill_constructors(Eolian_Class *cl, Eo_Class_Def *kls)
+{
+   Eolian_Constructor *ctor;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(kls->constructors, l, ctor)
+     {
+        _db_fill_constructor(cl, ctor);
+        eina_list_data_set(l, NULL); /* prevent double free */
+     }
+ 
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _db_fill_events(Eolian_Class *cl, Eo_Class_Def *kls)
 {
@@ -334,10 +363,11 @@ _db_fill_class(Eo_Class_Def *kls)
    if (kls->data_type)
      cl->data_type = eina_stringshare_ref(kls->data_type);
 
-   if (!_db_fill_properties(cl, kls)) return EINA_FALSE;
-   if (!_db_fill_methods   (cl, kls)) return EINA_FALSE;
-   if (!_db_fill_implements(cl, kls)) return EINA_FALSE;
-   if (!_db_fill_events    (cl, kls)) return EINA_FALSE;
+   if (!_db_fill_properties  (cl, kls)) return EINA_FALSE;
+   if (!_db_fill_methods     (cl, kls)) return EINA_FALSE;
+   if (!_db_fill_implements  (cl, kls)) return EINA_FALSE;
+   if (!_db_fill_constructors(cl, kls)) return EINA_FALSE;
+   if (!_db_fill_events      (cl, kls)) return EINA_FALSE;
 
    cl->base = kls->base;
    kls->base.file = NULL;

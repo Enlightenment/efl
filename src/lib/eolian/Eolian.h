@@ -68,6 +68,12 @@ typedef struct _Eolian_Function_Parameter Eolian_Function_Parameter;
  */
 typedef struct _Eolian_Implement Eolian_Implement;
 
+/* Class constructor information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Constructor Eolian_Constructor;
+
 /* Event information
  *
  * @ingroup Eolian
@@ -974,6 +980,46 @@ EAPI Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
+
+/*
+ * @brief Get full string of a constructing function.
+ *
+ * @param[in] ctor the handle of the constructor
+ * @return the full string.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_constructor_full_name_get(const Eolian_Constructor *ctor);
+
+/*
+ * @brief Get the class of a constructing function.
+ *
+ * @param[in] ctor the handle of the constructor
+ * @return the class handle or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_constructor_class_get(const Eolian_Constructor *ctor);
+
+/*
+ * @brief Get the function of a constructing function.
+ *
+ * @param[in] ctor the handle of the constructor
+ * @return the function handle or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Function *eolian_constructor_function_get(const Eolian_Constructor *ctor);
+
+/*
+ * @brief Get an iterator to the constructing functions defined in a class.
+ *
+ * @param[in] klass the class.
+ * @return the iterator
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
 
 /*
  * @brief Get an iterator to the events defined in a class.

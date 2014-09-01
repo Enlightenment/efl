@@ -23,14 +23,14 @@ enum Tokens
  * they just fill in the "kw" field of the token */
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
-    KW(abstract), KW(constructor), KW(data), KW(destructor), KW(eo), \
-    KW(eo_prefix), KW(events), KW(free), KW(func), KW(get), KW(implements), \
-    KW(interface), KW(keys), KW(legacy), KW(legacy_prefix), KW(methods), \
-    KW(mixin), KW(own), KW(params), KW(properties), KW(set), KW(type), \
-    KW(values), KW(var), KWAT(auto), KWAT(class), KWAT(const), \
-    KWAT(constructor), KWAT(empty), KWAT(extern), KWAT(free), KWAT(in), \
-    KWAT(inout), KWAT(nonull), KWAT(out), KWAT(private), KWAT(protected), \
-    KWAT(virtual), KWAT(warn_unused), \
+    KW(abstract), KW(constructor), KW(constructors), KW(data), \
+    KW(destructor), KW(eo), KW(eo_prefix), KW(events), KW(free), KW(func), \
+    KW(get), KW(implements), KW(interface), KW(keys), KW(legacy), \
+    KW(legacy_prefix), KW(methods), KW(mixin), KW(own), KW(params), \
+    KW(properties), KW(set), KW(type), KW(values), KW(var), KWAT(auto), \
+    KWAT(class), KWAT(const), KWAT(constructor), KWAT(empty), KWAT(extern), \
+    KWAT(free), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(out), \
+    KWAT(private), KWAT(protected), KWAT(virtual), KWAT(warn_unused), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \

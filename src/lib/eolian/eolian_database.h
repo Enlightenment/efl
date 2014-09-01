@@ -78,6 +78,7 @@ struct _Eolian_Class
    Eina_List *properties; /* List prop_name -> Eolian_Function */
    Eina_List *methods; /* List meth_name -> Eolian_Function */
    Eina_List *implements; /* List implements name -> Eolian_Implement */
+   Eina_List *constructors; /* List constructors name -> Eolian_Constructor */
    Eina_List *events; /* List event_name -> Eolian_Event */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
@@ -166,6 +167,13 @@ struct _Eolian_Implement
    Eina_Bool is_class_dtor :1;
    Eina_Bool is_auto: 1;
    Eina_Bool is_empty: 1;
+};
+
+struct _Eolian_Constructor
+{
+   Eolian_Object base;
+   const Eolian_Class *klass;
+   Eina_Stringshare *full_name;
 };
 
 struct _Eolian_Event
@@ -270,6 +278,7 @@ int database_shutdown();
 
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(void);
+Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **cl);
 
 /* types */
 
@@ -311,6 +320,10 @@ void database_parameter_del(Eolian_Function_Parameter *pdesc);
 /* implements */
 
 void database_implement_del(Eolian_Implement *impl);
+
+/* constructors */
+
+void database_constructor_del(Eolian_Constructor *ctor);
 
 /* events */
 

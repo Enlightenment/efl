@@ -1599,6 +1599,46 @@ end:
 }
 
 static void
+parse_constructor(Eo_Lexer *ls)
+{
+   Eina_Strbuf *buf = NULL;
+   Eolian_Constructor *ctor = NULL;
+   ctor = calloc(1, sizeof(Eolian_Implement));
+   ctor->base.file = eina_stringshare_ref(ls->filename);
+   ctor->base.line = ls->line_number;
+   ctor->base.column = ls->column;
+   ls->tmp.ctor = ctor;
+   if (ls->t.token == '.')
+     {
+        check_next(ls, '.');
+        if (ls->t.token != TOK_VALUE)
+          eo_lexer_syntax_error(ls, "name expected");
+        ctor->full_name = eina_stringshare_add(ls->t.value.s);
+        eo_lexer_get(ls);
+        check_next(ls, ';');
+        return;
+     }
+   check(ls, TOK_VALUE);
+   buf = push_strbuf(ls);
+   eina_strbuf_append(buf, ls->t.value.s);
+   eo_lexer_get(ls);
+   check_next(ls, '.');
+   check(ls, TOK_VALUE);
+   for (;;)
+     {
+        eina_strbuf_append_char(buf, '.');
+        check(ls, TOK_VALUE);
+        eina_strbuf_append(buf, ls->t.value.s);
+        eo_lexer_get(ls);
+        if (ls->t.token != '.') break;
+        eo_lexer_get(ls);
+     }
+   check_next(ls, ';');
+   ctor->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
+   pop_strbuf(ls);
+}
+
+static void
 parse_event(Eo_Lexer *ls)
 {
    Eolian_Event *ev = calloc(1, sizeof(Eolian_Event));
@@ -1685,6 +1725,19 @@ parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 }
 
 static void
+parse_constructors(Eo_Lexer *ls)
+{
+   PARSE_SECTION
+     {
+        parse_constructor(ls);
+        ls->tmp.kls->constructors = eina_list_append(ls->tmp.kls->constructors,
+                                                     ls->tmp.ctor);
+        ls->tmp.ctor = NULL;
+     }
+   check_match(ls, '}', '{', line, col);
+}
+
+static void
 parse_events(Eo_Lexer *ls)
 {
    int line, col;
@@ -1712,6 +1765,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
              has_properties    = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_implements    = EINA_FALSE,
+             has_constructors  = EINA_FALSE,
              has_events        = EINA_FALSE;
    if (ls->t.token == TOK_COMMENT)
      {
@@ -1763,6 +1817,12 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
       case KW_implements:
         CASE_LOCK(ls, implements, "implements definition")
         parse_implements(ls, type == EOLIAN_CLASS_INTERFACE);
+        break;
+      case KW_constructors:
+        if (type == EOLIAN_CLASS_INTERFACE || type == EOLIAN_CLASS_MIXIN)
+          return;
+        CASE_LOCK(ls, constructors, "constructors definition")
+        parse_constructors(ls);
         break;
       case KW_events:
         CASE_LOCK(ls, events, "events definition")
