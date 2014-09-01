@@ -377,6 +377,13 @@ evas_gl_current_context_get(Evas_GL *evas_gl)
    return NULL;
    MAGIC_CHECK_END();
 
+   if (!evas_gl->evas->engine.func->gl_current_context_get)
+     {
+        CRI("Can not get current context with this engine: %s",
+            evas_gl->evas->engine.module->definition->name);
+        return NULL;
+     }
+
    internal_ctx = evas_gl->evas->engine.func->gl_current_context_get(evas_gl->evas->engine.data.output);
    if (!internal_ctx)
      return NULL;
@@ -407,6 +414,13 @@ evas_gl_current_surface_get(Evas_GL *evas_gl)
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
    return NULL;
    MAGIC_CHECK_END();
+
+   if (!evas_gl->evas->engine.func->gl_current_surface_get)
+     {
+        CRI("Can not get current surface with this engine: %s",
+            evas_gl->evas->engine.module->definition->name);
+        return NULL;
+     }
 
    internal_sfc = evas_gl->evas->engine.func->gl_current_surface_get(evas_gl->evas->engine.data.output);
    if (!internal_sfc)
