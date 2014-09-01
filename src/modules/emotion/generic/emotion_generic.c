@@ -1030,7 +1030,7 @@ em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options
    ev->fd_read = NULL;
    ev->fd_write = NULL;
    ev->speed = 1.0;
-   ev->volume = 1.0;
+   ev->volume = 0.8;
    ev->audio_mute = EINA_FALSE;
    ev->cmd.type = -1;
 
