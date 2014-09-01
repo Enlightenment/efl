@@ -2972,7 +2972,7 @@ EAPI EPhysics_Body *
 ephysics_body_soft_box_add(EPhysics_World *world)
 {
    EPhysics_Body *body;
-   EPhysics_Body_Face_Slice *face_slice;
+   EPhysics_Body_Face_Slice *face_slice = NULL;
    btCollisionShape *shape;
    btSoftBodyWorldInfo *world_info;
    btSoftBody *soft_body;
@@ -3046,7 +3046,7 @@ ephysics_body_soft_box_add(EPhysics_World *world)
 
 no_slices:
 no_face_slice:
-   _ephysics_body_face_slice_del(face_slice);
+   if (face_slice) _ephysics_body_face_slice_del(face_slice);
 no_deform:
    ephysics_world_body_del(world, body);
 no_body:
