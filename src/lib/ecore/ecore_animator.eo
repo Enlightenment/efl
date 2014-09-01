@@ -2,7 +2,7 @@ class Ecore.Animator (Eo.Base)
 {
    eo_prefix: ecore_animator;
    methods {
-      timeline_constructor @constructor {
+      timeline_constructor {
          /*@ Constructor. */
          legacy: null;
          params {
@@ -11,7 +11,7 @@ class Ecore.Animator (Eo.Base)
             @in const(void)* data;
          }
       }
-      constructor @constructor {
+      constructor {
          /*@ Constructor. */
          legacy: null;
          params {
@@ -25,5 +25,9 @@ class Ecore.Animator (Eo.Base)
       Eo.Base.destructor;
       Eo.Base.event_freeze;
       Eo.Base.event_thaw;
+   }
+   constructors {
+      .constructor;
+      .timeline_constructor;
    }
 }

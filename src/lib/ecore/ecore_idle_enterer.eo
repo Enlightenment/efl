@@ -2,7 +2,7 @@ class Ecore.Idle.Enterer (Eo.Base)
 {
    eo_prefix: ecore_idle_enterer;
    methods {
-      before_constructor @constructor {
+      before_constructor {
          /*@ Contructor. Will insert the handler at the beginning of the list. */
          legacy: null;
          params {
@@ -10,7 +10,7 @@ class Ecore.Idle.Enterer (Eo.Base)
             @in const(void)* data;
          }
       }
-      after_constructor @constructor {
+      after_constructor {
          /*@ Contructor. Will insert the handler at the end of the list. */
          legacy: null;
          params {
@@ -22,5 +22,9 @@ class Ecore.Idle.Enterer (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .before_constructor;
+      .after_constructor;
    }
 }

@@ -1529,7 +1529,10 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
           eo_lexer_syntax_error(ls, "name expected");
-        impl->full_name = eina_stringshare_add(ls->t.value.s);
+        if (impl->is_virtual)
+          impl->full_name = eina_stringshare_ref(ls->t.value.s);
+        else
+          impl->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token == '.')
           {
@@ -1613,7 +1616,7 @@ parse_constructor(Eo_Lexer *ls)
         check_next(ls, '.');
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "name expected");
-        ctor->full_name = eina_stringshare_add(ls->t.value.s);
+        ctor->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         return;

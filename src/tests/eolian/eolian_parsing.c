@@ -208,6 +208,7 @@ START_TEST(eolian_ctor_dtor)
    const Eolian_Function *impl_func = NULL;
    const Eolian_Class *class, *base;
    const Eolian_Implement *impl;
+   const Eolian_Constructor *ctor;
    void *dummy;
 
    eolian_init();
@@ -237,13 +238,20 @@ START_TEST(eolian_ctor_dtor)
    eina_iterator_free(iter);
 
    /* Custom ctors/dtors */
-   fail_if(!(impl_func = eolian_class_function_get_by_name(base, "constructor", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_constructing(impl_func));
    fail_if(!eolian_class_function_get_by_name(base, "destructor", EOLIAN_METHOD));
-   fail_if(!(impl_func = eolian_class_function_get_by_name(class, "custom_constructor_1", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_constructing(impl_func));
-   fail_if(!(impl_func = eolian_class_function_get_by_name(class, "custom_constructor_2", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_constructing(impl_func));
+   fail_if(!(iter = eolian_class_constructors_get(class)));
+   fail_if(!(eina_iterator_next(iter, (void**)&ctor)));
+   fail_if(!(impl_class = eolian_constructor_class_get(ctor)));
+   fail_if(!(impl_func = eolian_constructor_function_get(ctor)));
+   fail_if(impl_class != class);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "custom_constructor_1"));
+   fail_if(!(eina_iterator_next(iter, (void**)&ctor)));
+   fail_if(!(impl_class = eolian_constructor_class_get(ctor)));
+   fail_if(!(impl_func = eolian_constructor_function_get(ctor)));
+   fail_if(impl_class != class);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "custom_constructor_2"));
+   fail_if(eina_iterator_next(iter, &dummy));
+   eina_iterator_free(iter);
 
    eolian_shutdown();
 }

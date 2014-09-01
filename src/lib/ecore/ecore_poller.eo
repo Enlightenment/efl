@@ -1,7 +1,7 @@
 class Ecore.Poller (Eo.Base)
 {
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Constructor with parameters for Ecore Poller. */
          legacy: null;
          params {
@@ -40,5 +40,8 @@ class Ecore.Poller (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .constructor;
    }
 }

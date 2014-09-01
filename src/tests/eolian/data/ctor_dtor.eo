@@ -1,12 +1,12 @@
 class Ctor_Dtor (Base) {
    methods {
-      custom_constructor_1 @constructor {
+      custom_constructor_1 {
          params {
             @in int a;
             @in char b;
          }
       }
-      custom_constructor_2 @constructor {
+      custom_constructor_2 {
       }
    }
    implements {
@@ -15,4 +15,8 @@ class Ctor_Dtor (Base) {
       Base.constructor;
       Base.destructor;
    }
+    constructors {
+        .custom_constructor_1;
+        .custom_constructor_2;
+    }
 }

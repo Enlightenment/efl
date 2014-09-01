@@ -3,7 +3,7 @@ class ColourableSquare (Colourable)
     legacy_prefix: legacy;
     data: ColourableSquare_Data;
     properties {
-       size_constructor @constructor {
+       size_constructor {
            legacy: null;
            params {
               @in int size;
@@ -23,5 +23,8 @@ class ColourableSquare (Colourable)
     }
     methods {
         size_print { /*@ Show the square. */ }
+    }
+    constructors {
+        .size_constructor;
     }
 }

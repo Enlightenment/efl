@@ -2,7 +2,7 @@ class Ecore.Idler (Eo.Base)
 {
    eo_prefix: ecore_idler;
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Constructor. */
          legacy: null;
          params {
@@ -14,5 +14,8 @@ class Ecore.Idler (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .constructor;
    }
 }

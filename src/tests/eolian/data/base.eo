@@ -1,11 +1,14 @@
 class Base {
    methods {
-      constructor @constructor {
+      constructor {
       }
       destructor {
       }
    }
    implements {
       @virtual .constructor;
+   }
+   constructors {
+      .constructor;
    }
 }
