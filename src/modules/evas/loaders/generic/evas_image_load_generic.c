@@ -151,18 +151,21 @@ _load(Eina_File *ef, const char *key,
         // double extn not too long
         if (((end - dot2) <= 10) && (!illegal_char(dot2)))
           {
-             strcpy(&(decoders[decoders_num][0]), img_loader);
+             strncpy(&(decoders[decoders_num][0]), img_loader, 127);
+             decoders[decoders_num][127] = 0;
              dotcat(&(decoders[decoders_num][0]), dot2);
              decoders_num++;
           }
         // single extn not too long
         if (((end - dot1) <= 5) && (!illegal_char(dot1)))
           {
-             strcpy(&(decoders[decoders_num][0]), img_loader);
+             strncpy(&(decoders[decoders_num][0]), img_loader, 127);
+             decoders[decoders_num][127] = 0;
              dotcat(&(decoders[decoders_num][0]), dot1);
              decoders_num++;
           }
-        strcpy(decoders[decoders_num], img_loader);
+        strncpy(decoders[decoders_num], img_loader, 127);
+        decoders[decoders_num][127] = 0;
         decoders_num++;
      }
    else if (dot1)
@@ -174,12 +177,14 @@ _load(Eina_File *ef, const char *key,
              dotcat(&(decoders[decoders_num][0]), dot1);
              decoders_num++;
           }
-        strcpy(decoders[decoders_num], img_loader);
+        strncpy(decoders[decoders_num], img_loader, 127);
+        decoders[decoders_num][127] = 0;
         decoders_num++;
      }
    else
      {
-        strcpy(decoders[decoders_num], img_loader);
+        strncpy(decoders[decoders_num], img_loader, 127);
+        decoders[decoders_num][127] = 0;
         decoders_num++;
      }
 
