@@ -504,6 +504,7 @@ video_obj_signal_frame_move_start_cb(void *data EINA_UNUSED, Evas_Object *o, con
    Evas_Coord x, y;
 
    fd = evas_object_data_get(o, "frame_data");
+   if (!fd) return;
    fd->moving = 1;
    evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
@@ -517,6 +518,7 @@ video_obj_signal_frame_move_stop_cb(void *data EINA_UNUSED, Evas_Object *o, cons
    Frame_Data *fd;
 
    fd = evas_object_data_get(o, "frame_data");
+   if (!fd) return;
    fd->moving = 0;
 }
 
@@ -527,6 +529,7 @@ video_obj_signal_frame_resize_start_cb(void *data EINA_UNUSED, Evas_Object *o, c
    Evas_Coord x, y;
 
    fd = evas_object_data_get(o, "frame_data");
+   if (!fd) return;
    fd->resizing = 1;
    evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
@@ -540,6 +543,7 @@ video_obj_signal_frame_resize_stop_cb(void *data EINA_UNUSED, Evas_Object *o, co
    Frame_Data *fd;
 
    fd = evas_object_data_get(o, "frame_data");
+   if (!fd) return;
    fd->resizing = 0;
 }
 
@@ -549,6 +553,7 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
    Frame_Data *fd;
 
    fd = evas_object_data_get(o, "frame_data");
+   if (!fd) return;
    if (fd->moving)
      {
         Evas_Coord x, y, ox, oy;
