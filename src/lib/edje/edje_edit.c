@@ -11072,7 +11072,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_
 	  }
      }
 
-   if (eed->bytecode_dirty || eed->script_need_recompile)
+   if ((eed->bytecode_dirty || eed->script_need_recompile) && ed->collection)
      {
         char buf[64];
         Eina_Iterator *it;
