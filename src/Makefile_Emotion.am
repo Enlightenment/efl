@@ -347,3 +347,14 @@ installed_emotionluadir = $(datadir)/elua/modules/emotion
 nodist_installed_emotionlua_DATA = $(generated_emotion_lua_all)
 
 endif
+
+# TODO: gives undefined reference to emotion_object_class_get()
+if HAVE_JS
+
+generated_emotion_js_bindings = $(emotion_eolian_files:%.eo=%.eo.js.cc)
+
+CLEANFILES += $(generated_emotion_js_bindings)
+
+GENERATED_JS_BINDINGS += $(generated_emotion_js_bindings)
+
+endif

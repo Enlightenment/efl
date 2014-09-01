@@ -1,0 +1,251 @@
+#!/bin/sh
+':' //; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+
+var zlib = require('zlib');
+var path = require('path');
+
+// external dependencies
+var fs = require('fs-extra');
+var tar = require('tar');
+var fstream = require('fstream');
+var getopt = require('node-getopt');
+
+/*
+ * Packing a project.
+ * The efljs package has a similar format to debian packages. It is a
+ * tar package containing two files:
+ *
+ * meta.txt: Metadata information about this package.
+ * data.tar.gz: Gzipped data, with the project tree ready to be decompressed
+ *              and run by the package launcher.
+ *
+ * During the build, a out/ directory is created in the project root to
+ * store the package and temporary files.
+ */
+
+// Creates a stub .project file and packs it.
+function pack_single(sourcepath, options)
+{
+   if (options.verbose)
+      console.log("Creating project file for single file app", sourcepath);
+
+   var dir_name = path.dirname(fs.realpathSync(sourcepath));
+   var filename = path.basename(sourcepath);
+   var projectRegex = /^(.*).js$/g;
+   var project_name = projectRegex.exec(filename)[1];
+
+   if (!validade_project_name(project_name))
+     {
+        console.error("Invalid project name. Must start with a letter.");
+        process.exit(0);
+     }
+
+   var project_filename = path.join(dir_name, project_name + ".project");
+
+   var fd = fs.openSync(project_filename, 'w');
+
+   var jsonData = {};
+
+   jsonData["Name"] = project_name;
+   jsonData["Entry"] = filename;
+   jsonData["Sources"] = [[filename, '.']];
+   jsonData["Version"] = "0.1";
+
+   fs.writeSync(fd, JSON.stringify(jsonData, null, 2));
+
+   fs.closeSync(fd);
+
+   pack_project(project_filename, options);
+
+}
+
+function generate_build_info(configuration, project_file, options)
+{
+   build_info = {};
+
+   // project == project_dir
+   //        /out == build_dir
+   //            /data == data_dir
+   //            /name-version == package_dir
+
+   build_info.package_id = configuration.Name + "-" + configuration.Version;
+   build_info.project_dir = path.dirname(project_file);
+   build_info.build_dir = path.join(build_info.project_dir, "out");
+   build_info.data_dir = path.join(build_info.build_dir, "data");
+   build_info.package_dir = path.join(build_info.build_dir, build_info.package_id);
+   build_info.data_file = path.join(build_info.package_dir, "data.tar.gz");
+   build_info.package_file = path.join(build_info.build_dir, build_info.package_id + ".epk")
+   build_info.metadata_file = path.join(build_info.package_dir, "meta.json");
+
+   if (options.verbose)
+     {
+        console.log("Project id: ", build_info.package_id);
+        console.log("Project source dir: ", build_info.project_dir);
+        console.log("Project build dir: ", build_info.build_dir);
+        console.log("Project data dir:", build_info.data_dir);
+        console.log("Project package dir:", build_info.package_dir);
+     }
+
+   return build_info;
+
+}
+
+// Project names must start with a letter and contain only
+// letters, digits and underscores.
+function validade_project_name(name)
+{
+   return (/^[a-zA-Z][\w-]*$/).test(name)
+}
+
+function pack_project(project_file, options)
+{
+   if (options.verbose)
+      console.log("Packing project from project file ", project_file);
+
+   var configuration = JSON.parse(fs.readFileSync(project_file));
+
+   if (!validade_project_name(configuration.Name))
+     {
+        console.error("Invalid project name. Must start with a letter.");
+        process.exit(0);
+     }
+
+   var build_info = generate_build_info(configuration, project_file, options);
+
+   try
+     {
+        fs.mkdirSync(build_info.build_dir);
+        fs.mkdirSync(build_info.data_dir);
+        fs.mkdirSync(build_info.package_dir);
+     }
+   catch (e)
+     {
+        console.warn("Warning: Project output directories not empty.");
+     }
+
+   create_metadata_file(configuration, build_info, options);
+
+   // If not explicitly named on configuration, add the entire directory
+   if (!('Sources' in configuration))
+     {
+        generate_source_list(configuration, build_info.project_dir, options);
+     }
+
+   create_project_tree(configuration.Sources, build_info, options);
+
+   pack_data_dir(build_info, options);
+}
+
+function create_project_tree(sources, build_info, options)
+{
+   for (var i = sources.length - 1; i >= 0; i--) {
+      if (options.verbose)
+         console.log("Adding file ", sources[i], "to package.");
+      var source_file = path.join(build_info.project_dir, sources[i][0]);
+      var destination_dir = path.join(build_info.data_dir, sources[i][1]);
+      var destination_filename = path.basename(source_file);
+      var destination_file = path.join(destination_dir, destination_filename);
+
+      fs.copySync(source_file, destination_file);
+   };
+}
+
+function generate_source_list(configuration, project_dir, options)
+{
+   console.log("Generating source list for project dir", build_info.project_dir);
+   var dir_entries = fs.readdirSync(project_dir);
+   var sources = [];
+
+   dir_entries.forEach(function(entry){
+      if (entry == "out")
+         return;
+      sources.push([entry, "."]);
+   });
+   configuration.Sources = sources;
+}
+
+function create_metadata_file(configuration, build_info, options)
+{
+   if (options.verbose)
+      console.log("Creating metadata file", build_info.metadata_file);
+
+   var metadata = {};
+
+   metadata.Name = configuration.Name;
+   metadata.Entry = configuration.Entry;
+   metadata.Version = configuration.Version;
+
+   var output = fs.createWriteStream(build_info.metadata_file);
+   output.write(JSON.stringify(metadata, null, 2));
+   output.close();
+}
+
+function pack_data_dir(build_info, options)
+{
+   if (options.verbose)
+      console.log("Packing data...");
+
+   pack_directory(build_info.data_dir, build_info.data_file, true, true, function(){
+      if (options.verbose)
+         console.log("Packed data");
+      pack_final_package(build_info, options);
+   });
+}
+
+function pack_final_package(build_info, options)
+{
+   if (options.verbose)
+      console.log("Creating package ", build_info.package_file);
+   pack_directory(build_info.package_dir, build_info.package_file, false, false, function(){
+      if (options.verbose)
+         console.log("Created project package.");
+   });
+}
+
+function pack_directory(source_dir, target_file, strip_base_dir, should_gzip, callback)
+{
+   var output = fs.createWriteStream(target_file);
+   var packer = tar.Pack({fromBase: strip_base_dir == true});
+   if (callback != undefined)
+      output.on('close', callback);
+
+   var reader = fstream.Reader({path: source_dir, type: "Directory"});
+   var destStr = reader.pipe(packer);
+   if(should_gzip)
+      destStr = destStr.pipe(zlib.createGzip());
+   destStr.pipe(output);
+}
+
+function main()
+{
+
+   var options = getopt.create([
+      ['v', 'verbose', 'Explain what is being done'],
+      ['h', 'help', 'Display this help']
+   ]).bindHelp().parseSystem();
+
+   filename = options.argv[0];
+
+   if (typeof filename === 'undefined')
+     {
+        console.error('Must provide a valid js or project file.');
+        process.exit(1);
+     }
+
+   if (endsWith(filename, ".js"))
+     {
+        pack_single(filename, options.options);
+     }
+   else if (endsWith(filename, ".project"))
+     {
+        pack_project(filename, options.options);
+     }
+}
+
+main();
+
+//// Helper functions
+function endsWith(str, suffix)
+{
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}

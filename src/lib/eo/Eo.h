@@ -535,15 +535,15 @@ typedef struct _Eo_Call_Cache
   }
 
 #ifndef _WIN32
-# define _EO_OP_API_ENTRY(a) a
+# define _EO_OP_API_ENTRY(a) (void*)a
 #else
 # define _EO_OP_API_ENTRY(a) #a
 #endif
 
-#define EO_OP_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_REGULAR }
-#define EO_OP_CLASS_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_CLASS }
-#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_REGULAR_OVERRIDE }
-#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_CLASS_OVERRIDE }
+#define EO_OP_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), (void*)_private, EO_OP_TYPE_REGULAR }
+#define EO_OP_CLASS_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), (void*)_private, EO_OP_TYPE_CLASS }
+#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), (void*)_private, EO_OP_TYPE_REGULAR_OVERRIDE }
+#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), (void*)_private, EO_OP_TYPE_CLASS_OVERRIDE }
 
 // returns the OP id corresponding to the given api_func
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func);

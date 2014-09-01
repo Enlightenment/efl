@@ -909,7 +909,6 @@ _ecore_memory_statistic(EINA_UNUSED void *data)
 #endif
 #ifdef HAVE_MALLOC_INFO
    if (frame) fputs("\n", _ecore_memory_statistic_file);
-   fprintf(_ecore_memory_statistic_file, "=== Frame %i ===\n\n", frame++);
    malloc_info(0, _ecore_memory_statistic_file);
 #endif
 

@@ -28,6 +28,7 @@
 /efreet.pc
 /eina.pc
 /eina-cxx.pc
+/eina-js.pc
 /eet-cxx.pc
 /eio.pc
 /eio-cxx.pc
@@ -36,6 +37,7 @@
 /embryo.pc
 /emotion.pc
 /eo.pc
+/eo-js.pc
 /ephysics.pc
 /escape.pc
 /ethumb.pc
@@ -57,6 +59,7 @@
 /evil.pc
 /eolian.pc
 /eolian-cxx.pc
+/eolian-js.pc
 /eo-cxx.pc
 /evas-cxx.pc
 /ecore-cxx.pc

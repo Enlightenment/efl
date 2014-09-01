@@ -11,7 +11,6 @@ namespace efl { namespace eldbus { namespace _detail {
 template <typename Callback, typename... Ins>
 void _callback_wrapper(void* data, Eldbus_Message const* message, Eldbus_Pending* pending)
 {
-  std::cout << "_callback_wrapper" << std::endl;
   Callback* callback(static_cast<Callback*>(data));
 
   const char* errname, *errmsg;

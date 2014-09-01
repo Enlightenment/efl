@@ -267,6 +267,39 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
+{
+   Eina_Bool did = EINA_FALSE;
+   Ecore_Fd_Handler *fd_handler;
+   int comm[2];
+   int ret;
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+
+   ret = pipe(comm);
+   fail_if(ret != 0);
+
+   fd_handler = ecore_main_fd_handler_add
+     (comm[0], ECORE_FD_ERROR, _fd_handler_cb, &did, NULL, NULL);
+   fail_if(fd_handler == NULL);
+
+   ecore_main_fd_handler_active_set(fd_handler, ECORE_FD_READ);
+
+   ret = write(comm[1], "e", 1);
+   fail_if(ret != 1);
+
+   ecore_main_loop_begin();
+
+   close(comm[0]);
+   close(comm[1]);
+
+   fail_if(did != EINA_TRUE);
+
+   ret = ecore_shutdown();
+}
+END_TEST
+
 static Eina_Bool
 _event_handler_cb(void *data, int type, void *event)
 {
@@ -705,6 +738,7 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_exiter);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_activate_modify);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event_recursive);

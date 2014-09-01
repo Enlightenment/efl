@@ -1,0 +1,9 @@
+{
+    "Name": "test-project",
+    "Entry": "main.js",
+    "Version": "0.42",
+    "Sources": [
+        ["main.js", "."],
+        ["hello.txt", "."]
+    ]
+}

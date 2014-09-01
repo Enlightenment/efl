@@ -154,7 +154,8 @@ struct malloc_clone_allocator
   template <typename T>
   static void deallocate_clone(T const* p)
   {
-    static_assert(std::is_pod<T>::value, "malloc_clone_allocator can only be used with POD types");
+    static_assert(std::is_pod<T>::value || std::is_void<T>::value
+                  , "malloc_clone_allocator can only be used with POD types");
     std::free(const_cast<T*>(p));
   }
 };

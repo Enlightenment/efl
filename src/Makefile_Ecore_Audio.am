@@ -104,4 +104,15 @@ nodist_installed_ecoreaudiolua_DATA = $(generated_ecore_audio_lua_all)
 
 endif
 
+if HAVE_JS
+
+generated_ecore_audio_js_bindings = $(ecore_audio_eolian_files:%.eo=%.eo.js.cc)
+
+CLEANFILES += $(generated_ecore_audio_js_bindings)
+
+GENERATED_JS_BINDINGS += $(generated_ecore_audio_js_bindings)
+
 endif
+
+endif
+

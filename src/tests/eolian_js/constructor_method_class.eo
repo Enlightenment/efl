@@ -1,0 +1,59 @@
+class Constructor_Method_Class (Eo.Base)
+{
+   legacy_prefix: null;
+   data: Constructor_Method_Class_Data;
+   methods {
+      @property fail {
+         get {
+         }
+         values {
+            is_fail: bool;
+         }
+      }
+      constructor1 {
+         params { @in one: int; }
+      }
+      constructor2 {
+         params { @in two: double; }
+      }
+      method1 {
+         params { @in one: int; }
+      }
+      method2 {
+         params { @in one: int; }
+         return: int;
+      }
+      method3 {
+         params { @in one: int; @in two: double; }
+      }
+      method4 {
+         params { @in one: int; @in two: double; }
+         return: int;
+      }
+      outmethod1 {
+         params { @out one: int; }
+      }
+      outmethod2 {
+         params { @out one: int; }
+         return: int;
+      }
+      outmethod3 {
+         params { @out one: int; @out two: double; }
+      }
+      classoutmethod1 {
+         params { @in one: int; @in two: double; }
+         return: free(own(Constructor_Method_Class *), eo_unref) @warn_unused;
+      }
+      classoutmethod2 {
+         params { @in one: int; @in two: double; @out out_class: own(Constructor_Method_Class *); }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.finalize;
+   }
+   constructors {
+      .constructor1;
+      .constructor2;
+   }
+}

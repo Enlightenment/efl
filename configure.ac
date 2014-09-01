@@ -1051,6 +1051,191 @@ EFL_EVAL_PKGS([EINA_CXX])
 EFL_LIB_END([Eina_Cxx])
 #### End of Eina CXX
 
+AC_ARG_WITH([js],
+   [AS_HELP_STRING([--with-js=@<:@nodejs/libv8/libuv/none@:>@],[enable JavaScript bindings using nodejs or libv8/libuv as build dependencies. The libuv option implies libv8. @<:@default=none@:>@])],
+   [want_js="${withval}"], [want_js="none"])
+
+EFLJS_CXXFLAGS=""
+AC_LANG_PUSH([C++])
+case "$want_js" in
+     nodejs)
+        AC_CHECK_HEADERS([node/v8.h nodejs/deps/v8/v8.h nodejs/deps/v8/include/v8.h nodejs/src/v8.h v8.h],
+                         [
+                           v8_header=AC_header
+                           v8_header_define=AS_TR_CPP([HAVE_]AC_header)
+                           EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -D$v8_header_define"
+                           break
+                         ]
+                         [AC_MSG_ERROR([Could not find v8 include headers from nodejs.])])
+        AC_CHECK_HEADERS([node/node.h nodejs/deps/node/node.h nodejs/deps/node/include/node.h nodejs/src/node.h node.h],
+                         [
+                           node_header_define=AS_TR_CPP([HAVE_]AC_header)
+                           EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -D$node_header_define"
+                           break
+                         ]
+                         [AC_MSG_ERROR([Could not find node include headers from nodejs.])])
+        AC_CHECK_HEADERS([node/uv.h nodejs/deps/uv/uv.h nodejs/deps/uv/include/uv.h nodejs/src/uv.h uv.h],
+                         [
+                           uv_header_define=AS_TR_CPP([HAVE_]AC_header)
+                           EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -D$uv_header_define"
+                           break
+                         ]
+                         [AC_MSG_ERROR([Could not find uv include headers from nodejs.])])
+        ;;
+     libv8)
+        AC_CHECK_HEADERS([v8.h],
+                         [
+                           v8_header=AC_header
+                           break
+                         ]
+                         [AC_MSG_ERROR([Could not find v8 include headers from libv8.])])
+        ;;
+     libuv)
+        AC_CHECK_HEADERS([v8.h],
+                         [
+                           v8_header=AC_header
+                           break
+                         ]
+                         [AC_MSG_ERROR([Could not find v8 include headers from libv8.])])
+        AC_CHECK_HEADERS([uv.h],
+                         [break]
+                         [AC_MSG_ERROR([Could not find uv include headers from libuv.])])
+        ;;
+     none)
+        ;;
+     *) AC_MSG_ERROR([Invalid javascript dependency (${want_js}): must be none, nodejs, libv8 or libuv]) ;;
+esac
+
+have_v8_global="no"
+have_v8_create_params="no"
+if test "$want_js" != "none" ; then
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include "$v8_header"
+       ]],
+       [[
+v8::Isolate::CreateParams create_params; create_params.array_buffer_allocator = nullptr;
+       ]])
+   ],
+   [
+    AC_DEFINE(HAVE_V8_CREATE_PARAMS, 1, [Define to 1 if you must pass create_params explicitly.])
+    have_v8_create_params="yes"
+    AC_MSG_NOTICE([checking for v8::Isolate::CreateParams... yes])
+   ],
+   [
+    AC_MSG_NOTICE([checking for v8::Isolate::CreateParams... no])
+   ])
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include "$v8_header"
+#include <type_traits>
+       ]],
+       [[
+       static_assert((std::is_same< ::v8::Global<void>, ::v8::UniquePersistent<void>>::value), "");
+       ]])
+   ],
+   [
+    AC_DEFINE(HAVE_V8_GLOBAL, 1, [Define to 1 if you must pass create_params explicitly.])
+    have_v8_global="yes"
+    AC_MSG_NOTICE([checking for v8::Global<T> class... yes])
+   ],
+   [
+    AC_MSG_NOTICE([checking for v8::Global<T> class... no])
+   ])
+fi
+AM_CONDITIONAL([HAVE_V8_CREATE_PARAMS], [test "x${have_v8_create_params}" = "xyes"])
+AM_CONDITIONAL([HAVE_V8_GLOBAL], [test "x${have_v8_global}" = "xyes"])
+AC_SUBST([HAVE_V8_CREATE_PARAMS])
+AC_SUBST([HAVE_V8_GLOBAL])
+AC_LANG_POP([C++])
+
+AM_CONDITIONAL([HAVE_NODEJS], [test "x${want_js}" = "xnodejs"])
+AC_DEFINE_IF([HAVE_NODEJS], [test "x${want_js}" = "xnodejs"],
+  [1], [Using NodeJS])
+AC_SUBST([want_js])
+AC_SUBST([HAVE_NODEJS])
+
+have_js="no"
+if test "x${want_js}" != "xnone" ; then
+   have_js="yes"
+fi
+AM_CONDITIONAL([HAVE_JS], [test "x${have_js}" = "xyes"])
+AC_DEFINE_IF([HAVE_JS], [test "x${have_js}" = "xyes"], [1], [Compiling bindings for JavaScript])
+AC_SUBST([HAVE_JS])
+
+AM_CONDITIONAL([HAVE_LIBUV], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibuv"])
+AC_DEFINE_IF([HAVE_LIBUV], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibuv"],
+             [1], [Compiling libuv event loop integration])
+AC_SUBST([HAVE_LIBUV])
+
+# For efljspack mime handling
+AM_CONDITIONAL([HAVE_XDG_DATA_HOME], [test "x${XDG_DATA_HOME}" != "x"])
+AM_COND_IF([HAVE_XDG_DATA_HOME], [AC_SUBST([XDG_DATA_HOME])], [AC_SUBST([XDG_DATA_HOME], "$HOME/.local/share")])
+
+#### Eina JS
+EFL_LIB_START_OPTIONAL([Eina_Js], [test "x${have_js}" = "xyes"])
+EFL_INTERNAL_DEPEND_PKG([EINA_JS], [Eina])
+EFL_INTERNAL_DEPEND_PKG([EINA_JS], [Eo])
+EFL_ADD_CFLAGS([EINA_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([EINA_JS])
+
+EFL_LIB_END_OPTIONAL([Eina_Js])
+#### End of Eina JS
+
+#### Ecore JS
+EFL_LIB_START_OPTIONAL([Ecore_Js], [test "x${have_js}" = "xyes"])
+
+EFL_INTERNAL_DEPEND_PKG([ECORE_JS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_JS], [ecore_file])
+EFL_ADD_CFLAGS([ECORE_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([ECORE_JS])
+
+EFL_LIB_END_OPTIONAL([Ecore_Js])
+#### End of Ecore JS
+
+#### Eio JS
+EFL_LIB_START_OPTIONAL([Eio_Js], [test "x${have_js}" = "xyes"])
+
+EFL_INTERNAL_DEPEND_PKG([EIO_JS], [eio])
+EFL_ADD_CFLAGS([EIO_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([EIO_JS])
+
+EFL_LIB_END_OPTIONAL([Eio_Js])
+#### End of Eio JS
+
+#### Ethumb JS
+EFL_LIB_START_OPTIONAL([Ethumb_Js], [test "x${have_js}" = "xyes"])
+
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_JS], [ethumb])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_JS], [ethumb_client])
+EFL_ADD_CFLAGS([ETHUMB_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([ETHUMB_JS])
+
+EFL_LIB_END_OPTIONAL([Ethumb_Js])
+#### End of Ethumb JS
+
+#### Eldbus JS
+EFL_LIB_START_OPTIONAL([Eldbus_Js], [test "x${have_js}" = "xyes"])
+
+EFL_INTERNAL_DEPEND_PKG([ELDBUS_JS], [eldbus])
+EFL_ADD_CFLAGS([ELDBUS_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([ELDBUS_JS])
+
+EFL_LIB_END_OPTIONAL([Eldbus_Js])
+#### End of Eldbus JS
+
+#### Eo JS
+EFL_LIB_START_OPTIONAL([Eo_Js], [test "x${have_js}" = "xyes"])
+
+EFL_INTERNAL_DEPEND_PKG([EO_JS], [eina])
+EFL_ADD_CFLAGS([EO_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([EO_JS])
+
+EFL_LIB_END_OPTIONAL([Eo_Js])
+#### End of Eo JS
+
 #### Eo
 
 EFL_LIB_START([Eo])
@@ -1243,6 +1428,15 @@ EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
 
 EFL_LIB_END([Eolian])
 #### End of Eolian
+
+EFL_LIB_START_OPTIONAL([Eolian_Js], [test "${have_js}" = "yes"])
+
+EFL_INTERNAL_DEPEND_PKG([EOLIAN_JS], [eina])
+EFL_INTERNAL_DEPEND_PKG([EOLIAN_JS], [eolian])
+
+EFL_LIB_END_OPTIONAL([Eolian_Js])
+#### End of Eolian
+
 
 EFL_LIB_START([Eolian_Cxx])
 ### Default values
@@ -2322,6 +2516,17 @@ AC_ARG_ENABLE([g-main-loop],
     fi
    ],
    [want_g_main_loop="no"])
+AC_ARG_ENABLE([libuv],
+   [AS_HELP_STRING([--enable-libuv],[enable ecore_main_loop based on libuv. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libuv="yes"
+       CFOPT_WARNING="xyes"
+    else
+       want_libuv="no"
+    fi
+   ],
+   [want_libuv="no"])
 
 AC_ARG_ENABLE([gstreamer],
    [AS_HELP_STRING([--enable-gstreamer],[enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
@@ -2410,6 +2615,7 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd])
 EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
 EFL_ADD_FEATURE([ECORE], [g-main-loop])
+EFL_ADD_FEATURE([ECORE], [libuv])
 
 want_glib_integration_always=no
 if test "x${with_glib}" = "xalways" ; then
@@ -4007,7 +4213,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [emile])
 ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
-ECORE_EVAS_MODULE([drm], [${want_drm}], 
+ECORE_EVAS_MODULE([drm], [${want_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm])])
 ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm])])
@@ -4677,6 +4883,63 @@ EFL_ADD_LIBS([ELOCATION], [-lm])
 EFL_LIB_END([Elocation])
 #### End of Elocation
 
+
+
+#### Efl_Js
+EFL_LIB_START_OPTIONAL([Efl_Js], [test "x${have_js}" = "xyes"])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Eina])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Eo])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Ecore])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Eet])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Ecore_Evas])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Ecore_Con])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Ecore_Audio])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Efl])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Evas])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Edje])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Emotion])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Eldbus])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Emile])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Ethumb_Client])
+EFL_INTERNAL_DEPEND_PKG([EFL_JS], [Eio])
+
+AM_COND_IF([HAVE_NODEJS], [], [ EFL_ADD_LIBS([EFL_JS], [-lv8]) ])
+
+EFL_EVAL_PKGS([EFL_JS])
+
+AM_COND_IF([HAVE_NODEJS], [EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -DHAVE_NODEJS"], [])
+AM_COND_IF([HAVE_LIBUV], [EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -DHAVE_LIBUV"], [])
+AM_COND_IF([HAVE_JS], [EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -DHAVE_JS"], [])
+
+AM_COND_IF([HAVE_V8_CREATE_PARAMS], [EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -DHAVE_V8_CREATE_PARAMS"], [])
+AM_COND_IF([HAVE_V8_GLOBAL], [EFLJS_CXXFLAGS="$EFLJS_CXXFLAGS -DHAVE_V8_GLOBAL"], [])
+AC_SUBST([EFLJS_CXXFLAGS])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END_OPTIONAL([Efl_Js])
+#### End of Efl_Js
+
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
    EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.8.0])
@@ -4809,6 +5072,10 @@ pc/eo.pc
 pc/eo-cxx.pc
 pc/eolian.pc
 pc/eolian-cxx.pc
+pc/eina-js.pc
+pc/efl-js.pc
+pc/eolian-js.pc
+pc/eo-js.pc
 pc/efl.pc
 pc/efl-cxx.pc
 pc/evas-fb.pc
@@ -4991,6 +5258,8 @@ echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl}"
 echo "  C++11.........: ${have_cxx11}"
+echo "  JavaScript....: ${want_js}"
+echo "  JavaScript flg: $EINA_JS_LIBS"
 echo "Eina............: yes (${features_eina} unwind=$have_unwind)"
 echo "Eo..............: yes (${features_eo})"
 echo "Eolian..........: yes (${features_eolian})"
@@ -5052,6 +5321,7 @@ echo "  CPPFLAGS......: $CPPFLAGS"
 echo "  CFLAGS........: $CFLAGS"
 echo "  CXXFLAGS......: $CXXFLAGS"
 echo "  LDFLAGS.......: $LDFLAGS"
+echo "  EFLJS_CXXFLAGS: $EFLJS_CXXFLAGS"
 
 if test "x${with_binary_edje_cc}" != "x"; then
 echo "  edje_cc.......: ${with_binary_edje_cc}"

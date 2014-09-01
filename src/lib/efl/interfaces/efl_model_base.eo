@@ -58,7 +58,7 @@ interface Efl.Model.Base ()
                return: Efl.Model.Load_Status;
          }
          values {
-               properties: const(array<const(char*)>*); [[array of current properties]]
+               properties: const(array<const(char)*>*); [[array of current properties]]
             }
         }
          @property property {

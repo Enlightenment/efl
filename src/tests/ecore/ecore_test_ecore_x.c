@@ -2,9 +2,9 @@
 # include <config.h>
 #endif
 
-#include <Ecore_X.h>
-
 #include "ecore_suite.h"
+
+#include <Eina.h>
 
 /* FIXME: Currently disable these tests. They are useless ATM and they just
  * make buildbot complain. Once we add useful tests here we'll also bother
@@ -13,6 +13,8 @@
 
 /* TODO: change to HAVE_ECORE_X when xcb implementation is done */
 #ifdef HAVE_ECORE_X_XLIB
+
+#include <Ecore_X.h>
 
 START_TEST(ecore_test_ecore_x_init)
 {
