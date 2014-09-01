@@ -39,13 +39,18 @@ _recalc(void *data)
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    Evas_Coord minw = -1, minh = -1;
-   Evas_Coord resw;
+   Evas_Coord resw, w;
 
    evas_event_freeze(evas_object_evas_get(data));
-   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &resw, NULL);
-   if (sd->wrap_w > resw)
-     resw = sd->wrap_w;
+   edje_object_size_min_calc(wd->resize_obj, &minw, NULL);
+   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, NULL);
 
+   if (sd->wrap_w > minw)
+     resw = sd->wrap_w;
+   else if ((sd->wrap_w > 0) && (minw > sd->wrap_w))
+     resw = minw;
+   else
+     resw = w;
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, resw, 0);
 
    /* This is a hack to workaround the way min size hints are treated.

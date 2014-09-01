@@ -288,3 +288,29 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+void
+test_label3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *lb;
+
+   win = elm_win_util_standard_add("label", "Label");
+   elm_win_autodel_set(win, EINA_TRUE);
+   bx = elm_box_add(win);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "This is text for our label, that is long but "
+                       "not too long. The label is designed to have line-wrap."
+                       );
+   elm_label_line_wrap_set(lb, ELM_WRAP_CHAR);
+   elm_label_wrap_width_set(lb, 200);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   evas_object_show(bx);
+   evas_object_show(win);
+   elm_win_resize_object_add(win, bx);
+}

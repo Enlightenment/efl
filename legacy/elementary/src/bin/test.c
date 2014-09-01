@@ -174,6 +174,7 @@ void test_flip_to(void *data, Evas_Object *obj, void *event_info);
 void test_flip_page(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label2(void *data, Evas_Object *obj, void *event_info);
+void test_label3(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
@@ -764,6 +765,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Text", "Label", test_label);
    ADD_TEST(NULL, "Text", "Label2", test_label2);
+   ADD_TEST(NULL, "Text", "Label3", test_label3);
 
    //------------------------------//
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);
