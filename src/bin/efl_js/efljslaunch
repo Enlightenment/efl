@@ -1,0 +1,139 @@
+#!/bin/sh
+':' //; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+
+// Core node modules
+var path = require('path');
+var os = require('os');
+var zlib = require('zlib');
+var child_process = require('child_process');
+
+// 3rd party modules
+var fs = require('fs-extra');
+var getopt = require('node-getopt');
+var tar = require('tar');
+
+function make_error_cb(message)
+{
+   return function(e) {
+      console.error("Error %s: %s", message, e);
+      process.exit(1);
+   };
+}
+
+function remove_files(options)
+{
+   if (options.verbose)
+      console.log("Removing temporary files");
+
+   fs.remove(options.project_folder);
+}
+
+function run_project(options)
+{
+   if (options.verbose)
+      console.log("Running the project");
+
+   var current_dir = process.cwd();
+   process.chdir(options.project_root);
+
+   var proc = child_process.fork(options.metadata.Entry);
+   proc.on('exit', function(code){
+      if (options.verbose)
+         console.log('Child exited with code %s', code);
+      process.chdir(current_dir);
+      if (!options.keep)
+         remove_files(options);
+   });
+
+}
+
+function unpack_project_data(options)
+{
+   if (options.verbose)
+      console.log("Unpacking project sources and assets");
+
+   var datafile = path.join(options.project_folder, "data.tar.gz");
+   var project_root = path.join(options.project_folder, "root");
+
+   options.project_root = project_root;
+
+   var input = fs.createReadStream(datafile);
+   var unzipper = zlib.createGunzip();
+   var extractor = tar.Extract({path: project_root, strip: 0});
+
+   input.on('error', make_error_cb("reading package data file."));
+   extractor.on('error', make_error_cb("unpacking package data file."));
+   if (!("only-extract" in options))
+      extractor.on('end', function(){ run_project(options); });
+
+   input.pipe(unzipper)
+   unzipper.pipe(extractor);
+}
+
+function read_metadata(options)
+{
+   if (options.verbose)
+      console.log("Reading project metadata");
+
+   var project_folder = options.project_folder;
+   var metadata = JSON.parse(fs.readFileSync(path.join(project_folder, "meta.json")));
+
+   if (options.verbose)
+      console.log("Project: %s\nVersion: %s\nEntry point: %s", metadata.Name, metadata.Version, metadata.Entry);
+   if ("only-dump" in options)
+      process.exit(0);
+
+   options.metadata = metadata;
+
+   unpack_project_data(options);
+}
+
+function extract(filename, options)
+{
+   if (options.verbose)
+      console.log("Extracting ", filename, "with options ", options);
+
+   var project_id = path.basename(filename, ".epk");
+   var project_folder = path.join(options['temp-dir'], project_id);
+
+   options.project_folder = project_folder;
+   options.project_id = project_id;
+
+   var input = fs.createReadStream(filename);
+   var extractor = tar.Extract({path: options['temp-dir'], strip: 0});
+
+   input.on('error', make_error_cb("reading package file."));
+   extractor.on('error', make_error_cb("unpacking package file."));
+   extractor.on('end', function(){ read_metadata(options); });
+
+   input.pipe(extractor);
+}
+
+function main() {
+   var options = getopt.create([
+       ['d', 'only-dump', 'Only dump information about the package'],
+       ['e', 'only-extract', 'Only extract the package, do not run'],
+       ['h', 'help', 'Display this help'],
+       ['k', 'keep', 'Do not remove the files after exiting'],
+       ['t', 'temp-dir=ARG', 'Temporary dir to extract files'],
+       ['v', 'verbose', 'Print information messages'],
+   ]).bindHelp().parseSystem();
+
+   var filename = options.argv[0];
+   if (filename === undefined)
+     {
+        console.error("Must provide a package file.");
+        process.exit(1);
+     }
+
+   if (!('temp-dir' in options.options))
+     {
+        options.options["temp-dir"] = path.join(os.tmpdir(), "efljs_apps");
+        if (options.verbose)
+         console.log("Defaulting temp dir to ", options.options["temp-dir"]);
+     }
+
+   extract(filename, options.options);
+}
+
+main();

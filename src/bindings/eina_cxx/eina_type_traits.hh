@@ -64,6 +64,22 @@ struct if_ : if_c<U::value, T, F>
 {
 };
 
+template <typename T>
+struct container_value_type
+{
+  typedef typename std::conditional<
+    std::is_void<T>::value
+    , T*, T>::type type;
+};
+
+template <typename T>
+struct nonconst_container_value_type
+{
+  typedef typename std::conditional<
+    std::is_void<T>::value
+    , T*, typename std::remove_const<T>::type>::type type;
+};
+
 /**
  * @}
  */

@@ -190,6 +190,8 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
+  using _base_type::native_handle_type;
+  
   list& operator=(list&& other) = default;
   list(list&& other) = default;
   list() = default;
@@ -224,6 +226,7 @@ public:
   using _base_type::max_size;
   using _base_type::native_handle;
   using _base_type::accessor;
+  using _base_type::release_native_handle;
 };
 
 template <typename T, typename CloneAllocator>
@@ -251,7 +254,9 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  explicit list(Eina_List* handle)
+  using _base_type::native_handle_type;
+
+  explicit list(typename _self_type::native_handle_type handle)
     : _base_type(handle) {}
   list(clone_allocator_type alloc) : _base_type(alloc) {}
   list() {}
@@ -295,6 +300,7 @@ public:
   using _base_type::get_clone_allocator;
   using _base_type::pop_back;
   using _base_type::pop_front;
+  using _base_type::release_native_handle;
 
   void push_back(const_reference w)
   {
@@ -464,6 +470,8 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
+  using _base_type::native_handle_type;
+
   using _base_type::_base_type;
   using _base_type::size;
   using _base_type::empty;
@@ -501,9 +509,9 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  typedef typename _base_type::native_handle_type native_handle_type;
+  using _base_type::native_handle_type;
 
-  explicit range_list(native_handle_type handle)
+  explicit range_list(typename _self_type::native_handle_type handle)
     : _base_type(handle) {}
   range_list() {}
   range_list(range_list<T> const& other)

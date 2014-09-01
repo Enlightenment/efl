@@ -43,6 +43,10 @@
  * @{
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef Eo Ecore_Con_Eet;
 typedef struct _Ecore_Con_Reply Ecore_Con_Reply;
 
@@ -300,4 +304,11 @@ EAPI void ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_na
  * @}
  */
 
+#ifdef __cplusplus
+}
+#endif
+
+#undef EAPI
+#define EAPI
+  
 #endif

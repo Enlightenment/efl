@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=EFL JS package launcher
+Exec=efljslaunch %f
+Type=Application
+Categories=EFL
+Terminal=true
+MimeType=application/x-efljspackage;

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="application/x-efljspackage">
+        <comment xml:lang="en">EFL JS package</comment>
+        <glob pattern="*.epk"/>
+    </mime-type>
+</mime-info>

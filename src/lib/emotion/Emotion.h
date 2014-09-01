@@ -120,6 +120,10 @@
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Emotion_Legacy.h"
 #endif
@@ -266,26 +270,23 @@ typedef enum _Emotion_Aspect    Emotion_Aspect; /**< Aspect ratio option. */
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define EMOTION_VERSION_MAJOR EFL_VERSION_MAJOR
 #define EMOTION_VERSION_MINOR EFL_VERSION_MINOR
-   /**
-    * @typedef Emotion_Version
-    * Represents the current version of Emotion
-    */
-   typedef struct _Emotion_Version
-     {
-        int major; /** < major (binary or source incompatible changes) */
-        int minor; /** < minor (new features, bugfixes, major improvements version) */
-        int micro; /** < micro (bugfix, internal improvements, no new features version) */
-        int revision; /** < git revision (0 if a proper release or the git revision number Emotion is built from) */
-     } Emotion_Version;
-   
-   EAPI extern Emotion_Version *emotion_version;
-   
+
+/**
+ * @typedef Emotion_Version
+ * Represents the current version of Emotion
+ */
+typedef struct _Emotion_Version
+  {
+     int major; /** < major (binary or source incompatible changes) */
+     int minor; /** < minor (new features, bugfixes, major improvements version) */
+     int micro; /** < micro (bugfix, internal improvements, no new features version) */
+     int revision; /** < git revision (0 if a proper release or the git revision number Emotion is built from) */
+  } Emotion_Version;
+
+EAPI extern Emotion_Version *emotion_version;
+
 /* api calls available */
 
 /**
@@ -873,7 +874,7 @@ EAPI Eina_Bool    emotion_object_smooth_scale_get      (const Evas_Object *obj);
  * @param obj The object target of the event.
  * @param ev The emotion event.
  *
- * @see Emotion_Event 
+ * @see Emotion_Event
  */
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
 

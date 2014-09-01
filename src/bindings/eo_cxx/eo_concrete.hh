@@ -187,6 +187,13 @@ struct concrete
    Eo* _eo_raw; ///< The opaque <em>EO Object</em>.
 };
 
+template<class CharT, class Traits>
+inline std::basic_ostream<CharT, Traits>&
+operator<<(std::basic_ostream<CharT, Traits>& os, concrete const& eo)
+{
+   return os << eo._eo_ptr();
+}
+
 inline bool operator==(concrete const& lhs, concrete const& rhs)
 {
   return lhs._eo_ptr() == rhs._eo_ptr();

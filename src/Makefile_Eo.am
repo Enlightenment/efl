@@ -197,3 +197,13 @@ endif
 
 
 EXTRA_DIST += tests/eo/eunit_tests.h lib/eo/eo_ptr_indirection.x
+
+if HAVE_JS
+
+generated_eo_js_bindings = $(eo_eolian_files:%.eo=%.eo.js.cc)
+
+CLEANFILES += $(generated_eo_js_bindings)
+
+GENERATED_JS_BINDINGS += $(generated_eo_js_bindings)
+
+endif

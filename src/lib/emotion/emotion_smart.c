@@ -1964,6 +1964,7 @@ _emotion_object_evas_object_smart_clip_unset(Evas_Object *obj EINA_UNUSED, Emoti
    if (sd->crop.clipper) evas_object_clip_unset(sd->crop.clipper);
    else evas_object_clip_unset(sd->obj);
    evas_object_clip_unset(sd->bg);
+
 }
 
 #include "emotion_object.eo.c"

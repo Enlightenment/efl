@@ -1,0 +1,24 @@
+class Benchmark_Object (Eo.Base)
+{
+   legacy_prefix: null;
+   data: null;
+   methods {
+      emptyarg {
+      }
+      onearg {
+         params { one: int; }
+      }
+      twoarg {
+         params { one: int; two: int; }
+      }
+      tenarg {
+         params { one: int; two: int; three: int; four: int; five: int; six: int; seven: int; eight: int; nine: int; ten: int; }
+      }
+      onecomplexarg {
+         params { one: list<int>*; }
+      }
+      tencomplexarg {
+         params { one: list<int>*; two: list<int>*; three: list<int>*; four: list<int>*; five: list<int>*; six: list<int>*; seven: list<int>*; eight: list<int>*; nine: list<int>*; ten: list<int>*; }
+      }
+   }
+}

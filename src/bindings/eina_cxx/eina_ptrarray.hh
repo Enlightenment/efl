@@ -295,10 +295,12 @@ struct range_ptr_array : _range_template<T, _ptr_array_access_traits>
   typedef _range_template<T, _ptr_array_access_traits> _base_type;  /**< Type for the base class. */
   typedef typename _base_type::value_type value_type;  /**< The type of each element. */
 
+  typedef typename _base_type::native_handle_type native_handle_type;
+
   /**
    * @brief Creates a range from a native Eina array handle.
    */
-  range_ptr_array(Eina_Array* array)
+  range_ptr_array(native_handle_type array)
     : _base_type(array)
   {}
 
@@ -391,7 +393,7 @@ struct _ptr_array_common_base
   /**
    * @internal
    */
-  T* _new_clone(T const& a)
+  T* _new_clone(typename container_value_type<T>::type const& a)
   {
     return _get_clone_allocator().allocate_clone(a);
   }
@@ -402,6 +404,7 @@ struct _ptr_array_common_base
   struct _ptr_array_impl : CloneAllocator
   {
     _ptr_array_impl() : _array( ::eina_array_new(32u) ) {}
+    _ptr_array_impl(Eina_Array* array) : _array(array) {}
     _ptr_array_impl(CloneAllocator allocator)
       : clone_allocator_type(allocator), _array( ::eina_array_new(32u)) {}
 
@@ -448,6 +451,8 @@ public:
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator; /**< Type for reverse iterator for this container. */
 
   typedef std::unique_ptr<value_type, clone_allocator_deleter<clone_allocator_type> > _unique_ptr;
+
+  typedef Eina_Array* native_handle_type;
 
   /**
    * @brief Default constructor. Create an empty array.
@@ -1210,6 +1215,13 @@ public:
    */
   size_type max_size() const { return -1; }
 
+  Eina_Array* release_native_handle()
+  {
+    Eina_Array* tmp = this->_impl._array;
+    this->_impl._array = ::eina_array_new(32u);
+    return tmp;
+  }
+  
   /**
    * @brief Get a handle for the wrapped Eina_Array.
    * @return Handle for the native Eina array.

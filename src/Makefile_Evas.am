@@ -2221,3 +2221,13 @@ $(NULL)
 
 installed_evasfiltersdir = $(datadir)/evas/filters/lua
 dist_installed_evasfilters_DATA = $(evas_filters_lua)
+
+if HAVE_JS
+
+generated_evas_js_bindings = $(evas_eolian_files:%.eo=%.eo.js.cc)
+
+CLEANFILES += $(generated_evas_js_bindings)
+
+GENERATED_JS_BINDINGS += $(generated_evas_js_bindings)
+
+endif

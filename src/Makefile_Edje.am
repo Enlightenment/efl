@@ -130,7 +130,7 @@ if HAVE_WIN32
 USE_EDJE_BIN_LIBS = -L$(top_builddir)/src/lib/evil @USE_EDJE_LIBS@
 else
 USE_EDJE_BIN_LIBS = @USE_EDJE_LIBS@
-endif         
+endif
 
 bin_PROGRAMS += \
 bin/edje/edje_cc \
@@ -332,5 +332,15 @@ CLEANFILES += $(generated_edje_lua_all)
 
 installed_edjeluadir = $(datadir)/elua/modules/edje
 nodist_installed_edjelua_DATA = $(generated_edje_lua_all)
+
+endif
+
+if HAVE_JS
+
+generated_edje_js_bindings = $(edje_eolian_files:%.eo=%.eo.js.cc)
+
+CLEANFILES += $(generated_edje_js_bindings)
+
+GENERATED_JS_BINDINGS += $(generated_edje_js_bindings)
 
 endif

@@ -61,7 +61,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#ifdef HAVE_SYS_EPOLL_H
+#if defined(HAVE_SYS_EPOLL_H) && !defined(HAVE_LIBUV)
 # define HAVE_EPOLL   1
 # include <sys/epoll.h>
 #else
@@ -157,6 +157,51 @@ timerfd_settime(int                      fd EINA_UNUSED,
 # include <glib.h>
 #endif
 
+#ifdef HAVE_LIBUV
+#ifdef HAVE_NODE_UV_H
+#include <node/uv.h>
+#elif defined(HAVE_NODEJS_DEPS_UV_UV_H)
+#include <nodejs/deps/uv/uv.h>
+#elif defined(HAVE_NODEJS_DEPS_UV_INCLUDE_UV_H)
+#include <nodejs/deps/uv/include/uv.h>
+#elif defined(HAVE_NODEJS_SRC_UV_H)
+#include <nodejs/src/uv.h>
+#elif defined(HAVE_UV_H)
+#include <uv.h>
+#else
+#error No uv.h header found?
+#endif
+
+#include <dlfcn.h>
+
+static uv_prepare_t _ecore_main_uv_prepare;
+static uv_check_t _ecore_main_uv_check;
+static uv_timer_t _ecore_main_uv_handle_timers;
+static Eina_Bool _ecore_main_uv_idling;
+
+static int (*_dl_uv_loop_alive)(uv_loop_t*) = 0;
+static int (*_dl_uv_run)(uv_loop_t*, uv_run_mode mode) = 0;
+static int (*_dl_uv_stop)(uv_loop_t*) = 0;
+static uv_loop_t* (*_dl_uv_default_loop)() = 0;
+static int (*_dl_uv_poll_init_socket)(uv_loop_t* loop, uv_poll_t* handle, uv_os_sock_t fd) = 0;
+static int (*_dl_uv_poll_init)(uv_loop_t* loop, uv_poll_t* handle, int fd) = 0;
+static int (*_dl_uv_poll_start)(uv_poll_t* handle, int events, uv_poll_cb cb) = 0;
+static int (*_dl_uv_poll_stop)(uv_poll_t* handle) = 0;
+static int (*_dl_uv_timer_init)(uv_loop_t*, uv_timer_t* handle);
+static int (*_dl_uv_timer_start)(uv_timer_t* handle,
+                                 uv_timer_cb cb,
+                                 uint64_t timeout,
+                                 uint64_t repeat);
+static int (*_dl_uv_timer_stop)(uv_timer_t* handle);
+static int (*_dl_uv_prepare_init)(uv_loop_t*, uv_prepare_t* prepare);
+static int (*_dl_uv_prepare_start)(uv_prepare_t* prepare, uv_prepare_cb cb);
+static int (*_dl_uv_prepare_stop)(uv_prepare_t* prepare);
+static int (*_dl_uv_check_init)(uv_loop_t*, uv_check_t* prepare);
+static int (*_dl_uv_check_start)(uv_check_t* prepare, uv_check_cb cb);
+static int (*_dl_uv_check_stop)(uv_check_t* prepare);
+static int (*_dl_uv_close)(uv_handle_t* handle, uv_close_cb close_cb);
+#endif
+
 #define NS_PER_SEC (1000.0 * 1000.0 * 1000.0)
 
 struct _Ecore_Fd_Handler
@@ -181,6 +226,9 @@ struct _Ecore_Fd_Handler
 #if defined(USE_G_MAIN_LOOP)
    GPollFD                gfd;
 #endif
+#ifdef HAVE_LIBUV
+   uv_poll_t              uv_handle;
+#endif
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Fd_Handler);
 
@@ -198,7 +246,7 @@ struct _Ecore_Win32_Handler
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Win32_Handler);
 #endif
 
-#ifndef USE_G_MAIN_LOOP
+#if !defined(USE_G_MAIN_LOOP) && !defined(HAVE_LIBUV)
 static int  _ecore_main_select(double timeout);
 #endif
 static void _ecore_main_prepare_handlers(void);
@@ -310,9 +358,13 @@ _ecore_try_add_to_call_list(Ecore_Fd_Handler *fdh)
 {
    /* check if this fdh is already in the list */
    if (fdh->next_ready)
-     return;
+     {
+       DBG("next_ready");
+       return;
+     }
    if (fdh->read_active || fdh->write_active || fdh->error_active)
      {
+       DBG("added");
         /*
          * make sure next_ready is non-null by pointing to ourselves
          * use that to indicate this fdh is in the ready list
@@ -344,6 +396,7 @@ _ecore_epoll_add(int   efd,
                  int   events,
                  void *ptr)
 {
+   
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -375,97 +428,197 @@ _gfd_events_from_fdh(Ecore_Fd_Handler *fdh)
 }
 #endif
 
+#ifdef HAVE_LIBUV
+static void
+_ecore_main_uv_poll_cb(uv_poll_t* handle, int status, int events)
+{
+   DBG("_ecore_main_uv_poll_cb %p status %d events %d", (void*)handle->data, status, events);
+   Ecore_Fd_Handler* fdh = handle->data;
+
+   if(_ecore_main_uv_idling)
+     {
+       DBG("not IDLE anymore");
+       _ecore_main_uv_idling = EINA_FALSE;
+       _ecore_idle_exiter_call();
+       _ecore_animator_run_reset();
+     }
+  
+  if (status)
+    fdh->error_active = EINA_TRUE;
+  if (events & UV_READABLE)
+    fdh->read_active = EINA_TRUE;
+  if (events & UV_WRITABLE)
+    fdh->write_active = EINA_TRUE;
+
+  _ecore_try_add_to_call_list(fdh);
+
+  _ecore_main_fd_handlers_call();
+  if (fd_handlers_with_buffer)
+    _ecore_main_fd_handlers_buf_call();
+  _ecore_signal_received_process();
+  _ecore_event_call();
+  _ecore_main_fd_handlers_cleanup();
+  _ecore_timer_expired_timers_call(_ecore_time_loop_time);
+  _ecore_timer_cleanup();
+}
+
+static int
+_ecore_main_uv_events_from_fdh(Ecore_Fd_Handler *fdh)
+{
+   int events = 0;
+   if (fdh->flags & ECORE_FD_READ) events |= UV_READABLE;
+   if (fdh->flags & ECORE_FD_WRITE) events |= UV_WRITABLE;
+   DBG("events is %d", (int)events);
+   return events;
+}
+#endif
+
 static inline int
 _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 {
+   DBG("_ecore_main_fdh_poll_add");
    int r = 0;
 
-   if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_LIBUV
+   if(!_dl_uv_run)
+#endif
      {
-        r = _ecore_epoll_add(_ecore_get_epoll_fd(), fdh->fd,
-                             _ecore_poll_events_from_fdh(fdh), fdh);
+       if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+         {
+           r = _ecore_epoll_add(_ecore_get_epoll_fd(), fdh->fd,
+                                _ecore_poll_events_from_fdh(fdh), fdh);
+         }
      }
-#ifdef USE_G_MAIN_LOOP
+#ifdef HAVE_LIBUV
    else
+#endif
      {
+#ifdef HAVE_LIBUV
+       if(!fdh->file)
+         {
+           DBG("_ecore_main_fdh_poll_add libuv socket %p", fdh);
+           fdh->uv_handle.data = fdh;
+           DBG("_ecore_main_fdh_poll_add2 %p", fdh);
+           _dl_uv_poll_init_socket(_dl_uv_default_loop(), &fdh->uv_handle, fdh->fd);
+           DBG("_ecore_main_fdh_poll_add3 %p", fdh->uv_handle.data);
+           _dl_uv_poll_start(&fdh->uv_handle, _ecore_main_uv_events_from_fdh(fdh)
+                             , _ecore_main_uv_poll_cb);
+           DBG("_ecore_main_fdh_poll_add libuv DONE");
+         }
+       else
+         {
+           DBG("_ecore_main_fdh_poll_add libuv file");
+           fdh->uv_handle.data = fdh;
+           DBG("_ecore_main_fdh_poll_add2 %p", fdh);
+           _dl_uv_poll_init(_dl_uv_default_loop(), &fdh->uv_handle, fdh->fd);
+           DBG("_ecore_main_fdh_poll_add3 %p", fdh->uv_handle.data);
+           _dl_uv_poll_start(&fdh->uv_handle, _ecore_main_uv_events_from_fdh(fdh)
+                             , _ecore_main_uv_poll_cb);
+           DBG("_ecore_main_fdh_poll_add libuv DONE");
+         }
+#elif defined(USE_G_MAIN_LOOP)
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
         g_source_add_poll(ecore_glib_source, &fdh->gfd);
-     }
 #endif
+     }
    return r;
 }
 
 static inline void
 _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 {
-   if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_LIBUV
+   if(!_dl_uv_run)
+#endif
      {
-        struct epoll_event ev;
-        int efd = _ecore_get_epoll_fd();
+       if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+         {
+           struct epoll_event ev;
+           int efd = _ecore_get_epoll_fd();
 
-        memset(&ev, 0, sizeof (ev));
-        DBG("removing poll on %d", fdh->fd);
-        /* could get an EBADF if somebody closed the FD before removing it */
-        if ((epoll_ctl(efd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0))
-          {
-             if (errno == EBADF)
-               {
-                  WRN("fd %d was closed, can't remove from epoll - reinit!",
-                      fdh->fd);
-                  _ecore_main_loop_shutdown();
-                  _ecore_main_loop_init();
-               }
-             else
-               {
-                  ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
-               }
-          }
+           memset(&ev, 0, sizeof (ev));
+           DBG("removing poll on %d", fdh->fd);
+           /* could get an EBADF if somebody closed the FD before removing it */
+           if ((epoll_ctl(efd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0))
+             {
+               if (errno == EBADF)
+                 {
+                   WRN("fd %d was closed, can't remove from epoll - reinit!",
+                       fdh->fd);
+                   _ecore_main_loop_shutdown();
+                   _ecore_main_loop_init();
+                 }
+               else
+                 {
+                   ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
+                 }
+             }
+         }
      }
-#ifdef USE_G_MAIN_LOOP
+#ifdef HAVE_LIBUV
    else
+#endif
      {
+#ifdef HAVE_LIBUV
+       DBG("_ecore_main_fdh_poll_del libuv %p", fdh);
+       uv_handle_t* h = (uv_handle_t*)&fdh->uv_handle;
+       _dl_uv_close(h, 0);
+       DBG("_ecore_main_fdh_poll_del libuv DONE");
+#elif USE_G_MAIN_LOOP
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("removing gpoll on %d %08x", fdh->fd, fdh->gfd.events);
         g_source_remove_poll(ecore_glib_source, &fdh->gfd);
-     }
 #endif
+     }
 }
 
 static inline int
 _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
 {
+   DBG("_ecore_main_fdh_poll_modify %p", fdh);
    int r = 0;
-   if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_LIBUV
+   if(!_dl_uv_run)
+#endif
      {
-        struct epoll_event ev;
-        int efd = _ecore_get_epoll_fd();
+       if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+         {
+           struct epoll_event ev;
+           int efd = _ecore_get_epoll_fd();
 
-        memset(&ev, 0, sizeof (ev));
-        ev.events = _ecore_poll_events_from_fdh(fdh);
-        ev.data.ptr = fdh;
-        DBG("modifing epoll on %d to %08x", fdh->fd, ev.events);
-        r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
+           memset(&ev, 0, sizeof (ev));
+           ev.events = _ecore_poll_events_from_fdh(fdh);
+           ev.data.ptr = fdh;
+           DBG("modifing epoll on %d to %08x", fdh->fd, ev.events);
+           r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
+         }
      }
-#ifdef USE_G_MAIN_LOOP
+#ifdef HAVE_LIBUV
    else
+#endif
      {
+#ifdef HAVE_LIBUV
+       _dl_uv_poll_start(&fdh->uv_handle, _ecore_main_uv_events_from_fdh(fdh)
+                         , _ecore_main_uv_poll_cb);
+#elif defined(USE_G_MAIN_LOOP)
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("modifing gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
-     }
 #endif
+     }
    return r;
 }
 
 static inline int
 _ecore_main_fdh_epoll_mark_active(void)
 {
+   DBG("_ecore_main_fdh_epoll_mark_active");
    struct epoll_event ev[32];
    int i, ret;
    int efd = _ecore_get_epoll_fd();
@@ -832,9 +985,62 @@ detect_time_changes_stop(void)
 #endif
 }
 
+
+#ifdef HAVE_LIBUV
+static inline
+void
+_ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED);
+static void _ecore_main_loop_uv_prepare(uv_prepare_t* handle);
+
+static
+void _ecore_main_loop_timer_run(uv_timer_t* timer EINA_UNUSED)
+{
+  if(_ecore_main_uv_idling)
+    {
+      _ecore_main_uv_idling = EINA_FALSE;
+      _ecore_idle_exiter_call();
+      _ecore_animator_run_reset();
+    }
+  _ecore_time_loop_time = ecore_time_get();
+  _ecore_main_loop_uv_check(NULL);
+  
+  _ecore_main_loop_uv_prepare(NULL);
+}
+static void _ecore_main_loop_uv_prepare(uv_prepare_t* handle);
+
+static inline
+void
+_ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
+{
+   DBG("_ecore_main_loop_uv_check idling? %d", (int)_ecore_main_uv_idling);
+   in_main_loop++;
+   _ecore_lock();
+
+   if(do_quit)
+     goto quit;
+   
+   do
+     {
+       _ecore_main_fd_handlers_call();
+       if (fd_handlers_with_buffer)
+         _ecore_main_fd_handlers_buf_call();
+       _ecore_signal_received_process();
+       _ecore_event_call();
+       _ecore_main_fd_handlers_cleanup();
+       _ecore_timer_expired_timers_call(_ecore_time_loop_time);
+       _ecore_timer_cleanup();
+     }
+   while(fd_handlers_to_call);
+quit:   
+   in_main_loop--;
+   _ecore_unlock();
+}
+#endif
+
 void
 _ecore_main_loop_init(void)
 {
+   DBG("_ecore_main_loop_init");
    epoll_fd = epoll_create(1);
    if ((epoll_fd < 0) && HAVE_EPOLL)
      WRN("Failed to create epoll fd!");
@@ -851,7 +1057,77 @@ _ecore_main_loop_init(void)
                          _ecore_poll_events_from_fdh(fdh), fdh);
         _ecore_main_fdh_poll_add(fdh);
      }
+#ifdef HAVE_LIBUV
+   {
+     DBG("loading lib uv");
+#ifdef HAVE_NODEJS
+     void* lib = dlopen(NULL, RTLD_LAZY);
+#else
+     void* lib = dlopen("libuv.so", RTLD_GLOBAL | RTLD_LAZY);
+#endif
 
+     if(lib && dlsym(lib, "uv_run"))
+       {
+         DBG("loaded lib uv");
+         _dl_uv_run = dlsym(lib, "uv_run");
+         assert(!!_dl_uv_run);
+         _dl_uv_stop = dlsym(lib, "uv_stop");
+         assert(!!_dl_uv_stop);
+         _dl_uv_default_loop = dlsym(lib, "uv_default_loop");
+         assert(!!_dl_uv_default_loop);
+         _dl_uv_poll_init_socket = dlsym(lib, "uv_poll_init_socket");
+         assert(!!_dl_uv_poll_init_socket);
+         _dl_uv_poll_init = dlsym(lib, "uv_poll_init");
+         assert(!!_dl_uv_poll_init);
+         _dl_uv_poll_start = dlsym(lib, "uv_poll_start");
+         assert(!!_dl_uv_poll_start);
+         _dl_uv_poll_stop = dlsym(lib, "uv_poll_stop");
+         assert(!!_dl_uv_poll_stop);
+         _dl_uv_timer_init = dlsym(lib, "uv_timer_init");
+         assert(!!_dl_uv_timer_init);
+         _dl_uv_timer_start = dlsym(lib, "uv_timer_start");
+         assert(!!_dl_uv_timer_start);
+         _dl_uv_timer_stop = dlsym(lib, "uv_timer_stop");
+         assert(!!_dl_uv_timer_stop);
+         _dl_uv_prepare_init = dlsym(lib, "uv_prepare_init");
+         assert(!!_dl_uv_prepare_init);
+         _dl_uv_prepare_start = dlsym(lib, "uv_prepare_start");
+         assert(!!_dl_uv_prepare_start);
+         _dl_uv_prepare_stop = dlsym(lib, "uv_prepare_stop");
+         assert(!!_dl_uv_prepare_stop);
+         _dl_uv_check_init = dlsym(lib, "uv_check_init");
+         assert(!!_dl_uv_check_init);
+         _dl_uv_check_start = dlsym(lib, "uv_check_start");
+         assert(!!_dl_uv_check_start);
+         _dl_uv_check_stop = dlsym(lib, "uv_check_stop");
+         assert(!!_dl_uv_check_stop);
+         _dl_uv_close = dlsym(lib, "uv_close");
+         assert(!!_dl_uv_close);
+         _dl_uv_loop_alive = dlsym(lib, "uv_loop_alive");
+         assert(!!_dl_uv_loop_alive);
+
+  //dlclose(lib);
+
+         DBG("_dl_uv_prepare_init");
+         _dl_uv_prepare_init(_dl_uv_default_loop(), &_ecore_main_uv_prepare);
+         DBG("_dl_uv_prepare_start");
+         _dl_uv_prepare_start(&_ecore_main_uv_prepare, &_ecore_main_loop_uv_prepare);
+         DBG("_dl_uv_prepare_started");
+
+         DBG("_dl_uv_check_init");
+         _dl_uv_check_init(_dl_uv_default_loop(), &_ecore_main_uv_check);
+         DBG("_dl_uv_check_start");
+         _dl_uv_check_start(&_ecore_main_uv_check, &_ecore_main_loop_uv_check);
+         DBG("_dl_uv_check_started");
+
+         _dl_uv_timer_init(_dl_uv_default_loop(),  &_ecore_main_uv_handle_timers);
+       }
+     /* else */
+     /*   DBG("did not load uv"); */
+     DBG("loaded dlsyms uv");
+   }
+#endif
+   
    /* setup for the g_main_loop only integration */
 #ifdef USE_G_MAIN_LOOP
    ecore_glib_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
@@ -916,11 +1192,21 @@ _ecore_main_loop_shutdown(void)
         close(timer_fd);
         timer_fd = -1;
      }
+
+#ifdef HAVE_LIBUV
+   if(_dl_uv_run)
+     {
+       DBG("_ecore_main_loop_shutdown");
+       _dl_uv_timer_stop(&_ecore_main_uv_handle_timers);
+       _dl_uv_close((uv_handle_t*)&_ecore_main_uv_handle_timers, 0);
+     }
+#endif
 }
 
 void *
 _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
+   DBG("_ecore_main_fd_handler_del %p", fd_handler);
    if (fd_handler->delete_me)
      {
         ERR("fdh %p deleted twice", fd_handler);
@@ -941,6 +1227,9 @@ EAPI void
 ecore_main_loop_iterate(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+#ifdef HAVE_LIBUV
+   if(!_dl_uv_run) {
+#endif
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
    _ecore_time_loop_time = ecore_time_get();
@@ -949,12 +1238,20 @@ ecore_main_loop_iterate(void)
 #else
    g_main_context_iteration(NULL, 0);
 #endif
+#ifdef HAVE_LIBUV
+   }
+   else
+     _dl_uv_run(_dl_uv_default_loop(), UV_RUN_ONCE | UV_RUN_NOWAIT);
+#endif
 }
 
 EAPI int
 ecore_main_loop_iterate_may_block(int may_block)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
+#ifdef HAVE_LIBUV
+   if(!_dl_uv_run) {
+#endif
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
    _ecore_time_loop_time = ecore_time_get();
@@ -966,11 +1263,18 @@ in_main_loop--;
 #else
    return g_main_context_iteration(NULL, may_block);
 #endif
+#ifdef HAVE_LIBUV
+   }
+   else
+     _dl_uv_run(_dl_uv_default_loop(), may_block ? UV_RUN_ONCE | UV_RUN_NOWAIT : UV_RUN_ONCE);
+#endif
+   return 0;
 }
 
 EAPI void
 ecore_main_loop_begin(void)
 {
+   DBG("ecore_main_loop_begin");
    EINA_MAIN_LOOP_CHECK_RETURN;
    if (in_main_loop > 0)
      {
@@ -980,6 +1284,9 @@ ecore_main_loop_begin(void)
    eina_evlog("+mainloop", NULL, 0.0, NULL);
 #ifdef HAVE_SYSTEMD
    sd_notify(0, "READY=1");
+#endif
+#ifdef HAVE_LIBUV
+   if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
@@ -998,6 +1305,20 @@ ecore_main_loop_begin(void)
      }
    do_quit = 0;
 #endif
+#ifdef HAVE_LIBUV
+   }
+   else
+     {
+       DBG("uv_run");
+       _ecore_time_loop_time = ecore_time_get();
+       in_main_loop++;
+       while(!do_quit)
+         _dl_uv_run(_dl_uv_default_loop(), UV_RUN_DEFAULT);
+       in_main_loop--;
+       do_quit = 0;
+       DBG("quit");
+     }
+#endif
    eina_evlog("-mainloop", NULL, 0.0, NULL);
 }
 
@@ -1009,6 +1330,9 @@ ecore_main_loop_quit(void)
 #ifdef USE_G_MAIN_LOOP
    if (ecore_main_loop)
      g_main_loop_quit(ecore_main_loop);
+#elif defined(HAVE_LIBUV)
+   if (_dl_uv_run)
+     _dl_uv_stop(_dl_uv_default_loop());
 #endif
 }
 
@@ -1021,6 +1345,7 @@ ecore_main_loop_nested_get(void)
 EAPI Eina_Bool
 ecore_main_loop_animator_ticked_get(void)
 {
+   DBG("ecore_main_loop_animator_ticked_get");
    return _ecore_animator_run_get();
 }
 
@@ -1047,6 +1372,7 @@ _ecore_main_fd_handler_add(int                    fd,
                            const void            *buf_data,
                            Eina_Bool              is_file)
 {
+   DBG("_ecore_main_fd_handler_add");
    Ecore_Fd_Handler *fdh = NULL;
 
    if ((fd < 0) || (flags == 0) || (!func)) return NULL;
@@ -1381,7 +1707,7 @@ _ecore_main_prepare_handlers(void)
      }
 }
 
-#ifndef USE_G_MAIN_LOOP
+#if !defined(USE_G_MAIN_LOOP)
 static int
 _ecore_main_select(double timeout)
 {
@@ -1750,8 +2076,119 @@ _ecore_main_fd_handlers_buf_call(void)
    return ret;
 }
 
-#ifndef USE_G_MAIN_LOOP
+#ifdef HAVE_LIBUV
+static void
+_ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
+{
+   _ecore_lock();
+   _dl_uv_timer_stop(&_ecore_main_uv_handle_timers);
+   if(in_main_loop == 0 && do_quit)
+     {
+       _ecore_main_fd_handlers_cleanup();
 
+       while (fd_handlers)
+         {
+           Ecore_Fd_Handler *fdh;
+
+           fdh = fd_handlers;
+           fd_handlers = (Ecore_Fd_Handler *)eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
+                                                                EINA_INLIST_GET(fdh));
+           _ecore_main_fdh_poll_del(fdh);
+           ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
+           ecore_fd_handler_mp_free(fdh);
+         }
+       if (fd_handlers_with_buffer)
+         fd_handlers_with_buffer = eina_list_free(fd_handlers_with_buffer);
+       if (fd_handlers_with_prep)
+         fd_handlers_with_prep = eina_list_free(fd_handlers_with_prep);
+       if (fd_handlers_to_delete)
+         fd_handlers_to_delete = eina_list_free(fd_handlers_to_delete);
+       if (file_fd_handlers)
+         file_fd_handlers = eina_list_free(file_fd_handlers);
+
+       fd_handlers_to_call = NULL;
+       fd_handlers_to_call_current = NULL;
+       fd_handlers_to_delete = NULL;
+       fd_handler_current = NULL;
+       
+       _dl_uv_prepare_stop(&_ecore_main_uv_prepare);
+       _dl_uv_check_stop(&_ecore_main_uv_check);
+       _dl_uv_stop(_dl_uv_default_loop());
+
+       _ecore_unlock();
+       return;
+     }
+   
+   in_main_loop++;
+  
+   if(!_ecore_main_uv_idling)
+     {
+        _ecore_main_uv_idling = EINA_TRUE;
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+     }
+
+   double t = -1;
+   if(_ecore_main_uv_idling)
+     {
+       _ecore_idler_all_call();
+       DBG("called idles");
+       if(_ecore_idler_exist() || _ecore_event_exist())
+         t = 0.0;
+     }
+
+   if (do_quit)
+     {
+       DBG("do quit outside loop");
+
+       if(_ecore_main_uv_idling)
+         {
+            _ecore_idle_exiter_call();
+            _ecore_animator_run_reset();
+       
+            _ecore_main_uv_idling = EINA_FALSE;
+         }
+
+       t = -1;
+
+       _ecore_time_loop_time = ecore_time_get();
+       _ecore_timer_enable_new();
+
+       goto done;
+     }
+
+   assert(!fd_handlers_to_call);
+
+   _ecore_time_loop_time = ecore_time_get();
+   _ecore_timer_enable_new();
+   if (_ecore_timers_exists() || t >= 0)
+     {
+       double t1 = _ecore_timer_next_get();
+       if(t < 0 || (t1 >= 0 && t1 < t)) t = t1;
+       DBG("Should awake after %f", t);
+       
+       if (t >= 0.0)
+         {
+           //_dl_uv_timer_stop(&_ecore_main_uv_handle_timers);
+           _dl_uv_timer_start(&_ecore_main_uv_handle_timers, &_ecore_main_loop_timer_run, t * 1000
+                              , 0);
+         }
+       else
+         DBG("Is not going to awake with timer");
+     }
+   else
+     DBG("Is not going to awake with timer");
+
+ done:
+   if (fd_handlers_with_prep)
+     _ecore_main_prepare_handlers();
+
+   _ecore_unlock();
+   in_main_loop--;
+}
+#endif
+
+#if !defined(USE_G_MAIN_LOOP)
 enum {
    SPIN_MORE,
    SPIN_RESTART,

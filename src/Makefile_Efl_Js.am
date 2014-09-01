@@ -1,0 +1,333 @@
+if HAVE_JS
+
+if HAVE_NODEJS
+
+noinst_lib_LTLIBRARIES = lib/efl_js/libefl_node_js.la
+noinst_libdir = $(libdir)/efl_js
+
+$(top_builddir)/src/lib/efl_js/efl.node: lib/efl_js/libefl_node_js.la
+	$(AM_V_CP)$(CP) $(top_builddir)/src/lib/efl_js/.libs/libefl_node_js.so $(top_builddir)/src/lib/efl_js/efl.node
+
+eflnodedir = $(libdir)/node_modules
+eflnode_DATA = $(top_builddir)/src/lib/efl_js/efl.node
+
+CLEANFILES += ${eflnodedir_DATA}
+EXTRA_DIST += ${eflnodedir_DATA}
+
+efljsmimedir = @XDG_DATA_HOME@/mime/packages
+efljsmime_DATA = bin/efl_js/efljslaunch.xml
+
+efljsdesktopdir = @XDG_DATA_HOME@/applications
+efljsdesktop_DATA = bin/efl_js/efljslaunch.desktop
+
+bin_SCRIPTS += \
+	bin/efl_js/efljslaunch \
+	bin/efl_js/efljspack
+
+else
+
+bin_PROGRAMS += bin/efl_js/eflv8js
+
+bin_efl_js_eflv8js_SOURCES = \
+	bin/efl_js/launcher_main.cc
+
+bin_efl_js_eflv8js_CPPFLAGS = \
+	-I$(top_builddir)/src/lib/efl \
+	-I$(top_srcdir)/src/bindings/js/efl_js \
+        -I$(top_srcdir)/src/bindings/js/eina_js \
+        -I$(top_srcdir)/src/bindings/js/eo_js \
+	@CHECK_CFLAGS@ \
+	@EINA_CXX_CFLAGS@ \
+	@EO_CXX_CFLAGS@ \
+	@EMILE_CFLAGS@ \
+	@ECORE_CFLAGS@ \
+	@EET_CFLAGS@ \
+	@EO_CFLAGS@ \
+	@EFL_JS_CFLAGS@ \
+	@EINA_JS_CFLAGS@ \
+	@EO_JS_CFLAGS@
+
+bin_efl_js_eflv8js_LDFLAGS = \
+	-lv8 \
+	@USE_EFL_JS_INTERNAL_LIBS@
+
+bin_efl_js_eflv8js_LDADD = \
+	@USE_EFL_JS_LIBS@
+
+endif
+
+bindings/js/efl_js/eolian_js_bindings.cc: $(GENERATED_JS_BINDINGS)
+	@echo @ECHO_E@ "#ifdef HAVE_CONFIG_H" > $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include \"config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Efl.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Efl_Config.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Ecore.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Eo.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Ecore_Con.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Ecore_Audio.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Evas.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Edje.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Ecore_Con_Eet.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Emotion.h>\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@for i in $(GENERATED_JS_BINDINGS); do echo "#include <$$i>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc; done
+
+CLEANFILES += bindings/js/efl_js/eolian_js_bindings.cc
+
+## Install Ecore-JS headers
+installed_ecorejsheadersdir = $(includedir)/ecore-js-@VMAJ@
+dist_installed_ecorejsheaders_DATA = \
+bindings/js/ecore_js/Ecore_Js.hh
+
+## Install Eio-JS headers
+installed_eiojsheadersdir = $(includedir)/eio-js-@VMAJ@
+dist_installed_eiojsheaders_DATA = \
+bindings/js/eio_js/Eio_Js.hh
+
+## Install Ethumb-JS headers
+installed_ethumbjsheadersdir = $(includedir)/ethumb-js-@VMAJ@
+dist_installed_ethumbjsheaders_DATA = \
+bindings/js/ethumb_js/Ethumb_Js.hh
+
+## Install Eldbus-JS headers
+installed_eldbusjsheadersdir = $(includedir)/eldbus-js-@VMAJ@
+dist_installed_eldbusjsheaders_DATA = \
+bindings/js/eldbus_js/Eldbus_Js.hh
+
+## Install Eo-JS headers
+installed_eojsmainheadersdir = $(includedir)/eo-js-@VMAJ@
+dist_installed_eojsmainheaders_DATA = \
+bindings/js/eo_js/eo_js_call_function.hh \
+bindings/js/eo_js/eo_js_constructor.hh \
+bindings/js/eo_js/eo_js_direction.hh \
+bindings/js/eo_js/eo_js_event.hh \
+bindings/js/eo_js/eo_js_namespace.hh \
+bindings/js/eo_js/eo_js_struct.hh \
+bindings/js/eo_js/eo_js_construct_from_eo.hh \
+bindings/js/eo_js/Eo_Js.hh
+
+## Install Eina-JS headers
+installed_einajsheadersdir = $(includedir)/eina-js-@VMAJ@
+dist_installed_einajsheaders_DATA = \
+bindings/js/eina_js/Eina_Js.hh \
+bindings/js/eina_js/eina_js_accessor.hh \
+bindings/js/eina_js/eina_js_array.hh \
+bindings/js/eina_js/eina_js_compatibility.hh \
+bindings/js/eina_js/eina_js_container.hh \
+bindings/js/eina_js/eina_js_error.hh \
+bindings/js/eina_js/eina_js_get_value_from_c.hh \
+bindings/js/eina_js/eina_js_get_value.hh \
+bindings/js/eina_js/eina_js_iterator.hh \
+bindings/js/eina_js/eina_js_list.hh \
+bindings/js/eina_js/eina_js_log.hh \
+bindings/js/eina_js/eina_js_node.hh \
+bindings/js/eina_js/eina_js_value.hh
+
+installed_efljsheadersdir = $(includedir)/efl-js-@VMAJ@
+dist_installed_efljsheaders_DATA = \
+bindings/js/efl_js/Efl_Js.hh
+
+lib_LTLIBRARIES += lib/efl_js/libefl_js.la
+
+lib_efl_js_libefl_js_la_SOURCES = \
+bindings/js/eina_js/eina_js_container.cc \
+bindings/js/eina_js/eina_js_value.cc \
+bindings/js/eina_js/eina_js_error.cc \
+bindings/js/eina_js/eina_js_accessor.cc \
+bindings/js/eina_js/eina_js_log.cc \
+bindings/js/eina_js/eina_js_iterator.cc \
+bindings/js/eina_js/eina_js_compatibility.cc \
+bindings/js/ecore_js/ecore_js_init.cc \
+bindings/js/ecore_js/ecore_js_mainloop.cc \
+bindings/js/ecore_js/ecore_js_timer.cc \
+bindings/js/ecore_js/ecore_js_event.cc \
+bindings/js/ecore_js/ecore_js_job.cc \
+bindings/js/ecore_js/ecore_js_idle.cc \
+bindings/js/ecore_js/ecore_js_animator.cc \
+bindings/js/ecore_js/ecore_js_poller.cc \
+bindings/js/ecore_js/ecore_js_throttle.cc \
+bindings/js/eldbus_js/eldbus_js_core.cc \
+bindings/js/eldbus_js/eldbus_js_connection.cc \
+bindings/js/eldbus_js/eldbus_js_message.cc \
+bindings/js/eldbus_js/eldbus_js_object_mapper.cc \
+bindings/js/eio_js/eio_js.cc \
+bindings/js/ethumb_js/ethumb_js_client.cc
+
+nodist_lib_efl_js_libefl_js_la_SOURCES = \
+bindings/js/efl_js/eolian_js_bindings.cc
+
+bindings/js/efl_js/efl_js.cc $(lib_efl_js_libefl_js_la_SOURCES): $(generated_ecore_cxx_all) $(generated_eo_cxx_bindings) $(generated_efl_cxx_all)
+
+lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces/ \
+-I$(top_builddir)/src/lib/evas/canvas/ \
+-I$(top_srcdir)/src/bindings/js/eina_js \
+-I$(top_srcdir)/src/bindings/js/ecore_js \
+-I$(top_srcdir)/src/bindings/js/eo_js \
+-I$(top_srcdir)/src/bindings/js/eldbus_js \
+-I$(top_srcdir)/src/bindings/js/eio_js \
+-I$(top_srcdir)/src/bindings/js/ethumb_js \
+@EFL_JS_CFLAGS@ \
+@EO_JS_CFLAGS@ \
+@ECORE_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@ECORE_JS_CFLAGS@ \
+@EINA_JS_CFLAGS@ \
+@ELDBUS_JS_CFLAGS@ \
+@EIO_JS_CFLAGS@ \
+@ETHUMB_JS_CFLAGS@ \
+@EINA_CXX_CFLAGS@
+lib_efl_js_libefl_js_la_LIBADD = @EFL_JS_LIBS@
+lib_efl_js_libefl_js_la_DEPENDENCIES = @EFL_JS_INTERNAL_LIBS@
+lib_efl_js_libefl_js_la_LIBTOOLFLAGS = --tag=disable-static
+lib_efl_js_libefl_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+if HAVE_NODEJS
+lib_efl_js_libefl_node_js_la_SOURCES = \
+bindings/js/efl_js/efl_js.cc
+
+lib_efl_js_libefl_node_js_la_CPPFLAGS = $(lib_efl_js_libefl_js_la_CPPFLAGS)
+lib_efl_js_libefl_node_js_la_LIBADD = @USE_EFL_JS_LIBS@
+lib_efl_js_libefl_node_js_la_DEPENDENCIES = @USE_EFL_JS_INTERNAL_LIBS@
+lib_efl_js_libefl_node_js_la_LIBTOOLFLAGS = --tag=disable-static
+lib_efl_js_libefl_node_js_la_LDFLAGS =
+else
+lib_efl_js_libefl_js_la_SOURCES += \
+bindings/js/efl_js/efl_js.cc
+endif
+
+if EFL_ENABLE_TESTS
+
+SUITE_RUNNER_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/bindings/js/eina_js \
+-I$(top_srcdir)/src/bindings/js/eo_js \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/efl_js\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl_js\" \
+@CHECK_CFLAGS@ \
+@EFL_JS_CFLAGS@ \
+@EINA_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EO_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@ECORE_CXX_CFLAGS@ \
+@ECORE_JS_CFLAGS@ \
+@EINA_JS_CFLAGS@
+
+if HAVE_NODEJS
+TESTS += tests/efl_js/eina_js_suite.js \
+tests/efl_js/eina_js_containers_suite.js \
+tests/efl_js/ecore_js_suite.js \
+tests/efl_js/eldbus_js_suite.js \
+tests/efl_js/ethumb_js_suite.js \
+tests/efl_js/eio_js_suite.js \
+tests/efl_js/benchmark_js_suite.js
+
+check_LTLIBRARIES += tests/efl_js/libbenchmark_object.la
+
+tests/efl_js/eina_js_suite.js tests/efl_js/eina_js_containers_suite.js tests/efl_js/ecore_js_suite.js tests/efl_js/eldbus_js_suite.js tests/efl_js/eio_js_suite.js tests/efl_js/ethumb_js_suite.js: $(top_builddir)/src/lib/efl_js/efl.node
+
+tests/efl_js/benchmark_object.node: tests/efl_js/libbenchmark_object.la
+	$(AM_V_CP)$(CP) $(top_builddir)/src/tests/efl_js/.libs/libbenchmark_object.so $(top_builddir)/src/tests/efl_js/benchmark_object.node
+tests/efl_js/benchmark_js_suite.js: $(top_builddir)/src/lib/efl_js/efl.node tests/efl_js/benchmark_object.node
+
+tests_efl_js_libbenchmark_object_la_SOURCES = tests/efl_js/benchmark_object_impl.cc
+tests_efl_js_libbenchmark_object_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/bindings/js/efl_js \
+-I$(top_builddir)/src/tests/efl_js \
+-I$(top_srcdir)/src/bindings/js/eina_js \
+-I$(top_srcdir)/src/bindings/js/eo_js \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/efl_js\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/efl_js\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl_js\" \
+@CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EINA_JS_CFLAGS@ @EO_JS_CFLAGS@ \
+@EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @EINA_CXX_CFLAGS@ \
+@EO_JS_CFLAGS@ @EO_CXX_CFLAGS@
+tests_efl_js_libbenchmark_object_la_LIBADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_libbenchmark_object_la_LDFLAGS = -rpath $(abs_top_builddir)/tests/efl_js @EFL_LTLIBRARY_FLAGS@
+tests_efl_js_libbenchmark_object_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+tests_efl_js_libbenchmark_object_la_LIBTOOLFLAGS = --tag=disable-static
+
+tests/efl_js/tests_efl_js_libbenchmark_object_la-benchmark_object_impl.l$(OBJEXT): tests/efl_js/benchmark_object.eo.js.cc tests/efl_js/benchmark_object.eo.c tests/efl_js/benchmark_object.eo.h
+else
+check_PROGRAMS += \
+tests/efl_js/eina_js_suite \
+tests/efl_js/eina_js_containers_suite \
+tests/efl_js/ecore_js_suite \
+tests/efl_js/eldbus_js_suite \
+tests/efl_js/ethumb_js_suite \
+tests/efl_js/eio_js_suite \
+tests/efl_js/benchmark_js_suite
+TESTS += tests/efl_js/eina_js_suite \
+tests/efl_js/ecore_js_suite \
+tests/efl_js/eldbus_js_suite \
+tests/efl_js/ethumb_js_suite \
+tests/efl_js/eio_js_suite \
+tests/efl_js/benchmark_js_suite
+
+tests_efl_js_eina_js_suite_SOURCES = \
+tests/efl_js/eina_js_suite.cc
+
+tests_efl_js_eina_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_eina_js_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+
+tests_efl_js_eina_js_containers_suite_SOURCES = \
+tests/efl_js/eina_js_containers_suite.cc
+
+tests_efl_js_eina_js_containers_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_eina_js_containers_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_eina_js_containers_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+
+tests_efl_js_ecore_js_suite_SOURCES = \
+tests/efl_js/ecore_js_suite.cc
+
+tests_efl_js_ecore_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_ecore_js_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_ecore_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+
+tests_efl_js_eldbus_js_suite_SOURCES = \
+tests/efl_js/eldbus_js_suite.cc
+
+tests_efl_js_eldbus_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_eldbus_js_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_eldbus_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+
+tests_efl_js_ethumb_js_suite_SOURCES = \
+tests/efl_js/ethumb_js_suite.cc
+
+tests_efl_js_ethumb_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_ethumb_js_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_ethumb_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+
+tests_efl_js_eio_js_suite_SOURCES = \
+tests/efl_js/eio_js_suite.cc
+
+tests_efl_js_eio_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_eio_js_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_eio_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+
+tests_efl_js_benchmark_js_suite_SOURCES = \
+tests/efl_js/benchmark_js_suite.cc
+
+tests_efl_js_benchmark_js_suite_CPPFLAGS = $(SUITE_RUNNER_CPPFLAGS)
+tests_efl_js_benchmark_js_suite_LDADD = \
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EFL_JS_LIBS@
+tests_efl_js_benchmark_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EFL_JS_INTERNAL_LIBS@
+endif
+endif
+
+
+endif

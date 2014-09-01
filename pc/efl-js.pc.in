@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+want_js=@want_js@
+
+Name: EFL JavaScript
+Description: JavaScript C++ helpers for data structures
+Version: @PACKAGE_VERSION@
+Requires.private: @requirements_pc_eina@
+Libs.private: @requirements_libs_eina@
+Libs: -L${libdir} -lefl_js
+Cflags: -I${includedir}/efl-js-@VMAJ@ @EFLJS_CXXFLAGS@
