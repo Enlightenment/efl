@@ -2637,7 +2637,8 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
    cell                size;
    int                 idxtag[sDIMEN_MAX];
 
-   strcpy(arg->name, name);
+   strncpy(arg->name, name, sizeof(arg->name) - 1);
+   arg->name[sizeof(arg->name) - 1] = 0;
    arg->hasdefault = FALSE;	/* preset (most common case) */
    arg->defvalue.val = 0;	/* clear */
    arg->defvalue_tag = 0;
