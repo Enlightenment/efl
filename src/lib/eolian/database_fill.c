@@ -138,7 +138,6 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
 
    foo_id->scope = prop->scope;
    foo_id->is_class = prop->is_class;
-   foo_id->is_constructing = prop->is_constructing;
 
    if (!_db_fill_params   (prop->keys  , &(foo_id->keys  ))) goto failure;
    if (!_db_fill_params   (prop->values, &(foo_id->params))) goto failure;
@@ -197,7 +196,6 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
    foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
    foo_id->obj_is_const = meth->obj_const;
    foo_id->is_class = meth->is_class;
-   foo_id->is_constructing = meth->is_constructing;
 
    if (meth->only_legacy)
      foo_id->get_only_legacy = EINA_TRUE;

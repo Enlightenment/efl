@@ -1296,8 +1296,7 @@ parse_property(Eo_Lexer *ls)
    Eo_Property_Def *prop = NULL;
    Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
-             has_protected = EINA_FALSE, has_class  = EINA_FALSE,
-             has_constructor = EINA_FALSE;
+             has_protected = EINA_FALSE, has_class  = EINA_FALSE;
    prop = calloc(1, sizeof(Eo_Property_Def));
    prop->base.file = eina_stringshare_ref(ls->filename);
    prop->base.line = ls->line_number;
@@ -1317,11 +1316,6 @@ parse_property(Eo_Lexer *ls)
         CASE_LOCK(ls, class, "class qualifier");
         prop->is_class = EINA_TRUE;
         eo_lexer_get(ls);
-        break;
-      case KW_at_constructor:
-        CASE_LOCK(ls, constructor, "constructor qualifier");
-        eo_lexer_get(ls);
-        prop->is_constructing = EINA_TRUE;
         break;
       default:
         goto body;
@@ -1378,7 +1372,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
-             has_constructor = EINA_FALSE, has_eo     = EINA_FALSE;
+             has_eo          = EINA_FALSE;
    meth = calloc(1, sizeof(Eo_Method_Def));
    meth->base.file = eina_stringshare_ref(ls->filename);
    meth->base.line = ls->line_number;
@@ -1421,11 +1415,6 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
            case KW_at_class:
              CASE_LOCK(ls, class, "class qualifier");
              meth->is_class = EINA_TRUE;
-             eo_lexer_get(ls);
-             break;
-           case KW_at_constructor:
-             CASE_LOCK(ls, constructor, "constructor qualifier");
-             meth->is_constructing = EINA_TRUE;
              eo_lexer_get(ls);
              break;
            default:
