@@ -371,7 +371,7 @@ do_symbol(FILE * fbin, char *params, cell opcode)
    int                 len;
    unsigned char       mclass, type;
 
-   for (endptr = params; !sc_isspace(*endptr) && endptr != '\0'; endptr++)
+   for (endptr = params; (!sc_isspace(*endptr)) && (*endptr != '\0'); endptr++)
       /* nothing */ ;
    assert(*endptr == ' ');
 
