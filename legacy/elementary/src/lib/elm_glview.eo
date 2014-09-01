@@ -162,6 +162,23 @@ class Elm_Glview (Elm_Widget)
             return: Evas_GL_API *;
          }
       }
+      evas_gl {
+         get {
+            /*@
+            Get the internal Evas GL attached to this view.
+
+            @note The returned Evas_GL must not be destroyed as it is still owned
+            by the view. But this pointer can be used then to call all the evas_gl_
+            functions.
+
+            @since 1.12
+
+            @return The Evas_GL used by this GLView.
+
+            @ingroup GLView */
+            return: Evas_GL *;
+         }
+      }
    }
    implements {
       class.constructor;

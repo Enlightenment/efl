@@ -417,6 +417,12 @@ _elm_glview_changed_set(Eo *obj, Elm_Glview_Data *sd)
        ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
 }
 
+EOLIAN static Evas_GL *
+_elm_glview_evas_gl_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+{
+   return sd->evasgl;
+}
+
 static void
 _elm_glview_class_constructor(Eo_Class *klass)
 {
