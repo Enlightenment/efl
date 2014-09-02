@@ -229,19 +229,21 @@ _expr_serialize(const Eolian_Expression *expr, Eina_Strbuf *buf, Eina_Bool outer
       case EOLIAN_EXPR_DOUBLE:
       case EOLIAN_EXPR_STRING:
       case EOLIAN_EXPR_CHAR:
-      case EOLIAN_EXPR_NULL:
-      case EOLIAN_EXPR_BOOL:
         {
-           Eolian_Value v = eolian_expression_eval(expr, EOLIAN_MASK_ALL);
-           if (!v.type)
-             return EINA_FALSE;
-           const char *x = eolian_expression_value_to_literal(&v);
+           Eolian_Value *v = (Eolian_Value*)&expr->type;
+           const char *x = eolian_expression_value_to_literal(v);
            if (!x)
              return EINA_FALSE;
            eina_strbuf_append(buf, x);
            eina_stringshare_del(x);
            break;
         }
+      case EOLIAN_EXPR_NULL:
+        eina_strbuf_append(buf, "null");
+        break;
+      case EOLIAN_EXPR_BOOL:
+        eina_strbuf_append(buf, expr->value.b ? "true" : "false");
+        break;
       case EOLIAN_EXPR_NAME:
       case EOLIAN_EXPR_ENUM:
         {
