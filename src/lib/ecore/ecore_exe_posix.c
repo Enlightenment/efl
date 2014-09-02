@@ -525,7 +525,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 }
 
 Eina_Bool
-_impl_ecore_exe_send(Ecore_Exe  *obj,
+_impl_ecore_exe_send(Ecore_Exe  *obj EINA_UNUSED,
                Ecore_Exe_Data *exe,
                const void *data,
                int         size)
