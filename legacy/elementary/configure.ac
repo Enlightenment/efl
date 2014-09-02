@@ -31,7 +31,7 @@ EFL_INIT
 # C++ bindings
 
 AC_ARG_ENABLE([cxx-bindings],
-   [AC_HELP_STRING([--enable-cxx-bindings],
+   [AS_HELP_STRING([--enable-cxx-bindings],
        [enable C++11 bindings. @<:@default=disabled@:>@])],
    [want_cxx11="${enableval}"],
    [want_cxx11="no"])
@@ -47,7 +47,7 @@ AC_ARG_WITH([tests],
 # Elementary base dir
 
 AC_ARG_WITH([elementary-base-dir],
-   [AC_HELP_STRING([--with-elementary-base-dir=PATH], [specify the subdirectory for all elementary data @<:@default=${elementary_base_dir}@:>@])],
+   [AS_HELP_STRING([--with-elementary-base-dir=PATH], [specify the subdirectory for all elementary data @<:@default=${elementary_base_dir}@:>@])],
    [elementary_base_dir=${withval}],
    [elementary_base_dir=".elementary"])
 
@@ -67,7 +67,7 @@ EFL_CHECK_INSTALL_EXAMPLES(
 # Debug mode
 
 AC_ARG_ENABLE([debug],
-   [AC_HELP_STRING([--enable-debug], [enable elementary debug support. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-debug], [enable elementary debug support. @<:@default=disabled@:>@])],
    [want_elementary_debug=$enableval],
    [want_elementary_debug="no"])
 
@@ -81,7 +81,7 @@ AC_SUBST([ELM_DEBUG_DEF])
 # quicklaunch support
 
 AC_ARG_ENABLE([quick-launch],
-   [AC_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
    [want_quicklaunch=$enableval],
    [want_quicklaunch="auto"])
 
@@ -446,7 +446,7 @@ ELM_ELOCATION_DEF="#undef"
 have_elementary_elocation="no"
 want_elementary_elocation="auto"
 AC_ARG_ENABLE([elocation],
-   [AC_HELP_STRING([--disable-elocation], [disable elocation support. @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--disable-elocation], [disable elocation support. @<:@default=detect@:>@])],
    [want_elementary_elocation=$enableval], [])
 
 if test "x$want_elementary_elocation" != "xno"; then
@@ -474,7 +474,7 @@ ELM_EWEATHER_DEF="#undef"
 have_elementary_eweather="no"
 want_elementary_eweather="auto"
 AC_ARG_ENABLE([eweather],
-   [AC_HELP_STRING([--disable-eweather], [disable eweather support. @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--disable-eweather], [disable eweather support. @<:@default=detect@:>@])],
    [want_elementary_eweather=$enableval], [])
 
 if test "x$want_elementary_eweather" != "xno"; then
@@ -502,7 +502,7 @@ ELM_EMAP_DEF="#undef"
 have_elementary_emap="no"
 want_elementary_emap="auto"
 AC_ARG_ENABLE([emap],
-   [AC_HELP_STRING([--disable-emap], [disable emap support. @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--disable-emap], [disable emap support. @<:@default=detect@:>@])],
    [want_elementary_emap=$enableval], [])
 
 if test "x$want_elementary_emap" != "xno"; then
@@ -532,7 +532,7 @@ elementary_web_backend="detect"
 elementary_web="no"
 want_elementary_web=""
 AC_ARG_WITH([elementary-web-backend],
-   [AC_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
    [
     elementary_web_backend=${withval}
    ],
