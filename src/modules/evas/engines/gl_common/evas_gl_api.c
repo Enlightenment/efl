@@ -16,7 +16,7 @@ void _make_current_check(const char* api)
 {
    EVGL_Context *ctx = NULL;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (!ctx)
      {
@@ -29,7 +29,7 @@ void _direct_rendering_check(const char *api)
 {
    EVGL_Context *ctx = NULL;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
    if (!ctx)
      {
         ERR("Current Context Not Set");
@@ -59,7 +59,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
    EVGL_Resource *rsc;
 
    rsc = _evgl_tls_resource_get();
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (!ctx)
      {
@@ -449,7 +449,7 @@ _evgl_glEnable(GLenum cap)
 {
    EVGL_Context *ctx;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (cap == GL_SCISSOR_TEST)
       if (ctx) ctx->scissor_enabled = 1;
@@ -461,7 +461,7 @@ _evgl_glDisable(GLenum cap)
 {
    EVGL_Context *ctx;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (cap == GL_SCISSOR_TEST)
       if (ctx) ctx->scissor_enabled = 0;

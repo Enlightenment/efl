@@ -4023,6 +4023,9 @@ init_gl(void)
         ORD(gl_proc_address_get);       // FIXME: Need to implement
         ORD(gl_native_surface_get);
         ORD(gl_api_get);
+        //ORD(gl_error_get);
+        //ORD(gl_current_context_get);
+        //ORD(gl_current_surface_get);
 #undef ORD
      }
 }

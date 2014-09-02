@@ -289,10 +289,7 @@ extern void           _evgl_api_get(Evas_GL_API *api, int debug);
 extern EVGL_Resource *_evgl_tls_resource_get();
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
-extern EVGL_Context  *_evgl_current_context_get();
 extern int            _evgl_not_in_pixel_get();
 extern int            _evgl_direct_enabled();
-extern void           _evgl_error_set(int error_enum);
-extern int            _evgl_error_get();
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

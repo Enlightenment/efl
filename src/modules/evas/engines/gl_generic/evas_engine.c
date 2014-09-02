@@ -1173,7 +1173,7 @@ eng_gl_current_surface_get(void *data EINA_UNUSED)
 {
    EVGL_Context *ctx;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
    if (!ctx)
      return NULL;
 

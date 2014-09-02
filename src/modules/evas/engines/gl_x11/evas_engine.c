@@ -75,6 +75,10 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
+glsym_func_void     glsym_evas_gl_common_error_set = NULL;
+glsym_func_int      glsym_evas_gl_common_error_get = NULL;
+glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
+
 #ifdef GL_GLES
 
 #ifndef EGL_NATIVE_PIXMAP_KHR
@@ -217,7 +221,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
@@ -233,13 +237,14 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (!ret)
           {
              int err = eglGetError();
-             _evgl_error_set(err - EGL_SUCCESS);
+             glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
              ERR("eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
           }
         return 1;
      }
 
+   // FIXME: Check (eglGetCurrentDisplay() != dpy) ?
    if ((eglGetCurrentContext() != ctx) ||
        (eglGetCurrentSurface(EGL_READ) != sfc) ||
        (eglGetCurrentSurface(EGL_DRAW) != sfc) )
@@ -255,7 +260,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (!ret)
           {
              int err = eglGetError();
-             _evgl_error_set(err - EGL_SUCCESS);
+             glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
              ERR("eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
           }
@@ -272,7 +277,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (!ret)
           {
              ERR("glXMakeCurrent() failed!");
-             _evgl_error_set(EVAS_GL_BAD_DISPLAY);
+             glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
              return 0;
           }
         return 1;
@@ -291,7 +296,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (!ret)
           {
              ERR("glXMakeCurrent() failed. Ret: %d! Context: %p Surface: %p", ret, (void*)ctx, (void*)sfc);
-             _evgl_error_set(EVAS_GL_BAD_DISPLAY);
+             glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
              return 0;
           }
      }
@@ -310,7 +315,7 @@ evgl_eng_native_window_create(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -339,7 +344,7 @@ evgl_eng_native_window_create(void *data)
    if (!win)
      {
         ERR("Creating native X window failed.");
-        _evgl_error_set(EVAS_GL_BAD_DISPLAY);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
         return NULL;
      }
 
@@ -355,14 +360,14 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
    if (!native_window)
      {
         ERR("Inavlid native surface.");
-        _evgl_error_set(EVAS_GL_BAD_NATIVE_WINDOW);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_NATIVE_WINDOW);
         return 0;
      }
 
@@ -385,7 +390,7 @@ evgl_eng_window_surface_create(void *data, void *native_window EINA_UNUSED)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -426,7 +431,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
@@ -434,7 +439,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
    if (!surface)
      {
         ERR("Invalid surface.");
-        _evgl_error_set(EVAS_GL_BAD_SURFACE);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
         return 0;
      }
 
@@ -454,7 +459,7 @@ evgl_eng_context_create(void *data, void *share_ctx)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -486,7 +491,7 @@ evgl_eng_context_create(void *data, void *share_ctx)
      {
         int err = eglGetError();
         ERR("Engine Context Creations Failed. Error: %#x.", err);
-        _evgl_error_set(err - EGL_SUCCESS);
+        glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
         return NULL;
      }
 
@@ -513,8 +518,8 @@ evgl_eng_context_create(void *data, void *share_ctx)
    if (!context)
      {
         ERR("Internal Resource Context Creations Failed.");
-        if(!(eng_get_ob(re)->info->info.display)) _evgl_error_set(EVAS_GL_BAD_DISPLAY);
-        if(!(eng_get_ob(re)->win)) _evgl_error_set(EVAS_GL_BAD_NATIVE_WINDOW);
+        if(!(eng_get_ob(re)->info->info.display)) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
+        if(!(eng_get_ob(re)->win)) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_NATIVE_WINDOW);
         return NULL;
      }
 
@@ -532,8 +537,8 @@ evgl_eng_context_destroy(void *data, void *context)
    if ((!re) || (!context))
      {
         ERR("Invalid Render Input Data. Engine: %p, Context: %p", data, context);
-        if (!re) _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
-        if (!context) _evgl_error_set(EVAS_GL_BAD_CONTEXT);
+        if (!re) glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        if (!context) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
 
@@ -555,7 +560,7 @@ evgl_eng_string_get(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -588,7 +593,7 @@ evgl_eng_rotation_angle_get(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
@@ -597,7 +602,7 @@ evgl_eng_rotation_angle_get(void *data)
    else
      {
         ERR("Unable to retrieve rotation angle.");
-        _evgl_error_set(EVAS_GL_BAD_CONTEXT);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
 }
@@ -654,6 +659,9 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
    LINK2GENERIC(evas_gl_symbols);
+   LINK2GENERIC(evas_gl_common_error_get);
+   LINK2GENERIC(evas_gl_common_error_set);
+   LINK2GENERIC(evas_gl_common_current_context_get);
 
 #ifdef GL_GLES
 #define FINDSYM(dst, sym, typ) \
@@ -1269,7 +1277,7 @@ eng_gl_current_context_get(void *data EINA_UNUSED)
 {
    EVGL_Context *ctx;
 
-   ctx = _evgl_current_context_get();
+   ctx = glsym_evas_gl_common_current_context_get();
    if (!ctx)
      return NULL;
 
@@ -1287,11 +1295,11 @@ eng_gl_current_context_get(void *data EINA_UNUSED)
 }
 
 static int
-eng_gl_error_get(void *data EINA_UNUSED)
+eng_gl_error_get(void *data)
 {
    int err;
 
-   if ((err = _evgl_error_get()) != EVAS_GL_SUCCESS)
+   if ((err = glsym_evas_gl_common_error_get(data)) != EVAS_GL_SUCCESS)
      goto end;
 
 #ifdef GL_GLES
@@ -1306,7 +1314,7 @@ eng_gl_error_get(void *data EINA_UNUSED)
 #endif
 
 end:
-    _evgl_error_set(EVAS_GL_SUCCESS);
+   glsym_evas_gl_common_error_set(data, EVAS_GL_SUCCESS);
    return err;
 }
 
@@ -1435,7 +1443,7 @@ _native_free_cb(void *data, void *image)
                 if ((err = eglGetError()) != EGL_SUCCESS)
                   {
                      ERR("eglDestroyImage() failed.");
-                     _evgl_error_set(err - EGL_SUCCESS);
+                     glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
                   }
              }
            else
@@ -1627,7 +1635,7 @@ eng_image_native_set(void *data, void *image, void *native)
                   int err = eglGetError();
                   ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i with error %d",
                                                          (unsigned int)pm, num_config, err);
-                  _evgl_error_set(err - EGL_SUCCESS);
+                  glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
                 }
               else
                 {

@@ -505,7 +505,8 @@ evas_gl_error_get(Evas_GL *evas_gl)
    return EVAS_GL_NOT_INITIALIZED;
    MAGIC_CHECK_END();
 
-   if ((err = _evas_gl_internal_error_get(evas_gl)) != EVAS_GL_SUCCESS) goto end;
+   if ((err = _evas_gl_internal_error_get(evas_gl)) != EVAS_GL_SUCCESS)
+     goto end;
 
    if (!evas_gl->evas->engine.func->gl_error_get)
      err = EVAS_GL_NOT_INITIALIZED;
