@@ -2845,6 +2845,11 @@ _link_combine(void)
                   eina_list_move_list(&combine, (Eina_List**)&tup->data, l);
                }
              current_program = el->pr;
+             if (!el->epp->common.name)
+               {
+                  ERR("A part without a name was detected.");
+                  exit(-1);
+               }
              _program_target_add(strdup(el->epp->common.name));
              EINA_LIST_FREE(combine, ell)
                {
