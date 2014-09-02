@@ -779,6 +779,16 @@ EAPI Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_P
 EAPI const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
 
 /*
+ * @brief Get the default value of a parameter
+ *
+ * @param[in] param_desc parameter handle
+ * @return the value or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Function_Parameter *param);
+
+/*
  * @brief Get name of a parameter
  *
  * @param[in] param_desc parameter handle

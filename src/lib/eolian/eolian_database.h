@@ -118,6 +118,7 @@ struct _Eolian_Function_Parameter
    Eolian_Object base;
    Eina_Stringshare *name;
    Eolian_Type *type;
+   Eolian_Expression *value;
    Eina_Stringshare *description;
    Eolian_Parameter_Dir param_dir;
    Eina_Bool is_const_on_get :1; /* True if const in this the get property */
@@ -313,7 +314,7 @@ void database_function_del(Eolian_Function *fid);
 
 /* func parameters */
 
-Eolian_Function_Parameter *database_parameter_add(Eolian_Type *type, const char *name, const char *description);
+Eolian_Function_Parameter *database_parameter_add(Eolian_Type *type, Eolian_Expression *value, const char *name, const char *description);
 void database_parameter_del(Eolian_Function_Parameter *pdesc);
 
 /* implements */

@@ -15,6 +15,13 @@ eolian_parameter_type_get(const Eolian_Function_Parameter *param)
    return param->type;
 }
 
+EAPI const Eolian_Expression *
+eolian_parameter_default_value_get(const Eolian_Function_Parameter *param)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
+   return param->value;
+}
+
 EAPI Eina_Stringshare *
 eolian_parameter_name_get(const Eolian_Function_Parameter *param)
 {

@@ -23,6 +23,7 @@ typedef struct _Eo_Param_Def
    Eolian_Object base;
    Eolian_Parameter_Dir way;
    Eolian_Type *type;
+   Eolian_Expression *value;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eina_Bool nonull:1;
