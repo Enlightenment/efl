@@ -55,3 +55,4 @@ tags
 /config/default/*.src
 /config/mobile/*.src
 /config/standard/*.src
+Session.vim
