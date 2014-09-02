@@ -116,6 +116,10 @@ static void *gl_lib_handle;
 static int gl_lib_is_gles = 0;
 static Evas_GL_API gl_funcs;
 
+static Eina_Bool _tls_init = EINA_FALSE;
+static Eina_TLS gl_current_ctx_key = 0;
+static Eina_TLS gl_current_sfc_key = 0;
+
 //------------------------------------------------------//
 // OSMesa APIS...
 static OSMesaContext (*_sym_OSMesaCreateContextExt)             (GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist) = NULL;
@@ -2263,7 +2267,25 @@ eng_image_load_error_get(void *data EINA_UNUSED, void *image)
    return im->cache_entry.load_error;
 }
 
+
 //------------ Evas GL engine code ---------------//
+#ifdef EVAS_GL
+static inline int
+_tls_check(void)
+{
+   // note: this is not thread safe...
+   if (!_tls_init)
+     {
+        if (!eina_tls_new(&gl_current_ctx_key)) return 0;
+        if (!eina_tls_new(&gl_current_sfc_key)) return 0;
+        eina_tls_set(gl_current_ctx_key, NULL);
+        eina_tls_set(gl_current_sfc_key, NULL);
+     }
+   _tls_init = EINA_TRUE;
+   return 1;
+}
+#endif
+
 static void *
 eng_gl_surface_create(void *data EINA_UNUSED, void *config, int w, int h)
 {
@@ -2370,6 +2392,10 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 
    if (!sfc) return 0;
 
+   _tls_check();
+   if (sfc == eina_tls_get(gl_current_sfc_key))
+     eina_tls_set(gl_current_sfc_key, NULL);
+
    if (sfc->buffer) free(sfc->buffer);
 
    free(sfc);
@@ -2432,6 +2458,10 @@ eng_gl_context_destroy(void *data EINA_UNUSED, void *context)
 
    if (!ctx) return 0;
 
+   _tls_check();
+   if (ctx == eina_tls_get(gl_current_ctx_key))
+     eina_tls_set(gl_current_ctx_key, NULL);
+
    _sym_OSMesaDestroyContext(ctx->context);
 
    free(ctx);
@@ -2456,11 +2486,15 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
 
+   _tls_check();
+
    // Unset surface/context
    if ((!sfc) || (!ctx))
      {
         if (ctx) ctx->current_sfc = NULL;
         if (sfc) sfc->current_ctx = NULL;
+        eina_tls_set(gl_current_ctx_key, NULL);
+        eina_tls_set(gl_current_sfc_key, NULL);
         return 1;
      }
 
@@ -2480,6 +2514,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
         if (!ctx->context)
           {
              ERR("Error initializing context.");
+             eina_tls_set(gl_current_ctx_key, NULL);
+             eina_tls_set(gl_current_sfc_key, NULL);
              return 0;
           }
 
@@ -2494,6 +2530,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    if (ret == GL_FALSE)
      {
         ERR("Error doing MakeCurrent.");
+        eina_tls_set(gl_current_ctx_key, NULL);
+        eina_tls_set(gl_current_sfc_key, NULL);
         return 0;
      }
 
@@ -2502,6 +2540,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    // Set the current surface/context
    ctx->current_sfc = sfc;
    sfc->current_ctx = ctx;
+   eina_tls_set(gl_current_ctx_key, ctx);
+   eina_tls_set(gl_current_sfc_key, sfc);
 
    return 1;
 #else
@@ -2576,6 +2616,20 @@ eng_gl_error_get(void *data)
      return EVAS_GL_BAD_DISPLAY;
 
    return EVAS_GL_SUCCESS;
+}
+
+static void *
+eng_gl_current_context_get(void *data EINA_UNUSED)
+{
+   _tls_check();
+   return eina_tls_get(gl_current_ctx_key);
+}
+
+static void *
+eng_gl_current_surface_get(void *data EINA_UNUSED)
+{
+   _tls_check();
+   return eina_tls_get(gl_current_sfc_key);
 }
 
 //------------------------------------------------//
@@ -3987,6 +4041,9 @@ static int
 gl_lib_init(void)
 {
 #ifdef EVAS_GL
+   // Current ctx & sfc stuff
+   if (!_tls_check()) return 0;
+
    // dlopen OSMesa 
    gl_lib_handle = dlopen("libOSMesa.so.9", RTLD_NOW);
    if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.8", RTLD_NOW);
@@ -4037,8 +4094,8 @@ init_gl(void)
         ORD(gl_native_surface_get);
         ORD(gl_api_get);
         ORD(gl_error_get);
-        //ORD(gl_current_context_get);
-        //ORD(gl_current_surface_get);
+        ORD(gl_current_context_get);
+        ORD(gl_current_surface_get);
 #undef ORD
      }
 }
