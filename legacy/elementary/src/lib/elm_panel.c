@@ -1259,9 +1259,31 @@ _elm_panel_elm_widget_disable(Eo *obj, Elm_Panel_Data *sd)
 }
 
 EOLIAN static void
-_elm_panel_scrollable_content_size_set(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd, double ratio)
+_elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio)
 {
+   Evas_Coord w, h;
    sd->content_size_ratio = ratio;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+   switch (sd->orient)
+     {
+      case ELM_PANEL_ORIENT_TOP:
+      case ELM_PANEL_ORIENT_BOTTOM:
+         // vertical
+         evas_object_resize(sd->scr_ly, w, (1 + sd->content_size_ratio) * h);
+         evas_object_size_hint_min_set(sd->scr_panel, w, (sd->content_size_ratio * h));
+         evas_object_size_hint_min_set(sd->scr_event, w, h);
+         break;
+      case ELM_PANEL_ORIENT_LEFT:
+      case ELM_PANEL_ORIENT_RIGHT:
+         // horizontal
+         evas_object_resize(sd->scr_ly, (1 + sd->content_size_ratio) * w, h);
+         evas_object_size_hint_min_set(sd->scr_panel, (sd->content_size_ratio * w), h);
+         evas_object_size_hint_min_set(sd->scr_event, w, h);
+         break;
+     }
+
+   ecore_animator_add(_elm_panel_anim_cb, obj);
 }
 
 EOLIAN static void
