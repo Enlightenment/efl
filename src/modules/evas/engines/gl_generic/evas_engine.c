@@ -1182,6 +1182,13 @@ eng_gl_current_surface_get(void *data EINA_UNUSED)
    return ctx->current_sfc;
 }
 
+static int
+eng_gl_rotation_angle_get(void *data)
+{
+   if (!evgl_engine->funcs->rotation_angle_get) return 0;
+   return evgl_engine->funcs->rotation_angle_get(data);
+}
+
 static void *
 eng_gl_string_query(void *data, int name)
 {
@@ -1802,7 +1809,7 @@ module_open(Evas_Module *em)
    //ORD(gl_surface_query);
    // gl_current_context_get is in engine
    ORD(gl_current_surface_get);
-   //ORD(gl_rotation_angle_get);
+   ORD(gl_rotation_angle_get);
 
    ORD(image_load_error_get);
 

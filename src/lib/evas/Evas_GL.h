@@ -424,7 +424,10 @@ typedef enum _Evas_GL_Stencil_Bits
 typedef enum _Evas_GL_Options_Bits
 {
    EVAS_GL_OPTIONS_NONE    = 0,     /**< No extra options */
-   EVAS_GL_OPTIONS_DIRECT  = (1<<0) /**< Optional hint to allow rendering directly to evas' window when possible */
+   EVAS_GL_OPTIONS_DIRECT  = (1<<0),/**< Optional hint to allow rendering directly to the Evas window if possible */
+   EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION = (1<<1) /**< Force direct rendering even if the canvas is rotated.
+                                                  *   In that case, it is the application's role to rotate the contents of
+                                                  *   the Evas_GL view. @see evas_gl_rotation_get. @since 1.12 */
 } Evas_GL_Options_Bits;
 
 /**
@@ -575,6 +578,31 @@ EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas
  *
  */
 EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the current rotation of the view, in degrees.
+ *
+ * This function should be called in order to properly handle the current
+ * rotation of the view. It will always return 0 unless the option
+ * @ref EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION has been set.
+ *
+ * Indeed, in case of direct rendering to the back buffer, the client
+ * application is responsible for properly rotating its view. This can generally
+ * be done by applying a rotation to a view matrix.
+ *
+ * @param[in] evas_gl    The current Evas_GL object
+ *
+ * @note The returned value may not be the same as the window rotation, for
+ * example if indirect rendering is used as a fallback, or if the GPU supports
+ * transparent rotation of the buffer during swap.
+ *
+ * @return 0, 90, 180 or 270 depending on the Evas canvas' orientation.
+ *
+ * @see EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION
+ *
+ * @since 1.12
+ */
+EAPI int                      evas_gl_rotation_get       (Evas_GL *evas_gl) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Returns the last error of any evas_gl function called in the current thread.

@@ -2632,6 +2632,12 @@ eng_gl_current_surface_get(void *data EINA_UNUSED)
    return eina_tls_get(gl_current_sfc_key);
 }
 
+static int
+eng_gl_rotation_angle_get(void *data EINA_UNUSED)
+{
+   return 0;
+}
+
 //------------------------------------------------//
 
 /* The following function require that any engine
@@ -3072,6 +3078,7 @@ static Evas_Func func =
      NULL, // need software mesa for gl rendering <- gl_error_get
      NULL, // need software mesa for gl rendering <- gl_current_context_get
      NULL, // need software mesa for gl rendering <- gl_current_surface_get
+     NULL, // need software mesa for gl rendering <- gl_rotation_angle_get
      eng_image_load_error_get,
      eng_font_run_font_end_get,
      eng_image_animated_get,
@@ -4096,6 +4103,7 @@ init_gl(void)
         ORD(gl_error_get);
         ORD(gl_current_context_get);
         ORD(gl_current_surface_get);
+        ORD(gl_rotation_angle_get);
 #undef ORD
      }
 }

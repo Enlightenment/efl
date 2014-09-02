@@ -598,7 +598,11 @@ evgl_eng_rotation_angle_get(void *data)
      }
 
    if ((eng_get_ob(re)) && (eng_get_ob(re)->gl_context))
-      return eng_get_ob(re)->gl_context->rot;
+     {
+        if (_evgl_direct_enabled())
+          return eng_get_ob(re)->gl_context->rot;
+        return 0;
+     }
    else
      {
         ERR("Unable to retrieve rotation angle.");

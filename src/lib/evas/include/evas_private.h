@@ -1247,6 +1247,7 @@ struct _Evas_Func
    int  (*gl_error_get)                  (void *data);
    void *(*gl_current_context_get)       (void *data);
    void *(*gl_current_surface_get)       (void *data);
+   int  (*gl_rotation_angle_get)         (void *data);
 
    int  (*image_load_error_get)          (void *data, void *image);
    int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);

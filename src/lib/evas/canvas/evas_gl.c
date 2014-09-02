@@ -497,6 +497,19 @@ evas_gl_api_get(Evas_GL *evas_gl)
 }
 
 EAPI int
+evas_gl_rotation_get(Evas_GL *evas_gl)
+{
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return 0;
+   MAGIC_CHECK_END();
+
+   if (!evas_gl->evas->engine.func->gl_rotation_angle_get)
+     return 0;
+
+   return evas_gl->evas->engine.func->gl_rotation_angle_get(evas_gl->evas->engine.data.output);
+}
+
+EAPI int
 evas_gl_error_get(Evas_GL *evas_gl)
 {
    int err;
