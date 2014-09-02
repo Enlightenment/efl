@@ -17,7 +17,10 @@ static Eina_Bool
 _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Enum_Type_Field *ef, Eina_Bool *success)
 {
-   *success = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
+   if (ef->value)
+     *success = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
+   else
+     *success = EINA_TRUE;
    return *success;
 }
 
