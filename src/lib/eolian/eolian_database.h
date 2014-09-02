@@ -201,44 +201,6 @@ struct _Eolian_Enum_Type_Field
    Eina_Stringshare  *comment;
 };
 
-typedef enum
-{
-   EOLIAN_BINOP_INVALID = -1,
-
-   EOLIAN_BINOP_ADD, /* + int, float */
-   EOLIAN_BINOP_SUB, /* - int, float */
-   EOLIAN_BINOP_MUL, /* * int, float */
-   EOLIAN_BINOP_DIV, /* / int, float */
-   EOLIAN_BINOP_MOD, /* % int */
-
-   EOLIAN_BINOP_EQ, /* == all types */
-   EOLIAN_BINOP_NQ, /* != all types */
-   EOLIAN_BINOP_GT, /* >  int, float */
-   EOLIAN_BINOP_LT, /* <  int, float */
-   EOLIAN_BINOP_GE, /* >= int, float */
-   EOLIAN_BINOP_LE, /* <= int, float */
-
-   EOLIAN_BINOP_AND, /* && all types */
-   EOLIAN_BINOP_OR,  /* || all types */
-
-   EOLIAN_BINOP_BAND, /* &  int */
-   EOLIAN_BINOP_BOR,  /* |  int */
-   EOLIAN_BINOP_BXOR, /* ^  int */
-   EOLIAN_BINOP_LSH,  /* << int */
-   EOLIAN_BINOP_RSH   /* >> int */
-} Eolian_Binary_Operator;
-
-typedef enum
-{
-   EOLIAN_UNOP_INVALID = -1,
-
-   EOLIAN_UNOP_UNM, /* - sint */
-   EOLIAN_UNOP_UNP, /* + sint */
-
-   EOLIAN_UNOP_NOT,  /* ! int, float, bool */
-   EOLIAN_UNOP_BNOT, /* ~ int */
-} Eolian_Unary_Operator;
-
 struct _Eolian_Expression
 {
    Eolian_Object base;

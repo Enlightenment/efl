@@ -217,6 +217,44 @@ typedef struct _Eolian_Value
    Eolian_Value_Union value;
 } Eolian_Value;
 
+typedef enum
+{
+   EOLIAN_BINOP_INVALID = -1,
+
+   EOLIAN_BINOP_ADD, /* + int, float */
+   EOLIAN_BINOP_SUB, /* - int, float */
+   EOLIAN_BINOP_MUL, /* * int, float */
+   EOLIAN_BINOP_DIV, /* / int, float */
+   EOLIAN_BINOP_MOD, /* % int */
+
+   EOLIAN_BINOP_EQ, /* == all types */
+   EOLIAN_BINOP_NQ, /* != all types */
+   EOLIAN_BINOP_GT, /* >  int, float */
+   EOLIAN_BINOP_LT, /* <  int, float */
+   EOLIAN_BINOP_GE, /* >= int, float */
+   EOLIAN_BINOP_LE, /* <= int, float */
+
+   EOLIAN_BINOP_AND, /* && all types */
+   EOLIAN_BINOP_OR,  /* || all types */
+
+   EOLIAN_BINOP_BAND, /* &  int */
+   EOLIAN_BINOP_BOR,  /* |  int */
+   EOLIAN_BINOP_BXOR, /* ^  int */
+   EOLIAN_BINOP_LSH,  /* << int */
+   EOLIAN_BINOP_RSH   /* >> int */
+} Eolian_Binary_Operator;
+
+typedef enum
+{
+   EOLIAN_UNOP_INVALID = -1,
+
+   EOLIAN_UNOP_UNM, /* - sint */
+   EOLIAN_UNOP_UNP, /* + sint */
+
+   EOLIAN_UNOP_NOT,  /* ! int, float, bool */
+   EOLIAN_UNOP_BNOT, /* ~ int */
+} Eolian_Unary_Operator;
+
 /*
  * @brief Parse a given .eo file and fill the database.
  *
@@ -1539,6 +1577,94 @@ EAPI Eina_Stringshare *eolian_expression_value_to_literal(const Eolian_Value *v)
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_expression_serialize(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the type of an expression.
+ *
+ * @param[in] expr the expression.
+ * @return the expression type.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Expression_Type eolian_expression_type_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the binary operator of an expression.
+ *
+ * @param[in] expr the expression.
+ * @return the binary operator, EOLIAN_BINOP_INVALID on failure.
+ *
+ * This only works on binary expressions, otherwise it returns
+ * EOLIAN_BINOP_INVALID.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Binary_Operator eolian_expression_binary_operator_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the lhs (left hand side) of a binary expression.
+ *
+ * @param[in] expr the expression.
+ * @return the expression or NULL.
+ *
+ * This only works on binary expressions, otherwise it returns NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_expression_binary_lhs_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the rhs (right hand side) of a binary expression.
+ *
+ * @param[in] expr the expression.
+ * @return the expression or NULL.
+ *
+ * This only works on binary expressions, otherwise it returns NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_expression_binary_rhs_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the unary operator of an expression.
+ *
+ * @param[in] expr the expression.
+ * @return the unary operator, EOLIAN_UNOP_INVALID on failure.
+ *
+ * This only works on unary expressions, otherwise it returns
+ * EOLIAN_UNOP_INVALID.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Unary_Operator eolian_expression_unary_operator_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the expression of an unary expression.
+ *
+ * @param[in] expr the expression.
+ * @return the expression or NULL.
+ *
+ * This only works on unary expressions, otherwise it returns NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Expression *eolian_expression_unary_expression_get(const Eolian_Expression *expr);
+
+/*
+ * @brief Get the value of an expression.
+ *
+ * @param[in] expr the expression.
+ * @return the value.
+ *
+ * Keep in mind that this doesn't evaluate anything. That's why it only works
+ * on expressions that actually hold values (not unknown, not binary, not
+ * unary). For some types of expressions (enum, name), this stores the actual
+ * name (in the value.s field). Resources for this are held by the database.
+ * Don't attempt to free the string or anything like that.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Value eolian_expression_value_get(const Eolian_Expression *expr);
 
 /*
  * @brief Get a global variable by name. Supports namespaces.
