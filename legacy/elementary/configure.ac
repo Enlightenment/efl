@@ -131,28 +131,7 @@ AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AC_SUBST([ELM_UNIX_DEF])
 AC_SUBST([ELM_WIN32_DEF])
 
-
 ### Checks for programs
-
-# gettext
-m4_ifdef([AM_GNU_GETTEXT_VERSION], [
-AM_GNU_GETTEXT_VERSION([0.17])
-])
-
-m4_ifdef([AM_GNU_GETTEXT], [
-AM_GNU_GETTEXT([external])
-po_makefile_in=po/Makefile.in
-have_po="yes"
-],[
-have_po="no"
-])
-AC_SUBST([LTLIBINTL])
-
-if test "x${POSUB}" = "x" ; then
-   have_po="no"
-fi
-
-AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
 # compilers
 AC_PROG_CC
@@ -171,6 +150,26 @@ else
    pkgconfig_requires_private="Requires"
 fi
 AC_SUBST([pkgconfig_requires_private])
+
+# gettext
+m4_ifdef([AM_GNU_GETTEXT_VERSION], [
+AM_GNU_GETTEXT_VERSION([0.18])
+])
+
+m4_ifdef([AM_GNU_GETTEXT], [
+AM_GNU_GETTEXT([external])
+po_makefile_in=po/Makefile.in
+have_po="yes"
+],[
+have_po="no"
+])
+AC_SUBST([LTLIBINTL])
+
+if test "x${POSUB}" = "x" ; then
+   have_po="no"
+fi
+
+AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
 # doxygen
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
