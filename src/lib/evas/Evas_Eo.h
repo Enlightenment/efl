@@ -36,6 +36,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN;
 EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT;
 EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_PRE;
 EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_DEVICE_CHANGED;
 
 // Callbacks events for use with Evas objects
 #define EVAS_OBJECT_EVENT_MOUSE_IN (&(_EVAS_OBJECT_EVENT_MOUSE_IN))
@@ -73,6 +74,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
 #define EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT (&(_EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT))
 #define EVAS_CANVAS_EVENT_RENDER_PRE (&(_EVAS_CANVAS_EVENT_RENDER_PRE))
 #define EVAS_CANVAS_EVENT_RENDER_POST (&(_EVAS_CANVAS_EVENT_RENDER_POST))
+#define EVAS_CANVAS_EVENT_DEVICE_CHANGED (&(_EVAS_CANVAS_EVENT_DEVICE_CHANGED))
 
 EAPI extern const Eo_Event_Description _CLICKED_EVENT;
 EAPI extern const Eo_Event_Description _CLICKED_DOUBLE_EVENT;
