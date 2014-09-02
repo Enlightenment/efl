@@ -304,17 +304,16 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         if (!win->ivi_surface) 
           {
 #endif
-             if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
-               if ((!win->xdg_surface) && (_ecore_wl_disp->wl.xdg_shell))
-                 {
-                    win->xdg_surface =
-                      xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
-                                                win->surface);
-                    if (!win->xdg_surface) return;
-                    xdg_surface_set_user_data(win->xdg_surface, win);
-                    xdg_surface_add_listener(win->xdg_surface,
-                                             &_ecore_xdg_surface_listener, win);
-                 }
+             if ((!win->xdg_surface) && (_ecore_wl_disp->wl.xdg_shell))
+               {
+                  win->xdg_surface =
+                    xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
+                                              win->surface);
+                  if (!win->xdg_surface) return;
+                  xdg_surface_set_user_data(win->xdg_surface, win);
+                  xdg_surface_add_listener(win->xdg_surface,
+                                           &_ecore_xdg_surface_listener, win);
+               }
              else if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
                {
                   win->shell_surface = 
@@ -335,31 +334,6 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 #ifdef USE_IVI_SHELL
           }
 #endif
-             win->xdg_surface =
-               xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
-                                         win->surface);
-             if (!win->xdg_surface) return;
-             xdg_surface_set_user_data(win->xdg_surface, win);
-             xdg_surface_add_listener(win->xdg_surface,
-                                      &_ecore_xdg_surface_listener, win);
-          }
-        else if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
-          {
-             win->shell_surface = 
-               wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell,
-                                          win->surface);
-             if (!win->shell_surface) return;
-
-             wl_shell_surface_add_listener(win->shell_surface,
-                                           &_ecore_wl_shell_surface_listener,
-                                           win);
-
-             if (win->title)
-               wl_shell_surface_set_title(win->shell_surface, win->title);
-
-             if (win->class_name)
-               wl_shell_surface_set_class(win->shell_surface, win->class_name);
-           }
      }
 
    /* trap for valid shell surface */
