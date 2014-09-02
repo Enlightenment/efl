@@ -501,6 +501,11 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "int"));
    fail_if(strcmp(eolian_parameter_name_get(param), "value"));
    fail_if(strcmp(eolian_parameter_description_get(param), "Value description"));
+   expr = eolian_parameter_default_value_get(param);
+   fail_if(!expr);
+   v = eolian_expression_eval(expr, EOLIAN_MASK_INT);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != 100);
 
    /* legacy only */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "b", EOLIAN_PROPERTY)));
@@ -546,6 +551,11 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "double"));
    fail_if(strcmp(eolian_parameter_name_get(param), "c"));
    fail_if(eolian_parameter_description_get(param));
+   expr = eolian_parameter_default_value_get(param);
+   fail_if(!expr);
+   v = eolian_expression_eval(expr, EOLIAN_MASK_FLOAT);
+   fail_if(v.type != EOLIAN_EXPR_DOUBLE);
+   fail_if(v.value.d != 1337.6);
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 
