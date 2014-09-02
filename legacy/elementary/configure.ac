@@ -31,10 +31,10 @@ EFL_INIT
 # C++ bindings
 
 AC_ARG_ENABLE([cxx-bindings],
-   [AC_HELP_STRING([--disable-cxx-bindings],
-       [disable C++11 bindings. @<:@default=enabled@:>@])],
+   [AC_HELP_STRING([--enable-cxx-bindings],
+       [enable C++11 bindings. @<:@default=disabled@:>@])],
    [want_cxx11="${enableval}"],
-   [want_cxx11="yes"])
+   [want_cxx11="no"])
 
 # Tests
 
