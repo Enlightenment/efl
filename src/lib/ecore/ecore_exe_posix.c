@@ -530,14 +530,26 @@ _impl_ecore_exe_send(Ecore_Exe  *obj,
                const void *data,
                int         size)
 {
-   if (exe->close_stdin)
-   {
-      ERR("Ecore_Exe %p stdin is closed! Cannot send %d bytes from %p",
-          exe, size, data);
-      return EINA_FALSE;
-   }
+   void *buf;
 
-   return _impl_ecore_exe_send(obj, exe, data, size);
+   if (exe->child_fd_write == -1)
+     {
+        ERR("Ecore_Exe %p created without ECORE_EXE_PIPE_WRITE! "
+              "Cannot send %d bytes from %p", exe, size, data);
+        return EINA_FALSE;
+     }
+
+   buf = realloc(exe->write_data_buf, exe->write_data_size + size);
+   if (!buf) return EINA_FALSE;
+
+   exe->write_data_buf = buf;
+   memcpy((char *)exe->write_data_buf + exe->write_data_size, data, size);
+   exe->write_data_size += size;
+
+   if (exe->write_fd_handler)
+      ecore_main_fd_handler_active_set(exe->write_fd_handler, ECORE_FD_WRITE);
+
+   return EINA_TRUE;
 }
 
 void
