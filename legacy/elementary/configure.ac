@@ -231,11 +231,10 @@ requirement_elm="\
     "
 
 EFL_CXX_COMPILE_STDCXX_11([ext])
-want_cxx11="yes"
 AC_ARG_ENABLE([cxx-bindings],
-   [AC_HELP_STRING([--disable-cxx-bindings],
-       [disable C++11 bindings. @<:@default=enabled@:>@])],
-   [want_cxx11="${enableval}"])
+   [AC_HELP_STRING([--enable-cxx-bindings],
+       [enable C++11 bindings. @<:@default=disabled@:>@])],
+   [want_cxx11="${enableval}"], [want_cxx11="no"])
 
 if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
    PKG_CHECK_MODULES([ELEMENTARY_CXX],
