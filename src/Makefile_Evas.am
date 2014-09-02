@@ -395,6 +395,7 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
+@NEON_CFLAGS@ \
 @ALTIVEC_CFLAGS@
 
 # SSE3
