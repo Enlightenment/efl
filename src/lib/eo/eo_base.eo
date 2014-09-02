@@ -44,7 +44,7 @@ Return event freeze count. */
       }
    }
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Call the object's constructor.
 Should not be used with #eo_do. Only use it with #eo_do_super. */
          legacy: null;
@@ -177,6 +177,9 @@ callbacks of the same priority are called in reverse order of creation. */
    implements {
         class.constructor;
         class.destructor;
+   }
+   constructors {
+      .constructor;
    }
    events {
       callback,add; /*@ A callback was added. */

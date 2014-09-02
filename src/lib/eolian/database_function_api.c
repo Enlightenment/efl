@@ -111,13 +111,6 @@ eolian_function_is_class(const Eolian_Function *fid)
    return fid->is_class;
 }
 
-EAPI Eina_Bool
-eolian_function_is_constructing(const Eolian_Function *fid)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   return fid->is_constructing;
-}
-
 EAPI const Eolian_Function_Parameter *
 eolian_function_parameter_get_by_name(const Eolian_Function *fid, const char *param_name)
 {

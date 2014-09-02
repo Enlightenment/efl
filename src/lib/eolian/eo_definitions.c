@@ -107,6 +107,7 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    Eo_Method_Def *meth;
    Eolian_Event *sgn;
    Eolian_Implement *impl;
+   Eolian_Constructor *ctor;
 
    if (kls->base.file)
      eina_stringshare_del(kls->base.file);
@@ -127,6 +128,9 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
 
    EINA_LIST_FREE(kls->implements, impl)
      database_implement_del(impl);
+
+   EINA_LIST_FREE(kls->constructors, ctor)
+     database_constructor_del(ctor);
 
    EINA_LIST_FREE(kls->properties, prop)
      eo_definitions_property_def_free(prop);
@@ -193,6 +197,9 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    if (tmp->impl)
      database_implement_del(tmp->impl);
+
+   if (tmp->ctor)
+     database_constructor_del(tmp->ctor);
 
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);

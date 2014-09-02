@@ -4,25 +4,39 @@
 static void
 _implements_print(Eolian_Implement *impl, int nb_spaces)
 {
-   Eolian_Function_Type ft;
    const char *t;
-
+   Eolian_Function_Type ft = EOLIAN_UNRESOLVED;
    eolian_implement_function_get(impl, &ft);
    switch (ft)
      {
       case EOLIAN_PROP_SET: t = "SET"; break;
       case EOLIAN_PROP_GET: t = "GET"; break;
       case EOLIAN_METHOD: t = "METHOD"; break;
-      case EOLIAN_UNRESOLVED:
-        {
-           t = "Type is the same as function being overriden";
-           break;
-        }
+      case EOLIAN_UNRESOLVED: t = ""; break;
       default:
          return;
      }
    printf("%*s <%s> <%s>\n", nb_spaces + 5, "", eolian_implement_full_name_get(impl), t);
 }
+
+static void
+_constructors_print(Eolian_Constructor *ctor, int nb_spaces)
+{
+   const char *t;
+   const Eolian_Function *func = eolian_constructor_function_get(ctor);
+   Eolian_Function_Type ft = eolian_function_type_get(func);
+   switch (ft)
+     {
+      case EOLIAN_PROP_SET: t = "SET"; break;
+      case EOLIAN_PROP_GET: t = "GET"; break;
+      case EOLIAN_METHOD: t = "METHOD"; break;
+      case EOLIAN_UNRESOLVED: t = ""; break;
+      default:
+         return;
+     }
+   printf("%*s <%s> <%s>\n", nb_spaces + 5, "", eolian_constructor_full_name_get(ctor), t);
+}
+
 
 static void
 _event_print(Eolian_Event *ev, int nb_spaces)
@@ -200,6 +214,8 @@ _class_print(const Eolian_Class *cl)
      {
         _function_print(function, 4);
      }
+   printf("\n");
+
    // Implement
    printf("  implements:\n");
    Eolian_Implement *impl;
@@ -208,6 +224,16 @@ _class_print(const Eolian_Class *cl)
         _implements_print(impl, 4);
      }
    printf("\n");
+
+   // Constructor
+   printf("  constructors:\n");
+   Eolian_Constructor *ctor;
+   EINA_LIST_FOREACH(cl->constructors, itr, ctor)
+     {
+        _constructors_print(ctor, 4);
+     }
+   printf("\n");
+
    // Implement
    printf("  events:\n");
    Eolian_Event *ev;
@@ -216,6 +242,7 @@ _class_print(const Eolian_Class *cl)
         _event_print(ev, 4);
      }
    printf("\n");
+
    return EINA_TRUE;
 }
 

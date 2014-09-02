@@ -2,7 +2,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
 {
    eo_prefix: ecore_obj_exe;
    properties {
-        command @constructor {
+        command {
              /*@ Control the command that's executed. FIXME: May need a split/rename. */
              set {
                   legacy: null;
@@ -23,6 +23,9 @@ class Ecore.Exe (Eo.Base, Efl.Control)
         Eo.Base.destructor;
         Eo.Base.finalize;
         Efl.Control.suspend.set;
+   }
+   constructors {
+      .command;
    }
    events {
         data,get: Ecore_Exe_Event_Data;

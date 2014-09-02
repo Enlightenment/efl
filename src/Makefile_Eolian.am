@@ -27,6 +27,8 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/database_type_api.c \
                                   lib/eolian/database_implement.c \
                                   lib/eolian/database_implement_api.c \
+                                  lib/eolian/database_constructor.c \
+                                  lib/eolian/database_constructor_api.c \
                                   lib/eolian/database_event.c \
                                   lib/eolian/database_event_api.c \
                                   lib/eolian/database_print.c \

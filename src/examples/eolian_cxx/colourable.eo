@@ -4,11 +4,11 @@ class Colourable (Eo.Base)
     legacy_prefix: legacy;
     data: Colourable_Data;
     methods {
-        constructor @constructor {
+        constructor {
             /*@ Default constructor. */
             legacy: null;
         }
-        rgb_composite_constructor @constructor {
+        rgb_composite_constructor {
             /*@ Composite RGB Constructor. */
             legacy: null;
             params {
@@ -17,7 +17,7 @@ class Colourable (Eo.Base)
                 @in int b; /*@ The blue component. */
                }
         }
-        rgb_24bits_constructor @constructor {
+        rgb_24bits_constructor {
             /*@ RGB Constructor. */
             legacy: null;
             params {
@@ -58,6 +58,11 @@ class Colourable (Eo.Base)
                 int b; /*@ The blue component. */
             }
         }
+    }
+    constructors {
+        .constructor;
+        .rgb_composite_constructor;
+        .rgb_24bits_constructor;
     }
     events {
         colour_changed: int;

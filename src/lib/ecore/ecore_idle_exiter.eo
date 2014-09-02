@@ -2,7 +2,7 @@ class Ecore.Idle.Exiter (Eo.Base)
 {
    eo_prefix: ecore_idle_exiter;
    methods {
-      constructor @constructor {
+      constructor {
          /*@ Constructor. */
          legacy: null;
          params {
@@ -14,5 +14,8 @@ class Ecore.Idle.Exiter (Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+   }
+   constructors {
+      .constructor;
    }
 }

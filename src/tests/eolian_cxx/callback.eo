@@ -3,15 +3,15 @@ class Callback (Eo.Base)
    legacy_prefix: null;
    data: Callback_Data;
    methods {
-      default_constructor @constructor {
+      default_constructor {
       }
-      constructor @constructor {
+      constructor {
          params {
             @in Ecore_Cb cb;
             @in void* data;
          }
       }
-      constructor2 @constructor {
+      constructor2 {
          params {
             @in Ecore_Cb cb;
             @in void* data;
@@ -32,6 +32,11 @@ class Callback (Eo.Base)
          }
       }
    }
+    constructors {
+        .default_constructor;
+        .constructor;
+        .constructor2;
+    }
    events {
      call_on_add;
    }

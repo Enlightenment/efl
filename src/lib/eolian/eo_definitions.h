@@ -64,7 +64,6 @@ typedef struct _Eo_Property_Def
    Eina_List *accessors;
    int scope;
    Eina_Bool is_class:1;
-   Eina_Bool is_constructing:1;
 } Eo_Property_Def;
 
 /* METHOD */
@@ -80,7 +79,6 @@ typedef struct _Eo_Method_Def
    Eina_Bool obj_const;
    int scope;
    Eina_Bool is_class:1;
-   Eina_Bool is_constructing:1;
    Eina_Bool only_legacy:1;
 } Eo_Method_Def;
 
@@ -98,6 +96,7 @@ typedef struct _Eo_Class_Def
    Eina_Stringshare *data_type;
    Eina_List *inherits;
    Eina_List *implements;
+   Eina_List *constructors;
    Eina_List *events;
    Eina_List *properties;
    Eina_List *methods;
@@ -122,6 +121,7 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *str_items;
    Eolian_Event *event;
    Eolian_Implement *impl;
+   Eolian_Constructor *ctor;
    Eina_List *expr_defs;
    Eina_List *strs;
 } Eo_Lexer_Temps;
