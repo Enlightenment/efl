@@ -1722,6 +1722,8 @@ Eina_Bool
 _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
                                         Eina_Bool force)
 {
+   gboolean      mute = 0;
+   gdouble       vol = 0.0;
    gboolean res;
    int i;
 
@@ -1787,8 +1789,6 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
         GstQuery     *query;
         const GValue *val;
         gchar        *str;
-        gboolean      mute = 0;
-        gdouble       vol = 0.0;
         
         gdouble length_time = 0.0;
         gint width;
