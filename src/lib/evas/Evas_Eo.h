@@ -714,7 +714,6 @@ typedef enum _Evas_3D_Mesh_File_Type
 {
    EVAS_3D_MESH_FILE_TYPE_MD2 = 0,   /**< Quake's MD2 mesh file format */
    EVAS_3D_MESH_FILE_TYPE_OBJ,
-   EVAS_3D_MESH_FILE_TYPE_EET,
 } Evas_3D_Mesh_File_Type;
 
 #include "canvas/evas_image.eo.h"
