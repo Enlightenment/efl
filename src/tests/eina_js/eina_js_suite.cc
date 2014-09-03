@@ -9,6 +9,7 @@
 static const char script[] =
   "print(\"teste\");\n"
   "var l = new List();\n"
+  "l.push_back(5);\n"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {
