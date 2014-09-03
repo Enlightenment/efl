@@ -269,7 +269,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
                                    eolian_class_function_get_by_name(cl, inm,
                                                                      ftype);
         if (!foo_id) return _func_error(cl, impl);
-        if (impl->is_auto)
+        if (impl->is_prop_set)
           foo_id->set_auto = EINA_TRUE;
         else
           foo_id->get_auto = EINA_TRUE;
@@ -283,7 +283,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
                                    eolian_class_function_get_by_name(cl, inm,
                                                                      ftype);
         if (!foo_id) return _func_error(cl, impl);
-        if (impl->is_auto)
+        if (impl->is_prop_set)
           foo_id->set_empty = EINA_TRUE;
         else
           foo_id->get_empty = EINA_TRUE;
