@@ -25,7 +25,15 @@ lib/evas/canvas/evas_clickable_interface.eo.hh \
 lib/evas/canvas/evas_scrollable_interface.eo.hh \
 lib/evas/canvas/evas_selectable_interface.eo.hh \
 lib/evas/canvas/evas_zoomable_interface.eo.hh \
-lib/evas/canvas/evas_box.eo.hh
+lib/evas/canvas/evas_box.eo.hh \
+lib/evas/canvas/evas_3d_camera.eo.hh \
+lib/evas/canvas/evas_3d_light.eo.hh \
+lib/evas/canvas/evas_3d_material.eo.hh \
+lib/evas/canvas/evas_3d_mesh.eo.hh \
+lib/evas/canvas/evas_3d_node.eo.hh \
+lib/evas/canvas/evas_3d_object.eo.hh \
+lib/evas/canvas/evas_3d_scene.eo.hh \
+lib/evas/canvas/evas_3d_texture.eo.hh
 
 lib/evas/Evas.hh: $(generated_evas_canvas_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
