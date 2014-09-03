@@ -15,7 +15,10 @@ include $(top_srcdir)/src/Makefile_Eolian_Cxx_Helper.am
 AM_CXXFLAGS = \
 	-I$(srcdir) \
 	-I$(builddir) \
+	-I$(top_srcdir)/src/lib/efl \
 	-I$(top_builddir)/src/lib/efl \
+	-I$(top_srcdir)/src/lib/efl/interfaces \
+	-I$(top_builddir)/src/lib/efl/interfaces \
 	-I$(top_srcdir)/src/lib/eina \
 	-I$(top_builddir)/src/lib/eina \
 	-I$(top_srcdir)/src/lib/eo \
@@ -46,9 +49,10 @@ AM_LDFLAGS = \
   -L$(top_builddir)/src/lib/evas \
 	-L$(top_builddir)/src/lib/ecore \
 	-L$(top_builddir)/src/lib/ecore_evas \
-	-leina -levas -leo -lecore -lecore_evas -pthread
+	-lefl -leina -levas -leo -lecore -lecore_evas -pthread
 
 LDADD = \
+	$(top_builddir)/src/lib/efl/libefl.la \
 	$(top_builddir)/src/lib/eo/libeo.la \
 	$(top_builddir)/src/lib/eina/libeina.la \
 	$(top_builddir)/src/lib/evas/libevas.la \
