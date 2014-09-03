@@ -51,6 +51,7 @@ struct _Elm_Fileselector_Data
    const char              *path;
    const char              *selection;
    Ecore_Idler             *populate_idler;
+   Ecore_Idler             *path_entry_idler;
 
    const char              *path_separator;
    const char              *search_string;

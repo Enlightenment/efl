@@ -69,6 +69,7 @@ _elm_fileselector_smart_del_do(Elm_Fileselector_Data *sd)
    eina_stringshare_del(sd->path);
    eina_stringshare_del(sd->selection);
    free(ecore_idler_del(sd->populate_idler));
+   ecore_idler_del(sd->path_entry_idler);
 
    eo_do_super(sd->obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1048,25 +1049,6 @@ _canc(void *data,
 }
 
 static void
-_on_text_clicked(void *data EINA_UNUSED,
-                 Evas_Object *obj,
-                 void *event_info EINA_UNUSED)
-{
-   ELM_FILESELECTOR_DATA_GET(data, sd);
-
-   /* FIXME: When anchor is clicked, current callback is also called.
-    * But when it is "anchor,clicked" entry should be unfocused, so we remove
-    * focus in achor_clicked.
-    *
-    * Check if entry is focused.
-    * It will be so if empty place (not anchor) was clicked. */
-   if (!elm_object_focus_get(obj)) return;
-
-   elm_entry_entry_set(obj, sd->path);
-   elm_entry_cursor_pos_set(obj, eina_stringshare_strlen(sd->path));
-}
-
-static void
 _on_text_activated(void *data,
                    Evas_Object *obj,
                    void *event_info EINA_UNUSED)
@@ -1150,6 +1132,29 @@ end:
    elm_object_focus_set(obj, EINA_FALSE);
 }
 
+static Eina_Bool
+_anchors_undo(void *data)
+{
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+
+   elm_entry_entry_set(sd->path_entry, sd->path);
+   elm_entry_cursor_pos_set(sd->path_entry, eina_stringshare_strlen(sd->path));
+
+   sd->path_entry_idler = NULL;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_on_text_focused(void *data,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+
+   if (!sd->path_entry_idler)
+       sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
+}
 static void
 _on_text_unfocused(void *data,
                    Evas_Object *obj EINA_UNUSED,
@@ -1168,6 +1173,8 @@ _anchor_clicked(void *data,
    Evas_Object *fs = data;
    const char *p;
 
+   ELM_FILESELECTOR_DATA_GET(fs, sd);
+
    // keep a ref to path 'couse it will be destroyed by _populate
    p = eina_stringshare_add(info->name);
    _populate(fs, p, NULL, NULL);
@@ -1175,6 +1182,11 @@ _anchor_clicked(void *data,
    /* After anchor was clicked, entry will be focused, and will be editable.
     * It's wrong. So remove focus. */
    elm_object_focus_set(obj, EINA_FALSE);
+
+   if (sd->path_entry_idler) {
+       ecore_idler_del(sd->path_entry_idler);
+       sd->path_entry_idler = NULL;
+   }
 }
 
 static Evas_Object *
@@ -1444,7 +1456,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    evas_object_smart_callback_add(en, "anchor,clicked", _anchor_clicked, obj);
-   evas_object_smart_callback_add(en, "clicked", _on_text_clicked, obj);
+   evas_object_smart_callback_add(en, "focused", _on_text_focused, obj);
    evas_object_smart_callback_add(en, "unfocused", _on_text_unfocused, obj);
    evas_object_smart_callback_add(en, "activated", _on_text_activated, obj);
 
