@@ -1763,6 +1763,26 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, (nw / 2));
 
+   evas_object_textblock_text_markup_set(tb, "a<b>b</b>a<b>b</b>a<b>b</b>");
+   evas_textblock_cursor_format_prepend(cur, "+ font_size=50 ellipsis=1.0");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw / 2, nh * 2);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_le(w, (nw / 2));
+
+   evas_object_textblock_text_markup_set(tb, "<item absize=100x100 href=item1></item><item absize=100x100 href=item2></item>");
+   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
+   evas_object_resize(tb, 101, 100);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_le(w, 100);
+
+   evas_object_textblock_text_markup_set(tb, "ab");
+   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw / 2, nh * 2);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_le(w, ellip_w);
+
    {
       double ellip;
       for(ellip = 0.0; ellip <= 1.0; ellip = ellip + 0.1)

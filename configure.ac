@@ -242,7 +242,7 @@ EFL_INIT
 
 ### gettext
 
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18])
 
 m4_ifdef([AC_GNU_GETTEXT], [
 AC_GNU_GETTEXT([external])

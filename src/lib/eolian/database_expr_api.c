@@ -229,19 +229,21 @@ _expr_serialize(const Eolian_Expression *expr, Eina_Strbuf *buf, Eina_Bool outer
       case EOLIAN_EXPR_DOUBLE:
       case EOLIAN_EXPR_STRING:
       case EOLIAN_EXPR_CHAR:
-      case EOLIAN_EXPR_NULL:
-      case EOLIAN_EXPR_BOOL:
         {
-           Eolian_Value v = eolian_expression_eval(expr, EOLIAN_MASK_ALL);
-           if (!v.type)
-             return EINA_FALSE;
-           const char *x = eolian_expression_value_to_literal(&v);
+           Eolian_Value *v = (Eolian_Value*)&expr->type;
+           const char *x = eolian_expression_value_to_literal(v);
            if (!x)
              return EINA_FALSE;
            eina_strbuf_append(buf, x);
            eina_stringshare_del(x);
            break;
         }
+      case EOLIAN_EXPR_NULL:
+        eina_strbuf_append(buf, "null");
+        break;
+      case EOLIAN_EXPR_BOOL:
+        eina_strbuf_append(buf, expr->value.b ? "true" : "false");
+        break;
       case EOLIAN_EXPR_NAME:
       case EOLIAN_EXPR_ENUM:
         {
@@ -282,4 +284,67 @@ eolian_expression_serialize(const Eolian_Expression *expr)
    const char *ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
+}
+
+EAPI Eolian_Expression_Type
+eolian_expression_type_get(const Eolian_Expression *expr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_EXPR_UNKNOWN);
+   return expr->type;
+}
+
+EAPI Eolian_Binary_Operator
+eolian_expression_binary_operator_get(const Eolian_Expression *expr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_BINOP_INVALID);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type == EOLIAN_EXPR_BINARY,
+                                   EOLIAN_BINOP_INVALID);
+   return expr->binop;
+}
+
+EAPI const Eolian_Expression *
+eolian_expression_binary_lhs_get(const Eolian_Expression *expr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type == EOLIAN_EXPR_BINARY, NULL);
+   return expr->lhs;
+}
+
+EAPI const Eolian_Expression *
+eolian_expression_binary_rhs_get(const Eolian_Expression *expr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type == EOLIAN_EXPR_BINARY, NULL);
+   return expr->rhs;
+}
+
+EAPI Eolian_Unary_Operator
+eolian_expression_unary_operator_get(const Eolian_Expression *expr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, EOLIAN_UNOP_INVALID);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type == EOLIAN_EXPR_UNARY,
+                                   EOLIAN_UNOP_INVALID);
+   return expr->unop;
+}
+
+EAPI const Eolian_Expression *
+eolian_expression_unary_expression_get(const Eolian_Expression *expr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type == EOLIAN_EXPR_UNARY, NULL);
+   return expr->expr;
+}
+
+EAPI Eolian_Value
+eolian_expression_value_get(const Eolian_Expression *expr)
+{
+   Eolian_Value v;
+   v.type = EOLIAN_EXPR_UNKNOWN;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(expr, v);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(expr->type != EOLIAN_EXPR_UNKNOWN
+                                && expr->type != EOLIAN_EXPR_BINARY
+                                && expr->type != EOLIAN_EXPR_UNARY, v);
+   v.type  = expr->type;
+   v.value = expr->value;
+   return v;
 }

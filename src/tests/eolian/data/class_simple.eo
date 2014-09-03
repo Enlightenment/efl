@@ -13,7 +13,7 @@ class Class_Simple {
          get {
          }
          values {
-            int value; /*@ Value description */
+            int value (100); /*@ Value description */
          }
       }
       b {
@@ -28,7 +28,7 @@ class Class_Simple {
          params {
             @in int a; /*@ a */
             @inout char b;
-            @out double c;
+            @out double c (1337.6);
          }
          return: char * (null); /*@ comment for method return */
       }

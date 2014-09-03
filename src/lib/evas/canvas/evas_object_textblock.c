@@ -4375,7 +4375,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 static inline void
 _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 {
-   Evas_Object_Textblock_Text_Item *ellip_ti;
+   Evas_Object_Textblock_Text_Item *ti, *ellip_ti;
    Evas_Object_Textblock_Item *last_it;
    Evas_Coord save_cx;
    int wrap;
@@ -4385,24 +4385,70 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    save_cx = c->x;
    c->w -= ellip_ti->parent.w;
 
-   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+   /* If there is no enough space for ellipsis item, remove all of items */
+   if (c->w <= 0)
      {
-        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-
-        wrap = _layout_text_cutoff_get(c, last_it->format, ti);
-        if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
-          {
-             _layout_item_text_split_strip_white(c, ti, i, wrap);
-          }
-        else if ((wrap == 0) && (c->ln->items))
+        while (c->ln->items)
           {
              last_it = _ITEM(EINA_INLIST_GET(c->ln->items)->last);
+             c->ln->items = _ITEM(eina_inlist_remove(
+                   EINA_INLIST_GET(c->ln->items),
+                   EINA_INLIST_GET(last_it)));
           }
-     }
-   else if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
-     {
-        /* We don't want to add this format item. */
         last_it = NULL;
+     }
+
+   while (last_it)
+     {
+        if (last_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             ti = _ITEM_TEXT(last_it);
+
+             wrap = _layout_text_cutoff_get(c, last_it->format, ti);
+
+             if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
+               {
+                  _layout_item_text_split_strip_white(c, ti, i, wrap);
+                  break;
+               }
+             else if (wrap < 0)
+               {
+                  break;
+               }
+          }
+        else
+          {
+             /* We will ignore format items. ex) tab
+              * But, if there is <item> tag and size is acceptable, we have to insert it to line. */
+             if (!strncmp(_ITEM_FORMAT(last_it)->item, "item", 4) &&
+                 ((c->w - c->o->style_pad.l - c->o->style_pad.r - c->marginl - c->marginr) >= (c->x + last_it->adv)))
+               {
+                  break;
+               }
+          }
+
+        if (c->ln->items && last_it != it)
+          {
+             c->ln->items = _ITEM(eina_inlist_remove(
+                   EINA_INLIST_GET(c->ln->items),
+                   EINA_INLIST_GET(last_it)));
+          }
+
+        last_it = (c->ln->items) ? _ITEM(EINA_INLIST_GET(c->ln->items)->last) : NULL;
+
+        if (last_it)
+          {
+             /* We need to renew ellipsis item.
+              * Because, base format is changed to last_it.
+              * We can't reuse it. */
+             c->w += ellip_ti->parent.w;
+             ellip_ti = _layout_ellipsis_item_new(c, last_it);
+             c->w -= ellip_ti->parent.w;
+             c->x -= last_it->adv;
+             if (c->x < 0)
+               c->x = 0;
+             save_cx = c->x;
+          }
      }
 
    c->x = save_cx;

@@ -1124,7 +1124,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
 }
 
 static void
-parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
+parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
 {
    Eo_Param_Def *par = calloc(1, sizeof(Eo_Param_Def));
    par->base.file = eina_stringshare_ref(ls->filename);
@@ -1159,6 +1159,16 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout)
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
+   if ((is_vals || (par->way == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
+     {
+        int line = ls->line_number, col = ls->column;
+        ls->expr_mode = EINA_TRUE;
+        eo_lexer_get(ls);
+        par->value = parse_expr(ls);
+        ls->expr_mode = EINA_FALSE;
+        pop_expr(ls);
+        check_match(ls, ')', '(', line, col);
+     }
    if (ls->t.kw == KW_at_nonull)
      {
         par->nonull = EINA_TRUE;
@@ -1278,11 +1288,11 @@ end:
 }
 
 static void
-parse_params(Eo_Lexer *ls, Eina_Bool allow_inout)
+parse_params(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
 {
    PARSE_SECTION
      {
-        parse_param(ls, allow_inout);
+        parse_param(ls, allow_inout, is_vals);
         ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
         ls->tmp.param = NULL;
      }
@@ -1347,13 +1357,13 @@ body:
         break;
       case KW_keys:
         CASE_LOCK(ls, keys, "keys definition")
-        parse_params(ls, EINA_FALSE);
+        parse_params(ls, EINA_FALSE, EINA_FALSE);
         prop->keys = ls->tmp.params;
         ls->tmp.params = NULL;
         break;
       case KW_values:
         CASE_LOCK(ls, values, "values definition")
-        parse_params(ls, EINA_FALSE);
+        parse_params(ls, EINA_FALSE, EINA_TRUE);
         prop->values = ls->tmp.params;
         ls->tmp.params = NULL;
         break;
@@ -1454,7 +1464,7 @@ body:
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")
-        parse_params(ls, EINA_TRUE);
+        parse_params(ls, EINA_TRUE, EINA_FALSE);
         meth->params = ls->tmp.params;
         ls->tmp.params = NULL;
         break;

@@ -4,6 +4,7 @@ static Eina_Bool
 _db_fill_param(Eina_List **plist, Eo_Param_Def *param)
 {
    Eolian_Function_Parameter *p = database_parameter_add(param->type,
+                                                         param->value,
                                                          param->name,
                                                          param->comment);
    p->param_dir = param->way;
