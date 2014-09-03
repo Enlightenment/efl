@@ -17,7 +17,7 @@
 #include <Ecore.hh>
 #include <Evas.hh>
 
-#include <ecore_poll.eo.hh>
+#include <ecore_poller.eo.hh>
 
 namespace efl { namespace ecore {
 using ::ecore::poller;
