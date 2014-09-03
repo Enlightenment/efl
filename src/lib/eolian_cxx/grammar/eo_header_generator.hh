@@ -101,7 +101,7 @@ namespace_head(std::ostream& out, eo_class const& cls)
              out << "namespace " << ns.substr(0, pos) << " { ";
              ns.erase(0, pos+2);
           }
-        out << "namespace " << ns << " { " << endl << endl;
+        out << "namespace " << ns << " {" << endl << endl;
      }
 }
 
@@ -126,7 +126,11 @@ include_headers(std::ostream& out,
                 eo_class const& cls EINA_UNUSED,
                 eo_generator_options const& opts)
 {
-   out << "#include <Eo.hh>" << endl << endl
+   out << "extern \"C\"" << endl
+       << "{" << endl
+       << "#include <Efl.h>" << endl
+       << "}" << endl
+       << "#include <Eo.hh>" << endl << endl
        << "#include <eo_cxx_interop.hh>" << endl << endl
        << "extern \"C\"" << endl
        << "{" << endl;
