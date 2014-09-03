@@ -8,18 +8,19 @@ struct _Ecore_Event_Modifier_Match
    unsigned int event_modifier;
 };
 
-static const Ecore_Event_Modifier_Match matchs[] = {
-  { "Shift_L", ECORE_SHIFT, ECORE_EVENT_MODIFIER_SHIFT },
-  { "Shift_R", ECORE_SHIFT, ECORE_EVENT_MODIFIER_SHIFT },
-  { "Alt_L", ECORE_ALT, ECORE_EVENT_MODIFIER_ALT },
-  { "Alt_R", ECORE_ALT, ECORE_EVENT_MODIFIER_ALT },
-  { "Control_L", ECORE_CTRL, ECORE_EVENT_MODIFIER_CTRL },
-  { "Control_R", ECORE_CTRL, ECORE_EVENT_MODIFIER_CTRL },
-  { "Caps_Lock", ECORE_CAPS, ECORE_EVENT_MODIFIER_CAPS },
-  { "Super_L", ECORE_WIN, ECORE_EVENT_MODIFIER_WIN },
-  { "Super_R", ECORE_WIN, ECORE_EVENT_MODIFIER_WIN },
-  { "ISO_Level3_Shift", ECORE_MODE, ECORE_EVENT_MODIFIER_ALTGR },
-  { "Scroll_Lock", ECORE_SCROLL, ECORE_EVENT_MODIFIER_SCROLL }
+static const Ecore_Event_Modifier_Match matchs[] = 
+{
+   { "Shift_L", ECORE_SHIFT, ECORE_EVENT_MODIFIER_SHIFT },
+   { "Shift_R", ECORE_SHIFT, ECORE_EVENT_MODIFIER_SHIFT },
+   { "Alt_L", ECORE_ALT, ECORE_EVENT_MODIFIER_ALT },
+   { "Alt_R", ECORE_ALT, ECORE_EVENT_MODIFIER_ALT },
+   { "Control_L", ECORE_CTRL, ECORE_EVENT_MODIFIER_CTRL },
+   { "Control_R", ECORE_CTRL, ECORE_EVENT_MODIFIER_CTRL },
+   { "Caps_Lock", ECORE_CAPS, ECORE_EVENT_MODIFIER_CAPS },
+   { "Super_L", ECORE_WIN, ECORE_EVENT_MODIFIER_WIN },
+   { "Super_R", ECORE_WIN, ECORE_EVENT_MODIFIER_WIN },
+   { "ISO_Level3_Shift", ECORE_MODE, ECORE_EVENT_MODIFIER_ALTGR },
+   { "Scroll_Lock", ECORE_SCROLL, ECORE_EVENT_MODIFIER_SCROLL }
 };
 
 /* local variables */
