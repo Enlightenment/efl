@@ -45,8 +45,8 @@ operator<<(std::ostream& out, event_callback_add const& x)
    out << tab(1) << "template <typename F>" << endl
        << tab(1) << "::efl::eo::signal_connection" << endl
        << tab(1) << "callback_" << x._event.name << "_add(F && callback_," << endl
-       << tab(11) << "::efl::eo::callback_priority priority_ =" << endl
-       << tab(11) << "::efl::eo::callback_priorities::default_)" << endl
+       << tab(8) << "::efl::eo::callback_priority priority_ =" << endl
+       << tab(8) << "::efl::eo::callback_priorities::default_)" << endl
        << tab(1) << "{" << endl
        << tab(2) << "typedef typename std::remove_reference<F>::type function_type;" << endl
        << tab(2) << "::std::unique_ptr<function_type> f ( new function_type(std::move(callback_)) );" << endl
