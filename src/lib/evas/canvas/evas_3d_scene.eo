@@ -111,6 +111,31 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
             @in Evas_Real y;         /*@ Y coordinate of the picking position. */
          }
       }
+      shadows_enable_set {
+         /*
+           Enable or disable shadows on given scene
+
+           If shadows_enabled @c EINA_TRUE, the objects in the scene can throw shadow to another objects located behind them.
+           The depth map used for shading. Directed and projective light sources are supported.
+
+           @ingroup Evas_3D_Scene
+          */
+         params {
+            @in Eina_Bool shadows_enabled;  /*@ shadows enabled status. */
+         }
+      }
+
+      shadows_enable_get @const {
+         /*
+           Get shadows enabled status for given scene.
+           @return The shadows enabled status.
+
+           @ingroup Evas_3D_Scene
+         */
+         return: Eina_Bool;
+         params {
+         }
+      }
    }
    properties {
 

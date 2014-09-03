@@ -36,6 +36,8 @@ typedef unsigned long         E3D_Shader_Flag;
 #define E3D_SHADER_FLAG_EMISSION_TEXTURE_BLEND  (1 << 27)
 #define E3D_SHADER_FLAG_NORMAL_TEXTURE_BLEND    (1 << 28)
 #define E3D_SHADER_FLAG_FOG_ENABLED             (1 << 29)
+#define E3D_SHADER_FLAG_SHADOWED                (1 << 30)
+
 
 static inline Eina_Bool
 _flags_need_tex_coord(E3D_Shader_Flag flags)
@@ -55,6 +57,7 @@ struct _E3D_Draw_Data
    Evas_Mat4   matrix_mvp;
    Evas_Mat4   matrix_mv;
    Evas_Mat3   matrix_normal;
+   Evas_Mat4   matrix_light;
 
    struct {
         Evas_3D_Vertex_Buffer vertex0;
@@ -80,6 +83,8 @@ struct _E3D_Draw_Data
    } materials[EVAS_3D_MATERIAL_ATTRIB_COUNT];
 
    Evas_Real shininess;
+
+   GLint       smap_sampler;
 
    struct {
         Evas_Vec4   position;
@@ -124,6 +129,7 @@ struct _E3D_Drawable
    GLuint   depth_stencil_buf;
    GLuint   depth_buf;
    GLuint   stencil_buf;
+   GLuint   texDepth;
 };
 
 /* Texture internal functions. */

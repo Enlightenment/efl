@@ -249,6 +249,100 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
             @out Evas_Real quadratic; /*@ Quadratic attenuation term..*/
          }
       }
+
+      projection_matrix_set {
+         /*@
+           Set the projection matrix of the given light source.
+
+           @param light The given light source.
+           @param matrix Pointer to the array of 16 Evas_Real values in column major order.
+
+           Default projection matrix is identity matrix.
+
+           @see evas_3d_light_projection_perspective_set()
+           @see evas_3d_light_projection_ortho_set()
+           @see evas_3d_light_projection_frustum_set()
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+           @in const(Evas_Real) *matrix; /*@ Projection Matrix */
+         }
+      }
+
+      projection_matrix_get  @const {
+         /*@
+          Get the projection matrix of the given light source.
+
+          @param light The given light source.
+          @param matrix Pointer to receive the 16 Evas_Real values in column major order.
+
+          @see evas_3d_light_projection_matrix_set()
+
+          @ingroup Evas_3D_Light
+         */
+         params {
+           @out Evas_Real matrix; /*@ Projection Matrix */
+         }
+      }
+
+      projection_perspective_set {
+         /*@
+           Set the projection matrix of the given light source with perspective projection.
+
+           @param light The given light source.
+           @param fovy Field of view angle in Y direction.
+           @param aspect Aspect ratio.
+           @param dnear Distance to near clipping plane.
+           @param dfar Distance to far clipping plane.
+
+           @see evas_3d_light_projection_matrix_set()
+
+           @ingroup Evas_3D_Light
+          */
+
+         params {
+            Evas_Real fovy; /*@ Field of view angle in Y direction. */
+            Evas_Real aspect; /*@ Aspect ratio.*/
+            Evas_Real dnear; /*@ Distance to near clipping plane. */
+            Evas_Real dfar; /*@ Distance to far clipping plane. */
+         }
+      }
+
+      projection_frustum_set {
+         /*@
+           Set the projection matrix of the given light source with frustum projection.
+
+           @see evas_3d_Light_projection_matrix_set()
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
+            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
+            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
+            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
+            Evas_Real dnear; /*@ Distance to near clipping plane. */
+            Evas_Real dfar; /*@ Distance to far clipping plane. */
+         }
+      }
+      projection_ortho_set {
+         /*@
+           Set the projection matrix of the given light source with orthogonal projection.
+
+           @see evas_3d_light_projection_matrix_set()
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
+            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
+            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
+            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
+            Evas_Real dnear; /*@ Distance to near clipping plane. */
+            Evas_Real dfar; /*@ Distance to far clipping plane. */
+         }
+      }
    }
 
    implements {

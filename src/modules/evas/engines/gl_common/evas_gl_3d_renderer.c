@@ -14,6 +14,7 @@ struct _E3D_Renderer
 
    Eina_Bool      vertex_attrib_enable[E3D_MAX_VERTEX_ATTRIB_COUNT];
    Eina_Bool      depth_test_enable;
+   GLuint         texDepth;
 };
 
 static inline GLenum
@@ -132,6 +133,8 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
                }
           }
      }
+     glActiveTexture(GL_TEXTURE0 + data->smap_sampler);
+     glBindTexture(GL_TEXTURE_2D, renderer->texDepth);
 }
 
 static inline void
@@ -192,6 +195,7 @@ e3d_renderer_target_set(E3D_Renderer *renderer, E3D_Drawable *target)
    glBindFramebuffer(GL_FRAMEBUFFER, target->fbo);
    glViewport(0, 0, target->w, target->h);
    renderer->fbo = target->fbo;
+   renderer->texDepth = target->texDepth;
 }
 
 void
@@ -235,6 +239,7 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
 
    _renderer_program_use(renderer, program);
    e3d_program_uniform_upload(program, data);
+   if (data->mode != EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER)
    _renderer_texture_bind(renderer, data);
 
    /* Set up vertex attrib pointers. */

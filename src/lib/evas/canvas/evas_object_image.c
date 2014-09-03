@@ -2582,6 +2582,7 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
    evas_3d_scene_data_init(&scene_data);
 
    scene_data.bg_color = pd_scene->bg_color;
+   scene_data.shadows_enabled = pd_scene->shadows_enabled;
    scene_data.camera_node = pd_scene->camera_node;
 
    /* Phase 1 - Update scene graph tree. */

@@ -5,6 +5,7 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_MATRIX_MVP,
    E3D_UNIFORM_MATRIX_MV,
    E3D_UNIFORM_MATRIX_NORMAL,
+   E3D_UNIFORM_MATRIX_LIGHT,
 
    E3D_UNIFORM_POSITION_WEIGHT,
    E3D_UNIFORM_NORMAL_WEIGHT,
@@ -29,6 +30,8 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_TEXTURE_SPECULAR1,
    E3D_UNIFORM_TEXTURE_EMISSION1,
    E3D_UNIFORM_TEXTURE_NORMAL1,
+
+   E3D_UNIFORM_SHADOWMAP,
 
    E3D_UNIFORM_LIGHT_POSITION,
    E3D_UNIFORM_LIGHT_SPOT_DIR,
@@ -121,6 +124,12 @@ _vertex_shader_string_variable_add(E3D_Shader_String *shader,
 {
    ADD_LINE("uniform mat4  uMatrixMvp;");
 
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("uniform mat4 uMatrixLight;");
+        ADD_LINE("varying vec4 lpos;");
+     }
+
    /* Vertex attributes. */
    if (flags & E3D_SHADER_FLAG_VERTEX_POSITION)
      ADD_LINE("attribute   vec4  aPosition0;");
@@ -130,6 +139,8 @@ _vertex_shader_string_variable_add(E3D_Shader_String *shader,
         ADD_LINE("attribute   vec4  aPosition1;");
         ADD_LINE("uniform     float uPositionWeight;");
      }
+
+   else if (mode == EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER) return;
 
    if (flags & E3D_SHADER_FLAG_VERTEX_NORMAL)
      ADD_LINE("attribute   vec4  aNormal0;");
@@ -488,6 +499,11 @@ _vertex_shader_string_get(E3D_Shader_String *shader,
           ADD_LINE("vertexNormalMap(position, normal);");
      }
 
+     if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("lpos = uMatrixLight * vec4(aPosition0.xyz, 1.0);");
+     }
+
    ADD_LINE("}");
 }
 
@@ -503,6 +519,11 @@ _fragment_shader_string_variable_add(E3D_Shader_String *shader,
      {
         ADD_LINE("uniform float uFogFactor;");
         ADD_LINE("uniform vec4  uFogColor;");
+     }
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("varying vec4 lpos;");
+        ADD_LINE("uniform sampler2D uShadowMap;");
      }
 
    /* Materials. */
@@ -689,6 +710,11 @@ _fragment_shader_string_func_flat_add(E3D_Shader_String *shader,
         ADD_LINE("gl_FragColor += uLightSpecular * color * vFactor.y;");
      }
 
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("gl_FragColor *= shadow;");
+     }
+
    if (flags & E3D_SHADER_FLAG_AMBIENT)
      {
         if (flags & E3D_SHADER_FLAG_AMBIENT_TEXTURE_BLEND)
@@ -806,6 +832,11 @@ _fragment_shader_string_func_phong_add(E3D_Shader_String *shader,
    ADD_LINE("} else {");
    ADD_LINE("gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);");
    ADD_LINE("}");
+
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("gl_FragColor *= shadow;");
+     }
 
    /* Ambient term. */
    if (flags & E3D_SHADER_FLAG_AMBIENT)
@@ -971,6 +1002,11 @@ _fragment_shader_string_func_normal_map_add(E3D_Shader_String *shader,
         ADD_LINE("}");
      }
 
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("gl_FragColor *= shadow;");
+     }
+
    ADD_LINE("} else {");
    ADD_LINE("gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);");
    ADD_LINE("}");
@@ -1024,12 +1060,34 @@ _fragment_shader_string_func_normal_map_add(E3D_Shader_String *shader,
 }
 
 static void
+_fragment_shader_string_pcf_even_func_add(E3D_Shader_String *shader,
+                                            Evas_3D_Shade_Mode mode EINA_UNUSED,
+                                            E3D_Shader_Flag flags EINA_UNUSED)
+{
+   ADD_LINE("float pcf(vec4 lpos, float size)");
+   ADD_LINE("{");
+   ADD_LINE("vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;");
+   ADD_LINE("float i, j, randx, randy, shadow;");
+   ADD_LINE("shadow = 0.0;");
+   ADD_LINE("for (i = -4.0; i < 4.0; i++)");
+   ADD_LINE("for (j = -4.0; j < 4.0; j++)");
+   ADD_LINE("{");
+   ADD_LINE("shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy +vec2(i / 8.0, j / 8.0)*size).x);");
+   ADD_LINE("}");
+   ADD_LINE("return shadow / 64.0;");
+   ADD_LINE("}");
+}
+
+static void
 _fragment_shader_string_get(E3D_Shader_String *shader,
                             Evas_3D_Shade_Mode mode, E3D_Shader_Flag flags)
 {
    /* Add variables - vertex attributes. */
    _fragment_shader_string_variable_add(shader, mode, flags);
-
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("float shadow;");
+     }
    /* Add functions. */
    if (mode == EVAS_3D_SHADE_MODE_FLAT)
      _fragment_shader_string_func_flat_add(shader, mode, flags);
@@ -1038,8 +1096,16 @@ _fragment_shader_string_get(E3D_Shader_String *shader,
    else if (mode == EVAS_3D_SHADE_MODE_NORMAL_MAP)
      _fragment_shader_string_func_normal_map_add(shader, mode, flags);
 
+   // TODO Add flexible bluring algorithm of shadows boundaries.
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     _fragment_shader_string_pcf_even_func_add(shader, mode, flags);
+
    /* Add main function. */
    ADD_LINE("void main() {");
+   if (flags & E3D_SHADER_FLAG_SHADOWED)
+     {
+        ADD_LINE("shadow = pcf(lpos, 1.0 / 200.0);");
+     }
 
    if (mode == EVAS_3D_SHADE_MODE_VERTEX_COLOR)
      {
@@ -1061,6 +1127,10 @@ _fragment_shader_string_get(E3D_Shader_String *shader,
           {
              ADD_LINE("gl_FragColor = uMaterialDiffuse;");
           }
+     }
+   else if(mode == EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER)
+     {
+        ADD_LINE("gl_FragColor = vec4(gl_FragCoord.z);");
      }
    else if (mode == EVAS_3D_SHADE_MODE_FLAT)
      {
@@ -1217,6 +1287,7 @@ static const char *uniform_names[] =
    "uMatrixMvp",
    "uMatrixModelview",
    "uMatrixNormal",
+   "uMatrixLight",
    "uPositionWeight",
    "uNormalWeight",
    "uTangentWeight",
@@ -1237,6 +1308,7 @@ static const char *uniform_names[] =
    "uTextureSpecular1",
    "uTextureEmission1",
    "uTextureNormal1",
+   "uShadowMap",
    "uLightPosition",
    "uLightSpotDir",
    "uLightSpotExp",
@@ -1288,6 +1360,13 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          for(int i = 0 ; i <9 ; i++)
             m[i] = data->matrix_normal.m[i];
          glUniformMatrix3fv(loc, 1, EINA_FALSE, &m[0]);
+         break;
+      }
+      case E3D_UNIFORM_MATRIX_LIGHT: {
+         float   m[16];
+         for(int i = 0 ; i <16 ; i++)
+            m[i] = data->matrix_light.m[i];
+         glUniformMatrix4fv(loc, 1, EINA_FALSE, &m[0]);
          break;
       }
       case E3D_UNIFORM_POSITION_WEIGHT:
@@ -1349,6 +1428,9 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       case E3D_UNIFORM_TEXTURE_NORMAL1:
          glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_NORMAL].sampler1);
+         break;
+      case E3D_UNIFORM_SHADOWMAP:
+         glUniform1i(loc, data->smap_sampler);
          break;
       case E3D_UNIFORM_LIGHT_POSITION:
          glUniform4f(loc, data->light.position.x, data->light.position.y,

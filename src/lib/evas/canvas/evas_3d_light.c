@@ -239,4 +239,56 @@ _evas_3d_light_attenuation_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *p
    return pd->enable_attenuation;
 }
 
+EOLIAN static void
+_evas_3d_light_projection_matrix_set(Eo *obj, Evas_3D_Light_Data *pd,
+                                         const Evas_Real *matrix)
+{
+   evas_mat4_array_set(&pd->projection, matrix);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
+}
+
+EOLIAN static void
+_evas_3d_light_projection_matrix_get(Eo *obj EINA_UNUSED,
+                                         Evas_3D_Light_Data *pd,
+                                         Evas_Real *matrix)
+{
+   memcpy(matrix, &pd->projection.m[0], sizeof(Evas_Real) * 16);
+}
+
+EOLIAN static void
+_evas_3d_light_projection_perspective_set(Eo *obj, Evas_3D_Light_Data *pd,
+                                              Evas_Real fovy, Evas_Real aspect,
+                                              Evas_Real dnear, Evas_Real dfar)
+{
+   Evas_Real   xmax;
+   Evas_Real   ymax;
+
+   ymax = dnear * (Evas_Real)tan((double)fovy * M_PI / 360.0);
+   xmax = ymax * aspect;
+
+   evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, dnear, dfar);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
+}
+
+EOLIAN static void
+_evas_3d_light_projection_frustum_set(Eo *obj, Evas_3D_Light_Data *pd,
+                                          Evas_Real left, Evas_Real right,
+                                          Evas_Real bottom, Evas_Real top,
+                                          Evas_Real dnear, Evas_Real dfar)
+{
+   evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, dnear, dfar);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
+}
+
+EOLIAN static void
+_evas_3d_light_projection_ortho_set(Eo *obj, Evas_3D_Light_Data *pd,
+                                        Evas_Real left, Evas_Real right,
+                                        Evas_Real bottom, Evas_Real top,
+                                        Evas_Real dnear, Evas_Real dfar)
+{
+   evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
+}
+
+
 #include "canvas/evas_3d_light.eo.c"

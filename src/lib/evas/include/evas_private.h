@@ -108,11 +108,12 @@ struct _Evas_3D_Scene
 {
    Evas_3D_Node     *root_node;
    Evas_3D_Node     *camera_node;
-   Evas_Color        bg_color;
+   Evas_Color       bg_color;
 
    void             *surface;
    int               w, h;
    Eina_List        *images;
+   Eina_Bool        shadows_enabled :1;
 };
 
 struct _Evas_3D_Node_Mesh
@@ -191,6 +192,7 @@ struct _Evas_3D_Light
    Evas_Real      atten_const;
    Evas_Real      atten_linear;
    Evas_Real      atten_quad;
+   Evas_Mat4      projection;
 
    Eina_Hash     *nodes;
 };
@@ -247,6 +249,7 @@ struct _Evas_3D_Mesh
    Evas_3D_Vertex_Assembly assembly;
 
    Eina_Hash               *nodes;
+   Eina_Bool               shadowed;
 
    Evas_Color              fog_color;
    Eina_Bool               fog_enabled :1;
@@ -285,6 +288,7 @@ struct _Evas_3D_Scene_Public_Data
    Evas_3D_Node     *camera_node;
    Eina_List        *light_nodes;
    Eina_List        *mesh_nodes;
+   Eina_Bool        shadows_enabled :1;
 };
 
 struct _Evas_3D_Pick_Data

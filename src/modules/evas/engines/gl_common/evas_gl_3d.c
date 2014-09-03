@@ -407,7 +407,7 @@ E3D_Drawable *
 e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_format)
 {
    E3D_Drawable  *drawable = NULL;
-   GLuint         tex, fbo;
+   GLuint         tex, fbo, texDepth;
    GLuint         depth_stencil_buf = 0;
    GLuint         depth_buf = 0;
    GLuint         stencil_buf = 0;
@@ -424,6 +424,14 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
    else
      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+   glGenTextures(1, &texDepth);
+   glBindTexture(GL_TEXTURE_2D, texDepth);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, w, h, 0, GL_RGB, GL_UNSIGNED_SHORT, 0);
 
    glGenFramebuffers(1, &fbo);
    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -503,6 +511,7 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    drawable->depth_stencil_buf = depth_stencil_buf;
    drawable->depth_buf = depth_buf;
    drawable->stencil_buf = stencil_buf;
+   drawable->texDepth = texDepth;
 
    return drawable;
 
@@ -1076,6 +1085,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
                       const Evas_Mat4 *matrix_eye,
                       const Evas_Mat4 *matrix_mv,
                       const Evas_Mat4 *matrix_mvp,
+                      const Evas_Mat4 *matrix_light,
                       const Evas_3D_Node *light)
 {
    Eina_List *l, *r;
@@ -1089,6 +1099,10 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         data->flags |= E3D_SHADER_FLAG_FOG_ENABLED;
         data->fog_color = pdmesh->fog_color;
      }
+
+   if (pdmesh->shadowed)
+        data->flags |= E3D_SHADER_FLAG_SHADOWED;
+
    data->mode = pdmesh->shade_mode;
    data->assembly = pdmesh->assembly;
    data->vertex_count = pdmesh->vertex_count;
@@ -1098,6 +1112,8 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
 
    evas_mat4_copy(&data->matrix_mvp, matrix_mvp);
    evas_mat4_copy(&data->matrix_mv, matrix_mv);
+   if (matrix_light != NULL)
+     evas_mat4_copy(&data->matrix_light, matrix_light);
 
    _mesh_frame_find(mesh, frame, &l, &r);
 
@@ -1115,6 +1131,10 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
      {
         BUILD(vertex_attrib,     VERTEX_POSITION,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_COLOR,        EINA_TRUE);
+     }
+   else if (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER)
+     {
+        BUILD(vertex_attrib,     VERTEX_POSITION,     EINA_TRUE);
      }
    else if (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_DIFFUSE)
      {
@@ -1189,19 +1209,70 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         evas_normal_matrix_get(&data->matrix_normal, matrix_mv);
      }
 
+   // TODO Add correct numbering
+   int num;
+   glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &num);
+   data->smap_sampler = num - 1;
    return EINA_TRUE;
 }
 
 static inline void
 _mesh_draw(E3D_Renderer *renderer, Evas_3D_Mesh *mesh, int frame, Evas_3D_Node *light,
-           const Evas_Mat4 *matrix_eye, const Evas_Mat4 *matrix_mv, const Evas_Mat4 *matrix_mvp)
+           const Evas_Mat4 *matrix_eye, const Evas_Mat4 *matrix_mv, const Evas_Mat4 *matrix_mvp, const Evas_Mat4 *matrix_light)
 {
    E3D_Draw_Data   data;
 
    memset(&data, 0x00, sizeof(E3D_Draw_Data));
 
-   if (_mesh_draw_data_build(&data, mesh, frame, matrix_eye, matrix_mv, matrix_mvp, light))
+   if (_mesh_draw_data_build(&data, mesh, frame, matrix_eye, matrix_mv, matrix_mvp, matrix_light, light))
      e3d_renderer_draw(renderer, &data);
+}
+
+void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_Scene_Public_Data *data, Evas_Mat4 *matrix_light_eye, Evas_3D_Node *light)
+{
+   Eina_List        *l;
+   Evas_3D_Node     *n;
+   Evas_3D_Shade_Mode shade_mode;
+   Evas_Color      c = {1.0, 1.0, 1.0};
+
+   glEnable(GL_POLYGON_OFFSET_FILL);
+   glPolygonOffset(4.0, 10000.0);
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawable->texDepth, 0);
+   e3d_renderer_target_set(renderer, drawable);
+   e3d_renderer_clear(renderer, &c);
+
+   Evas_3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_3D_NODE_CLASS);
+   Evas_3D_Light_Data *pd = eo_data_scope_get(pd_light_node->data.light.light, EVAS_3D_LIGHT_CLASS);
+
+   EINA_LIST_FOREACH(data->mesh_nodes, l, n)
+     {
+        Evas_Mat4          matrix_mv;
+        Evas_Mat4          matrix_mvp;
+        Eina_Iterator     *it;
+        void              *ptr;
+
+        Evas_3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EVAS_3D_NODE_CLASS);
+        evas_mat4_multiply(&matrix_mv, matrix_light_eye, &pd_mesh_node->data.mesh.matrix_local_to_world);
+        evas_mat4_multiply(&matrix_mvp, &pd->projection,
+                           &matrix_mv);
+
+        it = eina_hash_iterator_data_new(pd_mesh_node->data.mesh.node_meshes);
+
+        while (eina_iterator_next(it, &ptr))
+          {
+             Evas_3D_Node_Mesh *nm = (Evas_3D_Node_Mesh *)ptr;
+             Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(nm->mesh, EVAS_3D_MESH_CLASS);
+             shade_mode = pdmesh->shade_mode;
+             pdmesh->shade_mode = EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER;
+             _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_light_eye, &matrix_mv, &matrix_mvp, &matrix_mvp);
+             pdmesh->shade_mode = shade_mode;
+          }
+
+        eina_iterator_free(it);
+     }
+
+     glDisable(GL_POLYGON_OFFSET_FILL);
+     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawable->tex, 0);
 }
 
 void
@@ -1211,10 +1282,9 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
    Evas_3D_Node     *n;
    const Evas_Mat4  *matrix_eye;
    Evas_3D_Node     *light;
-
-   /* Set up render target. */
-   e3d_renderer_target_set(renderer, drawable);
-   e3d_renderer_clear(renderer, &data->bg_color);
+   Evas_Mat4        matrix_light_eye;
+   Evas_3D_Light_Data *ld;
+   Evas_3D_Node_Data *pd_light_node;
 
    /* Get eye matrix. */
    Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(data->camera_node, EVAS_3D_NODE_CLASS);
@@ -1222,27 +1292,54 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
 
    Evas_3D_Camera_Data *pd = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_3D_CAMERA_CLASS);
 
+   light = eina_list_data_get(data->light_nodes);
+
+   if (data->shadows_enabled)
+     {
+        pd_light_node = eo_data_scope_get(light, EVAS_3D_NODE_CLASS);
+        evas_mat4_inverse_build(&matrix_light_eye,
+           &pd_light_node->position_world, &pd_light_node ->orientation_world, &pd_light_node->scale_world);
+        ld = eo_data_scope_get(pd_light_node->data.light.light, EVAS_3D_LIGHT_CLASS);
+         _shadowmap_render(drawable, renderer, data, &matrix_light_eye, light);
+     }
+
+   /* Set up render target. */
+   e3d_renderer_target_set(renderer, drawable);
+   e3d_renderer_clear(renderer, &data->bg_color);
    EINA_LIST_FOREACH(data->mesh_nodes, l, n)
      {
         Evas_Mat4          matrix_mv;
+        Evas_Mat4          matrix_light;
         Evas_Mat4          matrix_mvp;
         Eina_Iterator     *it;
         void              *ptr;
         Evas_3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EVAS_3D_NODE_CLASS);
+
+        if (data->shadows_enabled)
+          {
+             evas_mat4_multiply(&matrix_mv, &matrix_light_eye,
+                 &pd_mesh_node->data.mesh.matrix_local_to_world);
+             evas_mat4_multiply(&matrix_light, &ld->projection,
+                 &matrix_mv);
+          }
+
         evas_mat4_multiply(&matrix_mv, matrix_eye, &pd_mesh_node->data.mesh.matrix_local_to_world);
-        evas_mat4_multiply(&matrix_mvp, matrix_eye, &matrix_mv);
         evas_mat4_multiply(&matrix_mvp, &pd->projection,
                            &matrix_mv);
-
-        /* TODO: Get most effective light node. */
-        light = eina_list_data_get(data->light_nodes);
 
         it = eina_hash_iterator_data_new(pd_mesh_node->data.mesh.node_meshes);
 
         while (eina_iterator_next(it, &ptr))
           {
              Evas_3D_Node_Mesh *nm = (Evas_3D_Node_Mesh *)ptr;
-             _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_eye, &matrix_mv, &matrix_mvp);
+             Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(nm->mesh, EVAS_3D_MESH_CLASS);
+             if (data->shadows_enabled)
+               {
+                  pdmesh->shadowed = EINA_TRUE;
+                  _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_eye, &matrix_mv, &matrix_mvp, &matrix_light);
+                  pdmesh->shadowed = EINA_FALSE;
+               }
+             else _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_eye, &matrix_mv, &matrix_mvp, NULL);
           }
 
         eina_iterator_free(it);

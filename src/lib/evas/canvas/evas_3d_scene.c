@@ -65,6 +65,7 @@ _evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_SCENE));
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
+   pd->shadows_enabled = EINA_FALSE;
 }
 
 EOLIAN static void
@@ -708,6 +709,19 @@ _evas_3d_scene_pick_member_list_get(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x
      }
 
    return picked_nodes;
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_scene_shadows_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
+{
+   return pd->shadows_enabled;
+}
+
+EOLIAN static void
+_evas_3d_scene_shadows_enable_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Eina_Bool _shadows_enabled)
+{
+   pd->shadows_enabled = _shadows_enabled;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_SHADOWS_ENABLED, NULL));
 }
 
 #include "canvas/evas_3d_scene.eo.c"
