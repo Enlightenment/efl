@@ -16,8 +16,8 @@ class Evas.Line (Evas.Object)
             second end point. */
          }
          values {
-            Evas_Coord x1; /*@ The X coordinate of the first point. */
-            Evas_Coord y1; /*@ The Y coordinate of the first point. */
+            Evas_Coord x1(0); /*@ The X coordinate of the first point. */
+            Evas_Coord y1(3); /*@ The Y coordinate of the first point. */
             Evas_Coord x2; /*@ The X coordinate of the second point. */
             Evas_Coord y2; /*@ The Y coordinate of the second point. */
          }

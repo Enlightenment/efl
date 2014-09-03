@@ -1605,7 +1605,7 @@ parse_constructor(Eo_Lexer *ls)
 {
    Eina_Strbuf *buf = NULL;
    Eolian_Constructor *ctor = NULL;
-   ctor = calloc(1, sizeof(Eolian_Implement));
+   ctor = calloc(1, sizeof(Eolian_Constructor));
    ctor->base.file = eina_stringshare_ref(ls->filename);
    ctor->base.line = ls->line_number;
    ctor->base.column = ls->column;

@@ -6,6 +6,10 @@
 #include "common_funcs.h"
 
 static _eolian_class_vars class_env;
+/* Used to store the function names that will have to be appended
+ * with __eolian during C generation. Needed when params have to
+ * be initialized and for future features. */
+static Eina_Hash *_funcs_params_init = NULL;
 
 static const char
 tmpl_dtor[] = "\
@@ -348,6 +352,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Bool add_star = EINA_FALSE;
    Eina_Iterator *itr;
    void *data, *data2;
+   const Eolian_Expression *default_ret_val = NULL;
 
    Eina_Bool need_implementation = EINA_TRUE;
    if (!impl_env && eolian_function_is_virtual_pure(funcid, ftype)) need_implementation = EINA_FALSE;
@@ -356,8 +361,11 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Strbuf *va_args = eina_strbuf_new();
    Eina_Strbuf *params = eina_strbuf_new(); /* only variables names */
    Eina_Strbuf *full_params = eina_strbuf_new(); /* variables types + names */
+   Eina_Strbuf *params_init = eina_strbuf_new(); /* init of variables to default */
 
    rettypet = eolian_function_return_type_get(funcid, ftype);
+   if (rettypet)
+      default_ret_val = eolian_function_return_default_value_get(funcid, ftype);
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";
@@ -372,6 +380,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                   rettypet = eolian_parameter_type_get(param);
                   var_as_ret = EINA_TRUE;
                   ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
+                  default_ret_val = eolian_parameter_default_value_get(param);
                }
              eina_iterator_free(itr);
           }
@@ -415,6 +424,30 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              eina_strbuf_append_printf(full_params, ", %s%s%s%s%s",
                    is_const?"const ":"",
                    ptype, had_star?"":" ", add_star?"*":"", pname);
+             if (ftype != EOLIAN_PROP_SET)
+               {
+                  const Eolian_Expression *dflt_value = eolian_parameter_default_value_get(param);
+                  if (dflt_value)
+                    {
+                       const char *val_str = NULL;
+                       Eolian_Value val = eolian_expression_eval
+                          (dflt_value, EOLIAN_MASK_ALL);
+                       if (val.type)
+                         {
+                            val_str = eolian_expression_value_to_literal(&val);
+                            eina_strbuf_append_printf(params_init,
+                                  "  if (%s) *%s = %s;",
+                                  pname, pname, val_str);
+                            if (eolian_expression_type_get(dflt_value) == EOLIAN_EXPR_ENUM)
+                              {
+                                 Eina_Stringshare *string = eolian_expression_serialize(dflt_value);
+                                 eina_strbuf_append_printf(params_init, " /* %s */", string);
+                                 eina_stringshare_del(string);
+                              }
+                            eina_strbuf_append_printf(params_init, "\n");
+                         }
+                    }
+               }
              eina_stringshare_del(ptype);
           }
         eina_iterator_free(itr);
@@ -433,6 +466,25 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
               impl_env?impl_env->lower_classname:"",
               eolian_function_name_get(funcid), suffix);
 
+        if (eina_strbuf_length_get(params_init))
+          {
+             eina_hash_add(_funcs_params_init,
+                   eina_stringshare_add(eolian_function_name_get(funcid)), funcid);
+             eina_strbuf_append_printf(fbody, "static %s%s __eolian_%s%s%s_%s%s(Eo *obj, @#Datatype_Data *pd@#full_params)\n{\n%s\n",
+                   ret_const?"const ":"", rettype?rettype:"void",
+                   class_env.lower_classname,
+                   impl_env?"_":"",
+                   impl_env?impl_env->lower_classname:"",
+                   eolian_function_name_get(funcid), suffix,
+                   eina_strbuf_string_get(params_init));
+             eina_strbuf_append_printf(fbody, "  %s_%s%s%s_%s%s(obj, pd, %s);\n}\n\n",
+                   rettype?"return ":"",
+                   class_env.lower_classname,
+                   impl_env?"_":"",
+                   impl_env?impl_env->lower_classname:"",
+                   eolian_function_name_get(funcid), suffix,
+                   eina_strbuf_string_get(params));
+          }
         eina_strbuf_free(ret_param);
      }
    if (!impl_env)
@@ -458,20 +510,23 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
               func_env.lower_eo_func);
         if (!ret_is_void)
           {
-             const Eolian_Expression *default_ret_val =
-                eolian_function_return_default_value_get(funcid, ftype);
              const char *val_str = NULL;
              if (default_ret_val)
                {
-                  Eolian_Value val = eolian_expression_eval_type
-                    (default_ret_val, rettypet);
+                  Eolian_Value val = eolian_expression_eval
+                    (default_ret_val, EOLIAN_MASK_ALL);
                   if (val.type)
                     val_str = eolian_expression_value_to_literal(&val);
                }
              eina_strbuf_append_printf(eo_func_decl, ", %s%s, %s",
                    ret_const ? "const " : "", rettype,
                    val_str?val_str:"0");
-
+             if (val_str && eolian_expression_type_get(default_ret_val) == EOLIAN_EXPR_ENUM)
+               {
+                  Eina_Stringshare *string = eolian_expression_serialize(default_ret_val);
+                  eina_strbuf_append_printf(eo_func_decl, " /* %s */", string);
+                  eina_stringshare_del(string);
+               }
           }
         if (has_params)
           {
@@ -508,6 +563,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
 
    eina_strbuf_free(va_args);
    eina_strbuf_free(full_params);
+   eina_strbuf_free(params_init);
    eina_strbuf_free(params);
    eina_strbuf_free(fbody);
    return EINA_TRUE;
@@ -530,7 +586,12 @@ eo_op_desc_generate(const Eolian_Class *class, Eolian_Function *fid, Eolian_Func
    if (eolian_function_is_class(fid)) class_str = "CLASS_";
    eina_strbuf_append_printf(buf, "\n     EO_OP_%sFUNC(%s, ", class_str, func_env.lower_eo_func);
    if (!is_virtual_pure)
-      eina_strbuf_append_printf(buf, "_%s_%s%s, \"%s\"),", class_env.lower_classname, funcname, suffix, desc);
+     {
+        eina_strbuf_append_printf(buf, "%s_%s_%s%s, \"%s\"),",
+              eina_hash_find(_funcs_params_init, funcname)
+              && ftype != EOLIAN_PROP_SET?"__eolian":"",
+              class_env.lower_classname, funcname, suffix, desc);
+     }
    else
       eina_strbuf_append_printf(buf, "NULL, \"%s\"),", desc);
 
@@ -863,6 +924,7 @@ eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 
    _class_env_create(class, NULL, &class_env);
+   _funcs_params_init = eina_hash_stringshared_new(NULL);
 
    if (!eo_source_beginning_generate(class, buf)) goto end;
 
@@ -901,6 +963,8 @@ eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
    ret = EINA_TRUE;
 end:
+   eina_hash_free(_funcs_params_init);
+   _funcs_params_init = NULL;
    eina_strbuf_free(str_bodyf);
    return ret;
 }
