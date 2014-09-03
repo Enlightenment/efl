@@ -106,6 +106,10 @@ struct _Eolian_Function
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_virtual_pure :1;
    Eina_Bool set_virtual_pure :1;
+   Eina_Bool get_auto :1;
+   Eina_Bool set_auto :1;
+   Eina_Bool get_empty :1;
+   Eina_Bool set_empty :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
    Eina_Bool get_only_legacy: 1;
