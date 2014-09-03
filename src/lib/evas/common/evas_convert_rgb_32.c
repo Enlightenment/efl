@@ -45,7 +45,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
 
 #ifdef TILE_ROTATE
 #ifdef BUILD_NEON
-#define ROT90_QUAD_COPY_LOOP \
+#define ROT90_QUAD_COPY_LOOP(pix_type) \
    if (evas_common_cpu_has_feature(CPU_FEATURE_NEON)) \
    { \
       if((w%4) == 0) \
@@ -86,8 +86,9 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
       } \
    } \
    else
-#define ROT270_QUAD_COPY_LOOP \
+#define ROT270_QUAD_COPY_LOOP(pix_type) \
    if (evas_common_cpu_has_feature(CPU_FEATURE_NEON)) \
+   { \
       if((w%4) == 0) \
       { \
         int klght = 4 * src_stride; \
@@ -127,8 +128,8 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
    } \
    else
 #else
-#define ROT90_QUAD_COPY_LOOP
-#define ROT270_QUAD_COPY_LOOP
+#define ROT90_QUAD_COPY_LOOP(pix_type)
+#define ROT270_QUAD_COPY_LOOP(pix_type)
 #endif
 #define FAST_SIMPLE_ROTATE(suffix, pix_type) \
    static void \
@@ -140,7 +141,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
                                    int             h) \
    { \
       int x, y; \
-      ROT90_QUAD_COPY_LOOP \
+      ROT90_QUAD_COPY_LOOP(pix_type) \
       { \
         for (y = 0; y < h; y++) \
           { \
@@ -163,7 +164,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
                                     int             h) \
    { \
       int x, y; \
-      ROT270_QUAD_COPY_LOOP \
+      ROT270_QUAD_COPY_LOOP(pix_type) \
       { \
         for(y = 0; y < h; y++) \
         { \
