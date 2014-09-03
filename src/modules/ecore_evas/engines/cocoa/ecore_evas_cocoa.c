@@ -22,7 +22,6 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
   NULL, NULL, NULL, NULL
 };
 static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
-static Ecore_Poller             *ecore_evas_event = NULL;
 
 //static const char               *ecore_evas_cocoa_default = "EFL Cocoa";
 
@@ -198,17 +197,6 @@ _ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSE
 //  return EINA_TRUE;
 //}
 
-static Eina_Bool
-_ecore_evas_cocoa_event(void *data EINA_UNUSED)
-{
-  //Ecore_Evas *ee = data;
-
-  DBG("Cocoa Event");
-
-  ecore_cocoa_feed_events();
-
-  return ECORE_CALLBACK_PASS_ON;
-}
 
 static int
 _ecore_evas_cocoa_init(void)
@@ -246,8 +234,6 @@ _ecore_evas_cocoa_shutdown(void)
       ecore_event_evas_shutdown();
       ecore_idle_enterer_del(ecore_evas_idle_enterer);
       ecore_evas_idle_enterer = NULL;
-      ecore_poller_del(ecore_evas_event);
-      ecore_evas_event = NULL;
 
       ecore_event_evas_shutdown();
     }
@@ -528,14 +514,6 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
   _ecore_evas_cocoa_init();
 
   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_cocoa_engine_func;
-
-  /* this is pretty bad: poller? and set poll time? pol time is meant to be
-   * adjustable for things like polling battery state, or amoutn of spare
-   * memory etc. I know it's bad but cedric did it for ecore_evas_sdl
-   * so why not me ? BTW why 0.006s ?
-   */
-  ecore_evas_event = ecore_poller_add(ECORE_POLLER_CORE, 1, _ecore_evas_cocoa_event, ee);
-  ecore_poller_poll_interval_set(ECORE_POLLER_CORE, 0.006);
 
   if (w < 1) w = 1;
   if (h < 1) h = 1;

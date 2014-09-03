@@ -12,6 +12,8 @@ lib/ecore_cocoa/Ecore_Cocoa_Keys.h
 lib_ecore_cocoa_libecore_cocoa_la_SOURCES = \
 lib/ecore_cocoa/ecore_cocoa.m \
 lib/ecore_cocoa/ecore_cocoa_window.m \
+lib/ecore_cocoa/ecore_cocoa_app.m \
+lib/ecore_cocoa/ecore_cocoa_app.h \
 lib/ecore_cocoa/ecore_cocoa_private.h
 
 lib_ecore_cocoa_libecore_cocoa_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_COCOA_CFLAGS@

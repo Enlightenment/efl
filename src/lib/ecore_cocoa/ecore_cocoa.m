@@ -4,6 +4,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "ecore_cocoa_window.h"
+#import "ecore_cocoa_app.h"
 
 #include <Eina.h>
 
@@ -30,15 +31,23 @@ ecore_cocoa_init(void)
    if (++_ecore_cocoa_init_count != 1)
      return _ecore_cocoa_init_count;
 
-   if (!ecore_event_init())
+   if (!ecore_init())
      return --_ecore_cocoa_init_count;
 
-   NSApplicationLoad();
+   if (!ecore_event_init())
+     return --_ecore_cocoa_init_count;
 
    ECORE_COCOA_EVENT_GOT_FOCUS  = ecore_event_type_new();
    ECORE_COCOA_EVENT_LOST_FOCUS = ecore_event_type_new();
    ECORE_COCOA_EVENT_RESIZE     = ecore_event_type_new();
    ECORE_COCOA_EVENT_EXPOSE     = ecore_event_type_new();
+
+   /* Init the Application handler */
+   [Ecore_Cocoa_Application sharedApplication];
+   [NSApp setDelegate:[Ecore_Cocoa_AppDelegate appDelegate]];
+
+   /* Start events monitoring */
+   [NSApp run];
 
    return _ecore_cocoa_init_count;
 }
@@ -89,21 +98,16 @@ _has_ecore_cocoa_window(NSEvent *event)
    return _nsevent_window_is_type_of(event, [EcoreCocoaWindow class]);
 }
 
-EAPI void
-ecore_cocoa_feed_events(void)
+EAPI Eina_Bool
+ecore_cocoa_feed_events(void *anEvent)
 {
-   Ecore_Event *ev;
-   NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0.001];
-   NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                       untilDate:date
-                                          inMode:NSDefaultRunLoopMode
-                                         dequeue:YES];
-   [date release];
-   if (!event) return; // SDL loops until null; maybe we should do that too. or not.
+   EINA_SAFETY_ON_NULL_RETURN_VAL(anEvent, EINA_FALSE);
 
+   NSEvent *event = anEvent;
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
+   Eina_Bool pass = EINA_FALSE;
 
-   switch([event type])
+   switch ([event type])
    {
       case NSMouseMoved:
       case NSLeftMouseDragged:
@@ -113,7 +117,7 @@ ecore_cocoa_feed_events(void)
          if (_has_ecore_cocoa_window(event))
            {
               Ecore_Event_Mouse_Move * ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
-              if (!ev) return;
+              if (!ev) return pass;
 
               EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
               NSView *view = [window contentView];
@@ -124,7 +128,7 @@ ecore_cocoa_feed_events(void)
               ev->root.x = ev->x;
               ev->root.y = ev->y;
               ev->timestamp = time;
-              ev->window = window.ecore_window_data;
+              ev->window = (Ecore_Window)window.ecore_window_data;
               ev->event_window = ev->window;
               ev->modifiers = 0; /* FIXME: keep modifier around. */
 
@@ -135,7 +139,7 @@ ecore_cocoa_feed_events(void)
               // We might want to handle cases such as events on the menubar.
               // If so, let's do it here.
            }
-         [NSApp sendEvent:event]; // pass along mouse events, for window manager
+         pass = EINA_TRUE;
          break;
       }
       case NSLeftMouseDown:
@@ -145,7 +149,7 @@ ecore_cocoa_feed_events(void)
          if (_has_ecore_cocoa_window(event))
            {
               Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
-              if (!ev) return;
+              if (!ev) return pass;
 
               EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
               NSView *view = [window contentView];
@@ -163,7 +167,7 @@ ecore_cocoa_feed_events(void)
                  case 2: ev->buttons = 2; break;
                  default: ev->buttons = 0; break;
                 }
-              ev->window = window.ecore_window_data;
+              ev->window = (Ecore_Window)window.ecore_window_data;
               ev->event_window = ev->window;
 
               if ([event clickCount] == 2)
@@ -183,7 +187,7 @@ ecore_cocoa_feed_events(void)
               // We might want to handle cases such as events on the menubar.
               // If so, let's do it here.
            }
-         [NSApp sendEvent:event]; // pass along mouse events, for window manager
+         pass = EINA_TRUE;
          break;
       }
       case NSLeftMouseUp:
@@ -191,7 +195,7 @@ ecore_cocoa_feed_events(void)
       case NSOtherMouseUp:
       {
          Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
-         if (!ev) return;
+         if (!ev) return pass;
 
          if (_has_ecore_cocoa_window(event))
            {
@@ -211,7 +215,7 @@ ecore_cocoa_feed_events(void)
                  case 2: ev->buttons = 2; break;
                  default: ev->buttons = 0; break;
                 }
-              ev->window = window.ecore_window_data;
+              ev->window = (Ecore_Window)window.ecore_window_data;
               ev->event_window = ev->window;
 
               if ([event clickCount] == 2)
@@ -231,7 +235,7 @@ ecore_cocoa_feed_events(void)
               // We might want to handle cases such as events on the menubar.
               // If so, let's do it here.
            }
-         [NSApp sendEvent:event]; // pass along mouse events, for window manager
+         pass = EINA_TRUE;
          break;
       }
       case NSKeyDown:
@@ -241,7 +245,7 @@ ecore_cocoa_feed_events(void)
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
 
          ev = calloc(1, sizeof (Ecore_Event_Key));
-         if (!ev) return;
+         if (!ev) return pass;
          ev->timestamp = time;
          ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
 
@@ -253,10 +257,10 @@ ecore_cocoa_feed_events(void)
                ev->keyname = keystable[i].name;
                ev->key = keystable[i].name;
                ev->string = keystable[i].compose;
-               ev->window = window.ecore_window_data;
+               ev->window = (Ecore_Window)window.ecore_window_data;
                ev->event_window = ev->window;
                ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
-               return;
+               return pass;
             }
          }
 
@@ -271,7 +275,7 @@ ecore_cocoa_feed_events(void)
          printf("Key Up\n");
 
          ev = calloc(1, sizeof (Ecore_Event_Key));
-         if (!ev) return;
+         if (!ev) return pass;
          ev->timestamp = time;
          ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
 
@@ -282,10 +286,10 @@ ecore_cocoa_feed_events(void)
                ev->keyname = keystable[i].name;
                ev->key = keystable[i].name;
                ev->string = keystable[i].compose;
-               ev->window = window.ecore_window_data;
+               ev->window = (Ecore_Window)window.ecore_window_data;
                ev->event_window = ev->window;
                ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
-               return;
+               return pass;
             }
          }
 
@@ -299,13 +303,13 @@ ecore_cocoa_feed_events(void)
          Ecore_Event_Key *evUp = NULL;
 
          evDown = calloc(1, sizeof (Ecore_Event_Key));
-         if (!evDown) return;
+         if (!evDown) return pass;
 
          evUp = calloc(1, sizeof (Ecore_Event_Key));
          if (!evUp)
            {
               free(evDown);
-              return;
+              return pass;
            }
 
          // Turn special key flags on
@@ -360,7 +364,7 @@ ecore_cocoa_feed_events(void)
             ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, NULL, NULL, NULL);
          else if ([event subtype] == NSApplicationDeactivatedEventType)
             ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, NULL, NULL, NULL);
-         [NSApp sendEvent:event]; // pass along AppKit events, for window manager
+         pass = EINA_TRUE; // pass along AppKit events, for window manager
          break;
       }
       case NSScrollWheel:
@@ -370,12 +374,12 @@ ecore_cocoa_feed_events(void)
       }
       default:
       {
-         [NSApp sendEvent:event];
+         pass = EINA_TRUE;
          break;
       }
    }
 
-   [event release];
+   return pass;
 }
 
 EAPI void

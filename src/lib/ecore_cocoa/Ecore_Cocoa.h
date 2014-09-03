@@ -25,6 +25,8 @@
 # define EAPI
 #endif
 
+#include <Eina.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,7 +55,7 @@ struct _Ecore_Cocoa_Screen
 
 EAPI int  ecore_cocoa_init(void);
 EAPI int  ecore_cocoa_shutdown(void);
-EAPI void ecore_cocoa_feed_events(void);
+EAPI Eina_Bool ecore_cocoa_feed_events(void *anEvent);
 
 /* Screen */
 
