@@ -297,7 +297,7 @@ _eo_call_stack_mem_alloc(size_t maxsize)
    newsize = MEM_PAGE_SIZE * ((maxsize + MEM_PAGE_SIZE - 1) /
                               MEM_PAGE_SIZE);
    ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+              MAP_PRIVATE | MAP_ANON, -1, 0);
    if (ptr == MAP_FAILED)
      {
         ERR("mmap of eo callstack failed!");
