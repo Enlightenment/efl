@@ -1,7 +1,6 @@
 #include "edje_private.h"
 
 #ifdef ENABLE_MULTISENSE
-#include <sndfile.h>
 #include "Ecore_Audio.h"
 
 static Eo *out = NULL;
@@ -25,7 +24,7 @@ static Eina_Bool _out_fail(void *data EINA_UNUSED, Eo *output EINA_UNUSED, const
 
 struct _edje_multisense_eet_data
 {
-   sf_count_t  offset, length;
+   unsigned int offset, length;
    Eet_File *ef;
    const char *data;
    Ecore_Audio_Vio vio;
