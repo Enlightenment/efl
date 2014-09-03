@@ -9662,11 +9662,12 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 {
    Eina_List *l, *ll;
    const char *s, *s2;
-   double db, db2;
+   double db, db2,v1,v2,v3,v4;
    char *data;
    Eina_Bool ret = EINA_TRUE;
    const char *api_name, *api_description;
    Edje_Program *epr;
+   int tweenmode = 0;
 
    GET_EED_OR_RETURN(EINA_FALSE);
 
@@ -9789,25 +9790,67 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 
    /* Transition */
    db = TO_DOUBLE(epr->tween.time);
-   switch (epr->tween.mode)
+   tweenmode = (epr->tween.mode & (~(EDJE_TWEEN_MODE_OPT_FROM_CURRENT)));
+   switch (tweenmode)
      {
-     case EDJE_TWEEN_MODE_LINEAR:
-	if (db)
-	  BUF_APPENDF(I4"transition: LINEAR %.5f;\n", db);
-	break;
-     case EDJE_TWEEN_MODE_ACCELERATE:
-	BUF_APPENDF(I4"transition: ACCELERATE %.5f;\n", db);
-	break;
-     case EDJE_TWEEN_MODE_DECELERATE:
-	BUF_APPENDF(I4"transition: DECELERATE %.5f;\n", db);
-	break;
-     case EDJE_TWEEN_MODE_SINUSOIDAL:
-	BUF_APPENDF(I4"transition: SINUSOIDAL %.5f;\n", db);
-	break;
-     default:
-	break;
+      case EDJE_TWEEN_MODE_LINEAR:
+        if (db)
+          BUF_APPENDF(I4"transition: LINEAR %.5f", db);
+        break;
+      case EDJE_TWEEN_MODE_ACCELERATE:
+        BUF_APPENDF(I4"transition: ACCELERATE %.5f", db);
+        break;
+      case EDJE_TWEEN_MODE_DECELERATE:
+        BUF_APPENDF(I4"transition: DECELERATE %.5f", db);
+        break;
+      case EDJE_TWEEN_MODE_SINUSOIDAL:
+        BUF_APPENDF(I4"transition: SINUSOIDAL %.5f", db);
+        break;
+      case EDJE_TWEEN_MODE_ACCELERATE_FACTOR:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        BUF_APPENDF(I4"transition: ACCELERATE_FACTOR %.5f %.5f", db,v1);
+        break;
+      case EDJE_TWEEN_MODE_DECELERATE_FACTOR:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        BUF_APPENDF(I4"transition: DECELERATE_FACTOR %.5f %.5f", db,v1);
+        break;
+      case EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        BUF_APPENDF(I4"transition: SINUSOIDAL_FACTOR %.5f %.5f", db,v1);
+        break;
+      case EDJE_TWEEN_MODE_DIVISOR_INTERP:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        v2 = TO_DOUBLE(epr->tween.v2);
+        BUF_APPENDF(I4"transition: DIVISOR_INTERP %.5f %.5f %.5f", db,v1,v2);
+        break;
+      case EDJE_TWEEN_MODE_BOUNCE:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        v2 = TO_DOUBLE(epr->tween.v2);
+        BUF_APPENDF(I4"transition: BOUNCE %.5f %.5f %.5f", db,v1,v2);
+        break;
+      case EDJE_TWEEN_MODE_SPRING:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        v2 = TO_DOUBLE(epr->tween.v2);
+        BUF_APPENDF(I4"transition: SPRING %.5f %.5f %.5f", db,v1,v2);
+        break;
+      case EDJE_TWEEN_MODE_CUBIC_BEZIER:
+        v1 = TO_DOUBLE(epr->tween.v1);
+        v2 = TO_DOUBLE(epr->tween.v2);
+        v3 = TO_DOUBLE(epr->tween.v3);
+        v4 = TO_DOUBLE(epr->tween.v4);
+        BUF_APPENDF(I4"transition: CUBIC_BEZIER %.5f %.5f %.5f %.5f %.5f", db,v1,v2,v3,v4);
+        break;
+      default:
+        break;
      }
 
+   if( db && (tweenmode >= EDJE_TWEEN_MODE_LINEAR) && (tweenmode < EDJE_TWEEN_MODE_LAST))
+     {
+        if(epr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT)
+          BUF_APPENDF(" CURRENT;\n");
+        else
+          BUF_APPENDF(";\n");
+     }
    /* In */
    db = epr->in.from;
    db2 = epr->in.range;
