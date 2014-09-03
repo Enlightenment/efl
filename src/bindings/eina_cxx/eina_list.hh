@@ -286,7 +286,7 @@ public:
   }
   list& operator=(list&& other) = default;
   list(list&& other) = default;
-  
+
   using _base_type::clear;
   using _base_type::size;
   using _base_type::empty;
@@ -296,19 +296,19 @@ public:
 
   void push_back(const_reference w)
   {
-    this->_base_type::push_back(* ::eo_ref(w._eo_ptr()));
+    this->_base_type::push_back(* w._eo_ptr());
   }
   void push_front(const_reference w)
   {
-    this->_base_type::push_front(* ::eo_ref(w._eo_ptr()));
+    this->_base_type::push_front(* w._eo_ptr());
   }
   iterator insert(iterator i, const_reference v)
   {
-    return this->_base_type::insert(i, * ::eo_ref(v._eo_ptr()));
+    return this->_base_type::insert(i, * v._eo_ptr());
   }
   iterator insert(iterator i, size_t n, const_reference v)
   {
-    return this->_base_type::insert(i, n, * ::eo_ref(v._eo_ptr()));
+    return this->_base_type::insert(i, n, * v._eo_ptr());
   }
   template <typename InputIterator>
   iterator insert(iterator p, InputIterator i, InputIterator j
