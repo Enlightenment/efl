@@ -253,6 +253,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
    impl->klass = cl;
    *foo_id = (Eolian_Function*)eolian_class_function_get_by_name(cl, imstr,
                                                                  ftype);
+   impl->foo_id = *foo_id;
    return !!*foo_id;
 }
 
@@ -353,6 +354,7 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
    eina_stringshare_ref(impl->base.file);
 
    impl->klass = cl;
+   impl->foo_id = foo_id;
    impl->full_name = eina_stringshare_printf("%s.%s", cl->full_name,
                                              foo_id->name);
 

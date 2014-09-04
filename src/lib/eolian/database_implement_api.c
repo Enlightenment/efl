@@ -34,6 +34,22 @@ eolian_implement_function_get(const Eolian_Implement *impl,
                               Eolian_Function_Type   *func_type)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
+
+   if (impl->foo_id)
+     {
+        if (!func_type)
+          return impl->foo_id;
+
+        if (impl->is_prop_get)
+          *func_type = EOLIAN_PROP_GET;
+        else if (impl->is_prop_set)
+          *func_type = EOLIAN_PROP_SET;
+        else
+          *func_type = eolian_function_type_get(impl->foo_id);
+
+        return impl->foo_id;
+     }
+
    const Eolian_Class *klass = eolian_implement_class_get(impl);
    if (!klass)
      return NULL;
@@ -67,6 +83,9 @@ eolian_implement_function_get(const Eolian_Implement *impl,
         else
           *func_type = tp;
      }
+
+   ((Eolian_Implement*)impl)->foo_id = fid;
+
    return fid;
 }
 

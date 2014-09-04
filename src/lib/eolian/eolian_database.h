@@ -164,6 +164,7 @@ struct _Eolian_Implement
 {
    Eolian_Object base;
    const Eolian_Class *klass;
+   const Eolian_Function *foo_id;
    Eina_Stringshare *full_name;
    Eina_Bool is_virtual :1;
    Eina_Bool is_prop_get :1;
