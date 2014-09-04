@@ -210,18 +210,21 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i/*",
             eed->base->collection->id);
    keys = eet_list(ef, buf, &count);
-   for (i = 0; i < count; i++)
+   if (keys)
      {
-        Program_Script *ps;
-        int size;
+        for (i = 0; i < count; i++)
+          {
+             Program_Script *ps;
+             int size;
 
-        ps = calloc(1, sizeof(Program_Script));
+             ps = calloc(1, sizeof(Program_Script));
 
-        sscanf(keys[i] + len, "%*i/%i", &ps->id);
-        ps->code = eet_read(ef, keys[i], &size);
-        eina_hash_add(eed->program_scripts, &ps->id, ps);
+             sscanf(keys[i] + len, "%*i/%i", &ps->id);
+             ps->code = eet_read(ef, keys[i], &size);
+             eina_hash_add(eed->program_scripts, &ps->id, ps);
+          }
+        free(keys);
      }
-   if (keys) free(keys);
    eet_close(ef);
 
    ret = EINA_TRUE;
