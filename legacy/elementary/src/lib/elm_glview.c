@@ -301,22 +301,59 @@ _elm_glview_mode_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Mode mode)
    if (mode & ELM_GLVIEW_ALPHA) sd->config->color_format = EVAS_GL_RGBA_8888;
    else sd->config->color_format = EVAS_GL_RGB_888;
 
-   if (mode & ELM_GLVIEW_DEPTH) sd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
-   else sd->config->depth_bits = EVAS_GL_DEPTH_NONE;
+   if (mode & ELM_GLVIEW_DEPTH)
+     {
+        const int mask = 7 << 6;
+        if ((mode & mask) == (ELM_GLVIEW_DEPTH_8 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_8;
+        else if ((mode & mask) == (ELM_GLVIEW_DEPTH_16 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_16;
+        else if ((mode & mask) == (ELM_GLVIEW_DEPTH_24 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
+        else if ((mode & mask) == (ELM_GLVIEW_DEPTH_32 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_32;
+        else
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
+     }
+   else
+     sd->config->depth_bits = EVAS_GL_DEPTH_NONE;
 
    if (mode & ELM_GLVIEW_STENCIL)
-     sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
-   else sd->config->stencil_bits = EVAS_GL_STENCIL_NONE;
+     {
+        const int mask = 7 << 9;
+        if ((mode & mask) == (ELM_GLVIEW_STENCIL_1 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_1;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_1 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_2;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_4 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_4;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_8 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_16 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_16;
+        else
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+     }
+   else
+     sd->config->stencil_bits = EVAS_GL_STENCIL_NONE;
 
+   if (mode & ELM_GLVIEW_MULTISAMPLE_HIGH)
+     {
+        if ((mode & ELM_GLVIEW_MULTISAMPLE_HIGH) == ELM_GLVIEW_MULTISAMPLE_LOW)
+          sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_LOW;
+        else if ((mode & ELM_GLVIEW_MULTISAMPLE_HIGH) == ELM_GLVIEW_MULTISAMPLE_MED)
+          sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_MED;
+        else
+          sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_HIGH;
+     }
+   else
+     sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_NONE;
+
+   sd->config->options_bits = EVAS_GL_OPTIONS_NONE;
    if (mode & ELM_GLVIEW_DIRECT)
      sd->config->options_bits = EVAS_GL_OPTIONS_DIRECT;
-   else sd->config->options_bits = EVAS_GL_OPTIONS_NONE;
-
-   // Check for Alpha Channel and enable it
-   if (mode & ELM_GLVIEW_ALPHA)
-     evas_object_image_alpha_set(wd->resize_obj, EINA_TRUE);
-   else
-     evas_object_image_alpha_set(wd->resize_obj, EINA_FALSE);
+   if (mode & ELM_GLVIEW_CLIENT_SIDE_ROTATION)
+     sd->config->options_bits |= EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION;
 
    sd->mode = mode;
 

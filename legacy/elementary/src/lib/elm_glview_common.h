@@ -8,10 +8,27 @@ typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 typedef enum _Elm_GLView_Mode
 {
    ELM_GLVIEW_NONE    = 0,
+   // 0x1 is reserved for future use
    ELM_GLVIEW_ALPHA   = (1<<1), /**< Alpha channel enabled rendering mode */
-   ELM_GLVIEW_DEPTH   = (1<<2), /**< Depth buffer enabled rendering mode */
-   ELM_GLVIEW_STENCIL = (1<<3), /**< Stencil buffer enabled rendering mode */
-   ELM_GLVIEW_DIRECT  = (1<<4)  /**< Direct rendering optimization hint */
+   ELM_GLVIEW_DEPTH   = (1<<2), /**< Depth buffer enabled rendering mode (24 bits by default) */
+   ELM_GLVIEW_STENCIL = (1<<3), /**< Stencil buffer enabled rendering mode (8 bits by default) */
+   ELM_GLVIEW_DIRECT  = (1<<4), /**< Request direct rendering, unless there must be a fallback */
+   ELM_GLVIEW_CLIENT_SIDE_ROTATION = (1<<5), /**< Client will handle GL view rotation if direct rendering is enabled */
+   // Depth buffer sizes (3 bits)
+   ELM_GLVIEW_DEPTH_8  = ELM_GLVIEW_DEPTH | (1 << 6), /**< Request min. 8 bits for the depth buffer */
+   ELM_GLVIEW_DEPTH_16 = ELM_GLVIEW_DEPTH | (2 << 6), /**< Request min. 16 bits for the depth buffer */
+   ELM_GLVIEW_DEPTH_24 = ELM_GLVIEW_DEPTH | (3 << 6), /**< Request min. 24 bits for the depth buffer (default) */
+   ELM_GLVIEW_DEPTH_32 = ELM_GLVIEW_DEPTH | (4 << 6), /**< Request min. 32 bits for the depth buffer */
+   // Stencil buffer sizes (3 bits)
+   ELM_GLVIEW_STENCIL_1  = ELM_GLVIEW_STENCIL | (1 << 9), /**< Request min. 1 bits for the stencil buffer */
+   ELM_GLVIEW_STENCIL_2  = ELM_GLVIEW_STENCIL | (2 << 9), /**< Request min. 2 bits for the stencil buffer */
+   ELM_GLVIEW_STENCIL_4  = ELM_GLVIEW_STENCIL | (3 << 9), /**< Request min. 4 bits for the stencil buffer */
+   ELM_GLVIEW_STENCIL_8  = ELM_GLVIEW_STENCIL | (4 << 9), /**< Request min. 8 bits for the stencil buffer (default) */
+   ELM_GLVIEW_STENCIL_16 = ELM_GLVIEW_STENCIL | (5 << 9), /**< Request min. 16 bits for the stencil buffer */
+   // MSAA params (2 bits)
+   ELM_GLVIEW_MULTISAMPLE_LOW  = (1 << 12), /**< MSAA with minimum number of samples */
+   ELM_GLVIEW_MULTISAMPLE_MED  = (2 << 12), /**< MSAA with half the number of maximum samples */
+   ELM_GLVIEW_MULTISAMPLE_HIGH = (3 << 12)  /**< MSAA with maximum number of samples */
 } Elm_GLView_Mode;
 
 /**
