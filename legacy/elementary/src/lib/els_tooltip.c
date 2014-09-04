@@ -107,8 +107,12 @@ _elm_tooltip_obj_resize_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj EI
 }
 
 static void
-_elm_tooltip_obj_mouse_move_cb(Elm_Tooltip *tt, Evas *e  EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Move *ev)
+_elm_tooltip_obj_mouse_move_cb(void *data, Evas *e  EINA_UNUSED,
+                               Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+   Elm_Tooltip *tt = data;
+   Evas_Event_Mouse_Move *ev = event_info;
+
    if (tt->mouse_x || tt->mouse_y)
      {
         if ((abs(ev->cur.output.x - tt->mouse_x) < 3) &&
@@ -164,8 +168,9 @@ _elm_tooltip_show(Elm_Tooltip *tt)
       //No movement of tooltip upon mouse move if orientation set
       if ((tt->orient <= ELM_TOOLTIP_ORIENT_NONE) || (tt->orient >= ELM_TOOLTIP_ORIENT_LAST))
         {
-           evas_object_event_callback_add
-           (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_move_cb, tt);
+           evas_object_event_callback_add(tt->eventarea,
+                                          EVAS_CALLBACK_MOUSE_MOVE,
+                                          _elm_tooltip_obj_mouse_move_cb, tt);
         }
      }
    tt->changed_style = EINA_TRUE;
