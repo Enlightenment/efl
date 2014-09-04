@@ -11219,7 +11219,12 @@ edje_edit_clean_save_as(Evas_Object *obj, const char* new_file_name)
      }
 
    /* copying file structure */
-   _edje_edit_edje_file_save(ef_out, ed->file);
+   if (!_edje_edit_edje_file_save(ef_out, ed->file))
+     {
+        eet_close(ef);
+        eet_close(ef_out);
+        return EINA_FALSE;
+     }
 
    int count = 0;
    char **ent = eet_list(ef, "*", &count);
