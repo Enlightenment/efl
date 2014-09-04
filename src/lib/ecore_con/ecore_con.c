@@ -805,7 +805,7 @@ _ecore_con_client_ecore_con_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data
              cl->buf = eina_binbuf_new();
              EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
 #ifdef TCP_CORK
-             if ((cl->fd >= 0) && (host_server->type) &&
+             if ((cl->fd >= 0) && (host_server) &&
                  ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
                {
                   int state = 1;
