@@ -1186,6 +1186,7 @@ static int
 eng_gl_rotation_angle_get(void *data)
 {
    if (!evgl_engine->funcs->rotation_angle_get) return 0;
+   if (!_evgl_direct_enabled()) return 0;
    return evgl_engine->funcs->rotation_angle_get(data);
 }
 
