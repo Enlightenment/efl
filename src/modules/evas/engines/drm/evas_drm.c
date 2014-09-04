@@ -1,53 +1,6 @@
 #include "evas_engine.h"
 #include <sys/mman.h>
 
-static int 
-_evas_drm_crtc_find(int fd, drmModeRes *res, drmModeConnector *conn)
-{
-   int crtc = -1;
-   drmModeEncoder *enc = NULL;
-
-   /* if this connector already has an encoder, get it */
-   if (conn->encoder_id) enc = drmModeGetEncoder(fd, conn->encoder_id);
-
-   /* if this encoder already has a crtc, lets try to use that */
-   if ((enc) && (enc->crtc_id)) crtc = enc->crtc_id;
-
-   if (crtc < 0)
-     {
-        int i = 0, c = 0;
-
-        /* if this connector has no encoder, we need to find one */
-        for (; i < conn->count_encoders; ++i)
-          {
-             /* try to get this encoder */
-             if (!(enc = drmModeGetEncoder(fd, conn->encoders[i])))
-               continue;
-
-             /* loop global crtcs */
-             for (; c < res->count_crtcs; ++c)
-               {
-                  /* does this crtc work with this encoder ? */
-                  if (!(enc->possible_crtcs & (1 << c))) continue;
-
-                  /* FIXME: We could be more proactive here and check that 
-                   * nobody else is using this crtc */
-
-                  /* if it works, let's use it */
-                  crtc = res->crtcs[c];
-                  break;
-               }
-
-             if (crtc >= 0) break;
-          }
-     }
-
-   /* free the encoder */
-   if (enc) drmModeFreeEncoder(enc);
-
-   return crtc;
-}
-
 static unsigned int 
 _evas_drm_crtc_buffer_get(int fd, int crtc_id)
 {
@@ -145,6 +98,8 @@ evas_drm_outbuf_setup(Outbuf *ob)
    drmModeRes *res;
    drmModeConnector *conn;
    drmModePlaneResPtr pres;
+   drmModeEncoder *enc;
+   drmModeModeInfo crtc_mode;
    int i = 0;
 
    /* check for valid Output buffer */
@@ -166,7 +121,7 @@ evas_drm_outbuf_setup(Outbuf *ob)
    /* loop the connectors */
    for (; i < res->count_connectors; ++i)
      {
-        int crtc = -1;
+        int crtc_id = -1;
         int m = 0;
 
         /* try to get this connector */
@@ -192,22 +147,28 @@ evas_drm_outbuf_setup(Outbuf *ob)
              continue;
           }
 
-        /* try to find a crtc for this connector */
-        if ((crtc = _evas_drm_crtc_find(ob->priv.fd, res, conn)) < 0) 
-          {
-             /* free connector resources */
-             drmModeFreeConnector(conn);
-             continue;
-          }
-
         /* record the connector id */
         ob->priv.conn = conn->connector_id;
 
+        if ((enc = drmModeGetEncoder(ob->priv.fd, conn->encoder_id)))
+          {
+             drmModeCrtc *crtc;
+
+             if ((crtc = drmModeGetCrtc(ob->priv.fd, enc->crtc_id)))
+               {
+                  crtc_id = enc->crtc_id;
+                  if (crtc->mode_valid) crtc_mode = crtc->mode;
+                  drmModeFreeCrtc(crtc);
+               }
+
+             drmModeFreeEncoder(enc);
+          }
+
         /* record the crtc id */
-        ob->priv.crtc = crtc;
+        ob->priv.crtc = crtc_id;
 
         /* get the current framebuffer */
-        ob->priv.fb = _evas_drm_crtc_buffer_get(ob->priv.fd, crtc);
+        ob->priv.fb = _evas_drm_crtc_buffer_get(ob->priv.fd, crtc_id);
 
         /* spew out connector properties for testing */
         /* drmModePropertyPtr props; */
@@ -218,24 +179,22 @@ evas_drm_outbuf_setup(Outbuf *ob)
         /*      DBG("Property Name: %s", props->name); */
         /*   } */
 
-        /* record the current mode */
-        memcpy(&ob->priv.mode, &conn->modes[0], sizeof(ob->priv.mode));
-
+        memset(&ob->priv.mode, 0, sizeof(ob->priv.mode));
         for (m = 0; m < conn->count_modes; m++)
           {
              DBG("Output Available Mode: %d: %d %d %d", ob->priv.conn, 
                  conn->modes[m].hdisplay, conn->modes[m].vdisplay, 
                  conn->modes[m].vrefresh);
-
-             /* try to find a mode which matches the requested size */
-             if ((conn->modes[m].hdisplay == ob->w) && 
-                 (conn->modes[m].vdisplay == ob->h) && 
-                 (conn->modes[m].vrefresh == 60))
+             if (!memcmp(&crtc_mode, &conn->modes[m], sizeof(crtc_mode)))
                {
-                  memcpy(&ob->priv.mode, &conn->modes[m], 
-                         sizeof(ob->priv.mode));
+                  /* record the current mode */
+                  memcpy(&ob->priv.mode, &conn->modes[m], sizeof(ob->priv.mode));
+                  break;
                }
           }
+
+        if ((!ob->priv.mode.hdisplay) && (crtc_mode.clock != 0))
+          memcpy(&ob->priv.mode, &crtc_mode, sizeof(ob->priv.mode));
 
         DBG("Output Current Mode: %d: %d %d", ob->priv.conn, 
             ob->priv.mode.hdisplay, ob->priv.mode.vdisplay);
