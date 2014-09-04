@@ -29,26 +29,25 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* if we have no drm device, get one */
    if (info->info.fd < 0)
      {
-      if (!ecore_drm_init())
-        return NULL;
+        if (!ecore_drm_init()) return NULL;
 
-      /* try getting the default drm device */
-      if (!(info->info.dev = ecore_drm_device_find(NULL, NULL)))
-        goto on_error;
+        /* try getting the default drm device */
+        if (!(info->info.dev = ecore_drm_device_find(NULL, NULL)))
+          goto on_error;
 
-      /* check if we already opened the drm device with ecore_evas */
-      /* try to open the drm ourselfs (most likely because we get called from expedite) */
-      if (!ecore_drm_device_open(info->info.dev))
-        goto on_error;
+        /* check if we already opened the drm device with ecore_evas */
+        /* try to open the drm ourselfs (most likely because we get called from expedite) */
+        if (!ecore_drm_device_open(info->info.dev))
+          goto on_error;
 
-      info->info.own_fd = EINA_TRUE;
-      info->info.fd = ecore_drm_device_fd_get(info->info.dev);
+        info->info.own_fd = EINA_TRUE;
+        info->info.fd = ecore_drm_device_fd_get(info->info.dev);
 
-      if (info->info.tty < 0)
-        {
-           info->info.own_tty = EINA_TRUE;
-           info->info.tty = ecore_drm_tty_get(info->info.dev);
-	}
+        if (info->info.tty < 0)
+          {
+             info->info.own_tty = EINA_TRUE;
+             info->info.tty = ecore_drm_tty_get(info->info.dev);
+          }
      }
 
    /* try to allocate space for our render engine structure */
