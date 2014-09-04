@@ -50,6 +50,20 @@ EAPI extern int ELM_EVENT_CONFIG_ALL_CHANGED;
 EAPI extern int ELM_EVENT_POLICY_CHANGED;
 
 /**
+ * Emitted when nothing is visible and the process as a whole should go into
+ * a background state.
+ * @since 1.12
+ */
+EAPI extern int ELM_EVENT_PROCESS_BACKGROUND;
+
+/**
+ * Emitted when going from nothing being visible to at least one window
+ * being visible.
+ * @since 1.12
+ */
+EAPI extern int ELM_EVENT_PROCESS_FOREGROUND;
+
+/**
  * @typedef Elm_Event_Policy_Changed
  *
  * Data on the event when an Elementary policy has changed
@@ -349,6 +363,27 @@ EAPI int       elm_policy_get(unsigned int policy);
  * @ingroup General
  */
 EAPI void      elm_language_set(const char *lang);
+
+typedef enum _Elm_Process_State
+{
+   ELM_PROCESS_STATE_FOREGROUND, /*< The process is in a foreground/active/running state - work as normal. @since 1.12 */
+   ELM_PROCESS_STATE_BACKGROUND /*< The process is in the bacgkround, so you may want to stop animating, fetching data as often etc. @since 1.12 */
+} Elm_Process_State; /** The state of the process as a whole. @since 1.12 */
+
+/**
+ * Get the process state as a while
+ *
+ * @return The current process state
+ *
+ * The process may logically be some runnable state. a "foreground" application
+ * runs as normal and may be user-visible or "active" in some way. A
+ * background application is not user-visible or otherwise important and
+ * likely should release resources and not wake up often or process much.
+ * 
+ * @ingroup General
+ * @since 1.12
+ */
+EAPI Elm_Process_State  elm_process_state_get(void);
 
 /**
  * @}

@@ -65,6 +65,8 @@ const char *_elm_lib_dir = NULL;
 int _elm_log_dom = -1;
 
 EAPI int ELM_EVENT_POLICY_CHANGED = 0;
+EAPI int ELM_EVENT_PROCESS_BACKGROUND = 0;
+EAPI int ELM_EVENT_PROCESS_FOREGROUND = 0;
 
 static int _elm_init_count = 0;
 static int _elm_sub_init_count = 0;
@@ -612,6 +614,10 @@ elm_quicklaunch_init(int    argc,
    memset(_elm_policies, 0, sizeof(_elm_policies));
    if (!ELM_EVENT_POLICY_CHANGED)
      ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
+   if (!ELM_EVENT_PROCESS_BACKGROUND)
+     ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
+   if (!ELM_EVENT_PROCESS_FOREGROUND)
+     ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
 
    ecore_file_init();
    eio_init();

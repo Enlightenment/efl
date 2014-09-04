@@ -345,6 +345,15 @@ _win_noblank_eval(void)
 #endif
 }
 
+static Elm_Process_State _elm_process_state = ELM_PROCESS_STATE_FOREGROUND;
+
+EAPI Elm_Process_State
+elm_process_state_get(void)
+{
+   return _elm_process_state;
+}
+
+
 static void
 _elm_win_state_eval(void *data EINA_UNUSED)
 {
@@ -353,6 +362,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
    int _elm_win_count_shown = 0;
    int _elm_win_count_iconified = 0;
    int _elm_win_count_withdrawn = 0;
+   Eina_Bool throttle = EINA_FALSE;
 
    _elm_win_state_eval_job = NULL;
 
@@ -397,41 +407,46 @@ _elm_win_state_eval(void *data EINA_UNUSED)
    if (((_elm_config->auto_throttle) &&
         (elm_policy_get(ELM_POLICY_THROTTLE) != ELM_POLICY_THROTTLE_NEVER)) ||
         (elm_policy_get(ELM_POLICY_THROTTLE) == ELM_POLICY_THROTTLE_HIDDEN_ALWAYS))
+     throttle = EINA_TRUE;
+   if (_elm_win_count == 0)
      {
-        if (_elm_win_count == 0)
+        if (_elm_win_auto_throttled)
           {
-             if (_elm_win_auto_throttled)
+             _elm_process_state = ELM_PROCESS_STATE_FOREGROUND;
+             ecore_event_add(ELM_EVENT_PROCESS_FOREGROUND, NULL, NULL, NULL);
+             if (throttle)
+               ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
+             _elm_win_auto_throttled = EINA_FALSE;
+          }
+     }
+   else
+     {
+        EINA_LIST_FOREACH(_elm_win_list, l, obj)
+          {
+             if (elm_win_withdrawn_get(obj)) _elm_win_count_withdrawn++;
+             else if (elm_win_iconified_get(obj)) _elm_win_count_iconified++;
+             else if (evas_object_visible_get(obj)) _elm_win_count_shown++;
+          }
+        if (_elm_win_count_shown <= 0)
+          {
+             if (!_elm_win_auto_throttled)
                {
-                  ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
-                  _elm_win_auto_throttled = EINA_FALSE;
+                  _elm_process_state = ELM_PROCESS_STATE_BACKGROUND;
+                  ecore_event_add(ELM_EVENT_PROCESS_BACKGROUND, NULL, NULL, NULL);
+                  if (throttle)
+                    ecore_throttle_adjust(_elm_config->auto_throttle_amount);
+                  _elm_win_auto_throttled = EINA_TRUE;
                }
           }
         else
           {
-             EINA_LIST_FOREACH(_elm_win_list, l, obj)
+             if (_elm_win_auto_throttled)
                {
-                  if (elm_win_withdrawn_get(obj))
-                    _elm_win_count_withdrawn++;
-                  else if (elm_win_iconified_get(obj))
-                    _elm_win_count_iconified++;
-                  else if (evas_object_visible_get(obj))
-                    _elm_win_count_shown++;
-               }
-             if (_elm_win_count_shown <= 0)
-               {
-                  if (!_elm_win_auto_throttled)
-                    {
-                       ecore_throttle_adjust(_elm_config->auto_throttle_amount);
-                       _elm_win_auto_throttled = EINA_TRUE;
-                    }
-               }
-             else
-               {
-                  if (_elm_win_auto_throttled)
-                    {
-                       ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
-                       _elm_win_auto_throttled = EINA_FALSE;
-                    }
+                  _elm_process_state = ELM_PROCESS_STATE_FOREGROUND;
+                  ecore_event_add(ELM_EVENT_PROCESS_FOREGROUND, NULL, NULL, NULL);
+                  if (throttle)
+                    ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
+                  _elm_win_auto_throttled = EINA_FALSE;
                }
           }
      }
