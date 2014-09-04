@@ -736,7 +736,7 @@ _ecore_evas_drm_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *
 }
 
 static void
-_ecore_evas_drm_object_cursor_set(Ecore_Evas  *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
+_ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
    Evas_Object *old;
