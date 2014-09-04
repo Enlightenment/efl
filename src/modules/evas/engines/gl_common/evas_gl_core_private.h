@@ -95,6 +95,7 @@ struct _EVGL_Surface
 
    // Direct Rendering Options
    unsigned direct_fb_opt : 1;
+   unsigned client_side_rotation : 1;
    unsigned alpha : 1;
 
    int     cfg_index;
@@ -275,6 +276,7 @@ struct _EVGL_Engine
    // Keep track of all the current surfaces/contexts
    Eina_List         *surfaces;
    Eina_List         *contexts;
+   Eina_List         *direct_depth_stencil_surfaces;
 
    //void              *engine_data;  
 
@@ -286,10 +288,10 @@ extern EVGL_Engine   *evgl_engine;
 
 // Internally used functions
 extern void           _evgl_api_get(Evas_GL_API *api, int debug);
-extern EVGL_Resource *_evgl_tls_resource_get();
+extern EVGL_Resource *_evgl_tls_resource_get(void);
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
-extern int            _evgl_not_in_pixel_get();
-extern int            _evgl_direct_enabled();
+extern int            _evgl_not_in_pixel_get(void);
+extern int            _evgl_direct_enabled(void);
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

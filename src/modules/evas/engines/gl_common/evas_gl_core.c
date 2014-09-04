@@ -897,11 +897,9 @@ _surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo)
    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
 #endif
 
-
    // Render Target Texture
    if (sfc->color_buf)
-      _texture_attach_2d(sfc->color_buf, GL_COLOR_ATTACHMENT0, 0, sfc->msaa_samples);
-
+     _texture_attach_2d(sfc->color_buf, GL_COLOR_ATTACHMENT0, 0, sfc->msaa_samples);
 
    // Depth Stencil RenderBuffer - Attach it to FBO
    if (sfc->depth_stencil_buf)
@@ -916,11 +914,11 @@ _surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo)
 
    // Depth RenderBuffer - Attach it to FBO
    if (sfc->depth_buf)
-      _renderbuffer_attach(sfc->depth_buf, GL_DEPTH_ATTACHMENT);
+     _renderbuffer_attach(sfc->depth_buf, GL_DEPTH_ATTACHMENT);
 
    // Stencil RenderBuffer - Attach it to FBO
    if (sfc->stencil_buf)
-      _renderbuffer_attach(sfc->stencil_buf, GL_STENCIL_ATTACHMENT);
+     _renderbuffer_attach(sfc->stencil_buf, GL_STENCIL_ATTACHMENT);
 
    // Check FBO for completeness
    status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -1095,10 +1093,11 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
              // TODO: Implement surface reconfigure and add depth+stencil support
 
              // Direct Rendering Option
-             if ( (!stencil_bit) || (evgl_engine->direct_override) )
-                sfc->direct_fb_opt = cfg->options_bits & EVAS_GL_OPTIONS_DIRECT;
+             if ((!depth_bit && !stencil_bit) || evgl_engine->direct_override)
+               sfc->direct_fb_opt = cfg->options_bits & EVAS_GL_OPTIONS_DIRECT;
 
              // Extra flags for direct rendering
+             sfc->client_side_rotation = !!(cfg->options_bits & EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION);
              sfc->alpha = (cfg->color_format == EVAS_GL_RGBA_8888);
 
              cfg_index = i;
@@ -1121,6 +1120,7 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
         DBG("  D-Stencil Format : %s", _glenum_string_get(sfc->depth_stencil_fmt));
         DBG("  MSAA Samples     : %d", sfc->msaa_samples);
         DBG("  Direct Option    : %d", sfc->direct_fb_opt);
+        DBG("  Client-side Rot. : %d", sfc->client_side_rotation);
         sfc->cfg_index = cfg_index;
         return 1;
      }
@@ -1141,7 +1141,7 @@ _evgl_direct_renderable(EVGL_Resource *rsc, EVGL_Surface *sfc)
 // Functions used by Evas GL module
 //---------------------------------------------------------------//
 EVGL_Resource *
-_evgl_tls_resource_get()
+_evgl_tls_resource_get(void)
 {
    EVGL_Resource *rsc = NULL;
 
@@ -1245,7 +1245,7 @@ evas_gl_common_current_context_get(void)
 }
 
 int
-_evgl_not_in_pixel_get()
+_evgl_not_in_pixel_get(void)
 {
    EVGL_Resource *rsc;
 
@@ -1265,7 +1265,7 @@ _evgl_not_in_pixel_get()
 }
 
 int
-_evgl_direct_enabled()
+_evgl_direct_enabled(void)
 {
    EVGL_Resource *rsc;
    EVGL_Surface  *sfc;
@@ -1436,7 +1436,11 @@ void
 evgl_engine_shutdown(void *eng_data)
 {
    // Check if engine is valid
-   if (!evgl_engine) return;
+   if (!evgl_engine)
+     {
+        ERR("EVGL Engine not valid!");
+        return;
+     }
 
    // Log
    eina_log_domain_unregister(_evas_gl_log_dom);
@@ -1458,6 +1462,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    EVGL_Surface *sfc = NULL;
    char *s = NULL;
    int direct_override = 0, direct_mem_opt = 0;
+   Eina_Bool need_reconfigure = EINA_FALSE;
 
    // Check if engine is valid
    if (!evgl_engine)
@@ -1562,6 +1567,20 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
    LKU(evgl_engine->resource_lock);
 
+   if (sfc->direct_fb_opt &&
+       (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
+     {
+        need_reconfigure = !evgl_engine->direct_depth_stencil_surfaces;
+        evgl_engine->direct_depth_stencil_surfaces =
+          eina_list_prepend(evgl_engine->direct_depth_stencil_surfaces, sfc);
+     }
+
+   if (need_reconfigure)
+     {
+        // See FIXME notice above in _internal_config_set
+        ERR("Surface reconfigure is not implemented yet");
+     }
+
    return sfc;
 
 error:
@@ -1574,6 +1593,7 @@ int
 evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 {
    EVGL_Resource *rsc;
+   Eina_Bool need_reconfigure = EINA_FALSE;
 
    // Check input parameter
    if ((!evgl_engine) || (!sfc))
@@ -1628,6 +1648,22 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
    LKU(evgl_engine->resource_lock);
+
+   if (sfc->direct_fb_opt &&
+       (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
+     {
+        Eina_List *found;
+        found = eina_list_data_find_list(evgl_engine->direct_depth_stencil_surfaces, sfc);
+        need_reconfigure = !!found;
+        evgl_engine->direct_depth_stencil_surfaces =
+          eina_list_remove_list(evgl_engine->direct_depth_stencil_surfaces, found);
+     }
+
+   if (need_reconfigure)
+     {
+        // See FIXME notice above in _internal_config_set
+        WRN("Surface reconfigure is not implemented yet");
+     }
 
    free(sfc);
    sfc = NULL;
@@ -1906,7 +1942,7 @@ evgl_string_query(int name)
    switch(name)
      {
       case EVAS_GL_EXTENSIONS:
-         return (void*)evgl_api_ext_string_get();
+         return evgl_api_ext_string_get();
       default:
          return "";
      };
@@ -1954,35 +1990,38 @@ evgl_direct_rendered()
    return rsc->direct.rendered;
 }
 
-
-
 void
-evgl_direct_info_set(int win_w, int win_h, int rot, int img_x, int img_y, int img_w, int img_h, int clip_x, int clip_y, int clip_w, int clip_h)
+evgl_direct_info_set(int win_w, int win_h, int rot,
+                     int img_x, int img_y, int img_w, int img_h,
+                     int clip_x, int clip_y, int clip_w, int clip_h)
 {
    EVGL_Resource *rsc;
 
    if (!(rsc=_evgl_tls_resource_get())) return;
 
-   // Normally direct rendering isn't allowed if alpha is on and
-   // rotation is not 0.  BUT, if override is on, allow it.
-   if ( (rot==0) ||
-        ((rot!=0) && (evgl_engine->direct_override)) )
+   /* Normally direct rendering isn't allowed if rotation is not 0.
+    * BUT, if client_side_rotation or override is on, allow it.
+    */
+   if ((rot == 0) || evgl_engine->direct_override ||
+       (rsc->current_ctx &&
+        rsc->current_ctx->current_sfc &&
+        rsc->current_ctx->current_sfc->client_side_rotation))
      {
         rsc->direct.enabled = EINA_TRUE;
 
-        rsc->direct.win_w  = win_w;
-        rsc->direct.win_h  = win_h;
-        rsc->direct.rot    = rot;
+        rsc->direct.win_w   = win_w;
+        rsc->direct.win_h   = win_h;
+        rsc->direct.rot     = rot;
 
-        rsc->direct.img.x  = img_x;
-        rsc->direct.img.y  = img_y;
-        rsc->direct.img.w  = img_w;
-        rsc->direct.img.h  = img_h;
+        rsc->direct.img.x   = img_x;
+        rsc->direct.img.y   = img_y;
+        rsc->direct.img.w   = img_w;
+        rsc->direct.img.h   = img_h;
 
-        rsc->direct.clip.x = clip_x;
-        rsc->direct.clip.y = clip_y;
-        rsc->direct.clip.w = clip_w;
-        rsc->direct.clip.h = clip_h;
+        rsc->direct.clip.x  = clip_x;
+        rsc->direct.clip.y  = clip_y;
+        rsc->direct.clip.w  = clip_w;
+        rsc->direct.clip.h  = clip_h;
      }
    else
      {
