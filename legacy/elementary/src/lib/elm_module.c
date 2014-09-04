@@ -117,6 +117,12 @@ _elm_module_find_as(const char *as)
    return m;
 }
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+# define EFL_SHARED_EXTENSION ".dll"
+#else
+# define EFL_SHARED_EXTENSION ".so"
+#endif
+
 Eina_Bool
 _elm_module_load(Elm_Module *m)
 {

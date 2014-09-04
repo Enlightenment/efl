@@ -97,9 +97,6 @@ MODULE_ARCH="v-v_maj.v_min.v_mic"
 AC_SUBST([MODULE_ARCH])
 AC_DEFINE_UNQUOTED([MODULE_ARCH], ["$MODULE_ARCH"], ["Module architecture"])
 
-EFL_SHARED_EXTENSION="${shrext_cmds}"
-AC_DEFINE_UNQUOTED([EFL_SHARED_EXTENSION], ["${EFL_SHARED_EXTENSION}"], ["Shared extension"])
-
 ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
 have_windows="no"
