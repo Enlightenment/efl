@@ -396,8 +396,6 @@ _drm_init(void)
    // only do this on new kernels = let's say 3.14 and up. 3.16 definitely
    // works
      {
-        Eina_Bool ok = EINA_FALSE;
-
         FILE *fp = fopen("/proc/sys/kernel/osrelease", "r");
         if (fp)
           {
@@ -414,6 +412,7 @@ _drm_init(void)
           }
         if (!ok) return 0;
      }
+   ok = EINA_FALSE;
 
    snprintf(buf, sizeof(buf), "/dev/dri/card1");
    if (stat(buf, &st) == 0)
