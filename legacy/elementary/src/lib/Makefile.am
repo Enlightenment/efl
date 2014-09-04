@@ -499,7 +499,6 @@ elu_ews_wm.c
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
-@my_libs@ \
 @ELEMENTARY_LIBS@ \
 @LTLIBINTL@
 

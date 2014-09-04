@@ -23,7 +23,7 @@ if test "x${want_option}" != "xno"; then
        AC_DEFINE([HAVE_ELEMENTARY_]UP, [1], [$1 support for Elementary])
        have_elementary_[]DOWN="yes"
        ELM_[]UP[]_DEF="#define"
-       requirement_elm="[]DOWN >= $2 ${requirement_elm}"
+       requirement_elm_pc="[]DOWN >= $2 ${requirement_elm_pc}"
       ],
       [have_elementary_]DOWN[="no"]
    )
@@ -83,7 +83,7 @@ if test "x${want_elementary_web}" != "xnone"; then
                           ["WebKit's data dir"])
        ELM_WEB2_DEF="#define"
        elementary_web=${want_elementary_web}
-       requirement_elm="${want_elementary_web} ${requirement_elm}"
+       requirement_elm_pc="${want_elementary_web} ${requirement_elm_pc}"
       ],
       [elementary_web="no"]
    )

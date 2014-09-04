@@ -97,8 +97,7 @@ widget_preview_web \
 widget_preview_win
 
 LDADD = $(top_builddir)/src/lib/libelementary.la \
-@ELEMENTARY_LIBS@ \
-@my_libs@
+@ELEMENTARY_LIBS@
 
 endif
 

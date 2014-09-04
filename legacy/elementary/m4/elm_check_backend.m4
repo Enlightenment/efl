@@ -20,7 +20,7 @@ if test "x${want_backend}" != "xno"; then
       [
        AC_DEFINE([HAVE_ELEMENTARY_]UP, [1], [$1 support for Elementary])
        have_elementary_[]DOWN="yes"
-       requirement_elm="ecore-[]DOWN >= efl_version ${requirement_elm}"
+       requirement_elm_pc="ecore-[]DOWN >= efl_version ${requirement_elm_pc}"
       ],
       [have_elementary_]DOWN[="no"]
    )

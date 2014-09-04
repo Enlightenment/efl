@@ -19,7 +19,6 @@ AM_CPPFLAGS = \
 @ELEMENTARY_CFLAGS@
 
 LDADD = \
--lm \
 @ELEMENTARY_LIBS@ \
 $(top_builddir)/src/lib/libelementary.la
 

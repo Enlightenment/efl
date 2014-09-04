@@ -84,8 +84,7 @@ elm_suite_CPPFLAGS = \
 elm_suite_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
 	@CHECK_LIBS@ \
-	@ELEMENTARY_LIBS@ \
-	@my_libs@
+	@ELEMENTARY_LIBS@
 
 if HAVE_CXX11
 TESTS += elm_cxx_suite
@@ -103,6 +102,5 @@ elm_cxx_suite_CPPFLAGS = \
 elm_cxx_suite_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
 	@CHECK_LIBS@ \
-	@ELEMENTARY_LIBS@ \
-	@my_libs@
+	@ELEMENTARY_LIBS@
 endif

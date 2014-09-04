@@ -129,8 +129,7 @@ test_win_dialog.c \
 test.h
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
-	@ELEMENTARY_LIBS@ \
-	@my_libs@
+	@ELEMENTARY_LIBS@
 elementary_test_CFLAGS =
 elementary_test_LDFLAGS =
 
@@ -138,8 +137,7 @@ elementary_config_SOURCES = \
 config.c
 
 elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
-	@ELEMENTARY_LIBS@ \
-	@my_libs@
+	@ELEMENTARY_LIBS@
 elementary_config_LDFLAGS =
 
 elementary_codegen_SOURCES = \
@@ -147,8 +145,7 @@ elementary_codegen.c
 
 elementary_codegen_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
-	@ELEMENTARY_LIBS@ \
-	@my_libs@
+	@ELEMENTARY_LIBS@
 elementary_codegen_LDFLAGS =
 
 noinst_HEADERS = \
@@ -163,14 +160,12 @@ elm_prefs_cc_handlers.c
 
 elm_prefs_cc_LDADD = \
 $(top_builddir)/src/lib/libelementary.la \
-@ELEMENTARY_LIBS@ \
-@my_libs@
+@ELEMENTARY_LIBS@
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
-	@ELEMENTARY_LIBS@ \
-	@my_libs@
+	@ELEMENTARY_LIBS@
 elementary_quicklaunch_LDFLAGS =
 
 if BUILD_RUN

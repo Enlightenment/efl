@@ -185,16 +185,16 @@ EFL_ENABLE_BIN([elementary-config])
 
 ### Checks for libraries
 
-requirement_elm=""
+requirement_elm_pc=""
 
 case "$host_os" in
    mingw*)
-      requirement_elm="evil >= efl_version"
+      requirement_elm_pc="evil >= efl_version"
       ;;
 esac
 
-requirement_elm="\
-    ${requirement_elm} \
+requirement_elm_pc="\
+    ${requirement_elm_pc} \
     efl >= efl_version \
     eina >= efl_version \
     eet >= efl_version \
@@ -232,8 +232,7 @@ ELM_CHECK_OPTION([eweather], [0.2.0])
 ELM_CHECK_OPTION([emap], [0.1.0])
 ELM_CHECK_OPTION([eweb])
 
-PKG_CHECK_MODULES([ELEMENTARY],
-   [${requirement_elm}])
+PKG_CHECK_MODULES([ELEMENTARY], [${requirement_elm_pc}])
 
 EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
@@ -247,7 +246,7 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
         evas-cxx >= efl_version
       ],
       [
-        requirement_elm="${requirement_elm} \
+        requirement_elm_pc="${requirement_elm_pc} \
           eo-cxx >= efl_version \
           eina-cxx >= efl_version \
           evas-cxx >= efl_version \
@@ -273,7 +272,7 @@ AC_DEFINE_UNQUOTED([MODULE_EDJE], ["$MODULE_EDJE"], ["Edje module architecture"]
 DEPS_EOLIAN_FLAGS=`${PKG_CONFIG} --variable=eolian_flags eo evas edje ecore efl`
 AC_SUBST([DEPS_EOLIAN_FLAGS])
 
-my_libs="-lm"
+requirement_elm_libs="-lm"
 
 # sockets
 
@@ -285,7 +284,7 @@ case "$host_os" in
       AC_CHECK_LIB([socket], [connect],
          [
           have_socket="yes"
-          my_libs="-lsocket ${my_libs}"
+          requirement_elm_libs="-lsocket ${requirement_elm_libs}"
          ],
          [have_socket="no"])
       ;;
@@ -307,7 +306,7 @@ case "$host_os" in
 dnl managed by evil
       AC_DEFINE([HAVE_DLADDR], [1], [Define to 1 if you have the `dladdr' function.])
       have_dlopen="yes"
-      my_libs="-ldl ${my_libs}"
+      requirement_elm_libs="-ldl ${requirement_elm_libs}"
       ;;
    *solaris*)
       have_dlopen="yes"
@@ -319,7 +318,7 @@ dnl managed by evil
       AC_CHECK_LIB([dl], [dlopen], [res=yes], [res=no])
       if test "x$res" = "xyes"; then
          AC_CHECK_LIB([dl], [dladdr], AC_DEFINE([HAVE_DLADDR], [1], [Define to 1 if you have the `dladdr' function.]))
-         my_libs="-ldl ${my_libs}"
+         requirement_elm_libs="-ldl ${requirement_elm_libs}"
          have_dlopen="yes"
       fi
       ;;
@@ -327,8 +326,9 @@ esac
 
 AM_CONDITIONAL([BUILD_MODULES], [test "x$have_dlopen" = "xyes"])
 
-AC_SUBST([my_libs])
-AC_SUBST([requirement_elm])
+ELEMENTARY_LIBS="${ELEMENTARY_LIBS} ${requirement_elm_libs}"
+
+AC_SUBST([requirement_elm_pc])
 
 # check unit testing library
 if test "${build_tests}" = "regular"; then
