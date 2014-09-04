@@ -482,8 +482,6 @@ _ecore_evas_drm_init(const char *device)
         goto sprite_err;
      }
 
-   /* NB: We don't need to create outputs here. Evas will create the
-    * framebuffers it needs */
    /* try to create outputs */
    if (!ecore_drm_outputs_create(dev))
      {
