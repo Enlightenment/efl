@@ -49,7 +49,7 @@
  * @li "icon" - An icon of the progressbar
  *
  * Default text parts of the progressbar widget that you can use for are:
- * @li "default" - Label of the progressbar
+ * @li "default" - A label of the progressbar
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_text_set

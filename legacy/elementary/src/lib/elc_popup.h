@@ -92,14 +92,14 @@
  * @li "button3" - 3rd button of the action area
  *
  * Default text parts of the popup widget that you can use are:
- * @li "title,text" - This operates on Title area's label
- * @li "default" - content-text set in the content area of the widget
+ * @li "title,text" - A title area's label
+ * @li "default" - A content-text set in the content area of the widget
  *
  * Default contents parts of the popup items that you can use are:
- * @li "default" -Item's icon
+ * @li "default" - An item's icon
  *
  * Default text parts of the popup items that you can use are:
- * @li "default" - Item's label
+ * @li "default" - An item's label
  *
  * Supported elm_object_item common APIs.
  * @li @ref elm_object_item_part_text_set

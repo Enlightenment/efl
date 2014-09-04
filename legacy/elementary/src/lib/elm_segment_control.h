@@ -38,7 +38,7 @@
  * @li "icon" - An icon in a segment control item
  *
  * Default text parts of the segment control items that you can use for are:
- * @li "default" - Title label in a segment control item
+ * @li "default" - A title label in a segment control item
  *
  * Supported elm_object common APIs.
  * @li elm_object_disabled_set

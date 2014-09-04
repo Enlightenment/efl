@@ -22,7 +22,7 @@
  * @li @c "default" - A main content of the menu item
  *
  * Default text parts of the menu items that you can use for are:
- * @li @c "default" - label in the menu item
+ * @li @c "default" - A label in the menu item
  *
  * Supported elm_object_item common APIs.
  * @li @ref elm_object_item_del

@@ -42,7 +42,7 @@
  *
  * Default text parts of the fileselector_button widget that you can use for
  * are:
- * @li "default" - Label of the fileselector_button
+ * @li "default" - A label of the fileselector_button
  *
  * Default content parts of the fileselector_button widget that you can use for
  * are:

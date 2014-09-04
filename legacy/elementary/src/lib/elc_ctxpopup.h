@@ -38,7 +38,7 @@
  * @li "icon" - An icon in the title area
  *
  * Default text parts of the ctxpopup items that you can use for are:
- * @li "default" - Title label in the title area
+ * @li "default" - A title label in the title area
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set

@@ -34,7 +34,7 @@
  * @li "icon" - An icon of the hoversel
  *
  * Default text parts of the hoversel widget that you can use for are:
- * @li "default" - Label of the hoversel
+ * @li "default" - A label of the hoversel
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set

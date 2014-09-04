@@ -45,7 +45,7 @@
  * @li "icon" - An icon of the button
  *
  * Default text parts of the button widget that you can use for are:
- * @li "default" - Label of the button
+ * @li "default" - A label of the button
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_text_set

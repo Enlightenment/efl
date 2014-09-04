@@ -38,7 +38,7 @@
  * - @c "default"
  *
  * Default text parts of the flipselector items that you can use for are:
- * @li "default" - label of the flipselector item
+ * @li "default" - A label of the flipselector item
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set

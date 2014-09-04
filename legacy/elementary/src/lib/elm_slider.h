@@ -54,7 +54,7 @@
  * @li "end" - A end part content of the slider
  *
  * Default text parts of the slider widget that you can use for are:
- * @li "default" - Label of the slider
+ * @li "default" - A label of the slider
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set

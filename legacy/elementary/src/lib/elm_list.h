@@ -59,7 +59,7 @@
  * Another parts for customized styles are not accepted.
  *
  * Default text parts of the list items that you can use are:
- * @li @c "default" - label in the list item
+ * @li @c "default" - A label in the list item
  * Another parts for customized styles are not accepted.
  *
  * Supported @c elm_object_item common APIs.

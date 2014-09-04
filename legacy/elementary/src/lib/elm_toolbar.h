@@ -43,7 +43,7 @@
  * - @c "transparent" - no background or shadow, just show the content
  *
  * Default text parts of the toolbar items that you can use for are:
- * @li "default" - label of the toolbar item
+ * @li "default" - A label of the toolbar item
  *
  * Supported elm_object_item common APIs.
  * @li @ref elm_object_item_del

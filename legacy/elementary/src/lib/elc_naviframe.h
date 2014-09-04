@@ -38,9 +38,8 @@
  * One can use @ref elm_object_item_part_text_set,
  * @ref elm_object_item_part_text_get to handle the text parts.
  * The swallow part name should be one of these:
- * @li @c "default" - Title label in the title area of the current
- *                    page
- * @li @c "subtitle" - Sub-title label in the title area of the
+ * @li @c "default" - A title label in the title area of the current page
+ * @li @c "subtitle" - A sub-title label in the title area of the
  *                     current page
  *
  * Most of those content objects can be passed at the time of an item

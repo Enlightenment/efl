@@ -48,7 +48,7 @@
  * @li "icon" - An icon of the radio
  *
  * Default text parts of the radio widget that you can use for are:
- * @li "default" - Label of the radio
+ * @li "default" - A label of the radio
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_text_set

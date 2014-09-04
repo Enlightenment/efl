@@ -47,7 +47,7 @@
  * @li "icon" - An icon in the diskselector item
  *
  * Default text parts of the diskselector items that you can use for are:
- * @li "default" - Label of the diskselector item
+ * @li "default" - A label of the diskselector item
  *
  * Supported elm_object_item common APIs.
  * @li @ref elm_object_item_del

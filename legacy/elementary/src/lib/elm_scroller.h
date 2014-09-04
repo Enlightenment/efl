@@ -57,7 +57,7 @@
  * theme, the thumb scroll (a.k.a. finger scroll) won't work.
  *
  * Default content parts of the scroller widget that you can use are:
- * @li @c "default" - Content of the scroller
+ * @li @c "default" - A content of the scroller
  *
  * In @ref tutorial_scroller you'll find an example on how to use most
  * of this API.

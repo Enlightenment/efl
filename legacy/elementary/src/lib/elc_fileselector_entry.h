@@ -51,11 +51,11 @@
  *
  * Default text parts of the fileselector_button widget that you can use for
  * are:
- * @li "default" - Label of the fileselector_button
+ * @li "default" - A label of the fileselector_button
  *
  * Default content parts of the fileselector_entry widget that you can use for
  * are:
- * @li "button icon" - Button icon of the fileselector_entry
+ * @li "button icon" - A button icon of the fileselector_entry
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_text_set

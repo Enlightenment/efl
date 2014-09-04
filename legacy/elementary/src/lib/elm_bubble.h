@@ -46,8 +46,8 @@
  * @li "icon" - An icon of the bubble
  *
  * Default text parts of the button widget that you can use for are:
- * @li "default" - Label of the bubble
- * @li "info" - info of the bubble
+ * @li "default" - A label of the bubble
+ * @li "info" - An info of the bubble
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_text_set
