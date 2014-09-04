@@ -220,7 +220,7 @@ _server_connect(void)
      }
 
 #ifdef HAVE_FCNTL
-   fcntl(s, F_SETFL, O_NONBLOCK);
+   if (fcntl(s, F_SETFL, O_NONBLOCK) < 0) ERR("can't set non-blocking fd");
 #endif
 
    socketfd = s;
