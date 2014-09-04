@@ -292,6 +292,8 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
           foo_id->set_auto = EINA_TRUE;
         else
           foo_id->get_auto = EINA_TRUE;
+
+        foo_id->impl = impl;
      }
    else if (impl->is_empty)
      {
@@ -304,6 +306,8 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
           foo_id->set_empty = EINA_TRUE;
         else
           foo_id->get_empty = EINA_TRUE;
+
+        foo_id->impl = impl;
      }
    else if (impl->is_class_ctor)
      {
@@ -335,9 +339,40 @@ pasttags:
 }
 
 static Eina_Bool
+_db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
+{
+   if (foo_id->impl || foo_id->get_virtual_pure || foo_id->set_virtual_pure)
+     return EINA_TRUE;
+
+   Eolian_Implement *impl = calloc(1, sizeof(Eolian_Implement));
+
+   if (foo_id->type == EOLIAN_PROP_SET)
+     impl->base = foo_id->set_base;
+   else
+     impl->base = foo_id->base;
+   eina_stringshare_ref(impl->base.file);
+
+   impl->klass = cl;
+   impl->full_name = eina_stringshare_printf("%s.%s", cl->full_name,
+                                             foo_id->name);
+
+   if (foo_id->type == EOLIAN_PROP_SET)
+     impl->is_prop_set = EINA_TRUE;
+   else if (foo_id->type == EOLIAN_PROP_GET)
+     impl->is_prop_get = EINA_TRUE;
+
+   foo_id->impl = impl;
+
+   cl->implements = eina_list_append(cl->implements, impl);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _db_fill_implements(Eolian_Class *cl, Eo_Class_Def *kls)
 {
    Eolian_Implement *impl;
+   Eolian_Function *foo_id;
    Eina_List *l;
 
    EINA_LIST_FOREACH(kls->implements, l, impl)
@@ -347,7 +382,15 @@ _db_fill_implements(Eolian_Class *cl, Eo_Class_Def *kls)
         if (ret > 0) continue;
         eina_list_data_set(l, NULL); /* prevent double free */
      }
- 
+
+   EINA_LIST_FOREACH(cl->properties, l, foo_id)
+     if (!_db_build_implement(cl, foo_id))
+       return EINA_FALSE;
+
+   EINA_LIST_FOREACH(cl->methods, l, foo_id)
+     if (!_db_build_implement(cl, foo_id))
+       return EINA_FALSE;
+
    return EINA_TRUE;
 }
 

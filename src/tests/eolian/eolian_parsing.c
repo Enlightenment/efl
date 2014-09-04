@@ -262,7 +262,6 @@ START_TEST(eolian_ctor_dtor)
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
    fail_if(strcmp(eolian_function_name_get(impl_func), "destructor"));
-   fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 
    /* Custom ctors/dtors */
