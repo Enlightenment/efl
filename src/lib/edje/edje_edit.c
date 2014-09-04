@@ -6857,6 +6857,7 @@ edje_edit_state_text_text_source_set(Evas_Object *obj, const char *part, const c
    if (source)
      {
         spd = _edje_part_description_find_byname(eed, source, state, value);
+        if (!spd) return EINA_FALSE;
         txt = (Edje_Part_Description_Text *) pd;
         source_txt = (Edje_Part_Description_Text *) spd;
 
@@ -6916,6 +6917,7 @@ edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *
    if (source)
      {
         spd = _edje_part_description_find_byname(eed, source, state, value);
+        if (!spd) return EINA_FALSE;
         txt = (Edje_Part_Description_Text *) pd;
         source_style = (Edje_Part_Description_Text *) spd;
 
