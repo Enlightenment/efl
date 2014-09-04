@@ -11230,28 +11230,32 @@ edje_edit_clean_save_as(Evas_Object *obj, const char* new_file_name)
      }
 
    int count = 0;
-   char **ent = eet_list(ef, "*", &count);
+   char **ent;
    int i;
    int size = 0;
    const void * data;
 
-   /* copying data */
-   for (i = 0; i < count; i++)
+   ent = eet_list(ef, "*", &count);
+   if (ent)
      {
-        /* Skiping entries that need special saving */
-        if (!strcmp(ent[i], "edje/file")) continue;
-        if (!strcmp(ent[i], "edje_sources")) continue;
-        if (strstr(ent[i], "collection")) continue;
-
-        data = eet_read_direct(ef, ent[i], &size);
-        if (data) eet_write(ef_out, ent[i], data, size, 0);
-        else
+        /* copying data */
+        for (i = 0; i < count; i++)
           {
-             data = eet_read(ef, ent[i], &size);
-             eet_write(ef_out, ent[i], data, size, 1);
+             /* Skiping entries that need special saving */
+             if (!strcmp(ent[i], "edje/file")) continue;
+             if (!strcmp(ent[i], "edje_sources")) continue;
+             if (strstr(ent[i], "collection")) continue;
+
+             data = eet_read_direct(ef, ent[i], &size);
+             if (data) eet_write(ef_out, ent[i], data, size, 0);
+             else
+               {
+                  data = eet_read(ef, ent[i], &size);
+                  eet_write(ef_out, ent[i], data, size, 1);
+               }
           }
+        free(ent);
      }
-   free(ent);
 
    /* copying groups */
    Edje_Part_Collection_Directory_Entry *ce;
