@@ -280,6 +280,9 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
         EINA_ITERATOR_FOREACH(itr, impl_desc)
           {
              Eolian_Function_Type ftype;
+             const Eolian_Class *cl = eolian_implement_class_get(impl_desc);
+             if (cl == class)
+               continue;
              if (!(foo = eolian_implement_function_get(impl_desc, &ftype)))
                {
                   const char *name = names[eolian_implement_is_prop_get(impl_desc)

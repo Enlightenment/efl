@@ -250,6 +250,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
      return EINA_TRUE;
    if (strchr(imstr, '.'))
      return EINA_FALSE;
+   impl->klass = cl;
    *foo_id = (Eolian_Function*)eolian_class_function_get_by_name(cl, imstr,
                                                                  ftype);
    return !!*foo_id;
@@ -313,6 +314,12 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      {
         cl->class_dtor_enable = EINA_TRUE;
         return 1;
+     }
+   else
+     {
+        Eolian_Function *foo_id;
+        if (!_get_impl_func(cl, impl, ftype, &foo_id))
+          return _func_error(cl, impl);
      }
 
 pasttags:

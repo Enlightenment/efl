@@ -726,6 +726,8 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
         if ((impl_class = eolian_implement_class_get(impl_desc)))
           {
+             if (impl_class == class)
+               continue;
              fnid = eolian_implement_function_get(impl_desc, &ftype);
              _class_env_create(impl_class, NULL, &impl_env);
              funcname = eolian_function_name_get(fnid);
