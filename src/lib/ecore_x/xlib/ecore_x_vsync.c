@@ -96,11 +96,29 @@ typedef struct _drmEventContext
                              void *user_data);
 } drmEventContext;
 
+typedef struct _drmVersion
+{
+   int version_major;
+   int version_minor;
+//   int version_patchlevel;
+   size_t name_len;
+   // WARNING! this does NOT match the system drm.h headers because
+   // literally drm.h is wrong. the below is correct. drm hapily
+   // broke its ABI at some point.
+   char *name;
+   size_t date_len;
+   char *date;
+   size_t desc_len;
+   char *desc;
+} drmVersion;
+
 static int (*sym_drmClose)(int fd) = NULL;
 static int (*sym_drmWaitVBlank)(int fd,
                                 drmVBlank *vbl) = NULL;
 static int (*sym_drmHandleEvent)(int fd,
                                  drmEventContext *evctx) = NULL;
+static void *(*sym_drmGetVersion)(int fd) = NULL;
+static void (*sym_drmFreeVersion)(void *drmver) = NULL;
 static int drm_fd = -1;
 static volatile int drm_event_is_busy = 0;
 static int drm_animators_interval = 1;
@@ -332,6 +350,8 @@ _drm_link(void)
              SYM(drm_lib, drmClose);
              SYM(drm_lib, drmWaitVBlank);
              SYM(drm_lib, drmHandleEvent);
+             SYM(drm_lib, drmGetVersion);
+             SYM(drm_lib, drmFreeVersion);
              if (fail)
                {
                   dlclose(drm_lib);
@@ -349,6 +369,7 @@ _drm_init(void)
 {
    struct stat st;
    char buf[512];
+   Eina_Bool ok = EINA_FALSE;
 
    // vboxvideo 4.3.14 is crashing when calls drmWaitVBlank()
    // https://www.virtualbox.org/ticket/13265
@@ -404,6 +425,53 @@ _drm_init(void)
    if (stat(buf, &st) != 0) return 0;
    drm_fd = open(buf, O_RDWR);
    if (drm_fd < 0) return 0;
+
+   if (!getenv("ECORE_VSYNC_DRM_ALL"))
+     {
+        drmVersion *drmver;
+
+        drmver = sym_drmGetVersion(drm_fd);
+        if (!drmver)
+          {
+             close(drm_fd);
+             return 0;
+          }
+        // sanity check the drm version structure due to public versions
+        // not matching the real memory layout, check drm version
+        // is recent (1.6+) and name and sec ptrs exist AND their lengths are
+        // not garbage (within a sensible range)
+        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+          {
+             fprintf(stderr,
+                     "DRM Version: %i.%i\n"
+                     "Name:        '%s'\n"
+                     "Date:        '%s'\n"
+                     "Desc:        '%s'\n",
+                     drmver->version_major, drmver->version_minor,
+                     drmver->name, drmver->date, drmver->desc);
+          }
+        if ((drmver->version_major >= 1) &&
+            (drmver->version_minor >= 6) &&
+            (drmver->name) &&
+            (drmver->desc) &&
+            (drmver->desc_len > 0) &&
+            (drmver->desc_len < 200))
+          {
+             // whitelist of known-to-work drivers
+             if ((!strcmp(drmver->name, "i915")) &&
+                 (strstr(drmver->desc, "Intel Graphics")))
+               {
+                  ok = EINA_TRUE;
+               }
+          }
+        if (!ok)
+          {
+             sym_drmFreeVersion(drmver);
+             close(drm_fd);
+             return 0;
+          }
+     }
+
    memset(&drm_evctx, 0, sizeof(drm_evctx));
    drm_evctx.version = DRM_EVENT_CONTEXT_VERSION;
    drm_evctx.vblank_handler = _drm_vblank_handler;
