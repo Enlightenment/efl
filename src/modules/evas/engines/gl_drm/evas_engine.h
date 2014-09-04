@@ -179,9 +179,6 @@ _re_wincheck(Outbuf *ob)
    return EINA_FALSE;
 }
 
-//TODO: Need to split below evas_drm_... apis
-Eina_Bool evas_drm_init(Evas_Engine_Info_GL_Drm *info);
-Eina_Bool evas_drm_shutdown(Evas_Engine_Info_GL_Drm *info);
 Eina_Bool evas_drm_gbm_init(Evas_Engine_Info_GL_Drm *info, int w, int h);
 Eina_Bool evas_drm_gbm_shutdown(Evas_Engine_Info_GL_Drm *info);
 Eina_Bool evas_drm_outbuf_setup(Outbuf *ob);

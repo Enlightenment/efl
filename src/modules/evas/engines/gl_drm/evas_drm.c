@@ -1,9 +1,5 @@
 #include "evas_engine.h"
-#include <linux/vt.h>
-#include <linux/kd.h>
 #include <sys/mman.h>
-
-static Evas_Engine_Info_GL_Drm *siginfo;
 
 static void
 _evas_drm_fb_destroy_callback(struct gbm_bo *bo, void *data)
@@ -13,63 +9,6 @@ _evas_drm_fb_destroy_callback(struct gbm_bo *bo, void *data)
 
    if (buffer->fb)
      drmModeRmFB(gbm_device_get_fd(gbm), buffer->fb);
-}
-
-static int
-_evas_drm_tty_open(Evas_Engine_Info_GL_Drm *info)
-{
-   int tty = STDIN_FILENO;
-
-   /* check if the current stdin is a valid tty */
-   if (!isatty(tty))
-     {
-        /* if not, try to open the curren tty */
-        if ((tty = open("/dev/tty", (O_RDWR | O_CLOEXEC))) < 0)
-          {
-             int tty0 = -1, num = -1;
-             char name[16];
-
-             /* if that fails, try tty0 */
-             if ((tty0 = open("/dev/tty0", (O_WRONLY | O_CLOEXEC))) < 0)
-               {
-                  CRI("Could not open tty0: %m");
-                  return -1;
-               }
-
-             /* try to find a non-opened tty */
-             if ((ioctl(tty0, VT_OPENQRY, &num) < 0) || (num < 0))
-               {
-                  CRI("Could not find a non-opened tty");
-                  close(tty0);
-                  return -1;
-               }
-
-             snprintf(name, sizeof(name), "/dev/tty%d", num);
-
-             /* try to open this tty */
-             if ((tty = open(name, (O_RDWR | O_CLOEXEC))) < 0)
-               {
-                  CRI("Could not open tty: %s", name);
-                  close(tty0);
-                  return -1;
-               }
-
-             /* set flag that evas should close this tty */
-             info->info.own_tty = EINA_TRUE;
-
-             /* close /dev/tty0 */
-             close(tty0);
-          }
-     }
-   else
-     {
-        /* set flag that evas should close this tty */
-        info->info.own_tty = EINA_TRUE;
-     }
-
-   DBG("Opened Tty %d", tty);
-
-   return tty;
 }
 
 static int
@@ -129,103 +68,6 @@ _evas_drm_crtc_buffer_get(int fd, int crtc_id)
    id = crtc->buffer_id;
    drmModeFreeCrtc(crtc);
    return id;
-}
-
-static void
-_evas_drm_tty_sigusr1(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
-{
-   Evas_Engine_Info_GL_Drm *einfo;
-
-   DBG("Caught SIGUSR1");
-
-   if (!(einfo = siginfo)) return;
-
-   /* TODO: set canvas to not render */
-
-   DBG("\tDrop Master & Release VT");
-
-   /* drop drm master */
-   if (einfo->info.own_fd)
-     {
-        if (drmDropMaster(einfo->info.fd) != 0)
-          WRN("Could not drop drm master: %m");
-     }
-
-   /* release vt */
-   if (einfo->info.own_tty)
-     {
-        if (ioctl(einfo->info.tty, VT_RELDISP, 1) < 0)
-          WRN("Could not release vt: %m");
-     }
-}
-
-static void
-_evas_drm_tty_sigusr2(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
-{
-   Evas_Engine_Info_GL_Drm *einfo;
-
-   DBG("Caught SIGUSR2");
-
-   if (!(einfo = siginfo)) return;
-
-   /* TODO: set canvas to render again */
-
-   DBG("\tAcquire VT & Set Master");
-
-   /* acquire vt */
-   if (einfo->info.own_tty)
-     {
-        if (ioctl(einfo->info.tty, VT_RELDISP, VT_ACKACQ) < 0)
-          WRN("Could not acquire vt: %m");
-     }
-
-   /* set master */
-   if (einfo->info.own_fd)
-     {
-        if (drmSetMaster(einfo->info.fd) != 0)
-          WRN("Could not set drm master: %m");
-     }
-}
-
-static Eina_Bool
-_evas_drm_tty_setup(Evas_Engine_Info_GL_Drm *info)
-{
-   struct vt_mode vtmode = { 0 };
-   struct sigaction sig;
-
-   /* check for valid tty */
-   if (info->info.tty < 0) return EINA_FALSE;
-
-   /* setup tty rel/acq signals */
-   vtmode.mode = VT_PROCESS;
-   vtmode.waitv = 0;
-   vtmode.relsig = SIGUSR1;
-   vtmode.acqsig = SIGUSR2;
-   if (ioctl(info->info.tty, VT_SETMODE, &vtmode) < 0)
-     {
-        CRI("Could not set tty mode: %m");
-        return EINA_FALSE;
-     }
-
-   /* store info struct
-    *
-    * NB: REALLY hate to store this here, but sigaction signal handlers cannot
-    * pass any 'user data' to the signal handlers :(
-    */
-   siginfo = info;
-
-   /* setup signal handlers for above signals */
-   sig.sa_sigaction = _evas_drm_tty_sigusr1;
-   sig.sa_flags = (SA_NODEFER | SA_SIGINFO | SA_RESTART);
-   sigemptyset(&sig.sa_mask);
-   sigaction(SIGUSR1, &sig, NULL);
-
-   sig.sa_sigaction = _evas_drm_tty_sigusr2;
-   sig.sa_flags = (SA_NODEFER | SA_SIGINFO | SA_RESTART);
-   sigemptyset(&sig.sa_mask);
-   sigaction(SIGUSR2, &sig, NULL);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -295,60 +137,6 @@ _evas_drm_outbuf_planes_setup(Outbuf *ob, drmModePlaneResPtr pres)
      }
 
    if (eina_list_count(ob->priv.planes) < 1) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-Eina_Bool
-evas_drm_init(Evas_Engine_Info_GL_Drm *info)
-{
-   /* check for valid engine info */
-   if (!info) return EINA_FALSE;
-
-   setvbuf(stdout, NULL, _IONBF, 0);
-
-   /* check if we already opened the tty */
-   if (info->info.tty < 0)
-     {
-        /* try to open the current tty */
-        if ((info->info.tty = _evas_drm_tty_open(info)) < 0)
-          {
-             /* check if we already opened the card. if so, close it */
-             if ((info->info.fd >= 0) && (info->info.own_fd))
-               {
-                  close(info->info.fd);
-                  info->info.fd = -1;
-               }
-
-             return EINA_FALSE;
-          }
-     }
-
-   /* with the tty opened, we need to set it up */
-   if (!_evas_drm_tty_setup(info))
-     {
-        /* setup of tty failed, close it */
-        if ((info->info.tty >= 0) && (info->info.own_tty))
-          close(info->info.tty);
-
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
-Eina_Bool
-evas_drm_shutdown(Evas_Engine_Info_GL_Drm *info)
-{
-   /* check for valid engine info */
-   if (!info) return EINA_TRUE;
-
-   /* check if we already opened the tty. if so, close it */
-   if ((info->info.tty >= 0) && (info->info.own_tty))
-     {
-        close(info->info.tty);
-        info->info.tty = -1;
-     }
-
    return EINA_TRUE;
 }
 

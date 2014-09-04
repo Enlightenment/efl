@@ -1,6 +1,5 @@
 #include "evas_common_private.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
-#include <Ecore_Drm.h>
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -94,7 +93,6 @@ static int evgl_eng_rotation_angle_get(void *data);
 static void _re_winfree(Render_Engine *re);
 
 /* local variables */
-static Ecore_Drm_Device *drm_dev = NULL;
 static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
 
@@ -112,9 +110,9 @@ _drm_device_shutdown(Evas_Engine_Info_GL_Drm *info)
    /* check if we already opened the card. if so, close it */
    if ((info->info.fd >= 0) && (info->info.own_fd))
      {
-        ecore_drm_device_close(drm_dev);
+        ecore_drm_device_close(info->info.dev);
         info->info.fd = -1;
-        ecore_drm_device_free(drm_dev);
+        ecore_drm_device_free(info->info.dev);
      }
 }
 
@@ -616,30 +614,26 @@ eng_setup(Evas *eo_e, void *in)
              if (!ecore_drm_init()) return 0;
 
              /* try getting the default drm device */
-             if (!(drm_dev = ecore_drm_device_find(NULL, NULL)))
+             if (!(info->info.dev = ecore_drm_device_find(NULL, NULL)))
                {
                   _drm_device_shutdown(info);
                   return 0;
                }
 
              /* check if we already opened the drm device with ecore_evas */
-             if (info->info.fd < 0)
-               {
-                  /* try to open the drm ourselfs (most likely because we get called from expedite) */
-                  if (!ecore_drm_device_open(drm_dev))
-                    {
-                       _drm_device_shutdown(info);
-                       return 0;
-                    }
-                  info->info.own_fd = EINA_TRUE;
-                  info->info.fd = ecore_drm_device_fd_get(drm_dev);
-               }
-             /* try to init drm (this includes openening tty) */
-             /* FIXME replace with ecore_drm_tty */
-             if (!evas_drm_init(info))
+             /* try to open the drm ourselfs (most likely because we get called from expedite) */
+             if (!ecore_drm_device_open(info->info.dev))
                {
                   _drm_device_shutdown(info);
                   return 0;
+               }
+             info->info.own_fd = EINA_TRUE;
+             info->info.fd = ecore_drm_device_fd_get(info->info.dev);
+
+             if (info->info.tty < 0)
+               {
+                  info->info.own_tty = EINA_TRUE;
+                  info->info.tty = ecore_drm_tty_get(info->info.dev);
                }
           }
 
@@ -647,7 +641,6 @@ eng_setup(Evas *eo_e, void *in)
           {
              if (!evas_drm_gbm_init(info, epd->output.w, epd->output.h))
                {
-                  evas_drm_shutdown(info);
                   _drm_device_shutdown(info);
                   return 0;
                }
@@ -670,9 +663,6 @@ eng_setup(Evas *eo_e, void *in)
           {
              /* shutdown destroy gbm surface & shutdown gbm device */
              evas_drm_gbm_shutdown(info);
-             /* shutdown tty */
-             /* FIXME use ecore_drm_tty */
-             evas_drm_shutdown(info);
              _drm_device_shutdown(info);
              free(re);
              return 0;
@@ -701,9 +691,6 @@ eng_setup(Evas *eo_e, void *in)
              eng_window_free(ob);
              /* shutdown destroy gbm surface & shutdown gbm device */
              evas_drm_gbm_shutdown(info);
-             /* shutdown tty */
-             /* FIXME use ecore_drm_tty */
-             evas_drm_shutdown(info);
              _drm_device_shutdown(info);
              free(re);
              return 0;
@@ -823,9 +810,6 @@ eng_setup(Evas *eo_e, void *in)
              eng_window_free(eng_get_ob(re));
              gl_wins--;
              evas_drm_gbm_shutdown(info);
-             /* shutdown tty */
-             /* FIXME use ecore_drm_tty */
-             evas_drm_shutdown(info);
              _drm_device_shutdown(info);
           }
         free(re);
@@ -859,9 +843,6 @@ eng_output_free(void *data)
         if (gl_wins == 1) glsym_evgl_engine_shutdown(re);
 
         evas_drm_gbm_shutdown(eng_get_ob(re)->info);
-        /* shutdown tty */
-        /* FIXME use ecore_drm_tty */
-        evas_drm_shutdown(eng_get_ob(re)->info);
         _drm_device_shutdown(eng_get_ob(re)->info);
 
         //evas_render_engine_software_generic_clean() frees ob.

@@ -2,6 +2,7 @@
 # define _EVAS_ENGINE_GL_DRM_H
 
 # include <gbm.h>
+# include <Ecore_Drm.h>
 
 typedef struct _Evas_Engine_Info_GL_Drm Evas_Engine_Info_GL_Drm;
 
@@ -24,6 +25,7 @@ struct _Evas_Engine_Info_GL_Drm
         Eina_Bool own_fd : 1;
         Eina_Bool own_tty : 1;
         int output, plane;
+        Ecore_Drm_Device *dev;
      } info;
 
    struct
