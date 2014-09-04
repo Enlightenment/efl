@@ -44,11 +44,11 @@
  * @li @c "unfocused" - When the radio has lost focus. (since 1.8)
  * @li @c "language,changed" - the program's language changed (since 1.9)
  *
- * Default text parts of the radio widget that you can use for are:
- * @li "default" - Label of the radio
- *
  * Default content parts of the radio widget that you can use for are:
  * @li "icon" - An icon of the radio
+ *
+ * Default text parts of the radio widget that you can use for are:
+ * @li "default" - Label of the radio
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_text_set

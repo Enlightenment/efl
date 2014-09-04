@@ -45,7 +45,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
-   {"icon", "elm.swallow.content"},
+   {"default", "elm.swallow.content"},
+   {"icon", "elm.swallow.content"}, // TODO: deprecate this in elm 2.0
    {NULL, NULL}
 };
 

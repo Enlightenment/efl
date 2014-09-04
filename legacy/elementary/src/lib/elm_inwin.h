@@ -35,6 +35,9 @@
  * functions acting on it also work for inner windown objects. It also
  * emits the signals inherited from @ref Layout.
  *
+ * Default content parts of the inwin that you can use for are:
+ * @li "default" A content of the inwin
+ *
  * Some examples of Inwin can be found in the following:
  * @li @ref inwin_example_01
  *
