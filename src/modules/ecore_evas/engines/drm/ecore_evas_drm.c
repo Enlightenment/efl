@@ -68,6 +68,8 @@ static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
 
+static void _ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h);
+
 /* local variables */
 static int _ecore_evas_init_count = 0;
 static Ecore_Drm_Device *dev = NULL;
@@ -132,7 +134,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 
    _ecore_evas_drm_render,
 
-   NULL, //void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+   _ecore_evas_drm_screen_geometry_get,
    NULL, //void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
    NULL, //void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
    NULL, //void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
@@ -483,11 +485,11 @@ _ecore_evas_drm_init(const char *device)
    /* NB: We don't need to create outputs here. Evas will create the
     * framebuffers it needs */
    /* try to create outputs */
-   /* if (!ecore_drm_outputs_create(dev)) */
-   /*   { */
-   /*      ERR("Could not create outputs: %m"); */
-   /*      goto output_err; */
-   /*   } */
+   if (!ecore_drm_outputs_create(dev))
+     {
+        ERR("Could not create outputs: %m");
+        goto output_err;
+     }
 
    /* try to create inputs */
    if (!ecore_drm_inputs_create(dev))
@@ -988,4 +990,10 @@ _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
    return rend;
+}
+
+static void 
+_ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
+{
+   ecore_drm_outputs_geometry_get(dev, x, y, w, h);
 }
