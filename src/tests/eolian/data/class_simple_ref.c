@@ -15,9 +15,8 @@ char * _class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *
 
 static char * __eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c)
 {
-  if (c) *c = 1337.600000;
-
-  return _class_simple_foo(obj, pd, a, b, c);
+   if (c) *c = 1337.600000;
+   return _class_simple_foo(obj, pd, a, b, c);
 }
 
 EOAPI EO_FUNC_BODYV(evas_obj_simple_foo, char *, NULL, EO_FUNC_CALL(a, b, c), int a, char *b, double *c);

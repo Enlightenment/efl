@@ -117,5 +117,6 @@ tests/eolian/data/enum.eo \
 tests/eolian/data/free_func.eo \
 tests/eolian/data/typedef_ref.c \
 tests/eolian/data/struct_ref.c \
-tests/eolian/data/class_simple_ref.c
+tests/eolian/data/class_simple_ref.c \
+tests/eolian/data/override_ref.c
 

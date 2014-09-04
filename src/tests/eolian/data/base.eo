@@ -1,4 +1,13 @@
 class Base {
+   properties {
+      z {
+           values {
+                int a;
+                char b;
+                float c;
+           }
+      }
+   }
    methods {
       constructor {
       }

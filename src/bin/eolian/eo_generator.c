@@ -339,7 +339,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 }
 
 static Eina_Bool
-eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, _eolian_class_vars *impl_env)
+eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, Eolian_Implement *impl, _eolian_class_vars *impl_env)
 {
    _eolian_class_func_vars func_env;
    const char *suffix = "";
@@ -351,6 +351,9 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Iterator *itr;
    void *data, *data2;
    const Eolian_Expression *default_ret_val = NULL;
+   Eina_Bool is_empty = impl ? eolian_implement_is_empty(impl) : eolian_function_is_empty(funcid, ftype);
+   Eina_Bool is_auto = impl ? eolian_implement_is_auto(impl) : eolian_function_is_auto(funcid, ftype);
+   if (ftype != EOLIAN_PROP_GET && ftype != EOLIAN_PROP_SET) ftype = eolian_function_type_get(funcid);
 
    Eina_Bool need_implementation = EINA_TRUE;
    if (!impl_env && eolian_function_is_virtual_pure(funcid, ftype)) need_implementation = EINA_FALSE;
@@ -363,7 +366,10 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
 
    rettypet = eolian_function_return_type_get(funcid, ftype);
    if (rettypet)
-      default_ret_val = eolian_function_return_default_value_get(funcid, ftype);
+     {
+        is_auto = EINA_FALSE; /* We block auto when the function has to return something */
+        default_ret_val = eolian_function_return_default_value_get(funcid, ftype);
+     }
    if (ftype == EOLIAN_PROP_GET)
      {
         suffix = "_get";
@@ -398,9 +404,9 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET);
         if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
         eina_strbuf_append_printf(params, "%s", pname);
-        eina_strbuf_append_printf(full_params, ", %s%s %s",
+        eina_strbuf_append_printf(full_params, ", %s%s %s%s",
               is_const?"const ":"",
-              ptype, pname);
+              ptype, pname, is_empty || is_auto?" EINA_UNUSED":"");
         eina_stringshare_del(ptype);
      }
    eina_iterator_free(itr);
@@ -410,6 +416,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         EINA_ITERATOR_FOREACH(itr, data)
           {
              Eolian_Function_Parameter *param = data;
+             const Eolian_Expression *dflt_value = eolian_parameter_default_value_get(param);
              const Eolian_Type *ptypet = eolian_parameter_type_get(param);
              const char *pname = eolian_parameter_name_get(param);
              const char *ptype = eolian_type_c_type_get(ptypet);
@@ -419,30 +426,44 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
              if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
              eina_strbuf_append_printf(params, "%s", pname);
-             eina_strbuf_append_printf(full_params, ", %s%s%s%s%s",
+             eina_strbuf_append_printf(full_params, ", %s%s%s%s%s%s",
                    is_const?"const ":"",
-                   ptype, had_star?"":" ", add_star?"*":"", pname);
-             if (ftype != EOLIAN_PROP_SET)
+                   ptype, had_star?"":" ", add_star?"*":"", pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
+             if (is_auto)
                {
-                  const Eolian_Expression *dflt_value = eolian_parameter_default_value_get(param);
-                  if (dflt_value)
+                  if (ftype == EOLIAN_PROP_SET)
                     {
-                       const char *val_str = NULL;
-                       Eolian_Value val = eolian_expression_eval
-                          (dflt_value, EOLIAN_MASK_ALL);
-                       if (val.type)
+                       eina_strbuf_append_printf(params_init,
+                             "   %s = pd->%s;\n", pname, pname);
+                    }
+                  else
+                    {
+                       eina_strbuf_append_printf(params_init,
+                             "   if (%s) *%s = pd->%s;\n", pname, pname, pname);
+                    }
+               }
+             else {
+                  if (ftype != EOLIAN_PROP_SET)
+                    {
+                       if (dflt_value)
                          {
-                            val_str = eolian_expression_value_to_literal(&val);
-                            eina_strbuf_append_printf(params_init,
-                                  "  if (%s) *%s = %s;",
-                                  pname, pname, val_str);
-                            if (eolian_expression_type_get(dflt_value) == EOLIAN_EXPR_ENUM)
+                            const char *val_str = NULL;
+                            Eolian_Value val = eolian_expression_eval
+                               (dflt_value, EOLIAN_MASK_ALL);
+                            if (val.type)
                               {
-                                 Eina_Stringshare *string = eolian_expression_serialize(dflt_value);
-                                 eina_strbuf_append_printf(params_init, " /* %s */", string);
-                                 eina_stringshare_del(string);
+                                 val_str = eolian_expression_value_to_literal(&val);
+                                 eina_strbuf_append_printf(params_init,
+                                       "   if (%s) *%s = %s;",
+                                       pname, pname, val_str);
+                                 if (eolian_expression_type_get(dflt_value) == EOLIAN_EXPR_ENUM)
+                                   {
+                                      Eina_Stringshare *string = eolian_expression_serialize(dflt_value);
+                                      eina_strbuf_append_printf(params_init, " /* %s */", string);
+                                      eina_stringshare_del(string);
+                                   }
+                                 eina_strbuf_append_printf(params_init, "\n");
                               }
-                            eina_strbuf_append_printf(params_init, "\n");
                          }
                     }
                }
@@ -457,25 +478,59 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
      {
         Eina_Strbuf *ret_param = eina_strbuf_new();
         eina_strbuf_append_printf(fbody, "\n");
-        eina_strbuf_append_printf(fbody, "%s%s _%s%s%s_%s%s(Eo *obj, @#Datatype_Data *pd@#full_params);\n\n",
-              ret_const?"const ":"", rettype?rettype:"void",
-              class_env.lower_classname,
-              impl_env?"_":"",
-              impl_env?impl_env->lower_classname:"",
-              eolian_function_name_get(funcid), suffix);
-
-        if (eina_strbuf_length_get(params_init))
+        /* Generation of the user function prototype declaration - not needed when @auto and @empty are indicated */
+        if (!is_empty && !is_auto)
           {
-             eina_hash_add(_funcs_params_init,
-                   eina_stringshare_add(eolian_function_name_get(funcid)), funcid);
-             eina_strbuf_append_printf(fbody, "static %s%s __eolian_%s%s%s_%s%s(Eo *obj, @#Datatype_Data *pd@#full_params)\n{\n%s\n",
+             eina_strbuf_append_printf(fbody, "%s%s _%s%s%s_%s%s(Eo *obj, @#Datatype_Data *pd%s);\n\n",
                    ret_const?"const ":"", rettype?rettype:"void",
                    class_env.lower_classname,
                    impl_env?"_":"",
                    impl_env?impl_env->lower_classname:"",
                    eolian_function_name_get(funcid), suffix,
-                   eina_strbuf_string_get(params_init));
-             eina_strbuf_append_printf(fbody, "  %s_%s%s%s_%s%s(obj, pd, %s);\n}\n\n",
+                   eina_strbuf_string_get(full_params));
+          }
+
+        if (is_empty || is_auto || eina_strbuf_length_get(params_init))
+          {
+             /* We need to give the internal function name to Eo. We use this hash table as indication */
+             eina_hash_add(_funcs_params_init,
+                   eina_stringshare_add(eolian_function_name_get(funcid)), (void *)ftype);
+             /* Generation of the intermediate function __eolian_... */
+             eina_strbuf_append_printf(fbody, "static %s%s __eolian_%s%s%s_%s%s(Eo *obj%s, @#Datatype_Data *pd%s%s)\n{\n",
+                   ret_const?"const ":"", rettype?rettype:"void",
+                   class_env.lower_classname,
+                   impl_env?"_":"",
+                   impl_env?impl_env->lower_classname:"",
+                   eolian_function_name_get(funcid), suffix,
+                   is_empty || is_auto?" EINA_UNUSED":"",
+                   is_empty || (is_auto && !eina_strbuf_length_get(params_init))?" EINA_UNUSED":"",
+                   eina_strbuf_string_get(full_params));
+          }
+        if (eina_strbuf_length_get(params_init))
+          {
+             eina_strbuf_append_printf(fbody, "%s", eina_strbuf_string_get(params_init));
+          }
+        if (is_auto || is_empty)
+          {
+             if (rettype)
+               {
+                  /* return for auto and empty */
+                  const char *val_str = NULL;
+                  if (default_ret_val)
+                    {
+                       Eolian_Value val = eolian_expression_eval
+                          (default_ret_val, EOLIAN_MASK_ALL);
+                       if (val.type)
+                          val_str = eolian_expression_value_to_literal(&val);
+                    }
+                  eina_strbuf_append_printf(fbody, "   return %s;\n", val_str?val_str:"0");
+               }
+             eina_strbuf_append_printf(fbody, "}\n\n");
+          }
+        else if (eina_strbuf_length_get(params_init))
+          {
+             /* Generation of the user function invocation, e.g return _user_foo(obj, pd, ...) */
+             eina_strbuf_append_printf(fbody, "   %s_%s%s%s_%s%s(obj, pd, %s);\n}\n\n",
                    rettype?"return ":"",
                    class_env.lower_classname,
                    impl_env?"_":"",
@@ -528,6 +583,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
           }
         if (has_params)
           {
+             eina_strbuf_replace_all(full_params, " EINA_UNUSED", "");
              eina_strbuf_append_printf(eo_func_decl, ", EO_FUNC_CALL(%s)%s",
                    eina_strbuf_string_get(params),
                    eina_strbuf_string_get(full_params));
@@ -540,7 +596,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    if (need_implementation)
      {
         Eina_Bool is_cf = eolian_function_is_class(funcid);
-        eina_strbuf_replace_all(fbody, "@#full_params", eina_strbuf_string_get(full_params));
         const char *data_type = eolian_class_data_type_get(class);
         if (is_cf || (data_type && !strcmp(data_type, "null")))
            eina_strbuf_replace_all(fbody, "@#Datatype_Data", "void");
@@ -585,9 +640,9 @@ eo_op_desc_generate(const Eolian_Class *class, const Eolian_Function *fid, Eolia
    eina_strbuf_append_printf(buf, "\n     EO_OP_%sFUNC(%s, ", class_str, func_env.lower_eo_func);
    if (!is_virtual_pure)
      {
+        Eolian_Function_Type ftype2 = (Eolian_Function_Type) eina_hash_find(_funcs_params_init, funcname);
         eina_strbuf_append_printf(buf, "%s_%s_%s%s, \"%s\"),",
-              eina_hash_find(_funcs_params_init, funcname)
-              && ftype != EOLIAN_PROP_SET?"__eolian":"",
+              ftype == ftype2?"__eolian":"",
               class_env.lower_classname, funcname, suffix, desc);
      }
    else
@@ -731,19 +786,24 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         const Eolian_Function *fnid = NULL;
         const char *funcname = NULL;
         const char *rets;
-        char *tp = implname;
 
         const char *names[] = { "", "getter ", "setter " };
 
-        if ((impl_class = eolian_implement_class_get(impl_desc)))
+        impl_class = eolian_implement_class_get(impl_desc);
+
+        if (impl_class)
           {
+             char *tp = implname;
              if (impl_class == class)
                continue;
              fnid = eolian_implement_function_get(impl_desc, &ftype);
              _class_env_create(impl_class, NULL, &impl_env);
              funcname = eolian_function_name_get(fnid);
 
-             sprintf(implname, "%s_%s", class_env.full_classname, impl_env.full_classname);
+             sprintf(implname, "%s_%s_%s",
+                   eolian_implement_is_auto(impl_desc) || eolian_implement_is_empty(impl_desc)?
+                   "__eolian":"",
+                   class_env.full_classname, impl_env.full_classname);
              eina_str_tolower(&tp);
           }
 
@@ -766,22 +826,22 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
            case EOLIAN_PROP_SET: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY:
               if (ftype != EOLIAN_PROP_GET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_set, _%s_%s_set),",
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_set, %s_%s_set),",
                          class_str, rets, implname, funcname);
-                   eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, &impl_env);
+                   eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, impl_desc, &impl_env);
                 }
 
               if (ftype != EOLIAN_PROP_SET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_get, _%s_%s_get),",
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_get, %s_%s_get),",
                          class_str, rets, implname, funcname);
-                   eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, &impl_env);
+                   eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, impl_desc, &impl_env);
                 }
               break;
            default:
-              eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, _%s_%s),",
+              eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, %s_%s),",
                     class_str, rets, implname, funcname);
-              eo_bind_func_generate(class, fnid, ftype, str_bodyf, &impl_env);
+              eo_bind_func_generate(class, fnid, ftype, str_bodyf, impl_desc, &impl_env);
               break;
           }
         eina_stringshare_del(rets);
@@ -929,17 +989,17 @@ eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              switch (ftype)
                {
                 case EOLIAN_PROP_GET: case EOLIAN_PROP_SET:
-                  if (!eo_bind_func_generate(class, fid, ftype, str_bodyf, NULL))
+                  if (!eo_bind_func_generate(class, fid, ftype, str_bodyf, NULL, NULL))
                     goto end;
                   break;
                 case EOLIAN_PROPERTY:
-                  if (!eo_bind_func_generate(class, fid, EOLIAN_PROP_SET, str_bodyf, NULL))
+                  if (!eo_bind_func_generate(class, fid, EOLIAN_PROP_SET, str_bodyf, NULL, NULL))
                     goto end;
-                  if (!eo_bind_func_generate(class, fid, EOLIAN_PROP_GET, str_bodyf, NULL))
+                  if (!eo_bind_func_generate(class, fid, EOLIAN_PROP_GET, str_bodyf, NULL, NULL))
                     goto end;
                   break;
                 default:
-                  if (!eo_bind_func_generate(class, fid, EOLIAN_UNRESOLVED, str_bodyf, NULL))
+                  if (!eo_bind_func_generate(class, fid, EOLIAN_UNRESOLVED, str_bodyf, NULL, NULL))
                     goto end;
                   break;
                }

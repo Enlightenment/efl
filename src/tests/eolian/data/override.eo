@@ -11,12 +11,37 @@ class Override (Base) {
          }
          get {
          }
+         keys {
+              int idx;
+         }
+         values {
+              float a;
+              char b;
+              int c;
+         }
+      }
+      c {
+         set {
+         }
+         get {
+         }
+         keys {
+              int idx;
+         }
+         values {
+              int c(50);
+         }
       }
    }
    methods {
       foo {
       }
       bar {
+           params {
+                @in int idx;
+                @out int a (250);
+                @out char *str (null);
+           }
       }
    }
    implements {
@@ -25,5 +50,8 @@ class Override (Base) {
       @virtual .foo;
       @auto .b.set;
       @empty .bar;
+      @auto .c.get;
+      @auto Base.z.get;
+      @empty Base.z.set;
    }
 }
