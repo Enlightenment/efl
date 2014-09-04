@@ -11,7 +11,7 @@ eolian_flags=-I${eoincludedir}/elementary-@VMAJ@
 
 Name: elementary
 Description: Mobile device touchscreen widget library
-@pkgconfig_requires_private@: @requirement_elm@
+Requires.private: @requirement_elm@
 Version: @VERSION@
 Libs: -L${libdir} -lelementary @my_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_WEB_LIBS@ @ELEMENTARY_EMAP_LIBS@
 Cflags: -I${includedir}/elementary-@VMAJ@
