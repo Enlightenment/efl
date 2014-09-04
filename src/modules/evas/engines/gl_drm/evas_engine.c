@@ -551,7 +551,7 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *in)
 {
    Evas_Engine_Info_GL_Drm *info;
 
-   if (info = (Evas_Engine_Info_GL_Drm *)in)
+   if ((info = (Evas_Engine_Info_GL_Drm *)in))
      free(info);
 }
 

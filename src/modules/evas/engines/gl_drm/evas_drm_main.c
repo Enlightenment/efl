@@ -522,7 +522,7 @@ eng_outbuf_push_free_region_for_update(Outbuf *ob EINA_UNUSED, RGBA_Image *updat
 }
 
 void
-eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
+eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
