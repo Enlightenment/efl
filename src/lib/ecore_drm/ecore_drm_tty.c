@@ -198,15 +198,9 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
           }
      }
 
-   if (dev->tty.fd < 0)
-     {
-        DBG("Failed to open tty %s", tty);
-        return EINA_FALSE;
-     }
-
    DBG("Opened Tty %s : %d", tty, dev->tty.fd);
 
-  /* save tty name */
+   /* save tty name */
    dev->tty.name = eina_stringshare_add(tty);
 
    /* FIXME */
