@@ -234,6 +234,12 @@ ELM_CHECK_BACKEND([Win32])
 ELM_CHECK_BACKEND([Wayland])
 ELM_CHECK_BACKEND([DRM])
 
+ELM_CHECK_OPTION([elocation], [0.1.0])
+ELM_CHECK_OPTION([eweather], [0.2.0])
+# emap is in svn : trunk/PROTO
+ELM_CHECK_OPTION([emap], [0.1.0])
+ELM_CHECK_OPTION([eweb])
+
 PKG_CHECK_MODULES([ELEMENTARY],
    [${requirement_elm}])
 
@@ -437,143 +443,6 @@ case "$host_os" in
       ;;
 esac
 
-
-
-
-
-ELM_ELOCATION_DEF="#undef"
-have_elementary_elocation="no"
-want_elementary_elocation="auto"
-AC_ARG_ENABLE([elocation],
-   [AS_HELP_STRING([--disable-elocation], [disable elocation support. @<:@default=detect@:>@])],
-   [want_elementary_elocation=$enableval], [])
-
-if test "x$want_elementary_elocation" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_ELOCATION],
-       [
-        elocation >= 0.1.0
-       ],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_ELOCATION, 1, [Elocation support for Elementary])
-        have_elementary_elocation="yes"
-        ELM_ELOCATION_DEF="#define"
-        requirement_elm="elocation >= 0.1.0 ${requirement_elm}"
-       ],
-       [have_elementary_elocation="no"]
-    )
-else
-    have_elementary_elocation="no"
-fi
-if test "x$want_elementary_elocation" = "xyes" -a "x$have_elementary_elocation" = "xno"; then
-    AC_MSG_ERROR([elocation support requested, but elocation was not found by pkg-config.])
-fi
-AC_SUBST(ELM_ELOCATION_DEF)
-
-ELM_EWEATHER_DEF="#undef"
-have_elementary_eweather="no"
-want_elementary_eweather="auto"
-AC_ARG_ENABLE([eweather],
-   [AS_HELP_STRING([--disable-eweather], [disable eweather support. @<:@default=detect@:>@])],
-   [want_elementary_eweather=$enableval], [])
-
-if test "x$want_elementary_eweather" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_EWEATHER],
-       [
-        eweather
-       ],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_EWEATHER, 1, [EWeather support for Elementary])
-        have_elementary_eweather="yes"
-        ELM_EWEATHER_DEF="#define"
-        requirement_elm="eweather ${requirement_elm}"
-       ],
-       [have_elementary_eweather="no"]
-    )
-else
-    have_elementary_eweather="no"
-fi
-if test "x$want_elementary_eweather" = "xyes" -a "x$have_elementary_eweather" = "xno"; then
-    AC_MSG_ERROR([Eweather support requested, but eweather was not found by pkg-config.])
-fi
-AC_SUBST(ELM_EWEATHER_DEF)
-
-ELM_EMAP_DEF="#undef"
-have_elementary_emap="no"
-want_elementary_emap="auto"
-AC_ARG_ENABLE([emap],
-   [AS_HELP_STRING([--disable-emap], [disable emap support. @<:@default=detect@:>@])],
-   [want_elementary_emap=$enableval], [])
-
-if test "x$want_elementary_emap" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_EMAP],
-       [
-        emap
-       ],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_EMAP, 1, [EMap support for Elementary])
-        have_elementary_emap="yes"
-        ELM_EMAP_DEF="#define"
-        requirement_elm="emap ${requirement_elm}"
-       ],
-       [have_elementary_emap="no"]
-    )
-else
-    have_elementary_emap="no"
-fi
-if test "x$want_elementary_emap" = "xyes" -a "x$have_elementary_emap" = "xno"; then
-    AC_MSG_ERROR([Emap support requested, but emap was not found by pkg-config.])
-fi
-AC_SUBST(ELM_EMAP_DEF)
-
-ELM_WEB2_DEF="#undef"
-
-elementary_web_backend="detect"
-elementary_web="no"
-want_elementary_web=""
-AC_ARG_WITH([elementary-web-backend],
-   [AS_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
-   [
-    elementary_web_backend=${withval}
-   ],
-   [elementary_web_backend="detect"])
-
-case "$elementary_web_backend" in
-    ewebkit2|detect|none) ;;
-    *) AC_MSG_ERROR([Invalid web backend: must be ewebkit2, detect or none]) ;;
-esac
-
-if test "x$elementary_web_backend" = "xdetect"; then
-    want_elementary_web="ewebkit2"
-else
-    want_elementary_web=$elementary_web_backend
-fi
-
-if test "x$want_elementary_web" != "xnone"; then
-    PKG_CHECK_MODULES([ELEMENTARY_WEB],
-       [$want_elementary_web],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_WEB, 1, [Web support for Elementary])
-        webkit_datadir=$($PKG_CONFIG $want_elementary_web --variable=datadir)
-        AC_DEFINE_UNQUOTED(WEBKIT_DATADIR,
-                           "$webkit_datadir",
-                           "WebKit's data dir")
-        ELM_WEB2_DEF="#define"
-o
-        elementary_web=$want_elementary_web
-        requirement_elm="${want_elementary_web} ${requirement_elm}"
-       ],
-       [elementary_web="no"]
-    )
-else
-    elementary_web="no"
-fi
-
-if test "x$elementary_web_backend" = "xewebkit2"; then
-    if test "x$elementary_web" = "xnone"; then
-        AC_MSG_ERROR([Web support requested, but no $elementary_web_backend found by pkg-config.])
-    fi
-fi
-AC_SUBST(ELM_WEB2_DEF)
 
 AC_CONFIG_FILES([
 Makefile

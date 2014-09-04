@@ -12,11 +12,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DDOCW_DIR=\"$(abs_top_builddir)/doc/widgets\" \
-@ELEMENTARY_CFLAGS@ \
-@ELEMENTARY_ELOCATION_CFLAGS@ \
-@ELEMENTARY_EWEATHER_CFLAGS@ \
-@ELEMENTARY_WEB_CFLAGS@ \
-@ELEMENTARY_EMAP_CFLAGS@
+@ELEMENTARY_CFLAGS@
 
 noinst_DATA = widget_preview_prefs.epb
 
@@ -101,8 +97,6 @@ widget_preview_web \
 widget_preview_win
 
 LDADD = $(top_builddir)/src/lib/libelementary.la \
-@ELEMENTARY_EWEATHER_LIBS@ \
-@ELEMENTARY_EMAP_LIBS@ \
 @ELEMENTARY_LIBS@ \
 @my_libs@
 
