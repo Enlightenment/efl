@@ -436,7 +436,6 @@ esac
 AC_CONFIG_FILES([
 Makefile
 elementary.spec
-elementary.pc
 doc/Makefile
 doc/Doxyfile
 doc/widgets/Makefile

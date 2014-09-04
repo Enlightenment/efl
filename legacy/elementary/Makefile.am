@@ -72,6 +72,29 @@ m4/elm_check_backend.m4 \
 config.rpath \
 pkgbuild/PKGBUILD
 
+sed_process = \
+$(SED) \
+-e 's,@VERSION\@,$(VERSION),g' \
+-e 's,@VMAJ\@,$(VMAJ),g' \
+-e 's,@prefix\@,$(prefix),g' \
+-e 's,@exec_prefix\@,$(exec_prefix),g' \
+-e 's,@libdir\@,$(libdir),g' \
+-e 's,@includedir\@,$(includedir),g' \
+-e 's,@datarootdir\@,$(datarootdir),g' \
+-e 's,@datadir\@,$(datadir),g' \
+-e 's,@pkgdatadir\@,$(pkgdatadir),g' \
+-e 's,@requirement_elm_pc\@,$(requirement_elm_pc),g' \
+-e 's,@ELEMENTARY_LIBS\@,$(ELEMENTARY_LIBS),g' \
+< $< > $@ || rm $@
+
+pc_verbose = $(pc_verbose_@AM_V@)
+pc_verbose_ = $(pc_verbose_@AM_DEFAULT_V@)
+pc_verbose_0 = @echo "  PC      " $@;
+
+elementary.pc: $(top_srcdir)/elementary.pc.in Makefile
+	$(AM_V_at)rm -f $@
+	$(pc_verbose)$(sed_process)
+
 if HAVE_FREEBSD
 pkgconfigdir = $(libdir)data/pkgconfig
 else
@@ -79,6 +102,8 @@ pkgconfigdir = $(libdir)/pkgconfig
 endif
 
 pkgconfig_DATA = elementary.pc
+
+CLEANFILES = elementary.pc
 
 cmakeconfigdir = $(libdir)/cmake/Elementary
 cmakeconfig_DATA = \
