@@ -6,7 +6,7 @@ datarootdir=@datarootdir@
 datadir=@datadir@
 pkgdatadir=@pkgdatadir@
 themes=${pkgdatadir}/themes
-eoincludedir=@datadir@/eolian/include
+eoincludedir=${datadir}/eolian/include
 eolian_flags=-I${eoincludedir}/elementary-@VMAJ@
 
 Name: elementary
