@@ -767,3 +767,30 @@ ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h)
    if (h) *h = fb->height;
    drmModeFreeFB(fb);
 }
+
+EAPI void 
+ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, int *h)
+{
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+   int ox = 0, oy = 0, ow = 0, oh = 0;
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (!dev) return;
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     {
+        ox += output->x;
+        oy += output->y;
+        ow += MAX(ow, output->current_mode->width);
+        oh += MAX(oh, output->current_mode->height);
+     }
+
+   if (x) *x = ox;
+   if (y) *y = oy;
+   if (w) *w = ow;
+   if (h) *h = oh;
+}
