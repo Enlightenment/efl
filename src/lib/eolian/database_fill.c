@@ -233,6 +233,28 @@ _func_error(Eolian_Class *cl, Eolian_Implement *impl)
    return -1;
 }
 
+static Eina_Bool
+_get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
+               Eolian_Function_Type ftype, Eolian_Function **foo_id)
+{
+   size_t cllen = strlen(cl->full_name);
+   size_t imlen = strlen(impl->full_name);
+   const char *imstr = impl->full_name;
+   *foo_id = NULL;
+   if (imstr[0] == '.')
+     ++imstr;
+   else if ((imlen > (cllen + 1)) && (*(imstr + cllen) == '.')
+        && !strncmp(imstr, cl->full_name, cllen))
+     imstr += cllen + 1;
+   else
+     return EINA_TRUE;
+   if (strchr(imstr, '.'))
+     return EINA_FALSE;
+   *foo_id = (Eolian_Function*)eolian_class_function_get_by_name(cl, imstr,
+                                                                 ftype);
+   return !!*foo_id;
+}
+
 static int
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
@@ -248,9 +270,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    if (impl->is_virtual)
      {
         Eolian_Function *foo_id = (Eolian_Function*)
-                                   eolian_class_function_get_by_name(cl,
-                                                                     impl_name,
-                                                                     ftype);
+            eolian_class_function_get_by_name(cl, impl_name, ftype);
         if (!foo_id) return _func_error(cl, impl);
 
         if (impl->is_prop_set)
@@ -262,13 +282,11 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      }
    else if (impl->is_auto)
      {
-        const char *inm = impl_name;
-        if (inm[0] == '.') ++inm;
-        if (strchr(inm, '.')) goto pasttags;
-        Eolian_Function *foo_id = (Eolian_Function*)
-                                   eolian_class_function_get_by_name(cl, inm,
-                                                                     ftype);
-        if (!foo_id) return _func_error(cl, impl);
+        Eolian_Function *foo_id;
+        if (!_get_impl_func(cl, impl, ftype, &foo_id))
+          return _func_error(cl, impl);
+        if (!foo_id)
+          goto pasttags;
         if (impl->is_prop_set)
           foo_id->set_auto = EINA_TRUE;
         else
@@ -276,13 +294,11 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      }
    else if (impl->is_empty)
      {
-        const char *inm = impl_name;
-        if (inm[0] == '.') ++inm;
-        if (strchr(inm, '.')) goto pasttags;
-        Eolian_Function *foo_id = (Eolian_Function*)
-                                   eolian_class_function_get_by_name(cl, inm,
-                                                                     ftype);
-        if (!foo_id) return _func_error(cl, impl);
+        Eolian_Function *foo_id;
+        if (!_get_impl_func(cl, impl, ftype, &foo_id))
+          return _func_error(cl, impl);
+        if (!foo_id)
+          goto pasttags;
         if (impl->is_prop_set)
           foo_id->set_empty = EINA_TRUE;
         else

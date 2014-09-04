@@ -6,14 +6,24 @@ class Override (Base) {
          get {
          }
       }
+      b {
+         set {
+         }
+         get {
+         }
+      }
    }
    methods {
       foo {
+      }
+      bar {
       }
    }
    implements {
       Base.constructor;
       @virtual .a.set;
       @virtual .foo;
+      @auto .b.set;
+      @empty .bar;
    }
 }

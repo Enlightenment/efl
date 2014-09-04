@@ -1546,13 +1546,6 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
                   check_kw_next(ls, KW_get);
                   impl->is_prop_get = EINA_TRUE;
                }
-             if (!impl->is_virtual)
-               {
-                  const char *ofname = impl->full_name;
-                  impl->full_name = eina_stringshare_printf("%s%s", ofname,
-                      impl->is_prop_get ? ".get" : "set");
-                  eina_stringshare_del(ofname);
-               }
           }
         check_next(ls, ';');
         return;
