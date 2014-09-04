@@ -189,6 +189,11 @@ EAPI void ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb
 EAPI void ecore_drm_output_repaint(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h);
 
+/**
+ * @since 1.12
+ */
+EAPI void ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, int *h);
+
 EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_inputs_enable(Ecore_Drm_Input *input);
