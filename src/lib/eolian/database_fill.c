@@ -1,6 +1,6 @@
 #include "eo_parser.h"
 
-static Eina_Bool
+static void
 _db_fill_param(Eina_List **plist, Eo_Param_Def *param)
 {
    Eolian_Function_Parameter *p = database_parameter_add(param->type,
@@ -14,8 +14,6 @@ _db_fill_param(Eina_List **plist, Eo_Param_Def *param)
 
    p->base = param->base;
    param->base.file = NULL;
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -25,7 +23,7 @@ _db_fill_params(Eina_List *oplist, Eina_List **plist)
    Eina_List *l;
 
    EINA_LIST_FOREACH(oplist, l, param)
-     if (!_db_fill_param(plist, param)) return EINA_FALSE;
+     _db_fill_param(plist, param);
 
    return EINA_TRUE;
 }
@@ -350,21 +348,19 @@ pasttags:
    return 0;
 }
 
-static Eina_Bool
+static void
 _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
 {
    if (foo_id->type == EOLIAN_PROP_SET)
      {
-        if (foo_id->set_impl)
-          return EINA_TRUE;
+        if (foo_id->set_impl) return;
      }
    else if (foo_id->type == EOLIAN_PROP_GET)
      {
-        if (foo_id->get_impl)
-          return EINA_TRUE;
+        if (foo_id->get_impl) return;
      }
-   else if (foo_id->get_impl && foo_id->set_impl)
-     return EINA_TRUE;
+   else if (foo_id->get_impl && foo_id->set_impl) return;
+
    Eolian_Implement *impl = calloc(1, sizeof(Eolian_Implement));
 
    if (foo_id->type == EOLIAN_PROP_SET)
@@ -407,8 +403,6 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
      foo_id->get_impl = foo_id->set_impl = impl;
 
    cl->implements = eina_list_append(cl->implements, impl);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -427,12 +421,10 @@ _db_fill_implements(Eolian_Class *cl, Eo_Class_Def *kls)
      }
 
    EINA_LIST_FOREACH(cl->properties, l, foo_id)
-     if (!_db_build_implement(cl, foo_id))
-       return EINA_FALSE;
+     _db_build_implement(cl, foo_id);
 
    EINA_LIST_FOREACH(cl->methods, l, foo_id)
-     if (!_db_build_implement(cl, foo_id))
-       return EINA_FALSE;
+     _db_build_implement(cl, foo_id);
 
    return EINA_TRUE;
 }
