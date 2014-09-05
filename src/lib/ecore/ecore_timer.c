@@ -436,6 +436,8 @@ _ecore_timer_del(Ecore_Timer *obj)
 {
    Ecore_Timer_Data *timer = eo_data_scope_get(obj, MY_CLASS);
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(timer, NULL);
+
    if (timer->frozen && !timer->references)
      {
         void *data = timer->data;
