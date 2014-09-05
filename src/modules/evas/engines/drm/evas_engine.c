@@ -42,12 +42,6 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
 
         info->info.own_fd = EINA_TRUE;
         info->info.fd = ecore_drm_device_fd_get(info->info.dev);
-
-        if (info->info.tty < 0)
-          {
-             info->info.own_tty = EINA_TRUE;
-             info->info.tty = ecore_drm_tty_get(info->info.dev);
-          }
      }
 
    /* try to allocate space for our render engine structure */

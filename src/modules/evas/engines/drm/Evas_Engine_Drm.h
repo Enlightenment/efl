@@ -22,9 +22,6 @@ struct _Evas_Engine_Info_Drm
         int fd;
         Eina_Bool own_fd : 1;
 
-        int tty;
-        Eina_Bool own_tty : 1;
-
         int output;
         int plane;
 
