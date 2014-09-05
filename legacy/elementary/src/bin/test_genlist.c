@@ -348,9 +348,7 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 static void
 my_gl_clear(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   api_data *api = data;
-   Evas_Object *gl = api->gl;
-   elm_genlist_clear(gl);
+   elm_genlist_clear(data);
 }
 
 static void
@@ -656,7 +654,7 @@ test_genlist2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "X");
-   evas_object_smart_callback_add(bt, "clicked", my_gl_clear, api);
+   evas_object_smart_callback_add(bt, "clicked", my_gl_clear, gl);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
