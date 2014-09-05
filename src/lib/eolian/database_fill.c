@@ -381,11 +381,6 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
    impl->full_name = eina_stringshare_printf("%s.%s", cl->full_name,
                                              foo_id->name);
 
-   if (foo_id->type == EOLIAN_PROP_SET)
-     impl->is_prop_set = EINA_TRUE;
-   else if (foo_id->type == EOLIAN_PROP_GET)
-     impl->is_prop_get = EINA_TRUE;
-
    if (foo_id->type == EOLIAN_PROPERTY)
      {
         if (foo_id->get_impl)
@@ -402,9 +397,15 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
           foo_id->get_impl = foo_id->set_impl = impl;
      }
    else if (foo_id->type == EOLIAN_PROP_SET)
-     foo_id->set_impl = impl;
+     {
+        impl->is_prop_set = EINA_TRUE;
+        foo_id->set_impl = impl;
+     }
    else if (foo_id->type == EOLIAN_PROP_GET)
-     foo_id->get_impl = impl;
+     {
+        impl->is_prop_get = EINA_TRUE;
+        foo_id->get_impl = impl;
+     }
    else
      foo_id->get_impl = foo_id->set_impl = impl;
 
