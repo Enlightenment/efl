@@ -799,7 +799,8 @@ _edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed;
    int program_id = 0;
    Edje_Running_Program *runp;
-   Eina_List *l;
+   Edje_Pending_Program *pp;
+   Eina_List *l, *ll;
 
    CHKPARAM(1);
    ed = embryo_program_data_get(ep);
@@ -811,6 +812,13 @@ _edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
    EINA_LIST_FOREACH(ed->actions, l, runp)
      if (program_id == runp->program->id)
        _edje_program_end(ed, runp);
+   EINA_LIST_FOREACH_SAFE(ed->pending_actions, l, ll, pp)
+     if (program_id == pp->program->id)
+       {
+          ed->pending_actions = eina_list_remove_list(ed->pending_actions, l);
+          ecore_timer_del(pp->timer);
+          free(pp);
+       }
 
    ed->walking_actions = EINA_FALSE;
 
