@@ -11,7 +11,7 @@ struct _Evas_Engine_Info_Drm
    /* at you and make nasty noises */
    Evas_Engine_Info magic;
 
-   struct 
+   struct
      {
         Evas *evas;
 
