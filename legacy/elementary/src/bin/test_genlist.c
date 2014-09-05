@@ -119,10 +119,17 @@ typedef struct _Testitem
    Eina_Bool checked;
 } Testitem;
 
-char *gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+static char *
+gl_text_get1(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Item # %i", (int)(uintptr_t)data);
+   int num = (int)(uintptr_t)data;
+
+   if (num == 5)
+     snprintf(buf, sizeof(buf), "Item # %i (Genlist Cleear on Select)", num);
+   else
+     snprintf(buf, sizeof(buf), "Item # %i", num);
+
    return strdup(buf);
 }
 
@@ -202,6 +209,13 @@ static void
 gl_sel(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
+}
+
+static void
+gl_sel_clear_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                void *event_info EINA_UNUSED)
+{
+   elm_genlist_clear(obj);
 }
 
 static void
@@ -309,7 +323,7 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    api->itc1 = elm_genlist_item_class_new();
    api->itc1->item_style = "default";
-   api->itc1->func.text_get = gl_text_get;
+   api->itc1->func.text_get = gl_text_get1;
    api->itc1->func.content_get = gl_content_get;
    api->itc1->func.state_get = gl_state_get;
    api->itc1->func.del = NULL;
@@ -326,12 +340,25 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    for (i = 0; i < 2000; i++)
      {
-        gli = elm_genlist_item_append(gl, api->itc1,
-                                      (void *)(uintptr_t)i/* item data */,
-                                      NULL/* parent */,
-                                      ELM_GENLIST_ITEM_NONE,
-                                      gl_sel/* func */,
-                                      (void *)(uintptr_t)(i * 10)/* func data */);
+        if (i == 5)
+          {
+             gli = elm_genlist_item_append(gl, api->itc1,
+                                           (void *)(uintptr_t)i/* item data */,
+                                           NULL/* parent */,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           gl_sel_clear_cb/* func */,
+                                           (void *)(uintptr_t)(i * 10)/* func data */);
+          }
+        else
+          {
+             gli = elm_genlist_item_append(gl, api->itc1,
+                                           (void *)(uintptr_t)i/* item data */,
+                                           NULL/* parent */,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           gl_sel/* func */,
+                                           (void *)(uintptr_t)(i * 10)/* func data */);
+          }
+
         if (i == 50)
           evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
         else if (i == 1500)
@@ -351,6 +378,13 @@ my_gl_clear(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    elm_genlist_clear(data);
 }
 
+static char *
+gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item # %i", (int)(uintptr_t)data);
+   return strdup(buf);
+}
 static void
 my_gl_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
