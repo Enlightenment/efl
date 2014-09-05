@@ -1012,6 +1012,16 @@ EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl);
 EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl);
 
 /*
+ * @brief Get whether an implement is tagged with @virtual.
+ *
+ * @param[in] impl the handle of the implement
+ * @return EINA_TRUE when it is, EINA_FALSE when it's not.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl);
+
+/*
  * @brief Get whether an implement references a property getter.
  *
  * @param[in] impl the handle of the implement

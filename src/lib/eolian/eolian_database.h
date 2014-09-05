@@ -97,7 +97,8 @@ struct _Eolian_Function
    Eolian_Type *set_ret_type;
    Eolian_Expression *get_ret_val;
    Eolian_Expression *set_ret_val;
-   Eolian_Implement *impl;
+   Eolian_Implement *get_impl;
+   Eolian_Implement *set_impl;
    Eina_Stringshare *get_legacy;
    Eina_Stringshare *set_legacy;
    Eina_Stringshare *get_description;
