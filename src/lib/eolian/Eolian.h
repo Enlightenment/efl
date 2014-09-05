@@ -1032,10 +1032,15 @@ EAPI Eina_Bool eolian_implement_is_prop_get(const Eolian_Implement *impl);
 EAPI Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
 
 /*
- * @brief Get an iterator to the overriding functions defined in a class.
+ * @brief Get an iterator to implements of a class.
  *
  * @param[in] klass the class.
  * @return the iterator
+ *
+ * Implements include fields specified in the "implements" section of your Eo
+ * file (i.e. overriding and virtual/auto/empty functions) and all other
+ * methods/properties of your class (local only) that are not specified
+ * within that section.
  *
  * @ingroup Eolian
  */
