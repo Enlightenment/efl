@@ -687,6 +687,15 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->line_number     = 1;
    ls->icolumn         = ls->column = 0;
    next_char(ls);
+   if (ls->current != 0xEF)
+     return;
+   next_char(ls);
+   if (ls->current != 0xBB)
+     return;
+   next_char(ls);
+   if (ls->current != 0xBF)
+     return;
+   next_char(ls);
 }
 
 void
