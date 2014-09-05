@@ -342,7 +342,7 @@ pasttags:
 static Eina_Bool
 _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
 {
-   if (foo_id->impl || foo_id->get_virtual_pure || foo_id->set_virtual_pure)
+   if (foo_id->impl)
      return EINA_TRUE;
 
    Eolian_Implement *impl = calloc(1, sizeof(Eolian_Implement));

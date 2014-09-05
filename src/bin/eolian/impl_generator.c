@@ -251,27 +251,6 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
       eina_strbuf_prepend_printf(buffer, "%s", eina_strbuf_string_get(begin));
    eina_strbuf_free(begin);
 
-   /* Properties */
-   itr = eolian_class_functions_get(class, EOLIAN_PROPERTY);
-   EINA_ITERATOR_FOREACH(itr, foo)
-     {
-        const Eolian_Function_Type ftype = eolian_function_type_get(foo);
-        if (ftype == EOLIAN_PROP_SET || ftype == EOLIAN_PROPERTY)
-           _prototype_generate(foo, EOLIAN_PROP_SET, data_type_buf, NULL, buffer);
-
-        if (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROPERTY)
-           _prototype_generate(foo, EOLIAN_PROP_GET, data_type_buf, NULL, buffer);
-     }
-   eina_iterator_free(itr);
-
-   /* Methods */
-   itr = eolian_class_functions_get(class, EOLIAN_METHOD);
-   EINA_ITERATOR_FOREACH(itr, foo)
-     {
-        _prototype_generate(foo, EOLIAN_METHOD, data_type_buf, NULL, buffer);
-     }
-   eina_iterator_free(itr);
-
    itr = eolian_class_implements_get(class);
    if (itr)
      {
@@ -280,24 +259,26 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
         EINA_ITERATOR_FOREACH(itr, impl_desc)
           {
              Eolian_Function_Type ftype;
-             const Eolian_Class *cl = eolian_implement_class_get(impl_desc);
-             if (cl == class)
-               continue;
+             Eolian_Implement *idesc = (eolian_implement_class_get(impl_desc) == class) ? NULL : impl_desc;
              if (!(foo = eolian_implement_function_get(impl_desc, &ftype)))
                {
                   const char *name = names[eolian_implement_is_prop_get(impl_desc)
                                         | (eolian_implement_is_prop_set(impl_desc) << 1)];
-                  ERR ("Failed to generate implementation of %s%s - missing form super class",
+                  ERR ("Failed to generate implementation of %s%s - missing from class",
                         name, eolian_implement_full_name_get(impl_desc));
                   goto end;
                }
              switch (ftype)
                {
                 case EOLIAN_PROP_SET: case EOLIAN_PROP_GET:
-                   _prototype_generate(foo, ftype, data_type_buf, impl_desc, buffer);
+                   _prototype_generate(foo, ftype, data_type_buf, idesc, buffer);
+                   break;
+                case EOLIAN_PROPERTY:
+                   _prototype_generate(foo, EOLIAN_PROP_SET, data_type_buf, idesc, buffer);
+                   _prototype_generate(foo, EOLIAN_PROP_GET, data_type_buf, idesc, buffer);
                    break;
                 default:
-                   _prototype_generate(foo, eolian_function_type_get(foo), data_type_buf, impl_desc, buffer);
+                   _prototype_generate(foo, eolian_function_type_get(foo), data_type_buf, idesc, buffer);
                    break;
                }
           }
