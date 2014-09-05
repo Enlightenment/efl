@@ -21,9 +21,8 @@ struct _Evas_Engine_Info_GL_Drm
         uint32_t flags;
         int depth, screen, rotation;
         unsigned char destination_alpha : 1;
-        int fd, tty;
+        int fd;
         Eina_Bool own_fd : 1;
-        Eina_Bool own_tty : 1;
         int output, plane;
         Ecore_Drm_Device *dev;
      } info;

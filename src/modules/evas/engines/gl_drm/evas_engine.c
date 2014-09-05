@@ -629,12 +629,6 @@ eng_setup(Evas *eo_e, void *in)
                }
              info->info.own_fd = EINA_TRUE;
              info->info.fd = ecore_drm_device_fd_get(info->info.dev);
-
-             if (info->info.tty < 0)
-               {
-                  info->info.own_tty = EINA_TRUE;
-                  info->info.tty = ecore_drm_tty_get(info->info.dev);
-               }
           }
 
         if (!(info->info.gbm) || !(info->info.surface))
