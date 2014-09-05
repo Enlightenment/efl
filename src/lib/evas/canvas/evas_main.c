@@ -122,7 +122,6 @@ evas_shutdown(void)
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
-   evas_font_dir_cache_free();
    evas_common_shutdown();
    evas_module_shutdown();
 
