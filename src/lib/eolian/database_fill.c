@@ -273,6 +273,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
    const char *impl_name = impl->full_name;
 
+   Eolian_Function *foo_id;
    Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
 
    if (impl->is_prop_get)
@@ -282,8 +283,8 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 
    if (impl->is_virtual)
      {
-        Eolian_Function *foo_id = (Eolian_Function*)
-            eolian_class_function_get_by_name(cl, impl_name, ftype);
+        foo_id = (Eolian_Function*)eolian_class_function_get_by_name(cl,
+          impl_name, ftype);
         if (!foo_id)
           return _func_error(cl, impl);
         if (impl->is_prop_set)
@@ -300,7 +301,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      }
    else if (impl->is_auto)
      {
-        Eolian_Function *foo_id;
         if (!_get_impl_func(cl, impl, ftype, &foo_id))
           return _func_error(cl, impl);
         if (!foo_id)
@@ -314,7 +314,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      }
    else if (impl->is_empty)
      {
-        Eolian_Function *foo_id;
         if (!_get_impl_func(cl, impl, ftype, &foo_id))
           return _func_error(cl, impl);
         if (!foo_id)
@@ -338,7 +337,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      }
    else
      {
-        Eolian_Function *foo_id;
         if (!_get_impl_func(cl, impl, ftype, &foo_id))
           return _func_error(cl, impl);
      }
