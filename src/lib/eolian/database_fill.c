@@ -335,11 +335,8 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         cl->class_dtor_enable = EINA_TRUE;
         return 1;
      }
-   else
-     {
-        if (!_get_impl_func(cl, impl, ftype, &foo_id))
-          return _func_error(cl, impl);
-     }
+   else if (!_get_impl_func(cl, impl, ftype, &foo_id))
+     return _func_error(cl, impl);
 
 pasttags:
    if (impl_name[0] == '.')
