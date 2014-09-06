@@ -936,6 +936,8 @@ _evas_table_evas_object_smart_resize(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, 
 EOLIAN static void
 _evas_table_evas_object_smart_calculate(Eo *o, Evas_Table_Data *priv)
 {
+   Evas *e;
+
    if ((priv->size.cols < 1) || (priv->size.rows < 1))
      {
         DBG("Nothing to do: cols=%d, rows=%d",
@@ -943,10 +945,15 @@ _evas_table_evas_object_smart_calculate(Eo *o, Evas_Table_Data *priv)
         return;
      }
 
+   e = evas_object_evas_get(o);
+   evas_event_freeze(e);
+
    if (priv->homogeneous)
      _evas_object_table_smart_calculate_homogeneous(o, priv);
    else
      _evas_object_table_smart_calculate_regular(o, priv);
+
+   evas_event_thaw(e);
 }
 
 EAPI Evas_Object *
@@ -1261,6 +1268,10 @@ EOLIAN static void
 _evas_table_clear(Eo *o, Evas_Table_Data *priv, Eina_Bool clear)
 {
    Evas_Object_Table_Option *opt;
+   Evas *e;
+
+   e = evas_object_evas_get(o);
+   evas_event_freeze(e);
 
    EINA_LIST_FREE(priv->children, opt)
      {
@@ -1275,6 +1286,8 @@ _evas_table_clear(Eo *o, Evas_Table_Data *priv, Eina_Bool clear)
    priv->size.rows = 0;
    _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
+
+   evas_event_thaw(e);
 }
 
 EOLIAN static void

@@ -436,10 +436,17 @@ _evas_box_evas_object_smart_calculate(Eo *o, Evas_Object_Box_Data *priv)
 {
    if (priv->layout.cb)
        {
+           Evas *e;
+
+           e = evas_object_evas_get(o);
+           evas_event_freeze(e);
+
            priv->layouting = 1;
            priv->layout.cb(o, priv, priv->layout.data);
            priv->layouting = 0;
            priv->children_changed = EINA_FALSE;
+
+           evas_event_thaw(e);
        }
    else
      ERR("No layout function set for %p box.", o);

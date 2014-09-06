@@ -208,11 +208,16 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
 {
    Eina_List *l;
    Evas_Object_Grid_Option *opt;
+   Evas *e;
    Evas_Coord x, y, w, h, vw, vh;
    Eina_Bool mirror;
-   
+
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, priv);
    if (!priv->children) return;
+
+   e = evas_object_evas_get(o);
+   evas_event_freeze(e);
+
    evas_object_geometry_get(o, &x, &y, &w, &h);
    mirror = priv->is_mirrored;
    vw = priv->size.w;
@@ -220,7 +225,7 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Coord x1, y1, x2, y2;
-        
+
         if (!mirror)
           {
              x1 = x + ((w * opt->x) / vw);
@@ -236,6 +241,8 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
         evas_object_move(opt->obj, x1, y1);
         evas_object_resize(opt->obj, x2 - x1, y2 - y1);
      }
+
+   evas_event_thaw(e);
 }
 
 static void
