@@ -945,16 +945,15 @@ evas_event_thaw(Evas *eo_e)
    eo_do(eo_e, eo_event_thaw());
 }
 
-void
-_canvas_event_freeze(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN void
+_evas_canvas_eo_base_event_freeze(Eo *eo_e, Evas_Public_Data *e)
 {
    eo_do_super(eo_e, EVAS_CANVAS_CLASS, eo_event_freeze());
-   Evas_Public_Data *e = _pd;
    e->is_frozen = EINA_TRUE;
 }
 
-void
-_canvas_event_thaw(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN void
+_evas_canvas_eo_base_event_thaw(Eo *eo_e, Evas_Public_Data *e)
 {
    int fcount = -1;
    eo_do_super(eo_e, EVAS_CANVAS_CLASS,
@@ -963,7 +962,6 @@ _canvas_event_thaw(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
          fcount = eo_event_freeze_count_get());
    if (0 == fcount)
      {
-        Evas_Public_Data *e = _pd;
         Evas_Layer *lay;
 
         e->is_frozen = EINA_FALSE;
