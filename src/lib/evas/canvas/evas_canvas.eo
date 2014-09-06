@@ -1761,6 +1761,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+      Eo.Base.event_thaw;
+      Eo.Base.event_freeze;
       Evas.Common_Interface.evas.get;
    }
 
