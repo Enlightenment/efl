@@ -4391,7 +4391,7 @@ _test_genlist_focus_option_panel_create(Evas_Object *win, Evas_Object *bx,
    evas_object_show(chk);
 
    chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Item Looping Enalbe");
+   elm_object_text_set(chk, "Item Looping Enable");
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
                                   _gl_focus_item_loop_enable_changed_cb, gl);
