@@ -173,9 +173,6 @@ group { name: "e/comp/screen/overlay/default";
                 action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
             }
          }
-         program { name: "logout_done";
-            action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
-         }
    }
 }
 
