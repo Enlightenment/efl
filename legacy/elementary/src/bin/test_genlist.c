@@ -4254,14 +4254,166 @@ _focus_autoscroll_mode_frame_create(Evas_Object *parent)
    return fr;
 }
 
+static void
+_test_genlist_focus_option_panel_create(Evas_Object *win, Evas_Object *bx,
+                                        Evas_Object *gl, Elm_Object_Item *it_0,
+                                        Elm_Object_Item *it_2)
+{
+   Evas_Object *fr = NULL, *bx_opt = NULL, *chk = NULL;
+   Evas_Object *bx_mv = NULL, *rd = NULL, *rdg = NULL;
+   Evas_Object *bx_btn = NULL, *btn_focus = NULL, *btn_sel = NULL,
+               *btn_dis = NULL;
+
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Options");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_opt = elm_box_add(fr);
+   elm_box_horizontal_set(bx_opt, EINA_TRUE);
+   elm_object_content_set(fr, bx_opt);
+   evas_object_show(bx_opt);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Focus Highlight");
+   elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  _gl_focus_focus_highlight_changed_cb,
+                                  win);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Focus Animation");
+   elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  _gl_focus_focus_animate_changed_cb,
+                                  win);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Focus on selection");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  _gl_focus_focus_on_selection_changed_cb, gl);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Item Looping Enalbe");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  _gl_focus_item_loop_enable_changed_cb, gl);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Item Select on Focus disable");
+   elm_check_state_set(chk, elm_config_item_select_on_focus_disabled_get());
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  _gl_focus_item_select_on_focus_disable_changed_cb,
+                                  NULL);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "First item focus on first focus in");
+   elm_check_state_set(chk, elm_config_first_item_focus_on_first_focusin_get());
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  _gl_first_item_focus_on_first_focus_in_cb,
+                                  NULL);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   // Focus Autoscroll Mode
+   fr = _focus_autoscroll_mode_frame_create(bx);
+   elm_box_pack_end(bx, fr);
+
+   // Focus Movement Policy
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus Movement Policy");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_mv = elm_box_add(fr);
+   elm_box_horizontal_set(bx_mv, EINA_TRUE);
+   elm_object_content_set(fr, bx_mv);
+   evas_object_show(bx_mv);
+
+   rdg = rd = elm_radio_add(bx_mv);
+   elm_object_text_set(rd, "Focus Move by Click");
+   elm_radio_state_value_set(rd, 0);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _gl_focus_move_policy_changed_cb,
+                                  NULL);
+   elm_box_pack_end(bx_mv, rd);
+   evas_object_show(rd);
+
+   rd = elm_radio_add(bx_mv);
+   elm_object_text_set(rd, "Focus Move by Mouse-In");
+   elm_radio_group_add(rd, rdg);
+   elm_radio_state_value_set(rd, 1);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _gl_focus_move_policy_changed_cb,
+                                  NULL);
+   elm_box_pack_end(bx_mv, rd);
+   evas_object_show(rd);
+
+   // Focus/Selection
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus/Selection");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_btn = elm_box_add(fr);
+   elm_object_content_set(fr, bx_btn);
+   evas_object_show(bx_btn);
+
+   btn_focus = elm_button_add(bx_btn);
+   elm_object_text_set(btn_focus, "Focus 2nd Item after 1.5 seconds.");
+   evas_object_size_hint_weight_set(btn_focus, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_focus, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_focus);
+   evas_object_show(btn_focus);
+
+   btn_sel = elm_button_add(bx_btn);
+   elm_object_text_set(btn_sel, "Select 2nd Item after 1.5 seconds.");
+   evas_object_size_hint_weight_set(btn_sel, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_sel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_sel);
+   evas_object_show(btn_sel);
+
+   btn_dis = elm_button_add(bx_btn);
+   elm_object_text_set(btn_dis, "Disable 1st Item.");
+   evas_object_size_hint_weight_set(btn_dis, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_dis, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_dis);
+   evas_object_show(btn_dis);
+
+   evas_object_smart_callback_add(btn_focus, "clicked", _focus_btn_cb, it_2);
+   evas_object_smart_callback_add(btn_sel, "clicked", _sel_btn_cb, it_2);
+   evas_object_smart_callback_add(btn_dis, "clicked", _dis_btn_cb, it_0);
+}
+
 void
 test_genlist_focus(void *data EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bx2, *gl, *btn, *fr;
-   Evas_Object *bx_opt, *chk, *bx_btn, *btn_focus, *btn_sel, *btn_dis;
-   Evas_Object *bx_mv, *rd, *rdg;
+   Evas_Object *win, *bx, *bx2, *gl, *btn;
    unsigned lhand, rhand;
    Elm_Object_Item *it = NULL, *it_0 = NULL, *it_2 = NULL;
 
@@ -4372,149 +4524,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_genlist_item_class_free(api->itc2);
 
    // Options
-   fr = elm_frame_add(bx);
-   elm_object_text_set(fr, "Options");
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
-
-   bx_opt = elm_box_add(fr);
-   elm_box_horizontal_set(bx_opt, EINA_TRUE);
-   elm_object_content_set(fr, bx_opt);
-   evas_object_show(bx_opt);
-
-   chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Focus Highlight");
-   elm_check_state_set(chk, EINA_TRUE);
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  _gl_focus_focus_highlight_changed_cb,
-                                  win);
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-   chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Focus Animation");
-   elm_check_state_set(chk, EINA_TRUE);
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  _gl_focus_focus_animate_changed_cb,
-                                  win);
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-   chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Focus on selection");
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  _gl_focus_focus_on_selection_changed_cb, gl);
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-   chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Item Looping Enalbe");
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  _gl_focus_item_loop_enable_changed_cb, gl);
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-   chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Item Select on Focus disable");
-   elm_check_state_set(chk, elm_config_item_select_on_focus_disabled_get());
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  _gl_focus_item_select_on_focus_disable_changed_cb,
-                                  NULL);
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-   chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "First item focus on first focus in");
-   elm_check_state_set(chk, elm_config_first_item_focus_on_first_focusin_get());
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  _gl_first_item_focus_on_first_focus_in_cb,
-                                  NULL);
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-
-   // Focus Autoscroll Mode
-   fr = _focus_autoscroll_mode_frame_create(bx);
-   elm_box_pack_end(bx, fr);
-
-   // Focus Movement Policy
-   fr = elm_frame_add(bx);
-   elm_object_text_set(fr, "Focus Movement Policy");
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
-
-   bx_mv = elm_box_add(fr);
-   elm_box_horizontal_set(bx_mv, EINA_TRUE);
-   elm_object_content_set(fr, bx_mv);
-   evas_object_show(bx_mv);
-
-   rdg = rd = elm_radio_add(bx_mv);
-   elm_object_text_set(rd, "Focus Move by Click");
-   elm_radio_state_value_set(rd, 0);
-   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(rd, "changed",
-                                  _gl_focus_move_policy_changed_cb,
-                                  NULL);
-   elm_box_pack_end(bx_mv, rd);
-   evas_object_show(rd);
-
-   rd = elm_radio_add(bx_mv);
-   elm_object_text_set(rd, "Focus Move by Mouse-In");
-   elm_radio_group_add(rd, rdg);
-   elm_radio_state_value_set(rd, 1);
-   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(rd, "changed",
-                                  _gl_focus_move_policy_changed_cb,
-                                  NULL);
-   elm_box_pack_end(bx_mv, rd);
-   evas_object_show(rd);
-
-   // Focus/Selection
-   fr = elm_frame_add(bx);
-   elm_object_text_set(fr, "Focus/Selection");
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
-
-   bx_btn = elm_box_add(fr);
-   elm_object_content_set(fr, bx_btn);
-   evas_object_show(bx_btn);
-
-   btn_focus = elm_button_add(bx_btn);
-   elm_object_text_set(btn_focus, "Focus 2nd Item after 1.5 seconds.");
-   evas_object_size_hint_weight_set(btn_focus, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn_focus, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx_btn, btn_focus);
-   evas_object_show(btn_focus);
-
-   btn_sel = elm_button_add(bx_btn);
-   elm_object_text_set(btn_sel, "Select 2nd Item after 1.5 seconds.");
-   evas_object_size_hint_weight_set(btn_sel, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn_sel, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx_btn, btn_sel);
-   evas_object_show(btn_sel);
-
-   btn_dis = elm_button_add(bx_btn);
-   elm_object_text_set(btn_dis, "Disable 1st Item.");
-   evas_object_size_hint_weight_set(btn_dis, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn_dis, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx_btn, btn_dis);
-   evas_object_show(btn_dis);
-
-   evas_object_smart_callback_add(btn_focus, "clicked", _focus_btn_cb, it_2);
-   evas_object_smart_callback_add(btn_sel, "clicked", _sel_btn_cb, it_2);
-   evas_object_smart_callback_add(btn_dis, "clicked", _dis_btn_cb, it_0);
+   _test_genlist_focus_option_panel_create(win, bx, gl, it_0, it_2);
 
    evas_object_resize(win, 420, 600);
    evas_object_show(win);
