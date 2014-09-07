@@ -4261,8 +4261,7 @@ _test_genlist_focus_option_panel_create(Evas_Object *win, Evas_Object *bx,
 {
    Evas_Object *fr = NULL, *bx_opt = NULL, *chk = NULL;
    Evas_Object *bx_mv = NULL, *rd = NULL, *rdg = NULL;
-   Evas_Object *bx_btn = NULL, *btn_focus = NULL, *btn_sel = NULL,
-               *btn_dis = NULL;
+   Evas_Object *btn_box  = NULL, *btn = NULL;
 
    fr = elm_frame_add(bx);
    elm_object_text_set(fr, "Options");
@@ -4378,34 +4377,33 @@ _test_genlist_focus_option_panel_create(Evas_Object *win, Evas_Object *bx,
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
-   bx_btn = elm_box_add(fr);
-   elm_object_content_set(fr, bx_btn);
-   evas_object_show(bx_btn);
+   btn_box = elm_box_add(fr);
+   elm_object_content_set(fr, btn_box);
+   evas_object_show(btn_box);
 
-   btn_focus = elm_button_add(bx_btn);
-   elm_object_text_set(btn_focus, "Focus 2nd Item after 1.5 seconds.");
-   evas_object_size_hint_weight_set(btn_focus, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn_focus, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx_btn, btn_focus);
-   evas_object_show(btn_focus);
+   btn = elm_button_add(btn_box);
+   elm_object_text_set(btn, "Focus 2nd Item after 1.5 seconds.");
+   evas_object_size_hint_weight_set(btn, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(btn_box, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked", _focus_btn_cb, it_2);
 
-   btn_sel = elm_button_add(bx_btn);
-   elm_object_text_set(btn_sel, "Select 2nd Item after 1.5 seconds.");
-   evas_object_size_hint_weight_set(btn_sel, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn_sel, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx_btn, btn_sel);
-   evas_object_show(btn_sel);
+   btn = elm_button_add(btn_box);
+   elm_object_text_set(btn, "Select 2nd Item after 1.5 seconds.");
+   evas_object_size_hint_weight_set(btn, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(btn_box, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked", _sel_btn_cb, it_2);
 
-   btn_dis = elm_button_add(bx_btn);
-   elm_object_text_set(btn_dis, "Disable 1st Item.");
-   evas_object_size_hint_weight_set(btn_dis, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn_dis, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx_btn, btn_dis);
-   evas_object_show(btn_dis);
-
-   evas_object_smart_callback_add(btn_focus, "clicked", _focus_btn_cb, it_2);
-   evas_object_smart_callback_add(btn_sel, "clicked", _sel_btn_cb, it_2);
-   evas_object_smart_callback_add(btn_dis, "clicked", _dis_btn_cb, it_0);
+   btn = elm_button_add(btn_box);
+   elm_object_text_set(btn, "Disable 1st Item.");
+   evas_object_size_hint_weight_set(btn, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(btn_box, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked", _dis_btn_cb, it_0);
 }
 
 void

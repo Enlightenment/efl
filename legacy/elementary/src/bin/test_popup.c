@@ -716,7 +716,7 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(list);
 
    check = elm_check_add(box);
-   elm_object_text_set(check, "Enable Focus");
+   elm_object_text_set(check, "Enable Focus Highlight");
    evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(check, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, check);
