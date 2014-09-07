@@ -3988,6 +3988,21 @@ test_genlist_del(void *data EINA_UNUSED,
 static unsigned _gl_focus_objects = 3;
 static const char *_gl_focus_object_names[] = {"None", "Square", "Button", "Check", "Box"};
 
+// for the first genlist item
+static char *
+gl_focus_popup_item_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                             const char *part EINA_UNUSED)
+{
+   if (!data) return NULL;
+
+   if (!strcmp(data, "popup_sel"))
+     return strdup("Create a popup on Select");
+   else if (!strcmp(data, "popup_mouse_down"))
+     return strdup("Create a popup on Mouse Down");
+   else
+     return NULL;
+}
+
 static char *
 gl_focus_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
@@ -4042,6 +4057,39 @@ gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
         evas_object_show(cnt);
      }
    return cnt;
+}
+
+static void
+_gl_focus_sel_popup_close_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                 void *event_info EINA_UNUSED)
+{
+   evas_object_del(data);
+}
+
+static void
+_gl_focus_sel_popup_create(Evas_Object *parent)
+{
+   Evas_Object *popup = NULL, *btn = NULL;
+
+   popup = elm_popup_add(parent);
+   elm_object_text_set(popup, "Popup for the genlist focus test with popup creation.");
+
+   // popup buttons
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Close");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _gl_focus_sel_popup_close_btn_cb, popup);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+}
+
+static void
+_gl_focus_0_item_sel_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                        void *event_info EINA_UNUSED)
+{
+   _gl_focus_sel_popup_create(obj);
 }
 
 static void
@@ -4110,6 +4158,21 @@ _gl_focus_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = event_info;
    printf("\n=== Key Down : %s ===\n", ev->keyname);
+}
+
+static void
+_gl_focus_mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                        Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   Elm_Object_Item *it = NULL;
+   int postret = 0;
+
+   it = elm_genlist_at_xy_item_get(obj, ev->canvas.x, ev->canvas.y, &postret);
+   if (!it) return;
+
+   if (elm_genlist_item_index_get(it) == 2)
+     _gl_focus_sel_popup_create(obj);
 }
 
 static Ecore_Timer *timer = NULL;
@@ -4447,6 +4510,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    Evas_Object *win, *bx, *bx2, *gl, *btn;
    unsigned lhand, rhand;
    Elm_Object_Item *it = NULL, *it_0 = NULL, *it_2 = NULL;
+   Elm_Genlist_Item_Class *itc = NULL;
 
    api_data *api = calloc(1, sizeof(api_data));
    win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
@@ -4499,6 +4563,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    evas_object_smart_callback_add(gl, "highlighted", _gl_focus_item_cb, "highlighted");
    evas_object_smart_callback_add(gl, "unhighlighted", _gl_focus_item_cb, "unhighlighted");
    evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _gl_focus_key_down_cb, NULL);
+   evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_DOWN, _gl_focus_mouse_down_cb, NULL);
 
    btn = elm_button_add(bx2);
    elm_object_text_set(btn, "Right");
@@ -4514,6 +4579,15 @@ test_genlist_focus(void *data EINA_UNUSED,
                                   _focus_button_clicked_cb, "Down");
    evas_object_show(btn);
 
+
+   itc = elm_genlist_item_class_new();
+
+   itc->item_style = "default";
+   itc->func.text_get = gl_focus_popup_item_text_get;
+   itc->func.content_get = NULL;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+
    api->itc1 = elm_genlist_item_class_new();
    api->itc1->item_style = "default";
    api->itc1->func.text_get = gl_focus_text_get;
@@ -4527,6 +4601,11 @@ test_genlist_focus(void *data EINA_UNUSED,
    api->itc2->func.content_get = gl_focus_content_get;
    api->itc2->func.state_get = NULL;
    api->itc2->func.del = NULL;
+
+   elm_genlist_item_append(gl, itc, "popup_sel", NULL, ELM_GENLIST_ITEM_NONE,
+                           _gl_focus_0_item_sel_cb, NULL);
+   elm_genlist_item_append(gl, itc, "popup_mouse_down", NULL, ELM_GENLIST_ITEM_NONE,
+                           NULL, NULL);
 
    for (lhand = 0; lhand < _gl_focus_objects; lhand++)
      {
