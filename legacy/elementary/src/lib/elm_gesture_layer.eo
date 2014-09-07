@@ -30,19 +30,21 @@ class Elm_Gesture_Layer (Elm_Widget)
       tap_finger_size {
          set {
             /*@
-            @since 1.8
             This function sets the gesture layer finger-size for taps
             If not set, this size taken from elm_config.
             Set to ZERO if you want GLayer to use system finger size value (default)
+
+            @since 1.8
             @ingroup Elm_Gesture_Layer
              */
          }
          get {
             /*@
-            @since 1.8
             This function returns the gesture layer finger-size for taps
 
             @return Finger size that is currently used by Gesture Layer for taps.
+
+            @since 1.8
             @ingroup Elm_Gesture_Layer
              */
          }

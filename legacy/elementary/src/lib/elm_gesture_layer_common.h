@@ -187,249 +187,248 @@ typedef struct _Elm_Gesture_Rotate_Info Elm_Gesture_Rotate_Info;
 typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
 
 /**
- * @since 1.8
  * This function sets the gesture layer line min length of an object
  *
  * @param obj gesture-layer.
  * @param line_min_length the length.
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_line_min_length_set(Evas_Object *obj, int line_min_length);
 
 /**
- * @since 1.8
  * This function returns the gesture layer line min length of an object
  *
  * @param obj gesture-layer.
  * @return the length.
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI int elm_gesture_layer_line_min_length_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer zoom distance tolerance of an object
  *
  * @param obj gesture-layer.
  * @param zoom_distance_tolerance zoom distance tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_zoom_distance_tolerance_set(Evas_Object *obj, Evas_Coord zoom_distance_tolerance);
 
 /**
- * @since 1.8
  * This function returns the gesture layer zoom distance tolerance of an object
  *
  * @param obj gesture-layer.
  * @return zoom distance tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Coord elm_gesture_layer_zoom_distance_tolerance_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer line distance tolerance of an object
  *
  * @param obj gesture-layer.
  * @param line_distance_tolerance line distance tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_line_distance_tolerance_set(Evas_Object *obj, Evas_Coord line_distance_tolerance);
 
 /**
- * @since 1.8
  * This function returns the gesture layer line distance tolerance of an object
  *
  * @param obj gesture-layer.
  * @return line distance tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Coord elm_gesture_layer_line_distance_tolerance_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer line angular tolerance of an object
  *
  * @param obj gesture-layer.
  * @param line_angular_tolerance line angular tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_line_angular_tolerance_set(Evas_Object *obj, double line_angular_tolerance);
 
 /**
- * @since 1.8
  * This function returns the gesture layer line angular tolerance of an object
  *
  * @param obj gesture-layer.
  * @return line angular tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_line_angular_tolerance_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer zoom wheel factor of an object
  *
  * @param obj gesture-layer.
  * @param zoom_wheel_factor zoom wheel factor
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_zoom_wheel_factor_set(Evas_Object *obj, double zoom_wheel_factor);
 
 /**
- * @since 1.8
  * This function returns the gesture layer zoom wheel factor of an object
  *
  * @param obj gesture-layer.
  * @return zoom wheel factor
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_zoom_wheel_factor_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer zoom finger factor of an object
  *
  * @param obj gesture-layer.
  * @param zoom_finger_factor zoom finger factor
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_zoom_finger_factor_set(Evas_Object *obj, double zoom_finger_factor);
 
 /**
- * @since 1.8
  * This function returns the gesture layer zoom finger factor of an object
  *
  * @param obj gesture-layer.
  * @return zoom finger factor
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer rotate angular tolerance of an object
  *
  * @param obj gesture-layer.
  * @param rotate_angular_tolerance rotate angular tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_rotate_angular_tolerance_set(Evas_Object *obj, double rotate_angular_tolerance);
 
 /**
- * @since 1.8
  * This function returns the gesture layer rotate angular tolerance of an object
  *
  * @param obj gesture-layer.
  * @return rotate angular tolerance
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_rotate_angular_tolerance_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer flick time limit (in ms) of an object
  *
  * @param obj gesture-layer.
  * @param flick_time_limit_ms flick time limit (in ms)
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_flick_time_limit_ms_set(Evas_Object *obj, unsigned int flick_time_limit_ms);
 
 /**
- * @since 1.8
  * This function returns the gesture layer flick time limit (in ms) of an object
  *
  * @param obj gesture-layer.
  * @return flick time limit (in ms)
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI unsigned int elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer long tap start timeout of an object
  *
  * @param obj gesture-layer.
  * @param long_tap_start_timeout long tap start timeout
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_long_tap_start_timeout_set(Evas_Object *obj, double long_tap_start_timeout);
 
 /**
- * @since 1.8
  * this function returns the gesture layer long tap start timeout of an object
  *
  * @param obj gesture-layer.
  * @return long tap start timeout
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_long_tap_start_timeout_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer continues enable of an object
  *
  * @param obj gesture-layer.
  * @param continues_enable continues enable
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_continues_enable_set(Evas_Object *obj, Eina_Bool continues_enable);
 
 /**
- * @since 1.8
  * This function returns the gesture layer continues enable of an object
  *
  * @param obj gesture-layer.
  * @return continues enable
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI Eina_Bool elm_gesture_layer_continues_enable_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer double tap timeout of an object
  *
  * @param obj gesture-layer.
  * @param double_tap_timeout double tap timeout
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double double_tap_timeout);
 
 /**
- * @since 1.8
  * this function returns the gesture layer double tap timeout of an object
  *
  * @param obj gesture-layer.
  * @return double tap timeout
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj);
 
 /**
- * @since 1.8
  * This function sets the gesture layer finger-size for taps
  * If not set, this size taken from elm_config.
  * Set to ZERO if you want GLayer to use system finger size value (default)
@@ -437,17 +436,18 @@ EAPI double elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj);
  * @param obj gesture-layer.
  * @param fsize Finger size
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_tap_finger_size_set(Evas_Object *obj, Evas_Coord sz);
 
 /**
- * @since 1.8
  * This function returns the gesture layer finger-size for taps
  *
  * @param obj gesture-layer.
  * @return Finger size that is currently used by Gesture Layer for taps.
  *
+ * @since 1.8
  * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Coord elm_gesture_layer_tap_finger_size_get(const Evas_Object *obj);
