@@ -4177,6 +4177,30 @@ _dis_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_add_more_items_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   Elm_Genlist_Item_Class *itc = NULL;
+   int i = 0;
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = gl_text_get;
+   itc->func.content_get = NULL;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+
+
+   for (i = 0; i < 1000; i++)
+     {
+        elm_genlist_item_append(data, itc, (void *)(uintptr_t)i,
+                                NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+     }
+
+   elm_genlist_item_class_free(itc);
+}
+
+static void
 _focus_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
                          void *event_info EINA_UNUSED)
 {
@@ -4404,6 +4428,15 @@ _test_genlist_focus_option_panel_create(Evas_Object *win, Evas_Object *bx,
    elm_box_pack_end(btn_box, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _dis_btn_cb, it_0);
+
+
+   btn = elm_button_add(btn_box);
+   elm_object_text_set(btn, "Add more Genlist items");
+   evas_object_size_hint_weight_set(btn, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(btn_box, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked", _add_more_items_btn_cb, gl);
 }
 
 void
