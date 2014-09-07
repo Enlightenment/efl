@@ -1,0 +1,289 @@
+# Finnish translation for enlightenment
+# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# This file is distributed under the same license as the enlightenment package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+#: src/lib/elm_config.c:3207
+msgid ""
+msgstr ""
+"Project-Id-Version: enlightenment\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-09-07 20:22+0300\n"
+"PO-Revision-Date: 2014-08-31 15:13+0000\n"
+"Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
+"Language-Team: Finnish <fi@li.org>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2014-09-01 07:00+0000\n"
+"X-Generator: Launchpad (build 17176)\n"
+
+#: src/lib/elc_fileselector.c:1412
+msgid "Up"
+msgstr "Ylös"
+
+#: src/lib/elc_fileselector.c:1427
+msgid "Home"
+msgstr "Koti"
+
+#: src/lib/elc_fileselector.c:1643 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1508
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: src/lib/elc_fileselector.c:1652
+msgid "OK"
+msgstr "OK"
+
+#: src/lib/elc_multibuttonentry.c:606
+msgid "multi button entry label"
+msgstr "moninappisyöttökentän nimiö"
+
+#: src/lib/elc_multibuttonentry.c:627
+msgid "multi button entry item"
+msgstr "moninappisyöttökentän kohta"
+
+#: src/lib/elc_multibuttonentry.c:1492
+msgid "multi button entry"
+msgstr "moninappisyöttökenttä"
+
+#: src/lib/elc_naviframe.c:435
+msgid "Title"
+msgstr "Otsikko"
+
+#: src/lib/elc_naviframe.c:962 src/lib/elc_naviframe.c:1160
+msgid "Back"
+msgstr "Takaisin"
+
+#: src/lib/elc_naviframe.c:1251
+msgid "Next"
+msgstr "Seuraava"
+
+#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:885
+msgid "Popup Title"
+msgstr "Ponnahdusikkunan otsikko"
+
+#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:951
+msgid "Popup Body Text"
+msgstr "Ponnahdusikkunan leipäteksti"
+
+#: src/lib/elm_bubble.c:196
+msgid "Bubble"
+msgstr "Kupla"
+
+#: src/lib/elm_button.c:72
+msgid "Clicked"
+msgstr "Napsautettu"
+
+#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:775
+#: src/lib/elm_genlist.c:1523 src/lib/elm_list.c:2059 src/lib/elm_radio.c:261
+#: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
+#: src/lib/elm_toolbar.c:2213
+msgid "State: Disabled"
+msgstr "Tila: Pois käytöstä"
+
+#: src/lib/elm_button.c:302
+msgid "Button"
+msgstr "Painike"
+
+#: src/lib/elm_calendar.c:158
+msgid "%B %Y"
+msgstr "%B %Y"
+
+#: src/lib/elm_calendar.c:167
+msgid "%B"
+msgstr "%B"
+
+#: src/lib/elm_calendar.c:176
+msgid "%Y"
+msgstr "%Y"
+
+#: src/lib/elm_calendar.c:291
+msgid "calendar item"
+msgstr "kalenterin kohta"
+
+#: src/lib/elm_calendar.c:317
+msgid "calendar decrement month button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:322
+msgid "calendar decrement year button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:327
+msgid "calendar increment month button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:332
+msgid "calendar increment year button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:337
+msgid "calendar month"
+msgstr "kalenterikuukausi"
+
+#: src/lib/elm_calendar.c:342
+msgid "calendar year"
+msgstr "kalenterivuosi"
+
+#: src/lib/elm_check.c:68 src/lib/elm_check.c:254 src/lib/elm_radio.c:107
+#: src/lib/elm_radio.c:262
+msgid "State: On"
+msgstr "Tila: päällä"
+
+#: src/lib/elm_check.c:74 src/lib/elm_check.c:266 src/lib/elm_radio.c:264
+msgid "State: Off"
+msgstr "Tila: pois päältä"
+
+#: src/lib/elm_check.c:250 src/lib/elm_check.c:263
+msgid "State"
+msgstr "Tila"
+
+#: src/lib/elm_check.c:341
+msgid "Check"
+msgstr "Valinta"
+
+#: src/lib/elm_clock.c:305
+msgid "clock increment button for am,pm"
+msgstr ""
+
+#: src/lib/elm_clock.c:313
+msgid "clock decrement button for am,pm"
+msgstr ""
+
+#: src/lib/elm_clock.c:651
+msgid "State: Editable"
+msgstr "Tila: muokattavissa"
+
+#: src/lib/elm_clock.c:686
+msgid "Clock"
+msgstr "Kello"
+
+#: src/lib/elm_colorselector.c:1372
+msgid "color selector palette item"
+msgstr "värivalitsimen palettikohta"
+
+#: src/lib/elm_config.c:3223
+msgid "default:LTR"
+msgstr ""
+
+#: src/lib/elm_dayselector.c:398
+msgid "day selector item"
+msgstr "päivyrin kohta"
+
+#: src/lib/elm_diskselector.c:680
+msgid "diskselector item"
+msgstr "kiekkovalitsimen kohta"
+
+#: src/lib/elm_entry.c:1470
+msgid "Copy"
+msgstr "Kopioi"
+
+#: src/lib/elm_entry.c:1475
+msgid "Cut"
+msgstr "Leikkaa"
+
+#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
+msgid "Paste"
+msgstr "Liitä"
+
+#: src/lib/elm_entry.c:1495
+msgid "Select"
+msgstr "Valitse"
+
+#: src/lib/elm_entry.c:3482
+msgid "Entry"
+msgstr "Syöttökenttä"
+
+#: src/lib/elm_gengrid.c:805
+msgid "Gengrid Item"
+msgstr "Gengridin kohta"
+
+#: src/lib/elm_index.c:93
+msgid "Index"
+msgstr "Indeksi"
+
+#: src/lib/elm_index.c:120
+msgid "Index Item"
+msgstr "Indeksin kohta"
+
+#: src/lib/elm_label.c:391
+msgid "Label"
+msgstr "Nimiö"
+
+#: src/lib/elm_panel.c:74
+msgid "state: opened"
+msgstr "tila: avattu"
+
+#: src/lib/elm_panel.c:75
+msgid "state: closed"
+msgstr "tila: suljettu"
+
+#: src/lib/elm_panel.c:115
+msgid "A panel is open"
+msgstr "Paneeli on auki"
+
+#: src/lib/elm_panel.c:117
+msgid "Double tap to close panel menu"
+msgstr "Kaksoisnäpäytä sulkeaksesi paneelivalikon"
+
+#: src/lib/elm_panel.c:187
+msgid "panel button"
+msgstr "Paneelinappi"
+
+#: src/lib/elm_progressbar.c:288
+msgid "progressbar"
+msgstr "Tilanneilmaisin"
+
+#: src/lib/elm_radio.c:290
+msgid "Radio"
+msgstr "Vaihtoehto"
+
+#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2215
+msgid "State: Selected"
+msgstr "Tila: valittu"
+
+#: src/lib/elm_segment_control.c:528
+msgid "State: Unselected"
+msgstr "Tila: valitsematon"
+
+#: src/lib/elm_segment_control.c:540
+msgid "Segment Control Item"
+msgstr ""
+
+#: src/lib/elm_slider.c:882
+msgid "slider"
+msgstr "liukusäädin"
+
+#: src/lib/elm_spinner.c:674
+msgid "spinner increment button"
+msgstr "Pyörövalitsimen lisää-nappi"
+
+#: src/lib/elm_spinner.c:683
+msgid "spinner decrement button"
+msgstr "Pyörövalitsimen vähennä-nappi"
+
+#: src/lib/elm_spinner.c:691
+msgid "spinner"
+msgstr "pyörövalitsin"
+
+#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2274
+msgid "Selected"
+msgstr "Valittu"
+
+#: src/lib/elm_toolbar.c:2211
+msgid "Separator"
+msgstr "Erotin"
+
+#: src/lib/elm_toolbar.c:2217
+msgid "Has menu"
+msgstr "Valikollinen"
+
+#: src/lib/elm_toolbar.c:2269
+msgid "Unselected"
+msgstr "Valitsematon"
+
+#: src/lib/elm_toolbar.c:2286
+msgid "Toolbar Item"
+msgstr "Työkalupalkin kohta"
