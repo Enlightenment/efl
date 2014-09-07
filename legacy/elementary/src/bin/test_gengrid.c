@@ -223,9 +223,21 @@ grid_double_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
-grid_longpress(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+grid_longpressed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   printf("longpress %p\n", event_info);
+   printf("longpressed %p\n", event_info);
+}
+
+static void
+grid_pressed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("pressed %p\n", event_info);
+}
+
+static void
+grid_released(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("released %p\n", event_info);
 }
 
 static void
@@ -348,7 +360,9 @@ create_gengrid(Evas_Object *obj, int items)
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "unselected", grid_unselected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
-   evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
+   evas_object_smart_callback_add(grid, "longpressed", grid_longpressed, NULL);
+   evas_object_smart_callback_add(grid, "pressed", grid_pressed, NULL);
+   evas_object_smart_callback_add(grid, "released", grid_released, NULL);
    evas_object_smart_callback_add(grid, "moved", grid_moved, NULL);
    evas_object_smart_callback_add(grid, "drag,start,up", grid_drag_up, NULL);
    evas_object_smart_callback_add(grid, "drag,start,right", grid_drag_right, NULL);
@@ -890,7 +904,7 @@ test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
-   evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
+   evas_object_smart_callback_add(grid, "longpressed", grid_longpressed, NULL);
    evas_object_smart_callback_add(grid, "moved", grid_moved, NULL);
    evas_object_smart_callback_add(grid, "drag,start,up", grid_drag_up, NULL);
    evas_object_smart_callback_add(grid, "drag,start,right", grid_drag_right, NULL);
