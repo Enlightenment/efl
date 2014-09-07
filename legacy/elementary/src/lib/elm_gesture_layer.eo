@@ -9,7 +9,9 @@ class Elm_Gesture_Layer (Elm_Widget)
             Set step to any positive value.
             Cancel step setting by setting to 0
 
-            @see elm_gesture_layer_zoom_step_get() */
+            @see elm_gesture_layer_zoom_step_get()
+            @ingroup Elm_Gesture_Layer
+             */
          }
          get {
             /*@
@@ -17,7 +19,9 @@ class Elm_Gesture_Layer (Elm_Widget)
 
             @return zoom step value.
 
-            @see elm_gesture_layer_zoom_step_set() */
+            @see elm_gesture_layer_zoom_step_set()
+            @ingroup Elm_Gesture_Layer
+             */
          }
          values {
             double step; /*@ new zoom step value. */
@@ -29,14 +33,18 @@ class Elm_Gesture_Layer (Elm_Widget)
             @since 1.8
             This function sets the gesture layer finger-size for taps
             If not set, this size taken from elm_config.
-            Set to ZERO if you want GLayer to use system finger size value (default) */
+            Set to ZERO if you want GLayer to use system finger size value (default)
+            @ingroup Elm_Gesture_Layer
+             */
          }
          get {
             /*@
             @since 1.8
             This function returns the gesture layer finger-size for taps
 
-            @return Finger size that is currently used by Gesture Layer for taps. */
+            @return Finger size that is currently used by Gesture Layer for taps.
+            @ingroup Elm_Gesture_Layer
+             */
          }
          values {
             Evas_Coord sz; /*@ Finger size */
@@ -48,14 +56,18 @@ class Elm_Gesture_Layer (Elm_Widget)
             This function is to make gesture-layer repeat events.
             Set this if you like to get the raw events only if gestures were not
             detected.
-            Clear this if you like gesture layer to forward events as testing gestures. */
+            Clear this if you like gesture layer to forward events as testing gestures.
+            @ingroup Elm_Gesture_Layer
+             */
          }
          get {
             /*@
             Call this function to get repeat-events settings.
 
             @return repeat events settings.
-            @see elm_gesture_layer_hold_events_set() */
+            @see elm_gesture_layer_hold_events_set()
+            @ingroup Elm_Gesture_Layer
+             */
          }
          values {
             bool hold_events; /*@ hold events or not. */
@@ -66,13 +78,17 @@ class Elm_Gesture_Layer (Elm_Widget)
             /*@
             This function sets step-value for rotate action.
             Set step to any positive value.
-            Cancel step setting by setting to 0 */
+            Cancel step setting by setting to 0
+            @ingroup Elm_Gesture_Layer
+             */
          }
          get {
             /*@
             This function returns step-value for rotate action.
 
-            @return rotate step value. */
+            @return rotate step value.
+            @ingroup Elm_Gesture_Layer
+             */
          }
          values {
             double step; /*@ new rotate step value. */
@@ -88,7 +104,9 @@ class Elm_Gesture_Layer (Elm_Widget)
 
             When ALL callbacks for a gesture are set to NULL
             it means user isn't interested in gesture-state
-            and it will not be tested. */
+            and it will not be tested.
+            @ingroup Elm_Gesture_Layer
+             */
          }
          values {
             Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
@@ -108,7 +126,9 @@ class Elm_Gesture_Layer (Elm_Widget)
          chooses. This will be object @a obj will listen all mouse and key
          events from, to report the gestures made upon it back.
 
-         @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise. */
+         @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise.
+         @ingroup Elm_Gesture_Layer
+          */
 
          return: bool;
          params {
@@ -118,7 +138,9 @@ class Elm_Gesture_Layer (Elm_Widget)
       cb_del {
          /*@
          Use this function to remove a callback that has been added
-         to be notified about change of state of gesture. */
+         to be notified about change of state of gesture.
+         @ingroup Elm_Gesture_Layer
+          */
 
          params {
             @in Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
@@ -141,7 +163,9 @@ class Elm_Gesture_Layer (Elm_Widget)
          If a function was already set for this gesture/type/state, it will be
          replaced by the new one. For ABI compat, callbacks added by
          elm_gesture_layer_cb_add will be removed. It is recommended to
-         use only one of these functions for a gesture object. */
+         use only one of these functions for a gesture object.
+         @ingroup Elm_Gesture_Layer
+          */
 
          params {
             @in Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
