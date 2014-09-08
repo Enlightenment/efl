@@ -3838,7 +3838,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
      return _x11_elm_cnp_selection_set(xwin, obj, selection, format, selbuf, buflen);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   if (elm_win_wl_window_get(obj))
+   if (_wl_elm_widget_window_get(obj))
       return _wl_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 #endif
    return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
@@ -3856,7 +3856,7 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
      _x11_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   if (elm_win_wl_window_get(obj))
+   if (_wl_elm_widget_window_get(obj))
      _wl_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 #endif
    _local_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
@@ -3872,7 +3872,7 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
      return _x11_elm_object_cnp_selection_clear(obj, selection);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   if (elm_win_wl_window_get(obj))
+   if (_wl_elm_widget_window_get(obj))
       return _wl_elm_cnp_selection_clear(obj, selection);
 #endif
    return _local_elm_object_cnp_selection_clear(obj, selection);
@@ -3890,7 +3890,7 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
      return _x11_elm_cnp_selection_get(xwin, obj, selection, format, datacb, udata);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   if (elm_win_wl_window_get(obj))
+   if (_wl_elm_widget_window_get(obj))
       return _wl_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 #endif
    return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
@@ -3916,9 +3916,10 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                      dropcb, dropdata);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   return _wl_elm_drop_target_add(obj, format, entercb, enterdata,
-                                  leavecb, leavedata, poscb, posdata,
-                                  dropcb, dropdata);
+   if (_wl_elm_widget_window_get(obj))
+     return _wl_elm_drop_target_add(obj, format, entercb, enterdata,
+                                    leavecb, leavedata, poscb, posdata,
+                                    dropcb, dropdata);
 #endif
    return _local_elm_drop_target_add(obj, format, entercb, enterdata,
                                      leavecb, leavedata, poscb, posdata,
@@ -3939,8 +3940,9 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
            leavecb, leavedata, poscb, posdata, dropcb, dropdata);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   return _wl_elm_drop_target_del(obj, format, entercb, enterdata,
-         leavecb, leavedata, poscb, posdata, dropcb, dropdata);
+   if (_wl_elm_widget_window_get(obj))
+     return _wl_elm_drop_target_del(obj, format, entercb, enterdata,
+           leavecb, leavedata, poscb, posdata, dropcb, dropdata);
 #endif
    return _local_elm_drop_target_del(obj);
 }
@@ -3963,11 +3965,12 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                                 dragdone, donecbdata);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   return _wl_elm_drag_start(obj, format, data, action,
-                             createicon, createdata,
-                             dragpos, dragdata,
-                             acceptcb, acceptdata,
-                             dragdone, donecbdata);
+   if (_wl_elm_widget_window_get(obj))
+     return _wl_elm_drag_start(obj, format, data, action,
+                               createicon, createdata,
+                               dragpos, dragdata,
+                               acceptcb, acceptdata,
+                               dragdone, donecbdata);
 #endif
    return _local_elm_drag_start(obj, format, data, action,
                                 createicon, createdata,
@@ -3985,7 +3988,8 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
      return _x11_elm_drag_action_set(obj, action);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   return _wl_elm_drag_action_set(obj, action);
+   if (_wl_elm_widget_window_get(obj))
+     return _wl_elm_drag_action_set(obj, action);
 #endif
    return _local_elm_drag_action_set(obj, action);
 }
@@ -3999,7 +4003,7 @@ elm_selection_selection_has_owner(Evas_Object *obj)
      return _x11_elm_selection_selection_has_owner(obj);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   if (elm_win_wl_window_get(obj))
+   if (_wl_elm_widget_window_get(obj))
      return ecore_wl_dnd_selection_owner_has(ecore_wl_input_get());
 #endif
    return _local_elm_selection_selection_has_owner(obj);
