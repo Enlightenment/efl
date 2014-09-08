@@ -20,7 +20,6 @@ struct _Evas_Engine_Info_Drm
         Eina_Bool vsync : 1;
 
         int fd;
-        Eina_Bool own_fd : 1;
 
         int output;
         int plane;

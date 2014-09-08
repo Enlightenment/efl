@@ -26,24 +26,6 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
    Render_Engine *re = NULL;
    Outbuf *ob;
 
-   /* if we have no drm device, get one */
-   if (info->info.fd < 0)
-     {
-        if (!ecore_drm_init()) return NULL;
-
-        /* try getting the default drm device */
-        if (!(info->info.dev = ecore_drm_device_find(NULL, NULL)))
-          goto on_error;
-
-        /* check if we already opened the drm device with ecore_evas */
-        /* try to open the drm ourselfs (most likely because we get called from expedite) */
-        if (!ecore_drm_device_open(info->info.dev))
-          goto on_error;
-
-        info->info.own_fd = EINA_TRUE;
-        info->info.fd = ecore_drm_device_fd_get(info->info.dev);
-     }
-
    /* try to allocate space for our render engine structure */
    if (!(re = calloc(1, sizeof(Render_Engine))))
      goto on_error;
@@ -69,14 +51,6 @@ _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
 
  on_error:
    if (re) evas_render_engine_software_generic_clean(&re->generic);
-
-   /* check if we already opened the card. if so, close it */
-   if ((info->info.fd >= 0) && (info->info.own_fd))
-     {
-        ecore_drm_device_close(info->info.dev);
-        info->info.fd = -1;
-        ecore_drm_device_free(info->info.dev);
-     }
 
    free(re);
    return NULL;
@@ -184,14 +158,6 @@ static void
 eng_output_free(void *data)
 {
    Render_Engine *re = data;
-
-   /* check if we already opened the card. if so, close it */
-   if ((re->info->info.fd >= 0) && (re->info->info.own_fd))
-     {
-        ecore_drm_device_close(re->info->info.dev);
-        re->info->info.fd = -1;
-        ecore_drm_device_free(re->info->info.dev);
-     }
 
    evas_render_engine_software_generic_clean(&re->generic);
    free(re);
