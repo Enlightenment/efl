@@ -68,7 +68,9 @@ static const char * const ctypes[] =
 
    "Eina_Bool",
 
-   "void"
+   "void",
+
+   "Eina_Accessor", "Eina_Array", "Eina_Iterator", "Eina_Hash", "Eina_List"
 };
 
 #undef KW
@@ -830,7 +832,7 @@ eo_lexer_keyword_str_get(int kw)
 Eina_Bool
 eo_lexer_is_type_keyword(int kw)
 {
-   return (kw >= KW_byte && kw <= KW_void);
+   return (kw >= KW_byte && kw <= KW_list);
 }
 
 int

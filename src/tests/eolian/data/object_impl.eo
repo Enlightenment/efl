@@ -11,7 +11,7 @@ class Object_Impl (Base) {
             const(char)* part;
          }
          values {
-            own(Eina.List*)<int> value;
+            own(list<int>*) value;
          }
       }
       b {
@@ -21,7 +21,7 @@ class Object_Impl (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            own(Eina.List*)<int> value;
+            own(list<int>*) value;
          }
       }
    }

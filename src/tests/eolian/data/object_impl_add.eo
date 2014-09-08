@@ -9,7 +9,7 @@ class Object_Impl_Add (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            own(Eina.List*)<int> value;
+            own(list<int>*) value;
          }
       }
    }

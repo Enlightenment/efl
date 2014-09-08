@@ -51,7 +51,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
          get {
          }
          values {
-            const(Eina_List <const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
+            const(list<const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
          }
       }
       connection_type {

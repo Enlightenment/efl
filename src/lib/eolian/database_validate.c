@@ -38,6 +38,7 @@ _validate_type(const Eolian_Type *tp)
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
+      case EOLIAN_TYPE_COMPLEX:
         return EINA_TRUE;
       case EOLIAN_TYPE_REGULAR:
         {

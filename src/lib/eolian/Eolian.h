@@ -143,6 +143,7 @@ typedef enum
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_REGULAR_STRUCT,
    EOLIAN_TYPE_REGULAR_ENUM,
+   EOLIAN_TYPE_COMPLEX,
    EOLIAN_TYPE_POINTER,
    EOLIAN_TYPE_FUNCTION,
    EOLIAN_TYPE_STRUCT,
@@ -1258,8 +1259,7 @@ EAPI Eina_Iterator *eolian_type_arguments_get(const Eolian_Type *tp);
  * @brief Get an iterator to all subtypes of a type.
  *
  * @param[in] tp the type.
- * @return the iterator when @c tp is a regular/regular struct/class/pointer
- * type.
+ * @return the iterator when @c tp is a complex type.
  *
  * @ingroup Eolian
  */
@@ -1505,11 +1505,11 @@ EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the name of the given type. You have to manually delete
- * the stringshare. For EOLIAN_TYPE_REGULAR and EOLIAN_TYPE_REGULAR_STRUCT,
- * this is for example "int". For EOLIAN_TYPE_STRUCT, EOLIAN_TYPE_STRUCT_OPAQUE
- * and EOLIAN_TYPE_ALIAS, this is the name of the alias or of the struct. For
- * EOLIAN_TYPE_CLASS, this can be "Button". Keep in mind that the name doesn't
- * include namespaces for structs and aliases.
+ * the stringshare. For regular or complex types,  this is for example "int".
+ * For EOLIAN_TYPE_STRUCT, EOLIAN_TYPE_STRUCT_OPAQUE and EOLIAN_TYPE_ALIAS,
+ * this is the name of the alias or of the struct. For EOLIAN_TYPE_CLASS, this
+ * can be "Button". Keep in mind that the name doesn't include namespaces for
+ * structs and aliases.
  *
  * @param[in] tp the type.
  * @return the name.

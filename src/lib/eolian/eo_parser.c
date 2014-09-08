@@ -930,13 +930,34 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
      }
    else
      {
+        int tpid = ls->t.kw;
         def->type = EOLIAN_TYPE_REGULAR;
         check(ls, TOK_VALUE);
         ctype = eo_lexer_get_c_type(ls->t.kw);
         if (ctype)
           {
-             _fill_type_name(def, eina_stringshare_add(ls->t.value.s));
+             _fill_type_name(def, eina_stringshare_ref(ls->t.value.s));
              eo_lexer_get(ls);
+             if (tpid >= KW_accessor)
+               {
+                  def->type = EOLIAN_TYPE_COMPLEX;
+                  if (ls->t.token == '<')
+                    {
+                       int bline = ls->line_number, bcol = ls->column;
+                       eo_lexer_get(ls);
+                       def->subtypes = eina_list_append(def->subtypes,
+                                                        parse_type(ls));
+                       pop_type(ls);
+                       if (tpid == KW_hash)
+                         {
+                            check_next(ls, ',');
+                            def->subtypes = eina_list_append(def->subtypes,
+                                                             parse_type(ls));
+                            pop_type(ls);
+                         }
+                       check_match(ls, '>', '<', bline, bcol);
+                    }
+               }
           }
         else
           {
@@ -983,19 +1004,6 @@ parse_ptr:
         pdef->type = EOLIAN_TYPE_POINTER;
         def = pdef;
         eo_lexer_get(ls);
-     }
-   if (ls->t.token == '<')
-     {
-        int bline = ls->line_number, bcol = ls->column;
-        eo_lexer_get(ls);
-        def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
-        pop_type(ls);
-        while (test_next(ls, ','))
-          {
-             def->subtypes = eina_list_append(def->subtypes, parse_type(ls));
-             pop_type(ls);
-          }
-        check_match(ls, '>', '<', bline, bcol);
      }
    return def;
 }

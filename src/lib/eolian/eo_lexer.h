@@ -48,6 +48,8 @@ enum Tokens
     \
     KW(void), \
     \
+    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
+    \
     KW(true), KW(false), KW(null)
 
 /* "regular" keyword and @ prefixed keyword */

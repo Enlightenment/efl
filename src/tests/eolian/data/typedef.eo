@@ -1,5 +1,5 @@
 type Evas.Coord: int; /* Simple type definition */
-type List_Objects: own(Eina.List*)< Eo *>; /* A little more complex */
+type List_Objects: own(list<Eo *>*); /* A little more complex */
 
 class Typedef {
    methods {
