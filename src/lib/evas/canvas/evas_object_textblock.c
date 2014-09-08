@@ -253,48 +253,47 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
      (base[closer_len] == '=') || \
      _is_white(base[closer_len])))
 
-/*FIXME: document the structs and struct items. */
 struct _Evas_Object_Style_Tag_Base
 {
-   char *tag;
-   char *replace;
-   size_t tag_len;
-   size_t replace_len;
+   char *tag;  /**< Format Identifier: b=Bold, i=Italic etc. */
+   char *replace;  /**< Replacement string. "font_weight=Bold", "font_style=Italic" etc. */
+   size_t tag_len;  /**< Strlen of tag. */
+   size_t replace_len;  /**< Strlen of replace. */
 };
 
 struct _Evas_Object_Style_Tag
 {
    EINA_INLIST;
-   Evas_Object_Style_Tag_Base tag;
+   Evas_Object_Style_Tag_Base tag;  /**< Base style object for holding style information. */
 };
 
 struct _Evas_Object_Textblock_Node_Text
 {
    EINA_INLIST;
-   Eina_UStrbuf                       *unicode;
-   char                               *utf8;
-   Evas_Object_Textblock_Node_Format  *format_node;
-   Evas_Object_Textblock_Paragraph    *par;
-   Eina_Bool                           dirty : 1;
-   Eina_Bool                           is_new : 1;
+   Eina_UStrbuf                       *unicode;  /**< Actual paragraph text. */
+   char                               *utf8;  /**< Text in utf8 format. */
+   Evas_Object_Textblock_Node_Format  *format_node; /**< Points to the last format node before the paragraph, or if there is none, to the first format node within the paragraph.*/
+   Evas_Object_Textblock_Paragraph    *par;  /**< Points to the paragraph node of which this node is a part. */
+   Eina_Bool                           dirty : 1;  /**< EINA_TRUE if already handled/format changed, else EINA_FALSE. */
+   Eina_Bool                           is_new : 1;  /**< EINA_TRUE if its a new paragraph, else EINA_FALSE. */
 };
 
 struct _Evas_Object_Textblock_Node_Format
 {
    EINA_INLIST;
-   const char                         *format;
-   const char                         *orig_format;
-   Evas_Object_Textblock_Node_Text    *text_node;
-   size_t                              offset;
+   const char                         *format;  /**< Cached, parsed and translated version of orig_format. */
+   const char                         *orig_format;  /**< Original format information. */
+   Evas_Object_Textblock_Node_Text    *text_node;  /**< The text node it's pointing to. */
+   size_t                              offset;  /**< Offset from the last format node of the same text. */
    struct {
       unsigned char l, r, t, b;
-   } pad;
-   unsigned char                       anchor : 2;
-   Eina_Bool                           opener : 1;
-   Eina_Bool                           own_closer : 1;
-   Eina_Bool                           visible : 1;
-   Eina_Bool                           format_change : 1;
-   Eina_Bool                           is_new : 1;
+   } pad;  /**< Amount of padding required. */
+   unsigned char                       anchor : 2;  /**< ANCHOR_NONE, ANCHOR_A or ANCHOR_ITEM. */
+   Eina_Bool                           opener : 1;  /**< EINA_TRUE if opener, else EINA_FALSE. */
+   Eina_Bool                           own_closer : 1;  /**< EINA_TRUE if own_closer, else EINA_FALSE. */
+   Eina_Bool                           visible : 1;  /**< EINA_TRUE if format is visible format, else EINA_FALSE. */
+   Eina_Bool                           format_change : 1;  /**< EINA_TRUE if the format of the textblock has changed, else EINA_FALSE. */
+   Eina_Bool                           is_new : 1;  /**< EINA_TRUE if its a new format node, else EINA_FALSE */
 };
 
 /* The default tags to use */
@@ -340,26 +339,26 @@ static const Evas_Object_Style_Tag_Base default_tags[] = {
 struct _Evas_Object_Textblock_Paragraph
 {
    EINA_INLIST;
-   Evas_Object_Textblock_Line        *lines;
-   Evas_Object_Textblock_Node_Text   *text_node;
-   Eina_List                         *logical_items;
-   Evas_BiDi_Paragraph_Props         *bidi_props; /* Only valid during layout */
-   Evas_BiDi_Direction                direction;
-   Evas_Coord                         y, w, h;
-   int                                line_no;
-   Eina_Bool                          is_bidi : 1;
-   Eina_Bool                          visible : 1;
-   Eina_Bool                          rendered : 1;
+   Evas_Object_Textblock_Line        *lines;  /**< Points to the first line of this paragraph. */
+   Evas_Object_Textblock_Node_Text   *text_node;  /**< Points to the first text node of this paragraph. */
+   Eina_List                         *logical_items;  /**< Logical items are the properties of this paragraph, like width, height etc. */
+   Evas_BiDi_Paragraph_Props         *bidi_props; /**< Only valid during layout. */
+   Evas_BiDi_Direction                direction;  /**< Bidi direction enum value. The display direction like right to left.*/
+   Evas_Coord                         y, w, h;  /**< Text block co-ordinates. y co-ord, width and height. */
+   int                                line_no;  /**< Line no of the text block. */
+   Eina_Bool                          is_bidi : 1;  /**< EINA_TRUE if this is BiDi Paragraph, else EINA_FALSE. */
+   Eina_Bool                          visible : 1;  /**< EINA_TRUE if paragraph visible, else EINA_FALSE. */
+   Eina_Bool                          rendered : 1;  /**< EINA_TRUE if paragraph rendered, else EINA_FALSE. */
 };
 
 struct _Evas_Object_Textblock_Line
 {
    EINA_INLIST;
-   Evas_Object_Textblock_Item        *items;
-   Evas_Object_Textblock_Paragraph   *par;
-   Evas_Coord                         x, y, w, h;
-   int                                baseline;
-   int                                line_no;
+   Evas_Object_Textblock_Item        *items;  /**< Pointer to layouting text item. Contains actual text and information about its display. */
+   Evas_Object_Textblock_Paragraph   *par;  /**< Points to the paragraph of which this line is a part. */
+   Evas_Coord                         x, y, w, h;  /**< Text block line co-ordinates. */
+   int                                baseline;  /**< Baseline of the textblock. */
+   int                                line_no;  /**< Line no of this line. */
 };
 
 typedef enum _Evas_Textblock_Item_Type
@@ -371,56 +370,50 @@ typedef enum _Evas_Textblock_Item_Type
 struct _Evas_Object_Textblock_Item
 {
    EINA_INLIST;
-   Evas_Object_Textblock_Node_Text     *text_node;
-   Evas_Object_Textblock_Format        *format;
-   Evas_Object_Textblock_Line          *ln;
-   size_t                               text_pos;
+   Evas_Object_Textblock_Node_Text     *text_node;  /**< Pointer to textblock node text. It contains actual text in unicode and utf8 format. */
+   Evas_Object_Textblock_Format        *format;  /**< Pointer to textblock format. It contains all the formatting information for this text block. */
+   Evas_Object_Textblock_Line          *ln;  /**< Pointer to textblock line. It contains the co-ord, baseline, and line no for this item. */
+   size_t                               text_pos;  /**< Position of this item in textblock line. */
 #ifdef BIDI_SUPPORT
-   size_t                               visual_pos;
+   size_t                               visual_pos;  /**< Visual position of this item. */
 #endif
-   Evas_Textblock_Item_Type             type;
+   Evas_Textblock_Item_Type             type;  /**< EVAS_TEXTBLOCK_ITEM_TEXT or EVAS_TEXTBLOCK_ITEM_FORMAT */
 
-   Evas_Coord                           adv, x, w, h;
-   Evas_Coord                           yoff;
-   Eina_Bool                            merge : 1; /* Indicates whether this
-                                                      item should merge to the
-                                                      previous item or not */
-   Eina_Bool                            visually_deleted : 1;
-                                                   /* Indicates whether this
-                                                      item is used in the visual
-                                                      layout or not. */
+   Evas_Coord                           adv, x, w, h;  /**< Item co-ordinates. Advancement to be made, x co-ord, width and height. */
+   Evas_Coord                           yoff;  /**< y offset. */
+   Eina_Bool                            merge : 1; /**< Indicates whether this item should merge to the previous item or not */
+   Eina_Bool                            visually_deleted : 1; /**< Indicates whether this item is used in the visual layout or not. */
 };
 
 struct _Evas_Object_Textblock_Text_Item
 {
-   Evas_Object_Textblock_Item       parent;
-   Evas_Text_Props                  text_props;
-   Evas_Coord                       inset;
-   Evas_Coord                       x_adjustment; /* Used to indicate by how
-                                                     much we adjusted sizes */
+   Evas_Object_Textblock_Item       parent;  /**< Textblock item. */
+   Evas_Text_Props                  text_props;  /**< Props for this item. */
+   Evas_Coord                       inset;  /**< Inset of text item. */
+   Evas_Coord                       x_adjustment; /**< Used to indicate by how much we adjusted sizes */
 };
 
 struct _Evas_Object_Textblock_Format_Item
 {
-   Evas_Object_Textblock_Item           parent;
-   Evas_BiDi_Direction                  bidi_dir;
-   const char                          *item;
-   int                                  y;
-   unsigned char                        vsize : 2;
-   unsigned char                        size : 2;
-   Eina_Bool                            formatme : 1;
+   Evas_Object_Textblock_Item           parent;  /**< Textblock item. */
+   Evas_BiDi_Direction                  bidi_dir;  /**< Bidi text direction. */
+   const char                          *item;  /**< Pointer to item contents. */
+   int                                  y;  /**< Co-ordinate of item. */
+   unsigned char                        vsize : 2;  /**< VSIZE_FULL or VSIZE_ASCENT */
+   unsigned char                        size : 2;  /**< SIZE, SIZE_ABS or SIZE_REL*/
+   Eina_Bool                            formatme : 1;  /**< EINA_TRUE if format required, else EINA_FALSE */
 };
 
 struct _Evas_Object_Textblock_Format
 {
-   Evas_Object_Textblock_Node_Format *fnode;
-   double               halign;
-   double               valign;
+   Evas_Object_Textblock_Node_Format *fnode;  /**< Pointer to textblock format node. */
+   double               halign;  /**< Horizontal alignment value. */
+   double               valign;  /**< Vertical alignment value. */
    struct {
-      Evas_Font_Description *fdesc;
-      const char       *source;
-      Evas_Font_Set    *font;
-      Evas_Font_Size    size;
+      Evas_Font_Description *fdesc;  /**< Pointer to font description. */
+      const char       *source;  /**< Pointer to object from which to search for the font. */
+      Evas_Font_Set    *font;  /**< Pointer to font set. */
+      Evas_Font_Size    size;  /**< Size of the font. */
    } font;
    struct {
       struct {
@@ -430,28 +423,28 @@ struct _Evas_Object_Textblock_Format
    } color;
    struct {
       int               l, r;
-   } margin;
-   int                  ref;
-   int                  tabstops;
-   int                  linesize;
-   int                  linegap;
-   int                  underline_dash_width;
-   int                  underline_dash_gap;
-   double               linerelsize;
-   double               linerelgap;
-   double               linefill;
-   double               ellipsis;
-   unsigned char        style;
-   Eina_Bool            wrap_word : 1;
-   Eina_Bool            wrap_char : 1;
-   Eina_Bool            wrap_mixed : 1;
-   Eina_Bool            underline : 1;
-   Eina_Bool            underline2 : 1;
-   Eina_Bool            underline_dash : 1;
-   Eina_Bool            strikethrough : 1;
-   Eina_Bool            backing : 1;
-   Eina_Bool            password : 1;
-   Eina_Bool            halign_auto : 1;
+   } margin;  /**< Left and right margin width. */
+   int                  ref;  /**< Value of the ref. */
+   int                  tabstops;  /**< Value of the size of the tab character. */
+   int                  linesize;  /**< Value of the size of the line of the text. */
+   int                  linegap;  /**< Value to set the line gap in text. */
+   int                  underline_dash_width;  /**< Valule to set the width of the underline dash. */
+   int                  underline_dash_gap;  /**< Value to set the gap of the underline dash. */
+   double               linerelsize;  /**< Value to set the size of line of text. */
+   double               linerelgap;  /**< Value for setting line gap. */
+   double               linefill;  /**< The value must be a percentage. */
+   double               ellipsis;  /**< The value should be a number. Any value smaller than 0.0 or greater than 1.0 disables ellipsis. A value of 0 means ellipsizing the leftmost portion of the text first, 1 on the other hand the rightmost portion. */
+   unsigned char        style;  /**< Value from Evas_Text_Style_Type enum. */
+   Eina_Bool            wrap_word : 1;  /**< EINA_TRUE if only wraps lines at word boundaries, else EINA_FALSE. */
+   Eina_Bool            wrap_char : 1;  /**< EINA_TRUE if wraps at any character, else EINA_FALSE. */
+   Eina_Bool            wrap_mixed : 1;  /**< EINA_TRUE if wrap at words if possible, else EINA_FALSE. */
+   Eina_Bool            underline : 1;  /**< EINA_TRUE if a single line under the text, else EINA_FALSE */
+   Eina_Bool            underline2 : 1;  /**< EINA_TRUE if two lines under the text, else EINA_FALSE */
+   Eina_Bool            underline_dash : 1;  /**< EINA_TRUE if a dashed line under the text, else EINA_FALSE */
+   Eina_Bool            strikethrough : 1;  /**< EINA_TRUE if text should be stricked off, else EINA_FALSE */
+   Eina_Bool            backing : 1;  /**< EINA_TRUE if enable background color, else EINA_FALSE */
+   Eina_Bool            password : 1;  /**< EINA_TRUE if the text is password, else EINA_FALSE */
+   Eina_Bool            halign_auto : 1;  /**< EINA_TRUE if auto horizontal align, else EINA_FALSE */
 };
 
 struct _Evas_Textblock_Style
@@ -2877,7 +2870,7 @@ _paragraphs_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *par
 
 /**
  * @internal
- * Push fmt to the format stack, if fmt is NULL, will fush a default item.
+ * Push fmt to the format stack, if fmt is NULL, will push a default item.
  *
  * @param c the context to work on - Not NULL.
  * @param fmt the format to push.
@@ -2982,7 +2975,7 @@ _layout_format_pop(Ctxt *c, const char *format)
              EINA_LIST_FOREACH_SAFE(redo_nodes, i, i_next, fnode)
                {
                   /* FIXME: Actually do something with the new acquired padding,
-                   * the can be different and affect our padding! */
+                   * they can be different and affect our padding! */
                   Evas_Coord style_pad_l, style_pad_r, style_pad_t, style_pad_b;
                   style_pad_l = style_pad_r = style_pad_t = style_pad_b = 0;
                   redo_nodes = eina_list_remove_list(redo_nodes, i);
@@ -5248,9 +5241,9 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
              _layout_update_bidi_props(c->o, c->par);
 #endif
 
-             /* For each text node to thorugh all of it's format nodes
+             /* For each text node, go through all of it's format nodes, and
               * append text from the start to the offset of the next format
-              * using the last format got. if needed it also creates format
+              * using the last format got. If needed it also creates format
               * items this is the core algorithm of the layout mechanism.
               * Skip the unicode replacement chars when there are because
               * we don't want to print them. */
@@ -6385,7 +6378,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                        s = p + 1;
                     }
                }
-             /* Unicode object replcament char */
+             /* Unicode object replacement char */
              else if (!strncmp(_REPLACEMENT_CHAR_UTF8, p,
                       text_len = strlen(_REPLACEMENT_CHAR_UTF8)) ||
                    !strncmp(_NEWLINE_UTF8, p,
@@ -6510,7 +6503,7 @@ _evas_textblock_text_markup_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 
         /* For each text node to thorugh all of it's format nodes
          * append text from the start to the offset of the next format
-         * using the last format got. if needed it also creates format items
+         * using the last format got. If needed it also creates format items
          * this is the core algorithm of the layout mechanism.
          * Skip the unicode replacement chars when there are because
          * we don't want to print them. */
@@ -6788,7 +6781,7 @@ _evas_textblock_nodes_merge(Evas_Textblock_Data *o, Evas_Object_Textblock_Node_T
      }
 
    /* When it comes to how we handle it, merging is like removing both nodes
-    * and creating a new one, se we need to do the needed cleanups. */
+    * and creating a new one, so we need to do the needed cleanups. */
    if (to->par)
       to->par->text_node = NULL;
    to->par = NULL;
@@ -8848,7 +8841,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
                    * current with the next, there must be a next. */
                   should_merge = EINA_TRUE;
                }
-             /* If a singnular, mark as invisible, so we'll delete it. */
+             /* If a singular, mark as invisible, so we'll delete it. */
              if (!format || last_fmt->own_closer)
                {
                   last_fmt->visible = EINA_FALSE;
