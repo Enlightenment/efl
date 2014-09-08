@@ -764,12 +764,17 @@ _ecore_wl_dnd_source_cb_send_free(void *data EINA_UNUSED, void *event)
 }
 
 static void 
-_ecore_wl_dnd_source_cb_cancelled(void *data EINA_UNUSED, struct wl_data_source *source)
+_ecore_wl_dnd_source_cb_cancelled(void *data, struct wl_data_source *source)
 {
+   Ecore_Wl_Input *input;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
 
    /* FIXME: Raise an Ecore_Wl_Event here */
    wl_data_source_destroy(source);
+   if (input->data_source == source) input->data_source = NULL;
 }
 
 static void 
