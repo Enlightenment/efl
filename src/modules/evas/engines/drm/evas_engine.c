@@ -10,9 +10,6 @@ struct _Render_Engine
    Evas_Engine_Info_Drm *info;
 };
 
-/* local function prototypes */
-static void *_output_setup(Evas_Engine_Info_Drm *info, int w, int h);
-
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
