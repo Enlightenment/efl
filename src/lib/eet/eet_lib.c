@@ -1397,6 +1397,9 @@ eet_memopen_read(const void *data,
    if (!ef)
      return NULL;
 
+   /* eet_internal_read expects the cache lock to be held when it is called */
+   LOCK_CACHE;
+
    INIT_FILE(ef);
    ef->ed = NULL;
    ef->path = NULL;
@@ -1413,8 +1416,6 @@ eet_memopen_read(const void *data,
    ef->sha1_length = 0;
    ef->readfp_owned = EINA_FALSE;
 
-   /* eet_internal_read expects the cache lock to be held when it is called */
-   LOCK_CACHE;
    ef = eet_internal_read(ef);
    UNLOCK_CACHE;
    return ef;
