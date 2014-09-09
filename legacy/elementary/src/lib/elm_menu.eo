@@ -21,10 +21,10 @@ class Elm_Menu (Elm_Widget, Evas.Clickable_Interface)
             /*@
             @brief Returns a list of @p item's items.
 
-            @return An Eina_List* of @p item's items
+            @return An list* of @p item's items
 
             @ingroup Menu */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       first_item {

@@ -201,7 +201,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Slideshow */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       transitions {
@@ -243,7 +243,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_transition_set()
 
             @ingroup Slideshow */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       count {
@@ -303,7 +303,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_layout_set()
 
             @ingroup Slideshow */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
    }

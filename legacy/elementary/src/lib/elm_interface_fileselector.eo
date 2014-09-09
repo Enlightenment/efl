@@ -120,7 +120,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get a list of selected paths in the fileselector. */
          }
          values {
-            const(Eina_List)* ret;
+            const(list)* ret;
          }
       }
    }

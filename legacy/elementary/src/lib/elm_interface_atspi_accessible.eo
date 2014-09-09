@@ -28,7 +28,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             elements Should be free by a user. */
          }
          values {
-            Eina_List *relations;
+            list *relations;
          }
       }
       role @protected {
@@ -46,7 +46,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             /*@ Gets widget's accessible children. */
          }
          values {
-            Eina_List *children;
+            list *children;
          }
       }
       role_name @protected {
@@ -64,7 +64,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             attributes. Must be free by a user. */
          }
          values {
-            Eina_List *attributes;
+            list *attributes;
          }
       }
       index_in_parent @protected {

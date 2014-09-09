@@ -440,7 +440,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_realized_items_update()
 
             @ingroup Genlist */
-            return: Eina_List *;
+            return: list *;
          }
       }
       selected_items {
@@ -464,7 +464,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_selected_item_get()
 
             @ingroup Genlist */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       last_item {

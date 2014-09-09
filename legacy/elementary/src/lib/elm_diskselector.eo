@@ -122,7 +122,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
             /*@
             Get a list of all the diskselector items.
 
-            @return An @c Eina_List of diskselector items, #Elm_Object_Item,
+            @return A @c list of diskselector items, #Elm_Object_Item,
             or @c NULL on failure.
 
             @see elm_diskselector_item_append()
@@ -130,7 +130,7 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
             @see elm_diskselector_clear()
 
             @ingroup Diskselector */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       last_item {

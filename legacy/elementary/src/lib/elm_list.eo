@@ -222,7 +222,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             /*@
             Get a list of all the list items.
 
-            @return An @c Eina_List of list items, #Elm_Object_Item,
+            @return A @c list of list items, #Elm_Object_Item,
             or @c NULL on failure.
 
             @see elm_list_item_append()
@@ -230,7 +230,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @see elm_list_clear()
 
             @ingroup List */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       first_item {
@@ -251,7 +251,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             /*@
             Return a list of the currently selected list items.
 
-            @return An @c Eina_List of list items, #Elm_Object_Item,
+            @return An @c list of list items, #Elm_Object_Item,
             or @c NULL on failure.
 
             Multiple items can be selected if multi select is enabled. It can be
@@ -261,7 +261,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @see elm_list_multi_select_set()
 
             @ingroup List */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       last_item {

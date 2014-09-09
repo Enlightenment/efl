@@ -63,7 +63,7 @@ class Elm_Flipselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Flipselector */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       first_item {

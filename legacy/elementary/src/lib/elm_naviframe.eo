@@ -89,12 +89,12 @@ class Elm_Naviframe (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get a list of all the naviframe items.
 
-            @return An Eina_List of naviframe items, #Elm_Object_Item,
+            @return A list of naviframe items, #Elm_Object_Item,
             or @c NULL on failure.
             @note The returned list MUST be freed.
 
             @ingroup Naviframe */
-            return: Eina_List * @warn_unused;
+            return: list * @warn_unused;
          }
       }
       top_item {

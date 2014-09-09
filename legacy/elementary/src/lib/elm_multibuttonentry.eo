@@ -77,7 +77,7 @@ class Elm_Multibuttonentry (Elm_Layout)
             @return The list of items, or NULL if none
 
             @ingroup Multibuttonentry */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       first_item {

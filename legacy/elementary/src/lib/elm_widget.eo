@@ -146,7 +146,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             objs: const;
          }
          values {
-            Eina_List *objs;
+            list *objs;
          }
       }
       can_focus {
@@ -302,7 +302,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
             /*@
             Function to operate on a given widget's scrollabe children when necessary.
             @warning free the returned list with eina_list_free(). */
-            return: Eina_List *;
+            return: list *;
          }
       }
       scroll_hold {
@@ -373,7 +373,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
       can_focus_child_list {
          get {
             /*@ No description supplied by the EAPI. */
-            return: Eina_List *;
+            return: list *;
          }
       }
       focused_item {
@@ -618,7 +618,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          return: bool;
          params {
             @in const(Evas_Object)* base;
-            @in const(Eina_List)* items;
+            @in const(list)* items;
             @in list_data_get_func_type list_data_get;
             @in double degree;
             @out Evas_Object *direction;
@@ -723,7 +723,7 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          /*@ No description supplied by the EAPI. */
          return: bool;
          params {
-            @in const(Eina_List)* items;
+            @in const(list)* items;
             @in list_data_get_func_type list_data_get;
             @in Elm_Focus_Direction dir;
             @out Evas_Object *next;

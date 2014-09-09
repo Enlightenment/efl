@@ -17,7 +17,7 @@ class Elm_App_Server (Eo.Base)
             /*@ Return a iterator with all views of application */
          }
          values {
-            Eina_Iterator *ret; /*@ Iterator with all views of application, you must free iterator after use */
+            iterator *ret; /*@ Iterator with all views of application, you must free iterator after use */
          }
       }
       path {

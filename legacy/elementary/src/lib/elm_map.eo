@@ -278,7 +278,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
             @since 1.7
 
             @ingroup Map */
-            return: Eina_List *;
+            return: list *;
          }
       }
       tile_load_status {

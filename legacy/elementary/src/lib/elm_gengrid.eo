@@ -372,7 +372,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_gengrid_realized_items_update()
 
             @ingroup Gengrid */
-            return: Eina_List *;
+            return: list *;
          }
       }
       first_item {
@@ -409,7 +409,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_gengrid_selected_item_get()
 
             @ingroup Gengrid */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       last_item {

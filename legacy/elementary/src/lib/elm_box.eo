@@ -143,7 +143,7 @@ class Elm_Box (Elm_Widget)
             /*@
             Retrieve a list of the objects packed into the box
 
-            Returns a new @c Eina_List with a pointer to @c Evas_Object in its nodes.
+            Returns a new @c list with a pointer to @c Evas_Object in its nodes.
             The order of the list corresponds to the packing order the box uses.
 
             You must free this list with eina_list_free() once you are done with it.

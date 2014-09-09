@@ -9,7 +9,7 @@ class Elm_Container (Elm_Widget)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Eina_List *ret; /*@ Eina_List */
+            list *ret; /*@ list */
          }
       }
    }

@@ -46,7 +46,7 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Get list of available widget actions */
          }
          values {
-            Eina_List *actions; /*@ contains statically allocated strings */
+            list *actions; /*@ contains statically allocated strings */
          }
       }
    }

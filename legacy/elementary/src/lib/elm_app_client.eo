@@ -8,7 +8,7 @@ class Elm_App_Client (Eo.Base)
             /*@ Return a iterator with all views of application. */
          }
          values {
-            Eina_Iterator *ret; /*@ the iterator with all views, must be freed after use */
+            iterator *ret; /*@ the iterator with all views, must be freed after use */
          }
       }
       package {

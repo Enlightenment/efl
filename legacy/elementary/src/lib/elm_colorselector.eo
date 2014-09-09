@@ -82,7 +82,7 @@ class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             @since 1.9
 
             @ingroup Colorselector */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
       palette_selected_item {

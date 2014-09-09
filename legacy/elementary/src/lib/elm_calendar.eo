@@ -238,14 +238,14 @@ class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             Get a list of all the calendar marks.
 
-            @return An @c Eina_List of calendar marks objects, or @c NULL on failure.
+            @return A @c list of calendar marks objects, or @c NULL on failure.
 
             @see elm_calendar_mark_add()
             @see elm_calendar_mark_del()
             @see elm_calendar_marks_clear()
 
             @ingroup Calendar */
-            return: const(Eina_List)*;
+            return: const(list)*;
          }
       }
    }

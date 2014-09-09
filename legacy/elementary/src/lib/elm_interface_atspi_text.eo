@@ -85,14 +85,14 @@ interface Elm_Interface_Atspi_Text ()
             int *end_offset;
          }
          values {
-            own(Eina_List*) attributes;
+            own(list*) attributes;
          }
       }
       default_attributes @protected {
          get {
          }
          values {
-            own(Eina_List*) attributes;
+            own(list*) attributes;
          }
       }
       character_extents @protected {
@@ -136,7 +136,7 @@ interface Elm_Interface_Atspi_Text ()
             Elm_Atspi_Text_Clip_Type yclip;
          }
          values {
-            Eina_List *ranges;
+            list *ranges;
          }
       }
       range_extents @protected {
