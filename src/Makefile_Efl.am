@@ -22,7 +22,9 @@ efleolianfiles_DATA = \
               lib/efl/interfaces/efl_text_properties.eo
 
 EXTRA_DIST += \
-              ${efleolianfiles_DATA}
+              ${efleolianfiles_DATA} \
+              lib/efl/Efl_Config.h \
+              lib/efl/Efl.h
 
 lib_LTLIBRARIES += lib/efl/libefl.la
 
