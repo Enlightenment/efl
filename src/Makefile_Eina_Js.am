@@ -6,6 +6,8 @@ lib_LTLIBRARIES += lib/eina_js/libeina_js.la
 
 lib_eina_js_libeina_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EO_CFLAGS@ \
 @EINA_JS_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -67,8 +69,8 @@ tests_eina_js_eina_js_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_js\" \
 @CHECK_CFLAGS@ \
 @EINA_JS_CFLAGS@
-tests_eina_js_eina_js_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@ @USE_EINA_JS_LIBS@
-tests_eina_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@
+tests_eina_js_eina_js_suite_LDADD = @CHECK_LIBS@ @USE_EINA_JS_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
+tests_eina_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 endif
 endif
