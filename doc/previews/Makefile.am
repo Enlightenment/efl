@@ -5,6 +5,7 @@ if EFL_BUILD_DOC
 
 AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/efl \
 -I. \
 -I$(builddir) \
 -I$(top_srcdir)/src/lib/evil \
