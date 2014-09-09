@@ -2616,7 +2616,7 @@ typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 enum _Ecore_Animator_Source    /* Timing sources for animators */
 {
    ECORE_ANIMATOR_SOURCE_TIMER, /**< The default system clock/timer based animator that ticks every "frametime" seconds */
-   ECORE_ANIMATOR_SOURCE_CUSTOM /**< A custom animator trigger that you need to call ecore_animator_trigger() to make it tick */
+   ECORE_ANIMATOR_SOURCE_CUSTOM /**< A custom animator trigger that you need to call ecore_animator_custom_tick() to make it tick */
 };
 typedef enum _Ecore_Animator_Source Ecore_Animator_Source;
 
