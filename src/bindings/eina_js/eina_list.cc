@@ -1,10 +1,16 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <v8.h>
 #include <Eina.h>
 #include <cstdlib>
 
+#include <Eo.h>
+
 #include <eina_integer_sequence.hh>
 #include <eina_tuple.hh>
+#include <eina_ptrlist.hh>
 
 #include <tuple>
 
@@ -16,21 +22,21 @@ struct eina_list
 {
   eina_list() : _list(0) {}
   
-  Eina_List* _list;
+  efl::eina::range_ptr_list<void> _list;
 };
 
-void push_back(eina_list& list, v8::Persistent<v8::Value, v8::CopyablePersistentTraits<v8::Value> > object)
+void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& info)
 {
-  std::cout << "eina_list push_back" << std::endl;
+  eina_list* self = static_cast<eina_list*>(info.This()->GetAlignedPointerFromInternalField(0));
+  info.GetReturnValue().Set((uint32_t)self->_list.size());
 }
 
 void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
 {
   std::cout << "index_get " << index << std::endl;
-  if(
   info.GetReturnValue().Set(5);
 }
-      
+
 void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
 {
   void* p = new eina_list;
@@ -134,9 +140,10 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
   instance_t->SetInternalFieldCount(1);
 
   instance_t->SetIndexedPropertyHandler(& efl::js::index_get);
+
+  v8::Local<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();
+  prototype->SetAccessor(v8::String::NewFromUtf8(isolate, "length"), &efl::js::length);
   
   global->Set(v8::String::NewFromUtf8(isolate, "List"), constructor);
-  // efl::js::register_<efl::js::eina_list>
-  //   (isolate, "push_back", &efl::js::push_back, instance_t);
 }
 

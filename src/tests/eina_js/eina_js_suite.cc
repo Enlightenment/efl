@@ -10,6 +10,7 @@ static const char script[] =
   "print(\"teste\");\n"
   "var l = new List();\n"
   "print (l[0]);\n"
+  "print (l.length);\n"
   // "l.push_back(5);\n"
   ;
 
