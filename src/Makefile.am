@@ -115,17 +115,19 @@ if HAVE_ELUA
 EXAMPLES_SUBDIRS += examples/elua
 endif
 
-if HAVE_CXX11
-EXAMPLES_SUBDIRS += \
+EXAMPLES_CXX = \
 examples/eina_cxx \
 examples/eolian_cxx
+
+if HAVE_CXX11
+EXAMPLES_SUBDIRS += $(EXAMPLES_CXX)
 endif
 
 if ALWAYS_BUILD_EXAMPLES
 SUBDIRS += . $(EXAMPLES_SUBDIRS)
 endif
 
-DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
+DIST_SUBDIRS += $(EXAMPLES_SUBDIRS) $(EXAMPLES_CXX)
 
 examples: all-am
 	@for d in $(EXAMPLES_SUBDIRS); do \
