@@ -617,14 +617,6 @@ local gen_contents = function(klass)
             cnt[#cnt + 1] = Method(v)
         end
     end
-    -- and constructors
-    local ctors = klass:functions_get(ft.CTOR):to_array()
-    for i, v in ipairs(ctors) do
-        cnt[#cnt + 1] = Constructor(v)
-    end
-    if #ctors == 0 then
-        cnt[#cnt + 1] = Default_Constructor()
-    end
     -- events
     local evs = {}
     local events = klass:events_get():to_array()
