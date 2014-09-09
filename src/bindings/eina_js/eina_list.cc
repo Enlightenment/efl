@@ -22,9 +22,15 @@ struct eina_list
 void push_back(eina_list& list, v8::Persistent<v8::Value, v8::CopyablePersistentTraits<v8::Value> > object)
 {
   std::cout << "eina_list push_back" << std::endl;
-  
-}      
+}
 
+void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
+{
+  std::cout << "index_get " << index << std::endl;
+  if(
+  info.GetReturnValue().Set(5);
+}
+      
 void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
 {
   void* p = new eina_list;
@@ -73,6 +79,7 @@ R call_impl(v8::Isolate* isolate
             , eina::index_sequence<N...>)
 
 {
+  std::cout << "self " << self << std::endl;
   (*f)(*self, js::get_element<N, Sig>(isolate, args)...);
 }
 
@@ -122,11 +129,14 @@ void register_(v8::Isolate* isolate, const char* name, F&& f, v8::Handle<v8::Obj
 
 EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate)
 {
-  v8::Local<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New(isolate, &efl::js::new_eina_list );
+  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New(isolate, &efl::js::new_eina_list );
   v8::Local<v8::ObjectTemplate> instance_t = constructor->InstanceTemplate();
   instance_t->SetInternalFieldCount(1);
+
+  instance_t->SetIndexedPropertyHandler(& efl::js::index_get);
+  
   global->Set(v8::String::NewFromUtf8(isolate, "List"), constructor);
-  efl::js::register_<efl::js::eina_list>
-    (isolate, "push_back", &efl::js::push_back, instance_t);
+  // efl::js::register_<efl::js::eina_list>
+  //   (isolate, "push_back", &efl::js::push_back, instance_t);
 }
 
