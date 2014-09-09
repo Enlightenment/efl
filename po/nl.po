@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-04 13:29+0100\n"
+"POT-Creation-Date: 2014-09-09 11:26+0200\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
 "Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -84,155 +84,155 @@ msgstr "FOUT: onbekende optie -%c.\n"
 msgid "ERROR: "
 msgstr "FOUT:"
 
-#: src/lib/ecore/ecore_getopt.c:1109 src/lib/ecore/ecore_getopt.c:1246
-#: src/lib/ecore/ecore_getopt.c:1262 src/lib/ecore/ecore_getopt.c:1277
-#: src/lib/ecore/ecore_getopt.c:1294 src/lib/ecore/ecore_getopt.c:1341
-#: src/lib/ecore/ecore_getopt.c:1461 src/lib/ecore/ecore_getopt.c:1502
+#: src/lib/ecore/ecore_getopt.c:1112 src/lib/ecore/ecore_getopt.c:1249
+#: src/lib/ecore/ecore_getopt.c:1265 src/lib/ecore/ecore_getopt.c:1280
+#: src/lib/ecore/ecore_getopt.c:1300 src/lib/ecore/ecore_getopt.c:1347
+#: src/lib/ecore/ecore_getopt.c:1467 src/lib/ecore/ecore_getopt.c:1508
 msgid "value has no pointer set.\n"
 msgstr "waarde heeft geen pointer ingsteld.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1141 src/lib/ecore/ecore_getopt.c:1361
+#: src/lib/ecore/ecore_getopt.c:1144 src/lib/ecore/ecore_getopt.c:1367
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "onbekende boolean-waarde %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1192 src/lib/ecore/ecore_getopt.c:1449
+#: src/lib/ecore/ecore_getopt.c:1195 src/lib/ecore/ecore_getopt.c:1455
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "ongeldig nummerformaat %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1307
+#: src/lib/ecore/ecore_getopt.c:1313
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "ongeldige keuze \"%s\". Geldige waardes zijn:"
 
-#: src/lib/ecore/ecore_getopt.c:1335
+#: src/lib/ecore/ecore_getopt.c:1341
 msgid "missing parameter to append.\n"
 msgstr "parameter om toe te wijzen ontbreekt.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1439
+#: src/lib/ecore/ecore_getopt.c:1445
 msgid "could not parse value.\n"
 msgstr "kon waarde niet doorvoeren.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1496
+#: src/lib/ecore/ecore_getopt.c:1502
 msgid "missing parameter.\n"
 msgstr "paramater ontbreekt.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1509
+#: src/lib/ecore/ecore_getopt.c:1515
 msgid "missing callback function!\n"
 msgstr "ontbrekende terugroep-functie!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1540
+#: src/lib/ecore/ecore_getopt.c:1546
 msgid "no version was defined.\n"
 msgstr "geen versie was gedefinieerd.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1557
+#: src/lib/ecore/ecore_getopt.c:1563
 msgid "no copyright was defined.\n"
 msgstr "geen copyright was gedefinieerd.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1574
+#: src/lib/ecore/ecore_getopt.c:1580
 msgid "no license was defined.\n"
 msgstr "geen licentie was gedefinieerd.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1664
+#: src/lib/ecore/ecore_getopt.c:1670
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "FOUT: onbekende optie --%s, genegeerd.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1697
+#: src/lib/ecore/ecore_getopt.c:1703
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "FOUT: optie --%s vereist een argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1739
+#: src/lib/ecore/ecore_getopt.c:1745
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "FOUT: onbekende opties -%c, genegeerd.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1777
+#: src/lib/ecore/ecore_getopt.c:1783
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "FOUT: optie -%c vereist een argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1872
+#: src/lib/ecore/ecore_getopt.c:1878
 #, fuzzy, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr "FOUT: optie -%c vereist een argument!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1904
+#: src/lib/ecore/ecore_getopt.c:1910
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr ""
 
-#: src/lib/ecore/ecore_getopt.c:2025 src/lib/ecore/ecore_getopt.c:2091
+#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
 msgid "ERROR: no parser provided.\n"
 msgstr "FOUT: geen doorvoerder beschikbaar gesteld.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2030 src/lib/ecore/ecore_getopt.c:2096
+#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
 msgid "ERROR: no values provided.\n"
 msgstr "FOUT: geen waarden beschikbaar gesteld.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2039 src/lib/ecore/ecore_getopt.c:2105
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no arguments provided.\n"
 msgstr "FOUT: geen argumenten beschibaar gesteld.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2065
+#: src/lib/ecore/ecore_getopt.c:2071
 msgid "ERROR: invalid options found."
 msgstr "FOUT: ongeldige opties gevonden."
 
-#: src/lib/ecore/ecore_getopt.c:2071 src/lib/ecore/ecore_getopt.c:2137
+#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
 #, c-format
 msgid " See --%s.\n"
 msgstr "Zie --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2073 src/lib/ecore/ecore_getopt.c:2139
+#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
 #, c-format
 msgid " See -%c.\n"
 msgstr "Zie -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2131
+#: src/lib/ecore/ecore_getopt.c:2137
 #, fuzzy
 msgid "ERROR: invalid positional arguments found."
 msgstr "FOUT: ongeldige opties gevonden."
 
-#: src/lib/ecore/ecore_getopt.c:2166
+#: src/lib/ecore/ecore_getopt.c:2172
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "Fout: foutieve wiskundige waarde '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:2184
+#: src/lib/ecore/ecore_getopt.c:2190
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "FOUT: foutieve grootte-waarden '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:121
+#: src/lib/efreet/efreet_base.c:120
 msgid "Desktop"
 msgstr "Bureaublad"
 
-#: src/lib/efreet/efreet_base.c:129
+#: src/lib/efreet/efreet_base.c:128
 msgid "Downloads"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:138
+#: src/lib/efreet/efreet_base.c:137
 msgid "Templates"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:147
+#: src/lib/efreet/efreet_base.c:146
 msgid "Public"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:156
+#: src/lib/efreet/efreet_base.c:155
 msgid "Documents"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:164
+#: src/lib/efreet/efreet_base.c:163
 msgid "Music"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:172
+#: src/lib/efreet/efreet_base.c:171
 msgid "Pictures"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:180
+#: src/lib/efreet/efreet_base.c:179
 msgid "Videos"
 msgstr ""

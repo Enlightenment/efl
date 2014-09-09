@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-04 13:29+0100\n"
+"POT-Creation-Date: 2014-09-09 11:26+0200\n"
 "PO-Revision-Date: 2014-04-16 13:32+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -86,154 +86,154 @@ msgstr "HATA: bilinmeyen seçenek -%c.\n"
 msgid "ERROR: "
 msgstr "HATA: "
 
-#: src/lib/ecore/ecore_getopt.c:1109 src/lib/ecore/ecore_getopt.c:1246
-#: src/lib/ecore/ecore_getopt.c:1262 src/lib/ecore/ecore_getopt.c:1277
-#: src/lib/ecore/ecore_getopt.c:1294 src/lib/ecore/ecore_getopt.c:1341
-#: src/lib/ecore/ecore_getopt.c:1461 src/lib/ecore/ecore_getopt.c:1502
+#: src/lib/ecore/ecore_getopt.c:1112 src/lib/ecore/ecore_getopt.c:1249
+#: src/lib/ecore/ecore_getopt.c:1265 src/lib/ecore/ecore_getopt.c:1280
+#: src/lib/ecore/ecore_getopt.c:1300 src/lib/ecore/ecore_getopt.c:1347
+#: src/lib/ecore/ecore_getopt.c:1467 src/lib/ecore/ecore_getopt.c:1508
 msgid "value has no pointer set.\n"
 msgstr "değer belirlenmemiş.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1141 src/lib/ecore/ecore_getopt.c:1361
+#: src/lib/ecore/ecore_getopt.c:1144 src/lib/ecore/ecore_getopt.c:1367
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "bilinmeyen boolean değeri %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1192 src/lib/ecore/ecore_getopt.c:1449
+#: src/lib/ecore/ecore_getopt.c:1195 src/lib/ecore/ecore_getopt.c:1455
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "geçersiz sayı biçimi %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1307
+#: src/lib/ecore/ecore_getopt.c:1313
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "geçersiz seçim \"%s\". Geçerli değerler: "
 
-#: src/lib/ecore/ecore_getopt.c:1335
+#: src/lib/ecore/ecore_getopt.c:1341
 msgid "missing parameter to append.\n"
 msgstr "geçersiz veri eklenmiş.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1439
+#: src/lib/ecore/ecore_getopt.c:1445
 msgid "could not parse value.\n"
 msgstr "değer ayrıştırılamadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1496
+#: src/lib/ecore/ecore_getopt.c:1502
 msgid "missing parameter.\n"
 msgstr "eksik parametre.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1509
+#: src/lib/ecore/ecore_getopt.c:1515
 msgid "missing callback function!\n"
 msgstr "eksik geri çağırma işlevi!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1540
+#: src/lib/ecore/ecore_getopt.c:1546
 msgid "no version was defined.\n"
 msgstr "sürüm tanımlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1557
+#: src/lib/ecore/ecore_getopt.c:1563
 msgid "no copyright was defined.\n"
 msgstr "telif hakkı tanımlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1574
+#: src/lib/ecore/ecore_getopt.c:1580
 msgid "no license was defined.\n"
 msgstr "lisans tanımlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1664
+#: src/lib/ecore/ecore_getopt.c:1670
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "HATA: bilinmeyen seçenek --%s, yoksayıldı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1697
+#: src/lib/ecore/ecore_getopt.c:1703
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "HATA: seçenek --%s bağımsız bir değişken gerektirir!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1739
+#: src/lib/ecore/ecore_getopt.c:1745
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "HATA: bilinmeyen seçenek --%c, yoksayıldı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1777
+#: src/lib/ecore/ecore_getopt.c:1783
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "HATA: seçenek --%c bağımsız bir değişken gerektirir!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1872
+#: src/lib/ecore/ecore_getopt.c:1878
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
 msgstr "HATA: konumsal argüman kayıp  %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1904
+#: src/lib/ecore/ecore_getopt.c:1910
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr "HATA:  %d desteklenmeyen eylem türü %s konumsal argümanı için.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2025 src/lib/ecore/ecore_getopt.c:2091
+#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
 msgid "ERROR: no parser provided.\n"
 msgstr "HATA: ayrıştırıcı sağlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2030 src/lib/ecore/ecore_getopt.c:2096
+#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
 msgid "ERROR: no values provided.\n"
 msgstr "HATA: değerler sağlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2039 src/lib/ecore/ecore_getopt.c:2105
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no arguments provided.\n"
 msgstr "HATA: bağımsız değişkenler sağlanmadı.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2065
+#: src/lib/ecore/ecore_getopt.c:2071
 msgid "ERROR: invalid options found."
 msgstr "HATA: geçersiz seçenekler bulundu."
 
-#: src/lib/ecore/ecore_getopt.c:2071 src/lib/ecore/ecore_getopt.c:2137
+#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
 #, c-format
 msgid " See --%s.\n"
 msgstr " Bakın --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2073 src/lib/ecore/ecore_getopt.c:2139
+#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
 #, c-format
 msgid " See -%c.\n"
 msgstr " Bakın -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2131
+#: src/lib/ecore/ecore_getopt.c:2137
 msgid "ERROR: invalid positional arguments found."
 msgstr "HATA: geçersiz konumsal argümanlar bulundu."
 
-#: src/lib/ecore/ecore_getopt.c:2166
+#: src/lib/ecore/ecore_getopt.c:2172
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "HATA: yanlış geometri değeri '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:2184
+#: src/lib/ecore/ecore_getopt.c:2190
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "HATA: yanlış boyut değeri '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:121
+#: src/lib/efreet/efreet_base.c:120
 msgid "Desktop"
 msgstr "Masaüstü"
 
-#: src/lib/efreet/efreet_base.c:129
+#: src/lib/efreet/efreet_base.c:128
 msgid "Downloads"
 msgstr "İndirilenler"
 
-#: src/lib/efreet/efreet_base.c:138
+#: src/lib/efreet/efreet_base.c:137
 msgid "Templates"
 msgstr "Şablonlar"
 
-#: src/lib/efreet/efreet_base.c:147
+#: src/lib/efreet/efreet_base.c:146
 msgid "Public"
 msgstr "Genel"
 
-#: src/lib/efreet/efreet_base.c:156
+#: src/lib/efreet/efreet_base.c:155
 msgid "Documents"
 msgstr "Belgeler"
 
-#: src/lib/efreet/efreet_base.c:164
+#: src/lib/efreet/efreet_base.c:163
 msgid "Music"
 msgstr "Müzik"
 
-#: src/lib/efreet/efreet_base.c:172
+#: src/lib/efreet/efreet_base.c:171
 msgid "Pictures"
 msgstr "Resimler"
 
-#: src/lib/efreet/efreet_base.c:180
+#: src/lib/efreet/efreet_base.c:179
 msgid "Videos"
 msgstr "Videolar"
