@@ -9,6 +9,7 @@
 #include <eina_eo_base_fwd.hh>
 #include <eina_iterator.hh>
 #include <eina_throw.hh>
+#include <eina_range_types.hh>
 
 #include <memory>
 #include <iterator>
@@ -364,7 +365,7 @@ struct _ptr_list_common_base
   /**
    * @internal
    */
-  T* _new_clone(T const& a)
+  T* _new_clone(typename std::conditional<std::is_void<T>::value, T const*, T>::type const& a)
   {
     return _get_clone_allocator().allocate_clone(a);
   }
@@ -407,11 +408,12 @@ class ptr_list : protected _ptr_list_common_base<T, CloneAllocator>
 {
   typedef _ptr_list_common_base<T, CloneAllocator> _base_type; /**< Type for the base class. */
 public:
-  typedef T value_type; /**< The type of each element. */
-  typedef T& reference; /**< Type for a reference to an element. */
-  typedef T const& const_reference; /**< Type for a constant reference to an element. */
-  typedef _ptr_list_iterator<T const> const_iterator; /**< Type for a iterator for this container. */
-  typedef _ptr_list_iterator<T> iterator; /**< Type for a constant iterator for this container. */
+  typedef typename std::conditional<std::is_void<T>::value, T*, T>::type
+    value_type; /**< The type of each element. */
+  typedef value_type& reference; /**< Type for a reference to an element. */
+  typedef value_type const& const_reference; /**< Type for a constant reference to an element. */
+  typedef _ptr_list_iterator<value_type const> const_iterator; /**< Type for a iterator for this container. */
+  typedef _ptr_list_iterator<value_type> iterator; /**< Type for a constant iterator for this container. */
   typedef T* pointer; /**< Type for a pointer to an element. */
   typedef T const* const_pointer; /**< Type for a constant pointer for an element. */
   typedef std::size_t size_type; /**< Type for size information. */
@@ -548,7 +550,7 @@ public:
    */
   std::size_t size() const
   {
-    return _ptr_list_access_traits::size<T>(this->_impl._list);
+    return _ptr_list_access_traits::size<value_type>(this->_impl._list);
   }
 
   /**
@@ -560,7 +562,7 @@ public:
    */
   bool empty() const
   {
-    return _ptr_list_access_traits::empty<T>(this->_impl._list);
+    return _ptr_list_access_traits::empty<value_type>(this->_impl._list);
   }
 
   /**
@@ -934,7 +936,7 @@ public:
    */
   value_type& back()
   {
-    return _ptr_list_access_traits::back<T>(this->_impl._list);
+    return _ptr_list_access_traits::back<value_type>(this->_impl._list);
   }
 
   /**
@@ -946,7 +948,7 @@ public:
    */
   value_type const& back() const
   {
-    return _ptr_list_access_traits::back<T>(this->_impl._list);
+    return _ptr_list_access_traits::back<value_type>(this->_impl._list);
   }
 
   /**
@@ -955,7 +957,7 @@ public:
    */
   value_type& front()
   {
-    return _ptr_list_access_traits::front<T>(this->_impl._list);
+    return _ptr_list_access_traits::front<value_type>(this->_impl._list);
   }
 
   /**
@@ -967,7 +969,7 @@ public:
    */
   value_type const& front() const
   {
-    return _ptr_list_access_traits::front<T>(this->_impl._list);
+    return _ptr_list_access_traits::front<value_type>(this->_impl._list);
   }
 
   /**
@@ -979,7 +981,7 @@ public:
    */
   const_iterator begin() const
   {
-    return _ptr_list_access_traits::cbegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::cbegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -991,7 +993,7 @@ public:
    */
   const_iterator end() const
   {
-    return _ptr_list_access_traits::cend<T>(this->_impl._list);
+    return _ptr_list_access_traits::cend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1004,7 +1006,7 @@ public:
    */
   iterator begin()
   {
-    return _ptr_list_access_traits::begin<T>(this->_impl._list);
+    return _ptr_list_access_traits::begin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1020,7 +1022,7 @@ public:
    */
   iterator end()
   {
-    return _ptr_list_access_traits::end<T>(this->_impl._list);
+    return _ptr_list_access_traits::end<value_type>(this->_impl._list);
   }
 
   /**
@@ -1032,7 +1034,7 @@ public:
    */
   const_reverse_iterator rbegin() const
   {
-    return _ptr_list_access_traits::rbegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::rbegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1044,7 +1046,7 @@ public:
    */
   const_reverse_iterator rend() const
   {
-    return _ptr_list_access_traits::rend<T>(this->_impl._list);
+    return _ptr_list_access_traits::rend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1057,7 +1059,7 @@ public:
    */
   reverse_iterator rbegin()
   {
-    return _ptr_list_access_traits::rbegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::rbegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1074,7 +1076,7 @@ public:
    */
   reverse_iterator rend()
   {
-    return _ptr_list_access_traits::rend<T>(this->_impl._list);
+    return _ptr_list_access_traits::rend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1087,7 +1089,7 @@ public:
    */
   const_iterator cbegin() const
   {
-    return _ptr_list_access_traits::cbegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::cbegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1100,7 +1102,7 @@ public:
    */
   const_iterator cend() const
   {
-    return _ptr_list_access_traits::cend<T>(this->_impl._list);
+    return _ptr_list_access_traits::cend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1113,7 +1115,7 @@ public:
    */
   const_reverse_iterator crbegin() const
   {
-    return _ptr_list_access_traits::crbegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::crbegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1126,7 +1128,7 @@ public:
    */
   const_reverse_iterator crend() const
   {
-    return _ptr_list_access_traits::crend<T>(this->_impl._list);
+    return _ptr_list_access_traits::crend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1137,9 +1139,9 @@ public:
    * the first element of the list. If the list is empty the returned
    * iterator is the same as the one returned by @ref iend().
    */
-  eina::iterator<T> ibegin()
+  eina::iterator<value_type> ibegin()
   {
-    return _ptr_list_access_traits::ibegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::ibegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1154,9 +1156,9 @@ public:
    * @note Note that attempting to access this position causes undefined
    * behavior.
    */
-  eina::iterator<T> iend()
+  eina::iterator<value_type> iend()
   {
-    return _ptr_list_access_traits::iend<T>(this->_impl._list);
+    return _ptr_list_access_traits::iend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1168,7 +1170,7 @@ public:
    */
   eina::iterator<T const> ibegin() const
   {
-    return _ptr_list_access_traits::ibegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::ibegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1180,7 +1182,7 @@ public:
    */
   eina::iterator<T const> iend() const
   {
-    return _ptr_list_access_traits::iend<T>(this->_impl._list);
+    return _ptr_list_access_traits::iend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1193,7 +1195,7 @@ public:
    */
   eina::iterator<T const> cibegin() const
   {
-    return _ptr_list_access_traits::cibegin<T>(this->_impl._list);
+    return _ptr_list_access_traits::cibegin<value_type>(this->_impl._list);
   }
 
   /**
@@ -1206,7 +1208,7 @@ public:
    */
   eina::iterator<T const> ciend() const
   {
-    return _ptr_list_access_traits::ciend<T>(this->_impl._list);
+    return _ptr_list_access_traits::ciend<value_type>(this->_impl._list);
   }
 
   /**
@@ -1269,9 +1271,9 @@ public:
    * @brief Get a @ref eina::accessor for the list.
    * @return <tt>eina::accessor</tt> to the list.
    */
-  eina::accessor<T> accessor()
+  eina::accessor<value_type> accessor()
   {
-    return eina::accessor<T>(eina_list_accessor_new(this->_impl._list));
+    return eina::accessor<value_type>(eina_list_accessor_new(this->_impl._list));
   }
 };
 

@@ -22,11 +22,12 @@ namespace efl { namespace eina {
 template <typename T, typename Traits>
 struct _const_range_template
 {
-  typedef typename Traits::template const_iterator<T>::type const_iterator; /**< Type for constant iterator to the range. */
-  typedef typename Traits::template iterator<T>::type iterator; /**< Type for iterator to the range. */
-  typedef T value_type; /**< The type of each element. */
-  typedef T& reference; /**< Type for a reference to an element. */
-  typedef T const& const_reference; /**< Type for a constant reference to an element. */
+  typedef typename std::conditional<std::is_void<T>::value, T*, T>::type
+    value_type; /**< The type of each element. */
+  typedef typename Traits::template const_iterator<value_type>::type const_iterator; /**< Type for constant iterator to the range. */
+  typedef typename Traits::template iterator<value_type>::type iterator; /**< Type for iterator to the range. */
+  typedef value_type& reference; /**< Type for a reference to an element. */
+  typedef value_type const& const_reference; /**< Type for a constant reference to an element. */
   typedef T* pointer; /**< Type for a pointer to an element. */
   typedef T const* const_pointer; /**< Type for a constant pointer to an element. */
   typedef std::reverse_iterator<iterator> reverse_iterator; /**< Type for reverse iterator to the range. */
@@ -235,10 +236,13 @@ void swap(_const_range_template<T, Traits>& lhs, _const_range_template<T, Traits
 template <typename T, typename Traits>
 struct _mutable_range_template : _const_range_template<T, Traits>
 {
-  typedef T value_type; /**< The type of each element. */
-  typedef typename Traits::template iterator<T>::type iterator; /**< Type for a iterator to the range. */
+  typedef typename std::conditional<std::is_void<T>::value, T*, T>::type
+    value_type; /**< The type of each element. */
+  typedef value_type& reference_type;
+  typedef value_type const& const_reference_type;
+  typedef typename Traits::template iterator<value_type>::type iterator; /**< Type for a iterator to the range. */
   typedef std::reverse_iterator<iterator> reverse_iterator; /**< Type for constant reverse iterator to the range. */
-  typedef typename Traits::template native_handle<T>::type native_handle_type; /**< Type for the native handle of the container. */
+  typedef typename Traits::template native_handle<value_type>::type native_handle_type; /**< Type for the native handle of the container. */
   typedef _const_range_template<T, Traits> _base_type;  /**< Type for the base class. */
 
   /**
@@ -260,7 +264,7 @@ struct _mutable_range_template : _const_range_template<T, Traits>
    * @brief Get a reference to the last element.
    * @return Reference to the last element of the range.
    */
-  value_type& back() const
+  reference_type back() const
   {
     return Traits::template back<value_type>(native_handle());
   }
@@ -269,7 +273,7 @@ struct _mutable_range_template : _const_range_template<T, Traits>
    * @brief Get a reference to the first element.
    * @return Reference to the first element of the range.
    */
-  value_type& front() const
+  reference_type front() const
   {
     return Traits::template front<value_type>(native_handle());
   }
@@ -349,11 +353,17 @@ protected:
 template <typename T, typename Traits>
 struct _range_template : private std::conditional
   <std::is_const<T>::value
-   , _const_range_template<typename std::remove_const<T>::type, Traits>
-   , _mutable_range_template<T, Traits> >::type
+   , _const_range_template
+     <typename std::conditional<std::is_void<T>::value, T*, typename std::remove_const<T>::type>::type
+     , Traits>
+   , _mutable_range_template<typename std::conditional<std::is_void<T>::value, T*, T>::type, Traits> >::type
 {
   typedef std::integral_constant<bool, !std::is_const<T>::value> is_mutable; /**< Type that specifies if the elements can be modified. */
-  typedef typename std::remove_const<T>::type value_type; /**< The type of each element. */
+  typedef typename std::conditional
+    <std::is_void<T>::value
+     , T*
+     , typename std::remove_const<T>::type
+     >::type value_type; /**< The type of each element. */
   typedef typename std::conditional<is_mutable::value, _mutable_range_template<value_type, Traits>
                                     , _const_range_template<value_type, Traits> >::type _base_type; /**< Type for the base class. */
   typedef typename _base_type::native_handle_type native_handle_type; /**< Type for the native handle of the container. */
