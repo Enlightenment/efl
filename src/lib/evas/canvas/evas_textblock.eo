@@ -249,7 +249,7 @@ class Evas.Textblock (Evas.Object)
       node_format_list_get @const {
          /*@ No description supplied by the EAPI. */
          legacy: evas_textblock_node_format_list_get;
-         return: const(Eina.List)*;
+         return: const(list<Evas.Object*>)*;
          params {
             @in const(char)* anchor;
          }

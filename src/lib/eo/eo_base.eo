@@ -171,7 +171,7 @@ callbacks of the same priority are called in reverse order of creation. */
       }
       children_iterator_new {
          /*@ Get an iterator on all childrens */
-         return: Eina.Iterator *;
+         return: free(own(iterator<Eo *> *), eina_iterator_free) @warn_unused;
       }
    }
    implements {

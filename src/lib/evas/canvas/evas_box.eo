@@ -274,7 +274,8 @@ class Evas.Box (Evas.Smart_Clipped)
          on errors
 
          @note Do @b not remove or delete objects while walking the list. */
-         return: Eina.Iterator * @warn_unused;
+         return: free(own(iterator<Evas.Object *> *), eina_iterator_free)
+            @warn_unused;
       }
       add_to {
          /*@
@@ -363,7 +364,8 @@ class Evas.Box (Evas.Smart_Clipped)
          on errors
 
          @note Do not remove or delete objects while walking the list. */
-         return: Eina.Accessor * @warn_unused;
+         return: free(own(accessor<Evas.Object *> *), eina_accessor_free)
+            @warn_unused;
       }
       internal_append {
          /*@ No description supplied by the EAPI. */

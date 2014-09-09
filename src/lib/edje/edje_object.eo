@@ -391,7 +391,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
             @return A list all accessibility part names on @p obj
             @since 1.7.0 */
-            return: Eina.List *;
+            return: list<const(char)*> *;
          }
       }
       load_error {
@@ -1173,7 +1173,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          This function return a list of Evas_Textblock_Rectangle anchor
          rectangles. */
-         return: const(Eina.List)*;
+         return: const(list<const(Evas.Textblock_Rectangle)*>)*;
          params {
             @in const(char)* part; /*@ The part name */
             @in const(char)* anchor; /*@ The anchor name */
@@ -2179,7 +2179,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          @return The list of anchors (const char *), do not modify!
 
          This function returns a list of char anchor names. */
-         return: const(Eina.List)*;
+         return: const(list<const(char)*>)*;
          params {
             @in const(char)* part; /*@ The part name */
          }
@@ -2314,7 +2314,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          @return The list of items (const char *), do not modify!
 
          This function returns a list of char item names. */
-         return: const(Eina.List)*;
+         return: const(list<const(char)*>)*;
          params {
             @in const(char)* part; /*@ The part name */
          }

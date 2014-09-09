@@ -102,7 +102,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             @see evas_object_smart_member_add()
             @see evas_object_smart_member_del()
             @see evas_object_smart_iterator_new() */
-            return: Eina.List * @warn_unused;
+            return: list<Evas.Object*> * @warn_unused;
          }
       }
       smart {
@@ -212,7 +212,8 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
          @see evas_object_smart_member_add()
          @see evas_object_smart_member_del()
          @see evas_object_smart_members_get() */
-         return: Eina.Iterator * @warn_unused;
+         return: free(own(iterator<Evas.Object *> *), eina_iterator_free)
+            @warn_unused;
       }
       callback_description_find @const {
          /*@

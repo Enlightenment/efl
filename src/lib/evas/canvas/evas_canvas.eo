@@ -591,7 +591,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          It will not append to the list pass events as hidden objects.
          Call eina_list_free on the returned list after usage. */
 
-         return: Eina.List * @warn_unused;
+         return: list<Evas.Object *> * @warn_unused;
          params {
             @in Evas_Object *stop; /*@ An Evas Object where to stop searching. */
             @in int x; /*@ The horizontal coordinate of the position. */
@@ -807,7 +807,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-         return: Eina.List * @warn_unused;
+         return: list<Evas.Object *> * @warn_unused;
          params {
             @in Evas_Coord x; /*@ The horizontal coordinate of the position */
             @in Evas_Coord y; /*@ The vertical coordinate of the position */
@@ -1115,10 +1115,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          after you're done.
 
          @ingroup Evas_Font_Group */
-         return: Eina.List * @warn_unused;
+         return: list<const(char) *> * @warn_unused;
       }
       objects_in_rectangle_get @const {
-         return: Eina.List * @warn_unused;
+         return: list<Evas.Object *> * @warn_unused;
          params {
             @in Evas_Coord x;
             @in Evas_Coord y;
@@ -1271,7 +1271,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          Retrieves the list of font paths used by the given evas.
          @return  The list of font paths used.
          @ingroup Evas_Font_Path_Group */
-         return: const(Eina.List)* @warn_unused;
+         return: const(list<const(char) *>)* @warn_unused;
       }
       image_cache_reload {
          /*@
@@ -1351,7 +1351,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          @ingroup Evas_Canvas */
 
-         return: Eina.List * @warn_unused;
+         return: free(own(list<Eina.Rectangle *> *), evas_render_updates_free)
+            @warn_unused;
       }
       image_cache_flush {
          /*@

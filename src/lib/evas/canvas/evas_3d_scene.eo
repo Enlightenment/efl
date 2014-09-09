@@ -105,7 +105,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Scene
          */
-         return: Eina.List *;
+         return: list<Evas_3D_Node *> *;
          params {
             @in Evas_Real x;         /*@ X coordinate of the picking position. */
             @in Evas_Real y;         /*@ Y coordinate of the picking position. */
@@ -121,7 +121,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
          params {
-            @in Eina_Bool shadows_enabled;  /*@ shadows enabled status. */
+            @in bool shadows_enabled;  /*@ shadows enabled status. */
          }
       }
 
@@ -132,7 +132,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Scene
          */
-         return: Eina_Bool;
+         return: bool;
          params {
          }
       }

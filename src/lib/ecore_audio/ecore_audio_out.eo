@@ -29,7 +29,7 @@ class Ecore_Audio_Out (Ecore_Audio)
          Returns the list of all attached inputs
 
          @since 1.8 */
-         return: Eina.List *; /*An @ref Eina_List of the inputs that are attached to the output*/
+         return: list<Eo*> *; /*An @ref Eina_List of the inputs that are attached to the output*/
       }
    }
    implements {
