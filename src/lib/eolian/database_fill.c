@@ -1,83 +1,6 @@
 #include "eo_parser.h"
 
-static Eina_Bool
-_db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
-                  Eo_Accessor_Def *accessor)
-{
-   if (accessor->type == SETTER)
-     foo_id->type = (foo_id->type == EOLIAN_PROP_GET) ? EOLIAN_PROPERTY
-                                                      : EOLIAN_PROP_SET;
-   else
-     foo_id->type = (foo_id->type == EOLIAN_PROP_SET) ? EOLIAN_PROPERTY
-                                                      : EOLIAN_PROP_GET;
-
-   if (accessor->ret && accessor->ret->type)
-     {
-        if (accessor->type == SETTER)
-          {
-             foo_id->set_ret_type = accessor->ret->type;
-             foo_id->set_ret_val  = accessor->ret->default_ret_val;
-             foo_id->set_return_comment = eina_stringshare_ref(accessor->ret->comment);
-             foo_id->set_return_warn_unused = accessor->ret->warn_unused;
-          }
-        else
-          {
-             foo_id->get_ret_type = accessor->ret->type;
-             foo_id->get_ret_val  = accessor->ret->default_ret_val;
-             foo_id->get_return_comment = eina_stringshare_ref(accessor->ret->comment);
-             foo_id->get_return_warn_unused = accessor->ret->warn_unused;
-          }
-        accessor->ret->type = NULL;
-        accessor->ret->default_ret_val = NULL;
-     }
-
-   if (accessor->type == SETTER)
-     {
-        foo_id->set_description = eina_stringshare_ref(accessor->comment);
-        if (accessor->legacy)
-          foo_id->set_legacy = eina_stringshare_ref(accessor->legacy);
-        foo_id->set_only_legacy = accessor->only_legacy;
-     }
-   else
-     {
-        foo_id->get_description = eina_stringshare_ref(accessor->comment);
-        if (accessor->legacy)
-          foo_id->get_legacy = eina_stringshare_ref(accessor->legacy);
-        foo_id->get_only_legacy = accessor->only_legacy;
-     }
-
-   if (kls->type == EOLIAN_CLASS_INTERFACE)
-     {
-        if (accessor->type == SETTER)
-          foo_id->set_virtual_pure = EINA_TRUE;
-        else
-          foo_id->get_virtual_pure = EINA_TRUE;
-     }
-
-   if (accessor->type == GETTER)
-     foo_id->base = accessor->base;
-   else
-     foo_id->set_base = accessor->base;
-
-   accessor->base.file = NULL;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_accessors(Eolian_Function *foo_id, Eo_Class_Def *kls,
-                   Eo_Property_Def *prop)
-{
-   if (prop->get_accessor && !_db_fill_accessor(foo_id, kls, prop->get_accessor))
-     return EINA_FALSE;
-   if (prop->set_accessor && !_db_fill_accessor(foo_id, kls, prop->set_accessor))
-     return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
-
-static Eina_Bool
+static void
 _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
 {
    Eolian_Function *foo_id = database_function_new(prop->name,
@@ -88,7 +11,75 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
 
    foo_id->keys   = prop->keys  ; prop->keys   = NULL;
    foo_id->params = prop->values; prop->values = NULL;
-   if (!_db_fill_accessors(foo_id, kls, prop)) goto failure;
+
+   if (prop->get_ret)
+     {
+        foo_id->get_ret_type = prop->get_ret->type;
+        prop->get_ret->type = NULL;
+        foo_id->get_ret_val = prop->get_ret->default_ret_val;
+        prop->get_ret->default_ret_val = NULL;
+        foo_id->get_return_comment = prop->get_ret->comment;
+        prop->get_ret->comment = NULL;
+        foo_id->get_return_warn_unused = prop->get_ret->warn_unused;
+     }
+   if (prop->set_ret)
+     {
+        foo_id->set_ret_type = prop->set_ret->type;
+        prop->set_ret->type = NULL;
+        foo_id->set_ret_val = prop->set_ret->default_ret_val;
+        prop->set_ret->default_ret_val = NULL;
+        foo_id->set_return_comment = prop->set_ret->comment;
+        prop->set_ret->comment = NULL;
+        foo_id->set_return_warn_unused = prop->set_ret->warn_unused;
+     }
+
+   if (prop->get_legacy)
+     {
+        foo_id->get_legacy = prop->get_legacy;
+        prop->get_legacy = NULL;
+    }
+   if (prop->set_legacy)
+     {
+        foo_id->set_legacy = prop->set_legacy;
+        prop->set_legacy = NULL;
+    }
+   foo_id->get_only_legacy = prop->get_only_legacy;
+   foo_id->set_only_legacy = prop->set_only_legacy;
+
+   if (prop->get_comment)
+     {
+        foo_id->get_description = prop->get_comment;
+        prop->get_comment = NULL;
+    }
+   if (prop->set_comment)
+     {
+        foo_id->set_description = prop->set_comment;
+        prop->set_comment = NULL;
+    }
+
+   if (prop->get_accessor)
+     {
+        if (kls->type == EOLIAN_CLASS_INTERFACE)
+          foo_id->get_virtual_pure = EINA_TRUE;
+        if (foo_id->type == EOLIAN_PROP_SET)
+          foo_id->type = EOLIAN_PROPERTY;
+        else
+          foo_id->type = EOLIAN_PROP_GET;
+        foo_id->base = prop->base;
+        prop->base.file = NULL;
+     }
+
+   if (prop->set_accessor)
+     {
+        if (kls->type == EOLIAN_CLASS_INTERFACE)
+          foo_id->set_virtual_pure = EINA_TRUE;
+        if (foo_id->type == EOLIAN_PROP_GET)
+          foo_id->type = EOLIAN_PROPERTY;
+        else
+          foo_id->type = EOLIAN_PROP_SET;
+        foo_id->set_base = prop->set_base;
+        prop->set_base.file = NULL;
+     }
 
    if (!prop->get_accessor && !prop->set_accessor)
      {
@@ -100,24 +91,16 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
      }
 
    cl->properties = eina_list_append(cl->properties, foo_id);
-
-   return EINA_TRUE;
-
-failure:
-   database_function_del(foo_id);
-   return EINA_FALSE;
 }
 
-static Eina_Bool
+static void
 _db_fill_properties(Eolian_Class *cl, Eo_Class_Def *kls)
 {
    Eo_Property_Def *prop;
    Eina_List *l;
 
    EINA_LIST_FOREACH(kls->properties, l, prop)
-     if (!_db_fill_property(cl, kls, prop)) return EINA_FALSE;
-
-   return EINA_TRUE;
+     _db_fill_property(cl, kls, prop);
 }
 
 static Eina_Bool
@@ -144,8 +127,7 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
    foo_id->obj_is_const = meth->obj_const;
    foo_id->is_class = meth->is_class;
 
-   if (meth->only_legacy)
-     foo_id->get_only_legacy = EINA_TRUE;
+   foo_id->get_only_legacy = meth->only_legacy;
 
    foo_id->params = meth->params; meth->params = NULL;
 
@@ -443,7 +425,8 @@ _db_fill_class(Eo_Class_Def *kls)
    if (kls->data_type)
      cl->data_type = eina_stringshare_ref(kls->data_type);
 
-   if (!_db_fill_properties  (cl, kls)) return EINA_FALSE;
+   _db_fill_properties(cl, kls);
+
    if (!_db_fill_methods     (cl, kls)) return EINA_FALSE;
    if (!_db_fill_implements  (cl, kls)) return EINA_FALSE;
    if (!_db_fill_constructors(cl, kls)) return EINA_FALSE;

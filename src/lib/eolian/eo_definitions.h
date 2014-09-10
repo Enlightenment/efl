@@ -16,35 +16,26 @@ typedef struct _Eo_Ret_Def
    Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
 
-/* ACCESSOR */
-
-typedef enum _Eo_Accessor_Type
-{
-   SETTER,
-   GETTER
-} Eo_Accessor_Type;
-
-typedef struct _Eo_Accessor_Def
-{
-   Eolian_Object base;
-   Eo_Accessor_Type type;
-   Eo_Ret_Def *ret;
-   Eina_Stringshare *comment;
-   Eina_Stringshare* legacy;
-   Eina_Bool only_legacy:1;
-} Eo_Accessor_Def;
-
 /* PROPERTY */
 
 typedef struct _Eo_Property_Def
 {
    Eolian_Object base;
+   Eolian_Object set_base;
    Eina_Stringshare *name;
+   Eo_Ret_Def *get_ret;
+   Eo_Ret_Def *set_ret;
    Eina_List *keys;
    Eina_List *values;
-   Eo_Accessor_Def *get_accessor;
-   Eo_Accessor_Def *set_accessor;
+   Eina_Stringshare *get_comment;
+   Eina_Stringshare *set_comment;
+   Eina_Stringshare *get_legacy;
+   Eina_Stringshare *set_legacy;
    int scope;
+   Eina_Bool get_accessor: 1;
+   Eina_Bool set_accessor: 1;
+   Eina_Bool get_only_legacy: 1;
+   Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class:1;
 } Eo_Property_Def;
 
@@ -98,7 +89,6 @@ typedef struct _Eo_Lexer_Temps
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eolian_Function_Parameter *param;
-   Eo_Accessor_Def *accessor;
    Eina_List *str_items;
    Eolian_Event *event;
    Eolian_Implement *impl;

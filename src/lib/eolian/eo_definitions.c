@@ -13,24 +13,6 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 }
 
 static void
-eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
-{
-   if (accessor->base.file)
-     eina_stringshare_del(accessor->base.file);
-
-   if (accessor->comment)
-     eina_stringshare_del(accessor->comment);
-
-   if (accessor->legacy)
-     eina_stringshare_del(accessor->legacy);
-
-   if (accessor->ret)
-     eo_definitions_ret_free(accessor->ret);
-
-   free(accessor);
-}
-
-static void
 eo_definitions_property_def_free(Eo_Property_Def *prop)
 {
    Eolian_Function_Parameter *param;
@@ -47,10 +29,23 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    EINA_LIST_FREE(prop->values, param)
      database_parameter_del(param);
 
-   if (prop->get_accessor)
-     eo_definitions_accessor_free(prop->get_accessor);
-   if (prop->set_accessor)
-     eo_definitions_accessor_free(prop->set_accessor);
+   if (prop->get_comment)
+     eina_stringshare_del(prop->get_comment);
+
+   if (prop->set_comment)
+     eina_stringshare_del(prop->set_comment);
+
+   if (prop->get_legacy)
+     eina_stringshare_del(prop->get_legacy);
+
+   if (prop->set_legacy)
+     eina_stringshare_del(prop->set_legacy);
+
+   if (prop->get_ret)
+     eo_definitions_ret_free(prop->get_ret);
+
+   if (prop->set_ret)
+     eo_definitions_ret_free(prop->set_ret);
 
    free(prop);
 }
@@ -162,9 +157,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    if (tmp->param)
      database_parameter_del(tmp->param);
-
-   if (tmp->accessor)
-     eo_definitions_accessor_free(tmp->accessor);
 
    EINA_LIST_FREE(tmp->str_items, s)
      if (s) eina_stringshare_del(s);

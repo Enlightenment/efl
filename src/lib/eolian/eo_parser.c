@@ -1215,40 +1215,57 @@ parse_legacy(Eo_Lexer *ls)
    check_next(ls, ';');
 }
 
-static Eo_Accessor_Def *
-parse_accessor(Eo_Lexer *ls)
+static void
+parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
 {
    int line, col;
-   Eo_Accessor_Def *acc = NULL;
    Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
              has_eo     = EINA_FALSE;
-   acc = calloc(1, sizeof(Eo_Accessor_Def));
-   acc->base.file = eina_stringshare_ref(ls->filename);
-   acc->base.line = ls->line_number;
-   acc->base.column = ls->column;
-   ls->tmp.accessor = acc;
-   acc->type = (ls->t.kw == KW_get) ? GETTER : SETTER;
+   Eina_Bool is_get = (ls->t.kw == KW_get);
+   if (is_get)
+     {
+        prop->base.file = eina_stringshare_ref(ls->filename);
+        prop->base.line = ls->line_number;
+        prop->base.column = ls->column;
+        prop->get_accessor = EINA_TRUE;
+     }
+   else
+     {
+        prop->set_base.file = eina_stringshare_ref(ls->filename);
+        prop->set_base.line = ls->line_number;
+        prop->set_base.column = ls->column;
+        prop->set_accessor = EINA_TRUE;
+     }
    eo_lexer_get(ls);
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        acc->comment = eina_stringshare_ref(ls->t.value.s);
+        if (is_get)
+          prop->get_comment = eina_stringshare_ref(ls->t.value.s);
+        else
+          prop->set_comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
         CASE_LOCK(ls, return, "return")
-        parse_return(ls, acc->type == GETTER);
-        acc->ret = ls->tmp.ret_def;
+        parse_return(ls, is_get);
+        if (is_get)
+          prop->get_ret = ls->tmp.ret_def;
+        else
+          prop->set_ret = ls->tmp.ret_def;
         ls->tmp.ret_def = NULL;
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
         parse_legacy(ls);
-        acc->legacy = ls->tmp.legacy_def;
+        if (is_get)
+          prop->get_legacy = ls->tmp.legacy_def;
+        else
+          prop->set_legacy = ls->tmp.legacy_def;
         ls->tmp.legacy_def = NULL;
         break;
       case KW_eo:
@@ -1257,15 +1274,16 @@ parse_accessor(Eo_Lexer *ls)
         check_next(ls, ':');
         check_kw_next(ls, KW_null);
         check_next(ls, ';');
-        acc->only_legacy = EINA_TRUE;
+        if (is_get)
+          prop->get_only_legacy = EINA_TRUE;
+        else
+          prop->set_only_legacy = EINA_TRUE;
         break;
       default:
         goto end;
      }
 end:
    check_match(ls, '}', '{', line, col);
-   ls->tmp.accessor = NULL;
-   return acc;
 }
 
 static void
@@ -1324,11 +1342,11 @@ body:
      {
       case KW_get:
         CASE_LOCK(ls, get, "get definition")
-        prop->get_accessor = parse_accessor(ls);
+        parse_accessor(ls, prop);
         break;
       case KW_set:
         CASE_LOCK(ls, set, "set definition")
-        prop->set_accessor = parse_accessor(ls);
+        parse_accessor(ls, prop);
         break;
       case KW_keys:
         CASE_LOCK(ls, keys, "keys definition")
