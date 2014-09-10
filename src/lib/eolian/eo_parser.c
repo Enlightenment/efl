@@ -1096,18 +1096,26 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    return def;
 }
 
-static void
-parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
+typedef struct _Eo_Ret_Def
 {
-   Eo_Ret_Def *ret = calloc(1, sizeof(Eo_Ret_Def));
-   ls->tmp.ret_def = ret;
+   Eolian_Type *type;
+   Eina_Stringshare *comment;
+   Eolian_Expression *default_ret_val;
+   Eina_Bool warn_unused:1;
+} Eo_Ret_Def;
+
+static void
+parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
+{
    eo_lexer_get(ls);
    check_next(ls, ':');
    if (allow_void)
      ret->type = parse_type_void(ls);
    else
      ret->type = parse_type(ls);
-   pop_type(ls);
+   ret->comment = NULL;
+   ret->default_ret_val = NULL;
+   ret->warn_unused = EINA_FALSE;
    if (ls->t.token == '(')
      {
         int line = ls->line_number, col = ls->column;
@@ -1115,7 +1123,6 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
         eo_lexer_get(ls);
         ret->default_ret_val = parse_expr(ls);
         ls->expr_mode = EINA_FALSE;
-        pop_expr(ls);
         check_match(ls, ')', '(', line, col);
      }
    if (ls->t.kw == KW_at_warn_unused)
@@ -1228,6 +1235,10 @@ parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
         prop->base.line = ls->line_number;
         prop->base.column = ls->column;
         prop->get_accessor = EINA_TRUE;
+        if (prop->type == EOLIAN_PROP_SET)
+          prop->type = EOLIAN_PROPERTY;
+        else
+          prop->type = EOLIAN_PROP_GET;
      }
    else
      {
@@ -1235,6 +1246,10 @@ parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
         prop->set_base.line = ls->line_number;
         prop->set_base.column = ls->column;
         prop->set_accessor = EINA_TRUE;
+        if (prop->type == EOLIAN_PROP_GET)
+          prop->type = EOLIAN_PROPERTY;
+        else
+          prop->type = EOLIAN_PROP_SET;
      }
    eo_lexer_get(ls);
    line = ls->line_number;
@@ -1243,21 +1258,33 @@ parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
    if (ls->t.token == TOK_COMMENT)
      {
         if (is_get)
-          prop->get_comment = eina_stringshare_ref(ls->t.value.s);
+          prop->get_description = eina_stringshare_ref(ls->t.value.s);
         else
-          prop->set_comment = eina_stringshare_ref(ls->t.value.s);
+          prop->set_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
         CASE_LOCK(ls, return, "return")
-        parse_return(ls, is_get);
+        Eo_Ret_Def ret;
+        parse_return(ls, &ret, is_get);
+        pop_type(ls);
+        if (ret.default_ret_val) pop_expr(ls);
         if (is_get)
-          prop->get_ret = ls->tmp.ret_def;
+          {
+             prop->get_ret_type = ret.type;
+             prop->get_return_comment = ret.comment;
+             prop->get_ret_val = ret.default_ret_val;
+             prop->get_return_warn_unused = ret.warn_unused;
+          }
         else
-          prop->set_ret = ls->tmp.ret_def;
-        ls->tmp.ret_def = NULL;
+          {
+             prop->set_ret_type = ret.type;
+             prop->set_return_comment = ret.comment;
+             prop->set_ret_val = ret.default_ret_val;
+             prop->set_return_warn_unused = ret.warn_unused;
+          }
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
@@ -1357,7 +1384,7 @@ body:
       case KW_values:
         CASE_LOCK(ls, values, "values definition")
         parse_params(ls, EINA_FALSE, EINA_TRUE);
-        prop->values = ls->tmp.params;
+        prop->params = ls->tmp.params;
         ls->tmp.params = NULL;
         break;
       default:
@@ -1437,9 +1464,14 @@ body:
      {
       case KW_return:
         CASE_LOCK(ls, return, "return")
-        parse_return(ls, EINA_FALSE);
-        meth->ret = ls->tmp.ret_def;
-        ls->tmp.ret_def = NULL;
+        Eo_Ret_Def ret;
+        parse_return(ls, &ret, EINA_FALSE);
+        pop_type(ls);
+        if (ret.default_ret_val) pop_expr(ls);
+        meth->ret_type = ret.type;
+        meth->ret_comment = ret.comment;
+        meth->default_ret_val = ret.default_ret_val;
+        meth->ret_warn_unused = ret.warn_unused;
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")

@@ -10,27 +10,27 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
    foo_id->is_class = prop->is_class;
 
    foo_id->keys   = prop->keys  ; prop->keys   = NULL;
-   foo_id->params = prop->values; prop->values = NULL;
+   foo_id->params = prop->params; prop->params = NULL;
 
-   if (prop->get_ret)
+   if (prop->get_ret_type)
      {
-        foo_id->get_ret_type = prop->get_ret->type;
-        prop->get_ret->type = NULL;
-        foo_id->get_ret_val = prop->get_ret->default_ret_val;
-        prop->get_ret->default_ret_val = NULL;
-        foo_id->get_return_comment = prop->get_ret->comment;
-        prop->get_ret->comment = NULL;
-        foo_id->get_return_warn_unused = prop->get_ret->warn_unused;
+        foo_id->get_ret_type = prop->get_ret_type;
+        prop->get_ret_type = NULL;
+        foo_id->get_ret_val = prop->get_ret_val;
+        prop->get_ret_val = NULL;
+        foo_id->get_return_comment = prop->get_return_comment;
+        prop->get_return_comment = NULL;
+        foo_id->get_return_warn_unused = prop->get_return_warn_unused;
      }
-   if (prop->set_ret)
+   if (prop->set_ret_type)
      {
-        foo_id->set_ret_type = prop->set_ret->type;
-        prop->set_ret->type = NULL;
-        foo_id->set_ret_val = prop->set_ret->default_ret_val;
-        prop->set_ret->default_ret_val = NULL;
-        foo_id->set_return_comment = prop->set_ret->comment;
-        prop->set_ret->comment = NULL;
-        foo_id->set_return_warn_unused = prop->set_ret->warn_unused;
+        foo_id->set_ret_type = prop->set_ret_type;
+        prop->set_ret_type = NULL;
+        foo_id->set_ret_val = prop->set_ret_val;
+        prop->set_ret_val = NULL;
+        foo_id->set_return_comment = prop->set_return_comment;
+        prop->set_return_comment = NULL;
+        foo_id->set_return_warn_unused = prop->set_return_warn_unused;
      }
 
    if (prop->get_legacy)
@@ -46,25 +46,23 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
    foo_id->get_only_legacy = prop->get_only_legacy;
    foo_id->set_only_legacy = prop->set_only_legacy;
 
-   if (prop->get_comment)
+   if (prop->get_description)
      {
-        foo_id->get_description = prop->get_comment;
-        prop->get_comment = NULL;
+        foo_id->get_description = prop->get_description;
+        prop->get_description = NULL;
     }
-   if (prop->set_comment)
+   if (prop->set_description)
      {
-        foo_id->set_description = prop->set_comment;
-        prop->set_comment = NULL;
+        foo_id->set_description = prop->set_description;
+        prop->set_description = NULL;
     }
+
+   foo_id->type = prop->type;
 
    if (prop->get_accessor)
      {
         if (kls->type == EOLIAN_CLASS_INTERFACE)
           foo_id->get_virtual_pure = EINA_TRUE;
-        if (foo_id->type == EOLIAN_PROP_SET)
-          foo_id->type = EOLIAN_PROPERTY;
-        else
-          foo_id->type = EOLIAN_PROP_GET;
         foo_id->base = prop->base;
         prop->base.file = NULL;
      }
@@ -73,10 +71,6 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
      {
         if (kls->type == EOLIAN_CLASS_INTERFACE)
           foo_id->set_virtual_pure = EINA_TRUE;
-        if (foo_id->type == EOLIAN_PROP_GET)
-          foo_id->type = EOLIAN_PROPERTY;
-        else
-          foo_id->type = EOLIAN_PROP_SET;
         foo_id->set_base = prop->set_base;
         prop->set_base.file = NULL;
      }
@@ -112,14 +106,15 @@ _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
 
    cl->methods = eina_list_append(cl->methods, foo_id);
 
-   if (meth->ret)
+   if (meth->ret_type)
      {
-        foo_id->get_ret_type = meth->ret->type;
-        foo_id->get_return_comment = eina_stringshare_ref(meth->ret->comment);
-        foo_id->get_return_warn_unused = meth->ret->warn_unused;
-        foo_id->get_ret_val = meth->ret->default_ret_val;
-        meth->ret->type = NULL;
-        meth->ret->default_ret_val = NULL;
+        foo_id->get_ret_type = meth->ret_type;
+        meth->ret_type = NULL;
+        foo_id->get_return_comment = meth->ret_comment;
+        meth->ret_comment = NULL;
+        foo_id->get_return_warn_unused = meth->ret_warn_unused;
+        foo_id->get_ret_val = meth->default_ret_val;
+        meth->default_ret_val = NULL;
      }
 
    foo_id->get_description = eina_stringshare_ref(meth->comment);

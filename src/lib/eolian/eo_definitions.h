@@ -6,16 +6,6 @@
 
 #include "eolian_database.h"
 
-/* RET */
-
-typedef struct _Eo_Ret_Def
-{
-   Eolian_Type *type;
-   Eina_Stringshare *comment;
-   Eolian_Expression *default_ret_val;
-   Eina_Bool warn_unused:1;
-} Eo_Ret_Def;
-
 /* PROPERTY */
 
 typedef struct _Eo_Property_Def
@@ -23,17 +13,24 @@ typedef struct _Eo_Property_Def
    Eolian_Object base;
    Eolian_Object set_base;
    Eina_Stringshare *name;
-   Eo_Ret_Def *get_ret;
-   Eo_Ret_Def *set_ret;
    Eina_List *keys;
-   Eina_List *values;
-   Eina_Stringshare *get_comment;
-   Eina_Stringshare *set_comment;
+   Eina_List *params;
+   Eolian_Function_Type type;
+   Eolian_Object_Scope scope;
+   Eolian_Type *get_ret_type;
+   Eolian_Type *set_ret_type;
+   Eolian_Expression *get_ret_val;
+   Eolian_Expression *set_ret_val;
+   Eina_Stringshare *get_return_comment;
+   Eina_Stringshare *set_return_comment;
    Eina_Stringshare *get_legacy;
    Eina_Stringshare *set_legacy;
-   int scope;
+   Eina_Stringshare *get_description;
+   Eina_Stringshare *set_description;
    Eina_Bool get_accessor: 1;
    Eina_Bool set_accessor: 1;
+   Eina_Bool get_return_warn_unused :1; /* also used for methods */
+   Eina_Bool set_return_warn_unused :1;
    Eina_Bool get_only_legacy: 1;
    Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class:1;
@@ -44,7 +41,9 @@ typedef struct _Eo_Property_Def
 typedef struct _Eo_Method_Def
 {
    Eolian_Object base;
-   Eo_Ret_Def *ret;
+   Eolian_Type *ret_type;
+   Eina_Stringshare *ret_comment;
+   Eolian_Expression *default_ret_val;
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eina_List *params;
@@ -53,6 +52,7 @@ typedef struct _Eo_Method_Def
    int scope;
    Eina_Bool is_class:1;
    Eina_Bool only_legacy:1;
+   Eina_Bool ret_warn_unused:1;
 } Eo_Method_Def;
 
 /* CLASS */
@@ -83,7 +83,6 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *params;
    Eina_Stringshare *legacy_def;
    Eo_Class_Def *kls;
-   Eo_Ret_Def *ret_def;
    Eina_List *type_defs;
    Eina_List *var_defs;
    Eo_Property_Def *prop;

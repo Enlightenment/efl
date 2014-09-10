@@ -4,15 +4,6 @@
 #include "eo_definitions.h"
 
 static void
-eo_definitions_ret_free(Eo_Ret_Def *ret)
-{
-   if (ret->type) database_type_del(ret->type);
-   if (ret->comment) eina_stringshare_del(ret->comment);
-   database_expr_del(ret->default_ret_val);
-   free(ret);
-}
-
-static void
 eo_definitions_property_def_free(Eo_Property_Def *prop)
 {
    Eolian_Function_Parameter *param;
@@ -26,14 +17,14 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    EINA_LIST_FREE(prop->keys, param)
      database_parameter_del(param);
 
-   EINA_LIST_FREE(prop->values, param)
+   EINA_LIST_FREE(prop->params, param)
      database_parameter_del(param);
 
-   if (prop->get_comment)
-     eina_stringshare_del(prop->get_comment);
+   if (prop->get_description)
+     eina_stringshare_del(prop->get_description);
 
-   if (prop->set_comment)
-     eina_stringshare_del(prop->set_comment);
+   if (prop->set_description)
+     eina_stringshare_del(prop->set_description);
 
    if (prop->get_legacy)
      eina_stringshare_del(prop->get_legacy);
@@ -41,11 +32,20 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    if (prop->set_legacy)
      eina_stringshare_del(prop->set_legacy);
 
-   if (prop->get_ret)
-     eo_definitions_ret_free(prop->get_ret);
+   if (prop->get_ret_type)
+     database_type_del(prop->get_ret_type);
 
-   if (prop->set_ret)
-     eo_definitions_ret_free(prop->set_ret);
+   if (prop->set_ret_type)
+     database_type_del(prop->set_ret_type);
+
+   if (prop->get_return_comment)
+     eina_stringshare_del(prop->get_return_comment);
+
+   if (prop->set_return_comment)
+     eina_stringshare_del(prop->set_return_comment);
+
+   database_expr_del(prop->get_ret_val);
+   database_expr_del(prop->set_ret_val);
 
    free(prop);
 }
@@ -58,8 +58,13 @@ eo_definitions_method_def_free(Eo_Method_Def *meth)
    if (meth->base.file)
      eina_stringshare_del(meth->base.file);
 
-   if (meth->ret)
-     eo_definitions_ret_free(meth->ret);
+   if (meth->ret_type)
+     database_type_del(meth->ret_type);
+
+   if (meth->ret_comment)
+     eina_stringshare_del(meth->ret_comment);
+
+   database_expr_del(meth->default_ret_val);
 
    if (meth->name)
      eina_stringshare_del(meth->name);
@@ -139,9 +144,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    if (tmp->kls)
      eo_definitions_class_def_free(tmp->kls);
-
-   if (tmp->ret_def)
-     eo_definitions_ret_free(tmp->ret_def);
 
    EINA_LIST_FREE(tmp->type_defs, tp)
      database_type_del(tp);
