@@ -127,8 +127,8 @@ struct _Script_Write
    int i;
    Ecore_Exe *exe;
    int tmpn_fd, tmpo_fd;
-   char tmpn[PATH_MAX];
-   char tmpo[PATH_MAX];
+   Eina_Tmpstr *tmpn;
+   Eina_Tmpstr *tmpo;
    char *errstr;
 };
 
@@ -1441,6 +1441,8 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    unlink(sc->tmpn);
    unlink(sc->tmpo);
+   eina_tmpstr_del(sc->tmpn);
+   eina_tmpstr_del(sc->tmpo);
    close(sc->tmpn_fd);
    close(sc->tmpo_fd);
 }
@@ -1493,13 +1495,6 @@ data_write_scripts(Eet_File *ef)
    char inc_path[PATH_MAX] = "";
    int i;
 
-   if (!tmp_dir)
-#ifdef HAVE_EVIL
-     tmp_dir = (char *)evil_tmpdir_get();
-#else
-     tmp_dir = "/tmp";
-#endif
-
 #ifdef _WIN32
 # define BIN_EXT ".exe"
 #else
@@ -1541,16 +1536,15 @@ data_write_scripts(Eet_File *ef)
         sc->ef = ef;
         sc->cd = cd;
         sc->i = i;
-        snprintf(sc->tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
-        sc->tmpn_fd = mkstemp(sc->tmpn);
+        sc->tmpn_fd = eina_file_mkstemp("edje_cc.sma-tmp-XXXXXX", &sc->tmpn);
         if (sc->tmpn_fd < 0)
           error_and_abort(ef, "Unable to open temp file \"%s\" for script "
                           "compilation.", sc->tmpn);
-        snprintf(sc->tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmp_dir);
-        sc->tmpo_fd = mkstemp(sc->tmpo);
+        sc->tmpo_fd = eina_file_mkstemp("edje_cc.amx-tmp-XXXXXX", &sc->tmpo);
         if (sc->tmpo_fd < 0)
           {
              unlink(sc->tmpn);
+             eina_tmpstr_del(sc->tmpn);
              error_and_abort(ef, "Unable to open temp file \"%s\" for script "
                              "compilation.", sc->tmpo);
           }
