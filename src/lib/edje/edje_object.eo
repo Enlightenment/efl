@@ -128,10 +128,9 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             if there was none, and on errors.
 
             @see edje_object_perspective_set() */
-            ps: const;
          }
          values {
-            Edje_Perspective *ps; /*@ The perspective object that will be used. */
+            Edje_Perspective *ps @const_get; /*@ The perspective object that will be used. */
          }
       }
       scale {

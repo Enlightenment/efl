@@ -1177,6 +1177,20 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
         pop_expr(ls);
         check_match(ls, ')', '(', line, col);
      }
+   /* XXX: remove this fugly bit - temporary */
+   if (is_vals)
+     {
+        if (ls->t.kw == KW_at_const_get)
+          {
+             par->is_const_on_get = EINA_TRUE;
+             eo_lexer_get(ls);
+          }
+        else if (ls->t.kw == KW_at_const_set)
+          {
+             par->is_const_on_set = EINA_TRUE;
+             eo_lexer_get(ls);
+          }
+     }
    if (ls->t.kw == KW_at_nonull)
      {
         par->nonull = EINA_TRUE;
@@ -1198,33 +1212,6 @@ parse_legacy(Eo_Lexer *ls)
    check(ls, TOK_VALUE);
    ls->tmp.legacy_def = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
-   check_next(ls, ';');
-}
-
-static void
-parse_attrs(Eo_Lexer *ls)
-{
-   Eo_Accessor_Param *acc = NULL;
-   Eina_Bool has_const = EINA_FALSE;
-   acc = calloc(1, sizeof(Eo_Accessor_Param));
-   ls->tmp.accessor_param = acc;
-   acc->name = eina_stringshare_ref(ls->t.value.s);
-   eo_lexer_get(ls);
-   check_next(ls, ':');
-   check(ls, TOK_VALUE);
-   for (;;) switch (ls->t.kw)
-     {
-      case KW_const:
-        CASE_LOCK(ls, const, "const qualifier")
-        acc->is_const = EINA_TRUE;
-        eo_lexer_get(ls);
-        break;
-      default:
-        if (ls->t.token != ';')
-          eo_lexer_syntax_error(ls, "attribute expected");
-        goto end;
-     }
-end:
    check_next(ls, ';');
 }
 
@@ -1273,23 +1260,7 @@ parse_accessor(Eo_Lexer *ls)
         acc->only_legacy = EINA_TRUE;
         break;
       default:
-        if (ls->t.token != '}')
-          {
-             check(ls, TOK_VALUE);
-             parse_attrs(ls);
-             acc->params = eina_list_append(acc->params,
-                                            ls->tmp.accessor_param);
-             ls->tmp.accessor_param = NULL;
-             /* this code path is disabled for the time being,
-              * it's not used in regular eolian yet either...
-             eo_lexer_lookahead(ls);
-             if (ls->lookahead.token == ':')
-               parse_attrs(ls);
-             else
-               parse_param(ls, EINA_TRUE);*/
-          }
-        else
-          goto end;
+        goto end;
      }
 end:
    check_match(ls, '}', '{', line, col);

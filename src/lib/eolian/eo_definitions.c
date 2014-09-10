@@ -13,13 +13,6 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 }
 
 static void
-eo_definitions_accessor_param_free(Eo_Accessor_Param *param)
-{
-   if (param->name) eina_stringshare_del(param->name);
-   free(param);
-}
-
-static void
 eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
 {
    if (accessor->base.file)
@@ -30,10 +23,6 @@ eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
 
    if (accessor->legacy)
      eina_stringshare_del(accessor->legacy);
-
-   Eo_Accessor_Param *param;
-   EINA_LIST_FREE(accessor->params, param)
-     eo_definitions_accessor_param_free(param);
 
    if (accessor->ret)
      eo_definitions_ret_free(accessor->ret);
@@ -175,9 +164,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    if (tmp->accessor)
      eo_definitions_accessor_free(tmp->accessor);
-
-   if (tmp->accessor_param)
-     eo_definitions_accessor_param_free(tmp->accessor_param);
 
    EINA_LIST_FREE(tmp->str_items, s)
      if (s) eina_stringshare_del(s);

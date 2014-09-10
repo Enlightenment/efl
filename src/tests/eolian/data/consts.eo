@@ -5,11 +5,10 @@ class Consts {
             return: bool (true); /*@ comment for property set return */
          }
          get {
-            buffer: const;
          }
          values {
             int value; /*@ Value description */
-            char *buffer;
+            char *buffer @const_get;
          }
       }
    }

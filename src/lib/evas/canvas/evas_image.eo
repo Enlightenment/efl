@@ -328,10 +328,9 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
             @since 1.1
 
             This function returns the video surface linked to a given canvas image. */
-            surf: const;
          }
          values {
-            Evas_Video_Surface *surf; /*@ The new video surface.
+            Evas_Video_Surface *surf @const_get; /*@ The new video surface.
             @since 1.1 */
          }
       }
@@ -541,10 +540,9 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
             @return The native surface of the given canvas image.
 
             This function returns the native surface of a given canvas image. */
-            /*surf: const;*/
          }
          values {
-            Evas_Native_Surface *surf @nonull; /*@ The new native surface. */
+            Evas_Native_Surface *surf/* @const_get*/ @nonull; /*@ The new native surface. */
          }
       }
       load_scale_down {

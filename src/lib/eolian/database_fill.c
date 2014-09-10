@@ -2,11 +2,8 @@
 
 static Eina_Bool
 _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
-                  Eo_Property_Def *prop, Eo_Accessor_Def *accessor)
+                  Eo_Accessor_Def *accessor)
 {
-   Eo_Accessor_Param *acc_param;
-   Eina_List *l;
-
    if (accessor->type == SETTER)
      foo_id->type = (foo_id->type == EOLIAN_PROP_GET) ? EOLIAN_PROPERTY
                                                       : EOLIAN_PROP_SET;
@@ -49,26 +46,6 @@ _db_fill_accessor(Eolian_Function *foo_id, Eo_Class_Def *kls,
         foo_id->get_only_legacy = accessor->only_legacy;
      }
 
-   EINA_LIST_FOREACH(accessor->params, l, acc_param)
-     {
-        Eolian_Function_Parameter *desc = (Eolian_Function_Parameter*)
-            eolian_function_parameter_get_by_name(foo_id, acc_param->name);
-
-        if (!desc)
-          {
-             ERR("Error - %s not known as parameter of property %s\n",
-                 acc_param->name, prop->name);
-             return EINA_FALSE;
-          }
-        else if (acc_param->is_const)
-          {
-             if (accessor->type == GETTER)
-               desc->is_const_on_get = EINA_TRUE;
-             else
-               desc->is_const_on_set = EINA_TRUE;
-          }
-     }
-
    if (kls->type == EOLIAN_CLASS_INTERFACE)
      {
         if (accessor->type == SETTER)
@@ -95,7 +72,7 @@ _db_fill_accessors(Eolian_Function *foo_id, Eo_Class_Def *kls,
    Eina_List *l;
 
    EINA_LIST_FOREACH(prop->accessors, l, accessor)
-     if (!_db_fill_accessor(foo_id, kls, prop, accessor)) return EINA_FALSE;
+     if (!_db_fill_accessor(foo_id, kls, accessor)) return EINA_FALSE;
 
    return EINA_TRUE;
 }

@@ -24,12 +24,6 @@ typedef enum _Eo_Accessor_Type
    GETTER
 } Eo_Accessor_Type;
 
-typedef struct _Eo_Accessor_Param
-{
-   Eina_Stringshare *name;
-   Eina_Bool is_const:1;
-} Eo_Accessor_Param;
-
 typedef struct _Eo_Accessor_Def
 {
    Eolian_Object base;
@@ -37,7 +31,6 @@ typedef struct _Eo_Accessor_Def
    Eo_Ret_Def *ret;
    Eina_Stringshare *comment;
    Eina_Stringshare* legacy;
-   Eina_List *params; /* List of Eo_Accessor_Param */
    Eina_Bool only_legacy:1;
 } Eo_Accessor_Def;
 
@@ -105,7 +98,6 @@ typedef struct _Eo_Lexer_Temps
    Eo_Method_Def *meth;
    Eolian_Function_Parameter *param;
    Eo_Accessor_Def *accessor;
-   Eo_Accessor_Param *accessor_param;
    Eina_List *str_items;
    Eolian_Event *event;
    Eolian_Implement *impl;

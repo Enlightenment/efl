@@ -3,7 +3,6 @@ class Object_Impl (Base) {
       a {
          set {
             return: bool (false);
-            value: const;
          }
          get {
          }
@@ -11,7 +10,7 @@ class Object_Impl (Base) {
             const(char)* part;
          }
          values {
-            own(list<int>*) value;
+            own(list<int>*) value @const_set;
          }
       }
       b {
