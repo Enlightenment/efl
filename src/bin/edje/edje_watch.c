@@ -17,7 +17,7 @@
 # define WEXITSTATUS(r) r
 #endif
 
-static char watchfile[PATH_MAX];
+static Eina_Tmpstr *watchfile;
 static char *edje_cc_command = NULL;
 static Eina_List *watching = NULL;
 static Ecore_Timer *timeout = NULL;
@@ -102,7 +102,6 @@ some_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSE
 int
 main(int argc, char **argv)
 {
-   char *watchout;
    Eina_Strbuf *buf;
    int tfd;
    int i;
@@ -112,21 +111,13 @@ main(int argc, char **argv)
    eio_init();
 
    if (argc < 2) return -1;
-   
+
    ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, some_change, NULL);
    ecore_event_handler_add(EIO_MONITOR_FILE_CREATED, some_change, NULL);
    ecore_event_handler_add(EIO_MONITOR_FILE_DELETED, some_change, NULL);
    ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, some_change, NULL);
 
-#ifdef HAVE_EVIL
-   watchout = (char *)evil_tmpdir_get();
-#else
-   watchout = "/tmp";
-#endif
-
-   snprintf(watchfile, PATH_MAX, "%s/edje_watch-tmp-XXXXXX", watchout);
-
-   tfd = mkstemp(watchfile);
+   tfd = eina_file_mkstemp("edje_watch-tmp-XXXXXX", &watchfile);
    if (tfd < 0) return -1;
    close(tfd);
 
@@ -151,6 +142,7 @@ main(int argc, char **argv)
    ecore_main_loop_begin();
 
    unlink(watchfile);
+   eina_tmpstr_del(watchfile);
 
    eio_shutdown();
    ecore_shutdown();
