@@ -253,7 +253,6 @@ extern Eina_List             *snd_dirs;
 extern Eina_List             *vibration_dirs;
 extern Eina_List             *data_dirs;
 extern char                  *file_in;
-extern char                  *tmp_dir;
 extern char                  *file_out;
 extern char                  *watchfile;
 extern char                  *license;
