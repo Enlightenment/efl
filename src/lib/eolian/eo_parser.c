@@ -1215,7 +1215,7 @@ parse_legacy(Eo_Lexer *ls)
    check_next(ls, ';');
 }
 
-static void
+static Eo_Accessor_Def *
 parse_accessor(Eo_Lexer *ls)
 {
    int line, col;
@@ -1264,6 +1264,8 @@ parse_accessor(Eo_Lexer *ls)
      }
 end:
    check_match(ls, '}', '{', line, col);
+   ls->tmp.accessor = NULL;
+   return acc;
 }
 
 static void
@@ -1322,17 +1324,11 @@ body:
      {
       case KW_get:
         CASE_LOCK(ls, get, "get definition")
-        parse_accessor(ls);
-        prop->accessors = eina_list_append(prop->accessors,
-                                           ls->tmp.accessor);
-        ls->tmp.accessor = NULL;
+        prop->get_accessor = parse_accessor(ls);
         break;
       case KW_set:
         CASE_LOCK(ls, set, "set definition")
-        parse_accessor(ls);
-        prop->accessors = eina_list_append(prop->accessors,
-                                           ls->tmp.accessor);
-        ls->tmp.accessor = NULL;
+        prop->set_accessor = parse_accessor(ls);
         break;
       case KW_keys:
         CASE_LOCK(ls, keys, "keys definition")

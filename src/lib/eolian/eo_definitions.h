@@ -42,7 +42,8 @@ typedef struct _Eo_Property_Def
    Eina_Stringshare *name;
    Eina_List *keys;
    Eina_List *values;
-   Eina_List *accessors;
+   Eo_Accessor_Def *get_accessor;
+   Eo_Accessor_Def *set_accessor;
    int scope;
    Eina_Bool is_class:1;
 } Eo_Property_Def;

@@ -68,11 +68,10 @@ static Eina_Bool
 _db_fill_accessors(Eolian_Function *foo_id, Eo_Class_Def *kls,
                    Eo_Property_Def *prop)
 {
-   Eo_Accessor_Def *accessor;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(prop->accessors, l, accessor)
-     if (!_db_fill_accessor(foo_id, kls, accessor)) return EINA_FALSE;
+   if (prop->get_accessor && !_db_fill_accessor(foo_id, kls, prop->get_accessor))
+     return EINA_FALSE;
+   if (prop->set_accessor && !_db_fill_accessor(foo_id, kls, prop->set_accessor))
+     return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -91,7 +90,7 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
    foo_id->params = prop->values; prop->values = NULL;
    if (!_db_fill_accessors(foo_id, kls, prop)) goto failure;
 
-   if (!prop->accessors)
+   if (!prop->get_accessor && !prop->set_accessor)
      {
         foo_id->type = EOLIAN_PROPERTY;
         if (kls->type == EOLIAN_CLASS_INTERFACE)

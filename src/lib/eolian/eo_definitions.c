@@ -34,7 +34,6 @@ static void
 eo_definitions_property_def_free(Eo_Property_Def *prop)
 {
    Eolian_Function_Parameter *param;
-   Eo_Accessor_Def *accessor;
 
    if (prop->base.file)
      eina_stringshare_del(prop->base.file);
@@ -48,8 +47,10 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    EINA_LIST_FREE(prop->values, param)
      database_parameter_del(param);
 
-   EINA_LIST_FREE(prop->accessors, accessor)
-     eo_definitions_accessor_free(accessor);
+   if (prop->get_accessor)
+     eo_definitions_accessor_free(prop->get_accessor);
+   if (prop->set_accessor)
+     eo_definitions_accessor_free(prop->set_accessor);
 
    free(prop);
 }
