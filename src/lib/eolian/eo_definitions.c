@@ -4,53 +4,6 @@
 #include "eo_definitions.h"
 
 static void
-eo_definitions_property_def_free(Eo_Property_Def *prop)
-{
-   Eolian_Function_Parameter *param;
-
-   if (prop->base.file)
-     eina_stringshare_del(prop->base.file);
-
-   if (prop->name)
-     eina_stringshare_del(prop->name);
-
-   EINA_LIST_FREE(prop->keys, param)
-     database_parameter_del(param);
-
-   EINA_LIST_FREE(prop->params, param)
-     database_parameter_del(param);
-
-   if (prop->get_description)
-     eina_stringshare_del(prop->get_description);
-
-   if (prop->set_description)
-     eina_stringshare_del(prop->set_description);
-
-   if (prop->get_legacy)
-     eina_stringshare_del(prop->get_legacy);
-
-   if (prop->set_legacy)
-     eina_stringshare_del(prop->set_legacy);
-
-   if (prop->get_ret_type)
-     database_type_del(prop->get_ret_type);
-
-   if (prop->set_ret_type)
-     database_type_del(prop->set_ret_type);
-
-   if (prop->get_return_comment)
-     eina_stringshare_del(prop->get_return_comment);
-
-   if (prop->set_return_comment)
-     eina_stringshare_del(prop->set_return_comment);
-
-   database_expr_del(prop->get_ret_val);
-   database_expr_del(prop->set_ret_val);
-
-   free(prop);
-}
-
-static void
 eo_definitions_method_def_free(Eo_Method_Def *meth)
 {
    Eolian_Function_Parameter *param;
@@ -83,7 +36,7 @@ void
 eo_definitions_class_def_free(Eo_Class_Def *kls)
 {
    const char *s;
-   Eo_Property_Def *prop;
+   Eolian_Function *prop;
    Eo_Method_Def *meth;
    Eolian_Event *sgn;
    Eolian_Implement *impl;
@@ -113,7 +66,7 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
      database_constructor_del(ctor);
 
    EINA_LIST_FREE(kls->properties, prop)
-     eo_definitions_property_def_free(prop);
+     database_function_del(prop);
 
    EINA_LIST_FREE(kls->methods, meth)
      eo_definitions_method_def_free(meth);
@@ -152,7 +105,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
      database_var_del(var);
 
    if (tmp->prop)
-     eo_definitions_property_def_free(tmp->prop);
+     database_function_del(tmp->prop);
 
    if (tmp->meth)
      eo_definitions_method_def_free(tmp->meth);

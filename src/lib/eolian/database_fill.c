@@ -1,104 +1,5 @@
 #include "eo_parser.h"
 
-static void
-_db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
-{
-   Eolian_Function *foo_id = database_function_new(prop->name,
-                                                   EOLIAN_UNRESOLVED);
-
-   foo_id->scope = prop->scope;
-   foo_id->is_class = prop->is_class;
-
-   foo_id->keys   = prop->keys  ; prop->keys   = NULL;
-   foo_id->params = prop->params; prop->params = NULL;
-
-   if (prop->get_ret_type)
-     {
-        foo_id->get_ret_type = prop->get_ret_type;
-        prop->get_ret_type = NULL;
-        foo_id->get_ret_val = prop->get_ret_val;
-        prop->get_ret_val = NULL;
-        foo_id->get_return_comment = prop->get_return_comment;
-        prop->get_return_comment = NULL;
-        foo_id->get_return_warn_unused = prop->get_return_warn_unused;
-     }
-   if (prop->set_ret_type)
-     {
-        foo_id->set_ret_type = prop->set_ret_type;
-        prop->set_ret_type = NULL;
-        foo_id->set_ret_val = prop->set_ret_val;
-        prop->set_ret_val = NULL;
-        foo_id->set_return_comment = prop->set_return_comment;
-        prop->set_return_comment = NULL;
-        foo_id->set_return_warn_unused = prop->set_return_warn_unused;
-     }
-
-   if (prop->get_legacy)
-     {
-        foo_id->get_legacy = prop->get_legacy;
-        prop->get_legacy = NULL;
-    }
-   if (prop->set_legacy)
-     {
-        foo_id->set_legacy = prop->set_legacy;
-        prop->set_legacy = NULL;
-    }
-   foo_id->get_only_legacy = prop->get_only_legacy;
-   foo_id->set_only_legacy = prop->set_only_legacy;
-
-   if (prop->get_description)
-     {
-        foo_id->get_description = prop->get_description;
-        prop->get_description = NULL;
-    }
-   if (prop->set_description)
-     {
-        foo_id->set_description = prop->set_description;
-        prop->set_description = NULL;
-    }
-
-   foo_id->type = prop->type;
-
-   if (prop->get_accessor)
-     {
-        foo_id->base = prop->base;
-        prop->base.file = NULL;
-     }
-
-   if (prop->set_accessor)
-     {
-        foo_id->set_base = prop->set_base;
-        prop->set_base.file = NULL;
-     }
-   else
-     {
-        foo_id->base = prop->base;
-        prop->base.file = NULL;
-     }
-
-   if (kls->type == EOLIAN_CLASS_INTERFACE)
-     {
-        if (foo_id->type == EOLIAN_PROP_GET)
-          foo_id->get_virtual_pure = EINA_TRUE;
-        else if (foo_id->type == EOLIAN_PROP_SET)
-          foo_id->set_virtual_pure = EINA_TRUE;
-        if (foo_id->type == EOLIAN_PROPERTY)
-          foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
-     }
-
-   cl->properties = eina_list_append(cl->properties, foo_id);
-}
-
-static void
-_db_fill_properties(Eolian_Class *cl, Eo_Class_Def *kls)
-{
-   Eo_Property_Def *prop;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(kls->properties, l, prop)
-     _db_fill_property(cl, kls, prop);
-}
-
 static Eina_Bool
 _db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
 {
@@ -422,7 +323,7 @@ _db_fill_class(Eo_Class_Def *kls)
    if (kls->data_type)
      cl->data_type = eina_stringshare_ref(kls->data_type);
 
-   _db_fill_properties(cl, kls);
+   cl->properties = kls->properties; kls->properties = NULL;
 
    if (!_db_fill_methods     (cl, kls)) return EINA_FALSE;
    if (!_db_fill_implements  (cl, kls)) return EINA_FALSE;

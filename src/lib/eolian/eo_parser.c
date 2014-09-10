@@ -1223,7 +1223,7 @@ parse_legacy(Eo_Lexer *ls)
 }
 
 static void
-parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
+parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
 {
    int line, col;
    Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
@@ -1231,10 +1231,11 @@ parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
    Eina_Bool is_get = (ls->t.kw == KW_get);
    if (is_get)
      {
+        if (prop->base.file)
+          eina_stringshare_del(prop->base.file);
         prop->base.file = eina_stringshare_ref(ls->filename);
         prop->base.line = ls->line_number;
         prop->base.column = ls->column;
-        prop->get_accessor = EINA_TRUE;
         if (prop->type == EOLIAN_PROP_SET)
           prop->type = EOLIAN_PROPERTY;
         else
@@ -1245,7 +1246,6 @@ parse_accessor(Eo_Lexer *ls, Eo_Property_Def *prop)
         prop->set_base.file = eina_stringshare_ref(ls->filename);
         prop->set_base.line = ls->line_number;
         prop->set_base.column = ls->column;
-        prop->set_accessor = EINA_TRUE;
         if (prop->type == EOLIAN_PROP_GET)
           prop->type = EOLIAN_PROPERTY;
         else
@@ -1326,14 +1326,28 @@ parse_params(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
 }
 
 static void
+_interface_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id)
+{
+   if (ls->tmp.kls->type != EOLIAN_CLASS_INTERFACE)
+     return;
+
+   if (foo_id->type == EOLIAN_PROP_GET)
+     foo_id->get_virtual_pure = EINA_TRUE;
+   else if (foo_id->type == EOLIAN_PROP_SET)
+     foo_id->set_virtual_pure = EINA_TRUE;
+   if (foo_id->type == EOLIAN_PROPERTY)
+     foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
+}
+
+static void
 parse_property(Eo_Lexer *ls)
 {
    int line, col;
-   Eo_Property_Def *prop = NULL;
+   Eolian_Function *prop = NULL;
    Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
              has_protected = EINA_FALSE, has_class  = EINA_FALSE;
-   prop = calloc(1, sizeof(Eo_Property_Def));
+   prop = calloc(1, sizeof(Eolian_Function));
    prop->base.file = eina_stringshare_ref(ls->filename);
    prop->base.line = ls->line_number;
    prop->base.column = ls->column;
@@ -1394,6 +1408,7 @@ end:
    check_match(ls, '}', '{', line, col);
    if (!has_get && !has_set)
      prop->type = EOLIAN_PROPERTY;
+   _interface_virtual_set(ls, prop);
 }
 
 static void
