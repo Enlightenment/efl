@@ -118,7 +118,6 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             ingroup Win
             @since 1.9 */
             legacy: elm_win_wm_rotation_available_rotations_set;
-            rotations: const;
          }
          get {
             /*@
@@ -134,7 +133,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             return: bool;
          }
          values {
-            int *rotations; /*@ The array of rotation value. */
+            int *rotations @const_set; /*@ The array of rotation value. */
             uint count; /*@ The number of array of rotations */
          }
       }
@@ -361,7 +360,6 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win
             @since 1.8 */
-            profiles: const;
          }
          get {
             /*@
@@ -374,7 +372,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             return: bool;
          }
          values {
-            char **profiles; /*@ The string array of available profiles */
+            char **profiles @const_set; /*@ The string array of available profiles */
             uint count; /*@ The number of members in profiles */
          }
       }
@@ -534,10 +532,9 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The icon object set
 
             @ingroup Win */
-            icon: const;
          }
          values {
-            Evas_Object *icon; /*@ The Evas image object to use for an icon */
+            Evas_Object *icon @const_get; /*@ The Evas image object to use for an icon */
          }
       }
       quickpanel_priority_minor {

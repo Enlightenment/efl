@@ -143,10 +143,9 @@ abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Widget)
          }
          get {
             /*@ No description supplied by the EAPI. */
-            objs: const;
          }
          values {
-            list *objs;
+            list *objs @const_get;
          }
       }
       can_focus {
