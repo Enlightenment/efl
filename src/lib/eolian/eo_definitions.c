@@ -13,16 +13,6 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 }
 
 static void
-eo_definitions_param_free(Eo_Param_Def *param)
-{
-   if (param->base.file) eina_stringshare_del(param->base.file);
-   if (param->type) database_type_del(param->type);
-   if (param->name) eina_stringshare_del(param->name);
-   if (param->comment) eina_stringshare_del(param->comment);
-   free(param);
-}
-
-static void
 eo_definitions_accessor_param_free(Eo_Accessor_Param *param)
 {
    if (param->name) eina_stringshare_del(param->name);
@@ -54,7 +44,7 @@ eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
 static void
 eo_definitions_property_def_free(Eo_Property_Def *prop)
 {
-   Eo_Param_Def *param;
+   Eolian_Function_Parameter *param;
    Eo_Accessor_Def *accessor;
 
    if (prop->base.file)
@@ -64,10 +54,10 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
      eina_stringshare_del(prop->name);
 
    EINA_LIST_FREE(prop->keys, param)
-     eo_definitions_param_free(param);
+     database_parameter_del(param);
 
    EINA_LIST_FREE(prop->values, param)
-     eo_definitions_param_free(param);
+     database_parameter_del(param);
 
    EINA_LIST_FREE(prop->accessors, accessor)
      eo_definitions_accessor_free(accessor);
@@ -78,7 +68,7 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
 static void
 eo_definitions_method_def_free(Eo_Method_Def *meth)
 {
-   Eo_Param_Def *param;
+   Eolian_Function_Parameter *param;
 
    if (meth->base.file)
      eina_stringshare_del(meth->base.file);
@@ -94,7 +84,7 @@ eo_definitions_method_def_free(Eo_Method_Def *meth)
      eina_stringshare_del(meth->legacy);
 
    EINA_LIST_FREE(meth->params, param)
-     eo_definitions_param_free(param);
+     database_parameter_del(param);
 
    free(meth);
 }
@@ -148,7 +138,7 @@ void
 eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
-   Eo_Param_Def *par;
+   Eolian_Function_Parameter *par;
    Eolian_Type *tp;
    Eolian_Variable *var;
    const char *s;
@@ -157,7 +147,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
      eina_strbuf_free(buf);
 
    EINA_LIST_FREE(tmp->params, par)
-     eo_definitions_param_free(par);
+     database_parameter_del(par);
 
    if (tmp->legacy_def)
      eina_stringshare_del(tmp->legacy_def);
@@ -181,7 +171,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
      eo_definitions_method_def_free(tmp->meth);
 
    if (tmp->param)
-     eo_definitions_param_free(tmp->param);
+     database_parameter_del(tmp->param);
 
    if (tmp->accessor)
      eo_definitions_accessor_free(tmp->accessor);

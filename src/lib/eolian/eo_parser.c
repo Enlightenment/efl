@@ -1134,7 +1134,7 @@ parse_return(Eo_Lexer *ls, Eina_Bool allow_void)
 static void
 parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
 {
-   Eo_Param_Def *par = calloc(1, sizeof(Eo_Param_Def));
+   Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    par->base.file = eina_stringshare_ref(ls->filename);
    par->base.line = ls->line_number;
    par->base.column = ls->column;
@@ -1143,23 +1143,23 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
      {
         if (ls->t.kw == KW_at_in)
           {
-             par->way = EOLIAN_IN_PARAM;
+             par->param_dir = EOLIAN_IN_PARAM;
              eo_lexer_get(ls);
           }
         else if (ls->t.kw == KW_at_out)
           {
-             par->way = EOLIAN_OUT_PARAM;
+             par->param_dir = EOLIAN_OUT_PARAM;
              eo_lexer_get(ls);
           }
         else if (ls->t.kw == KW_at_inout)
           {
-             par->way = EOLIAN_INOUT_PARAM;
+             par->param_dir = EOLIAN_INOUT_PARAM;
              eo_lexer_get(ls);
           }
         else
-           par->way = EOLIAN_IN_PARAM;
+           par->param_dir = EOLIAN_IN_PARAM;
      }
-   if (par->way == EOLIAN_OUT_PARAM || par->way == EOLIAN_INOUT_PARAM)
+   if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
      par->type = parse_type_void(ls);
    else
      par->type = parse_type(ls);
@@ -1167,7 +1167,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
-   if ((is_vals || (par->way == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
+   if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
         ls->expr_mode = EINA_TRUE;
@@ -1185,7 +1185,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
-        par->comment = eina_stringshare_ref(ls->t.value.s);
+        par->description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
 }

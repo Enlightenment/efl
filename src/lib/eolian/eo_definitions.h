@@ -16,19 +16,6 @@ typedef struct _Eo_Ret_Def
    Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
 
-/* PARAM */
-
-typedef struct _Eo_Param_Def
-{
-   Eolian_Object base;
-   Eolian_Parameter_Dir way;
-   Eolian_Type *type;
-   Eolian_Expression *value;
-   Eina_Stringshare *name;
-   Eina_Stringshare *comment;
-   Eina_Bool nonull:1;
-} Eo_Param_Def;
-
 /* ACCESSOR */
 
 typedef enum _Eo_Accessor_Type
@@ -116,7 +103,7 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *var_defs;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
-   Eo_Param_Def *param;
+   Eolian_Function_Parameter *param;
    Eo_Accessor_Def *accessor;
    Eo_Accessor_Param *accessor_param;
    Eina_List *str_items;
