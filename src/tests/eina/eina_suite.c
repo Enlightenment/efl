@@ -142,10 +142,16 @@ static void _mempool_init(void)
 
 static void _mempool_shutdown(void)
 {
+   unsigned int i;
+   Eina_Array_Iterator it;
+   Eina_Module *module;	
    eina_module_list_free(_modules);
    if (_modules)
-     eina_array_free(_modules);
-   /* TODO delete the list */
+     {
+        EINA_ARRAY_ITER_NEXT(_modules, i, module, it)
+          free(module);
+        eina_array_free(_modules);
+     }
    eina_shutdown();
 }
 

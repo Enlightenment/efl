@@ -47,7 +47,10 @@ static Eina_Bool list_cb(Eina_Module *m, void *data EINA_UNUSED)
 START_TEST(eina_module_load_unload)
 {
    Eina_Array *_modules;
-
+   unsigned int i;
+   Eina_Array_Iterator it;
+   Eina_Module *module;	
+   
    eina_init();
    _modules = eina_module_list_get(NULL,
                                    PACKAGE_BUILD_DIR "/src/tests/",
@@ -58,7 +61,9 @@ START_TEST(eina_module_load_unload)
    eina_module_list_load(_modules);
    eina_module_list_unload(_modules);
    eina_module_list_free(_modules);
-   /* TODO delete the list */
+   EINA_ARRAY_ITER_NEXT(_modules, i, module, it)
+     free(module);
+   eina_array_free(_modules);
    eina_shutdown();
 }
 END_TEST
