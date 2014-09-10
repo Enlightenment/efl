@@ -1,6 +1,19 @@
 ==========
-EFL 1.11.1
+EFL 1.11.2
 ==========
+
+Changes since 1.11.1:
+---------------------
+
+Fixes:
+
+   * shutup ecore-x vsync stupid log domain failures
+   * emotion - fix calling pos update cb for gst1 module in frame new
+   * emotion - audio volume - leave as-is on file open/init
+   * edje_cc now throws an error during link combination when the current part has no name
+   * evas: fix build on armv7l. (T1620)
+   * edje embryo stop_program() should stop pending actions
+   * evas: let's freeze the canvas, shall we ?
 
 Changes since 1.11.0:
 ---------------------
