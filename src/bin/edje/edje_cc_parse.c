@@ -851,11 +851,15 @@ parse(char *data, off_t size)
    DBG("Parsing done");
 }
 
-static char *clean_file = NULL;
+Eina_Tmpstr *clean_file = NULL;
 static void
 clean_tmp_file(void)
 {
-   if (clean_file) unlink(clean_file);
+   if (clean_file)
+     {
+        unlink(clean_file);
+        eina_tmpstr_del(clean_file);
+     }
 }
 
 int
@@ -901,27 +905,19 @@ compile(void)
 {
    char buf[4096], buf2[4096];
    char inc[4096];
-   static char tmpn[4096];
+   Eina_Tmpstr *tmpn;
    int fd;
    off_t size;
    char *data, *p;
    Eina_List *l;
    Edje_Style *stl;
 
-   if (!tmp_dir)
-#ifdef HAVE_EVIL
-     tmp_dir = (char *)evil_tmpdir_get();
-#else
-     tmp_dir = "/tmp";
-#endif
-
    strncpy(inc, file_in, 4000);
    inc[4001] = 0;
    p = strrchr(inc, '/');
    if (!p) strcpy(inc, "./");
    else *p = 0;
-   snprintf(tmpn, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
-   fd = mkstemp(tmpn);
+   fd = eina_file_mkstemp("edje_cc.edc-tmp-XXXXXX", &tmpn);
    if (fd < 0)
      {
         CRI("Unable to open temp file \"%s\" for pre-processor.", tmpn);
@@ -995,7 +991,7 @@ compile(void)
              exit(-1);
           }
         if (ret == EXIT_SUCCESS)
-          file_in = tmpn;
+          file_in = (char *)tmpn;
         else
           {
              ERR("Exit code of epp not clean: %i", ret);
