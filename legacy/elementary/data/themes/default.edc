@@ -117,7 +117,7 @@ collections {
 // modules
 #include "edc/start.edc"
 #include "edc/pager.edc"
-#include "edc/pager16.edc"
+#include "edc/pager_plain.edc"
 #include "edc/xkbswitch.edc"
 #include "edc/tasks.edc"
 #include "edc/connman.edc"
