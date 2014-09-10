@@ -1392,6 +1392,8 @@ body:
      }
 end:
    check_match(ls, '}', '{', line, col);
+   if (!has_get && !has_set)
+     prop->type = EOLIAN_PROPERTY;
 }
 
 static void

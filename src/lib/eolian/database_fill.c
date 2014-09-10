@@ -61,27 +61,29 @@ _db_fill_property(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Property_Def *prop)
 
    if (prop->get_accessor)
      {
-        if (kls->type == EOLIAN_CLASS_INTERFACE)
-          foo_id->get_virtual_pure = EINA_TRUE;
         foo_id->base = prop->base;
         prop->base.file = NULL;
      }
 
    if (prop->set_accessor)
      {
-        if (kls->type == EOLIAN_CLASS_INTERFACE)
-          foo_id->set_virtual_pure = EINA_TRUE;
         foo_id->set_base = prop->set_base;
         prop->set_base.file = NULL;
      }
-
-   if (!prop->get_accessor && !prop->set_accessor)
+   else
      {
-        foo_id->type = EOLIAN_PROPERTY;
-        if (kls->type == EOLIAN_CLASS_INTERFACE)
-          foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
         foo_id->base = prop->base;
         prop->base.file = NULL;
+     }
+
+   if (kls->type == EOLIAN_CLASS_INTERFACE)
+     {
+        if (foo_id->type == EOLIAN_PROP_GET)
+          foo_id->get_virtual_pure = EINA_TRUE;
+        else if (foo_id->type == EOLIAN_PROP_SET)
+          foo_id->set_virtual_pure = EINA_TRUE;
+        if (foo_id->type == EOLIAN_PROPERTY)
+          foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
      }
 
    cl->properties = eina_list_append(cl->properties, foo_id);
