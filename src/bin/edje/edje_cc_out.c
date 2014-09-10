@@ -1552,7 +1552,7 @@ data_write_scripts(Eet_File *ef)
           {
              unlink(sc->tmpn);
              error_and_abort(ef, "Unable to open temp file \"%s\" for script "
-                             "compilation.", sc->tmpn);
+                             "compilation.", sc->tmpo);
           }
         create_script_file(ef, sc->tmpn, cd, sc->tmpn_fd);
         snprintf(buf, sizeof(buf),
