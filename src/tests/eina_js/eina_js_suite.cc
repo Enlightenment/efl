@@ -11,7 +11,8 @@ static const char script[] =
   "var l = new List();\n"
   "print (l[0]);\n"
   "print (l.length);\n"
-  // "l.push_back(5);\n"
+  "var v = l.concat(new List());\n"
+  "print (v.length);\n"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {
