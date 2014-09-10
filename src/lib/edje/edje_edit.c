@@ -9116,9 +9116,8 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 {
    FILE *f;
    int fd, size, ret;
-   const char *tmp_dir;
-   char tmp_in[PATH_MAX];
-   char tmp_out[PATH_MAX];
+   Eina_Tmpstr *tmp_in;
+   Eina_Tmpstr *tmp_out;
    char embryo_cc_path[PATH_MAX] = "";
    char inc_path[PATH_MAX] = "";
    char buf[4096];
@@ -9135,12 +9134,6 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
         eina_stringshare_del(se->error_str);
         free(se);
      }
-
-#ifdef HAVE_EVIL
-   tmp_dir = evil_tmpdir_get();
-#else
-   tmp_dir = "/tmp";
-#endif
 
    pfx = eina_prefix_new(NULL,               /* argv[0] value (optional) */
                          edje_init,          /* an optional symbol to check path of */
@@ -9186,10 +9179,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 
    eina_prefix_free(pfx);
 
-   snprintf(tmp_in, sizeof(tmp_in), "%s/edje_edit.sma-tmp-XXXXXX", tmp_dir);
-   snprintf(tmp_out, sizeof(tmp_out), "%s/edje_edit.amx-tmp-XXXXXX", tmp_dir);
-
-   fd = mkstemp(tmp_in);
+   fd = eina_file_mkstemp("edje_edit.sma-tmp-XXXXXX", &tmp_in);
    if (fd < 0)
      return EINA_FALSE; /* FIXME: report something */
 
@@ -9263,7 +9253,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    if (!success)
      goto almost_out;
 
-   fd = mkstemp(tmp_out);
+   fd = eina_file_mkstemp("edje_edit.amx-tmp-XXXXXX", &tmp_out);
    if (fd < 0)
      {
         success = EINA_FALSE;
@@ -9327,8 +9317,10 @@ the_way_out:
    fclose(f);
 the_doorway:
    unlink(tmp_out);
+   eina_tmpstr_del(tmp_out);
 almost_out:
    unlink(tmp_in);
+   eina_tmpstr_del(tmp_in);
 
    return success;
 }
