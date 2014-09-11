@@ -1905,7 +1905,8 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         eo_lexer_syntax_error(ls, "class and file names differ");
      }
    eo_lexer_context_pop(ls);
-   ls->tmp.kls->name = eina_stringshare_add(eina_strbuf_string_get(buf));
+   _fill_class_name(ls->tmp.kls, eina_stringshare_add(eina_strbuf_string_get
+      (buf)));
    pop_strbuf(ls);
    if (ls->t.token != '{')
      {

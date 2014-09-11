@@ -254,11 +254,17 @@ _db_fill_events(Eolian_Class *cl, Eolian_Class *kls)
 static Eina_Bool
 _db_fill_class(Eolian_Class *kls)
 {
-   Eolian_Class *cl = database_class_add(kls->name, kls->type);
+   Eolian_Class *cl = calloc(1, sizeof(Eolian_Class));
    const char *s;
    Eina_List *l;
 
+   eina_hash_set(_classes, kls->full_name, cl);
    eina_hash_set(_classesf, kls->base.file, cl);
+
+   cl->namespaces = kls->namespaces; kls->namespaces = NULL;
+   cl->full_name = kls->full_name; kls->full_name = NULL;
+   cl->name = kls->name; kls->name = NULL;
+   cl->type = kls->type;
 
    if (kls->description)
      cl->description = eina_stringshare_ref(kls->description);

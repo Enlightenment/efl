@@ -37,31 +37,3 @@ database_class_del(Eolian_Class *cl)
 
    free(cl);
 }
-
-Eolian_Class *
-database_class_add(const char *class_name, Eolian_Class_Type type)
-{
-   char *full_name = strdup(class_name);
-   char *name = full_name;
-   char *colon = full_name;
-   Eolian_Class *cl = calloc(1, sizeof(*cl));
-   cl->full_name = eina_stringshare_add(class_name);
-   cl->type = type;
-   do
-     {
-        colon = strchr(colon, '.');
-        if (colon)
-          {
-             *colon = '\0';
-             cl->namespaces = eina_list_append(cl->namespaces,
-                                               eina_stringshare_add(name));
-             colon += 1;
-             name = colon;
-          }
-     }
-   while(colon);
-   cl->name = eina_stringshare_add(name);
-   eina_hash_set(_classes, cl->full_name, cl);
-   free(full_name);
-   return cl;
-}

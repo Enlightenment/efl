@@ -272,8 +272,6 @@ void database_var_del(Eolian_Variable *var);
 Eina_Bool database_var_add(Eolian_Variable *var);
 
 /* classes */
-
-Eolian_Class *database_class_add(const char *class_name, Eolian_Class_Type type);
 void database_class_del(Eolian_Class *cl);
 
 /* functions */
@@ -283,11 +281,9 @@ void database_function_del(Eolian_Function *fid);
 void database_parameter_del(Eolian_Function_Parameter *pdesc);
 
 /* implements */
-
 void database_implement_del(Eolian_Implement *impl);
 
 /* constructors */
-
 void database_constructor_del(Eolian_Constructor *ctor);
 
 /* events */
