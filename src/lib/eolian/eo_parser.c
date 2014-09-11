@@ -1530,11 +1530,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
 {
    Eina_Strbuf *buf = NULL;
    Eolian_Implement *impl = NULL;
-   impl = calloc(1, sizeof(Eolian_Implement));
-   impl->base.file = eina_stringshare_ref(ls->filename);
-   impl->base.line = ls->line_number;
-   impl->base.column = ls->column;
-   ls->tmp.impl = impl;
+   int iline = ls->line_number, icol = ls->column;
    if (iface)
      check_kw(ls, KW_class);
    if (ls->t.kw == KW_class)
@@ -1543,17 +1539,22 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, '.');
         if (ls->t.kw == KW_destructor)
           {
-             impl->is_class_dtor = EINA_TRUE;
+             ls->tmp.kls->class_dtor_enable = EINA_TRUE;
              eo_lexer_get(ls);
           }
         else
           {
              check_kw_next(ls, KW_constructor);
-             impl->is_class_ctor = EINA_TRUE;
+             ls->tmp.kls->class_ctor_enable = EINA_TRUE;
           }
         check_next(ls, ';');
         return;
      }
+   impl = calloc(1, sizeof(Eolian_Implement));
+   impl->base.file = eina_stringshare_ref(ls->filename);
+   impl->base.line = iline;
+   impl->base.column = icol;
+   ls->tmp.impl = impl;
    switch (ls->t.kw)
      {
         case KW_at_virtual:
@@ -1658,7 +1659,9 @@ parse_constructor(Eo_Lexer *ls)
         check_next(ls, '.');
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "name expected");
-        ctor->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
+        ctor->full_name = eina_stringshare_printf("%s.%s",
+                                                  ls->tmp.kls->full_name,
+                                                  ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         return;
@@ -1762,8 +1765,9 @@ parse_implements(Eo_Lexer *ls, Eina_Bool iface)
    PARSE_SECTION
      {
         parse_implement(ls, iface);
-        ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements,
-                                                   ls->tmp.impl);
+        if (ls->tmp.impl)
+          ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements,
+                                                     ls->tmp.impl);
         ls->tmp.impl = NULL;
      }
    check_match(ls, '}', '{', line, col);

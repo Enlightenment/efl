@@ -1,12 +1,12 @@
 #include "eo_parser.h"
 
-static int
+static Eina_Bool
 _func_error(Eolian_Class *cl, Eolian_Implement *impl)
 {
    ERR("Error - %s%s not known in class %s", impl->full_name,
        eolian_class_name_get(cl), (impl->is_prop_get ? ".get"
               : (impl->is_prop_set ? ".set" : "")));
-   return -1;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -44,7 +44,7 @@ _write_impl(Eolian_Function *fid, Eolian_Implement *impl)
      fid->get_impl = fid->set_impl = impl;
 }
 
-static int
+static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
    const char *impl_name = impl->full_name;
@@ -101,16 +101,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 
         _write_impl(foo_id, impl);
      }
-   else if (impl->is_class_ctor)
-     {
-        cl->class_ctor_enable = EINA_TRUE;
-        return 1;
-     }
-   else if (impl->is_class_dtor)
-     {
-        cl->class_dtor_enable = EINA_TRUE;
-        return 1;
-     }
    else if (!_get_impl_func(cl, impl, ftype, &foo_id))
      return _func_error(cl, impl);
 
@@ -122,8 +112,7 @@ pasttags:
         eina_stringshare_del(impl_name);
      }
 
-   cl->implements = eina_list_append(cl->implements, impl);
-   return 0;
+   return EINA_TRUE;
 }
 
 static void
@@ -190,13 +179,11 @@ _db_fill_implements(Eolian_Class *cl, Eolian_Class *kls)
    Eolian_Function *foo_id;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(kls->implements, l, impl)
-     {
-        int ret = _db_fill_implement(cl, impl);
-        if (ret < 0) return EINA_FALSE;
-        if (ret > 0) continue;
-        eina_list_data_set(l, NULL); /* prevent double free */
-     }
+   cl->implements = kls->implements; kls->implements = NULL;
+
+   EINA_LIST_FOREACH(cl->implements, l, impl)
+     if (!_db_fill_implement(cl, impl))
+       return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->properties, l, foo_id)
      _db_build_implement(cl, foo_id);
@@ -207,56 +194,10 @@ _db_fill_implements(Eolian_Class *cl, Eolian_Class *kls)
    return EINA_TRUE;
 }
 
-static void
-_db_fill_constructor(Eolian_Class *cl, Eolian_Constructor *ctor)
-{
-   const char *ctor_name = ctor->full_name;
-   if (ctor_name[0] == '.')
-     {
-        ctor->full_name = eina_stringshare_printf("%s%s", cl->full_name,
-                                                  ctor_name);
-        eina_stringshare_del(ctor_name);
-     }
-
-   cl->constructors = eina_list_append(cl->constructors, ctor);
-}
-
-static Eina_Bool
-_db_fill_constructors(Eolian_Class *cl, Eolian_Class *kls)
-{
-   Eolian_Constructor *ctor;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(kls->constructors, l, ctor)
-     {
-        _db_fill_constructor(cl, ctor);
-        eina_list_data_set(l, NULL); /* prevent double free */
-     }
- 
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_events(Eolian_Class *cl, Eolian_Class *kls)
-{
-   Eolian_Event *event;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(kls->events, l, event)
-     {
-        cl->events = eina_list_append(cl->events, event);
-        eina_list_data_set(l, NULL); /* prevent double free */
-     }
-
-   return EINA_TRUE;
-}
-
 static Eina_Bool
 _db_fill_class(Eolian_Class *kls)
 {
    Eolian_Class *cl = calloc(1, sizeof(Eolian_Class));
-   const char *s;
-   Eina_List *l;
 
    eina_hash_set(_classes, kls->full_name, cl);
    eina_hash_set(_classesf, kls->base.file, cl);
@@ -266,25 +207,23 @@ _db_fill_class(Eolian_Class *kls)
    cl->name = kls->name; kls->name = NULL;
    cl->type = kls->type;
 
-   if (kls->description)
-     cl->description = eina_stringshare_ref(kls->description);
+   cl->description = kls->description; kls->description = NULL;
+   cl->inherits    = kls->inherits   ; kls->inherits    = NULL;
 
-   EINA_LIST_FOREACH(kls->inherits, l, s)
-     cl->inherits = eina_list_append(cl->inherits, eina_stringshare_add(s));
-
-   if (kls->legacy_prefix)
-     cl->legacy_prefix = eina_stringshare_ref(kls->legacy_prefix);
-   if (kls->eo_prefix)
-     cl->eo_prefix = eina_stringshare_ref(kls->eo_prefix);
-   if (kls->data_type)
-     cl->data_type = eina_stringshare_ref(kls->data_type);
+   cl->legacy_prefix = kls->legacy_prefix; kls->legacy_prefix = NULL;
+   cl->eo_prefix     = kls->eo_prefix    ; kls->eo_prefix     = NULL;
+   cl->data_type     = kls->data_type    ; kls->data_type     = NULL;
 
    cl->properties = kls->properties; kls->properties = NULL;
    cl->methods    = kls->methods   ; kls->methods    = NULL;
 
-   if (!_db_fill_implements  (cl, kls)) return EINA_FALSE;
-   if (!_db_fill_constructors(cl, kls)) return EINA_FALSE;
-   if (!_db_fill_events      (cl, kls)) return EINA_FALSE;
+   if (!_db_fill_implements(cl, kls)) return EINA_FALSE;
+
+   cl->constructors = kls->constructors; kls->constructors = NULL;
+   cl->events       = kls->events      ; kls->events       = NULL;
+
+   cl->class_ctor_enable = kls->class_ctor_enable;
+   cl->class_dtor_enable = kls->class_dtor_enable;
 
    cl->base = kls->base;
    kls->base.file = NULL;

@@ -170,8 +170,6 @@ struct _Eolian_Implement
    Eina_Bool is_virtual :1;
    Eina_Bool is_prop_get :1;
    Eina_Bool is_prop_set :1;
-   Eina_Bool is_class_ctor :1;
-   Eina_Bool is_class_dtor :1;
    Eina_Bool is_auto: 1;
    Eina_Bool is_empty: 1;
 };
