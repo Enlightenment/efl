@@ -1331,11 +1331,11 @@ _interface_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id)
    if (ls->tmp.kls->type != EOLIAN_CLASS_INTERFACE)
      return;
 
-   if (foo_id->type == EOLIAN_PROP_GET)
+   if (foo_id->type == EOLIAN_PROP_GET || foo_id->type == EOLIAN_METHOD)
      foo_id->get_virtual_pure = EINA_TRUE;
    else if (foo_id->type == EOLIAN_PROP_SET)
      foo_id->set_virtual_pure = EINA_TRUE;
-   if (foo_id->type == EOLIAN_PROPERTY)
+   else if (foo_id->type == EOLIAN_PROPERTY)
      foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
 }
 
@@ -1351,7 +1351,7 @@ parse_property(Eo_Lexer *ls)
    prop->base.file = eina_stringshare_ref(ls->filename);
    prop->base.line = ls->line_number;
    prop->base.column = ls->column;
-   ls->tmp.prop = prop;
+   ls->tmp.func = prop;
    check(ls, TOK_VALUE);
    prop->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
@@ -1415,16 +1415,17 @@ static void
 parse_method(Eo_Lexer *ls, Eina_Bool ctor)
 {
    int line, col;
-   Eo_Method_Def *meth = NULL;
+   Eolian_Function *meth = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
              has_eo          = EINA_FALSE;
-   meth = calloc(1, sizeof(Eo_Method_Def));
+   meth = calloc(1, sizeof(Eolian_Function));
+   meth->type = EOLIAN_METHOD;
    meth->base.file = eina_stringshare_ref(ls->filename);
    meth->base.line = ls->line_number;
    meth->base.column = ls->column;
-   ls->tmp.meth = meth;
+   ls->tmp.func = meth;
    if (ctor)
      {
         if (ls->t.token != TOK_VALUE)
@@ -1456,7 +1457,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
              break;
            case KW_at_const:
              CASE_LOCK(ls, const, "const qualifier")
-             meth->obj_const = EINA_TRUE;
+             meth->obj_is_const = EINA_TRUE;
              eo_lexer_get(ls);
              break;
            case KW_at_class:
@@ -1474,7 +1475,7 @@ body:
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        meth->comment = eina_stringshare_ref(ls->t.value.s);
+        meth->get_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -1485,15 +1486,15 @@ body:
         parse_return(ls, &ret, EINA_FALSE);
         pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
-        meth->ret_type = ret.type;
-        meth->ret_comment = ret.comment;
-        meth->default_ret_val = ret.default_ret_val;
-        meth->ret_warn_unused = ret.warn_unused;
+        meth->get_ret_type = ret.type;
+        meth->get_return_comment = ret.comment;
+        meth->get_ret_val = ret.default_ret_val;
+        meth->get_return_warn_unused = ret.warn_unused;
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
         parse_legacy(ls);
-        meth->legacy = ls->tmp.legacy_def;
+        meth->get_legacy = ls->tmp.legacy_def;
         ls->tmp.legacy_def = NULL;
         break;
       case KW_eo:
@@ -1502,7 +1503,7 @@ body:
         check_next(ls, ':');
         check_kw_next(ls, KW_null);
         check_next(ls, ';');
-        meth->only_legacy = EINA_TRUE;
+        meth->get_only_legacy = EINA_TRUE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")
@@ -1515,6 +1516,7 @@ body:
      }
 end:
    check_match(ls, '}', '{', line, col);
+   _interface_virtual_set(ls, meth);
 }
 
 static void
@@ -1729,8 +1731,8 @@ parse_methods(Eo_Lexer *ls)
      {
         parse_method(ls, EINA_FALSE);
         ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods,
-                                                ls->tmp.meth);
-        ls->tmp.meth = NULL;
+                                                ls->tmp.func);
+        ls->tmp.func = NULL;
      }
    check_match(ls, '}', '{', line, col);
 }
@@ -1742,8 +1744,8 @@ parse_properties(Eo_Lexer *ls)
      {
         parse_property(ls);
         ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties,
-                                                   ls->tmp.prop);
-        ls->tmp.prop = NULL;
+                                                   ls->tmp.func);
+        ls->tmp.func = NULL;
      }
    check_match(ls, '}', '{', line, col);
 }

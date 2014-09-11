@@ -6,25 +6,6 @@
 
 #include "eolian_database.h"
 
-/* METHOD */
-
-typedef struct _Eo_Method_Def
-{
-   Eolian_Object base;
-   Eolian_Type *ret_type;
-   Eina_Stringshare *ret_comment;
-   Eolian_Expression *default_ret_val;
-   Eina_Stringshare *name;
-   Eina_Stringshare *comment;
-   Eina_List *params;
-   Eina_Stringshare *legacy;
-   Eina_Bool obj_const;
-   int scope;
-   Eina_Bool is_class:1;
-   Eina_Bool only_legacy:1;
-   Eina_Bool ret_warn_unused:1;
-} Eo_Method_Def;
-
 /* CLASS */
 
 typedef struct _Eo_Class_Def
@@ -55,8 +36,7 @@ typedef struct _Eo_Lexer_Temps
    Eo_Class_Def *kls;
    Eina_List *type_defs;
    Eina_List *var_defs;
-   Eolian_Function *prop;
-   Eo_Method_Def *meth;
+   Eolian_Function *func;
    Eolian_Function_Parameter *param;
    Eina_List *str_items;
    Eolian_Event *event;

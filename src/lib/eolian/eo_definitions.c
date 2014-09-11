@@ -3,41 +3,11 @@
 
 #include "eo_definitions.h"
 
-static void
-eo_definitions_method_def_free(Eo_Method_Def *meth)
-{
-   Eolian_Function_Parameter *param;
-
-   if (meth->base.file)
-     eina_stringshare_del(meth->base.file);
-
-   if (meth->ret_type)
-     database_type_del(meth->ret_type);
-
-   if (meth->ret_comment)
-     eina_stringshare_del(meth->ret_comment);
-
-   database_expr_del(meth->default_ret_val);
-
-   if (meth->name)
-     eina_stringshare_del(meth->name);
-   if (meth->comment)
-     eina_stringshare_del(meth->comment);
-   if (meth->legacy)
-     eina_stringshare_del(meth->legacy);
-
-   EINA_LIST_FREE(meth->params, param)
-     database_parameter_del(param);
-
-   free(meth);
-}
-
 void
 eo_definitions_class_def_free(Eo_Class_Def *kls)
 {
    const char *s;
-   Eolian_Function *prop;
-   Eo_Method_Def *meth;
+   Eolian_Function *func;
    Eolian_Event *sgn;
    Eolian_Implement *impl;
    Eolian_Constructor *ctor;
@@ -65,11 +35,11 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    EINA_LIST_FREE(kls->constructors, ctor)
      database_constructor_del(ctor);
 
-   EINA_LIST_FREE(kls->properties, prop)
-     database_function_del(prop);
+   EINA_LIST_FREE(kls->properties, func)
+     database_function_del(func);
 
-   EINA_LIST_FREE(kls->methods, meth)
-     eo_definitions_method_def_free(meth);
+   EINA_LIST_FREE(kls->methods, func)
+     database_function_del(func);
 
    EINA_LIST_FREE(kls->events, sgn)
      database_event_del(sgn);
@@ -104,11 +74,8 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    EINA_LIST_FREE(tmp->var_defs, var)
      database_var_del(var);
 
-   if (tmp->prop)
-     database_function_del(tmp->prop);
-
-   if (tmp->meth)
-     eo_definitions_method_def_free(tmp->meth);
+   if (tmp->func)
+     database_function_del(tmp->func);
 
    if (tmp->param)
      database_parameter_del(tmp->param);

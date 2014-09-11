@@ -1,55 +1,5 @@
 #include "eo_parser.h"
 
-static Eina_Bool
-_db_fill_method(Eolian_Class *cl, Eo_Class_Def *kls, Eo_Method_Def *meth)
-{
-   Eolian_Function *foo_id = database_function_new(meth->name, EOLIAN_METHOD);
-
-   foo_id->scope = meth->scope;
-
-   cl->methods = eina_list_append(cl->methods, foo_id);
-
-   if (meth->ret_type)
-     {
-        foo_id->get_ret_type = meth->ret_type;
-        meth->ret_type = NULL;
-        foo_id->get_return_comment = meth->ret_comment;
-        meth->ret_comment = NULL;
-        foo_id->get_return_warn_unused = meth->ret_warn_unused;
-        foo_id->get_ret_val = meth->default_ret_val;
-        meth->default_ret_val = NULL;
-     }
-
-   foo_id->get_description = eina_stringshare_ref(meth->comment);
-   foo_id->get_legacy = eina_stringshare_ref(meth->legacy);
-   foo_id->obj_is_const = meth->obj_const;
-   foo_id->is_class = meth->is_class;
-
-   foo_id->get_only_legacy = meth->only_legacy;
-
-   foo_id->params = meth->params; meth->params = NULL;
-
-   if (kls->type == EOLIAN_CLASS_INTERFACE)
-     foo_id->get_virtual_pure = EINA_TRUE;
-
-   foo_id->base = meth->base;
-   meth->base.file = NULL;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_db_fill_methods(Eolian_Class *cl, Eo_Class_Def *kls)
-{
-   Eo_Method_Def *meth;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(kls->methods, l, meth)
-     if (!_db_fill_method(cl, kls, meth)) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 static int
 _func_error(Eolian_Class *cl, Eolian_Implement *impl)
 {
@@ -324,8 +274,8 @@ _db_fill_class(Eo_Class_Def *kls)
      cl->data_type = eina_stringshare_ref(kls->data_type);
 
    cl->properties = kls->properties; kls->properties = NULL;
+   cl->methods    = kls->methods   ; kls->methods    = NULL;
 
-   if (!_db_fill_methods     (cl, kls)) return EINA_FALSE;
    if (!_db_fill_implements  (cl, kls)) return EINA_FALSE;
    if (!_db_fill_constructors(cl, kls)) return EINA_FALSE;
    if (!_db_fill_events      (cl, kls)) return EINA_FALSE;
