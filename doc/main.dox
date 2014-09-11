@@ -4,8 +4,7 @@
  * The Enlightenment Project covers more than simple window management. It
  * also includes the EFL, or Enlightenment Foundation Libraries: a framework
  * which provides a great deal of functionality. Below you can
- * find documentation auto-generated daily from GIT source for these
- * libraries:
+ * find documentation for these libraries:
  *
  * @li @ref ecore_main operating system abstraction and integration.
  * @li @ref edje_main layout and theme library with super powers.
