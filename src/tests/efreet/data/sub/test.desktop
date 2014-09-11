@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Type=Application
 Name=Sub
+Name[ca]=Sub
+Name[de]=Unter
+Name[el]=Sub
 Name[gl]=Sub
 Name[ms]=Sub
 Name[sr]=Под
