@@ -23,12 +23,3 @@ database_function_del(Eolian_Function *fid)
    if (fid->set_return_comment) eina_stringshare_del(fid->set_return_comment);
    free(fid);
 }
-
-Eolian_Function *
-database_function_new(const char *function_name, Eolian_Function_Type foo_type)
-{
-   Eolian_Function *fid = calloc(1, sizeof(*fid));
-   fid->name = eina_stringshare_add(function_name);
-   fid->type = foo_type;
-   return fid;
-}

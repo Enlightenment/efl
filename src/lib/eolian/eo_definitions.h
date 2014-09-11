@@ -12,18 +12,17 @@ typedef struct _Eo_Class_Def
 {
    Eolian_Object base;
    Eina_Stringshare *name;
-   Eina_Stringshare *file;
    Eolian_Class_Type type;
-   Eina_Stringshare *comment;
+   Eina_Stringshare *description;
    Eina_Stringshare *legacy_prefix;
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *data_type;
    Eina_List *inherits;
+   Eina_List *properties;
+   Eina_List *methods;
    Eina_List *implements;
    Eina_List *constructors;
    Eina_List *events;
-   Eina_List *properties;
-   Eina_List *methods;
 } Eo_Class_Def;
 
 /* TEMPS */

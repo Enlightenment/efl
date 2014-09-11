@@ -277,13 +277,9 @@ Eolian_Class *database_class_add(const char *class_name, Eolian_Class_Type type)
 void database_class_del(Eolian_Class *cl);
 
 /* functions */
-
-Eolian_Function *database_function_new(const char *function_name, Eolian_Function_Type foo_type);
 void database_function_del(Eolian_Function *fid);
 
 /* func parameters */
-
-Eolian_Function_Parameter *database_parameter_add(Eolian_Type *type, Eolian_Expression *value, const char *name, const char *description);
 void database_parameter_del(Eolian_Function_Parameter *pdesc);
 
 /* implements */
@@ -295,8 +291,6 @@ void database_implement_del(Eolian_Implement *impl);
 void database_constructor_del(Eolian_Constructor *ctor);
 
 /* events */
-
-Eolian_Event *database_event_new(const char *event_name, const char *event_type, const char *event_desc);
 void database_event_del(Eolian_Event *event);
 
 

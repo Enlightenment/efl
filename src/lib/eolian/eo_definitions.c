@@ -17,8 +17,8 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
 
    if (kls->name)
      eina_stringshare_del(kls->name);
-   if (kls->comment)
-     eina_stringshare_del(kls->comment);
+   if (kls->description)
+     eina_stringshare_del(kls->description);
    if (kls->legacy_prefix)
      eina_stringshare_del(kls->legacy_prefix);
    if (kls->eo_prefix)

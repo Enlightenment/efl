@@ -1808,7 +1808,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
              has_events        = EINA_FALSE;
    if (ls->t.token == TOK_COMMENT)
      {
-        ls->tmp.kls->comment = eina_stringshare_ref(ls->t.value.s);
+        ls->tmp.kls->description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    if (type == EOLIAN_CLASS_INTERFACE)

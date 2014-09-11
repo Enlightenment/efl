@@ -260,8 +260,8 @@ _db_fill_class(Eo_Class_Def *kls)
 
    eina_hash_set(_classesf, kls->base.file, cl);
 
-   if (kls->comment)
-     cl->description = eina_stringshare_ref(kls->comment);
+   if (kls->description)
+     cl->description = eina_stringshare_ref(kls->description);
 
    EINA_LIST_FOREACH(kls->inherits, l, s)
      cl->inherits = eina_list_append(cl->inherits, eina_stringshare_add(s));
