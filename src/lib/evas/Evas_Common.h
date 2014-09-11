@@ -445,7 +445,7 @@ typedef enum _Evas_Native_Surface_Type
  * break in your application on the different efl library versions.
  *
  * @warning Native surface types totally depend on the system. Please
- *          be aware that the types are supported on your system before using 
+ *          be aware that the types are supported on your system before using
  *          them.
  * @see evas_object_image_native_surface_set()
  */
