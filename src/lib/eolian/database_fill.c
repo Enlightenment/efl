@@ -3,9 +3,11 @@
 static Eina_Bool
 _func_error(Eolian_Class *cl, Eolian_Implement *impl)
 {
-   ERR("Error - %s%s not known in class %s", impl->full_name,
-       eolian_class_name_get(cl), (impl->is_prop_get ? ".get"
-              : (impl->is_prop_set ? ".set" : "")));
+   eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR, impl->base.file, "",
+                  impl->base.line, "%s%s not known in class %s at column %d",
+                  impl->full_name, (impl->is_prop_get ? ".get"
+                      : (impl->is_prop_set ? ".set" : "")),
+                  eolian_class_name_get(cl), impl->base.column);
    return EINA_FALSE;
 }
 
