@@ -185,7 +185,7 @@ _server_connect(void)
 #ifdef HAVE_FCNTL
    flags = fcntl(s, F_GETFD);
    flags |= FD_CLOEXEC;
-   fcntl(s, F_SETFD, flags);
+   if (fcntl(s, F_SETFD, flags) < 0) ERR("can't set CLOEXEC on fd");
 #endif
 
    remote.sun_family = AF_UNIX;
