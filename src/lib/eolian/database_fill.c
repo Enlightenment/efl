@@ -173,13 +173,11 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
 }
 
 static Eina_Bool
-_db_fill_implements(Eolian_Class *cl, Eolian_Class *kls)
+_db_fill_implements(Eolian_Class *cl)
 {
    Eolian_Implement *impl;
    Eolian_Function *foo_id;
    Eina_List *l;
-
-   cl->implements = kls->implements; kls->implements = NULL;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
      if (!_db_fill_implement(cl, impl))
@@ -195,38 +193,13 @@ _db_fill_implements(Eolian_Class *cl, Eolian_Class *kls)
 }
 
 static Eina_Bool
-_db_fill_class(Eolian_Class *kls)
+_db_fill_class(Eolian_Class *cl)
 {
-   Eolian_Class *cl = calloc(1, sizeof(Eolian_Class));
+   if (!_db_fill_implements(cl))
+     return EINA_FALSE;
 
-   eina_hash_set(_classes, kls->full_name, cl);
-   eina_hash_set(_classesf, kls->base.file, cl);
-
-   cl->namespaces = kls->namespaces; kls->namespaces = NULL;
-   cl->full_name = kls->full_name; kls->full_name = NULL;
-   cl->name = kls->name; kls->name = NULL;
-   cl->type = kls->type;
-
-   cl->description = kls->description; kls->description = NULL;
-   cl->inherits    = kls->inherits   ; kls->inherits    = NULL;
-
-   cl->legacy_prefix = kls->legacy_prefix; kls->legacy_prefix = NULL;
-   cl->eo_prefix     = kls->eo_prefix    ; kls->eo_prefix     = NULL;
-   cl->data_type     = kls->data_type    ; kls->data_type     = NULL;
-
-   cl->properties = kls->properties; kls->properties = NULL;
-   cl->methods    = kls->methods   ; kls->methods    = NULL;
-
-   if (!_db_fill_implements(cl, kls)) return EINA_FALSE;
-
-   cl->constructors = kls->constructors; kls->constructors = NULL;
-   cl->events       = kls->events      ; kls->events       = NULL;
-
-   cl->class_ctor_enable = kls->class_ctor_enable;
-   cl->class_dtor_enable = kls->class_dtor_enable;
-
-   cl->base = kls->base;
-   kls->base.file = NULL;
+   eina_hash_set(_classes, cl->full_name, cl);
+   eina_hash_set(_classesf, cl->base.file, cl);
 
    return EINA_TRUE;
 }
@@ -276,6 +249,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
            case NODE_CLASS:
              if (!_db_fill_class(nd->def_class))
                goto error;
+             nd->def_class = NULL;
              break;
            default:
              break;
