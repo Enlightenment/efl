@@ -249,6 +249,12 @@ _fill_variable_name(Eolian_Variable *var, const char *var_name)
    NAMESPACE_PARSE(var, var_name)
 }
 
+static void
+_fill_class_name(Eolian_Class *cl, const char *cl_name)
+{
+   NAMESPACE_PARSE(cl, cl_name)
+}
+
 #undef NAMESPACE_PARSE
 
 static Eolian_Expression *
@@ -1880,7 +1886,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    Eina_Bool same;
    int line, col;
    Eina_Strbuf *buf = push_strbuf(ls);
-   ls->tmp.kls = calloc(1, sizeof(Eo_Class_Def));
+   ls->tmp.kls = calloc(1, sizeof(Eolian_Class));
    ls->tmp.kls->base.file = eina_stringshare_ref(ls->filename);
    ls->tmp.kls->base.line = ls->line_number;
    ls->tmp.kls->base.column = ls->column;

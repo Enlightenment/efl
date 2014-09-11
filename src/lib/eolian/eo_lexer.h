@@ -91,15 +91,12 @@ enum Nodes
    NODE_CLASS = 0
 };
 
-/* represents a node, aka a result of parsing - currently class, typedef
- * or struct, they're all stored in a list in lexer state and their type
- * is determined by enum Nodes above */
 typedef struct _Eo_Node
 {
    unsigned char type;
    union {
       void         *def;
-      Eo_Class_Def *def_class;
+      Eolian_Class *def_class;
    };
 } Eo_Node;
 

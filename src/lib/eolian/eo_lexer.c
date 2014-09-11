@@ -718,7 +718,7 @@ eo_lexer_free(Eo_Lexer *ls)
         switch (nd->type)
           {
            case NODE_CLASS:
-             eo_definitions_class_def_free(nd->def_class);
+             database_class_del(nd->def_class);
              break;
            default:
              break;

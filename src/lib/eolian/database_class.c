@@ -4,46 +4,36 @@
 void
 database_class_del(Eolian_Class *cl)
 {
-   Eina_Stringshare *inherit_name;
-   Eina_List *inherits = cl->inherits;
    Eolian_Function *fid;
    Eolian_Event *ev;
-   const char *sp;
+   Eolian_Implement *impl;
+   Eolian_Constructor *ctor;
+   const char *s;
 
    if (cl->base.file) eina_stringshare_del(cl->base.file);
 
-   EINA_LIST_FREE(inherits, inherit_name)
-     eina_stringshare_del(inherit_name);
+   EINA_LIST_FREE(cl->inherits, s)
+     if (s) eina_stringshare_del(s);
 
-   Eolian_Implement *impl;
-   Eina_List *implements = cl->implements;
-   EINA_LIST_FREE(implements, impl)
-     {
-        eina_stringshare_del(impl->full_name);
-        free(impl);
-     }
+   EINA_LIST_FREE(cl->implements, impl)
+     database_implement_del(impl);
 
-   Eolian_Constructor *ctor;
-   Eina_List *constructors = cl->constructors;
-   EINA_LIST_FREE(constructors, ctor)
-     {
-        eina_stringshare_del(ctor->full_name);
-        free(ctor);
-     }
+   EINA_LIST_FREE(cl->constructors, ctor)
+     database_constructor_del(ctor);
 
    EINA_LIST_FREE(cl->methods, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->properties, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->events, ev) database_event_del(ev);
 
-   eina_stringshare_del(cl->name);
-   eina_stringshare_del(cl->full_name);
-   eina_stringshare_del(cl->description);
-   eina_stringshare_del(cl->legacy_prefix);
-   eina_stringshare_del(cl->eo_prefix);
-   eina_stringshare_del(cl->data_type);
+   if (cl->name) eina_stringshare_del(cl->name);
+   if (cl->full_name) eina_stringshare_del(cl->full_name);
+   if (cl->description) eina_stringshare_del(cl->description);
+   if (cl->legacy_prefix) eina_stringshare_del(cl->legacy_prefix);
+   if (cl->eo_prefix) eina_stringshare_del(cl->eo_prefix);
+   if (cl->data_type) eina_stringshare_del(cl->data_type);
 
-   if (cl->namespaces) EINA_LIST_FREE(cl->namespaces, sp)
-      eina_stringshare_del(sp);
+   if (cl->namespaces) EINA_LIST_FREE(cl->namespaces, s)
+      if (s) eina_stringshare_del(s);
 
    free(cl);
 }

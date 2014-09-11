@@ -4,50 +4,6 @@
 #include "eo_definitions.h"
 
 void
-eo_definitions_class_def_free(Eo_Class_Def *kls)
-{
-   const char *s;
-   Eolian_Function *func;
-   Eolian_Event *sgn;
-   Eolian_Implement *impl;
-   Eolian_Constructor *ctor;
-
-   if (kls->base.file)
-     eina_stringshare_del(kls->base.file);
-
-   if (kls->name)
-     eina_stringshare_del(kls->name);
-   if (kls->description)
-     eina_stringshare_del(kls->description);
-   if (kls->legacy_prefix)
-     eina_stringshare_del(kls->legacy_prefix);
-   if (kls->eo_prefix)
-     eina_stringshare_del(kls->eo_prefix);
-   if (kls->data_type)
-     eina_stringshare_del(kls->data_type);
-
-   EINA_LIST_FREE(kls->inherits, s)
-     if (s) eina_stringshare_del(s);
-
-   EINA_LIST_FREE(kls->implements, impl)
-     database_implement_del(impl);
-
-   EINA_LIST_FREE(kls->constructors, ctor)
-     database_constructor_del(ctor);
-
-   EINA_LIST_FREE(kls->properties, func)
-     database_function_del(func);
-
-   EINA_LIST_FREE(kls->methods, func)
-     database_function_del(func);
-
-   EINA_LIST_FREE(kls->events, sgn)
-     database_event_del(sgn);
-
-   free(kls);
-}
-
-void
 eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
@@ -66,7 +22,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
      eina_stringshare_del(tmp->legacy_def);
 
    if (tmp->kls)
-     eo_definitions_class_def_free(tmp->kls);
+     database_class_del(tmp->kls);
 
    EINA_LIST_FREE(tmp->type_defs, tp)
      database_type_del(tp);

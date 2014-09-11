@@ -184,7 +184,7 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
 }
 
 static Eina_Bool
-_db_fill_implements(Eolian_Class *cl, Eo_Class_Def *kls)
+_db_fill_implements(Eolian_Class *cl, Eolian_Class *kls)
 {
    Eolian_Implement *impl;
    Eolian_Function *foo_id;
@@ -222,7 +222,7 @@ _db_fill_constructor(Eolian_Class *cl, Eolian_Constructor *ctor)
 }
 
 static Eina_Bool
-_db_fill_constructors(Eolian_Class *cl, Eo_Class_Def *kls)
+_db_fill_constructors(Eolian_Class *cl, Eolian_Class *kls)
 {
    Eolian_Constructor *ctor;
    Eina_List *l;
@@ -237,7 +237,7 @@ _db_fill_constructors(Eolian_Class *cl, Eo_Class_Def *kls)
 }
 
 static Eina_Bool
-_db_fill_events(Eolian_Class *cl, Eo_Class_Def *kls)
+_db_fill_events(Eolian_Class *cl, Eolian_Class *kls)
 {
    Eolian_Event *event;
    Eina_List *l;
@@ -252,7 +252,7 @@ _db_fill_events(Eolian_Class *cl, Eo_Class_Def *kls)
 }
 
 static Eina_Bool
-_db_fill_class(Eo_Class_Def *kls)
+_db_fill_class(Eolian_Class *kls)
 {
    Eolian_Class *cl = database_class_add(kls->name, kls->type);
    const char *s;
