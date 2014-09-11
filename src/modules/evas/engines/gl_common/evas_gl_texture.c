@@ -109,6 +109,8 @@ static const struct {
 
 #define MATCH(_r, _v) ((_r == MATCH_ANY) || (_v == MATCH_ANY) || (_r == _v))
 
+#ifdef GL_TEXTURE_INTERNAL_FORMAT
+# ifndef GL_GLES
 static Eina_Bool
 _evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
 {
@@ -129,6 +131,8 @@ _evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
 
    return EINA_FALSE;
 }
+# endif
+#endif
 
 static int
 _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace cspace)
