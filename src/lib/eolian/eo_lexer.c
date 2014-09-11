@@ -703,8 +703,6 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
 void
 eo_lexer_free(Eo_Lexer *ls)
 {
-   Eo_Node *nd;
-
    if (!ls) return;
    if (ls->source  ) eina_stringshare_del(ls->source);
    if (ls->filename) eina_stringshare_del(ls->filename);
@@ -712,22 +710,7 @@ eo_lexer_free(Eo_Lexer *ls)
    if (ls->handle  ) eina_file_close     (ls->handle);
 
    eo_lexer_context_clear(ls);
-
-   EINA_LIST_FREE(ls->nodes, nd)
-     {
-        switch (nd->type)
-          {
-           case NODE_CLASS:
-             database_class_del(nd->def_class);
-             break;
-           default:
-             break;
-          }
-       free(nd);
-     }
-
    eo_definitions_temps_free(&ls->tmp);
-
    free(ls);
 }
 

@@ -207,9 +207,7 @@ _db_fill_class(Eolian_Class *cl)
 Eina_Bool
 eo_parser_database_fill(const char *filename, Eina_Bool eot)
 {
-   Eina_List *k;
-   Eo_Node *nd;
-   Eina_Bool has_class = EINA_FALSE;
+   Eolian_Class *cl;
 
    Eo_Lexer *ls = eo_lexer_new(filename);
    if (!ls)
@@ -229,31 +227,20 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (eot) goto done;
 
-   EINA_LIST_FOREACH(ls->nodes, k, nd) if (nd->type == NODE_CLASS)
-     {
-        has_class = EINA_TRUE;
-        break;
-     }
-
-   if (!has_class)
+   if (!eina_list_count(ls->tmp.classes))
      {
         ERR("No classes for file %s", filename);
         eo_lexer_free(ls);
         return EINA_FALSE;
      }
 
-   EINA_LIST_FOREACH(ls->nodes, k, nd)
+   while (ls->tmp.classes)
      {
-        switch (nd->type)
-          {
-           case NODE_CLASS:
-             if (!_db_fill_class(nd->def_class))
-               goto error;
-             nd->def_class = NULL;
-             break;
-           default:
-             break;
-          }
+        cl = eina_list_data_get(ls->tmp.classes);
+        if (!_db_fill_class(cl))
+          goto error;
+        ls->tmp.classes = eina_list_remove_list(ls->tmp.classes,
+                                                ls->tmp.classes);
      }
 
 done:

@@ -142,15 +142,6 @@ pop_str(Eo_Lexer *ls)
    ls->tmp.strs = eina_list_remove_list(ls->tmp.strs, ls->tmp.strs);
 }
 
-static void
-append_node(Eo_Lexer *ls, int type, void *def)
-{
-   Eo_Node *nd = calloc(1, sizeof(Eo_Node));
-   nd->type  = type;
-   nd->def   = def;
-   ls->nodes = eina_list_append(ls->nodes, nd);
-}
-
 static Eina_Bool
 compare_class_file(const char *fn_ext, const char *fn_noext)
 {
@@ -2029,7 +2020,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
      }
    return EINA_FALSE;
 found_class:
-   append_node(ls, NODE_CLASS, ls->tmp.kls);
+   ls->tmp.classes = eina_list_append(ls->tmp.classes, ls->tmp.kls);
    ls->tmp.kls = NULL;
    return EINA_TRUE;
 }

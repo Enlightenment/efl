@@ -10,6 +10,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    Eolian_Function_Parameter *par;
    Eolian_Type *tp;
    Eolian_Variable *var;
+   Eolian_Class *cl;
    const char *s;
 
    EINA_LIST_FREE(tmp->str_bufs, buf)
@@ -50,4 +51,7 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);
+
+   EINA_LIST_FREE(tmp->classes, cl)
+     database_class_del(cl);
 }

@@ -10,6 +10,7 @@
 
 typedef struct _Eo_Lexer_Temps
 {
+   Eina_List *classes;
    Eina_List *str_bufs;
    Eina_List *params;
    Eina_Stringshare *legacy_def;

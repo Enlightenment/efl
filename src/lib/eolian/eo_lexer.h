@@ -86,20 +86,6 @@ typedef struct _Eo_Token
    Eolian_Value_Union value;
 } Eo_Token;
 
-enum Nodes
-{
-   NODE_CLASS = 0
-};
-
-typedef struct _Eo_Node
-{
-   unsigned char type;
-   union {
-      void         *def;
-      Eolian_Class *def_class;
-   };
-} Eo_Node;
-
 typedef struct _Lexer_Ctx
 {
    int line, column;
@@ -151,13 +137,11 @@ typedef struct _Eo_Lexer
    /* saved context info */
    Eina_List *saved_ctxs;
 
-   /* represents the results of parsing */
-   Eina_List      *nodes;
    /* represents the temporaries, every object that is allocated by the
     * parser is temporarily put here so the resources can be reclaimed in
     * case of error - and it's nulled when it's written into a more permanent
     * position (e.g. as part of another struct, or into nodes */
-   Eo_Lexer_Temps  tmp;
+   Eo_Lexer_Temps tmp;
 } Eo_Lexer;
 
 int         eo_lexer_init           (void);
