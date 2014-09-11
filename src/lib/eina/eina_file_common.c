@@ -906,7 +906,8 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
-     tmpdir = getenv("TMPDIR");
+     tmpdir = getenv("XDG_RUNTIME_DIR");
+   if (!tmpdir) tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 #else
    tmpdir = (char *)evil_tmpdir_get();
