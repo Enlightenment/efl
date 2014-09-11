@@ -4096,6 +4096,16 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item_Data *item, Eina_List 
 
 #define ERR_NOT_SUPPORTED(item, method)  ERR("%s does not support %s API.", elm_widget_type_get(item->widget), method);
 
+static Eina_Bool
+_eo_del_cb(void *data EINA_UNUSED, Eo *eo_item, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Widget_Item_Data *item = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
+   if (item->del_func)
+      item->del_func((void *)item->data, item->widget, item);
+   return EINA_TRUE;
+}
+
 /**
  * @internal
  *
@@ -4130,6 +4140,7 @@ _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
    eo_do_super(eo_item, ELM_WIDGET_ITEM_CLASS, eo_constructor());
    item->widget = widget;
    item->eo_obj = eo_item;
+   eo_do(eo_item, eo_event_callback_add(EO_BASE_EVENT_DEL, _eo_del_cb, NULL));
 }
 
 EOLIAN static void
@@ -4138,9 +4149,6 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
    Elm_Translate_String_Data *ts;
 
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-
-   if (item->del_func)
-     item->del_func((void *)item->data, item->widget, item);
 
    evas_object_del(item->view);
 
