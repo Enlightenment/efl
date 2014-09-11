@@ -36,6 +36,11 @@
    @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
    @li @ref Ecore_Win32_Group
    @li @ref Ecore_Audio_Group
+   @li @ref Ecore_Avahi_Group
+   @li @ref Ecore_Drm_Group
+   @li @ref Ecore_Wl_Group
+
+
 
    For more info on Ecore usage, there are these @ref ecore_examples.
 
