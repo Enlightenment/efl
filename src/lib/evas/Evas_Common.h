@@ -419,17 +419,40 @@ struct _Evas_Pixel_Import_Source
 /* magic version number to know what the native surf struct looks like */
 #define EVAS_NATIVE_SURFACE_VERSION 2
 
+/**
+ * Native surface types that image object supports
+ *
+ * @see Evas_Native_Surface
+ * @see evas_object_image_native_surface_set()
+ */
 typedef enum _Evas_Native_Surface_Type
 {
-   EVAS_NATIVE_SURFACE_NONE,
-   EVAS_NATIVE_SURFACE_X11,
-   EVAS_NATIVE_SURFACE_OPENGL
+   EVAS_NATIVE_SURFACE_NONE, /**< No surface type */
+   EVAS_NATIVE_SURFACE_X11,  /**< X Window system based type. pixmap id or visual of the pixmap */
+   EVAS_NATIVE_SURFACE_OPENGL /**< OpenGL system based type. texture or framebuffer id*/
 } Evas_Native_Surface_Type;
 
+/**
+ * @brief A generic datatype for engine specific native surface information.
+ *
+ * Please fill up Evas_Native_Surface fields that regarded with current surface
+ * type. If you want to set the native surface type to
+ * EVAS_NATIVE_SURFACE_X11, you need to set union data with x11.visual or
+ * x11.pixmap. If you need to set the native surface as
+ * EVAS_NATIVE_SURFACE_OPENGL, on the other hand, you need to set union data
+ * with opengl.texture_id or opengl.framebuffer_id and so on. The version field
+ * should be set with EVAS_NATIVE_SURFACE_VERSION in order to check abi
+ * break in your application on the different efl library versions.
+ *
+ * @warning Native surface types totally depend on the system. Please
+ *          be aware that the types are supported on your system before using 
+ *          them.
+ * @see evas_object_image_native_surface_set()
+ */
 struct _Evas_Native_Surface
 {
-   int                      version;
-   Evas_Native_Surface_Type type;
+   int                      version; /**< Current Native Surface Version. Use EVAS_NATIVE_SURFACE_VERSION */
+   Evas_Native_Surface_Type type; /**< Surface type. @see Evas_Native_Surface_Type */
    union {
       struct
       {
