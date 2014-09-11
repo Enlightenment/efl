@@ -15,7 +15,6 @@
 /ecore-sdl.pc
 /ecore-wayland.pc
 /ecore-win32.pc
-/ecore-wince.pc
 /ecore-x.pc
 /ecore.pc
 /edje.pc
