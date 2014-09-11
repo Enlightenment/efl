@@ -238,3 +238,9 @@
  *
  * @brief Generates thumbnail images of files.
  */
+
+ /**
+ * @defgroup EPhysics
+ *
+ * @brief Physics simulation integration and visual effects.
+ */
