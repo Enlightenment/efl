@@ -342,9 +342,10 @@ evas_software_xlib_x_color_allocate(Display         *disp,
    palpriv->cmap = cmap;
    if (pal->colors == PAL_MODE_NONE)
      {
-	if (pal->lookup) free(pal->lookup);
-	free(pal);
-	return NULL;
+        if (pal->lookup) free(pal->lookup);
+        free(palpriv);
+        free(pal);
+        return NULL;
      }
    palettes = eina_list_append(palettes, pal);
    return pal;
