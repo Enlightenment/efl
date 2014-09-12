@@ -96,10 +96,10 @@ typedef struct _Lexer_Ctx
 typedef struct _Eo_Lexer_Temps
 {
    Eolian_Class *kls;
+   Eolian_Variable *var;
    Eina_List *classes;
    Eina_List *str_bufs;
    Eina_List *type_defs;
-   Eina_List *var_defs;
    Eina_List *str_items;
    Eina_List *expr_defs;
    Eina_List *strs;

@@ -114,20 +114,6 @@ pop_type(Eo_Lexer *ls)
    ls->tmp.type_defs = eina_list_remove_list(ls->tmp.type_defs, ls->tmp.type_defs);
 }
 
-static Eolian_Variable *
-push_var(Eo_Lexer *ls)
-{
-   Eolian_Variable *def = calloc(1, sizeof(Eolian_Variable));
-   ls->tmp.var_defs = eina_list_prepend(ls->tmp.var_defs, def);
-   return def;
-}
-
-static void
-pop_var(Eo_Lexer *ls)
-{
-   ls->tmp.var_defs = eina_list_remove_list(ls->tmp.var_defs, ls->tmp.var_defs);
-}
-
 static Eina_Stringshare *
 push_str(Eo_Lexer *ls, const char *val)
 {
@@ -1053,9 +1039,10 @@ parse_typedef(Eo_Lexer *ls)
 static Eolian_Variable *
 parse_variable(Eo_Lexer *ls, Eina_Bool global)
 {
-   Eolian_Variable *def = push_var(ls);
+   Eolian_Variable *def = calloc(1, sizeof(Eolian_Variable));
    Eina_Bool has_extern = EINA_FALSE;
    Eina_Strbuf *buf;
+   ls->tmp.var = def;
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_extern)
      {
@@ -1910,7 +1897,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_var:
         {
            database_var_add(parse_variable(ls, ls->t.kw == KW_var));
-           pop_var(ls);
+           ls->tmp.var = NULL;
            break;
         }
       case KW_struct:
