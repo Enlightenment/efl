@@ -117,6 +117,7 @@ struct _Eolian_Function
    Eina_Bool get_only_legacy: 1;
    Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
+   Eina_List *ctor_of;
 };
 
 struct _Eolian_Function_Parameter
@@ -274,12 +275,14 @@ void database_class_del(Eolian_Class *cl);
 
 /* functions */
 void database_function_del(Eolian_Function *fid);
+void database_function_constructor_add(Eolian_Function *func, const Eolian_Class *klass);
 
 /* func parameters */
 void database_parameter_del(Eolian_Function_Parameter *pdesc);
 
 /* implements */
 void database_implement_del(Eolian_Implement *impl);
+void database_implement_constructor_add(Eolian_Implement *impl, const Eolian_Class *klass);
 
 /* constructors */
 void database_constructor_del(Eolian_Constructor *ctor);

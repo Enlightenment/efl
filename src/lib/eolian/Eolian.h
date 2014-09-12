@@ -779,6 +779,17 @@ EAPI Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id
 EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
 
 /*
+ * @brief Indicates if a function is a constructing function of a given class.
+ *
+ * @param[in] klass the class
+ * @param[in] function_id Id of the function
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
+
+/*
  * @brief Returns a parameter of a function pointed by its id.
  *
  * @param[in] function_id Id of the function

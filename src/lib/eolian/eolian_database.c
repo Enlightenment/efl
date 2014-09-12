@@ -292,6 +292,8 @@ inherits:
              ERR("Unable to find function %s", eolian_implement_full_name_get(impl));
              goto error;
           }
+        else
+          database_implement_constructor_add(impl, class);
      }
    eina_iterator_free(itr);
    itr = eolian_class_constructors_get(class);
@@ -303,6 +305,8 @@ inherits:
              ERR("Unable to find function %s", eolian_constructor_full_name_get(ctor));
              goto error;
           }
+        else
+          database_function_constructor_add((Eolian_Function*)ctor_func, ctor->klass);
      }
    eina_iterator_free(itr);
 
