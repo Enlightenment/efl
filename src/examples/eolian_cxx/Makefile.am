@@ -69,7 +69,7 @@ GENERATED = \
 BUILT_SOURCES = $(GENERATED)
 CLEANFILES += $(BUILT_SOURCES)
 
-EOS = \
+ECXX_EXAMPLE_EOS = \
 	colourable.eo \
 	colourablesquare.eo
 
@@ -97,7 +97,7 @@ EXTRA_PROGRAMS = \
 	eolian_cxx_eo_events_01 \
 	eolian_cxx_complex_types_01
 
-DATA_FILES = Makefile.examples $(EOS)
+DATA_FILES = Makefile.examples $(ECXX_EXAMPLE_EOS)
 EXTRA_DIST = $(DATA_FILES)
 
 eolian_cxx_simple_01_SOURCES = \
@@ -137,7 +137,7 @@ eolian_cxx_complex_types_01_SOURCES = eolian_cxx_complex_types_01.cc
 %.eo.h: %.eo
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o $@ $<
 
-examples: $(EOS) $(GENERATED) $(EXTRA_PROGRAMS)
+examples: $(ECXX_EXAMPLE_EOS) $(GENERATED) $(EXTRA_PROGRAMS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(GENERATED)
