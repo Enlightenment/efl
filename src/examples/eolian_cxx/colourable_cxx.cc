@@ -20,7 +20,7 @@ extern "C"
 static efl::eina::log_domain domain("colourable");
 
 void
-_colourable_constructor(Eo *obj, Colourable_Data *self)
+_colourable_eo_base_constructor(Eo *obj, Colourable_Data *self)
 {
    EINA_CXX_DOM_LOG_DBG(domain) << __func__ << std::endl;
    self->r = self->g = self->b = 0;
@@ -28,7 +28,7 @@ _colourable_constructor(Eo *obj, Colourable_Data *self)
 }
 
 void
-_colourable_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    EINA_CXX_DOM_LOG_DBG(domain) << __func__ << std::endl;
    eo_do_super(obj, MY_CLASS, eo_destructor());

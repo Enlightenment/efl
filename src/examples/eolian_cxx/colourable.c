@@ -27,7 +27,7 @@ struct _Colourable_Data
 typedef struct _Colourable_Data  Colourable_Data;
 
 void
-_colourable_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    if(!_colourable_impl_logdomain)
      {
@@ -39,7 +39,7 @@ _colourable_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 }
 
 void
-_colourable_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
    if(_colourable_impl_logdomain)
      {

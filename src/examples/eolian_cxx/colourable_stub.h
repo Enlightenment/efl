@@ -13,7 +13,8 @@ struct _Colourable_Data
 };
 typedef struct _Colourable_Data  Colourable_Data;
 
-void _colourable_constructor(Eo *obj, Colourable_Data *self);
+void _colourable_eo_base_constructor(Eo *obj, Colourable_Data *self);
+void _colourable_eo_base_destructor(Eo *obj, Colourable_Data *self);
 void _colourable_rgb_composite_constructor(Eo *obj, Colourable_Data *self, int r, int g, int b);
 void _colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb);
 void _colourable_print_colour(Eo *obj, Colourable_Data *self);
