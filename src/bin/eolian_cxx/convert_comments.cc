@@ -38,7 +38,7 @@ _comment_parameters_list(Eina_Iterator *params)
 }
 
 static std::string
-_comment_brief_and_params(Eolian_Function const& function, Eolian_Function_Type ftype = EOLIAN_METHOD)
+_comment_brief_and_params(Eolian_Function const& function, Eolian_Function_Type ftype)
 {
    std::string doc = "";
    std::string func = safe_str(::eolian_function_description_get(&function, ftype));
@@ -79,11 +79,12 @@ convert_comments_class(Eolian_Class const& klass)
 }
 
 std::string
-convert_comments_function(Eolian_Function const& function,
+convert_comments_function(Eolian_Class const& klass,
+                          Eolian_Function const& function,
                           Eolian_Function_Type func_type)
 {
-   std::string doc = _comment_brief_and_params(function);
-   if (func_type != eolian_cxx::ctor.value)
+   std::string doc = _comment_brief_and_params(function, func_type);
+   if (!function_is_constructor(klass, function))
      doc += _comment_return(function, func_type);
    return doc;
 }

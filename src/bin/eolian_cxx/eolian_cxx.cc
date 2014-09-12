@@ -169,14 +169,17 @@ run(options_type const& opts)
      }
    else
      {
-        auto classes = class_list_all();
-        for (const Eolian_Class& c : classes)
+        efl::eina::iterator<const Eolian_Class> it(class_list_all());
+        efl::eina::iterator<const Eolian_Class> end;
+        while (it != end)
           {
+             Eolian_Class c = (*it);
              if (!generate(c, opts))
                {
                   klass = &c;
                   goto err;
                }
+             ++it;
           }
     }
    return;
