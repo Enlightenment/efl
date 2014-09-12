@@ -3525,6 +3525,8 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	if (angle_brackets)
 	   pfile->system_include_depth--;
      }
+   if (fname)
+      free(fname);
    return 0;
 }
 
