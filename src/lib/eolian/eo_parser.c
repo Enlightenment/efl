@@ -1136,13 +1136,14 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
 }
 
 static void
-parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
+parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
+            Eina_Bool is_vals)
 {
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    par->base.file = eina_stringshare_ref(ls->filename);
    par->base.line = ls->line_number;
    par->base.column = ls->column;
-   ls->tmp.params = eina_list_append(ls->tmp.params, par);
+   *params = eina_list_append(*params, par);
    if (allow_inout)
      {
         if (ls->t.kw == KW_at_in)
@@ -1309,9 +1310,10 @@ end:
 }
 
 static void
-parse_params(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
+parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
+             Eina_Bool is_vals)
 {
-   PARSE_SECTION parse_param(ls, allow_inout, is_vals);
+   PARSE_SECTION parse_param(ls, params, allow_inout, is_vals);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1381,15 +1383,11 @@ body:
         break;
       case KW_keys:
         CASE_LOCK(ls, keys, "keys definition")
-        parse_params(ls, EINA_FALSE, EINA_FALSE);
-        prop->keys = ls->tmp.params;
-        ls->tmp.params = NULL;
+        parse_params(ls, &prop->keys, EINA_FALSE, EINA_FALSE);
         break;
       case KW_values:
         CASE_LOCK(ls, values, "values definition")
-        parse_params(ls, EINA_FALSE, EINA_TRUE);
-        prop->params = ls->tmp.params;
-        ls->tmp.params = NULL;
+        parse_params(ls, &prop->params, EINA_FALSE, EINA_TRUE);
         break;
       default:
         goto end;
@@ -1495,9 +1493,7 @@ body:
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")
-        parse_params(ls, EINA_TRUE, EINA_FALSE);
-        meth->params = ls->tmp.params;
-        ls->tmp.params = NULL;
+        parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE);
         break;
       default:
         goto end;

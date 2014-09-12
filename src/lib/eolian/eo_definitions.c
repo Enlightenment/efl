@@ -7,7 +7,6 @@ void
 eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
-   Eolian_Function_Parameter *par;
    Eolian_Type *tp;
    Eolian_Variable *var;
    Eolian_Class *cl;
@@ -15,9 +14,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->str_bufs, buf)
      eina_strbuf_free(buf);
-
-   EINA_LIST_FREE(tmp->params, par)
-     database_parameter_del(par);
 
    if (tmp->kls)
      database_class_del(tmp->kls);
