@@ -1,6 +1,11 @@
 #ifndef _EFL_H
 #define _EFL_H
 
+#if defined ( __cplusplus )
+extern "C"
+{
+#endif
+
 #include <Eo.h>
 
 #ifdef EAPI
@@ -36,5 +41,9 @@
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
+
+#if defined ( __cplusplus )
+}
+#endif
 
 #endif
