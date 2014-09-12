@@ -8103,6 +8103,20 @@ edje_edit_program_run(Evas_Object *obj, const char *prog)
 }
 
 EAPI Eina_Bool
+edje_edit_program_stop_all(Evas_Object *obj)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   Eina_List *l, *ln;
+   Edje_Running_Program *runp;
+
+   EINA_LIST_FOREACH_SAFE(ed->actions, l, ln, runp)
+     _edje_program_end(ed, runp);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_name)
 {
    GET_EED_OR_RETURN(EINA_FALSE);

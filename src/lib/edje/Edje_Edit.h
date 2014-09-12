@@ -5436,6 +5436,14 @@ EAPI Eina_Bool edje_edit_program_exist(Evas_Object *obj, const char *prog);
  */
 EAPI Eina_Bool edje_edit_program_run(Evas_Object *obj, const char *prog);
 
+/** Stop all running programs.
+ *
+ * @param obj Object being edited.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_stop_all(Evas_Object *obj);
+
 /** Set a new name for the given program
  *
  * @param obj Object being edited.
