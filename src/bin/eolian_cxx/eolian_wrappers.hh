@@ -272,6 +272,15 @@ function_return_is_explicit_void(Eolian_Function const& func, getter_t func_type
    return !!type && type->type == EOLIAN_TYPE_VOID;
 }
 
+inline efl::eina::iterator<const Eolian_Function>
+properties_get(Eolian_Class const& cls)
+{
+   Eina_Iterator *itr = ::eolian_class_functions_get(&cls, EOLIAN_PROPERTY); // XXX
+   return itr
+     ? efl::eina::iterator<const Eolian_Function>(itr)
+     : efl::eina::iterator<const Eolian_Function>();
+}
+
 inline bool
 property_is_getter(Eolian_Function_Type func_type)
 {
