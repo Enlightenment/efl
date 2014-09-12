@@ -50,7 +50,7 @@ class_base_file(Eolian_Class const& klass)
 inline std::string
 class_name(Eolian_Class const& klass)
 {
-   return safe_str(::eolian_class_name_get(&klass));
+   return safe_lower(::eolian_class_name_get(&klass));
 }
 
 inline std::string
