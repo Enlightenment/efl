@@ -84,13 +84,8 @@ class_eo_name(Eolian_Class const& klass)
         default:
            break;
      }
-   std::string s = class_full_name(klass) + "_" + suffix;
-   std::transform(s.begin(), s.end(), s.begin(),
-                  [](int c)
-                  {
-                     return c == '.' ? '_' : c ;
-                  });
-   return safe_upper(s);
+   return safe_upper
+     (find_replace(class_full_name(klass) + "_" + suffix, ".", "_"));
 }
 
 inline std::string
