@@ -7,8 +7,6 @@ installed_eolianmainheadersdir = $(includedir)/eolian-@VMAJ@
 dist_installed_eolianmainheaders_DATA = lib/eolian/Eolian.h
 
 lib_eolian_libeolian_la_SOURCES = \
-                                  lib/eolian/eo_definitions.c \
-                                  lib/eolian/eo_definitions.h \
                                   lib/eolian/eo_lexer.c \
                                   lib/eolian/eo_lexer.h \
                                   lib/eolian/eo_parser.c \

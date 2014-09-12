@@ -5,7 +5,8 @@
 
 #include <Eina.h>
 #include <Eolian.h>
-#include "eo_definitions.h"
+
+#include "eolian_database.h"
 
 /* a token is an int, custom tokens start at this - single-char tokens are
  * simply represented by their ascii */
@@ -91,6 +92,18 @@ typedef struct _Lexer_Ctx
    int line, column;
    const char *linestr;
 } Lexer_Ctx;
+
+typedef struct _Eo_Lexer_Temps
+{
+   Eolian_Class *kls;
+   Eina_List *classes;
+   Eina_List *str_bufs;
+   Eina_List *type_defs;
+   Eina_List *var_defs;
+   Eina_List *str_items;
+   Eina_List *expr_defs;
+   Eina_List *strs;
+} Eo_Lexer_Temps;
 
 /* keeps all lexer state */
 typedef struct _Eo_Lexer

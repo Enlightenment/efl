@@ -700,6 +700,37 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    next_char(ls);
 }
 
+static void
+_temps_free(Eo_Lexer_Temps *tmp)
+{
+   Eina_Strbuf *buf;
+   Eolian_Type *tp;
+   Eolian_Variable *var;
+   Eolian_Class *cl;
+   const char *s;
+
+   EINA_LIST_FREE(tmp->str_bufs, buf)
+     eina_strbuf_free(buf);
+
+   if (tmp->kls)
+     database_class_del(tmp->kls);
+
+   EINA_LIST_FREE(tmp->type_defs, tp)
+     database_type_del(tp);
+
+   EINA_LIST_FREE(tmp->var_defs, var)
+     database_var_del(var);
+
+   EINA_LIST_FREE(tmp->str_items, s)
+     if (s) eina_stringshare_del(s);
+
+   EINA_LIST_FREE(tmp->strs, s)
+     if (s) eina_stringshare_del(s);
+
+   EINA_LIST_FREE(tmp->classes, cl)
+     database_class_del(cl);
+}
+
 void
 eo_lexer_free(Eo_Lexer *ls)
 {
@@ -710,7 +741,7 @@ eo_lexer_free(Eo_Lexer *ls)
    if (ls->handle  ) eina_file_close     (ls->handle);
 
    eo_lexer_context_clear(ls);
-   eo_definitions_temps_free(&ls->tmp);
+   _temps_free(&ls->tmp);
    free(ls);
 }
 

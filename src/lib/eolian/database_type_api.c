@@ -1,6 +1,5 @@
 #include <Eina.h>
 #include "eolian_database.h"
-#include "eo_definitions.h"
 
 EAPI const Eolian_Type *
 eolian_type_alias_get_by_name(const char *name)
