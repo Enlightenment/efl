@@ -249,9 +249,9 @@ Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Clas
 
 /* types */
 
-Eina_Bool database_type_add(Eolian_Type *def);
-Eina_Bool database_struct_add(Eolian_Type *tp);
-Eina_Bool database_enum_add(Eolian_Type *tp);
+void database_type_add(Eolian_Type *def);
+void database_struct_add(Eolian_Type *tp);
+void database_enum_add(Eolian_Type *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedef_del(Eolian_Type *tp);
 
@@ -267,7 +267,7 @@ void database_expr_print(Eolian_Expression *expr);
 /* variables */
 
 void database_var_del(Eolian_Variable *var);
-Eina_Bool database_var_add(Eolian_Variable *var);
+void database_var_add(Eolian_Variable *var);
 
 /* classes */
 void database_class_del(Eolian_Class *cl);

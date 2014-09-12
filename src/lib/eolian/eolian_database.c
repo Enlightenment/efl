@@ -201,6 +201,8 @@ database_class_name_validate(const char *class_name, const Eolian_Class **cl)
 EAPI Eina_Bool
 eolian_eot_file_parse(const char *filepath)
 {
+   if (_database_init_count <= 0)
+     return EINA_FALSE;
    return eo_parser_database_fill(filepath, EINA_TRUE);
 }
 
@@ -210,6 +212,10 @@ eolian_eo_file_parse(const char *filepath)
    Eina_Iterator *itr;
    Eina_List *depl;
    Eolian_Dependency *dep;
+
+   if (_database_init_count <= 0)
+     return EINA_FALSE;
+
    char *bfiledup = strdup(filepath);
    char *bfilename = basename(bfiledup);
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
@@ -317,6 +323,10 @@ EAPI Eina_Bool
 eolian_all_eot_files_parse()
 {
    Eina_Bool ret = EINA_TRUE;
+
+   if (_database_init_count <= 0)
+     return EINA_FALSE;
+
    eina_hash_foreach(_tfilenames, _tfile_parse, &ret);
    return ret;
 }
@@ -332,6 +342,10 @@ EAPI Eina_Bool
 eolian_all_eo_files_parse()
 {
    Eina_Bool ret = EINA_TRUE;
+
+   if (_database_init_count <= 0)
+     return EINA_FALSE;
+
    eina_hash_foreach(_filenames, _file_parse, &ret);
    return ret;
 }
@@ -339,5 +353,8 @@ eolian_all_eo_files_parse()
 EAPI Eina_Bool
 eolian_database_validate(void)
 {
+   if (_database_init_count <= 0)
+     return EINA_FALSE;
+
    return database_validate();
 }

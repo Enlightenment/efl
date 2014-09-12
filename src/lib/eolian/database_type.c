@@ -41,32 +41,28 @@ database_typedef_del(Eolian_Type *tp)
    database_type_del(tp);
 }
 
-Eina_Bool
+void
 database_type_add(Eolian_Type *def)
 {
-   if (!_aliases) return EINA_FALSE;
    eina_hash_set(_aliases, def->full_name, def);
    eina_hash_set(_aliasesf, def->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_aliasesf, def->base.file), def));
-   return EINA_TRUE;
 }
 
-Eina_Bool database_struct_add(Eolian_Type *tp)
+void
+database_struct_add(Eolian_Type *tp)
 {
-   if (!_structs) return EINA_FALSE;
    eina_hash_set(_structs, tp->full_name, tp);
    eina_hash_set(_structsf, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_structsf, tp->base.file), tp));
-   return EINA_TRUE;
 }
 
-Eina_Bool database_enum_add(Eolian_Type *tp)
+void
+database_enum_add(Eolian_Type *tp)
 {
-   if (!_enums) return EINA_FALSE;
    eina_hash_set(_enums, tp->full_name, tp);
    eina_hash_set(_enumsf, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_enumsf, tp->base.file), tp));
-   return EINA_TRUE;
 }
 
 static void
