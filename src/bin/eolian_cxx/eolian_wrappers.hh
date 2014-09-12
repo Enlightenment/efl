@@ -407,6 +407,64 @@ event_list(Eolian_Class const& klass)
    return events;
 }
 
+inline efl::eina::iterator<const Eolian_Implement>
+implements_get(Eolian_Class const& cls)
+{
+   Eina_Iterator *itr = ::eolian_class_implements_get(&cls);
+   return itr
+     ? efl::eina::iterator<const Eolian_Implement>(itr)
+     : efl::eina::iterator<const Eolian_Implement>();
+}
+
+inline bool
+implement_is_property_get(Eolian_Implement const& impl)
+{
+   return ::eolian_implement_is_prop_get(&impl);
+}
+
+inline bool
+implement_is_property_set(Eolian_Implement const& impl)
+{
+   return ::eolian_implement_is_prop_set(&impl);
+}
+
+inline bool
+implement_is_property(Eolian_Implement const& impl)
+{
+   return implement_is_property_get(impl) ||
+     implement_is_property_set(impl);
+}
+
+inline Eolian_Function const*
+implement_function(Eolian_Implement const& impl)
+{
+   return ::eolian_implement_function_get(&impl, nullptr);
+}
+
+inline Eolian_Class const*
+implement_class(Eolian_Implement const& impl)
+{
+   return ::eolian_implement_class_get(&impl);
+}
+
+// XXX This function shouldn't exist. Eolian should provide some way
+//     to determine if a method is a destructor.
+inline bool
+implement_is_destructor(Eolian_Implement const& impl)
+{
+   return !safe_str
+     (::eolian_implement_full_name_get(&impl)).compare("Eo.Base.destructor");
+}
+
+inline bool
+implement_is_visible(Eolian_Implement const& impl)
+{
+   return function_is_visible(*implement_function(impl)) &&
+     !::eolian_implement_is_virtual(&impl) &&
+     !::eolian_implement_is_empty(&impl) &&
+     !implement_is_destructor(impl);
+}
+
 }
 
 #endif // EOLIAN_CXX_EOLIAN_WRAPPERS_HH
