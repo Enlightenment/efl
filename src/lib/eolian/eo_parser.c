@@ -1348,7 +1348,7 @@ parse_property(Eo_Lexer *ls)
    prop->base.file = eina_stringshare_ref(ls->filename);
    prop->base.line = ls->line_number;
    prop->base.column = ls->column;
-   ls->tmp.func = prop;
+   ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties, prop);
    check(ls, TOK_VALUE);
    prop->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
@@ -1422,7 +1422,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    meth->base.file = eina_stringshare_ref(ls->filename);
    meth->base.line = ls->line_number;
    meth->base.column = ls->column;
-   ls->tmp.func = meth;
+   ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods, meth);
    if (ctor)
      {
         if (ls->t.token != TOK_VALUE)
@@ -1545,7 +1545,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
    impl->base.file = eina_stringshare_ref(ls->filename);
    impl->base.line = iline;
    impl->base.column = icol;
-   ls->tmp.impl = impl;
+   ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
    switch (ls->t.kw)
      {
         case KW_at_virtual:
@@ -1644,7 +1644,7 @@ parse_constructor(Eo_Lexer *ls)
    ctor->base.file = eina_stringshare_ref(ls->filename);
    ctor->base.line = ls->line_number;
    ctor->base.column = ls->column;
-   ls->tmp.ctor = ctor;
+   ls->tmp.kls->constructors = eina_list_append(ls->tmp.kls->constructors, ctor);
    if (ls->t.token == '.')
      {
         check_next(ls, '.');
@@ -1685,7 +1685,7 @@ parse_event(Eo_Lexer *ls)
    ev->base.line = ls->line_number;
    ev->base.column = ls->column;
    Eina_Strbuf *buf = push_strbuf(ls);
-   ls->tmp.event = ev;
+   ls->tmp.kls->events = eina_list_append(ls->tmp.kls->events, ev);
    check(ls, TOK_VALUE);
    eina_strbuf_append(buf, ls->t.value.s);
    eo_lexer_get(ls);
@@ -1727,53 +1727,28 @@ parse_event(Eo_Lexer *ls)
 static void
 parse_methods(Eo_Lexer *ls)
 {
-   PARSE_SECTION
-     {
-        parse_method(ls, EINA_FALSE);
-        ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods,
-                                                ls->tmp.func);
-        ls->tmp.func = NULL;
-     }
+   PARSE_SECTION parse_method(ls, EINA_FALSE);
    check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_properties(Eo_Lexer *ls)
 {
-   PARSE_SECTION
-     {
-        parse_property(ls);
-        ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties,
-                                                   ls->tmp.func);
-        ls->tmp.func = NULL;
-     }
+   PARSE_SECTION parse_property(ls);
    check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
-   PARSE_SECTION
-     {
-        parse_implement(ls, iface);
-        if (ls->tmp.impl)
-          ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements,
-                                                     ls->tmp.impl);
-        ls->tmp.impl = NULL;
-     }
+   PARSE_SECTION parse_implement(ls, iface);
    check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_constructors(Eo_Lexer *ls)
 {
-   PARSE_SECTION
-     {
-        parse_constructor(ls);
-        ls->tmp.kls->constructors = eina_list_append(ls->tmp.kls->constructors,
-                                                     ls->tmp.ctor);
-        ls->tmp.ctor = NULL;
-     }
+   PARSE_SECTION parse_constructor(ls);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1787,12 +1762,7 @@ parse_events(Eo_Lexer *ls)
    check(ls, '{');
    eo_lexer_get(ls);
    while (ls->t.token != '}')
-     {
-        parse_event(ls);
-        ls->tmp.kls->events = eina_list_append(ls->tmp.kls->events,
-                                               ls->tmp.event);
-        ls->tmp.event = NULL;
-     }
+     parse_event(ls);
    check_match(ls, '}', '{', line, col);
 }
 

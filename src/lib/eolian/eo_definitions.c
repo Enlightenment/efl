@@ -31,23 +31,11 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    EINA_LIST_FREE(tmp->var_defs, var)
      database_var_del(var);
 
-   if (tmp->func)
-     database_function_del(tmp->func);
-
    if (tmp->param)
      database_parameter_del(tmp->param);
 
    EINA_LIST_FREE(tmp->str_items, s)
      if (s) eina_stringshare_del(s);
-
-   if (tmp->event)
-     database_event_del(tmp->event);
-
-   if (tmp->impl)
-     database_implement_del(tmp->impl);
-
-   if (tmp->ctor)
-     database_constructor_del(tmp->ctor);
 
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);

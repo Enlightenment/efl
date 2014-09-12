@@ -17,12 +17,8 @@ typedef struct _Eo_Lexer_Temps
    Eolian_Class *kls;
    Eina_List *type_defs;
    Eina_List *var_defs;
-   Eolian_Function *func;
    Eolian_Function_Parameter *param;
    Eina_List *str_items;
-   Eolian_Event *event;
-   Eolian_Implement *impl;
-   Eolian_Constructor *ctor;
    Eina_List *expr_defs;
    Eina_List *strs;
 } Eo_Lexer_Temps;
