@@ -25,10 +25,6 @@ getter_t const getter = {};
 struct method_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_METHOD; };
 method_t const method = {};
 
-/* fixme */
-struct ctor_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_METHOD; };
-ctor_t const ctor = {};
-
 inline const Eolian_Class*
 class_from_file(std::string const& file)
 {
@@ -156,30 +152,22 @@ class_namespace_full(Eolian_Class const& klass)
    return safe_lower(s);
 }
 
-/* proxy struct for neater iteration */
-template<typename T>
-struct iterator_iterator
-{
-   iterator_iterator(Eina_Iterator *iter): p_iter(iter) {}
-
-   efl::eina::iterator<T> begin()
-   {
-      return efl::eina::iterator<T>(p_iter);
-   }
-
-   efl::eina::iterator<T> end()
-   {
-      return efl::eina::iterator<T>();
-   }
-
-private:
-   Eina_Iterator *p_iter;
-};
-
-inline iterator_iterator<const Eolian_Class>
+inline efl::eina::iterator<const Eolian_Class>
 class_list_all()
 {
-   return iterator_iterator<const Eolian_Class>(::eolian_all_classes_get());
+   return efl::eina::iterator<const Eolian_Class>(::eolian_all_classes_get());
+}
+
+
+
+
+inline efl::eina::iterator<const Eolian_Function>
+functions_get(Eolian_Class const& cls)
+{
+   Eina_Iterator *itr = ::eolian_class_functions_get(&cls, EOLIAN_METHOD); // XXX
+   return itr
+     ? efl::eina::iterator<const Eolian_Function>(itr)
+     : efl::eina::iterator<const Eolian_Function>();
 }
 
 inline std::string
@@ -236,9 +224,9 @@ function_return_type(Eolian_Function const& func, ctor_t func_type)
 inline bool
 function_return_is_explicit_void(Eolian_Function const& func, getter_t func_type)
 {
-   // XXX This function shouldn't be necessary. Eolian database should
-   //     forge functions as desired and the bindings generator shouldn't
-   //     be required to convert and understand this.
+   // XXX This function shouldn't exist. Eolian should
+   //     forge functions a priori. Bindings generators
+   //     shouldn't be required to convert such thing.
    Eolian_Type const* type =
      ::eolian_function_return_type_get(&func, func_type.value);
    return !!type && type->type == EOLIAN_TYPE_VOID;
