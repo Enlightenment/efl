@@ -198,6 +198,34 @@ function_type(Eolian_Function const& func)
          : efl::eolian::eo_function::regular_
          ;
 }
+
+inline bool
+function_is_constructor(Eolian_Class const& cls, Eolian_Function const& func)
+{
+   return ::eolian_function_is_constructor(&func, &cls);
+}
+
+inline bool
+function_is_visible(Eolian_Function const& func, Eolian_Function_Type func_type)
+{
+   return (::eolian_function_scope_get(&func) == EOLIAN_SCOPE_PUBLIC &&
+           ! ::eolian_function_is_legacy_only(&func, func_type));
+}
+
+inline bool
+function_is_visible(Eolian_Function const& func, method_t)
+{
+   return (::eolian_function_scope_get(&func) == EOLIAN_SCOPE_PUBLIC &&
+           ! ::eolian_function_is_legacy_only(&func, method_t::value));
+}
+
+inline bool
+function_is_visible(Eolian_Function const& func)
+{
+   return (::eolian_function_scope_get(&func) == EOLIAN_SCOPE_PUBLIC &&
+           ! ::eolian_function_is_legacy_only(&func, function_op_type(func)));
+}
+
 inline bool
 function_is_visible(Eolian_Constructor const& ctor_)
 {
