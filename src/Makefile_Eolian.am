@@ -71,6 +71,34 @@ include Makefile_Eolian_Helper.am
 ### Unit tests
 
 if EFL_ENABLE_TESTS
+
+EOLIAN_TESTS_EOS = \
+tests/eolian/data/base.eo \
+tests/eolian/data/class_simple.eo \
+tests/eolian/data/scope.eo \
+tests/eolian/data/ctor_dtor.eo \
+tests/eolian/data/complex_type.eo \
+tests/eolian/data/typedef.eo \
+tests/eolian/data/object_impl.eo \
+tests/eolian/data/object_impl_add.eo \
+tests/eolian/data/consts.eo \
+tests/eolian/data/override.eo \
+tests/eolian/data/events.eo \
+tests/eolian/data/extern.eo \
+tests/eolian/data/struct.eo \
+tests/eolian/data/var.eo \
+tests/eolian/data/class_funcs.eo \
+tests/eolian/data/enum.eo \
+tests/eolian/data/free_func.eo \
+tests/eolian/data/nmsp1_class1.eo \
+tests/eolian/data/nmsp1_nmsp11_class2.eo \
+tests/eolian/data/nmsp2_class1.eo \
+tests/eolian/data/no_nmsp.eo
+
+EOLIAN_TESTS_EOS_GENERATED = \
+$(EOLIAN_TESTS_EOS:%.eo=%.eo.c)\
+$(EOLIAN_TESTS_EOS:%.eo=%.eo.h)
+
 check_PROGRAMS += \
 tests/eolian/eolian_suite
 
@@ -94,30 +122,10 @@ tests_eolian_eolian_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST += \
-tests/eolian/data/base.eo \
-tests/eolian/data/class_simple.eo \
-tests/eolian/data/scope.eo \
-tests/eolian/data/ctor_dtor.eo \
-tests/eolian/data/complex_type.eo \
-tests/eolian/data/typedef.eo \
-tests/eolian/data/object_impl.eo \
 tests/eolian/data/object_impl_ref.c \
-tests/eolian/data/object_impl_add.eo \
 tests/eolian/data/object_impl_add_ref.c \
-tests/eolian/data/consts.eo \
-tests/eolian/data/override.eo \
-tests/eolian/data/events.eo \
-tests/eolian/data/extern.eo \
-tests/eolian/data/struct.eo \
-tests/eolian/data/var.eo \
-tests/eolian/data/class_funcs.eo \
-tests/eolian/data/enum.eo \
-tests/eolian/data/free_func.eo \
 tests/eolian/data/typedef_ref.c \
 tests/eolian/data/struct_ref.c \
 tests/eolian/data/class_simple_ref.c \
 tests/eolian/data/override_ref.c \
-tests/eolian/data/nmsp1_class1.eo \
-tests/eolian/data/nmsp1_nmsp11_class2.eo \
-tests/eolian/data/nmsp2_class1.eo \
-tests/eolian/data/no_nmsp.eo
+$(EOLIAN_TESTS_EOS)
