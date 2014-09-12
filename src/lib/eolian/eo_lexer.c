@@ -720,9 +720,6 @@ _temps_free(Eo_Lexer_Temps *tmp)
    EINA_LIST_FREE(tmp->type_defs, tp)
      database_type_del(tp);
 
-   EINA_LIST_FREE(tmp->str_items, s)
-     if (s) eina_stringshare_del(s);
-
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);
 

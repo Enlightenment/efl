@@ -176,22 +176,20 @@ parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
    return buf;
 }
 
-static Eina_List *
-parse_name_list(Eo_Lexer *ls)
+static void
+parse_name_list(Eo_Lexer *ls, Eina_List **out)
 {
    Eina_Strbuf *buf = push_strbuf(ls);
-   ls->tmp.str_items = NULL;
    parse_name(ls, buf);
-   ls->tmp.str_items = eina_list_append(ls->tmp.str_items,
+   *out = eina_list_append(*out,
        eina_stringshare_add(eina_strbuf_string_get(buf)));
    while (test_next(ls, ','))
      {
         parse_name(ls, buf);
-        ls->tmp.str_items = eina_list_append(ls->tmp.str_items,
-           eina_stringshare_add(eina_strbuf_string_get(buf)));
+        *out = eina_list_append(*out,
+            eina_stringshare_add(eina_strbuf_string_get(buf)));
      }
    pop_strbuf(ls);
-   return ls->tmp.str_items;
 }
 
 #define NAMESPACE_PARSE(def, dname) \
@@ -1853,10 +1851,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         col = ls->column;
         check_next(ls, '(');
         if (ls->t.token != ')')
-          {
-             ls->tmp.kls->inherits = parse_name_list(ls);
-             ls->tmp.str_items = NULL;
-          }
+          parse_name_list(ls, &ls->tmp.kls->inherits);
         check_match(ls, ')', '(', line, col);
      }
    line = ls->line_number;
