@@ -153,8 +153,12 @@ class_list_all()
    return efl::eina::iterator<const Eolian_Class>(::eolian_all_classes_get());
 }
 
-
-
+inline Eolian_Function const&
+constructor_function(Eolian_Constructor const& ctor)
+{
+   assert(!!::eolian_constructor_function_get(&ctor));
+   return * ::eolian_constructor_function_get(&ctor);
+}
 
 inline efl::eina::iterator<const Eolian_Function>
 functions_get(Eolian_Class const& cls)
@@ -194,6 +198,17 @@ function_type(Eolian_Function const& func)
          : efl::eolian::eo_function::regular_
          ;
 }
+inline bool
+function_is_visible(Eolian_Constructor const& ctor_)
+{
+   Eolian_Function const* func = ::eolian_constructor_function_get(&ctor_);
+   Eolian_Class const* cls = ::eolian_constructor_class_get(&ctor_);
+   assert(::eolian_class_ctor_enable_get(cls));
+   assert(!!cls);
+   assert(!!func);
+   return function_is_visible(*func, method_t::value);
+}
+
 inline efl::eolian::eolian_type_instance
 function_return_type(Eolian_Function const& func, Eolian_Function_Type func_type = method_t::value)
 {
