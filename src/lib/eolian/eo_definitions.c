@@ -19,9 +19,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
    EINA_LIST_FREE(tmp->params, par)
      database_parameter_del(par);
 
-   if (tmp->legacy_def)
-     eina_stringshare_del(tmp->legacy_def);
-
    if (tmp->kls)
      database_class_del(tmp->kls);
 
@@ -30,9 +27,6 @@ eo_definitions_temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->var_defs, var)
      database_var_del(var);
-
-   if (tmp->param)
-     database_parameter_del(tmp->param);
 
    EINA_LIST_FREE(tmp->str_items, s)
      if (s) eina_stringshare_del(s);

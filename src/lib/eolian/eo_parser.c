@@ -1142,7 +1142,7 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
    par->base.file = eina_stringshare_ref(ls->filename);
    par->base.line = ls->line_number;
    par->base.column = ls->column;
-   ls->tmp.param = par;
+   ls->tmp.params = eina_list_append(ls->tmp.params, par);
    if (allow_inout)
      {
         if (ls->t.kw == KW_at_in)
@@ -1209,12 +1209,12 @@ parse_param(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
 }
 
 static void
-parse_legacy(Eo_Lexer *ls)
+parse_legacy(Eo_Lexer *ls, const char **out)
 {
    eo_lexer_get(ls);
    check_next(ls, ':');
    check(ls, TOK_VALUE);
-   ls->tmp.legacy_def = eina_stringshare_ref(ls->t.value.s);
+   *out = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, ';');
 }
@@ -1285,12 +1285,10 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
-        parse_legacy(ls);
         if (is_get)
-          prop->get_legacy = ls->tmp.legacy_def;
+          parse_legacy(ls, &prop->get_legacy);
         else
-          prop->set_legacy = ls->tmp.legacy_def;
-        ls->tmp.legacy_def = NULL;
+          parse_legacy(ls, &prop->set_legacy);
         break;
       case KW_eo:
         CASE_LOCK(ls, eo, "eo name")
@@ -1313,12 +1311,7 @@ end:
 static void
 parse_params(Eo_Lexer *ls, Eina_Bool allow_inout, Eina_Bool is_vals)
 {
-   PARSE_SECTION
-     {
-        parse_param(ls, allow_inout, is_vals);
-        ls->tmp.params = eina_list_append(ls->tmp.params, ls->tmp.param);
-        ls->tmp.param = NULL;
-     }
+   PARSE_SECTION parse_param(ls, allow_inout, is_vals);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1490,9 +1483,7 @@ body:
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
-        parse_legacy(ls);
-        meth->get_legacy = ls->tmp.legacy_def;
-        ls->tmp.legacy_def = NULL;
+        parse_legacy(ls, &meth->get_legacy);
         break;
       case KW_eo:
         CASE_LOCK(ls, eo, "eo name")

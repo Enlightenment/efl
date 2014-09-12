@@ -13,11 +13,9 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *classes;
    Eina_List *str_bufs;
    Eina_List *params;
-   Eina_Stringshare *legacy_def;
    Eolian_Class *kls;
    Eina_List *type_defs;
    Eina_List *var_defs;
-   Eolian_Function_Parameter *param;
    Eina_List *str_items;
    Eina_List *expr_defs;
    Eina_List *strs;
