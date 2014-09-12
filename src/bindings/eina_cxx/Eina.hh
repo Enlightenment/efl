@@ -1,6 +1,12 @@
 #ifndef EINA_HH_
 #define EINA_HH_
 
+#if defined ( EFL_CXX_NO_EXCEPTIONS )
+# define EFL_CXX_THROW(x)    std::abort()
+#else
+# define EFL_CXX_THROW(x)    throw (x)
+#endif
+
 /**
  * @file
  * @brief Eina C++

@@ -238,9 +238,9 @@ inline void throw_on_error()
 {
   eina::error_code ec = get_error_code();
   if(ec)
-  {
-    throw eina::system_error(ec, "EFL Eina Error");
-  }
+    {
+       EFL_CXX_THROW(eina::system_error(ec, "EFL Eina Error"));
+    }
 }
 
 /**

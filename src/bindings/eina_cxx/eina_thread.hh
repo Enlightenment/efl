@@ -88,10 +88,10 @@ struct mutex
       case EINA_LOCK_SUCCEED:
         return;
       case EINA_LOCK_DEADLOCK:
-        throw system_error(error_code(int(eina::errc::resource_deadlock_would_occur)
-                                      , get_generic_category()));
+        EFL_CXX_THROW(system_error(error_code(int(eina::errc::resource_deadlock_would_occur), 
+                                              get_generic_category())));
       default:
-        throw system_error(get_error_code());
+        EFL_CXX_THROW(system_error(get_error_code()));
       }
   }
 
@@ -118,10 +118,10 @@ struct mutex
       case EINA_LOCK_FAIL:
         return false;
       case EINA_LOCK_DEADLOCK:
-        throw system_error(error_code(int(eina::errc::resource_deadlock_would_occur)
-                                      , get_generic_category()));
+        EFL_CXX_THROW(system_error(error_code(int(eina::errc::resource_deadlock_would_occur), 
+                                              get_generic_category())));
       default:
-        throw system_error(get_error_code());
+        EFL_CXX_THROW(system_error(get_error_code()));
       }
   }
 
@@ -147,10 +147,10 @@ struct mutex
       case EINA_LOCK_SUCCEED:
         return;
       case EINA_LOCK_DEADLOCK:
-        throw system_error(error_code(int(eina::errc::resource_deadlock_would_occur)
-                                      , get_generic_category()));
+        EFL_CXX_THROW(system_error(error_code(int(eina::errc::resource_deadlock_would_occur),
+                                              get_generic_category())));
       default:
-        throw system_error(get_error_code());
+        EFL_CXX_THROW(system_error(get_error_code()));
       }
   }
 
@@ -266,7 +266,9 @@ struct condition_variable
     eina::unique_lock<eina::mutex> l(_mutex);
     Eina_Bool r = eina_condition_signal(&_cond);
     if(!r)
-      throw eina::system_error(eina::get_error_code());
+      {
+         EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
+      }
   }
 
   /**
@@ -282,7 +284,9 @@ struct condition_variable
     eina::unique_lock<eina::mutex> l(_mutex);
     Eina_Bool r = eina_condition_broadcast(&_cond);
     if(!r)
-      throw eina::system_error(eina::get_error_code());
+      {
+         EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
+      }
   }
 
   /**

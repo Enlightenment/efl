@@ -384,7 +384,7 @@ struct stringshare
     if(i < size())
       return (*this)[i];
     else
-      throw std::out_of_range("");
+       EFL_CXX_THROW(std::out_of_range(""));
   }
 
   /**

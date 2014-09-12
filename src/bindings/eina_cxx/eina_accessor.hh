@@ -90,7 +90,7 @@ struct accessor
     eina_accessor_free(_impl);
     _impl = eina_accessor_clone(other._impl);
     if(!_impl)
-      throw eina::system_error(efl::eina::get_error_code(), "Error cloning accessor");
+       EFL_CXX_THROW(eina::system_error(efl::eina::get_error_code(), "Error cloning accessor"));
     return *this;
   }
 
@@ -119,7 +119,7 @@ struct accessor
     if(!eina_accessor_data_get(_impl, i, &p))
       {
         eina::error_code ec = efl::eina::get_error_code();
-        throw eina::system_error(ec, "EFL Eina Error");
+        EFL_CXX_THROW(eina::system_error(ec, "EFL Eina Error"));
       }
     return *static_cast<mapped_type*>(p);
   }

@@ -616,12 +616,12 @@ public:
   {
     Eina_List* new_list = eina_list_append(this->_impl._list, p.get());
     if(new_list)
-    {
-      this->_impl._list = new_list;
-      p.release();
-    }
+      {
+         this->_impl._list = new_list;
+         p.release();
+      }
     else
-      throw std::bad_alloc();
+       EFL_CXX_THROW(std::bad_alloc());
   }
 
   /**
@@ -669,12 +669,12 @@ public:
   {
     Eina_List* new_list = eina_list_prepend(this->_impl._list, p.get());
     if(new_list)
-    {
-      this->_impl._list = new_list;
-      p.release();
-    }
+      {
+         this->_impl._list = new_list;
+         p.release();
+      }
     else
-      throw std::bad_alloc();
+       EFL_CXX_THROW(std::bad_alloc());
   }
 
   /**
@@ -759,7 +759,7 @@ public:
     if(this->_impl._list)
       p.release();
     else
-      throw std::bad_alloc();
+       EFL_CXX_THROW(std::bad_alloc());
     return iterator(this->_impl._list
                     , i.native_handle()
                     ? ::eina_list_prev(i.native_handle())
