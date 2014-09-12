@@ -118,6 +118,7 @@ TESTS += tests/eolian/eolian_suite
 
 tests_eolian_eolian_suite_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
 tests_eolian_eolian_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+tests_eolian_eolian_suite.$(OBJEXT): $(EOLIAN_TESTS_EOS_GENERATED)
 
 endif
 
