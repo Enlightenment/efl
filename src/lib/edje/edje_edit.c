@@ -8117,6 +8117,44 @@ edje_edit_program_stop_all(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
+edje_edit_program_transition_state_set(Evas_Object *obj, const char *prog, double position)
+{
+   Edje_Program_Target *pt;
+   Edje_Real_Part *rp;
+   Eina_List *l;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+   if (position < 0 || position > 1) return EINA_FALSE;
+   if (epr->action != EDJE_ACTION_TYPE_STATE_SET) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(epr->targets, l, pt)
+     {
+        if (pt->id >= 0)
+          {
+             rp = ed->table_parts[pt->id % ed->table_parts_size];
+             if (rp)
+               {
+                  _edje_part_description_apply(ed, rp,
+                                               rp->param1.description->state.name,
+                                               rp->param1.description->state.value,
+                                               epr->state,
+                                               epr->value);
+                  _edje_part_pos_set(ed, rp,
+                                     epr->tween.mode, position,
+                                     epr->tween.v1,
+                                     epr->tween.v2,
+                                     epr->tween.v3,
+                                     epr->tween.v4);
+               }
+          }
+     }
+   _edje_recalc(ed);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_name)
 {
    GET_EED_OR_RETURN(EINA_FALSE);

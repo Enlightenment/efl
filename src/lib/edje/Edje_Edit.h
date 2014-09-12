@@ -5444,6 +5444,18 @@ EAPI Eina_Bool edje_edit_program_run(Evas_Object *obj, const char *prog);
  */
 EAPI Eina_Bool edje_edit_program_stop_all(Evas_Object *obj);
 
+/** Set parts into intermediate state of programs transition.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to use. Program should have action STATE_SET.
+ * @param pos State of transition to be setted. Value from 0.0 to 1.0.
+ * 0.0 represents the start state, 1.0 - the final state. Other values will set
+ * parts to an intermediate state taking into account programs transition type.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_transition_state_set(Evas_Object *obj, const char *prog, double pos);
+
 /** Set a new name for the given program
  *
  * @param obj Object being edited.
