@@ -241,10 +241,12 @@ EAPI void inherit_constructor(void* this_, Args args)
      op = _eo_api_op_id_get
        (reinterpret_cast<void*>
         (static_cast<void(*)(void*, Args)>(&detail::inherit_constructor<Args, E...>)),
-        __FILE__, __LINE__);
-   if (!_eo_call_resolve("detail::inherit_constructor", op, &call, __FILE__, __LINE__))
+        ::eina_main_loop_is(), __FILE__, __LINE__);
+   if (!_eo_call_resolve("detail::inherit_constructor", op, &call,
+                         ::eina_main_loop_is(), __FILE__, __LINE__))
      {
-        assert(_eo_call_resolve("detail::inherit_constructor", op, &call, __FILE__, __LINE__));
+        assert(_eo_call_resolve("detail::inherit_constructor", op, &call,
+                                ::eina_main_loop_is(), __FILE__, __LINE__));
         return;
      }
    func_t func = (func_t) call.func;
