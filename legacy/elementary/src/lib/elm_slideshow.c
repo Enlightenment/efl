@@ -411,7 +411,7 @@ _elm_slideshow_item_add(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Slideshow_Ite
 
    item->itc = itc;
    item->l = eina_list_append(item->l, eo_item);
-   eo_do(eo_item, elm_wdg_item_data_set(data));
+   WIDGET_ITEM_DATA_SET(eo_item, data);
 
    sd->items = eina_list_merge(sd->items, item->l);
 
@@ -432,7 +432,7 @@ _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Sli
 
    item->itc = itc;
    item->l = eina_list_append(item->l, eo_item);
-   eo_do(eo_item, elm_wdg_item_data_set(data));
+   WIDGET_ITEM_DATA_SET(eo_item, data);
 
    sd->items = eina_list_sorted_merge(sd->items, item->l, func);
 

@@ -208,7 +208,7 @@ _elm_toolbar_item_menu_cb(void *data,
 {
    Elm_Toolbar_Item_Data *it = data;
 
-   if (it->func) it->func((void *)(it->base->data), WIDGET(it), EO_OBJ(it));
+   if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
 }
 
 static void
@@ -1111,7 +1111,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
 
    if ((!sel) || (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
      {
-        if (it->func) it->func((void *)(it->base->data), WIDGET(it), EO_OBJ(it));
+        if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
      }
    evas_object_smart_callback_call(obj, SIG_CLICKED, EO_OBJ(it));
    evas_object_smart_callback_call(obj, SIG_SELECTED, EO_OBJ(it));
@@ -2323,7 +2323,7 @@ _item_new(Evas_Object *obj,
    it->func = func;
    it->separator = EINA_FALSE;
    it->object = NULL;
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
    evas_object_data_set(VIEW(it), "item", it);
@@ -3491,7 +3491,7 @@ _elm_toolbar_item_menu_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item)
 }
 
 EOLIAN static Elm_Toolbar_Item_State *
-_elm_toolbar_item_state_add(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
+_elm_toolbar_item_state_add(Eo *eo_item, Elm_Toolbar_Item_Data *item,
                            const char *icon,
                            const char *label,
                            Evas_Smart_Cb func,
@@ -3510,7 +3510,7 @@ _elm_toolbar_item_state_add(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item
      {
         it_state = _item_state_new
             (item->label, item->icon_str, item->icon, item->func,
-            item->base->data);
+            WIDGET_ITEM_DATA_GET(EO_OBJ(item)));
         item->states = eina_list_append(item->states, it_state);
         item->current_state = item->states;
      }
@@ -3528,7 +3528,7 @@ _elm_toolbar_item_state_add(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item
    it_state = _item_state_new(label, icon, icon_obj, func, data);
    item->states = eina_list_append(item->states, it_state);
    item->func = _elm_toolbar_item_state_cb;
-   item->base->data = NULL;
+   WIDGET_ITEM_DATA_SET(eo_item, NULL);
 
    return it_state;
 
@@ -3544,7 +3544,7 @@ error_state_add:
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_item_state_del(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
+_elm_toolbar_item_state_del(Eo *eo_item, Elm_Toolbar_Item_Data *item,
                            Elm_Toolbar_Item_State *state)
 {
    Elm_Toolbar_Item_State *it_state;
@@ -3570,7 +3570,7 @@ _elm_toolbar_item_state_del(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item
    if (item->states && !eina_list_next(item->states))
      {
         it_state = eina_list_data_get(item->states);
-        item->base->data = it_state->data;
+        WIDGET_ITEM_DATA_SET(eo_item, it_state->data);
         item->func = it_state->func;
         eina_stringshare_del(it_state->label);
         eina_stringshare_del(it_state->icon_str);

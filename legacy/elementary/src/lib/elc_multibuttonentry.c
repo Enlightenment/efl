@@ -701,8 +701,9 @@ _button_item_add(Elm_Multibuttonentry_Data *sd,
    evas_object_show(btn);
 
    // append item list
-   eo_item = eo_add(ELM_MULTIBUTTONENTRY_ITEM_CLASS, obj, elm_wdg_item_data_set(data));
+   eo_item = eo_add(ELM_MULTIBUTTONENTRY_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
+   WIDGET_ITEM_DATA_SET(eo_item, data);
 
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
 
@@ -1829,14 +1830,14 @@ _elm_multibuttonentry_item_next_get(Eo *eo_it,
 EINA_DEPRECATED EAPI void *
 elm_multibuttonentry_item_data_get(const Elm_Object_Item *it)
 {
-   return eo_do(it, elm_wdg_item_data_get());
+   return (void *)WIDGET_ITEM_DATA_GET(it);
 }
 
 EINA_DEPRECATED EAPI void
 elm_multibuttonentry_item_data_set(Elm_Object_Item *it,
                                    void *data)
 {
-   eo_do(it, elm_wdg_item_data_set(data));
+   WIDGET_ITEM_DATA_SET(it, data);
 }
 
 EOLIAN static void

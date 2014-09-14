@@ -3,27 +3,6 @@ class Elm_Widget_Item(Eo.Base)
       eo_prefix: elm_wdg_item;
       legacy_prefix: elm_object_item;
       properties {
-           data {
-                get {
-                     /**
-                       Get the data associated with an object item
-
-                       @note Every elm_object_item supports this API
-                       @ingroup General
-                      */
-                }
-                set {
-                     /**
-                       Set the data associated with an object item
-
-                       @note Every elm_object_item supports this API
-                       @ingroup General
-                      */
-                }
-                values {
-                     void *data @const_set; /*@ The data associated with the item */
-                }
-           }
            tooltip_window_mode {
                 get {
                      /**

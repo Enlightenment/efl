@@ -105,7 +105,7 @@ _on_item_clicked(void *data,
    Elm_Hoversel_Item_Data *item = data;
    Evas_Object *obj2 = WIDGET(item);
 
-   if (item->func) item->func((void *)item->base->data, obj2, EO_OBJ(item));
+   if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(item)), obj2, EO_OBJ(item));
    evas_object_smart_callback_call(obj2, SIG_SELECTED, EO_OBJ(item));
    elm_hoversel_hover_end(obj2);
 }
@@ -470,7 +470,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
    item->icon_file = eina_stringshare_add(icon_file);
    item->icon_type = icon_type;
    item->func = func;
-   item->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(item), data);
 
    sd->items = eina_list_append(sd->items, eo_item);
 

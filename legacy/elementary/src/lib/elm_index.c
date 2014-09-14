@@ -459,7 +459,7 @@ _item_new(Evas_Object *obj,
 
    if (letter) it->letter = eina_stringshare_add(letter);
    it->func = func;
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
    it->level = sd->level;
 
    return eo_item;
@@ -477,7 +477,7 @@ _item_find(Evas_Object *obj,
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
         ELM_INDEX_ITEM_DATA_GET(eo_item, it);
-        if (it->base->data == data) return it;
+        if (WIDGET_ITEM_DATA_GET(EO_OBJ(it)) == data) return it;
      }
    return NULL;
 }
@@ -749,7 +749,7 @@ _on_mouse_up(void *data,
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);
         if (id_item->func)
-          id_item->func((void *)id_item->base->data, WIDGET(id_item), eo_id_item);
+          id_item->func((void *)WIDGET_ITEM_DATA_GET(eo_id_item), WIDGET(id_item), eo_id_item);
      }
    if (!sd->autohide_disabled)
      elm_layout_signal_emit(data, "elm,state,inactive", "elm");
@@ -1334,10 +1334,9 @@ _elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, E
         else
           {
              Elm_Object_Item *eo_p_it = eina_list_data_get(lnear);
-             ELM_INDEX_ITEM_DATA_GET(eo_p_it, p_it);
-             ELM_INDEX_ITEM_DATA_GET(eo_item, it);
-             if (cmp_data_func(p_it->base->data, it->base->data) >= 0)
-               p_it->base->data = it->base->data;
+             const void *item_data = WIDGET_ITEM_DATA_GET(eo_item);
+             if (cmp_data_func(WIDGET_ITEM_DATA_GET(eo_p_it), item_data) >= 0)
+               WIDGET_ITEM_DATA_SET(eo_p_it, item_data);
              eo_do(eo_item, elm_wdg_item_del());
              eo_item = NULL;
           }

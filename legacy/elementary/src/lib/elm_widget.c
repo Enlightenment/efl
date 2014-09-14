@@ -4292,47 +4292,17 @@ _elm_widget_item_widget_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
    return item->widget;
 }
 
-/**
- * @internal
- *
- * Set user-data in this item.
- *
- * User data may be used to identify this item or just store any
- * application data. It is automatically given as the first parameter
- * of the deletion notify callback.
- *
- * @param item a valid #Elm_Widget_Item to store data in.
- * @param data user data to store.
- * @see elm_widget_item_del_cb_set() convenience macro.
- * @ingroup Widget
- */
-EOLIAN static void
-_elm_widget_item_data_set(Eo *eo_item EINA_UNUSED,
-                          Elm_Widget_Item_Data *item,
-                          const void *data)
-{
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
 
-   if ((item->data) && (item->data != data))
-     DBG("Replacing item %p data %p with %p", item, item->data, data);
-   item->data = data;
+EAPI void
+elm_object_item_data_set(Elm_Object_Item *it, void *data)
+{
+   WIDGET_ITEM_DATA_SET(it, data);
 }
 
-/**
- * @internal
- *
- * Retrieves user-data of this item.
- *
- * @param item a valid #Elm_Widget_Item to get data from.
- * @see elm_widget_item_data_set()
- * @ingroup Widget
- */
-EOLIAN static void *
-_elm_widget_item_data_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+EAPI void *
+elm_object_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
-   return (void *)item->data;
+   return (void *) WIDGET_ITEM_DATA_GET(it);
 }
 
 EOLIAN static void

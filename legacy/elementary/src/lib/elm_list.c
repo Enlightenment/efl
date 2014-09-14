@@ -1398,7 +1398,7 @@ call:
    evas_object_ref(obj);
    _elm_list_walk(sd);
 
-   if (it->func) it->func((void *)it->base->data, WIDGET(it), EO_OBJ(it));
+   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
    evas_object_smart_callback_call(obj, SIG_SELECTED, EO_OBJ(it));
    sd->last_selected_item = EO_OBJ(it);
 
@@ -2181,7 +2181,7 @@ _item_new(Evas_Object *obj,
    it->icon = icon;
    it->end = end;
    it->func = func;
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 

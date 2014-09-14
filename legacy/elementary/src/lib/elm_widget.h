@@ -574,6 +574,16 @@ struct _Elm_Widget_Item_Signal_Data
    void *data;
 };
 
+#define WIDGET_ITEM_DATA_GET(eo_obj) \
+   ({ \
+    eo_do(eo_obj, eo_key_data_get("__elm_widget_item_data")); \
+    })
+
+#define WIDGET_ITEM_DATA_SET(eo_obj, data) \
+{ \
+    eo_do(eo_obj, eo_key_data_set("__elm_widget_item_data", data, NULL)); \
+}
+
 struct _Elm_Widget_Item_Data
 {
 /* ef1 ~~ efl, el3 ~~ elm */

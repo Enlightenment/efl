@@ -625,7 +625,7 @@ _item_select_cb(void *data,
 
    if (!it || it->disabled) return;
    if (it->func)
-     it->func((void *)it->base->data, WIDGET(it), EO_OBJ(it));
+     it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
 }
 
 static void
@@ -1658,7 +1658,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
      _list_add(obj);
 
    it->func = func;
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
    _item_new(it);
    _item_icon_set(it, icon);

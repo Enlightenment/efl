@@ -57,3 +57,23 @@ typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Objec
 #define elm_object_item_domain_text_translatable_set(it, domain, translatable) elm_object_item_domain_part_text_translatable_set((it), NULL, (domain), (translatable))
 
 #define elm_object_item_text_translatable_set(it, translatable) elm_object_item_domain_part_text_translatable_set((it), NULL, NULL, (translatable))
+
+/**
+ * Get the data associated with an object item
+ * @param it The Elementary object item
+ * @return The data associated with @p it
+ *
+ * @note Every elm_object_item supports this API
+ * @ingroup General
+ */
+EAPI void *elm_object_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * Set the data associated with an object item
+ * @param it The Elementary object item
+ * @param data The data to be associated with @p it
+ *
+ * @note Every elm_object_item supports this API
+ * @ingroup General
+ */
+EAPI void elm_object_item_data_set(Elm_Object_Item *it, void *data);

@@ -87,7 +87,7 @@ _item_select(Elm_Diskselector_Item_Data *it)
    sd->selected_item = it;
    _selected_item_indicate(sd->selected_item);
 
-   if (it->func) it->func((void *)it->base->data, WIDGET(it), EO_OBJ(it));
+   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
    evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, EO_OBJ(it));
 }
 
@@ -585,7 +585,7 @@ _item_click_cb(void *data,
         _selected_item_indicate(sd->selected_item);
      }
 
-   if (it->func) it->func((void *)it->base->data, WIDGET(it), EO_OBJ(it));
+   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
    evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED, EO_OBJ(it));
 }
 
@@ -643,7 +643,7 @@ _item_new(Evas_Object *obj,
 
    it->label = eina_stringshare_add(label);
    it->func = func;
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                elm_widget_style_get(obj));
@@ -1169,7 +1169,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
      {
         sd->first = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
-            it->base->data);
+            WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
         sd->first->node = it->node;
         sd->r_items = eina_list_append(sd->r_items, sd->first);
      }
@@ -1182,7 +1182,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
      {
         sd->second = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
-            it->base->data);
+            WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
         sd->second->node = it->node;
         sd->r_items = eina_list_append(sd->r_items, sd->second);
      }
@@ -1195,7 +1195,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         if (!it) it = dit;
         temp_it = _item_new
             (WIDGET(it), _icon_duplicate
-              (it->icon), it->label, it->func, it->base->data);
+              (it->icon), it->label, it->func, WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
         sd->over_items = eina_list_append(sd->over_items, temp_it);
         sd->r_items = eina_list_append(sd->r_items, temp_it);
      }
@@ -1207,7 +1207,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
      {
         sd->last = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
-            it->base->data);
+            WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
         sd->last->node = it->node;
         sd->r_items = eina_list_prepend(sd->r_items, sd->last);
      }
@@ -1219,7 +1219,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
      {
         sd->s_last = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
-            it->base->data);
+            WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
         sd->s_last->node = it->node;
         sd->r_items = eina_list_prepend(sd->r_items, sd->s_last);
      }
@@ -1231,7 +1231,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         if (!it) it = dit;
         temp_it = _item_new
             (WIDGET(it), _icon_duplicate
-              (it->icon), it->label, it->func, it->base->data);
+              (it->icon), it->label, it->func, WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
         sd->under_items = eina_list_append(sd->under_items, temp_it);
         sd->r_items = eina_list_prepend(sd->r_items, temp_it);
      }

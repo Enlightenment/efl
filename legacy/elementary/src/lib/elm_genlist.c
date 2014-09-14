@@ -281,7 +281,7 @@ _item_text_realize(Elm_Gen_Item *it,
                continue;
 
              char *s = it->itc->func.text_get
-                 ((void *)it->base->data, WIDGET(it), key);
+                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
 
              if (s)
                {
@@ -322,7 +322,7 @@ _item_content_realize(Elm_Gen_Item *it,
 
              if (it->itc->func.content_get)
                ic = it->itc->func.content_get
-                   ((void *)it->base->data, WIDGET(it), key);
+                   ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
              if (ic)
                {
                   res = eina_list_append(res, ic);
@@ -359,7 +359,7 @@ _item_state_realize(Elm_Gen_Item *it,
                continue;
 
              Eina_Bool on = it->itc->func.state_get
-                 ((void *)it->base->data, WIDGET(it), key);
+                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
 
              if (on)
                {
@@ -1492,7 +1492,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
         EINA_LIST_FOREACH(it->texts, l, key)
           {
              char *s = it->itc->func.text_get
-                ((void *)it->base->data, WIDGET(it), key);
+                ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
 
              if (s)
                {
@@ -3386,7 +3386,7 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
      sd->last_selected_item = NULL;
 
    if (it->itc->func.del)
-     it->itc->func.del((void *)it->base->data, WIDGET(it));
+     it->itc->func.del((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it));
 }
 
 static void
@@ -5805,7 +5805,7 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
    elm_genlist_item_class_ref((Elm_Genlist_Item_Class *)itc);
 
    ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
    it->parent = parent;
    it->func.func = func;
    it->func.data = func_data;
@@ -7623,7 +7623,7 @@ _elm_genlist_search_by_text_item_get(Eo *obj EINA_UNUSED,
    EINA_INLIST_FOREACH(start, it)
      {
         if (!it->itc->func.text_get) continue;
-        str = it->itc->func.text_get((void *)it->base->data, WIDGET(it), part_name);
+        str = it->itc->func.text_get((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), part_name);
         if (!str) continue;
         if (!fnmatch(pattern, str, fnflags))
           {

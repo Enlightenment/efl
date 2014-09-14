@@ -451,7 +451,7 @@ void
 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item)
 {
   ELM_MENU_ITEM_DATA_GET(obj_item, item);
-  if (item->func) item->func((void *)(item->base->data), WIDGET(item), obj_item);
+  if (item->func) item->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(item))), WIDGET(item), obj_item);
 }
 
 static void
@@ -469,7 +469,7 @@ _menu_item_select_cb(void *data,
      }
    else _menu_hide(WIDGET(item), NULL, NULL);
 
-   if (item->func) item->func((void *)(item->base->data), WIDGET(item), EO_OBJ(item));
+   if (item->func) item->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(item))), WIDGET(item), EO_OBJ(item));
 }
 
 static void
@@ -911,7 +911,7 @@ _item_clone(Evas_Object *obj,
                                   item->icon_str,
                                   item->label,
                                   item->func,
-                                  item->base->data);
+                                  WIDGET_ITEM_DATA_GET(EO_OBJ(item)));
 
    Eina_Bool disabled = eo_do(eo_item, elm_wdg_item_disabled_get());
    eo_do(new_item, elm_wdg_item_disabled_set(disabled));
@@ -1009,7 +1009,7 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
 
    ELM_MENU_ITEM_DATA_GET(eo_item, it);
 
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
    it->func = func;
    it->parent = eo_data_scope_get(parent, ELM_MENU_ITEM_CLASS);
    it->content = icon_obj;

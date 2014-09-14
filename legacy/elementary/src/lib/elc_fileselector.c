@@ -1089,7 +1089,7 @@ _on_text_activated(void *data,
              Elm_Object_Item *item = elm_genlist_first_item_get(sd->files_view);
              while (item)
                {
-                  const char *item_path = eo_do(item, elm_wdg_item_data_get());
+                  const char *item_path = WIDGET_ITEM_DATA_GET(item);
                   if (!strcmp(item_path, path))
                     {
                        elm_genlist_item_selected_set(item, EINA_TRUE);

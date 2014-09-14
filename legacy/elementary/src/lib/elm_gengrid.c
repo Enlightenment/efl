@@ -143,7 +143,7 @@ _elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
    EINA_INLIST_FOREACH(start, it)
      {
         if (!it->itc->func.text_get) continue;
-        str = it->itc->func.text_get((void *)it->base->data,
+        str = it->itc->func.text_get((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
                                      WIDGET(it), part_name);
         if (!str) continue;
         if (!fnmatch(pattern, str, fnflags))
@@ -764,7 +764,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
         EINA_LIST_FOREACH(it->texts, l, key)
           {
              char *s = it->itc->func.text_get
-                ((void *)it->base->data, WIDGET(it), key);
+                ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
              return s;
           }
      }
@@ -868,7 +868,7 @@ _item_realize(Elm_Gen_Item *it)
         EINA_LIST_FOREACH(it->texts, l, key)
           {
              char *s = it->itc->func.text_get
-                 ((void *)it->base->data, WIDGET(it), key);
+                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
              if (s)
                {
                   edje_object_part_text_escaped_set(VIEW(it), key, s);
@@ -887,7 +887,7 @@ _item_realize(Elm_Gen_Item *it)
             (edje_object_data_get(VIEW(it), "contents"));
         EINA_LIST_FOREACH(it->contents, l, key)
           {
-             ic = it->itc->func.content_get((void *)it->base->data, WIDGET(it), key);
+             ic = it->itc->func.content_get((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
              if (ic)
                {
                   it->content_objs = eina_list_append(it->content_objs, ic);
@@ -908,7 +908,7 @@ _item_realize(Elm_Gen_Item *it)
         EINA_LIST_FOREACH(it->states, l, key)
           {
              Eina_Bool on = it->itc->func.state_get
-                 ((void *)it->base->data, WIDGET(it), l->data);
+                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), l->data);
              if (on)
                {
                   snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
@@ -3163,7 +3163,7 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
      sd->last_focused_item = NULL;
 
    if (it->itc->func.del)
-     it->itc->func.del((void *)it->base->data, WIDGET(it));
+     it->itc->func.del((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it));
 }
 
 static void
@@ -3509,7 +3509,7 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
    it->itc = itc;
    elm_gengrid_item_class_ref((Elm_Gengrid_Item_Class *)itc);
 
-   it->base->data = data;
+   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
    it->parent = NULL;
    it->func.func = func;
    it->func.data = func_data;
