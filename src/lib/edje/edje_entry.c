@@ -3202,7 +3202,7 @@ _edje_entry_input_hint_set(Edje_Real_Part *rp, Edje_Input_Hints input_hints)
    if (!en) return;
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
-     ecore_imf_context_input_hint_set(en->imf_context, input_hints);
+     ecore_imf_context_input_hint_set(en->imf_context, (Ecore_IMF_Input_Hints)input_hints);
 #else
    (void) input_hints;
 #endif
@@ -3219,7 +3219,7 @@ _edje_entry_input_hint_get(const Edje_Real_Part *rp)
    if (!en) return EDJE_INPUT_HINT_NONE;
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
-     return ecore_imf_context_input_hint_get(en->imf_context);
+     return (Edje_Input_Hints)ecore_imf_context_input_hint_get(en->imf_context);
 #endif
 
    return EDJE_INPUT_HINT_NONE;
