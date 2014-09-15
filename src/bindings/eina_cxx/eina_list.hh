@@ -224,6 +224,7 @@ public:
   using _base_type::max_size;
   using _base_type::native_handle;
   using _base_type::accessor;
+  using _base_type::release_native_handle;
 };
 
 template <typename T, typename CloneAllocator>
@@ -295,6 +296,7 @@ public:
   using _base_type::get_clone_allocator;
   using _base_type::pop_back;
   using _base_type::pop_front;
+  using _base_type::release_native_handle;
 
   void push_back(const_reference w)
   {

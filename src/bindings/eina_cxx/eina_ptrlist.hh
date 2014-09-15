@@ -1226,6 +1226,13 @@ public:
    */
   size_type max_size() const { return -1; }
 
+  Eina_List* release_native_handle()
+  {
+    Eina_List* tmp = this->_impl._list;
+    this->_impl._list = 0;
+    return tmp;
+  }
+  
   /**
    * @brief Get a handle for the wrapped @c Eina_List.
    * @return Handle for the native Eina list.

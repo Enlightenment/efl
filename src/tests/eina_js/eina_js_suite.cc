@@ -1,18 +1,33 @@
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <v8.h>
 
 #include <cassert>
 #include <cstdlib>
 
 #include <Eina.h>
+#include <Eina.hh>
+#include <Eo.hh>
+
+#include <eina_js_list.hh>
 
 static const char script[] =
+  "function assert(condition, message) {\n"
+  "  if (!condition) {\n"
+  "      print(\"Assertion failed \", message);\n"
+  "      throw message || \"Assertion failed\";\n"
+  "  }\n"
+  "}\n"
   "print(\"teste\");\n"
-  "var l = new List();\n"
-  "print (l[0]);\n"
-  "print (l.length);\n"
-  "var v = l.concat(new List());\n"
-  "print (v.length);\n"
+  "var l1 = new List(raw_list);\n"
+  "assert (l1.length == 3)\n;\n"
+  "var l2 = new List(raw_list);\n"
+  "assert (l2.length == 3)\n;\n"
+  "var c = l1.concat(l2);\n"
+  "assert (c.length == (l1.length + l2.length));\n"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {
@@ -39,8 +54,9 @@ bool ExecuteString(v8::Isolate* isolate,
   {
     v8::Handle<v8::Value> result = script->Run();
     if (result.IsEmpty()) {
+      std::cout << "Failed with exception thrown" << std::endl;
       assert(try_catch.HasCaught());
-      std::abort();
+      //std::abort();
       // Print errors that happened during execution.
       // if (report_exceptions)
       //   ReportException(isolate, &try_catch);
@@ -80,12 +96,22 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
 
 int main(int argc, char* argv[])
 {
+  efl::eina::eina_init eina_init;
+  efl::eo::eo_init eo_init;
+  
   v8::V8::InitializeICU();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
   v8::HandleScope handle_scope(isolate);
   v8::Handle<v8::Context> context;
+
+  efl::eina::ptr_list<int> list;
+  list.push_back(new int(5));
+  list.push_back(new int(10));
+  list.push_back(new int(15));
+
+  efl::js::range_eina_list<int> raw_list(list.native_handle());
   {
     // Create a template for the global object.
     v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
@@ -105,6 +131,10 @@ int main(int argc, char* argv[])
     // // Bind the 'version' function
     // global->Set(v8::String::NewFromUtf8(isolate, "version"),
     //             v8::FunctionTemplate::New(isolate, Version));
+
+    global->Set(v8::String::NewFromUtf8(isolate, "raw_list")
+                , v8::External::New(isolate, static_cast<efl::js::eina_list_base*>(&raw_list)));
+    
     context = v8::Context::New(isolate, NULL, global);
   }
   if (context.IsEmpty()) {

@@ -21,15 +21,20 @@ struct push_front<C<Args...>, AArgs...>
   typedef C<Args..., AArgs...> type;
 };
 
-template <typename A>
+template <typename A, std::size_t N = 1>
 struct pop_front;
-
+      
 template <template <typename...> class C, typename T, typename... Args>
-struct pop_front<C<T, Args...> >
+struct pop_front<C<T, Args...>, 1>
 {
   typedef C<Args...> type;
 };
 
+template <typename A, std::size_t N>
+struct pop_front : pop_front<typename pop_front<A, 1>::type, N-1>
+{
+};
+      
 } } }
 
 #endif

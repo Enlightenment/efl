@@ -68,6 +68,9 @@ tests_eina_js_eina_js_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina_js\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_js\" \
 @CHECK_CFLAGS@ \
+@EINA_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EO_CFLAGS@ \
 @EINA_JS_CFLAGS@
 tests_eina_js_eina_js_suite_LDADD = @CHECK_LIBS@ @USE_EINA_JS_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
 tests_eina_js_eina_js_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@

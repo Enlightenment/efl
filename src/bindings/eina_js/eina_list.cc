@@ -11,6 +11,7 @@
 #include <eina_integer_sequence.hh>
 #include <eina_tuple.hh>
 #include <eina_ptrlist.hh>
+#include <eina_js_list.hh>
 
 #include <tuple>
 
@@ -24,25 +25,41 @@ struct tag { typedef T type; };
 namespace {
 
 v8::UniquePersistent<v8::ObjectTemplate> persistent_instance_template;
-v8::Handle<v8::ObjectTemplate> instance_template;
-      
-struct eina_list
-{
-  eina_list() : _list(0) {}
-  eina_list(Eina_List* raw) : _list(raw) {}
-  
-  efl::eina::range_ptr_list<void> _list;
-};
+v8::Handle<v8::FunctionTemplate> instance_template;
 
-v8::Local<v8::Object> concat(eina_list& list, v8::Local<v8::Value> other)
+v8::Local<v8::Object> concat(v8::Isolate* isolate, eina_list_base& lhs, v8::Local<v8::Value> other)
 {
-  return instance_template->NewInstance();
+  if(other->IsObject())
+    {
+      v8::Local<v8::Object> obj = v8::Local<v8::Object>::Cast(other);
+      v8::String::Utf8Value constructor_name (obj->GetConstructorName());
+      if(obj->GetConstructorName()->Equals(v8::String::NewFromUtf8(isolate, "List")))
+        {
+          eina_list_base& rhs = *static_cast<eina_list_base*>(obj->GetAlignedPointerFromInternalField(0));
+          std::type_info const& typeinfo_lhs = typeid(lhs)
+            , &typeinfo_rhs = typeid(rhs);
+          if(!typeinfo_lhs.before(typeinfo_rhs) && !typeinfo_rhs.before(typeinfo_lhs))
+            {
+              v8::Handle<v8::Value> a[] = {v8::External::New(isolate, rhs.concat(lhs))};
+              v8::Local<v8::Object> result = instance_template->GetFunction()->NewInstance(1, a);
+              return result;
+            }
+          else
+            std::cout << "not same implementation type" << std::endl;
+        }
+      else
+        std::cout << "Not a list" << std::endl;
+    }
+  else
+    std::cout << "Not an object" << std::endl;
+  std::cout << "Some test failed" << std::endl;
+  std::abort();
 }
       
 void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& info)
 {
-  eina_list* self = static_cast<eina_list*>(info.This()->GetAlignedPointerFromInternalField(0));
-  info.GetReturnValue().Set((uint32_t)self->_list.size());
+  eina_list_base* self = static_cast<eina_list_base*>(info.This()->GetAlignedPointerFromInternalField(0));
+  info.GetReturnValue().Set((uint32_t)self->size());
 }
 
 void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
@@ -57,14 +74,23 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
     {
       if(args.Length() == 0)
         {
-          void* p = new eina_list;
+          eina_list_base* p = new range_eina_list<int>;
           std::cerr << "called eina list constructor p = " << p << std::endl;
-          args.This()->SetAlignedPointerInInternalField(0, p);
+          args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(p));
         }
       else
         {
           std::cout << "more than one parameter" << std::endl;
-          std::abort();
+          if(args[0]->IsExternal())
+            {
+              std::cout << "Is external" << std::endl;
+              eina_list_base* base = reinterpret_cast<eina_list_base*>
+                (v8::External::Cast(*args[0])->Value());
+              std::cout << "base " << base << std::endl;
+              args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(base));
+            }
+          else
+            std::abort();
         }
     }
   else
@@ -124,8 +150,15 @@ R call_impl(v8::Isolate* isolate
             , eina::index_sequence<N...>)
 
 {
-  std::cout << "self " << self << std::endl;
-  return (*f)(*self, js::get_element<N, Sig>(isolate, args)...);
+  struct print
+  {
+    ~print()
+    {
+      std::cout << "was called" << std::endl;
+    }
+  } print_;
+  std::cout << "self " << self << " pointer " << (void*)f << std::endl;
+  return (*f)(isolate, *self, js::get_element<N, Sig>(isolate, args)...);
 }
 
 template <typename Sig, typename R, typename T, typename F>
@@ -166,10 +199,11 @@ template <typename T, typename F>
 void register_(v8::Isolate* isolate, const char* name, F f, v8::Handle<v8::ObjectTemplate> template_
                , typename std::enable_if<std::is_function<typename std::remove_pointer<F>::type>::value>::type* = 0)
 {
+  std::cout << "registering " << name << " with pointer " << reinterpret_cast<void*>(f) << std::endl;
   template_->Set(v8::String::NewFromUtf8(isolate, name)
                  , v8::FunctionTemplate::New
                  (isolate, &efl::js::call_function
-                  <typename eina::_mpl::pop_front<typename function_params<F>::type>::type
+                  <typename eina::_mpl::pop_front<typename function_params<F>::type, 2u>::type
                   , typename function_result<F>::type, T, F>
                   , v8::External::New
                   (isolate, reinterpret_cast<void*>(f))));
@@ -199,11 +233,11 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
   v8::Local<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();
   prototype->SetAccessor(v8::String::NewFromUtf8(isolate, "length"), &efl::js::length);
 
-  efl::js::register_<efl::js::eina_list>
+  efl::js::register_<efl::js::eina_list_base>
     (isolate, "concat", &efl::js::concat, prototype);
 
   efl::js::persistent_instance_template = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
-  efl::js::instance_template = instance_t;
+  efl::js::instance_template = constructor;
   
   global->Set(v8::String::NewFromUtf8(isolate, "List"), constructor);
 }
