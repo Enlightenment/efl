@@ -105,7 +105,16 @@ struct base
      _eo_raw = nullptr;
      return tmp;
    }
-  
+
+   /// @brief Reset the current pointer to reference a new Eo object.
+   ///
+   void _reset(Eo* _ptr = nullptr)
+   {
+      if(_eo_raw)
+        detail::unref(_eo_raw);
+     _eo_raw = _ptr;
+   }
+
    /// @brief Get the reference count of this object.
    ///
    /// @return The referencer count of this object.
