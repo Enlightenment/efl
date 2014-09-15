@@ -69,6 +69,7 @@ static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, v
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
 
 static void _ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h);
+static void _ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
 /* local variables */
 static int _ecore_evas_init_count = 0;
@@ -139,7 +140,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
    NULL, //void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
 
-   NULL, // pointer_xy_get
+   _ecore_evas_drm_pointer_xy_get,
    NULL, // pointer_warp
 
    NULL, // wm_rot_preferred_rotation_set
@@ -994,4 +995,12 @@ static void
 _ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    ecore_drm_outputs_geometry_get(dev, x, y, w, h);
+}
+
+static void 
+_ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
+{
+   /* FIXME: This should probably be using an ecore_drm_input function to 
+    * return the current mouse position */
+   evas_pointer_output_xy_get(ee->evas, x, y);
 }
