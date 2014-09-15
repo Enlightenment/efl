@@ -1598,7 +1598,6 @@ EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, con
  * it would appear in C (e.g. strings are quoted and escaped).
  *
  * @param[in] v the value.
- * @param[in] etp the eolian type of the value.
  * @return a stringshare containing the literal (quoted and escaped as needed)
  * or NULL.
  *
