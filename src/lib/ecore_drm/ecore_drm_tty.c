@@ -12,6 +12,33 @@
 # define KDSKBMUTE 0x4B51
 #endif
 
+static Eina_Bool
+_ecore_drm_tty_cb_vt_switch(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Event_Key *ev;
+   int keycode;
+   int vt;
+
+   dev = data;
+   ev = event;
+   keycode = ev->keycode - 8; 
+
+   if ((ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
+       (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) &&
+       (keycode >= KEY_F1) && (keycode <= KEY_F8))
+     {
+        vt = (keycode - KEY_F1 + 1);
+
+        /* make a vt #vt active */
+        ioctl(dev->tty.fd, VT_ACTIVATE, vt);
+
+        return ECORE_CALLBACK_DONE;
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static Eina_Bool 
 _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
 {
@@ -22,8 +49,11 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
    dev = data;
    ev = event;
 
+   /* FIXME: this sigdata doesn't have pid or uid info
+    * si_code is single value to get from sigdata
+    */
    sigdata = ev->data;
-   if (sigdata.si_pid != getpid()) return ECORE_CALLBACK_RENEW;
+   if (sigdata.si_code != SI_KERNEL) return ECORE_CALLBACK_RENEW;
 
    if (ev->number == 1)
      {
@@ -54,6 +84,13 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
              /* issue ioctl to release vt */
              if (!ecore_drm_tty_release(dev))
                ERR("Could not release VT: %m");
+
+             /* remove switch handler */
+             if (dev->tty.switch_hdlr)
+               {
+                  ecore_event_handler_del(dev->tty.switch_hdlr);
+                  dev->tty.switch_hdlr = NULL;
+               }
           }
         else
           ERR("Could not drop drm master: %m");
@@ -80,6 +117,12 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
              /* enable inputs */
              EINA_LIST_FOREACH(dev->inputs, l, input)
                ecore_drm_inputs_enable(input);
+
+             /* listen key event for vt switch */
+             if (!dev->tty.switch_hdlr)
+               ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                                       _ecore_drm_tty_cb_vt_switch, dev);
+
           }
         else
           ERR("Could not acquire VT: %m");
@@ -211,6 +254,11 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
    dev->tty.event_hdlr = 
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
                              _ecore_drm_tty_cb_signal, dev);
+
+   /* setup handler for key event of vt switch */
+   dev->tty.switch_hdlr =
+     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                             _ecore_drm_tty_cb_vt_switch, dev);
 
    /* set current tty into env */
    setenv("ECORE_DRM_TTY", tty, 1);

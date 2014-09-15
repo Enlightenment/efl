@@ -98,6 +98,7 @@ struct _Ecore_Drm_Device
         int fd;
         const char *name;
         Ecore_Event_Handler *event_hdlr;
+        Ecore_Event_Handler *switch_hdlr;
      } tty;
 
    unsigned int format;
