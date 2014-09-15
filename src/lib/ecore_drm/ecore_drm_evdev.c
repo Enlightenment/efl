@@ -861,6 +861,6 @@ ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h)
      return;
 
    /* update the local values */
-   if (dev->mouse.x > w - 1) dev->mouse.x = w -1;
-   if (dev->mouse.y > h - 1) dev->mouse.y = h -1;
+   if (dev->mouse.x > w - 1) dev->mouse.x = w - 1;
+   if (dev->mouse.y > h - 1) dev->mouse.y = h - 1;
 }
