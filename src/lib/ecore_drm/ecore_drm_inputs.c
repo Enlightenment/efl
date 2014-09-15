@@ -61,7 +61,11 @@ _device_add(Ecore_Drm_Input *input, struct udev_device *device)
    /* DBG("Opened Restricted Input: %s %d", node, fd); */
 
    if (!(edev = _ecore_drm_evdev_device_create(seat, node, fd)))
-     return EINA_FALSE;
+     {
+        ERR("Could not create evdev device: %s", node);
+        close(fd);
+        return EINA_FALSE;
+     }
 
    seat->devices = eina_list_append(seat->devices, edev);
 
@@ -304,14 +308,13 @@ ecore_drm_inputs_disable(Ecore_Drm_Input *input)
 {
    if (!input) return;
 
-   udev_monitor_unref(input->monitor);
+   if (input->monitor) udev_monitor_unref(input->monitor);
    input->monitor = NULL;
 
-   if (input->hdlr)
-     {
-        ecore_main_fd_handler_del(input->hdlr);
-        input->hdlr = NULL;
-     }
+   if (input->hdlr) ecore_main_fd_handler_del(input->hdlr);
+   input->hdlr = NULL;
 
+   input->enabled = EINA_FALSE;
+   input->suspended = EINA_TRUE;
    ecore_drm_inputs_destroy(input->dev);
 }
