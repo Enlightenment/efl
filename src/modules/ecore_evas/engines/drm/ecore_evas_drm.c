@@ -390,11 +390,12 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
         einfo->info.fd = ecore_drm_device_fd_get(dev);
         einfo->info.format = format;
         einfo->info.flags = flags;
-        if (einfo->info.fd) einfo->info.gbm = gbm_create_device(einfo->info.fd);
+        if (einfo->info.fd) 
+          einfo->info.gbm = gbm_create_device(einfo->info.fd);
         if (einfo->info.gbm)
           {
-             einfo->info.surface = gbm_surface_create(einfo->info.gbm, w, h,
-                                                      format, flags);
+             einfo->info.surface = 
+               gbm_surface_create(einfo->info.gbm, w, h, format, flags);
           }
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
