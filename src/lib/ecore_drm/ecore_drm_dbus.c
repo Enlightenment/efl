@@ -58,7 +58,7 @@ _dbus_cb_notify(DBusPendingCall *pending, void *data EINA_UNUSED)
    dbus_message_iter_get_basic(&s, &ret);
    if (!ret) 
      {
-        /* TODO: emit active signal to compositor ? */
+        /* TODO: emit paused signal to compositor ? */
      }
 
 err:
@@ -144,7 +144,7 @@ _dbus_property_changed(DBusMessage *msg)
                   dbus_message_iter_get_basic(&ent, &ret);
                   if (!ret)
                     {
-                       /* TODO: emit active signal to compositor ? */
+                       /* TODO: emit paused signal to compositor ? */
                     }
                   return;
                }
@@ -209,7 +209,8 @@ _dbus_device_paused(DBusMessage *msg)
 
    if (maj == DRM_MAJOR)
      {
-        /* TODO: emit active signal to compositor ? */
+        /* TODO: emit paused signal to compositor ? */
+        DBG("Emit Paused Signal To Compositor");
      }
 }
 
@@ -226,6 +227,7 @@ _dbus_device_resumed(DBusMessage *msg)
    if (maj == DRM_MAJOR)
      {
         /* TODO: emit active signal to compositor ? */
+        DBG("Emit Active Signal To Compositor");
      }
 }
 
@@ -359,6 +361,7 @@ _dbus_device_open(const char *path)
    return fd;
 
 flag_err:
+   close(fd);
    _dbus_device_release(major(st.st_rdev), minor(st.st_rdev));
    return -1;
 }
