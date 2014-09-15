@@ -318,7 +318,7 @@ EAPI Eina_Bool eolian_directory_scan(const char *dir);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_system_directory_scan();
+EAPI Eina_Bool eolian_system_directory_scan(void);
 
 /*
  * @brief Force parsing of all the .eo files located in the directories
@@ -331,7 +331,7 @@ EAPI Eina_Bool eolian_system_directory_scan();
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_all_eo_files_parse();
+EAPI Eina_Bool eolian_all_eo_files_parse(void);
 
 /*
  * @brief Force parsing of all the .eot files located in the directories
@@ -344,7 +344,7 @@ EAPI Eina_Bool eolian_all_eo_files_parse();
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_all_eot_files_parse();
+EAPI Eina_Bool eolian_all_eot_files_parse(void);
 
 /*
  * @brief Validates the database, printing errors and warnings.
@@ -502,7 +502,7 @@ EAPI Eina_Bool eolian_show_constant(const char *name);
  *
  * @ingroup Eolian
  */
-EAPI void eolian_show_all();
+EAPI void eolian_show_all(void);
 
 /*
  * @brief Gets a class by its name
