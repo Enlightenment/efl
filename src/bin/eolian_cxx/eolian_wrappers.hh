@@ -114,7 +114,7 @@ class_prefix(Eolian_Class const& klass)
 inline efl::eolian::eo_class::eo_class_type
 class_type(Eolian_Class const& klass)
 {
-   efl::eolian::eo_class::eo_class_type type;
+   efl::eolian::eo_class::eo_class_type type = {};
    Eolian_Class_Type cls_type = ::eolian_class_type_get(&klass);
 
    if (cls_type == EOLIAN_CLASS_REGULAR)
@@ -125,7 +125,7 @@ class_type(Eolian_Class const& klass)
      type = efl::eolian::eo_class::mixin_;
    else if (cls_type == EOLIAN_CLASS_INTERFACE)
      type = efl::eolian::eo_class::interface_;
-   else assert(false);
+   else { assert(false); }
 
    return type;
 }
@@ -215,15 +215,13 @@ function_is_visible(Eolian_Function const& func, Eolian_Function_Type func_type)
 inline bool
 function_is_visible(Eolian_Function const& func, method_t)
 {
-   return (::eolian_function_scope_get(&func) == EOLIAN_SCOPE_PUBLIC &&
-           ! ::eolian_function_is_legacy_only(&func, method_t::value));
+   return function_is_visible(func, method_t::value);
 }
 
 inline bool
 function_is_visible(Eolian_Function const& func)
 {
-   return (::eolian_function_scope_get(&func) == EOLIAN_SCOPE_PUBLIC &&
-           ! ::eolian_function_is_legacy_only(&func, function_op_type(func)));
+   return function_is_visible(func, function_op_type(func));
 }
 
 inline bool
@@ -231,10 +229,10 @@ function_is_visible(Eolian_Constructor const& ctor_)
 {
    Eolian_Function const* func = ::eolian_constructor_function_get(&ctor_);
    Eolian_Class const* cls = ::eolian_constructor_class_get(&ctor_);
-   assert(::eolian_class_ctor_enable_get(cls));
-   assert(!!cls);
    assert(!!func);
-   return function_is_visible(*func, method_t::value);
+   assert(!!cls);
+   return (::eolian_class_ctor_enable_get(cls) &&
+           function_is_visible(*func, method_t::value));
 }
 
 inline efl::eolian::eolian_type_instance

@@ -23,6 +23,12 @@ namespace eolian_cxx {
 typedef std::vector<efl::eolian::eolian_type> lookup_table_type;
 extern const lookup_table_type type_lookup_table;
 
+inline bool
+type_is_complex(Eolian_Type const& type)
+{
+   return ::eolian_type_type_get(&type) == EOLIAN_TYPE_COMPLEX;
+}
+
 inline efl::eolian::eolian_type
 type_from_eolian(Eolian_Type const& type)
 {
@@ -51,11 +57,20 @@ type_lookup(const Eolian_Type* type,
 {
    if (type == NULL) return { efl::eolian::void_type }; // XXX shouldn't
 
-   std::vector<Eolian_Type const*> types; types.push_back(type);
-   efl::eina::iterator<Eolian_Type const> iterator ( ::eolian_type_subtypes_get(type) );
-   while(iterator != efl::eina::iterator<Eolian_Type const>())
-     if(Eolian_Type const* t = &*iterator)
-       types.push_back(t), ++iterator;
+   std::vector<Eolian_Type const*> types;
+   types.push_back(type);
+
+   if (type_is_complex(*type))
+     {
+        efl::eina::iterator<Eolian_Type const> end;
+        efl::eina::iterator<Eolian_Type const> it
+          (::eolian_type_subtypes_get(type));
+        while(it != end)
+          {
+             if(Eolian_Type const* t = &*it)
+               types.push_back(t), ++it;
+          }
+     }
 
    efl::eolian::eolian_type_instance v(types.size());
    for (std::size_t i = 0; i != types.size(); ++i)
