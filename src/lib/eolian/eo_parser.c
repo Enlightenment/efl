@@ -1325,6 +1325,7 @@ parse_property(Eo_Lexer *ls)
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
              has_protected = EINA_FALSE, has_class  = EINA_FALSE;
    prop = calloc(1, sizeof(Eolian_Function));
+   prop->type = EOLIAN_UNRESOLVED;
    prop->base.file = eina_stringshare_ref(ls->filename);
    prop->base.line = ls->line_number;
    prop->base.column = ls->column;
