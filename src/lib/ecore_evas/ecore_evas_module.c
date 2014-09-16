@@ -262,6 +262,9 @@ _ecore_evas_available_engines_get(void)
 #ifdef BUILD_ECORE_EVAS_DRM
                             ADDENG("drm");
 #endif
+#ifdef BUILD_ECORE_EVAS_GL_DRM
+                            ADDENG("opengl_drm");
+#endif
                          }
                     }
                }
