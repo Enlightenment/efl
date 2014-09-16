@@ -923,6 +923,8 @@ EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_C
  *
  * This callback will be called when the Input Method Context
  * module requests the surrounding context.
+ * Input methods typically want context in order to constrain input text based on existing text;
+ * this is important for languages such as Thai where only some sequences of characters are allowed.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param func The callback to be called.
