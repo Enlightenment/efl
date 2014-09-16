@@ -837,7 +837,7 @@ void
 _ecore_main_loop_init(void)
 {
    epoll_fd = epoll_create(1);
-   if (epoll_fd < 0)
+   if ((epoll_fd < 0) && HAVE_EPOLL)
      WRN("Failed to create epoll fd!");
    epoll_pid = getpid();
    _ecore_fd_close_on_exec(epoll_fd);
