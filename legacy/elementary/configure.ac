@@ -238,12 +238,14 @@ EFL_ENABLE_BETA_API_SUPPORT
 if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
    PKG_CHECK_MODULES([ELEMENTARY_CXX],
       [
+        efl-cxx >= efl_version
         eo-cxx >= efl_version
         eina-cxx >= efl_version
         evas-cxx >= efl_version
       ],
       [
         requirement_elm_pc="${requirement_elm_pc} \
+          efl-cxx >= efl_version \
           eo-cxx >= efl_version \
           eina-cxx >= efl_version \
           evas-cxx >= efl_version \
