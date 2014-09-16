@@ -13,6 +13,8 @@ struct eina_list_base
 
   virtual std::size_t size() const = 0;
   virtual eina_list_base* concat(eina_list_base const& rhs) const = 0;
+  //virtual v8::Local<v8::Value> operator[](std::size_t) const = 0;
+  virtual v8::Local<v8::String> to_string(v8::Isolate*) const = 0;
 };
 
 template <typename C>
@@ -22,7 +24,25 @@ struct eina_list_common : eina_list_base
   eina_list_common(Eina_List* raw) : _container(raw) {}
 
   std::size_t size() const { return _container.size(); }
-  
+  v8::Local<v8::String> to_string(v8::Isolate* isolate) const
+  {
+    std::cout << "to_string" << std::endl;
+    typedef typename container_type::const_iterator iterator;
+    std::stringstream s;
+    s << '[';
+    for(iterator first = _container.begin()
+          , last = _container.end()
+          , last_elem = std::next(last, -1); first != last; ++first)
+      {
+        s << *first;
+        if(first !=  last)
+          s << ", ";
+      }
+    s << ']';
+    std::cout << "string " << s.str() << std::endl;
+    return v8::String::NewFromUtf8(isolate, s.str().c_str());
+  }
+
   C _container;
   typedef C container_type;
 };
@@ -54,7 +74,7 @@ struct eina_list : eina_list_common<efl::eina::list
     return new eina_list<T>(list.release_native_handle());
   }
 };
-  
+
 template <typename T>
 struct range_eina_list : eina_list_common<efl::eina::range_list<T> >
 {

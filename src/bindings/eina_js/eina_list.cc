@@ -27,7 +27,7 @@ namespace {
 v8::UniquePersistent<v8::ObjectTemplate> persistent_instance_template;
 v8::Handle<v8::FunctionTemplate> instance_template;
 
-v8::Local<v8::Object> concat(v8::Isolate* isolate, eina_list_base& lhs, v8::Local<v8::Value> other)
+v8::Local<v8::Object> concat(eina_list_base& lhs, v8::Isolate* isolate, v8::Local<v8::Value> other)
 {
   if(other->IsObject())
     {
@@ -148,7 +148,6 @@ R call_impl(v8::Isolate* isolate
             , v8::FunctionCallbackInfo<v8::Value> const& args
             , T* self, F* f
             , eina::index_sequence<N...>)
-
 {
   struct print
   {
@@ -158,21 +157,38 @@ R call_impl(v8::Isolate* isolate
     }
   } print_;
   std::cout << "self " << self << " pointer " << (void*)f << std::endl;
-  return (*f)(isolate, *self, js::get_element<N, Sig>(isolate, args)...);
+  return (*f)(*self, isolate, js::get_element<N, Sig>(isolate, args)...);
 }
 
-template <typename Sig, typename R, typename T, typename F>
-R call_generic(v8::FunctionCallbackInfo<v8::Value> const& args)
+template <typename Sig, typename T, typename F, typename R>
+void call_generic_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<R>)
 {
   T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
   F* f = reinterpret_cast<F*>(v8::External::Cast(*args.Data())->Value());
-  js::call_impl<Sig, R>(args.GetIsolate(), args, self, f
-                        , eina::make_index_sequence<std::tuple_size<Sig>::value>());
+  args.GetReturnValue().Set
+    (js::call_impl<Sig, R>(args.GetIsolate(), args, self, f
+                           , eina::make_index_sequence<std::tuple_size<Sig>::value>()));
+}
+
+template <typename Sig, typename T, typename F>
+void call_generic_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<void>)
+{
+  T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
+  F* f = reinterpret_cast<F*>(v8::External::Cast(*args.Data())->Value());
+  js::call_impl<Sig, void>(args.GetIsolate(), args, self, f
+                           , eina::make_index_sequence<std::tuple_size<Sig>::value>());
+}
+  
+template <typename Sig, typename R, typename T, typename F>
+void call_generic(v8::FunctionCallbackInfo<v8::Value> const& args)
+{
+  efl::js::call_generic_impl<Sig, T, F>(args, tag<R>());
 }
 
 template <typename Sig, typename T, typename F, typename R>
 void call_function_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<R>)
 {
+  std::cout << "return type " << typeid(R).name() << std::endl;
   T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
   F f = reinterpret_cast<F>(v8::External::Cast(*args.Data())->Value());
   args.GetReturnValue().Set
@@ -188,10 +204,11 @@ void call_function_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<voi
   js::call_impl<Sig, void>(args.GetIsolate(), args, self, f
                            , eina::make_index_sequence<std::tuple_size<Sig>::value>());
 }
-      
+
 template <typename Sig, typename R, typename T, typename F>
 void call_function(v8::FunctionCallbackInfo<v8::Value> const& args)
 {
+  std::cout << "R: " << typeid(R).name() << std::endl;
   efl::js::call_function_impl<Sig, T, F>(args, tag<R>());
 }
 
@@ -213,9 +230,15 @@ template <typename T, typename...Sig, typename F>
 void register_(v8::Isolate* isolate, const char* name, F&& f, v8::Handle<v8::ObjectTemplate> template_
                , typename std::enable_if<!std::is_function<typename std::remove_pointer<F>::type>::value>::type* = 0)
 {
+  using result_type = decltype
+                        (std::declval<F>()
+                         (std::declval<T&>(), std::declval<v8::Isolate*>()
+                          , std::declval<Sig>()...)
+                        );
   template_->Set(v8::String::NewFromUtf8(isolate, name)
                  , v8::FunctionTemplate::New
-                 (isolate, &efl::js::call_generic<std::tuple<Sig...>, void, T, F>
+                 (isolate
+                  , &efl::js::call_generic<std::tuple<Sig...>, result_type, T, F>
                   , v8::External::New
                   (isolate, new F(std::forward<F>(f)))));
 }
@@ -233,8 +256,11 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
   v8::Local<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();
   prototype->SetAccessor(v8::String::NewFromUtf8(isolate, "length"), &efl::js::length);
 
+  using namespace std::placeholders;
   efl::js::register_<efl::js::eina_list_base>
     (isolate, "concat", &efl::js::concat, prototype);
+  efl::js::register_<efl::js::eina_list_base>
+    (isolate, "toString", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
 
   efl::js::persistent_instance_template = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
   efl::js::instance_template = constructor;

@@ -23,10 +23,13 @@ static const char script[] =
   "}\n"
   "print(\"teste\");\n"
   "var l1 = new List(raw_list);\n"
+  "print (\"l1 \", l1.toString());\n"
   "assert (l1.length == 3)\n;\n"
   "var l2 = new List(raw_list);\n"
+  "print (\"l2 \", l2.toString());\n"
   "assert (l2.length == 3)\n;\n"
   "var c = l1.concat(l2);\n"
+  "print (\"c \", c.toString());\n"
   "assert (c.length == (l1.length + l2.length));\n"
   ;
 
