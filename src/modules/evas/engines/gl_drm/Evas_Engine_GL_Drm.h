@@ -22,7 +22,6 @@ struct _Evas_Engine_Info_GL_Drm
         int depth, screen, rotation;
         unsigned char destination_alpha : 1;
         int fd;
-        Eina_Bool own_fd : 1;
         int output, plane;
         Ecore_Drm_Device *dev;
      } info;

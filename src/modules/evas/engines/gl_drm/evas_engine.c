@@ -103,19 +103,6 @@ eng_get_ob(Render_Engine *re)
    return re->generic.software.ob;
 }
 
-static inline void
-_drm_device_shutdown(Evas_Engine_Info_GL_Drm *info)
-{
-   if (!info) return;
-   /* check if we already opened the card. if so, close it */
-   if ((info->info.fd >= 0) && (info->info.own_fd))
-     {
-        ecore_drm_device_close(info->info.dev);
-        info->info.fd = -1;
-        ecore_drm_device_free(info->info.dev);
-     }
-}
-
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 static const EVGL_Interface evgl_funcs =
@@ -607,37 +594,10 @@ eng_setup(Evas *eo_e, void *in)
              glsym_evas_gl_preload_init();
           }
 
-        /* if we have no drm device, get one */
-        if (info->info.fd < 0)
-          {
-             /* try to init drm (this includes openening the card & tty) */
-             if (!ecore_drm_init()) return 0;
-
-             /* try getting the default drm device */
-             if (!(info->info.dev = ecore_drm_device_find(NULL, NULL)))
-               {
-                  _drm_device_shutdown(info);
-                  return 0;
-               }
-
-             /* check if we already opened the drm device with ecore_evas */
-             /* try to open the drm ourselfs (most likely because we get called from expedite) */
-             if (!ecore_drm_device_open(info->info.dev))
-               {
-                  _drm_device_shutdown(info);
-                  return 0;
-               }
-             info->info.own_fd = EINA_TRUE;
-             info->info.fd = ecore_drm_device_fd_get(info->info.dev);
-          }
-
         if (!(info->info.gbm) || !(info->info.surface))
           {
              if (!evas_drm_gbm_init(info, epd->output.w, epd->output.h))
-               {
-                  _drm_device_shutdown(info);
-                  return 0;
-               }
+               return 0;
           }
 
         DBG("FD: %d, GBM_DEVICE: 0x%x, GBM_SURFACE: 0x%x",
@@ -657,7 +617,6 @@ eng_setup(Evas *eo_e, void *in)
           {
              /* shutdown destroy gbm surface & shutdown gbm device */
              evas_drm_gbm_shutdown(info);
-             _drm_device_shutdown(info);
              free(re);
              return 0;
           }
@@ -685,7 +644,6 @@ eng_setup(Evas *eo_e, void *in)
              eng_window_free(ob);
              /* shutdown destroy gbm surface & shutdown gbm device */
              evas_drm_gbm_shutdown(info);
-             _drm_device_shutdown(info);
              free(re);
              return 0;
           }
@@ -804,7 +762,6 @@ eng_setup(Evas *eo_e, void *in)
              eng_window_free(eng_get_ob(re));
              gl_wins--;
              evas_drm_gbm_shutdown(info);
-             _drm_device_shutdown(info);
           }
         free(re);
         return 0;
@@ -837,7 +794,6 @@ eng_output_free(void *data)
         if (gl_wins == 1) glsym_evgl_engine_shutdown(re);
 
         evas_drm_gbm_shutdown(eng_get_ob(re)->info);
-        _drm_device_shutdown(eng_get_ob(re)->info);
 
         //evas_render_engine_software_generic_clean() frees ob.
         evas_render_engine_software_generic_clean(&re->generic.software);
