@@ -1,6 +1,10 @@
 //Compile with:
 //gcc -g box_example_02.c -o box_example_02 `pkg-config --cflags --libs elementary`
 
+
+extern "C"
+{
+
 #ifdef HAVE_CONFIG_H
 # include <elementary_config.h>
 #endif
@@ -16,8 +20,6 @@
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
-#include <iostream>
-
 #include <Elementary.h>
 
 #include <Eo.h>
@@ -30,6 +32,9 @@
 
 #include "elm_interface_atspi_widget_action.h"
 #include "elm_interface_atspi_widget_action.eo.h"
+}
+
+#include <iostream>
 
 #include <elm_win.eo.hh>
 #include <elm_box.eo.hh>
@@ -122,7 +127,7 @@ elm_main(int argc, char *argv[])
           {
             elm_button btn ( efl::eo::parent = *box );
             btn.text_set("elm.text", "I do nothing");
-            efl::eina::list<evas::object> childrens = box->children_get();
+            efl::eina::list<evas::object> childrens(box->children_get());
             if (!childrens.empty())
               {
                 box->pack_after(btn, childrens.front());
