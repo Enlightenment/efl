@@ -21,6 +21,8 @@
 #  define LOGFN(fl, ln, fn)
 # endif
 
+typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
+
 extern int _ecore_wl_log_dom;
 extern Ecore_Wl_Display *_ecore_wl_disp;
 

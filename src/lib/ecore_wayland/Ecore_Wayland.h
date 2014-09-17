@@ -31,8 +31,6 @@
 extern "C" {
 #endif
 
-typedef struct _Ecore_Wl_Display Ecore_Wl_Display; /** FIXME: move to private */
-
 typedef struct _Ecore_Wl_Output Ecore_Wl_Output;
 typedef struct _Ecore_Wl_Input Ecore_Wl_Input;
 typedef struct _Ecore_Wl_Global Ecore_Wl_Global; /** @since 1.7.6 */
