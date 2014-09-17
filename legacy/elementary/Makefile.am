@@ -64,6 +64,7 @@ COPYING \
 COPYING.images \
 COMPLIANCE \
 elementary.pc.in \
+elementary-cxx.pc.in \
 elementary.spec \
 elementary.spec.in \
 m4/efl_binary.m4 \
@@ -95,15 +96,19 @@ elementary.pc: $(top_srcdir)/elementary.pc.in Makefile
 	$(AM_V_at)rm -f $@
 	$(pc_verbose)$(sed_process)
 
+elementary-cxx.pc: $(top_srcdir)/elementary-cxx.pc.in Makefile
+	$(AM_V_at)rm -f $@
+	$(pc_verbose)$(sed_process)
+
 if HAVE_FREEBSD
 pkgconfigdir = $(libdir)data/pkgconfig
 else
 pkgconfigdir = $(libdir)/pkgconfig
 endif
 
-pkgconfig_DATA = elementary.pc
+pkgconfig_DATA = elementary.pc elementary-cxx.pc
 
-CLEANFILES = elementary.pc
+CLEANFILES = elementary.pc elementary-cxx.pc
 
 cmakeconfigdir = $(libdir)/cmake/Elementary
 cmakeconfig_DATA = \
