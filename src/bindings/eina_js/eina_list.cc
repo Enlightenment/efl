@@ -65,7 +65,8 @@ void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& in
 void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
 {
   std::cout << "index_get " << index << std::endl;
-  info.GetReturnValue().Set(5);
+  eina_list_base* self = static_cast<eina_list_base*>(info.This()->GetAlignedPointerFromInternalField(0));
+  info.GetReturnValue().Set(self->get(info.GetIsolate(), index));
 }
 
 void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
@@ -261,6 +262,10 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
     (isolate, "concat", &efl::js::concat, prototype);
   efl::js::register_<efl::js::eina_list_base>
     (isolate, "toString", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
+  efl::js::register_<efl::js::eina_list_base>
+    (isolate, "join", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
+  efl::js::register_<efl::js::eina_list_base, v8::Local<v8::Value> >
+    (isolate, "indexOf", std::bind(&efl::js::eina_list_base::index_of, _1, _2, _3), prototype);
 
   efl::js::persistent_instance_template = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
   efl::js::instance_template = constructor;

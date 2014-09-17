@@ -31,6 +31,18 @@ static const char script[] =
   "var c = l1.concat(l2);\n"
   "print (\"c \", c.toString());\n"
   "assert (c.length == (l1.length + l2.length));\n"
+  "assert (c[0] == l1[0]);\n"
+  "assert (c[1] == l1[1]);\n"
+  "assert (c[2] == l1[2]);\n"
+  "assert (c[3] == l2[0]);\n"
+  "assert (c[4] == l2[1]);\n"
+  "assert (c[5] == l2[2]);\n"
+  "assert (c.indexOf(c[0]) == 0);\n"
+  "assert (c.indexOf(c[1]) == 1);\n"
+  "assert (c.indexOf(c[2]) == 2);\n"
+  "assert (c.indexOf(c[3]) == 0);\n"
+  "assert (c.indexOf(c[4]) == 1);\n"
+  "assert (c.indexOf(c[5]) == 2);\n"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {
@@ -59,7 +71,7 @@ bool ExecuteString(v8::Isolate* isolate,
     if (result.IsEmpty()) {
       std::cout << "Failed with exception thrown" << std::endl;
       assert(try_catch.HasCaught());
-      //std::abort();
+      std::abort();
       // Print errors that happened during execution.
       // if (report_exceptions)
       //   ReportException(isolate, &try_catch);
