@@ -79,7 +79,7 @@ if test "x${want_elementary_web}" != "xnone"; then
        AC_DEFINE([HAVE_ELEMENTARY_WEB], [1], [Web support for Elementary])
        webkit_datadir=$(${PKG_CONFIG} ${want_elementary_web} --variable=datadir)
        AC_DEFINE_UNQUOTED([WEBKIT_DATADIR],
-                          [${webkit_datadir}],
+                          ["${webkit_datadir}"],
                           ["WebKit's data dir"])
        ELM_WEB2_DEF="#define"
        elementary_web=${want_elementary_web}
