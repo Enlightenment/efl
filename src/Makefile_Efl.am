@@ -11,10 +11,9 @@ EFL_EOS_C = $(EFL_EOS:%.eo=%.eo.c)
 
 BUILT_SOURCES += $(EFL_EOS_C) $(EFL_EOS_H)
 EXTRA_DIST += \
-              ${efleolianfiles_DATA} \
-              lib/efl/Efl_Config.h \
-              lib/efl/Efl.h \
-              $(EFL_EOS)
+      lib/efl/Efl_Config.h \
+      lib/efl/Efl.h \
+      $(EFL_EOS)
 
 efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
 efleolianfiles_DATA = $(EFL_EOS)
