@@ -4147,6 +4147,13 @@ _gl_focus_move_policy_changed_cb(void *data EINA_UNUSED,
 }
 
 static void
+_gl_focus_item_focus_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("%s: %p\n", (char *)data, event_info);
+   elm_genlist_clear(obj);
+}
+
+static void
 _gl_focus_item_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("%s: %p\n", (char *)data, event_info);
@@ -4555,8 +4562,8 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_box_pack_end(bx2, gl);
    api->gl = gl;
    evas_object_show(gl);
-   evas_object_smart_callback_add(gl, "item,focused", _gl_focus_item_cb, "item,focused");
-   evas_object_smart_callback_add(gl, "item,unfocused", _gl_focus_item_cb, "item,unfocused");
+   evas_object_smart_callback_add(gl, "item,focused", _gl_focus_item_focus_cb, "item,focused");
+   evas_object_smart_callback_add(gl, "item,unfocused", _gl_focus_item_focus_cb, "item,unfocused");
    evas_object_smart_callback_add(gl, "selected", _gl_focus_item_cb, "selected");
    evas_object_smart_callback_add(gl, "unselected", _gl_focus_item_cb, "unselected");
    evas_object_smart_callback_add(gl, "activated", _gl_focus_item_cb, "activated");
