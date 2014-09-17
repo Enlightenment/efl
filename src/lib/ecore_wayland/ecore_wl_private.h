@@ -21,10 +21,7 @@
 #  define LOGFN(fl, ln, fn)
 # endif
 
-typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
-
 extern int _ecore_wl_log_dom;
-extern Ecore_Wl_Display *_ecore_wl_disp;
 
 # ifdef ECORE_WL_DEFAULT_LOG_COLOR
 #  undef ECORE_WL_DEFAULT_LOG_COLOR
@@ -56,6 +53,7 @@ extern Ecore_Wl_Display *_ecore_wl_disp;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
+typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
 
 struct _Ecore_Wl_Display
 {
@@ -259,6 +257,8 @@ struct _Ecore_Wl_Dnd_Target
 {
    Ecore_Wl_Dnd_Source *source;
 };
+
+extern Ecore_Wl_Display *_ecore_wl_disp;
 
 void _ecore_wl_window_init(void);
 void _ecore_wl_window_shutdown(void);
