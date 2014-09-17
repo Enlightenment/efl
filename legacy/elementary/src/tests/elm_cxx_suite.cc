@@ -1,4 +1,7 @@
 
+extern "C"
+{
+
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -23,16 +26,8 @@
 #include <elm_interface_atspi_text.h>
 #include <elm_interface_atspi_accessible.h>
 #include <elm_interface_atspi_widget_action.h>
+}
 
-#include <elc_ctxpopup.eo.hh>
-#include <elc_fileselector_button.eo.hh>
-#include <elc_fileselector_entry.eo.hh>
-#include <elc_fileselector.eo.hh>
-#include <elc_hoversel.eo.hh>
-#include <elc_multibuttonentry.eo.hh>
-#include <elc_naviframe.eo.hh>
-#include <elc_player.eo.hh>
-#include <elc_popup.eo.hh>
 #include <elm_access.eo.hh>
 #include <elm_actionslider.eo.hh>
 #include <elm_app_client.eo.hh>
@@ -50,10 +45,14 @@
 #include <elm_colorselector.eo.hh>
 #include <elm_conformant.eo.hh>
 #include <elm_container.eo.hh>
+#include <elm_ctxpopup.eo.hh>
 #include <elm_datetime.eo.hh>
 #include <elm_dayselector.eo.hh>
 #include <elm_diskselector.eo.hh>
 #include <elm_entry.eo.hh>
+#include <elm_fileselector_button.eo.hh>
+#include <elm_fileselector_entry.eo.hh>
+#include <elm_fileselector.eo.hh>
 #include <elm_flip.eo.hh>
 #include <elm_flipselector.eo.hh>
 #include <elm_frame.eo.hh>
@@ -65,6 +64,7 @@
 #include <elm_glview.eo.hh>
 #include <elm_grid.eo.hh>
 #include <elm_hover.eo.hh>
+#include <elm_hoversel.eo.hh>
 #include <elm_icon.eo.hh>
 #include <elm_image.eo.hh>
 #include <elm_index.eo.hh>
@@ -89,6 +89,8 @@
 #include <elm_map.eo.hh>
 #include <elm_map_pan.eo.hh>
 #include <elm_menu.eo.hh>
+#include <elm_multibuttonentry.eo.hh>
+#include <elm_naviframe.eo.hh>
 #include <elm_notify.eo.hh>
 #include <elm_panel.eo.hh>
 #include <elm_pan.eo.hh>
@@ -96,7 +98,9 @@
 #include <elm_photocam.eo.hh>
 #include <elm_photocam_pan.eo.hh>
 #include <elm_photo.eo.hh>
+#include <elm_player.eo.hh>
 #include <elm_plug.eo.hh>
+#include <elm_popup.eo.hh>
 #include <elm_prefs.eo.hh>
 #include <elm_progressbar.eo.hh>
 #include <elm_radio.eo.hh>
