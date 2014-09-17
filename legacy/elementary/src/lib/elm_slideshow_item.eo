@@ -36,6 +36,6 @@ class Elm_Slideshow_Item(Elm_Widget_Item)
    }
    implements {
         Eo.Base.constructor;
-        Elm_Widget_Item.del_pre;
+        Eo.Base.destructor;
    }
 }

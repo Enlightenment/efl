@@ -343,8 +343,8 @@ _sizing_eval(Evas_Object *obj)
    _resize_cb(NULL, NULL, obj, NULL);
 }
 
-EOLIAN static Eina_Bool
-_elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskselector_Item_Data *it)
+EOLIAN static void
+_elm_diskselector_item_eo_base_destructor(Eo *eo_it, Elm_Diskselector_Item_Data *it)
 {
    Elm_Diskselector_Item_Data *item2, *dit;
    Eina_List *l;
@@ -360,6 +360,8 @@ _elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskse
      sd->r_items = eina_list_remove(sd->r_items, it);
 
    sd->items = eina_list_remove(sd->items, it);
+   sd->under_items = eina_list_remove(sd->under_items, it);
+   sd->over_items = eina_list_remove(sd->over_items, it);
 
    if (sd->selected_item == it)
      {
@@ -378,10 +380,10 @@ _elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskse
      {
         if (!sd->item_count)
           {
-             evas_object_hide(sd->VIEW(first));
-             evas_object_hide(sd->VIEW(second));
-             evas_object_hide(sd->VIEW(last));
-             evas_object_hide(sd->VIEW(s_last));
+             if (sd->first) evas_object_hide(sd->VIEW(first));
+             if (sd->second) evas_object_hide(sd->VIEW(second));
+             if (sd->last) evas_object_hide(sd->VIEW(last));
+             if (sd->s_last) evas_object_hide(sd->VIEW(s_last));
 
              EINA_LIST_FOREACH(sd->under_items, l, item2)
                evas_object_hide(VIEW(item2));
@@ -394,23 +396,30 @@ _elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskse
              dit = eina_list_nth(sd->items, 0);
              if (dit)
                {
-                  eina_stringshare_replace(&sd->first->label, dit->label);
-                  edje_object_part_text_escaped_set
-                    (sd->VIEW(first), "elm.text", sd->first->label);
+                  if (sd->first)
+                    {
+                       eina_stringshare_replace(&sd->first->label, dit->label);
+                       edje_object_part_text_escaped_set
+                          (sd->VIEW(first), "elm.text", sd->first->label);
+                    }
                }
 
              dit = eina_list_nth(sd->items, 1);
              if (dit)
                {
-                  eina_stringshare_replace(&sd->second->label, dit->label);
-                  edje_object_part_text_escaped_set
-                    (sd->VIEW(second), "elm.text", sd->second->label);
+                  if (sd->second)
+                    {
+                       eina_stringshare_replace(&sd->second->label, dit->label);
+                       edje_object_part_text_escaped_set
+                          (sd->VIEW(second), "elm.text", sd->second->label);
+                    }
                }
              // if more than 3 itmes should be displayed
              for (i = 2; i < CEIL(sd->display_item_num); i++)
                {
                   dit = eina_list_nth(sd->items, i);
                   item2 = eina_list_nth(sd->over_items, i - 2);
+                  if (!dit || !item2) continue;
                   eina_stringshare_replace(&item2->label, dit->label);
                   edje_object_part_text_escaped_set
                     (VIEW(item2), "elm.text", item2->label);
@@ -419,23 +428,30 @@ _elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskse
              dit = eina_list_nth(sd->items, eina_list_count(sd->items) - 1);
              if (dit)
                {
-                  eina_stringshare_replace(&sd->last->label, dit->label);
-                  edje_object_part_text_escaped_set
-                    (sd->VIEW(last), "elm.text", sd->last->label);
+                  if (sd->last)
+                    {
+                       eina_stringshare_replace(&sd->last->label, dit->label);
+                       edje_object_part_text_escaped_set
+                          (sd->VIEW(last), "elm.text", sd->last->label);
+                    }
                }
 
              dit = eina_list_nth(sd->items, eina_list_count(sd->items) - 2);
              if (dit)
                {
-                  eina_stringshare_replace(&sd->s_last->label, dit->label);
-                  edje_object_part_text_escaped_set
-                    (sd->VIEW(s_last), "elm.text", sd->s_last->label);
+                  if (sd->s_last)
+                    {
+                       eina_stringshare_replace(&sd->s_last->label, dit->label);
+                       edje_object_part_text_escaped_set
+                          (sd->VIEW(s_last), "elm.text", sd->s_last->label);
+                    }
                }
              // if more than 3 itmes should be displayed
              for (i = 3; i <= CEIL(sd->display_item_num); i++)
                {
                   dit = eina_list_nth(sd->items, sd->item_count - i);
                   item2 = eina_list_nth(sd->under_items, i - 3);
+                  if (!dit || !item2) continue;
                   eina_stringshare_replace(&item2->label, dit->label);
                   edje_object_part_text_escaped_set
                     (VIEW(item2), "elm.text", item2->label);
@@ -449,7 +465,7 @@ _elm_diskselector_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Diskse
 
    _sizing_eval(obj);
 
-   return EINA_TRUE;
+   eo_do_super(eo_it, ELM_DISKSELECTOR_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static void
@@ -1098,14 +1114,10 @@ _scroll_drag_stop_cb(Evas_Object *obj,
 }
 
 static void
-_round_item_del(Elm_Diskselector_Data *sd,
+_round_item_del(Elm_Diskselector_Data *sd EINA_UNUSED,
                 Elm_Diskselector_Item_Data *it)
 {
    if (!it) return;
-
-   elm_box_unpack(sd->main_box, VIEW(it));
-   sd->r_items = eina_list_remove(sd->r_items, it);
-   eina_stringshare_del(it->label);
    eo_del(EO_OBJ(it));
 }
 
@@ -1318,70 +1330,70 @@ EOLIAN static void
 _elm_diskselector_evas_object_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
-   Eina_List *l;
+   Eina_List *l, *l2;
    Evas_Object *blank;
 
    /* left blank */
-   EINA_LIST_FOREACH (sd->left_blanks, l, blank)
+   EINA_LIST_FREE (sd->left_blanks, blank)
      evas_object_del(blank);
 
    /* right blank */
-   EINA_LIST_FOREACH (sd->right_blanks, l, blank)
+   EINA_LIST_FREE (sd->right_blanks, blank)
      evas_object_del(blank);
 
    if (sd->last)
      {
-        eina_stringshare_del(sd->last->label);
         evas_object_del(sd->VIEW(last));
         eo_del(EO_OBJ(sd->last));
+        sd->last = NULL;
      }
 
    if (sd->s_last)
      {
-        eina_stringshare_del(sd->s_last->label);
         evas_object_del(sd->VIEW(s_last));
         eo_del(EO_OBJ(sd->s_last));
+        sd->s_last = NULL;
      }
 
    if (sd->second)
      {
-        eina_stringshare_del(sd->second->label);
         evas_object_del(sd->VIEW(second));
         eo_del(EO_OBJ(sd->second));
+        sd->second = NULL;
      }
 
    if (sd->first)
      {
-        eina_stringshare_del(sd->first->label);
         evas_object_del(sd->VIEW(first));
         eo_del(EO_OBJ(sd->first));
+        sd->first = NULL;
      }
 
-   EINA_LIST_FOREACH(sd->under_items, l, it)
+   EINA_LIST_FOREACH_SAFE(sd->under_items, l, l2, it)
      {
         if (it)
           {
-             eina_stringshare_del(it->label);
              evas_object_del(VIEW(it));
              eo_del(EO_OBJ(it));
           }
      }
+   sd->under_items = eina_list_free(sd->under_items);
 
-   EINA_LIST_FOREACH(sd->over_items, l, it)
+   EINA_LIST_FOREACH_SAFE(sd->over_items, l, l2, it)
      {
         if (it)
           {
-             eina_stringshare_del(it->label);
              evas_object_del(VIEW(it));
              eo_del(EO_OBJ(it));
           }
      }
+   sd->over_items = eina_list_free(sd->over_items);
 
-   EINA_LIST_FREE(sd->items, it)
+   EINA_LIST_FOREACH_SAFE(sd->items, l, l2, it)
      {
-        _item_del(it);
         eo_del(EO_OBJ(it));
      }
+   sd->items = eina_list_free(sd->items);
    sd->r_items = eina_list_free(sd->r_items);
 
    ELM_SAFE_FREE(sd->scroller_move_idle_enterer, ecore_idle_enterer_del);
@@ -1605,7 +1617,6 @@ _elm_diskselector_clear(Eo *obj, Elm_Diskselector_Data *sd)
    sd->selected_item = NULL;
    EINA_LIST_FREE(sd->items, it)
      {
-        _item_del(it);
         eo_del(EO_OBJ(it));
      }
 

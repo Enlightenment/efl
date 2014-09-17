@@ -489,15 +489,15 @@ _elm_segment_control_item_elm_widget_item_part_content_get(Eo *eo_item EINA_UNUS
      return edje_object_part_swallow_get(VIEW(item), part);
 }
 
-static Eina_Bool
-_elm_segment_control_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Segment_Control_Item_Data *item)
+EOLIAN static void
+_elm_segment_control_item_eo_base_destructor(Eo *eo_item, Elm_Segment_Control_Item_Data *item)
 {
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(item), sd);
 
    _item_free(item);
    _update_list(sd);
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS, eo_destructor());
 }
 
 static char *
@@ -628,8 +628,6 @@ _elm_segment_control_evas_object_smart_del(Eo *obj, Elm_Segment_Control_Data *sd
 
    EINA_LIST_FREE(sd->items, eo_it)
      {
-        ELM_SEGMENT_ITEM_DATA_GET(eo_it, it);
-        _item_free(it);
         eo_del(eo_it);
      }
 

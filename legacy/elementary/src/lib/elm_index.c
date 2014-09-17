@@ -424,15 +424,15 @@ _elm_index_elm_layout_sizing_eval(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Eina_Bool
-_elm_index_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Index_Item_Data *it)
+EOLIAN static void
+_elm_index_item_eo_base_destructor(Eo *eo_item EINA_UNUSED, Elm_Index_Item_Data *it)
 {
    ELM_INDEX_DATA_GET(WIDGET(it), sd);
 
    _item_free(it);
    _index_box_clear(WIDGET(it), sd->level);
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_INDEX_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static void

@@ -52,11 +52,6 @@ _item_del(Elm_Object_Item *eo_item)
      _item_del(child);
    eina_list_free(item->submenu.items);
 
-   eina_stringshare_del(item->label);
-   evas_object_del(item->submenu.hv);
-   evas_object_del(item->submenu.location);
-   eina_stringshare_del(item->icon_str);
-
    eo_del(eo_item);
 }
 
@@ -961,13 +956,14 @@ _elm_menu_item_add_helper(Evas_Object *obj,
    _sizing_eval(obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_menu_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Menu_Item_Data *item)
+EOLIAN static void
+_elm_menu_item_eo_base_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    ELM_MENU_DATA_GET(WIDGET(item), sd);
 
    elm_menu_item_subitems_clear(eo_item);
    eina_stringshare_del(item->label);
+   eina_stringshare_del(item->icon_str);
    evas_object_del(item->content);
    evas_object_del(item->submenu.hv);
    evas_object_del(item->submenu.location);
@@ -981,7 +977,7 @@ _elm_menu_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Menu_Item_Data *item)
    if (sd->dbus_menu)
      _elm_dbus_menu_item_delete(sd->dbus_menu, item->dbus_idx);
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_MENU_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static void

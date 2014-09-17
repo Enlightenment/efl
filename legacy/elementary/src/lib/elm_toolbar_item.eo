@@ -415,8 +415,8 @@ class Elm_Toolbar_Item(Elm_Widget_Item)
       }
       implements {
            Eo.Base.constructor;
+           Eo.Base.destructor;
            Elm_Widget_Item.disable;
-           Elm_Widget_Item.del_pre;
            Elm_Widget_Item.focus.set;
            Elm_Widget_Item.focus.get;
            Elm_Widget_Item.part_text.get;

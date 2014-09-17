@@ -766,10 +766,10 @@ _elm_popup_item_elm_widget_item_disable(Eo *eo_it, Elm_Popup_Item_Data *it)
      elm_layout_signal_emit(VIEW(it), "elm,state,item,enabled", "elm");
 }
 
-EOLIAN static Eina_Bool
-_elm_popup_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Popup_Item_Data *it)
+EOLIAN static void
+_elm_popup_item_eo_base_destructor(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
-   ELM_POPUP_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
    ELM_POPUP_DATA_GET(WIDGET(it), sd);
 
    evas_object_del(it->icon);
@@ -780,7 +780,7 @@ _elm_popup_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Popup_Item_Da
         sd->items = NULL;
         _list_del(sd);
      }
-   return EINA_TRUE;
+   eo_do_super(eo_it, ELM_POPUP_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static void

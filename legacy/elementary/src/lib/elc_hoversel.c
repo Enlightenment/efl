@@ -269,10 +269,10 @@ _elm_hoversel_item_elm_widget_item_style_get(Eo *eo_it EINA_UNUSED,
    return elm_object_style_get(VIEW(it));
 }
 
-EOLIAN static Eina_Bool
-_elm_hoversel_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Hoversel_Item_Data *item)
+EOLIAN static void
+_elm_hoversel_item_eo_base_destructor(Eo *eo_item, Elm_Hoversel_Item_Data *item)
 {
-   ELM_HOVERSEL_DATA_GET_OR_RETURN_VAL(WIDGET(item), sd, EINA_FALSE);
+   ELM_HOVERSEL_DATA_GET_OR_RETURN(WIDGET(item), sd);
 
    elm_hoversel_hover_end(WIDGET(item));
    sd->items = eina_list_remove(sd->items, eo_item);
@@ -280,7 +280,7 @@ _elm_hoversel_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Hoversel
    eina_stringshare_del(item->icon_file);
    eina_stringshare_del(item->icon_group);
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_HOVERSEL_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static void
@@ -304,10 +304,6 @@ _elm_hoversel_evas_object_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
 
    EINA_LIST_FREE(sd->items, eo_item)
      {
-        ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
-        eina_stringshare_del(item->label);
-        eina_stringshare_del(item->icon_file);
-        eina_stringshare_del(item->icon_group);
         eo_del(eo_item);
      }
    elm_hoversel_hover_parent_set(obj, NULL);

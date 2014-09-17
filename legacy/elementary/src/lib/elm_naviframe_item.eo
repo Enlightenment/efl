@@ -99,7 +99,7 @@ class Elm_Naviframe_Item(Elm_Widget_Item)
    }
    implements {
         Eo.Base.constructor;
-        Elm_Widget_Item.del_pre;
+        Eo.Base.destructor;
         Elm_Widget_Item.signal_emit;
         Elm_Widget_Item.part_text.set;
         Elm_Widget_Item.part_text.get;

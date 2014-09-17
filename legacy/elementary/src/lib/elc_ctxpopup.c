@@ -1030,9 +1030,9 @@ _list_del(Elm_Ctxpopup_Data *sd)
    ELM_SAFE_FREE(sd->list, evas_object_del);
 }
 
-EOLIAN static Eina_Bool
-_elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it,
-                                           Elm_Ctxpopup_Item_Data *ctxpopup_it)
+EOLIAN static void
+_elm_ctxpopup_item_eo_base_destructor(Eo *eo_ctxpopup_it,
+                                      Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
    Evas_Object *list;
 
@@ -1042,22 +1042,19 @@ _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it,
 
    list = elm_object_item_widget_get(ctxpopup_it->list_item);
 
-   if (eina_list_count(elm_list_items_get(list)) < 2)
+   if (ctxpopup_it->list_item)
+      eo_unref(ctxpopup_it->list_item);
+   sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
+   if (list && eina_list_count(elm_list_items_get(list)) < 2)
      {
-        if (ctxpopup_it->list_item)
-          elm_object_item_del(ctxpopup_it->list_item);
-        sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
         evas_object_hide(WIDGET(ctxpopup_it));
-
-        return EINA_TRUE;
+     }
+   else
+     {
+        if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
      }
 
-   if (ctxpopup_it->list_item)
-     elm_object_item_del(ctxpopup_it->list_item);
-   sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
-   if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
-
-   return EINA_TRUE;
+   eo_do_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static Eina_Bool
@@ -1266,6 +1263,7 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 
    item->list_item =
      elm_list_item_append(sd->list, label, icon, NULL, _item_wrap_cb, item);
+   eo_ref(item->list_item);
    sd->items = eina_list_append(sd->items, eo_item);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
@@ -1359,6 +1357,7 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 
    item->list_item =
      elm_list_item_prepend(sd->list, label, icon, NULL, _item_wrap_cb, item);
+   eo_ref(item->list_item);
    sd->items = eina_list_prepend(sd->items, eo_item);
 
    if (sd->visible) elm_layout_sizing_eval(obj);

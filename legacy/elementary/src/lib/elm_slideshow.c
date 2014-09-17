@@ -285,10 +285,10 @@ _timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EOLIAN static Eina_Bool
-_elm_slideshow_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Slideshow_Item_Data *item)
+EOLIAN static void
+_elm_slideshow_item_eo_base_destructor(Eo *eo_item, Elm_Slideshow_Item_Data *item)
 {
-   ELM_SLIDESHOW_DATA_GET_OR_RETURN_VAL(WIDGET(item), sd, EINA_FALSE);
+   ELM_SLIDESHOW_DATA_GET_OR_RETURN(WIDGET(item), sd);
 
    if (sd->previous == item) sd->previous = NULL;
    if (sd->current == item)
@@ -312,7 +312,7 @@ _elm_slideshow_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Slideshow_Item_Data
    if ((VIEW(item)) && (item->itc->func.del))
      item->itc->func.del(elm_object_item_data_get(eo_item), VIEW(item));
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_SLIDESHOW_ITEM_CLASS, eo_destructor());
 }
 
 EOLIAN static void

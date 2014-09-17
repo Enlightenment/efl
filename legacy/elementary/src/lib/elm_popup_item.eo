@@ -3,7 +3,7 @@ class Elm_Popup_Item(Elm_Widget_Item)
       eo_prefix: elm_obj_popup_item;
       implements {
            Eo.Base.constructor;
-           Elm_Widget_Item.del_pre;
+           Eo.Base.destructor;
            Elm_Widget_Item.disable;
            Elm_Widget_Item.signal_emit;
            Elm_Widget_Item.part_text.get;

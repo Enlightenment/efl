@@ -48,7 +48,6 @@ struct _Elm_Flipselector_Item_Data
 
    const char   *label;
    Evas_Smart_Cb func;
-   int           deleted : 1;
 };
 
 #define ELM_FLIPSELECTOR_DATA_GET(o, sd) \

@@ -192,7 +192,7 @@ _item_free(Elm_Naviframe_Item_Data *it)
         if ((sd->preserve) && (!sd->on_deletion))
           {
              /* so that elm does not delete the contents with the item's
-              * view after the del_pre_hook */
+              * view after the destructor */
              elm_object_part_content_unset(VIEW(it), CONTENT_PART);
              evas_object_event_callback_del
                 (it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
@@ -527,8 +527,8 @@ _elm_naviframe_item_elm_widget_item_part_text_get(Eo *nit EINA_UNUSED,
    return elm_object_part_text_get(VIEW(it), buf);
 }
 
-EOLIAN static Eina_Bool
-_elm_naviframe_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Naviframe_Item_Data *it)
+EOLIAN static void
+_elm_naviframe_item_eo_base_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
 {
    Elm_Naviframe_Item_Data *nit = it, *prev_it = NULL;
    Eina_Bool top;
@@ -536,7 +536,6 @@ _elm_naviframe_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Naviframe_Item_Data
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
    nit->delete_me = EINA_TRUE;
-   if (nit->ref > 0) return EINA_FALSE;
 
    ecore_animator_del(nit->animator);
 
@@ -569,7 +568,7 @@ _elm_naviframe_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Naviframe_Item_Data
 end:
    _item_free(nit);
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS, eo_destructor());
 }
 
 static void
@@ -1664,10 +1663,10 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
    evas_object_ref(obj);
    if (it->pop_cb)
      {
-        it->ref++;
+        eo_ref(eo_item);
         if (!it->pop_cb(it->pop_data, eo_item))
           {
-             it->ref--;
+             eo_unref(eo_item);
              if (it->delete_me)
                eo_do(eo_item, elm_wdg_item_del());
              else
@@ -1675,7 +1674,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
              evas_object_unref(obj);
              return NULL;
           }
-        it->ref--;
+        eo_unref(eo_item);
      }
    evas_object_unref(obj);
 

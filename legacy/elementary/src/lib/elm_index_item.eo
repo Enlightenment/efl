@@ -40,7 +40,7 @@ class Elm_Index_Item(Elm_Widget_Item)
    }
    implements {
         Eo.Base.constructor;
+        Eo.Base.destructor;
         Elm_Widget_Item.access_register;
-        Elm_Widget_Item.del_pre;
    }
 }

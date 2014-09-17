@@ -2219,8 +2219,8 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
    return NULL;
 }
 
-EOLIAN static Eina_Bool
-_elm_toolbar_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item)
+EOLIAN static void
+_elm_toolbar_item_eo_base_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item)
 {
    Elm_Toolbar_Item_Data *next = NULL;
    Evas_Object *obj;
@@ -2248,7 +2248,7 @@ _elm_toolbar_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Toolbar_I
    if (item != sd->more_item)
       eo_do(obj, elm_obj_widget_theme_apply());
 
-   return EINA_TRUE;
+   eo_do_super(eo_item, ELM_TOOLBAR_ITEM_CLASS, eo_destructor());
 }
 
 static void

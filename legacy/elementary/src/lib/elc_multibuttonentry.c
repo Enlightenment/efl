@@ -586,13 +586,13 @@ _elm_multibuttonentry_item_elm_widget_item_part_text_get(Eo *eo_item EINA_UNUSED
    return edje_object_part_text_get(item->button, src_part);
 }
 
-EOLIAN static Eina_Bool
-_elm_multibuttonentry_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED,
-                                                   Elm_Multibuttonentry_Item_Data *it EINA_UNUSED)
+EOLIAN static void
+_elm_multibuttonentry_item_eo_base_destructor(Eo *eo_it,
+                                              Elm_Multibuttonentry_Item_Data *it)
 {
    _button_item_del(it);
 
-   return EINA_TRUE;
+   eo_do_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS, eo_destructor());
 }
 
 static void
