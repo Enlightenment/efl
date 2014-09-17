@@ -55,7 +55,23 @@ v8::Local<v8::Object> concat(eina_list_base& lhs, v8::Isolate* isolate, v8::Loca
   std::cout << "Some test failed" << std::endl;
   std::abort();
 }
-      
+
+v8::Local<v8::Object> slice(eina_list_base& self, v8::Isolate* isolate, v8::Local<v8::Value> iv
+                            , v8::Local<v8::Value> jv)
+{
+  if((iv->IsUint32() || iv->IsInt32()) && (jv->IsUint32() || jv->IsInt32()))
+    {
+      std::int64_t i = iv->IntegerValue(), j = jv->IntegerValue();
+      v8::Handle<v8::Value> a[] = {v8::External::New(isolate, self.slice(i, j))};
+      v8::Local<v8::Object> result = instance_template->GetFunction()->NewInstance(1, a);
+      return result;
+    }
+  else
+    std::cout << "parameters are not integral" << std::endl;
+  std::cout << "Some test failed" << std::endl;
+  std::abort();
+}
+
 void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& info)
 {
   eina_list_base* self = static_cast<eina_list_base*>(info.This()->GetAlignedPointerFromInternalField(0));
@@ -158,6 +174,7 @@ R call_impl(v8::Isolate* isolate
     }
   } print_;
   std::cout << "self " << self << " pointer " << (void*)f << std::endl;
+  assert(self != 0);
   return (*f)(*self, isolate, js::get_element<N, Sig>(isolate, args)...);
 }
 
@@ -260,6 +277,8 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
   using namespace std::placeholders;
   efl::js::register_<efl::js::eina_list_base>
     (isolate, "concat", &efl::js::concat, prototype);
+  efl::js::register_<efl::js::eina_list_base>
+    (isolate, "slice", &efl::js::slice, prototype);
   efl::js::register_<efl::js::eina_list_base>
     (isolate, "toString", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
   efl::js::register_<efl::js::eina_list_base>

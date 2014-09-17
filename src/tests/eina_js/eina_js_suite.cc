@@ -49,6 +49,16 @@ static const char script[] =
   "assert (c.lastIndexOf(c[3]) == 3);\n"
   "assert (c.lastIndexOf(c[4]) == 4);\n"
   "assert (c.lastIndexOf(c[5]) == 5);\n"
+  "var s1 = l1.slice(1, 3);\n"
+  "print (\"s1 \", s1.toString());\n"
+  "assert (s1.length == 2);\n"
+  "assert (s1[0] == l1[1]);\n"
+  "assert (s1[1] == l1[2]);\n"
+  "var s2 = c.slice(1, 3);\n"
+  "print (\"s2 \", s2.toString());\n"
+  "assert (s2.length == 2);\n"
+  "assert (s2[0] == l1[1]);\n"
+  "assert (s2[1] == l1[2]);\n"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {
