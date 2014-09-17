@@ -217,8 +217,8 @@ ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
    if (!input) return;
 
    input->cursor_size = size;
-   input->display->cursor_theme = wl_cursor_theme_load(NULL, input->cursor_size,
-                                                       input->display->wl.shm);
+   input->display->cursor_theme = 
+     wl_cursor_theme_load(NULL, input->cursor_size, input->display->wl.shm);
 }
 
 static Eina_Bool
