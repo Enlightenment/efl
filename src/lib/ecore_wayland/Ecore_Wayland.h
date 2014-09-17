@@ -404,6 +404,12 @@ EAPI struct wl_seat *ecore_wl_input_seat_get(Ecore_Wl_Input *input);
 EAPI Eina_Inlist *ecore_wl_outputs_get(void);
 
 /**
+ * @ingroup Ecore_Wl_Input_Group
+ * @since 1.12
+ */
+EAPI void ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size);
+
+/**
  * Retrieves the Wayland Globals Interface list used for the current Wayland connection.
  *
  * This call, if done after the ECORE_WL_EVENT_INTERFACES_BOUND event was

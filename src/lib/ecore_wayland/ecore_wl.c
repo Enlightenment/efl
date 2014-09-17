@@ -635,9 +635,13 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      {
         ewd->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
 
-        /* FIXME: We should not hard-code a cursor size here, and we should
-         * also import the theme name from a config or env variable */
-        ewd->cursor_theme = wl_cursor_theme_load(NULL, 32, ewd->wl.shm);
+        /* FIXME: we should import the theme name from a config or env variable */
+        if (ewd->input)
+          ewd->cursor_theme = wl_cursor_theme_load(NULL, ewd->input->cursor_size,
+                                                   ewd->wl.shm);
+        else
+          ewd->cursor_theme = wl_cursor_theme_load(NULL, ECORE_WL_DEFAULT_CURSOR_SIZE,
+                                                   ewd->wl.shm);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
      {

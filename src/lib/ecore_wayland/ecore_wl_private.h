@@ -53,6 +53,11 @@ extern int _ecore_wl_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
+# ifdef ECORE_WL_DEFAULT_CURSOR_SIZE
+#  undef ECORE_WL_DEFAULT_CURSOR_SIZE
+# endif
+# define ECORE_WL_DEFAULT_CURSOR_SIZE 32
+
 typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
 
 struct _Ecore_Wl_Display
@@ -175,6 +180,7 @@ struct _Ecore_Wl_Input
    struct wl_callback *cursor_frame_cb;
    Ecore_Timer *cursor_timer;
    unsigned int cursor_current_index;
+   unsigned int cursor_size;
 
    struct wl_data_device *data_device;
    struct wl_data_source *data_source;

@@ -209,6 +209,18 @@ ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, in
                            surface, hot_x, hot_y);
 }
 
+EAPI void
+ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!input) return;
+
+   input->cursor_size = size;
+   input->display->cursor_theme = wl_cursor_theme_load(NULL, input->cursor_size,
+                                                       input->display->wl.shm);
+}
+
 static Eina_Bool
 _ecore_wl_input_cursor_update(void *data)
 {
@@ -327,6 +339,8 @@ void
 _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
    Ecore_Wl_Input *input;
+   char *temp;
+   unsigned int cursor_size;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -338,6 +352,13 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    input->pointer_focus = NULL;
    input->keyboard_focus = NULL;
    input->touch_focus = NULL;
+
+   temp = getenv("ECORE_WL_CURSOR_SIZE");
+   if (temp)
+     cursor_size = atoi(temp);
+   else
+     cursor_size = ECORE_WL_DEFAULT_CURSOR_SIZE;
+   ecore_wl_input_cursor_size_set(input, cursor_size);
 
    input->seat = 
      wl_registry_bind(ewd->wl.registry, id, &wl_seat_interface, 1);
