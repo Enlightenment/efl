@@ -114,7 +114,7 @@ elm_main(int argc, char **argv)
 
         if (curr != dict[i][0])
           {
-             Elm_Object_Item *index_it, *it;
+             Elm_Object_Item *index_it;
              char buf[32];
 
              curr = dict[i][0];
@@ -124,8 +124,8 @@ elm_main(int argc, char **argv)
              index_it = elm_index_item_append(id, buf, NULL, lit);
 
              /* this is here just to demostrate the API call */
-             it = elm_index_item_find(id, lit);
-             assert(it == index_it);
+             (void)elm_index_item_find(id, lit);
+             assert(elm_index_item_find(id, lit) == index_it);
 
              elm_object_item_del_cb_set(index_it, _index_item_del);
           }
