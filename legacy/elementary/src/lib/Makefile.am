@@ -1098,6 +1098,13 @@ nodist_includesunstable_HEADERS = \
 				  elm_win.eo.legacy.h
 
 if HAVE_CXX11
+nodist_includecxxbindings_HEADERS = Elementary.hh $(elm_eolian_hh)
+CLEANFILES += Elementary.hh $(nodist_includecxxbindings_HEADERS)
+Elementary.hh: $(elm_eolian_hh)
+	@echo @ECHO_E@ "#ifndef ELEMENTARY_CXX_HH\n#define ELEMENTARY_CXX_HH\n" > $(top_builddir)/src/lib/Elementary.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/Elementary.hh
+	@for i in $(elm_eolian_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/Elementary.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/Elementary.hh
 
 nodist_includesunstable_HEADERS += \
 	     elm_widget.eo.hh \
