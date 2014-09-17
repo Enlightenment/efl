@@ -43,6 +43,12 @@ static const char script[] =
   "assert (c.indexOf(c[3]) == 0);\n"
   "assert (c.indexOf(c[4]) == 1);\n"
   "assert (c.indexOf(c[5]) == 2);\n"
+  "assert (c.lastIndexOf(c[0]) == 3);\n"
+  "assert (c.lastIndexOf(c[1]) == 4);\n"
+  "assert (c.lastIndexOf(c[2]) == 5);\n"
+  "assert (c.lastIndexOf(c[3]) == 3);\n"
+  "assert (c.lastIndexOf(c[4]) == 4);\n"
+  "assert (c.lastIndexOf(c[5]) == 5);\n"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {

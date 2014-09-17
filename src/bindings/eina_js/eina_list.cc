@@ -266,6 +266,8 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
     (isolate, "join", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
   efl::js::register_<efl::js::eina_list_base, v8::Local<v8::Value> >
     (isolate, "indexOf", std::bind(&efl::js::eina_list_base::index_of, _1, _2, _3), prototype);
+  efl::js::register_<efl::js::eina_list_base, v8::Local<v8::Value> >
+    (isolate, "lastIndexOf", std::bind(&efl::js::eina_list_base::last_index_of, _1, _2, _3), prototype);
 
   efl::js::persistent_instance_template = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
   efl::js::instance_template = constructor;

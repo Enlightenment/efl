@@ -16,6 +16,7 @@ struct eina_list_base
   virtual std::size_t size() const = 0;
   virtual eina_list_base* concat(eina_list_base const& rhs) const = 0;
   virtual int index_of(v8::Isolate* isolate, v8::Local<v8::Value> v) const = 0;
+  virtual int last_index_of(v8::Isolate* isolate, v8::Local<v8::Value> v) const = 0;
   virtual v8::Local<v8::Value> get(v8::Isolate*, std::size_t) const = 0;
   virtual v8::Local<v8::String> to_string(v8::Isolate*) const = 0;
 };
@@ -47,6 +48,22 @@ struct eina_list_type_specific<C, int> : eina_list_base
           return -1;
         else
           return std::distance(first, found);
+      }
+    else
+      return -1;
+  }
+  int last_index_of(v8::Isolate*, v8::Local<v8::Value> v) const
+  {
+    std::cout << "last_index_of" << std::endl;
+    if(v->IsInt32() || v->IsUint32())
+      {
+        int64_t value = v->IntegerValue();
+        auto last = container_get().rend()
+          , found = std::find(container_get().rbegin(), last, value);
+        if(found == last)
+          return -1;
+        else
+          return std::distance(container_get().begin(), found.base()) -1;
       }
     else
       return -1;
