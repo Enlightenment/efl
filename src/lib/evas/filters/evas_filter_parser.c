@@ -1678,6 +1678,22 @@ fail:
    return EINA_FALSE;
 }
 
+static Instruction_Param *
+_paramameter_get_by_id(Evas_Filter_Instruction *instr, int id)
+{
+   Instruction_Param *param;
+   int i = 0;
+
+   if (id < 0)
+     return NULL;
+
+   EINA_INLIST_FOREACH(instr->params, param)
+     if (id == (i++))
+       return param;
+
+   return NULL;
+}
+
 static Eina_Bool
 _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
 {
@@ -1696,22 +1712,18 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
 
    if (lua_istable(L, 1))
      {
-        Eina_Bool seqmode = EINA_TRUE;
-
         if (argc > 1)
           {
              ERR("Too many arguments passed to the instruction %s (in table mode)", instr->name);
              goto fail;
           }
-        lua_pushnil(L);
-        param = EINA_INLIST_CONTAINER_GET(instr->params, Instruction_Param);
 
+        lua_pushnil(L);
         while (lua_next(L, 1))
           {
              if (!lua_isnumber(L, -2) && (lua_type(L, -2) == LUA_TSTRING))
                {
                   const char *name = lua_tostring(L, -2);
-                  seqmode = EINA_FALSE;
                   param = _instruction_param_get(instr, name);
                   if (!param)
                     {
@@ -1719,25 +1731,32 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
                        goto fail;
                     }
                }
-             else if (!seqmode)
+             else if (lua_isnumber(L, -2))
                {
-                  ERR("Unnamed parameter can not come after a named parameter");
-                  goto fail;
+                  int idx = (int) lua_tonumber(L, -2);
+                  param = _paramameter_get_by_id(instr, idx - 1);
+                  if (!param)
+                    {
+                       ERR("Too many parameters for the function %s", instr->name);
+                       goto fail;
+                    }
+
+                  if (!param->allow_seq)
+                    {
+                       ERR("The parameter %s must be referred to by name in function %s",
+                           param->name, instr->name);
+                       goto fail;
+                    }
                }
-             else if (param && !param->allow_seq)
+             else
                {
-                  ERR("The parameter %s must be refered to by name", param->name);
+                  ERR("Invalid type for the parameter key in function %s", instr->name);
                   goto fail;
                }
 
              if (!_lua_parameter_parse(L, param, -1))
                goto fail;
              lua_pop(L, 1);
-
-             if (seqmode)
-               param = EINA_INLIST_GET(param)->next ?
-                        _EINA_INLIST_CONTAINER(param, EINA_INLIST_GET(param)->next) :
-                        NULL;
           }
      }
    else

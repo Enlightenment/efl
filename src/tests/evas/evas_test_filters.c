@@ -128,6 +128,9 @@ START_TEST(evas_filter_parser)
       "m = buffer('alpha') mask ({ m, src = input, dst = output, color = 'white', fillmode = 'repeat', invalid = 42 })",
       "transform ({ output, op = 'vflip', src = input, oy = 0, invalid = 42 })",
       "padding_set ({ 1, 2, 3, 4, invalid = 42 })",
+      // Wrong order of arguments
+      "blur({ 1, ry=12, ox=24, 43 })",
+      //"blur({ 1, ox=24, 43 })", // not sure if that's possible to fix with lua
       // Some early check failures
       //"m = buffer ('alpha') displace ({ m, intensity = 10, flags = 'default', src = input, dst = output, fillmode = 'repeat' })",
       "m = buffer ('rgba') displace ({ m, intensity = 10, flags = 'invalid', src = input, dst = output, fillmode = 'repeat', invalid = 42 })",
