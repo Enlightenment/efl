@@ -1,6 +1,10 @@
 #ifndef _ECORE_DRM_PRIVATE_H
 # define _ECORE_DRM_PRIVATE_H
 
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
+
 # include "Ecore.h"
 # include "ecore_private.h"
 # include "Ecore_Input.h"
