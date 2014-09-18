@@ -18,7 +18,6 @@
 # include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
-# include <dbus/dbus.h>
 # include <systemd/sd-login.h>
 # include <xkbcommon/xkbcommon.h>
 
@@ -34,6 +33,7 @@
 /* #  include <GLES2/gl2ext.h> */
 /* # endif */
 
+# include <Eldbus.h>
 # include <Ecore_Drm.h>
 
 # define NUM_FRAME_BUFFERS 2
