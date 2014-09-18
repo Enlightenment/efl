@@ -232,7 +232,75 @@ typedef Eo Ecore_Con;
  */
 typedef struct Ecore_Con_Socks Ecore_Con_Socks;
 
-typedef enum _Ecore_Con_Type Ecore_Con_Type;
+/**
+ * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
+ * @ingroup Ecore_Con_Group
+ *
+ * Utility functions that set up and shut down the Ecore Connection
+ * library.
+ *
+ * There's also ecore_con_lookup() that can be used to make simple asynchronous
+ * DNS lookups.
+ *
+ * A simple example of how to use these functions:
+ * @li @ref ecore_con_lookup_example_c
+ *
+ * @{
+ */
+
+/**
+ * @typedef Ecore_Con_Type
+ * @enum _Ecore_Con_Type
+ * Types for an ecore_con client/server object.  A correct way to set this type is
+ * with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if encryption is desired,
+ * and LOAD_CERT if the previously loaded certificate should be used.
+ * @code
+ * ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT
+ * @endcode
+ * @ingroup Ecore_Con_Server_Group
+ */
+typedef enum _Ecore_Con_Type
+{
+   /** Socket in ~/.ecore */
+   ECORE_CON_LOCAL_USER = 0,
+   /** Socket in /tmp */
+   ECORE_CON_LOCAL_SYSTEM = 1,
+   /** Abstract socket */
+   ECORE_CON_LOCAL_ABSTRACT = 2,
+   /** Remote server using TCP */
+   ECORE_CON_REMOTE_TCP = 3,
+   /** Remote multicast server */
+   ECORE_CON_REMOTE_MCAST = 4,
+   /** Remote server using UDP */
+   ECORE_CON_REMOTE_UDP = 5,
+   /** Remote broadcast using UDP */
+   ECORE_CON_REMOTE_BROADCAST = 6,
+   /** Remote connection sending packets immediately */
+   ECORE_CON_REMOTE_NODELAY = 7,
+   /** Remote connection sending data in large chunks
+    * @note Only available on Linux
+    * @since 1.2
+    */
+   ECORE_CON_REMOTE_CORK = 8,
+   /** Use SSL2: UNSUPPORTED. **/
+   ECORE_CON_USE_SSL2 = (1 << 4),
+   /** Use SSL3 */
+   ECORE_CON_USE_SSL3 = (1 << 5),
+   /** Use TLS */
+   ECORE_CON_USE_TLS = (1 << 6),
+   /** Use both TLS and SSL3 */
+   ECORE_CON_USE_MIXED = ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS,
+   /** Attempt to use the loaded certificate */
+   ECORE_CON_LOAD_CERT = (1 << 7),
+   /** Disable all types of proxy on the server
+    * @note Only functional for clients
+    * @since 1.2
+    */
+   ECORE_CON_NO_PROXY = (1 << 8),
+   ECORE_CON_SOCKET_ACTIVATE = (1 << 9)
+} Ecore_Con_Type;
+
+/** @} */
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Ecore_Con_Legacy.h"
@@ -578,72 +646,11 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
  */
 
 /**
- * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
+ * @addtogroup Ecore_Con_Events_Group Ecore_Con_Lib_Group
  * @ingroup Ecore_Con_Group
- *
- * Utility functions that set up and shut down the Ecore Connection
- * library.
- *
- * There's also ecore_con_lookup() that can be used to make simple asynchronous
- * DNS lookups.
- *
- * A simple example of how to use these functions:
- * @li @ref ecore_con_lookup_example_c
  *
  * @{
  */
-
-/**
- * @typedef Ecore_Con_Type
- * @enum _Ecore_Con_Type
- * Types for an ecore_con client/server object.  A correct way to set this type is
- * with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if encryption is desired,
- * and LOAD_CERT if the previously loaded certificate should be used.
- * @code
- * ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT
- * @endcode
- * @ingroup Ecore_Con_Server_Group
- */
-typedef enum _Ecore_Con_Type
-{
-   /** Socket in ~/.ecore */
-   ECORE_CON_LOCAL_USER = 0,
-   /** Socket in /tmp */
-   ECORE_CON_LOCAL_SYSTEM = 1,
-   /** Abstract socket */
-   ECORE_CON_LOCAL_ABSTRACT = 2,
-   /** Remote server using TCP */
-   ECORE_CON_REMOTE_TCP = 3,
-   /** Remote multicast server */
-   ECORE_CON_REMOTE_MCAST = 4,
-   /** Remote server using UDP */
-   ECORE_CON_REMOTE_UDP = 5,
-   /** Remote broadcast using UDP */
-   ECORE_CON_REMOTE_BROADCAST = 6,
-   /** Remote connection sending packets immediately */
-   ECORE_CON_REMOTE_NODELAY = 7,
-   /** Remote connection sending data in large chunks
-    * @note Only available on Linux
-    * @since 1.2
-    */
-   ECORE_CON_REMOTE_CORK = 8,
-   /** Use SSL2: UNSUPPORTED. **/
-   ECORE_CON_USE_SSL2 = (1 << 4),
-   /** Use SSL3 */
-   ECORE_CON_USE_SSL3 = (1 << 5),
-   /** Use TLS */
-   ECORE_CON_USE_TLS = (1 << 6),
-   /** Use both TLS and SSL3 */
-   ECORE_CON_USE_MIXED = ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS,
-   /** Attempt to use the loaded certificate */
-   ECORE_CON_LOAD_CERT = (1 << 7),
-   /** Disable all types of proxy on the server
-    * @note Only functional for clients
-    * @since 1.2
-    */
-   ECORE_CON_NO_PROXY = (1 << 8),
-   ECORE_CON_SOCKET_ACTIVATE = (1 << 9) 
-} Ecore_Con_Type;
 
 /**
  * Initialises the Ecore_Con library.
