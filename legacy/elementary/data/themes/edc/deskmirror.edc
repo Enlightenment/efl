@@ -329,17 +329,15 @@ group { name: "e/deskmirror/frame/default";
       }
       program {
          signal: "e,action,uniconify"; source: "e";
-         script {
-            stop_program(get_program_id("iconify"));
-            run_program(get_program_id("uniconify"));
-         }
+         action: ACTION_STOP;
+         target: "iconify";
+         after: "uniconify";
       }
       program {
          signal: "e,action,iconify"; source: "e";
-         script {
-            stop_program(get_program_id("uniconify"));
-            run_program(get_program_id("iconify"));
-         }
+         action: ACTION_STOP;
+         target: "uniconify";
+         after: "iconify";
       }
    }
 }
