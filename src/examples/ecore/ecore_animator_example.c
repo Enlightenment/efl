@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g -Wall -o ecore_animator_example ecore_animator_example.c `pkg-config --cflags --libs evas ecore-evas`
+//gcc -g -Wall -o ecore_animator_example ecore_animator_example.c `pkg-config --cflags --libs evas ecore-evas ecore`
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
@@ -66,7 +66,7 @@ _advance_frame(void *data, double pos)
    evas_object_resize(data, 50 * (1 + frame), 50 * (1 + frame));
    evas_object_move(data, 100 * frame, 100 * frame);
    evas_object_color_set(data, 255 * frame, 0, 255 * (1 - frame), 255);
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -74,7 +74,7 @@ _start_second_anim(void *data)
 {
    ecore_animator_frametime_set(1. / 10);
    ecore_animator_timeline_add(20, _advance_frame2, data);
-   return EINA_FALSE;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
@@ -86,7 +86,7 @@ _advance_frame2(void *data, double pos)
    evas_object_resize(data, 100 - (50 * frame), 100 - (50 * frame));
    evas_object_move(data, 100 * (1 - frame), 100 * (1 - frame));
    evas_object_color_set(data, 255 * (1 - frame), 0, 255 * frame, 255);
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -98,20 +98,20 @@ _advance_frame3(void *data)
      x = 0;
    evas_object_move(data, ++x, 350);
 
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
 _freeze_third_anim(void *data)
 {
    ecore_animator_freeze(data);
-   return EINA_FALSE;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
 _thaw_third_anim(void *data)
 {
    ecore_animator_thaw(data);
-   return EINA_FALSE;
+   return ECORE_CALLBACK_CANCEL;
 }
 
