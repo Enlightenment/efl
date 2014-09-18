@@ -221,6 +221,19 @@ ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
      wl_cursor_theme_load(NULL, input->cursor_size, input->display->wl.shm);
 }
 
+EAPI void
+ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_theme_name)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!input) return;
+
+   input->cursor_theme_name = cursor_theme_name;
+   input->display->cursor_theme =
+     wl_cursor_theme_load(input->cursor_theme_name, input->cursor_size,
+                          input->display->wl.shm);
+}
+
 static Eina_Bool
 _ecore_wl_input_cursor_update(void *data)
 {
@@ -341,6 +354,7 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    Ecore_Wl_Input *input;
    char *temp;
    unsigned int cursor_size;
+   char *cursor_theme_name;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -359,6 +373,9 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    else
      cursor_size = ECORE_WL_DEFAULT_CURSOR_SIZE;
    ecore_wl_input_cursor_size_set(input, cursor_size);
+
+   cursor_theme_name = getenv("ECORE_WL_CURSOR_THEME_NAME");
+   ecore_wl_input_cursor_theme_name_set(input, cursor_theme_name);
 
    input->seat = 
      wl_registry_bind(ewd->wl.registry, id, &wl_seat_interface, 1);

@@ -408,6 +408,7 @@ EAPI Eina_Inlist *ecore_wl_outputs_get(void);
  * @since 1.12
  */
 EAPI void ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size);
+EAPI void ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_theme_name);
 
 /**
  * Retrieves the Wayland Globals Interface list used for the current Wayland connection.

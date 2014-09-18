@@ -635,11 +635,11 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      {
         ewd->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
 
-        /* FIXME: we should import the theme name from a config or env variable */
         if (ewd->input)
           {
-             ewd->cursor_theme = 
-               wl_cursor_theme_load(NULL, ewd->input->cursor_size, ewd->wl.shm);
+             ewd->cursor_theme =
+               wl_cursor_theme_load(ewd->input->cursor_theme_name,
+                                    ewd->input->cursor_size, ewd->wl.shm);
           }
         else
           {

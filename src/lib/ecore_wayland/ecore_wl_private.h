@@ -181,6 +181,7 @@ struct _Ecore_Wl_Input
    Ecore_Timer *cursor_timer;
    unsigned int cursor_current_index;
    unsigned int cursor_size;
+   const char *cursor_theme_name;
 
    struct wl_data_device *data_device;
    struct wl_data_source *data_source;
