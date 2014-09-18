@@ -22,10 +22,10 @@ static const char script[] =
   "  }\n"
   "}\n"
   "print(\"teste\");\n"
-  "var l1 = new List(raw_list);\n"
+  "var l1 = raw_list;\n"
   "print (\"l1 \", l1.toString());\n"
   "assert (l1.length == 3)\n;\n"
-  "var l2 = new List(raw_list);\n"
+  "var l2 = raw_list;\n"
   "print (\"l2 \", l2.toString());\n"
   "assert (l2.length == 3)\n;\n"
   "var c = l1.concat(l2);\n"
@@ -123,7 +123,8 @@ void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   fflush(stdout);
 }
 
-EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate);
+EAPI void eina_container_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate);
+EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
 
 int main(int argc, char* argv[])
 {
@@ -149,7 +150,7 @@ int main(int argc, char* argv[])
     // Bind the global 'print' function to the C++ Print callback.
     global->Set(v8::String::NewFromUtf8(isolate, "print"),
                 v8::FunctionTemplate::New(isolate, Print));
-    eina_list_register(global, isolate);
+    eina_container_register(global, isolate);
     // // Bind the global 'read' function to the C++ Read callback.
     // global->Set(v8::String::NewFromUtf8(isolate, "read"),
     //             v8::FunctionTemplate::New(isolate, Read));
@@ -163,9 +164,9 @@ int main(int argc, char* argv[])
     // global->Set(v8::String::NewFromUtf8(isolate, "version"),
     //             v8::FunctionTemplate::New(isolate, Version));
 
-    global->Set(v8::String::NewFromUtf8(isolate, "raw_list")
-                , v8::External::New(isolate, static_cast<efl::js::eina_list_base*>(&raw_list)));
-    
+    {
+    }
+
     context = v8::Context::New(isolate, NULL, global);
   }
   if (context.IsEmpty()) {
@@ -178,6 +179,10 @@ int main(int argc, char* argv[])
     v8::Context::Scope context_scope(context);
     v8::Local<v8::String> name(v8::String::NewFromUtf8(context->GetIsolate(), "(shell)"));
 
+    v8::Handle<v8::Value> a[] = {v8::External::New(isolate, &raw_list)};
+    context->Global()->Set(v8::String::NewFromUtf8(isolate, "raw_list")
+                , get_list_instance_template()->GetFunction()->NewInstance(1, a));     
+    
     v8::HandleScope handle_scope(context->GetIsolate());
     ExecuteString(context->GetIsolate(),
                   v8::String::NewFromUtf8(context->GetIsolate(), script),
@@ -185,3 +190,4 @@ int main(int argc, char* argv[])
   }
   context->Exit();
 }
+

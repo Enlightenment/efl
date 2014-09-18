@@ -24,24 +24,25 @@ struct tag { typedef T type; };
 
 namespace {
 
-v8::UniquePersistent<v8::ObjectTemplate> persistent_instance_template;
-v8::Handle<v8::FunctionTemplate> instance_template;
+v8::UniquePersistent<v8::ObjectTemplate> instance_persistents[container_type_size];
+v8::Handle<v8::FunctionTemplate> instance_templates[container_type_size];
 
-v8::Local<v8::Object> concat(eina_list_base& lhs, v8::Isolate* isolate, v8::Local<v8::Value> other)
+v8::Local<v8::Object> concat(eina_container_base& lhs, v8::Isolate* isolate, v8::Local<v8::Value> other)
 {
   if(other->IsObject())
     {
       v8::Local<v8::Object> obj = v8::Local<v8::Object>::Cast(other);
       v8::String::Utf8Value constructor_name (obj->GetConstructorName());
-      if(obj->GetConstructorName()->Equals(v8::String::NewFromUtf8(isolate, "List")))
+      std::cout << "constructor " << *constructor_name << std::endl;
+      if(obj->GetConstructorName()->Equals(v8::String::NewFromUtf8(isolate, "eina_list")))
         {
-          eina_list_base& rhs = *static_cast<eina_list_base*>(obj->GetAlignedPointerFromInternalField(0));
+          eina_container_base& rhs = *static_cast<eina_container_base*>(obj->GetAlignedPointerFromInternalField(0));
           std::type_info const& typeinfo_lhs = typeid(lhs)
             , &typeinfo_rhs = typeid(rhs);
           if(!typeinfo_lhs.before(typeinfo_rhs) && !typeinfo_rhs.before(typeinfo_lhs))
             {
               v8::Handle<v8::Value> a[] = {v8::External::New(isolate, rhs.concat(lhs))};
-              v8::Local<v8::Object> result = instance_template->GetFunction()->NewInstance(1, a);
+              v8::Local<v8::Object> result = instance_templates[lhs.get_container_type()]->GetFunction()->NewInstance(1, a);
               return result;
             }
           else
@@ -56,14 +57,15 @@ v8::Local<v8::Object> concat(eina_list_base& lhs, v8::Isolate* isolate, v8::Loca
   std::abort();
 }
 
-v8::Local<v8::Object> slice(eina_list_base& self, v8::Isolate* isolate, v8::Local<v8::Value> iv
+v8::Local<v8::Object> slice(eina_container_base& self, v8::Isolate* isolate, v8::Local<v8::Value> iv
                             , v8::Local<v8::Value> jv)
 {
   if((iv->IsUint32() || iv->IsInt32()) && (jv->IsUint32() || jv->IsInt32()))
     {
       std::int64_t i = iv->IntegerValue(), j = jv->IntegerValue();
       v8::Handle<v8::Value> a[] = {v8::External::New(isolate, self.slice(i, j))};
-      v8::Local<v8::Object> result = instance_template->GetFunction()->NewInstance(1, a);
+      v8::Local<v8::Object> result = instance_templates[self.get_container_type()]
+        ->GetFunction()->NewInstance(1, a);
       return result;
     }
   else
@@ -74,14 +76,14 @@ v8::Local<v8::Object> slice(eina_list_base& self, v8::Isolate* isolate, v8::Loca
 
 void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& info)
 {
-  eina_list_base* self = static_cast<eina_list_base*>(info.This()->GetAlignedPointerFromInternalField(0));
+  eina_container_base* self = static_cast<eina_container_base*>(info.This()->GetAlignedPointerFromInternalField(0));
   info.GetReturnValue().Set((uint32_t)self->size());
 }
 
 void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
 {
   std::cout << "index_get " << index << std::endl;
-  eina_list_base* self = static_cast<eina_list_base*>(info.This()->GetAlignedPointerFromInternalField(0));
+  eina_container_base* self = static_cast<eina_container_base*>(info.This()->GetAlignedPointerFromInternalField(0));
   info.GetReturnValue().Set(self->get(info.GetIsolate(), index));
 }
 
@@ -91,7 +93,7 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
     {
       if(args.Length() == 0)
         {
-          eina_list_base* p = new range_eina_list<int>;
+          eina_container_base* p = new range_eina_list<int>;
           std::cerr << "called eina list constructor p = " << p << std::endl;
           args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(p));
         }
@@ -101,7 +103,7 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
           if(args[0]->IsExternal())
             {
               std::cout << "Is external" << std::endl;
-              eina_list_base* base = reinterpret_cast<eina_list_base*>
+              eina_container_base* base = reinterpret_cast<eina_container_base*>
                 (v8::External::Cast(*args[0])->Value());
               std::cout << "base " << base << std::endl;
               args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(base));
@@ -261,12 +263,9 @@ void register_(v8::Isolate* isolate, const char* name, F&& f, v8::Handle<v8::Obj
                   (isolate, new F(std::forward<F>(f)))));
 }
 
-} } }
-
-EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate)
+v8::Local<v8::ObjectTemplate> register_template(v8::Isolate* isolate, v8::Handle<v8::FunctionTemplate> constructor)
 {
-  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New(isolate, &efl::js::new_eina_list );
-  v8::Local<v8::ObjectTemplate> instance_t = constructor->InstanceTemplate();
+  v8::Handle<v8::ObjectTemplate> instance_t = constructor->InstanceTemplate();
   instance_t->SetInternalFieldCount(1);
 
   instance_t->SetIndexedPropertyHandler(& efl::js::index_get);
@@ -275,22 +274,42 @@ EAPI void eina_list_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate*
   prototype->SetAccessor(v8::String::NewFromUtf8(isolate, "length"), &efl::js::length);
 
   using namespace std::placeholders;
-  efl::js::register_<efl::js::eina_list_base>
-    (isolate, "concat", &efl::js::concat, prototype);
-  efl::js::register_<efl::js::eina_list_base>
-    (isolate, "slice", &efl::js::slice, prototype);
-  efl::js::register_<efl::js::eina_list_base>
-    (isolate, "toString", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
-  efl::js::register_<efl::js::eina_list_base>
-    (isolate, "join", std::bind(&efl::js::eina_list_base::to_string, _1, _2), prototype);
-  efl::js::register_<efl::js::eina_list_base, v8::Local<v8::Value> >
-    (isolate, "indexOf", std::bind(&efl::js::eina_list_base::index_of, _1, _2, _3), prototype);
-  efl::js::register_<efl::js::eina_list_base, v8::Local<v8::Value> >
-    (isolate, "lastIndexOf", std::bind(&efl::js::eina_list_base::last_index_of, _1, _2, _3), prototype);
+  js::register_<js::eina_container_base>
+    (isolate, "concat", &js::concat, prototype);
+  js::register_<js::eina_container_base>
+    (isolate, "slice", &js::slice, prototype);
+  js::register_<js::eina_container_base>
+    (isolate, "toString", std::bind(&js::eina_container_base::to_string, _1, _2), prototype);
+  js::register_<js::eina_container_base>
+    (isolate, "join", std::bind(&js::eina_container_base::to_string, _1, _2), prototype);
+  js::register_<js::eina_container_base, v8::Local<v8::Value> >
+    (isolate, "indexOf", std::bind(&js::eina_container_base::index_of, _1, _2, _3), prototype);
+  js::register_<js::eina_container_base, v8::Local<v8::Value> >
+    (isolate, "lastIndexOf", std::bind(&js::eina_container_base::last_index_of, _1, _2, _3), prototype);
 
-  efl::js::persistent_instance_template = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
-  efl::js::instance_template = constructor;
-  
-  global->Set(v8::String::NewFromUtf8(isolate, "List"), constructor);
+  return instance_t;
 }
 
+void register_class(v8::Isolate* isolate, container_type type, const char* class_name
+                    , v8::FunctionCallback callback)
+{
+  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New(isolate, callback);
+  constructor->SetClassName(v8::String::NewFromUtf8(isolate, class_name));
+
+  v8::Local<v8::ObjectTemplate> instance_t = efl::js::register_template(isolate, constructor);
+  
+  efl::js::instance_persistents[type] = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
+  efl::js::instance_templates[type] = constructor;
+}
+  
+} } }
+
+EAPI void eina_container_register(v8::Handle<v8::ObjectTemplate>, v8::Isolate* isolate)
+{
+  efl::js::register_class(isolate, efl::js::list_container_type, "eina_list", &efl::js::new_eina_list);
+}
+
+EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template()
+{
+  return efl::js::instance_templates[efl::js::list_container_type];
+}
