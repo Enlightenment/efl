@@ -215,6 +215,7 @@ ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!input) return;
+   EINA_SAFETY_ON_NULL_RETURN(input->display->wl.shm);
 
    input->cursor_size = size;
    input->display->cursor_theme = 
