@@ -2861,6 +2861,44 @@ EFL_EVAL_PKGS([ECORE_WAYLAND])
 EFL_LIB_END_OPTIONAL([Ecore_Wayland])
 #### End of Ecore_Wayland
 
+
+#### Eldbus
+EFL_LIB_START([Eldbus])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ELDBUS], [evil])
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ELDBUS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ELDBUS], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELDBUS], [eina])
+
+EFL_DEPEND_PKG([ELDBUS], [DBUS], [dbus-1])
+
+EFL_EVAL_PKGS([ELDBUS])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Eldbus])
+#### End of Eldbus
+
+
 #### Ecore_Drm
 EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_drm}" = "yes"])
 
@@ -3880,42 +3918,6 @@ AC_DEFINE([HAVE_EIO], [1], [Have eio library])
 if test "x${want_eo_id}" = "xyes" ; then
    AC_DEFINE([HAVE_EO_ID], [1], [Have eo id])
 fi
-
-#### Eldbus
-EFL_LIB_START([Eldbus])
-
-### Additional options to configure
-
-### Default values
-
-### Checks for programs
-
-## Compatibility layers
-EFL_PLATFORM_DEPEND([ELDBUS], [evil])
-
-### Checks for libraries
-EFL_INTERNAL_DEPEND_PKG([ELDBUS], [ecore])
-EFL_INTERNAL_DEPEND_PKG([ELDBUS], [eo])
-EFL_INTERNAL_DEPEND_PKG([ELDBUS], [eina])
-
-EFL_DEPEND_PKG([ELDBUS], [DBUS], [dbus-1])
-
-EFL_EVAL_PKGS([ELDBUS])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-EFL_LIB_END([Eldbus])
-#### End of Eldbus
 
 
 #### Efreet
