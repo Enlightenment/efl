@@ -438,3 +438,89 @@ group { name: "e/deskmirror/frame/pixel";
       }
    }
 }
+
+group { "e/deskmirror/frame/borderless";
+   parts {
+      spacer { "spacer";
+         desc {}
+         desc { "iconic";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      rect { "client_clip";
+      }
+      swallow { "e.swallow.client";
+         clip: "client_clip";
+      }
+      proxy { "clone"; nomouse;
+         desc {
+            source: "e.swallow.client";
+            hid;
+            color: 255 255 255 0;
+         }
+         desc { "urgent1"; inherit: "default";
+            vis;
+            color: 255 255 255 255;
+         }
+         desc { "urgent2"; inherit: "default";
+            vis;
+            rel1.relative: -2.0  -2.0;
+            rel2.relative: 3.0  3.0;
+            color: 255 255 255 0;
+         }
+      }
+      program { name: "iconify";
+         action: STATE_SET "iconic" 0.0;
+         transition: ACCELERATE 0.2 CURRENT;
+         target: "spacer";
+      }
+      program { name: "uniconify";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.2 CURRENT;
+         target: "spacer";
+      }
+      program {
+         signal: "e,action,uniconify"; source: "e";
+         action: ACTION_STOP;
+         target: "iconify";
+         after: "uniconify";
+      }
+      program {
+         signal: "e,action,iconify"; source: "e";
+         action: ACTION_STOP;
+         target: "uniconify";
+         after: "iconify";
+      }
+      program { name: "urgent";
+         signal: "e,state,urgent"; source: "e";
+         action: ACTION_STOP;
+         target: "go_big";
+         target: "go_big2";
+         after: "go_big";
+      }
+      program { name: "go_big";
+         action: STATE_SET "urgent1" 0.0;
+         target: "clone";
+         after: "go_big2";
+      }
+      program { name: "go_big2";
+         action: STATE_SET "urgent2" 0.0;
+         transition: LINEAR 0.5;
+         target: "clone";
+         after: "go_big";
+      }
+      program { name: "not_urgent";
+         signal: "e,state,not_urgent"; source: "e";
+         action: ACTION_STOP;
+         target: "go_big";
+         target: "go_big2";
+         after: "go_hid";
+      }
+      program { name: "go_hid";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.5;
+         target: "clone";
+      }
+   }
+}
