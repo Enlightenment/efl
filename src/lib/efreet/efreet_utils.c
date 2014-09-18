@@ -318,6 +318,20 @@ efreet_util_desktop_category_list(const char *category)
     return efreet_util_cache_list("categories", category);
 }
 
+EAPI Eina_List *
+efreet_util_desktop_environments_list(void)
+{
+    Efreet_Cache_Array_String *array;
+    Eina_List *ret = NULL;
+    unsigned int i;
+
+    array = efreet_cache_util_names("environments_list");
+    if (!array) return NULL;
+    for (i = 0; i < array->array_count; i++)
+        ret = eina_list_append(ret, array->array[i]);
+    return ret;
+}
+
 static int
 efreet_util_glob_match(const char *str, const char *glob)
 {

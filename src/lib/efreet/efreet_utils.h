@@ -153,6 +153,16 @@ EAPI Eina_List *efreet_util_desktop_category_list(const char *category);
 EAPI Eina_List *efreet_util_menus_find(void);
 
 /**
+ * Find all known desktop environments
+ * This list must be freed using EINA_LIST_FREE
+ * @since 1.12
+ *
+ * @return an Eina_List of desktop environments names (const char *)
+ */
+EAPI Eina_List *efreet_util_desktop_environments_list(void);
+
+
+/**
  * @}
  */
 #endif

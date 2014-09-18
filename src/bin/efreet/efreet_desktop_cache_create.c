@@ -39,6 +39,7 @@ static Eina_Hash *name = NULL;
 static Eina_Hash *generic_name = NULL;
 static Eina_Hash *comment = NULL;
 static Eina_Hash *exec = NULL;
+static Eina_Hash *environments = NULL;
 
 static int
 cache_add(const char *path, const char *file_id, int priority EINA_UNUSED, int *changed)
@@ -118,6 +119,8 @@ cache_add(const char *path, const char *file_id, int priority EINA_UNUSED, int *
         ADD_ELEM(desk->generic_name, generic_name);
         ADD_ELEM(desk->comment, comment);
         ADD_ELEM(desk->exec, exec);
+        ADD_LIST(desk->only_show_in, environments);
+        ADD_LIST(desk->not_show_in, environments);
         eina_hash_add(file_ids, file_id, desk->orig_path);
         eina_hash_add(desktops, desk->orig_path, desk);
     }
@@ -352,6 +355,7 @@ main(int argc, char **argv)
     generic_name = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
     comment = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
     exec = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    environments = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
 
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                                     "applications");
@@ -401,6 +405,7 @@ main(int argc, char **argv)
     STORE_HASH_ARRAY(generic_name);
     STORE_HASH_ARRAY(comment);
     STORE_HASH_ARRAY(exec);
+    STORE_HASH_ARRAY(environments);
     if (eina_hash_population(file_ids) > 0)
     {
         hash.hash = file_ids;
@@ -414,6 +419,7 @@ main(int argc, char **argv)
     eina_hash_free(generic_name);
     eina_hash_free(comment);
     eina_hash_free(exec);
+    eina_hash_free(environments);
 
     if (old_file_ids)
     {
