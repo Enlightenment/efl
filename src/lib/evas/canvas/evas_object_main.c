@@ -1218,7 +1218,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
-   if (!(obj->layer->evas->is_frozen))
+   if (obj->layer->evas && !(obj->layer->evas->is_frozen))
      {
         evas_object_clip_across_clippees_check(eo_obj, obj);
         evas_object_recalc_clippees(obj);
