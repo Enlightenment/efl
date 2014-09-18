@@ -232,6 +232,9 @@ ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_t
    if (!input) return;
 
    input->cursor_theme_name = cursor_theme_name;
+
+   EINA_SAFETY_ON_NULL_RETURN(input->display->wl.shm);
+
    input->display->cursor_theme =
      wl_cursor_theme_load(input->cursor_theme_name, input->cursor_size,
                           input->display->wl.shm);
