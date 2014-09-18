@@ -113,27 +113,19 @@ ecore_wl_init(const char *name)
    if (_ecore_wl_log_dom < 0)
      {
         EINA_LOG_ERR("Cannot create a log domain for Ecore Wayland");
-        eina_shutdown();
-        return --_ecore_wl_init_count;
+        goto exit_eina;
      }
 
    if (!ecore_init())
      {
         ERR("Could not initialize ecore");
-        eina_log_domain_unregister(_ecore_wl_log_dom);
-        _ecore_wl_log_dom = -1;
-        eina_shutdown();
-        return --_ecore_wl_init_count;
+        goto exit_ecore;
      }
 
    if (!ecore_event_init())
      {
         ERR("Could not initialize ecore_event");
-        eina_log_domain_unregister(_ecore_wl_log_dom);
-        _ecore_wl_log_dom = -1;
-        ecore_shutdown();
-        eina_shutdown();
-        return --_ecore_wl_init_count;
+        goto exit_ecore_event;
      }
 
    if (!ECORE_WL_EVENT_MOUSE_IN)
@@ -159,12 +151,7 @@ ecore_wl_init(const char *name)
    if (!(_ecore_wl_disp = malloc(sizeof(Ecore_Wl_Display))))
      {
         ERR("Could not allocate memory for Ecore_Wl_Display structure");
-        eina_log_domain_unregister(_ecore_wl_log_dom);
-        _ecore_wl_log_dom = -1;
-        ecore_event_shutdown();
-        ecore_shutdown();
-        eina_shutdown();
-        return --_ecore_wl_init_count;
+        goto exit_ecore_disp;
      }
 
    memset(_ecore_wl_disp, 0, sizeof(Ecore_Wl_Display));
@@ -172,12 +159,7 @@ ecore_wl_init(const char *name)
    if (!(_ecore_wl_disp->wl.display = wl_display_connect(name)))
      {
         ERR("Could not connect to Wayland display");
-        eina_log_domain_unregister(_ecore_wl_log_dom);
-        _ecore_wl_log_dom = -1;
-        ecore_event_shutdown();
-        ecore_shutdown();
-        eina_shutdown();
-        return --_ecore_wl_init_count;
+        goto exit_ecore_disp_connect;
      }
 
    _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
@@ -198,13 +180,7 @@ ecore_wl_init(const char *name)
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
         ERR("Could not initialize XKB");
-        free(_ecore_wl_disp);
-        eina_log_domain_unregister(_ecore_wl_log_dom);
-        _ecore_wl_log_dom = -1;
-        ecore_event_shutdown();
-        ecore_shutdown();
-        eina_shutdown();
-        return --_ecore_wl_init_count;
+        goto exit_ecore_disp_connect;
      }
 
    _ecore_wl_window_init();
@@ -220,6 +196,23 @@ ecore_wl_init(const char *name)
      }
 
    return _ecore_wl_init_count;
+
+exit_ecore_disp_connect:
+   free(_ecore_wl_disp);
+
+exit_ecore_disp:
+   ecore_event_shutdown();
+
+exit_ecore_event:
+   ecore_shutdown();
+
+exit_ecore:
+   eina_log_domain_unregister(_ecore_wl_log_dom);
+   _ecore_wl_log_dom = -1;
+
+exit_eina:
+   eina_shutdown();
+   return --_ecore_wl_init_count;
 }
 
 EAPI int
