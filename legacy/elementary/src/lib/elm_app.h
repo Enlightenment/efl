@@ -266,5 +266,32 @@ EAPI const char *elm_app_data_dir_get(void);
 EAPI const char *elm_app_locale_dir_get(void);
 
 /**
+ * Set the base scale of the application.
+ *
+ * @param base_scale The scale that the application is made on the basis of.
+ *
+ * @note The scale is used for the application to be scaled.
+ * If the application isn't made on the basis of scale 1.0,
+ * the application layout will be scaled inappositely. So if the application set
+ * the base scale, it is applied when the application is scaled.
+ *
+ * @note You should call this function @b before using ELM_SCALE_SIZE macro.
+ *
+ * @ingroup App
+ * @since 1.12
+ */
+EAPI void elm_app_base_scale_set(double base_scale);
+
+/**
+ * Get the base scale of the application.
+ *
+ * @return The base scale which the application sets.
+ *
+ * @ingroup App
+ * @since 1.12
+ */
+EAPI double elm_app_base_scale_get(void);
+
+/**
  * @}
  */

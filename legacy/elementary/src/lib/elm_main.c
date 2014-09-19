@@ -127,6 +127,7 @@ static const char *app_bin_dir = NULL;
 static const char *app_lib_dir = NULL;
 static const char *app_data_dir = NULL;
 static const char *app_locale_dir = NULL;
+static double app_base_scale = 1.0;
 
 static Eina_Prefix *app_pfx = NULL;
 
@@ -455,6 +456,20 @@ elm_app_locale_dir_get(void)
    if (!app_pfx) return "";
    app_locale_dir = eina_prefix_locale_get(app_pfx);
    return app_locale_dir;
+}
+
+EAPI void
+elm_app_base_scale_set(double base_scale)
+{
+   if (base_scale <= 0.0) return;
+   app_base_scale = base_scale;
+}
+
+EAPI double
+elm_app_base_scale_get(void)
+{
+   if (app_base_scale) return app_base_scale;
+   return 1.0;
 }
 
 static Eina_Bool _elm_need_e_dbus = EINA_FALSE;
