@@ -1588,6 +1588,117 @@ error:
    return NULL;
 }
 
+void *
+evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
+                            int w, int h, const int *attrib_list)
+{
+   EVGL_Surface *sfc = NULL;
+   void *pbuffer;
+
+   // Check if engine is valid
+   if (!evgl_engine)
+     {
+        ERR("Invalid EVGL Engine!");
+        evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ACCESS);
+        return NULL;
+     }
+
+   if (!cfg)
+     {
+        ERR("Invalid Config!");
+        evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONFIG);
+        return NULL;
+     }
+
+   if (!evgl_engine->funcs->pbuffer_surface_create)
+     {
+        ERR("Engine can not create PBuffers");
+        evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
+        return NULL;
+     }
+
+   // Allocate surface structure
+   sfc = calloc(1, sizeof(EVGL_Surface));
+   if (!sfc)
+     {
+        ERR("Surface allocation failed.");
+        evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+        goto error;
+     }
+
+   sfc->w = w;
+   sfc->h = h;
+   sfc->pbuffer.color_fmt = cfg->color_format;
+   sfc->pbuffer.is_pbuffer = EINA_TRUE;
+
+   // Set the context current with resource context/surface
+   if (!_internal_resource_make_current(eng_data, NULL))
+     {
+        ERR("Error doing an internal resource make current");
+        goto error;
+     }
+
+   // If the surface is defined as RGB or RGBA, then create an FBO
+   if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
+     {
+        // Set the internal config value
+        if (!_internal_config_set(sfc, cfg))
+          {
+             ERR("Unsupported Format!");
+             evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONFIG);
+             goto error;
+          }
+
+        // Create internal buffers
+        if (!_surface_buffers_create(sfc))
+          {
+             ERR("Unable Create Specificed Surfaces.");
+             evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+             goto error;
+          };
+
+        // Allocate resources for fallback unless the flag is on
+        if (!evgl_engine->direct_mem_opt)
+          {
+             if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
+               {
+                  ERR("Unable Create Allocate Memory for Surface.");
+                  evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+                  goto error;
+               }
+          }
+     }
+
+   // Not calling make_current
+
+   pbuffer = evgl_engine->funcs->pbuffer_surface_create
+     (eng_data, sfc, attrib_list);
+
+   if (!pbuffer)
+     {
+        ERR("Engine failed to create a PBuffer");
+        goto error;
+     }
+
+   sfc->pbuffer.native_surface = pbuffer;
+
+   if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
+     {
+        ERR("Error doing make_current(NULL, NULL).");
+        goto error;
+     }
+
+   // Keep track of all the created surfaces
+   LKL(evgl_engine->resource_lock);
+   evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
+   LKU(evgl_engine->resource_lock);
+
+   return sfc;
+
+error:
+   free(sfc);
+   return NULL;
+}
 
 int
 evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
@@ -1624,11 +1735,14 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         evgl_make_current(eng_data, NULL, NULL);
      }
 
-   // Set the context current with resource context/surface
-   if (!_internal_resource_make_current(eng_data, NULL))
+   if (!sfc->pbuffer.native_surface)
      {
-        ERR("Error doing an internal resource make current");
-        return 0;
+        // Set the context current with resource context/surface
+        if (!_internal_resource_make_current(eng_data, NULL))
+          {
+             ERR("Error doing an internal resource make current");
+             return 0;
+          }
      }
 
    // Destroy created buffers
@@ -1636,6 +1750,24 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
      {
         ERR("Error deleting surface resources.");
         return 0;
+     }
+
+   // Destroy PBuffer surfaces
+   if (sfc->pbuffer.native_surface)
+     {
+        int ret;
+
+        if (sfc->pbuffer.fbo)
+          glDeleteFramebuffers(1, &sfc->pbuffer.fbo);
+
+        ret = evgl_engine->funcs->surface_destroy(eng_data, sfc->pbuffer.native_surface);
+        LKL(evgl_engine->resource_lock);
+        evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
+        LKU(evgl_engine->resource_lock);
+        free(sfc);
+
+        if (!ret) ERR("Engine failed to destroy a PBuffer.");
+        return ret;
      }
 
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
@@ -1879,6 +2011,12 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              glBindFramebuffer(GL_FRAMEBUFFER, 0);
              ctx->current_fbo = 0;
           }
+        else if (ctx->current_sfc && (ctx->current_sfc->pbuffer.is_pbuffer))
+          {
+             // Using the same context, we were rendering on a pbuffer
+             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+             ctx->current_fbo = 0;
+          }
 
         if (ctx->current_fbo == 0)
           {
@@ -1894,6 +2032,35 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           }
 
         rsc->direct.rendered = 1;
+     }
+   else if (sfc->pbuffer.native_surface)
+     {
+        // Call end tiling
+        if (rsc->direct.partial.enabled)
+           evgl_direct_partial_render_end();
+
+        if (sfc->color_buf)
+          {
+             if (!sfc->pbuffer.fbo)
+               {
+                  glGenFramebuffers(1, &sfc->pbuffer.fbo);
+                  GLERRLOG();
+               }
+             if (!_surface_buffers_fbo_set(sfc, sfc->pbuffer.fbo))
+               ERR("Could not detach current FBO");
+          }
+
+        evgl_engine->funcs->make_current(eng_data, sfc->pbuffer.native_surface,
+                                         ctx->context, EINA_TRUE);
+
+        // Bind to the previously bound buffer (may be 0)
+        if (ctx->current_fbo)
+          {
+             glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
+             GLERRLOG();
+          }
+
+        rsc->direct.rendered = 0;
      }
    else
      {

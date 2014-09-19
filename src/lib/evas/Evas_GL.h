@@ -391,8 +391,9 @@ typedef void                         *EvasGLImage;
  */
 typedef enum _Evas_GL_Color_Format
 {
-    EVAS_GL_RGB_888   = 0,
-    EVAS_GL_RGBA_8888 = 1
+    EVAS_GL_RGB_888   = 0, /**< Opaque RGB surface */
+    EVAS_GL_RGBA_8888 = 1, /**< RGBA surface with alpha */
+    EVAS_GL_NO_FBO    = 2  /**< Special value for creating PBuffer surfaces without any attached buffer. @see evas_gl_pbuffer_surface_create. @since 1.12*/
 } Evas_GL_Color_Format;
 
 /**
@@ -529,10 +530,45 @@ EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) E
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
 
 /**
+ * @brief Create a pixel buffer surface
+ *
+ * @param[in] evas_gl     The given Evas_GL object
+ * @param[in] cfg         Pixel format and configuration of the pixel buffer surface
+ * @param[in] w           Requested width of the buffer
+ * @param[in] h           Requested height of the buffer
+ * @param[in] attrib_list An optional list of attribute-value pairs terminated by attribute 0, can be @c NULL. Currently, no attributes are supported.
+ *
+ * @return The created GL surface object,
+ *         otherwise @c NULL on failure
+ *
+ * The surface must be released with @ref evas_gl_surface_destroy.
+ *
+ * If the color format in @a cfg is @ref EVAS_GL_RGB_888 or @ref EVAS_GL_RGBA_8888,
+ * then Evas will automatically generate a framebuffer attached to this PBuffer.
+ * Its properties can be queried using @ref evas_gl_native_surface_get.
+ * If you want to attach an FBO yourself, or create a PBuffer surface only,
+ * please use the color format @ref EVAS_GL_NO_FBO.
+ *
+ * Creating a 1x1 PBuffer surface can be useful in order to call
+ * @ref evas_gl_make_current() from another thread.
+ *
+ * @note The attribute list can be terminated by EVAS_GL_NONE or 0.
+ *       As of now, no special attributes are supported yet. Also, only EGL
+ *       is supported at the moment of writing.
+ *
+ * @see evas_gl_surface_destroy
+ *
+ * @since 1.12
+ */
+EAPI Evas_GL_Surface         *evas_gl_pbuffer_surface_create(Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h, const int *attrib_list) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
+
+/**
  * @brief Destroys an Evas GL Surface.
  *
  * @param[in] evas_gl   The given Evas_GL object
  * @param[in] surf      The given GL surface object
+ *
+ * @note This function can also destroy pbuffer surfaces.
  */
 EAPI void                     evas_gl_surface_destroy    (Evas_GL *evas_gl, Evas_GL_Surface *surf) EINA_ARG_NONNULL(1,2);
 

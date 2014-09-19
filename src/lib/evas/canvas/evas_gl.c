@@ -241,6 +241,62 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
    return surf;
 }
 
+EAPI Evas_GL_Surface *
+evas_gl_pbuffer_surface_create(Evas_GL *evas_gl, Evas_GL_Config *cfg,
+                               int w, int h, const int *attrib_list)
+{
+   Evas_GL_Surface *surf;
+
+   // Magic
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   if (!cfg)
+     {
+        ERR("Invalid Config Pointer!");
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_CONFIG);
+        return NULL;
+     }
+
+   if ((w <= 0) || (h <= 0))
+     {
+        ERR("Invalid surface dimensions: %d, %d", w, h);
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
+
+   if (!evas_gl->evas->engine.func->gl_pbuffer_surface_create)
+     {
+        ERR("Engine does not support PBuffer!");
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_NOT_INITIALIZED);
+        return NULL;
+     }
+
+   surf = calloc(1, sizeof(Evas_GL_Surface));
+   if (!surf)
+     {
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_ALLOC);
+        return NULL;
+     }
+
+   surf->data = evas_gl->evas->engine.func->gl_pbuffer_surface_create
+     (evas_gl->evas->engine.data.output, cfg, w, h, attrib_list);
+   if (!surf->data)
+     {
+        ERR("Engine failed to create a PBuffer!");
+        free(surf);
+        return NULL;
+     }
+
+   // Keep track of the surface creations
+   LKL(evas_gl->lck);
+   evas_gl->surfaces = eina_list_prepend(evas_gl->surfaces, surf);
+   LKU(evas_gl->lck);
+
+   return surf;
+}
+
 EAPI void
 evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
 {

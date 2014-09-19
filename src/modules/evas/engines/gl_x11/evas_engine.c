@@ -607,6 +607,125 @@ evgl_eng_rotation_angle_get(void *data)
      }
 }
 
+static void *
+evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
+                                const int *attrib_list)
+{
+   Render_Engine *re = (Render_Engine *)data;
+
+   // TODO: Add support for surfaceless pbuffers (EGL_NO_TEXTURE)
+   // TODO: Add support for EGL_MIPMAP_TEXTURE??? (GLX doesn't support them)
+
+#ifdef GL_GLES
+   int config_attrs[20];
+   int surface_attrs[20];
+   EGLSurface egl_sfc;
+   EGLConfig egl_cfg;
+   int num_config, i = 0;
+
+   if (attrib_list)
+     WRN("This PBuffer implementation does not support extra attributes yet");
+
+#if 0
+   // Choose framebuffer configuration
+   // DISABLED FOR NOW
+   if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
+     {
+        config_attrs[i++] = EGL_RED_SIZE;
+        config_attrs[i++] = 1;
+        config_attrs[i++] = EGL_GREEN_SIZE;
+        config_attrs[i++] = 1;
+        config_attrs[i++] = EGL_BLUE_SIZE;
+        config_attrs[i++] = 1;
+
+        if (sfc->pbuffer.color_fmt == EVAS_GL_RGBA_8888)
+          {
+             config_attrs[i++] = EGL_ALPHA_SIZE;
+             config_attrs[i++] = 1;
+             //config_attrs[i++] = EGL_BIND_TO_TEXTURE_RGBA;
+             //config_attrs[i++] = EGL_TRUE;
+          }
+        else
+          {
+             //config_attrs[i++] = EGL_BIND_TO_TEXTURE_RGB;
+             //config_attrs[i++] = EGL_TRUE;
+          }
+     }
+
+   if (sfc->depth_fmt || sfc->depth_stencil_fmt)
+     {
+        config_attrs[i++] = EGL_DEPTH_SIZE;
+        config_attrs[i++] = 1;
+     }
+
+   if (sfc->stencil_fmt || sfc->depth_stencil_fmt)
+     {
+        config_attrs[i++] = EGL_STENCIL_SIZE;
+        config_attrs[i++] = 1;
+     }
+
+   config_attrs[i++] = EGL_RENDERABLE_TYPE;
+   config_attrs[i++] = EGL_OPENGL_ES2_BIT;
+   config_attrs[i++] = EGL_SURFACE_TYPE;
+   config_attrs[i++] = EGL_PBUFFER_BIT;
+   config_attrs[i++] = EGL_NONE;
+#else
+   // It looks like eglMakeCurrent might fail if we use a different config from
+   // the actual display surface. This is weird.
+   i = 0;
+   config_attrs[i++] = EGL_CONFIG_ID;
+   config_attrs[i++] = 0;
+   config_attrs[i++] = EGL_NONE;
+   eglQueryContext(re->win->egl_disp, re->win->egl_context[0], EGL_CONFIG_ID, &config_attrs[1]);
+#endif
+
+   if (!eglChooseConfig(re->win->egl_disp, config_attrs, &egl_cfg, 1, &num_config)
+       || (num_config < 1))
+     {
+        int err = eglGetError();
+        _evgl_error_set(err - EGL_SUCCESS);
+        ERR("eglChooseConfig failed with error %x", err);
+        return NULL;
+     }
+
+   // Now, choose the config for the PBuffer
+   i = 0;
+   surface_attrs[i++] = EGL_WIDTH;
+   surface_attrs[i++] = sfc->w;
+   surface_attrs[i++] = EGL_HEIGHT;
+   surface_attrs[i++] = sfc->h;
+#if 0
+   // Adding these parameters will trigger EGL_BAD_ATTRIBUTE because
+   // the config also requires EGL_BIND_TO_TEXTURE_RGB[A]. But some drivers
+   // don't support those configs (eg. nvidia)
+   surface_attrs[i++] = EGL_TEXTURE_FORMAT;
+   if (sfc->pbuffer.color_fmt == EVAS_GL_RGB_888)
+     surface_attrs[i++] = EGL_TEXTURE_RGB;
+   else
+     surface_attrs[i++] = EGL_TEXTURE_RGBA;
+   surface_attrs[i++] = EGL_TEXTURE_TARGET;
+   surface_attrs[i++] = EGL_TEXTURE_2D;
+   surface_attrs[i++] = EGL_MIPMAP_TEXTURE;
+   surface_attrs[i++] = EINA_TRUE;
+#endif
+   surface_attrs[i++] = EGL_NONE;
+
+   egl_sfc = eglCreatePbufferSurface(re->win->egl_disp, egl_cfg, surface_attrs);
+   if (!egl_sfc)
+     {
+        int err = eglGetError();
+        _evgl_error_set(err - EGL_SUCCESS);
+        ERR("eglCreatePbufferSurface failed with error %x", err);
+        return NULL;
+     }
+
+   return egl_sfc;
+#else
+   ERR("PBuffer support is not implemented yet!");
+   return NULL;
+#endif
+}
+
 static const EVGL_Interface evgl_funcs =
 {
    evgl_eng_display_get,
@@ -620,7 +739,8 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_make_current,
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
-   evgl_eng_rotation_angle_get
+   evgl_eng_rotation_angle_get,
+   evgl_eng_pbuffer_surface_create
 };
 
 //----------------------------------------------------------//

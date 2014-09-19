@@ -1113,6 +1113,15 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
    return evgl_surface_create(data, cfg, w, h);
 }
 
+static void *
+eng_gl_pbuffer_surface_create(void *data, void *config, int w, int h, const int *attrib_list)
+{
+   Evas_GL_Config *cfg = (Evas_GL_Config *)config;
+
+   EVGLINIT(data, NULL);
+   return evgl_pbuffer_surface_create(data, cfg, w, h, attrib_list);
+}
+
 static int
 eng_gl_surface_destroy(void *data, void *surface)
 {
@@ -1897,6 +1906,7 @@ module_open(Evas_Module *em)
    ORD(image_cache_get);
 
    ORD(gl_surface_create);
+   ORD(gl_pbuffer_surface_create);
    ORD(gl_surface_destroy);
    ORD(gl_context_create);
    ORD(gl_context_destroy);

@@ -3062,6 +3062,7 @@ static Evas_Func func =
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
      NULL, // need software mesa for gl rendering <- gl_surface_create
+     NULL, // need software mesa for gl rendering <- gl_pbuffer_surface_create
      NULL, // need software mesa for gl rendering <- gl_surface_destroy
      NULL, // need software mesa for gl rendering <- gl_context_create
      NULL, // need software mesa for gl rendering <- gl_context_destroy

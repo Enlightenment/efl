@@ -1231,6 +1231,7 @@ struct _Evas_Func
 
    /* EFL-GL Glue Layer */
    void *(*gl_surface_create)            (void *data, void *config, int w, int h);
+   void *(*gl_pbuffer_surface_create)    (void *data, void *config, int w, int h, int const *attrib_list);
    int  (*gl_surface_destroy)            (void *data, void *surface);
    void *(*gl_context_create)            (void *data, void *share_context);
    int  (*gl_context_destroy)            (void *data, void *context);

@@ -64,6 +64,9 @@ struct _EVGL_Interface
 
    // Returns the current rotation angle of evas
    int         (*rotation_angle_get)(void *data);
+
+   // Create a pbuffer surface
+   void       *(*pbuffer_surface_create)(void *data, EVGL_Surface *evgl_sfc, const int *attrib_list);
 };
 
 struct _EVGL_Surface
@@ -109,6 +112,16 @@ struct _EVGL_Surface
    // Rough estimate of buffer in memory per renderbuffer
    // 0. color 1. depth 2. stencil 3. depth_stencil
    int     buffer_mem[4];
+
+   //-------------------------//
+   // Related to PBuffer Surface
+   struct {
+      EVGLNative_Surface    native_surface;
+      Evas_GL_Color_Format  color_fmt;
+      GLuint                fbo;
+      Eina_Bool             is_pbuffer : 1;
+   } pbuffer;
+
 
    //-------------------------//
 
