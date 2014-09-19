@@ -59,6 +59,7 @@ typedef struct _Ecore_Wl_Event_Dnd_Position Ecore_Wl_Event_Dnd_Position;
 typedef struct _Ecore_Wl_Event_Dnd_Leave Ecore_Wl_Event_Dnd_Leave;
 typedef struct _Ecore_Wl_Event_Dnd_Drop Ecore_Wl_Event_Dnd_Drop;
 typedef struct _Ecore_Wl_Event_Dnd_End Ecore_Wl_Event_Dnd_End;
+typedef struct _Ecore_Wl_Event_Data_Source_Cancelled Ecore_Wl_Event_Data_Source_Cancelled; /** @since 1.12 */
 typedef struct _Ecore_Wl_Event_Data_Source_Send Ecore_Wl_Event_Data_Source_Send; /** @since 1.7 */
 typedef struct _Ecore_Wl_Event_Selection_Data_Ready Ecore_Wl_Event_Selection_Data_Ready; /** @since 1.7 */
 typedef struct _Ecore_Wl_Event_Interfaces_Bound Ecore_Wl_Event_Interfaces_Bound;
@@ -179,6 +180,12 @@ struct _Ecore_Wl_Event_Dnd_Drop
 };
 
 struct _Ecore_Wl_Event_Dnd_End
+{
+   unsigned int win, source;
+};
+
+/** @since 1.12 */
+struct _Ecore_Wl_Event_Data_Source_Cancelled
 {
    unsigned int win, source;
 };

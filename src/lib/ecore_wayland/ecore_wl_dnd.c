@@ -767,14 +767,24 @@ static void
 _ecore_wl_dnd_source_cb_cancelled(void *data, struct wl_data_source *source)
 {
    Ecore_Wl_Input *input;
+   Ecore_Wl_Event_Data_Source_Cancelled *ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
 
-   /* FIXME: Raise an Ecore_Wl_Event here */
    wl_data_source_destroy(source);
    if (input->data_source == source) input->data_source = NULL;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Data_Source_Cancelled)))) return;
+
+   if (input->pointer_focus)
+     ev->win = input->pointer_focus->id;
+
+   if (input->keyboard_focus)
+     ev->source = input->keyboard_focus->id;
+
+   ecore_event_add(ECORE_WL_EVENT_DATA_SOURCE_CANCELLED, ev, NULL, NULL);
 }
 
 static void 
