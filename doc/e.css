@@ -716,10 +716,24 @@ div.ingroups a {
   color: #ffffff;
 }
 
-div.header {
+div.header, div.footer {
   margin-left: auto;
   margin-right: auto;
   width: 980px;
+}
+
+div.footer {
+  font-size: 10px;
+  text-align: center;
+}
+
+div.footer span.copyright {
+  padding-right: 50px;
+  padding-left: 50px;
+}
+
+div.footer a {
+  color: black;
 }
 
 div.headertitle {
