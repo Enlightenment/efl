@@ -14,6 +14,9 @@ EVGL_Engine *evgl_engine = NULL;
 int _evas_gl_log_dom   = -1;
 int _evas_gl_log_level = -1;
 
+typedef void           *(*glsym_func_void_ptr) ();
+glsym_func_void_ptr glsym_evas_gl_native_context_get = NULL;
+
 static void _surface_cap_print(int error);
 static void _surface_context_list_print();
 static void _internal_resources_destroy(void *eng_data, EVGL_Resource *rsc);
@@ -1305,6 +1308,22 @@ evas_gl_common_error_get(void *data EINA_UNUSED)
    return rsc->error_state;
 }
 
+EVGLNative_Context
+_evgl_native_context_get(Evas_GL_Context *ctx)
+{
+   EVGL_Context *evglctx;
+
+   if (!glsym_evas_gl_native_context_get)
+     {
+        ERR("Engine can't get a pointer to the native context");
+        return NULL;
+     }
+
+   evglctx = glsym_evas_gl_native_context_get(ctx);
+   if (!evglctx) return NULL;
+   return evglctx->context;
+}
+
 //---------------------------------------------------------------//
 // Exported functions for evas_engine to use
 
@@ -1366,6 +1385,9 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
         goto error;
      }
    DBG("TLS KEY created: %d", evgl_engine->resource_key);
+
+   // Link to evas_gl.c (this doesn't look great)
+   glsym_evas_gl_native_context_get = dlsym(RTLD_DEFAULT, "_evas_gl_native_context_get");
 
    // Initialize Extensions
    if (efunc->proc_address_get && efunc->ext_string_get)

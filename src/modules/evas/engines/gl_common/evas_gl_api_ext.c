@@ -73,14 +73,14 @@ _evgl_egl_display_get(const char *function)
    if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("%s: Unable to execute GL command. Error retrieving tls", function);
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
         return EGL_NO_DISPLAY;
      }
 
    if (!rsc->current_eng)
      {
         ERR("%s: Unable to retrive Current Engine", function);
-        _evgl_error_set(EVAS_GL_NOT_INITIALIZED);
+        evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
         return EGL_NO_DISPLAY;
      }
 
@@ -92,7 +92,7 @@ _evgl_egl_display_get(const char *function)
    else
      {
         ERR("%s: Invalid Engine... (Can't acccess EGL Display)\n", function);
-        _evgl_error_set(EVAS_GL_BAD_DISPLAY);
+        evas_gl_common_error_set(NULL, EVAS_GL_BAD_DISPLAY);
         return EGL_NO_DISPLAY;
      }
 }
@@ -155,7 +155,7 @@ evgl_evasglCreateImageForContext(Evas_GL *evasgl EINA_UNUSED, Evas_GL_Context *e
 
    if (!evasgl || !dpy) return NULL;
 
-   ctx = evgl_context_native_get(evasctx);
+   ctx = _evgl_native_context_get(evasctx);
    return _evgl_eglCreateImageKHR(dpy, ctx, target, buffer, attrib_list);
 }
 

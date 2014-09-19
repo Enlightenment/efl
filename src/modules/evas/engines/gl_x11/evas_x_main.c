@@ -54,14 +54,14 @@ error:
 }
 
 static inline Outbuf *
-tls_outbuf_get(void)
+_tls_outbuf_get(void)
 {
    if (!initted) eng_init();
    return eina_tls_get(_outbuf_key);
 }
 
 static inline Eina_Bool
-_tls_Outbuf_set(Outbuf *xwin)
+_tls_outbuf_set(Outbuf *xwin)
 {
    if (!initted) eng_init();
    return eina_tls_set(_outbuf_key, xwin);
@@ -496,9 +496,9 @@ eng_window_free(Outbuf *gw)
    eng_window_use(gw);
 
    context = _tls_context_get();
-   xwin = tls_outbuf_get();
+   xwin = _tls_outbuf_get();
 
-   if (gw == xwin) _tls_Outbuf_set(NULL);
+   if (gw == xwin) _tls_outbuf_set(NULL);
    if (gw->gl_context)
      {
         ref = gw->gl_context->references - 1;
@@ -600,7 +600,7 @@ eng_window_use(Outbuf *gw)
    Eina_Bool force_use = EINA_FALSE;
    Outbuf *xwin;
 
-   xwin = tls_outbuf_get();
+   xwin = _tls_outbuf_get();
 
    glsym_evas_gl_preload_render_lock(eng_window_make_current, gw);
 #ifdef GL_GLES
@@ -609,11 +609,15 @@ eng_window_use(Outbuf *gw)
         if ((eglGetCurrentDisplay() !=
              xwin->egl_disp) ||
             (eglGetCurrentContext() !=
-             xwin->egl_context[0]) ||
-            (eglGetCurrentSurface(EGL_READ) !=
-             xwin->egl_surface[xwin->offscreen]) ||
-            (eglGetCurrentSurface(EGL_DRAW) !=
-             xwin->egl_surface[xwin->offscreen]))
+             xwin->egl_context[0])
+#if 0
+            // FIXME: Figure out what that offscreen thing was about...
+            || (eglGetCurrentSurface(EGL_READ) !=
+                xwin->egl_surface[xwin->offscreen])
+            || (eglGetCurrentSurface(EGL_DRAW) !=
+                xwin->egl_surface[xwin->offscreen])
+#endif
+            )
           force_use = EINA_TRUE;
      }
 #else
@@ -630,7 +634,7 @@ eng_window_use(Outbuf *gw)
              glsym_evas_gl_common_context_use(xwin->gl_context);
              glsym_evas_gl_common_context_flush(xwin->gl_context);
           }
-        _tls_Outbuf_set(gw);
+        _tls_outbuf_set(gw);
         if (gw)
           {
 // EGL / GLES
@@ -679,9 +683,9 @@ eng_window_unsurf(Outbuf *gw)
 #ifdef GL_GLES
    Outbuf *xwin;
 
-   xwin = _tls_Outbuf_get();
+   xwin = _tls_outbuf_get();
    if (xwin)
-      evas_gl_common_context_flush(xwin->gl_context);
+      glsym_evas_gl_common_context_flush(xwin->gl_context);
    if (xwin == gw)
      {
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -691,7 +695,7 @@ eng_window_unsurf(Outbuf *gw)
         if (gw->egl_surface[1] != EGL_NO_SURFACE)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[1]);
         gw->egl_surface[1] = EGL_NO_SURFACE;
-        _tls_Outbuf_set(NULL);
+        _tls_outbuf_set(NULL);
      }
 #else
    if (gw->glxwin)

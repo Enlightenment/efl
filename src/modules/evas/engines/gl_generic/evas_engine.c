@@ -1349,8 +1349,10 @@ eng_gl_surface_query(void *data, void *surface, int attr, void *value)
         // This is a real EGL surface, let's just call EGL directly
         int val;
         Eina_Bool ok;
+        void *disp;
 
-        ok = eglQuerySurface(re->win->egl_disp, sfc->pbuffer.native_surface, attr, &val);
+        disp = re->window_egl_display_get(re->software.ob);
+        ok = eglQuerySurface(disp, sfc->pbuffer.native_surface, attr, &val);
         if (!ok) return EINA_FALSE;
         switch (attr)
           {
@@ -1430,7 +1432,7 @@ eng_gl_surface_query(void *data, void *surface, int attr, void *value)
              */
            default: break;
           }
-        _evgl_error_set(EVAS_GL_BAD_ATTRIBUTE);
+        evas_gl_common_error_set(data, EVAS_GL_BAD_ATTRIBUTE);
         return EINA_FALSE;
      }
 #else

@@ -611,7 +611,7 @@ static void *
 evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
                                 const int *attrib_list)
 {
-   Render_Engine *re = (Render_Engine *)data;
+   Render_Engine_GL_Generic *re = data;
 
    // TODO: Add support for surfaceless pbuffers (EGL_NO_TEXTURE)
    // TODO: Add support for EGL_MIPMAP_TEXTURE??? (GLX doesn't support them)
@@ -622,9 +622,14 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
    EGLSurface egl_sfc;
    EGLConfig egl_cfg;
    int num_config, i = 0;
+   EGLDisplay disp;
+   EGLContext ctx;
 
    if (attrib_list)
      WRN("This PBuffer implementation does not support extra attributes yet");
+
+   disp = re->window_egl_display_get(re->software.ob);
+   ctx = re->window_gl_context_get(re->software.ob);
 
 #if 0
    // Choose framebuffer configuration
@@ -676,14 +681,14 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
    config_attrs[i++] = EGL_CONFIG_ID;
    config_attrs[i++] = 0;
    config_attrs[i++] = EGL_NONE;
-   eglQueryContext(re->win->egl_disp, re->win->egl_context[0], EGL_CONFIG_ID, &config_attrs[1]);
+   eglQueryContext(disp, ctx, EGL_CONFIG_ID, &config_attrs[1]);
 #endif
 
-   if (!eglChooseConfig(re->win->egl_disp, config_attrs, &egl_cfg, 1, &num_config)
+   if (!eglChooseConfig(disp, config_attrs, &egl_cfg, 1, &num_config)
        || (num_config < 1))
      {
         int err = eglGetError();
-        _evgl_error_set(err - EGL_SUCCESS);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
         ERR("eglChooseConfig failed with error %x", err);
         return NULL;
      }
@@ -710,11 +715,11 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
 #endif
    surface_attrs[i++] = EGL_NONE;
 
-   egl_sfc = eglCreatePbufferSurface(re->win->egl_disp, egl_cfg, surface_attrs);
+   egl_sfc = eglCreatePbufferSurface(disp, egl_cfg, surface_attrs);
    if (!egl_sfc)
      {
         int err = eglGetError();
-        _evgl_error_set(err - EGL_SUCCESS);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
         ERR("eglCreatePbufferSurface failed with error %x", err);
         return NULL;
      }

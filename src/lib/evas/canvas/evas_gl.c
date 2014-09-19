@@ -613,3 +613,11 @@ evas_gl_surface_query(Evas_GL *evas_gl, Evas_GL_Surface *surface, int attribute,
    return evas_gl->evas->engine.func->gl_surface_query
          (evas_gl->evas->engine.data.output, surface->data, attribute, value);
 }
+
+// Internal function - called from evas_gl_core.c
+EAPI void *
+_evas_gl_native_context_get(Evas_GL_Context *ctx)
+{
+   if (!ctx) return NULL;
+   return ctx->data;
+}

@@ -306,5 +306,6 @@ extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
 extern int            _evgl_not_in_pixel_get(void);
 extern int            _evgl_direct_enabled(void);
+extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);
 
 #endif //_EVAS_GL_CORE_PRIVATE_H
