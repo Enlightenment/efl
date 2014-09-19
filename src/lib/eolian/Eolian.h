@@ -36,6 +36,56 @@ extern "C" {
 # include <config.h>
 #endif
 
+/**
+ * @page eolian_main Eolian (BETA)
+ *
+ * @date 2014 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref eolian_main_intro
+ * @li @ref eolian_main_compiling
+ * @li @ref eolian_main_next_steps
+ *
+ * @section eolian_main_intro Introduction
+ *
+ * The Eolian EO file parser and code generator.
+
+ * @section eolian_main_compiling How to compile
+ *
+ * Eolian is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags eolian`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs eolian`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section eolian_main_next_steps Next Steps
+ *
+ * After you understood what Eolian is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+
+ *
+ *
+ * @addtogroup Eolian
+ * @{
+ */
+
 #ifdef EFL_BETA_API_SUPPORT
 
 /* Class type used to extract information on classes
@@ -1848,6 +1898,10 @@ EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
 EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
 
 #endif
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 } // extern "C" {
