@@ -654,6 +654,25 @@ EAPI Evas_GL_Context         *evas_gl_current_context_get (Evas_GL *evas_gl) EIN
  */
 EAPI Evas_GL_Surface         *evas_gl_current_surface_get (Evas_GL *evas_gl) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+
+
+/*-------------------------------------------------------------------------
+ * Data types, definitions and values for use with Evas GL.
+ *
+ * The following definitions have been imported from the official GLES/GLES2
+ * header files. Please do not include the official GL headers along with
+ * Evas_GL.h as these will conflict.
+ *-----------------------------------------------------------------------*/
+
+#ifndef KHRONOS_SUPPORT_INT64
+typedef unsigned long long khronos_uint64_t;
+typedef signed long long   khronos_int64_t;
+#endif
+
+// Due to build conflicts on various platforms, we can't use GL[u]int64 directly
+typedef khronos_int64_t    EvasGLint64;
+typedef khronos_uint64_t   EvasGLuint64;
+
 #if !defined(__gl_h_) && !defined(__gl2_h_)
 # define __gl_h_
 # define __gl2_h_
@@ -686,8 +705,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 /* GL types for handling large vertex buffer objects */
 typedef signed long int  GLintptr;     // Changed khronos_intptr_t
 typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
-
-//#if (!defined(__gl2_h_) && !defined(__gl_h_))
 
 /* OpenGL ES core versions */
 //#define GL_ES_VERSION_2_0                 1
@@ -1378,6 +1395,72 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 # endif
 #endif
 
+
+
+// These types are required since we can't include GLES/gl.h or gl2.h
+typedef signed int         GLclampx;   // Changed khronos_int32_t
+typedef struct __GLsync*   GLsync;
+
+
+
+/*
+ * EGL-related definitions
+ *
+ * Note the names have been changed from EGL to EvasGL so as to be
+ * platform independent. Except for the error codes, the following
+ * EVAS_GL_x definitions have the same values as their EGL_x counterparts.
+ * Please note that the error codes have been reset to start from 0 (success).
+ */
+
+/* EGL/EvasGL Types */
+typedef void *EvasGLSync;
+typedef unsigned long long EvasGLTime;
+
+/* @brief Attribute list terminator
+ * 0 is also accepted as an attribute terminator.
+ * Evas_GL will ensure that the attribute list is always properly terminated
+ * (eg. using EGL_NONE for EGL backends) and the values are supported by the
+ * backends.
+ */
+#define EVAS_GL_NONE                            0x3038
+
+/* EGL_KHR_image_base */
+#define EVAS_GL_image_base 1
+#define EVAS_GL_IMAGE_PRESERVED                 0x30D2  /**< @brief An attribute for @ref evasglCreateImage or @ref evasglCreateImageForContext, the default is @c EINA_FALSE. Please refer to @c EGL_IMAGE_PRESERVED_KHR. */
+
+/* EGL_KHR_image */
+#define EVAS_GL_image 1
+#define EVAS_GL_NATIVE_PIXMAP                   0x30B0  /**< @internal A target for @ref evasglCreateImage or @ref evasglCreateImageForContext. Since it is X11-specific, it should not be used by Tizen applications. */
+
+/* EGL_KHR_vg_parent_image */
+#define EVAS_VG_PARENT_IMAGE                    0x30BA  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+
+/* EGL_KHR_gl_texture_2D_image */
+#define EVAS_GL_TEXTURE_2D                      0x30B1  /**< @brief An attribute for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_LEVEL                   0x30BC  /**< @brief An attribute for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+
+/* EGL_KHR_gl_texture_cubemap_image */
+#define EVAS_GL_TEXTURE_CUBE_MAP_POSITIVE_X     0x30B3  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_CUBE_MAP_NEGATIVE_X     0x30B4  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_CUBE_MAP_POSITIVE_Y     0x30B5  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_CUBE_MAP_NEGATIVE_Y     0x30B6  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_CUBE_MAP_POSITIVE_Z     0x30B7  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z     0x30B8  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+
+/* EGL_KHR_gl_texture_3D_image */
+#define EVAS_GL_TEXTURE_3D                      0x30B2  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+#define EVAS_GL_TEXTURE_ZOFFSET                 0x30BD  /**< @brief An attribute for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+
+/* EGL_KHR_gl_renderbuffer_image */
+#define EVAS_GL_RENDERBUFFER                    0x30B9  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext */
+
+/* Out-of-band attribute value */
+#define EVAS_GL_DONT_CARE			(-1)
+
+/* EGL_TIZEN_image_native_surface */
+#define EVAS_GL_TIZEN_image_native_surface 1
+#define EVAS_GL_NATIVE_SURFACE_TIZEN            0x32A1  /**< @brief A target for @ref evasglCreateImage or @ref evasglCreateImageForContext. This is a Tizen specific feature. */
+
 /**
  * @name Evas GL error codes
  *
@@ -1393,32 +1476,72 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
  *
  * @{
  */
-#define EVAS_GL_SUCCESS                         0x0000  /**< The last evas_gl_ operation succeeded. A call to @c evas_gl_error_get() will reset the error. */
-#define EVAS_GL_NOT_INITIALIZED                 0x0001  /**< Evas GL was not initialized or a @c NULL pointer was passed */
-#define EVAS_GL_BAD_ACCESS                      0x0002  /**< Bad access; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_ALLOC                       0x0003  /**< Bad allocation; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_ATTRIBUTE                   0x0004  /**< Bad attribute; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_CONFIG                      0x0005  /**< Bad configuration; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_CONTEXT                     0x0006  /**< Bad context; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_CURRENT_SURFACE             0x0007  /**< Bad current surface; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_DISPLAY                     0x0008  /**< Bad display; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_MATCH                       0x0009  /**< Bad match; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_NATIVE_PIXMAP               0x000A  /**< Bad native pixmap; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_NATIVE_WINDOW               0x000B  /**< Bad native window; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_PARAMETER                   0x000C  /**< Bad parameter; for more information, please refer to its EGL counterpart */
-#define EVAS_GL_BAD_SURFACE                     0x000D  /**< Bad surface; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_SUCCESS                         0x0000  /**< @brief The last evas_gl_ operation succeeded. A call to @c evas_gl_error_get() will reset the error. */
+#define EVAS_GL_NOT_INITIALIZED                 0x0001  /**< @brief Evas GL was not initialized or a @c NULL pointer was passed */
+#define EVAS_GL_BAD_ACCESS                      0x0002  /**< @brief Bad access; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_ALLOC                       0x0003  /**< @brief Bad allocation; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_ATTRIBUTE                   0x0004  /**< @brief Bad attribute; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_CONFIG                      0x0005  /**< @brief Bad configuration; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_CONTEXT                     0x0006  /**< @brief Bad context; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_CURRENT_SURFACE             0x0007  /**< @brief Bad current surface; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_DISPLAY                     0x0008  /**< @brief Bad display; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_MATCH                       0x0009  /**< @brief Bad match; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_NATIVE_PIXMAP               0x000A  /**< @internal Bad native pixmap; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_NATIVE_WINDOW               0x000B  /**< @brief Bad native window; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_PARAMETER                   0x000C  /**< @brief Bad parameter; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_BAD_SURFACE                     0x000D  /**< @brief Bad surface; for more information, please refer to its EGL counterpart */
 /* EGL 1.1 - IMG_power_management */
-#define EVAS_GL_CONTEXT_LOST                    0x000E  /**< Context lost; for more information, please refer to its EGL counterpart */
+#define EVAS_GL_CONTEXT_LOST                    0x000E  /**< @brief Context lost; for more information, please refer to its EGL counterpart */
 
 /** @} */
 
+/* EGL_KHR_fence_sync - EVAS_GL_fence_sync */
+#define EVAS_GL_fence_sync 1
+/* EGL_KHR_reusable_sync - EVAS_GL_reusable_sync */
+#define EVAS_GL_reusable_sync 1
+/* EGL_KHR_wait_sync - EVAS_GL_wait_sync */
+#define EVAS_GL_KHR_wait_sync 1
+
+/**
+ * @name Constants used to define and wait for Sync objects.
+ * @{
+ */
+#define EVAS_GL_SYNC_PRIOR_COMMANDS_COMPLETE    0x30F0 /**< @brief A value for @ref evasglGetSyncAttrib with @ref EVAS_GL_SYNC_CONDITION  */
+#define EVAS_GL_SYNC_STATUS                     0x30F1 /**< @brief A attribute for @ref evasglGetSyncAttrib */
+#define EVAS_GL_SIGNALED                        0x30F2 /**< @brief A value for @ref evasglGetSyncAttrib with @ref EVAS_GL_SYNC_STATUS  */
+#define EVAS_GL_UNSIGNALED                      0x30F3 /**< @brief A value for @ref evasglGetSyncAttrib with @ref EVAS_GL_SYNC_STATUS  */
+#define EVAS_GL_TIMEOUT_EXPIRED                 0x30F5 /**< @brief A returned by @ref evasglClientWaitSync */
+#define EVAS_GL_CONDITION_SATISFIED             0x30F6 /**< @brief A returned by @ref evasglClientWaitSync */
+#define EVAS_GL_SYNC_TYPE                       0x30F7 /**< @brief A attribute for @ref evasglGetSyncAttrib */
+#define EVAS_GL_SYNC_CONDITION                  0x30F8 /**< @brief A attribute for @ref evasglGetSyncAttrib */
+#define EVAS_GL_SYNC_FENCE                      0x30F9 /**< @brief A type for @ref evasglCreateSync */
+#define EVAS_GL_SYNC_REUSABLE                   0x30FA /**< @brief A type for @ref evasglCreateSync */
+
+#define EVAS_GL_SYNC_FLUSH_COMMANDS_BIT         0x0001 /**< @brief A flag for @ref evasglClientWaitSync */
+#define EVAS_GL_FOREVER                         0xFFFFFFFFFFFFFFFFull  /**< @brief Disable wait timeout */
+#define EVAS_GL_NO_SYNC                         ((EvasGLSync) NULL)    /**< @brief Empty sync object, see @ref evasglCreateSync */
+/** @} */
+
 #define EVAS_GL_API_VERSION 1
+
+/**
+ * @brief The Evas GL API
+ * This structure contains function pointers to the available GL functions.
+ * Some of these functions may be wrapped internally by Evas GL.
+ */
 struct _Evas_GL_API
 {
    int            version;
 
-   /* version 1: */
-   /*------- GLES 2.0 -------*/
+   /**
+    * @anchor gles2
+    * @name OpenGL-ES 2.0.
+    *
+    * Evas_GL_API version 1.
+    *
+    * The following functions are supported in all OpenGL-ES 2.0 contexts.
+    * @{
+    */
    void         (*glActiveTexture) (GLenum texture);
    void         (*glAttachShader) (GLuint program, GLuint shader);
    void         (*glBindAttribLocation) (GLuint program, GLuint index, const char* name);
@@ -1561,16 +1684,29 @@ struct _Evas_GL_API
    void         (*glVertexAttrib4fv) (GLuint indx, const GLfloat* values);
    void         (*glVertexAttribPointer) (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr);
    void         (*glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
+   /** @} */
 
-   /*------- GLES 2.0 Extensions -------*/
+   /**
+    * @name OpenGL-ES 2.0 extensions.
+    *
+    *  Evas_GL_API version 1
+    *
+    * The following functions may be supported in OpenGL-ES 2.0 contexts,
+    * depending on which extensions Evas has decided to support.
+    *
+    * @{
+    */
+
+   /* GL_OES_EGL_image */
    // Notice these two names have been changed to fit Evas GL and not EGL!
-   /* GL_OES_EvasGL_image */
+   /** @brief Requires the @c GL_OES_EGL_image extension, similar to @c glEGLImageTargetTexture2DOES. */
    void         (*glEvasGLImageTargetTexture2DOES) (GLenum target, EvasGLImage image);
+   /** @brief Requires the @c GL_OES_EGL_image extension, similar to @c glEGLImageTargetRenderbufferStorageOES. */
    void         (*glEvasGLImageTargetRenderbufferStorageOES) (GLenum target, EvasGLImage image);
 
    /* GL_OES_get_program_binary */
    void 	(*glGetProgramBinaryOES) (GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, void *binary);
-   void 	(*glProgramBinaryOES) (GLuint program, GLenum binaryFormat, const void *binary, GLint length);   
+   void 	(*glProgramBinaryOES) (GLuint program, GLenum binaryFormat, const void *binary, GLint length);
    /* GL_OES_mapbuffer */
    void* 	(*glMapBufferOES) (GLenum target, GLenum access);
    GLboolean 	(*glUnmapBufferOES) (GLenum target);
@@ -1628,20 +1764,81 @@ struct _Evas_GL_API
    void 	(*glExtGetTexSubImageQCOM) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, void* texels);
    void 	(*glExtGetBufferPointervQCOM) (GLenum target, void** params);
 
-
    /* GL_QCOM_extended_get2 */
    void 	(*glExtGetShadersQCOM) (GLuint* shaders, GLint maxShaders, GLint* numShaders);
    void 	(*glExtGetProgramsQCOM) (GLuint* programs, GLint maxPrograms, GLint* numPrograms);
    GLboolean 	(*glExtIsProgramBinaryQCOM) (GLuint program);
    void 	(*glExtGetProgramBinarySourceQCOM) (GLuint program, GLenum shadertype, char* source, GLint* length);
+   /** @} */
 
-   //------- EGL Related Extensions -------//
-   /* EvasGL_KHR_image */
-   EvasGLImage  (*evasglCreateImage) (int target, void* buffer, int* attrib_list);
+   /**
+    * @name EGL-related extensions
+    *
+    * Evas_GL_API version 1.
+    *
+    * @{
+    */
+
+   /* EGL_KHR_image - #ifdef EVAS_GL_image */
+   /**
+    * @anchor evasglCreateImage
+    * @brief Create an EvasGLImage for the current context.
+    *
+    * Common targets are:
+    * @li @c EVAS_GL_TEXTURE_2D:<br/>
+    * In case of @c EVAS_GL_TEXTURE_2D on EGL, the currently bound EGLContext
+    * will be used to create the image. The buffer argument must be a texture
+    * ID cast down to a void* pointer.<br/>
+    * Requires the @c EVAS_GL_image extension.
+    *
+    * @li @c EVAS_GL_NATIVE_SURFACE_TIZEN (Tizen platform only):<br/>
+    * Requires the @c EVAS_GL_TIZEN_image_native_surface extension.
+    *
+    * @note Please consider using @ref evasglCreateImageForContext instead.
+    */
+   EvasGLImage  (*evasglCreateImage) (int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
+
+   /**
+    * @anchor evasglDestroyImage
+    * @brief Destroys an EvasGLImage.
+    * Destroy an image created by either @ref evasglCreateImage or @ref evasglCreateImageForContext.
+    *
+    * Requires the @c EVAS_GL_image extension.
+    */
    void         (*evasglDestroyImage) (EvasGLImage image);
 
+   /* Evas_GL_API version 2: */
+
+   /**
+    * @anchor evasglCreateImageForContext
+    * @brief Create an EvasGLImage for a given context.
+    *
+    * @param[in]  evas_gl     The current Evas GL object,
+    * @param[in]  ctx         A context to create this image for,
+    * @param[in]  target      One of @c EVAS_GL_TEXTURE_2D and @c EVAS_GL_NATIVE_SURFACE_TIZEN,
+    * @param[in]  buffer      A pointer to a buffer, see below,
+    * @param[in]  attrib_list An array of key-value pairs terminated by 0 (see @ref EVAS_GL_IMAGE_PRESERVED)
+    *
+    * Common targets are:
+    * @li @c EVAS_GL_TEXTURE_2D:<br/>
+    * In case of @c EVAS_GL_TEXTURE_2D, the buffer argument must be a texture
+    * ID cast down to a void* pointer.<br/>
+    * Requires the @c EVAS_GL_image extension.
+    *
+    * @code
+EvasGLImage *img = glapi->evasglCreateImageForContext
+  (evasgl, ctx, EVAS_GL_TEXTURE_2D, (void*)(intptr_t)texture_id, NULL);
+    * @endcode
+    *
+    * @li @c EVAS_GL_NATIVE_SURFACE_TIZEN (Tizen platform only):<br/>
+    * Requires the @c EVAS_GL_TIZEN_image_native_surface extension.
+    *
+    * @since 1.12
+    */
+   EvasGLImage  (*evasglCreateImageForContext) (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
+
+
    /* future calls will be added down here for expansion */
-   /* version 2: */
 };
 
 

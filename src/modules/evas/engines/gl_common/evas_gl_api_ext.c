@@ -146,6 +146,19 @@ evgl_evasglCreateImage(int target, void* buffer, const int *attrib_list)
    return _evgl_eglCreateImageKHR(dpy, ctx, target, buffer, attrib_list);
 }
 
+static void *
+evgl_evasglCreateImageForContext(Evas_GL *evasgl EINA_UNUSED, Evas_GL_Context *evasctx,
+                                 int target, void* buffer, const int *attrib_list)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   EGLContext ctx = EGL_NO_CONTEXT;
+
+   if (!evasgl || !dpy) return NULL;
+
+   ctx = evgl_context_native_get(evasctx);
+   return _evgl_eglCreateImageKHR(dpy, ctx, target, buffer, attrib_list);
+}
+
 static void
 evgl_evasglDestroyImage(EvasGLImage image)
 {
@@ -163,7 +176,7 @@ evgl_glEvasGLImageTargetTexture2D(GLenum target, EvasGLImage image)
 static void
 evgl_glEvasGLImageTargetRenderbufferStorage(GLenum target, EvasGLImage image)
 {
-   EXT_FUNC(glEGLImageTargetTexture2DOES)(target, image);
+   EXT_FUNC(glEGLImageTargetRenderbufferStorageOES)(target, image);
 }
 
 #else

@@ -446,11 +446,14 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 		_EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglDestroyImageKHR"))
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImage, (int target, void* buffer, int *attrib_list))
+	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImage, (int target, void* buffer, const int *attrib_list))
 		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglCreateImage)
 	_EVASGL_EXT_FUNCTION_END()
 	_EVASGL_EXT_FUNCTION_BEGIN(void, evasglDestroyImage, (EvasGLImage image))
 		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglDestroyImage)
+	_EVASGL_EXT_FUNCTION_END()
+	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImageForContext, (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int *attrib_list))
+		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglCreateImageForContext)
 	_EVASGL_EXT_FUNCTION_END()
 
 	#ifdef _EVASGL_EXT_VERIFY
