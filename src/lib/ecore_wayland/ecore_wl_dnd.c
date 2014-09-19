@@ -26,6 +26,7 @@ static void _ecore_wl_dnd_selection_data_ready_cb_free(void *data EINA_UNUSED, v
 static Eina_Bool _ecore_wl_dnd_selection_cb_idle(void *data);
 
 static void _ecore_wl_dnd_source_cb_target(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type EINA_UNUSED);
+static void _ecore_wl_dnd_source_cb_target_free(void *data EINA_UNUSED, void *event);
 static void _ecore_wl_dnd_source_cb_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd);
 static void _ecore_wl_dnd_source_cb_send_free(void *data EINA_UNUSED, void *event);
 static void _ecore_wl_dnd_source_cb_cancelled(void *data EINA_UNUSED, struct wl_data_source *source);
@@ -724,11 +725,31 @@ _ecore_wl_dnd_selection_cb_idle(void *data)
 static void 
 _ecore_wl_dnd_source_cb_target(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type EINA_UNUSED)
 {
+   Ecore_Wl_Event_Data_Source_Target *event;
    Ecore_Wl_Input *input;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!(input = data)) return;
 
-   printf("Dnd Source Target\n");
+   if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Data_Source_Target)))) return;
+
+   event->type = strdup(mime_type);
+
+   ecore_event_add(ECORE_WL_EVENT_DATA_SOURCE_TARGET, event,
+                   _ecore_wl_dnd_source_cb_target_free, NULL);
+}
+
+static void
+_ecore_wl_dnd_source_cb_target_free(void *data EINA_UNUSED, void *event)
+{
+   Ecore_Wl_Event_Data_Source_Target *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(ev = event)) return;
+
+   free(ev->type);
+   free(ev);
 }
 
 static void 

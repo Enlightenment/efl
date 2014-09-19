@@ -61,6 +61,7 @@ typedef struct _Ecore_Wl_Event_Dnd_Drop Ecore_Wl_Event_Dnd_Drop;
 typedef struct _Ecore_Wl_Event_Dnd_End Ecore_Wl_Event_Dnd_End;
 typedef struct _Ecore_Wl_Event_Data_Source_Cancelled Ecore_Wl_Event_Data_Source_Cancelled; /** @since 1.12 */
 typedef struct _Ecore_Wl_Event_Data_Source_Send Ecore_Wl_Event_Data_Source_Send; /** @since 1.7 */
+typedef struct _Ecore_Wl_Event_Data_Source_Target  Ecore_Wl_Event_Data_Source_Target; /** @since 1.12 */
 typedef struct _Ecore_Wl_Event_Selection_Data_Ready Ecore_Wl_Event_Selection_Data_Ready; /** @since 1.7 */
 typedef struct _Ecore_Wl_Event_Interfaces_Bound Ecore_Wl_Event_Interfaces_Bound;
 
@@ -195,6 +196,12 @@ struct _Ecore_Wl_Event_Data_Source_Send
 {
    char *type;
    int fd;
+};
+
+/** @since 1.12 */
+struct _Ecore_Wl_Event_Data_Source_Target
+{
+   char *type;
 };
 
 /** @since 1.7 */
