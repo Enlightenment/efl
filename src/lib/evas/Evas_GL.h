@@ -605,6 +605,26 @@ EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA
 EAPI int                      evas_gl_rotation_get       (Evas_GL *evas_gl) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Query a surface for its properties
+ *
+ * @param[in]  evas_gl    The current Evas_GL object
+ * @param[in]  surface    An Evas_GL_Surface surface to query
+ * @param[in]  attribute  Specifies the attribute to query.
+ * @param[out] value      Returns the requested value (usually an int)
+ *
+ * The currently accepted attributes are the following:
+ * @li @ref EVAS_GL_WIDTH,
+ * @li @ref EVAS_GL_HEIGHT,
+ * @li @ref EVAS_GL_TEXTURE_FORMAT,
+ * @li @ref EVAS_GL_TEXTURE_TARGET
+ *
+ * @return EINA_TRUE in case of success, EINA_FALSE in case of error.
+ *
+ * @since_tizen 2.3
+ */
+EAPI Eina_Bool                evas_gl_surface_query      (Evas_GL *evas_gl, Evas_GL_Surface *surface, int attribute, void *value) EINA_ARG_NONNULL(1,2);
+
+/**
  * @brief Returns the last error of any evas_gl function called in the current thread.
  *        Initially, the error is set to @ref EVAS_GL_SUCCESS. A call to @ref evas_gl_error_get
  *        resets the error to @ref EVAS_GL_SUCCESS.
@@ -1520,6 +1540,17 @@ typedef unsigned long long EvasGLTime;
 #define EVAS_GL_SYNC_FLUSH_COMMANDS_BIT         0x0001 /**< @brief A flag for @ref evasglClientWaitSync */
 #define EVAS_GL_FOREVER                         0xFFFFFFFFFFFFFFFFull  /**< @brief Disable wait timeout */
 #define EVAS_GL_NO_SYNC                         ((EvasGLSync) NULL)    /**< @brief Empty sync object, see @ref evasglCreateSync */
+/** @} */
+
+/**
+ * @name Surface attributes
+ * The attributes can be queried using @ref evas_gl_surface_query
+ * @{
+ */
+#define EVAS_GL_HEIGHT                          0x3056 /**< Attribute for @ref evas_gl_surface_query, returns the surface width in pixels (@c value should be an @c int) */
+#define EVAS_GL_WIDTH                           0x3057 /**< Attribute for @ref evas_gl_surface_query, returns the surface width in pixels (@c value should be an @c int) */
+#define EVAS_GL_TEXTURE_FORMAT                  0x3080 /**< Attribute for @ref evas_gl_surface_query, returns an @ref Evas_GL_Color_Format */
+#define EVAS_GL_TEXTURE_TARGET                  0x3081 /**< Attribute for @ref evas_gl_surface_query, returns @ref EVAS_GL_TEXTURE_2D (if format is @c EVAS_GL_RGB_888 or @c EVAS_GL_RGBA_8888) or 0 (meaning @c NO_TEXTURE, from @c EVAS_GL_NO_FBO) (@c value should be an @c int) */
 /** @} */
 
 #define EVAS_GL_API_VERSION 1

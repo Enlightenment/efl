@@ -1327,6 +1327,110 @@ eng_gl_surface_read_pixels(void *data, void *surface,
 
    return EINA_TRUE;
 }
+
+static Eina_Bool
+eng_gl_surface_query(void *data, void *surface, int attr, void *value)
+{
+   Render_Engine_GL_Generic *re  = data;
+   EVGL_Surface  *sfc = surface;
+
+#ifdef GL_GLES
+   if (sfc->pbuffer.is_pbuffer)
+     {
+        // This is a real EGL surface, let's just call EGL directly
+        int val;
+        Eina_Bool ok;
+
+        ok = eglQuerySurface(re->win->egl_disp, sfc->pbuffer.native_surface, attr, &val);
+        if (!ok) return EINA_FALSE;
+        switch (attr)
+          {
+           case EVAS_GL_TEXTURE_FORMAT:
+             if (val == EGL_TEXTURE_RGB)
+               *((int *) value) = EVAS_GL_RGB_888;
+             else if (val == EGL_TEXTURE_RGBA)
+               *((int *) value) = EVAS_GL_RGBA_8888;
+             else // if (val == EGL_NO_TEXTURE)
+               *((int *) value) = EVAS_GL_NO_FBO;
+             break;
+           case EVAS_GL_TEXTURE_TARGET:
+             if (val == EGL_TEXTURE_2D)
+               *((int *) value) = val;
+             else
+               *((int *) value) = 0;
+             break;
+           default:
+             *((int *) value) = val;
+             break;
+          }
+        return EINA_TRUE;
+     }
+   else
+     {
+        // Since this is a fake surface (shared with evas), we must filter the
+        // queries...
+        switch (attr)
+          {
+           // TODO: Add support for whole config get
+           /*
+           case EVAS_GL_CONFIG_ID:
+             *((int *) value) = sfc->cfg_index;
+             return EINA_TRUE;
+             */
+           case EVAS_GL_WIDTH:
+             *((int *) value) = sfc->w;
+             return EINA_TRUE;
+           case EVAS_GL_HEIGHT:
+             *((int *) value) = sfc->h;
+             return EINA_TRUE;
+           case EVAS_GL_TEXTURE_FORMAT:
+             // FIXME: Check the possible color formats
+             if (sfc->color_buf)
+               {
+                  if ((sfc->color_fmt == GL_RGBA) || (sfc->color_fmt == GL_BGRA))
+                    {
+                       *((Evas_GL_Color_Format *) value) = EVAS_GL_RGBA_8888;
+                       return EINA_TRUE;
+                    }
+                  else if (sfc->color_fmt == GL_RGB)
+                    {
+                       *((Evas_GL_Color_Format *) value) = EVAS_GL_RGB_888;
+                       return EINA_TRUE;
+                    }
+               }
+             *((Evas_GL_Color_Format *) value) = EVAS_GL_NO_FBO;
+             return EINA_TRUE;
+           case EVAS_GL_TEXTURE_TARGET:
+             if (sfc->color_buf)
+               *((int *) value) = EVAS_GL_TEXTURE_2D;
+             else
+               *((int *) value) = 0;
+             return EINA_TRUE;
+           // TODO: Add support for this:
+           /*
+           case EVAS_GL_MULTISAMPLE_RESOLVE:
+             *((int *) value) = sfc->msaa_samples;
+             return EINA_TRUE;
+             */
+           // TODO: Add support for mipmaps
+           /*
+           case EVAS_GL_MIPMAP_TEXTURE:
+           case EVAS_GL_MIPMAP_LEVEL:
+             return eglQuerySurface(re->win->egl_disp, re->win->egl_surface[0],
+                                    attr, (int *) value);
+             */
+           default: break;
+          }
+        _evgl_error_set(EVAS_GL_BAD_ATTRIBUTE);
+        return EINA_FALSE;
+     }
+#else
+   (void) re; (void) sfc; (void) attr; (void) value;
+   ERR("GLX support for surface_query is not implemented!");
+   return EINA_FALSE;
+#endif
+}
+
 //--------------------------------//
 
 static int
@@ -1807,7 +1911,7 @@ module_open(Evas_Module *em)
    ORD(gl_surface_read_pixels);
    ORD(gl_surface_unlock);
    //ORD(gl_error_get);
-   //ORD(gl_surface_query);
+   ORD(gl_surface_query);
    // gl_current_context_get is in engine
    ORD(gl_current_surface_get);
    ORD(gl_rotation_angle_get);

@@ -531,3 +531,29 @@ end:
    _evas_gl_internal_error_set(evas_gl, EVAS_GL_SUCCESS);
    return err;
 }
+
+EAPI Eina_Bool
+evas_gl_surface_query(Evas_GL *evas_gl, Evas_GL_Surface *surface, int attribute, void *value)
+{
+   if (!evas_gl) return EINA_FALSE;
+   if (!surface)
+     {
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_SURFACE);
+        return EINA_FALSE;
+     }
+
+   if (!evas_gl->evas->engine.func->gl_surface_query)
+     {
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_NOT_INITIALIZED);
+        return EINA_FALSE;
+     }
+
+   if (!value)
+     {
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_PARAMETER);
+        return EINA_FALSE;
+     }
+
+   return evas_gl->evas->engine.func->gl_surface_query
+         (evas_gl->evas->engine.data.output, surface->data, attribute, value);
+}
