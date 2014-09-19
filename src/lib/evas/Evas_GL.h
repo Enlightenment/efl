@@ -10,10 +10,14 @@ extern "C" {
 
 /**
  * @defgroup Evas_GL Rendering GL on Evas
+ * @ingroup Evas_Canvas
  *
- * Functions that are used to do OpenGL rendering on Evas. Evas allows you
- * to use OpenGL to render to specially set up image objects (which act as
- * render target surfaces).
+ * @brief This group discusses the functions that are used to do OpenGL rendering on Evas. Evas allows you
+ *        to use OpenGL to render to specially set up image objects (which act as
+ *        render target surfaces).
+ *
+ *
+ * <h2> Evas GL usage example </h2>
  *
  * Below is an illustrative example of how to use OpenGL to render to an
  * object in Evas.
@@ -39,10 +43,10 @@ typedef struct _GLData
    Eina_Bool        initialized : 1;
 } GLData;
 
-// callbacks we want to handle deletion on the object and updates/draws
+// Callbacks we need to handle deletion on the object and updates/draws
 static void      on_del       (void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void      on_pixels    (void *data, Evas_Object *obj);
-// demo - animator just to keep ticking over saying to draw the image
+// Demo - animator just to keep ticking over asking to draw the image
 static Eina_Bool on_animate   (void *data);
 // gl stuff
 static int       init_shaders (GLData *gld);
@@ -51,23 +55,23 @@ static GLuint    load_shader  (GLData *gld, GLenum type, const char *shader_src)
 int
 main(int argc, char **argv)
 {
-   // a size by default
+   // A size by default
    int w = 256, h = 256;
-   // some variables we will use
+   // Some variables we will use
    Ecore_Evas  *ee;
    Evas *canvas;
    Evas_Object *r1;
    Evas_Native_Surface ns;
    GLData *gld = NULL;
 
-   // regular low-leve EFL (ecore+ecore-evas) init. elm is simpler
+   // Regular low-level EFL (ecore+ecore-evas) init. elm is simpler
    ecore_init();
    ecore_evas_init();
    ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 512, 512);
    ecore_evas_title_set(ee, "Ecore_Evas Template");
    canvas = ecore_evas_get(ee);
 
-   // alloc a data struct to hold our relevant gl info in
+   // Alloc a data struct to hold our relevant gl info in it
    if (!(gld = calloc(1, sizeof(GLData)))) return 0;
 
    //-//-//-// THIS IS WHERE GL INIT STUFF HAPPENS (ALA EGL)
@@ -83,26 +87,26 @@ main(int argc, char **argv)
    //gld->cfg->stencil_bits = EVAS_GL_STENCIL_NONE;
    //gld->cfg->options_bits = EVAS_GL_OPTIONS_NONE;
 
-   // create a surface and context
+   // Create a surface and context
    gld->sfc = evas_gl_surface_create(gld->evasgl, gld->cfg, w, h);
    gld->ctx = evas_gl_context_create(gld->evasgl, NULL);
    //-//
    //-//-//-// END GL INIT BLOB
 
-   // set up the image object. a filled one by default
+   // Set up the image object. A filled one by default
    r1 = evas_object_image_filled_add(canvas);
-   // attach important data we need to the object using key names. This just
-   // avoids some global variables and means we can do nice cleanup. You can
+   // Attach important data we need to the object using key names. This just
+   // avoids some global variables which means we can do a good cleanup. You can
    // avoid this if you are lazy
    evas_object_data_set(r1, "..gld", gld);
-   // when the object is deleted - call the on_del callback. like the above,
+   // When the object is deleted - call the on_del callback. Like the above,
    // this is just being clean
    evas_object_event_callback_add(r1, EVAS_CALLBACK_DEL, on_del, NULL);
-   // set up an actual pixel size fot the buffer data. It may be different
-   // to the output size. any windowing system has something like this, just
+   // Set up an actual pixel size for the buffer data. It may be different
+   // from the output size. Any windowing system has something like this, only
    // evas has 2 sizes, a pixel size and the output object size
    evas_object_image_size_set(r1, w, h);
-   // set up the native surface info to use the context and surface created
+   // Set up the native surface info to use the context and surface created
    // above
 
    //-//-//-// THIS IS WHERE GL INIT STUFF HAPPENS (ALA EGL)
@@ -113,32 +117,32 @@ main(int argc, char **argv)
    //-//
    //-//-//-// END GL INIT BLOB
 
-   // move the image object somewhere, resize it and show it. any windowing
+   // Move the image object somewhere, resize it, and show it. Any windowing
    // system would need this kind of thing - place a child "window"
    evas_object_move(r1, 128, 128);
    evas_object_resize(r1, w, h);
    evas_object_show(r1);
 
-   // animating - just a demo. as long as you trigger an update on the image
-   // object via evas_object_image_pixels_dirty_set(). any display system,
-   // mainloop siztem etc. will have something of this kind unless it's making
-   // you spin infinitely yourself and invent your own animation mechanism
+   // Animating - just a demo. As long as you trigger an update on the image
+   // object via evas_object_image_pixels_dirty_set(), any display system,
+   // mainloop system etc., will have something of this kind unless it's making
+   // you spin infinitely by yourself and invent your own animation mechanism
    //
-   // NOTE: if you delete r1, this animator will keep running trying to access
+   // NOTE: If you delete r1, this animator will keep running and trying to access
    // r1 so you'd better delete this animator with ecore_animator_del() or
-   // structure how you do animation differently. you can also attach it like
-   // evasgl, sfc, etc. etc. if this animator is specific to this object
-   // only and delete it in the del handler for the obj.
+   // structure how you do animation differently. You can also attach it like
+   // evasgl, sfc, etc., if this animator is specific to this object
+   // then delete it in the del handler for the obj.
    ecore_animator_add(on_animate, r1);
 
-   // finally show the window for the world to see. windowing system generic
+   // Finally show the window for the world to see. Windowing system generic
    ecore_evas_show(ee);
 
-   // begin the mainloop and tick over the animator, handle events etc.
-   // also windowing system generic
+   // Begin the mainloop and tick over the animator, handle events, etc.
+   // Also windowing system generic
    ecore_main_loop_begin();
 
-   // standard EFL shutdown stuff - generic for most systems, EFL or not
+   // Standard EFL shutdown stuff - generic for most systems, EFL or not
    ecore_evas_shutdown();
    ecore_shutdown();
    return 0;
@@ -147,11 +151,11 @@ main(int argc, char **argv)
 static void
 on_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   // on delete of our object clean up some things that don't get auto
-   // celeted for us as they are not intrinsically bound to the image
+   // On delete of our object clean up some things that don't get auto
+   // deleted for us as they are not intrinsically bound to the image
    // object as such (you could use the same context and surface across
-   // multiple image objects and re-use the evasgl handle too multiple times.
-   // here we bind them to 1 object only though by doing this.
+   // multiple image objects and re-use the evasgl handle multiple times.
+   // Here we bind them to only 1 object though by doing this.
    GLData *gld = evas_object_data_get(obj, "..gld");
    if (!gld) return;
    Evas_GL_API *gl = gld->glapi;
@@ -174,7 +178,7 @@ on_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 on_pixels(void *data, Evas_Object *obj)
 {
-   // get some variable we need from the object data keys
+   // Get some variable we need from the object data keys
    GLData *gld = evas_object_data_get(obj, "..gld");
    if (!gld) return;
    Evas_GL_API *gl = gld->glapi;
@@ -186,9 +190,9 @@ on_pixels(void *data, Evas_Object *obj)
      };
    int w, h;
 
-   // get the image size in case it changed with evas_object_image_size_set()
+   // Get the image size, in case it changed, with evas_object_image_size_set()
    evas_object_image_size_get(obj, &w, &h);
-   // set up the context and surface as the current one
+   // Set up the context and surface as the current one
    evas_gl_make_current(gld->evasgl, gld->sfc, gld->ctx);
 
    if (!gld->initialized)
@@ -197,12 +201,12 @@ on_pixels(void *data, Evas_Object *obj)
         gld->initialized = EINA_TRUE;
      }
 
-   // GL Viewport stuff. you can avoid doing this if viewport is all the
-   // same as last frame if you want
+   // GL Viewport stuff. You can avoid doing this if viewport is all the
+   // same as the last frame, if you want
    gl->glViewport(0, 0, w, h);
 
    // Clear the buffer
-   gl->glClearColor(0.0, 0.0, 1.0, 1);
+   gl->glClearColor(1.0, 0.0, 0.0, 1);
    gl->glClear(GL_COLOR_BUFFER_BIT);
 
    // Draw a Triangle
@@ -222,11 +226,11 @@ on_pixels(void *data, Evas_Object *obj)
 static Eina_Bool
 on_animate(void *data)
 {
-   // just a demo - animate here whenever an animation tick happens and then
-   // mark the image as "dirty" meaning it needs an update next time evas
-   // renders. it will call the pixel get callback then.
+   // Just a demo - Animate here whenever an animation tick happens and then
+   // mark the image as "dirty" meaning it needs an update the next time evas
+   // renders. It will then call the pixel get callback.
    evas_object_image_pixels_dirty_set(data, EINA_TRUE);
-   return EINA_TRUE; // keep looping
+   return EINA_TRUE; // Keep looping
 }
 
 static GLuint
@@ -336,54 +340,54 @@ init_shaders(GLData *gld)
 /**
   * @typedef Evas_GL
   *
-  * Evas GL Object for rendering gl in Evas.
-  */ 
+  * @brief The structure type of the Evas GL object used to render GL in Evas.
+  */
 typedef struct _Evas_GL               Evas_GL;
 
 /**
   * @typedef Evas_GL_Surface
   *
-  * Evas GL Surface object, a GL rendering target in Evas GL.
-  */ 
+  * @brief The structure type of the Evas GL Surface object, a GL rendering target in Evas GL.
+  */
 typedef struct _Evas_GL_Surface       Evas_GL_Surface;
 
 /**
   * @typedef Evas_GL_Context
   *
-  * Evas GL Context object, a GL rendering context in Evas GL.
-  */ 
+  * @brief The structure type of the Evas GL Context object, a GL rendering context in Evas GL.
+  */
 typedef struct _Evas_GL_Context       Evas_GL_Context;
 
 /**
   * @typedef Evas_GL_Config
   *
-  * Evas GL Surface configuration object for surface creation.
-  */ 
+  * @brief The structure type of the Evas GL Surface configuration object for surface creation.
+  */
 typedef struct _Evas_GL_Config        Evas_GL_Config;
 
 /**
   * @typedef Evas_GL_API
   *
-  * Evas GL API object that contains the GL APIs to be used in Evas GL.
-  */ 
+  * @brief The structure type of the Evas GL API object that contains the GL APIs to be used in Evas GL.
+  */
 typedef struct _Evas_GL_API           Evas_GL_API;
 
 /**
   * @typedef Evas_GL_Func
   *
-  * Evas GL Function Object used as a function pointer.
-  */ 
+  * @brief Represents a function pointer, that can be used for Evas GL extensions.
+  */
 typedef void                         *Evas_GL_Func;
 
 /**
   * @typedef EvasGLImage
   *
-  * Evas GL Image Object used in Evas GL Image extension.
-  */ 
+  * @brief Represents an Evas GL Image object used with Evas GL Image extensions.
+  */
 typedef void                         *EvasGLImage;
 
 /**
- * Surface Color Format
+ * @brief Enumeration that defines the available surface color formats.
  */
 typedef enum _Evas_GL_Color_Format
 {
@@ -392,7 +396,7 @@ typedef enum _Evas_GL_Color_Format
 } Evas_GL_Color_Format;
 
 /**
- * Surface Depth Format
+ * @brief Enumeration that defines the Surface Depth Format.
  */
 typedef enum _Evas_GL_Depth_Bits
 {
@@ -404,7 +408,7 @@ typedef enum _Evas_GL_Depth_Bits
 } Evas_GL_Depth_Bits;
 
 /**
- * Surface Stencil Format
+ * @brief Enumeration that defines the Surface Stencil Format.
  */
 typedef enum _Evas_GL_Stencil_Bits
 {
@@ -417,7 +421,7 @@ typedef enum _Evas_GL_Stencil_Bits
 } Evas_GL_Stencil_Bits;
 
 /**
- * Configuration Options.
+ * @brief Enumeration that defines the Configuration Options.
  *
  * @since 1.1
  */
@@ -431,10 +435,11 @@ typedef enum _Evas_GL_Options_Bits
 } Evas_GL_Options_Bits;
 
 /**
- * Configuration Option for Multisample Anti-aliased (MSAA) rendering surface.
- * Only works in supported device.
+ * @brief Enumeration that defines the configuration options for a Multisample Anti-Aliased (MSAA) rendering surface.
  *
  * @since 1.2
+ *
+ * @remarks This only works on devices that support the required extensions.
  */
 typedef enum _Evas_GL_Multisample_Bits
 {
@@ -445,10 +450,16 @@ typedef enum _Evas_GL_Multisample_Bits
 } Evas_GL_Multisample_Bits;
 
 /**
-  * @struct _Evas_GL_Config
-  *
-  * Evas GL Surface configuration
-  */
+ * @struct _Evas_GL_Config
+ *
+ * @brief A structure used to specify the configuration of an @ref Evas_GL_Surface.
+ *
+ * This structure should be allocated with @ref evas_gl_config_new() and released
+ * with @ref evas_gl_config_free().
+ *
+ * @see evas_gl_surface_create
+ * @see evas_gl_pbuffer_surface_create
+ */
 struct _Evas_GL_Config
 {
    Evas_GL_Color_Format       color_format;     /**< Surface Color Format */
@@ -463,104 +474,134 @@ struct _Evas_GL_Config
 
 
 /**
- * Creates a new Evas_GL object and returns a handle for gl rendering on efl.
+ * @brief Creates a new Evas_GL object and returns a handle for GL rendering with the EFL.
  *
- * @param e The given evas canvas OpenGL is to be used on.
- * @return The created evas_gl object, or NULL on failure.
+ * @param[in] e The given Evas canvas to use
+ *
+ * @return The created Evas_GL object, or @c NULL in case of failure
  */
 EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Frees the created Evas_GL object.
+ * @brief Frees an Evas_GL object.
  *
- * @param evas_gl The given Evas_GL object.
+ * @param[in] evas_gl   The given Evas_GL object to destroy
+ *
+ * @see evas_gl_new
  */
 EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
 /**
- * Allocates a new config object for the user to fill out.
+ * @brief Allocates a new config object for the user to fill out.
  *
- * As long as the Evas creates a config object for the user, it takes care
- * of the backward compatibility issue.
+ * @remarks As long as Evas creates a config object for the user, it takes care
+ *          of the backward compatibility issue.
+ *
+ * @see evas_gl_config_free
  */
 EAPI Evas_GL_Config          *evas_gl_config_new         (void);
 
 /**
- * Frees a config object created from evas_gl_config_new.
+ * @brief Frees a config object created from evas_gl_config_new.
  *
- * As long as the Evas creates a config object for the user, it takes care
- * of the backward compatibility issue.
+ * @param[in] cfg  The configuration structure to free, it can not be accessed afterwards.
+ *
+ * @remarks As long as Evas creates a config object for the user, it takes care
+ *          of the backward compatibility issue.
+ *
+ * @see evas_gl_config_new
  */
 EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) EINA_ARG_NONNULL(1);
 
 /**
- * Creates and returns new Evas_GL_Surface object for GL Rendering.
+ * @brief Creates and returns a new @ref Evas_GL_Surface object for GL Rendering.
  *
- * @param evas_gl The given Evas_GL object.
- * @param cfg The pixel format and configuration of the rendering surface.
- * @param w The width of the surface.
- * @param h The height of the surface.
- * @return The created GL surface object, or NULL on failure.
+ * @param[in] evas_gl The given Evas_GL object
+ * @param[in] cfg     The pixel format and configuration of the rendering surface
+ * @param[in] w       The width of the surface
+ * @param[in] h       The height of the surface
+ *
+ * @return The created GL surface object,
+ *         otherwise @c NULL on failure
+ *
+ * @see evas_gl_surface_destroy
  */
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
 
 /**
- * Destroys the created Evas GL Surface.
+ * @brief Destroys an Evas GL Surface.
  *
- * @param evas_gl The given Evas_GL object.
- * @param surf The given GL surface object.
+ * @param[in] evas_gl   The given Evas_GL object
+ * @param[in] surf      The given GL surface object
  */
 EAPI void                     evas_gl_surface_destroy    (Evas_GL *evas_gl, Evas_GL_Surface *surf) EINA_ARG_NONNULL(1,2);
 
 /**
- * Creates and returns a new Evas GL context object
+ * @brief Creates and returns a new Evas GL context object.
  *
- * @param evas_gl The given Evas_GL object.
- * @return The created context, or NULL on failure.
+ * @param[in] evas_gl    The given Evas_GL object
+ * @param[in] share_ctx  An Evas_GL context to share with the new context
+ *
+ * @return The created context,
+ *         otherwise @c NULL on failure
  */
 EAPI Evas_GL_Context         *evas_gl_context_create     (Evas_GL *evas_gl, Evas_GL_Context *share_ctx) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Destroys the given Evas GL context object
+ * @brief Destroys the given Evas GL context object.
  *
- * @param evas_gl The given Evas_GL object.
- * @param ctx The given Evas GL context.
+ * @param[in] evas_gl The given Evas_GL object
+ * @param[in] ctx     The given Evas GL context
+ *
+ * @see evas_gl_context_create
+ * @see evas_gl_context_version_create
  */
 EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
 
 /**
- * Sets the given context as a current context for the given surface
+ * @brief Sets the given context as the current context for the given surface.
  *
- * @param evas_gl The given Evas_GL object.
- * @param surf The given Evas GL surface.
- * @param ctx The given Evas GL context.
- * @return @c EINA_TRUE if successful, @c EINA_FALSE if not.
+ * @param[in] evas_gl The given Evas_GL object
+ * @param[in] surf The given Evas GL surface
+ * @param[in] ctx The given Evas GL context
+ * @return @c EINA_TRUE if successful,
+ *         otherwise @c EINA_FALSE if not
  */
 EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
 
 /**
- * Returns a pointer to a static, zero-terminated string describing some aspect of evas_gl.
+ * @brief Returns a pointer to a static, null-terminated string describing some aspect of Evas GL.
  *
- * @param evas_gl The given Evas_GL object.
- * @param name Specifies a symbolic constant, one of EVAS_GL_EXTENSIONS...
+ * @param[in] evas_gl The given Evas_GL object
+ * @param[in] name    A symbolic constant, only @ref EVAS_GL_EXTENSIONS is supported for now
  */
 EAPI const char              *evas_gl_string_query       (Evas_GL *evas_gl, int name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Returns a GL or the Glue Layer's extension function.
+ * @brief Returns a extension function from OpenGL or the Evas_GL glue layer.
  *
- * @param evas_gl The given Evas_GL object.
- * @param name The name of the function to return.
+ * @param[in] evas_gl  The given Evas_GL object
+ * @param[in] name     The name of the function to return
+ *
+ * The available extension functions may depend on the backend engine Evas GL is
+ * running on.
+ *
+ * @return A function pointer to the Evas_GL extension.
  */
 EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2) EINA_PURE;
 
 /**
- * Fills in the Native Surface information from the given Evas GL surface.
+ * @brief Fills in the Native Surface information from a given Evas GL surface.
  *
- * @param evas_gl The given Evas_GL object.
- * @param surf The given Evas GL surface to retrieve the Native Surface info from.
- * @param ns The native surface structure that the function fills in.
- * @return @c EINA_TRUE if successful, @c EINA_FALSE if not.
+ * @param[in]  evas_gl The given Evas_GL object
+ * @param[in]  surf    The given Evas GL surface to retrieve the Native Surface information from
+ * @param[out] ns      The native surface structure that the function fills in
+ * @return @c EINA_TRUE if successful,
+ *         otherwise @c EINA_FALSE if not
+ *
+ * @details This function can be called to later set this native surface as
+ *          source of an Evas Object Image. Please refer to
+ *          @ref evas_object_image_native_surface_set.
  */
 EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns) EINA_ARG_NONNULL(1,2,3);
 
@@ -634,11 +675,15 @@ EAPI Eina_Bool                evas_gl_surface_query      (Evas_GL *evas_gl, Evas
  * @return @ref EVAS_GL_SUCCESS in case of no error, or any other @c EVAS_GL error code.
  *
  * Since Evas GL is a glue layer for GL imitating EGL, the error codes returned
- * have the same meaning as those defined in EGL.
+ * have a similar meaning as those defined in EGL, so please refer to the EGL
+ * documentation for more information about the various error codes.
  *
- * @note At the moment of writing, this API is only partially implemented
- *       and might return @c EVAS_GL_SUCCESS even when the last call(s) to
- *       Evas_GL failed.
+ * @note Evas GL does not specify exactly which error codes will be returned in
+ *       which circumstances. This is because different backends may behave
+ *       differently and Evas GL will try to give the most meaningful error code
+ *       based on the backend's error. Evas GL only tries to provide some
+ *       information, so an application can not expect the exact same error
+ *       codes as EGL would return.
  *
  * @since 1.12
  */
@@ -1547,10 +1592,10 @@ typedef unsigned long long EvasGLTime;
  * The attributes can be queried using @ref evas_gl_surface_query
  * @{
  */
-#define EVAS_GL_HEIGHT                          0x3056 /**< Attribute for @ref evas_gl_surface_query, returns the surface width in pixels (@c value should be an @c int) */
-#define EVAS_GL_WIDTH                           0x3057 /**< Attribute for @ref evas_gl_surface_query, returns the surface width in pixels (@c value should be an @c int) */
-#define EVAS_GL_TEXTURE_FORMAT                  0x3080 /**< Attribute for @ref evas_gl_surface_query, returns an @ref Evas_GL_Color_Format */
-#define EVAS_GL_TEXTURE_TARGET                  0x3081 /**< Attribute for @ref evas_gl_surface_query, returns @ref EVAS_GL_TEXTURE_2D (if format is @c EVAS_GL_RGB_888 or @c EVAS_GL_RGBA_8888) or 0 (meaning @c NO_TEXTURE, from @c EVAS_GL_NO_FBO) (@c value should be an @c int) */
+#define EVAS_GL_HEIGHT                          0x3056 /**< @brief Attribute for @ref evas_gl_surface_query, returns the surface width in pixels (@c value should be an @c int) */
+#define EVAS_GL_WIDTH                           0x3057 /**< @brief Attribute for @ref evas_gl_surface_query, returns the surface width in pixels (@c value should be an @c int) */
+#define EVAS_GL_TEXTURE_FORMAT                  0x3080 /**< @brief Attribute for @ref evas_gl_surface_query, returns an @ref Evas_GL_Color_Format */
+#define EVAS_GL_TEXTURE_TARGET                  0x3081 /**< @brief Attribute for @ref evas_gl_surface_query, returns @ref EVAS_GL_TEXTURE_2D (if format is @c EVAS_GL_RGB_888 or @c EVAS_GL_RGBA_8888) or 0 (meaning @c NO_TEXTURE, from @c EVAS_GL_NO_FBO) (@c value should be an @c int) */
 /** @} */
 
 #define EVAS_GL_API_VERSION 1
@@ -1867,7 +1912,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * @since 1.12
     */
    EvasGLImage  (*evasglCreateImageForContext) (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
-
+   /** @} */
 
 
    /*------- EvasGL / EGL-related functions -------*/
