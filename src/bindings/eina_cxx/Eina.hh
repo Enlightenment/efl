@@ -30,6 +30,58 @@
 #include <eina_integer_sequence.hh>
 
 /**
+ * @page eina_cxx_main Eina C++ (BETA)
+ *
+ * @date 2014 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref eina_cxx_main_intro
+ * @li @ref eina_cxx_main_compiling
+ * @li @ref eina_cxx_main_next_steps
+ *
+ * @section eina_cxx_main_intro Introduction
+ *
+ * Eina C++ bindings
+
+ * @section eina_cxx_main_compiling How to compile
+ *
+ * Eina CXX is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags eina-cxx`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs eina-cxx`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section eina_cxx_main_next_steps Next Steps
+ *
+ * After you understood what Eina CXX is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+
+ *
+ *
+ * @addtogroup Eina_Cxx
+ * @{
+ */
+
+
+
+/**
  * @defgroup Eina_Cxx Eina C++
  *
  * @defgroup Eina_Cxx_Data_Types_Group Data Types
@@ -95,5 +147,9 @@ struct eina_threads_init
  */
 
 } }
+
+/**
+ * @}
+ */
 
 #endif
