@@ -2041,7 +2041,7 @@ error:
            ecore_event_del(ev);
         }
    }
-   free(cl);
+   eo_del(obj);
    if (clerr || errno) ecore_con_event_server_error(svr_obj, clerr ? : strerror(errno));
    return ECORE_CALLBACK_RENEW;
 }
