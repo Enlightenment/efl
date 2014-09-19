@@ -179,6 +179,60 @@ evgl_glEvasGLImageTargetRenderbufferStorage(GLenum target, EvasGLImage image)
    EXT_FUNC(glEGLImageTargetRenderbufferStorageOES)(target, image);
 }
 
+static EvasGLSync
+evgl_evasglCreateSync(Evas_GL *evas_gl EINA_UNUSED,
+                      unsigned int type, const int *attrib_list)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return NULL;
+   return EXT_FUNC(eglCreateSyncKHR)(dpy, type, attrib_list);
+}
+
+static Eina_Bool
+evgl_evasglDestroySync(Evas_GL *evas_gl EINA_UNUSED, EvasGLSync sync)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglDestroySyncKHR)(dpy, sync);
+}
+
+static int
+evgl_evasglClientWaitSync(Evas_GL *evas_gl EINA_UNUSED,
+                          EvasGLSync sync, int flags, EvasGLTime timeout)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglClientWaitSyncKHR)(dpy, sync, flags, timeout);
+}
+
+static Eina_Bool
+evgl_evasglSignalSync(Evas_GL *evas_gl EINA_UNUSED,
+                      EvasGLSync sync, unsigned mode)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglSignalSyncKHR)(dpy, sync, mode);
+}
+
+static Eina_Bool
+evgl_evasglGetSyncAttrib(Evas_GL *evas_gl EINA_UNUSED,
+                         EvasGLSync sync, int attribute, int *value)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglGetSyncAttribKHR)(dpy, sync, attribute, value);
+}
+
+static int
+evgl_evasglWaitSync(Evas_GL *evas_gl EINA_UNUSED,
+                    EvasGLSync sync, int flags)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglWaitSyncKHR)(dpy, sync, flags);
+}
+
+
 #else
 #endif
 

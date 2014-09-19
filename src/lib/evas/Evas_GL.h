@@ -1838,6 +1838,39 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    EvasGLImage  (*evasglCreateImageForContext) (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
 
 
+
+   /*------- EvasGL / EGL-related functions -------*/
+   /**
+    * @name Evas GL Sync object functions
+    * @since_tizen 2.3
+    * @{ */
+   /**
+    * @anchor evasglCreateSync
+    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglCreateSyncKHR.
+    */
+   EvasGLSync   (*evasglCreateSync) (Evas_GL *evas_gl, unsigned int type, const int *attrib_list);
+   /** @anchor evasglDestroySync
+    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglDestroySyncKHR.
+    */
+   Eina_Bool    (*evasglDestroySync) (Evas_GL *evas_gl, EvasGLSync sync);
+   /** @anchor evasglClientWaitSync
+    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglClientWaitSyncKHR.
+    */
+   int          (*evasglClientWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags, EvasGLTime timeout);
+   /** @anchor evasglSignalSync
+    * @brief Requires the extension @c EGL_KHR_reusable_sync, similar to eglSignalSyncKHR.
+    */
+   Eina_Bool    (*evasglSignalSync) (Evas_GL *evas_gl, EvasGLSync sync, unsigned mode);
+   /** @anchor evasglGetSyncAttrib
+    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglGetSyncAttribKHR.
+    */
+   Eina_Bool    (*evasglGetSyncAttrib) (Evas_GL *evas_gl, EvasGLSync sync, int attribute, int *value);
+   /** @anchor evasglWaitSync
+    * @brief Requires the extension @c EGL_KHR_wait_sync, similar to eglWaitSyncKHR.
+    */
+   int          (*evasglWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags);
+   /** @} */
+
    /* future calls will be added down here for expansion */
 };
 
