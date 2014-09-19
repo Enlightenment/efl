@@ -13,7 +13,7 @@
  * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
  * @li @ref eina_main data types and low-level/basic abstractions.
  * @li @ref eio_main asynchronous input/output
- * @li @ref eldbus_main d-bus integration.
+ * @li @ref eldbus_main D-Bus integration.
  * @li @ref embryo_main embedded script language.
  * @li @ref emotion_main to play music and videos.
  * @li @ref eo_main generic object system.
