@@ -1,8 +1,21 @@
 typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 
 /**
- * Defines mode of GLView
+ * @brief Selects the target surface properties
  *
+ * An OR combination of @c Elm_GLView_Mode values should be passed to
+ * @ref elm_glview_mode_set when setting up a GL widget. These flags will
+ * specify the properties of the rendering target surface; in particular,
+ * the mode can request the surface to support alpha, depth and stencil buffers.
+ *
+ * @note @c ELM_GLVIEW_CLIENT_SIDE_ROTATION is a special value that indicates
+ *       to EFL that the application will handle the view rotation when the
+ *       device is rotated. This is needed only when the application requests
+ *       direct rendering. Please refer to @ref Evas_GL
+ *       for more information about direct rendering.
+ *
+ * @see elm_glview_mode_set
+ * @see @ref elm_opengl_page
  * @ingroup GLView
  */
 typedef enum _Elm_GLView_Mode

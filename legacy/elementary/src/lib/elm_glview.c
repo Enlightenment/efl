@@ -355,6 +355,12 @@ _elm_glview_mode_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Mode mode)
    if (mode & ELM_GLVIEW_CLIENT_SIDE_ROTATION)
      sd->config->options_bits |= EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION;
 
+   // Check for Alpha Channel and enable it
+   if (mode & ELM_GLVIEW_ALPHA)
+     evas_object_image_alpha_set(wd->resize_obj, EINA_TRUE);
+   else
+     evas_object_image_alpha_set(wd->resize_obj, EINA_FALSE);
+
    sd->mode = mode;
 
    _glview_update_surface(obj);
@@ -464,6 +470,12 @@ EOLIAN static Evas_GL *
 _elm_glview_evas_gl_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return sd->evasgl;
+}
+
+EOLIAN static int
+_elm_glview_rotation_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+{
+   return evas_gl_rotation_get(sd->evasgl);
 }
 
 static void
