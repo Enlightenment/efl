@@ -38,7 +38,9 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
- * @li @c "changed" - This is called when the radio object is selected.
+ * @li @c "changed" - This is called when the radio object is selected. If you
+ * want to trace the state change of a radio group, you should add this callback
+ * to all the radio objects in that group.
  * @li @c "focused" - When the radio has received focus. (since 1.8)
  * @li @c "unfocused" - When the radio has lost focus. (since 1.8)
  * @li @c "language,changed" - the program's language changed (since 1.9)
