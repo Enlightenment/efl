@@ -76,14 +76,16 @@ v8::Local<v8::Object> slice(eina_container_base& self, v8::Isolate* isolate, v8:
 
 void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& info)
 {
-  eina_container_base* self = static_cast<eina_container_base*>(info.This()->GetAlignedPointerFromInternalField(0));
+  v8::Local<v8::Object> self_obj = v8::Local<v8::Object>::Cast(info.This());
+  eina_container_base* self = static_cast<eina_container_base*>(self_obj->GetAlignedPointerFromInternalField(0));
   info.GetReturnValue().Set((uint32_t)self->size());
 }
 
 void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
 {
   std::cout << "index_get " << index << std::endl;
-  eina_container_base* self = static_cast<eina_container_base*>(info.This()->GetAlignedPointerFromInternalField(0));
+  v8::Local<v8::Object> self_obj = v8::Local<v8::Object>::Cast(info.This());
+  eina_container_base* self = static_cast<eina_container_base*>(self_obj->GetAlignedPointerFromInternalField(0));
   info.GetReturnValue().Set(self->get(info.GetIsolate(), index));
 }
 
