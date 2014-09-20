@@ -38,8 +38,7 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
- * @li @c "changed" - This is called whenever the user changes the state of one of
- * the radio objects within the group of radio objects that work together.
+ * @li @c "changed" - This is called when the radio object is selected.
  * @li @c "focused" - When the radio has received focus. (since 1.8)
  * @li @c "unfocused" - When the radio has lost focus. (since 1.8)
  * @li @c "language,changed" - the program's language changed (since 1.9)
