@@ -164,9 +164,6 @@ int main(int argc, char* argv[])
     // global->Set(v8::String::NewFromUtf8(isolate, "version"),
     //             v8::FunctionTemplate::New(isolate, Version));
 
-    {
-    }
-
     context = v8::Context::New(isolate, NULL, global);
   }
   if (context.IsEmpty()) {
