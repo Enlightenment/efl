@@ -13,5 +13,5 @@ Name: elementary++
 Description: Elementary C++ bindings
 Requires.private: @requirement_elm_pc@
 Version: @VERSION@
-Libs: -L${libdir} -lelementary @ELEMENTARY_LIBS@
+Libs: -L${libdir} -lelementary @ELEMENTARY_PC_LIBS@
 Cflags: -I${includedir}/elementary-@VMAJ@ -I${includedir}/elementary-cxx-@VMAJ@

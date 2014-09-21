@@ -190,8 +190,7 @@ case "$host_os" in
       ;;
 esac
 
-requirement_elm_pc="\
-    ${requirement_elm_pc} \
+requirement_elm_pc_only="\
     efl >= efl_version \
     eina >= efl_version \
     eet >= efl_version \
@@ -214,6 +213,11 @@ requirement_elm_pc="\
     eio >= efl_version \
     "
 
+requirement_elm_pc="\
+    ${requirement_elm_pc} \
+    ${requirement_elm_pc_only} \
+    "
+
 ELM_CHECK_BACKEND([X])
 ELM_CHECK_BACKEND([FB])
 ELM_CHECK_BACKEND([PSL1GHT])
@@ -230,6 +234,7 @@ ELM_CHECK_OPTION([emap], [0.1.0])
 ELM_CHECK_OPTION([eweb])
 
 PKG_CHECK_MODULES([ELEMENTARY], [${requirement_elm_pc}])
+PKG_CHECK_MODULES([ELEMENTARY_PC], [${requirement_elm_pc_only}])
 
 EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
@@ -326,6 +331,7 @@ esac
 AM_CONDITIONAL([BUILD_MODULES], [test "x$have_dlopen" = "xyes"])
 
 ELEMENTARY_LIBS="${ELEMENTARY_LIBS} ${requirement_elm_libs}"
+ELEMENTARY_PC_LIBS="${ELEMENTARY_PC_LIBS} ${requirement_elm_libs}"
 
 AC_SUBST([requirement_elm_pc])
 

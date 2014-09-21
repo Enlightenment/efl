@@ -86,6 +86,7 @@ $(SED) \
 -e 's,@pkgdatadir\@,$(pkgdatadir),g' \
 -e 's,@requirement_elm_pc\@,$(requirement_elm_pc),g' \
 -e 's,@ELEMENTARY_LIBS\@,$(ELEMENTARY_LIBS),g' \
+-e 's,@ELEMENTARY_PC_LIBS\@,$(ELEMENTARY_PC_LIBS),g' \
 < $< > $@ || rm $@
 
 pc_verbose = $(pc_verbose_@AM_V@)
