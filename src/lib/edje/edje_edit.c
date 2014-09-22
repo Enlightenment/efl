@@ -3114,9 +3114,11 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	if (i == id) continue; //don't check the deleted id
 	real = ed->table_parts[i];
 
-	if ((real->typedata.text) && (real->typedata.text->source == rp))
+	if ((rp->type == EDJE_RP_TYPE_TEXT) &&
+            (real->typedata.text) && (real->typedata.text->source == rp))
           real->typedata.text->source = NULL;
-	if ((real->typedata.text) && (real->typedata.text->text_source == rp))
+	if ((rp->type == EDJE_RP_TYPE_TEXT) &&
+	    (real->typedata.text) && (real->typedata.text->text_source == rp))
           real->typedata.text->text_source = NULL;
 
 	if (real->part->clip_to_id == rp->part->id)
@@ -3336,7 +3338,8 @@ edje_edit_part_restack_below(Evas_Object *obj, const char* part)
    _edje_parts_id_switch(ed, rp, prev);
 
    evas_object_stack_below(rp->object, prev->object);
-   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+   if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+       (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
 
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
@@ -3373,7 +3376,8 @@ edje_edit_part_restack_part_below(Evas_Object *obj, const char* part, const char
      }
 
    evas_object_stack_below(rp->object, rp_below->object);
-   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+   if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+       (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
 
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
@@ -3408,7 +3412,8 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
    _edje_parts_id_switch(ed, rp, next);
 
    evas_object_stack_above(rp->object, next->object);
-   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+   if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+       (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
 
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
@@ -3445,7 +3450,8 @@ edje_edit_part_restack_part_above(Evas_Object *obj, const char* part, const char
      }
 
    evas_object_stack_above(rp->object, rp_above->object);
-   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+   if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+       (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
 
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
@@ -3535,7 +3541,8 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
 	  }
 
 	evas_object_clip_set(rp->object, ed->base->clipper);
-        if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+        if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+            (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
           evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base->clipper);
 
 	rp->part->clip_to_id = -1;
@@ -3562,7 +3569,8 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
    evas_object_pass_events_set(clip->object, 1);
    evas_object_pointer_mode_set(clip->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
    evas_object_clip_set(rp->object, clip->object);
-   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+   if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+       (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_clip_set(rp->typedata.swallow->swallowed_object, clip->object);
 
    edje_object_calc_force(obj);
