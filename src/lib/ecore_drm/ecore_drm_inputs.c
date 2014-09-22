@@ -4,7 +4,121 @@
 
 #include "ecore_drm_private.h"
 
+typedef struct _Ecore_Drm_Device_Open_Data Ecore_Drm_Device_Open_Data;
+struct _Ecore_Drm_Device_Open_Data
+{
+   Ecore_Drm_Seat *seat;
+   const char *node;
+};
+
 /* local functions */
+static int 
+_device_flags_set(int fd)
+{
+   int ret, fl;
+   /* char name[256] = "unknown"; */
+
+   if (fd < 0)
+     {
+        ERR("Failed to take device");
+        return -1;
+     }
+
+   if ((fl = fcntl(fd, F_GETFL)) < 0)
+     {
+        ERR("Failed to get file flags: %m");
+        goto flag_err;
+     }
+
+   fl = (O_RDWR | O_NONBLOCK);
+
+   if ((ret = fcntl(fd, F_SETFL, fl)) < 0)
+     {
+        ERR("Failed to set file flags: %m");
+        goto flag_err;
+     }
+
+   if ((fl = fcntl(fd, F_GETFD)) < 0)
+     {
+        ERR("Failed to get file fd: %m");
+        goto flag_err;
+     }
+
+   fl &= ~FD_CLOEXEC;
+
+   if ((ret = fcntl(fd, F_SETFD, fl)) < 0)
+     {
+        ERR("Failed to set file fds: %m");
+        goto flag_err;
+     }
+
+   /* if (ioctl(fd, EVIOCGNAME(sizeof(name)), name) < 0) */
+   /*   { */
+   /*      ERR("Could not get device name: %m"); */
+   /*      goto flag_err; */
+   /*   } */
+   /* else */
+   /*   { */
+   /*      name[sizeof(name) - 1] = '\0'; */
+   /*      DBG("%s Opened", name); */
+   /*   } */
+
+   return fd;
+
+flag_err:
+   close(fd);
+   return -1;
+}
+
+static void 
+_cb_device_opened(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   Ecore_Drm_Device_Open_Data *d;
+   Ecore_Drm_Evdev *edev;
+   Eina_Bool b = EINA_FALSE;
+   const char *errname, *errmsg;
+   int fd = -1;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        return;
+     }
+
+   if (!(d = data)) return;
+
+   DBG("Device Opened: %s", d->node);
+
+   /* DBUS_TYPE_UNIX_FD == 'h' */
+   if (!eldbus_message_arguments_get(msg, "hb", &fd, &b))
+     {
+        ERR("\tCould not get UNIX_FD from eldbus message: %d %d", fd, b);
+        goto cleanup;
+     }
+
+   if (!(fd = _device_flags_set(fd)))
+     {
+        ERR("\tCould not set fd flags");
+        goto release;
+     }
+
+   if (!(edev = _ecore_drm_evdev_device_create(d->seat, d->node, fd)))
+     {
+        ERR("\tCould not create evdev device: %s", d->node);
+        goto release;
+     }
+
+   d->seat->devices = eina_list_append(d->seat->devices, edev);
+
+   goto cleanup;
+
+release:
+   _ecore_drm_dbus_device_close(d->node);
+cleanup:
+   eina_stringshare_del(d->node);
+   free(d);
+}
+
 static Ecore_Drm_Seat *
 _seat_get(Ecore_Drm_Input *input, const char *seat)
 {
@@ -30,12 +144,11 @@ _seat_get(Ecore_Drm_Input *input, const char *seat)
 static Eina_Bool 
 _device_add(Ecore_Drm_Input *input, struct udev_device *device)
 {
-   Ecore_Drm_Evdev *edev;
+   Ecore_Drm_Device_Open_Data *data;
    Ecore_Drm_Seat *seat;
    const char *dev_seat, *wl_seat;
    const char *node;
    char n[PATH_MAX];
-   int fd = -1;
 
    if (!(dev_seat = udev_device_get_property_value(device, "ID_SEAT")))
      dev_seat = "seat0";
@@ -51,25 +164,13 @@ _device_add(Ecore_Drm_Input *input, struct udev_device *device)
    node = udev_device_get_devnode(device);
    strcpy(n, node);
 
-   fd = _ecore_drm_dbus_device_open(n);
-   if (fd < 0)
-     {
-        ERR("FAILED TO OPEN %s: %m", n);
-        return EINA_FALSE;
-     }
+   if (!(data = calloc(1, sizeof(Ecore_Drm_Device_Open_Data))))
+     return EINA_FALSE;
 
-   /* DBG("Opened Restricted Input: %s %d", node, fd); */
+   data->seat = seat;
+   data->node = eina_stringshare_add(n);
 
-   if (!(edev = _ecore_drm_evdev_device_create(seat, node, fd)))
-     {
-        ERR("Could not create evdev device: %s", node);
-        close(fd);
-        return EINA_FALSE;
-     }
-
-   seat->devices = eina_list_append(seat->devices, edev);
-
-   /* TODO: finish */
+   _ecore_drm_dbus_device_open(n, _cb_device_opened, data);
 
    return EINA_TRUE;
 }
@@ -106,8 +207,6 @@ _cb_input_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    struct udev_device *udevice;
    const char *act;
 
-   DBG("Input Event");
-
    if (!(input = data)) return EINA_FALSE;
 
    if (!(udevice = udev_monitor_receive_device(input->monitor)))
@@ -119,17 +218,13 @@ _cb_input_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
      goto err;
 
    if (!strcmp(act, "add"))
-     {
-        DBG("\tDevice Added");
-        _device_add(input, udevice);
-     }
+     _device_add(input, udevice);
    else if (!strcmp(act, "remove"))
      {
         const char *node;
 
         node = udev_device_get_devnode(udevice);
 
-        DBG("\tDevice Removed: %s", node);
         _device_remove(input, node);
      }
 

@@ -1,6 +1,10 @@
 #ifndef _ECORE_DRM_PRIVATE_H
 # define _ECORE_DRM_PRIVATE_H
 
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
+
 # include "Ecore.h"
 # include "ecore_private.h"
 # include "Ecore_Input.h"
@@ -18,7 +22,6 @@
 # include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
-# include <dbus/dbus.h>
 # include <systemd/sd-login.h>
 # include <xkbcommon/xkbcommon.h>
 
@@ -34,6 +37,7 @@
 /* #  include <GLES2/gl2ext.h> */
 /* # endif */
 
+# include <Eldbus.h>
 # include <Ecore_Drm.h>
 
 # define NUM_FRAME_BUFFERS 2
@@ -227,9 +231,9 @@ struct _Ecore_Drm_Sprite
    unsigned int formats[];
 };
 
-Eina_Bool _ecore_drm_dbus_init(const char *session);
-void _ecore_drm_dbus_shutdown(void);
-int _ecore_drm_dbus_device_open(const char *device);
+int _ecore_drm_dbus_init(const char *session);
+int _ecore_drm_dbus_shutdown(void);
+void _ecore_drm_dbus_device_open(const char *device, Eldbus_Message_Cb callback, const void *data);
 void _ecore_drm_dbus_device_close(const char *device);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);

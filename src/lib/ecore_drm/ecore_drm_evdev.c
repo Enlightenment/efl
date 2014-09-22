@@ -70,7 +70,7 @@ _device_configure(Ecore_Drm_Evdev *edev)
    if ((edev->caps & (EVDEV_MOTION_ABS | EVDEV_MOTION_REL)) && 
        (edev->caps & EVDEV_BUTTON))
      {
-        DBG("Input device %s is a pointer", edev->name);
+        DBG("\tInput device %s is a pointer", edev->name);
         edev->seat_caps |= EVDEV_SEAT_POINTER;
 
         /* FIXME: make this configurable */
@@ -81,7 +81,7 @@ _device_configure(Ecore_Drm_Evdev *edev)
 
    if (edev->caps & EVDEV_KEYBOARD)
      {
-        DBG("Input device %s is a keyboard", edev->name);
+        DBG("\tInput device %s is a keyboard", edev->name);
         edev->seat_caps |= EVDEV_SEAT_KEYBOARD;
         _device_keyboard_setup(edev);
         ret = EINA_TRUE;
@@ -89,7 +89,7 @@ _device_configure(Ecore_Drm_Evdev *edev)
 
    if (edev->caps & EVDEV_TOUCH)
      {
-        DBG("Input device %s is a touchpad", edev->name);
+        DBG("\tInput device %s is a touchpad", edev->name);
         edev->seat_caps |= EVDEV_SEAT_TOUCH;
         ret = EINA_TRUE;
      }
@@ -786,7 +786,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
 
    if (!_device_configure(edev))
      {
-        ERR("Could not configure input device: %s", name);
+        ERR("\tCould not configure input device: %s", name);
         _ecore_drm_evdev_device_destroy(edev);
         return NULL;
      }
@@ -798,7 +798,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
                                _cb_device_data, edev, NULL, NULL);
    if (!edev->hdlr)
      {
-        ERR("Could not create fd handler");
+        ERR("\tCould not create fd handler");
         _ecore_drm_evdev_device_destroy(edev);
         return NULL;
      }
