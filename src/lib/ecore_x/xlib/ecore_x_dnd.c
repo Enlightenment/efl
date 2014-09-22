@@ -230,10 +230,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
                                          XA_ATOM, 32, &data, &num))
-     {
-        if (data) free(data);
-        return ret;
-     }
+     return ret;
 
    atom = ecore_x_atom_get(type);
    atoms = (Ecore_X_Atom *)data;
