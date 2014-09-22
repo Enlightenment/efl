@@ -75,6 +75,7 @@ static const Eina_Test_Case etc[] = {
    { "Tmp String", eina_test_tmpstr },
    { "Locking", eina_test_locking },
    { "ABI", eina_test_abi },
+   { "Trash", eina_test_trash },
    { NULL, NULL }
 };
 
