@@ -257,6 +257,11 @@ pkgconfig_DATA += pc/ecore-audio.pc pc/ecore-audio-cxx.pc
 endif
 
 # Cmake configs:
+efl_cmakeconfigdir = $(libdir)/cmake/Efl/
+efl_cmakeconfig_DATA = \
+cmakeconfig/EflConfig.cmake \
+cmakeconfig/EflConfigVersion.cmake
+
 eina_cmakeconfigdir = $(libdir)/cmake/Eina/
 eina_cmakeconfig_DATA = \
 cmakeconfig/EinaConfig.cmake \

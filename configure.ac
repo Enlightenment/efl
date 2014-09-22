@@ -4480,6 +4480,8 @@ systemd-services/efreet.service
 systemd-services/ethumb.service
 $po_makefile_in
 $po_makevars
+cmakeconfig/EflConfig.cmake
+cmakeconfig/EflConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EinaConfig.cmake
 cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EezeConfig.cmake
