@@ -1455,6 +1455,53 @@ edje_edit_sound_compression_type_set(Evas_Object *obj, const char *sound, Edje_E
    return EINA_TRUE;
 }
 
+EAPI Eina_Binbuf *
+edje_edit_sound_samplebuffer_get(Evas_Object *obj, const char *sample_name)
+{
+   Eet_File *ef;
+   Edje_Sound_Sample *sample;
+   char snd_id_str[PATH_MAX];
+   int i, len;
+   const void *data;
+
+   if (!sample_name)
+    {
+       ERR("Given Sample Name is NULL\n");
+       return NULL;
+    }
+
+   GET_ED_OR_RETURN(NULL);
+
+   if ((!ed) || (!ed->file) || (!ed->file->sound_dir))
+     return NULL;
+
+   for(i = 0; i < (int)ed->file->sound_dir->samples_count; i++)
+     {
+        sample = &ed->file->sound_dir->samples[i];
+        if (!strcmp(sample->name, sample_name))
+          {
+             ef = eet_mmap(ed->file->f);
+             if (!ef)
+               {
+                  ERR("Cannot open edje file '%s' for samples", ed->path);
+                  return NULL;
+               }
+             snprintf(snd_id_str, sizeof(snd_id_str), "edje/sounds/%i", sample->id);
+             data = eet_read_direct(ef, snd_id_str, &len);
+             if (len <= 0)
+               {
+                  ERR("Sample from edj file '%s' has 0 length", ed->path);
+                  eet_close(ef);
+                  return NULL;
+               }
+             eet_close(ef);
+             return eina_binbuf_manage_read_only_new_length(data, len);
+          }
+     }
+   return NULL;
+}
+
+
 /****************/
 /*  GROUPS API  */
 /****************/

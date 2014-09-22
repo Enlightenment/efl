@@ -5004,6 +5004,16 @@ EAPI Edje_Edit_Sound_Comp edje_edit_sound_compression_type_get(Evas_Object *obj,
  */
 EAPI Eina_Bool edje_edit_sound_compression_type_set(Evas_Object *obj, const char* name, Edje_Edit_Sound_Comp sc);
 
+/** Get the certain sound data from the edje object.
+ *
+ * @param obj Object being edited.
+ * @param sample_name The name of the sound.
+ *
+ * @return buf The buffer that contains data of the sound. To free the resources use eina_binbuf_free().
+ * @since 1.11
+ */
+EAPI Eina_Binbuf *edje_edit_sound_samplebuffer_get(Evas_Object *obj, const char *sample_name);
+
 //@}
 /******************************************************************************/
 /*************************   SPECTRUM API   ***********************************/
