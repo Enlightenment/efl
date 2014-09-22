@@ -231,9 +231,9 @@ struct _Ecore_Drm_Sprite
    unsigned int formats[];
 };
 
-Eina_Bool _ecore_drm_dbus_init(const char *session);
-void _ecore_drm_dbus_shutdown(void);
-int _ecore_drm_dbus_device_open(const char *device);
+int _ecore_drm_dbus_init(const char *session);
+int _ecore_drm_dbus_shutdown(void);
+void _ecore_drm_dbus_device_open(const char *device, Eldbus_Message_Cb callback, const void *data);
 void _ecore_drm_dbus_device_close(const char *device);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
