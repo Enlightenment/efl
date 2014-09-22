@@ -5941,6 +5941,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 		       }
 		  }
 	     }
+	free(default_prefix);
 	/* Search ordinary names for GNU include directories.  */
 	for (di = include_defaults; di->fname; di++)
 	  {
