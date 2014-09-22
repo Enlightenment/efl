@@ -1132,12 +1132,12 @@ eng_gl_surface_destroy(void *data, void *surface)
 }
 
 static void *
-eng_gl_context_create(void *data, void *share_context)
+eng_gl_context_create(void *data, void *share_context, int version)
 {
    EVGL_Context  *sctx = (EVGL_Context *)share_context;
 
    EVGLINIT(data, NULL);
-   return evgl_context_create(data, sctx);
+   return evgl_context_create(data, sctx, version);
 }
 
 static int
@@ -1223,10 +1223,10 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 }
 
 static void *
-eng_gl_api_get(void *data)
+eng_gl_api_get(void *data, int version)
 {
    EVGLINIT(data, NULL);
-   return evgl_api_get();
+   return evgl_api_get(version);
 }
 
 

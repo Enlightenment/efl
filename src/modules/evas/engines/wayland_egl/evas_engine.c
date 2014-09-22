@@ -323,7 +323,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 }
 
 static void *
-evgl_eng_context_create(void *data, void *ctxt)
+evgl_eng_context_create(void *data, void *ctxt, int version)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -332,6 +332,12 @@ evgl_eng_context_create(void *data, void *ctxt)
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        return NULL;
+     }
 
    attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    attrs[1] = 2;

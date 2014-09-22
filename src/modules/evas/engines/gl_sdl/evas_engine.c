@@ -198,9 +198,15 @@ evgl_eng_window_surface_destroy(void *data EINA_UNUSED,
 }
 
 static void *
-evgl_eng_context_create(void *data, void *share_ctx EINA_UNUSED)
+evgl_eng_context_create(void *data, void *share_ctx EINA_UNUSED, int version)
 {
    Render_Engine *re = data;
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        return NULL;
+     }
 
    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
    return SDL_GL_CreateContext(re->generic.software.ob->window);

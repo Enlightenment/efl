@@ -1160,7 +1160,7 @@ evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const
 #endif 
 
 static void *
-eng_gl_api_get(void *data)
+eng_gl_api_get(void *data, int version EINA_UNUSED)
 {
    Render_Engine *re;
 

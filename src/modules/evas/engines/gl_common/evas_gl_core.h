@@ -26,14 +26,14 @@ EVGL_Engine *evgl_engine_init(void *eng_data, const EVGL_Interface *efunc);
 void        *evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h);
 void        *evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h, const int *attrib_list);
 int          evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc);
-void        *evgl_context_create(void *eng_data, EVGL_Context *share_ctx);
+void        *evgl_context_create(void *eng_data, EVGL_Context *share_ctx, Evas_GL_Context_Version version);
 int          evgl_context_destroy(void *eng_data, EVGL_Context *ctx);
 int          evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx);
 
 const char  *evgl_string_query(int name);
 void        *evgl_proc_address_get(const char *name);
 int          evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns);
-Evas_GL_API *evgl_api_get();
+Evas_GL_API *evgl_api_get(Evas_GL_Context_Version version);
 
 int          evgl_direct_rendered();
 void         evgl_direct_override_get(int *override, int *force_off);

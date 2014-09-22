@@ -19,9 +19,9 @@ void _make_current_check(const char* api)
    ctx = evas_gl_common_current_context_get();
 
    if (!ctx)
-     {
-        CRI("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
-     }
+     CRI("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
+   else if (ctx->version != EVAS_GL_GLES_2_X)
+     CRI("\e[1;33m%s\e[m: This API is being called with the wrong context (invalid version).", api);
 }
 
 static
@@ -185,7 +185,7 @@ _evgl_glReleaseShaderCompiler(void)
 // returns: imgc[4] (oc[4]) original image object dimension in gl coord
 // returns: objc[4] (nc[4]) tranformed  (x, y, width, heigth) in gl coord
 // returns: cc[4] cliped coordinate in original coordinate
-static void
+void
 compute_gl_coordinates(int win_w, int win_h, int rot, int clip_image,
                        int x, int y, int width, int height,
                        int img_x, int img_y, int img_w, int img_h,

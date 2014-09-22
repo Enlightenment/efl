@@ -50,7 +50,7 @@ struct _EVGL_Interface
    int         (*surface_destroy)(void *data, void *surface);
 
    // Creates/Destroys the native surface from evas engine.
-   void       *(*context_create)(void *data, void *share_ctx);
+   void       *(*context_create)(void *data, void *share_ctx, Evas_GL_Context_Version version);
    int         (*context_destroy)(void *data, void *context);
 
    // Calls the make_current from evas_engine.
@@ -133,6 +133,8 @@ struct _EVGL_Surface
 struct _EVGL_Context
 {
    EVGLNative_Context context;
+
+   Evas_GL_Context_Version version;
 
    // Context FBO
    GLuint       surface_fbo;
@@ -301,9 +303,11 @@ extern EVGL_Engine   *evgl_engine;
 
 // Internally used functions
 extern void           _evgl_api_get(Evas_GL_API *api, int debug);
+extern void           _evgl_api_gles1_get(Evas_GL_API *api, Eina_Bool debug);
 extern EVGL_Resource *_evgl_tls_resource_get(void);
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
+extern EVGL_Context  *_evgl_current_context_get(void);
 extern int            _evgl_not_in_pixel_get(void);
 extern int            _evgl_direct_enabled(void);
 extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);

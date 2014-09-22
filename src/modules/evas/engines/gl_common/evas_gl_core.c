@@ -10,6 +10,7 @@ typedef struct _GL_Format
 
 // Globals
 static Evas_GL_API gl_funcs;
+static Evas_GL_API gles1_funcs;
 EVGL_Engine *evgl_engine = NULL;
 int _evas_gl_log_dom   = -1;
 int _evas_gl_log_level = -1;
@@ -62,7 +63,7 @@ _internal_resources_create(void *eng_data)
      }
 
    // Create a resource context
-   rsc->context = evgl_engine->funcs->context_create(eng_data, NULL);
+   rsc->context = evgl_engine->funcs->context_create(eng_data, NULL, EVAS_GL_GLES_2_X);
    if (!rsc->context)
      {
         ERR("Internal resource context creations failed.");
@@ -1827,7 +1828,8 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 }
 
 void *
-evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
+evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
+                    Evas_GL_Context_Version version)
 {
    EVGL_Context *ctx   = NULL;
 
@@ -1836,6 +1838,13 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
      {
         ERR("Invalid EVGL Engine!");
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ACCESS);
+        return NULL;
+     }
+
+   if ((version < EVAS_GL_GLES_1_X) || (version > EVAS_GL_GLES_3_X))
+     {
+        ERR("Invalid context version number %d", version);
+        evas_gl_common_error_set(eng_data, EVAS_GL_BAD_PARAMETER);
         return NULL;
      }
 
@@ -1849,9 +1858,9 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
      }
 
    if (share_ctx)
-      ctx->context = evgl_engine->funcs->context_create(eng_data, share_ctx->context);
+      ctx->context = evgl_engine->funcs->context_create(eng_data, share_ctx->context, version);
    else
-      ctx->context = evgl_engine->funcs->context_create(eng_data, NULL);
+      ctx->context = evgl_engine->funcs->context_create(eng_data, NULL, version);
 
    // Call engine create context
    if (!ctx->context)
@@ -2229,11 +2238,19 @@ evgl_direct_info_clear()
 }
 
 Evas_GL_API *
-evgl_api_get()
+evgl_api_get(Evas_GL_Context_Version version)
 {
-   _evgl_api_get(&gl_funcs, evgl_engine->api_debug_mode);
-
-   return &gl_funcs;
+   if (version == EVAS_GL_GLES_2_X)
+     {
+        _evgl_api_get(&gl_funcs, evgl_engine->api_debug_mode);
+        return &gl_funcs;
+     }
+   else if (version == EVAS_GL_GLES_1_X)
+     {
+        _evgl_api_gles1_get(&gles1_funcs, evgl_engine->api_debug_mode);
+        return &gles1_funcs;
+     }
+   else return NULL;
 }
 
 

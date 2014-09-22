@@ -157,6 +157,7 @@ struct _Evas_3D_File_Eet
 
 typedef Eina_Bool (*Evas_3D_Node_Func)(Evas_3D_Node *, void *data);
 
+
 typedef enum _Evas_3D_Node_Traverse_Type
 {
    EVAS_3D_NODE_TRAVERSE_DOWNWARD,
@@ -1233,13 +1234,13 @@ struct _Evas_Func
    void *(*gl_surface_create)            (void *data, void *config, int w, int h);
    void *(*gl_pbuffer_surface_create)    (void *data, void *config, int w, int h, int const *attrib_list);
    int  (*gl_surface_destroy)            (void *data, void *surface);
-   void *(*gl_context_create)            (void *data, void *share_context);
+   void *(*gl_context_create)            (void *data, void *share_context, int version);
    int  (*gl_context_destroy)            (void *data, void *context);
    int  (*gl_make_current)               (void *data, void *surface, void *context);
    void *(*gl_string_query)              (void *data, int name);
    void *(*gl_proc_address_get)          (void *data, const char *name);
    int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
-   void *(*gl_api_get)                   (void *data);
+   void *(*gl_api_get)                   (void *data, int version);
    void (*gl_direct_override_get)        (void *data, int *override, int *force_off);
    void (*gl_get_pixels_set)             (void *data, void *get_pixels, void *get_pixels_data, void *obj);
    Eina_Bool (*gl_surface_lock)          (void *data, void *surface);

@@ -449,7 +449,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 }
 
 static void *
-evgl_eng_context_create(void *data, void *share_ctx)
+evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version version)
 {
    Render_Engine *re = (Render_Engine *)data;
 
@@ -461,12 +461,19 @@ evgl_eng_context_create(void *data, void *share_ctx)
         return NULL;
      }
 
+   if ((version < EVAS_GL_GLES_1_X) || (version > EVAS_GL_GLES_3_X))
+     {
+        ERR("Invalid context version number %d", version);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
+
 #ifdef GL_GLES
    EGLContext context = EGL_NO_CONTEXT;
    int context_attrs[3];
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = 2;
+   context_attrs[1] = version;
    context_attrs[2] = EGL_NONE;
 
    // Share context already assumes that it's sharing with evas' context
@@ -475,6 +482,13 @@ evgl_eng_context_create(void *data, void *share_ctx)
         context = eglCreateContext(eng_get_ob(re)->egl_disp,
                                    eng_get_ob(re)->egl_config,
                                    (EGLContext)share_ctx,
+                                   context_attrs);
+     }
+   else if (version == EVAS_GL_GLES_1_X)
+     {
+        context = eglCreateContext(eng_get_ob(re)->egl_disp,
+                                   eng_get_ob(re)->egl_config,
+                                   NULL,
                                    context_attrs);
      }
    else
@@ -489,7 +503,7 @@ evgl_eng_context_create(void *data, void *share_ctx)
      {
         int err = eglGetError();
         ERR("Engine Context Creations Failed. Error: %#x.", err);
-        glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
         return NULL;
      }
 
@@ -503,6 +517,13 @@ evgl_eng_context_create(void *data, void *share_ctx)
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
                                    eng_get_ob(re)->visualinfo,
                                    (GLXContext)share_ctx,
+                                   1);
+     }
+   else if (version == EVAS_GL_GLES_1_X)
+     {
+        context = glXCreateContext(eng_get_ob(re)->info->info.display,
+                                   eng_get_ob(re)->visualinfo,
+                                   NULL,
                                    1);
      }
    else

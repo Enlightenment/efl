@@ -84,7 +84,7 @@ static void *evgl_eng_native_window_create(void *data);
 static int evgl_eng_native_window_destroy(void *data, void *native_window);
 static void *evgl_eng_window_surface_create(void *data, void *native_window);
 static int evgl_eng_window_surface_destroy(void *data, void *surface);
-static void *evgl_eng_context_create(void *data, void *share_ctx);
+static void *evgl_eng_context_create(void *data, void *share_ctx, int version);
 static int evgl_eng_context_destroy(void *data, void *context);
 static const char *evgl_eng_string_get(void *data);
 static void *evgl_eng_proc_address_get(const char *name);
@@ -405,7 +405,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 }
 
 static void *
-evgl_eng_context_create(void *data, void *share_ctx)
+evgl_eng_context_create(void *data, void *share_ctx, int version)
 {
    Render_Engine *re = (Render_Engine *)data;
    EGLContext context = EGL_NO_CONTEXT;
@@ -414,6 +414,12 @@ evgl_eng_context_create(void *data, void *share_ctx)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        return NULL;
+     }
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
         return NULL;
      }
 

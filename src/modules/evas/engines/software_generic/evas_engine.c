@@ -2410,11 +2410,18 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 }
 
 static void *
-eng_gl_context_create(void *data EINA_UNUSED, void *share_context)
+eng_gl_context_create(void *data EINA_UNUSED, void *share_context,
+                      int version)
 {
 #ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;
    Render_Engine_GL_Context *share_ctx;
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        return NULL;
+     }
 
    ctx = calloc(1, sizeof(Render_Engine_GL_Context));
 
@@ -2596,8 +2603,11 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 
 
 static void *
-eng_gl_api_get(void *data EINA_UNUSED)
+eng_gl_api_get(void *data EINA_UNUSED, int version)
 {
+   if (version != EVAS_GL_GLES_2_X)
+     return NULL;
+
 #ifdef EVAS_GL
    return &gl_funcs;
 #else
