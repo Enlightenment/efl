@@ -898,7 +898,12 @@ low_mem_current:
          break;
       case EDJE_ACTION_TYPE_FOCUS_SET:
          if (!pr->targets)
-           ed->focused_part = NULL;
+           {
+              if (ed->focused_part)
+                _edje_emit(ed, "focus,part,out",
+                           ed->focused_part->part->name);
+              ed->focused_part = NULL;
+           }
          else
            {
               EINA_LIST_FOREACH(pr->targets, l, pt)
