@@ -13,6 +13,8 @@ typedef struct _Render_Engine Render_Engine;
 typedef struct _Render_Engine_GL_Surface    Render_Engine_GL_Surface;
 typedef struct _Render_Engine_GL_Context    Render_Engine_GL_Context;
 
+Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
+
 struct _Render_Engine
 {
    Evas_GL_Cocoa_Window *win;
@@ -1337,6 +1339,12 @@ eng_image_load_error_get(void *data EINA_UNUSED, void *image)
    return im->im->cache_entry.load_error;
 }
 
+static void *
+_dlsym(const char *sym)
+{
+   return dlsym(RTLD_DEFAULT, sym);
+}
+
 static int
 module_open(Evas_Module *em)
 {
@@ -1421,6 +1429,12 @@ module_open(Evas_Module *em)
    ORD(gl_api_get); 
 
    ORD(image_load_error_get);    
+
+#define LINK2GENERIC(sym) \
+   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+
+   LINK2GENERIC(evas_gl_symbols);
+   glsym_evas_gl_symbols(_dlsym);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
