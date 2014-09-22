@@ -20,6 +20,7 @@ struct _Evas_GL
 struct _Evas_GL_Context
 {
    void    *data;
+   Evas_GL_Context_Version version;
 };
 
 struct _Evas_GL_Surface
@@ -326,7 +327,8 @@ evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
 }
 
 EAPI Evas_GL_Context *
-evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
+evas_gl_context_version_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx,
+                               Evas_GL_Context_Version version)
 {
    Evas_GL_Context *ctx;
 
@@ -334,6 +336,14 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
    return NULL;
    MAGIC_CHECK_END();
+
+   if ((version != EVAS_GL_GLES_1_X) && (version != EVAS_GL_GLES_2_X))
+     {
+        ERR("Can not create an OpenGL-ES %d.x context (not supported).",
+            (int) version);
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
 
    // Allocate a context object
    ctx = calloc(1, sizeof(Evas_GL_Context));
@@ -345,14 +355,11 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
      }
 
    // Call engine->gl_create_context
+   ctx->version = version;
    if (share_ctx)
-     {
-        ctx->data = evas_gl->evas->engine.func->gl_context_create(evas_gl->evas->engine.data.output, share_ctx->data);
-     }
+     ctx->data = evas_gl->evas->engine.func->gl_context_create(evas_gl->evas->engine.data.output, share_ctx->data, version);
    else
-     {
-        ctx->data = evas_gl->evas->engine.func->gl_context_create(evas_gl->evas->engine.data.output, NULL);
-     }
+     ctx->data = evas_gl->evas->engine.func->gl_context_create(evas_gl->evas->engine.data.output, NULL, version);
 
    // Set a few variables
    if (!ctx->data)
@@ -368,6 +375,12 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
    LKU(evas_gl->lck);
 
    return ctx;
+}
+
+EAPI Evas_GL_Context *
+evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
+{
+   return evas_gl_context_version_create(evas_gl, share_ctx, EVAS_GL_GLES_2_X);
 }
 
 EAPI void
@@ -549,7 +562,23 @@ evas_gl_api_get(Evas_GL *evas_gl)
    return NULL;
    MAGIC_CHECK_END();
 
-   return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(evas_gl->evas->engine.data.output);
+   return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(evas_gl->evas->engine.data.output, EVAS_GL_GLES_2_X);
+}
+
+EAPI Evas_GL_API *
+evas_gl_context_api_get(Evas_GL *evas_gl, Evas_GL_Context *ctx)
+{
+   MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   if (!ctx)
+     {
+        _evas_gl_internal_error_set(evas_gl, EVAS_GL_BAD_CONTEXT);
+        return NULL;
+     }
+
+   return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(evas_gl->evas->engine.data.output, ctx->version);
 }
 
 EAPI int
