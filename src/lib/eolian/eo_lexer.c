@@ -629,36 +629,6 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
      }
 }
 
-static int
-lex_balanced(Eo_Lexer *ls, Eo_Token *tok, char beg, char end)
-{
-   int depth = 0, col;
-   const char *str;
-   eina_strbuf_reset(ls->buff);
-   while (isspace(ls->current))
-     next_char(ls);
-   col = ls->column;
-   while (ls->current)
-     {
-        if (ls->current == beg)
-          ++depth;
-        else if (ls->current == end)
-          --depth;
-
-        if (depth == -1)
-          break;
-
-        eina_strbuf_append_char(ls->buff, ls->current);
-        next_char(ls);
-     }
-   eina_strbuf_trim(ls->buff);
-   str     = eina_strbuf_string_get(ls->buff);
-   tok->kw = (int)(uintptr_t)eina_hash_find(keyword_map, str);
-   tok->value.s = eina_stringshare_add(str);
-   ls->column = col + 1;
-   return TOK_VALUE;
-}
-
 static const char *
 get_filename(Eo_Lexer *ls)
 {
@@ -752,13 +722,6 @@ eo_lexer_new(const char *source)
      }
    eo_lexer_free(ls);
    return NULL;
-}
-
-int
-eo_lexer_get_balanced(Eo_Lexer *ls, char beg, char end)
-{
-   assert(ls->lookahead.token < 0);
-   return (ls->t.token == lex_balanced(ls, &ls->t, beg, end));
 }
 
 int

@@ -160,10 +160,6 @@ int         eo_lexer_init           (void);
 int         eo_lexer_shutdown       (void);
 Eo_Lexer   *eo_lexer_new            (const char *source);
 void        eo_lexer_free           (Eo_Lexer *ls);
-/* gets a TOK_VALUE balanced token, aka keeps lexing everything until the
- * "end" character, but keeps it balanced, so if it hits "beg" during lexing,
- * it won't end at the next "end", useful for lexing between () or [] */
-int         eo_lexer_get_balanced   (Eo_Lexer *ls, char beg, char end);
 /* gets a regular token, singlechar or one of TOK_something */
 int         eo_lexer_get            (Eo_Lexer *ls);
 /* lookahead token - see Eo_Lexer */
