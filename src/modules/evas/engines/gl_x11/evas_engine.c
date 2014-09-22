@@ -22,8 +22,6 @@
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
 
-static int safe_native = -1;
-
 typedef struct _Render_Engine               Render_Engine;
 
 struct _Render_Engine
@@ -1070,23 +1068,6 @@ eng_setup(Evas *eo_e, void *in)
            default:
              swap_mode = MODE_AUTO;
              break;
-          }
-     }
-
-   if (safe_native == -1)
-     {
-        s = getenv("EVAS_GL_SAFE_NATIVE");
-        safe_native = 0;
-        if (s) safe_native = atoi(s);
-        else
-          {
-             s = (const char *)glGetString(GL_RENDERER);
-             if (s)
-               {
-                  if (strstr(s, "PowerVR SGX 540") ||
-                      strstr(s, "Mali-400 MP"))
-                    safe_native = 1;
-               }
           }
      }
 

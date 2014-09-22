@@ -76,7 +76,6 @@ void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 
 /* local variables */
-static int safe_native = -1;
 static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
 static Evas_Func func, pfunc;
@@ -562,23 +561,6 @@ eng_setup(Evas *evas, void *info)
            default:
              swap_mode = MODE_AUTO;
              break;
-          }
-     }
-
-   if (safe_native == -1)
-     {
-        s = getenv("EVAS_GL_SAFE_NATIVE");
-        safe_native = 0;
-        if (s) safe_native = atoi(s);
-        else
-          {
-             s = (const char *)glGetString(GL_RENDERER);
-             if (s)
-               {
-                  if (strstr(s, "PowerVR SGX 540") ||
-                      strstr(s, "Mali-400 MP"))
-                    safe_native = 1;
-               }
           }
      }
 

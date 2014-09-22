@@ -1174,19 +1174,6 @@ eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update EINA_UNUSED,
    if (!_re_wincheck(ob)) return;
    ob->draw.drew = 1;
    glsym_evas_gl_common_context_flush(ob->gl_context);
-#ifdef GL_GLES
-   // this is needed to make sure all previous rendering is flushed to
-   // buffers/surfaces
-   // previous rendering should be done and swapped
-//xx   if (!safe_native) eglWaitNative(EGL_CORE_NATIVE_ENGINE);
-//   if (eglGetError() != EGL_SUCCESS)
-//     {
-//        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
-//     }
-#else
-   // previous rendering should be done and swapped
-//xx   if (!safe_native) glXWaitX();
-#endif
 }
 
 void
