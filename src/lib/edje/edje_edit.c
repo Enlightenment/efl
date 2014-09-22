@@ -6427,6 +6427,8 @@ EAPI Eina_Bool
 edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text)
 {
    Edje_Part_Description_Text *txt;
+   Edje_Real_Part *real;
+   unsigned int i;
 
    if (!text)
      return EINA_FALSE;
@@ -6441,6 +6443,20 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
    _edje_if_string_free(ed, txt->text.text.str);
    txt->text.text.str = (char *)eina_stringshare_add(text);
    txt->text.text.id = 0;
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        real = ed->table_parts[i];
+        if (((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+             (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)) &&
+            (real->typedata.text) && (real->typedata.text->text_source == rp))
+          {
+             txt = (Edje_Part_Description_Text *) real;
+             _edje_if_string_free(ed, txt->text.text.str);
+             txt->text.text.str = (char *)eina_stringshare_add(text);
+             txt->text.text.id = 0;
+          }
+     }
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
@@ -6912,8 +6928,7 @@ EAPI Eina_Bool
 edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source)
 {
    Edje_Part_Description_Common *spd;
-   Edje_Part_Description_Text *txt, *source_style;
-   const char *style_source;
+   Edje_Part_Description_Text *txt;
    int id_source;
 
    GET_PD_OR_RETURN(EINA_FALSE);
@@ -6927,15 +6942,9 @@ edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *
         spd = _edje_part_description_find_byname(eed, source, state, value);
         if (!spd) return EINA_FALSE;
         txt = (Edje_Part_Description_Text *) pd;
-        source_style = (Edje_Part_Description_Text *) spd;
 
         id_source = _edje_part_id_find(ed, source);
         txt->text.id_source = id_source;
-
-        style_source = source_style->text.text.str;
-        _edje_if_string_free(ed, txt->text.text.str);
-        txt->text.text.str = eina_stringshare_add(style_source);
-        txt->text.text.id = 0;
      }
    else
      {
