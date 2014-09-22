@@ -6285,12 +6285,14 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		    {
 		       file_name_list     *dirtmp;
 		       char               *prefix;
+             int                 is_prefix_alloc = 0;
 
 		       if (opts->include_prefix)
 			  prefix = opts->include_prefix;
 		       else
 			 {
 			    prefix = savestring(GCC_INCLUDE_DIR);
+             is_prefix_alloc++;
 			    /* Remove the `include' from /usr/local/lib/gcc.../include.  */
 			    if (!strcmp
 				(prefix + strlen(prefix) - 8, "/include"))
@@ -6318,6 +6320,7 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		       else
 			  opts->last_after_include->next = dirtmp;
 		       opts->last_after_include = dirtmp;	/* Tail follows the last one */
+           if (is_prefix_alloc) free(prefix);
 		    }
 		  /* Add directory to main path for includes,
 		   * with the default prefix at the front of its name.  */
@@ -6325,12 +6328,14 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		    {
 		       file_name_list     *dirtmp;
 		       char               *prefix;
+             int                 is_prefix_alloc = 0;
 
 		       if (opts->include_prefix)
 			  prefix = opts->include_prefix;
 		       else
 			 {
 			    prefix = savestring(GCC_INCLUDE_DIR);
+             is_prefix_alloc++;
 			    /* Remove the `include' from /usr/local/lib/gcc.../include.  */
 			    if (!strcmp
 				(prefix + strlen(prefix) - 8, "/include"))
@@ -6354,6 +6359,7 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		       dirtmp->got_name_map = 0;
 
 		       append_include_chain(pfile, dirtmp, dirtmp);
+             if (is_prefix_alloc) free(prefix);
 		    }
 		  /* Add directory to end of path for includes.  */
 		  if (!strcmp(argv[i], "-idirafter"))
