@@ -1658,6 +1658,7 @@ EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, con
  * so that interoperability is wider than just C (no octal escapes). For
  * languages that differ too much, you can write an equivalent function
  * yourself.
+ * Also, you're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
@@ -1673,6 +1674,7 @@ EAPI Eina_Stringshare *eolian_expression_value_to_literal(const Eolian_Value *v)
  * file (but with parens on binary operators explicitly specifying precedence).
  * Keep in mind that it cannot be used alone pasted into C code as it doesn't
  * resolve namespaces and enum field names.
+ * Also, you're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
