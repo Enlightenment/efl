@@ -5925,8 +5925,43 @@ EAPI double edje_edit_program_transition_time_get(Evas_Object *obj, const char *
  */
 EAPI Eina_Bool edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double seconds);
 
+/** Get filter part name of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return const char* part_name on success, NULL otherwise.
+ */
 EAPI const char * edje_edit_program_filter_part_get(Evas_Object *obj, const char *prog);
+
+/** Set filter part name of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param filter_part The name of the part to be set as filter.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
 EAPI Eina_Bool edje_edit_program_filter_part_set(Evas_Object *obj, const char *prog, const char *filter_part);
+
+/** Get filter state of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return const char* state_name on success, NULL otherwise.
+ */
+EAPI const char * edje_edit_program_filter_state_get(Evas_Object *obj, const char *prog);
+
+/** Set filter state of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param filter_state New filter state value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_filter_state_set(Evas_Object *obj, const char *prog, const char *filter_state);
 
 //@}
 /******************************************************************************/
