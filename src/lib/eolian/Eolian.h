@@ -728,13 +728,15 @@ EAPI Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *functi
 EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_id);
 
 /*
- * @brief Returns the full C name of a function (with prefix). It's here
- * because the C API names are deduplicated (prefix of function and suffix
- * of prefix merge if applicable) and this helps generators not write the
- * same code over and over.
+ * @brief Returns the full C name of a function (with prefix).
  *
  * @param[in] function_id Id of the function
  * @return the function name
+ *
+ * It's here because the C API names are deduplicated (prefix of function and
+ * suffix of prefix merge if applicable) and this helps generators not write
+ * the same code over and over.
+ * Also, you're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
@@ -1541,6 +1543,7 @@ EAPI Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
  * alias types. Alias types are turned into C typedefs.
  *
  * Keep in mind that if @c name is NULL, the name won't be included.
+ * Also, you're responsible for deleting the stringshare.
  *
  * @see eolian_type_c_type_get
  *
@@ -1557,6 +1560,7 @@ EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const
  * This behaves exactly like eolian_type_c_type_named_get when name is NULL.
  * Keep in mind that this is not useful for function types as a function
  * pointer type in C cannot be used without a name.
+ * Also, you're responsible for deleting the stringshare.
  *
  * @see eolian_type_c_type_named_get
  *
@@ -1565,12 +1569,11 @@ EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const
 EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
 
 /*
- * @brief Get the name of the given type. You have to manually delete
- * the stringshare. For regular or complex types,  this is for example "int".
- * For EOLIAN_TYPE_STRUCT, EOLIAN_TYPE_STRUCT_OPAQUE and EOLIAN_TYPE_ALIAS,
- * this is the name of the alias or of the struct. For EOLIAN_TYPE_CLASS, this
- * can be "Button". Keep in mind that the name doesn't include namespaces for
- * structs and aliases.
+ * @brief Get the name of the given type. For regular or complex types, this
+ * is for example "int". For EOLIAN_TYPE_STRUCT, EOLIAN_TYPE_STRUCT_OPAQUE and
+ * EOLIAN_TYPE_ALIAS, this is the name of the alias or of the struct. For
+ * EOLIAN_TYPE_CLASS, this can be "Button". Keep in mind that the name doesn't
+ * include namespaces for structs and aliases.
  *
  * @param[in] tp the type.
  * @return the name.
