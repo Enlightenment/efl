@@ -303,7 +303,6 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value,
       step {
          set {
             /*@
-            @since 1.8
             Set the step by which slider indicator will move.
 
             This value is used when draggable object is moved automatically i.e., in case
@@ -313,18 +312,19 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value,
 
             @see elm_slider_step_get() for more details.
 
-            @ingroup Slider */
+            @ingroup Slider
+            @since 1.8 */
          }
          get {
             /*@
-            @since 1.8
             Get the step by which slider indicator moves.
 
             @return The step value.
 
             @see elm_slider_step_set() for more details.
 
-            @ingroup Slider */
+            @ingroup Slider
+            @since 1.8 */
          }
          values {
             double step; /*@ The step value. */
