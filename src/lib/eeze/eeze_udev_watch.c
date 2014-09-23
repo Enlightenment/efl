@@ -240,6 +240,16 @@ _get_syspath_from_watch(void             *data,
             || (strcmp(test, "drm")))
           goto error;
 
+      case EEZE_UDEV_TYPE_BACKLIGHT:
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "backlight")))
+          goto error;
+
+      case EEZE_UDEV_TYPE_LEDS:
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "leds")))
+          goto error;
+
         break;
       default:
         break;
