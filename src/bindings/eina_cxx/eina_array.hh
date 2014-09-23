@@ -134,6 +134,101 @@ struct _ptr_eo_array_iterator : _ptr_array_iterator<Eo>
   using _base_type::native_handle;
 };
 
+/**
+ * @internal
+ */
+struct _eo_array_access_traits : _ptr_array_access_traits
+{
+  template <typename T>
+  struct iterator
+  {
+    typedef _ptr_eo_array_iterator<T> type;
+  };
+  template <typename T>
+  struct const_iterator : iterator<T const> {};
+
+  template <typename T>
+  static T& back(Eina_Array* array)
+  {
+    return *static_cast<T*>(static_cast<void*>(array->data[size<T>(array)-1]));
+  }
+  template <typename T>
+  static T const& back(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::back<T>(const_cast<Eina_Array*>(array));
+  }
+  template <typename T>
+  static T& front(Eina_Array* array)
+  {
+    return *static_cast<T*>(static_cast<void*>(array->data[0]));
+  }
+  template <typename T>
+  static T const& front(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::front<T>(const_cast<Eina_Array*>(array));
+  }
+  template <typename T>
+  static typename iterator<T>::type begin(Eina_Array* array)
+  {
+    return _ptr_eo_array_iterator<T>(array->data);
+  }
+  template <typename T>
+  static typename iterator<T>::type end(Eina_Array* array)
+  {
+    return _ptr_eo_array_iterator<T>(array->data + size<T>(array));
+  }
+  template <typename T>
+  static typename const_iterator<T>::type begin(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::begin<T>(const_cast<Eina_Array*>(array));
+  }
+  template <typename T>
+  static typename const_iterator<T>::type end(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::end<T>(const_cast<Eina_Array*>(array));
+  }
+  template <typename T>
+  static std::reverse_iterator<typename iterator<T>::type> rbegin(Eina_Array* array)
+  {
+    return std::reverse_iterator<_ptr_eo_array_iterator<T> >(_eo_array_access_traits::end<T>(array));
+  }
+  template <typename T>
+  static std::reverse_iterator<typename iterator<T>::type> rend(Eina_Array* array)
+  {
+    return std::reverse_iterator<_ptr_eo_array_iterator<T> >(_eo_array_access_traits::begin<T>(array));
+  }
+  template <typename T>
+  static std::reverse_iterator<typename const_iterator<T>::type> rbegin(Eina_Array const* array)
+  {
+    return std::reverse_iterator<_ptr_eo_array_iterator<T>const>(_eo_array_access_traits::end<T>(array));
+  }
+  template <typename T>
+  static std::reverse_iterator<typename const_iterator<T>::type> rend(Eina_Array const* array)
+  {
+    return std::reverse_iterator<_ptr_eo_array_iterator<T>const>(_eo_array_access_traits::begin<T>(array));
+  }
+  template <typename T>
+  static typename const_iterator<T>::type cbegin(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::begin<T>(array);
+  }
+  template <typename T>
+  static typename const_iterator<T>::type cend(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::end<T>(array);
+  }
+  template <typename T>
+  static std::reverse_iterator<typename const_iterator<T>::type> crbegin(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::rbegin<T>(array);
+  }
+  template <typename T>
+  static std::reverse_iterator<typename const_iterator<T>::type> crend(Eina_Array const* array)
+  {
+    return _eo_array_access_traits::rend<T>(array);
+  }
+};
+    
 template <typename T, typename CloneAllocator>
 class array<T, CloneAllocator, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
   : ptr_array<Eo, typename std::conditional
@@ -334,7 +429,150 @@ bool operator!=(array<T, CloneAllocator> const& lhs, array<T, CloneAllocator> co
 {
   return !(lhs == rhs);
 }
+
+template <typename T, typename Enable = void>
+class range_array : range_ptr_array<T>
+{
+  typedef range_ptr_array<T> _base_type;
+public:
+  typedef typename _base_type::value_type value_type;
+  typedef typename _base_type::reference reference;
+  typedef typename _base_type::const_reference const_reference;
+  typedef typename _base_type::const_iterator const_iterator;
+  typedef typename _base_type::iterator iterator;
+  typedef typename _base_type::pointer pointer;
+  typedef typename _base_type::const_pointer const_pointer;
+  typedef typename _base_type::size_type size_type;
+  typedef typename _base_type::difference_type difference_type;
+
+  typedef typename _base_type::reverse_iterator reverse_iterator;
+  typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
+
+  typedef typename _base_type::native_handle_type native_handle_type;
+
+  range_array& operator=(range_array&& other) = default;
+
+  using _base_type::_base_type;
+  using _base_type::size;
+  using _base_type::empty;
+  using _base_type::back;
+  using _base_type::front;
+  using _base_type::begin;
+  using _base_type::end;
+  using _base_type::rbegin;
+  using _base_type::rend;
+  using _base_type::cbegin;
+  using _base_type::cend;
+  using _base_type::crbegin;
+  using _base_type::crend;
+  using _base_type::native_handle;
+};
+
+template <typename T>
+class range_array<T, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
+  : range_ptr_array<Eo>
+{
+  typedef range_ptr_array<Eo> _base_type;
+  typedef range_array<T> _self_type;
+public:
+  typedef T value_type;
+  typedef value_type& reference;
+  typedef value_type const& const_reference;
+  typedef _ptr_eo_array_iterator<value_type const> const_iterator;
+  typedef _ptr_eo_array_iterator<value_type> iterator;
+  typedef value_type* pointer;
+  typedef value_type const* const_pointer;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+
+  explicit range_array(Eina_Array* handle)
+    : _base_type(handle) {}
+  range_array() {}
+  range_array(range_array<T> const& other)
+    : _base_type(other.native_handle())
+  {
+  }
+  range_array<T>& operator=(range_array<T>const& other)
+  {
+    _base_type::_handle = other._handle;
+    return *this;
+  }
+  range_array& operator=(range_array&& other) = default;
+  range_array(range_array&& other) = default;
   
+  using _base_type::size;
+  using _base_type::empty;
+
+  reference front()
+  {
+    return _eo_array_access_traits::front<value_type>(native_handle());
+  }
+  reference back()
+  {
+    return _eo_array_access_traits::back<value_type>(native_handle());
+  }
+  const_reference front() const { return const_cast<_self_type*>(this)->front(); }
+  const_reference back() const { return const_cast<_self_type*>(this)->back(); }
+  iterator begin()
+  {
+    return _eo_array_access_traits::begin<value_type>(native_handle());
+  }
+  iterator end()
+  {
+    return _eo_array_access_traits::end<value_type>(native_handle());
+  }
+  const_iterator begin() const
+  {
+    return const_cast<_self_type*>(this)->begin();
+  }
+  const_iterator end() const
+  {
+    return const_cast<_self_type*>(this)->end();
+  }
+  const_iterator cbegin() const
+  {
+    return begin();
+  }
+  const_iterator cend() const
+  {
+    return end();
+  }
+  reverse_iterator rbegin()
+  {
+    return _eo_array_access_traits::rbegin<value_type>(native_handle());
+  }
+  reverse_iterator rend()
+  {
+    return _eo_array_access_traits::rend<value_type>(native_handle());
+  }
+  const_reverse_iterator rbegin() const
+  {
+    return const_cast<_self_type*>(this)->rbegin();
+  }
+  const_reverse_iterator rend() const
+  {
+    return const_cast<_self_type*>(this)->rend();
+  }
+  const_reverse_iterator crbegin() const
+  {
+    return rbegin();
+  }
+  const_reverse_iterator crend() const
+  {
+    return rend();
+  }
+  using _base_type::swap;
+  using _base_type::native_handle;
+
+  friend bool operator==(range_array<T> const& rhs, range_array<T> const& lhs)
+  {
+    return rhs.size() == lhs.size() && std::equal(rhs.begin(), rhs.end(), lhs.begin());
+  }
+};
+    
 } }
 
 #endif
