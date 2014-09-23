@@ -314,3 +314,24 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    udev_enumerate_unref(en);
    return ret;
 }
+
+EAPI int 
+eeze_udev_syspath_get_sysnum(const char *syspath)
+{
+   _udev_device *device;
+   const char *test;
+   int ret = -1;
+
+   if (!syspath)
+     return NULL;
+
+   if (!(device = _new_device(syspath)))
+     return NULL;
+
+   if ((test = udev_device_get_sysnum(device)))
+     ret = atoi(test);
+
+   udev_device_unref(device);
+   return ret;
+}
+
