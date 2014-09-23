@@ -96,11 +96,27 @@ typedef struct _drmEventContext
                              void *user_data);
 } drmEventContext;
 
-typedef struct _drmVersion
+typedef struct _drmVersionBroken
 {
    int version_major;
    int version_minor;
 //   int version_patchlevel;
+   size_t name_len;
+   // WARNING! this does NOT match the system drm.h headers because
+   // literally drm.h is wrong. the below is correct. drm hapily
+   // broke its ABI at some point.
+   char *name;
+   size_t date_len;
+   char *date;
+   size_t desc_len;
+   char *desc;
+} drmVersionBroken;
+
+typedef struct _drmVersion
+{
+   int version_major;
+   int version_minor;
+   int version_patchlevel;
    size_t name_len;
    // WARNING! this does NOT match the system drm.h headers because
    // literally drm.h is wrong. the below is correct. drm hapily
@@ -428,8 +444,10 @@ _drm_init(void)
    if (!getenv("ECORE_VSYNC_DRM_ALL"))
      {
         drmVersion *drmver;
+        drmVersionBroken *drmverbroken;
 
         drmver = sym_drmGetVersion(drm_fd);
+        drmverbroken = (drmVersionBroken *)drmver;
         if (!drmver)
           {
              close(drm_fd);
@@ -441,25 +459,51 @@ _drm_init(void)
         // not garbage (within a sensible range)
         if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
           {
-             fprintf(stderr,
-                     "DRM Version: %i.%i\n"
-                     "Name:        '%s'\n"
-                     "Date:        '%s'\n"
-                     "Desc:        '%s'\n",
-                     drmver->version_major, drmver->version_minor,
-                     drmver->name, drmver->date, drmver->desc);
+             if ((drmverbroken->name > (char *)4000L) &&
+                 (drmverbroken->date_len < 200))
+              fprintf(stderr,
+                      "!BROKEN DRM! Do FIXUP of ABI\n"
+                      "DRM Version: %i.%i\n"
+                      "Name:        '%s'\n"
+                      "Date:        '%s'\n"
+                      "Desc:        '%s'\n",
+                      drmverbroken->version_major, drmverbroken->version_minor,
+                      drmverbroken->name, drmverbroken->date, drmverbroken->desc);
+             else
+               fprintf(stderr,
+                       "OK DRM\n"
+                       "DRM Version: %i.%i\n"
+                       "Name:        '%s'\n"
+                       "Date:        '%s'\n"
+                       "Desc:        '%s'\n",
+                       drmver->version_major, drmver->version_minor,
+                       drmver->name, drmver->date, drmver->desc);
           }
         if ((drmver->version_major >= 1) &&
             (drmver->version_minor >= 6) &&
-            (drmver->name) &&
-            (drmver->desc) &&
-            (drmver->desc_len > 0) &&
-            (drmver->desc_len < 200))
+            (drmver->name > (char *)4000L) &&
+            (drmver->date_len < 200))
           {
              // whitelist of known-to-work drivers
              if ((!strcmp(drmver->name, "i915")) &&
                  (strstr(drmver->desc, "Intel Graphics")))
                {
+                  if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                    fprintf(stderr, "Whitelisted intel OK\n");
+                  ok = EINA_TRUE;
+               }
+          }
+        else if ((drmverbroken->version_major >= 1) &&
+                 (drmverbroken->version_minor >= 6) &&
+                 (drmverbroken->name > (char *)4000L) &&
+                 (drmverbroken->date_len < 200))
+          {
+             // whitelist of known-to-work drivers
+             if ((!strcmp(drmverbroken->name, "i915")) &&
+                 (strstr(drmverbroken->desc, "Intel Graphics")))
+               {
+                  if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                    fprintf(stderr, "Whitelisted intel OK\n");
                   ok = EINA_TRUE;
                }
           }
