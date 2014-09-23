@@ -900,7 +900,9 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
    const char *tmpdir = NULL;
    const char *XXXXXX = NULL;
    int fd, len;
+#ifndef _WIN32
    mode_t old_umask;
+#endif
 
 #ifndef HAVE_EVIL
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
@@ -915,11 +917,18 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 
    len = snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
 
-   /* 
+   /*
+    * Unix:
     * Make sure temp file is created with secure permissions,
     * http://man7.org/linux/man-pages/man3/mkstemp.3.html#NOTES
+    *
+    * Windows:
+    * no secure permissions anyway and the umask use below makes
+    * the file read-only.
     */
+#ifndef _WIN32
    old_umask = umask(S_IRWXG|S_IRWXO);
+#endif
    if ((XXXXXX = strstr(buffer, "XXXXXX.")) != NULL)
      {
         int suffixlen = buffer + len - XXXXXX - 6;
@@ -927,7 +936,9 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
      }
    else
      fd = mkstemp(buffer);
+#ifndef _WIN32
    umask(old_umask);
+#endif
 
    if (path) *path = eina_tmpstr_add(buffer);
    if (fd < 0)
