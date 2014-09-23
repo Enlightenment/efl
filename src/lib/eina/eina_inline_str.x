@@ -70,6 +70,34 @@ eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b)
 }
 
 /**
+ * @brief strdup function which takes @c NULL without crashing
+ * @param str The string to copy
+ * @return the copied string, must be freed
+ * @since 1.12
+ */
+static inline char *
+eina_strdup(const char *str)
+{
+   return str ? strdup(str) : NULL;
+}
+
+/**
+ * @brief streq function which takes @c NULL without crashing
+ * @param a string a
+ * @param b string b
+ * @return true if strings are equal
+ * @since 1.12
+ */
+static inline Eina_Bool
+eina_streq(const char *a, const char *b)
+{
+   if ((!a) && (!b)) return EINA_TRUE;
+   if (!a) return EINA_FALSE;
+   if (!b) return EINA_FALSE;
+   return !strcmp(a, b);
+}
+
+/**
  * @}
  */
 
