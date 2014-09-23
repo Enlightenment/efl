@@ -558,6 +558,17 @@ EAPI Eina_Bool        eeze_udev_syspath_is_touchpad(const char *syspath);
  * @since 1.7
  */
 EAPI Eina_Bool        eeze_udev_syspath_is_joystick(const char *syspath);
+
+/**
+ * Get the sysnum value of a device from the /sys/ path.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @return A integer with the sysnum or -1 on failure
+ * 
+ * @since 1.12
+ */
+EAPI int              eeze_udev_syspath_get_sysnum(const char *syspath);
+
    /**
     * @}
     */
