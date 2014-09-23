@@ -299,7 +299,7 @@ _eo_call_stack_mem_alloc(size_t maxsize)
               MAP_PRIVATE | MAP_ANON, -1, 0);
    if (ptr == MAP_FAILED)
      {
-        ERR("mmap of eo callstack failed!");
+        ERR("eo call stack mmap failed.");
         return NULL;
      }
    return ptr;
@@ -316,7 +316,7 @@ _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize
    // resize call stack down - currently won't ever be called
    if (newsize > maxsize)
      {
-        ERR("eo callstack overflow");
+        CRI("eo call stack overflow, abort.");
         abort();
      }
    size_t addr = MEM_PAGE_SIZE * ((newsize + MEM_PAGE_SIZE - 1) /
@@ -547,7 +547,7 @@ _eo_do_end(const Eo **eo_id EINA_UNUSED)
 
    if (fptr == stack->frames)
      {
-        CRI("call stack underflow, abort.");
+        CRI("eo call stack underflow, abort.");
         abort();
      }
 
