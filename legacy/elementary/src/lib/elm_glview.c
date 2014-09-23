@@ -173,7 +173,7 @@ _set_render_policy_callback(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
+_elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
 {
    Evas_Object *img;
 
@@ -185,7 +185,11 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
    evas_object_image_size_set(img, 1, 1);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+}
 
+static void
+_elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
+{
    // Evas_GL
    priv->evasgl = evas_gl_new(evas_object_evas_get(obj));
    if (!priv->evasgl)
@@ -215,15 +219,22 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
    priv->w = 64;
    priv->h = 64;
 
+   // Set context version
+   if (!priv->gles_version)
+     priv->gles_version = EVAS_GL_GLES_2_X;
+   priv->config->gles_version = priv->gles_version;
+
    // Create Context
-   priv->context = evas_gl_context_create(priv->evasgl, NULL);
+   if (priv->gles_version == EVAS_GL_GLES_2_X)
+     priv->context = evas_gl_context_create(priv->evasgl, NULL);
+   else
+     priv->context = evas_gl_context_version_create(priv->evasgl, NULL, priv->gles_version);
    if (!priv->context)
      {
         ERR("Error Creating an Evas_GL Context.\n");
 
-        evas_gl_config_free(priv->config);
-        evas_gl_free(priv->evasgl);
-        priv->evasgl = NULL;
+        ELM_SAFE_FREE(priv->config, evas_gl_config_free);
+        ELM_SAFE_FREE(priv->evasgl, evas_gl_free);
         return;
      }
 }
@@ -258,14 +269,34 @@ EAPI Evas_Object *
 elm_glview_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent,
+                             elm_obj_glview_version_constructor(EVAS_GL_GLES_2_X));
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent,
+                             elm_obj_glview_version_constructor(version));
    return obj;
 }
 
 EOLIAN static void
-_elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd)
+_elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
+}
+
+EOLIAN static void
+_elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
+                                Evas_GL_Context_Version version)
+{
+   sd->gles_version =
+     ((version > 0) && (version <= 3)) ? version : EVAS_GL_GLES_2_X;
+   _elm_glview_constructor(obj, sd);
+
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -281,7 +312,7 @@ _elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd)
 EOLIAN static Evas_GL_API*
 _elm_glview_gl_api_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
-   return evas_gl_api_get(sd->evasgl);
+   return evas_gl_context_api_get(sd->evasgl, sd->context);
 }
 
 EOLIAN static Eina_Bool

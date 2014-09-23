@@ -1,6 +1,15 @@
 class Elm_Glview (Elm_Widget)
 {
    eo_prefix: elm_obj_glview;
+   methods {
+      version_constructor {
+         /*@ Constructor with context version number. */
+         legacy: null;
+         params {
+            @in Evas_GL_Context_Version version;
+         }
+      }
+   }
    properties {
       size {
          set {
@@ -216,5 +225,7 @@ class Elm_Glview (Elm_Widget)
       language,changed;
       access,changed;
    }
-
+   constructors {
+      .version_constructor;
+   }
 }

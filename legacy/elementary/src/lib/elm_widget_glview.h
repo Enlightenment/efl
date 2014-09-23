@@ -29,6 +29,7 @@ struct _Elm_Glview_Data
    Elm_GLView_Mode          mode;
    Elm_GLView_Resize_Policy scale_policy;
    Elm_GLView_Render_Policy render_policy;
+   Evas_GL_Context_Version  gles_version;
 
    Evas_GL                 *evasgl;
    Evas_GL_Config          *config;
