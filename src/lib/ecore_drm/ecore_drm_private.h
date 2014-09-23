@@ -86,8 +86,6 @@ extern int _ecore_drm_log_dom;
 #define WRN(...) EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__)
 #define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__)
 
-extern struct udev *udev;
-
 struct _Ecore_Drm_Output_Mode
 {
    unsigned int flags;
@@ -161,7 +159,7 @@ struct _Ecore_Drm_Input
 {
    int fd;
    const char *seat;
-   struct udev_monitor *monitor;
+   Eeze_Udev_Watch *watch;
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm_Device *dev;
 
