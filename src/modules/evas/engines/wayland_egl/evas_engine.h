@@ -49,8 +49,6 @@ extern int _evas_engine_wl_egl_log_dom;
 #  define EGL_BUFFER_AGE_EXT 0x313d
 # endif
 
-typedef struct _Outbuf Outbuf;
-
 struct _Outbuf
 {
    struct wl_display *disp;

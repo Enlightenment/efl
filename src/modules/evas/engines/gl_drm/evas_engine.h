@@ -67,7 +67,6 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 
 typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
-typedef struct _Outbuf Outbuf;
 
 struct _Buffer
 {

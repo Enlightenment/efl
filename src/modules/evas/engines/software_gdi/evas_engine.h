@@ -36,7 +36,6 @@ extern int _evas_engine_soft_gdi_log_dom;
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_soft_gdi_log_dom, __VA_ARGS__)
 
 typedef struct BITMAPINFO_GDI     BITMAPINFO_GDI;
-typedef struct _Outbuf            Outbuf;
 typedef struct _Outbuf_Region     Outbuf_Region;
 typedef struct _Gdi_Output_Buffer Gdi_Output_Buffer;
 

@@ -51,7 +51,6 @@ extern int _evas_engine_drm_log_dom;
 
 typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
-typedef struct _Outbuf Outbuf;
 
 struct _Buffer
 {

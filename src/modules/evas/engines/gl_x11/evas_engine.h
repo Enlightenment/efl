@@ -58,8 +58,6 @@ extern int _evas_engine_GL_X11_log_dom ;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_X11_log_dom, __VA_ARGS__)
 
-typedef struct _Outbuf Outbuf;
-
 struct _Outbuf
 {
 #ifdef GL_GLES

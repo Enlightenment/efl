@@ -9,7 +9,6 @@
 
 #include "../software_generic/Evas_Engine_Software_Generic.h"
 
-typedef struct _Outbuf                Outbuf;
 typedef struct _Outbuf_Region         Outbuf_Region;
 typedef struct _DD_Output_Buffer      DD_Output_Buffer;
 

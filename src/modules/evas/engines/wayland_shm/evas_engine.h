@@ -43,8 +43,6 @@ extern int _evas_engine_way_shm_log_dom;
 
 #include "../software_generic/Evas_Engine_Software_Generic.h"
 
-typedef struct _Outbuf Outbuf;
-
 struct _Outbuf
 {
    Evas_Engine_Info_Wayland_Shm *info;
