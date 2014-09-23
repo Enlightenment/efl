@@ -273,6 +273,8 @@ typedef struct _Eo_Stack_Frame
    void              *obj_data;
 } Eo_Stack_Frame;
 
+#define EO_CALL_STACK_SIZE (EO_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
+
 static Eina_TLS _eo_call_stack_key = 0;
 
 typedef struct _Eo_Call_Stack {
@@ -280,20 +282,19 @@ typedef struct _Eo_Call_Stack {
    Eo_Stack_Frame *frame_ptr;
    Eo_Stack_Frame *last_frame;
    Eo_Stack_Frame *shrink_frame;
-   size_t max_size;
 } Eo_Call_Stack;
 
 #define MEM_PAGE_SIZE 4096
 
 static void *
-_eo_call_stack_mem_alloc(size_t maxsize)
+_eo_call_stack_mem_alloc(size_t size)
 {
 #ifdef HAVE_MMAP
    // allocate eo call stack via mmped anon segment if on linux - more
    // secure and safe. also gives page aligned memory allowing madvise
    void *ptr;
    size_t newsize;
-   newsize = MEM_PAGE_SIZE * ((maxsize + MEM_PAGE_SIZE - 1) /
+   newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
                               MEM_PAGE_SIZE);
    ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANON, -1, 0);
@@ -305,26 +306,26 @@ _eo_call_stack_mem_alloc(size_t maxsize)
    return ptr;
 #else
    //in regular cases just use malloc
-   return calloc(1, maxsize);
+   return calloc(1, size);
 #endif
 }
 
 #ifdef HAVE_MMAP
 static void
-_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize)
+_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t size)
 {
    // resize call stack down - currently won't ever be called
-   if (newsize > maxsize)
+   if (newsize > size)
      {
         CRI("eo call stack overflow, abort.");
         abort();
      }
    size_t addr = MEM_PAGE_SIZE * ((newsize + MEM_PAGE_SIZE - 1) /
                                   MEM_PAGE_SIZE);
-   madvise(((unsigned char *)*ptr) + addr, maxsize - addr, MADV_DONTNEED);
+   madvise(((unsigned char *)*ptr) + addr, size - addr, MADV_DONTNEED);
 #else
 static void
-_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize EINA_UNUSED, size_t maxsize EINA_UNUSED)
+_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize EINA_UNUSED, size_t size EINA_UNUSED)
 {
    // just grow in regular cases
 #endif
@@ -332,13 +333,13 @@ _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize EINA_UNUSED, si
 
 #ifdef HAVE_MMAP
 static void
-_eo_call_stack_mem_free(void *ptr, size_t maxsize)
+_eo_call_stack_mem_free(void *ptr, size_t size)
 {
    // free mmaped memory
-   munmap(ptr, maxsize);
+   munmap(ptr, size);
 #else
 static void
-_eo_call_stack_mem_free(void *ptr, size_t maxsize EINA_UNUSED)
+_eo_call_stack_mem_free(void *ptr, size_t size EINA_UNUSED)
 {
    // free regular memory
    free(ptr);
@@ -354,8 +355,7 @@ _eo_call_stack_create()
    if (!stack)
      return NULL;
 
-   stack->max_size = 8192 * sizeof(Eo_Stack_Frame);
-   stack->frames = _eo_call_stack_mem_alloc(stack->max_size);
+   stack->frames = _eo_call_stack_mem_alloc(EO_CALL_STACK_SIZE);
    if (!stack->frames)
      {
         free(stack);
@@ -378,7 +378,7 @@ _eo_call_stack_free(void *ptr)
    if (!stack) return;
 
    if (stack->frames)
-     _eo_call_stack_mem_free(stack->frames, stack->max_size);
+     _eo_call_stack_mem_free(stack->frames, EO_CALL_STACK_SIZE);
 
    free(stack);
 }
@@ -430,7 +430,7 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
    if (!grow)
      _eo_call_stack_mem_resize((void **)&(stack->frames),
                                next_sz * sizeof(Eo_Stack_Frame),
-                               stack->max_size);
+                               sz * sizeof(Eo_Stack_Frame));
    if (!stack->frames)
      {
         CRI("unable to resize call stack, abort.");
