@@ -167,7 +167,7 @@ eina_value_util_time_new(time_t t)
  * @since 1.12
  */
 static inline Eina_Value *
-eina_value_util_timestamp_new(const char *timestr)
+eina_value_util_time_string_new(const char *timestr)
 {
    Eina_Value *v;
    struct tm tm;
