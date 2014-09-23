@@ -235,6 +235,12 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
       case EEZE_UDEV_TYPE_BLUETOOTH:
 	udev_enumerate_add_match_subsystem(en, "bluetooth");
         break;
+
+      case EEZE_UDEV_TYPE_DRM:
+	udev_enumerate_add_match_subsystem(en, "drm");
+	udev_enumerate_add_match_subsystem(en, "card[0-9]*");
+        break;
+
       default:
         break;
      }
