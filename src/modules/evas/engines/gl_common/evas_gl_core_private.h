@@ -67,6 +67,12 @@ struct _EVGL_Interface
 
    // Create a pbuffer surface
    void       *(*pbuffer_surface_create)(void *data, EVGL_Surface *evgl_sfc, const int *attrib_list);
+
+   // Create a surface for 1.x rendering (could be pbuffer or xpixmap for instance)
+   void       *(*gles1_surface_create)(void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
+
+   // Destroy 1.x surface (could be pbuffer or xpixmap for instance)
+   int        (*gles1_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);
 };
 
 struct _EVGL_Surface
@@ -101,6 +107,10 @@ struct _EVGL_Surface
    unsigned client_side_rotation : 1;
    unsigned alpha : 1;
 
+   // Flag indicating this surface is used for GLES 1 indirect rendering
+   unsigned gles1_indirect : 1;
+   unsigned xpixmap : 1;
+
    int     cfg_index;
 
    // Attached Context
@@ -112,6 +122,12 @@ struct _EVGL_Surface
    // Rough estimate of buffer in memory per renderbuffer
    // 0. color 1. depth 2. stencil 3. depth_stencil
    int     buffer_mem[4];
+
+   //-------------------------//
+   // Used if gles1_indirect == 1
+   EVGLNative_Surface gles1_sfc;
+   void              *gles1_sfc_native;
+   void              *gles1_sfc_visual;
 
    //-------------------------//
    // Related to PBuffer Surface

@@ -1559,6 +1559,19 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         goto error;
      }
 
+   // Allocate a special surface for 1.1
+   if (cfg->gles_version == EVAS_GL_GLES_1_X)
+     {
+        if (!evgl_engine->funcs->gles1_surface_create)
+          {
+             evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
+             goto error;
+          }
+
+        INF("Creating special surface for GLES 1.x rendering");
+        evgl_engine->funcs->gles1_surface_create(eng_data, sfc, cfg, w, h);
+     }
+
    // Create internal buffers
    if (!_surface_buffers_create(sfc))
      {
@@ -1768,6 +1781,25 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
           }
      }
 
+   // Destroy surface used for 1.1
+   if (sfc->gles1_indirect)
+     {
+        int ret;
+        if (!evgl_engine->funcs->gles1_surface_destroy)
+          {
+             ERR("Error destroying GLES 1.x surface");
+             return 0;
+          }
+
+        INF("Destroying special surface used for GLES 1.x rendering");
+        ret = evgl_engine->funcs->gles1_surface_destroy(eng_data, sfc);
+
+        if (!ret) ERR("Engine failed to destroy a GLES1.x Surface.");
+        return ret;
+
+     }
+
+
    // Destroy created buffers
    if (!_surface_buffers_destroy(sfc))
      {
@@ -1857,6 +1889,9 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
         return NULL;
      }
 
+   ctx->version = version;
+
+   // Call engine create context
    if (share_ctx)
       ctx->context = evgl_engine->funcs->context_create(eng_data, share_ctx->context, version);
    else
@@ -2025,6 +2060,24 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         ERR("Error doing a make current with internal surface. Context: %p", ctx);
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONTEXT);
         return 0;
+     }
+
+   if (ctx->version == EVAS_GL_GLES_1_X)
+     {
+        if (_evgl_direct_renderable(rsc, sfc))
+          {
+             rsc->direct.rendered = 1;
+          }
+        else
+          {
+             evgl_engine->funcs->make_current(eng_data, sfc->gles1_sfc,
+                                              ctx->context, EINA_TRUE);
+          }
+
+        ctx->current_sfc = sfc;
+        rsc->current_ctx = ctx;
+        rsc->current_eng = eng_data;
+        return 1;
      }
 
    // Normal FBO Rendering

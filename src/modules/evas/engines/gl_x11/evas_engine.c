@@ -519,6 +519,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    (GLXContext)share_ctx,
                                    1);
      }
+   /* TODO: Check this case.
    else if (version == EVAS_GL_GLES_1_X)
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
@@ -526,6 +527,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    NULL,
                                    1);
      }
+   */
    else
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
@@ -750,6 +752,110 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
 #endif
 }
 
+// This function should create a surface that can be used for offscreen rendering
+// with GLES 1.x, and still be bindable to a texture in Evas main GL context.
+// For now, this will create an X pixmap... Ideally it should be able to create
+// a bindable pbuffer surface or just an FBO if that is supported and it can
+// be shared with Evas.
+static void *
+evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
+                              Evas_GL_Config *cfg, int w, int h)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Pixmap px;
+
+   if (!re || !evgl_sfc || !cfg)
+     {
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
+
+   if (cfg->gles_version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Inconsistent parameters, not creating any surface!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
+
+   // FIXME: Check the depth of the buffer!
+   px =  XCreatePixmap(eng_get_ob(re)->disp, eng_get_ob(re)->win, w, h,
+                       XDefaultDepth(eng_get_ob(re)->disp, eng_get_ob(re)->screen));
+   if (!px)
+     {
+        ERR("Failed to create XPixmap!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_ALLOC);
+        return NULL;
+     }
+
+#ifdef GL_GLES
+   EGLSurface egl_sfc;
+
+   egl_sfc = eglCreatePixmapSurface(eng_get_ob(re)->egl_disp, eng_get_ob(re)->egl_config, px, NULL);
+   if (!egl_sfc)
+     {
+        int err = eglGetError();
+        ERR("eglCreatePixmapSurface failed with error: %x", err);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        XFreePixmap(eng_get_ob(re)->disp, px);
+        return NULL;
+     }
+
+   evgl_sfc->gles1_indirect = EINA_TRUE;
+   evgl_sfc->xpixmap = EINA_TRUE;
+   evgl_sfc->gles1_sfc = egl_sfc;
+   evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
+   evgl_sfc->gles1_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
+   return evgl_sfc;
+
+#else
+#warning GLX support is not implemented for GLES 1.x
+   CRIT("Not implemented yet! (GLX for GLES 1)");
+   return NULL;
+#endif
+}
+
+// This function should destroy the surface used for offscreen rendering
+// with GLES 1.x.This will also destroy the X pixmap...
+static int
+evgl_eng_gles1_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
+{
+   Render_Engine *re = (Render_Engine *)data;
+
+   if (!re)
+     {
+        ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        return 0;
+     }
+
+#ifdef GL_GLES
+   if ((!evgl_sfc) || (!evgl_sfc->gles1_sfc))
+     {
+        ERR("Invalid surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
+        return 0;
+     }
+
+   eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)evgl_sfc->gles1_sfc);
+
+#else
+#warning GLX support is not implemented for GLES 1.x
+   CRIT("Not implemented yet! (GLX for GLES 1)");
+   return 0;
+#endif
+
+   if (!evgl_sfc->gles1_sfc_native)
+     {
+        ERR("Inconsistent parameters, not freeing XPixmap for gles1 surface!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return 0;
+     }
+
+   XFreePixmap(eng_get_ob(re)->disp, (Pixmap)evgl_sfc->gles1_sfc_native);
+
+   return 1;
+}
+
 static const EVGL_Interface evgl_funcs =
 {
    evgl_eng_display_get,
@@ -764,7 +870,9 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
    evgl_eng_rotation_angle_get,
-   evgl_eng_pbuffer_surface_create
+   evgl_eng_pbuffer_surface_create,
+   evgl_eng_gles1_surface_create,
+   evgl_eng_gles1_surface_destroy,
 };
 
 //----------------------------------------------------------//
