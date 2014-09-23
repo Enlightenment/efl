@@ -150,9 +150,6 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
    const char *devname;
    Eina_List *ret = NULL;
 
-   if ((!etype) && (!name))
-     return NULL;
-
    en = udev_enumerate_new(udev);
 
    if (!en)
