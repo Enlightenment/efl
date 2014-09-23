@@ -130,6 +130,7 @@
  * These are the device subsystems of udev:
  * @li ac97
  * @li acpi
+ * @li backlight
  * @li bdi
  * @li block
  * @li bsg
@@ -140,6 +141,7 @@
  * @li hwmon
  * @li i2c
  * @li input
+ * @li leds
  * @li mem
  * @li misc
  * @li net
@@ -264,7 +266,15 @@ typedef enum
    /** - Drm
     * @since 1.12
     */
-   EEZE_UDEV_TYPE_DRM
+   EEZE_UDEV_TYPE_DRM,
+   /** - Backlight
+    * @since 1.12
+    */
+   EEZE_UDEV_TYPE_BACKLIGHT, 
+   /** - Leds
+    * @since 1.12
+    */
+   EEZE_UDEV_TYPE_LEDS
 } Eeze_Udev_Type;
 /**@}*/
 
