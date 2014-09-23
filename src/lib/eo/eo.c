@@ -314,20 +314,27 @@ _eo_call_stack_mem_alloc(size_t size)
 static void
 _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t size)
 {
-   // resize call stack down - currently won't ever be called
+   // FIXME we don't grow
    if (newsize > size)
      {
         CRI("eo call stack overflow, abort.");
         abort();
      }
+   // FIXME resize call stack down
+   return;
    size_t addr = MEM_PAGE_SIZE * ((newsize + MEM_PAGE_SIZE - 1) /
                                   MEM_PAGE_SIZE);
    madvise(((unsigned char *)*ptr) + addr, size - addr, MADV_DONTNEED);
 #else
 static void
-_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize EINA_UNUSED, size_t size EINA_UNUSED)
+_eo_call_stack_mem_resize(void **ptr, size_t newsize, size_t size EINA_UNUSED)
 {
-   // just grow in regular cases
+   *ptr = realloc(*ptr, newsize);
+   if (!*ptr)
+     {
+        CRI("eo call stack resize failed, abort.");
+        abort();
+     }
 #endif
 }
 
@@ -427,10 +434,9 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
    frame_offset = stack->frame_ptr - stack->frames;
 
    DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
-   if (!grow)
-     _eo_call_stack_mem_resize((void **)&(stack->frames),
-                               next_sz * sizeof(Eo_Stack_Frame),
-                               sz * sizeof(Eo_Stack_Frame));
+   _eo_call_stack_mem_resize((void **)&(stack->frames),
+                             next_sz * sizeof(Eo_Stack_Frame),
+                             sz * sizeof(Eo_Stack_Frame));
    if (!stack->frames)
      {
         CRI("unable to resize call stack, abort.");
