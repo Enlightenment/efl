@@ -354,8 +354,6 @@ _eo_call_stack_create()
    if (!stack)
      return NULL;
 
-// XXX: leave in for noew in case this breaks, but remove later when ok
-//   stack->frames = calloc(EO_CALL_STACK_DEPTH_MIN, sizeof(Eo_Stack_Frame));
    stack->max_size = 8192 * sizeof(Eo_Stack_Frame);
    stack->frames = _eo_call_stack_mem_alloc(stack->max_size);
    if (!stack->frames)
@@ -380,11 +378,8 @@ _eo_call_stack_free(void *ptr)
    if (!stack) return;
 
    if (stack->frames)
-     {
-// XXX: leave in for noew in case this breaks, but remove later when ok
-//        free(stack->frames);
-        _eo_call_stack_mem_free(stack->frames, stack->max_size);
-     }
+     _eo_call_stack_mem_free(stack->frames, stack->max_size);
+
    free(stack);
 }
 
@@ -432,8 +427,6 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
    frame_offset = stack->frame_ptr - stack->frames;
 
    DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
-// XXX: leave in for noew in case this breaks, but remove later when ok
-//   stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
    if (!grow)
      _eo_call_stack_mem_resize((void **)&(stack->frames),
                                next_sz * sizeof(Eo_Stack_Frame),
