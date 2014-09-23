@@ -3037,7 +3037,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eeze])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
-EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libudev >= 148 libdrm >= 2.4 xkbcommon >= 0.3.0 libsystemd-login >= 192 gbm])
+EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 libsystemd-login >= 192 gbm])
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
