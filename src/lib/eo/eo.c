@@ -259,7 +259,8 @@ EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 #define EO_INVALID_DATA (void *) -1
 // 1024 entries == 8k or 16k (32 or 64bit) for eo call stack. that's 1024
 // recursion entires it can handle before barfing. i'd say that's ok
-#define EO_CALL_STACK_DEPTH 16
+#define EO_CALL_STACK_DEPTH_MIN 16
+#define EO_CALL_STACK_SHRINK_DROP 8
 
 typedef struct _Eo_Stack_Frame
 {
@@ -355,7 +356,7 @@ _eo_call_stack_create()
      return NULL;
 
 // XXX: leave in for noew in case this breaks, but remove later when ok
-//   stack->frames = calloc(EO_CALL_STACK_DEPTH, sizeof(Eo_Stack_Frame));
+//   stack->frames = calloc(EO_CALL_STACK_DEPTH_MIN, sizeof(Eo_Stack_Frame));
    stack->max_size = 8192 * sizeof(Eo_Stack_Frame);
    stack->frames = _eo_call_stack_mem_alloc(stack->max_size);
    if (!stack->frames)
@@ -366,7 +367,7 @@ _eo_call_stack_create()
 
    // first frame is never used
    stack->frame_ptr = stack->frames;
-   stack->last_frame = &stack->frames[EO_CALL_STACK_DEPTH - 1];
+   stack->last_frame = &stack->frames[EO_CALL_STACK_DEPTH_MIN - 1];
    stack->shrink_frame = stack->frames;
 
    return stack;
@@ -461,12 +462,15 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
    stack->frame_ptr = &stack->frames[frame_offset];
    stack->last_frame = &stack->frames[next_sz - 1];
 
-   if (grow)
-     frame_offset = (sz >> 1);
-   if (next_sz == EO_CALL_STACK_DEPTH)
+   if (next_sz == EO_CALL_STACK_DEPTH_MIN)
      frame_offset = 0;
    else
-     frame_offset = (next_sz >> 1);
+     {
+        if (grow)
+          frame_offset = sz - EO_CALL_STACK_SHRINK_DROP;
+        else
+          frame_offset = (next_sz / 2) - EO_CALL_STACK_SHRINK_DROP;
+     }
    stack->shrink_frame = &stack->frames[frame_offset];
 }
 
