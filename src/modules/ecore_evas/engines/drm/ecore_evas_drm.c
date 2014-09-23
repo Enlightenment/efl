@@ -457,6 +457,10 @@ _ecore_evas_drm_init(const char *device)
      {
         ERR("Could not find drm device with name: %s. Falling back to default device.", device);
 
+        /* if we already passed in NULL as device name, then no point in 
+         * calling the find function below with no name either */
+        if (!device) goto dev_err;
+
         /* try getting the default drm device */
         if (!(dev = ecore_drm_device_find(NULL, NULL)))
           goto dev_err;
