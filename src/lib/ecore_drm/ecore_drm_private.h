@@ -19,7 +19,6 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 
-# include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
 # include <systemd/sd-login.h>
