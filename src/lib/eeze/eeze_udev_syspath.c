@@ -323,10 +323,10 @@ eeze_udev_syspath_get_sysnum(const char *syspath)
    int ret = -1;
 
    if (!syspath)
-     return NULL;
+     return -1;
 
    if (!(device = _new_device(syspath)))
-     return NULL;
+     return -1;
 
    if ((test = udev_device_get_sysnum(device)))
      ret = atoi(test);
