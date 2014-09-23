@@ -3534,6 +3534,12 @@ _elm_win_noblank_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd)
    return pd->noblank;
 }
 
+EOLIAN static void *
+_elm_win_trap_data_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd)
+{
+   return pd->trap_data;
+}
+
 
 EAPI Evas_Object *
 elm_win_util_standard_add(const char *name,

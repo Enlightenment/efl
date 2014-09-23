@@ -1168,6 +1168,19 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             bool noblank; /*@ If true, the window is set to noblank */
          }
       }
+      trap_data {
+         get {
+            /*@
+
+            Get the trap data associated with a window
+            @since 1.12
+
+            @ingroup Win */
+         }
+         values {
+            void *trap_data; /*@ The trap data of the window */
+         }
+      }
    }
    methods {
       constructor {
