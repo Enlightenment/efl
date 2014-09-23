@@ -573,7 +573,7 @@ EAPI Eo_Op _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const
 EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eina_Bool is_main_loop, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
-  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, Eina_Bool is_main_loop, const char *file, const char *func, int line);
+  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
 
 // end of the eo_do barrier, unref the obj, move the stack pointer
 EAPI void _eo_do_end(const Eo **ojb);
@@ -584,9 +584,8 @@ EAPI void _eo_do_end(const Eo **ojb);
 
 #define _eo_do_common(eoid, clsid, is_super, ...)                       \
   ({                                                                    \
-       Eina_Bool is_main_loop = eina_main_loop_is();                    \
        const Eo *_eoid_ EO_DO_CLEANUP = eoid;                           \
-       _eo_do_start(_eoid_, clsid, is_super, is_main_loop, __FILE__, __FUNCTION__, __LINE__); \
+       _eo_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__); \
        __VA_ARGS__;                                                     \
     })
 

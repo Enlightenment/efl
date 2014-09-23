@@ -504,8 +504,9 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 }
 
 EAPI Eina_Bool
-_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, Eina_Bool is_main_loop, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
+   Eina_Bool is_main_loop = eina_main_loop_is();
    Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr, *pfptr;
    Eo_Call_Stack *stack = _eo_call_stack_get(is_main_loop);
