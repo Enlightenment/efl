@@ -4463,9 +4463,9 @@ _test_genlist_focus_option_panel_create(Evas_Object *win, Evas_Object *bx,
    elm_box_pack_end(bx_mv, rd);
    evas_object_show(rd);
 
-   // Focus/Selection
+   // Options
    fr = elm_frame_add(bx);
-   elm_object_text_set(fr, "Focus/Selection");
+   elm_object_text_set(fr, "Options");
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, fr);
