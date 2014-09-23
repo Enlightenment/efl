@@ -47,31 +47,23 @@ _elm_glview_elm_widget_on_focus(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED)
 static void
 _glview_update_surface(Evas_Object *obj)
 {
+   Evas_Native_Surface ns = { 0 };
    ELM_GLVIEW_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!sd) return;
 
    if (sd->surface)
      {
-        evas_object_image_native_surface_set
-          (wd->resize_obj, NULL);
+        evas_object_image_native_surface_set(wd->resize_obj, NULL);
         evas_gl_surface_destroy(sd->evasgl, sd->surface);
-        sd->surface = NULL;
      }
 
    evas_object_image_size_set(wd->resize_obj, sd->w, sd->h);
 
-   if (!sd->surface)
-     {
-        Evas_Native_Surface ns;
-
-        sd->surface = evas_gl_surface_create
-            (sd->evasgl, sd->config, sd->w, sd->h);
-        evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
-        evas_object_image_native_surface_set
-          (wd->resize_obj, &ns);
-        elm_glview_changed_set(obj);
-     }
+   sd->surface = evas_gl_surface_create(sd->evasgl, sd->config, sd->w, sd->h);
+   evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
+   evas_object_image_native_surface_set(wd->resize_obj, &ns);
+   elm_glview_changed_set(obj);
 }
 
 EOLIAN static void
