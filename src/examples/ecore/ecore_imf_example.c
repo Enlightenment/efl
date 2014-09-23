@@ -144,18 +144,20 @@ _imf_cursor_info_set(Entry *en)
    Evas_Coord x, y, w, h;
    Evas_Coord cx, cy, cw, ch; // cursor geometry
    int cursor_pos; // cursor position in chars (Not bytes)
+   Evas_BiDi_Direction dir;
 
    if (!en) return;
 
    // get cursor geometry
    evas_object_geometry_get(en->txt_obj, &x, &y, &w, &h);
-   evas_textblock_cursor_geometry_get(en->cursor, &cx, &cy, &cw, &ch, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   evas_textblock_cursor_geometry_get(en->cursor, &cx, &cy, &cw, &ch, &dir, EVAS_TEXTBLOCK_CURSOR_BEFORE);
 
    // get cursor position
    cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
    ecore_imf_context_cursor_location_set(en->imf_context, x + cx, y + cy, cw, ch);
+   ecore_imf_context_bidi_direction_set(en->imf_context, (Ecore_IMF_BiDi_Direction)dir);
 }
 
 static void
