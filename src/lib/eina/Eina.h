@@ -262,6 +262,7 @@ extern "C" {
 #include <eina_mmap.h>
 #include <eina_xattr.h>
 #include <eina_value.h>
+#include <eina_value_util.h>
 #include <eina_cow.h>
 #include <eina_thread_queue.h>
 

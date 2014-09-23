@@ -20,8 +20,10 @@
 #ifndef EINA_INLINE_VALUE_UTIL_X_
 #define EINA_INLINE_VALUE_UTIL_X_
 
-#include <stdlib.h>
-#include <string.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <inttypes.h>
 #include <math.h>
 #include <time.h>
