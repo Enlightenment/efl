@@ -302,8 +302,7 @@ _ecore_drm_backlight_init(Ecore_Drm_Device *dev, uint32_t conn_type)
    int ret;
 
    enumerate = udev_enumerate_new(udev);
-   if (!enumerate)
-     return NULL;
+   if (!enumerate) return NULL;
 
    udev_enumerate_add_match_subsystem(enumerate, "backlight");
    ret = udev_enumerate_scan_devices(enumerate);
