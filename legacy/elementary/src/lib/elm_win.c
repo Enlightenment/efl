@@ -2943,15 +2943,17 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
 static Eina_Bool
 _accel_is_gl(void)
 {
-   const char *env = NULL;
-   const char *str = NULL;
+   const char *str;
 
-   if (_elm_config->accel) str = _elm_config->accel;
-   if (_elm_accel_preference) str = _elm_accel_preference;
-   if ((_elm_config->accel_override) && (_elm_config->accel))
-     str = _elm_config->accel;
-   env = getenv("ELM_ACCEL");
-   if (env) str = env;
+   str = _elm_config->accel;
+   if (!_elm_config->accel_override)
+     {
+        const char *env = NULL;
+
+        env = getenv("ELM_ACCEL");
+        if (env) str = env;
+        else if (_elm_accel_preference) str = _elm_accel_preference;
+     }
    if ((str) &&
        ((!strcasecmp(str, "gl")) ||
         (!strcasecmp(str, "opengl")) ||
