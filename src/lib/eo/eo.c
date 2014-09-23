@@ -256,7 +256,6 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 EAPI Eo_Hook_Call eo_hook_call_pre = NULL;
 EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 
-// FIXME: Thread Local Storage
 #define EO_INVALID_DATA (void *) -1
 // 1024 entries == 8k or 16k (32 or 64bit) for eo call stack. that's 1024
 // recursion entires it can handle before barfing. i'd say that's ok
