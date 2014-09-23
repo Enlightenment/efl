@@ -2948,8 +2948,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                               (obj->cur->color.g == 255) &&
                               (obj->cur->color.b == 255) &&
                               (obj->cur->color.a == 255) &&
-                              (!obj->map->cur.map) &&
-                              (!o->cur->has_alpha)) ||
+                              (!obj->map->cur.map)) ||
                              (direct_override)) &&
                             (!direct_force_off) )
                          {
