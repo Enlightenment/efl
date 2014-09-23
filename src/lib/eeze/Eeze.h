@@ -134,6 +134,7 @@
  * @li block
  * @li bsg
  * @li dmi
+ * @li drm
  * @li graphics
  * @li hid
  * @li hwmon
@@ -169,6 +170,7 @@
  * @li cd
  * @li char
  * @li disk
+ * @li drm_minor
  * @li floppy
  * @li generic
  * @li hid
@@ -258,7 +260,11 @@ typedef enum
    /** - Joystick
     * @since 1.7
     */
-   EEZE_UDEV_TYPE_JOYSTICK
+   EEZE_UDEV_TYPE_JOYSTICK,
+   /** - Drm
+    * @since 1.12
+    */
+   EEZE_UDEV_TYPE_DRM
 } Eeze_Udev_Type;
 /**@}*/
 
