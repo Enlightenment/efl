@@ -96,6 +96,21 @@ struct _Ecore_Drm_Output_Mode
    drmModeModeInfo info;
 };
 
+typedef enum _Ecore_Drm_Backlight_Type
+{
+   ECORE_DRM_BACKLIGHT_RAW,
+   ECORE_DRM_BACKLIGHT_PLATFORM,
+   ECORE_DRM_BACKLIGHT_FIRMWARE
+} Ecore_Drm_Backlight_Type;
+
+typedef struct _Ecore_Drm_Backlight
+{
+   const char *dir_path;
+   int brightness_max;
+   int brightness;
+   Ecore_Drm_Backlight_Type type;
+} Ecore_Drm_Backlight;
+
 struct _Ecore_Drm_Output
 {
    Ecore_Drm_Device *dev;
@@ -120,6 +135,7 @@ struct _Ecore_Drm_Output
 
    Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
+   Ecore_Drm_Backlight *backlight;   
 
 /* # ifdef HAVE_GBM */
 /*    struct gbm_surface *surface; */

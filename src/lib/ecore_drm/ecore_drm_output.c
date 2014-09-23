@@ -290,6 +290,75 @@ _ecore_drm_output_mode_add(Ecore_Drm_Output *output, drmModeModeInfo *info)
    return mode;
 }
 
+static Ecore_Drm_Backlight *
+_ecore_drm_backlight_init(Ecore_Drm_Device *dev, uint32_t conn_type)
+{
+   Ecore_Drm_Backlight *backlight = NULL;
+   Ecore_Drm_Backlight_Type type = 0;
+   struct udev_enumerate *enumerate;
+   struct udev_device *device;
+   struct udev_list_entry *item, *first;
+   const char *dev_type, *backlight_path;
+   int ret;
+
+   enumerate = udev_enumerate_new(udev);
+   if (!enumerate)
+     return NULL;
+
+   udev_enumerate_add_match_subsystem(enumerate, "backlight");
+   ret = udev_enumerate_scan_devices(enumerate);
+   if (ret < 0)
+     {
+        udev_enumerate_add_match_subsystem(enumerate, "leds");
+        ret = udev_enumerate_scan_devices(enumerate);
+        if (ret < 0)
+          {
+             udev_enumerate_unref(enumerate);
+             return NULL;
+          }
+     }
+
+   first = udev_enumerate_get_list_entry(enumerate);
+   udev_list_entry_foreach(item, first)
+     {
+        backlight_path = udev_list_entry_get_name(item);
+        device = udev_device_new_from_syspath(udev, backlight_path);
+
+        dev_type = udev_device_get_sysattr_value(device, "type");
+        if (!dev_type)
+          {
+             udev_device_unref(device);
+             udev_enumerate_unref(enumerate);
+             return NULL;
+          }
+        if (!strcmp(dev_type, "raw"))
+          type = ECORE_DRM_BACKLIGHT_RAW;
+        else if (!strcmp(dev_type, "platform"))
+          type = ECORE_DRM_BACKLIGHT_PLATFORM;
+        else if (!strcmp(dev_type, "firmware"))
+          type = ECORE_DRM_BACKLIGHT_FIRMWARE;
+
+        if (conn_type != DRM_MODE_CONNECTOR_LVDS &&
+            conn_type != DRM_MODE_CONNECTOR_eDP)
+          {
+             if (type != ECORE_DRM_BACKLIGHT_RAW)
+               {
+                  udev_device_unref(device);
+                  udev_enumerate_unref(enumerate);
+                  return NULL;
+               }
+          }
+        udev_device_unref(device);
+     }
+   udev_enumerate_unref(enumerate);
+
+   backlight = (Ecore_Drm_Backlight *)malloc(sizeof(Ecore_Drm_Backlight));
+   backlight->type = type;
+   backlight->dir_path = eina_stringshare_add(backlight_path);
+
+   return backlight;
+}
+
 static Ecore_Drm_Output *
 _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnector *conn, int x, int y)
 {
