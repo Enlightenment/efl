@@ -9859,6 +9859,7 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
 	if (!strcmp(param->name, name))
 	  {
 	     found = 1;
+             free(name);
 	     break;
 	  }
      }
@@ -9895,8 +9896,6 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
 
    if (!found)
      ed->external_params = eina_list_append(ed->external_params, param);
-
-   free(name);
 }
 
 /**
