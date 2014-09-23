@@ -129,7 +129,7 @@ typedef struct _Ecore_Drm_Output_Mode Ecore_Drm_Output_Mode;
 /* opaque structure to represent a drm output */
 typedef struct _Ecore_Drm_Output Ecore_Drm_Output;
 
-/* opaque structure to represent a drm udev input */
+/* opaque structure to represent a drm input */
 typedef struct _Ecore_Drm_Input Ecore_Drm_Input;
 
 /* opaque structure to represent a drm evdev input */

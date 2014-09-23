@@ -19,7 +19,6 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 
-# include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
 # include <systemd/sd-login.h>
@@ -37,6 +36,7 @@
 /* #  include <GLES2/gl2ext.h> */
 /* # endif */
 
+# include <Eeze.h>
 # include <Eldbus.h>
 # include <Ecore_Drm.h>
 
@@ -85,8 +85,6 @@ extern int _ecore_drm_log_dom;
 #define INF(...) EINA_LOG_DOM_INFO(_ecore_drm_log_dom, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__)
 #define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__)
-
-extern struct udev *udev;
 
 struct _Ecore_Drm_Output_Mode
 {
@@ -161,7 +159,7 @@ struct _Ecore_Drm_Input
 {
    int fd;
    const char *seat;
-   struct udev_monitor *monitor;
+   Eeze_Udev_Watch *watch;
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm_Device *dev;
 
