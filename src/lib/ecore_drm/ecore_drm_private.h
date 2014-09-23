@@ -36,6 +36,7 @@
 /* #  include <GLES2/gl2ext.h> */
 /* # endif */
 
+# include <Eeze.h>
 # include <Eldbus.h>
 # include <Ecore_Drm.h>
 
