@@ -14,7 +14,7 @@ template <typename C>
 struct eina_container_common : eina_container_type_specific<C, typename C::value_type>
 {
   eina_container_common() : _container(0) {}
-  eina_container_common(Eina_List* raw) : _container(raw) {}
+  eina_container_common(typename C::native_handle_type raw) : _container(raw) {}
 
   std::size_t size() const { return _container.size(); }
   v8::Local<v8::String> to_string(v8::Isolate* isolate) const

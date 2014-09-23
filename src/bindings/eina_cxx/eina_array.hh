@@ -32,6 +32,8 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator; /**< Type for reverse iterator for this container. */
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator; /**< Type for reverse iterator for this container. */
 
+  typedef typename _base_type::native_handle_type native_handle_type;
+
   using _base_type::_base_type;
   using _base_type::clear;
   using _base_type::size;
@@ -59,6 +61,7 @@ public:
   using _base_type::ciend;
   using _base_type::swap;
   using _base_type::max_size;
+  using _base_type::release_native_handle;
   using _base_type::native_handle;
 
   friend bool operator==(array<T, CloneAllocator> const& lhs, array<T, CloneAllocator> const& rhs)

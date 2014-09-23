@@ -12,6 +12,7 @@
 #include <eina_tuple.hh>
 #include <eina_ptrlist.hh>
 #include <eina_js_list.hh>
+#include <eina_js_array.hh>
 
 #include <tuple>
 
@@ -118,6 +119,35 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
     std::abort();
 }
 
+void new_eina_array(v8::FunctionCallbackInfo<v8::Value> const& args)
+{
+  if(args.IsConstructCall())
+    {
+      if(args.Length() == 0)
+        {
+          eina_container_base* p = new eina_array<int>;
+          std::cerr << "called eina array constructor p = " << p << std::endl;
+          args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(p));
+        }
+      else
+        {
+          std::cout << "more than one parameter" << std::endl;
+          if(args[0]->IsExternal())
+            {
+              std::cout << "Is external" << std::endl;
+              eina_container_base* base = reinterpret_cast<eina_container_base*>
+                (v8::External::Cast(*args[0])->Value());
+              std::cout << "base " << base << std::endl;
+              args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(base));
+            }
+          else
+            std::abort();
+        }
+    }
+  else
+    std::abort();
+}
+  
 template <typename F>
 struct function_params;
 
@@ -309,6 +339,7 @@ void register_class(v8::Isolate* isolate, container_type type, const char* class
 EAPI void eina_container_register(v8::Handle<v8::ObjectTemplate>, v8::Isolate* isolate)
 {
   efl::js::register_class(isolate, efl::js::list_container_type, "eina_list", &efl::js::new_eina_list);
+  efl::js::register_class(isolate, efl::js::array_container_type, "eina_array", &efl::js::new_eina_array);
 }
 
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template()

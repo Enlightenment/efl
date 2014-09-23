@@ -423,6 +423,8 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator; /**< Type for reverse iterator for this container. */
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator; /**< Type for reverse iterator for this container. */
 
+  typedef Eina_List* native_handle_type;
+  
   typedef std::unique_ptr<value_type, clone_allocator_deleter<clone_allocator_type> > _unique_ptr;
 
   /**

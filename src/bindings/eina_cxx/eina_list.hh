@@ -190,6 +190,8 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
+  typedef typename _base_type::native_handle_type native_handle_type;
+  
   list& operator=(list&& other) = default;
   list(list&& other) = default;
   list() = default;
@@ -444,6 +446,10 @@ public:
 
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
+
+  typedef typename _base_type::native_handle_type native_handle_type;
+
+  range_list& operator=(range_list&& other) = default;
 
   using _base_type::_base_type;
   using _base_type::size;
