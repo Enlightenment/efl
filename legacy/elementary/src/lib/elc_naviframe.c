@@ -1579,6 +1579,7 @@ _elm_naviframe_item_insert_before(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_It
        EINA_INLIST_GET(((Elm_Naviframe_Item *)before)));
 
    elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+   evas_object_hide(VIEW(it));
    elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
 
    elm_layout_sizing_eval(obj);
