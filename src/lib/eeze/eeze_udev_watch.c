@@ -235,6 +235,12 @@ _get_syspath_from_watch(void             *data,
           goto error;
         break;
 
+      case EEZE_UDEV_TYPE_DRM:
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "drm")))
+          goto error;
+
+        break;
       default:
         break;
      }
@@ -312,6 +318,11 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
 
       case EEZE_UDEV_TYPE_BLUETOOTH:
         udev_monitor_filter_add_match_subsystem_devtype(mon, "bluetooth",
+                                                        NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_DRM:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "drm_minor",
                                                         NULL);
         break;
 
