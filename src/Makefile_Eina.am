@@ -77,6 +77,8 @@ lib/eina/eina_mmap.h \
 lib/eina/eina_xattr.h \
 lib/eina/eina_value.h \
 lib/eina/eina_inline_value.x \
+lib/eina/eina_value_util.h \
+lib/eina/eina_inline_value_util.x \
 lib/eina/eina_inline_lock_barrier.x \
 lib/eina/eina_tmpstr.h \
 lib/eina/eina_alloca.h \
@@ -142,6 +144,7 @@ lib/eina/eina_unicode.c \
 lib/eina/eina_ustrbuf.c \
 lib/eina/eina_ustringshare.c \
 lib/eina/eina_value.c \
+lib/eina/eina_value_util.c \
 lib/eina/eina_xattr.c \
 lib/eina/eina_share_common.h \
 lib/eina/eina_private.h \
