@@ -23,6 +23,7 @@
 #include "eina_safety_checks.h"
 #include "eina_value.h"
 #include "eina_stringshare.h"
+#include <time.h>
 
 
 typedef struct _Eina_Value_Util_Struct_Desc
@@ -77,4 +78,18 @@ eina_value_util_struct_desc_new(void)
    st_desc->base.version = EINA_VALUE_STRUCT_DESC_VERSION;
    st_desc->base.ops = &operations;
    return (Eina_Value_Struct_Desc*)st_desc;
+}
+
+EAPI Eina_Value *
+eina_value_util_time_string_new(const char *timestr)
+{
+   Eina_Value *v;
+   struct tm tm;
+   time_t t;
+
+   if (!strptime(timestr, "%Y%m%dT%H:%M:%S", &tm)) return NULL;
+   t = mktime(&tm);
+   v = eina_value_new(EINA_VALUE_TYPE_TIMESTAMP);
+   if (v) eina_value_set(v, t);
+   return v;
 }

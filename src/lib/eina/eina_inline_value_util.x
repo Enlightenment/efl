@@ -20,10 +20,6 @@
 #ifndef EINA_INLINE_VALUE_UTIL_X_
 #define EINA_INLINE_VALUE_UTIL_X_
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <inttypes.h>
 #include <math.h>
 #include <time.h>
@@ -157,26 +153,6 @@ eina_value_util_time_new(time_t t)
 {
    Eina_Value *v;
 
-   v = eina_value_new(EINA_VALUE_TYPE_TIMESTAMP);
-   if (v) eina_value_set(v, t);
-   return v;
-}
-
-/**
- * @brief Create a new #Eina_Value containing the passed parameter
- * @param timestr The value to use
- * @return The #Eina_Value
- * @since 1.12
- */
-static inline Eina_Value *
-eina_value_util_time_string_new(const char *timestr)
-{
-   Eina_Value *v;
-   struct tm tm;
-   time_t t;
-
-   if (!strptime(timestr, "%Y%m%dT%H:%M:%S", &tm)) return NULL;
-   t = mktime(&tm);
    v = eina_value_new(EINA_VALUE_TYPE_TIMESTAMP);
    if (v) eina_value_set(v, t);
    return v;
