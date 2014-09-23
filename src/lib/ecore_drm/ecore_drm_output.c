@@ -291,69 +291,63 @@ _ecore_drm_output_mode_add(Ecore_Drm_Output *output, drmModeModeInfo *info)
 }
 
 static Ecore_Drm_Backlight *
-_ecore_drm_backlight_init(Ecore_Drm_Device *dev, uint32_t conn_type)
+_ecore_drm_backlight_init(Ecore_Drm_Device *dev EINA_UNUSED, uint32_t conn_type)
 {
    Ecore_Drm_Backlight *backlight = NULL;
    Ecore_Drm_Backlight_Type type = 0;
-   struct udev_enumerate *enumerate;
-   struct udev_device *device;
-   struct udev_list_entry *item, *first;
-   const char *dev_type, *backlight_path;
-   int ret;
+   Eina_List *devs, *l;
+   Eina_Bool found = EINA_FALSE;
+   const char *device, *devtype, *tmpdevice;
 
-   enumerate = udev_enumerate_new(udev);
-   if (!enumerate) return NULL;
+   if (!(devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_BACKLIGHT, NULL)))
+     devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_LEDS, NULL);
 
-   udev_enumerate_add_match_subsystem(enumerate, "backlight");
-   ret = udev_enumerate_scan_devices(enumerate);
-   if (ret < 0)
+   if (!devs) return NULL;
+
+   EINA_LIST_FOREACH(devs, l, device)
      {
-        udev_enumerate_add_match_subsystem(enumerate, "leds");
-        ret = udev_enumerate_scan_devices(enumerate);
-        if (ret < 0)
-          {
-             udev_enumerate_unref(enumerate);
-             return NULL;
-          }
-     }
+        if (!(devtype = eeze_udev_syspath_get_sysattr(device, "type")))
+          continue;
 
-   first = udev_enumerate_get_list_entry(enumerate);
-   udev_list_entry_foreach(item, first)
-     {
-        backlight_path = udev_list_entry_get_name(item);
-        device = udev_device_new_from_syspath(udev, backlight_path);
-
-        dev_type = udev_device_get_sysattr_value(device, "type");
-        if (!dev_type)
-          {
-             udev_device_unref(device);
-             udev_enumerate_unref(enumerate);
-             return NULL;
-          }
-        if (!strcmp(dev_type, "raw"))
+        if (!strcmp(devtype, "raw"))
           type = ECORE_DRM_BACKLIGHT_RAW;
-        else if (!strcmp(dev_type, "platform"))
+        else if (!strcmp(devtype, "platform"))
           type = ECORE_DRM_BACKLIGHT_PLATFORM;
-        else if (!strcmp(dev_type, "firmware"))
+        else if (!strcmp(devtype, "firmware"))
           type = ECORE_DRM_BACKLIGHT_FIRMWARE;
 
-        if (conn_type != DRM_MODE_CONNECTOR_LVDS &&
-            conn_type != DRM_MODE_CONNECTOR_eDP)
+        if ((conn_type != DRM_MODE_CONNECTOR_LVDS) && 
+            (conn_type != DRM_MODE_CONNECTOR_eDP))
           {
-             if (type != ECORE_DRM_BACKLIGHT_RAW)
-               {
-                  udev_device_unref(device);
-                  udev_enumerate_unref(enumerate);
-                  return NULL;
-               }
+             if (type != ECORE_DRM_BACKLIGHT_RAW) goto cont;
           }
-        udev_device_unref(device);
-     }
-   udev_enumerate_unref(enumerate);
 
-   backlight = (Ecore_Drm_Backlight *)malloc(sizeof(Ecore_Drm_Backlight));
-   backlight->type = type;
-   backlight->dir_path = eina_stringshare_add(backlight_path);
+        found = EINA_TRUE;
+cont:
+        eina_stringshare_del(devtype);
+        if (found)
+          {
+             tmpdevice = eina_stringshare_add(device);
+             break;
+          }
+     }
+
+   EINA_LIST_FREE(devs, device)
+     eina_stringshare_del(device);
+
+   if (!found) return NULL;
+
+   if ((backlight = calloc(1, sizeof(Ecore_Drm_Backlight))))
+     {
+        backlight->type = type;
+        /* NB: This sets backlight directory path to /dev/...
+         * Am not sure yet if this is the desired path, or if we want the 
+         * actual /sys path. If we want Just the syspath then 'tmpdevice' is 
+         * already equal to that */
+        backlight->dir_path = eeze_udev_syspath_get_devpath(tmpdevice);
+     }
+
+   eina_stringshare_del(tmpdevice);
 
    return backlight;
 }
