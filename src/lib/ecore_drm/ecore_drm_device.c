@@ -151,131 +151,84 @@ EAPI Ecore_Drm_Device *
 ecore_drm_device_find(const char *name, const char *seat)
 {
    Ecore_Drm_Device *dev = NULL;
-   struct udev_enumerate *uenum;
-   struct udev_list_entry *uentry;
-   struct udev_device *udevice, *tmpdevice = NULL, *pcidevice;
-   const char *path = NULL, *devseat = NULL;
+   Eina_Bool found = EINA_FALSE;
+   Eina_List *devs, *l;
+   const char *device, *tmpdevice;
 
-   /* check for existing udev reference */
-   if (!udev) return NULL;
+   /* try to get a list of drm devics */
+   if (!(devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRM, name)))
+     return NULL;
 
-   /* setup udev enumerator */
-   uenum = udev_enumerate_new(udev);
-   udev_enumerate_add_match_subsystem(uenum, "drm");
-   udev_enumerate_add_match_subsystem(uenum, "card[0-9]*");
+   DBG("Find Drm Device: %s", name);
 
-   /* ask udev for list of drm devices */
-   udev_enumerate_scan_devices(uenum);
-
-   /* loop list of returned devices */
-   udev_list_entry_foreach(uentry, udev_enumerate_get_list_entry(uenum))
+   EINA_LIST_FOREACH(devs, l, device)
      {
-        /* get device path */
-        path = udev_list_entry_get_name(uentry);
+        const char *devpath;
+        const char *devseat;
+        const char *devparent;
 
-        /* get udev device */
-        if (!(udevice = udev_device_new_from_syspath(udev, path)))
+        if (!(devpath = eeze_udev_syspath_get_devpath(device)))
           continue;
 
-        /* if we are looking for a certain device, then compare names */
-        if (name)
-          {
-             if (strcmp(name, udev_device_get_devnode(udevice)))
-               {
-                  udev_device_unref(udevice);
-                  continue;
-               }
-          }
+        DBG("Found Drm Device");
+        DBG("\tDevice: %s", device);
+        DBG("\tDevpath: %s", devpath);
 
-        /* get this devices' seat */
-        devseat = udev_device_get_property_value(udevice, "ID_SEAT");
-        if (!devseat) devseat = "seat0";
+        if ((name) && (strcmp(name, devpath))) goto cont;
 
-        /* if we are looking for a device on a certain seat, compare it */
-        if (seat)
-          {
-             if (strcmp(seat, devseat))
-               {
-                  udev_device_unref(udevice);
-                  continue;
-               }
-          }
-        else
-          {
-             /* no seat name passed to use. check default */
-             if (strcmp(devseat, "seat0"))
-               {
-                  udev_device_unref(udevice);
-                  continue;
-               }
-          }
+        if (!(devseat = eeze_udev_syspath_get_property(device, "ID_SEAT")))
+          devseat = eina_stringshare_add("seat0");
 
-        /* try to find the boot_vga attribute */
-        if ((pcidevice = 
-             udev_device_get_parent_with_subsystem_devtype(udevice, "pci", NULL)))
+        if ((seat) && (strcmp(seat, devseat))) 
+          goto cont;
+        else if (strcmp(devseat, "seat0"))
+          goto cont;
+
+        devparent = eeze_udev_syspath_get_parent_filtered(device, "pci", NULL);
+        if (devparent)
           {
              const char *id;
 
-             if ((id = udev_device_get_sysattr_value(pcidevice, "boot_vga")))
+             if ((id = eeze_udev_syspath_get_sysattr(devparent, "boot_vga")))
                {
-                  if (!strcmp(id, "1"))
-                    {
-                       if (tmpdevice) udev_device_unref(tmpdevice);
-                       tmpdevice = udevice;
-                       break;
-                    }
+                  if (!strcmp(id, "1")) found = EINA_TRUE;
+                  eina_stringshare_del(id);
                }
+
+             eina_stringshare_del(devparent);
           }
 
-        if (!tmpdevice) 
-          tmpdevice = udevice;
-        else
-          udev_device_unref(udevice);
-     }
-
-   /* destroy the enumerator */
-   udev_enumerate_unref(uenum);
-
-   if (tmpdevice)
-     {
-        DBG("Found Drm Device");
-        DBG("\tFilename: %s", udev_device_get_devnode(tmpdevice));
-        DBG("\tDriver: %s", udev_device_get_driver(tmpdevice));
-        DBG("\tDevpath: %s", udev_device_get_devpath(tmpdevice));
-        DBG("\tSyspath: %s", udev_device_get_syspath(tmpdevice));
-        DBG("\tSysname: %s", udev_device_get_sysname(tmpdevice));
-
-        /* try to allocate space for return device structure */
-        if ((dev = calloc(1, sizeof(Ecore_Drm_Device))))
+cont:
+        eina_stringshare_del(devpath);
+        if (found) 
           {
-             const char *id, *seat_id;
-
-             /* set device name */
-             dev->drm.name = 
-               eina_stringshare_add(udev_device_get_devnode(tmpdevice));
-
-             /* set device path */
-             dev->drm.path = 
-               eina_stringshare_add(udev_device_get_syspath(tmpdevice));
-
-             /* store id for this device */
-             if ((id = udev_device_get_sysnum(tmpdevice)))
-               dev->id = atoi(id);
-
-             /* set dev seat_id */
-             seat_id = udev_device_get_property_value(tmpdevice, "ID_SEAT");
-             if (!seat_id) seat_id = "seat0";
-
-             dev->seat = eina_stringshare_add(seat_id);
-
-             /* dev->format = GBM_FORMAT_XRGB8888; */
-             dev->format = 0;
-             dev->use_hw_accel = EINA_FALSE;
+             tmpdevice = eina_stringshare_add(device);
+             break;
           }
      }
 
-   /* release device reference */
-   udev_device_unref(tmpdevice);
+   EINA_LIST_FREE(devs, device)
+     eina_stringshare_del(device);
+
+   if (!found) return NULL;
+
+   if ((dev = calloc(1, sizeof(Ecore_Drm_Device))))
+     {
+        dev->drm.name = eeze_udev_syspath_get_devpath(tmpdevice);
+        dev->drm.path = eina_stringshare_add(tmpdevice);
+
+        dev->id = eeze_udev_syspath_get_sysnum(tmpdevice);
+
+        dev->seat = eeze_udev_syspath_get_property(tmpdevice, "ID_SEAT");
+        if (!dev->seat) dev->seat = eina_stringshare_add("seat0");
+
+        dev->format = 0;
+        dev->use_hw_accel = EINA_FALSE;
+
+        DBG("Using Drm Device: %s", dev->drm.name);
+     }
+
+   eina_stringshare_del(tmpdevice);
 
    return dev;
 }
