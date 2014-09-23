@@ -238,6 +238,14 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
 	udev_enumerate_add_match_subsystem(en, "card[0-9]*");
         break;
 
+      case EEZE_UDEV_TYPE_BACKLIGHT:
+	udev_enumerate_add_match_subsystem(en, "backlight");
+        break;
+
+      case EEZE_UDEV_TYPE_LEDS:
+	udev_enumerate_add_match_subsystem(en, "leds");
+        break;
+
       default:
         break;
      }
