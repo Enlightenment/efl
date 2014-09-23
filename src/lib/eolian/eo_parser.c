@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "eo_parser.h"
 
 #define CASE_LOCK(ls, var, msg) \

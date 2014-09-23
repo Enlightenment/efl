@@ -10,6 +10,10 @@
 //
 // v1.03 - 5/12/13 - Initial public release
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <memory.h>
 #include <math.h>

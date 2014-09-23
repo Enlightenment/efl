@@ -1,3 +1,5 @@
+#include "config.h" 
+
 /* The Lua runtime component of the EFL */
 
 #include <getopt.h>

@@ -1,6 +1,6 @@
-#include <assert.h>
-
 #include "edje_private.h"
+
+#include <assert.h>
 
 static Eina_Hash *signal_match = NULL;
 

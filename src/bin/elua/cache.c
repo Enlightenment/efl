@@ -1,3 +1,5 @@
+#include "config.h" 
+
 /* elua bytecode caching */
 
 #include <sys/types.h>

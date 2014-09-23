@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "eo_parser.h"
 #include "eolian_database.h"
 

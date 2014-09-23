@@ -33,6 +33,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @license BSD-2 with advertisement clause
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <Eina.h>
 #include "rg_etc1.h"
 

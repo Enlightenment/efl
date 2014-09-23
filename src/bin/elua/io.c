@@ -1,3 +1,5 @@
+#include "config.h" 
+
 /* elua io extras, largely taken from lua io lib source */
 
 #include "main.h"

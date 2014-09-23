@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "eo_lexer.h"
 
 static Eina_Bool _validate_type(const Eolian_Type *tp);

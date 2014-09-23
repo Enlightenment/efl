@@ -1,3 +1,5 @@
+#include "config.h" 
+
 #include "Efreet.h"
 /* no logging */
 #define EFREET_MODULE_LOG_DOM

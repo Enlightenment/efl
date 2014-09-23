@@ -1,3 +1,5 @@
+#include "config.h" 
+
 #include "Efreet.h"
 #include <stdio.h>
 
