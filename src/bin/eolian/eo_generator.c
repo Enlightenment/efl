@@ -968,7 +968,7 @@ Eina_Bool
 eo_source_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
-   Eina_Iterator *itr;
+   Eina_Iterator *itr = NULL;
 
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 
