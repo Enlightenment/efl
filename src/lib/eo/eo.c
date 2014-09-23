@@ -281,7 +281,6 @@ typedef struct _Eo_Call_Stack {
    Eo_Stack_Frame *last_frame;
    Eo_Stack_Frame *shrink_frame;
    size_t max_size;
-   int dropcount;
 } Eo_Call_Stack;
 
 #define MEM_PAGE_SIZE 4096
@@ -427,23 +426,9 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
 
    sz = stack->last_frame - stack->frames + 1;
    if (grow)
-     {
-        next_sz = sz * 2;
-        // reset drop counter to avoid dropping stack for up to 2 ^ 18
-        // requests/tries
-        stack->dropcount = 1 << 18;
-     }
+     next_sz = sz * 2;
    else
-     {
-        // if we want to drop - delay if dropcounter still > 0 and drop it
-        if (stack->dropcount > 0)
-          {
-             stack->dropcount--;
-             return;
-          }
-        // actually drop
-        next_sz = sz / 2;
-     }
+     next_sz = sz / 2;
    frame_offset = stack->frame_ptr - stack->frames;
 
    DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
@@ -568,7 +553,7 @@ _eo_do_end(const Eo **eo_id EINA_UNUSED)
 
    stack->frame_ptr--;
 
-   if (fptr <= stack->shrink_frame)
+   if (fptr == stack->shrink_frame)
      _eo_call_stack_resize(stack, EINA_FALSE);
 }
 
