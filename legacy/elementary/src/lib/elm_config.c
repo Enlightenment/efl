@@ -480,7 +480,6 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, config_version, T_INT);
    ELM_CONFIG_VAL(D, T, engine, T_STRING);
    ELM_CONFIG_VAL(D, T, accel, T_STRING);
-   ELM_CONFIG_VAL(D, T, accel_override, T_UCHAR);
    ELM_CONFIG_VAL(D, T, vsync, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_threshold, T_INT);
@@ -1489,6 +1488,7 @@ _config_load(void)
         if (_elm_config->thumbscroll_flick_distance_tolerance == 0)
           _elm_config->thumbscroll_flick_distance_tolerance = 1000;
 
+        _elm_config->accel_override = 0;
         return;
      }
 
