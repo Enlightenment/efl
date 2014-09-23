@@ -9,7 +9,6 @@ static int _ecore_drm_init_count = 0;
 static char *sid;
 
 /* external variables */
-struct udev *udev;
 int _ecore_drm_log_dom = -1;
 
 /**
@@ -72,13 +71,13 @@ ecore_drm_init(void)
    /* try to init dbus */
    if (!_ecore_drm_dbus_init(sid)) goto dbus_err;
 
-   /* try to init udev */
-   if (!(udev = udev_new())) goto udev_err;
+   /* try to init eeze */
+   if (!eeze_init()) goto eeze_err;
 
    /* return init count */
    return _ecore_drm_init_count;
 
-udev_err:
+eeze_err:
    _ecore_drm_dbus_shutdown();
 dbus_err:
    free(sid);
@@ -106,8 +105,8 @@ ecore_drm_shutdown(void)
    /* if we are still in use, decrement init count and get out */
    if (--_ecore_drm_init_count != 0) return _ecore_drm_init_count;
 
-   /* close udev handle */
-   if (udev) udev_unref(udev);
+   /* close eeze */
+   eeze_shutdown();
 
    /* cleanup dbus */
    _ecore_drm_dbus_shutdown();
