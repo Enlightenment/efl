@@ -56,6 +56,7 @@ struct _Ecore_IMF_Context
    Ecore_IMF_Input_Panel_Lang     input_panel_lang;
    Ecore_IMF_Input_Panel_Return_Key_Type input_panel_return_key_type;
    Ecore_IMF_Input_Hints          input_hints;
+   Ecore_IMF_BiDi_Direction       bidi_direction;
    int                            input_panel_layout_variation;
    Eina_Bool                    (*retrieve_selection_func)(void *data, Ecore_IMF_Context *ctx, char **text);
    void                          *retrieve_selection_data;

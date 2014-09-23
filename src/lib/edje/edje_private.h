@@ -2329,7 +2329,7 @@ const Eina_List *_edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char 
 const Eina_List *_edje_entry_anchors_list(Edje_Real_Part *rp);
 Eina_Bool _edje_entry_item_geometry_get(Edje_Real_Part *rp, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 const Eina_List *_edje_entry_items_list(Edje_Real_Part *rp);
-void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+void _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *cdir);
 void _edje_entry_user_insert(Edje_Real_Part *rp, const char *text);
 void _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow);
 Eina_Bool _edje_entry_select_allow_get(const Edje_Real_Part *rp);

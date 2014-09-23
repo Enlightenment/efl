@@ -332,6 +332,18 @@ enum
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL /**< The number layout to allow decimal point and negative sign @since 1.8 */
 };
 
+/**
+ * @typedef Ecore_IMF_BiDi_Direction
+ * @brief Enumeration that defines the types of Ecore_IMF bidirectionality
+ * @since 1.12
+ */
+typedef enum
+{
+   ECORE_IMF_BIDI_DIRECTION_NEUTRAL,    /**< The Neutral mode @since 1.12 */
+   ECORE_IMF_BIDI_DIRECTION_LTR,        /**< The Left to Right mode @since 1.12 */
+   ECORE_IMF_BIDI_DIRECTION_RTL         /**< The Right to Left mode @since 1.12 */
+} Ecore_IMF_BiDi_Direction;
+
 struct _Ecore_IMF_Event_Preedit_Start
 {
    Ecore_IMF_Context *ctx;
@@ -535,6 +547,7 @@ struct _Ecore_IMF_Context_Class
    void (*input_panel_language_locale_get) (Ecore_IMF_Context *ctx, char **lang);
    void (*candidate_panel_geometry_get)(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
    void (*input_hint_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints);
+   void (*bidi_direction_set) (Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -1635,6 +1648,26 @@ EAPI void                          ecore_imf_context_input_panel_show_on_demand_
  * @since 1.8.0
  */
 EAPI Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx);
+
+/**
+ * @brief Sets the bidirectionality at the current cursor position.
+ *
+ * @since 1.12.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @param[in] direction the direction mode
+ */
+EAPI void                          ecore_imf_context_bidi_direction_set(Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction);
+
+/**
+ * @brief Gets the bidirectionality at the current cursor position.
+ *
+ * @since 1.12.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @return the direction mode
+ */
+EAPI Ecore_IMF_BiDi_Direction      ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx);
 
 /* The following entry points must be exported by each input method module
  */

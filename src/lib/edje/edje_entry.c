@@ -2998,11 +2998,12 @@ _edje_entry_items_list(Edje_Real_Part *rp)
 }
 
 void
-_edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *cdir)
 {
    Evas_Coord x, y, w, h, xx, yy, ww, hh;
    Entry *en;
    Evas_Textblock_Cursor_Type cur_type;
+   Evas_BiDi_Direction dir;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3022,7 +3023,7 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, NULL, cur_type);
+   evas_textblock_cursor_geometry_get(en->cursor, &xx, &yy, &ww, &hh, &dir, cur_type);
    if (ww < 1) ww = 1;
    if (rp->part->cursor_mode == EDJE_ENTRY_CURSOR_MODE_BEFORE)
      edje_object_size_min_restricted_calc(en->cursor_fg, &ww, NULL, ww, 0);
@@ -3031,6 +3032,7 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
    if (cy) *cy = y + yy;
    if (cw) *cw = ww;
    if (ch) *ch = hh;
+   if (cdir) *cdir = dir;
 }
 
 void
@@ -3924,10 +3926,12 @@ _edje_entry_imf_cursor_location_set(Entry *en)
 {
 #ifdef HAVE_ECORE_IMF
    Evas_Coord cx, cy, cw, ch;
+   Evas_BiDi_Direction dir;
    if (!en || !en->rp || !en->imf_context) return;
 
-   _edje_entry_cursor_geometry_get(en->rp, &cx, &cy, &cw, &ch);
+   _edje_entry_cursor_geometry_get(en->rp, &cx, &cy, &cw, &ch, &dir);
    ecore_imf_context_cursor_location_set(en->imf_context, cx, cy, cw, ch);
+   ecore_imf_context_bidi_direction_set(en->imf_context, (Ecore_IMF_BiDi_Direction)dir);
 #else
    (void) en;
 #endif

@@ -167,6 +167,9 @@ ecore_imf_context_add(const char *id)
    /* default input_mode is ECORE_IMF_INPUT_MODE_FULL, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_input_mode_set(ctx, ECORE_IMF_INPUT_MODE_FULL);
+
+   ecore_imf_context_bidi_direction_set(ctx, ECORE_IMF_BIDI_DIRECTION_NEUTRAL);
+
    return ctx;
 }
 
@@ -1342,5 +1345,37 @@ ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx)
      }
 
    return ctx->input_panel_show_on_demand;
+}
+
+EAPI void
+ecore_imf_context_bidi_direction_set(Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_bidi_direction_set");
+        return;
+     }
+
+   if (ctx->bidi_direction != direction)
+     {
+        if (ctx->klass->bidi_direction_set)
+          ctx->klass->bidi_direction_set(ctx, direction);
+
+        ctx->bidi_direction = direction;
+     }
+}
+
+EAPI Ecore_IMF_BiDi_Direction
+ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_bidi_direction_get");
+        return ECORE_IMF_BIDI_DIRECTION_NEUTRAL;
+     }
+
+   return ctx->bidi_direction;
 }
 

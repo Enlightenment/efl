@@ -1677,7 +1677,7 @@ _edje_object_part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const 
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        _edje_entry_cursor_geometry_get(rp, x, y, w, h);
+        _edje_entry_cursor_geometry_get(rp, x, y, w, h, NULL);
         if (x) *x -= ed->x;
         if (y) *y -= ed->y;
      }
