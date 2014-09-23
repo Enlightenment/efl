@@ -257,10 +257,10 @@ EAPI Eo_Hook_Call eo_hook_call_pre = NULL;
 EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 
 #define EO_INVALID_DATA (void *) -1
-// 1024 entries == 8k or 16k (32 or 64bit) for eo call stack. that's 1024
-// recursion entires it can handle before barfing. i'd say that's ok
-#define EO_CALL_STACK_DEPTH_MIN 16
-#define EO_CALL_STACK_SHRINK_DROP 8
+// 1024 entries == 16k or 32k (32 or 64bit) for eo call stack. that's 1023
+// imbricated/recursive calls it can handle before barfing. i'd say that's ok
+#define EO_CALL_STACK_DEPTH_MIN 1024
+#define EO_CALL_STACK_SHRINK_DROP (EO_CALL_STACK_DEPTH_MIN >> 1)
 
 typedef struct _Eo_Stack_Frame
 {
