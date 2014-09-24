@@ -103,9 +103,11 @@ typedef enum _Ecore_Drm_Backlight_Type
 
 typedef struct _Ecore_Drm_Backlight
 {
-   const char *dir_path;
-   int brightness_max;
-   int brightness;
+   const char *device;
+   double brightness_max;
+   double brightness_actual;
+   double brightness;
+
    Ecore_Drm_Backlight_Type type;
 } Ecore_Drm_Backlight;
 

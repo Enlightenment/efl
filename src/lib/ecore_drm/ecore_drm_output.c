@@ -290,14 +290,62 @@ _ecore_drm_output_mode_add(Ecore_Drm_Output *output, drmModeModeInfo *info)
    return mode;
 }
 
+static double
+_ecore_drm_output_brightness_get(Ecore_Drm_Backlight *backlight)
+{
+   const char *brightness = NULL;
+   double ret;
+
+   brightness = eeze_udev_syspath_get_sysattr(backlight->device, "brightness");
+   if (!brightness) return 0;
+
+   ret = strtod(brightness, NULL);
+   if (ret < 0)
+     ret = 0;
+
+   return ret;
+}
+
+static double
+_ecore_drm_output_actual_brightness_get(Ecore_Drm_Backlight *backlight)
+{
+   const char *brightness = NULL;
+   double ret;
+
+   brightness = eeze_udev_syspath_get_sysattr(backlight->device, "actual_brightness");
+   if (!brightness) return 0;
+
+   ret = strtod(brightness, NULL);
+   if (ret < 0)
+     ret = 0;
+
+   return ret;
+}
+
+static double
+_ecore_drm_output_max_brightness_get(Ecore_Drm_Backlight *backlight)
+{
+   const char *brightness = NULL;
+   double ret;
+
+   brightness = eeze_udev_syspath_get_sysattr(backlight->device, "max_brightness");
+   if (!brightness) return 0;
+
+   ret = strtod(brightness, NULL);
+   if (ret < 0)
+     ret = 0;
+
+   return ret;
+}
+
 static Ecore_Drm_Backlight *
-_ecore_drm_backlight_init(Ecore_Drm_Device *dev EINA_UNUSED, uint32_t conn_type)
+_ecore_drm_output_backlight_init(Ecore_Drm_Output *output EINA_UNUSED, uint32_t conn_type)
 {
    Ecore_Drm_Backlight *backlight = NULL;
    Ecore_Drm_Backlight_Type type = 0;
    Eina_List *devs, *l;
    Eina_Bool found = EINA_FALSE;
-   const char *device, *devtype, *tmpdevice;
+   const char *device, *devtype;
 
    if (!(devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_BACKLIGHT, NULL)))
      devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_LEDS, NULL);
@@ -327,27 +375,20 @@ cont:
         eina_stringshare_del(devtype);
         if (found)
           {
-             tmpdevice = eina_stringshare_add(device);
              break;
           }
      }
 
-   EINA_LIST_FREE(devs, device)
-     eina_stringshare_del(device);
-
-   if (!found) return NULL;
+   if (!found) goto out;
 
    if ((backlight = calloc(1, sizeof(Ecore_Drm_Backlight))))
      {
         backlight->type = type;
-        /* NB: This sets backlight directory path to /dev/...
-         * Am not sure yet if this is the desired path, or if we want the 
-         * actual /sys path. If we want Just the syspath then 'tmpdevice' is 
-         * already equal to that */
-        backlight->dir_path = eeze_udev_syspath_get_devpath(tmpdevice);
+        backlight->device = eina_stringshare_add(device);
      }
-
-   eina_stringshare_del(tmpdevice);
+out:
+   EINA_LIST_FREE(devs, device);
+      eina_stringshare_del(device);
 
    return backlight;
 }
