@@ -48,14 +48,16 @@ EXTRA_DIST += $(efreetfiles_DATA)
 ########################################################################
 # Eo
 eogdbdir = $(datadir)/eo/gdb
-eogdb_SCRIPTS = eo/eo_gdb.py
+eogdb_DATA = eo/eo_gdb.py
+EXTRA_DIST += $(eogdb_DATA)
 
 # Borrowed from gobject
 libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py: eo/libeo-gdb.py.in
 	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/eo/libeo-gdb.py.in > $(builddir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
 eogdbloaddir = $(datadir)/gdb/auto-load/$(libdir)
-eogdbload_SCRIPTS = libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
+eogdbload_DATA = libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
+EXTRA_DIST += $(eogdbload_DATA)
 
 CLEANFILES += libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
