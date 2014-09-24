@@ -188,6 +188,7 @@ elm_config.h \
 elm_conform.h \
 elm_conform_eo.h \
 elm_conform_legacy.h \
+elm_container.h \
 elm_cursor.h \
 elm_datetime.h \
 elm_datetime_common.h \
