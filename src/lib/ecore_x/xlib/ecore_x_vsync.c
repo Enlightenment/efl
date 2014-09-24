@@ -507,9 +507,9 @@ _drm_init(void)
                   ok = EINA_TRUE;
                }
           }
+        sym_drmFreeVersion(drmver);
         if (!ok)
           {
-             sym_drmFreeVersion(drmver);
              close(drm_fd);
              return 0;
           }
