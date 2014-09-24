@@ -181,6 +181,23 @@ M.__do_end = function()
                        -- only for cleanup (dtor)
 end
 
+local eo_methods = {
+}
+
+ffi.metatype("Eo", {
+    __index = function(self, key)
+        local v = rawget(eo_methods, key)
+        if v ~= nil then return v end
+        local cl = eo.eo_class_get(self)
+        if cl == nil then return nil end
+        local nm = eo.eo_class_name_get(cl)
+        if nm == nil then return nil end
+        local mt == classes[nm]
+        if mt == nil then return nil end
+        return mt[key]
+    end
+})
+
 M.Eo_Base = util.Object:clone {
 }
 
