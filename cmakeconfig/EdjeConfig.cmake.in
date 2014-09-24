@@ -26,6 +26,19 @@ set(EDJE_DEFINITIONS ${PC_LIBEDJE_CFLAGS_OTHER})
 set(EDJE_LIBRARIES ${EDJE_LIBRARY})
 set(EDJE_INCLUDE_DIRS ${PC_LIBEDJE_INCLUDE_DIRS})
 
+macro(EDJE_CC_TARGET Input)
+    cmake_parse_arguments(OPTIONS "" "" "COMPILE_FLAGS" ${ARGN})
+    STRING(REGEX REPLACE "[.]edc" ".edj" Output "${Input}" )
+    set(Output "${CMAKE_CURRENT_BINARY_DIR}/${Output}")
+    add_custom_command(OUTPUT ${Output}
+        COMMAND ${EDJE_CC_EXECUTABLE}
+        ARGS ${OPTIONS_COMPILE_FLAGS} ${Input} ${Output}
+        DEPENDS ${Input}
+        COMMENT
+        "edje_cc ${Input}"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endmacro()
+
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set EDJE_FOUND to TRUE
 # if all listed variables are TRUE
