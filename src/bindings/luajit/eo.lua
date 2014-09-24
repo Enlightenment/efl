@@ -14,6 +14,8 @@ ffi.cdef [[
 
     Eina_Bool eo_isa(const Eo *obj, const Eo_Class *klass);
 
+    const char *eo_class_name_get(const Eo_Class *klass);
+
     void eo_constructor(void);
     void eo_destructor(void);
 
@@ -23,6 +25,26 @@ ffi.cdef [[
     Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass,
         Eina_Bool is_super, const char *file, const char *func, int line);
     void      _eo_do_end  (const Eo **ojb);
+
+    const Eo_Class *eo_class_get(const Eo *obj);
+
+    void *eo_data_xref_internal(const char *file, int line, const Eo *obj,
+        const Eo_Class *klass, const Eo *ref_obj);
+    void eo_data_xunref_internal(const Eo *obj, void *data, const Eo *ref_obj);
+    Eo *eo_xref_internal(const char *file, int line, Eo *obj, const Eo *ref_obj);
+    void eo_xunref(Eo *obj, const Eo *ref_obj);
+    Eo *eo_ref(const Eo *obj);
+    void eo_unref(const Eo *obj);
+    int eo_ref_get(const Eo *obj);
+    void eo_del(const Eo *obj);
+
+    void eo_manual_free_set(Eo *obj, Eina_Bool manual_free);
+    Eina_Bool eo_manual_free(Eo *obj);
+    Eina_Bool eo_destructed_is(const Eo *obj);
+
+    Eina_Bool eo_composite_attach(Eo *comp_obj, Eo *parent);
+    Eina_Bool eo_composite_detach(Eo *comp_obj, Eo *parent);
+    Eina_Bool eo_composite_is(const Eo *comp_obj);
 
     Eo *eo_finalize(void);
 
