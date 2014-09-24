@@ -160,7 +160,8 @@ pc/ecore-cxx.pc \
 pc/eolian-cxx.pc \
 pc/edje-cxx.pc \
 pc/eet-cxx.pc \
-pc/eo-cxx.pc
+pc/eo-cxx.pc \
+pc/eio-cxx.pc
 endif
 
 if HAVE_ELUA

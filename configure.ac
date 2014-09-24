@@ -4567,6 +4567,7 @@ pc/ecore-audio-cxx.pc
 pc/ecore-avahi.pc
 pc/embryo.pc
 pc/eio.pc
+pc/eio-cxx.pc
 pc/eldbus.pc
 pc/efreet.pc
 pc/efreet-mime.pc

@@ -36,6 +36,8 @@ extern "C"
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include <Efl_Model_Common.h>
+  
 /* Interfaces */
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"
@@ -43,6 +45,7 @@ extern "C"
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
+#include "interfaces/efl_model_base.eo.h"
 
 #endif
 
