@@ -2596,8 +2596,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
              if (!g->object) continue;
              if (((e->modifiers.mask & g->modifiers) ||
                   (g->modifiers == e->modifiers.mask)) &&
-                 (!((e->modifiers.mask & g->not_modifiers) ||
-                    (g->not_modifiers == ~e->modifiers.mask))) &&
+                 (!(e->modifiers.mask & g->not_modifiers)) &&
                  (!strcmp(keyname, g->keyname)))
                {
                   Evas_Object_Protected_Data *object_obj = eo_data_scope_get(g->object, EVAS_OBJECT_CLASS);
