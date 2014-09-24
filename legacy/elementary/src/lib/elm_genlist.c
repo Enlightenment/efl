@@ -5192,7 +5192,7 @@ _elm_genlist_looping_up_cb(void *data,
 
    Elm_Object_Item *it = elm_genlist_last_item_get(genlist);
 
-   elm_genlist_item_show((Elm_Object_Item *)it, ELM_GENLIST_ITEM_SCROLLTO_IN);
+   elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
    _elm_widget_focus_highlight_signal_emit(genlist, "elm,action,focus,move,up", "elm");
    elm_layout_signal_emit(genlist, "elm,action,looping,up,end", "elm");
    sd->item_looping_on = EINA_FALSE;
@@ -5210,7 +5210,7 @@ _elm_genlist_looping_down_cb(void *data,
 
    Elm_Object_Item *it = elm_genlist_first_item_get(genlist);
 
-   elm_genlist_item_show((Elm_Object_Item *)it, ELM_GENLIST_ITEM_SCROLLTO_IN);
+   elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
    _elm_widget_focus_highlight_signal_emit(genlist, "elm,action,focus,move,down", "elm");
    elm_layout_signal_emit(genlist, "elm,action,looping,down,end", "elm");
    sd->item_looping_on = EINA_FALSE;
