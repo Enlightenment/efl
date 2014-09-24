@@ -104,6 +104,8 @@ ffi.cdef [[
     void  eo_key_data_del(const char *key);
 
     Eina_Iterator *eo_children_iterator_new(void);
+
+    const Eo_Class *eo_base_class_get(void);
 ]]
 
 local cutil = require("cutil")
@@ -116,9 +118,11 @@ local eo
 local init = function()
     eo = util.lib_load("eo")
     eo.eo_init()
+    M.class_register("Eo.Base", M.Base, eo.eo_base_class_get())
 end
 
 local shutdown = function()
+    M.class_unregister("Eo.Base")
     eo.eo_shutdown()
     util.lib_unload("eo")
 end
@@ -132,14 +136,25 @@ local getfuncname = function(info)
 end
 
 local classes = {}
+local eo_classes = {}
 
 M.class_get = function(name)
     return classes[name]
 end
 
-M.class_register = function(name, val)
+M.eo_class_get = function(name)
+    return eo_classes[name]
+end
+
+M.class_register = function(name, val, addr)
     classes[name] = val
+    eo_classes[name] = addr
     return val
+end
+
+M.class_unregister = function(name)
+    classes[name] = nil
+    eo_classes[name] = nil
 end
 
 M.__ctor_common = function(self, klass, parent, ctor, loff, ...)
@@ -192,6 +207,5 @@ ffi.metatype("Eo", {
 
 M.Base = util.Object:clone {
 }
-M.class_register("Eo.Base", M.Base)
 
 return M
