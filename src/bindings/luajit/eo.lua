@@ -5,9 +5,30 @@ local ffi = require("ffi")
 
 ffi.cdef [[
     typedef unsigned char Eina_Bool;
+    typedef struct _Eina_Iterator Eina_Iterator;
 
     typedef struct _Eo_Opaque Eo;
     typedef Eo Eo_Class;
+
+    typedef short Eo_Callback_Priority;
+
+    typedef void (*eo_key_data_free_func)(void *);
+
+    struct _Eo_Event_Description {
+        const char *name;
+        const char *doc;
+        Eina_Bool   unfreezable;
+    };
+    typedef struct _Eo_Event_Description Eo_Event_Description;
+
+    typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj,
+        const Eo_Event_Description *desc, void *event_info);
+
+    struct _Eo_Callback_Array_Item {
+        const Eo_Event_Description *desc;
+        Eo_Event_Cb func;
+    };
+    typedef struct _Eo_Callback_Array_Item Eo_Callback_Array_Item;
 
     Eina_Bool eo_init(void);
     Eina_Bool eo_shutdown(void);
@@ -36,6 +57,9 @@ ffi.cdef [[
     Eo *eo_ref(const Eo *obj);
     void eo_unref(const Eo *obj);
     int eo_ref_get(const Eo *obj);
+    void eo_wref_add(Eo **wref);
+    void eo_wref_del(Eo **wref);
+
     void eo_del(const Eo *obj);
 
     void eo_manual_free_set(Eo *obj, Eina_Bool manual_free);
@@ -46,8 +70,6 @@ ffi.cdef [[
     Eina_Bool eo_composite_detach(Eo *comp_obj, Eo *parent);
     Eina_Bool eo_composite_is(const Eo *comp_obj);
 
-    Eo *eo_finalize(void);
-
     void eo_parent_set(Eo *parent);
     Eo  *eo_parent_get(void);
 
@@ -57,6 +79,31 @@ ffi.cdef [[
     void eo_event_global_freeze(void);
     void eo_event_global_thaw(void);
     int eo_event_global_freeze_count_get(void);
+
+    Eina_Bool eo_finalized_get(void);
+    Eo *eo_finalize(void);
+
+    void eo_event_callback_forwarder_add(const Eo_Event_Description *desc,
+        Eo *new_obj);
+    void eo_event_callback_forwarder_del(const Eo_Event_Description *desc,
+        Eo *new_obj);
+    void  eo_event_callback_priority_add(const Eo_Event_Description *desc,
+        Eo_Callback_Priority priority, Eo_Event_Cb cb, const void *data);
+    void eo_event_callback_del(const Eo_Event_Description *desc,
+        Eo_Event_Cb func, const void *user_data);
+    void eo_event_callback_array_priority_add(const Eo_Callback_Array_Item *array,
+        Eo_Callback_Priority priority, const void *data);
+    void eo_event_callback_array_del(const Eo_Callback_Array_Item *array,
+        const void *user_data);
+    Eina_Bool eo_event_callback_call(const Eo_Event_Description *desc,
+        void *event_info);
+
+    void eo_key_data_set(const char *key, const void *data,
+        eo_key_data_free_func free_func);
+    void *eo_key_data_get(const char *key);
+    void  eo_key_data_del(const char *key);
+
+    Eina_Iterator *eo_children_iterator_new(void);
 ]]
 
 local cutil = require("cutil")
