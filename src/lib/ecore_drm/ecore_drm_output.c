@@ -386,6 +386,7 @@ cont:
         backlight->type = type;
         backlight->device = eina_stringshare_add(device);
      }
+
 out:
    EINA_LIST_FREE(devs, device);
       eina_stringshare_del(device);
