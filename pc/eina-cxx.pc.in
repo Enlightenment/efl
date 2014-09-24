@@ -5,8 +5,8 @@ includedir=@includedir@
 
 Name: Eina C++
 Description: A C++ binding for the Eina library
-Requires.private: @requirements_pc_eina@
+Requires.private: @requirements_pc_eina@ @requirements_pc_eo@
 Version: @VERSION@
-Libs: -L${libdir} -leina @requirements_public_libs_eina@
-Libs.private: @requirements_libs_eina@
-Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina -I${includedir}/eina-cxx-@VMAJ@ -I${includedir}/eina-cxx-@VMAJ@/eina-cxx
+Libs: -L${libdir} -leina @requirements_public_libs_eina@ @requirements_public_libs_eo@
+Libs.private: @requirements_libs_eina@ @requirements_libs_eo@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eo-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina -I${includedir}/eina-cxx-@VMAJ@ -I${includedir}/eina-cxx-@VMAJ@/eina-cxx
