@@ -1,0 +1,78 @@
+
+### Library 
+
+EMODEL_EOS = lib/emodel/emodel.eo
+
+EMODEL_EOS_H = $(EMODEL_EOS:%.eo=%.eo.h)
+EMODEL_EOS_C = $(EMODEL_EOS:%.eo=%.eo.c)
+
+BUILT_SOURCES += $(EMODEL_EOS_C) $(EMODEL_EOS_H)
+
+dist_installed_emodelmainheaders_DATA = \
+lib/emodel/Emodel.h \
+lib/emodel/Emodel_Common.h
+
+nodist_installed_emodelmainheaders_DATA = $(EMODEL_EOS_H)
+
+emodeleolianfilesdir = $(datadir)/eolian/include/emodel-@VMAJ@
+emodeleolianfiles_DATA = $(EMODEL_EOS)
+
+lib_LTLIBRARIES += lib/emodel/libemodel.la
+EXTRA_DIST += $(emodeleolianfiles_DATA)
+
+installed_emodelmainheadersdir = $(includedir)/emodel-@VMAJ@
+
+lib_emodel_libemodel_la_SOURCES = \
+lib/emodel/emodel.c
+
+lib_emodel_libemodel_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/emodel \
+-I$(top_srcdir)/src/lib/emodel \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eina \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/edje\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
+@EMODEL_CFLAGS@
+lib_emodel_libemodel_la_LIBADD = @EMODEL_LIBS@
+lib_emodel_libemodel_la_DEPENDENCIES = @EMODEL_INTERNAL_LIBS@ @EINA_INTERNAL_LIBS@ @EO_INTERNAL_LIBS@ @ECORE_INTERNAL_LIBS@
+
+if EFL_ENABLE_TESTS
+EXTRA_DIST += $(emodeleolianfiles_DATA)
+
+check_PROGRAMS += tests/emodel/emodel_suite
+TESTS += tests/emodel/emodel_suite
+
+tests_emodel_emodel_suite_SOURCES = \
+tests/emodel/emodel_suite.c \
+tests/emodel/emodel_test_file.c \
+tests/emodel/emodel_test_monitor_add.c
+
+tests_emodel_emodel_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/emodel \
+-I$(top_srcdir)/src/lib/emodel \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/eio \
+-I$(top_srcdir)/src/lib/eio \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eina \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/emodel\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/emodel\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+@CHECK_CFLAGS@ \
+@EINA_CFLAGS@ \
+@EMODEL_CFLAGS@ \
+@EO_CFLAGS@ \
+@EIO_CFLAGS@
+tests_emodel_emodel_suite_LDADD = @CHECK_LIBS@ @USE_EMODEL_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@ @USE_EIO_LIBS@ @USE_ECORE_LIBS@
+tests_emodel_emodel_suite_DEPENDENCIES = @USE_EMODEL_INTERNAL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_EIO_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@
+
+endif

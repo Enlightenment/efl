@@ -1,10 +1,24 @@
 
 ### Library
 
+EIO_EOS = \
+        lib/eio/eio_model.eo
+
+EIO_EOS_H =  $(EIO_EOS:%.eo=%.eo.h)
+EIO_EOS_C =  $(EIO_EOS:%.eo=%.eo.c)
+
+BUILT_SOURCES += $(EIO_EOS_C) $(EIO_EOS_H)
+
+eioeolianfilesdir = $(datadir)/eolian/include/eio-@VMAJ@
+eioeolianfiles_DATA = $(EIO_EOS)
+
 lib_LTLIBRARIES += lib/eio/libeio.la
+EXTRA_DIST += $(eioeolianfiles_DATA)
 
 installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
+
 dist_installed_eiomainheaders_DATA = lib/eio/Eio.h lib/eio/eio_inline_helper.x
+nodist_installed_eiomainheaders_DATA = $(EIO_EOS_H)
 
 lib_eio_libeio_la_SOURCES = \
 lib/eio/eio_dir.c \
@@ -16,6 +30,8 @@ lib/eio/eio_monitor.c \
 lib/eio/eio_monitor_poll.c \
 lib/eio/eio_single.c \
 lib/eio/eio_xattr.c \
+lib/eio/eio_model.c \
+lib/eio/eio_model_private.h \
 lib/eio/eio_private.h
 
 if HAVE_INOTIFY
@@ -30,9 +46,9 @@ endif
 endif
 endif
 
-lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@
-lib_eio_libeio_la_LIBADD = @EIO_LIBS@
-lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@
+lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@ @EMODEL_CFLAGS@
+lib_eio_libeio_la_LIBADD = @EIO_LIBS@ @EMODEL_LIBS@
+lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@ @EMODEL_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if HAVE_NOTIFY_COCOA
 lib_eio_libeio_la_LDFLAGS += -framework CoreServices

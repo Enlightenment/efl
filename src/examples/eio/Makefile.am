@@ -20,6 +20,7 @@ eio_file_copy
 eio_file_ls_SOURCES = eio_file_ls.c
 eio_file_ls_LDADD = \
 $(top_builddir)/src/lib/eio/libeio.la \
+$(top_builddir)/src/lib/emodel/libemodel.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eet/libeet.la \
@@ -29,6 +30,7 @@ $(top_builddir)/src/lib/eina/libeina.la \
 eio_file_copy_SOURCES = eio_file_copy.c
 eio_file_copy_LDADD = \
 $(top_builddir)/src/lib/eio/libeio.la \
+$(top_builddir)/src/lib/emodel/libemodel.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eet/libeet.la \

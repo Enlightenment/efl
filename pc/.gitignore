@@ -27,9 +27,12 @@
 /eina-cxx.pc
 /eet-cxx.pc
 /eio.pc
+/eio-cxx.pc
 /eldbus.pc
 /elocation.pc
 /embryo.pc
+/emodel.pc
+/emodel-cxx.pc
 /emotion.pc
 /eo.pc
 /ephysics.pc
