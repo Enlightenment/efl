@@ -58,7 +58,7 @@ eina_value_util_type_offset(const Eina_Value_Type *type, unsigned int base)
    size = eina_value_util_type_size(type);
    if (!(base % size))
      return base;
-   padding = abs(base - size);
+   padding = ( (base > size) ? (base - size) : (size - base));
    return base + padding;
 }
 
