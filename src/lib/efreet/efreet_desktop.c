@@ -823,7 +823,6 @@ static int
 efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     const char *val;
-    const char *not_show_in = NULL, *only_show_in = NULL;
 
     val = efreet_ini_localestring_get(ini, "Name");
 #ifndef STRICT_SPEC
@@ -851,12 +850,10 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
     desktop->no_display = efreet_ini_boolean_get(ini, "NoDisplay");
     desktop->hidden = efreet_ini_boolean_get(ini, "Hidden");
 
-    only_show_in = efreet_ini_string_get(ini, "OnlyShowIn");
-    not_show_in = efreet_ini_string_get(ini, "NotShowIn");
-    if (only_show_in && not_show_in)
-        WRN("Both OnlyShowIn and NotShowIn in %s, preferring OnlyShowIn", desktop->orig_path);
-    if (only_show_in) desktop->only_show_in = efreet_desktop_string_list_parse(only_show_in);
-    else if (not_show_in) desktop->not_show_in = efreet_desktop_string_list_parse(not_show_in);
+    val = efreet_ini_string_get(ini, "OnlyShowIn");
+    if (val) desktop->only_show_in = efreet_desktop_string_list_parse(val);
+    val = efreet_ini_string_get(ini, "NotShowIn");
+    if (val) desktop->not_show_in = efreet_desktop_string_list_parse(val);
 
     return 1;
 }
@@ -979,7 +976,8 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
                 break;
             }
         }
-        return found;
+        if (found)
+            return 1;
     }
 
 
@@ -993,7 +991,8 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
                 break;
             }
         }
-        return !found;
+        if (found)
+            return 0;
     }
 
     return 1;
