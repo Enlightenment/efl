@@ -221,6 +221,38 @@ cache_lock_file(void)
     return lockfd;
 }
 
+/* check if old and new caches contain the same number of entries,
+ * and are the same version */
+static int
+check_changed(const char *old_name, Eet_File *new_ef,
+              unsigned char major, unsigned char minor)
+{
+   Eet_File *old_ef;
+   Efreet_Cache_Version *old_version = NULL;
+
+   old_ef = eet_open(old_name, EET_FILE_MODE_READ);
+   if (!old_ef) return 1;
+   if (eet_num_entries(old_ef) != eet_num_entries(new_ef))
+     goto changed;
+
+   old_version = eet_data_read(old_ef, efreet_version_edd(), EFREET_CACHE_VERSION);
+   if (!old_version)
+     goto changed;
+
+   if ((old_version->major != major) ||
+       (old_version->minor != minor))
+     goto changed;
+
+   free(old_version);
+   eet_close(old_ef);
+   return 0;
+
+changed:
+   free(old_version);
+   eet_close(old_ef);
+   return 1;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -432,17 +464,19 @@ main(int argc, char **argv)
 
     eina_hash_free(desktops);
 
-    /* check if old and new caches contain the same number of entries */
+    /* check if old and new caches are equal */
     if (!changed)
     {
-        Eet_File *old;
+        if (check_changed(efreet_desktop_cache_file(), ef,
+                          EFREET_DESKTOP_CACHE_MAJOR, EFREET_DESKTOP_CACHE_MINOR))
+            changed = 1;
+    }
+    if (!changed)
+    {
+        if (check_changed(efreet_desktop_util_cache_file(), util_ef,
+                          EFREET_DESKTOP_UTILS_CACHE_MAJOR, EFREET_DESKTOP_UTILS_CACHE_MINOR))
+            changed = 1;
 
-        old = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
-        if (!old || eet_num_entries(old) != eet_num_entries(ef)) changed = 1;
-        if (old) eet_close(old);
-        old = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
-        if (!old || eet_num_entries(old) != eet_num_entries(util_ef)) changed = 1;
-        if (old) eet_close(old);
     }
 
     /* cleanup */
