@@ -153,7 +153,7 @@ ecore_drm_device_find(const char *name, const char *seat)
    Ecore_Drm_Device *dev = NULL;
    Eina_Bool found = EINA_FALSE;
    Eina_List *devs, *l;
-   const char *device, *tmpdevice;
+   const char *device;
 
    /* try to get a list of drm devics */
    if (!(devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRM, name)))
@@ -200,26 +200,19 @@ ecore_drm_device_find(const char *name, const char *seat)
 
 cont:
         eina_stringshare_del(devpath);
-        if (found) 
-          {
-             tmpdevice = eina_stringshare_add(device);
-             break;
-          }
+        if (found) break;
      }
 
-   EINA_LIST_FREE(devs, device)
-     eina_stringshare_del(device);
-
-   if (!found) return NULL;
+   if (!found) goto out;
 
    if ((dev = calloc(1, sizeof(Ecore_Drm_Device))))
      {
-        dev->drm.name = eeze_udev_syspath_get_devpath(tmpdevice);
-        dev->drm.path = eina_stringshare_add(tmpdevice);
+        dev->drm.name = eeze_udev_syspath_get_devpath(device);
+        dev->drm.path = eina_stringshare_add(device);
 
-        dev->id = eeze_udev_syspath_get_sysnum(tmpdevice);
+        dev->id = eeze_udev_syspath_get_sysnum(device);
 
-        dev->seat = eeze_udev_syspath_get_property(tmpdevice, "ID_SEAT");
+        dev->seat = eeze_udev_syspath_get_property(device, "ID_SEAT");
         if (!dev->seat) dev->seat = eina_stringshare_add("seat0");
 
         dev->format = 0;
@@ -228,7 +221,9 @@ cont:
         DBG("Using Drm Device: %s", dev->drm.name);
      }
 
-   eina_stringshare_del(tmpdevice);
+out:
+   EINA_LIST_FREE(devs, device)
+     eina_stringshare_del(device);
 
    return dev;
 }
