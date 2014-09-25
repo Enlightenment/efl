@@ -7,10 +7,6 @@ extern "C"
 #include <Eo.h>
 }
 
-#define eo_macro_add_custom(klass, parent, ...) ({      \
-       eo_add_custom(klass, parent, __VA_ARGS__);       \
-    })
-
 namespace efl { namespace eo { namespace detail {
 
 inline void
