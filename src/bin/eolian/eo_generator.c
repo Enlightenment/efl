@@ -265,7 +265,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
-        const char *evname = eolian_event_name_get(event);
+        const char *evname = eolian_event_c_name_get(event);
         const char *evdesc = eolian_event_description_get(event);
         Eolian_Object_Scope scope = eolian_event_scope_get(event);
 
@@ -288,7 +288,8 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         eina_strbuf_append_printf(str_ev, "/**\n%s\n */\n", eina_strbuf_string_get(tmpbuf));
 
         eina_strbuf_reset(tmpbuf);
-        eina_strbuf_append_printf(tmpbuf, "%s_EVENT_%s", class_env.upper_classname, evname);
+        eina_strbuf_append(tmpbuf, evname);
+        eina_stringshare_del(evname);
         eina_strbuf_replace_all(tmpbuf, ",", "_");
         char* s = (char *)eina_strbuf_string_get(tmpbuf);
         eina_str_toupper(&s);
@@ -667,21 +668,22 @@ eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
-        const char *evname = eolian_event_name_get(event);
+        const char *evname = eolian_event_c_name_get(event);
         const char *evdesc = eolian_event_description_get(event);
         char *evdesc_line1;
         char *p;
 
         eina_strbuf_reset(str_ev);
         evdesc_line1 = _source_desc_get(evdesc);
-        eina_strbuf_append_printf(str_ev, "%s_EVENT_%s", class_env.upper_classname, evname);
+        eina_strbuf_append(str_ev, evname);
+        eina_stringshare_del(evname);
         p = (char *)eina_strbuf_string_get(str_ev);
         eina_str_toupper(&p);
         eina_strbuf_replace_all(str_ev, ",", "_");
 
         eina_strbuf_append_printf(tmpbuf,
                                   "EOAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION(\"%s\", \"%s\");\n",
-                                  eina_strbuf_string_get(str_ev), evname, evdesc_line1);
+                                  eina_strbuf_string_get(str_ev), eolian_event_name_get(event), evdesc_line1);
         free(evdesc_line1);
      }
    eina_iterator_free(itr);
@@ -878,11 +880,12 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    itr = eolian_class_events_get(class);
    EINA_ITERATOR_FOREACH(itr, event)
      {
-        const char *evname = eolian_event_name_get(event);
+        const char *evname = eolian_event_c_name_get(event);
         char *p;
 
         eina_strbuf_reset(tmpbuf);
-        eina_strbuf_append_printf(tmpbuf, "%s_EVENT_%s", class_env.upper_classname, evname);
+        eina_strbuf_append(tmpbuf, evname);
+        eina_stringshare_del(evname);
         p = (char *)eina_strbuf_string_get(tmpbuf);
         eina_str_toupper(&p);
         eina_strbuf_replace_all(tmpbuf, ",", "_");

@@ -1211,6 +1211,18 @@ EAPI Eina_Stringshare *eolian_event_description_get(const Eolian_Event *event);
 EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 
 /*
+ * @brief Returns the C name of an event
+ *
+ * @param[in] event the event handle
+ * @return the event C name
+ *
+ * You're responsible for deleting the stringshare.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
+
+/*
  * @brief Indicates if the class constructor has to invoke
  * a non-generated class constructor function.
  *

@@ -1699,6 +1699,7 @@ parse_event(Eo_Lexer *ls)
         ev->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   ev->klass = ls->tmp.kls;
 }
 
 static void

@@ -188,6 +188,7 @@ struct _Eolian_Event
    Eina_Stringshare *name;
    Eina_Stringshare *comment;
    Eolian_Type *type;
+   Eolian_Class *klass;
    int scope;
 };
 
