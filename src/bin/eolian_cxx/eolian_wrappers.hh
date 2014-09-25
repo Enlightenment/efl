@@ -101,16 +101,6 @@ class_format_cxx(std::string const& fullname)
    return s;
 }
 
-inline std::string
-class_prefix(Eolian_Class const& klass)
-{
-   std::string prefix = safe_lower(::eolian_class_eo_prefix_get(&klass));
-   if (prefix.empty())
-     prefix = safe_lower(find_replace(class_full_name(klass), ".", "_"));
-   assert(!prefix.empty());
-   return prefix;
-}
-
 inline efl::eolian::eo_class::eo_class_type
 class_type(Eolian_Class const& klass)
 {
@@ -176,9 +166,9 @@ function_name(Eolian_Function const& func)
 }
 
 inline std::string
-function_impl(Eolian_Function const& func, std::string const& prefix)
+function_impl(Eolian_Function const& func)
 {
-   const char *s = ::eolian_function_full_c_name_get(&func, prefix.c_str());
+   const char *s = ::eolian_function_full_c_name_get(&func);
    std::string ret(s);
    ::eina_stringshare_del(s);
    return ret;

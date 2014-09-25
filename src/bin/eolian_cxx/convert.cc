@@ -76,12 +76,11 @@ static efl::eolian::eo_function
 _convert_property_set_to_function(Eolian_Class const& klass,
                                   Eolian_Function const& prop_)
 {
-   std::string prefix(class_prefix(klass));
    efl::eolian::eo_function set_ =
      {
        efl::eolian::eo_function::regular_,
        function_name(prop_) + "_set",
-       function_impl(prop_, prefix) + "_set",
+       function_impl(prop_) + "_set",
        function_return_type(prop_, eolian_cxx::setter),
        _convert_eolian_parameters(::eolian_function_parameters_get(&prop_),
                                   eolian_cxx::setter),
@@ -104,12 +103,11 @@ static efl::eolian::eo_function
 _convert_property_get_to_function(Eolian_Class const& klass,
                                   Eolian_Function const& prop_)
 {
-   std::string prefix(class_prefix(klass));
    efl::eolian::eo_function get_ =
      {
        efl::eolian::eo_function::regular_,
        function_name(prop_) + "_get",
-       function_impl(prop_, prefix) + "_get",
+       function_impl(prop_) + "_get",
        function_return_type(prop_, eolian_cxx::getter),
        _convert_eolian_parameters(prop_, eolian_cxx::getter),
        convert_comments_function(klass, prop_, eolian_cxx::getter)
@@ -209,7 +207,6 @@ convert_eolian_class_new(Eolian_Class const& klass)
 void
 convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
-   std::string prefix(class_prefix(klass));
    efl::eina::iterator<const Eolian_Implement> itr = implements_get(klass);
    efl::eina::iterator<const Eolian_Implement> end;
 
@@ -241,7 +238,7 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
         else if (function_is_constructor(klass, func))
           {
              cls.constructors.push_back({
-                  function_impl(func, class_prefix(icls)),
+                  function_impl(func),
                   _convert_eolian_parameters(func),
                   convert_comments_function(icls, func)
              });
@@ -251,7 +248,7 @@ convert_eolian_implements(efl::eolian::eo_class& cls, Eolian_Class const& klass)
              cls.functions.push_back({
                  function_type(func),
                  function_name(func),
-                 function_impl(func, class_prefix(icls)),
+                 function_impl(func),
                  function_return_type(func),
                  _convert_eolian_parameters(func),
                  convert_comments_function(icls, func, eolian_cxx::method)
