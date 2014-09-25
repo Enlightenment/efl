@@ -458,7 +458,8 @@ struct _Evas_Native_Surface
       {
          void         *visual; /**< visual of the pixmap to use (Visual) */
          unsigned long pixmap; /**< pixmap id to use (Pixmap) */
-      } x11;
+      } x11; /**< Set this struct fields if surface data is X11 based. */
+
       struct
       {
          unsigned int texture_id; /**< opengl texture id to use from glGenTextures() */
@@ -466,8 +467,8 @@ struct _Evas_Native_Surface
          unsigned int internal_format; /**< same as 'internalFormat' for glTexImage2D() */
          unsigned int format; /**< same as 'format' for glTexImage2D() */
          unsigned int x, y, w, h; /**< region inside the texture to use (image size is assumed as texture size, with 0, 0 being the top-left and co-ordinates working down to the right and bottom being positive) */
-      } opengl;
-   } data;
+      } opengl; /**< Set this struct fields if surface data is OpenGL based. */
+   } data; /**< Choose one union data according to your surface. */
 };
 
 /**
