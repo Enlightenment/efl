@@ -651,35 +651,27 @@ efreet_menu_parse(const char *path)
     if (!efreet_menu_handle_menu(internal, xml))
     {
         efreet_xml_del(xml);
-        efreet_menu_internal_free(internal);
-        return NULL;
+        goto error;
     }
     efreet_xml_del(xml);
 
     efreet_menu_resolve_moves(internal);
 
     if (!efreet_menu_process_dirs(internal))
-    {
-        efreet_menu_internal_free(internal);
-        return NULL;
-    }
+        goto error;
 
     /* handle all .desktops */
     if (!efreet_menu_process(internal, 0))
-    {
-        efreet_menu_internal_free(internal);
-        return NULL;
-    }
+        goto error;
 
     /* handle menus with only unallocated .desktops */
     if (!efreet_menu_process(internal, 1))
-    {
-        efreet_menu_internal_free(internal);
-        return NULL;
-    }
+        goto error;
 
     /* layout menu */
     entry = efreet_menu_layout_menu(internal);
+
+error:
     IF_FREE_HASH(internal->efreet_merged_menus);
     IF_FREE_HASH(internal->efreet_merged_dirs);
     efreet_menu_internal_free(internal);
