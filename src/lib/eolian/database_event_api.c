@@ -41,6 +41,6 @@ eolian_event_c_name_get(const Eolian_Event *event)
     snprintf(buf, sizeof(buf), "%s_EVENT_%s", event->klass->full_name,
              event->name);
     eina_str_toupper(&tmp);
-    while ((tmp = strchr(tmp, '.'))) *tmp = '_';
+    while ((tmp = strpbrk(tmp, ".,"))) *tmp = '_';
     return eina_stringshare_add(buf);
 }
