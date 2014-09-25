@@ -168,12 +168,15 @@ _device_add(Ecore_Drm_Input *input, const char *device)
      goto seat_get_err;
 
    data->seat = seat;
-   data->node = eeze_udev_syspath_get_devpath(device);
+   if (!(data->node = eeze_udev_syspath_get_devpath(device)))
+     goto dev_err;
 
    _ecore_drm_dbus_device_open(data->node, _cb_device_opened, data);
 
    return EINA_TRUE;
 
+dev_err:
+   free(data);
 seat_get_err:
    eina_stringshare_del(wlseat);
 seat_err:
