@@ -381,6 +381,9 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                                     &len, command, *p);
                             if (!exec) goto error;
                             file_added = 1;
+                            /* Set l to NULL to break the loop, since we parse all command->files
+                             * in efreet_desktop_command_append_multiple */
+                            l = NULL;
                         }
                         break;
                     case 'i':
