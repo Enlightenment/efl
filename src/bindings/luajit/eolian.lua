@@ -202,7 +202,7 @@ ffi.cdef [[
     Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
     Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id);
     const char *eolian_function_name_get(const Eolian_Function *function_id);
-    const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
+    const char *eolian_function_full_c_name_get(const Eolian_Function *function_id);
     const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     const char *eolian_function_description_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -246,6 +246,7 @@ ffi.cdef [[
     const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
     const char *eolian_event_description_get(const Eolian_Event *event);
     Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
+    const char *eolian_event_c_name_get(const Eolian_Event *event);
     Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
     Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
     const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
@@ -608,8 +609,8 @@ M.Function = ffi.metatype("Eolian_Function", {
             return ffi.string(v)
         end,
 
-        full_c_name_get = function(self, prefix)
-            local v = eolian.eolian_function_full_c_name_get(self, prefix)
+        full_c_name_get = function(self)
+            local v = eolian.eolian_function_full_c_name_get(self)
             if v == nil then return nil end
             return ffi_stringshare(v)
         end,
@@ -829,6 +830,12 @@ ffi.metatype("Eolian_Event", {
 
         scope_get = function(self)
             return eolian.eolian_event_scope_get(self)
+        end,
+
+        c_name_get = function(self)
+            local v = eolian.eolian_event_c_name_get(self)
+            if v == nil then return nil end
+            return ffi_stringshare(v)
         end
     }
 })

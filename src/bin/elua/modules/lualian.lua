@@ -165,7 +165,7 @@ local Method = Node:clone {
         local allocs = {}
         proto.allocs = allocs
 
-        proto.full_name = meth:full_c_name_get(self.parent_node.prefix)
+        proto.full_name = meth:full_c_name_get()
 
         local dirs = eolian.parameter_dir
 
@@ -259,8 +259,7 @@ local Property = Method:clone {
         local allocs = {}
         proto.allocs = allocs
 
-        proto.full_name = prop:full_c_name_get(self.parent_node.prefix)
-            .. proto.suffix
+        proto.full_name = prop:full_c_name_get() .. proto.suffix
 
         local dirs = eolian.parameter_dir
 
@@ -330,19 +329,17 @@ local Property = Method:clone {
 }
 
 local Event = Node:clone {
-    __ctor = function(self, ename, etype, edesc)
-        self.ename = ename
-        self.etype = etype
-        self.edesc = edesc
+    __ctor = function(self, ename, etype, edesc, ecname)
+        self.ename  = ename
+        self.etype  = etype
+        self.edesc  = edesc
+        self.ecname = ecname
     end,
 
     gen_ffi_name = function(self)
         local ffin = self.cached_ffi_name
         if ffin then return ffin end
-        ffin = table.concat {
-            "_", self.parent_node.klass:name_get():upper(), "_EVENT_",
-            self.ename:gsub("%W", "_"):upper()
-        }
+        ffin = "_" .. self.ecname
         self.cached_ffi_name = ffin
         return ffin
     end,
@@ -621,7 +618,8 @@ local gen_contents = function(klass)
     local evs = {}
     local events = klass:events_get():to_array()
     for i, v in ipairs(events) do
-        evs[#evs + 1] = Event(v:name_get(), v:type_get(), v:description_get())
+        evs[#evs + 1] = Event(v:name_get(), v:type_get(), v:description_get(),
+            v:c_name_get())
     end
     return cnt, evs
 end
