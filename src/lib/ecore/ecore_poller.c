@@ -239,7 +239,6 @@ ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
    Ecore_Poller *poller;
    poller = eo_add(MY_CLASS, _ecore_parent,
                           ecore_poller_constructor(type, interval, func, data));
-   eo_unref(poller);
    return poller;
 }
 

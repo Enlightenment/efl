@@ -776,7 +776,6 @@ evas_3d_node_add(Evas *e, Evas_3D_Node_Type type)
    return NULL;
    MAGIC_CHECK_END();
    Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_3d_node_constructor(type));
-   eo_unref(eo_obj);
    return eo_obj;
 }
 

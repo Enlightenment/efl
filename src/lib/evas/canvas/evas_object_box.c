@@ -456,7 +456,6 @@ EAPI Evas_Object *
 evas_object_box_add(Evas *evas)
 {
    Evas_Object *obj = eo_add(MY_CLASS, evas);
-   eo_unref(obj);
    return obj;
 }
 

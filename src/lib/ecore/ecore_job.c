@@ -50,7 +50,6 @@ ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
    Ecore_Job *job = eo_add(MY_CLASS, _ecore_parent, ecore_job_constructor(func, data));
-   eo_unref(job);
    return job;
 }
 

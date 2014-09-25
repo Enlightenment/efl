@@ -85,7 +85,6 @@ evas_3d_material_add(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    Evas_Object *eo_obj = eo_add(MY_CLASS, e);
-   eo_unref(eo_obj);
    return eo_obj;
 }
 

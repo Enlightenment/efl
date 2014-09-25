@@ -904,16 +904,23 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 #ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
 #endif
-   Eo_Id eo_id = _eo_id_allocate(obj);
-   obj->header.id = eo_id;
+   obj->header.id = _eo_id_allocate(obj);
+   Eo *eo_id = _eo_id_get(obj);
 
    _eo_condtor_reset(obj);
 
    _eo_ref(obj);
 
-   eo_do(_eo_id_get(obj), eo_parent_set(parent_id));
+   eo_do(eo_id, eo_parent_set(parent_id));
 
-   return _eo_id_get(obj);
+   /* If there's a parent. Unref. Eo_add should return an object with either a
+    * parent ref, or with the lack of, just a ref. */
+   if (eo_do(eo_id, eo_parent_get()))
+     {
+        _eo_unref(obj);
+     }
+
+   return eo_id;
 }
 
 Eo *
@@ -1539,8 +1546,6 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   EO_OBJ_POINTER_RETURN(obj, _obj);
-   eo_do((Eo *) obj, eo_parent_set(NULL));
    eo_unref(obj);
 }
 

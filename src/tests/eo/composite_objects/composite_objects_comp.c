@@ -32,8 +32,6 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
    fail_if(!eo_composite_is(simple));
 
    eo_do(obj, eo_key_data_set("simple-obj", simple, NULL));
-
-   eo_unref(simple);
 }
 
 static Eo_Op_Description op_descs[] = {

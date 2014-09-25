@@ -536,7 +536,6 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    MAGIC_CHECK_END();
    eo_obj = eo_add(EVAS_OBJECT_SMART_CLASS, eo_e);
    eo_do(eo_obj, evas_obj_smart_attach(s));
-   eo_unref(eo_obj);
    return eo_obj;
 }
 

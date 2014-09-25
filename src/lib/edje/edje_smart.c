@@ -20,7 +20,6 @@ edje_object_add(Evas *evas)
 {
    Evas_Object *e;
    e = eo_add(MY_CLASS, evas);
-   eo_unref(e);
    return e;
 }
 

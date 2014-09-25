@@ -1,6 +1,7 @@
 #ifndef _EO_PRIVATE_H
 #define _EO_PRIVATE_H
 
+#include <Eo.h>
 #include <Eina.h>
 
 #define EO_EINA_MAGIC 0xa186bc32
@@ -281,6 +282,16 @@ _eo_unref(_Eo_Object *obj)
           {
              ERR("Object %p already deleted.", obj);
              return;
+          }
+
+        /* Unparent if parented. */
+          {
+             Eo *eo_id = _eo_id_get(obj);
+             obj->refcount = 2; /* Needs to be high enough that parent set to null won't delete the object. */
+
+             eo_do(eo_id, eo_parent_set(NULL));
+
+             obj->refcount = 0;
           }
 
         _eo_del_internal(__FILE__, __LINE__, obj);

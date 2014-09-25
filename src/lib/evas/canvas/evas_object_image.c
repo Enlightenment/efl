@@ -381,7 +381,6 @@ evas_object_image_add(Evas *eo_e)
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e->engine.func, NULL);
    Evas_Object *eo_obj = eo_add(EVAS_IMAGE_CLASS, eo_e);
-   eo_unref(eo_obj);
    return eo_obj;
 }
 

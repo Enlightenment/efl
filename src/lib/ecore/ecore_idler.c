@@ -40,7 +40,6 @@ ecore_idler_add(Ecore_Task_Cb func,
    _ecore_lock();
 
    ie = eo_add(MY_CLASS, _ecore_parent, ecore_idler_constructor(func, data));
-   eo_unref(ie);
 
    _ecore_unlock();
    return ie;

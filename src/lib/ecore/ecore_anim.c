@@ -204,7 +204,6 @@ ecore_animator_add(Ecore_Task_Cb func,
 
    animator = eo_add(MY_CLASS, _ecore_parent,
                             ecore_animator_constructor(func, data));
-   eo_unref(animator);
    return animator;
 }
 
@@ -224,7 +223,6 @@ ecore_animator_timeline_add(double            runtime,
    Ecore_Animator *animator;
    animator = eo_add(MY_CLASS, _ecore_parent,
                             ecore_animator_timeline_constructor(runtime, func, data));
-   eo_unref(animator);
    return animator;
 }
 

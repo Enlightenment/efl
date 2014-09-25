@@ -435,7 +435,7 @@ START_TEST(eo_refs)
 
    /* Check hierarchy */
    obj = eo_add(SIMPLE_CLASS, NULL);
-   obj2 = eo_add(SIMPLE_CLASS, obj);
+   obj2 = eo_ref(eo_add(SIMPLE_CLASS, obj));
 
    Eo *wref = NULL;
    eo_do(obj2, eo_wref_add(&wref));
@@ -448,6 +448,16 @@ START_TEST(eo_refs)
    eo_unref(obj);
 
    fail_if(wref);
+
+   /* eo_add_ref and normal eo_add */
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   obj2 = eo_add(SIMPLE_CLASS, obj);
+   obj3 = eo_add_ref(SIMPLE_CLASS, obj);
+
+   ck_assert_int_eq(eo_ref_get(obj), 1);
+   ck_assert_int_eq(eo_ref_get(obj2), 1);
+   ck_assert_int_eq(eo_ref_get(obj3), 2);
+
 
    /* Just check it doesn't seg atm. */
    obj = eo_add(SIMPLE_CLASS, NULL);

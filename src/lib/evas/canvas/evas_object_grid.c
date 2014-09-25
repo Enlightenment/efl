@@ -258,7 +258,6 @@ EAPI Evas_Object *
 evas_object_grid_add(Evas *evas)
 {
    Evas_Object *obj = eo_add(MY_CLASS, evas);
-   eo_unref(obj);
    return obj;
 }
 

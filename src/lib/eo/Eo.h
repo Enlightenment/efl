@@ -621,6 +621,13 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 /**
  * @def eo_add
  * @brief Create a new object with the default constructor.
+ *
+ * The object returned by this function always has at least 1 ref. If the object
+ * has a parent, it returns with 1 ref, and even if it doesn't have a parent
+ * it's returned with 1 ref. This is convenient in C.
+ *
+ * If you want a more "consistent" behaviour, take a look at #eo_add_ref.
+ *
  * @param klass the class of the object to create.
  * @param parent the parent to set to the object.
  * @param ... The ops to run.
@@ -636,6 +643,25 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
            _tmp_obj = eo_finalize(); \
           ); \
     _tmp_obj; \
+    })
+
+/**
+ * @def eo_add_ref
+ * @brief Create a new object with the default constructor.
+ *
+ * The object returned by this function has 1 ref for itself, 1 ref from the
+ * parent (if exists) and possible other refs if were added during construction.
+ *
+ * @param klass the class of the object to create.
+ * @param parent the parent to set to the object.
+ * @param ... The ops to run.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+#define eo_add_ref(klass, parent, ...) \
+   ({ \
+    Eo *_tmp_obj_ref = eo_add(klass, parent, __VA_ARGS__); \
+    if (eo_do(_tmp_obj_ref, eo_parent_get())) eo_ref(_tmp_obj_ref); \
+    _tmp_obj_ref; \
     })
 
 EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent);
