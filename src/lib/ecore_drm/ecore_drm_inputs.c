@@ -228,9 +228,11 @@ _cb_input_event(const char *device, Eeze_Udev_Event event, void *data, Eeze_Udev
           {
              const char *node;
 
-             node = eeze_udev_syspath_get_devpath(device);
-             _device_remove(input, node);
-             eina_stringshare_del(node);
+             if ((node = eeze_udev_syspath_get_devpath(device)))
+               {
+                  _device_remove(input, node);
+                  eina_stringshare_del(node);
+               }
           }
         break;
       default:
