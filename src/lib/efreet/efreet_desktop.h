@@ -30,6 +30,12 @@ EAPI extern int EFREET_EVENT_DESKTOP_CACHE_UPDATE;
 EAPI extern int EFREET_EVENT_DESKTOP_CACHE_BUILD;
 
 /**
+ * Efreet_Desktop_Action
+ * @since 1.12
+ */
+typedef struct _Efreet_Desktop_Action Efreet_Desktop_Action;
+
+/**
  * Efreet_Desktop
  */
 typedef struct _Efreet_Desktop Efreet_Desktop;
@@ -62,11 +68,25 @@ typedef void (*Efreet_Desktop_Type_Save_Cb) (Efreet_Desktop *desktop, Efreet_Ini
 typedef void *(*Efreet_Desktop_Type_Free_Cb) (void *data);
 
 /**
+ * Efreet_Desktop_Action
+ * @brief an action described in a .desktop file
+ * @since 1.12
+ */
+struct _Efreet_Desktop_Action
+{
+    char *key;  /**< Key to identify the action */
+    char *name; /**< Specific name of the action */
+    char *icon; /**< Icon to display */
+    char *exec; /**< Program to execute */
+};
+
+/**
  * Efreet_Desktop
  * @brief a parsed representation of a .desktop file
  */
 struct _Efreet_Desktop
 {
+    /* Desktop Spec 1.0 */
     int type;               /**< type of desktop file */
 
     int ref;                /**< reference count - internal */
@@ -102,6 +122,12 @@ struct _Efreet_Desktop
 
     Eina_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */
     void *type_data; /**< Type specific data for custom types */
+
+    /* Desktop Spec 1.1 */
+    unsigned char dbus_activatable; /**< Activate application by dbus, not Exec. @since 1.12 */
+    Eina_List *actions;             /**< List of Efreet_Desktop_Actions, application actions. @since 1.12 */
+    Eina_List *implements;          /**< Interfaces which is file implements. @since 1.12 */
+    Eina_List *keywords;            /**< Keywords which describe this entry. @since 1.12 */
 };
 
 

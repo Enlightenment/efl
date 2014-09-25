@@ -52,8 +52,11 @@ static Efreet_Desktop_Type_Info *efreet_desktop_type_parse(const char *type_str)
 static void efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info);
 static void *efreet_desktop_application_fields_parse(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
+static Eina_List *efreet_desktop_action_fields_parse(Efreet_Ini *ini, const char *val);
 static void efreet_desktop_application_fields_save(Efreet_Desktop *desktop,
                                                     Efreet_Ini *ini);
+static void efreet_desktop_action_fields_save(Efreet_Desktop *desktop,
+                                              Efreet_Ini *ini);
 static void *efreet_desktop_link_fields_parse(Efreet_Desktop *desktop,
                                                 Efreet_Ini *ini);
 static void efreet_desktop_link_fields_save(Efreet_Desktop *desktop,
@@ -349,6 +352,9 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     }
     else
     {
+        Efreet_Desktop_Action *action;
+
+        /* Desktop Spec 1.0 */
         IF_FREE(desktop->orig_path);
 
         IF_FREE(desktop->version);
@@ -378,6 +384,19 @@ efreet_desktop_free(Efreet_Desktop *desktop)
             if (info->free_func)
                 info->free_func(desktop->type_data);
         }
+
+        /* Desktop Spec 1.1 */
+        EINA_LIST_FREE(desktop->actions, action)
+        {
+            free(action->key);
+            free(action->name);
+            free(action->icon);
+            free(action->exec);
+            free(action);
+        }
+        IF_FREE_LIST(desktop->implements, eina_stringshare_del);
+        IF_FREE_LIST(desktop->keywords, eina_stringshare_del);
+
         free(desktop);
     }
     eina_lock_release(&_lock);
@@ -710,6 +729,7 @@ efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini
 {
     const char *val;
 
+    /* Desktop Spec 1.0 */
     val = efreet_ini_string_get(ini, "TryExec");
     if (val) desktop->try_exec = strdup(val);
 
@@ -731,7 +751,57 @@ efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini
     desktop->terminal = efreet_ini_boolean_get(ini, "Terminal");
     desktop->startup_notify = efreet_ini_boolean_get(ini, "StartupNotify");
 
+    /* Desktop Spec 1.1 */
+    val = efreet_ini_string_get(ini, "Actions");
+    if (val)
+        desktop->actions = efreet_desktop_action_fields_parse(ini, val);
+    val = efreet_ini_string_get(ini, "Keywords");
+    if (val)
+        desktop->keywords = efreet_desktop_string_list_parse(val);
+
     return NULL;
+}
+
+/**
+ * @internal
+ * @param key the key to look up Desktop Action entry
+ * @return list of Desktop Actions
+ */
+static Eina_List *
+efreet_desktop_action_fields_parse(Efreet_Ini *ini, const char *actions)
+{
+    Eina_List *l;
+    Eina_List *ret = NULL;
+    const char *section;
+    const char *key;
+
+    // TODO: section = efreet_ini_section_get(ini);
+    section = "Desktop Entry";
+
+    l = efreet_desktop_string_list_parse(actions);
+    EINA_LIST_FREE(l, key)
+    {
+        char entry[4096];
+        Efreet_Desktop_Action *act;
+
+        snprintf(entry, sizeof(entry), "Desktop Action %s", key);
+
+        if (!efreet_ini_section_set(ini, entry)) continue;
+
+        act = NEW(Efreet_Desktop_Action, 1);
+        if (!act) continue;
+        ret = eina_list_append(ret, act);
+        act->key = strdup(key);
+        act->name = eina_strdup(efreet_ini_localestring_get(ini, "Name"));
+        act->icon = eina_strdup(efreet_ini_localestring_get(ini, "Icon"));
+        act->exec = eina_strdup(efreet_ini_string_get(ini, "Exec"));
+
+        /* TODO: Non-standard keys OnlyShowIn, NotShowIn used by Unity */
+
+        eina_stringshare_del(key);
+    }
+    efreet_ini_section_set(ini, section);
+    return ret;
 }
 
 /**
@@ -746,6 +816,7 @@ efreet_desktop_application_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     char *val;
 
+    /* Desktop Spec 1.0 */
     if (desktop->try_exec)
         efreet_ini_string_set(ini, "TryExec", desktop->try_exec);
 
@@ -780,6 +851,60 @@ efreet_desktop_application_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
     efreet_ini_boolean_set(ini, "Terminal", desktop->terminal);
     efreet_ini_boolean_set(ini, "StartupNotify", desktop->startup_notify);
+
+    /* Desktop Spec 1.1 */
+    if (desktop->actions)
+        efreet_desktop_action_fields_save(desktop, ini);
+    if (desktop->keywords)
+    {
+        val = efreet_desktop_string_list_join(desktop->keywords);
+        if (val)
+        {
+            efreet_ini_string_set(ini, "Keywords", val);
+            free(val);
+        }
+    }
+}
+
+/**
+ * @internal
+ * @param desktop the Efreet_Desktop to save fields from
+ * @param ini the Efreet_Ini to save fields to
+ * @return Returns no value
+ * @brief Save action specific desktop fields
+ */
+static void
+efreet_desktop_action_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
+{
+    Eina_List *actions = NULL, *l;
+    const char *section;
+    char *join;
+    Efreet_Desktop_Action *action;
+
+    // TODO: section = efreet_ini_section_get(ini);
+    section = "Desktop Entry";
+
+    EINA_LIST_FOREACH(desktop->actions, l, action)
+    {
+        char entry[4096];
+
+        actions = eina_list_append(actions, action->key);
+        snprintf(entry, sizeof(entry), "Desktop Action %s", action->key);
+        efreet_ini_section_add(ini, entry);
+        efreet_ini_section_set(ini, entry);
+
+        efreet_ini_localestring_set(ini, "Name", action->name);
+        efreet_ini_localestring_set(ini, "Icon", action->icon);
+        efreet_ini_string_set(ini, "Exec", action->exec);
+    }
+    efreet_ini_section_set(ini, section);
+    join = efreet_desktop_string_list_join(actions);
+    if (join)
+    {
+        efreet_ini_string_set(ini, "Actions", join);
+        free(join);
+    }
+    eina_list_free(actions);
 }
 
 /**
@@ -824,6 +949,7 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     const char *val;
 
+    /* Desktop Spec 1.0 */
     val = efreet_ini_localestring_get(ini, "Name");
 #ifndef STRICT_SPEC
     if (!val) val = efreet_ini_localestring_get(ini, "_Name");
@@ -855,6 +981,10 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
     val = efreet_ini_string_get(ini, "NotShowIn");
     if (val) desktop->not_show_in = efreet_desktop_string_list_parse(val);
 
+    /* Desktop Spec 1.1 */
+    desktop->dbus_activatable = efreet_ini_boolean_get(ini, "DBusActivatable");
+    val = efreet_ini_string_get(ini, "Implements");
+    if (val) desktop->implements = efreet_desktop_string_list_parse(val);
     return 1;
 }
 
@@ -870,6 +1000,7 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     const char *val;
 
+    /* Desktop Spec 1.0 */
     if (desktop->name)
     {
         efreet_ini_localestring_set(ini, "Name", desktop->name);
@@ -904,6 +1035,20 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
     if (desktop->x) eina_hash_foreach(desktop->x, efreet_desktop_x_fields_save,
                                         ini);
+
+    /* Desktop Spec 1.1 */
+    efreet_ini_boolean_set(ini, "DBusActivatable", desktop->dbus_activatable);
+    if (desktop->implements)
+    {
+        char *join;
+
+        join = efreet_desktop_string_list_join(desktop->implements);
+        if (join)
+        {
+           efreet_ini_string_set(ini, "Implements", join);
+           free(join);
+        }
+    }
 }
 
 /**
@@ -997,3 +1142,4 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
 
     return 1;
 }
+

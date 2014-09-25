@@ -71,6 +71,7 @@ static const char          *theme_name = NULL;
 
 static Eet_Data_Descriptor *version_edd = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
+static Eet_Data_Descriptor *desktop_action_edd = NULL;
 static Eet_Data_Descriptor *hash_array_string_edd = NULL;
 static Eet_Data_Descriptor *array_string_edd = NULL;
 static Eet_Data_Descriptor *hash_string_edd = NULL;
@@ -429,6 +430,7 @@ efreet_cache_edd_shutdown(void)
 {
     EDD_SHUTDOWN(version_edd);
     EDD_SHUTDOWN(desktop_edd);
+    EDD_SHUTDOWN(desktop_action_edd);
     EDD_SHUTDOWN(hash_array_string_edd);
     EDD_SHUTDOWN(array_string_edd);
     EDD_SHUTDOWN(hash_string_edd);
@@ -607,10 +609,21 @@ efreet_desktop_edd(void)
 
     if (desktop_edd) return desktop_edd;
 
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Desktop_Action);
+    desktop_action_edd = eet_data_descriptor_file_new(&eddc);
+    if (!desktop_action_edd) return NULL;
+
+    /* Desktop Spec 1.1 */
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_action_edd, Efreet_Desktop_Action, "key", key, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_action_edd, Efreet_Desktop_Action, "name", name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_action_edd, Efreet_Desktop_Action, "icon", icon, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_action_edd, Efreet_Desktop_Action, "exec", exec, EET_T_STRING);
+
     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Desktop);
     desktop_edd = eet_data_descriptor_file_new(&eddc);
     if (!desktop_edd) return NULL;
 
+    /* Desktop Spec 1.0 */
     EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "type", desktop.type, EET_T_INT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "version", desktop.version, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "orig_path", desktop.orig_path, EET_T_STRING);
@@ -633,6 +646,13 @@ efreet_desktop_edd(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "hidden", desktop.hidden, EET_T_UCHAR);
     EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "terminal", desktop.terminal, EET_T_UCHAR);
     EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "startup_notify", desktop.startup_notify, EET_T_UCHAR);
+
+    /* Desktop Spec 1.1 */
+    EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Cache_Desktop, "dbus_activatable", desktop.dbus_activatable, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_LIST(desktop_edd, Efreet_Cache_Desktop,
+                                 "actions", desktop.actions, desktop_action_edd);
+    eet_data_descriptor_element_add(desktop_edd, "implements", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Desktop, desktop.implements), 0, NULL, NULL);
+    eet_data_descriptor_element_add(desktop_edd, "keywords", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Desktop, desktop.keywords), 0, NULL, NULL);
 
     return desktop_edd;
 }
@@ -886,11 +906,17 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
         }
     }
 
+    /* Desktop Spec 1.0 */
     eina_list_free(desktop->only_show_in);
     eina_list_free(desktop->not_show_in);
     eina_list_free(desktop->categories);
     eina_list_free(desktop->mime_types);
     IF_FREE_HASH(desktop->x);
+    /* Desktop Spec 1.1 */
+    eina_list_free(desktop->actions);
+    eina_list_free(desktop->implements);
+    eina_list_free(desktop->keywords);
+
     free(desktop);
     eina_lock_release(&_lock);
 }
