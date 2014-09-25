@@ -2105,7 +2105,10 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
 void
 _elm_win_shutdown(void)
 {
-   while (_elm_win_list) evas_object_del(_elm_win_list->data);
+   Eina_List *itr, *itrn;
+   Evas_Object *obj;
+   EINA_LIST_FOREACH_SAFE(_elm_win_list, itr, itrn, obj)
+      evas_object_del(obj);
    ELM_SAFE_FREE(_elm_win_state_eval_job, ecore_job_del);
 }
 
