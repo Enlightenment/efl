@@ -511,7 +511,6 @@ elm_prefs_add(Evas_Object *parent)
      }
 
    Evas_Object *obj = eo_add(MY_CLASS, parent);
-   eo_unref(obj);
    return obj;
 }
 

@@ -1858,7 +1858,6 @@ elm_flip_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = eo_add(MY_CLASS, parent);
-   eo_unref(obj);
    return obj;
 }
 
