@@ -79,13 +79,14 @@ _cb_device_opened(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending
    const char *errname, *errmsg;
    int fd = -1;
 
+   if (!(d = data)) return;
+
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        ERR("\tFailed to open device: %s", d->node);
         return;
      }
-
-   if (!(d = data)) return;
 
    /* DBG("Input Device Opened: %s", d->node); */
 
@@ -170,6 +171,8 @@ _device_add(Ecore_Drm_Input *input, const char *device)
    data->seat = seat;
    if (!(data->node = eeze_udev_syspath_get_devpath(device)))
      goto dev_err;
+
+   DBG("\tDevice Path: %s", data->node);
 
    _ecore_drm_dbus_device_open(data->node, _cb_device_opened, data);
 
