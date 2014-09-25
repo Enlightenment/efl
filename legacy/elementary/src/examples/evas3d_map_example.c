@@ -901,7 +901,7 @@ skybox_setup(void)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 0.1, 0.1, 0.1, 1.0),
          evas_3d_material_shininess_set(50.0));
 
-   skybox_mesh_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   skybox_mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(root_node, evas_3d_node_member_add(skybox_mesh_node));
    eo_do(skybox_mesh_node, evas_3d_node_mesh_add(skybox_mesh));
@@ -961,7 +961,7 @@ camera_setup(void)
    camera_right_vec.y = 0.0;
    camera_right_vec.z = 0.0;
 
-   camera_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   camera_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(camera_node,
          evas_3d_node_camera_set(camera),
@@ -980,7 +980,7 @@ light_setup(void)
          evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_3d_light_specular_set(0.2, 0.2, 0.2, 1.0));
 
-   light_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   light_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                               evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(light_node,
          evas_3d_node_light_set(light),
@@ -1042,7 +1042,7 @@ mesh_setup(void)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 0.1, 0.1, 0.1, 1.0),
          evas_3d_material_shininess_set(50.0));
 
-   mesh_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(root_node, evas_3d_node_member_add(mesh_node));
    eo_do(mesh_node, evas_3d_node_mesh_add(mesh));
@@ -1215,7 +1215,7 @@ elm_main(int argc, char **argv)
    scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
    /* Add a root node for the scene. */
-   root_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    skybox_setup();

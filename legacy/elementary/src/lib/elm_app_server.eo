@@ -89,7 +89,6 @@ class Elm_App_Server (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
       Eo.Base.destructor;
    }
    constructors {

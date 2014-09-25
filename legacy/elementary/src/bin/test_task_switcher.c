@@ -304,7 +304,7 @@ _app_open(const char *package)
           return;
      }
 
-   app = eo_add_custom(ELM_APP_CLIENT_CLASS, NULL,
+   app = eo_add(ELM_APP_CLIENT_CLASS, NULL,
                        elm_app_client_constructor(package));
    eo_do(app,
          eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED,

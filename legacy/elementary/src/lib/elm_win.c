@@ -2864,7 +2864,7 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
-   Evas_Object *obj = eo_add_custom(MY_CLASS, parent, elm_obj_win_constructor(name, type));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type));
    eo_unref(obj);
    return obj;
 }
@@ -3505,10 +3505,9 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 }
 
 EOLIAN static void
-_elm_win_eo_base_constructor(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED)
+_elm_win_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Win_Data *_pd EINA_UNUSED)
 {
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
+   /* Do nothing. */
 }
 
 EOLIAN static Elm_Win_Type

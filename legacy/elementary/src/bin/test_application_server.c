@@ -100,7 +100,7 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
         return NULL;
      }
 
-   view = eo_add_custom(ELM_APP_SERVER_VIEW_CLASS, app_server,
+   view = eo_add(ELM_APP_SERVER_VIEW_CLASS, app_server,
                         elm_app_server_view_constructor(NULL));
 
    eo_do(view, id = elm_app_server_view_id_get());
@@ -142,7 +142,7 @@ test_application_server_common(const char *pkg)
    Elm_App_Server_View *view;
    Elm_App_Server *server;
 
-   server = eo_add_custom(ELM_APP_SERVER_CLASS, NULL,
+   server = eo_add(ELM_APP_SERVER_CLASS, NULL,
                           elm_app_server_constructor(pkg, _create_view_cb));
    eo_do(server, elm_app_server_title_set(pkg),
          views_iter = elm_app_server_views_get(),

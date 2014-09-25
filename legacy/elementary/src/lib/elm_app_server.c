@@ -205,8 +205,6 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
    EINA_SAFETY_ON_NULL_GOTO(data->create_view_cb, error);
    EINA_SAFETY_ON_TRUE_GOTO(!pkg, error);
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-
    data->views = eina_hash_string_small_new(NULL);
    data->PID = getpid();
    data->title = eina_stringshare_add("");
@@ -257,7 +255,7 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
              new_events = elm_app_server_view_props_new_events_get(view_eet_props);
              progress = elm_app_server_view_props_progress_get(view_eet_props);
 
-             view = eo_add_custom(ELM_APP_SERVER_VIEW_CLASS, obj,
+             view = eo_add(ELM_APP_SERVER_VIEW_CLASS, obj,
                                   elm_app_server_view_constructor(view_id));
              if (!view)
                continue;
@@ -444,13 +442,6 @@ _elm_app_server_eo_base_destructor(Eo *obj, Elm_App_Server_Data *data)
    eldbus_connection_unref(data->conn);
    eldbus_shutdown();
    eo_do_super(obj, MY_CLASS, eo_destructor());
-}
-
-EOLIAN static void
-_elm_app_server_eo_base_constructor(Eo *obj, Elm_App_Server_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 #include "elm_app_server.eo.c"

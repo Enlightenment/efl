@@ -37,7 +37,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
         if (view)
           continue;
 
-        view = eo_add_custom(ELM_APP_CLIENT_VIEW_CLASS, eo,
+        view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo,
                              elm_app_client_view_constructor(obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
@@ -162,8 +162,6 @@ _elm_app_client_constructor(Eo *eo, Elm_App_Client_Data *data, const char *pkg)
 
    EINA_SAFETY_ON_NULL_GOTO(pkg, error);
 
-   eo_do_super(eo, MY_CLASS, eo_constructor());
-
    data->views = eina_hash_string_small_new(NULL);
 
    path = _dbus_package_to_path(pkg);
@@ -221,7 +219,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
    view = eina_hash_find(cdata->views, view_path);
    if (!view)
      {
-        view = eo_add_custom(ELM_APP_CLIENT_VIEW_CLASS, eo,
+        view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo,
                              elm_app_client_view_constructor(view_path));
         eina_hash_add(cdata->views, view_path, view);
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED,
@@ -305,13 +303,6 @@ EOLIAN static void
 _elm_app_client_view_open_cancel(Eo *eo EINA_UNUSED, Elm_App_Client_Data *_pd EINA_UNUSED, Elm_App_Client_Pending *pending)
 {
    eldbus_pending_cancel(pending);
-}
-
-EOLIAN static void
-_elm_app_client_eo_base_constructor(Eo *obj, Elm_App_Client_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EOLIAN static void
