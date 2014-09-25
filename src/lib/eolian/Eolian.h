@@ -728,7 +728,7 @@ EAPI Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *functi
 EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_id);
 
 /*
- * @brief Returns the full C name of a function (with prefix).
+ * @brief Returns the full C name of a function.
  *
  * @param[in] function_id Id of the function
  * @return the function name
@@ -740,7 +740,7 @@ EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, const char *prefix);
+EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id);
 
 /*
  * @brief Get a function in a class by its name and type

@@ -807,7 +807,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              goto end;
           }
 
-        rets = eolian_function_full_c_name_get(fnid, impl_env.lower_eo_prefix);
+        rets = eolian_function_full_c_name_get(fnid);
 
         const char *class_str = "";
         if (eolian_function_is_class(fnid)) class_str = "CLASS_";

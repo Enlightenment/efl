@@ -1329,6 +1329,7 @@ parse_property(Eo_Lexer *ls)
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
              has_protected = EINA_FALSE, has_class  = EINA_FALSE;
    prop = calloc(1, sizeof(Eolian_Function));
+   prop->klass = ls->tmp.kls;
    prop->type = EOLIAN_UNRESOLVED;
    prop->base.file = eina_stringshare_ref(ls->filename);
    prop->base.line = ls->line_number;
@@ -1399,6 +1400,7 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
              has_eo          = EINA_FALSE;
    meth = calloc(1, sizeof(Eolian_Function));
+   meth->klass = ls->tmp.kls;
    meth->type = EOLIAN_METHOD;
    meth->base.file = eina_stringshare_ref(ls->filename);
    meth->base.line = ls->line_number;

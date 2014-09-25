@@ -98,12 +98,9 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    p = strncpy(env->upper_func, funcname, PATH_MAX - 1);
    eina_str_toupper(&p);
 
-   ret = eolian_function_full_c_name_get(funcid, tmp_env.upper_eo_prefix);
+   ret = eolian_function_full_c_name_get(funcid);
    sprintf(p = env->upper_eo_func, "%s%s", ret, suffix);
    eina_str_toupper(&p);
-   eina_stringshare_del(ret);
-
-   ret = eolian_function_full_c_name_get(funcid, tmp_env.lower_eo_prefix);
    sprintf(p = env->lower_eo_func, "%s%s", ret, suffix);
    eina_str_tolower(&p);
    eina_stringshare_del(ret);

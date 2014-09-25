@@ -26,9 +26,23 @@ eolian_function_name_get(const Eolian_Function *fid)
    return fid->name;
 }
 
-EAPI Eina_Stringshare *
-eolian_function_full_c_name_get(const Eolian_Function *foo_id, const char *prefix)
+static const char *
+get_eo_prefix(const Eolian_Function *foo_id, char *buf)
 {
+    char *tmp = buf;
+    if (foo_id->klass->eo_prefix)
+      return foo_id->klass->eo_prefix;
+    strcpy(buf, foo_id->klass->full_name);
+    eina_str_tolower(&buf);
+    while ((tmp = strchr(tmp, '.'))) *tmp = '_';
+    return buf;
+}
+
+EAPI Eina_Stringshare *
+eolian_function_full_c_name_get(const Eolian_Function *foo_id)
+{
+   char tbuf[512];
+   const char  *prefix = get_eo_prefix(foo_id, tbuf);
    const char  *funcn = eolian_function_name_get(foo_id);
    const char  *last_p = strrchr(prefix, '_');
    const char  *func_p = strchr(funcn, '_');
