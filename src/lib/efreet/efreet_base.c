@@ -1,3 +1,6 @@
+/* TODO:
+ * XDG_CURRENT_DESKTOP
+ */
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
