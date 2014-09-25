@@ -379,7 +379,6 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         {
                             exec = efreet_desktop_command_append_multiple(exec, &size,
                                     &len, command, *p);
-                           fprintf(stderr, "EXE: '%s'\n", exec);
                             if (!exec) goto error;
                             file_added = 1;
                         }
