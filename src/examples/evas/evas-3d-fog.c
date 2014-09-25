@@ -102,7 +102,7 @@ _camera_setup(Scene_Data *data)
          evas_3d_camera_projection_perspective_set(60.0, 1.0, 2.0, 50.0));
 
   data->camera_node =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
 
   eo_do(data->camera_node,
@@ -124,7 +124,7 @@ _light_setup(Scene_Data *data)
          evas_3d_light_specular_set(1.0, 1.0, 1.0, 1.0));
 
    data->light_node =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
@@ -223,14 +223,14 @@ _mesh_setup(Scene_Data *data)
    _set_ball(data->mesh1, 2, 0, 0, 0, 100, data->material);
 
    data->mesh_node =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node));
    eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh));
 
    data->mesh_node1 =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node1));
@@ -250,7 +250,7 @@ _scene_setup(Scene_Data *data)
          evas_3d_scene_background_color_set(FOG_COLOR, 1));
 
    data->root_node =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    _camera_setup(data);

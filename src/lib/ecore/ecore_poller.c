@@ -230,13 +230,6 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type EINA_UNUSED)
    return poll_interval;
 }
 
-EOLIAN static void
-_ecore_poller_eo_base_constructor(Eo *obj, Ecore_Poller_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
-}
-
 EAPI Ecore_Poller *
 ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
                  int               interval,
@@ -244,7 +237,7 @@ ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
                  const void       *data)
 {
    Ecore_Poller *poller;
-   poller = eo_add_custom(MY_CLASS, _ecore_parent,
+   poller = eo_add(MY_CLASS, _ecore_parent,
                           ecore_poller_constructor(type, interval, func, data));
    eo_unref(poller);
    return poller;
@@ -263,7 +256,6 @@ _ecore_poller_constructor(Eo *obj, Ecore_Poller_Data *poller, Ecore_Poller_Type 
          EINA_MAIN_LOOP_CHECK_RETURN;
       }
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)

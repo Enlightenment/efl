@@ -39,7 +39,7 @@ ecore_idler_add(Ecore_Task_Cb func,
 
    _ecore_lock();
 
-   ie = eo_add_custom(MY_CLASS, _ecore_parent, ecore_idler_constructor(func, data));
+   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idler_constructor(func, data));
    eo_unref(ie);
 
    _ecore_unlock();
@@ -56,7 +56,6 @@ _ecore_idler_constructor(Eo *obj, Ecore_Idler_Data *ie, Ecore_Task_Cb func, cons
       }
 
    ie->obj = obj;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -69,13 +68,6 @@ _ecore_idler_constructor(Eo *obj, Ecore_Idler_Data *ie, Ecore_Task_Cb func, cons
    ie->func = func;
    ie->data = (void *)data;
    idlers = (Ecore_Idler_Data *)eina_inlist_append(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
-}
-
-EOLIAN static void
-_ecore_idler_eo_base_constructor(Eo *obj, Ecore_Idler_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EAPI void *

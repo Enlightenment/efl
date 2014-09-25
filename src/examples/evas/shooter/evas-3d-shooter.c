@@ -870,7 +870,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    eo_do(data->mesh_eagle,
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 
-   data->mesh_node_eagle = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_eagle = eo_add(EVAS_3D_NODE_CLASS, evas,
                                          evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->mesh_node_eagle,
@@ -904,7 +904,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, index_count, &indices[0]),
          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES));
 
-   data->mesh_node_world = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_world = eo_add(EVAS_3D_NODE_CLASS, evas,
                                          evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->root_node,
@@ -957,7 +957,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
          evas_3d_mesh_frame_material_set(0, data->gun));
 
-   data->mesh_node_gun = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_gun = eo_add(EVAS_3D_NODE_CLASS, evas,
                                        evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->mediator_node,
@@ -1000,7 +1000,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
          evas_3d_mesh_frame_material_set(0, data->material_gun_butt));
 
-   data->mesh_node_gun_butt = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_gun_butt = eo_add(EVAS_3D_NODE_CLASS, evas,
                                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mediator_node,
           evas_3d_node_member_add(data->mesh_node_gun_butt));
@@ -1040,7 +1040,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
          evas_3d_mesh_frame_material_set(0, data->material_gun_cage));
 
-   data->mesh_node_gun_cage = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_gun_cage = eo_add(EVAS_3D_NODE_CLASS, evas,
                                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mediator_node,
          evas_3d_node_member_add(data->mesh_node_gun_cage));
@@ -1084,7 +1084,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
          evas_3d_mesh_frame_material_set(0, data->rocket));
 
-   data->mesh_node_rocket = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_rocket = eo_add(EVAS_3D_NODE_CLASS, evas,
                                           evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mediator_node,
          evas_3d_node_member_add(data->mesh_node_rocket));
@@ -1111,7 +1111,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
          evas_3d_mesh_frame_material_set(0, data->material_cube));
 
-   data->mesh_node_cube = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_cube = eo_add(EVAS_3D_NODE_CLASS, evas,
                                         evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->root_node,
          evas_3d_node_member_add(data->mesh_node_cube));
@@ -1159,7 +1159,7 @@ _mesh_setup_grass(Scene_Data *data, int index)
                                      6, &grass_indices[0]),
          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES));
 
-   data->mesh_node_grass[index] = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_grass[index] = eo_add(EVAS_3D_NODE_CLASS, evas,
                                                 evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->root_node,
@@ -1211,7 +1211,7 @@ _mesh_setup_gun_bling(Scene_Data *data, int index)
          evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, index_count, &indices[0]),
          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES));
 
-   data->mesh_node_gun_bling[index] = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_gun_bling[index] = eo_add(EVAS_3D_NODE_CLASS, evas,
                                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->mediator_node,
@@ -1357,7 +1357,7 @@ _mesh_setup_snake(Scene_Data *data)
    eo_do(data->mesh_snake,
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 
-   data->mesh_node_snake = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_snake = eo_add(EVAS_3D_NODE_CLASS, evas,
                                          evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->mesh_node_snake,
@@ -1381,7 +1381,7 @@ _scene_setup(Scene_Data *data)
          evas_3d_scene_size_set(WIDTH, HEIGHT),
          evas_3d_scene_background_color_set(0.5, 0.5, 0.5, 0.0));
 
-   data->root_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
@@ -1398,7 +1398,7 @@ _scene_setup(Scene_Data *data)
    _mesh_setup(data, bricks_vertices, 0);
    _mesh_setup(data, wall_vertices, 1);
 
-   data->mesh_node_level[0] = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_level[0] = eo_add(EVAS_3D_NODE_CLASS, evas,
                                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->root_node,
@@ -1415,7 +1415,7 @@ _scene_setup(Scene_Data *data)
    Evas_Real bx, by, bz;
    for ( i = 1; i < 10; ++i)
      {
-        data->mesh_node_level[i] = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+        data->mesh_node_level[i] = eo_add(EVAS_3D_NODE_CLASS, evas,
                                                  evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
         eo_do(data->mesh_node_level[i],
@@ -1433,7 +1433,7 @@ _scene_setup(Scene_Data *data)
      }
    _mesh_setup_warrior(data, 2);
 
-   data->mesh_node_level[10] = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_level[10] = eo_add(EVAS_3D_NODE_CLASS, evas,
                                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mesh_node_level[10],
          evas_3d_node_position_set(17, -10, 0),

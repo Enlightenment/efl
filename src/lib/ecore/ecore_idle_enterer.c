@@ -44,7 +44,6 @@ _ecore_idle_enterer_add(Ecore_Idle_Enterer *obj,
       }
 
    ie->obj = obj;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -64,7 +63,7 @@ ecore_idle_enterer_add(Ecore_Task_Cb func,
                        const void   *data)
 {
    Ecore_Idle_Enterer *ie = NULL;
-   ie = eo_add_custom(MY_CLASS, _ecore_parent, ecore_idle_enterer_after_constructor(func, data));
+   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_enterer_after_constructor(func, data));
    eo_unref(ie);
    return ie;
 }
@@ -86,7 +85,7 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
                               const void   *data)
 {
    Ecore_Idle_Enterer *ie = NULL;
-   ie = eo_add_custom(MY_CLASS, _ecore_parent, ecore_idle_enterer_before_constructor(func, data));
+   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_enterer_before_constructor(func, data));
    eo_unref(ie);
    return ie;
 }
@@ -101,13 +100,6 @@ _ecore_idle_enterer_before_constructor(Eo *obj, Ecore_Idle_Enterer_Data *ie, Eco
 
 unlock:
    _ecore_unlock();
-}
-
-EOLIAN static void
-_ecore_idle_enterer_eo_base_constructor(Eo *obj, Ecore_Idle_Enterer_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EAPI void *

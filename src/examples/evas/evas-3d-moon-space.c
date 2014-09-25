@@ -383,7 +383,7 @@ _camera_setup(Scene_Data *data)
    eo_do(data->camera,
          evas_3d_camera_projection_perspective_set(30.0, 1.0, 1.0, 100.0));
 
-   data->camera_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->camera_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                      evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(data->camera_node,
          evas_3d_node_camera_set(data->camera),
@@ -403,7 +403,7 @@ _light_setup(Scene_Data *data)
          evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_3d_light_specular_set(1.0, 1.0, 1.0, 1.0));
 
-   data->light_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->light_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
@@ -428,11 +428,11 @@ _mesh_setup(Scene_Data *data)
    data->texture_diffuse_planet = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    data->texture_diffuse_moon = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
 
-   data->mesh_node_planet = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_planet = eo_add(EVAS_3D_NODE_CLASS, evas,
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
-   data->mesh_node_cube = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_cube = eo_add(EVAS_3D_NODE_CLASS, evas,
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
-   data->mesh_node_moon = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_moon = eo_add(EVAS_3D_NODE_CLASS, evas,
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    /* Setup material for cube. */
@@ -561,7 +561,7 @@ _scene_setup(Scene_Data *data)
    data->scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
    /* Add the root node for the scene. */
-   data->root_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    eo_do(data->scene,

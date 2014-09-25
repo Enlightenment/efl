@@ -187,7 +187,7 @@ main(void)
 
    scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
-   root_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
@@ -195,7 +195,7 @@ main(void)
          evas_3d_camera_projection_perspective_set(60.0, 1.0, 1.0, 500.0));
 
    camera_node =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(camera_node,
          evas_3d_node_camera_set(camera));
@@ -213,7 +213,7 @@ main(void)
          evas_3d_light_directional_set(EINA_TRUE));
 
    light_node =
-      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+      eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(light_node,
          evas_3d_node_light_set(light),
@@ -252,9 +252,9 @@ main(void)
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
 
-   mesh_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
-   mesh_box_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   mesh_box_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                  evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    material_box = eo_add(EVAS_3D_MATERIAL_CLASS, evas);

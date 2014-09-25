@@ -625,8 +625,6 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @param parent the parent to set to the object.
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
- *
- * @see #eo_add_custom
  */
 #define eo_add(klass, parent, ...) \
    ({ \
@@ -634,27 +632,6 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
     Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
     eo_do(_tmp_obj, \
            eo_constructor(); \
-           __VA_ARGS__; \
-           _tmp_obj = eo_finalize(); \
-          ); \
-    _tmp_obj; \
-    })
-
-/**
- * @def eo_add_custom
- * @brief Create a new object with a custom constructor.
- * @param klass the class of the object to create.
- * @param parent the parent to set to the object.
- * @param ... The ops to run. With the constructor being first.
- * @return An handle to the new object on success, NULL otherwise.
- *
- * @see #eo_add
- */
-#define eo_add_custom(klass, parent, ...) \
-   ({ \
-    const Eo_Class *_tmp_klass = klass; \
-    Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
-    eo_do(_tmp_obj, \
            __VA_ARGS__; \
            _tmp_obj = eo_finalize(); \
           ); \

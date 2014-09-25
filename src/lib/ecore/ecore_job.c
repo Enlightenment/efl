@@ -49,7 +49,7 @@ EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
-   Ecore_Job *job = eo_add_custom(MY_CLASS, _ecore_parent, ecore_job_constructor(func, data));
+   Ecore_Job *job = eo_add(MY_CLASS, _ecore_parent, ecore_job_constructor(func, data));
    eo_unref(job);
    return job;
 }
@@ -62,7 +62,6 @@ _ecore_job_constructor(Eo *obj, Ecore_Job_Data *job, Ecore_Cb func, const void *
         eo_error_set(obj);
         EINA_MAIN_LOOP_CHECK_RETURN;
      }
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -81,13 +80,6 @@ _ecore_job_constructor(Eo *obj, Ecore_Job_Data *job, Ecore_Cb func, const void *
      }
    job->func = func;
    job->data = (void *)data;
-}
-
-EOLIAN static void
-_ecore_job_eo_base_constructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EAPI void *

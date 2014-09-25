@@ -20,7 +20,6 @@ class Ecore.Idle.Enterer (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
       Eo.Base.destructor;
    }
    constructors {

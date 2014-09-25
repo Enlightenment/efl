@@ -97,7 +97,7 @@ ecore_timer_add(double        in,
    Ecore_Timer *timer = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   timer = eo_add_custom(MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(in, func, data));
+   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(in, func, data));
    eo_unref(timer);
    return timer;
 }
@@ -118,7 +118,6 @@ _ecore_timer_add(Ecore_Timer *obj,
      }
 
    timer->obj = obj;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -158,13 +157,6 @@ _ecore_timer_loop_constructor(Eo *obj, Ecore_Timer_Data *timer, double in, Ecore
    now = ecore_loop_time_get();
 
    _ecore_timer_add(obj, timer, now, in, func, data);
-}
-
-EOLIAN static void
-_ecore_timer_eo_base_constructor(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EAPI Ecore_Timer *
@@ -407,7 +399,7 @@ _ecore_timer_loop_add(double        in,
                       const void   *data)
 {
    Ecore_Timer *timer = NULL;
-   timer = eo_add_custom(MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(in, func, data));
+   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(in, func, data));
    eo_unref(timer);
 
    return timer;

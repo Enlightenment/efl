@@ -111,7 +111,7 @@ main(void)
    ctxt.enterer = ecore_idle_enterer_add(_enterer_cb, &ctxt);
    ctxt.exiter = ecore_idle_exiter_add(_exiter_cb, &ctxt);
    ctxt.idler = ecore_idler_add(_idler_cb, &ctxt);
-//   ctxt.idler = eo_add_custom(ECORE_IDLER_CLASS, NULL, ecore_idler_constructor(_idler_cb, &ctxt));
+//   ctxt.idler = eo_add(ECORE_IDLER_CLASS, NULL, ecore_idler_constructor(_idler_cb, &ctxt));
    ctxt.handler = ecore_event_handler_add(_event_type,
                                           _event_handler_cb,
                                           &ctxt);

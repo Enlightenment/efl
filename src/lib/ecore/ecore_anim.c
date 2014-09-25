@@ -179,7 +179,6 @@ _ecore_animator_add(Ecore_Animator *obj,
       }
 
    animator->obj = obj;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -197,20 +196,13 @@ _ecore_animator_add(Ecore_Animator *obj,
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_ecore_animator_eo_base_constructor(Eo *obj, Ecore_Animator_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
-}
-
 EAPI Ecore_Animator *
 ecore_animator_add(Ecore_Task_Cb func,
                    const void   *data)
 {
    Ecore_Animator *animator = NULL;
 
-   animator = eo_add_custom(MY_CLASS, _ecore_parent,
+   animator = eo_add(MY_CLASS, _ecore_parent,
                             ecore_animator_constructor(func, data));
    eo_unref(animator);
    return animator;
@@ -230,7 +222,7 @@ ecore_animator_timeline_add(double            runtime,
                             const void       *data)
 {
    Ecore_Animator *animator;
-   animator = eo_add_custom(MY_CLASS, _ecore_parent,
+   animator = eo_add(MY_CLASS, _ecore_parent,
                             ecore_animator_timeline_constructor(runtime, func, data));
    eo_unref(animator);
    return animator;

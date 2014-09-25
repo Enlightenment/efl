@@ -775,7 +775,7 @@ evas_3d_node_add(Evas *e, Evas_3D_Node_Type type)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add_custom(MY_CLASS, e, evas_3d_node_constructor(type));
+   Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_3d_node_constructor(type));
    eo_unref(eo_obj);
    return eo_obj;
 }
@@ -783,8 +783,6 @@ evas_3d_node_add(Evas *e, Evas_3D_Node_Type type)
 EOLIAN static void
 _evas_3d_node_constructor(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node_Type type)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_NODE));
 
    evas_vec3_set(&pd->position, 0.0, 0.0, 0.0);
@@ -813,13 +811,6 @@ _evas_3d_node_constructor(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node_Type type
              _node_free(obj);
           }
      }
-}
-
-EOLIAN static void
-_evas_3d_node_eo_base_constructor(Eo *obj, Evas_3D_Node_Data *pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EOLIAN static void

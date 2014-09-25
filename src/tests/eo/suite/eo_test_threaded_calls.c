@@ -49,11 +49,9 @@ _try_swap_stack(Eo *obj EINA_UNUSED, void *class_data)
 }
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED, int v)
+_constructor(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, int v)
 {
    Thread_Test_Public_Data *pd = class_data;
-
-   eo_do_super(obj, THREAD_TEST_CLASS, eo_constructor());
 
    pd->v = v;
 }
@@ -87,7 +85,7 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
    if (v == 1)
      eina_spinlock_take(&locks[0]);
 
-   obj = eo_add_custom(THREAD_TEST_CLASS, NULL, thread_test_constructor(v));
+   obj = eo_add(THREAD_TEST_CLASS, NULL, thread_test_constructor(v));
 
    eo_do(obj, thread_test_try_swap_stack(), v = thread_test_v_get());
 

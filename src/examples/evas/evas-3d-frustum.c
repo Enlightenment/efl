@@ -121,7 +121,7 @@ static void
 _camera_setup(Scene_Data *data)
 {
    data->camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
-   data->camera_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->camera_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                      evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(data->camera_node,
          evas_3d_node_camera_set(data->camera),
@@ -140,7 +140,7 @@ _light_setup(Scene_Data *data)
          evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0);
          evas_3d_light_specular_set(1.0, 1.0, 1.0, 1.0));
 
-   data->light_node = eo_add_custom(EVAS_3D_NODE_CLASS,evas,
+   data->light_node = eo_add(EVAS_3D_NODE_CLASS,evas,
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
@@ -185,13 +185,13 @@ _scene_setup(Scene_Data *data)
 {
    data->scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
-   data->root_node = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
    _camera_setup(data);
    _light_setup(data);
    _mesh_setup_model(data);
 
-   data->mesh_node_model = eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+   data->mesh_node_model = eo_add(EVAS_3D_NODE_CLASS, evas,
                                       evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mesh_node_model,
          evas_3d_node_position_set(0, 0, 0);

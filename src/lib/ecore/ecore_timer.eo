@@ -68,7 +68,6 @@ class Ecore.Timer (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.event_freeze;
       /* XXX: can't document overriden methods

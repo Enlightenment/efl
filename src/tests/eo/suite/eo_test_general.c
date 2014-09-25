@@ -772,7 +772,7 @@ START_TEST(eo_add_do_and_custom)
    Eo *obj = NULL;
    eo_init();
 
-   obj = eo_add_custom(SIMPLE_CLASS, NULL, eo_constructor());
+   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor());
    fail_if(!obj);
    eo_unref(obj);
 
@@ -782,7 +782,7 @@ START_TEST(eo_add_do_and_custom)
    fail_if(pd->a != 7);
    eo_unref(obj);
 
-   obj = eo_add_custom(SIMPLE_CLASS, NULL, eo_constructor(), simple_a_set(7));
+   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(), simple_a_set(7));
    fail_if(!obj);
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
