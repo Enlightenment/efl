@@ -32,7 +32,7 @@ local int_builtin = {
 
 local num_others = {
     ["size" ] = true, ["ssize" ] = true, ["ptrdiff"] = true,
-    ["float"] = true, ["double"] = true, ["ldouble"] = true
+    ["float"] = true, ["double"] = true
 }
 
 local is_num = function(x)
