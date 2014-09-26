@@ -2105,10 +2105,15 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
 void
 _elm_win_shutdown(void)
 {
-   Eina_List *itr, *itrn;
-   Evas_Object *obj;
-   EINA_LIST_FOREACH_SAFE(_elm_win_list, itr, itrn, obj)
-      evas_object_del(obj);
+   while (_elm_win_list)
+     {
+        Eina_List *itr = _elm_win_list;
+        evas_object_del(itr->data);
+        if (_elm_win_list == itr)
+          {
+             _elm_win_list = eina_list_remove_list(_elm_win_list, _elm_win_list);
+          }
+     }
    ELM_SAFE_FREE(_elm_win_state_eval_job, ecore_job_del);
 }
 
