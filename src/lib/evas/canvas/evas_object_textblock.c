@@ -4892,8 +4892,12 @@ _layout_par(Ctxt *c)
                             wrap -= it->text_pos; /* Cut here */
                          }
                     }
-
-                  if (wrap > 0)
+                  if ((wrap >= 0) && ((size_t) wrap == it_len))
+                    {
+                       /* Can happen if this is the last word in the paragraph */
+                       adv_line = 0;
+                    }
+                  else if (wrap > 0)
                     {
                        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
                          {
@@ -4913,6 +4917,11 @@ _layout_par(Ctxt *c)
                        adv_line = 0;
                        redo_item = 1;
                        _layout_line_advance(c, it->format);
+                    }
+                  else // (wrap < 0)
+                    {
+                       /* avoid line advance if there is no wrapping point */
+                       adv_line = 0;
                     }
                   /* Reset wrap */
                   wrap = -1;

@@ -1654,6 +1654,19 @@ START_TEST(evas_textblock_wrapping)
      }
    fail_if(w != bw);
 
+   /* Verify that no empty line is added */
+   evas_object_textblock_text_markup_set(tb, "<wrap=word>Hello</wrap>");
+   evas_object_textblock_size_native_get(tb, NULL, &nh);
+   evas_object_resize(tb, 0, 1000);
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_eq(nh, h);
+
+   evas_object_textblock_text_markup_set(tb, "<wrap=char>a</wrap>");
+   evas_object_textblock_size_native_get(tb, NULL, &nh);
+   evas_object_resize(tb, 0, 1000);
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_eq(nh, h);
+
    /* Word wrap */
    evas_object_textblock_text_markup_set(tb, "aaaaaa");
    evas_object_textblock_size_formatted_get(tb, &bw, &bh);
