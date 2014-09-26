@@ -225,6 +225,30 @@ eeze_udev_syspath_set_sysattr(const char *syspath,
   return ret;
 }
 
+EAPI Eina_List *
+eeze_udev_syspath_get_sysattr_list(const char *syspath)
+{
+   _udev_device *device;
+   _udev_list_entry *devs, *cur;
+   Eina_List *syslist = NULL;
+
+   if (!syspath)
+     return NULL;
+
+   if (!(device = _new_device(syspath)))
+     return NULL;
+
+   devs = udev_device_get_sysattr_list_entry(device);
+   udev_list_entry_foreach(cur, devs)
+     {
+        syslist = eina_list_append(syslist,
+                   eina_stringshare_add(udev_list_entry_get_name(cur)));
+     }
+
+   udev_device_unref(device);
+   return syslist;
+}
+
 EAPI Eina_Bool
 eeze_udev_syspath_is_mouse(const char *syspath)
 {

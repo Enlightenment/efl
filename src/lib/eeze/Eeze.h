@@ -548,6 +548,15 @@ EAPI Eina_Bool eeze_udev_syspath_check_sysattr(const char *syspath, const char *
 EAPI Eina_Bool eeze_udev_syspath_set_sysattr(const char *syspath, const char *sysattr, double value);
 
 /**
+ * Get the sysattr list of a device from the /sys/ path.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @return Eina_list containing list of sysattr for a device or @c NULL on failure
+ * @since 1.12
+ */
+EAPI Eina_List *eeze_udev_syspath_get_sysattr_list(const char *syspath);
+
+/**
  * Checks whether the device is a mouse.
  *
  * @param syspath The /sys/ path with or without the /sys/
