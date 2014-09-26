@@ -461,14 +461,15 @@ elm_app_locale_dir_get(void)
 EAPI void
 elm_app_base_scale_set(double base_scale)
 {
-   if (base_scale <= 0.0) return;
+   if (base_scale < 0.0) return;
+   if ((int)(base_scale * 10000) == 0) return;
    app_base_scale = base_scale;
 }
 
 EAPI double
 elm_app_base_scale_get(void)
 {
-   if (app_base_scale) return app_base_scale;
+   if (app_base_scale > 0.0) return app_base_scale;
    return 1.0;
 }
 
