@@ -149,6 +149,8 @@ _device_add(Ecore_Drm_Input *input, const char *device)
    Ecore_Drm_Device_Open_Data *data;
    const char *devseat, *wlseat;
 
+   if (!input) return EINA_FALSE;
+
    DBG("Add Input Device: %s", device);
 
    if (!(devseat = eeze_udev_syspath_get_property(device, "ID_SEAT")))
