@@ -449,9 +449,8 @@ local Class = Node:clone {
         s:write(([[
 local __class = __lib.%s_class_get()
 local Parent  = eo.class_get("%s")
-%s.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.prefix, self.parent, mname, self.klass:name_get(),
-        self.klass:full_name_get()))
+eo.class_register("%s", Parent:clone {
+]]):format(self.prefix, self.parent, self.klass:full_name_get()))
 
         self:gen_children(s)
 
@@ -461,6 +460,11 @@ local Parent  = eo.class_get("%s")
             s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
                 :format(ename, v))
         end
+
+        -- write the constructor
+        s:write(([[\n%s.%s = function()
+end
+]]):format(mname, self.klass:name_get()))
     end,
 
     gen_ffi = Mixin.gen_ffi,
