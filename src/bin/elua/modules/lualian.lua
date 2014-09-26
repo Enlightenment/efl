@@ -336,22 +336,14 @@ local Event = Node:clone {
         self.ecname = ecname
     end,
 
-    gen_ffi_name = function(self)
-        local ffin = self.cached_ffi_name
-        if ffin then return ffin end
-        ffin = "_" .. self.ecname
-        self.cached_ffi_name = ffin
-        return ffin
-    end,
-
     generate = function(self, s, last)
         s:write("        [\"", self.ename, "\"] = __lib.",
-            self:gen_ffi_name(), last and "\n" or ",\n")
+            "_" .. self.ecname, last and "\n" or ",\n")
     end,
 
     gen_ffi = function(self, s)
         s:write("    extern const Eo_Event_Description ",
-            self:gen_ffi_name(), ";\n")
+            "_" .. self.ecname, ";\n")
     end,
 
     gen_ctor = function(self, s)
