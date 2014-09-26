@@ -358,62 +358,6 @@ local Event = Node:clone {
     end
 }
 
-local Constructor = Method:clone {
-    generate = function(self, s, last)
-        local proto   = self:gen_proto()
-        local name    = proto.name
-        local defctor = name == "constructor"
-        table.insert(proto.args, 2, "parent")
-
-        s:write("    __define_properties = function(self, proto)\n")
-        self.parent_node:gen_ctor(s)
-        s:write("        proto.__define_properties(self, proto.__proto)\n")
-        s:write("    end,\n\n")
-
-        s:write("    ", defctor and "__ctor" or name, " = function(",
-            table.concat(proto.args, ", "), ")\n")
-        if not defctor then
-            s:write("        self = self:clone()\n")
-        end
-        s:write("        self:__define_properties(self.__proto.__proto)\n")
-        for i, v in ipairs(proto.allocs) do
-            s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
-        end
-        local genv = (proto.ret_type ~= "void")
-        local cvargs = table.concat(proto.vargs, ", ")
-        if cvargs ~= "" then cvargs = ", " .. cvargs end
-        s:write("        ", genv and "local v = " or "", "eo.__ctor_common(",
-            "self, __class, parent, __lib.", proto.full_name, cvargs, ")\n")
-        if not defctor then
-            table.insert(proto.rets, 1, "self")
-        end
-        if #proto.rets > 0 then
-            s:write("        return ", table.concat(proto.rets, ", "), "\n")
-        end
-        s:write("    end", last and "" or ",", last and "\n" or "\n\n")
-    end
-}
-
-local Default_Constructor = Node:clone {
-    generate = function(self, s, last)
-        s:write("    __define_properties = function(self, proto)\n")
-        self.parent_node:gen_ctor(s)
-        s:write("        proto.__define_properties(self, proto.__proto)\n")
-        s:write("    end,\n\n")
-
-        s:write( "    __ctor = function(self, parent)\n")
-        s:write("        self:__define_properties(self.__proto.__proto)\n")
-        s:write("        eo.__ctor_common(self, __class, parent)\n")
-        s:write("    end", last and "" or ",", last and "\n" or "\n\n")
-    end,
-
-    gen_ffi = function(self, s)
-    end,
-
-    gen_ctor = function(self)
-    end
-}
-
 local Mixin = Node:clone {
     __ctor = function(self, klass, ch, evs)
         self.klass    = klass
