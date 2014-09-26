@@ -201,6 +201,31 @@ eeze_udev_syspath_get_sysattr(const char *syspath,
 }
 
 EAPI Eina_Bool
+eeze_udev_syspath_set_sysattr(const char *syspath,
+                              const char *sysattr,
+                              double value)
+{
+   _udev_device *device;
+   char val[16];
+   Eina_Bool ret = EINA_FALSE;
+   int test;
+
+   if (!syspath || !sysattr)
+     return EINA_FALSE;
+
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
+
+   sprintf(val, "%f", value);
+   test = udev_device_set_sysattr_value(device, sysattr, val);
+   if (test == 0)
+     ret = EINA_TRUE;
+
+  udev_device_unref(device);
+  return ret;
+}
+
+EAPI Eina_Bool
 eeze_udev_syspath_is_mouse(const char *syspath)
 {
    _udev_device *device = NULL;
