@@ -156,8 +156,7 @@ struct _Ecore_Wl_Window
    Eina_Bool anim_pending : 1;
    struct wl_callback *anim_callback;
 
-   /* FIXME: Ideally we should record the cursor name for this window
-    * so we can compare and avoid unnecessary cursor set calls to wayland */
+   const char *cursor_name;
 
    Ecore_Wl_Subsurf *subsurfs;
 
