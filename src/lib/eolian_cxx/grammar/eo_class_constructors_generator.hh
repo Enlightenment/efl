@@ -214,7 +214,7 @@ operator<<(std::ostream& out, eo_class_constructors const& x)
                  << (*callback_iter).name << "));"
                  << endl;
           }
-        out << tab(2) << "return eo_add("
+        out << tab(2) << "return eo_add_ref("
             << x._cls.eo_name << ", _p._eo_raw, " << (*it).name
             << "(" << parameters_list((*it).params) << "));" << endl
             << tab(1) << "}" << endl << endl;
