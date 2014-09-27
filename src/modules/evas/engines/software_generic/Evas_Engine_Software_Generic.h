@@ -80,6 +80,7 @@ struct _Render_Engine_Software_Generic
    unsigned char end : 1;
    unsigned char lost_back : 1;
    unsigned char tile_strict : 1;
+   unsigned char tiling : 1;
 };
 
 static inline Eina_Bool
@@ -123,6 +124,9 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
    re->end = 0;
    re->lost_back = 0;
    re->tile_strict = 0;
+
+   if (getenv("EVAS_TILING_ENABLE"))
+     re->tiling = 1;
 
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb) return EINA_FALSE;

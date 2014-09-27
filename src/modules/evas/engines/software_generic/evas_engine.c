@@ -2701,6 +2701,37 @@ _merge_rects(Render_Engine_Merge_Mode merge_mode,
    return rects;
 }
 
+static inline Tilebuf_Rect *
+_split_rect_horizontaly(Tilebuf_Rect *it)
+{
+   Tilebuf_Rect *tmp;
+
+   tmp = calloc(1, sizeof(Tilebuf_Rect));
+   if (!tmp) return NULL;
+   tmp->x = it->x + it->w / 2;
+   tmp->w = it->w / 2 + it->w % 2;
+   tmp->y = it->y;
+   tmp->h = it->h;
+   it->w = it->w / 2;
+
+   return tmp;
+}
+
+static inline Tilebuf_Rect *
+_split_rect_verticaly(Tilebuf_Rect *it)
+{
+   Tilebuf_Rect *tmp;
+
+   tmp = calloc(1, sizeof(Tilebuf_Rect));
+   if (!tmp) return NULL;
+   tmp->y = it->y + it->h / 2;
+   tmp->h = it->h / 2 + it->h % 2;
+   tmp->x = it->x;
+   tmp->w = it->w;
+   it->h = it->h / 2;
+
+   return tmp;
+}
 
 static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
@@ -2775,6 +2806,52 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
           }
         evas_common_tilebuf_clear(re->tb);
         re->cur_rect = EINA_INLIST_GET(re->rects);
+
+        if (re->tiling)
+          {
+             /* We will limit each rect to be fiting inside 16KB */
+             Tilebuf_Rect *it;
+
+             EINA_INLIST_FOREACH(re->cur_rect, it)
+               {
+                  while ((it->w * it->h * sizeof (int)) > (16 * 1024))
+                    {
+                       Tilebuf_Rect *tmp;
+
+                       /* Split the largest side first */
+                       if (it->w > it->h)
+                         {
+                            /* Let's try to divide it horizontaly */
+                            tmp = _split_rect_horizontaly(it);
+                            if (!tmp) break;
+                            re->cur_rect = eina_inlist_append(re->cur_rect, EINA_INLIST_GET(tmp));
+
+                            if ((it->w * it->h * sizeof (int)) <= (16 * 1024))
+                              break;
+
+                            /* Let's try to divide it verticaly */
+                            tmp = _split_rect_verticaly(it);
+                            if (!tmp) break;
+                            re->cur_rect = eina_inlist_append(re->cur_rect, EINA_INLIST_GET(tmp));
+                         }
+                       else
+                         {
+                            /* Let's try to divide it verticaly */
+                            tmp = _split_rect_verticaly(it);
+                            if (!tmp) break;
+                            re->cur_rect = eina_inlist_append(re->cur_rect, EINA_INLIST_GET(tmp));
+
+                            if ((it->w * it->h * sizeof (int)) <= (16 * 1024))
+                              break;
+
+                            /* Let's try to divide it horizontaly */
+                            tmp = _split_rect_horizontaly(it);
+                            if (!tmp) break;
+                            re->cur_rect = eina_inlist_append(re->cur_rect, EINA_INLIST_GET(tmp));
+                         }
+                    }
+               }
+          }
      }
    if (!re->cur_rect) return NULL;
    rect = (Tilebuf_Rect *)re->cur_rect;
