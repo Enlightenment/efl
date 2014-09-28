@@ -2,6 +2,9 @@
 #define ELM_WIDGET_INDEX_H
 
 #include "Elementary.h"
+#include "elm_index_item.eo.h"
+
+#include "elm_object_item_migration_temp.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
@@ -48,17 +51,17 @@ struct _Elm_Index_Data
    Eina_Bool             omit_enabled : 1;
 };
 
-typedef struct _Elm_Index_Item       Elm_Index_Item;
-struct _Elm_Index_Item
+typedef struct _Elm_Index_Item_Data       Elm_Index_Item_Data;
+struct _Elm_Index_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    const char      *letter;
    int              level;
    Evas_Smart_Cb    func;
 
    Eina_List       *omitted;
-   Elm_Index_Item  *head;
+   Elm_Index_Item_Data  *head;
 
    Eina_Bool        selected : 1; /**< a flag that remembers an item is selected. this is set true when mouse down/move occur above an item and when elm_index_item_selected_set() API is called. */
 };
@@ -99,11 +102,14 @@ struct _Elm_Index_Omit
     return
 
 #define ELM_INDEX_ITEM_CHECK(it)                            \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_INDEX_CHECK(it->base.widget);
+  if (EINA_UNLIKELY(!eo_isa((it->base->eo_obj), ELM_INDEX_ITEM_CLASS))) \
+    return
 
 #define ELM_INDEX_ITEM_CHECK_OR_RETURN(it, ...)                        \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_INDEX_CHECK(it->base.widget) __VA_ARGS__;
+  if (EINA_UNLIKELY(!eo_isa((it->base->eo_obj), ELM_INDEX_ITEM_CLASS))) \
+    return __VA_ARGS__;
+
+#define ELM_INDEX_ITEM_DATA_GET(o, sd) \
+  Elm_Index_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_INDEX_ITEM_CLASS)
 
 #endif
