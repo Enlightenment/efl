@@ -1,0 +1,248 @@
+class Elm_Gengrid_Item(Elm_Widget_Item)
+{
+      legacy_prefix: null;
+      eo_prefix: elm_obj_gengrid_item;
+      data: Elm_Gen_Item;
+      properties {
+           prev {
+                get {
+                     /*@
+                      Get the @b previous item in a gengrid widget's internal list of items,
+                      given a handle to one of those items.
+
+                      This returns the item placed before the @p item, on the container
+                      gengrid.
+
+                      @see elm_gengrid_item_next_get()
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                }
+           }
+           next {
+                get {
+                     /*@
+                      Get the @b next item in a gengrid widget's internal list of items,
+                      given a handle to one of those items.
+
+                      This returns the item placed after the @p item, on the container
+                      gengrid.
+
+                      @see elm_gengrid_item_prev_get()
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                }
+           }
+           selected {
+                get {
+                     /*@
+                      Get whether a given gengrid item is selected or not
+
+                      This API returns EINA_TRUE for all the items selected in multi-select mode as well.
+
+                      @see elm_gengrid_item_selected_set() for more details
+
+                      @ingroup Gengrid
+                      */
+                }
+                set {
+                     /*@
+                      Set whether a given gengrid item is selected or not
+
+                      This sets the selected state of an item. If multi-selection is
+                      not enabled on the containing gengrid and @p selected is @c
+                      EINA_TRUE, any other previously selected items will get
+                      unselected in favor of this new one.
+
+                      @see elm_gengrid_item_selected_get()
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                }
+           }
+           item_class {
+                get {
+                     /*@
+                      Get the Gengrid Item class for the given Gengrid Item.
+
+                      This returns the Gengrid_Item_Class for the given item. It can be used to examine
+                      the function pointers and item_style.
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     const (Elm_Gengrid_Item_Class) *itc; /*@ Gengrid Item class for the given item */
+                }
+           }
+           index {
+                get {
+                     /*@
+                      Get the index of the item. It is only valid once displayed.
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     int index; /*@ @return the position inside the list of item. */
+                }
+           }
+           pos {
+                get {
+                     /*@
+                      Get a given gengrid item's position, relative to the whole
+                      gengrid's grid area.
+
+                      This returns the "logical" position of the item within the
+                      gengrid. For example, @c (0, 1) would stand for first row,
+                      second column.
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     uint x; /*@ Pointer to variable to store the item's <b>row number</b>. */
+                     uint y; /*@ Pointer to variable to store the item's <b>column number</b>. */
+                }
+           }
+           select_mode {
+                get {
+                     /*@
+                      Get the gengrid item's select mode.
+
+                      (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+
+                      @see elm_gengrid_item_select_mode_set()
+
+                      @ingroup Gengrid
+                      */
+                }
+                set {
+                     /*@
+                      Set the gengrid item's select mode.
+
+                      elm_gengrid_select_mode_set() changes item's select mode.
+                      - ELM_OBJECT_SELECT_MODE_DEFAULT : The item will only call their selection func and
+                           callback when first becoming selected. Any further clicks will
+                           do nothing, unless you set always select mode.
+                      - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+                           every click will make the selected callbacks be called.
+                      - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select the item
+                           entirely and they will neither appear selected nor call selected
+                           callback functions.
+                      - ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY : This will apply no-finger-size rule
+                           with ELM_OBJECT_SELECT_MODE_NONE. No-finger-size rule makes an item can be
+                           smaller than lower limit. Clickable objects should be bigger than
+                           human touch point device (your finger) for some touch or
+                           small screen devices. So it is enabled, the item can be shrink than
+                           predefined finger-size value. And the item will be updated.
+
+                      @see elm_gengrid_item_select_mode_get()
+
+                      @ingroup Gengrid
+                      */
+                }
+                values {
+                     Elm_Object_Select_Mode mode; /*@ The selected mode */
+                }
+           }
+      }
+      methods {
+           /*      init { FIXME
+                   params {
+                   Evas_Smart_Cb func;
+                   const(void)* data;
+                   }
+                   }*/
+           show {
+                /*@
+                 Show the portion of a gengrid's internal grid containing a given
+                 item, @b immediately.
+
+                 This causes gengrid to @b redraw its viewport's contents to the
+                 region containing the given @p item item, if it is not fully
+                 visible.
+
+                 @see elm_gengrid_item_bring_in()
+
+                 @ingroup Gengrid
+                 */
+                params {
+                     @in Elm_Gengrid_Item_Scrollto_Type type; /*@ Where to position the item in the viewport. */
+                }
+           }
+           bring_in {
+                /*@
+                 Animatedly bring in, to the visible area of a gengrid, a given
+                 item on it.
+                 
+                 This causes gengrid to jump to the given @p item and show
+                 it (by scrolling), if it is not fully visible. This will use
+                 animation to do so and take a period of time to complete.
+
+                 @see elm_gengrid_item_show()
+
+                 @ingroup Gengrid
+                 */
+                params {
+                     @in Elm_Gengrid_Item_Scrollto_Type type; /*@ Where to position the item in the viewport. */
+                }
+           }
+           update {
+                /*@
+                 Update the contents of a given gengrid item
+
+                 This updates an item by calling all the item class functions
+                 again to get the contents, texts and states. Use this when the
+                 original item data has changed and you want the changes to be
+                 reflected.
+
+                 @ingroup Gengrid
+                 */
+           }
+           item_class_update {
+                /*@
+                 Update the item class of a gengrid item.
+
+                 This sets another class of the item, changing the way that it is
+                 displayed. After changing the item class, elm_gengrid_item_update() is
+                 called on the item @p it.
+
+                 @ingroup Gengrid
+                 */
+                params {
+                     @in const (Elm_Gengrid_Item_Class) *itc; /*@ The gengrid item class describing the function pointers and the item style. */
+                }
+           }
+      }
+      implements {
+           Eo.Base.constructor;
+           Elm_Widget_Item.del_pre;
+           Elm_Widget_Item.disable;
+           Elm_Widget_Item.signal_emit;
+           Elm_Widget_Item.focus.set;
+           Elm_Widget_Item.focus.get;
+           Elm_Widget_Item.part_text.get;
+           Elm_Widget_Item.part_content.get;
+           Elm_Widget_Item.tooltip_text_set;
+           Elm_Widget_Item.tooltip_style.get;
+           Elm_Widget_Item.tooltip_style.set;
+           Elm_Widget_Item.tooltip_window_mode.get;
+           Elm_Widget_Item.tooltip_window_mode.set;
+           Elm_Widget_Item.tooltip_content_cb_set;
+           Elm_Widget_Item.tooltip_unset;
+           Elm_Widget_Item.cursor.set;
+           Elm_Widget_Item.cursor_unset;
+      }
+}
+

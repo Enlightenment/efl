@@ -1,6 +1,8 @@
 #ifndef ELM_WIDGET_GENGRID_H
 #define ELM_WIDGET_GENGRID_H
 
+#define OBJECT_ITEMS_MIGRATION
+
 #include "elm_gen_common.h"
 #include "Elementary.h"
 
@@ -10,6 +12,7 @@
  * IT AT RUNTIME.
  */
 
+#include "elm_object_item_migration_temp.h"
 /**
  * @addtogroup Widget
  * @{
@@ -46,8 +49,8 @@ struct _Elm_Gengrid_Data
    Elm_Object_Item                      *last_selected_item;
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
-   Elm_Gen_Item                         *show_it;
-   Elm_Gen_Item                         *bring_in_it;
+   Elm_Object_Item                      *show_it;
+   Elm_Object_Item                      *bring_in_it;
    Elm_Gengrid_Item_Scrollto_Type        scroll_to_type;
 
    Ecore_Job                            *calc_job;
@@ -192,16 +195,19 @@ struct _Elm_Gengrid_Pan_Data
     return
 
 #define ELM_GENGRID_ITEM_CHECK(it)                          \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_GENGRID_CHECK(it->base.widget);
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, ); \
+  ELM_GENGRID_CHECK(it->base->widget);
 
 #define ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, ...)                      \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_GENGRID_CHECK(it->base.widget) __VA_ARGS__;
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, __VA_ARGS__); \
+  ELM_GENGRID_CHECK(it->base->widget) __VA_ARGS__;
 
 #define ELM_GENGRID_ITEM_CHECK_OR_GOTO(it, label)              \
-  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item_Data *)it, label); \
-  if (!it->base.widget || !eo_isa                              \
-        ((it->base.widget), ELM_GENGRID_CLASS)) goto label;
+  ELM_WIDGET_ITEM_CHECK_OR_GOTO(it->base, label); \
+  if (!it->base->widget || !eo_isa                              \
+        ((it->base->widget), ELM_GENGRID_CLASS)) goto label;
+
+#define ELM_GENGRID_ITEM_DATA_GET(o, sd) \
+  Elm_Gen_Item* sd = eo_data_scope_get((Eo *)o, ELM_GENGRID_ITEM_CLASS)
 
 #endif
