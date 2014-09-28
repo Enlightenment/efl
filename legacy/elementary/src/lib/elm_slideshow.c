@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
+#define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -97,27 +98,29 @@ _elm_slideshow_elm_layout_sizing_eval(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUS
    evas_object_size_hint_max_set(obj, minw, minh);
 }
 
-static Elm_Slideshow_Item *
-_item_prev_get(Elm_Slideshow_Item *item)
+static Elm_Slideshow_Item_Data *
+_item_prev_get(Elm_Slideshow_Item_Data *item)
 {
    ELM_SLIDESHOW_DATA_GET(WIDGET(item), sd);
-   Elm_Slideshow_Item *prev = eina_list_data_get(eina_list_prev(item->l));
+   Elm_Object_Item *eo_prev = eina_list_data_get(eina_list_prev(item->l));
 
-   if ((!prev) && (sd->loop))
-     prev = eina_list_data_get(eina_list_last(item->l));
+   if ((!eo_prev) && (sd->loop))
+     eo_prev = eina_list_data_get(eina_list_last(item->l));
 
+   ELM_SLIDESHOW_ITEM_DATA_GET(eo_prev, prev);
    return prev;
 }
 
-static Elm_Slideshow_Item *
-_item_next_get(Elm_Slideshow_Item *item)
+static Elm_Slideshow_Item_Data *
+_item_next_get(Elm_Slideshow_Item_Data *item)
 {
    ELM_SLIDESHOW_DATA_GET(WIDGET(item), sd);
-   Elm_Slideshow_Item *next = eina_list_data_get(eina_list_next(item->l));
+   Elm_Object_Item *eo_next = eina_list_data_get(eina_list_next(item->l));
 
-   if ((!next) && (sd->loop))
-     next = eina_list_data_get(sd->items);
+   if ((!eo_next) && (sd->loop))
+     eo_next = eina_list_data_get(sd->items);
 
+   ELM_SLIDESHOW_ITEM_DATA_GET(eo_next, next);
    return next;
 }
 
@@ -131,9 +134,9 @@ _on_size_hints_changed(void *data,
 }
 
 static void
-_item_realize(Elm_Slideshow_Item *item)
+_item_realize(Elm_Slideshow_Item_Data *item)
 {
-   Elm_Slideshow_Item *_item_prev, *_item_next;
+   Elm_Slideshow_Item_Data *_item_prev, *_item_next;
    Evas_Object *obj = WIDGET(item);
    int ac, bc, lc, ic = 0;
 
@@ -141,7 +144,7 @@ _item_realize(Elm_Slideshow_Item *item)
 
    if ((!VIEW(item)) && (item->itc->func.get))
      {
-        VIEW(item) = item->itc->func.get(elm_widget_item_data_get(item), obj);
+        VIEW(item) = item->itc->func.get(elm_object_item_data_get(EO_OBJ(item)), obj);
         item->l_built = eina_list_append(NULL, item);
         sd->items_built = eina_list_merge(sd->items_built, item->l_built);
         //FIXME: item could be shown by obj
@@ -173,7 +176,7 @@ _item_realize(Elm_Slideshow_Item *item)
                        ic++;
                        VIEW(_item_next) =
                          _item_next->itc->func.get(
-                           elm_widget_item_data_get(_item_next), obj);
+                           elm_object_item_data_get(EO_OBJ(_item_next)), obj);
                        _item_next->l_built =
                          eina_list_append(NULL, _item_next);
                        sd->items_built = eina_list_merge
@@ -205,7 +208,7 @@ _item_realize(Elm_Slideshow_Item *item)
                        ic++;
                        VIEW(_item_prev) =
                          _item_prev->itc->func.get(
-                           elm_widget_item_data_get(_item_prev), obj);
+                           elm_object_item_data_get(EO_OBJ(_item_prev)), obj);
                        _item_prev->l_built =
                          eina_list_append(NULL, _item_prev);
                        sd->items_built = eina_list_merge
@@ -233,7 +236,7 @@ _item_realize(Elm_Slideshow_Item *item)
         sd->items_built = eina_list_remove_list
             (sd->items_built, sd->items_built);
         if (item->itc->func.del)
-          item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
+          item->itc->func.del(elm_object_item_data_get(EO_OBJ(item)), VIEW(item));
         ELM_SAFE_FREE(VIEW(item), evas_object_del);
      }
 }
@@ -244,7 +247,7 @@ _on_slideshow_end(void *data,
                   const char *emission,
                   const char *source EINA_UNUSED)
 {
-   Elm_Slideshow_Item *item;
+   Elm_Slideshow_Item_Data *item;
    ELM_SLIDESHOW_DATA_GET(data, sd);
 
    item = sd->previous;
@@ -282,16 +285,15 @@ _timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static Eina_Bool
-_item_del_pre_hook(Elm_Object_Item *it)
+EOLIAN static Eina_Bool
+_elm_slideshow_item_elm_widget_item_del_pre(Eo *eo_item, Elm_Slideshow_Item_Data *item)
 {
-   Elm_Slideshow_Item *item = (Elm_Slideshow_Item *)it;
    ELM_SLIDESHOW_DATA_GET_OR_RETURN_VAL(WIDGET(item), sd, EINA_FALSE);
 
    if (sd->previous == item) sd->previous = NULL;
    if (sd->current == item)
      {
-        Eina_List *l = eina_list_data_find_list(sd->items, item);
+        Eina_List *l = eina_list_data_find_list(sd->items, eo_item);
         Eina_List *l2 = eina_list_next(l);
         sd->current = NULL;
         if (!l2)
@@ -308,7 +310,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    sd->items_built = eina_list_remove_list(sd->items_built, item->l_built);
 
    if ((VIEW(item)) && (item->itc->func.del))
-     item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
+     item->itc->func.del(elm_object_item_data_get((Elm_Object_Item *)eo_item), VIEW(item));
 
    return EINA_TRUE;
 }
@@ -390,55 +392,67 @@ _elm_slideshow_eo_base_constructor(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUSED)
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION));
 }
 
+EOLIAN static void
+_elm_slideshow_item_eo_base_constructor(Eo *obj, Elm_Slideshow_Item_Data *it)
+{
+   eo_do_super(obj, ELM_SLIDESHOW_ITEM_CLASS, eo_constructor());
+   it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+}
+
 EOLIAN static Elm_Object_Item*
 _elm_slideshow_item_add(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Slideshow_Item_Class *itc, const void *data)
 {
-   Elm_Slideshow_Item *item;
+   Eo *eo_item;
 
-   item = elm_widget_item_new(obj, Elm_Slideshow_Item);
-   if (!item) return NULL;
+   eo_item = eo_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
+   if (!eo_item) return NULL;
 
-   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
+   ELM_SLIDESHOW_ITEM_DATA_GET(eo_item, item);
+
    item->itc = itc;
-   item->l = eina_list_append(item->l, item);
-   elm_widget_item_data_set(item, data);
+   item->l = eina_list_append(item->l, eo_item);
+   eo_do(eo_item, elm_wdg_item_data_set(data));
 
    sd->items = eina_list_merge(sd->items, item->l);
 
-   if (!sd->current) elm_slideshow_item_show((Elm_Object_Item *)item);
+   if (!sd->current) elm_slideshow_item_show((Elm_Object_Item *)eo_item);
 
-   return (Elm_Object_Item *)item;
+   return (Elm_Object_Item *)eo_item;
 }
 
 EOLIAN static Elm_Object_Item*
 _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func)
 {
-   Elm_Slideshow_Item *item;
+   Eo *eo_item;
 
-   item = elm_widget_item_new(obj, Elm_Slideshow_Item);
-   if (!item) return NULL;
+   eo_item = eo_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
+   if (!eo_item) return NULL;
 
-   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
+   ELM_SLIDESHOW_ITEM_DATA_GET(eo_item, item);
+
    item->itc = itc;
-   item->l = eina_list_append(item->l, item);
-   elm_widget_item_data_set(item, data);
+   item->l = eina_list_append(item->l, eo_item);
+   eo_do(eo_item, elm_wdg_item_data_set(data));
 
    sd->items = eina_list_sorted_merge(sd->items, item->l, func);
 
-   if (!sd->current) elm_slideshow_item_show((Elm_Object_Item *)item);
+   if (!sd->current) elm_slideshow_item_show((Elm_Object_Item *)eo_item);
 
-   return (Elm_Object_Item *)item;
+   return (Elm_Object_Item *)eo_item;
 }
 
 EAPI void
 elm_slideshow_item_show(Elm_Object_Item *it)
 {
+   eo_do((Eo*)it, elm_obj_slideshow_item_show());
+}
+
+EOLIAN static void
+_elm_slideshow_item_show(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *item)
+{
    char buf[1024];
-   Elm_Slideshow_Item *item, *next = NULL;
+   Elm_Slideshow_Item_Data *next = NULL;
 
-   ELM_SLIDESHOW_ITEM_CHECK(it);
-
-   item = (Elm_Slideshow_Item *)it;
    ELM_SLIDESHOW_DATA_GET(WIDGET(item), sd);
 
    if (item == sd->current) return;
@@ -474,7 +488,7 @@ EOLIAN static void
 _elm_slideshow_next(Eo *obj, Elm_Slideshow_Data *sd)
 {
    char buf[1024];
-   Elm_Slideshow_Item *next = NULL;
+   Elm_Slideshow_Item_Data *next = NULL;
 
    if (sd->current) next = _item_next_get(sd->current);
 
@@ -511,7 +525,7 @@ EOLIAN static void
 _elm_slideshow_previous(Eo *obj, Elm_Slideshow_Data *sd)
 {
    char buf[1024];
-   Elm_Slideshow_Item *prev = NULL;
+   Elm_Slideshow_Item_Data *prev = NULL;
 
    if (sd->current) prev = _item_prev_get(sd->current);
 
@@ -620,18 +634,19 @@ _elm_slideshow_loop_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 EOLIAN static void
 _elm_slideshow_clear(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
-   Elm_Slideshow_Item *item;
+   Elm_Slideshow_Item_Data *item;
+   Eo *eo_item;
 
    sd->previous = NULL;
    sd->current = NULL;
    EINA_LIST_FREE(sd->items_built, item)
      {
         if (item->itc->func.del)
-          item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
+          item->itc->func.del(elm_object_item_data_get(EO_OBJ(item)), VIEW(item));
      }
 
-   EINA_LIST_FREE(sd->items, item)
-     elm_widget_item_free(item);
+   EINA_LIST_FREE(sd->items, eo_item)
+     eo_del(eo_item);
 }
 
 EOLIAN static const Eina_List*
@@ -643,13 +658,12 @@ _elm_slideshow_items_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 EOLIAN static Elm_Object_Item*
 _elm_slideshow_item_current_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
-   return (Elm_Object_Item *)sd->current;
+   return (Elm_Object_Item *)EO_OBJ(sd->current);
 }
 
-EAPI Evas_Object *
-elm_slideshow_item_object_get(const Elm_Object_Item *it)
+EOLIAN static Evas_Object *
+_elm_slideshow_item_object_get(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *it)
 {
-   ELM_SLIDESHOW_ITEM_CHECK_OR_RETURN(it, NULL);
    return VIEW(it);
 }
 
@@ -722,4 +736,5 @@ _elm_slideshow_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
    return &atspi_actions[0];
 }
 
+#include "elm_slideshow_item.eo.c"
 #include "elm_slideshow.eo.c"

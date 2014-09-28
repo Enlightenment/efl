@@ -2,6 +2,9 @@
 #define ELM_WIDGET_SLIDESHOW_H
 
 #include "Elementary.h"
+#include "elm_slideshow_item.eo.h"
+
+#include "elm_object_item_migration_temp.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
@@ -24,11 +27,11 @@
  * Base layout smart data extended with slideshow instance data.
  */
 typedef struct _Elm_Slideshow_Data       Elm_Slideshow_Data;
-typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item;
+typedef struct _Elm_Slideshow_Item_Data       Elm_Slideshow_Item_Data;
 
-struct _Elm_Slideshow_Item
+struct _Elm_Slideshow_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data           *base;
 
    Eina_List                      *l, *l_built;
 
@@ -41,8 +44,8 @@ struct _Elm_Slideshow_Data
    Eina_List            *items;
    Eina_List            *items_built;
 
-   Elm_Slideshow_Item   *current;
-   Elm_Slideshow_Item   *previous;
+   Elm_Slideshow_Item_Data   *current;
+   Elm_Slideshow_Item_Data   *previous;
 
    Eina_List            *transitions;
    const char           *transition;
@@ -89,12 +92,15 @@ struct _Elm_Slideshow_Data
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_SLIDESHOW_CLASS))) \
     return
 
-#define ELM_SLIDESHOW_ITEM_CHECK(it)                        \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_SLIDESHOW_CHECK(it->base.widget);
+#define ELM_SLIDESHOW_ITEM_CHECK(obj)                          \
+  if (EINA_UNLIKELY(!eo_isa(EO_OBJ(obj), ELM_SLIDESHOW_ITEM_CLASS))) \
+    return
 
-#define ELM_SLIDESHOW_ITEM_CHECK_OR_RETURN(it, ...)                    \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_SLIDESHOW_CHECK(it->base.widget) __VA_ARGS__;
+#define ELM_SLIDESHOW_ITEM_CHECK_OR_RETURN(obj, ...)           \
+  if (EINA_UNLIKELY(!eo_isa(EO_OBJ(obj), ELM_SLIDESHOW_ITEM_CLASS))) \
+    return __VA_ARGS__;
+
+#define ELM_SLIDESHOW_ITEM_DATA_GET(o, sd) \
+  Elm_Slideshow_Item_Data *sd = eo_data_scope_get((Eo *)o, ELM_SLIDESHOW_ITEM_CLASS)
 
 #endif

@@ -608,7 +608,8 @@ elm_widget_item.eo \
 elm_color_item.eo \
 elm_dayselector_item.eo \
 elm_hoversel_item.eo \
-elm_segment_control_item.eo
+elm_segment_control_item.eo \
+elm_slideshow_item.eo
 
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
 elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
@@ -724,8 +725,8 @@ elementaryeolianfiles_DATA = \
 	     elm_color_item.eo \
 	     elm_dayselector_item.eo \
 	     elm_hoversel_item.eo \
-	     elm_segment_control_item.eo
-
+	     elm_segment_control_item.eo \
+	     elm_slideshow_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
