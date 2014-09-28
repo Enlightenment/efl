@@ -20,10 +20,15 @@
 # include "config.h"
 #endif
 
+#include <time.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_safety_checks.h"
 #include "eina_value.h"
 #include "eina_stringshare.h"
-#include <time.h>
 
 
 typedef struct _Eina_Value_Util_Struct_Desc
