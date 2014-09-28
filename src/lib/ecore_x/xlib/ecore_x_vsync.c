@@ -369,8 +369,10 @@ _drm_link(void)
    return 1;
 }
 
+#define DRM_HAVE_NVIDIA 1
+
 static int
-_drm_init(void)
+_drm_init(int *flags)
 {
    struct stat st;
    char buf[512];
@@ -480,12 +482,13 @@ _drm_init(void)
                   if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
                     fprintf(stderr, "Whitelisted intel OK\n");
                   ok = EINA_TRUE;
+                  goto checkdone;
                }
           }
-        else if ((drmverbroken->version_major >= 1) &&
-                 (drmverbroken->version_minor >= 6) &&
-                 (drmverbroken->name > (char *)4000L) &&
-                 (drmverbroken->date_len < 200))
+        if ((drmverbroken->version_major >= 1) &&
+            (drmverbroken->version_minor >= 6) &&
+            (drmverbroken->name > (char *)4000L) &&
+            (drmverbroken->date_len < 200))
           {
              // whitelist of known-to-work drivers
              if ((!strcmp(drmverbroken->name, "i915")) &&
@@ -494,8 +497,34 @@ _drm_init(void)
                   if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
                     fprintf(stderr, "Whitelisted intel OK\n");
                   ok = EINA_TRUE;
+                  goto checkdone;
                }
           }
+        if ((drmver->version_major >= 0) &&
+            (drmver->version_minor >= 0) &&
+            (drmver->name > (char *)4000L) &&
+            (drmver->date_len < 200))
+          {
+             if ((!strcmp(drmver->name, "nvidia-drm")) &&
+                 (strstr(drmver->desc, "NVIDIA DRM driver")))
+               {
+                  *flags |= DRM_HAVE_NVIDIA;
+                  goto checkdone;
+               }
+          }
+        if ((drmverbroken->version_major >= 0) &&
+            (drmverbroken->version_minor >= 0) &&
+            (drmverbroken->name > (char *)4000L) &&
+            (drmverbroken->date_len < 200))
+          {
+             if ((!strcmp(drmverbroken->name, "nvidia-drm")) &&
+                 (strstr(drmverbroken->desc, "NVIDIA DRM driver")))
+               {
+                  *flags |= DRM_HAVE_NVIDIA;
+                  goto checkdone;
+               }
+          }
+checkdone:
         sym_drmFreeVersion(drmver);
         if (!ok)
           {
@@ -701,6 +730,7 @@ _vsync_init(void)
 {
    static int done = 0;
    struct stat stb;
+   int flags = 0;
 
    if (done) return;
 
@@ -713,19 +743,32 @@ _vsync_init(void)
           {
              if (_drm_link())
                {
-                  if (_drm_init())
-                    {
-                       mode = 1;
-                    }
+                  if (_drm_init(&flags)) mode = 1;
                }
           }
 #endif
         // nvidia gl vsync slave mode
         if (mode == 0)
           {
+             // we appear to have an nvidia driver running
              if (!stat("/dev/nvidiactl", &stb))
                {
-                  mode = 2;
+                  if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                    fprintf(stderr, "We appear to have an nvidia driver: drm flags %i\n", flags);
+                  if (
+                      // we have dri device AND it's an nvidia one
+                      ((!stat("/dev/dri/card0", &stb)) &&
+                       (flags & DRM_HAVE_NVIDIA))
+                      ||
+                      // or we have no dri device, and no nvidia flags
+                      ((stat("/dev/dri/card0", &stb)) &&
+                       (flags == 0))
+                      )
+                    {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "Using nvidia vsync slave proc\n");
+                       mode = 2;
+                    }
                }
           }
      }
