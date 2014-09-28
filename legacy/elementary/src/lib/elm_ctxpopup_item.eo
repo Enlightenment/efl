@@ -1,0 +1,59 @@
+class Elm_Ctxpopup_Item(Elm_Widget_Item)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_obj_ctxpopup_item;
+   properties {
+      prev {
+         get {
+            /*@
+             Get the item before @p it in a ctxpopup widget's internal list of
+             items.
+
+             @see elm_ctxpopup_item_next_get()
+
+             @since 1.11
+             @ingroup Ctxpopup
+             */
+         }
+         values {
+              Elm_Object_Item *item; /*@ The item before the object in its parent's list. If there is no
+                                       previous item for @p it or there's an error, @c NULL is returned. */
+         }
+      }
+      next {
+         get {
+            /*@
+             Get the item after @p it in a ctxpopup widget's
+             internal list of items.
+
+             @see elm_ctxpopup_item_prev_get()
+
+             @since 1.11
+             @ingroup Ctxpopup
+             */
+         }
+         values {
+              Elm_Object_Item *item; /*@ The item after the object in its parent's list. If there is no
+                                       previous item for @p it or there's an error, @c NULL is returned. */
+         }
+      }
+   }
+   methods {
+      init {
+         params {
+            Evas_Smart_Cb func;
+            const(void) * data;
+         }
+      }
+   }
+   implements {
+        Eo.Base.constructor;
+        Elm_Widget_Item.del_pre;
+        Elm_Widget_Item.disable;
+        Elm_Widget_Item.signal_emit;
+        Elm_Widget_Item.part_text.get;
+        Elm_Widget_Item.part_text.set;
+        Elm_Widget_Item.part_content.get;
+        Elm_Widget_Item.part_content.set;
+   }
+}
