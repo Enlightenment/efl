@@ -59,11 +59,11 @@ struct _Callback_Data
 };
 
 static Eina_Bool
-_menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item *item)
+_menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item_Data *item)
 {
    int32_t id;
    Eina_List *l;
-   Elm_Menu_Item *subitem;
+   Elm_Menu_Item_Data *subitem;
 
    id = ++dbus_menu->timestamp;
    if (!eina_hash_add(dbus_menu->elements, &id, item))
@@ -168,7 +168,7 @@ _str_to_property(const char *str)
 }
 
 static Eina_Bool
-_freedesktop_icon_exists(Elm_Menu_Item *item)
+_freedesktop_icon_exists(Elm_Menu_Item_Data *item)
 {
    if (!item->icon_str) return EINA_FALSE;
 
@@ -181,11 +181,9 @@ _freedesktop_icon_exists(Elm_Menu_Item *item)
 }
 
 static Eina_Bool
-_property_exists(Elm_Menu_Item *item,
+_property_exists(Elm_Menu_Item_Data *item,
                  Elm_DBus_Property property)
 {
-   Elm_Object_Item *item_obj;
-
    if (item->separator)
      {
         if (property == ELM_DBUS_PROPERTY_TYPE) return EINA_TRUE;
@@ -203,8 +201,7 @@ _property_exists(Elm_Menu_Item *item,
         return EINA_FALSE;
 
       case ELM_DBUS_PROPERTY_ENABLED:
-        item_obj = (Elm_Object_Item *)item;
-        return elm_object_item_disabled_get(item_obj);
+        return elm_object_item_disabled_get((Elm_Object_Item *)EO_OBJ(item));
 
       case ELM_DBUS_PROPERTY_ICON_NAME:
         return _freedesktop_icon_exists(item);
@@ -221,19 +218,18 @@ _property_exists(Elm_Menu_Item *item,
 // Ad-hoc dbusmenu property dictionary subset implementation
 // Depends on _property_exists results
 static void
-_property_append(Elm_Menu_Item *item,
+_property_append(Elm_Menu_Item_Data *item,
                  Elm_DBus_Property property,
                  Eldbus_Message_Iter *iter)
 {
    Eldbus_Message_Iter *variant = NULL;
-   Elm_Object_Item *item_obj = (Elm_Object_Item *)item;
    const char *t;
 
    switch (property)
      {
       case ELM_DBUS_PROPERTY_LABEL:
         variant = eldbus_message_iter_container_new(iter, 'v', "s");
-        t = elm_object_item_part_text_get(item_obj, NULL);
+        t = elm_object_item_part_text_get((Elm_Object_Item *)EO_OBJ(item), NULL);
         if (!t)
           {
              t = elm_object_part_text_get(item->content, NULL);
@@ -272,7 +268,7 @@ _property_append(Elm_Menu_Item *item,
 }
 
 static void
-_property_dict_build(Elm_Menu_Item *item,
+_property_dict_build(Elm_Menu_Item_Data *item,
                      Eina_List *property_list, Eldbus_Message_Iter *iter)
 {
    char *propstr;
@@ -299,12 +295,12 @@ _property_dict_build(Elm_Menu_Item *item,
 }
 
 static void
-_layout_build_recursive(Elm_Menu_Item *item,
+_layout_build_recursive(Elm_Menu_Item_Data *item,
                         Eina_List *property_list, unsigned recursion_depth,
                         Eldbus_Message_Iter *iter)
 {
    Eina_List *l;
-   Elm_Menu_Item *subitem;
+   Elm_Menu_Item_Data *subitem;
    Eldbus_Message_Iter *layout, *array, *variant;
 
    layout = eldbus_message_iter_container_new(iter, 'r', NULL);
@@ -337,7 +333,7 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
    const Eina_List *ret = NULL;
    Eina_List *items;
    Eina_List *l;
-   Elm_Menu_Item *item;
+   Elm_Menu_Item_Data *item;
 
    layout = eldbus_message_iter_container_new(iter, 'r', NULL);
    eldbus_message_iter_basic_append(layout, 'i', 0);
@@ -395,7 +391,7 @@ _empty_properties_handle(Eina_List *property_list)
 static Eina_Bool
 _event_handle(Elm_DBus_Menu *dbus_menu, Eldbus_Message_Iter *iter, int *error_id)
 {
-   Elm_Menu_Item *item;
+   Elm_Menu_Item_Data *item;
    const char *event;
    int id;
    int32_t i;
@@ -413,7 +409,7 @@ _event_handle(Elm_DBus_Menu *dbus_menu, Eldbus_Message_Iter *iter, int *error_id
      }
 
    if (!strcmp(event, "clicked"))
-     _elm_dbus_menu_item_select_cb((Elm_Object_Item *)item);
+     _elm_dbus_menu_item_select_cb((Elm_Object_Item *)EO_OBJ(item));
 
    return EINA_TRUE;
 }
@@ -424,7 +420,7 @@ _elm_dbus_menu_add(Eo *menu)
    Elm_DBus_Menu *dbus_menu;
    const Eina_List *ret = NULL;
    Eina_List *items, *l;
-   Elm_Menu_Item *item;
+   Elm_Menu_Item_Data *item;
 
    ELM_MENU_CHECK(menu) NULL;
 
@@ -483,7 +479,7 @@ _method_layout_get(const Eldbus_Service_Interface *iface,
    Eldbus_Message *reply;
    Eldbus_Message_Iter *iter, *array;
    Elm_DBus_Menu *dbus_menu;
-   Elm_Menu_Item *item = NULL;
+   Elm_Menu_Item_Data *item = NULL;
 
    dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
@@ -532,7 +528,7 @@ _method_group_properties_get(const Eldbus_Service_Interface *iface,
    Eldbus_Message_Iter *iter, *array, *tuple;
    Eina_List *property_list = NULL;
    Elm_DBus_Menu *dbus_menu;
-   Elm_Menu_Item *item;
+   Elm_Menu_Item_Data *item;
    char *property;
    int id;
    int32_t i;
@@ -595,7 +591,7 @@ _method_property_get(const Eldbus_Service_Interface *iface,
    Eldbus_Message_Iter *iter, *variant;
    Elm_DBus_Property property;
    Elm_DBus_Menu *dbus_menu;
-   Elm_Menu_Item *item;
+   Elm_Menu_Item_Data *item;
    int id;
    int32_t i;
    char *name;
@@ -996,7 +992,7 @@ _elm_dbus_menu_app_menu_unregister(Eo *obj)
 int
 _elm_dbus_menu_item_add(Elm_DBus_Menu *dbus_menu, Elm_Object_Item *item_obj)
 {
-   Elm_Menu_Item *item = (Elm_Menu_Item *)item_obj;
+   ELM_MENU_ITEM_DATA_GET(item_obj, item);
    int32_t id = dbus_menu->timestamp + 1;
 
    if (!eina_hash_add(dbus_menu->elements, &id, item))

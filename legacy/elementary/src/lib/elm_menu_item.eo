@@ -1,0 +1,134 @@
+class Elm_Menu_Item(Elm_Widget_Item)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_obj_menu_item;
+   properties {
+        icon_name {
+             get {
+                 /*@
+                  Get the string representation from the icon of a menu item
+
+                  Once this icon is set, any previously set icon will be deleted.
+                  To hide icon set it to "".
+
+                  @see elm_menu_item_icon_name_set()
+                  @ingroup Menu
+                 */
+             }
+             set {
+                 /*@
+                  Set the icon of a menu item to the standard icon with name @p icon
+
+                  Once this icon is set, any previously set icon will be deleted.
+                  To hide icon set it to "".
+
+                  @ingroup Menu
+                 */
+             }
+             values {
+                 const (char)* icon; /*@ The name of icon object */
+             }
+        }
+        selected {
+             get {
+                 /*@
+                  Get the selected state of @p item.
+
+                  @see elm_menu_item_selected_set()
+
+                  @ingroup Menu
+                 */
+             }
+             set {
+                 /*@
+                  Set the selected state of @p item.
+
+                  @ingroup Menu
+                 */
+             }
+             values {
+                 Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+             }
+        }
+   }
+   methods {
+      prev_get @const {
+            /*@
+             Get the previous item in the menu.
+
+             @ingroup Menu
+             */
+            return: Elm_Object_Item*;
+        }
+      next_get @const {
+            /*@
+             Get the next item in the menu.
+
+             @ingroup Menu
+             */
+             return: Elm_Object_Item*;
+        }
+      index_get @const {
+            /*@
+             Get the next item in the menu.
+
+             @ingroup Menu
+             */
+             return: uint;
+        }
+     subitems_clear {
+            /*@
+             Remove all sub-items (children) of the given item
+             @since 1.8
+
+             This removes all items that are children (and their descendants) of the
+             given item @p it.
+
+             @see elm_object_item_del()
+
+             @ingroup Menu
+             */
+        }
+     subitems_get @const {
+            /*@
+             Returns a list of @p item's subitems.
+
+             @see elm_menu_add()
+
+             @ingroup Menu
+             */
+             return: const (Eina_List) *; /*@ An Eina_List* of @p item's subitems */
+        }
+     is_separator @const {
+            /*@
+             Returns whether @p item is a separator.
+
+             @see elm_menu_item_separator_add()
+
+             @ingroup Menu
+             */
+             return: bool; /*@ If true, @p item is a separator */
+        }
+     object_get @const {
+            /*@
+             Get the real Evas(Edje) object created to implement the view of a given
+             menu @p item.
+
+             @warning Don't manipulate this object!
+
+             @ingroup Menu
+             */
+             return: Evas_Object*; /*@ The base Edje object containing the swallowed content associated with@p it. */
+        }
+   }
+   implements {
+        Eo.Base.constructor;
+        Elm_Widget_Item.del_pre;
+        Elm_Widget_Item.disable;
+        Elm_Widget_Item.signal_emit;
+        Elm_Widget_Item.part_text.get;
+        Elm_Widget_Item.part_text.set;
+        Elm_Widget_Item.part_content.get;
+        Elm_Widget_Item.part_content.set;
+   }
+}
