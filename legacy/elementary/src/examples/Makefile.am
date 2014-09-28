@@ -110,6 +110,7 @@ popup_example_02.c \
 popup_example_03.c \
 progressbar_example.c \
 radio_example_01.c \
+radio_example_02.c \
 segment_control_example.c \
 separator_example_01.c \
 slider_example.c \
@@ -260,6 +261,7 @@ popup_example_02 \
 popup_example_03 \
 progressbar_example \
 radio_example_01 \
+radio_example_02 \
 segment_control_example \
 separator_example_01 \
 slider_example \
@@ -369,6 +371,7 @@ panes_example:panes_example.png:0.0 \
 ctxpopup_example_01:ctxpopup_example_01.png:0.0 \
 separator_example_01:separator_example_01.png:0.0 \
 radio_example_01:radio_example_01.png:0.0 \
+radio_example_02:radio_example_02.png:0.0 \
 panel_example_01:panel_example_01.png:0.0 \
 gengrid_example:gengrid_example.png:0.0 \
 genlist_example_01:genlist_example_01.png:0.1 \
