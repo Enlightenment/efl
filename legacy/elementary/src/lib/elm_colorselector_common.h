@@ -30,50 +30,10 @@ typedef enum
    ELM_COLORSELECTOR_ALL /**< all possible color selector is displayed */
 } Elm_Colorselector_Mode;
 
-/**
- * Get Palette item's color.
- *
- * @param it The color palette item.
- * @param r integer pointer for r-value of color
- * @param g integer pointer for g-value of color
- * @param b integer pointer for b-value of color
- * @param a integer pointer for a-value of color
- *
- * @ingroup Colorselector
- */
 EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r, int *g, int *b, int *a);
 
-/**
- * Set palette item's color.
- *
- * @param it The color palette item.
- * @param r r-value of color
- * @param g g-value of color
- * @param b b-value of color
- * @param a a-value of color
- *
- * @ingroup Colorselector
- */
 EAPI void elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r, int g, int b, int a);
 
-/**
- * Get the selected state of color palette item.
- *
- * @param it The Colorpalette item
- * @return @c EINA_TRUE if the item is selected, @c EINA_FALSE otherwise.
- *
- * @since 1.9
- * @ingroup Colorselector
- */
 EAPI Eina_Bool elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it);
 
-/**
- * Set the selected state of color palette item
- *
- * @param it The Colorpalette item
- * @param selected if it's @c EINA_TRUE, select the item otherwise, unselect the item
- *
- * @since 1.9
- * @ingroup Colorselector
- */
 EAPI void elm_colorselector_palette_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);

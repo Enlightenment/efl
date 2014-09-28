@@ -1,0 +1,56 @@
+class Elm_Color_Item(Elm_Widget_Item)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_obj_color_item;
+   properties {
+        color {
+             get {
+                 /*@
+                 Get Palette item's color.
+
+                 @ingroup Colorselector
+                 */
+             }
+             set {
+                 /*@
+                 Set Palette item's color.
+
+                 @ingroup Colorselector
+                 */
+             }
+             values {
+                 int r; /*@ red-value of color   */
+                 int g; /*@ green-value of color */
+                 int b; /*@ blue-value of color  */
+                 int a; /*@ alpha-value of color */
+             }
+        }
+        selected {
+             get {
+                 /*@
+                 Get the selected state of color palette item
+
+                 @since 1.9
+                 @ingroup Colorselector
+                 */
+             }
+             set {
+                 /*@
+                 Set the selected state of color palette item
+
+                 @since 1.9
+                 @ingroup Colorselector
+                 */
+             }
+             values {
+                 Eina_Bool selected; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
+             }
+        }
+   }
+   implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Elm_Widget_Item.access_register;
+        Elm_Widget_Item.signal_emit;
+   }
+}

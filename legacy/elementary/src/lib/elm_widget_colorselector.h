@@ -2,6 +2,9 @@
 #define ELM_WIDGET_COLORSELECTOR_H
 
 #include "Elementary.h"
+#include "elm_color_item.eo.h"
+
+#include "elm_object_item_migration_temp.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
@@ -87,10 +90,10 @@ struct _Color_Bar_Data
    Color_Type   color_type;
 };
 
-typedef struct _Elm_Color_Item Elm_Color_Item;
-struct _Elm_Color_Item
+typedef struct _Elm_Color_Item_Data Elm_Color_Item_Data;
+struct _Elm_Color_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    Evas_Object    *color_obj;
    Elm_Color_RGBA *color;
@@ -121,16 +124,19 @@ struct _Elm_Color_Item
        return val;                                            \
     }
 
+#define ELM_COLOR_ITEM_DATA_GET(o, sd) \
+  Elm_Color_Item_Data * sd = eo_data_scope_get((Eo *)o, ELM_COLOR_ITEM_CLASS)
+
 #define ELM_COLORSELECTOR_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_COLORSELECTOR_CLASS))) \
     return
 
-#define ELM_COLORSELECTOR_ITEM_CHECK(it)                    \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_COLORSELECTOR_CHECK(it->base.widget);
+#define ELM_COLORSELECTOR_ITEM_CHECK(it)                       \
+  if (EINA_UNLIKELY(!eo_isa((Eo *)it->base->eo_obj, ELM_COLOR_ITEM_CLASS))) \
+    return
 
-#define ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_COLORSELECTOR_CHECK(it->base.widget) __VA_ARGS__;
+#define ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)        \
+  if (EINA_UNLIKELY(!eo_isa((Eo *)it->base->eo_obj, ELM_COLOR_ITEM_CLASS))) \
+    return __VA_ARGS__;
 
 #endif

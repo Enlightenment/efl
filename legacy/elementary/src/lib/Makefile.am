@@ -604,7 +604,8 @@ elm_video.eo \
 elm_web.eo \
 elm_widget.eo \
 elm_win.eo \
-elm_widget_item.eo
+elm_widget_item.eo \
+elm_color_item.eo
 
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
 elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
@@ -716,11 +717,13 @@ elementaryeolianfiles_DATA = \
 	     elm_video.eo \
 	     elm_web.eo \
 	     elm_win.eo \
-	     elm_widget_item.eo
+	     elm_widget_item.eo \
+	     elm_color_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
 includecxxbindingsdir = $(includedir)/elementary-cxx-@VMAJ@
+
 if HAVE_CXX11
 nodist_includecxxbindings_HEADERS = Elementary.hh $(elm_eolian_hh)
 CLEANFILES += Elementary.hh $(nodist_includecxxbindings_HEADERS)
