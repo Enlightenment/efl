@@ -23,28 +23,36 @@
 int fcntl(int fd, int cmd, ...)
 {
    va_list va;
-   HANDLE  h;
    int     res = -1;
 
    va_start (va, cmd);
 
-   h = (HANDLE)_get_osfhandle(fd);
-   if (h == INVALID_HANDLE_VALUE)
-     return -1;
-
    if (cmd == F_GETFD)
      {
+        HANDLE  h;
         DWORD flag;
 
+        h = (HANDLE)_get_osfhandle(fd);
+        if (h == INVALID_HANDLE_VALUE)
+          return -1;
+
 	if (!GetHandleInformation(h, &flag))
-	  return -1;
+          {
+             /* FIXME: should we close h ? MSDN seems to say that */
+             return -1;
+          }
 
 	res = 0;
      }
 
    if (cmd == F_SETFD)
      {
+        HANDLE  h;
         long flag;
+
+        h = (HANDLE)_get_osfhandle(fd);
+        if (h == INVALID_HANDLE_VALUE)
+          return -1;
 
         flag = va_arg(va, long);
         if (flag == FD_CLOEXEC)
@@ -73,7 +81,7 @@ int fcntl(int fd, int cmd, ...)
              ret = getsockopt((SOCKET)fd, SOL_SOCKET, SO_TYPE, (char *)&type, &len);
              if (!ret && (type == SOCK_STREAM))
                {
-                  if (!ioctlsocket((SOCKET)fd, FIONBIO, &arg) == SOCKET_ERROR)
+                  if (ioctlsocket((SOCKET)fd, FIONBIO, &arg) != SOCKET_ERROR)
                     res = 0;
                }
           }
