@@ -155,6 +155,11 @@
  * @author Anand <anand.km@@samsung.com>
  * @author Subhransu Sekhar Mohanty <sub.mohanty@@samsung.com>
  * @author Rajesh P S <rajeshps@@samsung.com>
+ * @author Srivardhan Hebbar <sri.hebbar@@samsung.com>
+ * @author Savio Sena <savio@@expertisesolutions.com.br>
+ * @author Jae Yong Hwang <j_yong.hwang@@samsung.com>
+ * @author Kabeer Khan <kabeer.khan@@samsung.com>
+ * @author yinsc <shouchen.yin@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
