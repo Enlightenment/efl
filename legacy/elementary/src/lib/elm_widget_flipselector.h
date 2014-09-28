@@ -8,6 +8,8 @@
  * FINAL. CALL elm_widget_api_check(ELM_INTERNAL_API_VERSION) TO CHECK
  * IT AT RUNTIME.
  */
+#include "elm_object_item_migration_temp.h"
+#include "elm_flipselector_item.eo.h"
 
 /**
  * @addtogroup Widget
@@ -41,10 +43,10 @@ struct _Elm_Flipselector_Data
    Eina_Bool             deleting : 1;
 };
 
-typedef struct _Elm_Flipselector_Item       Elm_Flipselector_Item;
-struct _Elm_Flipselector_Item
+typedef struct _Elm_Flipselector_Item_Data       Elm_Flipselector_Item_Data;
+struct _Elm_Flipselector_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
 
    const char   *label;
    Evas_Smart_Cb func;
@@ -72,16 +74,19 @@ struct _Elm_Flipselector_Item
        return val;                                           \
     }
 
-#define ELM_FLIPSELECTOR_CHECK(obj)                              \
+#define ELM_FLIPSELECTOR_ITEM_DATA_GET(o, sd) \
+  Elm_Flipselector_Item_Data * sd = eo_data_scope_get((Eo *)o, ELM_FLIPSELECTOR_ITEM_CLASS)
+
+#define ELM_FLIPSELECTOR_CHECK(obj)                          \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_FLIPSELECTOR_CLASS))) \
     return
 
 #define ELM_FLIPSELECTOR_ITEM_CHECK(it)                     \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_FLIPSELECTOR_CHECK(it->base.widget);
+  if (EINA_UNLIKELY(!eo_isa(((Eo *)it->base->eo_obj), ELM_FLIPSELECTOR_ITEM_CLASS))) \
+    return
 
 #define ELM_FLIPSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                 \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_FLIPSELECTOR_CHECK(it->base.widget) __VA_ARGS__;
+  if (EINA_UNLIKELY(!eo_isa(((Eo *)it->base->eo_obj), ELM_FLIPSELECTOR_ITEM_CLASS))) \
+    return __VA_ARGS__;
 
 #endif
