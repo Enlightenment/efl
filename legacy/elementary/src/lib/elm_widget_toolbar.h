@@ -9,6 +9,7 @@
  * IT AT RUNTIME.
  */
 
+#include "elm_object_item_migration_temp.h"
 /**
  * @addtogroup Widget
  * @{
@@ -20,7 +21,7 @@
  * widgets which are a toolbar with some more logic on top.
  */
 
-typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
+typedef struct _Elm_Toolbar_Item_Data Elm_Toolbar_Item_Data;
 
 /**
  * Base widget smart data extended with toolbar instance data.
@@ -33,11 +34,11 @@ struct _Elm_Toolbar_Data
    Evas_Object                          *bx, *more, *bx_more, *bx_more2;
    Evas_Object                          *menu_parent;
    Eina_Inlist                          *items;
-   Elm_Toolbar_Item                     *more_item;
-   Elm_Toolbar_Item                     *selected_item; /**< a selected item by mouse click, return key, api, and etc. */
+   Elm_Toolbar_Item_Data                *more_item;
+   Elm_Object_Item                      *selected_item; /**< a selected item by mouse click, return key, api, and etc. */
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
-   Elm_Toolbar_Item                     *reorder_empty, *reorder_item;
+   Elm_Toolbar_Item_Data                *reorder_empty, *reorder_item;
    Elm_Toolbar_Shrink_Mode               shrink_mode;
    Elm_Icon_Lookup_Order                 lookup_order;
    int                                   theme_icon_size, priv_icon_size,
@@ -59,9 +60,9 @@ struct _Elm_Toolbar_Data
    Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the toolbar at the moment. This flag is set to true on mouse and reset to false on mouse up. */
 };
 
-struct _Elm_Toolbar_Item
+struct _Elm_Toolbar_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data     *base;
    EINA_INLIST;
 
    const char   *label;
@@ -73,7 +74,7 @@ struct _Elm_Toolbar_Item
    Evas_Object  *proxy;
    Evas_Smart_Cb func;
    Elm_Transit  *trans;
-   Elm_Toolbar_Item *reorder_to;
+   Elm_Toolbar_Item_Data *reorder_to;
    struct
    {
       int       priority;
@@ -128,15 +129,18 @@ struct _Elm_Toolbar_Item_State
     return
 
 #define ELM_TOOLBAR_ITEM_CHECK(it)                          \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_TOOLBAR_CHECK(it->base.widget);
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, ); \
+  ELM_TOOLBAR_CHECK(it->base->widget);
 
 #define ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, ...)                      \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_TOOLBAR_CHECK(it->base.widget) __VA_ARGS__;
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, __VA_ARGS__); \
+  ELM_TOOLBAR_CHECK(it->base->widget) __VA_ARGS__;
 
 #define ELM_TOOLBAR_ITEM_CHECK_OR_GOTO(it, label)              \
-  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item_Data *)it, label); \
-  if (!it->base.widget || !eo_isa ((it->base.widget), ELM_TOOLBAR_CLASS)) goto label;
+  ELM_WIDGET_ITEM_CHECK_OR_GOTO(it->base, label); \
+  if (!it->base->widget || !eo_isa ((it->base->widget), ELM_TOOLBAR_CLASS)) goto label;
+
+#define ELM_TOOLBAR_ITEM_DATA_GET(o, sd) \
+  Elm_Toolbar_Item_Data* sd = eo_data_scope_get((Eo *)o, ELM_TOOLBAR_ITEM_CLASS)
 
 #endif
