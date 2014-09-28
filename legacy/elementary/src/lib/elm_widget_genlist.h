@@ -1,6 +1,8 @@
 #ifndef ELM_WIDGET_GENLIST_H
 #define ELM_WIDGET_GENLIST_H
 
+#define OBJECT_ITEMS_MIGRATION
+
 #include "elm_gen_common.h"
 #include "Elementary.h"
 
@@ -10,6 +12,7 @@
  * IT AT RUNTIME.
  */
 
+#include "elm_object_item_migration_temp.h"
 /**
  * @addtogroup Widget
  * @{
@@ -324,16 +327,19 @@ struct _Elm_Genlist_Pan_Data
     return
 
 #define ELM_GENLIST_ITEM_CHECK(it)                          \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_GENLIST_CHECK(it->base.widget);
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, ); \
+  ELM_GENLIST_CHECK(it->base->widget);
 
 #define ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, ...)                      \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_GENLIST_CHECK(it->base.widget) __VA_ARGS__;
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, __VA_ARGS__); \
+  ELM_GENLIST_CHECK(it->base->widget) __VA_ARGS__;
 
 #define ELM_GENLIST_ITEM_CHECK_OR_GOTO(it, label)              \
-  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item_Data *)it, label); \
-  if (!it->base.widget || !eo_isa                              \
-        ((it->base.widget), ELM_GENLIST_CLASS)) goto label;
+  ELM_WIDGET_ITEM_CHECK_OR_GOTO(it->base, label); \
+  if (!it->base->widget || !eo_isa                              \
+        ((it->base->widget), ELM_GENLIST_CLASS)) goto label;
+
+#define ELM_GENLIST_ITEM_DATA_GET(o, sd) \
+  Elm_Gen_Item* sd = eo_data_scope_get((Eo *)o, ELM_GENLIST_ITEM_CLASS)
 
 #endif
