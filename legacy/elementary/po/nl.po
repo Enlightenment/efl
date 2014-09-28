@@ -4,11 +4,12 @@
 # This file is distributed under the same license as the elementary package.
 # Fabian Nowak <timystery@arcor.de>, 2011.
 #
+#: src/lib/elm_config.c:3207
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-23 02:26+0900\n"
+"POT-Creation-Date: 2014-09-28 22:16+0900\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -20,20 +21,20 @@ msgstr ""
 "X-Poedit-Language: Dutch\n"
 "X-Poedit-Country: NETHERLANDS\n"
 
-#: src/lib/elc_fileselector.c:1400
+#: src/lib/elc_fileselector.c:1412
 msgid "Up"
 msgstr "Omhoog"
 
-#: src/lib/elc_fileselector.c:1415
+#: src/lib/elc_fileselector.c:1427
 msgid "Home"
 msgstr "Persoonlijke map"
 
-#: src/lib/elc_fileselector.c:1631 src/lib/elm_entry.c:1481
-#: src/lib/elm_entry.c:1506
+#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1508
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/lib/elc_fileselector.c:1640
+#: src/lib/elc_fileselector.c:1651
 msgid "OK"
 msgstr "OK"
 
@@ -165,7 +166,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:3228
+#: src/lib/elm_config.c:3223
 msgid "default:LTR"
 msgstr "Standaard: LTR"
 
@@ -177,23 +178,23 @@ msgstr ""
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1468
+#: src/lib/elm_entry.c:1470
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: src/lib/elm_entry.c:1473
+#: src/lib/elm_entry.c:1475
 msgid "Cut"
 msgstr "Knippen"
 
-#: src/lib/elm_entry.c:1477 src/lib/elm_entry.c:1500
+#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
 msgid "Paste"
 msgstr "Plakken"
 
-#: src/lib/elm_entry.c:1493
+#: src/lib/elm_entry.c:1495
 msgid "Select"
 msgstr "Selecteren"
 
-#: src/lib/elm_entry.c:3479
+#: src/lib/elm_entry.c:3482
 msgid "Entry"
 msgstr ""
 
@@ -209,7 +210,7 @@ msgstr ""
 msgid "Index Item"
 msgstr ""
 
-#: src/lib/elm_label.c:386
+#: src/lib/elm_label.c:391
 msgid "Label"
 msgstr ""
 
@@ -254,7 +255,7 @@ msgstr "Selecteren"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:882
+#: src/lib/elm_slider.c:881
 msgid "slider"
 msgstr ""
 

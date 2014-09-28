@@ -2,11 +2,12 @@
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
+#: src/lib/elm_config.c:3207
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-23 02:26+0900\n"
+"POT-Creation-Date: 2014-09-28 22:16+0900\n"
 "PO-Revision-Date: 2013-01-04 14:42+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -16,20 +17,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: src/lib/elc_fileselector.c:1400
+#: src/lib/elc_fileselector.c:1412
 msgid "Up"
 msgstr "Arriba"
 
-#: src/lib/elc_fileselector.c:1415
+#: src/lib/elc_fileselector.c:1427
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1631 src/lib/elm_entry.c:1481
-#: src/lib/elm_entry.c:1506
+#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1508
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1640
+#: src/lib/elc_fileselector.c:1651
 msgid "OK"
 msgstr "Aceptar"
 
@@ -161,7 +162,7 @@ msgstr "Reloj"
 msgid "color selector palette item"
 msgstr "Paleta de selección de color"
 
-#: src/lib/elm_config.c:3228
+#: src/lib/elm_config.c:3223
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -174,23 +175,23 @@ msgstr "Selector de disco"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1468
+#: src/lib/elm_entry.c:1470
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1473
+#: src/lib/elm_entry.c:1475
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1477 src/lib/elm_entry.c:1500
+#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:1493
+#: src/lib/elm_entry.c:1495
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:3479
+#: src/lib/elm_entry.c:3482
 msgid "Entry"
 msgstr "Entrada"
 
@@ -206,7 +207,7 @@ msgstr "Índice"
 msgid "Index Item"
 msgstr "Elemento del índice"
 
-#: src/lib/elm_label.c:386
+#: src/lib/elm_label.c:391
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -251,7 +252,7 @@ msgstr "Estado: Seleccionado"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:882
+#: src/lib/elm_slider.c:881
 msgid "slider"
 msgstr "barra de desplazamiento"
 

@@ -2,33 +2,34 @@
 # This file is distributed under the same license as the Elementary package.
 # Konrad Makowski <poczta@konradmakowski.pl>, 2013.
 #
+#: src/lib/elm_config.c:3207
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-23 02:26+0900\n"
+"POT-Creation-Date: 2014-09-28 22:16+0900\n"
 "PO-Revision-Date: 2013-11-23 14:48+0100\n"
 "Last-Translator: Konrad Makowski <poczta@konradmakowski.pl>\n"
 "Language-Team: General\n"
-"Language: Polski\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:1400
+#: src/lib/elc_fileselector.c:1412
 msgid "Up"
 msgstr "Do góry"
 
-#: src/lib/elc_fileselector.c:1415
+#: src/lib/elc_fileselector.c:1427
 msgid "Home"
 msgstr "Początek"
 
-#: src/lib/elc_fileselector.c:1631 src/lib/elm_entry.c:1481
-#: src/lib/elm_entry.c:1506
+#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1508
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/lib/elc_fileselector.c:1640
+#: src/lib/elc_fileselector.c:1651
 msgid "OK"
 msgstr "OK"
 
@@ -160,7 +161,7 @@ msgstr "Zegar"
 msgid "color selector palette item"
 msgstr "paleta wyboru kolorów"
 
-#: src/lib/elm_config.c:3228
+#: src/lib/elm_config.c:3223
 msgid "default:LTR"
 msgstr "default:RTL"
 
@@ -172,23 +173,23 @@ msgstr "wybór dni"
 msgid "diskselector item"
 msgstr "wybór dysków"
 
-#: src/lib/elm_entry.c:1468
+#: src/lib/elm_entry.c:1470
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: src/lib/elm_entry.c:1473
+#: src/lib/elm_entry.c:1475
 msgid "Cut"
 msgstr "Wytnij"
 
-#: src/lib/elm_entry.c:1477 src/lib/elm_entry.c:1500
+#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
 msgid "Paste"
 msgstr "Wklej"
 
-#: src/lib/elm_entry.c:1493
+#: src/lib/elm_entry.c:1495
 msgid "Select"
 msgstr "Wybór"
 
-#: src/lib/elm_entry.c:3479
+#: src/lib/elm_entry.c:3482
 msgid "Entry"
 msgstr "Pozycja"
 
@@ -204,7 +205,7 @@ msgstr "Indeks"
 msgid "Index Item"
 msgstr "Indeks"
 
-#: src/lib/elm_label.c:386
+#: src/lib/elm_label.c:391
 msgid "Label"
 msgstr "Etykieta"
 
@@ -248,7 +249,7 @@ msgstr "Stan: nie wybrany"
 msgid "Segment Control Item"
 msgstr "Kontrola Segmentami"
 
-#: src/lib/elm_slider.c:882
+#: src/lib/elm_slider.c:881
 msgid "slider"
 msgstr "slajder"
 

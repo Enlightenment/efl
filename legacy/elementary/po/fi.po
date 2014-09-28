@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-07 20:22+0300\n"
+"POT-Creation-Date: 2014-09-28 22:16+0900\n"
 "PO-Revision-Date: 2014-08-31 15:13+0000\n"
 "Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -27,12 +27,12 @@ msgstr "Ylös"
 msgid "Home"
 msgstr "Koti"
 
-#: src/lib/elc_fileselector.c:1643 src/lib/elm_entry.c:1483
+#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
 #: src/lib/elm_entry.c:1508
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: src/lib/elc_fileselector.c:1652
+#: src/lib/elc_fileselector.c:1651
 msgid "OK"
 msgstr "OK"
 
@@ -252,7 +252,7 @@ msgstr "Tila: valitsematon"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:882
+#: src/lib/elm_slider.c:881
 msgid "slider"
 msgstr "liukusäädin"
 

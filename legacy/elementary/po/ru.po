@@ -5,11 +5,12 @@
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 # Igor Murzov <garik@efl.so>, 2014.
 #
+#: src/lib/elm_config.c:3207
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-23 02:26+0900\n"
+"POT-Creation-Date: 2014-09-28 22:16+0900\n"
 "PO-Revision-Date: 2014-07-31 19:14+0400\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -20,20 +21,20 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/lib/elc_fileselector.c:1400
+#: src/lib/elc_fileselector.c:1412
 msgid "Up"
 msgstr "Вверх"
 
-#: src/lib/elc_fileselector.c:1415
+#: src/lib/elc_fileselector.c:1427
 msgid "Home"
 msgstr "Дом"
 
-#: src/lib/elc_fileselector.c:1631 src/lib/elm_entry.c:1481
-#: src/lib/elm_entry.c:1506
+#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1508
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/lib/elc_fileselector.c:1640
+#: src/lib/elc_fileselector.c:1651
 msgid "OK"
 msgstr "ОК"
 
@@ -165,7 +166,7 @@ msgstr "Часы"
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:3228
+#: src/lib/elm_config.c:3223
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -177,23 +178,23 @@ msgstr "элемент выбора дня"
 msgid "diskselector item"
 msgstr "элемент диска выбора"
 
-#: src/lib/elm_entry.c:1468
+#: src/lib/elm_entry.c:1470
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/lib/elm_entry.c:1473
+#: src/lib/elm_entry.c:1475
 msgid "Cut"
 msgstr "Вырезать"
 
-#: src/lib/elm_entry.c:1477 src/lib/elm_entry.c:1500
+#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:1493
+#: src/lib/elm_entry.c:1495
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elm_entry.c:3479
+#: src/lib/elm_entry.c:3482
 msgid "Entry"
 msgstr "Запись"
 
@@ -209,7 +210,7 @@ msgstr "Алфавитный указатель"
 msgid "Index Item"
 msgstr "Элемент алфавитного указателя"
 
-#: src/lib/elm_label.c:386
+#: src/lib/elm_label.c:391
 msgid "Label"
 msgstr "Метка"
 
@@ -255,7 +256,7 @@ msgstr "Состояние: Невыбрано"
 msgid "Segment Control Item"
 msgstr "Элемент сегментного элемента управления"
 
-#: src/lib/elm_slider.c:882
+#: src/lib/elm_slider.c:881
 msgid "slider"
 msgstr "бегунок"
 

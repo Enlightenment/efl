@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
+#: src/lib/elm_config.c:3207
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-23 02:26+0900\n"
+"POT-Creation-Date: 2014-09-28 22:16+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -18,20 +19,20 @@ msgstr ""
 "X-Launchpad-Export-Date: 2014-04-19 06:05+0000\n"
 "X-Generator: Launchpad (build 16985)\n"
 
-#: src/lib/elc_fileselector.c:1400
+#: src/lib/elc_fileselector.c:1412
 msgid "Up"
 msgstr "Yukarı"
 
-#: src/lib/elc_fileselector.c:1415
+#: src/lib/elc_fileselector.c:1427
 msgid "Home"
 msgstr "Ev"
 
-#: src/lib/elc_fileselector.c:1631 src/lib/elm_entry.c:1481
-#: src/lib/elm_entry.c:1506
+#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1508
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/lib/elc_fileselector.c:1640
+#: src/lib/elc_fileselector.c:1651
 msgid "OK"
 msgstr "Tamam"
 
@@ -163,7 +164,7 @@ msgstr "Saat"
 msgid "color selector palette item"
 msgstr "renk seçici paleti öğesi"
 
-#: src/lib/elm_config.c:3228
+#: src/lib/elm_config.c:3223
 msgid "default:LTR"
 msgstr "varsayılan:LTR"
 
@@ -175,23 +176,23 @@ msgstr "gün seçici ögesi"
 msgid "diskselector item"
 msgstr "disk seçici öğesi"
 
-#: src/lib/elm_entry.c:1468
+#: src/lib/elm_entry.c:1470
 msgid "Copy"
 msgstr "Kopyala"
 
-#: src/lib/elm_entry.c:1473
+#: src/lib/elm_entry.c:1475
 msgid "Cut"
 msgstr "Kes"
 
-#: src/lib/elm_entry.c:1477 src/lib/elm_entry.c:1500
+#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
 msgid "Paste"
 msgstr "Yapıştır"
 
-#: src/lib/elm_entry.c:1493
+#: src/lib/elm_entry.c:1495
 msgid "Select"
 msgstr "Seç"
 
-#: src/lib/elm_entry.c:3479
+#: src/lib/elm_entry.c:3482
 msgid "Entry"
 msgstr "Girdi"
 
@@ -207,7 +208,7 @@ msgstr "Dizin"
 msgid "Index Item"
 msgstr "fihrist öğesi"
 
-#: src/lib/elm_label.c:386
+#: src/lib/elm_label.c:391
 msgid "Label"
 msgstr "Etiket"
 
@@ -251,7 +252,7 @@ msgstr "Bölge: Seçilmedi"
 msgid "Segment Control Item"
 msgstr "Bölüm Kontrol Öğesi"
 
-#: src/lib/elm_slider.c:882
+#: src/lib/elm_slider.c:881
 msgid "slider"
 msgstr "kaydırıcı"
 
