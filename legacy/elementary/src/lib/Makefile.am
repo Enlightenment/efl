@@ -613,7 +613,8 @@ elm_slideshow_item.eo \
 elm_flipselector_item.eo \
 elm_menu_item.eo \
 elm_ctxpopup_item.eo \
-elm_index_item.eo
+elm_index_item.eo \
+elm_multibuttonentry_item.eo
 
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
 elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
@@ -734,7 +735,8 @@ elementaryeolianfiles_DATA = \
 	     elm_flipselector_item.eo \
 	     elm_menu_item.eo \
 	     elm_ctxpopup_item.eo \
-	     elm_index_item.eo
+	     elm_index_item.eo \
+	     elm_multibuttonentry_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
