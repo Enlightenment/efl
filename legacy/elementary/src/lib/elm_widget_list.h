@@ -10,6 +10,7 @@
  * IT AT RUNTIME.
  */
 
+#include "elm_object_item_migration_temp.h"
 /**
  * @addtogroup Widget
  * @{
@@ -23,6 +24,7 @@
 
 #define ELM_LIST_SWIPE_MOVES 12
 
+typedef struct _Elm_List_Item_Data Elm_List_Item_Data;
 /**
  * Base widget smart data extended with list instance data.
  */
@@ -63,10 +65,9 @@ struct _Elm_List_Data
    Eina_Bool                             item_looping_on : 1;
 };
 
-typedef struct _Elm_List_Item Elm_List_Item;
-struct _Elm_List_Item
+struct _Elm_List_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data     *base;
 
    Ecore_Timer         *swipe_timer;
    Ecore_Timer         *long_timer;
@@ -120,21 +121,24 @@ struct _Elm_List_Item
     return
 
 #define ELM_LIST_ITEM_CHECK(it)                             \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, ); \
-  ELM_LIST_CHECK(it->base.widget);                          \
-  if (((Elm_List_Item *)it)->deleted)                       \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, ); \
+  ELM_LIST_CHECK(it->base->widget);                          \
+  if (((Elm_List_Item_Data *)it)->deleted)                       \
     {                                                       \
        ERR("ERROR: " #it " has been DELETED.\n");           \
        return;                                              \
     }
 
 #define ELM_LIST_ITEM_CHECK_OR_RETURN(it, ...)                         \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item_Data *)it, __VA_ARGS__); \
-  ELM_LIST_CHECK(it->base.widget) __VA_ARGS__;                         \
-  if (((Elm_List_Item *)it)->deleted)                                  \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN(it->base, __VA_ARGS__); \
+  ELM_LIST_CHECK(it->base->widget) __VA_ARGS__;                         \
+  if (((Elm_List_Item_Data *)it)->deleted)                                  \
     {                                                                  \
        ERR("ERROR: " #it " has been DELETED.\n");                      \
        return __VA_ARGS__;                                             \
     }
+
+#define ELM_LIST_ITEM_DATA_GET(o, sd) \
+  Elm_List_Item_Data* sd = eo_data_scope_get((Eo *)o, ELM_LIST_ITEM_CLASS)
 
 #endif

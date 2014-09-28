@@ -1,0 +1,170 @@
+class Elm_List_Item(Elm_Widget_Item)
+{
+      legacy_prefix: null;
+      eo_prefix: elm_obj_list_item;
+      properties {
+           separator {
+                get {
+                     /*@
+                      Get a value whether item is a separator or not.
+
+                      @see elm_list_item_separator_set() for details.
+
+                      @ingroup List
+                      */
+                }
+                set {
+                     /*@
+                      Set or unset item as a separator.
+
+                      Items aren't set as separator by default.
+
+                      If set as separator it will display separator theme, so won't display
+                      icons or label.
+
+                      @see elm_list_item_separator_get()
+
+                      @ingroup List
+                      */
+                }
+                values {
+                     Eina_Bool setting; /*@ @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
+                                         indicates it's not. */
+                }
+           }
+           selected {
+                get {
+                     /*
+                      Get whether the @p item is selected or not.
+
+                      @see elm_list_selected_item_set() for details.
+                      @see elm_list_item_selected_get()
+
+                      @ingroup List
+                      */
+                }
+                set {
+                     /*@
+                      Set the selected state of an item.
+
+                      This sets the selected state of the given item @p it.
+                      @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
+
+                      If a new item is selected the previously selected will be unselected,
+                      unless multiple selection is enabled with elm_list_multi_select_set().
+                      Previously selected item can be get with function
+                      elm_list_selected_item_get().
+
+                      Selected items will be highlighted.
+
+                      @see elm_list_item_selected_get()
+                      @see elm_list_selected_item_get()
+                      @see elm_list_multi_select_set()
+
+                      @ingroup List
+                      */
+                }
+                values {
+                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                }
+           }
+           object {
+                get {
+                     /*@
+                      Get the real Evas(Edje) object created to implement the view of a given
+                      list @p item.
+
+                      Base object is the @c Evas_Object that represents that item.
+
+                      @ingroup List
+                      */
+                }
+                values {
+                     Evas_Object *obj; /*@ The base Edje object associated with @p it. */
+                }
+           }
+           prev {
+                get {
+                     /*@
+                      Get the item before @p it in list.
+
+                      @note If it is the first item, @c NULL will be returned.
+
+                      @see elm_list_item_append()
+                      @see elm_list_items_get()
+
+                      @ingroup List
+                      */
+                     /*legacy: elm_list_item_prev;*/
+                }
+                values {
+                     Elm_Object_Item *item; /*@ The item before @p it, or @c NULL if none or on failure. */
+                }
+           }
+           next {
+                get {
+                     /*@
+                      Get the item after @p it in list.
+
+                      @note If it is the last item, @c NULL will be returned.
+
+                      @see elm_list_item_append()
+                      @see elm_list_items_get()
+
+                      @ingroup List
+                      */
+                     /*legacy: elm_list_item_next;*/
+                }
+                values {
+                     Elm_Object_Item *item; /*@ The item after @p it, or @c NULL if none or on failure. */
+                }
+           }
+      }
+      methods {
+           /*      init { FIXME
+                   params {
+                   Evas_Smart_Cb func;
+                   const(void)* data;
+                   }
+                   }*/
+           show {
+                /*@
+                 Show @p item in the list view.
+
+                 It won't animate list until item is visible. If such behavior is wanted,
+                 use elm_list_bring_in() instead.
+
+                 @ingroup List
+                 */
+           }
+           bring_in {
+                /*@
+                 Bring in the given item to list view.
+
+                 This causes list to jump to the given item @p item and show it
+                 (by scrolling), if it is not fully visible.
+
+                 This may use animation to do so and take a period of time.
+
+                 If animation isn't wanted, elm_list_item_show() can be used.
+
+                 @ingroup List
+                 */
+           }
+      }
+      implements {
+           Eo.Base.constructor;
+           Elm_Widget_Item.disable;
+           Elm_Widget_Item.del_pre;
+           Elm_Widget_Item.signal_emit;
+           Elm_Widget_Item.focus.set;
+           Elm_Widget_Item.focus.get;
+           Elm_Widget_Item.part_text.get;
+           Elm_Widget_Item.part_text.set;
+           Elm_Widget_Item.part_content.get;
+           Elm_Widget_Item.part_content.set;
+           Elm_Widget_Item.part_content_unset;
+      }
+}
+
+
