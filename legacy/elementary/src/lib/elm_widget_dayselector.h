@@ -2,6 +2,9 @@
 #define ELM_WIDGET_DAYSELECTOR_H
 
 #include "Elementary.h"
+#include "elm_dayselector_item.eo.h"
+
+#include "elm_object_item_migration_temp.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
@@ -33,10 +36,10 @@ struct _Elm_Dayselector_Data
    Eina_Bool weekdays_names_set : 1;
 };
 
-typedef struct _Elm_Dayselector_Item       Elm_Dayselector_Item;
-struct _Elm_Dayselector_Item
+typedef struct _Elm_Dayselector_Item_Data       Elm_Dayselector_Item_Data;
+struct _Elm_Dayselector_Item_Data
 {
-   ELM_WIDGET_ITEM;
+   Elm_Widget_Item_Data *base;
    Elm_Dayselector_Day day;
    const char         *day_style;
 };
@@ -69,5 +72,8 @@ struct _Elm_Dayselector_Item
 #define ELM_DAYSELECTOR_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_DAYSELECTOR_CLASS))) \
     return
+
+#define ELM_DAYSELECTOR_ITEM_DATA_GET(o, sd) \
+  Elm_Dayselector_Item_Data * sd = eo_data_scope_get((Eo *)o, ELM_DAYSELECTOR_ITEM_CLASS)
 
 #endif
