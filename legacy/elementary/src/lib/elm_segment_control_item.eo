@@ -1,0 +1,65 @@
+class Elm_Segment_Control_Item(Elm_Widget_Item)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_obj_segment_control_item;
+   methods {
+      index_get @const {
+             /*@
+              Get the index of an item.
+
+              Index is the position of an item in segment control widget. Its
+              range is from @c 0 to <tt> count - 1 </tt>.
+              Count is the number of items, that can be get with
+              elm_segment_control_item_count_get().
+
+              @return The position of item in segment control widget.
+
+              @ingroup SegmentControl
+             */
+             return: int;
+        }
+      object_get @const {
+             /*@
+              Get the real Evas(Edje) object created to implement the view of a given
+              segment_control @p item.
+
+              Base object is the @c Evas_Object that represents that item.
+
+              @return The base Edje object associated with @p it.
+
+              @ingroup SegmentControl
+             */
+             return: Evas_Object*;
+        }
+      selected_set {
+             /*@
+              Set the selected state of an item.
+
+              This sets the selected state of the given item @p it.
+              @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
+
+              If a new item is selected the previously selected will be unselected.
+              Selected item can be got with function
+              elm_segment_control_item_selected_get().
+
+              The selected item always will be highlighted on segment control.
+
+              @see elm_segment_control_item_selected_get()
+
+              @ingroup SegmentControl
+             */
+             params {
+                  Eina_Bool select; /* @ The selected state. */
+             }
+        }
+   }
+   implements {
+        Eo.Base.constructor;
+        Elm_Widget_Item.access_register;
+        Elm_Widget_Item.part_text.get;
+        Elm_Widget_Item.part_text.set;
+        Elm_Widget_Item.part_content.get;
+        Elm_Widget_Item.part_content.set;
+        Elm_Widget_Item.del_pre;
+   }
+}
