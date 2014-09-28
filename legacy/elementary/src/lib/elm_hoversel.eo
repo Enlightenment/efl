@@ -141,6 +141,7 @@ class Elm_Hoversel (Elm_Button, Evas.Selectable_Interface,
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Eo.Base.destructor;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.show;
       Evas.Object_Smart.add;
