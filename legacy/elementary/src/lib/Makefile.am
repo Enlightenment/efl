@@ -620,7 +620,8 @@ elm_genlist_item.eo \
 elm_gengrid_item.eo \
 elm_list_item.eo \
 elm_toolbar_item.eo \
-elm_diskselector_item.eo
+elm_diskselector_item.eo \
+elm_popup_item.eo
 
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
 elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
@@ -748,7 +749,8 @@ elementaryeolianfiles_DATA = \
 	     elm_gengrid_item.eo \
 	     elm_list_item.eo \
 	     elm_toolbar_item.eo \
-	     elm_diskselector_item.eo
+	     elm_diskselector_item.eo \
+	     elm_popup_item.eo
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
