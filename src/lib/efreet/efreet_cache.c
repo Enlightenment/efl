@@ -665,7 +665,7 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
     if (theme_name && strcmp(theme_name, theme->name.internal))
     {
         /* FIXME: this is bad if people have pointer to this cache, things will go wrong */
-        INF("theme_name change from `%s` to `%s`", theme_name, theme->name.internal);
+        INF("theme_name change from '%s' to '%s'", theme_name, theme->name.internal);
         IF_RELEASE(theme_name);
         icon_cache = efreet_cache_close(icon_cache);
         eina_hash_free(icons);
@@ -824,13 +824,13 @@ efreet_cache_desktop_find(const char *file)
         /* If less than one second since last stat, return desktop */
         if ((ecore_time_get() - cache->check_time) < 1)
         {
-            INF("Return without stat %f %f", ecore_time_get(), cache->check_time);
+            INF("Return without stat %f %f for file '%s'", ecore_time_get(), cache->check_time, file);
             eina_lock_release(&_lock);
             return &cache->desktop;
         }
         if (cache->desktop.load_time == ecore_file_mod_time(cache->desktop.orig_path))
         {
-            INF("Return with stat %f %f", ecore_time_get(), cache->check_time);
+            INF("Return with stat %f %f for file '%s'", ecore_time_get(), cache->check_time, file);
             cache->check_time = ecore_time_get();
             eina_lock_release(&_lock);
             return &cache->desktop;
@@ -848,7 +848,7 @@ efreet_cache_desktop_find(const char *file)
         if (cache->desktop.load_time != ecore_file_mod_time(cache->desktop.orig_path))
         {
             /* Don't return stale data */
-            INF("We got stale data in the desktop cache");
+            INF("We got stale data in the desktop cache for file '%s'", cache->desktop.orig_path);
             efreet_cache_desktop_free(&cache->desktop);
             eina_hash_set(desktops, file, NON_EXISTING);
         }
@@ -883,7 +883,7 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
     curr = eina_hash_find(desktops, desktop->orig_path);
     if (curr == desktop)
     {
-        INF("Found in current cache, purge\n");
+        INF("Found '%s' in current cache, purge", desktop->orig_path);
         eina_hash_del_by_key(desktops, desktop->orig_path);
     }
 
@@ -892,11 +892,11 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
         curr = eina_hash_find(d->hash, desktop->orig_path);
         if (curr == desktop)
         {
-            INF("Found in old cache, purge\n");
+            INF("Found '%s' in old cache, purge", desktop->orig_path);
             eina_hash_del_by_key(d->hash, desktop->orig_path);
             if (eina_hash_population(d->hash) == 0)
             {
-                INF("Cache empty, close file\n");
+                INF("Cache empty, close file");
                 eina_hash_free(d->hash);
                 eet_close(d->ef);
                 free(d);

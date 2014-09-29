@@ -625,7 +625,7 @@ efreet_menu_parse(const char *path)
     /* make sure we've got a <Menu> to start with */
     if (xml->tag != efreet_tag_menu)
     {
-        WRN("Efreet_menu: Menu file didn't start with <Menu> tag.");
+        WRN("Menu file didn't start with <Menu> tag: '%s'", path);
         efreet_xml_del(xml);
         return NULL;
     }
@@ -875,7 +875,7 @@ efreet_menu_handle_menu(Efreet_Menu_Internal *internal, Efreet_Xml *xml)
         }
         else
         {
-            WRN("Unknown XML tag: %s", child->tag);
+            WRN("Unknown XML tag '%s' in file '%s/%s'", child->tag, internal->file.path, internal->file.name);
             return 0;
         }
     }
@@ -1068,7 +1068,7 @@ efreet_menu_handle_name(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     /* not allowed to have two Name settings in a menu */
     if (parent->name.internal)
     {
-        INF("efreet_menu_handle_name() setting second name into menu");
+        INF("efreet_menu_handle_name() setting second name into menu: '%s/%s'", parent->file.path, parent->file.name);
         return 0;
     }
     /* ignore the name if it is empty */
@@ -1351,7 +1351,7 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
         if (!parent->file.path)
         {
-            INF("efreet_menu_handle_merge_file() missing menu path ...");
+            INF("efreet_menu_handle_merge_file() missing menu path ... '%s'", parent->file.name);
             return 0;
         }
 
@@ -1443,7 +1443,7 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     if (!merge_xml)
     {
         INF("efreet_menu_merge() failed to read in the "
-                "merge file (%s)", path);
+                "merge file '%s'", path);
         return 0;
     }
 
@@ -1855,7 +1855,8 @@ efreet_menu_handle_move(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         else
         {
             INF("efreet_menu_handle_move() unknown tag found "
-                    "in Move (%s)", child->tag);
+                    "in Move '%s' in file '%s/%s'", child->tag,
+                    parent->file.path, parent->file.name);
             return 0;
         }
     }
@@ -1882,7 +1883,8 @@ efreet_menu_handle_old(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
     if (parent->current_move)
     {
         INF("efreet_menu_handle_old() saw second <Old> "
-                "before seeing <New>");
+                "before seeing <New> in file '%s/%s'",
+                parent->file.path, parent->file.name);
         return 0;
     }
 
@@ -1922,7 +1924,8 @@ efreet_menu_handle_new(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
     if (!parent->current_move)
     {
-        INF("efreet_menu_handle_new() saw New before seeing Old");
+        INF("efreet_menu_handle_new() saw New before seeing Old in '%s/%s'",
+            parent->file.path, parent->file.name);
         return 0;
     }
 
@@ -1965,7 +1968,8 @@ efreet_menu_handle_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         else
         {
             INF("efreet_menu_handle_move() unknown tag found "
-                    "in Layout (%s)", child->tag);
+                    "in Layout '%s' in file '%s/%s'", child->tag,
+                    parent->file.path, parent->file.name);
             return 0;
         }
     }
@@ -2022,7 +2026,8 @@ efreet_menu_handle_default_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         else
         {
             INF("efreet_menu_handle_move() unknown tag found in "
-                    "DefaultLayout (%s)", child->tag);
+                    "DefaultLayout '%s' in file '%s/%s'", child->tag,
+                    parent->file.path, parent->file.name);
             return 0;
         }
     }
@@ -2041,7 +2046,8 @@ efreet_menu_handle_layout_menuname(Efreet_Menu_Internal *parent, Efreet_Xml *xml
     if (!xml->text)
     {
         INF("efreet_menu_handle_layout_menuname() The Menuname tag in "
-                "layout needs a filename.");
+                "layout needs a filename in file '%s/%s'",
+                parent->file.path, parent->file.name);
         return 0;
     }
 
@@ -2080,7 +2086,8 @@ efreet_menu_handle_layout_filename(Efreet_Menu_Internal *parent, Efreet_Xml *xml
     if (!xml->text)
     {
         INF("efreet_menu_handle_layout_filename() The Filename tag in "
-                "layout needs a filename.");
+                "layout needs a filename in file '%s/%s'",
+                parent->file.path, parent->file.name);
         return 0;
     }
 
@@ -2122,14 +2129,16 @@ efreet_menu_handle_layout_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, i
     if (!attr)
     {
         INF("efreet_menu_handle_layout_merge() The Merge tag in layout "
-                "needs a type attribute.");
+                "needs a type attribute in file '%s/%s'",
+                parent->file.path, parent->file.name);
         return 0;
     }
 
     if (strcmp(attr, "files") && strcmp(attr, "menus") && strcmp(attr, "all"))
     {
         INF("efreet_menu_handle_layout_merge() The type attribute for "
-                "the Merge tag contains an unknown value (%s).", attr);
+                "the Merge tag contains an unknown value '%s' in file '%s/%s'",
+                attr, parent->file.path, parent->file.name);
         return 0;
     }
 
@@ -2201,7 +2210,8 @@ efreet_menu_handle_filter_op(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
         }
         else
         {
-            INF("efreet_menu_handle_filter_op() unknown tag in filter (%s)", child->tag);
+            INF("efreet_menu_handle_filter_op() unknown tag in filter '%s'",
+                child->tag);
             return 0;
         }
     }
@@ -3152,7 +3162,7 @@ efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix)
     {
         if (!internal->file.path)
         {
-            INF("efreet_menu_handle_app_dir() missing menu path ...");
+            INF("efreet_menu_handle_app_dir() missing menu path ... '%s'", internal->file.name);
             return NULL;
         }
         snprintf(path, sizeof(path), "%s/%s", internal->file.path, suffix);

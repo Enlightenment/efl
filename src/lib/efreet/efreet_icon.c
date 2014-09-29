@@ -197,7 +197,7 @@ efreet_icon_remove_extension(const char *icon)
             if (!strcmp(ext, ext2))
             {
 #ifdef STRICT_SPEC
-                WRN("[Efreet]: Requesting an icon with an extension: %s",
+                WRN("Requesting an icon with an extension: %s",
                     icon);
 #endif
                 *ext = '\0';
@@ -232,7 +232,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         Efreet_Cache_Icon *cache;
         cache = efreet_cache_icon_find(theme, tmp);
         value = efreet_icon_lookup_icon(cache, size);
-        if (!value) INF("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
+        if (!value) INF("lookup for '%s' failed in theme '%s' with %p.", icon, theme_name, cache);
     }
 
     /* we didn't find the icon in the theme or in the inherited directories
@@ -244,7 +244,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
 
         cache = efreet_cache_icon_fallback_find(tmp);
         value = efreet_icon_fallback_lookup_path(cache);
-        if (!value) INF("lookup for `%s` failed in fallback too with %p.", icon, cache);
+        if (!value) INF("lookup for '%s' failed in fallback too with %p.", icon, cache);
     }
 
 #ifdef SLOPPY_SPEC

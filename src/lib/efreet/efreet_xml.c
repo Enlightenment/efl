@@ -113,7 +113,7 @@ efreet_xml_new(const char *file)
     return xml;
 
 efreet_error:
-    ERR("could not parse xml file");
+    ERR("could not parse xml file '%s'", file);
     if (data != MAP_FAILED) munmap(data, size);
     if (fd != -1) close(fd);
     if (xml) efreet_xml_del(xml);

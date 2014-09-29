@@ -403,7 +403,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         break;
                     case 'v':
                     case 'm':
-                        WRN("[Efreet]: Deprecated conversion char: '%c' in file '%s'",
+                        WRN("Deprecated conversion char: '%c' in file '%s'",
                                 *p, command->desktop->orig_path);
                         break;
                     case '%':
@@ -411,7 +411,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         break;
                     default:
 #ifdef STRICT_SPEC
-                        WRN("[Efreet_desktop]: Unknown conversion character: '%c'", *p);
+                        WRN("Unknown conversion character: '%c' in file '%s'", *p, command->desktop->orig_path);
 #endif
                         break;
                 }

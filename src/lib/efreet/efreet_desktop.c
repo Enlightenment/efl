@@ -571,8 +571,7 @@ efreet_desktop_string_list_parse(const char *string)
     if (*s)
     {
 #ifdef STRICT_SPEC
-        WRN("[Efreet]: Found a string list without ';' "
-                "at the end: %s", string);
+        WRN("Found a string list without ';' at the end: '%s'", string);
 #endif
         list = eina_list_append(list, (void *)eina_stringshare_add(s));
     }
@@ -644,7 +643,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
     if (!ok) ok = efreet_ini_section_set(ini, "KDE Desktop Entry");
     if (!ok)
     {
-        ERR("efreet_desktop_new error: no Desktop Entry section");
+        ERR("no Desktop Entry section in file '%s'", desktop->orig_path);
         error = 1;
     }
 
@@ -957,7 +956,7 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
     if (val) desktop->name = strdup(val);
     else
     {
-        ERR("efreet_desktop_generic_fields_parse error: no Name or _Name fields");
+        ERR("no Name or _Name fields in file '%s'", desktop->orig_path);
         return 0;
     }
 

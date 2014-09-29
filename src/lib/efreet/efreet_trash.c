@@ -174,7 +174,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     trash_dir = efreet_trash_dir_get(uri->path);
     if (!trash_dir)
     {
-        ERR("EFREET TRASH ERROR: No trash directory.");
+        ERR("No trash directory for file '%s'", uri->path);
         return 0;
     }
     snprintf(dest, sizeof(dest), "%s/files/%s", trash_dir, fname);
@@ -199,14 +199,14 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
 
             if (!ecore_file_recursive_rm(uri->path))
             {
-                ERR("EFREET TRASH ERROR: Can't delete file.");
+                ERR("Can't delete file '%s'", uri->path);
                 eina_stringshare_del(trash_dir);
                 return 0;
             }
         }
         else
         {
-            ERR("EFREET TRASH ERROR: Can't move file to trash.");
+            ERR("Can't move file to trash '%s'", uri->path);
             eina_stringshare_del(trash_dir);
             return 0;
         }
@@ -233,7 +233,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     }
     else
     {
-        ERR("EFREET TRASH ERROR: Can't create trash info file.");
+        ERR("Can't create trash info file '%s'", dest);
         return 0;
     }
 

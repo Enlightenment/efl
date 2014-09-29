@@ -143,7 +143,7 @@ efreet_ini_parse(const char *file)
 
         if (!section)
         {
-            INF("Invalid file (%s) (missing section)", file);
+            INF("Invalid file '%s' (missing section)", file);
             goto error;
         }
 
@@ -207,7 +207,7 @@ efreet_ini_parse(const char *file)
         else
         {
             /* invalid file... */
-            INF("Invalid file (%s) (missing = from key=value pair)", file);
+            INF("Invalid file '%s' (missing = from key=value pair)", file);
             goto error;
         }
     }
