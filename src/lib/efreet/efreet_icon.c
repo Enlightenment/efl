@@ -701,10 +701,10 @@ efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path)
 
         EINA_LIST_FOREACH(efreet_icon_extensions, ll, ext)
             if (!strcmp(pp, ext))
-	    {
-		r = elem->paths[i];
-		break;
-	    }
+            {
+                r = elem->paths[i];
+                break;
+            }
     }
 
     free((void*) path);
@@ -794,10 +794,10 @@ efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon, const ch
 
         EINA_LIST_FOREACH(efreet_icon_extensions, ll, ext)
             if (!strcmp(pp, ext))
-	    {
-		r = icon->icons[i];
-		break;
-	    }
+            {
+                r = icon->icons[i];
+                break;
+            }
     }
 
     free((void*) path);
