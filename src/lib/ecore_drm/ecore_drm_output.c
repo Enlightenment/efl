@@ -296,6 +296,9 @@ _ecore_drm_output_brightness_get(Ecore_Drm_Backlight *backlight)
    const char *brightness = NULL;
    double ret;
 
+   if (!(backlight) || !(backlight->device))
+     return 0;
+
    brightness = eeze_udev_syspath_get_sysattr(backlight->device, "brightness");
    if (!brightness) return 0;
 
@@ -311,6 +314,9 @@ _ecore_drm_output_actual_brightness_get(Ecore_Drm_Backlight *backlight)
 {
    const char *brightness = NULL;
    double ret;
+
+   if (!(backlight) || !(backlight->device))
+     return 0;
 
    brightness = eeze_udev_syspath_get_sysattr(backlight->device, "actual_brightness");
    if (!brightness) return 0;
@@ -328,12 +334,28 @@ _ecore_drm_output_max_brightness_get(Ecore_Drm_Backlight *backlight)
    const char *brightness = NULL;
    double ret;
 
+   if (!(backlight) || !(backlight->device))
+     return 0;
+
    brightness = eeze_udev_syspath_get_sysattr(backlight->device, "max_brightness");
    if (!brightness) return 0;
 
    ret = strtod(brightness, NULL);
    if (ret < 0)
      ret = 0;
+
+   return ret;
+}
+
+static double
+_ecore_drm_output_brightness_set(Ecore_Drm_Backlight *backlight, double brightness_val)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!(backlight) || !(backlight->device))
+     return ret;
+
+   ret = eeze_udev_syspath_set_sysattr(backlight->device, "brightness", brightness_val);
 
    return ret;
 }
