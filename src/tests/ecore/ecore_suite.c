@@ -30,6 +30,9 @@ static const Ecore_Test_Case etc[] = {
   { "Ecore_Evas", ecore_test_ecore_evas },
   { "Ecore_Animators", ecore_test_animator },
   { "Ecore_Test_Ccore_Thread_Eina_Thread_Queue", ecore_test_ecore_thread_eina_thread_queue },
+#if HAVE_ECORE_WAYLAND
+  { "Ecore_Wayland", ecore_test_ecore_wayland },
+#endif
   { NULL, NULL }
 };
 
