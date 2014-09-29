@@ -388,7 +388,7 @@ local __class = __lib.%s_class_get()
 
         self:gen_children(s)
 
-        s:write("})\n")
+        s:write("}, __class)\n")
     end,
 
     gen_ffi = function(self, s)
@@ -455,7 +455,7 @@ eo.class_register("%s", %s, {
 
         self:gen_children(s)
 
-        s:write("})")
+        s:write("}, __class)")
 
         for i, v in ipairs(self.mixins) do
             s:write(("\neo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
