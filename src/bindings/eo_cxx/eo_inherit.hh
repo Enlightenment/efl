@@ -77,7 +77,7 @@ struct inherit
    {
       typedef std::tuple<typename std::remove_reference<Args>::type...> tuple_type;
       _eo_cls = detail::create_class<D, tuple_type, E...> (eina::make_index_sequence<sizeof...(E)>());
-      _eo_raw = eo_add
+      _eo_raw = eo_add_ref
         (_eo_cls, NULL,
          detail::inherit_constructor
          <tuple_type, E...>
