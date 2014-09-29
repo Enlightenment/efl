@@ -1429,7 +1429,7 @@ eina_list_search_sorted_near_list(const Eina_List *list,
           break;
         else if (cmp < 0)
           inf = cur + 1;
-        else if (cmp > 0)
+        else
           {
              if (cur > 0)
                sup = cur - 1;
