@@ -382,7 +382,7 @@ local Mixin = Node:clone {
 
         s:write(([[
 local __class = __lib.%s_class_get()
-%s.%s = eo.class_register("%s", {
+%s.%s = eo.class_register("%s", nil, {
 ]]):format(self.prefix, mname, self.klass:name_get(),
         self.klass:full_name_get()))
 
@@ -446,19 +446,19 @@ local Class = Node:clone {
             mname = "M"
         end
 
+        local kn = self.klass:full_name_get()
+
         s:write(([[
 local __class = __lib.%s_class_get()
-local Parent  = eo.class_get("%s")
-eo.class_register("%s", Parent:clone {
-]]):format(self.prefix, self.parent, self.klass:full_name_get()))
+eo.class_register("%s", %s, {
+]]):format(self.prefix, kn, self.parent and ('"' .. self.parent .. '"') or "nil"))
 
         self:gen_children(s)
 
         s:write("})")
 
         for i, v in ipairs(self.mixins) do
-            s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
-                :format(ename, v))
+            s:write(("\neo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
         end
 
         -- write the constructor
