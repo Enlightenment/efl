@@ -613,11 +613,6 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     Efreet_Desktop_Command_File *f;
     const char *uri, *base;
     int nonlocal = 0;
-/*
-    DBG("FLAGS: %d, %d, %d, %d\n",
-        command->flags & EFREET_DESKTOP_EXEC_FLAG_FULLPATH ? 1 : 0,
-        command->flags & EFREET_DESKTOP_EXEC_FLAG_URI ? 1 : 0);
-*/
     f = NEW(Efreet_Desktop_Command_File, 1);
     if (!f) return NULL;
 
@@ -691,12 +686,6 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
 
         free(absol);
     }
-#if 0
-    INF("  fullpath: %s", f->fullpath);
-    INF("  uri: %s", f->uri);
-    INF("  dir: %s", f->dir);
-    INF("  file: %s", f->file);
-#endif
     return f;
 error:
     IF_FREE(f);
