@@ -617,6 +617,10 @@ struct _Elm_Widget_Item_Data
    Eina_Hash                     *labels;
    Evas_Object                   *track_obj;
 
+   /**< A11Y info */
+   const char                    *description;
+   int                            role;
+
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;
    Eina_Bool                      on_translate : 1;

@@ -9,6 +9,14 @@
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+
+#define ELM_INTERFACE_ATPSI_COMPONENT_PROTECTED
+#include "elm_interface_atspi_component.eo.h"
+
 #define MY_CLASS ELM_WIDGET_CLASS
 
 #define MY_CLASS_NAME "Elm_Widget"
@@ -4278,6 +4286,9 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
+   if (item->description)
+     eina_stringshare_del(item->description);
+
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
 
    eo_do_super(eo_item, ELM_WIDGET_ITEM_CLASS, eo_destructor());
@@ -4400,6 +4411,47 @@ _elm_widget_item_widget_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
    return item->widget;
 }
 
+EOLIAN static const char*
+_elm_widget_item_elm_interface_atspi_accessible_description_get(Eo *eo_item EINA_UNUSED,
+                                                                Elm_Widget_Item_Data *item)
+{
+   return item->description;
+}
+
+EOLIAN static void
+_elm_widget_item_elm_interface_atspi_accessible_description_set(Eo *eo_item EINA_UNUSED,
+                                                                Elm_Widget_Item_Data *item,
+                                                                const char *descr)
+{
+   eina_stringshare_replace(&item->description, descr);
+}
+
+EOLIAN static Elm_Atspi_Role
+_elm_widget_item_elm_interface_atspi_accessible_role_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+{
+   return item->role;
+}
+
+EOLIAN static void
+_elm_widget_item_elm_interface_atspi_accessible_role_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item,
+                                                         Elm_Atspi_Role role)
+{
+   item->role = role;
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item EINA_UNUSED,
+                                                              Elm_Widget_Item_Data *item EINA_UNUSED)
+{
+   Elm_Atspi_State_Set states = 0;
+
+   if (elm_object_item_focus_get(eo_item))
+     STATE_TYPE_SET(states, ELM_ATSPI_STATE_FOCUSED);
+   if (!elm_object_item_disabled_get(eo_item))
+     STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
+
+   return states;
+}
 
 EAPI void
 elm_object_item_data_set(Elm_Object_Item *it, void *data)
