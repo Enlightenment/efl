@@ -416,6 +416,18 @@ out:
    return backlight;
 }
 
+static void
+_ecore_drm_output_backlight_shutdown(Ecore_Drm_Backlight *backlight)
+{
+   if (!backlight)
+     return;
+
+   if (backlight->device)
+     eina_stringshare_del(backlight->device);
+
+   free(backlight);
+}
+
 static Ecore_Drm_Output *
 _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnector *conn, int x, int y)
 {
@@ -523,7 +535,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
           DBG("Setup Output %d for Software Rendering", output->crtc_id);
      }
 
-   /* TODO: Backlight */
+   output->backlight = _ecore_drm_output_backlight_init(output, conn->connector_type);
 
    return output;
 
