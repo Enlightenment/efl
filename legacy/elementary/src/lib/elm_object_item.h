@@ -200,6 +200,8 @@ EAPI void elm_object_item_domain_part_text_translatable_set(Elm_Object_Item *it,
 
 #define elm_object_item_domain_text_translatable_set(it, domain, translatable) elm_object_item_domain_part_text_translatable_set((it), NULL, (domain), (translatable))
 
+#define elm_object_item_text_translatable_set(it, translatable) elm_object_item_domain_part_text_translatable_set((it), NULL, NULL, (translatable))
+
 /**
  * Set the text to read out when in accessibility mode
  *
