@@ -14,6 +14,7 @@ type_lookup_table
   {"Ecore_Timeline_Cb", eolian_type::callback_, {"Ecore.h"}},
   {"Eina_Accessor *", eolian_type::complex_, false, "efl::eina::accessor", {"eina-cxx/eina_accessor.hh"}},
   {"Eina_Bool", eolian_type::simple_, false, "bool", {}},
+  {"Eina_Bool *", eolian_type::simple_, false, "bool*", {}},
   {"Eina_Inlist *", eolian_type::complex_, false, "efl::eina::range_inlist", {"eina-cxx/eina_inlist.hh"}},
   {"Eina_Inlist *", eolian_type::complex_, true, "efl::eina::inlist", {"eina-cxx/eina_inlist.hh"}},
   {"Eina_Iterator *", eolian_type::complex_, false, "efl::eina::iterator", {"eina-cxx/eina_iterator.hh"}},
