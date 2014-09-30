@@ -235,6 +235,8 @@ text_input_commit_string(void                 *data,
                      "delete on commit (text: `%s', offset `%d', length: `%d')",
                      surrounding, ev.offset, ev.n_chars);
 
+             free(surrounding);
+
              ecore_imf_context_delete_surrounding_event_add(imcontext->ctx, ev.offset, ev.n_chars);
              ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
           }
