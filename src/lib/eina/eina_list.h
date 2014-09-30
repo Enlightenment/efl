@@ -1267,6 +1267,16 @@ static inline void        *eina_list_data_set(Eina_List *list, const void *data)
  */
 static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
 
+/**
+ * @brief Returns the last list node's data
+ *
+ * @param list The list
+ * @return The node's data, or @c NULL on being passed a @c NULL pointer
+ *
+ * This macro is a shortcut for typing eina_list_data_get(eina_list_last())
+ * @since 1.8
+ */
+static inline void        *eina_list_last_data_get(const Eina_List *list)
 
 /**
  * @brief Returned a new iterator associated to a list.
