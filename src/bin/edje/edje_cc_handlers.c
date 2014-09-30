@@ -11135,6 +11135,7 @@ ob_collections_group_programs_program_script(void)
              else
                {
                   data_queue_anonymous_lookup(pc, current_program, NULL);
+                  free(cp->original);
                   free(cp);
                   cp = NULL;
                }
