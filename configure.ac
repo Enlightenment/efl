@@ -2947,6 +2947,12 @@ EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_libmount}],
    [EEZE_MOUNT], [mount >= 2.18.0])
 EFL_ADD_FEATURE([EEZE], [libmount], [${have_eeze_mount}])
 
+PKG_CHECK_EXISTS([libudev < 199],
+                 [have_libudev_old="yes"],
+                 [have_libudev_old="no"])
+AC_MSG_CHECKING([Use old libudev API (before 199)])
+AC_MSG_RESULT([${have_libudev_old}])
+
 PKG_CHECK_EXISTS([mount < 2.19.0],
                  [have_libmount_old="yes"],
                  [have_libmount_old="no"])
@@ -2964,6 +2970,10 @@ PKG_CHECK_EXISTS([mount > 2.19.0],
                  [have_libmount_new="no"])
 AC_MSG_CHECKING([Use new libmount API (newer than 2.19.0)])
 AC_MSG_RESULT([${have_libmount_new}])
+
+if test "x${have_libudev_old}" = "xyes"; then
+  AC_DEFINE_UNQUOTED([OLD_LIBUDEV], [1], [using older version of libudev])
+fi
 
 if test "x${have_libmount_old}" = "xyes"; then
   AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
