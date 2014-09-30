@@ -1054,30 +1054,31 @@ eng_setup(Evas *eo_e, void *in)
         re = e->engine.data.output;
         if (eng_get_ob(re) && _re_wincheck(eng_get_ob(re)))
           {
-             if ((eng_get_ob(re)->info->info.display != eng_get_ob(re)->disp) ||
-                 (eng_get_ob(re)->info->info.drawable != eng_get_ob(re)->win) ||
-                 (eng_get_ob(re)->info->info.screen != eng_get_ob(re)->screen) ||
-                 (eng_get_ob(re)->info->info.visual != eng_get_ob(re)->visual) ||
-                 (eng_get_ob(re)->info->info.colormap != eng_get_ob(re)->colormap) ||
-                 (eng_get_ob(re)->info->info.depth != eng_get_ob(re)->depth) ||
-                 (eng_get_ob(re)->info->info.destination_alpha != eng_get_ob(re)->alpha))
+             if ((info->info.display != eng_get_ob(re)->disp) ||
+                 (info->info.drawable != eng_get_ob(re)->win) ||
+                 (info->info.screen != eng_get_ob(re)->screen) ||
+                 (info->info.visual != eng_get_ob(re)->visual) ||
+                 (info->info.colormap != eng_get_ob(re)->colormap) ||
+                 (info->info.depth != eng_get_ob(re)->depth) ||
+                 (info->info.destination_alpha != eng_get_ob(re)->alpha))
                {
                   Outbuf *ob;
 
                   eng_window_free(eng_get_ob(re));
+                  re->generic.software.ob = NULL;
                   gl_wins--;
 
                   ob = eng_window_new(info, eo_e,
-                                      eng_get_ob(re)->info->info.display,
-                                      eng_get_ob(re)->info->info.drawable,
-                                      eng_get_ob(re)->info->info.screen,
-                                      eng_get_ob(re)->info->info.visual,
-                                      eng_get_ob(re)->info->info.colormap,
-                                      eng_get_ob(re)->info->info.depth,
+                                      info->info.display,
+                                      info->info.drawable,
+                                      info->info.screen,
+                                      info->info.visual,
+                                      info->info.colormap,
+                                      info->info.depth,
                                       e->output.w, e->output.h,
-                                      eng_get_ob(re)->info->indirect,
-                                      eng_get_ob(re)->info->info.destination_alpha,
-                                      eng_get_ob(re)->info->info.rotation,
+                                      info->indirect,
+                                      info->info.destination_alpha,
+                                      info->info.rotation,
                                       swap_mode);
 
                   re->generic.software.ob = NULL;
