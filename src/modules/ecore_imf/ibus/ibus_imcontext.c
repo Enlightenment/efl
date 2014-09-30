@@ -682,6 +682,25 @@ sort_cb(const void *d1, const void *d2)
 }
 
 static void
+_ecore_imf_context_ibus_delete_surrounding_text_cb(IBusInputContext *ibuscontext EINA_UNUSED,
+                                                   gint              offset_from_cursor,
+                                                   guint             nchars,
+                                                   IBusIMContext    *ibusimcontext)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+
+   if (_focus_im_context != ibusimcontext->ctx)
+     return;
+
+   Ecore_IMF_Event_Delete_Surrounding ev;
+   ev.ctx = _focus_im_context;
+   ev.n_chars = nchars;
+   ev.offset = offset_from_cursor;
+   ecore_imf_context_delete_surrounding_event_add(_focus_im_context, offset_from_cursor, nchars);
+   ecore_imf_context_event_callback_call(_focus_im_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
+}
+
+static void
 _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EINA_UNUSED,
                                                IBusText          *text,
                                                gint               cursor_pos,
@@ -930,6 +949,10 @@ _ecore_imf_context_ibus_create(IBusIMContext *ibusimcontext)
    g_signal_connect(ibusimcontext->ibuscontext,
                     "forward-key-event",
                     G_CALLBACK (_ecore_imf_context_ibus_forward_key_event_cb),
+                    ibusimcontext);
+   g_signal_connect(ibusimcontext->ibuscontext,
+                    "delete-surrounding-text",
+                    G_CALLBACK (_ecore_imf_context_ibus_delete_surrounding_text_cb),
                     ibusimcontext);
    g_signal_connect(ibusimcontext->ibuscontext,
                     "update-preedit-text",
