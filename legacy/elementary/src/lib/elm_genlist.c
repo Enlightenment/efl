@@ -7817,5 +7817,20 @@ _elm_genlist_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
    return &atspi_actions[0];
 }
 
+EOLIAN Eina_List*
+_elm_genlist_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+{
+   Eina_List *ret = NULL;
+   Elm_Gen_Item *it;
+
+   EINA_INLIST_FOREACH(sd->items, it)
+     {
+        if (!it->parent)
+          ret = eina_list_append(ret, EO_OBJ(it));
+     }
+
+   return ret;
+}
+
 #include "elm_genlist.eo.c"
 #include "elm_genlist_item.eo.c"
