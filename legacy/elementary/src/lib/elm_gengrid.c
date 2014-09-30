@@ -3582,7 +3582,6 @@ EOLIAN static void
 _elm_gengrid_evas_object_smart_del(Eo *obj, Elm_Gengrid_Data *sd)
 {
    elm_gengrid_clear(obj);
-   eo_unref(sd->pan_obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
    ELM_SAFE_FREE(sd->stack, evas_object_del);
 

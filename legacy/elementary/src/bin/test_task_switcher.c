@@ -286,7 +286,7 @@ _win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_
 {
    Elm_App_Client *app;
    EINA_LIST_FREE(apps_list, app)
-     eo_unref(app);
+     eo_del(app);
 }
 
 static void

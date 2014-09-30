@@ -1367,7 +1367,6 @@ _elm_photocam_evas_object_smart_del(Eo *obj, Elm_Photocam_Data *sd)
         free(g->grid);
         free(g);
      }
-   eo_unref(sd->pan_obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    if (sd->f) eina_file_close(sd->f);

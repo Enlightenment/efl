@@ -3248,7 +3248,7 @@ _elm_atspi_bridge_shutdown(void)
 {
    if (_init_count)
      {
-        eo_unref(_root);
+        eo_del(_root);
 
         if (_cache_update_idler)
           ecore_idler_del(_cache_update_idler);

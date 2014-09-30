@@ -4159,7 +4159,6 @@ _elm_map_evas_object_smart_del(Eo *obj, Elm_Map_Data *sd)
    ecore_timer_del(sd->loaded_timer);
    if (sd->map) evas_map_free(sd->map);
 
-   eo_unref(sd->pan_obj);
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
 

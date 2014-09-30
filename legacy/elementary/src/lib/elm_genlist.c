@@ -5343,7 +5343,6 @@ _elm_genlist_evas_object_smart_del(Eo *obj, Elm_Genlist_Data *sd)
    elm_genlist_clear(obj);
    for (i = 0; i < 2; i++)
      ELM_SAFE_FREE(sd->stack[i], evas_object_del);
-   eo_unref(sd->pan_obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    _item_cache_zero(sd);
