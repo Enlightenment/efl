@@ -943,9 +943,8 @@ eng_setup(Evas *eo_e, void *in)
 
                   if (re->win)
                     {
-                       re->win->gl_context->references++;
-                       eng_window_free(re->win);
                        inc = 1;
+                       eng_window_free(re->win);
                        gl_wins--;
                     }
                   re->w = e->output.w;
