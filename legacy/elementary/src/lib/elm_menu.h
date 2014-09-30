@@ -32,6 +32,7 @@
  * @li @ref elm_object_item_part_content_get
  * @li @ref elm_object_item_disabled_set
  * @li @ref elm_object_item_disabled_get
+ * @li @ref elm_object_item_signal_emit (since 1.12)
  *
  * @see @ref tutorial_menu
  * @{

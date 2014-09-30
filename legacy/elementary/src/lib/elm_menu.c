@@ -91,6 +91,16 @@ _item_disable_hook(Elm_Object_Item *it)
 }
 
 static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
+
+   elm_layout_signal_emit(VIEW(item), emission, source);
+}
+
+static void
 _submenu_sizing_eval(Elm_Menu_Item *parent_it)
 {
    Eina_List *l;
@@ -974,6 +984,7 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
+   elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    it->base.data = data;
    it->func = func;
@@ -1059,6 +1070,7 @@ _elm_menu_item_separator_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(subitem, _item_content_set_hook);
    elm_widget_item_content_get_hook_set(subitem, _item_content_get_hook);
+   elm_widget_item_signal_emit_hook_set(subitem, _item_signal_emit_hook);
 
    subitem->separator = EINA_TRUE;
    _item_separator_obj_create(subitem);
