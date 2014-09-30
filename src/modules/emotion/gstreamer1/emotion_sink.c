@@ -371,6 +371,8 @@ emotion_video_sink_main_render(void *data)
 
    buffer = gst_buffer_ref(send->frame);
 
+   // XXX: need to map buffer and KEEP MAPPED until we set new video data or
+   // on the evas image object or release the object
    if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
      goto exit_point;
 
@@ -380,6 +382,8 @@ emotion_video_sink_main_render(void *data)
    evas_object_image_colorspace_set(priv->evas_object, send->eformat);
    evas_object_image_size_set(priv->evas_object, send->info.width, send->eheight);
 
+   // XXX: need to handle GstVideoCropMeta to get video cropping right
+
    evas_data = evas_object_image_data_get(priv->evas_object, 1);
 
    if (send->func)
@@ -387,6 +391,7 @@ emotion_video_sink_main_render(void *data)
    else
      WRN("No way to decode %x colorspace !", send->eformat);
 
+   // XXX: this unmap here is broken
    gst_buffer_unmap(buffer, &map);
 
    evas_object_image_data_set(priv->evas_object, evas_data);
