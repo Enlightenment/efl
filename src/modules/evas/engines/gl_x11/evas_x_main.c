@@ -238,6 +238,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
      gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
    if (!gw->glxwin)
      {
+        ERR("glXCreateWindow failed.");
         eng_window_free(gw);
         return NULL;
      }
@@ -250,6 +251,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 
    if (!gw->context)
      {
+        ERR("Failed to create a context.");
         eng_window_free(gw);
         return NULL;
      }
@@ -260,7 +262,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
              if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
                                         gw->context))
                {
-                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
+                  ERR("glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
                   eng_window_free(gw);
                   return NULL;
                }
@@ -269,7 +271,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
           {
              if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
                {
-                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
+                  ERR("glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
                   eng_window_free(gw);
                   return NULL;
                }
@@ -392,6 +394,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->gl_context = glsym_evas_gl_common_context_new();
    if (!gw->gl_context)
      {
+        ERR("Unable to get a new context.\n");
         eng_window_free(gw);
         return NULL;
      }
