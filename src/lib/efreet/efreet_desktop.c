@@ -1120,10 +1120,8 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
                 break;
             }
         }
-        if (found)
-            return 1;
+        return found;
     }
-
 
     if (desktop->not_show_in)
     {
@@ -1135,8 +1133,7 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
                 break;
             }
         }
-        if (found)
-            return 0;
+        return !found;
     }
 
     return 1;
