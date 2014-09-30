@@ -5858,6 +5858,7 @@ _elm_genlist_item_eo_base_constructor(Eo *eo_it, Elm_Gen_Item *it)
 {
    eo_do_super(eo_it, ELM_GENLIST_ITEM_CLASS, eo_constructor());
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
+   eo_do(eo_it, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST_ITEM));
 }
 
 static Elm_Gen_Item *
