@@ -40,7 +40,7 @@ to_c(bool x)
 inline Eina_Bool*
 to_c(bool* x)
 {
-   return static_cast<Eina_Bool*>(x);
+   return reinterpret_cast<Eina_Bool*>(x);
 }
 
 template <typename T>
