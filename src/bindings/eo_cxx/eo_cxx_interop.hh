@@ -37,6 +37,12 @@ to_c(bool x)
    return x ? EINA_TRUE : EINA_FALSE;
 }
 
+inline Eina_Bool*
+to_c(bool* x)
+{
+   return static_cast<Eina_Bool*>(x);
+}
+
 template <typename T>
 T to_c(T const& v, typename std::enable_if<!std::is_base_of<efl::eo::base, T>::value>::type* = 0)
 {
