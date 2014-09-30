@@ -1082,8 +1082,6 @@ eng_setup(Evas *eo_e, void *in)
                                       info->info.rotation,
                                       swap_mode);
 
-                  re->generic.software.ob = NULL;
-
                   eng_window_use(ob);
                   if (ob)
                     {
@@ -1091,7 +1089,6 @@ eng_setup(Evas *eo_e, void *in)
                                                                   e->output.w, e->output.h);
 
                        gl_wins++;
-                       eng_get_ob(re)->gl_context->references--;
                     }
                }
              else if ((eng_get_ob(re)->w != e->output.w) ||
