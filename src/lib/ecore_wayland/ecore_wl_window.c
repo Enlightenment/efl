@@ -14,6 +14,7 @@ static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *sur
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
+static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial);
 
 /* local variables */
@@ -36,6 +37,7 @@ static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener =
 static const struct xdg_surface_listener _ecore_xdg_surface_listener = 
 {
    _ecore_xdg_handle_surface_configure,
+   _ecore_xdg_handle_surface_delete,
 };
 
 static const struct xdg_popup_listener _ecore_xdg_popup_listener = 
@@ -263,6 +265,8 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
 EAPI struct wl_surface*
 ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!win) return NULL;
    if (win->surface) return win->surface;
    win->surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
@@ -973,10 +977,12 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 static void
 _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSED, int32_t width, int32_t height, struct wl_array *states, uint32_t serial)
 {
-   Ecore_Wl_Window *win = data;
+   Ecore_Wl_Window *win;
    uint32_t *p;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(win = data)) return;
 
    win->maximized = EINA_FALSE;
    win->fullscreen = EINA_FALSE;
@@ -1014,6 +1020,17 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface 
      }
 
    xdg_surface_ack_configure(win->xdg_surface, serial);
+}
+
+static void 
+_ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface EINA_UNUSED)
+{
+   Ecore_Wl_Window *win;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(win = data)) return;
+   ecore_wl_window_free(win);
 }
 
 static void 
