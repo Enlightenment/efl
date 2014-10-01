@@ -235,6 +235,15 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 
 /**
  * @internal
+ * @def GET_ITEM_LEN(it)
+ * Returns length of item (Format or Text)
+ */
+#define GET_ITEM_LEN(it) \
+   (((it)->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
+    _ITEM_TEXT(it)->text_props.text_len : 1)
+
+/**
+ * @internal
  * @def GET_ITEM_TEXT(ti)
  * Returns a const reference to the text of the ti (not null terminated).
  */
@@ -10514,9 +10523,62 @@ _evas_textblock_size_formatted_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coor
    if (h) *h = o->formatted.h;
 }
 
-static void
-_size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
-      Evas_Coord *ascent, Evas_Coord *descent, Evas_Coord *w, Textblock_Position position)
+#ifdef BIDI_SUPPORT
+/**
+ * @internal
+ * Returns last item in the visual order of a given native line.
+ * Similar to the code of _layout_line_reorder, but does only the
+ * required work to get the last item in the visual order. There is
+ * no need to actually reorder the items in the native line.
+ * @param line the native line to
+ * @param bidi_props bidi-props used for visual reorder
+ */
+static Evas_Object_Textblock_Item *
+_line_native_last_visual_get(const Eina_List *line,
+      Evas_BiDi_Paragraph_Props *bidi_props)
+{
+   Evas_Object_Textblock_Item *it, *last_it = NULL;
+   EvasBiDiStrIndex *v_to_l = NULL;
+   size_t len;
+   Evas_Object_Textblock_Item *items = NULL;
+   const Eina_List *i;
+   size_t max_vpos = 0;
+
+   if (line)
+      items = (Evas_Object_Textblock_Item *)eina_list_data_get(line);
+
+   if (items && bidi_props)
+     {
+        size_t start, end;
+        start = _ITEM(eina_list_data_get(line))->text_pos;
+        it = _ITEM(eina_list_data_get(eina_list_last(line)));
+        end = it->text_pos + GET_ITEM_LEN(it);
+
+        len = end - start;
+        evas_bidi_props_reorder_line(NULL, start, len, bidi_props, &v_to_l);
+
+        /* Get the last visual item in this line */
+        EINA_LIST_FOREACH(line, i, it)
+          {
+             size_t vpos = evas_bidi_position_logical_to_visual(
+                   v_to_l, len, it->text_pos - start);
+             if ((it->w > 0) && (!last_it || (vpos >= max_vpos)))
+               {
+                  last_it = it;
+                  max_vpos = vpos;
+               }
+          }
+        if (v_to_l) free(v_to_l);
+     }
+   return last_it;
+}
+#endif
+
+static inline void
+_size_native_calc_line_finalize(const Evas_Object *eo_obj,
+      const Evas_Object_Textblock_Paragraph *par, Eina_List *items,
+      Evas_Coord *ascent, Evas_Coord *descent,
+      Evas_Coord *w, Textblock_Position position)
 {
    Evas_Object_Textblock_Item *it, *last_it = NULL;
    Eina_List *i;
@@ -10544,10 +10606,19 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
         /* Add margins. */
         if (it->format)
            *w = it->format->margin.l + it->format->margin.r;
-
-        if (it->ln && it->ln->par)
-          is_bidi = it->ln->par->is_bidi;
       }
+
+#ifdef BIDI_SUPPORT
+   /* Get last item by visual order, because this paragraph is bidi */
+   if (par->is_bidi)
+     {
+        /* bidi_props has already been updated in calling function */
+        last_it = _line_native_last_visual_get(items, par->bidi_props);
+        is_bidi = EINA_TRUE;
+     }
+#else
+   (void) par;
+#endif
 
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
@@ -10579,25 +10650,12 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
 loop_advance:
         *w += it->adv;
 
-        /* Only conditional if we have bidi support, otherwise, just set it. */
-        if (it->w > 0)
-          {
-#ifdef BIDI_SUPPORT
-             if (is_bidi)
-               {
-                  if (!last_it || (it->visual_pos > last_it->visual_pos))
-                    {
-                       last_it = it;
-                    }
-               }
-             else
-#endif
-               {
-                  last_it = it;
-               }
-          }
+        /* Update visible last item in the logical order */
+        if (!is_bidi && (it->w > 0))
+           last_it = it;
      }
 
+   /* rectify width of line using the last item */
    if (last_it)
       *w += last_it->w - last_it->adv;
 }
@@ -10606,7 +10664,7 @@ loop_advance:
 static void
 _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
       const Evas_Textblock_Data *o,
-      const Evas_Object_Textblock_Paragraph *par,
+      Evas_Object_Textblock_Paragraph *par,
       Textblock_Position *position,
       Evas_Coord *_w, Evas_Coord *_h)
 {
@@ -10615,6 +10673,10 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
    Eina_List *line_items = NULL;
    Evas_Coord w = 0, y = 0, wmax = 0, h = 0, ascent = 0, descent = 0;
 
+#ifdef BIDI_SUPPORT
+   if (par->is_bidi)
+      _layout_update_bidi_props(o, par);
+#endif
    EINA_LIST_FOREACH(par->logical_items, i, it)
      {
         line_items = eina_list_append(line_items, it);
@@ -10624,7 +10686,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
              if (fi->item && (_IS_LINE_SEPARATOR(fi->item) ||
                       _IS_PARAGRAPH_SEPARATOR(o, fi->item)))
                {
-                  _size_native_calc_line_finalize(eo_obj, line_items, &ascent,
+                  _size_native_calc_line_finalize(eo_obj, par, line_items, &ascent,
                         &descent, &w, *position);
 
                   if (ascent + descent > h)
@@ -10663,7 +10725,15 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
         *position = (*position == TEXTBLOCK_POSITION_START) ?
            TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
      }
-   _size_native_calc_line_finalize(eo_obj, line_items, &ascent, &descent, &w, *position);
+   _size_native_calc_line_finalize(eo_obj, par, line_items, &ascent, &descent, &w, *position);
+#ifdef BIDI_SUPPORT
+   /* Clear the bidi props because we don't need them anymore. */
+   if (par->bidi_props)
+     {
+        evas_bidi_paragraph_props_unref(par->bidi_props);
+        par->bidi_props = NULL;
+     }
+#endif
 
    if (*position == TEXTBLOCK_POSITION_START)
       *position = TEXTBLOCK_POSITION_ELSE;
@@ -10696,7 +10766,6 @@ _evas_textblock_size_native_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord *
         EINA_INLIST_FOREACH(o->paragraphs, par)
           {
              Evas_Coord tw, th;
-             _layout_paragraph_render(o, par);
              _size_native_calc_paragraph_size(eo_obj, o, par, &position, &tw, &th);
              if (tw > wmax)
                 wmax = tw;
