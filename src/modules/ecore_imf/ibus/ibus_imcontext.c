@@ -242,7 +242,7 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 
    ibusimcontext->ibuscontext = NULL;
    ibusimcontext->has_focus = EINA_FALSE;
-   ibusimcontext->caps = IBUS_CAP_PREEDIT_TEXT | IBUS_CAP_FOCUS | IBUS_CAP_SURROUNDING_TEXT;
+   ibusimcontext->caps = IBUS_CAP_PREEDIT_TEXT | IBUS_CAP_FOCUS;
    ibusimcontext->ctx = ctx;
 
    s = getenv("IBUS_ENABLE_SYNC_MODE");
