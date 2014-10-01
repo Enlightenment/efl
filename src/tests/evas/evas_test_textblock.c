@@ -2901,6 +2901,14 @@ START_TEST(evas_textblock_size)
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h2, nh);
 
+   evas_object_textblock_text_markup_set(tb, "/u200eאאא AAA");
+   evas_object_resize(tb, 1, 1); //force wrapping
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_eq(w, nw);
+   ck_assert_int_eq(h, nh);
+
    /* Two lines != double the height */
    fail_if(h * 2 == h2);
 
