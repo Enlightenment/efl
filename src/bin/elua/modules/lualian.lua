@@ -346,6 +346,21 @@ local Event = Node:clone {
     end
 }
 
+local gen_ns = function(klass, s)
+    local nspaces = klass:namespaces_get():to_array()
+    if #nspaces > 1 then
+        local lnspaces = {}
+        for i = 2, #nspaces do
+            lnspaces[i] = '"' .. nspaces[i]:lower() .. '"'
+        end
+        s:write("local __M = util.get_namespace(M, { ",
+            table.concat(lnspaces, ", "), " })\n")
+        return "__M"
+    else
+        return "M"
+    end
+end
+
 local Mixin = Node:clone {
     __ctor = function(self, klass, ch, evs)
         self.klass    = klass
@@ -362,30 +377,11 @@ local Mixin = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        local nspaces = self.klass:namespaces_get():to_array()
-        local mname
-        if #nspaces > 1 then
-            local lnspaces = {}
-            for i = 2, #nspaces do
-                lnspaces[i] = '"' .. nspaces[i]:lower() .. '"'
-            end
-            s:write("local __M = util.get_namespace(M, { ",
-                table.concat(lnspaces, ", "), " })\n")
-            mname = "__M"
-        else
-            mname = "M"
-        end
+        gen_ns(self.klass, s)
 
-        s:write(([[
-local __class = __lib.%s_class_get()
-
-%s.%s = eo.class_register("%s", nil, {
-]]):format(self.prefix, mname, self.klass:name_get(),
-        self.klass:full_name_get()))
-
+        s:write("__body = {\n")
         self:gen_children(s)
-
-        s:write("}, __class)\n")
+        s:write("}\n")
     end,
 
     gen_ffi = function(self, s)
@@ -429,35 +425,11 @@ local Class = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        local nspaces = self.klass:namespaces_get():to_array()
-        local mname
-        if #nspaces > 1 then
-            local lnspaces = {}
-            for i = 2, #nspaces do
-                lnspaces[i] = '"' .. nspaces[i]:lower() .. '"'
-            end
-            s:write("local __M = util.get_namespace(M, { ",
-                table.concat(lnspaces, ", "), " })\n")
-            mname = "__M"
-        else
-            mname = "M"
-        end
+        local mname = gen_ns(self.klass, s)
 
-        local kn = self.klass:full_name_get()
-
-        s:write(([[
-local __class = __lib.%s_class_get()
-
-eo.class_register("%s", %s, {
-]]):format(self.prefix, kn, self.parent and ('"' .. self.parent .. '"') or "nil"))
-
+        s:write("__body = {\n")
         self:gen_children(s)
-
-        s:write("}, __class)\n\n")
-
-        for i, v in ipairs(self.mixins) do
-            s:write(("eo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
-        end
+        s:write("}\n")
 
         -- write the constructor
         s:write(([[
@@ -480,9 +452,14 @@ local File = Node:clone {
     end,
 
     generate = function(self, s)
+        local kls  = self.klass
+        local ckls = self.children[1]
+
+        local kn  = kls:full_name_get()
+        local par = ckls.parent
+
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
-        dom:log(log.level.INFO, "  Class            : "
-            .. self.klass:full_name_get())
+        dom:log(log.level.INFO, "  Class            : " .. kn)
 
         s:write(([[
 -- EFL LuaJIT bindings: %s (class %s)
@@ -490,14 +467,27 @@ local File = Node:clone {
 
 local cutil = require("cutil")
 local util  = require("util")
+local ffi   = require("ffi")
 local eo    = require("eo")
 
 local M     = ...
 
 local __lib
+local __class
+local __body
 
 local init = function()
     __lib = util.lib_load("%s")
+    __class = __lib.%s_class_get()
+    eo.class_register("%s", %s, __body, __class)
+]]):format(self.fname, kn, self.libname, ckls.prefix, kn,
+           par and ('"' .. par .. '"') or "nil"))
+
+        if ckls.mixins then for i, v in ipairs(ckls.mixins) do
+            s:write(("    eo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
+        end end
+
+        s:write(([[
 end
 
 local shutdown = function()
@@ -506,7 +496,7 @@ end
 
 cutil.init_module(init, shutdown)
 
-]]):format(self.fname, self.klass:full_name_get(), self.libname, self.libname))
+]]):format(self.libname))
 
         self:gen_children(s)
 
