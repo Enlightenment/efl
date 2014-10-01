@@ -351,7 +351,7 @@ local gen_ns = function(klass, s)
     if #nspaces > 1 then
         local lnspaces = {}
         for i = 2, #nspaces do
-            lnspaces[i] = '"' .. nspaces[i]:lower() .. '"'
+            lnspaces[i - 1] = '"' .. nspaces[i]:lower() .. '"'
         end
         s:write("local __M = util.get_namespace(M, { ",
             table.concat(lnspaces, ", "), " })\n")
