@@ -214,6 +214,53 @@ _ecore_imf_ibus_process_key_event_done(GObject      *object,
    free(event);
 }
 
+static void
+_request_surrounding_text(IBusIMContext *ibusimcontext)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext->ibuscontext);
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext->ctx);
+
+    if ((ibusimcontext->caps & IBUS_CAP_SURROUNDING_TEXT) != 0 &&
+        ibus_input_context_needs_surrounding_text(ibusimcontext->ibuscontext))
+      {
+         char *surrounding = NULL;
+         int cursor_pos;
+         IBusText *ibustext;
+
+         EINA_LOG_DBG ("requesting surrounding text...\n");
+
+         if (ecore_imf_context_surrounding_get(ibusimcontext->ctx,
+                                               &surrounding,
+                                               &cursor_pos))
+           {
+              if (!surrounding)
+                return;
+
+              if (cursor_pos < 0)
+                {
+                   free(surrounding);
+                   return;
+                }
+
+              ibustext = ibus_text_new_from_string (surrounding);
+
+              ibus_input_context_set_surrounding_text(ibusimcontext->ibuscontext,
+                                                      ibustext,
+                                                      cursor_pos,
+                                                      cursor_pos);
+
+              free(surrounding);
+           }
+         else
+           {
+              ibusimcontext->caps &= ~IBUS_CAP_SURROUNDING_TEXT;
+              ibus_input_context_set_capabilities(ibusimcontext->ibuscontext,
+                                                  ibusimcontext->caps);
+           }
+      }
+}
+
 EAPI void
 ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 {
@@ -242,7 +289,7 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 
    ibusimcontext->ibuscontext = NULL;
    ibusimcontext->has_focus = EINA_FALSE;
-   ibusimcontext->caps = IBUS_CAP_PREEDIT_TEXT | IBUS_CAP_FOCUS | IBUS_CAP_SURROUNDING_TEXT;
+   ibusimcontext->caps = IBUS_CAP_PREEDIT_TEXT | IBUS_CAP_FOCUS | IBUS_CAP_SURROUNDING_TEXT;;
    ibusimcontext->ctx = ctx;
 
    s = getenv("IBUS_ENABLE_SYNC_MODE");
@@ -342,6 +389,8 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type
              if (ev->timestamp == 0)
                return EINA_FALSE;
 
+             _request_surrounding_text(ibusimcontext);
+
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) |
@@ -396,6 +445,8 @@ ecore_imf_context_ibus_focus_in(Ecore_IMF_Context *ctx)
    ibusimcontext->has_focus = EINA_TRUE;
    if (ibusimcontext->ibuscontext)
      ibus_input_context_focus_in(ibusimcontext->ibuscontext);
+
+   _request_surrounding_text(ibusimcontext);
 
    if (_focus_im_context != ctx)
      _focus_im_context = ctx;
@@ -614,6 +665,8 @@ _ecore_imf_context_ibus_commit_text_cb(IBusInputContext *ibuscontext EINA_UNUSED
      {
         ecore_imf_context_commit_event_add(ibusimcontext->ctx, text->text);
         ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)commit_str);
+
+        _request_surrounding_text(ibusimcontext);
      }
 }
 
@@ -831,6 +884,8 @@ _ecore_imf_context_ibus_show_preedit_text_cb(IBusInputContext *ibuscontext EINA_
    // call preedit changed
    ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
    ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+
+   _request_surrounding_text(ibusimcontext);
 }
 
 static void
