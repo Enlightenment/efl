@@ -461,6 +461,9 @@ local File = Node:clone {
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
         dom:log(log.level.INFO, "  Class            : " .. kn)
 
+        local knu = kn:gsub("%.", "_")
+        local paru = par and ('"' .. par:gsub("%.", "_") .. '"') or "nil"
+
         s:write(([[
 -- EFL LuaJIT bindings: %s (class %s)
 -- For use with Elua; automatically generated, do not modify
@@ -480,11 +483,11 @@ local init = function()
     __lib = util.lib_load("%s")
     __class = __lib.%s_class_get()
     eo.class_register("%s", %s, __body, __class)
-]]):format(self.fname, kn, self.libname, ckls.prefix, kn,
-           par and ('"' .. par .. '"') or "nil"))
+]]):format(self.fname, kn, self.libname, ckls.prefix, knu, paru))
 
         if ckls.mixins then for i, v in ipairs(ckls.mixins) do
-            s:write(("    eo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
+            s:write(("    eo.class_mixin(\"%s\", \"%s\")\n"):format(knu,
+                v:gsub("%.", "_")))
         end end
 
         s:write(([[
