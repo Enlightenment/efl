@@ -16,6 +16,9 @@
 # include <subsurface-client-protocol.h>
 #endif
 
+#include "xdg-shell-client-protocol.h"
+#define XDG_VERSION 4
+
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
 static Eina_Bool _ecore_wl_cb_idle_enterer(void *data);
@@ -59,6 +62,17 @@ static const struct wl_callback_listener _ecore_wl_init_sync_listener =
 static const struct wl_callback_listener _ecore_wl_anim_listener =
 {
    _ecore_wl_animator_callback
+};
+
+static void 
+xdg_shell_ping(void *data EINA_UNUSED, struct xdg_shell *shell, uint32_t serial)
+{
+   xdg_shell_pong(shell, serial);
+}
+
+static const struct xdg_shell_listener xdg_shell_listener =
+{
+   xdg_shell_ping,
 };
 
 /* external variables */
@@ -165,7 +179,8 @@ ecore_wl_init(const char *name)
    _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
 
    _ecore_wl_disp->fd_hdl =
-     ecore_main_fd_handler_add(_ecore_wl_disp->fd, ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
+     ecore_main_fd_handler_add(_ecore_wl_disp->fd, 
+                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
                                _ecore_wl_cb_handle_data, _ecore_wl_disp,
                                NULL, NULL);
 
@@ -459,8 +474,9 @@ _ecore_wl_shutdown(Eina_Bool close)
 
         EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->globals, tmp, global)
           {
-             _ecore_wl_disp->globals = eina_inlist_remove
-               (_ecore_wl_disp->globals, EINA_INLIST_GET(global));
+             _ecore_wl_disp->globals = 
+               eina_inlist_remove(_ecore_wl_disp->globals, 
+                                  EINA_INLIST_GET(global));
              free(global->interface);
              free(global);
           }
@@ -471,6 +487,8 @@ _ecore_wl_shutdown(Eina_Bool close)
         if (_ecore_wl_disp->wl.ivi_application)
           ivi_application_destroy(_ecore_wl_disp->wl.ivi_application);
 #endif
+        if (_ecore_wl_disp->wl.xdg_shell)
+          xdg_shell_destroy(_ecore_wl_disp->wl.xdg_shell);
         if (_ecore_wl_disp->wl.shell)
           wl_shell_destroy(_ecore_wl_disp->wl.shell);
         if (_ecore_wl_disp->wl.shm) wl_shm_destroy(_ecore_wl_disp->wl.shm);
@@ -591,7 +609,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 
    ewd = data;
 
-   global = calloc(1, sizeof(Ecore_Wl_Global));
+   if (!(global = calloc(1, sizeof(Ecore_Wl_Global)))) return;
 
    global->id = id;
    global->interface = strdup(interface);
@@ -619,6 +637,14 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
           wl_registry_bind(registry, id, &ivi_application_interface, 1);
      }
 #endif
+   else if (!strcmp(interface, "xdg_shell"))
+     {
+        ewd->wl.xdg_shell = 
+          wl_registry_bind(registry, id, &xdg_shell_interface, 1);
+        xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
+        xdg_shell_add_listener(ewd->wl.xdg_shell, &xdg_shell_listener,
+                               ewd->wl.display);
+     }
    else if (!strcmp(interface, "wl_shell"))
      {
         ewd->wl.shell =
@@ -647,7 +673,8 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, 1);
      }
 
-   if ((ewd->wl.compositor) && (ewd->wl.shm) && (ewd->wl.shell))
+   if ((ewd->wl.compositor) && (ewd->wl.shm) && 
+       ((ewd->wl.shell) || (ewd->wl.xdg_shell)))
      {
         Ecore_Wl_Event_Interfaces_Bound *ev;
 
@@ -656,7 +683,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 
         ev->compositor = (ewd->wl.compositor != NULL);
         ev->shm = (ewd->wl.shm != NULL);
-        ev->shell = (ewd->wl.shell != NULL);
+        ev->shell = ((ewd->wl.shell != NULL) || (ewd->wl.xdg_shell != NULL));
         ev->output = (ewd->output != NULL);
         ev->seat = (ewd->input != NULL);
         ev->data_device_manager = (ewd->wl.data_device_manager != NULL);
@@ -680,8 +707,8 @@ _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_
    EINA_INLIST_FOREACH_SAFE(ewd->globals, tmp, global)
      {
         if (global->id != id) continue;
-        ewd->globals = eina_inlist_remove(ewd->globals,
-                                          EINA_INLIST_GET(global));
+        ewd->globals = 
+          eina_inlist_remove(ewd->globals, EINA_INLIST_GET(global));
         free(global->interface);
         free(global);
      }

@@ -69,6 +69,7 @@ struct _Ecore_Wl_Display
         struct wl_compositor *compositor;
         struct wl_subcompositor *subcompositor;
         struct wl_shell *shell;
+        struct xdg_shell *xdg_shell;
         struct wl_shell *desktop_shell;
 # ifdef USE_IVI_SHELL
         struct ivi_application *ivi_application;
@@ -115,6 +116,15 @@ struct _Ecore_Wl_Window
    struct ivi_surface *ivi_surface;
    int ivi_surface_id;
 # endif
+
+   struct xdg_surface *xdg_surface;
+   struct xdg_popup *xdg_popup;
+   Eina_Bool focused : 1;
+   Eina_Bool resizing : 1;
+
+   Eina_Bool fullscreen : 1;
+   Eina_Bool maximized : 1;
+   Eina_Bool minimized : 1;
 
    struct
      {

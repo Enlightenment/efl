@@ -567,12 +567,24 @@ EAPI void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
 EAPI void ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y);
 EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
 EAPI struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
+EAPI struct xdg_surface *ecore_wl_window_xdg_surface_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
 EAPI void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
 EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, int hot_x, int hot_y);
 EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
+
+/**
+ * Iconify a window
+ * 
+ * @param win The window to iconifiy
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.12
+ */
+EAPI void ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified);
+EAPI Eina_Bool ecore_wl_window_iconified_get(Ecore_Wl_Window *win);
 
 
 EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
