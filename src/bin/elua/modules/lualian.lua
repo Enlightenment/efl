@@ -64,11 +64,7 @@ local known_ptr_in = {
 local convfuncs = {}
 
 local build_calln = function(tps, expr, isin)
-    local funcn = "__convert_type_wip"
-    convfuncs[funcn] = true
-    return table.concat {
-        funcn, "(", expr, ")"
-    }
+    return expr
 end
 
 local typeconv_in = function(tps, expr)
@@ -382,6 +378,7 @@ local Mixin = Node:clone {
 
         s:write(([[
 local __class = __lib.%s_class_get()
+
 %s.%s = eo.class_register("%s", nil, {
 ]]):format(self.prefix, mname, self.klass:name_get(),
         self.klass:full_name_get()))
@@ -450,19 +447,22 @@ local Class = Node:clone {
 
         s:write(([[
 local __class = __lib.%s_class_get()
+
 eo.class_register("%s", %s, {
 ]]):format(self.prefix, kn, self.parent and ('"' .. self.parent .. '"') or "nil"))
 
         self:gen_children(s)
 
-        s:write("}, __class)")
+        s:write("}, __class)\n\n")
 
         for i, v in ipairs(self.mixins) do
-            s:write(("\neo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
+            s:write(("eo.class_mixin(\"%s\", \"%s\")\n"):format(kn, v))
         end
 
         -- write the constructor
-        s:write(([[\n%s.%s = function()
+        s:write(([[
+
+%s.%s = function()
 end
 ]]):format(mname, self.klass:name_get()))
     end,
@@ -483,9 +483,6 @@ local File = Node:clone {
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
         dom:log(log.level.INFO, "  Class            : "
             .. self.klass:full_name_get())
-
-        local modn = ("require(\"%s\")"):format(self.klass:namespaces_get()()
-            :lower())
 
         s:write(([[
 -- EFL LuaJIT bindings: %s (class %s)
