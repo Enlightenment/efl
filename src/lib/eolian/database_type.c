@@ -94,7 +94,7 @@ _ftype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 static void
 _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 {
-   const char *fname;
+   Eolian_Struct_Type_Field *sf;
    Eina_List *l;
    eina_strbuf_append(buf, "struct ");
    if (tp->name)
@@ -112,10 +112,9 @@ _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
    if (tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
      goto append_name;
    eina_strbuf_append(buf, "{ ");
-   EINA_LIST_FOREACH(tp->field_list, l, fname)
+   EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
-        Eolian_Struct_Type_Field *sf = eina_hash_find(tp->fields, fname);
-        database_type_to_str(sf->type, buf, fname);
+        database_type_to_str(sf->type, buf, sf->name);
         eina_strbuf_append(buf, "; ");
      }
    eina_strbuf_append(buf, "}");
@@ -130,7 +129,7 @@ append_name:
 static void
 _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 {
-   const char *fname;
+   Eolian_Enum_Type_Field *ef;
    Eina_List *l;
    eina_strbuf_append(buf, "enum ");
    if (tp->name)
@@ -146,10 +145,9 @@ _etype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append_char(buf, ' ');
      }
    eina_strbuf_append(buf, "{ ");
-   EINA_LIST_FOREACH(tp->field_list, l, fname)
+   EINA_LIST_FOREACH(tp->field_list, l, ef)
      {
-        Eolian_Enum_Type_Field *ef = eina_hash_find(tp->fields, fname);
-        eina_strbuf_append(buf, fname);
+        eina_strbuf_append(buf, ef->name);
         if (ef->value)
           {
              Eolian_Value val = eolian_expression_eval(ef->value,
@@ -336,15 +334,14 @@ database_type_print(Eolian_Type *tp)
      }
    else if (tp->type == EOLIAN_TYPE_STRUCT)
      {
-        const char *fname;
+        Eolian_Struct_Type_Field *sf;
         Eina_List *m;
         printf("struct ");
         if (tp->full_name) printf("%s ", tp->full_name);
         printf("{ ");
-        EINA_LIST_FOREACH(tp->field_list, m, fname)
+        EINA_LIST_FOREACH(tp->field_list, m, sf)
           {
-             Eolian_Struct_Type_Field *sf = eina_hash_find(tp->fields, fname);
-             printf("%s: ", fname);
+             printf("%s: ", sf->name);
              database_type_print(sf->type);
              printf("; ");
           }
@@ -352,14 +349,13 @@ database_type_print(Eolian_Type *tp)
      }
    else if (tp->type == EOLIAN_TYPE_ENUM)
      {
-        const char *fname;
+        Eolian_Enum_Type_Field *ef;
         Eina_List *m;
         printf("enum %s ", tp->full_name);
         printf("{ ");
-        EINA_LIST_FOREACH(tp->field_list, m, fname)
+        EINA_LIST_FOREACH(tp->field_list, m, ef)
           {
-             Eolian_Enum_Type_Field *ef = eina_hash_find(tp->fields, fname);
-             printf("%s", fname);
+             printf("%s", ef->name);
              if (ef->value)
                {
                   printf(" = ");
