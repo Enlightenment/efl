@@ -249,6 +249,7 @@ ffi.cdef [[
     const char *eolian_event_c_name_get(const Eolian_Event *event);
     Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
     Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
+    const char *eolian_class_c_get_function_name_get(const Eolian_Class *klass);
     const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
     const Eolian_Type *eolian_type_struct_get_by_name(const char *name);
     const Eolian_Type *eolian_type_enum_get_by_name(const char *name);
@@ -960,6 +961,12 @@ M.Class = ffi.metatype("Eolian_Class", {
 
         dtor_enable_get = function(self)
             return eolian.eolian_class_dtor_enable_get(self) ~= 0
+        end,
+
+        c_get_function_name_get = function(self)
+            local v = eolian.eolian_class_c_get_function_name_get(self)
+            if v == nil then return nil end
+            return ffi_stringshare(v)
         end
     }
 })

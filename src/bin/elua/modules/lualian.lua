@@ -364,7 +364,6 @@ end
 local Mixin = Node:clone {
     __ctor = function(self, klass, iface, ch, evs)
         self.klass    = klass
-        self.prefix   = klass:eo_prefix_get()
         self.children = ch
         self.events   = evs
         self.is_iface = iface
@@ -386,9 +385,8 @@ local Mixin = Node:clone {
     end,
 
     gen_ffi = function(self, s)
-        local prefix = self.is_iface and "interface" or "mixin"
-        s:write("    const Eo_Class *", self.prefix, "_", prefix,
-            "_get(void);\n")
+        s:write("    const Eo_Class *", self.klass:c_get_function_name_get(),
+            "(void);\n")
         for i, v in ipairs(self.children) do
             v.parent_node = self
             v:gen_ffi(s)
@@ -415,7 +413,6 @@ local Class = Node:clone {
         self.parent     = parent
         self.interfaces = interfaces
         self.mixins     = mixins
-        self.prefix     = klass:eo_prefix_get()
         self.children   = ch
         self.events     = evs
     end,

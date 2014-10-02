@@ -174,3 +174,31 @@ eolian_class_dtor_enable_get(const Eolian_Class *cl)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    return cl->class_dtor_enable;
 }
+
+EAPI Eina_Stringshare *
+eolian_class_c_get_function_name_get(const Eolian_Class *cl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   Eina_Stringshare *ret;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   char *bufp;
+   eina_strbuf_append(buf, cl->full_name);
+   switch (cl->type)
+     {
+      case EOLIAN_CLASS_INTERFACE:
+        eina_strbuf_append(buf, "_interface_get");
+        break;
+      case EOLIAN_CLASS_MIXIN:
+        eina_strbuf_append(buf, "_mixin_get");
+        break;
+      default:
+        eina_strbuf_append(buf, "_class_get");
+        break;
+     }
+   eina_strbuf_replace_all(buf, ".", "_");
+   bufp = eina_strbuf_string_steal(buf);
+   eina_str_tolower(&bufp);
+   ret = eina_stringshare_add(bufp);
+   free(bufp);
+   return ret;
+}
