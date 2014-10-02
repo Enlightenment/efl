@@ -99,6 +99,7 @@ START_TEST(evas_textblock_cursor)
    Evas_Coord x, y, w, h;
    size_t i, len;
    Evas_Coord nw, nh;
+   Evas_BiDi_Direction dir;
    const char *buf = "This is a<br/> test.<ps/>Lets see if this works.<ps/>עוד פסקה.";
 
    /* Walk the textblock using cursor_char_next */
@@ -419,6 +420,28 @@ START_TEST(evas_textblock_cursor)
         evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
      }
+
+   /* Check direction */
+   evas_object_textblock_text_markup_set(tb, "test");
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "test"));
+   dir = EVAS_BIDI_DIRECTION_RTL;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_UNDER);
+   fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
+   dir = EVAS_BIDI_DIRECTION_RTL;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
+   evas_object_textblock_text_markup_set(tb, "עוד פסקה");
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "עוד פסקה"));
+   dir = EVAS_BIDI_DIRECTION_LTR;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_UNDER);
+   fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+   dir = EVAS_BIDI_DIRECTION_LTR;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
 
 #ifdef HAVE_FRIBIDI
    evas_object_textblock_text_markup_set(tb,

@@ -9596,7 +9596,19 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
 
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
+        Evas_Object_Textblock_Line *ln;
+        Evas_Object_Textblock_Item *it;
+
         ret = evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
+        _find_layout_item_match(cur, &ln, &it);
+        if (ret >= 0)
+          {
+             Evas_BiDi_Direction itdir =
+                (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+                _ITEM_TEXT(it)->text_props.bidi_dir :
+                _ITEM_FORMAT(it)->bidi_dir;
+             if (dir) *dir = itdir;
+          }
      }
    else if (ctype == EVAS_TEXTBLOCK_CURSOR_BEFORE)
      {
@@ -9604,7 +9616,6 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
          * of just after the previous char (which in bidi text may not be
          * just before the current char). */
         Evas_Coord x, y, w, h;
-
         Evas_Object_Textblock_Line *ln;
         Evas_Object_Textblock_Item *it;
 
