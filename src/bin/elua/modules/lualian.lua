@@ -247,7 +247,7 @@ local Property = Method:clone {
             name    = prop:name_get(),
             suffix  = (self.isget and "_get" or "_set")
         }
-        proto.ret_type = rett or "void"
+        proto.ret_type = rett and rett:c_type_get() or "void"
         local args, cargs, vargs = { "self" }, {}, {}
         proto.args, proto.cargs, proto.vargs = args, cargs, vargs
         local rets = {}
