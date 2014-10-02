@@ -362,11 +362,12 @@ local gen_ns = function(klass, s)
 end
 
 local Mixin = Node:clone {
-    __ctor = function(self, klass, ch, evs)
+    __ctor = function(self, klass, iface, ch, evs)
         self.klass    = klass
         self.prefix   = klass:eo_prefix_get()
         self.children = ch
         self.events   = evs
+        self.is_iface = iface
     end,
 
     generate = function(self, s)
@@ -385,7 +386,9 @@ local Mixin = Node:clone {
     end,
 
     gen_ffi = function(self, s)
-        s:write("    const Eo_Class *", self.prefix, "_class_get(void);\n")
+        local prefix = self.is_iface and "interface" or "mixin"
+        s:write("    const Eo_Class *", self.prefix, "_", prefix,
+            "_get(void);\n")
         for i, v in ipairs(self.children) do
             v.parent_node = self
             v:gen_ffi(s)
@@ -554,8 +557,8 @@ local gen_contents = function(klass)
     return cnt, evs
 end
 
-local gen_mixin = function(kliass)
-    return Mixin(klass, gen_contents(klass))
+local gen_mixin = function(klass, iface)
+    return Mixin(klass, iface, gen_contents(klass))
 end
 
 local gen_class = function(klass)
@@ -606,7 +609,7 @@ M.generate = function(fname, libname, fstream)
     local ct = eolian.class_type
     local cl
     if tp == ct.MIXIN or tp == ct.INTERFACE then
-        cl = gen_mixin(klass)
+        cl = gen_mixin(klass, tp == ct.INTERFACE)
     elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
         cl = gen_class(klass)
     else
