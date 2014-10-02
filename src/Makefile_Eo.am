@@ -1,11 +1,22 @@
 
 ### Library
 
+eo_eolian_files = \
+	lib/eo/eo_base.eo.c \
+	lib/eo/eo_base.eo.h \
+	lib/eo/eo_abstract_class.eo.c \
+	lib/eo/eo_abstract_class.eo.h
+
+eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)
+eo_eolian_h = $(eo_eolian_files:%.eo=%.eo.h)
+
 BUILT_SOURCES += \
-                 lib/eo/eo_base.eo.c \
-                 lib/eo/eo_base.eo.h \
-                 lib/eo/eo_abstract_class.eo.c \
-                 lib/eo/eo_abstract_class.eo.h
+                 $(eo_eolian_c) \
+                 $(eo_eolian_h)
+
+CLEANFILES += \
+              $(eo_eolian_c) \
+              $(eo_eolian_h)
 
 lib_LTLIBRARIES += lib/eo/libeo.la
 
@@ -13,8 +24,7 @@ installed_eomainheadersdir = $(includedir)/eo-@VMAJ@
 dist_installed_eomainheaders_DATA = lib/eo/Eo.h
 
 nodist_installed_eomainheaders_DATA = \
-                                      lib/eo/eo_base.eo.h \
-                                      lib/eo/eo_abstract_class.eo.h
+									  $(eo_eolian_h)
 
 lib_eo_libeo_la_SOURCES = \
 lib/eo/eo.c \
@@ -31,8 +41,7 @@ lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 eoeolianfilesdir = $(datadir)/eolian/include/eo-@VMAJ@
 eoeolianfiles_DATA = \
-              lib/eo/eo_base.eo \
-              lib/eo/eo_abstract_class.eo
+					 $(eo_eolian_files)
 
 EXTRA_DIST += \
               ${eoeolianfiles_DATA}

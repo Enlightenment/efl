@@ -1,19 +1,25 @@
 
 ### Library
 
-BUILT_SOURCES += \
-                 lib/edje/edje_object.eo.c \
-                 lib/edje/edje_object.eo.h \
-                 lib/edje/edje_object.eo.legacy.h \
-                 lib/edje/edje_edit.eo.c \
-                 lib/edje/edje_edit.eo.h \
-                 lib/edje/edje_edit.eo.legacy.h
+edje_eolian_files = \
+	lib/edje/edje_object.eo \
+	lib/edje/edje_edit.eo
 
+edje_eolian_c = $(edje_eolian_files:%.eo=%.eo.c)
+edje_eolian_h = $(edje_eolian_files:%.eo=%.eo.h) \
+                $(edje_eolian_files:%.eo=%.eo.legacy.h)
+
+BUILT_SOURCES += \
+                 $(edje_eolian_c) \
+                 $(edje_eolian_h)
+
+CLEANFILES += \
+              $(edje_eolian_c) \
+              $(edje_eolian_h)
 
 edjeeolianfilesdir = $(datadir)/eolian/include/edje-@VMAJ@
 edjeeolianfiles_DATA = \
-              lib/edje/edje_object.eo \
-              lib/edje/edje_edit.eo
+                       $(edje_eolian_files)
 
 EXTRA_DIST += \
               ${edjeeolianfiles_DATA}
@@ -40,10 +46,7 @@ lib/edje/Edje_Legacy.h \
 lib/edje/Edje_Edit.h
 
 nodist_installed_edjemainheaders_DATA = \
-                                        lib/edje/edje_object.eo.h \
-                                        lib/edje/edje_edit.eo.h \
-                                        lib/edje/edje_object.eo.legacy.h \
-                                        lib/edje/edje_edit.eo.legacy.h
+                                        $(edje_eolian_h)
 
 lib_edje_libedje_la_SOURCES = \
 lib/edje/edje_private.h \

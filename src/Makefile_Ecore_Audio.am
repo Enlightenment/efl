@@ -2,31 +2,28 @@ if HAVE_ECORE_AUDIO
 
 ### Library
 
+ecore_audio_eolian_files = \
+	lib/ecore_audio/ecore_audio.eo \
+	lib/ecore_audio/ecore_audio_in.eo \
+	lib/ecore_audio/ecore_audio_out.eo \
+	lib/ecore_audio/ecore_audio_in_sndfile.eo \
+	lib/ecore_audio/ecore_audio_out_sndfile.eo \
+	lib/ecore_audio/ecore_audio_out_pulse.eo \
+	lib/ecore_audio/ecore_audio_in_tone.eo
+
+ecore_audio_eolian_c = $(ecore_audio_eolian_files:%.eo=%.eo.c)
+ecore_audio_eolian_h = $(ecore_audio_eolian_files:%.eo=%.eo.h)
+
 BUILT_SOURCES += \
-                 lib/ecore_audio/ecore_audio.eo.c \
-                 lib/ecore_audio/ecore_audio.eo.h \
-                 lib/ecore_audio/ecore_audio_in.eo.c \
-                 lib/ecore_audio/ecore_audio_in.eo.h \
-                 lib/ecore_audio/ecore_audio_out.eo.c \
-                 lib/ecore_audio/ecore_audio_out.eo.h \
-                 lib/ecore_audio/ecore_audio_in_sndfile.eo.c \
-                 lib/ecore_audio/ecore_audio_in_sndfile.eo.h \
-                 lib/ecore_audio/ecore_audio_out_sndfile.eo.c \
-                 lib/ecore_audio/ecore_audio_out_sndfile.eo.h \
-                 lib/ecore_audio/ecore_audio_out_pulse.eo.c \
-                 lib/ecore_audio/ecore_audio_out_pulse.eo.h \
-                 lib/ecore_audio/ecore_audio_in_tone.eo.c \
-                 lib/ecore_audio/ecore_audio_in_tone.eo.h
+                 $(ecore_audio_eolian_c) \
+                 $(ecore_audio_eolian_h)
+
+CLEANFILES += \
+              $(ecore_audio_eolian_c) \
+              $(ecore_audio_eolian_h)
 
 ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
-ecore_audioeolianfiles_DATA = \
-              lib/ecore_audio/ecore_audio.eo \
-              lib/ecore_audio/ecore_audio_in.eo \
-              lib/ecore_audio/ecore_audio_out.eo \
-              lib/ecore_audio/ecore_audio_in_sndfile.eo \
-              lib/ecore_audio/ecore_audio_out_sndfile.eo \
-              lib/ecore_audio/ecore_audio_out_pulse.eo \
-              lib/ecore_audio/ecore_audio_in_tone.eo
+ecore_audioeolianfiles_DATA = $(ecore_audio_eolian_files)
 
 EXTRA_DIST += \
               ${ecore_audioeolianfiles_DATA}
@@ -42,14 +39,7 @@ lib/ecore_audio/ecore_audio_obj_out.h \
 lib/ecore_audio/ecore_audio_obj_in_tone.h \
 lib/ecore_audio/ecore_audio_protected.h
 
-nodist_installed_ecoreaudiomainheaders_DATA = \
-                                        lib/ecore_audio/ecore_audio.eo.h \
-                                        lib/ecore_audio/ecore_audio_in.eo.h \
-                                        lib/ecore_audio/ecore_audio_out.eo.h \
-                                        lib/ecore_audio/ecore_audio_in_sndfile.eo.h \
-                                        lib/ecore_audio/ecore_audio_out_sndfile.eo.h \
-                                        lib/ecore_audio/ecore_audio_out_pulse.eo.h \
-                                        lib/ecore_audio/ecore_audio_in_tone.eo.h
+nodist_installed_ecoreaudiomainheaders_DATA = $(ecore_audio_eolian_h)
                                       
 lib_ecore_audio_libecore_audio_la_SOURCES = \
 lib/ecore_audio/ecore_audio.c \
