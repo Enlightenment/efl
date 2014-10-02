@@ -395,6 +395,16 @@ local Mixin = Node:clone {
     end
 }
 
+local incr_pc = function(upars, pn)
+    if upars[pn] then
+        upars[pn] = upars[pn] + 1
+        return pn .. upars[pn]
+    else
+        upars[pn] = 1
+        return pn
+    end
+end
+
 local Class = Node:clone {
     __ctor = function(self, klass, parent, mixins, ch, evs)
         self.klass      = klass
@@ -440,7 +450,7 @@ end
         local ftp = eolian.function_type
         local dir = eolian.parameter_dir
         s:write("    __eo_ctor = function(")
-        local cfuncs, parnames = {}, {}
+        local cfuncs, parnames, upars = {}, {}, {}
         for ctor in ctors do
             local cfunc = ctor:function_get()
             local tp = cfunc:type_get()
@@ -448,12 +458,14 @@ end
                 cfuncs[#cfuncs + 1] = cfunc
                 if tp ~= ftp.METHOD then
                     for par in cfunc:property_keys_get() do
-                        parnames[#parnames + 1] = kw_t(par:name_get())
+                        parnames[#parnames + 1] = incr_pc(upars,
+                            kw_t(par:name_get()))
                     end
                 end
                 for par in cfunc:parameters_get() do
                     if par:direction_get() ~= dir.OUT then
-                        parnames[#parnames + 1] = kw_t(par:name_get())
+                        parnames[#parnames + 1] = incr_pc(upars,
+                            kw_t(par:name_get()))
                     end
                 end
             end
@@ -461,6 +473,7 @@ end
         s:write(table.concat(parnames, ", "))
         s:write(")\n")
         -- write ctor body
+        local j = 1
         for i, cfunc in ipairs(cfuncs) do
             s:write("        self:", cfunc:name_get())
             if cfunc:type_get() ~= ftp.METHOD then
@@ -470,12 +483,14 @@ end
             local fpars = {}
             if cfunc:type_get() ~= ftp.METHOD then
                 for par in cfunc:property_keys_get() do
-                    fpars[#fpars + 1] = kw_t(par:name_get())
+                    fpars[#fpars + 1] = parnames[j]
+                    j = j + 1
                 end
             end
             for par in cfunc:parameters_get() do
                 if par:direction_get() ~= dir.OUT then
-                    fpars[#fpars + 1] = kw_t(par:name_get())
+                    fpars[#fpars + 1] = parnames[j]
+                    j = j + 1
                 end
             end
             s:write(table.concat(fpars, ", "))
