@@ -238,8 +238,64 @@ START_TEST(evas_object_image_loader_orientation)
 }
 END_TEST
 
+START_TEST(evas_object_image_loader_data)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *obj, *ref;
+   Eina_Strbuf *str;
+
+   const char *files[] = {
+     "Light-50",
+     "Pic1-10",
+     "Pic1-100",
+     "Pic1-50",
+     "Pic4-10",
+     "Pic4-100",
+     "Pic4-50",
+     "Train-10"
+   };
+   unsigned int i;
+
+   obj = evas_object_image_add(e);
+   ref = evas_object_image_add(e);
+   str = eina_strbuf_new();
+
+   for (i = 0; i < sizeof (files) / sizeof (files[0]); i++)
+     {
+        int w, h, r_w, r_h;
+        const uint32_t *d, *r_d;
+
+        eina_strbuf_append_printf(str, "%s/%s.tgv", TESTS_IMG_DIR, files[i]);
+        evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
+        fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(obj, &w, &h);
+        d = evas_object_image_data_get(obj, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        eina_strbuf_append_printf(str, "%s/%s.png", TESTS_IMG_DIR, files[i]);
+        evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
+        fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(ref, &r_w, &r_h);
+        r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        fail_if(w != r_w || h != r_h);
+        fail_if(memcmp(d, r_d, w * h * 4));
+     }
+
+   evas_object_del(obj);
+   evas_object_del(ref);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_loader);
    tcase_add_test(tc, evas_object_image_loader_orientation);
+   tcase_add_test(tc, evas_object_image_loader_data);
 }
