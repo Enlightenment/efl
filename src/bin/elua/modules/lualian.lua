@@ -403,6 +403,7 @@ local Class = Node:clone {
         local mname = gen_ns(self.klass, s)
 
         s:write("__body = {\n")
+        self:gen_ctor(s)
         self:gen_children(s)
         s:write("}\n")
 
@@ -414,7 +415,58 @@ end
 ]]):format(mname, self.klass:name_get()))
     end,
 
-    gen_ffi = Mixin.gen_ffi
+    gen_ffi = Mixin.gen_ffi,
+
+    gen_ctor = function(self, s)
+        local ctors = self.klass:constructors_get()
+        if not ctors then return end
+        -- collect constructor information
+        local ftp = eolian.function_type
+        s:write("    __eo_ctor = function(")
+        local cfuncs, parnames = {}, {}
+        for ctor in ctors do
+            local cfunc = ctor:function_get()
+            local tp = cfunc:type_get()
+            if tp == ftp.PROPERTY or tp == ftp.PROP_SET or tp == ftp.METHOD then
+                cfuncs[#cfuncs + 1] = cfunc
+                if tp ~= ftp.METHOD then
+                    for par in cfunc:property_keys_get() do
+                        parnames[#parnames + 1] = par:name_get()
+                    end
+                end
+                for par in cfunc:parameters_get() do
+                    parnames[#parnames + 1] = par:name_get()
+                end
+            end
+        end
+        s:write(table.concat(parnames, ", "))
+        s:write(")\n")
+        -- write ctor body
+        for i, cfunc in ipairs(cfuncs) do
+            s:write("        self:__raw_", cfunc:name_get())
+            if cfunc:type_get() ~= ftp.METHOD then
+                s:write("_set")
+            end
+            s:write("(")
+            local fpars = {}
+            if cfunc:type_get() ~= ftp.METHOD then
+                for par in cfunc:property_keys_get() do
+                    fpars[#fpars + 1] = par:name_get()
+                end
+            end
+            for par in cfunc:parameters_get() do
+                fpars[#fpars + 1] = par:name_get()
+            end
+            s:write(table.concat(fpars, ", "))
+            s:write(")\n")
+        end
+        s:write("    end")
+        if #self.children > 0 then
+            s:write(",\n\n")
+        else
+            s:write("\n")
+        end
+    end
 }
 
 local File = Node:clone {
