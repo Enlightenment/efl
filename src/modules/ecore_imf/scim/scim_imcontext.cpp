@@ -894,6 +894,7 @@ isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int 
    Ecore_Evas *ee;
    int canvas_x, canvas_y;
    int new_cursor_x, new_cursor_y;
+   Ecore_X_Window client_win = 0;
 
    if (cw == 0 && ch == 0)
      return;
@@ -901,20 +902,20 @@ isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int 
    if (context_scim != _focused_ic)
      return;
 
-   if (context_scim->impl->client_canvas)
-     {
-        ee = ecore_evas_ecore_evas_get(context_scim->impl->client_canvas);
-        if (!ee) return;
-
-        ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
-     }
+   if (context_scim->impl->client_window)
+     client_win = context_scim->impl->client_window;
    else
      {
-        if (context_scim->impl->client_window)
-          window_to_screen_geometry_get(context_scim->impl->client_window, &canvas_x, &canvas_y);
-        else
-          return;
+        if (context_scim->impl->client_canvas)
+          {
+             ee = ecore_evas_ecore_evas_get(context_scim->impl->client_canvas);
+
+             if (ee)
+               client_win = (Ecore_X_Window)ecore_evas_window_get(ee);
+          }
      }
+
+   window_to_screen_geometry_get(client_win, &canvas_x, &canvas_y);
 
    new_cursor_x = canvas_x + cx;
    new_cursor_y = canvas_y + cy + ch;
