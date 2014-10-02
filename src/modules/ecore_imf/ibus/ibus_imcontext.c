@@ -63,10 +63,41 @@ static IBusBus           *_bus = NULL;
 static void _ecore_imf_context_ibus_create(IBusIMContext      *context);
 static void _ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context  *ctx);
 static void _ecore_imf_context_ibus_bus_connected_cb(IBusBus *bus, IBusIMContext *context);
-static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win, Eina_Bool press, int keysym, int modifiers);
+static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
+                                                      Eina_Bool press,
+                                                      int keysym,
+                                                      int modifiers);
+
+static unsigned int
+utf8_offset_to_index(const char *str, int offset)
+{
+   int index = 0;
+   int i;
+   for (i = 0; i < offset; i++)
+     eina_unicode_utf8_next_get(str, &index);
+
+   return index;
+}
+
+static int
+sort_cb(const void *d1, const void *d2)
+{
+    const Ecore_IMF_Preedit_Attr *attr1 = d1;
+    const Ecore_IMF_Preedit_Attr *attr2 = d2;
+
+    if (!attr1) return 1;
+    if (!attr2) return -1;
+
+    if (attr1->start_index < attr2->start_index)
+      return -1;
+    else
+      return 1;
+}
 
 static void
-_ecore_imf_ibus_window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
+_ecore_imf_ibus_window_to_screen_geometry_get(Ecore_X_Window client_win,
+                                              int *x,
+                                              int *y)
 {
    Ecore_X_Window root_window, win;
    int win_x, win_y;
@@ -145,12 +176,18 @@ _ecore_imf_ibus_key_event_put(int keysym, int state)
    XKeyEvent event;
    if (state & IBUS_RELEASE_MASK)
      {
-        event = _ecore_imf_ibus_x_key_event_generate(winFocus, EINA_FALSE, keysym, state);
+        event = _ecore_imf_ibus_x_key_event_generate(winFocus,
+                                                     EINA_FALSE,
+                                                     keysym,
+                                                     state);
         XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
      }
    else
      {
-        event = _ecore_imf_ibus_x_key_event_generate(winFocus, EINA_TRUE, keysym, state);
+        event = _ecore_imf_ibus_x_key_event_generate(winFocus,
+                                                     EINA_TRUE,
+                                                     keysym,
+                                                     state);
         XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
      }
 }
@@ -163,29 +200,6 @@ _ecore_imf_ibus_key_event_copy(int keysym, int state)
    kev->state = state;
 
    return kev;
-}
-
-IBusIMContext *
-ecore_imf_context_ibus_new(void)
-{
-   EINA_LOG_DBG("%s", __FUNCTION__);
-
-   IBusIMContext *context = calloc(1, sizeof(IBusIMContext));
-
-   /* init bus object */
-   if (_bus == NULL)
-     {
-        char *display_name = NULL;
-
-        if ((display_name = getenv("DISPLAY")))
-          ibus_set_display(display_name);
-        else
-          ibus_set_display(":0.0");
-
-        _bus = ibus_bus_new();
-     }
-
-   return context;
 }
 
 static void
@@ -243,7 +257,7 @@ _request_surrounding_text(IBusIMContext *ibusimcontext)
                    return;
                 }
 
-              ibustext = ibus_text_new_from_string (surrounding);
+              ibustext = ibus_text_new_from_string(surrounding);
 
               ibus_input_context_set_surrounding_text(ibusimcontext->ibuscontext,
                                                       ibustext,
@@ -259,6 +273,29 @@ _request_surrounding_text(IBusIMContext *ibusimcontext)
                                                   ibusimcontext->caps);
            }
       }
+}
+
+IBusIMContext *
+ecore_imf_context_ibus_new(void)
+{
+   EINA_LOG_DBG("%s", __FUNCTION__);
+
+   IBusIMContext *context = calloc(1, sizeof(IBusIMContext));
+
+   /* init bus object */
+   if (_bus == NULL)
+     {
+        char *display_name = NULL;
+
+        if ((display_name = getenv("DISPLAY")))
+          ibus_set_display(display_name);
+        else
+          ibus_set_display(":0.0");
+
+        _bus = ibus_bus_new();
+     }
+
+   return context;
 }
 
 EAPI void
@@ -297,7 +334,7 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
      _sync_mode_use = !!atoi(s);
 
    if (ibus_bus_is_connected(_bus))
-     _ecore_imf_context_ibus_create (ibusimcontext);
+     _ecore_imf_context_ibus_create(ibusimcontext);
 
    g_signal_connect(_bus, "connected", G_CALLBACK (_ecore_imf_context_ibus_bus_connected_cb), ctx);
 }
@@ -312,7 +349,9 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
 
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
-   g_signal_handlers_disconnect_by_func(_bus, G_CALLBACK(_ecore_imf_context_ibus_bus_connected_cb), ctx);
+   g_signal_handlers_disconnect_by_func(_bus,
+                                        G_CALLBACK(_ecore_imf_context_ibus_bus_connected_cb),
+                                        ctx);
 
    if (ibusimcontext->ibuscontext)
      ibus_proxy_destroy((IBusProxy *)ibusimcontext->ibuscontext);
@@ -332,7 +371,9 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
 }
 
 EAPI Eina_Bool
-ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event)
+ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
+                                    Ecore_IMF_Event_Type type,
+                                    Ecore_IMF_Event *event)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ibusimcontext, EINA_FALSE);
@@ -514,7 +555,7 @@ ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
 }
 
 EAPI void
-ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context   *ctx,
+ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx,
                                                           char          **str,
                                                           Eina_List     **attrs,
                                                           int            *cursor_pos)
@@ -589,7 +630,9 @@ _ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx)
    else
      {
         if (ibusimcontext->client_window)
-          _ecore_imf_ibus_window_to_screen_geometry_get(ibusimcontext->client_window, &canvas_x, &canvas_y);
+          _ecore_imf_ibus_window_to_screen_geometry_get(ibusimcontext->client_window,
+                                                        &canvas_x,
+                                                        &canvas_y);
         else
           return;
      }
@@ -602,7 +645,11 @@ _ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx)
 }
 
 EAPI void
-ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h)
+ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx,
+                                           int x,
+                                           int y,
+                                           int w,
+                                           int h)
 {
    EINA_LOG_DBG("x : %d, y : %d, w, %d, h :%d", x, y, w, h);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
@@ -641,8 +688,8 @@ ecore_imf_context_ibus_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_pre
 }
 
 static void
-_ecore_imf_context_ibus_bus_connected_cb(IBusBus          *bus EINA_UNUSED,
-                                         IBusIMContext    *ibusimcontext)
+_ecore_imf_context_ibus_bus_connected_cb(IBusBus       *bus EINA_UNUSED,
+                                         IBusIMContext *ibusimcontext)
 {
    EINA_LOG_DBG("ibus is connected");
 
@@ -664,13 +711,18 @@ _ecore_imf_context_ibus_commit_text_cb(IBusInputContext *ibuscontext EINA_UNUSED
    if (ibusimcontext->ctx)
      {
         ecore_imf_context_commit_event_add(ibusimcontext->ctx, text->text);
-        ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)commit_str);
+        ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                              ECORE_IMF_CALLBACK_COMMIT,
+                                              (void *)commit_str);
 
         _request_surrounding_text(ibusimcontext);
      }
 }
 
-static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win, Eina_Bool press, int keysym, int modifiers)
+static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
+                                                      Eina_Bool press,
+                                                      int keysym,
+                                                      int modifiers)
 {
    XKeyEvent event;
    Display *display = ecore_x_display_get();
@@ -708,32 +760,6 @@ _ecore_imf_context_ibus_forward_key_event_cb(IBusInputContext  *ibuscontext EINA
    _ecore_imf_ibus_key_event_put(keyval, state);
 }
 
-static unsigned int
-utf8_offset_to_index(const char *str, int offset)
-{
-   int index = 0;
-   int i;
-   for (i = 0; i < offset; i++)
-     eina_unicode_utf8_next_get(str, &index);
-
-   return index;
-}
-
-static int
-sort_cb(const void *d1, const void *d2)
-{
-    const Ecore_IMF_Preedit_Attr *attr1 = d1;
-    const Ecore_IMF_Preedit_Attr *attr2 = d2;
-
-    if (!attr1) return 1;
-    if (!attr2) return -1;
-
-    if (attr1->start_index < attr2->start_index)
-      return -1;
-    else
-      return 1;
-}
-
 static void
 _ecore_imf_context_ibus_delete_surrounding_text_cb(IBusInputContext *ibuscontext EINA_UNUSED,
                                                    gint              offset_from_cursor,
@@ -750,7 +776,9 @@ _ecore_imf_context_ibus_delete_surrounding_text_cb(IBusInputContext *ibuscontext
    ev.n_chars = nchars;
    ev.offset = offset_from_cursor;
    ecore_imf_context_delete_surrounding_event_add(_focus_im_context, offset_from_cursor, nchars);
-   ecore_imf_context_event_callback_call(_focus_im_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
+   ecore_imf_context_event_callback_call(_focus_im_context,
+                                         ECORE_IMF_CALLBACK_DELETE_SURROUNDING,
+                                         &ev);
 }
 
 static void
@@ -796,7 +824,7 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
         for (i = 0; ; i++)
           {
              attr = NULL;
-             IBusAttribute *ibus_attr = ibus_attr_list_get (text->attrs, i);
+             IBusAttribute *ibus_attr = ibus_attr_list_get(text->attrs, i);
              if (ibus_attr == NULL)
                break;
 
@@ -804,8 +832,10 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
              if (attr == NULL)
                continue;
 
-             attr->start_index = utf8_offset_to_index(ibusimcontext->preedit_string, ibus_attr->start_index);
-             attr->end_index = utf8_offset_to_index(ibusimcontext->preedit_string, ibus_attr->end_index);
+             attr->start_index = utf8_offset_to_index(ibusimcontext->preedit_string,
+                                                      ibus_attr->start_index);
+             attr->end_index = utf8_offset_to_index(ibusimcontext->preedit_string,
+                                                    ibus_attr->end_index);
 
              switch (ibus_attr->type)
                {
@@ -824,7 +854,8 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
                }
 
              if (attr)
-               ibusimcontext->preedit_attrs = eina_list_append(ibusimcontext->preedit_attrs, (void *)attr);
+               ibusimcontext->preedit_attrs = eina_list_append(ibusimcontext->preedit_attrs,
+                                                               (void *)attr);
           }
 
         // Add underline for all characters which don't have attribute.
@@ -843,19 +874,24 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
                   attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB1;
                   attr->start_index = begin_pos;
                   attr->end_index = pos;
-                  ibusimcontext->preedit_attrs = eina_list_append(ibusimcontext->preedit_attrs, (void *)attr);
+                  ibusimcontext->preedit_attrs = eina_list_append(ibusimcontext->preedit_attrs,
+                                                                  (void *)attr);
                }
           }
 
         if (attrs_flag)
           free(attrs_flag);
 
-        ibusimcontext->preedit_attrs = eina_list_sort(ibusimcontext->preedit_attrs, eina_list_count(ibusimcontext->preedit_attrs), sort_cb);
+        ibusimcontext->preedit_attrs = eina_list_sort(ibusimcontext->preedit_attrs,
+                                                      eina_list_count(ibusimcontext->preedit_attrs),
+                                                      sort_cb);
      }
 
    ibusimcontext->preedit_cursor_pos = cursor_pos;
 
-   EINA_LOG_DBG("string : %s, cursor : %d", ibusimcontext->preedit_string, ibusimcontext->preedit_cursor_pos);
+   EINA_LOG_DBG("string : %s, cursor : %d",
+                ibusimcontext->preedit_string,
+                ibusimcontext->preedit_cursor_pos);
 
    flag = ibusimcontext->preedit_visible != visible;
    ibusimcontext->preedit_visible = visible;
@@ -865,22 +901,30 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
         if (flag)
           {
              ecore_imf_context_preedit_start_event_add(ibusimcontext->ctx);
-             ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
+             ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                                   ECORE_IMF_CALLBACK_PREEDIT_START,
+                                                   NULL);
           }
 
         ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-        ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+        ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                              ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                              NULL);
      }
    else
      {
         if (flag)
           {
              ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-             ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+             ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                                   ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                                   NULL);
           }
 
         ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
-        ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+        ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                              ECORE_IMF_CALLBACK_PREEDIT_END,
+                                              NULL);
      }
 }
 
@@ -898,11 +942,15 @@ _ecore_imf_context_ibus_show_preedit_text_cb(IBusInputContext *ibuscontext EINA_
 
    // call preedit start
    ecore_imf_context_preedit_start_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_START,
+                                         NULL);
 
    // call preedit changed
    ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                         NULL);
 
    _request_surrounding_text(ibusimcontext);
 }
@@ -921,11 +969,15 @@ _ecore_imf_context_ibus_hide_preedit_text_cb(IBusInputContext *ibuscontext EINA_
 
    // call preedit changed
    ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                         NULL);
 
    // call preedit end
    ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_END,
+                                         NULL);
 }
 
 static void
@@ -950,16 +1002,20 @@ _ecore_imf_context_ibus_disabled_cb(IBusInputContext *ibuscontext EINA_UNUSED,
    /* clear preedit */
    ibusimcontext->preedit_visible = EINA_FALSE;
    ibusimcontext->preedit_cursor_pos = 0;
-   free (ibusimcontext->preedit_string);
+   free(ibusimcontext->preedit_string);
    ibusimcontext->preedit_string = NULL;
 
    // call preedit changed
    ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                         NULL);
 
    // call preedit end
    ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_END,
+                                         NULL);
 }
 
 static void
@@ -975,16 +1031,20 @@ _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
    /* clear preedit */
    ibusimcontext->preedit_visible = EINA_FALSE;
    ibusimcontext->preedit_cursor_pos = 0;
-   free (ibusimcontext->preedit_string);
+   free(ibusimcontext->preedit_string);
    ibusimcontext->preedit_string = NULL;
 
    // call preedit changed
    ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                         NULL);
 
    // call preedit end
    ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_END,
+                                         NULL);
 }
 
 static void
@@ -1033,7 +1093,8 @@ _ecore_imf_context_ibus_create(IBusIMContext *ibusimcontext)
                     G_CALLBACK (_ecore_imf_context_ibus_destroy_cb),
                     ibusimcontext);
 
-   ibus_input_context_set_capabilities(ibusimcontext->ibuscontext, ibusimcontext->caps);
+   ibus_input_context_set_capabilities(ibusimcontext->ibuscontext,
+                                       ibusimcontext->caps);
 
    if (ibusimcontext->has_focus)
      ibus_input_context_focus_in(ibusimcontext->ibuscontext);
