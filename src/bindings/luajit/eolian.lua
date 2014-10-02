@@ -802,7 +802,7 @@ ffi.metatype("Eolian_Constructor", {
         end,
 
         function_get = function(self)
-            local v = eolian.eolian_implement_function_get(self)
+            local v = eolian.eolian_constructor_function_get(self)
             if v == nil then return nil end
             return v
         end

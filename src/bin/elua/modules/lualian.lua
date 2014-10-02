@@ -422,6 +422,7 @@ end
         if not ctors then return end
         -- collect constructor information
         local ftp = eolian.function_type
+        local dir = eolian.parameter_dir
         s:write("    __eo_ctor = function(")
         local cfuncs, parnames = {}, {}
         for ctor in ctors do
@@ -435,7 +436,9 @@ end
                     end
                 end
                 for par in cfunc:parameters_get() do
-                    parnames[#parnames + 1] = par:name_get()
+                    if par:direction_get() ~= dir.OUT then
+                        parnames[#parnames + 1] = par:name_get()
+                    end
                 end
             end
         end
@@ -443,7 +446,7 @@ end
         s:write(")\n")
         -- write ctor body
         for i, cfunc in ipairs(cfuncs) do
-            s:write("        self:__raw_", cfunc:name_get())
+            s:write("        self:", cfunc:name_get())
             if cfunc:type_get() ~= ftp.METHOD then
                 s:write("_set")
             end
@@ -455,7 +458,9 @@ end
                 end
             end
             for par in cfunc:parameters_get() do
-                fpars[#fpars + 1] = par:name_get()
+                if par:direction_get() ~= dir.OUT then
+                    fpars[#fpars + 1] = par:name_get()
+                end
             end
             s:write(table.concat(fpars, ", "))
             s:write(")\n")
