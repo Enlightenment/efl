@@ -222,9 +222,6 @@ local Method = Node:clone {
             table.concat(proto.cargs, ", "), ");\n"
         }
         s:write(table.concat(cproto))
-    end,
-
-    gen_ctor = function(self, s)
     end
 }
 
@@ -310,17 +307,6 @@ local Property = Method:clone {
         self.cached_proto = proto
 
         return proto
-    end,
-
-    gen_ctor = function(self, s)
-        local proto = self:gen_proto()
-        s:write("        ", "self:define_property",
-            proto.kprop and "_key(" or "(", '"', proto.name, '", ')
-        if self.isget then
-            s:write("self.", proto.name, "_get, nil)\n")
-        else
-            s:write("nil, self.", proto.name, "_set)\n")
-        end
     end
 }
 
@@ -340,9 +326,6 @@ local Event = Node:clone {
     gen_ffi = function(self, s)
         s:write("    extern const Eo_Event_Description ",
             "_" .. self.ecname, ";\n")
-    end,
-
-    gen_ctor = function(self, s)
     end
 }
 
@@ -396,13 +379,6 @@ local Mixin = Node:clone {
                 v:gen_ffi(s)
             end
         end
-    end,
-
-    gen_ctor = function(self, s)
-        for i, v in ipairs(self.children) do
-            v.parent_node = self
-            v:gen_ctor(s)
-        end
     end
 }
 
@@ -438,8 +414,7 @@ end
 ]]):format(mname, self.klass:name_get()))
     end,
 
-    gen_ffi = Mixin.gen_ffi,
-    gen_ctor = Mixin.gen_ctor
+    gen_ffi = Mixin.gen_ffi
 }
 
 local File = Node:clone {
