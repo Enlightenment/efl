@@ -56,14 +56,14 @@ static const Eo_Class_Description _@#class_class_desc = {\n\
      @#dtor_name\n\
 };\n\
 \n\
-EO_DEFINE_CLASS(@#class_@#classtype_get, &_@#class_class_desc, @#list_inheritNULL);\
+EO_DEFINE_CLASS(@#klasstype_get, &_@#class_class_desc, @#list_inheritNULL);\
 ";
 
 static const char
 tmpl_eo_obj_header[] = "\
-#define @#CLASS_@#CLASSTYPE @#class_@#classtype_get()\n\
+#define @#CLASS_@#CLASSTYPE @#klasstype_get()\n\
 \n\
-const Eo_Class *@#class_@#classtype_get(void) EINA_CONST;\n\
+const Eo_Class *@#klasstype_get(void) EINA_CONST;\n\
 \n\
 ";
 
@@ -257,6 +257,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
    eina_strbuf_replace_all(str_hdr, "@#EOPREFIX", class_env.upper_eo_prefix);
    eina_strbuf_replace_all(str_hdr, "@#eoprefix", class_env.lower_eo_prefix);
+   eina_strbuf_replace_all(str_hdr, "@#klasstype_get", eolian_class_c_get_function_name_get(class));
 
    Eina_Strbuf *str_ev = eina_strbuf_new();
    Eina_Strbuf *str_extrn_ev = eina_strbuf_new();
@@ -739,6 +740,7 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    eina_strbuf_replace_all(str_end, "@#type_class", str_classtype);
    eina_strbuf_replace_all(str_end, "@#EOPREFIX", class_env.upper_eo_prefix);
    eina_strbuf_replace_all(str_end, "@#eoprefix", class_env.lower_eo_prefix);
+   eina_strbuf_replace_all(str_end, "@#klasstype_get", eolian_class_c_get_function_name_get(class));
 
    eina_strbuf_reset(tmpbuf);
    eina_strbuf_replace_all(str_end, "@#ctor_func", eina_strbuf_string_get(tmpbuf));
