@@ -20,6 +20,19 @@ end, function()
     dom = nil
 end)
 
+local lua_kw = {
+    ["and"] = true, ["end"] = true, ["in"] = true, ["local"] = true,
+    ["nil"] = true, ["not"] = true, ["or"] = true, ["repeat"] = true,
+    ["then"] = true, ["until"] = true
+}
+
+local kw_t = function(n)
+    if lua_kw[n] then
+        return n .. "_"
+    end
+    return n
+end
+
 local int_builtin = {
     ["byte" ] = true, ["short"] = true, ["int"] = true, ["long"] = true,
     ["llong"] = true,
@@ -172,7 +185,7 @@ local Method = Node:clone {
         end
 
         for v in pars do
-            local dir, tps, nm = v:direction_get(), v:type_get(), v:name_get()
+            local dir, tps, nm = v:direction_get(), v:type_get(), kw_t(v:name_get())
             local tp = tps:c_type_get()
             if dir == dirs.OUT or dir == dirs.INOUT then
                 if dir == dirs.INOUT then
@@ -260,7 +273,7 @@ local Property = Method:clone {
         if #keys > 0 then
             local argn = (#keys > 1) and "keys" or "key"
             for i, v in ipairs(keys) do
-                local nm  = v:name_get()
+                local nm  = kw_t(v:name_get())
                 local tps = v:type_get()
                 local tp  = tps:c_type_get()
                 cargs [#cargs  + 1] = tp .. " " .. nm
@@ -280,7 +293,7 @@ local Property = Method:clone {
                 else
                     for i, v in ipairs(vals) do
                         local dir, tps, nm = v:direction_get(), v:type_get(),
-                            v:name_get()
+                            kw_t(v:name_get())
                         local tp = tps:c_type_get()
                         cargs [#cargs  + 1] = tp .. " *" .. nm
                         vargs [#vargs  + 1] = nm
@@ -293,7 +306,7 @@ local Property = Method:clone {
                 args[#args + 1] = argn
                 for i, v in ipairs(vals) do
                     local dir, tps, nm = v:direction_get(), v:type_get(),
-                        v:name_get()
+                        kw_t(v:name_get())
                     local tp = tps:c_type_get()
                     cargs[#cargs + 1] = tp .. " " .. nm
                     vargs[#vargs + 1] = typeconv(tps, argn .. "[" .. i .. "]",
@@ -435,12 +448,12 @@ end
                 cfuncs[#cfuncs + 1] = cfunc
                 if tp ~= ftp.METHOD then
                     for par in cfunc:property_keys_get() do
-                        parnames[#parnames + 1] = par:name_get()
+                        parnames[#parnames + 1] = kw_t(par:name_get())
                     end
                 end
                 for par in cfunc:parameters_get() do
                     if par:direction_get() ~= dir.OUT then
-                        parnames[#parnames + 1] = par:name_get()
+                        parnames[#parnames + 1] = kw_t(par:name_get())
                     end
                 end
             end
@@ -457,12 +470,12 @@ end
             local fpars = {}
             if cfunc:type_get() ~= ftp.METHOD then
                 for par in cfunc:property_keys_get() do
-                    fpars[#fpars + 1] = par:name_get()
+                    fpars[#fpars + 1] = kw_t(par:name_get())
                 end
             end
             for par in cfunc:parameters_get() do
                 if par:direction_get() ~= dir.OUT then
-                    fpars[#fpars + 1] = par:name_get()
+                    fpars[#fpars + 1] = kw_t(par:name_get())
                 end
             end
             s:write(table.concat(fpars, ", "))
