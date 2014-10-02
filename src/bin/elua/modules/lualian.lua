@@ -410,9 +410,12 @@ local Class = Node:clone {
         -- write the constructor
         s:write(([[
 
-%s.%s = function()
+%s.%s = function(parent, ...)
+    return eo.__ctor_common(__class, parent, eo.class_get("%s").__eo_ctor,
+                            1, ...)
 end
-]]):format(mname, self.klass:name_get()))
+]]):format(mname, self.klass:name_get(), self.klass:full_name_get():gsub("%.",
+        "_")))
     end,
 
     gen_ffi = Mixin.gen_ffi,

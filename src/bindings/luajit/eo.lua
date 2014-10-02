@@ -160,26 +160,23 @@ M.class_mixin = function(name, mixin)
     classes[name]:mixin(classes[mixin])
 end
 
-M.__ctor_common = function(self, klass, parent, ctor, loff, ...)
-    local info    = getinfo(2 + (loff or 0), "nlSf")
-    local source  = info.source
-    local func    = getfuncname(info)
-    local line    = info.currentline
-    local tmp_obj = eo._eo_add_internal_start(source, line, klass,
-        parent.__obj)
+M.__ctor_common = function(klass, parent, ctor, loff, ...)
+    local info   = getinfo(2 + (loff or 0), "nlSf")
+    local source = info.source
+    local func   = getfuncname(info)
+    local line   = info.currentline
+    local ret    = eo._eo_add_internal_start(source, line, klass, parent)
     local retval
-    if eo._eo_do_start(tmp_obj, nil, false, source, func, line) ~= 0 then
-        if ctor then
-            retval = ctor(...)
-        else
-            eo.eo_constructor()
-        end
-        tmp_obj = eo.eo_finalize()
+    local haspar
+    if eo._eo_do_start(ret, nil, false, source, func, line) ~= 0 then
+        eo.eo_constructor()
+        if ctor then ctor(...) end
+        ret = eo.eo_finalize()
+        haspar = eo.eo_parent_get() ~= 0
         eo._eo_do_end(nil)
     end
-    self.__obj    = tmp_obj
-    self.__parent = parent
-    return retval
+    if haspar then eo.eo_ref(ret) end
+    return ret
 end
 
 M.__do_start = function(self, klass)
