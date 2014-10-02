@@ -4450,12 +4450,26 @@ _elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item EINA_U
 {
    Elm_Atspi_State_Set states = 0;
 
+   STATE_TYPE_SET(states, ELM_ATSPI_STATE_FOCUSABLE);
+
    if (elm_object_item_focus_get(eo_item))
      STATE_TYPE_SET(states, ELM_ATSPI_STATE_FOCUSED);
    if (!elm_object_item_disabled_get(eo_item))
-     STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
+     {
+        STATE_TYPE_SET(states, ELM_ATSPI_STATE_ACTIVE);
+        STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
+        STATE_TYPE_SET(states, ELM_ATSPI_STATE_SENSITIVE);
+     }
 
    return states;
+}
+
+EOLIAN static Eo*
+_elm_widget_item_elm_interface_atspi_accessible_parent_get(Eo *eo_item, Elm_Widget_Item_Data *item EINA_UNUSED)
+{
+   Eo *parent;
+   eo_do(eo_item, parent = eo_parent_get());
+   return parent;
 }
 
 EAPI void

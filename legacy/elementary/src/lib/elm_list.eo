@@ -609,6 +609,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
       Elm_Layout.sizing_eval;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm_Interface_Atspi_Accessible.children.get;
    }
    events {
       activated;

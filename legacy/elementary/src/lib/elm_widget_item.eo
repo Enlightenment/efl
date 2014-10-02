@@ -731,5 +731,6 @@ class Elm_Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
            Elm_Interface_Atspi_Accessible.role.get;
            Elm_Interface_Atspi_Accessible.role.set;
            Elm_Interface_Atspi_Accessible.state_set.get;
+           Elm_Interface_Atspi_Accessible.parent.get;
       }
 }
