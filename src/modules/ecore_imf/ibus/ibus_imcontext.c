@@ -573,26 +573,28 @@ _ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx)
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
    Ecore_Evas *ee;
    int canvas_x, canvas_y;
+   Ecore_X_Window client_window = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    if (ibusimcontext->ibuscontext == NULL)
      return;
 
-   if (ibusimcontext->client_canvas)
-     {
-        ee = ecore_evas_ecore_evas_get(ibusimcontext->client_canvas);
-        if (!ee) return;
-
-        ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
-     }
+   if (ibusimcontext->client_window)
+     client_window = ibusimcontext->client_window;
    else
      {
-        if (ibusimcontext->client_window)
-          _ecore_imf_ibus_window_to_screen_geometry_get(ibusimcontext->client_window, &canvas_x, &canvas_y);
-        else
-          return;
+        if (ibusimcontext->client_canvas)
+          {
+             ee = ecore_evas_ecore_evas_get(ibusimcontext->client_canvas);
+             if (ee)
+               client_window = (Ecore_X_Window)ecore_evas_window_get(ee);
+          }
      }
+
+   _ecore_imf_ibus_window_to_screen_geometry_get(client_window,
+                                                 &canvas_x,
+                                                 &canvas_y);
 
    ibus_input_context_set_cursor_location(ibusimcontext->ibuscontext,
                                           ibusimcontext->cursor_x + canvas_x,
