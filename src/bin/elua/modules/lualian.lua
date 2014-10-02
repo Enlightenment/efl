@@ -395,14 +395,11 @@ local Mixin = Node:clone {
     end
 }
 
-local incr_pc = function(upars, pn)
-    if upars[pn] then
-        upars[pn] = upars[pn] + 1
-        return pn .. upars[pn]
-    else
-        upars[pn] = 1
-        return pn
+local build_pn = function(fn, pn)
+    if fn == pn then
+        return kw_t(pn)
     end
+    return fn .. "_" .. pn
 end
 
 local Class = Node:clone {
@@ -453,19 +450,18 @@ end
         local cfuncs, parnames, upars = {}, {}, {}
         for ctor in ctors do
             local cfunc = ctor:function_get()
+            local cn = cfunc:name_get()
             local tp = cfunc:type_get()
             if tp == ftp.PROPERTY or tp == ftp.PROP_SET or tp == ftp.METHOD then
                 cfuncs[#cfuncs + 1] = cfunc
                 if tp ~= ftp.METHOD then
                     for par in cfunc:property_keys_get() do
-                        parnames[#parnames + 1] = incr_pc(upars,
-                            kw_t(par:name_get()))
+                        parnames[#parnames + 1] = build_pn(cn, par:name_get())
                     end
                 end
                 for par in cfunc:parameters_get() do
                     if par:direction_get() ~= dir.OUT then
-                        parnames[#parnames + 1] = incr_pc(upars,
-                            kw_t(par:name_get()))
+                        parnames[#parnames + 1] = build_pn(cn, par:name_get())
                     end
                 end
             end
