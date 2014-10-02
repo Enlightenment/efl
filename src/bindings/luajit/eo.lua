@@ -146,15 +146,18 @@ M.eo_class_get = function(name)
     return eo_classes[name]
 end
 
-M.class_register = function(name, val, addr)
-    classes[name] = val
-    eo_classes[name] = addr
-    return val
+M.class_register = function(name, parent, body, eocl)
+    classes[name] = classes[parent]:clone(body)
+    eo_classes[name] = eocl
 end
 
 M.class_unregister = function(name)
     classes[name] = nil
     eo_classes[name] = nil
+end
+
+M.class_mixin = function(name, mixin)
+    classes[name]:mixin(classes[mixin])
 end
 
 M.__ctor_common = function(self, klass, parent, ctor, loff, ...)
