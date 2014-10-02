@@ -68,53 +68,18 @@ struct _Eina_Mempool
    Eina_Mempool_Backend_ABI2 *backend2;
 };
 
-/**
- * @brief Re-allocate an amount memory by the given mempool.
- *
- * @param mp The mempool.
- * @param element The element to re-allocate.
- * @param size The size in bytes to re-allocate.
- * @return The newly re-allocated data.
- *
- * This function re-allocates and returns @p element with @p size bytes using the
- * mempool @p mp. If not used anymore, the data must be freed with eina_mempool_free().
- * @warning No checks are done for @p mp.
- */
 static inline void *
 eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size)
 {
    return mp->backend.realloc(mp->backend_data, element, size);
 }
 
-/**
- * @brief Allocate memory using the given mempool.
- *
- * @param mp The mempool.
- * @param size The size in bytes to allocate.
- * @return The newly allocated data.
- *
- * This function allocates and returns @p size bytes using the mempool @p mp.
- * If not used anymore, the data must be freed with eina_mempool_free().
- * @warning No checks are done for @p mp.
- */
 static inline void *
 eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
 {
    return mp->backend.alloc(mp->backend_data, size);
 }
 
-/**
- * @brief Allocate and zero memory using the given mempool.
- *
- * @param mp The mempool.
- * @param size The size in bytes to allocate.
- * @return The newly allocated data.
- *
- * This function allocates, zeroes, and returns @p size bytes using the mempool @p mp.
- * If not used anymore, the data must be freed with eina_mempool_free().
- * @warning No checks are done for @p mp.
- * @since 1.2
- */
 static inline void *
 eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
 {
@@ -124,17 +89,6 @@ eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
    return r;
 }
 
-/**
- * @brief Free resources previously allocated by the given mempool.
- *
- * @param mp The mempool.
- * @param element The data to free.
- *
- * This function frees @p element allocated by @p mp. @p element must
- * have been obtained from eina_mempool_malloc(), eina_mempool_calloc(), or
- * eina_mempool_realloc().
- * @warning No checks are done for @p mp.
- */
 static inline void
 eina_mempool_free(Eina_Mempool *mp, void *element)
 {

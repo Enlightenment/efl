@@ -39,8 +39,8 @@
  * @li @c pass_through: it just call malloc() and free(). It may be
  * faster on some computers than using our own allocators (like having
  * a huge L2 cache, over 4MB).
- * @li @c one_big: It call just one time malloc for the requested number
- * of items. Useful when you know in advance how many object of some
+ * @li @c one_big: It calls just one time malloc for the requested number
+ * of items. Useful when you know in advance how many objects of some
  * type will live during the life of the mempool.
  */
 
@@ -78,22 +78,139 @@ typedef void (*Eina_Mempool_Repack_Cb)(void *dst, void *src, void *data);
 
 EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
+/**
+ *
+ * @brief TODO
+ *
+ * @param module
+ * @param context
+ * @param options
+ * @return Newly allocated mempool instance, NULL otherwise.
+ *
+ */
 EAPI Eina_Mempool  *eina_mempool_add(const char *module, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * @brief TODO
+ *
+ * @param mp The mempools
+ *
+ */
 EAPI void           eina_mempool_del(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Re-allocate an amount memory by the given mempool.
+ *
+ * @param mp The mempool.
+ * @param element The element to re-allocate.
+ * @param size The size in bytes to re-allocate.
+ * @return The newly re-allocated data.
+ *
+ * This function re-allocates and returns @p element with @p size bytes using the
+ * mempool @p mp. If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ */
 static inline void *eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Allocate memory using the given mempool.
+ *
+ * @param mp The mempool.
+ * @param size The size in bytes to allocate.
+ * @return The newly allocated data.
+ *
+ * This function allocates and returns @p size bytes using the mempool @p mp.
+ * If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ */
 static inline void *eina_mempool_malloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Allocate and zero memory using the given mempool.
+ *
+ * @param mp The mempool.
+ * @param size The size in bytes to allocate.
+ * @return The newly allocated data.
+ *
+ * This function allocates, zeroes, and returns @p size bytes using the mempool @p mp.
+ * If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ * @since 1.2
+ */
+static inline void *eina_mempool_calloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Free resources previously allocated by the given mempool.
+ *
+ * @param mp The mempool.
+ * @param element The data to free.
+ *
+ * This function frees @p element allocated by @p mp. @p element must
+ * have been obtained from eina_mempool_malloc(), eina_mempool_calloc(), or
+ * eina_mempool_realloc().
+ * @warning No checks are done for @p mp.
+ */
 static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_NONNULL(1);
 
-EAPI void	    eina_mempool_repack(Eina_Mempool *mp,
-				        Eina_Mempool_Repack_Cb cb,
-					void *data) EINA_ARG_NONNULL(1, 2);
+/**
+ *
+ * @brief TODO
+ *
+ * @param mp The mempool
+ * @param cb The after repack callback
+ * @param data The data
+ *
+ */
+EAPI void	        eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ *
+ * @brief TODO (garbage collect)
+ *
+ * @param mp The mempool
+ *
+ */
 EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * @brief TODO
+ *
+ * @param mp The mempool
+ *
+ */
 EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
+/**
+ *
+ * @brief TODO
+ *
+ * @param be The backend
+ * @return #EINA_TRUE if backend has been correctly registered, #EINA_FALSE
+ * otherwise.
+ *
+ */
 EAPI Eina_Bool      eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * @brief TODO
+ *
+ * @param be The backend
+ *
+ */
 EAPI void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
+/**
+ *
+ * @brief TODO
+ *
+ * @param size 
+ * @return #EINA_TRUE if backend has been correctly registered, #EINA_FALSE
+ * otherwise.
+ *
+ */
 static inline unsigned int   eina_mempool_alignof(unsigned int size);
 
 #include "eina_inline_mempool.x"
