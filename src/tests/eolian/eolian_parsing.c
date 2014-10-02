@@ -540,6 +540,11 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_class_eo_prefix_get(class), "evas_obj_simple"));
    fail_if(strcmp(eolian_class_data_type_get(class), "Evas_Simple_Data"));
 
+   /* c get func */
+   fail_if(!(string = eolian_class_c_get_function_name_get(class)));
+   fail_if(strcmp(string, "class_simple_class_get"));
+   eina_stringshare_del(string);
+
    /* Property */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
    fail_if(strcmp(eolian_function_name_get(fid), "a"));
