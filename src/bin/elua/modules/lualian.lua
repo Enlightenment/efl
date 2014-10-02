@@ -362,11 +362,10 @@ local gen_ns = function(klass, s)
 end
 
 local Mixin = Node:clone {
-    __ctor = function(self, klass, iface, ch, evs)
+    __ctor = function(self, klass, ch, evs)
         self.klass    = klass
         self.children = ch
         self.events   = evs
-        self.is_iface = iface
     end,
 
     generate = function(self, s)
@@ -554,8 +553,8 @@ local gen_contents = function(klass)
     return cnt, evs
 end
 
-local gen_mixin = function(klass, iface)
-    return Mixin(klass, iface, gen_contents(klass))
+local gen_mixin = function(klass)
+    return Mixin(klass, gen_contents(klass))
 end
 
 local gen_class = function(klass)
@@ -606,7 +605,7 @@ M.generate = function(fname, libname, fstream)
     local ct = eolian.class_type
     local cl
     if tp == ct.MIXIN or tp == ct.INTERFACE then
-        cl = gen_mixin(klass, tp == ct.INTERFACE)
+        cl = gen_mixin(klass)
     elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
         cl = gen_class(klass)
     else
