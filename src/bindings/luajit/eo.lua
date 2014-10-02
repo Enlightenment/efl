@@ -41,7 +41,7 @@ ffi.cdef [[
     void eo_destructor(void);
 
     Eo *_eo_add_internal_start(const char *file, int line,
-        const Eo_Class *klass_id, Eo *parent);
+        const Eo_Class *klass_id, Eo *parent, Eina_Bool ref);
 
     Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass,
         Eina_Bool is_super, const char *file, const char *func, int line);
@@ -165,17 +165,14 @@ M.__ctor_common = function(klass, parent, ctor, loff, ...)
     local source = info.source
     local func   = getfuncname(info)
     local line   = info.currentline
-    local ret    = eo._eo_add_internal_start(source, line, klass, parent)
+    local ret    = eo._eo_add_internal_start(source, line, klass, parent, true)
     local retval
-    local haspar
     if eo._eo_do_start(ret, nil, false, source, func, line) ~= 0 then
         eo.eo_constructor()
         if ctor then ctor(...) end
         ret = eo.eo_finalize()
-        haspar = eo.eo_parent_get() ~= 0
         eo._eo_do_end(nil)
     end
-    if haspar then eo.eo_ref(ret) end
     return ret
 end
 
