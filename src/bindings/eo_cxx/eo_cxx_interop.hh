@@ -40,6 +40,7 @@ to_c(bool x)
 inline Eina_Bool*
 to_c(bool* x)
 {
+   static_assert(sizeof(bool) == sizeof(Eina_Bool), "");
    return reinterpret_cast<Eina_Bool*>(x);
 }
 
