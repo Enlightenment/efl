@@ -2,10 +2,8 @@
 ### Library
 
 eo_eolian_files = \
-	lib/eo/eo_base.eo.c \
-	lib/eo/eo_base.eo.h \
-	lib/eo/eo_abstract_class.eo.c \
-	lib/eo/eo_abstract_class.eo.h
+	lib/eo/eo_base.eo \
+	lib/eo/eo_abstract_class.eo
 
 eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)
 eo_eolian_h = $(eo_eolian_files:%.eo=%.eo.h)
@@ -32,7 +30,9 @@ lib/eo/eo_ptr_indirection.c \
 lib/eo/eo_ptr_indirection.h \
 lib/eo/eo_base_class.c \
 lib/eo/eo_class_class.c \
-lib/eo/eo_private.h
+lib/eo/eo_private.h \
+${eo_eolian_c} \
+${eo_eolian_h}
 
 lib_eo_libeo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
