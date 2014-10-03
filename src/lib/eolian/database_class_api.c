@@ -200,5 +200,6 @@ eolian_class_c_get_function_name_get(const Eolian_Class *cl)
    eina_str_tolower(&bufp);
    ret = eina_stringshare_add(bufp);
    free(bufp);
+   eina_strbuf_free(buf);
    return ret;
 }
