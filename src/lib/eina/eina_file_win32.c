@@ -722,9 +722,8 @@ eina_file_open(const char *path, Eina_Bool shared)
    else
 #endif
      handle = CreateFile(filename,
-                         GENERIC_READ | GENERIC_WRITE,
-                         FILE_SHARE_READ | FILE_SHARE_WRITE,
-                         NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL,
+                         GENERIC_READ, FILE_SHARE_READ,
+                         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY,
                          NULL);
 
    if (handle == INVALID_HANDLE_VALUE)
@@ -852,7 +851,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
 
         max_size_high = (DWORD)((file->length & 0xffffffff00000000ULL) >> 32);
         max_size_low = (DWORD)(file->length & 0x00000000ffffffffULL);
-        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READWRITE,
+        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
                                      max_size_high, max_size_low, NULL);
         if (!file->fm)
           return NULL;
@@ -918,7 +917,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 
         /* the length parameter is unsigned long, that is a DWORD */
         /* so the max size high parameter of CreateFileMapping is 0 */
-        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READWRITE,
+        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
                                      0, (DWORD)length, NULL);
         if (!file->fm)
           return NULL;
