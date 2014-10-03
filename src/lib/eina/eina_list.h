@@ -1276,7 +1276,7 @@ static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
  * This macro is a shortcut for typing eina_list_data_get(eina_list_last())
  * @since 1.8
  */
-static inline void        *eina_list_last_data_get(const Eina_List *list)
+static inline void        *eina_list_last_data_get(const Eina_List *list);
 
 /**
  * @brief Returned a new iterator associated to a list.

@@ -66,6 +66,7 @@
  * Linux, BSD, Opensolaris and Windows (XP and CE).
  *
  * The data types that are available are (see @ref Eina_Data_Types_Group):
+ * @li @ref Eina_Fp_Group standard floating point numbers.
  * @li @ref Eina_Inline_Array_Group standard array of inlined members.
  * @li @ref Eina_Array_Group standard array of @c void* data.
  * @li @ref Eina_Hash_Group standard hash of @c void* data.
@@ -86,6 +87,7 @@
  * @li @ref Eina_Benchmark_Group helper to write benchmarks.
  * @li @ref Eina_Convert_Group faster conversion from strings to integers, double, etc.
  * @li @ref Eina_Counter_Group measures number of calls and their time.
+ * @li @ref Eina_Cpu_Group Cpu and architecture related helpers.
  * @li @ref Eina_Error_Group error identifiers.
  * @li @ref Eina_File_Group simple file list and path split.
  * @li @ref Eina_Lalloc_Group simple lazy allocator.
