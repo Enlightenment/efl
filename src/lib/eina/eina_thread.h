@@ -42,10 +42,22 @@
  * @{
  */
 
+/**
+ * @typedef Eina_Thread
+ * Type for a generic thread.
+ */
 typedef unsigned long int Eina_Thread;
 
+/**
+ * @typedef Eina_Thread_Cb
+ * Type for the definition of a thread callback function
+ */
 typedef void *(*Eina_Thread_Cb)(void *data, Eina_Thread t);
 
+/**
+ * @typedef Eina_Thead_Priority
+ * Type to enumerate different thread priorities
+ */
 typedef enum _Eina_Thread_Priority
 {
   EINA_THREAD_URGENT,

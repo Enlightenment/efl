@@ -21,19 +21,19 @@
 # define EINA_FP_H_
 
 /**
+ * @addtogroup Eina_Fp_Group Fp
+ *
+ * @brief Floating point numbers data type management.
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @{
  */
 
 /**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
- * @defgroup Eina_Hash_Group Fp
+ * @defgroup Eina_Fp_Group Fp
  *
  * @{
  */
@@ -48,45 +48,48 @@ typedef signed int       int32_t;
 # include <stdint.h>
 #endif
 
+/**
+ * @def EINA_F32P32_PI
+ * @brief Yields the 32-bit PI constant
+ */
 #define EINA_F32P32_PI 0x00000003243f6a89
-
 
 /**
  * @typedef Eina_F32p32
- * Type for floating point number where the size of the integer part is 32bits
- * and the size of the decimal part is 32bits
+ * Type for floating point number where the size of the integer part is 32-bit
+ * and the size of the decimal part is 32-bit
  */
 typedef int64_t Eina_F32p32;
 
 /**
  * @typedef Eina_F16p16
- * Type for floating point number where the size of the integer part is 16bits
- * and the size of the decimal part is 16bits
+ * Type for floating point number where the size of the integer part is 16-bit
+ * and the size of the decimal part is 16-bit
  */
 typedef int32_t Eina_F16p16;
 
 /**
  * @typedef Eina_F8p24
- * Type for floating point number where the size of the integer part is 8bits
+ * Type for floating point number where the size of the integer part is 8-bit
  * and the size of the decimal part is 24bits
  */
 typedef int32_t Eina_F8p24;
 
 /**
- * @brief Create a new Eina_F32p32 floating point number from standard 32 bits
+ * @brief Create a new Eina_F32p32 floating point number from standard 32-bit
  * integer
  *
- * @param v 32bits integer value to convert
+ * @param v 32-bit integer value to convert
  * @return The value converted into Eina_F32p32 format
  */
 static inline Eina_F32p32  eina_f32p32_int_from(int32_t v);
 
 /**
- * @brief Create a new standard 32bits integer from Eina_F32p32 floating point
+ * @brief Create a new standard 32-bit integer from Eina_F32p32 floating point
  * number 
  *
  * @param v Eina_F32p32 value to convert
- * @return The value converted into 32bits integer
+ * @return The value converted into 32-bit integer
  */
 static inline int32_t      eina_f32p32_int_to(Eina_F32p32 v);
 
@@ -175,7 +178,14 @@ static inline Eina_F32p32  eina_f32p32_sqrt(Eina_F32p32 a);
  */
 static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
 
-// dont use llabs - issues if not on 64bit
+/**
+ * @brief Get the absolute value of an Eina_F32p32 floating point number
+ *
+ * @param a The floating point number
+ * @return The absolute value for the number @p a
+ * @warning Has known issues on 64-bit architecture, prefer
+ * eina_f32p32_fracc_get() instead
+ */
 #define eina_fp32p32_llabs(a) ((a < 0) ? -(a) : (a))
 
 /**
@@ -195,24 +205,35 @@ EAPI Eina_F32p32           eina_f32p32_cos(Eina_F32p32 a);
 EAPI Eina_F32p32           eina_f32p32_sin(Eina_F32p32 a);
 
 
+/**
+ * @def EINA_F16P16_ONE
+ *
+ * Yields the maximum 16-bit unsigned integer size (= 65536)
+ */
 #define EINA_F16P16_ONE (1 << 16)
+
+/**
+ * @def EINA_F16P16_HALF
+ *
+ * Yields the maximum 16-bit signed integer size (= 32768)
+ */
 #define EINA_F16P16_HALF (1 << 15)
 
 /**
- * @brief Create a new Eina_F16p316 floating point number from standard 32 bits
+ * @brief Create a new Eina_F16p316 floating point number from standard 32-bit
  * integer
  *
- * @param v 32bits integer value to convert
+ * @param v 32-bit integer value to convert
  * @return The value converted into Eina_F16p16 format
  */
 static inline Eina_F16p16  eina_f16p16_int_from(int32_t v);
 
 /**
- * @brief Create a new standard 32bits integer from Eina_F16p16 floating point
+ * @brief Create a new standard 32-bit integer from Eina_F16p16 floating point
  * number 
  *
  * @param v Eina_F16p16 value to convert
- * @return The value converted into 32bits integer
+ * @return The value converted into 32-bit integer
  */
 static inline int32_t      eina_f16p16_int_to(Eina_F16p16 v);
 
@@ -315,20 +336,20 @@ static inline unsigned int eina_f16p16_fracc_get(Eina_F16p16 v);
 
 
 /**
- * @brief Create a new Eina_F16p316 floating point number from standard 32 bits
+ * @brief Create a new Eina_F16p316 floating point number from standard 32-bit
  * integer
  *
- * @param v 32bits integer value to convert
+ * @param v 32-bit integer value to convert
  * @return The value converted into Eina_F8p24 format
  */
 static inline Eina_F8p24   eina_f8p24_int_from(int32_t v);
 
 /**
- * @brief Create a new standard 32bits integer from Eina_F8p24 floating point
+ * @brief Create a new standard 32-bit integer from Eina_F8p24 floating point
  * number 
  *
  * @param v Eina_F8p24 value to convert
- * @return The value converted into 32bits integer
+ * @return The value converted into 32-bit integer
  */
 static inline int32_t      eina_f8p24_int_to(Eina_F8p24 v);
 
@@ -340,12 +361,10 @@ static inline int32_t      eina_f8p24_int_to(Eina_F8p24 v);
  */
 static inline Eina_F8p24   eina_f8p24_float_from(float v);
 
-/*
- * @brief Create a new standard float from Eina_F8p24 floating point
- * number 
- *
- * @param v Eina_F8p24 value to convert
- * @return The value converted into float
+/**
+ * @brief Create a new standard float from Eina_F8p24 floating point number 
+ * 
+ * @param v Eina_F8p24 value to convert @return The value converted into float
  */
 static inline float        eina_f8p24_float_to(Eina_F8p24 v);
 
@@ -472,4 +491,5 @@ static inline Eina_F8p24   eina_f16p16_to_f8p24(Eina_F16p16 a);
 /**
  * @}
  */
+
 #endif
