@@ -1648,6 +1648,8 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
           evas_object_raise(VIEW(it));
      }
    evas_object_smart_callback_call(obj, SIG_ITEM_FOCUSED, eo_it);
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -1676,6 +1678,8 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
 
    sd->focused_item = NULL;
    evas_object_smart_callback_call(obj, SIG_ITEM_UNFOCUSED, eo_it);
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -3631,6 +3635,7 @@ _elm_gengrid_item_eo_base_constructor(Eo *eo_it, Elm_Gen_Item *it)
 {
    eo_do_super(eo_it, ELM_GENGRID_ITEM_CLASS, eo_constructor());
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
+   eo_do(eo_it, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST_ITEM));
 }
 
 static Elm_Gen_Item *
@@ -3820,7 +3825,7 @@ _elm_gengrid_eo_base_constructor(Eo *obj, Elm_Gengrid_Data *sd)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_TABLE));
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_TREE_TABLE));
 }
 
 EOLIAN static void
@@ -4904,6 +4909,83 @@ _elm_gengrid_item_select_mode_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
    return it->select_mode;
 }
 
+EOLIAN Elm_Atspi_State_Set
+_elm_gengrid_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Gen_Item *it EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+
+   eo_do_super(eo_it, ELM_GENGRID_ITEM_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
+
+   return ret;
+}
+
+EOLIAN const char*
+_elm_gengrid_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
+{
+   const char *ret;
+   Eina_Strbuf *buf;
+
+   buf = eina_strbuf_new();
+
+   if (it->itc->func.text_get)
+     {
+        Eina_List *texts;
+        const char *key;
+
+        texts =
+           elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "texts"));
+
+        EINA_LIST_FREE(texts, key)
+          {
+             char *s = it->itc->func.text_get
+                ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+
+             if (s) ERR("Text: %s", s);
+             s = _elm_util_mkup_to_text(s);
+
+             if (s)
+               {
+                  if (eina_strbuf_length_get(buf) > 0)
+                    eina_strbuf_append(buf, ", ");
+                  eina_strbuf_append(buf, s);
+                  free(s);
+               }
+          }
+     }
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+
+   // FIXME
+   // leak here, consider changing return type of this method to something
+   // which could handle returning statically and dynamically string at once.
+   return ret;
+}
+
+EOLIAN Eina_List*
+_elm_gengrid_item_elm_interface_atspi_accessible_children_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
+{
+   Eina_List *ret = NULL;
+   if (VIEW(it))
+     {
+        Eina_List *parts;
+        const char *key;
+        parts = elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "contents"));
+
+        EINA_LIST_FREE(parts, key)
+          {
+             ERR("Key: %s", key);
+             Evas_Object *part;
+             part = edje_object_part_swallow_get(VIEW(it), key);
+             if (part && eo_isa(part, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+               ret = eina_list_append(ret, part);
+          }
+     }
+   return ret;
+}
+
 EAPI Elm_Object_Item *
 elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
 {
@@ -5033,6 +5115,30 @@ _elm_gengrid_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
+}
+
+EOLIAN Eina_List*
+_elm_gengrid_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
+{
+   Eina_List *ret = NULL;
+   Elm_Gen_Item *it;
+
+   EINA_INLIST_FOREACH(sd->items, it)
+      ret = eina_list_append(ret, EO_OBJ(it));
+
+   return ret;
+}
+
+EOLIAN Elm_Atspi_State_Set
+_elm_gengrid_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+
+   eo_do_super(obj, ELM_GENGRID_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
+
+   return ret;
 }
 
 #include "elm_gengrid.eo.c"
