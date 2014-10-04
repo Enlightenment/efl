@@ -22,8 +22,6 @@ struct _IBusIMContext
    /* instance members */
    Ecore_IMF_Context *ctx;
 
-   /* enabled */
-   Eina_Bool        enable;
    IBusInputContext *ibuscontext;
 
    /* preedit status */
@@ -309,9 +307,6 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 
    ibusimcontext->client_window = 0;
 
-   // Init ibus status
-   ibusimcontext->enable = EINA_FALSE;
-
    // Init preedit status
    ibusimcontext->preedit_string = NULL;
    ibusimcontext->preedit_attrs = NULL;
@@ -530,7 +525,7 @@ ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
-   if (ibusimcontext->enable && ibusimcontext->preedit_visible)
+   if (ibusimcontext->preedit_visible)
      {
         if (str)
           *str = strdup(ibusimcontext->preedit_string ? ibusimcontext->preedit_string: "");
@@ -981,44 +976,6 @@ _ecore_imf_context_ibus_hide_preedit_text_cb(IBusInputContext *ibuscontext EINA_
 }
 
 static void
-_ecore_imf_context_ibus_enabled_cb(IBusInputContext *ibuscontext EINA_UNUSED,
-                                   IBusIMContext    *ibusimcontext)
-{
-   EINA_LOG_DBG("%s", __FUNCTION__);
-   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
-
-   ibusimcontext->enable = EINA_TRUE;
-}
-
-static void
-_ecore_imf_context_ibus_disabled_cb(IBusInputContext *ibuscontext EINA_UNUSED,
-                                    IBusIMContext    *ibusimcontext)
-{
-   EINA_LOG_DBG("%s", __FUNCTION__);
-   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
-
-   ibusimcontext->enable = EINA_FALSE;
-
-   /* clear preedit */
-   ibusimcontext->preedit_visible = EINA_FALSE;
-   ibusimcontext->preedit_cursor_pos = 0;
-   free(ibusimcontext->preedit_string);
-   ibusimcontext->preedit_string = NULL;
-
-   // call preedit changed
-   ecore_imf_context_preedit_changed_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
-                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
-                                         NULL);
-
-   // call preedit end
-   ecore_imf_context_preedit_end_event_add(ibusimcontext->ctx);
-   ecore_imf_context_event_callback_call(ibusimcontext->ctx,
-                                         ECORE_IMF_CALLBACK_PREEDIT_END,
-                                         NULL);
-}
-
-static void
 _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
                                    IBusIMContext    *ibusimcontext)
 {
@@ -1026,7 +983,6 @@ _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->ibuscontext = NULL;
-   ibusimcontext->enable = EINA_FALSE;
 
    /* clear preedit */
    ibusimcontext->preedit_visible = EINA_FALSE;
@@ -1080,14 +1036,6 @@ _ecore_imf_context_ibus_create(IBusIMContext *ibusimcontext)
    g_signal_connect(ibusimcontext->ibuscontext,
                     "hide-preedit-text",
                     G_CALLBACK (_ecore_imf_context_ibus_hide_preedit_text_cb),
-                    ibusimcontext);
-   g_signal_connect(ibusimcontext->ibuscontext,
-                    "enabled",
-                    G_CALLBACK (_ecore_imf_context_ibus_enabled_cb),
-                    ibusimcontext);
-   g_signal_connect(ibusimcontext->ibuscontext,
-                    "disabled",
-                    G_CALLBACK (_ecore_imf_context_ibus_disabled_cb),
                     ibusimcontext);
    g_signal_connect(ibusimcontext->ibuscontext, "destroy",
                     G_CALLBACK (_ecore_imf_context_ibus_destroy_cb),
