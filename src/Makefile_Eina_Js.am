@@ -19,7 +19,8 @@ lib_eina_js_libeina_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
 lib_eina_js_libeina_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 lib_eina_js_libeina_js_la_SOURCES = \
-bindings/eina_js/eina_js_container.cc
+bindings/eina_js/eina_js_container.cc \
+bindings/eina_js/eina_js_value.cc
 
 #installed_einacxxmainheadersdir = $(includedir)/eina-cxx-@VMAJ@
 #dist_installed_einacxxmainheaders_DATA = \
