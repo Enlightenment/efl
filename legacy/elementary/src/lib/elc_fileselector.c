@@ -553,7 +553,6 @@ _signal_first(Listing_Request *lreq)
           elm_gengrid_clear(lreq->sd->files_view);
         eina_stringshare_replace(&lreq->sd->path, lreq->path);
         _anchors_do(lreq->obj, lreq->path);
-        elm_object_text_set(lreq->sd->name_entry, "");
      }
 
    lreq->first = EINA_FALSE;
@@ -690,6 +689,11 @@ _populate(Evas_Object *obj,
                                   _ls_done_cb, _ls_error_cb, lreq);
    elm_progressbar_pulse(sd->spinner, EINA_TRUE);
    elm_layout_signal_emit(lreq->obj, "elm,action,spinner,show", "elm");
+
+   // Clear name entry not in case of save mode.
+   if (elm_object_disabled_get(sd->name_entry))
+     elm_object_text_set(sd->name_entry, "");
+
 }
 
 static void
@@ -874,15 +878,10 @@ _on_item_selected(void *data,
 
         evas_object_smart_callback_call(data, SIG_SELECTED, (void *)path);
      }
-   else
+   else if (sd->multi && is_dir && sd->double_tap_navigation)
      {
-        if (sd->multi && is_dir && sd->double_tap_navigation)
-          {
-             _clear_selections(sd, it);
-             sd->dir_selected = EINA_TRUE;
-          }
-
-        elm_object_text_set(sd->name_entry, "");
+        _clear_selections(sd, it);
+        sd->dir_selected = EINA_TRUE;
      }
 
    /* We need to populate, if path is directory and:
@@ -1944,6 +1943,35 @@ _elm_fileselector_elm_interface_fileselector_selected_paths_get(Eo *obj EINA_UNU
      return sd->paths;
    else
      return NULL;
+}
+
+EAPI const char *
+elm_fileselector_current_name_get(const Evas_Object *obj)
+{
+   ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_current_name_get());
+   return ret;
+}
+
+EOLIAN static const char *
+_elm_fileselector_elm_interface_fileselector_current_name_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
+{
+   return elm_object_text_get(sd->name_entry);
+}
+
+EAPI void
+elm_fileselector_current_name_set(Evas_Object *obj,
+                                  const char *name)
+{
+   ELM_FILESELECTOR_INTERFACE_CHECK(obj);
+   eo_do((Eo *) obj, elm_interface_fileselector_current_name_set(name));
+}
+
+EOLIAN static void
+_elm_fileselector_elm_interface_fileselector_current_name_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const char *name)
+{
+   elm_object_text_set(sd->name_entry, name);
 }
 
 static Elm_Fileselector_Filter *

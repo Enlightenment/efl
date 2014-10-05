@@ -123,6 +123,17 @@ interface Elm_Interface_Fileselector ()
             const(list)* ret;
          }
       }
+      current_name {
+         set {
+            /*@ Set, */
+         }
+         get {
+            /*@ Get */
+         }
+         values {
+            const(char)* name;
+         }
+      }
    }
    methods {
       custom_filter_append {

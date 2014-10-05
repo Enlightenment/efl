@@ -245,6 +245,9 @@ EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const
  */
 EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
 
+EAPI void                  elm_fileselector_current_name_set(Evas_Object *obj, const char *name);
+EAPI const char           *elm_fileselector_current_name_get(const Evas_Object *obj);
+
 /**
  * Get a list of selected paths in the file selector.
  *

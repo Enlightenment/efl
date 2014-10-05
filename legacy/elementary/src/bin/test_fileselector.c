@@ -550,6 +550,9 @@ test_fileselector(void *data       EINA_UNUSED,
    /* start the fileselector in the home dir */
    elm_fileselector_path_set(fs, getenv("HOME"));
 
+   /* provides suggested name (just for showing) */
+   elm_fileselector_current_name_set(fs, "No name");
+
    /* add filesters */
    elm_fileselector_mime_types_filter_append(fs, "text/*", "Text Files");
    elm_fileselector_mime_types_filter_append(fs, "image/*", "Image Files");
