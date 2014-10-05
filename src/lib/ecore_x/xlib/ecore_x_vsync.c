@@ -222,6 +222,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
      {
         static unsigned int pframe = 0;
 
+        D("vblank %i\n", frame);
         DBG("vblank %i", frame);
         if (pframe != frame)
           {
@@ -324,6 +325,7 @@ _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void 
         double *t = msg;
         static double pt = 0.0;
 
+        D("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
         DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
         ecore_loop_time_set(*t);
         ecore_animator_custom_tick();
@@ -481,8 +483,9 @@ _drm_init(int *flags)
                        drmver->version_major, drmver->version_minor,
                        drmver->name, drmver->date, drmver->desc);
           }
-        if ((drmver->version_major >= 1) &&
-            (drmver->version_minor >= 6) &&
+        if ((((drmver->version_major == 1) &&
+              (drmver->version_minor >= 6)) ||
+             (drmver->version_major > 1)) &&
             (drmver->name > (char *)4000L) &&
             (drmver->date_len < 200))
           {
@@ -495,9 +498,21 @@ _drm_init(int *flags)
                   ok = EINA_TRUE;
                   goto checkdone;
                }
+             if ((!strcmp(drmver->name, "radeon")) &&
+                 (strstr(drmver->desc, "Radeon")) &&
+                 (((drmver->version_major == 2) &&
+                   (drmver->version_minor >= 39)) ||
+                  (drmver->version_major > 2)))
+               {
+                  if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                    fprintf(stderr, "Whitelisted radeon OK\n");
+                  ok = EINA_TRUE;
+                  goto checkdone;
+               }
           }
-        if ((drmverbroken->version_major >= 1) &&
-            (drmverbroken->version_minor >= 6) &&
+        if ((((drmverbroken->version_major == 1) &&
+              (drmverbroken->version_minor >= 6)) ||
+             (drmverbroken->version_major > 1)) &&
             (drmverbroken->name > (char *)4000L) &&
             (drmverbroken->date_len < 200))
           {
@@ -507,6 +522,17 @@ _drm_init(int *flags)
                {
                   if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
                     fprintf(stderr, "Whitelisted intel OK\n");
+                  ok = EINA_TRUE;
+                  goto checkdone;
+               }
+             if ((!strcmp(drmverbroken->name, "radeon")) &&
+                 (strstr(drmverbroken->desc, "Radeon")) &&
+                 (((drmver->version_major == 2) &&
+                   (drmver->version_minor >= 39)) ||
+                  (drmver->version_major > 2)))
+               {
+                  if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                    fprintf(stderr, "Whitelisted radeon OK\n");
                   ok = EINA_TRUE;
                   goto checkdone;
                }
