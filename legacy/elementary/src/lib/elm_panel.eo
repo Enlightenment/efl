@@ -53,6 +53,15 @@ class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable,
 
             @ingroup Panel */
          }
+         get {
+            /*@
+            @brief Get the state of the scrollability.
+
+            @return EINA_TRUE if it is scrollable
+
+            @ingroup Panel
+            @since 1.12 */
+         }
          values {
             bool scrollable;
          }

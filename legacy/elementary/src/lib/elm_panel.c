@@ -1285,6 +1285,12 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
    ecore_animator_add(_elm_panel_anim_cb, obj);
 }
 
+EOLIAN static Eina_Bool
+_elm_panel_scrollable_get(Eo *obj, Elm_Panel_Data *sd)
+{
+   return sd->scrollable;
+}
+
 EOLIAN static void
 _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 {
