@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
 #include <Elementary.h>
@@ -3228,6 +3229,95 @@ EOLIAN Eina_List*
 _elm_list_elm_interface_atspi_accessible_children_get(Eo *eo_item EINA_UNUSED, Elm_List_Data *pd)
 {
    return eina_list_clone(pd->items);
+}
+
+EOLIAN int
+_elm_list_elm_interface_atspi_selection_selected_children_count_get(Eo *objm EINA_UNUSED, Elm_List_Data *pd)
+{
+   return eina_list_count(pd->selected);
+}
+
+EOLIAN Eo*
+_elm_list_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_List_Data *pd, int child_idx)
+{
+   return eina_list_nth(pd->selected, child_idx);
+}
+
+EOLIAN Eina_Bool
+_elm_list_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm_List_Data *pd, int child_index)
+{
+   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+     {
+        Eo *item = eina_list_nth(pd->items, child_index);
+        if (item)
+           elm_list_item_selected_set(item, EINA_TRUE);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_list_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_List_Data *pd, int child_index)
+{
+   Eo *item = eina_list_nth(pd->selected, child_index);
+   if (item)
+     {
+        elm_list_item_selected_set(item, EINA_FALSE);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_list_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_List_Data *pd, int child_index)
+{
+   Eo *item = eina_list_nth(pd->items, child_index);
+   if (item)
+     return elm_list_item_selected_get(item);
+
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_list_elm_interface_atspi_selection_all_children_select(Eo *obj EINA_UNUSED, Elm_List_Data *pd)
+{
+   Eo *it;
+   Eina_List *l;
+
+   if (pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(pd->items, l, it)
+      elm_list_item_selected_set(it, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
+_elm_list_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Elm_List_Data *pd)
+{
+   Eo *it;
+   Eina_List *l;
+
+   if (pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(pd->items, l, it)
+      elm_list_item_selected_set(it, EINA_FALSE);
+
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
+_elm_list_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_List_Data *pd, int child_index)
+{
+   Eo *item = eina_list_nth(pd->items, child_index);
+   if (item)
+     {
+        elm_list_item_selected_set(item, EINA_FALSE);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 #include "elm_list.eo.c"
