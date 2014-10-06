@@ -11,8 +11,6 @@ EOLIAN_FLAGS = \
 	       -I$(srcdir)/lib/ecore \
 	       -I$(srcdir)/lib/ecore_con
 
-ELUA_GEN_FLAGS =
-
 DIST_SUBDIRS =
 SUBDIRS =
 

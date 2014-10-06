@@ -257,3 +257,16 @@ tests/emotion/data/video_frame_top.png \
 tests/emotion/data/whb.png \
 tests/emotion/data/window_inner_shadow.png \
 modules/emotion/generic/README
+
+if HAVE_ELUA
+
+emotion_eolian_lua = $(emotion_eolian_files:%.eo=%.eo.lua)
+
+generated_emotion_lua_all = $(emotion_eolian_lua)
+
+CLEANFILES += $(generated_emotion_lua_all)
+
+installed_emotionluadir = $(datadir)/elua/modules/emotion
+nodist_installed_emotionlua_DATA = $(generated_emotion_lua_all)
+
+endif

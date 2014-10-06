@@ -1965,3 +1965,15 @@ tests/evas/images/Light_exif_90.jpg \
 tests/evas/images/Light_exif_transverse.jpg \
 tests/evas/images/Light_exif_270.jpg
 
+if HAVE_ELUA
+
+evas_eolian_lua = $(evas_eolian_files:%.eo=%.eo.lua)
+
+generated_evas_lua_all = $(evas_eolian_lua)
+
+CLEANFILES += $(generated_evas_lua_all)
+
+installed_evasluadir = $(datadir)/elua/modules/evas
+nodist_installed_evaslua_DATA = $(generated_evas_lua_all)
+
+endif

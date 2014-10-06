@@ -136,9 +136,9 @@ elua_register_require(lua_State *L)
    elua_appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    if (getenv("EFL_RUN_IN_TREE"))
      {
-        corepath = PACKAGE_BUILD_DIR "/src/bin/elua/core";
-        modpath  = PACKAGE_BUILD_DIR "/src/bin/elua/modules";
-        appspath = PACKAGE_BUILD_DIR "/src/bin/elua/apps";
+        corepath = PACKAGE_SRC_DIR "/src/bin/elua/core";
+        modpath  = PACKAGE_SRC_DIR "/src/bin/elua/modules";
+        appspath = PACKAGE_SRC_DIR "/src/bin/elua/apps";
      }
    else
      {
@@ -466,9 +466,9 @@ elua_main(lua_State *L)
      {
         Arg_Data *v = malloc(sizeof(Arg_Data));
         v->type     = ARG_LIBDIR;
-        v->value    = PACKAGE_BUILD_DIR "/src/bindings/luajit";
+        v->value    = PACKAGE_SRC_DIR "/src/bindings/luajit";
         largs       = eina_list_append(largs, v);
-        coref       = PACKAGE_BUILD_DIR "/src/bin/elua/core";
+        coref       = PACKAGE_SRC_DIR "/src/bin/elua/core";
      }
    else if (!(coref = coredir))
      {

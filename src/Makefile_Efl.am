@@ -40,3 +40,16 @@ dist_installed_eflheaders_DATA = \
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
 nodist_installed_eflinterfaces_DATA = $(efl_eolian_files_h)
+
+if HAVE_ELUA
+
+efl_eolian_lua = $(efl_eolian_files:%.eo=%.eo.lua)
+
+generated_efl_lua_all = $(efl_eolian_lua)
+
+CLEANFILES += $(generated_efl_lua_all)
+
+installed_eflluadir = $(datadir)/elua/modules/efl
+nodist_installed_efllua_DATA = $(generated_efl_lua_all)
+
+endif

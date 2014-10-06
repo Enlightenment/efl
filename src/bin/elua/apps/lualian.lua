@@ -18,7 +18,7 @@ local gen_file = function(opts, i, fname)
     else
         printv("  Output file: printing to stdout...")
     end
-    lualian.generate(fname, opts["L"], fstream)
+    lualian.generate(fname, fstream)
 end
 
 getopt.parse {
@@ -37,7 +37,6 @@ getopt.parse {
         { "I", "include", true, help = "Include a directory.", metavar = "DIR",
             list = {}
         },
-        { "L", "library", true, help = "Specify a C library name." },
         { "o", "output", true, help = "Specify output file name(s), by "
             .. "default goes to stdout.",
             list = {}
@@ -49,20 +48,15 @@ getopt.parse {
     end,
     done_cb = function(parser, opts, args)
         if not opts["h"] then
-            if not opts["L"] then
-                io.stderr:write("library name not specified\n")
-                getopt.help(parser, io.stderr)
-            else
-                for i, v in ipairs(opts["I"] or {}) do
-                    lualian.include_dir(v)
-                end
-                if os.getenv("EFL_RUN_IN_TREE") then
-                    lualian.system_directory_scan()
-                end
-                lualian.load_eot_files()
-                for i, fname in ipairs(args) do
-                    gen_file(opts, i, fname)
-                end
+            for i, v in ipairs(opts["I"] or {}) do
+                lualian.include_dir(v)
+            end
+            if os.getenv("EFL_RUN_IN_TREE") then
+                lualian.system_directory_scan()
+            end
+            lualian.load_eot_files()
+            for i, fname in ipairs(args) do
+                gen_file(opts, i, fname)
             end
         end
     end

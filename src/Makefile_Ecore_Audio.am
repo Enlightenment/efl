@@ -75,3 +75,16 @@ lib/ecore_audio/ecore_audio_sndfile_vio.c
 endif
 
 endif
+
+if HAVE_ELUA
+
+ecore_audio_eolian_lua = $(ecore_audio_eolian_files:%.eo=%.eo.lua)
+
+generated_ecore_audio_lua_all = $(ecore_audio_eolian_lua)
+
+CLEANFILES += $(generated_ecore_audio_lua_all)
+
+installed_ecoreaudioluadir = $(datadir)/elua/modules/ecore_audio
+nodist_installed_ecoreaudiolua_DATA = $(generated_ecore_audio_lua_all)
+
+endif

@@ -502,10 +502,9 @@ end
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, klass, libname, ch)
+    __ctor = function(self, fname, klass, ch)
         self.fname    = fname:match(".+/(.+)") or fname
         self.klass    = klass
-        self.libname  = libname
         self.children = ch
     end,
 
@@ -531,33 +530,27 @@ local util  = require("util")
 local ffi   = require("ffi")
 local eo    = require("eo")
 
-local M     = ...
+local M, __lib = ...
 
-local __lib
 local __class
 local __body
 
 local init = function()
-    __lib = util.lib_load("%s")
     __class = __lib.%s_class_get()
     eo.class_register("%s", %s, __body, __class)
-]]):format(self.fname, kn, self.libname, ckls.prefix, knu, paru))
+]]):format(self.fname, kn, ckls.prefix, knu, paru))
 
         if ckls.mixins then for i, v in ipairs(ckls.mixins) do
             s:write(("    eo.class_mixin(\"%s\", \"%s\")\n"):format(knu,
                 v:gsub("%.", "_")))
         end end
 
-        s:write(([[
+        s:write([[
 end
 
-local shutdown = function()
-    util.lib_unload("%s")
-end
+cutil.init_module(init, function() end)
 
-cutil.init_module(init, shutdown)
-
-]]):format(self.libname))
+]])
 
         self:gen_children(s)
 
@@ -651,7 +644,7 @@ M.system_directory_scan = function()
     return eolian.system_directory_scan()
 end
 
-M.generate = function(fname, libname, fstream)
+M.generate = function(fname, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
     end
@@ -670,7 +663,7 @@ M.generate = function(fname, libname, fstream)
     else
         error(klass:full_name_get() .. ": unknown type")
     end
-    File(fname, klass, libname, { cl }):generate(fstream or io.stdout)
+    File(fname, klass, { cl }):generate(fstream or io.stdout)
 end
 
 return M
