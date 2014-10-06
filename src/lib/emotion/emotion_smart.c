@@ -689,6 +689,7 @@ _emotion_object_efl_player_position_set(Eo *obj, Emotion_Object_Data *sd, double
 {
    DBG("sec=%f", sec);
    if (!sd->engine_instance) return;
+   if (sec < 0.0) sec = 0.0;
    if (!sd->open)
      {
         sd->remember_jump = sec;
