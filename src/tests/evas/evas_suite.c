@@ -26,6 +26,7 @@ static const Evas_Test_Case etc[] = {
   { "Render Engines", evas_test_render_engines },
   { "Filters", evas_test_filters },
   { "Images", evas_test_image_object },
+  { "Meshes", evas_test_mesh },
   { NULL, NULL }
 };
 

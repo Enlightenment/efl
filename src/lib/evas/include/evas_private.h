@@ -74,11 +74,88 @@ typedef struct _Evas_3D_Light            Evas_3D_Light_Data;
 typedef struct _Evas_3D_Material         Evas_3D_Material_Data;
 typedef struct _Evas_3D_Texture          Evas_3D_Texture_Data;
 
+/* Structs for mesh eet saver/loader */
+typedef struct _Evas_3D_Vec3_Eet         Evas_3D_Vec3_Eet;
+typedef struct _Evas_3D_Vertex_Eet       Evas_3D_Vertex_Eet;
+typedef struct _Evas_3D_Geometry_Eet     Evas_3D_Geometry_Eet;
+typedef struct _Evas_3D_Color_Eet        Evas_3D_Color_Eet;
+typedef struct _Evas_3D_Material_Eet     Evas_3D_Material_Eet;
+typedef struct _Evas_3D_Frame_Eet        Evas_3D_Frame_Eet;
+typedef struct _Evas_3D_Mesh_Eet         Evas_3D_Mesh_Eet;
+typedef struct _Evas_3D_Header_Eet       Evas_3D_Header_Eet;
+typedef struct _Evas_3D_File_Eet         Evas_3D_File_Eet;
 
+struct _Evas_3D_Vec3_Eet
+{
+   float x;
+   float y;
+   float z;
+};
 
+struct _Evas_3D_Vertex_Eet
+{
+   Evas_3D_Vec3_Eet position;
+   Evas_3D_Vec3_Eet normal;
+   Evas_3D_Vec3_Eet texcoord;
+};//one point of mesh
+
+struct _Evas_3D_Geometry_Eet
+{
+   unsigned int id;
+   int vertices_count;
+   Evas_3D_Vertex_Eet *vertices;
+};//contain array of vertices and id for using in Evas_3D_Frame_Eet in future
+
+struct _Evas_3D_Color_Eet
+{
+   float r;
+   float g;
+   float b;
+   float a;
+};
+
+struct _Evas_3D_Material_Eet
+{
+   int id;
+   float shininess;
+   int colors_count;
+   Evas_3D_Color_Eet *colors;//Color per attribute (ambient, diffuse, specular etc.)
+};
+
+struct _Evas_3D_Frame_Eet
+{
+   int id;
+   int geometry_id;
+   int material_id;
+};//only ids to prevent of spending of memory when animation will change only geometry or only material
+
+struct _Evas_3D_Mesh_Eet
+{
+   int materials_count;
+   int frames_count;
+   int geometries_count;
+   Evas_3D_Material_Eet *materials;
+   Evas_3D_Frame_Eet *frames;
+   Evas_3D_Geometry_Eet *geometries;
+};//contain materials, geometries and bounding between it (frames)
+
+struct _Evas_3D_Header_Eet
+{
+   int version;
+   int *materials;//colors_count
+   int materials_count;
+   int *geometries;//vertices_count
+   int geometries_count;
+   int frames;
+};//can be use for fast allocating of memory
+
+struct _Evas_3D_File_Eet
+{
+   Evas_3D_Mesh_Eet *mesh;
+   Evas_3D_Header_Eet *header;
+};//contain mesh data and information about mesh size
 
 typedef Eina_Bool (*Evas_3D_Node_Func)(Evas_3D_Node *, void *data);
-
 
 typedef enum _Evas_3D_Node_Traverse_Type
 {
@@ -1529,7 +1606,11 @@ void evas_3d_material_mesh_del(Evas_3D_Material *material, Evas_3D_Mesh *mesh);
 void evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data);
 void evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data);
 
-
+/* Eet saver/loader functions */
+struct Evas_3D_File_Eet *_evas_3d_eet_file_new(void);
+void _evas_3d_eet_file_init(void);
+void _evas_3d_eet_descriptor_shutdown(void);
+void _evas_3d_eet_file_free(void);
 
 extern int _evas_alloc_error;
 extern int _evas_event_counter;

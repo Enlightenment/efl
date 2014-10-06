@@ -11,5 +11,6 @@ void evas_test_callbacks(TCase *tc);
 void evas_test_render_engines(TCase *tc);
 void evas_test_filters(TCase *tc);
 void evas_test_image_object(TCase *tc);
+void evas_test_mesh(TCase *tc);
 
 #endif /* _EVAS_SUITE_H */
