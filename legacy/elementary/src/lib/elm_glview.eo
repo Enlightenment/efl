@@ -185,7 +185,6 @@ class Elm_Glview (Elm_Widget)
             @return The Evas_GL used by this GLView.
 
             @ingroup GLView */
-            legacy: null;
             return: Evas_GL *;
          }
       }
@@ -206,7 +205,6 @@ class Elm_Glview (Elm_Widget)
             @since 1.12
 
             @ingroup GLView */
-            legacy: null;
             return: int;
          }
       }
