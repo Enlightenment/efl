@@ -77,7 +77,6 @@
 
 extern int _ecore_drm_log_dom;
 
-/* FIXME: Get slots from evdev device */
 #define EVDEV_MAX_SLOTS 32
 
 #define ERR(...) EINA_LOG_DOM_ERR(_ecore_drm_log_dom, __VA_ARGS__)
