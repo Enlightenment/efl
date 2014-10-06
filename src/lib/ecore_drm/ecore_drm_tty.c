@@ -207,8 +207,8 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
      }
    else
      {
-        if (strncmp(name,"/dev/", 5))
-          snprintf(tty, sizeof(tty), "/dev/%s",name);
+        if (strncmp(name, "/dev/", 5))
+          snprintf(tty, sizeof(tty), "/dev/%s", name);
         else
           snprintf(tty, sizeof(tty), "%s", name);
      }
