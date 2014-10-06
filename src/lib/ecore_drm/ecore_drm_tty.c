@@ -205,13 +205,8 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
         else
           dev->tty.fd = dup(STDIN_FILENO);
      }
-   else
-     {
-        if (strncmp(name,"/dev/", 5))
-          snprintf(tty, sizeof(tty), "/dev/%s",name);
-        else
-          snprintf(tty, sizeof(tty), "%s", name);
-     }
+   else // FIXME: NB: This should Really check for format of name (/dev/xyz)
+     snprintf(tty, sizeof(tty), "%s", name);
 
    if (dev->tty.fd < 0)
      {
