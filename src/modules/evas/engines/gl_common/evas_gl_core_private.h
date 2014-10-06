@@ -67,6 +67,7 @@ struct _EVGL_Interface
 
    // Create a pbuffer surface
    void       *(*pbuffer_surface_create)(void *data, EVGL_Surface *evgl_sfc, const int *attrib_list);
+   int         (*pbuffer_surface_destroy)(void *data, void *surface);
 
    // Create a surface for 1.x rendering (could be pbuffer or xpixmap for instance)
    void       *(*gles1_surface_create)(void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);

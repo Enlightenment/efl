@@ -471,7 +471,11 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_make_current,
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
-   evgl_eng_rotation_angle_get
+   evgl_eng_rotation_angle_get,
+   NULL, // PBuffer
+   NULL, // PBuffer
+   NULL, // OpenGL-ES 1
+   NULL, // OpenGL-ES 1
 };
 
 /* engine functions */

@@ -637,6 +637,9 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
    // TODO: Add support for surfaceless pbuffers (EGL_NO_TEXTURE)
    // TODO: Add support for EGL_MIPMAP_TEXTURE??? (GLX doesn't support them)
 
+   if (attrib_list)
+     WRN("This PBuffer implementation does not support extra attributes yet");
+
 #ifdef GL_GLES
    int config_attrs[20];
    int surface_attrs[20];
@@ -645,9 +648,6 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
    int num_config, i = 0;
    EGLDisplay disp;
    EGLContext ctx;
-
-   if (attrib_list)
-     WRN("This PBuffer implementation does not support extra attributes yet");
 
    disp = re->window_egl_display_get(re->software.ob);
    ctx = re->window_gl_context_get(re->software.ob);
@@ -747,9 +747,109 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
 
    return egl_sfc;
 #else
-   ERR("PBuffer support is not implemented yet!");
-   return NULL;
+   GLXPbuffer pbuf;
+   GLXFBConfig *cfgs;
+   int config_attrs[20];
+   int surface_attrs[20];
+   int ncfg = 0, i;
+
+   // TODO: Check all required config attributes
+
+#ifndef GLX_VISUAL_ID
+# define GLX_VISUAL_ID 0x800b
 #endif
+
+   i = 0;
+   if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
+     {
+        config_attrs[i++] = GLX_BUFFER_SIZE;
+        if (sfc->pbuffer.color_fmt == EVAS_GL_RGBA_8888)
+          {
+             config_attrs[i++] = 32;
+             //config_attrs[i++] = GLX_BIND_TO_TEXTURE_RGBA_EXT;
+             //config_attrs[i++] = 1;
+          }
+        else
+          {
+             config_attrs[i++] = 24;
+             //config_attrs[i++] = GLX_BIND_TO_TEXTURE_RGB_EXT;
+             //config_attrs[i++] = 1;
+          }
+     }
+   if (sfc->depth_fmt)
+     {
+        config_attrs[i++] = GLX_DEPTH_SIZE;
+        config_attrs[i++] = 24; // FIXME: This should depend on the requested bits
+     }
+   if (sfc->stencil_fmt)
+     {
+        config_attrs[i++] = GLX_STENCIL_SIZE;
+        config_attrs[i++] = 8; // FIXME: This should depend on the requested bits
+     }
+   //config_attrs[i++] = GLX_VISUAL_ID;
+   //config_attrs[i++] = XVisualIDFromVisual(vis);
+   config_attrs[i++] = 0;
+
+   cfgs = glXChooseFBConfig(re->software.ob->disp, re->software.ob->screen,
+                            config_attrs, &ncfg);
+   if (!cfgs || !ncfg)
+     {
+        ERR("GLX failed to find a valid config for the pbuffer");
+        if (cfgs) XFree(cfgs);
+        return NULL;
+     }
+
+   i = 0;
+   surface_attrs[i++] = GLX_LARGEST_PBUFFER;
+   surface_attrs[i++] = 0;
+   surface_attrs[i++] = GLX_PBUFFER_WIDTH;
+   surface_attrs[i++] = sfc->w;
+   surface_attrs[i++] = GLX_PBUFFER_HEIGHT;
+   surface_attrs[i++] = sfc->h;
+   surface_attrs[i++] = 0;
+   pbuf = glXCreatePbuffer(re->software.ob->disp, cfgs[0], surface_attrs);
+   if (cfgs) XFree(cfgs);
+
+   if (!pbuf)
+     {
+        ERR("GLX failed to create a pbuffer");
+        return NULL;
+     }
+
+   return (void*)(intptr_t)pbuf;
+#endif
+}
+
+static int
+evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
+{
+   /* EVGLINIT(re, 0); */
+   if (!data)
+     {
+        ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
+        return 0;
+     }
+
+   if (!surface)
+     {
+        ERR("Invalid surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
+        return 0;
+     }
+
+#ifdef GL_GLES
+   Render_Engine *re = data;
+
+   eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)surface);
+#else
+   Render_Engine_GL_Generic *re = data;
+   GLXPbuffer pbuf = (GLXPbuffer)(intptr_t) surface;
+
+   glXDestroyPbuffer(re->software.ob->disp, pbuf);
+#endif
+
+   return 1;
 }
 
 // This function should create a surface that can be used for offscreen rendering
@@ -808,9 +908,12 @@ evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
    return evgl_sfc;
 
 #else
-#warning GLX support is not implemented for GLES 1.x
-   CRIT("Not implemented yet! (GLX for GLES 1)");
-   return NULL;
+   evgl_sfc->gles1_indirect = EINA_TRUE;
+   evgl_sfc->xpixmap = EINA_TRUE;
+   evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
+   evgl_sfc->gles1_sfc = (void *)(intptr_t) px;
+   evgl_sfc->gles1_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
+   return evgl_sfc;
 #endif
 }
 
@@ -837,11 +940,6 @@ evgl_eng_gles1_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
      }
 
    eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)evgl_sfc->gles1_sfc);
-
-#else
-#warning GLX support is not implemented for GLES 1.x
-   CRIT("Not implemented yet! (GLX for GLES 1)");
-   return 0;
 #endif
 
    if (!evgl_sfc->gles1_sfc_native)
@@ -871,6 +969,7 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_string_get,
    evgl_eng_rotation_angle_get,
    evgl_eng_pbuffer_surface_create,
+   evgl_eng_pbuffer_surface_destroy,
    evgl_eng_gles1_surface_create,
    evgl_eng_gles1_surface_destroy,
 };

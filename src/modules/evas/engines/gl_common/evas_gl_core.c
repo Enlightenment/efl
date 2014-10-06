@@ -1815,7 +1815,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         if (sfc->pbuffer.fbo)
           glDeleteFramebuffers(1, &sfc->pbuffer.fbo);
 
-        ret = evgl_engine->funcs->surface_destroy(eng_data, sfc->pbuffer.native_surface);
+        ret = evgl_engine->funcs->pbuffer_surface_destroy(eng_data, sfc->pbuffer.native_surface);
         LKL(evgl_engine->resource_lock);
         evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
         LKU(evgl_engine->resource_lock);
