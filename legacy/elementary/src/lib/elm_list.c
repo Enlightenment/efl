@@ -671,8 +671,8 @@ EOLIAN static void
 _elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0;
-   Evas_Coord minw, minh, maxw, maxh, w, h, vmw, vmh;
-   double xw, yw;
+   Evas_Coord minw = 0, minh = 0, maxw = 0, maxh = 0, w = 0, h = 0, vmw = 0, vmh = 0;
+   double xw = 0.0, yw = 0.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
