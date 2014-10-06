@@ -293,8 +293,7 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
    if (!(input = calloc(1, sizeof(Ecore_Drm_Input))))
      return EINA_FALSE;
 
-   /* FIXME: Hardcoded seat name */
-   input->seat = eina_stringshare_add("seat0");
+   input->seat = eina_stringshare_add(dev->seat);
    input->dev = dev;
 
    /* try to enable this input */
