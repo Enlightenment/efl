@@ -557,7 +557,7 @@ ecore_con_server_del(Ecore_Con_Server *obj)
    if (!obj) return NULL;
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
 
-   if (svr->delete_me)
+   if (!svr || svr->delete_me)
      return NULL;
 
    _ecore_con_server_kill(obj);
@@ -579,9 +579,10 @@ ecore_con_server_data_set(Ecore_Con_Server *obj,
                           void *data)
 {
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   void *ret = NULL;
+
    if (!svr)
       return NULL;
-   void *ret = NULL;
 
    ret = svr->data;
    svr->data = data;
