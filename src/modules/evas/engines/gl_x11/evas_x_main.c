@@ -293,6 +293,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         else
           context = glXCreateContext(gw->disp, gw->visualinfo, NULL, GL_TRUE);
 #endif
+        _tls_context_set(context);
      }
 #ifdef NEWGL
    rgbactx = _tls_rgba_context_get();
