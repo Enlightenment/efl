@@ -44,6 +44,24 @@ static const char script[] =
     "assert(typeof(wrapped) === 'number', '#7');"
     "assert(wrapped === 1, '#8');"
 
+    "var captured = false;"
+    "try {"
+    "  my_value.set({type: 'complex object'});"
+    "} catch(e) {"
+    "  assert(e.code === 'std::bad_cast', '#9');"
+    "  captured = true;"
+    "}"
+    "assert(captured === true, '#10');"
+
+    "captured = false;"
+    "try {"
+    "  my_value = make_value({type: 'complex object'});"
+    "} catch(e) {"
+    "  assert(e.code === 'std::bad_cast', '#11');"
+    "  captured = true;"
+    "}"
+    "assert(captured === true, '#12');"
+
     "destroy_value(my_value);"
     ;
 
