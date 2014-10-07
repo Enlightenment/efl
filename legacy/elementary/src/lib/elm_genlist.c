@@ -664,11 +664,11 @@ _calc_job(void *data)
         itb->y = y;
         itb->x = 0;
         minh += itb->minh;
-        if (minw == -1) minw = itb->minw;
-        else if ((!itb->must_recalc) && (minw < itb->minw))
+        if (minw < itb->minw)
           {
              minw = itb->minw;
-             minw_change = EINA_TRUE;
+             if (minw != -1)
+               minw_change = EINA_TRUE;
           }
         if ((sd->mode == ELM_LIST_COMPRESS) && (minw > vw))
           {
