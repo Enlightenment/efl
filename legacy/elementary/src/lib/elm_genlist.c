@@ -652,9 +652,9 @@ _calc_job(void *data)
                   Elm_Gen_Item *it;
 
                   EINA_LIST_FOREACH(itb->items, l, it)
-                    if (it->item->mincalcd) it->item->mincalcd = EINA_FALSE;
+                    it->item->mincalcd = EINA_FALSE;
                   itb->changed = EINA_TRUE;
-                  if (itb->must_recalc) did_must_recalc = EINA_TRUE;
+                  did_must_recalc = EINA_TRUE;
                   if (itb->realized) _item_block_unrealize(itb);
                   itb->must_recalc = EINA_FALSE;
                }
