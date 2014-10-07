@@ -1044,7 +1044,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            bool anti_alias; /*@ 1 if the object is to be anti_aliased, 0 otherwise. */
+            bool anti_alias; /*@ (@c EINA_TRUE) if the object is to be anti_aliased, (@c EINA_FALSE) otherwise. */
          }
       }
       color {
