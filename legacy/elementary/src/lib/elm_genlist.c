@@ -5862,10 +5862,6 @@ _elm_genlist_item_eo_base_constructor(Eo *eo_it, Elm_Gen_Item *it)
 {
    eo_do_super(eo_it, ELM_GENLIST_ITEM_CLASS, eo_constructor());
 
-   Eo *p;
-   eo_do(eo_it, p = eo_parent_get());
-   ERR("Parent %p class: %s, %p", eo_it, eo_class_name_get(p), p);
-
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
    eo_do(eo_it, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST_ITEM));
 }
@@ -6495,12 +6491,10 @@ _elm_genlist_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
    ELM_GENLIST_DATA_GET(WIDGET(it), sd);
 
-   ERR("Clearing subitems");
    if (!sd->tree_effect_enabled || !sd->move_effect_mode)
      _item_sub_items_clear(it);
    else
      {
-        ERR("Not tree");
         if (!sd->tree_effect_animator)
           {
              sd->expanded_item = it;
@@ -6510,7 +6504,6 @@ _elm_genlist_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
              sd->start_time = ecore_time_get();
              sd->tree_effect_animator =
                ecore_animator_add(_tree_effect_animator_cb, sd->obj);
-             ERR("Animator");
           }
         else
           _item_sub_items_clear(it);
