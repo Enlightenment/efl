@@ -467,6 +467,11 @@ end
             end
         end
         s:write(table.concat(parnames, ", "))
+        if #parnames == 0 then
+            s:write("__func")
+        else
+            s:write(", __func")
+        end
         s:write(")\n")
         -- write ctor body
         local j = 1
@@ -492,6 +497,7 @@ end
             s:write(table.concat(fpars, ", "))
             s:write(")\n")
         end
+        s:write("        if __func then __func() end\n")
         s:write("    end")
         if #self.children > 0 then
             s:write(",\n\n")
