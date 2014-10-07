@@ -7677,7 +7677,8 @@ _elm_genlist_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Ge
 }
 
 EOLIAN const char*
-_elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Gen_Item *it)
+_elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
+                                                          Elm_Gen_Item *it)
 {
    const char *ret;
    Eina_Strbuf *buf;
