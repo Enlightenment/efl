@@ -9,7 +9,7 @@ namespace efl { namespace js {
 EAPI
 void register_make_value(v8::Isolate *isolate,
                          v8::Handle<v8::ObjectTemplate> global,
-                         v8::Local<v8::String> name)
+                         v8::Handle<v8::String> name)
 {
     using v8::Local;
     using v8::Value;
@@ -70,9 +70,8 @@ void register_make_value(v8::Isolate *isolate,
 EAPI
 void register_destroy_value(v8::Isolate *isolate,
                             v8::Handle<v8::ObjectTemplate> global,
-                            v8::Local<v8::String> name)
+                            v8::Handle<v8::String> name)
 {
-    using v8::Handle;
     using v8::Local;
     using v8::Value;
     using v8::FunctionTemplate;

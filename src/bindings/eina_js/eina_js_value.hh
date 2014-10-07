@@ -103,7 +103,7 @@ value_cast(const ::efl::eina::value &v, v8::Isolate *isolate)
 
 template<class T>
 typename std::enable_if<std::is_same<T, ::efl::eina::value>::value, T>::type
-value_cast(const v8::Local<v8::Value> &v)
+value_cast(const v8::Handle<v8::Value> &v)
 {
     using ::efl::eina::value;
 
@@ -135,11 +135,11 @@ value_cast(const v8::Local<v8::Value> &v)
  */
 void register_make_value(v8::Isolate *isolate,
                          v8::Handle<v8::ObjectTemplate> global,
-                         v8::Local<v8::String> name);
+                         v8::Handle<v8::String> name);
 
 void register_destroy_value(v8::Isolate *isolate,
                             v8::Handle<v8::ObjectTemplate> global,
-                            v8::Local<v8::String> name);
+                            v8::Handle<v8::String> name);
 
 } } // namespace efl::js
 
