@@ -542,9 +542,9 @@ local __class
 local __body
 
 local init = function()
-    __class = __lib.%s_class_get()
+    __class = __lib.%s()
     eo.class_register("%s", %s, __body, __class)
-]]):format(self.fname, kn, ckls.prefix, knu, paru))
+]]):format(self.fname, kn, kls:c_get_function_name_get(), knu, paru))
 
         if ckls.mixins then for i, v in ipairs(ckls.mixins) do
             s:write(("    eo.class_mixin(\"%s\", \"%s\")\n"):format(knu,
