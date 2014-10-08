@@ -239,6 +239,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
         einfo->info.vsync = EINA_TRUE;
         einfo->info.use_hw_accel = EINA_FALSE;
         einfo->info.fd = ecore_drm_device_fd_get(dev);
+        einfo->info.dev = dev;
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -389,8 +390,10 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
         else einfo->vsync = EINA_TRUE;
 
         einfo->info.fd = ecore_drm_device_fd_get(dev);
+        einfo->info.dev = dev;
         einfo->info.format = format;
         einfo->info.flags = flags;
+
         if (einfo->info.fd) 
           einfo->info.gbm = gbm_create_device(einfo->info.fd);
         if (einfo->info.gbm)
