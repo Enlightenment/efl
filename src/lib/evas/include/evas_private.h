@@ -1608,7 +1608,7 @@ void evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data);
 void evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data);
 
 /* Eet saver/loader functions */
-struct Evas_3D_File_Eet *_evas_3d_eet_file_new(void);
+Evas_3D_File_Eet *_evas_3d_eet_file_new(void);
 void _evas_3d_eet_file_init(void);
 void _evas_3d_eet_descriptor_shutdown(void);
 void _evas_3d_eet_file_free(void);

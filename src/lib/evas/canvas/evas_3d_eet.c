@@ -14,10 +14,10 @@ Eet_Data_Descriptor *_mesh_descriptor;
 Eet_Data_Descriptor *_header_descriptor;
 Eet_Data_Descriptor *_file_descriptor;
 
-struct Evas_3D_File_Eet *
+Evas_3D_File_Eet *
 _evas_3d_eet_file_new(void)
 {
-   const struct Evas_3D_File_Eet *creating_file = calloc(1, sizeof(Evas_3D_File_Eet));
+   Evas_3D_File_Eet *creating_file = calloc(1, sizeof(Evas_3D_File_Eet));
 
    if (!creating_file)
      {
