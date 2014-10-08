@@ -727,7 +727,6 @@ struct _Evas_Public_Data
    Eina_Array     pending_objects;
    Eina_Array     obscuring_objects;
    Eina_Array     temporary_objects;
-   Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
    Eina_Array     scie_unref_queue;
    Eina_Array     image_unref_queue;
