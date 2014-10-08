@@ -1452,6 +1452,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = ch;
 
    gc->pipe[pn].array.line = 1;
+   gc->pipe[pn].array.anti_alias = gc->dc->anti_alias;
    gc->pipe[pn].array.use_vertex = 1;
    gc->pipe[pn].array.use_color = 1;
    gc->pipe[pn].array.use_texuv = 0;
@@ -1475,6 +1476,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
 
    shader_array_flush(gc);
    gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.anti_alias = 0;
    gc->pipe[pn].array.use_vertex = 0;
    gc->pipe[pn].array.use_color = 0;
    gc->pipe[pn].array.use_texuv = 0;
@@ -2760,7 +2762,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     }
                }
           }
-        if (gc->pipe[i].shader.render_op != gc->state.current.render_op)
+        if ((gc->pipe[i].shader.render_op != gc->state.current.render_op) ||
+            gc->state.current.anti_alias)
           {
              switch (gc->pipe[i].shader.render_op)
                {
@@ -3054,6 +3057,18 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         if (gc->pipe[i].array.line)
           {
+             if (gc->pipe[i].array.anti_alias)
+               {
+                  glEnable(GL_BLEND);
+                  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                  glHint(GL_LINE_SMOOTH, GL_NICEST);
+                  glEnable(GL_LINE_SMOOTH);
+               }
+             else
+               {
+                  glDisable(GL_LINE_SMOOTH);
+               }
+
              glDisableVertexAttribArray(SHAD_TEXUV);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              glDisableVertexAttribArray(SHAD_TEXUV2);
@@ -3266,6 +3281,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->state.current.smooth    = gc->pipe[i].shader.smooth;
         gc->state.current.blend     = gc->pipe[i].shader.blend;
         gc->state.current.clip      = gc->pipe[i].shader.clip;
+        gc->state.current.anti_alias = gc->pipe[i].array.anti_alias;
 
         if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
         if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
