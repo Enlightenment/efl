@@ -82,6 +82,14 @@ utf8_offset_to_characters(const char *str, int offset)
 {
    int index = 0;
    unsigned int i = 0;
+   int len = 0;
+
+   if (!str) return 0;
+
+   len = strlen(str);
+
+   if (offset > len)
+     offset = len;
 
    for (; index < offset; i++)
      eina_unicode_utf8_next_get(str, &index);
