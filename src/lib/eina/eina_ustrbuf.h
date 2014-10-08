@@ -351,35 +351,6 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 #define eina_ustrbuf_prepend_char(buf, c) eina_ustrbuf_insert_char(buf, c, 0)
 
 /**
- * @def eina_ustrbuf_prepend_printf(buf, fmt, ...)
- * @brief Prepend the given string to the given buffer
- *
- * @param buf The string buffer to prepend to.
- * @param fmt The string to prepend.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This macro is calling eina_ustrbuf_insert_printf() at position 0.If @p buf
- * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
- */
-#define eina_ustrbuf_prepend_printf(buf, fmt, ...)   eina_ustrbuf_insert_printf(buf, fmt, 0, ## __VA_ARGS__)
-
-/**
- * @def eina_ustrbuf_prepend_vprintf(buf, fmt, args)
- * @brief Prepend the given string to the given buffer
- *
- * @param buf The string buffer to prepend to.
- * @param fmt The string to prepend.
- * @param args The variable arguments.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This macro is calling eina_ustrbuf_insert_vprintf() at position 0.If @p buf
- * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
- */
-#define eina_ustrbuf_prepend_vprintf(buf, fmt, args) eina_ustrbuf_insert_vprintf(buf, fmt, 0, args)
-
-/**
  * @brief Remove a slice of the given string buffer.
  *
  * @param buf The string buffer to remove a slice.
