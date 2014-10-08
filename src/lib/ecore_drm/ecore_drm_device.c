@@ -185,6 +185,12 @@ ecore_drm_device_find(const char *name, const char *seat)
           goto cont;
 
         devparent = eeze_udev_syspath_get_parent_filtered(device, "pci", NULL);
+        if (!devparent)
+          {
+             devparent = 
+               eeze_udev_syspath_get_parent_filtered(device, "platform", NULL);
+          }
+
         if (devparent)
           {
              const char *id;
