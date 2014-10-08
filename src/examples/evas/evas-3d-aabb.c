@@ -285,7 +285,6 @@ main(void)
          evas_3d_scene_size_set(WIDTH, HEIGHT));
 
    background = eo_add(EVAS_RECTANGLE_CLASS, evas);
-   eo_unref(background);
    eo_do(background,
          evas_obj_color_set(0, 0, 0, 255),
          evas_obj_size_set(WIDTH, HEIGHT),
