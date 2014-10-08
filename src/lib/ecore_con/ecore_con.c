@@ -1772,8 +1772,11 @@ _ecore_con_cb_tcp_connect(void *data,
                                     _ecore_con_cl_handler, obj, NULL, NULL);
      }
    else
-     svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                                                 _ecore_con_cl_handler, obj, NULL, NULL);
+     {
+        ecore_con_event_server_add(obj);
+        svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+                                                    _ecore_con_cl_handler, obj, NULL, NULL);
+     }
 
    if (svr->type & ECORE_CON_SSL)
      {
