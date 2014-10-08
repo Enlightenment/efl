@@ -152,6 +152,7 @@ ecore_drm_device_find(const char *name, const char *seat)
 {
    Ecore_Drm_Device *dev = NULL;
    Eina_Bool found = EINA_FALSE;
+   Eina_Bool platform = EINA_FALSE;
    Eina_List *devs, *l;
    const char *device;
 
@@ -189,17 +190,23 @@ ecore_drm_device_find(const char *name, const char *seat)
           {
              devparent = 
                eeze_udev_syspath_get_parent_filtered(device, "platform", NULL);
+             platform = EINA_TRUE;
           }
 
         if (devparent)
           {
-             const char *id;
-
-             if ((id = eeze_udev_syspath_get_sysattr(devparent, "boot_vga")))
+             if (!platform)
                {
-                  if (!strcmp(id, "1")) found = EINA_TRUE;
-                  eina_stringshare_del(id);
+                  const char *id;
+
+                  if ((id = eeze_udev_syspath_get_sysattr(devparent, "boot_vga")))
+                    {
+                       if (!strcmp(id, "1")) found = EINA_TRUE;
+                       eina_stringshare_del(id);
+                    }
                }
+             else
+               found = EINA_TRUE;
 
              eina_stringshare_del(devparent);
           }
