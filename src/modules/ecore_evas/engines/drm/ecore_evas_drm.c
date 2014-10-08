@@ -384,10 +384,13 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
 
         if ((num = getenv("EVAS_DRM_VSYNC")))
           {
-             if (!atoi(num)) einfo->vsync = EINA_FALSE;
-             else einfo->vsync = EINA_TRUE;
+             if (!atoi(num)) 
+               einfo->vsync = EINA_FALSE;
+             else 
+               einfo->vsync = EINA_TRUE;
           }
-        else einfo->vsync = EINA_TRUE;
+        else 
+          einfo->vsync = EINA_TRUE;
 
         einfo->info.fd = ecore_drm_device_fd_get(dev);
         einfo->info.dev = dev;
