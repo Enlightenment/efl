@@ -32,6 +32,11 @@ void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint
 void       (*glsym_glEndTiling)            (GLuint a) = NULL;
 
 #ifdef GL_GLES
+
+# ifndef GL_LINE_SMOOTH
+#  define GL_LINE_SMOOTH 0x0B20
+# endif
+
 // just used for finding symbols :)
 typedef void (*_eng_fn) (void);
 
