@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-09-28 22:16+0900\n"
-"PO-Revision-Date: 2014-08-12 23:45+0200\n"
+"PO-Revision-Date: 2014-10-08 19:10+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -217,14 +217,12 @@ msgid "state: closed"
 msgstr "Stato: chiuso"
 
 #: src/lib/elm_panel.c:115
-#, fuzzy
 msgid "A panel is open"
-msgstr "C'è un cassetto aperto"
+msgstr "C'è un pannello aperto"
 
 #: src/lib/elm_panel.c:117
-#, fuzzy
 msgid "Double tap to close panel menu"
-msgstr "Doppio tap per chiudere un menù a cassetto"
+msgstr "Doppio tap per chiudere il menù del pannello"
 
 #: src/lib/elm_panel.c:187
 msgid "panel button"
