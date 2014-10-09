@@ -1,11 +1,14 @@
-﻿/*
+/*
  * This example shows how to work frustum culling.
- * Use keys Up/Down for moving far plane of frustum.
- * Use keys Left/Right for changing camera view.
- * See in terminal output value of z coordinate of far plane of frustum
- * and check OBB's points inside frustum.
- * @see evas_3d_node_obb_frustum_check.
- * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags evas ecore ecore-evas eo`"
+ * Use 'w'/'s' key to move far frustum plane from/to the camera.
+ * Use 't'/'g' key to move near frustum plane from/to the camera.
+ * Use '1'/'2' key to set camera to the first/second position.
+ * Use '3'/'4'/'5' key to set bounding sphere/aabb/central point mode.
+ * Use 'i', 'k', 'j', 'l', 'u' and 'o' keys to move mesh node in 3D.
+ * Use 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh.
+ * See in terminal output value distance to far plane of frustum and value of visibility of node
+ * @see evas_3d_camera_node_visible_get.
+ * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina` -lm"
  */
 
 #define EFL_EO_API_SUPPORT
@@ -15,6 +18,7 @@
 #include <Ecore_Evas.h>
 #include <Evas.h>
 #include <Eo.h>
+#include <math.h>
 
 #define  WIDTH          800
 #define  HEIGHT         600
@@ -25,17 +29,47 @@ typedef struct _Scene_Data
    Eo *camera_node;
    Eo *light_node;
    Eo *mesh_node_model;
+   Eo *mesh_node;
    Eo *scene;
    Eo *camera;
    Eo *light;
    Eo *mesh_model;
+   Eo *mesh;
    Eo *material_model;
+   Eo *material;
    Eo *texture_model;
 } Scene_Data;
 
 Evas *evas;
 Evas_Object *background,*image;
-Evas_Real fleft = -5, fright = 5, fbottom = -5, fup = 5, fnear = 20, ffar = 40;
+Evas_Real obj_x = 0.0, obj_y = 0.0, obj_z = 0.0, obj_sc_x = 1.0, obj_sc_y = 1.0, obj_sc_z = 1.0;
+Evas_Real fleft = -5, fright = 5, fbottom = -5, fup = 5, fnear = 20, ffar = 1000;
+Evas_Real radius = 0;
+Evas_3D_Frustum_Mode key = EVAS_3D_FRUSTUM_MODE_BSPHERE;
+
+typedef struct _vec3
+{
+    float   x;
+    float   y;
+    float   z;
+} vec3;
+
+static void
+_set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Material *material);
+
+static void
+_mesh_aabb(Eo *mesh_b, Eo *mesh_node);
+
+static void
+_show_help()
+{
+   fprintf(stdout, "Press 'w'/'s' key to move far frustum plane from/to the camera\n");
+   fprintf(stdout, "Press 't'/'g' key to move near frustum plane from/to the camera\n");
+   fprintf(stdout, "Press '1'/'2' key to set camera to the first/second position\n");
+   fprintf(stdout, "Press '3'/'4'/'5' key to set bounding sphere/aabb/central point mode\n");
+   fprintf(stdout, "Press 'i', 'k', 'j', 'l', 'u' and 'o' keys to move mesh node in 3D\n");
+   fprintf(stdout, "Press 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh\n");
+}
 
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
@@ -55,66 +89,216 @@ _on_canvas_resize(Ecore_Evas *ee)
    evas_object_move(image, 0, 0);
 }
 
+static Eina_Bool
+_redraw_bounding_object(void *data)
+{
+   Evas_Real x, y, z;
+   vec3 center, ref, temp;
+   Scene_Data *scene = (Scene_Data *)data;
+
+   eo_do(scene->mesh_node_model, evas_3d_node_bounding_sphere_get(&x, &y, &z, &radius));
+   if (key == EVAS_3D_FRUSTUM_MODE_BSPHERE)
+     _set_ball(scene->mesh, radius, x, y, z, 100, scene->material);
+   else if (key == EVAS_3D_FRUSTUM_MODE_AABB)
+     _mesh_aabb(scene->mesh, scene->mesh_node_model);
+   else if (key == EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT)
+     _set_ball(scene->mesh, 1, x, y, z, 1, scene->material);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
 {
-
    Scene_Data *scene = (Scene_Data *)data;
    Evas_Event_Key_Down *ev = event_info;
-   int frustum;
+   Eina_Bool frustum;
+   Evas_Real x, y, z;
 
-   if (!strcmp("Up", ev->key))
+   if (!strcmp("w", ev->key))
      {
-        ffar += 5;
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
-        eo_do(scene->mesh_node_model,
-              frustum = evas_3d_node_obb_frustum_check(scene->camera_node));
-        fprintf(stdout, "far - %f frustum - %d \n", ffar, frustum);
+        ffar += 20;
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
+                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
      }
-   else if(!strcmp("Down", ev->key))
+   else if(!strcmp("s", ev->key))
      {
-        ffar -= 5;
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
+        ffar -= 20;
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
+                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("t", ev->key))
+     {
+        fnear += 2;
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
+                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("g", ev->key))
+     {
+        fnear -= 2;
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
+                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("i", ev->key))
+     {
+        obj_y++;
         eo_do(scene->mesh_node_model,
-              frustum = evas_3d_node_obb_frustum_check(scene->camera_node));
-        fprintf(stdout, "far - %f frustum - %d \n", ffar, frustum);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("k", ev->key))
+     {
+        obj_y--;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("o", ev->key))
+     {
+        obj_z++;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("u", ev->key))
+     {
+        obj_z--;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("l", ev->key))
+     {
+        obj_x++;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("j", ev->key))
+     {
+        obj_x--;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("z", ev->key))
+     {
+        obj_sc_y+=0.02;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("Z", ev->key))
+     {
+        obj_sc_y-=0.02;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("x", ev->key))
+     {
+        obj_sc_z+=0.02;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("X", ev->key))
+     {
+        obj_sc_z-=0.02;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("c", ev->key))
+     {
+        obj_sc_x+=0.02;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+     }
+   else if(!strcmp("C", ev->key))
+     {
+        obj_sc_x-=0.02;
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_position_set(obj_x, obj_y, obj_z),
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
+              evas_3d_object_update());
+        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
      }
    else if(!strcmp("Return", ev->key))
      {
-        eo_do(scene->mesh_node_model,
-              frustum = evas_3d_node_obb_frustum_check(scene->camera_node));
-        fprintf(stdout, "far - %f frustum - %d \n", ffar, frustum);
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
+                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
      }
-   else if (!strcmp("Left", ev->key))
+   else if (!strcmp("1", ev->key))
      {
-        eo_do(scene->camera_node, evas_3d_node_position_set(50.0, 0.0, 0.0),
-              evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
+        eo_do(scene->camera_node, evas_3d_node_position_set(0.0, 0.0, 300.0),
+              evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
         fprintf(stdout, "Changed position and view of camera\n");
      }
-   else if (!strcmp("Right", ev->key))
+   else if (!strcmp("2", ev->key))
      {
-        eo_do(scene->camera_node, evas_3d_node_position_set(0.0, 0.0, 50.0);
-              evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, -1.0, 0.0));
+        eo_do(scene->camera_node, evas_3d_node_position_set(300.0, 300.0, 300.0);
+              evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
         fprintf(stdout, "Changed position and view of camera\n");
+     }
+   else if (!strcmp("3", ev->key))
+     {
+        key = EVAS_3D_FRUSTUM_MODE_BSPHERE;
+     }
+   else if (!strcmp("4", ev->key))
+     {
+        key = EVAS_3D_FRUSTUM_MODE_AABB;
+     }
+   else if (!strcmp("5", ev->key))
+     {
+        key = EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT;
      }
    else
-     fprintf(stdout, "Press Right/Left/Up/Bottom keys\n");
-}
+     {
+        _show_help();
+     }
 
-static Eina_Bool
-_animate_scene_model(void *data)
-{
-   static int frame = 0;
-   Scene_Data *scene = (Scene_Data *)data;
-
-   eo_do(scene->mesh_node_model,
-         evas_3d_node_mesh_frame_set(scene->mesh_model, frame),
-         evas_3d_node_orientation_angle_axis_set(90, 1.0, 0.0, 0.0));
-   frame += 20;
-
-   if (frame > 256 * 18) frame = 0;
-
-   return ECORE_CALLBACK_RENEW;
+   _redraw_bounding_object(data);
 }
 
 static void
@@ -125,8 +309,10 @@ _camera_setup(Scene_Data *data)
                                      evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(data->camera_node,
          evas_3d_node_camera_set(data->camera),
-         evas_3d_node_position_set(0.0, 0.0, 50.0);
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, -1.0, 0.0));
+         evas_3d_node_position_set(0.0, 0.0, 300.0);
+         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+
+   eo_do(data->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
 
    eo_do(data->root_node, evas_3d_node_member_add(data->camera_node));
 }
@@ -145,9 +331,175 @@ _light_setup(Scene_Data *data)
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
          evas_3d_node_position_set(0.0, 0.0, 0.0),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
 
    eo_do(data->root_node, evas_3d_node_member_add(data->light_node));
+}
+
+static void
+_mesh_aabb(Eo *mesh_b, Eo *mesh_node)
+{
+   Evas_Real x0, y0, z0, x1, y1, z1;
+
+   eo_do(mesh_node, evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
+
+   float vertices[] =
+   {
+      x0,  y0,  z1,
+      x0,  y1,  z1,
+      x1,  y1,  z1,
+      x1,  y0,  z1,
+
+      x0,  y0,  z0,
+      x1,  y0,  z0,
+      x0,  y1,  z0,
+      x1,  y1,  z0,
+
+      x0,  y0,  z0,
+      x0,  y1,  z0,
+      x0,  y0,  z1,
+      x0,  y1,  z1,
+
+      x1,  y0,  z0,
+      x1,  y1,  z0,
+      x1,  y1,  z1,
+      x1,  y0,  z1,
+
+      x0,  y1,  z0,
+      x1,  y1,  z0,
+      x0,  y1,  z1,
+      x1,  y1,  z1,
+
+      x0,  y0,  z0,
+      x1,  y0,  z0,
+      x1,  y0,  z1,
+      x0,  y0,  z1
+   };
+
+   unsigned short indices[] =
+   {
+      0,  1,  2,  3,  1,  2,  0,  3,
+      4,  5,  5,  7,  7,  6,  6,  4,
+      8,  9,  9,  11, 11, 10, 10, 8,
+      12, 13, 13, 14, 14, 15, 15, 12,
+      16, 17, 17, 19, 19, 18, 18, 16,
+      20, 21, 21, 22, 22, 23, 23, 20
+   };
+
+   float *cube_vertices = (float *) malloc(1 * sizeof(vertices));
+   unsigned short *cube_indices = (unsigned short *) malloc(1 * sizeof(indices));
+   memcpy(cube_vertices, vertices, sizeof(vertices));
+   memcpy(cube_indices, indices, sizeof(indices));
+
+   eo_do(mesh_b,
+         evas_3d_mesh_vertex_count_set(24));
+
+   eo_do(mesh_b,
+         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
+                                                 3 * sizeof(float),
+                                                 &cube_vertices[ 0]),
+         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
+                                          48, &cube_indices[0]));
+   free(cube_vertices);
+   free(cube_indices);
+}
+
+static void
+_set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Material *material)
+{
+   int vcount, icount, vccount, i, j;
+   double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
+   unsigned short *indices, *index;
+
+   icount = p * p * 6;
+   vccount = p + 1;
+   vcount = vccount * vccount;
+
+   dtheta = M_PI / p;
+   dfi = 2 * M_PI / p;
+
+   vec3 *vertices = malloc(sizeof(vec3) * vcount);
+   vec3 *normals = malloc(sizeof(vec3) * vcount);
+
+  for (j = 0; j < vccount; j++)
+     {
+        theta = j * dtheta;
+        sinth = sin(theta);
+        costh = cos(theta);
+        for (i = 0; i < vccount; i++)
+          {
+             fi = i * dfi;
+             sinfi = sin(fi);
+             cosfi = cos(fi);
+             vertices[i + j * vccount].x = r * sinth * cosfi + x;
+             vertices[i + j * vccount].y = r * sinth * sinfi + y;
+             vertices[i + j * vccount].z = r * costh + z;
+
+             normals[i + j * vccount].x = sinth * cosfi;
+             normals[i + j * vccount].y = sinth * sinfi;
+             normals[i + j * vccount].z = costh;
+          }
+     }
+
+   indices = malloc(sizeof(short) * icount);
+   index = &indices[0];
+
+   for(j = 0; j < p; j++)
+     for(i = 0; i < p; i++)
+       {
+          *index++ = (unsigned short)(i + vccount * j);
+          *index++ = i + vccount * (j + 1);
+          *index++ = i + 1 + vccount * (j + 1);
+
+          *index++ =  i + vccount * j;
+          *index++ =  i + 1 +  vccount * j;
+          *index++ =  i + vccount * (j + 1) + 1;
+       }
+
+   eo_do(mesh,
+         evas_3d_mesh_vertex_count_set(vcount),
+         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
+                                    sizeof(vec3), &vertices[0]),
+         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_NORMAL,
+                                    sizeof(vec3), &normals[0]),
+         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
+                                    icount , &indices[0]));
+
+   free(vertices);
+   free(normals);
+   free(indices);
+}
+
+static void
+_mesh_setup(Scene_Data *data)
+{
+   data->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+
+   eo_do(data->material,
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
+
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 0.2, 0.2, 0.2, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_3d_material_shininess_set(100.0));
+
+   data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   eo_do(data->mesh,
+         evas_3d_mesh_frame_add(0);
+         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES);
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+         evas_3d_mesh_frame_material_set(0, data->material));
+
+
+   data->mesh_node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH),
+                    evas_3d_node_position_set(obj_x, obj_y, obj_z),
+                    evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
+   eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node));
+   eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh));
 }
 
 static void
@@ -187,20 +539,22 @@ _scene_setup(Scene_Data *data)
 
    data->root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
-   _camera_setup(data);
+
    _light_setup(data);
    _mesh_setup_model(data);
+   _camera_setup(data);
 
    data->mesh_node_model = eo_add(EVAS_3D_NODE_CLASS, evas,
                                       evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mesh_node_model,
-         evas_3d_node_position_set(0, 0, 0);
-         evas_3d_node_scale_set(0.3, 0.3, 0.3),
-         evas_3d_node_orientation_angle_axis_set(90, 1.0, 1.0, 0.0));
+         evas_3d_node_position_set(obj_x, obj_y, obj_z),
+         evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node_model));
    eo_do(data->mesh_node_model, evas_3d_node_mesh_add(data->mesh_model));
 
-   eo_do(data->scene,
+   _mesh_setup(data);
+
+    eo_do(data->scene,
          evas_3d_scene_size_set( WIDTH, HEIGHT),
          evas_3d_scene_background_color_set(0.5, 0.5, 0.5, 0.0),
          evas_3d_scene_root_node_set(data->root_node);
@@ -211,14 +565,12 @@ int
 main(void)
 {
    Scene_Data data;
-
-   Ecore_Evas *ecore_evas;
+   Ecore_Evas *ecore_evas = NULL;
 
    if (!ecore_evas_init()) return 0;
 
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
-
-   ecore_evas = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   ecore_evas = ecore_evas_new("opengl_x11", 0, 0, WIDTH, HEIGHT, NULL);
 
    if (!ecore_evas) return 0;
 
@@ -231,6 +583,7 @@ main(void)
    _scene_setup(&data);
 
    background = evas_object_rectangle_add(evas);
+
    evas_object_color_set(background, 0, 0, 0, 255);
    evas_object_move(background, 0, 0);
    evas_object_resize(background, WIDTH, HEIGHT);
@@ -244,7 +597,9 @@ main(void)
    evas_object_focus_set(image, EINA_TRUE);
    eo_do(image, evas_obj_image_scene_set(data.scene));
 
-   ecore_timer_add(0.1, _animate_scene_model, &data);
+   eo_do(data.mesh_node_model, evas_3d_object_update());
+   _redraw_bounding_object(&data);
+   _show_help();
 
    evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, &data);
    ecore_main_loop_begin();
