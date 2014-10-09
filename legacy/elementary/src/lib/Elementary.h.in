@@ -163,6 +163,9 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_entry.h>
 #include <elm_list.h>
 
+/* Interfaces */
+#include <elm_interfaces.h>
+
 /* other includes */
 #include <elc_ctxpopup.h>
 #include <elm_dayselector.h>
