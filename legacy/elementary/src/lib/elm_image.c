@@ -832,6 +832,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
    _elm_image_smart_internal_file_set(obj, sd, _elm_url_get(url), f, sd->key, &ret);
    eina_file_close(f);
 
+   sd->remote = NULL;
    if (!ret)
      {
         Elm_Image_Error err = { 0, EINA_TRUE };
@@ -851,7 +852,6 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
         evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
      }
 
-   sd->remote = NULL;
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
 }
 
