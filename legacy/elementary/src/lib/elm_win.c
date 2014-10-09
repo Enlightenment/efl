@@ -4432,7 +4432,7 @@ _elm_win_wm_manual_rotation_done_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_wm_manual_rotation_done(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+_elm_win_wm_manual_rotation_done_manual(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
    if (!sd->wm_rot.use) return;
    ecore_evas_wm_rotation_manual_rotation_done(sd->ee);

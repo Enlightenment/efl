@@ -1191,7 +1191,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @in Elm_Win_Type type;
          }
       }
-      wm_manual_rotation_done {
+      wm_manual_rotation_done_manual {
          /*@
          To notify the rotation done to WM manually.
 
