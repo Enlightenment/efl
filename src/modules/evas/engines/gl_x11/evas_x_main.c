@@ -34,7 +34,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
                int      w,
                int      h,
                int      indirect EINA_UNUSED,
-               int      alpha,
                int      rot,
                Render_Engine_Swap_Mode swap_mode)
 {
@@ -61,7 +60,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->visual = vis;
    gw->colormap = cmap;
    gw->depth = depth;
-   gw->alpha = alpha;
+   gw->alpha = 1;
    gw->w = w;
    gw->h = h;
    gw->rot = rot;
@@ -108,16 +107,8 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    config_attrs[n++] = 1;
 // FIXME: end n900 breakage
 # endif
-   if (gw->alpha)
-     {
-        config_attrs[n++] = EGL_ALPHA_SIZE;
-        config_attrs[n++] = 1;
-     }
-   else
-     {
-        config_attrs[n++] = EGL_ALPHA_SIZE;
-        config_attrs[n++] = 0;
-     }
+   config_attrs[n++] = EGL_ALPHA_SIZE;
+   config_attrs[n++] = 1;
    config_attrs[n++] = EGL_DEPTH_SIZE;
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_STENCIL_SIZE;

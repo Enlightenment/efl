@@ -160,7 +160,7 @@ Outbuf *eng_window_new(Evas_Engine_Info_GL_X11 *info, Evas *e,
                        Display *disp, Window win, int screen,
                        Visual *vis, Colormap cmap,
                        int depth, int w, int h, int indirect,
-                       int alpha, int rot,
+                       int rot,
                        Render_Engine_Swap_Mode swap_mode);
 void      eng_window_free(Outbuf *gw);
 void      eng_window_use(Outbuf *gw);
