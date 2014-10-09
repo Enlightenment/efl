@@ -1180,6 +1180,9 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
 
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, sobj);
+
    _callbacks_add(sobj, obj);
    if (_elm_widget_is(sobj))
      {
@@ -1291,6 +1294,8 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
 
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_children_changed_del_signal_emit(obj, sobj);
    _callbacks_del(sobj, obj);
 
    return EINA_TRUE;
@@ -5597,6 +5602,12 @@ _elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm
           accs = eina_list_append(accs, widget);
      }
    return accs;
+}
+
+EOLIAN static Eo*
+_elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
+{
+   return pd->parent_obj;
 }
 
 EOLIAN static Elm_Atspi_State_Set
