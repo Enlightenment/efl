@@ -4913,10 +4913,16 @@ EOLIAN Elm_Atspi_State_Set
 _elm_gengrid_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Gen_Item *it EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
+   Eina_Bool sel;
 
    eo_do_super(eo_it, ELM_GENGRID_ITEM_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
 
-   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
+   eo_do(eo_it, sel = elm_obj_gengrid_item_selected_get());
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
+
+   if (sel)
+      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTED);
 
    return ret;
 }
