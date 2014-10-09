@@ -637,7 +637,7 @@ public:
     if(eina_array_push(this->_impl._array, p.get()))
       p.release();
     else
-      throw std::bad_alloc();
+      EFL_CXX_THROW(std::bad_alloc());
   }
 
   /**
@@ -729,7 +729,7 @@ public:
         return iterator(this->_impl._array->data + j);
       }
     else
-      throw std::bad_alloc();
+      EFL_CXX_THROW(std::bad_alloc());
   }
 
   /**
