@@ -631,6 +631,8 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
      evas_object_raise(VIEW(it));
    evas_object_smart_callback_call
       (obj, SIG_ITEM_FOCUSED, EO_OBJ(it));
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -656,6 +658,8 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    evas_object_smart_callback_call
       (obj, SIG_ITEM_UNFOCUSED, eo_it);
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
 
 /*
@@ -2294,6 +2298,7 @@ _elm_toolbar_item_eo_base_constructor(Eo *eo_it, Elm_Toolbar_Item_Data *it)
 {
    eo_do_super(eo_it, ELM_TOOLBAR_ITEM_CLASS, eo_constructor());
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
+   eo_do(eo_it, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_MENU_ITEM));
 }
 
 static Elm_Toolbar_Item_Data *
@@ -3733,6 +3738,30 @@ _elm_toolbar_item_bring_in(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
      (x, y, w, h));
 }
 
+EOLIAN static char*
+_elm_toolbar_item_elm_interface_atspi_accessible_name_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item)
+{
+   return item->label ? strdup(item->label) : NULL;
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_toolbar_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Toolbar_Item_Data *item EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+   Eina_Bool sel;
+
+   eo_do_super(eo_it, ELM_TOOLBAR_ITEM_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   eo_do(eo_it, sel = elm_obj_toolbar_item_selected_get());
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
+
+   if (sel)
+      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTED);
+
+   return ret;
+}
+
 EOLIAN static Elm_Object_Item *
 _elm_toolbar_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
@@ -3757,6 +3786,30 @@ _elm_toolbar_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
+}
+
+EOLIAN static Eina_List*
+_elm_toolbar_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+{
+   Eina_List *ret = NULL;
+   Elm_Toolbar_Item_Data *it;
+
+   EINA_INLIST_FOREACH(sd->items, it)
+      ret = eina_list_append(ret, EO_OBJ(it));
+
+   return ret;
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_toolbar_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Toolbar_Data *sd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+
+   eo_do_super(obj, ELM_TOOLBAR_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
+
+   return ret;
 }
 
 #include "elm_toolbar.eo.c"
