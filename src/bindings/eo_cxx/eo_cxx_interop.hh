@@ -128,10 +128,10 @@ struct traits
 };
 
 template <typename T, typename ...Args>
-inline efl::eina::range_list<T>
+inline efl::eina::range_list<T const>
 to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_list<T> >)
 {
-   return efl::eina::list<T> {x};
+   return efl::eina::range_list<T const> {x};
 }
 
 template <typename T, typename ...Args>

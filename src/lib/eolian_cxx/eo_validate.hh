@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include "eo_types.hh"
 
+#include <iostream>
+
 namespace efl { namespace eolian {
 
 inline bool
@@ -21,12 +23,16 @@ _is_valid(eolian_type_instance const& type)
 {
    // if (type.empty() || (*type.rbegin()).category == eolian_type::complex_)
    //   return false;
-   for (auto rit = ++type.rbegin(), last = type.rend(); rit != last; ++rit)
+   for (auto rit = type.rbegin(), last = type.rend(); rit != last; ++rit)
      {
-        if ((*rit).binding.empty() || (*rit).category != eolian_type::complex_)
-          return false;
-        else if (rit != type.rbegin() && (*rit).category != eolian_type::complex_)
-          return false;
+        if ((*rit).binding.empty() && (*rit).category == eolian_type::complex_)
+            return false;
+        // else if (rit != type.rbegin() && (*rit).category != eolian_type::complex_)
+        //   {
+        //     std::cout << "begin " << (rit != type.rbegin()) << std::endl;
+        //     std::cout << "category " << rit->category << std::endl;
+        //     return false;
+        //   }
      }
    return true;
 }

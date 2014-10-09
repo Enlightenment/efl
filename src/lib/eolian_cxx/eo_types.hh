@@ -59,27 +59,6 @@ struct eolian_type
       assert(category == callback_);
    }
 
-   ~eolian_type() {}
-
-   eolian_type(eolian_type const& other)
-     : native(other.native)
-     , category(other.category)
-     , is_own(other.is_own)
-     , binding(other.binding)
-     , includes(other.includes)
-   {}
-
-   eolian_type&
-   operator=(eolian_type const& rhs)
-   {
-      native = rhs.native;
-      category = rhs.category;
-      is_own = rhs.is_own;
-      binding = rhs.binding;
-      includes = rhs.includes;
-      return *this;
-   }
-
    std::string native;
    category_type category;
    bool is_own;

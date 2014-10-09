@@ -191,6 +191,8 @@ public:
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
   list& operator=(list&& other) = default;
+  list(list&& other) = default;
+  list() = default;
 
   using _base_type::_base_type;
   using _base_type::clear;
@@ -437,25 +439,13 @@ public:
   typedef typename _base_type::const_pointer const_pointer;
   typedef typename _base_type::size_type size_type;
   typedef typename _base_type::difference_type difference_type;
-  typedef typename _base_type::clone_allocator_type clone_allocator_type;
 
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
-  range_list& operator=(range_list&& other) = default;
-
   using _base_type::_base_type;
-  using _base_type::clear;
   using _base_type::size;
   using _base_type::empty;
-  using _base_type::get_clone_allocator;
-  using _base_type::push_back;
-  using _base_type::push_front;
-  using _base_type::pop_back;
-  using _base_type::pop_front;
-  using _base_type::insert;
-  using _base_type::erase;
-  using _base_type::assign;
   using _base_type::back;
   using _base_type::front;
   using _base_type::begin;
@@ -466,21 +456,15 @@ public:
   using _base_type::cend;
   using _base_type::crbegin;
   using _base_type::crend;
-  using _base_type::ibegin;
-  using _base_type::iend;
-  using _base_type::cibegin;
-  using _base_type::ciend;
   using _base_type::swap;
-  using _base_type::max_size;
   using _base_type::native_handle;
-  using _base_type::accessor;
 };
 
 template <typename T>
 class range_list<T, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
-  : range_ptr_list<Eo>
+  : range_ptr_list<typename std::conditional<std::is_const<T>::value, Eo const, Eo>::type>
 {
-  typedef range_ptr_list<Eo> _base_type;
+  typedef range_ptr_list<typename std::conditional<std::is_const<T>::value, Eo const, Eo>::type> _base_type;
   typedef range_list<T> _self_type;
 public:
   typedef T value_type;
@@ -496,7 +480,9 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  explicit range_list(Eina_List* handle)
+  typedef typename _base_type::native_handle_type native_handle_type;
+
+  explicit range_list(native_handle_type handle)
     : _base_type(handle) {}
   range_list() {}
   range_list(range_list<T> const& other)
@@ -580,6 +566,9 @@ public:
     return rhs.size() == lhs.size() && std::equal(rhs.begin(), rhs.end(), lhs.begin());
   }
 };
+
+template <typename T>
+using crange_list = range_list<typename std::add_const<T>::type>;
     
 } }
 

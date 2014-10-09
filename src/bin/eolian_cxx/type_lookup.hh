@@ -56,15 +56,16 @@ type_lookup(const Eolian_Type* type,
             lookup_table_type const& lut = type_lookup_table)
 {
    if (type == NULL) return { efl::eolian::void_type }; // XXX shouldn't
+   // assert(type != NULL);
 
    std::vector<Eolian_Type const*> types;
    types.push_back(type);
 
-   if (type_is_complex(*type))
+   if (::eolian_type_type_get(type) == EOLIAN_TYPE_POINTER && type_is_complex(*eolian_type_base_type_get(type)))
      {
         efl::eina::iterator<Eolian_Type const> end;
         efl::eina::iterator<Eolian_Type const> it
-          (::eolian_type_subtypes_get(type));
+          (::eolian_type_subtypes_get(eolian_type_base_type_get(type)));
         while(it != end)
           {
              if(Eolian_Type const* t = &*it)
