@@ -5558,6 +5558,9 @@ _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Wid
 {
    const char *ret;
    ret = elm_object_text_get(obj);
+   if (!ret) return NULL;
+
+   ret = _elm_util_mkup_to_text(ret);
    return ret ? strdup(ret) : NULL;
 }
 
