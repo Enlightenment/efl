@@ -4948,7 +4948,6 @@ _elm_gengrid_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
              char *s = it->itc->func.text_get
                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
 
-             if (s) ERR("Text: %s", s);
              s = _elm_util_mkup_to_text(s);
 
              if (s)
@@ -4978,7 +4977,6 @@ _elm_gengrid_item_elm_interface_atspi_accessible_children_get(Eo *eo_it EINA_UNU
 
         EINA_LIST_FREE(parts, key)
           {
-             ERR("Key: %s", key);
              Evas_Object *part;
              part = edje_object_part_swallow_get(VIEW(it), key);
              if (part && eo_isa(part, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
