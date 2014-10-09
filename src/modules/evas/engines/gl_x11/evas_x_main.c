@@ -32,7 +32,6 @@ eng_window_new(Display *disp,
                int      w,
                int      h,
                int      indirect,
-               int      alpha,
                int      rot)
 {
    Evas_GL_X11_Window *gw;
@@ -58,7 +57,7 @@ eng_window_new(Display *disp,
    gw->visual = vis;
    gw->colormap = cmap;
    gw->depth = depth;
-   gw->alpha = alpha;
+   gw->alpha = 1;
    gw->w = w;
    gw->h = h;
    gw->rot = rot;
@@ -102,16 +101,8 @@ eng_window_new(Display *disp,
    config_attrs[n++] = 1;
 // FIXME: end n900 breakage
 # endif
-   if (gw->alpha)
-     {
-        config_attrs[n++] = EGL_ALPHA_SIZE;
-        config_attrs[n++] = 1;
-     }
-   else
-     {
-        config_attrs[n++] = EGL_ALPHA_SIZE;
-        config_attrs[n++] = 0;
-     }
+   config_attrs[n++] = EGL_ALPHA_SIZE;
+   config_attrs[n++] = 1;
    config_attrs[n++] = EGL_DEPTH_SIZE;
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_STENCIL_SIZE;

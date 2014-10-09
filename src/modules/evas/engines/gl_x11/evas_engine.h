@@ -94,7 +94,7 @@ struct _Evas_GL_X11_Window
 Evas_GL_X11_Window *eng_window_new(Display *disp, Window win, int screen,
                                    Visual *vis, Colormap cmap,
                                    int depth, int w, int h, int indirect,
-                                   int alpha, int rot);
+                                   int rot);
 void      eng_window_free(Evas_GL_X11_Window *gw);
 void      eng_window_use(Evas_GL_X11_Window *gw);
 void      eng_window_unsurf(Evas_GL_X11_Window *gw);
