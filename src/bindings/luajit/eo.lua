@@ -122,6 +122,21 @@ local init = function()
     eo = util.lib_load("eo")
     eo.eo_init()
     classes["Eo_Base"] = util.Object:clone {
+        connect = function(self, ename, func)
+            local ev = self.__events[ename]
+            if not ev then
+                error("invalid event '" .. ename .. "'", 2)
+            end
+            local cl = eo_classes["Eo_Base"]
+            M.__do_start(self, cl)
+            eo.eo_event_callback_priority_add(ev, 0,
+                function(data, obj, desc, einfo)
+                    func(obj, einfo)
+                end,
+            nil)
+            M.__do_end()
+        end,
+
         __events = util.Object:clone {},
         __properties = util.Object:clone {}
     }
