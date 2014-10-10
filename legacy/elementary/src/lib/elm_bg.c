@@ -28,7 +28,6 @@ _elm_bg_elm_layout_sizing_eval(Eo *obj, Elm_Bg_Data *sd)
    Evas_Coord iw = 0, ih = 0, mw = -1, mh = -1;
    Evas_Coord bx = 0, by = 0, bw = 0, bh = 0;
    Evas_Coord fx = 0, fy = 0, fw = 0, fh = 0;
-   Evas_Coord nx = 0, ny = 0, nw = 0, nh = 0;
    const char *p;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -44,21 +43,11 @@ _elm_bg_elm_layout_sizing_eval(Eo *obj, Elm_Bg_Data *sd)
    evas_object_geometry_get
      (wd->resize_obj, &bx, &by, &bw, &bh);
 
-   /* set some defaults */
-   nx = bx;
-   ny = by;
-   nw = bw;
-   nh = bh;
-
    switch (sd->option)
      {
       case ELM_BG_OPTION_CENTER:
-        fw = nw = iw;
-        fh = nh = ih;
-        nx = ((bw - fw) / 2);
-        ny = ((bh - fh) / 2);
-        mw = iw;
-        mh = ih;
+        fw = mw = iw;
+        fh = mh = ih;
         break;
 
       case ELM_BG_OPTION_SCALE:
@@ -85,8 +74,6 @@ _elm_bg_elm_layout_sizing_eval(Eo *obj, Elm_Bg_Data *sd)
         break;
      }
 
-   evas_object_move(sd->img, nx, ny);
-   evas_object_resize(sd->img, nw, nh);
    evas_object_image_fill_set(sd->img, fx, fy, fw, fh);
 
    evas_object_size_hint_min_set(sd->img, mw, mh);
