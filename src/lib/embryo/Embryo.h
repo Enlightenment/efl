@@ -370,13 +370,17 @@ extern "C" {
 
 #define EMBRYO_VERSION_MAJOR EFL_VERSION_MAJOR
 #define EMBRYO_VERSION_MINOR EFL_VERSION_MINOR
-   
+
+   /**
+    * @typedef Embryo_Version
+    * Represents the current version of Embryo
+    */
    typedef struct _Embryo_Version
      {
-        int major;
-        int minor;
-        int micro;
-        int revision;
+        int major; /** < major (binary or source incompatible changes) */
+        int minor; /** < minor (new features, bugfixes, major improvements version) */
+        int micro; /** < micro (bugfix, internal improvements, no new features version) */
+        int revision; /** < git revision (0 if a proper release or the git revision number Embryo is built from) */
      } Embryo_Version;
    
    EAPI extern Embryo_Version *embryo_version;
