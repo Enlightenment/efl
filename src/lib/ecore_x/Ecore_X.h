@@ -28,13 +28,16 @@
 
 #define ECORE_X_VERSION_MAJOR EFL_VERSION_MAJOR
 #define ECORE_X_VERSION_MINOR EFL_VERSION_MINOR
-
+/**
+ * @typedef Ecore_X_Version
+ * Represents the current version of Ecore_X
+ */
 typedef struct _Ecore_X_Version
 {
-      int major;
-      int minor;
-      int micro;
-      int revision;
+      int major; /** < major (binary or source incompatible changes) */
+      int minor; /** < minor (new features, bugfixes, major improvements version) */
+      int micro; /** < micro (bugfix, internal improvements, no new features version) */
+      int revision; /** < git revision (0 if a proper release or the git revision number Ecore_X is built from) */
 } Ecore_X_Version;
 
 EAPI extern Ecore_X_Version *ecore_x_version;
