@@ -42,7 +42,6 @@ eluamodulesdir = $(datadir)/elua/modules
 
 eluamodules_DATA = \
 	bin/elua/modules/benchmark.lua \
-	bin/elua/modules/elm.lua \
 	bin/elua/modules/getopt.lua \
 	bin/elua/modules/lualian.lua \
 	bindings/luajit/eo.lua \
