@@ -284,44 +284,44 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 
    if (dc->clip.use)
      {
-	dst_clip_x = dc->clip.x;
-	dst_clip_y = dc->clip.y;
-	dst_clip_w = dc->clip.w;
-	dst_clip_h = dc->clip.h;
-	if (dst_clip_x < 0)
-	  {
-	     dst_clip_w += dst_clip_x;
-	     dst_clip_x = 0;
-	  }
-	if (dst_clip_y < 0)
-	  {
-	     dst_clip_h += dst_clip_y;
-	     dst_clip_y = 0;
-	  }
-	if ((dst_clip_x + dst_clip_w) > dst_w)
-	  dst_clip_w = dst_w - dst_clip_x;
-	if ((dst_clip_y + dst_clip_h) > dst_h)
-	  dst_clip_h = dst_h - dst_clip_y;
+        dst_clip_x = dc->clip.x;
+        dst_clip_y = dc->clip.y;
+        dst_clip_w = dc->clip.w;
+        dst_clip_h = dc->clip.h;
+        if (dst_clip_x < 0)
+          {
+             dst_clip_w += dst_clip_x;
+             dst_clip_x = 0;
+          }
+        if (dst_clip_y < 0)
+          {
+             dst_clip_h += dst_clip_y;
+             dst_clip_y = 0;
+          }
+        if ((dst_clip_x + dst_clip_w) > dst_w)
+          dst_clip_w = dst_w - dst_clip_x;
+        if ((dst_clip_y + dst_clip_h) > dst_h)
+          dst_clip_h = dst_h - dst_clip_y;
      }
    else
      {
-	dst_clip_x = 0;
-	dst_clip_y = 0;
-	dst_clip_w = dst_w;
-	dst_clip_h = dst_h;
+        dst_clip_x = 0;
+        dst_clip_y = 0;
+        dst_clip_w = dst_w;
+        dst_clip_h = dst_h;
      }
 
    if (dst_clip_x < dst_region_x)
      {
-	dst_clip_w += dst_clip_x - dst_region_x;
-	dst_clip_x = dst_region_x;
+        dst_clip_w += dst_clip_x - dst_region_x;
+        dst_clip_x = dst_region_x;
      }
    if ((dst_clip_x + dst_clip_w) > (dst_region_x + dst_region_w))
      dst_clip_w = dst_region_x + dst_region_w - dst_clip_x;
    if (dst_clip_y < dst_region_y)
      {
-	dst_clip_h += dst_clip_y - dst_region_y;
-	dst_clip_y = dst_region_y;
+        dst_clip_h += dst_clip_y - dst_region_y;
+        dst_clip_y = dst_region_y;
      }
    if ((dst_clip_y + dst_clip_h) > (dst_region_y + dst_region_h))
      dst_clip_h = dst_region_y + dst_region_h - dst_clip_y;
@@ -334,16 +334,16 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    /* sanitise x */
    if (src_region_x < 0)
      {
-	dst_region_x -= (src_region_x * dst_region_w) / src_region_w;
-	dst_region_w += (src_region_x * dst_region_w) / src_region_w;
-	src_region_w += src_region_x;
-	src_region_x = 0;
+        dst_region_x -= (src_region_x * dst_region_w) / src_region_w;
+        dst_region_w += (src_region_x * dst_region_w) / src_region_w;
+        src_region_w += src_region_x;
+        src_region_x = 0;
      }
    if (src_region_x >= src_w) return EINA_FALSE;
    if ((src_region_x + src_region_w) > src_w)
      {
-	dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
-	src_region_w = src_w - src_region_x;
+        dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
+        src_region_w = src_w - src_region_x;
      }
    if (dst_region_w <= 0) return EINA_FALSE;
    if (src_region_w <= 0) return EINA_FALSE;
@@ -351,28 +351,28 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    if (dst_clip_x >= dst_w) return EINA_FALSE;
    if (dst_clip_x < dst_region_x)
      {
-	dst_clip_w += (dst_clip_x - dst_region_x);
-	dst_clip_x = dst_region_x;
+        dst_clip_w += (dst_clip_x - dst_region_x);
+        dst_clip_x = dst_region_x;
      }
    if ((dst_clip_x + dst_clip_w) > dst_w)
      {
-	dst_clip_w = dst_w - dst_clip_x;
+        dst_clip_w = dst_w - dst_clip_x;
      }
    if (dst_clip_w <= 0) return EINA_FALSE;
 
    /* sanitise y */
    if (src_region_y < 0)
      {
-	dst_region_y -= (src_region_y * dst_region_h) / src_region_h;
-	dst_region_h += (src_region_y * dst_region_h) / src_region_h;
-	src_region_h += src_region_y;
-	src_region_y = 0;
+        dst_region_y -= (src_region_y * dst_region_h) / src_region_h;
+        dst_region_h += (src_region_y * dst_region_h) / src_region_h;
+        src_region_h += src_region_y;
+        src_region_y = 0;
      }
    if (src_region_y >= src_h) return EINA_FALSE;
    if ((src_region_y + src_region_h) > src_h)
      {
-	dst_region_h = (dst_region_h * (src_h - src_region_y)) / (src_region_h);
-	src_region_h = src_h - src_region_y;
+        dst_region_h = (dst_region_h * (src_h - src_region_y)) / (src_region_h);
+        src_region_h = src_h - src_region_y;
      }
    if (dst_region_h <= 0) return EINA_FALSE;
    if (src_region_h <= 0) return EINA_FALSE;
@@ -380,12 +380,12 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    if (dst_clip_y >= dst_h) return EINA_FALSE;
    if (dst_clip_y < dst_region_y)
      {
-	dst_clip_h += (dst_clip_y - dst_region_y);
-	dst_clip_y = dst_region_y;
+        dst_clip_h += (dst_clip_y - dst_region_y);
+        dst_clip_y = dst_region_y;
      }
    if ((dst_clip_y + dst_clip_h) > dst_h)
      {
-	dst_clip_h = dst_h - dst_clip_y;
+        dst_clip_h = dst_h - dst_clip_y;
      }
    if (dst_clip_h <= 0) return EINA_FALSE;
 
@@ -409,14 +409,14 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_IMAGE_SCALE_SAMPLE        
         if ((src->pixman.im) && (dst->pixman.im) && ((!dc->mul.use) ||
-                ((dc->mul.use) && (dc->mul.col == 0xffffffff))) &&
+                                                     ((dc->mul.use) && (dc->mul.col == 0xffffffff))) &&
             ((dc->render_op == _EVAS_RENDER_COPY) ||
-                (dc->render_op == _EVAS_RENDER_BLEND)))
+             (dc->render_op == _EVAS_RENDER_BLEND)))
           {
              pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
              if (dc->render_op == _EVAS_RENDER_BLEND)
                op = PIXMAN_OP_OVER;
-             
+
              pixman_image_composite(op,
                                     src->pixman.im, NULL,
                                     dst->pixman.im,
@@ -427,69 +427,69 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                                     dst_clip_w, dst_clip_h);
           }
         else
-# endif          
+# endif
 #endif
           {
              ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
              for (y = 0; y < dst_clip_h; y++)
                {
-		 /* * blend here [clip_w *] ptr -> dst_ptr * */
-		 func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
+                  /* * blend here [clip_w *] ptr -> dst_ptr * */
+                  func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
 
-		 ptr += src_w;
-		 dst_ptr += dst_w;
+                  ptr += src_w;
+                  dst_ptr += dst_w;
                }
-	  }
+          }
      }
    else
      {
         /* fill scale tables */
-	for (x = 0; x < dst_clip_w; x++)
+        for (x = 0; x < dst_clip_w; x++)
           lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
-	for (y = 0; y < dst_clip_h; y++)
+        for (y = 0; y < dst_clip_h; y++)
           row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
                                     + src_region_y) * src_w);
-	/* scale to dst */
-	dptr = dst_ptr;
+        /* scale to dst */
+        dptr = dst_ptr;
 #ifdef DIRECT_SCALE
-	if ((!src->cache_entry.flags.alpha) &&
+        if ((!src->cache_entry.flags.alpha) &&
             (!dst->cache_entry.flags.alpha) &&
             (!dc->mul.use))
-	  {
-	     for (y = 0; y < dst_clip_h; y++)
-	       {
+          {
+             for (y = 0; y < dst_clip_h; y++)
+               {
 
-		 dst_ptr = dptr;
-		 for (x = 0; x < dst_clip_w; x++)
-		   {
-		     ptr = row_ptr[y] + lin_ptr[x];
-		     *dst_ptr = *ptr;
-		     dst_ptr++;
-		   }
+                  dst_ptr = dptr;
+                  for (x = 0; x < dst_clip_w; x++)
+                    {
+                       ptr = row_ptr[y] + lin_ptr[x];
+                       *dst_ptr = *ptr;
+                       dst_ptr++;
+                    }
 
-		 dptr += dst_w;
+                  dptr += dst_w;
                }
-	  }
-	else
+          }
+        else
 #endif
-	  {
-	    /* a scanline buffer */
+          {
+             /* a scanline buffer */
              buf = alloca(dst_clip_w * sizeof(DATA32));
              for (y = 0; y < dst_clip_h; y++)
                {
-		 dst_ptr = buf;
-		 for (x = 0; x < dst_clip_w; x++)
-		   {
-		     ptr = row_ptr[y] + lin_ptr[x];
-		     *dst_ptr = *ptr;
-		     dst_ptr++;
-		   }
-		 /* * blend here [clip_w *] buf -> dptr * */
-		 func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
+                  dst_ptr = buf;
+                  for (x = 0; x < dst_clip_w; x++)
+                    {
+                       ptr = row_ptr[y] + lin_ptr[x];
+                       *dst_ptr = *ptr;
+                       dst_ptr++;
+                    }
+                  /* * blend here [clip_w *] buf -> dptr * */
+                  func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
 
-		 dptr += dst_w;
+                  dptr += dst_w;
                }
-	  }
+          }
      }
 
    return EINA_TRUE;
