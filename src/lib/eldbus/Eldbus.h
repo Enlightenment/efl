@@ -129,12 +129,16 @@ extern "C" {
 #define ELDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled"
 #define ELDBUS_ERROR_PENDING_TIMEOUT "org.freedesktop.DBus.Error.NoReply"
 
+/**
+ * @typedef Eldbus_Version
+ * Represents the current version of Eldbus
+ */
 typedef struct _Eldbus_Version
 {
-   int major;
-   int minor;
-   int micro;
-   int revision;
+   int major; /** < major (binary or source incompatible changes) */
+   int minor; /** < minor (new features, bugfixes, major improvements version) */
+   int micro; /** < micro (bugfix, internal improvements, no new features version) */
+   int revision; /** < git revision (0 if a proper release or the git revision number Eldbus is built from) */
 } Eldbus_Version;
 
 EAPI extern const Eldbus_Version * eldbus_version;
