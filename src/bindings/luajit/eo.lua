@@ -184,6 +184,10 @@ M.class_mixin = function(name, mixin)
     classes[name]:mixin(classes[mixin])
 end
 
+local obj_gccb = function(obj)
+    eo.eo_unref(obj)
+end
+
 M.__ctor_common = function(klass, parent, ctor, loff, ...)
     local info   = getinfo(2 + (loff or 0), "nlSf")
     local source = info.source
@@ -197,6 +201,7 @@ M.__ctor_common = function(klass, parent, ctor, loff, ...)
         ret = eo.eo_finalize()
         eo._eo_do_end(nil)
     end
+    ffi.gc(ret, obj_gccb)
     return ret
 end
 
