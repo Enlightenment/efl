@@ -141,7 +141,7 @@ local Node = util.Object:clone {
             v:generate(s, (not hasevs) and (i == len))
         end
         if hasevs then
-            s:write("    events = {\n")
+            s:write("    __events = {\n")
             for i, v in ipairs(evs) do
                 v.parent_node = self
                 v:generate(s, i == evslen)
@@ -446,7 +446,7 @@ end
         -- collect constructor information
         local ftp = eolian.function_type
         local dir = eolian.parameter_dir
-        s:write("    __eo_ctor = function(")
+        s:write("    __eo_ctor = function(self, ")
         local cfuncs, parnames, upars = {}, {}, {}
         for ctor in ctors do
             local cfunc = ctor:function_get()

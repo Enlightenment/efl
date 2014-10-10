@@ -115,10 +115,17 @@ local M = {}
 
 local eo
 
+local classes = {}
+local eo_classes = {}
+
 local init = function()
     eo = util.lib_load("eo")
     eo.eo_init()
-    M.class_register("Eo.Base", M.Base, eo.eo_base_class_get())
+    classes["Eo_Base"] = util.Object:clone {
+        __events = util.Object:clone {},
+        __properties = util.Object:clone {}
+    }
+    eo_classes["Eo_Base"] = eo.eo_base_class_get()
 end
 
 local shutdown = function()
@@ -127,16 +134,11 @@ local shutdown = function()
     util.lib_unload("eo")
 end
 
-cutil.init_module(init, shutdown)
-
 local getinfo = debug.getinfo
 
 local getfuncname = function(info)
     return info.name or "<" .. tostring(info.func) .. ">"
 end
-
-local classes = {}
-local eo_classes = {}
 
 M.class_get = function(name)
     return classes[name]
@@ -147,7 +149,14 @@ M.eo_class_get = function(name)
 end
 
 M.class_register = function(name, parent, body, eocl)
-    classes[name] = classes[parent]:clone(body)
+    parent = classes[parent]
+    if body.__events then
+        body.__events = parent.__events:clone(body.__events)
+    end
+    if body.__properties then
+        body.__properties = parent.__properties:clone(body.__properties)
+    end
+    classes[name] = parent:clone(body)
     eo_classes[name] = eocl
 end
 
@@ -169,7 +178,7 @@ M.__ctor_common = function(klass, parent, ctor, loff, ...)
     local retval
     if eo._eo_do_start(ret, nil, false, source, func, line) ~= 0 then
         eo.eo_constructor()
-        if ctor then ctor(...) end
+        if ctor then ctor(ret, ...) end
         ret = eo.eo_finalize()
         eo._eo_do_end(nil)
     end
@@ -177,11 +186,11 @@ M.__ctor_common = function(klass, parent, ctor, loff, ...)
 end
 
 M.__do_start = function(self, klass)
-    if eo.eo_isa(self.__obj, klass) == 0 then
+    if eo.eo_isa(self, klass) == 0 then
         error("method call on an invalid object", 3)
     end
     local info = getinfo(3, "nlSf")
-    return eo._eo_do_start(self.__obj, nil, false, info.source,
+    return eo._eo_do_start(self, nil, false, info.source,
         getfuncname(info), info.currentline) ~= 0
 end
 
@@ -196,13 +205,37 @@ ffi.metatype("Eo", {
         if cl == nil then return nil end
         local nm = eo.eo_class_name_get(cl)
         if nm == nil then return nil end
-        local mt == classes[ffi.string(nm)]
+        local mt = classes[ffi.string(nm)]
         if mt == nil then return nil end
         return mt[key]
+    end,
+
+    __newindex = function(self, key, val)
+        local cl = eo.eo_class_get(self)
+        if cl == nil then return nil end
+        local nm = eo.eo_class_name_get(cl)
+        if nm == nil then return nil end
+        local mt = classes[ffi.string(nm)]
+        local pt = mt.__properties
+        local pp = pt[key]
+        if not pp then
+            error("no such property '" .. key .. "'", 2)
+        end
+        if not pp[4] then
+            error("property '" .. key .. "' is not settable")
+        end
+        if pp[1] ~= 0 then
+            error("property '" .. key .. "' requires " .. pp[1] .. " keys", 2)
+        end
+        local nvals = pp[2]
+        if nvals > 1 and type(val) == "table" then
+            mt[key .. "_set"](self, unpack(val))
+        else
+            mt[key .. "_set"](self, val)
+        end
     end
 })
 
-M.Base = util.Object:clone {
-}
+cutil.init_module(init, shutdown)
 
 return M
