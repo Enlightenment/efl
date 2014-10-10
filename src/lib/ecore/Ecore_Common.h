@@ -70,12 +70,33 @@ EAPI int ecore_shutdown(void);
 #define ECORE_VERSION_MAJOR EFL_VERSION_MAJOR
 #define ECORE_VERSION_MINOR EFL_VERSION_MINOR
 
+/**
+ * @typedef Ecore_Version
+ *
+ * This is the Ecore version information structure that can be used at
+ * runtime to detect which version of ecore is being used and adapt
+ * appropriately as follows for example:
+ *
+ * @code
+ * #if defined(ECORE_VERSION_MAJOR) && (ECORE_VERSION_MAJOR >= 1) && defined(ECORE_VERSION_MINOR) && (ECORE_VERSION_MINOR > 0)
+ * printf("Ecore version: %i.%i.%i\n",
+ *        ecore_version->major,
+ *        ecore_version->minor,
+ *        ecore_version->micro);
+ * if (ecore_version->revision > 0)
+ *   {
+ *     printf("  Built from Git revision # %i\n", ecore_version->revision);
+ *   }
+ * #endif
+ * @endcode
+ *
+ */
 typedef struct _Ecore_Version
 {
-   int major;
-   int minor;
-   int micro;
-   int revision;
+   int major; /** < major (binary or source incompatible changes) */
+   int minor; /** < minor (new features, bugfixes, major improvements version) */
+   int micro; /** < micro (bugfix, internal improvements, no new features version) */
+   int revision; /** < git revision (0 if a proper release or the git revision number Ecore is built from) */
 } Ecore_Version;
 
 EAPI extern Ecore_Version *ecore_version;
