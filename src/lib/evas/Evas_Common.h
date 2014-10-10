@@ -5,12 +5,34 @@
 #define EVAS_VERSION_MAJOR EFL_VERSION_MAJOR
 #define EVAS_VERSION_MINOR EFL_VERSION_MINOR
 
+/**
+ * @typedef Evas_Version
+ *
+ * This is the Evas version information structure that can be used at
+ * runtime to detect which version of evas is being used and adapt
+ * appropriately as follows for example:
+ *
+ * @code
+ * #if defined(EVAS_VERSION_MAJOR) && (EVAS_VERSION_MAJOR >= 1) && defined(EVAS_VERSION_MINOR) && (EVAS_VERSION_MINOR > 0)
+ * printf("Evas version: %i.%i.%i\n",
+ *        evas_version->major,
+ *        evas_version->minor,
+ *        evas_version->micro);
+ * if (evas_version->revision > 0)
+ *   {
+ *     printf("  Built from Git revision # %i\n", evas_version->revision);
+ *   }
+ * #endif
+ * @endcode
+ *
+ */
+
 typedef struct _Evas_Version
 {
-   int major;
-   int minor;
-   int micro;
-   int revision;
+   int major; /** < major (binary or source incompatible changes) */
+   int minor; /** < minor (new features, bugfixes, major improvements version) */
+   int micro; /** < micro (bugfix, internal improvements, no new features version) */
+   int revision;  /** < git revision (0 if a proper release or the git revision number Evas is built from) */
 } Evas_Version;
 
 EAPI extern Evas_Version * evas_version;
