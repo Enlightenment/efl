@@ -272,13 +272,16 @@ extern "C" {
 
 #define EMOTION_VERSION_MAJOR EFL_VERSION_MAJOR
 #define EMOTION_VERSION_MINOR EFL_VERSION_MINOR
-   
+   /**
+    * @typedef Emotion_Version
+    * Represents the current version of Emotion
+    */
    typedef struct _Emotion_Version
      {
-        int major;
-        int minor;
-        int micro;
-        int revision;
+        int major; /** < major (binary or source incompatible changes) */
+        int minor; /** < minor (new features, bugfixes, major improvements version) */
+        int micro; /** < micro (bugfix, internal improvements, no new features version) */
+        int revision; /** < git revision (0 if a proper release or the git revision number Emotion is built from) */
      } Emotion_Version;
    
    EAPI extern Emotion_Version *emotion_version;
