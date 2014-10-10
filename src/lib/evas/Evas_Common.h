@@ -1323,9 +1323,11 @@ EAPI void              evas_render_updates_free(Eina_List *updates);
  *
  * @param e The canvas to create the device node for.
  *
- * Adds a new device nod to the given canvas @p e. All devices created as
+ * Adds a new device node to the given canvas @p e. All devices created as
  * part of the canvas @p e will automatically be deleted when the canvas
  * is freed.
+ *
+ * @return the device node created or NULL if an error occured.
  *
  * @see evas_device_del
  * @since 1.8
