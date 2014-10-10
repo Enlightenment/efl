@@ -131,7 +131,7 @@ local init = function()
             M.__do_start(self, cl)
             eo.eo_event_callback_priority_add(ev, 0,
                 function(data, obj, desc, einfo)
-                    func(obj, einfo)
+                    return func(obj, einfo) ~= false
                 end,
             nil)
             M.__do_end()
