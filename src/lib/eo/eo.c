@@ -868,7 +868,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
 }
 
 EAPI Eo *
-_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
+_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, Eina_Bool ref)
 {
    _Eo_Object *obj;
 
@@ -915,7 +915,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    /* If there's a parent. Unref. Eo_add should return an object with either a
     * parent ref, or with the lack of, just a ref. */
-   if (eo_do(eo_id, eo_parent_get()))
+   if (!ref && eo_do(eo_id, eo_parent_get()))
      {
         _eo_unref(obj);
      }

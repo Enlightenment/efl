@@ -636,7 +636,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 #define eo_add(klass, parent, ...) \
    ({ \
     const Eo_Class *_tmp_klass = klass; \
-    Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
+    Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent, EINA_FALSE); \
     eo_do(_tmp_obj, \
            eo_constructor(); \
            __VA_ARGS__; \
@@ -659,12 +659,17 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  */
 #define eo_add_ref(klass, parent, ...) \
    ({ \
-    Eo *_tmp_obj_ref = eo_add(klass, parent, __VA_ARGS__); \
-    if (eo_do(_tmp_obj_ref, eo_parent_get())) eo_ref(_tmp_obj_ref); \
-    _tmp_obj_ref; \
+    const Eo_Class *_tmp_klass = klass; \
+    Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent, EINA_TRUE); \
+    eo_do(_tmp_obj, \
+           eo_constructor(); \
+           __VA_ARGS__; \
+           _tmp_obj = eo_finalize(); \
+          ); \
+    _tmp_obj; \
     })
 
-EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent);
+EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent, Eina_Bool ref);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
