@@ -856,7 +856,7 @@ _evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Boo
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    // XXX: do i need this?
-   if (obj->delete_me) return;
+   if (!obj || !obj->layer || obj->delete_me) return;
 
    /* remove this entry from calc_list or processed list */
    if (eina_clist_element_is_linked(&o->calc_entry))
