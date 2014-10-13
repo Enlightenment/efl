@@ -430,7 +430,7 @@ EAPI double       elm_config_scroll_thumbscroll_friction_standard_get(void);
  * same with thumbscroll friction, if the velocity is same with standard
  * velocity.
  *
- * @param friction the thumb scroll friction standard
+ * @param standard the thumb scroll friction standard
  *
  * @see elm_config_thumbscroll_friction_standard_get()
  * @ingroup Scrolling
@@ -524,7 +524,7 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_time_limit_get(void
 /**
  * Set the time limit for accelerating velocity.
  *
- * @param threshold the thumb scroll acceleration time limit
+ * @param time_limit the thumb scroll acceleration time limit
  *
  * @see elm_config_thumbscroll_acceleration_time_limit_get()
  * @ingroup Scrolling
@@ -543,7 +543,7 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
 /**
  * Set the weight for the acceleration.
  *
- * @param threshold the thumb scroll acceleration weight
+ * @param weight the thumb scroll acceleration weight
  *
  * @see elm_config_thumbscroll_acceleration_weight_get()
  * @ingroup Scrolling
@@ -960,7 +960,7 @@ EAPI Eina_Bool        elm_config_access_get(void);
 /**
  * Set access mode
  *
- * @param is_accesss If @c EINA_TRUE, enables access mode
+ * @param is_access If @c EINA_TRUE, enables access mode
  *
  * @note Elementary objects may have information (e.g. label on the elm_button)
  * to be read. This information is read by access module when an object
@@ -1377,13 +1377,13 @@ EAPI Eina_Bool elm_config_item_select_on_focus_disabled_get(void);
 /**
  * Set the disable status of the item select on focus feature.
  *
- * @param disable Disable item select on focus if @c EINA_TRUE, enable otherwise
+ * @param disabled Disable item select on focus if @c EINA_TRUE, enable otherwise
  *
  * @see elm_config_item_select_on_focus_disabled_get
  * @since 1.10
  * @ingroup Focus
  */
-EAPI void elm_config_item_select_on_focus_disabled_set(Eina_Bool enabled);
+EAPI void elm_config_item_select_on_focus_disabled_set(Eina_Bool disabled);
 
 /**
  * Get status of first item focus on first focusin feature.
@@ -1399,7 +1399,7 @@ EAPI Eina_Bool elm_config_first_item_focus_on_first_focusin_get(void);
 /**
  * Set the first item focus on first focusin feature.
  *
- * @param enable first_item_focus_on_first_focusin if @c EINA_TRUE, enable otherwise
+ * @param enabled first_item_focus_on_first_focusin if @c EINA_TRUE, enable otherwise
  *
  * @see elm_config_first_item_focus_on_first_focusin_get
  * @since 1.11
@@ -1483,7 +1483,7 @@ EAPI double   elm_config_glayer_double_tap_timeout_get(void);
 /**
  * Set the duration for occurring double tap event of gesture layer.
  *
- * @param long_tap_timeout Timeout for double tap event of gesture layer.
+ * @param double_tap_timeout Timeout for double tap event of gesture layer.
  * @ingroup Elm_Gesture_Layer
  * @since 1.8
  */
