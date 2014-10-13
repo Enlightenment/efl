@@ -2806,6 +2806,8 @@ EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, 
  * that will be called to start and stop the ticking source, which when it
  * gets a "tick" should call ecore_animator_custom_tick() to make the "tick"
  * over 1 frame.
+ *
+ * @see ecore_animator_source_get()
  */
 EAPI void ecore_animator_source_set(Ecore_Animator_Source source);
 
