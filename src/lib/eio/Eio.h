@@ -446,6 +446,7 @@ EAPI Eio_File *eio_file_mkdir(const char *path,
  * @param done_cb Callback called when the move is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
  * @return an Eio_File pointer, handler to the move operation, can be used to cancel the operation
  *
@@ -491,6 +492,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
  * @return an Eio_File pointer, handler to the move operation, can be used to cancel the operation
  *
@@ -521,6 +523,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
  * @return an Eio_File pointer, handler to the copy operation, can be used to cancel the operation
  *
@@ -547,6 +550,7 @@ EAPI Eio_File *eio_dir_copy(const char *source,
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
  * @return an Eio_File pointer, handler to the unlink operation, can be used to cancel the operation
  *
