@@ -4192,7 +4192,7 @@ EOLIAN static void
 _elm_win_size_base_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_base_w;
-   if (w) *h = sd->size_base_h;
+   if (h) *h = sd->size_base_h;
 }
 
 EOLIAN static void
@@ -4210,7 +4210,7 @@ EOLIAN static void
 _elm_win_size_step_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_step_w;
-   if (w) *h = sd->size_step_h;
+   if (h) *h = sd->size_step_h;
 }
 
 EOLIAN static void
