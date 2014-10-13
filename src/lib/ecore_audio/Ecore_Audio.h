@@ -82,6 +82,7 @@ typedef struct _Ecore_Audio_Module Ecore_Audio_Module;
 typedef struct _Ecore_Audio_Object Ecore_Audio_Object;  /**< The audio object */
 
 /*
+ * @brief Structure to hold the callbacks needed to implement virtual file IO
  * @since 1.8
  */
 struct _Ecore_Audio_Vio {
