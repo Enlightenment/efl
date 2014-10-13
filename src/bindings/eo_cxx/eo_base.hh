@@ -14,6 +14,13 @@
 #include "eo_ops.hh"
 #include "eo_event.hh"
 
+#ifndef EFL_CXX_THROW
+#if defined ( EFL_CXX_NO_EXCEPTIONS )
+# define EFL_CXX_THROW(x)    std::abort()
+#else
+# define EFL_CXX_THROW(x)    throw (x)
+#endif
+#endif
 
 namespace efl { namespace eo {
 
@@ -276,7 +283,7 @@ T downcast(U object)
      }
    else
      {
-        throw std::runtime_error("Invalid cast");
+        EFL_CXX_THROW(std::runtime_error("Invalid cast"));
      }
 }
 
