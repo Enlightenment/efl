@@ -2229,6 +2229,9 @@ edje_edit_data_add(Evas_Object *obj, const char *itemname, const char *value)
    if (!itemname || !ed->file)
      return EINA_FALSE;
 
+   if (!ed->file->data)
+     ed->file->data = eina_hash_string_small_new(NULL);
+
    if (eina_hash_find(ed->file->data, itemname))
      return EINA_FALSE;
 
