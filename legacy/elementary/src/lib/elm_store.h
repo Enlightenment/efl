@@ -70,6 +70,10 @@ typedef void                                 (*Elm_Store_Item_Fetch_Cb)(void *da
 typedef void                                 (*Elm_Store_Item_Unfetch_Cb)(void *data, Elm_Store_Item *sti); /**< Function to cal lto un-fetch (free) an item */
 typedef void                                *(*Elm_Store_Item_Mapping_Cb)(void *data, Elm_Store_Item *sti, const char *part); /**< Custom mapping function to call */
 
+/**
+ * Possible mappings types.
+ * @since 1.7
+ */
 typedef enum
 {
    ELM_STORE_ITEM_MAPPING_NONE = 0,
@@ -78,7 +82,7 @@ typedef enum
    ELM_STORE_ITEM_MAPPING_ICON, /**< char * -> icon path */
    ELM_STORE_ITEM_MAPPING_PHOTO, /**< char * -> photo path */
    ELM_STORE_ITEM_MAPPING_CUSTOM, /**< item->custom(it->data, it, part) -> void * (-> any) */
-   ELM_STORE_ITEM_MAPPING_LAST
+   ELM_STORE_ITEM_MAPPING_LAST, /** canary value: any value greater or equal to ELM_STORE_ITEM_MAPPING_LAST is forbidden. */
 } Elm_Store_Item_Mapping_Type;
 
 struct _Elm_Store_Item_Mapping_Icon
