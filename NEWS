@@ -1,6 +1,22 @@
 ==========
-EFL 1.11.2
+EFL 1.11.3
 ==========
+
+Changes since 1.11.2:
+---------------------
+
+Fixes:
+
+   * Evas filters: Fix parsing of argument lists (T1615)
+   * edje_program: added signal "focus,part,out" when focus is discarded
+   * efl - vsync - deal with both broken and non-broken libdrm
+   * ecore_x_vsync - fix tiny leaklet of drmversion
+   * Evas Textblock: Fix bad empty line add on wrapping
+   * ecore vsync - fix up dual nvidia + dri/drm driver discovery
+   * eeze - sensors - ints for sensor events were decld in .h - and never .c
+   * Evas Textblock: Fix native width of BiDi text (T1532)
+   * ecore_imf/ibus : provide to get surrounding text
+   * evas: GL_X11 context need to always be with alpha or it will fail to change.
 
 Changes since 1.11.1:
 ---------------------
