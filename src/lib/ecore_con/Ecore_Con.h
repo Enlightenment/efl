@@ -426,7 +426,7 @@ typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
  */
 struct _Ecore_Con_Event_Client_Add
 {
-   Ecore_Con_Client *client; /** the client that connected */
+   Ecore_Con_Client *client; /**< the client that connected */
 };
 
 /**
@@ -436,7 +436,7 @@ struct _Ecore_Con_Event_Client_Add
  */
 struct _Ecore_Con_Event_Client_Upgrade
 {
-   Ecore_Con_Client *client; /** the client that completed handshake */
+   Ecore_Con_Client *client; /**< the client that completed handshake */
 };
 
 /**
@@ -445,7 +445,7 @@ struct _Ecore_Con_Event_Client_Upgrade
  */
 struct _Ecore_Con_Event_Client_Del
 {
-   Ecore_Con_Client *client; /** the client that was lost */
+   Ecore_Con_Client *client; /**< the client that was lost */
 };
 
 /**
@@ -454,7 +454,7 @@ struct _Ecore_Con_Event_Client_Del
  */
 struct _Ecore_Con_Event_Client_Error
 {
-   Ecore_Con_Client *client; /** the client for which an error occurred */
+   Ecore_Con_Client *client; /**< the client for which an error occurred */
    char *error; /**< the error string describing what happened */
 };
 
@@ -464,7 +464,7 @@ struct _Ecore_Con_Event_Client_Error
  */
 struct _Ecore_Con_Event_Server_Add
 {
-   Ecore_Con_Server *server; /** the server that was connected to */
+   Ecore_Con_Server *server; /**< the server that was connected to */
 };
 
 /**
@@ -474,7 +474,7 @@ struct _Ecore_Con_Event_Server_Add
  */
 struct _Ecore_Con_Event_Server_Upgrade
 {
-   Ecore_Con_Server *server; /** the server that was connected to */
+   Ecore_Con_Server *server; /**< the server that was connected to */
 };
 
 /**
@@ -483,7 +483,7 @@ struct _Ecore_Con_Event_Server_Upgrade
  */
 struct _Ecore_Con_Event_Server_Del
 {
-   Ecore_Con_Server *server; /** the client that was lost */
+   Ecore_Con_Server *server; /**< the client that was lost */
 };
 
 /**
@@ -492,7 +492,7 @@ struct _Ecore_Con_Event_Server_Del
  */
 struct _Ecore_Con_Event_Server_Error
 {
-   Ecore_Con_Server *server; /** the server for which an error occurred */
+   Ecore_Con_Server *server; /**< the server for which an error occurred */
    char *error; /**< the error string describing what happened */
 };
 
