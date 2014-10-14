@@ -285,8 +285,8 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
         /* 0x07 : undefined */
 
       case VK_BACK: /* 0x08 */
-         keyname = "Backspace";
-         key = "Backspace";
+         keyname = "BackSpace";
+         key = "BackSpace";
          compose = "\b";
          break;
       case VK_TAB: /* 0x09 */
