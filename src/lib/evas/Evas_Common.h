@@ -318,7 +318,7 @@ typedef struct _Evas_Video_Surface Evas_Video_Surface;
 
 typedef unsigned long long         Evas_Modifier_Mask;  /**< An Evas modifier mask type */
 
-typedef int                        Evas_Coord;
+typedef int                        Evas_Coord /**< A type for coordinates */;
 typedef int                        Evas_Font_Size;
 typedef int                        Evas_Angle;
 
@@ -336,11 +336,12 @@ struct _Evas_Coord_Point
    Evas_Coord y; /**< y co-ordinate */
 };
 
-struct _Evas_Coord_Size
+struct _Evas_Coord_Size /**< A size in Evas_Coord */
 {
    Evas_Coord w; /**< width */
    Evas_Coord h; /**< height */
 };
+
 
 struct _Evas_Coord_Precision_Size
 {
@@ -352,25 +353,28 @@ struct _Evas_Coord_Precision_Size
 
 struct _Evas_Coord_Precision_Point
 {
-   Evas_Coord x, y;
-   double     xsub, ysub;
+   Evas_Coord x; /**< x co-ordinate */
+   Evas_Coord y; /**< y co-ordinate */
+   double     xsub; /** < subpixel precision for x */
+   double     ysub; /** < subpixel precision for y */
 };
 
 struct _Evas_Point
 {
-   int x, y;
+   int x; /**< x co-ordinate */
+   int y; /**< y co-ordinate */
 };
 
 struct _Evas_Position
 {
-   Evas_Point       output;
+   Evas_Point       output; /**< position on the output */
    Evas_Coord_Point canvas; /**< position on the canvas */
 };
 
 struct _Evas_Precision_Position
 {
-   Evas_Point                 output;
-   Evas_Coord_Precision_Point canvas;
+   Evas_Point                 output; /**< position on the output */
+   Evas_Coord_Precision_Point canvas; /**< position on the canvas */
 };
 
 typedef enum _Evas_Aspect_Control
@@ -505,7 +509,7 @@ typedef void (*Evas_Video_Coord_Cb)(void *data, Evas_Object *obj, const Evas_Vid
 
 struct _Evas_Video_Surface
 {
-   int                 version;
+   int                 version; /**< The Evas Video surface version in use @see EVAS_VIDEO_SURFACE_VERSION*/
 
    Evas_Video_Coord_Cb move; /**< Move the video surface to this position */
    Evas_Video_Coord_Cb resize; /**< Resize the video surface to that size */
@@ -513,7 +517,7 @@ struct _Evas_Video_Surface
    Evas_Video_Cb       hide; /**< Hide the video overlay surface */
    Evas_Video_Cb       update_pixels; /**< Please update the Evas_Object_Image pixels when called */
 
-   Evas_Object        *parent;
+   Evas_Object        *parent; /**< The parent object */
    void               *data;
 };
 
@@ -571,8 +575,8 @@ typedef enum _Evas_Border_Fill_Mode
 
 typedef enum _Evas_Engine_Render_Mode
 {
-   EVAS_RENDER_MODE_BLOCKING = 0,
-   EVAS_RENDER_MODE_NONBLOCKING = 1,
+   EVAS_RENDER_MODE_BLOCKING = 0, /**< The rendering is blocking mode*/
+   EVAS_RENDER_MODE_NONBLOCKING = 1, /** < The rendering is non blocking mode*/
 } Evas_Engine_Render_Mode;
 
 typedef enum _Evas_Image_Content_Hint
@@ -1336,6 +1340,8 @@ EAPI Evas_Device *evas_device_add(Evas *e);
 
 /**
  * Delete a new device type
+ *
+ * @param dev The device node you want to delete.
  *
  * @see evas_device_add
  * @see evas_device_push
