@@ -1805,6 +1805,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_
 /**
  * @brief Sets the bidirectionality at the current cursor position.
  *
+ * @ingroup Ecore_IMF_Context_Group
  * @since 1.12.0
  *
  * @param[in] ctx An #Ecore_IMF_Context
@@ -1815,6 +1816,7 @@ EAPI void                          ecore_imf_context_bidi_direction_set(Ecore_IM
 /**
  * @brief Gets the bidirectionality at the current cursor position.
  *
+ * @ingroup Ecore_IMF_Context_Group
  * @since 1.12.0
  *
  * @param[in] ctx An #Ecore_IMF_Context
