@@ -32,13 +32,15 @@
 #endif
 
 /**
- * @defgroup Ecore_Con_Eet_Group Ecore_Con_Eet - Eet connection functions
- * @ingroup Ecore
+ * @defgroup Ecore_Con_Eet_Group Eet connection functions
+ * @ingroup Ecore_Con_Group
  *
  * The Ecore Connection Eet library ( @c Ecore_Con_Eet) adds @c Eet data
  * serialization features to Ecore Connection objects. Its main aim is to
  * provide a way to send @c Eet data streams to another program through sockets
  * using @c Ecore_Con objects.
+ *
+ * @{
  */
 
 typedef struct _Ecore_Con_Eet Ecore_Con_Eet;
@@ -274,5 +276,9 @@ EAPI void ecore_con_eet_send(Ecore_Con_Reply *reply, const char *protocol_name, 
  * @param length        The data length.
  */
 EAPI void ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length);
+
+/**
+ * @}
+ */
 
 #endif

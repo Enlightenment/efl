@@ -31,8 +31,10 @@
 #endif /* ! _WIN32 */
 
 /**
- * @file Ecore_Getopt.h
- * @brief Contains powerful getopt replacement.
+ * @defgroup Ecore_Getopt_Group Ecore Getopt
+ * @ingroup Ecore
+ *
+ * This group contains powerful getopt replacement.
  *
  * This replacement handles both short (-X) or long options (--ABC)
  * options, with various actions supported, like storing one value and
@@ -46,6 +48,8 @@
  * Values will be stored elsewhere indicated by an array of pointers
  * to values, it is given in separate to parser description so you can
  * use multiple values with the same parser.
+ *
+ * @{
  */
 
 #ifdef __cplusplus
@@ -1206,4 +1210,9 @@ EAPI Eina_Bool  ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, con
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
+
 #endif /* _ECORE_GETOPT_H */
