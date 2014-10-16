@@ -1037,6 +1037,8 @@ EAPI int               evas_async_events_process(void);
  * @param event_info Information about the event.
  * @param func The callback function pointer.
  *
+ * @return EINA_FALSE if an error occured, EINA_TRUE otherwise.
+ *
  * This is the way, for a routine running outside evas' main thread,
  * to report an asynchronous event. A callback function is informed,
  * whose call is to happen after evas_async_events_process() is
@@ -2333,6 +2335,7 @@ EAPI void            evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled);
  * This gets the alpha flag for map rendering.
  *
  * @param m map to get the alpha from. Must not be NULL.
+ * @return EINA_FALSE if map is NULL EINA_TRUE otherwise.
  */
 EAPI Eina_Bool       evas_map_alpha_get(const Evas_Map *m);
 
@@ -2915,7 +2918,14 @@ typedef void (*Evas_Object_Intercept_Clip_Unset_Cb)(void *data, Evas_Object *obj
  * @{
  */
 
-
+/**
+ * Function signature for the evas object pixels get callback function
+ * @see evas_object_image_pixels_get()
+ *
+ * By @a data it will be passed the private data. By @a o it will be passed the
+ * Evas_Object image on which the pixels are requested.
+ *
+ */
 typedef void (*Evas_Object_Image_Pixels_Get_Cb)(void *data, Evas_Object *o);
 
 /**
@@ -3141,31 +3151,55 @@ typedef enum _Evas_Text_Style_Type
  * @{
  */
 
+/**
+ * @typedef Evas_Textblock_Style
+ *
+ * A textblock style object.
+ * @see evas_textblock_style_new()
+ * @see evas_textblock_style_get()
+ * @see evas_textblock_style_set()
+ */
+
 typedef struct _Evas_Textblock_Style              Evas_Textblock_Style;
+
+/**
+ * @typedef Evas_Textblock_Cursor
+ *
+ * A textblock cursor object, used to maipulate the cursor of an evas textblock
+ * @see evas_object_textblock_cursor_new
+ *
+ */
 typedef struct _Evas_Textblock_Cursor             Evas_Textblock_Cursor;
+
 /**
  * @typedef Evas_Object_Textblock_Node_Format
  * A format node.
  */
 typedef struct _Evas_Object_Textblock_Node_Format Evas_Object_Textblock_Node_Format;
-typedef struct _Evas_Textblock_Rectangle          Evas_Textblock_Rectangle;
 
+typedef struct _Evas_Textblock_Rectangle          Evas_Textblock_Rectangle;
 struct _Evas_Textblock_Rectangle
 {
    Evas_Coord x, y, w, h;
 };
 
+/**
+ * Text type for evas textblock.
+ */
 typedef enum _Evas_Textblock_Text_Type
 {
-   EVAS_TEXTBLOCK_TEXT_RAW,
-   EVAS_TEXTBLOCK_TEXT_PLAIN,
-   EVAS_TEXTBLOCK_TEXT_MARKUP
+   EVAS_TEXTBLOCK_TEXT_RAW, /**< textblock text of type raw */
+   EVAS_TEXTBLOCK_TEXT_PLAIN, /**< textblock text of type plain */
+   EVAS_TEXTBLOCK_TEXT_MARKUP /**< textblock text of type markup */
 } Evas_Textblock_Text_Type;
 
+/**
+ * Cursor type for evas textblock.
+ */
 typedef enum _Evas_Textblock_Cursor_Type
 {
-   EVAS_TEXTBLOCK_CURSOR_UNDER,
-   EVAS_TEXTBLOCK_CURSOR_BEFORE
+   EVAS_TEXTBLOCK_CURSOR_UNDER, /**< cursor type is under */
+   EVAS_TEXTBLOCK_CURSOR_BEFORE /**< cursor type is before */
 } Evas_Textblock_Cursor_Type;
 
 /**
