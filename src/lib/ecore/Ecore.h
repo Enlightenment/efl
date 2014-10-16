@@ -39,7 +39,7 @@
    @li @ref Ecore_FB_Group
    @li @ref Ecore_Input_Group
    @li @ref Ecore_IMF_Lib_Group
-   @li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
+   @li @ref Ecore_IPC_Group
    @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
    @li @ref Ecore_Win32_Group
    @li @ref Ecore_Audio_Group
