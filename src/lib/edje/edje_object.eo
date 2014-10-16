@@ -167,6 +167,21 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             meaning individual scaling @b not set) */
          }
       }
+      base_scale {
+         get {
+            /*@
+            @brief Get a given Edje object's base_scale factor.
+
+            This function returns the base_scale factor set on the
+            @a obj Edje object.
+            The base_scale can be set in the collection of edc.
+            If it isn't set, the default value is 1.0 */
+         }
+         values {
+            double base_scale; /* The base_scale factor (the default value is @ 1.0,
+            that means the edc file is made based on scale 1.0. */
+         }
+      }
       mmap {
          set {
             /*@

@@ -405,6 +405,13 @@ _edje_object_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
    return TO_DOUBLE(ed->scale);
 }
 
+EOLIAN double
+_edje_object_base_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
+{
+   if (!(ed->file)) return 1.0;
+   return TO_DOUBLE(ed->file->base_scale);
+}
+
 EOLIAN Eina_Bool
 _edje_object_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
 {

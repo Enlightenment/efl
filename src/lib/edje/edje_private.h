@@ -2465,6 +2465,7 @@ void _edje_user_definition_free(Edje_User_Defined *eud);
 
 void _scale_set(Eo *obj, void *_pd, va_list *list);
 void _scale_get(Eo *obj, void *_pd, va_list *list);
+void _base_scale_get(Eo *obj, void *_pd, va_list *list);
 void _mirrored_get(Eo *obj, void *_pd, va_list *list);
 void _mirrored_set(Eo *obj, void *_pd, va_list *list);
 void _data_get(Eo *obj, void *_pd, va_list *list);
