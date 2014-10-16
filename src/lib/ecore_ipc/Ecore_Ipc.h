@@ -30,8 +30,11 @@
 #endif
 
 /**
- * @file Ecore_Ipc.h
- * @brief Ecore inter-process communication functions.
+ * @defgroup Ecore_IPC_Group Ecore_IPC - Ecore inter-process communication functions.
+ * @ingroup Ecore
+ *
+ *
+ * @{
  */
 
 #ifdef __cplusplus
@@ -217,6 +220,11 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED
       } \
    return d
 
+/**
+ * @typedef Ecore_Ipc_Type
+ *
+ * Enum containing IPC types.
+ */
 typedef enum _Ecore_Ipc_Type
 {
    ECORE_IPC_LOCAL_USER,
@@ -233,50 +241,81 @@ typedef struct _Ecore_Ipc_Event_Server_Del  Ecore_Ipc_Event_Server_Del;
 typedef struct _Ecore_Ipc_Event_Client_Data Ecore_Ipc_Event_Client_Data;
 typedef struct _Ecore_Ipc_Event_Server_Data Ecore_Ipc_Event_Server_Data;
 
+/**
+ * @struct _Ecore_Ipc_Event_Client_Add
+ *
+ * An IPC structure for client_add event.
+ */
 struct _Ecore_Ipc_Event_Client_Add
 {
-   Ecore_Ipc_Client *client;
+   Ecore_Ipc_Client *client; /**< An IPC connection handle */
 };
 
+/**
+ * @struct _Ecore_Ipc_Event_Client_Del
+ *
+ * An IPC structure for client_del event.
+ */
 struct _Ecore_Ipc_Event_Client_Del
 {
-   Ecore_Ipc_Client *client;
+   Ecore_Ipc_Client *client; /**< An IPC connection handle */
 };
 
+/**
+ * @struct _Ecore_Ipc_Event_Server_Add
+ *
+ * An IPC structure for server_add event.
+ */
 struct _Ecore_Ipc_Event_Server_Add
 {
-   Ecore_Ipc_Server *server;
+   Ecore_Ipc_Server *server; /**< An IPC connection handle */
 };
 
+/**
+ * @struct _Ecore_Ipc_Event_Server_Del
+ *
+ * An IPC structure for server_del event.
+ */
 struct _Ecore_Ipc_Event_Server_Del
 {
-   Ecore_Ipc_Server *server;
+   Ecore_Ipc_Server *server; /**< An IPC connection handle */
+
 };
-   
+
+/**
+ * @struct _Ecore_Ipc_Event_Client_Data
+ *
+ * An IPC structure for client_data event.
+ */
 struct _Ecore_Ipc_Event_Client_Data
 {
-   Ecore_Ipc_Client *client;
+   Ecore_Ipc_Client *client; /**< An IPC connection handle */
    /* FIXME: this needs to become an ipc message */
-   int               major;
-   int               minor;
-   int               ref;
-   int               ref_to;
-   int               response;
-   void             *data;
-   int               size;
+   int               major; /**< The message major opcode number */
+   int               minor; /**< The message minor opcode number */
+   int               ref; /**< The message reference number */
+   int               ref_to; /**< Reference number of the message it refers to */
+   int               response; /**< Requires response */
+   void             *data; /**< The message data */
+   int               size; /**< The data length (in bytes) */
 };
-   
+
+/**
+ * @struct _Ecore_Ipc_Event_Server_Data
+ *
+ * An IPC structure for server_data event.
+ */
 struct _Ecore_Ipc_Event_Server_Data
 {
-   Ecore_Ipc_Server *server;
+   Ecore_Ipc_Server *server; /**< An IPC connection handle */
    /* FIXME: this needs to become an ipc message */
-   int               major;
-   int               minor;
-   int               ref;
-   int               ref_to;
-   int               response;
-   void             *data;
-   int               size;
+   int               major; /**< The message major opcode number */
+   int               minor; /**< The message minor opcode number */
+   int               ref; /**< The message reference number */
+   int               ref_to; /**< Reference number of the message it refers to */
+   int               response; /**< Requires response */
+   void             *data; /**< The message data */
+   int               size; /**< The data length (in bytes) */
 };
    
 EAPI extern int ECORE_IPC_EVENT_CLIENT_ADD;
@@ -325,4 +364,7 @@ EAPI int               ecore_ipc_ssl_available_get(void);
 }
 #endif
 
+/**
+ * @}
+ */
 #endif
