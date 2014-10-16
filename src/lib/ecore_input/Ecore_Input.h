@@ -39,6 +39,12 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup Ecore_Input_Group Ecore Input
+ * @ingroup Ecore_Group
+ *
+ *@{
+ */
    EAPI extern int ECORE_EVENT_KEY_DOWN;
    EAPI extern int ECORE_EVENT_KEY_UP;
    EAPI extern int ECORE_EVENT_MOUSE_BUTTON_DOWN;
@@ -72,7 +78,11 @@ extern "C" {
    typedef struct _Ecore_Event_Mouse_Move   Ecore_Event_Mouse_Move;
    typedef struct _Ecore_Event_Mouse_IO     Ecore_Event_Mouse_IO;
    typedef struct _Ecore_Event_Modifiers    Ecore_Event_Modifiers;
-   
+
+   /**
+    * @typedef Ecore_Event_Modifier
+    * An enum of modifier events.
+    */
    typedef enum _Ecore_Event_Modifier
      {
         ECORE_NONE,
@@ -86,18 +96,30 @@ extern "C" {
         ECORE_LAST
      } Ecore_Event_Modifier;
 
+   /**
+    * @typedef Ecore_Event_Press
+    * An enum of press events.
+    */
    typedef enum _Ecore_Event_Press
      {
         ECORE_DOWN,
         ECORE_UP
      } Ecore_Event_Press;
 
+   /**
+    * @typedef Ecore_Event_IO
+    * An enum of Input/Output events.
+    */
    typedef enum _Ecore_Event_IO
      {
         ECORE_IN,
         ECORE_OUT
      } Ecore_Event_IO;
 
+   /**
+    * @typedef Ecore_Compose_State
+    * An enum of Compose states.
+    */
    typedef enum _Ecore_Compose_State
      {   
         ECORE_COMPOSE_NONE,
@@ -105,140 +127,197 @@ extern "C" {
         ECORE_COMPOSE_DONE
      } Ecore_Compose_State;
 
+   /**
+    * @struct _Ecore_Event_Key
+    * Contains information about an Ecore keyboard event.
+    */
    struct _Ecore_Event_Key
      {
-        const char      *keyname;
-        const char      *key;
+        const char      *keyname; /**< The key name */
+        const char      *key; /**< The key symbol */
         const char      *string;
-        const char      *compose;
-        Ecore_Window     window;
-        Ecore_Window     root_window;
-        Ecore_Window     event_window;
+        const char      *compose; /**< final string corresponding to the key symbol composed */
+        Ecore_Window     window; /**< The main window where event happened */
+        Ecore_Window     root_window; /**< The root window where event happened */
+        Ecore_Window     event_window; /**< The child window where event happened */
         
-        unsigned int     timestamp;
-        unsigned int     modifiers;
+        unsigned int     timestamp; /**< Time when the event occurred */
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
         
-        int              same_screen;
+        int              same_screen; /**< same screen flag */
 
         unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 
         void            *data; /**< User data associated with an Ecore_Event_Key @since 1.10 */
      };
 
+   /**
+    * @struct _Ecore_Event_Mouse_Button
+    * Contains information about an Ecore mouse button event.
+    */
    struct _Ecore_Event_Mouse_Button
      {
-        Ecore_Window     window;
-        Ecore_Window     root_window;
-        Ecore_Window     event_window;
+        Ecore_Window     window; /**< The main window where event happened */
+        Ecore_Window     root_window; /**< The root window where event happened */
+        Ecore_Window     event_window; /**< The child window where event happened */
+
+        unsigned int     timestamp; /**< Time when the event occurred */
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        unsigned int     buttons; /**< The button that was used */
+        unsigned int     double_click; /**< Double click event */
+        unsigned int     triple_click; /**< Triple click event */
+        int              same_screen; /**< Same screen flag */
         
-        unsigned int     timestamp;
-        unsigned int     modifiers;
-        unsigned int     buttons;
-        unsigned int     double_click;
-        unsigned int     triple_click;
-        int              same_screen;
-        
-        int              x;
-        int              y;
+        int              x; /**< x coordinate relative to window where event happened */
+        int              y; /**< y coordinate relative to window where event happened */
         struct {
            int           x;
            int           y;
-        } root;
+        } root; /**< Coordinates relative to root window */
         
         struct {
-           int           device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
-           double        radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
-           double        pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
-           double        angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
-           double        x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
+           int           device; /**< 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
+           double        radius, radius_x, radius_y; /**< radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
+           double        pressure; /**< pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
+           double        angle; /**< angle relative to perpendicular (0.0 == perpendicular), in degrees */
+           double        x, y; /**< same as x, y, but with sub-pixel precision, if available */
            struct {
               double     x, y;
-           } root;
+           } root; /**< same as root.x, root.y, but with sub-pixel precision, if available */
         } multi;
-     };
-   
-   struct _Ecore_Event_Mouse_Wheel
-     {
-        Ecore_Window     window;
-        Ecore_Window     root_window;
-        Ecore_Window     event_window;
-        
-        unsigned int     timestamp;
-        unsigned int     modifiers;
-        
-        int              same_screen;
-        int              direction;
-        int              z;
-        
-        int              x;
-        int              y;
-        struct {
-           int           x;
-           int           y;
-        } root;
-     };
-   
-   struct _Ecore_Event_Mouse_Move
-     {
-        Ecore_Window     window;
-        Ecore_Window     root_window;
-        Ecore_Window     event_window;
-        
-        unsigned int     timestamp;
-        unsigned int     modifiers;
-        
-        int              same_screen;
-        
-        int              x;
-        int              y;
-        struct {
-           int           x;
-           int           y;
-        } root;
-        
-        struct {
-           int           device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
-           double        radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
-           double        pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
-           double        angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
-           double        x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
-           struct {
-              double     x, y;
-           } root;
-        } multi;
-     };
-   
-   struct _Ecore_Event_Mouse_IO
-     {
-        Ecore_Window     window;
-        Ecore_Window     event_window;
-        
-        unsigned int     timestamp;
-        unsigned int     modifiers;
-        
-        int              x;
-        int              y;
      };
 
+   /**
+    * @struct _Ecore_Event_Mouse_Wheel
+    * Contains information about an Ecore mouse wheel event.
+    */
+   struct _Ecore_Event_Mouse_Wheel
+     {
+        Ecore_Window     window; /**< The main window where event happened */
+        Ecore_Window     root_window; /**< The root window where event happened */
+        Ecore_Window     event_window; /**< The child window where event happened */
+        
+        unsigned int     timestamp; /**< Time when the event occurred */
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        
+        int              same_screen; /**< Same screen flag */
+        int              direction; /**< Orientation of the wheel (horizontal/vertical) */
+        int              z; /**< Value of the wheel event (+1/-1) */
+        
+        int              x; /**< x coordinate relative to window where event happened */
+        int              y; /**< y coordinate relative to window where event happened */
+        struct {
+           int           x;
+           int           y;
+        } root; /**< Coordinates relative to root window */
+     };
+
+   /**
+    * @struct _Ecore_Event_Mouse_Move
+    * Contains information about an Ecore mouse move event.
+    */
+   struct _Ecore_Event_Mouse_Move
+     {
+        Ecore_Window     window; /**< The main window where event happened */
+        Ecore_Window     root_window; /**< The root window where event happened */
+        Ecore_Window     event_window; /**< The child window where event happened */
+        
+        unsigned int     timestamp; /**< Time when the event occurred */
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        
+        int              same_screen; /**< Same screen flag */
+        
+        int              x; /**< x coordinate relative to window where event happened */
+        int              y; /**< y coordinate relative to window where event happened */
+        struct {
+           int           x;
+           int           y;
+        } root; /**< Coordinates relative to root window */
+        
+        struct {
+           int           device; /**< 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
+           double        radius, radius_x, radius_y; /**< radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
+           double        pressure; /**< pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
+           double        angle; /**< angle relative to perpendicular (0.0 == perpendicular), in degrees */
+           double        x, y; /**< same as x, y root.x, root.y, but with sub-pixel precision, if available */
+           struct {
+              double     x, y;
+           } root;
+        } multi;
+     };
+
+   /**
+    * @struct _Ecore_Event_Mouse_IO
+    * Contains information about an Ecore mouse input/output event.
+    */
+   struct _Ecore_Event_Mouse_IO
+     {
+        Ecore_Window     window; /**< The main window where event happened */
+        Ecore_Window     event_window; /**< The child window where event happened */
+        
+        unsigned int     timestamp; /**< Time when the event occurred */
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        
+        int              x /**< x coordinate relative to window where event happened */
+        int              y /**< y coordinate relative to window where event happened */
+     };
+
+   /**
+    * @struct _Ecore_Event_Modifiers
+    * Contains information about an Ecore event modifier.
+    */
    struct _Ecore_Event_Modifiers
      {
         unsigned int size;
         unsigned int array[ECORE_LAST];
      };
-   
+
+   /**
+    * Initialises the Ecore Event system.
+    */
    EAPI int                  ecore_event_init(void);
+   /**
+    * Shutdowns the Ecore Event system.
+    */
    EAPI int                  ecore_event_shutdown(void);
-   
+
+   /**
+    * Return the Ecore modifier event integer associated to a
+    * Ecore_Event_Modifier modifier event.
+    *
+    * @param modifier A Ecore_Event_Modifier event.
+    * @return A event_modifier integer that matches with the provided modifier
+    * event.
+    */
    EAPI unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
+
+   /**
+    * Update a Ecore_Event_Modifiers array with "key" modifier.
+    *
+    * @param key A string describing a modifier key.
+    * @param modifiers A Ecore_Event_Modifiers structure.
+    * @param inc The value to increment in the modifiers array.
+    *
+    * @return ECORE_NONE if the key does not match with an existing one, else
+    * the corresponding Ecore_Event_Modifier.
+    */
    EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 
    /**
-    * @since 1.7
+    * Handle a sequence of key symbols to make a final compose string.
+    *
+    * The final compose string seqstr_ret is allocated in this function and
+    * thus shall be freed when not needed anymore.
+    *
+    * @param seq The sequence of key symbols in a Eina_List.
+    * @param seqstr_ret The final compose string.
+    * @return The status of the composition.
     */
    EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
-   
+
 #ifdef __cplusplus
 }
 #endif
 
+/** @} */
 #endif
