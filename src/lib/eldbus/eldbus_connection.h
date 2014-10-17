@@ -7,6 +7,11 @@
  *
  * @{
  */
+
+/**
+ * @typedef Eldbus_Connection_Type
+ * Enum of several Eldbus connection types.
+ */
 typedef enum
 {
    ELDBUS_CONNECTION_TYPE_UNKNOWN = 0,       /**< sentinel, not a real type */
@@ -17,7 +22,7 @@ typedef enum
    ELDBUS_CONNECTION_TYPE_LAST       /**< sentinel, not a real type */
 } Eldbus_Connection_Type;
 
-#define ELDBUS_TIMEOUT_INFINITE ((int) 0x7fffffff)
+#define ELDBUS_TIMEOUT_INFINITE ((int) 0x7fffffff) /**< Infinite timeout definition */
 
 /**
  * Establish a connection to bus and integrate it with the ecore main
@@ -70,7 +75,8 @@ EAPI Eldbus_Connection *eldbus_private_address_connection_get(const char *addres
 /**
  * @brief Increment connection reference count.
  *
- * @param conn The given Eldbus_Connection object to reference
+ * @param conn The given Eldbus_Connection object to reference.
+ * @return The Eldbus_Connection object given as parameter.
  */
 EAPI Eldbus_Connection *eldbus_connection_ref(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
 
@@ -79,6 +85,8 @@ EAPI Eldbus_Connection *eldbus_connection_ref(Eldbus_Connection *conn) EINA_ARG_
  *
  * If reference count reaches 0, the connection to bus will be dropped and all
  * its children will be invalidated.
+ *
+ * @param conn The given Eldbus_Connection object to unreference.
  */
 EAPI void              eldbus_connection_unref(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
 
@@ -125,6 +133,10 @@ EAPI void             *eldbus_connection_data_get(const Eldbus_Connection *conn,
  */
 EAPI void             *eldbus_connection_data_del(Eldbus_Connection *conn, const char *key) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @typedef Eldbus_Connection_Event_Type
+ * Enum of several Eldbus connection events.
+ */
 typedef enum
 {
    ELDBUS_CONNECTION_EVENT_DEL,
@@ -132,6 +144,11 @@ typedef enum
    ELDBUS_CONNECTION_EVENT_LAST    /**< sentinel, not a real event type */
 } Eldbus_Connection_Event_Type;
 
+/**
+ * @typedef Eldbus_Connection_Event_Cb
+ *
+ * Callback called when we receive an event.
+ */
 typedef void (*Eldbus_Connection_Event_Cb)(void *data, Eldbus_Connection *conn, void *event_info);
 
 /**
@@ -155,6 +172,7 @@ EAPI void                  eldbus_connection_event_callback_del(Eldbus_Connectio
  * @param cb_data data passed to callback
  * @param timeout timeout in milliseconds, -1 to use default internal value or
  * ELDBUS_TIMEOUT_INFINITE for no timeout
+ * @return A Eldbus_Pending struct.
  */
 EAPI Eldbus_Pending *eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
 
