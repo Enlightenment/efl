@@ -300,16 +300,14 @@ local Property = Method:clone {
 
         local fulln = proto.full_name
         if #keys > 0 then
-            local argn = (#keys > 1) and "keys" or "key"
             for i, v in ipairs(keys) do
                 local nm  = kw_t(v:name_get())
                 local tps = v:type_get()
                 local tp  = tps:c_type_get()
-                cargs [#cargs  + 1] = tp .. " " .. nm
-                vargs [#vargs  + 1] = typeconv(tps, argn .. "[" .. i
-                    .. "]", true)
+                args [#args  + 1] = nm
+                cargs[#cargs + 1] = tp .. " " .. nm
+                vargs[#vargs + 1] = typeconv(tps, nm, true)
             end
-            args[#args + 1] = argn
         end
         proto.kprop = #keys > 0
 
@@ -331,15 +329,13 @@ local Property = Method:clone {
                     end
                 end
             else
-                local argn = (#keys > 1) and "vals" or "val"
-                args[#args + 1] = argn
                 for i, v in ipairs(vals) do
                     local dir, tps, nm = v:direction_get(), v:type_get(),
                         kw_t(v:name_get())
                     local tp = tps:c_type_get()
+                    args [#args  + 1] = nm
                     cargs[#cargs + 1] = tp .. " " .. nm
-                    vargs[#vargs + 1] = typeconv(tps, argn .. "[" .. i .. "]",
-                        true)
+                    vargs[#vargs + 1] = typeconv(tps, nm, true)
                 end
             end
         end
