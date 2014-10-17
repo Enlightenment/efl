@@ -242,11 +242,79 @@ local get_obj_mt = function(obj)
     return classes[eo_class_addr_get(cl)]
 end
 
+local prop_proxy_meta = {
+    __index = function(self, key)
+        if self.nkeys > 1 and type(key) == "table" then
+            if self.nvals > 1 then
+                return { self(unpack(key)) }
+            else
+                return self(unpack(key))
+            end
+        else
+            if self.nvals > 1 then
+                return { self(key) }
+            else
+                return self(key)
+            end
+        end
+    end,
+
+    __newindex = function(self, key, val)
+        local nkeys = self.nkeys
+        if nkeys > 1 then
+            -- ultra slow path, q66 failed optimizing this
+            local atbl
+            if type(key) == "table" then
+                atbl = { unpack(key) }
+            else
+                atbl = { key }
+            end
+            if self.nvals > 1 and type(val) == "table" then
+                for i, v in ipairs(val) do atbl[nkeys + i] = v end
+            else
+                atbl[nkeys + 1] = val
+            end
+            self.mt[self.key .. "_set"](self.obj, unpack(atbl))
+        else
+            if self.nvals > 1 and type(val) == "table" then
+                -- somewhat less slow but still slow path
+                self.mt[self.key .. "_set"](self.obj, key, unpack(val))
+            else
+                -- least slow, no unpacks, no temporaries, just proxy
+                self.mt[self.key .. "_set"](self.obj, key, val)
+            end
+        end
+    end,
+
+    -- provides alt syntax for getters with keys
+    __call = function(self, ...)
+        return self.mt[self.key .. "_get"](self.obj, ...)
+    end
+}
+
 ffi.metatype("Eo", {
     __index = function(self, key)
         local mt = get_obj_mt(self)
         if mt == nil then return nil end
-        return mt[key]
+        local pt = mt.__properties
+        local pp = pt[key]
+        if not pp then
+            return mt[key]
+        end
+        if not pp[3] then
+            error("property '" .. key .. "' is not gettable", 2)
+        end
+        local nkeys, nvals = pp[1], pp[2]
+        if nkeys ~= 0 then
+            -- proxy - slow path... TODO: find a better way
+            return setmetatable({ nkeys = nkeys, nvals = nvals,
+                obj = self, key = key, mt = mt }, prop_proxy_meta)
+        end
+        if nvals > 1 then
+            return { mt[key .. "_get"](self) }
+        else
+            return mt[key .. "_get"](self)
+        end
     end,
 
     __newindex = function(self, key, val)
@@ -258,7 +326,7 @@ ffi.metatype("Eo", {
             error("no such property '" .. key .. "'", 2)
         end
         if not pp[4] then
-            error("property '" .. key .. "' is not settable")
+            error("property '" .. key .. "' is not settable", 2)
         end
         if pp[1] ~= 0 then
             error("property '" .. key .. "' requires " .. pp[1] .. " keys", 2)
