@@ -7,7 +7,6 @@
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
-#include "elm_interface_atspi_widget.eo.h"
 
 #define MY_CLASS ELM_WIDGET_CLASS
 

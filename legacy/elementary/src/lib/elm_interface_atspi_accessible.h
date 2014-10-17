@@ -1,3 +1,7 @@
+#ifndef ELM_INTERFACE_ATSPI_ACCESSIBLE_H
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_H
+
+#ifdef EFL_BETA_API_SUPPORT
 
 /**
  * ATSPI object state set.
@@ -250,7 +254,9 @@ typedef struct _Elm_Atspi_Relation Elm_Atspi_Relation;
 /**
  * Free Elm_Atspi_Attributes_List
  */
-void elm_atspi_attributes_list_free(Eina_List *list);
+EAPI void elm_atspi_attributes_list_free(Eina_List *list);
+
+#ifdef EFL_EO_API_SUPPORT
 
 /**
  * Emits ATSPI 'StateChanged' dbus signal.
@@ -316,3 +322,12 @@ void elm_atspi_attributes_list_free(Eina_List *list);
  */
 #define elm_interface_atspi_accessible_active_descendants_changed_signal_emit(obj, desc) \
    eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANT_CHANGED, desc));
+
+#include "elm_interface_atspi_accessible.eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_interface_atspi_accessible.eo.legacy.h"
+#endif
+
+#endif
+#endif

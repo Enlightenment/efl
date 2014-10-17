@@ -2,22 +2,16 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
+#define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
+
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 #include "elm_widget_entry.h"
 
 #define MY_CLASS ELM_ENTRY_CLASS
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
-#define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
-
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-#include "elm_interface_atspi_text.h"
-#include "elm_interface_atspi_text.eo.h"
-#include "elm_interface_atspi_editable_text.eo.h"
 
 #define MY_CLASS_NAME "Elm_Entry"
 #define MY_CLASS_NAME_LEGACY "elm_entry"

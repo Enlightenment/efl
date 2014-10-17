@@ -2,15 +2,11 @@
   #include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-#include "elm_atspi_app_object.eo.h"
 
 extern Eina_List *_elm_win_list;
 

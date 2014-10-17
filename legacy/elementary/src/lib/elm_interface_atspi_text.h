@@ -1,3 +1,7 @@
+#ifndef ELM_INTERFACE_ATSPI_TEXT_H
+#define ELM_INTERFACE_ATSPI_TEXT_H
+
+#ifdef EFL_BETA_API_SUPPORT
 
 enum _Elm_Atspi_Text_Granulatity
 {
@@ -40,7 +44,7 @@ typedef enum _Elm_Atspi_Text_Clip_Type Elm_Atspi_Text_Clip_Type;
 /**
  * @brief Free Elm_Atspi_Text_Attribute structure
  */
-void elm_atspi_text_text_attribute_free(Elm_Atspi_Text_Attribute *attr);
+EAPI void elm_atspi_text_text_attribute_free(Elm_Atspi_Text_Attribute *attr);
 
 typedef struct _Elm_Atspi_Text_Change_Info Elm_Atspi_Text_Change_Info;
 
@@ -51,3 +55,13 @@ struct _Elm_Atspi_Text_Change_Info
    size_t pos;
    size_t len;
 };
+
+#ifdef EFL_EO_API_SUPPORT
+#include "elm_interface_atspi_text.eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_interface_atspi_text.eo.legacy.h"
+#endif
+
+#endif
+#endif

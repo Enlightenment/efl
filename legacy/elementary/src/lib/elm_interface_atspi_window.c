@@ -6,5 +6,4 @@
 #include "elm_widget.h"
 #include "elm_priv.h"
 
-#include "elm_interface_atspi_window.eo.h"
 #include "elm_interface_atspi_window.eo.c"

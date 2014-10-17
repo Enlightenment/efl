@@ -75,7 +75,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             int idx;
          }
       }
-      description {
+      description @protected {
          get {
             /*@ Gets widget contextual information. */
          }

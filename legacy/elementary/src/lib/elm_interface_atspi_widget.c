@@ -2,19 +2,14 @@
   #include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
 
 #include "assert.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
-
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-#include "elm_interface_atspi_component.eo.h"
-#include "elm_interface_atspi_widget.eo.h"
 
 typedef struct _Elm_Interface_Atspi_Widget_Data Elm_Interface_Atspi_Widget_Data;
 

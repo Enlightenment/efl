@@ -3,14 +3,10 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
-#include "atspi/atspi-constants.h"
 
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_interface_atspi_component.eo.h"
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
 
 
 EOLIAN static void

@@ -2,13 +2,11 @@
   #include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
+
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
-
-#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
-
-#include "elm_interface_atspi_image.eo.h"
 
 static void
 _free_desc(void *data)

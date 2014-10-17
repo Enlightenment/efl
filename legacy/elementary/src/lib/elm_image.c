@@ -2,21 +2,14 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "elm_widget_image.h"
-
-#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
-#include "elm_interface_atspi_image.eo.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
-#include "elm_interface_atspi_widget_action.h"
-#include "elm_interface_atspi_widget_action.eo.h"
 
 #define FMT_SIZE_T "%zu"
 

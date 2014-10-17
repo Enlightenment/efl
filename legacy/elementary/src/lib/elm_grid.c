@@ -2,14 +2,12 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "elm_widget_grid.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
 
 #define MY_CLASS ELM_GRID_CLASS
 #define MY_CLASS_NAME "Elm_Grid"

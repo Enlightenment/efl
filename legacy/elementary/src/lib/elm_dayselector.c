@@ -2,14 +2,12 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_dayselector.h"
 #include "elm_widget_container.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
 
 #define MY_CLASS ELM_DAYSELECTOR_CLASS
 

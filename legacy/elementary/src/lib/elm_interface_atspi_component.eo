@@ -92,7 +92,7 @@ mixin Elm_Interface_Atspi_Component ()
          }
          return: bool;
       }
-      focus_grab {
+      focus_grab @protected {
          /*@ Focuses accessible widget.
 
          @return true if focus grab focus has successed, false otherwise. */

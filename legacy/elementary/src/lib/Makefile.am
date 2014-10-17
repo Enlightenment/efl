@@ -152,6 +152,7 @@ elm_app_client.h \
 elm_app_client_view_eo.h \
 elm_app_client_view.h \
 elm_app.h \
+elm_atspi_app_object.h \
 elm_authors.h \
 elm_bg.h \
 elm_bg_eo.h \

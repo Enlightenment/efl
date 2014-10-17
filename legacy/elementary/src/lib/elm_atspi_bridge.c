@@ -18,20 +18,6 @@
 #include "elm_priv.h"
 #include <assert.h>
 
-#include "elm_atspi_app_object.eo.h"
-
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-#include "elm_interface_atspi_component.eo.h"
-#include "elm_interface_atspi_window.eo.h"
-#include "elm_interface_atspi_action.eo.h"
-#include "elm_interface_atspi_value.eo.h"
-#include "elm_interface_atspi_image.eo.h"
-#include "elm_interface_atspi_selection.eo.h"
-#include "elm_interface_atspi_text.h"
-#include "elm_interface_atspi_text.eo.h"
-#include "elm_interface_atspi_editable_text.eo.h"
-
 /*
  * Accessibility Bus info not defined in atspi-constants.h
  */

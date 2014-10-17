@@ -2,15 +2,11 @@
   #include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-
 
 const char* Atspi_Name[] = {
     "invalid",
@@ -273,7 +269,7 @@ _elm_interface_atspi_accessible_relation_set_get(Eo *obj EINA_UNUSED, void *pd E
    return NULL;
 }
 
-void elm_atspi_attributes_list_free(Eina_List *list)
+EAPI void elm_atspi_attributes_list_free(Eina_List *list)
 {
    Elm_Atspi_Attribute *attr;
    EINA_LIST_FREE(list, attr)

@@ -2,16 +2,12 @@
   #include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
-#include "elm_widget.h"
-#include "elm_priv.h"
-
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
-#include "elm_interface_atspi_action.eo.h"
-#include "elm_interface_atspi_widget_action.h"
-#include "elm_interface_atspi_widget_action.eo.h"
+#include <Elementary.h>
+#include "elm_widget.h"
+#include "elm_priv.h"
 
 extern Eina_Hash *_elm_key_bindings;
 

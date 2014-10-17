@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+
 #include <Elementary.h>
 #include <ctype.h>
 
@@ -9,17 +13,6 @@
 #include "elm_widget_spinner.h"
 
 #include "Eo.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-
-#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
-#include "elm_interface_atspi_value.eo.h"
-
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
-#include "elm_interface_atspi_widget_action.h"
-#include "elm_interface_atspi_widget_action.eo.h"
 
 #define MY_CLASS ELM_SPINNER_CLASS
 

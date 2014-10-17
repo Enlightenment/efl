@@ -2,14 +2,12 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "elm_widget_segment_control.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
 
 #define MY_CLASS ELM_SEGMENT_CONTROL_CLASS
 
