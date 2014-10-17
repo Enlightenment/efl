@@ -1,0 +1,19 @@
+MAINTAINERCLEANFILES = Makefile.in
+
+AM_CPPFLAGS = \
+-I$(top_srcdir)/elm_code/lib \
+-I$(top_builddir)/elm_code/lib \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EFL_CFLAGS@ \
+-DEFL_EFL_BUILD
+
+lib_LTLIBRARIES = libelm_code.la
+
+includes_HEADERS = Elm_Code.h
+includesdir = $(includedir)/edi-@VMAJ@
+
+libelm_code_la_SOURCES = \
+elm_code.c
+libelm_code_la_LIBADD = @EFL_LIBS@ -lm
+libelm_code_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
