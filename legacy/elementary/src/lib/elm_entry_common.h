@@ -61,10 +61,10 @@ enum
 
 enum
 {
-   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,
-   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,
-   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,
-   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,              /**< The plain normal number layout @since 1.8 */
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,              /**< The number layout to allow a positive or negative sign at the start @since 1.8 */
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,             /**< The number layout to allow decimal point to provide fractional value @since 1.8 */
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL   /**< The number layout to allow decimal point and negative sign @since 1.8 */
 };
 
 enum
