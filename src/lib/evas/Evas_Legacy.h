@@ -986,7 +986,7 @@ EAPI Evas_Object *evas_object_top_at_pointer_get(const Evas *e) EINA_WARN_UNUSED
  */
 
 /**
- * Set the callback function that intercepts a show event of a object.
+ * Set the callback function that intercepts a show event of an object.
  *
  * @param obj The given canvas object pointer.
  * @param func The given function to be the callback function.
@@ -1001,8 +1001,7 @@ EAPI Evas_Object *evas_object_top_at_pointer_get(const Evas *e) EINA_WARN_UNUSED
 EAPI void  evas_object_intercept_show_callback_add(Evas_Object *obj, Evas_Object_Intercept_Show_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Unset the callback function that intercepts a show event of a
- * object.
+ * Unset the callback function that intercepts a show event of a object.
  *
  * @param obj The given canvas object pointer.
  * @param func The given callback function.
@@ -1031,8 +1030,7 @@ EAPI void *evas_object_intercept_show_callback_del(Evas_Object *obj, Evas_Object
 EAPI void  evas_object_intercept_hide_callback_add(Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Unset the callback function that intercepts a hide event of a
- * object.
+ * Unset the callback function that intercepts a hide event of a object.
  *
  * @param obj The given canvas object pointer.
  * @param func The given callback function.
@@ -1046,7 +1044,7 @@ EAPI void  evas_object_intercept_hide_callback_add(Evas_Object *obj, Evas_Object
 EAPI void *evas_object_intercept_hide_callback_del(Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Set the callback function that intercepts a move event of a object.
+ * Set the callback function that intercepts a move event of an object.
  *
  * @param obj The given canvas object pointer.
  * @param func The given function to be the callback function.
@@ -1061,8 +1059,7 @@ EAPI void *evas_object_intercept_hide_callback_del(Evas_Object *obj, Evas_Object
 EAPI void  evas_object_intercept_move_callback_add(Evas_Object *obj, Evas_Object_Intercept_Move_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Unset the callback function that intercepts a move event of a
- * object.
+ * Unset the callback function that intercepts a move event of an object.
  *
  * @param obj The given canvas object pointer.
  * @param func The given callback function.
@@ -1075,25 +1072,294 @@ EAPI void  evas_object_intercept_move_callback_add(Evas_Object *obj, Evas_Object
  */
 EAPI void *evas_object_intercept_move_callback_del(Evas_Object *obj, Evas_Object_Intercept_Move_Cb func) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * Set the callback function that intercepts a resize event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a resize event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_resize_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_resize_callback_add(Evas_Object *obj, Evas_Object_Intercept_Resize_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a resize event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a resize event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_resize_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_resize_callback_del(Evas_Object *obj, Evas_Object_Intercept_Resize_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a raise event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a raise event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_raise_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_raise_callback_add(Evas_Object *obj, Evas_Object_Intercept_Raise_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a raise event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a raise event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_raise_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_raise_callback_del(Evas_Object *obj, Evas_Object_Intercept_Raise_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a lower event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a lower event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_lower_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_lower_callback_add(Evas_Object *obj, Evas_Object_Intercept_Lower_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a lower event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a lower event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_lower_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_lower_callback_del(Evas_Object *obj, Evas_Object_Intercept_Lower_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a stack above event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a stack above event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_stack_above_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_stack_above_callback_add(Evas_Object *obj, Evas_Object_Intercept_Stack_Above_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a stack above event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a stack above event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_stack_above_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_stack_above_callback_del(Evas_Object *obj, Evas_Object_Intercept_Stack_Above_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a stack below event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a stack below event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_stack_below_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_stack_below_callback_add(Evas_Object *obj, Evas_Object_Intercept_Stack_Below_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a stack below event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a stack below event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_stack_below_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_stack_below_callback_del(Evas_Object *obj, Evas_Object_Intercept_Stack_Below_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a layer set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a layer set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_layer_set_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_layer_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Layer_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a layer set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a layer set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_layer_set_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_layer_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Layer_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a color set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a color set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_color_set_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_color_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Color_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a color set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a color set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_color_set_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_color_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Color_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a clip set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a clip set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_clip_set_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_clip_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a clip set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a clip set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_clip_set_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_clip_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a clip unset event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a clip unset event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_clip_unset_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_clip_unset_callback_add(Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a clip unset event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a clip unset event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_clip_unset_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Set the callback function that intercepts a focus set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a focus set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_focus_set_callback_del().
+ *
+ */
 EAPI void  evas_object_intercept_focus_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Focus_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a focus set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a focus set event
+ * of a canvas object.
+ *
+ * @see evas_object_intercept_focus_set_callback_add().
+ *
+ */
 EAPI void *evas_object_intercept_focus_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Focus_Set_Cb func) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -2218,27 +2484,30 @@ EAPI Evas_Object   *evas_object_grid_add(Evas *evas) EINA_WARN_UNUSED_RESULT EIN
  */
 
 /**
- * @since 1.8
  *
  * Adds an output to the canvas
- * 
+ *
  * @parem e The canvas to add the output to
  * @return The output
  *
  * @see evas_out_engine_info_set
  * @see evas_output_viewport_set
  * @see evas_output_size_set
+ *
+ * @since 1.8
  */
 EAPI Evas_Out *evas_out_add(Evas *e);
 
 /**
- * @since 1.8
  *
  * Deletes an output
- * 
+ *
  * @parem evo The output object
  *
  * @see evas_out_add
+ *
+ * @since 1.8
+ *
  */
 EAPI void evas_output_del(Evas_Out *evo);
 

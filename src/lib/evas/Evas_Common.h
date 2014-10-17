@@ -323,7 +323,7 @@ typedef int                        Evas_Coord;/**< A type for coordinates */;
 typedef int                        Evas_Font_Size; /**< A type for font size */
 typedef int                        Evas_Angle; /**< A type for angle */
 
-struct _Evas_Coord_Rectangle /**< A rectangle in Evas_Coord */
+struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */
 {
    Evas_Coord x; /**< top-left x co-ordinate of rectangle */
    Evas_Coord y; /**< top-left y co-ordinate of rectangle */
@@ -331,20 +331,20 @@ struct _Evas_Coord_Rectangle /**< A rectangle in Evas_Coord */
    Evas_Coord h; /**< height of rectangle */
 };
 
-struct _Evas_Coord_Point
+struct _Evas_Coord_Point /** A Point in Evas_Coord */
 {
    Evas_Coord x; /**< x co-ordinate */
    Evas_Coord y; /**< y co-ordinate */
 };
 
-struct _Evas_Coord_Size /**< A size in Evas_Coord */
+struct _Evas_Coord_Size /** A size in Evas_Coord */
 {
    Evas_Coord w; /**< width */
    Evas_Coord h; /**< height */
 };
 
 
-struct _Evas_Coord_Precision_Size
+struct _Evas_Coord_Precision_Size /** A size in Evas_Coord with subpixel precision*/
 {
    Evas_Coord w; /**< width */
    Evas_Coord h; /**< height */
@@ -352,7 +352,7 @@ struct _Evas_Coord_Precision_Size
    double ysub;  /**< subpixel precision for height */
 };
 
-struct _Evas_Coord_Precision_Point
+struct _Evas_Coord_Precision_Point /** A point in Evas_Coord with subpixel precision*/
 {
    Evas_Coord x; /**< x co-ordinate */
    Evas_Coord y; /**< y co-ordinate */
@@ -360,19 +360,19 @@ struct _Evas_Coord_Precision_Point
    double     ysub; /**< subpixel precision for y */
 };
 
-struct _Evas_Point
+struct _Evas_Point /** A point */
 {
    int x; /**< x co-ordinate */
    int y; /**< y co-ordinate */
 };
 
-struct _Evas_Position
+struct _Evas_Position /** A position */
 {
    Evas_Point       output; /**< position on the output */
    Evas_Coord_Point canvas; /**< position on the canvas */
 };
 
-struct _Evas_Precision_Position
+struct _Evas_Precision_Position /** A position with precision*/
 {
    Evas_Point                 output; /**< position on the output */
    Evas_Coord_Precision_Point canvas; /**< position on the canvas */
@@ -625,12 +625,12 @@ typedef enum _Evas_Device_Subclass
    EVAS_DEVICE_SUBCLASS_TRACKBALL, /**< A trackball style mouse @since 1.8 */
 } Evas_Device_Subclass; /**< A general class of device @since 1.8 */
 
-struct _Evas_Engine_Info /**< Generic engine information. Generic info is useless */
+struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
 };
 
-struct _Evas_Event_Mouse_Down /**< Mouse button press event */
+struct _Evas_Event_Mouse_Down /** Mouse button press event */
 {
    int               button; /**< Mouse button number that went down (1 - 32) */
 
@@ -648,7 +648,7 @@ struct _Evas_Event_Mouse_Down /**< Mouse button press event */
    Evas_Object      *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
-struct _Evas_Event_Mouse_Up /**< Mouse button release event */
+struct _Evas_Event_Mouse_Up /** Mouse button release event */
 {
    int               button; /**< Mouse button number that was raised (1 - 32) */
 
@@ -666,7 +666,7 @@ struct _Evas_Event_Mouse_Up /**< Mouse button release event */
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
-struct _Evas_Event_Mouse_In /**< Mouse enter event */
+struct _Evas_Event_Mouse_In /** Mouse enter event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
@@ -682,7 +682,7 @@ struct _Evas_Event_Mouse_In /**< Mouse enter event */
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
-struct _Evas_Event_Mouse_Out /**< Mouse leave event */
+struct _Evas_Event_Mouse_Out /** Mouse leave event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
@@ -698,7 +698,7 @@ struct _Evas_Event_Mouse_Out /**< Mouse leave event */
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
-struct _Evas_Event_Mouse_Move /**< Mouse move event */
+struct _Evas_Event_Mouse_Move /** Mouse move event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
@@ -714,7 +714,7 @@ struct _Evas_Event_Mouse_Move /**< Mouse move event */
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
-struct _Evas_Event_Mouse_Wheel /**< Wheel event */
+struct _Evas_Event_Mouse_Wheel /** Wheel event */
 {
    int              direction; /* 0 = default up/down wheel FIXME: more wheel types */
    int              z; /* ...,-2,-1 = down, 1,2,... = up */
@@ -730,7 +730,7 @@ struct _Evas_Event_Mouse_Wheel /**< Wheel event */
    Evas_Device     *dev;
 };
 
-struct _Evas_Event_Multi_Down /**< Multi button press event */
+struct _Evas_Event_Multi_Down /** Multi button press event */
 {
    int                        device; /**< Multi device number that went down (1 or more for extra touches) */
    double                     radius, radius_x, radius_y;
@@ -749,7 +749,7 @@ struct _Evas_Event_Multi_Down /**< Multi button press event */
    Evas_Device               *dev;
 };
 
-struct _Evas_Event_Multi_Up /**< Multi button release event */
+struct _Evas_Event_Multi_Up /** Multi button release event */
 {
    int                        device; /**< Multi device number that went up (1 or more for extra touches) */
    double                     radius, radius_x, radius_y;
@@ -768,7 +768,7 @@ struct _Evas_Event_Multi_Up /**< Multi button release event */
    Evas_Device               *dev;
 };
 
-struct _Evas_Event_Multi_Move /**< Multi button down event */
+struct _Evas_Event_Multi_Move /** Multi button down event */
 {
    int                     device; /**< Multi device number that moved (1 or more for extra touches) */
    double                  radius, radius_x, radius_y;
@@ -784,7 +784,7 @@ struct _Evas_Event_Multi_Move /**< Multi button down event */
    Evas_Device            *dev;
 };
 
-struct _Evas_Event_Key_Down /**< Key press event */
+struct _Evas_Event_Key_Down /** Key press event */
 {
    char            *keyname; /**< the name string of the key pressed */
    void            *data;
@@ -801,7 +801,7 @@ struct _Evas_Event_Key_Down /**< Key press event */
    unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 };
 
-struct _Evas_Event_Key_Up /**< Key release event */
+struct _Evas_Event_Key_Up /** Key release event */
 {
    char            *keyname; /**< the name string of the key released */
    void            *data;
@@ -818,12 +818,12 @@ struct _Evas_Event_Key_Up /**< Key release event */
    unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 };
 
-struct _Evas_Event_Render_Post /**< Send when the frame rendering is done @since 1.8 */
+struct _Evas_Event_Render_Post /** Send when the frame rendering is done @since 1.8 */
 {
    Eina_List *updated_area; /**< A list of rectangle that were updated in the canvas */
 };
 
-struct _Evas_Event_Hold /**< Hold change event */
+struct _Evas_Event_Hold /** Hold change event */
 {
    int              hold; /**< The hold flag */
    void            *data;
@@ -2559,18 +2559,173 @@ EAPI void            evas_map_point_color_get(const Evas_Map *m, int idx, int *r
  * @{
  */
 
+/**
+ * Function signature for the resize event of an evas object
+ *
+ * @param data is the pointer passed through the callback.
+ * @param obj the object being shown.
+ *
+ * @see evas_object_intercept_show_callback_add()
+ * @see evas_object_intercept_show_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Show_Cb)(void *data, Evas_Object *obj);
+
+/**
+ * Function signature for the hide event of an evas object
+ *
+ * @param data is the pointer passed through the callback.
+ * @param obj the object being hidden.
+ *
+ * @see  evas_object_intercept_hide_callback_add()
+ * @see  evas_object_intercept_hide_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Hide_Cb)(void *data, Evas_Object *obj);
+
+/**
+ * Function signature for the move event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being moved.
+ * @param x move x position
+ * @param y move y position
+ *
+ * @see  evas_object_intercept_move_callback_add()
+ * @see  evas_object_intercept_move_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Move_Cb)(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+
+/**
+ * Function signature for the resize event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being resized.
+ * @param width of the object
+ * @param height of the object
+ *
+ * @see  evas_object_intercept_resize_callback_add()
+ * @see  evas_object_intercept_resize_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Resize_Cb)(void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * Function signature for the raise event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being raised.
+ *
+ * @see  evas_object_intercept_raise_callback_add()
+ * @see  evas_object_intercept_raise_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Raise_Cb)(void *data, Evas_Object *obj);
+
+/**
+ * Function signature for the lower event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being lowered.
+ *
+ * @see  evas_object_intercept_lower_callback_add()
+ * @see  evas_object_intercept_lower_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Lower_Cb)(void *data, Evas_Object *obj);
+
+/**
+ * Function signature for the stack above event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being stacked above.
+ * @param above the object above which the object is stacked
+ *
+ * @see  evas_object_intercept_stack_above_callback_add()
+ * @see  evas_object_intercept_stack_above_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Stack_Above_Cb)(void *data, Evas_Object *obj, Evas_Object *above);
+
+/**
+ * Function signature for the stack below event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being stacked below.
+ * @param above the object below which the object is stacked
+ *
+ * @see  evas_object_intercept_stack_below_callback_add()
+ * @see  evas_object_intercept_stack_below_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Stack_Below_Cb)(void *data, Evas_Object *obj, Evas_Object *above);
+
+/**
+ * Function signature for the layer event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being layered
+ * @param l the layer value
+ *
+ * @see  evas_object_intercept_layer_callback_add()
+ * @see  evas_object_intercept_layer_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Layer_Set_Cb)(void *data, Evas_Object *obj, int l);
+
+/**
+ * Function signature for the focus set event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being focused
+ * @param focus the focus value, EINA_TRUE if the object is focused, EINA_FALSE otherwise
+ *
+ * @see  evas_object_intercept_focus_set_callback_add()
+ * @see  evas_object_intercept_focus_set_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Focus_Set_Cb)(void *data, Evas_Object *obj, Eina_Bool focus);
+
+/**
+ * Function signature for the color set event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object changing color
+ * @param r the red component of the color
+ * @param g the green component of the color
+ * @param b the blue component of the color
+ * @param a the alpha component of the color
+ *
+ * @see  evas_object_intercept_color_set_callback_add()
+ * @see  evas_object_intercept_color_set_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Color_Set_Cb)(void *data, Evas_Object *obj, int r, int g, int b, int a);
+
+/**
+ * Function signature for the clip set event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being clipped
+ * @param clip the evas object on which the object is clipped
+ *
+ * @see  evas_object_intercept_clip_set_callback_add()
+ * @see  evas_object_intercept_clip_set_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Clip_Set_Cb)(void *data, Evas_Object *obj, Evas_Object *clip);
+
+/**
+ * Function signature for the clip unset event of an evas object
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being unclipped
+ *
+ * @see  evas_object_intercept_clip_unset_callback_add()
+ * @see  evas_object_intercept_clip_unset_callback_del()
+ *
+ */
 typedef void (*Evas_Object_Intercept_Clip_Unset_Cb)(void *data, Evas_Object *obj);
 
 /**
