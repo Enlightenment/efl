@@ -3,6 +3,8 @@
 
 #include <Elementary.h>
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -37,6 +39,20 @@ extern "C" {
  * @file
  * @brief These routines are used for interacting with files using Elm Code.
  */
+
+typedef struct _Elm_Code_Line
+{
+   const char *content;
+   const char *modified;
+
+} Elm_Code_Line;
+
+typedef struct _Elm_Code_File
+{
+   Elm_Code_Line *lines;
+   Eina_File *file;
+
+} Elm_Code_File;
 
 /**
  * @brief Init / shutdown functions.
@@ -83,6 +99,14 @@ EAPI int elm_code_init(void);
  * @ingroup Init
  */
 EAPI int elm_code_shutdown(void);
+
+EAPI Elm_Code_File *elm_code_open(const char *path);
+
+EAPI void elm_code_close(Elm_Code_File *file);
+
+EAPI const char *elm_code_filename_get(Elm_Code_File *file);
+
+EAPI const char *elm_code_path_get(Elm_Code_File *file);
 
 /**
  * @}

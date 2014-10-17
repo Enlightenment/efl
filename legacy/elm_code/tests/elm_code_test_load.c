@@ -6,7 +6,16 @@
 
 START_TEST (elm_code_load)
 {
-   ck_assert(1);
+   char *path = "elm_code/tests/testfile.txt";
+   char real[EINA_PATH_MAX];
+   Elm_Code_File *file;
+
+   file = elm_code_open(path);
+   realpath(path, real);
+
+   ck_assert_str_eq(basename(path), elm_code_filename_get(file));
+   ck_assert_str_eq(real, elm_code_path_get(file));
+   elm_code_close(file);
 }
 END_TEST
 

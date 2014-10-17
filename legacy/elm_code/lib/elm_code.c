@@ -56,3 +56,31 @@ elm_code_shutdown(void)
 
    return _elm_code_init;
 }
+
+EAPI Elm_Code_File *elm_code_open(const char *path)
+{
+   Elm_Code_File *ret;
+   Eina_File *file;
+
+   file = eina_file_open(path, EINA_FALSE);
+   ret = calloc(1, sizeof(ret));
+   ret->file = file;
+
+   return ret;
+}
+
+EAPI void elm_code_close(Elm_Code_File *file)
+{
+   eina_file_close(file->file);
+   free(file);
+}
+
+EAPI const char *elm_code_filename_get(Elm_Code_File *file)
+{
+   return basename(eina_file_filename_get(file->file));
+}
+
+EAPI const char *elm_code_path_get(Elm_Code_File *file)
+{
+   return eina_file_filename_get(file->file);
+}
