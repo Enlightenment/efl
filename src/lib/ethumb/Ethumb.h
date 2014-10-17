@@ -144,10 +144,26 @@ typedef struct _Ethumb Ethumb;
  */
 typedef void (*Ethumb_Generate_Cb)(void *data, Ethumb *e, Eina_Bool success);
 
+/**
+ * @brief Initialize ethumb.
+ * @return 1 or greater on success, 0 otherwise.
+ */
 EAPI int ethumb_init(void);
+/**
+ * @brief Shutdown ethumb, unloading all currently-loaded modules.
+ * @return 0 if ethumb shuts down, an integer greater than 0 otherwise.
+ */
 EAPI int ethumb_shutdown(void);
 
+/**
+ * @brief Create a new ethumb object.
+ * return The newly-created ethumb object
+ */
 EAPI Ethumb * ethumb_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Free an ethumb object.
+ */
 EAPI void ethumb_free(Ethumb *e);
 
 /**
@@ -212,22 +228,91 @@ typedef enum _Ethumb_Thumb_Orientation
 
 EAPI void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Set the size of thumbnails.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param tw Thumbnail width.
+ * @param th Thumbnail height.
+ */
 EAPI void ethumb_thumb_size_set(Ethumb *e, int tw, int th) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the size of thumbnails.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param[out] tw Pointer to an int to store the thumbnail width.
+ * @param[out] th Pointer to an int to store the thumbnail height.
+ */
 EAPI void ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Set the fileformat of the thumbnails
+ *
+ * Thumbnails are sent compressed; possible formats are PNG, JPEG and EET.
+ *
+ * @param e A pointer to an Ethumb object.
+ */
 EAPI void                     ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the fileformat of the thumbnails
+ *
+ * @param e A pointer to an Ethumb object.
+ * @return The thumbnail fileformat
+ *
+ * @see ethumb_thumb_format_set
+ */
 EAPI Ethumb_Thumb_Format      ethumb_thumb_format_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI void                     ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a) EINA_ARG_NONNULL(1);
+/**
+ * @brief Set the aspect ratio policy.
+ *
+ * When the source and thumbnail aspect ratios don't match, this policy sets
+ * how to adapt from the former to the latter: resize keeping source aspect
+ * ratio, resize ignoring it or crop.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param aspect  The new aspect ratio policy.
+ */
+EAPI void                     ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect aspect) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the aspect ratio policy.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @return The aspect ratio policy.
+ */
 EAPI Ethumb_Thumb_Aspect      ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI void                     ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation o) EINA_ARG_NONNULL(1);
+/**
+ * @brief Set the thumbnail rotation or flip.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param orientation The new orientation.
+ */
+EAPI void                     ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation orientation) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the thumbnail rotation.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @return The current rotation.
+ */
 EAPI Ethumb_Thumb_Orientation ethumb_thumb_orientation_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI void         ethumb_thumb_crop_align_set(Ethumb *e, float x, float y) EINA_ARG_NONNULL(1);
 EAPI void         ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Set the thumbnail compression quality.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param quality Compression quality (from 0 to 100, 100 being the best; default is 80)
+ */
 EAPI void         ethumb_thumb_quality_set(Ethumb *e, int quality) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the thumbnail compression quality.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @return The current compression quality (from 0 to 100, 100 being the best)
+ */
 EAPI int          ethumb_thumb_quality_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 EAPI void         ethumb_thumb_compress_set(Ethumb *e, int compress) EINA_ARG_NONNULL(1);
@@ -239,9 +324,35 @@ EAPI void         ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(
 EAPI float        ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 EAPI void         ethumb_video_interval_set(Ethumb *e, float interval) EINA_ARG_NONNULL(1);
 EAPI float        ethumb_video_interval_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @brief Set the number of times the video loops (if applicable).
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param ntimes The number of times the video loops.
+ */
 EAPI void         ethumb_video_ntimes_set(Ethumb *e, unsigned int ntimes) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the number of times the video loops (if applicable).
+ *
+ * @param e A pointer to an Ethumb object.
+ * @return The number of times the video loops.
+ */
 EAPI unsigned int ethumb_video_ntimes_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @brief Set the thumbnail framerate.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param fps New framerate of the thumbnail (default 10).
+ */
 EAPI void         ethumb_video_fps_set(Ethumb *e, unsigned int fps) EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the thumbnail framerate.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @return Current framerate of the thumbnail.
+ */
 EAPI unsigned int ethumb_video_fps_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 
@@ -255,8 +366,33 @@ EAPI unsigned int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RES
  * @addtogroup Ethumb_Basics Ethumb Basics
  * @{
  */
+
+/**
+ * @brief Set the file for which to generate thumbnails.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param path The file to use.
+ * @param key If @a path allows storing multiple resources in a single file
+ *            (EET or Edje for instance), @a key is the key used to locate the
+ *            right resource inside the file. NULL if not applicable.
+ */
 EAPI Eina_Bool ethumb_file_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Get the file for which to generate thumbnails.
+ *
+ * @param e A pointer to an Ethumb object.
+ * @param[out] path The file being used.
+ * @param[out] key The key used to locate the right resource in case the file
+ *                 can store several of them. NULL if not applicable.
+ * @see ethumb_file_set
+ */
 EAPI void      ethumb_file_get(const Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Reset the source file information.
+ *
+ * @param e A pointer to an Ethumb object.
+ */
 EAPI void      ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 
 EAPI Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data) EINA_ARG_NONNULL(1, 2);
