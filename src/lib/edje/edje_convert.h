@@ -98,7 +98,7 @@ struct _Old_Edje_Part
    unsigned char          effect; /* 0 = plain... */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
-   Evas_Event_Flags       ignore_flags;
+   Evas_Event_Flags       ignore_flags; 
    unsigned char          scale; /* should certain properties scale with edje scale factor? */
    unsigned char          precise_is_inside;
    unsigned char          use_alternate_font_metrics;
@@ -131,13 +131,53 @@ struct _Old_Edje_Part_Description
    Eina_List *external_params; /* parameters for external objects */
 };
 
+/**
+ * Convert old edje files into new edje files 
+ *
+ * @param file an Eet_File to write the new edje file 
+ * @param oedf the old edje file 
+ *
+ * @return An Edje_File pointer to the converted file 
+ */
 Edje_File *_edje_file_convert(Eet_File *file, Old_Edje_File *oedf);
+
+/**
+ * Convert old edje part collection into the new edje file 
+ *
+ * @param file an Eet_File to write the new edje file
+ * @param oedc The old edje part collection 
+ *
+ * @return a new edje parte collection 
+ */
 Edje_Part_Collection *_edje_collection_convert(Edje_File *file,
 					       Old_Edje_Part_Collection *oedc);
+
+/**
+ * Convert old edje part descripton into new format 
+ *
+ * @param type The edje par description common type 
+ * @param ce an edje collection directory entry 
+ * @param the old edje part descripton 
+ *
+ * @return a new edje part descripton common 
+ */
 Edje_Part_Description_Common *_edje_description_convert(int type,
 							Edje_Part_Collection_Directory_Entry *ce,
 							Old_Edje_Part_Description *oed);
+
+/**
+ * Get the current edje file 
+ *
+ * @return the current edje file 
+ */
 const Edje_File *_edje_file_get(void);
+
+/**
+ * Set the current edje file 
+ * 
+ * @param edf the edje file to set 
+ *
+ */
 void _edje_file_set(const Edje_File *edf);
 
 #endif
