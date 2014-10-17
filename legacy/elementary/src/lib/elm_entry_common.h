@@ -54,10 +54,23 @@ typedef enum
 
 enum
 {
+   ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_NORMAL,          /**< The plain normal layout @since 1.12 */
+   ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_FILENAME,        /**< Filename layout. Symbols such as '/' should be disabled. @since 1.12 */
+   ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_PERSON_NAME      /**< The name of a person. @since 1.12 */
+};
+
+enum
+{
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL
+};
+
+enum
+{
+   ELM_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NORMAL,    /**< The normal password layout @since 1.12 */
+   ELM_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NUMBERONLY /**< The password layout to allow only number @since 1.12 */
 };
 
 /**
