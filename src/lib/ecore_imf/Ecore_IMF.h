@@ -332,12 +332,24 @@ typedef enum
 
 enum
 {
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_NORMAL,            /**< The plain normal layout @since 1.12 */
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_FILENAME,          /**< Filename layout. Symbols such as '/' should be disabled. @since 1.12 */
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_PERSON_NAME        /**< The name of a person. @since 1.12 */
+};
+
+enum
+{
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,            /**< The plain normal number layout @since 1.8 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,            /**< The number layout to allow a positive or negative sign at the start @since 1.8 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,           /**< The number layout to allow decimal point to provide fractional value @since 1.8 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL /**< The number layout to allow decimal point and negative sign @since 1.8 */
 };
 
+enum
+{
+   ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NORMAL,          /**< The normal password layout @since 1.12 */
+   ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NUMBERONLY       /**< The password layout to allow only number @since 1.12 */
+};
 /**
  * @typedef Ecore_IMF_BiDi_Direction
  * @brief Enumeration that defines the types of Ecore_IMF bidirectionality
