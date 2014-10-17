@@ -13,57 +13,6 @@ local M = {}
 
 local getmetatable, setmetatable = getmetatable, setmetatable
 
-local gen_field = function(self, fname)
-    local  t = rawget(self, fname)
-    if not t then
-        t = {}
-        rawset(self, fname, t)
-        return false, t
-    end
-    return true, t
-end
-
-local init_getters = function(self)
-    local has_gtrs, gtrs = gen_field(self, "__getters")
-    if not has_gtrs then
-        local oidx = self.__index
-        if type(oidx) == "table" then
-            local ooidx = oidx
-            oidx = function(self, n) return ooidx[n] end
-        end
-        self.__index = function(self, n)
-            local f = gtrs[n]
-            if f then return f(self) end
-            local v = rawget(self, n)
-            if v == nil then return oidx(self, n) end
-            return v
-        end
-    end
-    return gtrs
-end
-
-local init_setters = function(self)
-    local has_strs, strs = gen_field(self, "__setters")
-    if not has_strs then
-        local onindex = self.__newindex or rawset
-        self.__newindex = function(self, n, v)
-            local f = strs[n]
-            if f then return f(self, v) end
-            onindex(self, n, v)
-        end
-    end
-    return strs
-end
-
-local wrap_retvals = function(f)
-    return function()
-        local vals = { f() }
-        if #vals == 0 then return end
-        if #vals  > 1 then return vals end
-        return vals[1]
-    end
-end
-
 M.Object = {
     __call = function(self, ...)
         local r = self:clone()
@@ -90,29 +39,6 @@ M.Object = {
             is = (pt == base)
         end
         return is
-    end,
-
-    define_property = function(self, propname, get, set)
-        if get then
-            init_getters(self)[propname] = wrap_retvals(get)
-        end
-        if set then
-            init_setters(self)[propname] = wrap_retvals(set)
-        end
-    end,
-
-    define_property_key = function(self, propname, get, set)
-        if get then get = wrap_retvals(get) end
-        if set then set = wrap_retvals(set) end
-        local proxy = setmetatable({}, {
-            __index = function(proxy, key)
-                if get then return get(self, key) end
-            end,
-            __newindex = function(proxy, key, val)
-                if set then return set(self, key, val) end
-            end
-        })
-        init_getters(self)[propname] = function(self, n) return proxy end
     end,
 
     mixin = function(self, obj)
