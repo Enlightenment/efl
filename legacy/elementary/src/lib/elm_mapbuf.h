@@ -10,9 +10,9 @@
  *
  * This holds one content object and uses an Evas Map of transformation
  * points to be later used with this content. So the content will be
- * moved, resized, etc as a single image. So it will improve performance
+ * moved as a single image. So it will improve performance
  * when you have a complex interface, with a lot of elements, and will
- * need to resize or move it frequently (the content object and its
+ * need to move it frequently (the content object and its
  * children).
  *
  * This widget inherits from @ref elm-container-class, so that the
