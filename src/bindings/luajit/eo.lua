@@ -108,6 +108,13 @@ ffi.cdef [[
     const Eo_Class *eo_base_class_get(void);
 ]]
 
+local addr_d = ffi.typeof("union { double d; const Eo_Class *p; }")
+local eo_class_addr_get = function(x)
+    local v = addr_d()
+    v.p = x
+    return tonumber(v.d)
+end
+
 local cutil = require("cutil")
 local util  = require("util")
 
@@ -121,6 +128,8 @@ local eo_classes = {}
 local init = function()
     eo = util.lib_load("eo")
     eo.eo_init()
+    local eocl = eo.eo_base_class_get()
+    local addr = eo_class_addr_get(eocl)
     classes["Eo_Base"] = util.Object:clone {
         connect = function(self, ename, func)
             local ev = self.__events[ename]
@@ -140,11 +149,13 @@ local init = function()
         __events = util.Object:clone {},
         __properties = util.Object:clone {}
     }
-    eo_classes["Eo_Base"] = eo.eo_base_class_get()
+    classes[addr] = classes["Eo_Base"]
+    eo_classes["Eo_Base"] = eocl
+    eo_classes[addr] = eocl
 end
 
 local shutdown = function()
-    M.class_unregister("Eo.Base")
+    M.class_unregister("Eo_Base")
     eo.eo_shutdown()
     util.lib_unload("eo")
 end
@@ -171,13 +182,19 @@ M.class_register = function(name, parent, body, eocl)
     if body.__properties then
         body.__properties = parent.__properties:clone(body.__properties)
     end
+    local addr = eo_class_addr_get(eocl)
     classes[name] = parent:clone(body)
+    classes[addr] = classes[name]
     eo_classes[name] = eocl
+    eo_classes[addr] = eocl
 end
 
 M.class_unregister = function(name)
+    local addr = eo_class_addr_get(eo_classes[name])
     classes[name] = nil
+    classes[addr] = nil
     eo_classes[name] = nil
+    eo_classes[addr] = nil
 end
 
 M.class_mixin = function(name, mixin)
@@ -219,23 +236,22 @@ M.__do_end = function()
                        -- only for cleanup (dtor)
 end
 
+local get_obj_mt = function(obj)
+    local cl = eo.eo_class_get(obj)
+    if cl == nil then return nil end
+    return classes[eo_class_addr_get(cl)]
+end
+
 ffi.metatype("Eo", {
     __index = function(self, key)
-        local cl = eo.eo_class_get(self)
-        if cl == nil then return nil end
-        local nm = eo.eo_class_name_get(cl)
-        if nm == nil then return nil end
-        local mt = classes[ffi.string(nm)]
+        local mt = get_obj_mt(self)
         if mt == nil then return nil end
         return mt[key]
     end,
 
     __newindex = function(self, key, val)
-        local cl = eo.eo_class_get(self)
-        if cl == nil then return nil end
-        local nm = eo.eo_class_name_get(cl)
-        if nm == nil then return nil end
-        local mt = classes[ffi.string(nm)]
+        local mt = get_obj_mt(self)
+        if mt == nil then return nil end
         local pt = mt.__properties
         local pp = pt[key]
         if not pp then
