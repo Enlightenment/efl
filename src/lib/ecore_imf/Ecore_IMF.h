@@ -71,6 +71,12 @@ extern "C" {
  *
  * @{
  */
+
+/**
+ * @example ecore_imf_example.c
+ * Show how to write simple editor using the Ecore_IMF library
+ */
+
 /* ecore_imf_context_input_panel_event_callback_add() flag */
 typedef enum
 {
