@@ -3864,7 +3864,8 @@ eet_data_read_cipher(Eet_File *ef,
  * @param edd The data descriptor handle to use when decoding.
  * @param name The key the data is stored under in the eet file.
  * @param cipher_key The key to use as cipher.
- * @param buffer Buffer 
+ * @param buffer Buffer.
+ * @param buffer_size The buffer size.
  * @return A pointer to buffer if successful and NULL on error.
  *
  * This function decodes a data structure stored in an eet file, returning
@@ -4530,9 +4531,37 @@ eet_data_node_write_cipher(Eet_File *ef,
  */
 typedef struct _Eet_Node_Walk Eet_Node_Walk;
 
+/**
+ * @typedef (*Eet_Node_Walk_Struct_Alloc_Callback)
+ *
+ * Callback prototype for Eet_Node_Walk_Struct_Alloc
+ * @param type The allocation type
+ * @param user_data the data passed by the user to the callback
+ */
 typedef void *              (*Eet_Node_Walk_Struct_Alloc_Callback)(const char *type, void *user_data);
+
+/**
+ * @typedef (*Eet_Node_Walk_Struct_Add_Callback)
+ *
+ * Callback prototype for Eet_Node_Walk_Struct_Add
+ * @param parent The parent node
+ * @param name the name for the new node
+ * @param child the child node
+ * @param user_data the data passed by the user to the callback
+ */
 typedef void                (*Eet_Node_Walk_Struct_Add_Callback)(void *parent, const char *name, void *child, void *user_data);
+
+/**
+ * @typedef (*Eet_Node_Walk_Array_Callback)
+ *
+ * Callback prototype for Eet_Node_Walk_Array
+ * @param variable EINA_TRUE or EINA_FALSE
+ * @param name a name
+ * @param count a counter
+ * @param user_data the data passed by the user to the callback
+ */
 typedef void *              (*Eet_Node_Walk_Array_Callback)(Eina_Bool variable, const char *name, int count, void *user_data);
+
 typedef void                (*Eet_Node_Walk_Insert_Callback)(void *array, int index, void *child, void *user_data);
 typedef void *              (*Eet_Node_Walk_List_Callback)(const char *name, void *user_data);
 typedef void                (*Eet_Node_Walk_Append_Callback)(void *list, void *child, void *user_data);
