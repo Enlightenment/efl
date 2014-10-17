@@ -197,8 +197,26 @@ M.class_unregister = function(name)
     eo_classes[addr] = nil
 end
 
+local mixin_tbl = function(cl, mixin, field)
+    local mxt = mixin[field]
+    if mxt then
+        local clt = cl[field]
+        if not clt then
+            cl[field] = mxt
+        else
+            for k, v in pairs(mxt) do clt[k] = v end
+        end
+        mixin[field] = nil
+    end
+end
+
 M.class_mixin = function(name, mixin)
-    classes[name]:mixin(classes[mixin])
+    local cl = classes[name]
+    -- mixin properties/events
+    mixin_tbl(cl, mixin, "__properties")
+    mixin_tbl(cl, mixin, "__events")
+    -- mixin the rest
+    cl:mixin(classes[mixin])
 end
 
 local obj_gccb = function(obj)
