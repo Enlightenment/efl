@@ -4788,6 +4788,7 @@ _edje_edit_state_alloc(int type, Edje *ed)
 	   }
 
 	 EDIT_ALLOC_POOL(IMAGE, Image, image);
+	 EDIT_ALLOC_POOL(PROXY, Proxy, proxy);
 	 EDIT_ALLOC_POOL(TEXT, Text, text);
 	 EDIT_ALLOC_POOL(TEXTBLOCK, Text, text);
 	 EDIT_ALLOC_POOL(BOX, Box, box);
