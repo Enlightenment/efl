@@ -28,8 +28,8 @@
    changes made to the canvas and so takes this work out of the
    programmers hand, saving a lot of time and energy.
 
-   It's small and lean, designed to work on embedded systems all the way
-   to large and powerful multi-cpu workstations. It can be compiled to
+   It is small and lean, and is designed to work on embedded systems all the way
+   to large and powerful multi-CPU workstations. It can be compiled to
    only have the features you need for your target platform if you so
    wish, thus keeping it small and lean. It has several display
    back-ends, letting it display on several display systems, making it
@@ -39,13 +39,13 @@
 
    Evas is not a widget set or widget toolkit, however it is their
    base. See Elementary (http://docs.enlightenment.org/auto/elementary/)
-   for a toolkit based on Evas, Edje, @ref Ecore and other Enlightenment
-   technologies.
+   for a toolkit based on @ref Evas, @ref Edje, @ref Ecore and other
+   Enlightenment technologies.
 
    It is not dependent or aware of main loops, input or output
    systems. Input should be polled from various sources and fed to
-   Evas. Similarly, it will not create windows or report windows updates
-   to your system, rather just drawing the pixels and reporting to the
+   Evas. Similarly, it does not create windows or report windows updates
+   to your system, but just draws the pixels and report to the
    user the areas that were changed. Of course these operations are quite
    common and thus they are ready to use in @ref Ecore, particularly in
    @ref Ecore_Evas_Group.
@@ -62,7 +62,7 @@
    the display.
 
    Immediate mode display systems retain very little, or no state. A
-   program will execute a series of commands, as in the pseudo code:
+   program executes a series of commands, as in the pseudo code:
 
    @verbatim
    draw line from position (0, 0) to position (100, 200);
@@ -77,9 +77,9 @@
    The series of commands is executed by the windowing system and the
    results are displayed on the screen (normally). Once the commands are
    executed the display system has little or no idea of how to reproduce
-   this image again, and so has to be instructed by the application how
+   this image again, and so has to be instructed by the application on how
    to redraw sections of the screen whenever needed. Each successive
-   command will be executed as instructed by the application and either
+   command is executed as instructed by the application and either
    emulated by software or sent to the graphics hardware on the device to
    be performed.
 
@@ -88,15 +88,14 @@
    increasing complexity of displays and demands by users to have better
    looking interfaces, more and more work is needing to be done at this
    level by the internals of widget sets, custom display widgets and
-   other programs. This means more and more logic and display rendering
-   code needs to be written time and time again, each time the
-   application needs to figure out how to minimise redraws so that
-   display is fast and interactive, and keep track of redraw logic. The
-   power comes at a high-price, lots of extra code and work.  Programmers
-   not very familiar with graphics programming will often make mistakes
-   at this level and produce code that is sub optimal. Those familiar
-   with this kind of programming will simply get bored by writing the
-   same code again and again.
+   other programs. This means that more and more logic and display rendering
+   code needs to be written each time the application needs to figure out
+   how to minimise redraws so that display is fast and interactive, and
+   keeps track of redraw logic. The power comes at a high-price with lots
+   of extra code and work.  Programmers not very familiar with graphics
+   programming often make mistakes at this level and produce code that
+   is sub optimal. Those familiar with this kind of programming simply
+   get bored by writing the same code again and again.
 
    For example, if in the above scene, the windowing system requires the
    application to redraw the area from 0, 0 to 50, 50 (also referred as
@@ -106,7 +105,7 @@
    @verbatim
    Redraw from position (0, 0) to position (50, 50):
 
-   // what was in area (0, 0, 50, 50)?
+   // what is in area (0, 0, 50, 50)?
 
    // 1. intersection part of line (0, 0) to (100, 200)?
       draw line from position (0, 0) to position (25, 50);
@@ -119,15 +118,15 @@
       draw image bitmap_subimage at position (10, 30);
    @endverbatim
 
-   The clever reader might have noticed that, if all elements in the
+   You might have noticed that, if all elements in the
    above scene are opaque, then the system is doing useless paints: part
    of the line is behind the rectangle, and part of the rectangle is
    behind the image. These useless paints tend to be very costly, as
-   pixels tend to be 4 bytes in size, thus an overlapping region of 100 x
-   100 pixels is around 40000 useless writes! The developer could write
+   pixels tend to be 4 bytes in size; thus an overlapping region of 100 x
+   100 pixels is around 40000 useless writes! You could write
    code to calculate the overlapping areas and avoid painting then, but
    then it should be mixed with the "expose event" handling mentioned
-   above and quickly one realizes the initially simpler method became
+   above and you quickly realize that the initially simpler method became
    really complex.
 
    Evas is a structural system in which the programmer creates and
@@ -156,25 +155,24 @@
    @endverbatim
 
    This may look longer, but when the display needs to be refreshed or
-   updated, the programmer only moves, resizes, shows, hides etc. the
-   objects that need to change. The programmer simply thinks at the
-   object logic level, and the canvas software does the rest of the work
-   for them, figuring out what actually changed in the canvas since it
-   was last drawn, how to most efficiently redraw the canvas and its
-   contents to reflect the current state, and then it can go off and do
+   updated, you move, resize, show, or hide the objects that need to change.
+   You can simply think at the object logic level, and the canvas software
+   does the rest of the work for you, figuring out what actually changed in the
+   canvas since it had been last drawn, how to most efficiently redraw the canvas and
+   its contents to reflect the current state, and then it can go off and do
    the actual drawing of the canvas.
 
-   This lets the programmer think in a more natural way when dealing with
+   This lets you think in a more natural way when dealing with
    a display, and saves time and effort of working out how to load and
-   display images, render given the current display system etc. Since
+   display images, render given the current display system, and so on. Since
    Evas also is portable across different display systems, this also
-   gives the programmer the ability to have their code ported and
+   gives you the ability to have their code ported and
    displayed on different display systems with very little work.
 
    Evas can be seen as a display system that stands somewhere between a
    widget set and an immediate mode display system. It retains basic
    display logic, but does very little high-level logic such as
-   scrollbars, sliders, push buttons etc.
+   scrollbars, sliders, and push buttons.
 
 
    @section evas_main_compiling How to compile
