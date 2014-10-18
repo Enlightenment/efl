@@ -294,7 +294,7 @@ eio_file_xattr(const char *path,
   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-  async = malloc(sizeof (Eio_File_Char_Ls));
+  async = calloc(1, sizeof (Eio_File_Char_Ls));
   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
   async->filter_cb = filter_cb;
