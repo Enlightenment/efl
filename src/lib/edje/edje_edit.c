@@ -7326,6 +7326,10 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
    if (image_id < 0)
       return NULL;
 
+   if (edje_edit_image_compression_type_get(obj, name) ==
+       EDJE_EDIT_IMAGE_COMP_USER)
+     image_id = -1 - image_id;
+
    it = eina_hash_iterator_data_new(ed->file->collection);
 
    #define ITEM_ADD() \
