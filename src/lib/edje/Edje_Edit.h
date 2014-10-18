@@ -5014,6 +5014,16 @@ EAPI Eina_Bool edje_edit_sound_compression_type_set(Evas_Object *obj, const char
  */
 EAPI Eina_Binbuf *edje_edit_sound_samplebuffer_get(Evas_Object *obj, const char *sample_name);
 
+/** Get the name of sample source.
+ *
+ * @param obj Object being edited.
+ * @param sample_name The name of the sample.
+ *
+ * @return snd_src The sample source name.
+ * @since 1.11
+ */
+EAPI const char *edje_edit_sound_samplesource_get(Evas_Object *obj, const char *sample_name);
+
 //@}
 /******************************************************************************/
 /*************************   SPECTRUM API   ***********************************/
