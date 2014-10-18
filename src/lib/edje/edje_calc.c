@@ -9,7 +9,7 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
                                      Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
                                      Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
                                      Edje_Real_Part *confine_to, Edje_Real_Part *threshold,
-				     Edje_Calc_Params *params, Edje_Real_Part_Set *set,
+                                     Edje_Calc_Params *params,
                                      Evas_Coord mmw, Evas_Coord mmh,
                                      FLOAT_T pos);
 
@@ -2258,7 +2258,6 @@ _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *confine_to,
                          Edje_Real_Part *threshold,
                          Edje_Calc_Params *params,
-                         Edje_Real_Part_Set *set,
                          Evas_Coord mmw, Evas_Coord mmh,
                          FLOAT_T pos)
 {
@@ -2312,7 +2311,10 @@ _edje_part_recalc_single(Edje *ed,
      {
       case EDJE_PART_TYPE_IMAGE:
            {
+              Edje_Real_Part_Set *set;
               Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) desc;
+
+              _edje_real_part_image_set(ed, ep, pos);
 
               /* border */
               params->type.common.spec.image.l = img_desc->image.border.l;
@@ -2323,6 +2325,7 @@ _edje_part_recalc_single(Edje *ed,
 
               params->type.common.spec.image.border_scale_by = img_desc->image.border.scale_by;
 
+              set = ep->param1.set;
               if (set && set->set)
                 {
 #define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
@@ -3391,7 +3394,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                       chosen_desc, center[0], light[0],
                                       persp[0], rp1[Rel1X], rp1[Rel1Y],
                                       rp1[Rel2X], rp1[Rel2Y], confine_to,
-                                      threshold, p1, ep->param1.set, mmw, mmh,
+                                      threshold, p1, mmw, mmh,
                                       pos);
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY) ep->param1.state = ed->state;
@@ -3460,7 +3463,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                       chosen_desc, center[1], light[1],
                                       persp[1], rp2[Rel1X], rp2[Rel1Y],
                                       rp2[Rel2X], rp2[Rel2Y], confine_to,
-                                      threshold, p2, ep->param2->set, mmw, mmh,
+                                      threshold, p2, mmw, mmh,
                                       pos);
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY) ep->param2->state = ed->state;
