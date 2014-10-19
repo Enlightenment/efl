@@ -256,10 +256,10 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo,
 
 /*---*/
 
-static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
-static void _JPEGErrorHandler(j_common_ptr cinfo);
-static void _JPEGErrorHandler2(j_common_ptr cinfo,
-                               int          msg_level);
+static void _eet_image_jpeg_error_exit_cb(j_common_ptr cinfo);
+static void _eet_image_jpeg_output_message_cb(j_common_ptr cinfo);
+static void _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
+                                            int          msg_level);
 
 static int
 eet_data_image_jpeg_header_decode(const void   *data,
@@ -357,37 +357,60 @@ static int _eet_image_words_bigendian = -1;
 /*---*/
 
 static void
-_JPEGFatalErrorHandler(j_common_ptr cinfo)
+_eet_image_jpeg_error_exit_cb(j_common_ptr cinfo)
 {
+   char buffer[JMSG_LENGTH_MAX];
    emptr errmgr;
 
+   (*cinfo->err->format_message)(cinfo, buffer);
+   ERR(buffer);
    errmgr = (emptr)cinfo->err;
-   /*   cinfo->err->output_message(cinfo);*/
    longjmp(errmgr->setjmp_buffer, 1);
    return;
 }
 
 static void
-_JPEGErrorHandler(j_common_ptr cinfo EINA_UNUSED)
+_eet_image_jpeg_output_message_cb(j_common_ptr cinfo)
 {
-   /*   emptr errmgr; */
+   char buffer[JMSG_LENGTH_MAX];
+   emptr errmgr;
 
-    /*   errmgr = (emptr) cinfo->err; */
-    /*   cinfo->err->output_message(cinfo);*/
-    /*   longjmp(errmgr->setjmp_buffer, 1);*/
-       return;
+   (*cinfo->err->format_message)(cinfo, buffer);
+   ERR(buffer);
+   errmgr = (emptr)cinfo->err;
+   longjmp(errmgr->setjmp_buffer, 1);
+   return;
 }
 
 static void
-_JPEGErrorHandler2(j_common_ptr cinfo EINA_UNUSED,
-                   int          msg_level EINA_UNUSED)
+_eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
+                                int          msg_level)
 {
-   /*   emptr errmgr; */
+   char buffer[JMSG_LENGTH_MAX];
+   struct jpeg_error_mgr *err;
+   emptr errmgr;
 
-    /*   errmgr = (emptr) cinfo->err; */
-    /*   cinfo->err->output_message(cinfo);*/
-    /*   longjmp(errmgr->setjmp_buffer, 1);*/
-       return;
+   err = cinfo->err;
+   if (msg_level < 0)
+     {
+        if ((err->num_warnings == 0) || (err->trace_level >= 3))
+          {
+             (*cinfo->err->format_message)(cinfo, buffer);
+             WRN(buffer);
+          }
+        err->num_warnings++;
+     }
+   else
+     {
+        if (err->trace_level >= msg_level)
+          {
+             (*cinfo->err->format_message)(cinfo, buffer);
+             INF(buffer);
+          }
+     }
+   errmgr = (emptr)cinfo->err;
+   longjmp(errmgr->setjmp_buffer, 1);
+   return;
 }
 
 static int
@@ -402,9 +425,9 @@ eet_data_image_jpeg_header_decode(const void   *data,
    memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _JPEGFatalErrorHandler;
-   jerr.pub.emit_message = _JPEGErrorHandler2;
-   jerr.pub.output_message = _JPEGErrorHandler;
+   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
    if (setjmp(jerr.setjmp_buffer))
      return 0;
 
@@ -461,9 +484,9 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
    memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _JPEGFatalErrorHandler;
-   jerr.pub.emit_message = _JPEGErrorHandler2;
-   jerr.pub.output_message = _JPEGErrorHandler;
+   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
    if (setjmp(jerr.setjmp_buffer))
      return 0;
 
@@ -613,9 +636,9 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _JPEGFatalErrorHandler;
-   jerr.pub.emit_message = _JPEGErrorHandler2;
-   jerr.pub.output_message = _JPEGErrorHandler;
+   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
    if (setjmp(jerr.setjmp_buffer))
      return 0;
 
@@ -1551,9 +1574,9 @@ eet_data_image_jpeg_convert(int         *size,
    memset(&cinfo, 0, sizeof (struct jpeg_compress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _JPEGFatalErrorHandler;
-   jerr.pub.emit_message = _JPEGErrorHandler2;
-   jerr.pub.output_message = _JPEGErrorHandler;
+   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
    if (setjmp(jerr.setjmp_buffer))
      return NULL;
 
@@ -1649,9 +1672,9 @@ eet_data_image_jpeg_alpha_convert(int         *size,
       buf = alloca(3 * w);
 
       cinfo.err = jpeg_std_error(&(jerr.pub));
-      jerr.pub.error_exit = _JPEGFatalErrorHandler;
-      jerr.pub.emit_message = _JPEGErrorHandler2;
-      jerr.pub.output_message = _JPEGErrorHandler;
+      jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+      jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+      jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
       if (setjmp(jerr.setjmp_buffer))
         return NULL;
 
@@ -1718,9 +1741,9 @@ eet_data_image_jpeg_alpha_convert(int         *size,
       buf = alloca(3 * w);
 
       cinfo.err = jpeg_std_error(&(jerr.pub));
-      jerr.pub.error_exit = _JPEGFatalErrorHandler;
-      jerr.pub.emit_message = _JPEGErrorHandler2;
-      jerr.pub.output_message = _JPEGErrorHandler;
+      jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+      jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+      jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
       if (setjmp(jerr.setjmp_buffer))
         {
            free(d1);
