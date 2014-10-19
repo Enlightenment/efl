@@ -3218,16 +3218,13 @@ _part_text_translatable_set(Eina_Inlist **translate_strings, const char *part, E
      }
    //Delete this exist one if this part has been not preset.
    //see elm_widget_part_text_translatable_set()
-   else if ((preset) || (!ts->preset))
+   else if (ts && ((preset) || (!ts->preset)))
      {
-        if (ts)
-          {
-             t = eina_inlist_remove(t, EINA_INLIST_GET(ts));
-             eina_stringshare_del(ts->id);
-             eina_stringshare_del(ts->domain);
-             eina_stringshare_del(ts->string);
-             ELM_SAFE_FREE(ts, free);
-          }
+        t = eina_inlist_remove(t, EINA_INLIST_GET(ts));
+        eina_stringshare_del(ts->id);
+        eina_stringshare_del(ts->domain);
+        eina_stringshare_del(ts->string);
+        ELM_SAFE_FREE(ts, free);
      }
 
    *translate_strings = t;
