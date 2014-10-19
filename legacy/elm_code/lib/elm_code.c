@@ -61,16 +61,40 @@ EAPI Elm_Code_File *elm_code_open(const char *path)
 {
    Elm_Code_File *ret;
    Eina_File *file;
+   Eina_File_Line *line;
+   Eina_Iterator *it;
+   void *map;
 
    file = eina_file_open(path, EINA_FALSE);
-   ret = calloc(1, sizeof(ret));
+   map = eina_file_map_all(file, EINA_FILE_WILLNEED);
+   ret = calloc(1, sizeof(Elm_Code_File));
    ret->file = file;
+   ret->map = map;
+
+   it = eina_file_map_lines(file);
+   EINA_ITERATOR_FOREACH(it, line)
+     {
+        Elm_Code_Line *ecl;
+
+        ecl = calloc(1, sizeof(Elm_Code_Line));
+        if (!ecl) continue;
+
+        ecl->content = *line;
+        ret->lines = eina_list_append(ret->lines, ecl);
+     }
+   eina_iterator_free(it);
 
    return ret;
 }
 
 EAPI void elm_code_close(Elm_Code_File *file)
 {
+   Elm_Code_Line *l;
+
+   EINA_LIST_FREE(file->lines, l)
+     free(l);
+
+   eina_file_map_free(file->file, file->map);
    eina_file_close(file->file);
    free(file);
 }
@@ -83,4 +107,9 @@ EAPI const char *elm_code_filename_get(Elm_Code_File *file)
 EAPI const char *elm_code_path_get(Elm_Code_File *file)
 {
    return eina_file_filename_get(file->file);
+}
+
+EAPI int elm_code_lines_get(Elm_Code_File *file)
+{
+   return eina_list_count(file->lines);
 }
