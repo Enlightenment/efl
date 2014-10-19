@@ -2704,7 +2704,10 @@ start_tiling(Evas_Engine_GL_Context *gc EINA_UNUSED,
 static void
 shader_array_flush(Evas_Engine_GL_Context *gc)
 {
-   int i, gw, gh, setclip, fbo = 0, done = 0;
+   int i, gw, gh;
+   unsigned int pipe_done = 0;  //count pipe iteration for debugging
+   Eina_Bool setclip;
+   Eina_Bool fbo = EINA_FALSE;
 
    if (!gc->havestuff) return;
    gw = gc->w;
@@ -2714,14 +2717,16 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
      {
         gw = gc->pipe[0].shader.surface->w;
         gh = gc->pipe[0].shader.surface->h;
-        fbo = 1;
+        fbo = EINA_TRUE;
      }
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
         if (gc->pipe[i].array.num <= 0) break;
-        setclip = 0;
-        done++;
+
+        setclip = EINA_FALSE;
+        pipe_done++;
         gc->flushnum++;
+
         GLERR(__FUNCTION__, __FILE__, __LINE__, "<flush err>");
         if (gc->pipe[i].shader.cur_prog != gc->state.current.cur_prog)
           {
@@ -2920,7 +2925,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
                   else
                     glScissor(cx, cy, cw, ch);
-                  setclip = 1;
+                  setclip = EINA_TRUE;
                   gc->state.current.cx = cx;
                   gc->state.current.cy = cy;
                   gc->state.current.cw = cw;
@@ -3330,7 +3335,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
    gc->state.top_pipe = 0;
    if (dbgflushnum == 1)
      {
-        if (done > 0) printf("DONE (pipes): %i\n", done);
+        if (pipe_done > 0) printf("DONE (pipes): %i\n", pipe_done);
      }
    gc->havestuff = EINA_FALSE;
 }
