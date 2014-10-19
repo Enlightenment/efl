@@ -548,6 +548,9 @@ START_TEST(eolian_simple_parsing)
    /* Property */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
    fail_if(strcmp(eolian_function_name_get(fid), "a"));
+   string = eolian_function_description_get(fid, EOLIAN_PROPERTY);
+   fail_if(!string);
+   fail_if(strcmp(string, "Common desc for a"));
    string = eolian_function_description_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "comment a.set"));

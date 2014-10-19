@@ -5,6 +5,7 @@ class Class_Simple {
    data: Evas_Simple_Data;
    properties {
       a {
+         /*@ Common desc for a */
          set {
             /*@
             comment a.set */

@@ -1359,7 +1359,7 @@ body:
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        /* just consume the comment for now */
+        prop->common_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)
@@ -1455,7 +1455,7 @@ body:
    check_next(ls, '{');
    if (ls->t.token == TOK_COMMENT)
      {
-        meth->get_description = eina_stringshare_ref(ls->t.value.s);
+        meth->common_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
    for (;;) switch (ls->t.kw)

@@ -101,6 +101,7 @@ struct _Eolian_Function
    Eolian_Implement *set_impl;
    Eina_Stringshare *get_legacy;
    Eina_Stringshare *set_legacy;
+   Eina_Stringshare *common_description;
    Eina_Stringshare *get_description;
    Eina_Stringshare *set_description;
    Eina_Stringshare *get_return_comment;

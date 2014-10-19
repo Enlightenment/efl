@@ -92,9 +92,9 @@ eolian_function_description_get(const Eolian_Function *fid, Eolian_Function_Type
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    switch (ftype)
      {
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_description; break;
+      case EOLIAN_PROP_GET: return fid->get_description; break;
       case EOLIAN_PROP_SET: return fid->set_description; break;
-      default: return NULL;
+      default: return fid->common_description;
      }
 }
 

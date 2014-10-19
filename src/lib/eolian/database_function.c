@@ -25,6 +25,7 @@ database_function_del(Eolian_Function *fid)
    if (fid->set_legacy) eina_stringshare_del(fid->set_legacy);
    if (fid->get_description) eina_stringshare_del(fid->get_description);
    if (fid->set_description) eina_stringshare_del(fid->set_description);
+   if (fid->common_description) eina_stringshare_del(fid->common_description);
    if (fid->get_return_comment) eina_stringshare_del(fid->get_return_comment);
    if (fid->set_return_comment) eina_stringshare_del(fid->set_return_comment);
    free(fid);
