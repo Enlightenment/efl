@@ -42,8 +42,8 @@ extern "C" {
 
 typedef struct _Elm_Code_Line
 {
-   Eina_File_Line content;
-   Eina_File_Line modified;
+   char *content;
+   unsigned int number;
 
 } Elm_Code_Line;
 
@@ -51,7 +51,6 @@ typedef struct _Elm_Code_File
 {
    Eina_List *lines;
    Eina_File *file;
-   void *map;
 
 } Elm_Code_File;
 
@@ -110,6 +109,8 @@ EAPI const char *elm_code_filename_get(Elm_Code_File *file);
 EAPI const char *elm_code_path_get(Elm_Code_File *file);
 
 EAPI int elm_code_lines_get(Elm_Code_File *file);
+
+EAPI char *elm_code_line_content_get(Elm_Code_File *file, int line);
 
 /**
  * @}

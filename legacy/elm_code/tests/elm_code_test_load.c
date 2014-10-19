@@ -31,9 +31,36 @@ START_TEST (elm_code_load_lines)
 }
 END_TEST
 
+START_TEST (elm_code_load_blank_lines)
+{
+   char *path = "elm_code/tests/testfile-withblanks.txt";
+   Elm_Code_File *file;
+
+   file = elm_code_open(path);
+
+   ck_assert(8 == elm_code_lines_get(file));
+   elm_code_close(file);
+}
+END_TEST
+
+START_TEST (elm_code_load_content)
+{
+   char *path = "elm_code/tests/testfile.txt";
+   Elm_Code_File *file;
+
+   file = elm_code_open(path);
+
+   ck_assert_str_eq("line2", elm_code_line_content_get(file, 2 - 1));
+   ck_assert_str_eq("another line", elm_code_line_content_get(file, 4 - 1));
+   elm_code_close(file);
+}
+END_TEST
+
 void elm_code_test_load(TCase *tc)
 {
    tcase_add_test(tc, elm_code_load);
    tcase_add_test(tc, elm_code_load_lines);
+   tcase_add_test(tc, elm_code_load_blank_lines);
+   tcase_add_test(tc, elm_code_load_content);
 }
 
