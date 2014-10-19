@@ -2272,6 +2272,7 @@ part_lookup_delete(Edje_Part_Collection *pc, const char *name, int *dest, char *
 {
    Part_Lookup_Key key;
    Part_Lookup *pl = NULL;
+   Part_Lookup *lpl;
    Eina_List *list, *l, *ll;
    key.pc = pc;
    key.mem.dest = dest;
@@ -2280,12 +2281,12 @@ part_lookup_delete(Edje_Part_Collection *pc, const char *name, int *dest, char *
    pl = eina_hash_find(part_pc_dest_lookup, &key);
    if (!pl) return;
    list = eina_hash_find(part_dest_lookup, &pl->key);
-   EINA_LIST_FOREACH_SAFE(list, l, ll, pl)
+   EINA_LIST_FOREACH_SAFE(list, l, ll, lpl)
      {
-        if (strcmp(pl->name, name) || (pl->key.dest2 != dest2)) continue;
-        free(pl->name);
+        if (strcmp(lpl->name, name) || (lpl->key.dest2 != dest2)) continue;
+        free(lpl->name);
         list = eina_list_remove_list(list, l);
-        free(pl);
+        free(lpl);
      }
    eina_hash_set(part_dest_lookup, &pl->key, list);
 }
