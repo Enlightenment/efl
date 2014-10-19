@@ -49,7 +49,7 @@ EAPI int evil_rename(const char *src, const char *dst);
  *
  * Wrapper around evil_rename().
  */
-# define rename(src, dst) evil_rename(src, dst)
+#define rename(src, dst) evil_rename(src, dst)
 
 
 #endif /* __EVIL_STDIO_H__ */
