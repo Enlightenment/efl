@@ -156,11 +156,31 @@ START_TEST(eolian_override_generation)
 }
 END_TEST
 
+START_TEST(eolian_functions_descriptions)
+{
+   char output_filepath[PATH_MAX] = "";
+   snprintf(output_filepath, PATH_MAX, "%s/eolian_output.h",
+#ifdef HAVE_EVIL
+         (char *)evil_tmpdir_get()
+#else
+         "/tmp"
+#endif
+         );
+   remove(output_filepath);
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "--eo --gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref_eo.h", output_filepath));
+   remove(output_filepath);
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "--legacy --gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref_legacy.h", output_filepath));
+}
+END_TEST
+
 void eolian_generation_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_types_generation);
    tcase_add_test(tc, eolian_default_values_generation);
    tcase_add_test(tc, eolian_override_generation);
    tcase_add_test(tc, eolian_dev_impl_code);
+   tcase_add_test(tc, eolian_functions_descriptions);
 }
 

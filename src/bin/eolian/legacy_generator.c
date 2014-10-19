@@ -90,9 +90,13 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
            eina_strbuf_append(fparam, "const ");
         eina_strbuf_append_printf(fparam, "%s *obj", class_env.full_classname);
      }
-   const char *desc = eolian_function_description_get(funcid, ftype);
    Eina_Strbuf *linedesc = eina_strbuf_new();
-   eina_strbuf_append(linedesc, desc ? desc : "No description supplied.");
+   const char *common_desc = eolian_function_description_get(funcid, EOLIAN_UNRESOLVED);
+   const char *specific_desc = (ftype == EOLIAN_PROP_SET || ftype == EOLIAN_PROP_GET) ?
+         eolian_function_description_get(funcid, ftype) : NULL;
+   if (!common_desc && !specific_desc) eina_strbuf_append(linedesc, "No description supplied.");
+   if (common_desc) eina_strbuf_append_printf(linedesc, "%s\n", common_desc);
+   if (specific_desc) eina_strbuf_append(linedesc, specific_desc);
    if (eina_strbuf_length_get(linedesc))
      {
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");

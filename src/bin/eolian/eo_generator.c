@@ -114,7 +114,6 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
           }
         eina_iterator_free(itr);
      }
-   const char *funcdesc = eolian_function_description_get(func, ftype);
    Eina_Strbuf *str_func = eina_strbuf_new();
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
@@ -127,7 +126,12 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    eina_strbuf_append_printf(str_func, "\n");
 
    Eina_Strbuf *linedesc = eina_strbuf_new();
-   eina_strbuf_append(linedesc, funcdesc ? funcdesc : "No description supplied.");
+   const char *common_desc = eolian_function_description_get(func, EOLIAN_UNRESOLVED);
+   const char *specific_desc = (ftype == EOLIAN_PROP_SET || ftype == EOLIAN_PROP_GET) ?
+         eolian_function_description_get(func, ftype) : NULL;
+   if (!common_desc && !specific_desc) eina_strbuf_append(linedesc, "No description supplied.");
+   if (common_desc) eina_strbuf_append_printf(linedesc, "%s\n", common_desc);
+   if (specific_desc) eina_strbuf_append(linedesc, specific_desc);
    if (eina_strbuf_length_get(linedesc))
      {
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");
