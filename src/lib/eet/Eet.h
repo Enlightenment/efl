@@ -4241,7 +4241,10 @@ struct _Eet_Node_Data
  */
 
 /**
- * TODO FIX ME
+ * Create a new character node.
+ * @param name Name of the node.
+ * @param c Character value.
+ * @return A new character node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4249,7 +4252,10 @@ eet_node_char_new(const char *name,
                   char c);
 
 /**
- * TODO FIX ME
+ * Create a new short node.
+ * @param name Name of the node.
+ * @param s short value.
+ * @return A new short node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4257,7 +4263,10 @@ eet_node_short_new(const char *name,
                    short s);
 
 /**
- * TODO FIX ME
+ * Create a new integer node.
+ * @param name Name of the node.
+ * @param i integer value.
+ * @return A new integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4265,7 +4274,10 @@ eet_node_int_new(const char *name,
                  int i);
 
 /**
- * TODO FIX ME
+ * Create a new long long integer node.
+ * @param name Name of the node.
+ * @param l long long integer value.
+ * @return A new long long integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4273,7 +4285,10 @@ eet_node_long_long_new(const char *name,
                        long long l);
 
 /**
- * TODO FIX ME
+ * Create a new float node.
+ * @param name Name of the node.
+ * @param f float value.
+ * @return A new float node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4281,7 +4296,10 @@ eet_node_float_new(const char *name,
                    float f);
 
 /**
- * TODO FIX ME
+ * Create a new double node.
+ * @param name Name of the node.
+ * @param d double value.
+ * @return A new double node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4289,7 +4307,10 @@ eet_node_double_new(const char *name,
                     double d);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned character node.
+ * @param name Name of the node.
+ * @param uc unsigned char value.
+ * @return A new unsigned char node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4297,7 +4318,10 @@ eet_node_unsigned_char_new(const char *name,
                            unsigned char uc);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned short node.
+ * @param name Name of the node.
+ * @param us unsigned short value.
+ * @return A new unsigned short node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4305,7 +4329,10 @@ eet_node_unsigned_short_new(const char *name,
                             unsigned short us);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned integer node.
+ * @param name Name of the node.
+ * @param ui unsigned integer value.
+ * @return A new unsigned integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4313,7 +4340,10 @@ eet_node_unsigned_int_new(const char *name,
                           unsigned int ui);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned long long integer node.
+ * @param name Name of the node.
+ * @param l unsigned long long integer value.
+ * @return A new unsigned long long integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4321,7 +4351,10 @@ eet_node_unsigned_long_long_new(const char *name,
                                 unsigned long long l);
 
 /**
- * TODO FIX ME
+ * Create a new string node.
+ * @param name Name of the node.
+ * @param str string value.
+ * @return A new string node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4329,7 +4362,10 @@ eet_node_string_new(const char *name,
                     const char *str);
 
 /**
- * TODO FIX ME
+ * Create a new inlined string node.
+ * @param name Name of the node.
+ * @param str string value.
+ * @return A new inlined string node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4337,14 +4373,19 @@ eet_node_inlined_string_new(const char *name,
                             const char *str);
 
 /**
- * TODO FIX ME
+ * Create a new empty node.
+ * @param name Name of the node.
+ * @return A new empty node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
 eet_node_null_new(const char *name);
 
 /**
- * TODO FIX ME
+ * Create a new list node.
+ * @param name Name of the node.
+ * @param nodes list of nodes.
+ * @return A new list node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4352,7 +4393,11 @@ eet_node_list_new(const char *name,
                   Eina_List *nodes);
 
 /**
- * TODO FIX ME
+ * Create a new array node.
+ * @param name Name of the node.
+ * @param count number of nodes
+ * @param nodes list of nodes.
+ * @return A new array node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4361,7 +4406,10 @@ eet_node_array_new(const char *name,
                    Eina_List *nodes);
 
 /**
- * TODO FIX ME
+ * Create a new variable array node.
+ * @param name Name of the node.
+ * @param nodes list of nodes.
+ * @return A new variable array node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4372,13 +4420,23 @@ eet_node_var_array_new(const char *name,
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
+/**
+ * Create a new short node.
+ * @param name Name of the node.
+ * @param s short value.
+ * @return A new short node.
+ * @ingroup Eet_Node_Group
+ */
 EAPI Eet_Node *
 eet_node_hash_new(const char *name,
                   const char *key,
                   Eet_Node *node);
 
 /**
- * TODO FIX ME
+ * Create a new struct node.
+ * @param name Name of the node.
+ * @param nodes list of nodes.
+ * @return A new struct node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4387,6 +4445,13 @@ eet_node_struct_new(const char *name,
 
 /**
  * TODO FIX ME
+ * @ingroup Eet_Node_Group
+ */
+/**
+ * Create a new short node.
+ * @param name Name of the node.
+ * @param s short value.
+ * @return A new short node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
