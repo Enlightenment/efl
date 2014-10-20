@@ -10,6 +10,9 @@
 
 /**
  * @brief Increase message reference.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return The previous Eldbus_Message with incremented refcount.
  */
 EAPI Eldbus_Message        *eldbus_message_ref(Eldbus_Message *msg) EINA_ARG_NONNULL(1);
 
@@ -18,14 +21,57 @@ EAPI Eldbus_Message        *eldbus_message_ref(Eldbus_Message *msg) EINA_ARG_NON
  *
  * When refcount reaches zero the message and all its resources will be
  * freed.
+ *
+ * @param msg The Eldbus_Message object.
  */
 EAPI void                  eldbus_message_unref(Eldbus_Message *msg) EINA_ARG_NONNULL(1);
 
+/**
+ * Get the Eldbus message path.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return A string containing the dbus message path.
+ */
 EAPI const char           *eldbus_message_path_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Get the Eldbus message interface.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return A string containing the dbus message interface.
+ */
 EAPI const char           *eldbus_message_interface_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Get the Eldbus message member.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return A string containing the dbus message member.
+ */
 EAPI const char           *eldbus_message_member_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Get the Eldbus message destination.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return A string containing the dbus message destination.
+ */
 EAPI const char           *eldbus_message_destination_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Get the Eldbus message sender.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return A string containing the dbus message sender.
+ */
 EAPI const char           *eldbus_message_sender_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Get the Eldbus message signature.
+ *
+ * @param msg The Eldbus_Message object.
+ * @return A string containing the dbus message signature.
+ */
 EAPI const char           *eldbus_message_signature_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -72,6 +118,7 @@ EAPI Eldbus_Message        *eldbus_message_method_return_new(const Eldbus_Messag
  * desired.
  * @param text Variable in which to store the error text or @c NULL if it's not
  * desired.
+ * @return EINA_TRUE on success, else EINA_FALSE.
  */
 EAPI Eina_Bool             eldbus_message_error_get(const Eldbus_Message *msg, const char **name, const char **text) EINA_ARG_NONNULL(1);
 
@@ -79,9 +126,9 @@ EAPI Eina_Bool             eldbus_message_error_get(const Eldbus_Message *msg, c
  * @brief Get the arguments from an Eldbus_Message
  *
  * Get the arguments of an Eldbus_Message storing them in the locations pointed
- * to by the pointer arguments that follow @param signature. Each pointer
+ * to by the pointer arguments that follow param signature. Each pointer
  * argument must be of a type that is appropriate for the correspondent complete
- * type in @param signature. For complex types such as arrays, structs,
+ * type in param signature. For complex types such as arrays, structs,
  * dictionaries or variants, a pointer to Eldbus_Message_Iter* must be provided.
  *
  * @param msg The message to get the arguments from.
@@ -98,7 +145,7 @@ EAPI Eina_Bool             eldbus_message_arguments_get(const Eldbus_Message *ms
  * @brief Get the arguments from an Eldbus_Message using a va_list.
  *
  * @param msg The message to get the arguments from.
- * @param signature The signature user is expecting to read from @param msg.
+ * @param signature The signature user is expecting to read from param msg.
  * @param ap The va_list containing the pointer arguments.
  *
  * @see eldbus_message_arguments_get()
@@ -111,8 +158,8 @@ EAPI Eina_Bool             eldbus_message_arguments_vget(const Eldbus_Message *m
 /**
  * @brief Append arguments into an Eldbus_Message
  *
- * Append arguments into an Eldbus_Message according to the @param signature
- * provided. For each complete type in @param signature, a value of the
+ * Append arguments into an Eldbus_Message according to the param signature
+ * provided. For each complete type in param signature, a value of the
  * corresponding type must be provided.
  *
  * This function supports only basic types. For complex types use
@@ -120,7 +167,7 @@ EAPI Eina_Bool             eldbus_message_arguments_vget(const Eldbus_Message *m
  *
  * @param msg The message in which arguments are being appended.
  * @param signature Signature of the arguments that are being appended.
- * @param ... Values of each argument to append in @param msg.
+ * @param ... Values of each argument to append in param msg.
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  */
@@ -183,6 +230,7 @@ EAPI Eina_Bool               eldbus_message_iter_basic_append(Eldbus_Message_Ite
  * @param iter iterator in which data will be appended
  * @param signature signature of the contained data
  * @param ... values for each complete type
+ * @return EINA_TRUE on success, else EINA_FALSE
  *
  * @see eldbus_message_iter_container_new()
  * @see eldbus_message_iter_container_close()
@@ -206,6 +254,7 @@ EAPI Eina_Bool               eldbus_message_iter_arguments_append(Eldbus_Message
  * @param iter iterator
  * @param signature of data
  * @param ap va_list with the values
+ * @return EINA_TRUE on success, else EINA_FALSE
  *
  * @note This function don't support variant, use instead
  * eldbus_message_iter_container_new() to create the variant fill
@@ -221,6 +270,7 @@ EAPI Eina_Bool               eldbus_message_iter_arguments_vappend(Eldbus_Messag
  * @param type basic type that will be appended
  * @param array data to append
  * @param size of array
+ * @return EINA_TRUE on success, else EINA_FALSE
  */
 EAPI Eina_Bool               eldbus_message_iter_fixed_array_append(Eldbus_Message_Iter *iter, int type, const void *array, unsigned int size) EINA_ARG_NONNULL(1, 3);
 
@@ -247,6 +297,9 @@ EAPI void                    eldbus_message_iter_basic_get(Eldbus_Message_Iter *
 /**
  * @brief Returns the current signature of a message iterator.
  *
+ * @param iter The iterator on which to query the signature.
+ * @return A string containing the message iterator signature.
+ *
  * @note The returned string must be freed.
  */
 EAPI char                   *eldbus_message_iter_signature_get(Eldbus_Message_Iter *iter) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
@@ -265,14 +318,14 @@ EAPI Eina_Bool               eldbus_message_iter_next(Eldbus_Message_Iter *iter)
  * Useful to iterate over arrays.
  *
  * @param iter iterator
- * @param type of the next completed type in Iterator
+ * @param signature of the next completed type in Iterator
  * @param ... pointer of where data will be stored
  *
- * @param if iterator was reach to end or if type different of the type that
+ * @return if iterator was reach to end or if type different of the type that
  * iterator points return EINA_FALSE
  *
  */
-EAPI Eina_Bool               eldbus_message_iter_get_and_next(Eldbus_Message_Iter *iter, char type, ...) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_Bool               eldbus_message_iter_get_and_next(Eldbus_Message_Iter *iter, char signature, ...) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Reads a block of fixed-length values from the message iterator.
@@ -290,6 +343,12 @@ EAPI Eina_Bool               eldbus_message_iter_get_and_next(Eldbus_Message_Ite
  *
  * Because the array is not copied, this function runs in constant time and is
  * fast; it's much preferred over walking the entire array with an iterator.
+ *
+ * @param iter The message iterator
+ * @param signature
+ * @param value
+ * @param n_elements
+ * @return EINA_TRUE on success, else EINA_FALSE.
  */
 EAPI Eina_Bool eldbus_message_iter_fixed_array_get(Eldbus_Message_Iter *iter, int signature, void *value, int *n_elements) EINA_ARG_NONNULL(1, 3, 4);
 

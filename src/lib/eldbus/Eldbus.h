@@ -116,28 +116,32 @@ extern "C" {
  *
  * @{
  */
-#define ELDBUS_VERSION_MAJOR EFL_VERSION_MAJOR
-#define ELDBUS_VERSION_MINOR EFL_VERSION_MINOR
+#define ELDBUS_VERSION_MAJOR EFL_VERSION_MAJOR /**< Eldbus version major number */
+#define ELDBUS_VERSION_MINOR EFL_VERSION_MINOR /**< Eldbus version minor number */
 
-#define ELDBUS_FDO_BUS "org.freedesktop.DBus"
-#define ELDBUS_FDO_PATH "/org/freedesktop/DBus"
-#define ELDBUS_FDO_INTERFACE ELDBUS_FDO_BUS
-#define ELDBUS_FDO_INTERFACE_PROPERTIES "org.freedesktop.DBus.Properties"
-#define ELDBUS_FDO_INTERFACE_OBJECT_MANAGER "org.freedesktop.DBus.ObjectManager"
-#define ELDBUS_FDO_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable"
-#define ELDBUS_FDO_INTEFACE_PEER "org.freedesktop.DBus.Peer"
-#define ELDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled"
-#define ELDBUS_ERROR_PENDING_TIMEOUT "org.freedesktop.DBus.Error.NoReply"
+#define ELDBUS_FDO_BUS "org.freedesktop.DBus" /**< Eldbus bus name */
+#define ELDBUS_FDO_PATH "/org/freedesktop/DBus" /**< Eldbus path name */
+#define ELDBUS_FDO_INTERFACE ELDBUS_FDO_BUS /**< Eldbus interface name */
+#define ELDBUS_FDO_INTERFACE_PROPERTIES "org.freedesktop.DBus.Properties" /**< Eldbus object properties request name */
+#define ELDBUS_FDO_INTERFACE_OBJECT_MANAGER "org.freedesktop.DBus.ObjectManager" /**< Eldbus object manager request name */
+#define ELDBUS_FDO_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable" /**< Eldbus object introspect request name */
+#define ELDBUS_FDO_INTEFACE_PEER "org.freedesktop.DBus.Peer" /**< Eldbus object peer request name */
+#define ELDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled" /**< Eldbus canceled answer */
+#define ELDBUS_ERROR_PENDING_TIMEOUT "org.freedesktop.DBus.Error.NoReply" /**< Eldbus timeout error answer */
 
+/**
+ * @typedef Eldbus_Version
+ * Represents the current version of Eldbus
+ */
 typedef struct _Eldbus_Version
 {
-   int major;
-   int minor;
-   int micro;
-   int revision;
+   int major; /**< major (binary or source incompatible changes) */
+   int minor; /**< minor (new features, bugfixes, major improvements version) */
+   int micro; /**< micro (bugfix, internal improvements, no new features version) */
+   int revision; /**< git revision (0 if a proper release or the git revision number Eldbus is built from) */
 } Eldbus_Version;
 
-EAPI extern const Eldbus_Version * eldbus_version;
+EAPI extern const Eldbus_Version * eldbus_version; /**< Global Eldbus_Version object */
 
 /**
  * @brief Initialize eldbus.
@@ -152,6 +156,11 @@ EAPI int eldbus_init(void);
  */
 EAPI int eldbus_shutdown(void);
 
+/**
+ * @typedef Eldbus_Free_Cb
+ *
+ * Callback that is called when the connection is freed.
+ */
 typedef void                       (*Eldbus_Free_Cb)(void *data, const void *deadptr);
 
 /**
@@ -202,7 +211,18 @@ typedef struct _Eldbus_Pending        Eldbus_Pending;
  */
 typedef struct _Eldbus_Signal_Handler Eldbus_Signal_Handler;
 
+/**
+ * @typedef Eldbus_Message_Cb
+ *
+ * Callback that is called when answer of a method call message comes.
+ */
 typedef void (*Eldbus_Message_Cb)(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending);
+
+/**
+ * @typedef Eldbus_Signal_Cb
+ *
+ * Callback that is called when a signal is received.
+ */
 typedef void (*Eldbus_Signal_Cb)(void *data, const Eldbus_Message *msg);
 /**
  * @}

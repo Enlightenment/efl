@@ -23,16 +23,23 @@
    it can be found in @ref Ecore_Main_Loop_Page.
 
    The Ecore library provides the following modules:
+   @li @ref Ecore_Init_Group
+   @li @ref Ecore_Getopt_Group
    @li @ref Ecore_Main_Loop_Group
+   @li @ref Ecore_System_Events
+   @li @ref Ecore_Time_Group
+   @li @ref Ecore_Thread_Group
+   @li @ref Ecore_Pipe_Group
+   @li @ref Ecore_Application_Group
+   @li @ref Ecore_Throttle_Group
+   @li @ref Ecore_Job_Group
    @li @ref Ecore_File_Group
    @li @ref Ecore_Con_Group
    @li @ref Ecore_Evas_Group
    @li @ref Ecore_FB_Group
+   @li @ref Ecore_Input_Group
    @li @ref Ecore_IMF_Lib_Group
-   @li @ref Ecore_IMF_Context_Group
-   @li @ref Ecore_IMF_Context_Module_Group
-   @li @ref Ecore_IMF_Evas_Group
-   @li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
+   @li @ref Ecore_IPC_Group
    @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
    @li @ref Ecore_Win32_Group
    @li @ref Ecore_Audio_Group
@@ -80,6 +87,9 @@
    @li @ref Ecore_FD_Handler_Group
    @li @ref Ecore_Event_Group
    @li @ref Ecore_Exe_Group
+   @li @ref Ecore_Animator_Group
+   @li @ref Ecore_Poller_Group
+
 
    @section ecore_main_intro_example Introductory Examples
 

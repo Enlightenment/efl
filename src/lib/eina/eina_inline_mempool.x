@@ -21,26 +21,36 @@
 
 #include <string.h>
 
-/**
- * @addtogroup Eina_Memory_Pool_Group Memory Pool
- *
- * @{
- */
-
 /* Memory Pool */
 typedef struct _Eina_Mempool_Backend_ABI1 Eina_Mempool_Backend_ABI1;
 typedef struct _Eina_Mempool_Backend_ABI2 Eina_Mempool_Backend_ABI2;
 
 struct _Eina_Mempool_Backend
 {
+   /** Name of the mempool backend */
    const char *name;
+   /** Function to initialize the backend. */
    void *(*init)(const char *context, const char *options, va_list args);
+   /** Function to free memory back to the mempool. */
    void (*free)(void *data, void *element);
+   /** Function to allocate memory from the mempool. */
    void *(*alloc)(void *data, unsigned int size);
+   /** Function to change the size of a block of memory that is currently
+    * allocated. */
    void *(*realloc)(void *data, void *element, unsigned int size);
+   /** Function to trigger a garbage collection; can be NULL if the feature
+    * isn't available in the backend. */
    void (*garbage_collect)(void *data);
+   /** Report statistics on the content of the mempool; can be NULL if the
+    * feature isn't available in the backend. */
    void (*statistics)(void *data);
+   /** Function to destroy the backend, freeing memory back to the operating
+    * system. */
    void (*shutdown)(void *data);
+   /** Function to optimize the placement of objects in the mempool (it's
+    * different from garbage_collect); can be NULL if the feature isn't
+    * available in the backend.
+    * @see Eina_Mempool_Repack_Cb */
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
 };
 
@@ -68,53 +78,18 @@ struct _Eina_Mempool
    Eina_Mempool_Backend_ABI2 *backend2;
 };
 
-/**
- * @brief Re-allocate an amount memory by the given mempool.
- *
- * @param mp The mempool.
- * @param element The element to re-allocate.
- * @param size The size in bytes to re-allocate.
- * @return The newly re-allocated data.
- *
- * This function re-allocates and returns @p element with @p size bytes using the
- * mempool @p mp. If not used anymore, the data must be freed with eina_mempool_free().
- * @warning No checks are done for @p mp.
- */
 static inline void *
 eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size)
 {
    return mp->backend.realloc(mp->backend_data, element, size);
 }
 
-/**
- * @brief Allocate memory using the given mempool.
- *
- * @param mp The mempool.
- * @param size The size in bytes to allocate.
- * @return The newly allocated data.
- *
- * This function allocates and returns @p size bytes using the mempool @p mp.
- * If not used anymore, the data must be freed with eina_mempool_free().
- * @warning No checks are done for @p mp.
- */
 static inline void *
 eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
 {
    return mp->backend.alloc(mp->backend_data, size);
 }
 
-/**
- * @brief Allocate and zero memory using the given mempool.
- *
- * @param mp The mempool.
- * @param size The size in bytes to allocate.
- * @return The newly allocated data.
- *
- * This function allocates, zeroes, and returns @p size bytes using the mempool @p mp.
- * If not used anymore, the data must be freed with eina_mempool_free().
- * @warning No checks are done for @p mp.
- * @since 1.2
- */
 static inline void *
 eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
 {
@@ -124,17 +99,6 @@ eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
    return r;
 }
 
-/**
- * @brief Free resources previously allocated by the given mempool.
- *
- * @param mp The mempool.
- * @param element The data to free.
- *
- * This function frees @p element allocated by @p mp. @p element must
- * have been obtained from eina_mempool_malloc(), eina_mempool_calloc(), or
- * eina_mempool_realloc().
- * @warning No checks are done for @p mp.
- */
 static inline void
 eina_mempool_free(Eina_Mempool *mp, void *element)
 {
@@ -173,9 +137,5 @@ eina_mempool_alignof(unsigned int size)
 
    return ((size / align) + (size % align ? 1 : 0)) * align;
 }
-
-/**
- * @}
- */
 
 #endif

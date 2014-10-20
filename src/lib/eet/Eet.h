@@ -137,7 +137,15 @@ extern "C" {
  *
  */
 
+/**
+ * @def EET_VERSION_MAJOR
+ * The major number of eet version
+ */
 #define EET_VERSION_MAJOR EFL_VERSION_MAJOR
+/**
+ * @def EET_VERSION_MINOR
+ * The minor number of eet version
+ */
 #define EET_VERSION_MINOR EFL_VERSION_MINOR
 /**
  * @typedef Eet_Version
@@ -210,7 +218,7 @@ typedef enum _Eet_Error
 /**
  * @}
  */
-   
+
 /**
  * @defgroup Eet_Compression Eet Compression Levels
  * @ingroup Eet
@@ -233,14 +241,14 @@ typedef enum _Eet_Compression
    EET_COMPRESSION_HI        = 9,  /**< Slow but high compression level (Zlib) @since 1.7 */
    EET_COMPRESSION_VERYFAST  = 10, /**< Very fast, but lower compression ratio (LZ4HC) @since 1.7 */
    EET_COMPRESSION_SUPERFAST = 11, /**< Very fast, but lower compression ratio (faster to compress than EET_COMPRESSION_VERYFAST)  (LZ4) @since 1.7 */
-     
+
    EET_COMPRESSION_LOW2      = 3,  /**< Space filler for compatibility. Don't use it @since 1.7 */
    EET_COMPRESSION_MED1      = 4,  /**< Space filler for compatibility. Don't use it @since 1.7 */
    EET_COMPRESSION_MED2      = 5,  /**< Space filler for compatibility. Don't use it @since 1.7 */
    EET_COMPRESSION_HI1       = 7,  /**< Space filler for compatibility. Don't use it @since 1.7 */
    EET_COMPRESSION_HI2       = 8   /**< Space filler for compatibility. Don't use it @since 1.7 */
 } Eet_Compression; /**< Eet compression modes @since 1.7 */
-   
+
 /**
  * @}
  */
@@ -1457,6 +1465,7 @@ eet_data_image_header_read_cipher(Eet_File *ef,
  *
  * @param ef A valid eet file handle opened for reading.
  * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param cipher_key The key to use as cipher.
  * @param cspaces Returned pointer by Eet to a list of possible decoding colorspace finished by @c EET_COLORSPACE_ARGB8888. If @c NULL, only EET_COLORSPACE_ARGB8888 is supported.
  * @return 1 on successful get, 0 otherwise.
  *
@@ -1591,7 +1600,7 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef,
  * @param row_stride The length of a pixels line in the destination surface.
  * @param cspace The color space of the pixels bsurface.
  * @param alpha A pointer to the int to hold the alpha flag.
- * @param compress A pointer to the int to hold the compression amount.
+ * @param comp A pointer to the int to hold the compression amount.
  * @param quality A pointer to the int to hold the quality amount.
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return 1 on success, 0 otherwise.
@@ -1653,7 +1662,7 @@ eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
  * @param row_stride The length of a pixels line in the destination surface.
  * @param cspace The color space of the pixel surface
  * @param alpha A pointer to the int to hold the alpha flag.
- * @param compress A pointer to the int to hold the compression amount.
+ * @param comp A pointer to the int to hold the compression amount.
  * @param quality A pointer to the int to hold the quality amount.
  * @param lossy A pointer to the int to hold the lossiness flag.
  * @return 1 on success, 0 otherwise.
@@ -2606,24 +2615,168 @@ typedef struct _Eet_Data_Descriptor Eet_Data_Descriptor;
  */
 typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
 
+/**
+ * @typedef (*Eet_Descriptor_Hash_Foreach_Callback_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Hash_Foreach_Callback
+ * @param h the hash
+ * @param k the key
+ * @param dt the data
+ * @param fdt the data passed to the callback
+ * @return an integer
+ */
 typedef int                             (*Eet_Descriptor_Hash_Foreach_Callback_Callback)(void *h, const char *k, void *dt, void *fdt);
 
+/**
+ * @typedef (*Eet_Descriptor_Mem_Alloc_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Mem_Alloc
+ * @param size is the size of memory to alloc on call of the callback
+ */
 typedef void *                          (*Eet_Descriptor_Mem_Alloc_Callback)(size_t size);
+
+/**
+ * @typedef (*Eet_Descriptor_Mem_Free_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Mem_Alloc
+ * @param mem must be a pointer to free on call of the callback
+ */
 typedef void                            (*Eet_Descriptor_Mem_Free_Callback)(void *mem);
+
+/**
+ * @typedef (*Eet_Descriptor_Str_Alloc_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Str_Alloc
+ * @param str must be the string to alloc
+ * @return have must be an allocated char * for the given string
+ */
 typedef char *                          (*Eet_Descriptor_Str_Alloc_Callback)(const char *str);
+
+/**
+ * @typedef (*Eet_Descriptor_Str_Free_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Str_Free
+ * @param str must be an allocated string to free
+ */
 typedef void                            (*Eet_Descriptor_Str_Free_Callback)(const char *str);
+
+/**
+ * @typedef (*Eet_Descriptor_List_Next_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_List_Next
+ * @param l must be a pointer to the list
+ * @return must be a pointer to the list
+ */
 typedef void *                          (*Eet_Descriptor_List_Next_Callback)(void *l);
+
+/**
+ * @typedef (*Eet_Descriptor_List_Append_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_List_Append
+ * @param l must be a pointer to the list
+ * @param d the data to append to the list
+ * @return must be a pointer to the list
+ */
 typedef void *                          (*Eet_Descriptor_List_Append_Callback)(void *l, void *d);
+
+
+/**
+ * @typedef (*Eet_Descriptor_List_Data_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_List_Data
+ * @param l must be a pointer to the list
+ * @return must be a pointer to the list
+ */
 typedef void *                          (*Eet_Descriptor_List_Data_Callback)(void *l);
+
+/**
+ * @typedef (*Eet_Descriptor_List_Free_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_List_Free
+ * @param l must be a pointer to the list to free
+ */
 typedef void *                          (*Eet_Descriptor_List_Free_Callback)(void *l);
+
+/**
+ * @typedef (*Eet_Descriptor_Hash_Foreach_Callback)
+ *
+ * Callback for Eet_Descriptor_Hash_Foreach
+ * @param h the hash
+ * @param func the function callback to call on each iteration
+ * @param fdt the data to pass to the callbac setted in param func
+ */
 typedef void                            (*Eet_Descriptor_Hash_Foreach_Callback)(void *h, Eet_Descriptor_Hash_Foreach_Callback_Callback func, void *fdt);
+
+/**
+ * @typedef (*Eet_Descriptor_Hash_Add_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Hash_Add
+ * @param h the hash
+ * @param k the key
+ * @param d the data to associate with the 'k' key
+ */
 typedef void *                          (*Eet_Descriptor_Hash_Add_Callback)(void *h, const char *k, void *d);
+
+/**
+ * @typedef (*Eet_Descriptor_Hash_Free_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Hash_Free
+ * @param h the hash to free
+ */
 typedef void                            (*Eet_Descriptor_Hash_Free_Callback)(void *h);
+
+/**
+ * @typedef (*Eet_Descriptor_Str_Alloc_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Str_Alloc
+ * @param str the string to allocate
+ * @return an allocated pointer to the string
+ */
 typedef char *                          (*Eet_Descriptor_Str_Direct_Alloc_Callback)(const char *str);
+
+/**
+ * @typedef (*Eet_Descriptor_Str_Free_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Str_Free
+ * @param str the string to free
+ */
 typedef void                            (*Eet_Descriptor_Str_Direct_Free_Callback)(const char *str);
+
+
+/**
+ * @typedef (*Eet_Descriptor_Type_Get_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Type_Get
+ * @param data data to pass to the callback
+ * @param unknow Eina_Bool __FIXME__
+ */
 typedef const char *                    (*Eet_Descriptor_Type_Get_Callback)(const void *data, Eina_Bool *unknow);
+
+/**
+ * @typedef (*Eet_Descriptor_Type_Set_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Type_Set
+ * @param type the type to set
+ * @param data to pass to the callback
+ * @param unknow Eina_Bool __FIXME__
+ */
 typedef Eina_Bool                       (*Eet_Descriptor_Type_Set_Callback)(const char *type, void *data, Eina_Bool unknow);
+
+
+/**
+ * @typedef (*Eet_Descriptor_Array_Alloc_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Array_Alloc
+ * @param size The size of the array
+ */
 typedef void *                          (*Eet_Descriptor_Array_Alloc_Callback)(size_t size);
+
+/**
+ * @typedef (*Eet_Descriptor_Array_Free_Callback)
+ *
+ * Callback prototype for Eet_Descriptor_Array_Free
+ * @param size The size of the array
+ */
 typedef void                            (*Eet_Descriptor_Array_Free_Callback)(void *mem);
 /**
  * @struct _Eet_Data_Descriptor_Class
@@ -3006,6 +3159,15 @@ eet_data_write(Eet_File *ef,
                const void *data,
                int compress);
 
+/**
+ *  @typedef Eet_Data_Descriptor_Class
+ * 
+ * Callback protoype for Eet_Dump 
+ *
+ * @param data to passe to the callback
+ * @param str the string to dump 
+ *
+ */
 typedef void (*Eet_Dump_Callback)(void *data, const char *str);
 
 /**
@@ -3702,7 +3864,8 @@ eet_data_read_cipher(Eet_File *ef,
  * @param edd The data descriptor handle to use when decoding.
  * @param name The key the data is stored under in the eet file.
  * @param cipher_key The key to use as cipher.
- * @param buffer Buffer 
+ * @param buffer Buffer.
+ * @param buffer_size The buffer size.
  * @return A pointer to buffer if successful and NULL on error.
  *
  * This function decodes a data structure stored in an eet file, returning
@@ -4078,7 +4241,10 @@ struct _Eet_Node_Data
  */
 
 /**
- * TODO FIX ME
+ * Create a new character node.
+ * @param name Name of the node.
+ * @param c Character value.
+ * @return A new character node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4086,7 +4252,10 @@ eet_node_char_new(const char *name,
                   char c);
 
 /**
- * TODO FIX ME
+ * Create a new short node.
+ * @param name Name of the node.
+ * @param s short value.
+ * @return A new short node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4094,7 +4263,10 @@ eet_node_short_new(const char *name,
                    short s);
 
 /**
- * TODO FIX ME
+ * Create a new integer node.
+ * @param name Name of the node.
+ * @param i integer value.
+ * @return A new integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4102,7 +4274,10 @@ eet_node_int_new(const char *name,
                  int i);
 
 /**
- * TODO FIX ME
+ * Create a new long long integer node.
+ * @param name Name of the node.
+ * @param l long long integer value.
+ * @return A new long long integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4110,7 +4285,10 @@ eet_node_long_long_new(const char *name,
                        long long l);
 
 /**
- * TODO FIX ME
+ * Create a new float node.
+ * @param name Name of the node.
+ * @param f float value.
+ * @return A new float node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4118,7 +4296,10 @@ eet_node_float_new(const char *name,
                    float f);
 
 /**
- * TODO FIX ME
+ * Create a new double node.
+ * @param name Name of the node.
+ * @param d double value.
+ * @return A new double node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4126,7 +4307,10 @@ eet_node_double_new(const char *name,
                     double d);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned character node.
+ * @param name Name of the node.
+ * @param uc unsigned char value.
+ * @return A new unsigned char node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4134,7 +4318,10 @@ eet_node_unsigned_char_new(const char *name,
                            unsigned char uc);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned short node.
+ * @param name Name of the node.
+ * @param us unsigned short value.
+ * @return A new unsigned short node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4142,7 +4329,10 @@ eet_node_unsigned_short_new(const char *name,
                             unsigned short us);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned integer node.
+ * @param name Name of the node.
+ * @param ui unsigned integer value.
+ * @return A new unsigned integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4150,7 +4340,10 @@ eet_node_unsigned_int_new(const char *name,
                           unsigned int ui);
 
 /**
- * TODO FIX ME
+ * Create a new unsigned long long integer node.
+ * @param name Name of the node.
+ * @param l unsigned long long integer value.
+ * @return A new unsigned long long integer node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4158,7 +4351,10 @@ eet_node_unsigned_long_long_new(const char *name,
                                 unsigned long long l);
 
 /**
- * TODO FIX ME
+ * Create a new string node.
+ * @param name Name of the node.
+ * @param str string value.
+ * @return A new string node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4166,7 +4362,10 @@ eet_node_string_new(const char *name,
                     const char *str);
 
 /**
- * TODO FIX ME
+ * Create a new inlined string node.
+ * @param name Name of the node.
+ * @param str string value.
+ * @return A new inlined string node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4174,14 +4373,19 @@ eet_node_inlined_string_new(const char *name,
                             const char *str);
 
 /**
- * TODO FIX ME
+ * Create a new empty node.
+ * @param name Name of the node.
+ * @return A new empty node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
 eet_node_null_new(const char *name);
 
 /**
- * TODO FIX ME
+ * Create a new list node.
+ * @param name Name of the node.
+ * @param nodes list of nodes.
+ * @return A new list node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4189,7 +4393,11 @@ eet_node_list_new(const char *name,
                   Eina_List *nodes);
 
 /**
- * TODO FIX ME
+ * Create a new array node.
+ * @param name Name of the node.
+ * @param count number of nodes
+ * @param nodes list of nodes.
+ * @return A new array node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4198,7 +4406,10 @@ eet_node_array_new(const char *name,
                    Eina_List *nodes);
 
 /**
- * TODO FIX ME
+ * Create a new variable array node.
+ * @param name Name of the node.
+ * @param nodes list of nodes.
+ * @return A new variable array node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4209,13 +4420,23 @@ eet_node_var_array_new(const char *name,
  * TODO FIX ME
  * @ingroup Eet_Node_Group
  */
+/**
+ * Create a new short node.
+ * @param name Name of the node.
+ * @param s short value.
+ * @return A new short node.
+ * @ingroup Eet_Node_Group
+ */
 EAPI Eet_Node *
 eet_node_hash_new(const char *name,
                   const char *key,
                   Eet_Node *node);
 
 /**
- * TODO FIX ME
+ * Create a new struct node.
+ * @param name Name of the node.
+ * @param nodes list of nodes.
+ * @return A new struct node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4224,6 +4445,13 @@ eet_node_struct_new(const char *name,
 
 /**
  * TODO FIX ME
+ * @ingroup Eet_Node_Group
+ */
+/**
+ * Create a new short node.
+ * @param name Name of the node.
+ * @param s short value.
+ * @return A new short node.
  * @ingroup Eet_Node_Group
  */
 EAPI Eet_Node *
@@ -4260,7 +4488,7 @@ EAPI Eet_Node *
 eet_node_parent_get(Eet_Node *node);
 
 /**
- * TODO FIX ME
+ * @brief Append a "list" node TODO FIX ME
  * @ingroup Eet_Node_Group
  */
 EAPI void
@@ -4368,9 +4596,37 @@ eet_data_node_write_cipher(Eet_File *ef,
  */
 typedef struct _Eet_Node_Walk Eet_Node_Walk;
 
+/**
+ * @typedef (*Eet_Node_Walk_Struct_Alloc_Callback)
+ *
+ * Callback prototype for Eet_Node_Walk_Struct_Alloc
+ * @param type The allocation type
+ * @param user_data the data passed by the user to the callback
+ */
 typedef void *              (*Eet_Node_Walk_Struct_Alloc_Callback)(const char *type, void *user_data);
+
+/**
+ * @typedef (*Eet_Node_Walk_Struct_Add_Callback)
+ *
+ * Callback prototype for Eet_Node_Walk_Struct_Add
+ * @param parent The parent node
+ * @param name the name for the new node
+ * @param child the child node
+ * @param user_data the data passed by the user to the callback
+ */
 typedef void                (*Eet_Node_Walk_Struct_Add_Callback)(void *parent, const char *name, void *child, void *user_data);
+
+/**
+ * @typedef (*Eet_Node_Walk_Array_Callback)
+ *
+ * Callback prototype for Eet_Node_Walk_Array
+ * @param variable EINA_TRUE or EINA_FALSE
+ * @param name a name
+ * @param count a counter
+ * @param user_data the data passed by the user to the callback
+ */
 typedef void *              (*Eet_Node_Walk_Array_Callback)(Eina_Bool variable, const char *name, int count, void *user_data);
+
 typedef void                (*Eet_Node_Walk_Insert_Callback)(void *array, int index, void *child, void *user_data);
 typedef void *              (*Eet_Node_Walk_List_Callback)(const char *name, void *user_data);
 typedef void                (*Eet_Node_Walk_Append_Callback)(void *list, void *child, void *user_data);

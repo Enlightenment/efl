@@ -272,13 +272,16 @@ extern "C" {
 
 #define EMOTION_VERSION_MAJOR EFL_VERSION_MAJOR
 #define EMOTION_VERSION_MINOR EFL_VERSION_MINOR
-   
+   /**
+    * @typedef Emotion_Version
+    * Represents the current version of Emotion
+    */
    typedef struct _Emotion_Version
      {
-        int major;
-        int minor;
-        int micro;
-        int revision;
+        int major; /** < major (binary or source incompatible changes) */
+        int minor; /** < minor (new features, bugfixes, major improvements version) */
+        int micro; /** < micro (bugfix, internal improvements, no new features version) */
+        int revision; /** < git revision (0 if a proper release or the git revision number Emotion is built from) */
      } Emotion_Version;
    
    EAPI extern Emotion_Version *emotion_version;
@@ -364,7 +367,19 @@ extern "C" {
  * @defgroup Emotion_Ressource Video ressource management
  */
 
+/**
+ * @brief Initialise Emotion library
+ *
+ * Initialise needed libraries like eina ecore eet
+ * Initialise needed modules like webcam
+ */
 EAPI Eina_Bool emotion_init(void);
+
+/**
+ * @brief Shutdown Emotion library
+ *
+ * Proper shutdown of all loaded modules and initialised libraries.
+ */
 EAPI Eina_Bool emotion_shutdown(void);
 
 /**
@@ -851,6 +866,15 @@ EAPI void         emotion_object_smooth_scale_set      (Evas_Object *obj, Eina_B
  * @ingroup Emotion_Video
  */
 EAPI Eina_Bool    emotion_object_smooth_scale_get      (const Evas_Object *obj);
+
+/**
+ * @brief Send an Emotion Event to an Evas object
+ *
+ * @param obj The object target of the event.
+ * @param ev The emotion event.
+ *
+ * @see Emotion_Event 
+ */
 EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
 
 /**
@@ -1001,8 +1025,38 @@ EAPI const char   *emotion_object_video_subtitle_file_get (const Evas_Object *ob
  * @ingroup Emotion_Video
  */
 EAPI int          emotion_object_video_channel_count   (const Evas_Object *obj);
+
+/**
+ * @brief Get the name of a given video channel
+ *
+ * @param obj The object which we are retrieving the channel name from
+ * @param channel the channel number
+ * @return the channel name.
+ *
+ * @see emotion_object_video_channel_count()
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI const char  *emotion_object_video_channel_name_get(const Evas_Object *obj, int channel);
+
+/**
+ * @brief Set the channel for a given video object
+ *
+ * @param obj The target object which we are setting the channel
+ * @param channel the channel number to be setted.
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI void         emotion_object_video_channel_set     (Evas_Object *obj, int channel);
+
+/**
+ * @brief Get the channel for a given video object
+ *
+ * @param obj The target object which we are getting the channel
+ * @return The current channel number.
+ *
+ * @ingroup Emotion_Video
+ */
 EAPI int          emotion_object_video_channel_get     (const Evas_Object *obj);
 EAPI void         emotion_object_spu_mute_set          (Evas_Object *obj, Eina_Bool mute);
 EAPI Eina_Bool    emotion_object_spu_mute_get          (const Evas_Object *obj);

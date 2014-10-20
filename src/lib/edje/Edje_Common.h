@@ -8,10 +8,10 @@
  */
 typedef struct _Edje_Version
 {
-   int major;
-   int minor;
-   int micro;
-   int revision;
+   int major; /**< The major number of Edje version. */
+   int minor; /**< The minor number of Edje version. */
+   int micro; /**< The micro number of Edje version. */
+   int revision; /**< The revision of Edje version) */
 } Edje_Version;
 
 EAPI extern Edje_Version *edje_version;
@@ -669,7 +669,8 @@ EAPI void         edje_external_type_array_unregister     (const Edje_External_T
 EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
 
 /**
- * Returns an interator of all the registered EXTERNAL types.
+ *
+ * @return an iterator of all the registered EXTERNAL types.
  *
  * Each item in the iterator is an @c Eina_Hash_Tuple which has the type
  * of the external in the @c key and #Edje_External_Type as @c data.
@@ -823,6 +824,8 @@ EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_
  *       @b NOT translated. One must use
  *       Edje_External_Type::translate() to translate those.
  *
+ * @param type_name Edje external type name
+ *
  * @return the NULL terminated array, or @c NULL if type is unknown or
  *         it does not have any parameter information.
  *
@@ -955,21 +958,36 @@ struct _Edje_Entry_Change_Info
  */
 typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
 
+/**
+ * @typedef Edje_Text_Filter_Type
+ * 
+ * All Edje text filters type values.
+ */
 typedef enum _Edje_Text_Filter_Type
 {
-   EDJE_TEXT_FILTER_TEXT = 0,
-   EDJE_TEXT_FILTER_FORMAT = 1,
-   EDJE_TEXT_FILTER_MARKUP = 2
+   EDJE_TEXT_FILTER_TEXT = 0,   /**< Text type filter   */
+   EDJE_TEXT_FILTER_FORMAT = 1, /**< Format type filter */
+   EDJE_TEXT_FILTER_MARKUP = 2  /**< Markup type filter */
 } Edje_Text_Filter_Type;
 
+/**
+ * @typedef Edje_Text_Autocapital_Type
+ *
+ * All Text auto capital mode type values 
+ *
+ */
 typedef enum _Edje_Text_Autocapital_Type
 {
-   EDJE_TEXT_AUTOCAPITAL_TYPE_NONE,
-   EDJE_TEXT_AUTOCAPITAL_TYPE_WORD,
-   EDJE_TEXT_AUTOCAPITAL_TYPE_SENTENCE,
-   EDJE_TEXT_AUTOCAPITAL_TYPE_ALLCHARACTER
+   EDJE_TEXT_AUTOCAPITAL_TYPE_NONE,        /**< None mode value */
+   EDJE_TEXT_AUTOCAPITAL_TYPE_WORD,        /**< Word mode value */
+   EDJE_TEXT_AUTOCAPITAL_TYPE_SENTENCE,    /**< Sentence mode value */
+   EDJE_TEXT_AUTOCAPITAL_TYPE_ALLCHARACTER /**< All characters mode value */
 } Edje_Text_Autocapital_Type;
 
+/**
+ * @typedef Edje_Input_Panel_Lang
+ * 
+ */
 typedef enum _Edje_Input_Panel_Lang
 {
    EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic @since 1.2 */
@@ -989,6 +1007,10 @@ typedef enum _Edje_Input_Panel_Return_Key_Type
    EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
 } Edje_Input_Panel_Return_Key_Type;
 
+/**
+ * @typedef Edje_Input_Panel_Layout
+ * @brief Edje input panel layout
+ */
 typedef enum _Edje_Input_Panel_Layout
 {
    EDJE_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
@@ -1007,6 +1029,10 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_EMOTICON         /**< Emoticon layout @since 1.10 */
 } Edje_Input_Panel_Layout;
 
+/*
+ * @typedef Edje_Input_Hints
+ * @brief Edje input hints 
+ */
 typedef enum
 {
    EDJE_INPUT_HINT_NONE                = 0,        /**< No active hints @since 1.12 */
@@ -1035,8 +1061,33 @@ enum
    EDJE_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NUMBERONLY    /**< The password layout to allow only number @since 1.12 */
 };
 
+/**
+ * @typedef (*Edje_Text_Filter_Cb)
+ * @brief Callback prototype for Edje_Text_Filter
+ * @param obj The Evas_Object to filter.
+ * @param type The filter type.
+ * @param text The text of the filter.
+ */
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
+
+/**
+ * @typedef (*Edje_Markup_Filter_Cb)
+ * @brief Callback prototype for Edje_Text_Filter
+ * @param obj The Evas_Object to filter.
+ * @param part Edje part name.
+ * @param text The text of the filter.
+ */
 typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
+
+/**
+ * @typedef (*Edje_Item_Provider_Cb)
+ * @brief Callback prototype for Edje_Item_Provider
+ * @param data some data provided by user
+ * @param obj The Evas_Object to filter.
+ * @param part Edje part name
+ * @param item Item of container
+ * @return must be an Evas_Object.
+ */
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
@@ -1126,6 +1177,8 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
  *
  * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
+ *
+ * @return Eina_Bool, EINA_TRUE on success and EINA_FALSE on failure.
  */
 EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
 
@@ -1216,22 +1269,28 @@ EAPI Eina_List   *edje_color_class_list           (void);
  * @{
  */
 
+/**
+ * @typedef Edje_Part_Type
+ *
+ * All possible "part" types in Edje
+ */
 typedef enum _Edje_Part_Type
 {
-   EDJE_PART_TYPE_NONE      = 0,
-   EDJE_PART_TYPE_RECTANGLE = 1,
-   EDJE_PART_TYPE_TEXT      = 2,
-   EDJE_PART_TYPE_IMAGE     = 3,
-   EDJE_PART_TYPE_SWALLOW   = 4,
-   EDJE_PART_TYPE_TEXTBLOCK = 5,
-   EDJE_PART_TYPE_GRADIENT  = 6,
-   EDJE_PART_TYPE_GROUP     = 7,
-   EDJE_PART_TYPE_BOX       = 8,
-   EDJE_PART_TYPE_TABLE     = 9,
-   EDJE_PART_TYPE_EXTERNAL  = 10,
-   EDJE_PART_TYPE_PROXY     = 11,
-   EDJE_PART_TYPE_SPACER    = 12, /**< @since 1.7 */
-   EDJE_PART_TYPE_LAST      = 13
+   EDJE_PART_TYPE_NONE      = 0,  /**< None type value */
+   EDJE_PART_TYPE_RECTANGLE = 1,  /**< Rectangle type value */
+   EDJE_PART_TYPE_TEXT      = 2,  /**< Text type value */
+   EDJE_PART_TYPE_IMAGE     = 3,  /**< Image type value */
+   EDJE_PART_TYPE_SWALLOW   = 4,  /**< Swallow  type value */
+   EDJE_PART_TYPE_TEXTBLOCK = 5,  /**< Text block type value */
+   EDJE_PART_TYPE_GRADIENT  = 6,  /**< Gradient type value */
+   EDJE_PART_TYPE_GROUP     = 7,  /**< Group type value */
+   EDJE_PART_TYPE_BOX       = 8,  /**< Box type value */
+   EDJE_PART_TYPE_TABLE     = 9,  /**< Table type value */
+   EDJE_PART_TYPE_EXTERNAL  = 10, /**< External type value */
+   EDJE_PART_TYPE_PROXY     = 11, /**< Proxy type value */
+   EDJE_PART_TYPE_SPACER    = 12, /**< Spacer type value @since 1.7 */
+   EDJE_PART_TYPE_LAST      = 13  /**< Last type value */
+
 } Edje_Part_Type;
 /**
  * @}
@@ -1261,32 +1320,45 @@ typedef enum _Edje_Part_Type
 #define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
    do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
 
+/**
+ * @typedef Edje_Text_Effect
+ *
+ * All possible text effects in Edje
+ */
 typedef enum _Edje_Text_Effect
 {
-   EDJE_TEXT_EFFECT_NONE                = 0,
-   EDJE_TEXT_EFFECT_PLAIN               = 1,
-   EDJE_TEXT_EFFECT_OUTLINE             = 2,
-   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,
-   EDJE_TEXT_EFFECT_SHADOW              = 4,
-   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,
-   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,
-   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,
-   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,
-   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,
-   EDJE_TEXT_EFFECT_GLOW                = 10,
+   EDJE_TEXT_EFFECT_NONE                = 0,  /**< None text effect value */
+   EDJE_TEXT_EFFECT_PLAIN               = 1,  /**< Plain text effect value */
+   EDJE_TEXT_EFFECT_OUTLINE             = 2,  /**< Outline text effect value */
+   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,  /**< Soft outline text effect value */
+   EDJE_TEXT_EFFECT_SHADOW              = 4,  /**< Shadown text effect value */
+   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,  /**< Soft shadow text effect value */
+   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,  /**< Outline shadow text effect value */
+   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,  /**< Outline soft shadow text effect value */
+   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,  /**< Far shadow text effect value */
+   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,  /**< Far soft shadow text effect value */
+   EDJE_TEXT_EFFECT_GLOW                = 10, /**< Glow text effect value */
 
-   EDJE_TEXT_EFFECT_LAST                = 11,
+   EDJE_TEXT_EFFECT_LAST                = 11, /**< Last text effect value */
 
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT         = (0x3 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP          = (0x5 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4), /**< Bottom right shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4), /**< Bottom shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4), /**< Bottom left shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT         = (0x3 << 4), /**< Left shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4), /**< Top left shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP          = (0x5 << 4), /**< Top shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4), /**< Top right shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)  /**< right shadow direction value */
 } Edje_Text_Effect;
 
+/**
+ * @typedef (*Edje_Text_Change_Cb)
+ *
+ * Callback prototype for Edje_Text_Change
+ * @param data user provided data to pass to the callback
+ * @param obj the Evas_Object
+ * @param The edje part
+ */
 typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
 /**
  * @}
@@ -1328,15 +1400,21 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
  * @{
  */
 
+/**
+ * @typedef Edje_Cursor
+ *
+ * All available cursor states
+ *
+ */
 typedef enum _Edje_Cursor
 {
-   EDJE_CURSOR_MAIN,
-   EDJE_CURSOR_SELECTION_BEGIN,
-   EDJE_CURSOR_SELECTION_END,
-   EDJE_CURSOR_PREEDIT_START,
-   EDJE_CURSOR_PREEDIT_END,
-   EDJE_CURSOR_USER,
-   EDJE_CURSOR_USER_EXTRA,
+   EDJE_CURSOR_MAIN,            /*< Main cursor state            */
+   EDJE_CURSOR_SELECTION_BEGIN, /*< Selection begin cursor state */
+   EDJE_CURSOR_SELECTION_END,   /*< Selection end cursor state   */
+   EDJE_CURSOR_PREEDIT_START,   /*< Pre-edit start cursor state  */
+   EDJE_CURSOR_PREEDIT_END,     /*< Pre-edit end cursor starge   */
+   EDJE_CURSOR_USER,            /*< User cursor state            */
+   EDJE_CURSOR_USER_EXTRA,      /*< User extra cursor state      */
    // more later
 } Edje_Cursor;
 
@@ -1363,13 +1441,19 @@ typedef enum _Edje_Cursor
  * @{
  */
 
+/**
+ * @typedef Edje_Aspect_Control
+ *
+ * All Edje aspect control values
+ *
+ */
 typedef enum _Edje_Aspect_Control
 {
-   EDJE_ASPECT_CONTROL_NONE = 0,
-   EDJE_ASPECT_CONTROL_NEITHER = 1,
-   EDJE_ASPECT_CONTROL_HORIZONTAL = 2,
-   EDJE_ASPECT_CONTROL_VERTICAL = 3,
-   EDJE_ASPECT_CONTROL_BOTH = 4
+   EDJE_ASPECT_CONTROL_NONE = 0,       /*< None aspect control value       */
+   EDJE_ASPECT_CONTROL_NEITHER = 1,    /*< Neither aspect control value    */
+   EDJE_ASPECT_CONTROL_HORIZONTAL = 2, /*< Horizontal aspect control value */
+   EDJE_ASPECT_CONTROL_VERTICAL = 3,   /*< Vertical aspect control value   */
+   EDJE_ASPECT_CONTROL_BOTH = 4        /*< Both aspect control value       */
 } Edje_Aspect_Control;
 
 /**
@@ -1416,12 +1500,17 @@ typedef enum _Edje_Aspect_Control
  * @{
  */
 
+/**
+ * @typedef Edje_Drag_Dir
+ *
+ * Dragable properties values
+ */
 typedef enum _Edje_Drag_Dir
 {
-   EDJE_DRAG_DIR_NONE = 0,
-   EDJE_DRAG_DIR_X = 1,
-   EDJE_DRAG_DIR_Y = 2,
-   EDJE_DRAG_DIR_XY = 3
+   EDJE_DRAG_DIR_NONE = 0,  /*< Not dragable value     */
+   EDJE_DRAG_DIR_X = 1,     /*< X dragable value       */
+   EDJE_DRAG_DIR_Y = 2,     /*< Y dragable value       */
+   EDJE_DRAG_DIR_XY = 3     /*< X and Y dragable value */
 } Edje_Drag_Dir;
 
 /**
@@ -1482,11 +1571,17 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
  * @{
  */
 
+/**
+ * @typedef Edje_Object_Table_Homogeneous_Mode
+ *
+ * Table homogeneous modes
+ *
+ */
 typedef enum _Edje_Object_Table_Homogeneous_Mode
 {
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,  /*< None homogeneous mode  */
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1, /*< Table homogeneous mode */
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2   /*< Item homogeneous mode  */
 } Edje_Object_Table_Homogeneous_Mode;
 
 /**
@@ -1688,53 +1783,64 @@ EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
  * @{
  */
 
+/**
+ * @typedef Edje_Tween_Mode
+ *
+ * Available tween mode for edje animations
+ */
 typedef enum _Edje_Tween_Mode
 {
-   EDJE_TWEEN_MODE_NONE              = 0,
-   EDJE_TWEEN_MODE_LINEAR            = 1,
-   EDJE_TWEEN_MODE_SINUSOIDAL        = 2,
-   EDJE_TWEEN_MODE_ACCELERATE        = 3,
-   EDJE_TWEEN_MODE_DECELERATE        = 4,
-   EDJE_TWEEN_MODE_ACCELERATE_FACTOR = 5,
-   EDJE_TWEEN_MODE_DECELERATE_FACTOR = 6,
-   EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR = 7,
-   EDJE_TWEEN_MODE_DIVISOR_INTERP    = 8,
-   EDJE_TWEEN_MODE_BOUNCE            = 9,
-   EDJE_TWEEN_MODE_SPRING            = 10,
-   EDJE_TWEEN_MODE_CUBIC_BEZIER      = 11,
-   EDJE_TWEEN_MODE_LAST              = 12,
-   EDJE_TWEEN_MODE_MASK              = 0xff,
-   EDJE_TWEEN_MODE_OPT_FROM_CURRENT  = (1 << 31)
+   EDJE_TWEEN_MODE_NONE              = 0,        /**< None tween mode value */
+   EDJE_TWEEN_MODE_LINEAR            = 1,        /**< Linear tween mode value */
+   EDJE_TWEEN_MODE_SINUSOIDAL        = 2,        /**< Sinusoidal tween mode value */
+   EDJE_TWEEN_MODE_ACCELERATE        = 3,        /**< Accelerate tween mode value */
+   EDJE_TWEEN_MODE_DECELERATE        = 4,        /**< Decelerate tween mode value */
+   EDJE_TWEEN_MODE_ACCELERATE_FACTOR = 5,        /**< Accelerate factor tween mode value */
+   EDJE_TWEEN_MODE_DECELERATE_FACTOR = 6,        /**< Decelerate factor tween mode value */
+   EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR = 7,        /**< Sinusoidal factgor tween mode value */
+   EDJE_TWEEN_MODE_DIVISOR_INTERP    = 8,        /**< Divisor iterp tween mode value */
+   EDJE_TWEEN_MODE_BOUNCE            = 9,        /**< Bounce tween mode value */
+   EDJE_TWEEN_MODE_SPRING            = 10,       /**< Spring tween mode value */
+   EDJE_TWEEN_MODE_CUBIC_BEZIER      = 11,       /**< Cubic Bezier tween mode value */
+   EDJE_TWEEN_MODE_LAST              = 12,       /**< Last tween mode value */
+   EDJE_TWEEN_MODE_MASK              = 0xff,     /**< Mask tween mode value */
+   EDJE_TWEEN_MODE_OPT_FROM_CURRENT  = (1 << 31) /**< Options from current tween mode value */
 } Edje_Tween_Mode;
 
+/**
+ * @typedef Edje_Action_Type
+ *
+ * All actions available in Edje programs.
+ *
+ */
 typedef enum _Edje_Action_Type
 {
-   EDJE_ACTION_TYPE_NONE                     = 0,
-   EDJE_ACTION_TYPE_STATE_SET                = 1,
-   EDJE_ACTION_TYPE_ACTION_STOP              = 2,
-   EDJE_ACTION_TYPE_SIGNAL_EMIT              = 3,
-   EDJE_ACTION_TYPE_DRAG_VAL_SET             = 4,
-   EDJE_ACTION_TYPE_DRAG_VAL_STEP            = 5,
-   EDJE_ACTION_TYPE_DRAG_VAL_PAGE            = 6,
-   EDJE_ACTION_TYPE_SCRIPT                   = 7,
-   EDJE_ACTION_TYPE_FOCUS_SET                = 8,
-   EDJE_ACTION_TYPE_RESERVED00               = 9,
-   EDJE_ACTION_TYPE_FOCUS_OBJECT             = 10,
-   EDJE_ACTION_TYPE_PARAM_COPY               = 11,
-   EDJE_ACTION_TYPE_PARAM_SET                = 12,
-   EDJE_ACTION_TYPE_SOUND_SAMPLE             = 13, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_SOUND_TONE               = 14, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_PHYSICS_IMPULSE          = 15, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE   = 16, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_FORCE            = 17, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_TORQUE           = 18, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR     = 19, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_VEL_SET          = 20, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET      = 21, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_STOP             = 22, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_PHYSICS_ROT_SET          = 23, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_VIBRATION_SAMPLE         = 24, /**< @since 1.10 */
-   EDJE_ACTION_TYPE_LAST                     = 25
+   EDJE_ACTION_TYPE_NONE                     = 0,  /**< None action value */
+   EDJE_ACTION_TYPE_STATE_SET                = 1,  /**< State set action value */
+   EDJE_ACTION_TYPE_ACTION_STOP              = 2,  /**< Action stop action value */
+   EDJE_ACTION_TYPE_SIGNAL_EMIT              = 3,  /**< Signal emit action value */
+   EDJE_ACTION_TYPE_DRAG_VAL_SET             = 4,  /**< Drag val set action value */
+   EDJE_ACTION_TYPE_DRAG_VAL_STEP            = 5,  /**< Drag val step action value */
+   EDJE_ACTION_TYPE_DRAG_VAL_PAGE            = 6,  /**< Drag val page action value */
+   EDJE_ACTION_TYPE_SCRIPT                   = 7,  /**< Script action value */
+   EDJE_ACTION_TYPE_FOCUS_SET                = 8,  /**< Forcus set action value */
+   EDJE_ACTION_TYPE_RESERVED00               = 9,  /**< Reversed do action value */
+   EDJE_ACTION_TYPE_FOCUS_OBJECT             = 10, /**< Forcus object action value */
+   EDJE_ACTION_TYPE_PARAM_COPY               = 11, /**< Param copy action value */
+   EDJE_ACTION_TYPE_PARAM_SET                = 12, /**< Param set action value */
+   EDJE_ACTION_TYPE_SOUND_SAMPLE             = 13, /**< @since 1.1 @brief Sound sample action value */
+   EDJE_ACTION_TYPE_SOUND_TONE               = 14, /**< @since 1.1 @brief Sound tone action value */
+   EDJE_ACTION_TYPE_PHYSICS_IMPULSE          = 15, /**< @since 1.8 @brief Physics impulse action value */
+   EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE   = 16, /**< @since 1.8 @brief Physics torque impulse action value */
+   EDJE_ACTION_TYPE_PHYSICS_FORCE            = 17, /**< @since 1.8 @brief Physics force action value */
+   EDJE_ACTION_TYPE_PHYSICS_TORQUE           = 18, /**< @since 1.8 @brief Physics torque action value */
+   EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR     = 19, /**< @since 1.8 @brief Physics forces clear action value */
+   EDJE_ACTION_TYPE_PHYSICS_VEL_SET          = 20, /**< @since 1.8 @brief Physics velocity set action value */
+   EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET      = 21, /**< @since 1.8 @brief Physics angle velocity set action value */
+   EDJE_ACTION_TYPE_PHYSICS_STOP             = 22, /**< @since 1.8 @brief Physics stop action value */
+   EDJE_ACTION_TYPE_PHYSICS_ROT_SET          = 23, /**< @since 1.8 @brief Physics rotation set action value */
+   EDJE_ACTION_TYPE_VIBRATION_SAMPLE         = 24, /**< @since 1.10 @brief vibration sample action value */
+   EDJE_ACTION_TYPE_LAST                     = 25  /**< Last action value */
 } Edje_Action_Type;
 
 /**
@@ -2091,24 +2197,24 @@ typedef enum _Edje_Channel
 
 /**
  * Set the mute state of audio for the process as a whole
- * 
+ *
  * @param channel The channel to set the mute state of
  * @param mute The mute state
- * 
+ *
  * This sets the mute (no output) state of audio for the given channel.
- * 
+ *
  * @see edje_audio_channel_mute_get()
- * 
+ *
  * @since 1.9
  */
 EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
  * Get the mute state of the given channel
- * 
+ *
  * @param channel The channel to get the mute state of
  * @return The mute state of the channel
- * 
+ *
  * @see edje_audio_channel_mute_set()
  *
  * @since 1.9
@@ -2127,4 +2233,3 @@ EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
 /**
  * @}
  */
-

@@ -106,13 +106,16 @@ extern "C" {
 
 #define EFREET_VERSION_MAJOR EFL_VERSION_MAJOR
 #define EFREET_VERSION_MINOR EFL_VERSION_MINOR
-   
+   /**
+    * @typedef Efreet_Version
+    * Represents the current version of Efreet
+    */
    typedef struct _Efreet_Version
      {
-        int major;
-        int minor;
-        int micro;
-        int revision;
+        int major; /** < major (binary or source incompatible changes) */
+        int minor; /** < minor (new features, bugfixes, major improvements version) */
+        int micro; /** < micro (bugfix, internal improvements, no new features version) */
+        int revision; /** < git revision (0 if a proper release or the git revision number Efreet is built from) */
      } Efreet_Version;
    
    EAPI extern Efreet_Version *efreet_version;

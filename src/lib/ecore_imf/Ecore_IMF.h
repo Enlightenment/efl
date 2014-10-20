@@ -78,6 +78,11 @@ extern "C" {
  */
 
 /* ecore_imf_context_input_panel_event_callback_add() flag */
+
+/**
+ * @typedef Ecore_IMF_Input_Panel_Event
+ * Enum containing input panel events.
+ */
 typedef enum
 {
    ECORE_IMF_INPUT_PANEL_STATE_EVENT,              /**< called when the state of the input panel is changed. @since 1.7 */
@@ -88,6 +93,10 @@ typedef enum
    ECORE_IMF_CANDIDATE_PANEL_GEOMETRY_EVENT        /**< called when the size of the candidate word panel is changed. @since 1.7 */
 } Ecore_IMF_Input_Panel_Event;
 
+/**
+ * @typedef Ecore_IMF_Input_Panel_State
+ * Enum containing input panel state notifications.
+ */
 typedef enum
 {
    ECORE_IMF_INPUT_PANEL_STATE_SHOW,        /**< Notification after the display of the input panel @since 1.7 */
@@ -95,12 +104,20 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_STATE_WILL_SHOW    /**< Notification prior to the display of the input panel @since 1.7 */
 } Ecore_IMF_Input_Panel_State;
 
+/**
+ * @typedef Ecore_IMF_Input_Panel_Shift_Mode
+ * Enum containing input shift mode states.
+ */
 typedef enum
 {
     ECORE_IMF_INPUT_PANEL_SHIFT_MODE_OFF, /**< @since 1.7 */
     ECORE_IMF_INPUT_PANEL_SHIFT_MODE_ON   /**< @since 1.7 */
 } Ecore_IMF_Input_Panel_Shift_Mode;
 
+/**
+ * @typedef Ecore_IMF_Candidate_Panel_State
+ * Enum containing candidate word panel state notifications.
+ */
 typedef enum
 {
    ECORE_IMF_CANDIDATE_PANEL_SHOW,        /**< Notification after the display of the candidate word panel @since 1.7 */
@@ -139,6 +156,13 @@ EAPI extern int ECORE_IMF_EVENT_PREEDIT_CHANGED;
 EAPI extern int ECORE_IMF_EVENT_COMMIT;
 EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
 
+/**
+ * @typedef Ecore_IMF_Event_Cb
+ *
+ * @brief Called when a Ecore_IMF event happens.
+ *
+ * @see  ecore_imf_context_event_callback_add()
+ */
 typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *event_info);
 
 /**
@@ -214,6 +238,10 @@ typedef enum
    ECORE_IMF_MOUSE_TRIPLE_CLICK      = 1 << 1  /**< A triple click */
 } Ecore_IMF_Mouse_Flags;
 
+/**
+ * @typedef Ecore_IMF_Input_Mode
+ * Type for Ecore_IMF input mode
+ */
 typedef enum
 {
    ECORE_IMF_INPUT_MODE_ALPHA        = 1 << 0,
@@ -362,27 +390,47 @@ typedef enum
    ECORE_IMF_BIDI_DIRECTION_RTL         /**< The Right to Left mode @since 1.12 */
 } Ecore_IMF_BiDi_Direction;
 
+/**
+ * @struct _Ecore_IMF_Event_Preedit_Start
+ * @brief The structure type used with the Preedit_Start Input Method event
+ */
 struct _Ecore_IMF_Event_Preedit_Start
 {
    Ecore_IMF_Context *ctx;
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Preedit_End
+ * @brief The structure type used with the Preedit_End Input Method event
+ */
 struct _Ecore_IMF_Event_Preedit_End
 {
    Ecore_IMF_Context *ctx;
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Preedit_Changed
+ * @brief The structure type used with the Preedit_Changed Input Method event
+ */
 struct _Ecore_IMF_Event_Preedit_Changed
 {
    Ecore_IMF_Context *ctx;
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Commit
+ * @brief The structure type used with the Commit Input Method event
+ */
 struct _Ecore_IMF_Event_Commit
 {
    Ecore_IMF_Context *ctx;
    char              *str;
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Delete_Surrounding
+ * @brief The structure type used with the Delete_Surrounding Input Method event
+ */
 struct _Ecore_IMF_Event_Delete_Surrounding
 {
    Ecore_IMF_Context *ctx;
@@ -390,6 +438,10 @@ struct _Ecore_IMF_Event_Delete_Surrounding
    int                n_chars;
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Selection
+ * @brief The structure type used with the Selection Input Method event
+ */
 struct _Ecore_IMF_Event_Selection
 {
    Ecore_IMF_Context *ctx;
@@ -397,6 +449,10 @@ struct _Ecore_IMF_Event_Selection
    int                end;
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Mouse_Down
+ * @brief The structure type used with the Mouse_Down event
+ */
 struct _Ecore_IMF_Event_Mouse_Down
 {
    int button;                             /**< The button which has been pressed */
@@ -412,6 +468,10 @@ struct _Ecore_IMF_Event_Mouse_Down
    unsigned int                 timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Mouse_Up
+ * @brief The structure type used with the Mouse_Up event
+ */
 struct _Ecore_IMF_Event_Mouse_Up
 {
    int button;                             /**< The button which has been pressed */
@@ -427,6 +487,10 @@ struct _Ecore_IMF_Event_Mouse_Up
    unsigned int                 timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Mouse_In
+ * @brief The structure type used with the Mouse_In event
+ */
 struct _Ecore_IMF_Event_Mouse_In
 {
    int buttons;
@@ -441,6 +505,10 @@ struct _Ecore_IMF_Event_Mouse_In
    unsigned int                 timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Mouse_Out
+ * @brief The structure type used with the Mouse_Out event
+ */
 struct _Ecore_IMF_Event_Mouse_Out
 {
    int buttons;
@@ -455,6 +523,10 @@ struct _Ecore_IMF_Event_Mouse_Out
    unsigned int                 timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Mouse_Move
+ * @brief The structure type used with the Mouse_Move event
+ */
 struct _Ecore_IMF_Event_Mouse_Move
 {
    int buttons;
@@ -471,6 +543,10 @@ struct _Ecore_IMF_Event_Mouse_Move
    unsigned int                 timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Mouse_Wheel
+ * @brief The structure type used with the Mouse_Wheel event
+ */
 struct _Ecore_IMF_Event_Mouse_Wheel
 {
    int direction;                         /* 0 = default up/down wheel */
@@ -486,6 +562,10 @@ struct _Ecore_IMF_Event_Mouse_Wheel
    unsigned int                 timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Key_Down
+ * @brief The structure type used with the Key_Down event
+ */
 struct _Ecore_IMF_Event_Key_Down
 {
    const char                   *keyname;   /**< The string name of the key pressed */
@@ -497,6 +577,10 @@ struct _Ecore_IMF_Event_Key_Down
    unsigned int                  timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @struct _Ecore_IMF_Event_Key_Up
+ * @brief The structure type used with the Key_Up event
+ */
 struct _Ecore_IMF_Event_Key_Up
 {
    const char                   *keyname;   /**< The string name of the key pressed */
@@ -508,6 +592,9 @@ struct _Ecore_IMF_Event_Key_Up
    unsigned int                  timestamp; /**< The timestamp when the event occurred */
 };
 
+/**
+ * @brief A union of IMF events.
+ */
 union _Ecore_IMF_Event
 {
    Ecore_IMF_Event_Mouse_Down  mouse_down;
@@ -520,6 +607,10 @@ union _Ecore_IMF_Event
    Ecore_IMF_Event_Key_Up      key_up;
 };
 
+/**
+ * @struct _Ecore_IMF_Preedit_Attr
+ * @brief Structure that contains preedit attribute information.
+ */
 struct _Ecore_IMF_Preedit_Attr
 {
    Ecore_IMF_Preedit_Type preedit_type; /**< preedit style type */
@@ -527,47 +618,58 @@ struct _Ecore_IMF_Preedit_Attr
    unsigned int end_index;              /**< end index of the range (in bytes) */
 };
 
+/**
+ * @struct _Ecore_IMF_Context_Class
+ * @brief Structure used when creating a new Input Method Context. This
+ * structure is mainly used by modules implementing the Input Method Context
+ * interface.
+ *
+ */
 struct _Ecore_IMF_Context_Class
 {
-   void (*add)                 (Ecore_IMF_Context *ctx);
-   void (*del)                 (Ecore_IMF_Context *ctx);
-   void (*client_window_set)   (Ecore_IMF_Context *ctx, void *window);
-   void (*client_canvas_set)   (Ecore_IMF_Context *ctx, void *canvas);
-   void (*show)                (Ecore_IMF_Context *ctx);
-   void (*hide)                (Ecore_IMF_Context *ctx);
-   void (*preedit_string_get)  (Ecore_IMF_Context *ctx, char **str, int *cursor_pos);
-   void (*focus_in)            (Ecore_IMF_Context *ctx);
-   void (*focus_out)           (Ecore_IMF_Context *ctx);
-   void (*reset)               (Ecore_IMF_Context *ctx);
-   void (*cursor_position_set) (Ecore_IMF_Context *ctx, int cursor_pos);
-   void (*use_preedit_set)     (Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
-   void (*input_mode_set)      (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
-   Eina_Bool (*filter_event)   (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
-   void (*preedit_string_with_attributes_get) (Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos);
-   void (*prediction_allow_set)(Ecore_IMF_Context *ctx, Eina_Bool prediction);
-   void (*autocapital_type_set)(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type);
-   void (*control_panel_show)   (Ecore_IMF_Context *ctx);
-   void (*control_panel_hide)   (Ecore_IMF_Context *ctx);
-   void (*input_panel_layout_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout);
-   Ecore_IMF_Input_Panel_Layout (*input_panel_layout_get) (Ecore_IMF_Context *ctx);
-   void (*input_panel_language_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang);
-   Ecore_IMF_Input_Panel_Lang (*input_panel_language_get) (Ecore_IMF_Context *ctx);
-   void (*cursor_location_set) (Ecore_IMF_Context *ctx, int x, int y, int w, int h);
-   void (*input_panel_imdata_set)(Ecore_IMF_Context *ctx, const void* data, int len);
-   void (*input_panel_imdata_get)(Ecore_IMF_Context *ctx, void* data, int *len);
-   void (*input_panel_return_key_type_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type);
-   void (*input_panel_return_key_disabled_set) (Ecore_IMF_Context *ctx, Eina_Bool disabled);
-   void (*input_panel_caps_lock_mode_set) (Ecore_IMF_Context *ctx, Eina_Bool mode);
-   void (*input_panel_geometry_get)(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
-   Ecore_IMF_Input_Panel_State (*input_panel_state_get) (Ecore_IMF_Context *ctx);
-   void (*input_panel_event_callback_add) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value), void *data);
-   void (*input_panel_event_callback_del) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value));
-   void (*input_panel_language_locale_get) (Ecore_IMF_Context *ctx, char **lang);
-   void (*candidate_panel_geometry_get)(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
-   void (*input_hint_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints);
-   void (*bidi_direction_set) (Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction);
+   void (*add)                 (Ecore_IMF_Context *ctx); /**< Create the Input Method Context */
+   void (*del)                 (Ecore_IMF_Context *ctx); /**< Delete the Input Method Context */
+   void (*client_window_set)   (Ecore_IMF_Context *ctx, void *window); /**< Set the client window for the Input Method Context */
+   void (*client_canvas_set)   (Ecore_IMF_Context *ctx, void *canvas); /**< Set the client canvas for the Input Method Context */
+   void (*show)                (Ecore_IMF_Context *ctx); /**< Show the Input Method Context */
+   void (*hide)                (Ecore_IMF_Context *ctx); /**< Hide the Input Method Context */
+   void (*preedit_string_get)  (Ecore_IMF_Context *ctx, char **str, int *cursor_pos); /**< Return current preedit string and cursor position */
+   void (*focus_in)            (Ecore_IMF_Context *ctx); /**< Input Method context widget has gained focus */
+   void (*focus_out)           (Ecore_IMF_Context *ctx); /**< Input Method context widget has lost focus */
+   void (*reset)               (Ecore_IMF_Context *ctx); /**< A change has been made */
+   void (*cursor_position_set) (Ecore_IMF_Context *ctx, int cursor_pos); /**< Cursor position changed */
+   void (*use_preedit_set)     (Ecore_IMF_Context *ctx, Eina_Bool use_preedit); /**< Use preedit string to display feedback */
+   void (*input_mode_set)      (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode); /**< Set the input mode */
+   Eina_Bool (*filter_event)   (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event); /**< Internally handle an event */
+   void (*preedit_string_with_attributes_get) (Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos); /**<  return current preedit string, attributes, and cursor position */
+   void (*prediction_allow_set)(Ecore_IMF_Context *ctx, Eina_Bool prediction); /**< Allow text prediction */
+   void (*autocapital_type_set)(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type); /**< Set auto-capitalization type */
+   void (*control_panel_show)   (Ecore_IMF_Context *ctx); /**< Show the control panel */
+   void (*control_panel_hide)   (Ecore_IMF_Context *ctx); /**< Hide the control panel */
+   void (*input_panel_layout_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout); /**< Set the layout of the input panel */
+   Ecore_IMF_Input_Panel_Layout (*input_panel_layout_get) (Ecore_IMF_Context *ctx); /**< Return the current layout of the input panel */
+   void (*input_panel_language_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang); /**< Set the language of the input panel */
+   Ecore_IMF_Input_Panel_Lang (*input_panel_language_get) (Ecore_IMF_Context *ctx); /**< Get the current language of the input panel */
+   void (*cursor_location_set) (Ecore_IMF_Context *ctx, int x, int y, int w, int h); /**< Set the cursor location */
+   void (*input_panel_imdata_set)(Ecore_IMF_Context *ctx, const void* data, int len); /**< Set panel-specific data to the input panel */
+   void (*input_panel_imdata_get)(Ecore_IMF_Context *ctx, void* data, int *len); /**< Get current panel-specific data from the input panel */
+   void (*input_panel_return_key_type_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type); /**< Set the return key theme of the input panel based on return key type provided */
+   void (*input_panel_return_key_disabled_set) (Ecore_IMF_Context *ctx, Eina_Bool disabled); /**< Disable return key of the input panel */
+   void (*input_panel_caps_lock_mode_set) (Ecore_IMF_Context *ctx, Eina_Bool mode); /**< Set input panel caps lock mode */
+   void (*input_panel_geometry_get)(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h); /**< Return input panel geometry */
+   Ecore_IMF_Input_Panel_State (*input_panel_state_get) (Ecore_IMF_Context *ctx); /**< Return input panel state */
+   void (*input_panel_event_callback_add) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value), void *data); /**< Add a callback on input panel state,language,mode change */
+   void (*input_panel_event_callback_del) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value)); /**< Delete the input panel event callback */
+   void (*input_panel_language_locale_get) (Ecore_IMF_Context *ctx, char **lang); /**< Return the current language locale */
+   void (*candidate_panel_geometry_get)(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h); /**< Return the candidate panel geometry */
+   void (*input_hint_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints); /**< Sets input hint to fine-tune input methods behavior */
+   void (*bidi_direction_set) (Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction); /**< Set bidirectionality at the cursor position */
 };
 
+/**
+ * @struct _Ecore_IMF_Context_Info
+ * @brief A IMF structure containing context information.
+ */
 struct _Ecore_IMF_Context_Info
 {
    const char *id;              /* ID */
@@ -597,6 +699,15 @@ EAPI int                           ecore_imf_init(void);
  */
 EAPI int                           ecore_imf_shutdown(void);
 
+/**
+ * Register an Ecore_IMF module.
+ *
+ * @param info              An Ecore_IMF_Context_Info structure
+ * @param imf_module_create A function to call at the creation
+ * @param imf_module_exit   A function to call when exiting
+ *
+ * @ingroup Ecore_IMF_Lib_Group
+ */
 EAPI void                          ecore_imf_module_register(const Ecore_IMF_Context_Info *info, Ecore_IMF_Context *(*imf_module_create)(void), Ecore_IMF_Context *(*imf_module_exit)(void));
 
 /**
@@ -619,6 +730,18 @@ EAPI Eina_Bool                     ecore_imf_input_panel_hide(void);
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI Eina_List                    *ecore_imf_context_available_ids_get(void);
+
+/**
+ * Get the list of the available Input Method Context ids by canvas type.
+ *
+ * Note that the caller is responsible for freeing the Eina_List
+ * when finished with it. There is no need to finish the list strings.
+ *
+ * @param  canvas_type A string containing the canvas type.
+ * @return Return an Eina_List of strings;
+ *         on failure it returns NULL.
+ * @ingroup Ecore_IMF_Context_Group
+ */
 EAPI Eina_List                    *ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type);
 
 /**
@@ -631,6 +754,18 @@ EAPI Eina_List                    *ecore_imf_context_available_ids_by_canvas_typ
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI const char                   *ecore_imf_context_default_id_get(void);
+
+/**
+ * Get the id of the default Input Method Context corresponding to a canvas
+ * type.
+ * The id may be used to create a new instance of an Input Method
+ * Context object.
+ *
+ * @param  canvas_type A string containing the canvas type.
+ * @return Return a string containing the id of the default Input
+ *         Method Context; on failure it returns NULL.
+ * @ingroup Ecore_IMF_Context_Group
+ */
 EAPI const char                   *ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type);
 
 /**
@@ -1670,6 +1805,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_
 /**
  * @brief Sets the bidirectionality at the current cursor position.
  *
+ * @ingroup Ecore_IMF_Context_Group
  * @since 1.12.0
  *
  * @param[in] ctx An #Ecore_IMF_Context
@@ -1680,6 +1816,7 @@ EAPI void                          ecore_imf_context_bidi_direction_set(Ecore_IM
 /**
  * @brief Gets the bidirectionality at the current cursor position.
  *
+ * @ingroup Ecore_IMF_Context_Group
  * @since 1.12.0
  *
  * @param[in] ctx An #Ecore_IMF_Context

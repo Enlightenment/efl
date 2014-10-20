@@ -39,8 +39,8 @@
  * @li @c pass_through: it just call malloc() and free(). It may be
  * faster on some computers than using our own allocators (like having
  * a huge L2 cache, over 4MB).
- * @li @c one_big: It call just one time malloc for the requested number
- * of items. Useful when you know in advance how many object of some
+ * @li @c one_big: It calls just one time malloc for the requested number
+ * of items. Useful when you know in advance how many objects of some
  * type will live during the life of the mempool.
  */
 
@@ -71,29 +71,154 @@ typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 
 /**
  * @typedef Eina_Mempool_Repack_Cb
- * Type for a callback who need to unreference an old object from a mempool
- * and reference the new one instead. Memcpy is taken care by the mempool.
+ *
+ * Type for a callback which is called when the mempool "repacks" its data,
+ * i.e. moves it around to optimize the way it is stored in memory. This is
+ * useful to improve data locality and to free internal pools back to the OS.
+ *
+ * The callback needs to update users of the data to stop accessing the object
+ * from the old location and access it using the new location instead. The copy
+ * of memory is taken care of by the mempool.
  */
 typedef void (*Eina_Mempool_Repack_Cb)(void *dst, void *src, void *data);
 
 EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
-EAPI Eina_Mempool  *eina_mempool_add(const char *module, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+/**
+ *
+ * @brief Create a new mempool of the given type
+ *
+ * @param name Name of the mempool kind to use.
+ * @param context Identifier of the mempool created (for debug purposes).
+ * @param options Unused. Use the variable arguments list instead to pass options to the mempool.
+ * @param ... Additional options to pass to the allocator; depends entirely on the type of mempool ("int pool size" for chained and "int item_size" for one_big.
+ * @return Newly allocated mempool instance, NULL otherwise.
+ *
+ */
+EAPI Eina_Mempool  *eina_mempool_add(const char *name, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * @brief Delete the given mempool.
+ *
+ * @param mp The mempool to delete
+ *
+ */
 EAPI void           eina_mempool_del(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Re-allocate an amount memory by the given mempool.
+ *
+ * @param mp The mempool.
+ * @param element The element to re-allocate.
+ * @param size The size in bytes to re-allocate.
+ * @return The newly re-allocated data.
+ *
+ * This function re-allocates and returns @p element with @p size bytes using the
+ * mempool @p mp. If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ */
 static inline void *eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Allocate memory using the given mempool.
+ *
+ * @param mp The mempool.
+ * @param size The size in bytes to allocate.
+ * @return The newly allocated data.
+ *
+ * This function allocates and returns @p size bytes using the mempool @p mp.
+ * If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ */
 static inline void *eina_mempool_malloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Allocate and zero memory using the given mempool.
+ *
+ * @param mp The mempool.
+ * @param size The size in bytes to allocate.
+ * @return The newly allocated data.
+ *
+ * This function allocates, zeroes, and returns @p size bytes using the mempool @p mp.
+ * If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ * @since 1.2
+ */
+static inline void *eina_mempool_calloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Free resources previously allocated by the given mempool.
+ *
+ * @param mp The mempool.
+ * @param element The data to free.
+ *
+ * This function frees @p element allocated by @p mp. @p element must
+ * have been obtained from eina_mempool_malloc(), eina_mempool_calloc(), or
+ * eina_mempool_realloc().
+ * @warning No checks are done for @p mp.
+ */
 static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_NONNULL(1);
 
-EAPI void	    eina_mempool_repack(Eina_Mempool *mp,
-				        Eina_Mempool_Repack_Cb cb,
-					void *data) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Repack the objects in the mempool.
+ *
+ * @param mp The mempool
+ * @param cb A callback to update the pointers the objects with their new location.
+ * @param data Data to pass as third argument to @p cb.
+ *
+ * @see Eina_Mempool_Repack_Cb
+ * @see _Eina_Mempool_Backend
+ *
+ */
+EAPI void	        eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ *
+ * @brief Run a garbage collection cycle.
+ *
+ * @param mp The mempool
+ *
+ */
 EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * @brief Have the backend update its internal statistics.
+ *
+ * @param mp The mempool
+ *
+ */
 EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
+/**
+ *
+ * @brief Register the given memory pool backend.
+ *
+ * @param be The backend
+ * @return #EINA_TRUE if backend has been correctly registered, #EINA_FALSE
+ * otherwise.
+ *
+ */
 EAPI Eina_Bool      eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * @brief Unregister the given memory pool backend.
+ *
+ * @param be The backend
+ *
+ */
 EAPI void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
+/**
+ *
+ * @brief Computer the alignment that would be used when allocating a object of size @p size.
+ *
+ * @param size 
+ * @return The alignment for an allocation of size @p size.
+ *
+ */
 static inline unsigned int   eina_mempool_alignof(unsigned int size);
 
 #include "eina_inline_mempool.x"

@@ -446,6 +446,9 @@ EAPI Eio_File *eio_file_mkdir(const char *path,
  * @param done_cb Callback called when the move is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
+ *
+ * @return an Eio_File pointer, handler to the move operation, can be used to cancel the operation
  *
  * This function will copy a file from source to dest. It will try to use splice
  * if possible, if not it will fallback to mmap/write. It will try to preserve
@@ -467,6 +470,8 @@ EAPI Eio_File *eio_file_move(const char *source,
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
  *
+ * @return an Eio_File pointer, handler to the copy operation, can be used to cancel the operation
+ *
  * This function will copy a file from source to dest. It will try to use splice
  * if possible, if not it will fallback to mmap/write. It will try to preserve
  * access right, but not user/group identification.
@@ -487,6 +492,9 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
+ *
+ * @return an Eio_File pointer, handler to the move operation, can be used to cancel the operation
  *
  * This function will move a directory and all its content from source to dest.
  * It will try first to rename the directory, if not it will try to use splice
@@ -515,6 +523,9 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
+ *
+ * @return an Eio_File pointer, handler to the copy operation, can be used to cancel the operation
  *
  * This function will copy a directory and all its content from source to dest.
  * It will try to use splice if possible, if not it will fallback to mmap/write.
@@ -539,6 +550,9 @@ EAPI Eio_File *eio_dir_copy(const char *source,
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
+ *
+ * @return an Eio_File pointer, handler to the unlink operation, can be used to cancel the operation
  *
  * This function will remove a directory and all its content.
  * Every file will be passed to the filter_cb, so it's your job to decide if you

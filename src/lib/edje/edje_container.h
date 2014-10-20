@@ -32,36 +32,48 @@ typedef struct _Smart_Data_Colinfo Smart_Data_Colinfo;
 
 struct _Smart_Data
 {
-   Evas_Coord     x, y, w, h;
-   Eina_List     *children;
-   Evas_Object   *smart_obj;
-   int            cols, rows;
+   Evas_Coord     x; /**< horizontal coordinate */
+   Evas_Coord     y; /**< vertical coordinate */
+   Evas_Coord     w; /**< width */
+   Evas_Coord     h; /**< height */
+   Eina_List     *children; /**< list of children */
+   Evas_Object   *smart_obj; /**< actual smart object */
+   int            cols; /**< columns count */
+   int            rows; /**< rows count */
 
-   Evas_Coord     contents_w, contents_h;
-   Evas_Coord     min_row_h, max_row_h;
-   Evas_Coord     min_w, max_w, min_h, max_h;
+   Evas_Coord     contents_w; /**< contents width */
+   Evas_Coord     contents_h; /**< contents height */
+   Evas_Coord     min_row_h; /**< minimum row height */
+   Evas_Coord     max_row_h; /**< maximum row height */
+   Evas_Coord     min_w; /**< minimum width */
+   Evas_Coord     max_w; /**< maximum width */
+   Evas_Coord     min_h; /**< minimum height */
+   Evas_Coord     max_h; /**< maximum height */
 
    Smart_Data_Colinfo *colinfo;
 
    int            freeze;
 
-   double         scroll_x, scroll_y;
-   double         align_x, align_y;
+   double         scroll_x; /**< horizontal scroll */
+   double         scroll_y; /**< vertical scroll */
+   double         align_x; /**< horizontal alignment */
+   double         align_y; /**< vertical alignment */
 
-   unsigned char  changed : 1;
-   unsigned char  change_child : 1;
-   unsigned char  change_child_list : 1;
-   unsigned char  change_cols : 1;
-   unsigned char  change_scroll : 1;
+   unsigned char  changed : 1; /**< some property changed */
+   unsigned char  change_child : 1; /**<  a child changed */
+   unsigned char  change_child_list : 1; /**< child list changed */
+   unsigned char  change_cols : 1; /**< columns changed */
+   unsigned char  change_scroll : 1; /**< scroll changed */
 
-   unsigned char  need_layout : 1;
+   unsigned char  need_layout : 1; /**< layout computation needed */
 
-   unsigned char  homogenous : 1;
+   unsigned char  homogenous : 1; /**< homogeneous layout */
 };
 
 struct _Smart_Data_Colinfo
 {
-   Evas_Coord minw, maxw;
+   Evas_Coord minw; /**< minimum width */
+   Evas_Coord maxw; /**< maximum width */
 };
 
 /* All items are virtual constructs that provide Evas_Objects at some point.
@@ -90,36 +102,42 @@ struct _Edje_Item_Class
 /* private */
 struct _Edje_Item
 {
-   Edje_Item_Class *class;
+   Edje_Item_Class *class; /**< item class */
    void            *class_data;
 
-   void            *sd;
+   void            *sd; /**< smart data */
 
    void            *data;
 
-   Evas_Object     *object;
-   Evas_Object     *overlay_object;
+   Evas_Object     *object; /**< actual object */
+   Evas_Object     *overlay_object; /**< overlay object */
    int              freeze;
-   Evas_Coord       y, h;
+   Evas_Coord       y; /**< vertical position */
+   Evas_Coord       h; /**< height */
 
-   Evas_Coord       minh, maxh;
+   Evas_Coord       minh; /**< minimum height */
+   Evas_Coord       maxh; /**< maximum height */
 
-   int              cells_num;
+   int              cells_num; /**< cells count */
    Edje_Item_Cell  *cells;
 
    unsigned char    accessible : 1;
 
    unsigned char    recalc : 1;
-   unsigned char    selected : 1;
-   unsigned char    disabled : 1;
-   unsigned char    focused : 1;
+   unsigned char    selected : 1; /**< selected item */
+   unsigned char    disabled : 1; /**< disabled item */
+   unsigned char    focused : 1; /**< focused item */
 };
 
 struct _Edje_Item_Cell
 {
-   Evas_Object *obj;
-   Evas_Coord   x, w;
-   Evas_Coord   minw, minh, maxw, maxh;
+   Evas_Object *obj; /**< actual cell object */
+   Evas_Coord   x; /**< horizontal position */
+   Evas_Coord   w; /**< width */
+   Evas_Coord   minw; /**< minimum width */
+   Evas_Coord   minh; /**< minimum height */
+   Evas_Coord   maxw; /**< maximum width */
+   Evas_Coord   maxh; /**< maximum height */
 };
 
 /* here is an item for a vertical list - with 1 or more columns. this has 3 */

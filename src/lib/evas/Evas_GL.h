@@ -402,10 +402,10 @@ typedef enum _Evas_GL_Color_Format
 typedef enum _Evas_GL_Depth_Bits
 {
     EVAS_GL_DEPTH_NONE   = 0,
-    EVAS_GL_DEPTH_BIT_8  = 1,
-    EVAS_GL_DEPTH_BIT_16 = 2,
-    EVAS_GL_DEPTH_BIT_24 = 3,
-    EVAS_GL_DEPTH_BIT_32 = 4
+    EVAS_GL_DEPTH_BIT_8  = 1,   /**< 8 bits precision surface depth */
+    EVAS_GL_DEPTH_BIT_16 = 2,   /**< 16 bits precision surface depth */
+    EVAS_GL_DEPTH_BIT_24 = 3,   /**< 24 bits precision surface depth */
+    EVAS_GL_DEPTH_BIT_32 = 4    /**< 32 bits precision surface depth */
 } Evas_GL_Depth_Bits;
 
 /**
@@ -414,11 +414,11 @@ typedef enum _Evas_GL_Depth_Bits
 typedef enum _Evas_GL_Stencil_Bits
 {
     EVAS_GL_STENCIL_NONE   = 0,
-    EVAS_GL_STENCIL_BIT_1  = 1,
-    EVAS_GL_STENCIL_BIT_2  = 2,
-    EVAS_GL_STENCIL_BIT_4  = 3,
-    EVAS_GL_STENCIL_BIT_8  = 4,
-    EVAS_GL_STENCIL_BIT_16 = 5
+    EVAS_GL_STENCIL_BIT_1  = 1,   /**< 1 bit precision for stencil buffer */
+    EVAS_GL_STENCIL_BIT_2  = 2,   /**< 2 bits precision for stencil buffer */
+    EVAS_GL_STENCIL_BIT_4  = 3,   /**< 4 bits precision for stencil buffer */
+    EVAS_GL_STENCIL_BIT_8  = 4,   /**< 8 bits precision for stencil buffer */
+    EVAS_GL_STENCIL_BIT_16 = 5    /**< 16 bits precision for stencil buffer */
 } Evas_GL_Stencil_Bits;
 
 /**

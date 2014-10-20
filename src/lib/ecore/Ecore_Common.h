@@ -67,15 +67,36 @@ EAPI int ecore_shutdown(void);
  * @{
  */
 
-#define ECORE_VERSION_MAJOR EFL_VERSION_MAJOR
-#define ECORE_VERSION_MINOR EFL_VERSION_MINOR
+#define ECORE_VERSION_MAJOR EFL_VERSION_MAJOR /**< Ecore version major number */
+#define ECORE_VERSION_MINOR EFL_VERSION_MINOR /**< Ecore version minor number */
 
+/**
+ * @typedef Ecore_Version
+ *
+ * This is the Ecore version information structure that can be used at
+ * runtime to detect which version of ecore is being used and adapt
+ * appropriately as follows for example:
+ *
+ * @code
+ * #if defined(ECORE_VERSION_MAJOR) && (ECORE_VERSION_MAJOR >= 1) && defined(ECORE_VERSION_MINOR) && (ECORE_VERSION_MINOR > 0)
+ * printf("Ecore version: %i.%i.%i\n",
+ *        ecore_version->major,
+ *        ecore_version->minor,
+ *        ecore_version->micro);
+ * if (ecore_version->revision > 0)
+ *   {
+ *     printf("  Built from Git revision # %i\n", ecore_version->revision);
+ *   }
+ * #endif
+ * @endcode
+ *
+ */
 typedef struct _Ecore_Version
 {
-   int major;
-   int minor;
-   int micro;
-   int revision;
+   int major; /** < major (binary or source incompatible changes) */
+   int minor; /** < minor (new features, bugfixes, major improvements version) */
+   int micro; /** < micro (bugfix, internal improvements, no new features version) */
+   int revision; /** < git revision (0 if a proper release or the git revision number Ecore is built from) */
 } Ecore_Version;
 
 EAPI extern Ecore_Version *ecore_version;
@@ -128,6 +149,7 @@ EAPI void ecore_main_loop_iterate(void);
  * DO NOT use this function unless you are the person God comes to ask for
  * advice when He has trouble managing the Universe.
  *
+ * @return 1 if event exists, else 0.
  * @see ecore_main_loop_iterate()
  */
 EAPI int ecore_main_loop_iterate_may_block(int may_block);
@@ -274,10 +296,14 @@ typedef void *(*Ecore_Data_Cb)(void *data);
 /**
  * Add a function to be called by ecore_fork_reset()
  *
+ * @param func The function to add.
+ * @param data The data to pass to this function.
+ *
  * This queues @p func to be called (and passed @p data as its argument) when
  * ecore_fork_reset() is called. This allows other libraries and subsystems
  * to also reset their internal state after a fork.
  *
+ * @return EINA_TRUE on success, else EINA_FALSE.
  * @since 1.7
  */
 EAPI Eina_Bool ecore_fork_reset_callback_add(Ecore_Cb func, const void *data);
@@ -285,9 +311,13 @@ EAPI Eina_Bool ecore_fork_reset_callback_add(Ecore_Cb func, const void *data);
 /**
  * This removes the callback specified
  *
+ * @param func The function to delete.
+ * @param data The data passed to this function.
+ *
  * This deletes the callback added by ecore_fork_reset_callback_add() using
  * the function and data pointer to specify which to remove.
  *
+ * @return EINA_TRUE on success, else EINA_FALSE.
  * @since 1.7
  */
 EAPI Eina_Bool ecore_fork_reset_callback_del(Ecore_Cb func, const void *data);
@@ -451,7 +481,7 @@ EAPI int ecore_thread_main_loop_end(void);
  * @{
  */
 
-#define ECORE_EVENT_NONE            0
+#define ECORE_EVENT_NONE            0 /**< None event */
 #define ECORE_EVENT_SIGNAL_USER     1 /**< User signal event */
 #define ECORE_EVENT_SIGNAL_HUP      2 /**< Hup signal event */
 #define ECORE_EVENT_SIGNAL_EXIT     3 /**< Exit signal event */
@@ -462,7 +492,7 @@ EAPI int ecore_thread_main_loop_end(void);
 #define ECORE_EVENT_LOCALE_CHANGED           8 /**< Locale changed */
 #define ECORE_EVENT_HOSTNAME_CHANGED         9 /**< Hostname changed */
 #define ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED 10 /**< Time or Date changed */
-#define ECORE_EVENT_COUNT                   11
+#define ECORE_EVENT_COUNT                   11 /**< Number of events */
 
 typedef struct _Ecore_Win32_Handler         Ecore_Win32_Handler;    /**< A handle for HANDLE handlers on Windows */
 typedef struct _Ecore_Event_Handler         Ecore_Event_Handler;    /**< A handle for an event handler */
@@ -494,7 +524,11 @@ typedef void (*Ecore_End_Cb)(void *user_data, void *func_data);
  */
 typedef Eina_Bool (*Ecore_Event_Handler_Cb)(void *data, int type, void *event);
 
-struct _Ecore_Event_Signal_User    /** User signal event */
+/**
+ * @struct _Ecore_Event_Signal_User
+ * @brief A structure that stores information of a User signal event.
+ */
+struct _Ecore_Event_Signal_User
 {
    int       number;  /**< The signal number. Either 1 or 2 */
    void     *ext_data;  /**< Extension data - not used */
@@ -504,7 +538,11 @@ struct _Ecore_Event_Signal_User    /** User signal event */
 #endif
 };
 
-struct _Ecore_Event_Signal_Hup    /** Hup signal event */
+/**
+ * @struct _Ecore_Event_Signal_Hup
+ * @brief A structure that stores information of a Hup signal event.
+ */
+struct _Ecore_Event_Signal_Hup
 {
    void     *ext_data;  /**< Extension data - not used */
 
@@ -513,7 +551,11 @@ struct _Ecore_Event_Signal_Hup    /** Hup signal event */
 #endif
 };
 
-struct _Ecore_Event_Signal_Exit    /** Exit request event */
+/**
+ * @struct _Ecore_Event_Signal_Exit
+ * @brief A structure that stores information of an Exit request event.
+ */
+struct _Ecore_Event_Signal_Exit
 {
    Eina_Bool interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
    Eina_Bool quit      : 1; /**< set if the exit request was a quit signal */
@@ -525,7 +567,11 @@ struct _Ecore_Event_Signal_Exit    /** Exit request event */
 #endif
 };
 
-struct _Ecore_Event_Signal_Power    /** Power event */
+/**
+ * @struct _Ecore_Event_Signal_Power
+ * @brief A structure that stores information of a Power event.
+ */
+struct _Ecore_Event_Signal_Power
 {
    void     *ext_data;  /**< Extension data - not used */
 
@@ -534,7 +580,11 @@ struct _Ecore_Event_Signal_Power    /** Power event */
 #endif
 };
 
-struct _Ecore_Event_Signal_Realtime    /** Realtime event */
+/**
+ * @struct _Ecore_Event_Signal_Realtime
+ * @brief A structure that stores information of a Realtime event.
+ */
+struct _Ecore_Event_Signal_Realtime
 {
    int       num; /**< The realtime signal's number */
 
@@ -907,13 +957,21 @@ typedef struct _Ecore_Exe_Event_Del       Ecore_Exe_Event_Del; /**< Spawned Exe 
 typedef struct _Ecore_Exe_Event_Data_Line Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
 typedef struct _Ecore_Exe_Event_Data      Ecore_Exe_Event_Data; /**< Data from a child process */
 
-struct _Ecore_Exe_Event_Add    /** Process add event */
+/**
+ * @struct _Ecore_Exe_Event_Add
+ * @brief A structure that stores information of a Process add event.
+ */
+struct _Ecore_Exe_Event_Add
 {
    Ecore_Exe *exe; /**< The handle to the added process */
    void      *ext_data; /**< Extension data - not used */
 };
 
-struct _Ecore_Exe_Event_Del    /** Process exit event */
+/**
+ * @struct _Ecore_Exe_Event_Del
+ * @brief A structure that stores information of a Process exit event.
+ */
+struct _Ecore_Exe_Event_Del
 {
    pid_t      pid; /**< The process ID of the process that exited */
    int        exit_code; /**< The exit code of the process */
@@ -927,13 +985,21 @@ struct _Ecore_Exe_Event_Del    /** Process exit event */
 #endif
 };
 
-struct _Ecore_Exe_Event_Data_Line    /**< Lines from a child process */
+/**
+ * @struct _Ecore_Exe_Event_Data_Line
+ * @brief A structure that stores information of lines data from a child process.
+ */
+struct _Ecore_Exe_Event_Data_Line
 {
    char *line; /**< The bytes of a line of buffered data */
    int   size; /**< The size of the line buffer in bytes */
 };
 
-struct _Ecore_Exe_Event_Data    /** Data from a child process event */
+/**
+ * @struct _Ecore_Exe_Event_Data
+ * @brief A structure that stores information of data from a child process event.
+ */
+struct _Ecore_Exe_Event_Data
 {
    Ecore_Exe                 *exe; /**< The handle to the process */
    void                      *data; /**< the raw binary data from the child process that was received */
@@ -1072,7 +1138,7 @@ EAPI Ecore_Exe_Event_Data *ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Fl
 /**
  * Frees the given event data.
  *
- * @param   e The given event data.
+ * @param   data The given event data.
  */
 EAPI void ecore_exe_event_data_free(Ecore_Exe_Event_Data *data);
 
@@ -1388,7 +1454,19 @@ EAPI Eina_Bool ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ec
  */
 EAPI void ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
+/**
+ * @brief Create a Ecore_Win32_Handler object and add it to the win32_handlers list.
+ * @param h    The win32 handler.
+ * @param func The function to add as a callback.
+ * @param data The data to pass to the callback when it is called.
+ */
 EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Ecore_Win32_Handle_Cb func, const void *data);
+/**
+ * @brief Set Ecore_Win32_Handler object to delete state.
+ * The handler will be deleted in the _ecore_main_win32_handlers_cleanup function.
+ *
+ * @param win32_handler The Ecore_Win32_Handler object.
+ */
 EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 
 /**
@@ -2244,7 +2322,7 @@ EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
 /**
  * Create a pipe with more parameters
  * 
- * @param hanlder Same as ecore_pipe_add()
+ * @param handler Same as ecore_pipe_add()
  * @param data Same as ecore_pipe_add()
  * @param fd_read An fd to use for reading or -1 otherwise
  * @param fd_write An fd to use for writing or -1 otherwise
@@ -2252,7 +2330,8 @@ EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
  * @param write_survive_fork Should write fd survive a fork
  * 
  * This is the same as ecore_pipe_add() but with some added parameters.
- * 
+ *
+ * @return A pointer to the new Ecore_Pipe object on success, else NULL.
  * @see ecore_pipe_add()
  */
 EAPI Ecore_Pipe *ecore_pipe_full_add(Ecore_Pipe_Cb handler,
@@ -2921,7 +3000,7 @@ EAPI double ecore_timer_precision_get(void);
 /**
  * @brief Sets the precision to be used by timer infrastructure.
  *
- * @param value allowed introduced timeout delay, in seconds.
+ * @param precision allowed introduced timeout delay, in seconds.
  *
  * This sets the precision for @b all timers. The precision determines how much
  * of an difference from the requested interval is acceptable. One common reason
