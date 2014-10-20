@@ -184,6 +184,11 @@ static void _all_drop_targets_cbs_del(void *data, Evas *e, Evas_Object *obj, voi
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 #endif
+static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
+                         Elm_Drag_State entercb, void *enterdata,
+                         Elm_Drag_State leavecb, void *leavedata,
+                         Elm_Drag_Pos poscb, void *posdata,
+                         Elm_Drop_Cb dropcb, void *dropdata);
 
 static Eina_Bool
 _drag_cancel_animate(void *data EINA_UNUSED, double pos)
@@ -2096,35 +2101,11 @@ _x11_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
 
    _x11_elm_cnp_init();
 
-   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
-   if (dropable)
+   if (!_local_elm_drop_target_del(obj, format, entercb, enterdata,
+           leavecb, leavedata, poscb, posdata, dropcb, dropdata))
      {
-        Eina_Inlist *itr;
-        Dropable_Cbs *cbs_info;
-        /* Look for the callback in the list */
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs_info)
-           if (cbs_info->entercb == entercb && cbs_info->enterdata == enterdata &&
-                 cbs_info->leavecb == leavecb && cbs_info->leavedata == leavedata &&
-                 cbs_info->poscb == poscb && cbs_info->posdata == posdata &&
-                 cbs_info->dropcb == dropcb && cbs_info->dropdata == dropdata &&
-                 cbs_info->types == format)
-             {
-                dropable->cbs_list = eina_inlist_remove(dropable->cbs_list,
-                      EINA_INLIST_GET(cbs_info));
-                free(cbs_info);
-             }
-        /* In case no more callbacks are listed for the object */
-        if (!dropable->cbs_list)
-          {
-             drops = eina_list_remove(drops, dropable);
-             eo_do(obj, eo_key_data_del("__elm_dropable"));
-             free(dropable);
-             dropable = NULL;
-             evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                   _all_drop_targets_cbs_del);
-          }
+        return EINA_FALSE;
      }
-   else return EINA_FALSE;
 
    /* TODO BUG: we should handle dnd-aware per window, not just the last that released it */
 
@@ -2843,36 +2824,12 @@ _wl_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                         Elm_Drag_Pos poscb, void *posdata,
                         Elm_Drop_Cb dropcb, void *dropdata)
 {
-   Dropable *dropable = NULL;
 
-   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
-   if (dropable)
+   if (!_local_elm_drop_target_del(obj, format, entercb, enterdata,
+           leavecb, leavedata, poscb, posdata, dropcb, dropdata))
      {
-        Eina_Inlist *itr;
-        Dropable_Cbs *cbs_info;
-        /* Look for the callback in the list */
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs_info)
-           if (cbs_info->entercb == entercb && cbs_info->enterdata == enterdata &&
-                 cbs_info->leavecb == leavecb && cbs_info->leavedata == leavedata &&
-                 cbs_info->poscb == poscb && cbs_info->posdata == posdata &&
-                 cbs_info->dropcb == dropcb && cbs_info->dropdata == dropdata &&
-                 cbs_info->types == format)
-             {
-                dropable->cbs_list = eina_inlist_remove(dropable->cbs_list,
-                      EINA_INLIST_GET(cbs_info));
-                free(cbs_info);
-             }
-        /* In case no more callbacks are listed for the object */
-        if (!dropable->cbs_list)
-          {
-             drops = eina_list_remove(drops, dropable);
-             eo_do(obj, eo_key_data_del("__elm_dropable"));
-             ELM_SAFE_FREE(dropable, free);
-             evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                   _all_drop_targets_cbs_del);
-          }
+        return EINA_FALSE;
      }
-   else return EINA_FALSE;
 
    if (!drops)
      {
@@ -3538,7 +3495,6 @@ static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj EINA_UNUSED, Elm_S
                                              Elm_Drag_State leavecb EINA_UNUSED, void *leavedata EINA_UNUSED,
                                              Elm_Drag_Pos poscb EINA_UNUSED, void *posdata EINA_UNUSED,
                                              Elm_Drop_Cb dropcb EINA_UNUSED, void *dropdata EINA_UNUSED);
-static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj EINA_UNUSED);
 static Eina_Bool  _local_elm_drag_start(Evas_Object *obj EINA_UNUSED,
                                         Elm_Sel_Format format EINA_UNUSED,
                                         const char *data EINA_UNUSED,
@@ -3657,10 +3613,46 @@ _local_elm_drop_target_add(Evas_Object *obj EINA_UNUSED,
 }
 
 static  Eina_Bool
-_local_elm_drop_target_del(Evas_Object *obj EINA_UNUSED)
+_local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
+                         Elm_Drag_State entercb, void *enterdata,
+                         Elm_Drag_State leavecb, void *leavedata,
+                         Elm_Drag_Pos poscb, void *posdata,
+                         Elm_Drop_Cb dropcb, void *dropdata)
 {
-   // XXX: implement me
+   Dropable *dropable = NULL;
+
    _local_elm_cnp_init();
+
+   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
+   if (dropable)
+     {
+        Eina_Inlist *itr;
+        Dropable_Cbs *cbs_info;
+        /* Look for the callback in the list */
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs_info)
+           if (cbs_info->entercb == entercb && cbs_info->enterdata == enterdata &&
+                 cbs_info->leavecb == leavecb && cbs_info->leavedata == leavedata &&
+                 cbs_info->poscb == poscb && cbs_info->posdata == posdata &&
+                 cbs_info->dropcb == dropcb && cbs_info->dropdata == dropdata &&
+                 cbs_info->types == format)
+             {
+                dropable->cbs_list = eina_inlist_remove(dropable->cbs_list,
+                      EINA_INLIST_GET(cbs_info));
+                free(cbs_info);
+             }
+        /* In case no more callbacks are listed for the object */
+        if (!dropable->cbs_list)
+          {
+             drops = eina_list_remove(drops, dropable);
+             eo_do(obj, eo_key_data_del("__elm_dropable"));
+             free(dropable);
+             dropable = NULL;
+             evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                   _all_drop_targets_cbs_del);
+          }
+        return EINA_TRUE;
+     }
+
    return EINA_FALSE;
 }
 
@@ -3944,7 +3936,15 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
      return _wl_elm_drop_target_del(obj, format, entercb, enterdata,
            leavecb, leavedata, poscb, posdata, dropcb, dropdata);
 #endif
-   return _local_elm_drop_target_del(obj);
+   /* FIXME: Not the best place for an error message, but meh.
+    * This code path is actually valid if running in framebuffer, but it still shouldn't
+    * be getting here because the drop target shouldn't be added. This is an error
+    * and it's because of some stupid handling in both the X11 and the wayland backends
+    * as seen in the commit that introduced this comment.
+    * Window check is probably not the best idea, you should be doing engine check instead. */
+   ERR("Please contact developers, you should probably not get here.");
+   return _local_elm_drop_target_del(obj, format, entercb, enterdata,
+           leavecb, leavedata, poscb, posdata, dropcb, dropdata);
 }
 
 EAPI Eina_Bool
