@@ -1,6 +1,14 @@
 ==========
-EFL 1.11.3
+EFL 1.11.4
 ==========
+
+Changes since 1.11.3:
+---------------------
+
+Fixes:
+
+   * Ecore_Win32: Fix string for the BackSpace key on Windows
+   * revert this gl x11 alpha "fix". this is worse than before
 
 Changes since 1.11.2:
 ---------------------
