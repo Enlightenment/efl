@@ -942,7 +942,6 @@ eng_setup(Evas *eo_e, void *in)
                     {
                        inc = 1;
                        eng_window_free(re->win);
-                       re->win->gl_context->references++;
                        gl_wins--;
                     }
                   re->w = e->output.w;
