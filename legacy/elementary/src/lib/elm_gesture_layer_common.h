@@ -434,7 +434,7 @@ EAPI double elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj);
  * Set to ZERO if you want GLayer to use system finger size value (default)
  *
  * @param obj gesture-layer.
- * @param fsize Finger size
+ * @param sz Finger size
  *
  * @since 1.8
  * @ingroup Elm_Gesture_Layer

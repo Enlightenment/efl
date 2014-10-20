@@ -509,10 +509,10 @@ EAPI void                  elm_map_overlays_show(Eina_List *overlays);
 EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_cb, void *data);
 
 /**
- * Set the get callback function to call when the overlay is deleted.
+ * Set the del callback function to call when the overlay is deleted.
  *
  * @param overlay The overlay to own the del callback function.
- * @param get_cb The callback function.
+ * @param del_cb The callback function.
  * @param data The user callback data.
  *
  * If the overlay is deleted, the callback wll be called.

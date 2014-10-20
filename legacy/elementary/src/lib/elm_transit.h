@@ -633,7 +633,7 @@ EAPI Eina_List             *elm_transit_chain_transits_get(const Elm_Transit *tr
 /**
  * Set the smooth effect for a transit.
  *
- * @param obj The transit object
+ * @param transit The transit object
  * @param enabled enable or disable smooth map rendering
  *
  * This sets smoothing for transit map rendering. If the object added in a
@@ -646,14 +646,14 @@ EAPI Eina_List             *elm_transit_chain_transits_get(const Elm_Transit *tr
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bool smooth);
+EAPI void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bool enabled);
 
 /**
  * Get the smooth scaling for transit map rendering
  *
  * This gets smooth scaling for transit map rendering.
  *
- * @param obj The transit object
+ * @param transit The transit object
  * @return @c EINA_TRUE if the smooth is enabled, @c EINA_FALSE otherwise.
  *
  * @see elm_transit_smooth_set()

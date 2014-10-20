@@ -420,23 +420,25 @@ EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_prev(Elm_Object_Item *i
  * Show a specific item, when the toolbar can be scrolled.
  *
  * @param it the toolbar item
+ * @param scrollto the position the item should appear at
  *
  * see elm_toolbar_item_bring_in()
  *
  * @since 1.8
  * @ingroup Toolbar
  */
-EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type);
+EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type scrollto);
 
 /**
  * Show a specific item with scroll animation, when the toolbar can be scrolled.
  *
  * @param it the toolbar item
+ * @param scrollto the position the item should appear at
  *
  * see elm_toolbar_item_show()
  *
  * @since 1.8
  * @ingroup Toolbar
  */
-EAPI void                          elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type);
+EAPI void                          elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type scrollto);
 

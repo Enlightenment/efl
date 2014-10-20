@@ -134,7 +134,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
          }
          values {
             int *rotations @const_set; /*@ The array of rotation value. */
-            uint count; /*@ The number of array of rotations */
+            uint count; /*@ The size of the @param rotations array. */
          }
       }
       quickpanel_zone {

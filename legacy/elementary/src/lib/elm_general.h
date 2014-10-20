@@ -134,20 +134,28 @@ typedef enum
    ELM_POLICY_THROTTLE_NEVER /**< never throttle when windows are all hidden, regardless of config settings */
 } Elm_Policy_Throttle;
 
+/**
+ * Possible values for the #ELM_OBJECT_SELECT_MODE policy.
+ * @since 1.7
+ */
 typedef enum
 {
    ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode. Once an item is selected, it would stay highlighted and not going to call selected callback again even it was clicked. Items can get focus. */
    ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode. Item selected callbacks will be called every time for click events, even after the item was already selected. Items can get focus. */
    ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode. Items will never be highlighted and selected but the size will be adjusted by the finger size configuration. Items can't get focus. */
    ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size rule. Items will never be highlighted and selected and ignore the finger size. So the item size can be reduced below than the finger size configuration. Items can't get focus. */
-   ELM_OBJECT_SELECT_MODE_MAX
+   ELM_OBJECT_SELECT_MODE_MAX /**< canary value: any value greater or equal to ELM_OBJECT_SELECT_MODE_MAX is forbidden. */
 } Elm_Object_Select_Mode;
 
+/**
+ * Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
+ * @since 1.8
+ */
 typedef enum
 {
    ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT = 0, /**< default multiple select mode */
    ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection when clicked without control key pressed */
-   ELM_OBJECT_MULTI_SELECT_MODE_MAX
+   ELM_OBJECT_MULTI_SELECT_MODE_MAX /**< canary value: any value greater or equal to ELM_OBJECT_MULTI_SELECT_MODE_MAX is forbidden. */
 } Elm_Object_Multi_Select_Mode;
 
 typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */

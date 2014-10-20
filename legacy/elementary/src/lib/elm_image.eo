@@ -30,15 +30,25 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       }
       resize_down {
          set {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Set whether the object's image can be resized to a size smaller than the original one.
+
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Get whether the object's image can be resized to a size smaller than the original one.
+
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          values {
-            bool resize_down;
+            bool resize_down; /*@ whether resizing down is allowed */
          }
       }
       animated_play {
@@ -87,15 +97,25 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       }
       resize_up {
          set {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Set whether the object's image can be resized to a size larget than the original one.
+
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Get whether the object's image can be resized to a size larget than the original one.
+
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          values {
-            bool resize_up;
+            bool resize_up; /*@ whether resizing up is allowed */
          }
       }
       smooth {
@@ -198,28 +218,62 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       }
       scale {
          set {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Set the scale of the object's image.
+
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Get the scale of the object's image.
+
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          values {
-            double scale;
+            double scale; /*@ Object's image scale. */
          }
       }
       fill_inside {
          set {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Set the resize method for the object's internal image when maintaining a given aspect ratio.
+
+              If @p fill_inside is true, image does not overflow the widget and
+              blank spaces are added to fill the space that is still free. If it
+              is false, the image overflows the image will fill all space and
+              overflow in its larger dimension.
+
+              You can think of it as "fill: inside" or "fill: outside" and not as
+              "fill the inside".
+
+              @see elm_image_fill_inside_get()
+              @see elm_image_fill_outside_get()
+              @see elm_image_fill_outside_set()
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@
+              Set the resize method for the object's internal image when maintaining a given aspect ratio.
+
+              @see elm_image_fill_inside_set()
+              @see elm_image_fill_outside_get()
+              @see elm_image_fill_outside_set()
+              @ingroup Image
+              @since 1.7
+             */
             legacy: null;
          }
          values {
-            bool fill_inside;
+            bool fill_inside; /*@ Resize method for the object's internal image. */
          }
       }
       aspect_fixed {
@@ -293,6 +347,8 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @note This option will have no effect if
             elm_image_aspect_fixed_set() is set to @c EINA_FALSE.
 
+            @see elm_image_fill_inside_get()
+            @see elm_image_fill_inside_set()
             @see elm_image_fill_outside_get()
             @see elm_image_aspect_fixed_set()
 
@@ -304,6 +360,8 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
 
             @return @c EINA_TRUE if the object is filled outside, @c EINA_FALSE otherwise.
 
+            @see elm_image_fill_inside_get()
+            @see elm_image_fill_inside_set()
             @see elm_image_fill_outside_set()
 
             @ingroup Image */
@@ -466,7 +524,11 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
    }
    methods {
       sizing_eval {
-         /*@ No description supplied by the EAPI. */
+         /*@
+           Re-evaluate the object's final geometry.
+
+           @ingroup Image
+           @since 1.7 */
          legacy: null;
       }
    }

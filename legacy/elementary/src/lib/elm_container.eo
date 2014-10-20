@@ -6,7 +6,7 @@ class Elm_Container (Elm_Widget)
    properties {
       content_swallow_list {
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@ Get the list of swallow parts in the object. */
          }
          values {
             list *ret; /*@ list */
@@ -15,22 +15,22 @@ class Elm_Container (Elm_Widget)
    }
    methods {
       content_set {
-         /*@ No description supplied by the EAPI. */
+         /*@ Swallow the given object into the given part of the container. */
          params {
-            @in const(char)* name;
-            @in Evas_Object *content;
+            @in const(char)* name; /*@ the part in which to swallow the object */
+            @in Evas_Object *content; /*@ the object to swallow */
          }
          return: bool;
       }
       content_get {
-         /*@ No description supplied by the EAPI. */
+         /*@ Get the object swallowed in the given part of the container. */
          params {
-            @in const(char)* name;
+            @in const(char)* name; /*@ the part in which the object is swallowed */
          }
          return: Evas_Object *;
       }
       content_unset {
-         /*@ No description supplied by the EAPI. */
+         /*@ Unswallow the object in the given part of the container and return it. */
          params {
             @in const(char)* name;
          }

@@ -181,7 +181,7 @@ EAPI void            elm_prefs_data_unref(Elm_Prefs_Data *prefs_data);
  * Set (or delete) one value of a given prefs data handle.
  *
  * @param prefs_data A valid prefs data handle
- * @param name The (unique) name (key) of the given value
+ * @param path The (unique) name (key) of the given value
  * @param type The item type to which the value is to be associated
  * @param value The value, itself. It must be a valid @c Eina_Value
  *              handle, bound to a given type and value or @c NULL. On
@@ -204,7 +204,7 @@ EAPI Eina_Bool       elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
  * Retrieve one value of a given prefs data handle (by key).
  *
  * @param prefs_data A valid prefs data handle
- * @param name The (unique) name (key) of the given value
+ * @param path The (unique) name (key) of the given value
  * @param type The item type associated with the value
  * @param value A valid @c Eina_Value handle, where to store the
  *              value, itself.
@@ -258,7 +258,7 @@ EAPI Eina_Bool       elm_prefs_data_event_callback_add(Elm_Prefs_Data *prefs_dat
  * @since 1.8
  */
 EAPI Eina_Bool       elm_prefs_data_event_callback_del(Elm_Prefs_Data *prefs_data,
-                                                       Elm_Prefs_Data_Event_Type t,
+                                                       Elm_Prefs_Data_Event_Type type,
                                                        Elm_Prefs_Data_Event_Cb cb,
                                                        const void *cb_data);
 

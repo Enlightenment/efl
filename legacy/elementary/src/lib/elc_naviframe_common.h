@@ -109,6 +109,7 @@ EAPI Eina_Bool        elm_naviframe_item_title_enabled_get(const Elm_Object_Item
  *
  * @param it The item to set the callback on
  * @param func the callback function.
+ * @param data The data to be passed to this @p func call.
  *
  * @warning Don't set "clicked" callback to the prev button additionally if the
  * function does an exact same logic with this @c func. When hardware back key
