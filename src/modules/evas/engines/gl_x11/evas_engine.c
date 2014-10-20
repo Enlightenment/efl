@@ -892,6 +892,7 @@ eng_setup(Evas *eo_e, void *in)
                                  re->w,
                                  re->h,
                                  re->info->indirect,
+                                 re->info->info.destination_alpha,
                                  re->info->info.rotation);
         if (!re->win)
           {
@@ -955,6 +956,7 @@ eng_setup(Evas *eo_e, void *in)
                                            re->w,
                                            re->h,
                                            re->info->indirect,
+                                           re->info->info.destination_alpha,
                                            re->info->info.rotation);
                   eng_window_use(re->win);
                   if (re->win) gl_wins++;
