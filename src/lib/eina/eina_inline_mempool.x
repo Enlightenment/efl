@@ -27,14 +27,30 @@ typedef struct _Eina_Mempool_Backend_ABI2 Eina_Mempool_Backend_ABI2;
 
 struct _Eina_Mempool_Backend
 {
+   /** Name of the mempool backend */
    const char *name;
+   /** Function to initialize the backend. */
    void *(*init)(const char *context, const char *options, va_list args);
+   /** Function to free memory back to the mempool. */
    void (*free)(void *data, void *element);
+   /** Function to allocate memory from the mempool. */
    void *(*alloc)(void *data, unsigned int size);
+   /** Function to change the size of a block of memory that is currently
+    * allocated. */
    void *(*realloc)(void *data, void *element, unsigned int size);
+   /** Function to trigger a garbage collection; can be NULL if the feature
+    * isn't available in the backend. */
    void (*garbage_collect)(void *data);
+   /** Report statistics on the content of the mempool; can be NULL if the
+    * feature isn't available in the backend. */
    void (*statistics)(void *data);
+   /** Function to destroy the backend, freeing memory back to the operating
+    * system. */
    void (*shutdown)(void *data);
+   /** Function to optimize the placement of objects in the mempool (it's
+    * different from garbage_collect); can be NULL if the feature isn't
+    * available in the backend.
+    * @see Eina_Mempool_Repack_Cb */
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
 };
 

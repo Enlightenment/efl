@@ -71,8 +71,14 @@ typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 
 /**
  * @typedef Eina_Mempool_Repack_Cb
- * Type for a callback who need to unreference an old object from a mempool
- * and reference the new one instead. Memcpy is taken care by the mempool.
+ *
+ * Type for a callback which is called when the mempool "repacks" its data,
+ * i.e. moves it around to optimize the way it is stored in memory. This is
+ * useful to improve data locality and to free internal pools back to the OS.
+ *
+ * The callback needs to update users of the data to stop accessing the object
+ * from the old location and access it using the new location instead. The copy
+ * of memory is taken care of by the mempool.
  */
 typedef void (*Eina_Mempool_Repack_Cb)(void *dst, void *src, void *data);
 
@@ -80,21 +86,22 @@ EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 /**
  *
- * @brief TODO
+ * @brief Create a new mempool of the given type
  *
- * @param module
- * @param context
- * @param options
+ * @param name Name of the mempool kind to use.
+ * @param context Identifier of the mempool created (for debug purposes).
+ * @param options Unused. Use the variable arguments list instead to pass options to the mempool.
+ * @param ... Additional options to pass to the allocator; depends entirely on the type of mempool ("int pool size" for chained and "int item_size" for one_big.
  * @return Newly allocated mempool instance, NULL otherwise.
  *
  */
-EAPI Eina_Mempool  *eina_mempool_add(const char *module, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Eina_Mempool  *eina_mempool_add(const char *name, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  *
- * @brief TODO
+ * @brief Delete the given mempool.
  *
- * @param mp The mempools
+ * @param mp The mempool to delete
  *
  */
 EAPI void           eina_mempool_del(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
@@ -154,19 +161,21 @@ static inline void *eina_mempool_calloc(Eina_Mempool *mp, unsigned int size) EIN
 static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_NONNULL(1);
 
 /**
- *
- * @brief TODO
+ * @brief Repack the objects in the mempool.
  *
  * @param mp The mempool
- * @param cb The after repack callback
- * @param data The data
+ * @param cb A callback to update the pointers the objects with their new location.
+ * @param data Data to pass as third argument to @p cb.
+ *
+ * @see Eina_Mempool_Repack_Cb
+ * @see _Eina_Mempool_Backend
  *
  */
 EAPI void	        eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  *
- * @brief TODO (garbage collect)
+ * @brief Run a garbage collection cycle.
  *
  * @param mp The mempool
  *
@@ -175,7 +184,7 @@ EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
 /**
  *
- * @brief TODO
+ * @brief Have the backend update its internal statistics.
  *
  * @param mp The mempool
  *
@@ -184,7 +193,7 @@ EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1
 
 /**
  *
- * @brief TODO
+ * @brief Register the given memory pool backend.
  *
  * @param be The backend
  * @return #EINA_TRUE if backend has been correctly registered, #EINA_FALSE
@@ -195,7 +204,7 @@ EAPI Eina_Bool      eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NON
 
 /**
  *
- * @brief TODO
+ * @brief Unregister the given memory pool backend.
  *
  * @param be The backend
  *
@@ -204,11 +213,10 @@ EAPI void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_N
 
 /**
  *
- * @brief TODO
+ * @brief Computer the alignment that would be used when allocating a object of size @p size.
  *
  * @param size 
- * @return #EINA_TRUE if backend has been correctly registered, #EINA_FALSE
- * otherwise.
+ * @return The alignment for an allocation of size @p size.
  *
  */
 static inline unsigned int   eina_mempool_alignof(unsigned int size);
