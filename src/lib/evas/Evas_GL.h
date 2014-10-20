@@ -879,10 +879,6 @@ typedef float            GLfloat;      // Changed khronos_float_t
 typedef float            GLclampf;     // Changed khronos_float_t
 typedef signed int       GLfixed;      // Changed khronos_int32_t
 
-/* GL types for handling large vertex buffer objects */
-typedef signed long int  GLintptr;     // Changed khronos_intptr_t
-typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
-
 /* OpenGL ES core versions */
 //#define GL_ES_VERSION_2_0                 1
 
@@ -3443,6 +3439,12 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 # endif
 #endif
 
+#ifndef GL_ES_VERSION_2_0
+/* GL types for handling large vertex buffer objects */
+#include <stddef.h>
+typedef ptrdiff_t GLintptr;     // Changed khronos_intptr_t
+typedef ptrdiff_t GLsizeiptr;   // Changed khronos_ssize_t
+#endif
 
 /* Some definitions from GLES 3.0.
  * Note: Evas_GL does NOT support GLES 3.
