@@ -116,6 +116,7 @@ struct _Ecore_Drm_Output
    unsigned int crtc_id;
    unsigned int conn_id;
    drmModeCrtcPtr crtc;
+   Eeze_Udev_Watch *watch;
 
    int x, y;
    int drm_fd;

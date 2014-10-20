@@ -623,6 +623,18 @@ finish:
    _ecore_drm_output_frame_finish(output);
 }
 
+static void
+_ecore_drm_output_event(const char *device, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+{
+   Ecore_Drm_Output *output;
+
+   if (!(output = data)) return;
+
+   /* TODO: Check if device is hotplug and update outputs */
+
+   return;
+}
+
 /**
  * @defgroup Ecore_Drm_Output_Group Ecore DRM Output
  * 
@@ -727,7 +739,19 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
    /* free resources */
    drmModeFreeResources(res);
 
-   /* TODO: add hook for udev drm output updates */
+   if (!output->watch)
+     {
+        int events = 0;
+
+        events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE);
+        if (!(output->watch =
+                eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
+                                    _ecore_drm_output_event, output)))
+        {
+           ERR("Could not create Eeze_Udev_Watch for drm output");
+           return EINA_FALSE;
+        }
+     }
 
    return ret;
 }
