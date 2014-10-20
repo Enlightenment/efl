@@ -179,13 +179,65 @@ EAPI void ethumb_free(Ethumb *e);
  * @{
  */
 
+/**
+ *
+ * @brief Set the Ethumb Frame
+ *
+ * This can be used to simulate wood frames in the Thumbnails 
+ * 
+ * @param e handle of the current thumbnailer.
+ * @param theme_file the edje theme file 
+ * @param group the edje group in theme 
+ * @param swallow the edje swallow in theme
+ *
+ * @return EINA_TRUE on success and EINA_FALSE on failure 
+ */
 EAPI Eina_Bool    ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Retreives the current ethumb frame of and Ethumb instance.
+ * 
+ * @param e handle of the current thumbnailer.
+ * @param theme_file will be setted with the edje theme
+ * @param group will be setted with the edje group 
+ * @param swallow will be setted with the edje swallow 
+ */
 EAPI void         ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Set the ethumb thumbnails path  
+ * 
+ * @param e handle of the current thumbnailer.
+ * @param path The thumbnails path 
+ *
+ */
 EAPI void         ethumb_thumb_dir_path_set(Ethumb *e, const char *path) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the ethumb thumbnails path  
+ * 
+ * @param e handle of the current thumbnailer.
+ *
+ * @return The thumbnails path for the current thumbnailer 
+ *
+ */
 EAPI const char  *ethumb_thumb_dir_path_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+/**
+ * @brief Set the thumbnails category
+ * 
+ * @param e handle of the current thumbnailer.
+ * @param category the category to set 
+ */
 EAPI void         ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the thumbnails category 
+ *
+ * @param e handle of the current thumbnailer 
+ *
+ * @return the current thumbnailer thumbnails category 
+ */
 EAPI const char  *ethumb_thumb_category_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI void         ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
