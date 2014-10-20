@@ -379,6 +379,7 @@ main(void)
    err = evas_object_image_load_error_get(d.img);
    if (err != EVAS_LOAD_ERROR_NONE)
      {
+        fprintf(stderr, "ERROR: Image loading failed! Aborting.\n");
         goto panic;
      }
    else
