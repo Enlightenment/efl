@@ -2,7 +2,16 @@
 # error You shall not include this header directly
 #endif
 
+/**
+ * @def EVAS_VERSION_MAJOR
+ * The major number of evas version
+ */
 #define EVAS_VERSION_MAJOR EFL_VERSION_MAJOR
+
+/**
+ * @def EVAS_VERSION_MINOR
+ * The minor number of eet version
+ */
 #define EVAS_VERSION_MINOR EFL_VERSION_MINOR
 
 /**
