@@ -3071,13 +3071,21 @@ EAPI unsigned char edje_edit_state_aspect_pref_get(Evas_Object *obj, const char 
 
 /** Set the aspect preference of a part state.
  *
+ * The available values of aspect preference are:
+ * <ul style="list-style-type:none">
+ *     <li>0 - None</li>
+ *     <li>1 - Vertical</li>
+ *     <li>2 - Horizontal</li>
+ *     <li>3 - Both</li>
+ *     <li>4 - Source</li>
+ * </ul>
+ *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set aspect preference (not
  *              including the state value).
  * @param value The state value.
- * @param pref The aspect preference to set (0 = None, 1 = Vertical, 2
- *             = Horizontal, 3 = Both)
+ * @param pref The aspect preference to be set
  *
  * @return @c EINA_TRUE if the parameter was found, @c EINA_FALSE otherwise.
  */

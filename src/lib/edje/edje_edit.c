@@ -5702,7 +5702,7 @@ EAPI Eina_Bool
 edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char pref)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
-   if ((!pref) || (pref > 3)) return EINA_FALSE;
+   if (pref > 4) return EINA_FALSE;
    pd->aspect.prefer = pref;
    return EINA_TRUE;
 }
