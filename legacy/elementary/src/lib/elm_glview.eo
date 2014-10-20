@@ -1,6 +1,15 @@
 class Elm_Glview (Elm_Widget)
 {
    eo_prefix: elm_obj_glview;
+   methods {
+      version_constructor {
+         /*@ Constructor with context version number. */
+         legacy: null;
+         params {
+            @in Evas_GL_Context_Version version;
+         }
+      }
+   }
    properties {
       size {
          set {
@@ -162,6 +171,43 @@ class Elm_Glview (Elm_Widget)
             return: Evas_GL_API *;
          }
       }
+      evas_gl {
+         get {
+            /*@
+            Get the internal Evas GL attached to this view.
+
+            @note The returned Evas_GL must not be destroyed as it is still owned
+            by the view. But this pointer can be used then to call all the evas_gl_
+            functions.
+
+            @since 1.12
+
+            @return The Evas_GL used by this GLView.
+
+            @ingroup GLView */
+            return: Evas_GL *;
+         }
+      }
+      rotation {
+         get {
+            /*@
+            Get the current GL view's rotation when using direct rendering
+
+            @return A window rotation in degrees (0, 90, 180 or 270)
+
+            @note This rotation can be different from the device orientation. This
+                  rotation value must be used in case of direct rendering and should be
+                  taken into account by the application when setting the internal rotation
+                  matrix for the view.
+
+            @see ELM_GLVIEW_CLIENT_SIDE_ROTATION
+
+            @since 1.12
+
+            @ingroup GLView */
+            return: int;
+         }
+      }
    }
    implements {
       class.constructor;
@@ -177,5 +223,7 @@ class Elm_Glview (Elm_Widget)
       language,changed;
       access,changed;
    }
-
+   constructors {
+      .version_constructor;
+   }
 }

@@ -47,31 +47,23 @@ _elm_glview_elm_widget_on_focus(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED)
 static void
 _glview_update_surface(Evas_Object *obj)
 {
+   Evas_Native_Surface ns = { 0 };
    ELM_GLVIEW_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!sd) return;
 
    if (sd->surface)
      {
-        evas_object_image_native_surface_set
-          (wd->resize_obj, NULL);
+        evas_object_image_native_surface_set(wd->resize_obj, NULL);
         evas_gl_surface_destroy(sd->evasgl, sd->surface);
-        sd->surface = NULL;
      }
 
    evas_object_image_size_set(wd->resize_obj, sd->w, sd->h);
 
-   if (!sd->surface)
-     {
-        Evas_Native_Surface ns;
-
-        sd->surface = evas_gl_surface_create
-            (sd->evasgl, sd->config, sd->w, sd->h);
-        evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
-        evas_object_image_native_surface_set
-          (wd->resize_obj, &ns);
-        elm_glview_changed_set(obj);
-     }
+   sd->surface = evas_gl_surface_create(sd->evasgl, sd->config, sd->w, sd->h);
+   evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
+   evas_object_image_native_surface_set(wd->resize_obj, &ns);
+   elm_glview_changed_set(obj);
 }
 
 EOLIAN static void
@@ -181,7 +173,7 @@ _set_render_policy_callback(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
+_elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
 {
    Evas_Object *img;
 
@@ -193,7 +185,11 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
    evas_object_image_size_set(img, 1, 1);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+}
 
+static void
+_elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
+{
    // Evas_GL
    priv->evasgl = evas_gl_new(evas_object_evas_get(obj));
    if (!priv->evasgl)
@@ -223,15 +219,22 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
    priv->w = 64;
    priv->h = 64;
 
+   // Set context version
+   if (!priv->gles_version)
+     priv->gles_version = EVAS_GL_GLES_2_X;
+   priv->config->gles_version = priv->gles_version;
+
    // Create Context
-   priv->context = evas_gl_context_create(priv->evasgl, NULL);
+   if (priv->gles_version == EVAS_GL_GLES_2_X)
+     priv->context = evas_gl_context_create(priv->evasgl, NULL);
+   else
+     priv->context = evas_gl_context_version_create(priv->evasgl, NULL, priv->gles_version);
    if (!priv->context)
      {
         ERR("Error Creating an Evas_GL Context.\n");
 
-        evas_gl_config_free(priv->config);
-        evas_gl_free(priv->evasgl);
-        priv->evasgl = NULL;
+        ELM_SAFE_FREE(priv->config, evas_gl_config_free);
+        ELM_SAFE_FREE(priv->evasgl, evas_gl_free);
         return;
      }
 }
@@ -239,6 +242,8 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv)
 EOLIAN static void
 _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
    // Call delete func if it's registered
    if (sd->del_func)
      {
@@ -248,7 +253,11 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
 
    ecore_idle_enterer_del(sd->render_idle_enterer);
 
-   if (sd->surface) evas_gl_surface_destroy(sd->evasgl, sd->surface);
+   if (sd->surface)
+     {
+        evas_object_image_native_surface_set(wd->resize_obj, NULL);
+        evas_gl_surface_destroy(sd->evasgl, sd->surface);
+     }
    if (sd->context) evas_gl_context_destroy(sd->evasgl, sd->context);
    if (sd->config) evas_gl_config_free(sd->config);
    if (sd->evasgl) evas_gl_free(sd->evasgl);
@@ -260,14 +269,34 @@ EAPI Evas_Object *
 elm_glview_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent,
+                             elm_obj_glview_version_constructor(EVAS_GL_GLES_2_X));
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent,
+                             elm_obj_glview_version_constructor(version));
    return obj;
 }
 
 EOLIAN static void
-_elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd)
+_elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
+}
+
+EOLIAN static void
+_elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
+                                Evas_GL_Context_Version version)
+{
+   sd->gles_version =
+     ((version > 0) && (version <= 3)) ? version : EVAS_GL_GLES_2_X;
+   _elm_glview_constructor(obj, sd);
+
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -283,7 +312,7 @@ _elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd)
 EOLIAN static Evas_GL_API*
 _elm_glview_gl_api_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
-   return evas_gl_api_get(sd->evasgl);
+   return evas_gl_context_api_get(sd->evasgl, sd->context);
 }
 
 EOLIAN static Eina_Bool
@@ -295,16 +324,59 @@ _elm_glview_mode_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Mode mode)
    if (mode & ELM_GLVIEW_ALPHA) sd->config->color_format = EVAS_GL_RGBA_8888;
    else sd->config->color_format = EVAS_GL_RGB_888;
 
-   if (mode & ELM_GLVIEW_DEPTH) sd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
-   else sd->config->depth_bits = EVAS_GL_DEPTH_NONE;
+   if (mode & ELM_GLVIEW_DEPTH)
+     {
+        const int mask = 7 << 6;
+        if ((mode & mask) == (ELM_GLVIEW_DEPTH_8 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_8;
+        else if ((mode & mask) == (ELM_GLVIEW_DEPTH_16 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_16;
+        else if ((mode & mask) == (ELM_GLVIEW_DEPTH_24 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
+        else if ((mode & mask) == (ELM_GLVIEW_DEPTH_32 & mask))
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_32;
+        else
+          sd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
+     }
+   else
+     sd->config->depth_bits = EVAS_GL_DEPTH_NONE;
 
    if (mode & ELM_GLVIEW_STENCIL)
-     sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
-   else sd->config->stencil_bits = EVAS_GL_STENCIL_NONE;
+     {
+        const int mask = 7 << 9;
+        if ((mode & mask) == (ELM_GLVIEW_STENCIL_1 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_1;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_1 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_2;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_4 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_4;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_8 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_16 & mask))
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_16;
+        else
+          sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+     }
+   else
+     sd->config->stencil_bits = EVAS_GL_STENCIL_NONE;
 
+   if (mode & ELM_GLVIEW_MULTISAMPLE_HIGH)
+     {
+        if ((mode & ELM_GLVIEW_MULTISAMPLE_HIGH) == ELM_GLVIEW_MULTISAMPLE_LOW)
+          sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_LOW;
+        else if ((mode & ELM_GLVIEW_MULTISAMPLE_HIGH) == ELM_GLVIEW_MULTISAMPLE_MED)
+          sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_MED;
+        else
+          sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_HIGH;
+     }
+   else
+     sd->config->multisample_bits = EVAS_GL_MULTISAMPLE_NONE;
+
+   sd->config->options_bits = EVAS_GL_OPTIONS_NONE;
    if (mode & ELM_GLVIEW_DIRECT)
      sd->config->options_bits = EVAS_GL_OPTIONS_DIRECT;
-   else sd->config->options_bits = EVAS_GL_OPTIONS_NONE;
+   if (mode & ELM_GLVIEW_CLIENT_SIDE_ROTATION)
+     sd->config->options_bits |= EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION;
 
    // Check for Alpha Channel and enable it
    if (mode & ELM_GLVIEW_ALPHA)
@@ -415,6 +487,18 @@ _elm_glview_changed_set(Eo *obj, Elm_Glview_Data *sd)
        !sd->render_idle_enterer)
      sd->render_idle_enterer =
        ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
+}
+
+EOLIAN static Evas_GL *
+_elm_glview_evas_gl_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+{
+   return sd->evasgl;
+}
+
+EOLIAN static int
+_elm_glview_rotation_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+{
+   return evas_gl_rotation_get(sd->evasgl);
 }
 
 static void
