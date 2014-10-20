@@ -709,9 +709,9 @@ evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *
 
    if (idx >= m->count) goto error;
    p = m->points + idx;
-   if (x) *x = p->x;
-   if (y) *y = p->y;
-   if (z) *z = p->z;
+   if (x) *x = lround(p->x);
+   if (y) *y = lround(p->y);
+   if (z) *z = lround(p->z);
    return;
 
  error:
