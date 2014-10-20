@@ -5,6 +5,15 @@
  * @{
  */
 
+/**
+ * @typedef Eldbus_Dict_Cb_Get
+ *
+ * Callback used when iterating over a dictionary. It is called at each entry iteration.
+ *
+ * @param data Context data passed to the callback.
+ * @param key Key parameter.
+ * @param var A message iterator on the current entry.
+ */
 typedef void (*Eldbus_Dict_Cb_Get)(void *data, const void *key, Eldbus_Message_Iter *var);
 
 /**
