@@ -366,14 +366,80 @@ EAPI void         ethumb_thumb_quality_set(Ethumb *e, int quality) EINA_ARG_NONN
  */
 EAPI int          ethumb_thumb_quality_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Set the compression rate
+ *
+ * @param e handle of the current thumbnailer.
+ * @param compress the compression rate (in percentage)
+ *
+ */
 EAPI void         ethumb_thumb_compress_set(Ethumb *e, int compress) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the compression rate
+ *
+ * @param e handle of the current thumbnailer.
+ *
+ * @return the compression rate (in percentage)
+ */
 EAPI int          ethumb_thumb_compress_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief set the video play start point
+ *
+ * Set the start point of video thumbnail
+ *
+ * @param e handle of the current thumbnailer.
+ * @param start the start point (float from 0.0 to 1.0)
+ */
 EAPI void         ethumb_video_start_set(Ethumb *e, float start) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief get the video play start point
+ *
+ * Get the start point of video thumbnail
+ *
+ * @param e handle of the current thumbnailer.
+ *
+ * @return the start point (float from 0.0 to 1.0)
+ */
 EAPI float        ethumb_video_start_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @brief Set the video time (duration) in seconds.
+ * 
+ * @param e handle of the current thumbnailer.
+ * @param time the video duration in seconds
+ */ 
 EAPI void         ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the video time (duration) in seconds.
+ * 
+ * @param e handle of the current thumbnailer.
+ * @return the video duration in seconds
+ */ 
 EAPI float        ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * @brief Set the video frame interval, in seconds
+ *
+ * This is useful for animated thumbnail and will define skip time
+ * before going to the next frame. Note that video backends might not
+ * be able to precisely skip that amount as it will depend on various
+ * factors, including video encoding.
+ *
+ * @param e handle of the current thumbnailer.
+ * @param interval the frame display interval in seconds
+ */
 EAPI void         ethumb_video_interval_set(Ethumb *e, float interval) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the video frame interval, in seconds
+ *
+ * @param e handle of the current thumbnailer.
+ * @return the frame display interval in seconds
+ */
 EAPI float        ethumb_video_interval_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
@@ -406,8 +472,20 @@ EAPI void         ethumb_video_fps_set(Ethumb *e, unsigned int fps) EINA_ARG_NON
  */
 EAPI unsigned int ethumb_video_fps_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-
+/**
+ * @brief Set the page number to thumbnail in paged documents
+ *
+ * @param e handle of the current thumbnailer.
+ * @param page the page number.
+ */
 EAPI void         ethumb_document_page_set(Ethumb *e, unsigned int page) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the page number thumbnailed in paged documents
+ *
+ * @param e handle of the current thumbnailer.
+ * @return the page number.
+ */
 EAPI unsigned int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 /**
  * @}
