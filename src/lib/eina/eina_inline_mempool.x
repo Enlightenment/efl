@@ -21,12 +21,6 @@
 
 #include <string.h>
 
-/**
- * @addtogroup Eina_Memory_Pool_Group Memory Pool
- *
- * @{
- */
-
 /* Memory Pool */
 typedef struct _Eina_Mempool_Backend_ABI1 Eina_Mempool_Backend_ABI1;
 typedef struct _Eina_Mempool_Backend_ABI2 Eina_Mempool_Backend_ABI2;
@@ -127,9 +121,5 @@ eina_mempool_alignof(unsigned int size)
 
    return ((size / align) + (size % align ? 1 : 0)) * align;
 }
-
-/**
- * @}
- */
 
 #endif
