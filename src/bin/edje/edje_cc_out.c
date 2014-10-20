@@ -2268,6 +2268,25 @@ data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
 }
 
 void
+part_lookup_del(Edje_Part_Collection *pc, int *dest)
+{
+   Part_Lookup_Key key;
+   Part_Lookup *pl = NULL;
+   Eina_List *list;
+   key.pc = pc;
+   key.mem.dest = dest;
+   key.stable = EINA_TRUE;
+
+   pl = eina_hash_find(part_pc_dest_lookup, &key);
+   if (!pl) return;
+   list = eina_hash_find(part_dest_lookup, &pl->key);
+   if (list)
+     eina_hash_del(part_dest_lookup, &pl->key, list);
+   eina_hash_del(part_pc_dest_lookup, &key, pl);
+}
+
+
+void
 part_lookup_delete(Edje_Part_Collection *pc, const char *name, int *dest, char **dest2)
 {
    Part_Lookup_Key key;

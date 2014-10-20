@@ -4206,13 +4206,13 @@ _part_desc_free(Edje_Part_Collection *pc,
 {
    if (!ed) return NULL;
 
-   part_lookup_delete(pc, ep->name, &(ed->rel1.id_x), NULL);
-   part_lookup_delete(pc, ep->name, &(ed->rel1.id_y), NULL);
-   part_lookup_delete(pc, ep->name, &(ed->rel2.id_x), NULL);
-   part_lookup_delete(pc, ep->name, &(ed->rel2.id_y), NULL);
-   part_lookup_delete(pc, ep->name, &(ed->map.id_persp), NULL);
-   part_lookup_delete(pc, ep->name, &(ed->map.id_light), NULL);
-   part_lookup_delete(pc, ep->name, &(ed->map.rot.id_center), NULL);
+   part_lookup_del(pc, &(ed->rel1.id_x));
+   part_lookup_del(pc, &(ed->rel1.id_y));
+   part_lookup_del(pc, &(ed->rel2.id_x));
+   part_lookup_del(pc, &(ed->rel2.id_y));
+   part_lookup_del(pc, &(ed->map.id_persp));
+   part_lookup_del(pc, &(ed->map.id_light));
+   part_lookup_del(pc, &(ed->map.rot.id_center));
 
    switch (ep->type)
      {
@@ -4230,17 +4230,17 @@ _part_desc_free(Edje_Part_Collection *pc,
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
         {
-           /* Edje_Part_Description_Text *ted = (Edje_Part_Description_Text*) ed; */
+           Edje_Part_Description_Text *ted = (Edje_Part_Description_Text*) ed;
 
-           /* part_lookup_delete(pc, ep->name, &(ted->text.id_source_part)); */
-           /* part_lookup_delete(pc, ep->name, &(ted->text.id_text_source_part)); */
+           part_lookup_del(pc, &(ted->text.id_source));
+           part_lookup_del(pc, &(ted->text.id_text_source));
            break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
            Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy*) ed;
 
-           part_lookup_delete(pc, ep->name, &(ped->proxy.id), NULL);
+           part_lookup_del(pc, &(ped->proxy.id));
            break;
         }
      }
@@ -4256,10 +4256,10 @@ _part_free(Edje_Part_Collection *pc, Edje_Part *ep)
    Edje_Part_Parser *epp = (Edje_Part_Parser*)ep;
    unsigned int j;
 
-   part_lookup_delete(pc, ep->name, &(ep->clip_to_id), NULL);
-   part_lookup_delete(pc, ep->name, &(ep->dragable.confine_id), NULL);
-   part_lookup_delete(pc, ep->name, &(ep->dragable.threshold_id), NULL);
-   part_lookup_delete(pc, ep->name, &(ep->dragable.event_id), NULL);
+   part_lookup_del(pc, &(ep->clip_to_id));
+   part_lookup_del(pc, &(ep->dragable.confine_id));
+   part_lookup_del(pc, &(ep->dragable.threshold_id));
+   part_lookup_del(pc, &(ep->dragable.event_id));
 
    _part_desc_free(pc, ep, ep->default_desc);
    for (j = 0 ; j < ep->other.desc_count ; j++)
