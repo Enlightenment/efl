@@ -258,8 +258,8 @@ extern "C" {
         unsigned int     timestamp; /**< Time when the event occurred */
         unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
         
-        int              x /**< x coordinate relative to window where event happened */
-        int              y /**< y coordinate relative to window where event happened */
+        int              x; /**< x coordinate relative to window where event happened */
+        int              y; /**< y coordinate relative to window where event happened */
      };
 
    /**
