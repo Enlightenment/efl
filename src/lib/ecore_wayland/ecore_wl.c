@@ -530,13 +530,13 @@ _ecore_wl_cb_idle_enterer(void *data)
    ret = wl_display_get_error(ewd->wl.display);
    if (ret < 0) goto err;
 
-   ret = wl_display_dispatch_pending(ewd->wl.display);
-   if (ret < 0) goto err;
-
    ret = wl_display_flush(ewd->wl.display);
    if ((ret < 0) && (errno == EAGAIN))
      ecore_main_fd_handler_active_set(ewd->fd_hdl,
                                       (ECORE_FD_READ | ECORE_FD_WRITE));
+
+   ret = wl_display_dispatch_pending(ewd->wl.display);
+   if (ret < 0) goto err;
 
    return ECORE_CALLBACK_RENEW;
 
