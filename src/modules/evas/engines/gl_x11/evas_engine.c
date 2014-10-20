@@ -22,8 +22,6 @@
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
 
-static int safe_native = -1;
-
 typedef struct _Render_Engine               Render_Engine;
 
 struct _Render_Engine
@@ -74,6 +72,10 @@ Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
+
+glsym_func_void     glsym_evas_gl_common_error_set = NULL;
+glsym_func_int      glsym_evas_gl_common_error_get = NULL;
+glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 
 #ifdef GL_GLES
 
@@ -217,6 +219,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
@@ -231,12 +234,15 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         ret = eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (!ret)
           {
-             ERR("eglMakeCurrent() failed! Error Code=%#x", eglGetError());
+             int err = eglGetError();
+             glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+             ERR("eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
           }
         return 1;
      }
 
+   // FIXME: Check (eglGetCurrentDisplay() != dpy) ?
    if ((eglGetCurrentContext() != ctx) ||
        (eglGetCurrentSurface(EGL_READ) != sfc) ||
        (eglGetCurrentSurface(EGL_DRAW) != sfc) )
@@ -251,7 +257,9 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
         if (!ret)
           {
-             ERR("eglMakeCurrent() failed! Error Code=%#x", eglGetError());
+             int err = eglGetError();
+             glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+             ERR("eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
           }
      }
@@ -267,6 +275,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (!ret)
           {
              ERR("glXMakeCurrent() failed!");
+             glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
              return 0;
           }
         return 1;
@@ -285,6 +294,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (!ret)
           {
              ERR("glXMakeCurrent() failed. Ret: %d! Context: %p Surface: %p", ret, (void*)ctx, (void*)sfc);
+             glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
              return 0;
           }
      }
@@ -303,6 +313,7 @@ evgl_eng_native_window_create(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -331,6 +342,7 @@ evgl_eng_native_window_create(void *data)
    if (!win)
      {
         ERR("Creating native X window failed.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
         return NULL;
      }
 
@@ -346,12 +358,14 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
    if (!native_window)
      {
         ERR("Inavlid native surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_NATIVE_WINDOW);
         return 0;
      }
 
@@ -374,6 +388,7 @@ evgl_eng_window_surface_create(void *data, void *native_window EINA_UNUSED)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -414,6 +429,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
@@ -421,6 +437,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
    if (!surface)
      {
         ERR("Invalid surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
         return 0;
      }
 
@@ -432,7 +449,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 }
 
 static void *
-evgl_eng_context_create(void *data, void *share_ctx)
+evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version version)
 {
    Render_Engine *re = (Render_Engine *)data;
 
@@ -440,6 +457,14 @@ evgl_eng_context_create(void *data, void *share_ctx)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        return NULL;
+     }
+
+   if ((version < EVAS_GL_GLES_1_X) || (version > EVAS_GL_GLES_3_X))
+     {
+        ERR("Invalid context version number %d", version);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
         return NULL;
      }
 
@@ -448,7 +473,7 @@ evgl_eng_context_create(void *data, void *share_ctx)
    int context_attrs[3];
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = 2;
+   context_attrs[1] = version;
    context_attrs[2] = EGL_NONE;
 
    // Share context already assumes that it's sharing with evas' context
@@ -457,6 +482,13 @@ evgl_eng_context_create(void *data, void *share_ctx)
         context = eglCreateContext(eng_get_ob(re)->egl_disp,
                                    eng_get_ob(re)->egl_config,
                                    (EGLContext)share_ctx,
+                                   context_attrs);
+     }
+   else if (version == EVAS_GL_GLES_1_X)
+     {
+        context = eglCreateContext(eng_get_ob(re)->egl_disp,
+                                   eng_get_ob(re)->egl_config,
+                                   NULL,
                                    context_attrs);
      }
    else
@@ -469,7 +501,9 @@ evgl_eng_context_create(void *data, void *share_ctx)
 
    if (!context)
      {
-        ERR("Engine Context Creations Failed. Error: %#x.", eglGetError());
+        int err = eglGetError();
+        ERR("Engine Context Creations Failed. Error: %#x.", err);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
         return NULL;
      }
 
@@ -485,6 +519,15 @@ evgl_eng_context_create(void *data, void *share_ctx)
                                    (GLXContext)share_ctx,
                                    1);
      }
+   /* TODO: Check this case.
+   else if (version == EVAS_GL_GLES_1_X)
+     {
+        context = glXCreateContext(eng_get_ob(re)->info->info.display,
+                                   eng_get_ob(re)->visualinfo,
+                                   NULL,
+                                   1);
+     }
+   */
    else
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
@@ -496,6 +539,8 @@ evgl_eng_context_create(void *data, void *share_ctx)
    if (!context)
      {
         ERR("Internal Resource Context Creations Failed.");
+        if(!(eng_get_ob(re)->info->info.display)) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
+        if(!(eng_get_ob(re)->win)) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_NATIVE_WINDOW);
         return NULL;
      }
 
@@ -513,6 +558,8 @@ evgl_eng_context_destroy(void *data, void *context)
    if ((!re) || (!context))
      {
         ERR("Invalid Render Input Data. Engine: %p, Context: %p", data, context);
+        if (!re) glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        if (!context) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
 
@@ -534,6 +581,7 @@ evgl_eng_string_get(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -566,16 +614,344 @@ evgl_eng_rotation_angle_get(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
    if ((eng_get_ob(re)) && (eng_get_ob(re)->gl_context))
-      return eng_get_ob(re)->gl_context->rot;
+     return eng_get_ob(re)->gl_context->rot;
    else
      {
         ERR("Unable to retrieve rotation angle.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
+}
+
+static void *
+evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
+                                const int *attrib_list)
+{
+   Render_Engine_GL_Generic *re = data;
+
+   // TODO: Add support for surfaceless pbuffers (EGL_NO_TEXTURE)
+   // TODO: Add support for EGL_MIPMAP_TEXTURE??? (GLX doesn't support them)
+
+   if (attrib_list)
+     WRN("This PBuffer implementation does not support extra attributes yet");
+
+#ifdef GL_GLES
+   int config_attrs[20];
+   int surface_attrs[20];
+   EGLSurface egl_sfc;
+   EGLConfig egl_cfg;
+   int num_config, i = 0;
+   EGLDisplay disp;
+   EGLContext ctx;
+
+   disp = re->window_egl_display_get(re->software.ob);
+   ctx = re->window_gl_context_get(re->software.ob);
+
+#if 0
+   // Choose framebuffer configuration
+   // DISABLED FOR NOW
+   if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
+     {
+        config_attrs[i++] = EGL_RED_SIZE;
+        config_attrs[i++] = 1;
+        config_attrs[i++] = EGL_GREEN_SIZE;
+        config_attrs[i++] = 1;
+        config_attrs[i++] = EGL_BLUE_SIZE;
+        config_attrs[i++] = 1;
+
+        if (sfc->pbuffer.color_fmt == EVAS_GL_RGBA_8888)
+          {
+             config_attrs[i++] = EGL_ALPHA_SIZE;
+             config_attrs[i++] = 1;
+             //config_attrs[i++] = EGL_BIND_TO_TEXTURE_RGBA;
+             //config_attrs[i++] = EGL_TRUE;
+          }
+        else
+          {
+             //config_attrs[i++] = EGL_BIND_TO_TEXTURE_RGB;
+             //config_attrs[i++] = EGL_TRUE;
+          }
+     }
+
+   if (sfc->depth_fmt || sfc->depth_stencil_fmt)
+     {
+        config_attrs[i++] = EGL_DEPTH_SIZE;
+        config_attrs[i++] = 1;
+     }
+
+   if (sfc->stencil_fmt || sfc->depth_stencil_fmt)
+     {
+        config_attrs[i++] = EGL_STENCIL_SIZE;
+        config_attrs[i++] = 1;
+     }
+
+   config_attrs[i++] = EGL_RENDERABLE_TYPE;
+   config_attrs[i++] = EGL_OPENGL_ES2_BIT;
+   config_attrs[i++] = EGL_SURFACE_TYPE;
+   config_attrs[i++] = EGL_PBUFFER_BIT;
+   config_attrs[i++] = EGL_NONE;
+#else
+   // It looks like eglMakeCurrent might fail if we use a different config from
+   // the actual display surface. This is weird.
+   i = 0;
+   config_attrs[i++] = EGL_CONFIG_ID;
+   config_attrs[i++] = 0;
+   config_attrs[i++] = EGL_NONE;
+   eglQueryContext(disp, ctx, EGL_CONFIG_ID, &config_attrs[1]);
+#endif
+
+   if (!eglChooseConfig(disp, config_attrs, &egl_cfg, 1, &num_config)
+       || (num_config < 1))
+     {
+        int err = eglGetError();
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        ERR("eglChooseConfig failed with error %x", err);
+        return NULL;
+     }
+
+   // Now, choose the config for the PBuffer
+   i = 0;
+   surface_attrs[i++] = EGL_WIDTH;
+   surface_attrs[i++] = sfc->w;
+   surface_attrs[i++] = EGL_HEIGHT;
+   surface_attrs[i++] = sfc->h;
+#if 0
+   // Adding these parameters will trigger EGL_BAD_ATTRIBUTE because
+   // the config also requires EGL_BIND_TO_TEXTURE_RGB[A]. But some drivers
+   // don't support those configs (eg. nvidia)
+   surface_attrs[i++] = EGL_TEXTURE_FORMAT;
+   if (sfc->pbuffer.color_fmt == EVAS_GL_RGB_888)
+     surface_attrs[i++] = EGL_TEXTURE_RGB;
+   else
+     surface_attrs[i++] = EGL_TEXTURE_RGBA;
+   surface_attrs[i++] = EGL_TEXTURE_TARGET;
+   surface_attrs[i++] = EGL_TEXTURE_2D;
+   surface_attrs[i++] = EGL_MIPMAP_TEXTURE;
+   surface_attrs[i++] = EINA_TRUE;
+#endif
+   surface_attrs[i++] = EGL_NONE;
+
+   egl_sfc = eglCreatePbufferSurface(disp, egl_cfg, surface_attrs);
+   if (!egl_sfc)
+     {
+        int err = eglGetError();
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        ERR("eglCreatePbufferSurface failed with error %x", err);
+        return NULL;
+     }
+
+   return egl_sfc;
+#else
+   GLXPbuffer pbuf;
+   GLXFBConfig *cfgs;
+   int config_attrs[20];
+   int surface_attrs[20];
+   int ncfg = 0, i;
+
+   // TODO: Check all required config attributes
+
+#ifndef GLX_VISUAL_ID
+# define GLX_VISUAL_ID 0x800b
+#endif
+
+   i = 0;
+   if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
+     {
+        config_attrs[i++] = GLX_BUFFER_SIZE;
+        if (sfc->pbuffer.color_fmt == EVAS_GL_RGBA_8888)
+          {
+             config_attrs[i++] = 32;
+             //config_attrs[i++] = GLX_BIND_TO_TEXTURE_RGBA_EXT;
+             //config_attrs[i++] = 1;
+          }
+        else
+          {
+             config_attrs[i++] = 24;
+             //config_attrs[i++] = GLX_BIND_TO_TEXTURE_RGB_EXT;
+             //config_attrs[i++] = 1;
+          }
+     }
+   if (sfc->depth_fmt)
+     {
+        config_attrs[i++] = GLX_DEPTH_SIZE;
+        config_attrs[i++] = 24; // FIXME: This should depend on the requested bits
+     }
+   if (sfc->stencil_fmt)
+     {
+        config_attrs[i++] = GLX_STENCIL_SIZE;
+        config_attrs[i++] = 8; // FIXME: This should depend on the requested bits
+     }
+   //config_attrs[i++] = GLX_VISUAL_ID;
+   //config_attrs[i++] = XVisualIDFromVisual(vis);
+   config_attrs[i++] = 0;
+
+   cfgs = glXChooseFBConfig(re->software.ob->disp, re->software.ob->screen,
+                            config_attrs, &ncfg);
+   if (!cfgs || !ncfg)
+     {
+        ERR("GLX failed to find a valid config for the pbuffer");
+        if (cfgs) XFree(cfgs);
+        return NULL;
+     }
+
+   i = 0;
+   surface_attrs[i++] = GLX_LARGEST_PBUFFER;
+   surface_attrs[i++] = 0;
+   surface_attrs[i++] = GLX_PBUFFER_WIDTH;
+   surface_attrs[i++] = sfc->w;
+   surface_attrs[i++] = GLX_PBUFFER_HEIGHT;
+   surface_attrs[i++] = sfc->h;
+   surface_attrs[i++] = 0;
+   pbuf = glXCreatePbuffer(re->software.ob->disp, cfgs[0], surface_attrs);
+   if (cfgs) XFree(cfgs);
+
+   if (!pbuf)
+     {
+        ERR("GLX failed to create a pbuffer");
+        return NULL;
+     }
+
+   return (void*)(intptr_t)pbuf;
+#endif
+}
+
+static int
+evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
+{
+   /* EVGLINIT(re, 0); */
+   if (!data)
+     {
+        ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
+        return 0;
+     }
+
+   if (!surface)
+     {
+        ERR("Invalid surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
+        return 0;
+     }
+
+#ifdef GL_GLES
+   Render_Engine *re = data;
+
+   eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)surface);
+#else
+   Render_Engine_GL_Generic *re = data;
+   GLXPbuffer pbuf = (GLXPbuffer)(intptr_t) surface;
+
+   glXDestroyPbuffer(re->software.ob->disp, pbuf);
+#endif
+
+   return 1;
+}
+
+// This function should create a surface that can be used for offscreen rendering
+// with GLES 1.x, and still be bindable to a texture in Evas main GL context.
+// For now, this will create an X pixmap... Ideally it should be able to create
+// a bindable pbuffer surface or just an FBO if that is supported and it can
+// be shared with Evas.
+static void *
+evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
+                              Evas_GL_Config *cfg, int w, int h)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Pixmap px;
+
+   if (!re || !evgl_sfc || !cfg)
+     {
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
+
+   if (cfg->gles_version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Inconsistent parameters, not creating any surface!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return NULL;
+     }
+
+   // FIXME: Check the depth of the buffer!
+   px =  XCreatePixmap(eng_get_ob(re)->disp, eng_get_ob(re)->win, w, h,
+                       XDefaultDepth(eng_get_ob(re)->disp, eng_get_ob(re)->screen));
+   if (!px)
+     {
+        ERR("Failed to create XPixmap!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_ALLOC);
+        return NULL;
+     }
+
+#ifdef GL_GLES
+   EGLSurface egl_sfc;
+
+   egl_sfc = eglCreatePixmapSurface(eng_get_ob(re)->egl_disp, eng_get_ob(re)->egl_config, px, NULL);
+   if (!egl_sfc)
+     {
+        int err = eglGetError();
+        ERR("eglCreatePixmapSurface failed with error: %x", err);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        XFreePixmap(eng_get_ob(re)->disp, px);
+        return NULL;
+     }
+
+   evgl_sfc->gles1_indirect = EINA_TRUE;
+   evgl_sfc->xpixmap = EINA_TRUE;
+   evgl_sfc->gles1_sfc = egl_sfc;
+   evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
+   evgl_sfc->gles1_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
+   return evgl_sfc;
+
+#else
+   evgl_sfc->gles1_indirect = EINA_TRUE;
+   evgl_sfc->xpixmap = EINA_TRUE;
+   evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
+   evgl_sfc->gles1_sfc = (void *)(intptr_t) px;
+   evgl_sfc->gles1_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
+   return evgl_sfc;
+#endif
+}
+
+// This function should destroy the surface used for offscreen rendering
+// with GLES 1.x.This will also destroy the X pixmap...
+static int
+evgl_eng_gles1_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
+{
+   Render_Engine *re = (Render_Engine *)data;
+
+   if (!re)
+     {
+        ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        return 0;
+     }
+
+#ifdef GL_GLES
+   if ((!evgl_sfc) || (!evgl_sfc->gles1_sfc))
+     {
+        ERR("Invalid surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
+        return 0;
+     }
+
+   eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)evgl_sfc->gles1_sfc);
+#endif
+
+   if (!evgl_sfc->gles1_sfc_native)
+     {
+        ERR("Inconsistent parameters, not freeing XPixmap for gles1 surface!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
+        return 0;
+     }
+
+   XFreePixmap(eng_get_ob(re)->disp, (Pixmap)evgl_sfc->gles1_sfc_native);
+
+   return 1;
 }
 
 static const EVGL_Interface evgl_funcs =
@@ -591,7 +967,11 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_make_current,
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
-   evgl_eng_rotation_angle_get
+   evgl_eng_rotation_angle_get,
+   evgl_eng_pbuffer_surface_create,
+   evgl_eng_pbuffer_surface_destroy,
+   evgl_eng_gles1_surface_create,
+   evgl_eng_gles1_surface_destroy,
 };
 
 //----------------------------------------------------------//
@@ -630,6 +1010,9 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
    LINK2GENERIC(evas_gl_symbols);
+   LINK2GENERIC(evas_gl_common_error_get);
+   LINK2GENERIC(evas_gl_common_error_set);
+   LINK2GENERIC(evas_gl_common_current_context_get);
 
 #ifdef GL_GLES
 #define FINDSYM(dst, sym, typ) \
@@ -913,23 +1296,6 @@ eng_setup(Evas *eo_e, void *in)
            default:
              swap_mode = MODE_AUTO;
              break;
-          }
-     }
-
-   if (safe_native == -1)
-     {
-        s = getenv("EVAS_GL_SAFE_NATIVE");
-        safe_native = 0;
-        if (s) safe_native = atoi(s);
-        else
-          {
-             s = (const char *)glGetString(GL_RENDERER);
-             if (s)
-               {
-                  if (strstr(s, "PowerVR SGX 540") ||
-                      strstr(s, "Mali-400 MP"))
-                    safe_native = 1;
-               }
           }
      }
 
@@ -1240,6 +1606,52 @@ eng_output_dump(void *data)
    _re_winfree(re);
 }
 
+static void *
+eng_gl_current_context_get(void *data EINA_UNUSED)
+{
+   EVGL_Context *ctx;
+
+   ctx = glsym_evas_gl_common_current_context_get();
+   if (!ctx)
+     return NULL;
+
+#ifdef GL_GLES
+   if (eglGetCurrentContext() == (ctx->context))
+     return ctx;
+   else
+     return NULL;
+#else
+   if (glXGetCurrentContext() == (ctx->context))
+     return ctx;
+   else
+     return NULL;
+#endif
+}
+
+static int
+eng_gl_error_get(void *data)
+{
+   int err;
+
+   if ((err = glsym_evas_gl_common_error_get(data)) != EVAS_GL_SUCCESS)
+     goto end;
+
+#ifdef GL_GLES
+   err = eglGetError() - EGL_SUCCESS;
+#else
+   Render_Engine *re = data;
+
+   if (!eng_get_ob(re)->win)
+     err = EVAS_GL_BAD_DISPLAY;
+   else if (!eng_get_ob(re)->info)
+     err = EVAS_GL_BAD_SURFACE;
+#endif
+
+end:
+   glsym_evas_gl_common_error_set(data, EVAS_GL_SUCCESS);
+   return err;
+}
+
 /////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1357,15 +1769,19 @@ _native_free_cb(void *data, void *image)
 #ifdef GL_GLES
       if (n->egl_surface)
         {
-          if (glsym_eglDestroyImage)
-            {
-              glsym_eglDestroyImage(eng_get_ob(re)->egl_disp,
-                                    n->egl_surface);
-              if (eglGetError() != EGL_SUCCESS)
-                ERR("eglDestroyImage() failed.");
-            }
-          else
-            ERR("Try eglDestroyImage on EGL with no support");
+           int err;
+           if (glsym_eglDestroyImage)
+             {
+                glsym_eglDestroyImage(eng_get_ob(re)->egl_disp,
+                                      n->egl_surface);
+                if ((err = eglGetError()) != EGL_SUCCESS)
+                  {
+                     ERR("eglDestroyImage() failed.");
+                     glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+                  }
+             }
+           else
+              ERR("Try eglDestroyImage on EGL with no support");
         }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
@@ -1549,7 +1965,12 @@ eng_image_native_set(void *data, void *image, void *native)
 
               if (!eglChooseConfig(eng_get_ob(re)->egl_disp, config_attrs,
                                    &egl_config, 1, &num_config))
-                ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i", (unsigned int)pm, num_config);
+                {
+                  int err = eglGetError();
+                  ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i with error %d",
+                                                         (unsigned int)pm, num_config, err);
+                  glsym_evas_gl_common_error_set(err - EGL_SUCCESS);
+                }
               else
                 {
                   int val;
@@ -1874,6 +2295,10 @@ module_open(Evas_Module *em)
    ORD(output_dump);
 
    ORD(image_native_set);
+
+   ORD(gl_error_get);
+   // gl_current_surface_get is in gl generic
+   ORD(gl_current_context_get);
 
    gl_symbols();
 

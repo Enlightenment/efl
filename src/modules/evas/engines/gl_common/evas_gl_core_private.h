@@ -50,7 +50,7 @@ struct _EVGL_Interface
    int         (*surface_destroy)(void *data, void *surface);
 
    // Creates/Destroys the native surface from evas engine.
-   void       *(*context_create)(void *data, void *share_ctx);
+   void       *(*context_create)(void *data, void *share_ctx, Evas_GL_Context_Version version);
    int         (*context_destroy)(void *data, void *context);
 
    // Calls the make_current from evas_engine.
@@ -64,6 +64,16 @@ struct _EVGL_Interface
 
    // Returns the current rotation angle of evas
    int         (*rotation_angle_get)(void *data);
+
+   // Create a pbuffer surface
+   void       *(*pbuffer_surface_create)(void *data, EVGL_Surface *evgl_sfc, const int *attrib_list);
+   int         (*pbuffer_surface_destroy)(void *data, void *surface);
+
+   // Create a surface for 1.x rendering (could be pbuffer or xpixmap for instance)
+   void       *(*gles1_surface_create)(void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
+
+   // Destroy 1.x surface (could be pbuffer or xpixmap for instance)
+   int        (*gles1_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);
 };
 
 struct _EVGL_Surface
@@ -93,8 +103,14 @@ struct _EVGL_Surface
    GLuint  depth_stencil_buf;
    GLenum  depth_stencil_fmt;
 
-   // Direct Rendering Option
-   int     direct_fb_opt;
+   // Direct Rendering Options
+   unsigned direct_fb_opt : 1;
+   unsigned client_side_rotation : 1;
+   unsigned alpha : 1;
+
+   // Flag indicating this surface is used for GLES 1 indirect rendering
+   unsigned gles1_indirect : 1;
+   unsigned xpixmap : 1;
 
    int     cfg_index;
 
@@ -109,6 +125,22 @@ struct _EVGL_Surface
    int     buffer_mem[4];
 
    //-------------------------//
+   // Used if gles1_indirect == 1
+   EVGLNative_Surface gles1_sfc;
+   void              *gles1_sfc_native;
+   void              *gles1_sfc_visual;
+
+   //-------------------------//
+   // Related to PBuffer Surface
+   struct {
+      EVGLNative_Surface    native_surface;
+      Evas_GL_Color_Format  color_fmt;
+      GLuint                fbo;
+      Eina_Bool             is_pbuffer : 1;
+   } pbuffer;
+
+
+   //-------------------------//
 
    EVGL_Context *current_ctx;
 };
@@ -118,6 +150,8 @@ struct _EVGL_Surface
 struct _EVGL_Context
 {
    EVGLNative_Context context;
+
+   Evas_GL_Context_Version version;
 
    // Context FBO
    GLuint       surface_fbo;
@@ -212,6 +246,8 @@ struct _EVGL_Resource
    EVGL_Context        *current_ctx;
    void                *current_eng;
 
+   int error_state;
+
    struct {
         EVGLNative_Surface   surface;
         int                  rendered;
@@ -235,6 +271,9 @@ struct _EVGL_Resource
 
         Eina_Bool            enabled : 1;
    } direct;
+   struct {
+        GLclampf r, g, b, a;
+   } clear_color;
 
 };
 
@@ -269,6 +308,7 @@ struct _EVGL_Engine
    // Keep track of all the current surfaces/contexts
    Eina_List         *surfaces;
    Eina_List         *contexts;
+   Eina_List         *direct_depth_stencil_surfaces;
 
    //void              *engine_data;  
 
@@ -280,11 +320,13 @@ extern EVGL_Engine   *evgl_engine;
 
 // Internally used functions
 extern void           _evgl_api_get(Evas_GL_API *api, int debug);
-extern EVGL_Resource *_evgl_tls_resource_get();
+extern void           _evgl_api_gles1_get(Evas_GL_API *api, Eina_Bool debug);
+extern EVGL_Resource *_evgl_tls_resource_get(void);
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
-extern EVGL_Context  *_evgl_current_context_get();
-extern int            _evgl_not_in_pixel_get();
-extern int            _evgl_direct_enabled();
+extern EVGL_Context  *_evgl_current_context_get(void);
+extern int            _evgl_not_in_pixel_get(void);
+extern int            _evgl_direct_enabled(void);
+extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

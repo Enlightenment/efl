@@ -16,12 +16,12 @@ void _make_current_check(const char* api)
 {
    EVGL_Context *ctx = NULL;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (!ctx)
-     {
-        CRI("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
-     }
+     CRI("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
+   else if (ctx->version != EVAS_GL_GLES_2_X)
+     CRI("\e[1;33m%s\e[m: This API is being called with the wrong context (invalid version).", api);
 }
 
 static
@@ -29,7 +29,7 @@ void _direct_rendering_check(const char *api)
 {
    EVGL_Context *ctx = NULL;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
    if (!ctx)
      {
         ERR("Current Context Not Set");
@@ -59,7 +59,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
    EVGL_Resource *rsc;
 
    rsc = _evgl_tls_resource_get();
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (!ctx)
      {
@@ -185,7 +185,7 @@ _evgl_glReleaseShaderCompiler(void)
 // returns: imgc[4] (oc[4]) original image object dimension in gl coord
 // returns: objc[4] (nc[4]) tranformed  (x, y, width, heigth) in gl coord
 // returns: cc[4] cliped coordinate in original coordinate
-static void
+void
 compute_gl_coordinates(int win_w, int win_h, int rot, int clip_image,
                        int x, int y, int width, int height,
                        int img_x, int img_y, int img_w, int img_h,
@@ -308,6 +308,27 @@ compute_gl_coordinates(int win_w, int win_h, int rot, int clip_image,
 }
 
 static void
+_evgl_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (_evgl_direct_enabled())
+     {
+        rsc->clear_color.a = alpha;
+        rsc->clear_color.r = red;
+        rsc->clear_color.g = green;
+        rsc->clear_color.b = blue;
+     }
+   glClearColor(red, green, blue, alpha);
+}
+
+static void
 _evgl_glClear(GLbitfield mask)
 {
    EVGL_Resource *rsc;
@@ -338,6 +359,29 @@ _evgl_glClear(GLbitfield mask)
      {
         if (!(rsc->current_ctx->current_fbo))
           {
+             /* Skip glClear() if clearing with transparent color
+              * Note: There will be side effects if the object itself is not
+              * marked as having an alpha channel!
+              */
+             if (ctx->current_sfc->alpha && (mask & GL_COLOR_BUFFER_BIT))
+               {
+                  if ((rsc->clear_color.a == 0) &&
+                      (rsc->clear_color.r == 0) &&
+                      (rsc->clear_color.g == 0) &&
+                      (rsc->clear_color.b == 0))
+                    {
+                       // Skip clear color as we don't want to write black
+                       mask &= ~GL_COLOR_BUFFER_BIT;
+                    }
+                  else if (rsc->clear_color.a != 1.0)
+                    {
+                       // TODO: Draw a rectangle? This will never be the perfect solution though.
+                       WRN("glClear() used with a semi-transparent color and direct rendering. "
+                           "This will erase the previous contents of the evas!");
+                    }
+                  if (!mask) return;
+               }
+
              if ((!ctx->direct_scissor))
                {
                   glEnable(GL_SCISSOR_TEST);
@@ -374,6 +418,8 @@ _evgl_glClear(GLbitfield mask)
                }
 
              glClear(mask);
+
+             // TODO/FIXME: Restore previous client-side scissors.
           }
         else
           {
@@ -403,7 +449,7 @@ _evgl_glEnable(GLenum cap)
 {
    EVGL_Context *ctx;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (cap == GL_SCISSOR_TEST)
       if (ctx) ctx->scissor_enabled = 1;
@@ -415,7 +461,7 @@ _evgl_glDisable(GLenum cap)
 {
    EVGL_Context *ctx;
 
-   ctx = _evgl_current_context_get();
+   ctx = evas_gl_common_current_context_get();
 
    if (cap == GL_SCISSOR_TEST)
       if (ctx) ctx->scissor_enabled = 0;
@@ -887,7 +933,7 @@ void
 _evgld_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
    EVGL_FUNC_BEGIN();
-   glClearColor(red, green, blue, alpha);
+   _evgl_glClearColor(red, green, blue, alpha);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    EVGL_FUNC_END();
 }
@@ -2386,7 +2432,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glBufferSubData);
    ORD(glCheckFramebufferStatus);
 //   ORD(glClear);
-   ORD(glClearColor);
+//   ORD(glClearColor);
 //   ORD(glClearDepthf);
    ORD(glClearStencil);
    ORD(glColorMask);
@@ -2525,6 +2571,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
 
    // For Direct Rendering
    ORD(glClear);
+   ORD(glClearColor);
    ORD(glDisable);
    ORD(glEnable);
    ORD(glGetIntegerv);
@@ -2551,6 +2598,7 @@ _direct_scissor_off_api_get(Evas_GL_API *funcs)
 #define ORD(f) EVAS_API_OVERRIDE(f, funcs,)
    // For Direct Rendering
    ORD(glClear);
+   ORD(glClearColor);
    ORD(glDisable);
    ORD(glEnable);
    ORD(glGetIntegerv);
@@ -2719,6 +2767,8 @@ _debug_gl_api_get(Evas_GL_API *funcs)
 void
 _evgl_api_get(Evas_GL_API *funcs, int debug)
 {
+   memset(funcs, 0, sizeof(Evas_GL_API));
+
    if (debug)
       _debug_gl_api_get(funcs);
    else

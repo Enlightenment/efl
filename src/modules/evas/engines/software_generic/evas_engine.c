@@ -116,6 +116,10 @@ static void *gl_lib_handle;
 static int gl_lib_is_gles = 0;
 static Evas_GL_API gl_funcs;
 
+static Eina_Bool _tls_init = EINA_FALSE;
+static Eina_TLS gl_current_ctx_key = 0;
+static Eina_TLS gl_current_sfc_key = 0;
+
 //------------------------------------------------------//
 // OSMesa APIS...
 static OSMesaContext (*_sym_OSMesaCreateContextExt)             (GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist) = NULL;
@@ -2263,7 +2267,25 @@ eng_image_load_error_get(void *data EINA_UNUSED, void *image)
    return im->cache_entry.load_error;
 }
 
+
 //------------ Evas GL engine code ---------------//
+#ifdef EVAS_GL
+static inline int
+_tls_check(void)
+{
+   // note: this is not thread safe...
+   if (!_tls_init)
+     {
+        if (!eina_tls_new(&gl_current_ctx_key)) return 0;
+        if (!eina_tls_new(&gl_current_sfc_key)) return 0;
+        eina_tls_set(gl_current_ctx_key, NULL);
+        eina_tls_set(gl_current_sfc_key, NULL);
+     }
+   _tls_init = EINA_TRUE;
+   return 1;
+}
+#endif
+
 static void *
 eng_gl_surface_create(void *data EINA_UNUSED, void *config, int w, int h)
 {
@@ -2370,6 +2392,10 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 
    if (!sfc) return 0;
 
+   _tls_check();
+   if (sfc == eina_tls_get(gl_current_sfc_key))
+     eina_tls_set(gl_current_sfc_key, NULL);
+
    if (sfc->buffer) free(sfc->buffer);
 
    free(sfc);
@@ -2384,11 +2410,18 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 }
 
 static void *
-eng_gl_context_create(void *data EINA_UNUSED, void *share_context)
+eng_gl_context_create(void *data EINA_UNUSED, void *share_context,
+                      int version)
 {
 #ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;
    Render_Engine_GL_Context *share_ctx;
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        return NULL;
+     }
 
    ctx = calloc(1, sizeof(Render_Engine_GL_Context));
 
@@ -2432,6 +2465,10 @@ eng_gl_context_destroy(void *data EINA_UNUSED, void *context)
 
    if (!ctx) return 0;
 
+   _tls_check();
+   if (ctx == eina_tls_get(gl_current_ctx_key))
+     eina_tls_set(gl_current_ctx_key, NULL);
+
    _sym_OSMesaDestroyContext(ctx->context);
 
    free(ctx);
@@ -2456,11 +2493,15 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
 
+   _tls_check();
+
    // Unset surface/context
    if ((!sfc) || (!ctx))
      {
         if (ctx) ctx->current_sfc = NULL;
         if (sfc) sfc->current_ctx = NULL;
+        eina_tls_set(gl_current_ctx_key, NULL);
+        eina_tls_set(gl_current_sfc_key, NULL);
         return 1;
      }
 
@@ -2480,6 +2521,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
         if (!ctx->context)
           {
              ERR("Error initializing context.");
+             eina_tls_set(gl_current_ctx_key, NULL);
+             eina_tls_set(gl_current_sfc_key, NULL);
              return 0;
           }
 
@@ -2494,6 +2537,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    if (ret == GL_FALSE)
      {
         ERR("Error doing MakeCurrent.");
+        eina_tls_set(gl_current_ctx_key, NULL);
+        eina_tls_set(gl_current_sfc_key, NULL);
         return 0;
      }
 
@@ -2502,6 +2547,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    // Set the current surface/context
    ctx->current_sfc = sfc;
    sfc->current_ctx = ctx;
+   eina_tls_set(gl_current_ctx_key, ctx);
+   eina_tls_set(gl_current_sfc_key, sfc);
 
    return 1;
 #else
@@ -2556,13 +2603,49 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 
 
 static void *
-eng_gl_api_get(void *data EINA_UNUSED)
+eng_gl_api_get(void *data EINA_UNUSED, int version)
 {
+   if (version != EVAS_GL_GLES_2_X)
+     return NULL;
+
 #ifdef EVAS_GL
    return &gl_funcs;
 #else
    return NULL;
 #endif
+}
+
+static int
+eng_gl_error_get(void *data)
+{
+   Render_Engine_Software_Generic *re = data;
+
+   // TODO: Track EGL-like errors in the software engines
+
+   if (!re->ob)
+     return EVAS_GL_BAD_DISPLAY;
+
+   return EVAS_GL_SUCCESS;
+}
+
+static void *
+eng_gl_current_context_get(void *data EINA_UNUSED)
+{
+   _tls_check();
+   return eina_tls_get(gl_current_ctx_key);
+}
+
+static void *
+eng_gl_current_surface_get(void *data EINA_UNUSED)
+{
+   _tls_check();
+   return eina_tls_get(gl_current_sfc_key);
+}
+
+static int
+eng_gl_rotation_angle_get(void *data EINA_UNUSED)
+{
+   return 0;
 }
 
 //------------------------------------------------//
@@ -2989,6 +3072,7 @@ static Evas_Func func =
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
      NULL, // need software mesa for gl rendering <- gl_surface_create
+     NULL, // need software mesa for gl rendering <- gl_pbuffer_surface_create
      NULL, // need software mesa for gl rendering <- gl_surface_destroy
      NULL, // need software mesa for gl rendering <- gl_context_create
      NULL, // need software mesa for gl rendering <- gl_context_destroy
@@ -3002,6 +3086,11 @@ static Evas_Func func =
      NULL, // need software mesa for gl rendering <- gl_surface_lock
      NULL, // need software mesa for gl rendering <- gl_surface_read_pixels
      NULL, // need software mesa for gl rendering <- gl_surface_unlock
+     NULL, // need software mesa for gl rendering <- gl_error_get
+     NULL, // need software mesa for gl rendering <- gl_current_context_get
+     NULL, // need software mesa for gl rendering <- gl_current_surface_get
+     NULL, // need software mesa for gl rendering <- gl_rotation_angle_get
+     NULL, // need software mesa for gl rendering <- gl_surface_query
      eng_image_load_error_get,
      eng_font_run_font_end_get,
      eng_image_animated_get,
@@ -3971,6 +4060,9 @@ static int
 gl_lib_init(void)
 {
 #ifdef EVAS_GL
+   // Current ctx & sfc stuff
+   if (!_tls_check()) return 0;
+
    // dlopen OSMesa 
    gl_lib_handle = dlopen("libOSMesa.so.9", RTLD_NOW);
    if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.8", RTLD_NOW);
@@ -4020,6 +4112,10 @@ init_gl(void)
         ORD(gl_proc_address_get);       // FIXME: Need to implement
         ORD(gl_native_surface_get);
         ORD(gl_api_get);
+        ORD(gl_error_get);
+        ORD(gl_current_context_get);
+        ORD(gl_current_surface_get);
+        ORD(gl_rotation_angle_get);
 #undef ORD
      }
 }

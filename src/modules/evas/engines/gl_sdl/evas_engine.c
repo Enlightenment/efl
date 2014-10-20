@@ -198,9 +198,15 @@ evgl_eng_window_surface_destroy(void *data EINA_UNUSED,
 }
 
 static void *
-evgl_eng_context_create(void *data, void *share_ctx EINA_UNUSED)
+evgl_eng_context_create(void *data, void *share_ctx EINA_UNUSED, int version)
 {
    Render_Engine *re = data;
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        return NULL;
+     }
 
    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
    return SDL_GL_CreateContext(re->generic.software.ob->window);
@@ -248,7 +254,11 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_make_current,
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
-   evgl_eng_rotation_angle_get
+   evgl_eng_rotation_angle_get,
+   NULL, // PBuffer
+   NULL, // PBuffer
+   NULL, // OpenGL-ES 1
+   NULL, // OpenGL-ES 1
 };
 
 

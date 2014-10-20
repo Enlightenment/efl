@@ -446,11 +446,14 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 		_EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglDestroyImageKHR"))
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 
-	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImage, (int target, void* buffer, int *attrib_list))
+	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImage, (int target, void* buffer, const int *attrib_list))
 		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglCreateImage)
 	_EVASGL_EXT_FUNCTION_END()
 	_EVASGL_EXT_FUNCTION_BEGIN(void, evasglDestroyImage, (EvasGLImage image))
 		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglDestroyImage)
+	_EVASGL_EXT_FUNCTION_END()
+	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLImage, evasglCreateImageForContext, (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int *attrib_list))
+		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglCreateImageForContext)
 	_EVASGL_EXT_FUNCTION_END()
 
 	#ifdef _EVASGL_EXT_VERIFY
@@ -562,6 +565,67 @@ _EVASGL_EXT_BEGIN(EGL_KHR_gl_renderbuffer_image)
 	#endif
 _EVASGL_EXT_END()
 
+_EVASGL_EXT_BEGIN(EGL_KHR_fence_sync)
+
+	_EVASGL_EXT_DRVNAME(EGL_KHR_fence_sync)
+
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void *, eglCreateSyncKHR, (EGLDisplay dpy, EGLenum type, const EGLint *attrib_list))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglCreateSyncKHR"))
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglDestroySyncKHR, (EGLDisplay dpy, EGLSyncKHR sync))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglDestroySyncKHR"))
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLint, eglClientWaitSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglClientWaitSyncKHR"))
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglGetSyncAttribKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglGetSyncAttribKHR"))
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+
+	_EVASGL_EXT_FUNCTION_BEGIN(EvasGLSync, evasglCreateSync, (Evas_GL *evas_gl, unsigned int type, const int *attrib_list))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglCreateSync)
+	_EVASGL_EXT_FUNCTION_END()
+	_EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglDestroySync, (Evas_GL *evas_gl, EvasGLSync sync))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglDestroySync)
+	_EVASGL_EXT_FUNCTION_END()
+	_EVASGL_EXT_FUNCTION_BEGIN(int, evasglClientWaitSync, (Evas_GL *evas_gl, EvasGLSync sync, int flags, EvasGLTime timeout))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglClientWaitSync)
+	_EVASGL_EXT_FUNCTION_END()
+	_EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglGetSyncAttrib, (Evas_GL *evas_gl, EvasGLSync sync, int attribute, int *value))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglGetSyncAttrib)
+	_EVASGL_EXT_FUNCTION_END()
+
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(EGL_KHR_reusable_sync)
+
+	_EVASGL_EXT_DRVNAME(EGL_KHR_reusable_sync)
+
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglSignalSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglSignalSyncKHR"))
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+
+	_EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglSignalSync, (Evas_GL *evas_gl, EvasGLSync sync, unsigned mode))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglSignalSync)
+	_EVASGL_EXT_FUNCTION_END()
+
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(EGL_KHR_wait_sync)
+
+	_EVASGL_EXT_DRVNAME(EGL_KHR_wait_sync)
+
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLint, eglWaitSyncKHR, (EGLDisplay dpy, EGLSyncKHR sync, int flags))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(GETPROCADDR("eglWaitSyncKHR"))
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+
+	_EVASGL_EXT_FUNCTION_BEGIN(int, evasglWaitSync, (Evas_GL *evas_gl, EvasGLSync sync, int flags))
+	        _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglWaitSync)
+	_EVASGL_EXT_FUNCTION_END()
+
+_EVASGL_EXT_END()
+
+
 #if 0
 _EVASGL_EXT_BEGIN(EGL_SEC_map_image)
 	_EVASGL_EXT_DRVNAME(EGL_SEC_map_image)
@@ -574,6 +638,7 @@ _EVASGL_EXT_BEGIN(EGL_SEC_map_image)
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 _EVASGL_EXT_END()
 #endif
+
 
 #endif
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

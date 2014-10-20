@@ -76,7 +76,6 @@ void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 
 /* local variables */
-static int safe_native = -1;
 static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
 static Evas_Func func, pfunc;
@@ -324,7 +323,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 }
 
 static void *
-evgl_eng_context_create(void *data, void *ctxt)
+evgl_eng_context_create(void *data, void *ctxt, int version)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -333,6 +332,12 @@ evgl_eng_context_create(void *data, void *ctxt)
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
+
+   if (version != EVAS_GL_GLES_2_X)
+     {
+        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        return NULL;
+     }
 
    attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    attrs[1] = 2;
@@ -466,7 +471,11 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_make_current,
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
-   evgl_eng_rotation_angle_get
+   evgl_eng_rotation_angle_get,
+   NULL, // PBuffer
+   NULL, // PBuffer
+   NULL, // OpenGL-ES 1
+   NULL, // OpenGL-ES 1
 };
 
 /* engine functions */
@@ -562,23 +571,6 @@ eng_setup(Evas *evas, void *info)
            default:
              swap_mode = MODE_AUTO;
              break;
-          }
-     }
-
-   if (safe_native == -1)
-     {
-        s = getenv("EVAS_GL_SAFE_NATIVE");
-        safe_native = 0;
-        if (s) safe_native = atoi(s);
-        else
-          {
-             s = (const char *)glGetString(GL_RENDERER);
-             if (s)
-               {
-                  if (strstr(s, "PowerVR SGX 540") ||
-                      strstr(s, "Mali-400 MP"))
-                    safe_native = 1;
-               }
           }
      }
 
