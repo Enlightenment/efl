@@ -631,8 +631,6 @@ _ecore_drm_output_event(const char *device, Eeze_Udev_Event event, void *data, E
    if (!(output = data)) return;
 
    /* TODO: Check if device is hotplug and update outputs */
-
-   return;
 }
 
 /**
