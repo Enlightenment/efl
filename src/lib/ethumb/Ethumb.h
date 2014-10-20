@@ -524,11 +524,45 @@ EAPI void      ethumb_file_get(const Ethumb *e, const char **path, const char **
  */
 EAPI void      ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Generate the thumbnail.
+ *
+ * @param e handle of the current thumbnailer.
+ * @param finished_cb The callback function to run on opertaion end
+ * @param free_data The callback function to run on free data.
+ *
+ * @return EINA_TRUE on success and EINA_FALSE on failure
+ */
 EAPI Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief test if the thumbnailer exists
+ *
+ * @param e handle of the thumbnailer to test.
+ *
+ * @return EINA_TRUE if thumbnailer exists and EINA_FALSE otherwise.
+ */
 EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+/**
+ * @brief Duplicate an thumbnailer
+ *
+ * @param e Handle of the thumbnailer to duplicate
+ *
+ * @return a new allocated copy of the thumbnailer.
+ */
 EAPI Ethumb *ethumb_dup(const Ethumb *e) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Compare two thumbnailers.
+ *
+ * @param e1 First handle of thumbnailer to compare
+ * @param e2 Second handle of thumbnailer to compare
+ *
+ * @return EINA_TRUE if the thumbnailers are equal and EINA_FALSE otherwise
+ */
 EAPI Eina_Bool ethumb_cmp(const Ethumb *e1, const Ethumb *e2) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
 EAPI int ethumb_hash(const void *key, int key_length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 EAPI int ethumb_key_cmp(const void *key1, int key1_length,
 			const void *key2, int key2_length) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT EINA_PURE;
