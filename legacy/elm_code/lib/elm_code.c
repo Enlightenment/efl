@@ -134,7 +134,7 @@ EAPI const char *elm_code_path_get(Elm_Code_File *file)
    return eina_file_filename_get(file->file);
 }
 
-EAPI int elm_code_lines_get(Elm_Code_File *file)
+EAPI unsigned int elm_code_lines_get(Elm_Code_File *file)
 {
    return eina_list_count(file->lines);
 }
