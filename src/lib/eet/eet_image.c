@@ -366,20 +366,20 @@ _eet_image_jpeg_error_exit_cb(j_common_ptr cinfo)
    ERR(buffer);
    errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
-   return;
 }
 
 static void
 _eet_image_jpeg_output_message_cb(j_common_ptr cinfo)
 {
    char buffer[JMSG_LENGTH_MAX];
-   emptr errmgr;
+   /* emptr errmgr; */
 
    (*cinfo->err->format_message)(cinfo, buffer);
    ERR(buffer);
+   /*
    errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
-   return;
+   */
 }
 
 static void
@@ -388,7 +388,7 @@ _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
 {
    char buffer[JMSG_LENGTH_MAX];
    struct jpeg_error_mgr *err;
-   emptr errmgr;
+   /* emptr errmgr; */
 
    err = cinfo->err;
    if (msg_level < 0)
@@ -408,9 +408,10 @@ _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
              INF(buffer);
           }
      }
+   /*
    errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
-   return;
+   */
 }
 
 static int
