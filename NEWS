@@ -1,6 +1,160 @@
 ==========
-EFL 1.11.0
+EFL 1.12.0
 ==========
+
+Changes since 1.11.0:
+---------------------
+
+Features:
+
+   * evas: add evas gl-drm engine
+   * eina: port Eina_Spinlock for OSX
+   * eo: mmap()/unmap() are also supported on OSX
+   * ecore-wayland: Implement ivi-shell support for Ecore_Wayland (T1552)
+   * ecore_cocoa: NSRunLoop integration
+   * edje: Edje_Edit - add code to generate edc source for all transition types in programs
+   * ecore-drm: Add API function for getting screen geometry
+   * ecore-drm: Add API function to get screen geometry
+   * ecore-evas-drm: Add function to return screen geometry
+   * Eolian/Generator: support @empty and @auto.
+   * edje: Edje_Edit - get the buffer with sound's data
+   * eeze: Add missing drm subsystem & device type and add a new Eeze_Udev_Type for drm
+   * eeze: Add case for EEZE_UDEV_TYPE_DRM in eeze_udev_find_by_type function
+   * eeze: Add ability to get syspath from a watch for DRM
+   * Merge branch 'devs/devilhorns/eeze'
+   * eeze: Add eeze_udev_syspath_get_synum function
+   * eeze: Add code for eeze_udev_syspath_get_sysnum function
+   * +eina_value_util api
+   * eeze: Add Eeze udev types for backlight and leds
+   * eeze: Add cases for backlight and leds in eeze_udev_find_by_type
+   * eeze: Add cases for backlight and leds in get_syspath_from_watch.
+   * ecore-drm: Port ecore_drm_inputs code to use Eeze instead of udev
+   * Merge branch 'devs/devilhorns/ecore_drm_eeze'
+   * +eina_strdup(), eina_streq()
+   * ecore-drm: Added private functions to get brightness levels in backlight
+   * Evil: add strptime()
+   * ecore-wayland: Add API functions to iconify an Ecore_Wl_Window
+   * Merge branch 'devs/devilhorns/xdg_shell'
+   * evas: Evas_3D - add .eet export/import
+   * edje: Edje_Edit - get the source name of the sample
+   * Evas GL: Add API evas_gl_error_get()
+   * Evas GL: Add APIs to get current surface/context
+   * Evas GL: Add API evas_gl_rotation_get
+   * Evas GL: Add support for client-side rotation
+   * Evas GL: Add evasglCreateImageForContext + import defs
+   * Evas GL: Add support for fence_sync and similar extensions
+   * Evas GL: Add evas_gl_surface_query
+   * Evas GL: Add support for pbuffer surfaces
+   * Evas GL: Add support for OpenGL-ES 1.1 (part 1)
+
+Fixes:
+
+   * evas: Evas_Gl_X11 - add missing eng_window_free
+   * evas: Evas_wayland_Egl - fix black surface during resize
+   * evas: Evas_Wayland_Egl - change size of common gl context after egl make current according to current Outbuf's size
+   * edje: Edje_Edit - fix support for program's targets
+   * edje: Edje_cc - fix not storing edc sources in .edj file with --no-save option
+   * ecore_evas: Ecore_Evas_X - make sure that ecore evas post render is always called.
+   * ecore-evas-wayland: Fix ecore_evas async rendering with wayland engines
+   * fix efl deadlock with thread queues
+   * ecore-wayland: Remove need for function prototypes
+   * ecore-wayland: Fix ecore_wl_screen_size_get function to handle more than one output.
+   * ecore_evas: Ecore_Evas_X - Fix broken rendering during rotation with resize (T1371)
+   * eina_file: fixing wrong return value on access problems in file copy process
+   * gl-drm: Fix missing link to gbm for ecore_evas_drm and clean up build script
+   * shutup ecore-x vsync stupid log domain failures
+   * ecore-drm: Add local function to free outputs and on any errors during create, call it
+   * ecore-drm: Fix copy/paste build error
+   * ecore-evas-drm: Fix misplaced #ifdef from gl_drm patch
+   * emotion - fix calling pos update cb for gst1 module in frame new
+   * emotion - audio volume - leave as-is on file open/init
+   * evas textblock: fixed ellipsis character cut off issue with complex markup text. (T1213)
+   * edje_cc now throws an error during link combination when the current part has no name
+   * evas: fix build on armv7l. (T1620)
+   * evas-drm: Fix evas-drm picking incorrect resolution/mode for outputs
+   * edje embryo stop_program() should stop pending actions
+   * ecore: Check that eo_data_scope_get returns valid Ecore_Timer_Data before trying to use it
+   * evas: let's freeze the canvas, shall we ?
+   * edje: prevent resource leak.
+   * ecore-evas-drm: Implement ecore_evas_pointer_xy_get for drm engine
+   * ecore-drm: Close input device fd on error during open and fix some todo messages
+   * ecore-drm: Fix missing close of fd on _device_add
+   * ecore-drm: Fix drm VT switching to work again
+   * Evas: Fix crash in hide
+   * ecore-wayland: Allow setting input->cursor_size even if we don't have the shm interface yet
+   * ecore-wayland: Don't crash if we have no shm interface yet when setting cursor theme
+   * Evas filters: Fix parsing of argument lists (T1615)
+   * edje_program: added signal "focus,part,out" when focus is discarded
+   * evas: Gl_Cocoa - fix early segfault caused by unloaded symbols
+   * efl: Move Eldbus above Ecore_Drm
+   * ecore-drm: Remove direct dbus dependency from Ecore_Drm
+   * ecore-drm: Add Eldbus header to private header file
+   * ecore-drm: Include config.h in private header
+   * ecore-drm: Fix private function prototypes for new dbus functions
+   * ecore-drm: Rework input code to function with Eldbus
+   * ecore-drm: Rework internal dbus code to use Eldbus
+   * Merge branch 'devs/devilhorns/ecore_drm'
+   * efl - vsync - deal with both broken and non-broken libdrm
+   * eina: do no use umask on Windows in eina_file_mkstemp()
+   * eeze: Fix return value for eeze_udev_syspath_get_sysnum
+   * eeze: Fix issue with eeze_udev_find_by_type not finding devices when name is NULL.
+   * ecore-evas-drm: Fix calling ecore_drm_device_find twice in some cases
+   * ecore-drm: Move Eeze above Ecore_Drm
+   * ecore-drm: Add Eeze as a dependency for Ecore_Drm
+   * ecore-drm: Remove dependency on libudev for ecore-drm
+   * ecore-drm: Remove internal dependency on libudev
+   * ecore-drm: Add Eeze as an internal dependency for ecore-drm
+   * ecore-drm: Fix comment to not mention udev
+   * ecore-drm: Remove references to udev functions and init Eeze during startup
+   * ecore-drm: Fix ecore_drm_device_find function to use Eeze
+   * ecore-drm: Remove udev from private header and add an Eeze_Udev_Watch for Ecore_Drm_Input
+   * ecore-drm: Port ecore_drm_output backlight init code to use Eeze
+   * eeze: Fix missing break in switch(s) (CID1240225, CID1240226)
+   * ecore_x_vsync - fix tiny leaklet of drmversion
+   * ecore-drm: Remove need to use an extra variable for storing device.
+   * ecore-drm: Add an extra blank line just to separate code
+   * efreet: Accept both only_show_in and not_show_in
+   * ecore-drm: Fix adding an input device when we don't get the devpath from Eeze.
+   * ecore-drm: Add some more debug information if a device fails to open
+   * ecore-drm: Don't crash if we get no devpath from Eeze
+   * Evas Textblock: Fix bad empty line add on wrapping
+   * ecore-drm: Fix _device_add function to check input
+   * ecore vsync - fix up dual nvidia + dri/drm driver discovery
+   * Evil: fix fcntl() when used with F_SETFL
+   * eeze: Add configure check for older libudev version
+   * eeze: Add ifdef trap for older udev version
+   * edje_cc: fix memory leak.
+   * eeze - sensors - ints for sensor events were decld in .h - and never .c
+   * Evas Textblock: Fix native width of BiDi text (T1532)
+   * ecore-wayland: Check return of calloc
+   * ecore-wayland: Check for valid shell before sending bound event
+   * ecore-wayland: Add support for xdg_surface class name
+   * ecore-wayland: Bump xdg_shell version for pending release
+   * ecore-wayland: Cleanup shell surface creation
+   * ecore-wayland: Add support for handling surface delete callback
+   * evas textblock: return text direction for under cursor in cursor geometry get
+   * eina: open files in read-onnly for eina_file_open() on Windows
+   * ecore_drm: Verifying if name format is /dev/xyz before assigning to tty.
+   * evas-gl-common: Fix compile for EGL due to missing GL_LINE_SMOOTH
+   * ecore-drm: Fix failure of finding drm device on ARM platforms.
+   * ecore-drm: Fix drm cards on ARM platform not having boot_vga parameter
+   * ecore-evas-drm: Set the ecore_drm_device reference in the engine data
+   * eina: remove macros referencing to absent functions.
+   * evas: GL_X11 context need to always be with alpha or it will fail to change.
+   * Edje_Edit: creating new hash in global data if it is not created yet
+   * Ecore_Win32: Fix string for the BackSpace key on Windows
+   * edje: Edje_Edit - fix edje_edit_image_usage_list_get() to return usage list with images with USER compression.
+   * edje: Edje_Edit - add state alloc for PROXY part.
+   * eio: actually correctly set all field to NULL. (T1729)
+   * ecore-wayland: We should be dispatching pending events After we flush clients
+   * evas: evas_map - fix cast from double to int with using lround()
+   * edje: Edje_Edit - fix edje_edit_state_aspect_pref_set() function to setup Source and None aspect preferences
+   * evil: simplify implementation of localtime_r
+   * eet: enhance error messages with libjpeg
+   * ecore-drm: Default output to NULL and add safety check for NULL output after the device loop.
+   * ecore-drm: Create udev watch for each output, and delete the watch when we free the output.
+   * evas: Evas_Box - layout_flow_horizontal and layout_flow_vertical fix
+   * evas-wayland-egl: Fix function prototype for eng_context_create
 
 Changes since 1.10.0:
 ---------------------
