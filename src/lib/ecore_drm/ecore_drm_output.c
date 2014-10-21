@@ -647,7 +647,7 @@ EAPI Eina_Bool
 ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 {
    Eina_Bool ret = EINA_TRUE;
-   Ecore_Drm_Output *output;
+   Ecore_Drm_Output *output = NULL;
    drmModeConnector *conn;
    drmModeRes *res;
    drmModeCrtc *crtc;
@@ -737,7 +737,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
    /* free resources */
    drmModeFreeResources(res);
 
-   if (!output->watch)
+   if ((output) && (!output->watch))
      {
         int events = 0;
 
