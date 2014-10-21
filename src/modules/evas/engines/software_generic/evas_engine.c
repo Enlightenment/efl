@@ -3132,7 +3132,7 @@ static Evas_Func func =
 static void
 sym_missing(void)
 {
-   ERR("GL symbols missing!\n");
+   ERR("GL symbols missing!");
 }
 
 static int
@@ -3144,7 +3144,7 @@ glue_sym_init(void)
    if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
    if (!dst)  \
      { \
-        ERR("Symbol not found %s\n", sym); \
+        ERR("Symbol not found: %s", sym); \
         return 0; \
      }
 #define FALLBAK(dst, typ) if (!dst) dst = (typeof(dst))sym_missing;
@@ -3178,7 +3178,7 @@ gl_sym_init(void)
    //------------------------------------------------//
 #define FINDSYM(dst, sym, typ) \
    if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
-   if (!dst) DBG("Symbol not found %s\n", sym);
+   if (!dst) DBG("Symbol not found: %s", sym);
 #define FALLBAK(dst, typ) if (!dst) dst = (typeof(dst))sym_missing;
 
    //------------------------------------------------------//
@@ -4096,7 +4096,7 @@ gl_lib_init(void)
 static void
 init_gl(void)
 {
-   DBG("Initializing Software OpenGL APIs...\n");
+   DBG("Initializing Software OpenGL APIs...");
 
    if (!gl_lib_init())
       DBG("Unable to support EvasGL in this engine module. Install OSMesa to get it running");
