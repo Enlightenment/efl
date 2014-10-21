@@ -147,15 +147,15 @@ _continue_scene(void *data)
 
 
 static void
-_rotate_x_reload(Evas_3D_Scene *scene, Evas_Event_Mouse_Down *ev, Evas_3D_Node *node, Evas_3D_Mesh *mesh,
+_rotate_x_reload(Evas_3D_Scene *eo_scene, Evas_Event_Mouse_Down *ev, Evas_3D_Node *node, Evas_3D_Mesh *mesh,
                              float *angle_diff, Evas_Coord *mouse_coord)
 {
-   Evas_3D_Node *n;
-   Evas_3D_Mesh *m;
+   Evas_3D_Node *n = NULL;
+   Evas_3D_Mesh *m = NULL;
    Evas_Real s, t;
    int mouse_diff;
 
-   eo_do(scene, evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
+   eo_do(eo_scene, evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
 
    if ((n == node) && (m == mesh))
      {
@@ -177,7 +177,7 @@ _rotate_x_reload(Evas_3D_Scene *scene, Evas_Event_Mouse_Down *ev, Evas_3D_Node *
 }
 
 static void
-_play_scene(void *data, Evas *evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void   *event_info)
+_play_scene(void *data, Evas *_evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void   *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Scene_Data *d = (Scene_Data *)data;
@@ -192,7 +192,7 @@ _play_scene(void *data, Evas *evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, voi
 }
 
 static void
-_stop_scene(void *data, Evas *evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
+_stop_scene(void *data, Evas *_evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     Scene_Data *d = (Scene_Data *)data;
     d->angle = 0.0;
@@ -202,11 +202,11 @@ _stop_scene(void *data, Evas *evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, voi
 static Eina_Bool
 _animate_scene(void *data)
 {
-   Scene_Data *scene = (Scene_Data *)data;
+   Scene_Data *sc = (Scene_Data *)data;
 
-   angle += scene->angle;
+   angle += sc->angle;
 
-   eo_do(scene->mesh_node, evas_3d_node_orientation_angle_axis_set(angle, 0, 1.0, 0.0));
+   eo_do(sc->mesh_node, evas_3d_node_orientation_angle_axis_set(angle, 0, 1.0, 0.0));
 
    return EINA_TRUE;
 }

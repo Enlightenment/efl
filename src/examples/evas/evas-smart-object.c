@@ -639,7 +639,7 @@ _on_example_smart_object_child_num_change(void *data EINA_UNUSED,
                                           void *event_info)
 {
    fprintf(stdout, "Number of child members on our example smart"
-                   " object changed to %llu\n", (unsigned long long)event_info);
+                   " object changed to %llu\n", (unsigned long long)(uintptr_t)event_info);
 }
 
 int
