@@ -275,9 +275,9 @@ START_TEST(eo_composite_tests)
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj2);
 
-   eo_composite_attach(obj2, obj);
+   eo_do(obj, eo_composite_attach(obj2));
    eo_do(obj2, eo_parent_set(NULL));
-   fail_if(eo_composite_is(obj2));
+   fail_if(eo_do(obj2, eo_composite_part_is()));
 
    eo_unref(obj2);
    eo_unref(obj);
@@ -681,11 +681,9 @@ START_TEST(eo_magic_checks)
 
         fail_if(eo_data_scope_get((Eo *) buf, SIMPLE_CLASS));
 
-        eo_composite_attach((Eo *) buf, obj);
-        eo_composite_attach(obj, (Eo *) buf);
-        eo_composite_detach((Eo *) buf, obj);
-        eo_composite_detach(obj, (Eo *) buf);
-        eo_composite_is((Eo *) buf);
+        eo_do(obj, eo_composite_attach((Eo *) buf));
+        eo_do(obj, eo_composite_detach((Eo *) buf));
+        eo_do((Eo *) buf, eo_composite_part_is());
 
         eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));
         eo_do(obj, eo_event_callback_forwarder_del(NULL, (Eo *) buf));

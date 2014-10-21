@@ -53,15 +53,15 @@ main(int argc, char *argv[])
    eo_do(obj, simple_a_set(2));
    fail_if(cb_called);
 
-   fail_if(!eo_composite_is(simple));
-   fail_if(!eo_composite_detach(simple, obj));
-   fail_if(eo_composite_detach(simple, obj));
-   fail_if(eo_composite_is(simple));
-   fail_if(!eo_composite_attach(simple, obj));
-   fail_if(!eo_composite_is(simple));
-   fail_if(eo_composite_attach(simple, obj));
+   fail_if(!eo_do(simple, eo_composite_part_is()));
+   fail_if(!eo_do(obj, eo_composite_detach(simple)));
+   fail_if(eo_do(obj, eo_composite_detach(simple)));
+   fail_if(eo_do(simple, eo_composite_part_is()));
+   fail_if(!eo_do(obj, eo_composite_attach(simple)));
+   fail_if(!eo_do(simple, eo_composite_part_is()));
+   fail_if(eo_do(obj, eo_composite_attach(simple)));
 
-   fail_if(eo_composite_attach(obj, simple));
+   fail_if(eo_do(simple, eo_composite_attach(obj)));
 
    eo_unref(simple);
    eo_unref(obj);

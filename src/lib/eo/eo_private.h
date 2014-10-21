@@ -231,7 +231,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_composite_detach(emb_obj, _eo_id_get(obj));
+             eo_do(_eo_id_get(obj), eo_composite_detach(emb_obj));
           }
      }
 

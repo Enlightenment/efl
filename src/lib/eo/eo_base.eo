@@ -173,6 +173,48 @@ callbacks of the same priority are called in reverse order of creation. */
          /*@ Get an iterator on all childrens */
          return: free(own(iterator<Eo *> *), eina_iterator_free) @warn_unused;
       }
+      composite_attach {
+           /**
+            * @brief Make an object a composite object of another.
+            *
+            * The class of comp_obj must be part of the extensions of the class of the parent.
+            * It is not possible to attach more then 1 composite of the same class.
+            * This functions also sets the parent of comp_obj to parent.
+            *
+            * @see eo_composite_detach()
+            * @see eo_composite_part_is()
+            * @ingroup Eo_Composite_Objects
+            */
+           params {
+                @in Eo *comp_obj; /*@ the object that will be used to composite the parent. */
+           }
+           return: bool; /*@ EINA_TRUE if successfull. EINA_FALSE otherwise. */
+      }
+      composite_detach {
+           /**
+            * @brief Detach a composite object from another object.
+            *
+            * This functions also sets the parent of comp_obj to @c NULL.
+            *
+            * @see eo_composite_attach()
+            * @see eo_composite_part_is()
+            * @ingroup Eo_Composite_Objects
+            */
+           params {
+                @in Eo *comp_obj; /*@ the object that will be removed from the parent. */
+           }
+           return: bool; /*@ EINA_TRUE if successfull. EINA_FALSE otherwise. */
+      }
+      composite_part_is {
+           /**
+            * @brief Check if an object is part of a composite object.
+            *
+            * @see eo_composite_attach()
+            * @see eo_composite_part_is()
+            * @ingroup Eo_Composite_Objects
+            */
+           return: bool; /*@ EINA_TRUE if it is. EINA_FALSE otherwise. */
+      }
    }
    implements {
         class.constructor;

@@ -25,11 +25,11 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
    Eo *simple = eo_add(SIMPLE_CLASS, obj);
-   eo_composite_attach(simple, obj);
+   eo_do(obj, eo_composite_attach(simple));
    eo_do(simple, eo_event_callback_forwarder_add(EV_A_CHANGED, obj));
 
-   fail_if(eo_composite_is(obj));
-   fail_if(!eo_composite_is(simple));
+   fail_if(eo_do(obj, eo_composite_part_is()));
+   fail_if(!eo_do(simple, eo_composite_part_is()));
 
    eo_do(obj, eo_key_data_set("simple-obj", simple, NULL));
 }

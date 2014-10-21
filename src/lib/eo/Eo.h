@@ -873,53 +873,6 @@ EAPI Eina_Bool eo_manual_free(Eo *obj);
 EAPI Eina_Bool eo_destructed_is(const Eo *obj);
 
 /**
- * @addtogroup Eo_Composite_Objects Composite Objects.
- * @{
- */
-
-/**
- * @brief Make an object a composite object of another.
- * @param comp_obj the object that will be used to composite parent.
- * @param parent the "parent" object.
- * @return EINA_TRUE if successfull. EINA_FALSE otherwise.
- *
- * The class of comp_obj must be part of the extensions of the class of the parent.
- * It is not possible to attach more then 1 composite of the same class.
- * This functions also sets the parent of comp_obj to parent.
- *
- * @see eo_composite_detach()
- * @see eo_composite_is()
- */
-EAPI Eina_Bool eo_composite_attach(Eo *comp_obj, Eo *parent);
-
-/**
- * @brief Detach a composite object from another object.
- * @param comp_obj the object attached to parent.
- * @param parent the "parent" object.
- * @return EINA_TRUE if successfull. EINA_FALSE otherwise.
- *
- * This functions also sets the parent of comp_obj to @c NULL.
- *
- * @see eo_composite_attach()
- * @see eo_composite_is()
- */
-EAPI Eina_Bool eo_composite_detach(Eo *comp_obj, Eo *parent);
-
-/**
- * @brief Check if an object is a composite object.
- * @param comp_obj the object to be checked.
- * @return @c EINA_TRUE if it is, @c EINA_FALSE otherwise.
- *
- * @see eo_composite_attach()
- * @see eo_composite_detach()
- */
-EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
-
-/**
- * @}
- */
-
-/**
  * @addtogroup Eo_Class_Class Eo's Class class.
  * @{
  */

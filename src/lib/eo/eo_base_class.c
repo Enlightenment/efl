@@ -104,9 +104,9 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
    if (pd->parent == parent_id)
      return;
 
-   if (eo_composite_is(obj) && pd->parent)
+   if (eo_do(obj, eo_composite_part_is()) && pd->parent)
      {
-        eo_composite_detach(obj, pd->parent);
+        eo_do(pd->parent, eo_composite_detach(obj));
      }
 
    if (pd->parent)
@@ -811,6 +811,57 @@ EOLIAN static int
 _eo_base_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return event_freeze_count;
+}
+
+EOLIAN static Eina_Bool
+_eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_obj_id)
+{
+   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
+   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
+
+   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass))) return EINA_FALSE;
+
+     {
+        Eina_List *itr;
+        Eo *emb_obj_id;
+        EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
+          {
+             EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
+             if(emb_obj->klass == comp_obj->klass)
+               return EINA_FALSE;
+          }
+     }
+
+   comp_obj->composite = EINA_TRUE;
+   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
+
+   eo_do(comp_obj_id, eo_parent_set(parent_id));
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_eo_base_composite_detach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_obj_id)
+{
+   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
+   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
+
+   if (!comp_obj->composite)
+      return EINA_FALSE;
+
+   comp_obj->composite = EINA_FALSE;
+   parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
+   eo_do(comp_obj_id, eo_parent_set(NULL));
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_eo_base_composite_part_is(Eo *comp_obj_id, Eo_Base_Data *pd EINA_UNUSED)
+{
+   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
+
+   return comp_obj->composite;
 }
 
 /* Eo_Dbg */

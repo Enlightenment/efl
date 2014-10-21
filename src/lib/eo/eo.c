@@ -1856,57 +1856,6 @@ eo_shutdown(void)
 }
 
 EAPI Eina_Bool
-eo_composite_attach(Eo *comp_obj_id, Eo *parent_id)
-{
-   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
-
-   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass))) return EINA_FALSE;
-
-     {
-        Eina_List *itr;
-        Eo *emb_obj_id;
-        EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
-          {
-             EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
-             if(emb_obj->klass == comp_obj->klass)
-               return EINA_FALSE;
-          }
-     }
-
-   comp_obj->composite = EINA_TRUE;
-   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
-
-   eo_do(comp_obj_id, eo_parent_set(parent_id));
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-eo_composite_detach(Eo *comp_obj_id, Eo *parent_id)
-{
-   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
-
-   if (!comp_obj->composite)
-      return EINA_FALSE;
-
-   comp_obj->composite = EINA_FALSE;
-   parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
-   eo_do(comp_obj_id, eo_parent_set(NULL));
-
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-eo_composite_is(const Eo *comp_obj_id)
-{
-   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-
-   return comp_obj->composite;
-}
-
-EAPI Eina_Bool
 eo_destructed_is(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);

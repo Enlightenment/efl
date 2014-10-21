@@ -23,7 +23,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
    Eo *bt = eo_add(ELW_BUTTON_CLASS, obj);
-   eo_composite_attach(bt, obj);
+   eo_do(obj, eo_composite_attach(bt));
    eo_do(bt, eo_event_callback_forwarder_add(EV_CLICKED, obj));
    eo_do(bt, exevas_obj_visibility_set(EINA_TRUE));
 
