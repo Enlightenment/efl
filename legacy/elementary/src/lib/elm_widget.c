@@ -2,20 +2,14 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-
-#define ELM_INTERFACE_ATPSI_COMPONENT_PROTECTED
-#include "elm_interface_atspi_component.eo.h"
 
 #define MY_CLASS ELM_WIDGET_CLASS
 
