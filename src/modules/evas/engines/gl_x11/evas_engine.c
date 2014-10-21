@@ -1360,6 +1360,7 @@ eng_setup(Evas *eo_e, void *in)
                             info->info.depth,
                             e->output.w, e->output.h,
                             info->indirect,
+                            info->info.destination_alpha,
                             info->info.rotation,
                             swap_mode);
         if (!ob)
@@ -1425,11 +1426,11 @@ eng_setup(Evas *eo_e, void *in)
                  (info->info.screen != eng_get_ob(re)->screen) ||
                  (info->info.visual != eng_get_ob(re)->visual) ||
                  (info->info.colormap != eng_get_ob(re)->colormap) ||
-                 (info->info.depth != eng_get_ob(re)->depth))
+                 (info->info.depth != eng_get_ob(re)->depth) ||
+                 (info->info.destination_alpha != eng_get_ob(re)->alpha))
                {
                   Outbuf *ob;
 
-                  eng_get_ob(re)->gl_context->references++;
                   eng_window_free(eng_get_ob(re));
                   re->generic.software.ob = NULL;
                   gl_wins--;
@@ -1443,6 +1444,7 @@ eng_setup(Evas *eo_e, void *in)
                                       info->info.depth,
                                       e->output.w, e->output.h,
                                       info->indirect,
+                                      info->info.destination_alpha,
                                       info->info.rotation,
                                       swap_mode);
 
@@ -1451,7 +1453,6 @@ eng_setup(Evas *eo_e, void *in)
                     {
                        evas_render_engine_software_generic_update(&re->generic.software, ob,
                                                                   e->output.w, e->output.h);
-                       eng_get_ob(re)->gl_context->references--;
 
                        gl_wins++;
                     }
