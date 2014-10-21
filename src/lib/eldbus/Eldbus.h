@@ -119,15 +119,15 @@ extern "C" {
 #define ELDBUS_VERSION_MAJOR EFL_VERSION_MAJOR /**< Eldbus version major number */
 #define ELDBUS_VERSION_MINOR EFL_VERSION_MINOR /**< Eldbus version minor number */
 
-#define ELDBUS_FDO_BUS "org.freedesktop.DBus" /**< Eldbus bus name */
-#define ELDBUS_FDO_PATH "/org/freedesktop/DBus" /**< Eldbus path name */
-#define ELDBUS_FDO_INTERFACE ELDBUS_FDO_BUS /**< Eldbus interface name */
-#define ELDBUS_FDO_INTERFACE_PROPERTIES "org.freedesktop.DBus.Properties" /**< Eldbus object properties request name */
-#define ELDBUS_FDO_INTERFACE_OBJECT_MANAGER "org.freedesktop.DBus.ObjectManager" /**< Eldbus object manager request name */
-#define ELDBUS_FDO_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable" /**< Eldbus object introspect request name */
-#define ELDBUS_FDO_INTEFACE_PEER "org.freedesktop.DBus.Peer" /**< Eldbus object peer request name */
-#define ELDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled" /**< Eldbus canceled answer */
-#define ELDBUS_ERROR_PENDING_TIMEOUT "org.freedesktop.DBus.Error.NoReply" /**< Eldbus timeout error answer */
+#define ELDBUS_FDO_BUS "org.freedesktop.DBus" /**< DBus message bus name */
+#define ELDBUS_FDO_PATH "/org/freedesktop/DBus" /**< Object that implements message bus interface */
+#define ELDBUS_FDO_INTERFACE ELDBUS_FDO_BUS /**< DBus message bus interface */
+#define ELDBUS_FDO_INTERFACE_PROPERTIES "org.freedesktop.DBus.Properties" /**< DBus Properties interface */
+#define ELDBUS_FDO_INTERFACE_OBJECT_MANAGER "org.freedesktop.DBus.ObjectManager" /**< DBus ObjectManager interface */
+#define ELDBUS_FDO_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable" /**< DBus Introspectable interface */
+#define ELDBUS_FDO_INTEFACE_PEER "org.freedesktop.DBus.Peer" /**< DBus Peer interface */
+#define ELDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled" /**< Canceled error answer */
+#define ELDBUS_ERROR_PENDING_TIMEOUT "org.freedesktop.DBus.Error.NoReply" /**< Timeout error answer */
 
 /**
  * @typedef Eldbus_Version
