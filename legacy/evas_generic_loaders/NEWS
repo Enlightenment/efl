@@ -1,4 +1,11 @@
-Evas Generic Loaders 1.11.0
+Evas Generic Loaders 1.12.0
+
+Changes since 1.11.0:
+---------------------
+
+Fixes:
+
+   * Improve LO binary detection
 
 Changes since Evas Generic Loaders 1.10.0:
 ------------------------------------------
