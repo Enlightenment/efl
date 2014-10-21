@@ -1,6 +1,42 @@
 =================
-Elementary 1.11.0
+Elementary 1.12.0
 =================
+
+Changes since 1.11.0:
+---------------------
+
+Features:
+
+   * theme - improve efm icons provided by ApB (T575)
+   * elm process state - add events and state get function
+   * Introduce current_name_{set|get} (T1664)
+   * GLView: Add more configuration flags for the surface
+   * GLView: Add support for client-side rotation
+   * GLView: Add constructor for GLES 1.1 context glview
+
+Fixes:
+
+   * elm_notify: fixing style applying
+   * genlist: Fixed item select logic when item select mode is ALWAYS.
+   * gengrid, genlist, list, toolbar: Fixed DISPLAY_ONLY select mode for an object.
+   * gengrid: Fixed _item_unselect to check select value not highlight value.
+   * genlist: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * gengrid: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * list: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * gengrid/popup: Fix wrong return type of _item_del_pre_hook.
+   * gengrid: Fixed item select logic when item select mode is ALWAYS.
+   * label: Fix size calculation for wrapped label
+   * panel: resize scrollable content in content_size_set API
+   * elm examples - missing -lm link - fix
+   * elm_map: the widget use efreet cache home to save image files to, so efreet should be initialized.
+   * module: detect extention just based on if its windows or not.
+   * conform, inwin, progressbar, radio: Fixed wrong part_alias_description implementations and documentations.
+   * genlist: Fixed a crash bug in case of calling a genlist_clear in a select callback function.
+   * elm_win should not check ELM_ACCEL variable if application has overridden it
+   * remove accel_override from elm_config
+   * bg: fix the _elm_bg_elm_layout_sizing_eval bug.
+   * win: fix segfaults (wrong checking)
+   * widget: fix seg fault when ts is NULL.
 
 Changes since 1.10.0:
 ---------------------
