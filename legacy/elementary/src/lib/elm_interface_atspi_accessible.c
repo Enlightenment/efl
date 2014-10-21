@@ -193,7 +193,7 @@ _elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, void *pd EINA
    return role > ELM_ATSPI_ROLE_LAST_DEFINED ? "" : Atspi_Name[role];
 }
 
-EOLIAN const char *
+EOLIAN char *
 _elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_name_get\" function.",
@@ -202,7 +202,7 @@ _elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUS
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_name_set(Eo *obj, void *pd EINA_UNUSED, const char *val EINA_UNUSED)
+_elm_interface_atspi_accessible_name_set(Eo *obj, void *pd EINA_UNUSED, char *val EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_name_set\" function.",
        eo_class_name_get(eo_class_get(obj)));

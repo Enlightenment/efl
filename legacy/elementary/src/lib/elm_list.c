@@ -2179,10 +2179,10 @@ _elm_list_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_List_
    return ret;
 }
 
-EOLIAN static const char*
+EOLIAN static char*
 _elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *data)
 {
-   return data->label;
+   return data->label ? strdup(data->label) : NULL;
 }
 
 EOLIAN static Eina_List*

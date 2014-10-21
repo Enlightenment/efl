@@ -7676,11 +7676,11 @@ _elm_genlist_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Ge
    return ret;
 }
 
-EOLIAN const char*
+EOLIAN char*
 _elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
                                                           Elm_Gen_Item *it)
 {
-   const char *ret;
+   char *ret;
    Eina_Strbuf *buf;
 
    buf = eina_strbuf_new();
@@ -7711,10 +7711,6 @@ _elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
 
    ret = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
-
-   // FIXME
-   // leak here, consider changing return type of this method to something
-   // which could handle returning statically and dynamically string at once.
    return ret;
 }
 

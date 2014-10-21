@@ -407,6 +407,9 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
 
+   int                          role;         /**< Accessibility role */
+   const char                   *description; /**< Accessibility description */
+
    /* this is a hook to be set on-the-fly on widgets. this is code
     * handling the request of showing a specific region from an inner
     * widget (mainly issued by entries, on cursor moving) */

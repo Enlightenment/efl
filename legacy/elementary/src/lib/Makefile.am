@@ -456,7 +456,6 @@ elm_interface_atspi_image.c \
 elm_interface_atspi_selection.c \
 elm_interface_atspi_text.c \
 elm_interface_atspi_value.c \
-elm_interface_atspi_widget.c \
 elm_interface_atspi_widget_action.c \
 elm_interface_atspi_window.c \
 elm_interface_fileselector.c \
@@ -578,7 +577,6 @@ elm_interface_atspi_image.eo \
 elm_interface_atspi_selection.eo \
 elm_interface_atspi_text.eo \
 elm_interface_atspi_value.eo \
-elm_interface_atspi_widget.eo \
 elm_interface_atspi_widget_action.eo \
 elm_interface_atspi_window.eo \
 elm_interface_fileselector.eo \
@@ -681,7 +679,6 @@ elementaryeolianfiles_DATA = \
 	     elm_interface_atspi_selection.eo \
 	     elm_interface_atspi_text.eo \
 	     elm_interface_atspi_value.eo \
-	     elm_interface_atspi_widget.eo \
 	     elm_interface_atspi_widget_action.eo \
 	     elm_interface_atspi_window.eo \
 	     elm_bg.eo \
