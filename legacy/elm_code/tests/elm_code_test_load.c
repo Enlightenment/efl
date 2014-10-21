@@ -26,7 +26,7 @@ START_TEST (elm_code_load_lines)
 
    file = elm_code_open(path);
 
-   ck_assert(4 == elm_code_lines_get(file));
+   ck_assert_uint_eq(4, elm_code_lines_get(file));
    elm_code_close(file);
 }
 END_TEST
@@ -38,7 +38,7 @@ START_TEST (elm_code_load_blank_lines)
 
    file = elm_code_open(path);
 
-   ck_assert(8 == elm_code_lines_get(file));
+   ck_assert_uint_eq(8, elm_code_lines_get(file));
    elm_code_close(file);
 }
 END_TEST
