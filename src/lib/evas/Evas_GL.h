@@ -1335,8 +1335,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_HSL_SATURATION_KHR             0x92AE
 #define GL_HSL_COLOR_KHR                  0x92AF
 #define GL_HSL_LUMINOSITY_KHR             0x92B0
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_KHR_blend_equation_advanced */
 
 #ifndef GL_KHR_debug
@@ -1381,8 +1379,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_CONTEXT_FLAG_DEBUG_BIT_KHR     0x00000002
 #define GL_STACK_OVERFLOW_KHR             0x0503
 #define GL_STACK_UNDERFLOW_KHR            0x0504
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_KHR_debug */
 
 #ifndef GL_KHR_texture_compression_astc_hdr
@@ -1423,8 +1419,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 
 #ifndef GL_OES_EGL_image
 #define GL_OES_EGL_image 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_EGL_image */
 
 #ifndef GL_OES_EGL_image_external
@@ -1485,8 +1479,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_PROGRAM_BINARY_LENGTH_OES      0x8741
 #define GL_NUM_PROGRAM_BINARY_FORMATS_OES 0x87FE
 #define GL_PROGRAM_BINARY_FORMATS_OES     0x87FF
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_get_program_binary */
 
 #ifndef GL_OES_mapbuffer
@@ -1495,8 +1487,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_BUFFER_ACCESS_OES              0x88BB
 #define GL_BUFFER_MAPPED_OES              0x88BC
 #define GL_BUFFER_MAP_POINTER_OES         0x88BD
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_mapbuffer */
 
 #ifndef GL_OES_packed_depth_stencil
@@ -1530,8 +1520,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_OES_sample_shading 1
 #define GL_SAMPLE_SHADING_OES             0x8C36
 #define GL_MIN_SAMPLE_SHADING_VALUE_OES   0x8C37
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_sample_shading */
 
 #ifndef GL_OES_sample_variables
@@ -1577,8 +1565,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_MAX_3D_TEXTURE_SIZE_OES        0x8073
 #define GL_SAMPLER_3D_OES                 0x8B5F
 #define GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_OES 0x8CD4
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_texture_3D */
 
 #ifndef GL_OES_texture_compression_astc
@@ -1639,15 +1625,11 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_SAMPLER_2D_MULTISAMPLE_ARRAY_OES 0x910B
 #define GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY_OES 0x910C
 #define GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY_OES 0x910D
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_texture_storage_multisample_2d_array */
 
 #ifndef GL_OES_vertex_array_object
 #define GL_OES_vertex_array_object 1
 #define GL_VERTEX_ARRAY_BINDING_OES       0x85B5
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_OES_vertex_array_object */
 
 #ifndef GL_OES_vertex_half_float
@@ -1682,8 +1664,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_PERFMON_RESULT_AVAILABLE_AMD   0x8BC4
 #define GL_PERFMON_RESULT_SIZE_AMD        0x8BC5
 #define GL_PERFMON_RESULT_AMD             0x8BC6
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_AMD_performance_monitor */
 
 #ifndef GL_AMD_program_binary_Z400
@@ -1701,8 +1681,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_DRAW_FRAMEBUFFER_ANGLE         0x8CA9
 #define GL_DRAW_FRAMEBUFFER_BINDING_ANGLE 0x8CA6
 #define GL_READ_FRAMEBUFFER_BINDING_ANGLE 0x8CAA
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_ANGLE_framebuffer_blit */
 
 #ifndef GL_ANGLE_framebuffer_multisample
@@ -1710,15 +1688,11 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_RENDERBUFFER_SAMPLES_ANGLE     0x8CAB
 #define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_ANGLE 0x8D56
 #define GL_MAX_SAMPLES_ANGLE              0x8D57
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_ANGLE_framebuffer_multisample */
 
 #ifndef GL_ANGLE_instanced_arrays
 #define GL_ANGLE_instanced_arrays 1
 #define GL_VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE 0x88FE
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_ANGLE_instanced_arrays */
 
 #ifndef GL_ANGLE_pack_reverse_row_order
@@ -1750,14 +1724,10 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #ifndef GL_ANGLE_translated_shader_source
 #define GL_ANGLE_translated_shader_source 1
 #define GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE 0x93A0
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_ANGLE_translated_shader_source */
 
 #ifndef GL_APPLE_copy_texture_levels
 #define GL_APPLE_copy_texture_levels 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_APPLE_copy_texture_levels */
 
 #ifndef GL_APPLE_framebuffer_multisample
@@ -1769,8 +1739,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_DRAW_FRAMEBUFFER_APPLE         0x8CA9
 #define GL_DRAW_FRAMEBUFFER_BINDING_APPLE 0x8CA6
 #define GL_READ_FRAMEBUFFER_BINDING_APPLE 0x8CAA
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_APPLE_framebuffer_multisample */
 
 #ifndef GL_APPLE_rgb_422
@@ -1799,8 +1767,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_WAIT_FAILED_APPLE              0x911D
 #define GL_SYNC_FLUSH_COMMANDS_BIT_APPLE  0x00000001
 #define GL_TIMEOUT_IGNORED_APPLE          0xFFFFFFFFFFFFFFFFull
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_APPLE_sync */
 
 #ifndef GL_APPLE_texture_format_BGRA8888
@@ -1868,14 +1834,10 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_QUERY_OBJECT_EXT               0x9153
 #define GL_VERTEX_ARRAY_OBJECT_EXT        0x9154
 #define GL_TRANSFORM_FEEDBACK             0x8E22
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_debug_label */
 
 #ifndef GL_EXT_debug_marker
 #define GL_EXT_debug_marker 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_debug_marker */
 
 #ifndef GL_EXT_discard_framebuffer
@@ -1883,8 +1845,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_COLOR_EXT                      0x1800
 #define GL_DEPTH_EXT                      0x1801
 #define GL_STENCIL_EXT                    0x1802
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_discard_framebuffer */
 
 #ifndef GL_EXT_disjoint_timer_query
@@ -1896,8 +1856,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_TIME_ELAPSED_EXT               0x88BF
 #define GL_TIMESTAMP_EXT                  0x8E28
 #define GL_GPU_DISJOINT_EXT               0x8FBB
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_disjoint_timer_query */
 
 #ifndef GL_EXT_draw_buffers
@@ -1936,21 +1894,15 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_COLOR_ATTACHMENT13_EXT         0x8CED
 #define GL_COLOR_ATTACHMENT14_EXT         0x8CEE
 #define GL_COLOR_ATTACHMENT15_EXT         0x8CEF
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_draw_buffers */
 
 #ifndef GL_EXT_draw_instanced
 #define GL_EXT_draw_instanced 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_draw_instanced */
 
 #ifndef GL_EXT_instanced_arrays
 #define GL_EXT_instanced_arrays 1
 #define GL_VERTEX_ATTRIB_ARRAY_DIVISOR_EXT 0x88FE
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_instanced_arrays */
 
 #ifndef GL_EXT_map_buffer_range
@@ -1961,14 +1913,10 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_MAP_INVALIDATE_BUFFER_BIT_EXT  0x0008
 #define GL_MAP_FLUSH_EXPLICIT_BIT_EXT     0x0010
 #define GL_MAP_UNSYNCHRONIZED_BIT_EXT     0x0020
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_map_buffer_range */
 
 #ifndef GL_EXT_multi_draw_arrays
 #define GL_EXT_multi_draw_arrays 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_multi_draw_arrays */
 
 #ifndef GL_EXT_multisampled_render_to_texture
@@ -1977,8 +1925,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_RENDERBUFFER_SAMPLES_EXT       0x8CAB
 #define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT 0x8D56
 #define GL_MAX_SAMPLES_EXT                0x8D57
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_multisampled_render_to_texture */
 
 #ifndef GL_EXT_multiview_draw_buffers
@@ -1988,8 +1934,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_DRAW_BUFFER_EXT                0x0C01
 #define GL_READ_BUFFER_EXT                0x0C02
 #define GL_MAX_MULTIVIEW_BUFFERS_EXT      0x90F2
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_multiview_draw_buffers */
 
 #ifndef GL_EXT_occlusion_query_boolean
@@ -2021,8 +1965,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_RESET_NOTIFICATION_STRATEGY_EXT 0x8256
 #define GL_LOSE_CONTEXT_ON_RESET_EXT      0x8252
 #define GL_NO_RESET_NOTIFICATION_EXT      0x8261
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_robustness */
 
 #ifndef GL_EXT_sRGB
@@ -2046,8 +1988,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_ALL_SHADER_BITS_EXT            0xFFFFFFFF
 #define GL_PROGRAM_SEPARABLE_EXT          0x8258
 #define GL_PROGRAM_PIPELINE_BINDING_EXT   0x825A
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_separate_shader_objects */
 
 #ifndef GL_EXT_shader_framebuffer_fetch
@@ -2131,8 +2071,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_LUMINANCE_ALPHA16F_EXT         0x881F
 #define GL_R32F_EXT                       0x822E
 #define GL_RG32F_EXT                      0x8230
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_EXT_texture_storage */
 
 #ifndef GL_EXT_texture_type_2_10_10_10_REV
@@ -2158,8 +2096,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_IMG 0x9134
 #define GL_MAX_SAMPLES_IMG                0x9135
 #define GL_TEXTURE_SAMPLES_IMG            0x9136
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_IMG_multisampled_render_to_texture */
 
 #ifndef GL_IMG_program_binary
@@ -2214,8 +2150,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_PERFQUERY_COUNTER_NAME_LENGTH_MAX_INTEL 0x94FE
 #define GL_PERFQUERY_COUNTER_DESC_LENGTH_MAX_INTEL 0x94FF
 #define GL_PERFQUERY_GPA_EXTENDED_COUNTERS_INTEL 0x9500
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_INTEL_performance_query */
 
 #ifndef GL_NV_blend_equation_advanced
@@ -2269,8 +2203,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_UNCORRELATED_NV                0x9282
 #define GL_VIVIDLIGHT_NV                  0x92A6
 #define GL_XOR_NV                         0x1506
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_blend_equation_advanced */
 
 #ifndef GL_NV_blend_equation_advanced_coherent
@@ -2282,8 +2214,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_NV_copy_buffer 1
 #define GL_COPY_READ_BUFFER_NV            0x8F36
 #define GL_COPY_WRITE_BUFFER_NV           0x8F37
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_copy_buffer */
 
 #ifndef GL_NV_coverage_sample
@@ -2297,8 +2227,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_COVERAGE_EDGE_FRAGMENTS_NV     0x8ED6
 #define GL_COVERAGE_AUTOMATIC_NV          0x8ED7
 #define GL_COVERAGE_BUFFER_BIT_NV         0x00008000
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_coverage_sample */
 
 #ifndef GL_NV_depth_nonlinear
@@ -2341,14 +2269,10 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_COLOR_ATTACHMENT13_NV          0x8CED
 #define GL_COLOR_ATTACHMENT14_NV          0x8CEE
 #define GL_COLOR_ATTACHMENT15_NV          0x8CEF
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_draw_buffers */
 
 #ifndef GL_NV_draw_instanced
 #define GL_NV_draw_instanced 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_draw_instanced */
 
 #ifndef GL_NV_explicit_attrib_location
@@ -2365,8 +2289,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_ALL_COMPLETED_NV               0x84F2
 #define GL_FENCE_STATUS_NV                0x84F3
 #define GL_FENCE_CONDITION_NV             0x84F4
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_fence */
 
 #ifndef GL_NV_framebuffer_blit
@@ -2375,8 +2297,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_DRAW_FRAMEBUFFER_NV            0x8CA9
 #define GL_DRAW_FRAMEBUFFER_BINDING_NV    0x8CA6
 #define GL_READ_FRAMEBUFFER_BINDING_NV    0x8CAA
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_framebuffer_blit */
 
 #ifndef GL_NV_framebuffer_multisample
@@ -2384,8 +2304,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_RENDERBUFFER_SAMPLES_NV        0x8CAB
 #define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_NV 0x8D56
 #define GL_MAX_SAMPLES_NV                 0x8D57
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_framebuffer_multisample */
 
 #ifndef GL_NV_generate_mipmap_sRGB
@@ -2395,8 +2313,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #ifndef GL_NV_instanced_arrays
 #define GL_NV_instanced_arrays 1
 #define GL_VERTEX_ATTRIB_ARRAY_DIVISOR_NV 0x88FE
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_instanced_arrays */
 
 #ifndef GL_NV_non_square_matrices
@@ -2407,15 +2323,11 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_FLOAT_MAT3x4_NV                0x8B68
 #define GL_FLOAT_MAT4x2_NV                0x8B69
 #define GL_FLOAT_MAT4x3_NV                0x8B6A
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_non_square_matrices */
 
 #ifndef GL_NV_read_buffer
 #define GL_NV_read_buffer 1
 #define GL_READ_BUFFER_NV                 0x0C02
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_NV_read_buffer */
 
 #ifndef GL_NV_read_buffer_front
@@ -2477,8 +2389,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_ALPHA_TEST_QCOM                0x0BC0
 #define GL_ALPHA_TEST_FUNC_QCOM           0x0BC1
 #define GL_ALPHA_TEST_REF_QCOM            0x0BC2
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_QCOM_alpha_test */
 
 #ifndef GL_QCOM_binning_control
@@ -2491,8 +2401,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 
 #ifndef GL_QCOM_driver_control
 #define GL_QCOM_driver_control 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_QCOM_driver_control */
 
 #ifndef GL_QCOM_extended_get
@@ -2508,14 +2416,10 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_TEXTURE_TARGET_QCOM            0x8BDA
 #define GL_TEXTURE_OBJECT_VALID_QCOM      0x8BDB
 #define GL_STATE_RESTORE                  0x8BDC
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_QCOM_extended_get */
 
 #ifndef GL_QCOM_extended_get2
 #define GL_QCOM_extended_get2 1
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_QCOM_extended_get2 */
 
 #ifndef GL_QCOM_perfmon_global_mode
@@ -2557,8 +2461,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_MULTISAMPLE_BUFFER_BIT5_QCOM   0x20000000
 #define GL_MULTISAMPLE_BUFFER_BIT6_QCOM   0x40000000
 #define GL_MULTISAMPLE_BUFFER_BIT7_QCOM   0x80000000
-#ifdef GL_GLEXT_PROTOTYPES
-#endif
 #endif /* GL_QCOM_tiled_rendering */
 
 #ifndef GL_QCOM_writeonly_rendering
