@@ -812,12 +812,6 @@ _evas_3d_node_constructor(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node_Type type
      }
 }
 
-EOLIAN static void
-_evas_3d_node_eo_base_destructor(Eo *obj, Evas_3D_Node_Data *pd EINA_UNUSED)
-{
-   eo_unref(obj);
-}
-
 EOLIAN static Evas_3D_Node_Type
 _evas_3d_node_type_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd)
 {

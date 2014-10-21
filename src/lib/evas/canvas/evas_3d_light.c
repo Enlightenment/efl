@@ -95,10 +95,11 @@ _evas_3d_light_eo_base_constructor(Eo *obj, Evas_3D_Light_Data *pd)
 }
 
 EOLIAN static void
-_evas_3d_light_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd)
+_evas_3d_light_eo_base_destructor(Eo *obj, Evas_3D_Light_Data *pd)
 {
    if (pd->nodes)
      eina_hash_free(pd->nodes);
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 

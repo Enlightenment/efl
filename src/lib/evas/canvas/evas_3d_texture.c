@@ -315,6 +315,7 @@ _evas_3d_texture_eo_base_destructor(Eo *obj, Evas_3D_Texture_Data *pd  EINA_UNUS
 {
    //evas_3d_object_unreference(&pd->base);
    _texture_fini(obj);
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static void

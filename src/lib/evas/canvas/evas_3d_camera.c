@@ -71,11 +71,12 @@ _evas_3d_camera_eo_base_constructor(Eo *obj,
 }
 
 EOLIAN static void
-_evas_3d_camera_eo_base_destructor(Eo *obj EINA_UNUSED,
+_evas_3d_camera_eo_base_destructor(Eo *obj,
                                       Evas_3D_Camera_Data *pd)
 {
    //evas_3d_object_unreference(&pd->base);
    if (pd->nodes) eina_hash_free(pd->nodes);
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EAPI Evas_3D_Camera *

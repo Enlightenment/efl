@@ -68,12 +68,6 @@ _evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
 }
 
 EOLIAN static void
-_evas_3d_scene_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd EINA_UNUSED)
-{
-   //evas_3d_object_unreference(&pd->base);
-}
-
-EOLIAN static void
 _evas_3d_scene_root_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
 {
    if (pd->root_node == node)

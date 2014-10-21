@@ -117,6 +117,7 @@ _evas_3d_material_eo_base_destructor(Eo *obj, Evas_3D_Material_Data *pd)
              //eo_unref(pd->attribs[i].texture);
           }
      }
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static void
