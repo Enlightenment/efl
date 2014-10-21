@@ -70,7 +70,6 @@ include Makefile_Eolian_Helper.am
 
 ### Unit tests
 
-if EFL_ENABLE_TESTS
 
 EOLIAN_TESTS_EOS = \
 tests/eolian/data/base.eo \
@@ -99,6 +98,7 @@ EOLIAN_TESTS_EOS_GENERATED = \
 $(EOLIAN_TESTS_EOS:%.eo=%.eo.c)\
 $(EOLIAN_TESTS_EOS:%.eo=%.eo.h)
 
+if EFL_ENABLE_TESTS
 check_PROGRAMS += \
 tests/eolian/eolian_suite
 
