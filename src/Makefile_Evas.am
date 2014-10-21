@@ -1973,6 +1973,23 @@ tests/evas/images/Light_exif_flip_h.jpg \
 tests/evas/images/Light_exif_flip_v.jpg \
 tests/evas/images/Light_exif_transpose.jpg \
 tests/evas/images/Light_exif_transverse.jpg \
+tests/evas/images/Pic4-bmp.png \
+tests/evas/images/Pic4-dds.png \
+tests/evas/images/Pic4-gif.png \
+tests/evas/images/Pic4-png.png \
+tests/evas/images/Pic4-psd.png \
+tests/evas/images/Pic4-tga.png \
+tests/evas/images/Pic4-wbmp.png \
+tests/evas/images/Pic4-webp.png \
+tests/evas/images/Pic4-xpm.png \
+tests/evas/images/Pic4.bmp \
+tests/evas/images/Pic4.dds \
+tests/evas/images/Pic4.gif \
+tests/evas/images/Pic4.psd \
+tests/evas/images/Pic4.tga \
+tests/evas/images/Pic4.wbmp \
+tests/evas/images/Pic4.webp \
+tests/evas/images/Pic4.xpm \
 tests/evas/meshes/md2/sonic.md2 \
 tests/evas/meshes/obj/man_mesh.obj
 

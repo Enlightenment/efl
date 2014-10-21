@@ -238,7 +238,7 @@ START_TEST(evas_object_image_loader_orientation)
 }
 END_TEST
 
-START_TEST(evas_object_image_loader_data)
+START_TEST(evas_object_image_tgv_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -293,9 +293,87 @@ START_TEST(evas_object_image_loader_data)
 }
 END_TEST
 
+START_TEST(evas_object_image_all_loader_data)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *obj, *ref;
+   Eina_Strbuf *str;
+
+   const char *exts[] = {
+     "png"
+#ifdef BUILD_LOADER_TGA
+     ,"tga"
+#endif
+#ifdef BUILD_LOADER_WBMP
+     ,"wbmp"
+#endif
+     // FIXME: Seems like XPM support is currently broken
+#if 0
+#ifdef BUILD_LOADER_XPM
+     ,"xpm"
+#endif
+#endif
+#ifdef BUILD_LOADER_BMP
+     ,"bmp"
+#endif
+#ifdef BUILD_LOADER_GIF
+     ,"gif"
+#endif
+#ifdef BUILD_LOADER_PSD
+     ,"psd"
+#endif
+#ifdef BUILD_LOADER_WEBP
+     ,"webp"
+#endif
+   };
+   unsigned int i;
+
+   obj = evas_object_image_add(e);
+   ref = evas_object_image_add(e);
+   str = eina_strbuf_new();
+
+   for (i = 0; i < sizeof (exts) / sizeof (exts[0]); i++)
+     {
+        int w, h, r_w, r_h;
+        const uint32_t *d, *r_d;
+
+
+        eina_strbuf_append_printf(str, "%s/Pic4-%s.png", TESTS_IMG_DIR, exts[i]);
+        evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
+        fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(obj, &w, &h);
+        d = evas_object_image_data_get(obj, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        eina_strbuf_append_printf(str, "%s/Pic4.%s", TESTS_IMG_DIR, exts[i]);
+        evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
+        fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(ref, &r_w, &r_h);
+        r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        fail_if(w != r_w || h != r_h);
+        fail_if(memcmp(d, r_d, w * h * 4));
+     }
+
+   evas_object_del(obj);
+   evas_object_del(ref);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_loader);
    tcase_add_test(tc, evas_object_image_loader_orientation);
-   tcase_add_test(tc, evas_object_image_loader_data);
+#if BUILD_LOADER_TGV && BUILD_LOADER_PNG
+   tcase_add_test(tc, evas_object_image_tgv_loader_data);
+#endif
+#if BUILD_LOADER_PNG
+   tcase_add_test(tc, evas_object_image_all_loader_data);
+#endif
 }
