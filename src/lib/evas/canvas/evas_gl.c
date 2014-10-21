@@ -75,7 +75,7 @@ _evas_gl_internal_tls_destroy(Evas_GL *evas_gl)
 
    if (!evas_gl) return;
 
-   if (!(tls_data = eina_tls_get(evas_gl->resource_key)))
+   if (!eina_tls_get(evas_gl->resource_key))
      {
         WRN("Destructor: TLS data was never set!");
         return;
