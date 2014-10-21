@@ -1227,10 +1227,10 @@ _evas_box_layout_homogeneous_max_size_vertical(Eo *o, Evas_Object_Box_Data *priv
 }
 
 static void
-_evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *priv, int box_w, int *row_count, int *row_max_h, int *row_break, int *row_width, int *off_y_ret, int *max_h_ret)
+_evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *priv, int box_w, int *row_count, int *row_max_h, int *row_break, int *row_width, int *off_y_ret, int *max_w_ret, int *max_h_ret)
 {
    int i, remain_w = box_w, start_i = 0;
-   int off_y = 0, max_h = 0, n_rows = 0;
+   int off_y = 0, max_w = 0, max_h = 0, n_rows = 0;
    Eina_List *l;
 
    for (i = 0, l = priv->children; l; i++, l = l->next)
@@ -1247,6 +1247,8 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
 
         child_w += padding_l + padding_r + priv->pad.h;
         child_h += padding_t + padding_b;
+        if (child_w > max_w)
+          max_w = child_w;
 
         remain_w -= child_w;
         if (remain_w + priv->pad.h >= 0)
@@ -1287,6 +1289,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
 
    *row_count = n_rows;
    *off_y_ret = off_y;
+   *max_w_ret = max_w;
    *max_h_ret = max_h;
 }
 
@@ -1322,7 +1325,7 @@ _evas_box_layout_flow_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    _evas_object_box_layout_flow_horizontal_row_info_collect
-     (priv, w, &row_count, row_max_h, row_break, row_width, &offset_y, &max_h);
+     (priv, w, &row_count, row_max_h, row_break, row_width, &offset_y, &min_w, &max_h);
 
    inc_y = 0;
    remain_y = h - (offset_y + max_h);
@@ -1393,8 +1396,6 @@ _evas_box_layout_flow_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_
           }
 
         evas_object_geometry_get(o, &x, NULL, NULL, NULL);
-        if (min_w < row_width[r])
-            min_w = row_width[r];
         min_h += row_max_h[r];
         y += row_max_h[r] + inc_y;
      }
@@ -1403,10 +1404,10 @@ _evas_box_layout_flow_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_
 }
 
 static void
-_evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *priv, int box_h, int *col_count, int *col_max_w, int *col_break, int *col_height, int *off_x_ret, int *max_w_ret)
+_evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *priv, int box_h, int *col_count, int *col_max_w, int *col_break, int *col_height, int *off_x_ret, int *max_w_ret, int *max_h_ret)
 {
    int i, remain_h = box_h, start_i = 0;
-   int off_x = 0, max_w = 0, n_cols = 0;
+   int off_x = 0, max_w = 0, max_h = 0, n_cols = 0;
    Eina_List *l;
 
    for (i = 0, l = priv->children; l; i++, l = l->next)
@@ -1423,6 +1424,8 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
 
         child_w += padding_l + padding_r;
         child_h += padding_t + padding_b + priv->pad.v;
+        if (child_h > max_h)
+          max_h = child_h;
 
         remain_h -= child_h;
         if (remain_h + priv->pad.v >= 0)
@@ -1465,6 +1468,7 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
    *col_count = n_cols;
    *off_x_ret = off_x;
    *max_w_ret = max_w;
+   *max_h_ret = max_h;
 }
 
 EOLIAN static void
@@ -1499,7 +1503,7 @@ _evas_box_layout_flow_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Bo
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    _evas_object_box_layout_flow_vertical_col_info_collect
-     (priv, h, &col_count, col_max_w, col_break, col_height, &offset_x, &max_w);
+     (priv, h, &col_count, col_max_w, col_break, col_height, &offset_x, &max_w, &min_h);
 
    inc_x = 0;
    remain_x = w - (offset_x + max_w);
@@ -1571,8 +1575,6 @@ _evas_box_layout_flow_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Bo
 
         evas_object_geometry_get(o, NULL, &y, NULL, NULL);
         min_w += col_max_w[c];
-        if (min_h < col_height[c])
-            min_h = col_height[c];
         x += col_max_w[c] + inc_x;
      }
 
