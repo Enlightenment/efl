@@ -2858,9 +2858,9 @@ EFL_EVAL_PKGS([ECORE_WAYLAND])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+
 EFL_LIB_END_OPTIONAL([Ecore_Wayland])
 #### End of Ecore_Wayland
-
 
 #### Eldbus
 EFL_LIB_START([Eldbus])
@@ -4371,6 +4371,12 @@ EFL_EVAL_PKGS([ELUA])
 
 EFL_LIB_END_OPTIONAL([Elua])
 #### End of Elua
+
+### Add Wayland server library if test is enabled
+if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
+   EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.3.0])
+   EFL_EVAL_PKGS([ECORE_WAYLAND_SRV])
+fi
 
 AC_ARG_ENABLE([always-build-examples],
    [AS_HELP_STRING([--enable-always-build-examples],[always build examples. @<:@default=disabled@:>@])],
