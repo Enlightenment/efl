@@ -29,7 +29,6 @@ evas_3d_mesh_frame_free(Evas_3D_Mesh_Frame *frame)
    if (frame->material)
      {
         evas_3d_material_mesh_del(frame->material, frame->mesh);
-        eo_unref(frame->mesh);
      }
 
    for (i = 0; i < EVAS_3D_VERTEX_ATTRIB_COUNT; i++)

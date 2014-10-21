@@ -39,14 +39,15 @@
      {                                                                                                        \
         mesh = eo_add(EVAS_3D_MESH_CLASS, e);                                                                 \
         mesh2 = eo_add(EVAS_3D_MESH_CLASS, e);                                                                \
+        fail_if(mesh == NULL);                                                                                \
+        fail_if(mesh2 == NULL);                                                                               \
         eo_do(mesh, evas_3d_mesh_file_set(type, file->path, NULL));                                           \
-        fail_if(mesh == NULL);                                                                                \
         eo_do(mesh, evas_3d_mesh_save(EVAS_3D_MESH_FILE_TYPE_EET, buffer, NULL));                             \
-        fail_if(mesh == NULL);                                                                                \
         eo_do(mesh2, evas_3d_mesh_file_set(EVAS_3D_MESH_FILE_TYPE_EET, buffer, NULL));                        \
-        fail_if(mesh == NULL);                                                                                \
         res = _compare_meshes(mesh, mesh2);                                                                   \
         fail_if(res == 1);                                                                                    \
+        eo_del(mesh2);                                                                                        \
+        eo_del(mesh);                                                                                         \
      }
 
 static Evas_3D_Mesh_Frame *
@@ -113,9 +114,6 @@ START_TEST(evas_object_mesh_loader_saver)
    CHECK_MESHES_IN_FOLDER(TESTS_MD2_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_MD2)
 
    eina_iterator_free(it);
-
-   evas_object_del(mesh);
-   evas_object_del(mesh2);
 
    evas_free(e);
    evas_shutdown();
