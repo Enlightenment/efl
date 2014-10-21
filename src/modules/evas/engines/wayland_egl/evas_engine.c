@@ -323,7 +323,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 }
 
 static void *
-evgl_eng_context_create(void *data, void *ctxt, int version)
+evgl_eng_context_create(void *data, void *ctxt, Evas_GL_Context_Version version)
 {
    Render_Engine *re;
    Outbuf *ob;
