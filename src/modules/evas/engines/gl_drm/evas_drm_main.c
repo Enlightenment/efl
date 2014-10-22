@@ -37,7 +37,8 @@ _outbuf_flush_famebuffer(Outbuf *ob)
    _outbuf_buffer_swap(ob, rects, n);
 }
 
-Outbuf *eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, struct gbm_surface *surface, int screen, int depth, int w, int h, int indirect EINA_UNUSED, int alpha, int rot, Render_Engine_Swap_Mode swap_mode)
+Outbuf *
+eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, struct gbm_surface *surface, int screen, int depth, int w, int h, int indirect EINA_UNUSED, int alpha, int rot, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -421,9 +422,7 @@ eng_gl_context_use(Context_3D *ctx)
 {
    if (eglMakeCurrent(ctx->display, ctx->surface,
                       ctx->surface, ctx->context) == EGL_FALSE)
-     {
-        ERR("eglMakeCurrent() failed.");
-     }
+     ERR("eglMakeCurrent() failed.");
 }
 
 void
@@ -487,13 +486,11 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    return EINA_FALSE;
 }
 
-void*
+void *
 eng_outbuf_new_region_for_update(Outbuf *ob, int x, int y, int w, int h, int *cx EINA_UNUSED, int *cy EINA_UNUSED, int *cw EINA_UNUSED, int *ch EINA_UNUSED)
 {
-   if (w == ob->w && h == ob->h)
-     {
-        ob->gl_context->master_clip.enabled = EINA_FALSE;
-     }
+   if ((w == ob->w) && (h == ob->h))
+     ob->gl_context->master_clip.enabled = EINA_FALSE;
    else
      {
         ob->gl_context->master_clip.enabled = EINA_TRUE;
@@ -539,10 +536,10 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode r
         else eglSwapInterval(ob->egl_disp, 0);
         ob->vsync = 1;
      }
+
    if (ob->info->callback.pre_swap)
-     {
-        ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
-     }
+     ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
+
 // TODO: Check eglSwapBuffersWithDamage for gl_drm and apply
 #if 0
    if ((glsym_eglSwapBuffersWithDamage) && (ob->swap_mode != MODE_FULL))
@@ -606,9 +603,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode r
       eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
 
    if (ob->info->callback.post_swap)
-     {
-        ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
-     }
+     ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
 
    //Flush GL Surface data to Framebuffer
    _outbuf_flush_famebuffer(ob);

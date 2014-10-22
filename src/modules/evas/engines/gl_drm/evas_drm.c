@@ -147,9 +147,7 @@ evas_drm_gbm_init(Evas_Engine_Info_GL_Drm *info, int w, int h)
    if (info->info.fd < 0)  return EINA_FALSE;
 
    if (!(info->info.gbm = gbm_create_device(info->info.fd)))
-     {
-        return EINA_FALSE;
-     }
+     return EINA_FALSE;
 
    if (!(info->info.surface = 
          gbm_surface_create(info->info.gbm, w, h,

@@ -207,13 +207,9 @@ gl_extn_veto(Render_Engine *re)
         if (getenv("EVAS_GL_INFO"))
           printf("EGL EXTN:\n%s\n", str);
         if (!strstr(str, "EGL_EXT_buffer_age"))
-          {
-             extn_have_buffer_age = 0;
-          }
+          extn_have_buffer_age = 0;
         if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
-          {
-             glsym_eglSwapBuffersWithDamage = NULL;
-          }
+          glsym_eglSwapBuffersWithDamage = NULL;
      }
    else
      {
@@ -325,13 +321,10 @@ evgl_eng_native_window_create(void *data)
         return NULL;
      }
 
-   surface = gbm_surface_create(info->info.gbm, 1, 1,
-                                info->info.format,
+   surface = gbm_surface_create(info->info.gbm, 1, 1, info->info.format,
                                 info->info.flags);
    if (!surface)
-     {
-        ERR("Could not create gl drm window: %m");
-     }
+     ERR("Could not create gl drm window: %m");
 
    return (void*)surface;
 }
@@ -402,7 +395,6 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
      }
 
    ret = eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)surface);
-
    if (ret == EGL_TRUE) return 1;
 
    return 0;
@@ -469,7 +461,6 @@ evgl_eng_context_destroy(void *data, void *context)
      }
 
    ret = eglDestroyContext(eng_get_ob(re)->egl_disp, (EGLContext)context);
-
    if (ret == EGL_TRUE) return 1;
 
    return 0;
@@ -845,8 +836,9 @@ eng_preload_make_current(void *data, void *doit)
 static Eina_Bool
 eng_canvas_alpha_get(void *data, void *info EINA_UNUSED)
 {
-   Render_Engine *re = (Render_Engine *)data;
-   if (!re) return EINA_FALSE;
+   Render_Engine *re;
+
+   if (!(re = (Render_Engine *)data)) return EINA_FALSE;
 
    return re->generic.software.ob->alpha;
 }
@@ -856,8 +848,8 @@ eng_output_dump(void *data)
 {
    Render_Engine *re;
 
-   re = (Render_Engine *)data;
-   if (!re) return;
+   if (!(re = (Render_Engine *)data)) return;
+
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    glsym_evas_gl_common_image_all_unload(eng_get_ob(re)->gl_context);
