@@ -556,14 +556,20 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
 {
    Ecore_Drm_Output_Mode *mode;
 
+   /* check for valid output */
    if (!output) return;
 
-   eina_stringshare_del(output->make);
-   eina_stringshare_del(output->model);
-   eina_stringshare_del(output->name);
+   /* delete any added udev watch */
+   if (output->watch) eeze_udev_watch_del(output->watch);
 
+   /* free modes */
    EINA_LIST_FREE(output->modes, mode)
      free(mode);
+
+   /* free strings */
+   if (output->name) eina_stringshare_del(output->name);
+   if (output->model) eina_stringshare_del(output->model);
+   if (output->make) eina_stringshare_del(output->make);
 
    drmModeFreeCrtc(output->crtc);
 
@@ -777,24 +783,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 EAPI void 
 ecore_drm_output_free(Ecore_Drm_Output *output)
 {
-   Ecore_Drm_Output_Mode *mode;
-
-   /* check for valid output */
-   if (!output) return;
-
-   /* delete any added udev watch */
-   if (output->watch) eeze_udev_watch_del(output->watch);
-
-   /* free modes */
-   EINA_LIST_FREE(output->modes, mode)
-     free(mode);
-
-   /* free strings */
-   if (output->name) eina_stringshare_del(output->name);
-   if (output->model) eina_stringshare_del(output->model);
-   if (output->make) eina_stringshare_del(output->make);
-
-   free(output);
+   _ecore_drm_output_free(output);
 }
 
 EAPI void 
