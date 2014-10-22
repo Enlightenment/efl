@@ -623,6 +623,26 @@ finish:
    _ecore_drm_output_frame_finish(output);
 }
 
+static Eina_Bool
+_ecore_drm_output_device_is_hotplug(Ecore_Drm_Output *output)
+{
+   const char *syspath;
+   const char *val;
+   int sysnum;
+
+   syspath = output->dev->drm.path;
+   sysnum = eeze_udev_syspath_get_sysnum(syspath);
+
+   if ((sysnum == -1) || (sysnum != output->dev->id))
+     return EINA_FALSE;
+
+   val = eeze_udev_syspath_get_property(syspath, "HOTPLUG");
+   if (!val)
+     return EINA_FALSE;
+
+   return (strcmp(val, "1") == 0);
+}
+
 static void
 _ecore_drm_output_event(const char *device, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
@@ -630,7 +650,10 @@ _ecore_drm_output_event(const char *device, Eeze_Udev_Event event, void *data, E
 
    if (!(output = data)) return;
 
-   /* TODO: Check if device is hotplug and update outputs */
+   if (_ecore_drm_output_device_is_hotplug(output))
+     {
+        DBG("Output Hotplug Event");
+     }
 }
 
 /**
