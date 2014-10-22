@@ -2,6 +2,8 @@
 # include "config.h"
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 
@@ -10,6 +12,41 @@
 #include "evas_tests_helpers.h"
 
 #define TESTS_IMG_DIR TESTS_SRC_DIR"/images"
+
+static const char *exts[] = {
+  "png"
+#ifdef BUILD_LOADER_TGA
+  ,"tga"
+#endif
+#ifdef BUILD_LOADER_WBMP
+  ,"wbmp"
+#endif
+  // FIXME: Seems like XPM support is currently broken
+#if 0
+#ifdef BUILD_LOADER_XPM
+  ,"xpm"
+#endif
+#endif
+#ifdef BUILD_LOADER_BMP
+  ,"bmp"
+#endif
+#ifdef BUILD_LOADER_GIF
+  ,"gif"
+#endif
+#ifdef BUILD_LOADER_PSD
+  ,"psd"
+#endif
+#ifdef BUILD_LOADER_WEBP
+  ,"webp"
+#endif
+#ifdef BUILD_LOADER_JPEG
+  ,"jpeg"
+  ,"jpg"
+#endif
+#ifdef BUILD_LOADER_TGV
+  ,"tgv"
+#endif
+};
 
 #if 0
 static const char *
@@ -35,7 +72,19 @@ START_TEST(evas_object_image_loader)
    it = eina_file_direct_ls(TESTS_IMG_DIR);
    EINA_ITERATOR_FOREACH(it, file)
      {
+        Eina_Bool found = EINA_FALSE;
+        unsigned int i;
         int w, h;
+
+        for (i = 0; i < (sizeof (exts) / sizeof (exts[0])); i++)
+          if (!strcasecmp(file->path + file->path_length - strlen(exts[i]),
+                          exts[i]))
+            {
+               found = EINA_TRUE;
+               break;
+            }
+
+        if (!found) continue;
 
         evas_object_image_file_set(o, file->path, NULL);
         fail_if(evas_object_image_load_error_get(o) != EVAS_LOAD_ERROR_NONE);
@@ -298,34 +347,6 @@ START_TEST(evas_object_image_all_loader_data)
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
    Eina_Strbuf *str;
-
-   const char *exts[] = {
-     "png"
-#ifdef BUILD_LOADER_TGA
-     ,"tga"
-#endif
-#ifdef BUILD_LOADER_WBMP
-     ,"wbmp"
-#endif
-     // FIXME: Seems like XPM support is currently broken
-#if 0
-#ifdef BUILD_LOADER_XPM
-     ,"xpm"
-#endif
-#endif
-#ifdef BUILD_LOADER_BMP
-     ,"bmp"
-#endif
-#ifdef BUILD_LOADER_GIF
-     ,"gif"
-#endif
-#ifdef BUILD_LOADER_PSD
-     ,"psd"
-#endif
-#ifdef BUILD_LOADER_WEBP
-     ,"webp"
-#endif
-   };
    unsigned int i;
 
    obj = evas_object_image_add(e);
@@ -334,11 +355,16 @@ START_TEST(evas_object_image_all_loader_data)
 
    for (i = 0; i < sizeof (exts) / sizeof (exts[0]); i++)
      {
+        struct stat st;
         int w, h, r_w, r_h;
         const uint32_t *d, *r_d;
 
+        fprintf(stderr, "testing '%s'\n", exts[i]);
 
         eina_strbuf_append_printf(str, "%s/Pic4-%s.png", TESTS_IMG_DIR, exts[i]);
+
+        if (stat(eina_strbuf_string_get(str), &st) != 0) continue;
+
         evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
         fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
         evas_object_image_size_get(obj, &w, &h);
