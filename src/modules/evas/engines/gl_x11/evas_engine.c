@@ -519,7 +519,6 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    (GLXContext)share_ctx,
                                    1);
      }
-   /* TODO: Check this case.
    else if (version == EVAS_GL_GLES_1_X)
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
@@ -527,7 +526,6 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    NULL,
                                    1);
      }
-   */
    else
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
