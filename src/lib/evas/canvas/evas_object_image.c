@@ -359,10 +359,12 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
    cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
                                                                 o->engine_data);
 
-   if (cspace != o->cur->cspace)
+   if (!o->cur->filter || (cspace != o->cur->cspace))
      {
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
           state_write->cspace = cspace;
+          if (!state_write->filter)
+            state_write->filter = eina_cow_alloc(evas_object_filter_cow);
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
 }
@@ -3231,7 +3233,7 @@ start_draw:
 
                   if (!redraw && o->cur->filter->output)
                     {
-                       if (o->cur->filter->sources && o->cur->filter->sources_count > 0)
+                       if (eina_hash_population(o->cur->filter->sources) > 0)
                          {
                             Evas_Filter_Proxy_Binding *pb;
                             Evas_Object_Protected_Data *prxsource;
@@ -3780,7 +3782,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
         if (!o->pixels->pixel_updates) goto done;
      }
-   if (o->cur->filter && o->cur->filter->changed)
+   if (o->cur->filter->changed)
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
         if (!o->pixels->pixel_updates) goto done;
@@ -4785,11 +4787,8 @@ _evas_image_filter_program_set(Eo *eo_obj, Evas_Image_Data *o, const char *arg)
    Evas_Filter_Program *pgm = NULL;
 
    if (!o) return;
-   if (o->cur->filter)
-     {
-        if (o->cur->filter->code == arg) return;
-        if (o->cur->filter->code && arg && !strcmp(arg, o->cur->filter->code)) return;
-     }
+   if (o->cur->filter->code == arg) return;
+   if (o->cur->filter->code && arg && !strcmp(arg, o->cur->filter->code)) return;
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    EINA_COW_IMAGE_FILTER_WRITE_BEGIN(state_write, fcow)
@@ -4844,13 +4843,7 @@ _filter_source_hash_free_cb(void *data)
 
    if (o && proxy)
      {
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          EINA_COW_IMAGE_FILTER_WRITE_BEGIN(state_write, fcow)
-            fcow->sources_count--;
-          EINA_COW_IMAGE_FILTER_WRITE_END(state_write, fcow)
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write)
-
-        if (!o->cur->filter->sources_count)
+        if (!eina_hash_population(o->cur->filter->sources))
           {
              EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy,
                                   Evas_Object_Proxy_Data, proxy_write)

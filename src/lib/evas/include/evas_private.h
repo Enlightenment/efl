@@ -1082,7 +1082,6 @@ struct _Evas_Object_Filter_Data
    Eina_Stringshare    *code;
    Evas_Filter_Program *chain;
    Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
-   int                  sources_count;
    void                *output;
    Eina_Bool            changed : 1;
    Eina_Bool            invalid : 1; // Code parse failed
