@@ -32,25 +32,30 @@ static const Evas_Object_Protected_State default_state = {
   { 255, 255, 255, 255 },
   1.0, 0, EVAS_RENDER_BLEND, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
+static const Evas_Object_Filter_Data default_filter = {
+  NULL, NULL, NULL, 0, NULL, EINA_FALSE, EINA_FALSE
+};
 
 Eina_Cow *evas_object_proxy_cow = NULL;
 Eina_Cow *evas_object_map_cow = NULL;
 Eina_Cow *evas_object_state_cow = NULL;
 
 Eina_Cow *evas_object_3d_cow = NULL;
+Eina_Cow *evas_object_filter_cow = NULL;
 
 static Eina_Bool
 _init_cow(void)
 {
-   if (evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow) return EINA_TRUE;
+   if (evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow && evas_object_filter_cow) return EINA_TRUE;
 
    evas_object_proxy_cow = eina_cow_add("Evas Object Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy, EINA_TRUE);
    evas_object_map_cow = eina_cow_add("Evas Object Map", sizeof (Evas_Object_Map_Data), 8, &default_map, EINA_TRUE);
    evas_object_state_cow = eina_cow_add("Evas Object State", sizeof (Evas_Object_Protected_State), 64, &default_state, EINA_FALSE);
 
    evas_object_3d_cow = eina_cow_add("Evas Object 3D", sizeof (Evas_Object_3D_Data), 8, &default_proxy, EINA_TRUE);
+   evas_object_filter_cow = eina_cow_add("Evas Filter Data", sizeof (Evas_Object_Filter_Data), 8, &default_filter, EINA_TRUE);
 
-   if (!(evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow))
+   if (!(evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow && evas_object_filter_cow))
      {
         eina_cow_del(evas_object_proxy_cow);
         eina_cow_del(evas_object_map_cow);
@@ -61,6 +66,9 @@ _init_cow(void)
 
         eina_cow_del(evas_object_3d_cow);
         evas_object_3d_cow = NULL;
+
+        eina_cow_del(evas_object_filter_cow);
+        evas_object_filter_cow = NULL;
 
         return EINA_FALSE;
      }

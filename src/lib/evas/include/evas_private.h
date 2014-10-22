@@ -52,6 +52,9 @@ typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 
+typedef struct _Evas_Filter_Program         Evas_Filter_Program;
+typedef struct _Evas_Object_Filter_Data     Evas_Object_Filter_Data;
+
 // 3D stuff
 
 #define EVAS_3D_VERTEX_ATTRIB_COUNT    5
@@ -1074,6 +1077,17 @@ struct _Evas_Device
    Evas_Device_Subclass subclas;
 };
 
+struct _Evas_Object_Filter_Data
+{
+   Eina_Stringshare    *code;
+   Evas_Filter_Program *chain;
+   Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
+   int                  sources_count;
+   void                *output;
+   Eina_Bool            changed : 1;
+   Eina_Bool            invalid : 1; // Code parse failed
+};
+
 struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
@@ -1700,6 +1714,8 @@ extern Eina_Cow *evas_object_3d_cow;
 extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;
 extern Eina_Cow *evas_object_image_state_cow;
+
+extern Eina_Cow *evas_object_filter_cow;
 
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \
