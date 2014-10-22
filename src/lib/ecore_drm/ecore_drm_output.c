@@ -571,7 +571,7 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    if (output->model) eina_stringshare_del(output->model);
    if (output->make) eina_stringshare_del(output->make);
 
-   drmModeFreeCrtc(output->crtc);
+   if (output->crtc) drmModeFreeCrtc(output->crtc);
 
    free(output);
 }
