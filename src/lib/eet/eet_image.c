@@ -363,7 +363,7 @@ _eet_image_jpeg_error_exit_cb(j_common_ptr cinfo)
    emptr errmgr;
 
    (*cinfo->err->format_message)(cinfo, buffer);
-   ERR(buffer);
+   ERR("%s", buffer);
    errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
 }
@@ -375,7 +375,7 @@ _eet_image_jpeg_output_message_cb(j_common_ptr cinfo)
    /* emptr errmgr; */
 
    (*cinfo->err->format_message)(cinfo, buffer);
-   ERR(buffer);
+   ERR("%s", buffer);
    /*
    errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
@@ -396,7 +396,7 @@ _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
         if ((err->num_warnings == 0) || (err->trace_level >= 3))
           {
              (*cinfo->err->format_message)(cinfo, buffer);
-             WRN(buffer);
+             WRN("%s", buffer);
           }
         err->num_warnings++;
      }
@@ -405,7 +405,7 @@ _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
         if (err->trace_level >= msg_level)
           {
              (*cinfo->err->format_message)(cinfo, buffer);
-             INF(buffer);
+             INF("%s", buffer);
           }
      }
    /*
