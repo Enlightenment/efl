@@ -8,6 +8,9 @@
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 
+/* Loading this internal header for testing purposes. */
+#include "eo_ptr_indirection.h"
+
 START_TEST(eo_simple)
 {
    eo_init();
@@ -847,6 +850,13 @@ START_TEST(eo_pointers_indirection)
    fail_if(!eo_isa(obj2, klass));
    fail_if(eo_isa(obj1, klass));
    eo_unref(obj2);
+
+   /* Check id sanity checks for "close enough" ids. */
+   obj1 = eo_add(klass, NULL);
+   fail_if(!obj1);
+   obj2 = (Eo *) (((Eo_Id) obj1) & ~MASK_OBJ_TAG);
+   fail_if(eo_class_get(obj2));
+   eo_unref(obj1);
 
 #define NB_OBJS 10000
    unsigned int obj_id;
