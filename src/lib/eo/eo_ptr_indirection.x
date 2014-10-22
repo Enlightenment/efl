@@ -100,6 +100,7 @@ typedef uint32_t Generation_Counter;
 #define MASK_TABLE_ID         ((1 << BITS_TABLE_ID) - 1)
 #define MASK_ENTRY_ID         ((1 << BITS_ENTRY_ID) - 1)
 #define MASK_GENERATIONS      (MAX_GENERATIONS - 1)
+#define MASK_OBJ_TAG          (((Eo_Id) 1) << (REF_TAG_SHIFT))
 
 /* This only applies to classes. Used to artificially enlarge the class ids
  * to reduce the likelihood of a clash with normal integers. */
@@ -273,6 +274,12 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
         DBG("obj_id is NULL. Possibly unintended access?");
         return NULL;
      }
+   else if (!(obj_id & MASK_OBJ_TAG))
+     {
+        DBG("obj_id is not a valid object id.");
+        return NULL;
+     }
+
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
    /* Check the validity of the entry */
