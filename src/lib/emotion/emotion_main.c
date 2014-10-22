@@ -89,6 +89,7 @@ static const struct ext_match_s matchs[] =
    MATCHING(".wav"),
    MATCHING(".weba"),
    MATCHING(".webm"),
+   MATCHING(".wma"),
    MATCHING(".wmv")
 };
 
