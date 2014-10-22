@@ -20,6 +20,7 @@ static const char o_type[] = "text";
 /* private struct for text object internal data */
 typedef struct _Evas_Text_Data Evas_Text_Data;
 typedef struct _Evas_Object_Text_Item Evas_Object_Text_Item;
+typedef struct _Evas_Filter_Data Evas_Filter_Data;
 
 struct _Evas_Text_Data
 {
@@ -41,16 +42,7 @@ struct _Evas_Text_Data
       Evas_Font_Size       size;
       Evas_Text_Style_Type style;
 
-      // special effects. VERY EXPERIMENTAL for now.
-      struct {
-         Eina_Stringshare    *code;
-         Evas_Filter_Program *chain;
-         Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
-         int                  sources_count;
-         void                *output;
-         Eina_Bool            changed : 1;
-         Eina_Bool            invalid : 1; // Code parse failed
-      } filter;
+      const Evas_Filter_Data* filter; // cow
    } cur, prev;
 
    struct {
@@ -83,6 +75,17 @@ struct _Evas_Object_Text_Item
    size_t               visual_pos;
    Evas_Text_Props      text_props;
    Evas_Coord           x, w, h, adv;
+};
+
+struct _Evas_Filter_Data
+{
+   Eina_Stringshare    *code;
+   Evas_Filter_Program *chain;
+   Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
+   int                  sources_count;
+   void                *output;
+   Eina_Bool            changed : 1;
+   Eina_Bool            invalid : 1; // Code parse failed
 };
 
 /* private methods for text objects */
@@ -141,6 +144,9 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL
 };
+
+static Eina_Cow *evas_filter_cow = NULL;
+static const Evas_Filter_Data evas_filter_cow_default_data = {0};
 
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
@@ -374,8 +380,28 @@ evas_object_text_add(Evas *e)
    return eo_obj;
 }
 
+static Eina_Bool
+_init_cow(Eo *eo_obj)
+{
+   if (!evas_filter_cow)
+     {
+        evas_filter_cow = eina_cow_add("Evas filter data",
+                                       sizeof (Evas_Filter_Data),
+                                       8,
+                                       &evas_filter_cow_default_data,
+                                       EINA_TRUE);
+     }
+   if (!evas_filter_cow)
+     {
+        eo_error_set(eo_obj);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 EOLIAN static void
-_evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *class_data EINA_UNUSED)
+_evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *o)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_text_init(eo_obj);
@@ -384,6 +410,11 @@ _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *class_data EINA_UNUSE
 
    eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
+
+   if (!_init_cow(eo_obj))
+     return;
+
+   o->cur.filter = eina_cow_alloc(evas_filter_cow);
 }
 
 EOLIAN static void
@@ -405,6 +436,17 @@ _evas_text_efl_text_properties_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Text
 {
 
    return o->cur.source;
+}
+
+static inline void
+_evas_text_filter_changed_set(Evas_Text_Data *o, Eina_Bool val)
+{
+   if (o->cur.filter && (o->cur.filter->changed != val))
+     {
+        EINA_COW_WRITE_BEGIN(evas_filter_cow, o->cur.filter, Evas_Filter_Data, fcow)
+          fcow->changed = val;
+        EINA_COW_WRITE_END(evas_filter_cow, o->cur.filter, fcow);
+     }
 }
 
 EOLIAN static void
@@ -472,7 +514,7 @@ _evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const cha
    _evas_object_text_items_clear(o);
    _evas_object_text_recalc(eo_obj, o->cur.text);
    o->changed = 1;
-   o->cur.filter.changed = EINA_TRUE;
+   _evas_text_filter_changed_set(o, EINA_TRUE);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -760,10 +802,10 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
      }
    o->last_computed.advance_without_ellipsis = advance;
 
-   if (!o->cur.filter.chain)
+   if (!o->cur.filter || !o->cur.filter->chain)
      evas_text_style_pad_get(o->cur.style, &l, &r, NULL, NULL);
    else
-     evas_filter_program_padding_get(o->cur.filter.chain, &l, &r, NULL, NULL);
+     evas_filter_program_padding_get(o->cur.filter->chain, &l, &r, NULL, NULL);
 
    /* Handle ellipsis */
    if (pos && (o->cur.ellipsis >= 0.0) && (advance + l + r > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
@@ -941,7 +983,7 @@ _evas_text_ellipsis_set(Eo *eo_obj, Evas_Text_Data *o, double ellipsis)
 
    o->cur.ellipsis = ellipsis;
    o->changed = 1;
-   o->cur.filter.changed = EINA_TRUE;
+   _evas_text_filter_changed_set(o, EINA_TRUE);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
 }
@@ -998,7 +1040,7 @@ _evas_text_efl_text_text_set(Eo *eo_obj, Evas_Text_Data *o, const char *_text)
    if (o->cur.text != text) free(text);
 
    o->changed = 1;
-   o->cur.filter.changed = EINA_TRUE;
+   _evas_text_filter_changed_set(o, EINA_TRUE);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -1117,10 +1159,10 @@ _evas_text_char_pos_get(Eo *eo_obj, Evas_Text_Data *o, int pos, Evas_Coord *cx, 
 
    Eina_Bool int_ret = _evas_object_text_char_coords_get(eo_obj, o, (size_t) pos,
             &x, &y, &w, &h);
-   if (!o->cur.filter.chain)
+   if (!o->cur.filter || !o->cur.filter->chain)
      evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    else
-     evas_filter_program_padding_get(o->cur.filter.chain, &l, &r, &t, &b);
+     evas_filter_program_padding_get(o->cur.filter->chain, &l, &r, &t, &b);
    y += o->max_ascent - t;
    x -= l;
    if (x < 0)
@@ -1174,10 +1216,10 @@ _evas_text_char_coords_get(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coo
 
    int int_ret = _evas_object_text_char_at_coords(eo_obj, o, x, y - o->max_ascent,
          &rx, &ry, &rw, &rh);
-   if (!o->cur.filter.chain)
+   if (!o->cur.filter || !o->cur.filter->chain)
      evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    else
-     evas_filter_program_padding_get(o->cur.filter.chain, &l, &r, &t, &b);
+     evas_filter_program_padding_get(o->cur.filter->chain, &l, &r, &t, &b);
    ry += o->max_ascent - t;
    rx -= l;
    if (rx < 0)
@@ -1332,10 +1374,10 @@ _evas_text_style_pad_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, int *l, int 
 {
    int sl = 0, sr = 0, st = 0, sb = 0;
    /* use temps to be certain we have initialized values */
-   if (!o->cur.filter.chain)
+   if (!o->cur.filter || !o->cur.filter->chain)
      evas_text_style_pad_get(o->cur.style, &sl, &sr, &st, &sb);
    else
-     evas_filter_program_padding_get(o->cur.filter.chain, &sl, &sr, &st, &sb);
+     evas_filter_program_padding_get(o->cur.filter->chain, &sl, &sr, &st, &sb);
    if (l) *l = sl;
    if (r) *r = sr;
    if (t) *t = st;
@@ -1538,16 +1580,23 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    /* free filter output */
-   if (o->cur.filter.output)
-     ENFN->image_free(ENDT, o->cur.filter.output);
-   eina_hash_free(o->cur.filter.sources);
-   evas_filter_program_del(o->cur.filter.chain);
-   eina_stringshare_del(o->cur.filter.code);
-   o->cur.filter.output = NULL;
-   o->cur.filter.chain = NULL;
-   o->cur.filter.sources = NULL;
-   o->cur.filter.code = NULL;
-   o->cur.filter.sources_count = 0;
+   if (o->cur.filter)
+     {
+        EINA_COW_WRITE_BEGIN(evas_filter_cow, o->cur.filter, Evas_Filter_Data, fcow)
+          {
+             if (fcow->output)
+               ENFN->image_free(ENDT, fcow->output);
+             eina_hash_free(fcow->sources);
+             evas_filter_program_del(fcow->chain);
+             eina_stringshare_del(fcow->code);
+             fcow->output = NULL;
+             fcow->chain = NULL;
+             fcow->sources = NULL;
+             fcow->code = NULL;
+             fcow->sources_count = 0;
+          }
+        EINA_COW_WRITE_END(evas_filter_cow, o->cur.filter, fcow);
+     }
 
    /* free obj */
    _evas_object_text_items_clear(o);
@@ -1598,7 +1647,9 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
         Evas_Text_Data *o = (Evas_Text_Data *) obj->private_data;
 
         ERR("Filter failed at runtime!");
-        o->cur.filter.invalid = EINA_TRUE;
+        EINA_COW_WRITE_BEGIN(evas_filter_cow, o->cur.filter, Evas_Filter_Data, fcow)
+          fcow->invalid = EINA_TRUE;
+        EINA_COW_WRITE_END(evas_filter_cow, o->cur.filter, fcow);
 
         // Update object
         _evas_object_text_items_clear(o);
@@ -1633,10 +1684,10 @@ evas_object_text_render(Evas_Object *eo_obj,
    int shad_dst = 0, shad_sz = 0, dx = 0, dy = 0, haveshad = 0;
 
    /* render object to surface with context, and offxet by x,y */
-   if (!o->cur.filter.chain)
+   if (!o->cur.filter || !o->cur.filter->chain)
      evas_text_style_pad_get(o->cur.style, &sl, NULL, &st, NULL);
    else
-     evas_filter_program_padding_get(o->cur.filter.chain, &sl, NULL, &st, NULL);
+     evas_filter_program_padding_get(o->cur.filter->chain, &sl, NULL, &st, NULL);
    ENFN->context_multiplier_unset(output, context);
    ENFN->context_render_op_set(output, context, obj->cur->render_op);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
@@ -1718,7 +1769,8 @@ evas_object_text_render(Evas_Object *eo_obj,
     * remotely similar to its final form. You've been warned :)
     */
 
-   if (!o->cur.filter.invalid && (o->cur.filter.chain || o->cur.filter.code))
+   if (o->cur.filter &&
+       (!o->cur.filter->invalid && (o->cur.filter->chain || o->cur.filter->code)))
      {
         int X, Y, W, H;
         Evas_Filter_Context *filter;
@@ -1727,7 +1779,9 @@ evas_object_text_render(Evas_Object *eo_obj,
         void *filter_ctx;
         Eina_Bool ok;
         int ox = 0, oy = 0;
-        void *previous = o->cur.filter.output;
+        void *previous = o->cur.filter->output;
+        Evas_Filter_Data *fcow =
+          eina_cow_write(evas_filter_cow, (const Eina_Cow_Data**)&(o->cur.filter));
 
         /* NOTE: Font effect rendering is now done ENTIRELY on CPU.
          * So we rely on cache/cache2 to allocate a real image buffer,
@@ -1735,6 +1789,7 @@ evas_object_text_render(Evas_Object *eo_obj,
          * after the rendering has been done, as we simply push the output
          * image to GL.
          */
+
 
         W = obj->cur->geometry.w;
         H = obj->cur->geometry.h;
@@ -1747,39 +1802,42 @@ evas_object_text_render(Evas_Object *eo_obj,
             (obj->cur->cache.clip.b == 255) && (obj->cur->cache.clip.a == 255))
           ENFN->context_multiplier_unset(ENDT, context);
         else
-          ENFN->context_multiplier_set(ENDT, context,
-                                       obj->cur->cache.clip.r,
-                                       obj->cur->cache.clip.g,
-                                       obj->cur->cache.clip.b,
-                                       obj->cur->cache.clip.a);
+           ENFN->context_multiplier_set(ENDT, context,
+                                        obj->cur->cache.clip.r,
+                                        obj->cur->cache.clip.g,
+                                        obj->cur->cache.clip.b,
+                                        obj->cur->cache.clip.a);
 
-        if (!o->cur.filter.chain)
+        if (!fcow->chain)
           {
              Evas_Filter_Program *pgm;
              pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
-             evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
-             if (!evas_filter_program_parse(pgm, o->cur.filter.code))
+             evas_filter_program_source_set_all(pgm, fcow->sources);
+             if (!evas_filter_program_parse(pgm, fcow->code))
                {
                   ERR("Filter program parsing failed");
                   evas_filter_program_del(pgm);
-                  o->cur.filter.invalid = EINA_TRUE;
+                  fcow->invalid = EINA_TRUE;
+
+                  eina_cow_done(evas_filter_cow, (const Eina_Cow_Data**)&(o->cur.filter),
+                                fcow, EINA_TRUE);
                   goto normal_render;
                }
-             o->cur.filter.chain = pgm;
-             o->cur.filter.invalid = EINA_FALSE;
+             fcow->chain = pgm;
+             fcow->invalid = EINA_FALSE;
           }
         else if (previous)
           {
-             Eina_Bool redraw = o->cur.filter.changed;
+             Eina_Bool redraw = fcow->changed;
 
              // Scan proxies to find if any changed
-             if (!redraw && o->cur.filter.sources)
+             if (!redraw && fcow->sources)
                {
                   Evas_Filter_Proxy_Binding *pb;
                   Evas_Object_Protected_Data *source;
                   Eina_Iterator *iter;
 
-                  iter = eina_hash_iterator_data_new(o->cur.filter.sources);
+                  iter = eina_hash_iterator_data_new(fcow->sources);
                   EINA_ITERATOR_FOREACH(iter, pb)
                     {
                        source = eo_data_scope_get(pb->eo_source, EVAS_OBJECT_CLASS);
@@ -1801,16 +1859,22 @@ evas_object_text_render(Evas_Object *eo_obj,
                                    X + x, Y + y, W, H, // dst
                                    EINA_FALSE,         // smooth
                                    do_async);
+
+                  eina_cow_done(evas_filter_cow, (const Eina_Cow_Data**)&(o->cur.filter),
+                                fcow, EINA_TRUE);
                   return;
                }
           }
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
-        ok = evas_filter_context_program_use(filter, o->cur.filter.chain);
+        ok = evas_filter_context_program_use(filter, fcow->chain);
         if (!filter || !ok)
           {
              ERR("Parsing failed?");
              evas_filter_context_destroy(filter);
+
+             eina_cow_done(evas_filter_cow, (const Eina_Cow_Data**)&(o->cur.filter),
+                           fcow, EINA_TRUE);
              goto normal_render;
           }
 
@@ -1826,8 +1890,8 @@ evas_object_text_render(Evas_Object *eo_obj,
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
 
         // Steal output and release previous
-        o->cur.filter.output = evas_filter_buffer_backing_steal(filter, outbuf);
-        if (o->cur.filter.output != previous)
+        fcow->output = evas_filter_buffer_backing_steal(filter, outbuf);
+        if (fcow->output != previous)
           evas_filter_buffer_backing_release(filter, previous);
 
         // Render text to input buffer
@@ -1846,7 +1910,12 @@ evas_object_text_render(Evas_Object *eo_obj,
         // Add post-run callback and run filter
         evas_filter_context_post_run_callback_set(filter, _filter_cb, eo_obj);
         ok = evas_filter_run(filter);
-        o->cur.filter.changed = EINA_FALSE;
+        fcow->changed = EINA_FALSE;
+
+        if (!ok) fcow->invalid = EINA_TRUE;
+
+        eina_cow_done(evas_filter_cow, (const Eina_Cow_Data**)&(o->cur.filter),
+                      fcow, EINA_TRUE);
 
         if (ok)
           {
@@ -1856,7 +1925,6 @@ evas_object_text_render(Evas_Object *eo_obj,
         else
           {
              ERR("Rendering failed");
-             o->cur.filter.invalid = EINA_TRUE;
              goto normal_render;
           }
      }
@@ -2212,7 +2280,7 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
    /* DO II */
    _evas_object_text_recalc(eo_obj, o->cur.text);
    o->changed = 1;
-   o->cur.filter.changed = EINA_TRUE;
+   _evas_text_filter_changed_set(o, EINA_TRUE);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -2287,10 +2355,10 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 
         w = _evas_object_text_horiz_advance_without_ellipsis_get(o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
-        if (!o->cur.filter.chain)
+        if (!o->cur.filter || !o->cur.filter->chain)
           evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
         else
-          evas_filter_program_padding_get(o->cur.filter.chain, &l, &r, &t, &b);
+          evas_filter_program_padding_get(o->cur.filter->chain, &l, &r, &t, &b);
 
         if (o->cur.ellipsis >= 0.0)
           {
@@ -2311,10 +2379,10 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
      {
         int t = 0, b = 0, l = 0, r = 0;
 
-        if (!o->cur.filter.chain)
+        if (!o->cur.filter || !o->cur.filter->chain)
           evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
         else
-          evas_filter_program_padding_get(o->cur.filter.chain, &l, &r, &t, &b);
+          evas_filter_program_padding_get(o->cur.filter->chain, &l, &r, &t, &b);
 
         eo_do_super(eo_obj, MY_CLASS,
                     evas_obj_size_set(0, o->max_ascent + o->max_descent + t + b));
@@ -2333,26 +2401,33 @@ _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
    Evas_Filter_Program *pgm = NULL;
 
    if (!o) return;
-   if (o->cur.filter.code == arg) return;
-   if (o->cur.filter.code && arg && !strcmp(arg, o->cur.filter.code)) return;
-
-   // Parse filter program
-   evas_filter_program_del(o->cur.filter.chain);
-   if (arg)
+   if (o->cur.filter)
      {
-        pgm = evas_filter_program_new("Evas_Text: Filter Program", EINA_TRUE);
-        evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
-        if (!evas_filter_program_parse(pgm, arg))
-          {
-             ERR("Parsing failed!");
-             evas_filter_program_del(pgm);
-             pgm = NULL;
-          }
+        if (o->cur.filter->code == arg) return;
+        if (o->cur.filter->code && arg && !strcmp(arg, o->cur.filter->code)) return;
      }
-   o->cur.filter.chain = pgm;
-   o->cur.filter.changed = EINA_TRUE;
-   o->cur.filter.invalid = (pgm == NULL);
-   eina_stringshare_replace(&o->cur.filter.code, arg);
+
+   EINA_COW_WRITE_BEGIN(evas_filter_cow, o->cur.filter, Evas_Filter_Data, fcow)
+     {
+        // Parse filter program
+        evas_filter_program_del(fcow->chain);
+        if (arg)
+          {
+             pgm = evas_filter_program_new("Evas_Text: Filter Program", EINA_TRUE);
+             evas_filter_program_source_set_all(pgm, fcow->sources);
+             if (!evas_filter_program_parse(pgm, arg))
+               {
+                  ERR("Parsing failed!");
+                  evas_filter_program_del(pgm);
+                  pgm = NULL;
+               }
+          }
+        fcow->chain = pgm;
+        fcow->changed = EINA_TRUE;
+        fcow->invalid = (pgm == NULL);
+        eina_stringshare_replace(&fcow->code, arg);
+     }
+   EINA_COW_WRITE_END(evas_filter_cow, o->cur.filter, fcow);
 
    // Update object
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -2387,8 +2462,11 @@ _filter_source_hash_free_cb(void *data)
 
    if (o && proxy)
      {
-        o->cur.filter.sources_count--;
-        if (!o->cur.filter.sources_count)
+        EINA_COW_WRITE_BEGIN(evas_filter_cow, o->cur.filter, Evas_Filter_Data, fcow)
+          fcow->sources_count--;
+        EINA_COW_WRITE_END(evas_filter_cow, o->cur.filter, fcow);
+
+        if (!o->cur.filter->sources_count)
           {
              EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy,
                                   Evas_Object_Proxy_Data, proxy_write)
@@ -2405,42 +2483,51 @@ EOLIAN static void
 _evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Evas_Object *eo_source)
 {
    Evas_Object_Protected_Data *obj;
-   Evas_Filter_Program *pgm = o->cur.filter.chain;
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
    Evas_Object_Protected_Data *source = NULL;
+   Evas_Filter_Data *fcow = NULL;
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (eo_source) source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
 
    if (!name)
      {
-        if (!eo_source || !o->cur.filter.sources) return;
-        if (eina_hash_del_by_data(o->cur.filter.sources, eo_source))
+        if (!eo_source || !o->cur.filter || !o->cur.filter->sources) return;
+        if (eina_hash_del_by_data(o->cur.filter->sources, eo_source))
           goto update;
         return;
      }
 
-   if (!o->cur.filter.sources)
+   if (!source && (!o->cur.filter || !o->cur.filter->sources))
+     return;
+
+   fcow = eina_cow_write(evas_filter_cow, (const Eina_Cow_Data**)&o->cur.filter);
+
+   if (!fcow->sources)
      {
-        if (!source) return;
-        o->cur.filter.sources = eina_hash_string_small_new
+        fcow->sources = eina_hash_string_small_new
               (EINA_FREE_CB(_filter_source_hash_free_cb));
      }
    else
      {
-        pb_old = eina_hash_find(o->cur.filter.sources, name);
+        pb_old = eina_hash_find(fcow->sources, name);
         if (pb_old)
           {
              if (pb_old->eo_source == eo_source) goto update;
-             eina_hash_del(o->cur.filter.sources, name, pb_old);
+             eina_hash_del(fcow->sources, name, pb_old);
           }
      }
 
    if (!source)
      {
-        pb_old = eina_hash_find(o->cur.filter.sources, name);
-        if (!pb_old) return;
-        eina_hash_del_by_key(o->cur.filter.sources, name);
+        pb_old = eina_hash_find(fcow->sources, name);
+        if (!pb_old)
+          {
+             eina_cow_done(evas_filter_cow, (const Eina_Cow_Data**)&o->cur.filter,
+                           fcow, EINA_TRUE);
+             return;
+          }
+        eina_hash_del_by_key(fcow->sources, name);
         goto update;
      }
 
@@ -2460,15 +2547,21 @@ _evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Ev
      proxy_write->is_proxy = EINA_TRUE;
    EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write)
 
-   eina_hash_add(o->cur.filter.sources, pb->name, pb);
-   o->cur.filter.sources_count++;
+   eina_hash_add(fcow->sources, pb->name, pb);
+   fcow->sources_count++;
 
-   evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
+   evas_filter_program_source_set_all(fcow->chain, fcow->sources);
 
    // Update object
 update:
-   o->cur.filter.changed = EINA_TRUE;
-   o->cur.filter.invalid = EINA_FALSE;
+   if (fcow)
+     {
+        fcow->changed = EINA_TRUE;
+        fcow->invalid = EINA_FALSE;
+        eina_cow_done(evas_filter_cow, (const Eina_Cow_Data**)&o->cur.filter,
+                      fcow, EINA_TRUE);
+     }
+
    _evas_object_text_items_clear(o);
    o->changed = 1;
    _evas_object_text_recalc(eo_obj, o->cur.text);
