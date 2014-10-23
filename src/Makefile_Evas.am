@@ -1273,7 +1273,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EVAS_CFLAGS@
 
 bin_evas_evas_cserve2_slave_LDADD = @EVAS_CSERVE2_SLAVE_LIBS@ @USE_EINA_LIBS@
-bin_evas_evas_cserve2_slave_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+bin_evas_evas_cserve2_slave_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 bin_evas_evas_cserve2_slave_LDFLAGS = -export-dynamic
 
 bin_evas_dummy_slave_SOURCES = \
