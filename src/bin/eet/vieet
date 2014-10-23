@@ -14,8 +14,16 @@ die() {
 }
 
 usage() {
-    die "Usage: vieet <eet file> <section>"
+    die "Usage: vieet <eet file> [section]"
 }
+
+EETFILE="$1"
+SECTION="$2"
+
+if [ $# -eq 1 ]; then
+    eet -l "$EETFILE"
+    exit $?
+fi
 
 if [ $# -ne 2 ]; then
     usage
@@ -25,8 +33,6 @@ if [ -z "$EDITOR" ]; then
     die "EDITOR env var must be set."
 fi
 
-EETFILE="$1"
-SECTION="$2"
 TFILE=$(mktemp)
 
 if [ $? -ne 0 ]; then
