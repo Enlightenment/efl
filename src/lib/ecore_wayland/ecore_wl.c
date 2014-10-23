@@ -448,7 +448,12 @@ _ecore_wl_shutdown(Eina_Bool close)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (_ecore_wl_init_count < 1) return 0;
+   if (_ecore_wl_init_count < 1)
+     {
+        ERR("Ecore_Wayland Shutdown called without Ecore_Wayland Init");
+        return 0;
+     }
+
    if (--_ecore_wl_init_count != 0) return _ecore_wl_init_count;
    if (!_ecore_wl_disp) return _ecore_wl_init_count;
 
