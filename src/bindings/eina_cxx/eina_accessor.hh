@@ -3,6 +3,7 @@
 
 #include <Eina.h>
 #include <eina_error.hh>
+#include <eina_throw.hh>
 
 #include <memory>
 #include <iterator>

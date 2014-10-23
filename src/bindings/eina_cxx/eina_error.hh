@@ -3,6 +3,8 @@
 
 #include <Eina.h>
 
+#include <eina_throw.hh>
+
 #include <system_error>
 
 /**

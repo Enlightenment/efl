@@ -3,6 +3,7 @@
 
 #include <Eina.h>
 #include <eina_type_traits.hh>
+#include <eina_throw.hh>
 
 #include <cstring>
 #include <stdexcept>

@@ -5,6 +5,7 @@
 
 #include <eina_stringshare.hh>
 #include <eina_type_traits.hh>
+#include <eina_throw.hh>
 
 /**
  * @addtogroup Eina_Cxx_Data_Types_Group

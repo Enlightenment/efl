@@ -5,6 +5,7 @@
 #include <eina_clone_allocators.hh>
 #include <eina_type_traits.hh>
 #include <eina_range_types.hh>
+#include <eina_throw.hh>
 
 #include <memory>
 #include <iterator>

@@ -8,6 +8,7 @@
 #include <eina_accessor.hh>
 #include <eina_eo_base_fwd.hh>
 #include <eina_iterator.hh>
+#include <eina_throw.hh>
 
 #include <memory>
 #include <iterator>
