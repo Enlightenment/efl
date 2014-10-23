@@ -269,7 +269,6 @@ struct _eina_value_traits<std::string>
     char* c_str;
     ::eina_value_get(v, &c_str);
     std::string r(c_str);
-    ::free(c_str);
     return r;
   }
 };

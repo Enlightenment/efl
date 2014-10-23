@@ -184,6 +184,12 @@ START_TEST(eina_cxx_value_copying)
 }
 END_TEST
 
+START_TEST(eina_cxx_value_temporaries)
+{
+  efl::eina::get<std::string>(efl::eina::value(std::string("Matroska")));
+}
+END_TEST
+
 void
 eina_test_value(TCase* tc)
 {
@@ -192,4 +198,5 @@ eina_test_value(TCase* tc)
   tcase_add_test(tc, eina_cxx_value_wrong_get);
   tcase_add_test(tc, eina_cxx_value_comparison_operators);
   tcase_add_test(tc, eina_cxx_value_copying);
+  tcase_add_test(tc, eina_cxx_value_temporaries);
 }
