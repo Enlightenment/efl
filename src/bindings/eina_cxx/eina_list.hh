@@ -449,8 +449,6 @@ public:
 
   typedef typename _base_type::native_handle_type native_handle_type;
 
-  range_list& operator=(range_list&& other) = default;
-
   using _base_type::_base_type;
   using _base_type::size;
   using _base_type::empty;
