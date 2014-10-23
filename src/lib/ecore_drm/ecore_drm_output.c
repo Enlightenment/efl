@@ -562,6 +562,9 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    /* delete any added udev watch */
    if (output->watch) eeze_udev_watch_del(output->watch);
 
+   /* delete the backlight struct */
+   if (output->backlight) _ecore_drm_output_backlight_shutdown(output->backlight);
+
    /* free modes */
    EINA_LIST_FREE(output->modes, mode)
      free(mode);
