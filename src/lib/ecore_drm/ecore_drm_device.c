@@ -531,6 +531,18 @@ ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
+/**
+ * Get the file descriptor of Ecore_Drm_Device
+ *
+ * This function will get the file descriptor of drm device
+ *
+ * @param dev The Ecore_Drm_Device to get
+ *
+ * @return fd value on success, -1 on failure
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ *
+ */
 EAPI int 
 ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
 {
@@ -539,8 +551,15 @@ ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
 }
 
 /**
- * TODO: Doxy
- * 
+ * Set the window of Ecore_Drm_Device
+ *
+ * This function will set the window for given drm device
+ *
+ * @param dev The Ecore_Drm_Device for which window is set
+ * @param window The window to set
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ *
  * @since 1.10
  */
 EAPI void 
@@ -553,8 +572,16 @@ ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window)
 }
 
 /**
- * TODO: Doxy
- * 
+ * Get the name of the Ecore_Drm_Device
+ *
+ * This function will return the name of Ecore_Drm_Device
+ *
+ * @param dev The Ecore_Drm_Device to get name
+ *
+ * @return device name on success, NULL on failure
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ *
  * @since 1.10
  */
 EAPI const char *
