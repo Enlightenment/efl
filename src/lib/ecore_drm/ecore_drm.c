@@ -102,6 +102,9 @@ log_err:
 EAPI int 
 ecore_drm_shutdown(void)
 {
+   /* _ecore_drm_init_count should not go below zero. */
+   if (_ecore_drm_init_count < 1) return 0;
+
    /* if we are still in use, decrement init count and get out */
    if (--_ecore_drm_init_count != 0) return _ecore_drm_init_count;
 
