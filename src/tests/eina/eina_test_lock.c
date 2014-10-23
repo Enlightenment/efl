@@ -196,7 +196,7 @@ START_TEST(eina_test_rwlock)
    fail_if(counter != 7200);
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
 
-   eina_condition_timedwait(&cond, 0.01);
+   /* eina_condition_timedwait(&cond, 0.01); */
    eina_thread_join(thread);
 
    eina_condition_free(&cond);
