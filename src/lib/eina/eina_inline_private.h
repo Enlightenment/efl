@@ -52,6 +52,9 @@ _eina_time_get(Eina_Nano_Time *tp)
    if (!clock_gettime(CLOCK_REALTIME, tp))
      return 0;
 # endif
+
+/* FIXME: Have a look if and how we can support CLOCK_MONOTONIC */
+
    struct timeval tv;
 
    if (gettimeofday(&tv, NULL))
