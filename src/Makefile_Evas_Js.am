@@ -1,0 +1,49 @@
+
+if HAVE_CXX11
+
+### Generated headers
+
+generated_evas_canvas_js_bindings = \
+lib/evas/canvas/evas_line.eo.js.cc \
+lib/evas/canvas/evas_polygon.eo.js.cc \
+lib/evas/canvas/evas_rectangle.eo.js.cc \
+lib/evas/canvas/evas_text.eo.js.cc \
+lib/evas/canvas/evas_textblock.eo.js.cc \
+lib/evas/canvas/evas_textgrid.eo.js.cc \
+lib/evas/canvas/evas_signal_interface.eo.js.cc \
+lib/evas/canvas/evas_object_smart.eo.js.cc \
+lib/evas/canvas/evas_smart_clipped.eo.js.cc \
+lib/evas/canvas/evas_table.eo.js.cc \
+lib/evas/canvas/evas_common_interface.eo.js.cc \
+lib/evas/canvas/evas_object.eo.js.cc \
+lib/evas/canvas/evas_canvas.eo.js.cc \
+lib/evas/canvas/evas_grid.eo.js.cc \
+lib/evas/canvas/evas_image.eo.js.cc \
+lib/evas/canvas/evas_out.eo.js.cc \
+lib/evas/canvas/evas_draggable_interface.eo.js.cc \
+lib/evas/canvas/evas_clickable_interface.eo.js.cc \
+lib/evas/canvas/evas_scrollable_interface.eo.js.cc \
+lib/evas/canvas/evas_selectable_interface.eo.js.cc \
+lib/evas/canvas/evas_zoomable_interface.eo.js.cc \
+lib/evas/canvas/evas_box.eo.js.cc
+
+CLEANFILES += $(generated_evas_canvas_js_bindings)
+
+### Unit tests
+
+# if EFL_ENABLE_TESTS
+
+# check_PROGRAMS += tests/evas_cxx/cxx_compile_test
+# TESTS += tests/evas_cxx/cxx_compile_test
+
+# tests_evas_cxx_cxx_compile_test_SOURCES = tests/evas_cxx/cxx_compile_test.cc
+# tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+#  -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas_cxx\" \
+#  -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas_cxx\" \
+#  @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+#  @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @EO_CFLAGS@
+# tests_evas_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@
+# tests_evas_cxx_cxx_compile_test_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+
+# endif
+endif

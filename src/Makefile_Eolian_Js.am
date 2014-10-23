@@ -1,0 +1,83 @@
+
+### Binary
+if HAVE_CXX11
+
+bin_PROGRAMS += bin/eolian_js/eolian_js
+
+bin_eolian_js_eolian_js_SOURCES = \
+    bin/eolian_js/main.cc
+
+bin_eolian_js_eolian_js_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/bin/eolian_js \
+@CHECK_CFLAGS@ @EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CFLAGS@ \
+@EOLIAN_CXX_CFLAGS@ @EOLIAN_CFLAGS@
+
+bin_eolian_js_eolian_js_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
+
+bin_eolian_js_eolian_js_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+include Makefile_Eolian_Js_Helper.am
+
+### Library
+
+lib_LTLIBRARIES += bindings/eolian_js/libeolian_js.la
+
+bindings_eolian_js_libeolian_js_la_SOURCES =\
+	bindings/eolian_js/main.cc \
+	$(generated_evas_canvas_js_bindings)
+
+bindings_eolian_js_libeolian_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+@EINA_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eolian_js\" \
+@VALGRIND_CFLAGS@
+
+bindings_eolian_js_libeolian_js_la_LIBADD = @EINA_LIBS@ @DL_LIBS@
+bindings_eolian_js_libeolian_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+bindings_eolian_js_libeolian_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+# check_PROGRAMS += tests/eolian_cxx/eolian_cxx_suite
+# TESTS += tests/eolian_cxx/eolian_cxx_suite
+
+# tests_eolian_cxx_eolian_cxx_suite_SOURCES = \
+# tests/eolian_cxx/eolian_cxx_suite.cc \
+# tests/eolian_cxx/eolian_cxx_test_parse.cc \
+# tests/eolian_cxx/callback.c \
+# tests/eolian_cxx/eolian_cxx_test_callback.cc \
+# tests/eolian_cxx/eolian_cxx_test_generate.cc
+
+# tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh
+
+# tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-callback.$(OBJEXT): tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
+
+# CLEANFILES += tests/eolian_cxx/callback.eo.hh tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
+
+# tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = 	\
+# -I$(top_builddir)/src/lib/efl \
+# -I$(top_srcdir)/src/bin/eolian_cxx \
+# -I$(top_builddir)/src/tests/eolian_cxx \
+# -DTESTS_WD=\"`pwd`\" \
+# -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian_cxx\" \
+# -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eolian_cxx\" \
+# -DPACKAGE_DATA_DIR=\"$(datadir)/eolian_cxx\" \
+# -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian_cxx\" \
+# @CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ \
+# @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ \
+# @EO_CXX_CFLAGS@
+
+# tests_eolian_cxx_eolian_cxx_suite_CFLAGS = ${tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS}
+# tests_eolian_cxx_eolian_cxx_suite_CPPFLAGS = ${tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS}
+# tests_eolian_cxx_eolian_cxx_suite_LDADD = \
+# @CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+# tests_eolian_cxx_eolian_cxx_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+endif
+
+#EXTRA_DIST += tests/eolian_cxx/callback.eo
+
+endif
