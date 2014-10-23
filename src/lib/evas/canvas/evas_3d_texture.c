@@ -66,6 +66,8 @@ _texture_proxy_subrender(Evas_3D_Texture *obj)
    if (!pd->source)
      return;
 
+   // TODO: replace this function by evas_render_proxy_subrender (as appropriate)
+
    source = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
 
    is_image = eo_isa(pd->source, EVAS_IMAGE_CLASS);

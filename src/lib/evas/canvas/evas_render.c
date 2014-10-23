@@ -1473,6 +1473,88 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    return clean_them;
 }
 
+/*
+ * Render the source object when a proxy is set.
+ * Used to force a draw if necessary, else just makes sure it's available.
+ * Called from: image objects and text with filters.
+ * TODO: 3d objects subrender should probably be merged here as well.
+ */
+void
+evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
+                            Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
+{
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Object_Protected_Data *source;
+   Eina_Bool source_clip = EINA_FALSE;
+   void *ctx;
+   int w, h;
+
+   if (!eo_source) return;
+   source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
+
+   w = source->cur->geometry.w;
+   h = source->cur->geometry.h;
+
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
+                        Evas_Object_Proxy_Data, proxy_write)
+     {
+        proxy_write->redraw = EINA_FALSE;
+
+        /* We need to redraw surface then */
+        if ((proxy_write->surface) &&
+            ((proxy_write->w != w) || (proxy_write->h != h)))
+          {
+             e->engine.func->image_map_surface_free(e->engine.data.output,
+                                                    proxy_write->surface);
+             proxy_write->surface = NULL;
+          }
+
+        /* FIXME: Hardcoded alpha 'on' */
+        /* FIXME (cont): Should see if the object has alpha */
+        if (!proxy_write->surface)
+          {
+             proxy_write->surface = e->engine.func->image_map_surface_new
+               (e->engine.data.output, w, h, 1);
+             if (!proxy_write->surface) goto end;
+             proxy_write->w = w;
+             proxy_write->h = h;
+          }
+
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0,
+                                          0, 0);
+        e->engine.func->context_render_op_set(e->engine.data.output, ctx,
+                                              EVAS_RENDER_COPY);
+        e->engine.func->rectangle_draw(e->engine.data.output, ctx,
+                                       proxy_write->surface, 0, 0, w, h,
+                                       do_async);
+        e->engine.func->context_free(e->engine.data.output, ctx);
+
+        ctx = e->engine.func->context_new(e->engine.data.output);
+
+        if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
+          eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
+
+        Evas_Proxy_Render_Data proxy_render_data = {
+             .eo_proxy = eo_proxy,
+             .proxy_obj = proxy_obj,
+             .eo_src = eo_source,
+             .source_clip = source_clip
+        };
+        evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
+                           -source->cur->geometry.x,
+                           -source->cur->geometry.y,
+                           1, 0, 0, e->output.w, e->output.h,
+                           &proxy_render_data, 1, do_async);
+
+        e->engine.func->context_free(e->engine.data.output, ctx);
+        proxy_write->surface = e->engine.func->image_dirty_region
+           (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
+     }
+ end:
+   EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
+}
+
 static void
 _evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, int off_x, int off_y)
 {
