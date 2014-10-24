@@ -1201,6 +1201,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       Elm_Layout.content_aliases.get;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Scrollable.bounce_allow.set;
+      Elm_Interface_Atspi_Accessible.state_set.get;
       Elm_Interface_Atspi_Text.text.get;
       Elm_Interface_Atspi_Text.string.get;
       Elm_Interface_Atspi_Text.attribute.get;

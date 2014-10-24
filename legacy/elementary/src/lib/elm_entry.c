@@ -5626,4 +5626,16 @@ _elm_entry_elm_interface_atspi_editable_text_cut(Eo *obj, Elm_Entry_Data *_pd EI
    return EINA_TRUE;
 }
 
+EOLIAN static Elm_Atspi_State_Set
+_elm_entry_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+   eo_do_super(obj, ELM_ENTRY_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   if (elm_entry_editable_get(obj))
+     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EDITABLE);
+
+   return ret;
+}
+
 #include "elm_entry.eo.c"
