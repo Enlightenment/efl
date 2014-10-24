@@ -246,6 +246,7 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
    typedef _getproc_fn (*fp_getproc)(const char *);
 
    fp_getproc gp = (fp_getproc)getproc;
+   int _curext_supported = 0;
 
    memset(_gl_ext_string, 0x00, MAX_EXTENSION_STRING_BUFFER);
 
@@ -332,12 +333,13 @@ re->info->info.screen);
    // Extension HEADER
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define _EVASGL_EXT_BEGIN(name) \
-     if (_gl_ext_support_##name != 0) strcat(_gl_ext_string, #name" ");
+     if (_gl_ext_support_##name != 0) { strcat(_gl_ext_string, #name" "); _curext_supported = 1; } \
+     else _curext_supported = 0;
 
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_CHECK_SUPPORT(name)
 #define _EVASGL_EXT_DISCARD_SUPPORT()
-#define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME(name) if (_curext_supported) strcat(_gl_ext_string, #name" ");
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
