@@ -57,6 +57,15 @@ _state_set(Evas_Object *obj, Eina_Bool state)
           elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
         else
           elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+        if (_elm_config->atspi_mode)
+          {
+             if (sd->state)
+               {
+                  elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_TRUE);
+               }
+             else
+               elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_FALSE);
+          }
      }
 }
 
@@ -449,6 +458,18 @@ _elm_radio_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
+}
+
+EOLIAN Elm_Atspi_State_Set
+_elm_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Radio_Data *pd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+
+   eo_do_super(obj, ELM_RADIO_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+   if (obj == elm_radio_selected_object_get(obj))
+     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
+
+   return ret;
 }
 
 #include "elm_radio.eo.c"
