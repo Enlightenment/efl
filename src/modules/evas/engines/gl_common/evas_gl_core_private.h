@@ -311,7 +311,7 @@ struct _EVGL_Engine
    Eina_List         *direct_depth_stencil_surfaces;
 
    //void              *engine_data;  
-
+   Eina_Hash         *safe_extensions;
 };
 
 

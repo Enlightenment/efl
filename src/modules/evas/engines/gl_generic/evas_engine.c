@@ -1207,6 +1207,17 @@ eng_gl_proc_address_get(void *data, const char *name)
 {
    Render_Engine_GL_Generic *re = data;
    EVGLINIT(re, NULL);
+   void *func = NULL;
+
+   if (!evgl_safe_extension_get(name, &func))
+     {
+        DBG("The extension '%s' is not safe to use with Evas GL or is not "
+            "supported on this platform.", name);
+        return NULL;
+     }
+
+   if (func)
+     return func;
 
    if (re->evgl_funcs && re->evgl_funcs->proc_address_get)
      return re->evgl_funcs->proc_address_get(name);

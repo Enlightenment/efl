@@ -315,8 +315,15 @@ re->info->info.screen);
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name) \
    if ((*drvfunc) == NULL) *drvfunc = name;
 
+// This adds all the function names to the "safe" list but only one pointer
+// will be stored in the hash table.
 #define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name) \
-   if ((*drvfunc) == NULL) *drvfunc = GETPROCADDR(name);
+   if ((*drvfunc) == NULL) \
+     { \
+        *drvfunc = GETPROCADDR(name); \
+        evgl_safe_extension_add(name, (void *) (*drvfunc)); \
+     } \
+   else evgl_safe_extension_add(name, NULL);
 
 #include "evas_gl_api_ext_def.h"
 
@@ -403,8 +410,12 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
 #define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
+#undef _EVASGL_EXT_WHITELIST_ONLY
+#define _EVASGL_EXT_WHITELIST_ONLY 0
+
 #include "evas_gl_api_ext_def.h"
 
+#undef _EVASGL_EXT_WHITELIST_ONLY
 #undef _EVASGL_EXT_CHECK_SUPPORT
 #undef _EVASGL_EXT_DISCARD_SUPPORT
 #undef _EVASGL_EXT_BEGIN

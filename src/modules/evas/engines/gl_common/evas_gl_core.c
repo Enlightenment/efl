@@ -1398,6 +1398,8 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
    // Link to evas_gl.c (this doesn't look great)
    glsym_evas_gl_native_context_get = dlsym(RTLD_DEFAULT, "_evas_gl_native_context_get");
 
+   evgl_engine->safe_extensions = eina_hash_string_small_new(NULL);
+
    // Initialize Extensions
    if (efunc->proc_address_get && efunc->ext_string_get)
      {
@@ -1457,6 +1459,7 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 error:
    if (evgl_engine)
      {
+        eina_hash_free(evgl_engine->safe_extensions);
         if (evgl_engine->resource_key)
           eina_tls_free(evgl_engine->resource_key);
         LKD(evgl_engine->resource_lock);
@@ -2213,11 +2216,48 @@ evgl_string_query(int name)
      };
 }
 
-void *
-evgl_proc_address_get(const char *name EINA_UNUSED)
+void
+evgl_safe_extension_add(const char *name, void *funcptr)
 {
-   // Will eventually deprecate this function
-   return NULL;
+   if (!name) return;
+
+   if (funcptr)
+     eina_hash_set(evgl_engine->safe_extensions, name, funcptr);
+   else
+     eina_hash_set(evgl_engine->safe_extensions, name, (void*) 0x1);
+}
+
+Eina_Bool
+evgl_safe_extension_get(const char *name, void **pfuncptr)
+{
+   static Eina_Bool _unsafe_checked = EINA_FALSE, _unsafe = EINA_FALSE;
+   void *func;
+
+   if (!name || !*name)
+     return EINA_FALSE;
+
+   // use this for debugging or if you want to break everything
+   if (!_unsafe_checked)
+     {
+        if (getenv("EVAS_GL_UNSAFE_EXTENSIONS"))
+          _unsafe = EINA_TRUE;
+     }
+
+   if (_unsafe)
+     return EINA_TRUE;
+
+   func = eina_hash_find(evgl_engine->safe_extensions, name);
+   if (!func) return EINA_FALSE;
+
+   // this is for safe extensions of which we didn't resolve the address
+   if (func == (void *) 0x1)
+     {
+        if (pfuncptr) *pfuncptr = NULL;
+        return EINA_TRUE;
+     }
+
+   if (pfuncptr) *pfuncptr = func;
+   return EINA_TRUE;
 }
 
 int

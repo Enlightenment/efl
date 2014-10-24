@@ -31,9 +31,10 @@ int          evgl_context_destroy(void *eng_data, EVGL_Context *ctx);
 int          evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx);
 
 const char  *evgl_string_query(int name);
-void        *evgl_proc_address_get(const char *name);
 int          evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns);
 Evas_GL_API *evgl_api_get(Evas_GL_Context_Version version);
+void         evgl_safe_extension_add(const char *name, void *funcptr);
+Eina_Bool    evgl_safe_extension_get(const char *name, void **pfuncptr);
 
 int          evgl_direct_rendered();
 void         evgl_direct_override_get(int *override, int *force_off);
