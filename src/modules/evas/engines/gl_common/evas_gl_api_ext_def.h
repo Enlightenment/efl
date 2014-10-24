@@ -51,6 +51,10 @@
 # define _EVASGL_EXT_WHITELIST_ONLY 1
 #endif
 
+#ifndef _EVASGL_EXT_FUNCTION_WHITELIST
+# define _EVASGL_EXT_FUNCTION_WHITELIST(name)
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GL/GLES EXTENSIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1092,15 +1096,108 @@ _EVASGL_EXT_END()
 #if _EVASGL_EXT_WHITELIST_ONLY
 
 // TODO: Remove this function. Not actually supported. Just for debugging.
-_EVASGL_EXT_BEGIN(ARB_blend_func_extended)
-        _EVASGL_EXT_DRVNAME(GL_ARB_blend_func_extended)
+_EVASGL_EXT_BEGIN(debug)
+_EVASGL_EXT_DRVNAME(GL_KHR_debug)
 
-        _EVASGL_EXT_FUNCTION_BEGIN(int, glGetFragDataIndex, (uint program, const char * name))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glGetFragDataIndex")
-        _EVASGL_EXT_FUNCTION_END()
+_EVASGL_EXT_FUNCTION_WHITELIST("glDebugMessageControl")
+_EVASGL_EXT_FUNCTION_WHITELIST("glDebugMessageControlKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glDebugMessageInsert")
+_EVASGL_EXT_FUNCTION_WHITELIST("glDebugMessageInsertKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glDebugMessageCallback")
+_EVASGL_EXT_FUNCTION_WHITELIST("glDebugMessageCallbackKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetDebugMessageLog")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetDebugMessageLogKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetPointerv")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetPointervKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glPushDebugGroup")
+_EVASGL_EXT_FUNCTION_WHITELIST("glPushDebugGroupKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glPopDebugGroup")
+_EVASGL_EXT_FUNCTION_WHITELIST("glPopDebugGroupKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glObjectLabel")
+_EVASGL_EXT_FUNCTION_WHITELIST("glObjectLabelKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectLabel")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectLabelKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glObjectPtrLabel")
+_EVASGL_EXT_FUNCTION_WHITELIST("glObjectPtrLabelKHR")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectPtrLabel")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectPtrLabelKHR")
+
+_EVASGL_EXT_END()
+
+
+_EVASGL_EXT_BEGIN(debug_label)
+_EVASGL_EXT_DRVNAME(GL_EXT_debug_label)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glLabelObject")
+_EVASGL_EXT_FUNCTION_WHITELIST("glLabelObjectEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectLabel")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectLabelEXT")
+
+_EVASGL_EXT_END()
+
+
+_EVASGL_EXT_BEGIN(debug_marker)
+_EVASGL_EXT_DRVNAME(GL_EXT_debug_marker)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glInsertEventMarker")
+_EVASGL_EXT_FUNCTION_WHITELIST("glInsertEventMarkerEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glPushGroupMarker")
+_EVASGL_EXT_FUNCTION_WHITELIST("glPushGroupMarkerEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glPopGroupMarker")
+_EVASGL_EXT_FUNCTION_WHITELIST("glPopGroupMarkerEXT")
+
 _EVASGL_EXT_END()
 
 #endif // _EVASGL_EXT_WHITELIST_ONLY ("safe" extensions)
+
+#if 0
+// requested extensions
+/* GL_EXT_debug_marker */
+void (*glPushGroupMarkerEXT)(int len, const char* name);
+void (*glPopGroupMarkerEXT)();
+
+
+/* GL_QCOM_alpha_test */
+void (*glAlphaFuncQCOM)(GLenum func, GLfloat ref);
+
+
+/* GL_EXT_disjoint_timer_query */
+void (*glQueryCounterEXT)(GLuint target, GLuint id);
+void (*glGetQueryObjectui64vEXT)(GLuint id, GLuint pname, EvasGLuint64* params);
+
+
+/* GL_EXT_occlusion_query_boolean */
+void (*glGenQueriesEXT)(GLsizei n, GLuint* ids);
+void (*glDeleteQueriesEXT)(GLsizei n, const GLuint* ids);
+void (*glBeginQueryEXT) (GLenum target, GLuint id);
+void (*glEndQueryEXT) (GLenum target);
+void (*glGetQueryObjectuivEXT)(GLuint id, GLenum pname, GLuint* params);
+
+
+/* GL_NV_draw_buffers */
+void (*glDrawBuffersNV)(GLsizei n, const GLenum* bufs);
+
+
+/* GL_NV_read_buffer */
+void (*glReadBufferNV) (GLenum mode);
+
+
+/* GL_NV_framebuffer_blit */
+void (*glBlitFramebufferNV) (int srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

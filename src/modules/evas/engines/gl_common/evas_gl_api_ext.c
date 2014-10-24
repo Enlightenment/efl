@@ -325,8 +325,14 @@ re->info->info.screen);
      } \
    else evgl_safe_extension_add(name, NULL);
 
+#ifdef _EVASGL_EXT_FUNCTION_WHITELIST
+# undef _EVASGL_EXT_FUNCTION_WHITELIST
+#endif
+#define _EVASGL_EXT_FUNCTION_WHITELIST(name) evgl_safe_extension_add(name, NULL);
+
 #include "evas_gl_api_ext_def.h"
 
+#undef _EVASGL_EXT_FUNCTION_WHITELIST
 #undef _EVASGL_EXT_CHECK_SUPPORT
 #undef _EVASGL_EXT_DISCARD_SUPPORT
 #undef _EVASGL_EXT_BEGIN
