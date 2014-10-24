@@ -1202,10 +1202,15 @@ eng_gl_string_query(void *data, int name)
    return evgl_string_query(name);
 }
 
-// Need to deprecate this function..
 static void *
-eng_gl_proc_address_get(void *data EINA_UNUSED, const char *name EINA_UNUSED)
+eng_gl_proc_address_get(void *data, const char *name)
 {
+   Render_Engine_GL_Generic *re = data;
+   EVGLINIT(re, NULL);
+
+   if (re->evgl_funcs && re->evgl_funcs->proc_address_get)
+     return re->evgl_funcs->proc_address_get(name);
+
    return NULL;
 }
 
