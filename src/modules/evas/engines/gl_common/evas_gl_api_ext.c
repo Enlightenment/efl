@@ -23,6 +23,7 @@ char _gl_ext_string[10240] = { 0 };
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) ret (*glextsym_##name) param = NULL;
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -34,6 +35,7 @@ char _gl_ext_string[10240] = { 0 };
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +49,7 @@ char _gl_ext_string[10240] = { 0 };
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -58,6 +61,7 @@ char _gl_ext_string[10240] = { 0 };
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -311,6 +315,9 @@ re->info->info.screen);
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name) \
    if ((*drvfunc) == NULL) *drvfunc = name;
 
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name) \
+   if ((*drvfunc) == NULL) *drvfunc = GETPROCADDR(name);
+
 #include "evas_gl_api_ext_def.h"
 
 #undef _EVASGL_EXT_CHECK_SUPPORT
@@ -321,6 +328,7 @@ re->info->info.screen);
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 
 #undef GETPROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -343,6 +351,7 @@ re->info->info.screen);
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -354,6 +363,7 @@ re->info->info.screen);
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -391,6 +401,7 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 #define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_PRIVATE_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -404,6 +415,7 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 #undef ORD
 

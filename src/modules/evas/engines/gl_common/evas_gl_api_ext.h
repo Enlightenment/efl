@@ -27,6 +27,7 @@
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) extern ret (*glextsym_##name) param;
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -38,6 +39,7 @@
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXT_FUNC(fname) glextsym_##fname
 
@@ -53,6 +55,7 @@
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
 
 #include "evas_gl_api_ext_def.h"
 
@@ -64,6 +67,7 @@
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXTENSION_SUPPORT(name) (_gl_ext_support_##name == 1)
 
