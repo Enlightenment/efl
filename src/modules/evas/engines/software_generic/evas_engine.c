@@ -2559,7 +2559,7 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
 }
 
 // FIXME!!! Implement later
-static void *
+static const char *
 eng_gl_string_query(void *data EINA_UNUSED, int name EINA_UNUSED)
 {
    return NULL;

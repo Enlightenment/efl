@@ -517,7 +517,7 @@ evas_gl_string_query(Evas_GL *evas_gl, int name)
    return "";
    MAGIC_CHECK_END();
 
-   return (const char *)evas_gl->evas->engine.func->gl_string_query(evas_gl->evas->engine.data.output, name);
+   return evas_gl->evas->engine.func->gl_string_query(evas_gl->evas->engine.data.output, name);
 }
 
 EAPI Evas_GL_Func

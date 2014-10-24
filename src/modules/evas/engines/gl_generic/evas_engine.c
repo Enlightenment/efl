@@ -1199,11 +1199,11 @@ eng_gl_rotation_angle_get(void *data)
    return evgl_engine->funcs->rotation_angle_get(data);
 }
 
-static void *
+static const char *
 eng_gl_string_query(void *data, int name)
 {
    EVGLINIT(data, NULL);
-   return (void *)evgl_string_query(name);
+   return evgl_string_query(name);
 }
 
 // Need to deprecate this function..
