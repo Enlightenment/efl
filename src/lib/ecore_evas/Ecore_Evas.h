@@ -1192,7 +1192,7 @@ EAPI void            ecore_evas_wayland_type_set(Ecore_Evas *ee, int type);
 EAPI Ecore_Wl_Window *ecore_evas_wayland_window_get(const Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h);
-EAPI Ecore_Evas     *ecore_evas_gl_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h);
+EAPI Ecore_Evas     *ecore_evas_gl_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h); /** @since 1.12 */
 
 /**
  * @brief Create a new @c Ecore_Evas canvas bound to the Evas
