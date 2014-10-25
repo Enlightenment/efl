@@ -34,7 +34,7 @@
 
 #define ECORE_EXE_WIN32_TIMEOUT 3000
 
-static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
+static int run_pri = NORMAL_PRIORITY_CLASS;
 
 static Eina_Bool
 _ecore_exe_close_cb(void *data,
