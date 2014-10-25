@@ -21,6 +21,69 @@ static Ecore_X_Window *ignore_list = NULL;
  * Functions that can be used to create an X window.
  */
 
+EAPI Ecore_X_Window
+ecore_x_window_full_new(Ecore_X_Window parent,
+                        int x,
+                        int y,
+                        int w,
+                        int h,
+                        Ecore_X_Visual *visual,
+                        Ecore_X_Colormap colormap,
+                        int depth,
+                        Eina_Bool override)
+{
+   Window win;
+   XSetWindowAttributes attr;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (parent == 0)
+     parent = DefaultRootWindow(_ecore_x_disp);
+
+   attr.backing_store = NotUseful;
+   attr.override_redirect = override;
+   attr.border_pixel = 0;
+   attr.background_pixmap = None;
+   attr.bit_gravity = NorthWestGravity;
+   attr.win_gravity = NorthWestGravity;
+   attr.save_under = False;
+   attr.do_not_propagate_mask = NoEventMask;
+   attr.colormap = (Colormap)colormap;
+   attr.event_mask = KeyPressMask |
+     KeyReleaseMask |
+     ButtonPressMask |
+     ButtonReleaseMask |
+     EnterWindowMask |
+     LeaveWindowMask |
+     PointerMotionMask |
+     ExposureMask |
+     VisibilityChangeMask |
+     StructureNotifyMask |
+     FocusChangeMask |
+     PropertyChangeMask |
+     ColormapChangeMask;
+   win = XCreateWindow(_ecore_x_disp, parent,
+                       x, y, w, h, 0,
+                       depth,
+                       InputOutput,
+                       (Visual *)visual,
+                       CWBackingStore |
+                       CWOverrideRedirect |
+                       (colormap ? CWColormap : 0) |
+                       CWBorderPixel |
+                       CWBackPixmap |
+                       CWSaveUnder |
+                       CWDontPropagate |
+                       CWEventMask |
+                       CWBitGravity |
+                       CWWinGravity,
+                       &attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (parent == DefaultRootWindow(_ecore_x_disp))
+     ecore_x_window_defaults_set(win);
+
+   return win;
+}
+
 /**
  * Creates a new window.
  * @param   parent The parent window to use.  If @p parent is @c 0, the root

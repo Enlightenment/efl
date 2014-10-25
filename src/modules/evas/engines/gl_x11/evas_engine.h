@@ -61,16 +61,15 @@ extern int _evas_engine_GL_X11_log_dom ;
 struct _Outbuf
 {
 #ifdef GL_GLES
-   EGLContext       egl_context[1];
-   EGLSurface       egl_surface[1];
+   EGLContext       egl_context[2];
+   EGLSurface       egl_surface[2];
    EGLConfig        egl_config;
    EGLDisplay       egl_disp;
 #else
    GLXContext       context;
    GLXWindow        glxwin;
-
    struct {
-      unsigned int loose_binding : 1;
+      Eina_Bool     loose_binding : 1;
    } detected;
 #endif
 
@@ -202,4 +201,8 @@ _re_wincheck(Outbuf *ob)
    return 0;
 }
 
+#ifndef GL_GLES
+Eina_Bool __glXMakeContextCurrent(Display *disp, GLXDrawable glxwin,
+                                  GLXContext context);
+#endif
 #endif

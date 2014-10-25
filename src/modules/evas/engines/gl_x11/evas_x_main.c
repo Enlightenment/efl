@@ -5,6 +5,8 @@ static Eina_TLS _context_key = 0;
 
 #ifdef GL_GLES
 typedef EGLContext GLContext;
+static EGLConfig fbconf = 0;
+static EGLConfig rgba_fbconf = 0;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
 typedef GLXContext GLContext;
@@ -12,9 +14,6 @@ static Eina_TLS _rgba_context_key = 0;
 static GLXFBConfig fbconf = 0;
 static GLXFBConfig rgba_fbconf = 0;
 #endif
-
-// fixme: something is up/wrong here - dont know what tho...
-//#define NEWGL 1
 
 static XVisualInfo *_evas_gl_x11_vi = NULL;
 static XVisualInfo *_evas_gl_x11_rgba_vi = NULL;
@@ -95,6 +94,13 @@ _tls_rgba_context_set(GLXContext ctx)
    if (!initted) eng_init();
    return eina_tls_set(_rgba_context_key, ctx);
 }
+
+Eina_Bool
+__glXMakeContextCurrent(Display *disp, GLXDrawable glxwin, GLXContext context)
+{
+   if (!glXMakeContextCurrent(disp, glxwin, glxwin, context)) return EINA_FALSE;
+   return EINA_TRUE;
+}
 #endif
 
 Outbuf *
@@ -117,17 +123,14 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    GLContext context;
 #ifdef GL_GLES
    int context_attrs[3];
-   int config_attrs[40];
    int major_version, minor_version;
-   int num_config, n = 0;
 #else
-# ifdef NEWGL
    GLXContext rgbactx;
-# endif
 #endif
    const GLubyte *vendor, *renderer, *version;
    int blacklist = 0;
 
+   if (!fbconf) eng_best_visual_get(info);
    if (!_evas_gl_x11_vi) return NULL;
 
    gw = calloc(1, sizeof(Outbuf));
@@ -159,36 +162,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
 
-   config_attrs[n++] = EGL_SURFACE_TYPE;
-   config_attrs[n++] = EGL_WINDOW_BIT;
-   config_attrs[n++] = EGL_RENDERABLE_TYPE;
-   config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-# if 0
-// FIXME: n900 - omap3 sgx libs break here
-   config_attrs[n++] = EGL_RED_SIZE;
-   config_attrs[n++] = 1;
-   config_attrs[n++] = EGL_GREEN_SIZE;
-   config_attrs[n++] = 1;
-   config_attrs[n++] = EGL_BLUE_SIZE;
-   config_attrs[n++] = 1;
-// FIXME: end n900 breakage
-# endif
-   if (gw->alpha)
-     {
-        config_attrs[n++] = EGL_ALPHA_SIZE;
-        config_attrs[n++] = 1;
-     }
-   else
-     {
-        config_attrs[n++] = EGL_ALPHA_SIZE;
-        config_attrs[n++] = 0;
-     }
-   config_attrs[n++] = EGL_DEPTH_SIZE;
-   config_attrs[n++] = 0;
-   config_attrs[n++] = EGL_STENCIL_SIZE;
-   config_attrs[n++] = 0;
-   config_attrs[n++] = EGL_NONE;
-   
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
@@ -210,19 +183,15 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         return NULL;
      }
 
-   num_config = 0;
-   if (!eglChooseConfig(gw->egl_disp, config_attrs, &gw->egl_config,
-                        1, &num_config) || (num_config != 1))
-     {
-        ERR("eglChooseConfig() fail. code=%#x", eglGetError());
-        eng_window_free(gw);
-        return NULL;
-     }
+   if (gw->alpha) gw->egl_config = rgba_fbconf;
+   else gw->egl_config = fbconf;
+
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
+        printf("surf creat fail! %x\n", eglGetError());
         ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
             (unsigned int)gw->win, eglGetError());
         eng_window_free(gw);
@@ -287,7 +256,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    context = _tls_context_get();
    if (!context)
      {
-#ifdef NEWGL
         if (indirect)
           context = glXCreateNewContext(gw->disp, fbconf,
                                         GLX_RGBA_TYPE, NULL,
@@ -296,15 +264,8 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
           context = glXCreateNewContext(gw->disp, fbconf,
                                         GLX_RGBA_TYPE, NULL,
                                         GL_TRUE);
-#else
-        if (indirect)
-          context = glXCreateContext(gw->disp, gw->visualinfo, NULL, GL_FALSE);
-        else
-          context = glXCreateContext(gw->disp, gw->visualinfo, NULL, GL_TRUE);
-#endif
         _tls_context_set(context);
      }
-#ifdef NEWGL
    rgbactx = _tls_rgba_context_get();
    if ((gw->alpha) && (!rgbactx))
      {
@@ -331,9 +292,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 
    if (gw->alpha) gw->context = rgbactx;
    else gw->context = context;
-#else
-   gw->context = context;
-#endif
 
    if (!gw->context)
      {
@@ -341,142 +299,122 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
-   if (gw->context)
+   if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
      {
-        if (gw->glxwin)
-          {
-             if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
-                                        gw->context))
-               {
-                  ERR("glXMakeContextCurrent(%p, %p, %p, %p) failed",
-                      (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin,
-                      (void *)gw->context);
-                  eng_window_free(gw);
-                  return NULL;
-               }
-          }
-        else
-          {
-             if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
-               {
-                  ERR("glXMakeCurrent(%p, 0x%x, %p) failed", (void *)gw->disp,
-                      (unsigned int)gw->win, (void *)gw->context);
-                  eng_window_free(gw);
-                  return NULL;
-               }
-          }
+        ERR("glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
+        eng_window_free(gw);
+        return NULL;
+     }
+   // FIXME: move this up to context creation
 
-        // FIXME: move this up to context creation
-
-        vendor = glGetString(GL_VENDOR);
-        renderer = glGetString(GL_RENDERER);
-        version = glGetString(GL_VERSION);
-        if (getenv("EVAS_GL_INFO"))
-          {
-             fprintf(stderr, "vendor: %s\n", vendor);
-             fprintf(stderr, "renderer: %s\n", renderer);
-             fprintf(stderr, "version: %s\n", version);
-          }
-        //   examples:
-        // vendor: NVIDIA Corporation
-        // renderer: NVIDIA Tegra
-        // version: OpenGL ES 2.0
-        //   or
-        // vendor: Imagination Technologies
-        // renderer: PowerVR SGX 540
-        // version: OpenGL ES 2.0
-        //   or
-        // vendor: NVIDIA Corporation
-        // renderer: GeForce GT 330M/PCI/SSE2
-        // version: 3.3.0 NVIDIA 256.53
-        //   or
-        // vendor: NVIDIA Corporation
-        // renderer: GeForce GT 220/PCI/SSE2
-        // version: 3.2.0 NVIDIA 195.36.24
-        //   or
-        // vendor: NVIDIA Corporation
-        // renderer: GeForce 8600 GTS/PCI/SSE2
-        // version: 3.3.0 NVIDIA 260.19.36
-        //   or
-        // vendor: ATI Technologies Inc.
-        // renderer: ATI Mobility Radeon HD 4650
-        // version: 3.2.9756 Compatibility Profile Context
-        //   or
-        // vendor: Tungsten Graphics, Inc
-        // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT x86/MMX/SSE2
-        // version: 2.1 Mesa 7.9-devel
-        //   or
-        // vendor: Advanced Micro Devices, Inc.
-        // renderer: Mesa DRI R600 (RS780 9610) 20090101  TCL DRI2
-        // version: 2.1 Mesa 7.9-devel
-        //   or
-        // vendor: NVIDIA Corporation
-        // renderer: GeForce 9600 GT/PCI/SSE2
-        // version: 3.3.0 NVIDIA 260.19.29
-        //   or
-        // vendor: ATI Technologies Inc.
-        // renderer: ATI Radeon HD 4800 Series
-        // version: 3.3.10237 Compatibility Profile Context
-        //   or
-        // vendor: Advanced Micro Devices, Inc.
-        // renderer: Mesa DRI R600 (RV770 9442) 20090101  TCL DRI2
-        // version: 2.0 Mesa 7.8.2
-        //   or
-        // vendor: Tungsten Graphics, Inc
-        // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT
-        // version: 2.1 Mesa 7.9-devel
-        //   or (bad - software renderer)
-        // vendor: Mesa Project
-        // renderer: Software Rasterizer
-        // version: 2.1 Mesa 7.9-devel
-        //   or (bad - software renderer)
-        // vendor: VMware, Inc.
-        // renderer: Gallium 0.4 on softpipe
-        // version: 2.1 Mesa 7.9-devel
-
-        if (strstr((const char *)vendor, "Mesa Project"))
-          {
-             if (strstr((const char *)renderer, "Software Rasterizer"))
-                blacklist = 1;
-          }
-        if (strstr((const char *)renderer, "softpipe"))
-           blacklist = 1;
-        if (strstr((const char *)renderer, "llvmpipe"))
+   vendor = glGetString(GL_VENDOR);
+   renderer = glGetString(GL_RENDERER);
+   version = glGetString(GL_VERSION);
+   if (getenv("EVAS_GL_INFO"))
+     {
+        fprintf(stderr, "vendor: %s\n", vendor);
+        fprintf(stderr, "renderer: %s\n", renderer);
+        fprintf(stderr, "version: %s\n", version);
+     }
+   //   examples:
+   // vendor: NVIDIA Corporation
+   // renderer: NVIDIA Tegra
+   // version: OpenGL ES 2.0
+   //   or
+   // vendor: Imagination Technologies
+   // renderer: PowerVR SGX 540
+   // version: OpenGL ES 2.0
+   //   or
+   // vendor: NVIDIA Corporation
+   // renderer: GeForce GT 330M/PCI/SSE2
+   // version: 3.3.0 NVIDIA 256.53
+   //   or
+   // vendor: NVIDIA Corporation
+   // renderer: GeForce GT 220/PCI/SSE2
+   // version: 3.2.0 NVIDIA 195.36.24
+   //   or
+   // vendor: NVIDIA Corporation
+   // renderer: GeForce 8600 GTS/PCI/SSE2
+   // version: 3.3.0 NVIDIA 260.19.36
+   //   or
+   // vendor: ATI Technologies Inc.
+   // renderer: ATI Mobility Radeon HD 4650
+   // version: 3.2.9756 Compatibility Profile Context
+   //   or
+   // vendor: Tungsten Graphics, Inc
+   // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT x86/MMX/SSE2
+   // version: 2.1 Mesa 7.9-devel
+   //   or
+   // vendor: Advanced Micro Devices, Inc.
+   // renderer: Mesa DRI R600 (RS780 9610) 20090101  TCL DRI2
+   // version: 2.1 Mesa 7.9-devel
+   //   or
+   // vendor: NVIDIA Corporation
+   // renderer: GeForce 9600 GT/PCI/SSE2
+   // version: 3.3.0 NVIDIA 260.19.29
+   //   or
+   // vendor: ATI Technologies Inc.
+   // renderer: ATI Radeon HD 4800 Series
+   // version: 3.3.10237 Compatibility Profile Context
+   //   or
+   // vendor: Advanced Micro Devices, Inc.
+   // renderer: Mesa DRI R600 (RV770 9442) 20090101  TCL DRI2
+   // version: 2.0 Mesa 7.8.2
+   //   or
+   // vendor: Tungsten Graphics, Inc
+   // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT
+   // version: 2.1 Mesa 7.9-devel
+   //   or (bad - software renderer)
+   // vendor: Mesa Project
+   // renderer: Software Rasterizer
+   // version: 2.1 Mesa 7.9-devel
+   //   or (bad - software renderer)
+   // vendor: VMware, Inc.
+   // renderer: Gallium 0.4 on softpipe
+   // version: 2.1 Mesa 7.9-devel
+   // 
+   if (strstr((const char *)vendor, "Mesa Project"))
+     {
+        if (strstr((const char *)renderer, "Software Rasterizer"))
           blacklist = 1;
-        if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
+     }
+   if (strstr((const char *)renderer, "softpipe"))
+     blacklist = 1;
+   if (strstr((const char *)renderer, "llvmpipe"))
+     blacklist = 1;
+   if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
+     {
+        WRN("OpenGL Driver blacklisted:");
+        WRN("Vendor: %s", (const char *)vendor);
+        WRN("Renderer: %s", (const char *)renderer);
+        WRN("Version: %s", (const char *)version);
+        eng_window_free(gw);
+        return NULL;
+     }
+   if (strstr((const char *)vendor, "NVIDIA"))
+     {
+        if (!strstr((const char *)renderer, "NVIDIA Tegra"))
           {
-             WRN("OpenGL Driver blacklisted:");
-             WRN("Vendor: %s", (const char *)vendor);
-             WRN("Renderer: %s", (const char *)renderer);
-             WRN("Version: %s", (const char *)version);
-             eng_window_free(gw);
-             return NULL;
-          }
-        if (strstr((const char *)vendor, "NVIDIA"))
-          {
-             if (!strstr((const char *)renderer, "NVIDIA Tegra"))
-               {
-                  int v1 = 0, v2 = 0, v3 = 0;
+             int v1 = 0, v2 = 0, v3 = 0;
 
+             if (sscanf((const char *)version,
+                        "%*s %*s %i.%i.%i",
+                        &v1, &v2, &v3) != 3)
+               {
+                  v1 = v2 = v3 = 0;
                   if (sscanf((const char *)version,
-                             "%*s %*s %i.%i.%i",
-                             &v1, &v2, &v3) != 3)
-                    {
-                       v1 = v2 = v3 = 0;
-                       if (sscanf((const char *)version,
-                                  "%*s %*s %i.%i",
-                                  &v1, &v2) != 2)
-                          v1 = 0;
-                    }
-                  // ALSO as of some nvidia driver version loose binding is
-                  // probably not needed
-                  if (v1 < 195) gw->detected.loose_binding = 1;
+                             "%*s %*s %i.%i",
+                             &v1, &v2) != 2)
+                    v1 = 0;
                }
+             // ALSO as of some nvidia driver version loose binding is
+             // probably not needed
+             if (v1 < 195) gw->detected.loose_binding = 1;
           }
-        else
-          {
-             // noothing yet. add more cases and options over time
-          }
+     }
+   else
+     {
+        // noothing yet. add more cases and options over time
      }
 #endif
 
@@ -495,8 +433,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
    return gw;
-// unused warnign handled in mcro above 
-//   (void) (indirect = 0);
 }
 
 void
@@ -531,13 +467,16 @@ eng_window_free(Outbuf *gw)
         eglTerminate(gw->egl_disp);
         eglReleaseThread();
         _tls_context_set(EGL_NO_CONTEXT);
+        free(_evas_gl_x11_vi);
+        free(_evas_gl_x11_rgba_vi);
+        fbconf = 0;
+        rgba_fbconf = 0;
+        _evas_gl_x11_vi = NULL;
+        _evas_gl_x11_rgba_vi = NULL;
      }
 #else
-   if (gw->glxwin)
-     {
-        glXMakeContextCurrent(gw->disp, 0, 0, gw->context);
-        glXDestroyWindow(gw->disp, gw->glxwin);
-     }
+   __glXMakeContextCurrent(gw->disp, 0, gw->context);
+   glXDestroyWindow(gw->disp, gw->glxwin);
    if (ref == 0)
      {
         GLXContext rgbactx = _tls_rgba_context_get();
@@ -548,10 +487,14 @@ eng_window_free(Outbuf *gw)
           }
         if (context) glXDestroyContext(gw->disp, context);
         if (rgbactx) glXDestroyContext(gw->disp, rgbactx);
+        free(_evas_gl_x11_vi);
+        free(_evas_gl_x11_rgba_vi);
         _tls_context_set(0);
         _tls_rgba_context_set(0);
         fbconf = 0;
         rgba_fbconf = 0;
+        _evas_gl_x11_vi = NULL;
+        _evas_gl_x11_rgba_vi = NULL;
      }
    else if (!gw->glxwin)
      {
@@ -581,26 +524,15 @@ eng_window_make_current(void *data, void *doit)
 #else
    if (doit)
      {
-        if (gw->glxwin)
+        if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
           {
-             if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, gw->context))
-               {
-                  ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
-                  return EINA_FALSE;
-               }
-          }
-        else
-          {
-             if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
-               {
-                  ERR("glXMakeCurrent(%p, 0x%x, %p) failed", gw->disp, (unsigned int)gw->win, (void *)gw->context);
-                  return EINA_FALSE;
-               }
+             ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
+             return EINA_FALSE;
           }
      }
    else
      {
-        if (!glXMakeCurrent(gw->disp, None, NULL))
+        if (!__glXMakeContextCurrent(gw->disp, 0, NULL))
           return EINA_FALSE;
      }
 #endif
@@ -664,20 +596,9 @@ eng_window_use(Outbuf *gw)
                }
 // GLX
 #else
-             if (gw->glxwin)
+             if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
                {
-                  if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
-                                             gw->context))
-                    {
-                       ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
-                    }
-               }
-             else
-               {
-                  if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
-                    {
-                       ERR("glXMakeCurrent(%p, 0x%x, %p) failed", gw->disp, (unsigned int)gw->win, (void *)gw->context);
-                    }
+                  ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
                }
 #endif
           }
@@ -690,8 +611,7 @@ eng_window_unsurf(Outbuf *gw)
 {
    if (!gw->surf) return;
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
-   if (getenv("EVAS_GL_INFO"))
-      printf("unsurf %p\n", gw);
+   if (getenv("EVAS_GL_INFO")) printf("unsurf %p\n", gw);
 
 #ifdef GL_GLES
    Outbuf *xwin;
@@ -712,12 +632,9 @@ eng_window_unsurf(Outbuf *gw)
      }
 #else
    if (gw->glxwin)
-      {
-         glXDestroyWindow(gw->disp, gw->glxwin);
-         gw->glxwin = 0;
-      }
-   else
      {
+        glXDestroyWindow(gw->disp, gw->glxwin);
+        gw->glxwin = 0;
      }
 #endif
    gw->surf = 0;
@@ -727,8 +644,7 @@ void
 eng_window_resurf(Outbuf *gw)
 {
    if (gw->surf) return;
-   if (getenv("EVAS_GL_INFO"))
-      printf("resurf %p\n", gw);
+   if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
 #ifdef GL_GLES
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
@@ -747,22 +663,14 @@ eng_window_resurf(Outbuf *gw)
         ERR("eglMakeCurrent() failed!");
      }
 #else
-#ifdef NEWGL
    if (gw->alpha)
      gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
    else
      gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
-   if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
-                              gw->context))
+   if (!__glXMakeContextCurrent(gw->disp, gw->glxwin, gw->context))
      {
-        ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
+        ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
      }
-#else
-   if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
-     {
-        ERR("glXMakeCurrent(%p, 0x%x, %p) failed", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
-     }
-#endif
 #endif
    gw->surf = 1;
 }
@@ -775,52 +683,159 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
    if (!_evas_gl_x11_vi)
      {
         int alpha;
-
 // EGL / GLES
 #ifdef GL_GLES
+        EGLDisplay *egl_disp;
+        EGLConfig configs[200];
+        int major_version, minor_version;
+
+        egl_disp = eglGetDisplay((EGLNativeDisplayType)(einfo->info.display));
+        if (!egl_disp) return NULL;
+        if (!eglInitialize(egl_disp, &major_version, &minor_version)) return NULL;
+
         for (alpha = 0; alpha < 2; alpha++)
           {
+             Eina_Bool found;
+             int config_attrs[40], i, n, num;
              int depth = DefaultDepth(einfo->info.display,
                                       einfo->info.screen);
+
+             n = 0;
+             config_attrs[n++] = EGL_SURFACE_TYPE;
+             config_attrs[n++] = EGL_WINDOW_BIT;
+             config_attrs[n++] = EGL_RENDERABLE_TYPE;
+             config_attrs[n++] = EGL_OPENGL_ES2_BIT;
+# if 0
+             // FIXME: n900 - omap3 sgx libs break here
+             config_attrs[n++] = EGL_RED_SIZE;
+             config_attrs[n++] = 1;
+             config_attrs[n++] = EGL_GREEN_SIZE;
+             config_attrs[n++] = 1;
+             config_attrs[n++] = EGL_BLUE_SIZE;
+             config_attrs[n++] = 1;
+             // FIXME: end n900 breakage
+# endif
              if (alpha)
                {
-                  XVisualInfo *xvi, vi_in;
-                  int nvi, i;
-                  XRenderPictFormat *fmt;
-
-                  vi_in.screen = einfo->info.screen;
-                  vi_in.depth = 32;
-                  vi_in.class = TrueColor;
-                  xvi = XGetVisualInfo(einfo->info.display,
-                                       VisualScreenMask | VisualDepthMask |
-                                       VisualClassMask,
-                                       &vi_in, &nvi);
-                  if (xvi)
-                    {
-                       for (i = 0; i < nvi; i++)
-                         {
-                            fmt = XRenderFindVisualFormat(einfo->info.display,
-                                                          xvi[i].visual);
-                            if ((fmt->type == PictTypeDirect) &&
-                                (fmt->direct.alphaMask))
-                              {
-                                 _evas_gl_x11_rgba_vi =
-                                   calloc(1, sizeof(XVisualInfo));
-                                 if (_evas_gl_x11_rgba_vi)
-                                   memcpy(_evas_gl_x11_rgba_vi,
-                                          &(xvi[i]), sizeof(XVisualInfo));
-                                 break;
-                              }
-                         }
-                       XFree (xvi);
-                    }
+                  config_attrs[n++] = EGL_ALPHA_SIZE;
+                  config_attrs[n++] = 1;
                }
              else
                {
-                  _evas_gl_x11_vi = calloc(1, sizeof(XVisualInfo));
-                  XMatchVisualInfo(einfo->info.display,
-                                   einfo->info.screen, depth, TrueColor,
-                                   _evas_gl_x11_vi);
+                  config_attrs[n++] = EGL_ALPHA_SIZE;
+                  config_attrs[n++] = 0;
+               }
+             config_attrs[n++] = EGL_DEPTH_SIZE;
+             config_attrs[n++] = 0;
+             config_attrs[n++] = EGL_STENCIL_SIZE;
+             config_attrs[n++] = 0;
+             config_attrs[n++] = EGL_NONE;
+             num = 0;
+             if ((!eglChooseConfig(egl_disp, config_attrs, configs, 200, &num))
+                 || (num < 1))
+               {
+                  ERR("eglChooseConfig() can't find any configs");
+                  return NULL;
+               }
+             found = EINA_FALSE;
+             for (i = 0; (i < num) && (!found); i++)
+               {
+                  EGLint val = 0;
+                  VisualID visid = 0;
+                  XVisualInfo *xvi, vi_in;
+                  int nvi, j;
+
+                  if (!eglGetConfigAttrib(egl_disp, configs[i],
+                                          EGL_NATIVE_VISUAL_ID, &val))
+                    continue;
+                  visid = val;
+                  vi_in.screen = einfo->info.screen;
+                  vi_in.visualid = visid;
+                  xvi = XGetVisualInfo(einfo->info.display,
+                                       VisualScreenMask |
+                                       VisualIDMask,
+                                       &vi_in, &nvi);
+                  for (j = 0; j < nvi; j++)
+                    {
+                       if (!alpha)
+                         {
+                            if (xvi[j].depth == depth)
+                              {
+                                 _evas_gl_x11_vi = malloc(sizeof(XVisualInfo));
+                                 if (_evas_gl_x11_vi)
+                                   memcpy(_evas_gl_x11_vi, &(xvi[j]), sizeof(XVisualInfo));
+                                 fbconf = configs[i];
+                                 found = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                       else
+                         {
+                            XRenderPictFormat *fmt;
+
+                            fmt = XRenderFindVisualFormat
+                              (einfo->info.display, xvi[j].visual);
+                            if ((fmt->direct.alphaMask > 0) &&
+                                (fmt->type == PictTypeDirect))
+                              {
+                                 _evas_gl_x11_rgba_vi = malloc(sizeof(XVisualInfo));
+                                 if (_evas_gl_x11_rgba_vi)
+                                   memcpy(_evas_gl_x11_rgba_vi, &(xvi[j]), sizeof(XVisualInfo));
+                                 rgba_fbconf = configs[i];
+                                 found = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                    }
+                  if (xvi) XFree(xvi);
+               }
+             if (!found)
+               {
+                  // this is a less correct fallback if the above fails to
+                  // find the right visuals/configs
+                  if (!alpha)
+                    {
+                       fbconf = configs[0];
+                       _evas_gl_x11_vi = calloc(1, sizeof(XVisualInfo));
+                       if (_evas_gl_x11_vi)
+                         XMatchVisualInfo(einfo->info.display,
+                                          einfo->info.screen, depth, TrueColor,
+                                          _evas_gl_x11_vi);
+                    }
+                  else
+                    {
+                       XVisualInfo *xvi, vi_in;
+                       int nvi, i;
+                       XRenderPictFormat *fmt;
+
+                       rgba_fbconf = configs[0];
+                       vi_in.screen = einfo->info.screen;
+                       vi_in.depth = 32;
+                       vi_in.class = TrueColor;
+                       xvi = XGetVisualInfo(einfo->info.display,
+                                            VisualScreenMask | VisualDepthMask |
+                                            VisualClassMask,
+                                            &vi_in, &nvi);
+                       if (xvi)
+                         {
+                            for (i = 0; i < nvi; i++)
+                              {
+                                 fmt = XRenderFindVisualFormat(einfo->info.display,
+                                                               xvi[i].visual);
+                                 if ((fmt->type == PictTypeDirect) &&
+                                     (fmt->direct.alphaMask))
+                                   {
+                                      _evas_gl_x11_rgba_vi =
+                                        malloc(sizeof(XVisualInfo));
+                                      if (_evas_gl_x11_rgba_vi)
+                                        memcpy(_evas_gl_x11_rgba_vi,
+                                               &(xvi[i]), sizeof(XVisualInfo));
+                                      break;
+                                   }
+                              }
+                            XFree(xvi);
+                         }
+                    }
                }
           }
 // GLX
@@ -882,6 +897,11 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                   visinfo = glXGetVisualFromFBConfig(einfo->info.display,
                                                      configs[i]);
                   if (!visinfo) continue;
+                  if (visinfo->visual->class != TrueColor)
+                    {
+                       XFree(visinfo);
+                       continue;
+                    }
                   if (!alpha)
                     {
                        config = configs[i];
@@ -890,8 +910,8 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                            visinfo->depth)
                          {
                             _evas_gl_x11_vi = malloc(sizeof(XVisualInfo));
-                            memcpy(_evas_gl_x11_vi, visinfo,
-                                   sizeof(XVisualInfo));
+                            if (_evas_gl_x11_vi)
+                              memcpy(_evas_gl_x11_vi, visinfo, sizeof(XVisualInfo));
                             fbconf = config;
                             XFree(visinfo);
                             break;
@@ -906,12 +926,15 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                             XFree(visinfo);
                             continue;
                          }
-                       if (format->direct.alphaMask > 0)
+                       if ((format->direct.alphaMask > 0) &&
+                           (format->type == PictTypeDirect))
                          {
                             config = configs[i];
                             _evas_gl_x11_rgba_vi = malloc(sizeof(XVisualInfo));
-                            memcpy(_evas_gl_x11_rgba_vi, visinfo, sizeof(XVisualInfo));
+                            if (_evas_gl_x11_rgba_vi)
+                              memcpy(_evas_gl_x11_rgba_vi, visinfo, sizeof(XVisualInfo));
                             rgba_fbconf = config;
+                            _evas_gl_x11_rgba_cmap = format->colormap;
                             XFree(visinfo);
                             break;
                          }
@@ -924,14 +947,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
    if (!_evas_gl_x11_vi) return NULL;
    if (einfo->info.destination_alpha)
      {
-// EGL / GLES
-#ifdef GL_GLES
         if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
-#else
-//# ifdef NEWGL
-        if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
-//# endif
-#endif
      }
    return _evas_gl_x11_vi->visual;
 }
@@ -943,7 +959,7 @@ eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo)
    if (!einfo->info.display) return 0;
    if (!_evas_gl_x11_vi) eng_best_visual_get(einfo);
    if (!_evas_gl_x11_vi) return 0;
-   if (einfo->info.destination_alpha)
+   if ((einfo->info.destination_alpha) && (_evas_gl_x11_rgba_vi))
      {
         if (!_evas_gl_x11_rgba_cmap)
           _evas_gl_x11_rgba_cmap =
@@ -1046,24 +1062,11 @@ eng_gl_context_use(Context_3D *ctx)
         ERR("eglMakeCurrent() failed.");
      }
 #else
-   if (ctx->glxwin)
+   if (!__glXMakeContextCurrent(ctx->display, ctx->glxwin, ctx->context))
      {
-        if (!glXMakeContextCurrent(ctx->display, ctx->glxwin,
-                                   ctx->glxwin, ctx->context))
-          {
-             ERR("glXMakeContextCurrent(%p, %p, %p, %p) faild.",
-                 (void *)ctx->display, (void *)ctx->glxwin,
-                 (void *)ctx->glxwin, (void *)ctx->context);
-          }
-     }
-   else
-     {
-        if (!glXMakeCurrent(ctx->display, ctx->win, ctx->context))
-          {
-             ERR("glXMakeCurrent(%p, %p, %p) failed.",
-                 (void *)ctx->display, (void *)ctx->win,
-                 (void *)ctx->context);
-          }
+        ERR("glXMakeContextCurrent(%p, %p, %p, %p) faild.",
+            (void *)ctx->display, (void *)ctx->glxwin,
+            (void *)ctx->win, (void *)ctx->context);
      }
 #endif
 }
@@ -1093,26 +1096,15 @@ eng_outbuf_swap_mode(Outbuf *ob)
 #ifdef GL_GLES
         EGLint age = 0;
 
-        if (!eglQuerySurface(ob->egl_disp,
-                             ob->egl_surface[0],
+        if (!eglQuerySurface(ob->egl_disp, ob->egl_surface[0],
                              EGL_BUFFER_AGE_EXT, &age))
           age = 0;
 #else
         unsigned int age = 0;
 
         if (glsym_glXQueryDrawable)
-          {
-             if (ob->glxwin)
-               glsym_glXQueryDrawable(ob->disp,
-                                      ob->glxwin,
-                                      GLX_BACK_BUFFER_AGE_EXT,
-                                      &age);
-             else
-               glsym_glXQueryDrawable(ob->disp,
-                                      ob->win,
-                                      GLX_BACK_BUFFER_AGE_EXT,
-                                      &age);
-          }
+          glsym_glXQueryDrawable(ob->disp, ob->glxwin,
+                                 GLX_BACK_BUFFER_AGE_EXT, &age);
 #endif
         if (age == 1) swap_mode = MODE_COPY;
         else if (age == 2) swap_mode = MODE_DOUBLE;
@@ -1135,7 +1127,7 @@ eng_outbuf_region_first_rect(Outbuf *ob)
 
    glsym_evas_gl_preload_render_lock(eng_preload_make_current, ob);
 #ifdef GL_GLES
-             // dont need to for egl - eng_window_use() can check for other ctxt's
+   // dont need to for egl - eng_window_use() can check for other ctxt's
 #else
    eng_window_use(NULL);
 #endif
@@ -1346,7 +1338,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
      }
    // XXX: if partial swaps can be done use re->rects
 //   measure(0, "swap");
-   glXSwapBuffers(ob->disp, ob->win);
+   glXSwapBuffers(ob->disp, ob->glxwin);
 //   measure(1, "swap");
    if (ob->info->callback.post_swap)
      {

@@ -480,22 +480,11 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                   return 0;
                }
           }
-
-        if (argb)
-          {
-             if (override)
-               win = ecore_x_window_override_argb_new(parent, x, y, w, h);
-             else
-               win = ecore_x_window_argb_new(parent, x, y, w, h);
-          }
-        else
-          {
-             if (override)
-               win = ecore_x_window_override_new(parent, x, y, w, h);
-             else
-               win = ecore_x_window_new(parent, x, y, w, h);
-          }
-
+        win = ecore_x_window_full_new(parent, x, y, w, h,
+                                      einfo->info.visual,
+                                      einfo->info.colormap,
+                                      einfo->info.depth,
+                                      override);
         ecore_x_window_pixel_gravity_set(win, ECORE_X_GRAVITY_FORGET);
         ecore_x_vsync_animator_tick_source_set(win);
 

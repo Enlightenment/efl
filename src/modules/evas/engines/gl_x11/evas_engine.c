@@ -271,7 +271,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
    if ((!context) && (!surface))
      {
-        ret = glXMakeCurrent(eng_get_ob(re)->info->info.display, None, NULL);
+        ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display, 0, NULL);
         if (!ret)
           {
              ERR("glXMakeCurrent() failed!");
@@ -289,8 +289,13 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         if (flush) eng_window_use(NULL);
 
         // Do a make current
-        ret = glXMakeCurrent(eng_get_ob(re)->info->info.display, sfc, ctx);
-
+        if ((sfc == eng_get_ob(re)->win) ||
+            (sfc == eng_get_ob(re)->glxwin))
+          ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display,
+                                        eng_get_ob(re)->glxwin, ctx);
+        else
+          ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display,
+                                        sfc, ctx);
         if (!ret)
           {
              ERR("glXMakeCurrent() failed. Ret: %d! Context: %p Surface: %p", ret, (void*)ctx, (void*)sfc);
@@ -331,8 +336,8 @@ evgl_eng_native_window_create(void *data)
    attr.event_mask = 0; 
 
    win = XCreateWindow(eng_get_ob(re)->info->info.display,
-                       DefaultRootWindow(eng_get_ob(re)->info->info.display),
-                       0, 0, 2, 2, 0,
+                       eng_get_ob(re)->win,
+                       -20, -20, 2, 2, 0,
                        CopyFromParent, InputOutput, CopyFromParent, 
                        CWBackingStore | CWOverrideRedirect |
                        CWBorderPixel | CWBackPixmap |
@@ -403,6 +408,7 @@ evgl_eng_window_surface_create(void *data, void *native_window EINA_UNUSED)
    if (!surface)
      {
         ERR("Creating window surface failed. Error: %#x.", eglGetError());
+        abort();
         return NULL;
      }
 
@@ -1445,7 +1451,11 @@ eng_setup(Evas *eo_e, void *in)
                                       info->info.destination_alpha,
                                       info->info.rotation,
                                       swap_mode);
-
+                  if (!ob)
+                    {
+                       free(re);
+                       return 0;
+                    }
                   eng_window_use(ob);
                   if (ob)
                     {
@@ -1561,7 +1571,7 @@ eng_preload_make_current(void *data, void *doit)
         if (!eglMakeCurrent(ob->egl_disp, ob->egl_surface[0], ob->egl_surface[0], ob->egl_context[0]))
           return EINA_FALSE;
 #else
-        if (!glXMakeCurrent(ob->info->info.display, ob->win, ob->context))
+        if (!__glXMakeContextCurrent(ob->info->info.display, ob->glxwin, ob->context))
           {
              ERR("glXMakeCurrent(%p, 0x%x, %p) failed", ob->info->info.display, (unsigned int)ob->win, (void *)ob->context);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -1575,7 +1585,7 @@ eng_preload_make_current(void *data, void *doit)
         if (!eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
           return EINA_FALSE;
 #else
-        if (!glXMakeCurrent(ob->info->info.display, None, NULL))
+        if (!__glXMakeContextCurrent(ob->info->info.display, 0, NULL))
           {
              ERR("glXMakeCurrent(%p, None, NULL) failed", ob->info->info.display);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");

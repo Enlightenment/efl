@@ -1469,6 +1469,17 @@ EAPI Ecore_X_Atom              ecore_x_dnd_source_action_get(void);
 EAPI void                      ecore_x_dnd_callback_pos_update_set(void (*cb)(void *, Ecore_X_Xdnd_Position *data), const void *data);
 EAPI Eina_Bool                 ecore_x_dnd_abort(Ecore_X_Window xwin_source); /**< @since 1.9 */
 
+EAPI Ecore_X_Window
+   ecore_x_window_full_new(Ecore_X_Window parent,
+                           int x,
+                           int y,
+                           int w,
+                           int h,
+                           Ecore_X_Visual *visual,
+                           Ecore_X_Colormap colormap,
+                           int depth,
+                           Eina_Bool override); /**< @since 1.12 */
+
 EAPI Ecore_X_Window            ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window            ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI int                       ecore_x_window_argb_get(Ecore_X_Window win);

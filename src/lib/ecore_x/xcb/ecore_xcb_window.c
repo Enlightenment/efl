@@ -51,6 +51,68 @@ void *_ecore_xcb_window_grab_replay_data;
  * Functions that can be used to create an X window.
  */
 
+EAPI Ecore_X_Window
+ecore_x_window_full_new(Ecore_X_Window parent,
+                        int x,
+                        int y,
+                        int w,
+                        int h,
+                        Ecore_X_Visual *visual,
+                        Ecore_X_Colormap colormap,
+                        int depth,
+                        Eina_Bool override)
+{
+   Ecore_X_Window win;
+   uint32_t mask, mask_list[10];
+   xcb_visualtype_t *vis;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+   if (parent == 0)
+     parent = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+
+   vis = (xcb_visualtype_t *)visual;
+
+   /* NB: Order here is very important due to xcb_cw_t enum */
+   mask = (XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL | XCB_CW_BIT_GRAVITY |
+           XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE |
+           XCB_CW_OVERRIDE_REDIRECT | XCB_CW_SAVE_UNDER | XCB_CW_EVENT_MASK |
+           XCB_CW_DONT_PROPAGATE | XCB_CW_COLORMAP);
+
+   mask_list[0] = XCB_BACK_PIXMAP_NONE;
+   mask_list[1] = 0;
+   mask_list[2] = XCB_GRAVITY_NORTH_WEST;
+   mask_list[3] = XCB_GRAVITY_NORTH_WEST;
+   mask_list[4] = XCB_BACKING_STORE_NOT_USEFUL;
+   mask_list[5] = override;
+   mask_list[6] = 0;
+   mask_list[7] = (XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+                   XCB_EVENT_MASK_BUTTON_PRESS |
+                   XCB_EVENT_MASK_BUTTON_RELEASE |
+                   XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+                   XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_EXPOSURE |
+                   XCB_EVENT_MASK_VISIBILITY_CHANGE |
+                   XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+                   XCB_EVENT_MASK_FOCUS_CHANGE |
+                   XCB_EVENT_MASK_PROPERTY_CHANGE |
+                   XCB_EVENT_MASK_COLOR_MAP_CHANGE);
+   mask_list[8] = XCB_EVENT_MASK_NO_EVENT;
+   value_list[9]  = colormap;
+
+   win = xcb_generate_id(_ecore_xcb_conn);
+   xcb_create_window(_ecore_xcb_conn, XCB_COPY_FROM_PARENT,
+                     win, parent, x, y, w, h, 0,
+                     XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                     vis ? vis->visual_id : XCB_COPY_FROM_PARENT,
+                     mask, mask_list);
+
+   if (parent == ((xcb_screen_t *)_ecore_xcb_screen)->root)
+     ecore_x_window_defaults_set(win);
+
+   return win;
+}
+
 /**
  * Creates a new window.
  * @param   parent The parent window to use.  If @p parent is @c 0, the root
