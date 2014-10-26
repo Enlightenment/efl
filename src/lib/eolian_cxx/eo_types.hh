@@ -31,6 +31,7 @@ struct eolian_type
    eolian_type()
      : native("")
      , category(unknown_)
+     , is_const(false)
      , is_own(false)
      , binding()
      , includes()
@@ -38,11 +39,13 @@ struct eolian_type
 
    eolian_type(std::string native_,
                category_type category_,
+               bool is_const_,
                bool is_own_,
                std::string binding_,
                includes_container_type includes_)
      : native(native_)
      , category(category_)
+     , is_const(is_const_)
      , is_own(is_own_)
      , binding(binding_)
      , includes(includes_)
@@ -54,13 +57,14 @@ struct eolian_type
    eolian_type(std::string native_,
                category_type category_,
                includes_container_type const& includes_)
-     : eolian_type(native_, category_, false, "", includes_)
+     : eolian_type(native_, category_, false, false, "", includes_)
    {
       assert(category == callback_);
    }
 
    std::string native;
    category_type category;
+   bool is_const;
    bool is_own;
    std::string binding;
    includes_container_type includes;
@@ -69,7 +73,7 @@ struct eolian_type
 typedef std::vector<eolian_type> eolian_type_instance;
 
 const efl::eolian::eolian_type
-void_type { "void", efl::eolian::eolian_type::simple_, false, "", {} };
+void_type { "void", efl::eolian::eolian_type::simple_, false, false, "", {} };
 
 inline bool
 type_is_void(eolian_type_instance const& type)

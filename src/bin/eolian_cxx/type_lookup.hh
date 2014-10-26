@@ -35,6 +35,7 @@ type_from_eolian(Eolian_Type const& type)
    efl::eolian::eolian_type x;
    x.native = normalize_spaces(safe_str(::eolian_type_c_type_get(&type)));
    x.is_own = ::eolian_type_is_own(&type);
+   x.is_const = ::eolian_type_is_const(&type);
    return x;
 }
 
