@@ -100,6 +100,18 @@ EAPI int elm_code_init(void);
  */
 EAPI int elm_code_shutdown(void);
 
+/**
+ * @}
+ *
+ * @brief File handling functions.
+ * @defgroup File  I/O at a file level
+ *
+ * @{
+ *
+ * Functions for file handling within elm code.
+ *
+ */
+
 EAPI Elm_Code_File *elm_code_open(const char *path);
 
 EAPI void elm_code_close(Elm_Code_File *file);
@@ -108,7 +120,19 @@ EAPI const char *elm_code_filename_get(Elm_Code_File *file);
 
 EAPI const char *elm_code_path_get(Elm_Code_File *file);
 
-EAPI int elm_code_lines_get(Elm_Code_File *file);
+/**
+ * @}
+ *
+ * @brief Content functions.
+ * @defgroup Content  Functions for accessing file content
+ *
+ * @{
+ *
+ * File content handling functions.
+ *
+ */
+
+EAPI unsigned int elm_code_lines_get(Elm_Code_File *file);
 
 EAPI char *elm_code_line_content_get(Elm_Code_File *file, int line);
 
