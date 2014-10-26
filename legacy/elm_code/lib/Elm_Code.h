@@ -5,6 +5,8 @@
 
 #include <Eina.h>
 
+#include <elm_code_file.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -37,22 +39,15 @@ extern "C" {
 
 /**
  * @file
- * @brief These routines are used for interacting with files using Elm Code.
+ * @brief These routines are used for loading Elm Code widgets.
  */
 
-typedef struct _Elm_Code_Line
+typedef struct _Elm_Code
 {
-   char *content;
-   unsigned int number;
+   Elm_Code_File *file;
+   Eina_List *widgets;
 
-} Elm_Code_Line;
-
-typedef struct _Elm_Code_File
-{
-   Eina_List *lines;
-   Eina_File *file;
-
-} Elm_Code_File;
+} Elm_Code;
 
 /**
  * @brief Init / shutdown functions.
@@ -101,40 +96,21 @@ EAPI int elm_code_init(void);
 EAPI int elm_code_shutdown(void);
 
 /**
- * @}
+ * Create a new Elm Code instance for an existing file
  *
- * @brief File handling functions.
- * @defgroup File  I/O at a file level
+ * This method creates a new Elm Code instance backing to the specified file.
+ * Once an Elm Code has been created you can create widgets that render the content.
  *
- * @{
- *
- * Functions for file handling within elm code.
- *
+ * "return an allocated Elm_Code that references the given file
  */
-
-EAPI Elm_Code_File *elm_code_open(const char *path);
-
-EAPI void elm_code_close(Elm_Code_File *file);
-
-EAPI const char *elm_code_filename_get(Elm_Code_File *file);
-
-EAPI const char *elm_code_path_get(Elm_Code_File *file);
+EAPI Elm_Code *elm_code_create(Elm_Code_File *file);
 
 /**
- * @}
+ * Free an Elm Code instance
  *
- * @brief Content functions.
- * @defgroup Content  Functions for accessing file content
- *
- * @{
- *
- * File content handling functions.
- *
+ * Releases the resources retained by the code instance and any files it references.
  */
-
-EAPI unsigned int elm_code_lines_get(Elm_Code_File *file);
-
-EAPI char *elm_code_line_content_get(Elm_Code_File *file, int line);
+EAPI void elm_code_free(Elm_Code *code);
 
 /**
  * @}

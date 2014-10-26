@@ -13,7 +13,8 @@ static const struct {
    const char *name;
    void (*build)(TCase *tc);
 } tests[] = {
-  { "load", elm_code_test_load },
+  { "file_load", elm_code_file_test_load },
+  { "basic", elm_code_test_basic },
 };
 
 START_TEST(elm_code_initialization)

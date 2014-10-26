@@ -4,7 +4,8 @@ if EFL_HAVE_TESTS
 check_PROGRAMS = elm_code_suite
 
 elm_code_suite_SOURCES = \
-elm_code_test_load.c \
+elm_code_file_test_load.c \
+elm_code_test_basic.c \
 elm_code_suite.c
 
 elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/lib/ \

@@ -10,10 +10,13 @@ AM_CPPFLAGS = \
 
 lib_LTLIBRARIES = libelm_code.la
 
-includes_HEADERS = Elm_Code.h
+includes_HEADERS = \
+elm_code_file.h \
+Elm_Code.h
 includesdir = $(includedir)/edi-@VMAJ@
 
 libelm_code_la_SOURCES = \
+elm_code_file.c \
 elm_code.c
 libelm_code_la_LIBADD = @EFL_LIBS@ -lm
 libelm_code_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
