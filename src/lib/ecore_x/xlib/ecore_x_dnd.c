@@ -261,18 +261,18 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    atom = ecore_x_atom_get(type);
-   if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
-                                        XA_ATOM, 32, &old_data, &num) == 0)
-     return;
-   oldset = (Ecore_X_Atom *)old_data;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (on)
      {
-        if (ecore_x_dnd_type_isset(win, type))
+        if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
+                                             XA_ATOM, 32, &old_data, &num) > 0)
           {
-             if (old_data) free(old_data);
-             return;
+             if (ecore_x_dnd_type_isset(win, type))
+               {
+                  if (old_data) free(old_data);
+                  return;
+               }
           }
 
         newset = calloc(num + 1, sizeof(Ecore_X_Atom));
@@ -282,6 +282,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
              return;
           }
 
+        oldset = (Ecore_X_Atom *)old_data;
         data = (unsigned char *)newset;
 
         for (i = 0; i < num; i++)
@@ -294,6 +295,9 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
      }
    else
      {
+        if (ecore_x_window_prop_property_get(win, ECORE_X_ATOM_XDND_TYPE_LIST,
+                                             XA_ATOM, 32, &old_data, &num) == 0)
+           return;
         if (!ecore_x_dnd_type_isset(win, type))
           {
              if (old_data) free(old_data);
@@ -307,6 +311,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
              return;
           }
 
+        oldset = (Ecore_X_Atom *)old_data;
         data = (unsigned char *)newset;
         for (i = 0; i < num; i++)
           if (oldset[i] != atom)
@@ -316,7 +321,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
                                          XA_ATOM, 32, data, num - 1);
      }
 
-   XFree(oldset);
+   if (oldset) XFree(oldset);
    free(newset);
 }
 
