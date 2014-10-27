@@ -139,20 +139,17 @@
  *
  *
  * @defgroup Eina_Data_Types_Group Data Types
+ * @brief Eina provides an easy to use and optimized data types and structures.
  * @ingroup Eina
  *
- * Eina provides an easy to use and optimized data types and structures.
- *
  * @defgroup Eina_Content_Access_Group Content Access
+ * @brief Eina provides an uniform way to access elements of a container,
+ *        either sequential or indexed.
  * @ingroup Eina_Data_Types_Group
- *
- * Eina provides an uniform way to access elements of a container,
- * either sequential or indexed.
  *
  * @defgroup Eina_Containers_Group Containers
+ * @brief Data types that contains other types. Examples: list, array and hash.
  * @ingroup Eina_Data_Types_Group
- *
- * Data types that contains other types. Examples: list, array and hash.
  *
  * @section eina_main_Intro Introduction
  * Containers are data types that hold data and allow iteration over
@@ -201,11 +198,9 @@
  * should return properly populated @ref _Eina_Iterator and @ref _Eina_Accessor.
  *
  * @defgroup Eina_Tools_Group Tools
+ * @brief Eina tools aims to help application development, providing ways to
+ *        make it safer, log errors, manage memory more efficiently and more.
  * @ingroup Eina
- *
- * Eina tools aims to help application development, providing ways to
- * make it safer, log errors, manage memory more efficiently and more.
- * 
  */
 
 #ifdef _WIN32
