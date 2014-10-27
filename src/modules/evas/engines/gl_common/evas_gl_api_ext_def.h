@@ -310,7 +310,11 @@ _EVASGL_EXT_BEGIN(multisampled_render_to_texture)
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(compressed_ETC1_RGB8_texture)
-	_EVASGL_EXT_DRVNAME(GL_OES_compressed_ETC1_RGB8_texture)
+        _EVASGL_EXT_DRVNAME(GL_OES_compressed_ETC1_RGB8_texture)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(compressed_ETC2_RGB8_texture)
+        _EVASGL_EXT_DRVNAME(GL_OES_compressed_ETC2_RGB8_texture)
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(compressed_paletted_texture)
