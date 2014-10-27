@@ -1093,9 +1093,31 @@ _EVASGL_EXT_END()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other "safe" extensions that are not in Evas_GL_API
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+ * IMPORTANT NOTE:
+ *
+ * Before adding any extension & function to the list below, it is very
+ * important to check that the extension does not modify the state in a way
+ * that would break direct rendering (eg. Scissors) or indirect rendering
+ * (eg. changes the target FBO).
+ *
+ * If any of the following applies, the extension must be wrapped before
+ * being exposed to client apps:
+ * - The target FBO is changed (this could break indirect rendering)
+ * - The scissors geometry is changed (breaks direct rendering)
+ * - Shared contexts can also be affected (breaks everything since all contexts
+ *   are shared with the main Evas GL context)
+ *
+ * There can be a number of other reasons for functions to need wrapping, so
+ * please read carefully the specifications of all extensions and check that
+ * they are safe to use. The goal is to contain as much as possible the effects
+ * of an API call to the surface & context bound to the Evas_GL.
+ */
+
 #if _EVASGL_EXT_WHITELIST_ONLY
 
-// TODO: Remove this function. Not actually supported. Just for debugging.
+// ----------------------------------------------------------
 _EVASGL_EXT_BEGIN(debug)
 _EVASGL_EXT_DRVNAME(GL_KHR_debug)
 
@@ -1135,6 +1157,7 @@ _EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectPtrLabelKHR")
 _EVASGL_EXT_END()
 
 
+// ----------------------------------------------------------
 _EVASGL_EXT_BEGIN(debug_label)
 _EVASGL_EXT_DRVNAME(GL_EXT_debug_label)
 
@@ -1147,6 +1170,7 @@ _EVASGL_EXT_FUNCTION_WHITELIST("glGetObjectLabelEXT")
 _EVASGL_EXT_END()
 
 
+// ----------------------------------------------------------
 _EVASGL_EXT_BEGIN(debug_marker)
 _EVASGL_EXT_DRVNAME(GL_EXT_debug_marker)
 
@@ -1161,43 +1185,132 @@ _EVASGL_EXT_FUNCTION_WHITELIST("glPopGroupMarkerEXT")
 
 _EVASGL_EXT_END()
 
+
+// ----------------------------------------------------------
+_EVASGL_EXT_BEGIN(disjoint_timer_query)
+_EVASGL_EXT_DRVNAME(GL_EXT_disjoint_timer_query)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGenQueries")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGenQueriesEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glDeleteQueries")
+_EVASGL_EXT_FUNCTION_WHITELIST("glDeleteQueriesEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glIsQuery")
+_EVASGL_EXT_FUNCTION_WHITELIST("glIsQueryEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glBeginQuery")
+_EVASGL_EXT_FUNCTION_WHITELIST("glBeginQueryEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glEndQuery")
+_EVASGL_EXT_FUNCTION_WHITELIST("glEndQueryEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glQueryCounter")
+_EVASGL_EXT_FUNCTION_WHITELIST("glQueryCounterEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryiv")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryivEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectiv")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectivEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectuiv")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectuivEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjecti64v")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjecti64vEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectui64v")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectui64vEXT")
+
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+_EVASGL_EXT_BEGIN(occlusion_query_boolean)
+_EVASGL_EXT_DRVNAME(GL_EXT_occlusion_query_boolean)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGenQueries")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGenQueriesEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glDeleteQueries")
+_EVASGL_EXT_FUNCTION_WHITELIST("glDeleteQueriesEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glIsQuery")
+_EVASGL_EXT_FUNCTION_WHITELIST("glIsQueryEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glBeginQuery")
+_EVASGL_EXT_FUNCTION_WHITELIST("glBeginQueryEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glEndQuery")
+_EVASGL_EXT_FUNCTION_WHITELIST("glEndQueryEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryiv")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryivEXT")
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectuiv")
+_EVASGL_EXT_FUNCTION_WHITELIST("glGetQueryObjectuivEXT")
+
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+// NOTE: This extension changes state
+_EVASGL_EXT_BEGIN(alpha_test)
+_EVASGL_EXT_DRVNAME(GL_QCOM_alpha_test)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glAlphaFunc")
+_EVASGL_EXT_FUNCTION_WHITELIST("glAlphaFuncQCOM")
+
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+// NOTE: This extension changes state
+/* Also, to be perfectly correct, we would need to wrap the extension:
+ * << DrawBuffersNV may only be called when the GL is bound to a framebuffer
+ *    object. If called when the GL is bound to the default framebuffer, an
+ *    INVALID_OPERATION error is generated. >>
+ * This means the function should generate INVALID_OPERATION when indirect
+ * rendering is active and the default FBO is currently bound.
+ */
+_EVASGL_EXT_BEGIN(draw_buffers)
+_EVASGL_EXT_DRVNAME(GL_NV_draw_buffers)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glDrawBuffers")
+_EVASGL_EXT_FUNCTION_WHITELIST("glDrawBuffersNV")
+
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+// NOTE: This extension changes state
+_EVASGL_EXT_BEGIN(read_buffer)
+_EVASGL_EXT_DRVNAME(GL_NV_read_buffer)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glReadBuffer")
+_EVASGL_EXT_FUNCTION_WHITELIST("glReadBufferNV")
+
+_EVASGL_EXT_END()
+
+
+// Another version of the extension (that allows reading from the FRONT color buf)
+_EVASGL_EXT_BEGIN(read_buffer_front)
+_EVASGL_EXT_DRVNAME(GL_NV_read_buffer_front)
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+_EVASGL_EXT_BEGIN(framebuffer_blit)
+_EVASGL_EXT_DRVNAME(GL_NV_framebuffer_blit)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebuffer")
+_EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebufferNV")
+
+_EVASGL_EXT_END()
+
+
 #endif // _EVASGL_EXT_WHITELIST_ONLY ("safe" extensions)
-
-#if 0
-// requested extensions
-/* GL_EXT_debug_marker */
-void (*glPushGroupMarkerEXT)(int len, const char* name);
-void (*glPopGroupMarkerEXT)();
-
-
-/* GL_QCOM_alpha_test */
-void (*glAlphaFuncQCOM)(GLenum func, GLfloat ref);
-
-
-/* GL_EXT_disjoint_timer_query */
-void (*glQueryCounterEXT)(GLuint target, GLuint id);
-void (*glGetQueryObjectui64vEXT)(GLuint id, GLuint pname, EvasGLuint64* params);
-
-
-/* GL_EXT_occlusion_query_boolean */
-void (*glGenQueriesEXT)(GLsizei n, GLuint* ids);
-void (*glDeleteQueriesEXT)(GLsizei n, const GLuint* ids);
-void (*glBeginQueryEXT) (GLenum target, GLuint id);
-void (*glEndQueryEXT) (GLenum target);
-void (*glGetQueryObjectuivEXT)(GLuint id, GLenum pname, GLuint* params);
-
-
-/* GL_NV_draw_buffers */
-void (*glDrawBuffersNV)(GLsizei n, const GLenum* bufs);
-
-
-/* GL_NV_read_buffer */
-void (*glReadBufferNV) (GLenum mode);
-
-
-/* GL_NV_framebuffer_blit */
-void (*glBlitFramebufferNV) (int srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
