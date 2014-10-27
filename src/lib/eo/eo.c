@@ -595,6 +595,9 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
    else
      {
         func = _dich_func_get(klass, op);
+
+        if (!func)
+          goto end;
      }
 
    if (EINA_UNLIKELY(func == NULL))
@@ -647,10 +650,10 @@ end:
         Eo *emb_obj_id;
         EINA_LIST_FOREACH(((_Eo_Object *) fptr->o.obj)->composite_objects, itr, emb_obj_id)
           {
-            _Eo_Object *emb_obj = _eo_obj_pointer_get((Eo_Id)emb_obj_id);
+             _Eo_Object *emb_obj = _eo_obj_pointer_get((Eo_Id)emb_obj_id);
 
-            if (!emb_obj)
-               goto end2;
+             if (!emb_obj)
+               continue;
 
              func = _dich_func_get(emb_obj->klass, op);
              if (func == NULL)
@@ -668,7 +671,6 @@ end:
           }
      }
 
-end2:
      {
         const _Eo_Class *main_klass;
         main_klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
