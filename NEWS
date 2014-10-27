@@ -46,6 +46,7 @@ Features:
    * Evas GL: Add evas_gl_surface_query
    * Evas GL: Add support for pbuffer surfaces
    * Evas GL: Add support for OpenGL-ES 1.1 (part 1)
+   * ecore_drm: Added internal function to check if drm device is hotplug device
 
 Fixes:
 
@@ -155,6 +156,22 @@ Fixes:
    * ecore-drm: Create udev watch for each output, and delete the watch when we free the output.
    * evas: Evas_Box - layout_flow_horizontal and layout_flow_vertical fix
    * evas-wayland-egl: Fix function prototype for eng_context_create
+   * Eo id: Fix id security checks for invalid objects.
+   * ecore-drm: Cleanup/Unify output_free function code
+   * ecore-drm: Check for valid crtc before calling free
+   * ecore-drm: Cleanup backlight and drm device in output_free function code
+   * ecore-drm: Added documentation for various APIs in ecore_drm_device module
+   * ecore-drm: Added documentation for various APIs in ecore_drm_output module
+   * ecore_wayland: Making _ecore_wl_init_count not to go below zero in shutdown.
+   * ecore_drm: Making _ecore_drm_init_count not to go below zero in _ecore_drm_shutdown.
+   * ecore-drm: Add error message for calling shutdown without calling init first.
+   * ecore-wayland: Add error message for calling shutdown without calling init
+   * ecore_wayland: Making _ecore_wl_shutdown return int instead of EINA_BOOL.
+   * evas-gl-drm: Fix initialization from incompatible pointer type
+   * evas gl rgba visual/rendering fix try ... again
+   * dnd/x: fix type set for case there is no type list exists
+   * edje: edje_edit - don't unlick(NULL) (T1760)
+   * edje: edje_edit - fix posible resource leak (T1760)
 
 Changes since 1.10.0:
 ---------------------
