@@ -17,7 +17,7 @@ inline std::size_t namespace_size(Eolian_Class const* klass)
    return size;
 }
 
-inline void print_namespace(Eolian_Class const* klass, std::ostream& os)
+inline void print_lower_case_namespace(Eolian_Class const* klass, std::ostream& os)
 {
   std::vector<std::string> namespace_;
    for(efl::eina::iterator<const char> first (::eolian_class_namespaces_get(klass))
@@ -26,7 +26,9 @@ inline void print_namespace(Eolian_Class const* klass, std::ostream& os)
    for(auto first = namespace_.begin(), last = namespace_.end()
          ; first != last; ++first)
      {
-       os << *first;
+       std::string lower(*first);
+       std::transform(lower.begin(), lower.end(), lower.begin(), tolower);
+       os << lower;
        if(std::next(first) != last) os << "::";
      }
 }
@@ -40,7 +42,18 @@ inline void print_eo_class(Eolian_Class const* klass, std::ostream& os)
          , last; first != last; ++first)
      namespace_.push_back(&*first);
    namespace_.push_back(name(klass));
-   namespace_.push_back("CLASS");
+   switch(eolian_class_type_get(klass))
+     {
+     case EOLIAN_CLASS_REGULAR:
+     case EOLIAN_CLASS_ABSTRACT:
+       namespace_.push_back("CLASS");
+       break;
+     case EOLIAN_CLASS_INTERFACE:
+       namespace_.push_back("INTERFACE");
+       break;
+     default:
+       std::abort();
+     }
    for(auto first = namespace_.begin(), last = namespace_.end()
          ; first != last; ++first)
      {
@@ -49,6 +62,13 @@ inline void print_eo_class(Eolian_Class const* klass, std::ostream& os)
        os << upper;
        if(std::next(first) != last) os << "_";
      }
+}
+
+inline bool is_evas(Eolian_Class const* klass)
+{
+  efl::eina::iterator<const char> first (::eolian_class_namespaces_get(klass));
+  return first != efl::eina::iterator<const char>()
+    && std::strcmp(&*first, "Evas") == 0;
 }
 
 #endif

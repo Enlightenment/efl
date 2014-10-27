@@ -122,15 +122,27 @@ int main(int argc, char** argv)
    os << "#ifndef EFL_GENERATED_EOLIAN_CLASS_GUARD_" << upper_case_class_name << "_H\n";
    os << "#define EFL_GENERATED_EOLIAN_CLASS_GUARD_" << upper_case_class_name << "_H\n\n";
 
+
    os << "#ifdef HAVE_CONFIG_H\n";
    os << "#include \"config.h\"\n";
    os << "#endif\n";
+   os << "extern \"C\"\n";
+   os << "{\n";
+   os << "#include <Efl.h>\n";
+   os << "}\n";
    os << "#include <eo_js_constructor.hh>\n\n";
+   os << "#include <Eo.h>\n\n";
    os << "#include <v8.h>\n\n";
+   os << "extern \"C\" {\n";
+
+   if(is_evas(klass))
+     os << "#include <Evas.h>\n";
+   
    os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
+   os << "}\n";
 
    os << "namespace ";
-   print_namespace(klass, os);
+   print_lower_case_namespace(klass, os);
    os << " {\n";
 
    os << "void register_xxx(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate)\n";
@@ -145,18 +157,27 @@ int main(int argc, char** argv)
    os << "  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
    os << "  instance->SetInternalFieldCount(1);\n";
    os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
+
+   for(efl::eina::iterator<Eolian_Function> first
+         ( ::eolian_class_functions_get(klass, EOLIAN_METHOD) )
+         , last; first != last; ++first)
+     {
+       Eolian_Function const* function = &*first;
+       os << "  prototype->Set( ::v8::String::NewFromUtf8(isolate, \""
+          << eolian_function_name_get(function) << "\")\n"
+          << "    , v8::FunctionTemplate::New(isolate, &efl::eo::js::call_function\n"
+          << "    , v8::External::New(isolate, efl::eo::js::call_function_data(& ::"
+          << eolian_function_full_c_name_get(function) << "))));\n";
+     }
+
    os << "}\n";
 
    for(std::size_t i = 0, j = namespace_size(klass); i != j; ++i)
      os << "}";
    os << "\n";
 
-   std::vector<Eolian_Function const*> functions;
+   //std::vector<Eolian_Function const*> functions;
 
-   for(efl::eina::iterator<Eolian_Function> first
-         ( ::eolian_class_functions_get(klass, EOLIAN_METHOD) )
-         , last; first != last; ++first)
-     functions.push_back(&*first);
 
    os << "\n#endif\n\n";
 }
