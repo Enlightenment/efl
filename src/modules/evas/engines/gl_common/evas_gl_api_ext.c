@@ -438,6 +438,56 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 
 }
 
+void
+evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
+{
+   if (_evgl_api_ext_status != 1)
+     {
+        ERR("EVGL extension is not yet initialized.");
+        return;
+     }
+
+#define ORD(f) EVAS_API_OVERRIDE(f, gl_funcs, glextsym_)
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Extension HEADER
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+#define _EVASGL_EXT_CHECK_SUPPORT(name)
+#define _EVASGL_EXT_DISCARD_SUPPORT()
+#define _EVASGL_EXT_BEGIN(name) \
+   if (_gl_ext_support_##name != 0) \
+     {
+#define _EVASGL_EXT_END() \
+     }
+#define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) \
+   ORD(name);
+#define _EVASGL_EXT_FUNCTION_END()
+#define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(ret, name, param)
+#define _EVASGL_EXT_FUNCTION_PRIVATE_END()
+#define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
+#define _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR(name)
+
+#undef _EVASGL_EXT_WHITELIST_ONLY
+#define _EVASGL_EXT_WHITELIST_ONLY 0
+
+#include "evas_gl_api_ext_def.h"
+
+#undef _EVASGL_EXT_CHECK_SUPPORT
+#undef _EVASGL_EXT_DISCARD_SUPPORT
+#undef _EVASGL_EXT_BEGIN
+#undef _EVASGL_EXT_END
+#undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_FUNCTION_BEGIN
+#undef _EVASGL_EXT_FUNCTION_END
+#undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN
+#undef _EVASGL_EXT_FUNCTION_PRIVATE_END
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC
+#undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+#undef ORD
+
+}
 const char *
 evgl_api_ext_string_get()
 {

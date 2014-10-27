@@ -4098,8 +4098,8 @@ _debug_gles1_api_get(Evas_GL_API *funcs)
    ORD(glVertexPointer);
    ORD(glViewport);
 #undef ORD
-   // TODO: Add gles1 extensions
-   //evgl_api_gles1_ext_get(funcs);
+
+   evgl_api_gles1_ext_get(funcs);
 }
 
 static void
@@ -4256,8 +4256,8 @@ _normal_gles1_api_get(Evas_GL_API *funcs)
    ORD(glVertexPointer);
    ORD(glViewport);
 #undef ORD
-   // TODO: Add GLES 1.1 extensions
-   //evgl_api_gles1_ext_get(funcs);
+
+   evgl_api_gles1_ext_get(funcs);
 }
 
 void
