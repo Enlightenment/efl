@@ -14,6 +14,35 @@
 
 static char test_socket[] = "test1";
 
+START_TEST(ecore_test_ecore_wl_shutdown_bef_init)
+{
+   struct wl_display *test_display = NULL;
+   int ret = 0;
+
+   ret = ecore_wl_shutdown();
+   fprintf(stderr, "Calling ecore_wl_shutdown without calling ecore_wl_init\n");
+   fail_if(ret != 0);
+
+   test_display = wl_display_create();
+   fprintf(stderr, "Creating wayland display\n");
+   fail_if(test_display == NULL);
+
+   ret = wl_display_add_socket(test_display, test_socket);
+   fprintf(stderr, "Connecting %s socket to wayland display\n", test_socket);
+   fail_if(ret != 0);
+
+   ret = ecore_wl_init(test_socket);
+   fprintf(stderr, "Calling ecore_wl_init with %s\n", test_socket);
+   fail_if(ret != 1);
+
+   ret = ecore_wl_shutdown();
+   fprintf(stderr, "Calling ecore_wl_shutdown after ecore_wl_init.\n");
+   fail_if(ret != 0);
+
+   wl_display_destroy(test_display);
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_wl_init_name)
 {
    struct wl_display *test_display = NULL;
@@ -69,4 +98,5 @@ void ecore_test_ecore_wayland(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_wl_init);
    tcase_add_test(tc, ecore_test_ecore_wl_init_name);
+   tcase_add_test(tc, ecore_test_ecore_wl_shutdown_bef_init);
 }
