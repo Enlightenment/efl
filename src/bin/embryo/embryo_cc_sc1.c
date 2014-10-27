@@ -1033,7 +1033,8 @@ declglb(char *firstname, int firsttag, int fpublic, int fstatic,
 	if (firstname)
 	  {
 	     assert(strlen(firstname) <= sNAMEMAX);
-	     strcpy(name, firstname);	/* save symbol name */
+	     strncpy(name, firstname, sNAMEMAX);	/* save symbol name */
+	     name[sNAMEMAX] = 0;
 	     tag = firsttag;
 	     firstname = NULL;
 	  }
@@ -1043,7 +1044,8 @@ declglb(char *firstname, int firsttag, int fpublic, int fstatic,
 	     if (lex(&val, &str) != tSYMBOL)	/* read in (new) token */
 		error(20, str);	/* invalid symbol name */
 	     assert(strlen(str) <= sNAMEMAX);
-	     strcpy(name, str);	/* save symbol name */
+	     strncpy(name, str, sNAMEMAX);	/* save symbol name */
+	     name[sNAMEMAX] = 0;
 	  }			/* if */
 	sym = findglb(name);
 	if (!sym)
@@ -1181,7 +1183,8 @@ declloc(int fstatic)
 	if (lex(&val, &str) != tSYMBOL)	/* read in (new) token */
 	   error(20, str);	/* invalid symbol name */
 	assert(strlen(str) <= sNAMEMAX);
-	strcpy(name, str);	/* save symbol name */
+	strncpy(name, str, sNAMEMAX);	/* save symbol name */
+	name[sNAMEMAX] = 0;
 	if (name[0] == PUBLIC_CHAR)
 	   error(56, name);	/* local variables cannot be public */
 	/* Note: block locals may be named identical to locals at higher
@@ -1657,7 +1660,8 @@ decl_enum(int vclass)
 	tok = lex(&lexval, &str);	/* read in (new) token */
 	if (tok != tSYMBOL && tok != tLABEL)
 	   error(20, str);	/* invalid symbol name */
-	strcpy(constname, str);	/* save symbol name */
+	strncpy(constname, str, sNAMEMAX); /* save symbol name */
+	constname[sNAMEMAX] = 0;
 	size = increment;	/* default increment of 'val' */
 	if (tok == tLABEL || matchtoken(':'))
 	   constexpr(&size, NULL);	/* get size */
