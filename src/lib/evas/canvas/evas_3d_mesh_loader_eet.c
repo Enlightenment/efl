@@ -109,8 +109,6 @@ evas_3d_mesh_file_eet_set(Evas_3D_Mesh *mesh, const char *file)
    Eet_File *ef;
 
    _evas_3d_eet_file_init();
-
-   eet_file = _evas_3d_eet_file_new();
    ef = eet_open(file, EET_FILE_MODE_READ);
    eet_file = eet_data_read(ef,
                             _file_descriptor,

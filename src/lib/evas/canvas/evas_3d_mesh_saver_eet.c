@@ -33,6 +33,7 @@ _set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
         ERR("Allocating of memory is failed.");
         free(vertices);
         free(geometry);
+        free(geometries);
         return;
      }
 
@@ -46,6 +47,7 @@ _set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
         ERR("Reading of geometrics is failed.");\
         free(vertices);\
         free(geometry);\
+        free(geometries);\
         return;\
      }\
    src = (float *)vb->data;\
@@ -88,6 +90,7 @@ _set_material_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh,
         free(material);
         free(saved_materials);
         free(saved_colors);
+        free(materials);
         return;
      }
 
@@ -173,6 +176,8 @@ evas_3d_mesh_save_eet(Evas_3D_Mesh *mesh,
    if (ef == NULL)
      {
         ERR("Opening of file is failed.");
+        free(eet_mesh);
+        free(eet_header);
         _evas_3d_eet_file_free();
         return;
      }
