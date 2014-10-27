@@ -1011,6 +1011,18 @@ EFL_EVAL_PKGS([EINA_JS])
 EFL_LIB_END([Eina_Js])
 #### End of Eina JS
 
+#### Eina JS
+EFL_LIB_START([Eo_Js])
+
+EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
+
+EFL_INTERNAL_DEPEND_PKG([EO_JS], [eina])
+EFL_ADD_CFLAGS([EO_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([EO_JS])
+
+EFL_LIB_END([Eo_Js])
+#### End of Eina JS
+
 #### Eet
 
 EFL_LIB_START([Eet])

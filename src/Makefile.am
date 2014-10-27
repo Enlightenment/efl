@@ -80,6 +80,7 @@ include Makefile_Eo_Cxx.am
 include Makefile_Efl_Cxx.am
 
 include Makefile_Eina_Js.am
+include Makefile_Eo_Js.am
 include Makefile_Evas_Js.am
 include Makefile_Eolian_Js.am
 

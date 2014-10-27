@@ -113,26 +113,43 @@ int main(int argc, char** argv)
        return -1;
      }
 
-   std::string class_name = name(*klass);
-   std::transform(class_name.begin(), class_name.end(), class_name.begin()
+   std::string class_name (name(klass)), upper_case_class_name(class_name)
+     , lower_case_class_name(class_name);
+   std::transform(upper_case_class_name.begin(), upper_case_class_name.end(), upper_case_class_name.begin()
                   , [] (unsigned char c) { return std::toupper(c); });
-   os << "#ifndef EFL_GENERATED_EOLIAN_CLASS_GUARD_" << class_name << "_H\n";
-   os << "#define EFL_GENERATED_EOLIAN_CLASS_GUARD_" << class_name << "_H\n\n";
+   std::transform(lower_case_class_name.begin(), lower_case_class_name.end(), lower_case_class_name.begin()
+                  , [] (unsigned char c) { return std::tolower(c); });
+   os << "#ifndef EFL_GENERATED_EOLIAN_CLASS_GUARD_" << upper_case_class_name << "_H\n";
+   os << "#define EFL_GENERATED_EOLIAN_CLASS_GUARD_" << upper_case_class_name << "_H\n\n";
 
-   std::vector<std::string> namespace_;
-   
-   for(efl::eina::iterator<const char> first (::eolian_class_namespaces_get(klass))
-         , last; first != last; ++first)
-     namespace_.push_back(&*first);
- 
+   os << "#ifdef HAVE_CONFIG_H\n";
+   os << "#include \"config.h\"\n";
+   os << "#endif\n";
+   os << "#include <eo_js_constructor.hh>\n\n";
+   os << "#include <v8.h>\n\n";
+   os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
+
    os << "namespace ";
-   for(auto first = namespace_.begin()
-         , last = namespace_.end(); first != last; ++first)
-     {
-       os << *first;
-       if(std::next(first) != last) os << "::";
-     }
+   print_namespace(klass, os);
    os << " {\n";
+
+   os << "void register_xxx(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate)\n";
+   os << "{\n";
+   os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
+   os << "    (isolate, efl::eo::js::constructor, efl::eo::js::constructor_data(isolate, ";
+   print_eo_class(klass, os);
+   os  << "));\n";
+   os << "  constructor->SetClassName(v8::String::NewFromUtf8(isolate, \""
+      << class_name
+      << "\"));\n";
+   os << "  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
+   os << "  instance->SetInternalFieldCount(1);\n";
+   os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
+   os << "}\n";
+
+   for(std::size_t i = 0, j = namespace_size(klass); i != j; ++i)
+     os << "}";
+   os << "\n";
 
    std::vector<Eolian_Function const*> functions;
 
@@ -141,4 +158,5 @@ int main(int argc, char** argv)
          , last; first != last; ++first)
      functions.push_back(&*first);
 
+   os << "\n#endif\n\n";
 }

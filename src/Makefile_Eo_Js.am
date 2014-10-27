@@ -1,0 +1,12 @@
+
+### Library
+
+if HAVE_CXX11
+installed_eojsmainheadersdir = $(includedir)/eo-js-@VMAJ@
+dist_installed_eojsmainheaders_DATA = \
+bindings/eo_js/eo_js_constructor.hh
+
+### Unit tests
+
+endif
+
