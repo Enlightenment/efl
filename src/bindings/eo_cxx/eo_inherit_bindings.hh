@@ -250,9 +250,9 @@ EAPI void inherit_constructor(void* this_, Args args)
         return;
      }
    func_t func = (func_t) call.func;
-   EO_HOOK_CALL_PREPARE(eo_hook_call_pre);
+   EO_HOOK_CALL_PREPARE(eo_hook_call_pre, "");
    func(call.obj, call.data, this_, args);
-   EO_HOOK_CALL_PREPARE(eo_hook_call_post);
+   EO_HOOK_CALL_PREPARE(eo_hook_call_post, "");
 }
 
 template <typename T>
