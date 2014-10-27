@@ -58,6 +58,17 @@ typedef void (*Eina_Lock_Bt_Func) ();
 #include "eina_inlist.h"
 #endif
 
+/* To be removed once we can use _eina_time_get() here*/
+#ifndef _WIN32
+# include <time.h>
+# include <sys/time.h>
+#else
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+#endif /* _WIN2 */
+/* End of to be removed */
+
 typedef struct _Eina_Lock Eina_Lock;
 typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
@@ -399,6 +410,14 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
 {
    struct timespec tv;
    Eina_Bool r;
+   time_t sec;
+   long nsec;
+
+   if (t < 0)
+     {
+        errno = EINVAL;
+        return EINA_FALSE;
+     }
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(_eina_threads_activated);
@@ -410,8 +429,40 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
 
-   tv.tv_sec = t;
-   tv.tv_nsec = (t - (double) tv.tv_sec) * 1000000000;
+/* To be removed once we can use _eina_time_get() here*/
+#ifndef _WIN32
+# if defined(CLOCK_PROCESS_CPUTIME_ID)
+   if (!clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tv))
+     return EINA_FALSE;
+# endif
+# if defined(CLOCK_PROF)
+   if (!clock_gettime(CLOCK_PROF, &tv))
+     return EINA_FALSE;
+# endif
+# if defined(CLOCK_REALTIME)
+   if (!clock_gettime(CLOCK_REALTIME, &tv))
+     return EINA_FALSE;
+# endif
+#endif
+
+   struct timeval tp;
+
+   if (gettimeofday(&tp, NULL))
+     return EINA_FALSE;
+
+   tv.tv_sec = tp.tv_sec;
+   tv.tv_nsec = tp.tv_usec * 1000L;
+/* End of to be removed */
+
+   sec = (time_t)t;
+   nsec = (t - (double) sec) * 1000000000L;
+   tv.tv_sec += sec;
+   tv.tv_nsec += nsec;
+   if (tv.tv_nsec > 1000000000L)
+     {
+        tv.tv_sec++;
+        tv.tv_nsec -= 1000000000L;
+     }
 
    r = pthread_cond_timedwait(&(cond->condition),
 			      &(cond->lock->mutex),
