@@ -2307,8 +2307,13 @@ eng_gl_surface_create(void *data EINA_UNUSED, void *config, int w, int h)
      {
 
       case EVAS_GL_RGB_888:
-         sfc->internal_fmt = OSMESA_RGB;
-         sfc->internal_cpp = 3;
+         sfc->internal_fmt = OSMESA_BGRA;
+         sfc->internal_cpp = 4;
+// FIXME: don't allow rgb buffers as evas doesn't understand them so pad out
+// to 32bit bgra buffers anyway, so for now just pad out - one day do this
+// nicely
+//         sfc->internal_fmt = OSMESA_RGB;
+//         sfc->internal_cpp = 3;
          break;
       case EVAS_GL_RGBA_8888:
          sfc->internal_fmt = OSMESA_BGRA;
