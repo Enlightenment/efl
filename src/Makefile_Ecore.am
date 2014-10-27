@@ -191,7 +191,8 @@ tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_WAYLAND_CFLAGS@ \
-@ECORE_WAYLAND_SRV_CFLAGS@
+@ECORE_WAYLAND_SRV_CFLAGS@ \
+@ECORE_DRM_CFLAGS@
 
 tests_ecore_ecore_suite_LDADD = \
 @CHECK_LIBS@ \
@@ -203,7 +204,8 @@ tests_ecore_ecore_suite_LDADD = \
 @USE_ECORE_IMF_LIBS@ \
 @USE_ECORE_EVAS_LIBS@ \
 @USE_ECORE_WAYLAND_LIBS@ \
-@ECORE_WAYLAND_SRV_LIBS@
+@ECORE_WAYLAND_SRV_LIBS@ \
+@ECORE_DRM_LIBS@
 tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_AUDIO_INTERNAL_LIBS@ \
@@ -212,7 +214,8 @@ tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_X_INTERNAL_LIBS@ \
 @USE_ECORE_IMF_INTERNAL_LIBS@ \
 @USE_ECORE_EVAS_INTERNAL_LIBS@ \
-@USE_ECORE_WAYLAND_INTERNAL_LIBS@
+@USE_ECORE_WAYLAND_INTERNAL_LIBS@ \
+@USE_ECORE_DRM_INTERNAL_LIBS@
 
 if HAVE_ECORE_AUDIO
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_audio.c
@@ -220,6 +223,10 @@ endif
 
 if HAVE_ECORE_WAYLAND
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_wayland.c
+endif
+
+if HAVE_ECORE_DRM
+tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_drm.c
 endif
 
 endif

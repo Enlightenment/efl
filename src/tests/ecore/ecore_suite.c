@@ -33,6 +33,9 @@ static const Ecore_Test_Case etc[] = {
 #if HAVE_ECORE_WAYLAND
   { "Ecore_Wayland", ecore_test_ecore_wayland },
 #endif
+#if HAVE_ECORE_DRM
+  { "Ecore_Drm", ecore_test_ecore_drm },
+#endif
   { NULL, NULL }
 };
 
