@@ -9466,8 +9466,11 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 the_way_out:
    fclose(f);
 the_doorway:
-   unlink(tmp_out);
-   eina_tmpstr_del(tmp_out);
+   if (tmp_out)
+     {
+        unlink(tmp_out);
+        eina_tmpstr_del(tmp_out);
+     }
 almost_out:
    unlink(tmp_in);
    eina_tmpstr_del(tmp_in);
