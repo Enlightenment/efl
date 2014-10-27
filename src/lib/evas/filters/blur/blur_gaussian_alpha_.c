@@ -41,7 +41,7 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
                   acc += (*s) * weights[j + radius - k];
                   divider += weights[j + radius - k];
                }
-             //if (!divider) abort();
+             if (!divider) goto error;
              *dst = acc / divider;
           }
 
@@ -66,13 +66,18 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
                   acc += (*s) * weights[j];
                   divider += weights[j];
                }
-             //if (!divider) abort();
+             if (!divider) goto error;
              *dst = acc / divider;
           }
 
         dstdata += loopstep;
         srcdata += loopstep;
      }
+
+   return;
+
+error:
+   CRI("Avoided division by 0.");
 }
 
 #undef FUNCTION_NAME

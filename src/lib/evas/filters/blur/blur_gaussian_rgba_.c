@@ -43,7 +43,7 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
                   acc[BLUE]  += B_VAL(s) * weights[weightidx];
                   divider += weights[weightidx];
                }
-             //if (!divider) abort();
+             if (!divider) goto error;
              A_VAL(dst) = acc[ALPHA] / divider;
              R_VAL(dst) = acc[RED]   / divider;
              G_VAL(dst) = acc[GREEN] / divider;
@@ -82,7 +82,7 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
                   acc[BLUE]  += B_VAL(s) * weights[j];
                   divider += weights[j];
                }
-             //if (!divider) abort();
+             if (!divider) goto error;
              A_VAL(dst) = acc[ALPHA] / divider;
              R_VAL(dst) = acc[RED]   / divider;
              G_VAL(dst) = acc[GREEN] / divider;
@@ -92,6 +92,11 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
         dstdata += loopstep;
         srcdata += loopstep;
      }
+
+   return;
+
+error:
+   CRI("Avoided division by 0.");
 }
 
 #undef FUNCTION_NAME
