@@ -616,7 +616,15 @@ _surface_cap_cache_save()
 
    /* use mkstemp for writing */
    snprintf(tmp_file, sizeof(tmp_file), "%s.XXXXXX", cap_file_path);
+
+#ifndef _WIN32
+   mode_t old_umask = umask(S_IRWXG|S_IRWXO);
+#endif
    tmpfd = mkstemp(tmp_file);
+#ifndef _WIN32
+   umask(old_umask);
+#endif
+
    if (tmpfd < 0) goto error;
    close(tmpfd);
 

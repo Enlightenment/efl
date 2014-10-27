@@ -1167,7 +1167,15 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 
    /* use mkstemp for writing */
    snprintf(tmp_file, sizeof(tmp_file), "%s.XXXXXX", bin_file_path);
+
+#ifndef _WIN32
+   mode_t old_umask = umask(S_IRWXG|S_IRWXO);
+#endif
    tmpfd = mkstemp(tmp_file);
+#ifndef _WIN32
+   umask(old_umask);
+#endif
+
    if (tmpfd < 0) goto error;
    close(tmpfd);
 
