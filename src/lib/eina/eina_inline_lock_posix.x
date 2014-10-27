@@ -62,13 +62,36 @@ typedef struct _Eina_Lock Eina_Lock;
 typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
 typedef pthread_key_t Eina_TLS;
-typedef sem_t Eina_Semaphore;
+
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
 typedef pthread_spinlock_t Eina_Spinlock;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
 typedef OSSpinLock Eina_Spinlock;
 #else
 typedef Eina_Lock Eina_Spinlock;
+#endif
+
+#if defined(EINA_HAVE_OSX_SEMAPHORE)
+/* OSX supports only named semaphores.
+ * So, we need to be able to generate a unique string identifier for each
+ * semaphore we want to create.
+ * It seems reasonable to use a counter, which is incremented each time a
+ * semaphore is created. However, it needs to be atomic...
+ * It would be easier if we were using C11 with stdatomic, but I guess it
+ * will just be fine without.
+ * That's why there are two static variables below the struct */
+struct _Eina_Semaphore
+{
+   sem_t       *sema;
+   char         name[16];
+};
+typedef struct _Eina_Semaphore Eina_Semaphore;
+
+static unsigned int _sem_ctr = 0;
+static Eina_Spinlock _sem_ctr_lock = 0; // 0: not locked
+
+#else
+typedef sem_t Eina_Semaphore;
 #endif
 
 /** @privatesection  @{ */
@@ -537,41 +560,6 @@ eina_tls_set(Eina_TLS key, const void *data)
    return EINA_TRUE;
 }
 
-static inline Eina_Bool
-eina_semaphore_new(Eina_Semaphore *sem, int count_init)
-{
-   if (!sem || (count_init <= 0))
-     return EINA_FALSE;
-
-   return (sem_init(sem, count_init, 1) == 0) ? EINA_TRUE : EINA_FALSE;
-}
-
-static inline Eina_Bool
-eina_semaphore_free(Eina_Semaphore *sem)
-{
-   if (!sem)
-     return EINA_FALSE;
-
-   return (sem_destroy(sem) == 0) ? EINA_TRUE : EINA_FALSE;
-}
-
-static inline Eina_Bool
-eina_semaphore_lock(Eina_Semaphore *sem)
-{
-   if (!sem)
-     return EINA_FALSE;
-
-   return (sem_wait(sem) == 0) ? EINA_TRUE : EINA_FALSE;
-}
-
-static inline Eina_Bool
-eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
-{
-   if (!sem)
-     return EINA_FALSE;
-
-   return (sem_post(sem) == 0) ? EINA_TRUE : EINA_FALSE;
-}
 
 #ifdef EINA_HAVE_PTHREAD_BARRIER
 typedef struct _Eina_Barrier Eina_Barrier;
@@ -691,6 +679,66 @@ eina_spinlock_free(Eina_Spinlock *spinlock)
    (void) spinlock;
 #else
    eina_lock_free(spinlock);
+#endif
+}
+
+static inline Eina_Bool
+eina_semaphore_new(Eina_Semaphore *sem, int count_init)
+{
+   if (!sem || (count_init <= 0))
+     return EINA_FALSE;
+
+#if defined(EINA_HAVE_OSX_SEMAPHORE)
+   /* Atomic increment to generate the unique identifier */
+   eina_spinlock_take(&_sem_ctr_lock);
+   ++_sem_ctr;
+   eina_spinlock_release(&_sem_ctr_lock);
+
+   snprintf(sem->name, sizeof(sem->name), "/eina_sem_%u", _sem_ctr);
+   sem->sema = sem_open(sem->name, O_CREAT, 0644, 1);
+   return (sem->sema == SEM_FAILED) ? EINA_FALSE : EINA_TRUE;
+#else
+   return (sem_init(sem, count_init, 1) == 0) ? EINA_TRUE : EINA_FALSE;
+#endif
+}
+
+static inline Eina_Bool
+eina_semaphore_free(Eina_Semaphore *sem)
+{
+   if (!sem)
+     return EINA_FALSE;
+
+#if defined(EINA_HAVE_OSX_SEMAPHORE)
+   return ((sem_close(sem->sema) == 0) &&
+           (sem_unlink(sem->name)) == 0) ? EINA_TRUE : EINA_FALSE;
+#else
+   return (sem_destroy(sem) == 0) ? EINA_TRUE : EINA_FALSE;
+#endif
+}
+
+static inline Eina_Bool
+eina_semaphore_lock(Eina_Semaphore *sem)
+{
+   if (!sem)
+     return EINA_FALSE;
+
+#if defined(EINA_HAVE_OSX_SEMAPHORE)
+   return (sem_wait(sem->sema) == 0) ? EINA_TRUE : EINA_FALSE;
+#else
+   return (sem_wait(sem) == 0) ? EINA_TRUE : EINA_FALSE;
+#endif
+}
+
+static inline Eina_Bool
+eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
+{
+   if (!sem)
+     return EINA_FALSE;
+
+#if defined(EINA_HAVE_OSX_SEMAPHORE)
+   return (sem_post(sem->sema) == 0) ? EINA_TRUE : EINA_FALSE;
+#else
+   return (sem_post(sem) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
 }
 
