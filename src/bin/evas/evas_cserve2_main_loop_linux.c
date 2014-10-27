@@ -328,7 +328,7 @@ _inotifyfd_handler(int fd, Fd_Flags flags, void *data EINA_UNUSED)
      }
 
    size = read(fd, buffer, sizeof(buffer));
-   while (i < size)
+   while ((i + (int) sizeof(struct inotify_event)) <= (int) size)
      {
         struct inotify_event *event;
         int event_size;
@@ -338,6 +338,7 @@ _inotifyfd_handler(int fd, Fd_Flags flags, void *data EINA_UNUSED)
 
         event = (struct inotify_event *)&buffer[i];
         event_size = sizeof(struct inotify_event) + event->len;
+        if ((event_size + i) > size) break ;
         i += event_size;
 
         ids = eina_hash_find(inotify_id_hash, &event->wd);
