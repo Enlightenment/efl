@@ -1,5 +1,5 @@
-#ifndef EFL_EO_JS_CONSTRUCTOR_HH
-#define EFL_EO_JS_CONSTRUCTOR_HH
+#ifndef EFL_EO_JS_CALL_FUNCTION_HH
+#define EFL_EO_JS_CALL_FUNCTION_HH
 
 #include <v8.h>
 
@@ -11,7 +11,7 @@
 
 namespace efl { namespace eo { namespace js {
 
-inline void constructor(v8::FunctionCallbackInfo<v8::Value> const& args)
+inline void call_function(v8::FunctionCallbackInfo<v8::Value> const& args)
 {
   if(args.IsConstructCall())
     {
@@ -21,8 +21,8 @@ inline void constructor(v8::FunctionCallbackInfo<v8::Value> const& args)
     std::abort();
 }
 
-template <typename T = void>
-v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* /*cls*/)
+template <typename T>
+v8::Handle<v8::Value> call_function_data(v8::Isolate* isolate, T /*f*/)
 {
   return v8::External::New(isolate, new std::function<void()>());
 }

@@ -130,7 +130,7 @@ int main(int argc, char** argv)
    os << "{\n";
    os << "#include <Efl.h>\n";
    os << "}\n";
-   os << "#include <eo_js_constructor.hh>\n\n";
+   os << "#include <Eo_Js.hh>\n\n";
    os << "#include <Eo.h>\n\n";
    os << "#include <v8.h>\n\n";
    os << "extern \"C\" {\n";
@@ -145,7 +145,8 @@ int main(int argc, char** argv)
    print_lower_case_namespace(klass, os);
    os << " {\n";
 
-   os << "void register_xxx(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate)\n";
+   os << "void register_" << lower_case_class_name
+      << "(v8::Handle<v8::ObjectTemplate> /*global*/, v8::Isolate* isolate)\n";
    os << "{\n";
    os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
    os << "    (isolate, efl::eo::js::constructor, efl::eo::js::constructor_data(isolate, ";
@@ -156,18 +157,21 @@ int main(int argc, char** argv)
       << "\"));\n";
    os << "  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
    os << "  instance->SetInternalFieldCount(1);\n";
-   os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
 
-   for(efl::eina::iterator<Eolian_Function> first
-         ( ::eolian_class_functions_get(klass, EOLIAN_METHOD) )
-         , last; first != last; ++first)
+   efl::eina::iterator<Eolian_Function> first ( ::eolian_class_functions_get(klass, EOLIAN_METHOD) )
+     , last;
+
+   if(first != last)
+     os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
+
+   for(; first != last; ++first)
      {
        Eolian_Function const* function = &*first;
        os << "  prototype->Set( ::v8::String::NewFromUtf8(isolate, \""
           << eolian_function_name_get(function) << "\")\n"
           << "    , v8::FunctionTemplate::New(isolate, &efl::eo::js::call_function\n"
-          << "    , v8::External::New(isolate, efl::eo::js::call_function_data(& ::"
-          << eolian_function_full_c_name_get(function) << "))));\n";
+          << "    , efl::eo::js::call_function_data(isolate, & ::"
+          << eolian_function_full_c_name_get(function) << ")));\n";
      }
 
    os << "}\n";
