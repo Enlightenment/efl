@@ -22,20 +22,21 @@
 #include "eina_types.h"
 
 /**
- * @addtogroup Eina_Counter_Group Counter
+ * @defgroup Eina_Counter_Group Counter
+ * @ingroup Eina_Tools_Group
  *
- * @brief These functions allow you to get the time spent in a part of a code.
+ * @brief This group discusses the functions that allow you to get the time spent in a part of a code.
  *
  * Before using the counter system, Eina must be initialized with
- * eina_init() and later shut down with eina_shutdown(). The create a
+ * eina_init() and later shut down with eina_shutdown(). To create a
  * counter, use eina_counter_new(). To free it, use
  * eina_counter_free().
  *
  * To time a part of a code, call eina_counter_start() just before it,
  * and eina_counter_stop() just after it. Each time you start to time
- * a code, a clock is added to a list. You can give a number of that
+ * a code, a clock is added to a list. You can give the number of that
  * clock with the second argument of eina_counter_stop(). To send all
- * the registered clocks to a stream (like stdout, ofr a file), use
+ * the registered clocks to a stream (like stdout, for a file), use
  * eina_counter_dump().
  *
  * Here is a straightforward example:
@@ -86,37 +87,27 @@
  * }
  * @endcode
  *
- * Compile this code with the following commant:
+ * Compile this code with the following command:
  *
  * @verbatim
  * gcc -Wall -o test_eina_counter test_eina.c `pkg-config --cflags --libs eina`
  * @endverbatim
  *
- * The result should be something like that:
+ * The result should be something like this:
  *
  * @verbatim
  * \# specimen    experiment time    starting time    ending time
  * 1              9794125            783816           10577941
  * @endverbatim
  *
- * @note The displayed time is in nanosecond.
- */
-
-/**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
- * @defgroup Eina_Counter_Group Counter
+ * @note The displayed time is in nanoseconds.
  *
  * @{
  */
 
 /**
  * @typedef Eina_Counter
- * Counter type.
+ * @brief Type for Counter.
  */
 typedef struct _Eina_Counter Eina_Counter;
 
@@ -200,10 +191,6 @@ EAPI void          eina_counter_stop(Eina_Counter *counter,
  * The unit of time is the nanosecond.
  */
 EAPI char         *eina_counter_dump(Eina_Counter *counter) EINA_ARG_NONNULL(1);
-
-/**
- * @}
- */
 
 /**
  * @}
