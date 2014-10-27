@@ -1962,12 +1962,12 @@ edje_edit_group_limits_##TYPE##_list_get(Evas_Object * obj) \
  \
    if (!ed->file || !ed->collection) \
      return NULL; \
-   lim = calloc(ed->collection->limits.TYPE##_count, sizeof(Edje_Edit_Limit)); \
    for(i = 0; i < ed->collection->limits.TYPE##_count; i++) \
      { \
-        lim[i].name = eina_stringshare_add(ed->collection->limits.TYPE[i]->name); \
-        lim[i].value = ed->collection->limits.TYPE[i]->value; \
-        limits = eina_list_append(limits, &lim[i]); \
+        lim = malloc(sizeof(Edje_Edit_Limit)); \
+        lim->name = eina_stringshare_add(ed->collection->limits.TYPE[i]->name); \
+        lim->value = ed->collection->limits.TYPE[i]->value; \
+        limits = eina_list_append(limits, &lim); \
      } \
  \
    return limits; \
