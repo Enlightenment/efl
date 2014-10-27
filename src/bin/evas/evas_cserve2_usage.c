@@ -133,6 +133,10 @@ _server_read(int *size)
    if (n < 0)
      return NULL;
 
+   // We don't expect large messages
+   if (sr_size < 0 || sr_size > 0x10000)
+     return NULL;
+
    sr_buf = malloc(sr_size);
 
 get_data:
