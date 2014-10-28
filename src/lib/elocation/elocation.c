@@ -54,7 +54,7 @@ EAPI int ELOCATION_EVENT_POI;
 EAPI int ELOCATION_EVENT_META_READY;
 
 static void
-_dummy_free(void *user_data, void *func_data)
+_dummy_free(void *user_data EINA_UNUSED, void *func_data EINA_UNUSED)
 {
    /* Don't free the event data after dispatching the event. We keep track of
     * it on our own
@@ -80,7 +80,7 @@ unmarshall_provider(const Eldbus_Message *reply, Elocation_Provider *provider)
 }
 
 static void
-meta_address_provider_info_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+meta_address_provider_info_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
    Elocation_Provider *addr_provider;
@@ -106,7 +106,7 @@ meta_address_provider_info_cb(void *data, const Eldbus_Message *reply, Eldbus_Pe
 }
 
 static void
-meta_position_provider_info_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+meta_position_provider_info_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
    Elocation_Provider *pos_provider;
@@ -253,7 +253,7 @@ unmarshall_address(const Eldbus_Message *reply, Elocation_Address *addr)
  * variable set of key value pairs so we need to handle this with care
  */
 static void
-rgeocode_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+rgeocode_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -277,7 +277,7 @@ rgeocode_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
  * not in standard GeoClue but currently a Tizen extension.
  */
 static void
-poi_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+poi_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    int32_t count, id, rank;
    double lat, lon, bound_left, bound_top, bound_right, bound_bottom;
@@ -316,7 +316,7 @@ poi_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 
 /* Unmarshall a GeoCode message */
 static void
-geocode_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+geocode_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    GeocluePositionFields fields;
    int32_t level;
@@ -364,7 +364,7 @@ geocode_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-address_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+address_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -385,7 +385,7 @@ address_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-address_signal_cb(void *data, const Eldbus_Message *reply)
+address_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
    const char *err, *errmsg;
 
@@ -444,7 +444,7 @@ unmarshall_velocity(const Eldbus_Message *reply)
 }
 
 static void
-velocity_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+velocity_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -465,7 +465,7 @@ velocity_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-velocity_signal_cb(void *data, const Eldbus_Message *reply)
+velocity_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
    if (!unmarshall_velocity(reply))
      {
@@ -495,7 +495,7 @@ unmarshall_nmea(const Eldbus_Message *reply)
 }
 
 static void
-nmea_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+nmea_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -516,7 +516,7 @@ nmea_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-nmea_signal_cb(void *data, const Eldbus_Message *reply)
+nmea_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
    if (!unmarshall_nmea(reply))
      {
@@ -561,7 +561,7 @@ unmarshall_satellite(const Eldbus_Message *reply)
 }
 
 static void
-satellite_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+satellite_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -582,7 +582,7 @@ satellite_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-last_satellite_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+last_satellite_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -603,7 +603,7 @@ last_satellite_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pendi
 }
 
 static void
-satellite_signal_cb(void *data, const Eldbus_Message *reply)
+satellite_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
    if (!unmarshall_satellite(reply))
      {
@@ -662,7 +662,7 @@ unmarshall_position(const Eldbus_Message *reply)
 }
 
 static void
-position_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+position_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -683,7 +683,7 @@ position_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-position_signal_cb(void *data, const Eldbus_Message *reply)
+position_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
    if (!unmarshall_position(reply))
      {
@@ -696,21 +696,21 @@ position_signal_cb(void *data, const Eldbus_Message *reply)
 }
 
 static Eina_Bool
-geoclue_start(void *data, int ev_type, void *event)
+geoclue_start(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event EINA_UNUSED)
 {
    DBG("GeoClue start event at %s", unique_name);
    return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool
-geoclue_stop(void *data, int ev_type, void *event)
+geoclue_stop(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event EINA_UNUSED)
 {
    DBG("GeoClue stop event");
    return ECORE_CALLBACK_DONE;
 }
 
 static void
-_reference_add_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+_reference_add_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -724,13 +724,13 @@ _reference_add_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pendi
 }
 
 static void
-_reference_del_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+_reference_del_cb(void *data EINA_UNUSED, const Eldbus_Message *reply EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED)
 {
    /* Dummy callback. We are not waiting for any reply here on shutdown */
 }
 
 static void
-status_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+status_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err, *errmsg;
 
@@ -755,7 +755,7 @@ status_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-status_signal_cb(void *data, const Eldbus_Message *reply)
+status_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
    /* We need this to be malloced to be passed to ecore_event_add. Or provide a dummy free callback. */
    status = malloc(sizeof(*status));
@@ -772,7 +772,7 @@ status_signal_cb(void *data, const Eldbus_Message *reply)
 }
 
 static void
-_dummy_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_dummy_cb(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED, Eldbus_Pending *pending EINA_UNUSED)
 {
 }
 
@@ -784,7 +784,7 @@ _dummy_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
  * to eager aplications.
  */
 static void
-create_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
+create_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *object_path;
    Eina_Bool updates;
@@ -964,7 +964,7 @@ create_cb(void *data, const Eldbus_Message *reply, Eldbus_Pending *pending)
 }
 
 static void
-_name_owner_changed(void *data, const char *bus, const char *old, const char *new)
+_name_owner_changed(void *data EINA_UNUSED, const char *bus EINA_UNUSED, const char *old, const char *new)
 {
    if (old[0] == '\0' && new[0] != '\0')
      {
@@ -986,7 +986,7 @@ _name_owner_changed(void *data, const char *bus, const char *old, const char *ne
 
 /* Public API function to request a landmarks position based on an address object */
 EAPI Eina_Bool
-elocation_landmarks_get(Elocation_Position *position_shadow, Elocation_Address *address_shadow)
+elocation_landmarks_get(Elocation_Position *position_shadow EINA_UNUSED, Elocation_Address *address_shadow EINA_UNUSED)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter;
@@ -1016,7 +1016,7 @@ elocation_landmarks_get(Elocation_Position *position_shadow, Elocation_Address *
 
 /* Public API function to get an address from a position */
 EAPI Eina_Bool
-elocation_position_to_address(Elocation_Position *position_shadow, Elocation_Address *address_shadow)
+elocation_position_to_address(Elocation_Position *position_shadow, Elocation_Address *address_shadow EINA_UNUSED)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *structure;
@@ -1042,7 +1042,7 @@ elocation_position_to_address(Elocation_Position *position_shadow, Elocation_Add
 
 /* Public API function to get a position from and address */
 EAPI Eina_Bool
-elocation_address_to_position(Elocation_Address *address_shadow, Elocation_Position *position_shadow)
+elocation_address_to_position(Elocation_Address *address_shadow, Elocation_Position *position_shadow EINA_UNUSED)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *array;
@@ -1097,7 +1097,7 @@ elocation_address_to_position(Elocation_Address *address_shadow, Elocation_Posit
  * address
  */
 EAPI Eina_Bool
-elocation_freeform_address_to_position(const char *freeform_address, Elocation_Position *position_shadow)
+elocation_freeform_address_to_position(const char *freeform_address, Elocation_Position *position_shadow EINA_UNUSED)
 {
    if (!eldbus_proxy_call(geonames_geocode, "FreeformAddressToPosition", geocode_cb, NULL, -1, "s", freeform_address))
      {
