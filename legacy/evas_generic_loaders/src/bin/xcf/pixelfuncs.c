@@ -218,7 +218,7 @@ hsv_to_rgb (DATA8 *hue, DATA8 *saturation, DATA8 *value)
     {
       *hue        = *value;
       *saturation = *value;
-      *value      = *value;
+      /* *value      = *value; */
     }
   else
     {
