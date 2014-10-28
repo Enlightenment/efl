@@ -1,10 +1,11 @@
 /**
+ * @file Elocation.h
  * @brief Elocation Library
  *
- * @mainpage Elocation
- * @version 0.0.0
- * @author Stefan Schmidt <stefan@datenfreihafen.org>
- * @date 2012
+ * @defgroup Location Location
+ */
+
+/**
  *
  * @section intro Elocation Use Cases
  *
@@ -62,12 +63,6 @@
 
 #include <Ecore.h>
 #include <Eldbus.h>
-
-/**
- * @file Elocation.h
- *
- * @defgroup Location Location
- */
 
 /**
  * @ingroup Location
