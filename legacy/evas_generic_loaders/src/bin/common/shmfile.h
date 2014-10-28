@@ -10,7 +10,7 @@ extern int   shm_size;
 extern void *shm_addr;
 extern char *shmfile;
 
-void shm_alloc  (int dsize);
+void shm_alloc  (unsigned long dsize);
 void shm_free   (void);
 
 #ifdef __cplusplus

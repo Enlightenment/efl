@@ -25,7 +25,7 @@ void *shm_addr = NULL;
 char *shmfile = NULL;
 
 void
-shm_alloc(int dsize)
+shm_alloc(unsigned long dsize)
 {
 #ifdef HAVE_SHM_OPEN
    if (!shmfile) shmfile = malloc(1024);

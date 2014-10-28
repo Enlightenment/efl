@@ -37,7 +37,7 @@
 #endif
 
 static int fd = -1;
-static int seg_size = 0;
+static size_t seg_size = 0;
 static unsigned char *seg = MAP_FAILED;
 static libraw_data_t *raw_data = NULL;
 static void *data = NULL;
@@ -146,14 +146,14 @@ read_raw_data()
           for (count = 0; count < image->data_size; count +=2)
             SWAP(image->data[count], image->data[count + 1]);
 #undef SWAP
-        shm_alloc(image->width * image->height * (sizeof(DATA32)));
+        shm_alloc((unsigned int)(image->width * image->height) * (sizeof(DATA32)));
         if (!shm_addr)
           goto clean_image;
         data = shm_addr;
-        memset(shm_addr, 0, image->width * image->height * (sizeof(DATA32)));
+        memset(shm_addr, 0, (unsigned int)(image->width * image->height) * (sizeof(DATA32)));
         dataptr = data;
         bufptr = image->data;
-        for (count = image->width * image->height; count > 0; --count)
+        for (count = (unsigned int)(image->width * image->height); count > 0; --count)
           {
              *dataptr = ARGB_JOIN(0xff, bufptr[0], bufptr[1], bufptr[2]);
              dataptr++;
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
              else
                {
                   printf("data\n");
-                  fwrite(data, width * height * sizeof(DATA32), 1, stdout);
+                  fwrite(data, (unsigned int)(width * height) * sizeof(DATA32), 1, stdout);
                }
              shm_free();
           }
