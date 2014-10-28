@@ -409,7 +409,7 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
 }
 
 static void
-_edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
+_edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set, FLOAT_T pos)
 {
    int image_id;
    int image_count, image_num;
@@ -418,6 +418,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
                                &ep->param1.set,
                                (Edje_Part_Description_Image*) ep->param1.description,
                                NULL);
+   *set = ep->param1.set;
    if (image_id < 0)
      {
         Edje_Image_Directory_Entry *ie;
@@ -446,6 +447,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
                                          &ep->param1.set,
                                          (Edje_Part_Description_Image*) ep->param1.description,
                                          NULL);
+             *set = ep->param1.set;
           }
         else
           if (ep->param2)
@@ -456,6 +458,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
                                                 &ep->param2->set,
                                                 (Edje_Part_Description_Image*) ep->param2->description,
                                                 NULL);
+                    *set = ep->param2->set;
                  }
                else
                  {
@@ -463,6 +466,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
 
                     imid = ((Edje_Part_Description_Image*) ep->param2->description)->image.tweens[image_num - 1];
                     image_id = _edje_image_find(ep->object, ed, NULL, NULL, imid);
+                    *set = NULL;
                  }
             }
         if (image_id < 0)
@@ -949,7 +953,7 @@ _edje_part_recalc_single_aspect(Edje *ed,
 
         /* We only need pose to find the right image that would be displayed,
            and the right aspect ratio in that case */
-        _edje_real_part_image_set(ed, ep, pos);
+        _edje_real_part_image_set(ed, ep, NULL, pos);
         evas_object_image_size_get(ep->object, &w, &h);
         amin = amax = DIV(FROM_INT(w), FROM_INT(h));
      }
@@ -2314,7 +2318,7 @@ _edje_part_recalc_single(Edje *ed,
               Edje_Real_Part_Set *set;
               Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) desc;
 
-              _edje_real_part_image_set(ed, ep, pos);
+              _edje_real_part_image_set(ed, ep, &set, pos);
 
               /* border */
               params->type.common.spec.image.l = img_desc->image.border.l;
@@ -2325,7 +2329,6 @@ _edje_part_recalc_single(Edje *ed,
 
               params->type.common.spec.image.border_scale_by = img_desc->image.border.scale_by;
 
-              set = ep->param1.set;
               if (set && set->set)
                 {
 #define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
@@ -2443,7 +2446,7 @@ _edje_part_recalc_single(Edje *ed,
         /* Yes, if someone set aspect preference to SOURCE and also max,min
            to SOURCE, it will be under efficient, but who cares at the
            moment. */
-        _edje_real_part_image_set(ed, ep, pos);
+        _edje_real_part_image_set(ed, ep, NULL, pos);
         evas_object_image_size_get(ep->object, &w, &h);
 
         if (chosen_desc->min.limit)
@@ -2653,9 +2656,23 @@ static void
 _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Image *chosen_desc, FLOAT_T pos)
 {
    FLOAT_T sc;
+   Edje_Real_Part_Set *set;
 
    sc = DIV(ed->scale, ed->file->base_scale);
    if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
+
+   _edje_real_part_image_set(ed, ep, &set, pos);
+   if (set && set->set)
+     {
+#define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
+        SET_BORDER_DEFINED(p3->type.common.spec.image.l, set->entry->border.l);
+        SET_BORDER_DEFINED(p3->type.common.spec.image.r, set->entry->border.r);
+        SET_BORDER_DEFINED(p3->type.common.spec.image.t, set->entry->border.t);
+        SET_BORDER_DEFINED(p3->type.common.spec.image.b, set->entry->border.b);
+
+        SET_BORDER_DEFINED(p3->type.common.spec.image.border_scale_by, set->entry->border.scale_by);
+     }
+
    eo_do(ep->object,
 	 evas_obj_image_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
 				 p3->type.common.fill.w, p3->type.common.fill.h),
@@ -2686,8 +2703,6 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_NONE);
    else if (chosen_desc->image.border.no_fill == 2)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
-
-   _edje_real_part_image_set(ed, ep, pos);
 }
 
 static Edje_Real_Part *
