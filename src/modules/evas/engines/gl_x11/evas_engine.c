@@ -1433,9 +1433,9 @@ eng_setup(Evas *eo_e, void *in)
                  (info->info.depth != eng_get_ob(re)->depth) ||
                  (info->info.destination_alpha != eng_get_ob(re)->alpha))
                {
-                  Outbuf *ob;
+                  Outbuf *ob, *ob_old;
 
-                  eng_window_free(eng_get_ob(re));
+                  ob_old = re->generic.software.ob;
                   re->generic.software.ob = NULL;
                   gl_wins--;
 
@@ -1453,17 +1453,16 @@ eng_setup(Evas *eo_e, void *in)
                                       swap_mode);
                   if (!ob)
                     {
+                       if (ob_old) eng_window_free(ob_old);
                        free(re);
                        return 0;
                     }
                   eng_window_use(ob);
-                  if (ob)
-                    {
-                       evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                                  e->output.w, e->output.h);
+                  if (ob_old) eng_window_free(ob_old);
+                  evas_render_engine_software_generic_update(&re->generic.software, ob,
+                                                             e->output.w, e->output.h);
 
-                       gl_wins++;
-                    }
+                  gl_wins++;
                }
              else if ((eng_get_ob(re)->w != e->output.w) ||
                       (eng_get_ob(re)->h != e->output.h) ||
