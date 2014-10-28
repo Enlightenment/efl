@@ -24,6 +24,7 @@
  * @li @ref evil_main microsoft windows portability layer.
  * @li @ref eolian_main an EO file parser and code generator.
  * @li @ref eina_cxx_main Eina C++ bindings.
+ * @li @ref Location awareness library.
  *
  */
 
