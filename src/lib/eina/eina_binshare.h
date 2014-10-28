@@ -56,9 +56,6 @@
 /**
  * @page tutorial_binshare_page Binary Share Tutorial
  *
- * Should call eina_binshare_init() before usage and eina_binshare_shutdown() after usage.
- * to be written...
- *
  */
 
 /**
