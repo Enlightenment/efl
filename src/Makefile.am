@@ -107,6 +107,7 @@ examples/eldbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \
+examples/elocation \
 examples/ethumb_client
 
 if HAVE_ELUA

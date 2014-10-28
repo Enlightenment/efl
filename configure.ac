@@ -4467,6 +4467,7 @@ src/examples/emotion/Makefile
 src/examples/ethumb_client/Makefile
 src/examples/elua/Makefile
 src/examples/eolian_cxx/Makefile
+src/examples/elocation/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
