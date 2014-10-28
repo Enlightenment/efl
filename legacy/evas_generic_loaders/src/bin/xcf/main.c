@@ -1537,6 +1537,7 @@ flatten_image(void)
                 case ERASE_MODE:
                 case ANTI_ERASE_MODE:
                   D("EEEEEK -- this mode shouldn't be here\n");
+                  /* Fall through */
 
                 case NORMAL_MODE:
                   D("NORMAL\n");
