@@ -4,7 +4,10 @@
 #include <v8.h>
 
 #include <eina_tuple.hh>
+#include <eina_function.hh>
 #include <Eo.h>
+
+#include <eo_js_get_value.hh>
 
 #include <cstdlib>
 
@@ -37,19 +40,38 @@ struct constructor_caller
     template <typename T>
     void operator()(T function) const
     {
+      aux(function, eina::make_index_sequence<std::tuple_size
+          <typename eina::_mpl::function_params<T>::type>::value>());
+    }
+
+    template <typename U, std::size_t I>
+    static
+    typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type
+    get_value(v8::Local<v8::Value> v)
+    {
+      return js::get_value_from_javascript
+        (v, js::value_tag<typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type>());
+    }
+    
+    template <typename T, std::size_t... I>
+    void aux(T function, eina::index_sequence<I...>) const
+    {
+      function(get_value<T, I>((*args)[I + *current])...);
       std::cout << " should call " << typeid(function).name() << std::endl;
     }
 
+    std::size_t* current;
     v8::FunctionCallbackInfo<v8::Value> const* args;
   };
 
   void operator()(v8::FunctionCallbackInfo<v8::Value> const& args)
   {
     std::cout << "Constructing" << std::endl;
+    std::size_t current_index = 0;
     Eo* eo = eo_add
       (klass
        , NULL
-       , eina::_mpl::for_each(constructors, call())
+       , eina::_mpl::for_each(constructors, call{&current_index, &args})
       );
     assert(eo != 0);
     v8::Local<v8::Object> self = args.This();
