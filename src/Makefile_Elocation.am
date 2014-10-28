@@ -1,0 +1,16 @@
+### Library
+
+lib_LTLIBRARIES += lib/elocation/libelocation.la
+
+installed_elocationsmainheadersdir = $(includedir)/elocation-@VMAJ@
+dist_installed_elocationsmainheaders_DATA = \
+lib/elocation/Elocation.h \
+lib/elocation/elocation_private.h
+
+lib_elocation_libelocation_la_SOURCES = \
+lib/elocation/elocation.c
+
+lib_elocation_libelocation_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELOCATION_CFLAGS@
+lib_elocation_libelocation_la_LIBADD = @ELOCATION_LIBS@
+lib_elocation_libelocation_la_DEPENDENCIES = @ELOCATION_INTERNAL_LIBS@
+lib_elocation_libelocation_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
