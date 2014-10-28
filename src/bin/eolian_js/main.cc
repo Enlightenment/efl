@@ -106,6 +106,25 @@ int main(int argc, char** argv)
        return -1;
      }
 
+   std::vector<Eolian_Function const*> constructor_functions;
+   std::vector<Eolian_Function const*> normal_functions;
+
+   auto separate_functions = [&] (Eolian_Function_Type t)
+     {
+       efl::eina::iterator<Eolian_Function> first ( ::eolian_class_functions_get(klass, t) )
+       , last;
+       for(; first != last; ++first)
+         {
+           Eolian_Function const* function = &*first;
+           if( ::eolian_function_is_constructor(function, klass))
+             constructor_functions.push_back(function);
+           else
+             normal_functions.push_back(function);
+         }
+     };
+   separate_functions(EOLIAN_METHOD);
+   // separate_functions(EOLIAN_PROPERTY);
+   
    std::ofstream os (out_file.c_str());
    if(!os.is_open())
      {
@@ -141,16 +160,28 @@ int main(int argc, char** argv)
    os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
    os << "}\n";
 
-   os << "namespace ";
-   print_lower_case_namespace(klass, os);
-   os << " {\n";
-
+   if(namespace_size(klass))
+     {
+       os << "namespace ";
+       print_lower_case_namespace(klass, os);
+       os << " {\n";
+     }
+   
    os << "EAPI void register_" << lower_case_class_name
       << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
    os << "{\n";
    os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
-   os << "    (isolate, efl::eo::js::constructor, efl::eo::js::constructor_data(isolate, ";
+   os << "    (isolate, efl::eo::js::constructor\n"
+      << "     , efl::eo::js::constructor_data(isolate\n"
+         "         , ";
    print_eo_class(klass, os);
+
+   for(auto function : constructor_functions)
+     {
+       os << "\n         , & ::"
+          << eolian_function_full_c_name_get(function);
+     }
+   
    os  << "));\n";
    os << "  constructor->SetClassName(v8::String::NewFromUtf8(isolate, \""
       << class_name
@@ -158,15 +189,12 @@ int main(int argc, char** argv)
    os << "  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
    os << "  instance->SetInternalFieldCount(1);\n";
 
-   efl::eina::iterator<Eolian_Function> first ( ::eolian_class_functions_get(klass, EOLIAN_METHOD) )
-     , last;
-
-   if(first != last)
+   if(!normal_functions.empty())
      os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
 
-   for(; first != last; ++first)
+   for(auto function : normal_functions)
      {
-       Eolian_Function const* function = &*first;
+       if(! ::eolian_function_is_constructor(function, klass))
        os << "  prototype->Set( ::v8::String::NewFromUtf8(isolate, \""
           << eolian_function_name_get(function) << "\")\n"
           << "    , v8::FunctionTemplate::New(isolate, &efl::eo::js::call_function\n"

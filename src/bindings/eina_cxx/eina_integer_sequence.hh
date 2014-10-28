@@ -1,6 +1,8 @@
 #ifndef EINA_CXX_EINA_INTEGER_SEQUENCE_HH
 #define EINA_CXX_EINA_INTEGER_SEQUENCE_HH
 
+#include <cstdlib>
+
 /**
  * @addtogroup Eina_Cxx_Data_Types_Group
  *

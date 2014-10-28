@@ -1,0 +1,21 @@
+class Constructor_Method_Class (Eo.Base)
+{
+   legacy_prefix: null;
+   data: Constructor_Method_Class_Data;
+   methods {
+      constructor1 {
+         params { @in int one; }
+      }
+      constructor2 {
+         params { @in double two; }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.finalize;
+   }
+   constructors {
+      .constructor1;
+      .constructor2;
+   }
+}

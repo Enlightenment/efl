@@ -27,15 +27,15 @@ lib_eolian_js_libeolian_js_la_SOURCES =\
 	$(generated_evas_canvas_js_bindings)
 
 lib_eolian_js_libeolian_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
-@EINA_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ \
+@EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ \
 -I$(top_builddir)/src/lib/evas/canvas \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eolian_js\" \
 @VALGRIND_CFLAGS@
 
-lib_eolian_js_libeolian_js_la_LIBADD = @EINA_LIBS@ @DL_LIBS@
-lib_eolian_js_libeolian_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_eolian_js_libeolian_js_la_LIBADD = @EINA_LIBS@ @DL_LIBS@ @EVAS_LIBS@
+lib_eolian_js_libeolian_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @EVAS_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
 lib_eolian_js_libeolian_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Unit tests
@@ -47,13 +47,15 @@ TESTS += tests/eolian_js/eolian_js_suite
 
 tests_eolian_js_eolian_js_suite_SOURCES = \
 tests/eolian_js/eolian_js_suite.cc \
-tests/eolian_js/eolian_js_test_parse.cc
+tests/eolian_js/eolian_js_test_evas_box.cc \
+tests/eolian_js/eolian_js_test_constructor_method.cc \
+tests/eolian_js/eolian_js_test_constructor_method_impl.c
 
-#tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh
+tests/eolian_js/tests_eolian_js_eolian_js_suite-eolian_js_test_constructor_method.$(OBJEXT): tests/eolian_js/constructor_method_class.eo.js.cc tests/eolian_js/constructor_method_class.eo.h
 
-#tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-callback.$(OBJEXT): tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
+tests/eolian_js/tests_eolian_js_eolian_js_suite-eolian_js_test_constructor_method_impl.$(OBJEXT): tests/eolian_js/constructor_method_class.eo.c
 
-#CLEANFILES += tests/eolian_cxx/callback.eo.hh tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
+CLEANFILES += tests/eolian_js/constructor_method_class.eo.js.cc tests/eolian_js/constructor_method_class.eo.c tests/eolian_js/constructor_method_class.eo.h
 
 tests_eolian_js_eolian_js_suite_CXXFLAGS = 	\
 -I$(top_builddir)/src/lib/efl \
@@ -71,8 +73,8 @@ tests_eolian_js_eolian_js_suite_CXXFLAGS = 	\
 tests_eolian_js_eolian_js_suite_CFLAGS = ${tests_eolian_js_eolian_js_suite_CXXFLAGS}
 tests_eolian_js_eolian_js_suite_CPPFLAGS = ${tests_eolian_js_eolian_js_suite_CXXFLAGS}
 tests_eolian_js_eolian_js_suite_LDADD = \
-@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EOLIAN_JS_LIBS@ @USE_EINA_JS_LIBS@
-tests_eolian_js_eolian_js_suite_DEPENDENCIES = @USE_EOLIAN_JS_INTERNAL_LIBS@ @USE_EOLIAN_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@
+@CHECK_LIBS@ @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@ @USE_EOLIAN_JS_LIBS@ @USE_EINA_JS_LIBS@ @USE_EVAS_LIBS@
+tests_eolian_js_eolian_js_suite_DEPENDENCIES = @USE_EOLIAN_JS_INTERNAL_LIBS@ @USE_EOLIAN_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@ @USE_EVAS_INTERNAL_LIBS@
 
 endif
 

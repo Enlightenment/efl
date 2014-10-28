@@ -1,4 +1,5 @@
 
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -7,44 +8,16 @@
 #include <Eina.hh>
 #include <Eo.hh>
 
+#include <check.h>
+
 #include <iostream>
 
 #include <cassert>
 #include <tuple>
 
-#include <v8-platform.h>
+#include <constructor_method_class.eo.js.cc>
 
-namespace v8 {
-namespace platform {
-
-/**
- * Returns a new instance of the default v8::Platform implementation.
- *
- * The caller will take ownership of the returned pointer. |thread_pool_size|
- * is the number of worker threads to allocate for background jobs. If a value
- * of zero is passed, a suitable default based on the current number of
- * processors online will be chosen.
- */
-v8::Platform* CreateDefaultPlatform(int thread_pool_size = 0);
-
-
-/**
- * Pumps the message loop for the given isolate.
- *
- * The caller has to make sure that this is called from the right thread.
- * Returns true if a task was executed, and false otherwise. This call does
- * not block if no task is pending. The |platform| has to be created using
- * |CreateDefaultPlatform|.
- */
-bool PumpMessageLoop(v8::Platform* platform, v8::Isolate* isolate);
-
-
-}  // namespace platform
-}  // namespace v8
-
-namespace evas {
-EAPI void register_box(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-}
+namespace {
 
 static const char script[] =
   "function assert(condition, message) {\n"
@@ -54,7 +27,7 @@ static const char script[] =
   "  }\n"
   "}\n"
   "print(\"teste\");\n"
-  "x = new Box();\n"
+  "x = new Constructor_Method_Class(5, 10.0);"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {
@@ -119,8 +92,10 @@ void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   fflush(stdout);
 }
 
-int main(int argc, char** argv)
+START_TEST(eolian_js_test_constructor_method_test)
 {
+  int argc = 1;
+  const char* argv[] = {"test"};
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
   
@@ -156,7 +131,7 @@ int main(int argc, char** argv)
     v8::Context::Scope context_scope(context);
     v8::Local<v8::String> name(v8::String::NewFromUtf8(context->GetIsolate(), "(shell)"));
 
-    evas::register_box(context->Global(), isolate);
+    register_constructor_method_class(context->Global(), isolate);
 
     v8::HandleScope handle_scope(context->GetIsolate());
     ExecuteString(context->GetIsolate(),
@@ -164,4 +139,12 @@ int main(int argc, char** argv)
                   name);
   }
   context->Exit();
+}
+END_TEST
+
+}
+
+void eolian_js_test_constructor_method(TCase* tc)
+{
+   tcase_add_test(tc, eolian_js_test_constructor_method_test);
 }
