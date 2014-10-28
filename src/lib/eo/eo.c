@@ -600,13 +600,6 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
           goto end;
      }
 
-   if (EINA_UNLIKELY(func == NULL))
-     {
-        ERR("in %s:%d: you called func '%s' (%d) which is unknown in class '%s'.",
-            file, line, func_name, op, klass->desc->name);
-        return EINA_FALSE;
-     }
-
    if (EINA_LIKELY(func->func && func->src))
      {
         call->func = func->func;
