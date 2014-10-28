@@ -72,7 +72,7 @@
 /**
  * @ingroup Location
  * @brief Available location events that are emitted from the library
- * @since 1.8
+ * @since 1.13
  *
  * Ecore events emitted by the library. Applications can register ecore event
  * handlers to react on such events. After the initial query this can be used
@@ -94,7 +94,7 @@ EAPI extern int ELOCATION_EVENT_META_READY; /**< Meta provider is ready to be us
 /**
  * @ingroup Location
  * @typedef Elocation_Accuracy_Level
- * @since 1.8
+ * @since 1.13
  *
  * Different location accuracy levels from country level up to detailed,
  * e.g. GPS, information.
@@ -114,7 +114,7 @@ typedef enum {
 /**
  * @ingroup Location
  * @typedef Elocation_Resource_Flags
- * @since 1.8
+ * @since 1.13
  *
  * Flags for available system resources to be used for locating. So far they
  * cover physical resources like network connection, cellular network
@@ -134,7 +134,7 @@ typedef enum {
 /**
  * @ingroup Location
  * @typedef Elocation_Accuracy
- * @since 1.8
+ * @since 1.13
  *
  * Information about the accuracy of the reported location. For details about
  * the level of accuracy see #Elocation_Accuracy_Level. It also covers
@@ -151,7 +151,7 @@ typedef struct _Elocation_Accuracy
 /**
  * @ingroup Location
  * @typedef Elocation_Address
- * @since 1.8
+ * @since 1.13
  *
  * Location information in textual form. Depending on the used provider this
  * can cover only the country or a detailed address with postcode and street.
@@ -173,7 +173,7 @@ typedef struct _Elocation_Address
 /**
  * @ingroup Location
  * @typedef Elocation_Position
- * @since 1.8
+ * @since 1.13
  *
  * Location information based on the GPS grid. Latitude, longitude and altitude.
  * A timestamp is available to calculate the age of the address data.
@@ -190,7 +190,7 @@ typedef struct _Elocation_Postion
 /**
  * @ingroup Location
  * @typedef Elocation_Velocity
- * @since 1.8
+ * @since 1.13
  *
  * Velocity information. So far this interface is only offered with GPS based
  * providers. It offers information about speed, direction and climb.
@@ -209,7 +209,7 @@ typedef struct _Elocation_Velocity
 /**
  * @ingroup Location
  * @typedef Elocation_Requirements
- * @since 1.8
+ * @since 1.13
  *
  * Requirement settings for the location provider. Requirements can be a level
  * of accuracy or allowed resources like network access or GPS. See
@@ -235,7 +235,7 @@ typedef struct _Elocation_Requirements
  * with a call to #elocation_address_free.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Elocation_Address *elocation_address_new(void);
 
@@ -248,7 +248,7 @@ EAPI Elocation_Address *elocation_address_new(void);
  * no longer needed.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI void elocation_address_free(Elocation_Address *address);
 
@@ -261,7 +261,7 @@ EAPI void elocation_address_free(Elocation_Address *address);
  * with a call to #elocation_address_free.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Elocation_Position *elocation_position_new(void);
 
@@ -274,7 +274,7 @@ EAPI Elocation_Position *elocation_position_new(void);
  * no longer needed.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI void elocation_position_free(Elocation_Position *position);
 
@@ -290,7 +290,7 @@ EAPI void elocation_position_free(Elocation_Position *position);
  * event.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_address_get(Elocation_Address *address);
 
@@ -306,7 +306,7 @@ EAPI Eina_Bool elocation_address_get(Elocation_Address *address);
  * event.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_position_get(Elocation_Position *position);
 
@@ -316,7 +316,7 @@ EAPI Eina_Bool elocation_position_get(Elocation_Position *position);
  * @return EINA_TRUE for success and EINA_FALSE for failure.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_status_get(int *status);
 
@@ -328,7 +328,7 @@ EAPI Eina_Bool elocation_status_get(int *status);
  * Set the requirements for selecting a provider.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_requirements_set(Elocation_Requirements *requirements);
 
@@ -342,7 +342,7 @@ EAPI Eina_Bool elocation_requirements_set(Elocation_Requirements *requirements);
  * representation of a location to a representation in textual form.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_position_to_address(Elocation_Position *position_shadow, Elocation_Address *address_shadow);
 
@@ -356,7 +356,7 @@ EAPI Eina_Bool elocation_position_to_address(Elocation_Position *position_shadow
  * representation of a location to a representation as GPS coordinates.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_address_to_position(Elocation_Address *address_shadow, Elocation_Position *position_shadow);
 
@@ -375,7 +375,7 @@ EAPI Eina_Bool elocation_address_to_position(Elocation_Address *address_shadow, 
  * prone regarding correct results.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_freeform_address_to_position(const char *freeform_address, Elocation_Position *position_shadow);
 
@@ -389,7 +389,7 @@ EAPI Eina_Bool elocation_freeform_address_to_position(const char *freeform_addre
  * GeoClue.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_landmarks_get(Elocation_Position *position_shadow, Elocation_Address *address_shadow);
 
@@ -401,7 +401,7 @@ EAPI Eina_Bool elocation_landmarks_get(Elocation_Position *position_shadow, Eloc
  * in your application to make sure it it setup correctly for usage.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI Eina_Bool elocation_init(void);
 
@@ -412,7 +412,7 @@ EAPI Eina_Bool elocation_init(void);
  * the Elocation functionality to allow the subsystem to shutdown cleanly.
  *
  * @ingroup Location
- * @since 1.8
+ * @since 1.13
  */
 EAPI void elocation_shutdown(void);
 #endif
