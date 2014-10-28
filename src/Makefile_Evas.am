@@ -1833,7 +1833,8 @@ bin_evas_evas_cserve2_slave_CPPFLAGS +=  \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
-@evas_image_loader_tgv_cflags@
+@evas_image_loader_tgv_cflags@ \
+@NEON_CFLAGS@
 if ! ENABLE_LIBLZ4
 bin_evas_evas_cserve2_slave_CPPFLAGS += \
 -I$(top_srcdir)/src/static_libs/lz4
@@ -1858,6 +1859,7 @@ modules_evas_loaders_tgv_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
 @EVAS_CFLAGS@ \
+@NEON_CFLAGS@ \
 @evas_image_loader_tgv_cflags@
 if ! ENABLE_LIBLZ4
 modules_evas_loaders_tgv_module_la_CPPFLAGS += \
