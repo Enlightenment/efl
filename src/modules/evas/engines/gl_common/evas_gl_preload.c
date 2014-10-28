@@ -46,23 +46,23 @@ evas_gl_preload_pop(Evas_GL_Texture *tex)
      {
         Eina_Bool running = async_loader_running;
         evas_gl_make_current_cb tmp_cb = async_gl_make_current;
+        Evas_GL_Texture_Async_Preload *current = async_current;
         void *tmp_data = async_engine_data;
 
         async_current_cancel = EINA_TRUE;
+        async_current = NULL;
         eina_lock_release(&async_loader_lock);
 
         if (running) evas_gl_preload_render_lock(tmp_cb, tmp_data);
 
-        evas_gl_common_texture_free(async_current->tex, EINA_FALSE);
+        evas_gl_common_texture_free(current->tex, EINA_FALSE);
 #ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&async_current->im->cache_entry))
-          evas_cache2_image_close(&async_current->im->cache_entry);
+        if (evas_cache2_image_cached(&current->im->cache_entry))
+          evas_cache2_image_close(&current->im->cache_entry);
         else
 #endif
-        evas_cache_image_drop(&async_current->im->cache_entry);
-        free(async_current);
-
-        async_current = NULL;
+        evas_cache_image_drop(&current->im->cache_entry);
+        free(current);
 
         if (running) evas_gl_preload_render_unlock(tmp_cb, tmp_data);
 
