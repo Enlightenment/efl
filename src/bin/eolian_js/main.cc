@@ -145,8 +145,8 @@ int main(int argc, char** argv)
    print_lower_case_namespace(klass, os);
    os << " {\n";
 
-   os << "void register_" << lower_case_class_name
-      << "(v8::Handle<v8::ObjectTemplate> /*global*/, v8::Isolate* isolate)\n";
+   os << "EAPI void register_" << lower_case_class_name
+      << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
    os << "{\n";
    os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
    os << "    (isolate, efl::eo::js::constructor, efl::eo::js::constructor_data(isolate, ";
@@ -174,14 +174,14 @@ int main(int argc, char** argv)
           << eolian_function_full_c_name_get(function) << ")));\n";
      }
 
+   os << "  global->Set(v8::String::NewFromUtf8(isolate, \""
+      << class_name << "\")"
+      << ", constructor->GetFunction());\n";
+
    os << "}\n";
 
    for(std::size_t i = 0, j = namespace_size(klass); i != j; ++i)
      os << "}";
    os << "\n";
-
-   //std::vector<Eolian_Function const*> functions;
-
-
    os << "\n#endif\n\n";
 }

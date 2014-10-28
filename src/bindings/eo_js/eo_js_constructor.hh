@@ -9,10 +9,13 @@
 
 #include <functional>
 
+#include <iostream>
+
 namespace efl { namespace eo { namespace js {
 
 inline void constructor(v8::FunctionCallbackInfo<v8::Value> const& args)
 {
+  std::cout << "Constructor ! " << std::endl;
   if(args.IsConstructCall())
     {
       

@@ -1163,6 +1163,37 @@ EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
 EFL_LIB_END([Eolian])
 #### End of Eolian
 
+EFL_LIB_START([Eolian_Js])
+
+### Default values
+
+### Additional options to configure
+#EFL_ADD_FEATURE([EOLIAN_JS], [cxx], [${have_cxx11}])
+EFL_DEPEND_PKG([EOLIAN_JS], [V8], [v8 >= 3.25.28])
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EOLIAN_JS], [eina])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Eolian_Js])
+#### End of Eolian
+
+
 EFL_LIB_START([Eolian_Cxx])
 ### Default values
 
