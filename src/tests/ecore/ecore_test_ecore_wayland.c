@@ -10,7 +10,7 @@
 #include "ecore_suite.h"
 #include "wayland-server.h"
 
-#define MAX_ITER 15
+#define MAX_ITER 10
 
 static char test_socket[] = "test1";
 
@@ -76,20 +76,52 @@ END_TEST
 
 START_TEST(ecore_test_ecore_wl_init)
 {
-   int ret, i, j;
+#define PATH_LEN  128
+   struct wl_display *test_display = NULL;
+   int ret, i, j, run_test = 0;
+   char *wayland_display = NULL, *xdg_runtime_dir = NULL, path[PATH_LEN];
 
-   for (i = 1; i <= MAX_ITER; i++)
+   xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+   if (xdg_runtime_dir)
      {
-        ret = ecore_wl_init(NULL);
-        fprintf(stderr, "Created %d ecore wayland instance.\n", i);
-        fail_if(ret != i);
+        wayland_display = getenv("WAYLAND_DISPLAY");
+        if (!wayland_display)
+          wayland_display = "wayland-0";
+
+        snprintf(path, PATH_LEN, "%s/%s", xdg_runtime_dir, wayland_display);
+        if (access(path, F_OK) != -1)
+          {
+             run_test = 1;
+          }
+        else
+          {
+             test_display = wl_display_create();
+             fprintf(stderr, "Creating display\n");
+             fail_if(test_display == NULL);
+
+             ret = wl_display_add_socket(test_display, NULL);
+             fprintf(stderr, "Connecting socket to display\n");
+             fail_if(ret != 0);
+
+             run_test = 1;
+          }
      }
 
-   for (j = MAX_ITER - 1; j >= 0; j--)
+   if (run_test)
      {
-        ret = ecore_wl_shutdown();
-        fprintf(stderr, "Deleted %d ecore wayland instance.\n", MAX_ITER - j);
-        fail_if(ret != j);
+        for (i = 1; i <= MAX_ITER; i++)
+          {
+             ret = ecore_wl_init(NULL);
+             fprintf(stderr, "Created %d ecore wayland instance.\n", i);
+             fail_if(ret != i);
+          }
+
+        for (j = MAX_ITER - 1; j >= 0; j--)
+          {
+             ret = ecore_wl_shutdown();
+             fprintf(stderr, "Deleted %d ecore wayland instance.\n", MAX_ITER - j);
+             fail_if(ret != j);
+          }
      }
 }
 END_TEST
