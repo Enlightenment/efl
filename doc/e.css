@@ -150,6 +150,7 @@ dl.el {
   font-family: monospace, mono, fixed;
   font-size: 9pt;
   white-space: pre;
+  padding-top: 10px;
 }
 
 .line {
