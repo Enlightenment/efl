@@ -37,7 +37,19 @@ main(int argc, char *argv[])
    fail_if(!eo_isa(obj, SIMPLE_CLASS));
 
    int a = 0;
+   cb_called = EINA_FALSE;
    eo_do(obj, simple_a_set(1));
+   fail_if(!cb_called);
+
+   /* Test functions from all across the chain. */
+   cb_called = EINA_FALSE;
+   eo_do(obj, simple_a_set1(1));
+   fail_if(!cb_called);
+   cb_called = EINA_FALSE;
+   eo_do(obj, simple_a_set15(1));
+   fail_if(!cb_called);
+   cb_called = EINA_FALSE;
+   eo_do(obj, simple_a_set32(1));
    fail_if(!cb_called);
 
    eo_do(obj, a = simple_a_get());
