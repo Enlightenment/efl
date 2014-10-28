@@ -622,7 +622,7 @@ xcf_load_image_props(void)
                     {
                        amount = (16 < prop_size ? 16 : prop_size);
                        image->cp += xcf_read_int8(image->file, buf, amount);
-                       prop_size -= (16 < amount ? 16 : amount);
+                       prop_size -= amount;
                     }
                }
              break;
@@ -735,7 +735,7 @@ xcf_load_layer_props(Layer *layer)
                     {
                        amount = (16 < prop_size ? 16 : prop_size);
                        image->cp += xcf_read_int8 (image->file, buf, amount);
-                       prop_size -= (16 < amount ? 16 : amount);
+                       prop_size -= amount;
                     }
                }
              break;
@@ -1005,7 +1005,7 @@ xcf_load_channel_props(Layer *layer)
                     {
                        amount = (16 < prop_size ? 16 : prop_size);
                        image->cp += xcf_read_int8(image->file, buf, amount);
-                       prop_size -= (16 < amount ? 16 : amount);
+                       prop_size -= amount;
                     }
                }
              break;
