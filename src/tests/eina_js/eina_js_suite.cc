@@ -133,8 +133,11 @@ int main(int argc, char* argv[])
   
   v8::V8::InitializeICU();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Isolate* isolate = v8::Isolate::New();
+  assert(isolate != 0);
 
+  v8::Isolate::Scope isolate_scope(isolate);
+  
   v8::HandleScope handle_scope(isolate);
   v8::Handle<v8::Context> context;
 
