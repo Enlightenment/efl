@@ -11,6 +11,24 @@
 
 #define MAX_ITER 10
 
+START_TEST(ecore_test_ecore_drm_shutdown_bef_init)
+{
+   int ret = 0;
+
+   ret = ecore_drm_shutdown();
+   fprintf(stderr, "Calling ecore_drm_shutdown without calling ecore_drm_init.\n");
+   fail_if(ret != 0);
+
+   ret = ecore_drm_init();
+   fprintf(stderr, "Calling ecore_drm_init.\n");
+   fail_if(ret != 1);
+
+   ret = ecore_drm_shutdown();
+   fprintf(stderr, "Calling ecore_drm_shutdown after ecore_drm_init.\n");
+   fail_if(ret != 0);
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_drm_init)
 {
    int ret, i, j;
@@ -34,4 +52,5 @@ END_TEST
 void ecore_test_ecore_drm(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_drm_init);
+   tcase_add_test(tc, ecore_test_ecore_drm_shutdown_bef_init);
 }
