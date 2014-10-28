@@ -308,7 +308,7 @@ combine_pixels_normal (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
   unsigned char src_alpha;
   unsigned char new_alpha;
   float ratio, compl_ratio;
-  long tmp;
+  unsigned long tmp;
 
   _clip(&src_tl_x, &src_tl_y, &src_br_x, &src_br_y, &dest_x, &dest_y, dest_w, dest_h);
 
@@ -325,7 +325,7 @@ combine_pixels_normal (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w
 	    if (src_alpha == 255)
 	      new_alpha = src_alpha;
 	    else
-	      new_alpha = AD + INT_MULT((255 - AD), src_alpha, tmp);
+	      new_alpha = AD + INT_MULT((255u - AD), src_alpha, tmp);
 
 	    b = 3;
 	    if (new_alpha != 0)
@@ -725,7 +725,7 @@ combine_pixels_diss (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, 
 	    unsigned char src_alpha;
 	    unsigned char new_alpha;
 	    float ratio, compl_ratio;
-	    long tmp;
+	    unsigned long tmp;
 
 	    src_alpha = AS;
 
@@ -734,7 +734,7 @@ combine_pixels_diss (DATA8* src, int src_w, int src_h, DATA8* dest, int dest_w, 
 		if (src_alpha == 255)
 		  new_alpha = src_alpha;
 		else
-		  new_alpha = AD + INT_MULT((255 - AD), src_alpha, tmp);
+		  new_alpha = AD + INT_MULT((255u - AD), src_alpha, tmp);
 
 		b = 3;
 		if (new_alpha != 0)
