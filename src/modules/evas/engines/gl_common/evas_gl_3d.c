@@ -1298,7 +1298,7 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
      {
         pd_light_node = eo_data_scope_get(light, EVAS_3D_NODE_CLASS);
         evas_mat4_inverse_build(&matrix_light_eye,
-           &pd_light_node->position_world, &pd_light_node ->orientation_world, &pd_light_node->scale_world);
+           &pd_light_node->position_world, &pd_light_node->orientation_world, &pd_light_node->scale_world);
         ld = eo_data_scope_get(pd_light_node->data.light.light, EVAS_3D_LIGHT_CLASS);
          _shadowmap_render(drawable, renderer, data, &matrix_light_eye, light);
      }
