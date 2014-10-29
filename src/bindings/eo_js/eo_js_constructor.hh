@@ -10,12 +10,10 @@
 #include <eo_js_get_value.hh>
 
 #include <cstdlib>
-
 #include <functional>
-
 #include <iostream>
-
 #include <cassert>
+#include <vector>
 
 namespace efl { namespace eo { namespace js {
 
@@ -29,7 +27,13 @@ inline void constructor(v8::FunctionCallbackInfo<v8::Value> const& args)
       (*f)(args);
     }
   else
-    std::abort();
+    {
+      std::size_t argc = args.Length();
+      std::vector<v8::Local<v8::Value> > argv (argc ? argc : 1 );
+      for(std::size_t i = 0; i != args.Length(); ++i)
+        argv[i] = args[i];
+      args.Callee()->NewInstance(argc, &argv[0]);
+    }
 }
 
 template <typename...F>
