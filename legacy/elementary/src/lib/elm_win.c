@@ -3372,6 +3372,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    sd->type = type;
    sd->parent = parent;
    sd->modal_count = 0;
+   sd->withdrawn = EINA_TRUE;
 
    if (sd->parent)
      evas_object_event_callback_add
