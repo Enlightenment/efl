@@ -66,8 +66,9 @@ struct constructor_caller
     get_value(v8::Local<v8::Value> v, v8::Isolate* isolate)
     {
       return js::get_value_from_javascript
-        (v, js::value_tag<typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type>()
-         , isolate);
+        (v, isolate
+         , js::value_tag<typename std::tuple_element
+         <I, typename eina::_mpl::function_params<U>::type>::type>());
     }
     
     template <typename T, std::size_t... I>

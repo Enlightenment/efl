@@ -48,4 +48,27 @@ static Eo * _constructor_method_class_eo_base_finalize(Eo *obj, Constructor_Meth
   return obj;
 }
 
+void _constructor_method_class_method1(Eo *obj, Constructor_Method_Class_Data *pd, int one)
+{
+  fprintf(stderr, "method1 one == %d\n", one);
+  fflush(stderr);
+  ck_assert(one == 2);
+}
+
+int _constructor_method_class_method2(Eo *obj, Constructor_Method_Class_Data *pd, int one)
+{
+  fprintf(stderr, "method2 one == %d\n", one);
+  fflush(stderr);
+  ck_assert(one == 3);
+  return 5;
+}
+
+void _constructor_method_class_method3(Eo *obj, Constructor_Method_Class_Data *pd, int one, double two)
+{
+  fprintf(stderr, "method3 one == %d two == %f\n", one, two);
+  fflush(stderr);
+  ck_assert(one == 3);
+  ck_assert(two == 11.1);
+}
+
 #include <constructor_method_class.eo.c>
