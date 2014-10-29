@@ -245,6 +245,12 @@ ecore_con_shutdown(void)
    Eina_List *l, *l2;
    Ecore_Con_Server *obj;
 
+   /* _ecore_con_init_count should not go below zero. */
+   if (_ecore_con_init_count < 1)
+     {
+        ERR("Ecore_Con Shutdown called without calling Ecore_Con Init.\n");
+        return 0;
+     }
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
 
