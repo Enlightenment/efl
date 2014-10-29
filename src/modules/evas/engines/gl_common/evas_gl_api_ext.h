@@ -67,7 +67,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXTENSION_SUPPORT(name) (_gl_ext_support_##name == 1)
 
-extern void evgl_api_ext_init(void *getproc, const char *glueexts);
+extern Eina_Bool evgl_api_ext_init(void *getproc, const char *glueexts);
 extern void evgl_api_ext_get(Evas_GL_API *gl_funcs);
 extern const char *evgl_api_ext_string_get();
 

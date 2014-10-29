@@ -238,7 +238,7 @@ evgl_evasglWaitSync(Evas_GL *evas_gl EINA_UNUSED,
 
 static int _evgl_api_ext_status = 0;
 
-void
+Eina_Bool
 evgl_api_ext_init(void *getproc, const char *glueexts)
 {
    const char *glexts;
@@ -258,6 +258,12 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
 
    // GLES Extensions
    glexts = (const char*)glGetString(GL_EXTENSIONS);
+   if (!glexts)
+     {
+        ERR("glGetString returned NULL! Something is very wrong...");
+        return EINA_FALSE;
+     }
+
    /*
    // GLUE Extensions
 #ifdef GL_GLES
@@ -352,6 +358,7 @@ re->info->info.screen);
 
 
    _evgl_api_ext_status = 1;
+   return EINA_TRUE;
 }
 
 void

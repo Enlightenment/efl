@@ -1400,9 +1400,15 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 
    // Initialize Extensions
    if (efunc->proc_address_get && efunc->ext_string_get)
-      evgl_api_ext_init(efunc->proc_address_get, efunc->ext_string_get(eng_data));
+     {
+        if (!evgl_api_ext_init(efunc->proc_address_get, efunc->ext_string_get(eng_data)))
+          {
+             ERR("Extensions failed to load. This shouldn't happen, Evas GL load fails.");
+             goto error;
+          }
+     }
    else
-      ERR("Proc address get function not available.  Extension not initialized.");
+     ERR("Proc address get function not available. Extensions not initialized.");
 
    if (efunc->ext_string_get)
      DBG("GLUE Extension String: %s", efunc->ext_string_get(eng_data));
