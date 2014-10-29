@@ -9,6 +9,8 @@
 
 #include "constructor_method_class.eo.h"
 
+#include <check.h>
+
 struct _Constructor_Method_Class_Data
 {
   Eina_Bool one, two;
@@ -24,11 +26,17 @@ static void _constructor_method_class_eo_base_constructor(Eo *obj, Constructor_M
 
 static void _constructor_method_class_constructor1(Eo *obj, Constructor_Method_Class_Data *pd, int one)
 {
+  fprintf(stderr, "one == %d\n", one);
+  fflush(stderr);
+  ck_assert(one == 5);
   pd->one = 1;
 }
 
 static void _constructor_method_class_constructor2(Eo *obj, Constructor_Method_Class_Data *pd, double two)
 {
+  fprintf(stderr, "two == %f\n", two);
+  fflush(stderr);
+  ck_assert(two == 10.0);
   pd->two = 1;
 }
 
@@ -37,7 +45,6 @@ static Eo * _constructor_method_class_eo_base_finalize(Eo *obj, Constructor_Meth
   if(!pd->one || !pd->two)
     return NULL;
   
-  eo_do_super(obj, EO_BASE_CLASS, eo_finalize());
   return obj;
 }
 

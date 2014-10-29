@@ -40,8 +40,10 @@ struct constructor_caller
     template <typename T>
     void operator()(T function) const
     {
-      aux(function, eina::make_index_sequence<std::tuple_size
-          <typename eina::_mpl::function_params<T>::type>::value>());
+      std::size_t const parameters
+        = std::tuple_size<typename eina::_mpl::function_params<T>::type>::value;
+      aux(function, eina::make_index_sequence<parameters>());
+      *current += parameters;
     }
 
     template <typename U, std::size_t I>
@@ -57,7 +59,6 @@ struct constructor_caller
     void aux(T function, eina::index_sequence<I...>) const
     {
       function(get_value<T, I>((*args)[I + *current])...);
-      std::cout << " should call " << typeid(function).name() << std::endl;
     }
 
     std::size_t* current;
