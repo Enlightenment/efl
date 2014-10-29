@@ -654,7 +654,7 @@ _ecore_drm_output_device_is_hotplug(Ecore_Drm_Output *output)
 }
 
 static void
-_ecore_drm_output_event(const char *device, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+_ecore_drm_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    Ecore_Drm_Output *output;
 
