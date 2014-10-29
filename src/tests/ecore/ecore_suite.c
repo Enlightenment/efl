@@ -36,6 +36,9 @@ static const Ecore_Test_Case etc[] = {
 #if HAVE_ECORE_DRM
   { "Ecore_Drm", ecore_test_ecore_drm },
 #endif
+#if HAVE_ECORE_FB
+  { "Ecore_Fb", ecore_test_ecore_fb },
+#endif
   { NULL, NULL }
 };
 
