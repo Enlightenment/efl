@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <Eina.h>
-
 #include <check.h>
 
 #include <Elocation.h>
@@ -18,16 +16,10 @@ START_TEST(elocation_test_init)
 {
    Eina_Bool ret;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
@@ -37,10 +29,6 @@ START_TEST(elocation_test_address_object)
    Eina_Bool ret;
    Elocation_Address *address = NULL;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
@@ -50,8 +38,6 @@ START_TEST(elocation_test_address_object)
    elocation_address_free(address);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
@@ -61,10 +47,6 @@ START_TEST(elocation_test_position_object)
    Eina_Bool ret;
    Elocation_Position *position = NULL;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
@@ -74,8 +56,6 @@ START_TEST(elocation_test_position_object)
    elocation_position_free(position);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
@@ -86,10 +66,6 @@ START_TEST(elocation_test_api_geocode)
    Elocation_Position *position = NULL;
    Elocation_Address *address = NULL;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
@@ -117,8 +93,6 @@ START_TEST(elocation_test_api_geocode)
    elocation_address_free(address);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
@@ -128,10 +102,6 @@ START_TEST(elocation_test_api_position)
    Eina_Bool ret;
    Elocation_Position *position = NULL;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
@@ -144,8 +114,6 @@ START_TEST(elocation_test_api_position)
    elocation_position_free(position);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
@@ -155,10 +123,6 @@ START_TEST(elocation_test_api_address)
    Eina_Bool ret;
    Elocation_Address *address = NULL;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
@@ -171,8 +135,6 @@ START_TEST(elocation_test_api_address)
    elocation_address_free(address);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
@@ -182,10 +144,6 @@ START_TEST(elocation_test_api_status)
    Eina_Bool ret;
    int status = 0;
 
-   ret = ecore_init();
-   fail_if(ret != EINA_TRUE);
-   ret = eldbus_init();
-   fail_if(ret != EINA_TRUE);
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
 
@@ -193,8 +151,6 @@ START_TEST(elocation_test_api_status)
    fail_if(ret != EINA_TRUE);
 
    elocation_shutdown();
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 END_TEST
 
