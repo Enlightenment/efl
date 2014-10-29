@@ -2589,11 +2589,11 @@ _data_image_id_update(Eina_List *images_unused_list)
      }
    for (i = 0; i < edje_file->image_dir->sets_count; i++)
      {
-        Eina_List *entries, *l;
+        Eina_List *entries, *list;
         Edje_Image_Directory_Set_Entry *entry;
 
         entries = edje_file->image_dir->sets[i].entries;
-        EINA_LIST_FOREACH(entries, l, entry)
+        EINA_LIST_FOREACH(entries, list, entry)
           {
              EINA_LIST_FOREACH(images_unused_list, l3, iui)
                {
