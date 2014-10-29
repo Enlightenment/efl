@@ -475,7 +475,11 @@ eng_window_free(Outbuf *gw)
         _evas_gl_x11_rgba_vi = NULL;
      }
 #else
-   __glXMakeContextCurrent(gw->disp, 0, gw->context);
+   if (!__glXMakeContextCurrent(gw->disp, 0, gw->context))
+     {
+        ERR("glXMakeContextCurrent() failed!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
+     }
    glXDestroyWindow(gw->disp, gw->glxwin);
    if (ref == 0)
      {
