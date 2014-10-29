@@ -2587,6 +2587,25 @@ _data_image_id_update(Eina_List *images_unused_list)
                }
           }
      }
+   for (i = 0; i < edje_file->image_dir->sets_count; i++)
+     {
+        Eina_List *entries, *l;
+        Edje_Image_Directory_Set_Entry *entry;
+
+        entries = edje_file->image_dir->sets[i].entries;
+        EINA_LIST_FOREACH(entries, l, entry)
+          {
+             EINA_LIST_FOREACH(images_unused_list, l3, iui)
+               {
+                  if (entry->id == iui->old_id)
+                    {
+                       entry->id = iui->new_id;
+                       break;
+                    }
+               }
+
+          }
+     }
 }
 
 void
