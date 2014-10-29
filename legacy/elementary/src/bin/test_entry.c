@@ -620,7 +620,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_show(bx3);
 
    elm_object_focus_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320, 500);
    evas_object_show(win);
 }
 
