@@ -60,14 +60,35 @@ START_TEST(elocation_test_position_object)
 END_TEST
 
 /* Basic testing for the various functions of the GeoCode API */
+static int cb_count = 0;
+
+static Eina_Bool
+event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
+{
+   fail_if(event == NULL);
+
+   /* We expect 3 callbacks right now */
+   if (++cb_count == 3)
+     ecore_main_loop_quit();
+
+   return ECORE_CALLBACK_DONE;
+}
+
 START_TEST(elocation_test_api_geocode)
 {
    Eina_Bool ret;
    Elocation_Position *position = NULL;
    Elocation_Address *address = NULL;
+   Ecore_Event_Handler *handler;
 
    ret = elocation_init();
    fail_if(ret != EINA_TRUE);
+
+   handler = ecore_event_handler_add(ELOCATION_EVENT_GEOCODE, event_cb, NULL);
+   fail_if(handler == NULL);
+
+   handler = ecore_event_handler_add(ELOCATION_EVENT_REVERSEGEOCODE, event_cb, NULL);
+   fail_if(handler == NULL);
 
    position = elocation_position_new();
    fail_if(position == NULL);
@@ -88,6 +109,8 @@ START_TEST(elocation_test_api_geocode)
    address->countrycode = strdup("UK");
    ret = elocation_address_to_position(address, position);
    fail_if(ret != EINA_TRUE);
+
+   ecore_main_loop_begin();
 
    elocation_position_free(position);
    elocation_address_free(address);
