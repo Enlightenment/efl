@@ -95,7 +95,7 @@ extern int ELOCATION_EVENT_OUT;
 /**
  * @ingroup Location
  * @typedef GeocluePositionFields
- * @since 1.8
+ * @since 1.13
  *
  * Bitmask to indicate which of the supplied positions fields are valid.
  *
@@ -112,7 +112,7 @@ typedef enum {
 /**
  * @ingroup Location
  * @typedef GeoclueNetworkStatus
- * @since 1.8
+ * @since 1.13
  *
  * Status of the network connectivity for GeoClue. Needed for all providers that
  * access external data to determine the location. For example GeoIP or GeoCode
@@ -131,7 +131,7 @@ typedef enum {
 /**
  * @ingroup Location
  * @typedef GeoclueStatus
- * @since 1.8
+ * @since 1.13
  *
  *  Status of a GeoClue provider.
  *
@@ -148,7 +148,7 @@ typedef enum {
 /**
  * @ingroup Location
  * @typedef GeoclueVelocityFields
- * @since 1.8
+ * @since 1.13
  *
  * Bitmask to indicate which of the supplied velocity fields are valid.
  *
@@ -165,7 +165,7 @@ typedef enum {
 /**
  * @ingroup Location
  * @typedef Elocation_Provider
- * @since 1.8
+ * @since 1.13
  *
  * Data structure to hold information about a GeoClue provider.
  *
