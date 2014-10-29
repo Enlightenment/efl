@@ -280,11 +280,16 @@ Eina_Cow *evas_object_image_state_cow = NULL;
 static void
 _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
 {
-   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   /* Eina_Cow doesn't know if the resulting memory has changed, better check
+      before we change it */
+   if (o->cur->opaque_valid)
      {
-        state_write->opaque_valid = 0;
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+          {
+             state_write->opaque_valid = 0;
+          }
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
-   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    if ((o->preloading) && (o->engine_data))
      {
