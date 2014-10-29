@@ -35,6 +35,7 @@ static const Evas_Object_Protected_State default_state = {
 static const Evas_Object_Filter_Data default_filter = {
   NULL, NULL, NULL, NULL, EINA_FALSE, EINA_FALSE
 };
+const void * const evas_object_filter_cow_default = &default_filter;
 
 Eina_Cow *evas_object_proxy_cow = NULL;
 Eina_Cow *evas_object_map_cow = NULL;

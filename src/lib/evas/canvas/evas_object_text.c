@@ -403,7 +403,8 @@ _evas_text_efl_text_properties_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Text
 static inline void
 _evas_text_filter_changed_set(Evas_Text_Data *o, Eina_Bool val)
 {
-   if (o->cur.filter && (o->cur.filter->changed != val))
+   if ((evas_object_filter_cow_default != o->cur.filter)
+       && (o->cur.filter->changed != val))
      {
         EINA_COW_WRITE_BEGIN(evas_object_filter_cow, o->cur.filter, Evas_Object_Filter_Data, fcow)
           fcow->changed = val;
@@ -1542,17 +1543,21 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    /* free filter output */
-   EINA_COW_WRITE_BEGIN(evas_object_filter_cow, o->cur.filter, Evas_Object_Filter_Data, fcow)
-     if (fcow->output)
-       ENFN->image_free(ENDT, fcow->output);
-     eina_hash_free(fcow->sources);
-     evas_filter_program_del(fcow->chain);
-     eina_stringshare_del(fcow->code);
-     fcow->output = NULL;
-     fcow->chain = NULL;
-     fcow->sources = NULL;
-     fcow->code = NULL;
-   EINA_COW_WRITE_END(evas_object_filter_cow, o->cur.filter, fcow);
+   if (evas_object_filter_cow_default != o->cur.filter)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_filter_cow, o->cur.filter, Evas_Object_Filter_Data, fcow)
+          if (fcow->output)
+            ENFN->image_free(ENDT, fcow->output);
+          eina_hash_free(fcow->sources);
+          evas_filter_program_del(fcow->chain);
+          eina_stringshare_del(fcow->code);
+          fcow->output = NULL;
+          fcow->chain = NULL;
+          fcow->sources = NULL;
+          fcow->code = NULL;
+        EINA_COW_WRITE_END(evas_object_filter_cow, o->cur.filter, fcow);
+        eina_cow_free(evas_object_filter_cow, (const Eina_Cow_Data **) &o->cur.filter);
+     }
 
    /* free obj */
    _evas_object_text_items_clear(o);

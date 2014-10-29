@@ -1715,6 +1715,8 @@ extern Eina_Cow *evas_object_image_load_opts_cow;
 extern Eina_Cow *evas_object_image_state_cow;
 
 extern Eina_Cow *evas_object_filter_cow;
+// This should be replaced by something like "eina_cow_default_get()" maybe
+extern const void * const evas_object_filter_cow_default;
 
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \
