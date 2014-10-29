@@ -24,8 +24,11 @@ inline int get_value_from_javascript
   else if(v->IsUint32())
     return v->Uint32Value();
   else
-    isolate->ThrowException
-      (v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Type expected is different")));
+    {
+      isolate->ThrowException
+        (v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Type expected is different")));
+      throw std::logic_error("");
+    }
   return 0;
 }
 template <typename T>
@@ -37,8 +40,11 @@ inline double get_value_from_javascript
   if(v->IsNumber())
     return v->NumberValue();
   else
-    isolate->ThrowException
-      (v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Type expected is different")));
+    {
+      isolate->ThrowException
+        (v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Type expected is different")));
+      throw std::logic_error("");
+    }
 }
       
 } } }

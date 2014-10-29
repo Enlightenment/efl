@@ -42,8 +42,18 @@ struct constructor_caller
     {
       std::size_t const parameters
         = std::tuple_size<typename eina::_mpl::function_params<T>::type>::value;
-      aux(function, eina::make_index_sequence<parameters>(), isolate);
-      *current += parameters;
+      if(*current + parameters <= args->Length())
+        {
+          aux(function, eina::make_index_sequence<parameters>());
+          *current += parameters;
+        }
+      else
+        {
+          args->GetIsolate()->ThrowException
+            (v8::Exception::TypeError
+             (v8::String::NewFromUtf8(args->GetIsolate(), "Expected more arguments for this call")));
+          throw std::logic_error("");
+        }
     }
 
     template <typename U, std::size_t I>
@@ -57,28 +67,30 @@ struct constructor_caller
     }
     
     template <typename T, std::size_t... I>
-    void aux(T function, eina::index_sequence<I...>, v8::Isolate* isolate) const
+    void aux(T function, eina::index_sequence<I...>) const
     {
-      function(get_value<T, I>((*args)[I + *current], isolate)...);
+      function(get_value<T, I>((*args)[I + *current], args->GetIsolate())...);
     }
 
-    v8::Isolate* isolate;
     std::size_t* current;
     v8::FunctionCallbackInfo<v8::Value> const* args;
   };
 
   void operator()(v8::FunctionCallbackInfo<v8::Value> const& args)
   {
-    std::cout << "Constructing" << std::endl;
     std::size_t current_index = 0;
-    Eo* eo = eo_add
-      (klass
-       , NULL
-       , eina::_mpl::for_each(constructors, call{args.GetIsolate(), &current_index, &args})
-      );
-    assert(eo != 0);
-    v8::Local<v8::Object> self = args.This();
-    self->SetInternalField(0, v8::External::New(args.GetIsolate(), eo));
+    try
+      {
+        Eo* eo = eo_add
+          (klass
+           , NULL
+           , eina::_mpl::for_each(constructors, call{&current_index, &args})
+           );
+        assert(eo != 0);
+        v8::Local<v8::Object> self = args.This();
+        self->SetInternalField(0, v8::External::New(args.GetIsolate(), eo));
+      }
+    catch(std::logic_error const&) {}
   }
 
   Eo_Class const* klass;
