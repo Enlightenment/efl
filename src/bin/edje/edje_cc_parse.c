@@ -851,14 +851,14 @@ parse(char *data, off_t size)
    DBG("Parsing done");
 }
 
-Eina_Tmpstr *clean_file = NULL;
+static char *clean_file = NULL;
 static void
 clean_tmp_file(void)
 {
    if (clean_file)
      {
         unlink(clean_file);
-        eina_tmpstr_del(clean_file);
+        free(clean_file);
      }
 }
 
@@ -929,7 +929,8 @@ compile(void)
         int ret;
         char *def;
 
-        clean_file = tmpn;
+        clean_file = strdup(tmpn);
+        eina_tmpstr_del(tmpn);
         close(fd);
         atexit(clean_tmp_file);
         if (!defines)
