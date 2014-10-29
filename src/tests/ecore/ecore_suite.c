@@ -39,6 +39,7 @@ static const Ecore_Test_Case etc[] = {
 #if HAVE_ECORE_FB
   { "Ecore_Fb", ecore_test_ecore_fb },
 #endif
+  { "Ecore_Input", ecore_test_ecore_input },
   { NULL, NULL }
 };
 
