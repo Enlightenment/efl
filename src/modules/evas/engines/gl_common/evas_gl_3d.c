@@ -1283,7 +1283,7 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
    const Evas_Mat4  *matrix_eye;
    Evas_3D_Node     *light;
    Evas_Mat4        matrix_light_eye;
-   Evas_3D_Light_Data *ld;
+   Evas_3D_Light_Data *ld = NULL;
    Evas_3D_Node_Data *pd_light_node;
 
    /* Get eye matrix. */
@@ -1319,8 +1319,9 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
           {
              evas_mat4_multiply(&matrix_mv, &matrix_light_eye,
                  &pd_mesh_node->data.mesh.matrix_local_to_world);
-             evas_mat4_multiply(&matrix_light, &ld->projection,
-                 &matrix_mv);
+             if (ld)
+               evas_mat4_multiply(&matrix_light, &ld->projection,
+                                  &matrix_mv);
           }
 
         evas_mat4_multiply(&matrix_mv, matrix_eye, &pd_mesh_node->data.mesh.matrix_local_to_world);
