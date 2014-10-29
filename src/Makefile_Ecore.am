@@ -177,6 +177,7 @@ tests/ecore/ecore_test_timer.c \
 tests/ecore/ecore_test_ecore_evas.c \
 tests/ecore/ecore_test_animator.c \
 tests/ecore/ecore_test_ecore_thread_eina_thread_queue.c \
+tests/ecore/ecore_test_ecore_file.c \
 tests/ecore/ecore_test_ecore_input.c \
 tests/ecore/ecore_suite.h
 

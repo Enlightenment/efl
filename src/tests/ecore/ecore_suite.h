@@ -16,6 +16,7 @@ void ecore_test_ecore_thread_eina_thread_queue(TCase *tc);
 void ecore_test_ecore_wayland(TCase *tc);
 void ecore_test_ecore_drm(TCase *tc);
 void ecore_test_ecore_fb(TCase *tc);
+void ecore_test_ecore_file(TCase *tc);
 void ecore_test_ecore_input(TCase *tc);
 
 #endif /* _ECORE_SUITE_H */
