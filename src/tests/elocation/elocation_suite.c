@@ -197,8 +197,11 @@ main(void)
    SRunner *sr;
    int failed_count;
 
+   putenv("EFL_RUN_IN_TREE=1");
+
    s = elocation_suite();
    sr = srunner_create(s);
+   srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
