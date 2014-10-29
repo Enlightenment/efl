@@ -163,7 +163,7 @@ eina_unicode_escape(const Eina_Unicode *str)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, NULL);
 
-   s2 = malloc((eina_unicode_strlen(str) * 2) + 1);
+   s2 = malloc(((eina_unicode_strlen(str) * 2) + 1) * sizeof(Eina_Unicode));
    if (!s2)
       return NULL;
 
