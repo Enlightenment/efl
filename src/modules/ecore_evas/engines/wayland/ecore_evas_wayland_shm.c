@@ -160,6 +160,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = EINA_FALSE;
    ee->prop.draw_frame = frame;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->alpha = EINA_FALSE;
 
    if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
@@ -322,6 +323,8 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
      }
 
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
@@ -349,6 +352,8 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if (wdata->win) 
      ecore_wl_window_hide(wdata->win);
 
+   ee->prop.withdrawn = EINA_TRUE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->visible = 0;
    ee->should_be_visible = 0;
    _ecore_evas_wl_common_frame_callback_clean(ee);

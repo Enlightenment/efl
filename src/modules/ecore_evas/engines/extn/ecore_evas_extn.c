@@ -1164,7 +1164,7 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_FALSE;
    ee->prop.fullscreen = EINA_FALSE;
-   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->prop.sticky = EINA_FALSE;
 
    bdata->image = o;
@@ -1591,6 +1591,8 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
       case OP_SHOW:
          if (!ee->visible)
            {
+              ee->prop.withdrawn = EINA_FALSE;
+              if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
               ee->visible = 1;
               if (ee->func.fn_show) ee->func.fn_show(ee);
            }
@@ -1598,6 +1600,8 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
       case OP_HIDE:
          if (ee->visible)
            {
+              ee->prop.withdrawn = EINA_TRUE;
+              if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
               ee->visible = 0;
               if (ee->func.fn_hide) ee->func.fn_hide(ee);
            }

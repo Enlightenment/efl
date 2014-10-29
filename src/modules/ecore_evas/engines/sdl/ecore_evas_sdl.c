@@ -387,6 +387,8 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    if (ee->prop.focused) return;
    ee->prop.focused = EINA_TRUE;
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
@@ -568,7 +570,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_TRUE;
    ee->prop.fullscreen = fullscreen;
-   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->prop.sticky = EINA_FALSE;
    ee->prop.window = 0;
    ee->alpha = alpha;

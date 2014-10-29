@@ -395,6 +395,8 @@ static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
    if (ee->prop.focused) return;
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
@@ -403,6 +405,8 @@ _ecore_evas_show(Ecore_Evas *ee)
 static void
 _ecore_evas_hide(Ecore_Evas *ee)
 {
+   ee->prop.withdrawn = EINA_TRUE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    if (ee->prop.focused)
      {
         ee->prop.focused = EINA_FALSE;
@@ -659,7 +663,7 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_TRUE;
    ee->prop.fullscreen = EINA_FALSE;
-   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */

@@ -107,6 +107,8 @@ _ecore_evas_show(Ecore_Evas *ee)
    if (bdata->image) return;
    if (ee->prop.focused) return;
    ee->prop.focused = EINA_TRUE;
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 }
@@ -430,6 +432,8 @@ _ecore_evas_buffer_cb_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Ecore_Evas *ee;
 
    ee = data;
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
@@ -440,6 +444,8 @@ _ecore_evas_buffer_cb_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Ecore_Evas *ee;
 
    ee = data;
+   ee->prop.withdrawn = EINA_TRUE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
@@ -790,7 +796,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->prop.override = EINA_TRUE;
    ee->prop.maximized = EINA_FALSE;
    ee->prop.fullscreen = EINA_FALSE;
-   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */

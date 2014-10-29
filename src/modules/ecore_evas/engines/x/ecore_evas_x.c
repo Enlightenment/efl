@@ -1642,6 +1642,11 @@ _ecore_evas_x_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED, vo
      }
    if ((first_map_bug) && (!strcmp(ee->driver, "opengl_x11")))
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   if (ee->prop.override)
+     {
+        ee->prop.withdrawn = EINA_FALSE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+     }
    if (ee->visible) return ECORE_CALLBACK_PASS_ON;
 //   if (ee->visible) return ECORE_CALLBACK_DONE;
 //   printf("SHOW EVENT %p\n", ee);
@@ -1667,6 +1672,11 @@ _ecore_evas_x_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
         if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
         ee->in = EINA_FALSE;
+     }
+   if (ee->prop.override)
+     {
+        ee->prop.withdrawn = EINA_TRUE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
      }
    if (!ee->visible) return ECORE_CALLBACK_PASS_ON;
 //   if (!ee->visible) return ECORE_CALLBACK_DONE;
@@ -3837,6 +3847,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    ee->prop.layer = 4;
    ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = 0;
+   ee->prop.withdrawn = EINA_TRUE;
    edata->state.sticky = 0;
 
    if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
@@ -4372,6 +4383,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    ee->prop.layer = 4;
    ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = 0;
+   ee->prop.withdrawn = EINA_TRUE;
    edata->state.sticky = 0;
 
    /* init evas here */

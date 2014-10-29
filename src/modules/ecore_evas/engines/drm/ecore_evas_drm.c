@@ -212,6 +212,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    ee->prop.layer = 4;
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->alpha = EINA_FALSE;
 
    ee->can_async_render = 1;
@@ -357,6 +358,7 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    ee->prop.layer = 4;
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
+   ee->prop.withdrawn = EINA_TRUE;
    ee->alpha = EINA_FALSE;
 
    ee->can_async_render = 1;
@@ -665,6 +667,8 @@ _ecore_evas_drm_show(Ecore_Evas *ee)
 {
    if ((!ee) || (ee->visible)) return;
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
@@ -674,6 +678,8 @@ _ecore_evas_drm_hide(Ecore_Evas *ee)
 {
    if ((!ee) || (!ee->visible)) return;
    evas_sync(ee->evas);
+   ee->prop.withdrawn = EINA_TRUE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    ee->visible = 0;
    ee->should_be_visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);

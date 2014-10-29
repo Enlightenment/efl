@@ -318,6 +318,8 @@ _ecore_evas_win32_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED
    ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
    if ((Ecore_Window)e->window != ee->prop.window) return 1;
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    if (ee->visible) return 0; /* dont pass it on */
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
@@ -337,6 +339,8 @@ _ecore_evas_win32_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED
    ee = ecore_event_window_match((Ecore_Window)e->window);
    if (!ee) return 1; /* pass on event */
    if ((Ecore_Window)e->window != ee->prop.window) return 1;
+   ee->prop.withdrawn = EINA_TRUE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
    if (!ee->visible) return 0; /* dont pass it on */
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
@@ -1307,6 +1311,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    ee->prop.sticky = EINA_FALSE;
    /* FIXME: sticky to add */
    ee->prop.window = 0;
+   ee->prop.withdrawn = EINA_TRUE;
 
    /* init evas here */
    ee->evas = evas_new();

@@ -536,6 +536,7 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
   ee->prop.request_pos = EINA_FALSE;
   ee->prop.sticky = EINA_FALSE;
   ee->prop.window = 0;
+  ee->prop.withdrawn = EINA_TRUE;
 
   printf("Create New Evas\n");
 
