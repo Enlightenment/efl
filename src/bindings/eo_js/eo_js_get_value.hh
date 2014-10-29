@@ -16,6 +16,7 @@ struct value_tag
 template <typename T>
 inline int get_value_from_javascript
   (v8::Local<v8::Value> v, value_tag<T>
+   , v8::Isolate* isolate
    , typename std::enable_if<std::is_integral<T>::value>::type* = 0)
 {
   if(v->IsInt32())
@@ -23,18 +24,21 @@ inline int get_value_from_javascript
   else if(v->IsUint32())
     return v->Uint32Value();
   else
-    std::abort();
+    isolate->ThrowException
+      (v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Type expected is different")));
   return 0;
 }
 template <typename T>
 inline double get_value_from_javascript
   (v8::Local<v8::Value> v, value_tag<T>
+   , v8::Isolate* isolate
    , typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
   if(v->IsNumber())
     return v->NumberValue();
   else
-    std::abort();
+    isolate->ThrowException
+      (v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Type expected is different")));
 }
       
 } } }

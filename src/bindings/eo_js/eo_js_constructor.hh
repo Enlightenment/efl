@@ -42,25 +42,27 @@ struct constructor_caller
     {
       std::size_t const parameters
         = std::tuple_size<typename eina::_mpl::function_params<T>::type>::value;
-      aux(function, eina::make_index_sequence<parameters>());
+      aux(function, eina::make_index_sequence<parameters>(), isolate);
       *current += parameters;
     }
 
     template <typename U, std::size_t I>
     static
     typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type
-    get_value(v8::Local<v8::Value> v)
+    get_value(v8::Local<v8::Value> v, v8::Isolate* isolate)
     {
       return js::get_value_from_javascript
-        (v, js::value_tag<typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type>());
+        (v, js::value_tag<typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type>()
+         , isolate);
     }
     
     template <typename T, std::size_t... I>
-    void aux(T function, eina::index_sequence<I...>) const
+    void aux(T function, eina::index_sequence<I...>, v8::Isolate* isolate) const
     {
-      function(get_value<T, I>((*args)[I + *current])...);
+      function(get_value<T, I>((*args)[I + *current], isolate)...);
     }
 
+    v8::Isolate* isolate;
     std::size_t* current;
     v8::FunctionCallbackInfo<v8::Value> const* args;
   };
@@ -72,7 +74,7 @@ struct constructor_caller
     Eo* eo = eo_add
       (klass
        , NULL
-       , eina::_mpl::for_each(constructors, call{&current_index, &args})
+       , eina::_mpl::for_each(constructors, call{args.GetIsolate(), &current_index, &args})
       );
     assert(eo != 0);
     v8::Local<v8::Object> self = args.This();
