@@ -873,7 +873,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
              _evas_cache_image_activ_add(im);
              goto on_ok;
           }
-        /* as avtive cache find - if we match in lru and its invalid, dirty */
+        /* as active cache find - if we match in lru and its invalid, dirty */
         _evas_cache_image_dirty_add(im);
         /* this image never used, so it have to be deleted */
         _evas_cache_image_entry_delete(cache, im);

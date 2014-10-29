@@ -742,7 +742,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
              goto on_ok;
           }
         DBG("Entry on inactive hash was invalid (file changed or deleted).");
-        /* as avtive cache find - if we match in lru and its invalid, dirty */
+        /* as active cache find - if we match in lru and its invalid, dirty */
         _evas_cache2_image_dirty_add(im);
         /* this image never used, so it have to be deleted */
         _evas_cache2_image_entry_delete(cache, im);
