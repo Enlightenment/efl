@@ -84,8 +84,9 @@ struct _Elm_Fileselector_Data
 
 struct sel_data
 {
-   Evas_Object *fs;
-   const char  *path;
+   Evas_Object      *fs;
+   Eina_Stringshare *path;
+   Eina_Stringshare *selected;
 };
 
 typedef struct _Listing_Request Listing_Request;

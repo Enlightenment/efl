@@ -736,18 +736,41 @@ static Eina_Bool
 _populate_do(void *data)
 {
    struct sel_data *sdata = data;
-   const char *p;
-
    ELM_FILESELECTOR_DATA_GET(sdata->fs, sd);
 
-   /* keep a ref to path 'couse it will be destroyed by _populate */
-   p = eina_stringshare_add(sdata->path);
-   _populate(sdata->fs, p, NULL, NULL);
-   eina_stringshare_del(p);
+   _populate(sdata->fs, sdata->path, NULL, sdata->selected);
+   eina_stringshare_del(sdata->path);
+   eina_stringshare_del(sdata->selected);
 
    sd->populate_idler = NULL;
+
    free(sdata);
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_schedule_populate(Evas_Object *fs,
+                   Elm_Fileselector_Data *sd,
+                   Eina_Stringshare *path,
+                   Eina_Stringshare *selected)
+{
+   struct sel_data *sdata;
+   sdata = malloc(sizeof(*sdata));
+   if (!sdata) return;
+
+   sdata->fs = fs;
+   sdata->path = path;
+   sdata->selected = selected;
+
+   if (sd->populate_idler)
+     {
+        struct sel_data *old_sdata;
+        old_sdata = ecore_idler_del(sd->populate_idler);
+        eina_stringshare_del(old_sdata->path);
+        eina_stringshare_del(old_sdata->selected);
+        free(old_sdata);
+     }
+   sd->populate_idler = ecore_idler_add(_populate_do, sdata);
 }
 
 static void
@@ -757,8 +780,6 @@ _on_item_activated(void *data,
 {
    //This event_info could be a list or gengrid item
    Elm_Object_Item *it = event_info;
-   struct sel_data *sdata;
-   void *old_sdata;
    const char *path;
    Eina_Bool is_dir;
 
@@ -776,18 +797,7 @@ _on_item_activated(void *data,
 
    if (!sd->double_tap_navigation) return;
 
-   sdata = malloc(sizeof(*sdata));
-   if (!sdata) return;
-
-   sdata->fs = data;
-   sdata->path = path;
-
-   if (sd->populate_idler)
-     {
-        old_sdata = ecore_idler_del(sd->populate_idler);
-        free(old_sdata);
-     }
-   sd->populate_idler = ecore_idler_add(_populate_do, sdata);
+   _schedule_populate(data, sd, eina_stringshare_add(path), NULL);
 }
 
 static void
@@ -825,8 +835,6 @@ _on_item_selected(void *data,
 {
    //This event_info could be a list or gengrid item
    Elm_Object_Item *it = event_info;
-   struct sel_data *sdata;
-   void *old_sdata;
    const char *path;
    char *parent_path;
    Eina_Bool is_dir;
@@ -904,18 +912,7 @@ _on_item_selected(void *data,
 
    if (sd->double_tap_navigation) return;
 
-   sdata = malloc(sizeof(*sdata));
-   if (!sdata) return;
-
-   sdata->fs = data;
-   sdata->path = path;
-
-   if (sd->populate_idler)
-     {
-        old_sdata = ecore_idler_del(sd->populate_idler);
-        free(old_sdata);
-     }
-   sd->populate_idler = ecore_idler_add(_populate_do, sdata);
+   _schedule_populate(data, sd, eina_stringshare_add(path), NULL);
 }
 
 static void
@@ -1605,7 +1602,11 @@ _elm_fileselector_elm_interface_fileselector_folder_only_set(Eo *obj, Elm_Filese
    if (sd->only_folder == only) return;
 
    sd->only_folder = !!only;
-   if (sd->path) _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI Eina_Bool
@@ -1676,7 +1677,11 @@ _elm_fileselector_elm_interface_fileselector_expandable_set(Eo *obj, Elm_Filesel
 {
    sd->expand = !!expand;
 
-   if (sd->path) _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI Eina_Bool
@@ -1703,12 +1708,12 @@ elm_fileselector_path_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_fileselector_elm_interface_fileselector_path_set(Eo *obj, Elm_Fileselector_Data *sd EINA_UNUSED, const char *_path)
+_elm_fileselector_elm_interface_fileselector_path_set(Eo *obj, Elm_Fileselector_Data *sd, const char *_path)
 {
    char *path;
 
    path = ecore_file_realpath(_path);
-   _populate(obj, path, NULL, NULL);
+   _schedule_populate(obj, sd, eina_stringshare_add(path), NULL);
    free(path);
 }
 
@@ -1763,7 +1768,11 @@ _elm_fileselector_elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_
 
    sd->mode = mode;
 
-   _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI Elm_Fileselector_Mode
@@ -1901,7 +1910,8 @@ _elm_fileselector_elm_interface_fileselector_selected_set(Eo *obj, Elm_Fileselec
 
    path = ecore_file_realpath(_path);
 
-   if (ecore_file_is_dir(path)) _populate(obj, path, NULL, NULL);
+   if (ecore_file_is_dir(path))
+     _schedule_populate(obj, sd, eina_stringshare_add(path), NULL);
    else
      {
         if (!ecore_file_exists(path))
@@ -1911,8 +1921,9 @@ _elm_fileselector_elm_interface_fileselector_selected_set(Eo *obj, Elm_Fileselec
           }
 
         dir = ecore_file_dir_get(path);
-        _populate(obj, dir, NULL, path);
         eina_stringshare_replace(&sd->selection, path);
+        eina_stringshare_ref(sd->selection);
+        _schedule_populate(obj, sd, eina_stringshare_add(dir), sd->selection);
         free(dir);
      }
 
@@ -2014,7 +2025,11 @@ _elm_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, E
 
    sd->filter_list = eina_list_append(sd->filter_list, ff);
 
-   _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 
    if (need_theme)
      eo_do(obj, elm_obj_widget_theme_apply());
@@ -2057,7 +2072,11 @@ _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_F
 
    sd->filter_list = eina_list_append(sd->filter_list, ff);
 
-   _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 
    if (need_theme)
      eo_do(obj, elm_obj_widget_theme_apply());
@@ -2094,7 +2113,11 @@ _elm_fileselector_elm_interface_fileselector_filters_clear(Eo *obj, Elm_Filesele
 
    ELM_SAFE_FREE(sd->filter_hoversel, evas_object_del);
 
-   _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI void
@@ -2112,7 +2135,12 @@ _elm_fileselector_elm_interface_fileselector_hidden_visible_set(Eo *obj EINA_UNU
    sd->hidden_visible = visible;
 
    _clear_selections(sd, NULL);
-   _populate(obj, sd->path, NULL, NULL);
+
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI Eina_Bool
@@ -2153,7 +2181,11 @@ _elm_fileselector_elm_interface_fileselector_thumbnail_size_set(Eo *obj EINA_UNU
    if (sd->mode == ELM_FILESELECTOR_GRID)
      elm_gengrid_item_size_set(sd->files_view, w + GENGRID_PADDING, h + GENGRID_PADDING);
 
-   _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI void
@@ -2216,7 +2248,11 @@ _elm_fileselector_elm_interface_fileselector_sort_method_set(Eo *obj EINA_UNUSED
          sd->sort_method = strcoll;
      }
 
-   _populate(obj, sd->path, NULL, NULL);
+   if (sd->path)
+     {
+        eina_stringshare_ref(sd->path);
+        _schedule_populate(obj, sd, sd->path, NULL);
+     }
 }
 
 EAPI Elm_Fileselector_Sort
