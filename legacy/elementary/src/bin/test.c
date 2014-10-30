@@ -908,7 +908,19 @@ elm_main(int argc, char **argv)
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
    if (argc == 2)
-     autorun = argv[1];
+     {
+        if (!strcmp(argv[1], "--help"))
+          {
+             printf("Usages:\n"
+                    "$ elementary_test\n"
+                    "$ elementary_test --test-win-only [TEST_NAME]\n"
+                    "$ elementary_test -to [TEST_NAME]\n\n"
+                    "Examples:\n"
+                    "$ elementary_test -to Button\n\n");
+             exit(EXIT_SUCCESS);
+          }
+        autorun = argv[1];
+     }
    else if (argc == 3)
      {
         /* Just a workaround to make the shot module more
