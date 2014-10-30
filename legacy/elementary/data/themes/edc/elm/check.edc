@@ -816,9 +816,9 @@ group { name: "elm/check/base/toggle";
                }
                if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
                    (get_int(is_rtl) == 0) && (dx > 0.5)) {
-                  emit("elm,action,check,off", "");
+                  emit("elm,action,check,off", "elm");
                } else {
-                  emit("elm,action,check,on", "");
+                  emit("elm,action,check,on", "elm");
                }
             }
          }
@@ -849,9 +849,9 @@ group { name: "elm/check/base/toggle";
                }
                if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
                    (get_int(is_rtl) == 0) && (dx > 0.5)) {
-                 emit("elm,action,check,on", "");
+                 emit("elm,action,check,on", "elm");
                } else {
-                 emit("elm,action,check,off", "");
+                 emit("elm,action,check,off", "elm");
                }
                set_int(was_drag, 1);
                set_int(is_drag, 0);
