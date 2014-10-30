@@ -620,6 +620,7 @@ elm_quicklaunch_init(int    argc,
 
    eet_init();
    ecore_init();
+   edje_init();
 
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_init();
@@ -686,7 +687,6 @@ elm_quicklaunch_sub_init(int    argc,
      {
         ecore_app_args_set(argc, (const char **)argv);
         evas_init();
-        edje_init();
         _elm_module_init();
         _elm_config_init();
         _elm_config_sub_init();
@@ -722,7 +722,6 @@ elm_quicklaunch_sub_shutdown(void)
         ecore_imf_shutdown();
         ecore_evas_shutdown();
         _elm_config_sub_shutdown();
-        edje_shutdown();
         evas_shutdown();
      }
    return _elm_sub_init_count;
@@ -765,6 +764,7 @@ elm_quicklaunch_shutdown(void)
 #endif
    _elm_emotion_shutdown();
 
+   edje_shutdown();
    ecore_shutdown();
    eet_shutdown();
 
@@ -953,7 +953,6 @@ elm_quicklaunch_fork(int    argc,
 #ifdef SEMI_BROKEN_QUICKLAUNCH
         ecore_app_args_set(argc, (const char **)argv);
         evas_init();
-        edje_init();
         _elm_module_init();
         _elm_config_sub_init();
 # ifdef HAVE_ELEMENTARY_X
