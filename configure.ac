@@ -40,6 +40,7 @@ case "$efl_api" in
     eo)
         EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
         EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
+        CFOPT_WARNING="xyes"
         ;;
     legacy)
         EFL_API_LEGACY_DEF=""
@@ -4900,6 +4901,16 @@ if test -n "$CFOPT_WARNING"; then
     echo "that rely on it with users then reporting bugs."
     echo "If you want to mute audio, there are APIs and policies to do"
     echo "that, as opposed to compiling it out."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${efl_api}" = "xeo"; then
+    echo "_____________________________________________________________________"
+    echo "Using the EO based EFL API only does not work at the moment. We still"
+    echo "have a lot code that depends on the legacy interfaces. We provide"
+    echo "this option for testing once we are able to migrate to the EO based"
+    echo "API."
+    echo "If you are not working on this migration please leave the option set"
+    echo "to both as it will break your build if set to eo."
     echo "_____________________________________________________________________"
   fi
   echo "_____________________________________________________________________"
