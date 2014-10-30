@@ -1,5 +1,4 @@
 /**
-kkikk
  * @defgroup Check Check
  * @ingroup Elementary
  *
