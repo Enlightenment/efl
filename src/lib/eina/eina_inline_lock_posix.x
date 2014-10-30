@@ -58,16 +58,9 @@ typedef void (*Eina_Lock_Bt_Func) ();
 #include "eina_inlist.h"
 #endif
 
-/* To be removed once we can use _eina_time_get() here*/
-#ifndef _WIN32
-# include <time.h>
-# include <sys/time.h>
-#else
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif /* _WIN2 */
-/* End of to be removed */
+/* For cond_timedwait */
+#include <time.h>
+#include <sys/time.h>
 
 typedef struct _Eina_Lock Eina_Lock;
 typedef struct _Eina_RWLock Eina_RWLock;
@@ -124,6 +117,7 @@ struct _Eina_Condition
 {
    Eina_Lock      *lock;      /**< The lock for this condition */
    pthread_cond_t  condition; /**< The condition variable */
+   clockid_t       clkid;     /**< The attached clock for timedwait */
 };
 
 struct _Eina_RWLock
@@ -343,6 +337,8 @@ eina_lock_release(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
+   pthread_condattr_t attr;
+
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(mutex != NULL);
    if (!_eina_threads_activated)
@@ -350,9 +346,27 @@ eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
    memset(cond, 0, sizeof (Eina_Condition));
 #endif
 
+   pthread_condattr_init(&attr);
+   cond->clkid = (clockid_t) 0;
+
+   /* We try here to chose the best clock for cond_timedwait */
+#if defined(CLOCK_MONOTONIC_RAW)
+   if (!pthread_condattr_setclock(&attr, CLOCK_MONOTONIC_RAW))
+     cond->clkid = CLOCK_MONOTONIC_RAW;
+#endif
+#if defined(CLOCK_MONOTONIC)
+   if (!cond->clkid && !pthread_condattr_setclock(&attr, CLOCK_MONOTONIC))
+     cond->clkid = CLOCK_MONOTONIC;
+#endif
+#if defined(CLOCK_REALTIME)
+   if (!cond->clkid && !pthread_condattr_setclock(&attr, CLOCK_REALTIME))
+     cond->clkid = CLOCK_REALTIME;
+#endif
+
    cond->lock = mutex;
-   if (pthread_cond_init(&cond->condition, NULL) != 0)
+   if (pthread_cond_init(&cond->condition, cond->clkid ? &attr : NULL) != 0)
      {
+        pthread_condattr_destroy(&attr);
 #ifdef EINA_HAVE_DEBUG_THREADS
         if (errno == EBUSY)
           printf("eina_condition_new on already initialized Eina_Condition\n");
@@ -360,6 +374,7 @@ eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
         return EINA_FALSE;
      }
 
+   pthread_condattr_destroy(&attr);
    return EINA_TRUE;
 }
 
@@ -408,15 +423,31 @@ eina_condition_wait(Eina_Condition *cond)
 static inline Eina_Bool
 eina_condition_timedwait(Eina_Condition *cond, double t)
 {
-   struct timespec tv;
-   Eina_Bool r;
+   struct timespec ts;
    time_t sec;
    long nsec;
+   int err;
 
    if (t < 0)
      {
         errno = EINVAL;
         return EINA_FALSE;
+     }
+
+   if (cond->clkid)
+     {
+        if (clock_gettime(cond->clkid, &ts) != 0)
+          return EINA_FALSE;
+     }
+   else
+     {
+        /* Obsolete - this probably will never happen */
+        struct timeval tv;
+        if (gettimeofday(&tv, NULL) != 0)
+          return EINA_FALSE;
+
+        ts.tv_sec = tv.tv_sec;
+        ts.tv_nsec = tv.tv_usec * 1000L;
      }
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -429,45 +460,19 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
 
-/* To be removed once we can use _eina_time_get() here*/
-#ifndef _WIN32
-# if defined(CLOCK_PROCESS_CPUTIME_ID)
-   if (!clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tv))
-     return EINA_FALSE;
-# endif
-# if defined(CLOCK_PROF)
-   if (!clock_gettime(CLOCK_PROF, &tv))
-     return EINA_FALSE;
-# endif
-# if defined(CLOCK_REALTIME)
-   if (!clock_gettime(CLOCK_REALTIME, &tv))
-     return EINA_FALSE;
-# endif
-#endif
-
-   struct timeval tp;
-
-   if (gettimeofday(&tp, NULL))
-     return EINA_FALSE;
-
-   tv.tv_sec = tp.tv_sec;
-   tv.tv_nsec = tp.tv_usec * 1000L;
-/* End of to be removed */
-
    sec = (time_t)t;
    nsec = (t - (double) sec) * 1000000000L;
-   tv.tv_sec += sec;
-   tv.tv_nsec += nsec;
-   if (tv.tv_nsec > 1000000000L)
+   ts.tv_sec += sec;
+   ts.tv_nsec += nsec;
+   if (ts.tv_nsec > 1000000000L)
      {
-        tv.tv_sec++;
-        tv.tv_nsec -= 1000000000L;
+        ts.tv_sec++;
+        ts.tv_nsec -= 1000000000L;
      }
 
-   r = pthread_cond_timedwait(&(cond->condition),
-			      &(cond->lock->mutex),
-			      &tv) == 0 ?
-     EINA_TRUE : EINA_FALSE;
+   err = pthread_cond_timedwait(&(cond->condition),
+                                &(cond->lock->mutex),
+                                &ts);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_lock(&_eina_tracking_lock);
@@ -476,7 +481,7 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
 
-   return r;
+   return (!err) ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool

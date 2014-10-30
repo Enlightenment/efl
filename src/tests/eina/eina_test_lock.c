@@ -163,6 +163,9 @@ _eina_test_rwlock_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 
 START_TEST(eina_test_rwlock)
 {
+   struct timespec ts, ts2;
+   long delay;
+
    fail_if(!eina_init());
 
    fail_if(!eina_rwlock_new(&mutex));
@@ -196,7 +199,17 @@ START_TEST(eina_test_rwlock)
    fail_if(counter != 7200);
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
 
-   eina_condition_timedwait(&cond, 0.01);
+#ifndef _WIN32
+   fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
+   clock_gettime(CLOCK_REALTIME, &ts);
+   eina_condition_timedwait(&cond, 0.050);
+   clock_gettime(CLOCK_REALTIME, &ts2);
+   delay = (ts2.tv_sec - ts.tv_sec) * 1000L + (ts2.tv_nsec - ts.tv_nsec) / 1000000L;
+   fail_if(delay < 50);
+   fail_if(delay > 200);
+   fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
+#endif
+
    eina_thread_join(thread);
 
    eina_condition_free(&cond);
