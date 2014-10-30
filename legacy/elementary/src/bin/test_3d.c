@@ -156,17 +156,6 @@ _cube_pos(Cube *c,
    evas_map_free(m);
 }
 
-/*
-static void
-_cube_free(Cube *c)
-{
-   int i;
-
-   for (i = 0; i < 6; i++) evas_object_del(c->side[i].o);
-   free(c);
-}
-*/
-
 static void
 _cube_update(Evas_Object *win, Cube *c)
 {
