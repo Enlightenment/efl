@@ -149,9 +149,6 @@ typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
 EAPI int ecore_drm_init(void);
 EAPI int ecore_drm_shutdown(void);
 
-/* EAPI void *ecore_drm_gbm_get(Ecore_Drm_Device *dev); */
-/* EAPI unsigned int ecore_drm_gbm_format_get(Ecore_Drm_Device *dev); */
-
 EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat);
 EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
