@@ -52,6 +52,8 @@ _cube_new(Evas *evas, Evas_Coord w, Evas_Coord h, Evas_Coord d)
         evas_object_image_fill_set(o, 0, 0, 256, 256);
         evas_object_resize(o, 256, 256);
         evas_object_image_smooth_scale_set(o, EINA_FALSE);
+        evas_object_pass_events_set(o, EINA_TRUE);
+        evas_object_color_set(o, 235, 235, 235, 235);
         evas_object_show(o);
      }
    POINT(0, 0, -w, -h, -d,   0,   0);
