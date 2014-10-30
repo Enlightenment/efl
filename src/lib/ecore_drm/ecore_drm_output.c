@@ -14,145 +14,6 @@ static const char *conn_types[] =
 };
 
 /* local functions */
-/* #ifdef HAVE_GBM */
-/* static Eina_Bool  */
-/* _ecore_drm_output_context_create(Ecore_Drm_Device *dev, EGLSurface surface) */
-/* { */
-/*    EGLBoolean r; */
-/*    static const EGLint attribs[] =  */
-/*      { */
-/*         EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE */
-/*      }; */
-
-/*    if ((!dev->egl.disp) || (!dev->egl.cfg)) return EINA_FALSE; */
-
-/*    if (!eglBindAPI(EGL_OPENGL_ES_API)) */
-/*      { */
-/*         ERR("Could not bind egl api"); */
-/*         return EINA_FALSE; */
-/*      } */
-
-/*    dev->egl.ctxt =  */
-/*      eglCreateContext(dev->egl.disp, dev->egl.cfg, EGL_NO_CONTEXT, attribs); */
-/*    if (!dev->egl.ctxt) */
-/*      { */
-/*         ERR("Could not create Egl Context"); */
-/*         return EINA_FALSE; */
-/*      } */
-
-/*    r = eglMakeCurrent(dev->egl.disp, surface, surface, dev->egl.ctxt); */
-/*    if (r == EGL_FALSE) */
-/*      { */
-/*         ERR("Could not make surface current"); */
-/*         return EINA_FALSE; */
-/*      } */
-
-/*    return EINA_TRUE; */
-/* } */
-
-/* static Eina_Bool  */
-/* _ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output) */
-/* { */
-/*    unsigned int i = 0; */
-/*    int flags = 0; */
-/*    int w = 0, h = 0; */
-
-/*    if ((!dev) || (!output)) return EINA_FALSE; */
-
-/*    if (output->current_mode) */
-/*      { */
-/*         w = output->current_mode->width; */
-/*         h = output->current_mode->height; */
-/*      } */
-/*    else */
-/*      { */
-/*         w = 1024; */
-/*         h = 768; */
-/*      } */
-
-/*    flags = (GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING); */
-
-/*    if (!(output->surface =  */
-/*          gbm_surface_create(dev->gbm, w, h, GBM_FORMAT_ARGB8888, flags))) */
-/*      { */
-/*         ERR("Could not create output surface"); */
-/*         return EINA_FALSE; */
-/*      } */
-
-/*    if (!(output->egl.surface =  */
-/*          eglCreateWindowSurface(dev->egl.disp, dev->egl.cfg,  */
-/*                                 output->surface, NULL))) */
-/*      { */
-/*         ERR("Could not create output egl surface"); */
-/*         gbm_surface_destroy(output->surface); */
-/*         return EINA_FALSE; */
-/*      } */
-
-/*    if (!dev->egl.ctxt) */
-/*      { */
-/*         if (!_ecore_drm_output_context_create(dev, output->egl.surface)) */
-/*           { */
-/*              ERR("Could not create context"); */
-/*              gbm_surface_destroy(output->surface); */
-/*              return EINA_FALSE; */
-/*           } */
-/*      } */
-
-/*    flags = (GBM_BO_USE_CURSOR_64X64 | GBM_BO_USE_WRITE); */
-/*    for (i = 0; i < NUM_FRAME_BUFFERS; i++) */
-/*      { */
-/*         if (output->cursor[i]) continue; */
-/*         if (!(output->cursor[i] =  */
-/*               gbm_bo_create(dev->gbm, 64, 64, dev->format, flags))) */
-/*           { */
-/*              continue; */
-/*           } */
-/*      } */
-
-/*    if ((!output->cursor[0]) || (!output->cursor[1])) */
-/*      { */
-/*         WRN("Hardware Cursor Buffers not available"); */
-/*         dev->cursors_broken = EINA_TRUE; */
-/*      } */
-
-/*    return EINA_TRUE; */
-/* } */
-
-/* static void  */
-/* _ecore_drm_output_hardware_render(Ecore_Drm_Output *output) */
-/* { */
-/*    struct gbm_bo *bo; */
-/*    int ret; */
-
-/*    if (!output) return; */
-/*    if (!output->current_mode) return; */
-
-/*    glViewport(output->x, output->y,  */
-/*               output->current_mode->width, output->current_mode->height); */
-
-/*    if (eglMakeCurrent(output->dev->egl.disp, output->egl.surface,  */
-/*                       output->egl.surface, output->dev->egl.ctxt) == EGL_FALSE) */
-/*      return; */
-
-/*    glClearColor(1.0, 1.0, 0.0, 1.0); */
-/*    glClear(GL_COLOR_BUFFER_BIT); */
-/*    glFlush(); */
-
-/*    eglSwapBuffers(output->dev->egl.disp, output->egl.surface); */
-
-/*    if (!(bo = gbm_surface_lock_front_buffer(output->surface))) */
-/*      { */
-/*         ERR("Failed to lock front buffer"); */
-/*         return; */
-/*      } */
-
-/*    if (!(output->next = _ecore_drm_fb_bo_get(output->dev, bo))) */
-/*      { */
-/*         ERR("Failed to get FB from bo"); */
-/*         gbm_surface_release_buffer(output->surface, bo); */
-/*      } */
-/* } */
-/* #endif */
 
 static Eina_Bool 
 _ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output)
@@ -510,23 +371,6 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
         if (!output->current_mode) goto mode_err;
      }
 
-/* #ifdef HAVE_GBM */
-/*    if ((dev->use_hw_accel) && (dev->gbm)) */
-/*      { */
-/*         if (!_ecore_drm_output_hardware_setup(dev, output)) */
-/*           { */
-/*              ERR("Could not setup output for hardware acceleration"); */
-/*              dev->use_hw_accel = EINA_FALSE; */
-/*              if (!_ecore_drm_output_software_setup(dev, output)) */
-/*                goto mode_err; */
-/*              else */
-/*                DBG("Setup Output %d for Software Rendering", output->crtc_id); */
-/*           } */
-/*         else */
-/*           DBG("Setup Output %d for Hardware Acceleration", output->crtc_id); */
-/*      } */
-/*    else */
-/* #endif */
      {
         dev->use_hw_accel = EINA_FALSE;
         if (!_ecore_drm_output_software_setup(dev, output))
@@ -597,10 +441,6 @@ _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 
    if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
      ecore_drm_fb_destroy(fb);
-/* #ifdef HAVE_GBM */
-/*    else if (fb->bo) */
-/*      gbm_bo_destroy(fb->bo); */
-/* #endif */
 }
 
 void 
@@ -854,15 +694,6 @@ ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 
    if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
      ecore_drm_fb_destroy(fb);
-/* #ifdef HAVE_GBM */
-/*    else if (fb->bo) */
-/*      { */
-/*         if (fb->from_client) */
-/*           gbm_bo_destroy(fb->bo); */
-/*         else */
-/*           gbm_surface_release_buffer(output->surface, fb->bo); */
-/*      } */
-/* #endif */
 }
 
 EAPI void 
@@ -880,13 +711,6 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
 
    if (!output->next)
      {
-/* #ifdef HAVE_GBM */
-/*         if (output->dev->use_hw_accel) */
-/*           { */
-/*              _ecore_drm_output_hardware_render(output); */
-/*           } */
-/*         else */
-/* #endif */
           {
              _ecore_drm_output_software_render(output);
           }

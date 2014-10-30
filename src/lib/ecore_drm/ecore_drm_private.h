@@ -28,14 +28,6 @@
 # include <xf86drmMode.h>
 # include <drm_fourcc.h>
 
-/* # ifdef HAVE_GBM */
-/* #  include <gbm.h> */
-/* #  include <EGL/egl.h> */
-/* #  include <EGL/eglext.h> */
-/* #  include <GLES2/gl2.h> */
-/* #  include <GLES2/gl2ext.h> */
-/* # endif */
-
 # include <Eeze.h>
 # include <Eldbus.h>
 # include <Ecore_Drm.h>
@@ -136,17 +128,6 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
    Ecore_Drm_Backlight *backlight;   
-
-/* # ifdef HAVE_GBM */
-/*    struct gbm_surface *surface; */
-/*    struct gbm_bo *cursor[NUM_FRAME_BUFFERS]; */
-/*    struct  */
-/*      { */
-/*         EGLSurface surface; */
-/*      } egl; */
-/* # endif */
-
-   /* TODO: finish */
 };
 
 struct _Ecore_Drm_Seat
@@ -258,10 +239,6 @@ void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
 
 Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
-
-/* #ifdef HAVE_GBM */
-/* Ecore_Drm_Fb *_ecore_drm_fb_bo_get(Ecore_Drm_Device *dev, struct gbm_bo *bo); */
-/* #endif */
 
 void _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
 void _ecore_drm_output_repaint_start(Ecore_Drm_Output *output);

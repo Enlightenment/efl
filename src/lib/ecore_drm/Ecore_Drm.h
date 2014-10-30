@@ -61,9 +61,6 @@ typedef struct _Ecore_Drm_Fb
    unsigned int stride, size;
    int fd;
    void *mmap;
-/* #ifdef HAVE_GBM */
-/*    struct gbm_bo *bo; */
-/* #endif */
 } Ecore_Drm_Fb;
 
 struct _Ecore_Drm_Device
@@ -108,16 +105,6 @@ struct _Ecore_Drm_Device
    struct xkb_context *xkb_ctx;
 
    unsigned int window;
-
-/* #ifdef HAVE_GBM */
-/*    struct gbm_device *gbm; */
-/*    struct */
-/*      { */
-/*         EGLDisplay disp; */
-/*         EGLContext ctxt; */
-/*         EGLConfig cfg; */
-/*      } egl; */
-/* #endif */
 };
 
 /* opaque structure to represent a drm device */

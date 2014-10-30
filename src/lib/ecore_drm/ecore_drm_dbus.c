@@ -67,7 +67,6 @@ _cb_device_paused(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
      {
         if (!strcmp(type, "pause"))
           {
-             /* TODO: device pause done */
              _ecore_drm_dbus_device_pause_done(maj, min);
           }
 

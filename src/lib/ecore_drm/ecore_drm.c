@@ -142,10 +142,6 @@ ecore_drm_gbm_get(Ecore_Drm_Device *dev)
 {
    if (!dev) return NULL;
 
-#ifdef HAVE_GBM
-   return dev->gbm;
-#endif
-
    return NULL;
 }
 
