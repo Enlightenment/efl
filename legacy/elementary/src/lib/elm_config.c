@@ -2660,6 +2660,28 @@ elm_config_cache_image_cache_size_set(int size)
    _elm_recache();
 }
 
+EAPI void
+elm_config_font_hint_type_set(int type)
+{
+   Eina_List *l;
+   Evas_Object *win;
+
+   if ((type < 0) || (type > 2)) return;
+   _elm_config->font_hinting = type;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, win)
+     {
+        Evas *e = evas_object_evas_get(win);
+
+        if (!_elm_config->font_hinting)
+          evas_font_hinting_set(e, EVAS_FONT_HINTING_NONE);
+        else if (_elm_config->font_hinting == 1)
+          evas_font_hinting_set(e, EVAS_FONT_HINTING_AUTO);
+        else if (_elm_config->font_hinting == 2)
+          evas_font_hinting_set(e, EVAS_FONT_HINTING_BYTECODE);
+     }
+}
+
 EAPI int
 elm_config_cache_edje_file_cache_size_get()
 {

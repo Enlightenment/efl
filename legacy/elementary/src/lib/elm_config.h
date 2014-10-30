@@ -1024,6 +1024,20 @@ EAPI void             elm_config_font_overlay_unset(const char *text_class);
 EAPI void             elm_config_font_overlay_apply(void);
 
 /**
+ * Apply the specified font hinting type.
+ * EVAS_FONT_HINTING_NONE < No font hinting
+ * EVAS_FONT_HINTING_AUTO < Automatic font hinting
+ * EVAS_FONT_HINTING_BYTECODE < Bytecode font hinting
+ *
+ * @ingroup Fonts
+ *
+ * This applies font hint changes to all windows of the current application.
+ *
+ * @since 1.13
+ */
+EAPI void elm_config_font_hint_type_set(int type);
+
+/**
  * Get the configured "finger size"
  *
  * @return The finger size
