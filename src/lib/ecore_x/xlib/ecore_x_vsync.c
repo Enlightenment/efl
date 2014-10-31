@@ -207,6 +207,7 @@ _drm_send_time(double t)
      {
         *tim = t;
         DBG("   ... send %1.8f", t);
+        D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
         ecore_thread_feedback(drm_thread, tim);
      }
 }
@@ -222,13 +223,17 @@ _drm_vblank_handler(int fd EINA_UNUSED,
      {
         static unsigned int pframe = 0;
 
-        D("vblank %i\n", frame);
         DBG("vblank %i", frame);
+        D("    @%1.5f vblank %i\n", ecore_time_get(), frame);
         if (pframe != frame)
           {
              _drm_send_time((double)sec + ((double)usec / 1000000));
              pframe = frame;
           }
+     }
+   else
+     {
+        D("    @%1.5f vblank drm event when not busy!\n", ecore_time_get());
      }
 }
 
@@ -242,9 +247,11 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    while (!ecore_thread_check(thread))
      {
         DBG("------- drm_event_is_busy=%i", drm_event_is_busy);
+        D("    @%1.5f ------- drm_event_is_busy=%i\n", ecore_time_get(), drm_event_is_busy);
         if (!drm_event_is_busy)
           {
              DBG("wait...");
+             D("    @1.5f wait...\n", ecore_time_get());
              msg = eina_thread_queue_wait(thq, &ref);
              if (msg)
                {
@@ -257,6 +264,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              do
                {
                   DBG("poll...");
+                  D("    @%1.5f poll...\n", ecore_time_get());
                   msg = eina_thread_queue_poll(thq, &ref);
                   if (msg)
                     {
@@ -267,6 +275,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              while (msg);
           }
         DBG("tick = %i", tick);
+        D("    @%1.5f tick = %i\n", ecore_time_get(), tick);
         if (tick == -1)
           {
              drm_thread = NULL;
@@ -283,7 +292,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 
              if (!_drm_tick_schedule())
                {
-                  D("@%1.5f schedule fail\n", ecore_time_get());
+                  D("    @%1.5f schedule fail\n", ecore_time_get());
                   _drm_fail_count = 999999;
                }
              max_fd = 0;
@@ -297,11 +306,11 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                tv.tv_usec = _drm_fail_time2 * 1000000;
              else
                tv.tv_usec = _drm_fail_time * 1000000;
-             D("@%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
+             D("    @%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
              ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
              if ((ret == 1) && (FD_ISSET(drm_fd, &rfds)))
                {
-                  D("@%1.5f have event\n", ecore_time_get());
+                  D("    @%1.5f have event\n", ecore_time_get());
                   sym_drmHandleEvent(drm_fd, &drm_evctx);
                   _drm_fail_count = 0;
                }
@@ -310,7 +319,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                   // timeout
                   _drm_send_time(ecore_time_get());
                   _drm_fail_count++;
-                  D("@%1.5f fail count %i\n", ecore_time_get(), _drm_fail_count);
+                  D("    @%1.5f fail count %i\n", ecore_time_get(), _drm_fail_count);
                }
           }
      }
@@ -320,13 +329,14 @@ static void
 _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
    DBG("notify.... %3.3f %i", *((double *)msg), drm_event_is_busy);
+   D("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
    if (drm_event_is_busy)
      {
         double *t = msg;
         static double pt = 0.0;
 
-        D("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
         DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
+        D("VSYNC %1.8f = delt %1.8f\n", *t, *t - pt);
         ecore_loop_time_set(*t);
         ecore_animator_custom_tick();
         pt = *t;
@@ -820,7 +830,16 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 
    if (vsync_veto == -1)
      {
+        char buf[4096];
+        const char *home;
+        struct stat st;
+
+        home = getenv("HOME");
+        if (!home) home = "/tmp";
+        snprintf(buf, sizeof(buf), "%s/.ecore-no-vsync", home);
         if (getenv("ECORE_NO_VSYNC")) vsync_veto = 1;
+        else if (stat(buf, &st) == 0) vsync_veto = 1;
+        else if (stat("/etc/.ecore-no-vsync", &st) == 0) vsync_veto = 1;
         else vsync_veto = 0;
      }
    if (vsync_veto == 1) return EINA_FALSE;
