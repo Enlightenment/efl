@@ -861,11 +861,17 @@ _elm_panel_elm_widget_event(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED, Evas_Objec
 EOLIAN static Eina_Bool
 _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Object *content)
 {
-   if (part && strcmp(part, "default"))
+   if (part)
      {
-        Eina_Bool int_ret = EINA_TRUE;
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
-        return int_ret;
+        // "elm.swallow.event" part is used for internal needs and should not be changed.
+        if (!strcmp(part, "elm.swallow.event")) return EINA_FALSE;
+        if (strcmp(part, "default"))
+          {
+             Eina_Bool int_ret = EINA_TRUE;
+             eo_do_super(obj, MY_CLASS,
+                         int_ret = elm_obj_container_content_set(part, content));
+             return int_ret;
+          }
      }
 
    if (sd->content == content) return EINA_TRUE;
@@ -886,11 +892,16 @@ _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
 EOLIAN static Evas_Object*
 _elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
 {
-   if (part && strcmp(part, "default"))
+   if (part)
      {
-        Evas_Object *ret = NULL;
-        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(part));
-        return ret;
+        // "elm.swallow.event" part is used for internal needs and should not be changed.
+        if (!strcmp(part, "elm.swallow.event")) return NULL;
+        if (strcmp(part, "default"))
+          {
+             Evas_Object *ret = NULL;
+             eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(part));
+             return ret;
+          }
      }
 
    return sd->content;
@@ -901,10 +912,16 @@ _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
 {
    Evas_Object *ret = NULL;
 
-   if (part && strcmp(part, "default"))
+   if (part)
      {
-        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset(part));
-        return ret;
+        // "elm.swallow.event" part is used for internal needs and should not be changed.
+        if (!strcmp(part, "elm.swallow.event")) return NULL;
+        if (strcmp(part, "default"))
+          {
+             eo_do_super(obj, MY_CLASS,
+                         ret = elm_obj_container_content_unset(part));
+             return ret;
+          }
      }
 
    if (!sd->content) return NULL;
