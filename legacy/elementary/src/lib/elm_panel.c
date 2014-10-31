@@ -864,7 +864,11 @@ _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
    if (part)
      {
         // "elm.swallow.event" part is used for internal needs and should not be changed.
-        if (!strcmp(part, "elm.swallow.event")) return EINA_FALSE;
+        if (!strcmp(part, "elm.swallow.event"))
+          {
+             ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
+             return EINA_FALSE;
+          }
         if (strcmp(part, "default"))
           {
              Eina_Bool int_ret = EINA_TRUE;
@@ -895,7 +899,11 @@ _elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
    if (part)
      {
         // "elm.swallow.event" part is used for internal needs and should not be changed.
-        if (!strcmp(part, "elm.swallow.event")) return NULL;
+        if (!strcmp(part, "elm.swallow.event"))
+          {
+             ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
+             return NULL;
+          }
         if (strcmp(part, "default"))
           {
              Evas_Object *ret = NULL;
@@ -915,7 +923,11 @@ _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
    if (part)
      {
         // "elm.swallow.event" part is used for internal needs and should not be changed.
-        if (!strcmp(part, "elm.swallow.event")) return NULL;
+        if (!strcmp(part, "elm.swallow.event"))
+          {
+             ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
+             return NULL;
+          }
         if (strcmp(part, "default"))
           {
              eo_do_super(obj, MY_CLASS,
