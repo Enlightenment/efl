@@ -2399,12 +2399,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
        ((a < 255) || (tex->alpha))) blend = EINA_TRUE;
 
-   if (npoints != 4)
-     {
-        // FIXME: nash - you didn't fix this for n points. its still all
-        // 4 point stuff!!! grrrr.
-        abort();
-     }
    if ((A_VAL(&(p[0].col)) < 0xff) || (A_VAL(&(p[1].col)) < 0xff) ||
        (A_VAL(&(p[2].col)) < 0xff) || (A_VAL(&(p[3].col)) < 0xff))
      blend = 1;
