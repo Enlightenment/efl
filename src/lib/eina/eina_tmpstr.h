@@ -184,7 +184,12 @@ EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
  * printf("%s\n", tmpstr) etc.). This string should be considered read-only
  * and immutable, and when youa re done with the string yo should delete it
  * with eina_tmpstr_del().
- * 
+ *
+ * @note If the length is greater than the actual string, but still '\0'
+ *       terminateed. Their won't be any crash and the string will be correct,
+ *       but eina_tmpstr_strlen will return an erroneous length. So if you
+ *       want to have the correct length always call eina_tmpstr_add_length
+ *       with length == strlen(str).
  * @see eina_tmpstr_del()
  * @see eina_tmpstr_add()
  * 

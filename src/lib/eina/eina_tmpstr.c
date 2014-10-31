@@ -72,12 +72,14 @@ eina_tmpstr_add_length(const char *str, size_t length)
    Str *s;
 
    if (!str || !length) return NULL;
-   s = malloc(sizeof(Str) + length + 1);
+   /* eina_tmpstr_strlen is expected to return strlen + 1 */
+   length += 1;
+   s = malloc(sizeof(Str) + length);
    if (!s) return NULL;
    s->length = length;
    s->str = ((char *)s) + sizeof(Str);
-   strncpy(s->str, str, length);
-   s->str[length] = '\0';
+   strncpy(s->str, str, length - 1);
+   s->str[length - 1] = '\0';
    eina_lock_take(&_mutex);
    s->next = strs;
    strs = s;
