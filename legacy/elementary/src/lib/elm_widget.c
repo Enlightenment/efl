@@ -4426,14 +4426,14 @@ _elm_widget_item_style_set(Elm_Widget_Item *item, const char *style)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
-   item->style_set_func(item, style);
+   if (item->style_set_func) item->style_set_func(item, style);
 }
 
 EAPI const char *
 _elm_widget_item_style_get(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
-   return item->style_get_func(item);
+   return item->style_get_func ? item->style_get_func(item) : NULL;
 }
 
 EAPI void
