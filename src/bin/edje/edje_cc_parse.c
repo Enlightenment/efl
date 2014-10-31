@@ -976,13 +976,13 @@ compile(void)
                snprintf(buf, sizeof(buf), "%s -anotate -a %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
-                        inc, def, tmpn,
+                        inc, def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
                snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
-                        inc, def, tmpn,
+                        inc, def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              ret = system(buf);
           }
@@ -992,7 +992,7 @@ compile(void)
              exit(-1);
           }
         if (ret == EXIT_SUCCESS)
-          file_in = (char *)tmpn;
+          file_in = (char *)clean_file;
         else
           {
              ERR("Exit code of epp not clean: %i", ret);
