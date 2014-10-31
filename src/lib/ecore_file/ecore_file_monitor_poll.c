@@ -62,10 +62,10 @@ ecore_file_monitor_backend_shutdown(void)
 
 Ecore_File_Monitor *
 ecore_file_monitor_backend_add(const char *path,
-                            void (*func) (void *data, Ecore_File_Monitor *em,
-                                          Ecore_File_Event event,
-                                          const char *path),
-                            void *data)
+                               void (*func) (void *data, Ecore_File_Monitor *em,
+                                             Ecore_File_Event event,
+                                             const char *path),
+                               void *data)
 {
    Ecore_File_Monitor *em;
    size_t len;
@@ -102,23 +102,25 @@ ecore_file_monitor_backend_add(const char *path,
 
              files = ecore_file_ls(em->path);
              EINA_LIST_FREE(files, file)
-                    {
-                       Ecore_File *f;
-                       char buf[PATH_MAX];
+               {
+                  Ecore_File *f;
+                  char buf[PATH_MAX];
 
-                       f = calloc(1, sizeof(Ecore_File));
-                       if (!f)
+                  f = calloc(1, sizeof(Ecore_File));
+                  if (!f)
                     {
                        free(file);
-                         continue;
+                       continue;
                     }
 
-                       snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-                       f->name = file;
-                       f->mtime = ecore_file_mod_time(buf);
-                       f->is_dir = ecore_file_is_dir(buf);
-                       em->files = (Ecore_File *) eina_inlist_append(EINA_INLIST_GET(em->files), EINA_INLIST_GET(f));
-                    }
+                  snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
+                  f->name = file;
+                  f->mtime = ecore_file_mod_time(buf);
+                  f->is_dir = ecore_file_is_dir(buf);
+                  em->files = 
+                    (Ecore_File *) eina_inlist_append(EINA_INLIST_GET(em->files), 
+                                                      EINA_INLIST_GET(f));
+               }
           }
      }
    else
