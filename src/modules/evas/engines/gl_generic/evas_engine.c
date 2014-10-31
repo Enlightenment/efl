@@ -898,11 +898,7 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
    gl_context = re->window_gl_context_get(re->software.ob);
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
-   if (m->count != 4)
-     {
-        // FIXME: nash - you didn't fix this
-        abort();
-     }
+
    if ((m->pts[0].x == m->pts[3].x) &&
        (m->pts[1].x == m->pts[2].x) &&
        (m->pts[0].y == m->pts[1].y) &&
