@@ -418,7 +418,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
                                &ep->param1.set,
                                (Edje_Part_Description_Image*) ep->param1.description,
                                NULL);
-   *set = ep->param1.set;
+   if (set) *set = ep->param1.set;
    if (image_id < 0)
      {
         Edje_Image_Directory_Entry *ie;
@@ -447,7 +447,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
                                          &ep->param1.set,
                                          (Edje_Part_Description_Image*) ep->param1.description,
                                          NULL);
-             *set = ep->param1.set;
+             if (set) *set = ep->param1.set;
           }
         else
           if (ep->param2)
@@ -458,7 +458,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
                                                 &ep->param2->set,
                                                 (Edje_Part_Description_Image*) ep->param2->description,
                                                 NULL);
-                    *set = ep->param2->set;
+                    if (set) *set = ep->param2->set;
                  }
                else
                  {
@@ -466,7 +466,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
 
                     imid = ((Edje_Part_Description_Image*) ep->param2->description)->image.tweens[image_num - 1];
                     image_id = _edje_image_find(ep->object, ed, NULL, NULL, imid);
-                    *set = NULL;
+                    if (set) *set = NULL;
                  }
             }
         if (image_id < 0)
