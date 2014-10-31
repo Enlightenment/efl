@@ -20,78 +20,101 @@
 #define EINA_TRASH_H__
 
 /**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
  * @defgroup Eina_Trash_Group Trash
+ * @ingroup Eina_Containers_Group
+ * @brief This group provides a generic container.
  *
  * @{
  */
 
 /**
  * @typedef Eina_Trash
- * Type for a generic container of unused allocated pointer.
+ * @brief The type for strcuture #_Eina_Trash.
  */
 typedef struct _Eina_Trash Eina_Trash;
 
 /**
  * @struct _Eina_Trash
- * Type for a generic container of unused allocated pointer.
+ * @brief The structure type for a generic container of an unused allocated pointer.
  */
 struct _Eina_Trash
 {
-   Eina_Trash *next; /**< next item in trash. */
+   Eina_Trash *next; /**< Next item in the trash */
 };
 
+/**
+ * @brief Initializes a trash before using it.
+ *
+ * @param[in] trash The trash
+ *
+ * @details This function just set to zero the trash to correctly
+ *          initialize it.
+ *
+ * @note You can just set *trash to @c NULL and you will have
+ *       the same result.
+ */
 static inline void  eina_trash_init(Eina_Trash **trash) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Pushes an unused pointer in the trash instead of freeing it.
+ *
+ * @param[in] trash A pointer to an Eina_Trash
+ * @param data An unused pointer big enougth to put a (void*)
+ *
+ * @details Instead of freeing a pointer and put pressure on malloc/free
+ *          you can push it in a trash for a later use. This function just
+ *          provide a fast way to push a now unused pointer into a trash.
+ *
+ * @note Do not use the pointer after insertion or bad things will
+ *       happens.
+ *
+ * @note This trash will not resize, nor do anything with the size of
+ *       the region pointed by @p data, so it's your duty to manage the size.
+ */
 static inline void  eina_trash_push(Eina_Trash **trash, void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Pops an available pointer from the trash if possible.
+ *
+ * @param[in] trash A #Eina_Trash handle
+ *
+ * @details Instead of calling malloc, and putting pressure on malloc/free
+ *          you can recycle the content of the trash, if it's not empty.
+ *
+ * @note This trash will not resize, nor do anything with the size of
+ *       the region pointed by pointer inside the trash, so it's your duty
+ *       to manage the size of the returned pointer.
+ */
 static inline void *eina_trash_pop(Eina_Trash **trash) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @def EINA_TRASH_CLEAN
- * @brief Macro to remove all pointer from the trash.
+ * @brief Definition of a macro to remove all the pointers from the trash.
  *
- * @param trash The trash to clean.
- * @param data The pointer extracted from the trash.
+ * @param trash The trash to clean
+ * @param data The pointer extracted from the trash
  *
- * This macro allow the cleaning of @p trash in an easy way. It will
- * remove all pointers from @p trash until it's empty.
+ * @details This macro allows the cleaning of @a trash in an easy way. It
+ *          removes all the pointers from @a trash until it's empty.
  *
- * This macro can be used for freeing the data in the trash, like in
- * the following example:
+ * @note This macro can be used for freeing the data in the trash, like in
+ *       the following example:
  *
  * @code
  * Eina_Trash *trash = NULL;
  * char *data;
  *
- * // trash is filled with pointer to some duped strings.
+ * // trash is filled with a pointer to some duped strings.
  *
  * EINA_TRASH_CLEAN(&trash, data)
  *   free(data);
  * @endcode
  *
- * @note this macro is useful when you implement some memory pool.
+ * @note This macro is useful when you implement some memory pool.
  */
 #define EINA_TRASH_CLEAN(trash, data) while ((data = eina_trash_pop(trash)))
 
 #include "eina_inline_trash.x"
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}

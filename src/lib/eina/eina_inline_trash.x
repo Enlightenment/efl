@@ -19,39 +19,12 @@
 #ifndef EINA_INLINE_TRASH_X__
 #define EINA_INLINE_TRASH_X__
 
-/**
- * @brief Initialize a trash before using it.
- *
- * @param trash The trash.
- *
- * This function just set to zero the trash to correctly
- * initialize it.
- *
- * @note You can just set *trash to @c NULL and you will have
- * the same result.
- */
 static inline void
 eina_trash_init(Eina_Trash **trash)
 {
    *trash = NULL;
 }
 
-/**
- * @brief Push an unused pointer in the trash instead of freeing it.
- *
- * @param trash A pointer to an Eina_Trash.
- * @param data An unused pointer big enougth to put a (void*).
- *
- * Instead of freeing a pointer and put pressure on malloc/free
- * you can push it in a trash for a later use. This function just
- * provide a fast way to push a now unused pointer into a trash.
- *
- * @note Do never use the pointer after insertion or bad things will
- * happens.
- *
- * @note This trash will not resize, nor do anything with the size of
- * the region pointed by @p data, so it's your duty to manage the size.
- */
 static inline void
 eina_trash_push(Eina_Trash **trash, void *data)
 {
@@ -62,18 +35,6 @@ eina_trash_push(Eina_Trash **trash, void *data)
    *trash = tmp;
 }
 
-/**
- * @brief Pop an available pointer from the trash if possible.
- *
- * @param trash A pointer to an Eina_Trash.
- *
- * Instead of calling malloc, and putting pressure on malloc/free
- * you can recycle the content of the trash, if it's not empty.
- *
- * @note This trash will not resize, nor do anything with the size of
- * the region pointed by pointer inside the trash, so it's your duty
- * to manage the size of the returned pointer.
- */
 static inline void*
 eina_trash_pop(Eina_Trash **trash)
 {
