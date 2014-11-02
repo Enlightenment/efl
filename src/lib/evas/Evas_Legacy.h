@@ -1650,11 +1650,14 @@ EAPI Eina_Bool evas_object_image_animated_get(const Eo *obj);
 
 /**
  *
- * Set the size of a given image object's source image, when loading
- * it.
+ * Set the load size of a given image object's source image.
  *
- * This function sets a new (loading) size for the given canvas
- * image.
+ * This function sets a new geometry size for the given canvas image.
+ * The image will be loaded into memory as if it was the set size instead of
+ * the original size.
+ *
+ * @note The size of a given image object's source image will be less than or
+ * equal to the size of @p w and @p h.
  *
  * @see evas_object_image_load_size_get()
  *
@@ -1665,11 +1668,15 @@ EAPI void evas_object_image_load_size_set(Eo *obj, int w, int h);
 
 /**
  *
- * Get the size of a given image object's source image, when loading
- * it.
+ * Get the load size of a given image object's source image.
+ *
+ * This function gets the geometry size set manually for the given canvas image.
  *
  * @note Use @c NULL pointers on the size components you're not
  * interested in: they'll be ignored by the function.
+ * @note @p w and @p h will be set with the image's loading size only if
+ * the image's load size is set manually: if evas_object_image_load_size_set()
+ * has not been called, @p w and @p h will be set with 0.
  *
  * @see evas_object_image_load_size_set() for more details
  *
