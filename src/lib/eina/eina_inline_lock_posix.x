@@ -117,7 +117,9 @@ struct _Eina_Condition
 {
    Eina_Lock      *lock;      /**< The lock for this condition */
    pthread_cond_t  condition; /**< The condition variable */
+#if defined(__clockid_t_defined)
    clockid_t       clkid;     /**< The attached clock for timedwait */
+#endif
 };
 
 struct _Eina_RWLock
@@ -346,25 +348,28 @@ eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
    memset(cond, 0, sizeof (Eina_Condition));
 #endif
 
+   cond->lock = mutex;
    pthread_condattr_init(&attr);
-   cond->clkid = (clockid_t) 0;
 
+   /* OSX doesn't provide clockid_t or clock_gettime. */
+#if defined(__clockid_t_defined)
+   cond->clkid = (clockid_t) 0;
    /* We try here to chose the best clock for cond_timedwait */
-#if defined(CLOCK_MONOTONIC_RAW)
+# if defined(CLOCK_MONOTONIC_RAW)
    if (!pthread_condattr_setclock(&attr, CLOCK_MONOTONIC_RAW))
      cond->clkid = CLOCK_MONOTONIC_RAW;
-#endif
-#if defined(CLOCK_MONOTONIC)
+# endif
+# if defined(CLOCK_MONOTONIC)
    if (!cond->clkid && !pthread_condattr_setclock(&attr, CLOCK_MONOTONIC))
      cond->clkid = CLOCK_MONOTONIC;
-#endif
-#if defined(CLOCK_REALTIME)
+# endif
+# if defined(CLOCK_REALTIME)
    if (!cond->clkid && !pthread_condattr_setclock(&attr, CLOCK_REALTIME))
      cond->clkid = CLOCK_REALTIME;
+# endif
 #endif
 
-   cond->lock = mutex;
-   if (pthread_cond_init(&cond->condition, cond->clkid ? &attr : NULL) != 0)
+   if (pthread_cond_init(&cond->condition, &attr) != 0)
      {
         pthread_condattr_destroy(&attr);
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -434,14 +439,17 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
         return EINA_FALSE;
      }
 
+#if defined(__clockid_t_defined)
    if (cond->clkid)
      {
         if (clock_gettime(cond->clkid, &ts) != 0)
           return EINA_FALSE;
      }
    else
+#endif
      {
-        /* Obsolete - this probably will never happen */
+        /* Obsolete for Linux.
+         * TODO: use pthread_cond_timedwait_relative_np for OSX. */
         struct timeval tv;
         if (gettimeofday(&tv, NULL) != 0)
           return EINA_FALSE;
