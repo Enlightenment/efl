@@ -274,7 +274,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         ret = __glXMakeContextCurrent(eng_get_ob(re)->info->info.display, 0, NULL);
         if (!ret)
           {
-             ERR("glXMakeCurrent() failed!");
+             ERR("glXMakeContextCurrent() failed!");
              glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
              return 0;
           }
@@ -298,7 +298,8 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
                                         sfc, ctx);
         if (!ret)
           {
-             ERR("glXMakeCurrent() failed. Ret: %d! Context: %p Surface: %p", ret, (void*)ctx, (void*)sfc);
+             ERR("glXMakeContextCurrent() failed. Ret: %d! Context: %p Surface: %p",
+                 ret, (void *)ctx, (void *)sfc);
              glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
              return 0;
           }
@@ -1572,7 +1573,8 @@ eng_preload_make_current(void *data, void *doit)
 #else
         if (!__glXMakeContextCurrent(ob->info->info.display, ob->glxwin, ob->context))
           {
-             ERR("glXMakeCurrent(%p, 0x%x, %p) failed", ob->info->info.display, (unsigned int)ob->win, (void *)ob->context);
+             ERR("glXMakeContextCurrent(%p, %p, %p) failed",
+                 ob->info->info.display, (void *)ob->win, (void *)ob->context);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              return EINA_FALSE;
           }
@@ -1586,7 +1588,8 @@ eng_preload_make_current(void *data, void *doit)
 #else
         if (!__glXMakeContextCurrent(ob->info->info.display, 0, NULL))
           {
-             ERR("glXMakeCurrent(%p, None, NULL) failed", ob->info->info.display);
+             ERR("glXMakeContextCurrent(%p, None, NULL) failed",
+                 ob->info->info.display);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
              return EINA_FALSE;
           }

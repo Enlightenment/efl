@@ -475,17 +475,10 @@ eng_window_free(Outbuf *gw)
         _evas_gl_x11_rgba_vi = NULL;
      }
 #else
-   if (!__glXMakeContextCurrent(gw->disp, 0, gw->context))
-     ERR("glXMakeContextCurrent() failed!");
    glXDestroyWindow(gw->disp, gw->glxwin);
    if (ref == 0)
      {
         GLXContext rgbactx = _tls_rgba_context_get();
-        if (!gw->glxwin)
-          {
-             if (glXGetCurrentContext() == gw->context)
-               glXMakeCurrent(gw->disp, 0, NULL);
-          }
         if (context) glXDestroyContext(gw->disp, context);
         if (rgbactx) glXDestroyContext(gw->disp, rgbactx);
         free(_evas_gl_x11_vi);
@@ -496,11 +489,6 @@ eng_window_free(Outbuf *gw)
         rgba_fbconf = 0;
         _evas_gl_x11_vi = NULL;
         _evas_gl_x11_rgba_vi = NULL;
-     }
-   else if (!gw->glxwin)
-     {
-        if (glXGetCurrentDrawable() == gw->win)
-          glXMakeCurrent(gw->disp, 0, gw->context);
      }
 #endif
    free(gw);
