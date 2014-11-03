@@ -1579,7 +1579,7 @@ _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Sour
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
-   if ((pixels->w != o->cur->image.w) || (pixels->h != o->cur->image.h)) return 0;
+   if ((pixels->w != o->cur->image.w) || (pixels->h != o->cur->image.h)) return EINA_FALSE;
 
    switch (pixels->format)
      {
@@ -1636,10 +1636,10 @@ _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Sour
           }
         break;
       default:
-        return 0;
+        return EINA_FALSE;
         break;
      }
-   return 1;
+   return EINA_TRUE;
 }
 
 EOLIAN static void
