@@ -167,6 +167,7 @@ END_TEST
 
 START_TEST(eina_cxx_value_copying)
 {
+  efl::eina::eina_init init;
   char c = 5;
 
   efl::eina::value vchar(c);
@@ -186,6 +187,7 @@ END_TEST
 
 START_TEST(eina_cxx_value_temporaries)
 {
+  efl::eina::eina_init init;
   efl::eina::get<std::string>(efl::eina::value(std::string("Matroska")));
 }
 END_TEST

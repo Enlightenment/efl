@@ -68,6 +68,7 @@ END_TEST
 
 START_TEST(eina_cxx_thread_mutexes)
 {
+  efl::eina::eina_init init;
   efl::eina::mutex m;
 
   {
@@ -103,6 +104,7 @@ void condition_thread(efl::eina::mutex& condition_mutex
 
 START_TEST(eina_cxx_thread_conditional)
 {
+  efl::eina::eina_init init;
   efl::eina::mutex m;
 
   efl::eina::mutex condition_mutex;
