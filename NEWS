@@ -172,6 +172,21 @@ Fixes:
    * dnd/x: fix type set for case there is no type list exists
    * edje: edje_edit - don't unlick(NULL) (T1760)
    * edje: edje_edit - fix posible resource leak (T1760)
+   * Edje_calc: set the image set border again after resize.
+   * ecore_evas - ecore_evas's should start withdrawn then normal on show
+   * edje_cc_out: update the id of set images.
+   * ecore-tests: Add missing separator
+   * evas-gl-x11: Check return value of glXMakeContextCurrent (CID1249651)
+   * evas-gl-x11: Fix copy/paste error from Coverity fix
+   * evas-gl-x11: Don't call gl_common_error_set if MakeContextCurrent fails
+   * evas-gl-3d: Fix compiler warning about 'ld' may be used uninitialized
+   * ecore-evas-wayland: Fix wayland windows not showing up after 5954289c6ce1cd55ff212428291604b981438439
+   * eina_unicode: fix memory allocation
+   * edje: fix use of eina_tmpstr_del after eina_shutdown.
+   * ecoreidrm: Cleaned up unwanted code.
+   * ecore-drm: Remove commented out dead functions
+   * ecore-drm: Remove dead functions
+   * eina: clear up eina_tmpstr length information (T1775)
 
 Changes since 1.10.0:
 ---------------------
