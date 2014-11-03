@@ -413,6 +413,27 @@ public:
   using _base_type::max_size;
   using _base_type::native_handle;
 
+  /**
+   * @brief Get a constant @ref eina::accessor for the list.
+   * @return Constant <tt>eina::accessor</tt> to the list.
+   *
+   * Version of @ref accessor() to const-qualified inline lists. Returns
+   * a const-qualified <tt>eina::accessor</tt> instead.
+   */
+  eina::accessor<T const> accessor() const
+  {
+    return eina::accessor<T const>(eina_list_accessor_new(this->_impl._list));
+  }
+
+  /**
+   * @brief Get a @ref eina::accessor for the list.
+   * @return <tt>eina::accessor</tt> to the list.
+   */
+  eina::accessor<T> accessor()
+  {
+    return eina::accessor<T>(eina_list_accessor_new(this->_impl._list));
+  }
+
   friend bool operator==(list<T, CloneAllocator> const& rhs, list<T, CloneAllocator> const& lhs)
   {
     return rhs.size() == lhs.size() && std::equal(rhs.begin(), rhs.end(), lhs.begin());

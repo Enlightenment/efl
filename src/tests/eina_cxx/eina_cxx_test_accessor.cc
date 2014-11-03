@@ -4,13 +4,26 @@
 #endif
 
 #include "Eina.hh"
+#include "Eo.hh"
 
 #include <algorithm>
 
 #include <check.h>
 
+
+const Eo_Class *simple_class_get(void);
+#define MY_CLASS simple_class_get()
+
+struct wrapper : efl::eo::base
+{
+  explicit wrapper(Eo* o)
+    : base(o) {}
+};
+
 START_TEST(eina_cxx_accessor_indexing)
 {
+  efl::eina::eina_init eina_init;
+
   efl::eina::ptr_list<int> list;
   list.push_back(new int(5));
   list.push_back(new int(10));
@@ -26,8 +39,36 @@ START_TEST(eina_cxx_accessor_indexing)
 }
 END_TEST
 
+START_TEST(eina_cxx_eo_accessor_indexing)
+{
+  efl::eina::eina_init eina_init;
+  efl::eo::eo_init eo_init;
+
+  efl::eina::list<wrapper> list;
+
+  wrapper const w1(eo_add(MY_CLASS, NULL));
+  wrapper const w2(eo_add(MY_CLASS, NULL));
+  wrapper const w3(eo_add(MY_CLASS, NULL));
+  wrapper const w4(eo_add(MY_CLASS, NULL));
+
+  list.push_back(w1);
+  list.push_back(w2);
+  list.push_back(w3);
+  list.push_back(w4);
+
+  efl::eina::accessor<wrapper> accessor(list.accessor());
+
+  ck_assert(accessor[0] == w1);
+  ck_assert(accessor[1] == w2);
+  ck_assert(accessor[2] == w3);
+  ck_assert(accessor[3] == w4);
+}
+END_TEST
+
 START_TEST(eina_cxx_accessor_iterator)
 {
+  efl::eina::eina_init eina_init;
+
   efl::eina::ptr_list<int> list;
   list.push_back(new int(5));
   list.push_back(new int(10));
@@ -38,6 +79,12 @@ START_TEST(eina_cxx_accessor_iterator)
   for(efl::eina::accessor_iterator<int> first (list.accessor())
         , last (list.accessor(), list.size()); first != last; ++first, ++pos)
     {
+       if(pos >= 4u)
+         {
+            ck_assert_msg(0, "accessor_iterator out of bounds");
+            break;
+         }
+
       ck_assert(pos != 0u || *first == 5);
       ck_assert(pos != 1u || *first == 10);
       ck_assert(pos != 2u || *first == 15);
@@ -46,8 +93,45 @@ START_TEST(eina_cxx_accessor_iterator)
 }
 END_TEST
 
+START_TEST(eina_cxx_eo_accessor_iterator)
+{
+  efl::eina::eina_init eina_init;
+  efl::eo::eo_init eo_init;
+
+  efl::eina::list<wrapper> list;
+
+  wrapper const w1(eo_add(MY_CLASS, NULL));
+  wrapper const w2(eo_add(MY_CLASS, NULL));
+  wrapper const w3(eo_add(MY_CLASS, NULL));
+  wrapper const w4(eo_add(MY_CLASS, NULL));
+
+  list.push_back(w1);
+  list.push_back(w2);
+  list.push_back(w3);
+  list.push_back(w4);
+
+  std::size_t pos = 0u;
+  for(efl::eina::accessor_iterator<wrapper> first (list.accessor())
+        , last (list.accessor(), list.size()); first != last; ++first, ++pos)
+    {
+       if(pos >= 4u)
+         {
+            ck_assert_msg(0, "accessor_iterator out of bounds");
+            break;
+         }
+
+       ck_assert(pos != 0u || *first == w1);
+       ck_assert(pos != 1u || *first == w2);
+       ck_assert(pos != 2u || *first == w3);
+       ck_assert(pos != 3u || *first == w4);
+    }
+}
+END_TEST
+
 START_TEST(eina_cxx_accessor_relops)
 {
+  efl::eina::eina_init eina_init;
+
   efl::eina::ptr_list<int> list;
   list.push_back(new int(5));
   list.push_back(new int(10));
@@ -101,6 +185,8 @@ void
 eina_test_accessor(TCase* tc)
 {
   tcase_add_test(tc, eina_cxx_accessor_indexing);
+  tcase_add_test(tc, eina_cxx_eo_accessor_indexing);
   tcase_add_test(tc, eina_cxx_accessor_iterator);
+  tcase_add_test(tc, eina_cxx_eo_accessor_iterator);
   tcase_add_test(tc, eina_cxx_accessor_relops);
 }
