@@ -5,10 +5,17 @@ lib_LTLIBRARIES += lib/elocation/libelocation.la
 installed_elocationsmainheadersdir = $(includedir)/elocation-@VMAJ@
 dist_installed_elocationsmainheaders_DATA = \
 lib/elocation/Elocation.h \
-lib/elocation/elocation_private.h
+lib/elocation/elocation_private.h \
+lib/elocation/gen/eldbus_geo_clue2_client.h \
+lib/elocation/gen/eldbus_geo_clue2_location.h \
+lib/elocation/gen/eldbus_geo_clue2_manager.h \
+lib/elocation/gen/eldbus_utils.h
 
 lib_elocation_libelocation_la_SOURCES = \
-lib/elocation/elocation.c
+lib/elocation/elocation.c \
+lib/elocation/gen/eldbus_geo_clue2_client.c \
+lib/elocation/gen/eldbus_geo_clue2_location.c \
+lib/elocation/gen/eldbus_geo_clue2_manager.c
 
 lib_elocation_libelocation_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELOCATION_CFLAGS@
 lib_elocation_libelocation_la_LIBADD = @ELOCATION_LIBS@
