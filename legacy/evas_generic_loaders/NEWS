@@ -6,6 +6,8 @@ Changes since 1.11.0:
 Fixes:
 
    * Improve LO binary detection
+   * xcf: Make sure complete calculation is unsigned (CID63748, CID63749)
+   * raw: Make sure to keep the correct sign (CID63746, CID63747)
 
 Changes since Evas Generic Loaders 1.10.0:
 ------------------------------------------
