@@ -1913,7 +1913,7 @@ ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const cha
  * @param client client instance. Must @b not be @c NULL and client
  *        must be configured with ethumb_client_file_set().
  *
- * @return @c EINA_TRUE if it exists, @c EINA_FALSE otherwise.
+ * @return @c NULL on failure, a valid Ethumb_Exists pointer otherwise
  */
 EAPI Ethumb_Exists *
 ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data)
