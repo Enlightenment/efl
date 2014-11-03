@@ -37,6 +37,11 @@ Fixes:
    * bg: fix the _elm_bg_elm_layout_sizing_eval bug.
    * win: fix segfaults (wrong checking)
    * widget: fix seg fault when ts is NULL.
+   * fileselector: Do not call _populate directly in APIs (T1663)
+   * entry/test: make scrollable entries visible
+   * elm win - start wins in withdrawn state
+   * Elm_Panel: forbid changing of content of "elm.swallow.event" part
+   * elm_widget: fix segfaults for _elm_widget_item_style_set/get
 
 Changes since 1.10.0:
 ---------------------
