@@ -17,11 +17,47 @@
 void
 _writeToFile(char *filePath, char *text)
 {
-   FILE *f = fopen(filePath, "w");
-   fail_if(!f);
+   FILE *f = fopen(filePath, "r+");
+   if(f == NULL)
+     {
+      f = fopen(filePath, "w");
+     }
+   fail_if(f == NULL);
    fprintf(f, "%s\n", text);
    fclose(f);
-} 
+}
+
+static void
+file_monitor_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
+                Ecore_File_Event event, const char *path)
+{
+   switch (event)
+     {
+      case ECORE_FILE_EVENT_NONE:
+      case ECORE_FILE_EVENT_CREATED_FILE:
+         fprintf(stderr, "File created in %s", path);
+         break;
+      case ECORE_FILE_EVENT_DELETED_FILE:
+         fprintf(stderr, "File deleted in %s", path);
+         break;
+      case ECORE_FILE_EVENT_MODIFIED:
+         fprintf(stderr, "File modified in %s", path);
+         break;
+      case ECORE_FILE_EVENT_CLOSED:
+         fprintf(stderr, "File closed in %s", path);
+         break;
+      case ECORE_FILE_EVENT_DELETED_DIRECTORY:
+         fprintf(stderr, "Directory deleted in %s", path);
+         break;
+      case ECORE_FILE_EVENT_CREATED_DIRECTORY:
+         fprintf(stderr, "Directory created in %s", path);
+         break;
+      case ECORE_FILE_EVENT_DELETED_SELF:
+         fprintf(stderr, "Path %s deleted", path);
+         break;
+     }
+}
+ 
 START_TEST(ecore_test_ecore_file_init)
 {
    int ret;
@@ -42,7 +78,7 @@ START_TEST(ecore_test_ecore_file_operations)
    const char *destFile = "/tmp/EcoreFileDest.txt";
    char *randomText = "This is random test String";
    char dir[MAXSIZE] = {'\0'};
-   int ret;
+   unsigned int ret;
    Eina_Bool res;
    Eina_List *list;
 
@@ -95,6 +131,8 @@ START_TEST(ecore_test_ecore_file_operations)
 
    ret = ecore_file_size(srcFile);
    fail_if(ret != strlen(randomText)+1);
+   ret = ecore_file_is_dir(srcFile);
+   fail_if(ret != EINA_FALSE);
 
    res = ecore_file_cp(srcFile, destFile);
    fail_if(res != EINA_TRUE);
@@ -107,6 +145,7 @@ START_TEST(ecore_test_ecore_file_operations)
    res = ecore_file_symlink(srcFile, destFile);
    fail_if(res != EINA_TRUE);
    ck_assert_str_eq(ecore_file_readlink(destFile), srcFile);
+   ck_assert_str_eq(ecore_file_realpath(destFile), srcFile);
    res = ecore_file_unlink(destFile);
    fail_if(res != EINA_TRUE);
 
@@ -133,8 +172,59 @@ START_TEST(ecore_test_ecore_file_operations)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_file_monitor)
+{
+   Ecore_File_Monitor *mon;
+   char *path = "/tmp/rootDir/";
+   char *file = "/tmp/rootDir/EcoreFileDest.txt";
+   const char *subDir[] = {"subdir"};
+   char dirName[MAXSIZE] = {'\0'};
+   char *randomText = "This is random test String";
+   char *realp;
+   Eina_Bool res;
+   int ret;
+
+   ret = ecore_file_init();
+   fail_if(ret != 1);
+
+   res = ecore_file_mkdir(path);
+   fail_if(res != EINA_TRUE);
+
+   realp = ecore_file_realpath(path);
+   fail_if(!realp);
+   mon = ecore_file_monitor_add(realp, file_monitor_cb, NULL);
+   fail_if(mon == NULL);
+
+   _writeToFile(file, randomText);
+   _writeToFile(file, randomText);
+
+   ck_assert_str_eq(ecore_file_monitor_path_get(mon), realp);
+
+   ret = ecore_file_mksubdirs(path, subDir);
+   fail_if(ret != 1);
+
+   res = ecore_file_remove(file);
+   fail_if(res != EINA_TRUE);
+
+   strcat(dirName, path);
+   strcat(dirName, subDir[0]);
+   res = ecore_file_rmdir(dirName);
+   fail_if(res != EINA_TRUE);
+   
+   res = ecore_file_recursive_rm(path);
+   fail_if(res != EINA_TRUE);
+
+   ecore_file_monitor_del(mon);
+   
+   ret = ecore_file_shutdown();
+   fail_if(ret != 0);
+
+}
+END_TEST
+
 void ecore_test_ecore_file(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_file_init);
    tcase_add_test(tc, ecore_test_ecore_file_operations);
+   tcase_add_test(tc, ecore_test_ecore_file_monitor);
 }
