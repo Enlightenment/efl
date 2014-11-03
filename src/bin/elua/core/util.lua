@@ -71,7 +71,17 @@ local loaded_libc = {}
 M.lib_load = function(libname)
     local  lib = loaded_libs[libname]
     if not lib then
-        lib = ffi.load(libname)
+        local ev = os.getenv("ELUA_" .. libname:upper() .. "_LIBRARY_PATH")
+        if not ev or ev == "" then
+            lib = ffi.load(libname)
+        else
+            if ffi.os == "Windows" then
+                lib = ffi.load(ev .. "\\" .. libname .. ".dll")
+            else
+                lib = ffi.load(ev .. "/lib" .. libname .. ".so")
+            end
+            -- XXX: perhaps check here if it's loaded and fallback to default?
+        end
         loaded_libs[libname] = lib
         loaded_libc[libname] = 0
     end

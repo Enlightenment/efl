@@ -2,7 +2,7 @@ if HAVE_ELUA_BIN
 ELUA_GEN = @elua_bin@ :lualian
 _ELUA_GEN_DEP = @elua_bin@
 else
-ELUA_GEN = LD_LIBRARY_PATH=$(top_builddir)/src/lib/eolian/.libs \
+ELUA_GEN = ELUA_EOLIAN_LIBRARY_PATH=$(top_builddir)/src/lib/eolian/.libs \
 	EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/elua/elua${EXEEXT} :lualian
 _ELUA_GEN_DEP = bin/elua/elua${EXEEXT}
 endif
