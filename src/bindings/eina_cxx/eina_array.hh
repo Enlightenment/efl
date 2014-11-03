@@ -305,7 +305,7 @@ public:
   }
   const_iterator cend() const
   {
-    return cend();
+    return end();
   }
   const_reverse_iterator crbegin() const
   {
