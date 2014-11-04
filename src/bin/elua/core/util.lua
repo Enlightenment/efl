@@ -77,6 +77,8 @@ M.lib_load = function(libname)
         else
             if ffi.os == "Windows" then
                 lib = ffi.load(ev .. "\\" .. libname .. ".dll")
+            elseif ffi.os == "OSX" then
+                lib = ffi.load(ev .. "/lib" .. libname .. ".dylib")
             else
                 lib = ffi.load(ev .. "/lib" .. libname .. ".so")
             end
