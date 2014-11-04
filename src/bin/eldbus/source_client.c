@@ -103,7 +103,7 @@ source_client_complex_method_call_generate(const DBus_Method *method, Eina_Strbu
         eina_strbuf_append_printf(c_code, "        ERR(\"Error: Filling message from eina value.\");\n");
         eina_strbuf_append_printf(c_code, "        return;\n");
         eina_strbuf_append_printf(c_code, "     }\n");
-        eina_strbuf_append_printf(c_code, "   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);\n");
+        eina_strbuf_append_printf(c_code, "   eldbus_proxy_send(proxy, msg, %s, NULL, -1);\n", method->cb_name);
         eina_strbuf_append_printf(c_code, "}\n");
         goto end;
      }
