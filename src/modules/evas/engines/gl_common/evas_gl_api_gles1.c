@@ -974,7 +974,7 @@ _evgl_gles1_glGetIntegerv(GLenum pname, GLint *params)
                */
 
              // If it hasn't been initialized yet, return img object size
-             if ((pname == GL_SCISSOR_BOX)) //|| (pname == GL_VIEWPORT))
+             if (pname == GL_SCISSOR_BOX) //|| (pname == GL_VIEWPORT))
                {
                   params[0] = 0;
                   params[1] = 0;

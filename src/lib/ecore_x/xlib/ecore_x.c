@@ -326,7 +326,7 @@ _ecore_x_modifiers_get(void)
 
    if (ECORE_X_MODIFIER_SHIFT)
      {
-        if ((ECORE_X_MODIFIER_SHIFT == ECORE_X_MODIFIER_CTRL))
+        if (ECORE_X_MODIFIER_SHIFT == ECORE_X_MODIFIER_CTRL)
           {
              ERR("CTRL conflicts with other modifiers. IGNORE CTRL");
              ECORE_X_MODIFIER_CTRL = 0;
