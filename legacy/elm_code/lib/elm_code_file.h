@@ -36,7 +36,11 @@ typedef struct _Elm_Code_File
  *
  */
 
+EAPI Elm_Code_File *elm_code_file_new();
+
 EAPI Elm_Code_File *elm_code_file_open(const char *path);
+
+EAPI void elm_code_file_free(Elm_Code_File *file);
 
 EAPI void elm_code_file_close(Elm_Code_File *file);
 
@@ -57,6 +61,8 @@ EAPI const char *elm_code_file_path_get(Elm_Code_File *file);
  */
 
 EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file);
+
+EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line);
 
 EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, int line);
 

@@ -14,6 +14,7 @@ static const struct {
    void (*build)(TCase *tc);
 } tests[] = {
   { "file_load", elm_code_file_test_load },
+  { "file_memory", elm_code_file_test_memory },
   { "basic", elm_code_test_basic },
 };
 

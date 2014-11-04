@@ -18,6 +18,29 @@ static Elm_Code_Line *_elm_code_blank_create(int line)
    return ecl;
 }
 
+static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *content, int length, int row)
+{
+   Elm_Code_Line *line;
+
+   line = _elm_code_blank_create(row);
+   if (!line) return;
+
+   line->content = malloc(sizeof(char) * (length + 1));
+   strncpy(line->content, content, length);
+   line->content[length] = 0;
+
+   file->lines = eina_list_append(file->lines, line);
+}
+
+EAPI Elm_Code_File *elm_code_file_new()
+{
+   Elm_Code_File *ret;
+
+   ret = calloc(1, sizeof(Elm_Code_File));
+
+   return ret;
+}
+
 EAPI Elm_Code_File *elm_code_file_open(const char *path)
 {
    Elm_Code_File *ret;
@@ -26,8 +49,8 @@ EAPI Elm_Code_File *elm_code_file_open(const char *path)
    Eina_Iterator *it;
    unsigned int lastindex;
 
+   ret = elm_code_file_new();
    file = eina_file_open(path, EINA_FALSE);
-   ret = calloc(1, sizeof(Elm_Code_File));
    ret->file = file;
    lastindex = 1;
 
@@ -45,21 +68,14 @@ EAPI Elm_Code_File *elm_code_file_open(const char *path)
              ret->lines = eina_list_append(ret->lines, ecl);
           }
 
-        ecl = _elm_code_blank_create(lastindex = line->index);
-        if (!ecl) continue;
-
-        ecl->content = malloc(sizeof(char) * (line->length + 1));
-        strncpy(ecl->content, line->start, line->length);
-        ecl->content[line->length] = 0;
-
-        ret->lines = eina_list_append(ret->lines, ecl);
+        _elm_code_file_line_append_data(ret, line->start, line->length, lastindex = line->index);
      }
    eina_iterator_free(it);
 
    return ret;
 }
 
-EAPI void elm_code_file_close(Elm_Code_File *file)
+EAPI void elm_code_file_free(Elm_Code_File *file)
 {
    Elm_Code_Line *l;
 
@@ -70,8 +86,14 @@ EAPI void elm_code_file_close(Elm_Code_File *file)
         free(l);
      }
 
-   eina_file_close(file->file);
    free(file);
+}
+
+EAPI void elm_code_file_close(Elm_Code_File *file)
+{
+   eina_file_close(file->file);
+
+   elm_code_file_free(file);
 }
 
 EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
@@ -87,6 +109,15 @@ EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
 EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file)
 {
    return eina_list_count(file->lines);
+}
+
+
+EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line)
+{
+   int row;
+
+   row = elm_code_file_lines_get(file);
+   _elm_code_file_line_append_data(file, line, strlen(line), row+1);
 }
 
 EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, int number)
