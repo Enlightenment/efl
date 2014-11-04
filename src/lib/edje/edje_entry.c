@@ -2961,7 +2961,7 @@ _edje_entry_item_geometry_get(Edje_Real_Part *rp, const char *item, Evas_Coord *
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
         const char *n = an->name;
-        if (an->item) continue;
+        if (!an->item) continue;
         if (!n) n = "";
         if (!strcmp(item, n))
           {
@@ -2988,7 +2988,7 @@ _edje_entry_items_list(Edje_Real_Part *rp)
         EINA_LIST_FOREACH(en->anchors, l, an)
           {
              const char *n = an->name;
-             if (an->item) continue;
+             if (!an->item) continue;
              if (!n) n = "";
              items = eina_list_append(items, strdup(n));
           }
