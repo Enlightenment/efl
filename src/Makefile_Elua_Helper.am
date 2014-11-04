@@ -4,7 +4,7 @@ _ELUA_GEN_DEP = @elua_bin@
 else
 ELUA_GEN = ELUA_EOLIAN_LIBRARY_PATH=$(top_builddir)/src/lib/eolian/.libs \
 	EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/elua/elua${EXEEXT} :lualian
-_ELUA_GEN_DEP = bin/elua/elua${EXEEXT}
+_ELUA_GEN_DEP = bin/elua/elua${EXEEXT} bin/elua/modules/lualian.lua
 endif
 
 AM_V_ELUA = $(am__v_ELUA_@AM_V@)
@@ -13,7 +13,7 @@ am__v_ELUA_0 = @echo "  ELUA    " $@;
 
 SUFFIXES += .lua
 
-%.eo.lua: %.eo ${_ELUA_GEN_DEP} bin/elua/modules/lualian.lua
+%.eo.lua: %.eo ${_ELUA_GEN_DEP}
 	$(AM_V_ELUA)$(ELUA_GEN) $(EOLIAN_FLAGS) -o $@ $<
 
 CLEANFILES += $(BUILT_SOURCES)
