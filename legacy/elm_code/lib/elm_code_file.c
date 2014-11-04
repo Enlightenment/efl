@@ -124,6 +124,10 @@ EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, int number)
 {
    Elm_Code_Line *line;
 
-   line = eina_list_nth(file->lines, number);
+   line = eina_list_nth(file->lines, number - 1);
+   printf("N %d\n", number);
+
+   if (!line)
+     return NULL;
    return line->content;
 }

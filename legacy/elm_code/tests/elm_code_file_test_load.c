@@ -50,8 +50,8 @@ START_TEST (elm_code_file_load_content)
 
    file = elm_code_file_open(path);
 
-   ck_assert_str_eq("line2", elm_code_file_line_content_get(file, 2 - 1));
-   ck_assert_str_eq("another line", elm_code_file_line_content_get(file, 4 - 1));
+   ck_assert_str_eq("line2", elm_code_file_line_content_get(file, 2));
+   ck_assert_str_eq("another line", elm_code_file_line_content_get(file, 4));
    elm_code_file_close(file);
 }
 END_TEST

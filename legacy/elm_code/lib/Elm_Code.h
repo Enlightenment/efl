@@ -5,7 +5,9 @@
 
 #include <Eina.h>
 
+#include <elm_code_common.h>
 #include <elm_code_file.h>
+#include <elm_code_widget.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -41,13 +43,6 @@ extern "C" {
  * @file
  * @brief These routines are used for loading Elm Code widgets.
  */
-
-typedef struct _Elm_Code
-{
-   Elm_Code_File *file;
-   Eina_List *widgets;
-
-} Elm_Code;
 
 /**
  * @brief Init / shutdown functions.
