@@ -34,11 +34,12 @@ ecore_file_monitor_shutdown(void)
  *
  * This function monitors @p path. If @p path is @c NULL, or is an
  * empty string, or none of the notify methods (Inotify, Windows
- * notification or polling) is available, the function returns @c NULL.
- * Otherwise, it returns a newly allocated Ecore_File_Monitor object
- * and the monitoring begins. When one of the Ecore_File_Event 
- * event is notified, @p func is called and @p data is passed to @p func.
- * Call ecore_file_monitor_del() to stop the monitoring.
+ * notification or polling) is available, or if @p path does not exist
+ * the function returns @c NULL. Otherwise, it returns a newly 
+ * allocated Ecore_File_Monitor object and the monitoring begins.
+ * When one of the Ecore_File_Event event is notified, @p func is called
+ * and @p data is passed to @p func.Call ecore_file_monitor_del() to
+ * stop the monitoring.
  */
 EAPI Ecore_File_Monitor *
 ecore_file_monitor_add(const char           *path,
