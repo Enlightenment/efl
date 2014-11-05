@@ -79,10 +79,7 @@ local load_lib_win = function(libname, ev)
             succ, v = pcall(ffi.load, ev .. "\\lib" .. libname .. ".dll")
         end
     end
-    if not succ then
-        return false, v
-    end
-    return true, v
+    return succ, v
 end
 
 local load_lib = function(libname, ev)
@@ -95,10 +92,7 @@ local load_lib = function(libname, ev)
         local ext = (ffi.os == "OSX") and ".dylib" or ".so"
         succ, v = pcall(ffi.load, ev .. "/lib" .. libname .. ext)
     end
-    if not succ then
-        return false, v
-    end
-    return true, v
+    return succ, v
 end
 
 -- makes sure we only keep one handle for each lib
