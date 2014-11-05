@@ -3,6 +3,8 @@
 
 #include <Eina.h>
 
+#include "elm_code_common.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,6 +18,8 @@ typedef struct _Elm_Code_Line
 {
    char *content;
    unsigned int number;
+
+   Elm_Code_Status_Type status;
 
 } Elm_Code_Line;
 
@@ -64,7 +68,9 @@ EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file);
 
 EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line);
 
-EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, int line);
+EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int line);
+
+EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int line);
 
 /**
  * @}

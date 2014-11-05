@@ -3,6 +3,21 @@
 
 #include <Eina.h>
 
+typedef enum {
+   ELM_CODE_STATUS_TYPE_DEFAULT = 0,
+   ELM_CODE_STATUS_TYPE_ERROR,
+
+   ELM_CODE_STATUS_TYPE_COUNT
+} Elm_Code_Status_Type;
+
+
+typedef enum {
+   ELM_CODE_TOKEN_TYPE_DEFAULT = ELM_CODE_STATUS_TYPE_COUNT,
+
+   ELM_CODE_TOKEN_TYPE_COUNT
+} Elm_Code_Token_Type;
+
+
 #include "elm_code_file.h"
 
 #ifdef __cplusplus

@@ -15,6 +15,7 @@ static Elm_Code_Line *_elm_code_blank_create(int line)
    if (!ecl) return NULL;
 
    ecl->number = line;
+   ecl->status = ELM_CODE_STATUS_TYPE_DEFAULT;
    return ecl;
 }
 
@@ -120,12 +121,16 @@ EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line)
    _elm_code_file_line_append_data(file, line, strlen(line), row+1);
 }
 
-EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, int number)
+EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int number)
+{
+   return eina_list_nth(file->lines, number - 1);
+}
+
+EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int number)
 {
    Elm_Code_Line *line;
 
-   line = eina_list_nth(file->lines, number - 1);
-   printf("N %d\n", number);
+   line = elm_code_file_line_get(file, number);
 
    if (!line)
      return NULL;
