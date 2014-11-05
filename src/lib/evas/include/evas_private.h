@@ -1680,11 +1680,8 @@ Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
                              void *context, void *surface, int off_x, int off_y,
                              int mapped, int ecx, int ecy, int ecw, int ech,
-                             Evas_Proxy_Render_Data *proxy_render_data
-#ifdef REND_DBG
-                             , int level
-#endif
-                             , Eina_Bool do_async);
+                             Evas_Proxy_Render_Data *proxy_render_data,
+                             int level, Eina_Bool do_async);
 void evas_render_invalidate(Evas *e);
 void evas_render_object_recalc(Evas_Object *obj);
 

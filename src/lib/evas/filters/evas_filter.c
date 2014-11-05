@@ -262,11 +262,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
                            1, 0, 0, e->output.w, e->output.h,
-                           &proxy_render_data
-#ifdef REND_DBG
-                           , 1
-#endif
-                           , do_async);
+                           &proxy_render_data, 1, do_async);
 
         e->engine.func->context_free(e->engine.data.output, ctx);
         proxy_write->surface = e->engine.func->image_dirty_region
