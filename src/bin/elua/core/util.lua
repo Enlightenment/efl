@@ -66,24 +66,52 @@ end
 local loaded_libs = {}
 local loaded_libc = {}
 
+local load_lib_win = function(libname, ev)
+    local succ, v
+    if not ev or ev == "" then
+        succ, v = pcall(ffi.load, libname)
+        if not succ then
+            succ, v = pcall(ffi.load, "lib" .. libname)
+        end
+    else
+        succ, v = pcall(ffi.load, ev .. "\\" .. libname .. ".dll")
+        if not succ then
+            succ, v = pcall(ffi.load, ev .. "\\lib" .. libname .. ".dll")
+        end
+    end
+    if not succ then
+        return false, v
+    end
+    return true, v
+end
+
+local load_lib = function(libname, ev)
+    local succ, v
+    if ffi.os == "Windows" then
+        succ, v = load_lib_win(libname, ev)
+    elseif not ev or ev == "" then
+        succ, v = pcall(ffi.load, libname)
+    else
+        local ext = (ffi.os == "OSX") and ".dylib" or ".so"
+        succ, v = pcall(ffi.load, ev .. "/lib" .. libname .. ext)
+    end
+    if not succ then
+        return false, v
+    end
+    return true, v
+end
+
 -- makes sure we only keep one handle for each lib
 -- reference counted
 M.lib_load = function(libname)
     local  lib = loaded_libs[libname]
     if not lib then
         local ev = os.getenv("ELUA_" .. libname:upper() .. "_LIBRARY_PATH")
-        if not ev or ev == "" then
-            lib = ffi.load(libname)
-        else
-            if ffi.os == "Windows" then
-                lib = ffi.load(ev .. "\\" .. libname .. ".dll")
-            elseif ffi.os == "OSX" then
-                lib = ffi.load(ev .. "/lib" .. libname .. ".dylib")
-            else
-                lib = ffi.load(ev .. "/lib" .. libname .. ".so")
-            end
-            -- XXX: perhaps check here if it's loaded and fallback to default?
+        local succ, v = load_lib(libname, ev)
+        if not succ then
+            error(v, 2)
         end
+        lib = v
         loaded_libs[libname] = lib
         loaded_libc[libname] = 0
     end
