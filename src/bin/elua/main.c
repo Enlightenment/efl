@@ -93,10 +93,7 @@ elua_getargs(lua_State *L, int argc, char **argv, int n)
    lua_createtable(L, narg, n + 1);
    for (i = 0; i < argc; ++i)
      {
-        if (!(i - n) && argv[i][0] == ':')
-           lua_pushstring(L, &argv[i][1]);
-        else
-           lua_pushstring(L, argv[i]);
+        lua_pushstring(L, argv[i]);
         lua_rawseti(L, -2, i - n);
      }
    return narg;
@@ -233,9 +230,17 @@ elua_doscript(lua_State *L, int argc, char **argv, int n, int *quit)
      {
         fname = NULL;
      }
-   if (fname && fname[0] == ':')
+   if (fname)
      {
-        status = !elua_loadapp(L, fname + 1);
+        /* check if there is a file of that name */
+        FILE *f = fopen(fname, "r");
+        if (f)
+          {
+             fclose(f);
+             status = elua_loadfile(L, fname);
+          }
+        else
+          status = !elua_loadapp(L, fname);
      }
    else
      {
