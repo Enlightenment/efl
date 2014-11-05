@@ -23,7 +23,7 @@ EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code)
          ceil(((double) h) / ch));
    evas_object_textgrid_size_get(o, &w, &h);
 
-   for (y = 1; y <= elm_code_file_lines_get(code->file); y++)
+   for (y = 1; y <= (unsigned int) h && y <= elm_code_file_lines_get(code->file); y++)
      {
         line = elm_code_file_line_get(code->file, y);
         content = elm_code_file_line_content_get(code->file, y);
