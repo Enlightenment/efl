@@ -8,7 +8,7 @@ if [ ! "$ELUA_BIN" ]; then
 fi
 
 if [ -x "$ELUA_BIN" ]; then
-    $ELUA_BIN :xgettext "$@"
+    $ELUA_BIN xgettext "$@"
 else
     $XGETTEXT "$@"
 fi
