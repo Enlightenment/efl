@@ -645,13 +645,12 @@ _edje_part_description_id_switch(int type, Edje_Part_Description_Common *c, int 
        || type == EDJE_PART_TYPE_TEXTBLOCK)
      {
 	Edje_Part_Description_Text *t;
-
 	t = (Edje_Part_Description_Text *) c;
 
 	if (t->text.id_source == id1) t->text.id_source = id2;
 	else if (t->text.id_source == id2) t->text.id_source = id1;
 	if (t->text.id_text_source == id1) t->text.id_text_source = id2;
-	else if (t->text.id_text_source == id2) t->text.id_text_source = id2;
+	else if (t->text.id_text_source == id2) t->text.id_text_source = id1;
      }
 }
 
@@ -6528,7 +6527,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
              (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)) &&
             (real->typedata.text) && (real->typedata.text->text_source == rp))
           {
-             txt = (Edje_Part_Description_Text *) real;
+             txt = _edje_real_part_text_text_source_description_get(real, NULL);
              _edje_if_string_free(ed, txt->text.text.str);
              txt->text.text.str = (char *)eina_stringshare_add(text);
              txt->text.text.id = 0;
