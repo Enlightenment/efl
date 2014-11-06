@@ -109,6 +109,21 @@ EAPI void elm_code_free(Elm_Code *code);
 
 /**
  * @}
+ *
+ * @brief Callbacks and message passing.
+ * @defgroup Callbacks  Managing the information flow between Elm_Code objects and Evas_Object widgets
+ *
+ * @{
+ *
+ * Managing the callbacks and other behaviours that cross the backend - frontend divide.
+ */
+
+
+EAPI void elm_code_callback_fire(Elm_Code *code, const char *signal, void *data);
+
+
+/**
+ * @}
  */
 
 #ifdef __cplusplus

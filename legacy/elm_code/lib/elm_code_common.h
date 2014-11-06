@@ -3,6 +3,13 @@
 
 #include <Eina.h>
 
+#define EFL_BETA_API_SUPPORT
+#include <Eo.h>
+
+#define ELM_CODE_EVENT_LINE_SET_DONE "line,set,done"
+//EAPI const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE = 
+//    EO_EVENT_DESCRIPTION("line,set,done", "");
+
 typedef enum {
    ELM_CODE_STATUS_TYPE_DEFAULT = 0,
    ELM_CODE_STATUS_TYPE_ERROR,
@@ -17,12 +24,13 @@ typedef enum {
    ELM_CODE_TOKEN_TYPE_COUNT
 } Elm_Code_Token_Type;
 
-
 #include "elm_code_file.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 
 /**
  * @file

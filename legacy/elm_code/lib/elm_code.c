@@ -2,6 +2,9 @@
 # include "config.h"
 #endif
 
+#define EFL_BETA_API_SUPPORT
+#include <Eo.h>
+
 #include "Elm_Code.h"
 
 #include "elm_code_private.h"
@@ -64,6 +67,7 @@ elm_code_create(Elm_Code_File *file)
 
    ret = calloc(1, sizeof(Elm_Code));
    ret->file = file;
+   file->parent = ret;
 
    return ret;
 }
@@ -71,8 +75,30 @@ elm_code_create(Elm_Code_File *file)
 EAPI void
 elm_code_free(Elm_Code *code)
 {
+   Eina_List *item;
+   Evas_Object *widget;
+
    if (code->file)
-     free(code->file);
+     elm_code_file_free(code->file);
+
+   EINA_LIST_FOREACH(code->widgets, item, widget)
+     {
+        evas_object_hide(widget);
+        evas_object_del(widget);
+     }
 
    free(code);
 }
+
+EAPI void
+elm_code_callback_fire(Elm_Code *code, const char *signal, void *data)
+{
+   Eina_List *item;
+   Evas_Object *widget;
+
+   EINA_LIST_FOREACH(code->widgets, item, widget)
+     {
+        eo_do(widget, eo_event_callback_call(ELM_CODE_EVENT_LINE_SET_DONE, data));
+     }
+}
+

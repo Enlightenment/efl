@@ -25,6 +25,8 @@ typedef struct _Elm_Code_Line
 
 typedef struct _Elm_Code_File
 {
+   void *parent;
+
    Eina_List *lines;
    Eina_File *file;
 
@@ -71,6 +73,8 @@ EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line);
 EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int line);
 
 EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int line);
+
+EAPI void elm_code_file_line_status_set(Elm_Code_File *file, unsigned int line, Elm_Code_Status_Type status);
 
 /**
  * @}

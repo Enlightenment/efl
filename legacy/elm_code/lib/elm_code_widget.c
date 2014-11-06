@@ -2,6 +2,9 @@
 # include "config.h"
 #endif
 
+#define EFL_BETA_API_SUPPORT
+#include <Eo.h>
+
 #include <Elementary.h>
 
 #include "elm_code_widget.h"
@@ -12,7 +15,8 @@ EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code)
 {
    Elm_Code_Line *line;
    Evas_Textgrid_Cell *cells;
-   const char *content, *chr;
+   const char *content;
+   char *chr;
    unsigned int length;
    int w, h, cw, ch;
    unsigned int x, y;
@@ -41,11 +45,47 @@ EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code)
              chr++;
           }
      }
+
+   evas_object_textgrid_update_add(o, 0, 0, w, h);
 }
 
 static void
-_elm_code_widget_resize_cb(void *data, EINA_UNUSED Evas *e, Evas_Object *obj,
-                           EINA_UNUSED void *event_info)
+_elm_code_widget_line_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
+                         void *event_info)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   Evas_Object *o;
+
+   Evas_Textgrid_Cell *cells;
+   char *chr;
+   unsigned int length, x;
+   int w;
+
+   code = (Elm_Code *)data;
+   line = (Elm_Code_Line *)event_info;
+   o = (Evas_Object *)obj;
+
+   cells = evas_object_textgrid_cellrow_get(o, line->number - 1);
+   length = strlen(line->content);
+   evas_object_textgrid_size_get(o, &w, NULL);
+
+   chr = line->content;
+   for (x = 0; x < (unsigned int) w && x < length; x++)
+     {
+        cells[x].codepoint = *chr;
+        cells[x].bg = line->status;
+        cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
+
+        chr++;
+     }
+
+   evas_object_textgrid_update_add(o, 0, line->number - 1, w, 1);
+}
+
+static void
+_elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+                           void *event_info EINA_UNUSED)
 {
    Elm_Code *code;
 
@@ -72,6 +112,10 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
                                     205, 205, 205, 255);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, code);
+
+   eo_do(o,eo_event_callback_add(ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, code));
+
+   code->widgets = eina_list_append(code->widgets, o);
    return o;
 }
 
