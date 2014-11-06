@@ -7590,6 +7590,13 @@ _elm_genlist_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Genlist_D
          _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,up,end",
                                                          "elm", _elm_genlist_focus_highlight_move_up_end_cb, obj);
       }
+   else
+     {
+        _elm_widget_focus_highlight_signal_callback_del(obj, "elm,focus,move,down,end",
+                                                        "elm", _elm_genlist_focus_highlight_move_down_end_cb);
+        _elm_widget_focus_highlight_signal_callback_del(obj, "elm,focus,move,up,end",
+                                                        "elm", _elm_genlist_focus_highlight_move_up_end_cb);
+     }
 
    sd->item_loop_enable = !!enable;
 }
