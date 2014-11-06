@@ -188,7 +188,7 @@ _elm_widget_focus_highlight_signal_callback_del(Evas_Object *obj, const char *em
    Evas_Object *top = elm_widget_top_get(obj);
 
    if (top && eo_isa(top, ELM_WIN_CLASS))
-     _elm_win_focus_highlight_signal_callback_del(obj, emission, source, _focus_highlight_signal_cb);
+     _elm_win_focus_highlight_signal_callback_del(top, emission, source, _focus_highlight_signal_cb);
 }
 
 EAPI Eina_Bool
