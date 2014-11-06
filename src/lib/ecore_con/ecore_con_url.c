@@ -445,7 +445,11 @@ _ecore_con_url_eo_base_constructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *u
    eo_do_super(url_obj, MY_CLASS, eo_constructor());
 
    if (!_init_count) eo_error_set(url_obj);
-   if (!_c_init()) eo_error_set(url_obj);
+   if (!_c_init())
+     {
+        eo_error_set(url_obj);
+        return;
+     }
 
    url_con->curl_easy = _c->curl_easy_init();
    if (!url_con->curl_easy)
@@ -606,7 +610,7 @@ _ecore_con_url_eo_base_destructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *ur
    url_con->dead = EINA_TRUE;
    if (url_con->event_count) return;
 
-   _c->curl_slist_free_all(url_con->headers);
+   if (_c) _c->curl_slist_free_all(url_con->headers);
    EINA_LIST_FREE(url_con->additional_headers, s)
      free(s);
    EINA_LIST_FREE(url_con->response_headers, s)
