@@ -60,14 +60,41 @@ writef(lua_State *L EINA_UNUSED, const void *p, size_t size, void *ud)
    return ferror(f) || (fwrite(p, 1, size, f) != size);
 }
 
+static FILE *
+bc_tmp_open(const char *fname, char *buf, size_t buflen)
+{
+   int fd;
+#ifndef _WIN32
+   mode_t old_umask;
+#endif
+   char *fs = strrchr(fname, '/'), *bs = strrchr(fname, '\\');
+   if (!fs && !bs)
+     snprintf(buf, buflen, "./XXXXXX");
+   else
+     {
+        char *ss = (fs > bs) ? fs : bs;
+        snprintf(buf, buflen, "%.*sXXXXXX", (int)(ss - fname + 1), fname);
+     }
+#ifndef _WIN32
+   old_umask = umask(S_IRWXG|S_IRWXO);
+#endif
+   fd = mkstemp(buf);
+#ifndef _WIN32
+   umask(old_umask);
+#endif
+   if (fd < 0)
+     return NULL;
+   return fdopen(fd, "w");
+}
+
 static void
 write_bc(lua_State *L, const char *fname)
 {
    FILE *f;
-   char  buf[PATH_MAX];
-   snprintf(buf, sizeof(buf), "%sc", fname);
-   if ((f = fopen(buf, "wb")))
+   char buf[PATH_MAX];
+   if ((f = bc_tmp_open(fname, buf, sizeof(buf))))
      {
+        char buf2[PATH_MAX];
         if (lua_dump(L, writef, f))
           {
              fclose(f);
@@ -75,6 +102,13 @@ write_bc(lua_State *L, const char *fname)
              (void)!!remove(buf);
           }
         else fclose(f);
+        snprintf(buf2, sizeof(buf2), "%sc", fname);
+        if (rename(buf, buf2))
+          {
+             /* a futile attempt at cleanup */
+             (void)!!remove(buf);
+             (void)!!remove(buf2);
+          }
      }
 }
 
