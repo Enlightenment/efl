@@ -5085,12 +5085,6 @@ _edje_edit_part_state_copy(Evas_Object *obj, const char *part, const char *part_
 
 	   img_to->image = img_from->image;
 
-	   /* Update pointers. */
-	   for (i = 0; i < img_to->image.tweens_count; ++i)
-	     free(img_to->image.tweens[i]);
-	   if (img_to->image.tweens_count > 0)
-		free(img_to->image.tweens);
-
 	   img_to->image.tweens_count = img_from->image.tweens_count;
 	   img_to->image.tweens = calloc(img_to->image.tweens_count,
 					 sizeof (Edje_Part_Image_Id*));
