@@ -785,7 +785,7 @@ _evas_3d_node_constructor(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node_Type type
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_NODE));
 
    evas_vec3_set(&pd->position, 0.0, 0.0, 0.0);
-   evas_vec4_set(&pd->orientation, 0.0, 0.0, 0.0, 0.0);
+   evas_vec4_set(&pd->orientation, 0.0, 0.0, 0.0, 1.0);
    evas_vec3_set(&pd->scale, 1.0, 1.0, 1.0);
 
    evas_vec3_set(&pd->position_world, 0.0, 0.0, 0.0);
