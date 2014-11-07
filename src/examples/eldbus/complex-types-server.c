@@ -325,7 +325,7 @@ static const Eldbus_Property properties[] = {
 };
 
 static const Eldbus_Service_Interface_Desc iface_desc = {
-   IFACE, methods, NULL, properties, _properties_get
+   IFACE, methods, NULL, properties, _properties_get, NULL
 };
 
 static Eina_Bool _emit_changed(void *data)
