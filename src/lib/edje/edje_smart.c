@@ -34,10 +34,10 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_eo_base_destructor(Eo *obj, Edje *class_data EINA_UNUSED)
+_edje_object_eo_base_destructor(Eo *obj, Edje *class_data)
 {
    eo_do_super(obj, MY_CLASS, eo_destructor());
-   eo_data_unref(obj, class_data);
+   eo_data_unref(obj, class_data->base);
 }
 
 EOLIAN static void
