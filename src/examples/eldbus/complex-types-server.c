@@ -384,6 +384,7 @@ main(void)
 
    free(resp2);
    ecore_timer_del(timer);
+   eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn);
 
    eldbus_shutdown();
