@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-28 22:16+0900\n"
+"POT-Creation-Date: 2014-11-07 09:26+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -20,156 +20,156 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: src/lib/elc_fileselector.c:1412
+#: src/lib/elc_fileselector.c:1403
 msgid "Up"
 msgstr "Πάνω"
 
-#: src/lib/elc_fileselector.c:1427
+#: src/lib/elc_fileselector.c:1418
 msgid "Home"
 msgstr "Αρχική"
 
-#: src/lib/elc_fileselector.c:1642 src/lib/elm_entry.c:1483
-#: src/lib/elm_entry.c:1508
+#: src/lib/elc_fileselector.c:1637 src/lib/elm_entry.c:1477
+#: src/lib/elm_entry.c:1502
 msgid "Cancel"
 msgstr "Άκυρο"
 
-#: src/lib/elc_fileselector.c:1651
+#: src/lib/elc_fileselector.c:1646
 msgid "OK"
 msgstr "Εντάξει"
 
-#: src/lib/elc_multibuttonentry.c:606
+#: src/lib/elc_multibuttonentry.c:604
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:627
+#: src/lib/elc_multibuttonentry.c:625
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1492
+#: src/lib/elc_multibuttonentry.c:1490
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:435
+#: src/lib/elc_naviframe.c:430
 msgid "Title"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:962 src/lib/elc_naviframe.c:1160
+#: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1155
 msgid "Back"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:1251
+#: src/lib/elc_naviframe.c:1246
 msgid "Next"
 msgstr ""
 
-#: src/lib/elc_popup.c:263 src/lib/elc_popup.c:885
+#: src/lib/elc_popup.c:258 src/lib/elc_popup.c:880
 msgid "Popup Title"
 msgstr ""
 
-#: src/lib/elc_popup.c:273 src/lib/elc_popup.c:951
+#: src/lib/elc_popup.c:268 src/lib/elc_popup.c:946
 msgid "Popup Body Text"
 msgstr ""
 
-#: src/lib/elm_bubble.c:196
+#: src/lib/elm_bubble.c:194
 #, fuzzy
 msgid "Bubble"
 msgstr "Πλαίσιο"
 
-#: src/lib/elm_button.c:72
+#: src/lib/elm_button.c:66
 msgid "Clicked"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_button.c:277 src/lib/elm_check.c:241 src/lib/elm_gengrid.c:775
-#: src/lib/elm_genlist.c:1523 src/lib/elm_list.c:2059 src/lib/elm_radio.c:261
-#: src/lib/elm_segment_control.c:523 src/lib/elm_spinner.c:585
-#: src/lib/elm_toolbar.c:2213
+#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:770
+#: src/lib/elm_genlist.c:1518 src/lib/elm_list.c:2054 src/lib/elm_radio.c:256
+#: src/lib/elm_segment_control.c:521 src/lib/elm_spinner.c:578
+#: src/lib/elm_toolbar.c:2208
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
 
-#: src/lib/elm_button.c:302
+#: src/lib/elm_button.c:296
 msgid "Button"
 msgstr "Κουμπί"
 
-#: src/lib/elm_calendar.c:158
+#: src/lib/elm_calendar.c:153
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:167
+#: src/lib/elm_calendar.c:162
 msgid "%B"
 msgstr ""
 
-#: src/lib/elm_calendar.c:176
+#: src/lib/elm_calendar.c:171
 msgid "%Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:291
+#: src/lib/elm_calendar.c:286
 msgid "calendar item"
 msgstr "αντικείμενο ημερολογίου"
 
-#: src/lib/elm_calendar.c:317
+#: src/lib/elm_calendar.c:312
 #, fuzzy
 msgid "calendar decrement month button"
 msgstr "Προηγούμενο Ημερολόγιο"
 
-#: src/lib/elm_calendar.c:322
+#: src/lib/elm_calendar.c:317
 #, fuzzy
 msgid "calendar decrement year button"
 msgstr "Προηγούμενο Ημερολόγιο"
 
-#: src/lib/elm_calendar.c:327
+#: src/lib/elm_calendar.c:322
 #, fuzzy
 msgid "calendar increment month button"
 msgstr "Επόμενο Ημερολόγιο"
 
-#: src/lib/elm_calendar.c:332
+#: src/lib/elm_calendar.c:327
 #, fuzzy
 msgid "calendar increment year button"
 msgstr "Επόμενο Ημερολόγιο"
 
-#: src/lib/elm_calendar.c:337
+#: src/lib/elm_calendar.c:332
 msgid "calendar month"
 msgstr "Μηνας Ημερολογίου"
 
-#: src/lib/elm_calendar.c:342
+#: src/lib/elm_calendar.c:337
 #, fuzzy
 msgid "calendar year"
 msgstr "αντικείμενο ημερολογίου"
 
-#: src/lib/elm_check.c:68 src/lib/elm_check.c:254 src/lib/elm_radio.c:107
-#: src/lib/elm_radio.c:262
+#: src/lib/elm_check.c:62 src/lib/elm_check.c:248 src/lib/elm_radio.c:102
+#: src/lib/elm_radio.c:257
 msgid "State: On"
 msgstr "Κατάσταση: Ενεργό"
 
-#: src/lib/elm_check.c:74 src/lib/elm_check.c:266 src/lib/elm_radio.c:264
+#: src/lib/elm_check.c:68 src/lib/elm_check.c:260 src/lib/elm_radio.c:259
 msgid "State: Off"
 msgstr "Κατάσταση: Ανενεργό"
 
-#: src/lib/elm_check.c:250 src/lib/elm_check.c:263
+#: src/lib/elm_check.c:244 src/lib/elm_check.c:257
 msgid "State"
 msgstr "Κατάσταση"
 
-#: src/lib/elm_check.c:341
+#: src/lib/elm_check.c:335
 msgid "Check"
 msgstr "Επιλογή"
 
-#: src/lib/elm_clock.c:305
+#: src/lib/elm_clock.c:303
 #, fuzzy
 msgid "clock increment button for am,pm"
 msgstr "επόμενο κουμπί ρολογιού για πμ,μμ"
 
-#: src/lib/elm_clock.c:313
+#: src/lib/elm_clock.c:311
 #, fuzzy
 msgid "clock decrement button for am,pm"
 msgstr "προηγούμενο κουμπί ρολογιού για πμ,μμ"
 
-#: src/lib/elm_clock.c:651
+#: src/lib/elm_clock.c:649
 msgid "State: Editable"
 msgstr "Κατάσταση: Επεξεργάσιμο"
 
-#: src/lib/elm_clock.c:686
+#: src/lib/elm_clock.c:684
 msgid "Clock"
 msgstr "Ρολοι"
 
-#: src/lib/elm_colorselector.c:1372
+#: src/lib/elm_colorselector.c:1367
 msgid "color selector palette item"
 msgstr "παλέτα επιλογής χρώματος"
 
@@ -177,128 +177,128 @@ msgstr "παλέτα επιλογής χρώματος"
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_dayselector.c:398
+#: src/lib/elm_dayselector.c:396
 #, fuzzy
 msgid "day selector item"
 msgstr "επιλογή δίσκου"
 
-#: src/lib/elm_diskselector.c:680
+#: src/lib/elm_diskselector.c:675
 msgid "diskselector item"
 msgstr "επιλογή δίσκου"
 
-#: src/lib/elm_entry.c:1470
+#: src/lib/elm_entry.c:1464
 msgid "Copy"
 msgstr "Αντιγραφή"
 
-#: src/lib/elm_entry.c:1475
+#: src/lib/elm_entry.c:1469
 msgid "Cut"
 msgstr "Αποκοπή"
 
-#: src/lib/elm_entry.c:1479 src/lib/elm_entry.c:1502
+#: src/lib/elm_entry.c:1473 src/lib/elm_entry.c:1496
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: src/lib/elm_entry.c:1495
+#: src/lib/elm_entry.c:1489
 msgid "Select"
 msgstr "Επιλογή"
 
-#: src/lib/elm_entry.c:3482
+#: src/lib/elm_entry.c:3476
 msgid "Entry"
 msgstr "Καταχώριση"
 
-#: src/lib/elm_gengrid.c:805
+#: src/lib/elm_gengrid.c:800
 msgid "Gengrid Item"
 msgstr "Αντικείμενο Gengrid"
 
-#: src/lib/elm_index.c:93
+#: src/lib/elm_index.c:91
 msgid "Index"
 msgstr "Κατάλογος"
 
-#: src/lib/elm_index.c:120
+#: src/lib/elm_index.c:118
 msgid "Index Item"
 msgstr "Αντικείμενο Καταλόγου"
 
-#: src/lib/elm_label.c:391
+#: src/lib/elm_label.c:389
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: src/lib/elm_panel.c:74
+#: src/lib/elm_panel.c:69
 msgid "state: opened"
 msgstr "Κατάσταση: Ανοικτό"
 
-#: src/lib/elm_panel.c:75
+#: src/lib/elm_panel.c:70
 msgid "state: closed"
 msgstr "Κατάσταση: Κλειστό"
 
-#: src/lib/elm_panel.c:115
+#: src/lib/elm_panel.c:110
 msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elm_panel.c:117
+#: src/lib/elm_panel.c:112
 msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elm_panel.c:187
+#: src/lib/elm_panel.c:182
 msgid "panel button"
 msgstr "κουμπί πινακα"
 
-#: src/lib/elm_progressbar.c:288
+#: src/lib/elm_progressbar.c:286
 msgid "progressbar"
 msgstr "Μπάρα Προόδου"
 
-#: src/lib/elm_radio.c:290
+#: src/lib/elm_radio.c:285
 msgid "Radio"
 msgstr "Επιλογή"
 
-#: src/lib/elm_segment_control.c:526 src/lib/elm_toolbar.c:2215
+#: src/lib/elm_segment_control.c:524 src/lib/elm_toolbar.c:2210
 msgid "State: Selected"
 msgstr "Κατάσταση: Επιλεγμένο"
 
-#: src/lib/elm_segment_control.c:528
+#: src/lib/elm_segment_control.c:526
 #, fuzzy
 msgid "State: Unselected"
 msgstr "Κατάσταση: Επιλεγμένο"
 
-#: src/lib/elm_segment_control.c:540
+#: src/lib/elm_segment_control.c:538
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:881
+#: src/lib/elm_slider.c:874
 msgid "slider"
 msgstr "μπάρα κύλισης"
 
-#: src/lib/elm_spinner.c:674
+#: src/lib/elm_spinner.c:667
 #, fuzzy
 msgid "spinner increment button"
 msgstr "κουμπί spinner επόμενο"
 
-#: src/lib/elm_spinner.c:683
+#: src/lib/elm_spinner.c:676
 #, fuzzy
 msgid "spinner decrement button"
 msgstr "κουμπί spinner προηγούμενο"
 
-#: src/lib/elm_spinner.c:691
+#: src/lib/elm_spinner.c:684
 #, fuzzy
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2274
+#: src/lib/elm_toolbar.c:1670 src/lib/elm_toolbar.c:2269
 msgid "Selected"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:2211
+#: src/lib/elm_toolbar.c:2206
 msgid "Separator"
 msgstr "Διαχωριστικό"
 
-#: src/lib/elm_toolbar.c:2217
+#: src/lib/elm_toolbar.c:2212
 msgid "Has menu"
 msgstr "Έχει μενού"
 
-#: src/lib/elm_toolbar.c:2269
+#: src/lib/elm_toolbar.c:2264
 msgid "Unselected"
 msgstr "Μη Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:2286
+#: src/lib/elm_toolbar.c:2281
 msgid "Toolbar Item"
 msgstr "Αντικείμενο μπάρας εργαλείων"
 
