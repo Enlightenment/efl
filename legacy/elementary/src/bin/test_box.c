@@ -654,7 +654,6 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(bt, "clicked", _del_cb, bx);
    elm_box_pack_end(bx, bt);
-   evas_object_resize(bt, 100, 100);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -663,7 +662,6 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(bt, "clicked", _del_cb, bx);
    elm_box_pack_end(bx, bt);
-   evas_object_resize(bt, 100, 100);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -672,7 +670,6 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(bt, "clicked", _del_cb, bx);
    elm_box_pack_end(bx, bt);
-   evas_object_resize(bt, 100, 100);
    evas_object_show(bt);
 
    tdata = calloc(1, sizeof(Transitions_Data));
@@ -695,7 +692,6 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    tdata->transitions = eina_list_append(tdata->transitions,
          evas_object_box_layout_stack);
 
-   evas_object_resize(bx, 300, 300);
    evas_object_smart_callback_add(win, "delete,request", _win_del, tdata);
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
    _test_box_transition_change(tdata);
