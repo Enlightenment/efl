@@ -24,36 +24,106 @@ _elm_code_test_win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 }
 
 static Evas_Object *
-elm_code_test_win_setup(void)
+_elm_code_test_welcome_setup(Evas_Object *parent)
 {
-   Evas_Object *win;
    Elm_Code *code;
-   Elm_Code_Line *line;
    Evas_Object *widget;
 
-   win = elm_win_util_standard_add("main", "Elm_code_test");
-   if (!win) return NULL;
-
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   evas_object_smart_callback_add(win, "delete,request", _elm_code_test_win_del, NULL);
-
    code = elm_code_create(elm_code_file_new());
-   widget = elm_code_widget_add(win, code);
+   widget = elm_code_widget_add(parent, code);
    elm_code_file_line_append(code->file, "Hello World, Elm Code!");
    elm_code_file_line_append(code->file, "");
    elm_code_file_line_append(code->file, "This is a demo of elm_code's capabilities.");
 
    elm_code_file_line_append(code->file, "*** Currently experimental ***");
-   line = elm_code_file_line_get(code->file, 4);
-   line->status = ELM_CODE_STATUS_TYPE_ERROR;
+   elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_ERROR);
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(widget);
 
-   elm_win_resize_object_add(win, widget);
+   return widget;
+}
 
-   evas_object_resize(win, 280 * elm_config_scale_get(), 70 * elm_config_scale_get());
+static Evas_Object *
+_elm_code_test_diff_setup(Evas_Object *parent)
+{
+   Elm_Code *code;
+   Evas_Object *widget, *hbox;
+
+   hbox = elm_box_add(parent);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_homogeneous_set(hbox, EINA_TRUE);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   evas_object_show(hbox);
+
+   // left side of diff
+   code = elm_code_create(elm_code_file_new());
+   widget = elm_code_widget_add(parent, code);
+
+   elm_code_file_line_append(code->file, "Some content to diff");
+   elm_code_file_line_append(code->file, "");
+   elm_code_file_line_append(code->file, "more");
+   elm_code_file_line_append(code->file, "removed");
+   elm_code_file_line_append(code->file, "will change");
+   elm_code_file_line_append(code->file, "unchanged");
+
+   elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_REMOVED);
+   elm_code_file_line_status_set(code->file, 5, ELM_CODE_STATUS_TYPE_CHANGED);
+
+   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(widget);
+   elm_box_pack_end(hbox, widget);
+
+   // right side of diff
+   code = elm_code_create(elm_code_file_new());
+   widget = elm_code_widget_add(parent, code);
+
+   elm_code_file_line_append(code->file, "Some content to diff");
+   elm_code_file_line_append(code->file, "added");
+   elm_code_file_line_append(code->file, "more");
+   elm_code_file_line_append(code->file, "");
+   elm_code_file_line_append(code->file, "changed");
+   elm_code_file_line_append(code->file, "unchanged");
+
+   elm_code_file_line_status_set(code->file, 2, ELM_CODE_STATUS_TYPE_ADDED);
+   elm_code_file_line_status_set(code->file, 5, ELM_CODE_STATUS_TYPE_CHANGED);
+
+   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(widget);
+   elm_box_pack_end(hbox, widget);
+
+   return hbox;
+}
+
+static Evas_Object *
+elm_code_test_win_setup(void)
+{
+   Evas_Object *win;
+   Evas_Object *vbox;
+
+   win = elm_win_util_standard_add("main", "Elm_code_test");
+   if (!win) return NULL;
+
+   vbox = elm_box_add(win);
+   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_homogeneous_set(vbox, EINA_TRUE);
+   evas_object_show(vbox);
+
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   evas_object_smart_callback_add(win, "delete,request", _elm_code_test_win_del, NULL);
+
+   elm_box_pack_end(vbox, _elm_code_test_welcome_setup(vbox));
+
+   elm_box_pack_end(vbox, _elm_code_test_diff_setup(vbox));
+
+   elm_win_resize_object_add(win, vbox);
+
+   evas_object_resize(win, 320 * elm_config_scale_get(), 180 * elm_config_scale_get());
    evas_object_show(win);
 
    return win;
