@@ -3,9 +3,7 @@
 
 #include <Eina.h>
 
-#define EFL_BETA_API_SUPPORT
-#include <Eo.h>
-
+// TODO figure out how this can be fixed
 #define ELM_CODE_EVENT_LINE_SET_DONE "line,set,done"
 //EAPI const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE = 
 //    EO_EVENT_DESCRIPTION("line,set,done", "");

@@ -98,7 +98,7 @@ elm_code_callback_fire(Elm_Code *code, const char *signal, void *data)
 
    EINA_LIST_FOREACH(code->widgets, item, widget)
      {
-        eo_do(widget, eo_event_callback_call(ELM_CODE_EVENT_LINE_SET_DONE, data));
+        eo_do(widget, eo_event_callback_call((Eo_Event_Description *)signal, data));
      }
 }
 
