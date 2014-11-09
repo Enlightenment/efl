@@ -678,8 +678,7 @@ _elm_box_align_set(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double horizontal, do
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_object_size_hint_align_set
-     (wd->resize_obj, horizontal, vertical);
+   evas_object_box_align_set(wd->resize_obj, horizontal, vertical);
 }
 
 EOLIAN static void
@@ -687,8 +686,7 @@ _elm_box_align_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double *horizontal, d
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_object_size_hint_align_get
-     (wd->resize_obj, horizontal, vertical);
+   evas_object_box_align_get(wd->resize_obj, horizontal, vertical);
 }
 
 EOLIAN static void

@@ -152,7 +152,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
      }
    if (!expand)
      {
-        evas_object_size_hint_align_get(o, &ax, &ay);
+        evas_object_box_align_get(o, &ax, &ay);
         if (rtl) ax = 1.0 - ax;
         if (horizontal)
           {
