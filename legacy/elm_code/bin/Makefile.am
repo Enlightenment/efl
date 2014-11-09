@@ -7,6 +7,7 @@ AM_CPPFLAGS = -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -I$(top_srcdir)/elm_code/bin/ \
 -I$(top_builddir)/elm_code/lib/ \
 -I$(top_srcdir)/elm_code/lib/ \
+-DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@
 
 elm_code_test_SOURCES = elm_code_test_main.c

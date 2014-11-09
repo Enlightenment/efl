@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/elm_code/lib \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@ \
 -DEFL_EFL_BUILD
 

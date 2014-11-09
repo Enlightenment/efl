@@ -1,12 +1,10 @@
 #ifndef ELM_CODE_COMMON_H_
 # define ELM_CODE_COMMON_H_
 
+#include <Eo.h>
 #include <Eina.h>
 
-// TODO figure out how this can be fixed
-#define ELM_CODE_EVENT_LINE_SET_DONE "line,set,done"
-//EAPI const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE = 
-//    EO_EVENT_DESCRIPTION("line,set,done", "");
+EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE;
 
 typedef enum {
    ELM_CODE_STATUS_TYPE_DEFAULT = 0,

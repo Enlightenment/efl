@@ -33,7 +33,7 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
    file->lines = eina_list_append(file->lines, line);
 
    if (file->parent)
-     elm_code_callback_fire(file->parent, ELM_CODE_EVENT_LINE_SET_DONE, line);
+     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
 }
 
 EAPI Elm_Code_File *elm_code_file_new()
@@ -152,5 +152,5 @@ EAPI void elm_code_file_line_status_set(Elm_Code_File *file, unsigned int number
    line->status = status;
 
    if (file->parent)
-     elm_code_callback_fire(file->parent, ELM_CODE_EVENT_LINE_SET_DONE, line);
+     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
 }

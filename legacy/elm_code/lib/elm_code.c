@@ -2,7 +2,6 @@
 # include "config.h"
 #endif
 
-#define EFL_BETA_API_SUPPORT
 #include <Eo.h>
 
 #include "Elm_Code.h"
@@ -11,6 +10,9 @@
 
 static int _elm_code_init = 0;
 int _elm_code_lib_log_dom = -1;
+
+const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE =
+    EO_EVENT_DESCRIPTION("line,set,done", "");
 
 EAPI int
 elm_code_init(void)
@@ -91,14 +93,14 @@ elm_code_free(Elm_Code *code)
 }
 
 EAPI void
-elm_code_callback_fire(Elm_Code *code, const char *signal, void *data)
+elm_code_callback_fire(Elm_Code *code, const Eo_Event_Description *signal, void *data)
 {
    Eina_List *item;
    Evas_Object *widget;
 
    EINA_LIST_FOREACH(code->widgets, item, widget)
      {
-        eo_do(widget, eo_event_callback_call((Eo_Event_Description *)signal, data));
+        eo_do(widget, eo_event_callback_call(signal, data));
      }
 }
 

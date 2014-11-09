@@ -2,7 +2,7 @@
 # define ELM_CODE_H_
 
 #include <Elementary.h>
-
+#include <Eo.h>
 #include <Eina.h>
 
 #include <elm_code_common.h>
@@ -119,7 +119,7 @@ EAPI void elm_code_free(Elm_Code *code);
  */
 
 
-EAPI void elm_code_callback_fire(Elm_Code *code, const char *signal, void *data);
+EAPI void elm_code_callback_fire(Elm_Code *code, const Eo_Event_Description *signal, void *data);
 
 
 /**

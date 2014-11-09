@@ -2,9 +2,7 @@
 # include "config.h"
 #endif
 
-#define EFL_BETA_API_SUPPORT
 #include <Eo.h>
-
 #include <Elementary.h>
 
 #include "elm_code_widget.h"
@@ -131,7 +129,7 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, code);
 
-   eo_do(o,eo_event_callback_add((Eo_Event_Description *)ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, code));
+   eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, code));
 
    code->widgets = eina_list_append(code->widgets, o);
    return o;
