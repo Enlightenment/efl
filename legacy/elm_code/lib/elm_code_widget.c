@@ -44,6 +44,12 @@ EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code)
 
              chr++;
           }
+        for (; x < (unsigned int) w; x++)
+          {
+             cells[x].codepoint = 0;
+             cells[x].bg = line->status;
+             cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
+          }
      }
 
    evas_object_textgrid_update_add(o, 0, 0, w, h);
@@ -78,6 +84,12 @@ _elm_code_widget_line_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
         cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
 
         chr++;
+     }
+   for (; x < (unsigned int) w; x++)
+     {
+        cells[x].codepoint = 0;
+        cells[x].bg = line->status;
+        cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
      }
 
    evas_object_textgrid_update_add(o, 0, line->number - 1, w, 1);
