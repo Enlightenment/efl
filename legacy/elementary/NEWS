@@ -7,41 +7,46 @@ Changes since 1.11.0:
 
 Features:
 
-   * theme - improve efm icons provided by ApB (T575)
-   * elm process state - add events and state get function
-   * Introduce current_name_{set|get} (T1664)
+   * theme: Improve efm icons provided by ApB (T575)
+   * process state: Add events and state get function
+   * fileselector: Introduce current_name_{set|get} (T1664)
    * GLView: Add more configuration flags for the surface
    * GLView: Add support for client-side rotation
    * GLView: Add constructor for GLES 1.1 context glview
 
 Fixes:
 
-   * elm_notify: fixing style applying
-   * genlist: Fixed item select logic when item select mode is ALWAYS.
-   * gengrid, genlist, list, toolbar: Fixed DISPLAY_ONLY select mode for an object.
-   * gengrid: Fixed _item_unselect to check select value not highlight value.
-   * genlist: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
-   * gengrid: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
-   * list: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
-   * gengrid/popup: Fix wrong return type of _item_del_pre_hook.
-   * gengrid: Fixed item select logic when item select mode is ALWAYS.
-   * label: Fix size calculation for wrapped label
-   * panel: resize scrollable content in content_size_set API
-   * elm examples - missing -lm link - fix
-   * elm_map: the widget use efreet cache home to save image files to, so efreet should be initialized.
-   * module: detect extention just based on if its windows or not.
-   * conform, inwin, progressbar, radio: Fixed wrong part_alias_description implementations and documentations.
-   * genlist: Fixed a crash bug in case of calling a genlist_clear in a select callback function.
-   * elm_win should not check ELM_ACCEL variable if application has overridden it
-   * remove accel_override from elm_config
-   * bg: fix the _elm_bg_elm_layout_sizing_eval bug.
-   * win: fix segfaults (wrong checking)
-   * widget: fix seg fault when ts is NULL.
+   [Widgets]
+   * bg: Fix the _elm_bg_elm_layout_sizing_eval bug.
+   * conform, inwin, progressbar, radio: Fix wrong part_alias_description implementations and documentations.
    * fileselector: Do not call _populate directly in APIs (T1663)
-   * entry/test: make scrollable entries visible
-   * elm win - start wins in withdrawn state
-   * Elm_Panel: forbid changing of content of "elm.swallow.event" part
-   * elm_widget: fix segfaults for _elm_widget_item_style_set/get
+   * label: Fix size calculation for wrapped label
+   * list: Fix ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * map: the widget use efreet cache home to save image files to, so efreet should be initialized.
+   * notify: Fix style applying
+   * genlist: Fix item select logic when item select mode is ALWAYS.
+   * genlist: Fix ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * genlist: Fix a crash bug in case of calling a genlist_clear in a select callback function.
+   * gengrid: Fix _item_unselect to check select value not highlight value.
+   * gengrid: Fix ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * gengrid: Fix item select logic when item select mode is ALWAYS.
+   * gengrid, genlist, list, toolbar: Fix DISPLAY_ONLY select mode for an object.
+   * gengrid/popup: Fix wrong return type of _item_del_pre_hook.
+   * panel: Resize scrollable content in content_size_set API
+   * panel: Forbid changing of content of "elm.swallow.event" part
+   * win: Win should not check ELM_ACCEL variable if application has overridden it
+   * win: Fix segfaults (wrong checking)
+   * win: Start wins in withdrawn state
+
+   [Infra]
+   * config: Remove accel_override from elm_config
+   * module: Detect extention just based on if its windows or not.
+   * widget: Fix segfaults for _elm_widget_item_style_set/get
+   * widget: Fix seg fault when ts is NULL.
+
+   [Samples]
+   * test entry: make scrollable entries visible
+   * examples: Fix missing -lm link
 
 Changes since 1.10.0:
 ---------------------
