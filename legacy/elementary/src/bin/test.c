@@ -23,6 +23,7 @@ void test_box_pack(void *data, Evas_Object *obj, void *event_info);
 void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_box_homo(void *data, Evas_Object *obj, void *event_info);
 void test_box_transition(void *data, Evas_Object *obj, void *event_info);
+void test_box_align(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
@@ -549,6 +550,7 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Box Horiz", test_box_horiz);
    ADD_TEST(NULL, "Containers", "Box Homogeneous", test_box_homo);
    ADD_TEST(NULL, "Containers", "Box Transition", test_box_transition);
+   ADD_TEST(NULL, "Containers", "Box Align", test_box_align);
    ADD_TEST(NULL, "Containers", "Table", test_table);
    ADD_TEST(NULL, "Containers", "Table Homogeneous", test_table2);
    ADD_TEST(NULL, "Containers", "Table 3", test_table3);
