@@ -18,8 +18,10 @@ void
 _writeToFile(char *filePath, char *text)
 {
    FILE *f = fopen(filePath, "r+");
-   if (f == NULL)
-     f = fopen(filePath, "w");
+   if(f == NULL)
+     {
+      f = fopen(filePath, "w");
+     }
    fail_if(f == NULL);
    fprintf(f, "%s\n", text);
    fclose(f);
