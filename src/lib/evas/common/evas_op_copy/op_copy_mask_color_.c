@@ -3,20 +3,21 @@
 static void
 _op_copy_mas_c_dp(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e;
-   int color;
+   int alpha;
    UNROLL8_PLD_WHILE(d, l, e,
                      {
-                        color = *m;
-                        switch(color)
+                        alpha = *m;
+                        switch(alpha)
                           {
                           case 0:
+                             *d = 0;
                              break;
                           case 255:
                              *d = c;
                              break;
                           default:
-                             color++;
-                             *d = INTERP_256(color, c, *d);
+                             alpha++;
+                             *d = MUL_256(alpha, c);
                              break;
                           }
                         m++;  d++;
