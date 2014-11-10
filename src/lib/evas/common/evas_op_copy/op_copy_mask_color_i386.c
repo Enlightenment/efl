@@ -3,6 +3,30 @@
 #ifdef BUILD_MMX
 static void
 _op_copy_mas_c_dp_mmx(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+#if 1
+   DATA32 *e;
+   int alpha;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        /* d = m*c */
+                        alpha = *m;
+                        switch(alpha)
+                          {
+                          case 0:
+                             *d = 0;
+                             break;
+                          case 255:
+                             *d = c;
+                             break;
+                          default:
+                             alpha++;
+                             *d = MUL_256(alpha, c);
+                             break;
+                          }
+                        m++;  d++;
+                     });
+#else
+#warning This MMX function looks broken. Please fixme.
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm2, mm0)
@@ -29,6 +53,7 @@ _op_copy_mas_c_dp_mmx(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int 
 	  }
 	m++;  d++;
      }
+#endif
 }
 
 #define _op_copy_mas_cn_dp_mmx _op_copy_mas_c_dp_mmx
@@ -99,6 +124,7 @@ init_copy_mask_color_pt_funcs_mmx(void)
 #ifdef BUILD_MMX
 static void
 _op_copy_rel_mas_c_dp_mmx(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+   /* FIXME: THIS FUNCTION HAS PROBABLY NEVER BEEN TESTED */
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_P2R(c, mm2, mm0)
