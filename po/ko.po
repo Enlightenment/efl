@@ -167,7 +167,7 @@ msgstr "오류: %s 옵션에 위치 인자가 필요합니다!\n"
 #: src/lib/ecore/ecore_getopt.c:1910
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
-msgstr "오류: 위치 인자 %s 에 대해 지원하지 않는 동작 형식 %d\n"
+msgstr "오류: 지원하지 않는 동작 형식 %d의 위치 인자 %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
 msgid "ERROR: no parser provided.\n"
