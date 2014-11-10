@@ -2536,6 +2536,131 @@ data_process_part_set(Part_Lookup *target, int value)
    return EINA_FALSE;
 }
 
+static int
+_data_image_w_size_compare_cb(const void *data1, const void *data2)
+{
+   const Edje_Image_Directory_Set_Entry *img1 = data1;
+   const Edje_Image_Directory_Set_Entry *img2 = data2;
+
+   if (img1->size.w < img2->size.w) return -1;
+   if (img1->size.w > img2->size.w) return 1;
+
+   return 0;
+}
+
+static int
+_data_image_h_size_compare_cb(const void *data1, const void *data2)
+{
+   const Edje_Image_Directory_Set_Entry *img1 = data1;
+   const Edje_Image_Directory_Set_Entry *img2 = data2;
+
+   if (img1->size.h < img2->size.h) return -1;
+   if (img1->size.h > img2->size.h) return 1;
+
+   return 0;
+}
+
+static void
+_data_image_sets_size_set()
+{
+   Evas *evas;
+   Ecore_Evas *ee;
+   Edje_Image_Directory_Set *set;
+   Edje_Image_Directory_Set_Entry *simg, *preimg;
+   Eina_List *l, *entries;
+   unsigned int i;
+
+   ecore_evas_init();
+   ee = ecore_evas_buffer_new(1, 1);
+   if (!ee)
+     {
+        ERR("Cannot create buffer engine canvas for image load.");
+        exit(-1);
+     }
+   evas = ecore_evas_get(ee);
+
+   for (i = 0; i < edje_file->image_dir->sets_count; i++)
+     {
+        set = edje_file->image_dir->sets + i;
+
+        EINA_LIST_FOREACH(set->entries, l, simg)
+          {
+             Evas_Object *im;
+             Eina_List *ll;
+             char *s;
+
+             im = evas_object_image_add(evas);
+             EINA_LIST_FOREACH(img_dirs, ll, s)
+               {
+                  char buf[PATH_MAX];
+                  int load_err = EVAS_LOAD_ERROR_NONE;
+
+                  snprintf(buf, sizeof(buf), "%s/%s", s, simg->name);
+                  evas_object_image_file_set(im, buf, NULL);
+                  load_err = evas_object_image_load_error_get(im);
+                  if (load_err == EVAS_LOAD_ERROR_NONE)
+                    {
+                       evas_object_image_size_get(im, &simg->size.w, &simg->size.h);
+                       break;
+                    }
+               }
+             evas_object_del(im);
+          }
+
+        entries = eina_list_clone(set->entries);
+
+        entries = eina_list_sort(entries, 0, _data_image_w_size_compare_cb);
+        preimg = eina_list_data_get(entries);
+        EINA_LIST_FOREACH(entries, l, simg)
+          {
+             if (simg == preimg) continue;
+             if (!(preimg->size.max.w) && !(simg->size.min.w))
+               {
+                  preimg->size.max.w = (preimg->size.w + simg->size.w) / 2;
+                  simg->size.min.w = preimg->size.max.w + 1;
+                  if (simg->size.min.w <= (simg->border.l + simg->border.r))
+                    {
+                       preimg->size.max.w = simg->border.l + simg->border.r;
+                       simg->size.min.w = preimg->size.max.w + 1;
+                    }
+               }
+             else if (preimg->size.max.w && !(simg->size.min.w))
+               simg->size.min.w = preimg->size.max.w + 1;
+             else if (!(preimg->size.max.w) && simg->size.min.w)
+               preimg->size.max.w = simg->size.min.w - 1;
+             preimg = simg;
+          }
+        simg = eina_list_data_get(eina_list_last(entries));
+        if (!(simg->size.max.w)) simg->size.max.w = 99999;
+
+        entries = eina_list_sort(entries, 0, _data_image_h_size_compare_cb);
+        preimg = eina_list_data_get(entries);
+        EINA_LIST_FOREACH(entries, l, simg)
+          {
+             if (simg == preimg) continue;
+             if (!(preimg->size.max.h) && !(simg->size.min.h))
+               {
+                  preimg->size.max.h = (preimg->size.h + simg->size.h) / 2;
+                  simg->size.min.h = preimg->size.max.h + 1;
+                  if (simg->size.min.h <= (simg->border.t + simg->border.b))
+                    {
+                       preimg->size.max.h = simg->border.t + simg->border.b;
+                       simg->size.min.h = preimg->size.max.h + 1;
+                    }
+               }
+             else if (preimg->size.max.h && !(simg->size.min.h))
+               simg->size.min.h = preimg->size.max.h + 1;
+             else if (!(preimg->size.max.h) && simg->size.min.h)
+               preimg->size.max.h = simg->size.min.h - 1;
+             preimg = simg;
+          }
+        simg = eina_list_data_get(eina_list_last(entries));
+        if (!(simg->size.max.h)) simg->size.max.h = 99999;
+
+        eina_list_free(entries);
+     }
+}
+
 static void
 _data_image_id_update(Eina_List *images_unused_list)
 {
@@ -2980,10 +3105,13 @@ free_group:
                   free(set_e);
                }
           }
+
         /* update image id in parts */
         if (images_unused_list) _data_image_id_update(images_unused_list);
         EINA_LIST_FREE(images_unused_list, iui)
            free(iui);
+
+        _data_image_sets_size_set();
      }
 
    eina_hash_free(images_in_use);

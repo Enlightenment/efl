@@ -574,10 +574,12 @@ struct _Edje_Image_Directory_Set_Entry
    int id;
 
    struct {
-     struct {
-       int w;
-       int h;
-     } min, max;
+      int w;
+      int h;
+      struct {
+         int w;
+         int h;
+      } min, max;
    } size;
 
    struct {
