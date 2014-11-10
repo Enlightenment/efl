@@ -187,6 +187,14 @@ Fixes:
    * ecore-drm: Remove commented out dead functions
    * ecore-drm: Remove dead functions
    * eina: clear up eina_tmpstr length information (T1775)
+   * elua: load .dylib on OSX
+   * Ecore File: Corrected documentation of ecore_file_monitor_add API
+   * edje: fix edje_object_part_text_item_list_get and edje_object_part_text_item_geometry_get
+   * elua: remove the : prefix for running apps
+   * evas: fix quaternion initiation for node, which isn't a root node
+   * edje: Edje_Edit - fix segfaults on restacking of text parts with set 'text_source'.
+   * edje: Edje_Edit - fix segfault on copying state of IMAGE part with twins
+   * elua: two-stage bytecode caching
 
 Changes since 1.10.0:
 ---------------------
