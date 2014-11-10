@@ -2662,6 +2662,16 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
 
    _edje_real_part_image_set(ed, ep, &set, pos);
+
+   /* border */
+   p3->type.common.spec.image.l = chosen_desc->image.border.l;
+   p3->type.common.spec.image.r = chosen_desc->image.border.r;
+
+   p3->type.common.spec.image.t = chosen_desc->image.border.t;
+   p3->type.common.spec.image.b = chosen_desc->image.border.b;
+
+   p3->type.common.spec.image.border_scale_by = chosen_desc->image.border.scale_by;
+
    if (set && set->set)
      {
 #define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
