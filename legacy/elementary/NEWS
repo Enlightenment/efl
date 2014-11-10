@@ -18,15 +18,18 @@ Fixes:
 
    [Widgets]
    * bg: Fix the _elm_bg_elm_layout_sizing_eval bug.
+   * box: elm_box_align_set API fix
    * conform, inwin, progressbar, radio: Fix wrong part_alias_description implementations and documentations.
    * fileselector: Do not call _populate directly in APIs (T1663)
    * label: Fix size calculation for wrapped label
+   * label: Reset sd->lastw as '-1' in some elm_label APIs for ensure the sizing_eval.
    * list: Fix ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
    * map: the widget use efreet cache home to save image files to, so efreet should be initialized.
    * notify: Fix style applying
    * genlist: Fix item select logic when item select mode is ALWAYS.
    * genlist: Fix ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
    * genlist: Fix a crash bug in case of calling a genlist_clear in a select callback function.
+   * genlist: Remove unnecessary callbacks when item loop is disabled.
    * gengrid: Fix _item_unselect to check select value not highlight value.
    * gengrid: Fix ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
    * gengrid: Fix item select logic when item select mode is ALWAYS.
@@ -43,6 +46,7 @@ Fixes:
    * module: Detect extention just based on if its windows or not.
    * widget: Fix segfaults for _elm_widget_item_style_set/get
    * widget: Fix seg fault when ts is NULL.
+   * widget: Fix the typo. Use win object instead.
 
    [Samples]
    * test entry: make scrollable entries visible
