@@ -34,7 +34,7 @@ static Elocation_Position *position = NULL;
 static Elocation_Address *addr_geocode = NULL;
 static Elocation_Position *pos_geocode = NULL;
 static Elocation_Velocity *velocity = NULL;
-static int *status = -1; /* 0 is a valid status code */
+static int status = -1; /* 0 is a valid status code */
 static char nmea_sentence[256];
 
 int _elocation_log_dom = -1;
@@ -740,35 +740,29 @@ status_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *p
         return;
      }
 
-   /* We need this to be malloced to be passed to ecore_event_add. Or provide a dummy free callback. */
-   status = malloc(sizeof(*status));
-
-   if (!eldbus_message_arguments_get(reply,"i",  status))
+   if (!eldbus_message_arguments_get(reply,"i",  &status))
      {
         ERR("Error: Unable to unmarshall status");
         return;
      }
 
-   address_provider->status = position_provider->status = *status;
+   address_provider->status = position_provider->status = status;
    /* Send out an event to all interested parties that we have an update */
-   ecore_event_add(ELOCATION_EVENT_STATUS, status, NULL, NULL);
+   ecore_event_add(ELOCATION_EVENT_STATUS, &status, _dummy_free, NULL);
 }
 
 static void
 status_signal_cb(void *data EINA_UNUSED, const Eldbus_Message *reply)
 {
-   /* We need this to be malloced to be passed to ecore_event_add. Or provide a dummy free callback. */
-   status = malloc(sizeof(*status));
-
-   if (!eldbus_message_arguments_get(reply,"i",  status))
+   if (!eldbus_message_arguments_get(reply,"i",  &status))
      {
         ERR("Error: Unable to unmarshall status");
         return;
      }
 
-   address_provider->status = position_provider->status = *status;
+   address_provider->status = position_provider->status = status;
    /* Send out an event to all interested parties that we have an update */
-   ecore_event_add(ELOCATION_EVENT_STATUS, status, NULL, NULL);
+   ecore_event_add(ELOCATION_EVENT_STATUS, &status, _dummy_free, NULL);
 }
 
 static void
@@ -1133,7 +1127,7 @@ elocation_status_get(int *status_shadow)
 {
    if (status < 0) return EINA_FALSE;
 
-   status_shadow = status;
+   status_shadow = &status;
    return EINA_TRUE;
 }
 
