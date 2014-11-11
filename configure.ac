@@ -248,14 +248,12 @@ AM_GNU_GETTEXT_VERSION([0.18])
 m4_ifdef([AC_GNU_GETTEXT], [
 AC_GNU_GETTEXT([external])
 po_makefile_in=po/Makefile.in
-po_makevars="${srcdir}/po/Makevars:po/Makevars.in"
 have_po="yes"
 ],
 [
 m4_ifdef([AM_GNU_GETTEXT], [
 AM_GNU_GETTEXT([external])
 po_makefile_in=po/Makefile.in
-po_makevars="${srcdir}/po/Makevars:po/Makevars.in"
 have_po="yes"
 ],
 [
@@ -4539,7 +4537,6 @@ dbus-services/org.enlightenment.Ethumb.service
 systemd-services/efreet.service
 systemd-services/ethumb.service
 $po_makefile_in
-$po_makevars
 cmakeconfig/EflConfig.cmake
 cmakeconfig/EflConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EinaConfig.cmake
