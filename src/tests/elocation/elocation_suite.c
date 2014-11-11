@@ -205,11 +205,11 @@ elocation_suite(void)
    tc = tcase_create("Elocation_API_Address");
    tcase_add_test(tc, elocation_test_api_address);
    suite_add_tcase(s, tc);
-
+/*
    tc = tcase_create("Elocation_API_Status");
    tcase_add_test(tc, elocation_test_api_status);
    suite_add_tcase(s, tc);
-
+*/
    return s;
 }
 
