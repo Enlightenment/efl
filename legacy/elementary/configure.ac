@@ -18,7 +18,7 @@ AH_BOTTOM([
 
 AC_USE_SYSTEM_EXTENSIONS
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 dist-xz -Wall])
+AM_INIT_AUTOMAKE([1.11 dist-xz -Wall])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
