@@ -62,6 +62,7 @@ tests/eolian_cxx/eolian_cxx_suite.cc \
 tests/eolian_cxx/eolian_cxx_test_parse.cc \
 tests/eolian_cxx/callback.c \
 tests/eolian_cxx/eolian_cxx_test_callback.cc \
+tests/eolian_cxx/eolian_cxx_test_wrapper.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc
 
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh

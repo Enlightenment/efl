@@ -46,7 +46,10 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << eo_class_getter(cls)
         << "private:" << endl
        << eo_class_constructors(cls)
-       << "};" << endl;
+       << "};" << endl
+       << "static_assert(sizeof(" << cls.name << ") == sizeof(Eo*), \"sizeof(" << cls.name << ") != sizeof(Eo*)\");" << endl
+       << "static_assert(std::is_standard_layout<" << cls.name << ">::value, \"'" << cls.name << "' is not standard layout\");"
+       << endl << endl;
 }
 
 } } } // namespace efl { namespace eolian { namespace grammar {
