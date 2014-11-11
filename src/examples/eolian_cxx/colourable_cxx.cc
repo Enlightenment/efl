@@ -35,18 +35,6 @@ _colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 }
 
 void
-_colourable_rgb_composite_constructor(Eo *obj, Colourable_Data *self, int r, int g, int b)
-{
-   EINA_CXX_DOM_LOG_DBG(domain) << std::showbase << std::hex
-     << __func__ << " [ (r, g, b) = ("
-     << r << ", " << g << ", " << b << ") ]" << std::endl;
-   self->r = r;
-   self->g = g;
-   self->b = b;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-}
-
-void
 _colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
 {
    EINA_CXX_DOM_LOG_DBG(domain) << std::showbase << std::hex

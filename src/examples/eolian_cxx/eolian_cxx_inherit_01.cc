@@ -16,10 +16,6 @@ using namespace efl;
 struct ColourableCircle
   : efl::eo::inherit<ColourableCircle, ::colourable>
 {
-   ColourableCircle(int r, int g, int b)
-     : inherit_base(r, g, b)
-   {}
-
    ColourableCircle(int rgb)
      : inherit_base(efl::eo::args<::colourable>(rgb))
    {}
@@ -52,7 +48,8 @@ main()
    efl::eo::eo_init init;
    eina_log_domain_level_set("colourable", EINA_LOG_LEVEL_DBG);
 
-   ColourableCircle obj1(0xc0, 0xff, 0xee);
+   ColourableCircle obj1(0x0);
+   obj1.composite_colour_set(0xc0, 0xff, 0xee);
 
    ColourableCircle obj2(0xc0ffee);
    int r, g, b;

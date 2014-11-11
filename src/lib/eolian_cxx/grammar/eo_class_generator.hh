@@ -37,15 +37,17 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << "struct " << cls.name << endl
        << tab(2) << ": " << class_inheritance(cls)
        << '{' << endl
+       << functors_constructor_methods(cls)
+       << functions_constructor_methods(cls)
+       << constructor_with_constructor_methods(cls)
        << constructor_eo(cls)
-       << constructors(cls)
        << copy_constructor(cls)
        << destructor(cls)
        << functions(cls.functions)
        << events(cls)
        << eo_class_getter(cls)
         << "private:" << endl
-       << eo_class_constructors(cls)
+       << function_call_constructor_methods(cls)
        << "};" << endl
        << "static_assert(sizeof(" << cls.name << ") == sizeof(Eo*), \"sizeof(" << cls.name << ") != sizeof(Eo*)\");" << endl
        << "static_assert(std::is_standard_layout<" << cls.name << ">::value, \"'" << cls.name << "' is not standard layout\");"

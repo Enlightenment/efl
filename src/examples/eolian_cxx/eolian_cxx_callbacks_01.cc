@@ -27,20 +27,21 @@ void
 example_callbacks()
 {
    int count = 0;
-   efl::ecore::poller poller
-      (ECORE_POLLER_CORE, 1,
+   efl::ecore::poller poller(
+     poller.ecore_poller_constructor(ECORE_POLLER_CORE, 1,
        [&count, &poller]
-      {
-         if (++count == 5)
-           {
-              std::cout << std::endl;
-              ecore_main_loop_quit();
-              return false;
-           }
-         poller.interval_set(2*poller.interval_get());
-         std::cout << "."<< std::flush;
-         return true;
-      });
+       {
+          if (++count == 5)
+            {
+               std::cout << std::endl;
+               ecore_main_loop_quit();
+               return false;
+            }
+          poller.interval_set(2*poller.interval_get());
+          std::cout << "." << std::flush;
+          return true;
+       })
+   );
    ::ecore_main_loop_begin();
 }
 

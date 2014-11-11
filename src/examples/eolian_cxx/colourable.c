@@ -51,24 +51,6 @@ _colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 }
 
 void
-_colourable_rgb_composite_constructor(Eo *obj, Colourable_Data *self, int r, int g, int b)
-{
-   if(!_colourable_impl_logdomain)
-     {
-        _colourable_impl_logdomain
-          = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
-     }
-   self->r = r;
-   self->g = g;
-   self->b = b;
-   DBG("_colourable_rgb_composite_constructor(0x%2.x, %0x2.x, %0x2.x)\n",
-       (unsigned int)self->r,
-       (unsigned int)self->g,
-       (unsigned int)self->b);
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-}
-
-void
 _colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
 {
    if(!_colourable_impl_logdomain)

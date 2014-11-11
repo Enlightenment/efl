@@ -12,18 +12,6 @@
 
 void foo(void*) {}
 
-START_TEST(eolian_cxx_test_callback_constructor)
-{
-  efl::eo::eo_init i;
-
-  bool called1 = false, called2 = false;
-  ::callback c1 (std::bind([&called1] { called1 = true; }));
-  ::callback c2 (std::bind([&called2] { called2 = true; }), &foo);
-  fail_if(!called1);
-  fail_if(!called2);
-}
-END_TEST
-
 START_TEST(eolian_cxx_test_callback_method)
 {
   efl::eo::eo_init i;
@@ -124,7 +112,6 @@ END_TEST
 void
 eolian_cxx_test_callback(TCase* tc)
 {
-   tcase_add_test(tc, eolian_cxx_test_callback_constructor);
    tcase_add_test(tc, eolian_cxx_test_callback_method);
    tcase_add_test(tc, eolian_cxx_test_callback_event_add);
    tcase_add_test(tc, eolian_cxx_test_callback_event_del);
