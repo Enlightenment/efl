@@ -19,8 +19,8 @@ lib_elocation_libelocation_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 if EFL_ENABLE_TESTS
 
-check_PROGRAMS += tests/elocation/elocation_suite
-TESTS += tests/elocation/elocation_suite
+#check_PROGRAMS += tests/elocation/elocation_suite
+#TESTS += tests/elocation/elocation_suite
 
 tests_elocation_elocation_suite_SOURCES = \
 tests/elocation/elocation_suite.c
