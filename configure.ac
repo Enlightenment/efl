@@ -4374,6 +4374,42 @@ EFL_EVAL_PKGS([ELUA])
 EFL_LIB_END_OPTIONAL([Elua])
 #### End of Elua
 
+#### Elocation
+
+EFL_LIB_START([Elocation])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+EFL_PLATFORM_DEPEND([ELOCATION], [evil])
+EFL_INTERNAL_DEPEND_PKG([ELOCATION], [eina])
+EFL_INTERNAL_DEPEND_PKG([ELOCATION], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELOCATION], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ELOCATION], [eldbus])
+
+EFL_ADD_LIBS([ELOCATION], [-lm])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Elocation])
+#### End of Elocation
+
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
    EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.3.0])
@@ -4431,6 +4467,7 @@ src/examples/emotion/Makefile
 src/examples/ethumb_client/Makefile
 src/examples/elua/Makefile
 src/examples/eolian_cxx/Makefile
+src/examples/elocation/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
@@ -4496,6 +4533,7 @@ pc/edje-cxx.pc
 pc/emotion.pc
 pc/ethumb.pc
 pc/ethumb_client.pc
+pc/elocation.pc
 dbus-services/org.enlightenment.Efreet.service
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/efreet.service

@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: elocation
+Description: Enlightenment location library
+@pkgconfig_requires_private@: @requirements_elocation@
+Version: @VERSION@
+Libs: -L${libdir} -lelocation
+Libs.private: -lm
+Cflags: -I${includedir}/elocation-@VMAJ@
