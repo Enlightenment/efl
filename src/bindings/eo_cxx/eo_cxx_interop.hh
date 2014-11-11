@@ -16,7 +16,7 @@ namespace efl { namespace eolian {
 inline Eo*
 to_c(efl::eo::base const& x)
 {
-   return ::eo_ref(x._eo_ptr());
+   return x._eo_ptr();
 }
 
 inline const char*
