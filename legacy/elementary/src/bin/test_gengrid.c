@@ -354,9 +354,7 @@ create_gengrid(Evas_Object *obj, int items)
    char buf[PATH_MAX];
 
    grid = elm_gengrid_add(obj);
-   elm_gengrid_item_size_set(grid,
-                             elm_config_scale_get() * 200,
-                             elm_config_scale_get() * 150);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(200), ELM_SCALE_SIZE(150));
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "unselected", grid_unselected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
@@ -762,9 +760,7 @@ _size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *grid = data;
    int size = elm_spinner_value_get(obj);
-   elm_gengrid_item_size_set(grid,
-                             elm_config_scale_get() * size,
-                             elm_config_scale_get() * size);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(size), ELM_SCALE_SIZE(size));
 }
 
 void
@@ -781,9 +777,7 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(bx);
 
    grid = elm_gengrid_add(win);
-   elm_gengrid_item_size_set(grid,
-                             elm_config_scale_get() * 150,
-                             elm_config_scale_get() * 150);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(150));
    elm_gengrid_multi_select_set(grid, EINA_FALSE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -895,12 +889,8 @@ test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    grid = elm_gengrid_add(win);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, grid);
-   elm_gengrid_item_size_set(grid,
-                             elm_config_scale_get() * 150,
-                             elm_config_scale_get() * 150);
-   elm_gengrid_group_item_size_set(grid,
-                                   elm_config_scale_get() * 31,
-                                   elm_config_scale_get() * 31);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(150));
+   elm_gengrid_group_item_size_set(grid, ELM_SCALE_SIZE(31), ELM_SCALE_SIZE(31));
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
@@ -967,9 +957,7 @@ _gengrid_create(Evas_Object *obj, int items, const char *style)
      {
         if (!obj) return NULL;
         grid = elm_gengrid_add(obj);
-        elm_gengrid_item_size_set(grid,
-                                  elm_config_scale_get() * 150,
-                                  elm_config_scale_get() * 150);
+        elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(150));
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
@@ -1167,7 +1155,6 @@ _show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
    static Item_Data ti[10000];
    int i, n;
    char buf[PATH_MAX];
-   double scale = elm_config_scale_get();
 
    if (!data) return;
 
@@ -1180,8 +1167,8 @@ _show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
    elm_win_autodel_set(win, EINA_TRUE);
 
    grid = elm_gengrid_add(win);
-   elm_gengrid_item_size_set(grid, 150 * scale, 150 * scale);
-   elm_gengrid_group_item_size_set(grid, 31 * scale, 31 * scale);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(150));
+   elm_gengrid_group_item_size_set(grid, ELM_SCALE_SIZE(31), ELM_SCALE_SIZE(31));
    if (sd->winmode == 0)
      elm_gengrid_horizontal_set(grid, EINA_TRUE);
    else if (sd->winmode == 1)
@@ -1514,7 +1501,7 @@ test_gengrid5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_object_focus_set(en, EINA_TRUE);
 
    grid = elm_gengrid_add(bx);
-   elm_gengrid_item_size_set(grid, elm_config_scale_get() * 200, elm_config_scale_get() * 150);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(200), ELM_SCALE_SIZE(150));
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
@@ -1575,8 +1562,8 @@ test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    api->grid = create_gengrid(win, 5000);
    evas_object_size_hint_min_set(api->grid, 600, 600);
    elm_gengrid_item_size_set(api->grid,
-                          elm_config_scale_get() * 30,
-                          elm_config_scale_get() * 36);
+                             ELM_SCALE_SIZE(30),
+                             ELM_SCALE_SIZE(36));
    elm_object_content_set(fr, api->grid);
    evas_object_show(api->grid);
    evas_object_resize(win, 600, 600);
@@ -1697,8 +1684,8 @@ test_gengrid_focus(void *data EINA_UNUSED,
 
    gengrid = elm_gengrid_add(bx);
    elm_gengrid_item_size_set(gengrid,
-                             elm_config_scale_get() * 150,
-                             elm_config_scale_get() * 150);
+                             ELM_SCALE_SIZE(150),
+                             ELM_SCALE_SIZE(150));
    evas_object_size_hint_weight_set(gengrid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gengrid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, gengrid);

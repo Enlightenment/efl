@@ -170,8 +170,9 @@ Evas_Object *gl_content_full_get(void *data EINA_UNUSED, Evas_Object *obj, const
 
    ic = elm_icon_add(bx);
    elm_icon_standard_set(ic, "home");
-   evas_object_size_hint_min_set(ic, 32 * elm_config_scale_get(),
-                                 32 * elm_config_scale_get());
+   evas_object_size_hint_min_set(ic,
+                                 ELM_SCALE_SIZE(32),
+                                 ELM_SCALE_SIZE(32));
    evas_object_size_hint_align_set(ic, 0.5, EVAS_HINT_FILL);
    evas_object_show(ic);
    elm_box_pack_end(bx, ic);
@@ -193,8 +194,9 @@ Evas_Object *gl_content_full_get(void *data EINA_UNUSED, Evas_Object *obj, const
    elm_box_pack_end(bx, ck);
 
    elm_layout_content_set(fr, NULL, bx);
-   evas_object_size_hint_min_set(fr, 100 * elm_config_scale_get(),
-                                 100 * elm_config_scale_get());
+   evas_object_size_hint_min_set(fr,
+                                 ELM_SCALE_SIZE(100),
+                                 ELM_SCALE_SIZE(100));
 
    return fr;
 }

@@ -938,8 +938,7 @@ test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         Evas_Object *grid = elm_gengrid_add(win);
         evas_object_smart_callback_add(win, "delete,request", _win_del, grid);
         elm_gengrid_item_size_set(grid,
-              elm_config_scale_get() * 150,
-              elm_config_scale_get() * 150);
+                                  ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(150));
         elm_gengrid_horizontal_set(grid, EINA_FALSE);
         elm_gengrid_reorder_mode_set(grid, EINA_FALSE);
         elm_gengrid_multi_select_set(grid, EINA_TRUE); /* We allow multi drag */
@@ -1082,8 +1081,7 @@ test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
         Evas_Object *grid = elm_gengrid_add(bxx);
         evas_object_smart_callback_add(win, "delete,request", _win_del, grid);
         elm_gengrid_item_size_set(grid,
-              elm_config_scale_get() * 100,
-              elm_config_scale_get() * 100);
+                                  ELM_SCALE_SIZE(100), ELM_SCALE_SIZE(100));
         elm_gengrid_horizontal_set(grid, EINA_FALSE);
         elm_gengrid_reorder_mode_set(grid, EINA_FALSE);
         elm_gengrid_multi_select_set(grid, EINA_TRUE); /* We allow multi drag */

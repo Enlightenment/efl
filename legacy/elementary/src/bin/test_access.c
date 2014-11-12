@@ -85,9 +85,7 @@ Evas_Object *gl_access_content_full_get(void *data EINA_UNUSED, Evas_Object *obj
    if (strcmp(part, "elm.swallow.content")) return NULL;
 
    grid = elm_gengrid_add(obj);
-   elm_gengrid_item_size_set(grid,
-                             elm_config_scale_get() * 100,
-                             elm_config_scale_get() * 100);
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(100), ELM_SCALE_SIZE(100));
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -109,8 +107,8 @@ Evas_Object *gl_access_content_full_get(void *data EINA_UNUSED, Evas_Object *obj
      }
    elm_gengrid_item_class_free(gic);
 
-   evas_object_size_hint_min_set(grid, 300 * elm_config_scale_get(),
-                                 150 * elm_config_scale_get());
+   evas_object_size_hint_min_set(grid,
+                                 ELM_SCALE_SIZE(300), ELM_SCALE_SIZE(150));
    return grid;
 }
 

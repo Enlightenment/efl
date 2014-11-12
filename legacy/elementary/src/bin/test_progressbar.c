@@ -149,7 +149,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_part_content_set(pb, "icon", ic1);
    elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, "%1.1f units");
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(200));
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, pb);
@@ -177,7 +177,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 80);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(80));
    elm_progressbar_pulse_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, NULL);
    elm_object_text_set(pb, "Infinite bounce");
@@ -195,7 +195,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_part_content_set(pb, "icon", ic2);
    elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, "%1.2f%%");
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(200));
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(hbx, pb);
@@ -336,7 +336,7 @@ test_progressbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(pb, "Style: default");
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(200));
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
    pd->pb1 = pb;
@@ -346,7 +346,7 @@ test_progressbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(pb, "Style: double");
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(200));
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
    pd->pb2 = pb;
@@ -356,7 +356,7 @@ test_progressbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(pb, "Style: double 2");
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(200));
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
    pd->pb3 = pb;
@@ -367,7 +367,7 @@ test_progressbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(pb, "Style: Vertical");
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_progressbar_span_size_set(pb, ELM_SCALE_SIZE(200));
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
    pd->pb4 = pb;
