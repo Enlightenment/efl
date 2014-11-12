@@ -5,6 +5,7 @@
 #include <Eina.h>
 
 EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE;
+EAPI extern const Eo_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE;
 
 typedef enum {
    ELM_CODE_STATUS_TYPE_DEFAULT = 0,

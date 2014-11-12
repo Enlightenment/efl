@@ -13,6 +13,8 @@ int _elm_code_lib_log_dom = -1;
 
 const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE =
     EO_EVENT_DESCRIPTION("line,set,done", "");
+const Eo_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE =
+    EO_EVENT_DESCRIPTION("file, load,done", "");
 
 EAPI int
 elm_code_init(void)

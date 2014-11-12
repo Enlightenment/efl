@@ -92,6 +92,21 @@ _elm_code_widget_line_cb(void *data EINA_UNUSED, Eo *obj,
    return EINA_TRUE;
 }
 
+
+static Eina_Bool
+_elm_code_widget_file_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
+{
+   Evas_Object *o;
+   Elm_Code *code;
+
+   code = (Elm_Code *)data;
+   o = (Evas_Object *)obj;
+
+   elm_code_widget_fill(o, code);
+   return EINA_TRUE;
+}
+
 static void
 _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
                            void *event_info EINA_UNUSED)
@@ -130,6 +145,7 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, code);
 
    eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, code));
+   eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, code));
 
    code->widgets = eina_list_append(code->widgets, o);
    return o;

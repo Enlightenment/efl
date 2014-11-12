@@ -76,6 +76,8 @@ EAPI Elm_Code_File *elm_code_file_open(const char *path)
      }
    eina_iterator_free(it);
 
+   if (ret->parent)
+     elm_code_callback_fire(ret->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, ret);
    return ret;
 }
 
