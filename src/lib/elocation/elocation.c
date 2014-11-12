@@ -40,8 +40,6 @@ static char nmea_sentence[256];
 int _elocation_log_dom = -1;
 
 /* Elocation ecore event types we provide to the application. */
-EAPI int ELOCATION_EVENT_IN;
-EAPI int ELOCATION_EVENT_OUT;
 EAPI int ELOCATION_EVENT_STATUS;
 EAPI int ELOCATION_EVENT_POSITION;
 EAPI int ELOCATION_EVENT_ADDRESS;
@@ -52,6 +50,10 @@ EAPI int ELOCATION_EVENT_NMEA;
 EAPI int ELOCATION_EVENT_SATELLITE;
 EAPI int ELOCATION_EVENT_POI;
 EAPI int ELOCATION_EVENT_META_READY;
+
+/* Internal events */
+int ELOCATION_EVENT_IN;
+int ELOCATION_EVENT_OUT;
 
 static void
 _dummy_free(void *user_data EINA_UNUSED, void *func_data EINA_UNUSED)
