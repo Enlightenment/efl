@@ -84,6 +84,7 @@ struct _Ecore_Drm_Device
    unsigned int crtc_count;
    unsigned int *crtcs;
    unsigned int crtc_allocator;
+   unsigned int conn_allocator;
 
    Eina_List *seats;
    Eina_List *inputs;
