@@ -89,6 +89,10 @@ do                                  \
    eina_array_flush(array);                           \
 }
 
+/* save typing */
+#define ENFN evas->engine.func
+#define ENDT evas->engine.data.output
+
 typedef struct _Render_Updates Render_Updates;
 struct _Render_Updates
 {
@@ -1489,7 +1493,7 @@ void
 evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
                             Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *source;
    Eina_Bool source_clip = EINA_FALSE;
    void *ctx;
@@ -1510,8 +1514,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         if ((proxy_write->surface) &&
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
-             e->engine.func->image_map_surface_free(e->engine.data.output,
-                                                    proxy_write->surface);
+             ENFN->image_map_surface_free(ENDT, proxy_write->surface);
              proxy_write->surface = NULL;
           }
 
@@ -1519,24 +1522,19 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         /* FIXME (cont): Should see if the object has alpha */
         if (!proxy_write->surface)
           {
-             proxy_write->surface = e->engine.func->image_map_surface_new
-               (e->engine.data.output, w, h, 1);
+             proxy_write->surface = ENFN->image_map_surface_new(ENDT, w, h, 1);
              if (!proxy_write->surface) goto end;
              proxy_write->w = w;
              proxy_write->h = h;
           }
 
-        ctx = e->engine.func->context_new(e->engine.data.output);
-        e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0,
-                                          0, 0);
-        e->engine.func->context_render_op_set(e->engine.data.output, ctx,
-                                              EVAS_RENDER_COPY);
-        e->engine.func->rectangle_draw(e->engine.data.output, ctx,
-                                       proxy_write->surface, 0, 0, w, h,
-                                       do_async);
-        e->engine.func->context_free(e->engine.data.output, ctx);
+        ctx = ENFN->context_new(ENDT);
+        ENFN->context_color_set(ENDT, ctx, 0, 0,0, 0);
+        ENFN->context_render_op_set(ENDT, ctx,EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(ENDT, ctx, proxy_write->surface, 0, 0, w, h, do_async);
+        ENFN->context_free(ENDT, ctx);
 
-        ctx = e->engine.func->context_new(e->engine.data.output);
+        ctx = ENFN->context_new(ENDT);
 
         if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
           eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
@@ -1547,15 +1545,14 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
              .eo_src = eo_source,
              .source_clip = source_clip
         };
-        evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
+        evas_render_mapped(evas, eo_source, source, ctx, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
-                           1, 0, 0, e->output.w, e->output.h,
+                           1, 0, 0, evas->output.w, evas->output.h,
                            &proxy_render_data, 1, EINA_TRUE, do_async);
 
-        e->engine.func->context_free(e->engine.data.output, ctx);
-        proxy_write->surface = e->engine.func->image_dirty_region
-           (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
+        ENFN->context_free(ENDT, ctx);
+        proxy_write->surface = ENFN->image_dirty_region(ENDT, proxy_write->surface, 0, 0, w, h);
      }
  end:
    EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
