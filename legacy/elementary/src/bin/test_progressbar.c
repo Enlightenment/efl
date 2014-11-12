@@ -64,9 +64,9 @@ my_progressbar_test_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
    Progressbar_Data *pd = data;
    if (!pd) return;
 
-   elm_progressbar_pulse(pd->pb1, EINA_FALSE);
    elm_progressbar_pulse(pd->pb2, EINA_FALSE);
-   elm_progressbar_pulse(pd->pb3, EINA_FALSE);
+   elm_progressbar_pulse(pd->pb5, EINA_FALSE);
+   elm_progressbar_pulse(pd->pb7, EINA_FALSE);
    elm_object_disabled_set(pd->btn_start, EINA_FALSE);
    elm_object_disabled_set(pd->btn_stop, EINA_TRUE);
 
@@ -121,7 +121,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    pb = elm_progressbar_add(win);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, pb);
    //elm_progressbar_horizontal_set(pb, EINA_TRUE);
    //elm_object_text_set(pb, "Progression %");
@@ -169,7 +169,6 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(hbx, pb);
-   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 60);
    elm_object_text_set(pb, "percent");
    evas_object_show(pb);
    pd->pb4 = pb;
