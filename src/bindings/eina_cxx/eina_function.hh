@@ -11,6 +11,15 @@ struct function_params<R(*)(P...)>
 {
   typedef std::tuple<P...> type;
 };
+
+template <typename T>
+struct function_return;
+
+template <typename R, typename... P>
+struct function_return<R(*)(P...)>
+{
+  typedef R type;
+};
       
 } } }
 

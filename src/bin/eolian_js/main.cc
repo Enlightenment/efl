@@ -198,30 +198,39 @@ int main(int argc, char** argv)
        os << "  prototype->Set( ::v8::String::NewFromUtf8(isolate, \""
           << eolian_function_name_get(function) << "\")\n"
           << "    , v8::FunctionTemplate::New(isolate, &efl::eo::js::call_function\n"
-          << "    , efl::eo::js::call_function_data< std::tuple<\n";
-       efl::eina::iterator< ::Eolian_Function_Parameter> parameter
-         ( ::eolian_function_parameters_get(function) )
-         , last;
-       while(parameter != last)
+          << "    , efl::eo::js::call_function_data<\n"
+          << "      ::efl::eina::_mpl::tuple_c<std::size_t";
+       std::size_t i = 0;
+       for(efl::eina::iterator< ::Eolian_Function_Parameter> parameter
+             ( ::eolian_function_parameters_get(function) )
+             , last; parameter != last; ++parameter, ++i)
          {
            switch(eolian_parameter_direction_get(&*parameter))
              {
              case EOLIAN_IN_PARAM:
-               os << "       ::efl::eo::js::input";
-               break;
-             case EOLIAN_OUT_PARAM:
-               os << "       ::efl::eo::js::output";
-               break;
              case EOLIAN_INOUT_PARAM:
-               os << "      ::efl::eo::js::input_output";
-               break;
+               os << ", " << i;
+             default: break;
              }
-           if(++parameter != last)
-             os << ",\n";
          }
-       os << ">, std::tuple<\n";
-       parameter = efl::eina::iterator< ::Eolian_Function_Parameter>
-         ( ::eolian_function_parameters_get(function) );
+       os << ">\n      , ::efl::eina::_mpl::tuple_c<std::size_t";
+       i = 0;
+       for(efl::eina::iterator< ::Eolian_Function_Parameter> parameter
+             ( ::eolian_function_parameters_get(function) )
+             , last; parameter != last; ++parameter, ++i)
+         {
+           switch(eolian_parameter_direction_get(&*parameter))
+             {
+             case EOLIAN_OUT_PARAM:
+             case EOLIAN_INOUT_PARAM:
+               os << ", " << i;
+             default: break;
+             }
+         }
+       os << ">\n      , std::tuple<\n";
+       efl::eina::iterator< ::Eolian_Function_Parameter> parameter
+             ( ::eolian_function_parameters_get(function) )
+         , last;
        while(parameter != last)
          {
            Eolian_Type const* type = eolian_parameter_type_get(&*parameter);

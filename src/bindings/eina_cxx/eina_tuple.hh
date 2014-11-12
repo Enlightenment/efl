@@ -2,6 +2,7 @@
 #define EFL_EINA_EINA_TUPLE_HH_
 
 #include <eina_integer_sequence.hh>
+#include <eina_logical.hh>
 
 #include <tuple>
 
@@ -53,6 +54,36 @@ void for_each(T&& t, F&& f)
                       <std::tuple_size<typename std::remove_reference<T>::type>::value>());
 }
 
+template <typename T, typename Transform>
+struct tuple_transform;
+
+template <typename...T, typename Transform>
+struct tuple_transform<std::tuple<T...>, Transform>
+{
+  typedef std::tuple<typename Transform::template apply<T>::type...> type;
+};
+
+template <typename T, typename Tuple>
+struct tuple_contains;
+
+
+      
+template <typename T, typename...Ts>
+struct tuple_contains<T, std::tuple<Ts...> >
+  : _mpl::or_<std::is_same<T, Ts>::value...>
+{
+};
+
+template <typename T, typename Tuple>
+struct tuple_find : std::integral_constant<int, -1> {};
+
+template <typename T, typename... Ts>
+struct tuple_find<T, std::tuple<T, Ts...> > : std::integral_constant<std::size_t, 0> {};
+
+template <typename T, typename T1, typename... Ts>
+struct tuple_find<T, std::tuple<T1, Ts...> > : std::integral_constant
+ <std::size_t, 1 + tuple_find<T, std::tuple<Ts...> >::value> {};
+      
 } } }
 
 #endif

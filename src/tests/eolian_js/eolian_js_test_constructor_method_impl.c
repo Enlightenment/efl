@@ -71,20 +71,33 @@ void _constructor_method_class_method3(Eo* obj EINA_UNUSED, Constructor_Method_C
   ck_assert(two == 11.1);
 }
 
+int _constructor_method_class_rmethod1(Eo * obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int one, double two)
+{
+  fprintf(stderr, "rmethod1 one == %d two == %f\n", one, two);
+  fflush(stderr);
+  ck_assert(one == 3);
+  ck_assert(two == 11.1);
+  return 5;
+}
+
 void _constructor_method_class_outmethod1(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int *one)
 {
+  fprintf(stderr, "outmethod1\n");
   *one = 5;
 }
 
 int _constructor_method_class_outmethod2(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int *one)
 {
-  return *one = 10;
+  fprintf(stderr, "outmethod2\n");
+  *one = 10;
+  return 11;
 }
 
 void _constructor_method_class_outmethod3(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int *one, double *two)
 {
+  fprintf(stderr, "outmethod3\n");
   *one = 11;
-  *two = 12.2;
+  *two = 5.1;
 }
 
 
