@@ -717,6 +717,9 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   struct wl_array states;
+   uint32_t *s;
+
    if (!win) return;
 
    if (iconified)
@@ -735,9 +738,12 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
      {
         if (win->xdg_surface)
           {
-             /* TODO: Handle case of UnIconifying an xdg_surface
-              * 
-              * NB: This will be needed for Enlightenment IBox scenario */
+             win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
+             wl_array_init(&states);
+             s = wl_array_add(&states, sizeof(*s));
+             *s = XDG_SURFACE_STATE_ACTIVATED;
+             _ecore_xdg_handle_surface_configure(win, win->xdg_surface, win->saved.w, win->saved.h, &states, 0);
+             wl_array_release(&states);
           }
         else if (win->shell_surface)
           {
