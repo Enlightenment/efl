@@ -959,7 +959,6 @@ _elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
    eo_do(obj, elm_obj_widget_theme_apply());
 
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
-   evas_object_size_hint_align_set(priv->bx, 0.5, 0.5);
    evas_object_box_layout_set(priv->bx, _box_layout_cb, priv, NULL);
    evas_object_show(priv->bx);
 

@@ -2757,7 +2757,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    priv->align = 0.5;
 
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
-   evas_object_size_hint_align_set(priv->bx, priv->align, 0.5);
+   evas_object_box_align_set(priv->bx, priv->align, 0.5);
    evas_object_box_layout_set(priv->bx, _layout, obj, NULL);
    elm_widget_sub_object_add(obj, priv->bx);
    eo_do(obj, elm_interface_scrollable_content_set(priv->bx));
@@ -2775,7 +2775,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    evas_object_show(priv->more);
 
    priv->bx_more = evas_object_box_add(evas_object_evas_get(obj));
-   evas_object_size_hint_align_set(priv->bx_more, priv->align, 0.5);
+   evas_object_box_align_set(priv->bx_more, priv->align, 0.5);
    evas_object_box_layout_set(priv->bx_more, _layout, obj, NULL);
    elm_widget_sub_object_add(obj, priv->bx_more);
    elm_layout_content_set
@@ -2783,7 +2783,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    evas_object_show(priv->bx_more);
 
    priv->bx_more2 = evas_object_box_add(evas_object_evas_get(obj));
-   evas_object_size_hint_align_set(priv->bx_more2, priv->align, 0.5);
+   evas_object_box_align_set(priv->bx_more2, priv->align, 0.5);
    evas_object_box_layout_set(priv->bx_more2, _layout, obj, NULL);
    elm_widget_sub_object_add(obj, priv->bx_more2);
    elm_layout_content_set
@@ -3453,12 +3453,12 @@ _elm_toolbar_align_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, double align)
    if (sd->vertical)
      {
         if (sd->align != align)
-          evas_object_size_hint_align_set(sd->bx, 0.5, align);
+          evas_object_box_align_set(sd->bx, 0.5, align);
      }
    else
      {
         if (sd->align != align)
-          evas_object_size_hint_align_set(sd->bx, align, 0.5);
+          evas_object_box_align_set(sd->bx, align, 0.5);
      }
    sd->align = align;
 }
@@ -3707,9 +3707,9 @@ _elm_toolbar_horizontal_set(Eo *obj, Elm_Toolbar_Data *sd, Eina_Bool horizontal)
    if (!horizontal == sd->vertical) return;
    sd->vertical = !horizontal;
    if (sd->vertical)
-     evas_object_size_hint_align_set(sd->bx, 0.5, sd->align);
+     evas_object_box_align_set(sd->bx, 0.5, sd->align);
    else
-     evas_object_size_hint_align_set(sd->bx, sd->align, 0.5);
+     evas_object_box_align_set(sd->bx, sd->align, 0.5);
 
    _sizing_eval(obj);
 }
