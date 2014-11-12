@@ -198,7 +198,42 @@ int main(int argc, char** argv)
        os << "  prototype->Set( ::v8::String::NewFromUtf8(isolate, \""
           << eolian_function_name_get(function) << "\")\n"
           << "    , v8::FunctionTemplate::New(isolate, &efl::eo::js::call_function\n"
-          << "    , efl::eo::js::call_function_data(isolate, & ::"
+          << "    , efl::eo::js::call_function_data< std::tuple<\n";
+       efl::eina::iterator< ::Eolian_Function_Parameter> parameter
+         ( ::eolian_function_parameters_get(function) )
+         , last;
+       while(parameter != last)
+         {
+           switch(eolian_parameter_direction_get(&*parameter))
+             {
+             case EOLIAN_IN_PARAM:
+               os << "       ::efl::eo::js::input";
+               break;
+             case EOLIAN_OUT_PARAM:
+               os << "       ::efl::eo::js::output";
+               break;
+             case EOLIAN_INOUT_PARAM:
+               os << "      ::efl::eo::js::input_output";
+               break;
+             }
+           if(++parameter != last)
+             os << ",\n";
+         }
+       os << ">, std::tuple<\n";
+       parameter = efl::eina::iterator< ::Eolian_Function_Parameter>
+         ( ::eolian_function_parameters_get(function) );
+       while(parameter != last)
+         {
+           Eolian_Type const* type = eolian_parameter_type_get(&*parameter);
+           if(eolian_type_is_own(type))
+             os << "       ::std::true_type";
+           else
+             os << "       ::std::false_type";
+           if(++parameter != last)
+             os << ",\n";
+         }
+       os <<
+         "> >(isolate, & ::"
           << eolian_function_full_c_name_get(function) << ")));\n";
      }
 

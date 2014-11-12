@@ -47,7 +47,7 @@ struct method_caller
   
   void operator()(v8::FunctionCallbackInfo<v8::Value> const& args)
   {
-    std::size_t const parameters
+    int const parameters
       = std::tuple_size<typename eina::_mpl::function_params<F>::type>::value;
     if(parameters <= args.Length())
       {
@@ -71,7 +71,7 @@ struct method_caller
   F function;
 };
 
-template <typename F>
+template <typename D, typename O, typename F>
 v8::Handle<v8::Value> call_function_data(v8::Isolate* isolate, F f)
 {
   return v8::External::New

@@ -30,7 +30,7 @@ inline void constructor(v8::FunctionCallbackInfo<v8::Value> const& args)
     {
       std::size_t argc = args.Length();
       std::vector<v8::Local<v8::Value> > argv (argc ? argc : 1 );
-      for(std::size_t i = 0; i != args.Length(); ++i)
+      for(int i = 0; i != args.Length(); ++i)
         argv[i] = args[i];
       args.Callee()->NewInstance(argc, &argv[0]);
     }
@@ -44,7 +44,7 @@ struct constructor_caller
     template <typename T>
     void operator()(T function) const
     {
-      std::size_t const parameters
+      int const parameters
         = std::tuple_size<typename eina::_mpl::function_params<T>::type>::value;
       if(*current + parameters <= args->Length())
         {
@@ -77,13 +77,13 @@ struct constructor_caller
       function(get_value<T, I>((*args)[I + *current], args->GetIsolate())...);
     }
 
-    std::size_t* current;
+    int* current;
     v8::FunctionCallbackInfo<v8::Value> const* args;
   };
 
   void operator()(v8::FunctionCallbackInfo<v8::Value> const& args)
   {
-    std::size_t current_index = 0;
+    int current_index = 0;
     try
       {
         Eo* eo = eo_add

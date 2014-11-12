@@ -59,6 +59,8 @@ static const char script[] =
   "  print(\"Correctly exception thrown\");\n"
   "}\n"
   "z = Constructor_Method_Class(5, 10.0);\n"
+  // Out parameters
+  "r = x.outmethod1(5);"
   ;
 
 const char* ToCString(const v8::String::Utf8Value& value) {

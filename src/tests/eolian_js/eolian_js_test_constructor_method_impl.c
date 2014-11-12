@@ -19,12 +19,12 @@ typedef struct _Constructor_Method_Class_Data Constructor_Method_Class_Data;
 
 #define MY_CLASS CONSTRUCTOR_METHOD_CLASS_CLASS
 
-static void _constructor_method_class_eo_base_constructor(Eo *obj, Constructor_Method_Class_Data *pd)
+static void _constructor_method_class_eo_base_constructor(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd)
 {
   pd->one = pd->two = 0;
 }
 
-static void _constructor_method_class_constructor1(Eo *obj, Constructor_Method_Class_Data *pd, int one)
+static void _constructor_method_class_constructor1(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd, int one)
 {
   fprintf(stderr, "one == %d\n", one);
   fflush(stderr);
@@ -32,7 +32,7 @@ static void _constructor_method_class_constructor1(Eo *obj, Constructor_Method_C
   pd->one = 1;
 }
 
-static void _constructor_method_class_constructor2(Eo *obj, Constructor_Method_Class_Data *pd, double two)
+static void _constructor_method_class_constructor2(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd, double two)
 {
   fprintf(stderr, "two == %f\n", two);
   fflush(stderr);
@@ -48,14 +48,14 @@ static Eo * _constructor_method_class_eo_base_finalize(Eo *obj, Constructor_Meth
   return obj;
 }
 
-void _constructor_method_class_method1(Eo *obj, Constructor_Method_Class_Data *pd, int one)
+void _constructor_method_class_method1(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int one)
 {
   fprintf(stderr, "method1 one == %d\n", one);
   fflush(stderr);
   ck_assert(one == 2);
 }
 
-int _constructor_method_class_method2(Eo *obj, Constructor_Method_Class_Data *pd, int one)
+int _constructor_method_class_method2(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int one)
 {
   fprintf(stderr, "method2 one == %d\n", one);
   fflush(stderr);
@@ -63,12 +63,29 @@ int _constructor_method_class_method2(Eo *obj, Constructor_Method_Class_Data *pd
   return 5;
 }
 
-void _constructor_method_class_method3(Eo *obj, Constructor_Method_Class_Data *pd, int one, double two)
+void _constructor_method_class_method3(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int one, double two)
 {
   fprintf(stderr, "method3 one == %d two == %f\n", one, two);
   fflush(stderr);
   ck_assert(one == 3);
   ck_assert(two == 11.1);
 }
+
+void _constructor_method_class_outmethod1(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int *one)
+{
+  *one = 5;
+}
+
+int _constructor_method_class_outmethod2(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int *one)
+{
+  return *one = 10;
+}
+
+void _constructor_method_class_outmethod3(Eo* obj EINA_UNUSED, Constructor_Method_Class_Data *pd EINA_UNUSED, int *one, double *two)
+{
+  *one = 11;
+  *two = 12.2;
+}
+
 
 #include <constructor_method_class.eo.c>

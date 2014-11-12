@@ -19,6 +19,16 @@ class Constructor_Method_Class (Eo.Base)
       method3 {
          params { @in int one; @in double two; }
       }
+      outmethod1 {
+         params { @out int one; }
+      }
+      outmethod2 {
+         params { @out int one; }
+         return: int;
+      }
+      outmethod3 {
+         params { @out int one; @out double two; }
+      }
    }
    implements {
       Eo.Base.constructor;
