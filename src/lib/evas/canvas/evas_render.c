@@ -1107,7 +1107,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                    void *surface, int off_x, int off_y, int mapped, int ecx,
                    int ecy, int ecw, int ech,
                    Evas_Proxy_Render_Data *proxy_render_data, int level,
-                   Eina_Bool do_async)
+                   Eina_Bool use_mapped_ctx, Eina_Bool do_async)
 {
    void *ctx;
    Evas_Object_Protected_Data *obj2;
@@ -1278,6 +1278,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
                                                            level + 1,
+                                                           EINA_FALSE,
                                                            do_async);
                           /* We aren't sure this object will be rendered by
                              normal(not proxy) drawing after, we reset this
@@ -1394,7 +1395,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              RDI(level);
              RD("        draw child of mapped obj\n");
-             ctx = e->engine.func->context_new(e->engine.data.output);
+             if (use_mapped_ctx)
+               ctx = context;
+             else
+               ctx = e->engine.func->context_new(e->engine.data.output);
              if (obj->is_smart)
                {
                   EINA_INLIST_FOREACH
@@ -1406,6 +1410,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
                                                            level + 1,
+                                                           EINA_FALSE,
                                                            do_async);
                           /* We aren't sure this object will be rendered by
                              normal(not proxy) drawing after, we reset this
@@ -1432,7 +1437,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 				    e->engine.data.output, ctx,
                                     surface, off_x, off_y, EINA_FALSE);
                }
-             e->engine.func->context_free(e->engine.data.output, ctx);
+             if (!use_mapped_ctx)
+               e->engine.func->context_free(e->engine.data.output, ctx);
           }
         else
           {
@@ -1545,7 +1551,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
                            1, 0, 0, e->output.w, e->output.h,
-                           &proxy_render_data, 1, do_async);
+                           &proxy_render_data, 1, EINA_TRUE, do_async);
 
         e->engine.func->context_free(e->engine.data.output, ctx);
         proxy_write->surface = e->engine.func->image_dirty_region
@@ -2022,7 +2028,9 @@ evas_render_updates_internal(Evas *eo_e,
                                                              surface, off_x + fx,
                                                              off_y + fy, 0,
                                                              cx, cy, cw, ch,
-                                                             NULL, 1, do_async);
+                                                             NULL, 1,
+                                                             EINA_FALSE,
+                                                             do_async);
                             e->engine.func->context_cutout_clear(e->engine.data.output,
                                                                  e->engine.data.context);
                          }
