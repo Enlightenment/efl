@@ -244,7 +244,9 @@ unmarshall_address(const Eldbus_Message *reply, Elocation_Address *addr)
          }
     }
 
-   eldbus_message_iter_arguments_get(sub, "idd", &level, &horizontal, &vertical);
+   if (!eldbus_message_iter_arguments_get(sub, "idd", &level, &horizontal, &vertical))
+     return EINA_FALSE;
+
    addr->accur->level = level;
    addr->accur->horizontal = horizontal;
    addr->accur->vertical = vertical;
@@ -301,11 +303,13 @@ poi_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *pend
    /* TODO re-check that the parameter ordering is what we expect */
    while (eldbus_message_iter_get_and_next(array, 'r', &struct_landmark))
      {
-        eldbus_message_iter_arguments_get(struct_landmark, "iiddddddsssssssssss", &id, &rank,
+        if (!eldbus_message_iter_arguments_get(struct_landmark, "iiddddddsssssssssss", &id, &rank,
                                          &lat, &lon, &bound_left, &bound_top, &bound_right,
                                          &bound_bottom, &name, &icon, &house, &road,
                                          &village, &suburb, &postcode, &city, &county,
-                                         &country, &country_code);
+                                         &country, &country_code))
+          return;
+
         DBG("Landmark received: %i, %i, %f, %f, %f, %f, %f, %f, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,",
                                          id, rank, lat, lon, bound_left, bound_top, bound_right,
                                          bound_bottom, name, icon, house, road, village,
@@ -357,7 +361,9 @@ geocode_cb(void *data EINA_UNUSED, const Eldbus_Message *reply, Eldbus_Pending *
    else
       pos_geocode->altitude = 0.0;
 
-   eldbus_message_iter_arguments_get(sub, "idd", &level, &horizontal, &vertical);
+   if (!eldbus_message_iter_arguments_get(sub, "idd", &level, &horizontal, &vertical))
+     return;
+
    pos_geocode->accur->level = level;
    pos_geocode->accur->horizontal = horizontal;
    pos_geocode->accur->vertical = vertical;
@@ -555,7 +561,9 @@ unmarshall_satellite(const Eldbus_Message *reply)
    /* TODO re-check that the parameter ordering is what we expect */
    while (eldbus_message_iter_get_and_next(sub_info, 'r', &struct_info))
      {
-        eldbus_message_iter_arguments_get(struct_info, "iiii", &prn, &elevation, &azimuth, &snr);
+        if (!eldbus_message_iter_arguments_get(struct_info, "iiii", &prn, &elevation, &azimuth, &snr))
+          return EINA_FALSE;
+
         DBG("Satellite info %i, %i, %i, %i", prn, elevation, azimuth, snr);
      }
 
