@@ -1879,11 +1879,11 @@ data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
    bytes = eet_write(ef, "edje/authors", m, eina_file_size_get(f), compress_mode);
    if ((bytes <= 0) || eina_file_map_faulted(f, m))
      {
-        ERR("Unable to write license part \"%s\".", authors);
+        ERR("Unable to write authors part \"%s\".", authors);
      }
    else
      {
-        INF("Wrote %9i bytes (%4iKb) for \"%s\" license entry compress: [real: %2.1f%%]",
+        INF("Wrote %9i bytes (%4iKb) for \"%s\" authors entry compress: [real: %2.1f%%]",
             bytes, (bytes + 512) / 1024, license,
             100 - (100 * (double)bytes) / ((double)(eina_file_size_get(f))));
      }
