@@ -417,6 +417,60 @@ eng_context_clip_set(void *data EINA_UNUSED, void *context, int x, int y, int w,
 }
 
 static void
+eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
+{
+   RGBA_Draw_Context *ctx = context;
+
+   if (ctx->clip.mask)
+     {
+        Image_Entry *ie = ctx->clip.mask;
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_close(ie);
+        else
+#endif
+          evas_cache_image_drop(ie);
+        // Is the above code safe? Hmmm...
+        //evas_unref_queue_image_put(EVAS???, &ctx->clip.ie->cache_entry);
+        ctx->clip.mask = NULL;
+     }
+}
+
+static void
+eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface, int x, int y)
+{
+   RGBA_Draw_Context *ctx = context;
+
+   if (ctx->clip.mask && ctx->clip.mask != surface)
+     eng_context_clip_image_unset(data, context);
+
+   ctx->clip.mask = surface;
+   ctx->clip.mask_x = x;
+   ctx->clip.mask_y = y;
+
+   if (surface)
+     {
+        Image_Entry *ie = surface;
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_ref(ie);
+        else
+#endif
+          evas_cache_image_ref(ie);
+     }
+}
+
+static void
+eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int *x, int *y)
+{
+   RGBA_Draw_Context *ctx = context;
+
+   if (ie) *ie = ctx->clip.mask;
+   if (x) *x = ctx->clip.mask_x;
+   if (y) *y = ctx->clip.mask_y;
+}
+
+static void
 eng_context_clip_clip(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_clip_clip(context, x, y, w, h);
@@ -1296,14 +1350,23 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
 	clip_h = dst->cache_entry.h;
      }
 
+   /* Set image mask, if any */
+   cr->mask = dc->clip.mask;
+   cr->mask_x = dc->clip.mask_x;
+   cr->mask_y = dc->clip.mask_y;
+   if (cr->mask)
+     {
+        Image_Entry *im = cr->mask;
+        RECTS_CLIP_TO_RECT(clip_x, clip_y, clip_w, clip_h,
+                           cr->mask_x, cr->mask_y,
+                           im->w, im->h);
+     }
+
    EINA_RECTANGLE_SET(&cr->clip, clip_x, clip_y, clip_w, clip_h);
 
    cr->mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
    cr->render_op = dc->render_op;
    cr->smooth = smooth;
-   cr->mask = dc->clip.mask;
-   cr->mask_x = dc->clip.mask_x;
-   cr->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_image_draw, cr);
 
@@ -3010,6 +3073,9 @@ static Evas_Func func =
      eng_canvas_alpha_get,
      eng_context_free,
      eng_context_clip_set,
+     eng_context_clip_image_set,
+     eng_context_clip_image_unset,
+     eng_context_clip_image_get,
      eng_context_clip_clip,
      eng_context_clip_unset,
      eng_context_clip_get,

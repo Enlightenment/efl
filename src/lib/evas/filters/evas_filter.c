@@ -1537,6 +1537,9 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
        ctx->target.b == 255 && ctx->target.a == 255)
      ctx->target.color_use = EINA_FALSE;
 
+   ENFN->context_clip_image_get
+      (ENDT, draw_context, &ctx->target.mask, &ctx->target.mask_x, &ctx->target.mask_y);
+
    if (ctx->gl_engine)
      {
         // Since GL has sync rendering, draw_context is safe to keep around
@@ -1620,6 +1623,12 @@ _filter_target_render(Evas_Filter_Context *ctx)
      {
         ENFN->context_multiplier_unset(ENDT, drawctx);
      }
+
+   if (ctx->target.mask)
+     ENFN->context_clip_image_set(ENDT, drawctx,
+                                  ctx->target.mask, ctx->target.mask_x, ctx->target.mask_y);
+   else
+     ENFN->context_clip_image_unset(ENDT, drawctx);
 
    ENFN->image_draw(ENDT, drawctx, surface, image,
                     0, 0, src->w, src->h,

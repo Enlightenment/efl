@@ -101,6 +101,8 @@ struct _Evas_Filter_Context
       int x, y;
       int cx, cy, cw, ch; // clip
       int r, g, b, a; // clip color
+      void *mask; // mask
+      int mask_x, mask_y; // mask offset
       Eina_Bool clip_use : 1;
       Eina_Bool color_use : 1;
    } target;
