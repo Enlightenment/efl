@@ -71,7 +71,9 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    elm_code_file_line_append(code->file, "unchanged");
 
    elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_REMOVED);
+   elm_code_file_line_token_add(code->file, 4, 1, 7, ELM_CODE_TOKEN_TYPE_REMOVED);
    elm_code_file_line_status_set(code->file, 5, ELM_CODE_STATUS_TYPE_CHANGED);
+   elm_code_file_line_token_add(code->file, 5, 1, 5, ELM_CODE_TOKEN_TYPE_REMOVED);
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -90,7 +92,9 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    elm_code_file_line_append(code->file, "unchanged");
 
    elm_code_file_line_status_set(code->file, 2, ELM_CODE_STATUS_TYPE_ADDED);
+   elm_code_file_line_token_add(code->file, 2, 1, 5, ELM_CODE_TOKEN_TYPE_ADDED);
    elm_code_file_line_status_set(code->file, 5, ELM_CODE_STATUS_TYPE_CHANGED);
+   elm_code_file_line_token_add(code->file, 5, 7, 7, ELM_CODE_TOKEN_TYPE_ADDED);
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
