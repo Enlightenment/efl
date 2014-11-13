@@ -122,7 +122,11 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                }
              else
                {
-                  inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
+                  Evas_Object_Protected_Data *clip = obj->cur->clipper;
+                  if (clip && clip->mask->is_mask && clip->precise_is_inside)
+                    inside = evas_object_is_inside(clip->object, clip, x, y);
+                  else
+                    inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
 
                   if (inside)
                     {
