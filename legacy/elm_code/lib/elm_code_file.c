@@ -156,3 +156,23 @@ EAPI void elm_code_file_line_status_set(Elm_Code_File *file, unsigned int number
    if (file->parent)
      elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
 }
+
+EAPI void elm_code_file_line_token_add(Elm_Code_File *file, unsigned int number, int start, int end,
+                                       Elm_Code_Token_Type type)
+{
+   Elm_Code_Line *line;
+   Elm_Code_Token *tok;
+
+   line = elm_code_file_line_get(file, number);
+   tok = calloc(1, sizeof(Elm_Code_Token));
+
+   tok->start = start;
+   tok->end = end;
+   tok->type = type;
+
+   line->tokens = eina_list_append(line->tokens, tok);
+
+   if (file->parent)
+     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
+}
+

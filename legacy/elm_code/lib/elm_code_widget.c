@@ -9,48 +9,93 @@
 
 #include "elm_code_private.h"
 
-EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code)
+static Eina_Bool _elm_code_widget_resize(Evas_Object *o)
 {
-   Elm_Code_Line *line;
-   Evas_Textgrid_Cell *cells;
-   const char *content;
-   char *chr;
-   unsigned int length;
    int w, h, cw, ch;
-   unsigned int x, y;
 
    evas_object_geometry_get(o, NULL, NULL, &w, &h);
    evas_object_textgrid_cell_size_get(o, &cw, &ch);
    evas_object_textgrid_size_set(o, ceil(((double) w) / cw),
          ceil(((double) h) / ch));
+
+   return h > 0 && w > 0;
+}
+
+static void _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start, int end, Elm_Code_Token_Type type)
+{
+   int x;
+
+   for (x = start - 1; x < end && x < count; x++)
+     {
+        cells[x].fg = type;
+     }
+}
+
+static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells, Elm_Code_Line *line)
+{
+   Eina_List *item;
+   Elm_Code_Token *token;
+
+   char *chr;
+   unsigned int length, x;
+   int w, start;
+
+   if (!_elm_code_widget_resize(o))
+     return;
+
+   length = strlen(line->content);
+   evas_object_textgrid_size_get(o, &w, NULL);
+
+   chr = (char *)line->content;
+   for (x = 0; x < (unsigned int) w && x < length; x++)
+     {
+        cells[x].codepoint = *chr;
+        cells[x].bg = line->status;
+
+        chr++;
+     }
+   for (; x < (unsigned int) w; x++)
+     {
+        cells[x].codepoint = 0;
+        cells[x].bg = line->status;
+     }
+
+   start = 1;
+
+   EINA_LIST_FOREACH(line->tokens, item, token)
+     {
+
+        _elm_code_widget_fill_line_token(cells, w, start, token->start, ELM_CODE_TOKEN_TYPE_DEFAULT);
+
+        // TODO handle a token starting before the previous finishes
+        _elm_code_widget_fill_line_token(cells, w, token->start, token->end, token->type);
+
+        start = token->end + 1;
+     }
+
+   _elm_code_widget_fill_line_token(cells, w, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
+
+   evas_object_textgrid_update_add(o, 0, line->number - 1, w, 1);
+}
+
+EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code)
+{
+   Elm_Code_Line *line;
+   Evas_Textgrid_Cell *cells;
+   int w, h;
+   unsigned int y;
+
+   if (!_elm_code_widget_resize(o))
+     return;
    evas_object_textgrid_size_get(o, &w, &h);
 
    for (y = 1; y <= (unsigned int) h && y <= elm_code_file_lines_get(code->file); y++)
      {
         line = elm_code_file_line_get(code->file, y);
-        content = elm_code_file_line_content_get(code->file, y);
-        chr = (char *)content;
 
         cells = evas_object_textgrid_cellrow_get(o, y - 1);
-        length = strlen(content);
-
-        for (x = 0; x < (unsigned int) w && x < length; x++)
-          {
-             cells[x].codepoint = *chr;
-             cells[x].bg = line->status;
-             cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-
-             chr++;
-          }
-        for (; x < (unsigned int) w; x++)
-          {
-             cells[x].codepoint = 0;
-             cells[x].bg = line->status;
-             cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-          }
+        _elm_code_widget_fill_line(o, cells, line);
      }
-
-   evas_object_textgrid_update_add(o, 0, 0, w, h);
 }
 
 static Eina_Bool
@@ -61,34 +106,13 @@ _elm_code_widget_line_cb(void *data EINA_UNUSED, Eo *obj,
    Evas_Object *o;
 
    Evas_Textgrid_Cell *cells;
-   char *chr;
-   unsigned int length, x;
-   int w;
 
    line = (Elm_Code_Line *)event_info;
    o = (Evas_Object *)obj;
 
    cells = evas_object_textgrid_cellrow_get(o, line->number - 1);
-   length = strlen(line->content);
-   evas_object_textgrid_size_get(o, &w, NULL);
+   _elm_code_widget_fill_line(o, cells, line);
 
-   chr = (char *)line->content;
-   for (x = 0; x < (unsigned int) w && x < length; x++)
-     {
-        cells[x].codepoint = *chr;
-        cells[x].bg = line->status;
-        cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-
-        chr++;
-     }
-   for (; x < (unsigned int) w; x++)
-     {
-        cells[x].codepoint = 0;
-        cells[x].bg = line->status;
-        cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-     }
-
-   evas_object_textgrid_update_add(o, 0, line->number - 1, w, 1);
    return EINA_TRUE;
 }
 
@@ -114,6 +138,7 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    Elm_Code *code;
 
    code = (Elm_Code *)data;
+
    elm_code_widget_fill(obj, code);
 }
 
@@ -141,6 +166,8 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
    // setup token colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_DEFAULT,
                                     205, 205, 205, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_COMMENT,
+                                    54, 205, 255, 255);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, code);
 

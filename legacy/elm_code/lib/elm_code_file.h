@@ -14,12 +14,22 @@ extern "C" {
  * @brief These routines are used for interacting with files using Elm Code.
  */
 
+typedef struct _Elm_Code_Token
+{
+   int start, end;
+
+   Elm_Code_Token_Type type;
+
+} Elm_Code_Token;
+
 typedef struct _Elm_Code_Line
 {
    char *content;
    unsigned int number;
 
    Elm_Code_Status_Type status;
+   Eina_List *tokens;
+
 
 } Elm_Code_Line;
 
@@ -75,6 +85,9 @@ EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int lin
 EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int line);
 
 EAPI void elm_code_file_line_status_set(Elm_Code_File *file, unsigned int line, Elm_Code_Status_Type status);
+
+EAPI void elm_code_file_line_token_add(Elm_Code_File *file, unsigned int number, int start, int end,
+                                       Elm_Code_Token_Type type);
 
 /**
  * @}

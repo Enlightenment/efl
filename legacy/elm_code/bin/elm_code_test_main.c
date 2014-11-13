@@ -32,6 +32,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    code = elm_code_create(elm_code_file_new());
    widget = elm_code_widget_add(parent, code);
    elm_code_file_line_append(code->file, "Hello World, Elm Code!");
+   elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
    elm_code_file_line_append(code->file, "");
    elm_code_file_line_append(code->file, "This is a demo of elm_code's capabilities.");
 
