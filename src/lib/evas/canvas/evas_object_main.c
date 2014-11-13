@@ -28,7 +28,7 @@ static const Evas_Object_Map_Data default_map = {
 };
 static const Evas_Object_Protected_State default_state = {
   NULL, { 0, 0, 0, 0 },
-  { { 0, 0, 0, 0,  0, 0, 0, 0, EINA_FALSE, EINA_FALSE } },
+  { { 0, 0, 0, 0,  0, 0, 0, 0, NULL, EINA_FALSE, EINA_FALSE } },
   { 255, 255, 255, 255 },
   1.0, 0, EVAS_RENDER_BLEND, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
@@ -36,13 +36,16 @@ static const Evas_Object_Filter_Data default_filter = {
   NULL, NULL, NULL, NULL, EINA_FALSE, EINA_FALSE
 };
 const void * const evas_object_filter_cow_default = &default_filter;
+static const Evas_Object_Mask_Data default_mask = {
+  NULL, 0, 0, EINA_FALSE
+};
 
 Eina_Cow *evas_object_proxy_cow = NULL;
 Eina_Cow *evas_object_map_cow = NULL;
 Eina_Cow *evas_object_state_cow = NULL;
-
 Eina_Cow *evas_object_3d_cow = NULL;
 Eina_Cow *evas_object_filter_cow = NULL;
+Eina_Cow *evas_object_mask_cow = NULL;
 
 static Eina_Bool
 _init_cow(void)
@@ -52,24 +55,26 @@ _init_cow(void)
    evas_object_proxy_cow = eina_cow_add("Evas Object Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy, EINA_TRUE);
    evas_object_map_cow = eina_cow_add("Evas Object Map", sizeof (Evas_Object_Map_Data), 8, &default_map, EINA_TRUE);
    evas_object_state_cow = eina_cow_add("Evas Object State", sizeof (Evas_Object_Protected_State), 64, &default_state, EINA_FALSE);
-
    evas_object_3d_cow = eina_cow_add("Evas Object 3D", sizeof (Evas_Object_3D_Data), 8, &default_proxy, EINA_TRUE);
    evas_object_filter_cow = eina_cow_add("Evas Filter Data", sizeof (Evas_Object_Filter_Data), 8, &default_filter, EINA_TRUE);
+   evas_object_mask_cow = eina_cow_add("Evas Mask Data", sizeof (Evas_Object_Mask_Data), 8, &default_mask, EINA_TRUE);
 
-   if (!(evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow && evas_object_filter_cow))
+   if (!(evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow &&
+         evas_object_3d_cow && evas_object_filter_cow && evas_object_mask_cow))
      {
         eina_cow_del(evas_object_proxy_cow);
         eina_cow_del(evas_object_map_cow);
         eina_cow_del(evas_object_state_cow);
+        eina_cow_del(evas_object_3d_cow);
+        eina_cow_del(evas_object_filter_cow);
+        eina_cow_del(evas_object_mask_cow);
+
         evas_object_proxy_cow = NULL;
         evas_object_map_cow = NULL;
         evas_object_state_cow = NULL;
-
-        eina_cow_del(evas_object_3d_cow);
         evas_object_3d_cow = NULL;
-
-        eina_cow_del(evas_object_filter_cow);
         evas_object_filter_cow = NULL;
+        evas_object_mask_cow = NULL;
 
         return EINA_FALSE;
      }
@@ -97,6 +102,7 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->cur = eina_cow_alloc(evas_object_state_cow);
    obj->prev = eina_cow_alloc(evas_object_state_cow);
    obj->data_3d = eina_cow_alloc(evas_object_3d_cow);
+   obj->mask = eina_cow_alloc(evas_object_mask_cow);
 }
 
 void
@@ -206,6 +212,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->cur);
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->prev);
    eina_cow_free(evas_object_3d_cow, (const Eina_Cow_Data**) &obj->data_3d);
+   eina_cow_free(evas_object_mask_cow, (const Eina_Cow_Data**) &obj->mask);
    eo_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
 
@@ -509,6 +516,8 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
      }
    else
      {
+        /* This is a clipper object: add regions that changed here,
+         * See above: EINA_LIST_FOREACH(clipper->clip.changes) */
         evas_object_clip_changes_clean(eo_obj);
         EINA_ARRAY_ITER_NEXT(rects, i, r, it)
            obj->clip.changes = eina_list_append(obj->clip.changes, r);

@@ -29,6 +29,8 @@
 /* private magic number for image objects */
 static const char o_type[] = "image";
 
+const char *o_image_type = o_type;
+
 /* private struct for rectangle object internal data */
 typedef struct _Evas_Object_Image Evas_Image_Data;
 typedef struct _Evas_Object_Image_Load_Opts Evas_Object_Image_Load_Opts;

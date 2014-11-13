@@ -48,6 +48,7 @@ typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
 typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
 typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
+typedef struct _Evas_Object_Mask_Data       Evas_Object_Mask_Data;
 
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
@@ -890,6 +891,16 @@ struct _Evas_Object_3D_Data
    int            w, h;
 };
 
+// Mask clipper information
+struct _Evas_Object_Mask_Data
+{
+   void          *surface;
+   int            x, y, w, h;
+   Eina_Bool      is_mask : 1;
+   Eina_Bool      redraw : 1;
+   Eina_Bool      is_alpha : 1;
+};
+
 struct _Evas_Object_Protected_State
 {
    Evas_Object_Protected_Data *clipper;
@@ -899,6 +910,7 @@ struct _Evas_Object_Protected_State
       struct {
          Evas_Coord      x, y, w, h;
          unsigned char   r, g, b, a;
+         const Evas_Object_Protected_Data *mask, *prev_mask;
          Eina_Bool       visible : 1;
          Eina_Bool       dirty : 1;
       } clip;
@@ -957,6 +969,7 @@ struct _Evas_Object_Protected_Data
    const Evas_Object_Proxy_Data *proxy;
    const Evas_Object_Map_Data *map;
    const Evas_Object_3D_Data  *data_3d;
+   const Evas_Object_Mask_Data *mask;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -1714,6 +1727,7 @@ void evas_render_invalidate(Evas *e);
 void evas_render_object_recalc(Evas_Object *obj);
 void evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
                                  Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async);
+void evas_render_mask_subrender(Evas_Public_Data *e, Evas_Object_Protected_Data *mask, Evas_Object_Protected_Data *prev_mask);
 
 Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
@@ -1746,6 +1760,7 @@ extern Eina_Cow *evas_object_image_state_cow;
 extern Eina_Cow *evas_object_filter_cow;
 // This should be replaced by something like "eina_cow_default_get()" maybe
 extern const void * const evas_object_filter_cow_default;
+extern Eina_Cow *evas_object_mask_cow;
 
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \

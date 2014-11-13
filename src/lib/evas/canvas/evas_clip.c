@@ -188,8 +188,33 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
 #endif
 }
 
+static void
+_evas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
+{
+   if (!obj || !obj->mask->is_mask) return;
+   if (obj->clip.clipees) return;
+
+   /* this frees the clip surface. is this correct? */
+   EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mask)
+     mask->is_mask = EINA_FALSE;
+     mask->redraw = EINA_FALSE;
+     mask->is_alpha = EINA_FALSE;
+     if (mask->surface)
+       {
+          obj->layer->evas->engine.func->image_map_surface_free
+                (obj->layer->evas->engine.data.output, mask->surface);
+          mask->surface = NULL;
+       }
+     mask->x = 0;
+     mask->y = 0;
+     mask->w = 0;
+     mask->h = 0;
+   EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
+}
+
 /* public functions */
 extern const char *o_rect_type;
+extern const char *o_image_type;
 
 EOLIAN void
 _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
@@ -242,10 +267,10 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
      }
 
    if (evas_object_intercept_call_clip_set(eo_obj, obj, eo_clip)) return;
-   // illegal to set anything but a rect as a clip
-   if (clip->type != o_rect_type)
+   // illegal to set anything but a rect or an image as a clip
+   if (clip->type != o_rect_type && clip->type != o_image_type)
      {
-        ERR("For now a clip on other object than a rectangle is disabled");
+        ERR("For now a clip on other object than a rectangle or an image is disabled");
         return;
      }
    if (obj->is_smart)
@@ -280,6 +305,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                     }
                }
  */
+             _evas_object_clip_mask_unset(obj->cur->clipper);
           }
         evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
         evas_object_change(eo_obj, obj);
@@ -290,6 +316,15 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
           }
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
+
+   /* image object clipper */
+   if (clip->type == o_image_type)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_mask_cow, clip->mask, Evas_Object_Mask_Data, mask)
+          mask->is_mask = EINA_TRUE;
+        EINA_COW_WRITE_END(evas_object_mask_cow, clip->mask, mask);
+     }
+
    /* clip me */
    if ((!clip->clip.clipees) && (clip->cur->visible))
      {
@@ -326,13 +361,6 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
           evas_object_update_bounding_box(eo_clip, clip);
      }
 
-   /* If it's NOT a rectangle set the mask bits too */
-   /* FIXME: Optmz ths chck */
-   if (clip->type != o_rect_type)
-     {
-        ERR("Not supported clipping to type '%s', just rectangles.",
-            clip->type);
-     }
    evas_object_change(eo_clip, clip);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -399,6 +427,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                     }
                }
  */
+             _evas_object_clip_mask_unset(obj->cur->clipper);
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
      }
