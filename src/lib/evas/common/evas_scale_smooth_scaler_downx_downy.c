@@ -1,8 +1,10 @@
 {
    int Cx, Cy, i, j;
    DATA32 *dptr, *sptr, *pix, *pbuf;
+   DATA8 *mask;
    int a, r, g, b, rx, gx, bx, ax;
    int xap, yap, pos;
+   int y;
    //int dyy, dxx;
 
    DATA32  **yp;
@@ -24,6 +26,7 @@
 #if 1
    if (src->cache_entry.flags.alpha)
      {
+        y = 0;
 	while (dst_clip_h--)
 	  {
 	    Cy = *yapp >> 16;
@@ -131,7 +134,18 @@
 		xp++;  xapp++;
 	      }
 
-	    func(buf, NULL, mul_col, dptr, w);
+            if (!mask_ie)
+              func(buf, NULL, mul_col, dptr, w);
+            else
+              {
+                 mask = mask_ie->image.data8
+                    + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
+                    + (dst_clip_x - mask_x);
+
+                 if (mul_col != 0xffffffff) func2(buf, NULL, mul_col, buf, w);
+                 func(buf, mask, 0, dptr, w);
+              }
+            y++;
 
 	    pbuf = buf;
 	    dptr += dst_w;   dst_clip_w = w;
@@ -144,8 +158,9 @@
      {
 #ifdef DIRECT_SCALE
         if ((!src->cache_entry.flags.alpha) &&
-	    (!dst->cache_entry.flags.alpha) &&
-	    (mul_col == 0xffffffff))
+            (!dst->cache_entry.flags.alpha) &&
+            (mul_col == 0xffffffff) &&
+            (!mask_ie))
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -252,6 +267,7 @@
 	else
 #endif
 	  {
+             y = 0;
 	     while (dst_clip_h--)
 	       {
 		 Cy = *yapp >> 16;
@@ -347,7 +363,18 @@
 		     xp++;  xapp++;
 		   }
 
-		 func(buf, NULL, mul_col, dptr, w);
+                 if (!mask_ie)
+                   func(buf, NULL, mul_col, dptr, w);
+                 else
+                   {
+                      mask = mask_ie->image.data8
+                         + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
+                         + (dst_clip_x - mask_x);
+
+                      if (mul_col != 0xffffffff) func2(buf, NULL, mul_col, buf, w);
+                      func(buf, mask, 0, dptr, w);
+                   }
+                 y++;
 
 		 pbuf = buf;
 		 dptr += dst_w;   dst_clip_w = w;

@@ -110,6 +110,8 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
    RGBA_Gfx_Func func;
    int yy;
    DATA32 *ptr;
+   DATA8 *mask;
+   RGBA_Image *mask_ie = dc->clip.mask;
 
    if (!dst->image.data) return;
    RECTS_CLIP_TO_RECT(x, y, w, h, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
@@ -132,29 +134,54 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
 # endif     
 #endif
      {
-        func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
+        if (mask_ie)
+          func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
+        else
+          func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
         ptr = dst->image.data + (y * dst->cache_entry.w) + x;
         for (yy = 0; yy < h; yy++)
           {
-	    func(NULL, NULL, dc->col.col, ptr, w);
+             if (mask_ie)
+               {
+                  mask = mask_ie->image.data8
+                     + (y + yy - dc->clip.mask_y) * mask_ie->cache_entry.w
+                     + (x - dc->clip.mask_x);
+                  func(NULL, mask, dc->col.col, ptr, w);
+               }
+             else
+               func(NULL, NULL, dc->col.col, ptr, w);
 
-	    ptr += dst->cache_entry.w;
+             ptr += dst->cache_entry.w;
           }
      }
 }
 
 EAPI void
-evas_common_rectangle_rgba_draw(RGBA_Image *dst, DATA32 color, int render_op, int x, int y, int w, int h)
+evas_common_rectangle_rgba_draw(RGBA_Image *dst, DATA32 color, int render_op, int x, int y, int w, int h, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    RGBA_Gfx_Func func;
    DATA32 *ptr;
+   DATA8 *mask;
    int yy;
 
-   func = evas_common_gfx_func_composite_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
+   if (mask_ie)
+     func = evas_common_gfx_func_composite_mask_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
+   else
+     func = evas_common_gfx_func_composite_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
+
    ptr = dst->image.data + (y * dst->cache_entry.w) + x;
    for (yy = 0; yy < h; yy++)
      {
-        func(NULL, NULL, color, ptr, w);
+        if (mask_ie)
+          {
+             mask = mask_ie->image.data8
+                + (y + yy - mask_y) * mask_ie->cache_entry.w
+                + (x - mask_x);
+             func(NULL, mask, color, ptr, w);
+          }
+        else
+          func(NULL, NULL, color, ptr, w);
+
         ptr += dst->cache_entry.w;
      }
 }

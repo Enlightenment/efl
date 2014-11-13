@@ -296,6 +296,8 @@ struct _Evas_Thread_Command_Rect
    DATA32 color;
    int render_op;
    int x, y, w, h;
+   void *mask;
+   int mask_x, mask_y;
 };
 
 struct _Evas_Thread_Command_Line
@@ -327,6 +329,8 @@ struct _Evas_Thread_Command_Image
    DATA32 mul_col;
    int render_op;
    int smooth;
+   void *mask;
+   int mask_x, mask_y;
 };
 
 struct _Evas_Thread_Command_Font
@@ -341,9 +345,11 @@ struct _Evas_Thread_Command_Font
    void *gl_draw;
    void *font_ext_data;
    DATA32 col;
-   Eina_Bool clip_use : 1;
    Eina_Rectangle clip_rect, ext;
    int im_w, im_h;
+   void *mask;
+   int mask_x, mask_y;
+   Eina_Bool clip_use : 1;
 };
 
 struct _Evas_Thread_Command_Map
@@ -525,7 +531,8 @@ _draw_thread_rectangle_draw(void *data)
 
     evas_common_rectangle_rgba_draw(rect->surface,
                                     rect->color, rect->render_op,
-                                    rect->x, rect->y, rect->w, rect->h);
+                                    rect->x, rect->y, rect->w, rect->h,
+                                    rect->mask, rect->mask_x, rect->mask_y);
 
     eina_mempool_free(_mp_command_rect, rect);
 }
@@ -548,6 +555,9 @@ _draw_rectangle_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    cr->y = y;
    cr->w = w;
    cr->h = h;
+   cr->mask = dc->clip.mask;
+   cr->mask_x = dc->clip.mask_x;
+   cr->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_rectangle_draw, cr);
 }
@@ -1239,14 +1249,16 @@ _draw_thread_image_draw(void *data)
         image->clip.x, image->clip.y, image->clip.w, image->clip.h,
         image->mul_col, image->render_op,
         image->src.x, image->src.y, image->src.w, image->src.h,
-        image->dst.x, image->dst.y, image->dst.w, image->dst.h);
+        image->dst.x, image->dst.y, image->dst.w, image->dst.h,
+        image->mask, image->mask_x, image->mask_y);
    else
      evas_common_scale_rgba_sample_draw
        (image->image, image->surface,
         image->clip.x, image->clip.y, image->clip.w, image->clip.h,
         image->mul_col, image->render_op,
         image->src.x, image->src.y, image->src.w, image->src.h,
-        image->dst.x, image->dst.y, image->dst.w, image->dst.h);
+        image->dst.x, image->dst.y, image->dst.w, image->dst.h,
+        image->mask, image->mask_x, image->mask_y);
 
    eina_mempool_free(_mp_command_image, image);
 }
@@ -1289,6 +1301,9 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
    cr->mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
    cr->render_op = dc->render_op;
    cr->smooth = smooth;
+   cr->mask = dc->clip.mask;
+   cr->mask_x = dc->clip.mask_x;
+   cr->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_image_draw, cr);
 
@@ -1429,13 +1444,15 @@ _map_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src
                                         clip_x, clip_y, clip_w, clip_h,
                                         mul_col, dc->render_op,
                                         src_x, src_y, src_w, src_h,
-                                        dst_x, dst_y, dst_w, dst_h);
+                                        dst_x, dst_y, dst_w, dst_h,
+                                        dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
    else
      evas_common_scale_rgba_sample_draw(src, dst,
                                         clip_x, clip_y, clip_w, clip_h,
                                         mul_col, dc->render_op,
                                         src_x, src_y, src_w, src_h,
-                                        dst_x, dst_y, dst_w, dst_h);
+                                        dst_x, dst_y, dst_w, dst_h,
+                                        dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
 }
 
 static Eina_Bool
@@ -2152,6 +2169,9 @@ _draw_thread_font_draw(void *data)
    dc.clip.y = font->clip_rect.y;
    dc.clip.w = font->clip_rect.w;
    dc.clip.h = font->clip_rect.h;
+   dc.clip.mask = font->mask;
+   dc.clip.mask_x = font->mask_x;
+   dc.clip.mask_y = font->mask_y;
 
    evas_common_font_rgba_draw
      (font->dst, &dc,
@@ -2186,6 +2206,9 @@ _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas
    EINA_RECTANGLE_SET(&cf->ext, ext_x, ext_y, ext_w, ext_h);
    cf->im_w = im_w;
    cf->im_h = im_h;
+   cf->mask = dc->clip.mask;
+   cf->mask_x = dc->clip.mask_x;
+   cf->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_font_draw, cf);
 
