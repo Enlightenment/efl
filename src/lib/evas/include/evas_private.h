@@ -1155,6 +1155,9 @@ struct _Evas_Func
    Eina_Bool (*canvas_alpha_get)           (void *data, void *context);
    void (*context_free)                    (void *data, void *context);
    void (*context_clip_set)                (void *data, void *context, int x, int y, int w, int h);
+   void (*context_clip_image_set)          (void *data, void *context, void *surface, int x, int y);
+   void (*context_clip_image_unset)        (void *data, void *context);
+   void (*context_clip_image_get)          (void *data, void *context, void **surface, int *x, int *y);
    void (*context_clip_clip)               (void *data, void *context, int x, int y, int w, int h);
    void (*context_clip_unset)              (void *data, void *context);
    int  (*context_clip_get)                (void *data, void *context, int *x, int *y, int *w, int *h);
