@@ -309,6 +309,8 @@ struct _Evas_Thread_Command_Line
    Eina_Bool anti_alias;
    int x1, y1;
    int x2, y2;
+   void *mask;
+   int mask_x, mask_y;
 };
 
 struct _Evas_Thread_Command_Polygon
@@ -649,7 +651,8 @@ _draw_thread_line_draw(void *data)
         evas_common_line_point_draw(line->surface,
                                     clip_x, clip_y, clip_w, clip_h,
                                     line->color, line->render_op,
-                                    line->x1, line->y1);
+                                    line->x1, line->y1,
+                                    line->mask, line->mask_x, line->mask_y);
         return;
      }
 
@@ -659,14 +662,16 @@ _draw_thread_line_draw(void *data)
         clip_x, clip_y, clip_w, clip_h,
         line->color, line->render_op,
         line->x1, line->y1,
-        line->x2, line->y2);
+        line->x2, line->y2,
+        line->mask, line->mask_x, line->mask_y);
    else
      evas_common_line_draw_line
        (line->surface,
         clip_x, clip_y, clip_w, clip_h,
         line->color, line->render_op,
         line->x1, line->y1,
-        line->x2, line->y2);
+        line->x2, line->y2,
+        line->mask, line->mask_x, line->mask_y);
 
    eina_mempool_free(_mp_command_line, line);
 }
@@ -732,6 +737,9 @@ _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    cl->y1 = y1;
    cl->x2 = x2;
    cl->y2 = y2;
+   cl->mask = dc->clip.mask;
+   cl->mask_x = dc->clip.mask_x;
+   cl->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_line_draw, cl);
 }
