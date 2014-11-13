@@ -7,6 +7,7 @@
 
 void elm_code_file_test_load(TCase *tc);
 void elm_code_file_test_memory(TCase *tc);
+void elm_code_test_widget(TCase *tc);
 void elm_code_test_basic(TCase *tc);
 
 #endif /* _EDLM_CODE_SUITE_H */

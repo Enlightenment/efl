@@ -15,6 +15,7 @@ static const struct {
 } tests[] = {
   { "file_load", elm_code_file_test_load },
   { "file_memory", elm_code_file_test_memory },
+  { "widget", elm_code_test_widget },
   { "basic", elm_code_test_basic },
 };
 

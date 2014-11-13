@@ -31,14 +31,34 @@ static void _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int coun
      }
 }
 
-static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells, Elm_Code_Line *line)
+EAPI void elm_code_widget_fill_line_tokens(Evas_Textgrid_Cell *cells, int count, Elm_Code_Line *line)
 {
    Eina_List *item;
    Elm_Code_Token *token;
+   int start, length;
 
+   start = 1;
+   length = strlen(line->content);
+
+   EINA_LIST_FOREACH(line->tokens, item, token)
+     {
+
+        _elm_code_widget_fill_line_token(cells, count, start, token->start, ELM_CODE_TOKEN_TYPE_DEFAULT);
+
+        // TODO handle a token starting before the previous finishes
+        _elm_code_widget_fill_line_token(cells, count, token->start, token->end, token->type);
+
+        start = token->end + 1;
+     }
+
+   _elm_code_widget_fill_line_token(cells, count, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
+}
+
+static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells, Elm_Code_Line *line)
+{
    char *chr;
    unsigned int length, x;
-   int w, start;
+   int w;
 
    if (!_elm_code_widget_resize(o))
      return;
@@ -60,20 +80,7 @@ static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells
         cells[x].bg = line->status;
      }
 
-   start = 1;
-
-   EINA_LIST_FOREACH(line->tokens, item, token)
-     {
-
-        _elm_code_widget_fill_line_token(cells, w, start, token->start, ELM_CODE_TOKEN_TYPE_DEFAULT);
-
-        // TODO handle a token starting before the previous finishes
-        _elm_code_widget_fill_line_token(cells, w, token->start, token->end, token->type);
-
-        start = token->end + 1;
-     }
-
-   _elm_code_widget_fill_line_token(cells, w, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
+   elm_code_widget_fill_line_tokens(cells, w, line);
 
    evas_object_textgrid_update_add(o, 0, line->number - 1, w, 1);
 }
