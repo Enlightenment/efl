@@ -1,6 +1,8 @@
 #ifndef EVAS_INLINE_H
 #define EVAS_INLINE_H
 
+#include "evas_private.h"
+
 static inline Eina_Bool
 _evas_render_has_map(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
@@ -65,9 +67,13 @@ static inline int
 evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (obj->is_smart) return 0;
-   /* If a mask: Assume alpha */
+   /* If clipped: Assume alpha */
    if (obj->cur->cache.clip.a == 255)
      {
+        /* If has mask image: Always assume non opaque */
+        if ((obj->cur->clipper && obj->cur->clipper->mask->is_mask) ||
+            (obj->cur->cache.clip.mask))
+          return 0;
         if (obj->func->is_opaque)
           return obj->func->is_opaque(eo_obj, obj, obj->private_data);
         return 1;
@@ -240,6 +246,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
    Evas_Object_Protected_Data *clipper = NULL;
    int cx, cy, cw, ch, cr, cg, cb, ca;
    int nx, ny, nw, nh, nr, ng, nb, na;
+   const Evas_Object_Protected_Data *mask = NULL, *prev_mask = NULL;
    Eina_Bool cvis, nvis;
    Evas_Object *eo_obj;
 
@@ -293,6 +300,29 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
              RECTS_CLIP_TO_RECT(cx, cy, cw, ch, nx, ny, nw, nh);
           }
 
+        if (clipper->mask->is_mask)
+          {
+             // Set complex masks the object being clipped (parent)
+             mask = clipper;
+
+             // Forward any mask from the parents
+             if (EINA_LIKELY(obj->smart.parent != NULL))
+               {
+                  Evas_Object_Protected_Data *parent =
+                        eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
+                  if (parent->cur->cache.clip.mask)
+                    {
+                       if (parent->cur->cache.clip.mask != mask)
+                         prev_mask = parent->cur->cache.clip.mask;
+                    }
+               }
+          }
+        else if (clipper->cur->cache.clip.mask)
+          {
+             // Pass complex masks to children
+             mask = clipper->cur->cache.clip.mask;
+          }
+
         nvis = clipper->cur->cache.clip.visible;
         nr = clipper->cur->cache.clip.r;
         ng = clipper->cur->cache.clip.g;
@@ -304,6 +334,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
         cb = (cb * (nb + 1)) >> 8;
         ca = (ca * (na + 1)) >> 8;
      }
+
    if ((ca == 0 && obj->cur->render_op == EVAS_RENDER_BLEND) ||
        (cw <= 0) || (ch <= 0)) cvis = EINA_FALSE;
 
@@ -316,7 +347,9 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
        obj->cur->cache.clip.g == cg &&
        obj->cur->cache.clip.b == cb &&
        obj->cur->cache.clip.a == ca &&
-       obj->cur->cache.clip.dirty == EINA_FALSE)
+       obj->cur->cache.clip.dirty == EINA_FALSE &&
+       obj->cur->cache.clip.mask == mask &&
+       obj->cur->cache.clip.prev_mask == prev_mask)
      return ;
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -331,6 +364,8 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
         state_write->cache.clip.b = cb;
         state_write->cache.clip.a = ca;
         state_write->cache.clip.dirty = EINA_FALSE;
+        state_write->cache.clip.mask = mask;
+        state_write->cache.clip.prev_mask = prev_mask;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 }
