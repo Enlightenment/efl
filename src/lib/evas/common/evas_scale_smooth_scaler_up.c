@@ -34,9 +34,9 @@
      {
 	buf = alloca(dst_clip_w * sizeof(DATA32));
 	if (mul_col != 0xffffffff)
-	   func = evas_common_gfx_func_composite_pixel_color_span_get(src, mul_col, dst, dst_clip_w, render_op);
+           func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
 	else
-	   func  = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, render_op);
+           func  = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
      }
    else
 	buf = pdst;

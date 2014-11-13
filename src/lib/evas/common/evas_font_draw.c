@@ -255,7 +255,7 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
    im_h = dst->cache_entry.h;
 
 //   evas_common_font_size_use(fn);
-   func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
+   func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, 1, dc->render_op);
 
    if (!dc->cutout.rects)
      {
@@ -366,7 +366,7 @@ evas_common_font_draw_prepare_cutout(Cutout_Rects **reuse, RGBA_Image *dst, RGBA
    im_w = dst->cache_entry.w;
    im_h = dst->cache_entry.h;
 
-   *func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
+   *func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, 1, dc->render_op);
 
    evas_common_draw_context_clip_clip(dc, 0, 0, im_w, im_h);
    if (dc->clip.w <= 0) return EINA_FALSE;

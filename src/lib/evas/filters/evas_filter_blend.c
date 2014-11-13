@@ -69,7 +69,7 @@ _image_draw_cpu_alpha2rgba(void *data EINA_UNUSED, void *context,
    EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
 
    func = evas_common_gfx_func_composite_mask_color_span_get
-     (dc->color, surface, 1, dc->render_op);
+     (dc->color, dst->cache_entry.flags.alpha, 1, dc->render_op);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
    sw = src->cache_entry.w;
@@ -208,7 +208,7 @@ _image_draw_cpu_rgba2rgba(void *data EINA_UNUSED, void *context,
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
 
-   func = evas_common_gfx_func_composite_pixel_span_get(image, surface, 1, dc->render_op);
+   func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, 1, dc->render_op);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
    sw = src->cache_entry.w;

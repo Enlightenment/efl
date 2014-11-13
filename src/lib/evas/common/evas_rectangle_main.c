@@ -132,7 +132,7 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
 # endif     
 #endif
      {
-        func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst, w, dc->render_op);
+        func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
         ptr = dst->image.data + (y * dst->cache_entry.w) + x;
         for (yy = 0; yy < h; yy++)
           {
@@ -150,7 +150,7 @@ evas_common_rectangle_rgba_draw(RGBA_Image *dst, DATA32 color, int render_op, in
    DATA32 *ptr;
    int yy;
 
-   func = evas_common_gfx_func_composite_color_span_get(color, dst, w, render_op);
+   func = evas_common_gfx_func_composite_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
    ptr = dst->image.data + (y * dst->cache_entry.w) + x;
    for (yy = 0; yy < h; yy++)
      {

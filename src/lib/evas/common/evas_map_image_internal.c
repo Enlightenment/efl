@@ -93,9 +93,9 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         pa = src->cache_entry.flags.alpha;
         if (havea) src->cache_entry.flags.alpha = 1;
         if (mul_col != 0xffffffff)
-          func = evas_common_gfx_func_composite_pixel_color_span_get(src, mul_col, dst, cw, render_op);
+          func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, cw, render_op);
         else
-          func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, render_op);
+          func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, cw, render_op);
         src->cache_entry.flags.alpha = pa;
      }
 
@@ -161,9 +161,9 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
         pa = src->cache_entry.flags.alpha;
         if (ms->havea) src->cache_entry.flags.alpha = 1;
         if (dc->mul.use)
-          func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, cw, dc->render_op);
+          func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, cw, dc->render_op);
         else
-          func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, dc->render_op);
+          func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, cw, dc->render_op);
         src->cache_entry.flags.alpha = pa;
      }
 

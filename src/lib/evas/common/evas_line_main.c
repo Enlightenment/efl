@@ -49,7 +49,7 @@ _evas_draw_point(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y)
 # endif     
 #endif
      {
-        pfunc = evas_common_gfx_func_composite_color_pt_get(dc->col.col, dst, dc->render_op);
+        pfunc = evas_common_gfx_func_composite_color_pt_get(dc->col.col, dst->cache_entry.flags.alpha, dc->render_op);
         if (pfunc)
           pfunc(0, 255, dc->col.col, dst->image.data + (dst->cache_entry.w * y) + x);
      }
@@ -70,7 +70,7 @@ evas_common_line_point_draw(RGBA_Image *dst, int clip_x, int clip_y, int clip_w,
    if ((!no_cuse) && (!IN_RECT(x, y, clip_x, clip_y, clip_w, clip_h)))
      return;
 
-   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst, render_op);
+   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst->cache_entry.flags.alpha, render_op);
    if (pfunc)
      pfunc(0, 255, color, dst->image.data + (dst->cache_entry.w * y) + x);
 }
@@ -147,7 +147,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 # endif
 #endif
                {
-                  sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
+                  sfunc = evas_common_gfx_func_composite_color_span_get(color, dst->cache_entry.flags.alpha, len, dc->render_op);
                   if (sfunc)
                     sfunc(NULL, NULL, color, p, len);
                }
@@ -155,7 +155,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
         return;
      }
 
-   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst, dc->render_op);
+   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst->cache_entry.flags.alpha, dc->render_op);
    if (!pfunc) return;
 
    if (dx == 0)
@@ -488,13 +488,13 @@ _draw_render_thread_simple_line(RGBA_Image *dst, int clip_x, int clip_y, int cli
 
              len = x1 - x0 + 1;
              p = dst->image.data + (dstw * y0) + x0;
-             sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, render_op);
+             sfunc = evas_common_gfx_func_composite_color_span_get(color, dst->cache_entry.flags.alpha, len, render_op);
              if (sfunc) sfunc(NULL, NULL, color, p, len);
           }
         return;
      }
 
-   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst, render_op);
+   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst->cache_entry.flags.alpha, render_op);
    if (!pfunc) return;
 
    if (dx == 0)
@@ -767,7 +767,7 @@ evas_common_line_draw_line(RGBA_Image *dst, int clip_x, int clip_y, int clip_w, 
 	return;
      }
 
-   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst, render_op);
+   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst->cache_entry.flags.alpha, render_op);
    if (!pfunc) return;
 
    clx = clip_x;
@@ -896,7 +896,7 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
      }
 
    color = dc->col.col;
-   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst, dc->render_op);
+   pfunc = evas_common_gfx_func_composite_color_pt_get(color, dst->cache_entry.flags.alpha, dc->render_op);
    if (!pfunc) return;
 
    clx = dc->clip.x;
@@ -1053,7 +1053,7 @@ evas_common_line_draw_line_aa(RGBA_Image *dst, int clip_x, int clip_y, int clip_
 	return;
      }
 
-   pfunc = evas_common_gfx_func_composite_mask_color_pt_get(color, dst, render_op);
+   pfunc = evas_common_gfx_func_composite_mask_color_pt_get(color, dst->cache_entry.flags.alpha, render_op);
    if (!pfunc) return;
 
    clx = clip_x;
@@ -1202,7 +1202,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
      }
 
    color = dc->col.col;
-   pfunc = evas_common_gfx_func_composite_mask_color_pt_get(color, dst, dc->render_op);
+   pfunc = evas_common_gfx_func_composite_mask_color_pt_get(color, dst->cache_entry.flags.alpha, dc->render_op);
    if (!pfunc) return;
 
    clx = dc->clip.x;

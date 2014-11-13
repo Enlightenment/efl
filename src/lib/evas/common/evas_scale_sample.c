@@ -199,9 +199,9 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
 
    if (mul_col != 0xffffffff)
-     func = evas_common_gfx_func_composite_pixel_color_span_get(src, mul_col, dst, dst_clip_w, render_op);
+     func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
    else
-     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, render_op);
+     func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {
@@ -396,9 +396,9 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
 
    if (dc->mul.use)
-     func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, dst_clip_w, dc->render_op);
    else
-     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, dc->render_op);
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {

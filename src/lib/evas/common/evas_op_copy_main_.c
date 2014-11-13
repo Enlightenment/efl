@@ -7,17 +7,17 @@ static RGBA_Gfx_Pt_Func  op_copy_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CP
 static void op_copy_init(void);
 static void op_copy_shutdown(void);
 
-static RGBA_Gfx_Func op_copy_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
+static RGBA_Gfx_Func op_copy_pixel_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_color_span_get(DATA32 col, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_pixel_color_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, DATA32 col, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_mask_color_span_get(DATA32 col, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_pixel_mask_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, Eina_Bool dst_alpha, int pixels);
 
-static RGBA_Gfx_Pt_Func op_copy_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_pixel_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha);
+static RGBA_Gfx_Pt_Func op_copy_color_pt_get(DATA32 col, Eina_Bool dst_alpha);
+static RGBA_Gfx_Pt_Func op_copy_pixel_color_pt_get(Eina_Bool src_alpha, DATA32 col, Eina_Bool dst_alpha);
+static RGBA_Gfx_Pt_Func op_copy_mask_color_pt_get(DATA32 col, Eina_Bool dst_alpha);
+static RGBA_Gfx_Pt_Func op_copy_pixel_mask_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha);
 
 static RGBA_Gfx_Compositor  _composite_copy = { "copy",
  op_copy_init, op_copy_shutdown,
@@ -42,19 +42,19 @@ static RGBA_Gfx_Pt_Func  op_copy_rel_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST
 static void op_copy_rel_init(void);
 static void op_copy_rel_shutdown(void);
 
-static RGBA_Gfx_Func op_copy_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels);
-static RGBA_Gfx_Func op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels);
+static RGBA_Gfx_Func op_copy_rel_pixel_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_rel_color_span_get(DATA32 col, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_rel_pixel_color_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, DATA32 col, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_rel_mask_color_span_get(DATA32 col, Eina_Bool dst_alpha, int pixels);
+static RGBA_Gfx_Func op_copy_rel_pixel_mask_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, Eina_Bool dst_alpha, int pixels);
 
-static RGBA_Gfx_Pt_Func op_copy_rel_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_rel_pixel_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha);
 /* XXX: doesn't exist
-static RGBA_Gfx_Pt_Func op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_rel_color_pt_get(DATA32 col, Eina_Bool dst_alpha);
  */
-static RGBA_Gfx_Pt_Func op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst);
-static RGBA_Gfx_Pt_Func op_copy_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst);
+static RGBA_Gfx_Pt_Func op_copy_rel_pixel_color_pt_get(Eina_Bool src_alpha, DATA32 col, Eina_Bool dst_alpha);
+static RGBA_Gfx_Pt_Func op_copy_rel_mask_color_pt_get(DATA32 col, Eina_Bool dst_alpha);
+static RGBA_Gfx_Pt_Func op_copy_rel_pixel_mask_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha);
 
 static RGBA_Gfx_Compositor  _composite_copy_rel = { "copy_rel",
  op_copy_rel_init, op_copy_rel_shutdown,
@@ -178,73 +178,64 @@ copy_gfx_span_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Func
-op_copy_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_pixel_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, Eina_Bool dst_alpha, int pixels EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src && src->cache_entry.flags.alpha)
+   if (src_alpha)
      {
-	dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Func
-op_copy_color_span_get(DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_color_span_get(DATA32 col, Eina_Bool dst_alpha, int pixels EINA_UNUSED)
 {
    int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Func
-op_copy_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_pixel_color_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, DATA32 col, Eina_Bool dst_alpha, int pixels EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src && src->cache_entry.flags.alpha)
+   if (src_alpha)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Func
-op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_mask_color_span_get(DATA32 col, Eina_Bool dst_alpha EINA_UNUSED, int pixels EINA_UNUSED)
 {
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -255,13 +246,11 @@ op_copy_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
 }
 
 static RGBA_Gfx_Func
-op_copy_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_pixel_mask_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, Eina_Bool dst_alpha EINA_UNUSED, int pixels EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
-   if (src && src->cache_entry.flags.alpha)
+   if (src_alpha)
 	s = SP;
    return copy_gfx_span_func_cpu(s, m, c, d);
 }
@@ -294,73 +283,64 @@ copy_gfx_pt_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
+op_copy_pixel_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src_flags.alpha)
+   if (src_alpha)
      {
-	dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_color_pt_get(DATA32 col, RGBA_Image *dst)
+op_copy_color_pt_get(DATA32 col, Eina_Bool dst_alpha)
 {
    int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst)
+op_copy_pixel_color_pt_get(Eina_Bool src_alpha, DATA32 col, Eina_Bool dst_alpha)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src_flags.alpha)
+   if (src_alpha)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
+op_copy_mask_color_pt_get(DATA32 col, Eina_Bool dst_alpha EINA_UNUSED)
 {
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -371,13 +351,11 @@ op_copy_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
+op_copy_pixel_mask_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
-   if (src_flags.alpha)
+   if (src_alpha)
 	s = SP;
    return copy_gfx_pt_func_cpu(s, m, c, d);
 }
@@ -460,74 +438,64 @@ copy_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_rel_pixel_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, Eina_Bool dst_alpha, int pixels EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src && src->cache_entry.flags.alpha)
+   if (src_alpha)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_color_span_get(DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_rel_color_span_get(DATA32 col, Eina_Bool dst_alpha, int pixels EINA_UNUSED)
 {
    int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_pixel_color_span_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_rel_pixel_color_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, DATA32 col, Eina_Bool dst_alpha, int pixels EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src && src->cache_entry.flags.alpha)
+   if (src_alpha)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_rel_mask_color_span_get(DATA32 col, Eina_Bool dst_alpha EINA_UNUSED, int pixels EINA_UNUSED)
 {
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -538,13 +506,11 @@ op_copy_rel_mask_color_span_get(DATA32 col, RGBA_Image *dst, int pixels EINA_UNU
 }
 
 static RGBA_Gfx_Func
-op_copy_rel_pixel_mask_span_get(RGBA_Image *src, RGBA_Image *dst, int pixels EINA_UNUSED)
+op_copy_rel_pixel_mask_span_get(Eina_Bool src_alpha, Eina_Bool src_sparse_alpha EINA_UNUSED, Eina_Bool dst_alpha EINA_UNUSED, int pixels EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
-   if (src && src->cache_entry.flags.alpha)
+   if (src_alpha)
 	s = SP;
    return copy_rel_gfx_span_func_cpu(s, m, c, d);
 }
@@ -577,24 +543,22 @@ copy_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
+op_copy_rel_pixel_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha)
 {
    int  s = SP_AN, m = SM_N, c = SC_N, d = DP_AN;
 
-   if (src_flags.alpha)
+   if (src_alpha)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
 
 /* XXX: not used
 static RGBA_Gfx_Pt_Func
-op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
+op_copy_rel_color_pt_get(DATA32 col, Eina_Bool dst_alpha)
 {
    int  s = SP_N, m = SM_N, c = SC_AN, d = DP_AN;
 
@@ -608,45 +572,39 @@ op_copy_rel_color_pt_get(DATA32 col, RGBA_Image *dst)
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
 */
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_pixel_color_pt_get(Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst)
+op_copy_rel_pixel_color_pt_get(Eina_Bool src_alpha, DATA32 col, Eina_Bool dst_alpha)
 {
    int  s = SP_AN, m = SM_N, c = SC_AN, d = DP_AN;
 
-   if (src_flags.alpha)
+   if (src_alpha)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	s = SP;
      }
    if ((col >> 24) < 255)
      {
-	if (dst)
-	   dst->cache_entry.flags.alpha = 1;
 	c = SC;
      }
    if (col == ((col >> 24) * 0x01010101))
 	c = SC_AA;
    if (col == 0xffffffff)
 	c = SC_N;
-   if (dst && dst->cache_entry.flags.alpha)
+   if (dst_alpha)
 	d = DP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
+op_copy_rel_mask_color_pt_get(DATA32 col, Eina_Bool dst_alpha EINA_UNUSED)
 {
    int  s = SP_N, m = SM_AS, c = SC_AN, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
    if ((col >> 24) < 255)
 	c = SC;
    if (col == ((col >> 24) * 0x01010101))
@@ -657,13 +615,11 @@ op_copy_rel_mask_color_pt_get(DATA32 col, RGBA_Image *dst)
 }
 
 static RGBA_Gfx_Pt_Func
-op_copy_rel_pixel_mask_pt_get(Image_Entry_Flags src_flags, RGBA_Image *dst)
+op_copy_rel_pixel_mask_pt_get(Eina_Bool src_alpha, Eina_Bool dst_alpha EINA_UNUSED)
 {
    int  s = SP_AN, m = SM_AS, c = SC_N, d = DP;
 
-   if (dst)
-	dst->cache_entry.flags.alpha = 1;
-   if (src_flags.alpha)
+   if (src_alpha)
 	s = SP;
    return copy_rel_gfx_pt_func_cpu(s, m, c, d);
 }

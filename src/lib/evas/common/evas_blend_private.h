@@ -15,17 +15,17 @@ RGBA_Gfx_Compositor *evas_common_gfx_compositor_sub_rel_get(void);
 RGBA_Gfx_Compositor *evas_common_gfx_compositor_mask_get                 (void);
 RGBA_Gfx_Compositor *evas_common_gfx_compositor_mul_get                  (void);
 
-RGBA_Gfx_Func        evas_common_gfx_func_composite_pixel_span_get       (RGBA_Image *src, RGBA_Image *dst, int pixels, int op);
-RGBA_Gfx_Func        evas_common_gfx_func_composite_color_span_get       (DATA32 col, RGBA_Image *dst, int pixels, int op);
-RGBA_Gfx_Func        evas_common_gfx_func_composite_pixel_color_span_get (RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels, int op);
-RGBA_Gfx_Func        evas_common_gfx_func_composite_mask_color_span_get  (DATA32 col, RGBA_Image *dst, int pixels, int op);
-RGBA_Gfx_Func        evas_common_gfx_func_composite_pixel_mask_span_get  (RGBA_Image *src, RGBA_Image *dst, int pixels, int op);
+RGBA_Gfx_Func        evas_common_gfx_func_composite_pixel_span_get       (Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, Eina_Bool dst_alpha, int pixels, int op);
+RGBA_Gfx_Func        evas_common_gfx_func_composite_color_span_get       (DATA32 col, Eina_Bool dst_alpha, int pixels, int op);
+RGBA_Gfx_Func        evas_common_gfx_func_composite_pixel_color_span_get (Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, DATA32 col, Eina_Bool dst_alpha, int pixels, int op);
+RGBA_Gfx_Func        evas_common_gfx_func_composite_mask_color_span_get  (DATA32 col, Eina_Bool dst_alpha, int pixels, int op);
+RGBA_Gfx_Func        evas_common_gfx_func_composite_pixel_mask_span_get  (Eina_Bool src_alpha, Eina_Bool src_sparse_alpha, Eina_Bool dst_alpha, int pixels, int op);
 
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_pt_get         (Image_Entry_Flags src_flags, RGBA_Image *dst, int op);
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_color_pt_get         (DATA32 col, RGBA_Image *dst, int op);
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_color_pt_get   (Image_Entry_Flags src_flags, DATA32 col, RGBA_Image *dst, int op);
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_mask_color_pt_get    (DATA32 col, RGBA_Image *dst, int op);
-RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get    (Image_Entry_Flags src_flags, RGBA_Image *dst, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_pt_get         (Eina_Bool src_alpha, Eina_Bool dst_alpha, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_color_pt_get         (DATA32 col, Eina_Bool dst_alpha, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_color_pt_get   (Eina_Bool src_alpha, DATA32 col, Eina_Bool dst_alpha, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_mask_color_pt_get    (DATA32 col, Eina_Bool dst_alpha, int op);
+RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get    (Eina_Bool src_alpha, Eina_Bool dst_alpha, int op);
 
 /* Alpha/mask functions */
 Alpha_Gfx_Func       evas_common_alpha_func_get (int op);

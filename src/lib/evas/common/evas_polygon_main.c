@@ -279,7 +279,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    free(point);
    free(sorted_index);
 
-   func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst, 1, dc->render_op);
+   func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, 1, dc->render_op);
    if (spans)
      {
 	RGBA_Span *span;
@@ -435,7 +435,7 @@ evas_common_polygon_rgba_draw(RGBA_Image *dst, int ext_x, int ext_y, int ext_w, 
    free(point);
    free(sorted_index);
 
-   func = evas_common_gfx_func_composite_color_span_get(col, dst, 1, render_op);
+   func = evas_common_gfx_func_composite_color_span_get(col, dst->cache_entry.flags.alpha, 1, render_op);
    if (spans)
      {
 	RGBA_Span *span;

@@ -220,8 +220,8 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    stepcount = w / stepsize;
    span = malloc(stepsize * sizeof(DATA32));
 
-   func1 = evas_common_gfx_func_composite_pixel_mask_span_get(mask, out, 1, EVAS_RENDER_COPY);
-   func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask, color2, out, 1, op);
+   func1 = evas_common_gfx_func_composite_pixel_mask_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, out->cache_entry.flags.alpha, 1, EVAS_RENDER_COPY);
+   func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, color2, out->cache_entry.flags.alpha, 1, op);
 
    // Apply mask using Gfx functions
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
@@ -313,7 +313,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    stepcount = w / stepsize;
    span = malloc(stepsize * sizeof(DATA8));
 
-   func = evas_common_gfx_func_composite_mask_color_span_get(color, out, 1, op);
+   func = evas_common_gfx_func_composite_mask_color_span_get(color, out->cache_entry.flags.alpha, 1, op);
    span_func = evas_common_alpha_func_get(EVAS_RENDER_MASK);
 
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
