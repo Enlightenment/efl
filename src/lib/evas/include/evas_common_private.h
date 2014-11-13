@@ -700,6 +700,8 @@ struct _RGBA_Draw_Context
    } col;
    struct RGBA_Draw_Context_clip {
       int    x, y, w, h;
+      void  *mask;
+      int    mask_x, mask_y;
       Eina_Bool use : 1;
    } clip;
    Cutout_Rects cutout;

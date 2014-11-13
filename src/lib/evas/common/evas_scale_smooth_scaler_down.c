@@ -5,7 +5,7 @@
    int     *yapoints, *yapp;
    DATA32  *buf, *src_data;
 
-   RGBA_Gfx_Func      func;
+   RGBA_Gfx_Func      func, func2 = NULL;
 
    src_data = src->image.data;
 
@@ -18,10 +18,20 @@
    /* a scanline buffer */
    buf = alloca(dst_clip_w * sizeof(DATA32));
 
-   if (mul_col != 0xffffffff)
-      func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+   if (!mask_ie)
+     {
+        if (mul_col != 0xffffffff)
+          func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+        else
+          func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+     }
    else
-      func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+     {
+        func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+        if (mul_col != 0xffffffff)
+          func2 = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+     }
+
    /* scaling down vertically */
    if ((dst_region_w >= src_region_w) &&
        (dst_region_h <  src_region_h))

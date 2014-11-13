@@ -525,6 +525,43 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
           }
         free(src8);
      }
+   else if (dc->clip.mask)
+     {
+        RGBA_Gfx_Func func;
+        DATA8 *src8, *mask;
+        DATA32 *buf, *ptr, *buf_ptr;
+        RGBA_Image *im = dc->clip.mask;
+        int row;
+
+        buf = alloca(sizeof(DATA32) * w * h);
+
+        // Step 1: alpha glyph drawing
+        src8 = evas_common_font_glyph_uncompress(fg, NULL, NULL);
+        if (!src8) return;
+
+        // Step 2: color blending to buffer
+        func = evas_common_gfx_func_composite_mask_color_span_get(col, dst_image->cache_entry.flags.alpha, 1, EVAS_RENDER_COPY);
+        for (row = y1; row < y2; row++)
+          {
+             buf_ptr = buf + (row * w) + x1;
+             DATA8 *s = src8 + (row * w) + x1;
+             func(NULL, s, col, buf_ptr, x2 - x1);
+          }
+        free(src8);
+
+        // Step 3: masking to destination
+        func = evas_common_gfx_func_composite_pixel_mask_span_get(im->cache_entry.flags.alpha, im->cache_entry.flags.alpha_sparse, dst_image->cache_entry.flags.alpha, dst_pitch, dc->render_op);
+        for (row = y1; row < y2; row++)
+          {
+             mask = im->image.data8
+                + (y + row - dc->clip.mask_y) * im->cache_entry.w
+                + (x + x1 - dc->clip.mask_x);
+
+             ptr = dst + (x + x1) + ((y + row) * dst_pitch);
+             buf_ptr = buf + (row * w) + x1;
+             func(buf_ptr, mask, 0, ptr, x2 - x1);
+          }
+     }
    else
      {
         // build fast multiply + mask color tables to avoid compute. this works
