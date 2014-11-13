@@ -1,6 +1,14 @@
 ==========
-EFL 1.11.4
+EFL 1.11.5
 ==========
+
+Changes since 1.11.4:
+---------------------
+
+Fixes:
+
+   * Eo id: Fix id security checks for invalid objects.
+   * Fix bug ecore_imf_context_cursor_position_set was not called when cursor was moved by ECORE_IMF_CALLBACK_SELECTION_SET
 
 Changes since 1.11.3:
 ---------------------
