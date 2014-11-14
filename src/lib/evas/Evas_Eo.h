@@ -645,6 +645,20 @@ typedef enum _Evas_3D_Wrap_Mode
 } Evas_3D_Wrap_Mode;
 
 /**
+ * Mesh Primitive
+ *
+ * @since 1.12
+ * @ingroup Evas_3D_Types
+ */
+typedef enum _Evas_3D_Mesh_Primitive
+{
+   EVAS_3D_MESH_PRIMITIVE_NONE = 0,
+   EVAS_3D_MESH_PRIMITIVE_CUBE = 1,
+   EVAS_3D_MESH_PRIMITIVE_SPHERE = 2
+} Evas_3D_Mesh_Primitive;
+
+
+/**
  * Texture filters
  *
  * @since 1.10

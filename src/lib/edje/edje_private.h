@@ -223,6 +223,11 @@ struct _Edje_Color
    unsigned char  r, g, b, a;
 };
 
+struct _Edje_Float_Color
+{
+   FLOAT_T  r, g, b, a;
+};
+
 struct _Edje_Map_Color
 {
    int idx;
@@ -250,16 +255,32 @@ struct _Edje_String
    unsigned int id;
 };
 
+struct _Edje_3D_Vec {
+   FLOAT_T   x;
+   FLOAT_T   y;
+   FLOAT_T   z;
+};
+
+struct _Edje_3D_Int_Vec {
+   int   x;
+   int   y;
+   int   z;
+};
+
 typedef struct _Edje_Position_Scale                  Edje_Alignment;
 typedef struct _Edje_Position_Scale                  Edje_Position_Scale;
 typedef struct _Edje_Position                        Edje_Position;
 typedef struct _Edje_Size                            Edje_Size;
 typedef struct _Edje_Rectangle                       Edje_Rectangle;
 typedef struct _Edje_Color                           Edje_Color;
+typedef struct _Edje_Float_Color                     Edje_Float_Color;
 typedef struct _Edje_Map_Color                       Edje_Map_Color;
 typedef struct _Edje_Aspect_Prefer                   Edje_Aspect_Prefer;
 typedef struct _Edje_Aspect                          Edje_Aspect;
 typedef struct _Edje_String                          Edje_String;
+typedef struct _Edje_3D_Vec                          Edje_3D_Vec;
+typedef struct _Edje_3D_Int_Vec                      Edje_3D_Int_Vec;
+typedef struct _AABB                                 AABB;
 
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Style                           Edje_Style;
@@ -271,6 +292,8 @@ typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Image_Directory_Set             Edje_Image_Directory_Set;
 typedef struct _Edje_Image_Directory_Set_Entry       Edje_Image_Directory_Set_Entry;
+typedef struct _Edje_Model_Directory                 Edje_Model_Directory;
+typedef struct _Edje_Model_Directory_Entry           Edje_Model_Directory_Entry;
 typedef struct _Edje_Limit                           Edje_Limit;
 typedef struct _Edje_Plugin                          Edje_Plugin;
 typedef struct _Edje_Sound_Sample                    Edje_Sound_Sample;
@@ -294,6 +317,9 @@ typedef struct _Edje_Part_Description_Text           Edje_Part_Description_Text;
 typedef struct _Edje_Part_Description_Box            Edje_Part_Description_Box;
 typedef struct _Edje_Part_Description_Table          Edje_Part_Description_Table;
 typedef struct _Edje_Part_Description_External       Edje_Part_Description_External;
+typedef struct _Edje_Part_Description_Mesh_Node      Edje_Part_Description_Mesh_Node;
+typedef struct _Edje_Part_Description_Light          Edje_Part_Description_Light;
+typedef struct _Edje_Part_Description_Camera         Edje_Part_Description_Camera;
 typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
 typedef struct _Edje_Part_Description_Spec_Fill      Edje_Part_Description_Spec_Fill;
 typedef struct _Edje_Part_Description_Spec_Border    Edje_Part_Description_Spec_Border;
@@ -302,6 +328,9 @@ typedef struct _Edje_Part_Description_Spec_Proxy     Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_Text;
 typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
+typedef struct _Edje_Part_Description_Spec_Mesh_Node Edje_Part_Description_Spec_Mesh_Node;
+typedef struct _Edje_Part_Description_Spec_Light     Edje_Part_Description_Spec_Light;
+typedef struct _Edje_Part_Description_Spec_Camera    Edje_Part_Description_Spec_Camera;
 typedef struct _Edje_Physics_Face                    Edje_Physics_Face;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
@@ -458,6 +487,12 @@ typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 
 /*----------*/
 
+struct _AABB {
+   Edje_3D_Vec       relative;
+   Edje_3D_Int_Vec   offset;
+   int               rel_to;
+};
+
 struct _Edje_File
 {
    const char                     *path;
@@ -465,6 +500,7 @@ struct _Edje_File
 
    Edje_External_Directory        *external_dir;
    Edje_Image_Directory           *image_dir;
+   Edje_Model_Directory           *model_dir;
    Edje_Sound_Directory           *sound_dir;
    Edje_Vibration_Directory       *vibration_dir;
 
@@ -586,6 +622,19 @@ struct _Edje_Image_Directory_Set_Entry
       int l, r, t, b;
       FLOAT_T scale_by;
    } border;
+};
+
+struct _Edje_Model_Directory
+{
+   Edje_Model_Directory_Entry *entries; /* an array of Edje_Model_Directory_Entry */
+   unsigned int entries_count;
+};
+
+struct _Edje_Model_Directory_Entry
+{
+   const char *entry; /* the nominal name of the model - if any */
+   int   source_type; /* alternate source mode. 0 = none */
+   int   id; /* the id no. of the image */
 };
 
 struct _Edje_Sound_Sample /*Sound Sample*/
@@ -724,8 +773,11 @@ struct _Edje_Limit
       TYPE      GROUP;            \
       TYPE      BOX;              \
       TYPE      TABLE;            \
-      TYPE      SPACER;	  \
-      TYPE      EXTERNAL;
+      TYPE      SPACER;           \
+      TYPE      EXTERNAL;         \
+      TYPE      MESH_NODE;        \
+      TYPE      LIGHT;            \
+      TYPE      CAMERA;
 
 struct _Edje_Part_Collection_Directory_Entry
 {
@@ -975,6 +1027,11 @@ struct _Edje_Part_Collection
    unsigned char    script_recursion; /* permits unsafe Embryo->EDC->Embryo scripting */
 
    unsigned char    checked : 1;
+
+   struct {
+      Evas_Real        height;
+      Evas_Real        width;
+   } scene_size;
 };
 
 struct _Edje_Part_Dragable
@@ -1032,6 +1089,7 @@ struct _Edje_Part
    unsigned char          repeat_events; /* it will repeat events to objects below */
    Evas_Event_Flags       ignore_flags;
    unsigned char          scale; /* should certain properties scale with edje scale factor? */
+   Edje_3D_Vec            scale_3d;
    unsigned char          precise_is_inside;
    unsigned char          use_alternate_font_metrics;
    unsigned char          pointer_mode;
@@ -1145,6 +1203,7 @@ struct _Edje_Part_Description_Common
 
    unsigned char     visible; /* is it shown */
    unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
+   Edje_3D_Vec       align_3d;
 };
 
 struct _Edje_Part_Description_Spec_Fill
@@ -1248,6 +1307,95 @@ struct _Edje_Part_Description_Spec_Table
    } min;
 };
 
+struct _Edje_Part_Description_Spec_Mesh_Node
+{
+   struct {
+      Edje_Part_Image_Id      **tweens;
+      unsigned int            tweens_count;
+      int                     id;
+
+      Eina_Bool               set;
+
+      Evas_3D_Mesh_Primitive  primitive;
+      Evas_3D_Vertex_Assembly assembly;
+   } mesh;
+
+   struct {
+      Edje_Part_Image_Id     **tweens;
+      unsigned int           tweens_count;
+      int                    id;
+
+      Eina_Bool              set;
+
+      Evas_3D_Shade_Mode shade;
+      Evas_3D_Wrap_Mode wrap1;
+      Evas_3D_Wrap_Mode wrap2;
+      Evas_3D_Texture_Filter filter1;
+      Evas_3D_Texture_Filter filter2;
+   } texture;
+
+   struct {
+      Edje_Float_Color      ambient;
+      Edje_Float_Color      diffuse;
+      Edje_Float_Color      specular;
+      Eina_Bool             normal;
+      FLOAT_T               shininess;
+
+      Evas_3D_Material_Attrib material_attrib;
+   } properties;
+
+   AABB     aabb1;
+   AABB     aabb2;
+
+   struct {
+      Evas_Real      angle;
+      Edje_3D_Vec    axis;
+   } orientation;
+
+   struct {
+      Edje_3D_Vec   point;
+
+      unsigned char space;
+   } position;
+};
+
+struct _Edje_Part_Description_Spec_Light
+{
+   struct {
+      Edje_Float_Color      ambient;
+      Edje_Float_Color      diffuse;
+      Edje_Float_Color      specular;
+   } properties;
+
+   struct {
+      Edje_3D_Vec   point;
+
+      unsigned char space;
+      Edje_3D_Vec   look1;
+      Edje_3D_Vec   look2;
+      int           look_to; /* -1 = whole part collection, or part ID */
+   } position;
+};
+
+struct _Edje_Part_Description_Spec_Camera
+{
+   struct {
+      Evas_Real       fovy;
+      Evas_Real       aspect;
+      Evas_Real       near;
+      Evas_Real       far;
+   } camera;
+
+   struct {
+      Edje_3D_Vec   point;
+      unsigned char space;
+      Edje_3D_Vec   look1;
+      Edje_3D_Vec   look2;
+      int           look_to; /* -1 = whole part collection, or part ID */
+   } position;
+};
+
+
 struct _Edje_Part_Description_Image
 {
    Edje_Part_Description_Common common;
@@ -1282,6 +1430,24 @@ struct _Edje_Part_Description_External
 {
    Edje_Part_Description_Common common;
    Eina_List *external_params; /* parameters for external objects */
+};
+
+struct _Edje_Part_Description_Mesh_Node
+{
+   Edje_Part_Description_Common common;
+   Edje_Part_Description_Spec_Mesh_Node mesh_node;
+};
+
+struct _Edje_Part_Description_Light
+{
+   Edje_Part_Description_Common common;
+   Edje_Part_Description_Spec_Light light;
+};
+
+struct _Edje_Part_Description_Camera
+{
+   Edje_Part_Description_Common common;
+   Edje_Part_Description_Spec_Camera camera;
 };
 
 /*----------*/
@@ -1971,6 +2137,9 @@ EAPI extern Eina_Mempool *_emp_BOX;
 EAPI extern Eina_Mempool *_emp_TABLE;
 EAPI extern Eina_Mempool *_emp_EXTERNAL;
 EAPI extern Eina_Mempool *_emp_SPACER;
+EAPI extern Eina_Mempool *_emp_MESH_NODE;
+EAPI extern Eina_Mempool *_emp_LIGHT;
+EAPI extern Eina_Mempool *_emp_CAMERA;
 EAPI extern Eina_Mempool *_emp_part;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4);

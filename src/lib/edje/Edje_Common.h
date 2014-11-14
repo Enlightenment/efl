@@ -1289,8 +1289,10 @@ typedef enum _Edje_Part_Type
    EDJE_PART_TYPE_EXTERNAL  = 10, /**< External type value */
    EDJE_PART_TYPE_PROXY     = 11, /**< Proxy type value */
    EDJE_PART_TYPE_SPACER    = 12, /**< Spacer type value @since 1.7 */
-   EDJE_PART_TYPE_LAST      = 13  /**< Last type value */
-
+   EDJE_PART_TYPE_MESH_NODE = 13,
+   EDJE_PART_TYPE_LIGHT     = 14,
+   EDJE_PART_TYPE_CAMERA    = 15,
+   EDJE_PART_TYPE_LAST      = 16  /**< Last type value */
 } Edje_Part_Type;
 /**
  * @}
