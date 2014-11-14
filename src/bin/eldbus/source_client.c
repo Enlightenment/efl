@@ -511,7 +511,7 @@ source_client_property_generate_set(const DBus_Property *prop, Eina_Strbuf *c_co
    eina_strbuf_append_printf(c_code, "   Eldbus_Pending *p;\n");
    eina_strbuf_append_printf(c_code, "   EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);\n");
    eina_strbuf_append_printf(c_code, "   EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);\n");
-   eina_strbuf_append_printf(c_code, "   p = eldbus_proxy_property_set(proxy, \"%s\", \"%s\", value, %s_set, data);\n", prop->name, prop->type, prop->cb_name);
+   eina_strbuf_append_printf(c_code, "   p = eldbus_proxy_property_set(proxy, \"%s\", \"%s\", value, %s_set, cb);\n", prop->name, prop->type, prop->cb_name);
    eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_data\", data);\n");
    eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__proxy\", proxy);\n");
    eina_strbuf_append_printf(c_code, "   return p;\n");
