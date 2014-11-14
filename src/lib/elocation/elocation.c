@@ -210,7 +210,8 @@ unmarshall_address(const Eldbus_Message *reply, Elocation_Address *addr)
 
    while (eldbus_message_iter_get_and_next(dict, 'e', &entry))
     {
-       eldbus_message_iter_arguments_get(entry, "ss", &key, &value);
+       if (!eldbus_message_iter_arguments_get(entry, "ss", &key, &value))
+         continue;
 
        if (!strcmp(key, "country"))
          {
