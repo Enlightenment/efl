@@ -10092,7 +10092,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      BUF_APPENDF(I5"min: %d %d;\n", pd->min.w, pd->min.h);
    if (pd->max.w != -1 || pd->max.h != -1)
      BUF_APPENDF(I5"max: %d %d;\n", pd->max.w, pd->max.h);
-   if (pd->minmul.w != 0 || pd->minmul.h != 0)
+   if ((pd->minmul.have) && (pd->minmul.w != 1 || pd->minmul.h != 1))
      BUF_APPENDF(I5"minmul: %g %g;\n", TO_DOUBLE(pd->minmul.w), TO_DOUBLE(pd->minmul.h));
 
    if (pd->step.x && pd->step.y)
@@ -10382,7 +10382,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	if (txt->text.fit_x || txt->text.fit_y)
 	  BUF_APPENDF(I6"fit: %d %d;\n", txt->text.fit_x, txt->text.fit_y);
     if (txt->text.min_x || txt->text.min_y)
-  	  BUF_APPENDF(I6"min: \"%d\" \"%d\";\n", txt->text.min_x, txt->text.min_y);
+  	  BUF_APPENDF(I6"min: %d %d;\n", txt->text.min_x, txt->text.min_y);
     if (txt->text.max_x || txt->text.max_y)
       BUF_APPENDF(I6"max: %d %d;\n", txt->text.max_x, txt->text.max_y);
 	if (TO_DOUBLE(txt->text.align.x) != 0.5 || TO_DOUBLE(txt->text.align.y) != 0.5)
