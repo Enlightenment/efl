@@ -1,3 +1,11 @@
+/* bg widget style information
+
+   [SWALLOW]
+      elm.swallow.rectangle: Used for elm_bg_color_set()
+      elm.swallow.background: Used for elm_bg_file_set()
+      elm.swallow.content: Used for elm_layout_part_content_set(bg, "overlay", content).
+*/
+
 group { name: "elm/bg/base/default";
    images.image: "bevel_dark_out.png" COMP;
    parts {
