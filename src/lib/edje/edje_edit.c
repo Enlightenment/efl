@@ -10724,6 +10724,31 @@ _edje_generate_source_of_sounds(Edje_Sound_Directory *sound_directory, Eina_Strb
    BUF_APPEND(I1"}\n");
 }
 
+static void
+_edje_limits_source_generate(const Edje *ed, Eina_Strbuf *buf, Eina_Bool *res)
+{
+   Eina_Bool ret = *res;
+   unsigned int i;
+
+   if (!ed->collection->limits.vertical_count &&
+       !ed->collection->limits.horizontal_count) return;
+
+   BUF_APPEND(I2"limits {\n");
+
+   for(i = 0; i < ed->collection->limits.vertical_count; i++)
+     BUF_APPENDF(I3"vertical: \"%s\" %d;\n",
+                 ed->collection->limits.vertical[i]->name,
+                 ed->collection->limits.vertical[i]->value);
+   for(i = 0; i < ed->collection->limits.horizontal_count; i++)
+     BUF_APPENDF(I3"horizontal: \"%s\" %d;\n",
+                 ed->collection->limits.horizontal[i]->name,
+                 ed->collection->limits.horizontal[i]->value);
+
+   BUF_APPEND(I2"}\n");
+
+   *res = ret;
+}
+
 static Eina_Bool
 _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *pce, Eina_Strbuf *buf)
 {
@@ -10782,6 +10807,9 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
      }
    broadcast = edje_edit_group_broadcast_signal_get(obj);
    if (!broadcast) BUF_APPENDF(I2"broadcast_signal: %d;\n", broadcast);
+
+   /* Limits */
+   _edje_limits_source_generate(ed, buf, &ret);
 
    /* Data */
    if (pc->data)
