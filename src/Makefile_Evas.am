@@ -577,7 +577,8 @@ modules/evas/engines/gl_common/evas_gl_core_private.h \
 modules/evas/engines/gl_common/evas_gl_api.c \
 modules/evas/engines/gl_common/evas_gl_api_gles1.c \
 modules/evas/engines/gl_common/evas_gl_api_ext.c \
-modules/evas/engines/gl_common/shader/evas_gl_shaders.x
+modules/evas/engines/gl_common/shader/evas_gl_shaders.x \
+modules/evas/engines/gl_common/shader/evas_gl_enum.x
 
 # 3D
 GL_COMMON_SOURCES += \
@@ -633,21 +634,37 @@ modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_vert.shd \
 modules/evas/engines/gl_common/shader/rgb_a_pair_vert.shd \
 modules/evas/engines/gl_common/shader/tex_12_frag.shd \
+modules/evas/engines/gl_common/shader/tex_12_vert.shd \
 modules/evas/engines/gl_common/shader/tex_12_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/tex_12_nomul_vert.shd \
-modules/evas/engines/gl_common/shader/tex_12_vert.shd \
 modules/evas/engines/gl_common/shader/tex_21_frag.shd \
+modules/evas/engines/gl_common/shader/tex_21_vert.shd \
 modules/evas/engines/gl_common/shader/tex_21_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/tex_21_nomul_vert.shd \
-modules/evas/engines/gl_common/shader/tex_21_vert.shd \
 modules/evas/engines/gl_common/shader/tex_22_frag.shd \
+modules/evas/engines/gl_common/shader/tex_22_vert.shd \
 modules/evas/engines/gl_common/shader/tex_22_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/tex_22_nomul_vert.shd \
-modules/evas/engines/gl_common/shader/tex_22_vert.shd \
 modules/evas/engines/gl_common/shader/tex_frag.shd \
+modules/evas/engines/gl_common/shader/tex_vert.shd \
 modules/evas/engines/gl_common/shader/tex_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/tex_nomul_vert.shd \
-modules/evas/engines/gl_common/shader/tex_vert.shd \
+modules/evas/engines/gl_common/shader/tex_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_22_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_22_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_21_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_21_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_12_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_12_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_22_nomul_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_22_nomul_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_21_nomul_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_21_nomul_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_12_nomul_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_12_nomul_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_nomul_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_nomul_afill_vert.shd \
 modules/evas/engines/gl_common/shader/yuv_frag.shd \
 modules/evas/engines/gl_common/shader/yuv_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/yuv_nomul_vert.shd \
@@ -663,7 +680,9 @@ $(GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: modules/evas/engines/gl_common/shader/gen_shaders.sh $(GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
-	@modules/evas/engines/gl_common/shader/gen_shaders.sh
+	@modules/evas/engines/gl_common/shader/gen_shaders.sh $(GL_SHADERS_GEN)
+
+modules/evas/engines/gl_common/shader/evas_gl_enum.x: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \

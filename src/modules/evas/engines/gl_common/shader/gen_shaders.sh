@@ -6,7 +6,10 @@
 DIR=`dirname $0`
 
 OUTPUT=${DIR}/evas_gl_shaders.x
-SHADERS=${DIR}/*.shd
+OUTPUT_ENUM=${DIR}/evas_gl_enum.x
+
+#SHADERS=${DIR}/*.shd
+SHADERS="$@"
 
 # Redirect output to ${OUTPUT}
 exec 1<&-
@@ -20,6 +23,7 @@ printf "#include \"../evas_gl_private.h\"\n\n"
 
 # Prepare list of shaders:
 shaders_source=""
+shaders_enum=""
 
 # Reading with the following code breaks indents:
 #  while read -r line ; do
@@ -47,6 +51,7 @@ for shd in ${SHADERS} ; do
     name=`echo ${lname} |sed -e 's/_vert//'`
     SHADER=`echo ${UNAME} |sed -e 's/_VERT//'`
     shaders_source="${shaders_source}   { SHADER_${SHADER}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\" },\n"
+    shaders_enum="${shaders_enum}   SHADER_${SHADER},\n"
   fi
 done
 
@@ -59,4 +64,10 @@ printf "static const struct {
 
 printf "${shaders_source}};\n\n"
 
+printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED\n * See: $0 */
+
+typedef enum {
+${shaders_enum}   SHADER_LAST
+} Evas_GL_Shader;
+" >| ${OUTPUT_ENUM}
 

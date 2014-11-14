@@ -1126,62 +1126,6 @@ Evas_GL_Program_Source shader_rgb_a_pair_vert_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_12_afill_frag.shd */
-static const char tex_12_afill_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
-   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
-   "   vec4 c = (col00 + col01) / div_s;\n"
-   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_12_afill_frag_src =
-{
-   tex_12_afill_frag_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_12_afill_vert.shd */
-static const char tex_12_afill_vert_glsl[] =
-   "#ifdef GL_ES\n"
-   "precision highp float;\n"
-   "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec4 color;\n"
-   "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_sample;\n"
-   "uniform mat4 mvp;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_Position = mvp * vertex;\n"
-   "   col = color;\n"
-   "   tex_c = tex_coord;\n"
-   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
-   "   tex_s[1] = vec2(0,  tex_sample.y);\n"
-   "   div_s = vec4(2, 2, 2, 2);\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_12_afill_vert_src =
-{
-   tex_12_afill_vert_glsl,
-   NULL, 0
-};
-
 /* Source: modules/evas/engines/gl_common/shader/tex_12_frag.shd */
 static const char tex_12_frag_glsl[] =
    "#ifdef GL_ES\n"
@@ -1208,55 +1152,32 @@ Evas_GL_Program_Source shader_tex_12_frag_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_afill_frag.shd */
-static const char tex_12_nomul_afill_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
-   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
-   "   vec4 c = (col00 + col01) / div_s;\n"
-   "   gl_FragColor = vec4(c.r, c.g, c.b, 1);\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_12_nomul_afill_frag_src =
-{
-   tex_12_nomul_afill_frag_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_afill_vert.shd */
-static const char tex_12_nomul_afill_vert_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_12_vert.shd */
+static const char tex_12_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
    "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
    "attribute vec2 tex_sample;\n"
    "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
    "varying vec2 tex_s[2];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "   tex_s[0] = vec2(0, -tex_sample.y);\n"
    "   tex_s[1] = vec2(0,  tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_12_nomul_afill_vert_src =
+Evas_GL_Program_Source shader_tex_12_vert_src =
 {
-   tex_12_nomul_afill_vert_glsl,
+   tex_12_vert_glsl,
    NULL, 0
 };
 
@@ -1311,91 +1232,6 @@ Evas_GL_Program_Source shader_tex_12_nomul_vert_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_12_vert.shd */
-static const char tex_12_vert_glsl[] =
-   "#ifdef GL_ES\n"
-   "precision highp float;\n"
-   "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec4 color;\n"
-   "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_sample;\n"
-   "uniform mat4 mvp;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_Position = mvp * vertex;\n"
-   "   col = color;\n"
-   "   tex_c = tex_coord;\n"
-   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
-   "   tex_s[1] = vec2(0,  tex_sample.y);\n"
-   "   div_s = vec4(2, 2, 2, 2);\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_12_vert_src =
-{
-   tex_12_vert_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_21_afill_frag.shd */
-static const char tex_21_afill_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
-   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
-   "   vec4 c = (col00 + col01) / div_s;\n"
-   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_21_afill_frag_src =
-{
-   tex_21_afill_frag_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_21_afill_vert.shd */
-static const char tex_21_afill_vert_glsl[] =
-   "#ifdef GL_ES\n"
-   "precision highp float;\n"
-   "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec4 color;\n"
-   "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_sample;\n"
-   "uniform mat4 mvp;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_Position = mvp * vertex;\n"
-   "   col = color;\n"
-   "   tex_c = tex_coord;\n"
-   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
-   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
-   "   div_s = vec4(2, 2, 2, 2);\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_21_afill_vert_src =
-{
-   tex_21_afill_vert_glsl,
-   NULL, 0
-};
-
 /* Source: modules/evas/engines/gl_common/shader/tex_21_frag.shd */
 static const char tex_21_frag_glsl[] =
    "#ifdef GL_ES\n"
@@ -1422,55 +1258,32 @@ Evas_GL_Program_Source shader_tex_21_frag_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_afill_frag.shd */
-static const char tex_21_nomul_afill_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
-   "varying vec4 div_s;\n"
-   "void main()\n"
-   "{\n"
-   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
-   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
-   "   vec4 c = (col00 + col01) / div_s;\n"
-   "   gl_FragColor = vec4(c.r, c.g, c.b, 1);\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_21_nomul_afill_frag_src =
-{
-   tex_21_nomul_afill_frag_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_afill_vert.shd */
-static const char tex_21_nomul_afill_vert_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_21_vert.shd */
+static const char tex_21_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
    "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
    "attribute vec2 tex_sample;\n"
    "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
    "varying vec2 tex_s[2];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_21_nomul_afill_vert_src =
+Evas_GL_Program_Source shader_tex_21_vert_src =
 {
-   tex_21_nomul_afill_vert_glsl,
+   tex_21_vert_glsl,
    NULL, 0
 };
 
@@ -1525,8 +1338,36 @@ Evas_GL_Program_Source shader_tex_21_nomul_vert_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_21_vert.shd */
-static const char tex_21_vert_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_22_frag.shd */
+static const char tex_22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[4];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]);\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]);\n"
+   "   gl_FragColor = ((col00 + col01 + col10 + col11) / div_s) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_22_frag_src =
+{
+   tex_22_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_22_vert.shd */
+static const char tex_22_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1537,20 +1378,209 @@ static const char tex_21_vert_glsl[] =
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[2];\n"
+   "varying vec2 tex_s[4];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
-   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
-   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
-   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x,  tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x,  tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_21_vert_src =
+Evas_GL_Program_Source shader_tex_22_vert_src =
 {
-   tex_21_vert_glsl,
+   tex_22_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_frag.shd */
+static const char tex_22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[4];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]);\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]);\n"
+   "   gl_FragColor = (col00 + col01 + col10 + col11) / div_s;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_22_nomul_frag_src =
+{
+   tex_22_nomul_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_vert.shd */
+static const char tex_22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord;\n"
+   "attribute vec2 tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[4];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x,  tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x,  tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_22_nomul_vert_src =
+{
+   tex_22_nomul_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_frag.shd */
+static const char tex_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_frag_src =
+{
+   tex_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_vert.shd */
+static const char tex_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_vert_src =
+{
+   tex_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_nomul_frag.shd */
+static const char tex_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_nomul_frag_src =
+{
+   tex_nomul_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_nomul_vert.shd */
+static const char tex_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_nomul_vert_src =
+{
+   tex_nomul_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_afill_frag.shd */
+static const char tex_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c = texture2D(tex, tex_c.xy);\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_afill_frag_src =
+{
+   tex_afill_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_afill_vert.shd */
+static const char tex_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_afill_vert_src =
+{
+   tex_afill_vert_glsl,
    NULL, 0
 };
 
@@ -1614,8 +1644,8 @@ Evas_GL_Program_Source shader_tex_22_afill_vert_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_22_frag.shd */
-static const char tex_22_frag_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_21_afill_frag.shd */
+static const char tex_21_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1626,19 +1656,103 @@ static const char tex_22_frag_glsl[] =
    "uniform sampler2D tex;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[4];\n"
+   "varying vec2 tex_s[2];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
    "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
-   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]);\n"
-   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]);\n"
-   "   gl_FragColor = ((col00 + col01 + col10 + col11) / div_s) * col;\n"
+   "   vec4 c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_22_frag_src =
+Evas_GL_Program_Source shader_tex_21_afill_frag_src =
 {
-   tex_22_frag_glsl,
+   tex_21_afill_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_21_afill_vert.shd */
+static const char tex_21_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "attribute vec2 tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[2];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_21_afill_vert_src =
+{
+   tex_21_afill_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_12_afill_frag.shd */
+static const char tex_12_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[2];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
+   "   vec4 c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_12_afill_frag_src =
+{
+   tex_12_afill_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_12_afill_vert.shd */
+static const char tex_12_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "attribute vec2 tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[2];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0,  tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_12_afill_vert_src =
+{
+   tex_12_afill_vert_glsl,
    NULL, 0
 };
 
@@ -1698,8 +1812,8 @@ Evas_GL_Program_Source shader_tex_22_nomul_afill_vert_src =
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_frag.shd */
-static const char tex_22_nomul_frag_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_afill_frag.shd */
+static const char tex_21_nomul_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1709,24 +1823,23 @@ static const char tex_22_nomul_frag_glsl[] =
    "#endif\n"
    "uniform sampler2D tex;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[4];\n"
+   "varying vec2 tex_s[2];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
    "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
-   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]);\n"
-   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]);\n"
-   "   gl_FragColor = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   vec4 c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1);\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_22_nomul_frag_src =
+Evas_GL_Program_Source shader_tex_21_nomul_afill_frag_src =
 {
-   tex_22_nomul_frag_glsl,
+   tex_21_nomul_afill_frag_glsl,
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_vert.shd */
-static const char tex_22_nomul_vert_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_afill_vert.shd */
+static const char tex_21_nomul_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1735,120 +1848,71 @@ static const char tex_22_nomul_vert_glsl[] =
    "attribute vec2 tex_sample;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[4];\n"
+   "varying vec2 tex_s[2];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
-   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
-   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
-   "   tex_s[2] = vec2( tex_sample.x,  tex_sample.y);\n"
-   "   tex_s[3] = vec2(-tex_sample.x,  tex_sample.y);\n"
-   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_22_nomul_vert_src =
+Evas_GL_Program_Source shader_tex_21_nomul_afill_vert_src =
 {
-   tex_22_nomul_vert_glsl,
+   tex_21_nomul_afill_vert_glsl,
    NULL, 0
 };
 
-/* Source: modules/evas/engines/gl_common/shader/tex_22_vert.shd */
-static const char tex_22_vert_glsl[] =
+/* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_afill_frag.shd */
+static const char tex_12_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_s[2];\n"
+   "varying vec4 div_s;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);\n"
+   "   vec4 c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_12_nomul_afill_frag_src =
+{
+   tex_12_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_afill_vert.shd */
+static const char tex_12_nomul_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
    "attribute vec4 vertex;\n"
-   "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
    "attribute vec2 tex_sample;\n"
    "uniform mat4 mvp;\n"
-   "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_s[4];\n"
+   "varying vec2 tex_s[2];\n"
    "varying vec4 div_s;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
-   "   col = color;\n"
    "   tex_c = tex_coord;\n"
-   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
-   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
-   "   tex_s[2] = vec2( tex_sample.x,  tex_sample.y);\n"
-   "   tex_s[3] = vec2(-tex_sample.x,  tex_sample.y);\n"
-   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0,  tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_22_vert_src =
+Evas_GL_Program_Source shader_tex_12_nomul_afill_vert_src =
 {
-   tex_22_vert_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_afill_frag.shd */
-static const char tex_afill_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "void main()\n"
-   "{\n"
-   "   vec4 c = texture2D(tex, tex_c.xy);\n"
-   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_afill_frag_src =
-{
-   tex_afill_frag_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_afill_vert.shd */
-static const char tex_afill_vert_glsl[] =
-   "#ifdef GL_ES\n"
-   "precision highp float;\n"
-   "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec4 color;\n"
-   "attribute vec2 tex_coord;\n"
-   "uniform mat4 mvp;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_Position = mvp * vertex;\n"
-   "   col = color;\n"
-   "   tex_c = tex_coord;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_afill_vert_src =
-{
-   tex_afill_vert_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_frag.shd */
-static const char tex_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy) * col;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_frag_src =
-{
-   tex_frag_glsl,
+   tex_12_nomul_afill_vert_glsl,
    NULL, 0
 };
 
@@ -1891,70 +1955,6 @@ static const char tex_nomul_afill_vert_glsl[] =
 Evas_GL_Program_Source shader_tex_nomul_afill_vert_src =
 {
    tex_nomul_afill_vert_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_nomul_frag.shd */
-static const char tex_nomul_frag_glsl[] =
-   "#ifdef GL_ES\n"
-   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-   "precision highp float;\n"
-   "#else\n"
-   "precision mediump float;\n"
-   "#endif\n"
-   "#endif\n"
-   "uniform sampler2D tex;\n"
-   "varying vec2 tex_c;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy);\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_nomul_frag_src =
-{
-   tex_nomul_frag_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_nomul_vert.shd */
-static const char tex_nomul_vert_glsl[] =
-   "#ifdef GL_ES\n"
-   "precision highp float;\n"
-   "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec2 tex_coord;\n"
-   "uniform mat4 mvp;\n"
-   "varying vec2 tex_c;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_Position = mvp * vertex;\n"
-   "   tex_c = tex_coord;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_nomul_vert_src =
-{
-   tex_nomul_vert_glsl,
-   NULL, 0
-};
-
-/* Source: modules/evas/engines/gl_common/shader/tex_vert.shd */
-static const char tex_vert_glsl[] =
-   "#ifdef GL_ES\n"
-   "precision highp float;\n"
-   "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec4 color;\n"
-   "attribute vec2 tex_coord;\n"
-   "uniform mat4 mvp;\n"
-   "varying vec4 col;\n"
-   "varying vec2 tex_c;\n"
-   "void main()\n"
-   "{\n"
-   "   gl_Position = mvp * vertex;\n"
-   "   col = color;\n"
-   "   tex_c = tex_coord;\n"
-   "}\n";
-Evas_GL_Program_Source shader_tex_vert_src =
-{
-   tex_vert_glsl,
    NULL, 0
 };
 
@@ -2209,22 +2209,22 @@ static const struct {
    { SHADER_RECT, &(shader_rect_vert_src), &(shader_rect_frag_src), "rect" },
    { SHADER_RGB_A_PAIR_NOMUL, &(shader_rgb_a_pair_nomul_vert_src), &(shader_rgb_a_pair_nomul_frag_src), "rgb_a_pair_nomul" },
    { SHADER_RGB_A_PAIR, &(shader_rgb_a_pair_vert_src), &(shader_rgb_a_pair_frag_src), "rgb_a_pair" },
-   { SHADER_TEX_12_AFILL, &(shader_tex_12_afill_vert_src), &(shader_tex_12_afill_frag_src), "tex_12_afill" },
-   { SHADER_TEX_12_NOMUL_AFILL, &(shader_tex_12_nomul_afill_vert_src), &(shader_tex_12_nomul_afill_frag_src), "tex_12_nomul_afill" },
-   { SHADER_TEX_12_NOMUL, &(shader_tex_12_nomul_vert_src), &(shader_tex_12_nomul_frag_src), "tex_12_nomul" },
    { SHADER_TEX_12, &(shader_tex_12_vert_src), &(shader_tex_12_frag_src), "tex_12" },
-   { SHADER_TEX_21_AFILL, &(shader_tex_21_afill_vert_src), &(shader_tex_21_afill_frag_src), "tex_21_afill" },
-   { SHADER_TEX_21_NOMUL_AFILL, &(shader_tex_21_nomul_afill_vert_src), &(shader_tex_21_nomul_afill_frag_src), "tex_21_nomul_afill" },
-   { SHADER_TEX_21_NOMUL, &(shader_tex_21_nomul_vert_src), &(shader_tex_21_nomul_frag_src), "tex_21_nomul" },
+   { SHADER_TEX_12_NOMUL, &(shader_tex_12_nomul_vert_src), &(shader_tex_12_nomul_frag_src), "tex_12_nomul" },
    { SHADER_TEX_21, &(shader_tex_21_vert_src), &(shader_tex_21_frag_src), "tex_21" },
-   { SHADER_TEX_22_AFILL, &(shader_tex_22_afill_vert_src), &(shader_tex_22_afill_frag_src), "tex_22_afill" },
-   { SHADER_TEX_22_NOMUL_AFILL, &(shader_tex_22_nomul_afill_vert_src), &(shader_tex_22_nomul_afill_frag_src), "tex_22_nomul_afill" },
-   { SHADER_TEX_22_NOMUL, &(shader_tex_22_nomul_vert_src), &(shader_tex_22_nomul_frag_src), "tex_22_nomul" },
+   { SHADER_TEX_21_NOMUL, &(shader_tex_21_nomul_vert_src), &(shader_tex_21_nomul_frag_src), "tex_21_nomul" },
    { SHADER_TEX_22, &(shader_tex_22_vert_src), &(shader_tex_22_frag_src), "tex_22" },
-   { SHADER_TEX_AFILL, &(shader_tex_afill_vert_src), &(shader_tex_afill_frag_src), "tex_afill" },
-   { SHADER_TEX_NOMUL_AFILL, &(shader_tex_nomul_afill_vert_src), &(shader_tex_nomul_afill_frag_src), "tex_nomul_afill" },
-   { SHADER_TEX_NOMUL, &(shader_tex_nomul_vert_src), &(shader_tex_nomul_frag_src), "tex_nomul" },
+   { SHADER_TEX_22_NOMUL, &(shader_tex_22_nomul_vert_src), &(shader_tex_22_nomul_frag_src), "tex_22_nomul" },
    { SHADER_TEX, &(shader_tex_vert_src), &(shader_tex_frag_src), "tex" },
+   { SHADER_TEX_NOMUL, &(shader_tex_nomul_vert_src), &(shader_tex_nomul_frag_src), "tex_nomul" },
+   { SHADER_TEX_AFILL, &(shader_tex_afill_vert_src), &(shader_tex_afill_frag_src), "tex_afill" },
+   { SHADER_TEX_22_AFILL, &(shader_tex_22_afill_vert_src), &(shader_tex_22_afill_frag_src), "tex_22_afill" },
+   { SHADER_TEX_21_AFILL, &(shader_tex_21_afill_vert_src), &(shader_tex_21_afill_frag_src), "tex_21_afill" },
+   { SHADER_TEX_12_AFILL, &(shader_tex_12_afill_vert_src), &(shader_tex_12_afill_frag_src), "tex_12_afill" },
+   { SHADER_TEX_22_NOMUL_AFILL, &(shader_tex_22_nomul_afill_vert_src), &(shader_tex_22_nomul_afill_frag_src), "tex_22_nomul_afill" },
+   { SHADER_TEX_21_NOMUL_AFILL, &(shader_tex_21_nomul_afill_vert_src), &(shader_tex_21_nomul_afill_frag_src), "tex_21_nomul_afill" },
+   { SHADER_TEX_12_NOMUL_AFILL, &(shader_tex_12_nomul_afill_vert_src), &(shader_tex_12_nomul_afill_frag_src), "tex_12_nomul_afill" },
+   { SHADER_TEX_NOMUL_AFILL, &(shader_tex_nomul_afill_vert_src), &(shader_tex_nomul_afill_frag_src), "tex_nomul_afill" },
    { SHADER_YUV_NOMUL, &(shader_yuv_nomul_vert_src), &(shader_yuv_nomul_frag_src), "yuv_nomul" },
    { SHADER_YUV, &(shader_yuv_vert_src), &(shader_yuv_frag_src), "yuv" },
    { SHADER_YUY2_NOMUL, &(shader_yuy2_nomul_vert_src), &(shader_yuy2_nomul_frag_src), "yuy2_nomul" },
