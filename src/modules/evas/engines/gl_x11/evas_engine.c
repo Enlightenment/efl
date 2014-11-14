@@ -646,6 +646,7 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
      WRN("This PBuffer implementation does not support extra attributes yet");
 
 #ifdef GL_GLES
+   Evas_Engine_GL_Context *evasglctx;
    int config_attrs[20];
    int surface_attrs[20];
    EGLSurface egl_sfc;
@@ -655,7 +656,8 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
    EGLContext ctx;
 
    disp = re->window_egl_display_get(re->software.ob);
-   ctx = re->window_gl_context_get(re->software.ob);
+   evasglctx = re->window_gl_context_get(re->software.ob);
+   ctx = evasglctx->eglctxt;
 
 #if 0
    // Choose framebuffer configuration
