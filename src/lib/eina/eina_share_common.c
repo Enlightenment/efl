@@ -607,7 +607,7 @@ eina_share_common_init(Eina_Share **_share,
 {
    Eina_Share *share;
 
-   share = *_share = calloc(sizeof(Eina_Share), 1);
+   share = *_share = calloc(1, sizeof(Eina_Share));
    if (!share) goto on_error;
 
    share->share = calloc(1, sizeof(Eina_Share_Common));
