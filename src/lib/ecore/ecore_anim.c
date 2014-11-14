@@ -587,8 +587,8 @@ ecore_animator_source_set(Ecore_Animator_Source source)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
-   src = source;
    _end_tick();
+   src = source;
    if (_have_animators()) _begin_tick();
    _ecore_unlock();
 }
@@ -606,9 +606,9 @@ ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb    func,
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
+   _end_tick();
    begin_tick_cb = func;
    begin_tick_data = data;
-   _end_tick();
    if (_have_animators()) _begin_tick();
    _ecore_unlock();
 }
@@ -619,9 +619,9 @@ ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb    func,
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
+   _end_tick();
    end_tick_cb = func;
    end_tick_data = data;
-   _end_tick();
    if (_have_animators()) _begin_tick();
    _ecore_unlock();
 }
