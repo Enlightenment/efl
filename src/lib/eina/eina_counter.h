@@ -107,88 +107,88 @@
 
 /**
  * @typedef Eina_Counter
- * @brief Type for Counter.
+ * @brief An opaque type for counter.
  */
 typedef struct _Eina_Counter Eina_Counter;
 
 
 /**
- * @brief Return a counter.
+ * @brief Returns a counter.
  *
- * @param name The name of the counter.
- * @return A newly allocated counter.
+ * @param[in] name The name of the counter
+ * @return A newly allocated counter
  *
- * This function returns a new counter. It is characterized by @p
- * name. If @p name is @c NULL, the function returns @c NULL
- * immediately. If memory allocation fails, @c NULL is returned.
+ * @details This function returns a new counter. It is characterized by @p
+ *          name. If @p name is @c NULL, the function returns @c NULL
+ *          immediately. If memory allocation fails, @c NULL is returned.
  *
- * Whe the new counter is not needed anymore, use eina_counter_free() to
- * free the allocated memory.
+ * @note Whe the new counter is not needed anymore, use eina_counter_free() to
+ *       free the allocated memory.
  */
 EAPI Eina_Counter *eina_counter_new(const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Delete a counter.
+ * @brief Deletes a counter.
  *
- * @param counter The counter to delete.
+ * @param[in] counter The counter to delete
  *
- * This function remove the clock of @p counter from the used clocks
- * (see eina_counter_start()) and frees the memory allocated for
- * @p counter. If @p counter is @c NULL, the function returns
- * immediately.
+ * @details This function removes the clock of @p counter from the used clocks
+ *          (see eina_counter_start()) and frees the memory allocated for
+ *          @p counter. If @p counter is @c NULL, the function returns
+ *          immediately.
  */
 EAPI void          eina_counter_free(Eina_Counter *counter) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Start the time count.
+ * @brief Starts the time count.
  *
- * @param counter The counter.
+ * @param[in] counter The counter
  *
- * This function specifies that the part of the code beginning just
- * after its call is being to be timed, using @p counter. If
- * @p counter is @c NULL, this function returns immediately.
+ * @details This function specifies that the part of the code beginning just
+ *          after its call is being timed, using @p counter. If
+ *          @p counter is @c NULL, this function returns immediately.
  *
- * This function adds the clock associated to @p counter in a list. If
- * the memory needed by that clock can not be allocated, the function
- * returns and nothing is done.
+ * @note This function adds the clock associated to @p counter in a list. If
+ *       the memory needed by that clock can not be allocated, the function
+ *       returns and nothing is done.
  *
- * To stop the timing, eina_counter_stop() must be called with the
- * same counter.
+ * @note To stop the timing, eina_counter_stop() must be called with the
+ *       same counter.
  */
 EAPI void          eina_counter_start(Eina_Counter *counter) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Stop the time count.
+ * @brief Stops the time count.
  *
- * @param counter The counter.
- * @param specimen The number of the test.
+ * @param[in] counter The counter
+ * @param[in] specimen The number of the test
  *
- * This function stop the timing that has been started with
- * eina_counter_start(). @p counter must be the same than the one used
- * with eina_counter_start(). @p specimen is the number of the
- * test. If @p counter or its associated clock are  @c NULL, or if the
- * time can't be retrieved the function exits.
+ * @details This function stops the timing that has been started with
+ *          eina_counter_start(). @p counter must be the same as the one used
+ *          with eina_counter_start(). @p specimen is the number of the
+ *          test. If @p counter or its associated clock is @c NULL, or if the
+ *          time can't be retrieved the function exits.
  */
 EAPI void          eina_counter_stop(Eina_Counter *counter,
                                      int           specimen) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Dump the result of all clocks of a counter to a stream.
+ * @brief Dumps the result of all the clocks of a counter to a stream.
  *
- * @return A string with a summary of the test.
- * @param counter The counter.
+ * @param[in] counter The counter
+ * @return A string with a summary of the test
  *
- * This function returns an malloc'd string containing the dump of
- * all the valid clocks of @p counter.
- * If @p counter @c NULL, the functions exits
- * immediately. Otherwise, the output is formattted like that:
+ * @details This function returns an malloc'd string containing the dump of
+ *          all the valid clocks of @p counter.
+ *          If @p counter is @c NULL, the functions exits
+ *          immediately. Otherwise, the output is formatted like this:
  *
  * @verbatim
  * \# specimen    experiment time    starting time    ending time
  * 1              208                120000           120208
  * @endverbatim
  *
- * The unit of time is the nanosecond.
+ * @note The unit of time is nanoseconds.
  */
 EAPI char         *eina_counter_dump(Eina_Counter *counter) EINA_ARG_NONNULL(1);
 
