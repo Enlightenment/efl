@@ -48,7 +48,7 @@ class Elm_Segment_Control_Item(Elm_Widget_Item)
               @ingroup SegmentControl
              */
              params {
-                  Eina_Bool select; /* @ The selected state. */
+                  Eina_Bool selected; /* @ The selected state. */
              }
         }
    }
