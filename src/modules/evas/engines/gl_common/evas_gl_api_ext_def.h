@@ -309,8 +309,14 @@ _EVASGL_EXT_BEGIN(multisampled_render_to_texture)
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 _EVASGL_EXT_END()
 
+/* ETC1 compressed texture format support */
 _EVASGL_EXT_BEGIN(compressed_ETC1_RGB8_texture)
         _EVASGL_EXT_DRVNAME(GL_OES_compressed_ETC1_RGB8_texture)
+_EVASGL_EXT_END()
+
+/* SubImage texture upload support for ETC1*/
+_EVASGL_EXT_BEGIN(compressed_ETC1_RGB8_sub_texture)
+        _EVASGL_EXT_DRVNAME(GL_EXT_compressed_ETC1_RGB8_sub_texture)
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(compressed_ETC2_RGB8_texture)
@@ -359,6 +365,10 @@ _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_half_float)
 	_EVASGL_EXT_DRVNAME(GL_OES_texture_half_float)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(texture_float_linear)
+        _EVASGL_EXT_DRVNAME(GL_OES_texture_float_linear)
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_half_float_linear)
@@ -452,6 +462,19 @@ _EVASGL_EXT_END()
 _EVASGL_EXT_BEGIN(QCOM_writeonly_rendering)
 	_EVASGL_EXT_DRVNAME(GL_QCOM_writeonly_rendering)
 _EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(read_format)
+        _EVASGL_EXT_DRVNAME(GL_OES_read_format)
+_EVASGL_EXT_END()
+
+/* GL_OES_fragment_precision_high:
+    This extension has been withdrawn. See the specification of
+    GetShaderPrecisionFormat in section 6.1.8 of the OpenGL ES 2.0
+    Specification to determine within the API if high-precision fragment
+    shader varyings are supported by the implementation.
+ */
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1089,6 +1112,35 @@ _EVASGL_EXT_BEGIN(QCOM_tiled_rendering)
         _EVASGL_EXT_FUNCTION_END()
 _EVASGL_EXT_END()
 
+_EVASGL_EXT_BEGIN(element_index_uint)
+        _EVASGL_EXT_DRVNAME(GL_OES_element_index_uint)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(fbo_render_mipmap)
+        _EVASGL_EXT_DRVNAME(GL_OES_fbo_render_mipmap)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(mali_program_binary)
+        _EVASGL_EXT_DRVNAME(GL_ARM_mali_program_binary)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(mali_shader_binary)
+        _EVASGL_EXT_DRVNAME(GL_ARM_mali_shader_binary)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(depth_texture)
+        _EVASGL_EXT_DRVNAME(GL_OES_depth_texture)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(depth_texture_cube_map)
+        _EVASGL_EXT_DRVNAME(GL_OES_depth_texture_cube_map)
+_EVASGL_EXT_END()
+
+_EVASGL_EXT_BEGIN(shader_texture_lod)
+        _EVASGL_EXT_DRVNAME(GL_EXT_shader_texture_lod)
+_EVASGL_EXT_END()
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1307,11 +1359,41 @@ _EVASGL_EXT_END()
 // ----------------------------------------------------------
 _EVASGL_EXT_BEGIN(framebuffer_blit)
 _EVASGL_EXT_DRVNAME(GL_NV_framebuffer_blit)
+_EVASGL_EXT_DRVNAME(GL_ANGLE_framebuffer_blit)
 
 _EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebuffer")
 _EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebufferNV")
+_EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebufferANGLE")
 
 _EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+_EVASGL_EXT_BEGIN(framebuffer_multisample)
+_EVASGL_EXT_DRVNAME(GL_ANGLE_framebuffer_multisample)
+
+_EVASGL_EXT_FUNCTION_WHITELIST("glRenderbufferStorageMultisampleANGLE")
+
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+_EVASGL_EXT_BEGIN(point_sprite)
+  _EVASGL_EXT_DRVNAME(GL_OES_point_sprite)
+_EVASGL_EXT_END()
+
+
+// ----------------------------------------------------------
+// This "extension" is already listed in the base GLES1 API
+// Provided here as convenience for evas_gl_proc_address_get
+_EVASGL_EXT_BEGIN(point_size_array)
+  _EVASGL_EXT_DRVNAME(GL_OES_point_size_array)
+
+  _EVASGL_EXT_FUNCTION_WHITELIST("glPointSizePointer")
+  _EVASGL_EXT_FUNCTION_WHITELIST("glPointSizePointerOES")
+_EVASGL_EXT_END()
+
+
 
 
 #endif // _EVASGL_EXT_WHITELIST_ONLY ("safe" extensions)
@@ -1350,8 +1432,8 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
 		// Add special function pointers
-		evgl_evasglCreateImage_ptr = GETPROCADDR("eglCreateImageKHR");
-		evgl_evasglDestroyImage_ptr = GETPROCADDR("eglDestroyImageKHR");
+		//evgl_evasglCreateImage_ptr = GETPROCADDR("eglCreateImageKHR");
+		//evgl_evasglDestroyImage_ptr = GETPROCADDR("eglDestroyImageKHR");
 	}
 	#endif
 
@@ -1379,7 +1461,7 @@ _EVASGL_EXT_BEGIN(GL_OES_EGL_image)
 
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 
@@ -1391,7 +1473,7 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_pixmap)
 	_EVASGL_EXT_DRVNAME(EGL_KHR_image_pixmap)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
@@ -1401,17 +1483,17 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image)
 	_EVASGL_EXT_DRVNAME(EGL_KHR_image)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
 
 
 _EVASGL_EXT_BEGIN(EGL_KHR_vg_parent_image)
-	_EVASGL_EXT_DRVNAME(EvasGL_KHR_vg_parent_image)
+	_EVASGL_EXT_DRVNAME(EGL_KHR_vg_parent_image)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
@@ -1421,7 +1503,7 @@ _EVASGL_EXT_BEGIN(EGL_KHR_gl_texture_2D_image)
 	_EVASGL_EXT_DRVNAME(EGL_KHR_gl_texture_2D_image)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
@@ -1431,7 +1513,7 @@ _EVASGL_EXT_BEGIN(EGL_KHR_gl_texture_cubemap_image)
 	_EVASGL_EXT_DRVNAME(EGL_KHR_gl_texture_cubemap_image)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
@@ -1441,7 +1523,7 @@ _EVASGL_EXT_BEGIN(EGL_KHR_gl_texture_3D_image)
 	_EVASGL_EXT_DRVNAME(EGL_KHR_gl_texture_3D_image)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
@@ -1451,14 +1533,28 @@ _EVASGL_EXT_BEGIN(EGL_KHR_gl_renderbuffer_image)
 	_EVASGL_EXT_DRVNAME(EGL_KHR_gl_renderbuffer_image)
 	#ifdef _EVASGL_EXT_VERIFY
 	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base") _EVASGL_EXT_DISCARD_SUPPORT();
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 _EVASGL_EXT_END()
 
+
+_EVASGL_EXT_BEGIN(GL_OES_EGL_image_external)
+        _EVASGL_EXT_DRVNAME(GL_OES_EGL_image_external)
+	#ifdef _EVASGL_EXT_VERIFY
+	{
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
+	}
+	#endif
+_EVASGL_EXT_END()
+
+
 _EVASGL_EXT_BEGIN(EGL_KHR_fence_sync)
 
+        /* 3 aliasses for EGL_KHR_fence_sync */
 	_EVASGL_EXT_DRVNAME(EGL_KHR_fence_sync)
+        _EVASGL_EXT_DRVNAME(GL_OES_EGL_sync)
+        _EVASGL_EXT_DRVNAME(VG_KHR_EGL_sync)
 
 	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void *, eglCreateSyncKHR, (EGLDisplay dpy, EGLenum type, const EGLint *attrib_list))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglCreateSyncKHR")
