@@ -27,9 +27,7 @@ evas_3d_mesh_frame_free(Evas_3D_Mesh_Frame *frame)
    int i;
 
    if (frame->material)
-     {
-        evas_3d_material_mesh_del(frame->material, frame->mesh);
-     }
+     evas_3d_material_mesh_del(frame->material, frame->mesh);
 
    for (i = 0; i < EVAS_3D_VERTEX_ATTRIB_COUNT; i++)
      {
@@ -790,6 +788,9 @@ _evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type ty
       case EVAS_3D_MESH_FILE_TYPE_EET:
         evas_3d_mesh_file_eet_set(obj, file);
         break;
+      case EVAS_3D_MESH_FILE_TYPE_PLY:
+        evas_3d_mesh_file_ply_set(obj, file);
+        break;
       default:
         ERR("Invalid mesh file type.");
         break;
@@ -802,34 +803,25 @@ _evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type,
 {
    if ((file == NULL) || (obj == NULL) || (pd == NULL)) return;
 
+   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
+
+   if (f == NULL)
+     {
+        ERR("Not existing mesh frame.");
+        return;
+     }
+
    switch (type)
      {
       case EVAS_3D_MESH_FILE_TYPE_OBJ:
-        {
-           Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
-
-           if (f == NULL)
-             {
-                ERR("Not existing mesh frame.");
-                return;
-             }
-
-           evas_3d_mesh_save_obj(obj, file, f);//file without extension!
-           break;
-        }
+        evas_3d_mesh_save_obj(obj, file, f);//file without extension!
+        break;
       case EVAS_3D_MESH_FILE_TYPE_EET:
-        {
-           Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
-
-           if (f == NULL)
-             {
-                ERR("Not existing mesh frame.");
-                return;
-             }
-
-           evas_3d_mesh_save_eet(obj, file, f);
-           break;
-        }
+        evas_3d_mesh_save_eet(obj, file, f);
+        break;
+      case EVAS_3D_MESH_FILE_TYPE_PLY:
+        evas_3d_mesh_save_ply(obj, file, f);
+        break;
       default:
         ERR("Invalid mesh file type.");
         break;

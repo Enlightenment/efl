@@ -14,8 +14,9 @@
 #define TESTS_MESH_DIR TESTS_SRC_DIR"/meshes"
 #define TESTS_OBJ_MESH_DIR TESTS_MESH_DIR"/obj"
 #define TESTS_MD2_MESH_DIR TESTS_MESH_DIR"/md2"
+#define TESTS_PLY_MESH_DIR TESTS_MESH_DIR"/ply"
 
-#define COMPARE_GEOMETRICS(a, component)                    \
+#define COMPARE_GEOMETRICS(a)                               \
    vb1 = &f1->vertices[a];                                  \
    vb2 = &f2->vertices[a];                                  \
    if ((vb1->data == NULL) || (vb2->data == NULL))          \
@@ -33,21 +34,21 @@
         src2 += f2->vertices[a].element_count;              \
      }
 
-#define CHECK_MESHES_IN_FOLDER(folder, type)                                                                  \
-   it = eina_file_direct_ls(folder);                                                                          \
-   EINA_ITERATOR_FOREACH(it, file)                                                                            \
-     {                                                                                                        \
-        mesh = eo_add(EVAS_3D_MESH_CLASS, e);                                                                 \
-        mesh2 = eo_add(EVAS_3D_MESH_CLASS, e);                                                                \
-        fail_if(mesh == NULL);                                                                                \
-        fail_if(mesh2 == NULL);                                                                               \
-        eo_do(mesh, evas_3d_mesh_file_set(type, file->path, NULL));                                           \
-        eo_do(mesh, evas_3d_mesh_save(EVAS_3D_MESH_FILE_TYPE_EET, buffer, NULL));                             \
-        eo_do(mesh2, evas_3d_mesh_file_set(EVAS_3D_MESH_FILE_TYPE_EET, buffer, NULL));                        \
-        res = _compare_meshes(mesh, mesh2);                                                                   \
-        fail_if(res == 1);                                                                                    \
-        eo_del(mesh2);                                                                                        \
-        eo_del(mesh);                                                                                         \
+#define CHECK_MESHES_IN_FOLDER(folder, type, type_to_check)                                                     \
+   it = eina_file_direct_ls(folder);                                                                            \
+   EINA_ITERATOR_FOREACH(it, file)                                                                              \
+     {                                                                                                          \
+        mesh = eo_add(EVAS_3D_MESH_CLASS, e);                                                                   \
+        mesh2 = eo_add(EVAS_3D_MESH_CLASS, e);                                                                  \
+        fail_if(mesh == NULL);                                                                                  \
+        fail_if(mesh2 == NULL);                                                                                 \
+        eo_do(mesh, evas_3d_mesh_file_set(type, file->path, NULL));                                             \
+        eo_do(mesh, evas_3d_mesh_save(type_to_check, buffer, NULL));                                            \
+        eo_do(mesh2, evas_3d_mesh_file_set(type_to_check, buffer, NULL));                                       \
+        res = _compare_meshes(mesh, mesh2);                                                                     \
+        fail_if(res == 1);                                                                                      \
+        eo_del(mesh2);                                                                                          \
+        eo_del(mesh);                                                                                           \
      }
 
 static Evas_3D_Mesh_Frame *
@@ -86,9 +87,10 @@ static int _compare_meshes(Evas_3D_Mesh *mesh1, Evas_3D_Mesh *mesh2)
    if ((pd1->vertex_count) != (pd2->vertex_count))
       return 1;
 
-   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_POSITION, position)
-   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_NORMAL, normal)
-   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_TEXCOORD, texcoord)
+   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_POSITION)
+   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_NORMAL)
+   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_TEXCOORD)
+
    return 0;
 }
 
@@ -97,8 +99,7 @@ START_TEST(evas_object_mesh_loader_saver)
    char buffer[PATH_MAX];
    Evas *e = _setup_evas();
    Eina_Tmpstr *tmp;
-   Eo *mesh;
-   Eo *mesh2;
+   Eo *mesh, *mesh2;
    Eina_Iterator *it;
    char *file_mask = strdup("evas_test_mesh_XXXXXX");
    int res = 0, tmpfd;
@@ -110,8 +111,10 @@ START_TEST(evas_object_mesh_loader_saver)
 
    snprintf(buffer, PATH_MAX, "%s", tmp);
 
-   CHECK_MESHES_IN_FOLDER(TESTS_OBJ_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_OBJ)
-   CHECK_MESHES_IN_FOLDER(TESTS_MD2_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_MD2)
+   CHECK_MESHES_IN_FOLDER(TESTS_OBJ_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_OBJ, EVAS_3D_MESH_FILE_TYPE_EET)
+   CHECK_MESHES_IN_FOLDER(TESTS_MD2_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_MD2, EVAS_3D_MESH_FILE_TYPE_EET)
+   CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_PLY, EVAS_3D_MESH_FILE_TYPE_EET)
+   CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_PLY, EVAS_3D_MESH_FILE_TYPE_PLY)
 
    eina_iterator_free(it);
 

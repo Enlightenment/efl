@@ -194,7 +194,9 @@ lib/evas/canvas/evas_3d_mesh_loader_obj.c \
 lib/evas/canvas/evas_3d_mesh_saver_obj.c \
 lib/evas/canvas/evas_3d_mesh_loader_eet.c \
 lib/evas/canvas/evas_3d_mesh_saver_eet.c \
-lib/evas/canvas/evas_3d_eet.c
+lib/evas/canvas/evas_3d_eet.c \
+lib/evas/canvas/evas_3d_mesh_loader_ply.c \
+lib/evas/canvas/evas_3d_mesh_saver_ply.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \

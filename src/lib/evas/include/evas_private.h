@@ -1613,6 +1613,8 @@ void evas_3d_mesh_file_obj_set(Evas_3D_Mesh *mesh, const char *file);
 Eina_Bool evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride);
 void evas_3d_mesh_file_eet_set(Evas_3D_Mesh *mesh, const char *file);
 void evas_3d_mesh_save_eet(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
+void evas_3d_mesh_file_ply_set(Evas_3D_Mesh *mesh, const char *file);
+void evas_3d_mesh_save_ply(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
 
 /* Texture functions. */
 void evas_3d_texture_material_add(Evas_3D_Texture *texture, Evas_3D_Material *material);
