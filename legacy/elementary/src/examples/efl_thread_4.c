@@ -123,7 +123,6 @@ elm_main(int argc, char **argv)
    pthread_mutex_lock(&th_lock);
    th_exit = 1;
    pthread_mutex_unlock(&th_lock);
-   elm_shutdown();
 
    return 0;
 }

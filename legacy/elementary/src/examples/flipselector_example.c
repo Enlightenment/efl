@@ -176,7 +176,6 @@ elm_main(int argc, char **argv)
 
    fprintf(stdout, "%s", commands);
    elm_run();
-   elm_shutdown();
 
    return 0;
 }

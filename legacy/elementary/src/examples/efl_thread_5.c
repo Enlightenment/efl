@@ -106,7 +106,6 @@ elm_main(int argc, char **argv)
 
    elm_run();
    if (thr) ecore_thread_cancel(thr);
-   elm_shutdown();
 
    return 0;
 }

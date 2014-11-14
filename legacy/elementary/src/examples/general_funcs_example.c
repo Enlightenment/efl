@@ -166,7 +166,6 @@ elm_main(int    argc,
 
    elm_run(); /* and run the program now, starting to handle all
                * events, etc. */
-   elm_shutdown(); /* clean up and shut down */
 
    /* exit code */
    return 0;

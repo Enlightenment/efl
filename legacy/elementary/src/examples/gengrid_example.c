@@ -609,7 +609,6 @@ elm_main(int    argc,
    evas_object_show(win);
 
    elm_run();
-   elm_shutdown();
 
    return 0;
 }

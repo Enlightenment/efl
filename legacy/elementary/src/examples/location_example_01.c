@@ -86,8 +86,6 @@ elm_main(int argc, char *argv[])
    elocation_address_free(address);
 #endif
 
-   elm_shutdown();
-
    return 0;
 }
 ELM_MAIN()

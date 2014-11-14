@@ -104,8 +104,6 @@ elm_main(int argc, char **argv)
 
    elm_prefs_data_unref(prefs_data);
 
-   elm_shutdown();
-
    return 0;
 }
 ELM_MAIN()

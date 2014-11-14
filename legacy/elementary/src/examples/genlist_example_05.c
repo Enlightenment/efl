@@ -409,7 +409,6 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
-   elm_shutdown();
 
    return 0;
 }

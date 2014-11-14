@@ -187,7 +187,6 @@
  *
  *    // run the mainloop and process events and callbacks
  *    elm_run();
- *    elm_shutdown();
  *    return 0;
  * }
  * ELM_MAIN()

@@ -104,7 +104,6 @@ elm_main(int argc, char **argv)
    ecore_timer_add(0.5, _nasty_hack, win);
 
    elm_run();
-   elm_shutdown();
 
    return 0;
 }
