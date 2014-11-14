@@ -26,16 +26,9 @@
 typedef struct _Elm_Bg_Data Elm_Bg_Data;
 struct _Elm_Bg_Data
 {
-/* the basic background's edje object has three swallow spots, namely:
- *  - "elm.swallow.rectangle" (elm_bg_color_set),
- *  - "elm.swallow.background" (elm_bg_file_set) and
- *  - "elm.swallow.content" (elm_bg_overlay_set).
- * the following three variables hold possible content to fit in each
- * of them, respectively. */
-
-   Evas_Object          *rect, *img;
-   const char           *file, *group;  /* path to file and group name
-                                         * to give life to "img" */
+   Evas_Object          *rect; /*<< Used for elm_bg_color_set(): elm.swallow.rectangle */
+   Evas_Object          *img; /*<< Used for elm_bg_file_set(): elm.swallow.content */
+   const char           *file, *group;  /*<< path to file and group name to give life to "img": elm.swallow.background */
    Elm_Bg_Option         option;
    struct
      {

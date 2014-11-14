@@ -10,7 +10,7 @@ class Elm_Bg (Elm_Layout, Efl.File)
             This sets how the background widget will display its image. This
             will only work if the elm_bg_file_set() was previously called with
             an image file on @a obj. The image can be display tiled, scaled,
-            centered or stretched.
+            centered or stretched. #ELM_BG_OPTION_SCALE by default.
 
             @see elm_bg_option_get()
 

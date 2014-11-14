@@ -58,7 +58,7 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
  * This sets the image file used in the background object. If the
  * image comes from an Edje group, it will be stretched to completely
  * fill the background object. If it comes from a traditional image file, it
- * will by default be centered in this widget's are (thus retaining
+ * will by default be centered in this widget's area (thus retaining
  * its aspect), what could lead to some parts being not visible. You
  * may change the mode of exhibition for a real image file with
  * elm_bg_option_set().
