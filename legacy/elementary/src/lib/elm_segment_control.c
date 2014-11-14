@@ -349,7 +349,7 @@ _on_mouse_up(void *data,
    ev = event_info;
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
 
-   if ((ev->canvas.x >= x) && (ev->output.x <= (x + w)) && (ev->canvas.y >= y)
+   if ((ev->canvas.x >= x) && (ev->canvas.x <= (x + w)) && (ev->canvas.y >= y)
        && (ev->canvas.y <= (y + h)))
      _segment_on(it);
    else

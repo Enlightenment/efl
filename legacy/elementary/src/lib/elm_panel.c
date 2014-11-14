@@ -629,8 +629,8 @@ _event_mouse_up(void *data,
    Evas_Coord x, y, up_x, up_y, minw = 0, minh = 0;
    evas_object_geometry_get(data, &x, &y, NULL, NULL);
 
-   up_x = ev->output.x - x;
-   up_y = ev->output.y - y;
+   up_x = ev->canvas.x - x;
+   up_y = ev->canvas.y - y;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
@@ -650,8 +650,8 @@ _on_mouse_down(void *data,
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-   sd->down_x = ev->output.x - x;
-   sd->down_y = ev->output.y - y;
+   sd->down_x = ev->canvas.x - x;
+   sd->down_y = ev->canvas.y - y;
 
    // if freeze state & mouse down on the edge
    // then set timer for un-freeze
