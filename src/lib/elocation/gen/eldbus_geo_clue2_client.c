@@ -223,7 +223,7 @@ geo_clue2_client_distance_threshold_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "DistanceThreshold", "u", value, cb_geo_clue2_client_distance_threshold_set, data);
+   p = eldbus_proxy_property_set(proxy, "DistanceThreshold", "u", value, cb_geo_clue2_client_distance_threshold_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;
@@ -293,7 +293,7 @@ geo_clue2_client_desktop_id_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "DesktopId", "s", value, cb_geo_clue2_client_desktop_id_set, data);
+   p = eldbus_proxy_property_set(proxy, "DesktopId", "s", value, cb_geo_clue2_client_desktop_id_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;
@@ -363,7 +363,7 @@ geo_clue2_client_requested_accuracy_level_propset(Eldbus_Proxy *proxy, Eldbus_Co
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
-   p = eldbus_proxy_property_set(proxy, "RequestedAccuracyLevel", "u", value, cb_geo_clue2_client_requested_accuracy_level_set, data);
+   p = eldbus_proxy_property_set(proxy, "RequestedAccuracyLevel", "u", value, cb_geo_clue2_client_requested_accuracy_level_set, cb);
    eldbus_pending_data_set(p, "__user_data", data);
    eldbus_pending_data_set(p, "__proxy", proxy);
    return p;
