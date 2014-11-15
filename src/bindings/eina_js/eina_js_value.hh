@@ -133,12 +133,10 @@ value_cast(const v8::Handle<v8::Value> &v)
     - The returned object has a `set()` method, which can be used to change the
       wrapped value.
  */
-void register_make_value(v8::Isolate *isolate,
-                         v8::Handle<v8::ObjectTemplate> global,
+void register_make_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                          v8::Handle<v8::String> name);
 
-void register_destroy_value(v8::Isolate *isolate,
-                            v8::Handle<v8::ObjectTemplate> global,
+void register_destroy_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                             v8::Handle<v8::String> name);
 
 } } // namespace efl::js

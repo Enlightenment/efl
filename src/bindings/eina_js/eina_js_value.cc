@@ -7,8 +7,7 @@
 namespace efl { namespace js {
 
 EAPI
-void register_make_value(v8::Isolate *isolate,
-                         v8::Handle<v8::ObjectTemplate> global,
+void register_make_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                          v8::Handle<v8::String> name)
 {
     using v8::Isolate;
@@ -92,12 +91,11 @@ void register_make_value(v8::Isolate *isolate,
         }
     };
 
-    global->Set(name, FunctionTemplate::New(isolate, ctor));
+    global->Set(name, FunctionTemplate::New(isolate, ctor)->GetFunction());
 }
 
 EAPI
-void register_destroy_value(v8::Isolate *isolate,
-                            v8::Handle<v8::ObjectTemplate> global,
+void register_destroy_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                             v8::Handle<v8::String> name)
 {
     using v8::Local;
@@ -118,7 +116,7 @@ void register_destroy_value(v8::Isolate *isolate,
         assert(o->GetAlignedPointerFromInternalField(0) == nullptr);
     };
 
-    global->Set(name, FunctionTemplate::New(isolate, dtor));
+    global->Set(name, FunctionTemplate::New(isolate, dtor)->GetFunction());
 }
 
 } } // namespace efl { namespace js {

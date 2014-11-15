@@ -70,35 +70,34 @@ int main(int argc, char *argv[])
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
+  v8::V8::Initialize();
   v8::V8::InitializeICU();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Isolate* isolate = v8::Isolate::New();
 
+  v8::Isolate::Scope isolate_scope(isolate);
   v8::HandleScope handle_scope(isolate);
-  v8::Handle<v8::Context> context = [&isolate]() {
-      v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
-
-      efl::js::register_make_value(isolate, global,
-                                   v8::String::NewFromUtf8(isolate,
-                                                           "make_value"));
-      efl::js::register_destroy_value(isolate, global,
-                                   v8::String::NewFromUtf8(isolate,
-                                                           "destroy_value"));
-      global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                  v8::FunctionTemplate::New(isolate, print));
-
-      return v8::Context::New(isolate, NULL, global);
-  }();
+  v8::Handle<v8::Context> context
+      = v8::Context::New(isolate, NULL, v8::ObjectTemplate::New(isolate));
 
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
     return 1;
   }
 
-  context->Enter();
   {
     // Enter the execution environment before evaluating any code.
     v8::Context::Scope context_scope(context);
+    v8::Handle<v8::Object> global = context->Global();
+
+    global->Set(v8::String::NewFromUtf8(isolate, "print"),
+                v8::FunctionTemplate::New(isolate, print)->GetFunction());
+    efl::js::register_make_value(isolate, global,
+                                 v8::String::NewFromUtf8(isolate,
+                                                         "make_value"));
+    efl::js::register_destroy_value(isolate, global,
+                                    v8::String::NewFromUtf8(isolate,
+                                                            "destroy_value"));
 
     assert(efl::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<uint64_t>::max()),
@@ -256,9 +255,11 @@ int main(int argc, char *argv[])
         assert(efl::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::string(utf8_data)), isolate)
                ->StrictEquals(v8::String::NewFromUtf8(isolate, utf8_data)));
+#ifndef EINA_JS_TEST_SKIP_STRINGSHARE
         assert(efl::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(efl::eina::stringshare(utf8_data)), isolate)
                ->StrictEquals(v8::String::NewFromUtf8(isolate, utf8_data)));
+#endif // EINA_JS_TEST_SKIP_STRINGSHARE
     }
 
     {
@@ -278,5 +279,4 @@ int main(int argc, char *argv[])
         }
     }
   }
-  context->Exit();
 }
