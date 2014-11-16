@@ -4,6 +4,8 @@
 #include <Eo.h>
 #include <Eina.h>
 
+typedef struct _Elm_Code Elm_Code;
+
 EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE;
 EAPI extern const Eo_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE;
 
@@ -44,11 +46,12 @@ extern "C" {
  * @brief Common data structures and constants.
  */
 
-typedef struct _Elm_Code
+struct _Elm_Code
 {
    Elm_Code_File *file;
    Eina_List *widgets;
-} Elm_Code;
+   Eina_List *parsers;
+};
 
 /**
  * @}

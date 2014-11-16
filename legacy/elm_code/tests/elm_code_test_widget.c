@@ -13,11 +13,13 @@ START_TEST (elm_code_widget_token_render_simple_test)
 {
    Elm_Code_File *file;
    Elm_Code_Line *line;
+   Elm_Code *code;
    int length;
 
    Evas_Textgrid_Cell cells[25];
 
-   file = elm_code_file_new();
+   code = elm_code_create();
+   file = elm_code_file_new(code);
    elm_code_file_line_append(file, "some \"test content\", 45");
    line = elm_code_file_line_get(file, 1);
    length = strlen(line->content);
@@ -33,7 +35,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    _assert_cell_type(cells[19], ELM_CODE_TOKEN_TYPE_DEFAULT);
    _assert_cell_type(cells[22], ELM_CODE_TOKEN_TYPE_COMMENT);
 
-   elm_code_file_free(file);
+   elm_code_free(code);
 }
 END_TEST
 

@@ -29,7 +29,8 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    Elm_Code *code;
    Evas_Object *widget;
 
-   code = elm_code_create(elm_code_file_new());
+   code = elm_code_create();
+   elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
    elm_code_file_line_append(code->file, "Hello World, Elm Code!");
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
@@ -60,7 +61,8 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    evas_object_show(hbox);
 
    // left side of diff
-   code = elm_code_create(elm_code_file_new());
+   code = elm_code_create();
+   elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
 
    elm_code_file_line_append(code->file, "Some content to diff");
@@ -81,7 +83,8 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    elm_box_pack_end(hbox, widget);
 
    // right side of diff
-   code = elm_code_create(elm_code_file_new());
+   code = elm_code_create();
+   elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
 
    elm_code_file_line_append(code->file, "Some content to diff");

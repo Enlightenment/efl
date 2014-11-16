@@ -5,6 +5,7 @@
 #include <Eo.h>
 
 #include "Elm_Code.h"
+#include "elm_code_parse.h"
 
 #include "elm_code_private.h"
 
@@ -65,13 +66,11 @@ elm_code_shutdown(void)
 }
 
 EAPI Elm_Code *
-elm_code_create(Elm_Code_File *file)
+elm_code_create()
 {
    Elm_Code *ret;
 
    ret = calloc(1, sizeof(Elm_Code));
-   ret->file = file;
-   file->parent = ret;
 
    return ret;
 }
@@ -79,16 +78,21 @@ elm_code_create(Elm_Code_File *file)
 EAPI void
 elm_code_free(Elm_Code *code)
 {
-   Eina_List *item;
    Evas_Object *widget;
+   Elm_Code_Parser *parser;
 
    if (code->file)
      elm_code_file_free(code->file);
 
-   EINA_LIST_FOREACH(code->widgets, item, widget)
+   EINA_LIST_FREE(code->widgets, widget)
      {
         evas_object_hide(widget);
         evas_object_del(widget);
+     }
+
+   EINA_LIST_FREE(code->parsers, parser)
+     {
+        free(parser);
      }
 
    free(code);

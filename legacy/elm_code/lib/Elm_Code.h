@@ -91,14 +91,15 @@ EAPI int elm_code_init(void);
 EAPI int elm_code_shutdown(void);
 
 /**
- * Create a new Elm Code instance for an existing file
+ * Create a new Elm Code instance
  *
- * This method creates a new Elm Code instance backing to the specified file.
+ * This method creates a new Elm Code instance which will need a
+ * backing file set for storage.
  * Once an Elm Code has been created you can create widgets that render the content.
  *
  * "return an allocated Elm_Code that references the given file
  */
-EAPI Elm_Code *elm_code_create(Elm_Code_File *file);
+EAPI Elm_Code *elm_code_create();
 
 /**
  * Free an Elm Code instance

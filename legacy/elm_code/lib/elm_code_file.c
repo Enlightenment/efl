@@ -4,6 +4,7 @@
 
 #include "Elm_Code.h"
 #include "elm_code_file.h"
+#include "elm_code_parse.h"
 
 #include "elm_code_private.h"
 
@@ -33,19 +34,24 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
    file->lines = eina_list_append(file->lines, line);
 
    if (file->parent)
-     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
+     {
+        elm_code_parse_line(file->parent, line);
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
+     }
 }
 
-EAPI Elm_Code_File *elm_code_file_new()
+EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
 {
    Elm_Code_File *ret;
 
    ret = calloc(1, sizeof(Elm_Code_File));
+   code->file = ret;
+   ret->parent = code;
 
    return ret;
 }
 
-EAPI Elm_Code_File *elm_code_file_open(const char *path)
+EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
 {
    Elm_Code_File *ret;
    Eina_File *file;
@@ -53,7 +59,7 @@ EAPI Elm_Code_File *elm_code_file_open(const char *path)
    Eina_Iterator *it;
    unsigned int lastindex;
 
-   ret = elm_code_file_new();
+   ret = elm_code_file_new(code);
    file = eina_file_open(path, EINA_FALSE);
    ret->file = file;
    lastindex = 1;
@@ -77,7 +83,10 @@ EAPI Elm_Code_File *elm_code_file_open(const char *path)
    eina_iterator_free(it);
 
    if (ret->parent)
-     elm_code_callback_fire(ret->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, ret);
+     {
+        elm_code_parse_file(ret->parent, ret);
+        elm_code_callback_fire(ret->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, ret);
+     }
    return ret;
 }
 
@@ -98,8 +107,6 @@ EAPI void elm_code_file_free(Elm_Code_File *file)
 EAPI void elm_code_file_close(Elm_Code_File *file)
 {
    eina_file_close(file->file);
-
-   elm_code_file_free(file);
 }
 
 EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)

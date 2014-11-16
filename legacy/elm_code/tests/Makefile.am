@@ -7,6 +7,7 @@ elm_code_suite_SOURCES = \
 elm_code_file_test_load.c \
 elm_code_file_test_memory.c \
 elm_code_test_basic.c \
+elm_code_test_parse.c \
 elm_code_test_widget.c \
 elm_code_suite.c
 

@@ -52,9 +52,9 @@ typedef struct _Elm_Code_File
  *
  */
 
-EAPI Elm_Code_File *elm_code_file_new();
+EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code);
 
-EAPI Elm_Code_File *elm_code_file_open(const char *path);
+EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path);
 
 EAPI void elm_code_file_free(Elm_Code_File *file);
 

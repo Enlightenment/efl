@@ -7,11 +7,10 @@
 START_TEST (elm_code_create_test)
 {
    char *path = "elm_code/tests/testfile.txt";
-   Elm_Code_File *file;
    Elm_Code *code;
 
-   file = elm_code_file_open(path);
-   code = elm_code_create(file);
+   code = elm_code_create();
+   elm_code_file_open(code, path);
 
    ck_assert(code);
    elm_code_free(code);
