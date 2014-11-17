@@ -17,6 +17,11 @@ evas_3d_mesh_save_ply(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *
 
    Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
    FILE *_ply_file = fopen(file, "w+");
+   if (!_ply_file)
+     {
+        ERR("File open '%s' for save failed", file);
+        return;
+     }
 
    fprintf(_ply_file,"ply\nformat ascii 1.0\ncomment Created by EFL evas_3d_mesh_saver_ply.c" \
                       "version 1 (sub 0) - www.enlightenment.org, source file: ''\n");
