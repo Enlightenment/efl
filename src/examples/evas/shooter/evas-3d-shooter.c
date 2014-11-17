@@ -23,7 +23,7 @@
 #define  GUN_DIR_Z        105
 #define  GUN_SPEED        0.001
 
-Evas_3D_Scene    *scene             = NULL;
+Evas_3D_Scene    *global_scene      = NULL;
 Ecore_Evas       *ecore_evas        = NULL;
 static float     angle_camera       = 0.0f;
 static float     angle_eagle        = 180.0f;
@@ -635,14 +635,14 @@ _continue_camera(void *data)
 
 /* calculate new angle of rotation */
 static void
-_reload_camera(void *data, Evas *evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void   *event_info)
+_reload_camera(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void   *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_3D_Node *n;
    Evas_3D_Mesh *m;
    Evas_Real s, t;
 
-   eo_do(scene,
+   eo_do(global_scene,
          evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
 
    d_angle_camera = 0;
@@ -1375,9 +1375,9 @@ _mesh_setup_snake(Scene_Data *data)
 void
 _scene_setup(Scene_Data *data)
 {
-   scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
+   global_scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
-   eo_do(scene,
+   eo_do(global_scene,
          evas_3d_scene_size_set(WIDTH, HEIGHT),
          evas_3d_scene_background_color_set(0.5, 0.5, 0.5, 0.0));
 
@@ -1446,7 +1446,7 @@ _scene_setup(Scene_Data *data)
 
    _mesh_aabb(&data->mesh_cube, data);
 
-   eo_do(scene,
+   eo_do(global_scene,
          evas_3d_scene_root_node_set(data->root_node),
          evas_3d_scene_camera_node_set(data->camera_node));
 
@@ -1486,7 +1486,7 @@ main(void)
 
    /* Set the image object as render target for 3D scene. */
    eo_do(image,
-         evas_obj_image_scene_set(scene));
+         evas_obj_image_scene_set(global_scene));
 
    evas_object_focus_set(image, EINA_TRUE);
 
