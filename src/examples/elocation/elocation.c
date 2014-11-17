@@ -12,7 +12,7 @@
  * function.
  */
 static Eina_Bool
-status_changed(void *data, int ev_type, void *event)
+status_changed(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    int *status = event;
 
@@ -23,7 +23,7 @@ status_changed(void *data, int ev_type, void *event)
 }
 
 static Eina_Bool
-rgeocode_arrived(void *data, int ev_type, void *event)
+rgeocode_arrived(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Elocation_Address *address;
 
@@ -44,7 +44,7 @@ rgeocode_arrived(void *data, int ev_type, void *event)
 }
 
 static Eina_Bool
-geocode_arrived(void *data, int ev_type, void *event)
+geocode_arrived(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Elocation_Position *position;
 
@@ -62,7 +62,7 @@ geocode_arrived(void *data, int ev_type, void *event)
 }
 
 static Eina_Bool
-address_changed(void *data, int ev_type, void *event)
+address_changed(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Elocation_Address *address;
 
@@ -83,7 +83,7 @@ address_changed(void *data, int ev_type, void *event)
 }
 
 static Eina_Bool
-position_changed(void *data, int ev_type, void *event)
+position_changed(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Elocation_Position *position;
 
