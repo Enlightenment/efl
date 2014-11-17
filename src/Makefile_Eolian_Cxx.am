@@ -36,8 +36,8 @@ bin_eolian_cxx_eolian_cxx_SOURCES = \
     bin/eolian_cxx/convert.hh \
     bin/eolian_cxx/eolian_wrappers.hh \
     bin/eolian_cxx/safe_strings.hh \
-	  bin/eolian_cxx/type_lookup.hh \
-	  bin/eolian_cxx/type_lookup_table.cc \
+    bin/eolian_cxx/type_lookup.hh \
+    bin/eolian_cxx/type_lookup_table.cc \
     bin/eolian_cxx/eolian_cxx.cc
 
 bin_eolian_cxx_eolian_cxx_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
@@ -70,7 +70,7 @@ tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-callback.$(OBJEXT): tests/eol
 
 CLEANFILES += tests/eolian_cxx/callback.eo.hh tests/eolian_cxx/callback.eo.c tests/eolian_cxx/callback.eo.h
 
-tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = 	\
+tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bin/eolian_cxx \
 -I$(top_builddir)/src/tests/eolian_cxx \
