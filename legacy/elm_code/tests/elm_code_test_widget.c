@@ -28,12 +28,12 @@ START_TEST (elm_code_widget_token_render_simple_test)
    elm_code_file_line_token_add(file, 1, 22+1, 23+1, ELM_CODE_TOKEN_TYPE_COMMENT);
 
    elm_code_widget_fill_line_tokens(cells, length, line);
-   _assert_cell_type(cells[0], ELM_CODE_TOKEN_TYPE_DEFAULT);
-   _assert_cell_type(cells[3], ELM_CODE_TOKEN_TYPE_DEFAULT);
-   _assert_cell_type(cells[5], ELM_CODE_TOKEN_TYPE_DEFAULT);
-   _assert_cell_type(cells[15], ELM_CODE_TOKEN_TYPE_COMMENT);
-   _assert_cell_type(cells[19], ELM_CODE_TOKEN_TYPE_DEFAULT);
-   _assert_cell_type(cells[22], ELM_CODE_TOKEN_TYPE_COMMENT);
+   _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT);
+   _assert_cell_type(cells[4], ELM_CODE_TOKEN_TYPE_DEFAULT);
+   _assert_cell_type(cells[6], ELM_CODE_TOKEN_TYPE_DEFAULT);
+   _assert_cell_type(cells[16], ELM_CODE_TOKEN_TYPE_COMMENT);
+   _assert_cell_type(cells[20], ELM_CODE_TOKEN_TYPE_DEFAULT);
+   _assert_cell_type(cells[23], ELM_CODE_TOKEN_TYPE_COMMENT);
 
    elm_code_free(code);
 }
