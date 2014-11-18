@@ -2041,7 +2041,12 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    dbg = evgl_engine->api_debug_mode;
    if (dbg) DBG("(eng = %p, sfc = %p, ctx = %p), rsc = %p", eng_data, sfc, ctx, rsc);
 
-   if (!rsc) return 0;
+   if (!rsc)
+     {
+        DBG("Creating new TLS for this thread: %lu", eina_thread_self());
+        rsc = _evgl_tls_resource_create(eng_data);
+        if (!rsc) return 0;
+     }
 
    // Unset
    if ((!sfc) && (!ctx))
@@ -2052,7 +2057,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                 evgl_direct_partial_render_end();
           }
 
-        // FIXME: This code path does not properly set the underlying TLS vars.
         if (dbg) DBG("Calling make_current(NULL, NULL)");
         if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
           {
@@ -2060,7 +2064,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              return 0;
           }
 
-        //FIXME!!!
+        // FIXME -- What is this "FIXME" about?
         if (rsc->current_ctx)
           {
              rsc->current_ctx->current_sfc = NULL;
