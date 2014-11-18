@@ -111,11 +111,17 @@ _elm_code_widget_line_cb(void *data EINA_UNUSED, Eo *obj,
 {
    Elm_Code_Line *line;
    Evas_Object *o;
+   int h;
 
    Evas_Textgrid_Cell *cells;
 
    line = (Elm_Code_Line *)event_info;
    o = (Evas_Object *)obj;
+
+   evas_object_textgrid_size_get(o, NULL, &h);
+
+   if (line->number > (unsigned int) h)
+     return EINA_TRUE;
 
    cells = evas_object_textgrid_cellrow_get(o, line->number - 1);
    _elm_code_widget_fill_line(o, cells, line);
