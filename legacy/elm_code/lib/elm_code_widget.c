@@ -9,6 +9,20 @@
 
 #include "elm_code_private.h"
 
+Eina_Unicode status_icons[] = {
+ ' ',
+ '!',
+
+ '+',
+ '-',
+ ' ',
+
+ 0x2713,
+ 0x2717,
+
+ 0
+};
+
 static Eina_Bool _elm_code_widget_resize(Evas_Object *o)
 {
    int w, h, cw, ch;
@@ -25,7 +39,7 @@ static void _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int coun
 {
    int x;
 
-   for (x = start - 1; x < end && x < count; x++)
+   for (x = start; x <= end && x < count; x++)
      {
         cells[x].fg = type;
      }
@@ -66,8 +80,13 @@ static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells
    length = strlen(line->content);
    evas_object_textgrid_size_get(o, &w, NULL);
 
+   cells[0].codepoint = status_icons[line->status];
+   cells[0].bold = 1;
+   cells[0].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
+   cells[0].bg = line->status;
+
    chr = (char *)line->content;
-   for (x = 0; x < (unsigned int) w && x < length; x++)
+   for (x = 1; x < (unsigned int) w && x <= length; x++)
      {
         cells[x].codepoint = *chr;
         cells[x].bg = line->status;
