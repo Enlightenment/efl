@@ -168,9 +168,22 @@ efreet_desktop_get(const char *file)
                 info->id == EFREET_DESKTOP_TYPE_LINK ||
                 info->id == EFREET_DESKTOP_TYPE_DIRECTORY
                 ))
+        {
             efreet_cache_desktop_add(desktop);
+            /* Check Symbolic link */
+            char *sym_file;
+            Efreet_Desktop *sym_desktop;
+            sym_file = ecore_file_readlink(file);
+            if (sym_file)
+            {
+                sym_desktop = efreet_desktop_new(sym_file);
+                if (sym_desktop && !sym_desktop->eet)
+                  efreet_cache_desktop_add(sym_desktop);
+                free(sym_file);
+                efreet_desktop_free(sym_desktop);
+            }
+        }
     }
-
     return desktop;
 }
 
