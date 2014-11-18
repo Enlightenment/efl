@@ -405,6 +405,23 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
           }
      }
    
+  entry = eina_list_data_get(set->entries);
+  if (entry)
+    {
+       if (eps)
+         {
+            if (!*eps)
+              *eps = calloc(1, sizeof (Edje_Real_Part_Set));
+            if (*eps)
+              {
+                 (*eps)->entry = entry;
+                 (*eps)->set = set;
+                 (*eps)->id = id;
+              }
+         }
+       return entry->id;
+    }
+
    return -1;
 }
 
