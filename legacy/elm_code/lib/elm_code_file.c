@@ -119,6 +119,21 @@ EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
    return eina_file_filename_get(file->file);
 }
 
+EAPI void elm_code_file_clear(Elm_Code_File *file)
+{
+   Elm_Code_Line *l;
+
+   EINA_LIST_FREE(file->lines, l)
+     {
+        if (l->content)
+          free(l->content);
+        free(l);
+     }
+
+   if (file->parent)
+     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, file);
+}
+
 EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file)
 {
    return eina_list_count(file->lines);

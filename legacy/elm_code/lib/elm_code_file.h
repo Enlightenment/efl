@@ -76,6 +76,8 @@ EAPI const char *elm_code_file_path_get(Elm_Code_File *file);
  *
  */
 
+EAPI void elm_code_file_clear(Elm_Code_File *file);
+
 EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file);
 
 EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line);
