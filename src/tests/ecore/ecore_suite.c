@@ -40,6 +40,7 @@ static const Ecore_Test_Case etc[] = {
   { "Ecore_Fb", ecore_test_ecore_fb },
 #endif
   { "Ecore_Input", ecore_test_ecore_input },
+  { "Ecore_File", ecore_test_ecore_file },
   { NULL, NULL }
 };
 
