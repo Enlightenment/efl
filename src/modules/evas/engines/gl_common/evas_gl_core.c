@@ -128,6 +128,8 @@ _internal_resource_make_current(void *eng_data, EVGL_Context *ctx)
       surface = (void*)rsc->surface;
 
    // Do the make current
+   if (evgl_engine->api_debug_mode)
+     DBG("Calling make_current(%p, %p)", surface, context);
    ret = evgl_engine->funcs->make_current(eng_data, surface, context, 1);
    if (!ret)
      {
@@ -769,6 +771,8 @@ _glenum_string_get(GLenum e)
          return "GL_STENCIL_INDEX8";
 
          // Depth_Stencil
+      case GL_DEPTH_STENCIL:
+        return "GL_DEPTH_STENCIL";
       case GL_DEPTH24_STENCIL8:
          return "GL_DEPTH24_STENCIL8";
 #endif
@@ -1503,6 +1507,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    char *s = NULL;
    int direct_override = 0, direct_mem_opt = 0;
    Eina_Bool need_reconfigure = EINA_FALSE;
+   Eina_Bool dbg;
 
    // Check if engine is valid
    if (!evgl_engine)
@@ -1511,6 +1516,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ACCESS);
         return NULL;
      }
+   dbg = evgl_engine->api_debug_mode;
 
    if (!cfg)
      {
@@ -1608,6 +1614,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
           }
      }
 
+   if (dbg) DBG("Calling make_current(NULL, NULL)");
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
      {
         ERR("Error doing make_current(NULL, NULL).");
@@ -1618,7 +1625,6 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    // Keep track of all the created surfaces
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
-   LKU(evgl_engine->resource_lock);
 
    if (sfc->direct_fb_opt &&
        (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
@@ -1627,12 +1633,15 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         evgl_engine->direct_depth_stencil_surfaces =
           eina_list_prepend(evgl_engine->direct_depth_stencil_surfaces, sfc);
      }
+   LKU(evgl_engine->resource_lock);
 
    if (need_reconfigure)
      {
         // See FIXME notice above in _internal_config_set
         ERR("Surface reconfigure is not implemented yet");
      }
+
+   if (dbg) DBG("Created surface sfc %p (eng %p)", sfc, eng_data);
 
    return sfc;
 
@@ -1647,6 +1656,7 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
 {
    EVGL_Surface *sfc = NULL;
    void *pbuffer;
+   Eina_Bool dbg;
 
    // Check if engine is valid
    if (!evgl_engine)
@@ -1655,6 +1665,7 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ACCESS);
         return NULL;
      }
+   dbg = evgl_engine->api_debug_mode;
 
    if (!cfg)
      {
@@ -1735,6 +1746,7 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
 
    sfc->pbuffer.native_surface = pbuffer;
 
+   if (dbg) DBG("Calling make_current(NULL, NULL)");
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
      {
         ERR("Error doing make_current(NULL, NULL).");
@@ -1745,6 +1757,8 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
    LKU(evgl_engine->resource_lock);
+
+   if (dbg) DBG("Created PBuffer surface sfc %p:%p (eng %p)", sfc, pbuffer, eng_data);
 
    return sfc;
 
@@ -1758,6 +1772,9 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 {
    EVGL_Resource *rsc;
    Eina_Bool need_reconfigure = EINA_FALSE;
+   Eina_Bool dbg;
+
+   // FIXME: This does some make_current(0,0) which may have side effects
 
    // Check input parameter
    if ((!evgl_engine) || (!sfc))
@@ -1772,6 +1789,9 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         ERR("Error retrieving resource from TLS");
         return 0;
      }
+
+   if ((dbg = evgl_engine->api_debug_mode))
+     DBG("Destroying surface sfc %p (eng %p)", sfc, eng_data);
 
    if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
      {
@@ -1802,18 +1822,19 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    if (sfc->gles1_indirect)
      {
         int ret;
+        if (dbg) DBG("sfc %p is used for GLES 1.x indirect rendering", sfc);
+
         if (!evgl_engine->funcs->gles1_surface_destroy)
           {
              ERR("Error destroying GLES 1.x surface");
              return 0;
           }
 
-        INF("Destroying special surface used for GLES 1.x rendering");
+        DBG("Destroying special surface used for GLES 1.x rendering");
         ret = evgl_engine->funcs->gles1_surface_destroy(eng_data, sfc);
 
         if (!ret) ERR("Engine failed to destroy a GLES1.x Surface.");
         return ret;
-
      }
 
 
@@ -1828,6 +1849,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    if (sfc->pbuffer.native_surface)
      {
         int ret;
+        if (dbg) DBG("Surface sfc %p is a pbuffer: %p", sfc, sfc->pbuffer.native_surface);
 
         if (sfc->pbuffer.fbo)
           glDeleteFramebuffers(1, &sfc->pbuffer.fbo);
@@ -1842,6 +1864,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         return ret;
      }
 
+   if (dbg) DBG("Calling make_current(NULL, NULL)");
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
      {
         ERR("Error doing make_current(NULL, NULL).");
@@ -1851,7 +1874,6 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    // Remove it from the list
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
-   LKU(evgl_engine->resource_lock);
 
    if (sfc->direct_fb_opt &&
        (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
@@ -1862,6 +1884,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         evgl_engine->direct_depth_stencil_surfaces =
           eina_list_remove_list(evgl_engine->direct_depth_stencil_surfaces, found);
      }
+   LKU(evgl_engine->resource_lock);
 
    if (need_reconfigure)
      {
@@ -1897,6 +1920,9 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
         return NULL;
      }
 
+   if (evgl_engine->api_debug_mode)
+     DBG("Creating context GLESv%d (eng = %p, shctx = %p)", version, eng_data, share_ctx);
+
    // Allocate context object
    ctx = calloc(1, sizeof(EVGL_Context));
    if (!ctx)
@@ -1927,19 +1953,29 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
    evgl_engine->contexts = eina_list_prepend(evgl_engine->contexts, ctx);
    LKU(evgl_engine->resource_lock);
 
+   if (evgl_engine->api_debug_mode)
+     DBG("Created ctx %p", ctx);
+
    return ctx;
 }
-
 
 int
 evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
 {
+   Eina_Bool dbg;
+
    // Check the input
    if ((!evgl_engine) || (!ctx))
      {
         ERR("Invalid input data.  Engine: %p  Context:%p", evgl_engine, ctx);
         return 0;
      }
+   dbg = evgl_engine->api_debug_mode;
+
+   // FIXME: this calls make_current(0,0) which probably shouldn't be the case
+   // if the context is not current (?)
+
+   if (dbg) DBG("Destroying context (eng = %p, ctx = %p)", eng_data, ctx);
 
    // Set the context current with resource context/surface
    if (!_internal_resource_make_current(eng_data, NULL))
@@ -1953,6 +1989,7 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
       glDeleteFramebuffers(1, &ctx->surface_fbo);
 
    // Unset the currrent context
+   if (dbg) DBG("Calling make_current(NULL, NULL)");
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
      {
         ERR("Error doing make_current(NULL, NULL).");
@@ -1982,6 +2019,7 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
 int
 evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 {
+   Eina_Bool dbg = EINA_FALSE;
    EVGL_Resource *rsc;
    int curr_fbo = 0;
 
@@ -1997,7 +2035,13 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
 
    // Get TLS Resources
-   if (!(rsc = _evgl_tls_resource_get())) return 0;
+   rsc = _evgl_tls_resource_get();
+
+   // Abuse debug mode - extra tracing for make_current and friends
+   dbg = evgl_engine->api_debug_mode;
+   if (dbg) DBG("(eng = %p, sfc = %p, ctx = %p), rsc = %p", eng_data, sfc, ctx, rsc);
+
+   if (!rsc) return 0;
 
    // Unset
    if ((!sfc) && (!ctx))
@@ -2008,11 +2052,14 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                 evgl_direct_partial_render_end();
           }
 
+        // FIXME: This code path does not properly set the underlying TLS vars.
+        if (dbg) DBG("Calling make_current(NULL, NULL)");
         if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
           {
              ERR("Error doing make_current(NULL, NULL).");
              return 0;
           }
+
         //FIXME!!!
         if (rsc->current_ctx)
           {
@@ -2020,6 +2067,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              rsc->current_ctx = NULL;
              rsc->current_eng = NULL;
           }
+        if (dbg) DBG("Call to make_current(NULL, NULL) was successful.");
         return 1;
      }
 
@@ -2036,6 +2084,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      {
         if (_evgl_direct_renderable(rsc, sfc))
           {
+             if (dbg) DBG("sfc %p is direct renderable (has buffers: %d).", sfc, sfc->buffers_allocated);
+
              // Destroy created resources
              if (sfc->buffers_allocated)
                {
@@ -2059,6 +2109,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                   // Create internal buffers if not yet created
                   if (!sfc->buffers_allocated)
                     {
+                       if (dbg) DBG("Allocating buffers for sfc %p", sfc);
                        if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 1))
                          {
                             ERR("Unable Create Specificed Surfaces.  Unsupported format!");
@@ -2081,12 +2132,15 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
    if (ctx->version == EVAS_GL_GLES_1_X)
      {
+        if (dbg) DBG("ctx %p is GLES 1", ctx);
         if (_evgl_direct_renderable(rsc, sfc))
           {
+             if (dbg) DBG("sfc %p is direct renderable.", sfc);
              rsc->direct.rendered = 1;
           }
         else
           {
+             if (dbg) DBG("Calling make_current(%p, %p)", sfc->gles1_sfc, ctx->context);
              evgl_engine->funcs->make_current(eng_data, sfc->gles1_sfc,
                                               ctx->context, EINA_TRUE);
           }
@@ -2105,6 +2159,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    // Direct Rendering
    if (_evgl_direct_renderable(rsc, sfc))
      {
+        if (dbg) DBG("sfc %p is direct renderable.", sfc);
+
         // This is to transition from FBO rendering to direct rendering
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
         if (ctx->surface_fbo == (GLuint)curr_fbo)
@@ -2136,6 +2192,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
    else if (sfc->pbuffer.native_surface)
      {
+        if (dbg) DBG("Surface sfc %p is a pbuffer: %p", sfc, sfc->pbuffer.native_surface);
+
         // Call end tiling
         if (rsc->direct.partial.enabled)
            evgl_direct_partial_render_end();
@@ -2151,6 +2209,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                ERR("Could not detach current FBO");
           }
 
+        if (dbg) DBG("Calling make_current(%p, %p)", sfc->pbuffer.native_surface, ctx->context);
         evgl_engine->funcs->make_current(eng_data, sfc->pbuffer.native_surface,
                                          ctx->context, EINA_TRUE);
 
@@ -2165,6 +2224,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
    else
      {
+        if (dbg) DBG("Surface sfc %p is a normal surface.", sfc);
+
         // Attach fbo and the buffers
         if ((ctx->current_sfc != sfc) || (ctx != sfc->current_ctx))
           {
