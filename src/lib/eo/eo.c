@@ -1855,7 +1855,7 @@ eo_destructed_is(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
 
-   return obj->del;
+   return obj->destructed;
 }
 
 EAPI void
@@ -1876,7 +1876,7 @@ eo_manual_free(Eo *obj_id)
         return EINA_FALSE;
      }
 
-   if (!obj->del)
+   if (!obj->destructed)
      {
         ERR("Tried deleting the object %p while still referenced(%d).", obj_id, obj->refcount);
         return EINA_FALSE;
