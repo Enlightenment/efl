@@ -310,13 +310,6 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
      }
    evas_common_rgba_image_scalecache_shutdown(&im->cache_entry);
    if (ie->info.module) evas_module_unref((Evas_Module *)ie->info.module);
-   /* memset the image to 0x99 because i recently saw a segv where an
-    * seemed to be used BUT its contents were wrong - it looks like it was
-    * overwritten by something from efreet - as there was an execute command
-    * for a command there and some other signs - but to make sure, I am
-    * going to empty this struct out in case this happens again so i know
-    * that something else is overwritign this struct - or not */
-//   memset(im, 0x99, sizeof(im));
 #ifdef EVAS_CSERVE2
    if (ie->data1)
        ERR("Shouldn't reach this point since we are using cache2: '%s' '%s'",
