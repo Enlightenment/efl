@@ -113,7 +113,7 @@ elm_code_test_win_setup(void)
    Evas_Object *win;
    Evas_Object *vbox;
 
-   win = elm_win_util_standard_add("main", "Elm_code_test");
+   win = elm_win_util_standard_add("main", "Elm_Code Test");
    if (!win) return NULL;
 
    vbox = elm_box_add(win);
