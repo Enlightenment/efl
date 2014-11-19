@@ -104,12 +104,25 @@ inline std::ostream&
 operator<<(std::ostream& out, constructor_functor_type_decl const& x)
 {
    out << constructor_functor_type_name(x._ctor);
-   auto cb_it = parameters_find_callback(x._ctor.params);
-   if(cb_it != x._ctor.params.cend())
+
+   if (parameters_count_callbacks(x._ctor.params) == 0)
+     return out;
+
+   bool comma = false;
+   out << "<";
+   auto first = x._ctor.params.cbegin(), last = x._ctor.params.cend();
+   for(auto it = first; it != last; ++it)
      {
-        out << "<F>";
+        if (type_is_callback((*it).type) && it+1 != last)
+          {
+             if (comma)
+               out << ", ";
+             else
+               comma = true;
+             out << template_parameter_type((*it).type, (*it).name);
+          }
      }
-   return out;
+   return out << ">";
 }
 
 struct functors_constructor_methods
@@ -127,16 +140,23 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
    for (it = first; it != last; ++it)
      {
         eo_constructor const& c = *it;
-        auto cb_it = parameters_find_callback(c.params);
-        bool has_callback = (cb_it != c.params.cend());
 
         // Struct declaration
-        if(has_callback)
-          {
-             out << tab(1) << "template <typename F>" << endl;
-          }
-        out << tab(1) << "struct " << constructor_functor_type_name(c) << endl
+        out << template_parameters_declaration(c.params, 1)
+            << tab(1) << "struct " << constructor_functor_type_name(c) << endl
             << tab(1) << "{" << endl;
+
+        // Callbacks typedefs
+        out << parameters_cxx_generic(c.params,
+                 [](param_data d)
+                 {
+                    if (d.is_cb)
+                      d.out << tab(2)
+                            << parameter_remove_reference_typedef(d.type, d.name)
+                            << endl;
+                 }
+               )
+            << endl;
 
         // Struct constructor
         out << tab(2) << constructor_functor_type_name(c) << "("
@@ -148,7 +168,13 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
                         d.out << endl << tab(3) << ": ";
                      else
                         d.out << ", ";
-                     d.out << d.name << "(" << parameter_forward(d.type, d.name) << ")";
+
+                     if (d.is_cb)
+                       d.out << callback_tmp(d.name) << "(new "
+                             << template_parameter_type(d.type, d.name)
+                             << "(" << parameter_forward(d.type, d.name) << "))";
+                     else
+                       d.out << d.name << "(" << parameter_forward(d.type, d.name) << ")";
                   }
                )
             << endl
@@ -156,21 +182,22 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
 
         // Struct operator()
         out << tab(2) << "void operator()()" << endl
-            << tab(2) << "{" << endl;
-        if (has_callback)
-          {
-             out << tab(3) << "typedef typename std::remove_reference<F>::type function_type;" << endl
-                 << tab(3) << "function_type* _tmp_f = new F(this->" << (*cb_it).name << ");" << endl;
-          }
-        out << tab(3) << "::" << c.name << "(" << parameters_forward_to_c(c.params) << ");" << endl
+            << tab(2) << "{" << endl
+            << tab(3) << "::" << c.name << "(" << parameters_forward_to_c(c.params) << ");" << endl
             << tab(2) << "}" << endl;
 
         // Struct member variables
-        out << tab(1) << "private:" << endl
+        out << endl
             << parameters_cxx_generic(c.params,
                   [](param_data d)
                   {
-                     d.out << tab(2) << parameter_type(d.type) << " " << d.name << ";" << endl;
+                     d.out << tab(2);
+                     if (d.is_cb)
+                       d.out << parameter_no_ref_type(d.type, d.name) << "* "
+                             << callback_tmp(d.name);
+                     else
+                       d.out << parameter_type(d.type, d.name) << " " << d.name;
+                     d.out << ";" << endl;
                   }
                );
 
@@ -197,12 +224,9 @@ operator<<(std::ostream& out, functions_constructor_methods const& x)
      {
         eo_constructor const& c = *it;
 
-        out << comment(c.comment, 1);
-
-        unsigned cb_count = parameters_count_callbacks(c.params);
-        if(cb_count)
-          out << tab(1) << "template <typename F>" << endl;
-        out << tab(1) << constructor_functor_type_decl(c) << " " << c.name << "("
+        out << comment(c.comment, 1)
+            << template_parameters_declaration(c.params, 1)
+            << tab(1) << constructor_functor_type_decl(c) << " " << c.name << "("
             << parameters_declaration(c.params) << ")" << endl
             << tab(1) << "{" << endl
             << tab(2) << "return " << constructor_functor_type_decl(c) << "("
@@ -228,26 +252,50 @@ operator<<(std::ostream& out, constructor_with_constructor_methods const& x)
    // TODO Require constructor methods of all base classes ?
    //
 
+   unsigned cb_count = 0;
+
    constructors_container_type::const_iterator it,
      first = x._cls.constructors.cbegin(),
      last = x._cls.constructors.cend();
-
    for (it = first; it != last; ++it)
      {
-        unsigned cb_count = parameters_count_callbacks((*it).params);
-        if(cb_count)
+        cb_count += parameters_count_callbacks((*it).params);
+     }
+
+   if (cb_count != 0)
+     {
+        out << tab(1) << "template <";
+        for (unsigned i = 0; i != cb_count; ++i)
           {
-             out << tab(1) << "template <typename F>" << endl;
-             break;
+             if (i != 0)
+               out << ", ";
+             out << "typename F" << i;
           }
+        out << ">" << endl;
      }
 
    out << tab(1) << x._cls.name << "(";
-   for (it = first; it != last; ++it)
-     {
-        out << constructor_functor_type_decl(*it)
-            << " _c" << (it-first) << ", ";
-     }
+   {
+      unsigned cb_idx = 0;
+      for (it = first; it != last; ++it)
+        {
+           out << constructor_functor_type_name(*it);
+
+           if (cb_count != 0 && parameters_count_callbacks((*it).params) != 0)
+             {
+                out << "<"
+                    << parameters_cxx_generic((*it).params,
+                         [&cb_idx](param_data d)
+                         {
+                            if (d.is_cb)
+                              d.out << (d.cb_idx ? ", " : "") << "F" << cb_idx++;
+                         })
+                    << ">";
+             }
+           out << " _c" << (it-first) << ", ";
+        }
+        assert(cb_idx == cb_count);
+   }
    out << "efl::eo::parent_type _p = (efl::eo::parent = nullptr))" << endl
        << tab(2) << ": " << x._cls.name << "(_ctors_call(";
    for (it = first; it != last; ++it)
@@ -292,40 +340,6 @@ operator<<(std::ostream& out, constructor_eo const& x)
    return out;
 }
 
-struct constructors
-{
-   eo_class const& _cls;
-   constructors(eo_class const& cls)
-     : _cls(cls)
-   {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, constructors const& x)
-{
-   constructors_container_type::const_iterator it,
-     first = x._cls.constructors.cbegin(),
-     last = x._cls.constructors.cend();
-   for (it = first; it != last; ++it)
-     {
-        eo_constructor const& ctor = *it;
-        out << comment(ctor.comment, 1);
-        if (parameters_count_callbacks(ctor.params))
-          out << tab(1) << "template <typename F>" << endl;
-        out << tab(1)
-            << x._cls.name
-            << '(' << parameters_declaration(ctor.params)
-            << (ctor.params.size() > 0 ? ", " : "")
-            << "efl::eo::parent_type _p = (efl::eo::parent = nullptr))" << endl
-            << tab(2) << ": " << class_name(x._cls.name)
-            << "(_c" << (it - first) << "(" << constructor_parameters_list(ctor.params)
-            << (ctor.params.size() > 0 ? ", " : "")
-            << "_p))" << endl
-            << tab(1) << "{}" << endl << endl;
-     }
-   return out;
-}
-
 struct copy_constructor
 {
    eo_class const& _cls;
@@ -363,48 +377,6 @@ operator<<(std::ostream& out, destructor const& x)
    return out;
 }
 
-struct eo_class_constructors
-{
-   eo_class const& _cls;
-   eo_class_constructors(eo_class const& cls) : _cls(cls) {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, eo_class_constructors const& x)
-{
-   constructors_container_type::const_iterator it,
-     first = x._cls.constructors.begin(),
-     last = x._cls.constructors.end();
-   for (it = first; it != last; ++it)
-     {
-        if (parameters_count_callbacks((*it).params))
-          out << tab(1) << "template <typename F>" << endl;
-        out << tab(1)
-            << "static Eo* _c" << (it - first) << "("
-            << parameters_declaration((*it).params)
-            << ((*it).params.size() > 0 ? ", " : "")
-            << "efl::eo::parent_type _p"
-            << ')' << endl
-            << tab(1) << "{" << endl;
-
-        parameters_container_type::const_iterator callback_iter =
-          parameters_find_callback((*it).params);
-        if (callback_iter != (*it).params.cend())
-          {
-             out << tab(2)
-                 << "typedef typename std::remove_reference<F>::type function_type;" << endl
-                 << "function_type* _tmp_f = new F(std::forward<F>("
-                 << (*callback_iter).name << "));"
-                 << endl;
-          }
-        out << tab(2) << "return eo_add_ref("
-            << x._cls.eo_name << ", _p._eo_raw, " << (*it).name
-            << "(" << parameters_list((*it).params) << "));" << endl
-            << tab(1) << "}" << endl << endl;
-     }
-   return out;
-}
-
 struct function_call_constructor_methods
 {
    eo_class const& _cls;
@@ -414,31 +386,78 @@ struct function_call_constructor_methods
 inline std::ostream&
 operator<<(std::ostream& out, function_call_constructor_methods const& x)
 {
+   unsigned cb_count = 0;
+
    constructors_container_type::const_iterator it,
      first = x._cls.constructors.cbegin(),
      last = x._cls.constructors.cend();
    for (it = first; it != last; ++it)
      {
-        unsigned cb_count = parameters_count_callbacks((*it).params);
-        if (cb_count)
+        unsigned param_cb_count = parameters_count_callbacks((*it).params);
+        for (unsigned i = 0; i != param_cb_count; ++i)
           {
-             out << tab(1) << "template <typename F>" << endl;
-             break;
+             if(cb_count == 0)
+               out << tab(1) << "template <";
+             else
+               out << ", ";
+             out << "typename F" << cb_count++;
           }
      }
+   if (cb_count != 0)
+     out << ">" << endl;
+
+   unsigned cb_idx = 0;
    out << tab(1) << "static Eo* _ctors_call(";
    for (it = first; it != last; ++it)
      {
-        out << constructor_functor_type_decl(*it) << " _c" << (it-first) << ", ";
+        out << constructor_functor_type_name(*it);
+
+        if (cb_count != 0 && parameters_count_callbacks((*it).params) != 0)
+          {
+             out << "<"
+                 << parameters_cxx_generic((*it).params,
+                      [&cb_idx](param_data d)
+                      {
+                         if (d.is_cb)
+                           d.out << (d.cb_idx ? ", " : "") << "F" << cb_idx++;
+                      })
+                 << ">";
+          }
+        out << " _c" << (it-first) << ", ";
      }
+   assert(cb_idx == cb_count);
+
    out << "efl::eo::parent_type _p)" << endl
        << tab(1) << "{" << endl
-       << tab(2) << "return eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw, ";
+       << tab(2) << "Eo* _ret_eo = eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw, ";
    for (it = first; it != last; ++it)
      {
         out << "_c" << (it-first) << "(); ";
      }
-   out << ");" << endl
+   out << ");" << endl << endl;
+
+   cb_idx = 0;
+   for (it = first; it != last; ++it)
+     {
+        if (parameters_count_callbacks((*it).params) == 0)
+          continue;
+
+        out << parameters_cxx_generic((*it).params,
+                 [&it, &first, &cb_idx](param_data d)
+                 {
+                    if (d.is_cb)
+                      d.out << tab(2)
+                            << "eo_do(_ret_eo," << endl
+                            << tab(3) << "eo_event_callback_add(EO_EV_DEL, "
+                            << "&efl::eolian::free_callback_calback<F" << cb_idx++
+                            << ">, _c" << (it-first) << "." << callback_tmp(d.name)
+                            << "));" << endl;
+                 })
+            << endl;
+     }
+   assert(cb_idx == cb_count);
+
+   out << tab(2) << "return _ret_eo;" << endl
        << tab(1) << "}" << endl << endl;
 
    return out;

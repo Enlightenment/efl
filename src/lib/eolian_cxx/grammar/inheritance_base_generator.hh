@@ -155,8 +155,8 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    eo_function const& func = x._func;
    bool is_void = function_is_void(func);
 
-   if (parameters_count_callbacks(func.params) == 1)
-     out << tab(2) << "template <typename F>" << tab(2) << endl;
+   if (parameters_count_callbacks(func.params))
+     out << template_parameters_declaration(func.params, 2) << tab(2);
    else
      out << tab(2) << "virtual ";
 
@@ -168,12 +168,8 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    if (!is_void)
      out << tab(3) << func.ret.front().native << " _tmp_ret = {};"  << endl;
 
-   parameters_container_type::const_iterator
-     callback_iter = parameters_find_callback(func.params);
-   if (callback_iter != func.params.cend())
-     out << tab(3) << "typedef typename std::remove_reference<F>::type function_type;" << endl
-         << tab(3) << "function_type* _tmp_f = new function_type(std::forward<F>("
-         << (*callback_iter).name << "));" << endl;
+   out << callbacks_heap_alloc("static_cast<T*>(this)->_eo_ptr()", func.params, 3)
+       << endl;
 
    out << tab(3)
        << "eo_do_super(static_cast<T*>(this)->_eo_ptr()," << endl
@@ -291,8 +287,7 @@ struct inheritance_extension_function
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_extension_function const& x)
 {
-   if (parameters_count_callbacks(x._func.params) == 1)
-     out << tab(1) << "template <typename F>" << endl;
+   out << template_parameters_declaration(x._func.params, 1);
 
    bool is_void = function_is_void(x._func);
    out << tab(2)
@@ -307,16 +302,8 @@ operator<<(std::ostream& out, inheritance_extension_function const& x)
         out << tab(3) << x._func.ret.front().native << " _tmp_ret = {};"  << endl;
      }
 
-   parameters_container_type::const_iterator callback_iter =
-     parameters_find_callback(x._func.params);
-   if (callback_iter != x._func.params.cend())
-     {
-       out << tab(2)
-           << "typedef typename std::remove_reference<F>::type function_type;" << endl
-           << "function_type* _tmp_f = new function_type(std::forward<F>("
-           << (*callback_iter).name << "));"
-           << endl;
-     }
+   out << callbacks_heap_alloc("static_cast<U*>(this)->_eo_ptr()", x._func.params, 2)
+       << endl;
 
    out << tab(3) << "eo_do(static_cast<U*>(this)->_eo_ptr(), "
        << function_call(x._func) << ");" << endl;

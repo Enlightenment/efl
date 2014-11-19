@@ -77,6 +77,81 @@ operator<<(std::ostream& out, type_ownership const& x)
    return out << ">()";
 }
 
+struct
+template_parameter_type
+{
+   eolian_type_instance const& _type;
+   std::string const& _name;
+   template_parameter_type(eolian_type_instance const& type, std::string const& name)
+     : _type(type)
+     , _name(name)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, template_parameter_type const& x)
+{
+   return out << "F_" << x._name;
+}
+
+struct
+parameter_type
+{
+   eolian_type_instance const& _type;
+   std::string const& _name;
+   parameter_type(eolian_type_instance const& t, std::string const& name)
+     : _type(t)
+     , _name(name)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameter_type const& x)
+{
+   if(type_is_callback(x._type))
+      out << template_parameter_type(x._type, x._name);
+   else
+      out << reinterpret_type(x._type);
+   return out;
+}
+
+struct
+parameter_no_ref_type
+{
+   eolian_type_instance const& _type;
+   std::string const& _name;
+   parameter_no_ref_type(eolian_type_instance const& type, std::string const& name)
+     : _type(type)
+     , _name(name)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameter_no_ref_type const& x)
+{
+   return out << "_no_ref_" << parameter_type(x._type, x._name);
+}
+
+struct
+parameter_remove_reference_typedef
+{
+   eolian_type_instance const& _type;
+   std::string const& _name;
+   parameter_remove_reference_typedef(eolian_type_instance const& type, std::string const& name)
+     : _type(type)
+     , _name(name)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameter_remove_reference_typedef const& x)
+{
+   out << "typedef typename std::remove_reference<"
+       << parameter_type(x._type, x._name)
+       << ">::type " << parameter_no_ref_type(x._type, x._name) << ";";
+   return out;
+}
+
 struct to_cxx
 {
    eolian_type_instance const& _type;
@@ -114,7 +189,8 @@ inline std::ostream&
 operator<<(std::ostream& out, to_c const& x)
 {
    if (type_is_callback(x._type))
-     out << "efl::eolian::get_callback<" << type_to_native_str(x._type) << ", function_type>()";
+     out << "efl::eolian::get_callback<" << type_to_native_str(x._type)
+         << ", " << parameter_no_ref_type(x._type, x._varname) << " >()";
    else if (type_is_binding(x._type))
      out << "efl::eolian::to_c(" << x._varname << ")";
    else

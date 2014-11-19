@@ -234,6 +234,15 @@ C get_callback()
      (tag<typename callback_args_type<C>::type>());
 }
 
+template <typename F>
+Eina_Bool free_callback_calback(void* data, Eo* obj EINA_UNUSED
+                                , Eo_Event_Description const* e EINA_UNUSED
+                                , void* event_info EINA_UNUSED)
+{
+   delete (F*) data;
+   return EO_CALLBACK_CONTINUE;
+}
+
 } } // namespace efl { namespace eolian {
 
 #endif // EFL_EOLIAN_INTEROP_HH

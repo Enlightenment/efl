@@ -24,7 +24,7 @@ operator<<(std::ostream& out, function_call const& x)
    bool is_void = function_is_void(x._func);
    return out << (!is_void ? "_tmp_ret = " : "")
               << "::" << x._func.impl
-              << "(" << parameters_list(x._func.params) << ")";
+              << "(" << parameters_forward_to_c(x._func.params) << ")";
 }
 
 struct function
@@ -39,8 +39,7 @@ operator<<(std::ostream& out, function const& x)
    eo_function const& func = x._func;
 
    out << comment(x._func.comment, 1);
-   if (parameters_count_callbacks(x._func.params) == 1)
-     out << tab(1) << "template <typename F>" << endl;
+   out << template_parameters_declaration(func.params, 1);
 
    if (function_is_static(func))
      out << tab(1) << "static ";
@@ -55,16 +54,7 @@ operator<<(std::ostream& out, function const& x)
      out << tab(2)
          << func.ret.front().native << " _tmp_ret;" << endl;
 
-   parameters_container_type::const_iterator callback_iter =
-     parameters_find_callback(func.params);
-   if (callback_iter != func.params.cend())
-     {
-       out << tab(2)
-           << "typedef typename std::remove_reference<F>::type function_type;" << endl
-           << tab(2) << "function_type* _tmp_f = new function_type(std::forward<F>("
-           << (*callback_iter).name << "));"
-           << endl;
-     }
+   out << callbacks_heap_alloc("_eo_ptr()", func.params, 2);
 
    out << tab(2)
        << "eo_do(_eo_ptr(), " << function_call(x._func) << ");" << endl;
