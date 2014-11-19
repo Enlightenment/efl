@@ -763,8 +763,9 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
 {
    Image_Entry *ie;
    if (!im->im) return;
-   ie = (Image_Entry *)(im->im);
+   ie = &im->im->cache_entry;
    evas_gl_common_image_alloc_ensure(im);
+
 /*
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
@@ -786,6 +787,7 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
      }
    else
  */
+
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -804,36 +806,36 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {
 #ifdef EVAS_CSERVE2
-              if (evas_cache2_image_cached(&im->im->cache_entry))
+              if (evas_cache2_image_cached(ie))
                 {
-                   evas_cache2_image_load_data(&im->im->cache_entry);
+                   evas_cache2_image_load_data(ie);
                    evas_gl_common_texture_update(im->tex, im->im);
-                   evas_cache2_image_unload_data(&im->im->cache_entry);
+                   evas_cache2_image_unload_data(ie);
                 }
               else
 #endif
                 {
-                   evas_cache_image_load_data(&im->im->cache_entry);
+                   evas_cache_image_load_data(ie);
                    evas_gl_common_texture_update(im->tex, im->im);
-                   evas_cache_image_unload_data(&im->im->cache_entry);
+                   evas_cache_image_unload_data(ie);
                 }
              ie->flags.updated_data = 0;
           }
-	if (!im->tex)
+        if (!im->tex)
           {
 #ifdef EVAS_CSERVE2
-             if (evas_cache2_image_cached(&im->im->cache_entry))
+             if (evas_cache2_image_cached(ie))
                {
-                  evas_cache2_image_load_data(&im->im->cache_entry);
+                  evas_cache2_image_load_data(ie);
                   im->tex = evas_gl_common_texture_new(gc, im->im);
-                  evas_cache2_image_unload_data(&im->im->cache_entry);
+                  evas_cache2_image_unload_data(ie);
                }
              else
 #endif
                {
-                  evas_cache_image_load_data(&im->im->cache_entry);
+                  evas_cache_image_load_data(ie);
                   im->tex = evas_gl_common_texture_new(gc, im->im);
-                  evas_cache_image_unload_data(&im->im->cache_entry);
+                  evas_cache_image_unload_data(ie);
                }
           }
         im->dirty = 0;
@@ -842,15 +844,15 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_ETC1_ALPHA:
         if ((im->tex) && (im->dirty))
           {
-             evas_cache_image_load_data(&im->im->cache_entry);
+             evas_cache_image_load_data(ie);
              evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
-             evas_cache_image_unload_data(&im->im->cache_entry);
+             evas_cache_image_unload_data(ie);
           }
         else if ((!im->tex))
           {
-             evas_cache_image_load_data(&im->im->cache_entry);
+             evas_cache_image_load_data(ie);
              im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
-             evas_cache_image_unload_data(&im->im->cache_entry);
+             evas_cache_image_unload_data(ie);
           }
         im->dirty = 0;
         if (!im->tex) return;
@@ -859,16 +861,12 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_YCBCR422P709_PL:
         if ((im->tex) && (im->dirty))
           {
-             evas_gl_common_texture_yuv_update(im->tex, im->cs.data,
-                                               im->im->cache_entry.w,
-                                               im->im->cache_entry.h);
+             evas_gl_common_texture_yuv_update(im->tex, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
           {
-             im->tex = evas_gl_common_texture_yuv_new(gc, im->cs.data,
-                                                      im->im->cache_entry.w,
-                                                      im->im->cache_entry.h);
+             im->tex = evas_gl_common_texture_yuv_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if (!im->tex) return;
@@ -876,16 +874,12 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_YCBCR422601_PL:
         if ((im->tex) && (im->dirty))
           {
-             evas_gl_common_texture_yuy2_update(im->tex, im->cs.data,
-                                                im->im->cache_entry.w,
-                                                im->im->cache_entry.h);
+             evas_gl_common_texture_yuy2_update(im->tex, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
           {
-             im->tex = evas_gl_common_texture_yuy2_new(gc, im->cs.data,
-                                                       im->im->cache_entry.w,
-                                                       im->im->cache_entry.h);
+             im->tex = evas_gl_common_texture_yuy2_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if (!im->tex) return;
@@ -893,16 +887,12 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
         if ((im->tex) && (im->dirty))
           {
-             evas_gl_common_texture_nv12_update(im->tex, im->cs.data,
-                                                im->im->cache_entry.w,
-                                                im->im->cache_entry.h);
+             evas_gl_common_texture_nv12_update(im->tex, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
           {
-             im->tex = evas_gl_common_texture_nv12_new(gc, im->cs.data,
-                                                       im->im->cache_entry.w,
-                                                       im->im->cache_entry.h);
+             im->tex = evas_gl_common_texture_nv12_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if (!im->tex) return;
@@ -910,16 +900,12 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
         if ((im->tex) && (im->dirty))
           {
-             evas_gl_common_texture_nv12tiled_update(im->tex, im->cs.data,
-                                                     im->im->cache_entry.w,
-                                                     im->im->cache_entry.h);
+             evas_gl_common_texture_nv12tiled_update(im->tex, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if ((!im->tex) && (im->cs.data) && (*((unsigned char **)im->cs.data)))
           {
-             im->tex = evas_gl_common_texture_nv12tiled_new(gc, im->cs.data,
-                                                            im->im->cache_entry.w,
-                                                            im->im->cache_entry.h);
+             im->tex = evas_gl_common_texture_nv12tiled_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
         if (!im->tex) return;
