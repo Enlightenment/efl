@@ -39,7 +39,7 @@ static void _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int coun
 {
    int x;
 
-   for (x = start; x <= end && x <= count; x++)
+   for (x = start; x <= end && x < count; x++)
      {
         cells[x].fg = type;
      }
