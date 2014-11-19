@@ -1806,7 +1806,7 @@ _tree_effect_animator_cb(void *data)
    Eina_Bool end = EINA_FALSE, vis = EINA_TRUE;
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh;
    Elm_Gen_Item *it = NULL, *it2, *expanded_next_it;
-   Elm_Object_Item *eo_it, *eo_it2;
+   Elm_Object_Item *eo_it = NULL, *eo_it2;
 
    t = ((0.0 > (t = ecore_time_get() - sd->start_time)) ? 0.0 : t);
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
