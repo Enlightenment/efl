@@ -24,8 +24,10 @@ typedef struct _Elm_Code_Token
 
 typedef struct _Elm_Code_Line
 {
-   char *content;
+   const char *content;
+   int length;
    unsigned int number;
+   char *modified;
 
    Elm_Code_Status_Type status;
    Eina_List *tokens;
@@ -39,6 +41,7 @@ typedef struct _Elm_Code_File
 
    Eina_List *lines;
    Eina_File *file;
+   void *map;
 
 } Elm_Code_File;
 
@@ -80,11 +83,11 @@ EAPI void elm_code_file_clear(Elm_Code_File *file);
 
 EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file);
 
-EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line);
+EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length);
 
 EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int line);
 
-EAPI char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int line);
+EAPI const char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int line, int *length);
 
 EAPI void elm_code_file_line_status_set(Elm_Code_File *file, unsigned int line, Elm_Code_Status_Type status);
 
