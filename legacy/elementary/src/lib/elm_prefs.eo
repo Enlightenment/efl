@@ -38,7 +38,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
          }
          get {
             /*@
-            Retrieve user data for a given prefs widget
+            Get user data for a given prefs widget
 
             @return A pointer to the user data of a given prefs widget on success.
             @c NULL otherwise.
@@ -129,7 +129,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
       }
       item_value_get @const {
          /*@
-         Retrieve the value of a given prefs widget's item.
+         Get the value of a given prefs widget's item.
 
          @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
 
@@ -149,7 +149,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
       }
       item_object_get {
          /*@
-         Retrieve the Elementary widget bound to a given prefs widget's
+         Get the Elementary widget bound to a given prefs widget's
          item.
 
          @return A valid widget handle, on success, or @c NULL, otherwise
@@ -188,7 +188,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
       }
       item_disabled_get @const {
          /*@
-         Retrieve whether the widget bound to a given prefs widget's item is
+         Get whether the widget bound to a given prefs widget's item is
          disabled or not.
 
          @return @c EINA_TRUE, if it is disabled, @c EINA_FALSE
@@ -242,7 +242,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
       }
       item_editable_get @const {
          /*@
-         Retrieve whether the widget bound to a given prefs widget's item is
+         Get whether the widget bound to a given prefs widget's item is
          editable or not.
 
          @return @c EINA_TRUE, if it is editable, @c EINA_FALSE
@@ -295,7 +295,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
       }
       item_visible_get @const {
          /*@
-         Retrieve whether the widget bound to a given prefs widget's item is
+         Get whether the widget bound to a given prefs widget's item is
          visible or not.
 
          @return @c EINA_TRUE, if it is visible, @c EINA_FALSE

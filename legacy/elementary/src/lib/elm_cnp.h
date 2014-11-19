@@ -219,7 +219,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                                      const void *buf, size_t buflen);
 
 /**
- * @brief Retrieve data from a widget that has a selection.
+ * @brief Get data from a widget that has a selection.
  *
  * Get the current selection data from a widget.
  * The widget input here will usually be elm_entry,

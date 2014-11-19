@@ -42,7 +42,7 @@ EAPI Eina_Bool elm_prefs_file_set(Eo *obj, const char *file, const char *page);
 
 /**
  *
- * Retrieve file and page bound to a given prefs widget.
+ * Get file and page bound to a given prefs widget.
  *
  * @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
  *

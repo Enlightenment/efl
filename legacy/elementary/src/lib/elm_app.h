@@ -186,7 +186,7 @@ EAPI void        elm_app_compile_data_dir_set(const char *dir);
 EAPI void        elm_app_compile_locale_set(const char *dir);
 
 /**
- * Retrieve the application formal name, as set by elm_app_name_set().
+ * Get the application formal name, as set by elm_app_name_set().
  *
  * @return The application formal name.
  *
@@ -196,7 +196,7 @@ EAPI void        elm_app_compile_locale_set(const char *dir);
 EAPI const char *elm_app_name_get(void);
 
 /**
- * Retrieve the path to the '.desktop' file, as set by
+ * Get the path to the '.desktop' file, as set by
  * elm_app_desktop_entry_set().
  *
  * @return The '.desktop' file path.
@@ -207,7 +207,7 @@ EAPI const char *elm_app_name_get(void);
 EAPI const char *elm_app_desktop_entry_get(void);
 
 /**
- * Retrieve the application's run time prefix directory, as set by
+ * Get the application's run time prefix directory, as set by
  * elm_app_info_set() and the way (environment) the application was
  * run from.
  *
@@ -218,7 +218,7 @@ EAPI const char *elm_app_desktop_entry_get(void);
 EAPI const char *elm_app_prefix_dir_get(void);
 
 /**
- * Retrieve the application's run time binaries prefix directory, as
+ * Get the application's run time binaries prefix directory, as
  * set by elm_app_info_set() and the way (environment) the application
  * was run from.
  *
@@ -230,7 +230,7 @@ EAPI const char *elm_app_prefix_dir_get(void);
 EAPI const char *elm_app_bin_dir_get(void);
 
 /**
- * Retrieve the application's run time libraries prefix directory, as
+ * Get the application's run time libraries prefix directory, as
  * set by elm_app_info_set() and the way (environment) the application
  * was run from.
  *
@@ -242,7 +242,7 @@ EAPI const char *elm_app_bin_dir_get(void);
 EAPI const char *elm_app_lib_dir_get(void);
 
 /**
- * Retrieve the application's run time data prefix directory, as
+ * Get the application's run time data prefix directory, as
  * set by elm_app_info_set() and the way (environment) the application
  * was run from.
  *
@@ -254,7 +254,7 @@ EAPI const char *elm_app_lib_dir_get(void);
 EAPI const char *elm_app_data_dir_get(void);
 
 /**
- * Retrieve the application's run time locale prefix directory, as
+ * Get the application's run time locale prefix directory, as
  * set by elm_app_info_set() and the way (environment) the application
  * was run from.
  *

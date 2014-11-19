@@ -19,7 +19,7 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value,
          }
          get {
             /*@
-            Retrieve the orientation of a given slider widget
+            Get the orientation of a given slider widget
 
             @return @c EINA_TRUE, if @p obj is set to be @b horizontal,
             @c EINA_FALSE if it's @b vertical (and on errors).

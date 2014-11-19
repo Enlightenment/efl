@@ -151,7 +151,7 @@ class Elm_Progressbar (Elm_Layout)
          }
          get {
             /*@
-            Retrieve the orientation of a given progress bar widget
+            Get the orientation of a given progress bar widget
 
             @return @c EINA_TRUE, if @p obj is set to be @b horizontal,
             @c EINA_FALSE if it's @b vertical (and on errors)
@@ -188,7 +188,7 @@ class Elm_Progressbar (Elm_Layout)
          }
          get {
             /*@
-            Retrieve the format string set for a given progress bar widget's
+            Get the format string set for a given progress bar widget's
             units label
 
             @return The format set string for @p obj's units label or

@@ -258,7 +258,7 @@ EAPI void                          elm_scroller_page_relative_get(const Evas_Obj
 EAPI void                          elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
 
 /**
- * @brief Retrieve a scroller widget's current page size.
+ * @brief Get a scroller widget's current page size.
  *
  * @param obj The scroller object
  * @param h_pagesize Where to store its horizontal page size

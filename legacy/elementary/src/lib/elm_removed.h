@@ -510,7 +510,7 @@ EINA_DEPRECATED EAPI void        elm_anchorblock_text_set(Evas_Object *obj, cons
 /**
  * Get the markup text set for the anchorblock
  *
- * Retrieves the text set on the anchorblock, with markup tags included.
+ * Gets the text set on the anchorblock, with markup tags included.
  *
  * @param obj The anchorblock object
  * @return The markup text set or @c NULL if nothing was set or an error
@@ -540,7 +540,7 @@ EINA_DEPRECATED EAPI void        elm_anchorview_text_set(Evas_Object *obj, const
 /**
  * Get the markup text set for the anchorview
  *
- * Retrieves the text set on the anchorview, with markup tags included.
+ * Gets the text set on the anchorview, with markup tags included.
  *
  * @param obj The anchorview object
  * @return The markup text set or @c NULL if nothing was set or an error
@@ -2941,7 +2941,7 @@ EINA_DEPRECATED EAPI const char  *elm_progressbar_label_get(const Evas_Object *o
 EINA_DEPRECATED EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
- * Retrieve the icon object set for a given progress bar widget
+ * Get the icon object set for a given progress bar widget
  *
  * @param obj The progress bar object
  * @return The icon object's handle, if @p obj had one set, or @c NULL,
@@ -3092,7 +3092,7 @@ EINA_DEPRECATED EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Obj
 EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_unset(Evas_Object *obj);
 
 /**
- * Retrieve the icon object set for a given slider widget.
+ * Get the icon object set for a given slider widget.
  *
  * @param obj The slider object.
  * @return The icon object's handle, if @p obj had one set, or @c NULL,
@@ -3153,7 +3153,7 @@ EINA_DEPRECATED EAPI void         elm_slider_end_set(Evas_Object *obj, Evas_Obje
 EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_unset(Evas_Object *obj);
 
 /**
- * Retrieve the end object set for a given slider widget.
+ * Get the end object set for a given slider widget.
  *
  * @param obj The slider object.
  * @return The end object's handle, if @p obj had one set, or @c NULL,
@@ -3752,7 +3752,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(con
 EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
 
 /**
- * @brief Retrieve size restriction state of an object's tooltip
+ * @brief Get size restriction state of an object's tooltip
  * @param obj The tooltip's anchor object
  * @return If EINA_TRUE, size restrictions are disabled
  *
@@ -6014,7 +6014,7 @@ EINA_DEPRECATED EAPI double            elm_clock_interval_get(const Evas_Object 
 EINA_DEPRECATED EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Edit_Mode digedit);
 
 /**
- * Retrieve what digits of the given clock widget should be
+ * Get what digits of the given clock widget should be
  * editable when in edition mode.
  *
  * @param obj The clock object

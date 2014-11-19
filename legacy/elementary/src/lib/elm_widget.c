@@ -4277,7 +4277,7 @@ _elm_widget_item_del_cb_set(Eo *eo_item EINA_UNUSED,
 /**
  * @internal
  *
- * Retrieves owner widget of this item.
+ * Get owner widget of this item.
  *
  * @param item a valid #Elm_Widget_Item to get data from.
  * @return owner widget of this item.

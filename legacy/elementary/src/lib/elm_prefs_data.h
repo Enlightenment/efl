@@ -137,7 +137,7 @@ EAPI Eina_Bool       elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
                                                 unsigned int version);
 
 /**
- * Retrieve the version field of a given prefs data handle.
+ * Get the version field of a given prefs data handle.
  *
  * @param prefs_data A valid prefs data handle
  * @return The version of @a prefs_data or -1, on errors.
@@ -201,7 +201,7 @@ EAPI Eina_Bool       elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
                                               const Eina_Value *value);
 
 /**
- * Retrieve one value of a given prefs data handle (by key).
+ * Get one value of a given prefs data handle (by key).
  *
  * @param prefs_data A valid prefs data handle
  * @param path The (unique) name (key) of the given value

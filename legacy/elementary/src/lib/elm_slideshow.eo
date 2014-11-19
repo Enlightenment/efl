@@ -17,7 +17,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
          }
          get {
             /*@
-            Retrieve the number of items to cache, on a given slideshow widget,
+            Get the number of items to cache, on a given slideshow widget,
             <b>after the current item</b>
 
             @return The number of items set to be cached after the current one
@@ -45,7 +45,7 @@ class Elm_Slideshow (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
          }
          get {
             /*@
-            Retrieve the number of items to cache, on a given slideshow widget,
+            Get the number of items to cache, on a given slideshow widget,
             <b>before the current item</b>
 
             @return The number of items set to be cached before the current one

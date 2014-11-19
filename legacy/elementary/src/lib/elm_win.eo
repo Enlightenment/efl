@@ -342,7 +342,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
          }
          get {
             /*@
-            Retrieve the constraints on the maximum width and height of a window relative to the width and height of its screen
+            Get the constraints on the maximum width and height of a window relative to the width and height of its screen
 
             When this function returns true, @p obj will never resize larger than the screen.
             @return EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction

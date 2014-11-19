@@ -245,7 +245,7 @@ EAPI const char                   *elm_genlist_item_tooltip_style_get(const Elm_
 EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
 
 /**
- * @brief Retrieve size restriction state of an object's tooltip
+ * @brief Get size restriction state of an object's tooltip
  * @param it The tooltip's anchor object
  * @return If @c EINA_TRUE, size restrictions are disabled
  *

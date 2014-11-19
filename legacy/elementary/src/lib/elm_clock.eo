@@ -128,7 +128,7 @@ class Elm_Clock (Elm_Layout)
          }
          get {
             /*@
-            Retrieve whether a given clock widget is under editing mode
+            Get whether a given clock widget is under editing mode
             or under (default) displaying-only mode.
 
             @return @c EINA_TRUE, if it's in edition mode, @c EINA_FALSE otherwise
@@ -224,7 +224,7 @@ class Elm_Clock (Elm_Layout)
          }
          get {
             /*@
-            Retrieve what digits of the given clock widget should be
+            Get what digits of the given clock widget should be
             editable when in edition mode.
 
             @return Bit mask indicating the digits to be editable

@@ -6,7 +6,7 @@ class Elm_Widget_Item(Eo.Base)
            tooltip_window_mode {
                 get {
                      /**
-                       @brief Retrieve size restriction state of an object's tooltip
+                       @brief Get size restriction state of an object's tooltip
 
                        This function returns whether a tooltip is allowed to expand beyond
                        its parent window's canvas.

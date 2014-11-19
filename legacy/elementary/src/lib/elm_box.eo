@@ -141,7 +141,7 @@ class Elm_Box (Elm_Widget)
       children {
          get {
             /*@
-            Retrieve a list of the objects packed into the box
+            Get a list of the objects packed into the box
 
             Returns a new @c list with a pointer to @c Evas_Object in its nodes.
             The order of the list corresponds to the packing order the box uses.

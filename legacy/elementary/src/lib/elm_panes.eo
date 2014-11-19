@@ -57,7 +57,7 @@ class Elm_Panes (Elm_Layout)
          }
          get {
             /*@
-            Retrieve the split direction of a given panes widget.
+            Get the split direction of a given panes widget.
 
             @return @c EINA_TRUE, if @p obj is set to be @b horizontal,
             @c EINA_FALSE if it's @b vertical (and on errors).
@@ -87,7 +87,7 @@ class Elm_Panes (Elm_Layout)
          }
          get {
             /*@
-            Retrieve the resize mode for the panes of a given panes widget.
+            Get the resize mode for the panes of a given panes widget.
 
             @return @c EINA_TRUE, if @p obj is set to be resizable by user interaction.
 
