@@ -3621,6 +3621,7 @@ gl_sym_init(void)
 
    // Checking to see if this function exists is a poor but reasonable way to 
    // check if it's gles but it works for now
+   // FIXME: This is wrong as OpenGL 4.1 also supports this function.
    if (_sym_glGetShaderPrecisionFormat != (typeof(_sym_glGetShaderPrecisionFormat))sym_missing ) 
      {
         DBG("GL Library is GLES.");

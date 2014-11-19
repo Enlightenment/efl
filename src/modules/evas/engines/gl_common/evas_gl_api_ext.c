@@ -6,7 +6,10 @@
 
 #define MAX_EXTENSION_STRING_BUFFER 10240
 
-char _gl_ext_string[10240] = { 0 };
+// list of exts like "discard_framebuffer GL_EXT_discard_framebuffer multi_draw_arrays GL_EXT_multi_draw_arrays"
+char _gl_ext_string[MAX_EXTENSION_STRING_BUFFER] = { 0 };
+// list of exts by official name only like "GL_EXT_discard_framebuffer GL_EXT_multi_draw_arrays"
+char _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER] = { 0 };
 
 #ifndef EGL_NATIVE_PIXMAP_KHR
 # define EGL_NATIVE_PIXMAP_KHR 0x30b0
@@ -252,7 +255,8 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
    fp_getproc gp = (fp_getproc)getproc;
    int _curext_supported = 0;
 
-   memset(_gl_ext_string, 0x00, MAX_EXTENSION_STRING_BUFFER);
+   memset(_gl_ext_string, 0, MAX_EXTENSION_STRING_BUFFER);
+   memset(_gl_ext_string_official, 0, MAX_EXTENSION_STRING_BUFFER);
 
 #define FINDSYM(getproc, dst, sym) \
    if (getproc) { \
@@ -346,9 +350,8 @@ re->info->info.screen);
 #undef GETPROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-	_gl_ext_string[0] = 0x00; //NULL;
+   _gl_ext_string[0] = 0;
+   _gl_ext_string_official[0] = 0;
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extension HEADER
@@ -360,7 +363,12 @@ re->info->info.screen);
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_CHECK_SUPPORT(name)
 #define _EVASGL_EXT_DISCARD_SUPPORT()
-#define _EVASGL_EXT_DRVNAME(name) if (_curext_supported) strcat(_gl_ext_string, #name" ");
+#define _EVASGL_EXT_DRVNAME(name) \
+   if (_curext_supported) \
+   { \
+      strcat(_gl_ext_string, #name" "); \
+      strcat(_gl_ext_string_official, #name" "); \
+   }
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
@@ -379,10 +387,7 @@ re->info->info.screen);
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-   _evgl_api_ext_status = 1;
+  _evgl_api_ext_status = 1;
    return EINA_TRUE;
 }
 
@@ -488,8 +493,9 @@ evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
 #undef ORD
 
 }
+
 const char *
-evgl_api_ext_string_get()
+evgl_api_ext_string_get(Eina_Bool official, Eina_Bool gles1)
 {
    if (_evgl_api_ext_status != 1)
      {
@@ -497,6 +503,11 @@ evgl_api_ext_string_get()
         return NULL;
      }
 
+   // TODO: Properly distinguish between GLES 2 and GLES 1 extensions.
+   (void) gles1;
+
+   if (official)
+     return _gl_ext_string_official;
+
    return _gl_ext_string;
 }
-

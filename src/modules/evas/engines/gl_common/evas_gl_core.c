@@ -2275,7 +2275,7 @@ evgl_string_query(int name)
    switch(name)
      {
       case EVAS_GL_EXTENSIONS:
-         return evgl_api_ext_string_get();
+         return evgl_api_ext_string_get(EINA_FALSE, EINA_FALSE);
       default:
          return "";
      };

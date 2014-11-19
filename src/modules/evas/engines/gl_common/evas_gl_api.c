@@ -531,6 +531,76 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
    glGetIntegerv(pname, params);
 }
 
+static const GLubyte *
+_evgl_glGetString(GLenum name)
+{
+   static char _version[64] = {0};
+   EVGL_Resource *rsc;
+   const GLubyte *ret;
+   char *r;
+
+   /* We wrap two values here:
+    *
+    * VERSION: Since OpenGL ES 3 is not supported yet, we return OpenGL ES 2.0
+    *   The string is not modified on desktop GL (eg. 4.4.0 NVIDIA 343.22)
+    *   GLES 3 support is not exposed because apps can't use GLES 3 core
+    *   functions yet.
+    *
+    * EXTENSIONS: This should return the list of GL extensions supported by Evas GL
+    *   --> FIXME: Unfortunately the whitelist does not contain enough extensions
+    * especially for desktop GL and needs updating as OpenGL evolves.
+    */
+
+   /*
+    * Note from Khronos: "If an error is generated, glGetString returns 0."
+    * I decided not to call glGetString if there is no context as this is
+    * known to cause crashes on certain GL drivers (eg. Nvidia binary blob).
+    * --> crash moved to app side if they blindly call strstr()
+    */
+
+   if ((!(rsc = _evgl_tls_resource_get())) || !rsc->current_ctx)
+     {
+        ERR("Current context is NULL, not calling glGetString");
+        // This sets evas_gl_error_get instead of glGetError...
+        evas_gl_common_error_set(NULL, EVAS_GL_BAD_CONTEXT);
+        return NULL;
+     }
+
+   switch (name)
+     {
+      case GL_VENDOR:
+      case GL_RENDERER:
+      case GL_SHADING_LANGUAGE_VERSION: // wrap me?
+        break;
+      case GL_VERSION:
+        ret = glGetString(GL_VERSION);
+        if (!ret) return NULL;
+        if (strstr((const char *) ret, "OpenGL ES 3"))
+          {
+             // We try not to remove the vendor fluff (contains driver version)
+             strncpy(_version, (const char *) ret, sizeof(_version));
+             r = strchr(_version, '3');
+             *r++ = '2';
+             *r++ = '.';
+             *r++ = '0';
+             *r   = ' ';
+             _version[sizeof(_version) - 1] = '\0';
+             return (const GLubyte *) _version;
+          }
+        return ret;
+      case GL_EXTENSIONS:
+        // return (GLubyte *) evgl_api_ext_string_get
+        //      (EINA_TRUE, (rsc->current_ctx->version == EVAS_GL_GLES_1_X));
+        break;
+      default:
+        // GL_INVALID_ENUM is generated if name is not an accepted value.
+        WRN("Unknown string requested: %x", (unsigned int) name);
+        break;
+     }
+
+   return glGetString(name);
+}
+
 static void
 _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
 {
@@ -1458,13 +1528,7 @@ _evgld_glGetString(GLenum name)
    const GLubyte *ret = NULL;
 
    EVGL_FUNC_BEGIN();
-#if 0
-   if (name == GL_EXTENSIONS)
-      return (GLubyte *)_gl_ext_string; //glGetString(GL_EXTENSIONS);
-   else
-      return glGetString(name);
-#endif
-   ret = glGetString(name);
+   ret = _evgl_glGetString(name);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    EVGL_FUNC_END();
    return ret;
@@ -2487,7 +2551,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glGetShaderInfoLog);
 //   ORD(glGetShaderPrecisionFormat);
    ORD(glGetShaderSource);
-   ORD(glGetString);
+//   ORD(glGetString);
    ORD(glGetTexParameterfv);
    ORD(glGetTexParameteriv);
    ORD(glGetUniformfv);
@@ -2575,6 +2639,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glDisable);
    ORD(glEnable);
    ORD(glGetIntegerv);
+   ORD(glGetString);
    ORD(glReadPixels);
    ORD(glScissor);
    ORD(glViewport);

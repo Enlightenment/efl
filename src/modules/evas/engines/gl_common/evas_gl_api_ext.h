@@ -74,7 +74,7 @@
 extern Eina_Bool evgl_api_ext_init(void *getproc, const char *glueexts);
 extern void evgl_api_ext_get(Evas_GL_API *gl_funcs);
 extern void evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs);
-extern const char *evgl_api_ext_string_get();
+extern const char *evgl_api_ext_string_get(Eina_Bool official, Eina_Bool gles1);
 
 #endif //_EVAS_GL_API_EXT_H
 
