@@ -821,7 +821,7 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
                 }
              ie->flags.updated_data = 0;
           }
-        if (!im->tex)
+        else if (!im->tex && !ie->load_error)
           {
 #ifdef EVAS_CSERVE2
              if (evas_cache2_image_cached(ie))
@@ -848,7 +848,7 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
              evas_cache_image_unload_data(ie);
           }
-        else if ((!im->tex))
+        else if (!im->tex && !ie->load_error)
           {
              evas_cache_image_load_data(ie);
              im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
