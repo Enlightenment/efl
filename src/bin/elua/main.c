@@ -126,7 +126,7 @@ elua_register_require(lua_State *L)
    Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(5));
    Arg_Data   *data     = NULL;
    char corepathbuf[PATH_MAX], modpathbuf[PATH_MAX], appspathbuf[PATH_MAX];
-   int n = 2;
+   int n = 3;
    lua_pushvalue(L, 1);
    elua_require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    lua_pushvalue(L, 2);
@@ -174,6 +174,7 @@ elua_register_require(lua_State *L)
         lua_pushfstring(L, "%s/?.lua;", data->value);
         ++n;
      }
+   lua_pushfstring(L, "%s/?.eo.lua;", modpath);
    lua_pushfstring(L, "%s/?.lua;", modpath);
    lua_pushvalue(L, 3);
    lua_concat(L, n + 1);
