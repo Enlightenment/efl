@@ -4,15 +4,17 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
           int clip_x, int clip_y, int clip_w, int clip_h,
           DATA32 mul_col, int render_op,
           RGBA_Map_Point *p,
-          int smooth, int anti_alias, int level EINA_UNUSED) // level unused for now - for future use
+          int smooth, int anti_alias, int level EINA_UNUSED, // level unused for now - for future use
+          RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    int i;
    int cx, cy, cw, ch;
    int ytop, ybottom, ystart, yend, y, sw, shp, swp, direct;
    Line *spans;
    DATA32 *buf = NULL, *sp;
-   RGBA_Gfx_Func func = NULL;
+   RGBA_Gfx_Func func = NULL, func2 = NULL;
    Eina_Bool havea = EINA_FALSE;
+   Eina_Bool sa, ssa, da;
    int havecol = 4;
 
    cx = clip_x;
@@ -57,6 +59,10 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    swp = sw << (FP + FPI);
    shp = src->cache_entry.h << (FP + FPI);
 
+   sa = src->cache_entry.flags.alpha;
+   ssa = src->cache_entry.flags.alpha_sparse;
+   da = dst->cache_entry.flags.alpha;
+
    // limit u,v coords of points to be within the source image
    for (i = 0; i < 4; i++)
      {
@@ -88,8 +94,8 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    /* FIXME: even if anti-alias is enabled, only edges may require the
       pixels composition. we can optimize it. */
 
-   if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha) &&
-       (mul_col == 0xffffffff) && (!havea) && (!anti_alias))
+   if ((!sa) && (!dst->cache_entry.flags.alpha) &&
+       (mul_col == 0xffffffff) && (!havea) && (!anti_alias) && (!mask_ie))
      {
         direct = 1;
      }
@@ -98,12 +104,20 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         int pa;
 
         buf = alloca(cw * sizeof(DATA32));
-        pa = src->cache_entry.flags.alpha;
-        if (havea) src->cache_entry.flags.alpha = 1;
-        if (mul_col != 0xffffffff)
-          func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, cw, render_op);
+        if (havea) sa = 1;
+        if (!mask_ie)
+          {
+             if (mul_col != 0xffffffff)
+               func = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, render_op);
+             else
+               func = evas_common_gfx_func_composite_pixel_span_get(sa, ssa, da, cw, render_op);
+          }
         else
-          func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, cw, render_op);
+          {
+             func = evas_common_gfx_func_composite_pixel_mask_span_get(sa, ssa, da, cw, render_op);
+             if (mul_col != 0xffffffff)
+               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, render_op);
+          }
 
         if (anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
         else src->cache_entry.flags.alpha = pa;
@@ -128,12 +142,17 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
 {
    Line *spans;
    DATA32 *buf = NULL, *sp;
-   RGBA_Gfx_Func func = NULL;
+   RGBA_Gfx_Func func = NULL, func2 = NULL;
    int cx, cy, cw, ch;
    DATA32 mul_col;
    int ystart, yend, y, sw, shp, swp, direct;
    int havecol;
    int i;
+   Eina_Bool sa, ssa, da;
+
+   RGBA_Image *mask_ie = dc->clip.mask;
+   int mask_x = dc->clip.mask_x;
+   int mask_y = dc->clip.mask_y;
 
    cx = dc->clip.x;
    cy = dc->clip.y;
@@ -155,6 +174,10 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    havecol = ms->havecol;
    direct = ms->direct;
 
+   sa = src->cache_entry.flags.alpha;
+   ssa = src->cache_entry.flags.alpha_sparse;
+   da = dst->cache_entry.flags.alpha;
+
    // allocate some s to hold out span list
    spans = alloca((yend - ystart + 1) * sizeof(Line));
    memcpy(spans, &ms->spans[ystart - ms->ystart],
@@ -167,13 +190,20 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
         int pa;
 
         buf = alloca(cw * sizeof(DATA32));
-        pa = src->cache_entry.flags.alpha;
-        if (ms->havea) src->cache_entry.flags.alpha = 1;
-        if (dc->mul.use)
-          func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, cw, dc->render_op);
+        if (ms->havea) sa = 1;
+        if (mask_ie)
+          {
+             if (mul_col != 0xffffffff)
+               func = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, dc->render_op);
+             else
+               func = evas_common_gfx_func_composite_pixel_span_get(sa, ssa, da, cw, dc->render_op);
+          }
         else
-          func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, cw, dc->render_op);
-        src->cache_entry.flags.alpha = pa;
+          {
+             func = evas_common_gfx_func_composite_pixel_mask_span_get(sa, ssa, da, cw, dc->render_op);
+             if (mul_col != 0xffffffff)
+               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, dc->render_op);
+          }
      }
 
    if (havecol == 0)

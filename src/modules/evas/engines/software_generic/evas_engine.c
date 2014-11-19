@@ -367,6 +367,8 @@ struct _Evas_Thread_Command_Map
    RGBA_Map *map;
    int smooth, level, offset;
    Eina_Bool anti_alias;
+   void *mask;
+   int mask_x, mask_y;
 };
 
 struct _Evas_Thread_Command_Multi_Font
@@ -1626,7 +1628,8 @@ _draw_thread_map_draw(void *data)
                (im, map->surface,
                 map->clip.x, map->clip.y, map->clip.w, map->clip.h,
                 map->mul_col, map->render_op, m->count - offset, &m->pts[offset],
-                map->smooth, map->anti_alias, map->level);
+                map->smooth, map->anti_alias, map->level,
+                map->mask, map->mask_x, map->mask_y);
           }
 
         evas_common_cpu_end_opt();
@@ -1688,6 +1691,10 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
    cm->smooth = smooth;
    cm->level = level;
    cm->offset = offset;
+
+   cm->mask = dc->clip.mask;
+   cm->mask_x = dc->clip.mask_x;
+   cm->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_map_draw, cm);
 
