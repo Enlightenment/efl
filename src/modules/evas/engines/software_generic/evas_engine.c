@@ -3619,12 +3619,15 @@ gl_sym_init(void)
 #undef FINDSYM
 #undef FALLBAK
 
-   // Checking to see if this function exists is a poor but reasonable way to 
-   // check if it's gles but it works for now
-   // FIXME: This is wrong as OpenGL 4.1 also supports this function.
-   if (_sym_glGetShaderPrecisionFormat != (typeof(_sym_glGetShaderPrecisionFormat))sym_missing ) 
+   /*
+    * For desktop OpenGL we wrap these:
+    * - glGetShaderPrecisionFormat
+    * - glReleaseShaderCompiler
+    * - glShaderBinary
+    */
+   if (_sym_glGetShaderPrecisionFormat != (typeof(_sym_glGetShaderPrecisionFormat))sym_missing )
      {
-        DBG("GL Library is GLES.");
+        DBG("The GL library is OpenGL ES or OpenGL 4.1+");
         gl_lib_is_gles = 1;
      }
 
@@ -4051,6 +4054,7 @@ override_gl_apis(Evas_GL_API *api)
      {
         // Override functions wrapped by Evas_GL
         // GLES2.0 API compat on top of desktop gl
+        // Note that Open GL 4.1+ provides these 3 functions as well
         ORD(glGetShaderPrecisionFormat);
         ORD(glReleaseShaderCompiler);
         ORD(glShaderBinary);
