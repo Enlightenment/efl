@@ -80,50 +80,26 @@ local build_calln = function(tps, expr, isin)
     return expr
 end
 
-local typeconv_in = function(tps, expr)
-    if tps:type_get() == eolian.type_type.POINTER then
-        local base = tps:base_type_get()
-        local f = known_ptr_in[base:c_type_get()]
-        if f then return f(expr) end
-        return build_calln(tps, expr, true)
-    end
-
-    local tp = tps:name_get()
-
-    if is_num(tp) then return expr end
-
-    local f = known_in[tp]
-    if f then
-        return f(expr)
-    end
-
-    return build_calln(tps, expr, true)
-end
-
 local typeconv = function(tps, expr, isin)
-    if isin then
-        return typeconv_in(tps, expr)
-    end
-
     if tps:type_get() == eolian.type_type.POINTER then
         local base = tps:base_type_get()
-        local f = known_ptr_out[base:c_type_get()]
+        local f = (isin and known_ptr_in or known_ptr_out)[base:c_type_get()]
         if f then return f(expr) end
-        return build_calln(tps, expr, false)
+        return build_calln(tps, expr, isin)
     end
 
     local tp = tps:name_get()
 
     if is_num(tp) then
-        return ("tonumber(%s)"):format(expr)
+        return isin and expr or ("tonumber(%s)"):format(expr)
     end
 
-    local f = known_out[tp]
+    local f = (isin and known_in or known_out)[tp]
     if f then
         return f(expr)
     end
 
-    return build_calln(tps, expr, false)
+    return build_calln(tps, expr, isin)
 end
 
 local Node = util.Object:clone {
