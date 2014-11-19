@@ -762,6 +762,7 @@ void
 evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
 {
    Image_Entry *ie;
+
    if (!im->im) return;
    ie = &im->im->cache_entry;
    evas_gl_common_image_alloc_ensure(im);
@@ -808,33 +809,37 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
 #ifdef EVAS_CSERVE2
               if (evas_cache2_image_cached(ie))
                 {
-                   evas_cache2_image_load_data(ie);
-                   evas_gl_common_texture_update(im->tex, im->im);
+                   ie->load_error = evas_cache2_image_load_data(ie);
+                   if (ie->load_error == EVAS_LOAD_ERROR_NONE)
+                     evas_gl_common_texture_update(im->tex, im->im);
                    evas_cache2_image_unload_data(ie);
                 }
               else
 #endif
                 {
-                   evas_cache_image_load_data(ie);
-                   evas_gl_common_texture_update(im->tex, im->im);
+                   ie->load_error = evas_cache_image_load_data(ie);
+                   if (ie->load_error == EVAS_LOAD_ERROR_NONE)
+                     evas_gl_common_texture_update(im->tex, im->im);
                    evas_cache_image_unload_data(ie);
                 }
              ie->flags.updated_data = 0;
           }
-        if (!im->tex)
+        else if ((!im->tex) && (ie->load_error == EVAS_LOAD_ERROR_NONE))
           {
 #ifdef EVAS_CSERVE2
              if (evas_cache2_image_cached(ie))
                {
-                  evas_cache2_image_load_data(ie);
-                  im->tex = evas_gl_common_texture_new(gc, im->im);
+                  ie->load_error = evas_cache2_image_load_data(ie);
+                  if (ie->load_error == EVAS_LOAD_ERROR_NONE)
+                    im->tex = evas_gl_common_texture_new(gc, im->im);
                   evas_cache2_image_unload_data(ie);
                }
              else
 #endif
                {
-                  evas_cache_image_load_data(ie);
-                  im->tex = evas_gl_common_texture_new(gc, im->im);
+                  ie->load_error = evas_cache_image_load_data(ie);
+                  if (ie->load_error == EVAS_LOAD_ERROR_NONE)
+                    im->tex = evas_gl_common_texture_new(gc, im->im);
                   evas_cache_image_unload_data(ie);
                }
           }
@@ -844,14 +849,16 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_ETC1_ALPHA:
         if ((im->tex) && (im->dirty))
           {
-             evas_cache_image_load_data(ie);
-             evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
+             ie->load_error = evas_cache_image_load_data(ie);
+             if (ie->load_error == EVAS_LOAD_ERROR_NONE)
+               evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
              evas_cache_image_unload_data(ie);
           }
-        else if ((!im->tex))
+        else if ((!im->tex) && (ie->load_error == EVAS_LOAD_ERROR_NONE))
           {
-             evas_cache_image_load_data(ie);
-             im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
+             ie->load_error = evas_cache_image_load_data(ie);
+             if (ie->load_error == EVAS_LOAD_ERROR_NONE)
+               im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
              evas_cache_image_unload_data(ie);
           }
         im->dirty = 0;
