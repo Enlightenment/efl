@@ -117,7 +117,16 @@
                     {
                        d = dst->image.data;
                        d += (y * dst->cache_entry.w) + x;
-                       func(buf, NULL, mul_col, d, w);
+                       if (!mask_ie)
+                         func(buf, NULL, mul_col, d, w);
+                       else
+                         {
+                            DATA8 *mask = mask_ie->image.data8
+                               + (y - mask_y) * mask_ie->cache_entry.w
+                               + (x - mask_x);
+                            if (mul_col != 0xffffffff) func2(buf, NULL, mul_col, buf, w);
+                            func(buf, mask, 0, d, w);
+                         }
                     }
                }
           }
@@ -226,7 +235,16 @@
                     {
                        d = dst->image.data;
                        d += (y * dst->cache_entry.w) + x;
-                       func(buf, NULL, mul_col, d, w);
+                       if (!mask_ie)
+                         func(buf, NULL, mul_col, d, w);
+                       else
+                         {
+                            DATA8 *mask = mask_ie->image.data8
+                               + (y - mask_y) * mask_ie->cache_entry.w
+                               + (x - mask_x);
+                            if (mul_col != 0xffffffff) func2(buf, NULL, mul_col, buf, w);
+                            func(buf, mask, 0, d, w);
+                         }
                     }
                }
           }

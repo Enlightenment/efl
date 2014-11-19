@@ -675,7 +675,8 @@ void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Dr
    _evas_common_map_rgba_internal_mmx(src, dst,
                                       clip_x, clip_y, clip_w, clip_h,
                                       mul_col, dc->render_op,
-                                      p, smooth, dc->anti_alias, level);
+                                      p, smooth, dc->anti_alias, level,
+                                      dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
 }
 #endif
 
@@ -703,7 +704,8 @@ void evas_common_map_rgba_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_C
    _evas_common_map_rgba_internal(src, dst,
                                   clip_x, clip_y, clip_w, clip_h,
                                   mul_col, dc->render_op,
-                                  p, smooth, dc->anti_alias, level);
+                                  p, smooth, dc->anti_alias, level,
+                                  dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
 }
 
 #ifdef BUILD_NEON
@@ -731,7 +733,8 @@ void evas_common_map_rgba_internal_neon(RGBA_Image *src, RGBA_Image *dst, RGBA_D
    _evas_common_map_rgba_internal_neon(src, dst,
                                   clip_x, clip_y, clip_w, clip_h,
                                   mul_col, dc->render_op,
-                                  p, smooth, dc->anti_alias, level);
+                                  p, smooth, dc->anti_alias, level,
+                                  dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
 }
 #endif
 
@@ -863,7 +866,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
 }
 
 EAPI void
-evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level)
+evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
@@ -873,7 +876,8 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
      _evas_common_map_rgba_internal_mmx(src, dst,
                                         clip_x, clip_y, clip_w, clip_h,
                                         mul_col, render_op,
-                                        p, smooth, anti_alias, level);
+                                        p, smooth, anti_alias, level,
+                                        mask_ie, mask_x, mask_y);
    else
 #endif
 #ifdef BUILD_NEON
@@ -881,13 +885,15 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
      _evas_common_map_rgba_internal_neon(src, dst,
                                     clip_x, clip_y, clip_w, clip_h,
                                     mul_col, render_op,
-                                    p, smooth, anti_alias, level);
+                                    p, smooth, anti_alias, level,
+                                    mask_ie, mask_x, mask_y);
    else
 #endif
      _evas_common_map_rgba_internal(src, dst,
                                     clip_x, clip_y, clip_w, clip_h,
                                     mul_col, render_op,
-                                    p, smooth, anti_alias, level);
+                                    p, smooth, anti_alias, level,
+                                    mask_ie, mask_x, mask_y);
 }
 
 EAPI void
