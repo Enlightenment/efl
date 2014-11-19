@@ -233,9 +233,13 @@ local Method = Node:clone {
 
     gen_ffi = function(self, s)
         local proto = self:gen_proto()
+        local ret = proto.ret_type
+        if ret:match("[a-zA-Z0-9_]$") then
+            ret = ret .. " "
+        end
         local cproto = {
-            "    ", proto.ret_type, " ", proto.full_name, "(",
-            table.concat(proto.cargs, ", "), ");\n"
+            "    ", ret, proto.full_name, "(", table.concat(proto.cargs, ", "),
+            ");\n"
         }
         s:write(table.concat(cproto))
     end
