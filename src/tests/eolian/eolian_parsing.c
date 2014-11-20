@@ -305,6 +305,7 @@ START_TEST(eolian_ctor_dtor)
    fail_if(!eolian_class_function_get_by_name(base, "destructor", EOLIAN_METHOD));
    fail_if(!(iter = eolian_class_constructors_get(class)));
    fail_if(!(eina_iterator_next(iter, (void**)&ctor)));
+   fail_if(eolian_constructor_is_optional(ctor));
    fail_if(!(impl_class = eolian_constructor_class_get(ctor)));
    fail_if(!(impl_func = eolian_constructor_function_get(ctor)));
    fail_if(impl_class != class);
@@ -312,6 +313,7 @@ START_TEST(eolian_ctor_dtor)
    fail_if(!eolian_function_is_constructor(impl_func, class));
    fail_if(eolian_function_is_constructor(impl_func, base));
    fail_if(!(eina_iterator_next(iter, (void**)&ctor)));
+   fail_if(!eolian_constructor_is_optional(ctor));
    fail_if(!(impl_class = eolian_constructor_class_get(ctor)));
    fail_if(!(impl_func = eolian_constructor_function_get(ctor)));
    fail_if(impl_class != class);

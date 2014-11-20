@@ -15,8 +15,8 @@ class Ctor_Dtor (Base) {
       Base.constructor;
       Base.destructor;
    }
-    constructors {
-        .custom_constructor_1;
-        .custom_constructor_2;
-    }
+   constructors {
+      .custom_constructor_1;
+      .custom_constructor_2 @optional;
+   }
 }

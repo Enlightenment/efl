@@ -1633,6 +1633,11 @@ parse_constructor(Eo_Lexer *ls)
                                                   ls->tmp.kls->full_name,
                                                   ls->t.value.s);
         eo_lexer_get(ls);
+        if (ls->t.kw == KW_at_optional)
+          {
+             eo_lexer_get(ls);
+             ctor->is_optional = EINA_TRUE;
+          }
         check_next(ls, ';');
         return;
      }
@@ -1650,6 +1655,11 @@ parse_constructor(Eo_Lexer *ls)
         eo_lexer_get(ls);
         if (ls->t.token != '.') break;
         eo_lexer_get(ls);
+     }
+   if (ls->t.kw == KW_at_optional)
+     {
+        eo_lexer_get(ls);
+        ctor->is_optional = EINA_TRUE;
      }
    check_next(ls, ';');
    ctor->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));

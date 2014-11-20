@@ -43,3 +43,10 @@ eolian_constructor_function_get(const Eolian_Constructor *ctor)
    return eolian_class_function_get_by_name(klass,
        ctor->full_name + strlen(klass->full_name) + 1, EOLIAN_UNRESOLVED);
 }
+
+EAPI Eina_Bool
+eolian_constructor_is_optional(const Eolian_Constructor *ctor)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, EINA_FALSE);
+   return ctor->is_optional;
+}

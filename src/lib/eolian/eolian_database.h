@@ -182,6 +182,7 @@ struct _Eolian_Constructor
    Eolian_Object base;
    const Eolian_Class *klass;
    Eina_Stringshare *full_name;
+   Eina_Bool is_optional: 1;
 };
 
 struct _Eolian_Event
