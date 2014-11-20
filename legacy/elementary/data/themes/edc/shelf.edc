@@ -130,6 +130,7 @@ group { name: "e/shelf/default/base";
 group { name: "e/shelf/default/inset";
    alias: "e/shelf/alternate/inset";
    alias: "e/shelf/invisible/inset";
+   alias: "e/shelf/translucent/inset";
    images.image: "horiz_bar_inset.png" COMP;
    images.image: "vert_bar_inset.png" COMP;
    parts {
@@ -264,9 +265,37 @@ group { name: "e/shelf/invisible/base";
    }
 }
 
+group { name: "e/shelf/translucent/base";
+   inherit: "e/shelf/default/base";
+   data {
+      item: "shaped" "1";
+   }
+   parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            color: 127 127 127 135;
+         }
+         description { state: "vert" 0.0;
+            color: 127 127 127 135;
+         }
+      }
+      part { name: "bevel";
+         description { state: "default" 0.0;
+            color: 127 127 127 135;
+         }
+      }
+      part { name: "shine";
+         description { state: "default" 0.0;
+            color: 127 127 127 135;
+         }
+      }
+   }
+}
+
 group { name: "e/shelf/default/plain";
    alias: "e/shelf/alternate/plain";
    alias: "e/shelf/invisible/plain";
+   alias: "e/shelf/translucent/plain";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
