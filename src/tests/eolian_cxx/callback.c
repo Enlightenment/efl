@@ -69,5 +69,10 @@ static void _callback_twocallback(Eo *obj EINA_UNUSED, Callback_Data *pd EINA_UN
   cb(data);
 }
 
+#undef EOAPI
+#define EOAPI
+#undef EAPI
+#define EAPI
+
 #include "callback.eo.c"
 
