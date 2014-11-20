@@ -321,6 +321,8 @@ struct _Evas_Thread_Command_Polygon
    void *surface;
    RGBA_Polygon_Point *points;
    int x, y;
+   void *mask;
+   int mask_x, mask_y;
 };
 
 struct _Evas_Thread_Command_Image
@@ -799,7 +801,8 @@ _draw_thread_polygon_draw(void *data)
      (poly->surface,
       poly->ext.x, poly->ext.y, poly->ext.w, poly->ext.h,
       poly->col, poly->render_op,
-      poly->points, poly->x, poly->y);
+      poly->points, poly->x, poly->y,
+      poly->mask, poly->mask_x, poly->mask_y);
 
    _draw_thread_polygon_cleanup(poly);
    eina_mempool_free(_mp_command_polygon, poly);
@@ -872,6 +875,10 @@ _polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 
    cp->x = x;
    cp->y = y;
+
+   cp->mask = dc->clip.mask;
+   cp->mask_x = dc->clip.mask_x;
+   cp->mask_y = dc->clip.mask_y;
 
    evas_thread_cmd_enqueue(_draw_thread_polygon_draw, cp);
 }

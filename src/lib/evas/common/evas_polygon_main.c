@@ -279,7 +279,10 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    free(point);
    free(sorted_index);
 
-   func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, 1, dc->render_op);
+   if(dc->clip.mask)
+     func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, 1, dc->render_op);
+   else
+     func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, 1, dc->render_op);
    if (spans)
      {
 	RGBA_Span *span;
@@ -287,6 +290,8 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 	EINA_INLIST_FOREACH(spans, span)
 	  {
 	     DATA32 *ptr;
+             DATA8 *mask;
+             RGBA_Image *mask_ie;
 
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_POLY
@@ -300,7 +305,16 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 #endif
 	       {
 		 ptr = dst->image.data + (span->y * (dst->cache_entry.w)) + span->x;
-		 func(NULL, NULL, dc->col.col, ptr, span->w);
+                  if (dc->clip.mask)
+                    {
+                       mask_ie = dc->clip.mask;
+                       mask = mask_ie->image.data8
+                          + ((span->y - dc->clip.mask_y) * mask_ie->cache_entry.w)
+                          + (span->x - dc->clip.mask_x);
+                       func(NULL, mask, dc->col.col, ptr, span->w);
+                    }
+                  else
+                    func(NULL, NULL, dc->col.col, ptr, span->w);
 	       }
           }
 	while (spans)
@@ -313,7 +327,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 }
 
 EAPI void
-evas_common_polygon_rgba_draw(RGBA_Image *dst, int ext_x, int ext_y, int ext_w, int ext_h, DATA32 col, int render_op, RGBA_Polygon_Point *points, int x, int y)
+evas_common_polygon_rgba_draw(RGBA_Image *dst, int ext_x, int ext_y, int ext_w, int ext_h, DATA32 col, int render_op, RGBA_Polygon_Point *points, int x, int y, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    RGBA_Gfx_Func      func;
    RGBA_Polygon_Point *pt;
@@ -435,17 +449,29 @@ evas_common_polygon_rgba_draw(RGBA_Image *dst, int ext_x, int ext_y, int ext_w, 
    free(point);
    free(sorted_index);
 
-   func = evas_common_gfx_func_composite_color_span_get(col, dst->cache_entry.flags.alpha, 1, render_op);
+   if (mask_ie)
+     func = evas_common_gfx_func_composite_mask_color_span_get(col, dst->cache_entry.flags.alpha, 1, render_op);
+   else
+     func = evas_common_gfx_func_composite_color_span_get(col, dst->cache_entry.flags.alpha, 1, render_op);
    if (spans)
      {
 	RGBA_Span *span;
+        DATA8 *mask;
 
 	EINA_INLIST_FOREACH(spans, span)
 	  {
 	     DATA32 *ptr;
 
              ptr = dst->image.data + (span->y * (dst->cache_entry.w)) + span->x;
-             func(NULL, NULL, col, ptr, span->w);
+             if (mask_ie)
+               {
+                  mask = mask_ie->image.data8
+                     + ((span->y - mask_y) * mask_ie->cache_entry.w)
+                     + (span->x - mask_x);
+                  func(NULL, mask, col, ptr, span->w);
+               }
+             else
+               func(NULL, NULL, col, ptr, span->w);
           }
 	while (spans)
 	  {
