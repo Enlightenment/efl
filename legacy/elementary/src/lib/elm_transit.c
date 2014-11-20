@@ -118,8 +118,9 @@ _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
 
    obj_data->freeze_events = evas_object_freeze_events_get(obj);
 
-   if (!transit->state_keep)
+   if (!transit->state_keep && obj_data->state)
      {
+        if (obj_data->state->map) evas_map_free(obj_data->state->map);
         ELM_SAFE_FREE(obj_data->state, free);
      }
    else
