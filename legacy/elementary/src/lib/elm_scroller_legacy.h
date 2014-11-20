@@ -462,4 +462,36 @@ EAPI void                         elm_scroller_movement_block_set(Evas_Object *o
  */
 EAPI Elm_Scroller_Movement_Block  elm_scroller_movement_block_get(const Evas_Object *obj);
 
+/**
+ * @brief Set scroll step size.
+ *
+ * @param obj The scroller object
+ * @param x The horizontal step size
+ * @param y The vertical step size
+ *
+ * This sets the step size to move scroller by key event.
+ *
+ * @see elm_scroller_step_size_get() for more details
+ *
+ * @since 1.13
+ *
+ * @ingroup Scroller
+ */
+EAPI void                          elm_scroller_step_size_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+
+/**
+ * @brief Get the current step size of the scroller object.
+ *
+ * @param obj The scroller object
+ * @param x Where to store its x axis step size
+ * @param y Where to store its y axis step size
+ *
+ * @see elm_scroller_step_size_set() for more details
+ *
+ * @since 1.13
+ *
+ * @ingroup Scroller
+ */
+EAPI void                          elm_scroller_step_size_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
+
 #include "elm_scroller.eo.legacy.h"

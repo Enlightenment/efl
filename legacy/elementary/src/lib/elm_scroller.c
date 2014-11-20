@@ -1105,6 +1105,26 @@ elm_scroller_movement_block_get(const Evas_Object *obj)
    return block;
 }
 
+EAPI void
+elm_scroller_step_size_set(Evas_Object *obj,
+                           Evas_Coord x,
+                           Evas_Coord y)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do(obj, elm_interface_scrollable_step_size_set(x, y));
+}
+
+EAPI void
+elm_scroller_step_size_get(const Evas_Object *obj,
+                           Evas_Coord *x,
+                           Evas_Coord *y)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do((Eo *) obj, elm_interface_scrollable_step_size_get(x, y));
+}
+
 EOLIAN static void
 _elm_scroller_propagate_events_set(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Eina_Bool propagation)
 {

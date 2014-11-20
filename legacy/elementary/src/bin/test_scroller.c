@@ -140,6 +140,14 @@ _sc_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_inf
    evas_object_resize(data, w, h);
 }
 
+static void
+_size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *sc = data;
+   int size = elm_spinner_value_get(obj);
+   elm_scroller_step_size_set(sc, ELM_SCALE_SIZE(size), ELM_SCALE_SIZE(size));
+}
+
 void
 test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -248,6 +256,16 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(ck4, "changed", my_bt_block_movements_y_axis,
                                   sc);
    evas_object_smart_callback_add(ck5, "changed", my_bt_snap_to_pages, sc);
+
+   bt = elm_spinner_add(win);
+   elm_spinner_min_max_set(bt, 0, 500);
+   elm_scroller_step_size_get(sc, &x, &y);
+   elm_spinner_value_set(bt, x);
+   elm_spinner_editable_set(bt, EINA_TRUE);
+   elm_spinner_label_format_set(bt, "Step size: %.0f");
+   evas_object_smart_callback_add(bt, "changed", _size_changed, sc);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
 
    tb2 = elm_table_add(win);
 
