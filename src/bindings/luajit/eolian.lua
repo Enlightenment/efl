@@ -240,6 +240,7 @@ ffi.cdef [[
     const char *eolian_constructor_full_name_get(const Eolian_Constructor *ctor);
     const Eolian_Class *eolian_constructor_class_get(const Eolian_Constructor *ctor);
     const Eolian_Function *eolian_constructor_function_get(const Eolian_Constructor *ctor);
+    Eina_Bool eolian_constructor_is_optional(const Eolian_Constructor *ctor);
     Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
     const char *eolian_event_name_get(const Eolian_Event *event);
@@ -805,6 +806,10 @@ ffi.metatype("Eolian_Constructor", {
             local v = eolian.eolian_constructor_function_get(self)
             if v == nil then return nil end
             return v
+        end,
+
+        is_optional = function(self)
+            return eolian.eolian_constructor_is_optional(self) ~= 0
         end
     }
 })
