@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Dayselector
+ *
+ * @{
+ */
+
+/**
  * Identifies the day of the week.
  * API can call the selection/unselection of day with this as a parameter.
  *
@@ -17,3 +23,6 @@ typedef enum
    ELM_DAYSELECTOR_MAX     /**< Sentinel value, @b don't use */
 } Elm_Dayselector_Day;
 
+/**
+ * @}
+ */
