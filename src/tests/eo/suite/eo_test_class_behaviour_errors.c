@@ -43,10 +43,10 @@ START_TEST(eo_destructor_unref)
    };
 
    klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
-   fail_unless(klass);
+   fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
-   fail_unless(obj);
+   fail_if(!obj);
 
    TEST_EO_ERROR("_eo_unref", "Object %p deletion already triggered. You wrongly call eo_unref() within a destructor.");
    eo_unref(obj);
