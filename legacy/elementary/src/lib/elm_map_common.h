@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Map
+ *
+ * @{
+ */
+
+/**
  * Set map's zoom behavior. It can be set to manual or automatic.
  *
  * Default value is #ELM_MAP_ZOOM_MODE_MANUAL.
@@ -10,8 +16,6 @@
  *
  * @see elm_map_zoom_mode_set()
  * @see elm_map_zoom_mode_get()
- *
- * @ingroup Map
  */
 typedef enum
 {
@@ -27,8 +31,6 @@ typedef enum
  * @see elm_map_sources_get()
  * @see elm_map_source_get()
  * @see elm_map_source_set()
- *
- * @ingroup Map
  */
 typedef enum
 {
@@ -42,8 +44,6 @@ typedef enum
  * Set type of transport used on route.
  *
  * @see elm_map_route_add()
- *
- * @ingroup Map
  */
 typedef enum
 {
@@ -57,8 +57,6 @@ typedef enum
  * Set the routing method, what should be prioritized, time or distance.
  *
  * @see elm_map_route_add()
- *
- * @ingroup Map
  */
 typedef enum
 {
@@ -71,8 +69,6 @@ typedef enum
  * Set the name search method.
  *
  * This is for name module interface.
- *
- * @ingroup Map
  */
 typedef enum
 {
@@ -90,10 +86,8 @@ typedef enum
  * @see elm_map_overlay_add()
  * @see elm_map_overlay_class_add()
  * @see elm_map_overlay_bubble_add()
- *
- * @ingroup Map
  */
-typedef enum _Elm_Map_Overlay_Type
+typedef enum
 {
    ELM_MAP_OVERLAY_TYPE_NONE = 0,
    ELM_MAP_OVERLAY_TYPE_DEFAULT,
@@ -135,8 +129,6 @@ typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *
  * @see elm_map_overlay_add()
  * @see elm_map_overlay_class_add()
  * @see elm_map_overlay_bubble_add()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_del(Elm_Map_Overlay *overlay);
 
@@ -151,8 +143,6 @@ EAPI void                  elm_map_overlay_del(Elm_Map_Overlay *overlay);
  * @see elm_map_overlay_add()
  * @see elm_map_overlay_class_add()
  * @see elm_map_overlay_bubble_add()
- *
- * @ingroup Map
  */
 EAPI Elm_Map_Overlay_Type  elm_map_overlay_type_get(const Elm_Map_Overlay *overlay);
 
@@ -163,8 +153,6 @@ EAPI Elm_Map_Overlay_Type  elm_map_overlay_type_get(const Elm_Map_Overlay *overl
  * @param data A pointer of user data
  *
  * @see elm_map_overlay_data_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_data_set(Elm_Map_Overlay *overlay, void *data);
 
@@ -176,8 +164,6 @@ EAPI void                  elm_map_overlay_data_set(Elm_Map_Overlay *overlay, vo
  *         or @c NULL, if none has been set.
  *
  * @see elm_map_overlay_data_set()
- *
- * @ingroup Map
  */
 EAPI void *                elm_map_overlay_data_get(const Elm_Map_Overlay *overlay);
 
@@ -188,8 +174,6 @@ EAPI void *                elm_map_overlay_data_get(const Elm_Map_Overlay *overl
  * @param hide Use @c EINA_TRUE to hide the overlay or @c EINA_FALSE to show.
  *
  * @see elm_map_overlay_hide_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_hide_set(Elm_Map_Overlay *overlay, Eina_Bool hide);
 
@@ -203,8 +187,6 @@ EAPI void                  elm_map_overlay_hide_set(Elm_Map_Overlay *overlay, Ei
  * This gets the current hidden state for the overlay.
  *
  * @see elm_map_overlay_hide_set()
- *
- * @ingroup Map
  */
 EAPI Eina_Bool             elm_map_overlay_hide_get(const Elm_Map_Overlay *overlay);
 
@@ -218,8 +200,6 @@ EAPI Eina_Bool             elm_map_overlay_hide_get(const Elm_Map_Overlay *overl
  * or bigger.
  *
  * @see elm_map_overlay_displayed_zoom_min_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_displayed_zoom_min_set(Elm_Map_Overlay *overlay, int zoom);
 
@@ -230,8 +210,6 @@ EAPI void                  elm_map_overlay_displayed_zoom_min_set(Elm_Map_Overla
  * @return zoom The minimum zoom.
  *
  * @see elm_map_overlay_displayed_zoom_min_set()
- *
- * @ingroup Map
  */
 EAPI int                   elm_map_overlay_displayed_zoom_min_get(const Elm_Map_Overlay *overlay);
 
@@ -251,8 +229,6 @@ EAPI int                   elm_map_overlay_displayed_zoom_min_get(const Elm_Map_
  * even if map being scrolled or zoomed.
  *
  * @see elm_map_overlay_paused_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_paused_set(Elm_Map_Overlay *overlay, Eina_Bool paused);
 
@@ -266,8 +242,6 @@ EAPI void                  elm_map_overlay_paused_set(Elm_Map_Overlay *overlay, 
  * This gets the current paused state for the overlay.
  *
  * @see elm_map_overlay_paused_set()
- *
- * @ingroup Map
  */
 EAPI Eina_Bool             elm_map_overlay_paused_get(const Elm_Map_Overlay *overlay);
 
@@ -282,8 +256,6 @@ EAPI Eina_Bool             elm_map_overlay_paused_get(const Elm_Map_Overlay *ove
  * This value can be changed dynamically while zooming and panning
  *
  * @since 1.7
- *
- * @ingroup Map
  */
 EAPI Eina_Bool             elm_map_overlay_visible_get(const Elm_Map_Overlay *overlay);
 
@@ -307,8 +279,6 @@ EAPI Eina_Bool             elm_map_overlay_visible_get(const Elm_Map_Overlay *ov
  * If @p obj is @c NULL, content inside the overlay is deleted.
  *
  * @see elm_map_overlay_content_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_content_set(Elm_Map_Overlay *overlay, Evas_Object *obj);
 
@@ -328,8 +298,6 @@ EAPI void                  elm_map_overlay_content_set(Elm_Map_Overlay *overlay,
  * The content can be set by elm_map_overlay_content_set().
  *
  * @see elm_map_overlay_content_set()
- *
- * @ingroup Map
  */
 EAPI const Evas_Object *   elm_map_overlay_content_get(const Elm_Map_Overlay *overlay);
 
@@ -349,8 +317,6 @@ EAPI const Evas_Object *   elm_map_overlay_content_get(const Elm_Map_Overlay *ov
  * If @p icon is @c NULL, icon inside the overlay will be deleted.
  *
  * @see elm_map_overlay_icon_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_icon_set(Elm_Map_Overlay *overlay, Evas_Object *icon);
 
@@ -369,8 +335,6 @@ EAPI void                  elm_map_overlay_icon_set(Elm_Map_Overlay *overlay, Ev
  * The icon can be set by elm_map_overlay_icon_set().
  *
  * @see elm_map_overlay_icon_set()
- *
- * @ingroup Map
  */
 EAPI const Evas_Object *   elm_map_overlay_icon_get(const Elm_Map_Overlay *overlay);
 
@@ -387,8 +351,6 @@ EAPI const Evas_Object *   elm_map_overlay_icon_get(const Elm_Map_Overlay *overl
  * get by elm_map_overlay_region_get().
  *
  * @see elm_map_overlay_region_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_region_set(Elm_Map_Overlay *overlay, double lon, double lat);
 
@@ -405,8 +367,6 @@ EAPI void                  elm_map_overlay_region_set(Elm_Map_Overlay *overlay, 
  * set by elm_map_overlay_region_set().
  *
  * @see elm_map_overlay_region_set()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_region_get(const Elm_Map_Overlay *overlay, double *lon, double *lat);
 
@@ -437,8 +397,6 @@ EAPI void                  elm_map_overlay_region_get(const Elm_Map_Overlay *ove
  * and ELM_MAP_OVERLAY_TYPE_ROUTE Elm_Map_Overlay_Type types.
  *
  * @see elm_map_overlay_color_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_color_set(Elm_Map_Overlay *overlay, int r, int g, int b, int a);
 
@@ -452,8 +410,6 @@ EAPI void                  elm_map_overlay_color_set(Elm_Map_Overlay *overlay, i
  * @param a Pointer to store the alpha channel value.
  *
  * @see elm_map_overlay_color_set()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_color_get(const Elm_Map_Overlay *overlay, int *r, int *g, int *b, int *a);
 
@@ -467,8 +423,6 @@ EAPI void                  elm_map_overlay_color_get(const Elm_Map_Overlay *over
  * moved to the center of the map.
  *
  * @see elm_map_overlays_show() if more than one overlay need to be displayed.
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_show(Elm_Map_Overlay *overlay);
 
@@ -484,8 +438,6 @@ EAPI void                  elm_map_overlay_show(Elm_Map_Overlay *overlay);
  * @warning All the overlays should belong to the same map object.
  *
  * @see elm_map_overlay_show() to show a single overlay.
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlays_show(Eina_List *overlays);
 
@@ -503,8 +455,6 @@ EAPI void                  elm_map_overlays_show(Eina_List *overlays);
  * is clicked, callback will be called and return a virtual group overlays.
  *
  * You can delete this callback function by setting @c NULL.
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_cb, void *data);
 
@@ -521,8 +471,6 @@ EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, 
  * You can delete this callback function by setting @c NULL.
  *
  * @since 1.7
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_del_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Del_Cb del_cb, void *data);
 
@@ -533,8 +481,6 @@ EAPI void                  elm_map_overlay_del_cb_set(Elm_Map_Overlay *overlay, 
  * @param overlay The overlay to be added to the class overlay.
  *
  * @see elm_map_overlay_class_remove()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_class_append(Elm_Map_Overlay *clas, Elm_Map_Overlay *overlay);
 
@@ -545,8 +491,6 @@ EAPI void                  elm_map_overlay_class_append(Elm_Map_Overlay *clas, E
  * @param overlay The overlay to be deleted from the class overlay.
  *
  * @see elm_map_overlay_class_append()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_class_remove(Elm_Map_Overlay *clas, Elm_Map_Overlay *overlay);
 
@@ -561,8 +505,6 @@ EAPI void                  elm_map_overlay_class_remove(Elm_Map_Overlay *clas, E
  * is displayed at less than @p zoom.
  *
  * @see elm_map_overlay_class_zoom_max_get()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *clas, int zoom);
 
@@ -575,8 +517,6 @@ EAPI void                  elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *c
  * @return The maximum zoom.
  *
  * @see elm_map_overlay_class_zoom_max_set()
- *
- * @ingroup Map
  */
 EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *clas);
 
@@ -596,8 +536,6 @@ EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Over
  * Do not modifty the group overlay itself.
  *
  * @see elm_map_overlay_class_add()
- *
- * @ingroup Map
  */
 EAPI Eina_List *           elm_map_overlay_group_members_get(const Elm_Map_Overlay *grp);
 
@@ -610,8 +548,6 @@ EAPI Eina_List *           elm_map_overlay_group_members_get(const Elm_Map_Overl
  * Bubble overlay will follow the parent overlay's movement (hide, show, move).
  *
  * @see elm_map_overlay_bubble_add()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble, const Elm_Map_Overlay *parent);
 
@@ -624,8 +560,6 @@ EAPI void                  elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble
  * Added contents will be displayed inside the bubble overlay.
  *
  * @see elm_map_overlay_bubble_content_clear()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_bubble_content_append(Elm_Map_Overlay *bubble, Evas_Object *content);
 
@@ -637,8 +571,6 @@ EAPI void                  elm_map_overlay_bubble_content_append(Elm_Map_Overlay
  * This will delete all contents inside the bubble overlay.
  *
  * @see elm_map_overlay_bubble_content_append()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble);
 
@@ -655,8 +587,6 @@ EAPI void                  elm_map_overlay_bubble_content_clear(Elm_Map_Overlay 
  *
  * @see elm_map_overlay_polygon_add()
  * @see elm_map_overlay_del()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_overlay_polygon_region_add(Elm_Map_Overlay *overlay, double lon, double lat);
 
@@ -666,8 +596,6 @@ EAPI void                  elm_map_overlay_polygon_region_add(Elm_Map_Overlay *o
  * @param route The route to remove.
  *
  * @see elm_map_route_add()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_route_del(Elm_Map_Route *route);
 
@@ -676,8 +604,6 @@ EAPI void                  elm_map_route_del(Elm_Map_Route *route);
  *
  * @param route The route object.
  * @return The distance of route (unit : km).
- *
- * @ingroup Map
  */
 EAPI double                elm_map_route_distance_get(const Elm_Map_Route *route);
 
@@ -686,8 +612,6 @@ EAPI double                elm_map_route_distance_get(const Elm_Map_Route *route
  *
  * @param route The route object.
  * @return Returns a string with the nodes of route.
- *
- * @ingroup Map
  */
 EAPI const char           *elm_map_route_node_get(const Elm_Map_Route *route);
 
@@ -696,8 +620,6 @@ EAPI const char           *elm_map_route_node_get(const Elm_Map_Route *route);
  *
  * @param route the route object.
  * @return Returns a string with information about waypoint of route.
- *
- * @ingroup Map
  */
 EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route);
 
@@ -711,8 +633,6 @@ EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route
  * conversion functions.
  *
  * @see elm_map_name_add()
- *
- * @ingroup Map
  */
 EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name);
 
@@ -727,8 +647,6 @@ EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name);
  * conversion functions.
  *
  * @see elm_map_name_add()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, double *lon, double *lat);
 
@@ -741,8 +659,9 @@ EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, dou
  * between address and coordinates will be lost.
  *
  * @see elm_map_name_add()
- *
- * @ingroup Map
  */
 EAPI void                  elm_map_name_del(Elm_Map_Name *name);
 
+/**
+ * @}
+ */

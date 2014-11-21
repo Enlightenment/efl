@@ -1,4 +1,10 @@
 /**
+ * @addtogroup List
+ *
+ * @{
+ */
+
+/**
  * Set list's resizing behavior, transverse axis scrolling and items
  * cropping. See each mode's description for more details.
  *
@@ -9,8 +15,6 @@
  *
  * @see elm_list_mode_set()
  * @see elm_list_mode_get()
- *
- * @ingroup List
  */
 typedef enum
 {
@@ -21,3 +25,6 @@ typedef enum
    ELM_LIST_LAST /**< Indicates error if returned by elm_list_mode_get() */
 } Elm_List_Mode;
 
+/**
+ * @}
+ */
