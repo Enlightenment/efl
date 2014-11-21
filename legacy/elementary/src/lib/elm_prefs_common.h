@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Prefs
+ *
+ * @{
+ */
+
+/**
  * Modes of resetting a prefs widget.
  *
  * @see elm_prefs_reset()
@@ -7,8 +13,8 @@
  */
 typedef enum
 {
-   ELM_PREFS_RESET_DEFAULTS, /** reset to default values, declared in its @b .epb file */
-   ELM_PREFS_RESET_LAST /** prefs will keep a small history of changes, so this  resets back to last batch of changes on the UI elements. it does @b not work on autosave mode */
+   ELM_PREFS_RESET_DEFAULTS, /**< reset to default values, declared in its @b .epb file */
+   ELM_PREFS_RESET_LAST /**< prefs will keep a small history of changes, so this  resets back to last batch of changes on the UI elements. it does @b not work on autosave mode */
 } Elm_Prefs_Reset_Mode;
 
 /**
@@ -21,29 +27,33 @@ typedef enum
  */
 EAPI Evas_Object       *elm_prefs_add(Evas_Object *parent);
 
-
 /* API for prefs interface modules, from now on */
 
-typedef struct _Elm_Prefs_Item_Spec_Void
+typedef struct _Elm_Prefs_Item_Spec_Void Elm_Prefs_Item_Spec_Void;
+struct _Elm_Prefs_Item_Spec_Void
 {
-} Elm_Prefs_Item_Spec_Void;
+};
 
-typedef struct _Elm_Prefs_Item_Spec_Bool
+typedef struct _Elm_Prefs_Item_Spec_Bool Elm_Prefs_Item_Spec_Bool;
+struct _Elm_Prefs_Item_Spec_Bool
 {
    Eina_Bool def;
-} Elm_Prefs_Item_Spec_Bool;
+};
 
-typedef struct _Elm_Prefs_Item_Spec_Int
+typedef struct _Elm_Prefs_Item_Spec_Int Elm_Prefs_Item_Spec_Int;
+struct _Elm_Prefs_Item_Spec_Int
 {
    int def, min, max;
-} Elm_Prefs_Item_Spec_Int;
+};
 
-typedef struct _Elm_Prefs_Item_Spec_Float
+typedef struct _Elm_Prefs_Item_Spec_Float Elm_Prefs_Item_Spec_Float;
+struct _Elm_Prefs_Item_Spec_Float
 {
    float def, min, max;
-} Elm_Prefs_Item_Spec_Float;
+};
 
-typedef struct _Elm_Prefs_Item_Spec_String
+typedef struct _Elm_Prefs_Item_Spec_String Elm_Prefs_Item_Spec_String;
+struct _Elm_Prefs_Item_Spec_String
 {
    const char *def;
    const char *placeholder;
@@ -54,9 +64,10 @@ typedef struct _Elm_Prefs_Item_Spec_String
    {
       int min, max;
    } length;
-} Elm_Prefs_Item_Spec_String;
+};
 
-typedef struct _Elm_Prefs_Item_Spec_Date
+typedef struct _Elm_Prefs_Item_Spec_Date Elm_Prefs_Item_Spec_Date;
+struct _Elm_Prefs_Item_Spec_Date
 {
    struct
    {
@@ -78,14 +89,16 @@ typedef struct _Elm_Prefs_Item_Spec_Date
       unsigned char  m; /* month*/
       unsigned short y; /* year */
    } max;
-} Elm_Prefs_Item_Spec_Date;
+};
 
-typedef struct _Elm_Prefs_Item_Spec_Page
+typedef struct _Elm_Prefs_Item_Spec_Page Elm_Prefs_Item_Spec_Page;
+struct _Elm_Prefs_Item_Spec_Page
 {
    const char *source;
-} Elm_Prefs_Item_Spec_Page;
+};
 
-typedef union _Elm_Prefs_Item_Spec
+typedef union _Elm_Prefs_Item_Spec Elm_Prefs_Item_Spec;
+union _Elm_Prefs_Item_Spec
 {
    Elm_Prefs_Item_Spec_Void   v;
    Elm_Prefs_Item_Spec_Bool   b;
@@ -94,23 +107,9 @@ typedef union _Elm_Prefs_Item_Spec
    Elm_Prefs_Item_Spec_String s;
    Elm_Prefs_Item_Spec_Date   d;
    Elm_Prefs_Item_Spec_Page   p;
-} Elm_Prefs_Item_Spec;
+};
 
 typedef struct _Elm_Prefs_Item_Iface Elm_Prefs_Item_Iface;
-
-/**
- * Convenience struct used to mass-register widgets implementing
- * prefs @b items interfaces.
- *
- * To be used with elm_prefs_item_iface_register() and
- * elm_prefs_item_iface_unregister().
- */
-struct _Elm_Prefs_Item_Iface_Info
-{
-   const char                 *widget_name; /**< The name of the widget implementing the interface, to be exposed on the prefs collections language. */
-   const Elm_Prefs_Item_Iface *info; /**< The type interface's implementation. */
-};
-typedef struct _Elm_Prefs_Item_Iface_Info Elm_Prefs_Item_Iface_Info;
 
 typedef void                            (*Elm_Prefs_Item_Changed_Cb)(Evas_Object *it_obj);   /**< Elementary prefs' item widget changed function signature */
 
@@ -168,6 +167,20 @@ struct _Elm_Prefs_Item_Iface
    Eina_Bool                  (*expand_want)(Evas_Object *obj); /**< function to get wether the item implementation needs to be expanded in the page's longitudinal axis or not */
 };
 
+typedef struct _Elm_Prefs_Item_Iface_Info Elm_Prefs_Item_Iface_Info;
+/**
+ * Convenience struct used to mass-register widgets implementing
+ * prefs @b items interfaces.
+ *
+ * To be used with elm_prefs_item_iface_register() and
+ * elm_prefs_item_iface_unregister().
+ */
+struct _Elm_Prefs_Item_Iface_Info
+{
+   const char                 *widget_name; /**< The name of the widget implementing the interface, to be exposed on the prefs collections language. */
+   const Elm_Prefs_Item_Iface *info; /**< The type interface's implementation. */
+};
+
 /**
  * Mass-register widgets implementing prefs @b items interfaces.
  *
@@ -203,21 +216,6 @@ EAPI Eina_Bool elm_prefs_item_widget_common_add(Evas_Object *prefs,
                                                 Evas_Object *obj);
 
 typedef struct _Elm_Prefs_Page_Iface Elm_Prefs_Page_Iface;
-
-/**
- * Convenience struct used to mass-register widgets implementing
- * prefs @b pages interfaces.
- *
- * To be used with elm_prefs_page_iface_register() and
- * elm_prefs_page_iface_unregister().
- */
-struct _Elm_Prefs_Page_Iface_Info
-{
-   const char                 *widget_name; /**< The name of the widget implementing the interface, to be exposed on the prefs collections language. */
-   const Elm_Prefs_Page_Iface *info; /**< The interface's implementation. */
-};
-typedef struct _Elm_Prefs_Page_Iface_Info Elm_Prefs_Page_Iface_Info;
-
 /**
  * @struct _Elm_Prefs_Page_Iface
  *
@@ -283,6 +281,20 @@ struct _Elm_Prefs_Page_Iface
                                     const Elm_Prefs_Item_Iface *iface);
 };
 
+typedef struct _Elm_Prefs_Page_Iface_Info Elm_Prefs_Page_Iface_Info;
+/**
+ * Convenience struct used to mass-register widgets implementing
+ * prefs @b pages interfaces.
+ *
+ * To be used with elm_prefs_page_iface_register() and
+ * elm_prefs_page_iface_unregister().
+ */
+struct _Elm_Prefs_Page_Iface_Info
+{
+   const char                 *widget_name; /**< The name of the widget implementing the interface, to be exposed on the prefs collections language. */
+   const Elm_Prefs_Page_Iface *info; /**< The interface's implementation. */
+};
+
 /**
  * Mass-register widgets implementing prefs @b pages interfaces.
  *
@@ -314,3 +326,6 @@ EAPI void      elm_prefs_page_iface_register(const Elm_Prefs_Page_Iface_Info *ar
  */
 EAPI void      elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array);
 
+/**
+ * @}
+ */

@@ -1,3 +1,12 @@
+/**
+ * @addtogroup App
+ *
+ * @{
+ */
+
+/**
+ * Elm_App_View_State
+ */
 typedef enum
 {
    ELM_APP_VIEW_STATE_UNKNOWN = 0,
@@ -6,6 +15,10 @@ typedef enum
    ELM_APP_VIEW_STATE_CLOSED,
    ELM_APP_VIEW_STATE_SHALLOW
 } Elm_App_View_State;
+
+/**
+ * @}
+ */
 
 char *_dbus_package_to_path(const char *package);
 

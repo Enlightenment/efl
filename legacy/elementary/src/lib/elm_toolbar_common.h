@@ -1,7 +1,10 @@
 /**
- * @enum Elm_Toolbar_Shrink_Mode
- * @typedef Elm_Toolbar_Shrink_Mode
+ * @addtogroup Toolbar
  *
+ * @{
+ */
+
+/**
  * Set toolbar's items display behavior, it can be scrollable,
  * show a menu with exceeding items, or simply hide them.
  *
@@ -12,8 +15,6 @@
  *
  * @see elm_toolbar_shrink_mode_set()
  * @see elm_toolbar_shrink_mode_get()
- *
- * @ingroup Toolbar
  */
 typedef enum
 {
@@ -27,8 +28,6 @@ typedef enum
 
 /**
  * Defines where to position the item in the toolbar.
- *
- * @ingroup Toolbar
  */
 typedef enum
 {
@@ -49,7 +48,9 @@ typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State;    /**< State of 
  * The default icon and label from this item will be displayed.
  *
  * @see elm_toolbar_item_state_set() for more details.
- *
- * @ingroup Toolbar
  */
 EAPI void                         elm_toolbar_item_state_unset(Elm_Object_Item *it);
+
+/**
+ * @}
+ */

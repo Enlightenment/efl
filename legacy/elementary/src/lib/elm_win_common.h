@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Win
+ *
+ * @{
+ */
+
+/**
  * Defines the types of window that can be created
  *
  * These are hints set on the window so that a running Window Manager knows
@@ -110,7 +116,6 @@ typedef enum
 /**
  * Defines the opacity modes of indicator that can be shown
  */
-
 typedef enum
 {
    ELM_WIN_INDICATOR_OPACITY_UNKNOWN, /**< Unknown indicator opacity mode */
@@ -200,4 +205,6 @@ struct _Elm_Win_Trap
  */
 EAPI Eina_Bool elm_win_trap_set(const Elm_Win_Trap *trap);
 
-
+/**
+ * @}
+ */

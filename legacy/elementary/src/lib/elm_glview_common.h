@@ -1,3 +1,9 @@
+/**
+ * @addtogroup GLView
+ *
+ * @{
+ */
+
 typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 
 /**
@@ -16,9 +22,8 @@ typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
  *
  * @see elm_glview_mode_set
  * @see @ref elm_opengl_page
- * @ingroup GLView
  */
-typedef enum _Elm_GLView_Mode
+typedef enum
 {
    ELM_GLVIEW_NONE    = 0,
    // 0x1 is reserved for future use
@@ -55,7 +60,6 @@ typedef enum _Elm_GLView_Mode
  * scaled.
  *
  * @note Default is ELM_GLVIEW_RESIZE_POLICY_RECREATE
- * @ingroup GLView
  */
 typedef enum
 {
@@ -72,7 +76,6 @@ typedef enum
  * only when it is visible.
  *
  * @note Default is ELM_GLVIEW_RENDER_POLICY_ON_DEMAND
- * @ingroup GLView
  */
 typedef enum
 {
@@ -80,3 +83,6 @@ typedef enum
    ELM_GLVIEW_RENDER_POLICY_ALWAYS    = 2  /**< Render always even when it is not visible */
 } Elm_GLView_Render_Policy;
 
+/**
+ * @}
+ */

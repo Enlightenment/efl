@@ -1,10 +1,13 @@
 /**
- * @enum _Elm_Gesture_Type
- * Enum of supported gesture types.
-
- * @ingroup Elm_Gesture_Layer
+ * @addtogroup Elm_Gesture_Layer
+ *
+ * @{
  */
-enum _Elm_Gesture_Type
+
+/**
+ * Enum of supported gesture types.
+ */
+typedef enum
 {
    ELM_GESTURE_FIRST = 0,
 
@@ -22,44 +25,27 @@ enum _Elm_Gesture_Type
    ELM_GESTURE_ROTATE, /**< Rotate */
 
    ELM_GESTURE_LAST
-};
+} Elm_Gesture_Type;
 
 /**
- * @typedef Elm_Gesture_Type
- * Convenient macro around #_Elm_Gesture_Type
- *
- * @ingroup Elm_Gesture_Layer
- */
-typedef enum _Elm_Gesture_Type Elm_Gesture_Type;
-
-/**
- * @enum _Elm_Gesture_State
  * Enum of gesture states.
- *
- * @ingroup Elm_Gesture_Layer
  */
-enum _Elm_Gesture_State
+typedef enum
 {
    ELM_GESTURE_STATE_UNDEFINED = -1, /**< Gesture not STARTed */
    ELM_GESTURE_STATE_START, /**< Gesture STARTed     */
    ELM_GESTURE_STATE_MOVE, /**< Gesture is ongoing  */
    ELM_GESTURE_STATE_END, /**< Gesture completed   */
    ELM_GESTURE_STATE_ABORT /**< Ongoing gesture was ABORTed */
-};
+} Elm_Gesture_State;
 
 /**
- * @typedef Elm_Gesture_State
- * Convenient macro around #_Elm_Gesture_State
- *
- * @ingroup Elm_Gesture_Layer
+ * Holds taps info for user
  */
-typedef enum _Elm_Gesture_State Elm_Gesture_State;
+typedef struct _Elm_Gesture_Taps_Info Elm_Gesture_Taps_Info;
 
 /**
- * @struct _Elm_Gesture_Taps_Info
  * Struct holds taps info for user
- *
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Taps_Info
 {
@@ -69,70 +55,54 @@ struct _Elm_Gesture_Taps_Info
 };
 
 /**
- * @typedef Elm_Gesture_Taps_Info
- * holds taps info for user
- *
- * @ingroup Elm_Gesture_Layer
+ * holds momentum info for user
  */
-typedef struct _Elm_Gesture_Taps_Info Elm_Gesture_Taps_Info;
+typedef struct _Elm_Gesture_Momentum_Info Elm_Gesture_Momentum_Info;
 
 /**
- * @struct _Elm_Gesture_Momentum_Info
  * Struct holds momentum info for user
  * x1 and y1 are not necessarily in sync
  * x1 holds x value of x direction starting point
  * and same holds for y1.
  * This is noticeable when doing V-shape movement
- *
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Momentum_Info /* Report line ends, timestamps, and momentum computed        */
-{Evas_Coord   x1; /**< Final-swipe direction starting point on X */
- Evas_Coord   y1; /**< Final-swipe direction starting point on Y */
- Evas_Coord   x2; /**< Final-swipe direction ending point on X   */
- Evas_Coord   y2; /**< Final-swipe direction ending point on Y   */
+{
+   Evas_Coord   x1; /**< Final-swipe direction starting point on X */
+   Evas_Coord   y1; /**< Final-swipe direction starting point on Y */
+   Evas_Coord   x2; /**< Final-swipe direction ending point on X   */
+   Evas_Coord   y2; /**< Final-swipe direction ending point on Y   */
 
- unsigned int tx; /**< Timestamp of start of final x-swipe */
- unsigned int ty; /**< Timestamp of start of final y-swipe */
+   unsigned int tx; /**< Timestamp of start of final x-swipe */
+   unsigned int ty; /**< Timestamp of start of final y-swipe */
 
- Evas_Coord   mx; /**< Momentum on X */
- Evas_Coord   my; /**< Momentum on Y */
+   Evas_Coord   mx; /**< Momentum on X */
+   Evas_Coord   my; /**< Momentum on Y */
 
- unsigned int n; /**< Number of fingers */
+   unsigned int n; /**< Number of fingers */
 };
 
 /**
- * @typedef Elm_Gesture_Momentum_Info
- * holds momentum info for user
- *
- * @ingroup Elm_Gesture_Layer
- */
-typedef struct _Elm_Gesture_Momentum_Info Elm_Gesture_Momentum_Info;
-
-/**
- * @struct _Elm_Gesture_Line_Info
- * Struct holds line info for user
- *
- * @ingroup Elm_Gesture_Layer
- */
-struct _Elm_Gesture_Line_Info   /* Report line ends, timestamps, and momentum computed      */
-{Elm_Gesture_Momentum_Info momentum; /**< Line momentum info */
- double                    angle; /**< Angle (direction) of lines  */
-};
-
-/**
- * @typedef Elm_Gesture_Line_Info
  * Holds line info for user
- *
- * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Elm_Gesture_Line_Info Elm_Gesture_Line_Info;
 
 /**
- * @struct _Elm_Gesture_Zoom_Info
+ * Struct holds line info for user
+ */
+struct _Elm_Gesture_Line_Info   /* Report line ends, timestamps, and momentum computed      */
+{
+   Elm_Gesture_Momentum_Info momentum; /**< Line momentum info */
+   double                    angle; /**< Angle (direction) of lines  */
+};
+
+/**
+ * Holds zoom info for user
+ */
+typedef struct _Elm_Gesture_Zoom_Info Elm_Gesture_Zoom_Info;
+
+/**
  * Struct holds zoom info for user
- *
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Zoom_Info
 {
@@ -143,18 +113,12 @@ struct _Elm_Gesture_Zoom_Info
 };
 
 /**
- * @typedef Elm_Gesture_Zoom_Info
- * Holds zoom info for user
- *
- * @ingroup Elm_Gesture_Layer
+ * Holds rotation info for user
  */
-typedef struct _Elm_Gesture_Zoom_Info Elm_Gesture_Zoom_Info;
+typedef struct _Elm_Gesture_Rotate_Info Elm_Gesture_Rotate_Info;
 
 /**
- * @struct _Elm_Gesture_Rotate_Info
  * Struct holds rotation info for user
- *
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Rotate_Info
 {
@@ -166,23 +130,12 @@ struct _Elm_Gesture_Rotate_Info
 };
 
 /**
- * @typedef Elm_Gesture_Rotate_Info
- * Holds rotation info for user
- *
- * @ingroup Elm_Gesture_Layer
- */
-typedef struct _Elm_Gesture_Rotate_Info Elm_Gesture_Rotate_Info;
-
-/**
- * @typedef Elm_Gesture_Event_Cb
  * User callback used to stream gesture info from gesture layer
  * @param data user data
  * @param event_info gesture report info
  * Returns a flag field to be applied on the causing event.
  * You should probably return EVAS_EVENT_FLAG_ON_HOLD if your widget acted
  * upon the event, in an irreversible way.
- *
- * @ingroup Elm_Gesture_Layer
  */
 typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
 
@@ -193,7 +146,6 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
  * @param line_min_length the length.
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_line_min_length_set(Evas_Object *obj, int line_min_length);
 
@@ -204,7 +156,6 @@ EAPI void elm_gesture_layer_line_min_length_set(Evas_Object *obj, int line_min_l
  * @return the length.
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI int elm_gesture_layer_line_min_length_get(const Evas_Object *obj);
 
@@ -215,7 +166,6 @@ EAPI int elm_gesture_layer_line_min_length_get(const Evas_Object *obj);
  * @param zoom_distance_tolerance zoom distance tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_zoom_distance_tolerance_set(Evas_Object *obj, Evas_Coord zoom_distance_tolerance);
 
@@ -226,7 +176,6 @@ EAPI void elm_gesture_layer_zoom_distance_tolerance_set(Evas_Object *obj, Evas_C
  * @return zoom distance tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Coord elm_gesture_layer_zoom_distance_tolerance_get(const Evas_Object *obj);
 
@@ -237,7 +186,6 @@ EAPI Evas_Coord elm_gesture_layer_zoom_distance_tolerance_get(const Evas_Object 
  * @param line_distance_tolerance line distance tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_line_distance_tolerance_set(Evas_Object *obj, Evas_Coord line_distance_tolerance);
 
@@ -248,7 +196,6 @@ EAPI void elm_gesture_layer_line_distance_tolerance_set(Evas_Object *obj, Evas_C
  * @return line distance tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Coord elm_gesture_layer_line_distance_tolerance_get(const Evas_Object *obj);
 
@@ -259,7 +206,6 @@ EAPI Evas_Coord elm_gesture_layer_line_distance_tolerance_get(const Evas_Object 
  * @param line_angular_tolerance line angular tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_line_angular_tolerance_set(Evas_Object *obj, double line_angular_tolerance);
 
@@ -270,7 +216,6 @@ EAPI void elm_gesture_layer_line_angular_tolerance_set(Evas_Object *obj, double 
  * @return line angular tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_line_angular_tolerance_get(const Evas_Object *obj);
 
@@ -281,7 +226,6 @@ EAPI double elm_gesture_layer_line_angular_tolerance_get(const Evas_Object *obj)
  * @param zoom_wheel_factor zoom wheel factor
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_zoom_wheel_factor_set(Evas_Object *obj, double zoom_wheel_factor);
 
@@ -292,7 +236,6 @@ EAPI void elm_gesture_layer_zoom_wheel_factor_set(Evas_Object *obj, double zoom_
  * @return zoom wheel factor
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_zoom_wheel_factor_get(const Evas_Object *obj);
 
@@ -303,7 +246,6 @@ EAPI double elm_gesture_layer_zoom_wheel_factor_get(const Evas_Object *obj);
  * @param zoom_finger_factor zoom finger factor
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_zoom_finger_factor_set(Evas_Object *obj, double zoom_finger_factor);
 
@@ -314,7 +256,6 @@ EAPI void elm_gesture_layer_zoom_finger_factor_set(Evas_Object *obj, double zoom
  * @return zoom finger factor
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj);
 
@@ -325,7 +266,6 @@ EAPI double elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj);
  * @param rotate_angular_tolerance rotate angular tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_rotate_angular_tolerance_set(Evas_Object *obj, double rotate_angular_tolerance);
 
@@ -336,7 +276,6 @@ EAPI void elm_gesture_layer_rotate_angular_tolerance_set(Evas_Object *obj, doubl
  * @return rotate angular tolerance
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_rotate_angular_tolerance_get(const Evas_Object *obj);
 
@@ -347,7 +286,6 @@ EAPI double elm_gesture_layer_rotate_angular_tolerance_get(const Evas_Object *ob
  * @param flick_time_limit_ms flick time limit (in ms)
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_flick_time_limit_ms_set(Evas_Object *obj, unsigned int flick_time_limit_ms);
 
@@ -358,7 +296,6 @@ EAPI void elm_gesture_layer_flick_time_limit_ms_set(Evas_Object *obj, unsigned i
  * @return flick time limit (in ms)
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI unsigned int elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *obj);
 
@@ -369,7 +306,6 @@ EAPI unsigned int elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *o
  * @param long_tap_start_timeout long tap start timeout
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_long_tap_start_timeout_set(Evas_Object *obj, double long_tap_start_timeout);
 
@@ -380,7 +316,6 @@ EAPI void elm_gesture_layer_long_tap_start_timeout_set(Evas_Object *obj, double 
  * @return long tap start timeout
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_long_tap_start_timeout_get(const Evas_Object *obj);
 
@@ -391,7 +326,6 @@ EAPI double elm_gesture_layer_long_tap_start_timeout_get(const Evas_Object *obj)
  * @param continues_enable continues enable
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_continues_enable_set(Evas_Object *obj, Eina_Bool continues_enable);
 
@@ -402,7 +336,6 @@ EAPI void elm_gesture_layer_continues_enable_set(Evas_Object *obj, Eina_Bool con
  * @return continues enable
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Eina_Bool elm_gesture_layer_continues_enable_get(const Evas_Object *obj);
 
@@ -413,7 +346,6 @@ EAPI Eina_Bool elm_gesture_layer_continues_enable_get(const Evas_Object *obj);
  * @param double_tap_timeout double tap timeout
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double double_tap_timeout);
 
@@ -424,7 +356,6 @@ EAPI void elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double doub
  * @return double tap timeout
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj);
 
@@ -437,7 +368,6 @@ EAPI double elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj);
  * @param sz Finger size
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_tap_finger_size_set(Evas_Object *obj, Evas_Coord sz);
 
@@ -448,6 +378,9 @@ EAPI void elm_gesture_layer_tap_finger_size_set(Evas_Object *obj, Evas_Coord sz)
  * @return Finger size that is currently used by Gesture Layer for taps.
  *
  * @since 1.8
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Coord elm_gesture_layer_tap_finger_size_get(const Evas_Object *obj);
+
+/**
+ * @}
+ */

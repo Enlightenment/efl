@@ -1,4 +1,12 @@
 /**
+ * @addtogroup Clock
+ *
+ * @{
+ */
+
+/**
+ * @enum Elm_Clock_Edit_Mode
+ *
  * Identifiers for which clock digits should be editable, when a
  * clock widget is in edition mode. Values may be OR-ed together to
  * make a mask, naturally.
@@ -18,3 +26,6 @@ typedef enum
    ELM_CLOCK_EDIT_ALL = (1 << 6) - 1 /**< All digits should be editable */
 } Elm_Clock_Edit_Mode;
 
+/**
+ * @}
+ */

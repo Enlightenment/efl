@@ -1,6 +1,10 @@
 /**
- * @typedef Elm_Text_Format
+ * @addtogroup Entry
  *
+ * @{
+ */
+
+/**
  * Text Format types.
  *
  * @see elm_entry_file_set()
@@ -12,8 +16,6 @@ typedef enum
 } Elm_Text_Format;
 
 /**
- * @typedef Elm_Wrap_Type
- *
  * Line wrapping types.
  *
  * @see elm_entry_line_wrap_set()
@@ -28,8 +30,6 @@ typedef enum
 } Elm_Wrap_Type; /**< Type of word or character wrapping to use */
 
 /**
- * @typedef Elm_Input_Panel_Layout
- *
  * Input panel (virtual keyboard) layout types.
  *
  * @see elm_entry_input_panel_layout_set()
@@ -74,8 +74,6 @@ enum
 };
 
 /**
- * @typedef Elm_Input_Panel_Lang
- *
  * Input panel (virtual keyboard) language modes.
  *
  * @see elm_entry_input_panel_language_set()
@@ -87,8 +85,6 @@ typedef enum
 } Elm_Input_Panel_Lang;
 
 /**
- * @typedef Elm_Autocapital_Type
- *
  * Autocapitalization Types.
  *
  * @see elm_entry_autocapital_type_set()
@@ -102,8 +98,6 @@ typedef enum
 } Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
 
 /**
- * @typedef Elm_Input_Panel_Return_Key_Type
- *
  * "Return" Key types on the input panel (virtual keyboard).
  *
  * @see elm_entry_input_panel_return_key_type_set()
@@ -122,7 +116,6 @@ typedef enum
 } Elm_Input_Panel_Return_Key_Type;
 
 /**
- * @typedef Elm_Input_Hints
  * @brief Enumeration that defines the types of Input Hints.
  * @since 1.12
  */
@@ -134,16 +127,12 @@ typedef enum
 } Elm_Input_Hints;
 
 /**
- * @typedef Elm_Entry_Anchor_Info
- *
  * The info sent in the callback for the "anchor,clicked" signals emitted
  * by entries.
  */
 typedef struct _Elm_Entry_Anchor_Info Elm_Entry_Anchor_Info;
 
 /**
- * @struct _Elm_Entry_Anchor_Info
- *
  * The info sent in the callback for the "anchor,clicked" signals emitted
  * by entries.
  */
@@ -158,24 +147,18 @@ struct _Elm_Entry_Anchor_Info
 };
 
 /**
- * @typedef Elm_Entry_Anchor_Hover_Info
- *
  * The info sent in the callback for "anchor,clicked" signals emitted by
  * the Anchor_Hover widget.
  */
 typedef struct _Elm_Entry_Anchor_Hover_Info Elm_Entry_Anchor_Hover_Info;
 
 /**
- * @typedef Elm_Entry_Context_Menu_Item
- *
  * Type of contextual item that can be added in to long press menu.
  * @since 1.8
  */
 typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
 
 /**
- * @struct _Elm_Entry_Anchor_Hover_Info
- *
  * The info sent in the callback for "anchor,clicked" signals emitted by
  * the Anchor_Hover widget.
  */
@@ -209,7 +192,6 @@ struct _Elm_Entry_Anchor_Hover_Info
 };
 
 /**
- * @typedef Elm_Entry_Item_Provider_Cb
  * This callback type is used to provide items.
  * If it returns an object handle other than NULL (it should create an
  * object to do this), then this object is used to replace the current item.
@@ -226,7 +208,6 @@ struct _Elm_Entry_Anchor_Hover_Info
 typedef Evas_Object * (*Elm_Entry_Item_Provider_Cb)(void *data, Evas_Object * entry, const char *item);
 
 /**
- * @typedef Elm_Entry_Filter_Cb
  * This callback type is used by entry filters to modify text.
  * @param data The data specified as the last param when adding the filter
  * @param entry The entry object
@@ -238,7 +219,6 @@ typedef Evas_Object * (*Elm_Entry_Item_Provider_Cb)(void *data, Evas_Object * en
 typedef void (*Elm_Entry_Filter_Cb)(void *data, Evas_Object *entry, char **text);
 
 /**
- * @typedef Elm_Entry_Change_Info
  * This corresponds to Edje_Entry_Change_Info. Includes information about
  * a change in the entry.
  */
@@ -252,8 +232,6 @@ typedef Edje_Entry_Change_Info Elm_Entry_Change_Info;
  *
  * @param s The string (in markup) to be converted
  * @return The converted string (in UTF-8). It should be freed.
- *
- * @ingroup Entry
  */
 EAPI char              *elm_entry_markup_to_utf8(const char *s);
 
@@ -270,8 +248,6 @@ EAPI char              *elm_entry_markup_to_utf8(const char *s);
  * "&lt;align=center&gt;hello&lt;/align&gt; &amp;gt;". This is useful when you
  * want to display "&" in label, entry, and some widgets which use textblock
  * internally.
- *
- * @ingroup Entry
  */
 EAPI char              *elm_entry_utf8_to_markup(const char *s);
 
@@ -280,15 +256,11 @@ EAPI char              *elm_entry_utf8_to_markup(const char *s);
 /* pre-made filters for entries */
 
 /**
- * @typedef Elm_Entry_Filter_Limit_Size
- *
  * Data for the elm_entry_filter_limit_size() entry filter.
  */
 typedef struct _Elm_Entry_Filter_Limit_Size Elm_Entry_Filter_Limit_Size;
 
 /**
- * @struct _Elm_Entry_Filter_Limit_Size
- *
  * Data for the elm_entry_filter_limit_size() entry filter.
  */
 struct _Elm_Entry_Filter_Limit_Size
@@ -320,21 +292,15 @@ struct _Elm_Entry_Filter_Limit_Size
  *
  * This filter, like any others, does not apply when setting the entry text
  * directly with elm_object_text_set().
- *
- * @ingroup Entry
  */
 EAPI void elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text);
 
 /**
- * @typedef Elm_Entry_Filter_Accept_Set
- *
  * Data for the elm_entry_filter_accept_set() entry filter.
  */
 typedef struct _Elm_Entry_Filter_Accept_Set Elm_Entry_Filter_Accept_Set;
 
 /**
- * @struct _Elm_Entry_Filter_Accept_Set
- *
  * Data for the elm_entry_filter_accept_set() entry filter.
  */
 struct _Elm_Entry_Filter_Accept_Set
@@ -361,13 +327,10 @@ struct _Elm_Entry_Filter_Accept_Set
  *
  * This filter, like any others, does not apply when setting the entry text
  * directly with elm_object_text_set()
- *
- * @ingroup Entry
  */
 EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
 
 /**
- * @typedef Elm_Cnp_Mode
  * Enum of entry's copy & paste policy.
  *
  * @see elm_entry_cnp_mode_set()
@@ -380,22 +343,17 @@ typedef enum {
 } Elm_Cnp_Mode;
 
 /**
- * Get the text of the contextual menu item.
- *
  * Get the text of the contextual menu item of entry.
  *
  * @param item The item to get the label
  * @return The text of contextual menu item
  *
  * @see elm_entry_context_menu_item_add()
- * @ingroup Entry
  * @since 1.8
  */
 EAPI const char                  *elm_entry_context_menu_item_label_get(const Elm_Entry_Context_Menu_Item *item);
 
 /**
- * Get the icon object of the contextual menu item.
- *
  * Get the icon object packed in the contextual menu item of entry.
  *
  * @param item The item to get the icon from
@@ -406,8 +364,11 @@ EAPI const char                  *elm_entry_context_menu_item_label_get(const El
  * @param icon_type The icon type
  *
  * @see elm_entry_context_menu_item_add()
- * @ingroup Entry
  * @since 1.8
  */
 EAPI void                         elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
+
+/**
+ * @}
+ */

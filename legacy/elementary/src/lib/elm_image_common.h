@@ -1,10 +1,14 @@
 /**
+ * @addtogroup Image
+ *
+ * @{
+ */
+
+/**
  * Possible orientation options for elm_image_orient_set().
  *
  * @image html elm_image_orient_set.png
  * @image latex elm_image_orient_set.eps width=\textwidth
- *
- * @ingroup Image
  */
 typedef enum
 {
@@ -24,22 +28,30 @@ typedef enum
  * @since 1.8
  */
 typedef struct _Elm_Image_Progress Elm_Image_Progress;
-
+/**
+ * Structure associated with smart callback 'download,progress'.
+ */
 struct _Elm_Image_Progress
 {
    double now;
    double total;
 };
 
-
 /**
  * Structre associated with smart callback 'download,error'
  * @since 1.8
  */
 typedef struct _Elm_Image_Error Elm_Image_Error;
+/**
+ * Structure associated with smart callback 'download,progress'.
+ */
 struct _Elm_Image_Error
 {
    int status;
 
    Eina_Bool open_error;
 };
+
+/**
+ * @}
+ */

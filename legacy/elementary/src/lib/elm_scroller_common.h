@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Scroller
+ *
+ * @{
+ */
+
+/**
  * @brief Type that controls when scrollbars should appear.
  *
  * @see elm_scroller_policy_set()
@@ -38,4 +44,6 @@ typedef enum
     ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL = 1 << 2 /**< Block horizontal movements */
 } Elm_Scroller_Movement_Block;
 
-
+/**
+ * @}
+ */

@@ -1,10 +1,14 @@
 /**
+ * @addtogroup Thumb
+ *
+ * @{
+ */
+
+/**
  * @enum Elm_Thumb_Animation_Setting
  * @typedef Elm_Thumb_Animation_Setting
  *
  * Used to set if a video thumbnail is animating or not.
- *
- * @ingroup Thumb
  */
 typedef enum
 {
@@ -22,8 +26,6 @@ typedef enum
  * The ethumb client handle returned may or may not be NULL. It may or may
  * not survive into the future (ethumbd may become disconnected). Do not use
  * this unless you know what you are doing.
- *
- * @ingroup Thumb
  */
 EAPI void                       *elm_thumb_ethumb_client_get(void);
 
@@ -35,3 +37,6 @@ EAPI void                       *elm_thumb_ethumb_client_get(void);
  */
 EAPI Eina_Bool                   elm_thumb_ethumb_client_connected_get(void);
 
+/**
+ * @}
+ */

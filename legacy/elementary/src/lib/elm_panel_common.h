@@ -1,7 +1,11 @@
 /**
- * Panel orientation mode
+ * @addtogroup Panel
  *
- * @ingroup Panel
+ * @{
+ */
+
+/**
+ * Panel orientation mode
  */
 typedef enum
 {
@@ -15,11 +19,20 @@ typedef enum
  * Panel scroll information
  *
  * @since 1.11
- * @ingroup Panel
  */
-typedef struct _Elm_Panel_Scroll_Info
+typedef struct _Elm_Panel_Scroll_Info Elm_Panel_Scroll_Info;
+/**
+ * Panel scroll information
+ *
+ * @since 1.11
+ */
+struct _Elm_Panel_Scroll_Info
 {
    double rel_x;  /**<content scrolled position (0.0 ~ 1.0) in the panel>*/
    double rel_y;  /**<content scrolled position (0.0 ~ 1.0) in the panel>*/
 
-} Elm_Panel_Scroll_Info;
+};
+
+/**
+ * @}
+ */

@@ -1,7 +1,11 @@
 /**
- * A position for indicators, magnets, and enabled items.
+ * @addtogroup Actionslider
  *
- * @ingroup Actionslider
+ * @{
+ */
+
+/**
+ * A position for indicators, magnets, and enabled items.
  */
 typedef enum
 {
@@ -11,3 +15,7 @@ typedef enum
    ELM_ACTIONSLIDER_RIGHT = 1 << 2, /**< right position */
    ELM_ACTIONSLIDER_ALL = (1 << 3) - 1 /**< all positions for left/center/right */
 } Elm_Actionslider_Pos;
+
+/**
+ * @}
+ */

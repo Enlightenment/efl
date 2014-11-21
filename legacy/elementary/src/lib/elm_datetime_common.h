@@ -1,9 +1,14 @@
 /**
+ * @addtogroup Datetime
+ *
+ * @{
+ */
+
+/**
  * Identifies a Datetime field, The widget supports 6 fields : Year, month,
  * Date, Hour, Minute, AM/PM
- *
  */
-typedef enum _Elm_Datetime_Field_Type
+typedef enum
 {
    ELM_DATETIME_YEAR    = 0, /**< Indicates Year field */
    ELM_DATETIME_MONTH   = 1, /**< Indicates Month field */
@@ -13,3 +18,6 @@ typedef enum _Elm_Datetime_Field_Type
    ELM_DATETIME_AMPM    = 5, /**< Indicates AM/PM field */
 } Elm_Datetime_Field_Type;
 
+/**
+ * @}
+ */

@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Box
+ *
+ * @{
+ */
+
+/**
  * @typedef Elm_Box_Transition
  *
  * Opaque handler containing the parameters to perform an animated
@@ -41,8 +47,6 @@ typedef struct _Elm_Box_Transition Elm_Box_Transition;
  * @see elm_box_transition_new
  * @see elm_box_transition_free
  * @see elm_box_layout_set
- *
- * @ingroup Box
  */
 EAPI void                elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data);
 
@@ -76,8 +80,6 @@ EAPI void                elm_box_layout_transition(Evas_Object *obj, Evas_Object
  *
  * @see elm_box_transition_new
  * @see elm_box_layout_transition
- *
- * @ingroup Box
  */
 EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Object_Box_Layout start_layout, void *start_layout_data, Ecore_Cb start_layout_free_data, Evas_Object_Box_Layout end_layout, void *end_layout_data, Ecore_Cb end_layout_free_data, Ecore_Cb transition_end_cb, void *transition_end_data);
 
@@ -91,7 +93,9 @@ EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Obje
  *
  * @see elm_box_transition_new
  * @see elm_box_layout_transition
- *
- * @ingroup Box
  */
 EAPI void                elm_box_transition_free(void *data);
+
+/**
+ * @}
+ */
