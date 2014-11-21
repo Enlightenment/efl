@@ -1002,8 +1002,8 @@ _layout_key_down_cb(void *data,
    if (sd->last_btn_select)
      {
         if (sd->selected_it &&
-            ((strcmp(ev->key, "BackSpace") == 0) ||
-             (strcmp(ev->key, "Delete") == 0)))
+            ((!strcmp(ev->key, "BackSpace")) ||
+             (!strcmp(ev->key, "Delete"))))
           {
              Elm_Multibuttonentry_Item_Data *item = sd->selected_it;
              if (item && sd->editable)
@@ -1013,8 +1013,8 @@ _layout_key_down_cb(void *data,
                }
           }
         else if (((!sd->selected_it && (sd->n_str == 0) &&
-                   (strcmp(ev->key, "BackSpace") == 0)) ||
-                  (strcmp(ev->key, "Delete") == 0)))
+                   (!strcmp(ev->key, "BackSpace"))) ||
+                  (!strcmp(ev->key, "Delete"))))
           {
              Elm_Object_Item *eo_item = eina_list_data_get(eina_list_last(sd->items));
              if (eo_item)
