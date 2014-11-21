@@ -188,45 +188,29 @@ parse_name_list(Eo_Lexer *ls, Eina_List **out)
    pop_strbuf(ls);
 }
 
-#define NAMESPACE_PARSE(def, dname) \
-   char *full_name = strdup(dname); \
-   char *name = full_name, *dot = full_name; \
-   def->full_name = dname; \
-   do \
-     { \
-        dot = strchr(dot, '.'); \
-        if (dot) \
-          { \
-             *dot = '\0'; \
-             def->namespaces = eina_list_append(def->namespaces, \
-                                               eina_stringshare_add(name)); \
-             ++dot; \
-             name = dot; \
-          } \
-     } \
-   while (dot); \
-   def->name = eina_stringshare_add(name); \
-   free(full_name);
-
 static void
-_fill_type_name(Eolian_Type *tp, const char *type_name)
+_fill_name(const char *input, Eina_Stringshare **full_name,
+           Eina_Stringshare **name, Eina_List **namespaces)
 {
-   NAMESPACE_PARSE(tp, type_name)
+   char *fname = strdup(input);
+   char *sname = fname, *dot = fname;
+   *full_name = input;
+   do
+     {
+        dot = strchr(dot, '.');
+        if (dot)
+          {
+             *dot = '\0';
+             *namespaces = eina_list_append(*namespaces,
+                                            eina_stringshare_add(sname));
+             ++dot;
+             sname = dot;
+          }
+     }
+   while (dot);
+   *name = eina_stringshare_add(sname);
+   free(fname);
 }
-
-static void
-_fill_variable_name(Eolian_Variable *var, const char *var_name)
-{
-   NAMESPACE_PARSE(var, var_name)
-}
-
-static void
-_fill_class_name(Eolian_Class *cl, const char *cl_name)
-{
-   NAMESPACE_PARSE(cl, cl_name)
-}
-
-#undef NAMESPACE_PARSE
 
 static Eolian_Expression *
 push_expr(Eo_Lexer *ls)
@@ -562,7 +546,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    int bline = ls->line_number, bcolumn = ls->column;
    Eolian_Type *def = push_type(ls);
    def->is_extern = is_extern;
-   if (name) _fill_type_name(def, name);
+   if (name) _fill_name(name, &def->full_name, &def->name, &def->namespaces);
    def->type = EOLIAN_TYPE_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
    def->freefunc = freefunc;
@@ -627,7 +611,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    int bline = ls->line_number, bcolumn = ls->column;
    Eolian_Type *def = push_type(ls);
    def->is_extern = is_extern;
-   _fill_type_name(def, name);
+   _fill_name(name, &def->full_name, &def->name, &def->namespaces);
    def->type = EOLIAN_TYPE_ENUM;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_enum_field_free));
    check_next(ls, '{');
@@ -888,7 +872,7 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
            def->base.line = line;
            def->base.column = col;
            pop_str(ls);
-           _fill_type_name(def, sname);
+           _fill_name(sname, &def->full_name, &def->name, &def->namespaces);
            goto parse_ptr;
         }
       case KW_func:
@@ -913,7 +897,8 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
         ctype = eo_lexer_get_c_type(ls->t.kw);
         if (ctype)
           {
-             _fill_type_name(def, eina_stringshare_ref(ls->t.value.s));
+             _fill_name(eina_stringshare_ref(ls->t.value.s), &def->full_name,
+                        &def->name, &def->namespaces);
              eo_lexer_get(ls);
              if (tpid >= KW_accessor)
                {
@@ -964,7 +949,8 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
                   free(fnm);
                   def->type = EOLIAN_TYPE_CLASS;
                }
-             _fill_type_name(def, eina_stringshare_add(nm));
+             _fill_name(eina_stringshare_add(nm), &def->full_name, &def->name,
+                        &def->namespaces);
              pop_strbuf(ls);
           }
      }
@@ -1010,7 +996,8 @@ parse_typedef(Eo_Lexer *ls)
    def->base.line = ls->line_number;
    def->base.column = ls->column;
    parse_name(ls, buf);
-   _fill_type_name(def, eina_stringshare_add(eina_strbuf_string_get(buf)));
+   _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
+              &def->full_name, &def->name, &def->namespaces);
    Eolian_Type *tp = (Eolian_Type*)eina_hash_find(_aliases, def->full_name);
    if (tp)
      {
@@ -1053,7 +1040,8 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    def->base.line = ls->line_number;
    def->base.column = ls->column;
    parse_name(ls, buf);
-   _fill_variable_name(def, eina_stringshare_add(eina_strbuf_string_get(buf)));
+   _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
+              &def->full_name, &def->name, &def->namespaces);
    check_next(ls, ':');
    def->base_type = parse_type(ls);
    pop_type(ls);
@@ -1877,8 +1865,9 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         eo_lexer_syntax_error(ls, "class and file names differ");
      }
    eo_lexer_context_pop(ls);
-   _fill_class_name(ls->tmp.kls, eina_stringshare_add(eina_strbuf_string_get
-      (buf)));
+   _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
+              &ls->tmp.kls->full_name, &ls->tmp.kls->name,
+              &ls->tmp.kls->namespaces);
    pop_strbuf(ls);
    if (ls->t.token != '{')
      {
@@ -1966,7 +1955,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 def->type = EOLIAN_TYPE_STRUCT_OPAQUE;
                 def->freefunc = freefunc;
                 pop_str(ls);
-                _fill_type_name(def, name);
+                _fill_name(name, &def->full_name, &def->name, &def->namespaces);
                 eo_lexer_get(ls);
                 if (ls->t.token == TOK_COMMENT)
                   {
