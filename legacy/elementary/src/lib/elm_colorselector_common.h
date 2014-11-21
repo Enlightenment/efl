@@ -1,20 +1,28 @@
-typedef struct _Elm_Color_RGBA
+/**
+ * @addtogroup Colorselector
+ *
+ * @{
+ */
+
+typedef struct _Elm_Color_RGBA Elm_Color_RGBA;
+struct _Elm_Color_RGBA
 {
    unsigned int r;
    unsigned int g;
    unsigned int b;
    unsigned int a;
-} Elm_Color_RGBA;
+};
 
-typedef struct _Elm_Custom_Palette
+
+typedef struct _Elm_Custom_Palette Elm_Custom_Palette;
+struct _Elm_Custom_Palette
 {
    const char *palette_name;
    Eina_List  *color_list;
-} Elm_Custom_Palette;
+};
 
 /**
  * @enum Elm_Colorselector_Mode
- * @typedef Elm_Colorselector_Mode
  *
  * Different modes supported by Colorselector
  *
@@ -37,3 +45,7 @@ EAPI void elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r, i
 EAPI Eina_Bool elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it);
 
 EAPI void elm_colorselector_palette_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
+
+/**
+ * @}
+ */

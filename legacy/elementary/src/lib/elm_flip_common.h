@@ -1,3 +1,6 @@
+/**
+ * @ingroup Flip
+ */
 typedef enum
 {
    ELM_FLIP_ROTATE_Y_CENTER_AXIS,
@@ -14,6 +17,9 @@ typedef enum
    ELM_FLIP_PAGE_DOWN
 } Elm_Flip_Mode;
 
+/**
+ * @ingroup Flip
+ */
 typedef enum
 {
    ELM_FLIP_INTERACTION_NONE,
@@ -22,6 +28,9 @@ typedef enum
    ELM_FLIP_INTERACTION_PAGE
 } Elm_Flip_Interaction;
 
+/**
+ * @ingroup Flip
+ */
 typedef enum
 {
    ELM_FLIP_DIRECTION_UP = 0, /**< Allows interaction with the top of the widget */
@@ -29,4 +38,3 @@ typedef enum
    ELM_FLIP_DIRECTION_LEFT, /**< Allows interaction with the left portion of the widget */
    ELM_FLIP_DIRECTION_RIGHT /**< Allows interaction with the right portion of the widget */
 } Elm_Flip_Direction;
-
