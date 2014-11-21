@@ -97,7 +97,7 @@ _cb_device_opened(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending
         goto cleanup;
      }
 
-   if (!(fd = _device_flags_set(fd)))
+   if ((fd = _device_flags_set(fd)) < 0)
      {
         ERR("\tCould not set fd flags");
         goto release;
