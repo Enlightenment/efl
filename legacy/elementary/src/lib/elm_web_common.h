@@ -1,4 +1,10 @@
 /**
+ * @addtogroup Web
+ *
+ * @{
+ */
+
+/**
  * Structure used to report load errors.
  *
  * Load errors are reported as signal by elm_web. All the strings are
@@ -70,8 +76,6 @@ struct _Elm_Web_Menu_Item
  *
  * @see elm_web_popup_selected_set()
  * @see elm_web_popup_destroy()
- *
- * @ingroup Web
  */
 typedef struct _Elm_Web_Menu Elm_Web_Menu;
 
@@ -91,8 +95,6 @@ typedef struct _Elm_Web_Menu Elm_Web_Menu;
  *
  * @see elm_web_popup_selected_set()
  * @see elm_web_popup_destroy()
- *
- * @ingroup Web
  */
 struct _Elm_Web_Menu
 {
@@ -128,7 +130,6 @@ typedef enum
  */
 typedef struct _Elm_Web_Window_Features Elm_Web_Window_Features;
 
-
 /**
  * Definitions of web window features.
  *
@@ -159,8 +160,6 @@ typedef enum
  * the request.
  *
  * @see elm_web_window_create_hook_set()
- *
- * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Window_Open)(void *data, Evas_Object *obj, Eina_Bool js, const Elm_Web_Window_Features *window_features);
 
@@ -179,8 +178,6 @@ typedef Evas_Object *(*Elm_Web_Window_Open)(void *data, Evas_Object *obj, Eina_B
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_alert_hook_set()
- *
- * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_Alert)(void *data, Evas_Object *obj, const char *message);
 
@@ -201,8 +198,6 @@ typedef Evas_Object *(*Elm_Web_Dialog_Alert)(void *data, Evas_Object *obj, const
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_confirm_hook_set()
- *
- * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, const char *message, Eina_Bool *ret);
 
@@ -226,8 +221,6 @@ typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, con
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_prompt_hook_set()
- *
- * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, const char *message, const char *def_value, const char **value, Eina_Bool *ret);
 
@@ -252,8 +245,6 @@ typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, cons
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_file selector_hook_set()
- *
- * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *obj, Eina_Bool allows_multiple, Eina_List *accept_types, Eina_List **selected, Eina_Bool *ret);
 
@@ -271,8 +262,6 @@ typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *ob
  * @param source_id Source id.
  *
  * @see elm_web_console_message_hook_set()
- *
- * @ingroup Web
  */
 typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char *message, unsigned int line_number, const char *source_id);
 
@@ -284,8 +273,6 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
  * @param flag The web window feature flag whose value is required.
  *
  * @return @c EINA_TRUE if the flag is set, @c EINA_FALSE otherwise
- *
- * @ingroup Web
  */
 EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag);
 
@@ -295,10 +282,12 @@ EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_W
  *
  * @param wf The web window features object
  * @param x, y, w, h - the co-ordinates of the web view window.
- *
- * @ingroup Web
  */
 EAPI void              elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 EAPI void              elm_web_window_features_ref(Elm_Web_Window_Features *wf);
 EAPI void              elm_web_window_features_unref(Elm_Web_Window_Features *wf);
+
+/**
+ * @}
+ */
