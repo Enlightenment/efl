@@ -251,12 +251,12 @@ ecore_file_mkdirs(const char **dirs)
  * @return number of successful directories created, -1 on failure.
  *
  * This function creates all the directories that are in the null
- * terminated array @p dirs in the @p base directory. If @p base does
+ * terminated array @p subdirs in the @p base directory. If @p base does
  * not exist, it will be created. The function loops over the directories
  * and call ecore_file_mkdir(). The whole path of the directories must
  * exist. So if base/a/b/c wants to be created, @p subdirs must
  * contain "a", "a/b" and "a/b/c", in that order. This function
- * returns -1 if @p dirs or @p base are @c NULL, or if @p base is
+ * returns -1 if @p subdirs or @p base are @c NULL, or if @p base is
  * empty ("\0"). It returns 0 is @p base is not a directory or
  * invalid, or if it can't be created. Otherwise if returns the number
  * of suceesfully created directories.
