@@ -1,6 +1,10 @@
 /**
- * @typedef Elm_Hover_Axis
+ * @addtogroup Hover
  *
+ * @{
+ */
+
+/**
  * The orientation axis for the hover object
  */
 typedef enum
@@ -11,3 +15,6 @@ typedef enum
    ELM_HOVER_AXIS_BOTH /**< ELM_HOVER_AXIS_BOTH -- both */
 } Elm_Hover_Axis;
 
+/**
+ * @}
+ */
