@@ -1,5 +1,6 @@
 /**
  * @addtogroup Icon
+ *
  * @{
  */
 
@@ -16,8 +17,6 @@ typedef enum
  *
  * Lookup order used by elm_icon_standard_set(). Should look for icons in the
  * theme, FDO paths, or both?
- *
- * @ingroup Icon
  */
 typedef enum
 {
@@ -27,3 +26,6 @@ typedef enum
    ELM_ICON_LOOKUP_THEME /**< icon look up order: theme */
 } Elm_Icon_Lookup_Order;
 
+/**
+ * @}
+ */

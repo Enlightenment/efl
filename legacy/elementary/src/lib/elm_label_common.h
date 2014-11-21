@@ -1,3 +1,12 @@
+/**
+ * @addtogroup Label
+ *
+ * @{
+ */
+
+/**
+ * Slide mode of a label widget
+ */
 typedef enum
 {
    ELM_LABEL_SLIDE_MODE_NONE = 0, /**< no slide effect */
@@ -5,3 +14,6 @@ typedef enum
    ELM_LABEL_SLIDE_MODE_ALWAYS /**< slide always */
 } Elm_Label_Slide_Mode;
 
+/**
+ * @}
+ */
