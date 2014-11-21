@@ -1319,6 +1319,17 @@ static void
 gl4_con(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
+   const Eina_List *list = NULL, *l = NULL;
+   Elm_Object_Item *it = NULL;
+
+   printf("\n");
+
+   list = elm_genlist_item_subitems_get(glit);
+   EINA_LIST_FOREACH(list, l, it)
+     {
+        printf("sub item: %p %s\n", it, elm_object_item_text_get(it));
+     }
+
    elm_genlist_item_subitems_clear(glit);
 }
 
