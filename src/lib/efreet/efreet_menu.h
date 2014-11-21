@@ -5,9 +5,11 @@
  * @file efreet_menu.h
  * @brief Contains the structures and methods to support the Desktop
  * Menu Specification.
- * @addtogroup Efreet_Menu Efreet_Menu: The FDO Desktop Menu Specification
- * functions and structures
- * @ingroup Efreet
+ *
+ * @internal
+ * @defgroup Efreet_Menu_Group Efreet_Menu: The FDO Desktop Menu Specification
+ *           functions and structures
+ * @ingroup Efreet_Group
  *
  * @{
  */
@@ -42,34 +44,30 @@ struct Efreet_Menu
 
     Efreet_Desktop *desktop;   /**< The desktop we refer too */
     Eina_List      *entries;   /**< The menu items */
-    int             references; /**< refcount (keeps menu util ref is at 0) @since 1.11 */
 };
 
-/**
- * A callback used with efreet_menu_async_get() and efreet_menu_async_parse()
- *
- * @since 1.8
- */
-typedef void (*Efreet_Menu_Cb) (void *data, Efreet_Menu *menu);
 
 /**
- * @return Returns no value
  * @brief Initialize legacy kde support. This function blocks while
  * the kde-config script is run.
+ *
+ * @return Returns no value
  */
 EAPI int              efreet_menu_kde_legacy_init(void);
 
 /**
- * @param name The internal name of the menu
+ * @brief Creates a new menu
+ *
+ * @param[in] name The internal name of the menu
  * @return Returns the Efreet_Menu on success or
  * NULL on failure
- * @brief Creates a new menu
  */
 EAPI Efreet_Menu     *efreet_menu_new(const char *name);
 
 /**
  * @brief Override which file is used for menu creation
- * @param file The file to use for menu creation
+ *
+ * @param[in] file The file to use for menu creation
  *
  * This file is only used if it exists, else the standard files will be used
  * for the menu.
@@ -77,103 +75,72 @@ EAPI Efreet_Menu     *efreet_menu_new(const char *name);
 EAPI void             efreet_menu_file_set(const char *file);
 
 /**
- * Creates the Efreet_Menu representation of the default menu or
- * NULL if none found and returns it in the callback.
- * @param func function to call when menu is created
- * @param data user data to return in callback
- *
- * @since 1.8
- */
-EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func, const void *data);
-
-/**
- * @return Returns the Efreet_Menu representation of the default menu or
- * NULL if none found
  * @brief Creates the default menu representation
+ *
+ * @return Returns the Efreet_Menu_Internal representation of the default menu or
+ * NULL if none found
  */
 EAPI Efreet_Menu     *efreet_menu_get(void);
 
 /**
- * Parses the given .menu file and creates the menu representation, and
- * returns it in the callback
- * @param path The path of the menu to load
- * @param func function to call when menu is created
- * @param data user data to return in callback
- *
- * @since 1.8
- */
-EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data);
-
-/**
- * @param path The path of the menu to load
- * @return Returns the Efreet_Menu representation on success or NULL on
- * failure
  * @brief Parses the given .menu file and creates the menu representation
+ *
+ * @param[in] path The path of the menu to load
+ * @return Returns the Efreet_Menu_Internal representation on success or NULL on
+ * failure
  */
 EAPI Efreet_Menu     *efreet_menu_parse(const char *path);
 
 /**
- * @param menu The menu to work with
- * @param path The path where the menu should be saved
- * @return Returns 1 on success, 0 on failure
  * @brief Saves the menu to file
+ *
+ * @param[in] menu The menu to work with
+ * @param[in] path The path where the menu should be saved
+ * @return Returns 1 on success, 0 on failure
  */
 EAPI int              efreet_menu_save(Efreet_Menu *menu, const char *path);
 
 /**
- * @param menu The Efreet_Menu to free
+ * @brief Frees the given structure
+ *
+ * @param[in] menu The Efreet_Menu to free
  * @return Returns no value
- * @brief Frees the given structure (if refcount at 1 at the time of this call)
  */
 EAPI void             efreet_menu_free(Efreet_Menu *menu);
 
-/**
- * @param menu The Efreet_Menu to reference
- * @return Returns no value
- * @brief Incriments refcount for the menu
- * @since 1.11
- */
-EAPI void             efreet_menu_ref(Efreet_Menu *menu);
-
 
 /**
- * @param menu The Efreet_Menu to unreference
- * @return Returns no value
- * @brief Decrements refcount for the menu, and on 0 frees
- * @since 1.11
- */
-EAPI void             efreet_menu_unref(Efreet_Menu *menu);
-
-
-/**
- * @param menu The menu to work with
- * @param desktop The desktop to insert
- * @param pos The position to place the new desktop
- * @return Returns 1 on success, 0 on failure
  * @brief Insert a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
+ *
+ * @param[in] menu The menu to work with
+ * @param[in] desktop The desktop to insert
+ * @param[in] pos The position to place the new desktop
+ * @return Returns 1 on success, 0 on failure
  */
 EAPI int              efreet_menu_desktop_insert(Efreet_Menu *menu,
                                                     Efreet_Desktop *desktop,
                                                     int pos);
 
 /**
- * @param menu The menu to work with
- * @param desktop The desktop to remove
- * @return Returns 1 on success, 0 on failure
  * @brief Remove a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
+ *
+ * @param[in] menu The menu to work with
+ * @param[in] desktop The desktop to remove
+ * @return Returns 1 on success, 0 on failure
  */
 EAPI int              efreet_menu_desktop_remove(Efreet_Menu *menu,
                                                     Efreet_Desktop *desktop);
 
 
 /**
- * @param menu The menu to work with
- * @param menu The menu to work with
- * @param indent The indent level to print the menu at
- * @return Returns no value
  * @brief Dumps the contents of the menu to the command line
+ *
+ * @param[in] menu The menu to work with
+ * @param[in] menu The menu to work with
+ * @param[in] indent The indent level to print the menu at
+ * @return Returns no value
  */
 EAPI void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
 

@@ -35,6 +35,7 @@
 #endif /* ! _WIN32 */
 
 /**
+ * @internal
  * @file Ecore_File.h
  * @brief Files utility functions
  */
@@ -44,66 +45,67 @@ extern "C" {
 #endif
 
 /**
+ * @internal
  * @defgroup Ecore_File_Group Ecore_File - Files and directories convenience functions
- * @ingroup Ecore
+ * @ingroup Ecore_Group
  *
  * @{
  */
 
 /**
  * @typedef Ecore_File_Monitor
- * Abstract type used when monitoring a directory.
+ * @brief The structure type containing the abstract type used to monitor a directory.
  */
 typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
 
 /**
  * @typedef Ecore_File_Download_Job
- * Abstract type used when aborting a download.
+ * @brief The structure type containing the abstract type used to abort a download.
  */
 typedef struct _Ecore_File_Download_Job  Ecore_File_Download_Job;
 
 /**
  * @typedef _Ecore_File_Event
- * The event type returned when a file or directory is monitored.
+ * @brief The structure type containing the event type returned when a file or directory is monitored.
  */
 typedef enum _Ecore_File_Event
 {
-   ECORE_FILE_EVENT_NONE,              /**< No event. */
-   ECORE_FILE_EVENT_CREATED_FILE,      /**< Created file event. */
-   ECORE_FILE_EVENT_CREATED_DIRECTORY, /**< Created directory event. */
-   ECORE_FILE_EVENT_DELETED_FILE,      /**< Deleted file event. */
-   ECORE_FILE_EVENT_DELETED_DIRECTORY, /**< Deleted directory event. */
-   ECORE_FILE_EVENT_DELETED_SELF,      /**< Deleted monitored directory event. */
-   ECORE_FILE_EVENT_MODIFIED,          /**< Modified file or directory event. */
+   ECORE_FILE_EVENT_NONE,              /**< No event */
+   ECORE_FILE_EVENT_CREATED_FILE,      /**< Created file event */
+   ECORE_FILE_EVENT_CREATED_DIRECTORY, /**< Created directory event */
+   ECORE_FILE_EVENT_DELETED_FILE,      /**< Deleted file event */
+   ECORE_FILE_EVENT_DELETED_DIRECTORY, /**< Deleted directory event */
+   ECORE_FILE_EVENT_DELETED_SELF,      /**< Deleted monitored directory event */
+   ECORE_FILE_EVENT_MODIFIED,          /**< Modified file or directory event */
    ECORE_FILE_EVENT_CLOSED             /**< Closed file event */
 } Ecore_File_Event;
 
 /**
  * @typedef Ecore_File_Monitor_Cb
- * Callback type used when a monitored directory has changes.
+ * @brief Called to be used when a monitored directory has changed.
  */
 typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path);
 
 /**
  * @typedef Ecore_File_Download_Completion_Cb
- * Callback type used when a download is finished.
+ * @brief Called to be used when a download has finished.
  */
 typedef void (*Ecore_File_Download_Completion_Cb)(void *data, const char *file, int status);
 
 /**
  * @typedef _Ecore_File_Progress_Return
- * What to do with the download as a return from the 
- * Ecore_File_Download_Progress_Cb function, if provided.
+ * @brief Enumeration on what to do with the download as a return from the 
+ *        Ecore_File_Download_Progress_Cb function, if provided.
  */
 typedef enum _Ecore_File_Progress_Return
 {
-   ECORE_FILE_PROGRESS_CONTINUE = 0,   /**< Continue the download. */
-   ECORE_FILE_PROGRESS_ABORT = 1       /**< Abort the download. */
+   ECORE_FILE_PROGRESS_CONTINUE = 0,   /**< Continue the download */
+   ECORE_FILE_PROGRESS_ABORT = 1       /**< Abort the download */
 } Ecore_File_Progress_Return;
 
 /**
  * @typedef Ecore_File_Download_Progress_Cb
- * Callback type used while a download is in progress.
+ * @brief Called to be used while a download is in progress.
  */
 typedef int (*Ecore_File_Download_Progress_Cb)(void *data,
                                                const char *file,
@@ -140,6 +142,7 @@ EAPI Eina_Bool      ecore_file_can_write    (const char *file);
 EAPI Eina_Bool      ecore_file_can_exec     (const char *file);
 EAPI char          *ecore_file_readlink     (const char *link);
 EAPI Eina_List     *ecore_file_ls           (const char *dir);
+EAPI Eina_Iterator *ecore_file_ls_iterator  (const char *dir);
 EAPI char          *ecore_file_app_exe_get  (const char *app);
 EAPI char          *ecore_file_escape_name  (const char *filename);
 EAPI char          *ecore_file_strip_ext    (const char *file);

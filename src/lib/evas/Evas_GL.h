@@ -15,8 +15,27 @@ extern "C" {
  * @brief This group discusses the functions that are used to do OpenGL rendering on Evas. Evas allows you
  *        to use OpenGL to render to specially set up image objects (which act as
  *        render target surfaces).
+ *        By default, Evas GL will use an OpenGL-ES 2.0 context and API set.
  *
  *
+ * <h2> Evas GL vs. Elementary GLView </h2>
+ *
+ * While it is possible to Evas and Ecore_Evas to create an OpenGL application,
+ * using these low-level APIs can be troublesome for most users. Before
+ * diving in Evas GL, please refer to the page @ref elm_opengl_page.
+ *
+ * Elementary @ref GLView provides a set of helper functions in:
+ * @li @ref Elementary_GL_Helpers.h
+ *
+ * Similarly, two sets of helper functions are provided by Evas GL in the
+ * following header files:
+ * @li Evas_GL_GLES1_Helpers.h
+ * @li Evas_GL_GLES2_Helpers.h
+ *
+ * @{
+ */
+
+/*
  * <h2> Evas GL usage example </h2>
  *
  * Below is an illustrative example of how to use OpenGL to render to an
@@ -328,13 +347,6 @@ init_shaders(GLData *gld)
    return 1;
 }
  * @endcode
- *
- * @ingroup Evas_Canvas
- */
-
-/**
- * @addtogroup Evas_GL
- * @{
  */
 
 /**
@@ -393,38 +405,41 @@ typedef enum _Evas_GL_Color_Format
 {
     EVAS_GL_RGB_888   = 0, /**< Opaque RGB surface */
     EVAS_GL_RGBA_8888 = 1, /**< RGBA surface with alpha */
-    EVAS_GL_NO_FBO    = 2  /**< Special value for creating PBuffer surfaces without any attached buffer. @see evas_gl_pbuffer_surface_create. @since 1.12*/
+    EVAS_GL_NO_FBO    = 2  /**< Special value for creating PBuffer surfaces without any attached buffer. @see evas_gl_pbuffer_surface_create. @since_tizen 2.3 */
 } Evas_GL_Color_Format;
 
 /**
  * @brief Enumeration that defines the Surface Depth Format.
+ * @since_tizen 2.3
  */
 typedef enum _Evas_GL_Depth_Bits
 {
     EVAS_GL_DEPTH_NONE   = 0,
-    EVAS_GL_DEPTH_BIT_8  = 1,   /**< 8 bits precision surface depth */
-    EVAS_GL_DEPTH_BIT_16 = 2,   /**< 16 bits precision surface depth */
-    EVAS_GL_DEPTH_BIT_24 = 3,   /**< 24 bits precision surface depth */
-    EVAS_GL_DEPTH_BIT_32 = 4    /**< 32 bits precision surface depth */
+    EVAS_GL_DEPTH_BIT_8  = 1,
+    EVAS_GL_DEPTH_BIT_16 = 2,
+    EVAS_GL_DEPTH_BIT_24 = 3,
+    EVAS_GL_DEPTH_BIT_32 = 4
 } Evas_GL_Depth_Bits;
 
 /**
  * @brief Enumeration that defines the Surface Stencil Format.
+ * @since_tizen 2.3
  */
 typedef enum _Evas_GL_Stencil_Bits
 {
     EVAS_GL_STENCIL_NONE   = 0,
-    EVAS_GL_STENCIL_BIT_1  = 1,   /**< 1 bit precision for stencil buffer */
-    EVAS_GL_STENCIL_BIT_2  = 2,   /**< 2 bits precision for stencil buffer */
-    EVAS_GL_STENCIL_BIT_4  = 3,   /**< 4 bits precision for stencil buffer */
-    EVAS_GL_STENCIL_BIT_8  = 4,   /**< 8 bits precision for stencil buffer */
-    EVAS_GL_STENCIL_BIT_16 = 5    /**< 16 bits precision for stencil buffer */
+    EVAS_GL_STENCIL_BIT_1  = 1,
+    EVAS_GL_STENCIL_BIT_2  = 2,
+    EVAS_GL_STENCIL_BIT_4  = 3,
+    EVAS_GL_STENCIL_BIT_8  = 4,
+    EVAS_GL_STENCIL_BIT_16 = 5
 } Evas_GL_Stencil_Bits;
 
 /**
  * @brief Enumeration that defines the Configuration Options.
  *
  * @since 1.1
+ * @since_tizen 2.3
  */
 typedef enum _Evas_GL_Options_Bits
 {
@@ -432,13 +447,14 @@ typedef enum _Evas_GL_Options_Bits
    EVAS_GL_OPTIONS_DIRECT  = (1<<0),/**< Optional hint to allow rendering directly to the Evas window if possible */
    EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION = (1<<1) /**< Force direct rendering even if the canvas is rotated.
                                                   *   In that case, it is the application's role to rotate the contents of
-                                                  *   the Evas_GL view. @see evas_gl_rotation_get. @since 1.12 */
+                                                  *   the Evas_GL view. @see evas_gl_rotation_get */
 } Evas_GL_Options_Bits;
 
 /**
  * @brief Enumeration that defines the configuration options for a Multisample Anti-Aliased (MSAA) rendering surface.
  *
  * @since 1.2
+ * @since_tizen 2.3
  *
  * @remarks This only works on devices that support the required extensions.
  */
@@ -454,7 +470,7 @@ typedef enum _Evas_GL_Multisample_Bits
  * @brief Enumeration that defines the available OpenGL ES version numbers.
  *        They can be used to create OpenGL-ES 1.1 contexts.
  *
- * @since 1.12
+ * @since_tizen 2.3
  *
  * @see evas_gl_context_version_create
  *
@@ -477,6 +493,8 @@ typedef enum _Evas_GL_Context_Version
  *
  * @see evas_gl_surface_create
  * @see evas_gl_pbuffer_surface_create
+ *
+ * @since_tizen 2.3
  */
 struct _Evas_GL_Config
 {
@@ -485,7 +503,7 @@ struct _Evas_GL_Config
    Evas_GL_Stencil_Bits       stencil_bits;     /**< Surface Stencil Bits */
    Evas_GL_Options_Bits       options_bits;     /**< Extra Surface Options */
    Evas_GL_Multisample_Bits   multisample_bits; /**< Optional Surface MSAA Bits */
-   Evas_GL_Context_Version    gles_version;     /**< @internal Special flag for OpenGL-ES 1.1 indirect rendering surfaces (since 1.12) */
+   Evas_GL_Context_Version    gles_version;     /**< @internal Special flag for OpenGL-ES 1.1 indirect rendering surfaces */
 };
 
 /** @brief Constant to use when calling @ref evas_gl_string_query to retrieve the available Evas_GL extensions. */
@@ -498,6 +516,8 @@ struct _Evas_GL_Config
  * @param[in] e The given Evas canvas to use
  *
  * @return The created Evas_GL object, or @c NULL in case of failure
+ *
+ * @since_tizen 2.3
  */
 EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -507,6 +527,8 @@ EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNU
  * @param[in] evas_gl   The given Evas_GL object to destroy
  *
  * @see evas_gl_new
+ *
+ * @since_tizen 2.3
  */
 EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
@@ -517,6 +539,10 @@ EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA
  *          of the backward compatibility issue.
  *
  * @see evas_gl_config_free
+ *
+ * @return A new config object
+ *
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Config          *evas_gl_config_new         (void);
 
@@ -529,6 +555,8 @@ EAPI Evas_GL_Config          *evas_gl_config_new         (void);
  *          of the backward compatibility issue.
  *
  * @see evas_gl_config_new
+ *
+ * @since_tizen 2.3
  */
 EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) EINA_ARG_NONNULL(1);
 
@@ -544,6 +572,8 @@ EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) E
  *         otherwise @c NULL on failure
  *
  * @see evas_gl_surface_destroy
+ *
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
 
@@ -576,7 +606,7 @@ EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas
  *
  * @see evas_gl_surface_destroy
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Surface         *evas_gl_pbuffer_surface_create(Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h, const int *attrib_list) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
 
@@ -591,13 +621,19 @@ EAPI Evas_GL_Surface         *evas_gl_pbuffer_surface_create(Evas_GL *evas_gl, E
 EAPI void                     evas_gl_surface_destroy    (Evas_GL *evas_gl, Evas_GL_Surface *surf) EINA_ARG_NONNULL(1,2);
 
 /**
- * @brief Creates and returns a new Evas GL context object.
+ * @brief Creates and returns a new Evas GL context object (OpenGL-ES 2.0).
  *
  * @param[in] evas_gl    The given Evas_GL object
  * @param[in] share_ctx  An Evas_GL context to share with the new context
  *
+ * The API in use will be an OpenGL-ES 2.0 API (ie. with framebuffers and shaders).
+ * Consider calling @ref evas_gl_context_version_create if you need an OpenGL-ES 1.1
+ * context instead.
+ *
  * @return The created context,
  *         otherwise @c NULL on failure
+ *
+ * @see evas_gl_context_version_create
  */
 EAPI Evas_GL_Context         *evas_gl_context_create     (Evas_GL *evas_gl, Evas_GL_Context *share_ctx) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -622,7 +658,7 @@ EAPI Evas_GL_Context         *evas_gl_context_create     (Evas_GL *evas_gl, Evas
  * @see Evas_GL_Context_Version
  * @see evas_gl_context_api_get
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Context         *evas_gl_context_version_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx, Evas_GL_Context_Version version) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -634,6 +670,8 @@ EAPI Evas_GL_Context         *evas_gl_context_version_create(Evas_GL *evas_gl, E
  *
  * @see evas_gl_context_create
  * @see evas_gl_context_version_create
+ *
+ * @since_tizen 2.3
  */
 EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
 
@@ -645,6 +683,8 @@ EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas
  * @param[in] ctx The given Evas GL context
  * @return @c EINA_TRUE if successful,
  *         otherwise @c EINA_FALSE if not
+ *
+ * @since_tizen 2.3
  */
 EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
 
@@ -653,11 +693,14 @@ EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas
  *
  * @param[in] evas_gl The given Evas_GL object
  * @param[in] name    A symbolic constant, only @ref EVAS_GL_EXTENSIONS is supported for now
+ * @return A string describing some aspect of Evas GL
+ *
+ * @since_tizen 2.3
  */
 EAPI const char              *evas_gl_string_query       (Evas_GL *evas_gl, int name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * @brief Returns a extension function from OpenGL or the Evas_GL glue layer.
+ * @brief Returns a extension function from the Evas_GL glue layer.
  *
  * @param[in] evas_gl  The given Evas_GL object
  * @param[in] name     The name of the function to return
@@ -665,7 +708,12 @@ EAPI const char              *evas_gl_string_query       (Evas_GL *evas_gl, int 
  * The available extension functions may depend on the backend engine Evas GL is
  * running on.
  *
+ * @note Evas_GL extensions are not EGL or OpenGL extensions, but Evas_GL-specific
+ *       features.
+ *
  * @return A function pointer to the Evas_GL extension.
+ *
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2) EINA_PURE;
 
@@ -681,6 +729,8 @@ EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, cons
  * @details This function can be called to later set this native surface as
  *          source of an Evas Object Image. Please refer to
  *          @ref evas_object_image_native_surface_set.
+ *
+ * @since_tizen 2.3
  */
 EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns) EINA_ARG_NONNULL(1,2,3);
 
@@ -699,6 +749,8 @@ EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas
  *
  * @note This function will always return an OpenGL-ES 2.0 API, please use
  *       @ref evas_gl_context_api_get instead to get an OpenGL-ES 1.1 set of APIs.
+ *
+ * @since_tizen 2.3
  *
  * @see Evas_GL_API
  * @see evas_gl_context_api_get
@@ -729,7 +781,7 @@ EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA
  * @see evas_gl_api_get
  * @see evas_gl_context_version_create
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_API             *evas_gl_context_api_get    (Evas_GL *evas_gl, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1);
 
@@ -754,7 +806,7 @@ EAPI Evas_GL_API             *evas_gl_context_api_get    (Evas_GL *evas_gl, Evas
  *
  * @see EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI int                      evas_gl_rotation_get       (Evas_GL *evas_gl) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -774,7 +826,7 @@ EAPI int                      evas_gl_rotation_get       (Evas_GL *evas_gl) EINA
  *
  * @return EINA_TRUE in case of success, EINA_FALSE in case of error.
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI Eina_Bool                evas_gl_surface_query      (Evas_GL *evas_gl, Evas_GL_Surface *surface, int attribute, void *value) EINA_ARG_NONNULL(1,2);
 
@@ -798,7 +850,7 @@ EAPI Eina_Bool                evas_gl_surface_query      (Evas_GL *evas_gl, Evas
  *       information, so an application can not expect the exact same error
  *       codes as EGL would return.
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI int                      evas_gl_error_get          (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
@@ -810,7 +862,7 @@ EAPI int                      evas_gl_error_get          (Evas_GL *evas_gl) EINA
  * @return The current context for the calling thread, or @c NULL in case of
  *         failure and when there is no current context in this thread.
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Context         *evas_gl_current_context_get (Evas_GL *evas_gl) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -828,7 +880,7 @@ EAPI Evas_GL_Context         *evas_gl_current_context_get (Evas_GL *evas_gl) EIN
  *
  * @see evas_gl_make_current
  *
- * @since 1.12
+ * @since_tizen 2.3
  */
 EAPI Evas_GL_Surface         *evas_gl_current_surface_get (Evas_GL *evas_gl) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -854,6 +906,8 @@ typedef khronos_uint64_t   EvasGLuint64;
 #if !defined(__gl2_h_)
 # define __gl2_h_
 
+#define GL_ES_VERSION_2_0 1
+
 /*
  * This document is licensed under the SGI Free Software B License Version
  * 2.0. For details, see http://oss.sgi.com/projects/FreeB/ .
@@ -878,6 +932,10 @@ typedef unsigned int     GLuint;
 typedef float            GLfloat;      // Changed khronos_float_t
 typedef float            GLclampf;     // Changed khronos_float_t
 typedef signed int       GLfixed;      // Changed khronos_int32_t
+
+/* GL types for handling large vertex buffer objects */
+typedef signed long int  GLintptr;     // Changed khronos_intptr_t
+typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 
 /* OpenGL ES core versions */
 //#define GL_ES_VERSION_2_0                 1
@@ -3341,12 +3399,6 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 # endif
 #endif
 
-#ifndef GL_ES_VERSION_2_0
-/* GL types for handling large vertex buffer objects */
-#include <stddef.h>
-typedef ptrdiff_t GLintptr;     // Changed khronos_intptr_t
-typedef ptrdiff_t GLsizeiptr;   // Changed khronos_ssize_t
-#endif
 
 /* Some definitions from GLES 3.0.
  * Note: Evas_GL does NOT support GLES 3.
@@ -3432,7 +3484,7 @@ typedef unsigned long long EvasGLTime;
  * call the backend's GetError() function and translate to a valid @c EVAS_GL_
  * error code.
  *
- * @since 1.12
+ * @since_tizen 2.3
  *
  * @{
  */
@@ -3619,7 +3671,7 @@ struct _Evas_GL_API
    void         (*glSampleCoverage) (GLclampf value, GLboolean invert);
    void         (*glScissor) (GLint x, GLint y, GLsizei width, GLsizei height);
    void         (*glShaderBinary) (GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length);
-   void         (*glShaderSource) (GLuint shader, GLsizei count, const char* const * string, const GLint* length);
+   void         (*glShaderSource) (GLuint shader, GLsizei count, const char** string, const GLint* length);
    void         (*glStencilFunc) (GLenum func, GLint ref, GLuint mask);
    void         (*glStencilFuncSeparate) (GLenum face, GLenum func, GLint ref, GLuint mask);
    void         (*glStencilMask) (GLuint mask);
@@ -3812,7 +3864,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * @li @c EVAS_GL_NATIVE_SURFACE_TIZEN (Tizen platform only):<br/>
     * Requires the @c EVAS_GL_TIZEN_image_native_surface extension.
     *
-    * @since 1.12
+    * @since_tizen 2.3
     */
    EvasGLImage  (*evasglCreateImageForContext) (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
 

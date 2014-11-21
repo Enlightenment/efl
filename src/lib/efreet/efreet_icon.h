@@ -5,10 +5,12 @@
  * @file efreet_icon.h
  * @brief Contains the structures and methods used to support the FDO icon
  * theme specificiation.
- * @addtogroup Efreet_Icon Efreet_Icon: The FDO Icon Theme
- *                  Specification functions and structures
  *
- * @ingroup Efreet
+ * @internal
+ * @defgroup Efreet_Icon_Group Efreet_Icon: The FDO Icon Theme
+ *           Specification functions and structures
+ * @ingroup Efreet_Group
+ *
  * @{
  */
 
@@ -141,77 +143,86 @@ struct Efreet_Icon_Point
 };
 
 /**
- * @return Returns the user icon directory
  * @brief Returns the user icon directory
+ *
+ * @return Returns the user icon directory
  */
 EAPI const char        *efreet_icon_user_dir_get(void);
 
 /**
- * @return Returns the deprecated user icon directory
  * @brief Returns the deprecated user icon directory
+ *
+ * @return Returns the deprecated user icon directory
  */
 EAPI const char        *efreet_icon_deprecated_user_dir_get(void);
 
 /**
- * @param ext The extension to add to the list of checked extensions
- * @return Returns no value.
  * @brief Adds the given extension to the list of possible icon extensions
+ *
+ * @param[in] ext The extension to add to the list of checked extensions
+ * @return Returns no value.
  */
 EAPI void               efreet_icon_extension_add(const char *ext);
 
 
 /**
- * @return Returns a list of strings that are paths to other icon directories
  * @brief Gets the list of all extra directories to look for icons. These
  * directories are used to look for icons after looking in the user icon dir
  * and before looking in standard system directories. The order of search is
  * from first to last directory in this list. the strings in the list should
  * be created with eina_stringshare_add().
+ *
+ * @return Returns a list of strings that are paths to other icon directories
  */
 EAPI Eina_List        **efreet_icon_extra_list_get(void);
 
 /**
- * @return Returns a list of strings that are icon extensions to look for
  * @brief Gets the list of all icon extensions to look for
+ *
+ * @return Returns a list of strings that are icon extensions to look for
  */
 EAPI Eina_List         *efreet_icon_extensions_list_get(void);
 
 /**
- * @return Returns a list of Efreet_Icon structs for all the non-hidden icon
- * themes
  * @brief Retrieves all of the non-hidden icon themes available on the system.
  * The returned list must be freed. Do not free the list data.
+ *
+ * @return Returns a list of Efreet_Icon structs for all the non-hidden icon
+ * themes
  */
 EAPI Eina_List         *efreet_icon_theme_list_get(void);
 
 /**
- * @param theme_name The theme to look for
+ * @brief Tries to get the icon theme structure for the given theme name
+ *
+ * @param[in] theme_name The theme to look for
  * @return Returns the icon theme related to the given theme name or NULL if
  * none exists.
- * @brief Tries to get the icon theme structure for the given theme name
  */
 EAPI Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 
 /**
- * @param theme_name The icon theme to look for
- * @param icon The icon to look for
- * @param size The icon size to look for
+ * @brief Retrieves all of the information about the given icon.
+ *
+ * @param[in] theme_name The icon theme to look for
+ * @param[in] icon The icon to look for
+ * @param[in] size The icon size to look for
  * @return Returns the Efreet_Icon structure representing this icon or NULL
  * if the icon is not found
- * @brief Retrieves all of the information about the given icon.
  */
 EAPI Efreet_Icon       *efreet_icon_find(const char *theme_name,
                                             const char *icon,
                                             unsigned int size);
 
 /**
- * @param theme_name The icon theme to look for
- * @param icons List of icons to look for
- * @param size; The icon size to look for
- * @return Returns the path representing first found icon or
- * NULL if none of the icons are found
  * @brief Retrieves all of the information about the first found icon in
  * the list.
+ *
+ * @param[in] theme_name The icon theme to look for
+ * @param[in] icons List of icons to look for
+ * @param[in] size; The icon size to look for
+ * @return Returns the path representing first found icon or
+ * NULL if none of the icons are found
  * @note This function will search the given theme for all icons before falling
  * back. This is useful when searching for mimetype icons.
  *
@@ -223,11 +234,12 @@ EAPI const char        *efreet_icon_list_find(const char *theme_name,
                                                 unsigned int size);
 
 /**
- * @param theme_name The icon theme to look for
- * @param icon The icon to look for
- * @param size; The icon size to look for
- * @return Returns the path to the given icon or NULL if none found
  * @brief Retrives the path to the given icon.
+ *
+ * @param[in] theme_name The icon theme to look for
+ * @param[in] icon The icon to look for
+ * @param[in] size; The icon size to look for
+ * @return Returns the path to the given icon or NULL if none found
  *
  * There is no guarantee for how long the pointer to the path will be valid.
  * If the pointer is to be kept, the user must create a copy of the path.
@@ -237,9 +249,10 @@ EAPI const char        *efreet_icon_path_find(const char *theme_name,
                                                 unsigned int size);
 
 /**
- * @param icon The Efreet_Icon to cleanup
- * @return Returns no value.
  * @brief Free's the given icon and all its internal data.
+ *
+ * @param[in] icon The Efreet_Icon to cleanup
+ * @return Returns no value.
  */
 EAPI void               efreet_icon_free(Efreet_Icon *icon);
 

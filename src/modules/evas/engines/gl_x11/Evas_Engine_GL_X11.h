@@ -1,6 +1,8 @@
 #ifndef _EVAS_ENGINE_GL_X11_H
 #define _EVAS_ENGINE_GL_X11_H
 
+#include <X11/Xlib.h>
+
 typedef struct _Evas_Engine_Info_GL_X11              Evas_Engine_Info_GL_X11;
 
 /* have this feature */
@@ -24,21 +26,23 @@ struct _Evas_Engine_Info_GL_X11
 
    /* engine specific data & parameters it needs to set up */
    struct {
-      void          *display;
-      unsigned long  drawable;
-      void          *visual;
-      unsigned long  colormap;
-      int            depth;
-      int            screen;
-      int            rotation;
-      unsigned int   destination_alpha  : 1;
+      Display     *display;
+      Drawable     drawable;
+      Drawable     drawable_back;
+      Visual      *visual;
+      Colormap     colormap;
+      int          depth;
+      int          screen;
+      int          rotation;
+      unsigned int destination_alpha  : 1;
+      unsigned int offscreen : 1;
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
    struct {
-      void          *(*best_visual_get)   (Evas_Engine_Info_GL_X11 *einfo);
-      unsigned long  (*best_colormap_get) (Evas_Engine_Info_GL_X11 *einfo);
-      int            (*best_depth_get)    (Evas_Engine_Info_GL_X11 *einfo);
+      Visual *  (*best_visual_get)   (Evas_Engine_Info_GL_X11 *einfo);
+      Colormap  (*best_colormap_get) (Evas_Engine_Info_GL_X11 *einfo);
+      int       (*best_depth_get)    (Evas_Engine_Info_GL_X11 *einfo);
    } func;
 
    struct {
@@ -54,5 +58,12 @@ struct _Evas_Engine_Info_GL_X11
    unsigned char vsync : 1; // does nothing right now
    unsigned char indirect : 1; // use indirect rendering
    unsigned char swap_mode : 4; // what swap mode to assume
+
+   /* TIZEN ONLY
+    * Disable sync draw done from application side when it is needed.
+    * Currently this is set true when a back-end engine uses DRI2.
+    * This depends on engine so we need to check it from evas engine.
+    */
+   Eina_Bool disable_sync_draw_done : 1;
 };
 #endif

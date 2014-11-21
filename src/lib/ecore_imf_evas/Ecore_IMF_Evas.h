@@ -31,80 +31,29 @@
 #endif /* ! _WIN32 */
 
 /**
+ * @internal
  * @defgroup Ecore_IMF_Evas_Group Ecore Input Method Context Evas Helper Functions
- * @ingroup Ecore_IMF_Lib_Group
+ * @ingroup Ecore_IMF_Group
  *
  * Helper functions to make it easy to use Evas with Ecore_IMF.
  * Converts each event from Evas to the corresponding event of Ecore_IMF.
  *
- * An example of usage of these functions can be found at:
- * @li @ref ecore_imf_example_c
+ * @{
  */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**
- * Converts a "mouse_in" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
- */
 EAPI void ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event, Ecore_IMF_Event_Mouse_In *imf_event);
-
-/**
- * Converts a "mouse_out" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
- */
 EAPI void ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event, Ecore_IMF_Event_Mouse_Out *imf_event);
-
-/**
- * Converts a "mouse_move" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
- */
 EAPI void ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event, Ecore_IMF_Event_Mouse_Move *imf_event);
-
-/**
- * Converts a "mouse_down" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
- */
 EAPI void ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event, Ecore_IMF_Event_Mouse_Down *imf_event);
-
-/**
- * Converts a "mouse_up" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
- */
 EAPI void ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event, Ecore_IMF_Event_Mouse_Up *imf_event);
-
-/**
- * Converts a "mouse_wheel" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
- */
 EAPI void ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event, Ecore_IMF_Event_Mouse_Wheel *imf_event);
 
 /**
- * Converts a "key_down" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
+ * @brief Converts a "key_down" event from Evas to the corresponding event of Ecore_IMF.
  *
  * Example
  * @code
@@ -127,15 +76,14 @@ EAPI void ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_eve
  *
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, data);
  * @endcode
+ *
+ * @param[in] evas_event The received Evas event.
+ * @param[out] imf_event The location to store the converted Ecore_IMF event.
  */
 EAPI void ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event, Ecore_IMF_Event_Key_Down *imf_event);
 
 /**
- * Converts a "key_up" event from Evas to the corresponding event of Ecore_IMF.
- *
- * @param evas_event The received Evas event.
- * @param imf_event The location to store the converted Ecore_IMF event.
- * @ingroup Ecore_IMF_Evas_Group
+ * @brief Converts a "key_up" event from Evas to the corresponding event of Ecore_IMF.
  *
  * Example
  * @code
@@ -158,11 +106,18 @@ EAPI void ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event, Ec
  *
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP, _key_up_cb, data);
  * @endcode
+ *
+ * @param[in] evas_event The received Evas event.
+ * @param[out] imf_event The location to store the converted Ecore_IMF event.
  */
 EAPI void ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event, Ecore_IMF_Event_Key_Up *imf_event);
 
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif

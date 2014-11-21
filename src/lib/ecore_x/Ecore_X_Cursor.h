@@ -2,8 +2,9 @@
 #define _ECORE_X_CURSOR_H
 
 /**
+ * @internal
  * @file
- * @brief Defines the various cursor types for the X Windows system.
+ * @brief Definition for the various cursor types of the X Windows system.
  */
 
 #define ECORE_X_CURSOR_X                   0

@@ -1,14 +1,14 @@
 /* EINA - EFL data type library
  * Copyright (C) 2008 Cedric Bail
  *
- * This library is free software; you can redistribute it and/or
+ * This library is a free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -25,147 +25,80 @@
 #include "eina_magic.h"
 
 /**
- * @page eina_iterator_example_page Eina_Iterator usage
- * @dontinclude eina_iterator_01.c
+ * @defgroup Eina_Iterator_Group Iterator Functions
+ * @ingroup Eina_Content_Access_Group Content
  *
- * As always when using eina we need to include it:
- * @skip #include
- * @until Eina.h
- *
- * Here we a declare an unimpressive @ref Eina_Each_Cb "function" that prints
- * some data:
- * @until }
- * @note Returning EINA_TRUE is important so we don't stop iterating over the
- * container.
- *
- * And here a more interesting function, it uses an iterator to print the
- * contents of a container. What's interesting about it is that it doesn't care
- * the type of container, it works for anything that can provide an iterator:
- * @until }
- *
- * And on to our main function were we declare some variables and initialize
- * eina, nothing too special:
- * @until eina_init
- *
- * Next we populate both an array and a list with our strings, for more details
- * see @ref eina_list_01_example_page and @ref eina_array_01_example_page :
- * @until }
- *
- * And now we create an array and because the first element of the container
- * doesn't interest us we skip it:
- * @until iterator_next
- *
- * Having our iterator now pointing to interesting data we go ahead and print:
- * @until print_eina_container
- *
- * As always once data with a structure we free it, but just because we can we
- * do it by asking the iterator for it's container, and then of course free the
- * iterator itself:
- * @until eina_iterator_free
- *
- * But so far you're not impressed in @ref eina_array_01_example_page an array is
- * also printed, so now we go to the cool stuff and use an iterator to do same
- * stuff to a list:
- * @until eina_iterator_free
- * @note The only significant diference to the block above is in the
- * function used to create the iterator.
- *
- * And now we free the list and shut eina down:
- * @until }
- */
-
-/**
- * @page eina_iterator_01_c Eina_Iterator usage
- * @page eina_iterator_01_c Eina_Iterator usage
- *
- * @include eina_iterator_01.c
- * @example eina_iterator_01.c
- */
-
-/**
- * @addtogroup Eina_Iterator_Group Iterator Functions
- *
- * @brief These functions manage iterators on containers.
+ * @brief This group of functions manages iterators on containers.
  *
  * These functions allow to access elements of a container in a
  * generic way, without knowing which container is used (a bit like
- * iterators in the C++ STL). Iterators only allows sequential access
- * (that is, from an element to the next one). For random access, see
+ * iterators in the C++ STL). Iterators only allow sequential access
+ * (that is, from one element to the next one). For random access, see
  * @ref Eina_Accessor_Group.
  *
  * Getting an iterator to access elements of a given container is done through
  * the functions of that particular container. There is no function to create
  * a generic iterator as iterators absolutely depend on the container. This
- * means you won't find iterator creation function here, those can be found on
+ * means you won't find a iterator creation function here, those can be found on
  * the documentation of the container type you're using. Though created with
  * container specific functions iterators are always deleted with the same
  * function: eina_iterator_free().
  *
- * To get the data and iterate, use eina_iterator_next(). To call a function on
+ * To get data and iterate it, use eina_iterator_next(). To call a function on
  * all the elements of a container, use eina_iterator_foreach().
- * 
- * Here an @ref eina_iterator_example_page "example"
- */
-
-/**
- * @addtogroup Eina_Content_Access_Group Content Access
- *
- * @{
- */
-
-/**
- * @defgroup Eina_Iterator_Group Iterator Functions
  *
  * @{
  */
 
 /**
  * @typedef Eina_Iterator
- * Abstract type for iterators.
+ * @brief The structure type containing the abstract type for iterators.
  */
 typedef struct _Eina_Iterator Eina_Iterator;
 
 /**
  * @typedef Eina_Iterator_Next_Callback
- * Type for a callback that returns the next element in a container.
+ * @brief The boolean type for a callback that returns the next element in a container.
  */
 typedef Eina_Bool           (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
 
 /**
  * @typedef Eina_Iterator_Get_Container_Callback
- * Type for a callback that returns the container.
+ * @brief Called to return the container.
  */
 typedef void               *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
 
 /**
  * @typedef Eina_Iterator_Free_Callback
- * Type for a callback that frees the container.
+ * @brief Called to free the container.
  */
 typedef void                (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
 
 /**
  * @typedef Eina_Iterator_Lock_Callback
- * Type for a callback that lock the container.
+ * @brief Called to lock the container.
  */
 typedef Eina_Bool           (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
 
 /**
  * @struct _Eina_Iterator
- * structure of an iterator
+ * @brief The structure type of an iterator.
  *
- * If creating an iterator remember to set the type using @ref EINA_MAGIC_SET.
+ * @internal
+ * @remarks When creating an iterator remember to set the type using #EINA_MAGIC_SET.
+ * @endinternal
  */
 struct _Eina_Iterator
 {
 #define EINA_ITERATOR_VERSION 1
-   int                                  version; /**< Version of the Iterator API. */
+   int                                  version; /**< Version of the Iterator API */
 
-   Eina_Iterator_Next_Callback          next          EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT; /**< Callback called when a next element is requested. */
-   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is requested. */
-   Eina_Iterator_Free_Callback          free          EINA_ARG_NONNULL(1); /**< Callback called when the container is freed. */
+   Eina_Iterator_Next_Callback          next          EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT; /**< Callback called when the next element is requested */
+   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is requested */
+   Eina_Iterator_Free_Callback          free          EINA_ARG_NONNULL(1); /**< Callback called when the container is freed */
 
-   Eina_Iterator_Lock_Callback          lock          EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is locked. */
-   Eina_Iterator_Lock_Callback          unlock        EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is unlocked. */
+   Eina_Iterator_Lock_Callback          lock          EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is locked */
+   Eina_Iterator_Lock_Callback          unlock        EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is unlocked */
 
 #define EINA_MAGIC_ITERATOR 0x98761233
    EINA_MAGIC
@@ -173,79 +106,91 @@ struct _Eina_Iterator
 
 /**
  * @def FUNC_ITERATOR_NEXT(Function)
- * Helper macro to cast @p Function to a Eina_Iterator_Next_Callback.
+ * @brief Definition of a helper macro to cast @a Function to a Eina_Iterator_Next_Callback.
  */
 #define FUNC_ITERATOR_NEXT(Function)          ((Eina_Iterator_Next_Callback)Function)
 
 /**
  * @def FUNC_ITERATOR_GET_CONTAINER(Function)
- * Helper macro to cast @p Function to a Eina_Iterator_Get_Container_Callback.
+ * @brief Definition of a helper macro to cast @a Function to a Eina_Iterator_Get_Container_Callback.
  */
 #define FUNC_ITERATOR_GET_CONTAINER(Function) ((Eina_Iterator_Get_Container_Callback)Function)
 
 /**
  * @def FUNC_ITERATOR_FREE(Function)
- * Helper macro to cast @p Function to a Eina_Iterator_Free_Callback.
+ * @brief Definition of a helper macro to cast @a Function to a Eina_Iterator_Free_Callback.
  */
 #define FUNC_ITERATOR_FREE(Function)          ((Eina_Iterator_Free_Callback)Function)
 
 /**
  * @def FUNC_ITERATOR_LOCK(Function)
- * Helper macro to cast @p Function to a Eina_Iterator_Lock_Callback.
+ * @brief Definition of a helper macro to cast @a Function to a Eina_Iterator_Lock_Callback.
  */
 #define FUNC_ITERATOR_LOCK(Function)          ((Eina_Iterator_Lock_Callback)Function)
 
 
 /**
- * @brief Free an iterator.
+ * @brief Frees an iterator.
  *
- * @param iterator The iterator to free.
+ * @details This function frees @a iterator if it is not @c NULL.
  *
- * This function frees @p iterator if it is not @c NULL;
+ * @since_tizen 2.3
+ *
+ * @param[in] iterator The iterator to free
+ *
  */
 EAPI void      eina_iterator_free(Eina_Iterator *iterator);
 
 
 /**
- * @brief Return the container of an iterator.
+ * @brief Gets the container of an iterator.
  *
- * @param iterator The iterator.
- * @return The container which created the iterator.
+ * @details This function returns the container that created @a iterator. If
+ *          @a iterator is @c NULL, this function returns @c NULL.
  *
- * This function returns the container which created @p iterator. If
- * @p iterator is @c NULL, this function returns @c NULL.
+ * @since_tizen 2.3
+ *
+ * @param[in] iterator The iterator
+ * @return The container that created the iterator
+ *
  */
 EAPI void     *eina_iterator_container_get(Eina_Iterator *iterator) EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * @brief Return the value of the current element and go to the next one.
+ * @brief Returns the value of the current element and goes to the next one.
  *
- * @param iterator The iterator.
- * @param data The data of the element.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @details This function returns the value of the current element pointed by
+ *          @a iterator in @a data and then goes to the next element. If @a
+ *          iterator is @c NULL or if a problem occurs, @c EINA_FALSE is
+ *          returned, otherwise @c EINA_TRUE is returned.
  *
- * This function returns the value of the current element pointed by
- * @p iterator in @p data, then goes to the next element. If @p
- * iterator is @c NULL or if a problem occurred, #EINA_FALSE is
- * returned, otherwise #EINA_TRUE is returned.
+ * @since_tizen 2.3
+ *
+ * @param[in] iterator The iterator
+ * @param[in] data The data of the element
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE
+ *
  */
 EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
                                   void         **data) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 
 /**
- * @brief Iterate over the container and execute a callback on each element.
+ * @brief Iterates over the container and executes a callback on each element.
  *
- * @param iterator The iterator.
- * @param callback The callback called on each iteration.
- * @param fdata The data passed to the callback.
+ * @details This function iterates over the elements pointed by @a iterator,
+ *          beginning from the current element. For each element, the callback
+ *          @a cb is called with the data @a fdata. If @a iterator is @c NULL,
+ *          the function returns immediately. Also, if @a cb returns @c EINA_FALSE,
+ *          the iteration stops at that point. If @a cb returns @c EINA_TRUE
+ *          the iteration continues.
  *
- * This function iterates over the elements pointed by @p iterator,
- * beginning from the current element. For Each element, the callback
- * @p cb is called with the data @p fdata. If @p iterator is @c NULL,
- * the function returns immediately. Also, if @p cb returns #EINA_FALSE,
- * the iteration stops at that point, if @p cb returns #EINA_TRUE
- * the iteration continues.
+ * @since_tizen 2.3
+ *
+ * @param[in] iterator The iterator
+ * @param[in] callback The callback called on each iteration
+ * @param[in] fdata The data passed to the callback
+ *
  */
 EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
                                 Eina_Each_Cb   callback,
@@ -253,52 +198,55 @@ EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
 
 
 /**
- * @brief Lock the container of the iterator.
+ * @brief Locks the container of the iterator.
  *
- * @param iterator The iterator.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @since_tizen 2.3
  *
- * If the container of the @p iterator permits it, it will be locked. When a
- * container is locked calling eina_iterator_foreach() on it will return
- * immediately. If @p iterator is @c NULL or if a problem occurred, #EINA_FALSE
- * is returned, otherwise #EINA_TRUE is returned. If the container isn't
- * lockable, it will return #EINA_TRUE.
+ * @remarks If the container of the @a iterator permits it, it is locked. When a
+ *          container is locked by calling eina_iterator_foreach() on it, it returns
+ *          immediately. If @a iterator is @c NULL or if a problem occurs, @c EINA_FALSE
+ *          is returned, otherwise @c EINA_TRUE is returned. If the container isn't
+ *          lockable, it returns @c EINA_TRUE.
  *
- * @warning None of the existing eina data structures are lockable.
+ * @remarks None of the existing eina data structures are lockable.
+ *
+ * @param[in] iterator The iterator
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE
+ *
  */
 EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Unlock the container of the iterator.
+ * @brief Unlocks the container of the iterator.
  *
- * @param iterator The iterator.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @since_tizen 2.3
  *
- * If the container of the @p iterator permits it and was previously
- * locked, it will be unlocked. If @p iterator is @c NULL or if a
- * problem occurred, #EINA_FALSE is returned, otherwise #EINA_TRUE
- * is returned. If the container is not lockable, it will
- * return #EINA_TRUE.
+ * @remarks If the container of the @a iterator permits it and is previously
+ *          locked, it is unlocked. If @a iterator is @c NULL or if a
+ *          problem occurs, @c EINA_FALSE is returned, otherwise @c EINA_TRUE
+ *          is returned. If the container is not lockable, it
+ *          returns @c EINA_TRUE.
  *
- * @warning None of the existing eina data structures are lockable.
+ * @remarks None of the existing eina data structures are lockable.
+ *
+ * @param[in] iterator The iterator
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE
+ *
  */
 EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
 /**
  * @def EINA_ITERATOR_FOREACH
- * @brief Macro to iterate over all elements easily.
+ * @brief Definition of the macro to iterate over all the elements easily.
  *
- * @param itr The iterator to use.
- * @param data Where to store * data, must be a pointer support getting
- *        its address since * eina_iterator_next() requires a pointer
- *        to pointer!
+ * @since_tizen 2.3
  *
- * This macro is a convenient way to use iterators, very similar to
- * EINA_LIST_FOREACH().
+ * @details This macro is a convenient way to use iterators, very similar to
+ *          EINA_LIST_FOREACH().
  *
- * This macro can be used for freeing the data of a list, like in the
- * following example. It has the same goal as the one documented in
- * EINA_LIST_FOREACH(), but using iterators:
+ * @remarks This macro can be used for freeing the data of a list, like in the
+ *          following example. It has the same goal as the one documented in
+ *          EINA_LIST_FOREACH(), but using iterators:
  *
  * @code
  * Eina_List     *list;
@@ -315,27 +263,29 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
  * eina_list_free(list);
  * @endcode
  *
- * @note this example is not optimal algorithm to release a list since
- *    it will walk the list twice, but it serves as an example. For
- *    optimized version use EINA_LIST_FREE()
+ * @remarks This example is not an optimal algorithm to release a list as
+ *          it walks through the list twice, but it serves as an example. For an
+ *          optimized version use EINA_LIST_FREE().
  *
- * @warning The order in which the elements will be traversed depends on the
- * underlying container and @b shouldn't be relied upon.
+ * @remarks The order in which the elements are traversed depends on the
+ *          underlying container and @b shouldn't be relied upon.
  *
- * @warning unless explicitly stated in functions returning iterators,
- *    do not modify the iterated object while you walk it, in this
- *    example using lists, do not remove list nodes or you might
- *    crash!  This is not a limitiation of iterators themselves,
- *    rather in the iterators implementations to keep them as simple
- *    and fast as possible.
+ * @remarks Unless explicitly stated in the function's returning iterators,
+ *          do not modify the iterated object while you walk through it. In this
+ *          example using lists, do not remove the list nodes or the program might
+ *          crash. This is not a limitation of the iterators themselves,
+ *          but a limitation in the iterators implementations to keep them as simple
+ *          and fast as possible.
+ *
+ * @param itr The iterator to use
+ * @param data A pointer to store the data \n
+ *             It must be a pointer to support getting
+ *             its address since eina_iterator_next() requires a pointer.
+ *
  */
 #define EINA_ITERATOR_FOREACH(itr,                                   \
                               data) while (eina_iterator_next((itr), \
                                                               (void **)(void *)&(data)))
-
-/**
- * @}
- */
 
 /**
  * @}

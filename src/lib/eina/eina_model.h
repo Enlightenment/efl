@@ -46,228 +46,9 @@
  */
 
 /**
- * @page eina_model_02_example_page Creating a simple model
- * @dontinclude eina_model_02.c
- *
- * This example shows the creation of a model with five properties, named:
- * 'a', 'b', 'c', 'd' and 'e' with values 0, 1, 2, 3 and 4
- * respectively. In addition to the 5 properties our model also add 5 children,
- * and to each child we give a property named 'x' with a value of 1, 2, 3, 4 and
- * 5.
- *
- * In other words this piece of code shows how to use eina_model to store a list
- * of elements, given that the list itself has some properties.
- *
- * Now let's walk through the code and examine the interesting bits.
- *
- * This is some pretty standard initialization code.
- * @until eina_init
- *
- * We now create our eina_model, the important detail here is the type of the
- * model being created, for this example we use the generic type provided by
- * eina:
- * @until model_new
- *
- * Once our model has been created we can add callbacks to be notified of events
- * that happen to our model, for this example we are just going to add a
- * callback for the "delete" event. To get a list of events a given eina model
- * can emit see @ref eina_model_event_names_list_get().
- * @until callback_add
- *
- * Once we have a model, we need to populate it with information. There are two
- * types of information we can store on an eina model: properties and eina
- * models. We are going to start by looking at properties.
- *
- * Properties are, simply put, named values. They have a char* identifier and an
- * Eina_Value value. This means you can store in a property almost any type of
- * data. For this example we are going to add some very simple numeric
- * properties which will have single letter identifiers.
- * @until }
- * @until }
- *
- * Despite being able to store almost any value properties the least flexible
- * information unit we can put in an eina model. We can add eina models to our
- * eina model, this allows us to represt complex information hierarchies. This
- * example adds 5 models(with no children of their own) to our parent model @c
- * m.
- * @until }
- * The code here should be pretty easy to understand, we create a model, much
- * like we did before, and we then add a property to our model, again a task we
- * have already done.
- *
- * The important issue to note here is that we could have given each of our @c c
- * child models as complex an structure as we needed, they could each be a list
- * or a tree on their own right.
- *
- * Now that we have a populated model we print a string representation of
- * it(without forgetting to free the string):
- * @until free
- *
- * And since we are done using our model we release our reference to it(and
- * since no else holds references to it, it will be freed):
- * @until }
- *
- * Note that we don't need to iterate over the children of @c m unrefing it,
- * this is because we don't hold references to it, we freed our references right
- * after we added them to their parent model, so when the parent model dies(and
- * releases the references to it's children) they will be freed.
- *
- * The only thing we are going to look at is the callback we registered for
- * whenever a model is deleted, since our models don't do anything fancy we are
- * just going to print the memory address of the model being freed.
- * @until }
- *
- * Note that this means the memory address is still valid, our callback is
- * called just before the memory is freed so we could still access its
- * information here.
- *
- * The full code can be seen in @ref eina_model_02_c
- */
-
-/**
- * @page eina_model_02_c eina_model_02.c
- * @include eina_model_02.c
- * @example eina_model_02.c
- */
-
-/**
- * @page eina_model_03_example_page Using Eina_Model and inheritance
- * @dontinclude eina_model_03.c
- *
- * This example will use two custom defined eina model types: @c PERSON_TYPE to
- * represent a person and @c ADDRESS_BOOK_TYPE to represent the an address book.
- * Both our types inherit from EINA_MODEL_TYPE_STRUCT, and, therefore,
- * store it's data on a struct. Our address book will be very simple it will
- * only contain one property, the name of the file where we store our address
- * book. The person type will contain two fields a name and en email. Let's look
- * at the code.
- *
- * We'll start with declaring the variables and functions we'll need to define
- * our custom type. This will all be explained when the variables get used.
- * @until address_book_init
- *
- * We then jump into our @c main function, declare a couple of variables and
- * initialize eina:
- * @until eina_init
- *
- * After eina is initialized we'll @c address_book_init() which will initialize
- * both our @c PERSON_TYPE and our @c ADDRESS_BOOK_TYPE. Details of this will be
- * shown latter on:
- * @until address_book_init
- *
- * Now that everything is correctly initialized we can create the model that
- * will represent our address book's
- * @until eina_model_new
- *
- * Before we can load data into our model we need to tell it where to load from,
- * we do this by setting it's filename property:
- * @until value_flush
- *
- * We then load data into our model and display it as a string:
- * @until free
- *
- * While @c eina_model_to_string allows you to see the contents of the model,
- * it's display format is not user friendly, it's best used for debugging. So
- * let's now print our model in a user friendly way.
- *
- * First we see how many people are in our address book and print that:
- * @until printf
- *
- * And now we iterate over every child of our address book model, which
- * represents a person:
- * @until person
- *
- * But again simply calling @c eina_model_to_string would result in not very
- * user friendly output, so we'll need to get the properties of the person(name
- * and email) and print them with some formatting:
- * @until printf
- *
- * We then free the resources we allocated to print this person:
- * @until }
- *
- * And that's it for our main function, now just freeing our resources:
- * @until }
- *
- * This however obviously doesn't conclude our example we need to examine how
- * the the loading of data works to really understand what is happening in the
- * @c main function.
- *
- * Let's start with the constructors(and the variables they use). Both our
- * constructors do two very important tasks:
- * @li Calls our parent's constructor, and
- * @li Sets the description of the struct on our model
- *
- * For these constructors that's all we need to do since most of our
- * functionality is provided by @c EINA_MODEL_TYPE_STRUCT.
- * @until }
- * @until }
- *
- * And now we have our load function, it opens the file from which we'll
- * read the address book:
- * @until EINA_SAFETY_ON_NULL_RETURN_VAL
- *
- * Once the file has been opened we read from it line by line and for each
- * non-blank line we get a name and an email:
- * @until email
- * @until email
- *
- * Once we have the name and email we create our person model, set it's
- * properties and make our person a child of the address book:
- * @until }
- *
- * And now that we're done reading the file we close it:
- * @until }
- *
- * This next function is perphaps the most interesting one of our example, it's
- * the one that creates the definition of our derived types.
- *
- * First thing we'll do is the description of the members of our person type.
- * @until person_members[1].type
- * Now the description of the struct itself(which uses the members):
- * @until }
- * And finally we define the person type itself:
- * @until person_type.constructor
- *
- * With the person now described we'll do the same process for our address book
- * type:
- * @until address_book_type.load
- *
- * So far everything we created has been in the scope of our function to make
- * this available outside(such as in the @c main function where we use @c
- * ADDRESS_BOOK_TYPE and on @c _address_book_load function where we use @c
- * PERSON_TYPE) we need to assign our descriptions and type to global variables:
- * @until }
- *
- * This concludes this example. A good exercise for the reader is to extend this
- * example to have the model save the addres book, for example once it's
- * unloaded, this can be done by overriding the .unload property of @c
- * ADDRESS_BOOK_TYPE.
- *
- * For the full code see: @ref eina_model_03_c
- */
-
-/**
- * @page eina_model_03_c eina_model_03.c
- * @include eina_model_03.c
- * @example eina_model_03.c
- */
-
-/**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @since 1.2
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
+ * @internal
  * @defgroup Eina_Model_Group Data Model API
+ * @ingroup Eina_Containers_Group
  *
  * Abstracts data access to hierarchical data in an efficient way,
  * extensible to different backing stores such as database or remote
@@ -288,21 +69,19 @@
  * fixed set of names and they have fixed type, as defined by
  * the #Eina_Value_Struct_Desc description used internally.
  *
- * Examples:
- * @li @ref eina_model_01_c inheritance example, uses #EINA_MODEL_TYPE_GENERIC
- * @li @ref eina_model_02_example_page contains an easy to follow
- *     example that demonstrates several of the important features of
- *     eina_model, uses #EINA_MODEL_TYPE_GENERIC.
- * @li @ref eina_model_03_example_page walk-through example on how to
- *     inherit types, a suggestion of eina_model_load() usage and
- *     uses #EINA_MODEL_TYPE_STRUCT.
- * @li @ref eina_model_04_c Advanced inheritance, interfaces and interface
- *     function overloading example.
- *
  * @{
  */
 
+/**
+ * @var EINA_ERROR_MODEL_FAILED
+ * Defined when model-specific errors happens.
+ */
 EAPI extern Eina_Error EINA_ERROR_MODEL_FAILED;
+
+/**
+ * @var EINA_ERROR_MODEL_METHOD_MISSING
+ * Defined when model-specific errors happens.
+ */
 EAPI extern Eina_Error EINA_ERROR_MODEL_METHOD_MISSING;
 
 /**
@@ -508,8 +287,9 @@ EAPI void eina_model_xunref(Eina_Model *model,
 
 
 /**
+ * @internal
  * @defgroup Eina_Model_Event_Group Data Model Events
- * Events and their usage with models.
+ * @brief Events and their usage with models.
  *
  * Events are specified by each type and interface level
  * using #Eina_Model_Event_Description. One can know all events supported
@@ -748,8 +528,9 @@ EAPI Eina_Bool eina_model_unload(Eina_Model *model) EINA_ARG_NONNULL(1);
 
 
 /**
+ * @internal
  * @defgroup Eina_Model_Properties_Group Data Model Properties
- * Properties and their usage with models.
+ * @brief Properties and their usage with models.
  *
  * Properties are attributes of model. They have a name and contain a
  * data value (@ref Eina_Value_Group).
@@ -835,8 +616,9 @@ EAPI void eina_model_properties_names_list_free(Eina_List *list);
  */
 
 /**
+ * @internal
  * @defgroup Eina_Model_Children_Group Data Model Children
- * Children and their usage with models.
+ * @brief Children and their usage with models.
  *
  * Children are other model instances that are kept sequentially in
  * the model. They are accessed by their integer index within the
@@ -1005,8 +787,9 @@ EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
  */
 
 /**
+ * @internal
  * @defgroup Eina_Model_Iterators_Group Data Model Iterators
- * Iterators and their usage with models.
+ * @brief Iterators and their usage with models.
  *
  * One of the most common tasks of models is to iterate over their
  * children, either forwards or backwards, filtering by some criteria
@@ -1273,10 +1056,11 @@ EAPI Eina_Iterator *eina_model_child_slice_filtered_iterator_get(Eina_Model *mod
 EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 /**
+ * @internal
  * @defgroup Eina_Model_Type_Group Data Model Type management
  *
- * Functions and structures related to implementing new types or
- * extending existing ones.
+ * @brief Functions and structures related to implementing new types or
+ *        extending existing ones.
  *
  * All eina_model_type functions takes an Eina_Model_Type or
  * Eina_Model_Interface as parameter and may be used to validate or
@@ -1287,14 +1071,6 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * eina_model_compare() are used as "super", that is, calls the @c
  * compare() method of the given type (or its parent) instead of the
  * most specific type of provided Eina_Model.
- *
- * Examples:
- * @li @ref eina_model_02_example_page contains an easy to follow
- *     example that demonstrates several of the important features of
- *     eina_model, uses #EINA_MODEL_TYPE_GENERIC.
- * @li @ref eina_model_03_example_page walk-through example on how to
- *     inherit types, a suggestion of eina_model_load() usage and uses
- *     #EINA_MODEL_TYPE_STRUCT.
  *
  * @{
  */
@@ -2218,7 +1994,7 @@ EAPI Eina_Bool eina_model_interface_constructor(const Eina_Model_Interface *ifac
  * @param model The model instance.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * @warning If @a model doesn't implement @a iface does nothing and 
+ * @warning If @a model doesn't implement @a iface does nothing and
  * returns #EINA_FALSE.
  *
  * @see eina_model_del()
@@ -2819,9 +2595,10 @@ EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
  */
 
 /**
+ * @internal
  * @defgroup Eina_Model_Utils_Group Data Model Utilities
  *
- * Miscellaneous utilities to help usage or debug of @ref Eina_Model_Group.
+ * @brief Miscellaneous utilities to help usage or debug of @ref Eina_Model_Group.
  *
  * @{
  */
@@ -3131,14 +2908,6 @@ EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_STRUCT;
  * @since 1.2
  */
 EAPI extern const char *EINA_MODEL_INTERFACE_NAME_CHILDREN;
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}

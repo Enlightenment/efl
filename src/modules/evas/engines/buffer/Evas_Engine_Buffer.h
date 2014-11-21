@@ -29,7 +29,7 @@ struct _Evas_Engine_Info_Buffer
       struct {
 	 void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
 	 void   (*free_update_region) (int x, int y, int w, int h, void *data);
- 	 void * (*switch_buffer) (void *data, void *dest_buffer);
+	 void * (*switch_buffer) (void *data, void *dest_buffer);
       } func;
 
       void *switch_data;

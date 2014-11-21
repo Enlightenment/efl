@@ -6,7 +6,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EFREET_BUILD
+# ifdef EFL_EFREET_TRASH_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -33,63 +33,76 @@ extern "C" {
 
 /**
  * @file Efreet_Trash.h
+ *
  * @brief Contains the methods used to support the FDO trash specification.
- * @addtogroup Efreet_Trash Efreet_Trash: The XDG Trash Specification
- * Efreet_Trash.h provides all of the necessary headers and includes to
+ *
+ * @internal
+ * @defgroup Efreet_Trash_Group Efreet_Trash: The XDG Trash Specification
+ * @ingroup Efreet_Group
+ *
+ * Efreet_Trash.h provides all the necessary headers and includes to
  * work with Efreet_Trash.
  *
- * @ingroup Efreet
  * @{
  */
 
 /**
- * @return @c 1 on success or @c 0 on failure.
- * @brief Initializes the efreet trash system
+ * @brief Initializes the efreet trash system.
+ *
+ * @return @c 1 on success, otherwise @c 0 on failure
  */
 EAPI int         efreet_trash_init(void);
 
 /**
- * @return No value.
- * @brief Cleans up the efreet trash system
+ * @brief Cleans up the efreet trash system.
+ *
+ * @return No value
  */
 EAPI int         efreet_trash_shutdown(void);
 
 /**
- * @return The XDG Trash local directory or @c NULL on errors.
- * Return value must be freed with eina_stringshare_del.
- * @brief Retrieves the XDG Trash local directory
+ * @brief Gets the XDG Trash local directory.
+ *
+ * @remarks The return value must be freed using eina_stringshare_del.
+ *
+ * @return The XDG Trash local directory, otherwise @c NULL on errors
  */
 EAPI const char *efreet_trash_dir_get(const char *for_file);
 
 /**
- * @param uri The local uri to move in the trash
- * @param force_delete If you set this to @c 1 than files on different filesystems
- * will be deleted permanently
- * @return @c 1 on success, @c 0 on failure or @c -1 in case the uri is not on
- * the same filesystem and force_delete is not set.
- * @brief This function try to move the given uri to the trash. Files on 
- * different filesystem can't be moved to trash. If force_delete
- * is @c 0 than non-local files will be ignored and @c -1 is returned, if you set
- * force_delete to @c 1 non-local files will be deleted without asking.
+ * @brief Tries to move the given URI to the trash.
+ *
+ * @remarks Files on a different filesystem can't be moved to trash. If force_delete
+ *          is @c 0 then non-local files are ignored and @c -1 is returned, if you set
+ *          @a force_delete to @c 1 non-local files are deleted without asking.
+ *
+ * @param[in] uri The local URI to move to the trash
+ * @param[in] force_delete If @c 1 then files on a different filesystem are deleted permanently
+ * 
+ * @return @c 1 on success, otherwise @c 0 on failure or @c -1 if the uri is not on
+ *         the same filesystem and force_delete is not set
  */
 EAPI int         efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete);
 
 /**
- * @return A list of strings with filename (remember to free the list
- * when you don't need anymore).
- * @brief List all the files and directory currently inside the trash.
+ * @brief Lists all the files and directories currently inside the trash.
+ *
+ * @return A list of strings with a filename (remember to free the list
+ *         when you don't need it anymore)
  */
 EAPI Eina_List  *efreet_trash_ls(void);
 
 /**
- * @return @c 1 if the trash is empty or @c 0 if some file are in.
- * @brief Check if the trash is currently empty
+ * @brief Checks whether the trash is currently empty.
+ *
+ * @return @c 1 if the trash is empty, otherwise @c 0 if some files are present in it
  */
 EAPI int         efreet_trash_is_empty(void);
 
 /**
- * @return @c 1 on success or @c 0 on failure.
- * @brief Delete all the files inside the trash.
+ * @brief Deletes all the files inside the trash.
+ *
+ * @return @c 1 on success, otherwise @c 0 on failure
  */
 EAPI int         efreet_trash_empty_trash(void);
 

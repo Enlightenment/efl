@@ -9,16 +9,10 @@ typedef struct _Ethumb_Plugin Ethumb_Plugin;
 
 struct _Ethumb_Plugin
 {
-#define ETHUMB_PLUGIN_API_VERSION (1U)
-   unsigned int version;
-   const char *name;
    const char **extensions;
    void *(*thumb_generate)(Ethumb *);
    void (*thumb_cancel)(Ethumb *, void *);
 };
-
-EAPI Eina_Bool ethumb_plugin_register(const Ethumb_Plugin *plugin);
-EAPI Eina_Bool ethumb_plugin_unregister(const Ethumb_Plugin *plugin);
 
 EAPI void ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h);
 EAPI void ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h);

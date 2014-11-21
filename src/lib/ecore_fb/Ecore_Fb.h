@@ -18,15 +18,14 @@
 #endif
 
 /* FIXME:
- * maybe a new module?
- * - code to get battery info
- * - code to get thermal info
+ * Maybe a new module?
+ * - Code to get the battery info
+ * - Code to get the thermal info
  * ecore evas fb isn't good enough for weird things, like multiple fb's, same happens here.
  * backlight support using new kernel interface
  * absolute axis
  * joystick
  * ecore_fb_li_device_close_all ? or a shutdown of the subsystem?
- *
  */
 
 #ifdef __cplusplus
@@ -34,23 +33,24 @@ extern "C" {
 #endif
 
 /**
+ * @internal
  * @defgroup Ecore_FB_Group Ecore_FB - Frame buffer convenience functions.
- * @ingroup Ecore
+ * @ingroup Ecore_Group
  *
- * Functions used to set up and shut down the Ecore_Framebuffer functions.
+ * @brief This group discusses the functions used to set up and shut down the Ecore_Framebuffer functions.
  *
  * @{
  */
 
 /**
  * @typedef Ecore_Fb_Input_Device
- * Input device handler.
+ * @brief The structure type containing the Input device handler.
  */
 typedef struct _Ecore_Fb_Input_Device Ecore_Fb_Input_Device;
 
 /**
  * @enum _Ecore_Fb_Input_Device_Cap
- * Device capabilities.
+ * @brief Enumeration that defines the device capabilities.
  */
 enum _Ecore_Fb_Input_Device_Cap
 {
@@ -62,7 +62,7 @@ enum _Ecore_Fb_Input_Device_Cap
 
 /**
  * @typedef Ecore_Fb_Input_Device_Cap
- * Device capabilities.
+ * @brief Enumeration that defines the device capabilities.
  */
 typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 

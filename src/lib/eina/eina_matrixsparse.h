@@ -1,14 +1,14 @@
 /* EINA - EFL data type library
  * Copyright (C) 2009 Gustavo Sverzut Barbieri
  *
- * This library is free software; you can redistribute it and/or
+ * This library is a free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -28,66 +28,54 @@
 #include "eina_accessor.h"
 
 /**
- * @addtogroup Eina_Matrixsparse_Group Sparse Matrix
- *
- * @brief These functions provide matrix sparse management.
- *
- * For more information, you can look at the @ref tutorial_matrixsparse_page.
- */
-
-/**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
  * @defgroup Eina_Matrixsparse_Group Sparse Matrix
+ * @ingroup Eina_Containers_Group
+ *
+ * @brief This group discusses the functions to provide matrix sparse management.
  *
  * @{
  */
 
 /**
  * @typedef Eina_Matrixsparse
- * Type for a generic sparse matrix.
+ * @brief The structure type for a generic sparse matrix.
  */
 typedef struct _Eina_Matrixsparse Eina_Matrixsparse;
 
 /**
  * @typedef Eina_Matrixsparse_Row
- * Type for a generic sparse matrix row, opaque for users.
+ * @brief The structure type for a generic sparse matrix row, opaque for users.
  */
 typedef struct _Eina_Matrixsparse_Row Eina_Matrixsparse_Row;
 
 /**
  * @typedef Eina_Matrixsparse_Cell
- * Type for a generic sparse matrix cell, opaque for users.
+ * @brief The structure type for a generic sparse matrix cell, opaque for users.
  */
 typedef struct _Eina_Matrixsparse_Cell      Eina_Matrixsparse_Cell;
 
-/* constructors and destructors */
+/* Constructors and destructors */
 
 /**
- * @brief Create a new Sparse Matrix.
+ * @brief Creates a new Sparse Matrix.
  *
- * @param rows number of rows in matrix. Operations with rows greater than this
- *        value will fail.
- * @param cols number of columns in matrix. Operations with columns greater
- *        than this value will fail.
- * @param free_func used to delete cell data contents, used by
- *        eina_matrixsparse_free(), eina_matrixsparse_size_set(),
- *        eina_matrixsparse_row_idx_clear(),
- *        eina_matrixsparse_column_idx_clear(),
- *        eina_matrixsparse_cell_idx_clear() and possible others.
- * @param user_data given to @a free_func as first parameter.
+ * @since_tizen 2.3
  *
- * @return Newly allocated matrix or @c NULL if allocation failed.
+ * @param[in] rows The number of rows in the matrix \n
+ *             Operations with rows greater than this
+ *             value fail.
+ * @param[in] cols The number of columns in the matrix \n
+ *             Operations with columns greater
+ *             than this value fail.
+ * @param[in] free_func The function used to delete cell data contents, used by
+ *                  eina_matrixsparse_free(), eina_matrixsparse_size_set(),
+ *                  eina_matrixsparse_row_idx_clear(),
+ *                  eina_matrixsparse_column_idx_clear(),
+ *                  eina_matrixsparse_cell_idx_clear(), and other possible functions.
+ * @param[in] user_data The data given to @a free_func as the first parameter
+ *
+ * @return The newly allocated matrix, otherwise @c NULL if allocation fails and eina_error
+ *         is set
  */
 EAPI Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
                                               unsigned long cols,
@@ -96,61 +84,71 @@ EAPI Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
                                               const void *user_data);
 
 /**
- * @brief Free resources allocated to Sparse Matrix.
+ * @brief Frees resources allocated to the Sparse Matrix.
  *
- * @param m The Sparse Matrix instance to free, must @b not be @c NULL.
+ * @since_tizen 2.3
+ *
+ * @param[in] m The Sparse Matrix instance to free, must @b not be @c NULL
  */
 EAPI void eina_matrixsparse_free(Eina_Matrixsparse *m);
 
-/* size manipulation */
+/* Size manipulation */
 
 /**
- * @brief Get the current size of Sparse Matrix.
+ * @brief Gets the current size of the Sparse Matrix.
  *
- * The given parameters are guaranteed to be set if they're not @c NULL,
- * even if this function fails (ie: @a m is not a valid matrix instance).
+ * @since_tizen 2.3
  *
- * @param m the sparse matrix to operate on.
- * @param rows returns the number of rows, may be @c NULL. If @a m is invalid,
- *        returned value is zero, otherwise it's a positive integer.
- * @param cols returns the number of columns, may be @c NULL. If @a m is
- *        invalid, returned value is zero, otherwise it's a positive integer.
+ * @remarks The given parameters are guaranteed to be set if they're not @c NULL,
+ *          even if this function fails (ie: @a m is not a valid matrix instance).
+ *
+ * @param[in] m The sparse matrix to operate on
+ * @param[out] rows The number of rows, may be @c NULL \n 
+ *             If @a m is invalid the returned value is zero, otherwise it's a positive integer.
+ * @param[out] cols The number of columns, may be @c NULL \n
+ *             If @a m is invalid the returned value is zero, otherwise it's a positive integer.
  */
 EAPI void eina_matrixsparse_size_get(const Eina_Matrixsparse *m,
                                      unsigned long           *rows,
                                      unsigned long           *cols);
 
 /**
- * @brief Resize the Sparse Matrix.
+ * @brief Resizes the Sparse Matrix.
  *
- * This will resize the sparse matrix, possibly freeing cells on rows
- * and columns that will cease to exist.
+ * @details This resizes the sparse matrix, possibly freeing cells of rows
+ *          and columns that cease to exist.
  *
- * @param m the sparse matrix to operate on.
- * @param rows the new number of rows, must be greater than zero.
- * @param cols the new number of columns, must be greater than zero.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @since_tizen 2.3
  *
- * @warning cells, rows or columns are not reference counted and thus
- *     after this call any reference might be invalid if instance were
- *     freed.
+ * @remarks The cells, rows, or columns are not reference counted and thus
+ *          after this call any reference might be invalid if the instance is
+ *          freed.
+ *
+ * @param[in] m The sparse matrix to operate on
+ * @param[in] rows The new number of rows, must be greater than zero
+ * @param[in] cols The new number of columns, must be greater than zero
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE on failure
+ *
  */
 EAPI Eina_Bool eina_matrixsparse_size_set(Eina_Matrixsparse *m,
                                           unsigned long      rows,
                                           unsigned long      cols);
 
-/* data getting */
+/* Obtaining data */
 
 /**
- * Get the cell reference inside Sparse Matrix.
+ * @brief Gets the cell reference inside the Sparse Matrix.
  *
- * @param m the sparse matrix to operate on.
- * @param row the new number of row to clear.
- * @param col the new number of column to clear.
- * @param cell pointer to return cell reference, if any exists.
+ * @since_tizen 2.3
  *
- * @return @c 1 on success, @c 0 on failure. It is considered success if did not
- *     exist but index is inside matrix size, in this case @c *cell == NULL
+ * @param[in] m The sparse matrix to operate on
+ * @param[in] row The new row number to clear
+ * @param[in] col The new column number to clear
+ * @param[out] cell A pointer to return the cell reference, if it exists
+ *
+ * @return @c 1 on success, otherwise @c 0 on failure \n
+ *         It is considered successful if it does not
+ *         exist but its index is inside the matrix size, in this case @c *cell == NULL
  *
  * @see eina_matrixsparse_cell_data_get()
  * @see eina_matrixsparse_data_idx_get()
@@ -158,11 +156,11 @@ EAPI Eina_Bool eina_matrixsparse_size_set(Eina_Matrixsparse *m,
 EAPI Eina_Bool eina_matrixsparse_cell_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col, Eina_Matrixsparse_Cell **cell);
 
 /**
- * Get data associated with given cell reference.
+ * @brief Gets the data associated to the given cell reference.
  *
- * @param cell given cell reference, must @b not be @c NULL.
+ * @param[in] cell The given cell reference, must @b not be @c NULL
  *
- * @return data associated with given cell.
+ * @return The data associated to the given cell
  *
  * @see eina_matrixsparse_cell_idx_get()
  * @see eina_matrixsparse_data_idx_get()
@@ -170,13 +168,15 @@ EAPI Eina_Bool eina_matrixsparse_cell_idx_get(const Eina_Matrixsparse *m, unsign
 EAPI void     *eina_matrixsparse_cell_data_get(const Eina_Matrixsparse_Cell *cell);
 
 /**
- * Get data associated with given cell given its indexes.
+ * @brief Gets the data associated to the given cell given that its indexes are provided.
  *
- * @param m the sparse matrix to operate on.
- * @param row the new number of row to clear.
- * @param col the new number of column to clear.
+ * @since_tizen 2.3
  *
- * @return Data associated with given cell or @c NULL if nothing is associated.
+ * @param[in] m The sparse matrix to operate on
+ * @param[in] row The new row number to clear
+ * @param[in] col The new column number to clear
+ *
+ * @return The data associated to the given cell, otherwise @c NULL if nothing is associated
  *
  * @see eina_matrixsparse_cell_idx_get()
  * @see eina_matrixsparse_cell_data_get()
@@ -184,26 +184,30 @@ EAPI void     *eina_matrixsparse_cell_data_get(const Eina_Matrixsparse_Cell *cel
 EAPI void     *eina_matrixsparse_data_idx_get(const Eina_Matrixsparse *m, unsigned long row, unsigned long col);
 
 /**
- * Get position (indexes) of the given cell.
+ * @brief Gets the position (indexes) of the given cell.
  *
- * @param cell the cell reference, must @b not be @c NULL.
- * @param row where to store cell row number, may be @c NULL.
- * @param col where to store cell column number, may be @c NULL.
+ * @since_tizen 2.3
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise (@c cell is @c NULL).
+ * @param[in] cell The cell reference, must @b not be @c NULL
+ * @param[out] row The location to store the cell row number, may be @c NULL
+ * @param[out] col The location to store the column number, may be @c NULL
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE (@c cell is @c NULL)
  */
 EAPI Eina_Bool eina_matrixsparse_cell_position_get(const Eina_Matrixsparse_Cell *cell, unsigned long *row, unsigned long *col);
 
-/* data setting */
+/* Setting data */
 
 /**
- * Change cell reference value without freeing the possibly existing old value.
+ * @brief Changes the cell reference value without freeing a possible existing old value.
  *
- * @param cell the cell reference, must @b not be @c NULL.
- * @param data new data to set.
- * @param p_old returns the old value intact (not freed).
+ * @since_tizen 2.3
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise (@a cell is @c NULL).
+ * @param[in] cell The cell reference, must @b not be @c NULL
+ * @param[in] data The new data to set
+ * @param[out] p_old The old value that is intact (not freed)
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE (@a cell is @c NULL)
  *
  * @see eina_matrixsparse_cell_data_set()
  * @see eina_matrixsparse_data_idx_replace()
@@ -211,15 +215,17 @@ EAPI Eina_Bool eina_matrixsparse_cell_position_get(const Eina_Matrixsparse_Cell 
 EAPI Eina_Bool eina_matrixsparse_cell_data_replace(Eina_Matrixsparse_Cell *cell, const void *data, void **p_old);
 
 /**
- * Change cell value freeing the possibly existing old value.
+ * @brief Changes the cell value by freeing a possible existing old value.
  *
- * In contrast to eina_matrixsparse_cell_data_replace(), this function will
- * call @c free_func() on existing value.
+ * @since_tizen 2.3
  *
- * @param cell the cell reference, must @b not be @c NULL.
- * @param data new data to set.
+ * @remarks In contrast to eina_matrixsparse_cell_data_replace(), this function
+ *          calls @c free_func() on the existing value.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise (@a cell is @c NULL).
+ * @param[in] cell The cell reference, must @b not be @c NULL
+ * @param[in] data The new data to set
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE (@a cell is @c NULL).
  *
  * @see eina_matrixsparse_cell_data_replace()
  * @see eina_matrixsparse_data_idx_set()
@@ -227,16 +233,18 @@ EAPI Eina_Bool eina_matrixsparse_cell_data_replace(Eina_Matrixsparse_Cell *cell,
 EAPI Eina_Bool eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, const void *data);
 
 /**
- * Change cell value without freeing the possibly existing old value, using
- * indexes.
+ * @brief Changes the cell value without freeing a possible existing old value, using
+ *        indexes.
  *
- * @param m the sparse matrix, must @b not be @c NULL.
- * @param row the row number to set the value.
- * @param col the column number to set the value.
- * @param data new data to set.
- * @param p_old returns the old value intact (not freed).
+ * @since_tizen 2.3
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise (@a m is @c NULL, indexes are not valid).
+ * @param[in] m The sparse matrix, must @b not be @c NULL
+ * @param[in] row The row number to set the value of
+ * @param[in] col The column number to set the value of
+ * @param[in] data The new data to set
+ * @param[out] p_old The old value that is intact (not freed)
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE (@a m is @c NULL, indexes are not valid)
  *
  * @see eina_matrixsparse_cell_data_replace()
  * @see eina_matrixsparse_data_idx_set()
@@ -244,156 +252,168 @@ EAPI Eina_Bool eina_matrixsparse_cell_data_set(Eina_Matrixsparse_Cell *cell, con
 EAPI Eina_Bool eina_matrixsparse_data_idx_replace(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data, void **p_old);
 
 /**
- * Change cell value freeing the possibly existing old value, using
- * indexes.
+ * @brief Changes the cell value by freeing a possible existing old value, using
+ *        indexes.
  *
- * In contrast to eina_matrixsparse_data_idx_replace(), this function will
- * call @c free_func() on existing value.
+ * @since_tizen 2.3
  *
- * @param m the sparse matrix, must @b not be @c NULL.
- * @param row the row number to set the value.
- * @param col the column number to set the value.
- * @param data new data to set.
+ * @remarks In contrast to eina_matrixsparse_data_idx_replace(), this function
+ *          calls @c free_func() on the existing value.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise (@a m is @c NULL, indexes are not valid).
+ * @param[in] m The sparse matrix, must @b not be @c NULL
+ * @param[in] row The row number to set the value of
+ * @param[in] col The column number to set the value of
+ * @param[in] data The new data to set
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE (@a m is @c NULL, indexes are not valid)
  *
  * @see eina_matrixsparse_cell_data_replace()
  */
 EAPI Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m, unsigned long row, unsigned long col, const void *data);
 
-/* data deleting */
+/* Deleting data */
 
 /**
- * Clear (erase all cells) of row given its index.
+ * @brief Clears (erases) all the cells of the row given that its index is provided.
  *
- * Existing cells will be cleared with @c free_func() given to
- * eina_matrixsparse_new().
+ * @since_tizen 2.3
  *
- * @param m the sparse matrix to operate on.
- * @param row the new number of row to clear.
+ * @remarks Existing cells are cleared with @c free_func() given to
+ *          eina_matrixsparse_new().
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered success if row
- *     had no cells filled. Failure is asking for clear row outside
- *     matrix size.
+ * @remarks The cells, rows, or columns are not reference counted and thus
+ *          after this call any reference might be invalid if an instance is
+ *          freed.
  *
- * @warning cells, rows or columns are not reference counted and thus
- *     after this call any reference might be invalid if instance were
- *     freed.
+ * @param[in] m The sparse matrix to operate on
+ * @param[in] row The new row number to clear
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE on failure \n
+ *         It is considered successful if the row has no filled cells \n
+ *         Failure is asking for a clear row outside the matrix size.
+ *
  */
 EAPI Eina_Bool eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m, unsigned long row);
 
 /**
- * Clear (erase all cells) of column given its index.
+ * @brief Clears (erases) all the cells of the column given that its index is provided.
  *
- * Existing cells will be cleared with @c free_func() given to
- * eina_matrixsparse_new().
+ * @since_tizen 2.3
  *
- * @param m the sparse matrix to operate on.
- * @param col the new number of column to clear.
+ * @remarks Existing cells are cleared with @c free_func() given to
+ *          eina_matrixsparse_new().
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered success if column
- *     had no cells filled. Failure is asking for clear column outside
- *     matrix size.
+ * @remarks The cells, rows, or columns are not reference counted and thus
+ *          after this call any reference might be invalid if an instance is
+ *          freed.
  *
- * @warning cells, rows or columns are not reference counted and thus
- *     after this call any reference might be invalid if instance were
- *     freed.
+ * @param[in] m The sparse matrix to operate on
+ * @param[in] col The new column number to clear
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE on failure \n
+ *         It is considered successful if the column has no filled cells \n
+ *         Failure is asking for a clear column outside the matrix size.
+ *
  */
 EAPI Eina_Bool eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned long col);
 
 /**
- * Clear (erase) cell given its indexes.
+ * @brief Clears (erases) a cell given that its indexes are provided.
  *
- * Existing cell will be cleared with @c free_func() given to
- * eina_matrixsparse_new().
+ * @since_tizen 2.3
  *
- * @param m the sparse matrix to operate on.
- * @param row the new number of row to clear.
- * @param col the new number of column to clear.
+ * @remarks Existing cells are cleared with @c free_func() given to
+ *          eina_matrixsparse_new().
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered success if did not
- *     exist but index is inside matrix size.
+ * @remarks The cells, rows, or columns are not reference counted and thus
+ *          after this call any reference might be invalid if an instance is
+ *          freed.
  *
- * @warning cells, rows or columns are not reference counted and thus
- *     after this call any reference might be invalid if instance were
- *     freed.
+ * @remarks This call might delete a container column and row if this cell is the
+ *          last remainder.
  *
- * @note This call might delete container column and row if this cell was the
- * last remainder.
+ * @param[in] m The sparse matrix to operate on
+ * @param[in] row The new row number to clear
+ * @param[in] col The new column number to clear
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE on failure \n
+ *         It is considered successful if it does not exist but its index is inside the matrix size.
+ *
  */
 EAPI Eina_Bool eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned long row, unsigned long col);
 
 /**
- * Clear (erase) cell given its reference.
+ * @brief Clears (erases) a cell given that its referenceis provided.
  *
- * @param cell the cell reference, must @b not be @c NULL.
+ * @since_tizen 2.3
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @remarks The cells, rows, or columns are not reference counted and thus
+ *          after this call any reference might be invalid if an instance is
+ *          freed.
  *
- * @warning cells, rows or columns are not reference counted and thus
- *     after this call any reference might be invalid if instance were
- *     freed.
+ * @remarks This call might delete a container column and row if this cell is the
+ *          last remainder.
  *
- * @note This call might delete container column and row if this cell was the
- * last remainder.
+ * @param[in] cell The cell reference, must @b not be @c NULL
+ *
+ * @return @c EINA_TRUE on success, otherwise @c EINA_FALSE on failure
+ *
  */
 EAPI Eina_Bool eina_matrixsparse_cell_clear(Eina_Matrixsparse_Cell *cell);
 
-/* iterators */
+/* Iterators */
 
 /**
- * Creates a new iterator over existing matrix cells.
+ * @brief Creates a new iterator over existing matrix cells.
  *
- * This is a cheap walk, it will just report existing cells and holes
- * in the sparse matrix will be ignored. That means the reported
- * indexes will not be sequential.
+ * @since_tizen 2.3
  *
- * The iterator data will be the cell reference, one may query current
- * position with eina_matrixsparse_cell_position_get() and cell value
- * with eina_matrixsparse_cell_data_get().
+ * @remarks This is a cheap walk, it just reports existing cells and holes
+ *          in the sparse matrix are ignored. That means the reported
+ *          indexes are not sequential.
  *
- * @param m The Sparse Matrix reference, must @b not be @c NULL.
- * @return A new iterator.
+ * @remarks The iterator data is the cell reference, one may query the current
+ *          position with eina_matrixsparse_cell_position_get() and cell value
+ *          with eina_matrixsparse_cell_data_get().
  *
- * @warning if the matrix structure changes then the iterator becomes
- *    invalid! That is, if you add or remove cells this iterator
- *    behavior is undefined and your program may crash!
+ * @remarks If the matrix structure changes then the iterator becomes
+ *          invalid. That is, if you add or remove cells this iterator's
+ *          behavior is undefined and your program may crash.
+ *
+ * @param[in] m The Sparse Matrix reference, must @b not be @c NULL
+ * @return A new iterator
+ *
  */
 EAPI Eina_Iterator *eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m);
 
 /**
- * Creates a new iterator over all matrix cells.
+ * @brief Creates a new iterator over all the matrix cells.
  *
- * Unlike eina_matrixsparse_iterator_new() this one will report all
- * matrix cells, even those that are still empty (holes). These will
- * be reported as dummy cells that contains no data.
+ * @since_tizen 2.3
  *
- * Be aware that iterating a big matrix (1000x1000) will call your
- * function that number of times (1000000 times in that case) even if
- * your matrix have no elements at all!
+ * @remarks Unlike eina_matrixsparse_iterator_new(), this one reports all
+ *          the matrix cells, even those that are still empty (holes). These are
+ *          reported as dummy cells that contain no data.
  *
- * The iterator data will be the cell reference, one may query current
- * position with eina_matrixsparse_cell_position_get() and cell value
- * with eina_matrixsparse_cell_data_get(). If cell is empty then the
- * reference will be a dummy/placeholder, thus setting value with
- * eina_matrixsparse_cell_data_set() will leave pointer unreferenced.
+ * @remarks Be aware that iterating a big matrix (1000x1000) calls your
+ *          function that number of times (1000000 times in that case) even if
+ *          your matrix have no elements at all.
  *
- * @param m The Sparse Matrix reference, must @b not be @c NULL.
- * @return A new iterator.
+ * @remarks The iterator data is the cell reference, one may query the current
+ *          position with eina_matrixsparse_cell_position_get() and cell value
+ *          with eina_matrixsparse_cell_data_get(). If the cell is empty then the
+ *          reference is a dummy/placeholder, thus setting a value with
+ *          eina_matrixsparse_cell_data_set() leaves the pointer unreferenced.
  *
- * @warning if the matrix structure changes then the iterator becomes
- *    invalid! That is, if you add or remove cells this iterator
- *    behavior is undefined and your program may crash!
+ * @remarks If the matrix structure changes then the iterator becomes
+ *          invalid. That is, if you add or remove cells this iterator's
+ *          behavior is undefined and your program may crash.
+ *
+ * @param[in] m The Sparse Matrix reference, must @b not be @c NULL
+ * @return A new iterator
+ *
  */
 EAPI Eina_Iterator *eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m);
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /**
  * @}

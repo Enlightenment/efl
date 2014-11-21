@@ -47,6 +47,13 @@ struct _Evas_Engine_Info_Software_X11
 
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
+
+   /* TIZEN ONLY
+    * Disable sync draw done from application side when it is needed.
+    * Currently this is set true when a back-end engine uses DRI2.
+    * This depends on engine so we need to check it from evas engine.
+    */
+   Eina_Bool disable_sync_draw_done : 1;
 };
 
 #endif

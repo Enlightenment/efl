@@ -1,14 +1,14 @@
 /* EINA - EFL data type library
  * Copyright (C) 2007-2008 Carsten Haitzler, Vincent Torri, Jorge Luis Zapata Muga
  *
- * This library is free software; you can redistribute it and/or
+ * This library is a free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -20,13 +20,10 @@
 #define EINA_TYPES_H_
 
 /**
- * @addtogroup Eina_Core_Group Core
- *
- * @{
- */
-
-/**
  * @defgroup Eina_Types_Group Types
+ * @ingroup Eina_Core_Group
+ *
+ * @brief This provides fundamental types and macros, etc.
  *
  * @{
  */
@@ -55,7 +52,7 @@
 # else
 /**
  * @def EAPI
- * @brief Used to export functions(by changing visibility).
+ * @brief Definition used to export functions(by changing visibility).
  */
 #  define EAPI
 # endif
@@ -164,11 +161,10 @@
 #  define EINA_SENTINEL
 # endif
 
-#elif defined(_MSC_VER)
-# define EINA_UNUSED
+#elif defined(_WIN32)
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(...)
-# if _MSC_VER >= 1300
+# if defined(_MSC_VER) && _MSC_VER >= 1300
 #  define EINA_DEPRECATED __declspec(deprecated)
 # else
 #  define EINA_DEPRECATED
@@ -185,7 +181,6 @@
 # define EINA_SENTINEL
 
 #elif defined(__SUNPRO_C)
-# define EINA_UNUSED
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(...)
 # define EINA_DEPRECATED
@@ -209,91 +204,85 @@
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
 
-#else /* ! __GNUC__ && ! _MSC_VER && ! __SUNPRO_C */
-
-/**
- * @def EINA_UNUSED
- * Used to warn when an argument of the function is not used.
- */
-# define EINA_UNUSED
+#else /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
 /**
  * @def EINA_WARN_UNUSED_RESULT
- * Used to warn when the returned value of the function is not used.
+ * @brief Definition used to warn when the returned value of the function is not used.
  */
 # define EINA_WARN_UNUSED_RESULT
 
 /**
  * @def EINA_ARG_NONNULL
- * Used to warn when the specified arguments of the function are @c NULL.
- * 
- * @param ... Oridnals of the parameters to check for nullity (1..n)
- * 
- * @returns Nothing, but Doxygen will complain if it's not documented :-P
- * 
+ * @brief Definition used to warn when the specified arguments of the function are @c NULL.
  */
 # define EINA_ARG_NONNULL(...)
 
 /**
  * @def EINA_DEPRECATED
- * Used to warn when the function is considered as deprecated.
+ * @brief Definition used to warn when the function is considered as deprecated.
  */
 # define EINA_DEPRECATED
 /**
  * @def EINA_MALLOC
- * @brief EINA_MALLOC is used to tell the compiler that a function may be treated
- * as if any non-NULL pointer it returns cannot alias any other pointer valid when
- * the function returns and that the memory has undefined content.
+ * @brief Definition used to tell the compiler that a function may be treated
+ *        as if any non-NULL pointer it returns cannot alias any other pointer valid when
+ *        the function returns and that the memory has undefined content.
  */
 # define EINA_MALLOC
 /**
  * @def EINA_PURE
- * @brief EINA_PURE is used to tell the compiler this functions has no effects
- * except the return value and their return value depends only on the parameters
- * and/or global variables.
+ * @brief Definition used to tell the compiler that this function has no effect
+ *        except that the return value depends only on the parameters
+ *        and/or global variables.
  */
 # define EINA_PURE
 /**
  * @def EINA_PRINTF
- * @param fmt The format to be used.
- * @param arg The argument to be used.
+ * @brief Write formatted string to the standard output
+ * @param fmt The format to be used
+ * @param arg The argument to be used
  */
 # define EINA_PRINTF(fmt, arg)
 /**
  * @def EINA_SCANF
- * @param fmt The format to be used.
- * @param arg The argument to be used.
+ * @brief Read formatted string from stdin
+ * @param fmt The format to be used
+ * @param arg The argument to be used
  */
 # define EINA_SCANF(fmt, arg)
 /**
  * @def EINA_FORMAT
- * @param fmt The format to be used.
+ * @brief Assign printf-like or scanf-like characteristics
+ * @param fmt The format to be used
  */
 # define EINA_FORMAT(fmt)
 /**
  * @def EINA_CONST
- * @brief Attribute from gcc to prevent the function to read/modify any global memory.
+ * @brief Definition of the attribute from gcc to prevent the function to read/modify any global memory.
  */
 # define EINA_CONST
 /**
  * @def EINA_NOINSTRUMENT
- * @brief Attribute from gcc to disable instrumentation for a specific function.
+ * @brief Definition of the attribute from gcc to disable instrumentation for a specific function.
  */
 # define EINA_NOINSTRUMENT
 /**
  * @def EINA_UNLIKELY
- * @param exp The expression to be used.
+ * @brief Give branch prediction information
+ * @param exp The expression to be used
  */
 # define EINA_UNLIKELY(exp) exp
 /**
  * @def EINA_LIKELY
- * @param exp The expression to be used.
+ * @brief Give branch prediction information
+ * @param exp The expression to be used
  */
 # define EINA_LIKELY(exp)   exp
 /**
  * @def EINA_SENTINEL
- * @brief Attribute from gcc to prevent calls without the necessary NULL
- * sentinel in certain variadic functions
+ * @brief Definition of the attribute from gcc to prevent calls without the necessary @c NULL
+ *        sentinel in certain variadic functions.
  * @since 1.7.0
  */
 # define EINA_SENTINEL
@@ -301,23 +290,29 @@
 
 /**
  * @typedef Eina_Bool
- * Type to mimic a boolean.
+ * @brief The boolean type to mimic a boolean.
  *
- * @note it differs from stdbool.h as this is defined as an unsigned
- *       char to make it usable by bitfields (Eina_Bool name:1) and
- *       also take as few bytes as possible.
+ * @since_tizen 2.3
+ *
+ * @remarks It differs from stdbool.h as this is defined as an unsigned
+ *          char to make it usable by bitfields (Eina_Bool name:1) and
+ *          also take as few bytes as possible.
  */
 typedef unsigned char Eina_Bool;
 
 /**
  * @def EINA_FALSE
- * boolean value FALSE (numerical value 0)
+ * @brief Definition of the boolean value FALSE (numerical value 0).
+ *
+ * @since_tizen 2.3
  */
 #define EINA_FALSE ((Eina_Bool)0)
 
 /**
  * @def EINA_TRUE
- * boolean value TRUE (numerical value 1)
+ * @brief Definition of the boolean value TRUE (numerical value 1).
+ *
+ * @since_tizen 2.3
  */
 #define EINA_TRUE  ((Eina_Bool)1)
 
@@ -325,71 +320,71 @@ EAPI extern const unsigned int eina_prime_table[];
 
 /**
  * @typedef Eina_Compare_Cb
- * Function used in functions using sorting. It compares @p data1 and
- * @p data2. If @p data1 is 'less' than @p data2, -1 must be returned,
- * if it is 'greater', 1 must be returned, and if they are equal, 0
- * must be returned.
+ *
+ * @brief The integer type used in functions that use sorting. It compares @a data1 and
+ *        @a data2. If @a data1 is 'less' than @a data2, @c -1 must be returned,
+ *        if it is 'greater', @c 1 must be returned, and if they are equal, @c 0
+ *        must be returned.
+ *
+ * @since_tizen 2.3
  */
 typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
 
 /**
  * @def EINA_COMPARE_CB
- * Macro to cast to Eina_Compare_Cb.
+ * @brief Definition of the macro to cast to Eina_Compare_Cb.
+ *
+ * @since_tizen 2.3
  */
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
 /**
- * @typedef Eina_Random_Cb
- * Function used in shuffling functions. An integer betwen min and max
- * inclusive must be returned.
- *
- * @since 1.8
- */
-typedef int (*Eina_Random_Cb)(const int min, const int max);
-
-/**
- * @def EINA_RANDOM_CB
- * Macro to cast to Eina_Random_Cb.
- */
-#define EINA_RANDOM_CB(function) ((Eina_Random_Cb)function)
-
-/**
  * @typedef Eina_Each_Cb
- * A callback type used when iterating over a container.
+ * @brief The boolean type used when iterating over a container.
+ *
+ * @since_tizen 2.3
  */
 typedef Eina_Bool (*Eina_Each_Cb)(const void *container, void *data, void *fdata);
 
 /**
  * @def EINA_EACH_CB
- * Macro to cast to Eina_Each.
+ * @brief Definition of the macro to cast to Eina_Each.
+ *
+ * @since_tizen 2.3
  */
 #define EINA_EACH_CB(Function) ((Eina_Each_Cb)Function)
 
 /**
  * @typedef Eina_Free_Cb
- * A callback type used to free data when iterating over a container.
+ * @brief The boolean type used to free data when iterating over a container.
+ *
+ * @since_tizen 2.3
  */
 typedef void (*Eina_Free_Cb)(void *data);
 
 /**
  * @def EINA_FREE_CB
- * Macro to cast to Eina_Free_Cb.
+ * @brief Definition of the macro to cast to Eina_Free_Cb.
+ *
+ * @since_tizen 2.3
  */
 #define EINA_FREE_CB(Function) ((Eina_Free_Cb)Function)
 
 /**
  * @def EINA_C_ARRAY_LENGTH
- * Macro to return the array length of a standard c array.
+ * @brief Definition of the macro to return the array length of a standard C array.
+ *
+ * @code
  * For example:
  * int foo[] = { 0, 1, 2, 3 };
  * would return 4 and not 4 * sizeof(int).
+ * @endcode
+ *
  * @since 1.2.0
+ *
+ * @since_tizen 2.3
  */
 #define EINA_C_ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
-
-/**
- * @}
- */
 
 /**
  * @}

@@ -1,14 +1,14 @@
 /* EINA - EFL data type library
  * Copyright (C) 2007-2008 Jorge Luis Zapata Muga, Cedric Bail
  *
- * This library is free software; you can redistribute it and/or
+ * This library is a free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -39,189 +39,51 @@
 #define EINA_COLOR_RESET     "\033[0m"
 #define EINA_COLOR_HIGH      "\033[1m"
 
-
 /**
- * @page tutorial_log_page Log Tutorial
- *
- * @section tutorial_log_introduction Introduction
- *
- * The Eina Log module provides logging facilities for libraries and
- * applications. It provides colored logging, basic logging levels (error,
- * warning, debug, info, critical) and loggers - called logging domains -
- * which will be covered on next sections.
- *
- * @section tutorial_log_basic_usage Basic Usage
- *
- * Log messages can be displayed using the following macros:
- *
- * @li EINA_LOG_ERR(),
- * @li EINA_LOG_INFO(),
- * @li EINA_LOG_WARN(),
- * @li EINA_LOG_DBG().
- *
- * Here is an example:
- *
- * @include eina_log_02.c
- *
- * If you compiled Eina without debug mode, execution will yield only one log
- * message, which is "argument is negative".
- *
- * Here we introduce the concept of logging domains (or loggers), which might
- * already be familiar to readers. It is basically a way to separate a set of
- * log messages into a context (e.g. a module) and provide a way of controlling
- * this set as a whole.
- *
- * For example, suppose you have 3 different modules on your application and you
- * want to get logging only from one of them (e.g. create some sort of filter).
- * For achieving that, all you need to do is create a logging domain for each
- * module so that all logging inside a module can be considered as a whole.
- *
- * Logging domains are specified by a name, color applied to the name and the
- * level. The first two (name and color) are set through code, that is, inside
- * your application/module/library.
- *
- * The level is used for controlling which messages should appear. It
- * specifies the lowest level that should be displayed (e.g. a message
- * with level 11 being logged on a domain with level set to 10 would be
- * displayed, while a message with level 9 wouldn't).
- *
- * The domain level is set during runtime (in contrast with the name and
- * color) through the environment variable EINA_LOG_LEVELS. This variable
- * expects a list in the form domain_name1:level1,domain_name2:level2,... . For
- * example:
- *
- * @verbatim EINA_LOG_LEVELS=mymodule1:5,mymodule2:2,mymodule3:0 ./myapp@endverbatim
- *
- * This line would set mymodule1 level to 5, mymodule2 level to 2 and mymodule3
- * level to 0.
- *
- * There's also a global logger to which EINA_LOG_(ERR, DBG, INFO, CRIT, WARN)
- * macros do log on. It is a logger that is created internally by Eina Log with
- * an empty name and can be used for general logging (where logging domains do
- * not apply).
- *
- * Since this global logger doesn't have a name, you can't set its level through
- * EINA_LOG_LEVELS variable. Here we introduce a second environment variable
- * that is a bit more special: EINA_LOG_LEVEL.
- *
- * This variable specifies the level of the global logging domain and the level
- * of domains that haven't been set through EINA_LOG_LEVELS. Here's an example:
- *
- * @verbatim EINA_LOG_LEVEL=3 EINA_LOG_LEVELS=module1:10,module3:2 ./myapp@endverbatim
- *
- * Supposing you have modules named "module1", "module2" and "module3", this
- * line would result in module1 with level 10, module2 with level 3 and module3
- * with level 2. Note that module2's level wasn't specified, so it's level is
- * set to the global level. This way we can easily apply filters to multiple
- * domains with only one parameter (EINA_LOG_LEVEL=num).
- *
- * The global level (EINA_LOG_LEVEL) can also be set through code, using
- * eina_log_level_set() function.
- *
- * While developing your libraries or applications, you may notice that
- * EINA_LOG_DOM_(ERR, DBG, INFO, CRIT, WARN) macros also print out
- * messages from eina itself. Here we introduce another environment variable
- * that is a bit more special: EINA_LOG_LEVELS_GLOB.
- *
- * This variable allows you to disable the logging of any/all code in eina itself.
- * This is useful when developing your libraries or applications so that you can
- * see your own domain's messages easier without having to sift through a lot of
- * internal eina debug messages. Here's an example:
- *
- * @verbatim EINA_LOG_LEVEL=3 EINA_LOG_LEVELS_GLOB=eina_*:0 ./myapp@endverbatim
- *
- * This will disable eina_log output from all internal eina code thus allowing
- * you to see your own domain messages easier.
- *
- * @section tutorial_log_advanced_display Advanced usage of print callbacks
- *
- * The log module allows the user to change the way
- * eina_log_print() displays the messages. It suffices to pass to
- * eina_log_print_cb_set() the function used to display the
- * message. That  function must be of type #Eina_Log_Print_Cb. As a
- * custom data can be passed to that callback, powerful display
- * messages can be displayed.
- *
- * It is suggested to not use __FILE__, __FUNCTION__ or __LINE__ when
- * writing that callback, but when defining macros (like
- * EINA_LOG_ERR() and other macros).
- *
- * Here is an example of custom callback, whose behavior can be
- * changed at runtime:
- *
- * @include eina_log_03.c
- * @example eina_log_02.c
- * @example eina_log_03.c
- */
-
-/**
- * @addtogroup Eina_Log_Group Log
- *
  * @brief Full-featured logging system.
  *
  * Eina provides eina_log_print(), a standard function to manage all
- * logging messages. This function may be called directly or using the
- * helper macros such as EINA_LOG_DBG(), EINA_LOG_ERR() or those that
- * take a specific domain as argument EINA_LOG_DOM_DBG(),
- * EINA_LOG_DOM_ERR().  Internally, eina_log_print() will call the
+ * logging messages. This function may be called directly or by using the
+ * helper macros such as EINA_LOG_DBG(), EINA_LOG_ERR(), or those that
+ * take a specific domain as an argument such as EINA_LOG_DOM_DBG(),
+ * EINA_LOG_DOM_ERR(). Internally, eina_log_print() calls the
  * function defined with eina_log_print_cb_set(), that defaults to
  * eina_log_print_cb_stderr(), but may be changed to do whatever you
  * need, such as networking or syslog logging.
  *
  * The logging system is thread safe once initialized with
  * eina_log_threads_enable(). The thread that calls this function
- * first is considered "main thread" and other threads will have their
- * thread id (pthread_self()) printed in the log message so it is easy
+ * first is considered "main thread" and other threads have their
+ * thread ID (pthread_self()) printed in the log message so it is easy
  * to detect from where it is coming.
  *
- * Log domains is the Eina way to differentiate messages. There might
+ * Log domains is the Eina way to differentiate between messages. There might
  * be different domains to represent different modules, different
- * feature-set, different categories and so on. Filtering can be
+ * feature-sets, different categories, and so on. Filtering can be
  * applied to domain names by means of @c EINA_LOG_LEVELS environment
  * variable or eina_log_domain_level_set().
  *
  * The different logging levels serve to customize the amount of
- * debugging one want to take and may be used to automatically call
+ * debugging one might want to take and may be used to automatically call
  * abort() once some given level message is printed. This is
- * controlled by environment variable @c EINA_LOG_ABORT and the level
- * to be considered critical with @c EINA_LOG_ABORT_LEVEL. These can
- * be changed with eina_log_abort_on_critical_set() and
+ * controlled by an environment variable @c EINA_LOG_ABORT and the level
+ * to be considered critical, which is @c EINA_LOG_ABORT_LEVEL. These can
+ * be changed by eina_log_abort_on_critical_set() and
  * eina_log_abort_on_critical_level_set().
  *
  * The default maximum level to print is defined by environment
  * variable @c EINA_LOG_LEVEL, but may be set per-domain with @c
- * EINA_LOG_LEVELS. It will default to #EINA_LOG_ERR. This can be
- * changed with eina_log_level_set().
+ * EINA_LOG_LEVELS. It defaults to #EINA_LOG_ERR. This can be
+ * changed by eina_log_level_set().
  *
  * To use the log system Eina must be initialized with eina_init() and
- * later shut down with eina_shutdown(). Here is a straightforward
- * example:
- *
- * @include eina_log_01.c
- *
- * Compile this code with the following command:
- *
- * @verbatim gcc -Wall -o eina_log_01 eina_log_01.c `pkg-config --cflags --libs eina`@endverbatim
- *
- * Now execute the program with:
- *
- * @verbatim EINA_LOG_LEVEL=2 ./eina_log_01@endverbatim
- *
- * You should see a message displayed in the terminal.
- *
- * For more information, you can look at the @ref tutorial_log_page.
- *
- * @example eina_log_01.c
+ * later shut down with eina_shutdown().
  */
 
 /**
- * @addtogroup Eina_Tools_Group Tools
- *
- * @{
- */
-
-/**
+ * @internal
  * @defgroup Eina_Log_Group Log
+ * @ingroup Eina_Tools_Group
  *
  * @{
  */
@@ -236,15 +98,15 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
 /**
  * @def EINA_LOG_DOMAIN_DEFAULT
- * This macro defines the domain to use with the macros EINA_LOG_DOM_DBG(),
- * EINA_LOG_DOM_INFO(), EINA_LOG_DOM_WARN(), EINA_LOG_DOM_ERR() and
- * EINA_LOG_DOM_CRIT().
+ * @brief Definition of the macro that defines the domain to use with the macros EINA_LOG_DOM_DBG(),
+ *        EINA_LOG_DOM_INFO(), EINA_LOG_DOM_WARN(), EINA_LOG_DOM_ERR(), and
+ *        EINA_LOG_DOM_CRIT().
  *
- * If not defined prior to the inclusion of this header, then it
- * defaults to #EINA_LOG_DOMAIN_GLOBAL.
+ * @remarks If not defined prior to the inclusion of this header, then it
+ *          defaults to #EINA_LOG_DOMAIN_GLOBAL.
  *
- * @note One may like to redefine this in its code to avoid typing too
- *       much. In this case the recommended way is:
+ * @remarks  One may like to redefine this in its code to avoid typing too
+ *           much. In this case, the recommended way is:
  *
  * @code
  * #include <Eina.h>
@@ -261,10 +123,10 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * }
  * @endcode
  *
- * @warning If one defines the domain prior to inclusion of this
+ * @remarks If one defines the domain prior to inclusion of this
  *          header, the defined log domain symbol must be defined
  *          prior as well, otherwise the inlined functions defined by
- *          Eina will fail to find the symbol, causing build failure.
+ *          Eina fail to find the symbol, causing a build failure.
  *
  * @code
  * #define EINA_LOG_DOMAIN_DEFAULT _log_dom
@@ -287,17 +149,17 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
 /**
  * @def EINA_LOG(DOM, LEVEL, fmt, ...)
- * Logs a message on the specified domain, level and format.
+ * @brief Definition that logs a message on the specified domain, level, and format.
  *
- * @note if @c EINA_LOG_LEVEL_MAXIMUM is defined, then messages larger
- *       than this value will be ignored regardless of current domain
- *       level, the eina_log_print() is not even called! Most
- *       compilers will just detect the two integers make the branch
- *       impossible and remove the branch and function call all
- *       together. Take this as optimization tip and possible remove
- *       debug messages from binaries to be deployed, saving on hot
- *       paths. Never define @c EINA_LOG_LEVEL_MAXIMUM on public
- *       header files.
+ * @remarks If @c EINA_LOG_LEVEL_MAXIMUM is defined, then messages larger
+ *          than this value are ignored regardless of the current domain
+ *          level, eina_log_print() is not even called. Most
+ *          compilers just detect the two integers that make the branch
+ *          impossible and remove the branch and function call all
+ *          together. Take this as an optimization tip and possibly remove
+ *          debug messages from binaries to be deployed, saving on hot
+ *          paths. Never define @c EINA_LOG_LEVEL_MAXIMUM on public
+ *          header files.
  */
 #ifdef EINA_ENABLE_LOG
 # ifdef EINA_LOG_LEVEL_MAXIMUM
@@ -324,43 +186,43 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
 /**
  * @def EINA_LOG_DOM_CRIT(DOM, fmt, ...)
- * Logs a message with level CRITICAL on the specified domain and format.
+ * @brief Definition that logs a message with level as CRITICAL on the specified domain and format.
  */
 #define EINA_LOG_DOM_CRIT(DOM, fmt, ...) \
   EINA_LOG(DOM, EINA_LOG_LEVEL_CRITICAL, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_ERR(DOM, fmt, ...)
- * Logs a message with level ERROR on the specified domain and format.
+ * @brief Definition that logs a message with level as ERROR on the specified domain and format.
  */
 #define EINA_LOG_DOM_ERR(DOM, fmt, ...) \
   EINA_LOG(DOM, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_INFO(DOM, fmt, ...)
- * Logs a message with level INFO on the specified domain and format.
+ * @brief Definition that logs a message with level as INFO on the specified domain and format.
  */
 #define EINA_LOG_DOM_INFO(DOM, fmt, ...) \
   EINA_LOG(DOM, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_DBG(DOM, fmt, ...)
- * Logs a message with level DEBUG on the specified domain and format.
+ * @brief Definition that logs a message with level as DEBUG on the specified domain and format.
  */
 #define EINA_LOG_DOM_DBG(DOM, fmt, ...) \
   EINA_LOG(DOM, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_WARN(DOM, fmt, ...)
- * Logs a message with level WARN on the specified domain and format.
+ * @brief Definition that logs a message with level as WARN on the specified domain and format.
  */
 #define EINA_LOG_DOM_WARN(DOM, fmt, ...) \
   EINA_LOG(DOM, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_CRIT(fmt, ...)
- * Logs a message with level CRITICAL on the default domain with the specified
- * format.
+ * @brief Definition that logs a message with level as CRITICAL on the default domain with the specified
+ *        format.
  */
 #define EINA_LOG_CRIT(fmt, ...)     \
   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, \
@@ -370,87 +232,79 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
 /**
  * @def EINA_LOG_ERR(fmt, ...)
- * Logs a message with level ERROR on the default domain with the specified
- * format.
+ * @brief Definition that logs a message with level as ERROR on the default domain with the specified
+ *        format.
  */
 #define EINA_LOG_ERR(fmt, ...) \
   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_INFO(fmt, ...)
- * Logs a message with level INFO on the default domain with the specified
- * format.
+ * @brief Definition that logs a message with level as INFO on the default domain with the specified
+ *        format.
  */
 #define EINA_LOG_INFO(fmt, ...) \
   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_WARN(fmt, ...)
- * Logs a message with level WARN on the default domain with the specified
- * format.
+ * @brief Definition that logs a message with level as WARN on the default domain with the specified
+ *        format.
  */
 #define EINA_LOG_WARN(fmt, ...) \
   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DBG(fmt, ...)
- * Logs a message with level DEBUG on the default domain with the specified
- * format.
+ * @brief Definition that logs a message with level as DEBUG on the default domain with the specified
+ *        format.
  */
 #define EINA_LOG_DBG(fmt, ...) \
   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
 
 /**
  * @typedef Eina_Log_Domain
- * The domain used for logging.
+ * @brief The structure type containing the domain used for logging.
  */
 typedef struct _Eina_Log_Domain Eina_Log_Domain;
 
 /**
  * @struct _Eina_Log_Domain
- * The domain used for logging.
+ * @brief The structure type containing the domain used for logging.
  */
 struct _Eina_Log_Domain
 {
-   int         level; /**< Max level to log */
+   int         level; /**< Maximum level to log */
    const char *domain_str; /**< Formatted string with color to print */
    const char *name; /**< Domain name */
    size_t      namelen; /**< strlen(name) */
 
    /* Private */
    Eina_Bool   deleted : 1; /**< Flags deletion of domain, a free slot */
-
-   /* Add new members here. */
-   const char *color; /**< Color to use when printing in this domain */
 };
 
 /**
- * Enable logging module to handle threads.
+ * @brief Enables logging module to handle threads.
  *
- * There is no disable option on purpose, if it is enabled, there is
- * no way back until you call the last eina_shutdown().
+ * @remarks There is no disable option on purpose, if it is enabled, there is
+ *          no way back until you call the last eina_shutdown().
  *
- * There is no function to retrieve if threads are enabled as one is
- * not supposed to know this from outside.
+ * @remarks There is no function to retrieve if threads are enabled as one is
+ *          not supposed to know this from outside.
  *
- * After this call is executed at least once, if Eina was compiled
- * with threads support then logging will lock around debug messages
- * and threads that are not the main thread will have its identifier
- * printed.
+ * @remarks After this call is executed at least once, if Eina is compiled
+ *          with threads support then logging locks around debug messages
+ *          and threads that are not the main thread is going to have its identifier
+ *          printed.
  *
- * The main thread is considered the thread where the first
- * eina_init() was called.
+ *          The main thread is considered the thread where the first
+ *          eina_init() was called.
  */
 EAPI void eina_log_threads_enable(void);
 
-
-/**
- * @typedef Eina_Log_Level
- * List of available logging levels.
- */
 /**
  * @enum _Eina_Log_Level
- * List of available logging levels.
+ * @brief Enumeration for the list of available logging levels.
  */
 typedef enum _Eina_Log_Level
 {
@@ -465,165 +319,162 @@ typedef enum _Eina_Log_Level
 
 /**
  * @typedef Eina_Log_Print_Cb
- * Type for print callbacks.
+ * Called to print callbacks.
  */
 typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d,
                                   Eina_Log_Level level,
                                   const char *file, const char *fnc, int line,
                                   const char *fmt, void *data, va_list args);
 
-/**
- * @typedef Eina_Log_State
- * List of available log states.
- */
-/**
- * @enum _Eina_Log_State
- * List of available log states.
- */
-typedef enum _Eina_Log_State
-{
-  EINA_LOG_STATE_START,
-  EINA_LOG_STATE_STOP
-} Eina_Log_State;
-
 /*
  * Customization
  */
 
 /**
- * Sets logging method to use.
+ * @brief Sets the logging function to use.
  *
- * @param cb The callback to call when printing a log.
- * @param data The data to pass to the callback.
+ * @since_tizen 2.3
  *
- * By default, eina_log_print_cb_stderr() is used.
+ * @remarks By default, eina_log_print_cb_stderr() is used.
+ * @remarks It is safe to call from any thread.
+ * @remarks The given function @a cb is called protected by mutex.
+ *          This means you're safe from other calls but you should never
+ *          call eina_log_print(), directly or indirectly.
  *
- * @note MT: safe to call from any thread.
+ * @param[in] cb The callback to call when printing a log
+ * @param[in] data The data to pass to the callback
  *
- * @note MT: given function @a cb will be called protected by mutex.
- *       This means you're safe from other calls but you should never
- *       call eina_log_print(), directly or indirectly.
  */
 EAPI void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
 
 
 /**
- * @brief Set the default log level.
+ * @brief Sets the default log level.
  *
- * @param level The log level.
+ * @details This function sets the log level @a level. It is used in
+ *          eina_log_print().
  *
- * This function sets the log level @p level. It is used in
- * eina_log_print().
+ * @since_tizen 2.3
  *
- * @note this is initially set to envvar EINA_LOG_LEVEL by eina_init().
+ * @remarks This is initially set to envvar EINA_LOG_LEVEL by eina_init().
+ *
+ * @param[in] level The log level
  *
  * @see eina_log_level_get()
  */
 EAPI void eina_log_level_set(int level);
 
 /**
- * @brief Get the default log level.
+ * @brief Gets the default log level.
  *
- * @return the log level that limits eina_log_print().
+ * @since_tizen 2.3
+ *
+ * @return The log level that limits eina_log_print()
  *
  * @see eina_log_level_set()
  */
 EAPI int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 
-/**
- * @brief Determine if a given @p level should be logged.
- *
- * @return #EINA_TRUE if the @p level should be logged, else #EINA_FALSE.
- *
- * @see eina_log_level_set()
- */
 static inline Eina_Bool eina_log_level_check(int level);
 
 /**
- * @brief Checks if current thread is the main thread.
+ * @brief Checks whether the current thread is the main thread.
  *
- * If there is no thread support (compiled with --disable-pthreads) or
- * threads were not enabled, then #EINA_TRUE is returned. The only case where 
- * #EINA_FALSE is returned is when threads were successfully enabled but the 
- * current thread is not the one that called eina_log_threads_init() (the 
- * manin thread).
- * 
- * @return #EINA_TRUE if the current thread is the one that called 
- * eina_log_threads_init(), otherwise #EINA_FALSE. 
+ * @since_tizen 2.3
+ *
+ * @return @c EINA_TRUE if threads are enabled and the current thread
+ *         is the one that called eina_log_threads_init() \n
+ *         If there is no thread support (compiled with --disable-pthreads) or
+ *         they are not enabled, then @c EINA_TRUE is also
+ *         returned \n
+ *         The only case where @c EINA_FALSE is returned is
+ *         when threads are successfully enabled but the current
+ *         thread is not the main (one that called
+ *         eina_log_threads_init()).
  */
 EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
 
 
 /**
- * @brief Enable or disable colored text in the logs.
+ * @brief Sets whether color logging should be disabled.
  *
- * @param disabled If #EINA_TRUE, color logging should be disabled.
+ * @since_tizen 2.3
  *
- * @note this is initially set to envvar EINA_LOG_COLOR_DISABLE by eina_init().
+ * @remarks This is initially set to envvar EINA_LOG_COLOR_DISABLE by eina_init().
+ *
+ * @param[in] disabled If @c EINA_TRUE color logging should be disabled
  *
  * @see eina_log_color_disable_get()
  */
 EAPI void               eina_log_color_disable_set(Eina_Bool disabled);
 
 /**
- * @brief Determine if color logging is enabled or disabled.
+ * @brief Gets whether color logging should be disabled.
  *
- * @return If #EINA_TRUE, color logging is disabled.
+ * @since_tizen 2.3
+ *
+ * @return @c EINA_TRUE if color logging should be disabled
  *
  * @see eina_log_color_disable_set()
  */
 EAPI Eina_Bool          eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set if originating file name logging should be disabled.
+ * @brief Sets whether originating file name logging should be disabled.
  *
- * @param disabled if #EINA_TRUE, file name logging should be disabled.
+ * @since_tizen 2.3
  *
- * @note this is initially set to envvar EINA_LOG_FILE_DISABLE by eina_init().
+ * @remarks This is initially set to envvar EINA_LOG_FILE_DISABLE by eina_init().
+ *
+ * @param[in] disabled If @c EINA_TRUE file name logging should be disabled
  *
  * @see eina_log_file_disable_get()
  */
 EAPI void               eina_log_file_disable_set(Eina_Bool disabled);
 
 /**
- * @brief Get if originating file name logging should be disabled.
+ * @brief Gets whether originating file name logging should be disabled.
  *
- * @return if #EINA_TRUE, file name logging should be disabled.
+ * @since_tizen 2.3
+ *
+ * @return @c EINA_TRUE if file name logging should be disabled
  *
  * @see eina_log_file_disable_set()
  */
 EAPI Eina_Bool          eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set if originating function name logging should be disabled.
+ * @brief Sets whether originating function name logging should be disabled.
  *
- * @param disabled if #EINA_TRUE, function name logging should be disabled.
+ * @since_tizen 2.3
  *
- * @note this is initially set to envvar EINA_LOG_FUNCTION_DISABLE by
- *       eina_init().
+ * @remarks This is initially set to envvar EINA_LOG_FUNCTION_DISABLE by
+ *          eina_init().
+ *
+ * @param[in] disabled If @c EINA_TRUE function name logging should be disabled
  *
  * @see eina_log_function_disable_get()
  */
 EAPI void               eina_log_function_disable_set(Eina_Bool disabled);
 
 /**
- * @brief Get if originating function name logging should be disabled.
+ * @brief Gets whether originating function name logging should be disabled.
  *
- * @return if #EINA_TRUE, function name logging should be disabled.
+ * @return @c EINA_TRUE if function name logging should be disabled
  *
  * @see eina_log_function_disable_set()
  */
 EAPI Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set if critical messages should abort the program.
+ * @brief Sets whether critical messages should abort the program.
  *
- * @param abort_on_critical if #EINA_TRUE, messages with level equal
- *        or smaller than eina_log_abort_on_critical_level_get() will
- *        abort the program.
+ * @remarks This is initially set to envvar EINA_LOG_ABORT by
+ *          eina_init().
  *
- * @note this is initially set to envvar EINA_LOG_ABORT by
- *       eina_init().
+ * @param[in] abort_on_critical If @c EINA_TRUE, messages with level equal to
+ *                          or smaller than eina_log_abort_on_critical_level_get()
+ *                          abort the program.
  *
  * @see eina_log_abort_on_critical_get()
  * @see eina_log_abort_on_critical_level_set()
@@ -631,11 +482,13 @@ EAPI Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RES
 EAPI void               eina_log_abort_on_critical_set(Eina_Bool abort_on_critical);
 
 /**
- * @brief Get if critical messages should abort the program.
+ * @brief Gets whether critical messages should abort the program.
  *
- * @return if #EINA_TRUE, any messages with level equal or smaller
- *         than eina_log_abort_on_critical_level_get() will abort the
- *         program.
+ * @since_tizen 2.3
+ *
+ * @return @c EINA_TRUE if messages with level equal to or smaller
+ *         than eina_log_abort_on_critical_level_get() abort the
+ *         program
  *
  * @see eina_log_abort_on_critical_set()
  * @see eina_log_abort_on_critical_level_set()
@@ -643,14 +496,15 @@ EAPI void               eina_log_abort_on_critical_set(Eina_Bool abort_on_critic
 EAPI Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set level that triggers abort if abort-on-critical is set.
+ * @brief Sets the level that triggers abort if abort-on-critical is set.
  *
- * @param critical_level levels equal or smaller than the given value
- *        will trigger program abortion if
- *        eina_log_abort_on_critical_get() returns #EINA_TRUE.
+ * @since_tizen 2.3
  *
- * @note this is initially set to envvar EINA_LOG_ABORT_LEVEL by
- *       eina_init().
+ * @remarks This is initially set to envvar EINA_LOG_ABORT_LEVEL by
+ *          eina_init().
+ *
+ * @param[in] critical_level If @c EINA_TRUE, levels equal to or smaller than
+ *                       eina_log_abort_on_critical_get() triggers program abortion
  *
  * @see eina_log_abort_on_critical_level_get()
  * @see eina_log_abort_on_critical_get()
@@ -658,11 +512,12 @@ EAPI Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RE
 EAPI void               eina_log_abort_on_critical_level_set(int critical_level);
 
 /**
- * @brief Get level that triggers abort if abort-on-critical is set.
+ * @brief Gets the level that triggers abort if abort-on-critical is set.
  *
- * @return critical level equal or smaller than value will trigger
- *        program abortion if eina_log_abort_on_critical_get()
- *        returns #EINA_TRUE.
+ * @since_tizen 2.3
+ *
+ * @return @c EINA_TRUE if the critical level equal to or smaller than
+ *         eina_log_abort_on_critical_get() triggers program abortion
  *
  * @see eina_log_abort_on_critical_level_set()
  * @see eina_log_abort_on_critical_get()
@@ -671,32 +526,39 @@ EAPI int                eina_log_abort_on_critical_level_get(void) EINA_WARN_UNU
 
 
 /**
- * Set the domain level given its name.
+ * @brief Sets the domain level given that its name is provided.
  *
- * This call has the same effect as setting
- * EINA_LOG_LEVELS=&lt;@p domain_name&gt;:&lt;@p level&gt;
+ * @since_tizen 2.3
  *
- * @param domain_name domain name to change the level. It may be of a
- *        still not registered domain. If the domain is not registered
- *        yet, it will be saved as a pending set and applied upon
- *        registration.
- * @param level level to use to limit eina_log_print() for given domain.
+ * @remarks This call has the same effect as setting
+ *          EINA_LOG_LEVELS=&lt;@a domain_name&gt;:&lt;@a level&gt;
+ *
+ * @param[in] domain_name The domain name to change the level \n
+ *                    It may be of a still not registered domain \n
+ *                    If the domain is not registered
+ *                    yet, it is saved as a pending set and applied upon
+ *                    registration.
+ * @param[in] level The level to use to limit eina_log_print() for the given domain
  */
 EAPI void               eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
 
 /**
- * Get the domain level given its name.
+ * @brief Gets the domain level given that its name is provided.
  *
- * @param domain_name domain name to retrieve the level. It may be of
- *        a still not registered domain. If the domain is not
- *        registered yet, but there is a pending value, either from
- *        eina_log_domain_level_set(),EINA_LOG_LEVELS environment
- *        variable or from EINA_LOG_LEVELS_GLOB, these are
- *        returned. If nothing else was found, then the global/default
- *        level (eina_log_level_get()) is returned.
+ * @since_tizen 2.3
  *
- * @return level to use to limit eina_log_print() for given
- *         domain. On error (@p domain_name == NULL),
+ * @param[in] domain_name The domain name to retrieve the level \n
+ *                    It may be of a still not registered domain \n
+ *                    If the domain is not registered yet, but there is a pending value either from
+ *                    eina_log_domain_level_set(), EINA_LOG_LEVELS environment
+ *                    variable, or EINA_LOG_LEVELS_GLOB, these are
+ *                    returned \n
+ *                    If nothing else is found, then the global/default
+ *                    level (eina_log_level_get()) is returned.
+ *
+ * @return The level to use to limit eina_log_print() for the given
+ *         domain \n
+ *         On error (@a domain_name == NULL),
  *         EINA_LOG_LEVEL_UNKNOWN is returned.
  *
  * @see eina_log_domain_level_set()
@@ -705,29 +567,19 @@ EAPI void               eina_log_domain_level_set(const char *domain_name, int l
 EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Get the domain level given its identifier.
+ * @brief Gets the domain level given that its identifier is provided.
  *
- * @param domain identifier, so it must be previously registered with
- *        eina_log_domain_register(). It's a much faster version of
- *        eina_log_domain_level_get(), but relies on domain being
- *        present.
+ * @since_tizen 2.3
  *
- * @return #EINA_TRUE if level should be printed, #EINA_FALSE if not.
- *         (domain's level is greater or equal @a level).
+ * @param[in] domain The domain identifier, so it must be previously registered with
+ *               eina_log_domain_register() \n
+ *               It's a much faster version of eina_log_domain_level_get(),
+ *               but relies on the domain being present.
+ *
+ * @return @c EINA_TRUE if the level should be printed, otherwise @c EINA_FALSE if not
+ *         (domain's level is greater than or equal to @a level)
  */
 EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
-
-/**
- * Set the domain level given its identifier.
- *
- * @param domain identifier, so it must be previously registered with
- *        eina_log_domain_register(). It's a much faster version of
- *        eina_log_domain_level_get(), but relies on domain being
- *        present.
- * @param level level to use to limit eina_log_print() for given domain.
- * @since 1.10
- */
-EAPI void                eina_log_domain_registered_level_set(int domain, int level);
 
 static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
 
@@ -736,23 +588,30 @@ static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
  */
 
 /**
- * @param name Domain name
- * @param color Color of the domain name
+ * @brief Logs domains
  *
- * @return Domain index that will be used as the DOMAIN parameter on log
- *         macros. A negative return value means an log occurred.
+ * @since_tizen 2.3
  *
- * @note MT: safe to call from any thread.
+ * @remarks It is safe to call from any thread.
+ *
+ * @param[in] name The domain name
+ * @param[in] color The color of the domain name
+ *
+ * @return The domain index that is used as the DOMAIN parameter on log
+ *         macros \n
+ *         A negative return value means a log occurred.
  */
 EAPI int  eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
 
 /**
- * Forget about a logging domain registered by eina_log_domain_register()
+ * @brief Forgets about a logging domain registered by eina_log_domain_register().
  *
- * @param domain domain identifier as reported by eina_log_domain_register(),
- *        must be >= 0.
+ * @since_tizen 2.3
  *
- * @note MT: safe to call from any thread.
+ * @remarks It is safe to call from any thread.
+ *
+ * @param[in] domain The domain identifier as reported by eina_log_domain_register(),
+ *               must be >= 0
  */
 EAPI void eina_log_domain_unregister(int domain);
 
@@ -761,27 +620,29 @@ EAPI void eina_log_domain_unregister(int domain);
  */
 
 /**
- * Print out log message using given domain and level.
+ * @brief Prints out log messages using the given domain and level.
  *
- * @note Usually you'll not use this function directly but the helper
- *       macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT() and
- *       so on. See eina_log.h
+ * @details This function may be called from different threads if
+ *          eina_log_threads_enable() is called before.
  *
- * @param domain logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
- *        you registered none. It is recommended that modules and
- *        applications have their own logging domain.
- * @param level message level, those with level greater than user
- *        specified value (eina_log_level_set() or environment
- *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
- * @param file filename that originated the call, must @b not be @c NULL.
- * @param function function that originated the call, must @b not be @c NULL.
- * @param line originating line in @a file.
- * @param fmt printf-like format to use. Should not provide trailing
- *        '\n' as it is automatically included.
- * @param ... variadic args.
+ * @since_tizen 2.3
  *
- * @note MT: this function may be called from different threads if
- *       eina_log_threads_enable() was called before.
+ * @remarks Usually you do not use this function directly but the helper
+ *          macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT(), and
+ *         so on. See eina_log.h
+ *
+ * @param[in] domain The logging domain to use, otherwise @c EINA_LOG_DOMAIN_GLOBAL if
+ *               you registered none \n
+ *               It is recommended that modules and
+ *               applications have their own logging domain.
+ * @param[in] level  The message level, those with levels greater than the user
+ *               specified value (eina_log_level_set() or environment
+ *               variables like EINA_LOG_LEVEL, EINA_LOG_LEVELS) are ignored
+ * @param[in] file   The filename that originated the call, must @b not be @c NULL
+ * @param[in] function The function that originated the call, must @b not be @c NULL
+ * @param[in] line 	 The originating line in @a file
+ * @param[in] fmt 	 The printf-like format to use, should not provide trailing
+ *               '\n' as it is automatically included
  */
 EAPI void eina_log_print(int            domain,
                          Eina_Log_Level level,
@@ -792,27 +653,30 @@ EAPI void eina_log_print(int            domain,
                          ...) EINA_ARG_NONNULL(3, 4, 6) EINA_PRINTF(6, 7) EINA_NOINSTRUMENT;
 
 /**
- * Print out log message using given domain and level.
+ * @brief Prints out log messages using the given domain and level.
  *
- * @note Usually you'll not use this function directly but the helper
- *       macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT() and
- *       so on. See eina_log.h
+ * @details This function may be called from different threads if
+ *          eina_log_threads_enable() is called before.
  *
- * @param domain logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
- *        you registered none. It is recommended that modules and
- *        applications have their own logging domain.
- * @param level message level, those with level greater than user
- *        specified value (eina_log_level_set() or environment
- *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
- * @param file filename that originated the call, must @b not be @c NULL.
- * @param fnc function that originated the call, must @b not be @c NULL.
- * @param line originating line in @a file.
- * @param fmt printf-like format to use. Should not provide trailing
- *        '\n' as it is automatically included.
- * @param args the arguments needed by the format.
+ * @since_tizen 2.3
  *
- * @note MT: this function may be called from different threads if
- *       eina_log_threads_enable() was called before.
+ * @remarks Usually you do not use this function directly, but the helper
+ *          macros like EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT(), and
+ *          so on. See eina_log.h
+ *
+ * @param[in] domain The logging domain to use, otherwise @c EINA_LOG_DOMAIN_GLOBAL if
+ *               you registered none \n
+ *               It is recommended that modules and
+ *               applications have their own logging domain.
+ * @param[in] level  The message level, those with levels greater than the user
+ *               specified value (eina_log_level_set() or environment
+ *               variables like EINA_LOG_LEVEL, EINA_LOG_LEVELS) are ignored
+ * @param[in] file 	 The filename that originated the call, must @b not be @c NULL
+ * @param[in] fnc 	 The function that originated the call, must @b not be @c NULL
+ * @param[in] line 	 The originating line in @a file.
+ * @param[in] fmt 	 The printf-like format to use, should not provide trailing
+ *               '\n' as it is automatically included
+ * @param[in] args 	 The arguments needed by the format.
  *
  * @see eina_log_print()
  */
@@ -829,30 +693,33 @@ EAPI void eina_log_vprint(int            domain,
  */
 
 /**
- * @brief Alternative logging method, this will output to standard output stream.
+ * @brief Alternative logging function, this outputs to the standard output stream.
  *
- * @param d The domain.
- * @param level The level.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The ouptut format to use.
- * @param data Not used.
- * @param args The arguments needed by the format.
+ * @details This function colorizes the output based on the domain provided color and
+ *          the message logging level. To disable color, set the environment variable
+ *          EINA_LOG_COLOR_DISABLE=1. Similarly, to disable file and line
+ *          information, set EINA_LOG_FILE_DISABLE=1 or
+ *          EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in the output. It is
+ *          not acceptable to have both EINA_LOG_FILE_DISABLE and
+ *          EINA_LOG_FUNCTION_DISABLE at the same time, in this case just
+ *          EINA_LOG_FUNCTION_DISABLE is considered and file information
+ *          is printed anyways.
  *
- * This method will colorize output based on domain provided color and
- * message logging level. To disable color, set environment variable
- * EINA_LOG_COLOR_DISABLE=1. Similarly, to disable file and line
- * information, set EINA_LOG_FILE_DISABLE=1 or
- * EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in output. It is
- * not acceptable to have both EINA_LOG_FILE_DISABLE and
- * EINA_LOG_FUNCTION_DISABLE at the same time, in this case just
- * EINA_LOG_FUNCTION_DISABLE will be considered and file information
- * will be printed anyways.
+ * @since_tizen 2.3
  *
- * @note MT: if threads are enabled, this function is called within locks.
- * @note MT: Threads different from main thread will have thread id
- *       appended to domain name.
+ * @remarks If threads are enabled, this function is called within locks.
+ * @remarks Threads different from the main thread have a thread ID
+ *          appended to the domain name.
+ *
+ * @param[in] d The domain
+ * @param[in] level The level
+ * @param[in] file The file that is logged
+ * @param[in] fnc The function that is logged
+ * @param[in] line The line that is logged
+ * @param[in] fmt The ouptut format to use
+ * @param[in] data Not used
+ * @param[in] args The arguments needed by the format
+ *
  */
 EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
                                    Eina_Log_Level         level,
@@ -864,38 +731,41 @@ EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
                                    va_list                args);
 
 /**
- * @brief Default logging method, this will output to standard error stream.
+ * @brief Default logging function, this outputs to the standard error stream.
  *
- * @param d The domain.
- * @param level The level.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The ouptut format to use.
- * @param data Not used.
- * @param args The arguments needed by the format.
+ * @details This function colorizes the output based on the domain provided color and
+ *          the message logging level.
  *
- * This method will colorize output based on domain provided color and
- * message logging level.
+ *          To disable color, set the environment variable
+ *          EINA_LOG_COLOR_DISABLE=1. To enable color, even if directing to a
+ *          file or when using a non-supported color terminal, use
+ *          EINA_LOG_COLOR_DISABLE=0. If EINA_LOG_COLOR_DISABLE is unset (or
+ *          -1), then Eina disables color if terminal ($TERM) is
+ *          unsupported or redirecting to a file.
  *
- * To disable color, set environment variable
- * EINA_LOG_COLOR_DISABLE=1. To enable color, even if directing to a
- * file or when using a non-supported color terminal, use
- * EINA_LOG_COLOR_DISABLE=0. If EINA_LOG_COLOR_DISABLE is unset (or
- * -1), then Eina will disable color if terminal ($TERM) is
- * unsupported or if redirecting to a file.
-
-   . Similarly, to disable file and line
- * information, set EINA_LOG_FILE_DISABLE=1 or
- * EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in output. It is
- * not acceptable to have both EINA_LOG_FILE_DISABLE and
- * EINA_LOG_FUNCTION_DISABLE at the same time, in this case just
- * EINA_LOG_FUNCTION_DISABLE will be considered and file information
- * will be printed anyways.
+ *          Similarly, to disable file and line
+ *          information, set EINA_LOG_FILE_DISABLE=1 or
+ *          EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in the output. It is
+ *          not acceptable to have both EINA_LOG_FILE_DISABLE and
+ *          EINA_LOG_FUNCTION_DISABLE at the same time, in this case just
+ *          EINA_LOG_FUNCTION_DISABLE is considered and file information
+ *          is printed anyways.
  *
- * @note MT: if threads are enabled, this function is called within locks.
- * @note MT: Threads different from main thread will have thread id
- *       appended to domain name.
+ * @since_tizen 2.3
+ *
+ * @remarks If threads are enabled, this function is called within locks.
+ * @remarks Threads different from the main thread have a thread ID
+ *          appended to the domain name.
+ *
+ * @param[in] d The domain
+ * @param[in] level The level
+ * @param[in] file The file that is logged
+ * @param[in] fnc The function that is logged
+ * @param[in] line The line that is logged
+ * @param[in] fmt The ouptut format to use
+ * @param[in] data Not used
+ * @param[in] args The arguments needed by the format
+ *
  */
 EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
                                    Eina_Log_Level         level,
@@ -907,22 +777,25 @@ EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
                                    va_list                args);
 
 /**
- * Alternative logging method, this will output to given file stream.
+ * @brief Alternative logging function, this outputs to the given file stream.
  *
- * @param d The domain.
- * @param level Not used.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The ouptut format to use.
- * @param data The file which will store the output (as a FILE *).
- * @param args The arguments needed by the format.
+ * @details This function never gives color as the output.
  *
- * This method will never output color.
+ * @since_tizen 2.3
  *
- * @note MT: if threads are enabled, this function is called within locks.
- * @note MT: Threads different from main thread will have thread id
- *       appended to domain name.
+ * @remarks If threads are enabled, this function is called within locks.
+ * @remarks Threads different from the main thread have a thread ID
+ *          appended to the domain name.
+ *
+ * @param[in] d The domain
+ * @param[in] level Not used
+ * @param[in] file The file that is logged
+ * @param[in] fnc The function that is logged
+ * @param[in] line The line that is logged
+ * @param[in] fmt The ouptut format to use
+ * @param[in] data The file that stores the output (as a FILE *)
+ * @param[in] args The arguments needed by the format
+ *
  */
 EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  Eina_Log_Level         level,
@@ -933,85 +806,79 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  void                  *data,
                                  va_list                args);
 
-
+/*--- TIZEN_ONLY : begin ---*/
 /**
- * Alternative logging method, this will output to systemd journal.
+ * @brief Alternative logging function, this outputs to the system log.
  *
- * @param d The domain.
- * @param level Not used.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The ouptut format to use.
- * @param data The file which will store the output (as a FILE *).
- * @param args The arguments needed by the format.
+ * @details This function never gives color as the output.
  *
- * This method will never output color.
+ * @param[in] d The domain
+ * @param[in] level Not used
+ * @param[in] file The file that is logged
+ * @param[in] fnc The function that is logged
+ * @param[in] line The line that is logged
+ * @param[in] fmt The ouptut format to use
+ * @param[in] data Not Used
+ * @param[in] args The arguments needed by the format
  *
- * @note if systemd journal is not there it will display error on stderr.
- * @note if the process has been started by systemd this will be the default logging method.
- *
- * @since 1.8
  */
-EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
-				     Eina_Log_Level level,
-				     const char *file,
-				     const char *fnc,
-				     int line,
-				     const char *fmt,
-				     void *data,
-				     va_list args);
+EAPI void eina_log_print_cb_syslog(const Eina_Log_Domain *d,
+                                   Eina_Log_Level         level,
+                                   const char            *file,
+                                   const char            *fnc,
+                                   int                    line,
+                                   const char            *fmt,
+                                   void                  *data,
+                                   va_list                args);
+
+#ifdef HAVE_DLOG
+/**
+ * @brief Alternative logging function, this outputs to the dlog.
+ *
+ * @since_tizen 2.3
+ *
+ * @param[in] d The domain
+ * @param[in] level Not used
+ * @param[in] file The file that is logged
+ * @param[in] fnc The function that is logged
+ * @param[in] line The line that is logged
+ * @param[in] fmt The ouptut format to use
+ * @param[in] data Not Used
+ * @param[in] args The arguments needed by the format
+ *
+ */
+EAPI void eina_log_print_cb_dlog(const Eina_Log_Domain *d,
+                                 Eina_Log_Level         level,
+                                 const char            *file,
+                                 const char            *fnc,
+                                 int                    line,
+                                 const char            *fmt,
+                                 void                  *data,
+                                 va_list                args);
+#endif
+
+/*--- TIZEN_ONLY : end ---*/
 
 /**
- * Configure console color of given file.
- *
- * @param fp file to configure console color (usually stderr or stdout).
- * @param color a VT color code such as EINA_COLOR_RED or EINA_COLOR_RESET.
- *
- * @note if color is disabled, nothing is done. See
- *       eina_log_color_disable_get()
- * @note on windows, both @a fp and @a color is converted automatically.
+ * @brief Configures the console color of the given file.
  *
  * @since 1.7
+ *
+ * @since_tizen 2.3
+ *
+ * @remarks If color is disabled, nothing is done.
+ * @remarks In windows, both @a fp and @a color are converted automatically.
+ *
+ * @param[in] fp The file to configure the console color of(usually stderr or stdout)
+ * @param[in] color A VT color code such as EINA_COLOR_RED or EINA_COLOR_RESET
+ *
+ *
+ * @see eina_log_color_disable_get()
  */
 EAPI void eina_log_console_color_set(FILE *fp,
                                      const char *color) EINA_ARG_NONNULL(1, 2);
 
-/** String that indicates the log system is initializing */
-extern EAPI const char *_eina_log_state_init;
-/** String that indicates the log system is shutting down */
-extern EAPI const char *_eina_log_state_shutdown;
-/** @def EINA_LOG_STATE_INIT
- *String that indicates the log system is initializing 
- */
-#define EINA_LOG_STATE_INIT _eina_log_state_init
-/** @def EINA_LOG_STATE_SHUTDOWN
- *String that indicates the log system is shutting down 
- */
-#define EINA_LOG_STATE_SHUTDOWN _eina_log_state_shutdown
-
-/**
- * @brief Start or stop the timing of a phase.
- *
- * @param domain The domain.
- * @param state State indicating if we are starting or stopping a phase.
- * @param phase The name of the phase to be used in the log.
- *
- * @note One domain can be in only one phase at a time.
- * @note If you change the name of the phase, it is assumed that
- *    the previous phase has stopped.
- * @note The phase name should be available for all the life of the timing.
- * @since 1.8
- */
-EAPI void eina_log_timing(int domain,
-                          Eina_Log_State state,
-                          const char *phase) EINA_ARG_NONNULL(1, 3);
-
 #include "eina_inline_log.x"
-
-/**
- * @}
- */
 
 /**
  * @}

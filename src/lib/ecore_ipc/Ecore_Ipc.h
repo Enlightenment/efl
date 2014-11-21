@@ -30,11 +30,9 @@
 #endif
 
 /**
- * @defgroup Ecore_IPC_Group Ecore_IPC - Ecore inter-process communication functions.
- * @ingroup Ecore
- *
- *
- * @{
+ * @internal
+ * @file Ecore_Ipc.h
+ * @brief Ecore inter-process communication functions.
  */
 
 #ifdef __cplusplus
@@ -44,17 +42,17 @@ extern "C" {
 typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server; /**< An IPC connection handle */
 typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client; /**< An IPC connection handle */
 
-EAPI unsigned short     _ecore_ipc_swap_16(unsigned short v) EINA_DEPRECATED;
-EAPI unsigned int       _ecore_ipc_swap_32(unsigned int v) EINA_DEPRECATED;
-EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED;
+EAPI unsigned short     _ecore_ipc_swap_16(unsigned short v);
+EAPI unsigned int       _ecore_ipc_swap_32(unsigned int v);
+EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
 
 #ifdef WORDS_BIGENDIAN
-#define ECORE_IPC_SWAP2NET64(x) eina_swap64(x)
-#define ECORE_IPC_SWAP2CPU64(x) eina_swap64(x)
-#define ECORE_IPC_SWAP2NET32(x) eina_swap32(x)
-#define ECORE_IPC_SWAP2CPU32(x) eina_swap32(x)
-#define ECORE_IPC_SWAP2NET16(x) eina_swap16(x)
-#define ECORE_IPC_SWAP2CPU16(x) eina_swap16(x)
+#define ECORE_IPC_SWAP2NET64(x) _ecore_ipc_swap_64(x)
+#define ECORE_IPC_SWAP2CPU64(x) _ecore_ipc_swap_64(x)
+#define ECORE_IPC_SWAP2NET32(x) _ecore_ipc_swap_32(x)
+#define ECORE_IPC_SWAP2CPU32(x) _ecore_ipc_swap_32(x)
+#define ECORE_IPC_SWAP2NET16(x) _ecore_ipc_swap_16(x)
+#define ECORE_IPC_SWAP2CPU16(x) _ecore_ipc_swap_16(x)
 #define ECORE_IPC_SWAP2NET8(x) (x)
 #define ECORE_IPC_SWAP2CPU8(x) (x)
 #else
@@ -166,7 +164,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED
     ptr = d;
 /* footer for the hell of it */
 #define ECORE_IPC_DEC_STRUCT_FOOT() return 1
-/* header for encoder - gives native struct type and size of flattened packet */
+/* header for encoder - gives native strct type and size of flattened packet */
 #define ECORE_IPC_ENC_STRUCT_HEAD(typ, sz) \
     typ *p; \
     unsigned char *d, *ptr; \
@@ -220,11 +218,6 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED
       } \
    return d
 
-/**
- * @typedef Ecore_Ipc_Type
- *
- * Enum containing IPC types.
- */
 typedef enum _Ecore_Ipc_Type
 {
    ECORE_IPC_LOCAL_USER,
@@ -241,81 +234,50 @@ typedef struct _Ecore_Ipc_Event_Server_Del  Ecore_Ipc_Event_Server_Del;
 typedef struct _Ecore_Ipc_Event_Client_Data Ecore_Ipc_Event_Client_Data;
 typedef struct _Ecore_Ipc_Event_Server_Data Ecore_Ipc_Event_Server_Data;
 
-/**
- * @struct _Ecore_Ipc_Event_Client_Add
- *
- * An IPC structure for client_add event.
- */
 struct _Ecore_Ipc_Event_Client_Add
 {
-   Ecore_Ipc_Client *client; /**< An IPC connection handle */
+   Ecore_Ipc_Client *client;
 };
 
-/**
- * @struct _Ecore_Ipc_Event_Client_Del
- *
- * An IPC structure for client_del event.
- */
 struct _Ecore_Ipc_Event_Client_Del
 {
-   Ecore_Ipc_Client *client; /**< An IPC connection handle */
+   Ecore_Ipc_Client *client;
 };
 
-/**
- * @struct _Ecore_Ipc_Event_Server_Add
- *
- * An IPC structure for server_add event.
- */
 struct _Ecore_Ipc_Event_Server_Add
 {
-   Ecore_Ipc_Server *server; /**< An IPC connection handle */
+   Ecore_Ipc_Server *server;
 };
 
-/**
- * @struct _Ecore_Ipc_Event_Server_Del
- *
- * An IPC structure for server_del event.
- */
 struct _Ecore_Ipc_Event_Server_Del
 {
-   Ecore_Ipc_Server *server; /**< An IPC connection handle */
-
+   Ecore_Ipc_Server *server;
 };
-
-/**
- * @struct _Ecore_Ipc_Event_Client_Data
- *
- * An IPC structure for client_data event.
- */
+   
 struct _Ecore_Ipc_Event_Client_Data
 {
-   Ecore_Ipc_Client *client; /**< An IPC connection handle */
-   /* FIXME: this needs to become an ipc message */
-   int               major; /**< The message major opcode number */
-   int               minor; /**< The message minor opcode number */
-   int               ref; /**< The message reference number */
-   int               ref_to; /**< Reference number of the message it refers to */
-   int               response; /**< Requires response */
-   void             *data; /**< The message data */
-   int               size; /**< The data length (in bytes) */
+   Ecore_Ipc_Client *client;
+   /* FIXME: This needs to become an IPC message */
+   int               major;
+   int               minor;
+   int               ref;
+   int               ref_to;
+   int               response;
+   void             *data;
+   int               size;
 };
-
-/**
- * @struct _Ecore_Ipc_Event_Server_Data
- *
- * An IPC structure for server_data event.
- */
+   
 struct _Ecore_Ipc_Event_Server_Data
 {
-   Ecore_Ipc_Server *server; /**< An IPC connection handle */
-   /* FIXME: this needs to become an ipc message */
-   int               major; /**< The message major opcode number */
-   int               minor; /**< The message minor opcode number */
-   int               ref; /**< The message reference number */
-   int               ref_to; /**< Reference number of the message it refers to */
-   int               response; /**< Requires response */
-   void             *data; /**< The message data */
-   int               size; /**< The data length (in bytes) */
+   Ecore_Ipc_Server *server;
+   /* FIXME: This needs to become an IPC message */
+   int               major;
+   int               minor;
+   int               ref;
+   int               ref_to;
+   int               response;
+   void             *data;
+   int               size;
 };
    
 EAPI extern int ECORE_IPC_EVENT_CLIENT_ADD;
@@ -328,16 +290,16 @@ EAPI extern int ECORE_IPC_EVENT_SERVER_DATA;
 EAPI int               ecore_ipc_init(void);
 EAPI int               ecore_ipc_shutdown(void);
 
-/* FIXME: need to add protocol type parameter */
+/* FIXME: Need to add protocol type parameter */
 EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void *data);
 
-/* FIXME: need to add protocol type parameter */
+/* FIXME: Need to add protocol type parameter */
 EAPI Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data);
 EAPI void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
 EAPI void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
 EAPI Eina_Bool         ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
 EAPI Eina_List        *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
-/* FIXME: this needs to become an ipc message */
+/* FIXME: This needs to become an IPC message */
 EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
 EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients);
 EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *srv, int size);
@@ -345,7 +307,7 @@ EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *srv)
 EAPI const char       *ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr);
 EAPI void              ecore_ipc_server_flush(Ecore_Ipc_Server *svr);
     
-/* FIXME: this needs to become an ipc message */
+/* FIXME: This needs to become an IPC message */
 EAPI int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
 EAPI Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
 EAPI void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
@@ -357,14 +319,11 @@ EAPI const char       *ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl);
 EAPI void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
 
 EAPI int               ecore_ipc_ssl_available_get(void);
-/* FIXME: need to add a callback to "ok" large ipc messages greater than */
+/* FIXME: Need to add a callback to "ok" large IPC messages greater than */
 /*        a certain size (security/DOS attack safety) */
    
 #ifdef __cplusplus
 }
 #endif
 
-/**
- * @}
- */
 #endif

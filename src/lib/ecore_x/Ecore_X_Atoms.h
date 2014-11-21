@@ -2,11 +2,12 @@
 #define _ECORE_X_ATOMS_H
 
 /**
+ * @internal
  * @file
- * @brief Ecore X atoms
+ * @brief Ecore X atoms.
  */
 
-/* generic atoms */
+/* Generic atoms */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_ATOM;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_CARDINAL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_COMPOUND_TEXT;
@@ -14,7 +15,6 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_FILE_NAME;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_STRING;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEXT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_UTF8_STRING;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_X_MOZ_URL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_WINDOW;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_PIXMAP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_VISUALID;
@@ -38,7 +38,6 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_STATUS;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_LEAVE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_DROP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_FINISHED;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_DIRECTSAVE0; /**< @since 1.8 */
 
 /* dnd atoms that need to be exposed to the application interface */
 EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_COPY;
@@ -47,10 +46,10 @@ EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_LINK;
 EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_ASK;
 EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_PRIVATE;
 
-/* old E atom */
+/* Old E atom */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_FRAME_SIZE;
 
-/* old Gnome atom */
+/* Old Gnome atom */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_WIN_LAYER;
 
 /* ICCCM: client properties */
@@ -104,7 +103,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_VIRTUAL_ROOTS;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_DESKTOP_LAYOUT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_SHOWING_DESKTOP;
 
-/* pager */
+/* Pager */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_CLOSE_WINDOW;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_MOVERESIZE_WINDOW;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_MOVERESIZE;
@@ -117,7 +116,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_ICON_NAME;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_DESKTOP;
 
-/* window type */
+/* Window type */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_WINDOW_TYPE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DESKTOP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DOCK;
@@ -134,7 +133,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NOTIFICATION;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_WINDOW_TYPE_COMBO;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DND;
 
-/* state */
+/* State */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_STATE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_STATE_MODAL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_STATE_STICKY;
@@ -149,7 +148,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_STATE_ABOVE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_STATE_BELOW;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION;
 
-/* allowed actions */
+/* Allowed actions */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_ACTION_MOVE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_ACTION_RESIZE;
@@ -189,7 +188,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_PROP_SECONDARY;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD;
 
-/* currently E specific virtual keyboard extension, aim to submit to netwm spec
+/* Currently E specific virtual keyboard extension, aim to submit to netwm spec
  * later */
 
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD;
@@ -247,6 +246,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_OPAQUE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_TRANSLUCENT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_TRANSPARENT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_BG_TRANSPARENT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_1;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_2;
@@ -261,6 +261,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_WINDOW_STATE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_NORMAL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_FLOATING;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_ASSISTANT_MENU;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_NEXT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_PREV;
@@ -273,14 +274,10 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_BACK;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_SCROLL;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ZOOM;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_MOUSE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ENABLE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DISABLE;
-
-/* Abi compat fix */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_ENABLE;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_ACCESS_DISABLE;
-/* End of Abi compat fix */
 
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_SYNC_COUNTER;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE;
@@ -295,28 +292,21 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_COMP_PIXMAP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIDEO_PARENT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIDEO_POSITION;
 
-/* currently elementary and E specific extension */
-/* @deprecated use ECORE_X_ATOM_E_WINDOW_PROFILE */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_PROFILE;
-/* @deprecated use ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_PROFILE_LIST;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_PROFILE;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_REQUEST;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_DONE;
+/* For operating indicator and quickpanel */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_INDICATOR_FLICK_DONE;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_MOVE_QUICKPANEL_STATE;
 
-/* for sliding window */
+/* Currently elementary and E specific extension */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_PROFILE;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_PROFILE_LIST;
+
+/* For sliding window */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY;
 
-/* for SDB(Samsung Debug Bridge) */
+/* For SDB */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SDB_SERVER_CONNECT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SDB_SERVER_DISCONNECT;
-
-/* for deiconify approve protcol */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_DEICONIFY_APPROVE;
 
 /* E window rotation extension */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_SUPPORTED;
@@ -327,10 +317,24 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_CHANGE_PREPARE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_CHANGE_PREPARE_DONE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_CHANGE_REQUEST;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_CHANGE_DONE;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_0_GEOMETRY;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_90_GEOMETRY;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_180_GEOMETRY;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_270_GEOMETRY;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_ROTATION_TRANSFORM_HINT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_DESKTOP_LAYOUT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_CONTROL_WINDOW;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_ON_PREPARE_REQUEST;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_ON_PREPARE_DONE;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_OFF_PREPARE_REQUEST;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_OFF_PREPARE_DONE;
 
-/* E window auxiliary hint */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORTED_LIST; /**< @since 1.10 */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORT; /**< @since 1.10 */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT; /**< @since 1.10 */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_ALLOWED; /**< @since 1.10 */
+/* For deiconify approve protcol */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_DEICONIFY_APPROVE;
+
+/* For window auxiliary hint */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORTED_LIST;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_ALLOWED;
 #endif /* _ECORE_X_ATOMS_H */
