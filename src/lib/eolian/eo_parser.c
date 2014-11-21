@@ -9,14 +9,6 @@
      eo_lexer_syntax_error(ls, "double " msg); \
    has_##var = EINA_TRUE;
 
-#define PARSE_SECTION \
-   int line, col; \
-   eo_lexer_get(ls); \
-   line = ls->line_number; \
-   col = ls->column; \
-   check_next(ls, '{'); \
-   while (ls->t.token != '}')
-
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
@@ -1302,7 +1294,12 @@ static void
 parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
              Eina_Bool is_vals)
 {
-   PARSE_SECTION parse_param(ls, params, allow_inout, is_vals);
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_param(ls, params, allow_inout, is_vals);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1717,28 +1714,48 @@ parse_event(Eo_Lexer *ls)
 static void
 parse_methods(Eo_Lexer *ls)
 {
-   PARSE_SECTION parse_method(ls, EINA_FALSE);
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_method(ls, EINA_FALSE);
    check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_properties(Eo_Lexer *ls)
 {
-   PARSE_SECTION parse_property(ls);
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_property(ls);
    check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
-   PARSE_SECTION parse_implement(ls, iface);
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_implement(ls, iface);
    check_match(ls, '}', '{', line, col);
 }
 
 static void
 parse_constructors(Eo_Lexer *ls)
 {
-   PARSE_SECTION parse_constructor(ls);
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_constructor(ls);
    check_match(ls, '}', '{', line, col);
 }
 
