@@ -40,6 +40,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    code = elm_code_create();
    elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
+   elm_code_widget_font_size_set(widget, 14);
    _append_line(code->file, "Hello World, Elm Code!");
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
    _append_line(code->file, "");
@@ -139,7 +140,7 @@ elm_code_test_win_setup(void)
 
    elm_win_resize_object_add(win, vbox);
 
-   evas_object_resize(win, 320 * elm_config_scale_get(), 180 * elm_config_scale_get());
+   evas_object_resize(win, 380 * elm_config_scale_get(), 240 * elm_config_scale_get());
    evas_object_show(win);
 
    return win;

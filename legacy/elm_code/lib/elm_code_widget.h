@@ -25,7 +25,10 @@ extern "C" {
  */
 
 EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code);
-EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code);                  
+
+EAPI void elm_code_widget_font_size_set(Evas_Object *widget, int size);
+
+EAPI void elm_code_widget_fill(Evas_Object *o, Elm_Code *code);
 
 EAPI void elm_code_widget_fill_line_tokens(Evas_Textgrid_Cell *cells, int count, Elm_Code_Line *line);
 
