@@ -1,0 +1,10 @@
+--- testdiff1.txt	2014-11-22 21:16:16.279872989 +0000
++++ testdiff2.txt	2014-11-22 21:16:34.406052375 +0000
+@@ -1,5 +1,5 @@
+ Some content to diff
++added
+ more
+-removed
+-will change
++changed
+ unchanged

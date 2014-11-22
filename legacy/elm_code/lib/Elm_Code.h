@@ -9,6 +9,7 @@
 #include <elm_code_file.h>
 #include <elm_code_parse.h>
 #include <elm_code_widget.h>
+#include <elm_code_diff_widget.h>
 
 #ifdef EAPI
 # undef EAPI

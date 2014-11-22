@@ -15,6 +15,7 @@ includes_HEADERS = \
 elm_code_file.h \
 elm_code_parse.h \
 elm_code_widget.h \
+elm_code_diff_widget.h \
 Elm_Code.h
 includesdir = $(includedir)/edi-@VMAJ@
 
@@ -22,6 +23,7 @@ libelm_code_la_SOURCES = \
 elm_code_file.c \
 elm_code_parse.c \
 elm_code_widget.c \
+elm_code_diff_widget.c \
 elm_code.c
 libelm_code_la_LIBADD = @EFL_LIBS@ -lm
 libelm_code_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

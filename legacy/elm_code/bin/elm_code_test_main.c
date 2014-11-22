@@ -59,61 +59,16 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
 static Evas_Object *
 _elm_code_test_diff_setup(Evas_Object *parent)
 {
+   char *path = "elm_code/tests/testdiff.diff";
+   Evas_Object *diff;
+   Elm_Code_File *file;
    Elm_Code *code;
-   Evas_Object *widget, *hbox;
 
-   hbox = elm_box_add(parent);
-   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_homogeneous_set(hbox, EINA_TRUE);
-   elm_box_horizontal_set(hbox, EINA_TRUE);
-   evas_object_show(hbox);
-
-   // left side of diff
    code = elm_code_create();
-   elm_code_file_new(code);
-   widget = elm_code_widget_add(parent, code);
+   file = elm_code_file_open(code, path);
 
-   _append_line(code->file, "Some content to diff");
-   _append_line(code->file, "");
-   _append_line(code->file, "more");
-   _append_line(code->file, "removed");
-   _append_line(code->file, "will change");
-   _append_line(code->file, "unchanged");
-
-   elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_REMOVED);
-   elm_code_file_line_token_add(code->file, 4, 1, 7, ELM_CODE_TOKEN_TYPE_REMOVED);
-   elm_code_file_line_status_set(code->file, 5, ELM_CODE_STATUS_TYPE_CHANGED);
-   elm_code_file_line_token_add(code->file, 5, 1, 5, ELM_CODE_TOKEN_TYPE_REMOVED);
-
-   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(widget);
-   elm_box_pack_end(hbox, widget);
-
-   // right side of diff
-   code = elm_code_create();
-   elm_code_file_new(code);
-   widget = elm_code_widget_add(parent, code);
-
-   _append_line(code->file, "Some content to diff");
-   _append_line(code->file, "added");
-   _append_line(code->file, "more");
-   _append_line(code->file, "");
-   _append_line(code->file, "changed");
-   _append_line(code->file, "unchanged");
-
-   elm_code_file_line_status_set(code->file, 2, ELM_CODE_STATUS_TYPE_ADDED);
-   elm_code_file_line_token_add(code->file, 2, 1, 5, ELM_CODE_TOKEN_TYPE_ADDED);
-   elm_code_file_line_status_set(code->file, 5, ELM_CODE_STATUS_TYPE_CHANGED);
-   elm_code_file_line_token_add(code->file, 5, 7, 7, ELM_CODE_TOKEN_TYPE_ADDED);
-
-   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(widget);
-   elm_box_pack_end(hbox, widget);
-
-   return hbox;
+   diff = elm_code_diff_widget_add(parent, code);
+   return diff;
 }
 
 static Evas_Object *
