@@ -860,7 +860,7 @@ end
 
 M.all_classes_get = function()
     return Ptr_Iterator("const Eolian_Class*",
-        eolian.eolain_all_classes_get())
+        eolian.eolian_all_classes_get())
 end
 
 M.class_type = {
