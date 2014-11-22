@@ -63,7 +63,7 @@ _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item_Data *item)
 {
    int32_t id;
    Eina_List *l;
-   Elm_Menu_Item_Data *subitem;
+   Elm_Object_Item *obj_subitem;
 
    id = ++dbus_menu->timestamp;
    if (!eina_hash_add(dbus_menu->elements, &id, item))
@@ -71,8 +71,9 @@ _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item_Data *item)
 
    item->dbus_idx = id;
 
-   EINA_LIST_FOREACH (item->submenu.items, l, subitem)
+   EINA_LIST_FOREACH (item->submenu.items, l, obj_subitem)
      {
+        ELM_MENU_ITEM_DATA_GET(obj_subitem, subitem);
         if (!_menu_add_recursive(dbus_menu, subitem))
           return EINA_FALSE;
      }
@@ -300,8 +301,8 @@ _layout_build_recursive(Elm_Menu_Item_Data *item,
                         Eldbus_Message_Iter *iter)
 {
    Eina_List *l;
-   Elm_Menu_Item_Data *subitem;
    Eldbus_Message_Iter *layout, *array, *variant;
+   Elm_Object_Item *obj_subitem;
 
    layout = eldbus_message_iter_container_new(iter, 'r', NULL);
    eldbus_message_iter_basic_append(layout, 'i', item->dbus_idx);
@@ -310,10 +311,11 @@ _layout_build_recursive(Elm_Menu_Item_Data *item,
 
    if (recursion_depth > 0)
      {
-        EINA_LIST_FOREACH (item->submenu.items, l, subitem)
+        EINA_LIST_FOREACH (item->submenu.items, l, obj_subitem)
           {
              variant = eldbus_message_iter_container_new(array, 'v',
                                                         "(ia{sv}av)");
+             ELM_MENU_ITEM_DATA_GET(obj_subitem, subitem);
              _layout_build_recursive(subitem, property_list,
                                      recursion_depth - 1, variant);
              eldbus_message_iter_container_close(array, variant);
@@ -333,7 +335,7 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
    const Eina_List *ret = NULL;
    Eina_List *items;
    Eina_List *l;
-   Elm_Menu_Item_Data *item;
+   Elm_Object_Item *obj_item;
 
    layout = eldbus_message_iter_container_new(iter, 'r', NULL);
    eldbus_message_iter_basic_append(layout, 'i', 0);
@@ -360,10 +362,11 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
      {
         eo_do(dbus_menu->menu, ret = elm_obj_menu_items_get());
         items = (Eina_List *)ret;
-        EINA_LIST_FOREACH (items, l, item)
+        EINA_LIST_FOREACH (items, l, obj_item)
           {
              variant = eldbus_message_iter_container_new(array, 'v',
-                                                        "(ia{sv}av)");
+                                                         "(ia{sv}av)");
+             ELM_MENU_ITEM_DATA_GET(obj_item, item);
              _layout_build_recursive(item, property_list,
                                      recursion_depth - 1, variant);
              eldbus_message_iter_container_close(array, variant);
@@ -420,7 +423,7 @@ _elm_dbus_menu_add(Eo *menu)
    Elm_DBus_Menu *dbus_menu;
    const Eina_List *ret = NULL;
    Eina_List *items, *l;
-   Elm_Menu_Item_Data *item;
+   Elm_Object_Item *obj_item;
 
    ELM_MENU_CHECK(menu) NULL;
 
@@ -442,8 +445,9 @@ _elm_dbus_menu_add(Eo *menu)
 
    eo_do(menu, ret = elm_obj_menu_items_get());
    items = (Eina_List *)ret;
-   EINA_LIST_FOREACH (items, l, item)
+   EINA_LIST_FOREACH (items, l, obj_item)
      {
+        ELM_MENU_ITEM_DATA_GET(obj_item, item);
         if (!_menu_add_recursive(dbus_menu, item))
           {
              ERR("Unable to add menu item");
