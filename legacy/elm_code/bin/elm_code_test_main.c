@@ -61,11 +61,10 @@ _elm_code_test_diff_setup(Evas_Object *parent)
 {
    char *path = "elm_code/tests/testdiff.diff";
    Evas_Object *diff;
-   Elm_Code_File *file;
    Elm_Code *code;
 
    code = elm_code_create();
-   file = elm_code_file_open(code, path);
+   elm_code_file_open(code, path);
 
    diff = elm_code_diff_widget_add(parent, code);
    return diff;
