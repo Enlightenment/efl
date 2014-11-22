@@ -183,7 +183,7 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 
    o = evas_object_textgrid_add(parent);
 
-   evas_object_textgrid_font_set(o, "Mono", 10 * elm_config_scale_get());
+   elm_code_widget_font_size_set(o, 10);
 
    // setup status colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
@@ -223,5 +223,10 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 
    code->widgets = eina_list_append(code->widgets, o);
    return o;
+}
+
+EAPI void elm_code_widget_font_size_set(Evas_Object *widget, int size)
+{
+   evas_object_textgrid_font_set(widget, "Mono", size * elm_config_scale_get());
 }
 
