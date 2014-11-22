@@ -23,6 +23,14 @@ _elm_code_test_win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    elm_exit();
 }
 
+static void _append_line(Elm_Code_File *file, const char *line)
+{
+   int length;
+
+   length = strlen(line);
+   elm_code_file_line_append(file, line, length);
+}
+
 static Evas_Object *
 _elm_code_test_welcome_setup(Evas_Object *parent)
 {
@@ -32,12 +40,12 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    code = elm_code_create();
    elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
-   elm_code_file_line_append(code->file, "Hello World, Elm Code!");
+   _append_line(code->file, "Hello World, Elm Code!");
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
-   elm_code_file_line_append(code->file, "");
-   elm_code_file_line_append(code->file, "This is a demo of elm_code's capabilities.");
+   _append_line(code->file, "");
+   _append_line(code->file, "This is a demo of elm_code's capabilities.");
 
-   elm_code_file_line_append(code->file, "*** Currently experimental ***");
+   _append_line(code->file, "*** Currently experimental ***");
    elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_ERROR);
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -65,12 +73,12 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
 
-   elm_code_file_line_append(code->file, "Some content to diff");
-   elm_code_file_line_append(code->file, "");
-   elm_code_file_line_append(code->file, "more");
-   elm_code_file_line_append(code->file, "removed");
-   elm_code_file_line_append(code->file, "will change");
-   elm_code_file_line_append(code->file, "unchanged");
+   _append_line(code->file, "Some content to diff");
+   _append_line(code->file, "");
+   _append_line(code->file, "more");
+   _append_line(code->file, "removed");
+   _append_line(code->file, "will change");
+   _append_line(code->file, "unchanged");
 
    elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_REMOVED);
    elm_code_file_line_token_add(code->file, 4, 1, 7, ELM_CODE_TOKEN_TYPE_REMOVED);
@@ -87,12 +95,12 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
 
-   elm_code_file_line_append(code->file, "Some content to diff");
-   elm_code_file_line_append(code->file, "added");
-   elm_code_file_line_append(code->file, "more");
-   elm_code_file_line_append(code->file, "");
-   elm_code_file_line_append(code->file, "changed");
-   elm_code_file_line_append(code->file, "unchanged");
+   _append_line(code->file, "Some content to diff");
+   _append_line(code->file, "added");
+   _append_line(code->file, "more");
+   _append_line(code->file, "");
+   _append_line(code->file, "changed");
+   _append_line(code->file, "unchanged");
 
    elm_code_file_line_status_set(code->file, 2, ELM_CODE_STATUS_TYPE_ADDED);
    elm_code_file_line_token_add(code->file, 2, 1, 5, ELM_CODE_TOKEN_TYPE_ADDED);

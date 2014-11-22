@@ -52,6 +52,18 @@ START_TEST (elm_code_file_load_blank_lines)
 }
 END_TEST
 
+static void _assert_line_content_eq(const char *content, Elm_Code_Line *line)
+{
+   int length;
+   int c;
+
+   length = strlen(content);
+   ck_assert_int_eq(length, line->length);
+
+   for (c = 0; c < length; c++)
+     ck_assert_uint_eq(content[c], line->content[c]);
+}
+
 START_TEST (elm_code_file_load_content)
 {
    char *path = "elm_code/tests/testfile.txt";
@@ -61,8 +73,8 @@ START_TEST (elm_code_file_load_content)
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
-   ck_assert_str_eq("line2", elm_code_file_line_content_get(file, 2));
-   ck_assert_str_eq("another line", elm_code_file_line_content_get(file, 4));
+   _assert_line_content_eq("line2", elm_code_file_line_get(file, 2));
+   _assert_line_content_eq("another line", elm_code_file_line_get(file, 4));
    elm_code_file_close(file);
    elm_code_free(code);
 }

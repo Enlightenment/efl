@@ -52,7 +52,7 @@ EAPI void elm_code_widget_fill_line_tokens(Evas_Textgrid_Cell *cells, int count,
    int start, length;
 
    start = 1;
-   length = strlen(line->content);
+   length = line->length;
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
@@ -77,7 +77,7 @@ static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells
    if (!_elm_code_widget_resize(o))
      return;
 
-   length = strlen(line->content);
+   length = line->length;
    evas_object_textgrid_size_get(o, &w, NULL);
 
    cells[0].codepoint = status_icons[line->status];
@@ -85,7 +85,10 @@ static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells
    cells[0].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
    cells[0].bg = line->status;
 
-   chr = (char *)line->content;
+   if (line->modified)
+      chr = line->modified;
+   else
+      chr = (char *)line->content;
    for (x = 1; x < (unsigned int) w && x <= length; x++)
      {
         cells[x].codepoint = *chr;
