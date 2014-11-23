@@ -116,7 +116,7 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_span_size_set(sl, 120);
    elm_slider_min_max_set(sl, 0, 100);
-   elm_object_text_set(sl, "Always show : ");
+   elm_object_text_set(sl, "Show Indicator on Focus: ");
    step = _step_size_calculate(0, 9);
    elm_slider_step_set(sl, step);
    elm_slider_indicator_show_on_focus_set(sl, EINA_TRUE);
