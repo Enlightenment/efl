@@ -4607,7 +4607,7 @@ _elm_widget_item_tooltip_create(void *data,
                                 Evas_Object *tooltip)
 {
    Elm_Widget_Item_Tooltip *wit = data;
-   return wit->func((void *)wit->data, obj, tooltip, wit->item);
+   return wit->func((void *)wit->data, obj, tooltip, wit->item->eo_obj);
 }
 
 static void
@@ -4616,7 +4616,7 @@ _elm_widget_item_tooltip_del_cb(void *data,
                                 void *event_info EINA_UNUSED)
 {
    Elm_Widget_Item_Tooltip *wit = data;
-   if (wit->del_cb) wit->del_cb((void *)wit->data, obj, wit->item);
+   if (wit->del_cb) wit->del_cb((void *)wit->data, obj, wit->item->eo_obj);
    free(wit);
 }
 
