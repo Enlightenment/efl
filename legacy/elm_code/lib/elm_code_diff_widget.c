@@ -44,32 +44,40 @@ static void _elm_code_diff_widget_parse_diff(Elm_Code_File *diff, Elm_Code_File 
 {
    Eina_List *item;
    Elm_Code_Line *line;
-   int number;
+   int number, offset;
 
    number = 0;
+   offset = 0;
    EINA_LIST_FOREACH(diff->lines, item, line)
      {
 
-        if (line->length > 0 && number < 2)
+        if (line->length > 0)
           {
-             if (line->content[0] == 'd' || line->content[0] == 'i')
-               continue;
+             if (line->content[0] == 'd' || line->content[0] == 'i' || line->content[0] == 'n')
+               {
+                  offset = 0;
+                  continue;
+               }
           }
-
-        if (number == 0)
-          {
-             elm_code_file_line_append(left, line->content+4, line->length-4);
-             elm_code_file_line_status_set(left, 1, ELM_CODE_STATUS_TYPE_CHANGED);
-          }
-        else if (number == 1)
-          {
-             elm_code_file_line_append(right, line->content+4, line->length-4);
-             elm_code_file_line_status_set(right, 1, ELM_CODE_STATUS_TYPE_CHANGED);
-          }
-        else
-          _elm_code_diff_widget_parse_diff_line(line, number, left, right);
 
         number++;
+        if (offset == 0)
+          {
+             elm_code_file_line_append(left, line->content+4, line->length-4);
+             elm_code_file_line_status_set(left, number, ELM_CODE_STATUS_TYPE_CHANGED);
+          }
+        else if (offset == 1)
+          {
+             number--;
+             elm_code_file_line_append(right, line->content+4, line->length-4);
+             elm_code_file_line_status_set(right, number, ELM_CODE_STATUS_TYPE_CHANGED);
+          }
+        else
+          {
+             _elm_code_diff_widget_parse_diff_line(line, number, left, right);
+          }
+
+        offset++;
      }
 }
 
