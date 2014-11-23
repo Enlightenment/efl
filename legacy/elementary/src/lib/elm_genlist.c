@@ -3426,7 +3426,7 @@ _item_del(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(obj));
 
    // FIXME: relative will be better to be fixed. it is too harsh.
-   if (it->item->rel)
+   if (it->item->rel && it->item->rel->item)
       it->item->rel->item->rel_revs =
          eina_list_remove(it->item->rel->item->rel_revs, it);
    if (it->item->rel_revs)
@@ -6069,6 +6069,7 @@ _elm_genlist_item_sorted_insert(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const
 
    if (it->parent)
      {
+        Elm_Object_Item *eo_rel = NULL;
         Eina_List *l;
         int cmp_result;
 
@@ -6078,7 +6079,8 @@ _elm_genlist_item_sorted_insert(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const
 
         if (l)
           {
-             rel = eina_list_data_get(l);
+             eo_rel = eina_list_data_get(l);
+             rel = eo_data_scope_get(eo_rel, ELM_GENLIST_ITEM_CLASS);
 
              if (cmp_result >= 0)
                {
