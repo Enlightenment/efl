@@ -878,7 +878,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
         ee->prop.maximized  = EINA_FALSE;
         ee->prop.sticky     = EINA_FALSE;
         ee->prop.fullscreen = EINA_FALSE;
-        ee->prop.focus_skip = EINA_FALSE;
+//        ee->prop.focus_skip = EINA_FALSE;
         
         ecore_x_netwm_window_state_get(e->win, &state, &num);
         if (state)
@@ -908,11 +908,9 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
                        break;
                      case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
                        edata->state.skip_taskbar = 1;
-                       ee->prop.focus_skip = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_SKIP_PAGER:
                        edata->state.skip_pager = 1;
-                       ee->prop.focus_skip = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_FULLSCREEN:
                        ee->prop.fullscreen = 1;
@@ -936,8 +934,8 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
             (prev.x.maximized_v != edata->state.maximized_v) ||
             (prev.x.maximized_h != edata->state.maximized_h) ||
 //                 (prev.x.shaded != edata->state.shaded) ||
-//                 (prev.x.skip_taskbar != edata->state.skip_taskbar) ||
-//                 (prev.x.skip_pager != edata->state.skip_pager) ||
+            (prev.x.skip_taskbar != edata->state.skip_taskbar) ||
+            (prev.x.skip_pager != edata->state.skip_pager) ||
             (prev.x.fullscreen != edata->state.fullscreen) ||
 //                 (prev.x.above != edata->state.above) ||
 //                 (prev.x.below != edata->state.below) ||
