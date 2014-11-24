@@ -2,7 +2,7 @@
 %bcond_with x
 
 Name:           efl
-Version:        1.11.4
+Version:        1.12.0
 Release:        0
 License:        LGPL-2.1
 Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
@@ -83,16 +83,22 @@ BuildRequires:  pkgconfig(capi-system-sensor)
 BuildRequires:  libmount-devel
 BuildRequires:  pkgconfig(dlog)
 
+############ efl
+Provides: efl-data
+Obsoletes: efl-data
+
+
 %description
 EFL is a library collection providing various functionality used (not only) by
 Enlightenment, Terminology, Tizen and more.
 
 ############ efl-data
-%package data
-Summary: Data files for EFL package
 
-%description data
-This package includes data files common to all packages.
+%package devel
+Summary: Developer files for EFL package
+
+%description devel
+This package includes developer files common to all packages.
 
 ############ Eina
 %package -n eina
@@ -613,11 +619,21 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %postun -n ephysics -p /sbin/ldconfig
 
 
-%files data
+%files -n %{name}
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_datadir}/locale/*/*/*.mo
-%{_includedir}/efl-1/Efl_Config.h
+%{_libdir}/libefl.so.*
+
+%files -n %{name}-devel
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_includedir}/efl-1/Efl*.h
+%{_includedir}/efl-1/interfaces/efl*.h
+%{_includedir}/efl-cxx-1/*.hh
+%{_libdir}/cmake/Efl*/*.cmake
+%{_libdir}/libefl.so
+%{_libdir}/pkgconfig/efl*.pc
 
 %files -n eina
 %manifest %{name}.manifest
@@ -629,7 +645,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %files -n eina-examples
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_datadir}/eina/examples/*
+%{_datadir}/eina*/examples/*
 %{_libdir}/eina/examples/*
 
 %files -n eina-devel
