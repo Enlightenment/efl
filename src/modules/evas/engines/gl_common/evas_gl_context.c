@@ -851,6 +851,11 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, texa);
 
+        SHADER_TEXTURE_ADD(shared, IMG_MASK, tex);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK, texa);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, tex);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, texa);
+
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
         else glUseProgram(gc->state.current.cur_prog);
@@ -2645,6 +2650,109 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 }
 
+void
+evas_gl_common_context_masked_image_push(Evas_Engine_GL_Context *gc,
+                                         Evas_GL_Texture *tex,
+                                         Evas_GL_Texture *mask_tex,
+                                         double sx, double sy,
+                                         double sw, double sh,
+                                         int x, int y, int w, int h,
+                                         int mx, int my, int mw, int mh,
+                                         int r, int g, int b, int a,
+                                         Eina_Bool smooth, Eina_Bool tex_only)
+{
+   // FIXME: How to implement support for yuv, rgb_a_pair & map stuff?
+   // NOTE: If image (tex) has no alpha this is very similar to RGB+A pair
+
+   // FIXME: Optimize for image vs. texture?
+   (void)tex_only;
+
+   int pnum, nv, nc, nu, na, i;
+   GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
+   GLuint prog;
+   int pn;
+
+   // TODO: Big IF here (image type, etc --> needs tons of new shaders!)
+   prog = gc->shared->shader[evas_gl_common_shader_choice
+     (0, NULL, r, g, b, a, SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK)].prog;
+
+   pn = _evas_gl_common_context_push(RTYPE_IMAGE,
+                                     gc, tex,
+                                     prog,
+                                     x, y, w, h,
+                                     EINA_TRUE,
+                                     smooth,
+                                     EINA_FALSE, 0, 0, 0, 0);
+
+   gc->pipe[pn].region.type = RTYPE_IMAGE;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texa = mask_tex->pt->texture;
+   gc->pipe[pn].shader.cur_prog = prog;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.blend = EINA_TRUE;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = EINA_TRUE;
+   // if nomul... dont need this
+   gc->pipe[pn].array.use_color = EINA_TRUE;
+   gc->pipe[pn].array.use_texuv = EINA_TRUE;
+   gc->pipe[pn].array.use_texuv2 = EINA_FALSE;
+   gc->pipe[pn].array.use_texuv3 = EINA_FALSE;
+   gc->pipe[pn].array.use_texa = EINA_TRUE;
+   gc->pipe[pn].array.use_texsam = EINA_FALSE;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+
+   pnum = gc->pipe[pn].array.num;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; na = pnum * 2;
+   gc->pipe[pn].array.num += 6;
+   array_alloc(gc, pn);
+
+   tx1 = (tex->x + sx) / (double)tex->pt->w;
+   ty1 = (tex->y + sy) / (double)tex->pt->h;
+   tx2 = (tex->x + sx + sw) / (double)tex->pt->w;
+   ty2 = (tex->y + sy + sh) / (double)tex->pt->h;
+
+   t2x1 = (mask_tex->x + mx) / (double)mask_tex->pt->w;
+   t2y1 = (mask_tex->y + my) / (double)mask_tex->pt->h;
+   t2x2 = (mask_tex->x + mx + mw) / (double)mask_tex->pt->w;
+   t2y2 = (mask_tex->y + my + mh) / (double)mask_tex->pt->h;
+
+   PUSH_VERTEX(pn, x    , y    , 0);
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_TEXUV(pn, tx1, ty1);
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx1, ty2);
+
+   PUSH_TEXA(pn, t2x1, t2y1);
+   PUSH_TEXA(pn, t2x2, t2y1);
+   PUSH_TEXA(pn, t2x1, t2y2);
+
+   PUSH_VERTEX(pn, x + w, y    , 0);
+   PUSH_VERTEX(pn, x + w, y + h, 0);
+   PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_TEXUV(pn, tx2, ty1);
+   PUSH_TEXUV(pn, tx2, ty2);
+   PUSH_TEXUV(pn, tx1, ty2);
+
+   PUSH_TEXA(pn, t2x2, t2y1);
+   PUSH_TEXA(pn, t2x2, t2y2);
+   PUSH_TEXA(pn, t2x1, t2y2);
+
+   for (i = 0; i < 6; i++)
+     {
+        PUSH_COLOR(pn, r, g, b, a);
+     }
+}
+
 EAPI void
 evas_gl_common_context_flush(Evas_Engine_GL_Context *gc)
 {
@@ -3103,7 +3211,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glDisableVertexAttribArray(SHAD_TEXUV);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
-
              if (gc->pipe[i].array.use_texa)
                 {
                    glEnableVertexAttribArray(SHAD_TEXA);
@@ -3145,6 +3252,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              else
                {
                   glDisableVertexAttribArray(SHAD_TEXA);
+
                }
              if (gc->pipe[i].array.use_texsam)
                {

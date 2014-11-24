@@ -762,6 +762,15 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        Eina_Bool smooth,
                                                        Eina_Bool tex_only,
                                                        Evas_Colorspace cspace);
+void             evas_gl_common_context_masked_image_push(Evas_Engine_GL_Context *gc,
+                                                          Evas_GL_Texture *tex,
+                                                          Evas_GL_Texture *mask_tex,
+                                                          double sx, double sy,
+                                                          double sw, double sh,
+                                                          int x, int y, int w, int h,
+                                                          int mx, int my, int mw, int mh,
+                                                          int r, int g, int b, int a,
+                                                          Eina_Bool smooth, Eina_Bool tex_only);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);

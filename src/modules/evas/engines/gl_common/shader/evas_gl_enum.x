@@ -44,5 +44,7 @@ typedef enum {
    SHADER_YUV,
    SHADER_YUY2_NOMUL,
    SHADER_YUY2,
+   SHADER_IMG_MASK,
+   SHADER_IMG_MASK_NOMUL,
    SHADER_LAST
 } Evas_GL_Shader;

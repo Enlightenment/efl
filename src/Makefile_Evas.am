@@ -680,7 +680,12 @@ modules/evas/engines/gl_common/shader/yuv_vert.shd \
 modules/evas/engines/gl_common/shader/yuy2_frag.shd \
 modules/evas/engines/gl_common/shader/yuy2_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/yuy2_nomul_vert.shd \
-modules/evas/engines/gl_common/shader/yuy2_vert.shd
+modules/evas/engines/gl_common/shader/yuy2_vert.shd \
+modules/evas/engines/gl_common/shader/img_mask_frag.shd \
+modules/evas/engines/gl_common/shader/img_mask_vert.shd \
+modules/evas/engines/gl_common/shader/img_mask_nomul_frag.shd \
+modules/evas/engines/gl_common/shader/img_mask_nomul_vert.shd \
+$(NULL)
 
 EXTRA_DIST += \
 modules/evas/engines/gl_common/shader/gen_shaders.sh \
