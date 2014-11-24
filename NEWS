@@ -1,6 +1,20 @@
 ==========
-EFL 1.12.0
+EFL 1.12.1
 ==========
+
+Changes since 1.12.0:
+---------------------
+
+Fixes:
+
+   * edje_calc: fix image set bug.
+   * ecore_anim: fix source_set bug.
+   * Evas GL: Fix bug in evgl_eng_pbuffer_surface_create (EGL)
+   * Fix bug ecore_imf_context_cursor_position_set was not called when cursor was moved by ECORE_IMF_CALLBACK_SELECTION_SET
+   * edje: fix wrong generation of 'minmul' and 'text.min' parameters in EDC.
+   * eldbus-codegen: Make generated code for property set work by setting the cb
+   * eldbus-codegen: Free msg on error path for generated code.
+   * eldbus-codegen: More memory leak fixes for generated code.
 
 Changes since 1.11.0:
 ---------------------
