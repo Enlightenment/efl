@@ -39,6 +39,7 @@ geo_clue2_manager_get_client_call(Eldbus_Proxy *proxy, Geo_Clue2_Manager_Get_Cli
    if (!eldbus_message_arguments_append(msg, ""))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return NULL;
      }
    p = eldbus_proxy_send(proxy, msg, cb_geo_clue2_manager_get_client, cb, -1);
@@ -82,6 +83,7 @@ geo_clue2_manager_add_agent_call(Eldbus_Proxy *proxy, Geo_Clue2_Manager_Add_Agen
    if (!eldbus_message_arguments_append(msg, "s", id))
      {
         ERR("Error: Filling message.");
+        eldbus_message_unref(msg);
         return NULL;
      }
    p = eldbus_proxy_send(proxy, msg, cb_geo_clue2_manager_add_agent, cb, -1);
