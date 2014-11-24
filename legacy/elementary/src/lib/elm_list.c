@@ -1219,7 +1219,7 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
      {
         while ((item_list = eina_list_next(item_list)))
           {
-             item = eina_list_data_get(item_list);
+             item = eo_data_scope_get(eina_list_data_get(item_list), ELM_LIST_ITEM_CLASS);
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
@@ -1230,7 +1230,7 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
      {
         while ((item_list = eina_list_prev(item_list)))
           {
-             item = eina_list_data_get(item_list);
+             item = eo_data_scope_get(eina_list_data_get(item_list), ELM_LIST_ITEM_CLASS);
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
