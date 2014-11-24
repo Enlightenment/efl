@@ -50,7 +50,6 @@ _cube_new(Evas *evas, Evas_Coord w, Evas_Coord h, Evas_Coord d)
                  elm_app_data_dir_get(), "twofish.jpg");
         evas_object_image_file_set(o, buf, NULL);
         evas_object_resize(o, 256, 256);
-        evas_object_image_smooth_scale_set(o, EINA_FALSE);
         evas_object_pass_events_set(o, EINA_TRUE);
         evas_object_color_set(o, 235, 235, 235, 235);
         evas_object_show(o);
@@ -99,7 +98,6 @@ _cube_pos(Cube *c,
    Evas_Coord mz[6];
 
    m = evas_map_new(4);
-   evas_map_smooth_set(m, EINA_FALSE);
 
    for (i = 0; i < 6; i++)
      {
