@@ -78,14 +78,8 @@ _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
 
    evas_event_freeze(tev);
 
-   ed->base->evas = tev;
-   ed->base->clipper = evas_object_rectangle_add(ed->base->evas);
-   evas_object_static_clip_set(ed->base->clipper, 1);
-   evas_object_smart_member_add(ed->base->clipper, obj);
-   evas_object_color_set(ed->base->clipper, 255, 255, 255, 255);
-   evas_object_move(ed->base->clipper, -100000, -100000);
-   evas_object_resize(ed->base->clipper, 200000, 200000);
-   evas_object_pass_events_set(ed->base->clipper, 1);
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+
    ed->is_rtl = EINA_FALSE;
    ed->have_objects = EINA_TRUE;
    ed->references = 1;
