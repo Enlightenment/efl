@@ -37,6 +37,15 @@ _notify_block(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    printf("Notify block area clicked!!\n");
 }
 
+static void
+_notify_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+
+   printf("Key down: %s\n", ev->keyname);
+}
+
 void
 test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -89,6 +98,8 @@ test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_notify_timeout_set(notify, 5.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
    evas_object_smart_callback_add(notify, "block,clicked", _notify_block, NULL);
+   evas_object_event_callback_add(notify, EVAS_CALLBACK_KEY_DOWN,
+                                  _notify_key_down_cb, NULL);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);

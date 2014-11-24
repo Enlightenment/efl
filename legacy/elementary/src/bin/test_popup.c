@@ -107,6 +107,15 @@ _list_click(void *data EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
+_popup_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+
+   printf("Key: %s\n", ev->keyname);
+}
+
+static void
 _popup_center_text_cb(void *data, Evas_Object *obj EINA_UNUSED,
                       void *event_info EINA_UNUSED)
 {
@@ -117,6 +126,8 @@ _popup_center_text_cb(void *data, Evas_Object *obj EINA_UNUSED,
                        "timeout value is 3 seconds");
    elm_popup_timeout_set(popup, 3.0);
    evas_object_smart_callback_add(popup, "timeout", _response_cb, popup);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_KEY_DOWN,
+                                  _popup_key_down_cb, NULL);
 
    // popup show should be called after adding all the contents and the buttons
    // of popup to set the focus into popup's contents correctly.
