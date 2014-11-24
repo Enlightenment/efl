@@ -724,7 +724,11 @@ evas_gl_common_context_new(void)
 
                        // Note: If we support ETC2 we'll try to always use ETC2 even when the
                        // image has colorspace ETC1 (backwards compatibility).
-                       shared->info.etc1_subimage = shared->info.etc2;
+
+                       if (ext && strstr((char *)ext, "GL_EXT_compressed_ETC1_RGB8_sub_texture"))
+                         shared->info.etc1_subimage = 1;
+                       else
+                         shared->info.etc1_subimage = shared->info.etc2;
 
                        // FIXME: My NVIDIA driver advertises ETC2 texture formats
                        // but does not support them. Driver bug? Logic bug?
