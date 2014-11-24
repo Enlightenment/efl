@@ -843,9 +843,9 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, texuv);
 
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, tex);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, texm);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, texa);
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, texm);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, texa);
 
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
@@ -1403,7 +1403,7 @@ _evas_gl_common_context_push(int rtype,
 #else
    if (!((gc->pipe[pn].region.type == rtype)
          && (!tex || gc->pipe[pn].shader.cur_tex == current_tex)
-         && (!texm || gc->pipe[pn].shader.cur_texm == current_texm)
+         && (!texa || gc->pipe[pn].shader.cur_texa == current_texa)
          && (gc->pipe[pn].shader.cur_prog == prog)
          && (gc->pipe[pn].shader.smooth == smooth)
          && (gc->pipe[pn].shader.blend == blend)
@@ -1606,7 +1606,7 @@ again:
    gc->pipe[pn].array.use_texuv = 0;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
 #endif
 
@@ -2981,7 +2981,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *texuv_ptr = NULL;
         unsigned char *texuv2_ptr = NULL;
         unsigned char *texuv3_ptr = NULL;
-        unsigned char *texm_ptr = NULL;
+        unsigned char *texa_ptr = NULL;
         unsigned char *texsam_ptr = NULL;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
@@ -2996,8 +2996,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv_ptr = color_ptr + COLOR_SIZE;
              texuv2_ptr = texuv_ptr + TEX_SIZE;
              texuv3_ptr = texuv2_ptr + TEX_SIZE;
-             texm_ptr = texuv3_ptr + TEX_SIZE;
-             texsam_ptr = texm_ptr + TEX_SIZE;
+             texa_ptr = texuv3_ptr + TEX_SIZE;
+             texsam_ptr = texa_ptr + TEX_SIZE;
 # define END_POINTER (texsam_ptr + TEX_SIZE)
 
              glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
@@ -3024,7 +3024,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (gc->pipe[i].array.use_texuv3)
                     memcpy(x + (unsigned long)texuv3_ptr, gc->pipe[i].array.texuv3, TEX_SIZE);
                   if (gc->pipe[i].array.use_texa)
-                    memcpy(x + (unsigned long)texm_ptr, gc->pipe[i].array.texa, TEX_SIZE);
+                    memcpy(x + (unsigned long)texa_ptr, gc->pipe[i].array.texa, TEX_SIZE);
                   if (gc->pipe[i].array.use_texsam)
                     memcpy(x + (unsigned long)texsam_ptr, gc->pipe[i].array.texsam, TEX_SIZE);
 /*                  
@@ -3038,7 +3038,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                           gc->pipe[i].array.use_texuv,
                           gc->pipe[i].array.use_texuv2,
                           gc->pipe[i].array.use_texuv3,
-                          gc->pipe[i].array.use_texm,
+                          gc->pipe[i].array.use_texa,
                           gc->pipe[i].array.use_texsam);
  */
                   glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -3051,7 +3051,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv_ptr = (unsigned char *)gc->pipe[i].array.texuv;
              texuv2_ptr = (unsigned char *)gc->pipe[i].array.texuv2;
              texuv3_ptr = (unsigned char *)gc->pipe[i].array.texuv3;
-             texm_ptr = (unsigned char *)gc->pipe[i].array.texa;
+             texa_ptr = (unsigned char *)gc->pipe[i].array.texa;
              texsam_ptr = (unsigned char *)gc->pipe[i].array.texsam;
           }
         glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)vertex_ptr);
@@ -3102,7 +3102,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                 {
                    glEnableVertexAttribArray(SHAD_TEXA);
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                   glVertexAttribPointer(SHAD_TEXA, 2, GL_FLOAT, GL_FALSE, 0, (void *)texm_ptr);
+                   glVertexAttribPointer(SHAD_TEXA, 2, GL_FLOAT, GL_FALSE, 0, (void *)texa_ptr);
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                    glActiveTexture(GL_TEXTURE1);
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
