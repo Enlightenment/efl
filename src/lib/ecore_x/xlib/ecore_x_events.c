@@ -270,7 +270,7 @@ _ecore_mouse_move(unsigned int timestamp,
 }
 
 static void
-_ecore_x_event_free_axis_update_event(void *data, void *ev)
+_ecore_x_event_free_axis_update_event(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Event_Axis_Update *e = ev;
    if (e) free(e->axis);
