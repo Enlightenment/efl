@@ -12,6 +12,9 @@ EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_PRE =
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST =
    EO_EVENT_DESCRIPTION("Render Post", "Called just after rendering stops on the canvas target @since 1.2");
 
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
+   EO_EVENT_DESCRIPTION("Axis Update", "Device axis value changed");
+
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN =
    EO_HOT_EVENT_DESCRIPTION("Canvas Focus In", "Canvas got focus as a whole");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT =
@@ -66,7 +69,8 @@ static const Eo_Event_Description *_legacy_evas_callback_table[EVAS_CALLBACK_LAS
    EVAS_CANVAS_EVENT_RENDER_PRE,
    EVAS_CANVAS_EVENT_RENDER_POST,
    EVAS_OBJECT_EVENT_IMAGE_RESIZE,
-   EVAS_CANVAS_EVENT_DEVICE_CHANGED
+   EVAS_CANVAS_EVENT_DEVICE_CHANGED,
+   EVAS_CANVAS_EVENT_AXIS_UPDATE
 };
 
 typedef struct

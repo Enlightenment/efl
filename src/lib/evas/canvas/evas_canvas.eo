@@ -1758,6 +1758,25 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in uint keycode; /*@ Key scan code numeric value for canvas. */
          }
       }
+      event_feed_axis_update {
+         /*@
+         Input device axis update event feed.
+
+         This function will set some evas properties that is necessary when
+         an e.g. stylus axis is updated. It prepares information to be treated
+         by the callback function.
+
+         @since 1.13 */
+
+         params {
+            @in uint timestamp; /*@ Timestamp of the axis event */
+            @in int device; /*@ System-provided device identifier */
+            @in int toolid; /*@ Type of tool currently being used */
+            @in int naxes; /*@ Number of elements in the \p axis array */
+            @in const(Evas_Axis)* axis; /*@ Array containing the current value of all updated axes */
+            @in const(void)* data; /*@ Data for canvas. */
+         }
+      }
    }
    implements {
       Eo.Base.constructor;

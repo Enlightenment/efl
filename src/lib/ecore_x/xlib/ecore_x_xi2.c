@@ -3,6 +3,7 @@
 #endif /* ifdef HAVE_CONFIG_H */
 
 #include <string.h>
+#include <math.h>
 
 #include "Ecore.h"
 #include "ecore_x_private.h"
@@ -86,6 +87,42 @@ _ecore_x_input_touch_info_clear(void)
    _ecore_x_xi2_touch_info_list = NULL;
 }
 #endif /* ifdef ECORE_XI2_2 */
+#endif /* ifdef ECORE_XI2 */
+
+#ifdef ECORE_XI2
+static Atom
+_ecore_x_input_get_axis_label(char *axis_name)
+{
+   static Atom *atoms = NULL;
+   static char *names[] =
+     {
+        "Abs X", "Abs Y", "Abs Pressure",
+        "Abs Distance", "Abs Rotary Z",
+        "Abs Wheel", "Abs Tilt X", "Abs Tilt Y"
+     };
+   int n = sizeof(names) / sizeof(names[0]);
+   int i;
+
+   if (atoms == NULL)
+     {
+        atoms = calloc(n, sizeof(Atom));
+        if (!atoms) return 0;
+
+        if (!XInternAtoms(_ecore_x_disp, names, n, 1, atoms))
+          {
+             free(atoms);
+             atoms = NULL;
+             return 0;
+          }
+     }
+
+   for (i = 0; i < n; i++)
+     {
+        if (!strcmp(axis_name, names[i])) return atoms[i];
+     }
+
+   return 0;
+}
 #endif /* ifdef ECORE_XI2 */
 
 void
@@ -208,15 +245,11 @@ _ecore_x_input_touch_info_get(XIDeviceInfo *dev)
 #endif
 
 void
-_ecore_x_input_handler(XEvent *xevent)
+_ecore_x_input_raw_handler(XEvent *xevent)
 {
 #ifdef ECORE_XI2
-   XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
-   /* XIRawEvent *evr = (XIRawEvent *)(xevent->xcookie.data); */
-   int devid = evd->deviceid;
-   int i;
+   if (xevent->type != GenericEvent) return;
 
-   /* No filter for this events */
    switch (xevent->xcookie.evtype)
      {
 #ifdef XI_RawButtonPress
@@ -235,24 +268,22 @@ _ecore_x_input_handler(XEvent *xevent)
          break;
 #endif
      }
+#endif /* ifdef ECORE_XI2 */
+}
 
-   if (_ecore_x_xi2_devs)
-     {
-        for (i = 0; i < _ecore_x_xi2_num; i++)
-          {
-             XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
+void
+_ecore_x_input_mouse_handler(XEvent *xevent)
+{
+#ifdef ECORE_XI2
+   if (xevent->type != GenericEvent) return;
 
-             if (devid == dev->deviceid)
-               {
-                  if (dev->use == XIMasterPointer) return;
-                  if ((dev->use == XISlavePointer) &&
-                      (evd->flags & XIPointerEmulated)) return;
-               }
-          }
-     }
+   XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+   int devid = evd->deviceid;
+
    switch (xevent->xcookie.evtype)
      {
       case XI_Motion:
+        INF("Handling XI_Motion");
         _ecore_mouse_move
           (evd->time,
           0,   // state
@@ -290,7 +321,7 @@ _ecore_x_input_handler(XEvent *xevent)
         break;
 
       case XI_ButtonRelease:
-		INF("ButtonEvent:multi release time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
+        INF("ButtonEvent:multi release time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_UP,
           evd->time,
@@ -308,13 +339,27 @@ _ecore_x_input_handler(XEvent *xevent)
           evd->event_x, evd->event_y,
           evd->root_x, evd->root_y);
         break;
+      }
+#endif /* ifdef ECORE_XI2 */
+}
 
+void
+_ecore_x_input_multi_handler(XEvent *xevent)
+{
+#ifdef ECORE_XI2
+   if (xevent->type != GenericEvent) return;
+   XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+   int devid = evd->deviceid;
+
+   switch (xevent->xcookie.evtype)
+      {
 #ifdef XI_TouchUpdate
       case XI_TouchUpdate:
 #ifdef ECORE_XI2_2
         i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchUpdate);
         if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
 #endif /* #ifdef ECORE_XI2_2 */
+        INF("Handling XI_TouchUpdate");
         _ecore_mouse_move
           (evd->time,
           0,   // state
@@ -342,6 +387,7 @@ _ecore_x_input_handler(XEvent *xevent)
         i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchBegin);
         if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
 #endif /* #ifdef ECORE_XI2_2 */
+       INF("Handling XI_TouchBegin");
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_DOWN,
           evd->time,
@@ -375,6 +421,7 @@ _ecore_x_input_handler(XEvent *xevent)
              return;
           }
 #endif /* #ifdef ECORE_XI2_2 */
+        INF("Handling XI_TouchEnd");
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_UP,
           evd->time,
@@ -400,7 +447,181 @@ _ecore_x_input_handler(XEvent *xevent)
 #endif /* #ifdef ECORE_XI2_2 */
         break;
 #endif
+      }
+#endif /* ifdef ECORE_XI2 */
+}
 
+static int
+count_bits(long n)
+{
+   unsigned int c; /* c accumulates the total bits set in v */
+   for (c = 0; n; c++) n &= n - 1; /* clear the least significant bit set */
+   return c;
+}
+
+void
+_ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
+{
+#ifdef ECORE_XI2
+   if (xevent->type != GenericEvent) return;
+   XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+   int n = count_bits(*evd->valuators.mask);
+   int i;
+   int j = 0;
+   double tiltx = 0, tilty = 0;
+   Eina_Bool compute_tilt = EINA_FALSE;
+   Ecore_Axis *axis = calloc(n, sizeof(Ecore_Axis));
+   if (!axis) return;
+   Ecore_Axis *axis_ptr = axis;
+
+   for (i = 0; i < dev->num_classes; i++)
+     {
+        if (dev->classes[i]->type == XIValuatorClass)
+          {
+             XIValuatorClassInfo *inf = ((XIValuatorClassInfo *)dev->classes[i]);
+
+             if (*evd->valuators.mask & (1 << inf->number))
+               {
+                  if (inf->label == _ecore_x_input_get_axis_label("Abs X"))
+                    {
+                       axis_ptr->label = ECORE_AXIS_LABEL_X;
+                       axis_ptr->value = evd->valuators.values[j];
+                       axis_ptr++;
+                    }
+                  else if (inf->label == _ecore_x_input_get_axis_label("Abs Y"))
+                    {
+                       axis_ptr->label = ECORE_AXIS_LABEL_Y;
+                       axis_ptr->value = evd->valuators.values[j];
+                       axis_ptr++;
+                    }
+                  else if (inf->label == _ecore_x_input_get_axis_label("Abs Pressure"))
+                    {
+                       axis_ptr->label = ECORE_AXIS_LABEL_PRESSURE;
+                       axis_ptr->value = (evd->valuators.values[j] - inf->min) / (inf->max - inf->min);
+                       axis_ptr++;
+                    }
+                  else if (inf->label == _ecore_x_input_get_axis_label("Abs Distance"))
+                    {
+                       axis_ptr->label = ECORE_AXIS_LABEL_DISTANCE;
+                       axis_ptr->value = (evd->valuators.values[j] - inf->min) / (inf->max - inf->min);
+                       axis_ptr++;
+                    }
+                  else if ((inf->label == _ecore_x_input_get_axis_label("Abs Rotary Z")) ||
+                           (inf->label == _ecore_x_input_get_axis_label("Abs Wheel")))
+                    {
+                       axis_ptr->label = ECORE_AXIS_LABEL_TWIST;
+                       if (inf->resolution == 1)
+                         {
+                            /* some wacom drivers do not correctly report resolution, so pre-normalize */
+                            axis_ptr->value = 2*((evd->valuators.values[j] - inf->min) / (inf->max - inf->min)) - 1;
+                            axis_ptr->value *= M_PI;
+                         }
+                       else
+                         {
+                            axis_ptr->value = evd->valuators.values[j] / inf->resolution;
+                         }
+                       axis_ptr++;
+                    }
+                  else if (inf->label == _ecore_x_input_get_axis_label("Abs Tilt X"))
+                    {
+                       tiltx = evd->valuators.values[j] / inf->resolution;
+                       compute_tilt = EINA_TRUE;
+                       /* don't increment axis_ptr */
+                    }
+                  else if (inf->label == _ecore_x_input_get_axis_label("Abs Tilt Y"))
+                    {
+                       tilty = -evd->valuators.values[j] / inf->resolution;
+                       compute_tilt = EINA_TRUE;
+                       /* don't increment axis_ptr */
+                    }
+                  else
+                    {
+                       axis_ptr->label = ECORE_AXIS_LABEL_UNKNOWN;
+                       axis_ptr->value = evd->valuators.values[j];
+                       axis_ptr++;
+                    }
+                  j++;
+               }
+          }
+     }
+
+   if ((compute_tilt) && ((axis_ptr + 2) <= (axis + n)))
+     {
+        double x = sin(tiltx);
+        double y = sin(tilty);
+        axis_ptr->label = ECORE_AXIS_LABEL_TILT;
+        axis_ptr->value = asin(sqrt((x * x) + (y * y)));
+        axis_ptr++;
+
+        /* note: the value of atan2(0,0) is implementation-defined */
+        axis_ptr->label = ECORE_AXIS_LABEL_AZIMUTH;
+        axis_ptr->value = atan2(y, x);
+        axis_ptr++;
+     }
+
+   /* update n to reflect actual count and realloc array to free excess */
+   n = (axis_ptr - axis);
+   Ecore_Axis *shrunk_axis = realloc(axis, n * sizeof(Ecore_Axis));
+   if (shrunk_axis != NULL) axis = shrunk_axis;
+
+   if (n > 0)
+     _ecore_x_axis_update(evd->child ? evd->child : evd->event,
+                          evd->event, evd->root, evd->time, evd->deviceid,
+                          evd->detail, n, axis);
+#endif /* ifdef ECORE_XI2 */
+}
+
+static XIDeviceInfo *
+_ecore_x_input_device_lookup(int deviceid)
+{
+   XIDeviceInfo *dev;
+   int i;
+
+   if (_ecore_x_xi2_devs)
+     {
+        for (i = 0; i < _ecore_x_xi2_num; i++)
+          {
+             dev = &(_ecore_x_xi2_devs[i]);
+             if (deviceid == dev->deviceid) return dev;
+          }
+     }
+   return NULL;
+}
+
+void
+_ecore_x_input_handler(XEvent *xevent)
+{
+#ifdef ECORE_XI2
+   if (xevent->type != GenericEvent) return;
+
+   switch (xevent->xcookie.evtype)
+     {
+      case XI_RawMotion:
+      case XI_RawButtonPress:
+      case XI_RawButtonRelease:
+        _ecore_x_input_raw_handler(xevent);
+        break;
+
+      case XI_Motion:
+      case XI_ButtonPress:
+      case XI_ButtonRelease:
+      case XI_TouchUpdate:
+      case XI_TouchBegin:
+      case XI_TouchEnd:
+          {
+             XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+             XIDeviceInfo *dev = _ecore_x_input_device_lookup(evd->deviceid);
+
+             if ((dev->use == XISlavePointer) &&
+                 !(evd->flags & XIPointerEmulated))
+               _ecore_x_input_multi_handler(xevent);
+             else if (dev->use == XIFloatingSlave)
+               _ecore_x_input_mouse_handler(xevent);
+
+             if (dev->use != XIMasterPointer)
+               _ecore_x_input_axis_handler(xevent, dev);
+          }
+        break;
       default:
         break;
      }
@@ -408,116 +629,64 @@ _ecore_x_input_handler(XEvent *xevent)
 }
 
 EAPI Eina_Bool
-ecore_x_input_multi_select(Ecore_X_Window win)
+ecore_x_input_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
    int i;
    Eina_Bool find = EINA_FALSE;
 
    if (!_ecore_x_xi2_devs)
-     return 0;
+     return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    for (i = 0; i < _ecore_x_xi2_num; i++)
      {
         XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
+        XIEventMask eventmask;
+        unsigned char mask[4] = { 0 };
+        int update = 0;
 
-        if (dev->use == XIFloatingSlave)
+        eventmask.deviceid = dev->deviceid;
+        eventmask.mask_len = sizeof(mask);
+        eventmask.mask = mask;
+
+        if ((dev->use == XIFloatingSlave) || (dev->use == XISlavePointer))
           {
-             XIEventMask eventmask;
-             unsigned char mask[4] = { 0 };
-
-             eventmask.deviceid = dev->deviceid;
-             eventmask.mask_len = sizeof(mask);
-             eventmask.mask = mask;
              XISetMask(mask, XI_ButtonPress);
              XISetMask(mask, XI_ButtonRelease);
              XISetMask(mask, XI_Motion);
+
+#ifdef ECORE_XI2_2
+             Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
+             Ecore_X_Touch_Device_Info *info;
+             info = _ecore_x_input_touch_info_get(dev);
+
+             if (info)
+               {
+                  XISetMask(mask, XI_TouchUpdate);
+                  XISetMask(mask, XI_TouchBegin);
+                  XISetMask(mask, XI_TouchEnd);
+                  update = 1;
+
+                  l = eina_inlist_append(l, (Eina_Inlist *)info);
+                  _ecore_x_xi2_touch_info_list = l;
+               }
+#endif /* #ifdef ECORE_XI2_2 */
+
+#if !defined (ECORE_XI2_2) && defined (XI_TouchUpdate) && defined (XI_TouchBegin) && defined (XI_TouchEnd)
+             XISetMask(mask, XI_TouchUpdate);
+             XISetMask(mask, XI_TouchBegin);
+             XISetMask(mask, XI_TouchEnd);
+#endif
+
+             update = 1;
+          }
+
+        if (update)
+          {
              XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
              if (_ecore_xlib_sync) ecore_x_sync();
              find = EINA_TRUE;
-          }
-        else if (dev->use == XISlavePointer)
-          {
-             XIDeviceInfo *atdev = NULL;
-             int j;
-
-             for (j = 0; j < _ecore_x_xi2_num; j++)
-               {
-                  if (_ecore_x_xi2_devs[j].deviceid == dev->attachment)
-                    atdev = &(_ecore_x_xi2_devs[j]);
-               }
-             if (((atdev) && (atdev->use != XIMasterPointer)) ||
-                 (!atdev))
-               {
-                  XIEventMask eventmask;
-                  unsigned char mask[4] = { 0 };
-
-                  eventmask.deviceid = dev->deviceid;
-                  eventmask.mask_len = sizeof(mask);
-                  eventmask.mask = mask;
-                  XISetMask(mask, XI_ButtonPress);
-                  XISetMask(mask, XI_ButtonRelease);
-                  XISetMask(mask, XI_Motion);
-#ifdef ECORE_XI2_2
-                  Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
-                  Ecore_X_Touch_Device_Info *info;
-                  info = _ecore_x_input_touch_info_get(dev);
-
-                  if (info)
-                    {
-                       XISetMask(mask, XI_TouchUpdate);
-                       XISetMask(mask, XI_TouchBegin);
-                       XISetMask(mask, XI_TouchEnd);
-
-                       l = eina_inlist_append(l, (Eina_Inlist *)info);
-                       _ecore_x_xi2_touch_info_list = l;
-                    }
-#else
-# ifdef XI_TouchUpdate
-                  XISetMask(mask, XI_TouchUpdate);
-# endif
-# ifdef XI_TouchBegin
-                  XISetMask(mask, XI_TouchBegin);
-# endif
-# ifdef XI_TouchEnd
-                  XISetMask(mask, XI_TouchEnd);
-# endif
-#endif /* #ifdef ECORE_XI2_2 */
-
-                  XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
-                  if (_ecore_xlib_sync) ecore_x_sync();
-                  find = EINA_TRUE;
-               }
-#ifdef ECORE_XI2_2
-             else if ((atdev) && (atdev->use == XIMasterPointer))
-               {
-                  Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
-                  Ecore_X_Touch_Device_Info *info;
-                  info = _ecore_x_input_touch_info_get(dev);
-
-                  if (info)
-                    {
-                       XIEventMask eventmask;
-                       unsigned char mask[4] = { 0 };
-
-                       eventmask.deviceid = dev->deviceid;
-                       eventmask.mask_len = sizeof(mask);
-                       eventmask.mask = mask;
-
-                       XISetMask(mask, XI_TouchUpdate);
-                       XISetMask(mask, XI_TouchBegin);
-                       XISetMask(mask, XI_TouchEnd);
-                       XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
-                       if (_ecore_xlib_sync) ecore_x_sync();
-
-                       l = eina_inlist_append(l, (Eina_Inlist *)info);
-                       _ecore_x_xi2_touch_info_list = l;
-
-                       find = EINA_TRUE;
-                    }
-               }
-#endif /* #ifdef ECORE_XI2_2 */
           }
      }
 

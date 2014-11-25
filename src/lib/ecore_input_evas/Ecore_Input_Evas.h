@@ -49,6 +49,7 @@ EAPI Eina_Bool ecore_event_evas_mouse_wheel(void *data, int type, void *event);
 EAPI Eina_Bool ecore_event_evas_mouse_move(void *data, int type, void *event);
 EAPI Eina_Bool ecore_event_evas_mouse_in(void *data, int type, void *event);
 EAPI Eina_Bool ecore_event_evas_mouse_out(void *data, int type, void *event);
+EAPI Eina_Bool ecore_event_evas_axis_update(void *data, int type, void *event);
 
 EAPI void      ecore_event_window_register(Ecore_Window id, void *window, Evas *evas, Ecore_Event_Mouse_Move_Cb move_mouse, Ecore_Event_Multi_Move_Cb move_multi, Ecore_Event_Multi_Down_Cb down_multi, Ecore_Event_Multi_Up_Cb up_multi);
 EAPI void      ecore_event_window_unregister(Ecore_Window id);

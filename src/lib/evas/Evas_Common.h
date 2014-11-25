@@ -129,6 +129,8 @@ typedef enum _Evas_Callback_Type
 
    EVAS_CALLBACK_IMAGE_RESIZE, /**< Image size is changed @since 1.8 */
    EVAS_CALLBACK_DEVICE_CHANGED, /**< Devices added, removed or changed on canvas @since 1.8 */
+
+   EVAS_CALLBACK_AXIS_UPDATE, /**< Input device changed value on some axis @since 1.13 */
    EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The types of events triggering a callback */
 
@@ -420,6 +422,8 @@ typedef struct _Evas_Event_Key_Down      Evas_Event_Key_Down; /**< Event structu
 typedef struct _Evas_Event_Key_Up        Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
 typedef struct _Evas_Event_Render_Post   Evas_Event_Render_Post; /**< Event structure that may come with #EVAS_CALLBACK_RENDER_POST event callbacks @since 1.8 */
+typedef struct _Evas_Axis                Evas_Axis; /**< Details for a single device axis state @since 1.13 */
+typedef struct _Evas_Event_Axis_Update   Evas_Event_Axis_Update; /**< Event structure for #EVAS_CALLBACK_AXIS_UPDATE event callbacks @since 1.13 */
 
 typedef enum _Evas_Alloc_Error
 {
@@ -840,6 +844,41 @@ struct _Evas_Event_Hold /** Hold change event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+};
+
+typedef enum _Evas_Axis_Label
+{
+   EVAS_AXIS_LABEL_UNKNOWN,       /**< Axis containing unknown (or not yet representable) data. Range: Unbounded. Unit: Undefined. @since 1.13 */
+   EVAS_AXIS_LABEL_X,             /**< Position along physical X axis; not window relative. Range: Unbounded. Unit: Undefined. @since 1.13 */
+   EVAS_AXIS_LABEL_Y,             /**< Position along physical Y axis; not window relative. Range: Unbounded. Unit: Undefined. @since 1.13 */
+   EVAS_AXIS_LABEL_PRESSURE,      /**< Force applied to tool tip. Range: [0.0, 1.0]. Unit: Unitless. @since 1.13 */
+   EVAS_AXIS_LABEL_DISTANCE,      /**< Relative distance along physical Z axis. Range: [0.0, 1.0]. Unit: Unitless @since 1.13 */
+   EVAS_AXIS_LABEL_AZIMUTH,       /**< Angle of tool about the Z axis from positive X axis. Range: [-PI, PI]. Unit: Radians. @since 1.13 */
+   EVAS_AXIS_LABEL_TILT,          /**< Angle of tool about plane of sensor from positive Z axis. Range: [0.0, PI]. Unit: Radians. @since 1.13 */
+   EVAS_AXIS_LABEL_TWIST,         /**< Rotation of tool about its major axis from its "natural" position. Range: [-PI, PI] Unit: Radians. @since 1.13 */
+   EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR,   /**< Length of contact ellipse along AZIMUTH. Range: Unbounded: Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOUCH_WIDTH_MINOR,   /**< Length of contact ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOOL_WIDTH_MAJOR,    /**< Length of tool ellipse along AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR     /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+} Evas_Axis_Label; /**< Types of recognized device axes @since 1.13 */
+
+struct _Evas_Axis
+{
+   Evas_Axis_Label label;
+   double value;
+};
+
+struct _Evas_Event_Axis_Update
+{
+   void             *data;
+
+   unsigned int timestamp;
+   int device;
+   int toolid;
+
+   int naxis;
+   Evas_Axis *axis;
+   Evas_Device *dev;
 };
 
 /**

@@ -53,6 +53,7 @@ extern "C" {
    EAPI extern int ECORE_EVENT_MOUSE_WHEEL;
    EAPI extern int ECORE_EVENT_MOUSE_IN;
    EAPI extern int ECORE_EVENT_MOUSE_OUT;
+   EAPI extern int ECORE_EVENT_AXIS_UPDATE; /**< @since 1.13 */
 
 #define ECORE_EVENT_MODIFIER_SHIFT      0x0001
 #define ECORE_EVENT_MODIFIER_CTRL       0x0002
@@ -78,6 +79,8 @@ extern "C" {
    typedef struct _Ecore_Event_Mouse_Move   Ecore_Event_Mouse_Move;
    typedef struct _Ecore_Event_Mouse_IO     Ecore_Event_Mouse_IO;
    typedef struct _Ecore_Event_Modifiers    Ecore_Event_Modifiers;
+   typedef struct _Ecore_Event_Axis_Update  Ecore_Event_Axis_Update; /**< @since 1.13 */
+   typedef struct _Ecore_Axis               Ecore_Axis; /**< @since 1.13 */
 
    /**
     * @typedef Ecore_Event_Modifier
@@ -244,6 +247,42 @@ extern "C" {
               double     x, y;
            } root;
         } multi;
+     };
+
+   typedef enum _Ecore_Axis_Label
+     {
+        ECORE_AXIS_LABEL_UNKNOWN,       /**< Axis type is not known. Range: Unbounded. Unit: Undefined. @since 1.13 */
+        ECORE_AXIS_LABEL_X,             /**< Position along physical X axis; not window relative. Range: Unbounded. Unit: Undefined. @since 1.13 */
+        ECORE_AXIS_LABEL_Y,             /**< Position along physical Y axis; not window relative. Range: Unbounded. Unit: Undefined. @since 1.13 */
+        ECORE_AXIS_LABEL_PRESSURE,      /**< Force applied to tool tip. Range: [0.0, 1.0]. Unit: Unitless. @since 1.13 */
+        ECORE_AXIS_LABEL_DISTANCE,      /**< Relative distance along physical Z axis. Range: [0.0, 1.0]. Unit: Unitless. @since 1.13 */
+        ECORE_AXIS_LABEL_AZIMUTH,       /**< Angle of tool about the Z axis from positive X axis. Range: [-PI, PI]. Unit: Radians. @since 1.13*/
+        ECORE_AXIS_LABEL_TILT,          /**< Angle of tool about plane of sensor from positive Z axis. Range: [0.0, PI]. Unit: Radians. @since 1.13 */
+        ECORE_AXIS_LABEL_TWIST,         /**< Rotation of tool about its major axis from its "natural" position. Range: [-PI, PI] Unit: Radians. @since 1.13 */
+        ECORE_AXIS_LABEL_TOUCH_WIDTH_MAJOR,   /**< Length of contact ellipse along AZIMUTH. Range: Unbounded: Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
+        ECORE_AXIS_LABEL_TOUCH_WIDTH_MINOR,   /**< Length of contact ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
+        ECORE_AXIS_LABEL_TOOL_WIDTH_MAJOR,    /**< Length of tool ellipse along AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
+        ECORE_AXIS_LABEL_TOOL_WIDTH_MINOR     /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as ECORE_AXIS_LABEL_{X,Y}. @since 1.13 */
+   } Ecore_Axis_Label; /**< @since 1.13 */
+
+   struct _Ecore_Axis
+     {
+        Ecore_Axis_Label label;
+        double value;
+     };
+
+   struct _Ecore_Event_Axis_Update
+     {
+        Ecore_Window     window;
+        Ecore_Window     root_window;
+        Ecore_Window     event_window;
+
+        unsigned int timestamp;
+        int device;
+        int toolid;
+
+        int naxis;
+        Ecore_Axis *axis;
      };
 
    /**

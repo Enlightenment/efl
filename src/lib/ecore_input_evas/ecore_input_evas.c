@@ -46,7 +46,7 @@ struct _Ecore_Input_Last
 };
 
 static int _ecore_event_evas_init_count = 0;
-static Ecore_Event_Handler *ecore_event_evas_handlers[8];
+static Ecore_Event_Handler *ecore_event_evas_handlers[9];
 static Eina_Hash *_window_hash = NULL;
 
 static Eina_List *_last_events = NULL;
@@ -541,6 +541,19 @@ ecore_event_evas_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
    return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_OUT);
 }
 
+EAPI Eina_Bool
+ecore_event_evas_axis_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Event_Axis_Update *e;
+   Ecore_Input_Window *lookup;
+
+   e = event;
+   lookup = _ecore_event_window_match(e->event_window);
+   if (!lookup) return ECORE_CALLBACK_PASS_ON;
+   evas_event_feed_axis_update(lookup->evas, e->timestamp, e->device, e->toolid, e->naxis, e->axis, NULL);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 EAPI int
 ecore_event_evas_init(void)
 {
@@ -588,6 +601,9 @@ ecore_event_evas_init(void)
                                                           NULL);
    ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
                                                           ecore_event_evas_mouse_out,
+                                                          NULL);
+   ecore_event_evas_handlers[8] = ecore_event_handler_add(ECORE_EVENT_AXIS_UPDATE,
+                                                          ecore_event_evas_axis_update,
                                                           NULL);
 
    _window_hash = eina_hash_pointer_new(free);

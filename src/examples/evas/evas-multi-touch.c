@@ -98,6 +98,38 @@ _touch_move(Touch_Point *tp, int x, int y)
 }
 
 static void
+_touch_update(Touch_Point *tp, float azimuth, float tilt, float twist, float pressure)
+{
+   Evas_Map* m = evas_map_new(4);
+   evas_map_util_points_populate_from_object(m, tp->move);
+
+   int r = tp->r * (1+pressure);
+   int g = tp->g * (1+pressure);
+   int b = tp->b * (1+pressure);
+
+   int x, y, w, h;
+   evas_object_geometry_get(tp->move, &x, &y, &w, &h);
+
+   float vheight = cos(tilt);
+   float vbase = sin(tilt);
+   float vx = cos(azimuth) * vbase;
+   float vy = sin(azimuth) * vbase;
+   float rx = (-atan2(vheight,vy) + M_PI/2) * 180.0/M_PI;
+   float ry = (-atan2(vheight,vx) + M_PI/2) * 180.0/M_PI;
+   float rz = (twist) * 180.0/M_PI;
+
+   /* apply */
+   evas_object_color_set(tp->move, r, g, b, ALPHA_MOVE);
+   evas_map_util_3d_rotate(m, rx, ry, rz, x+w/2, y+w/2, 0);
+   evas_map_util_3d_perspective(m, x+w/2, y+w/2, 10, 100);
+   evas_map_util_3d_lighting(m, WIDTH/2,HEIGHT/2, -500, 255, 255, 255, 192, 192, 192 );
+
+   evas_object_map_set(tp->move, m);
+   evas_object_map_enable_set(tp->move, EINA_TRUE);
+   evas_map_free(m);
+}
+
+static void
 _touch_end(Touch_Point *tp, int x, int y)
 {
    evas_object_hide(tp->move);
@@ -137,6 +169,18 @@ _mouse_move_handle(int device, int x, int y)
      return;
 
    _touch_move(tp, x, y);
+}
+
+static void
+_mouse_update_handle(int device, float azimuth, float tilt, float twist, float pressure)
+{
+   Touch_Point *tp;
+
+   tp = eina_hash_find(d.hash, &device);
+   if (!tp)
+     return;
+
+   _touch_update(tp, azimuth, tilt, twist, pressure);
 }
 
 static void
@@ -202,6 +246,30 @@ _multi_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    _mouse_up_handle(ev->device, ev->cur.canvas.x, ev->cur.canvas.y);
 }
 
+static void
+_axis_update_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Axis_Update *ev = event_info;
+   float twist = 0, azimuth = 0, tilt = 0;
+   float pressure = 1;
+   int i;
+
+   for (i = 0; i < ev->naxis; i++)
+     {
+        float val = ev->axis[i].value;
+        switch (ev->axis[i].label)
+          {
+          case EVAS_AXIS_LABEL_PRESSURE: pressure = val; break;
+          case EVAS_AXIS_LABEL_TWIST:    twist    = val; break;
+          case EVAS_AXIS_LABEL_AZIMUTH:  azimuth  = val; break;
+          case EVAS_AXIS_LABEL_TILT:     tilt     = val; break;
+          default: break;
+          }
+     }
+
+    _mouse_update_handle(ev->toolid, azimuth, tilt, twist, pressure);
+}
+
 int
 main(void)
 {
@@ -241,6 +309,8 @@ main(void)
 
    evas_object_event_callback_add(d.bg, EVAS_CALLBACK_MULTI_MOVE, _multi_move_cb, &d);
    evas_object_event_callback_add(d.bg, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, &d);
+
+   evas_object_event_callback_add(d.bg, EVAS_CALLBACK_AXIS_UPDATE, _axis_update_cb, &d);
 
    evas_object_focus_set(d.bg, EINA_TRUE); /* so we get input events */
 

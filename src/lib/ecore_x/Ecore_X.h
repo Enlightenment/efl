@@ -2529,7 +2529,7 @@ EAPI Eina_Bool      ecore_x_image_is_argb32_get(Ecore_X_Image *im);
 
 EAPI Eina_Bool      ecore_x_image_to_argb_convert(void *src, int sbpp, int sbpl, Ecore_X_Colormap c, Ecore_X_Visual v, int x, int y, int w, int h, unsigned int *dst, int dbpl, int dx, int dy);
 
-EAPI Eina_Bool      ecore_x_input_multi_select(Ecore_X_Window win);
+EAPI Eina_Bool      ecore_x_input_select(Ecore_X_Window win);
 EAPI Eina_Bool	    ecore_x_input_raw_select(Ecore_X_Window win); /**< @since 1.8 */
 
 EAPI Eina_Bool      ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);

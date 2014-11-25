@@ -613,6 +613,7 @@ EAPI void             evas_object_hide(Evas_Object *obj) EINA_ARG_NONNULL(1);
  * #EVAS_CALLBACK_MOUSE_DOWN, #EVAS_CALLBACK_MOUSE_UP,
  * #EVAS_CALLBACK_MOUSE_MOVE, #EVAS_CALLBACK_MOUSE_WHEEL,
  * #EVAS_CALLBACK_MULTI_DOWN, #EVAS_CALLBACK_MULTI_UP,
+ * #EVAS_CALLBACK_AXIS_UPDATE,
  * #EVAS_CALLBACK_MULTI_MOVE, #EVAS_CALLBACK_FREE,
  * #EVAS_CALLBACK_KEY_DOWN, #EVAS_CALLBACK_KEY_UP,
  * #EVAS_CALLBACK_FOCUS_IN, #EVAS_CALLBACK_FOCUS_OUT,
@@ -686,6 +687,9 @@ EAPI void             evas_object_hide(Evas_Object *obj) EINA_ARG_NONNULL(1);
  *
  * - #EVAS_CALLBACK_MULTI_MOVE: @p event_info is a pointer to an
  *   #Evas_Event_Multi_Move struct
+ *
+ * - #EVAS_CALLBACK_AXIS_UPDATE: @p event_info is a pointer to an
+ *   #Evas_Event_Axis_Update struct
  *
  * - #EVAS_CALLBACK_FREE: @p event_info is @c NULL \n\n
  *   This event is triggered just before Evas is about to free all
