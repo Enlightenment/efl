@@ -550,7 +550,9 @@ ecore_event_evas_axis_update(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_axis_update(lookup->evas, e->timestamp, e->device, e->toolid, e->naxis, e->axis, NULL);
+   evas_event_feed_axis_update(lookup->evas, e->timestamp, e->device,
+                               e->toolid, e->naxis,
+                               (Evas_Axis *)e->axis, NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
