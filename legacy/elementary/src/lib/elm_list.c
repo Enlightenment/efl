@@ -604,7 +604,7 @@ static Eina_Bool _key_action_select(Evas_Object *obj, const char *params EINA_UN
    if (eo_it)
      {
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
-        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, EO_OBJ(it));
+        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, eo_it);
      }
 
    return EINA_TRUE;
@@ -1365,6 +1365,7 @@ _item_select(Elm_List_Item_Data *it)
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    if (it->base->disabled || _is_no_select(it))
      return;
@@ -1392,15 +1393,15 @@ _item_select(Elm_List_Item_Data *it)
    _elm_list_item_content_focus_set(it, ELM_FOCUS_PREVIOUS, sd->h_mode);
 
    it->selected = EINA_TRUE;
-   sd->selected = eina_list_append(sd->selected, EO_OBJ(it));
+   sd->selected = eina_list_append(sd->selected, eo_it);
 
 call:
    evas_object_ref(obj);
    _elm_list_walk(sd);
 
-   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
-   evas_object_smart_callback_call(obj, SIG_SELECTED, EO_OBJ(it));
-   sd->last_selected_item = EO_OBJ(it);
+   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
+   evas_object_smart_callback_call(obj, SIG_SELECTED, eo_it);
+   sd->last_selected_item = eo_it;
 
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);

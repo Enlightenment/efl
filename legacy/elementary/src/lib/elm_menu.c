@@ -1005,7 +1005,7 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
 
    ELM_MENU_ITEM_DATA_GET(eo_item, it);
 
-   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
+   WIDGET_ITEM_DATA_SET(eo_item, data);
    it->func = func;
    it->parent = eo_data_scope_get(parent, ELM_MENU_ITEM_CLASS);
    it->content = icon_obj;

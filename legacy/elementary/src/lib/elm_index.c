@@ -477,7 +477,7 @@ _item_find(Evas_Object *obj,
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
         ELM_INDEX_ITEM_DATA_GET(eo_item, it);
-        if (WIDGET_ITEM_DATA_GET(EO_OBJ(it)) == data) return it;
+        if (WIDGET_ITEM_DATA_GET(eo_item) == data) return it;
      }
    return NULL;
 }
