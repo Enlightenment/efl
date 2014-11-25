@@ -3515,6 +3515,7 @@ _item_mouse_move_cb(void *data,
    Evas_Coord ox, oy, ow, oh, it_scrl_y, y_pos;
    Evas_Coord minw = 0, minh = 0, x, y, w, h, dx, dy, adx, ady;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
@@ -3546,7 +3547,7 @@ _item_mouse_move_cb(void *data,
                sd->movements++;
           }
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        evas_object_smart_callback_call(WIDGET(it), SIG_DRAG, EO_OBJ(it));
+        evas_object_smart_callback_call(WIDGET(it), SIG_DRAG, eo_it);
         return;
      }
    if ((!it->down) || (sd->longpressed))
@@ -3625,30 +3626,30 @@ _item_mouse_move_cb(void *data,
           {
              if (ady > adx)
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_DRAG_START_UP, EO_OBJ(it));
+                 (WIDGET(it), SIG_DRAG_START_UP, eo_it);
              else
                {
                   if (dx < 0)
                     evas_object_smart_callback_call
-                      (WIDGET(it), SIG_DRAG_START_LEFT, EO_OBJ(it));
+                      (WIDGET(it), SIG_DRAG_START_LEFT, eo_it);
                   else
                     evas_object_smart_callback_call
-                      (WIDGET(it), SIG_DRAG_START_RIGHT, EO_OBJ(it));
+                      (WIDGET(it), SIG_DRAG_START_RIGHT, eo_it);
                }
           }
         else
           {
              if (ady > adx)
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_DRAG_START_DOWN, EO_OBJ(it));
+                 (WIDGET(it), SIG_DRAG_START_DOWN, eo_it);
              else
                {
                   if (dx < 0)
                     evas_object_smart_callback_call
-                      (WIDGET(it), SIG_DRAG_START_LEFT, EO_OBJ(it));
+                      (WIDGET(it), SIG_DRAG_START_LEFT, eo_it);
                   else
                     evas_object_smart_callback_call
-                      (WIDGET(it), SIG_DRAG_START_RIGHT, EO_OBJ(it));
+                      (WIDGET(it), SIG_DRAG_START_RIGHT, eo_it);
                }
           }
      }
@@ -3756,6 +3757,7 @@ _multi_touch_gesture_eval(Elm_Gen_Item *it)
    Evas_Coord minw = 0, minh = 0;
    Evas_Coord off_x, off_y, off_mx, off_my;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    sd->multi_touched = EINA_FALSE;
    ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
@@ -3778,33 +3780,33 @@ _multi_touch_gesture_eval(Elm_Gen_Item *it)
           {
              if ((sd->cur_x > sd->prev_x) && (sd->cur_mx > sd->prev_mx))
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_SWIPE_RIGHT, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_SWIPE_RIGHT, eo_it);
              else if ((sd->cur_x < sd->prev_x) && (sd->cur_mx < sd->prev_mx))
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_SWIPE_LEFT, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_SWIPE_LEFT, eo_it);
              else if (abs(sd->cur_x - sd->cur_mx) >
                       abs(sd->prev_x - sd->prev_mx))
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_PINCH_OUT, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_PINCH_OUT, eo_it);
              else
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_PINCH_IN, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_PINCH_IN, eo_it);
           }
         else
           {
              if ((sd->cur_y > sd->prev_y) && (sd->cur_my > sd->prev_my))
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_SWIPE_DOWN, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_SWIPE_DOWN, eo_it);
              else if ((sd->cur_y < sd->prev_y) && (sd->cur_my < sd->prev_my))
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_SWIPE_UP, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_SWIPE_UP, eo_it);
              else if (abs(sd->cur_y - sd->cur_my) >
                       abs(sd->prev_y - sd->prev_my))
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_PINCH_OUT, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_PINCH_OUT, eo_it);
              else
                evas_object_smart_callback_call
-                 (WIDGET(it), SIG_MULTI_PINCH_IN, EO_OBJ(it));
+                 (WIDGET(it), SIG_MULTI_PINCH_IN, eo_it);
           }
      }
 
@@ -3891,6 +3893,7 @@ _item_mouse_down_cb(void *data,
    Elm_Gen_Item *it = data;
    Evas_Coord x, y;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -3930,7 +3933,7 @@ _item_mouse_down_cb(void *data,
    sd->movements = 0;
 
    if (_is_no_select(it) ||
-        eo_do((Eo *)EO_OBJ(it), elm_wdg_item_disabled_get()))
+        eo_do((Eo *)eo_it, elm_wdg_item_disabled_get()))
      return;
 
    // and finally call the user callbacks.
@@ -3939,10 +3942,10 @@ _item_mouse_down_cb(void *data,
    it->highlight_cb(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, EO_OBJ(it));
-        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, EO_OBJ(it));
+        evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, eo_it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, eo_it);
      }
-   evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, EO_OBJ(it));
+   evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, eo_it);
 }
 
 static Item_Block *
@@ -5561,6 +5564,7 @@ _item_select(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    if (_is_no_select(it) ||
        (it->generation < sd->generation) ||
@@ -5571,7 +5575,7 @@ _item_select(Elm_Gen_Item *it)
      {
         it->selected = EINA_TRUE;
         sd->selected =
-          eina_list_append(sd->selected, EO_OBJ(it));
+          eina_list_append(sd->selected, eo_it);
      }
    else if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
             (it->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS))
@@ -5580,11 +5584,11 @@ _item_select(Elm_Gen_Item *it)
    evas_object_ref(obj);
    it->walking++;
    sd->walking++;
-   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), EO_OBJ(it));
+   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    if (it->generation == sd->generation)
      {
-        evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, EO_OBJ(it));
-        elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
+        evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
+        elm_object_item_focus_set(eo_it, EINA_TRUE);
         _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
      }
 
@@ -5612,10 +5616,10 @@ _item_select(Elm_Gen_Item *it)
         if ((!it->walking) && (it->generation < sd->generation))
           {
              it->del_cb(it);
-             eo_del(EO_OBJ(it));
+             eo_del(eo_it);
           }
         else
-          sd->last_selected_item = EO_OBJ(it);
+          sd->last_selected_item = eo_it;
      }
 
    evas_object_unref(obj);
