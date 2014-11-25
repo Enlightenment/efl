@@ -1038,6 +1038,13 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
    Eo *parent = NULL;
 
    eo_do(sobj, parent = eo_parent_get());
+   if (!eo_isa(parent, ELM_WIDGET_CLASS))
+     {
+        ERR("You passed a wrong parent parameter (%p %s). "
+            "Elementary widget's parent should be an elementary widget.", parent, evas_object_type_get(parent));
+        return ret;
+     }
+
    eo_do(parent, ret = elm_obj_widget_sub_object_add(sobj));
 
    return ret;
