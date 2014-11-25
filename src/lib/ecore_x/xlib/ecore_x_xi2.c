@@ -378,9 +378,9 @@ _ecore_x_input_multi_handler(XEvent *xevent)
                                0.0,   // angle
                                evd->event_x, evd->event_y,
                                evd->root_x, evd->root_y);
+#endif
           }
         break;
-#endif
 
 #ifdef XI_TouchBegin
       case XI_TouchBegin:
@@ -409,9 +409,9 @@ _ecore_x_input_multi_handler(XEvent *xevent)
                                  0.0,   // angle
                                  evd->event_x, evd->event_y,
                                  evd->root_x, evd->root_y);
+#endif
           }
         break;
-#endif
 
 #ifdef XI_TouchEnd
       case XI_TouchEnd:
@@ -446,17 +446,19 @@ _ecore_x_input_multi_handler(XEvent *xevent)
                                  evd->root_x, evd->root_y);
 #ifdef ECORE_XI2_2
              _ecore_x_input_touch_index_clear(devid,  i);
-          }
 #endif /* #ifdef ECORE_XI2_2 */
-        break;
 #endif
+          }
+        break;
+      default:
+        break;
       }
 #endif /* ifdef ECORE_XI2 */
 }
 
 #ifdef ECORE_XI2
 static unsigned int
-count_bits(long n)
+_ecore_x_count_bits(unsigned long n)
 {
    unsigned int c; /* c accumulates the total bits set in v */
    for (c = 0; n; c++) n &= n - 1; /* clear the least significant bit set */
@@ -464,13 +466,13 @@ count_bits(long n)
 }
 #endif
 
+#ifdef ECORE_XI2
 void
 _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
 {
-#ifdef ECORE_XI2
    if (xevent->type != GenericEvent) return;
    XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
-   int n = count_bits(*evd->valuators.mask);
+   unsigned int n = _ecore_x_count_bits(*evd->valuators.mask);
    int i;
    int j = 0;
    double tiltx = 0, tilty = 0;
@@ -573,8 +575,8 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
      _ecore_x_axis_update(evd->child ? evd->child : evd->event,
                           evd->event, evd->root, evd->time, evd->deviceid,
                           evd->detail, n, axis);
-#endif /* ifdef ECORE_XI2 */
 }
+#endif /* ifdef ECORE_XI2 */
 
 #ifdef ECORE_XI2
 static XIDeviceInfo *
