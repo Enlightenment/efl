@@ -2236,6 +2236,17 @@ AC_ARG_ENABLE([g-main-loop],
     fi
    ],
    [want_g_main_loop="no"])
+AC_ARG_ENABLE([libuv],
+   [AS_HELP_STRING([--enable-libuv],[enable ecore_main_loop based on libuv. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libuv="yes"
+       CFOPT_WARNING="xyes"
+    else
+       want_libuv="no"
+    fi
+   ],
+   [want_libuv="no"])
 
 AC_ARG_ENABLE([gstreamer],
    [AS_HELP_STRING([--enable-gstreamer],[enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
@@ -2327,6 +2338,7 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd-daemo
 EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
 EFL_ADD_FEATURE([ECORE], [g-main-loop])
+EFL_ADD_FEATURE([ECORE], [libuv])
 
 want_glib_integration_always=no
 if test "x${with_glib}" = "xalways" ; then
@@ -2336,6 +2348,10 @@ fi
 
 if test "x${want_g_main_loop}" = "xyes" ; then
   AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
+fi
+
+if test "x${want_libuv}" = "xyes" ; then
+  AC_DEFINE([USE_LIBUV], [1], [Use libuv in ecore])
 fi
 
 # not EFL_OPTIONAL_DEPEND_PKG() because it's only used for ecore examples
