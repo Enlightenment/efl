@@ -21,7 +21,7 @@ typedef struct _Span Span;
 
 struct _Span
 {
-   int x1, x2;
+   int x[2];
    FPc o1, o2, z1, z2;
    FPc  u[2], v[2];
    DATA32 col[2];
@@ -60,23 +60,23 @@ _interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
 static inline void
 _interpolated_clip_span(Span *s, int c1, int c2, Eina_Bool interp_col)
 {
-   if (s->x1 < c1)
+   if (s->x[0] < c1)
      {
-        s->u[0] = _interp(s->x1, s->x2, c1, s->u[0], s->u[1]);
-        s->v[0] = _interp(s->x1, s->x2, c1, s->v[0], s->v[1]);
+        s->u[0] = _interp(s->x[0], s->x[1], c1, s->u[0], s->u[1]);
+        s->v[0] = _interp(s->x[0], s->x[1], c1, s->v[0], s->v[1]);
         if (interp_col)
-          s->col[0] = _interp_col(s->x1, s->x2, c1, s->col[0], s->col[1]);
-        s->x1 = c1;
+          s->col[0] = _interp_col(s->x[0], s->x[1], c1, s->col[0], s->col[1]);
+        s->x[0] = c1;
         s->o1 = c1 << FP;
         // FIXME: do s->z1
      }
-   if (s->x2 > c2)
+   if (s->x[1] > c2)
      {
-        s->u[1] = _interp(s->x1, s->x2, c2, s->u[0], s->u[1]);
-        s->v[1] = _interp(s->x1, s->x2, c2, s->v[0], s->v[1]);
+        s->u[1] = _interp(s->x[0], s->x[1], c2, s->u[0], s->u[1]);
+        s->v[1] = _interp(s->x[0], s->x[1], c2, s->v[0], s->v[1]);
         if (interp_col)
-          s->col[1] = _interp_col(s->x1, s->x2, c2, s->col[0], s->col[1]);
-        s->x2 = c2;
+          s->col[1] = _interp_col(s->x[0], s->x[1], c2, s->col[0], s->col[1]);
+        s->x[1] = c2;
         s->o2 = c2 << FP;
         // FIXME: do s->z2
      }
@@ -115,31 +115,31 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              if (y == py[0])
                {
                   i = 0;
-                  spans[yp].span[i].x1 = p[leftp].x >> FP;
+                  spans[yp].span[i].x[0] = p[leftp].x >> FP;
                   spans[yp].span[i].o1 = p[leftp].x;
                   spans[yp].span[i].u[0] = p[leftp].u;
                   spans[yp].span[i].v[0] = p[leftp].v;
                   spans[yp].span[i].col[0] = p[leftp].col;
-                  spans[yp].span[i].x2 = p[rightp].x >> FP;
+                  spans[yp].span[i].x[1] = p[rightp].x >> FP;
                   spans[yp].span[i].o2 = p[rightp].x;
                   spans[yp].span[i].u[1] = p[rightp].u;
                   spans[yp].span[i].v[1] = p[rightp].v;
                   spans[yp].span[i].col[1] = p[rightp].col;
                   //Outside of the clipper
-                  if ((spans[yp].span[i].x1 >= (cx + cw)) ||
-                      (spans[yp].span[i].x2 < cx))
-                    spans[yp].span[i].x1 = -1;
+                  if ((spans[yp].span[i].x[0] > (cx + cw)) ||
+                      (spans[yp].span[i].x[1] < cx))
+                    spans[yp].span[i].x[0] = -1;
                   else
                     {
                        _interpolated_clip_span(&(spans[yp].span[i]), cx,
                                               (cx + cw), interp_col);
                        i++;
-                       spans[yp].span[i].x1 = -1;
+                       spans[yp].span[i].x[0] = -1;
                     }
                }
              //The polygon shape seems not be completed definitely.
              else
-               spans[yp].span[0].x1 = -1;
+               spans[yp].span[0].x[0] = -1;
           }
         return;
      }
@@ -268,47 +268,47 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
         if (edge_num == 2)
           {
              i = 0;
-             spans[yp].span[i].x1 = edge[order[0]][2];
+             spans[yp].span[i].x[0] = edge[order[0]][2];
              spans[yp].span[i].o1 = edge[order[0]][3];
              spans[yp].span[i].u[0] = uv[order[0]][0];
              spans[yp].span[i].v[0] = uv[order[0]][1];
              spans[yp].span[i].col[0] = col[order[0]];
 
-             spans[yp].span[i].x2 = edge[order[1]][2];
+             spans[yp].span[i].x[1] = edge[order[1]][2];
              spans[yp].span[i].o2 = edge[order[1]][3];
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
              spans[yp].span[i].col[1] = col[order[1]];
 
              //Outside of the clipper
-             if ((spans[yp].span[i].x1 >= (cx + cw)) ||
-                 (spans[yp].span[i].x2 < cx))
-               spans[yp].span[i].x1 = -1;
+             if ((spans[yp].span[i].x[0] >= (cx + cw)) ||
+                 (spans[yp].span[i].x[1] < cx))
+               spans[yp].span[i].x[0] = -1;
              else
                {
                   _interpolated_clip_span(&(spans[yp].span[i]), cx, (cx + cw),
                                           interp_col);
                   i++;
-                  spans[yp].span[i].x1 = -1;
+                  spans[yp].span[i].x[0] = -1;
                }
           }
         else if (edge_num == 4)
           {
              i = 0;
-             spans[yp].span[i].x1 = edge[order[0]][2];
+             spans[yp].span[i].x[0] = edge[order[0]][2];
              spans[yp].span[i].u[0] = uv[order[0]][0];
              spans[yp].span[i].v[0] = uv[order[0]][1];
              spans[yp].span[i].col[0] = col[order[0]];
 
-             spans[yp].span[i].x2 = edge[order[1]][2];
+             spans[yp].span[i].x[1] = edge[order[1]][2];
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
              spans[yp].span[i].col[1] = col[order[1]];
 
              //Outside of the clipper
-             if ((spans[yp].span[i].x1 >= (cx + cw)) ||
-                 (spans[yp].span[i].x2 < cx))
-               spans[yp].span[i].x1 = -1;
+             if ((spans[yp].span[i].x[0] >= (cx + cw)) ||
+                 (spans[yp].span[i].x[1] < cx))
+               spans[yp].span[i].x[0] = -1;
              else
                {
                   _interpolated_clip_span(&(spans[yp].span[i]), cx, (cx + cw),
@@ -316,32 +316,32 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   i++;
                }
 
-             spans[yp].span[i].x1 = edge[order[2]][2];
+             spans[yp].span[i].x[0] = edge[order[2]][2];
              spans[yp].span[i].u[0] = uv[order[2]][0];
              spans[yp].span[i].v[0] = uv[order[2]][1];
              spans[yp].span[i].col[0] = col[order[2]];
 
-             spans[yp].span[i].x2 = edge[order[3]][2];
+             spans[yp].span[i].x[1] = edge[order[3]][2];
              spans[yp].span[i].u[1] = uv[order[3]][0];
              spans[yp].span[i].v[1] = uv[order[3]][1];
              spans[yp].span[i].col[1] = col[order[3]];
 
              //Outside of the clipper
-             if ((spans[yp].span[i].x1 >= (cx + cw)) ||
-                 (spans[yp].span[i].x2 < cx))
-               spans[yp].span[i].x1 = -1;
+             if ((spans[yp].span[i].x[0] >= (cx + cw)) ||
+                 (spans[yp].span[i].x[1] < cx))
+               spans[yp].span[i].x[0] = -1;
              else
                {
                   int l = cx;
 
-                  if (i > 0) l = spans[yp].span[i - 1].x2;
+                  if (i > 0) l = spans[yp].span[i - 1].x[1];
                   _interpolated_clip_span(&(spans[yp].span[i]), l, (cx + cw),
                                           interp_col);
                }
           }
         //The polygon shape seems not be completed definitely.
         else
-          spans[yp].span[0].x1 = -1;
+          spans[yp].span[0].x[0] = -1;
      }
 }
 
@@ -356,27 +356,27 @@ _clip_spans(Line *spans, int ystart, int yend,
 
    for (y = ystart, yp = 0; y <= yend; y++, yp++)
      {
-        if (spans[yp].span[0].x1 > -1)
+        if (spans[yp].span[0].x[0] > -1)
           {
-             if ((spans[yp].span[0].x1 >= (cx + cw)) ||
-                 (spans[yp].span[0].x2 < cx))
+             if ((spans[yp].span[0].x[0] >= (cx + cw)) ||
+                 (spans[yp].span[0].x[1] < cx))
                {
-                  spans[yp].span[0].x1 = -1;
+                  spans[yp].span[0].x[0] = -1;
                }
              else
                {
                   _interpolated_clip_span(&(spans[yp].span[0]), cx, (cx + cw),
                                           interp_col);
 
-                  if ((spans[yp].span[1].x1 >= (cx + cw)) ||
-                      (spans[yp].span[1].x2 < cx))
+                  if ((spans[yp].span[1].x[0] >= (cx + cw)) ||
+                      (spans[yp].span[1].x[1] < cx))
                     {
-                       spans[yp].span[1].x1 = -1;
+                       spans[yp].span[1].x[0] = -1;
                     }
                   else
                     {
                        _interpolated_clip_span(&(spans[yp].span[1]),
-                                               spans[yp].span[0].x2,
+                                               spans[yp].span[0].x[1],
                                                cx + cw, interp_col);
                     }
                }

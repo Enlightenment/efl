@@ -26,11 +26,11 @@
                   span = &(line->span[i]);
 
                   //The polygon shape won't be completed type
-                  if (span->x1 < 0) break;
+                  if (span->x[0] < 0) break;
 
-                  x = span->x1;
+                  x = span->x[0];
 
-                  w = (span->x2 - x);
+                  w = (span->x[1] - x);
                   if (w <= 0) continue;
 
                   dv = (span->o2 - span->o1);
@@ -47,7 +47,7 @@
                   else if (u2 > swp) u2 = swp;
                   ud = (u2 - u) / w;
                   ud = ((long long)ud * (w << FP)) / dv;
-                  u -= (ud * (span->o1 - (span->x1 << FP))) / FP1;
+                  u -= (ud * (span->o1 - (span->x[0] << FP))) / FP1;
                   if (ud < 0) u += ud;
                   if (u < 0) u = 0;
                   else if (u >= swp) u = swp - 1;
@@ -61,7 +61,7 @@
                   else if (v2 > shp) v2 = shp;
                   vd = (v2 - v) / w;
                   vd = ((long long)vd * (w << FP)) / dv;
-                  v -= (vd * (span->o1 - (span->x1 << FP))) / FP1;
+                  v -= (vd * (span->o1 - (span->x[0] << FP))) / FP1;
                   if (vd < 0) v += vd;
                   if (v < 0) v = 0;
                   else if (v >= shp) v = shp - 1;
@@ -141,11 +141,11 @@
                   span = &(line->span[i]);
 
                   //The polygon shape won't be completed type
-                  if (span->x1 < 0) break;
+                  if (span->x[0] < 0) break;
 
-                  x = span->x1;
+                  x = span->x[0];
 
-                  w = (span->x2 - x);
+                  w = (span->x[1] - x);
                   if (w <= 0) continue;
 
                   ww = w;
