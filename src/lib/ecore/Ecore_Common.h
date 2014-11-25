@@ -2916,6 +2916,8 @@ EAPI Ecore_Animator_Source ecore_animator_source_get(void);
  * produce tick events that call ecore_animator_custom_tick(). If @p func
  * is @c NULL then no function is called to begin custom ticking.
  *
+ * @warning Do not use this function unless you know what you are doing.
+ *
  * @see ecore_animator_source_set()
  * @see ecore_animator_custom_source_tick_end_callback_set()
  * @see ecore_animator_custom_tick()
@@ -2934,6 +2936,8 @@ EAPI void ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, co
  * called to stop ticking. For more information please see
  * ecore_animator_custom_source_tick_begin_callback_set().
  *
+ * @warning Do not use this function unless you know what you are doing.
+ *
  * @see ecore_animator_source_set()
  * @see ecore_animator_custom_source_tick_begin_callback_set()
  * @see ecore_animator_custom_tick()
@@ -2948,6 +2952,8 @@ EAPI void ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, cons
  * Ecore as this indicates a "frame tick" happened. This will do nothing if
  * the animator source(set by ecore_animator_source_set()) is not set to
  * ECORE_ANIMATOR_SOURCE_CUSTOM.
+ *
+ * @warning Do not use this function unless you know what you are doing.
  *
  * @see ecore_animator_source_set()
  * @see ecore_animator_custom_source_tick_begin_callback_set
