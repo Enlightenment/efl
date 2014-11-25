@@ -2059,6 +2059,7 @@ _font_names_list_sel(void *data   EINA_UNUSED,
 
    /* load styles list */
    efp = eina_hash_find(fndata.font_hash, sel_font);
+   if (!efp) return;
 
    ELM_LIST_ENABLE(style_list);
    elm_list_clear(style_list);
