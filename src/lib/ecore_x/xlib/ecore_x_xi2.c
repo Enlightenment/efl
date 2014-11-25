@@ -352,98 +352,101 @@ _ecore_x_input_multi_handler(XEvent *xevent)
    int devid = evd->deviceid;
 
    switch (xevent->xcookie.evtype)
-      {
+     {
 #ifdef XI_TouchUpdate
       case XI_TouchUpdate:
+          {
 #ifdef ECORE_XI2_2
-        i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchUpdate);
-        if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
+             int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchUpdate);
+             if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
 #endif /* #ifdef ECORE_XI2_2 */
-        INF("Handling XI_TouchUpdate");
-        _ecore_mouse_move
-          (evd->time,
-          0,   // state
-          evd->event_x, evd->event_y,
-          evd->root_x, evd->root_y,
-          evd->event,
-          (evd->child ? evd->child : evd->event),
-          evd->root,
-          1,   // same_screen
+             INF("Handling XI_TouchUpdate");
+             _ecore_mouse_move(evd->time,
+                               0,   // state
+                               evd->event_x, evd->event_y,
+                               evd->root_x, evd->root_y,
+                               evd->event,
+                               (evd->child ? evd->child : evd->event),
+                               evd->root,
+                               1,   // same_screen
 #ifdef ECORE_XI2_2
-          i, 1, 1,
+                               i, 1, 1,
 #else
-          devid, 1, 1,
+                               devid, 1, 1,
 #endif /* #ifdef ECORE_XI2_2 */
-          1.0,   // pressure
-          0.0,   // angle
-          evd->event_x, evd->event_y,
-          evd->root_x, evd->root_y);
+                               1.0,   // pressure
+                               0.0,   // angle
+                               evd->event_x, evd->event_y,
+                               evd->root_x, evd->root_y);
+          }
         break;
 #endif
 
 #ifdef XI_TouchBegin
       case XI_TouchBegin:
+          {
 #ifdef ECORE_XI2_2
-        i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchBegin);
-        if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
+             int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchBegin);
+             if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
 #endif /* #ifdef ECORE_XI2_2 */
-       INF("Handling XI_TouchBegin");
-        _ecore_mouse_button
-          (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-          evd->time,
-          0,   // state
-          0,   // button
-          evd->event_x, evd->event_y,
-          evd->root_x, evd->root_y,
-          evd->event,
-          (evd->child ? evd->child : evd->event),
-          evd->root,
-          1,   // same_screen
+             INF("Handling XI_TouchBegin");
+             _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                                 evd->time,
+                                 0,   // state
+                                 0,   // button
+                                 evd->event_x, evd->event_y,
+                                 evd->root_x, evd->root_y,
+                                 evd->event,
+                                 (evd->child ? evd->child : evd->event),
+                                 evd->root,
+                                 1,   // same_screen
 #ifdef ECORE_XI2_2
-          i, 1, 1,
+                                 i, 1, 1,
 #else
-          devid, 1, 1,
+                                 devid, 1, 1,
 #endif /* #ifdef ECORE_XI2_2 */
-          1.0,   // pressure
-          0.0,   // angle
-          evd->event_x, evd->event_y,
-          evd->root_x, evd->root_y);
+                                 1.0,   // pressure
+                                 0.0,   // angle
+                                 evd->event_x, evd->event_y,
+                                 evd->root_x, evd->root_y);
+          }
         break;
 #endif
 
 #ifdef XI_TouchEnd
       case XI_TouchEnd:
-#ifdef ECORE_XI2_2
-        i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchEnd);
-        if ((i == 0) && (evd->flags & XITouchEmulatingPointer))
           {
-             _ecore_x_input_touch_index_clear(devid,  i);
-             return;
-          }
-#endif /* #ifdef ECORE_XI2_2 */
-        INF("Handling XI_TouchEnd");
-        _ecore_mouse_button
-          (ECORE_EVENT_MOUSE_BUTTON_UP,
-          evd->time,
-          0,   // state
-          0,   // button
-          evd->event_x, evd->event_y,
-          evd->root_x, evd->root_y,
-          evd->event,
-          (evd->child ? evd->child : evd->event),
-          evd->root,
-          1,   // same_screen
 #ifdef ECORE_XI2_2
-          i, 1, 1,
+             int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchEnd);
+             if ((i == 0) && (evd->flags & XITouchEmulatingPointer))
+               {
+                  _ecore_x_input_touch_index_clear(devid,  i);
+                  return;
+               }
+#endif /* #ifdef ECORE_XI2_2 */
+             INF("Handling XI_TouchEnd");
+             _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
+                                 evd->time,
+                                 0,   // state
+                                 0,   // button
+                                 evd->event_x, evd->event_y,
+                                 evd->root_x, evd->root_y,
+                                 evd->event,
+                                 (evd->child ? evd->child : evd->event),
+                                 evd->root,
+                                 1,   // same_screen
+#ifdef ECORE_XI2_2
+                                 i, 1, 1,
 #else
-          devid, 1, 1,
+                                 devid, 1, 1,
 #endif /* #ifdef ECORE_XI2_2 */
-          1.0,   // pressure
-          0.0,   // angle
-          evd->event_x, evd->event_y,
-          evd->root_x, evd->root_y);
+                                 1.0,   // pressure
+                                 0.0,   // angle
+                                 evd->event_x, evd->event_y,
+                                 evd->root_x, evd->root_y);
 #ifdef ECORE_XI2_2
-        _ecore_x_input_touch_index_clear(devid,  i);
+             _ecore_x_input_touch_index_clear(devid,  i);
+          }
 #endif /* #ifdef ECORE_XI2_2 */
         break;
 #endif
