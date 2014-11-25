@@ -73,7 +73,6 @@ lib/edje/edje_misc.c \
 lib/edje/edje_module.c \
 lib/edje/edje_multisense.c \
 lib/edje/edje_program.c \
-lib/edje/edje_script_only.c \
 lib/edje/edje_smart.c \
 lib/edje/edje_text.c \
 lib/edje/edje_textblock_styles.c \

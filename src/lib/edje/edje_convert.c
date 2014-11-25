@@ -412,7 +412,6 @@ _edje_collection_convert(Edje_File *file, Old_Edje_Part_Collection *oedc)
    edc->prop.max = oedc->prop.max;
    edc->script = oedc->script;
    edc->part = oedc->part;
-   edc->script_only = oedc->script_only;
    edc->lua_script_only = oedc->lua_script_only;
    edc->checked = oedc->checked;
 

@@ -103,8 +103,6 @@ struct _Old_Edje_Part_Collection
    Embryo_Program   *script; /**< all the embryo script code for this group */
    const char       *part; /**< part name */
 
-   unsigned char    script_only; /**< script only */
-
    unsigned char    lua_script_only; /** LUA script only */
 
    unsigned char    checked : 1; /**< contents checked and registered */

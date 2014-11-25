@@ -1016,8 +1016,6 @@ struct _Edje_Part_Collection
    } patterns;
    /* *** *** */
 
-   unsigned char    script_only;
-
    unsigned char    lua_script_only;
 
    unsigned char    broadcast_signal;
@@ -1488,7 +1486,6 @@ struct _Edje
    Eina_List            *subobjs;
    Eina_List            *text_insert_filter_callbacks;
    Eina_List            *markup_filter_callbacks;
-   void                 *script_only_data;
 
    Eina_List            *groups;
 
@@ -2442,15 +2439,6 @@ void _edje_embryo_globals_init(Edje *ed);
    int *___cptr; \
    if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
       *___cptr = (int)val; } }
-
-Eina_Bool _edje_script_only(Edje *ed);
-void _edje_script_only_init(Edje *ed);
-void _edje_script_only_shutdown(Edje *ed);
-void _edje_script_only_show(Edje *ed);
-void _edje_script_only_hide(Edje *ed);
-void _edje_script_only_move(Edje *ed);
-void _edje_script_only_resize(Edje *ed);
-void _edje_script_only_message(Edje *ed, Edje_Message *em);
 
 extern jmp_buf _edje_lua_panic_jmp;
 #define _edje_lua_panic_here() setjmp(_edje_lua_panic_jmp)

@@ -352,7 +352,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
    collect = _edje_object_collect(ed);
 
-   if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
 
 #ifdef HAVE_EPHYSICS
@@ -398,12 +397,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
         ed->groups = eina_list_append(ed->groups, ed);
 
-        if (ed->collection->script_only)
-          {
-             ed->load_error = EDJE_LOAD_ERROR_NONE;
-             _edje_script_only_init(ed);
-          }
-        else if (ed->collection->lua_script_only)
+        if (ed->collection->lua_script_only)
           {
              ed->load_error = EDJE_LOAD_ERROR_NONE;
              _edje_lua_script_only_init(ed);
@@ -759,7 +753,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                _edje_ref(ed);
                _edje_block(ed);
                _edje_util_freeze(ed);
-               //	     if (ed->collection->script) _edje_embryo_script_init(ed);
                _edje_var_init(ed);
                for (i = 0; i < ed->table_parts_size; i++)
                  {
@@ -1258,10 +1251,6 @@ _edje_file_del(Edje *ed)
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
-   //   if (ed->collection)
-   //     {
-   //        if (ed->collection->script) _edje_embryo_script_shutdown(ed);
-   //     }
 
    if (!((ed->file) && (ed->collection)))
      {

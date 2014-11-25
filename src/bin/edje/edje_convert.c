@@ -371,7 +371,6 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
    edc->prop.max = oedc->prop.max;
    edc->script = oedc->script;
    edc->part = oedc->part;
-   edc->script_only = oedc->script_only;
    edc->lua_script_only = oedc->lua_script_only;
    edc->checked = oedc->checked;
 

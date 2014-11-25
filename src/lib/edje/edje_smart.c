@@ -120,7 +120,6 @@ _edje_object_evas_object_smart_del(Eo *obj, Edje *ed)
    ed->delete_me = 1;
    _edje_edjes = eina_list_remove(_edje_edjes, obj);
    evas_object_smart_data_set(obj, NULL);
-   if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */
@@ -147,11 +146,6 @@ _edje_object_evas_object_smart_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x,
    ed->y = y;
 //   evas_object_move(ed->clipper, ed->x, ed->y);
 
-   if (_edje_script_only(ed))
-     {
-        _edje_script_only_move(ed);
-        return;
-     }
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_move(ed);
@@ -252,11 +246,6 @@ _edje_object_evas_object_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord 
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
 #endif
-   if (_edje_script_only(ed))
-     {
-        _edje_script_only_resize(ed);
-        return;
-     }
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_resize(ed);
@@ -276,11 +265,6 @@ _edje_object_evas_object_smart_show(Eo *obj, Edje *ed)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
    if (evas_object_visible_get(obj)) return;
-   if (_edje_script_only(ed))
-     {
-        _edje_script_only_show(ed);
-        return;
-     }
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_show(ed);
@@ -309,11 +293,6 @@ _edje_object_evas_object_smart_hide(Eo *obj, Edje *ed)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    if (!evas_object_visible_get(obj)) return;
-   if (_edje_script_only(ed))
-     {
-        _edje_script_only_hide(ed);
-        return;
-     }
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_hide(ed);

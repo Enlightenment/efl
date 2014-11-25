@@ -437,7 +437,6 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_collection, Old_Edje_Part_Collection, "prop.max.w", prop.max.w, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_collection, Old_Edje_Part_Collection, "prop.max.h", prop.max.h, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_collection, Old_Edje_Part_Collection, "id", id, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_collection, Old_Edje_Part_Collection, "script_only", script_only, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_collection, Old_Edje_Part_Collection, "lua_script_only", lua_script_only, EET_T_UCHAR);
 
    {
