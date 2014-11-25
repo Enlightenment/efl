@@ -2994,9 +2994,10 @@ double_named_group:
         [group name]
     @effect
         The name that will be used by the application to load the resulting
-        Edje object and to identify the group to swallow in a GROUP part. If a
-        group with the same name exists already it will be completely overriden
-        by the new group.
+        Edje object and to identify the group to swallow in a GROUP part. If
+        group with the same name exists already, it won't be compiled.
+        Only a single name statement is valid for group, use alias instead if
+        you want to give additional names.
     @endproperty
 */
 static void
