@@ -229,7 +229,7 @@ _on_item_changed(Elm_Flipselector_Data *sd)
    if (sd->deleting) return;
 
    if (item->func)
-     item->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(item)), WIDGET(item), eo_item);
+     item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
    evas_object_smart_callback_call
       (sd->obj, SIG_SELECTED, eo_item);
 }
@@ -321,7 +321,7 @@ _item_new(Evas_Object *obj,
 
    it->label = eina_stringshare_add_length(label, len);
    it->func = func;
-   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
+   WIDGET_ITEM_DATA_SET(eo_item, data);
 
    /* TODO: no view here, but if one desires general contents in the
     * future... */

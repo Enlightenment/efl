@@ -83,12 +83,13 @@ _item_select(Elm_Diskselector_Item_Data *it)
    if (!it) return;
 
    ELM_DISKSELECTOR_DATA_GET(WIDGET(it), sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    sd->selected_item = it;
    _selected_item_indicate(sd->selected_item);
 
-   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
-   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, EO_OBJ(it));
+   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
 }
 
 static int
@@ -594,6 +595,7 @@ _item_click_cb(void *data,
 
    if (!it) return;
    ELM_DISKSELECTOR_DATA_GET(WIDGET(it), sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
 
    if (sd->selected_item != it)
      {
@@ -601,8 +603,8 @@ _item_click_cb(void *data,
         _selected_item_indicate(sd->selected_item);
      }
 
-   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), EO_OBJ(it));
-   evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED, EO_OBJ(it));
+   if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED, eo_it);
 }
 
 static char *
@@ -659,7 +661,7 @@ _item_new(Evas_Object *obj,
 
    it->label = eina_stringshare_add(label);
    it->func = func;
-   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
+   WIDGET_ITEM_DATA_SET(eo_it, data);
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                elm_widget_style_get(obj));
