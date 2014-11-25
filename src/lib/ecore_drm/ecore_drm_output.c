@@ -151,6 +151,7 @@ _ecore_drm_output_mode_add(Ecore_Drm_Output *output, drmModeModeInfo *info)
    return mode;
 }
 
+/* XXX: this code is currently unused comment out until needed
 static double
 _ecore_drm_output_brightness_get(Ecore_Drm_Backlight *backlight)
 {
@@ -220,6 +221,7 @@ _ecore_drm_output_brightness_set(Ecore_Drm_Backlight *backlight, double brightne
 
    return ret;
 }
+*/
 
 static Ecore_Drm_Backlight *
 _ecore_drm_output_backlight_init(Ecore_Drm_Output *output EINA_UNUSED, uint32_t conn_type)
