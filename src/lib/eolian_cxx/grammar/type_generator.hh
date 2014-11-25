@@ -47,10 +47,12 @@ operator<<(std::ostream& out, efl::eolian::grammar::reinterpret_type const& x)
    std::string res;
    for (auto rit = x._list.rbegin(), last = x._list.rend(); rit != last; ++rit)
      {
-        if (type_is_complex(*rit))
-          res = (*rit).binding + "< " + res + " >";
+        eolian_type const& t = *rit;
+        if (type_is_complex(t))
+          res = t.binding + "< " + res + " >" + (t.is_out ? "*" : "");
         else
-          res = type_is_binding(*rit) ? (*rit).binding : (*rit).native;
+          res = type_is_binding(t) ? t.binding + (t.is_out ? "*" : "")
+                                   : t.native;
      }
    assert(!res.empty());
    return out << res;
@@ -191,6 +193,8 @@ operator<<(std::ostream& out, to_c const& x)
    if (type_is_callback(x._type))
      out << "efl::eolian::get_callback<" << type_to_native_str(x._type)
          << ", " << parameter_no_ref_type(x._type, x._varname) << " >()";
+   else if (type_is_complex(x._type) && type_is_binding(x._type))
+     out << "efl::eolian::to_native<" << c_type(x._type) << ">(" << x._varname << ")";
    else if (type_is_binding(x._type))
      out << "efl::eolian::to_c(" << x._varname << ")";
    else

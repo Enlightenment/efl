@@ -33,6 +33,7 @@ struct eolian_type
      , category(unknown_)
      , is_const(false)
      , is_own(false)
+     , is_out(false)
      , binding()
      , includes()
    {}
@@ -47,6 +48,7 @@ struct eolian_type
      , category(category_)
      , is_const(is_const_)
      , is_own(is_own_)
+     , is_out(false)
      , binding(binding_)
      , includes(includes_)
    {
@@ -66,6 +68,7 @@ struct eolian_type
    category_type category;
    bool is_const;
    bool is_own;
+   bool is_out;
    std::string binding;
    includes_container_type includes;
 };
@@ -94,6 +97,19 @@ type_is_binding(eolian_type_instance const& type)
    return type_is_binding(type.front());
 }
 
+inline bool
+type_is_out(eolian_type const& type)
+{
+   return type.is_out;
+}
+
+inline bool
+type_is_out(eolian_type_instance const& type)
+{
+   assert(!type.empty());
+   return type_is_out(type.front());
+}
+
 inline eolian_type
 type_to_native(eolian_type const& type)
 {
@@ -120,6 +136,13 @@ inline bool
 type_is_complex(eolian_type const& type)
 {
    return type.category == eolian_type::complex_;
+}
+
+inline bool
+type_is_complex(eolian_type_instance const& type_ins)
+{
+   assert(!type_ins.empty());
+   return type_is_complex(type_ins.front());
 }
 
 template <typename T>

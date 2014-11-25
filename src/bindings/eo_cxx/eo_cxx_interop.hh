@@ -13,12 +13,6 @@ namespace efl { namespace eolian {
 
 //// From C++ to C
 
-inline Eo*
-to_c(efl::eo::base const& x)
-{
-   return x._eo_ptr();
-}
-
 inline const char*
 to_c(std::string const& x)
 {
@@ -45,10 +39,38 @@ to_c(bool* x)
 }
 
 template <typename T>
-T to_c(T const& v, typename std::enable_if<!std::is_base_of<efl::eo::base, T>::value>::type* = 0)
+T to_c(T const& v, typename std::enable_if<!std::is_convertible<T*, efl::eo::base*>::value>::type* = 0)
 {
    return v;
 }
+
+template <typename T>
+Eo* to_c(T const& v, typename std::enable_if<std::is_convertible<T*, efl::eo::base*>::value>::type* = 0)
+{
+   return v._eo_ptr();
+}
+
+template <typename T>
+Eo** to_c(T* v, typename std::enable_if<std::is_convertible<T*, efl::eo::base*>::value>::type* = 0)
+{
+   static_assert(sizeof(T) == sizeof(Eo*), "");
+   return static_cast<Eo**>(static_cast<void*>(v));
+}
+
+template <typename R, typename T>
+R to_native(T const& v)
+{
+   static_assert(sizeof(T) == sizeof(R), "");
+   return v.native_handle();
+}
+
+template <typename R, typename T>
+R to_native(T* v)
+{
+  static_assert(sizeof(T) == sizeof(typename std::remove_pointer<R>::type), "");
+  return static_cast<R>(static_cast<void*>(v));
+}
+
     
 //// From C to C++
 
