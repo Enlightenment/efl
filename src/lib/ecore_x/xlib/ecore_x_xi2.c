@@ -454,13 +454,15 @@ _ecore_x_input_multi_handler(XEvent *xevent)
 #endif /* ifdef ECORE_XI2 */
 }
 
-static int
+#ifdef ECORE_XI2
+static unsigned int
 count_bits(long n)
 {
    unsigned int c; /* c accumulates the total bits set in v */
    for (c = 0; n; c++) n &= n - 1; /* clear the least significant bit set */
    return c;
 }
+#endif
 
 void
 _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
@@ -574,6 +576,7 @@ _ecore_x_input_axis_handler(XEvent *xevent, XIDeviceInfo *dev)
 #endif /* ifdef ECORE_XI2 */
 }
 
+#ifdef ECORE_XI2
 static XIDeviceInfo *
 _ecore_x_input_device_lookup(int deviceid)
 {
@@ -590,6 +593,7 @@ _ecore_x_input_device_lookup(int deviceid)
      }
    return NULL;
 }
+#endif
 
 void
 _ecore_x_input_handler(XEvent *xevent)
