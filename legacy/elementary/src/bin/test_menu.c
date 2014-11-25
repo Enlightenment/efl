@@ -257,7 +257,7 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_color_set(rect2, 0, 0, 0, 0);
    evas_object_show(rect2);
 
-   mn = elm_menu_add(rect);
+   mn = elm_menu_add(win);
    elm_menu_item_add(mn, NULL, NULL, "first item", NULL, NULL);
    menu_it = elm_menu_item_add(mn, NULL, NULL, "second item", NULL, NULL);
    elm_menu_item_add(mn, menu_it, NULL, "item 1", NULL, NULL);
