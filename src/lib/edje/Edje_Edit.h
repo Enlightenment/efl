@@ -4028,8 +4028,7 @@ edje_edit_state_map_point_color_get(Evas_Object *obj, const char *part, const ch
 
 /** Set the source part for given part state.
  *
- * Set source causes the part to use another part content as the content
- * of this part.
+ * Set another part content as the content of this part.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
