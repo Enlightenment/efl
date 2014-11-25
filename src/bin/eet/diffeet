@@ -1,0 +1,55 @@
+#!/bin/sh
+
+DIFF=${DIFF-diff}
+
+cleanup() {
+    if [ ! -z "$TDIR" ]; then
+        rm -r "$TDIR"
+    fi
+}
+
+die() {
+    echo "$@"
+    echo "Aborting"
+    cleanup
+    exit 1
+}
+
+usage() {
+    die "Usage: diffeet <eet file> <eet file2> <section>"
+}
+
+decode_eet() {
+    eet -d "$1" "$SECTION" "$2"
+
+    if [ $? -ne 0 ]; then
+        die "Failed decoding eet file '$1'."
+    fi
+}
+
+EETFILE1="$1"
+EETFILE2="$2"
+SECTION="$3"
+
+if [ $# -ne 3 ]; then
+    usage
+fi
+
+TDIR=$(mktemp -d)
+
+if [ $? -ne 0 ]; then
+    die "Failed creating tempdir."
+fi
+
+TMP="$(basename $EETFILE1)"
+TARGET1="$TDIR/$TMP"
+TMP="$(basename $EETFILE2)"
+TARGET2="$TDIR/$TMP"
+
+# Decode the file
+decode_eet "$EETFILE1" "$TARGET1"
+decode_eet "$EETFILE2" "$TARGET2"
+
+$DIFF "$TARGET1" "$TARGET2"
+
+cleanup
