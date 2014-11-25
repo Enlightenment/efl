@@ -68,6 +68,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    int c, cx, cy, cw, ch;
    int i;
    int sx, sy, sw, sh;
+   double mx, my, mw, mh, mmx, mmy, mmw, mmh;
 
    if (dc != gc->dc) return;
    tex = fg->ext_dat;
@@ -78,6 +79,42 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    g = (dc->col.col >> 8 ) & 0xff;
    b = (dc->col.col      ) & 0xff;
    sx = 0; sy = 0; sw = tex->w, sh = tex->h;
+
+   if (gc->dc->clip.mask && (sw > 0) && (sh > 0))
+     {
+        // FIXME: This code path does not handle half the stuff the other path does...
+        Evas_GL_Image *mask = gc->dc->clip.mask;
+        int nx, ny, nw, nh, dx, dy, dw, dh;
+
+        nx = x; ny = y; nw = tex->w; nh = tex->h;
+        RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
+                           gc->dc->clip.x, gc->dc->clip.y,
+                           gc->dc->clip.w, gc->dc->clip.h);
+        if ((nw < 1) || (nh < 1)) return;
+
+        ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
+        ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
+        ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
+        ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
+
+        dx = x; dy = y; dw = sw; dh = sh;
+        mx = gc->dc->clip.mask_x; my = gc->dc->clip.mask_y; mw = mask->w; mh = mask->h;
+        //RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
+        RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
+
+        mmx = (double)(mx - gc->dc->clip.mask_x) + ((double)(mw * (nx - dx)) / (double)(dw));
+        mmy = (double)(my - gc->dc->clip.mask_y) + ((double)(mh * (ny - dy)) / (double)(dh));
+        mmw = ((double)mw * (double)(nw)) / (double)(dw);
+        mmh = ((double)mh * (double)(nh)) / (double)(dh);
+
+        evas_gl_common_context_masked_font_push(gc, tex,
+                                                ssx, ssy, ssw, ssh,
+                                                nx, ny, nw, nh,
+                                                r, g, b, a,
+                                                mask->tex, mmx, mmy, mmw, mmh);
+        return;
+     }
+
    if ((!gc->dc->cutout.rects) ||
        ((gc->shared->info.tune.cutout.max > 0) &&
            (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
