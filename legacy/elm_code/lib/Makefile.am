@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@ \
--DEFL_EFL_BUILD
+-DEFL_ELM_CODE_BUILD
 
 lib_LTLIBRARIES = libelm_code.la
 
@@ -26,4 +26,4 @@ elm_code_widget.c \
 elm_code_diff_widget.c \
 elm_code.c
 libelm_code_la_LIBADD = @EFL_LIBS@ -lm
-libelm_code_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+libelm_code_la_LDFLAGS = -no-undefined @EFL_LTLIBRARY_FLAGS@
