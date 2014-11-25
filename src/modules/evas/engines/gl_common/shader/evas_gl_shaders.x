@@ -48,6 +48,56 @@ Evas_GL_Program_Source shader_font_vert_src =
    NULL, 0
 };
 
+/* Source: modules/evas/engines/gl_common/shader/font_mask_frag.shd */
+static const char const font_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "uniform sampler2D texa;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_a;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy).aaaa * texture2D(texa, tex_a.xy).aaaa * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_font_mask_frag_src =
+{
+   font_mask_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/font_mask_vert.shd */
+static const char const font_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "attribute vec2 tex_coorda;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec2 tex_a;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_a = tex_coorda;\n"
+   "}\n";
+Evas_GL_Program_Source shader_font_mask_vert_src =
+{
+   font_mask_vert_glsl,
+   NULL, 0
+};
+
 /* Source: modules/evas/engines/gl_common/shader/img_12_bgra_frag.shd */
 static const char const img_12_bgra_frag_glsl[] =
    "#ifdef GL_ES\n"
@@ -2182,7 +2232,7 @@ Evas_GL_Program_Source shader_yuy2_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_mask_frag.shd */
-static const char img_mask_frag_glsl[] =
+static const char const img_mask_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2207,7 +2257,7 @@ Evas_GL_Program_Source shader_img_mask_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_mask_vert.shd */
-static const char img_mask_vert_glsl[] =
+static const char const img_mask_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2233,7 +2283,7 @@ Evas_GL_Program_Source shader_img_mask_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_mask_nomul_frag.shd */
-static const char img_mask_nomul_frag_glsl[] =
+static const char const img_mask_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2257,7 +2307,7 @@ Evas_GL_Program_Source shader_img_mask_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_mask_nomul_vert.shd */
-static const char img_mask_nomul_vert_glsl[] =
+static const char const img_mask_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2286,6 +2336,7 @@ static const struct {
    const char *name;
 } _shaders_source[] = {
    { SHADER_FONT, &(shader_font_vert_src), &(shader_font_frag_src), "font" },
+   { SHADER_FONT_MASK, &(shader_font_mask_vert_src), &(shader_font_mask_frag_src), "font_mask" },
    { SHADER_IMG_12_BGRA_NOMUL, &(shader_img_12_bgra_nomul_vert_src), &(shader_img_12_bgra_nomul_frag_src), "img_12_bgra_nomul" },
    { SHADER_IMG_12_BGRA, &(shader_img_12_bgra_vert_src), &(shader_img_12_bgra_frag_src), "img_12_bgra" },
    { SHADER_IMG_12_NOMUL, &(shader_img_12_nomul_vert_src), &(shader_img_12_nomul_frag_src), "img_12_nomul" },

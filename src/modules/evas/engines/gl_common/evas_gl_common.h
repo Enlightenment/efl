@@ -729,6 +729,13 @@ void              evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                                    double sx, double sy, double sw, double sh,
                                                    int x, int y, int w, int h,
                                                    int r, int g, int b, int a);
+void              evas_gl_common_context_masked_font_push(Evas_Engine_GL_Context *gc,
+                                                          Evas_GL_Texture *tex,
+                                                          double sx, double sy, double sw, double sh,
+                                                          int x, int y, int w, int h,
+                                                          int r, int g, int b, int a,
+                                                          Evas_GL_Texture *texa,
+                                                          int mx, int my, int mw, int mh);
 void             evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                                  Evas_GL_Texture *tex,
                                                  double sx, double sy, double sw, double sh,

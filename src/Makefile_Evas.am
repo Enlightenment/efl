@@ -599,6 +599,8 @@ modules/evas/engines/gl_common/evas_gl_3d_shader.c
 GL_SHADERS_GEN = \
 modules/evas/engines/gl_common/shader/font_frag.shd \
 modules/evas/engines/gl_common/shader/font_vert.shd \
+modules/evas/engines/gl_common/shader/font_mask_frag.shd \
+modules/evas/engines/gl_common/shader/font_mask_vert.shd \
 modules/evas/engines/gl_common/shader/img_12_bgra_frag.shd \
 modules/evas/engines/gl_common/shader/img_12_bgra_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/img_12_bgra_nomul_vert.shd \

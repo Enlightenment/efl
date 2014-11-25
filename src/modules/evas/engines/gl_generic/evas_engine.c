@@ -1696,6 +1696,60 @@ eng_context_flush(void *data)
 }
 
 static void
+eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
+{
+   RGBA_Draw_Context *ctx = context;
+   Evas_GL_Image *im = ctx->clip.mask;
+
+   if (im && im->im)
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_close(&im->im->cache_entry);
+        else
+#endif
+          evas_cache_image_drop(&im->im->cache_entry);
+        // Is the above code safe? Hmmm...
+        //evas_unref_queue_image_put(EVAS???, &ctx->clip.ie->cache_entry);
+     }
+   ctx->clip.mask = NULL;
+}
+
+static void
+eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface, int x, int y)
+{
+   RGBA_Draw_Context *ctx = context;
+   Evas_GL_Image *im = surface;
+
+   if (ctx->clip.mask && ctx->clip.mask != surface)
+     eng_context_clip_image_unset(data, context);
+
+   ctx->clip.mask = surface;
+   ctx->clip.mask_x = x;
+   ctx->clip.mask_y = y;
+
+   if (im && im->im)
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_ref(&im->im->cache_entry);
+        else
+#endif
+          evas_cache_image_ref(&im->im->cache_entry);
+     }
+}
+
+static void
+eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int *x, int *y)
+{
+   RGBA_Draw_Context *ctx = context;
+
+   if (ie) *ie = ctx->clip.mask;
+   if (x) *x = ctx->clip.mask_x;
+   if (y) *y = ctx->clip.mask_y;
+}
+
+static void
 eng_context_3d_use(void *data)
 {
    Render_Engine_GL_Generic *re = data;
@@ -1885,6 +1939,10 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(context_clip_image_set);
+   ORD(context_clip_image_unset);
+   ORD(context_clip_image_get);
+
    ORD(rectangle_draw);
    ORD(line_draw);
    ORD(polygon_point_add);
