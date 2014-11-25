@@ -5607,7 +5607,7 @@ _relayout_if_needed(Evas_Object *eo_obj, const Evas_Textblock_Data *o)
  * @see _find_layout_format_item_line_match()
  */
 static void
-_find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Text *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
+_find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Text *n, size_t pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
 {
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
@@ -5625,22 +5625,21 @@ _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Tex
 
              EINA_INLIST_FOREACH(ln->items, it)
                {
-                  /* FIXME: p should be size_t, same goes for pos */
-                  int p = (int) it->text_pos;
+                  size_t p = it->text_pos;
 
                   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
                     {
                        Evas_Object_Textblock_Text_Item *ti =
                           _ITEM_TEXT(it);
 
-                       p += (int) ti->text_props.text_len;
+                       p += ti->text_props.text_len;
                     }
                   else
                     {
                        p++;
                     }
 
-                  if (((pos >= (int) it->text_pos) && (pos < p)))
+                  if (((pos >= it->text_pos) && (pos < p)))
                     {
                        *lnr = ln;
                        *itr = it;
