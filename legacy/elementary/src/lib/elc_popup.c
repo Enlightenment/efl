@@ -1658,7 +1658,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
      _list_add(obj);
 
    it->func = func;
-   WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
+   WIDGET_ITEM_DATA_SET(eo_it, data);
 
    _item_new(it);
    _item_icon_set(it, icon);
@@ -1670,7 +1670,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
    _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
-   return EO_OBJ(it);
+   return eo_it;
 }
 
 static void

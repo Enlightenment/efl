@@ -1505,7 +1505,7 @@ _palette_colors_load(Evas_Object *obj)
                               (item->color->b * item->color->a) / 255,
                               item->color->a);
 
-        sd->items = eina_list_append(sd->items, EO_OBJ(item));
+        sd->items = eina_list_append(sd->items, eo_item);
      }
 
    sd->config_load = EINA_TRUE;
@@ -1779,7 +1779,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
           item->color->a);
         evas_object_smart_callback_call
-          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, EO_OBJ(item));
+          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, eo_item);
         sd->selected = cl;
      }
    else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
@@ -2086,7 +2086,7 @@ _elm_colorselector_palette_color_add(Eo *obj, Elm_Colorselector_Data *sd, int r,
 
    elm_layout_sizing_eval(obj);
 
-   return EO_OBJ(item);
+   return eo_item;
 }
 
 EOLIAN static void
