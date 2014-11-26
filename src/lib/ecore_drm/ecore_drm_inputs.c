@@ -24,20 +24,6 @@ _device_flags_set(int fd)
         return -1;
      }
 
-   if ((fl = fcntl(fd, F_GETFL)) < 0)
-     {
-        ERR("Failed to get file flags: %m");
-        goto flag_err;
-     }
-
-   fl = (O_RDWR | O_NONBLOCK);
-
-   if ((ret = fcntl(fd, F_SETFL, fl)) < 0)
-     {
-        ERR("Failed to set file flags: %m");
-        goto flag_err;
-     }
-
    if ((fl = fcntl(fd, F_GETFD)) < 0)
      {
         ERR("Failed to get file fd: %m");
