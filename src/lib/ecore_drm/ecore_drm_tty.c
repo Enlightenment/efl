@@ -227,7 +227,11 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 
    /* FIXME */
    if (!_ecore_drm_tty_setup(dev))
-     return EINA_FALSE;
+     {
+        close(dev->tty.fd);
+        dev->tty.fd = -1;
+        return EINA_FALSE;
+     }
 
    /* setup handler for signals */
    dev->tty.event_hdlr = 
