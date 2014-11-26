@@ -98,6 +98,15 @@ _cb_device_resumed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
      }
 }
 
+static void
+_property_response_set(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   const char *errname;
+   const char *errmsg;
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     ERR("Eldbus Message error %s - %s\n\n", errname, errmsg);
+}
+
 static void 
 _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
 {
@@ -111,7 +120,8 @@ _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, 
 
    if (!strcmp(ev->name, "Active"))
      {
-        /* TODO: Send 'Active' to login1.Session */
+         eldbus_proxy_property_set(proxy, "Active", "b", (void *)EINA_TRUE, _property_response_set, NULL);
+         eldbus_proxy_property_set(proxy, "State", "s", &"active", _property_response_set, NULL);
      }
 }
 
