@@ -30,6 +30,8 @@ struct _Span
 struct _Line
 {
    Span span[2];
+   int aa_cov[2];
+   int aa_len[2];
 };
 
 static inline FPc
@@ -81,6 +83,8 @@ _interpolated_clip_span(Span *s, int c1, int c2, Eina_Bool interp_col)
         // FIXME: do s->z2
      }
 }
+
+#include "evas_map_image_aa.c"
 
 // 12.63 % of time - this can improve
 static void

@@ -31,12 +31,13 @@
 
    while (ww > 0)
      {
+        DATA32 val1 = 0x00000000;
 # ifdef COLBLACK
         *d = 0xff000000; // col
 # else  //COLBLACK
         FPc uu1, vv1, uu2, vv2;
         FPc rv, ru;
-        DATA32 val1, val2, val3, val4;
+        DATA32 val2, val3, val4;
 
         uu1 = u;
         if (uu1 < 0) uu1 = 0;
@@ -156,19 +157,19 @@
         val1 = INTERP_256(rv, val3, val1); // col
 #   ifdef COLMUL
 #    ifdef COLSAME
-        *d = MUL4_SYM(c1, val1);
+        val1 = MUL4_SYM(c1, val1);
 #    else //COLSAME
         val2 = INTERP_256((cv >> 16), c2, c1); // col
-        *d   = MUL4_SYM(val2, val1); // col
+        val1  = MUL4_SYM(val2, val1); // col
         cv += cd; // col
 #    endif //COLSAME
-#   else
-        *d   = val1;
 #   endif //COLMUL
 #  endif //SCALE_USING_MMX
         u += ud;
         v += vd;
 # endif //COLBLACK
+        if (anti_alias) val1 = _aa_coverage_apply(line, ww, w, val1);
+        *d = val1;
         d++;
         ww--;
      }
@@ -200,9 +201,9 @@
 
    while (ww > 0)
      {
+        DATA32 val1 = 0x00000000;
 # ifdef COLMUL
 #  ifndef COLBLACK
-        DATA32 val1;
 #   ifdef COLSAME
 #   else
         DATA32 cval; // col
@@ -211,7 +212,7 @@
 # endif //COLMUL
 
 # ifdef COLBLACK
-        *d = 0xff000000; // col
+        val1 = 0xff000000; // col
 # else //COLBLACK
         s = sp + ((v >> (FP + FPI)) * sw) + (u >> (FP + FPI));
 #  ifdef COLMUL
@@ -225,7 +226,7 @@
         MUL4_SYM_NEON(d0, d1, d4)
         VMOV_R2M_NEON(q0, d0, d);
 #    else
-        *d = MUL4_SYM(c1, val1);
+        val1 = MUL4_SYM(c1, val1);
 #    endif  //SCALE_USING_NEON
 #   else //COLSAME
 /* XXX: this neon is broken! :( FIXME
@@ -242,18 +243,20 @@
 #    else
  */
         cval = INTERP_256((cv >> 16), c2, c1); // col
-        *d = MUL4_SYM(cval, val1);
+        val1 = MUL4_SYM(cval, val1);
         cv += cd; // col              
 /*
 #    endif
  */
 #   endif //COLSAME
 #  else //COLMUL
-        *d = *s;
+        val1 = *s;
 #  endif //COLMUL
         u += ud;
         v += vd;
 # endif //COLBLACK
+        if (anti_alias) val1 = _aa_coverage_apply(line, ww, w, val1);
+        *d = val1;
         d++;
         ww--;
      }

@@ -76,12 +76,20 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    // calculate the spans list
    _calc_spans(p, spans, ystart, yend, cx, cy, cw, ch);
 
+   // calculate anti alias edges
+   if (anti_alias) _calc_aa_edges(spans, ystart, yend);
+
    // walk through spans and render
 
    // if operation is solid, bypass buf and draw func and draw direct to dst
    direct = 0;
+
+
+   /* FIXME: even if anti-alias is enabled, only edges may require the
+      pixels composition. we can optimize it. */
+
    if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha) &&
-       (mul_col == 0xffffffff) && (!havea))
+       (mul_col == 0xffffffff) && (!havea) && (!anti_alias))
      {
         direct = 1;
      }
@@ -96,9 +104,10 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
           func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, mul_col, dst->cache_entry.flags.alpha, cw, render_op);
         else
           func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, cw, render_op);
-        src->cache_entry.flags.alpha = pa;
-     }
 
+        if (anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
+        else src->cache_entry.flags.alpha = pa;
+     }
    if (havecol == 0)
      {
 #undef COLMUL
