@@ -81,7 +81,8 @@ static void
 _cb_device_resumed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *errname, *errmsg;
-   uint32_t maj;
+   uint32_t maj, min;
+   int fd;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -89,7 +90,7 @@ _cb_device_resumed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
         return;
      }
 
-   if (eldbus_message_arguments_get(msg, "u", &maj))
+   if (eldbus_message_arguments_get(msg, "uuh", &maj, &min, &fd))
      {
         /* if (maj == DRM_MAJOR) */
         /*   { */
