@@ -439,8 +439,8 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         switch (type)
           {
            case EVAS_MODULE_TYPE_ENGINE: type_str = "engines"; break;
-           case EVAS_MODULE_TYPE_IMAGE_LOADER: type_str = "loaders"; break;
-           case EVAS_MODULE_TYPE_IMAGE_SAVER: type_str = "savers"; break;
+           case EVAS_MODULE_TYPE_IMAGE_LOADER: type_str = "image_loaders"; break;
+           case EVAS_MODULE_TYPE_IMAGE_SAVER: type_str = "image_savers"; break;
            case EVAS_MODULE_TYPE_OBJECT: type_str = "object"; break;
           }
 
