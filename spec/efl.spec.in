@@ -97,8 +97,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 %{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.so
 %{_libdir}/evas/modules/engines/*/linux-gnu-*/*.so
-%{_libdir}/evas/modules/loaders/*/linux-gnu-*/*.so
-%{_libdir}/evas/modules/savers/*/linux-gnu-*/*.so
+%{_libdir}/evas/modules/image_loaders/*/linux-gnu-*/*.so
+%{_libdir}/evas/modules/image_savers/*/linux-gnu-*/*.so
 %{_libdir}/ecore/*/*.so
 %{_libdir}/ecore_evas/*/*/*/*.so
 %{_libexecdir}/*
@@ -115,8 +115,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ecore_evas/*/*/*/*.la
 %{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.la
 %{_libdir}/evas/modules/engines/*/linux-gnu-*/*.la
-%{_libdir}/evas/modules/loaders/*/linux-gnu-*/*.la
-%{_libdir}/evas/modules/savers/*/linux-gnu-*/*.la
+%{_libdir}/evas/modules/image_loaders/*/linux-gnu-*/*.la
+%{_libdir}/evas/modules/image_savers/*/linux-gnu-*/*.la
 %{_datadir}/embryo/
 %{_datadir}/evas/
 
