@@ -11,14 +11,14 @@
              FPc cv, cd; // col
 # ifdef SCALE_USING_MMX
              FPc cc;
-#endif
+#endif //SCALE_USING_MMX
              DATA32 c1, c2; // col
-#endif
+#endif //COLMUL
              Line *line;
 #ifdef SCALE_USING_MMX
              pxor_r2r(mm0, mm0);
              MOV_A2R(ALPHA_255, mm5)
-#endif
+#endif //SCALE_USING_MMX
              line = &(spans[y - ystart]);
              for (i = 0; i < 2; i++)
                {
@@ -81,7 +81,7 @@
                     {
                        if (c1 == 0xffffffff)
                          {
-#endif
+#endif //COLMUL
 #define COLSAME 1
 #include "evas_map_image_loop.c"
 #undef COLSAME
@@ -112,7 +112,7 @@
                     {
 # include "evas_map_image_loop.c"
                     }
-#endif
+#endif //COLMUL
                   if (!direct)
                     {
                        d = dst->image.data;
@@ -132,7 +132,7 @@
 #ifdef COLMUL
              FPc cv, cd; // col
              DATA32 c1, c2; // col
-#endif
+#endif //COLMUL
              Line *line;
              line = &(spans[y - ystart]);
              for (i = 0; i < 2; i++)
@@ -189,7 +189,7 @@
                     {
                        if (c1 == 0xffffffff)
                          {
-#endif
+#endif //COLMUL
 #define COLSAME 1
 #include "evas_map_image_loop.c"
 #undef COLSAME
@@ -221,7 +221,7 @@
                        // generic loop
 # include "evas_map_image_loop.c"
                     }
-#endif
+#endif //COLMUL
                   if (!direct)
                     {
                        d = dst->image.data;
