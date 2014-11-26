@@ -263,7 +263,6 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    ph = elm_photocam_add(win);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
-   evas_object_data_set(ph, "window", win);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
@@ -406,7 +405,6 @@ test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    ph = elm_photocam_add(win);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
-   evas_object_data_set(ph, "window", win);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
