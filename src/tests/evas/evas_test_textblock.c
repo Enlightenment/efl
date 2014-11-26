@@ -2134,6 +2134,203 @@ START_TEST(evas_textblock_geometries)
    EINA_LIST_FREE(rects, tr)
       free(tr);
 
+   /* Range simple geometry */
+   /* Single line range */
+   Eina_Iterator *it, *it2;
+   Evas_Textblock_Rectangle *tr3;
+   Evas_Coord w = 200;
+   evas_object_textblock_text_markup_set(tb, "This <br/> is a test.<br/>Another <br/>text.");
+   evas_object_resize(tb, w, w / 2);
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 3);
+
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   it2 = evas_textblock_cursor_range_simple_geometry_get(main_cur, cur);
+   fail_if(!it2);
+   rects2 = eina_iterator_container_get(it2);
+   fail_if(!rects2);
+
+   fail_if(eina_list_count(rects) != 1);
+   fail_if(eina_list_count(rects2) != 1);
+
+   tr = eina_list_data_get(rects);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(rects2);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   EINA_LIST_FREE(rects2, tr2)
+      free(tr2);
+   eina_iterator_free(it);
+   eina_iterator_free(it2);
+
+   /* Multiple range */
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 16);
+
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   it2 = evas_textblock_cursor_range_simple_geometry_get(main_cur, cur);
+   fail_if(!it2);
+   rects2 = eina_iterator_container_get(it2);
+   fail_if(!rects2);
+
+   fail_if(eina_list_count(rects) != 3);
+   fail_if(eina_list_count(rects2) != 3);
+
+   tr = eina_list_data_get(rects);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(rects2);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   tr = eina_list_nth(rects, 1);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(eina_list_next(rects2));
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   tr = eina_list_nth(rects, 2);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_nth(rects2, 2);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   /* Check that the second line is positioned below the first */
+   tr = eina_list_data_get(rects);
+   tr2 = eina_list_nth(rects, 1);
+   tr3 = eina_list_nth(rects, 2);
+   fail_if((tr->y >= tr3->y) || (tr2->y >= tr3->y));
+   fail_if(tr2->x + tr2->w != w);
+
+   /* Have middle rectangle */
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 31);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   it2 = evas_textblock_cursor_range_simple_geometry_get(main_cur, cur);
+   fail_if(!it2);
+   rects2 = eina_iterator_container_get(it2);
+   fail_if(!rects2);
+
+   fail_if(eina_list_count(rects) != 4);
+   fail_if(eina_list_count(rects) != 4);
+
+   tr = eina_list_data_get(rects);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_data_get(rects2);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+      (tr->h != tr2->h));
+
+   tr = eina_list_nth(rects, 1);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_nth(rects2, 1);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   tr = eina_list_nth(rects, 2);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_nth(rects2, 2);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   tr = eina_list_nth(rects, 3);
+   fail_if((tr->h <= 0) || (tr->w <= 0));
+   tr2 = eina_list_nth(rects2, 3);
+   fail_if((tr2->h <= 0) || (tr2->w <= 0));
+   fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
+           (tr->h != tr2->h));
+
+   /* Check that the middle rectanlge is between first and last rectangles */
+   tr = eina_list_data_get(rects);
+   tr2 = eina_list_nth(rects, 2);
+   tr3 = eina_list_nth(rects, 3);
+   fail_if((tr2->y < tr->y + tr->h) || (tr2->y + tr2->h > tr3->y));
+
+   /* Check that the middle rectangle has proper width */
+   tr = eina_list_data_get(rects);
+   tr2 = eina_list_nth(rects, 1);
+   fail_if((tr->y != tr2->y) || (tr->h != tr2->h));
+   tr3 = eina_list_nth(rects, 2);
+   fail_if((tr2->x + tr2->w != w) || (tr2->x + tr2->w != tr3->x + tr3->w));
+   tr2 = eina_list_nth(rects, 2);
+   tr3 = eina_list_nth(rects, 3);
+   fail_if((tr2->x != tr3->x));
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   EINA_LIST_FREE(rects2, tr2)
+      free(tr2);
+   eina_iterator_free(it);
+   eina_iterator_free(it2);
+
+   /* Same run different scripts */
+   evas_object_textblock_text_markup_set(tb, "עבריתenglishрусскийעברית");
+
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_textblock_cursor_pos_set(main_cur, 7);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+
+   fail_if(eina_list_count(rects) != 2);
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   eina_iterator_free(it);
+
+   /* Same run different styles */
+   evas_object_textblock_text_markup_set(tb, "test<b>test2</b>test3");
+
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_textblock_cursor_pos_set(main_cur, 11);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+
+   fail_if(eina_list_count(rects) != 3);
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   eina_iterator_free(it);
+
+   /* Bidi text with a few back and forth from bidi. */
+   evas_object_textblock_text_markup_set(tb, "נגכדגךלח eountoheunth ךלחגדךכלח");
+
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(main_cur, 28);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+
+   ck_assert_int_eq(eina_list_count(rects), 3);
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   eina_iterator_free(it);
+
    END_TB_TEST();
 }
 END_TEST

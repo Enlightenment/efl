@@ -620,30 +620,29 @@ _sel_clear(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_U
 static void
 _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 {
-   Eina_List *range = NULL, *l;
-   Sel *sel;
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y;
    Evas_Object *smart, *clip;
 
    smart = evas_object_smart_parent_get(o);
    clip = evas_object_clip_get(o);
-   if (en->sel_start)
-     range = evas_textblock_cursor_range_geometry_get(en->sel_start, en->sel_end);
-   else
-     return;
-   if (eina_list_count(range) != eina_list_count(en->sel))
+   if (!en->sel_start)
+      return;
+
+   evas_object_geometry_get(o, &x, &y, NULL, NULL);
+   if (en->have_selection)
      {
-        while (en->sel)
+        Eina_Iterator *range = NULL;
+        Eina_List *l;
+        Sel *sel;
+        Evas_Textblock_Rectangle *r;
+
+        range = evas_textblock_cursor_range_simple_geometry_get(en->sel_start,
+                                                                en->sel_end);
+
+        l = en->sel;
+        EINA_ITERATOR_FOREACH(range, r)
           {
-             sel = en->sel->data;
-             if (sel->obj_bg) evas_object_del(sel->obj_bg);
-             if (sel->obj_fg) evas_object_del(sel->obj_fg);
-             free(sel);
-             en->sel = eina_list_remove_list(en->sel, en->sel);
-          }
-        if (en->have_selection)
-          {
-             for (l = range; l; l = eina_list_next(l))
+             if (!l)
                {
                   Evas_Object *ob;
 
@@ -669,17 +668,13 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
                   sel->obj_fg = ob;
                   _edje_subobj_register(ed, sel->obj_fg);
                }
-          }
-     }
-   x = y = w = h = -1;
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   if (en->have_selection)
-     {
-        EINA_LIST_FOREACH(en->sel, l, sel)
-          {
-             Evas_Textblock_Rectangle *r;
+             else
+               {
+                  sel = eina_list_data_get(l);
+                  l = l->next;
+               }
+             *(&(sel->rect)) = *r;
 
-             r = range->data;
              if (sel->obj_bg)
                {
                   evas_object_move(sel->obj_bg, x + r->x, y + r->y);
@@ -690,17 +685,23 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
                   evas_object_move(sel->obj_fg, x + r->x, y + r->y);
                   evas_object_resize(sel->obj_fg, r->w, r->h);
                }
-             *(&(sel->rect)) = *r;
-             range = eina_list_remove_list(range, range);
              free(r);
           }
-     }
-   else
-     {
-        while (range)
+        eina_iterator_free(range);
+
+        /* delete redundant selection rects */
+        while (l)
           {
-             free(range->data);
-             range = eina_list_remove_list(range, range);
+             Eina_List *temp = l->next;
+             sel = eina_list_data_get(l);
+             if (sel)
+               {
+                  if (sel->obj_bg) evas_object_del(sel->obj_bg);
+                  if (sel->obj_fg) evas_object_del(sel->obj_fg);
+                  free(sel);
+               }
+             en->sel = eina_list_remove_list(en->sel, l);
+             l = temp;
           }
      }
 }

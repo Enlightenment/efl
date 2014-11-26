@@ -199,7 +199,12 @@ typedef struct _Evas_Object_Textblock_Format_Item Evas_Object_Textblock_Format_I
  * A textblock format.
  */
 typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
-
+/**
+ * @internal
+ * @typedef Evas_Textblock_Selection_Iterator
+ * A textblock selection iterator.
+ */
+typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Iterator;
 /**
  * @internal
  * @def IS_AT_END(ti, ind)
@@ -513,6 +518,13 @@ struct _Evas_Object_Textblock
    Eina_Bool                           legacy_newline : 1;
 };
 
+struct _Evas_Textblock_Selection_Iterator
+{
+   Eina_Iterator                       iterator; /**< Eina Iterator. */
+   Eina_List                           *list; /**< Head of list. */
+   Eina_List                           *current; /**< Current node in loop. */
+};
+
 /* private methods for textblock objects */
 static void evas_object_textblock_init(Evas_Object *eo_obj);
 static void evas_object_textblock_render(Evas_Object *eo_obj,
@@ -596,6 +608,85 @@ static void _evas_textblock_changed(Evas_Textblock_Data *o, Evas_Object *eo_obj)
 static void _evas_textblock_invalidate_all(Evas_Textblock_Data *o);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Textblock_Data *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
+
+/** selection iterator */
+/**
+  * @internal
+  * Returns the value of the current data of list node,
+  * and goes to the next list node.
+  *
+  * @param it the iterator.
+  * @param data the data of the current list node.
+  * @return EINA_FALSE if the current list node does not exists.
+  * Otherwise, returns EINA_TRUE.
+  */
+static Eina_Bool
+_evas_textblock_selection_iterator_next(Evas_Textblock_Selection_Iterator *it, void **data)
+{
+   if (!it->current)
+     return EINA_FALSE;
+
+   *data = eina_list_data_get(it->current);
+   it->current = eina_list_next(it->current);
+
+   return EINA_TRUE;
+}
+
+/**
+  * @internal
+  * Gets the iterator container (Eina_List) which created the iterator.
+  * @param it the iterator.
+  * @return A pointer to Eina_List.
+  */
+static Eina_List *
+_evas_textblock_selection_iterator_get_container(Evas_Textblock_Selection_Iterator *it)
+{
+   return it->list;
+}
+
+/**
+  * @internal
+  * Frees the iterator container (Eina_List).
+  * @param it the iterator.
+  */
+static void
+_evas_textblock_selection_iterator_free(Evas_Textblock_Selection_Iterator *it)
+{
+   while (it->list)
+     it->list = eina_list_remove_list(it->list, it->list);
+   EINA_MAGIC_SET(&it->iterator, 0);
+   free(it);
+}
+
+/**
+  * @internal
+  * Creates newly allocated  iterator associated to a list.
+  * @param list The list.
+  * @return If the memory cannot be allocated, NULL is returned.
+  * Otherwise, a valid iterator is returned.
+  */
+Eina_Iterator *
+_evas_textblock_selection_iterator_new(Eina_List *list)
+{
+   Evas_Textblock_Selection_Iterator *it;
+
+   it = calloc(1, sizeof(Evas_Textblock_Selection_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->list = list;
+   it->current = list;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(
+                                     _evas_textblock_selection_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+                            _evas_textblock_selection_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(
+                                     _evas_textblock_selection_iterator_free);
+
+   return &it->iterator;
+}
 
 /* styles */
 /**
@@ -10341,6 +10432,99 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
      }
    return rects;
+}
+
+EAPI Eina_Iterator *
+evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
+{
+   Evas_Object_Textblock_Line *ln1, *ln2;
+   Evas_Object_Textblock_Item *it1, *it2;
+   Eina_List *rects = NULL;
+   Eina_Iterator *itr = NULL;
+
+   if (!cur1 || !cur1->node) return NULL;
+   if (!cur2 || !cur2->node) return NULL;
+   if (cur1->obj != cur2->obj) return NULL;
+   Evas_Textblock_Data *o = eo_data_scope_get(cur1->obj, MY_CLASS);
+
+   _relayout_if_needed(cur1->obj, o);
+
+   if (evas_textblock_cursor_compare(cur1, cur2) > 0)
+     {
+        const Evas_Textblock_Cursor *tc;
+
+        tc = cur1;
+        cur1 = cur2;
+        cur2 = tc;
+     }
+
+   ln1 = ln2 = NULL;
+   it1 = it2 = NULL;
+   _find_layout_item_match(cur1, &ln1, &it1);
+   if (!ln1 || !it1) return NULL;
+   _find_layout_item_match(cur2, &ln2, &it2);
+   if (!ln2 || !it2) return NULL;
+
+   if (ln1 == ln2)
+     {
+        rects = _evas_textblock_cursor_range_in_line_geometry_get(ln1, cur1, cur2);
+     }
+   else
+     {
+        int lm = 0, rm = 0;
+        Eina_List *rects2 = NULL;
+        Evas_Coord w;
+        Evas_Textblock_Cursor *tc;
+        Evas_Textblock_Rectangle *tr;
+
+        if (ln1->items)
+          {
+             Evas_Object_Textblock_Format *fm = ln1->items->format;
+             if (fm)
+               {
+                  lm = fm->margin.l;
+                  rm = fm->margin.r;
+               }
+          }
+
+        evas_object_geometry_get(cur1->obj, NULL, NULL, &w, NULL);
+        rects = _evas_textblock_cursor_range_in_line_geometry_get(ln1, cur1, NULL);
+
+        /* Extend selection rectangle in first line */
+        tc = evas_object_textblock_cursor_new(cur1->obj);
+        evas_textblock_cursor_copy(cur1, tc);
+        evas_textblock_cursor_line_char_last(tc);
+        tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+        evas_textblock_cursor_pen_geometry_get(tc, &tr->x, &tr->y, &tr->w, &tr->h);
+        if (ln1->par->direction == EVAS_BIDI_DIRECTION_RTL)
+          {
+             tr->w = tr->x + tr->w - rm;
+             tr->x = lm;
+          }
+        else
+          {
+             tr->w = w - tr->x - rm;
+          }
+        rects = eina_list_append(rects, tr);
+        evas_textblock_cursor_free(tc);
+
+        rects2 = _evas_textblock_cursor_range_in_line_geometry_get(ln2, NULL, cur2);
+
+        /* Add middle rect */
+        if ((ln1->par->y + ln1->y + ln1->h) != (ln2->par->y + ln2->y))
+          {
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             tr->x = lm;
+             tr->y = ln1->par->y + ln1->y + ln1->h;
+             tr->w = w - tr->x - rm;
+             tr->h = ln2->par->y + ln2->y - tr->y;
+             rects = eina_list_append(rects, tr);
+          }
+        rects = eina_list_merge(rects, rects2);
+     }
+   itr = _evas_textblock_selection_iterator_new(rects);
+
+   return itr;
 }
 
 EAPI Eina_List *

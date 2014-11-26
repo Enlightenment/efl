@@ -3981,6 +3981,17 @@ EAPI int                                      evas_textblock_cursor_line_coord_s
 EAPI Eina_List                               *evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 /**
+ * Get the simple geometry of a range.
+ * The simple geometry is the geomtry in which rectangles in middle
+ * lines of range are merged into one big rectangle.
+ *
+ * @param cur1 one side of the range.
+ * @param cur2 other side of the range.
+ * @return an iterator of rectangles representing the geometry of the range.
+ */
+EAPI Eina_Iterator                               *evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
+/**
  * Get the geometry of ?
  *
  * @param cur one side of the range.
