@@ -3,8 +3,6 @@
 #endif
 #include <Elementary.h>
 
-static Evas_Object *rect;
-
 static void
 my_ph_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -219,6 +217,7 @@ _photocam_mouse_wheel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
    int zoom;
    double val;
+
    //unset the mouse wheel
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
@@ -243,19 +242,20 @@ _photocam_mouse_wheel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 }
 
 static void
-_photocam_move_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_photocam_move_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   int x,y,w,h;
+   int x, y, w, h;
 
-   evas_object_geometry_get(data,&x,&y,&w,&h);
-   evas_object_resize(rect,w,h);
-   evas_object_move(rect,x,y);
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_resize(data, w, h);
+   evas_object_move(data, x, y);
 }
 
 void
 test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ph, *tb2, *bt, *box;
+   Evas_Object *rect = NULL;
 
    win = elm_win_util_standard_add("photocam", "PhotoCam");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -264,6 +264,7 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
 
+   // this rectangle hooks the event prior to scroller
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_repeat_events_set(rect, EINA_TRUE);
@@ -271,8 +272,9 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _photocam_mouse_wheel_cb, ph);
    evas_object_raise(rect);
 
-   evas_object_event_callback_add(ph, EVAS_CALLBACK_RESIZE, _photocam_move_resize_cb, ph);
-   evas_object_event_callback_add(ph, EVAS_CALLBACK_MOVE, _photocam_move_resize_cb, ph);
+   // add move/resize callbacks to resize rect manually
+   evas_object_event_callback_add(ph, EVAS_CALLBACK_RESIZE, _photocam_move_resize_cb, rect);
+   evas_object_event_callback_add(ph, EVAS_CALLBACK_MOVE, _photocam_move_resize_cb, rect);
 
    evas_object_smart_callback_add(ph, "clicked", my_ph_clicked, win);
    evas_object_smart_callback_add(ph, "press", my_ph_press, win);
@@ -396,6 +398,7 @@ void
 test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ph, *tb2, *bt, *box, *pb;
+   Evas_Object *rect = NULL;
    // these were just testing - use the "select photo" browser to select one
    static const char *url = "http://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x21600x10800.jpg";
 
@@ -406,6 +409,7 @@ test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
 
+   // this rectangle hooks the event prior to scroller
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_repeat_events_set(rect, EINA_TRUE);
@@ -413,8 +417,9 @@ test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _photocam_mouse_wheel_cb, ph);
    evas_object_raise(rect);
 
-   evas_object_event_callback_add(ph, EVAS_CALLBACK_RESIZE, _photocam_move_resize_cb, ph);
-   evas_object_event_callback_add(ph, EVAS_CALLBACK_MOVE, _photocam_move_resize_cb, ph);
+   // add move/resize callbacks to resize rect manually
+   evas_object_event_callback_add(ph, EVAS_CALLBACK_RESIZE, _photocam_move_resize_cb, rect);
+   evas_object_event_callback_add(ph, EVAS_CALLBACK_MOVE, _photocam_move_resize_cb, rect);
 
    evas_object_smart_callback_add(ph, "clicked", my_ph_clicked, win);
    evas_object_smart_callback_add(ph, "press", my_ph_press, win);
