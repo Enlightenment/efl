@@ -281,7 +281,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].col[1] = col[order[1]];
 
              //Outside of the clipper
-             if ((spans[yp].span[i].x[0] >= (cx + cw)) ||
+             if ((spans[yp].span[i].x[0] > (cx + cw)) ||
                  (spans[yp].span[i].x[1] < cx))
                spans[yp].span[i].x[0] = -1;
              else
@@ -306,7 +306,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].col[1] = col[order[1]];
 
              //Outside of the clipper
-             if ((spans[yp].span[i].x[0] >= (cx + cw)) ||
+             if ((spans[yp].span[i].x[0] > (cx + cw)) ||
                  (spans[yp].span[i].x[1] < cx))
                spans[yp].span[i].x[0] = -1;
              else
@@ -327,7 +327,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].col[1] = col[order[3]];
 
              //Outside of the clipper
-             if ((spans[yp].span[i].x[0] >= (cx + cw)) ||
+             if ((spans[yp].span[i].x[0] > (cx + cw)) ||
                  (spans[yp].span[i].x[1] < cx))
                spans[yp].span[i].x[0] = -1;
              else
