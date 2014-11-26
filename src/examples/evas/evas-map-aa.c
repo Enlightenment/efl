@@ -22,8 +22,8 @@
 #define WIDTH  (800)
 #define HEIGHT (400)
 
-#define IMAGE_SIZE_W 850
-#define IMAGE_SIZE_H 565
+#define IMAGE_SIZE_W 256
+#define IMAGE_SIZE_H 256
 
 struct exemple_data
 {
@@ -53,7 +53,6 @@ update()
    Evas_Map *map = evas_map_new(4);
    evas_map_util_points_populate_from_object_full(map, d.target1, 0);
 
-   //Anti Alias ppt
    evas_map_point_coord_set(map, 0, d.px1, d.py1, 0);
    evas_map_point_coord_set(map, 1, d.px2, d.py2, 0);
    evas_map_point_coord_set(map, 2, d.px3, d.py3, 0);
