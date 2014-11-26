@@ -1,10 +1,3 @@
-/*
- * evas_map_image_aa.c
- *
- *  Created on: Nov 21, 2014
- *      Author: hermet
- */
-
 #define  READY_TX() \
 { \
   if (eidx == 0) \
