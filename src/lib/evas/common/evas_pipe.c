@@ -606,7 +606,8 @@ evas_common_pipe_map_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGBA
    memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
    evas_common_map_rgba_do(&info->area, op->op.map.src, dst,
                            &context, op->op.map.m,
-                           op->op.map.smooth, op->op.map.level);
+                           op->op.map.smooth, op->op.map.anti_alias,
+                           op->op.map.level);
 }
 
 static Eina_Bool
@@ -647,6 +648,7 @@ evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
    src->ref++;
    op->op.map.src = src;
    op->op.map.m = m;
+	op->op.map.anti_alias = dc->anti_alias;
    op->op_func = evas_common_pipe_map_draw_do;
    op->free_func = evas_common_pipe_op_map_free;
    op->prepare_func = evas_common_pipe_map_draw_prepare;

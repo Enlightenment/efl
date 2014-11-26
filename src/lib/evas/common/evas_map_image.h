@@ -19,7 +19,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                       int npoints, RGBA_Map_Point *points,
                       int smooth, int level);
 
-EAPI void evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints, RGBA_Map_Point *p, int smooth, int level);
+EAPI void evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level);
 
 EAPI Eina_Bool
 evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,

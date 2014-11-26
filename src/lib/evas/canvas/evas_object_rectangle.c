@@ -127,6 +127,8 @@ evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED,
 						    obj->cur->cache.clip.g,
 						    obj->cur->cache.clip.b,
 						    obj->cur->cache.clip.a);
+   obj->layer->evas->engine.func->context_anti_alias_set(output, context,
+                                                         obj->cur->anti_alias);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
    obj->layer->evas->engine.func->context_render_op_set(output, context,
