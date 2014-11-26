@@ -864,11 +864,15 @@ evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
 // For now, this will create an X pixmap... Ideally it should be able to create
 // a bindable pbuffer surface or just an FBO if that is supported and it can
 // be shared with Evas.
+// FIXME: Avoid passing evgl_engine around like that.
 static void *
-evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
+evgl_eng_gles1_surface_create(EVGL_Engine *evgl, void *data,
+                              EVGL_Surface *evgl_sfc,
                               Evas_GL_Config *cfg, int w, int h)
 {
-   Render_Engine *re = (Render_Engine *)data;
+   Render_Engine *re = data;
+   Eina_Bool alpha = EINA_FALSE;
+   int colordepth;
    Pixmap px;
 
    if (!re || !evgl_sfc || !cfg)
@@ -877,16 +881,25 @@ evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
         return NULL;
      }
 
-   if (cfg->gles_version != EVAS_GL_GLES_1_X)
+   if ((cfg->gles_version != EVAS_GL_GLES_1_X) || (w < 1) || (h < 1))
      {
         ERR("Inconsistent parameters, not creating any surface!");
         glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
         return NULL;
      }
 
-   // FIXME: Check the depth of the buffer!
-   px =  XCreatePixmap(eng_get_ob(re)->disp, eng_get_ob(re)->win, w, h,
-                       XDefaultDepth(eng_get_ob(re)->disp, eng_get_ob(re)->screen));
+   /* Choose appropriate pixmap depth */
+   if (cfg->color_format == EVAS_GL_RGBA_8888)
+     {
+        alpha = EINA_TRUE;
+        colordepth = 32;
+     }
+   else if (cfg->color_format == EVAS_GL_RGB_888)
+     colordepth = 24;
+   else // this could also be XDefaultDepth but this case shouldn't happen
+     colordepth = 24;
+
+   px = XCreatePixmap(eng_get_ob(re)->disp, eng_get_ob(re)->win, w, h, colordepth);
    if (!px)
      {
         ERR("Failed to create XPixmap!");
@@ -896,8 +909,127 @@ evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
 
 #ifdef GL_GLES
    EGLSurface egl_sfc;
+   EGLConfig egl_cfg;
+   int i, num = 0;
+   EGLConfig configs[200];
+   int config_attrs[40];
+   Eina_Bool found = EINA_FALSE;
+   int msaa = 0, depth = 0, stencil = 0;
+   Visual *visual = NULL;
 
-   egl_sfc = eglCreatePixmapSurface(eng_get_ob(re)->egl_disp, eng_get_ob(re)->egl_config, px, NULL);
+   /* Now we need to iterate over all EGL configurations to check the compatible
+    * ones and finally check their visual ID. */
+
+   i = 0;
+   config_attrs[i++] = EGL_SURFACE_TYPE;
+   config_attrs[i++] = EGL_PIXMAP_BIT;
+   config_attrs[i++] = EGL_RENDERABLE_TYPE;
+   config_attrs[i++] = EGL_OPENGL_ES_BIT;
+   if (cfg->color_format == EVAS_GL_RGBA_8888)
+     {
+        config_attrs[i++] = EGL_ALPHA_SIZE;
+        config_attrs[i++] = 1; // should it be 8?
+        DBG("Requesting RGBA pixmap");
+     }
+   else
+     {
+        config_attrs[i++] = EGL_ALPHA_SIZE;
+        config_attrs[i++] = 0;
+     }
+   if ((cfg->depth_bits > EVAS_GL_DEPTH_NONE) &&
+       (cfg->depth_bits <= EVAS_GL_DEPTH_BIT_32))
+     {
+        depth = 8 * ((int) cfg->depth_bits);
+        config_attrs[i++] = EGL_DEPTH_SIZE;
+        config_attrs[i++] = depth;
+        DBG("Requesting depth buffer size %d", depth);
+     }
+   if ((cfg->stencil_bits > EVAS_GL_STENCIL_NONE) &&
+       (cfg->stencil_bits <= EVAS_GL_STENCIL_BIT_16))
+     {
+        stencil = 1 << ((int) cfg->stencil_bits - 1);
+        config_attrs[i++] = EGL_STENCIL_SIZE;
+        config_attrs[i++] = stencil;
+        DBG("Requesting stencil buffer size %d", stencil);
+     }
+   if ((cfg->multisample_bits > EVAS_GL_MULTISAMPLE_NONE) &&
+       (cfg->multisample_bits <= EVAS_GL_MULTISAMPLE_HIGH))
+     {
+        msaa = evgl->caps.msaa_samples[(int) cfg->multisample_bits - 1];
+        config_attrs[i++] = EGL_SAMPLE_BUFFERS;
+        config_attrs[i++] = 1;
+        config_attrs[i++] = EGL_SAMPLES;
+        config_attrs[i++] = msaa;
+        DBG("Requesting MSAA buffer with %d samples", msaa);
+     }
+   config_attrs[i++] = EGL_NONE;
+   config_attrs[i++] = 0;
+
+   if (!eglChooseConfig(eng_get_ob(re)->egl_disp, config_attrs, configs, 200, &num))
+     {
+        int err = eglGetError();
+        ERR("eglChooseConfig() can't find any configs, error: %x", err);
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        XFreePixmap(eng_get_ob(re)->disp, px);
+        return NULL;
+     }
+
+   for (i = 0; (i < num) && !found; i++)
+     {
+        EGLint val = 0;
+        VisualID visid = 0;
+        XVisualInfo *xvi, vi_in;
+        XRenderPictFormat *fmt;
+        int nvi = 0, j;
+
+        if (!eglGetConfigAttrib(eng_get_ob(re)->egl_disp, configs[i],
+                                EGL_NATIVE_VISUAL_ID, &val))
+          continue;
+
+        // Find matching visuals. Only alpha & depth are really valid here.
+        visid = val;
+        vi_in.screen = eng_get_ob(re)->screen;
+        vi_in.visualid = visid;
+        xvi = XGetVisualInfo(eng_get_ob(re)->disp,
+                             VisualScreenMask | VisualIDMask,
+                             &vi_in, &nvi);
+        if (xvi)
+          {
+             for (j = 0; (j < nvi) && !found; j++)
+               {
+                  if (xvi[j].depth >= colordepth)
+                    {
+                       if (alpha)
+                         {
+                            fmt = XRenderFindVisualFormat(eng_get_ob(re)->disp, xvi[j].visual);
+                            if (fmt && (fmt->direct.alphaMask))
+                              found = EINA_TRUE;
+                         }
+                       else found = EINA_TRUE;
+                    }
+               }
+             if (found)
+               {
+                  egl_cfg = configs[i];
+                  visual = xvi[j].visual;
+                  XFree(xvi);
+                  break;
+               }
+             XFree(xvi);
+          }
+     }
+
+   if (!found)
+     {
+        // This config will probably not work, but we try anyways.
+        ERR("XGetVisualInfo failed. Trying with the first EGL config.");
+        if (num)
+          egl_cfg = configs[0];
+        else
+          egl_cfg = eng_get_ob(re)->egl_config;
+     }
+
+   egl_sfc = eglCreatePixmapSurface(eng_get_ob(re)->egl_disp, egl_cfg, px, NULL);
    if (!egl_sfc)
      {
         int err = eglGetError();
@@ -911,10 +1043,13 @@ evgl_eng_gles1_surface_create(void *data, EVGL_Surface *evgl_sfc,
    evgl_sfc->xpixmap = EINA_TRUE;
    evgl_sfc->gles1_sfc = egl_sfc;
    evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
-   evgl_sfc->gles1_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
+   evgl_sfc->gles1_sfc_visual = visual;
    return evgl_sfc;
 
 #else
+   // TODO/FIXME: do the same as with EGL above...
+   ERR("GLX support is not fully implemented for GLES 1.x");
+
    evgl_sfc->gles1_indirect = EINA_TRUE;
    evgl_sfc->xpixmap = EINA_TRUE;
    evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;

@@ -70,7 +70,7 @@ struct _EVGL_Interface
    int         (*pbuffer_surface_destroy)(void *data, void *surface);
 
    // Create a surface for 1.x rendering (could be pbuffer or xpixmap for instance)
-   void       *(*gles1_surface_create)(void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
+   void       *(*gles1_surface_create)(EVGL_Engine *evgl, void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
 
    // Destroy 1.x surface (could be pbuffer or xpixmap for instance)
    int        (*gles1_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);

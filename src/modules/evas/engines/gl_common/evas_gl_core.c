@@ -1592,7 +1592,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
           }
 
         INF("Creating special surface for GLES 1.x rendering");
-        evgl_engine->funcs->gles1_surface_create(eng_data, sfc, cfg, w, h);
+        evgl_engine->funcs->gles1_surface_create(evgl_engine, eng_data, sfc, cfg, w, h);
      }
 
    // Create internal buffers
