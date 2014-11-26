@@ -3397,8 +3397,8 @@ loop_advance:
         /* c->o->style_pad.r is already included in the line width, so it's
          * not used in this calculation. . */
         c->ln->x = c->marginl + c->o->style_pad.l +
-           ((c->w - c->ln->w -
-             c->o->style_pad.l - c->marginl) * _layout_line_align_get(c));
+           ((c->w - c->ln->w - c->o->style_pad.l -
+             c->marginl - c->marginr) * _layout_line_align_get(c));
      }
    else
      {

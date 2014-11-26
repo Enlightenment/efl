@@ -1954,6 +1954,39 @@ START_TEST(evas_textblock_various)
    evas_textblock_cursor_pos_set(cur, 0);
    evas_textblock_cursor_char_delete(cur);
 
+   /* Check margins' position */
+     {
+        Evas_Coord nw, nh, lx, lw;
+
+        evas_object_textblock_text_markup_set(tb, "This is a test");
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        evas_object_resize(tb, nw, nh);
+        evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
+        ck_assert_int_eq(lx, 0);
+        ck_assert_int_eq(lx + lw, nw);
+
+        evas_object_textblock_text_markup_set(tb, "<left_margin=10 right_margin=5>This is a test</>");
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        evas_object_resize(tb, nw, nh);
+        evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
+        ck_assert_int_eq(lx, 10);
+        ck_assert_int_eq(lx + lw + 5, nw);
+
+        evas_object_textblock_text_markup_set(tb, "עוד פסקה");
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        evas_object_resize(tb, nw, nh);
+        evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
+        ck_assert_int_eq(lx, 0);
+        ck_assert_int_eq(lx + lw, nw);
+
+        evas_object_textblock_text_markup_set(tb, "<left_margin=10 right_margin=5>עוד פסקה</>");
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        evas_object_resize(tb, nw, nh);
+        evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
+        ck_assert_int_eq(lx, 10);
+        ck_assert_int_eq(lx + lw + 5, nw);
+     }
+
    /* Super big one line item. */
      {
 #define CNT 10000
