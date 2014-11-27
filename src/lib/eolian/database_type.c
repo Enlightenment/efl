@@ -70,28 +70,6 @@ database_enum_add(Eolian_Type *tp)
 }
 
 static void
-_ftype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
-{
-   Eina_List *l;
-   Eolian_Type *stp;
-   Eina_Bool first = EINA_TRUE;
-   if (tp->ret_type)
-     database_type_to_str(tp->ret_type, buf, NULL);
-   else
-     eina_strbuf_append(buf, "void");
-   eina_strbuf_append(buf, " (*");
-   if (name) eina_strbuf_append(buf, name);
-   eina_strbuf_append(buf, ")(");
-   EINA_LIST_FOREACH(tp->arguments, l, stp)
-     {
-        if (!first) eina_strbuf_append(buf, ", ");
-        first = EINA_FALSE;
-        database_type_to_str(stp, buf, NULL);
-     }
-   eina_strbuf_append(buf, ")");
-}
-
-static void
 _stype_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 {
    Eolian_Struct_Type_Field *sf;
@@ -197,11 +175,6 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         _atype_to_str(tp, buf);
         return;
      }
-   else if (tp->type == EOLIAN_TYPE_FUNCTION)
-     {
-        _ftype_to_str(tp, buf, name);
-        return;
-     }
    else if (tp->type == EOLIAN_TYPE_STRUCT
          || tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
      {
@@ -286,8 +259,6 @@ database_expr_print(Eolian_Expression *exp)
 void
 database_type_print(Eolian_Type *tp)
 {
-   Eina_List *l;
-   Eolian_Type *stp;
    if (tp->type == EOLIAN_TYPE_ALIAS)
      {
         _typedef_print(tp);
@@ -311,26 +282,6 @@ database_type_print(Eolian_Type *tp)
      {
         database_type_print(tp->base_type);
         putchar('*');
-     }
-   else if (tp->type == EOLIAN_TYPE_FUNCTION)
-     {
-        Eina_Bool first = EINA_TRUE;
-        printf("func");
-        if (tp->ret_type)
-          {
-             putchar(' ');
-             database_type_print(tp->ret_type);
-          }
-        else
-          printf(" void");
-        printf(" (");
-        EINA_LIST_FOREACH(tp->arguments, l, stp)
-          {
-             if (!first) printf(", ");
-             first = EINA_FALSE;
-             database_type_print(stp);
-          }
-        putchar(')');
      }
    else if (tp->type == EOLIAN_TYPE_STRUCT)
      {

@@ -195,7 +195,6 @@ typedef enum
    EOLIAN_TYPE_REGULAR_ENUM,
    EOLIAN_TYPE_COMPLEX,
    EOLIAN_TYPE_POINTER,
-   EOLIAN_TYPE_FUNCTION,
    EOLIAN_TYPE_STRUCT,
    EOLIAN_TYPE_STRUCT_OPAQUE,
    EOLIAN_TYPE_ENUM,
@@ -1343,16 +1342,6 @@ EAPI Eina_Iterator *eolian_type_enums_get_by_file(const char *fname);
 EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
 
 /*
- * @brief Get an iterator to all arguments of a function type.
- *
- * @param[in] tp the type.
- * @return the iterator when @c tp is an EOLIAN_TYPE_FUNCTION, NULL otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_type_arguments_get(const Eolian_Type *tp);
-
-/*
  * @brief Get an iterator to all subtypes of a type.
  *
  * @param[in] tp the type.
@@ -1500,16 +1489,6 @@ EAPI Eina_Stringshare *eolian_type_description_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
-
-/*
- * @brief Get the return type of a function type.
- *
- * @param[in] tp the type.
- * @return the return type when @c tp is an EOLIAN_TYPE_FUNCTION, NULL otherwise.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Type *eolian_type_return_type_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the base type of a pointer or alias type.

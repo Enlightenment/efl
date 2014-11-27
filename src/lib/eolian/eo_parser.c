@@ -495,40 +495,6 @@ parse_type_named(Eo_Lexer *ls, Eina_Bool allow_named)
    return ret;
 }
 
-static Eolian_Type *
-parse_function_type(Eo_Lexer *ls)
-{
-   int line, col;
-   Eolian_Type *def = push_type(ls);
-   def->type = EOLIAN_TYPE_FUNCTION;
-   def->base.file = eina_stringshare_ref(ls->filename);
-   def->base.line = ls->line_number;
-   def->base.column = ls->column;
-   eo_lexer_get(ls);
-   if (ls->t.kw == KW_void)
-     eo_lexer_get(ls);
-   else
-     {
-        def->ret_type = parse_type_void(ls);
-        pop_type(ls);
-     }
-   line = ls->line_number;
-   col = ls->column;
-   check_next(ls, '(');
-   if (ls->t.token != ')')
-     {
-        def->arguments = eina_list_append(def->arguments, parse_type(ls));
-        pop_type(ls);
-        while (test_next(ls, ','))
-          {
-             def->arguments = eina_list_append(def->arguments, parse_type(ls));
-             pop_type(ls);
-          }
-     }
-   check_match(ls, ')', '(', line, col);
-   return def;
-}
-
 static void
 _struct_field_free(Eolian_Struct_Type_Field *def)
 {
@@ -875,8 +841,6 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
            _fill_name(sname, &def->full_name, &def->name, &def->namespaces);
            goto parse_ptr;
         }
-      case KW_func:
-        return parse_function_type(ls);
       default:
         break;
      }

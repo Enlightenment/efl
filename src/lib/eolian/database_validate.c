@@ -91,17 +91,6 @@ _validate_type(const Eolian_Type *tp)
       case EOLIAN_TYPE_POINTER:
       case EOLIAN_TYPE_ALIAS:
         return _validate_type(tp->base_type);
-      case EOLIAN_TYPE_FUNCTION:
-        {
-           Eina_List *l;
-           Eolian_Type *tpp;
-           if (tp->ret_type && !_validate_type(tp->ret_type))
-             return EINA_FALSE;
-           EINA_LIST_FOREACH(tp->arguments, l, tpp)
-             if (!_validate_type(tpp))
-               return EINA_FALSE;
-           return EINA_TRUE;
-        }
       case EOLIAN_TYPE_STRUCT:
         {
            Eina_Bool succ = EINA_TRUE;

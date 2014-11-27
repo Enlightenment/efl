@@ -139,26 +139,16 @@ struct _Eolian_Type
 {
    Eolian_Object base;
    Eolian_Type_Type type;
-   union {
-      /* functions */
-      struct {
-         Eina_List   *arguments;
-         Eolian_Type *ret_type;
-      };
-      /* everything else */
-      struct {
-         Eina_List   *subtypes;
-         Eolian_Type *base_type;
-         Eina_Stringshare *name;
-         Eina_Stringshare *full_name;
-         Eina_List        *namespaces;
-         Eina_Hash        *fields;
-         Eina_List        *field_list;
-         Eina_Stringshare *comment;
-         Eina_Stringshare *legacy;
-         Eina_Stringshare *freefunc;
-      };
-   };
+   Eina_List   *subtypes;
+   Eolian_Type *base_type;
+   Eina_Stringshare *name;
+   Eina_Stringshare *full_name;
+   Eina_List        *namespaces;
+   Eina_Hash        *fields;
+   Eina_List        *field_list;
+   Eina_Stringshare *comment;
+   Eina_Stringshare *legacy;
+   Eina_Stringshare *freefunc;
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
    Eina_Bool is_extern :1;
