@@ -14,6 +14,7 @@
 
 // Driver extensions to wrap (name : SPEC extension name)
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 
 // These functions will be exported to 'EVAS extension function'.
 // The functions of this block must correspond with the functions list in Evas_GL.h.
@@ -375,12 +376,9 @@ _EVASGL_EXT_BEGIN(texture_half_float_linear)
 	_EVASGL_EXT_DRVNAME(GL_OES_texture_half_float_linear)
 _EVASGL_EXT_END()
 
-_EVASGL_EXT_BEGIN(texture_npot)     // Desktop differs
-	_EVASGL_EXT_DRVNAME(GL_OES_texture_npot)
-_EVASGL_EXT_END()
-
-_EVASGL_EXT_BEGIN(texture_npot_DESKTOP)     // Desktop differs
-	_EVASGL_EXT_DRVNAME(GL_OES_texture_npot)
+_EVASGL_EXT_BEGIN(texture_npot)
+        _EVASGL_EXT_DRVNAME(GL_OES_texture_npot)
+        _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_texture_non_power_of_two")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(vertex_half_float)     // Desktop differs

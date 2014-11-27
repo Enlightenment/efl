@@ -23,6 +23,7 @@ char _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER] = { 0 };
 #define _EVASGL_EXT_BEGIN(name)
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) ret (*glextsym_##name) param = NULL;
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
@@ -35,6 +36,7 @@ char _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER] = { 0 };
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
@@ -49,6 +51,7 @@ char _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER] = { 0 };
 #define _EVASGL_EXT_BEGIN(name) int _gl_ext_support_##name = 0;
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
@@ -61,6 +64,7 @@ char _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER] = { 0 };
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
@@ -316,6 +320,9 @@ re->info->info.screen);
 #define _EVASGL_EXT_DRVNAME(name) \
    if (_EVASGL_EXT_CHECK_SUPPORT(#name)) *ext_support = 1;
 
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname) \
+   if (_EVASGL_EXT_CHECK_SUPPORT(deskname)) *ext_support = 1;
+
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) \
      { \
         ret (**drvfunc)param = &glextsym_##name;
@@ -350,6 +357,7 @@ re->info->info.screen);
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
@@ -373,6 +381,7 @@ re->info->info.screen);
       strcat(_gl_ext_string, #name" "); \
       strcat(_gl_ext_string_official, #name" "); \
    }
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
@@ -385,6 +394,7 @@ re->info->info.screen);
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
@@ -417,6 +427,7 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 #define _EVASGL_EXT_END() \
      }
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) \
    ORD(name);
 #define _EVASGL_EXT_FUNCTION_END()
@@ -436,6 +447,7 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN
@@ -469,6 +481,7 @@ evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
 #define _EVASGL_EXT_END() \
      }
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) \
    ORD(name);
 #define _EVASGL_EXT_FUNCTION_END()
@@ -487,6 +500,7 @@ evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN

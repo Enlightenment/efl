@@ -24,6 +24,7 @@
 #define _EVASGL_EXT_BEGIN(name)
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) extern ret (*glextsym_##name) param;
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
@@ -36,6 +37,7 @@
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
@@ -52,6 +54,7 @@
 #define _EVASGL_EXT_BEGIN(name) extern int _gl_ext_support_##name;
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
@@ -64,6 +67,7 @@
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_DESKTOP
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
