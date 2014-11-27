@@ -112,13 +112,11 @@ struct _EVGL_Surface
    unsigned gles1_indirect : 1;
    unsigned xpixmap : 1;
 
+   // Init Flag
+   unsigned buffers_allocated : 1;
+
    int     cfg_index;
 
-   // Attached Context
-   int     fbo_attached;
-
-   // Init Flag
-   int     buffers_allocated;
 
    // Rough estimate of buffer in memory per renderbuffer
    // 0. color 1. depth 2. stencil 3. depth_stencil

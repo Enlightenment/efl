@@ -2088,7 +2088,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      {
         if (_evgl_direct_renderable(rsc, sfc))
           {
-             if (dbg) DBG("sfc %p is direct renderable (has buffers: %d).", sfc, sfc->buffers_allocated);
+             if (dbg) DBG("sfc %p is direct renderable (has buffers: %d).", sfc, (int) sfc->buffers_allocated);
 
              // Destroy created resources
              if (sfc->buffers_allocated)
