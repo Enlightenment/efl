@@ -547,10 +547,10 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
 static const GLubyte *
 _evgl_glGetString(GLenum name)
 {
-   static char _version[64] = {0};
+   static char _version[128] = {0};
+   static char _glsl[128] = {0};
    EVGL_Resource *rsc;
    const GLubyte *ret;
-   char *r;
 
    /* We wrap two values here:
     *
@@ -583,40 +583,51 @@ _evgl_glGetString(GLenum name)
      {
       case GL_VENDOR:
       case GL_RENDERER:
-      case GL_SHADING_LANGUAGE_VERSION:
-        // GLSL version example strings (for the same GPU):
-        // For OpenGL ES 2.0 or 3.0: "OpenGL ES GLSL ES 3.10"
-        // For Desktop OpenGL: "4.40 NVIDIA via Cg compiler"
+        // Keep these as-is.
         break;
+
+      case GL_SHADING_LANGUAGE_VERSION:
+        ret = glGetString(GL_SHADING_LANGUAGE_VERSION);
+        if (!ret) return NULL;
+#ifdef GL_GLES
+        if (ret[15] != (GLubyte) '1')
+          {
+             // We try not to remove the vendor fluff
+             snprintf(_glsl, sizeof(_glsl), "OpenGL ES GLSL ES 1.00 Evas GL (%s)", ((char *) ret) + 18);
+             _glsl[sizeof(_glsl) - 1] = '\0';
+             return (const GLubyte *) _glsl;
+          }
+        return ret;
+#else
+        // Desktop GL, we still keep the official name
+        snprintf(_glsl, sizeof(_glsl), "OpenGL ES GLSL ES 1.00 Evas GL (%s)", (char *) ret);
+        _version[sizeof(_glsl) - 1] = '\0';
+        return (const GLubyte *) _glsl;
+#endif
+
       case GL_VERSION:
         ret = glGetString(GL_VERSION);
         if (!ret) return NULL;
-        if (strstr((const char *) ret, "OpenGL ES 3"))
+#ifdef GL_GLES
+        if (ret[11] != (GLubyte) '2')
           {
-             // We try not to remove the vendor fluff (contains driver version)
-             strncpy(_version, (const char *) ret, sizeof(_version));
-             r = strchr(_version, '3');
-             if (r)
-               {
-                  *r++ = '2';
-                  *r++ = '.';
-                  *r++ = '0';
-                  *r   = ' ';
-               }
-             _version[sizeof(_version) - 1] = '\0';
-             return (const GLubyte *) _version;
-          }
-        else if (!strstr((const char *) ret, "OpenGL ES"))
-          {
-             // Desktop GL, we still keep the official name
-             snprintf(_version, sizeof(_version), "OpenGL ES 2.0 (%s)", (char *) ret);
+             // We try not to remove the vendor fluff
+             snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", ((char *) ret) + 10);
              _version[sizeof(_version) - 1] = '\0';
              return (const GLubyte *) _version;
           }
         return ret;
+#else
+        // Desktop GL, we still keep the official name
+        snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", (char *) ret);
+        _version[sizeof(_version) - 1] = '\0';
+        return (const GLubyte *) _version;
+#endif
+
       case GL_EXTENSIONS:
         return (GLubyte *) evgl_api_ext_string_get
               (EINA_TRUE, (rsc->current_ctx->version == EVAS_GL_GLES_1_X));
+
       default:
         // GL_INVALID_ENUM is generated if name is not an accepted value.
         WRN("Unknown string requested: %x", (unsigned int) name);
