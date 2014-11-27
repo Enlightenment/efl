@@ -1637,8 +1637,8 @@ void _evas_3d_eet_descriptor_shutdown(void);
 void _evas_3d_eet_file_free(void);
 
 /* Temporary save/load functions */
-void evas_common_load_model_to_file(Evas_3D_Mesh *model, const char *file, Evas_3D_Mesh_File_Type type);
-void evas_common_save_model_to_file(Evas_3D_Mesh *model, const char *file, Evas_3D_Mesh_Frame *f, Evas_3D_Mesh_File_Type type);
+void evas_common_load_model_to_file(Evas_3D_Mesh *model, const char *file);
+void evas_common_save_model_to_file(Evas_3D_Mesh *model, const char *file, Evas_3D_Mesh_Frame *f);
 void evas_model_load_file_eet(Evas_3D_Mesh *mesh, const char *file);
 void evas_model_load_file_md2(Evas_3D_Mesh *mesh, const char *file);
 void evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file);

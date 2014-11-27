@@ -9,26 +9,26 @@
 
 
 void
-evas_common_load_model_to_file(Evas_3D_Mesh *model,
-                               const char *file,
-                               Evas_3D_Mesh_File_Type type)
+evas_common_load_model_to_file(Evas_3D_Mesh *model, const char *file)
 {
-   switch (type)
+   char *p;
+   char *loader = NULL;
+
+   p = strrchr(file, '.');
+   if (p)
      {
-      case EVAS_3D_MESH_FILE_TYPE_MD2:
-        evas_model_load_file_md2(model, file);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_OBJ:
-        evas_model_load_file_obj(model, file);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_EET:
-        evas_model_load_file_eet(model, file);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_PLY:
-        evas_model_load_file_ply(model, file);
-        break;
-      default:
-        ERR("Invalid mesh file type.");
-        break;
+        p++;
+#define CHECK_EXTENTION_BY_FILE_NAME(extention)                \
+        if (!strcasecmp(p, #extention))                        \
+          {                                                    \
+             evas_model_load_file_##extention(model, file);    \
+             loader = #extention;                              \
+          }
+        CHECK_EXTENTION_BY_FILE_NAME(eet)
+        CHECK_EXTENTION_BY_FILE_NAME(md2)
+        CHECK_EXTENTION_BY_FILE_NAME(obj)
+        CHECK_EXTENTION_BY_FILE_NAME(ply)
+#undef CHECK_EXTENTION_BY_FILE_NAME
      }
+   if (!loader) ERR("Invalid mesh file type.");
 }

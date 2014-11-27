@@ -720,21 +720,6 @@ typedef enum _Evas_3D_Material_Attrib
    EVAS_3D_MATERIAL_NORMAL,          /**< Normal map term */
 } Evas_3D_Material_Attrib;
 
-/**
- * Mesh file type
- *
- * @since 1.10
- * @ingroup Evas_3D_Types
- */
-typedef enum _Evas_3D_Mesh_File_Type
-{
-   EVAS_3D_MESH_FILE_TYPE_NONE = 0, /**< Noone from read formats */
-   EVAS_3D_MESH_FILE_TYPE_MD2,      /**< Quake's MD2 mesh file format */
-   EVAS_3D_MESH_FILE_TYPE_OBJ,      /**< Wavefront OBJ file format */
-   EVAS_3D_MESH_FILE_TYPE_EET,      /**< EET - own EFL file format */
-   EVAS_3D_MESH_FILE_TYPE_PLY,      /**< Stanford PLY mesh file format */
-} Evas_3D_Mesh_File_Type;
-
 #include "canvas/evas_image.eo.h"
 
 #include "canvas/evas_3d_camera.eo.h"

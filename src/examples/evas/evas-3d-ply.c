@@ -189,16 +189,16 @@ main(void)
         mesh[i] = eo_add(EVAS_3D_MESH_CLASS, evas);
 
         eo_do(mesh[i],
-              evas_3d_mesh_file_set(EVAS_3D_MESH_FILE_TYPE_PLY, path_file[i % 8], NULL),
+              evas_3d_mesh_file_set(path_file[i % 8], NULL),
               evas_3d_mesh_frame_material_set(0, material),
               evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 
         snprintf(buffer, PATH_MAX, "%s/Saved_%s", folder, file_name[i % 8]);
-        eo_do(mesh[i], evas_3d_mesh_save(EVAS_3D_MESH_FILE_TYPE_PLY, buffer, NULL));
+        eo_do(mesh[i], evas_3d_mesh_save(buffer, NULL));
 
         if (i > 15)
           eo_do(mesh[i],
-                evas_3d_mesh_file_set(EVAS_3D_MESH_FILE_TYPE_PLY, path_file[i % 8], NULL),
+                evas_3d_mesh_file_set(path_file[i % 8], NULL),
                 evas_3d_mesh_frame_material_set(0, material),
                 evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 

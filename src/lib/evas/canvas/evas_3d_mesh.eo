@@ -14,7 +14,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
           * @ingroup Evas_3D_Mesh
           */
          params {
-            @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
             @in const(char)* file; /*@ Path to the mesh file. */
             @in const(char)* key; /*@ Key in the mesh file. */
          }
@@ -30,7 +29,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
           * @ingroup Evas_3D_Mesh
           */
          params {
-            @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
             @in const(char)* file; /*@ Path to the mesh file. */
             @in const(char)* key; /*@ Key in the mesh file. */
          }
