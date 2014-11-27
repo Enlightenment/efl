@@ -802,18 +802,19 @@ _evas_3d_mesh_blending_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
 }
 
 EOLIAN static void
-_evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type, const char *file, const char *key EINA_UNUSED)
+_evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
+                       const char *file, const char *key EINA_UNUSED)
 {
    _mesh_fini(pd);
    _mesh_init(pd);
 
    if (file == NULL) return;
 
-   evas_common_load_model_to_file(obj, file, type);
+   evas_common_load_model_to_file(obj, file);
 }
 
 EOLIAN static void
-_evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type,
+_evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd,
                    const char *file, const char *key EINA_UNUSED)
 {
    if ((file == NULL) || (obj == NULL) || (pd == NULL)) return;
@@ -826,7 +827,7 @@ _evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type,
         return;
      }
 
-   evas_common_save_model_to_file(obj, file, f, type);
+   evas_common_save_model_to_file(obj, file, f);
 }
 
 static inline void

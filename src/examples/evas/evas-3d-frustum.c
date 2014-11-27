@@ -525,7 +525,7 @@ _mesh_setup_model(Scene_Data *data)
          evas_3d_material_shininess_set(100.0));
 
    eo_do(data->mesh_model,
-         evas_3d_mesh_file_set(EVAS_3D_MESH_FILE_TYPE_MD2, "eagle.md2", NULL),
+         evas_3d_mesh_file_set("eagle.md2", NULL),
          evas_3d_mesh_frame_material_set(0, data->material_model),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 }

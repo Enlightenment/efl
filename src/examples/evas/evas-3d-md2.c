@@ -120,7 +120,7 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
    eo_do(mesh,
-         evas_3d_mesh_file_set(EVAS_3D_MESH_FILE_TYPE_MD2, "sonic.md2", NULL),
+         evas_3d_mesh_file_set("sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
