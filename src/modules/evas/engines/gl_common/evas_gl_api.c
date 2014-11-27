@@ -583,7 +583,10 @@ _evgl_glGetString(GLenum name)
      {
       case GL_VENDOR:
       case GL_RENDERER:
-      case GL_SHADING_LANGUAGE_VERSION: // wrap me?
+      case GL_SHADING_LANGUAGE_VERSION:
+        // GLSL version example strings (for the same GPU):
+        // For OpenGL ES 2.0 or 3.0: "OpenGL ES GLSL ES 3.10"
+        // For Desktop OpenGL: "4.40 NVIDIA via Cg compiler"
         break;
       case GL_VERSION:
         ret = glGetString(GL_VERSION);
@@ -593,10 +596,20 @@ _evgl_glGetString(GLenum name)
              // We try not to remove the vendor fluff (contains driver version)
              strncpy(_version, (const char *) ret, sizeof(_version));
              r = strchr(_version, '3');
-             *r++ = '2';
-             *r++ = '.';
-             *r++ = '0';
-             *r   = ' ';
+             if (r)
+               {
+                  *r++ = '2';
+                  *r++ = '.';
+                  *r++ = '0';
+                  *r   = ' ';
+               }
+             _version[sizeof(_version) - 1] = '\0';
+             return (const GLubyte *) _version;
+          }
+        else if (!strstr((const char *) ret, "OpenGL ES"))
+          {
+             // Desktop GL, we still keep the official name
+             snprintf(_version, sizeof(_version), "OpenGL ES 2.0 (%s)", (char *) ret);
              _version[sizeof(_version) - 1] = '\0';
              return (const GLubyte *) _version;
           }
