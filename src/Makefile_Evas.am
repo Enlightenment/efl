@@ -234,6 +234,8 @@ lib/evas/common/evas_image_save.c \
 lib/evas/common/evas_image_main.c \
 lib/evas/common/evas_image_data.c \
 lib/evas/common/evas_image_scalecache.c \
+lib/evas/common/evas_model_load.c \
+lib/evas/common/evas_model_save.c \
 lib/evas/common/evas_line_main.c \
 lib/evas/common/evas_polygon_main.c \
 lib/evas/common/evas_rectangle_main.c \

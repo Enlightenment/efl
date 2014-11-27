@@ -129,7 +129,7 @@ _save_material(Evas_3D_Mesh_Data *pd EINA_UNUSED, const char *file, Evas_3D_Mesh
 }
 
 void
-evas_3d_mesh_save_obj(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f)
+evas_model_save_file_obj(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f)
 {
    Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
    _save_mesh(pd, file, f);

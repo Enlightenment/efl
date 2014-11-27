@@ -198,7 +198,7 @@ _read_header(char *start)//Check properties of mesh in .ply file.
 }
 
 void
-evas_3d_mesh_file_ply_set(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
 {
    long length;
    Evas_3D_Mesh_Data *pd;
