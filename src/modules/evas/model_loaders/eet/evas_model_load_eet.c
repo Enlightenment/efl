@@ -104,7 +104,7 @@ _set_material_to_mesh_from_eet_file(Evas_3D_Mesh *mesh,
 }
 
 void
-evas_3d_mesh_file_eet_set(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_eet(Evas_3D_Mesh *mesh, const char *file)
 {
    Eet_File *ef;
 

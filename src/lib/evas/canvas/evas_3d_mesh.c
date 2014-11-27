@@ -777,24 +777,7 @@ _evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type ty
 
    if (file == NULL) return;
 
-   switch (type)
-     {
-      case EVAS_3D_MESH_FILE_TYPE_MD2:
-        evas_3d_mesh_file_md2_set(obj, file);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_OBJ:
-        evas_3d_mesh_file_obj_set(obj, file);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_EET:
-        evas_3d_mesh_file_eet_set(obj, file);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_PLY:
-        evas_3d_mesh_file_ply_set(obj, file);
-        break;
-      default:
-        ERR("Invalid mesh file type.");
-        break;
-     }
+   evas_common_load_model_to_file(obj, file, type);
 }
 
 EOLIAN static void
@@ -811,21 +794,7 @@ _evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Mesh_File_Type type,
         return;
      }
 
-   switch (type)
-     {
-      case EVAS_3D_MESH_FILE_TYPE_OBJ:
-        evas_3d_mesh_save_obj(obj, file, f);//file without extension!
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_EET:
-        evas_3d_mesh_save_eet(obj, file, f);
-        break;
-      case EVAS_3D_MESH_FILE_TYPE_PLY:
-        evas_3d_mesh_save_ply(obj, file, f);
-        break;
-      default:
-        ERR("Invalid mesh file type.");
-        break;
-     }
+   evas_common_save_model_to_file(obj, file, f, type);
 }
 
 static inline void

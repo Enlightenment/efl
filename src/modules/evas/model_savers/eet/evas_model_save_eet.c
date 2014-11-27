@@ -148,9 +148,9 @@ _set_frame_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh)
 }
 
 void
-evas_3d_mesh_save_eet(Evas_3D_Mesh *mesh,
-                      const char *file,
-                      Evas_3D_Mesh_Frame *f)
+evas_model_save_file_eet(Evas_3D_Mesh *mesh,
+                         const char *file,
+                         Evas_3D_Mesh_Frame *f)
 {
    Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
    Eet_File *ef = eet_open(file, EET_FILE_MODE_WRITE);

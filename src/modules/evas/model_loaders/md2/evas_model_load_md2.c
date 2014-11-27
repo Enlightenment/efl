@@ -343,7 +343,7 @@ error:
 }
 
 void
-evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_md2(Evas_3D_Mesh *mesh, const char *file)
 {
    MD2_Loader           loader;
    int                  i, j, k;

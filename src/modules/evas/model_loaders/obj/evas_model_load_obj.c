@@ -202,7 +202,7 @@ _count_elements(char *start, long length)//count elements of mesh in .obj
 }
 
 void
-evas_3d_mesh_file_obj_set(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
 {
    long length, i;
    char * start = _file_to_buf(file, &length);
