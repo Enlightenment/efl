@@ -559,9 +559,9 @@ _evgl_glGetString(GLenum name)
     *   GLES 3 support is not exposed because apps can't use GLES 3 core
     *   functions yet.
     *
-    * EXTENSIONS: This should return the list of GL extensions supported by Evas GL
-    *   --> FIXME: Unfortunately the whitelist does not contain enough extensions
-    * especially for desktop GL and needs updating as OpenGL evolves.
+    * EXTENSIONS: This should return only the list of GL extensions supported
+    *   by Evas GL. This means as many extensions as possible should be
+    *   added to the whitelist.
     */
 
    /*
@@ -602,9 +602,8 @@ _evgl_glGetString(GLenum name)
           }
         return ret;
       case GL_EXTENSIONS:
-        // return (GLubyte *) evgl_api_ext_string_get
-        //      (EINA_TRUE, (rsc->current_ctx->version == EVAS_GL_GLES_1_X));
-        break;
+        return (GLubyte *) evgl_api_ext_string_get
+              (EINA_TRUE, (rsc->current_ctx->version == EVAS_GL_GLES_1_X));
       default:
         // GL_INVALID_ENUM is generated if name is not an accepted value.
         WRN("Unknown string requested: %x", (unsigned int) name);
