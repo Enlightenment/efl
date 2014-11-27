@@ -342,6 +342,7 @@ _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(packed_depth_stencil)
 	_EVASGL_EXT_DRVNAME(GL_OES_packed_depth_stencil)
+        _EVASGL_EXT_DRVNAME_DESKTOP("GL_EXT_packed_depth_stencil")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(rgb8_rgba8)
@@ -362,18 +363,22 @@ _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_float)
 	_EVASGL_EXT_DRVNAME(GL_OES_texture_float)
+        _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_texture_float")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_half_float)
 	_EVASGL_EXT_DRVNAME(GL_OES_texture_half_float)
+        _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_texture_half_float")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_float_linear)
         _EVASGL_EXT_DRVNAME(GL_OES_texture_float_linear)
+//        _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_texture_float_linear")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_half_float_linear)
 	_EVASGL_EXT_DRVNAME(GL_OES_texture_half_float_linear)
+//        _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_texture_half_float_linear")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(texture_npot)
@@ -381,12 +386,9 @@ _EVASGL_EXT_BEGIN(texture_npot)
         _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_texture_non_power_of_two")
 _EVASGL_EXT_END()
 
-_EVASGL_EXT_BEGIN(vertex_half_float)     // Desktop differs
+_EVASGL_EXT_BEGIN(vertex_half_float)
 	_EVASGL_EXT_DRVNAME(GL_OES_vertex_half_float)
-_EVASGL_EXT_END()
-
-_EVASGL_EXT_BEGIN(vertex_half_float_DESKTOP)     // Desktop differs
-	_EVASGL_EXT_DRVNAME(GL_OES_vertex_half_float)
+        _EVASGL_EXT_DRVNAME_DESKTOP("GL_ARB_half_float_vertex")
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(vertex_type_10_10_10_2)
@@ -421,11 +423,7 @@ _EVASGL_EXT_BEGIN(texture_format_BGRA8888) // Desktop has it from GL 1.2
 	_EVASGL_EXT_DRVNAME(GL_EXT_texture_format_BGRA8888)
 _EVASGL_EXT_END()
 
-_EVASGL_EXT_BEGIN(texture_type_2_10_10_10_rev) // Desktop differs
-	_EVASGL_EXT_DRVNAME(GL_EXT_texture_type_2_10_10_10_REV)
-_EVASGL_EXT_END()
-
-_EVASGL_EXT_BEGIN(texture_type_2_10_10_10_rev_DESKTOP) // Desktop differs
+_EVASGL_EXT_BEGIN(texture_type_2_10_10_10_rev) // Desktop has it from GL 1.2
 	_EVASGL_EXT_DRVNAME(GL_EXT_texture_type_2_10_10_10_REV)
 _EVASGL_EXT_END()
 
