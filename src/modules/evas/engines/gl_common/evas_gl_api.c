@@ -478,7 +478,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
      {
         if (!params)
           {
-             ERR("Inavlid Parameter");
+             ERR("Invalid Parameter");
              return;
           }
 
@@ -523,6 +523,19 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
                   params[1] = 0;
                   params[2] = (GLint)rsc->direct.img.w;
                   params[3] = (GLint)rsc->direct.img.h;
+                  return;
+               }
+          }
+     }
+   else
+     {
+        if (pname == GL_FRAMEBUFFER_BINDING)
+          {
+             rsc = _evgl_tls_resource_get();
+             ctx = rsc ? rsc->current_ctx : NULL;
+             if (ctx)
+               {
+                  *params = ctx->current_fbo;
                   return;
                }
           }
