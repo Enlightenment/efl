@@ -264,8 +264,11 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
 
 #ifndef GL_GLES
    /* Add some extension strings that are always working on desktop GL */
-   strcat(_gl_ext_string, "GL_EXT_texture_format_BGRA8888 ");
-   strcat(_gl_ext_string_official, "GL_EXT_texture_format_BGRA8888 ");
+   static const char *desktop_exts =
+         "GL_EXT_read_format_bgra "
+         "GL_EXT_texture_format_BGRA8888";
+   strcpy(_gl_ext_string, desktop_exts);
+   strcpy(_gl_ext_string_official, desktop_exts);
 #endif
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////

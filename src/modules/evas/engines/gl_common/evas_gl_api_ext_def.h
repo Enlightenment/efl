@@ -409,11 +409,7 @@ _EVASGL_EXT_BEGIN(blend_minmax)
 	_EVASGL_EXT_DRVNAME(GL_EXT_blend_minmax)
 _EVASGL_EXT_END()
 
-_EVASGL_EXT_BEGIN(read_format_bgra) // Desktop differs
-	_EVASGL_EXT_DRVNAME(GL_EXT_read_format_bgra)
-_EVASGL_EXT_END()
-
-_EVASGL_EXT_BEGIN(read_format_bgra_DESKTOP) // Desktop differs
+_EVASGL_EXT_BEGIN(read_format_bgra) // Desktop has it from GL 1.2
 	_EVASGL_EXT_DRVNAME(GL_EXT_read_format_bgra)
 _EVASGL_EXT_END()
 
@@ -421,7 +417,7 @@ _EVASGL_EXT_BEGIN(texture_filter_anisotropic)
 	_EVASGL_EXT_DRVNAME(GL_EXT_texture_filter_anisotropic)
 _EVASGL_EXT_END()
 
-_EVASGL_EXT_BEGIN(texture_format_BGRA8888)
+_EVASGL_EXT_BEGIN(texture_format_BGRA8888) // Desktop has it from GL 1.2
 	_EVASGL_EXT_DRVNAME(GL_EXT_texture_format_BGRA8888)
 _EVASGL_EXT_END()
 
