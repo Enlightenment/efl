@@ -491,6 +491,12 @@ typedef enum _Evas_Native_Surface_Type
  * @warning Native surface types totally depend on the system. Please
  *          be aware that the types are supported on your system before using
  *          them.
+ *
+ * @note The information stored in an @c Evas_Native_Surface returned by
+ *       @ref evas_gl_native_surface_get() is not meant to be used by
+ *       applications except for passing it to
+ *       @ref evas_object_image_native_surface_set().
+ *
  * @see evas_object_image_native_surface_set()
  */
 struct _Evas_Native_Surface

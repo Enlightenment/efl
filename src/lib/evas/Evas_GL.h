@@ -681,6 +681,10 @@ EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, cons
  * @details This function can be called to later set this native surface as
  *          source of an Evas Object Image. Please refer to
  *          @ref evas_object_image_native_surface_set.
+ *
+ * @warning Applications should not rely on the information set in @p ns
+ *          since its properties are internal to Evas and are not meant to be
+ *          tampered with in any way or form from outside Evas.
  */
 EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns) EINA_ARG_NONNULL(1,2,3);
 
