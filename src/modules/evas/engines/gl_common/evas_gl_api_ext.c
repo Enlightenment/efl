@@ -258,6 +258,14 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
    memset(_gl_ext_string, 0, MAX_EXTENSION_STRING_BUFFER);
    memset(_gl_ext_string_official, 0, MAX_EXTENSION_STRING_BUFFER);
 
+#ifndef GL_GLES
+   /* Add some extension strings that are always working on desktop GL */
+   strcat(_gl_ext_string, "GL_EXT_texture_format_BGRA8888 ");
+   strcat(_gl_ext_string_official, "GL_EXT_texture_format_BGRA8888 ");
+#endif
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #define FINDSYM(getproc, dst, sym) \
    if (getproc) { \
       if (!dst) dst = (__typeof__(dst))getproc(sym); \
@@ -348,10 +356,6 @@ re->info->info.screen);
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 
 #undef GETPROCADDR
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   _gl_ext_string[0] = 0;
-   _gl_ext_string_official[0] = 0;
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extension HEADER

@@ -423,11 +423,7 @@ _EVASGL_EXT_BEGIN(texture_filter_anisotropic)
 	_EVASGL_EXT_DRVNAME(GL_EXT_texture_filter_anisotropic)
 _EVASGL_EXT_END()
 
-_EVASGL_EXT_BEGIN(texture_format_BGRA8888) // Desktop differs
-	_EVASGL_EXT_DRVNAME(GL_EXT_texture_format_BGRA8888)
-_EVASGL_EXT_END()
-
-_EVASGL_EXT_BEGIN(texture_format_BGRA8888_DESKTOP) // Desktop differs
+_EVASGL_EXT_BEGIN(texture_format_BGRA8888)
 	_EVASGL_EXT_DRVNAME(GL_EXT_texture_format_BGRA8888)
 _EVASGL_EXT_END()
 
