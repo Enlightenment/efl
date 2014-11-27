@@ -181,20 +181,7 @@ type Ecore_Con_Event_Data_Received: struct {
     size: int; /*@ The length of the data sent. */
 };
 
-type Ecore_Con_Dns_Cb: func void (const(char) *,
-                                 const(char) *,
-                                 struct sockaddr *,
-                                 int,
-                                 void *);
-
-/* FIXME: Ecore_Con_Dns_Cb should be like this:
-type Ecore_Con_Dns_Cb: func void (const(char) *canonname,
-                                 const(char) *ip,
-                                 struct sockaddr *addr,
-                                 int addrlen,
-                                 void *data);
-
-
+/* TODO
 * Add events (to all of the ecore con stuff, e.g url).
 * Make server the father of the client - make sure I don't leak references.
 *

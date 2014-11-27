@@ -249,6 +249,16 @@ typedef struct Ecore_Con_Socks Ecore_Con_Socks;
  */
 
 /**
+ * @typedef Ecore_Con_Dns_Cb
+ * A callback type for use with @ref ecore_con_lookup.
+ */
+typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
+                                 const char *ip,
+                                 struct sockaddr *addr,
+                                 int addrlen,
+                                 void *data);
+
+/**
  * @typedef Ecore_Con_Type
  * @enum _Ecore_Con_Type
  * Types for an ecore_con client/server object.  A correct way to set this type is
