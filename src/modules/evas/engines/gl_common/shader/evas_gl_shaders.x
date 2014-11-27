@@ -4,7 +4,7 @@
 #include "../evas_gl_private.h"
 
 /* Source: modules/evas/engines/gl_common/shader/font_frag.shd */
-static const char font_frag_glsl[] =
+static const char const font_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -26,7 +26,7 @@ Evas_GL_Program_Source shader_font_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/font_vert.shd */
-static const char font_vert_glsl[] =
+static const char const font_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -49,7 +49,7 @@ Evas_GL_Program_Source shader_font_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_bgra_frag.shd */
-static const char img_12_bgra_frag_glsl[] =
+static const char const img_12_bgra_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -75,7 +75,7 @@ Evas_GL_Program_Source shader_img_12_bgra_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_bgra_nomul_frag.shd */
-static const char img_12_bgra_nomul_frag_glsl[] =
+static const char const img_12_bgra_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -100,7 +100,7 @@ Evas_GL_Program_Source shader_img_12_bgra_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_bgra_nomul_vert.shd */
-static const char img_12_bgra_nomul_vert_glsl[] =
+static const char const img_12_bgra_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -126,7 +126,7 @@ Evas_GL_Program_Source shader_img_12_bgra_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_bgra_vert.shd */
-static const char img_12_bgra_vert_glsl[] =
+static const char const img_12_bgra_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -155,7 +155,7 @@ Evas_GL_Program_Source shader_img_12_bgra_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_frag.shd */
-static const char img_12_frag_glsl[] =
+static const char const img_12_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -181,7 +181,7 @@ Evas_GL_Program_Source shader_img_12_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_nomul_frag.shd */
-static const char img_12_nomul_frag_glsl[] =
+static const char const img_12_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -206,7 +206,7 @@ Evas_GL_Program_Source shader_img_12_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_nomul_vert.shd */
-static const char img_12_nomul_vert_glsl[] =
+static const char const img_12_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -232,7 +232,7 @@ Evas_GL_Program_Source shader_img_12_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_12_vert.shd */
-static const char img_12_vert_glsl[] =
+static const char const img_12_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -261,7 +261,7 @@ Evas_GL_Program_Source shader_img_12_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_bgra_frag.shd */
-static const char img_21_bgra_frag_glsl[] =
+static const char const img_21_bgra_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -287,7 +287,7 @@ Evas_GL_Program_Source shader_img_21_bgra_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_bgra_nomul_frag.shd */
-static const char img_21_bgra_nomul_frag_glsl[] =
+static const char const img_21_bgra_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -312,7 +312,7 @@ Evas_GL_Program_Source shader_img_21_bgra_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_bgra_nomul_vert.shd */
-static const char img_21_bgra_nomul_vert_glsl[] =
+static const char const img_21_bgra_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -338,7 +338,7 @@ Evas_GL_Program_Source shader_img_21_bgra_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_bgra_vert.shd */
-static const char img_21_bgra_vert_glsl[] =
+static const char const img_21_bgra_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -367,7 +367,7 @@ Evas_GL_Program_Source shader_img_21_bgra_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_frag.shd */
-static const char img_21_frag_glsl[] =
+static const char const img_21_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -393,7 +393,7 @@ Evas_GL_Program_Source shader_img_21_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_nomul_frag.shd */
-static const char img_21_nomul_frag_glsl[] =
+static const char const img_21_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -418,7 +418,7 @@ Evas_GL_Program_Source shader_img_21_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_nomul_vert.shd */
-static const char img_21_nomul_vert_glsl[] =
+static const char const img_21_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -444,7 +444,7 @@ Evas_GL_Program_Source shader_img_21_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_21_vert.shd */
-static const char img_21_vert_glsl[] =
+static const char const img_21_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -473,7 +473,7 @@ Evas_GL_Program_Source shader_img_21_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_bgra_frag.shd */
-static const char img_22_bgra_frag_glsl[] =
+static const char const img_22_bgra_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -501,7 +501,7 @@ Evas_GL_Program_Source shader_img_22_bgra_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_bgra_nomul_frag.shd */
-static const char img_22_bgra_nomul_frag_glsl[] =
+static const char const img_22_bgra_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -528,7 +528,7 @@ Evas_GL_Program_Source shader_img_22_bgra_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_bgra_nomul_vert.shd */
-static const char img_22_bgra_nomul_vert_glsl[] =
+static const char const img_22_bgra_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -556,7 +556,7 @@ Evas_GL_Program_Source shader_img_22_bgra_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_bgra_vert.shd */
-static const char img_22_bgra_vert_glsl[] =
+static const char const img_22_bgra_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -587,7 +587,7 @@ Evas_GL_Program_Source shader_img_22_bgra_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_frag.shd */
-static const char img_22_frag_glsl[] =
+static const char const img_22_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -615,7 +615,7 @@ Evas_GL_Program_Source shader_img_22_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_nomul_frag.shd */
-static const char img_22_nomul_frag_glsl[] =
+static const char const img_22_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -642,7 +642,7 @@ Evas_GL_Program_Source shader_img_22_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_nomul_vert.shd */
-static const char img_22_nomul_vert_glsl[] =
+static const char const img_22_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -670,7 +670,7 @@ Evas_GL_Program_Source shader_img_22_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_22_vert.shd */
-static const char img_22_vert_glsl[] =
+static const char const img_22_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -701,7 +701,7 @@ Evas_GL_Program_Source shader_img_22_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_bgra_frag.shd */
-static const char img_bgra_frag_glsl[] =
+static const char const img_bgra_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -723,7 +723,7 @@ Evas_GL_Program_Source shader_img_bgra_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_bgra_nomul_frag.shd */
-static const char img_bgra_nomul_frag_glsl[] =
+static const char const img_bgra_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -744,7 +744,7 @@ Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_bgra_nomul_vert.shd */
-static const char img_bgra_nomul_vert_glsl[] =
+static const char const img_bgra_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -764,7 +764,7 @@ Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_bgra_vert.shd */
-static const char img_bgra_vert_glsl[] =
+static const char const img_bgra_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -787,7 +787,7 @@ Evas_GL_Program_Source shader_img_bgra_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_frag.shd */
-static const char img_frag_glsl[] =
+static const char const img_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -809,7 +809,7 @@ Evas_GL_Program_Source shader_img_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_nomul_frag.shd */
-static const char img_nomul_frag_glsl[] =
+static const char const img_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -830,7 +830,7 @@ Evas_GL_Program_Source shader_img_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_nomul_vert.shd */
-static const char img_nomul_vert_glsl[] =
+static const char const img_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -850,7 +850,7 @@ Evas_GL_Program_Source shader_img_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/img_vert.shd */
-static const char img_vert_glsl[] =
+static const char const img_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -873,7 +873,7 @@ Evas_GL_Program_Source shader_img_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/nv12_frag.shd */
-static const char nv12_frag_glsl[] =
+static const char const nv12_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -908,7 +908,7 @@ Evas_GL_Program_Source shader_nv12_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/nv12_nomul_frag.shd */
-static const char nv12_nomul_frag_glsl[] =
+static const char const nv12_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -942,7 +942,7 @@ Evas_GL_Program_Source shader_nv12_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/nv12_nomul_vert.shd */
-static const char nv12_nomul_vert_glsl[] =
+static const char const nv12_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -964,7 +964,7 @@ Evas_GL_Program_Source shader_nv12_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/nv12_vert.shd */
-static const char nv12_vert_glsl[] =
+static const char const nv12_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -988,7 +988,7 @@ Evas_GL_Program_Source shader_nv12_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/rect_frag.shd */
-static const char rect_frag_glsl[] =
+static const char const rect_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1009,7 +1009,7 @@ Evas_GL_Program_Source shader_rect_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/rect_vert.shd */
-static const char rect_vert_glsl[] =
+static const char const rect_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1029,7 +1029,7 @@ Evas_GL_Program_Source shader_rect_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/rgb_a_pair_frag.shd */
-static const char rgb_a_pair_frag_glsl[] =
+static const char const rgb_a_pair_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1054,7 +1054,7 @@ Evas_GL_Program_Source shader_rgb_a_pair_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_frag.shd */
-static const char rgb_a_pair_nomul_frag_glsl[] =
+static const char const rgb_a_pair_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1078,7 +1078,7 @@ Evas_GL_Program_Source shader_rgb_a_pair_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/rgb_a_pair_nomul_vert.shd */
-static const char rgb_a_pair_nomul_vert_glsl[] =
+static const char const rgb_a_pair_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1101,7 +1101,7 @@ Evas_GL_Program_Source shader_rgb_a_pair_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/rgb_a_pair_vert.shd */
-static const char rgb_a_pair_vert_glsl[] =
+static const char const rgb_a_pair_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1127,7 +1127,7 @@ Evas_GL_Program_Source shader_rgb_a_pair_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_frag.shd */
-static const char tex_12_frag_glsl[] =
+static const char const tex_12_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1153,7 +1153,7 @@ Evas_GL_Program_Source shader_tex_12_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_vert.shd */
-static const char tex_12_vert_glsl[] =
+static const char const tex_12_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1182,7 +1182,7 @@ Evas_GL_Program_Source shader_tex_12_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_frag.shd */
-static const char tex_12_nomul_frag_glsl[] =
+static const char const tex_12_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1207,7 +1207,7 @@ Evas_GL_Program_Source shader_tex_12_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_vert.shd */
-static const char tex_12_nomul_vert_glsl[] =
+static const char const tex_12_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1233,7 +1233,7 @@ Evas_GL_Program_Source shader_tex_12_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_frag.shd */
-static const char tex_21_frag_glsl[] =
+static const char const tex_21_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1259,7 +1259,7 @@ Evas_GL_Program_Source shader_tex_21_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_vert.shd */
-static const char tex_21_vert_glsl[] =
+static const char const tex_21_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1288,7 +1288,7 @@ Evas_GL_Program_Source shader_tex_21_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_frag.shd */
-static const char tex_21_nomul_frag_glsl[] =
+static const char const tex_21_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1313,7 +1313,7 @@ Evas_GL_Program_Source shader_tex_21_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_vert.shd */
-static const char tex_21_nomul_vert_glsl[] =
+static const char const tex_21_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1339,7 +1339,7 @@ Evas_GL_Program_Source shader_tex_21_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_frag.shd */
-static const char tex_22_frag_glsl[] =
+static const char const tex_22_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1367,7 +1367,7 @@ Evas_GL_Program_Source shader_tex_22_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_vert.shd */
-static const char tex_22_vert_glsl[] =
+static const char const tex_22_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1398,7 +1398,7 @@ Evas_GL_Program_Source shader_tex_22_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_frag.shd */
-static const char tex_22_nomul_frag_glsl[] =
+static const char const tex_22_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1425,7 +1425,7 @@ Evas_GL_Program_Source shader_tex_22_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_vert.shd */
-static const char tex_22_nomul_vert_glsl[] =
+static const char const tex_22_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1453,7 +1453,7 @@ Evas_GL_Program_Source shader_tex_22_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_frag.shd */
-static const char tex_frag_glsl[] =
+static const char const tex_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1475,7 +1475,7 @@ Evas_GL_Program_Source shader_tex_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_vert.shd */
-static const char tex_vert_glsl[] =
+static const char const tex_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1498,7 +1498,7 @@ Evas_GL_Program_Source shader_tex_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_nomul_frag.shd */
-static const char tex_nomul_frag_glsl[] =
+static const char const tex_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1519,7 +1519,7 @@ Evas_GL_Program_Source shader_tex_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_nomul_vert.shd */
-static const char tex_nomul_vert_glsl[] =
+static const char const tex_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1539,7 +1539,7 @@ Evas_GL_Program_Source shader_tex_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_afill_frag.shd */
-static const char tex_afill_frag_glsl[] =
+static const char const tex_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1562,7 +1562,7 @@ Evas_GL_Program_Source shader_tex_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_afill_vert.shd */
-static const char tex_afill_vert_glsl[] =
+static const char const tex_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1585,7 +1585,7 @@ Evas_GL_Program_Source shader_tex_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_afill_frag.shd */
-static const char tex_22_afill_frag_glsl[] =
+static const char const tex_22_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1614,7 +1614,7 @@ Evas_GL_Program_Source shader_tex_22_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_afill_vert.shd */
-static const char tex_22_afill_vert_glsl[] =
+static const char const tex_22_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1645,7 +1645,7 @@ Evas_GL_Program_Source shader_tex_22_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_afill_frag.shd */
-static const char tex_21_afill_frag_glsl[] =
+static const char const tex_21_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1672,7 +1672,7 @@ Evas_GL_Program_Source shader_tex_21_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_afill_vert.shd */
-static const char tex_21_afill_vert_glsl[] =
+static const char const tex_21_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1701,7 +1701,7 @@ Evas_GL_Program_Source shader_tex_21_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_afill_frag.shd */
-static const char tex_12_afill_frag_glsl[] =
+static const char const tex_12_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1728,7 +1728,7 @@ Evas_GL_Program_Source shader_tex_12_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_afill_vert.shd */
-static const char tex_12_afill_vert_glsl[] =
+static const char const tex_12_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1757,7 +1757,7 @@ Evas_GL_Program_Source shader_tex_12_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_afill_frag.shd */
-static const char tex_22_nomul_afill_frag_glsl[] =
+static const char const tex_22_nomul_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1785,7 +1785,7 @@ Evas_GL_Program_Source shader_tex_22_nomul_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_22_nomul_afill_vert.shd */
-static const char tex_22_nomul_afill_vert_glsl[] =
+static const char const tex_22_nomul_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1813,7 +1813,7 @@ Evas_GL_Program_Source shader_tex_22_nomul_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_afill_frag.shd */
-static const char tex_21_nomul_afill_frag_glsl[] =
+static const char const tex_21_nomul_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1839,7 +1839,7 @@ Evas_GL_Program_Source shader_tex_21_nomul_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_21_nomul_afill_vert.shd */
-static const char tex_21_nomul_afill_vert_glsl[] =
+static const char const tex_21_nomul_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1865,7 +1865,7 @@ Evas_GL_Program_Source shader_tex_21_nomul_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_afill_frag.shd */
-static const char tex_12_nomul_afill_frag_glsl[] =
+static const char const tex_12_nomul_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1891,7 +1891,7 @@ Evas_GL_Program_Source shader_tex_12_nomul_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_12_nomul_afill_vert.shd */
-static const char tex_12_nomul_afill_vert_glsl[] =
+static const char const tex_12_nomul_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1917,7 +1917,7 @@ Evas_GL_Program_Source shader_tex_12_nomul_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_nomul_afill_frag.shd */
-static const char tex_nomul_afill_frag_glsl[] =
+static const char const tex_nomul_afill_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1939,7 +1939,7 @@ Evas_GL_Program_Source shader_tex_nomul_afill_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/tex_nomul_afill_vert.shd */
-static const char tex_nomul_afill_vert_glsl[] =
+static const char const tex_nomul_afill_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1959,7 +1959,7 @@ Evas_GL_Program_Source shader_tex_nomul_afill_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuv_frag.shd */
-static const char yuv_frag_glsl[] =
+static const char const yuv_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1991,7 +1991,7 @@ Evas_GL_Program_Source shader_yuv_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuv_nomul_frag.shd */
-static const char yuv_nomul_frag_glsl[] =
+static const char const yuv_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2022,7 +2022,7 @@ Evas_GL_Program_Source shader_yuv_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuv_nomul_vert.shd */
-static const char yuv_nomul_vert_glsl[] =
+static const char const yuv_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2044,7 +2044,7 @@ Evas_GL_Program_Source shader_yuv_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuv_vert.shd */
-static const char yuv_vert_glsl[] =
+static const char const yuv_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2069,7 +2069,7 @@ Evas_GL_Program_Source shader_yuv_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuy2_frag.shd */
-static const char yuy2_frag_glsl[] =
+static const char const yuy2_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2103,7 +2103,7 @@ Evas_GL_Program_Source shader_yuy2_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuy2_nomul_frag.shd */
-static const char yuy2_nomul_frag_glsl[] =
+static const char const yuy2_nomul_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2137,7 +2137,7 @@ Evas_GL_Program_Source shader_yuy2_nomul_frag_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuy2_nomul_vert.shd */
-static const char yuy2_nomul_vert_glsl[] =
+static const char const yuy2_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2158,7 +2158,7 @@ Evas_GL_Program_Source shader_yuy2_nomul_vert_src =
 };
 
 /* Source: modules/evas/engines/gl_common/shader/yuy2_vert.shd */
-static const char yuy2_vert_glsl[] =
+static const char const yuy2_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"

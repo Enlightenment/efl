@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script will generate a C file containing all the shaders used by Evas.
 # This C file should be checked-in Git and not modified.
@@ -38,7 +38,7 @@ for shd in ${SHADERS} ; do
 
   OIFS=$IFS
   IFS=$'\n'
-  printf "static const char ${lname}_glsl[] ="
+  printf "static const char const ${lname}_glsl[] ="
   for line in `cat ${shd}` ; do
     printf "\n   \"${line}\\\n\""
   done
