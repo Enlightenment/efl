@@ -127,7 +127,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 #else
    GLXContext rgbactx;
 #endif
-   const GLubyte *vendor, *renderer, *version;
+   const GLubyte *vendor, *renderer, *version, *glslversion;
    int blacklist = 0;
 
    if (!fbconf) eng_best_visual_get(info);
@@ -223,14 +223,17 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
    version = glGetString(GL_VERSION);
+   glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
    if (!vendor)   vendor   = (unsigned char *)"-UNKNOWN-";
    if (!renderer) renderer = (unsigned char *)"-UNKNOWN-";
    if (!version)  version  = (unsigned char *)"-UNKNOWN-";
+   if (!glslversion) glslversion = (unsigned char *)"-UNKNOWN-";
    if (getenv("EVAS_GL_INFO"))
      {
-        fprintf(stderr, "vendor: %s\n", vendor);
+        fprintf(stderr, "vendor  : %s\n", vendor);
         fprintf(stderr, "renderer: %s\n", renderer);
-        fprintf(stderr, "version: %s\n", version);
+        fprintf(stderr, "version : %s\n", version);
+        fprintf(stderr, "glsl ver: %s\n", glslversion);
      }
 
    if (strstr((const char *)vendor, "Mesa Project"))
@@ -310,12 +313,19 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
    version = glGetString(GL_VERSION);
+   glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+   if (!vendor)   vendor   = (unsigned char *)"-UNKNOWN-";
+   if (!renderer) renderer = (unsigned char *)"-UNKNOWN-";
+   if (!version)  version  = (unsigned char *)"-UNKNOWN-";
+   if (!glslversion) glslversion = (unsigned char *)"-UNKNOWN-";
    if (getenv("EVAS_GL_INFO"))
      {
-        fprintf(stderr, "vendor: %s\n", vendor);
+        fprintf(stderr, "vendor  : %s\n", vendor);
         fprintf(stderr, "renderer: %s\n", renderer);
-        fprintf(stderr, "version: %s\n", version);
+        fprintf(stderr, "version : %s\n", version);
+        fprintf(stderr, "glsl ver: %s\n", glslversion);
      }
+
    //   examples:
    // vendor: NVIDIA Corporation
    // renderer: NVIDIA Tegra
