@@ -31,12 +31,21 @@ my_bt_38_alpha_off(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
 }
 
 static Eina_Bool
-_unic(void *data)
+_activate_timer_cb(void *data)
 {
-   printf("activate\n");
+   printf("Activate window\n");
    elm_win_activate(data);
-   return EINA_FALSE;
+   return ECORE_CALLBACK_CANCEL;
 }
+
+static Eina_Bool
+_deiconify_timer_cb(void *data)
+{
+   printf("Deiconify window\n");
+   elm_win_iconified_set(data, EINA_FALSE);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 
 static Eina_Bool
 _unwith(void *data)
@@ -45,15 +54,6 @@ _unwith(void *data)
    evas_object_show(data);
    elm_win_activate(data);
    return EINA_FALSE;
-}
-
-static void
-my_bt_38_iconify(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Evas_Object *win = data;
-   printf("iconify, current %i\n", elm_win_iconified_get(win));
-   elm_win_iconified_set(win, EINA_TRUE);
-   ecore_timer_add(10.0, _unic, win);
 }
 
 static void
@@ -182,6 +182,36 @@ _move_0_0(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED
 }
 
 static void
+_bt_win_lower(void *data, Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
+{
+   printf("Lower window\n");
+   elm_win_lower(data);
+}
+
+static void
+_bt_win_iconify_and_activate(void *data, Evas_Object *obj EINA_UNUSED,
+                             void *event_info EINA_UNUSED)
+{
+   printf("Iconify window. (current status: %i)\n", elm_win_iconified_get(data));
+   elm_win_iconified_set(data, EINA_TRUE);
+
+   printf("This window will be activated in 5 seconds.\n");
+   ecore_timer_add(5.0, _activate_timer_cb, data);
+}
+
+static void
+_bt_win_iconify_and_deiconify(void *data, Evas_Object *obj EINA_UNUSED,
+                              void *event_info EINA_UNUSED)
+{
+   printf("Iconify window. (current status: %i)\n", elm_win_iconified_get(data));
+   elm_win_iconified_set(data, EINA_TRUE);
+
+   printf("This window will be deiconified in 5 seconds.\n");
+   ecore_timer_add(5.0, _deiconify_timer_cb, data);
+}
+
+static void
 _win_state_print_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("WIN: %s\n", (char *)data);
@@ -273,14 +303,6 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Iconify");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_38_iconify, win);
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
    elm_object_text_set(bt, "Withdraw");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_withdraw, win);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -299,6 +321,41 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Move 20 20");
    evas_object_smart_callback_add(bt, "clicked", _move_20_20, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Lower");
+   evas_object_smart_callback_add(bt, "clicked", _bt_win_lower, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Iconify and Activate");
+   evas_object_smart_callback_add(bt, "clicked",
+                                  _bt_win_iconify_and_activate, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Iconify and Deiconify");
+   evas_object_smart_callback_add(bt, "clicked",
+                                  _bt_win_iconify_and_deiconify, win);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
