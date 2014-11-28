@@ -34,7 +34,7 @@
         src2 += f2->vertices[a].element_count;              \
      }
 
-#define CHECK_MESHES_IN_FOLDER(folder, type, type_to_check)                                                     \
+#define CHECK_MESHES_IN_FOLDER(folder, ext)                                                                     \
    it = eina_file_direct_ls(folder);                                                                            \
    EINA_ITERATOR_FOREACH(it, file)                                                                              \
      {                                                                                                          \
@@ -42,9 +42,10 @@
         mesh2 = eo_add(EVAS_3D_MESH_CLASS, e);                                                                  \
         fail_if(mesh == NULL);                                                                                  \
         fail_if(mesh2 == NULL);                                                                                 \
-        eo_do(mesh, evas_3d_mesh_file_set(type, file->path, NULL));                                             \
-        eo_do(mesh, evas_3d_mesh_save(type_to_check, buffer, NULL));                                            \
-        eo_do(mesh2, evas_3d_mesh_file_set(type_to_check, buffer, NULL));                                       \
+        snprintf(buffer, PATH_MAX, "%s", ext);                                                                  \
+        eo_do(mesh, evas_3d_mesh_file_set(file->path, NULL));                                                   \
+        eo_do(mesh, evas_3d_mesh_save(buffer, NULL));                                                           \
+        eo_do(mesh2, evas_3d_mesh_file_set(buffer, NULL));                                                      \
         res = _compare_meshes(mesh, mesh2);                                                                     \
         fail_if(res == 1);                                                                                      \
         eo_del(mesh2);                                                                                          \
@@ -111,10 +112,10 @@ START_TEST(evas_object_mesh_loader_saver)
 
    snprintf(buffer, PATH_MAX, "%s", tmp);
 
-   CHECK_MESHES_IN_FOLDER(TESTS_OBJ_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_OBJ, EVAS_3D_MESH_FILE_TYPE_EET)
-   CHECK_MESHES_IN_FOLDER(TESTS_MD2_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_MD2, EVAS_3D_MESH_FILE_TYPE_EET)
-   CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_PLY, EVAS_3D_MESH_FILE_TYPE_EET)
-   CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, EVAS_3D_MESH_FILE_TYPE_PLY, EVAS_3D_MESH_FILE_TYPE_PLY)
+   CHECK_MESHES_IN_FOLDER(TESTS_OBJ_MESH_DIR, ".eet")
+   CHECK_MESHES_IN_FOLDER(TESTS_MD2_MESH_DIR, ".eet")
+   CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, ".eet")
+   CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, ".ply")
 
    eina_iterator_free(it);
 
