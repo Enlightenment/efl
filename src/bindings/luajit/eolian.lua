@@ -171,6 +171,10 @@ ffi.cdef [[
 
     Eina_Bool eolian_eo_file_parse(const char *filename);
     Eina_Bool eolian_eot_file_parse(const char *filepath);
+    Eina_Iterator *eolian_all_eo_file_paths_get(void);
+    Eina_Iterator *eolian_all_eot_file_paths_get(void);
+    Eina_Iterator *eolian_all_eo_files_get(void);
+    Eina_Iterator *eolian_all_eot_files_get(void);
     int eolian_init(void);
     int eolian_shutdown(void);
     Eina_Bool eolian_directory_scan(const char *dir);
@@ -366,6 +370,22 @@ end
 
 M.all_eot_files_parse = function()
     return eolian.eolian_all_eot_files_parse() ~= 0
+end
+
+M.all_eo_file_paths_get = function()
+    return iterator.String_Iterator(eolian.eolian_all_eo_file_paths_get())
+end
+
+M.all_eot_file_paths_get = function()
+    return iterator.String_Iterator(eolian.eolian_all_eot_file_paths_get())
+end
+
+M.all_eo_files_get = function()
+    return iterator.String_Iterator(eolian.eolian_all_eo_files_get())
+end
+
+M.all_eot_files_get = function()
+    return iterator.String_Iterator(eolian.eolian_all_eot_files_get())
 end
 
 M.database_validate = function()
