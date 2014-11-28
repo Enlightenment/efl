@@ -268,8 +268,8 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
          "GL_EXT_read_format_bgra "
          "GL_EXT_texture_format_BGRA8888 "
          "GL_EXT_texture_type_2_10_10_10_REV ";
-   strcpy(_gl_ext_string, desktop_exts);
-   strcpy(_gl_ext_string_official, desktop_exts);
+   strncpy(_gl_ext_string, desktop_exts, MAX_EXTENSION_STRING_BUFFER);
+   strncpy(_gl_ext_string_official, desktop_exts, MAX_EXTENSION_STRING_BUFFER);
 #endif
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,7 +373,11 @@ re->info->info.screen);
    // Extension HEADER
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define _EVASGL_EXT_BEGIN(name) \
-     if (_gl_ext_support_##name != 0) { strcat(_gl_ext_string, #name" "); _curext_supported = 1; } \
+     if (_gl_ext_support_##name != 0) \
+       { \
+          strncat(_gl_ext_string, #name" ", MAX_EXTENSION_STRING_BUFFER); \
+          _curext_supported = 1; \
+       } \
      else _curext_supported = 0;
 
 #define _EVASGL_EXT_END()
@@ -381,10 +385,10 @@ re->info->info.screen);
 #define _EVASGL_EXT_DISCARD_SUPPORT()
 #define _EVASGL_EXT_DRVNAME(name) \
    if (_curext_supported) \
-   { \
-      strcat(_gl_ext_string, #name" "); \
-      strcat(_gl_ext_string_official, #name" "); \
-   }
+     { \
+        strncat(_gl_ext_string, #name" ", MAX_EXTENSION_STRING_BUFFER); \
+        strncat(_gl_ext_string_official, #name" ", MAX_EXTENSION_STRING_BUFFER); \
+     }
 #define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
 #define _EVASGL_EXT_FUNCTION_END()
@@ -404,6 +408,9 @@ re->info->info.screen);
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   _gl_ext_string[MAX_EXTENSION_STRING_BUFFER - 1] = '\0';
+   _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER - 1] = '\0';
 
   _evgl_api_ext_status = 1;
    return EINA_TRUE;
