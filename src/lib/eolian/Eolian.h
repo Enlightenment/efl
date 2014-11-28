@@ -329,6 +329,50 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filename);
 EAPI Eina_Bool eolian_eot_file_parse(const char *filepath);
 
 /*
+ * @brief Get an iterator to all .eo file names with paths.
+ *
+ * @see eolian_all_eo_files_get
+ * @see eolian_all_eot_file_paths_get
+ * @see eolian_all_eot_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_all_eo_file_paths_get(void);
+
+/*
+ * @brief Get an iterator to all .eot file names with paths.
+ *
+ * @see eolian_all_eo_files_get
+ * @see eolian_all_eo_file_paths_get
+ * @see eolian_all_eot_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_all_eot_file_paths_get(void);
+
+/*
+ * @brief Get an iterator to all .eo file names (without paths).
+ *
+ * @see eolian_all_eo_file_paths_get
+ * @see eolian_all_eot_file_paths_get
+ * @see eolian_all_eot_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_all_eo_files_get(void);
+
+/*
+ * @brief Get an iterator to all .eot file names (without paths).
+ *
+ * @see eolian_all_eo_file_paths_get
+ * @see eolian_all_eot_file_paths_get
+ * @see eolian_all_eo_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_all_eot_files_get(void);
+
+/*
  * @brief Init Eolian.
  *
  * @ingroup Eolian

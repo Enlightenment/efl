@@ -366,3 +366,31 @@ eolian_database_validate(void)
 
    return database_validate();
 }
+
+EAPI Eina_Iterator *
+eolian_all_eot_files_get(void)
+{
+   if (!_tfilenames) return NULL;
+   return eina_hash_iterator_key_new(_tfilenames);
+}
+
+EAPI Eina_Iterator *
+eolian_all_eo_files_get(void)
+{
+   if (!_filenames) return NULL;
+   return eina_hash_iterator_key_new(_filenames);
+}
+
+EAPI Eina_Iterator *
+eolian_all_eot_file_paths_get(void)
+{
+   if (!_tfilenames) return NULL;
+   return eina_hash_iterator_data_new(_tfilenames);
+}
+
+EAPI Eina_Iterator *
+eolian_all_eo_file_paths_get(void)
+{
+   if (!_filenames) return NULL;
+   return eina_hash_iterator_data_new(_filenames);
+}
