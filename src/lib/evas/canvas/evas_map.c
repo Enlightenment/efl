@@ -1230,7 +1230,7 @@ evas_object_map_update(Evas_Object *eo_obj,
 
    if (!obj->changed_map) return EINA_FALSE;
 
-   if (obj->map->cur.map && obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
+   if (obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
      {
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           {
