@@ -2406,6 +2406,33 @@ EAPI void            evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled);
 EAPI Eina_Bool       evas_map_alpha_get(const Evas_Map *m);
 
 /**
+ * Set the flag of the object move synchronization for map rendering
+ *
+ * This sets the flag of the object move synchronization for map rendering.
+ * If the flag is set as enabled, the map will be moved as the object of the map
+ * is moved. By default, the flag of the object move synchronization is not
+ * enabled.
+ *
+ * @param m map to modify. Must not be NULL.
+ * @param enabled enable or disable the object move synchronization for map
+ *        rendering.
+ * @since 1.13
+ */
+EAPI void            evas_map_util_object_move_sync_set(Evas_Map *m, Eina_Bool enabled);
+
+/**
+ * Get the flag of the object move synchronization for map rendering
+ *
+ * This gets the flag of the object move synchronization for map rendering.
+ *
+ * @param m map to get the flag of the object move synchronization from. Must
+ * not be NULL.
+ * @return EINA_FALSE if map is NULL EINA_TRUE otherwise.
+ * @since 1.13
+ */
+EAPI Eina_Bool       evas_map_util_object_move_sync_get(const Evas_Map *m);
+
+/**
  * Copy a previously allocated map.
  *
  * This makes a duplicate of the @p m object and returns it.

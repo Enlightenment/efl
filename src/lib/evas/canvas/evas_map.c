@@ -152,6 +152,7 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
      memcpy(dst->points, src->points, src->count * sizeof(Evas_Map_Point));
    dst->smooth = src->smooth;
    dst->alpha = src->alpha;
+   dst->move_sync = src->move_sync;
    dst->persp = src->persp;
    return EINA_TRUE;
 }
@@ -164,6 +165,7 @@ _evas_map_dup(const Evas_Map *orig)
    memcpy(copy->points, orig->points, orig->count * sizeof(Evas_Map_Point));
    copy->smooth = orig->smooth;
    copy->alpha = orig->alpha;
+   copy->move_sync = orig->move_sync;
    copy->persp = orig->persp;
    return copy;
 }
@@ -648,6 +650,31 @@ evas_map_alpha_get(const Evas_Map *m)
    MAGIC_CHECK_END();
 
    return m->alpha;
+}
+
+EAPI void
+evas_map_util_object_move_sync_set(Evas_Map *m, Eina_Bool enabled)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
+   if (!enabled)
+     {
+        m->move_sync.diff_x = 0;
+        m->move_sync.diff_y = 0;
+     }
+   m->move_sync.enabled = !!enabled;
+}
+
+EAPI Eina_Bool
+evas_map_util_object_move_sync_get(const Evas_Map *m)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   return m->move_sync.enabled;
 }
 
 EAPI Evas_Map *
@@ -1199,6 +1226,8 @@ evas_object_map_update(Evas_Object *eo_obj,
         obj->changed_map = EINA_TRUE;
      }
 
+   evas_object_map_move_sync(eo_obj);
+
    if (!obj->changed_map) return EINA_FALSE;
 
    if (obj->map->cur.map && obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
@@ -1282,3 +1311,51 @@ evas_object_map_update(Evas_Object *eo_obj,
    return obj->changed_pchange;
 }
 
+void
+evas_map_object_move_diff_set(Evas_Map *m,
+                              Evas_Coord diff_x,
+                              Evas_Coord diff_y)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
+   m->move_sync.diff_x += diff_x;
+   m->move_sync.diff_y += diff_y;
+}
+
+void
+evas_object_map_move_sync(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj;
+   Evas_Map *m;
+   Evas_Map_Point *p;
+   Evas_Coord diff_x, diff_y;
+   int i, count;
+
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   if (!obj) return;
+
+   if ((!obj->map->cur.map->move_sync.enabled) ||
+       ((obj->map->cur.map->move_sync.diff_x == 0) &&
+        (obj->map->cur.map->move_sync.diff_y == 0)))
+     return;
+
+   m = obj->map->cur.map;
+   p = m->points;
+   count = m->count;
+   diff_x = m->move_sync.diff_x;
+   diff_y = m->move_sync.diff_y;
+
+   for (i = 0; i < count; i++, p++)
+     {
+        p->px += diff_x;
+        p->py += diff_y;
+        p->x += diff_x;
+        p->y += diff_y;
+     }
+   m->move_sync.diff_x = 0;
+   m->move_sync.diff_y = 0;
+
+   _evas_map_calc_map_geometry(eo_obj);
+}

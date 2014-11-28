@@ -750,6 +750,14 @@ _evas_object_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coor
 
    if ((obj->cur->geometry.x == x) && (obj->cur->geometry.y == y)) return;
 
+   Evas_Map *map = eo_do(eo_obj, evas_obj_map_get());
+   if (map && map->move_sync.enabled)
+     {
+        Evas_Coord diff_x = x - obj->cur->geometry.x;
+        Evas_Coord diff_y = y - obj->cur->geometry.y;
+        evas_map_object_move_diff_set(map, diff_x, diff_y);
+     }
+
    if (!(obj->layer->evas->is_frozen))
      {
         pass = evas_event_passes_through(eo_obj, obj);
