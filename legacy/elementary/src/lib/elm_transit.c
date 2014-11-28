@@ -1084,6 +1084,8 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
    map = evas_map_new(4);
    if (!map) return;
 
+   evas_map_util_object_move_sync_set(map, EINA_TRUE);
+
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         evas_object_geometry_get(obj, &x, &y, &w, &h);
@@ -1175,6 +1177,8 @@ _transit_effect_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
 
    map = evas_map_new(4);
    if (!map) return;
+
+   evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
    if (flip->cw) degree = (float)(progress * 180);
    else degree = (float)(progress * -180);
@@ -1473,6 +1477,8 @@ _transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *trans
    map = evas_map_new(4);
    if (!map) return;
 
+   evas_map_util_object_move_sync_set(map, EINA_TRUE);
+
    if (resizable_flip->cw) degree = (float)(progress * 180);
    else degree = (float)(progress * -180);
 
@@ -1762,6 +1768,8 @@ _transit_effect_wipe_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
 
    map = evas_map_new(4);
    if (!map) return;
+
+   evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
@@ -2287,6 +2295,8 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
 
    map = evas_map_new(4);
    if (!map) return;
+
+   evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
