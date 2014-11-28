@@ -38,7 +38,6 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    Evas_Object *widget;
 
    code = elm_code_create();
-   elm_code_file_new(code);
    widget = elm_code_widget_add(parent, code);
    elm_code_widget_font_size_set(widget, 14);
    _append_line(code->file, "Hello World, Elm Code!");

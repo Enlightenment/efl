@@ -94,7 +94,6 @@ EAPI Evas_Object *elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
    // left side of diff
    wcode1 = elm_code_create();
-   elm_code_file_new(wcode1);
    widget_left = elm_code_widget_add(parent, wcode1);
 
    evas_object_size_hint_weight_set(widget_left, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -105,7 +104,6 @@ EAPI Evas_Object *elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
    // right side of diff
    wcode2 = elm_code_create();
-   elm_code_file_new(wcode2);
    widget_right = elm_code_widget_add(parent, wcode2);
 
    evas_object_size_hint_weight_set(widget_right, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

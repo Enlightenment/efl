@@ -19,7 +19,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    Evas_Textgrid_Cell cells[25];
 
    code = elm_code_create();
-   file = elm_code_file_new(code);
+   file = code->file;
    elm_code_file_line_append(file, "some \"test content\", 45", 23);
    line = elm_code_file_line_get(file, 1);
    length = line->length;

@@ -72,6 +72,8 @@ elm_code_create()
 
    ret = calloc(1, sizeof(Elm_Code));
 
+   // create an in-memory backing for this elm_code by default
+   elm_code_file_new(ret);
    return ret;
 }
 
