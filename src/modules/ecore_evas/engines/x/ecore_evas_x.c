@@ -3051,7 +3051,7 @@ _ecore_evas_x_iconified_set(Ecore_Evas *ee, Eina_Bool on)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
    if (ee->prop.iconified == on) return;
-   if (((ee->should_be_visible) && (!ee->visible)) || (!ee->visible))
+   if (((ee->should_be_visible) && (!ee->visible)) || (ee->visible))
      ee->prop.iconified = on;
    _ecore_evas_x_hints_update(ee);
    if (on)
