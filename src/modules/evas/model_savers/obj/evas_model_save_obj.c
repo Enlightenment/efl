@@ -9,17 +9,11 @@
 #include "evas_private.h"
 
 #define OPEN_FILE(extension)\
-   int length=strlen(file);\
-   char * extension = "."#extension;\
-   char * _##extension##_file_name = (char *)malloc(length+4);\
-   strcpy(_##extension##_file_name,file);\
-   strcpy(_##extension##_file_name+length,extension);\
    FILE * _##extension##_file = fopen(_##extension##_file_name, "w+");\
-   free(_##extension##_file_name);
 
 #define SAVE_GEOMETRICS(a, format)\
    vb = &f->vertices[a];\
-   fprintf(_obj_file, "o %s\n",file);\
+   fprintf(_obj_file, "o %s\n",_obj_file_name);\
    if (vb->data == NULL)\
      {\
         ERR("Reading of geometrics is failed.");\
@@ -34,7 +28,7 @@
      }
 
 static void
-_save_mesh(Evas_3D_Mesh_Data *pd, const char *file, Evas_3D_Mesh_Frame *f)
+_save_mesh(Evas_3D_Mesh_Data *pd, const char *_obj_file_name, Evas_3D_Mesh_Frame *f)
 {
    Evas_3D_Vertex_Buffer *vb;
    time_t current_time;
@@ -45,7 +39,7 @@ _save_mesh(Evas_3D_Mesh_Data *pd, const char *file, Evas_3D_Mesh_Frame *f)
    OPEN_FILE(obj)
    if (!_obj_file)
      {
-        ERR("File open '%s' for save failed", file);
+        ERR("File open '%s' for save failed", _obj_file_name);
         return;
      }
    fprintf(_obj_file, "# Evas_3D saver OBJ v0.03 \n");//_obj_file created in macro
@@ -69,7 +63,7 @@ _save_mesh(Evas_3D_Mesh_Data *pd, const char *file, Evas_3D_Mesh_Frame *f)
      }
 
    fprintf(_obj_file,"# Current time is %s \n", c_time_string);
-   fprintf(_obj_file,"mtllib %s.mtl \n\n", file);
+   fprintf(_obj_file,"mtllib %s.mtl \n\n", _obj_file_name);
 
    /* Adding geometrics to file. */
    if (f == NULL)
@@ -95,14 +89,14 @@ _save_mesh(Evas_3D_Mesh_Data *pd, const char *file, Evas_3D_Mesh_Frame *f)
 }
 
 static void
-_save_material(Evas_3D_Mesh_Data *pd EINA_UNUSED, const char *file, Evas_3D_Mesh_Frame *f)
+_save_material(Evas_3D_Mesh_Data *pd EINA_UNUSED, const char *_mtl_file_name, Evas_3D_Mesh_Frame *f)
 {
    Evas_3D_Material_Data *mat = eo_data_scope_get(f->material, EVAS_3D_MATERIAL_CLASS);
 
    OPEN_FILE(mtl)
    if (!_mtl_file)
      {
-        ERR("File open '%s' for save failed", file);
+        ERR("File open '%s' for save failed", _mtl_file_name);
         return;
      }
    fprintf(_mtl_file, "# Evas_3D saver OBJ v0.03 \n");//_mtl_file created in macro
@@ -129,9 +123,24 @@ _save_material(Evas_3D_Mesh_Data *pd EINA_UNUSED, const char *file, Evas_3D_Mesh
 }
 
 void
-evas_model_save_file_obj(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f)
+evas_model_save_file_obj(Evas_3D_Mesh *mesh, const char *_obj_file_name, Evas_3D_Mesh_Frame *f)
 {
+   int len;
+   char *without_extention, *_mtl_extension, *_mtl_file_name;
+
+   len = strlen(_obj_file_name);
+   without_extention = (char*)malloc((len - 4) * sizeof(char));
+   _mtl_extension = ".mtl";
+   _mtl_file_name = (char *)malloc(len * sizeof(char));
+
+   memcpy(without_extention, _obj_file_name, len-4);
+   strcpy(_mtl_file_name, without_extention);
+   strcpy(_mtl_file_name + len - 4, _mtl_extension);
+
    Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
-   _save_mesh(pd, file, f);
-   _save_material(pd, file, f);
+   _save_mesh(pd, _obj_file_name, f);
+   _save_material(pd, _mtl_file_name, f);
+
+   free(without_extention);
+   free(_mtl_file_name);
 }

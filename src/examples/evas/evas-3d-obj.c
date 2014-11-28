@@ -159,7 +159,7 @@ main(void)
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
 
-         eo_do(mesh, evas_3d_mesh_save("saved_man", NULL));
+         eo_do(mesh, evas_3d_mesh_save("saved_man.obj", NULL));
 
    mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
