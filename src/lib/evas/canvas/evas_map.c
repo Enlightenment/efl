@@ -40,8 +40,6 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (!obj) return;
    if (!obj->map->cur.map) return;
-   // WARN: Do not merge below code to SLP until it is fixed.
-   // It has an infinite loop bug.
    if (obj->map->prev.map)
      {
         if (obj->map->prev.map != obj->map->cur.map)
