@@ -53,6 +53,9 @@ EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
 {
    Elm_Code_File *ret;
 
+   if (code->file)
+     elm_code_file_free(code->file);
+
    ret = calloc(1, sizeof(Elm_Code_File));
    code->file = ret;
    ret->parent = code;

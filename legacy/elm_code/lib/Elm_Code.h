@@ -86,7 +86,7 @@ EAPI int elm_code_init(void);
  *
  * @return Elm Code's init counter value.
  *
- * @see elm_code_init().
+ * @see elm_code_init()
  *
  * @ingroup Init
  */
@@ -95,11 +95,12 @@ EAPI int elm_code_shutdown(void);
 /**
  * Create a new Elm Code instance
  *
- * This method creates a new Elm Code instance which will need a
- * backing file set for storage.
+ * This method creates a new Elm Code instance using an in-memory file for backing changes.
+ * A regular file can be set after creation if required.
  * Once an Elm Code has been created you can create widgets that render the content.
  *
- * "return an allocated Elm_Code that references the given file
+ * @return an allocated Elm_Code that references the given file
+ * @see elm_code_file_open()
  */
 EAPI Elm_Code *elm_code_create();
 
