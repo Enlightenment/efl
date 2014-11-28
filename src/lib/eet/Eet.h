@@ -2063,6 +2063,26 @@ eet_identity_print(Eet_Key *key,
                    FILE *out);
 
 /**
+ * Compare the identify certificate of an eet file against a stored one
+ *
+ * @param ef The file handle to check the identify of
+ * @param certificate_file The path to the certificate file
+ * @return EINA_TRUE if the certificates match, otherwise EINA_FALSE;
+ *
+ * The @p ef file handle mus be valid, and a signed file, otherwise
+ * checking will fail. The path to the certificate file must be a valid
+ * file path to a 'pem' format file (the same used for siging with
+ * eet_identity_open() as a certificate file).
+ * 
+ * @warning You need to compile signature support in EET.
+ * @since 1.13
+ * @ingroup Eet_Cipher_Group
+ */
+EAPI Eina_Bool
+eet_identity_verify(Eet_File *ef,
+                    const char *certificate_file);
+
+/**
  * Get the x509 der certificate associated with an Eet_File. Will return NULL
  * if the file is not signed.
  *

@@ -1752,6 +1752,9 @@ START_TEST(eet_identity_simple)
    ef = eet_open(file, EET_FILE_MODE_READ);
    fail_if(!ef);
 
+   /* check that the certificates match */
+   fail_if(!eet_identity_verify(ef, _cert_pem));
+
    test = eet_read(ef, "keys/tests", &size);
    fail_if(!test);
    fail_if(size != (int)strlen(buffer) + 1);

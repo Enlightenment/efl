@@ -1676,6 +1676,154 @@ eet_mode_get(Eet_File *ef)
       return ef->mode;
 }
 
+static const char *_b64_table =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+static Eina_Bool
+_b64_is(char c)
+{
+   const char *p;
+
+   if (!c) return EINA_FALSE;
+   p = strchr(_b64_table, c);
+   if (p >= _b64_table) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static unsigned char
+_b64_val(char c)
+{
+   const char *p = strchr(_b64_table, c);
+   if (p) return p - _b64_table;
+   return 0;
+}
+
+static int
+_b64_dec(unsigned char *dst, const char *src, int len)
+{
+   unsigned char *p = dst;
+   *dst = 0;
+
+   if (!*src) return 0;
+   do
+     {
+        unsigned char a = _b64_val(src[0]);
+        unsigned char b = _b64_val(src[1]);
+        unsigned char c = _b64_val(src[2]);
+        unsigned char d = _b64_val(src[3]);
+
+        *p++ = (a << 2) | (b >> 4);
+        *p++ = (b << 4) | (c >> 2);
+        *p++ = (c << 6) | d;
+
+        if (!_b64_is(src[1]))
+          {
+             p -= 2;
+             break;
+          }
+        else if (!_b64_is(src[2]))
+          {
+             p -= 2;
+             break;
+          }
+        else if (!_b64_is(src[3]))
+          {
+             p--;
+             break;
+          }
+        src += 4;
+        while (*src && ((*src == 13) || (*src == 10))) src++;
+     }
+   while ((len -= 4));
+   *p = 0;
+   return (int)(p - dst);
+}
+
+static unsigned char *
+_base64_dec(const char *file, int *size_ret)
+{
+   char buf[4096], *p, *end;
+   unsigned char *data = NULL;
+   Eina_Binbuf *binbuf;
+   FILE *f;
+
+   f = fopen(file, "rb");
+   if (!f) return NULL;
+   binbuf = eina_binbuf_new();
+   if (!binbuf)
+     {
+        fclose(f);
+        return NULL;
+     }
+   while (fgets(buf, sizeof(buf) - 1, f))
+     {
+        buf[sizeof(buf) - 1] = 0;
+        // check where first invalid char in a line is
+        for (p = buf; *p; p++)
+          {
+             // this is the first invalid char
+             if ((*p != '=') && (!_b64_is(*p))) break;
+          }
+        end = p;
+        // go from line start to (but not including) first invalid char
+        if (((end - buf) > 0) && (((end - buf) % 4) == 0))
+          {
+             unsigned char *tmp = malloc((end - buf + 4) * 2);
+
+             if (tmp)
+               {
+                  int len = _b64_dec(tmp, buf, end - buf);
+                  char *str = malloc(end - buf + 1);
+                  strncpy(str, buf, end - buf);
+                  str[end - buf] = 0;
+                  free(str);
+                  eina_binbuf_append_length(binbuf, tmp, len);
+                  free(tmp);
+               }
+          }
+     }
+   fclose(f);
+   // as long as data is less than a mb - we have a cert that is possibly ok
+   if (eina_binbuf_length_get(binbuf) < (1 * 1024 * 1024))
+     {
+        *size_ret = eina_binbuf_length_get(binbuf);
+        data = eina_binbuf_string_steal(binbuf);
+     }
+   eina_binbuf_free(binbuf);
+   return data;
+}
+
+EAPI Eina_Bool
+eet_identity_verify(Eet_File   *ef,
+                    const char *certificate_file)
+{
+   unsigned char *cert;
+   int cert_len;
+
+   if (eet_check_pointer(ef))
+     return EINA_FALSE;
+
+   if (!ef->x509_der)
+     return EINA_FALSE;
+
+   cert = _base64_dec(certificate_file, &cert_len);
+   if (!cert)
+     return EINA_FALSE;
+
+   if (cert_len != ef->x509_length)
+     {
+        free(cert);
+        return EINA_FALSE;
+     }
+   if (memcmp(ef->x509_der, cert, cert_len))
+     {
+        free(cert);
+        return EINA_FALSE;
+     }
+   free(cert);
+   return EINA_TRUE;
+}
+
 EAPI const void *
 eet_identity_x509(Eet_File *ef,
                   int      *der_length)
