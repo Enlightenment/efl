@@ -1477,19 +1477,18 @@ _config_load(void)
    _elm_config = _config_user_load();
    if (_elm_config)
      {
-        if (_elm_config->config_version < ELM_CONFIG_VERSION)
-          _config_update();
-
-        /* set the default value if the configuration was just added and the
-         * value is zero which means it was not supported before and invalid. */
-        if (_elm_config->thumbscroll_min_friction == 0.0)
-          _elm_config->thumbscroll_min_friction = 0.5;
-        if (_elm_config->thumbscroll_friction_standard == 0.0)
-          _elm_config->thumbscroll_friction_standard = 1000.0;
-        if (_elm_config->thumbscroll_flick_distance_tolerance == 0)
-          _elm_config->thumbscroll_flick_distance_tolerance = 1000;
-
-        return;
+        if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
+           {
+              WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
+              _config_free(_elm_config);
+              _elm_config = NULL;
+           }
+        else
+          {
+             if (_elm_config->config_version < ELM_CONFIG_VERSION)
+               _config_update();
+             return;
+          }
      }
 
    /* no user config, fallback for system. No need to check version for
@@ -1813,8 +1812,6 @@ static void
 _config_update(void)
 {
    Elm_Config *tcfg;
-   const char *s = NULL;
-
    tcfg = _config_system_load();
    if (!tcfg)
      {
@@ -1829,89 +1826,13 @@ _config_update(void)
 #define COPYPTR(x) do {_elm_config->x = tcfg->x; tcfg->x = NULL; } while (0)
 #define COPYSTR(x) COPYPTR(x)
 
-     /* we also need to update for property changes in the root window
-      * if needed, but that will be dependent on new properties added
-      * with each version */
+   /* we also need to update for property changes in the root window
+    * if needed, but that will be dependent on new properties added
+    * with each version */
 
-     IFCFG(0x0003);
-     COPYVAL(longpress_timeout);
-     IFCFGEND;
-
-     IFCFG(0x0004);
-#define PREFS_IFACE_MODULE_STR "prefs>prefs_iface"
-     if (!_elm_config->modules)
-       s = eina_stringshare_add(PREFS_IFACE_MODULE_STR);
-     else
-       {
-          if (!strstr(_elm_config->modules, PREFS_IFACE_MODULE_STR))
-            s = eina_stringshare_printf
-            ("%s:%s", _elm_config->modules, PREFS_IFACE_MODULE_STR);
-       }
-     if (s)
-       {
-          eina_stringshare_del(_elm_config->modules);
-          _elm_config->modules = s;
-       }
-     IFCFGEND;
-
-     IFCFG(0x0005);
-     COPYVAL(magnifier_scale);
-     if (!_elm_config->bindings)
-       {
-          Elm_Config_Bindings_Widget *wb;
-          Eina_List *l;
-          
-          EINA_LIST_FOREACH(tcfg->bindings, l, wb)
-            {
-               Elm_Config_Bindings_Widget *wb2;
-
-               wb2 = calloc(1, sizeof(Elm_Config_Bindings_Widget));
-               if (wb2)
-                 {
-                    Elm_Config_Binding_Key *kb;
-                    Eina_List *l2;
-                    
-                    *wb2 = *wb;
-#define DUPSHARE(x) if (wb->x) wb2->x = eina_stringshare_add(wb->x)
-                    DUPSHARE(name);
-#undef DUPSHARE
-                    wb->key_bindings = NULL;
-                    EINA_LIST_FOREACH(wb->key_bindings, l2, kb)
-                      {
-                         Elm_Config_Binding_Key *kb2;
-
-                         kb2 = calloc(1, sizeof(Elm_Config_Binding_Key));
-                         if (kb2)
-                           {
-                              Elm_Config_Binding_Modifier *mb;
-                              Eina_List *l3;
-
-#define DUPSHARE(x) if (kb->x) kb2->x = eina_stringshare_add(kb->x)
-                              DUPSHARE(key);
-                              DUPSHARE(action);
-                              DUPSHARE(params);
-#undef DUPSHARE
-                              EINA_LIST_FOREACH(kb2->modifiers, l3, mb)
-                                {
-                                   Elm_Config_Binding_Modifier *mb2;
-
-                                   mb2 = calloc(1, sizeof(Elm_Config_Bindings_Widget));
-                                   if (mb2)
-                                     {
-#define DUPSHARE(x) if (mb->x) mb2->x = eina_stringshare_add(mb->x)
-                                        DUPSHARE(mod);
-#undef DUPSHARE
-                                        kb->modifiers = eina_list_append(kb->modifiers, mb2);
-                                     }
-                                }
-                              wb->key_bindings = eina_list_append(wb->key_bindings, kb2);
-                           }
-                      }
-                    _elm_config->bindings = eina_list_append(_elm_config->bindings, wb2);
-                 }
-            }
-       }
-     IFCFGEND;
+   /**
+    * Fix user config for current ELM_CONFIG_EPOCH here.
+    **/
 
 #undef COPYSTR
 #undef COPYPTR

@@ -125,7 +125,8 @@ struct _Elm_Theme
  * to be put in
  */
 #define ELM_CONFIG_FILE_GENERATION 0x0001
-#define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | \
+#define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
+#define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                     ELM_CONFIG_FILE_GENERATION)
 /* NB: profile configuration files (.src) must have their
  * "config_version" entry's value up-to-date with ELM_CONFIG_VERSION
