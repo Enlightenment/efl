@@ -48,9 +48,6 @@ struct _Elm_Slider_Data
    Eina_Bool             spacer_down : 1;
    Eina_Bool             frozen : 1;
    Eina_Bool             units_show : 1;
-   /* this flag is to set the visiblity of slider indicator
-      if this flag is set  then the indicator always show */
-   Eina_Bool             always_popup_show : 1;
    Eina_Bool             popup_visible : 1;
 };
 

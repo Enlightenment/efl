@@ -597,7 +597,7 @@ EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode
 /**
  * Slider's indicator visiblity mode.
  *
- * @since 1.12
+ * @since 1.13
  * @ingroup Slider
  */
 
@@ -617,7 +617,7 @@ typedef enum
  * viewport.
  *
  * @ingroup Slider
- * @since 1.12
+ * @since 1.13
  */
 EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode);
 
@@ -630,7 +630,7 @@ EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visi
  *    ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE if any of the above is set by user.
  *
  * @ingroup Slider
- * @since 1.12
+ * @since 1.13
  */
 EAPI Elm_Slider_Indicator_Visible_Mode elm_config_slider_indicator_visible_mode_get(void);
 
