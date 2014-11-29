@@ -529,6 +529,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_highlight_clip_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_move_policy, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_autoscroll_mode, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, slider_indicator_visible_mode, T_INT);
    ELM_CONFIG_VAL(D, T, item_select_on_focus_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, first_item_focus_on_first_focus_in, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
@@ -1992,7 +1993,18 @@ _env_get(void)
         else
           _elm_config->focus_autoscroll_mode = ELM_FOCUS_AUTOSCROLL_MODE_SHOW;
      }
-
+   s = getenv("ELM_SLIDER_INDICATOR_VISIBLE_MODE");
+   if (s)
+     {
+        if (!strcmp(s, "ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT"))
+          _elm_config->slider_indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT;
+        else if (!strcmp(s, "ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS"))
+          _elm_config->slider_indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS;
+        else if (!strcmp(s, "ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS"))
+          _elm_config->slider_indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS;
+        else
+          _elm_config->slider_indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE;
+     }
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
@@ -2954,6 +2966,18 @@ EAPI Elm_Focus_Autoscroll_Mode
 elm_config_focus_autoscroll_mode_get(void)
 {
    return _elm_config->focus_autoscroll_mode;
+}
+
+EAPI void
+elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode)
+{
+   _elm_config->slider_indicator_visible_mode = mode;
+}
+
+EAPI Elm_Slider_Indicator_Visible_Mode
+elm_config_slider_indicator_visible_mode_get(void)
+{
+    return _elm_config->slider_indicator_visible_mode;
 }
 
 EAPI void

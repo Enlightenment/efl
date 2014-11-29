@@ -595,6 +595,46 @@ EAPI Elm_Focus_Autoscroll_Mode elm_config_focus_autoscroll_mode_get(void);
 EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode mode);
 
 /**
+ * Slider's indicator visiblity mode.
+ *
+ * @since 1.12
+ * @ingroup Slider
+ */
+
+typedef enum
+{
+   ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT,   /**< show indicator on mouse down or change in slider value */
+   ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS,    /**< Always show the indicator. */
+   ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS,  /**< Show the indicator on focus */
+   ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE       /**< Never show the indicator  */
+} Elm_Slider_Indicator_Visible_Mode;
+
+/**
+ * Sets the slider's indicator visible mode.
+ *
+ * @param obj The slider object.
+ * @param mode Elm_Slider_Indicator_Visible_Mode.
+ * viewport.
+ *
+ * @ingroup Slider
+ * @since 1.12
+ */
+EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode);
+
+/**
+ * Get the slider's indicator visible mode.
+ *
+ * @param obj The slider object.
+ * @return @c ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT if not set anything by the user.
+ * @c ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS,
+ *    ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE if any of the above is set by user.
+ *
+ * @ingroup Slider
+ * @since 1.12
+ */
+EAPI Elm_Slider_Indicator_Visible_Mode elm_config_slider_indicator_visible_mode_get(void);
+
+/**
  * @}
  */
 

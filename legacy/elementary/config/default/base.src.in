@@ -27,6 +27,7 @@ group "Elm_Config" struct {
   value "scroll_smooth_future_time" double: 0.0;
   value "scroll_smooth_time_window" double: 0.01;
   value "focus_autoscroll_mode" uchar: 0;
+  value "slider_indicator_visible_mode" int: 0;
   value "scale" double: 1.0;
   value "bgpixmap" int: 0;
   value "compositing" int: 1;

@@ -308,7 +308,7 @@ _popup_show(void *data,
             const char *source EINA_UNUSED)
 {
    ELM_SLIDER_DATA_GET(data, sd);
-   if (sd->popup)
+   if (sd->popup && _elm_config->slider_indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE)
      {
         evas_object_raise(sd->popup);
         evas_object_show(sd->popup);
@@ -328,7 +328,10 @@ _popup_hide(void *data,
 
    if (!sd->popup_visible || !sd->popup) return;
 
-   if (!(elm_widget_focus_get(data) && sd->always_popup_show))
+   if (_elm_config->slider_indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS) return;
+
+   if (!((elm_widget_focus_get(data)) &&
+         (_elm_config->slider_indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS)))
      {
         // XXX: for compat
         edje_object_signal_emit(sd->popup, "popup,hide", "elm");
@@ -345,7 +348,8 @@ _popup_hide_done(void *data,
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
      {
-        if (!(elm_widget_focus_get(data) && sd->always_popup_show))
+        if (!((elm_widget_focus_get(data)) &&
+              (_elm_config->slider_indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS)))
           {
              evas_object_hide(sd->popup);
              sd->popup_visible = EINA_FALSE;
@@ -823,6 +827,16 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return NULL;
 }
 
+static void
+_on_show(void *data EINA_UNUSED,
+         Evas *e EINA_UNUSED,
+         Evas_Object *obj,
+         void *event_info EINA_UNUSED)
+{
+   if (_elm_config->slider_indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS)
+     _popup_show(obj, NULL, NULL, NULL); 
+}
+
 EOLIAN static void
 _elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
 {
@@ -866,6 +880,8 @@ _elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
      (priv->spacer, EVAS_CALLBACK_MOUSE_MOVE, _spacer_move_cb, obj);
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_UP, _spacer_up_cb, obj);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -1143,18 +1159,18 @@ _elm_slider_step_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 }
 
 EOLIAN static void
-_elm_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, Eina_Bool flag)
+_elm_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd EINA_UNUSED, Eina_Bool flag)
 {
    if (flag)
-     sd->always_popup_show = EINA_TRUE;
+     elm_config_slider_indicator_visible_mode_set(ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
    else
-     sd->always_popup_show = EINA_FALSE;
+     elm_config_slider_indicator_visible_mode_set(ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT);
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_elm_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd EINA_UNUSED)
 {
-   return sd->always_popup_show;
+   return (elm_config_slider_indicator_visible_mode_get() == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
 }
 
 EOLIAN static Eina_Bool
@@ -1170,13 +1186,13 @@ _elm_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Slide
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd)
+_elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
 
-   if (sd->always_popup_show && elm_widget_focus_get(obj))
+   if ((_elm_config->slider_indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS) && elm_widget_focus_get(obj))
      _popup_show(obj, NULL, NULL, NULL);
    else
      _popup_hide(obj, NULL, NULL, NULL);
