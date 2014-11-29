@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
+#include <Efreet.h>
 #include "elm_priv.h"
 #ifdef HAVE_MMAN_H
 # include <sys/mman.h>
@@ -888,6 +889,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
    if (data->content == ECORE_X_SELECTION_CONTENT_FILES)
      {
         int i, len = 0;
+        Efreet_Uri **uri;
 
         cnp_debug("got a files list\n");
         files = notify->data;
@@ -900,11 +902,29 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
           }
         stripstr = p = strdup(files->files[0]);
          */
+
+        uri = calloc(1, sizeof(*uri) * files->num_files);
+        if (!uri) return 0;
+
         for (i = 0; i < files->num_files ; i++)
           {
-             p = files->files[i];
-             if ((strncmp(p, "file:/", 6)) && (p[0] != '/')) continue;
-             len += strlen(files->files[i]) + 1;
+             uri[i] = efreet_uri_decode(files->files[i]);
+             if (!uri[i])
+               {
+                  /* Is there any reason why we care of URI without scheme? */
+                  if (files->files[i][0] != '/') continue;
+                  len += strlen(files->files[i]) + 1;
+               }
+             else
+               {
+                  if (strcmp(uri[i]->protocol, "file"))
+                    {
+                       efreet_uri_free(uri[i]);
+                       uri[i] = NULL;
+                       continue;
+                    }
+                  len += strlen(uri[i]->path) + 1;
+               }
           }
         p = NULL;
         if (len > 0)
@@ -912,9 +932,11 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
              s = stripstr = malloc(len + 1);
              for (i = 0; i < files->num_files ; i++)
                {
-                  p = files->files[i];
-                  if (!strncmp(p, "file:/", 6)) p += 5;
-                  else if (p[0] != '/') continue;
+                  if (uri[i])
+                    p = (char *)uri[i]->path;
+                  else
+                    p = files->files[i];
+
                   len = strlen(p);
                   strcpy(s, p);
                   if (i < (files->num_files - 1))
@@ -928,26 +950,40 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
                        s[len] = 0;
                        s += len;
                     }
+
+                  if (uri[i])
+                    efreet_uri_free(uri[i]);
                }
           }
+        free(uri);
      }
    else
      {
+        Efreet_Uri *uri;
+        int len = 0;
+
         p = (char *)data->data;
-        if ((!strncmp(p, "file:/", 6)) || (p[0] == '/'))
+        uri = efreet_uri_decode(p);
+        if (!uri)
           {
-             int len = data->length;
-             if (!strncmp(p, "file:/", 6))
-               {
-                  p += 5;
-                  len -= 5;
-               }
+             /* Is there any reason why we care of URI without scheme? */
+             if (p[0] == '/')
+               len = data->length;
+          }
+        else
+          {
+             p = (char *)uri->path;
+             len = strlen(p);
+          }
+        if (len > 0)
+          {
              stripstr = malloc(len + 1);
              if (!stripstr) return 0;
              memcpy(stripstr, p, len);
              stripstr[len] = 0;
           }
      }
+
    if (!stripstr)
      {
         cnp_debug("Couldn't find a file\n");
