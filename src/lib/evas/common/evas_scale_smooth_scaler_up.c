@@ -173,9 +173,23 @@
 	    pxor_r2r(mm0, mm0);
 	    MOV_A2R(ALPHA_255, mm5)
 #elif defined SCALE_USING_NEON
-	    FPU_NEON;
-	    VDUP_NEON(d12, ay);
-	    VMOV_I2R_NEON(q2, #255);
+	    uint16x4_t ay_16x4;
+	    uint16x4_t p0_16x4;
+	    uint16x4_t p2_16x4;
+	    uint16x8_t ax_16x8;
+	    uint16x8_t p0_p2_16x8;
+	    uint16x8_t p1_p3_16x8;
+	    uint16x8_t x255_16x8;
+	    uint32x2_t p0_p2_32x2;
+	    uint32x2_t p1_p3_32x2;
+	    uint32x2_t res_32x2;
+	    uint8x8_t p0_p2_8x8;
+	    uint8x8_t p1_p3_8x8;
+	    uint8x8_t p2_8x8;
+	    uint16x4_t temp_16x4;
+
+	    ay_16x4 = vdup_n_u16(ay);
+	    x255_16x8 = vdupq_n_u16(0xff);
 #endif
 	    pbuf = buf;  pbuf_end = buf + dst_clip_w;
 	    sxx = sxx0;
@@ -217,22 +231,36 @@
 #elif defined SCALE_USING_NEON
 		if (p0 | p1 | p2 | p3)
 		  {
-		    FPU_NEON;
-		    VMOV_M2R_NEON(d8, p0);
-		    VEOR_NEON(q0);
-		    VMOV_M2R_NEON(d9, p2);
-		    VMOV_M2R_NEON(d10, p1);
-		    VEOR_NEON(q1);
-		    VMOV_M2R_NEON(d11, p3);
-		    VDUP_NEON(q3, ax);
-		    VZIP_NEON(q4, q0);
-		    VZIP_NEON(q5, q1);
-		    VMOV_R2R_NEON(d9, d0);
-		    VMOV_R2R_NEON(d11, d2);
-		    INTERP_256_NEON(q3, q5, q4, q2);
-		    INTERP_256_NEON(d12, d9, d8, d5);
-		    VMOV_R2M_NEON(q4, d8, pbuf);
-		    pbuf++;
+		    ax_16x8 = vdupq_n_u16(ax);
+
+		    p0_p2_32x2 = vset_lane_u32(p0, p0_p2_32x2, 0);
+		    p0_p2_32x2 = vset_lane_u32(p2, p0_p2_32x2, 1);
+		    p1_p3_32x2 = vset_lane_u32(p1, p1_p3_32x2, 0);
+		    p1_p3_32x2 = vset_lane_u32(p3, p1_p3_32x2, 1);
+
+		    p0_p2_8x8 = vreinterpret_u8_u32(p0_p2_32x2);
+		    p1_p3_8x8 = vreinterpret_u8_u32(p1_p3_32x2);
+		    p1_p3_16x8 = vmovl_u8(p1_p3_8x8);
+		    p0_p2_16x8 = vmovl_u8(p0_p2_8x8);
+
+		    p1_p3_16x8 = vsubq_u16(p1_p3_16x8, p0_p2_16x8);
+		    p1_p3_16x8 = vmulq_u16(p1_p3_16x8, ax_16x8);
+		    p1_p3_16x8 = vshrq_n_u16(p1_p3_16x8, 8);
+		    p1_p3_16x8 = vaddq_u16(p1_p3_16x8, p0_p2_16x8);
+		    p1_p3_16x8 = vandq_u16(p1_p3_16x8, x255_16x8);
+
+		    p0_16x4 = vget_low_u16(p1_p3_16x8);
+		    p2_16x4 = vget_high_u16(p1_p3_16x8);
+
+		    p2_16x4 = vsub_u16(p2_16x4, p0_16x4);
+		    p2_16x4 = vmul_u16(p2_16x4, ay_16x4);
+		    p2_16x4 = vshr_n_u16(p2_16x4, 8);
+		    p2_16x4 = vadd_u16(p2_16x4, p0_16x4);
+
+		    p1_p3_16x8 = vcombine_u16(temp_16x4, p2_16x4);
+		    p2_8x8 = vmovn_u16(p1_p3_16x8);
+		    res_32x2 = vreinterpret_u32_u8(p2_8x8);
+		    vst1_lane_u32(pbuf++, res_32x2, 1);
 		  }
 		else
 		  *pbuf++ = p0;

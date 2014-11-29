@@ -1,6 +1,9 @@
 #include "evas_common_private.h"
 #include "evas_scale_smooth.h"
 #include "evas_blend_private.h"
+#ifdef BUILD_NEON
+#include <arm_neon.h>
+#endif
 
 #define SCALE_CALC_X_POINTS(P, SW, DW, CX, CW) \
   P = alloca((CW + 1) * sizeof (int));         \
