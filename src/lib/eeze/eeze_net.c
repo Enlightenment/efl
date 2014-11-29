@@ -84,6 +84,15 @@ eeze_net_new(const char *name)
    net->syspath = syspath;
    net->name = eina_stringshare_add(name);
    idx = udev_device_get_sysattr_value(net->device, "ifindex");
+   if (!idx)
+     {
+        udev_device_unref(net->device);
+        eina_stringshare_del(net->syspath);
+        eina_stringshare_del(net->name);
+
+        free(net);
+        return NULL;
+     }
    net->index = atoi(idx);
    eina_hash_add(eeze_nets, name, net);
    udev_enumerate_unref(en);
