@@ -866,12 +866,14 @@ evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
 // be shared with Evas.
 // FIXME: Avoid passing evgl_engine around like that.
 static void *
-evgl_eng_gles1_surface_create(EVGL_Engine *evgl, void *data,
+evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
                               EVGL_Surface *evgl_sfc,
                               Evas_GL_Config *cfg, int w, int h)
 {
    Render_Engine *re = data;
+#ifdef GL_GLES
    Eina_Bool alpha = EINA_FALSE;
+#endif
    int colordepth;
    Pixmap px;
 
@@ -891,7 +893,9 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl, void *data,
    /* Choose appropriate pixmap depth */
    if (cfg->color_format == EVAS_GL_RGBA_8888)
      {
+#ifdef GL_GLES
         alpha = EINA_TRUE;
+#endif
         colordepth = 32;
      }
    else if (cfg->color_format == EVAS_GL_RGB_888)
