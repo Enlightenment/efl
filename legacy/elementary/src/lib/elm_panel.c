@@ -1005,7 +1005,7 @@ _elm_panel_evas_object_smart_del(Eo *obj, Elm_Panel_Data *sd)
 
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
 
-   /* let's make our box object the *last* to be processed, since it
+   /* let's make our panel object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
    EINA_LIST_FOREACH(wd->subobjs, l, child)
      {

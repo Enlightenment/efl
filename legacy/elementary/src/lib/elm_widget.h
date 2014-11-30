@@ -370,12 +370,12 @@ typedef struct _Elm_Widget_Smart_Class
  */
 typedef struct _Elm_Widget_Smart_Data
 {
-   Evas_Object                  *obj;
-   Evas_Object                  *parent_obj;
-   Evas_Object                  *parent2;
+   Evas_Object                  *obj; /**< object pointer for this widget smart data */
+   Evas_Object                  *parent_obj; /**< parent object of a widget in the elementary tree */
+   Evas_Object                  *parent2; /**< parent object for an inlined window */
    Evas_Coord                    x, y, w, h;
-   Eina_List                    *subobjs;
-   Evas_Object                  *resize_obj;
+   Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
+   Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
    Eina_List                    *tooltips, *cursors;
    Evas_Object                  *focus_previous, *focus_next;
