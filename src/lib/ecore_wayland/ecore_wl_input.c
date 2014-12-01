@@ -919,8 +919,9 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
    input->display->serial = serial;
    input->pointer_enter_serial = serial;
 
+   if (input->pointer)
    /* The cursor on the surface is undefined until we set it */
-   ecore_wl_input_cursor_from_name_set(input, "left_ptr");
+     ecore_wl_input_cursor_from_name_set(input, "left_ptr");
 
    if ((win = ecore_wl_window_surface_find(surface)))
      {
