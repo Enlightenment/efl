@@ -979,15 +979,14 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
      {
         double mx, my, mw, mh;
 
-        mtex = mask->tex;
         mx = mask_x; my = mask_y; mw = mask->w; mh = mask->h;
         RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
         RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
-
-        mmx = (double)(mx - mask_x) + ((double)(mw * (nx - dx)) / (double)(dw));
-        mmy = (double)(my - mask_y) + ((double)(mh * (ny - dy)) / (double)(dh));
-        mmw = ((double)mw * (double)(nw)) / (double)(dw);
-        mmh = ((double)mh * (double)(nh)) / (double)(dh);
+        mmx = mx - mask_x;
+        mmy = my - mask_y;
+        mmw = mw;
+        mmh = mh;
+        mtex = mask->tex;
      }
 
    if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
