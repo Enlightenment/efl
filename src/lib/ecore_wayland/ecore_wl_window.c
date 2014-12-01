@@ -1037,7 +1037,8 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface 
           _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
      }
 
-   xdg_surface_ack_configure(win->xdg_surface, serial);
+   if (win->xdg_surface)
+     xdg_surface_ack_configure(win->xdg_surface, serial);
 }
 
 static void 
