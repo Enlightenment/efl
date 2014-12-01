@@ -167,7 +167,6 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 
    if ((!input) && (win->parent))
      {
-        input = win->parent->keyboard_device;
         if (!(input = win->parent->keyboard_device))
           input = win->parent->pointer_device;
      }
