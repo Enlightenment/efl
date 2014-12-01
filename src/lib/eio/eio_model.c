@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <stdint.h>
+
 #include <Emodel.h>
 #include <Eina.h>
 #include <eio_model.h>
@@ -693,10 +695,10 @@ _struct_properties_init(void)
      {
         const char *filename;
         const char *path;
-        double mtime;
+        struct timeval mtime;
         int is_dir;
         int is_lnk;
-        int size;
+        int64_t size;
      } This_Eio_Properties;
 
    static Eina_Value_Struct_Member prop_members[] = {
