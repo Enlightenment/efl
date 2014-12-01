@@ -96,6 +96,25 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
             Evas_Real dfar; /*@ Distance to far clipping plane. */
          }
       }
+      node_visible_get {
+         /*@
+            Check is bounding sphere of given node inside frustum of camera node.
+          *
+          * @param camera          The given camera node.
+          * @param node            The given node.
+          * @return                @c EINA_TRUE in frustum, @c EINA_FALSE otherwise
+
+          * If the nodes are @ NULL or nodes type mismatch error wrong type of nodes will be generated and returned @ EINA_FALSE.
+
+          * @ingroup Evas_3D_Camera
+          */
+         return: bool;
+         params {
+            @in Evas_3D_Node *camera_node;
+            @in Evas_3D_Node *node;
+            @in Evas_3D_Frustum_Mode key;
+         }
+      }
    }
 
    implements {

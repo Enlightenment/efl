@@ -17,8 +17,10 @@ typedef struct _Evas_Mat3 Evas_Mat3;
 typedef struct _Evas_Mat4 Evas_Mat4;
 typedef struct _Evas_Box2 Evas_Box2;
 typedef struct _Evas_Box3 Evas_Box3;
+typedef struct _Evas_Line3 Evas_Line3;
 typedef struct _Evas_Triangle3 Evas_Triangle3;
 typedef struct _Evas_Ray3 Evas_Ray3;
+typedef struct _Evas_Sphere Evas_Sphere;
 
 struct _Evas_Color
 {
@@ -79,6 +81,12 @@ struct _Evas_Box3
    Evas_Vec3   p1;
 };
 
+struct _Evas_Line3
+{
+   Evas_Vec3   point;
+   Evas_Vec3   direction;
+};
+
 struct _Evas_Triangle3
 {
    Evas_Vec3   p0;
@@ -90,6 +98,12 @@ struct _Evas_Ray3
 {
    Evas_Vec3   org;
    Evas_Vec3   dir;
+};
+
+struct _Evas_Sphere
+{
+   Evas_Vec3 center;
+   Evas_Real radius;
 };
 
 /* 2D vector */
@@ -1594,6 +1608,17 @@ evas_box2_intersect_2d(const Evas_Box2 *box, const Evas_Vec2 *org, const Evas_Ve
    return EINA_TRUE;
 }
 
+static inline Evas_Real
+evas_determinant_3D(Evas_Real matrix[3][3])
+{
+   return (matrix[0][0] * matrix[1][1] * matrix[2][2]) +
+          (matrix[0][1] * matrix[1][2] * matrix[2][0]) +
+          (matrix[0][2] * matrix[1][0] * matrix[2][1]) -
+          (matrix[0][2] * matrix[1][1] * matrix[2][0]) -
+          (matrix[0][1] * matrix[1][0] * matrix[2][2]) -
+          (matrix[0][0] * matrix[1][2] * matrix[2][1]);
+}
+
 static inline Eina_Bool
 evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
 {
@@ -1721,4 +1746,243 @@ evas_reciprocal_sqrt(Evas_Real x)
    u.f = x;
    u.i = 0x5f3759df - (u.i >> 1);
    return u.f * (1.5f - u.f * u.f * x * 0.5f);
+}
+
+static inline void
+evas_build_sphere(const Evas_Box3 *box, Evas_Sphere *sphere)
+{
+   Evas_Vec3 tmp;
+
+   evas_vec3_set(&sphere->center, (0.5 * (box->p0.x + box->p1.x)), (0.5 * (box->p0.y + box->p1.y)), (0.5 * (box->p0.z + box->p1.z)));
+   evas_vec3_set(&tmp, sphere->center.x - box->p0.x, sphere->center.y - box->p0.y, sphere->center.z - box->p0.z);
+
+   sphere->radius = sqrtf(evas_vec3_dot_product(&tmp, &tmp));
+}
+
+static inline void
+evas_plane_normalize(Evas_Vec4 *plane)
+{
+   Evas_Vec3 tmp;
+   Evas_Real length;
+   evas_vec3_set(&tmp, plane->x, plane->y, plane->z);
+   length = evas_vec3_length_get(&tmp);
+   plane->x = plane->x / length;
+   plane->y = plane->y / length;
+   plane->z = plane->z / length;
+   plane->w = plane->w / length;
+}
+
+static inline Eina_Bool
+evas_intersection_line_of_two_planes(Evas_Line3 *line, Evas_Vec4 *plane1, Evas_Vec4 *plane2)
+{
+   //TODO:parallel case
+   Evas_Vec3 planes3D[2];
+
+   evas_vec3_set(&planes3D[0], plane1->x, plane1->y, plane1->z);
+   evas_vec3_set(&planes3D[1], plane2->x, plane2->y, plane2->z);
+
+   evas_vec3_cross_product(&line->direction, &planes3D[0], &planes3D[1]);
+
+#define SOLVE_EQUATION(x, y, z) \
+   line->point.x = 0; \
+   line->point.y = (plane2->w * plane1->z - plane1->w * plane2->z) / line->direction.x; \
+   line->point.z = (plane2->y * plane1->w - plane1->y * plane2->w) / line->direction.x;
+
+   if (line->direction.x && plane1->z)
+     {
+        SOLVE_EQUATION(x, y, z)
+     }
+   else if (line->direction.y && plane1->x)
+     {
+        SOLVE_EQUATION(y, z, x)
+     }
+   else
+     {
+        SOLVE_EQUATION(z, x, y)
+     }
+#undef SOLVE_EQUATION
+
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+evas_intersection_point_of_three_planes(Evas_Vec3 *point, Evas_Vec4 *plane1, Evas_Vec4 *plane2, Evas_Vec4 *plane3)
+{
+   //TODO:parallel case
+   int i;
+   Evas_Real delta, deltax, deltay, deltaz;
+   Evas_Real matrix_to_det[3][3];
+   Evas_Vec4 planes[3];
+
+   planes[0] = *plane1;
+   planes[1] = *plane2;
+   planes[2] = *plane3;
+
+   for (i = 0; i < 3; i++)
+     {
+        matrix_to_det[0][i] = planes[i].x;
+        matrix_to_det[1][i] = planes[i].y;
+        matrix_to_det[2][i] = planes[i].z;
+     }
+   delta = evas_determinant_3D(matrix_to_det);
+
+   for (i = 0; i < 3; i++)
+     matrix_to_det[0][i] = planes[i].w;
+   deltax = evas_determinant_3D(matrix_to_det);
+
+   for (i = 0; i < 3; i++)
+     {
+        matrix_to_det[0][i] = planes[i].x;
+        matrix_to_det[1][i] = planes[i].w;
+     }
+   deltay = evas_determinant_3D(matrix_to_det);
+
+   for (i = 0; i < 3; i++)
+     {
+        matrix_to_det[1][i] = planes[i].y;
+        matrix_to_det[2][i] = planes[i].w;
+     }
+   deltaz = evas_determinant_3D(matrix_to_det);
+
+   evas_vec3_set(point, -deltax/delta, -deltay/delta, -deltaz/delta);
+
+   return EINA_TRUE;
+}
+
+static inline Evas_Real
+evas_point_plane_distance(Evas_Vec3 *point, Evas_Vec4 *plane)
+{
+   return plane->x * point->x + plane->y * point->y + plane->z * point->z + plane->w;
+}
+
+static inline Evas_Real
+evas_point_line_distance(Evas_Vec3 *point, Evas_Line3 *line)
+{
+   Evas_Vec3 temp, sub;
+
+   evas_vec3_subtract(&sub, point, &line->point);
+   evas_vec3_cross_product(&temp, &sub, &line->direction);
+
+   return evas_vec3_length_get(&temp) / evas_vec3_length_get(&line->direction);
+}
+
+static inline Eina_Bool
+evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Evas_Vec4 *planes)
+{
+   int i;
+   Evas_Line3 line;
+   Evas_Vec3 point, sub;
+   Evas_Real distances[6] = {0};
+   int intersected_planes[3];
+   int intersected_planes_count = 0;
+
+   for (i = 0; i < 6; i++)
+     {
+        distances[i] = evas_point_plane_distance(&bsphere->center, &planes[i]);
+     }
+
+   for (i = 0; i < 6; i++)
+     {
+        if (distances[i] <= -bsphere->radius)
+          {
+             return EINA_FALSE;
+          }
+        else if (distances[i] <= 0)
+          {
+             intersected_planes[intersected_planes_count] = i;
+             intersected_planes_count++;
+          }
+      }
+
+   if ((intersected_planes_count == 0) || (intersected_planes_count == 1))
+     return EINA_TRUE;
+   else if (intersected_planes_count == 2)
+     {
+        evas_intersection_line_of_two_planes(&line, &planes[intersected_planes[0]], &planes[intersected_planes[1]]);
+        return (evas_point_line_distance(&bsphere->center, &line) < bsphere->radius) ? EINA_TRUE : EINA_FALSE;
+     }
+   else if (intersected_planes_count == 3)
+     {
+        evas_intersection_point_of_three_planes(&point, &planes[intersected_planes[0]], &planes[intersected_planes[1]], &planes[intersected_planes[2]]);
+        evas_vec3_subtract(&sub, &point, &bsphere->center);
+        return (evas_vec3_length_get(&sub) < bsphere->radius) ? EINA_TRUE : EINA_FALSE;
+     }
+
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+evas_is_point_in_frustum(Evas_Vec3 *point, Evas_Vec4 *planes)
+{
+   int i;
+   for (i = 0; i < 6; i++)
+     if (evas_point_plane_distance(point, &planes[i]) <= 0) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+evas_is_box_in_frustum(Evas_Box3 *box, Evas_Vec4 *planes)
+{
+   int i;
+   for (i = 0; i < 6; i++)
+     {
+        if (planes[i].x * box->p0.x + planes[i].y * box->p0.y + planes[i].z * box->p0.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p1.x + planes[i].y * box->p0.y + planes[i].z * box->p0.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p1.x + planes[i].y * box->p1.y + planes[i].z * box->p0.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p0.x + planes[i].y * box->p1.y + planes[i].z * box->p0.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p0.x + planes[i].y * box->p0.y + planes[i].z * box->p1.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p1.x + planes[i].y * box->p0.y + planes[i].z * box->p1.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p1.x + planes[i].y * box->p1.y + planes[i].z * box->p1.z + planes[i].w > 0)
+          continue;
+        if (planes[i].x * box->p0.x + planes[i].y * box->p1.y + planes[i].z * box->p1.z + planes[i].w > 0)
+          continue;
+       return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static inline void
+evas_frustum_calculate(Evas_Vec4 *planes, Evas_Mat4 *matrix_vp)
+{
+   int i;
+   evas_vec4_set(&planes[0], matrix_vp->m[3] - matrix_vp->m[0],
+                             matrix_vp->m[7] - matrix_vp->m[4],
+                             matrix_vp->m[11] - matrix_vp->m[8],
+                             matrix_vp->m[15] - matrix_vp->m[12]);
+
+   evas_vec4_set(&planes[1], matrix_vp->m[3] + matrix_vp->m[0],
+                             matrix_vp->m[7] + matrix_vp->m[4],
+                             matrix_vp->m[11] + matrix_vp->m[8],
+                             matrix_vp->m[15] + matrix_vp->m[12]);
+
+   evas_vec4_set(&planes[2], matrix_vp->m[3] + matrix_vp->m[1],
+                             matrix_vp->m[7] + matrix_vp->m[5],
+                             matrix_vp->m[11] + matrix_vp->m[9],
+                             matrix_vp->m[15] + matrix_vp->m[13]);
+
+   evas_vec4_set(&planes[3], matrix_vp->m[3] - matrix_vp->m[1],
+                             matrix_vp->m[7] - matrix_vp->m[5],
+                             matrix_vp->m[11] - matrix_vp->m[9],
+                             matrix_vp->m[15] - matrix_vp->m[13]);
+
+   evas_vec4_set(&planes[4], matrix_vp->m[3] - matrix_vp->m[2],
+                             matrix_vp->m[7] - matrix_vp->m[6],
+                             matrix_vp->m[11] - matrix_vp->m[10],
+                             matrix_vp->m[15] - matrix_vp->m[14]);
+
+   evas_vec4_set(&planes[5], matrix_vp->m[3] + matrix_vp->m[2],
+                             matrix_vp->m[7] + matrix_vp->m[6],
+                             matrix_vp->m[11] + matrix_vp->m[10],
+                             matrix_vp->m[15] + matrix_vp->m[14]);
+   for (i = 0; i < 6; i++)
+     {
+       evas_plane_normalize(&planes[i]);
+     }
 }

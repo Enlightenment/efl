@@ -204,6 +204,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
    Eina_Bool transform_dirty = EINA_FALSE, mesh_geom_dirty = EINA_FALSE;
    Eina_Bool mesh_frame_dirty = EINA_FALSE, member_dirty = EINA_FALSE;
    Eina_Bool frame_found = EINA_FALSE, is_change_orientation = EINA_FALSE;
+   Eina_Bool parent_dirty = EINA_FALSE;
    const Eina_List *m, *l;
    Evas_3D_Mesh *mesh;
    int frame, count, size, i, j;
@@ -217,19 +218,21 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
          transform_dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_NODE_TRANSFORM),
          mesh_geom_dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_NODE_MESH_GEOMETRY),
          mesh_frame_dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_NODE_MESH_FRAME),
+         parent_dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_NODE_PARENT),
          member_dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_NODE_MEMBER));
 
-   if (transform_dirty ||
+     if (transform_dirty ||
        mesh_geom_dirty ||
        mesh_frame_dirty ||
-       member_dirty)
+       member_dirty ||
+       parent_dirty)
      {
         if (pd->type == EVAS_3D_NODE_TYPE_MESH)
           {
 
-             if (pd->orientation.x || pd->orientation.y || pd->orientation.z)
+             if (pd->orientation_world.x || pd->orientation_world.y || pd->orientation_world.z)
                {
-                  evas_vec4_set(&orientation, pd->orientation.x, pd->orientation.y, pd->orientation.z, pd->orientation.w);
+                  evas_vec4_set(&orientation, pd->orientation_world.x, pd->orientation_world.y, pd->orientation_world.z, pd->orientation_world.w);
                   is_change_orientation = EINA_TRUE;
                }
 
@@ -347,19 +350,19 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
                        evas_vec3_quaternion_rotate(&pd->obb.p0, &pd->obb.p0, &orientation);
                        evas_vec3_quaternion_rotate(&pd->obb.p1, &pd->obb.p1, &orientation);
                     }
-                  if ((pd->scale.x != 1 || pd->scale.y != 1 || pd->scale.z != 1))
+                  if ((pd->scale_world.x != 1 || pd->scale_world.y != 1 || pd->scale_world.z != 1))
                     {
                        Evas_Vec3 scale;
-                       evas_vec3_set(&scale, pd->scale.x, pd->scale.y, pd->scale.z);
+                       evas_vec3_set(&scale, pd->scale_world.x, pd->scale_world.y, pd->scale_world.z);
                        evas_vec3_multiply(&pd->obb.p0, &scale, &pd->obb.p0);
                        evas_vec3_multiply(&pd->obb.p1, &scale, &pd->obb.p1);
                        evas_vec3_multiply(&pd->aabb.p0, &scale, &pd->aabb.p0);
                        evas_vec3_multiply(&pd->aabb.p1, &scale, &pd->aabb.p1);
                     }
-                  if ((pd->position.x || pd->position.y || pd->position.z))
+                  if ((pd->position_world.x || pd->position_world.y || pd->position_world.z))
                     {
                        Evas_Vec3 position;
-                       evas_vec3_set(&position, pd->position.x, pd->position.y, pd->position.z);
+                       evas_vec3_set(&position, pd->position_world.x, pd->position_world.y, pd->position_world.z);
                        evas_vec3_add(&pd->obb.p0, &position, &pd->obb.p0);
                        evas_vec3_add(&pd->obb.p1, &position, &pd->obb.p1);
                        evas_vec3_add(&pd->aabb.p0, &position, &pd->aabb.p0);
@@ -372,7 +375,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
              Eina_List *current;
              Evas_3D_Node *datanode;
 
-             /* Update AABB and OBB of this node. */
+             /* Update AABB, OBB, bounding sphere of this node. */
              evas_box3_empty_set(&pd->aabb);
              evas_box3_empty_set(&pd->obb);
 
@@ -383,6 +386,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
                   evas_box3_union(&pd->aabb, &pd->aabb, &datapd->aabb);
                }
           }
+          evas_build_sphere(&pd->obb, &pd->bsphere);
      }
 
    return EINA_TRUE;
@@ -1362,99 +1366,13 @@ _evas_3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_
    if (z2) *z2 = pd->aabb.p1.z;
 }
 
-EOLIAN static int
-_evas_3d_node_obb_frustum_check(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_3D_Node *camera_node)
+EOLIAN static void
+_evas_3d_node_bounding_sphere_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *r)
 {
-   Evas_Mat4  matrix_eye = { { 0 } };
-   Evas_Mat4  matrix_local_to_world;
-   Evas_Mat4  matrix_mv;
-   Evas_Mat4  matrix_mvp;
-   Evas_Vec4 plane_right, plane_left, plane_bottom, plane_top, plane_far, plane_near, tmp;
-   int frustum = 0;
-   Evas_3D_Node_Data *camera_pd = eo_data_scope_get(camera_node, EVAS_3D_CAMERA_CLASS);
-   Evas_3D_Camera_Data *camera = eo_data_scope_get(camera_pd->data.camera.camera, EVAS_3D_CAMERA_CLASS);
-
-
-   if (camera_pd->type != EVAS_3D_NODE_TYPE_CAMERA)
-     {
-        ERR("Nodes type mismatch.");
-        return -1;
-     }
-
-#define CHECK_IN_FRUSTUM_MIN(name) \
-   (((plane_##name.x * pd->obb.p0.x + plane_##name.y * pd->obb.p0.y + plane_##name.z * pd->obb.p0.z + plane_##name.w) >= 0) ? EINA_TRUE : EINA_FALSE)
-
-#define CHECK_IN_FRUSTUM_MAX(name) \
-   (((plane_##name.x * pd->obb.p1.x + plane_##name.y * pd->obb.p1.y + plane_##name.z * pd->obb.p1.z + plane_##name.w) >= 0) ? EINA_TRUE : EINA_FALSE)
-
-#define NORMALIZE(name) \
-   evas_vec4_copy(&tmp, &plane_##name); \
-   plane_##name.x = plane_##name.x / sqrtf(evas_vec4_length_square_get(&tmp)); \
-   plane_##name.y = plane_##name.y / sqrtf(evas_vec4_length_square_get(&tmp)); \
-   plane_##name.z = plane_##name.z / sqrtf(evas_vec4_length_square_get(&tmp)); \
-   plane_##name.w = plane_##name.w / sqrtf(evas_vec4_length_square_get(&tmp));
-
-   /*get need matrix like multiply view matrix with projection matrix*/
-   evas_mat4_inverse_build(&matrix_eye, &camera_pd->position_world, &camera_pd->orientation_world, &camera_pd->scale_world);
-   evas_mat4_build(&matrix_local_to_world, &pd->position_world, &pd->orientation_world, &pd->scale_world);
-   evas_mat4_multiply(&matrix_mv, &matrix_eye, &matrix_local_to_world);
-   evas_mat4_multiply(&matrix_mvp, &camera->projection, &matrix_mv);
-
-   /*get planes and normilize results*/
-   evas_vec4_set(&plane_right, matrix_mvp.m[3] - matrix_mvp.m[0],
-                               matrix_mvp.m[7] - matrix_mvp.m[4],
-                               matrix_mvp.m[11] - matrix_mvp.m[8],
-                               matrix_mvp.m[15] - matrix_mvp.m[12]);
-   NORMALIZE(right)
-
-   evas_vec4_set(&plane_left, matrix_mvp.m[3] + matrix_mvp.m[0],
-                              matrix_mvp.m[7] + matrix_mvp.m[4],
-                              matrix_mvp.m[11] + matrix_mvp.m[8],
-                              matrix_mvp.m[15] + matrix_mvp.m[12]);
-   NORMALIZE(left)
-
-   evas_vec4_set(&plane_bottom, matrix_mvp.m[3] + matrix_mvp.m[1],
-                                matrix_mvp.m[7] + matrix_mvp.m[5],
-                                matrix_mvp.m[11] + matrix_mvp.m[9],
-                                matrix_mvp.m[15] + matrix_mvp.m[13]);
-   NORMALIZE(bottom)
-
-   evas_vec4_set(&plane_top, matrix_mvp.m[3] - matrix_mvp.m[1],
-                             matrix_mvp.m[7] - matrix_mvp.m[5],
-                             matrix_mvp.m[11] - matrix_mvp.m[9],
-                             matrix_mvp.m[15] - matrix_mvp.m[13]);
-   NORMALIZE(top)
-
-   evas_vec4_set(&plane_far, matrix_mvp.m[3] - matrix_mvp.m[2],
-                             matrix_mvp.m[7] - matrix_mvp.m[6],
-                             matrix_mvp.m[11] - matrix_mvp.m[10],
-                             matrix_mvp.m[15] - matrix_mvp.m[14]);
-   NORMALIZE(far)
-
-   evas_vec4_set(&plane_near, matrix_mvp.m[3] + matrix_mvp.m[2],
-                              matrix_mvp.m[7] + matrix_mvp.m[6],
-                              matrix_mvp.m[11] + matrix_mvp.m[10],
-                              matrix_mvp.m[15] + matrix_mvp.m[14]);
-   NORMALIZE(near)
-
-#undef NORMALIZE
-
-   /*check OBB points in frustum (Ax + By + Cz + D >= 0)*/
-   if (CHECK_IN_FRUSTUM_MIN(right) && CHECK_IN_FRUSTUM_MIN(left)
-       && CHECK_IN_FRUSTUM_MIN(bottom) && CHECK_IN_FRUSTUM_MIN(top)
-       && CHECK_IN_FRUSTUM_MIN(far) && CHECK_IN_FRUSTUM_MIN(near))
-     frustum |= 1;
-
-   if (CHECK_IN_FRUSTUM_MAX(right) && CHECK_IN_FRUSTUM_MAX(left)
-       && CHECK_IN_FRUSTUM_MAX(bottom) && CHECK_IN_FRUSTUM_MAX(top)
-       && CHECK_IN_FRUSTUM_MAX(far) && CHECK_IN_FRUSTUM_MAX(near))
-     frustum |= 2;
-
-#undef CHECK_IN_FRUSTUM_MIN
-#undef CHECK_IN_FRUSTUM_MAX
-
-   return frustum;
+   if (x) *x = pd->bsphere.center.x;
+   if (y) *y = pd->bsphere.center.y;
+   if (z) *z = pd->bsphere.center.z;
+   if (r) *r = pd->bsphere.radius;
 }
-
 
 #include "canvas/evas_3d_node.eo.c"

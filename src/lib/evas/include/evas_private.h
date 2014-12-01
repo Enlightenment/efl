@@ -219,6 +219,7 @@ struct _Evas_3D_Node
 
    Evas_Box3         aabb;
    Evas_Box3         obb;
+   Evas_Sphere       bsphere;
 
    Evas_3D_Node_Type type;
 

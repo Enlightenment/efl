@@ -140,5 +140,49 @@ _evas_3d_camera_projection_ortho_set(Eo *obj, Evas_3D_Camera_Data *pd,
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
+EOLIAN static Eina_Bool
+_evas_3d_camera_node_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Camera_Data *pd, Evas_3D_Node *camera_node, Evas_3D_Node *node, Evas_3D_Frustum_Mode key)
+{
+   Evas_Mat4 matrix_vp;
+   Evas_Vec4 planes[6];
+   Evas_3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_3D_NODE_CLASS);
+   Evas_3D_Node_Data *pd_camera = eo_data_scope_get(camera_node, EVAS_3D_NODE_CLASS);
+   Evas_Vec3 central_point;
+
+   if (!node || pd_node->type != EVAS_3D_NODE_TYPE_MESH)
+     {
+        ERR("Mesh node %p type mismatch.", node);
+        return EINA_FALSE;
+     }
+
+   if (!camera_node || pd_camera->type != EVAS_3D_NODE_TYPE_CAMERA)
+     {
+        ERR("Camera node %p type mismatch.", camera_node);
+        return EINA_FALSE;
+     }
+
+   /*get need matrix like multiply projection matrix with view matrix*/
+   evas_mat4_multiply(&matrix_vp, &pd->projection, &pd_camera->data.camera.matrix_world_to_eye);
+
+   evas_frustum_calculate(planes, &matrix_vp);
+
+   if (key == EVAS_3D_FRUSTUM_MODE_BSPHERE)
+     return evas_is_sphere_in_frustum(&pd_node->bsphere, planes);
+   else if (key == EVAS_3D_FRUSTUM_MODE_AABB)
+     return evas_is_box_in_frustum(&pd_node->aabb, planes);
+   else if (key == EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT)
+     {
+        central_point.x = (pd_node->aabb.p0.x + pd_node->aabb.p1.x) / 2;
+        central_point.y = (pd_node->aabb.p0.y + pd_node->aabb.p1.y) / 2;
+        central_point.z = (pd_node->aabb.p0.z + pd_node->aabb.p1.z) / 2;
+        return evas_is_point_in_frustum(&central_point, planes);
+     }
+   else
+     {
+        ERR("Unknown frustun mode.");
+        return EINA_TRUE;
+     }
+}
+
 #include "canvas/evas_3d_camera.eo.c"
 

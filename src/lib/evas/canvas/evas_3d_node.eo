@@ -324,13 +324,12 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       bounding_box_get{
          /*
-
-          * Get axis-aligned bounding box (AABB) of the given node.
+           Get axis-aligned bounding box (AABB) of the given node.
           *
           * @param node     The given node.
-          * @param x       Pointer to receive X coordinate of the first point of AABB.
-          * @param y       Pointer to receive Y coordinate of the first point of AABB.
-          * @param z       Pointer to receive Z coordinate of the first point of AABB.
+          * @param x        Pointer to receive X coordinate of the first point of AABB.
+          * @param y        Pointer to receive Y coordinate of the first point of AABB.
+          * @param z        Pointer to receive Z coordinate of the first point of AABB.
           * @param x2       Pointer to receive X coordinate of the second point of AABB.
           * @param y2       Pointer to receive Y coordinate of the second point of AABB.
           * @param z2       Pointer to receive Z coordinate of the second point of AABB.
@@ -347,23 +346,25 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      obb_frustum_check {
+      bounding_sphere_get {
          /*
-
-          * Check is the obb of node in frustum of camera node.
+          Get bounding sphere of the given node.
           *
-          * @param camera_node     The given node of camera.
-          * @param node            The given node.
-          * @return                @c 0 if the obb is not in frustum, @c 1 if only min coordinate of obb is in frustum,
-          *                        @c 2 if only max coordinate of obb is in frustum, @c 3 if both coordinates of obb is in frustum.
+          * @param node     The given node.
 
-          * If the camera_node is not of type EVAS_3D_NODE_TYPE_CAMERA error wrong type of node will be generated and returned @ -1.
+          * @param x       Pointer to receive X coordinate of the center of sphere.
+          * @param y       Pointer to receive Y coordinate of the center of sphere.
+          * @param z       Pointer to receive Z coordinate of center of sphere.
+          * @param r       Pointer to receive radius of center of sphere.
 
-          * @ingroup Evas_3D_Node
+           @ingroup Evas_3D_Node
           */
-         return: int;
          params {
-            @in Evas_3D_Node *camera_node;
+
+            @in Evas_Real *x;      /*@ Coordinates of vector.*/
+            @in Evas_Real *y;
+            @in Evas_Real *z;
+            @in Evas_Real *r;
          }
       }
    }

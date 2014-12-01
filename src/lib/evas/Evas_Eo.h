@@ -566,6 +566,20 @@ typedef enum _Evas_3D_Index_Format
 } Evas_3D_Index_Format;
 
 /**
+ * Frustum modes
+ *
+ * @since 1.12
+ * @ingroup Evas_3D_Types
+ */
+typedef enum _Evas_3D_Frustum_Mode
+{
+   EVAS_3D_FRUSTUM_MODE_BSPHERE,
+   EVAS_3D_FRUSTUM_MODE_AABB,
+   EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT
+} Evas_3D_Frustum_Mode;
+
+
+/**
  * Vertex assembly modes
  *
  * Vertex assembly represents how the vertices are organized into geometric
