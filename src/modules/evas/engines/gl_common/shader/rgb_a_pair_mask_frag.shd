@@ -1,0 +1,19 @@
+#ifdef GL_ES
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#endif
+uniform sampler2D tex;
+uniform sampler2D texa;
+uniform sampler2D texm;
+varying vec4 col;
+varying vec2 coord_c;
+varying vec2 coord_a;
+varying vec2 coord_m;
+void main()
+{
+   gl_FragColor.rgb = texture2D(tex, coord_c.xy).rgb * col.rgb * texture2D(texa, coord_a).g * texture2D(texm, coord_m.xy).a;
+   gl_FragColor.a = col.a * texture2D(texa, coord_a).g * texture2D(texm, coord_m.xy).a;
+}
