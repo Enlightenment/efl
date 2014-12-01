@@ -12,7 +12,6 @@ varying vec2 coord_c;
 varying vec2 coord_a;
 void main()
 {
-   gl_FragColor.rgb = col.rgb * texture2D(tex, coord_c.xy).rgb * texture2D(texa, coord_a).g;
-   gl_FragColor.a = col.a * texture2D(tex, coord_c.xy).a * texture2D(texa, coord_a).g;
+   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy).bgra * col;
 }
 
