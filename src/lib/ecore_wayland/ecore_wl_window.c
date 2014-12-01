@@ -716,10 +716,10 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 EAPI void 
 ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    struct wl_array states;
    uint32_t *s;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
 
