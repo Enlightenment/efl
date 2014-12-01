@@ -58,13 +58,13 @@ static const char const font_mask_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex;\n"
-   "uniform sampler2D texa;\n"
+   "uniform sampler2D texm;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_a;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy).aaaa * texture2D(texa, tex_a.xy).aaaa * col;\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy).aaaa * texture2D(texm, tex_m.xy).aaaa * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_font_mask_frag_src =
 {
@@ -80,17 +80,17 @@ static const char const font_mask_vert_glsl[] =
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coorda;\n"
+   "attribute vec2 tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
-   "varying vec2 tex_a;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
-   "   tex_a = tex_coorda;\n"
+   "   tex_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_font_mask_vert_src =
 {
@@ -2241,13 +2241,13 @@ static const char const img_mask_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex;\n"
-   "uniform sampler2D texa;\n"
+   "uniform sampler2D texm;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy).bgra * col;\n"
+   "   gl_FragColor = texture2D(texm, coord_m.xy).a * texture2D(tex, coord_c.xy).bgra * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_frag_src =
 {
@@ -2263,17 +2263,17 @@ static const char const img_mask_vert_glsl[] =
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coorda;\n"
+   "attribute vec2 tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_a = tex_coorda;\n"
+   "   coord_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_vert_src =
 {
@@ -2291,12 +2291,12 @@ static const char const img_mask_nomul_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex;\n"
-   "uniform sampler2D texa;\n"
+   "uniform sampler2D texm;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(tex, coord_c.xy) * texture2D(texa, coord_a).a;\n"
+   "   gl_FragColor = texture2D(tex, coord_c.xy) * texture2D(texm, coord_m).a;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_frag_src =
 {
@@ -2311,15 +2311,15 @@ static const char const img_mask_nomul_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coorda;\n"
+   "attribute vec2 tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_a = tex_coorda;\n"
+   "   coord_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_vert_src =
 {
@@ -2337,13 +2337,13 @@ static const char const img_mask_bgra_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex;\n"
-   "uniform sampler2D texa;\n"
+   "uniform sampler2D texm;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy) * col;\n"
+   "   gl_FragColor = texture2D(texm, coord_m.xy).a * texture2D(tex, coord_c.xy) * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_frag_src =
 {
@@ -2359,17 +2359,17 @@ static const char const img_mask_bgra_vert_glsl[] =
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coorda;\n"
+   "attribute vec2 tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_a = tex_coorda;\n"
+   "   coord_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_vert_src =
 {
@@ -2387,12 +2387,12 @@ static const char const img_mask_bgra_nomul_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex;\n"
-   "uniform sampler2D texa;\n"
+   "uniform sampler2D texm;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy);\n"
+   "   gl_FragColor = texture2D(texm, coord_m.xy).a * texture2D(tex, coord_c.xy);\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_nomul_frag_src =
 {
@@ -2407,15 +2407,15 @@ static const char const img_mask_bgra_nomul_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coorda;\n"
+   "attribute vec2 tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_a;\n"
+   "varying vec2 coord_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_a = tex_coorda;\n"
+   "   coord_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_nomul_vert_src =
 {
@@ -2432,9 +2432,9 @@ static const char const yuv_mask_frag_glsl[] =
    "precision mediump float;\n"
    "#endif\n"
    "#endif\n"
-   "uniform sampler2D tex, texu, texv, texa;\n"
+   "uniform sampler2D tex, texu, texv, texm;\n"
    "varying vec4 col;\n"
-   "varying vec2 tex_c, tex_c2, tex_c3, tex_a;\n"
+   "varying vec2 tex_c, tex_c2, tex_c3, tex_m;\n"
    "void main()\n"
    "{\n"
    "   float r, g, b, y, u, v;\n"
@@ -2447,7 +2447,7 @@ static const char const yuv_mask_frag_glsl[] =
    "   r = y + (1.402   * v);\n"
    "   g = y - (0.34414 * u) - (0.71414 * v);\n"
    "   b = y + (1.772   * u);\n"
-   "   gl_FragColor = vec4(r, g, b, 1.0) * texture2D(texa, tex_a.xy).a * col;\n"
+   "   gl_FragColor = vec4(r, g, b, 1.0) * texture2D(texm, tex_m.xy).a * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_frag_src =
 {
@@ -2462,10 +2462,10 @@ static const char const yuv_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec2 tex_coord, tex_coord2, tex_coord3, tex_coorda;\n"
+   "attribute vec2 tex_coord, tex_coord2, tex_coord3, tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
-   "varying vec2 tex_c, tex_c2, tex_c3, tex_a;\n"
+   "varying vec2 tex_c, tex_c2, tex_c3, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
@@ -2473,7 +2473,7 @@ static const char const yuv_mask_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = tex_coord2;\n"
    "   tex_c3 = tex_coord3;\n"
-   "   tex_a = tex_coorda;\n"
+   "   tex_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_vert_src =
 {
@@ -2490,9 +2490,9 @@ static const char const nv12_mask_frag_glsl[] =
    "precision mediump float;\n"
    "#endif\n"
    "#endif\n"
-   "uniform sampler2D tex, texuv, texa;\n"
+   "uniform sampler2D tex, texuv, texm;\n"
    "varying vec4 col;\n"
-   "varying vec2 tex_c, tex_cuv, tex_a;\n"
+   "varying vec2 tex_c, tex_cuv, tex_m;\n"
    "void main()\n"
    "{\n"
    "  float y,u,v,vmu,r,g,b;\n"
@@ -2508,7 +2508,7 @@ static const char const nv12_mask_frag_glsl[] =
    "  r=y+v;\n"
    "  g=y-vmu;\n"
    "  b=y+u;\n"
-   "  gl_FragColor = vec4(r,g,b,1.0) * texture2D(texa, tex_a.xy).a * col;\n"
+   "  gl_FragColor = vec4(r,g,b,1.0) * texture2D(tex, tex_m.xy).a * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_frag_src =
 {
@@ -2523,17 +2523,17 @@ static const char const nv12_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec2 tex_coord, tex_coord2, tex_coorda;\n"
+   "attribute vec2 tex_coord, tex_coord2, tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
-   "varying vec2 tex_c, tex_cuv, tex_a;\n"
+   "varying vec2 tex_c, tex_cuv, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "   tex_cuv = tex_coord2 * 0.5;\n"
-   "   tex_a = tex_coorda;\n"
+   "   tex_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_vert_src =
 {
@@ -2550,9 +2550,9 @@ static const char const yuy2_mask_frag_glsl[] =
    "precision mediump float;\n"
    "#endif\n"
    "#endif\n"
-   "uniform sampler2D tex, texuv, texa;\n"
+   "uniform sampler2D tex, texuv, texm;\n"
    "varying vec4 col;\n"
-   "varying vec2 tex_c, tex_cuv, tex_a;\n"
+   "varying vec2 tex_c, tex_cuv, tex_m;\n"
    "void main()\n"
    "{\n"
    "  float y,u,v,vmu,r,g,b;\n"
@@ -2567,7 +2567,7 @@ static const char const yuy2_mask_frag_glsl[] =
    "  r=y+v;\n"
    "  g=y-vmu;\n"
    "  b=y+u;\n"
-   "  gl_FragColor = vec4(r,g,b,1.0) * texture2D(texa, tex_a.xy).a * col;\n"
+   "  gl_FragColor = vec4(r,g,b,1.0) * texture2D(texm, tex_m.xy).a * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_frag_src =
 {
@@ -2582,17 +2582,17 @@ static const char const yuy2_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec2 tex_coord, tex_coord2, tex_coorda;\n"
+   "attribute vec2 tex_coord, tex_coord2, tex_coordm;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
-   "varying vec2 tex_c, tex_cuv, tex_a;\n"
+   "varying vec2 tex_c, tex_cuv, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "   tex_cuv = vec2(tex_coord2.x * 0.5, tex_coord2.y);\n"
-   "   tex_a = tex_coorda;\n"
+   "   tex_m = tex_coordm;\n"
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_vert_src =
 {
