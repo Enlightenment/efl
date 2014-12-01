@@ -61,14 +61,14 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
 {
    Evas_Engine_GL_Context *gc = context;
    RGBA_Draw_Context *dc = draw_context;
-   Evas_GL_Texture *tex;
+   Evas_GL_Texture *tex, *mtex = NULL;
    Cutout_Rect  *rct;
    int r, g, b, a;
    double ssx, ssy, ssw, ssh;
    int c, cx, cy, cw, ch;
    int i;
    int sx, sy, sw, sh;
-   double mx, my, mw, mh, mmx, mmy, mmw, mmh;
+   double mmx, mmy, mmw, mmh;
 
    if (dc != gc->dc) return;
    tex = fg->ext_dat;
@@ -85,34 +85,33 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
         // FIXME: This code path does not handle half the stuff the other path does...
         Evas_GL_Image *mask = gc->dc->clip.mask;
         int nx, ny, nw, nh, dx, dy, dw, dh;
+        double mx, my, mw, mh;
 
-        nx = x; ny = y; nw = tex->w; nh = tex->h;
-        RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
-                           gc->dc->clip.x, gc->dc->clip.y,
-                           gc->dc->clip.w, gc->dc->clip.h);
-        if ((nw < 1) || (nh < 1)) return;
+        if (mask->tex)
+          {
+             nx = x; ny = y; nw = tex->w; nh = tex->h;
+             RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
+                                gc->dc->clip.x, gc->dc->clip.y,
+                                gc->dc->clip.w, gc->dc->clip.h);
+             if ((nw < 1) || (nh < 1)) return;
 
-        ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
-        ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
-        ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
-        ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
+             ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
+             ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
+             ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
+             ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
 
-        dx = x; dy = y; dw = sw; dh = sh;
-        mx = gc->dc->clip.mask_x; my = gc->dc->clip.mask_y; mw = mask->w; mh = mask->h;
-        //RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
-        RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
+             dx = x; dy = y; dw = sw; dh = sh;
+             mx = gc->dc->clip.mask_x; my = gc->dc->clip.mask_y; mw = mask->w; mh = mask->h;
+             //RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
+             RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
 
-        mmx = (double)(mx - gc->dc->clip.mask_x) + ((double)(mw * (nx - dx)) / (double)(dw));
-        mmy = (double)(my - gc->dc->clip.mask_y) + ((double)(mh * (ny - dy)) / (double)(dh));
-        mmw = ((double)mw * (double)(nw)) / (double)(dw);
-        mmh = ((double)mh * (double)(nh)) / (double)(dh);
+             mmx = (double)(mx - gc->dc->clip.mask_x) + ((double)(mw * (nx - dx)) / (double)(dw));
+             mmy = (double)(my - gc->dc->clip.mask_y) + ((double)(mh * (ny - dy)) / (double)(dh));
+             mmw = ((double)mw * (double)(nw)) / (double)(dw);
+             mmh = ((double)mh * (double)(nh)) / (double)(dh);
 
-        evas_gl_common_context_masked_font_push(gc, tex,
-                                                ssx, ssy, ssw, ssh,
-                                                nx, ny, nw, nh,
-                                                r, g, b, a,
-                                                mask->tex, mmx, mmy, mmw, mmh);
-        return;
+             mtex = mask->tex;
+          }
      }
 
    if ((!gc->dc->cutout.rects) ||
@@ -134,6 +133,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                                    0.0, 0.0, 0.0, 0.0,
 //                                                   sx, sy, sw, sh,
                                                    x, y, tex->w, tex->h,
+                                                   mtex, mmx, mmy, mmw, mmh,
                                                    r, g, b, a);
                   return;
                }
@@ -144,6 +144,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
              evas_gl_common_context_font_push(gc, tex,
                                               ssx, ssy, ssw, ssh,
                                               nx, ny, nw, nh,
+                                              mtex, mmx, mmy, mmw, mmh,
                                               r, g, b, a);
           }
         else
@@ -152,6 +153,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
+                                              mtex, mmx, mmy, mmw, mmh,
                                               r, g, b, a);
           }
         return;
@@ -181,6 +183,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
+                                              mtex, mmx, mmy, mmw, mmh,
                                               r, g, b, a);
              continue;
           }
@@ -191,6 +194,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
         evas_gl_common_context_font_push(gc, tex,
                                          ssx, ssy, ssw, ssh,
                                          nx, ny, nw, nh,
+                                         mtex, mmx, mmy, mmw, mmh,
                                          r, g, b, a);
      }
    evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);

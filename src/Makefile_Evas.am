@@ -682,6 +682,10 @@ modules/evas/engines/gl_common/shader/img_mask_frag.shd \
 modules/evas/engines/gl_common/shader/img_mask_vert.shd \
 modules/evas/engines/gl_common/shader/img_mask_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/img_mask_nomul_vert.shd \
+modules/evas/engines/gl_common/shader/img_mask_bgra_frag.shd \
+modules/evas/engines/gl_common/shader/img_mask_bgra_vert.shd \
+modules/evas/engines/gl_common/shader/img_mask_bgra_nomul_frag.shd \
+modules/evas/engines/gl_common/shader/img_mask_bgra_nomul_vert.shd \
 $(NULL)
 
 EXTRA_DIST += \

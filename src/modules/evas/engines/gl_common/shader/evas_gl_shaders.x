@@ -2247,8 +2247,7 @@ static const char const img_mask_frag_glsl[] =
    "varying vec2 coord_a;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor.rgb = col.rgb * texture2D(tex, coord_c.xy).rgb * texture2D(texa, coord_a).g;\n"
-   "   gl_FragColor.a = col.a * texture2D(tex, coord_c.xy).a * texture2D(texa, coord_a).g;\n"
+   "   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy).bgra * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_frag_src =
 {
@@ -2297,8 +2296,7 @@ static const char const img_mask_nomul_frag_glsl[] =
    "varying vec2 coord_a;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor.rgb = texture2D(tex, coord_c.xy).rgb * texture2D(texa, coord_a).g;\n"
-   "   gl_FragColor.a = texture2D(tex, coord_c.xy).a * texture2D(texa, coord_a).g;\n"
+   "   gl_FragColor = texture2D(tex, coord_c.xy) * texture2D(texa, coord_a).a;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_frag_src =
 {
@@ -2326,6 +2324,102 @@ static const char const img_mask_nomul_vert_glsl[] =
 Evas_GL_Program_Source shader_img_mask_nomul_vert_src =
 {
    img_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/img_mask_bgra_frag.shd */
+static const char const img_mask_bgra_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "uniform sampler2D texa;\n"
+   "varying vec4 col;\n"
+   "varying vec2 coord_c;\n"
+   "varying vec2 coord_a;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_img_mask_bgra_frag_src =
+{
+   img_mask_bgra_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/img_mask_bgra_vert.shd */
+static const char const img_mask_bgra_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "attribute vec2 tex_coorda;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 coord_c;\n"
+   "varying vec2 coord_a;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   coord_c = tex_coord;\n"
+   "   coord_a = tex_coorda;\n"
+   "}\n";
+Evas_GL_Program_Source shader_img_mask_bgra_vert_src =
+{
+   img_mask_bgra_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/img_mask_bgra_nomul_frag.shd */
+static const char const img_mask_bgra_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "uniform sampler2D texa;\n"
+   "varying vec2 coord_c;\n"
+   "varying vec2 coord_a;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(texa, coord_a.xy).a * texture2D(tex, coord_c.xy);\n"
+   "}\n";
+Evas_GL_Program_Source shader_img_mask_bgra_nomul_frag_src =
+{
+   img_mask_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/img_mask_bgra_nomul_vert.shd */
+static const char const img_mask_bgra_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord;\n"
+   "attribute vec2 tex_coorda;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 coord_c;\n"
+   "varying vec2 coord_a;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   coord_c = tex_coord;\n"
+   "   coord_a = tex_coorda;\n"
+   "}\n";
+Evas_GL_Program_Source shader_img_mask_bgra_nomul_vert_src =
+{
+   img_mask_bgra_nomul_vert_glsl,
    NULL, 0
 };
 
@@ -2380,5 +2474,7 @@ static const struct {
    { SHADER_YUY2, &(shader_yuy2_vert_src), &(shader_yuy2_frag_src), "yuy2" },
    { SHADER_IMG_MASK, &(shader_img_mask_vert_src), &(shader_img_mask_frag_src), "img_mask" },
    { SHADER_IMG_MASK_NOMUL, &(shader_img_mask_nomul_vert_src), &(shader_img_mask_nomul_frag_src), "img_mask_nomul" },
+   { SHADER_IMG_MASK_BGRA, &(shader_img_mask_bgra_vert_src), &(shader_img_mask_bgra_frag_src), "img_mask_bgra" },
+   { SHADER_IMG_MASK_BGRA_NOMUL, &(shader_img_mask_bgra_nomul_vert_src), &(shader_img_mask_bgra_nomul_frag_src), "img_mask_bgra_nomul" },
 };
 
