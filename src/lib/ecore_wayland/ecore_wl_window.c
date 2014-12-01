@@ -261,7 +261,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
      }
 }
 
-EAPI struct wl_surface*
+EAPI struct wl_surface *
 ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -269,6 +269,7 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
    if (!win) return NULL;
    if (win->surface) return win->surface;
    win->surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
+   if (!win->surface) return NULL;
    win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
    return win->surface;
 }
