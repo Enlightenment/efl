@@ -221,6 +221,7 @@ EAPI void
 ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Window *dragwin, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    struct wl_surface *drag_surface;
+   struct wl_surface *origin_surface;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -241,9 +242,12 @@ ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Wi
                                &_ecore_wl_dnd_source_listener, input);
 
    /* start the drag */
-   wl_data_device_start_drag(input->data_device, input->data_source, 
-                             ecore_wl_window_surface_get(win), 
-                             drag_surface, input->display->serial);
+   if ((origin_surface = ecore_wl_window_surface_get(win)))
+     {
+        wl_data_device_start_drag(input->data_device, input->data_source, 
+                                  origin_surface, drag_surface, 
+                                  input->display->serial);
+     }
 
    /* set pointer image */
    ecore_wl_input_cursor_from_name_set(input, "move");
