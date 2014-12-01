@@ -379,6 +379,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
                                        _ecore_wl_disp->serial,
                                        win->allocation.x,
                                        win->allocation.y, 0);
+             if (!win->xdg_popup) return;
              xdg_popup_set_user_data(win->xdg_popup, win);
              xdg_popup_add_listener(win->xdg_popup, 
                                     &_ecore_xdg_popup_listener, win);
