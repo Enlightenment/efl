@@ -813,6 +813,12 @@ ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int 
 
              region = 
                wl_compositor_create_region(_ecore_wl_compositor_get());
+             if (!region)
+               {
+                  wl_surface_set_input_region(win->surface, NULL);
+                  return;
+               }
+
              wl_region_add(region, x, y, w, h);
              wl_surface_set_input_region(win->surface, region);
              wl_region_destroy(region);
