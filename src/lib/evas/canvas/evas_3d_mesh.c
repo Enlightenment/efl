@@ -117,6 +117,9 @@ _mesh_init(Evas_3D_Mesh_Data *pd)
    pd->assembly = EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES;
 
    pd->nodes = NULL;
+   pd->blend_sfactor = EVAS_3D_BLEND_ONE;
+   pd->blend_dfactor = EVAS_3D_BLEND_ZERO;
+   pd->blending = EINA_FALSE;
 }
 
 static inline void
@@ -767,6 +770,35 @@ EOLIAN static Eina_Bool
 _evas_3d_mesh_fog_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
    return pd->fog_enabled;
+}
+
+EOLIAN static void
+_evas_3d_mesh_blending_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool blending)
+{
+   pd->blending = blending;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_BLENDING, NULL));
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_mesh_blending_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+{
+   return pd->blending;
+}
+
+EOLIAN static void
+_evas_3d_mesh_blending_func_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Blend_Func sfactor, Evas_3D_Blend_Func dfactor)
+{
+   pd->blend_sfactor = sfactor;
+   pd->blend_dfactor = dfactor;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_BLENDING, NULL));
+}
+
+EOLIAN static void
+_evas_3d_mesh_blending_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
+                                   Evas_3D_Blend_Func *sfactor, Evas_3D_Blend_Func *dfactor)
+{
+   if (sfactor) *sfactor = pd->blend_sfactor;
+   if (dfactor) *dfactor = pd->blend_dfactor;
 }
 
 EOLIAN static void

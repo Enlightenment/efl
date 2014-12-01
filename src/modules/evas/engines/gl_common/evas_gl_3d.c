@@ -1103,6 +1103,9 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
    if (pdmesh->shadowed)
         data->flags |= E3D_SHADER_FLAG_SHADOWED;
 
+   data->blending = pdmesh->blending;
+   data->blend_sfactor = pdmesh->blend_sfactor;
+   data->blend_dfactor = pdmesh->blend_dfactor;
    data->mode = pdmesh->shade_mode;
    data->assembly = pdmesh->assembly;
    data->vertex_count = pdmesh->vertex_count;

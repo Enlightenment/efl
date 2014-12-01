@@ -333,6 +333,10 @@ struct _Evas_3D_Mesh
    Eina_Hash               *nodes;
    Eina_Bool               shadowed;
 
+   Eina_Bool               blending :1;
+   Evas_3D_Blend_Func      blend_sfactor;
+   Evas_3D_Blend_Func      blend_dfactor;
+
    Evas_Color              fog_color;
    Eina_Bool               fog_enabled :1;
 };

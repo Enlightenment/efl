@@ -84,7 +84,10 @@ struct _E3D_Draw_Data
 
    Evas_Real shininess;
 
-   GLint       smap_sampler;
+   GLint                   smap_sampler;
+   Evas_3D_Blend_Func      blend_sfactor;
+   Evas_3D_Blend_Func      blend_dfactor;
+   Eina_Bool               blending : 1;
 
    struct {
         Evas_Vec4   position;

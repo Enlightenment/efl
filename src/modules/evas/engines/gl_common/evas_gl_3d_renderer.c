@@ -41,6 +41,46 @@ _gl_assembly_get(Evas_3D_Vertex_Assembly assembly)
      }
 }
 
+static inline GLenum
+_gl_blend_func_get(Evas_3D_Blend_Func blend_func)
+{
+   switch (blend_func)
+     {
+      case EVAS_3D_BLEND_ZERO:
+         return GL_ZERO;
+      case EVAS_3D_BLEND_ONE:
+         return GL_ONE;
+      case EVAS_3D_BLEND_SRC_COLOR:
+         return GL_SRC_COLOR;
+      case EVAS_3D_BLEND_ONE_MINUS_SRC_COLOR:
+         return GL_ONE_MINUS_SRC_COLOR;
+      case EVAS_3D_BLEND_DST_COLOR:
+         return GL_DST_COLOR;
+      case EVAS_3D_BLEND_ONE_MINUS_DST_COLOR:
+         return GL_ONE_MINUS_DST_COLOR;
+      case EVAS_3D_BLEND_SRC_ALPHA:
+         return GL_SRC_ALPHA;
+      case EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA:
+         return GL_ONE_MINUS_SRC_ALPHA;
+      case EVAS_3D_BLEND_DST_ALPHA:
+         return GL_DST_ALPHA;
+      case EVAS_3D_BLEND_ONE_MINUS_DST_ALPHA:
+         return GL_ONE_MINUS_DST_ALPHA;
+      case EVAS_3D_BLEND_CONSTANT_COLOR:
+         return GL_CONSTANT_COLOR;
+      case EVAS_3D_BLEND_ONE_MINUS_CONSTANT_COLOR:
+         return GL_ONE_MINUS_CONSTANT_COLOR;
+      case EVAS_3D_BLEND_CONSTANT_ALPHA:
+         return GL_CONSTANT_ALPHA;
+      case EVAS_3D_BLEND_ONE_MINUS_CONSTANT_ALPHA:
+         return GL_ONE_MINUS_CONSTANT_ALPHA;
+      case EVAS_3D_BLEND_SRC_ALPHA_SATURATE:
+         return GL_SRC_ALPHA_SATURATE;
+      default:
+         return GL_ZERO;
+     }
+}
+
 static inline void
 _renderer_vertex_attrib_array_enable(E3D_Renderer *renderer, int index)
 {
@@ -270,6 +310,13 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
 
    while (index < E3D_MAX_VERTEX_ATTRIB_COUNT)
      _renderer_vertex_attrib_array_disable(renderer, index++);
+
+   if (data->blending)
+     {
+        glEnable(GL_BLEND);
+        glBlendFunc(_gl_blend_func_get(data->blend_sfactor), _gl_blend_func_get(data->blend_dfactor));
+     }
+   else glDisable(GL_BLEND);
 
    if (data->indices)
      {

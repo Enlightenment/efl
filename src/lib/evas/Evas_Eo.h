@@ -486,6 +486,7 @@ typedef enum _Evas_3D_State
    EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY,
    EVAS_3D_STATE_MESH_SHADE_MODE,
    EVAS_3D_STATE_MESH_FOG,
+   EVAS_3D_STATE_MESH_BLENDING,
 
    EVAS_3D_STATE_CAMERA_PROJECTION = 1,
 
@@ -605,6 +606,40 @@ typedef enum _Evas_3D_Vertex_Assembly
    /**< Vertices are organized as a triangle fan */
    EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
 } Evas_3D_Vertex_Assembly;
+
+typedef enum _Evas_3D_Blend_Func
+{
+   /**< The scale factors for color components is (0, 0, 0, 0)*/
+   EVAS_3D_BLEND_ZERO = 0,
+   /**< The scale factors for color components is (1, 1, 1, 1)*/
+   EVAS_3D_BLEND_ONE,
+   /**< The scale factors for color components is (Rs/kR, Gs/kG, Bs/kB, As/kA)*/
+   EVAS_3D_BLEND_SRC_COLOR,
+   /**< The scale factors for color components is (1, 1, 1, 1) - (Rs/kR, Gs/kG, Bs/kB, As/kA)*/
+   EVAS_3D_BLEND_ONE_MINUS_SRC_COLOR,
+   /**< The scale factors for color components is (Rd/kR, Gd/kG, Bd/kB, Ad/kA)*/
+   EVAS_3D_BLEND_DST_COLOR,
+   /**< The scale factors for color components is (1, 1, 1, 1) - (Rd/kR, Gd/kG, Bd/kB, Ad/kA)*/
+   EVAS_3D_BLEND_ONE_MINUS_DST_COLOR,
+   /**< The scale factors for color components is (As/kA, As/kA, As/kA, As/kA)*/
+   EVAS_3D_BLEND_SRC_ALPHA,
+   /**< The scale factors for color components is (1, 1, 1, 1) - (As/kA, As/kA, As/kA, As/kA)*/
+   EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA,
+   /**< The scale factors for color components is (Ad/kA, Ad/kA, Ad/kA, Ad/kA)*/
+   EVAS_3D_BLEND_DST_ALPHA,
+   /**< The scale factors for color components is (1, 1, 1, 1) - (Ad/kA, Ad/kA, Ad/kA, Ad/kA)*/
+   EVAS_3D_BLEND_ONE_MINUS_DST_ALPHA,
+   /**< The scale factors for color components is (Rc, Gc, Bc, Ac)*/
+   EVAS_3D_BLEND_CONSTANT_COLOR,
+   /**< The scale factors for color components is (1, 1, 1, 1) - (Rc, Gc, Bc, Ac)*/
+   EVAS_3D_BLEND_ONE_MINUS_CONSTANT_COLOR,
+   /**< The scale factors for color components is (Ac, Ac, Ac, Ac)*/
+   EVAS_3D_BLEND_CONSTANT_ALPHA,
+   /**< The scale factors for color components is (1, 1, 1, 1) - (Ac, Ac, Ac, Ac)*/
+   EVAS_3D_BLEND_ONE_MINUS_CONSTANT_ALPHA,
+   /**< The scale factors for color components is (i, i, i, 1) where i = min(As, kA, Ad)/kA*/
+   EVAS_3D_BLEND_SRC_ALPHA_SATURATE,
+} Evas_3D_Blend_Func;
 
 /**
  * Color formats of pixel data
