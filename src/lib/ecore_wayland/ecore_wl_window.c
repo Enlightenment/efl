@@ -849,6 +849,11 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
 
         region = 
           wl_compositor_create_region(_ecore_wl_compositor_get());
+        if (!region)
+          {
+             wl_surface_set_opaque_region(win->surface, NULL);
+             return;
+          }
 
         switch (win->rotation)
           {
