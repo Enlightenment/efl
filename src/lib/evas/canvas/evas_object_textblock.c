@@ -11376,8 +11376,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         /* UNDERLINE DASHED */
         DRAW_FORMAT_DASHED(underline_dash, ln->baseline + line_position,
                          line_thickness,
-                         ti->parent.format->underline_dash_width,
-                         ti->parent.format->underline_dash_gap);
+                         itr->format->underline_dash_width,
+                         itr->format->underline_dash_gap);
 
         /* UNDERLINE2 */
         DRAW_FORMAT(underline2, ln->baseline + line_position + line_thickness +
