@@ -270,6 +270,7 @@
 #define SHAD_TEXUV3 4
 #define SHAD_TEXA   5
 #define SHAD_TEXSAM 6
+#define SHAD_TEXM   7
 
 typedef struct _Evas_GL_Program               Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source        Evas_GL_Program_Source;
@@ -419,7 +420,7 @@ struct _Evas_Engine_GL_Context
       int                top_pipe;
       struct {
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texu, cur_texv, cur_texa;
+         GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
@@ -447,7 +448,7 @@ struct _Evas_Engine_GL_Context
       struct {
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texu, cur_texv, cur_texa;
+         GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
          int             render_op;
          int             cx, cy, cw, ch;
@@ -464,6 +465,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texuv3;
          GLfloat *texa;
          GLfloat *texsam;
+         GLfloat *texm;
          Eina_Bool line: 1;
          Eina_Bool use_vertex : 1;
          Eina_Bool use_color : 1;
@@ -472,6 +474,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texuv3 : 1;
          Eina_Bool use_texa : 1;
          Eina_Bool use_texsam : 1;
+         Eina_Bool use_texm : 1;
          Eina_Bool anti_alias : 1;
          Evas_GL_Image *im;
          GLuint buffer;

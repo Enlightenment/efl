@@ -830,11 +830,24 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, YUV, texu);
         SHADER_TEXTURE_ADD(shared, YUV, texv);
 
+        SHADER_TEXTURE_ADD(shared, YUV_MASK, tex);
+        SHADER_TEXTURE_ADD(shared, YUV_MASK, texu);
+        SHADER_TEXTURE_ADD(shared, YUV_MASK, texv);
+        SHADER_TEXTURE_ADD(shared, YUV_MASK, texm);
+
         SHADER_TEXTURE_ADD(shared, YUY2, tex);
         SHADER_TEXTURE_ADD(shared, YUY2, texuv);
 
+        SHADER_TEXTURE_ADD(shared, YUY2_MASK, tex);
+        SHADER_TEXTURE_ADD(shared, YUY2_MASK, texuv);
+        SHADER_TEXTURE_ADD(shared, YUY2_MASK, texm);
+
         SHADER_TEXTURE_ADD(shared, NV12, tex);
         SHADER_TEXTURE_ADD(shared, NV12, texuv);
+
+        SHADER_TEXTURE_ADD(shared, NV12_MASK, tex);
+        SHADER_TEXTURE_ADD(shared, NV12_MASK, texuv);
+        SHADER_TEXTURE_ADD(shared, NV12_MASK, texm);
 
         SHADER_TEXTURE_ADD(shared, YUV_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, YUV_NOMUL, texu);
@@ -846,23 +859,29 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, NV12_NOMUL, texuv);
 
+        // Note: there is no nomul version for YUV,YUY2,NV12,RGB+A with MASK
+
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, tex);
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, texa);
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, texa);
 
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_MASK, tex);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_MASK, texa);
+        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_MASK, texm);
+
         SHADER_TEXTURE_ADD(shared, IMG_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK, texa);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK, texm);
         SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, texa);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, texm);
 
         SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA, texa);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA, texm);
         SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, texa);
+        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, texm);
 
         SHADER_TEXTURE_ADD(shared, FONT_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, FONT_MASK, texa);
+        SHADER_TEXTURE_ADD(shared, FONT_MASK, texm);
 
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
@@ -923,6 +942,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
              if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
              if (gc->pipe[i].array.texsam) free(gc->pipe[i].array.texsam);
+             if (gc->pipe[i].array.texm) free(gc->pipe[i].array.texm);
           }
      }
 
@@ -998,6 +1018,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    gc->state.current.cur_texu = 0;
    gc->state.current.cur_texv = 0;
    gc->state.current.cur_texa = 0;
+   gc->state.current.cur_texm = 0;
    gc->state.current.render_op = 0;
    gc->state.current.smooth = 0;
    gc->state.current.blend = 0;
@@ -1025,6 +1046,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
         gc->pipe[i].shader.cur_texu = 0;
         gc->pipe[i].shader.cur_texv = 0;
         gc->pipe[i].shader.cur_texa = 0;
+        gc->pipe[i].shader.cur_texm = 0;
         gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
         gc->pipe[i].shader.smooth = 0;
         gc->pipe[i].shader.blend = 0;
@@ -1193,31 +1215,48 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    _evas_gl_common_viewport_set(gc);
 }
 
-#define PUSH_VERTEX(n, x, y, z) \
+#define PUSH_VERTEX(n, x, y, z) do { \
    gc->pipe[n].array.vertex[nv++] = x; \
    gc->pipe[n].array.vertex[nv++] = y; \
-   gc->pipe[n].array.vertex[nv++] = z
-#define PUSH_COLOR(n, r, g, b, a) \
+   gc->pipe[n].array.vertex[nv++] = z; } while(0)
+#define PUSH_COLOR(n, r, g, b, a) do { \
    gc->pipe[n].array.color[nc++] = r; \
    gc->pipe[n].array.color[nc++] = g; \
    gc->pipe[n].array.color[nc++] = b; \
-   gc->pipe[n].array.color[nc++] = a
-#define PUSH_TEXUV(n, u, v) \
+   gc->pipe[n].array.color[nc++] = a; } while(0)
+#define PUSH_TEXUV(n, u, v) do { \
    gc->pipe[n].array.texuv[nu++] = u; \
-   gc->pipe[n].array.texuv[nu++] = v
-#define PUSH_TEXUV2(n, u, v) \
+   gc->pipe[n].array.texuv[nu++] = v; } while(0)
+#define PUSH_TEXUV2(n, u, v) do { \
    gc->pipe[n].array.texuv2[nu2++] = u; \
-   gc->pipe[n].array.texuv2[nu2++] = v
-#define PUSH_TEXUV3(n, u, v) \
+   gc->pipe[n].array.texuv2[nu2++] = v; } while(0)
+#define PUSH_TEXUV3(n, u, v) do { \
    gc->pipe[n].array.texuv3[nu3++] = u; \
-   gc->pipe[n].array.texuv3[nu3++] = v
-#define PUSH_TEXA(n, u, v) \
+   gc->pipe[n].array.texuv3[nu3++] = v; } while(0)
+#define PUSH_TEXA(n, u, v) do { \
    gc->pipe[n].array.texa[na++] = u; \
-   gc->pipe[n].array.texa[na++] = v
-#define PUSH_TEXSAM(n, x, y) \
+   gc->pipe[n].array.texa[na++] = v; } while(0)
+#define PUSH_TEXM(n, u, v) do { \
+   gc->pipe[n].array.texm[nm++] = u; \
+   gc->pipe[n].array.texm[nm++] = v; } while(0)
+#define PUSH_TEXSAM(n, x, y) do { \
    gc->pipe[n].array.texsam[ns++] = x; \
-   gc->pipe[n].array.texsam[ns++] = y
+   gc->pipe[n].array.texsam[ns++] = y; } while(0)
 
+#define PUSH_6_COLORS(pn, r, g, b, a) \
+   do { int i; for (i = 0; i < 6; i++) PUSH_COLOR(pn, r, g, b, a); } while(0)
+
+#define PIPE_GROW(gc, pn, inc) \
+   int nv = gc->pipe[pn].array.num * 3; (void) nv; \
+   int nc = gc->pipe[pn].array.num * 4; (void) nc; \
+   int nu = gc->pipe[pn].array.num * 2; (void) nu; \
+   int nu2 = gc->pipe[pn].array.num * 2; (void) nu2; \
+   int nu3 = gc->pipe[pn].array.num * 2; (void) nu3; \
+   int na = gc->pipe[pn].array.num * 2; (void) na; \
+   int ns = gc->pipe[pn].array.num * 2; (void) ns; \
+   int nm = gc->pipe[pn].array.num * 2; (void) nm; \
+   gc->pipe[pn].array.num += inc; \
+   array_alloc(gc, pn);
 
 static inline void
 array_alloc(Evas_Engine_GL_Context *gc, int n)
@@ -1236,6 +1275,7 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
         ALOC(texuv2, GLfloat, 2);
         ALOC(texuv3, GLfloat, 2);
         ALOC(texsam, GLfloat, 2);
+        ALOC(texm,   GLfloat, 2);
         return;
      }
    gc->pipe[n].array.alloc += 6 * 1024;
@@ -1251,6 +1291,7 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
    RALOC(texuv2, GLfloat, 2);
    RALOC(texuv3, GLfloat, 2);
    RALOC(texsam, GLfloat, 2);
+   RALOC(texm,   GLfloat, 2);
 }
 
 #ifdef GLPIPES
@@ -1426,6 +1467,7 @@ _evas_gl_common_context_push(int rtype,
    if (!((gc->pipe[pn].region.type == rtype)
          && (!tex || gc->pipe[pn].shader.cur_tex == current_tex)
          && (!texa || gc->pipe[pn].shader.cur_texa == current_texa)
+         && (!texm || gc->pipe[pn].shader.cur_texm == current_texm)
          && (gc->pipe[pn].shader.cur_prog == prog)
          && (gc->pipe[pn].shader.smooth == smooth)
          && (gc->pipe[pn].shader.blend == blend)
@@ -1457,10 +1499,9 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                  int clip, int cx, int cy, int cw, int ch,
                                  int r, int g, int b, int a)
 {
-   int pnum, nv, nc, i;
    Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
-   int pn = 0;
+   int pn = 0, i;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) && (a < 255))
      blend = EINA_TRUE;
@@ -1487,12 +1528,9 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_texm = 0;
 
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4;
-   gc->pipe[pn].array.num += 2;
-   array_alloc(gc, pn);
-
+   PIPE_GROW(gc, pn, 2);
    PUSH_VERTEX(pn, x1, y1, 0);
    PUSH_VERTEX(pn, x2, y2, 0);
 
@@ -1511,6 +1549,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_texm = 0;
 }
 
 void
@@ -1518,7 +1557,6 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                       int x, int y, int w, int h,
                                       int r, int g, int b, int a)
 {
-   int pnum, nv, nc, i;
    Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0;
@@ -1550,10 +1588,11 @@ again:
         gc->pipe[pn].array.use_texuv3 = 0;
         gc->pipe[pn].array.use_texa = 0;
         gc->pipe[pn].array.use_texsam = 0;
+        gc->pipe[pn].array.use_texm = 0;
      }
    else
      {
-        int found = 0;
+        int found = 0, i;
 
         for (i = pn; i >= 0; i--)
           {
@@ -1598,6 +1637,7 @@ again:
              gc->pipe[pn].array.use_texuv3 = 0;
              gc->pipe[pn].array.use_texa = 0;
              gc->pipe[pn].array.use_texsam = 0;
+             gc->pipe[pn].array.use_texm = 0;
          }
      }
 #else
@@ -1630,14 +1670,11 @@ again:
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_texm = 0;
 #endif
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    PUSH_VERTEX(pn, x    , y    , 0);
    PUSH_VERTEX(pn, x + w, y    , 0);
@@ -1647,10 +1684,7 @@ again:
    PUSH_VERTEX(pn, x + w, y + h, 0);
    PUSH_VERTEX(pn, x    , y + h, 0);
 
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -1663,7 +1697,6 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                   Eina_Bool smooth, Eina_Bool tex_only)
 {
    Evas_GL_Texture_Pool *pt;
-   int pnum, nv, nc, nu, ns, na, i;
    GLfloat tx1, tx2, ty1, ty2;
    GLfloat offsetx, offsety;
    Eina_Bool blend = EINA_FALSE;
@@ -1853,7 +1886,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    gc->pipe[pn].region.type = RTYPE_IMAGE;
    gc->pipe[pn].shader.cur_tex = pt->texture;
-   gc->pipe[pn].shader.cur_texa = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -1870,15 +1903,11 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = !!mtex;
+   gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texsam = sam;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; ns = pnum * 2; na = pnum * 2;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
@@ -1927,27 +1956,24 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        GLfloat t2x1, t2x2, t2y1, t2y2;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXA(pn, t2x1, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
 
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y2);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
    
    // if nomul... dont need this
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -1958,7 +1984,6 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                  Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
                                  int r, int g, int b, int a)
 {
-   int pnum, nv, nc, nu, na, i;
    GLfloat tx1, tx2, ty1, ty2;
    GLuint prog;
    int pn = 0;
@@ -1978,7 +2003,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
 
    gc->pipe[pn].region.type = RTYPE_FONT;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-   gc->pipe[pn].shader.cur_texa = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = 0;
    gc->pipe[pn].shader.blend = 1;
@@ -1994,15 +2019,11 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = !!mtex;
+   gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; na = 2 * pnum;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    if (sw == 0.0)
      {
@@ -2037,26 +2058,23 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        GLfloat t2x1, t2x2, t2y1, t2y2;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXA(pn, t2x1, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
 
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y2);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
 
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2068,7 +2086,6 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                 int r, int g, int b, int a,
                                 Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nu2, nu3, na, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog;
@@ -2092,7 +2109,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
    gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
-   gc->pipe[pn].shader.cur_texa = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -2108,16 +2125,11 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 1;
-   gc->pipe[pn].array.use_texa = !!mtex;
+   gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; na = pnum * 2;
-   nu2 = pnum * 2; nu3 = pnum * 2;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    tx1 = (sx) / (double)tex->pt->w;
    ty1 = (sy) / (double)tex->pt->h;
@@ -2163,24 +2175,23 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        PUSH_TEXA(pn, t2x1, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y2);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
+
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
 
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2192,7 +2203,6 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
                                  int r, int g, int b, int a,
                                  Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nu2, na, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog;
@@ -2215,7 +2225,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].region.type = RTYPE_YUY2;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
-   gc->pipe[pn].shader.cur_texa = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -2231,16 +2241,11 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = !!mtex;
+   gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; na = pnum * 2;
-   nu2 = pnum * 2;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    tx1 = (sx) / (double)tex->pt->w;
    ty1 = (sy) / (double)tex->pt->h;
@@ -2278,24 +2283,23 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        PUSH_TEXA(pn, t2x1, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y2);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
+
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
 
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2307,7 +2311,6 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                  int r, int g, int b, int a,
                                  Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nu2, na, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog;
@@ -2332,7 +2335,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.cur_tex_dyn = tex->pt->dyn.img;
    gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
    gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
-   gc->pipe[pn].shader.cur_texa = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -2348,16 +2351,11 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
-   gc->pipe[pn].array.use_texa = !!mtex;
+   gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; na = pnum * 2;
-   nu2 = pnum * 2;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    tx1 = (sx) / (double)tex->pt->w;
    ty1 = (sy) / (double)tex->pt->h;
@@ -2395,24 +2393,23 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        PUSH_TEXA(pn, t2x1, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y2);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
+
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
 
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2433,7 +2430,6 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
     * colorspaces as well (eg. RGB565+Alpha4, ...).
     */
 
-   int pnum, nv, nc, nu, na, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    GLuint prog;
    int pn;
@@ -2454,8 +2450,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].region.type = RTYPE_IMAGE;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    gc->pipe[pn].shader.cur_texa = tex->pta->texture;
-#warning FIXME: must add texm instead
-   //gc->pipe[pn].shader.cur_texu = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = EINA_TRUE;
@@ -2474,13 +2469,10 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = EINA_TRUE;
    gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_texm = !!mtex;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; na = pnum * 2;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    // FIXME: pt and pta could have different x,y
    tx1 = (tex->x + sx) / (double)tex->pt->w;
@@ -2517,28 +2509,25 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    PUSH_TEXA(pn, t2x2, t2y2);
    PUSH_TEXA(pn, t2x1, t2y2);
 
-   /*
    if (mtex)
      {
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        PUSH_TEXM(pn, t2x1, t2y1);
-        PUSH_TEXM(pn, t2x2, t2y1);
-        PUSH_TEXM(pn, t2x1, t2y2);
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXM(pn, t2x2, t2y1);
-        PUSH_TEXM(pn, t2x2, t2y2);
-        PUSH_TEXM(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
+
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
-   */
 
-   for (i = 0; i < 6; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+   PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2552,7 +2541,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       Eina_Bool smooth, Eina_Bool tex_only,
                                       Evas_Colorspace cspace)
 {
-   int pnum, nv, nc, nu, nu2, nu3, na, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
    int x = 0, y = 0, w = 0, h = 0, px = 0, py = 0;
    GLfloat tx[4], ty[4], t2x[4], t2y[4];
@@ -2561,7 +2549,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    GLuint prog = gc->shared->shader[SHADER_IMG].prog;
    Eina_Bool utexture = EINA_FALSE;
    Eina_Bool uvtexture = EINA_FALSE;
-   int pn = 0;
+   int pn = 0, i;
    int flat = 0;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
@@ -2722,7 +2710,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
        gc->pipe[pn].shader.cur_texu = tex->ptuv->texture;
        gc->pipe[pn].shader.cur_texu_dyn = tex->ptuv->dyn.img;
      }
-   gc->pipe[pn].shader.cur_texa = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -2738,16 +2726,11 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
-   gc->pipe[pn].array.use_texa = !!mtex;
+   gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
-
-   pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2; na = pnum * 2;
-   nu2 = pnum * 2; nu3 = pnum * 2;
-   gc->pipe[pn].array.num += 6;
-   array_alloc(gc, pn);
+   PIPE_GROW(gc, pn, 6);
 
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
@@ -2806,20 +2789,20 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        GLfloat t2x1, t2y1, t2x2, t2y2;
+        GLfloat tmx1, tmy1, tmx2, tmy2;
 
-        t2x1 = (mtex->x + mx) / (double)mtex->pt->w;
-        t2y1 = (mtex->y + my) / (double)mtex->pt->h;
-        t2x2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
-        t2y2 = (mtex->y + my + mh) / (double)mtex->pt->h;
+        tmx1 = (mtex->x + mx) / (double)mtex->pt->w;
+        tmy1 = (mtex->y + my) / (double)mtex->pt->h;
+        tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w;
+        tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h;
 
-        PUSH_TEXA(pn, t2x1, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx1, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx1, tmy2);
 
-        PUSH_TEXA(pn, t2x2, t2y1);
-        PUSH_TEXA(pn, t2x2, t2y2);
-        PUSH_TEXA(pn, t2x1, t2y2);
+        PUSH_TEXM(pn, tmx2, tmy1);
+        PUSH_TEXM(pn, tmx2, tmy2);
+        PUSH_TEXM(pn, tmx1, tmy2);
      }
 
    if (!flat)
@@ -3178,6 +3161,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *texuv3_ptr = NULL;
         unsigned char *texa_ptr = NULL;
         unsigned char *texsam_ptr = NULL;
+        unsigned char *texm_ptr = NULL;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
@@ -3193,7 +3177,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv3_ptr = texuv2_ptr + TEX_SIZE;
              texa_ptr = texuv3_ptr + TEX_SIZE;
              texsam_ptr = texa_ptr + TEX_SIZE;
-# define END_POINTER (texsam_ptr + TEX_SIZE)
+             texm_ptr = texsam_ptr + TEX_SIZE;
+# define END_POINTER (texm_ptr + TEX_SIZE)
 
              glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
              if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
@@ -3222,6 +3207,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     memcpy(x + (unsigned long)texa_ptr, gc->pipe[i].array.texa, TEX_SIZE);
                   if (gc->pipe[i].array.use_texsam)
                     memcpy(x + (unsigned long)texsam_ptr, gc->pipe[i].array.texsam, TEX_SIZE);
+                  if (gc->pipe[i].array.use_texm)
+                    memcpy(x + (unsigned long)texm_ptr, gc->pipe[i].array.texm, TEX_SIZE);
 /*                  
                   fprintf(stderr, "copy %i bytes [%i/%i slots] [%i + %i + %i + %i + %i + %i + %i] <%i %i %i %i %i %i %i>\n",
                           (int)((unsigned char *)END_POINTER),
@@ -3234,7 +3221,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                           gc->pipe[i].array.use_texuv2,
                           gc->pipe[i].array.use_texuv3,
                           gc->pipe[i].array.use_texa,
-                          gc->pipe[i].array.use_texsam);
+                          gc->pipe[i].array.use_texsam,
+                          gc->pipe[i].array.use_texm);
  */
                   glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
                }
@@ -3248,6 +3236,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv3_ptr = (unsigned char *)gc->pipe[i].array.texuv3;
              texa_ptr = (unsigned char *)gc->pipe[i].array.texa;
              texsam_ptr = (unsigned char *)gc->pipe[i].array.texsam;
+             texm_ptr = (unsigned char *)gc->pipe[i].array.texm;
           }
         glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)vertex_ptr);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -3292,6 +3281,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glDisableVertexAttribArray(SHAD_TEXUV);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
+
+             /* Alpha plane */
              if (gc->pipe[i].array.use_texa)
                 {
                    glEnableVertexAttribArray(SHAD_TEXA);
@@ -3333,8 +3324,52 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              else
                {
                   glDisableVertexAttribArray(SHAD_TEXA);
-
                }
+
+             /* Mask surface */
+             if (gc->pipe[i].array.use_texm)
+                {
+                   glEnableVertexAttribArray(SHAD_TEXM);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                   glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, (void *)texm_ptr);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                   glActiveTexture(GL_TEXTURE3);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+                  if (shared->info.anisotropic > 0.0)
+                    {
+                       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                    }
+#endif
+                   if (gc->pipe[i].shader.smooth)
+                      {
+                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                      }
+                   else
+                      {
+                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                      }
+                   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                   glActiveTexture(GL_TEXTURE0);
+                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  glDisableVertexAttribArray(SHAD_TEXM);
+               }
+
              if (gc->pipe[i].array.use_texsam)
                {
                   glEnableVertexAttribArray(SHAD_TEXSAM);
@@ -3489,6 +3524,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
         if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
         if (gc->pipe[i].array.texsam) free(gc->pipe[i].array.texsam);
+        if (gc->pipe[i].array.texm) free(gc->pipe[i].array.texm);
 
         gc->pipe[i].array.line = 0;
         gc->pipe[i].array.use_vertex = 0;
@@ -3498,6 +3534,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.use_texuv3 = 0;
         gc->pipe[i].array.use_texa = 0;
         gc->pipe[i].array.use_texsam = 0;
+        gc->pipe[i].array.use_texm = 0;
         
         gc->pipe[i].array.vertex = NULL;
         gc->pipe[i].array.color = NULL;
@@ -3506,6 +3543,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.texuv2 = NULL;
         gc->pipe[i].array.texuv3 = NULL;
         gc->pipe[i].array.texsam = NULL;
+        gc->pipe[i].array.texm = NULL;
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;

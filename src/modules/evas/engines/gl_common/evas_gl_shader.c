@@ -78,6 +78,7 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
    glBindAttribLocation(p->prog, SHAD_TEXA,   "tex_coorda");
    glBindAttribLocation(p->prog, SHAD_TEXSAM, "tex_sample");
+   glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
 
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -202,6 +203,8 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXA, "tex_coorda");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXSAM, "tex_sample");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glLinkProgram(p->prog);

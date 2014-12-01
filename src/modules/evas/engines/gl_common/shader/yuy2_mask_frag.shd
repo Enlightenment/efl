@@ -5,9 +5,9 @@ precision highp float;
 precision mediump float;
 #endif
 #endif
-uniform sampler2D tex, texuv, texa;
+uniform sampler2D tex, texuv, texm;
 varying vec4 col;
-varying vec2 tex_c, tex_cuv, tex_a;
+varying vec2 tex_c, tex_cuv, tex_m;
 void main()
 {
   float y,u,v,vmu,r,g,b;
@@ -25,6 +25,6 @@ void main()
   g=y-vmu;
   b=y+u;
 
-  gl_FragColor = vec4(r,g,b,1.0) * texture2D(texa, tex_a.xy).a * col;
+  gl_FragColor = vec4(r,g,b,1.0) * texture2D(texm, tex_m.xy).a * col;
 }
 
