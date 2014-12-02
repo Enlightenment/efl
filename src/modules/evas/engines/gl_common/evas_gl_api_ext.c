@@ -243,6 +243,33 @@ evgl_evasglWaitSync(Evas_GL *evas_gl EINA_UNUSED,
    return EXT_FUNC(eglWaitSyncKHR)(dpy, sync, flags);
 }
 
+static Eina_Bool
+evgl_evasglBindWaylandDisplay(Evas_GL *evas_gl EINA_UNUSED,
+                              void *wl_display)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglBindWaylandDisplayWL)(dpy, wl_display);
+}
+
+static Eina_Bool
+evgl_evasglUnbindWaylandDisplay(Evas_GL *evas_gl EINA_UNUSED,
+                                void *wl_display)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglUnbindWaylandDisplayWL)(dpy, wl_display);
+}
+
+static Eina_Bool
+evgl_evasglQueryWaylandBuffer(Evas_GL *evas_gl EINA_UNUSED,
+                              void *buffer, int attribute, int *value)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET();
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC(eglQueryWaylandBufferWL)(dpy, buffer, attribute, value);
+}
+
 
 #else
 #endif

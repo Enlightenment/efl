@@ -4123,6 +4123,27 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    int          (*evasglWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags);
    /** @} */
 
+   /**
+    * @name Evas GL Wayland functions
+    * @since 1.13
+    * @{ */
+   /**
+    * @anchor evasglBindWaylandDisplay
+    * @brief Requires the extension @c EGL_WL_bind_wayland_display, similar to eglBindWaylandDisplayWL.
+    */
+   Eina_Bool    (*evasglBindWaylandDisplay) (Evas_GL *evas_gl, void *wl_display);
+   /**
+    * @anchor evasglUnbindWaylandDisplay
+    * @brief Requires the extension @c EGL_WL_bind_wayland_display, similar to eglUnbindWaylandDisplayWL.
+    */
+   Eina_Bool    (*evasglUnbindWaylandDisplay) (Evas_GL *evas_gl, void *wl_display);
+   /**
+    * @anchor evasglQueryWaylandBuffer
+    * @brief Requires the extension @c EGL_WL_bind_wayland_display, similar to eglQueryWaylandBufferWL.
+    */
+   Eina_Bool    (*evasglQueryWaylandBuffer) (Evas_GL *evas_gl, void *buffer, int attribute, int *value);
+   /** @} */
+
    /* future calls will be added down here for expansion */
 };
 

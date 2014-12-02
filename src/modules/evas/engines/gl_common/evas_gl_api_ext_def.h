@@ -1600,6 +1600,32 @@ _EVASGL_EXT_BEGIN(EGL_KHR_wait_sync)
 
 _EVASGL_EXT_END()
 
+_EVASGL_EXT_BEGIN(EGL_WL_bind_wayland_display)
+
+        _EVASGL_EXT_DRVNAME(EGL_WL_bind_wayland_display)
+
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglBindWaylandDisplayWL, (EGLDisplay dpy, struct wl_display *display))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglBindWaylandDisplayWL")
+        _EVASGL_EXT_FUNCTION_PRIVATE_END()
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglUnbindWaylandDisplayWL, (EGLDisplay dpy, struct wl_display *display))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglUnbindWaylandDisplayWL")
+        _EVASGL_EXT_FUNCTION_PRIVATE_END()
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglQueryWaylandBufferWL, (EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglQueryWaylandBufferWL")
+        _EVASGL_EXT_FUNCTION_PRIVATE_END()
+
+        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglBindWaylandDisplay, (Evas_GL *evas_gl, void *wl_display))
+                _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglBindWaylandDisplay)
+        _EVASGL_EXT_FUNCTION_END()
+        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglUnbindWaylandDisplay, (Evas_GL *evas_gl, void *wl_display))
+                _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglUnbindWaylandDisplay)
+        _EVASGL_EXT_FUNCTION_END()
+        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglQueryWaylandBuffer, (Evas_GL *evas_gl, void *buffer, int attribute, int *value))
+                _EVASGL_EXT_FUNCTION_DRVFUNC(evgl_evasglQueryWaylandBuffer)
+        _EVASGL_EXT_FUNCTION_END()
+
+_EVASGL_EXT_END()
+
 
 #if 0
 _EVASGL_EXT_BEGIN(EGL_SEC_map_image)
