@@ -53,5 +53,6 @@ typedef enum {
    SHADER_NV12_MASK,
    SHADER_YUY2_MASK,
    SHADER_RGB_A_PAIR_MASK,
+   SHADER_RECT_MASK,
    SHADER_LAST
 } Evas_GL_Shader;
