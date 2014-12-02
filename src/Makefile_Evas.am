@@ -694,6 +694,8 @@ modules/evas/engines/gl_common/shader/yuy2_mask_frag.shd \
 modules/evas/engines/gl_common/shader/yuy2_mask_vert.shd \
 modules/evas/engines/gl_common/shader/rgb_a_pair_mask_frag.shd \
 modules/evas/engines/gl_common/shader/rgb_a_pair_mask_vert.shd \
+modules/evas/engines/gl_common/shader/rect_mask_frag.shd \
+modules/evas/engines/gl_common/shader/rect_mask_vert.shd \
 $(NULL)
 
 EXTRA_DIST += \

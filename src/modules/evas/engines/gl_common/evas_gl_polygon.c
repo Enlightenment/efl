@@ -139,6 +139,8 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    Evas_GL_Polygon_Point *pt;
    Eina_Inlist *spans;
 
+   // TODO: Implement masking support (not very important right now)
+
    /* save out clip info */
    c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
 
@@ -268,7 +270,9 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                   y = span->y;
                   w = span->w;
                   h = 1;
-                  evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca);
+                  evas_gl_common_context_rectangle_push(gc, x, y, w, h,
+                                                        cr, cg, cb, ca,
+                                                        NULL, 0, 0, 0, 0);
                }
           }
         else
@@ -290,7 +294,9 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                                  h = 1;
                                  RECTS_CLIP_TO_RECT(x, y, w, h, r->x, r->y, r->w, r->h);
                                  if ((w > 0) && (h > 0))
-                                   evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca);
+                                   evas_gl_common_context_rectangle_push(gc, x, y, w, h,
+                                                                         cr, cg, cb, ca,
+                                                                         NULL, 0, 0, 0, 0);
                               }
                          }
                     }

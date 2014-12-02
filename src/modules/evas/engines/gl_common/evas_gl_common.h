@@ -720,7 +720,8 @@ void              evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                                    int r, int g, int b, int a);
 void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                                         int x, int y, int w, int h,
-                                                        int r, int g, int b, int a);
+                                                        int r, int g, int b, int a,
+                                                        Evas_GL_Texture *mtex, int mx, int my, int mw, int mh);
 void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *tex,
                                                     double sx, double sy, double sw, double sh,

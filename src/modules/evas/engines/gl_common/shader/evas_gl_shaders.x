@@ -2656,6 +2656,51 @@ Evas_GL_Program_Source shader_rgb_a_pair_mask_vert_src =
    NULL, 0
 };
 
+/* Source: modules/evas/engines/gl_common/shader/rect_mask_frag.shd */
+static const char const rect_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D texm;\n"
+   "varying vec4 col;\n"
+   "varying vec4 coord_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(texm, coord_m.xy).a * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_rect_mask_frag_src =
+{
+   rect_mask_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/rect_mask_vert.shd */
+static const char const rect_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec4 tex_coordm;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec4 coord_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   coord_m = tex_coordm;\n"
+   "}\n";
+Evas_GL_Program_Source shader_rect_mask_vert_src =
+{
+   rect_mask_vert_glsl,
+   NULL, 0
+};
+
 static const struct {
    Evas_GL_Shader id;
    Evas_GL_Program_Source *vert;
@@ -2713,5 +2758,6 @@ static const struct {
    { SHADER_NV12_MASK, &(shader_nv12_mask_vert_src), &(shader_nv12_mask_frag_src), "nv12_mask" },
    { SHADER_YUY2_MASK, &(shader_yuy2_mask_vert_src), &(shader_yuy2_mask_frag_src), "yuy2_mask" },
    { SHADER_RGB_A_PAIR_MASK, &(shader_rgb_a_pair_mask_vert_src), &(shader_rgb_a_pair_mask_frag_src), "rgb_a_pair_mask" },
+   { SHADER_RECT_MASK, &(shader_rect_mask_vert_src), &(shader_rect_mask_frag_src), "rect_mask" },
 };
 

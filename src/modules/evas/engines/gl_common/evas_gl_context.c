@@ -883,6 +883,8 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, FONT_MASK, tex);
         SHADER_TEXTURE_ADD(shared, FONT_MASK, texm);
 
+        SHADER_TEXTURE_ADD(shared, RECT_MASK, texm);
+
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
         else glUseProgram(gc->state.current.cur_prog);
@@ -1569,14 +1571,24 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
 void
 evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                       int x, int y, int w, int h,
-                                      int r, int g, int b, int a)
+                                      int r, int g, int b, int a,
+                                      Evas_GL_Texture *mtex,
+                                      int mx, int my, int mw, int mh)
 {
    Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
+   GLuint mtexid = 0;
    int pn = 0;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) && (a < 255))
      blend = EINA_TRUE;
+
+   if (mtex)
+     {
+        blend = EINA_TRUE;
+        mtexid = mtex->pt->texture;
+        prog = gc->shared->shader[SHADER_RECT_MASK].prog;
+     }
 
 again:
    vertex_array_size_check(gc, gc->state.top_pipe, 6);
@@ -1586,6 +1598,7 @@ again:
      {
         gc->pipe[pn].region.type = RTYPE_RECT;
         gc->pipe[pn].shader.cur_tex = 0;
+        gc->pipe[pn].shader.cur_texm = mtexid;
         gc->pipe[pn].shader.cur_prog = prog;
         gc->pipe[pn].shader.blend = blend;
         gc->pipe[pn].shader.render_op = gc->dc->render_op;
@@ -1602,7 +1615,7 @@ again:
         gc->pipe[pn].array.use_texuv3 = 0;
         gc->pipe[pn].array.use_texa = 0;
         gc->pipe[pn].array.use_texsam = 0;
-        gc->pipe[pn].array.use_texm = 0;
+        gc->pipe[pn].array.use_texm = !!mtex;
      }
    else
      {
@@ -1612,6 +1625,7 @@ again:
           {
              if ((gc->pipe[i].region.type == RTYPE_RECT)
                  && (gc->pipe[i].shader.cur_tex == 0)
+                 && (gc->pipe[i].shader.cur_texm == mtexid)
                  && (gc->pipe[i].shader.cur_prog == prog)
                  && (gc->pipe[i].shader.blend == blend)
                  && (gc->pipe[i].shader.render_op == gc->dc->render_op)
@@ -1635,6 +1649,7 @@ again:
              gc->state.top_pipe = pn;
              gc->pipe[pn].region.type = RTYPE_RECT;
              gc->pipe[pn].shader.cur_tex = 0;
+             gc->pipe[pn].shader.cur_texm = mtexid;
              gc->pipe[pn].shader.cur_prog = prog;
              gc->pipe[pn].shader.blend = blend;
              gc->pipe[pn].shader.render_op = gc->dc->render_op;
@@ -1651,11 +1666,12 @@ again:
              gc->pipe[pn].array.use_texuv3 = 0;
              gc->pipe[pn].array.use_texa = 0;
              gc->pipe[pn].array.use_texsam = 0;
-             gc->pipe[pn].array.use_texm = 0;
+             gc->pipe[pn].array.use_texm = !!mtex;
          }
      }
 #else
    if ((gc->pipe[pn].shader.cur_tex != 0)
+       || (gc->pipe[pn].shader.cur_texm != mtexid)
        || (gc->pipe[pn].shader.cur_prog != prog)
        || (gc->pipe[pn].shader.blend != blend)
        || (gc->pipe[pn].shader.render_op != gc->dc->render_op)
@@ -1665,6 +1681,7 @@ again:
         shader_array_flush(gc);
         pn = gc->state.top_pipe;
         gc->pipe[pn].shader.cur_tex = 0;
+        gc->pipe[pn].shader.cur_texm = mtexid;
         gc->pipe[pn].shader.cur_prog = prog;
         gc->pipe[pn].shader.blend = blend;
         gc->pipe[pn].shader.render_op = gc->dc->render_op;
@@ -1684,7 +1701,7 @@ again:
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texm = !!mtex;
 #endif
 
    pipe_region_expand(gc, pn, x, y, w, h);
@@ -1697,6 +1714,8 @@ again:
    PUSH_VERTEX(pn, x + w, y    , 0);
    PUSH_VERTEX(pn, x + w, y + h, 0);
    PUSH_VERTEX(pn, x    , y + h, 0);
+
+   PUSH_MASK(pn, mtex, mx, my, mw, mh);
 
    PUSH_6_COLORS(pn, r, g, b, a);
 }
@@ -3175,7 +3194,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           }
         else
           {
-             GLint MASK_TEXTURE = GL_TEXTURE1;
+             GLint MASK_TEXTURE = GL_TEXTURE0;
 
              if (gc->pipe[i].array.use_texuv)
                {
@@ -3184,6 +3203,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0,
                                         (void *)texuv_ptr);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+                  MASK_TEXTURE += 1;
                }
              else
                {

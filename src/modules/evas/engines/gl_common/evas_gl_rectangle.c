@@ -5,6 +5,8 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
 {
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch, cr, cg, cb, ca, i;
+   double mx = 0, my = 0, mw = 0, mh = 0;
+   Evas_GL_Texture *mtex = NULL;
 
    if ((w <= 0) || (h <= 0)) return;
    if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, gc->w, gc->h))) return;
@@ -26,9 +28,21 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
                            gc->dc->clip.w, gc->dc->clip.h);
      }
 
+   if (gc->dc->clip.mask)
+     {
+        Evas_GL_Image *mask = gc->dc->clip.mask;
+
+        mx = gc->dc->clip.mask_x; mw = mask->w;
+        my = gc->dc->clip.mask_y; mh = mask->h;
+        RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
+        mx -= gc->dc->clip.mask_x;
+        my -= gc->dc->clip.mask_y;
+        mtex = mask->tex;
+     }
+
    if (!gc->dc->cutout.rects)
      {
-        evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca);
+        evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca, mtex, mx, my, mw, mh);
      }
    else
      {
@@ -42,7 +56,7 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
                   r = _evas_gl_common_cutout_rects->rects + i;
                   if ((r->w > 0) && (r->h > 0))
                     {
-                       evas_gl_common_context_rectangle_push(gc, r->x, r->y, r->w, r->h, cr, cg, cb, ca);
+                       evas_gl_common_context_rectangle_push(gc, r->x, r->y, r->w, r->h, cr, cg, cb, ca, mtex, mx, my, mw, mh);
                     }
                }
              evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);
