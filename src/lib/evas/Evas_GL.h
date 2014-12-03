@@ -3500,8 +3500,9 @@ typedef unsigned long long EvasGLTime;
 
 /* Version 1: OpenGLES 2.0 + extensions only
  * Version 2: OpenGLES 1.0 + extensions
+ * Version 3: wayland extensions
  */
-#define EVAS_GL_API_VERSION 2
+#define EVAS_GL_API_VERSION 3
 
 /**
  * @brief The Evas GL API
@@ -3511,7 +3512,7 @@ typedef unsigned long long EvasGLTime;
 struct _Evas_GL_API
 {
    /**
-    * The current version number is @c EVAS_GL_API_VERSION (2).
+    * The current version number is @c EVAS_GL_API_VERSION (3).
     * This should not be confused with the OpenGL-ES context version.
     */
    int            version;
