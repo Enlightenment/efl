@@ -590,10 +590,11 @@ START_TEST(eolian_simple_parsing)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 100);
 
-   /* legacy only */
+   /* legacy only + c only */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "b", EOLIAN_PROPERTY)));
    fail_if(eolian_function_is_legacy_only(fid, EOLIAN_PROP_GET));
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_PROP_SET));
+   fail_if(!eolian_function_is_c_only(fid));
 
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
@@ -642,9 +643,10 @@ START_TEST(eolian_simple_parsing)
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 
-   /* legacy only */
+   /* legacy only + c only */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
+   fail_if(!eolian_function_is_c_only(fid));
 
    eolian_shutdown();
 }

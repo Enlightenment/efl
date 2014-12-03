@@ -17,7 +17,7 @@ class Class_Simple {
             int value (100); /*@ Value description */
          }
       }
-      b {
+      b @c_only {
         set {
            eo: null;
         }
@@ -33,7 +33,7 @@ class Class_Simple {
          }
          return: char * (null); /*@ comment for method return */
       }
-      bar {
+      bar @c_only {
          eo: null;
          params {
             int x;
