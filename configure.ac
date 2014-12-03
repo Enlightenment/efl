@@ -1805,6 +1805,28 @@ else
    evas_engine_gl_common_libs="-lGL"
 fi
 
+# The lines below fix compiling/linking of gl_generic on OSX
+if test "x${have_darwin}" = "xyes"; then
+   if test "x${have_evas_engine_gl_cocoa}" = "xyes"; then
+      # If gl_cocoa is enabled, Apple's Core OpenGL (CGL) should be the default OpenGL.
+      # CFLAGS and LIBS are determined by evas-gl_cocoa.
+      evas_engine_gl_common_libs="${evas_engine_gl_cocoa_libs}"
+      evas_engine_gl_common_cflags="${evas_engine_gl_cocoa_cflags}"
+   else
+      # If evas-gl_cocoa is disabled, the only supported OpenGL engine on OSX (for now)
+      # is evas-gl_x11. Without its CFLAGS and LIBS explicitely set, gl_generic
+      # cannot compile (nor link).
+      evas_engine_gl_common_libs=""
+      evas_engine_gl_common_cflags=""
+
+      if test "x${have_evas_engine_gl_xlib}" = "xyes"; then
+         evas_engine_gl_common_libs="${evas_engine_gl_xlib_libs}"
+         evas_engine_gl_common_cflags="${evas_engine_gl_xlib_cflags}"
+      fi
+      ### XXX Check for other supported engines supported on OSX (dec. 2014: NONE)
+   fi
+fi
+
 AC_SUBST([evas_engine_gl_common_cflags])
 AC_SUBST([evas_engine_gl_common_libs])
 

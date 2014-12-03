@@ -711,6 +711,7 @@ modules_evas_engines_gl_generic_module_la_CFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
+@evas_engine_gl_common_cflags@ \
 @EVAS_CFLAGS@
 modules_evas_engines_gl_generic_module_la_LIBADD = \
 modules/evas/engines/gl_common/libevas_engine_gl_common.la \
