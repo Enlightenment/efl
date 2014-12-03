@@ -10689,6 +10689,7 @@ st_collections_group_programs_program_action(void)
         @li DIVIS or DIVISOR_INTERP
         @li BOUNCE
         @li SPRING
+        @li CUBIC_BEZIER
         
         ACCEL_FAC, DECEL_FAC and SIN_FAC need the extra optional
         "interp val 1" to determine the "factor" of curviness. 1.0 is the same
