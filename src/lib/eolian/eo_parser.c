@@ -1276,7 +1276,8 @@ parse_property(Eo_Lexer *ls)
    Eolian_Function *prop = NULL;
    Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
-             has_protected = EINA_FALSE, has_class  = EINA_FALSE;
+             has_protected = EINA_FALSE, has_class  = EINA_FALSE,
+             has_c_only    = EINA_FALSE;
    prop = calloc(1, sizeof(Eolian_Function));
    prop->klass = ls->tmp.kls;
    prop->type = EOLIAN_UNRESOLVED;
@@ -1297,6 +1298,11 @@ parse_property(Eo_Lexer *ls)
       case KW_at_class:
         CASE_LOCK(ls, class, "class qualifier");
         prop->is_class = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_c_only:
+        CASE_LOCK(ls, c_only, "c_only qualifier");
+        prop->is_c_only = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:
@@ -1340,14 +1346,14 @@ end:
 }
 
 static void
-parse_method(Eo_Lexer *ls, Eina_Bool ctor)
+parse_method(Eo_Lexer *ls)
 {
    int line, col;
    Eolian_Function *meth = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
-             has_eo          = EINA_FALSE;
+             has_eo          = EINA_FALSE, has_c_only = EINA_FALSE;
    meth = calloc(1, sizeof(Eolian_Function));
    meth->klass = ls->tmp.kls;
    meth->type = EOLIAN_METHOD;
@@ -1355,48 +1361,33 @@ parse_method(Eo_Lexer *ls, Eina_Bool ctor)
    meth->base.line = ls->line_number;
    meth->base.column = ls->column;
    ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods, meth);
-   if (ctor)
+   check(ls, TOK_VALUE);
+   meth->name = eina_stringshare_ref(ls->t.value.s);
+   eo_lexer_get(ls);
+   for (;;) switch (ls->t.kw)
      {
-        if (ls->t.token != TOK_VALUE)
-          eo_lexer_syntax_error(ls, "expected method name");
-        meth->name = eina_stringshare_ref(ls->t.value.s);
+      case KW_at_protected:
+        CASE_LOCK(ls, protected, "protected qualifier")
+        meth->scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
-        for (;;) switch (ls->t.kw)
-          {
-           case KW_at_protected:
-             CASE_LOCK(ls, protected, "protected qualifier")
-             meth->scope = EOLIAN_SCOPE_PROTECTED;
-             eo_lexer_get(ls);
-             break;
-           default:
-             goto body;
-          }
-     }
-   else
-     {
-        check(ls, TOK_VALUE);
-        meth->name = eina_stringshare_ref(ls->t.value.s);
+        break;
+      case KW_at_const:
+        CASE_LOCK(ls, const, "const qualifier")
+        meth->obj_is_const = EINA_TRUE;
         eo_lexer_get(ls);
-        for (;;) switch (ls->t.kw)
-          {
-           case KW_at_protected:
-             CASE_LOCK(ls, protected, "protected qualifier")
-             meth->scope = EOLIAN_SCOPE_PROTECTED;
-             eo_lexer_get(ls);
-             break;
-           case KW_at_const:
-             CASE_LOCK(ls, const, "const qualifier")
-             meth->obj_is_const = EINA_TRUE;
-             eo_lexer_get(ls);
-             break;
-           case KW_at_class:
-             CASE_LOCK(ls, class, "class qualifier");
-             meth->is_class = EINA_TRUE;
-             eo_lexer_get(ls);
-             break;
-           default:
-             goto body;
-          }
+        break;
+      case KW_at_class:
+        CASE_LOCK(ls, class, "class qualifier");
+        meth->is_class = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_c_only:
+        CASE_LOCK(ls, c_only, "c_only qualifier");
+        meth->is_c_only = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto body;
      }
 body:
    line = ls->line_number;
@@ -1671,7 +1662,7 @@ parse_methods(Eo_Lexer *ls)
    line = ls->line_number, col = ls->column;
    check_next(ls, '{');
    while (ls->t.token != '}')
-     parse_method(ls, EINA_FALSE);
+     parse_method(ls);
    check_match(ls, '}', '{', line, col);
 }
 

@@ -29,8 +29,8 @@ enum Tokens
     KW(get), KW(implements), KW(interface), KW(keys), KW(legacy), \
     KW(legacy_prefix), KW(methods), KW(mixin), KW(own), KW(params), \
     KW(properties), KW(set), KW(type), KW(values), KW(var), KWAT(auto), \
-    KWAT(class), KWAT(const), KWAT(const_get), KWAT(const_set), KWAT(empty), \
-    KWAT(extern), KWAT(free), KWAT(in), KWAT(inout), KWAT(nonull), \
+    KWAT(c_only), KWAT(class), KWAT(const), KWAT(const_get), KWAT(const_set), \
+    KWAT(empty), KWAT(extern), KWAT(free), KWAT(in), KWAT(inout), KWAT(nonull), \
     KWAT(optional), KWAT(out), KWAT(private), KWAT(protected), KWAT(virtual), \
     KWAT(warn_unused), \
     \

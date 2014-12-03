@@ -874,6 +874,16 @@ EAPI Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id
 EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
 
 /*
+ * @brief Get whether a function is C only (i.e. not bindable).
+ *
+ * @param[in] function_id Id of the function
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_c_only(const Eolian_Function *function_id);
+
+/*
  * @brief Indicates if a function is a constructing function of a given class.
  *
  * @param[in] klass the class

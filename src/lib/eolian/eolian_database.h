@@ -118,6 +118,7 @@ struct _Eolian_Function
    Eina_Bool get_only_legacy: 1;
    Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
+   Eina_Bool is_c_only :1;
    Eina_List *ctor_of;
    Eolian_Class *klass;
 };
