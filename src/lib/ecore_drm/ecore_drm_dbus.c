@@ -35,8 +35,6 @@ _cb_session_removed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
    const char *errname, *errmsg;
    const char *sid;
 
-   DBG("Session Removed");
-
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
@@ -112,12 +110,8 @@ static void
 _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
 {
    Eldbus_Proxy_Event_Property_Changed *ev;
-   /* const Eina_Value *val; */
 
    ev = event;
-   /* val = ev->value; */
-
-   DBG("Properties Changed: %s", ev->name);
 
    if (!strcmp(ev->name, "Active"))
      {
