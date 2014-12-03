@@ -24,24 +24,56 @@ struct _PLY_Header
    Eina_Bool existence_of_colors;
 };
 
-static inline char*
-_file_to_buf(const char *file, long *length)//prepare text file for reading
+typedef struct _PLY_Loader
 {
-   FILE *file_for_print;
-   char *buf;
-   int unused __attribute__((unused));//this variable fixes warning "ignoring return value of fread"
+   Eina_File *file;
+   char *map;
+} PLY_Loader;
 
-   *length = 0;
-   file_for_print = fopen(file, "rb");
-   if (!file_for_print) return NULL;
-   fseek(file_for_print, 0, SEEK_END);//set file_for_print to the end of file
-   *length = ftell(file_for_print);//set current position of file_for_print
-   buf = malloc(*length + 1);
-   fseek(file_for_print, 0, SEEK_SET);//set file_for_print to the begining of file
-   unused = fread(buf, *length, 1, file_for_print);
-   fclose(file_for_print);
-   buf[*length] = '\0';
-   return buf;
+static inline void
+_ply_loader_fini(PLY_Loader *loader)
+{
+   if (loader->map)
+     {
+        eina_file_map_free(loader->file, loader->map);
+        loader->map = NULL;
+     }
+
+   if (loader->file)
+     {
+        eina_file_close(loader->file);
+        loader->file = NULL;
+     }
+}
+
+static inline Eina_Bool
+_ply_loader_init(PLY_Loader *loader, const char *file)
+{
+   memset(loader, 0x00, sizeof(PLY_Loader));
+
+   /* Open given file. */
+   loader->file = eina_file_open(file, 0);
+
+   if (loader->file == NULL)
+     {
+        ERR("Failed to open file %s\n", file);
+        goto error;
+     }
+
+   /* Map the file. */
+   loader->map = eina_file_map_all(loader->file, EINA_FILE_SEQUENTIAL);
+
+   if (loader->map == NULL)
+     {
+        ERR("Failed to create map from file %s\n", file);
+        goto error;
+     }
+
+   return EINA_TRUE;
+
+error:
+   _ply_loader_fini(loader);
+   return EINA_FALSE;
 }
 
 /* create new header */
@@ -102,7 +134,7 @@ _read_data(float *array, int place, int count, char *current, float divider)
 }
 
 static inline PLY_Header
-_read_header(char *start)//Check properties of mesh in .ply file.
+_read_header(char *map)//Check properties of mesh in .ply file.
 {
    eina_init();
 
@@ -113,7 +145,7 @@ _read_header(char *start)//Check properties of mesh in .ply file.
    PLY_Header header;
 
    header = _new_ply_header();
-   helping_pointer = eina_str_split(start, "vertex ", 0);
+   helping_pointer = eina_str_split(map, "vertex ", 0);
 
    if (helping_pointer == NULL)
      {
@@ -124,7 +156,7 @@ _read_header(char *start)//Check properties of mesh in .ply file.
    sscanf(helping_pointer[1], "%d", &header.vertices_count);
 
    free(helping_pointer);
-   helping_pointer = eina_str_split(start, "end_header\n", 0);
+   helping_pointer = eina_str_split(map, "end_header\n", 0);
 
    if (helping_pointer == NULL)
      {
@@ -164,7 +196,7 @@ _read_header(char *start)//Check properties of mesh in .ply file.
    free(helping_pointer);
 
       /* analyse flags used when file was saved in blender */
-   helping_pointer = eina_str_split(start, "property float ", 0);
+   helping_pointer = eina_str_split(map, "property float ", 0);
 
    if ((helping_pointer[1] != NULL) && (*helping_pointer[1] == 'x') &&
        (helping_pointer[2] != NULL) && (*helping_pointer[2] == 'y') &&
@@ -185,7 +217,7 @@ _read_header(char *start)//Check properties of mesh in .ply file.
        (helping_pointer[5] != NULL) && (*helping_pointer[5] == 't'))))
      header.existence_of_texcoords = EINA_TRUE;
 
-   helping_pointer = eina_str_split(start, "property uchar ", 0);
+   helping_pointer = eina_str_split(map, "property uchar ", 0);
 
    if ((helping_pointer[1] != NULL) && (*helping_pointer[1] == 'r') &&
        (helping_pointer[2] != NULL) && (*helping_pointer[2] == 'g') &&
@@ -200,25 +232,25 @@ _read_header(char *start)//Check properties of mesh in .ply file.
 void
 evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
 {
-   long length;
    Evas_3D_Mesh_Data *pd;
    int i = 0, j = 0, k = 0, count_of_triangles_in_line = 0;
    float *pos, *nor, *tex, *col;
    int stride_pos, stride_nor, stride_tex, stride_col;
-   char *start, *current;
+   char *current;
    PLY_Header header;
-   float *_vertices_ply = NULL, *_normals_ply = NULL, *_tex_coords_ply = NULL, *_colors_ply = NULL;
+   float *_vertices_ply = NULL, *_normals_ply = NULL;
+   float *_tex_coords_ply = NULL, *_colors_ply = NULL;
    char **helping_pointer;
+   PLY_Loader loader;
 
-   start = _file_to_buf(file, &length);
-
-   if (start == NULL)
+   /* Initialize PLY loader */
+   if (!_ply_loader_init(&loader, file))
      {
-        ERR("Buffer is empty after preparation file for reading.");
+        ERR("Failed to initialize PLY loader.");
         return;
      }
 
-   header = _read_header(start);
+   header = _read_header(loader.map);
 
    if (!header.existence_of_geometries)
      {
@@ -226,7 +258,7 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
         return;
      }
 
-   helping_pointer = eina_str_split(start, "end_header\n", 0);
+   helping_pointer = eina_str_split(loader.map, "end_header\n", 0);
 
    if (helping_pointer == NULL)
      {
@@ -252,7 +284,7 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
        (_triangles == NULL))
      {
         ERR("Allocate memory is failed.");
-        free(start);
+        _ply_loader_fini(&loader);
         free(_vertices_ply);
         free(_normals_ply);
         free(_tex_coords_ply);
@@ -398,4 +430,6 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
      {
         ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
      }
+
+   _ply_loader_fini(&loader);
 }
