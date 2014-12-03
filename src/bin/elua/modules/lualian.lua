@@ -604,7 +604,7 @@ local gen_contents = function(klass)
     -- first try properties
     local props = klass:functions_get(ft.PROPERTY):to_array()
     for i, v in ipairs(props) do
-        if v:scope_get() == eolian.object_scope.PUBLIC then
+        if v:scope_get() == eolian.object_scope.PUBLIC and not v:is_c_only() then
             local ftype  = v:type_get()
             local fread  = (ftype == ft.PROPERTY or ftype == ft.PROP_GET)
             local fwrite = (ftype == ft.PROPERTY or ftype == ft.PROP_SET)
@@ -619,7 +619,7 @@ local gen_contents = function(klass)
     -- then methods
     local meths = klass:functions_get(ft.METHOD):to_array()
     for i, v in ipairs(meths) do
-        if v:scope_get() == eolian.object_scope.PUBLIC then
+        if v:scope_get() == eolian.object_scope.PUBLIC and not v:is_c_only() then
             cnt[#cnt + 1] = Method(v)
         end
     end
