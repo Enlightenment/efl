@@ -2767,8 +2767,6 @@ _debug_gl_api_get(Evas_GL_API *funcs)
 void
 _evgl_api_get(Evas_GL_API *funcs, int debug)
 {
-   memset(funcs, 0, sizeof(Evas_GL_API));
-
    if (debug)
       _debug_gl_api_get(funcs);
    else

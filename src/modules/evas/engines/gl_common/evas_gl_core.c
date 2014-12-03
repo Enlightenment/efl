@@ -8,9 +8,11 @@ typedef struct _GL_Format
    GLenum fmt;
 } GL_Format;
 
-// Globals
-static Evas_GL_API gl_funcs;
-static Evas_GL_API gles1_funcs;
+// Extended struct size based on the 314 functions found in gl31.h
+#define EVAS_GL_API_STRUCT_SIZE (sizeof(Evas_GL_API) + 300 * sizeof(void*))
+static Evas_GL_API *gl_funcs = NULL;
+static Evas_GL_API *gles1_funcs = NULL;
+
 EVGL_Engine *evgl_engine = NULL;
 int _evas_gl_log_dom   = -1;
 int _evas_gl_log_level = -1;
@@ -1450,7 +1452,8 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
    evgl_engine->main_tid = 0;
 
    // Clear Function Pointers
-   memset(&gl_funcs, 0, sizeof(Evas_GL_API));
+   if (!gl_funcs) gl_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
+   if (!gles1_funcs) gles1_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
 
    return evgl_engine;
 
@@ -2309,13 +2312,13 @@ evgl_api_get(Evas_GL_Context_Version version)
 {
    if (version == EVAS_GL_GLES_2_X)
      {
-        _evgl_api_get(&gl_funcs, evgl_engine->api_debug_mode);
-        return &gl_funcs;
+        _evgl_api_get(gl_funcs, evgl_engine->api_debug_mode);
+        return gl_funcs;
      }
    else if (version == EVAS_GL_GLES_1_X)
      {
-        _evgl_api_gles1_get(&gles1_funcs, evgl_engine->api_debug_mode);
-        return &gles1_funcs;
+        _evgl_api_gles1_get(gles1_funcs, evgl_engine->api_debug_mode);
+        return gles1_funcs;
      }
    else return NULL;
 }
