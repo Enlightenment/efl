@@ -885,9 +885,10 @@ _ecore_con_ssl_shutdown_gnutls(void)
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *obj,
                                      int ssl_type)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int ret;
 
    if (ssl_type & ECORE_CON_USE_SSL2)
@@ -938,13 +939,14 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr,
 
 error:
    _gnutls_print_errors(svr, ECORE_CON_EVENT_SERVER_ERROR, ret);
-   _ecore_con_ssl_server_shutdown_gnutls(svr);
+   _ecore_con_ssl_server_shutdown_gnutls(obj);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
    gnutls_x509_crt_t cert = NULL;
@@ -1073,14 +1075,15 @@ error:
      }
    if (cert)
      gnutls_x509_crt_deinit(cert);
-   _ecore_con_ssl_server_shutdown_gnutls(svr);
+   _ecore_con_ssl_server_shutdown_gnutls(obj);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cafile_add_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_cafile_add_gnutls(Ecore_Con_Server *obj,
                                         const char *ca_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    struct stat st;
    Eina_Iterator *it;
    const char *file;
@@ -1113,9 +1116,10 @@ error:
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_crl_add_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_crl_add_gnutls(Ecore_Con_Server *obj,
                                      const char *crl_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_crl_file(svr->cert, crl_file,
                                                                    GNUTLS_X509_FMT_PEM) < 1);
 
@@ -1126,9 +1130,10 @@ error:
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_privkey_add_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_privkey_add_gnutls(Ecore_Con_Server *obj,
                                          const char *key_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_key_file(svr->cert, svr->cert_file, key_file,
                                                                    GNUTLS_X509_FMT_PEM));
 
@@ -1139,9 +1144,10 @@ error:
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cert_add_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_cert_add_gnutls(Ecore_Con_Server *obj,
                                       const char *cert_file)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    if (!(svr->cert_file = strdup(cert_file)))
      return EINA_FALSE;
 
@@ -1149,8 +1155,9 @@ _ecore_con_ssl_server_cert_add_gnutls(Ecore_Con_Server *svr,
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *obj)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    if (svr->session)
      {
         gnutls_bye(svr->session, GNUTLS_SHUT_RDWR);
@@ -1195,16 +1202,17 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
 }
 
 static int
-_ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *obj,
                                   unsigned char *buf,
                                   int size)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int num;
 
    if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
      {
         DBG("Continuing gnutls handshake");
-        if (!_ecore_con_ssl_server_init_gnutls(svr))
+        if (!_ecore_con_ssl_server_init_gnutls(obj))
           return 0;
         return -1;
      }
@@ -1220,7 +1228,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr,
 
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
-        if (!_ecore_con_ssl_server_init_gnutls(svr))
+        if (!_ecore_con_ssl_server_init_gnutls(obj))
           return 0;
      }
    else if ((!gnutls_error_is_fatal(num)) && (num != GNUTLS_E_SUCCESS))
@@ -1230,16 +1238,17 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr,
 }
 
 static int
-_ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *obj,
                                    const unsigned char *buf,
                                    int size)
 {
+   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int num;
 
    if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
      {
         DBG("Continuing gnutls handshake");
-        if (!_ecore_con_ssl_server_init_gnutls(svr))
+        if (!_ecore_con_ssl_server_init_gnutls(obj))
           return 0;
         return -1;
      }
@@ -1255,7 +1264,7 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr,
 /* this is only partly functional I think? */
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
-        if (!_ecore_con_ssl_server_init_gnutls(svr))
+        if (!_ecore_con_ssl_server_init_gnutls(obj))
           return 0;
      }
    else if (!gnutls_error_is_fatal(num))
@@ -1265,8 +1274,10 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr,
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
+_ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *obj)
 {
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
+   Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
    const char *priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT";
@@ -1278,10 +1289,10 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         return ECORE_CON_SSL_ERROR_NONE;
 
       case ECORE_CON_SSL_STATE_INIT:
-        if (cl->host_server->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
+        if (host_server->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
           return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
 
-        switch (cl->host_server->type & ECORE_CON_SSL)
+        switch (host_server->type & ECORE_CON_SSL)
           {
            case ECORE_CON_USE_SSL3:
            case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
@@ -1309,10 +1320,10 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         INF("Applying priority string: %s", priority);
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(cl->session, priority, NULL));
         gnutls_handshake_set_private_extensions(cl->session, 1);
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
-        //  SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
-        if (!cl->host_server->use_cert)
-          SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, host_server->cert));
+        //  SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, host_server->pskcred_s));
+        if (!host_server->use_cert)
+          SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, host_server->anoncred_s));
 
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
 
@@ -1348,7 +1359,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         break;
      }
 
-   if (!cl->host_server->verify)
+   if (!host_server->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
    /* use CRL/CA lists to verify */
@@ -1381,7 +1392,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER));
 
-   SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, cl->host_server->name));
+   SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, host_server->name));
    gnutls_x509_crt_deinit(cert);
  */
    DBG("SSL certificate verification succeeded!");
@@ -1400,13 +1411,14 @@ error:
    if (cert)
      gnutls_x509_crt_deinit(cert);
  */
-   _ecore_con_ssl_client_shutdown_gnutls(cl);
+   _ecore_con_ssl_client_shutdown_gnutls(obj);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
+_ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *obj)
 {
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    if (cl->session)
      {
         gnutls_bye(cl->session, GNUTLS_SHUT_RDWR);
@@ -1421,15 +1433,16 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
 }
 
 static int
-_ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl,
+_ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *obj,
                                   unsigned char *buf,
                                   int size)
 {
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    int num;
 
    if (cl->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
      {
-        if (!_ecore_con_ssl_client_init_gnutls(cl))
+        if (!_ecore_con_ssl_client_init_gnutls(obj))
           return 0;
         return -1;
      }
@@ -1444,7 +1457,7 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl,
         return 0;
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
-        if (!_ecore_con_ssl_client_init_gnutls(cl))
+        if (!_ecore_con_ssl_client_init_gnutls(obj))
           return 0;
         WRN("Rehandshake request ignored");
         return 0;
@@ -1456,15 +1469,16 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl,
 }
 
 static int
-_ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl,
+_ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *obj,
                                    const unsigned char *buf,
                                    int size)
 {
+   Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    int num;
 
    if (cl->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
      {
-        if (!_ecore_con_ssl_client_init_gnutls(cl))
+        if (!_ecore_con_ssl_client_init_gnutls(obj))
           return 0;
         return -1;
      }
@@ -1479,7 +1493,7 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl,
         return 0;
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
-        if (!_ecore_con_ssl_client_init_gnutls(cl))
+        if (!_ecore_con_ssl_client_init_gnutls(obj))
           return 0;
      }
    else if (!gnutls_error_is_fatal(num))
