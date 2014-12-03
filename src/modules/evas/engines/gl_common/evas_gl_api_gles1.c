@@ -4263,8 +4263,6 @@ _normal_gles1_api_get(Evas_GL_API *funcs)
 void
 _evgl_api_gles1_get(Evas_GL_API *funcs, Eina_Bool debug)
 {
-   memset(funcs, 0, sizeof(Evas_GL_API));
-
    if (!_evgl_gles1_api_init())
      return;
 
