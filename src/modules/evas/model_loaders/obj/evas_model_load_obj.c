@@ -7,6 +7,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+//TODO Increase of stability (reading .obj file saved with any flags).
 /* set value to position [x][y] to array name which have. */
 #define ARRAY_2D(name, x, y, count_y) (*(name + x * count_y + y))
 
@@ -41,7 +42,6 @@ typedef struct _OBJ_Loader
 {
    Eina_File *file;
    char *map;
-   int length;
 } OBJ_Loader;
 
 static inline void
@@ -82,8 +82,6 @@ _obj_loader_init(OBJ_Loader *loader, const char *file)
         ERR("Failed to create map from file %s\n", file);
         goto error;
      }
-
-   loader->length = eina_file_size_get(loader->file);
 
    return EINA_TRUE;
 
@@ -150,7 +148,7 @@ _count_elements(OBJ_Loader loader)//count elements of mesh in .obj
 
    long i = 0;
    /* count elements of mesh in .obj */
-   for (; loader.length > i; i++)
+   for (; *current != '\00'; i++)
      {
         if (will_check_next_char)
           {
@@ -276,7 +274,7 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
    i = 0;
 
    /* put data to arrays */
-   for (; loader.length > i; i++)
+   for (; *current != '\00'; i++)
      {
         if (will_check_next_char)
           {
