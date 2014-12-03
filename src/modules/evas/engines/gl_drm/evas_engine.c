@@ -596,10 +596,7 @@ eng_setup(Evas *eo_e, void *in)
           }
 
         if (!(info->info.gbm) || !(info->info.surface))
-          {
-             if (!evas_drm_gbm_init(info, epd->output.w, epd->output.h))
-               return 0;
-          }
+          return 0;
 
         DBG("FD: %d, GBM_DEVICE: 0x%x, GBM_SURFACE: 0x%x",
             info->info.fd, (unsigned int)info->info.gbm,
