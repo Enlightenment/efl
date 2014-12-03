@@ -3498,9 +3498,15 @@ typedef unsigned long long EvasGLTime;
 /** @} */
 
 
-/* Version 1: OpenGLES 2.0 + extensions only
- * Version 2: OpenGLES 1.0 + extensions
- * Version 3: wayland extensions
+/**
+ * @brief Defines the version of the API structure.
+ *
+ * This helps applications know at runtime whether a function pointer exists
+ * or not.
+ *
+ * Version 1: GLES 2.0 + GLES2 extensions only
+ * Version 2: GLES 2.0 + GLES2 extensions + GLES1 + GLES1.1 extensions
+ * Version 3: [version 2] + Wayland extensions
  */
 #define EVAS_GL_API_VERSION 3
 
@@ -3791,7 +3797,11 @@ struct _Evas_GL_API
     */
    void         (*evasglDestroyImage) (EvasGLImage image);
 
+
+
+   // ---------------------------------------------------------------------- //
    /* Evas_GL_API version 2: */
+
 
    /**
     * @anchor evasglCreateImageForContext
@@ -3817,6 +3827,8 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * @li @c EVAS_GL_NATIVE_SURFACE_TIZEN (Tizen platform only):<br/>
     * Requires the @c EVAS_GL_TIZEN_image_native_surface extension.
     *
+    * @note Evas_GL_API must have version 2 or more.
+    *
     * @since 1.12
     */
    EvasGLImage  (*evasglCreateImageForContext) (Evas_GL *evas_gl, Evas_GL_Context *ctx, int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
@@ -3826,7 +3838,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /**
     * @name OpenGL-ES 1.1
     *
-    * Evas_GL_API version 2.
+    * Evas_GL_API version 2 or more.
     *
     * The following functions are some of the standard OpenGL-ES 1.0 functions,
     * that are not also present in the @ref gles2 "OpenGL-ES 2.0 APIs".
@@ -3927,7 +3939,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /**
     * @name OpenGL-ES 1.1 extensions
     *
-    * Evas_GL_API version 2.
+    * Evas_GL_API version 2 or more.
     *
     * OpenGL-ES 1.1 specifies a set of extensions on top of OpenGL-ES 1.0.
     * When available, Evas GL will expose these extensions with the following
@@ -4124,8 +4136,16 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    int          (*evasglWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags);
    /** @} */
 
+
+
+   // ---------------------------------------------------------------------- //
+   /* Evas_GL_API version 3: */
+
    /**
     * @name Evas GL Wayland functions
+    *
+    * Evas_GL_API version 3 or more.
+    *
     * @since 1.13
     * @{ */
    /**
@@ -4145,7 +4165,10 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    Eina_Bool    (*evasglQueryWaylandBuffer) (Evas_GL *evas_gl, void *buffer, int attribute, int *value);
    /** @} */
 
-   /* future calls will be added down here for expansion */
+   /* Future calls will be added down here for expansion, when adding
+    * new APIs here, please bump the struct version number (together with
+    * the EFL version bump).
+    */
 };
 
 
