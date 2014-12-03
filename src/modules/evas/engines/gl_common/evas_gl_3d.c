@@ -10,14 +10,14 @@ e3d_texture_param_update(E3D_Texture *texture)
    if (texture->wrap_dirty)
      {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrap_s);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrap_t);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->wrap_t);
         texture->wrap_dirty = EINA_FALSE;
      }
 
    if (texture->filter_dirty)
      {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->filter_min);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->filter_mag);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->filter_mag);
         texture->filter_dirty = EINA_FALSE;
      }
 }
