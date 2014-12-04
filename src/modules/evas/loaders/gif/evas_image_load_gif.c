@@ -211,16 +211,16 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
 
    // build a blob of memory to have pointers to rows of pixels
    // AND store the decoded gif pixels (1 byte per pixel) as welll
-   rows = malloc((h * sizeof(GifRowType *)) + (w * h * sizeof(GifPixelType)));
+   rows = malloc((h * sizeof(GifRowType)) + (w * h * sizeof(GifPixelType)));
    if (!rows) goto on_error;
-   
+
    // fill in the pointers at the start
    for (yy = 0; yy < h; yy++)
      {
-        rows[yy] = ((unsigned char *)rows) + (h * sizeof(GifRowType *)) +
+        rows[yy] = ((unsigned char *)rows) + (h * sizeof(GifRowType)) +
           (yy * w * sizeof(GifPixelType));
      }
-   
+
    // if give is interlaced, walk interlace pattern and decode into rows
    if (gif->Image.Interlace)
      {
