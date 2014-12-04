@@ -281,6 +281,16 @@ EAPI void ecore_main_loop_quit(void);
 EAPI Eina_Bool ecore_main_loop_animator_ticked_get(void);
 
 /**
+ * Returns if the ecore_main_loop is running
+ * 
+ * @return an integer specifying if the ecore_main_loop is running,
+ *         0 if not running, > 0 if running
+ * 
+ * @since 1.3
+ */
+EAPI int ecore_main_loop_nested_get(void);
+
+/**
  * @typedef Ecore_Cb Ecore_Cb
  * A generic callback called as a hook when a certain point in
  * execution is reached.
