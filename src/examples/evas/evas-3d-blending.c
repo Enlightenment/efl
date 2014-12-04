@@ -99,8 +99,6 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
 {
    Scene_Data *scene = (Scene_Data *)data;
    Evas_Event_Key_Down *ev = event_info;
-   Eina_Bool frustum;
-   Evas_Real x, y, z;
 
    if (!strcmp("Up", ev->key))
      func1++;

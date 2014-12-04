@@ -55,7 +55,7 @@ typedef struct _vec3
 } vec3;
 
 static void
-_set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Material *material);
+_set_ball(Eo *mesh, double r, double x, double y, double z, int p);
 
 static void
 _mesh_aabb(Eo *mesh_b, Eo *mesh_node);
@@ -93,16 +93,15 @@ static Eina_Bool
 _redraw_bounding_object(void *data)
 {
    Evas_Real x, y, z;
-   vec3 center, ref, temp;
    Scene_Data *scene = (Scene_Data *)data;
 
    eo_do(scene->mesh_node_model, evas_3d_node_bounding_sphere_get(&x, &y, &z, &radius));
    if (key == EVAS_3D_FRUSTUM_MODE_BSPHERE)
-     _set_ball(scene->mesh, radius, x, y, z, 100, scene->material);
+     _set_ball(scene->mesh, radius, x, y, z, 100);
    else if (key == EVAS_3D_FRUSTUM_MODE_AABB)
      _mesh_aabb(scene->mesh, scene->mesh_node_model);
    else if (key == EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT)
-     _set_ball(scene->mesh, 1, x, y, z, 1, scene->material);
+     _set_ball(scene->mesh, 1, x, y, z, 1);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -113,7 +112,6 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
    Scene_Data *scene = (Scene_Data *)data;
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool frustum;
-   Evas_Real x, y, z;
 
    if (!strcmp("w", ev->key))
      {
@@ -405,7 +403,7 @@ _mesh_aabb(Eo *mesh_b, Eo *mesh_node)
 }
 
 static void
-_set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Material *material)
+_set_ball(Eo *mesh, double r, double x, double y, double z, int p)
 {
    int vcount, icount, vccount, i, j;
    double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
