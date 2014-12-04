@@ -546,6 +546,12 @@ _eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb c
    return pending;
 }
 
+static Eldbus_Message *
+_eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg)
+{
+   return _eldbus_connection_send_and_block(proxy->obj->conn, msg);
+}
+
 EAPI Eldbus_Pending *
 eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout)
 {
@@ -553,6 +559,15 @@ eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
 
    return _eldbus_proxy_send(proxy, msg, cb, cb_data, timeout);
+}
+
+EAPI Eldbus_Message *
+eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg)
+{
+   ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
+
+   return _eldbus_proxy_send_and_block(proxy, msg);
 }
 
 EAPI Eldbus_Message *
