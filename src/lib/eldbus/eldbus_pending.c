@@ -158,6 +158,31 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
    return NULL;
 }
 
+Eldbus_Message *
+_eldbus_connection_send_and_block(Eldbus_Connection *conn, Eldbus_Message *msg)
+{
+   Eldbus_Message *reply;
+
+   if (ecore_main_loop_nested_get())
+     WRN("Calling this function may result in dropped frames because the main loop is running");
+
+   reply = eldbus_message_new(EINA_TRUE);
+   EINA_SAFETY_ON_NULL_GOTO(reply, fail);
+
+   reply->dbus_msg = 
+     dbus_connection_send_with_reply_and_block(conn->dbus_conn, 
+                                               msg->dbus_msg, -1, NULL);
+
+   dbus_message_iter_init_append(reply->dbus_msg, 
+                                 &reply->iterator->dbus_iterator);
+
+   return reply;
+
+fail:
+   eldbus_message_unref(reply);
+   return NULL;
+}
+
 EAPI void
 eldbus_pending_data_set(Eldbus_Pending *pending, const char *key, const void *data)
 {
