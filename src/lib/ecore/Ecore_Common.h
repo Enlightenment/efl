@@ -282,11 +282,11 @@ EAPI Eina_Bool ecore_main_loop_animator_ticked_get(void);
 
 /**
  * Returns if the ecore_main_loop is running
- * 
+ *
  * @return an integer specifying if the ecore_main_loop is running,
  *         0 if not running, > 0 if running
- * 
- * @since 1.3
+ *
+ * @since 1.13
  */
 EAPI int ecore_main_loop_nested_get(void);
 
