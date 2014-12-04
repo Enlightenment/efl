@@ -376,6 +376,7 @@ struct _Evas_GL_Shared
 
    Eina_Hash          *native_pm_hash;
    Eina_Hash          *native_tex_hash;
+   Eina_Hash          *native_wl_hash;
 
 #ifdef GL_GLES
    // FIXME: hack.

@@ -555,10 +555,6 @@ _ecore_evas_drm_interface_new(void)
    iface->base.name = "drm";
    iface->base.version = 1;
 
-   /* iface->pixmap_visual_get; */
-   /* iface->pixmap_colormap_get; */
-   /* iface->pixmap_depth_get; */
-
    return iface;
 }
 

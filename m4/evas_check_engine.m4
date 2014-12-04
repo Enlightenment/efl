@@ -654,10 +654,10 @@ evas_engine_[]$1[]_libs=""
 
 gl_library="glesv2"
 
-PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} gbm],
+PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} gbm wayland-client >= 1.3.0],
    [
     have_dep="yes"
-    requirement="egl >= 7.10 ${gl_library} gbm"
+    requirement="egl >= 7.10 ${gl_library} gbm wayland-client >= 1.3.0"
    ],
    [have_dep="no"])
 

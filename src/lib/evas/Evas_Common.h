@@ -461,7 +461,7 @@ struct _Evas_Pixel_Import_Source
  * Magic version number to know what the native surface struct looks like
  */
 
-#define EVAS_NATIVE_SURFACE_VERSION 2
+#define EVAS_NATIVE_SURFACE_VERSION 3
 
 /**
  * Native surface types that image object supports
@@ -473,7 +473,8 @@ typedef enum _Evas_Native_Surface_Type
 {
    EVAS_NATIVE_SURFACE_NONE, /**< No surface type */
    EVAS_NATIVE_SURFACE_X11,  /**< X Window system based type. pixmap id or visual of the pixmap */
-   EVAS_NATIVE_SURFACE_OPENGL /**< OpenGL system based type. texture or framebuffer id*/
+   EVAS_NATIVE_SURFACE_OPENGL, /**< OpenGL system based type. texture or framebuffer id*/
+   EVAS_NATIVE_SURFACE_WL /**< Wayland system based type. buffer of surface */
 } Evas_Native_Surface_Type;
 
 /**
@@ -484,7 +485,9 @@ typedef enum _Evas_Native_Surface_Type
  * EVAS_NATIVE_SURFACE_X11, you need to set union data with x11.visual or
  * x11.pixmap. If you need to set the native surface as
  * EVAS_NATIVE_SURFACE_OPENGL, on the other hand, you need to set union data
- * with opengl.texture_id or opengl.framebuffer_id and so on. The version field
+ * with opengl.texture_id or opengl.framebuffer_id and so on.
+ * If you need to set the native surface as EVAS_NATIVE_SURFACE_WL,
+ * you need to set union data with wl.legacy_buffer. The version field
  * should be set with EVAS_NATIVE_SURFACE_VERSION in order to check abi
  * break in your application on the different efl library versions.
  *
@@ -518,6 +521,10 @@ struct _Evas_Native_Surface
          unsigned int format; /**< same as 'format' for glTexImage2D() */
          unsigned int x, y, w, h; /**< region inside the texture to use (image size is assumed as texture size, with 0, 0 being the top-left and co-ordinates working down to the right and bottom being positive) */
       } opengl; /**< Set this struct fields if surface data is OpenGL based. */
+      struct
+      {
+         void *legacy_buffer; /**< wayland client buffer to use */
+      } wl; /**< Set this struct fields if surface data is Wayland based. */
    } data; /**< Choose one union data according to your surface. */
 };
 

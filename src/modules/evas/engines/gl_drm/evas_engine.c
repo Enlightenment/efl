@@ -20,6 +20,7 @@
 # define EGL_NATIVE_PIXMAP_KHR 0x30b0
 #endif
 
+#include <wayland-client.h>
 /* external variables */
 int _evas_engine_gl_drm_log_dom = -1;
 int extn_have_buffer_age = 1;
@@ -51,10 +52,17 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
 /* local structures */
 typedef struct _Render_Engine Render_Engine;
-
 struct _Render_Engine
 {
    Render_Engine_GL_Generic generic;
+};
+
+typedef struct _Native Native;
+struct _Native
+{
+   Evas_Native_Surface ns;
+   struct wl_buffer *wl_buf;
+   void *egl_surface;
 };
 
 /* local function prototype types */
@@ -72,6 +80,7 @@ void *(*glsym_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBu
 void (*glsym_eglDestroyImage)(EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES)(int a, void *b)  = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
+unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, struct wl_resource *b, EGLint c, EGLint *d) = NULL;
 
 /* local function prototypes */
 static void gl_symbols(void);
@@ -192,6 +201,9 @@ gl_symbols(void)
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
            glsym_func_uint);
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
+           glsym_func_uint);
+
+   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
 
    done = EINA_TRUE;
@@ -853,6 +865,317 @@ eng_output_dump(void *data)
    _re_winfree(re);
 }
 
+static void
+_native_cb_bind(void *data EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *img;
+   Native *n;
+
+   if (!(img = image)) return;
+   if (!(n = img->native.data)) return;
+
+   if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
+     {
+        if (n->egl_surface)
+          {
+             if (glsym_glEGLImageTargetTexture2DOES)
+               {
+                  glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+                  if (eglGetError() != EGL_SUCCESS)
+                    ERR("glEGLImageTargetTexture2DOES() failed.");
+               }
+             else
+               ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
+          }
+     }
+   else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+     {
+        glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+}
+
+static void
+_native_cb_unbind(void *data EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *img;
+   Native *n;
+
+   if (!(img = image)) return;
+   if (!(n = img->native.data)) return;
+
+   if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
+     {
+        //glBindTexture(GL_TEXTURE_2D, 0); //really need?
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+   else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+     {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+}
+
+static void
+_native_cb_free(void *data, void *image)
+{
+   Render_Engine *re;
+   Outbuf *ob;
+   Evas_GL_Image *img;
+   Native *n;
+   uint32_t texid;
+   void *wlid;
+
+   if (!(re = (Render_Engine *)data)) return;
+   if (!(img = image)) return;
+   if (!(n = img->native.data)) return;
+   if (!(ob = eng_get_ob(re))) return;
+
+   if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
+     {
+        wlid = (void*)n->wl_buf;
+        eina_hash_del(ob->gl_context->shared->native_wl_hash, &wlid, img);
+        if (n->egl_surface)
+          {
+             if (glsym_eglDestroyImage)
+               {
+                  glsym_eglDestroyImage(eng_get_ob(re)->egl_disp,
+                                        n->egl_surface);
+                  if (eglGetError() != EGL_SUCCESS)
+                    ERR("eglDestroyImage() failed.");
+               }
+             else
+               ERR("Try eglDestroyImage on EGL with  no support");
+          }
+     }
+   else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+     {
+        texid = n->ns.data.opengl.texture_id;
+        eina_hash_del(ob->gl_context->shared->native_tex_hash, &texid, img);
+     }
+
+   img->native.data = NULL;
+   img->native.func.data = NULL;
+   img->native.func.bind = NULL;
+   img->native.func.unbind = NULL;
+   img->native.func.free = NULL;
+
+   free(n);
+}
+
+static void *
+eng_image_native_set(void *data, void *image, void *native)
+{
+   Render_Engine *re;
+   Outbuf *ob;
+   Native *n;
+   Evas_Native_Surface *ns;
+   Evas_GL_Image *img, *img2;
+   unsigned int tex = 0, fbo = 0;
+   uint32_t texid;
+   void *wlid;
+   void *wl_buf = NULL;
+
+   if (!(re = (Render_Engine *)data)) return NULL;
+   if (!(ob = eng_get_ob(re))) return NULL;
+
+   ns = native;
+
+   if (!(img = image))
+     {
+        if ((ns) && (ns->type == EVAS_NATIVE_SURFACE_OPENGL))
+          {
+             img =
+               glsym_evas_gl_common_image_new_from_data(ob->gl_context,
+                                                        ns->data.opengl.w,
+                                                        ns->data.opengl.h,
+                                                        NULL, 1,
+                                                        EVAS_COLORSPACE_ARGB8888);
+          }
+        else
+          return NULL;
+     }
+
+   if (ns)
+     {
+        if (ns->type == EVAS_NATIVE_SURFACE_WL)
+          {
+             wl_buf = ns->data.wl.legacy_buffer;
+             if (img->native.data)
+               {
+                  Evas_Native_Surface *ens;
+
+                  ens = img->native.data;
+                  if (ens->data.wl.legacy_buffer == wl_buf)
+                    return img;
+               }
+          }
+        else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+          {
+             tex = ns->data.opengl.texture_id;
+             fbo = ns->data.opengl.framebuffer_id;
+             if (img->native.data)
+               {
+                  Evas_Native_Surface *ens;
+
+                  ens = img->native.data;
+                  if ((ens->data.opengl.texture_id == tex) &&
+                      (ens->data.opengl.framebuffer_id == fbo))
+                     return img;
+               }
+          }
+     }
+
+   if ((!ns) && (!img->native.data)) return img;
+
+   eng_window_use(ob);
+
+   if (img->native.data)
+     {
+        if (img->native.func.free)
+          img->native.func.free(img->native.func.data, img);
+        glsym_evas_gl_common_image_native_disable(img);
+     }
+
+   if (!ns) return img;
+
+   if (ns->type == EVAS_NATIVE_SURFACE_WL)
+     {
+        wlid = wl_buf;
+        img2 = eina_hash_find(ob->gl_context->shared->native_wl_hash, &wlid);
+        if (img2 == img) return img;
+        if (img2)
+          {
+             if((n = img2->native.data))
+               {
+                  glsym_evas_gl_common_image_ref(img2);
+                  glsym_evas_gl_common_image_free(img);
+                  return img2;
+               }
+          }
+     }
+   else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+     {
+        texid = tex;
+        img2 = eina_hash_find(ob->gl_context->shared->native_tex_hash, &texid);
+        if (img2 == img) return img;
+        if (img2)
+          {
+             if ((n = img2->native.data))
+               {
+                  glsym_evas_gl_common_image_ref(img2);
+                  glsym_evas_gl_common_image_free(img);
+                  return img2;
+               }
+          }
+     }
+
+   img2 = glsym_evas_gl_common_image_new_from_data(ob->gl_context, img->w,
+                                                   img->h, NULL, img->alpha,
+                                                   EVAS_COLORSPACE_ARGB8888);
+   glsym_evas_gl_common_image_free(img);
+
+   if (!(img = img2)) return NULL;
+
+   if (ns->type == EVAS_NATIVE_SURFACE_WL)
+     {
+        if (native)
+          {
+             if ((n = calloc(1, sizeof(Native))))
+               {
+                  EGLint attribs[3];
+                  int yinvert = 1;
+                  uint32_t format;
+
+                  glsym_eglQueryWaylandBufferWL(ob->egl_disp, wl_buf, EGL_TEXTURE_FORMAT, &format);
+                  if ((format != EGL_TEXTURE_RGB) && (format != EGL_TEXTURE_RGBA))
+                    {
+                       ERR("eglQueryWaylandBufferWL() %d format is not supported ", format);
+                       glsym_evas_gl_common_image_free(img);
+                       free(n);
+                       return NULL;
+                    }
+
+                  attribs[0] = EGL_WAYLAND_PLANE_WL;
+                  attribs[1] = 0; //if plane is 1 then 0, if plane is 2 then 1
+                  attribs[2] = EGL_NONE;
+
+                  memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+                  glsym_eglQueryWaylandBufferWL(ob->egl_disp, wl_buf, EGL_WAYLAND_Y_INVERTED_WL, &yinvert);
+                  eina_hash_add(ob->gl_context->shared->native_wl_hash, &wlid, img);
+
+                  n->wl_buf = wl_buf;
+                  if (glsym_eglCreateImage)
+                    n->egl_surface = glsym_eglCreateImage(ob->egl_disp,
+                                                          NULL,
+                                                          EGL_WAYLAND_BUFFER_WL,
+                                                          wl_buf,
+                                                          attribs);
+                  else
+                    {
+                       ERR("Try eglCreateImage on EGL with no support");
+                       eina_hash_del(ob->gl_context->shared->native_wl_hash, &wlid, img);
+                       glsym_evas_gl_common_image_free(img);
+                       free(n);
+                       return NULL;
+                    }
+
+                  if (!n->egl_surface)
+                    {
+                       ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)wl_buf);
+                       eina_hash_del(ob->gl_context->shared->native_wl_hash, &wlid, img);
+                       glsym_evas_gl_common_image_free(img);
+                       free(n);
+                       return NULL;
+                    }
+
+                  //XXX: workaround for mesa-10.2.8
+                  // mesa's eglQueryWaylandBufferWL() with EGL_WAYLAND_Y_INVERTED_WL works incorrect.
+                  //img->native.yinvert = yinvert;
+                  img->native.yinvert = 1;
+                  img->native.loose = 0;
+                  img->native.data = n;
+                  img->native.func.data = re;
+                  img->native.func.bind = _native_cb_bind;
+                  img->native.func.unbind = _native_cb_unbind;
+                  img->native.func.free = _native_cb_free;
+                  img->native.target = GL_TEXTURE_2D;
+                  img->native.mipmap = 0;
+
+                  glsym_evas_gl_common_image_native_enable(img);
+               }
+          }
+     }
+   else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+     {
+        if (native)
+          {
+             if ((n = calloc(1, sizeof(Native))))
+               {
+                  memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+                  eina_hash_add(ob->gl_context->shared->native_tex_hash, &texid, img);
+
+                  n->egl_surface = 0;
+
+                  img->native.yinvert = 0;
+                  img->native.loose = 0;
+                  img->native.data = n;
+                  img->native.func.data = re;
+                  img->native.func.bind = _native_cb_bind;
+                  img->native.func.unbind = _native_cb_unbind;
+                  img->native.func.free = _native_cb_free;
+                  img->native.target = GL_TEXTURE_2D;
+                  img->native.mipmap = 0;
+
+                  glsym_evas_gl_common_image_native_enable(img);
+               }
+          }
+     }
+
+   return img;
+}
+
+
 /* module api functions */
 static int
 module_open(Evas_Module *em)
@@ -888,6 +1211,7 @@ module_open(Evas_Module *em)
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_dump);
+   ORD(image_native_set);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
