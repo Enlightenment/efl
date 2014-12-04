@@ -45,6 +45,7 @@ ECORE_EVAS_COMMON_CPPFLAGS = \
 @EVAS_CFLAGS@
 
 ECORE_EVAS_COMMON_LDADD = \
+$(top_builddir)/src/lib/efl/libefl.la \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \

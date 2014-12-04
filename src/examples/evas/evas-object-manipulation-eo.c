@@ -19,6 +19,7 @@
 #define PACKAGE_EXAMPLES_DIR "."
 #endif
 
+#include <Efl.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <stdio.h>
