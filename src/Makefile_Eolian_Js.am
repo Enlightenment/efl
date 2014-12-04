@@ -27,15 +27,15 @@ lib_eolian_js_libeolian_js_la_SOURCES =\
 	$(generated_evas_canvas_js_bindings)
 
 lib_eolian_js_libeolian_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
-@EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ \
+@EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ @ECORE_CFLAGS@ @ECORE_EVAS_CFLAGS@ @EINA_CFLAGS@ \
 -I$(top_builddir)/src/lib/evas/canvas \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eolian_js\" \
 @VALGRIND_CFLAGS@
 
-lib_eolian_js_libeolian_js_la_LIBADD = @EINA_LIBS@ @DL_LIBS@ @EVAS_LIBS@
-lib_eolian_js_libeolian_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @EVAS_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_eolian_js_libeolian_js_la_LIBADD = @EINA_LIBS@ @DL_LIBS@ @EVAS_LIBS@ @ECORE_LIBS@ @ECORE_EVAS_LIBS@ lib/ecore/libecore.la lib/evas/libevas.la lib/ecore_evas/libecore_evas.la
+lib_eolian_js_libeolian_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @EVAS_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@ @ECORE_INTERNAL_LIBS@ @ECORE_EVAS_INTERNAL_LIBS@ lib/ecore/libecore.la lib/evas/libevas.la lib/ecore_evas/libecore_evas.la
 lib_eolian_js_libeolian_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Unit tests

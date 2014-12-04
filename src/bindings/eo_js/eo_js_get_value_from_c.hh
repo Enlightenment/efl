@@ -14,11 +14,27 @@ template <typename T> struct print_tag {};
 template <typename T>
 inline v8::Local<v8::Value>
 get_value_from_c(T v, v8::Isolate* isolate
-                 , typename std::enable_if<std::is_integral<T>::value>::type* = 0)
+                 , typename std::enable_if<std::is_integral<T>::value && !std::is_same<T,bool>::value>::type* = 0)
 {
   return v8::Integer::New(isolate, v);
 }
 
+template <typename T>
+inline v8::Local<v8::Value>
+get_value_from_c(T v, v8::Isolate* isolate
+                 , typename std::enable_if<std::is_same<T,bool>::value>::type* = 0)
+{
+  return v8::Boolean::New(isolate, v);
+}
+      
+// template <typename T>
+// inline v8::Local<v8::Value>
+// get_value_from_c(T v, v8::Isolate* isolate
+//                  , typename std::enable_if<std::is_integral<T>::value>::type* = 0)
+// {
+//   return v8::Integer::New(isolate, v);
+// }
+      
 template <typename T>
 inline v8::Local<v8::Value>
 get_value_from_c(T v, v8::Isolate* isolate

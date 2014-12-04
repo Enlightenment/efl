@@ -4576,6 +4576,7 @@ pc/eo.pc
 pc/eo-cxx.pc
 pc/eolian.pc
 pc/eolian-cxx.pc
+pc/eolian-js.pc
 pc/efl.pc
 pc/efl-cxx.pc
 pc/evas-fb.pc

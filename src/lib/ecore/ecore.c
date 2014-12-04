@@ -200,10 +200,14 @@ ecore_app_no_system_modules(void)
 EAPI int
 ecore_init(void)
 {
+  fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+  
    if (++_ecore_init_count != 1)
      return _ecore_init_count;
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    setlocale(LC_CTYPE, "");
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    /*
       if (strcmp(nl_langinfo(CODESET), "UTF-8"))
       {
@@ -214,39 +218,54 @@ ecore_init(void)
    if (!evil_init())
      return --_ecore_init_count;
 #endif
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (!eina_init())
      goto shutdown_evil;
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_log_dom = eina_log_domain_register("ecore", ECORE_DEFAULT_LOG_COLOR);
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (_ecore_log_dom < 0)
      {
+       fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
         goto shutdown_log_dom;
      }
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    _ecore_pfx = eina_prefix_new(NULL, ecore_init,
                                 "ECORE", "ecore", "checkme",
                                 PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
                                 PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (!_ecore_pfx)
      {
+       fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         ERR("Could not get ecore installation prefix");
         goto shutdown_log_dom;
      }
 
    eo_init();
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_main_loop_init();
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
    _ecore_exe_init();
 #endif
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_thread_init();
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_glib_init();
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_job_init();
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _ecore_time_init();
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    eina_lock_new(&_thread_mutex);
    eina_condition_new(&_thread_cond, &_thread_mutex);

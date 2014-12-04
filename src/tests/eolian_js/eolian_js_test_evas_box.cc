@@ -40,7 +40,11 @@ bool ExecuteString(v8::Isolate* isolate,
                    v8::Handle<v8::String> source,
                    v8::Handle<v8::Value> name)
 {
-  v8::HandleScope handle_scope(isolate);
+  v8::HandleScope handle_scope
+#if 0
+    (isolate)
+#endif
+    ;
   v8::TryCatch try_catch;
   v8::ScriptOrigin origin(name);
   v8::Handle<v8::Script> script = v8::Script::Compile(source, &origin);
@@ -76,6 +80,7 @@ bool ExecuteString(v8::Isolate* isolate,
   }
 }
 
+#if 0
 void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
@@ -92,6 +97,24 @@ void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   printf("\n");
   fflush(stdout);
 }
+#else
+v8::Handle<v8::Value> Print(v8::Arguments const& args) {
+  bool first = true;
+  for (int i = 0; i < args.Length(); i++) {
+    v8::HandleScope handle_scope;
+    if (first) {
+      first = false;
+    } else {
+      printf(" ");
+    }
+    v8::String::Utf8Value str(args[i]);
+    const char* cstr = ToCString(str);
+    printf("%s", cstr);
+  }
+  printf("\n");
+  fflush(stdout);
+}
+#endif
 
 START_TEST(eolian_js_test_evas_box)
 {
@@ -100,7 +123,7 @@ START_TEST(eolian_js_test_evas_box)
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
   
-  v8::V8::InitializeICU();
+  //v8::V8::InitializeICU();
   v8::V8::Initialize();
   v8::V8::SetFlagsFromCommandLine(&argc, const_cast<char**>(argv), true);
 
@@ -111,16 +134,25 @@ START_TEST(eolian_js_test_evas_box)
   assert(isolate != 0);
 
   v8::Handle<v8::Context> context;
-  v8::HandleScope handle_scope(isolate);
+  v8::HandleScope handle_scope
+#if 0
+    (isolate)
+#endif
+    ;
 
   {
     // Create a template for the global object.
-    v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
+    v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New
+      (
+#if 0
+       isolate
+#endif
+       );
     // Bind the global 'print' function to the C++ Print callback.
-    global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                v8::FunctionTemplate::New(isolate, Print));
+    global->Set(v8::String::New/*FromUtf8*/(/*isolate,*/ "print"),
+                v8::FunctionTemplate::New(/*isolate,*/ Print));
 
-    context = v8::Context::New(isolate, NULL, global);
+    context = v8::Context::New(/*isolate*/NULL, global);
 
   }
   if (context.IsEmpty()) {
@@ -130,13 +162,13 @@ START_TEST(eolian_js_test_evas_box)
   {
     // Enter the execution environment before evaluating any code.
     v8::Context::Scope context_scope(context);
-    v8::Local<v8::String> name(v8::String::NewFromUtf8(context->GetIsolate(), "(shell)"));
+    v8::Local<v8::String> name(v8::String::New/*FromUtf8*/(/*context->GetIsolate(),*/ "(shell)"));
 
     evas::register_box(context->Global(), isolate);
 
-    v8::HandleScope handle_scope(context->GetIsolate());
-    ExecuteString(context->GetIsolate(),
-                  v8::String::NewFromUtf8(context->GetIsolate(), script),
+    v8::HandleScope handle_scope/*(context->GetIsolate())*/;
+    ExecuteString(/*context->GetIsolate()*/isolate,
+                  v8::String::New/*FromUtf8*/(/*context->GetIsolate(), */script),
                   name);
   }
   context->Exit();

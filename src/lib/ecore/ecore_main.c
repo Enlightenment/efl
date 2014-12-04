@@ -1106,16 +1106,22 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
 void
 _ecore_main_loop_init(void)
 {
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   DBG("_ecore_main_loop_init");
    epoll_fd = epoll_create(1);
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if ((epoll_fd < 0) && HAVE_EPOLL)
      WRN("Failed to create epoll fd!");
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    epoll_pid = getpid();
    _ecore_fd_close_on_exec(epoll_fd);
+   fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    /* add polls on all our file descriptors */
    Ecore_Fd_Handler *fdh;
    EINA_INLIST_FOREACH(fd_handlers, fdh)
      {
+       fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         if (fdh->delete_me)
           continue;
         _ecore_epoll_add(epoll_fd, fdh->fd,
@@ -1124,14 +1130,20 @@ _ecore_main_loop_init(void)
      }
 #ifdef USE_LIBUV
    {
+     fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+     DBG("loading lib uv");
 #ifdef USE_NODEJS
-     void* lib = dlopen("/usr/bin/node", RTLD_GLOBAL | RTLD_LAZY);
+     void* lib = dlopen(NULL, RTLD_LAZY);
+     fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 #else
      void* lib = dlopen("libuv.so", RTLD_GLOBAL | RTLD_LAZY);
+     fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 #endif
+     fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
-     if(lib)
+     if(lib && dlsym(lib, "uv_run"))
        {
+         fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
          DBG("loaded lib uv");
          _dl_uv_run = dlsym(lib, "uv_run");
          assert(!!_dl_uv_run);
@@ -1181,8 +1193,9 @@ _ecore_main_loop_init(void)
 
          _dl_uv_timer_init(_dl_uv_default_loop(),  &_ecore_main_uv_handle_timers);
        }
-     else
-       DBG("did not load uv");
+     /* else */
+     /*   DBG("did not load uv"); */
+     fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      DBG("loaded dlsyms uv");
    }
 #endif

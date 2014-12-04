@@ -14,7 +14,7 @@ struct _Eolian_Js_Test_Case
 };
 
 static const Eolian_Js_Test_Case etc[] = {
-  { "Eolian-Js Evas Box", eolian_js_test_evas_box },
+  //{ "Eolian-Js Evas Box", eolian_js_test_evas_box },
   { "Eolian-Js Constructor Method", eolian_js_test_constructor_method },
   { NULL, NULL }
 };

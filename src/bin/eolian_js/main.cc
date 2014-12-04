@@ -109,21 +109,38 @@ int main(int argc, char** argv)
    std::vector<Eolian_Function const*> constructor_functions;
    std::vector<Eolian_Function const*> normal_functions;
 
-   auto separate_functions = [&] (Eolian_Function_Type t)
+   auto separate_functions = [&] (Eolian_Class const* klass, Eolian_Function_Type t)
      {
        efl::eina::iterator<Eolian_Function> first ( ::eolian_class_functions_get(klass, t) )
        , last;
        for(; first != last; ++first)
          {
            Eolian_Function const* function = &*first;
+           std::cout << "function " << ::eolian_function_full_c_name_get(function) << std::endl;
            if( ::eolian_function_is_constructor(function, klass))
-             constructor_functions.push_back(function);
+             // constructor_functions.push_back(function);
+             ;
            else
              normal_functions.push_back(function);
          }
      };
-   separate_functions(EOLIAN_METHOD);
-   // separate_functions(EOLIAN_PROPERTY);
+   separate_functions(klass, EOLIAN_METHOD);
+   separate_functions(klass, EOLIAN_PROPERTY);
+
+   std::function<void(Eolian_Class const*)> recurse_inherits
+     = [&] (Eolian_Class const* klass)
+     {
+   for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
+         , last; first != last; ++first)
+     {
+       std::cout << "base " << &*first << std::endl;
+       Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
+       separate_functions(base, EOLIAN_METHOD);
+       separate_functions(base, EOLIAN_PROPERTY);
+       recurse_inherits(base);
+     }
+     };
+   recurse_inherits(klass);
    
    std::ofstream os (out_file.c_str());
    if(!os.is_open())
@@ -151,7 +168,7 @@ int main(int argc, char** argv)
    os << "}\n";
    os << "#include <Eo_Js.hh>\n\n";
    os << "#include <Eo.h>\n\n";
-   os << "#include <v8.h>\n\n";
+   os << "#include <node/v8.h>\n\n";
    os << "extern \"C\" {\n";
 
    if(is_evas(klass))
@@ -171,7 +188,7 @@ int main(int argc, char** argv)
       << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
    os << "{\n";
    os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
-   os << "    (isolate, efl::eo::js::constructor\n"
+   os << "    (/*isolate,*/ efl::eo::js::constructor\n"
       << "     , efl::eo::js::constructor_data(isolate\n"
          "         , ";
    print_eo_class(klass, os);
@@ -183,7 +200,7 @@ int main(int argc, char** argv)
      }
    
    os  << "));\n";
-   os << "  constructor->SetClassName(v8::String::NewFromUtf8(isolate, \""
+   os << "  constructor->SetClassName(v8::String::New/*FromUtf8(isolate,*/( \""
       << class_name
       << "\"));\n";
    os << "  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
@@ -194,17 +211,40 @@ int main(int argc, char** argv)
 
    for(auto function : normal_functions)
      {
-       if(! ::eolian_function_is_constructor(function, klass))
-       os << "  prototype->Set( ::v8::String::NewFromUtf8(isolate, \""
-          << eolian_function_name_get(function) << "\")\n"
-          << "    , v8::FunctionTemplate::New(isolate, &efl::eo::js::call_function\n"
-          << "    , efl::eo::js::call_function_data<\n"
-          << "      ::efl::eina::_mpl::tuple_c<std::size_t";
+       auto output_begin = [&] (std::string name)
+         {
+           if(! ::eolian_function_is_constructor(function, klass))
+             os << "  prototype->Set( ::v8::String::New/*FromUtf8(isolate,*/( \""
+                << name << "\")\n"
+                << "    , v8::FunctionTemplate::New(/*isolate,*/ &efl::eo::js::call_function\n"
+                << "    , efl::eo::js::call_function_data<\n"
+                << "      ::efl::eina::_mpl::tuple_c<std::size_t";
+         };
+       switch(eolian_function_type_get(function))
+         {
+         case EOLIAN_METHOD:
+           output_begin(eolian_function_name_get(function));
+           break;
+         case EOLIAN_PROPERTY:
+           output_begin(eolian_function_name_get(function) + std::string("_set"));
+           break;
+         // case EOLIAN_PROP_GET:
+         //   output_begin(eolian_function_name_get(function) + std::string("_get"));
+         //   break;
+         // case EOLIAN_PROP_SET:
+         //   output_begin(eolian_function_name_get(function) + std::string("_set"));
+         case EOLIAN_PROP_GET:
+         case EOLIAN_PROP_SET:
+         default:
+           continue;
+         }
+       // os << __func__ << ":" << __LINE__;
        std::size_t i = 0;
        for(efl::eina::iterator< ::Eolian_Function_Parameter> parameter
              ( ::eolian_function_parameters_get(function) )
              , last; parameter != last; ++parameter, ++i)
          {
+           // os << __func__ << ":" << __LINE__;
            switch(eolian_parameter_direction_get(&*parameter))
              {
              case EOLIAN_IN_PARAM:
@@ -213,6 +253,7 @@ int main(int argc, char** argv)
              default: break;
              }
          }
+       // os << __func__ << ":" << __LINE__;
        os << ">\n      , ::efl::eina::_mpl::tuple_c<std::size_t";
        i = 0;
        for(efl::eina::iterator< ::Eolian_Function_Parameter> parameter
@@ -231,8 +272,10 @@ int main(int argc, char** argv)
        efl::eina::iterator< ::Eolian_Function_Parameter> parameter
              ( ::eolian_function_parameters_get(function) )
          , last;
+       // os << __func__ << ":" << __LINE__;
        while(parameter != last)
          {
+           // os << __func__ << ":" << __LINE__;
            Eolian_Type const* type = eolian_parameter_type_get(&*parameter);
            if(eolian_type_is_own(type))
              os << "       ::std::true_type";
@@ -241,12 +284,29 @@ int main(int argc, char** argv)
            if(++parameter != last)
              os << ",\n";
          }
-       os <<
-         "> >(isolate, & ::"
-          << eolian_function_full_c_name_get(function) << ")));\n";
+       // // os << __func__ << ":" << __LINE__;
+       auto output_end = [&] (std::string const& name)
+         {
+           os << "> >(isolate, & ::" << name << ")));\n";
+         };
+       switch(eolian_function_type_get(function))
+         {
+         case EOLIAN_METHOD:
+           output_end(eolian_function_full_c_name_get(function));
+           break;
+         case EOLIAN_PROPERTY:
+           output_end(eolian_function_full_c_name_get(function) + std::string("_set"));
+           break;
+         case EOLIAN_PROP_SET:
+           output_end(eolian_function_full_c_name_get(function) + std::string("_set"));
+           break;
+         case EOLIAN_PROP_GET:
+           output_end(eolian_function_full_c_name_get(function) + std::string("_get"));
+           break;
+         }
      }
 
-   os << "  global->Set(v8::String::NewFromUtf8(isolate, \""
+   os << "  global->Set(v8::String::New/*FromUtf8(isolate,*/( \""
       << class_name << "\")"
       << ", constructor->GetFunction());\n";
 
