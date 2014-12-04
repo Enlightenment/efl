@@ -18,6 +18,8 @@ AH_BOTTOM([
 AM_INIT_AUTOMAKE([1.6 dist-xz -Wall color-tests subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+# Due to a bug in automake 1.14 we need to use this after AM_INIT_AUTOMAKE
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=15981
 AC_USE_SYSTEM_EXTENSIONS
 
 CFOPT_WARNING=""
