@@ -73,6 +73,7 @@ Eldbus_Connection_Name *eldbus_connection_name_get(Eldbus_Connection *conn, cons
 void                   eldbus_connection_name_owner_monitor(Eldbus_Connection *conn, Eldbus_Connection_Name *cn, Eina_Bool enable);
 
 Eldbus_Pending         *_eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout);
+Eldbus_Message         *_eldbus_connection_send_and_block(Eldbus_Connection *conn, Eldbus_Message *msg);
 
 Eldbus_Message_Iter    *eldbus_message_iter_sub_iter_get(Eldbus_Message_Iter *iter);
 Eina_Value            *_message_iter_struct_to_eina_value(Eldbus_Message_Iter *iter);
