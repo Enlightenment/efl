@@ -1006,6 +1006,12 @@ ecore_main_loop_quit(void)
 #endif
 }
 
+EAPI int 
+ecore_main_loop_nested_get(void)
+{
+   return in_main_loop;
+}
+
 EAPI Eina_Bool
 ecore_main_loop_animator_ticked_get(void)
 {
