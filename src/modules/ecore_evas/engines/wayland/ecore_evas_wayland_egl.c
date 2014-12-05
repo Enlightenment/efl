@@ -331,11 +331,8 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
      }
 
-   if (ee->prop.override)
-     {
-        ee->prop.withdrawn = EINA_FALSE;
-        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-     }
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 
    if (ee->visible) return;
    ee->visible = 1;
