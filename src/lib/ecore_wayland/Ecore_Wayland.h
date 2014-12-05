@@ -54,6 +54,8 @@ typedef struct _Ecore_Wl_Event_Mouse_Out Ecore_Wl_Event_Mouse_Out;
 typedef struct _Ecore_Wl_Event_Focus_In Ecore_Wl_Event_Focus_In;
 typedef struct _Ecore_Wl_Event_Focus_Out Ecore_Wl_Event_Focus_Out;
 typedef struct _Ecore_Wl_Event_Window_Configure Ecore_Wl_Event_Window_Configure;
+typedef struct _Ecore_Wl_Event_Window_Activate Ecore_Wl_Event_Window_Activate;
+typedef struct _Ecore_Wl_Event_Window_Deactivate Ecore_Wl_Event_Window_Deactivate;
 typedef struct _Ecore_Wl_Event_Dnd_Enter Ecore_Wl_Event_Dnd_Enter;
 typedef struct _Ecore_Wl_Event_Dnd_Position Ecore_Wl_Event_Dnd_Position;
 typedef struct _Ecore_Wl_Event_Dnd_Leave Ecore_Wl_Event_Dnd_Leave;
@@ -142,6 +144,22 @@ struct _Ecore_Wl_Event_Window_Configure
    unsigned int event_win;
    int x, y, w, h;
    int edges;
+};
+
+struct _Ecore_Wl_Event_Window_Activate
+{
+   unsigned int win;
+   unsigned int parent_win;
+   unsigned int event_win;
+   Eina_Bool fobscured;
+};
+
+struct _Ecore_Wl_Event_Window_Deactivate
+{
+   unsigned int win;
+   unsigned int parent_win;
+   unsigned int event_win;
+   Eina_Bool fobscured;
 };
 
 struct _Ecore_Wl_Event_Dnd_Enter
@@ -248,6 +266,8 @@ EAPI extern int ECORE_WL_EVENT_MOUSE_OUT;
 EAPI extern int ECORE_WL_EVENT_FOCUS_IN;
 EAPI extern int ECORE_WL_EVENT_FOCUS_OUT;
 EAPI extern int ECORE_WL_EVENT_WINDOW_CONFIGURE;
+EAPI extern int ECORE_WL_EVENT_WINDOW_ACTIVATE;
+EAPI extern int ECORE_WL_EVENT_WINDOW_DEACTIVATE;
 EAPI extern int ECORE_WL_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL_EVENT_DND_POSITION;
 EAPI extern int ECORE_WL_EVENT_DND_LEAVE;

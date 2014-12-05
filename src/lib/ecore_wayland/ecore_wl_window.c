@@ -1044,6 +1044,55 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface 
      xdg_surface_ack_configure(win->xdg_surface, serial);
 }
 
+static void
+_ecore_wl_window_cb_xdg_surface_activate(void *data, struct xdg_surface *xdg_surface)
+{
+   Ecore_Wl_Window *win;
+   Ecore_Wl_Event_Window_Activate *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!xdg_surface) return;
+   if (!(win = data)) return;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Window_Activate)))) return;
+   ev->win = win->id;
+   if (win->parent)
+       ev->parent_win = win->parent->id;
+   else
+       ev->parent_win = 0;
+   ev->event_win = win->id;
+   ev->fobscured = EINA_FALSE;
+   ecore_event_add(ECORE_WL_EVENT_WINDOW_ACTIVATE, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl_window_cb_xdg_surface_deactivate(void *data, struct xdg_surface *xdg_surface)
+{
+   Ecore_Wl_Window *win;
+   Ecore_Wl_Event_Window_Deactivate *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!xdg_surface) return;
+   if (!(win = data)) return;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Window_Deactivate)))) return;
+   ev->win = win->id;
+   if (win->parent)
+       ev->parent_win = win->parent->id;
+   else
+       ev->parent_win = 0;
+   ev->event_win = win->id;
+   ev->fobscured = EINA_FALSE;
+   ecore_event_add(ECORE_WL_EVENT_WINDOW_DEACTIVATE, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl_window_cb_xdg_surface_delete(void *data EINA_UNUSED, struct xdg_surface *xdg_surface EINA_UNUSED)
+{
+}
+
 static void 
 _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface EINA_UNUSED)
 {
