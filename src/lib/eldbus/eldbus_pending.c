@@ -159,7 +159,7 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
 }
 
 Eldbus_Message *
-_eldbus_connection_send_and_block(Eldbus_Connection *conn, Eldbus_Message *msg)
+_eldbus_connection_send_and_block(Eldbus_Connection *conn, Eldbus_Message *msg, double timeout)
 {
    Eldbus_Message *reply = NULL;
    DBusError err;

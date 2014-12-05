@@ -547,9 +547,9 @@ _eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb c
 }
 
 static Eldbus_Message *
-_eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg)
+_eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double timeout)
 {
-   return _eldbus_connection_send_and_block(proxy->obj->conn, msg);
+   return _eldbus_connection_send_and_block(proxy->obj->conn, msg, timeout);
 }
 
 EAPI Eldbus_Pending *
@@ -562,12 +562,12 @@ eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb
 }
 
 EAPI Eldbus_Message *
-eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg)
+eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double timeout)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
 
-   return _eldbus_proxy_send_and_block(proxy, msg);
+   return _eldbus_proxy_send_and_block(proxy, msg, timeout);
 }
 
 EAPI Eldbus_Message *
