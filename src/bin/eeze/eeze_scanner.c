@@ -45,7 +45,7 @@ event_send(const char *device, Eeze_Scanner_Event_Type type, Eina_Bool volume)
      {
         Eet_Connection *ec;
 
-        ec = eina_hash_find(clients, cl);
+        ec = eina_hash_find(clients, &cl);
         if (!ec) continue;
         INF("Serializing event...");
         eet_connection_send(ec, es_edd, &ev, NULL);
@@ -137,7 +137,7 @@ cl_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Add 
         return ECORE_CALLBACK_RENEW;
      }
 
-   eina_hash_direct_add(clients, ev->client, ec);
+   eina_hash_add(clients, &ev->client, ec);
    cl_setup(ev->client, ec);
    return ECORE_CALLBACK_RENEW;
 }
@@ -148,10 +148,10 @@ cl_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del 
    Eet_Connection *ec;
    Eina_Bool d;
    INF("Removed client");
-   ec = eina_hash_find(clients, ev->client);
+   ec = eina_hash_find(clients, &ev->client);
    if (ec)
      {
-        eina_hash_del_by_data(clients, ec);
+        eina_hash_del_by_data(clients, &ec);
         eet_connection_close(ec, &d);
      }
 
