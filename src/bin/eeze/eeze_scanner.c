@@ -415,6 +415,7 @@ sigs_setup(void)
 int
 main(void)
 {
+   int ret;
    eina_init();
    ecore_init();
    ecore_con_init();
@@ -427,6 +428,7 @@ main(void)
 
    eet_setup();
    clients = eina_hash_pointer_new(NULL);
+   ret = 1;
    EINA_SAFETY_ON_NULL_GOTO(clients, error);
 
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)cl_add, NULL);
@@ -440,6 +442,7 @@ main(void)
    eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, EEZE_UDEV_EVENT_NONE, cb_vol_chg, NULL);
 
    svr = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, "eeze_scanner", 0, NULL);
+   ret = 2;
    EINA_SAFETY_ON_NULL_GOTO(svr, error);
    
    storage_setup();
@@ -449,5 +452,5 @@ main(void)
    return 0;
 error:
    ERR("Could not start up!");
-   exit(1);
+   exit(ret);
 }
