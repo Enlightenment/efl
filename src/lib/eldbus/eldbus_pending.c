@@ -161,26 +161,33 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
 Eldbus_Message *
 _eldbus_connection_send_and_block(Eldbus_Connection *conn, Eldbus_Message *msg)
 {
-   Eldbus_Message *reply;
+   Eldbus_Message *reply = NULL;
+   DBusError err;
+   DBusMessage *dbus_msg;
 
    if (ecore_main_loop_nested_get())
      WRN("Calling this function may result in dropped frames because the main loop is running");
 
-   reply = eldbus_message_new(EINA_TRUE);
+   dbus_error_init(&err);
+   dbus_msg = dbus_connection_send_with_reply_and_block(conn->dbus_conn,
+                                               msg->dbus_msg, -1, &err);
+   EINA_SAFETY_ON_TRUE_GOTO(dbus_error_is_set(&err), dbus_error_set);
+   dbus_error_free(&err);
+
+   reply = eldbus_message_new(EINA_FALSE);
    EINA_SAFETY_ON_NULL_GOTO(reply, fail);
 
-   reply->dbus_msg = 
-     dbus_connection_send_with_reply_and_block(conn->dbus_conn, 
-                                               msg->dbus_msg, -1, NULL);
-
-   dbus_message_iter_init_append(reply->dbus_msg, 
-                                 &reply->iterator->dbus_iterator);
-
+   reply->dbus_msg = dbus_msg;
+   dbus_message_iter_init(reply->dbus_msg, &reply->iterator->dbus_iterator);
+   eldbus_message_unref(msg);
    return reply;
 
+dbus_error_set:
+    reply = eldbus_message_error_new(msg, err.name, err.message);
+    dbus_error_free(&err);
 fail:
-   eldbus_message_unref(reply);
-   return NULL;
+    eldbus_message_unref(msg);
+    return reply;
 }
 
 EAPI void
