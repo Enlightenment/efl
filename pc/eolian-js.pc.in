@@ -5,7 +5,7 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 
-Name: Eolian++
+Name: Eolian-JS
 Description: EFL's JavaScript bindings generator.
 Version: @VERSION@
 Require.private: @requirements_pc_eolian@

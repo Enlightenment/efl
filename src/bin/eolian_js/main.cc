@@ -17,6 +17,11 @@
 #include <cstdlib>
 #include <vector>
 
+namespace eolian { namespace js {
+
+efl::eina::log_domain domain("eina_cxx");
+
+} }
 
 int main(int argc, char** argv)
 {
@@ -116,31 +121,43 @@ int main(int argc, char** argv)
        for(; first != last; ++first)
          {
            Eolian_Function const* function = &*first;
-           std::cout << "function " << ::eolian_function_full_c_name_get(function) << std::endl;
-           if( ::eolian_function_is_constructor(function, klass))
-             // constructor_functions.push_back(function);
-             ;
-           else
-             normal_functions.push_back(function);
+           if(eolian_function_scope_get(function) == EOLIAN_SCOPE_PUBLIC)
+             {
+               std::cout << "function " << ::eolian_function_full_c_name_get(function) << std::endl;
+               if( ::eolian_function_is_constructor(function, klass))
+                 {
+                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "is a constructor";
+                   constructor_functions.push_back(function);
+                 }
+               else
+                 {
+                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "is a NOT constructor";
+                   normal_functions.push_back(function);
+                 }
+             }
          }
      };
    separate_functions(klass, EOLIAN_METHOD);
    separate_functions(klass, EOLIAN_PROPERTY);
 
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "functions were separated";
+   
    std::function<void(Eolian_Class const*)> recurse_inherits
      = [&] (Eolian_Class const* klass)
      {
-   for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
-         , last; first != last; ++first)
-     {
-       std::cout << "base " << &*first << std::endl;
-       Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
-       separate_functions(base, EOLIAN_METHOD);
-       separate_functions(base, EOLIAN_PROPERTY);
-       recurse_inherits(base);
-     }
+       for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
+             , last; first != last; ++first)
+         {
+           std::cout << "base " << &*first << std::endl;
+           Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
+           separate_functions(base, EOLIAN_METHOD);
+           separate_functions(base, EOLIAN_PROPERTY);
+           recurse_inherits(base);
+         }
      };
    recurse_inherits(klass);
+
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "inherits were recursed";
    
    std::ofstream os (out_file.c_str());
    if(!os.is_open())
@@ -149,40 +166,83 @@ int main(int argc, char** argv)
        return -1;
      }
 
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "output was opened";
+   
    std::string class_name (name(klass)), upper_case_class_name(class_name)
      , lower_case_class_name(class_name);
    std::transform(upper_case_class_name.begin(), upper_case_class_name.end(), upper_case_class_name.begin()
                   , [] (unsigned char c) { return std::toupper(c); });
    std::transform(lower_case_class_name.begin(), lower_case_class_name.end(), lower_case_class_name.begin()
                   , [] (unsigned char c) { return std::tolower(c); });
-   os << "#ifndef EFL_GENERATED_EOLIAN_CLASS_GUARD_" << upper_case_class_name << "_H\n";
-   os << "#define EFL_GENERATED_EOLIAN_CLASS_GUARD_" << upper_case_class_name << "_H\n\n";
+
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+       os << "#ifdef HAVE_CONFIG_H\n";
+       os << "#include \"config.h\"\n";
+       os << "#endif\n";
+
+       os << "extern \"C\"\n";
+       os << "{\n";
+       os << "#include <Efl.h>\n";
+       os << "}\n";
+       os << "#include <Eo.h>\n\n";
+     }
+   else
+     {
+       os << "#ifdef HAVE_CONFIG_H\n";
+       os << "#include \"elementary_config.h\"\n";
+       os << "#endif\n";
+
+       os << "extern \"C\"\n";
+       os << "{\n";
+       os << "#include <Efl.h>\n";
+       os << "}\n";
+
+       os << "#include <Eo.h>\n\n";
+       os << "#include <Evas.h>\n\n";
+       os << "#include <Edje.h>\n\n";
 
 
-   os << "#ifdef HAVE_CONFIG_H\n";
-   os << "#include \"config.h\"\n";
-   os << "#endif\n";
-   os << "extern \"C\"\n";
-   os << "{\n";
-   os << "#include <Efl.h>\n";
-   os << "}\n";
+       os << "#include <Elementary.h>\n\n";
+       os << "extern \"C\" {\n";
+       os << "#include <elm_widget.h>\n";
+       os << "}\n\n";
+     }
    os << "#include <Eo_Js.hh>\n\n";
-   os << "#include <Eo.h>\n\n";
    os << "#include <node/v8.h>\n\n";
    os << "extern \"C\" {\n";
 
    if(is_evas(klass))
      os << "#include <Evas.h>\n";
    
+   std::function<void(Eolian_Class const*)> recurse_inherits_includes
+     = [&] (Eolian_Class const* klass)
+     {
+       for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
+             , last; first != last; ++first)
+         {
+           std::cout << "base " << &*first << std::endl;
+           Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
+           os << "#include <" << eolian_class_file_get(base) << ".h>\n\n";
+           recurse_inherits_includes(base);
+         }
+     };
+   recurse_inherits_includes(klass);
    os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
+
    os << "}\n";
 
+   
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "includes added";
+   
    if(namespace_size(klass))
      {
        os << "namespace ";
        print_lower_case_namespace(klass, os);
        os << " {\n";
      }
+
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "namespace";
    
    os << "EAPI void register_" << lower_case_class_name
       << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
@@ -191,8 +251,13 @@ int main(int argc, char** argv)
    os << "    (/*isolate,*/ efl::eo::js::constructor\n"
       << "     , efl::eo::js::constructor_data(isolate\n"
          "         , ";
+
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "before print eo_class";
+   
    print_eo_class(klass, os);
 
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "print eo_class";
+   
    for(auto function : constructor_functions)
      {
        os << "\n         , & ::"
@@ -315,5 +380,4 @@ int main(int argc, char** argv)
    for(std::size_t i = 0, j = namespace_size(klass); i != j; ++i)
      os << "}";
    os << "\n";
-   os << "\n#endif\n\n";
 }

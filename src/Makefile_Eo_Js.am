@@ -4,7 +4,12 @@
 if HAVE_CXX11
 installed_eojsmainheadersdir = $(includedir)/eo-js-@VMAJ@
 dist_installed_eojsmainheaders_DATA = \
-bindings/eo_js/eo_js_constructor.hh
+bindings/eo_js/eo_js_call_function.hh \
+bindings/eo_js/eo_js_constructor.hh \
+bindings/eo_js/eo_js_direction.hh \
+bindings/eo_js/eo_js_get_value_from_c.hh \
+bindings/eo_js/eo_js_get_value.hh \
+bindings/eo_js/Eo_Js.hh
 
 ### Unit tests
 

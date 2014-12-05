@@ -1,6 +1,10 @@
 #ifndef EOLIAN_KLASS_HH
 #define EOLIAN_KLASS_HH
 
+#include <Eina.hh>
+
+#include <eolian/js/domain.hh>
+
 #include <ostream>
 
 inline std::string name(Eolian_Class const* klass)
@@ -35,37 +39,54 @@ inline void print_lower_case_namespace(Eolian_Class const* klass, std::ostream& 
 
 inline void print_eo_class(Eolian_Class const* klass, std::ostream& os)
 {
-  auto toupper = [] (unsigned char c) { return std::toupper(c); };
+   assert(klass != 0);
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "print_eo_class";
+
+   auto toupper = [] (unsigned char c) { return std::toupper(c); };
   
-  std::vector<std::string> namespace_;
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "print_eo_class";
+   std::vector<std::string> namespace_;
    for(efl::eina::iterator<const char> first (::eolian_class_namespaces_get(klass))
          , last; first != last; ++first)
      namespace_.push_back(&*first);
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "namespace";
    namespace_.push_back(name(klass));
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "class";
    switch(eolian_class_type_get(klass))
      {
      case EOLIAN_CLASS_REGULAR:
      case EOLIAN_CLASS_ABSTRACT:
+       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "";
        namespace_.push_back("CLASS");
        break;
      case EOLIAN_CLASS_INTERFACE:
+       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "";
        namespace_.push_back("INTERFACE");
        break;
+     case EOLIAN_CLASS_MIXIN:
+       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "";
+       namespace_.push_back("MIXIN");
+       break;
      default:
+       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "default ?";
        std::abort();
      }
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "";
    for(auto first = namespace_.begin(), last = namespace_.end()
          ; first != last; ++first)
      {
+       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "";
        std::string upper(*first);
        std::transform(upper.begin(), upper.end(), upper.begin(), toupper);
        os << upper;
        if(std::next(first) != last) os << "_";
      }
+   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "";
 }
 
 inline bool is_evas(Eolian_Class const* klass)
 {
+  EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "is_evas";
   efl::eina::iterator<const char> first (::eolian_class_namespaces_get(klass));
   return first != efl::eina::iterator<const char>()
     && std::strcmp(&*first, "Evas") == 0;

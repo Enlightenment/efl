@@ -999,6 +999,11 @@ EFL_EVAL_PKGS([EINA_CXX])
 EFL_LIB_END([Eina_Cxx])
 #### End of Eina CXX
 
+AC_ARG_ENABLE([js-bindings],
+   [AS_HELP_STRING([--enable-js-bindings],[enable JavaScript bindings. @<:@default=disabled@:>@])],
+   [want_js="${enableval}"], [want_js="no"])
+AM_CONDITIONAL([HAVE_JS], [test "x${want_js}" = "xyes"])
+
 #### Eina JS
 EFL_LIB_START([Eina_Js])
 
@@ -4577,6 +4582,7 @@ pc/eo-cxx.pc
 pc/eolian.pc
 pc/eolian-cxx.pc
 pc/eolian-js.pc
+pc/eo-js.pc
 pc/efl.pc
 pc/efl-cxx.pc
 pc/evas-fb.pc

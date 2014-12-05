@@ -63,7 +63,7 @@ inline v8::Handle<v8::Value> constructor(v8::Arguments const& args)
 }
 #endif
       
-      //template <typename...F>
+template <typename...F>
 struct constructor_caller
 {
   struct call
@@ -71,11 +71,13 @@ struct constructor_caller
     template <typename T>
     void operator()(T function) const
     {
-      std::cout << "function called " << __func__ << std::endl;
+      std::cout << "function called call " << __func__ << std::endl;
       int const parameters
         = std::tuple_size<typename eina::_mpl::function_params<T>::type>::value;
       if(*current + parameters <= args->Length())
         {
+          std::cout << "calling " << typeid(function).name() << " with " << parameters
+                    << " parameters" << std::endl;
           aux(function, eina::make_index_sequence<parameters>());
           *current += parameters;
         }
@@ -147,7 +149,7 @@ struct constructor_caller
         Eo* eo = eo_add
           (klass
            , NULL
-           // , eina::_mpl::for_each(constructors, call{&current_index, &args})
+           , eina::_mpl::for_each(constructors, call{&current_index, &args})
            );
         assert(eo != 0);
         v8::Local<v8::Object> self = args.This();
@@ -159,7 +161,7 @@ struct constructor_caller
 #endif
   
   Eo_Class const* klass;
-  //std::tuple<F...> constructors;
+  std::tuple<F...> constructors;
 };
 
 #if 0
@@ -173,28 +175,26 @@ v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* kla
      );
 }
 #else
-template <typename T> void foo(T const&);
-      //template <typename... F>
-inline
-v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* klass/*, F... f*/)
+template <typename... F>
+v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* klass, F... f)
 {
   fprintf(stderr, "function called %s\n", __func__); fflush(stderr);
   std::cerr << "function called " << __func__ << std::endl;
   return v8::External::New
     (new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>
-     (constructor_caller/*<F...>*/{klass/*, std::tuple<F...>{f...}*/}));
+     (constructor_caller<F...>{klass, std::tuple<F...>{f...}}));
 }
-inline
-/*v8::Handle<v8::Value>*/void constructor_data1(v8::Isolate* isolate, Eo_Class const* klass/*, F... f*/)
-{
-  fprintf(stderr, "function called %s\n", __func__); fflush(stderr);
-  std::cerr << "function called " << __func__ << std::endl;
-  // return v8::External::New
-   // new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>(
-  std::function<v8::Handle<v8::Value>(v8::Arguments const&)>
-    ((constructor_caller/*<F...>*/{nullptr/*klass/*, std::tuple<F...>{f...}*/}));
-  // return v8::Handle<v8::Value>();
-}
+// inline
+// /*v8::Handle<v8::Value>*/void constructor_data1(v8::Isolate* isolate, Eo_Class const* klass/*, F... f*/)
+// {
+//   fprintf(stderr, "function called %s\n", __func__); fflush(stderr);
+//   std::cerr << "function called " << __func__ << std::endl;
+//   return v8::External::New
+//    new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>(
+//   std::function<v8::Handle<v8::Value>(v8::Arguments const&)>
+//     ((constructor_caller/*<F...>*/{klass, std::tuple<F...>{f...}}));
+//   return v8::Handle<v8::Value>();
+// }
 #endif
 
 } } }

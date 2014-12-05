@@ -163,6 +163,12 @@ pc/eet-cxx.pc \
 pc/eo-cxx.pc
 endif
 
+if HAVE_JS
+pkgconfig_DATA += \
+pc/eolian-js.pc \
+pc/eo-js.pc
+endif
+
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
 endif

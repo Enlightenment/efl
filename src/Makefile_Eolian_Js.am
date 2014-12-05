@@ -26,7 +26,7 @@ lib_eolian_js_libeolian_js_la_SOURCES =\
 	bindings/eolian_js/main.cc \
 	$(generated_evas_canvas_js_bindings)
 
-lib_eolian_js_libeolian_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+lib_eolian_js_libeolian_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl/interfaces \
 @EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ @ECORE_CFLAGS@ @ECORE_EVAS_CFLAGS@ @EINA_CFLAGS@ \
 -I$(top_builddir)/src/lib/evas/canvas \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
