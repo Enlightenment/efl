@@ -643,7 +643,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
           wl_registry_bind(registry, id, &ivi_application_interface, 1);
      }
 #endif
-   else if (!strcmp(interface, "xdg_shell"))
+   else if (!strcmp(interface, "xdg_shell") && !getenv("EFL_WAYLAND_DONT_USE_XDG_SHELL"))
      {
         ewd->wl.xdg_shell = 
           wl_registry_bind(registry, id, &xdg_shell_interface, 1);
