@@ -33,6 +33,7 @@ typedef enum {
    ELM_CODE_TOKEN_TYPE_REMOVED,
    ELM_CODE_TOKEN_TYPE_CHANGED,
 
+   ELM_CODE_TOKEN_TYPE_CURSOR, // a pseudo type used for styling but may not be set on a cell
    ELM_CODE_TOKEN_TYPE_COUNT
 } Elm_Code_Token_Type;
 

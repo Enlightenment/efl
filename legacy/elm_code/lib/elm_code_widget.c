@@ -45,7 +45,7 @@ static void _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int coun
      }
 }
 
-EAPI void elm_code_widget_fill_line_tokens(Evas_Textgrid_Cell *cells, int count, Elm_Code_Line *line)
+EAPI void elm_code_widget_fill_line_tokens(Evas_Textgrid_Cell *cells, unsigned int count, Elm_Code_Line *line)
 {
    Eina_List *item;
    Elm_Code_Token *token;
@@ -73,6 +73,7 @@ static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells
    char *chr;
    unsigned int length, x;
    int w;
+   ELM_CODE_WIDGET_DATA_GET(o, widget);
 
    if (!_elm_code_widget_resize(o))
      return;
@@ -103,6 +104,11 @@ static void _elm_code_widget_fill_line(Evas_Object *o, Evas_Textgrid_Cell *cells
      }
 
    elm_code_widget_fill_line_tokens(cells, w, line);
+   if (widget->editable && widget->cursor_line == line->number)
+     {
+        if (widget->cursor_col < (unsigned int) w)
+          cells[widget->cursor_col].bg = ELM_CODE_TOKEN_TYPE_CURSOR;
+     }
 
    evas_object_textgrid_update_add(o, 0, line->number - 1, w, 1);
 }
@@ -180,10 +186,9 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    Evas_Object *o;
+   Elm_Code_Widget *widget;
 
    o = evas_object_textgrid_add(parent);
-
-   elm_code_widget_font_size_set(o, 10);
 
    // setup status colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
@@ -216,17 +221,38 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CHANGED,
                                     54, 54, 255, 255);
 
+   // the style for a cursor - this is a special token and will be applied to the background
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CURSOR,
+                                    205, 205, 54, 255);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, code);
 
    eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, code));
    eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, code));
 
+   widget = calloc(1, sizeof(*widget));
+   widget->code = code;
+   widget->cursor_line = 1;
+   widget->cursor_col = 1;
+   evas_object_data_set(o, ELM_CODE_WIDGET_DATA_KEY, widget);
    code->widgets = eina_list_append(code->widgets, o);
+
+   elm_code_widget_font_size_set(o, 10);
    return o;
 }
 
-EAPI void elm_code_widget_font_size_set(Evas_Object *widget, int size)
+EAPI void elm_code_widget_font_size_set(Evas_Object *obj, Evas_Font_Size size)
 {
-   evas_object_textgrid_font_set(widget, "Mono", size * elm_config_scale_get());
+   ELM_CODE_WIDGET_DATA_GET(obj, widget);
+
+   widget->font_size = size;
+   evas_object_textgrid_font_set(obj, "Mono", size * elm_config_scale_get());
 }
+
+EAPI void elm_code_widget_editable_set(Evas_Object *obj, Eina_Bool editable)
+{
+   ELM_CODE_WIDGET_DATA_GET(obj, widget);
+
+   widget->editable = editable;
+}
+
 
