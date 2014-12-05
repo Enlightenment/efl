@@ -308,69 +308,18 @@ _pos_map_spring(double pos,
 }
 
 static double
-_cubic_bezier_a (double a1, double a2)
-{
-    return 1.0 - 3.0 * a2 + 3.0 * a1;
-}
-
-static double
-_cubic_bezier_b (double a1, double a2)
-{
-    return 3.0 * a2 - 6.0 * a1;
-}
-
-static double
-_cubic_bezier_c(double a1)
-{
-    return 3.0 * a1;
-}
-
-static double
-_cubic_bezier_calc(double t,
-                   double a1,
-                   double a2)
-{
-    return ((_cubic_bezier_a(a1, a2) * t +
-             _cubic_bezier_b(a1, a2)) * t +
-            _cubic_bezier_c(a1)) * t;
-}
-
-static double
-_cubic_bezier_slope_get(double t,
-                        double a1,
-                        double a2)
-{
-    return 3.0 * _cubic_bezier_a(a1, a2) * t * t +
-           2.0 * _cubic_bezier_b(a1, a2) * t +
-           _cubic_bezier_c(a1);
-}
-
-static double
-_cubic_bezier_t_get(double a,
-                        double x1,
-                        double x2)
-{
-    double guess_t = a;
-    for (int i = 0; i < 4; ++i)
-    {
-        double current_slope = _cubic_bezier_slope_get(a, x1, x2);
-        if (current_slope == 0.0)
-            return guess_t;
-        double current_x = _cubic_bezier_calc(guess_t, x1, x2) - a;
-        guess_t -= current_x / current_slope;
-    }
-    return guess_t;
-}
-
-static double
 _pos_map_cubic_bezier(double pos,
-                      double x1,
+                      double x1 EINA_UNUSED,
                       double y1,
-                      double x2,
+                      double x2 EINA_UNUSED,
                       double y2)
 {
     if (x1 == y1 && x2 == y2) return pos;
-    return _cubic_bezier_calc(_cubic_bezier_t_get(pos, x1, x2), y1, y2);
+
+    /* Bezier Cubic formula:
+		 y(t) = (1 - t)^3 + 3t(1 - t)^2 + 3t^2(1 - t) + t^3 */
+    return (pow((1 - pos), 3) * 0) + (3 * pos * pow((1 - pos), 2) * y1) +
+           (3 * pow(pos, 2) * (1 - pos) * y2) + (pow(pos, 3) * 1);
 }
 
 #define DBL_TO(Fp) eina_f32p32_double_to(Fp)
