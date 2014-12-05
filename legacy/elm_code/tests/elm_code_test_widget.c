@@ -4,6 +4,8 @@
 
 #include "elm_code_suite.h"
 
+#include "elm_code_widget.c"
+
 static void _assert_cell_type(Evas_Textgrid_Cell cell, Elm_Code_Token_Type type, int id)
 {
    ck_assert_msg(cell.fg == type, "Wrong type for cell %d", id);
@@ -27,7 +29,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    elm_code_file_line_token_add(file, 1, 6+1, 17+1, ELM_CODE_TOKEN_TYPE_COMMENT);
    elm_code_file_line_token_add(file, 1, 21+1, 22+1, ELM_CODE_TOKEN_TYPE_COMMENT);
 
-   elm_code_widget_fill_line_tokens(cells, length+1, line);
+   _elm_code_widget_fill_line_tokens(cells, length+1, line);
    _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT, 1);
    _assert_cell_type(cells[4], ELM_CODE_TOKEN_TYPE_DEFAULT, 4);
    _assert_cell_type(cells[6], ELM_CODE_TOKEN_TYPE_DEFAULT, 6);
