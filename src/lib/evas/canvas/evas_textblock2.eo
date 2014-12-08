@@ -53,15 +53,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
             const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
-      replace_char {
-         set {
-            /*@
-            @brief Set the "replacement character" to use for the given textblock2 object. */
-         }
-         values {
-            const(char)* ch; /*@ The charset name. */
-         }
-      }
       legacy_newline {
          set {
             /*@

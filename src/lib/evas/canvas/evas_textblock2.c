@@ -457,7 +457,6 @@ struct _Evas_Object_Textblock2_Format
    Eina_Bool            underline_dash : 1;  /**< EINA_TRUE if a dashed line under the text, else EINA_FALSE */
    Eina_Bool            strikethrough : 1;  /**< EINA_TRUE if text should be stricked off, else EINA_FALSE */
    Eina_Bool            backing : 1;  /**< EINA_TRUE if enable background color, else EINA_FALSE */
-   Eina_Bool            password : 1;  /**< EINA_TRUE if the text is password, else EINA_FALSE */
    Eina_Bool            halign_auto : 1;  /**< EINA_TRUE if auto horizontal align, else EINA_FALSE */
 };
 
@@ -504,7 +503,6 @@ struct _Evas_Object_Textblock2
    double                              valign;
    char                               *markup_text;
    void                               *engine_data;
-   const char                         *repch;
    const char                         *bidi_delimiters;
    struct {
       int                              w, h, oneline_h;
@@ -943,7 +941,6 @@ static const char *linerelgapstr = NULL;
 static const char *itemstr = NULL;
 static const char *linefillstr = NULL;
 static const char *ellipsisstr = NULL;
-static const char *passwordstr = NULL;
 static const char *underline_dash_widthstr = NULL;
 static const char *underline_dash_gapstr = NULL;
 
@@ -1044,7 +1041,6 @@ _format_command_init(void)
         itemstr = eina_stringshare_add("item");
         linefillstr = eina_stringshare_add("linefill");
         ellipsisstr = eina_stringshare_add("ellipsis");
-        passwordstr = eina_stringshare_add("password");
         underline_dash_widthstr = eina_stringshare_add("underline_dash_width");
         underline_dash_gapstr = eina_stringshare_add("underline_dash_gap");
      }
@@ -1095,7 +1091,6 @@ _format_command_shutdown(void)
    eina_stringshare_del(itemstr);
    eina_stringshare_del(linefillstr);
    eina_stringshare_del(ellipsisstr);
-   eina_stringshare_del(passwordstr);
    eina_stringshare_del(underline_dash_widthstr);
    eina_stringshare_del(underline_dash_gapstr);
 }
@@ -2082,27 +2077,6 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock2_Format *fmt, const c
              o->have_ellipsis = 1;
           }
      }
-   else if (cmd == passwordstr)
-     {
-        /**
-         * @page evas_textblock2_style_page Evas Textblock2 Style Options
-         *
-         * @subsection evas_textblock2_style_password Password
-         *
-         * Sets if the text is being used for passwords. Enabling this causes
-         * all characters to be substituted for '*'.
-         * Value must be one of the following:
-         * @li "on" - Enable
-         * @li "off" - Disable
-         * @code
-         * password=<number>
-         * @endcode
-         */
-        if (len == 3 && !strcmp(param, "off"))
-          fmt->password = 0;
-        else if (len == 2 && !strcmp(param, "on"))
-          fmt->password = 1;
-     }
    else if (cmd == underline_dash_widthstr)
      {
         /**
@@ -2817,7 +2791,6 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock2_Format *fmt,
         fmt->underline_dash_width = 6;
         fmt->underline_dash_gap = 2;
         fmt->linerelgap = 0.0;
-        fmt->password = 1;
         fmt->ellipsis = -1;
      }
    return fmt;
@@ -3629,16 +3602,14 @@ typedef struct {
  * @param n the text node. - Not null.
  * @param start the start position. - in range.
  * @param off the offset - start + offset in range. if offset is -1, it'll add everything to the end of the string if offset = 0 it'll return with doing nothing.
- * @param repch a replacement char to print instead of the original string, for example, * when working with passwords.
  */
 static void
-_layout_text_append(Ctxt *c, Layout_Text_Append_Queue *queue, Evas_Object_Textblock2_Node_Text *n, int start, int off, const char *repch, Eina_List *rel)
+_layout_text_append(Ctxt *c, Layout_Text_Append_Queue *queue, Evas_Object_Textblock2_Node_Text *n, int start, int off, Eina_List *rel)
 {
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
    const Eina_Unicode *tbase;
    Evas_Object_Textblock2_Text_Item *ti;
    size_t cur_len = 0;
-   Eina_Unicode urepch = 0;
 
    /* prepare a working copy of the string, either filled by the repch or
     * filled with the true values */
@@ -3669,25 +3640,7 @@ _layout_text_append(Ctxt *c, Layout_Text_Append_Queue *queue, Evas_Object_Textbl
              return;
           }
 
-        /* If we work with a replacement char, create a string which is the same
-         * but with replacement chars instead of regular chars. */
-        if ((queue->format->password) && (repch) && (eina_ustrbuf_length_get(n->unicode)))
-          {
-             int i, ind;
-             Eina_Unicode *ptr;
-
-             tbase = str = ptr = alloca((off + 1) * sizeof(Eina_Unicode));
-             ind = 0;
-             urepch = eina_unicode_utf8_next_get(repch, &ind);
-             for (i = 0 ; i < off; ptr++, i++)
-               *ptr = urepch;
-             *ptr = 0;
-          }
-        /* Use the string, just cut the relevant parts */
-        else
-          {
-             str = eina_ustrbuf_string_get(n->unicode) + start;
-          }
+        str = eina_ustrbuf_string_get(n->unicode) + start;
 
         cur_len = off;
      }
@@ -5038,7 +4991,7 @@ _layout_text_append_commit(Ctxt *c, Layout_Text_Append_Queue **_queue, Evas_Obje
      {
         item = (Layout_Text_Append_Queue *) EINA_INLIST_GET(queue)->last;
         int off = item->start - queue->start + item->off;
-        _layout_text_append(c, queue, n, queue->start, off, c->o->repch, rel);
+        _layout_text_append(c, queue, n, queue->start, off, rel);
      }
 
    while (queue)
@@ -5055,8 +5008,7 @@ static Eina_Bool
 _layout_split_text_because_format(const Evas_Object_Textblock2_Format *fmt,
       const Evas_Object_Textblock2_Format *nfmt)
 {
-   if ((fmt->password != nfmt->password) ||
-         memcmp(&fmt->font, &nfmt->font, sizeof(fmt->font)))
+   if (memcmp(&fmt->font, &nfmt->font, sizeof(fmt->font)))
      {
         return EINA_TRUE;
      }
@@ -5899,16 +5851,6 @@ _evas_textblock2_style_user_pop(Eo *eo_obj, Evas_Textblock2_Data *o)
 }
 
 EOLIAN static void
-_evas_textblock2_replace_char_set(Eo *eo_obj, Evas_Textblock2_Data *o, const char *ch)
-{
-   if (o->repch) eina_stringshare_del(o->repch);
-   if (ch) o->repch = eina_stringshare_add(ch);
-   else o->repch = NULL;
-   _evas_textblock2_invalidate_all(o);
-   _evas_textblock2_changed(o, eo_obj);
-}
-
-EOLIAN static void
 _evas_textblock2_legacy_newline_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o, Eina_Bool mode)
 {
    if (o->legacy_newline == mode)
@@ -5951,12 +5893,6 @@ EOLIAN static const char*
 _evas_textblock2_bidi_delimiters_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
 {
    return o->bidi_delimiters;
-}
-
-EOLIAN static const char*
-_evas_textblock2_replace_char_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
-{
-   return o->repch;
 }
 
 /**
@@ -10289,7 +10225,6 @@ evas_object_textblock2_free(Evas_Object *eo_obj)
 	o->cursors = eina_list_remove_list(o->cursors, o->cursors);
 	free(cur);
      }
-   if (o->repch) eina_stringshare_del(o->repch);
    if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
    o->magic = 0;
   _format_command_shutdown();
