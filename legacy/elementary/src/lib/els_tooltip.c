@@ -549,7 +549,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              else if (!INSIDE(px, py, tx + (px - tx) + ax, ty + (py - ty) + ay, tw, th))
                tx += px - tx + ax, ty += py - ty + ay;
           }
-#undef
+#undef INSIDE
      }
    if (((tx < 0) && (tw < cw)) || ((ty < 0) && (th < ch)))
      {
