@@ -7932,8 +7932,8 @@ evas_textblock2_cursor_content_get(const Evas_Textblock2_Cursor *cur)
      }
 }
 
-static char *
-_evas_textblock2_cursor_range_text_plain_get(const Evas_Textblock2_Cursor *cur1, const Evas_Textblock2_Cursor *_cur2)
+EAPI char *
+evas_textblock2_cursor_range_text_get(const Evas_Textblock2_Cursor *cur1, const Evas_Textblock2_Cursor *_cur2)
 {
    Eina_UStrbuf *buf;
    Evas_Object_Textblock2_Node_Text *n1, *n2;
@@ -7990,93 +7990,6 @@ _evas_textblock2_cursor_range_text_plain_get(const Evas_Textblock2_Cursor *cur1,
         eina_ustrbuf_free(buf);
         return ret;
      }
-}
-
-EAPI Eina_List *
-evas_textblock2_cursor_range_formats_get(const Evas_Textblock2_Cursor *cur1, const Evas_Textblock2_Cursor *cur2)
-{
-   Evas_Object *eo_obj;
-   Eina_List *ret = NULL;
-   Evas_Object_Textblock2_Node_Text *n1, *n2;
-   Evas_Object_Textblock2_Node_Format *first, *last;
-   if (!cur1 || !cur1->node) return NULL;
-   if (!cur2 || !cur2->node) return NULL;
-   if (cur1->obj != cur2->obj) return NULL;
-
-   eo_obj = cur1->obj;
-   TB_HEAD_RETURN(NULL);
-
-   if (evas_textblock2_cursor_compare(cur1, cur2) > 0)
-     {
-        const Evas_Textblock2_Cursor *tc;
-
-        tc = cur1;
-        cur1 = cur2;
-        cur2 = tc;
-     }
-   n1 = cur1->node;
-   n2 = cur2->node;
-
-   /* FIXME: Change first and last getting to format_before_or_at_pos_get */
-
-   last = n2->format_node;
-
-   /* If n2->format_node is NULL, we don't have formats in the tb/range. */
-   if (!last)
-      return NULL;
-   /* If the found format is on our text node, we should go to the last
-    * one, otherwise, the one we found is good enough. */
-   if (last->text_node == n2)
-     {
-        Evas_Object_Textblock2_Node_Format *fnode = last;
-        while (fnode && (fnode->text_node == n2))
-          {
-             last = fnode;
-             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-          }
-     }
-
-   /* If the first format node is within the range (i.e points to n1) or if
-    * we have other formats in the range, go through them */
-   first = n1->format_node;
-   if ((first->text_node == n1) || (first != last))
-     {
-        Evas_Object_Textblock2_Node_Format *fnode = first;
-        /* Go to the first one in the range */
-        if (fnode->text_node != n1)
-          {
-             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-          }
-
-        while (fnode)
-          {
-             ret = eina_list_append(ret, fnode);
-             if (fnode == last)
-                break;
-             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-          }
-     }
-
-   return ret;
-
-}
-
-EAPI char *
-evas_textblock2_cursor_range_text_get(const Evas_Textblock2_Cursor *cur1, const Evas_Textblock2_Cursor *cur2, Evas_Textblock2_Text_Type format)
-{
-   // FIXME: Remove the format param, only palin is available from now on. */
-   if (format == EVAS_TEXTBLOCK2_TEXT_PLAIN)
-      return _evas_textblock2_cursor_range_text_plain_get(cur1, cur2);
-   else
-      return NULL; /* Not yet supported */
-}
-
-EAPI const Evas_Object_Textblock2_Node_Format *
-evas_textblock2_cursor_format_get(const Evas_Textblock2_Cursor *cur)
-{
-   if (!cur) return NULL;
-   TB_NULL_CHECK(cur->node, NULL);
-   return _evas_textblock2_cursor_node_format_at_pos_get(cur);
 }
 
 EAPI const char *

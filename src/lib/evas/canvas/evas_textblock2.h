@@ -606,11 +606,10 @@ EAPI Eina_List                               *evas_textblock2_cursor_range_forma
  *
  * @param cur1 one side of the range.
  * @param cur2 the other side of the range
- * @param format The form on which to return the text. Markup - in textblock2 markup. Plain - UTF8.
  * @return the text in the range
  * @see elm_entry_markup_to_utf8()
  */
-EAPI char                                    *evas_textblock2_cursor_range_text_get(const Evas_Textblock2_Cursor *cur1, const Evas_Textblock2_Cursor *cur2, Evas_Textblock2_Text_Type format) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+EAPI char                                    *evas_textblock2_cursor_range_text_get(const Evas_Textblock2_Cursor *cur1, const Evas_Textblock2_Cursor *cur2) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 /**
  * Return the content of the cursor.
