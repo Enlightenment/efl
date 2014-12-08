@@ -29,16 +29,16 @@ if EFL_ENABLE_TESTS
 #check_PROGRAMS += tests/elocation/elocation_suite
 #TESTS += tests/elocation/elocation_suite
 
-tests_elocation_elocation_suite_SOURCES = \
-tests/elocation/elocation_suite.c
+#tests_elocation_elocation_suite_SOURCES = \
+#tests/elocation/elocation_suite.c
 
-tests_elocation_elocation_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--DTESTS_WD=\"`pwd`\" \
--DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elocation\" \
--DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elocation\" \
-@CHECK_CFLAGS@ \
-@ELOCATION_CFLAGS@
-tests_elocation_elocation_suite_LDADD = @CHECK_LIBS@ @USE_ELOCATION_LIBS@
-tests_elocation_elocation_suite_DEPENDENCIES = @USE_ELOCATION_INTERNAL_LIBS@
+#tests_elocation_elocation_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+#-DTESTS_WD=\"`pwd`\" \
+#-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elocation\" \
+#-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elocation\" \
+#@CHECK_CFLAGS@ \
+#@ELOCATION_CFLAGS@
+#tests_elocation_elocation_suite_LDADD = @CHECK_LIBS@ @USE_ELOCATION_LIBS@
+#tests_elocation_elocation_suite_DEPENDENCIES = @USE_ELOCATION_INTERNAL_LIBS@
 
 endif
