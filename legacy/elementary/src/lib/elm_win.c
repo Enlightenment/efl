@@ -1749,6 +1749,10 @@ _elm_win_obj_intercept_show(void *data,
         evas_object_show(sd->pointer.obj);
      }
    evas_object_show(obj);
+#ifdef ELEMENTARY_X
+   if (sd->type == ELM_WIN_TOOLTIP)
+     ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
+#endif
 }
 
 EOLIAN static void
@@ -2016,6 +2020,7 @@ _elm_win_xwin_update(Elm_Win_Data *sd)
 
       case ELM_WIN_TOOLTIP:
         ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_TOOLTIP);
+        ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
         break;
 
       case ELM_WIN_NOTIFICATION:
