@@ -252,9 +252,8 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
 }
 
 /**
- * Frees the hash table and the data contained inside it.
- * @param   hash The hash table to destroy.
- * @return  @c TRUE on success, @c FALSE on error.
+ * @brief Frees the hash table and the data contained inside it.
+ * @param   hash: The hash table to destroy.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 EAPI void
