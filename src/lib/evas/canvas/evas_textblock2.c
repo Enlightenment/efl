@@ -6343,45 +6343,6 @@ _prepend_escaped_char(Evas_Textblock2_Cursor *cur, const char *s,
 }
 
 
-EOLIAN static void
-_evas_textblock2_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o, const char *text)
-{
-   if ((text != o->markup_text) && (o->markup_text))
-     {
-        free(o->markup_text);
-        o->markup_text = NULL;
-     }
-
-   _nodes_clear(eo_obj);
-
-   o->cursor->node = _evas_textblock2_node_text_new();
-   o->text_nodes = _NODE_TEXT(eina_inlist_append(
-            EINA_INLIST_GET(o->text_nodes),
-            EINA_INLIST_GET(o->cursor->node)));
-
-   if (!o->style && !o->style_user)
-     {
-        if (text != o->markup_text)
-          {
-             if (text) o->markup_text = strdup(text);
-          }
-        return;
-     }
-
-   evas_textblock2_cursor_paragraph_first(o->cursor);
-
-   evas_object_textblock2_text_markup_prepend(o->cursor, text);
-   /* Point all the cursors to the starrt */
-     {
-        Eina_List *l;
-        Evas_Textblock2_Cursor *data;
-
-        evas_textblock2_cursor_paragraph_first(o->cursor);
-        EINA_LIST_FOREACH(o->cursors, l, data)
-           evas_textblock2_cursor_paragraph_first(data);
-     }
-}
-
 EAPI void
 evas_object_textblock2_text_markup_prepend(Evas_Textblock2_Cursor *cur, const char *text)
 {
@@ -6575,253 +6536,7 @@ _markup_get_text_append(Eina_Strbuf *txt, const Eina_Unicode *text)
 
    free(base);
 }
-EOLIAN static const char*
-_evas_textblock2_text_markup_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
-{
-   Evas_Object_Textblock2_Node_Text *n;
-   Eina_Strbuf *txt = NULL;
 
-   const char *markup;
-   if (o->markup_text)
-     {
-        markup = (o->markup_text);
-        return markup;
-     }
-   txt = eina_strbuf_new();
-   EINA_INLIST_FOREACH(o->text_nodes, n)
-     {
-        Evas_Object_Textblock2_Node_Format *fnode;
-        Eina_Unicode *text_base, *text;
-        int off;
-        int len;
-
-        /* For each text node to thorugh all of it's format nodes
-         * append text from the start to the offset of the next format
-         * using the last format got. If needed it also creates format items
-         * this is the core algorithm of the layout mechanism.
-         * Skip the unicode replacement chars when there are because
-         * we don't want to print them. */
-        len = (int) eina_ustrbuf_length_get(n->unicode);
-        text_base = text =
-           eina_unicode_strndup(eina_ustrbuf_string_get(n->unicode), len);
-        fnode = n->format_node;
-        off = 0;
-        while (fnode && (fnode->text_node == n))
-          {
-             Eina_Unicode tmp_ch;
-             off += fnode->offset;
-
-             if (off > len) break;
-             /* No need to skip on the first run */
-             tmp_ch = text[off];
-             text[off] = 0; /* Null terminate the part of the string */
-             _markup_get_text_append(txt, text);
-             _markup_get_format_append(txt, fnode);
-             text[off] = tmp_ch; /* Restore the char */
-             text += off;
-             if (fnode->visible)
-               {
-                  off = -1;
-                  text++;
-               }
-             else
-               {
-                  off = 0;
-               }
-             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-          }
-        /* Add the rest, skip replacement */
-        _markup_get_text_append(txt, text);
-        free(text_base);
-     }
-
-   (((Evas_Textblock2_Data *)o)->markup_text) = eina_strbuf_string_steal(txt);
-   eina_strbuf_free(txt);
-   markup = (o->markup_text);
-
-   return markup;
-}
-
-EAPI char *
-evas_textblock2_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
-{
-   /* FIXME: Redundant and awful, should be merged with markup_prepend */
-   Eina_Strbuf *sbuf;
-   char *s, *p, *ret;
-   char *tag_start, *tag_end, *esc_start, *esc_end;
-
-   if (!text) return NULL;
-
-
-   tag_start = tag_end = esc_start = esc_end = NULL;
-   sbuf = eina_strbuf_new();
-   p = (char *)text;
-   s = p;
-   /* This loop goes through all of the mark up text until it finds format
-    * tags, escape sequences or the terminating NULL. When it finds either
-    * of those, it appends the text found up until that point to the textblock2
-    * proccesses whatever found. It repeats itself until the termainating
-    * NULL is reached. */
-   for (;;)
-     {
-        /* If we got to the end of string or just finished/started tag
-         * or escape sequence handling. */
-        if ((*p == 0) ||
-              (tag_end) || (esc_end) ||
-              (tag_start) || (esc_start))
-          {
-             if (tag_end)
-               {
-                  /* If we reached to a tag ending, analyze the tag */
-                  char *ttag;
-                  size_t ttag_len;
-
-                  tag_start++; /* Skip the < */
-                  tag_end--; /* Skip the > */
-                  if ((tag_end > tag_start) && (*(tag_end - 1) == '/'))
-                    {
-                       tag_end --; /* Skip the terminating '/' */
-                       while (*(tag_end - 1) == ' ')
-                          tag_end--; /* skip trailing ' ' */
-                    }
-
-                  ttag_len = tag_end - tag_start;
-
-                  ttag = malloc(ttag_len + 1);
-                  if (ttag)
-                    {
-                       const char *match = NULL;
-                       size_t replace_len;
-                       memcpy(ttag, tag_start, ttag_len);
-                       ttag[ttag_len] = 0;
-
-
-                       if (eo_obj)
-                         {
-                            match = _style_match_tag(
-                                  evas_object_textblock2_style_get(eo_obj),
-                                  ttag, ttag_len, &replace_len);
-                         }
-
-                       if (!match) match = ttag;
-
-                       if (_IS_PARAGRAPH_SEPARATOR_SIMPLE(match))
-                          eina_strbuf_append(sbuf, _PARAGRAPH_SEPARATOR_UTF8);
-                       else if (_IS_LINE_SEPARATOR(match))
-                          eina_strbuf_append(sbuf, _NEWLINE_UTF8);
-                       else if (_IS_TAB(match))
-                          eina_strbuf_append(sbuf, _TAB_UTF8);
-                       else if (!strncmp(match, "item", 4))
-                          eina_strbuf_append(sbuf, _REPLACEMENT_CHAR_UTF8);
-
-                       free(ttag);
-                    }
-                  tag_start = tag_end = NULL;
-               }
-             else if (esc_end)
-               {
-                  const char *escape;
-
-                  escape = _escaped_char_get(esc_start, esc_end + 1);
-                  if (escape) eina_strbuf_append(sbuf, escape);
-                  esc_start = esc_end = NULL;
-               }
-             else if (*p == 0)
-               {
-                  if (s)
-                    {
-                       eina_strbuf_append_length(sbuf, s, p - s);
-                       s = NULL;
-                    }
-                  else
-                    {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
-                    }
-               }
-             if (*p == 0)
-                break;
-          }
-        if (*p == '<')
-          {
-             if (!esc_start)
-               {
-                  /* Append the text prior to this to the textblock2 and
-                   * mark the start of the tag */
-                  tag_start = p;
-                  tag_end = NULL;
-                  if (s)
-                    {
-                       eina_strbuf_append_length(sbuf, s, p - s);
-                       s = NULL;
-                    }
-                  else
-                    {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
-                    }
-               }
-          }
-        else if (*p == '>')
-          {
-             if (tag_start)
-               {
-                  tag_end = p + 1;
-                  s = p + 1;
-               }
-          }
-        else if (*p == '&')
-          {
-             if (!tag_start)
-               {
-                  /* Append the text prior to this to the textblock2 and mark
-                   * the start of the escape sequence */
-                  esc_start = p;
-                  esc_end = NULL;
-                  if (s)
-                    {
-                       eina_strbuf_append_length(sbuf, s, p - s);
-                       s = NULL;
-                    }
-                  else
-                    {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
-                    }
-               }
-          }
-        else if (*p == ';')
-          {
-             if (esc_start)
-               {
-                  esc_end = p;
-                  s = p + 1;
-               }
-          }
-        p++;
-     }
-
-   ret = eina_strbuf_string_steal(sbuf);
-   eina_strbuf_free(sbuf);
-   return ret;
-}
-
-EAPI char *
-evas_textblock2_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
-{
-   Eina_Strbuf *sbuf;
-   char *str = NULL;
-
-   (void) eo_obj;
-
-   if (!text) return NULL;
-
-   sbuf = eina_strbuf_new();
-
-   _markup_get_text_utf8_append(sbuf, text);
-
-   str = eina_strbuf_string_steal(sbuf);
-   eina_strbuf_free(sbuf);
-   return str;
-
-}
 
 /* cursors */
 
@@ -8577,6 +8292,24 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_te
    if (len == 0) return 0;
    cur->pos += len; /*Advance */
    return len;
+}
+
+EOLIAN static void
+_evas_textblock2_efl_text_text_set(Eo *obj, Evas_Textblock2_Data *pd EINA_UNUSED, const char *text)
+{
+   /* FIXME: This is not even slightly correct. */
+   Evas_Textblock2_Cursor *main_cur = evas_object_textblock2_cursor_get(obj);
+   evas_textblock2_cursor_text_prepend(main_cur, text);
+}
+
+
+EOLIAN static const char *
+_evas_textblock2_efl_text_text_get(Eo *obj, Evas_Textblock2_Data *pd)
+{
+   (void) obj;
+   (void) pd;
+   /* FIXME: Do something. */
+   return "";
 }
 
 /**
@@ -10975,7 +10708,7 @@ _evas_textblock2_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock2_Data *o EINA_U
 
    eo_do(eo_obj, ts = evas_obj_textblock2_style_get());
    style = evas_textblock2_style_get(ts);
-   eo_do(eo_obj, text = evas_obj_textblock2_text_markup_get());
+   eo_do(eo_obj, text = efl_text_get());
    strncpy(shorttext, text, 38);
    if (shorttext[37])
      strcpy(shorttext + 37, "\xe2\x80\xa6"); /* HORIZONTAL ELLIPSIS */
@@ -11017,7 +10750,7 @@ evas_object_textblock2_init(Evas_Object *eo_obj)
 
    o = obj->private_data;
    o->cursor->obj = eo_obj;
-   evas_object_textblock2_text_markup_set(eo_obj, "");
+   eo_do(eo_obj, efl_text_set(""));
 
    o->legacy_newline = EINA_TRUE;
 }

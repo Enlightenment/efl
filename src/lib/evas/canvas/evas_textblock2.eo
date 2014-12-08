@@ -1,27 +1,8 @@
-class Evas.Textblock2 (Evas.Object)
+class Evas.Textblock2 (Evas.Object, Efl.Text)
 {
    legacy_prefix: evas_object_textblock2;
    eo_prefix: evas_obj_textblock2;
    properties {
-      text_markup {
-         set {
-            /*@
-            Sets the tetxblock's text to the markup text.
-
-            @note assumes text does not include the unicode object replacement char (0xFFFC)
-
-            @return Return no value. */
-         }
-         get {
-            /*@
-            Return the markup of the object.
-
-            @return the markup text of the object. */
-         }
-         values {
-            const(char)* text; /*@ the markup text to use. */
-         }
-      }
       valign {
          set {
             /*@
@@ -300,5 +281,7 @@ class Evas.Textblock2 (Evas.Object)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
+      Efl.Text.text.set;
+      Efl.Text.text.get;
    }
 }
