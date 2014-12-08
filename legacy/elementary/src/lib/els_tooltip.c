@@ -455,15 +455,23 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    TTDBG("ADJUST (POINTER):  tx=%d,ty=%d\n", tx, ty);
    if ((tx < 0) || (tx + tw > cw))
      {
-        /* if we're offscreen, try to flip over the Y axis */
-        if ((tx < 0) && (abs((tx + 2 * tw) - cw) < abs(tx)))
-          tx += tw;
+        if (tx < 0)
+          {
+             /* if we're offscreen to the left, try to flip over the Y axis */
+             if (abs((tx + 2 * tw) - cw) < abs(tx))
+               tx += tw;
+             else
+               tx = 0;
+          }
         else if (tx + tw > cw)
           {
              int test_x = tx - tw;
 
+             /* if we're offscreen to the right, try to flip over the Y axis */
              if ((test_x >= 0) || (tx + tw - cw > abs(test_x)))
                tx -= tw;
+             else
+               tx = cw - tw;
           }
      }
    else if ((tx > px) && (px > tw))
@@ -473,15 +481,23 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
    if ((ty < 0) || (ty + th > ch))
      {
-        /* if we're offscreen, try to flip over the X axis */
-        if ((ty < 0) && (abs((ty + 2 * th) - ch) < abs(ty)))
-          ty += th;
+        if (ty < 0)
+          {
+             /* if we're offscreen to the top, try to flip over the X axis */
+             if (abs((ty + 2 * th) - ch) < abs(ty))
+               ty += th;
+             else
+               ty = 0;
+          }
         else if (ty + th > ch)
           {
              int test_y = ty - th;
 
+             /* if we're offscreen to the bottom, try to flip over the X axis */
              if ((test_y >= 0) || (ty + th - ch > abs(test_y)))
                ty -= th;
+             else
+               ty = ch - th;
           }
      }
    else if ((ty > py) && (py > th))
