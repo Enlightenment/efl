@@ -4557,6 +4557,7 @@ pc/emotion.pc
 pc/ethumb.pc
 pc/ethumb_client.pc
 pc/elocation.pc
+pc/elua.pc
 dbus-services/org.enlightenment.Efreet.service
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/efreet.service
@@ -4602,6 +4603,8 @@ cmakeconfig/EthumbClientConfig.cmake
 cmakeconfig/EthumbClientConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EmotionConfig.cmake
 cmakeconfig/EmotionConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EluaConfig.cmake
+cmakeconfig/EluaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
