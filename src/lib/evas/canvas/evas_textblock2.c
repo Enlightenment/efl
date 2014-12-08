@@ -905,28 +905,6 @@ _is_white(Eina_Unicode c)
    return EINA_FALSE;
 }
 
-/**
- * @internal
- * Prepends the text between s and p to the main cursor of the object.
- *
- * @param cur the cursor to prepend to.
- * @param[in] s start of the string
- * @param[in] p end of the string
- */
-static void
-_prepend_text_run(Evas_Textblock2_Cursor *cur, const char *s, const char *p)
-{
-   if ((s) && (p > s))
-     {
-        char *ts;
-
-        ts = alloca(p - s + 1);
-        strncpy(ts, s, p - s);
-        ts[p - s] = 0;
-        evas_textblock2_cursor_text_prepend(cur, ts);
-     }
-}
-
 /* The refcount for the formats. */
 static int format_refcount = 0;
 /* Holders for the stringshares */
@@ -5989,52 +5967,6 @@ _evas_textblock2_replace_char_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *
  * @param s the start of the string
  * @param s_end the end of the string.
  */
-
-EAPI void
-evas_object_textblock2_text_markup_prepend(Evas_Textblock2_Cursor *cur, const char *text)
-{
-   if (!cur) return;
-   Evas_Object *eo_obj = cur->obj;
-   TB_HEAD();
-   if (text)
-     {
-        char *s, *p;
-
-        p = (char *)text;
-        s = p;
-        /* This loop goes through all of the mark up text until it finds format
-         * tags, escape sequences or the terminating NULL. When it finds either
-         * of those, it appends the text found up until that point to the textblock2
-         * proccesses whatever found. It repeats itself until the termainating
-         * NULL is reached. */
-        for (;;)
-          {
-             size_t text_len;
-             if (*p == 0)
-               {
-                  _prepend_text_run(cur, s, p);
-                  s = NULL;
-                  break;
-               }
-             /* Unicode object replacement char */
-             else if (!strncmp(_REPLACEMENT_CHAR_UTF8, p,
-                      text_len = strlen(_REPLACEMENT_CHAR_UTF8)))
-               {
-                  /*FIXME: currently just remove them, maybe do something
-                   * fancier in the future, atm it breaks if this char
-                   * is inside <> */
-                  _prepend_text_run(cur, s, p);
-                  /* it's also advanced later in this loop need +text_len
-                     in total*/
-                  p += text_len - 1;
-                  s = p + 1; /* One after the end of the replacement char */
-               }
-             p++;
-          }
-     }
-   _evas_textblock2_changed(o, eo_obj);
-}
-
 
 /**
  * @internal
