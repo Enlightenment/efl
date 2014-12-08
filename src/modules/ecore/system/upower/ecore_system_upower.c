@@ -33,17 +33,26 @@ static Eldbus_Proxy *_proxy = NULL;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
 static Eina_Bool _ecore_on_battery = EINA_FALSE;
-static Eina_Bool _ecore_low_battery = EINA_FALSE;
+static unsigned int _ecore_low_battery = 0;
+
+static int uversions[3] = {0}; //major, minor, micro
+static void _ecore_system_upower_shutdown(void);
 
 static void
 _battery_eval(void)
 {
-   if (_ecore_low_battery)
-     ecore_power_state_set(ECORE_POWER_STATE_LOW);
-   else if (_ecore_on_battery)
-     ecore_power_state_set(ECORE_POWER_STATE_BATTERY);
+   if (uversions[0] >= 1) return;
+   if (uversions[1] >= 99)
+     ecore_power_state_set(_ecore_low_battery);
    else
-     ecore_power_state_set(ECORE_POWER_STATE_MAINS);
+     {
+        if (_ecore_low_battery)
+          ecore_power_state_set(ECORE_POWER_STATE_LOW);
+        else if (_ecore_on_battery)
+          ecore_power_state_set(ECORE_POWER_STATE_BATTERY);
+        else
+          ecore_power_state_set(ECORE_POWER_STATE_MAINS);
+     }
 }
 
 static void
@@ -63,10 +72,17 @@ _on_low_battery_from_variant(Eldbus_Message_Iter *variant)
 }
 
 static void
+_on_low_battery_from_uint(unsigned int level)
+{
+   DBG("OnLowBattery=%hhu", level);
+   _ecore_low_battery = level;
+   _battery_eval();
+}
+
+static void
 _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
                         Eldbus_Pending *pending EINA_UNUSED)
 {
-   Eldbus_Message_Iter *variant;
    const char *errname, *errmsg;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
@@ -74,20 +90,49 @@ _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
         ERR("Message error %s - %s", errname, errmsg);
         return;
      }
-   if (!eldbus_message_arguments_get(msg, "v", &variant))
+
+   if (uversions[0] >= 1)
      {
-        ERR("Error getting arguments.");
+        ERR("Unsupported new UPower version!");
         return;
      }
+   if (uversions[1] >= 99)
+     {
+        unsigned int level;
 
-   _on_low_battery_from_variant(variant);
+        if (!eldbus_message_arguments_get(msg, "u", &level))
+          {
+             ERR("Error getting arguments.");
+             return;
+          }
+        _on_low_battery_from_uint(level);
+     }
+   else
+     {
+        Eldbus_Message_Iter *variant;
+
+        if (!eldbus_message_arguments_get(msg, "v", &variant))
+          {
+             ERR("Error getting arguments.");
+             return;
+          }
+        _on_low_battery_from_variant(variant);
+     }
 }
 
 static void
 _on_low_battery_get(Eldbus_Proxy *proxy)
 {
-   eldbus_proxy_property_get(proxy, "OnLowBattery",
-                             _on_low_battery_get_cb, NULL);
+   /* version specific battery properties */
+   if (uversions[0] < 1)
+     {
+        if (uversions[1] >= 99)
+          {/* FIXME: this module needs a huge refactoring since WarningLevel property is per-device */}
+        else
+          eldbus_proxy_property_get(proxy, "OnLowBattery", _on_low_battery_get_cb, NULL);
+     }
+   else
+     CRI("SOMEBODY SHOULD BE MAINTAINING THIS MODULE!!!!!!!");
 }
 
 static void
@@ -156,8 +201,31 @@ _props_changed(void *data, const Eldbus_Message *msg)
           continue;
         if (strcmp(key, "OnBattery") == 0)
           _on_battery_from_variant(var);
-        if (strcmp(key, "OnLowBattery") == 0)
-          _on_low_battery_from_variant(var);
+        if (uversions[0] >= 1)
+          {
+             ERR("Unsupported new UPower version!");
+             return;
+          }
+        if (uversions[1] >= 99)
+          {
+             /* FIXME: this will never be hit since it's on the wrong proxy */
+#if 0
+             if (strcmp(key, "WarningLevel") == 0)
+               {
+                  unsigned int level;
+
+                  if (!eldbus_message_iter_get_and_next(var, 'u', &level))
+                    ERR("Error getting OnBattery.");
+                  else
+                    _on_low_battery_from_uint(level);
+               }
+#endif
+          }
+        else
+          {
+             if (strcmp(key, "OnLowBattery") == 0)
+               _on_low_battery_from_variant(var);
+          }
      }
 
    while (eldbus_message_iter_get_and_next(invalidated, 's', &prop))
@@ -167,6 +235,43 @@ _props_changed(void *data, const Eldbus_Message *msg)
         if (strcmp(prop, "OnLowBattery") == 0)
           _on_low_battery_get(proxy);
      }
+}
+
+static void
+_version_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   const char *errname, *errmsg, *v;
+   char vers[128], *e;
+   unsigned int i;
+   Eldbus_Message_Iter *variant;
+
+   /* FIXME: if either of these fail...do something? */
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Message error %s - %s", errname, errmsg);
+        return;
+     }
+   if ((!eldbus_message_arguments_get(msg, "v", &variant)) ||
+       (!eldbus_message_iter_get_and_next(variant, 's', &v)))
+     {
+        ERR("Error getting version.");
+        return;
+     }
+   e = strncpy(vers, v, sizeof(vers) - 1);
+   for (i = 0; e[0] && (i < 3); i++, e++)
+     {
+        errno = 0;
+        uversions[i] = strtol(e, &e, 10);
+        if (errno) break;
+     }
+   if ((uversions[0] >= 1) || (uversions[1] >= 99))
+     {
+        /* may as well kill the module since it'll do more harm than good */
+        ERR("Unsupported new UPower version!");
+        _ecore_system_upower_shutdown();
+        return;
+     }
+   _on_low_battery_get(data);
 }
 
 static void _upower_name_owner_cb(void *data,
@@ -180,7 +285,7 @@ static void _upower_name_owner_cb(void *data,
        old_id, new_id);
 
    if ((new_id) && (new_id[0]))
-     _on_low_battery_get(proxy);
+     eldbus_proxy_property_get(proxy, "DaemonVersion", _version_get, proxy);
 }
 
 static void _ecore_system_upower_shutdown(void);
@@ -274,6 +379,7 @@ _ecore_system_upower_shutdown(void)
      }
 
    eldbus_shutdown();
+   memset(&uversions, 0, sizeof(uversions));
 }
 
 EINA_MODULE_INIT(_ecore_system_upower_init);

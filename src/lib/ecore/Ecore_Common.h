@@ -858,7 +858,9 @@ enum _Ecore_Power_State    /* Power state */
 {
    ECORE_POWER_STATE_MAINS, /**< The system is connected to a mains supply of power, thus there is no need to limit processing to save battery life at all. */
    ECORE_POWER_STATE_BATTERY, /**< The system is running off battery power, but is otherwise running normally. */
-   ECORE_POWER_STATE_LOW /**< The system is low on power (on battery) and the process should do its best to conserve power. For example it may reduce or suspend polling of network resources, turn off animations or reduce framerate etc. */
+   ECORE_POWER_STATE_LOW, /**< The system is low on power (on battery) and the process should do its best to conserve power. For example it may reduce or suspend polling of network resources, turn off animations or reduce framerate etc. */
+   //ECORE_POWER_STATE_CRITICAL, /**< The system is very low on power (on battery) and the process should begin taking even more conservative action @since 1.13*/
+   //ECORE_POWER_STATE_EMERGENCY /**< The system is extremely low on power (on battery) and the process should prepare for suspend/hibernate/power loss @since 1.13 */
 };
 typedef enum _Ecore_Power_State Ecore_Power_State;
 
