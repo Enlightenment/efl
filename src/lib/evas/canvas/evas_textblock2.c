@@ -64,8 +64,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "evas_textblock2.h"
-
 //#define LYDBG(f, args...) printf(f, ##args)
 #define LYDBG(f, args...)
 

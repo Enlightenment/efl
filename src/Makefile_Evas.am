@@ -1900,6 +1900,7 @@ tests/evas/evas_suite.c \
 tests/evas/evas_test_init.c \
 tests/evas/evas_test_object.c \
 tests/evas/evas_test_textblock.c \
+tests/evas/evas_test_textblock2.c \
 tests/evas/evas_test_text.c \
 tests/evas/evas_test_callbacks.c \
 tests/evas/evas_test_render_engines.c \

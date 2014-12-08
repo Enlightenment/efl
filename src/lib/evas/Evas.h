@@ -286,6 +286,7 @@ extern "C" {
 #endif
 
 #include <Evas_Common.h>
+#include "canvas/evas_textblock2.h"
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <Evas_Legacy.h>
 #endif
