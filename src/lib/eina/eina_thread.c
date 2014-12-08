@@ -97,8 +97,12 @@ _eina_thread_tls_keys_clean(Eina_Thread_Win32 *tw)
 EAPI Eina_Bool
 _eina_thread_tls_cb_register(Eina_TLS key, Eina_TLS_Delete_Cb cb)
 {
-   Eina_TLS_Cbs_Win32 *tls_cb = malloc(sizeof(Eina_TLS_Cbs_Win32));
+   Eina_TLS_Cbs_Win32 *tls_cb;
+
    if (!cb) return EINA_FALSE;
+
+   tls_cb = malloc(sizeof(Eina_TLS_Cbs_Win32));
+   if (!tls_cb) return EINA_FALSE;
 
    tls_cb->key = key;
    tls_cb->cb = cb;
