@@ -163,6 +163,11 @@ pc/eet-cxx.pc \
 pc/eo-cxx.pc
 endif
 
+if HAVE_ELUA
+pkgconfig_DATA += \
+pc/elua.pc
+endif
+
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
 endif

@@ -1,0 +1,17 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@/elua
+vmaj=@VMAJ@
+vmin=@VMIN@
+vmic=@VMIC@
+
+Name: elua
+Description: EFL Lua application platform backend
+Requires.private: @requirements_pc_elua@
+Version: @VERSION@
+Libs: -L${libdir} -lelua
+Libs.private: @requirements_libs_elua@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/elua-@VMAJ@

@@ -39,9 +39,9 @@ endif
 endif
 
 if HAVE_WIN32
-bin_elua_elua_LDADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@
+bin_elua_elua_LDADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@ @USE_ELUA_LIBS@
 else
-bin_elua_elua_LDADD = @ELUA_LIBS@
+bin_elua_elua_LDADD = @ELUA_LIBS@ @USE_ELUA_LIBS@
 endif
 bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
 
