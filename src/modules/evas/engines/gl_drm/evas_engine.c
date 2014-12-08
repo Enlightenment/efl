@@ -1084,8 +1084,7 @@ eng_image_native_set(void *data, void *image, void *native)
              if ((n = calloc(1, sizeof(Native))))
                {
                   EGLint attribs[3];
-                  int yinvert = 1;
-                  uint32_t format;
+                  int format, yinvert = 1;
 
                   glsym_eglQueryWaylandBufferWL(ob->egl_disp, wl_buf, EGL_TEXTURE_FORMAT, &format);
                   if ((format != EGL_TEXTURE_RGB) && (format != EGL_TEXTURE_RGBA))
