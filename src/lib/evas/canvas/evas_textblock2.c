@@ -4801,11 +4801,11 @@ _layout_par(Ctxt *c)
                   Evas_Object_Textblock2_Format_Item *fi;
                   fi = _ITEM_FORMAT(it);
                   fi->y = c->y;
-                  /* If it's a newline, and we are not in newline compat
-                   * mode, or we are in newline compat mode, and this is
-                   * not used as a paragraph separator, advance */
-                  if (fi->item && _IS_LINE_SEPARATOR(fi->item) &&
-                        (eina_list_next(i)))
+               }
+             else
+               {
+                  Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
+                  if (GET_ITEM_TEXT(ti)[ti->text_props.text_len] == '\n')
                     {
                        adv_line = 1;
                     }
