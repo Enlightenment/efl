@@ -5536,9 +5536,6 @@ _find_layout_line_num(const Evas_Object *eo_obj, int line)
 EAPI Evas_Object *
 evas_object_textblock2_add(Evas *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
    Evas_Object *eo_obj = eo_add(EVAS_TEXTBLOCK2_CLASS, e);
    return eo_obj;
 }
@@ -6479,14 +6476,6 @@ evas_textblock2_cursor_char_next(Evas_Textblock2_Cursor *cur)
 }
 
 EAPI void
-evas_textblock2_cursor_paragraph_char_first(Evas_Textblock2_Cursor *cur)
-{
-   if (!cur) return;
-   cur->pos = 0;
-
-}
-
-EAPI void
 evas_textblock2_cursor_paragraph_char_last(Evas_Textblock2_Cursor *cur)
 {
    int ind;
@@ -7331,8 +7320,8 @@ _evas_textblock2_invalidate_all(Evas_Textblock2_Data *o)
      }
 }
 
-EAPI int
-evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_text)
+static int
+_evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_text)
 {
    Evas_Object_Textblock2_Node_Text *n;
    Evas_Object_Textblock2_Node_Format *fnode = NULL;
@@ -7419,7 +7408,7 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_te
 {
    int len;
    /*append is essentially prepend without advancing */
-   len = evas_textblock2_cursor_text_append(cur, _text);
+   len = _evas_textblock2_cursor_text_append(cur, _text);
    if (len == 0) return 0;
    cur->pos += len; /*Advance */
    return len;
@@ -8080,40 +8069,6 @@ evas_textblock2_cursor_range_text_get(const Evas_Textblock2_Cursor *cur1, const 
       return _evas_textblock2_cursor_range_text_plain_get(cur1, cur2);
    else
       return NULL; /* Not yet supported */
-}
-
-EAPI const char *
-evas_textblock2_cursor_paragraph_text_get(const Evas_Textblock2_Cursor *cur)
-{
-   Evas_Textblock2_Cursor cur1, cur2;
-   if (!cur) return NULL;
-   TB_NULL_CHECK(cur->node, NULL);
-   if (cur->node->utf8)
-     {
-        free(cur->node->utf8);
-     }
-   cur1.obj = cur2.obj = cur->obj;
-   cur1.node = cur2.node = cur->node;
-   evas_textblock2_cursor_paragraph_char_first(&cur1);
-   evas_textblock2_cursor_paragraph_char_last(&cur2);
-
-   cur->node->utf8 = evas_textblock2_cursor_range_text_get(&cur1, &cur2,
-         EVAS_TEXTBLOCK2_TEXT_MARKUP);
-   return cur->node->utf8;
-}
-
-EAPI int
-evas_textblock2_cursor_paragraph_text_length_get(const Evas_Textblock2_Cursor *cur)
-{
-   int len;
-   if (!cur) return -1;
-   TB_NULL_CHECK(cur->node, -1);
-   len = eina_ustrbuf_length_get(cur->node->unicode);
-
-   if (EINA_INLIST_GET(cur->node)->next)
-      return len - 1; /* Remove the paragraph separator */
-   else
-      return len;
 }
 
 EAPI const Evas_Object_Textblock2_Node_Format *
@@ -9322,7 +9277,7 @@ evas_object_textblock2_clear(Evas_Object *eo_obj)
    /* Force recreation of everything for textblock2.
     * FIXME: We have the same thing in other places, merge it... */
    evas_textblock2_cursor_paragraph_first(o->cursor);
-   evas_textblock2_cursor_text_append(o->cursor, "");
+   evas_textblock2_cursor_text_prepend(o->cursor, "");
 }
 
 EOLIAN static void
