@@ -513,7 +513,6 @@ struct _Evas_Object_Textblock2
    Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
    Eina_Bool                           have_ellipsis : 1;
-   Eina_Bool                           legacy_newline : 1;
 };
 
 struct _Evas_Textblock2_Selection_Iterator
@@ -4806,8 +4805,7 @@ _layout_par(Ctxt *c)
                    * mode, or we are in newline compat mode, and this is
                    * not used as a paragraph separator, advance */
                   if (fi->item && _IS_LINE_SEPARATOR(fi->item) &&
-                        (!c->o->legacy_newline ||
-                         eina_list_next(i)))
+                        (eina_list_next(i)))
                     {
                        adv_line = 1;
                     }
@@ -5848,23 +5846,6 @@ EOLIAN static void
 _evas_textblock2_style_user_pop(Eo *eo_obj, Evas_Textblock2_Data *o)
 {
    _textblock2_style_generic_set(eo_obj, NULL,  &(o->style_user));
-}
-
-EOLIAN static void
-_evas_textblock2_legacy_newline_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o, Eina_Bool mode)
-{
-   if (o->legacy_newline == mode)
-      return;
-
-   o->legacy_newline = mode;
-   /* FIXME: Should recreate all the textnodes... For now, it's just
-    * for new text inserted. */
-}
-
-EOLIAN static Eina_Bool
-_evas_textblock2_legacy_newline_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
-{
-   return o->legacy_newline;
 }
 
 EOLIAN static void
@@ -7410,8 +7391,7 @@ evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_tex
    int i;
    for (i = 0 ; i < len ; i++)
      {
-        if ((text[i] == _PARAGRAPH_SEPARATOR) ||
-              (o->legacy_newline && text[i] == _NEWLINE))
+        if (text[i] == _PARAGRAPH_SEPARATOR)
           {
              _evas_textblock2_cursor_break_paragraph(cur);
           }
@@ -9415,8 +9395,6 @@ evas_object_textblock2_init(Evas_Object *eo_obj)
    o = obj->private_data;
    o->cursor->obj = eo_obj;
    eo_do(eo_obj, efl_text_set(""));
-
-   o->legacy_newline = EINA_TRUE;
 }
 
 EOLIAN static void

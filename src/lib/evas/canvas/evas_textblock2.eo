@@ -53,26 +53,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
             const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
-      legacy_newline {
-         set {
-            /*@
-            @brief Sets newline mode. When true, newline character will behave
-            as a paragraph separator.
-
-            @since 1.1 */
-         }
-         get {
-            /*@
-            @brief Gets newline mode. When true, newline character behaves
-            as a paragraph separator.
-
-            @return @c EINA_TRUE if in legacy mode, @c EINA_FALSE otherwise.
-            @since 1.1 */
-         }
-         values {
-            bool mode; /*@ @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise. */
-         }
-      }
       style {
          set {
             /*@
