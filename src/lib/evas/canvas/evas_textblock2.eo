@@ -88,15 +88,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
             const(Evas_Textblock2_Style)* ts; /*@ the style to set. */
          }
       }
-      node_format_first {
-         get {
-            /*@ Returns the first format node. */
-            legacy: evas_textblock2_node_format_first_get;
-         }
-         values {
-            const(Evas_Object_Textblock2_Node_Format)* format;
-         }
-      }
       size_formatted {
          get {
             /*@
@@ -120,15 +111,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
          values {
             Evas_Coord w; /*@ the width of the object. */
             Evas_Coord h; /*@ the height of the object */
-         }
-      }
-      node_format_last {
-         get {
-            /*@ Returns the last format node. */
-            legacy: evas_textblock2_node_format_last_get;
-         }
-         values {
-            const(Evas_Object_Textblock2_Node_Format)* format;
          }
       }
       cursor {
@@ -166,15 +148,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
             @out Evas_Coord cw; /*@ w coord of the line. */
             @out Evas_Coord ch; /*@ h coord of the line. */
          }
-      }
-      replace_char_get {
-        /*@
-        @brief Get the "replacement character" for given textblock2 object. Returns
-        @c NULL if no replacement character is in use.
-
-        @return Replacement character or @c NULL. */
-
-        return: const(char)*;
       }
       style_user_pop {
          /*@

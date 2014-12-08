@@ -5895,37 +5895,6 @@ _evas_textblock2_bidi_delimiters_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Dat
    return o->bidi_delimiters;
 }
 
-/**
- * @internal
- * prepends the escaped char beteewn s and s_end to the curosr
- *
- *
- * @param s the start of the string
- * @param s_end the end of the string.
- */
-
-/**
- * @internal
- * An helper function to markup get. Appends the format from fnode to the strbugf txt.
- *
- * @param o the textblock2 object.
- * @param txt the strbuf to append to.
- * @param fnode the format node to process.
- */
-static void
-_markup_get_format_append(Eina_Strbuf *txt, Evas_Object_Textblock2_Node_Format *fnode)
-{
-   eina_strbuf_append_char(txt, '<');
-     {
-        const char *s;
-
-        // FIXME: need to escape
-        s = fnode->orig_format;
-        eina_strbuf_append(txt, s);
-     }
-   eina_strbuf_append_char(txt, '>');
-}
-
 /* cursors */
 
 /**
@@ -6076,33 +6045,6 @@ _evas_textblock2_node_format_last_at_off(const Evas_Object_Textblock2_Node_Forma
    while (nnode && (nnode->text_node == tnode) && (nnode->offset == 0));
 
    return (Evas_Object_Textblock2_Node_Format *) n;
-}
-
-/**
- * @internal
- * Returns the visible format at a specific location.
- *
- * @param n a format at the specific position.
- * @return the format node at the specific position or NULL if not found.
- */
-static Evas_Object_Textblock2_Node_Format *
-_evas_textblock2_node_visible_at_pos_get(const Evas_Object_Textblock2_Node_Format *n)
-{
-   const Evas_Object_Textblock2_Node_Format *nnode;
-   if (!n) return NULL;
-   /* The visible format is the last one, because it inserts a replacement
-    * char that advances the next formats. */
-
-   nnode = n;
-   do
-     {
-        n = nnode;
-        if (n->visible) return (Evas_Object_Textblock2_Node_Format *) n;
-        nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
-     }
-   while (nnode && (nnode->offset == 0));
-
-   return NULL;
 }
 
 /**
@@ -8004,23 +7946,9 @@ evas_textblock2_cursor_range_delete(Evas_Textblock2_Cursor *cur1, Evas_Textblock
 EAPI char *
 evas_textblock2_cursor_content_get(const Evas_Textblock2_Cursor *cur)
 {
-   if (!cur || !cur->node) return NULL;
-   if (evas_textblock2_cursor_format_is_visible_get(cur))
-     {
-        Eina_Strbuf *buf;
-        Evas_Object_Textblock2_Node_Format *fnode;
-        char *ret;
-        fnode = _evas_textblock2_node_visible_at_pos_get(
-                 evas_textblock2_cursor_format_get(cur));
+   if (!cur || !cur->node)
+      return NULL;
 
-        buf = eina_strbuf_new();
-        _markup_get_format_append(buf, fnode);
-        ret = eina_strbuf_string_steal(buf);
-        eina_strbuf_free(buf);
-
-        return ret;
-     }
-   else
      {
         const Eina_Unicode *ustr;
         Eina_Unicode buf[2];
