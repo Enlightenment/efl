@@ -353,9 +353,7 @@ eina_bench_lookup_djb2_inline(int request)
       for (i = 0; i < (unsigned int)request; ++i)
         {
            char tmp_key[10];
-           int length = 6;
-
-           length = eina_convert_itoa(rand() % request, tmp_key) + 1;
+           int length = eina_convert_itoa(rand() % request, tmp_key) + 1;
 
            elm =
               eina_hash_find_by_hash(hash, tmp_key, length,
