@@ -531,6 +531,26 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    else if (ty < 0) ty -= tt->pad.by;
    else if (ty > ch) ty += tt->pad.by;
    TTDBG("PAD (BORDER):  tx=%d,ty=%d\n", tx, ty);
+   if (tt->tt_win)
+     {
+#define INSIDE(x, y, xx, yy, ww, hh) \
+  (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && ((x) >= (xx)) && ((y) >= (yy)))
+        /* attempt to ensure no overlap with pointer */
+        if (INSIDE(px, py, tx, ty, tw, th))
+          {
+             int ax, ay;
+
+             ax = tt->pad.x ?: 1;
+             ay = tt->pad.y ?: 1;
+             if (!INSIDE(px, py, tx, ty + (py - ty) + ay, tw, th))
+               ty += py - ty + ay;
+             else if (!INSIDE(px, py, tx + (px - tx) + ax, ty, tw, th))
+               tx += px - tx + ax;
+             else if (!INSIDE(px, py, tx + (px - tx) + ax, ty + (py - ty) + ay, tw, th))
+               tx += px - tx + ax, ty += py - ty + ay;
+          }
+#undef
+     }
    if (((tx < 0) && (tw < cw)) || ((ty < 0) && (th < ch)))
      {
         TTDBG("POSITIONING FAILED! THIS IS A BUG SOMEWHERE!\n");
