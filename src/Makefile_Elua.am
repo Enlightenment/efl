@@ -1,5 +1,23 @@
 if HAVE_ELUA
 
+lib_LTLIBRARIES += lib/elua/libelua.la
+
+installed_eluamainheadersdir = $(includedir)/elua-@VMAJ@
+dist_installed_eluamainheaders_DATA = \
+lib/elua/Elua.h
+
+lib_elua_libelua_la_SOURCES = \
+lib/elua/elua.c
+
+lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@
+if HAVE_WIN32
+lib_elua_libelua_la_LIBADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@
+else
+lib_elua_libelua_la_LIBADD = @ELUA_LIBS@
+endif
+lib_elua_libelua_la_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
+lib_elua_libelua_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
 bin_PROGRAMS += bin/elua/elua
 
 bin_elua_elua_SOURCES = \
