@@ -67,6 +67,7 @@ lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
 nodist_installed_evascanvasheaders_DATA = \
+                                          lib/evas/canvas/evas_textblock2.h \
                                           $(evas_eolian_h)
 
 noinst_HEADERS = \

@@ -8311,10 +8311,10 @@ _evas_textblock2_node_text_new(void)
  * @return Returns no value.
  */
 static void
-_evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur,
-      Evas_Object_Textblock2_Node_Format *fnode)
+_evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur)
 {
    Evas_Object_Textblock2_Node_Text *n;
+   Evas_Object_Textblock2_Node_Format *fnode = NULL;
 
    if (!cur) return;
    Evas_Textblock2_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
@@ -8327,7 +8327,6 @@ _evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur,
    /* Handle text and format changes. */
    if (cur->node)
      {
-        Evas_Object_Textblock2_Node_Format *nnode;
         size_t len, start;
         const Eina_Unicode *text;
 
@@ -8335,19 +8334,6 @@ _evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur,
          * make it our format and update the text_node fields,
          * otherwise, use the paragraph separator
          * of the previous paragraph. */
-        nnode  = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-        if (nnode && (nnode->text_node == cur->node))
-          {
-             n->format_node = nnode;
-             nnode->offset--; /* We don't have to take the replacement char
-                                 into account anymore */
-             while (nnode && (nnode->text_node == cur->node))
-               {
-                  nnode->text_node = n;
-                  nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
-               }
-          }
-        else
           {
              n->format_node = fnode;
           }
@@ -8561,7 +8547,7 @@ evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_tex
         if ((text[i] == _PARAGRAPH_SEPARATOR) ||
               (o->legacy_newline && text[i] == _NEWLINE))
           {
-             _evas_textblock2_cursor_break_paragraph(cur, fnode);
+             _evas_textblock2_cursor_break_paragraph(cur);
           }
         evas_textblock2_cursor_char_next(cur);
      }
