@@ -140,29 +140,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
             return: Evas_Textblock2_Cursor *;
          }
       }
-      size_native {
-         get {
-            /*@
-            Get the native width and height. This calculates the actual size without taking account
-            the current size of the object.
-            The main difference between this and @ref evas_object_textblock2_size_formatted_get
-            is that the "native" function does not take wrapping into account
-            it just calculates the real width of the object if it was placed on an
-            infinite canvas, while the "formatted" function gives the size after
-            wrapping text according to the size restrictions of the object.
-
-            For example for a textblock2 containing the text: "You shall not pass!"
-            with no margins or padding and assuming a monospace font and a size of
-            7x10 char widths (for simplicity) has a native size of 19x1
-            and a formatted size of 5x4.
-
-            @return Returns no value. */
-         }
-         values {
-            Evas_Coord w; /*@ the width returned */
-            Evas_Coord h; /*@ the height returned */
-         }
-      }
       style_insets {
          get {
             /*@ No description supplied by the EAPI. */
