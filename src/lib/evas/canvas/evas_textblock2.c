@@ -87,16 +87,6 @@ static const char o_type[] = "textblock2";
 #define _NEWLINE '\n'
 #define _TAB '\t'
 
-#define _REPLACEMENT_CHAR_UTF8 "\xEF\xBF\xBC"
-#define _PARAGRAPH_SEPARATOR_UTF8 "\xE2\x80\xA9"
-#define _NEWLINE_UTF8 "\n"
-#define _TAB_UTF8 "\t"
-#define EVAS_TEXTBLOCK2_IS_VISIBLE_FORMAT_CHAR(ch) \
-   (((ch) == _REPLACEMENT_CHAR) || \
-    ((ch) ==  _NEWLINE) || \
-    ((ch) == _TAB) || \
-    ((ch) == _PARAGRAPH_SEPARATOR))
-
 #ifdef CRI
 #undef CRI
 #endif
@@ -457,19 +447,6 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL
 };
-
-/* the actual api call to add a textblock2 */
-
-#define TB_HEAD() \
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ); \
-   return; \
-   MAGIC_CHECK_END(); \
-   Evas_Textblock2_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
-
-#define TB_HEAD_RETURN(x) \
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ); \
-   return (x); \
-   MAGIC_CHECK_END();
 
 static void _evas_textblock2_node_text_remove(Evas_Textblock2_Data *o, Evas_Object_Textblock2_Node_Text *n);
 static void _evas_textblock2_node_text_free(Evas_Object_Textblock2_Node_Text *n);
@@ -5231,18 +5208,6 @@ _evas_textblock2_clear(Eo *eo_obj, Evas_Textblock2_Data *o)
      }
 
    _evas_textblock2_changed(o, eo_obj);
-}
-
-EAPI void
-evas_object_textblock2_clear(Evas_Object *eo_obj)
-{
-   TB_HEAD();
-   _evas_object_textblock2_clear_all(eo_obj);
-
-   /* Force recreation of everything for textblock2.
-    * FIXME: We have the same thing in other places, merge it... */
-   evas_textblock2_cursor_paragraph_first(o->cursor);
-   evas_textblock2_cursor_text_prepend(o->cursor, "");
 }
 
 EOLIAN static void
