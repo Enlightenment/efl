@@ -3663,11 +3663,28 @@ skip:
         Evas_Font_Instance *script_fi = NULL;
         int script_len, tmp_cut;
         Evas_Script_Type script;
+        size_t str_start = start + str - tbase;
 
         script_len = cur_len;
 
         tmp_cut = evas_common_language_script_end_of_run_get(str,
-              c->par->bidi_props, start + str - tbase, script_len);
+              c->par->bidi_props, str_start, script_len);
+
+        /* Cut to newlines */
+          {
+             const Eina_Unicode newline_str[] = {'\n', 0};
+             Eina_Unicode *newline_pos = eina_unicode_strstr(str + str_start, newline_str);
+
+             if (newline_pos)
+               {
+                  int newline_cut = newline_pos - (str + start);
+                  if ((tmp_cut <= 0) || (newline_cut < tmp_cut))
+                    {
+                       tmp_cut = newline_cut;
+                    }
+               }
+          }
+
         if (tmp_cut > 0)
           {
              script_len = tmp_cut;
