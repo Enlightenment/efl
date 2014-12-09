@@ -350,15 +350,24 @@ _cubic_bezier_t_get(double a,
                         double x1,
                         double x2)
 {
+#define APPROXIMATE_RANGE(val) \
+  ((((val) < 0.01) && ((val) > -0.01)) ? EINA_TRUE : EINA_FALSE)
+
+    const int LIMIT = 100;
+    double current_slope;
+    double tmp;
+    double current_x;
     double guess_t = a;
-    for (int i = 0; i < 4; ++i)
-    {
-        double current_slope = _cubic_bezier_slope_get(a, x1, x2);
-        if (current_slope == 0.0)
-            return guess_t;
-        double current_x = _cubic_bezier_calc(guess_t, x1, x2) - a;
-        guess_t -= current_x / current_slope;
-    }
+
+    for (int i = 0; i < LIMIT; i++)
+      {
+         current_slope = _cubic_bezier_slope_get(guess_t, x1, x2);
+         if (current_slope == 0.0) return guess_t;
+         current_x = _cubic_bezier_calc(guess_t, x1, x2) - a;
+         tmp = current_x / current_slope;
+         guess_t -= current_x / current_slope;
+         if (APPROXIMATE_RANGE(tmp)) break;
+      }
     return guess_t;
 }
 
