@@ -295,6 +295,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
                   _xcbob_sync(buf->priv.x11.xcb.conn);
                   buf->priv.synced = EINA_TRUE;
                }
+             free(obr);
              return buf->priv.onebuf;
           }
         obr->x = 0;
