@@ -54,6 +54,17 @@ expand_bitmap(DATA8 *src, int pitch, int w, int h, DATA8 *dst)
      }
 }
 
+static inline DATA8
+alpha8to4(int a8)
+{
+   // a4 values are 0x00, 0x11, 0x22, 0x33, ... 0xee, 0xff
+   // increments by 0x11 = 17
+   int a4 = (a8 >> 4) & 0x0f;
+   int v = (a4 << 4) | a4;
+   if ((a8 - v) > 8) a4++;
+   else if ((v - a8) > 8) a4--;
+   return a4; // v = (a4 << 4) | a4;
+}
 
 
 
@@ -149,11 +160,8 @@ compress_rle4(DATA8 *src, int pitch, int w, int h, int *size_ret)
         spanval = spanlen = spannum = 0;
         for (x = 0; x < w; x++)
           {
-             // we only need upper 4 bits of value for span creation
-             DATA8 v = pix[x] >> 4;
-             // round-up if closer to upper value
-             if ((pix[x] & 0x8) && (v != 0xF))
-               v++;
+             // round value from a8 to a44
+             DATA8 v = alpha8to4(pix[x]);
              // if the current pixel value (in 4bit) is not the same as the
              // span value (n 4 bit) OR... if the span now exceeds 16 pixels
              // then add/write out the span to our RLE span blob
@@ -347,10 +355,8 @@ compress_bpp4(DATA8 *src, int pitch, int w, int h, int *size_ret)
         // 4 bits only needed) and pack
         for (x = 0; x < (w - 1); x += 2)
           {
-             DATA8 v1 = s[0] >> 4;
-             DATA8 v2 = s[1] >> 4;
-             if ((s[0] & 0x08) && (v1 != 0x0f)) v1++;
-             if ((s[1] & 0x08) && (v2 != 0x0f)) v2++;
+             DATA8 v1 = alpha8to4(s[0]);
+             DATA8 v2 = alpha8to4(s[1]);
              *d = (v1 << 4) | v2;
              s += 2;
              d++;
