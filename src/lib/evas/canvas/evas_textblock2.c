@@ -4085,7 +4085,6 @@ _layout_par(Ctxt *c)
    Evas_Object_Textblock2_Item *it;
    Eina_List *i;
    int ret = 0;
-   int wrap = -1;
    char *line_breaks = NULL;
 
    if (!c->par->logical_items)
@@ -4184,6 +4183,9 @@ _layout_par(Ctxt *c)
               len, lang, line_breaks);
      }
 
+   /* XXX: We assume wrap type doesn't change between items. */
+
+   /* This loop walks on lines, we do per item inside. */
    for (i = c->par->logical_items ; i ; )
      {
         Evas_Coord prevdescent = 0, prevascent = 0;
@@ -4206,26 +4208,8 @@ _layout_par(Ctxt *c)
              _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
                    &c->descent, it, it->format);
           }
-        else
-          {
-             Evas_Object_Textblock2_Format_Item *fi = _ITEM_FORMAT(it);
-             if (fi->formatme)
-               {
-                  prevdescent = c->descent;
-                  prevascent = c->ascent;
-                  /* If there are no text items yet, calc ascent/descent
-                   * according to the current format. */
-                  if (c->ascent + c->descent == 0)
-                     _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
-                           &c->descent, it, it->format);
 
-                  _layout_calculate_format_item_size(c->obj, fi, &c->ascent,
-                        &c->descent, &fi->y, &fi->parent.w, &fi->parent.h);
-                  fi->parent.adv = fi->parent.w;
-               }
-          }
-
-
+#if 0
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
         if ((c->w >= 0) &&
@@ -4373,20 +4357,6 @@ _layout_par(Ctxt *c)
                   wrap = -1;
                }
           }
-        else
-          {
-             int break_position = 0;
-             if ((break_position = _it_break_position_get(it, line_breaks)) > 0)
-               {
-                  Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
-                  if (GET_ITEM_TEXT(ti)[break_position] != _PARAGRAPH_SEPARATOR)
-                    {
-                       _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, break_position);
-
-                       adv_line = 1;
-                    }
-               }
-          }
 
         if (!redo_item && !it->visually_deleted)
           {
@@ -4414,6 +4384,70 @@ _layout_par(Ctxt *c)
                   it = _ITEM(eina_list_data_get(i));
                }
              _layout_line_advance(c, it->format);
+          }
+#endif
+        while (i)
+          {
+             int break_position = 0;
+             it = _ITEM(eina_list_data_get(i));
+
+             if ((break_position = _it_break_position_get(it, line_breaks)) > 0)
+               {
+                  Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
+                  if (GET_ITEM_TEXT(ti)[break_position] == _PARAGRAPH_SEPARATOR)
+                    {
+                       break_position = -1;
+                    }
+                  else
+                    {
+                       break_position++;
+                    }
+               }
+
+             if (c->w >= 0)
+               {
+                  if (((c->x + it->w) >
+                           (c->w - c->o->style_pad.l - c->o->style_pad.r -
+                            c->marginl - c->marginr)))
+                    {
+                       int wrap = -1;
+                       int line_start = it->text_pos;
+                       if (it->format->wrap_word)
+                          wrap = _layout_get_wordwrap(c, it->format, it,
+                                line_start, line_breaks);
+                       else if (it->format->wrap_char)
+                          wrap = _layout_get_charwrap(c, it->format, it,
+                                line_start, line_breaks);
+                       else if (it->format->wrap_mixed)
+                          wrap = _layout_get_mixedwrap(c, it->format, it,
+                                line_start, line_breaks);
+                       else
+                          wrap = -1;
+
+                       if ((wrap > 0) && (wrap < break_position))
+                         {
+                            break_position = wrap;
+                         }
+                    }
+               }
+
+             if (break_position > 0)
+               {
+                  _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, break_position);
+               }
+
+             c->ln->items = _ITEM(eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+                      EINA_INLIST_GET(it)));
+             it->ln = c->ln;
+             c->x += it->adv;
+
+             i = eina_list_next(i);
+
+             if (break_position > 0)
+               {
+                  _layout_line_advance(c, it->format);
+                  break;
+               }
           }
      }
 
