@@ -1872,7 +1872,7 @@ main(int argc, char *argv[])
 
    if (_pfx) eina_prefix_free(_pfx);
    ethumb_shutdown();
-   eina_init();
+   eina_shutdown();
    ecore_shutdown();
    return exit_value;
 }
