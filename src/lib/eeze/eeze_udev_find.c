@@ -382,3 +382,31 @@ eeze_udev_find_by_sysattr(const char *sysattr,
    udev_enumerate_unref(en);
    return ret;
 }
+
+EAPI Eina_List *
+eeze_udev_find_by_subsystem_sysname(const char *subsystem, const char *sysname)
+{
+   _udev_enumerate *en;
+   _udev_list_entry *devs, *cur;
+   _udev_device *device;
+   const char *devname;
+   Eina_List *ret = NULL;
+
+   if (!sysname) return NULL;
+
+   en = udev_enumerate_new(udev);
+   if (!en) return NULL;
+
+   udev_enumerate_scan_devices(en);
+   devs = udev_enumerate_get_list_entry(en);
+   udev_list_entry_foreach(cur, devs)
+     {
+        devname = udev_list_entry_get_name(cur);
+        device = 
+          udev_device_new_from_subsystem_sysname(udev, subsystem, sysname);
+        ret = eina_list_append(ret, eina_stringshare_add(devname));
+        udev_device_unref(device);
+     }
+   udev_enumerate_unref(en);
+   return ret;
+}
