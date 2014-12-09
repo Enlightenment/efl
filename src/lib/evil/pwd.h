@@ -31,21 +31,35 @@ extern "C" {
 struct passwd {
    char    *pw_name;       /**< user name */
    char    *pw_passwd;     /**< encrypted password (always @c NULL) */
-   uid_t    pw_uid;        /**< user uid */
-   gid_t    pw_gid;        /**< user gid (always O) */
+   uid_t    pw_uid;        /**< user uid (always 0) */
+   gid_t    pw_gid;        /**< user gid (always 0) */
    time_t   pw_change;     /**< password change time (always 0) */
    char    *pw_class;      /**< user access class (always @c NULL) */
    char    *pw_gecos;      /**< Honeywell login info */
    char    *pw_dir;        /**< home directory */
    char    *pw_shell;      /**< default shell */
-   time_t   pw_expire;     /**< account expiration (always O) */
-   int      pw_fields;     /**< internal: fields filled in (always O) */
+   time_t   pw_expire;     /**< account expiration (always 0) */
+   int      pw_fields;     /**< internal: fields filled in (always 0) */
 };
 
 /**
  * @brief Return a passwd structure.
  *
- * @param uid The User ID
+ * @param n The name of the user.
+ * @return A stacally allocated passwd structure.
+ *
+ * This function fills a static buffer @ref passwd with the user name @p n.
+ *
+ * Conformity: None.
+ *
+ * Supported OS: Windows XP.
+ */
+EAPI struct passwd *getpwnam(const char *n);
+
+/**
+ * @brief Return a passwd structure.
+ *
+ * @param uid The User ID.
  * @return A stacally allocated passwd structure.
  *
  * This function fills a static buffer @ref passwd with @p uid and the
@@ -53,7 +67,7 @@ struct passwd {
  *
  * Conformity: None.
  *
- * Supported OS: Windows XP, CE.
+ * Supported OS: Windows XP.
  */
 EAPI struct passwd *getpwuid (uid_t uid);
 
