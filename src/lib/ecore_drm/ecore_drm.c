@@ -6,7 +6,6 @@
 
 /* local variables */
 static int _ecore_drm_init_count = 0;
-static char *sid;
 
 /* external variables */
 int _ecore_drm_log_dom = -1;
@@ -65,12 +64,6 @@ ecore_drm_init(void)
    if (!eina_log_domain_level_check(_ecore_drm_log_dom, EINA_LOG_LEVEL_DBG))
      eina_log_domain_level_set("ecore_drm", EINA_LOG_LEVEL_DBG);
 
-   /* get sd-login properties we need */
-   if (sd_pid_get_session(getpid(), &sid) < 0) goto sd_err;
-
-   /* try to init dbus */
-   if (!_ecore_drm_dbus_init(sid)) goto dbus_err;
-
    /* try to init eeze */
    if (!eeze_init()) goto eeze_err;
 
@@ -78,10 +71,6 @@ ecore_drm_init(void)
    return _ecore_drm_init_count;
 
 eeze_err:
-   _ecore_drm_dbus_shutdown();
-dbus_err:
-   free(sid);
-sd_err:
    eina_log_domain_unregister(_ecore_drm_log_dom);
    _ecore_drm_log_dom = -1;
 log_err:
@@ -115,9 +104,6 @@ ecore_drm_shutdown(void)
    /* close eeze */
    eeze_shutdown();
 
-   /* cleanup dbus */
-   _ecore_drm_dbus_shutdown();
-
    /* shutdown ecore_event */
    ecore_event_shutdown();
 
@@ -130,8 +116,6 @@ ecore_drm_shutdown(void)
 
    /* shutdown eina */
    eina_shutdown();
-
-   free(sid);
 
    /* return init count */
    return _ecore_drm_init_count;

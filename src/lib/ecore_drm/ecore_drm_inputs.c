@@ -57,29 +57,18 @@ flag_err:
 }
 
 static void 
-_cb_device_opened(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_cb_device_opened(void *data, int fd, Eina_Bool paused EINA_UNUSED)
 {
    Ecore_Drm_Device_Open_Data *d;
    Ecore_Drm_Evdev *edev;
    Eina_Bool b = EINA_FALSE;
-   const char *errname, *errmsg;
-   int fd = -1;
 
    if (!(d = data)) return;
 
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-     {
-        ERR("Eldbus Message Error: %s %s", errname, errmsg);
-        ERR("\tFailed to open device: %s", d->node);
-        return;
-     }
-
-   /* DBG("Input Device Opened: %s", d->node); */
-
-   /* DBUS_TYPE_UNIX_FD == 'h' */
-   if (!eldbus_message_arguments_get(msg, "hb", &fd, &b))
+   if (fd < 0)
      {
         ERR("\tCould not get UNIX_FD from eldbus message: %d %d", fd, b);
+        ERR("\tFailed to open device: %s", d->node);
         goto cleanup;
      }
 
@@ -100,7 +89,7 @@ _cb_device_opened(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending
    goto cleanup;
 
 release:
-   _ecore_drm_dbus_device_close(d->node);
+   _ecore_drm_launcher_device_close(d->node, fd);
 cleanup:
    eina_stringshare_del(d->node);
    free(d);
@@ -162,7 +151,8 @@ _device_add(Ecore_Drm_Input *input, const char *device)
 
    DBG("\tDevice Path: %s", data->node);
 
-   _ecore_drm_dbus_device_open(data->node, _cb_device_opened, data);
+   if (!_ecore_drm_launcher_device_open(data->node, _cb_device_opened, data, O_RDWR | O_NONBLOCK))
+     goto dev_err;
 
    return EINA_TRUE;
 
@@ -311,7 +301,7 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
 
         EINA_LIST_FREE(seat->devices, edev)
           {
-             _ecore_drm_dbus_device_close(edev->path);
+             _ecore_drm_launcher_device_close(edev->path, edev->fd);
              _ecore_drm_evdev_device_destroy(edev);
           }
      }

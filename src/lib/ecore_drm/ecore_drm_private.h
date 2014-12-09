@@ -21,7 +21,6 @@
 
 # include <linux/input.h>
 //# include <libinput.h>
-# include <systemd/sd-login.h>
 # include <xkbcommon/xkbcommon.h>
 
 # include <xf86drm.h>
@@ -228,10 +227,11 @@ struct _Ecore_Drm_Sprite
    unsigned int formats[];
 };
 
-int _ecore_drm_dbus_init(const char *session);
-int _ecore_drm_dbus_shutdown(void);
-void _ecore_drm_dbus_device_open(const char *device, Eldbus_Message_Cb callback, const void *data);
-void _ecore_drm_dbus_device_close(const char *device);
+typedef void (*Ecore_Drm_Open_Cb)(void *data, int fd, Eina_Bool b);
+
+Eina_Bool _ecore_drm_launcher_device_open(const char *device, Ecore_Drm_Open_Cb callback, void *data, int flags);
+int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
+void _ecore_drm_launcher_device_close(const char *device, int fd);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);

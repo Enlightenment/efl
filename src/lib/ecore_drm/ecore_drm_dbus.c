@@ -175,7 +175,7 @@ _ecore_drm_dbus_session_release(const char *session)
    return EINA_TRUE;
 }
 
-static void 
+void 
 _ecore_drm_dbus_device_release(uint32_t major, uint32_t minor)
 {
    Eldbus_Proxy *proxy;
@@ -199,11 +199,35 @@ _ecore_drm_dbus_device_release(uint32_t major, uint32_t minor)
    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
 }
 
-static int 
-_ecore_drm_dbus_device_take(uint32_t major, uint32_t minor, Eldbus_Message_Cb callback, const void *data)
+static void
+_cb_device_taken(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+{
+   const char *errname, *errmsg;
+   Ecore_Drm_Open_Cb callback = NULL;
+   Eina_Bool b = EINA_FALSE;
+   int fd = -1;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        goto eldbus_err;
+     }
+
+   /* DBUS_TYPE_UNIX_FD == 'h' */
+   if (!eldbus_message_arguments_get(msg, "hb", &fd, &b))
+     ERR("\tCould not get UNIX_FD from eldbus message: %d %d", fd, b);
+
+eldbus_err:
+   callback = (Ecore_Drm_Open_Cb)eldbus_pending_data_del(pending, "callback");
+   if (callback) callback(data, fd, b);
+}
+
+int 
+_ecore_drm_dbus_device_take(uint32_t major, uint32_t minor, Ecore_Drm_Open_Cb callback, void *data)
 {
    Eldbus_Proxy *proxy;
    Eldbus_Message *msg;
+   Eldbus_Pending *pending;
 
    /* try to get the Session proxy */
    if (!(proxy = eldbus_proxy_get(dobj, "org.freedesktop.login1.Session")))
@@ -219,9 +243,43 @@ _ecore_drm_dbus_device_take(uint32_t major, uint32_t minor, Eldbus_Message_Cb ca
      }
 
    eldbus_message_arguments_append(msg, "uu", major, minor);
-   eldbus_proxy_send(proxy, msg, callback, data, -1);
+   pending = eldbus_proxy_send(proxy, msg, _cb_device_taken, data, -1);
+   if (callback) eldbus_pending_data_set(pending, "callback", callback);
 
    return 1;
+}
+
+int
+_ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool *paused_out, double timeout)
+{
+   Eldbus_Proxy *proxy;
+   Eldbus_Message *msg, *reply;
+   Eina_Bool b;
+   int fd;
+
+   /* try to get the Session proxy */
+   if (!(proxy = eldbus_proxy_get(dobj, "org.freedesktop.login1.Session")))
+     {
+        ERR("Could not get eldbus session proxy");
+        return -1;
+     }
+
+   if (!(msg = eldbus_proxy_method_call_new(proxy, "TakeDevice")))
+     {
+        ERR("Could not create method call for proxy");
+        return -1;
+     }
+
+   if (!eldbus_message_arguments_append(msg, "uu", major, minor))
+     return -1;
+
+   reply = eldbus_proxy_send_and_block(proxy, msg, timeout);
+
+   if (!eldbus_message_arguments_get(reply, "hb", &fd, &b))
+     return -1;
+
+   if (paused_out) *paused_out = b;
+   return fd;
 }
 
 int 
@@ -342,26 +400,4 @@ _ecore_drm_dbus_shutdown(void)
    eldbus_shutdown();
 
    return _dbus_init_count;
-}
-
-void 
-_ecore_drm_dbus_device_open(const char *device, Eldbus_Message_Cb callback, const void *data)
-{
-   struct stat st;
-
-   if (stat(device, &st) < 0) return;
-   if (!S_ISCHR(st.st_mode)) return;
-
-   _ecore_drm_dbus_device_take(major(st.st_rdev), minor(st.st_rdev), callback, data);
-}
-
-void 
-_ecore_drm_dbus_device_close(const char *device)
-{
-   struct stat st;
-
-   if (stat(device, &st) < 0) return;
-   if (!S_ISCHR(st.st_mode)) return;
-
-   _ecore_drm_dbus_device_release(major(st.st_rdev), minor(st.st_rdev));
 }

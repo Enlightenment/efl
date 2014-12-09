@@ -474,18 +474,17 @@ _ecore_evas_drm_init(const char *device)
           goto dev_err;
      }
 
+   if (!ecore_drm_launcher_connect(dev))
+     {
+        ERR("Could not connect DRM launcher");
+        goto launcher_err;
+     }
+
    /* try to open the graphics card */
    if (!ecore_drm_device_open(dev))
      {
         ERR("Could not open drm device");
         goto dev_open_err;
-     }
-
-   /* try to open the tty */
-   if (!ecore_drm_tty_open(dev, NULL))
-     {
-        ERR("Could not open tty: %m");
-        goto tty_open_err;
      }
 
    /* try to create sprites */
@@ -516,11 +515,11 @@ _ecore_evas_drm_init(const char *device)
 output_err:
    ecore_drm_sprites_destroy(dev);
 sprite_err:
-   ecore_drm_tty_close(dev);
-tty_open_err:
    ecore_drm_device_close(dev);
 dev_open_err:
    ecore_drm_device_free(dev);
+   ecore_drm_launcher_disconnect(dev);
+launcher_err:
 dev_err:
    ecore_drm_shutdown();
    return --_ecore_evas_init_count;
@@ -534,9 +533,9 @@ _ecore_evas_drm_shutdown(void)
    ecore_drm_sprites_destroy(dev);
    /* NB: No need to free outputs here. Is done in device free */
    ecore_drm_inputs_destroy(dev);
-   ecore_drm_tty_close(dev);
    ecore_drm_device_close(dev);
    ecore_drm_device_free(dev);
+   ecore_drm_launcher_disconnect(dev);
    ecore_drm_shutdown();
 
    ecore_event_evas_shutdown();

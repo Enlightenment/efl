@@ -673,12 +673,17 @@ fi
 AM_CONDITIONAL([HAVE_SYSTEMD_USER_SESSION], [test "x${have_systemd_user_session}" = "xyes"])
 AC_SUBST([USER_SESSION_DIR])
 
-
 if test "x${have_systemd_pkg}" = "xauto" -o "x${have_systemd_pkg}" = "xyes"; then
    PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
    [have_systemd_pkg="yes"],
    [have_systemd_pkg="no"])
 fi
+
+PKG_CHECK_MODULES(SYSTEMD_LOGIN, [libsystemd-login >= 198],
+                  [have_systemd_login=yes], [have_systemd_login=no])
+AS_IF([test "x$have_systemd_login" = "xyes"],
+      [AC_DEFINE([HAVE_SYSTEMD_LOGIN], [1], [Have systemd-login])])
+AM_CONDITIONAL(HAVE_SYSTEMD_LOGIN, test "x$have_systemd_login" = "xyes")
 
 # check for systemd library if requested
 if test "x${want_systemd}" = "xyes" -a "x${have_systemd_pkg}" = "xno"; then
@@ -3072,7 +3077,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eeze])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
-EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 libsystemd-login >= 192 gbm])
+EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 gbm])
 
 EFL_EVAL_PKGS([ECORE_DRM])
 

@@ -254,7 +254,8 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    /* check for valid device */
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
 
-   dev->drm.fd = open(dev->drm.name, O_RDWR | O_CLOEXEC);
+   /* DRM device node is needed immediately to keep going. */
+   dev->drm.fd = _ecore_drm_launcher_device_open_no_pending(dev->drm.name, O_RDWR);
    if (dev->drm.fd < 0) return EINA_FALSE;
 
    DBG("Opened Device %s : %d", dev->drm.name, dev->drm.fd);
@@ -319,7 +320,7 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
    if (dev->drm.hdlr) ecore_main_fd_handler_del(dev->drm.hdlr);
    dev->drm.hdlr = NULL;
 
-   close(dev->drm.fd);
+   _ecore_drm_launcher_device_close(dev->drm.name, dev->drm.fd);
 
    /* reset device fd */
    dev->drm.fd = -1;

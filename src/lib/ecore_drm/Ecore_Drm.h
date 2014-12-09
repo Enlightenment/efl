@@ -194,4 +194,6 @@ EAPI Eina_Bool ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsign
 EAPI Ecore_Drm_Fb *ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 
+EAPI Eina_Bool ecore_drm_launcher_connect(Ecore_Drm_Device *dev);
+EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
 #endif
