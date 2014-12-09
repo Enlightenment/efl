@@ -3764,7 +3764,7 @@ _it_break_position_get(Evas_Object_Textblock2_Item *it, const char *breaks)
      {
         if (*breaks == LINEBREAK_MUSTBREAK)
           {
-             return i;
+             return i + it->text_pos;
           }
      }
 
@@ -4076,6 +4076,44 @@ _layout_par_append_ellipsis(Ctxt *c)
    c->x += ellip_ti->parent.adv;
 }
 
+static int
+_layout_par_wrap_find(Ctxt *c, Evas_Object_Textblock2_Format *fmt, Evas_Object_Textblock2_Item *first_it, const char *line_breaks)
+{
+   int wrap = -1;
+
+   if ((c->w >= 0) &&
+         ((fmt->wrap_word) ||
+          (fmt->wrap_char) ||
+          (fmt->wrap_mixed)))
+     {
+        Evas_Object_Textblock2_Item *it = first_it;
+
+        int line_start = it->text_pos;
+        if (it->format->wrap_word)
+           wrap = _layout_get_wordwrap(c, it->format, it,
+                 line_start, line_breaks);
+        else if (it->format->wrap_char)
+           wrap = _layout_get_charwrap(c, it->format, it,
+                 line_start, line_breaks);
+        else if (it->format->wrap_mixed)
+           wrap = _layout_get_mixedwrap(c, it->format, it,
+                 line_start, line_breaks);
+        else
+           wrap = -1;
+     }
+
+   return wrap;
+}
+
+static void
+_layout_par_line_item_add(Ctxt *c, Evas_Object_Textblock2_Item *it)
+{
+   c->ln->items = _ITEM(eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+            EINA_INLIST_GET(it)));
+   it->ln = c->ln;
+   c->x += it->adv;
+}
+
 /* 0 means go ahead, 1 means break without an error, 2 means
  * break with an error, should probably clean this a bit (enum/macro)
  * FIXME ^ */
@@ -4206,6 +4244,9 @@ _layout_par(Ctxt *c)
                    &c->descent, it, it->format);
           }
 
+        /* FIXME: What is first find the cutoff point based on _it_break_position_get
+         * and wrap from all the remaining items, and then I can just add all the
+         * items up until that point, and just reduce the rest. */
         while (i)
           {
              int break_position = 0;
@@ -4213,8 +4254,8 @@ _layout_par(Ctxt *c)
 
              if ((break_position = _it_break_position_get(it, line_breaks)) > 0)
                {
-                  Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
-                  if (GET_ITEM_TEXT(ti)[break_position] == _PARAGRAPH_SEPARATOR)
+                  if (eina_ustrbuf_string_get(
+                           c->par->text_node->unicode)[break_position] == _PARAGRAPH_SEPARATOR)
                     {
                        break_position = -1;
                     }
@@ -4224,42 +4265,41 @@ _layout_par(Ctxt *c)
                     }
                }
 
-             if (c->w >= 0)
                {
-                  if (((c->x + it->w) >
-                           (c->w - c->o->style_pad.l - c->o->style_pad.r -
-                            c->marginl - c->marginr)))
+                  int wrap = _layout_par_wrap_find(c, it->format, it, line_breaks);
+                  if ((0 < wrap) && (wrap < break_position))
                     {
-                       int wrap = -1;
-                       int line_start = it->text_pos;
-                       if (it->format->wrap_word)
-                          wrap = _layout_get_wordwrap(c, it->format, it,
-                                line_start, line_breaks);
-                       else if (it->format->wrap_char)
-                          wrap = _layout_get_charwrap(c, it->format, it,
-                                line_start, line_breaks);
-                       else if (it->format->wrap_mixed)
-                          wrap = _layout_get_mixedwrap(c, it->format, it,
-                                line_start, line_breaks);
-                       else
-                          wrap = -1;
-
-                       if ((wrap > 0) && (wrap < break_position))
-                         {
-                            break_position = wrap;
-                         }
+                       break_position = wrap;
                     }
                }
 
              if (break_position > 0)
                {
-                  _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, break_position);
+                  /* Add all the items that don't need breaking. */
+                  for ( ; i ; i = eina_list_next(i), it = _ITEM(eina_list_data_get(i)))
+                    {
+                       if (it->type == EVAS_TEXTBLOCK2_ITEM_TEXT)
+                         {
+                            Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
+                            if ((it->text_pos < (unsigned int) break_position) &&
+                               ((unsigned int) break_position <= it->text_pos + ti->text_props.text_len))
+                              {
+                                 break;
+                              }
+
+                            _layout_par_line_item_add(c, it);
+                         }
+                       else
+                         {
+                            /* FIXME: Do something. */
+                            break;
+                         }
+                    }
+
+                  _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, break_position - it->text_pos);
                }
 
-             c->ln->items = _ITEM(eina_inlist_append(EINA_INLIST_GET(c->ln->items),
-                      EINA_INLIST_GET(it)));
-             it->ln = c->ln;
-             c->x += it->adv;
+             _layout_par_line_item_add(c, it);
 
              i = eina_list_next(i);
 
