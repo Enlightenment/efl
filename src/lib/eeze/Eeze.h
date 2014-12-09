@@ -412,6 +412,21 @@ EAPI Eina_List       *eeze_udev_find_by_type(Eeze_Udev_Type type, const char *na
  * Requires at least one filter.
  */
 EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name);
+
+/**
+ * A more advanced find, allows finds using udev subsystem and sysname
+ *
+ * @param subsystem The udev subsystem to filter by, or @c NULL
+ * @param sysname A filter for the device name, or @c NULL
+ * @return A stringshared Eina_List* of matched devices or @c NULL on failure
+ *
+ * @return A stringshared list of the devices found
+ *
+ * @since 1.13
+
+ EAPI */
+EAPI Eina_List       *eeze_udev_find_by_subsystem_sysname(const char *subsystem, const char *sysname);
+
    /**
     * @}
     */
