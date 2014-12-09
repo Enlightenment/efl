@@ -4,95 +4,77 @@
 
 #include "ecore_drm_private.h"
 
-typedef struct _Ecore_Drm_Device_Open_Data Ecore_Drm_Device_Open_Data;
-struct _Ecore_Drm_Device_Open_Data
-{
-   Ecore_Drm_Seat *seat;
-   const char *node;
-};
-
 /* local functions */
-static int 
-_device_flags_set(int fd)
+static void 
+_cb_libinput_log(struct libinput *libinput EINA_UNUSED, enum libinput_log_priority priority, const char *format, va_list args)
 {
-   int ret, fl;
-   /* char name[256] = "unknown"; */
-
-   if (fd < 0)
+   switch (priority)
      {
-        ERR("Failed to take device");
-        return -1;
+      case LIBINPUT_LOG_PRIORITY_DEBUG:
+        DBG(format, args);
+        break;
+      /* case LIBINPUT_LOG_PRIORITY_INFO: */
+      /*   INF(format, args); */
+      /*   break; */
+      case LIBINPUT_LOG_PRIORITY_ERROR:
+        ERR(format, args);
+        break;
+      default:
+        break;
      }
+}
 
-   if ((fl = fcntl(fd, F_GETFD)) < 0)
+static int 
+_cb_open_restricted(const char *path, int flags, void *data)
+{
+   Ecore_Drm_Input *input;
+   Ecore_Drm_Seat *seat;
+   Ecore_Drm_Evdev *edev;
+   Eina_List *l, *ll;
+   int fd = -1;
+
+   if (!(input = data)) return -1;
+
+   /* try to open the device */
+   fd = _ecore_drm_launcher_device_open_no_pending(path, flags);
+   if (fd < 0) ERR("Could not open device");
+
+   EINA_LIST_FOREACH(input->dev->seats, l, seat)
      {
-        ERR("Failed to get file fd: %m");
-        goto flag_err;
+        EINA_LIST_FOREACH(seat->devices, ll, edev)
+          {
+             if (strstr(path, edev->path))
+               {
+                  edev->fd = fd;
+                  return fd;
+               }
+          }
      }
-
-   fl &= ~FD_CLOEXEC;
-
-   if ((ret = fcntl(fd, F_SETFD, fl)) < 0)
-     {
-        ERR("Failed to set file fds: %m");
-        goto flag_err;
-     }
-
-   /* if (ioctl(fd, EVIOCGNAME(sizeof(name)), name) < 0) */
-   /*   { */
-   /*      ERR("Could not get device name: %m"); */
-   /*      goto flag_err; */
-   /*   } */
-   /* else */
-   /*   { */
-   /*      name[sizeof(name) - 1] = '\0'; */
-   /*      DBG("%s Opened", name); */
-   /*   } */
 
    return fd;
-
-flag_err:
-   close(fd);
-   return -1;
 }
 
 static void 
-_cb_device_opened(void *data, int fd, Eina_Bool paused EINA_UNUSED)
+_cb_close_restricted(int fd, void *data)
 {
-   Ecore_Drm_Device_Open_Data *d;
+   Ecore_Drm_Input *input;
+   Ecore_Drm_Seat *seat;
    Ecore_Drm_Evdev *edev;
-   Eina_Bool b = EINA_FALSE;
+   Eina_List *l, *ll;
 
-   if (!(d = data)) return;
+   if (!(input = data)) return;
 
-   if (fd < 0)
+   EINA_LIST_FOREACH(input->dev->seats, l, seat)
      {
-        ERR("\tCould not get UNIX_FD from eldbus message: %d %d", fd, b);
-        ERR("\tFailed to open device: %s", d->node);
-        goto cleanup;
+        EINA_LIST_FOREACH(seat->devices, ll, edev)
+          {
+             if (edev->fd == fd)
+               {
+                  _ecore_drm_launcher_device_close(edev->path, fd);
+                  return;
+               }
+          }
      }
-
-   if ((fd = _device_flags_set(fd)) < 0)
-     {
-        ERR("\tCould not set fd flags");
-        goto release;
-     }
-
-   if (!(edev = _ecore_drm_evdev_device_create(d->seat, d->node, fd)))
-     {
-        ERR("\tCould not create evdev device: %s", d->node);
-        goto release;
-     }
-
-   d->seat->devices = eina_list_append(d->seat->devices, edev);
-
-   goto cleanup;
-
-release:
-   _ecore_drm_launcher_device_close(d->node, fd);
-cleanup:
-   eina_stringshare_del(d->node);
-   free(d);
 }
 
 static Ecore_Drm_Seat *
@@ -101,262 +83,288 @@ _seat_get(Ecore_Drm_Input *input, const char *seat)
    Ecore_Drm_Seat *s;
    Eina_List *l;
 
+   /* search for this name in existing seats */
    EINA_LIST_FOREACH(input->dev->seats, l, s)
-     {
-        if (!strcmp(s->name, seat)) return s;
-     }
+     if (!strcmp(s->name, seat)) return s;
 
-   if (!(s = calloc(1, sizeof(Ecore_Drm_Seat))))
+   /* try to allocate space for new seat */
+   if (!(s = calloc(1, sizeof(Ecore_Drm_Seat)))) 
      return NULL;
 
    s->input = input;
    s->name = eina_stringshare_add(seat);
 
+   /* add this new seat to list */
    input->dev->seats = eina_list_append(input->dev->seats, s);
 
    return s;
 }
 
+static void 
+_device_added(Ecore_Drm_Input *input, struct libinput_device *device)
+{
+   struct libinput_seat *libinput_seat;
+   const char *seat_name;
+   Ecore_Drm_Seat *seat;
+   Ecore_Drm_Evdev *edev;
+
+   libinput_seat = libinput_device_get_seat(device);
+   seat_name = libinput_seat_get_logical_name(libinput_seat);
+
+   /* try to get a seat */
+   if (!(seat = _seat_get(input, seat_name)))
+     {
+        ERR("Could not get matching seat: %s", seat_name);
+        return;
+     }
+
+   /* try to create a new evdev device */
+   if (!(edev = _ecore_drm_evdev_device_create(seat, device)))
+     {
+        ERR("Failed to create new evdev device");
+        return;
+     }
+
+   /* append this device to the seat */
+   seat->devices = eina_list_append(seat->devices, edev);
+}
+
+static void 
+_device_removed(Ecore_Drm_Input *input EINA_UNUSED, struct libinput_device *device)
+{
+   Ecore_Drm_Evdev *edev;
+
+   /* try to get the evdev structure */
+   if (!(edev = libinput_device_get_user_data(device)))
+     return;
+
+   /* remove this evdev from the seat's list of devices */
+   edev->seat->devices = eina_list_remove(edev->seat->devices, edev);
+
+   /* destroy this evdev */
+   _ecore_drm_evdev_device_destroy(edev);
+}
+
+static int 
+_udev_event_process(struct libinput_event *event)
+{
+   struct libinput *libinput;
+   struct libinput_device *device;
+   Ecore_Drm_Input *input;
+   Eina_Bool ret = EINA_TRUE;
+
+   libinput = libinput_event_get_context(event);
+   input = libinput_get_user_data(libinput);
+   device = libinput_event_get_device(event);
+
+   switch (libinput_event_get_type(event))
+     {
+      case LIBINPUT_EVENT_DEVICE_ADDED:
+        _device_added(input, device);
+        break;
+      case LIBINPUT_EVENT_DEVICE_REMOVED:
+        _device_removed(input, device);
+        break;
+      default:
+        ret = EINA_FALSE;
+     }
+
+   return ret;
+}
+
+static void 
+_input_event_process(struct libinput_event *event)
+{
+   if (_udev_event_process(event)) return;
+   if (_ecore_drm_evdev_event_process(event)) return;
+}
+
+static void 
+_input_events_process(Ecore_Drm_Input *input)
+{
+   struct libinput_event *event;
+
+   while ((event = libinput_get_event(input->libinput)))
+     {
+        _input_event_process(event);
+        libinput_event_destroy(event);
+     }
+}
+
 static Eina_Bool 
-_device_add(Ecore_Drm_Input *input, const char *device)
-{
-   Ecore_Drm_Seat *seat;
-   Ecore_Drm_Device_Open_Data *data;
-   const char *devseat, *wlseat;
-
-   if (!input) return EINA_FALSE;
-
-   DBG("Add Input Device: %s", device);
-
-   if (!(devseat = eeze_udev_syspath_get_property(device, "ID_SEAT")))
-     devseat = eina_stringshare_add("seat0");
-
-   if (strcmp(devseat, input->seat)) goto seat_err;
-
-   if (!(wlseat = eeze_udev_syspath_get_property(device, "WL_SEAT")))
-     wlseat = eina_stringshare_add("seat0");
-
-   if (!(seat = _seat_get(input, wlseat))) 
-     {
-        ERR("\tCould not get matching seat");
-        goto seat_get_err;
-     }
-
-   if (!(data = calloc(1, sizeof(Ecore_Drm_Device_Open_Data))))
-     goto seat_get_err;
-
-   data->seat = seat;
-   if (!(data->node = eeze_udev_syspath_get_devpath(device)))
-     goto dev_err;
-
-   DBG("\tDevice Path: %s", data->node);
-
-   if (!_ecore_drm_launcher_device_open(data->node, _cb_device_opened, data, O_RDWR | O_NONBLOCK))
-     goto dev_err;
-
-   return EINA_TRUE;
-
-dev_err:
-   free(data);
-seat_get_err:
-   eina_stringshare_del(wlseat);
-seat_err:
-   eina_stringshare_del(devseat);
-   return EINA_FALSE;
-}
-
-static void 
-_device_remove(Ecore_Drm_Input *input, const char *device)
-{
-   Ecore_Drm_Seat *seat;
-   Eina_List *l;
-
-   if (!input) return;
-
-   EINA_LIST_FOREACH(input->dev->seats, l, seat)
-     {
-        Ecore_Drm_Evdev *edev;
-        Eina_List *ll;
-
-        EINA_LIST_FOREACH(seat->devices, ll, edev)
-          {
-             if (!strcmp(edev->path, device))
-               {
-                  seat->devices = eina_list_remove(seat->devices, edev);
-                  _ecore_drm_evdev_device_destroy(edev);
-                  break;
-               }
-          }
-     }
-}
-
-static void 
-_cb_input_event(const char *device, Eeze_Udev_Event event, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+_cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    Ecore_Drm_Input *input;
 
-   if (!(input = data)) return;
+   if (!(input = data)) return EINA_TRUE;
 
-   switch (event)
-     {
-      case EEZE_UDEV_EVENT_ADD:
-        _device_add(input, device);
-        break;
-      case EEZE_UDEV_EVENT_REMOVE:
-          {
-             const char *node;
+   if (libinput_dispatch(input->libinput) != 0)
+     ERR("Failed to dispatch libinput events: %m");
 
-             if ((node = eeze_udev_syspath_get_devpath(device)))
-               {
-                  _device_remove(input, node);
-                  eina_stringshare_del(node);
-               }
-          }
-        break;
-      default:
-        break;
-     }
-}
-
-static Eina_Bool 
-_devices_add(Ecore_Drm_Input *input)
-{
-   Eina_List *devices;
-   Eina_Bool found = EINA_FALSE;
-   const char *device;
-
-   /* NB: This really sucks !! We cannot 'OR' diferent device types 
-    * together for eeze_udev_find_by_type
-    * 
-    * For now, just find by 'NONE" and we'll filter for input devices by 
-    * running tests */
-   devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_NONE, NULL);
-   EINA_LIST_FREE(devices, device)
-     {
-        if ((eeze_udev_syspath_is_mouse(device)) || 
-            (eeze_udev_syspath_is_kbd(device)) || 
-            (eeze_udev_syspath_is_touchpad(device)) || 
-            (eeze_udev_syspath_is_joystick(device)))
-          {
-             if (!_device_add(input, device))
-               ERR("\tFailed to add device");
-             else
-               found = EINA_TRUE;
-          }
-
-        eina_stringshare_del(device);
-     }
-
-   if (!found)
-     {
-        ERR("No Input Devices Found");
-        return EINA_FALSE;
-     }
+   /* process pending events */
+   _input_events_process(input);
 
    return EINA_TRUE;
 }
+
+const struct libinput_interface _input_interface = 
+{
+   _cb_open_restricted,
+   _cb_close_restricted,
+};
 
 /* public functions */
 EAPI Eina_Bool 
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
+   int level, priority = LIBINPUT_LOG_PRIORITY_INFO;
 
    /* check for valid device */
-   if (!dev) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
 
-   /* try to allocate space for input structure */
+   /* try to allocate space for new input structure */
    if (!(input = calloc(1, sizeof(Ecore_Drm_Input))))
      return EINA_FALSE;
 
-   input->seat = eina_stringshare_add(dev->seat);
+   /* set reference for parent device */
    input->dev = dev;
 
-   /* try to enable this input */
-   if (!ecore_drm_inputs_enable(input))
+   /* try to create libinput context */
+   input->libinput = 
+     libinput_udev_create_context(&_input_interface, input, eeze_udev_get());
+   if (!input->libinput)
      {
-        ERR("Could not enable input");
-        if (input->seat) eina_stringshare_del(input->seat);
-        free(input);
-        return EINA_FALSE;
+        ERR("Could not create libinput context: %m");
+        goto err;
      }
 
-   /* add this input to dev */
+   /* get the current eina_log level */
+   level = eina_log_domain_registered_level_get(_ecore_drm_log_dom);
+   switch (level)
+     {
+      case EINA_LOG_LEVEL_DBG:
+        priority = LIBINPUT_LOG_PRIORITY_DEBUG;
+        break;
+      case EINA_LOG_LEVEL_INFO:
+        priority = LIBINPUT_LOG_PRIORITY_INFO;
+        break;
+      case EINA_LOG_LEVEL_CRITICAL:
+      case EINA_LOG_LEVEL_ERR:
+      case EINA_LOG_LEVEL_WARN:
+        priority = LIBINPUT_LOG_PRIORITY_ERROR;
+        break;
+      default:
+        break;
+     }
+
+   /* set callback for libinput logging */
+   libinput_log_set_handler(input->libinput, &_cb_libinput_log);
+
+   /* set libinput log priority */
+   libinput_log_set_priority(input->libinput, priority);
+
+   /* assign udev seat */
+   if (libinput_udev_assign_seat(input->libinput, dev->seat) != 0)
+     {
+        ERR("Failed to assign seat: %m");
+        goto err;
+     }
+
+   /* process pending events */
+   _input_events_process(input);
+
+   /* enable this input */
+   if (!ecore_drm_inputs_enable(input))
+     {
+        ERR("Failed to enable input");
+        goto err;
+     }
+
+   /* append this input */
    dev->inputs = eina_list_append(dev->inputs, input);
 
    return EINA_TRUE;
+
+err:
+   if (input->libinput) libinput_unref(input->libinput);
+   free(input);
+   return EINA_FALSE;
 }
 
 EAPI void 
 ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
 {
+   Ecore_Drm_Input *input;
    Ecore_Drm_Seat *seat;
-   Eina_List *l;
+   Ecore_Drm_Evdev *edev;
 
-   if (!dev) return;
-
-   EINA_LIST_FOREACH(dev->seats, l, seat)
+   EINA_LIST_FREE(dev->inputs, input)
      {
-        Ecore_Drm_Evdev *edev;
+        if (input->hdlr) ecore_main_fd_handler_del(input->hdlr);
+        if (input->libinput) libinput_unref(input->libinput);
+        free(input);
+     }
 
+   EINA_LIST_FREE(dev->seats, seat)
+     {
         EINA_LIST_FREE(seat->devices, edev)
-          {
-             _ecore_drm_launcher_device_close(edev->path, edev->fd);
-             _ecore_drm_evdev_device_destroy(edev);
-          }
+          _ecore_drm_evdev_device_destroy(edev);
+
+        if (seat->name) eina_stringshare_del(seat->name);
+        free(seat);
      }
 }
 
 EAPI Eina_Bool 
 ecore_drm_inputs_enable(Ecore_Drm_Input *input)
 {
-   /* check for valid input */
-   if (!input) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->libinput, EINA_FALSE);
 
-   if (!input->watch)
+   input->fd = libinput_get_fd(input->libinput);
+
+   if (!input->hdlr)
      {
-        int events = 0;
-
-        events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE);
-        /* NB: This really sucks !! We cannot 'OR' diferent device types 
-         * together for eeze_udev_watch_add :(
-         * 
-         * For now, just put a 'watch' on mouse type as this (in effect) does 
-         * what we need by internally by adding a subsystem match for 'input' */
-        if (!(input->watch = 
-              eeze_udev_watch_add(EEZE_UDEV_TYPE_MOUSE, events, 
-                                  _cb_input_event, input)))
-          {
-             ERR("Could not create Eeze_Udev_Watch for input");
-             return EINA_FALSE;
-          }
+        input->hdlr = 
+          ecore_main_fd_handler_add(input->fd, ECORE_FD_READ, 
+                                    _cb_input_dispatch, input, NULL, NULL);
      }
 
-   /* try to add devices */
-   if (!_devices_add(input))
+   if (input->suspended)
      {
-        ERR("Could not add input devices");
-        eeze_udev_watch_del(input->watch);
-        input->watch = NULL;
-        return EINA_FALSE;
+        if (libinput_resume(input->libinput) != 0) 
+          goto err;
+
+        input->suspended = EINA_FALSE;
+
+        /* process pending events */
+        _input_events_process(input);
      }
 
    input->enabled = EINA_TRUE;
    input->suspended = EINA_FALSE;
 
    return EINA_TRUE;
+
+err:
+   input->enabled = EINA_FALSE;
+   if (input->hdlr) ecore_main_fd_handler_del(input->hdlr);
+   input->hdlr = NULL;
+   return EINA_FALSE;
 }
 
 EAPI void 
 ecore_drm_inputs_disable(Ecore_Drm_Input *input)
 {
-   if (!input) return;
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   EINA_SAFETY_ON_TRUE_RETURN(input->suspended);
 
-   if (input->watch) eeze_udev_watch_del(input->watch);
-   input->watch = NULL;
+   /* suspend this input */
+   libinput_suspend(input->libinput);
 
-   input->enabled = EINA_FALSE;
+   /* process pending events */
+   _input_events_process(input);
+
    input->suspended = EINA_TRUE;
-
-   ecore_drm_inputs_destroy(input->dev);
 }

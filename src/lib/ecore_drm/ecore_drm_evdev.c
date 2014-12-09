@@ -2,22 +2,70 @@
 # include <config.h>
 #endif
 
-/* copied from udev/extras/input_id/input_id.c */
-/* we must use this kernel-compatible implementation */
-#define BITS_PER_LONG (sizeof(unsigned long) * 8)
-#define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
-#define OFF(x)  ((x)%BITS_PER_LONG)
-#define BIT(x)  (1UL<<OFF(x))
-#define LONG(x) ((x)/BITS_PER_LONG)
-#define TEST_BIT(array, bit)    ((array[LONG(bit)] >> OFF(bit)) & 1)
-/* end copied */
-
 #include "ecore_drm_private.h"
-#include <sys/ioctl.h>
-#include <linux/input.h>
 #include <ctype.h>
 
-/* local functions */
+static void 
+_device_calibration_set(Ecore_Drm_Evdev *edev)
+{
+   const char *sysname;
+   int w = 0, h = 0;
+   float cal[6];
+   const char *device;
+   Eina_List *devices;
+   const char *vals;
+   enum libinput_config_status status;
+
+   ecore_drm_output_size_get(edev->seat->input->dev, 
+                             edev->seat->input->dev->window, &w, &h);
+   if ((w == 0) || (h == 0)) return;
+
+   if ((!libinput_device_config_calibration_has_matrix(edev->device)) || 
+       (libinput_device_config_calibration_get_default_matrix(edev->device, cal) != 0))
+     return;
+
+   sysname = libinput_device_get_sysname(edev->device);
+
+   devices = eeze_udev_find_by_subsystem_sysname("input", sysname);
+   if (eina_list_count(devices) < 1) return;
+
+   EINA_LIST_FREE(devices, device)
+     {
+        vals = eeze_udev_syspath_get_property(device, "WL_CALIBRATION");
+	if ((!vals) || 
+            (sscanf(vals, "%f %f %f %f %f %f",
+                    &cal[0], &cal[1], &cal[2], &cal[3], &cal[4], &cal[5]) != 6))
+          goto cont;
+
+        cal[2] /= w;
+        cal[5] /= h;
+
+        status = 
+          libinput_device_config_calibration_set_matrix(edev->device, cal);
+
+        if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)
+          ERR("Failed to apply calibration");
+
+cont:
+        eina_stringshare_del(device);
+        continue;
+     }
+}
+
+static void 
+_device_configure(Ecore_Drm_Evdev *edev)
+{
+   if (libinput_device_config_tap_get_finger_count(edev->device) > 0)
+     {
+        Eina_Bool tap = EINA_FALSE;
+
+        tap = libinput_device_config_tap_get_default_enabled(edev->device);
+        libinput_device_config_tap_set_enabled(edev->device, tap);
+     }
+
+   _device_calibration_set(edev);
+}
+
 static void 
 _device_keyboard_setup(Ecore_Drm_Evdev *edev)
 {
@@ -58,169 +106,6 @@ _device_keyboard_setup(Ecore_Drm_Evdev *edev)
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_CAPS);
    edev->xkb.altgr_mask = 
      1 << xkb_map_mod_get_index(edev->xkb.keymap, "ISO_Level3_Shift");
-}
-
-static Eina_Bool 
-_device_configure(Ecore_Drm_Evdev *edev)
-{
-   Eina_Bool ret = EINA_FALSE;
-
-   if (!edev) return EINA_FALSE;
-
-   if ((edev->caps & (EVDEV_MOTION_ABS | EVDEV_MOTION_REL)) && 
-       (edev->caps & EVDEV_BUTTON))
-     {
-        DBG("\tInput device %s is a pointer", edev->name);
-        edev->seat_caps |= EVDEV_SEAT_POINTER;
-
-        /* FIXME: make this configurable */
-        edev->mouse.threshold = 0.25;
-
-        ret = EINA_TRUE;
-     }
-
-   if (edev->caps & EVDEV_KEYBOARD)
-     {
-        DBG("\tInput device %s is a keyboard", edev->name);
-        edev->seat_caps |= EVDEV_SEAT_KEYBOARD;
-        _device_keyboard_setup(edev);
-        ret = EINA_TRUE;
-     }
-
-   if (edev->caps & EVDEV_TOUCH)
-     {
-        DBG("\tInput device %s is a touchpad", edev->name);
-        edev->seat_caps |= EVDEV_SEAT_TOUCH;
-        ret = EINA_TRUE;
-     }
-
-   return ret;
-}
-
-static void
-_device_axis_update(Ecore_Drm_Evdev *dev)
-{
-   if (!dev) return;
-
-   if ((dev->abs.rel_w < 0) || (dev->abs.rel_h < 0))
-     {
-        int w = 0, h = 0;
-
-        ecore_drm_output_size_get(dev->seat->input->dev, 
-                                  dev->seat->input->dev->window, &w, &h);
-        if ((w) && (h)) 
-          ecore_drm_inputs_device_axis_size_set(dev, w, h);
-     }
-}
-
-static Eina_Bool 
-_device_handle(Ecore_Drm_Evdev *edev)
-{
-   struct input_absinfo absinfo;
-   unsigned long dev_bits[NBITS(EV_MAX)];
-   unsigned long abs_bits[NBITS(ABS_MAX)];
-   unsigned long rel_bits[NBITS(REL_MAX)];
-   unsigned long key_bits[NBITS(KEY_MAX)];
-   /* Eina_Bool have_key = EINA_FALSE; */
-   Eina_Bool have_abs = EINA_FALSE;
-
-   if (!edev) return EINA_FALSE;
-
-   ioctl(edev->fd, EVIOCGBIT(0, sizeof(dev_bits)), dev_bits);
-   if (TEST_BIT(dev_bits, EV_ABS))
-     {
-        have_abs = EINA_TRUE;
-
-        ioctl(edev->fd, EVIOCGBIT(EV_ABS, sizeof(abs_bits)), abs_bits);
-
-        if ((TEST_BIT(abs_bits, ABS_WHEEL)) || 
-            (TEST_BIT(abs_bits, ABS_GAS)) || 
-            (TEST_BIT(abs_bits, ABS_BRAKE)) || 
-            (TEST_BIT(abs_bits, ABS_HAT0X)))
-          {
-             /* ignore joystick */
-             return EINA_FALSE;
-          }
-
-        if (TEST_BIT(abs_bits, ABS_X))
-          {
-             ioctl(edev->fd, EVIOCGABS(ABS_X), &absinfo);
-             edev->abs.min_x = absinfo.minimum;
-             edev->abs.max_x = absinfo.maximum;
-             edev->abs.rel_w = -1;
-             edev->mouse.x = -1;
-             edev->caps |= EVDEV_MOTION_ABS;
-          }
-
-        if (TEST_BIT(abs_bits, ABS_Y))
-          {
-             ioctl(edev->fd, EVIOCGABS(ABS_Y), &absinfo);
-             edev->abs.min_y = absinfo.minimum;
-             edev->abs.max_y = absinfo.maximum;
-             edev->abs.rel_h = -1;
-             edev->mouse.y = -1;
-             edev->caps |= EVDEV_MOTION_ABS;
-          }
-
-        if ((TEST_BIT(abs_bits, ABS_MT_POSITION_X)) && 
-            (TEST_BIT(abs_bits, ABS_MT_POSITION_Y)))
-          {
-             DBG("Handle MultiTouch Device: %s", edev->path);
-          }
-     }
-
-   if (TEST_BIT(dev_bits, EV_REL))
-     {
-        ioctl(edev->fd, EVIOCGBIT(EV_REL, sizeof(rel_bits)), rel_bits);
-
-        if ((TEST_BIT(rel_bits, REL_X)) || (TEST_BIT(rel_bits, REL_Y)))
-          edev->caps |= EVDEV_MOTION_REL;
-     }
-
-   if (TEST_BIT(dev_bits, EV_KEY))
-     {
-        unsigned int i = 0;
-
-        /* have_key = EINA_TRUE; */
-
-        ioctl(edev->fd, EVIOCGBIT(EV_KEY, sizeof(key_bits)), key_bits);
-
-        if (have_abs)
-          {
-             if ((TEST_BIT(key_bits, BTN_TOOL_FINGER)) && 
-                 (!TEST_BIT(key_bits, BTN_TOOL_PEN)))
-               {
-                  DBG("Device Is Touchpad: %s", edev->path);
-               }
-          }
-
-        for (i = KEY_ESC; i < KEY_MAX; i++)
-          {
-             if ((i >= BTN_MISC) && (i < KEY_OK)) continue;
-             if (TEST_BIT(key_bits, i))
-               {
-                  edev->caps |= EVDEV_KEYBOARD;
-                  break;
-               }
-          }
-
-        if (TEST_BIT(key_bits, BTN_TOUCH))
-          edev->caps |= EVDEV_TOUCH;
-
-        for (i = BTN_MISC; i < BTN_JOYSTICK; i++)
-          {
-             if (TEST_BIT(key_bits, i))
-               {
-                  edev->caps |= EVDEV_BUTTON;
-                  edev->caps &= ~EVDEV_TOUCH;
-                  break;
-               }
-          }
-     }
-
-   if (TEST_BIT(dev_bits, EV_LED)) edev->caps |= EVDEV_KEYBOARD;
-
-   return EINA_TRUE;
 }
 
 static int 
@@ -304,28 +189,32 @@ _device_modifiers_update(Ecore_Drm_Evdev *edev)
 }
 
 static void 
-_device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+_device_handle_key(struct libinput_device *device, struct libinput_event_keyboard *event)
 {
-   unsigned int code, nsyms;
-   /* unsigned int *keycode; */
+   Ecore_Drm_Evdev *edev;
+   Ecore_Drm_Input *input;
+   uint32_t timestamp;
+   uint32_t code, nsyms;
    const xkb_keysym_t *syms;
+   enum libinput_key_state state;
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
    char key[256], keyname[256], compose_buffer[256];
    Ecore_Event_Key *e;
-   Ecore_Drm_Input *input;
-   char *tmp = NULL;
-   char *compose = NULL;
+   char *tmp = NULL, *compose = NULL;
 
-   if (!(input = dev->seat->input)) return;
+   if (!(edev = libinput_device_get_user_data(device))) return;
 
-   /* xkb rules reflect X broken keycodes, so offset by 8 */
-   code = event->code + 8;
+   if (!(input = edev->seat->input)) return;
 
-   xkb_state_update_key(dev->xkb.state, code, 
-                        (event->value ? XKB_KEY_DOWN : XKB_KEY_UP));
+   timestamp = libinput_event_keyboard_get_time(event);
+   code = libinput_event_keyboard_get_key(event) + 8;
+   state = libinput_event_keyboard_get_key_state(event);
+
+   xkb_state_update_key(edev->xkb.state, code, 
+                        (state ? XKB_KEY_DOWN : XKB_KEY_UP));
 
    /* get the keysym for this code */
-   nsyms = xkb_key_get_syms(dev->xkb.state, code, &syms);
+   nsyms = xkb_key_get_syms(edev->xkb.state, code, &syms);
    if (nsyms == 1) sym = syms[0];
 
    /* get the keyname for this sym */
@@ -339,8 +228,8 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
    /* if shift is active, we need to transform the key to lower */
-   if (xkb_state_mod_index_is_active(dev->xkb.state, 
-                                     xkb_map_mod_get_index(dev->xkb.keymap, 
+   if (xkb_state_mod_index_is_active(edev->xkb.state, 
+                                     xkb_map_mod_get_index(edev->xkb.keymap, 
                                                            XKB_MOD_NAME_SHIFT),
                                      XKB_STATE_MODS_EFFECTIVE))
      {
@@ -349,23 +238,20 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
      }
 
    memset(compose_buffer, 0, sizeof(compose_buffer));
-   if (_device_keysym_translate(sym, dev->xkb.modifiers, compose_buffer, sizeof(compose_buffer)))
+   if (_device_keysym_translate(sym, edev->xkb.modifiers, 
+                                compose_buffer, sizeof(compose_buffer)))
      {
-        compose = eina_str_convert("ISO8859-1", "UTF-8",
-                                   compose_buffer);
+        compose = eina_str_convert("ISO8859-1", "UTF-8", compose_buffer);
         if (!compose)
           {
              ERR("Ecore_DRM cannot convert input key string '%s' to UTF-8. "
                  "Is Eina built with iconv support?", compose_buffer);
           }
         else
-          {
-             tmp = compose;
-          }
+          tmp = compose;
      }
 
-   if (!compose)
-     compose = compose_buffer;
+   if (!compose) compose = compose_buffer;
 
    e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
@@ -388,44 +274,45 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    e->keycode = code;
    e->data = NULL;
 
-   _device_modifiers_update(dev);
-   e->modifiers = dev->xkb.modifiers;
+   _device_modifiers_update(edev);
 
-   if (event->value)
+   e->modifiers = edev->xkb.modifiers;
+
+   if (state)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
-   if (tmp)
-     free(tmp);
+   if (tmp) free(tmp);
 }
 
 static void 
-_device_notify_motion(Ecore_Drm_Evdev *dev, unsigned int timestamp)
+_device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Input *input;
    Ecore_Event_Mouse_Move *ev;
 
-   if (!(input = dev->seat->input)) return;
+   if (!(input = edev->seat->input)) return;
+
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
    ev->window = (Ecore_Window)input->dev->window;
    ev->event_window = (Ecore_Window)input->dev->window;
    ev->root_window = (Ecore_Window)input->dev->window;
-   ev->timestamp = timestamp;
+   ev->timestamp = libinput_event_pointer_get_time(event);
    ev->same_screen = 1;
 
    /* NB: Commented out. This borks mouse movement if no key has been 
     * pressed yet due to 'state' not being set */
 //   _device_modifiers_update(dev);
-   ev->modifiers = dev->xkb.modifiers;
+   ev->modifiers = edev->xkb.modifiers;
 
-   ev->x = dev->mouse.x;
-   ev->y = dev->mouse.y;
+   ev->x = edev->mouse.x;
+   ev->y = edev->mouse.y;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
-   ev->multi.device = dev->mt_slot;
+   ev->multi.device = edev->mt_slot;
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
    ev->multi.radius_y = 1;
@@ -440,44 +327,53 @@ _device_notify_motion(Ecore_Drm_Evdev *dev, unsigned int timestamp)
 }
 
 static void 
-_device_notify_wheel(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+_device_handle_pointer_motion(struct libinput_device *device, struct libinput_event_pointer *event)
 {
-   Ecore_Drm_Input *input;
-   Ecore_Event_Mouse_Wheel *ev;
+   Ecore_Drm_Evdev *edev;
 
-   if (!(input = dev->seat->input)) return;
-   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
+   if (!(edev = libinput_device_get_user_data(device))) return;
 
-   ev->window = (Ecore_Window)input->dev->window;
-   ev->event_window = (Ecore_Window)input->dev->window;
-   ev->root_window = (Ecore_Window)input->dev->window;
-   ev->timestamp = timestamp;
-   ev->same_screen = 1;
+   edev->mouse.x += libinput_event_pointer_get_dx(event);
+   edev->mouse.y += libinput_event_pointer_get_dy(event);
 
-   /* NB: Commented out. This borks mouse wheel if no key has been 
-    * pressed yet due to 'state' not being set */
-//   _device_modifiers_update(dev);
-   ev->modifiers = dev->xkb.modifiers;
-
-   ev->x = dev->mouse.x;
-   ev->y = dev->mouse.y;
-   ev->root.x = ev->x;
-   ev->root.y = ev->y;
-   if (event->value == REL_HWHEEL) ev->direction = 1;
-   ev->z = -event->value;
-
-   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+   _device_pointer_motion(edev, event);
 }
 
 static void 
-_device_notify_button(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+_device_handle_pointer_motion_absolute(struct libinput_device *device, struct libinput_event_pointer *event)
 {
+   Ecore_Drm_Evdev *edev;
+   int x, y;
+
+   if (!(edev = libinput_device_get_user_data(device))) return;
+
+   edev->mouse.x = libinput_event_pointer_get_absolute_x(event);
+   edev->mouse.y = libinput_event_pointer_get_absolute_y(event);
+
+   _device_pointer_motion(edev, event);
+}
+
+static void 
+_device_handle_button(struct libinput_device *device, struct libinput_event_pointer *event)
+{
+   Ecore_Drm_Evdev *edev;
    Ecore_Drm_Input *input;
    Ecore_Event_Mouse_Button *ev;
-   int button;
+   enum libinput_button_state state;
+   uint32_t button, timestamp;
 
-   if (!(input = dev->seat->input)) return;
+   if (!(edev = libinput_device_get_user_data(device))) return;
+   if (!(input = edev->seat->input)) return;
+
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
+
+   state = libinput_event_pointer_get_button_state(event);
+   button = libinput_event_pointer_get_button(event);
+   timestamp = libinput_event_pointer_get_time(event);
+
+   button = ((button & 0x00F) + 1);
+   if (button == 3) button = 2;
+   else if (button == 2) button = 3;
 
    ev->window = (Ecore_Window)input->dev->window;
    ev->event_window = (Ecore_Window)input->dev->window;
@@ -488,14 +384,14 @@ _device_notify_button(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned 
    /* NB: Commented out. This borks mouse button if no key has been 
     * pressed yet due to 'state' not being set */
 //   _device_modifiers_update(dev);
-   ev->modifiers = dev->xkb.modifiers;
+   ev->modifiers = edev->xkb.modifiers;
 
-   ev->x = dev->mouse.x;
-   ev->y = dev->mouse.y;
+   ev->x = edev->mouse.x;
+   ev->y = edev->mouse.y;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
-   ev->multi.device = dev->mt_slot;
+   ev->multi.device = edev->mt_slot;
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
    ev->multi.radius_y = 1;
@@ -506,323 +402,188 @@ _device_notify_button(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned 
    ev->multi.root.x = ev->x;
    ev->multi.root.y = ev->y;
 
-   button = ((event->code & 0x00F) + 1);
-
-   /* swap buttons 2 & 3 so behaviour is like X */
-   if (button == 3) button = 2;
-   else if (button == 2) button = 3;
-
-   if (event->value)
+   if (state)
      {
         unsigned int current;
 
         current = timestamp;
-        dev->mouse.did_double = EINA_FALSE;
-        dev->mouse.did_triple = EINA_FALSE;
+        edev->mouse.did_double = EINA_FALSE;
+        edev->mouse.did_triple = EINA_FALSE;
 
-        if (((current - dev->mouse.prev) <= dev->mouse.threshold) &&
-            (button == dev->mouse.prev_button))
+        if (((current - edev->mouse.prev) <= edev->mouse.threshold) &&
+            (button == edev->mouse.prev_button))
           {
-             dev->mouse.did_double = EINA_TRUE;
-             if (((current - dev->mouse.last) <= (2 * dev->mouse.threshold)) && 
-                 (button == dev->mouse.last_button))
+             edev->mouse.did_double = EINA_TRUE;
+             if (((current - edev->mouse.last) <= (2 * edev->mouse.threshold)) && 
+                 (button == edev->mouse.last_button))
                {
-                  dev->mouse.did_triple = EINA_TRUE;
-                  dev->mouse.prev = 0;
-                  dev->mouse.last = 0;
+                  edev->mouse.did_triple = EINA_TRUE;
+                  edev->mouse.prev = 0;
+                  edev->mouse.last = 0;
                   current = 0;
                }
           }
 
-        dev->mouse.last = dev->mouse.prev;
-        dev->mouse.prev = current;
-        dev->mouse.last_button = dev->mouse.prev_button;
-        dev->mouse.prev_button = button;
+        edev->mouse.last = edev->mouse.prev;
+        edev->mouse.prev = current;
+        edev->mouse.last_button = edev->mouse.prev_button;
+        edev->mouse.prev_button = button;
      }
 
    ev->buttons = button;
-   if (dev->mouse.did_double)
+
+   if (edev->mouse.did_double)
      ev->double_click = 1;
-   if (dev->mouse.did_triple)
+   if (edev->mouse.did_triple)
      ev->triple_click = 1;
 
-   if (event->value)
+   if (state)
      ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
    else
      ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
 
 static void 
-_device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
-{
-   switch (dev->pending_event)
-     {
-      case EVDEV_NONE:
-        return;
-      case EVDEV_RELATIVE_MOTION:
-        _device_notify_motion(dev, timestamp);
-        /* dev->mouse.x = 0; */
-        /* dev->mouse.y = 0; */
-        goto out;
-        break;
-      case EVDEV_ABSOLUTE_MT_DOWN:
-        goto out;
-        break;
-      case EVDEV_ABSOLUTE_MT_MOTION:
-        goto out;
-        break;
-      case EVDEV_ABSOLUTE_MT_UP:
-        goto out;
-        break;
-      case EVDEV_ABSOLUTE_TOUCH_DOWN:
-      case EVDEV_ABSOLUTE_TOUCH_UP:
-          {
-             struct input_event event;
-
-             event.code = 0;
-             event.value = dev->abs.pt[dev->mt_slot].down;
-
-             dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
-             dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
-
-             _device_notify_motion(dev, timestamp);
-             _device_notify_button(dev, &event, timestamp);
-
-             break;
-          }
-      case EVDEV_ABSOLUTE_MOTION:
-        dev->mouse.x = dev->abs.pt[dev->mt_slot].x[0];
-        dev->mouse.y = dev->abs.pt[dev->mt_slot].y[0];
-
-        _device_notify_motion(dev, timestamp);
-        break;
-     }
-
-out:
-   dev->pending_event = EVDEV_NONE;
-}
-
-static void 
-_device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
-{
-   /* ignore key repeat */
-   if (event->value == 2) return;
-
-   _device_process_flush(dev, timestamp);
-
-   if ((event->code >= BTN_LEFT) && (event->code <= BTN_TASK))
-     _device_notify_button(dev, event, timestamp);
-   else if ((event->code >= KEY_ESC) && (event->code <= KEY_MICMUTE))
-     _device_notify_key(dev, event, timestamp);
-   else if ((event->code == BTN_TOUCH) && (dev->caps & EVDEV_MOTION_ABS))
-     dev->abs.pt[dev->mt_slot].down = event->value;
-}
-
-static void 
-_device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp EINA_UNUSED)
-{
-   _device_axis_update(dev);
-
-   switch (event->code)
-     {
-      case ABS_X:
-        if (dev->abs.pt[dev->mt_slot].down == 0)
-          return;
-      case ABS_MT_POSITION_X:
-        dev->abs.pt[dev->mt_slot].x[0] = 
-          (int)((double)(event->value - dev->abs.min_x) / dev->abs.rel_w);
-
-        if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_DOWN)
-          if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_UP)
-            dev->pending_event = EVDEV_ABSOLUTE_MOTION;
-
-        break;
-      case ABS_Y:
-        if (dev->abs.pt[dev->mt_slot].down == 0)
-          return;
-      case ABS_MT_POSITION_Y:
-        dev->abs.pt[dev->mt_slot].y[0] = 
-          (int)((double)(event->value - dev->abs.min_y) / dev->abs.rel_h);
-
-        if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_DOWN)
-          if (dev->pending_event != EVDEV_ABSOLUTE_TOUCH_UP)
-            dev->pending_event = EVDEV_ABSOLUTE_MOTION;
-
-        break;
-      case ABS_MT_SLOT:
-        if ((event->value >= 0) && (event->value < EVDEV_MAX_SLOTS))
-          dev->mt_slot = event->value;
-
-        break;
-      case ABS_MT_TRACKING_ID:
-        if (event->value < 0)
-          {
-             dev->abs.pt[dev->mt_slot].down = 0;
-             dev->pending_event = EVDEV_ABSOLUTE_TOUCH_UP;
-          }
-        else
-          {
-             dev->abs.pt[dev->mt_slot].down = 1;
-             dev->pending_event = EVDEV_ABSOLUTE_TOUCH_DOWN;
-          }
-        break;
-     }
-}
-
-static void
-_device_process_relative(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
-{
-   switch (event->code)
-     {
-      case REL_X:
-        if (dev->pending_event != EVDEV_RELATIVE_MOTION)
-          _device_process_flush(dev, timestamp);
-        dev->mouse.x += event->value;
-        dev->pending_event = EVDEV_RELATIVE_MOTION;
-        break;
-      case REL_Y:
-        if (dev->pending_event != EVDEV_RELATIVE_MOTION)
-          _device_process_flush(dev, timestamp);
-        dev->mouse.y += event->value;
-        dev->pending_event = EVDEV_RELATIVE_MOTION;
-        break;
-      case REL_WHEEL:
-      case REL_HWHEEL:
-        _device_process_flush(dev, timestamp);
-        _device_notify_wheel(dev, event, timestamp);
-        break;
-     }
-}
-
-static void 
-_device_process(Ecore_Drm_Evdev *dev, struct input_event *event, int count)
-{
-   struct input_event *ev, *end;
-   unsigned int timestamp = 0;
-
-   ev = event;
-   end = ev + count;
-   for (ev = event; ev < end; ev++)
-     {
-        timestamp = (ev->time.tv_sec * 1000) + (ev->time.tv_usec / 1000);
-
-        switch (ev->type)
-          {
-           case EV_KEY:
-             _device_process_key(dev, ev, timestamp);
-             break;
-           case EV_REL:
-             _device_process_relative(dev, ev, timestamp);
-             break;
-           case EV_ABS:
-             _device_process_absolute(dev, ev, timestamp);
-             break;
-           case EV_SYN:
-             _device_process_flush(dev, timestamp);
-             break;
-           default:
-             break;
-          }
-     }
-}
-
-static Eina_Bool 
-_cb_device_data(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+_device_handle_axis(struct libinput_device *device, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Evdev *edev;
-   struct input_event ev[32];
-   int len = 0;
+   Ecore_Drm_Input *input;
+   Ecore_Event_Mouse_Wheel *ev;
+   uint32_t timestamp;
+   enum libinput_pointer_axis axis;
 
-   if (!(edev = data)) return EINA_TRUE;
+   if (!(edev = libinput_device_get_user_data(device))) return;
+   if (!(input = edev->seat->input)) return;
 
-   do
-     {
-        len = read(edev->fd, &ev, sizeof(ev));
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
 
-        if ((len < 0) || ((len % sizeof(ev[0])) != 0))
-          {
-             if ((len < 0) && (errno != EAGAIN) && (errno != EINTR))
-               {
-                  ERR("Device Died");
-               }
+   axis = libinput_event_pointer_get_axis(event);
+   timestamp = libinput_event_pointer_get_time(event);
 
-             return EINA_TRUE;
-          }
+   ev->window = (Ecore_Window)input->dev->window;
+   ev->event_window = (Ecore_Window)input->dev->window;
+   ev->root_window = (Ecore_Window)input->dev->window;
+   ev->timestamp = timestamp;
+   ev->same_screen = 1;
 
-        edev->event_process(edev, ev, (len / sizeof(ev[0])));
+   /* NB: Commented out. This borks mouse wheel if no key has been 
+    * pressed yet due to 'state' not being set */
+//   _device_modifiers_update(dev);
+   ev->modifiers = edev->xkb.modifiers;
 
-     } while (len > 0);
+   ev->x = edev->mouse.x;
+   ev->y = edev->mouse.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
 
-   return EINA_TRUE;
+   if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) ev->direction = 1;
+   ev->z = -libinput_event_pointer_get_axis_value(event);
+
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
 
-/* external functions */
 Ecore_Drm_Evdev *
-_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd)
+_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *device)
 {
    Ecore_Drm_Evdev *edev;
-   char name[256] = "unknown";
 
-   if (!(edev = calloc(1, sizeof(Ecore_Drm_Evdev))))
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+
+   /* try to allocate space for new evdev */
+   if (!(edev = calloc(1, sizeof(Ecore_Drm_Evdev)))) return NULL;
 
    edev->seat = seat;
-   edev->path = eina_stringshare_add(path);
-   edev->fd = fd;
-   edev->mt_slot = 0;
+   edev->device = device;
+   edev->path = eina_stringshare_add(libinput_device_get_sysname(device));
 
-   if (ioctl(edev->fd, EVIOCGNAME(sizeof(name)), name) < 0)
-     ERR("Error getting device name: %m");
-
-   name[sizeof(name) - 1] = '\0';
-   edev->name = eina_stringshare_add(name);
-
-   if (!_device_handle(edev))
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD))
      {
-        ERR("Unhandled Input Device: %s", name);
-        _ecore_drm_evdev_device_destroy(edev);
-        return NULL;
+        edev->seat_caps |= EVDEV_SEAT_KEYBOARD;
+        _device_keyboard_setup(edev);
      }
 
-   if (!_device_configure(edev))
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER))
      {
-        ERR("\tCould not configure input device: %s", name);
-        _ecore_drm_evdev_device_destroy(edev);
-        return NULL;
+        edev->seat_caps |= EVDEV_SEAT_POINTER;
+
+        /* TODO: make this configurable */
+        edev->mouse.threshold = 0.25;
      }
 
-   edev->event_process = _device_process;
-
-   edev->hdlr = 
-     ecore_main_fd_handler_add(edev->fd, ECORE_FD_READ, 
-                               _cb_device_data, edev, NULL, NULL);
-   if (!edev->hdlr)
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH))
      {
-        ERR("\tCould not create fd handler");
-        _ecore_drm_evdev_device_destroy(edev);
-        return NULL;
+        edev->seat_caps |= EVDEV_SEAT_TOUCH;
      }
+
+   libinput_device_set_user_data(device, edev);
+   libinput_device_ref(device);
+
+   /* configure device */
+   _device_configure(edev);
 
    return edev;
 }
 
 void 
-_ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *dev)
+_ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *edev)
 {
-   if (!dev) return;
+   EINA_SAFETY_ON_NULL_RETURN(edev);
 
-   if (dev->xkb.state) xkb_state_unref(dev->xkb.state);
-   if (dev->xkb.keymap) xkb_map_unref(dev->xkb.keymap);
+   if (edev->seat_caps & EVDEV_SEAT_KEYBOARD)
+     {
+        if (edev->xkb.state) xkb_state_unref(edev->xkb.state);
+        if (edev->xkb.keymap) xkb_map_unref(edev->xkb.keymap);
+     }
 
-   if (dev->path) eina_stringshare_del(dev->path);
-   if (dev->name) eina_stringshare_del(dev->name);
-   if (dev->hdlr) ecore_main_fd_handler_del(dev->hdlr);
+   if (edev->path) eina_stringshare_del(edev->path);
+   if (edev->device) libinput_device_unref(edev->device);
 
-   close(dev->fd);
-
-   free(dev);
+   free(edev);
 }
 
+Eina_Bool 
+_ecore_drm_evdev_event_process(struct libinput_event *event)
+{
+   struct libinput_device *device;
+   Eina_Bool ret = EINA_TRUE;
+
+   /* TODO: Finish Touch Events */
+
+   device = libinput_event_get_device(event);
+   switch (libinput_event_get_type(event))
+     {
+      case LIBINPUT_EVENT_KEYBOARD_KEY:
+        _device_handle_key(device, libinput_event_get_keyboard_event(event));
+        break;
+      case LIBINPUT_EVENT_POINTER_MOTION:
+        _device_handle_pointer_motion(device, 
+                                      libinput_event_get_pointer_event(event));
+        break;
+      case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
+        _device_handle_pointer_motion_absolute(device, 
+                                               libinput_event_get_pointer_event(event));
+        break;
+      case LIBINPUT_EVENT_POINTER_BUTTON:
+        _device_handle_button(device, libinput_event_get_pointer_event(event));
+        break;
+      case LIBINPUT_EVENT_POINTER_AXIS:
+        _device_handle_axis(device, libinput_event_get_pointer_event(event));
+        break;
+      case LIBINPUT_EVENT_TOUCH_DOWN:
+        break;
+      case LIBINPUT_EVENT_TOUCH_MOTION:
+        break;
+      case LIBINPUT_EVENT_TOUCH_UP:
+        break;
+      case LIBINPUT_EVENT_TOUCH_FRAME:
+        break;
+      default:
+        ret = EINA_FALSE;
+        break;
+     }
+
+   return ret;
+}
 
 /**
  * @brief Set the axis size of the given device.
@@ -837,30 +598,45 @@ _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *dev)
  * not, unsupported device.
  */
 EAPI void
-ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h)
+ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *edev, int w, int h)
 {
-   if (!dev) return;
-   if ((w < 0) || (h < 0)) return;
+   const char *sysname;
+   float cal[6];
+   const char *device;
+   Eina_List *devices;
+   const char *vals;
+   enum libinput_config_status status;
 
-   if (dev->caps & EVDEV_MOTION_ABS)
-     {
-        /* FIXME looks like some kernels dont include this struct */
-        struct input_absinfo abs_features;
+   if ((w == 0) || (h == 0)) return;
 
-        ioctl(dev->fd, EVIOCGABS(ABS_X), &abs_features);
-        dev->abs.rel_w = 
-          (double)(abs_features.maximum - abs_features.minimum)/(double)(w);
-        dev->abs.min_x = abs_features.minimum;
-
-        ioctl(dev->fd, EVIOCGABS(ABS_Y), &abs_features);
-        dev->abs.rel_h = 
-          (double)(abs_features.maximum - abs_features.minimum)/(double)(h);
-        dev->abs.min_y = abs_features.minimum;
-     }
-   else if (!(dev->caps & EVDEV_MOTION_REL))
+   if ((!libinput_device_config_calibration_has_matrix(edev->device)) || 
+       (libinput_device_config_calibration_get_default_matrix(edev->device, cal) != 0))
      return;
 
-   /* update the local values */
-   if (dev->mouse.x > w - 1) dev->mouse.x = w - 1;
-   if (dev->mouse.y > h - 1) dev->mouse.y = h - 1;
+   sysname = libinput_device_get_sysname(edev->device);
+
+   devices = eeze_udev_find_by_subsystem_sysname("input", sysname);
+   if (eina_list_count(devices) < 1) return;
+
+   EINA_LIST_FREE(devices, device)
+     {
+        vals = eeze_udev_syspath_get_property(device, "WL_CALIBRATION");
+	if ((!vals) || 
+            (sscanf(vals, "%f %f %f %f %f %f",
+                    &cal[0], &cal[1], &cal[2], &cal[3], &cal[4], &cal[5]) != 6))
+          goto cont;
+
+        cal[2] /= w;
+        cal[5] /= h;
+
+        status = 
+          libinput_device_config_calibration_set_matrix(edev->device, cal);
+
+        if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)
+          ERR("Failed to apply calibration");
+
+cont:
+        eina_stringshare_del(device);
+        continue;
+     }
 }
