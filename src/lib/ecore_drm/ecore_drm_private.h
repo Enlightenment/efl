@@ -20,7 +20,7 @@
 # include <sys/ioctl.h>
 
 # include <linux/input.h>
-//# include <libinput.h>
+# include <libinput.h>
 # include <xkbcommon/xkbcommon.h>
 
 # include <xf86drm.h>
