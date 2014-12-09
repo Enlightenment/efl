@@ -2696,7 +2696,7 @@ enum _Ecore_Pos_Map    /* Position mappings */
    ECORE_POS_MAP_DIVISOR_INTERP, /**< Start at gradient * v1, interpolated via power of v2 curve */
    ECORE_POS_MAP_BOUNCE, /**< Start at 0.0 then "drop" like a ball bouncing to the ground at 1.0, and bounce v2 times, with decay factor of v1 */
    ECORE_POS_MAP_SPRING, /**< Start at 0.0 then "wobble" like a spring rest position 1.0, and wobble v2 times, with decay factor of v1 */
-   ECORE_POS_MAP_CUBIC_BEZIER /**< Follow the cubic-bezier curve calculated with the points (x1, y1), (x2, y2) */
+   ECORE_POS_MAP_CUBIC_BEZIER /**< Follow the cubic-bezier curve calculated with the control points (x1, y1), (x2, y2) */
 };
 typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 
