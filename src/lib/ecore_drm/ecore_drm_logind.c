@@ -247,8 +247,10 @@ _ecore_drm_logind_vt_close(Ecore_Drm_Device *dev)
 Eina_Bool
 _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
 {
+#ifdef HAVE_SYSTEMD
    /* get sd-login properties we need */
    if (sd_pid_get_session(getpid(), &sid) < 0) return EINA_FALSE;
+#endif
 
    /* try to init dbus */
    if (!_ecore_drm_dbus_init(sid))
