@@ -1854,9 +1854,6 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         int ret;
         if (dbg) DBG("Surface sfc %p is a pbuffer: %p", sfc, sfc->pbuffer.native_surface);
 
-        if (sfc->pbuffer.fbo)
-          glDeleteFramebuffers(1, &sfc->pbuffer.fbo);
-
         ret = evgl_engine->funcs->pbuffer_surface_destroy(eng_data, sfc->pbuffer.native_surface);
         LKL(evgl_engine->resource_lock);
         evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
@@ -1935,7 +1932,12 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
         return NULL;
      }
 
+   // Set default values
    ctx->version = version;
+   ctx->scissor_coord[0] = 0;
+   ctx->scissor_coord[1] = 0;
+   ctx->scissor_coord[2] = evgl_engine->caps.max_w;
+   ctx->scissor_coord[3] = evgl_engine->caps.max_h;
 
    // Call engine create context
    if (share_ctx)
@@ -2058,6 +2060,15 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           {
              if (rsc->direct.partial.enabled)
                 evgl_direct_partial_render_end();
+
+             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
+             if ((rsc->current_ctx->surface_fbo == (GLuint) curr_fbo) ||
+                 (rsc->current_ctx->current_sfc &&
+                  rsc->current_ctx->current_sfc->color_buf == (GLuint) curr_fbo))
+               {
+                  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                  rsc->current_ctx->current_fbo = 0;
+               }
           }
 
         if (dbg) DBG("Calling make_current(NULL, NULL)");
@@ -2207,12 +2218,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
         if (sfc->color_buf)
           {
-             if (!sfc->pbuffer.fbo)
-               {
-                  glGenFramebuffers(1, &sfc->pbuffer.fbo);
-                  GLERRLOG();
-               }
-             if (!_surface_buffers_fbo_set(sfc, sfc->pbuffer.fbo))
+             if (!_surface_buffers_fbo_set(sfc, sfc->color_buf))
                ERR("Could not detach current FBO");
           }
 

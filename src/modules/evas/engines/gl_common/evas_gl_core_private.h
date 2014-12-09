@@ -133,7 +133,6 @@ struct _EVGL_Surface
    struct {
       EVGLNative_Surface    native_surface;
       Evas_GL_Color_Format  color_fmt;
-      GLuint                fbo;
       Eina_Bool             is_pbuffer : 1;
    } pbuffer;
 
