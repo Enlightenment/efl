@@ -142,18 +142,6 @@ static const char o_type[] = "textblock2";
 typedef struct _Evas_Object_Textblock2             Evas_Textblock2_Data;
 /**
  * @internal
- * @typedef Evas_Object_Style_Tag
- * The structure used for finding style tags.
- */
-typedef struct _Evas_Object_Style_Tag             Evas_Object_Style_Tag;
-/**
- * @internal
- * @typedef Evas_Object_Style_Tag
- * The structure used for finding style tags.
- */
-typedef struct _Evas_Object_Style_Tag_Base        Evas_Object_Style_Tag_Base;
-/**
- * @internal
  * @typedef Evas_Object_Textblock2_Node_Text
  * A text node.
  */
@@ -252,30 +240,6 @@ typedef struct _Evas_Textblock2_Selection_Iterator Evas_Textblock2_Selection_Ite
    (((ti)->parent.text_node) ? \
     (eina_ustrbuf_string_get((ti)->parent.text_node->unicode) + \
       (ti)->parent.text_pos) : EINA_UNICODE_EMPTY_STRING)
-/**
- * @internal
- * @def _FORMAT_IS_CLOSER_OF(base, closer, closer_len)
- * Returns true if closer is the closer of base.
- */
-#define _FORMAT_IS_CLOSER_OF(base, closer, closer_len) \
-   (!strncmp(base, closer, closer_len) && \
-    (!base[closer_len] || \
-     (base[closer_len] == '=') || \
-     _is_white(base[closer_len])))
-
-struct _Evas_Object_Style_Tag_Base
-{
-   char *tag;  /**< Format Identifier: b=Bold, i=Italic etc. */
-   char *replace;  /**< Replacement string. "font_weight=Bold", "font_style=Italic" etc. */
-   size_t tag_len;  /**< Strlen of tag. */
-   size_t replace_len;  /**< Strlen of replace. */
-};
-
-struct _Evas_Object_Style_Tag
-{
-   EINA_INLIST;
-   Evas_Object_Style_Tag_Base tag;  /**< Base style object for holding style information. */
-};
 
 struct _Evas_Object_Textblock2_Node_Text
 {
@@ -427,8 +391,6 @@ struct _Evas_Object_Textblock2_Format
 struct _Evas_Textblock2_Style
 {
    const char            *style_text;
-   char                  *default_tag;
-   Evas_Object_Style_Tag *tags;
    Eina_List             *objects;
    Eina_Bool              delete_me : 1;
 };
@@ -654,19 +616,6 @@ static void
 _style_replace(Evas_Textblock2_Style *ts, const char *style_text)
 {
    eina_stringshare_replace(&ts->style_text, style_text);
-   if (ts->default_tag) free(ts->default_tag);
-   while (ts->tags)
-     {
-	Evas_Object_Style_Tag *tag;
-
-	tag = (Evas_Object_Style_Tag *)ts->tags;
-	ts->tags = (Evas_Object_Style_Tag *)eina_inlist_remove(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
-	free(tag->tag.tag);
-	free(tag->tag.replace);
-	free(tag);
-     }
-   ts->default_tag = NULL;
-   ts->tags = NULL;
 }
 
 /**
@@ -2826,7 +2775,9 @@ _layout_line_reorder(Evas_Object_Textblock2_Line *line)
 }
 #endif
 
-/* FIXME: doc */
+/* FIXME: Super simplify what item is allowed to be, probably just either:
+ * fixed size or relative to line height/ascent/descent with them being completely
+ * calculated from the font and not dependant on surrounding text. */
 static void
 _layout_calculate_format_item_size(const Evas_Object *eo_obj,
       const Evas_Object_Textblock2_Format_Item *fi,
@@ -4191,20 +4142,20 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    /* setup default base style */
      {
         Eina_Bool finalize = EINA_FALSE;
-        if ((c->o->style) && (c->o->style->default_tag))
+        if ((c->o->style) && (c->o->style->style_text))
           {
              c->fmt = _layout_format_push(c, NULL);
-             _format_fill(c->obj, c->fmt, c->o->style->default_tag);
+             _format_fill(c->obj, c->fmt, c->o->style->style_text);
              finalize = EINA_TRUE;
           }
 
-        if ((c->o->style_user) && (c->o->style_user->default_tag))
+        if ((c->o->style_user) && (c->o->style_user->style_text))
           {
              if (!c->fmt)
                {
                   c->fmt = _layout_format_push(c, NULL);
                }
-             _format_fill(c->obj, c->fmt, c->o->style_user->default_tag);
+             _format_fill(c->obj, c->fmt, c->o->style_user->style_text);
              finalize = EINA_TRUE;
           }
 
@@ -4541,121 +4492,6 @@ evas_textblock2_style_set(Evas_Textblock2_Style *ts, const char *text)
      }
 
    _style_replace(ts, text);
-
-   if (ts->style_text)
-     {
-        // format MUST be KEY='VALUE'[KEY='VALUE']...
-        const char *p;
-        const char *key_start, *key_stop, *val_start;
-
-        key_start = key_stop = val_start = NULL;
-        p = ts->style_text;
-        while (*p)
-          {
-             if (!key_start)
-               {
-		 if (!isspace((unsigned char)(*p)))
-                    key_start = p;
-               }
-             else if (!key_stop)
-               {
-		 if ((*p == '=') || (isspace((unsigned char)(*p))))
-                    key_stop = p;
-               }
-             else if (!val_start)
-               {
-                  if (((*p) == '\'') && (*(p + 1)))
-                    {
-                       val_start = ++p;
-                    }
-               }
-             if ((key_start) && (key_stop) && (val_start))
-               {
-                  char *tags, *replaces = NULL;
-                  Evas_Object_Style_Tag *tag;
-                  const char *val_stop = NULL;
-                  size_t tag_len;
-                  size_t replace_len;
-
-                    {
-                       Eina_Strbuf *buf = eina_strbuf_new();
-                       val_stop = val_start;
-                       while(*p)
-                         {
-                            if (*p == '\'')
-                              {
-                                 /* Break if we found the tag end */
-                                 if (p[-1] != '\\')
-                                   {
-                                      eina_strbuf_append_length(buf, val_stop,
-                                            p - val_stop);
-                                      break;
-                                   }
-                                 else
-                                   {
-                                      eina_strbuf_append_length(buf, val_stop,
-                                            p - val_stop - 1);
-                                      eina_strbuf_append_char(buf, '\'');
-                                      val_stop = p + 1;
-                                   }
-                              }
-                            p++;
-                         }
-                       replaces = eina_strbuf_string_steal(buf);
-                       eina_strbuf_free(buf);
-                    }
-                  /* If we didn't find an end, just aboart. */
-                  if (!*p)
-                    {
-                       if (replaces) free(replaces);
-                       break;
-                    }
-
-                  tag_len = key_stop - key_start;
-                  replace_len = val_stop - val_start;
-
-                  tags = malloc(tag_len + 1);
-                  if (tags)
-                    {
-                       memcpy(tags, key_start, tag_len);
-                       tags[tag_len] = 0;
-                    }
-
-                  if ((tags) && (replaces))
-                    {
-                       if (!strcmp(tags, "DEFAULT"))
-                         {
-                            ts->default_tag = replaces;
-                            free(tags);
-                         }
-                       else
-                         {
-                            tag = calloc(1, sizeof(Evas_Object_Style_Tag));
-                            if (tag)
-                              {
-                                 tag->tag.tag = tags;
-                                 tag->tag.replace = replaces;
-                                 tag->tag.tag_len = tag_len;
-                                 tag->tag.replace_len = replace_len;
-                                 ts->tags = (Evas_Object_Style_Tag *)eina_inlist_append(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
-                              }
-                            else
-                              {
-                                 free(tags);
-                                 free(replaces);
-                              }
-                         }
-                    }
-                  else
-                    {
-                       if (tags) free(tags);
-                       if (replaces) free(replaces);
-                    }
-                  key_start = key_stop = val_start = NULL;
-               }
-             p++;
-          }
-     }
 }
 
 EAPI const char *
