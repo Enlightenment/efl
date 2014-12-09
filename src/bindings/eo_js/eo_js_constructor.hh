@@ -101,10 +101,14 @@ struct constructor_caller
     get_value(v8::Local<v8::Value> v, v8::Isolate* isolate)
     {
       std::cout << "function called " << __func__ << std::endl;
-      return js::get_value_from_javascript
+      typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type
+        tmp = 
+        js::get_value_from_javascript
         (v, isolate
          , js::value_tag<typename std::tuple_element
          <I, typename eina::_mpl::function_params<U>::type>::type>());
+      std::cerr << "Value got " << tmp << " for parameter " << I << std::endl;
+      return tmp;
     }
     
     template <typename T, std::size_t... I>
@@ -143,19 +147,36 @@ struct constructor_caller
   v8::Handle<v8::Value> operator()(v8::Arguments const& args) const
   {
     std::cout << "function called " << __func__ << std::endl;
-    int current_index = 0;
-    try
+    int current_index = 1;
+    if(args.Length() != 0)
       {
-        Eo* eo = eo_add
-          (klass
-           , NULL
-           , eina::_mpl::for_each(constructors, call{&current_index, &args})
-           );
-        assert(eo != 0);
-        v8::Local<v8::Object> self = args.This();
-        self->SetInternalField(0, v8::External::New(/*args.GetIsolate(),*/ eo));
+        try
+          {
+            Eo* parent = js::get_value_from_javascript(args[0], args.GetIsolate(), js::value_tag<Eo*>());
+            std::cout << "Value for parent " << parent << std::endl;
+            Eo* eo = eo_add_ref
+              (klass
+               , parent
+               , eina::_mpl::for_each(constructors, call{&current_index, &args})
+               );
+            assert(eo != 0);
+            std::cout << "Eo constructed " << eo << std::endl;
+            v8::Local<v8::Object> self = args.This();
+            self->SetInternalField(0, v8::External::New(/*args.GetIsolate(),*/ eo));
+          }
+        catch(std::logic_error const&) {}
       }
-    catch(std::logic_error const&) {}
+    else
+      {
+#if 0
+        args->GetIsolate()->
+#else
+          v8::
+#endif
+          ThrowException
+          (v8::Exception::TypeError
+           (v8::String::New/*FromUtf8*/(/*args->GetIsolate(), */"Expected at least one argument for this call")));
+      }
     return v8::Handle<v8::Value>();
   }
 #endif

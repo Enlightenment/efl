@@ -30,6 +30,7 @@ inline void call_function(v8::FunctionCallbackInfo<v8::Value> const& args)
 #else
 inline v8::Handle<v8::Value> call_function(v8::Arguments const& args)
 {
+  std::cerr << "call_function" << std::endl;
   void* data = v8::External::Cast(*args.Data())->Value();
   std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*
     f = static_cast<std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*>(data);
@@ -317,6 +318,7 @@ struct method_caller
 #else
   v8::Handle<v8::Value> operator()(v8::Arguments const& args)
   {
+    std::cerr << "call function operator()(args)" << std::endl;
     int input_parameters = std::tuple_size<In>::value;
     if(input_parameters <= args.Length())
       {

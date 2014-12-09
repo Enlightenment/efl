@@ -16,6 +16,7 @@
 #include <getopt.h>
 #include <cstdlib>
 #include <vector>
+#include <set>
 
 namespace eolian { namespace js {
 
@@ -87,13 +88,13 @@ int main(int argc, char** argv)
        }
    if (!::eolian_all_eot_files_parse())
      {
-       EINA_CXX_DOM_LOG_ERR(eolian::js::domain)
+       EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
          << "Eolian failed parsing eot files";
        assert(false && "Error parsing eot files");
      }
    if (!::eolian_eo_file_parse(in_file.c_str()))
      {
-       EINA_CXX_DOM_LOG_ERR(eolian::js::domain)
+       EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
          << "Failed parsing: " << in_file << ".";
        assert(false && "Error parsing input file");
      }
@@ -107,14 +108,17 @@ int main(int argc, char** argv)
    }
    if(!klass)
      {
-       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "could not find any class defined in this eo file";
+       EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "could not find any class defined in this eo file";
        return -1;
      }
 
    std::vector<Eolian_Function const*> constructor_functions;
    std::vector<Eolian_Function const*> normal_functions;
 
-   auto separate_functions = [&] (Eolian_Class const* klass, Eolian_Function_Type t)
+   std::set<Eolian_Class const*> classes;
+   
+   auto separate_functions = [&] (Eolian_Class const* klass, Eolian_Function_Type t
+                                  , bool ignore_constructors)
      {
        efl::eina::iterator<Eolian_Function> first ( ::eolian_class_functions_get(klass, t) )
        , last;
@@ -123,24 +127,43 @@ int main(int argc, char** argv)
            Eolian_Function const* function = &*first;
            if(eolian_function_scope_get(function) == EOLIAN_SCOPE_PUBLIC)
              {
-               std::cout << "function " << ::eolian_function_full_c_name_get(function) << std::endl;
+               EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << ::eolian_function_full_c_name_get(function);
+               if(strcmp("elm_obj_entry_input_panel_imdata_get", ::eolian_function_full_c_name_get(function))
+                  != 0)
+                 {
                if( ::eolian_function_is_constructor(function, klass))
                  {
-                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "is a constructor";
-                   constructor_functions.push_back(function);
+                   if(!ignore_constructors)
+                     {
+                       EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "is a constructor";
+                       constructor_functions.push_back(function);
+                     }
+                   else
+                     {
+                       EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "ignoring parent's constructors";
+                     }
                  }
-               else
+               else /*if( std::strcmp( ::eolian_function_full_c_name_get(function)
+                      , "eo_parent") != 0)*/
                  {
-                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "is a NOT constructor";
+                   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "is a NOT constructor "
+                                                            << ::eolian_function_full_c_name_get(function);
                    normal_functions.push_back(function);
+                 }
+               // else
+               //   {
+               //     EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "parent_set as first constructor";
+               //     constructor_functions.insert(constructor_functions.begin(), function);
+               //     normal_functions.push_back(function);
+               //   }
                  }
              }
          }
      };
-   separate_functions(klass, EOLIAN_METHOD);
-   separate_functions(klass, EOLIAN_PROPERTY);
+   separate_functions(klass, EOLIAN_METHOD, false);
+   separate_functions(klass, EOLIAN_PROPERTY, false);
 
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "functions were separated";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "functions were separated";
    
    std::function<void(Eolian_Class const*)> recurse_inherits
      = [&] (Eolian_Class const* klass)
@@ -148,25 +171,29 @@ int main(int argc, char** argv)
        for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
              , last; first != last; ++first)
          {
-           std::cout << "base " << &*first << std::endl;
+           EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
            Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
-           separate_functions(base, EOLIAN_METHOD);
-           separate_functions(base, EOLIAN_PROPERTY);
-           recurse_inherits(base);
+           if(classes.find(base) == classes.end())
+             {
+               classes.insert(base);
+               separate_functions(base, EOLIAN_METHOD, true);
+               separate_functions(base, EOLIAN_PROPERTY, true);
+               recurse_inherits(base);
+             }
          }
      };
    recurse_inherits(klass);
 
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "inherits were recursed";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "inherits were recursed";
    
    std::ofstream os (out_file.c_str());
    if(!os.is_open())
      {
-       EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Couldn't open output file " << out_file;
+       EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "Couldn't open output file " << out_file;
        return -1;
      }
 
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "output was opened";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "output was opened";
    
    std::string class_name (name(klass)), upper_case_class_name(class_name)
      , lower_case_class_name(class_name);
@@ -221,7 +248,7 @@ int main(int argc, char** argv)
        for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
              , last; first != last; ++first)
          {
-           std::cout << "base " << &*first << std::endl;
+           EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
            Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
            os << "#include <" << eolian_class_file_get(base) << ".h>\n\n";
            recurse_inherits_includes(base);
@@ -233,7 +260,7 @@ int main(int argc, char** argv)
    os << "}\n";
 
    
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "includes added";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "includes added";
    
    if(namespace_size(klass))
      {
@@ -242,7 +269,7 @@ int main(int argc, char** argv)
        os << " {\n";
      }
 
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "namespace";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "namespace";
    
    os << "EAPI void register_" << lower_case_class_name
       << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
@@ -252,16 +279,18 @@ int main(int argc, char** argv)
       << "     , efl::eo::js::constructor_data(isolate\n"
          "         , ";
 
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "before print eo_class";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "before print eo_class";
    
    print_eo_class(klass, os);
 
-   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "print eo_class";
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "print eo_class";
    
    for(auto function : constructor_functions)
      {
        os << "\n         , & ::"
           << eolian_function_full_c_name_get(function);
+       if(eolian_function_type_get(function) == EOLIAN_PROPERTY)
+         os << "_set";
      }
    
    os  << "));\n";
