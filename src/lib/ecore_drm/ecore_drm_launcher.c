@@ -38,9 +38,7 @@ ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
         _ecore_drm_logind_disconnect(dev);
      }
    else
-     {
-        ecore_drm_tty_close(dev);
-     }
+     ecore_drm_tty_close(dev);
 }
 
 static int
@@ -49,8 +47,7 @@ _device_flags_set(int fd, int flags)
    int fl;
 
    fl = fcntl(fd, F_GETFL);
-   if (fl < 0)
-     return -1;
+   if (fl < 0) return -1;
 
    if (flags & O_NONBLOCK)
      fl |= O_NONBLOCK;
@@ -59,8 +56,7 @@ _device_flags_set(int fd, int flags)
      return -1;
 
    fl = fcntl(fd, F_GETFD);
-   if (fl < 0)
-     return -1;
+   if (fl < 0) return -1;
 
    if (!(flags & O_CLOEXEC))
      fl &= ~FD_CLOEXEC;
