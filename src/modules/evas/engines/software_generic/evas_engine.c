@@ -3098,6 +3098,7 @@ static Evas_Func func =
      NULL, // need software mesa for gl rendering <- gl_current_surface_get
      NULL, // need software mesa for gl rendering <- gl_rotation_angle_get
      NULL, // need software mesa for gl rendering <- gl_surface_query
+     NULL, // need software mesa for gl rendering <- gl_surface_direct_renderable_get
      eng_image_load_error_get,
      eng_font_run_font_end_get,
      eng_image_animated_get,
@@ -3106,7 +3107,7 @@ static Evas_Func func =
      eng_image_animated_loop_count_get,
      eng_image_animated_frame_duration_get,
      eng_image_animated_frame_set,
-     NULL,
+     NULL, // image_max_size_get
      eng_multi_font_draw,
      eng_pixel_alpha_get,
      NULL, // eng_context_flush - software doesn't use it

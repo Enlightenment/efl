@@ -1111,7 +1111,7 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
              // TODO: Implement surface reconfigure and add depth+stencil support
 
              // Direct Rendering Option
-             if ((!depth_bit && !stencil_bit) || evgl_engine->direct_override)
+             if ((!depth_bit && !stencil_bit && !msaa_samples) || evgl_engine->direct_override)
                sfc->direct_fb_opt = cfg->options_bits & EVAS_GL_OPTIONS_DIRECT;
 
              // Extra flags for direct rendering
@@ -1271,6 +1271,27 @@ _evgl_not_in_pixel_get(void)
 
    EVGL_Context *ctx = rsc->current_ctx;
 
+   if (evgl_engine->direct_force_off)
+     return 0;
+
+   if (rsc->id != evgl_engine->main_tid)
+     return 0;
+
+   if (!ctx || !ctx->current_sfc)
+     return 0;
+
+   if (!ctx->current_sfc->direct_fb_opt)
+     return 0;
+
+   if (rsc->direct.rot == 0)
+     return !rsc->direct.enabled;
+
+   if (!ctx->current_sfc->client_side_rotation)
+     return 0;
+
+   return !rsc->direct.enabled;
+
+   /* was:
    if ((!evgl_engine->direct_force_off) &&
        (rsc->id == evgl_engine->main_tid) &&
        (ctx) &&
@@ -1280,6 +1301,7 @@ _evgl_not_in_pixel_get(void)
       return 1;
    else
       return 0;
+   */
 }
 
 int
@@ -1354,6 +1376,7 @@ EVGL_Engine *
 evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 {
    int direct_mem_opt = 0, direct_off = 0, direct_soff = 0, debug_mode = 0;
+   int direct_override = 0;
    char *s = NULL;
 
    if (evgl_engine) return evgl_engine;
@@ -1436,6 +1459,12 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
    if (direct_mem_opt == 1)
       evgl_engine->direct_mem_opt = 1;
 
+   // Check for Direct rendering override env var.
+   s = getenv("EVAS_GL_DIRECT_OVERRIDE");
+   if (s) direct_override = atoi(s);
+   if (direct_override == 1)
+     evgl_engine->direct_override = 1;
+
    // Check if Direct Rendering Override Force Off flag is on
    s = getenv("EVAS_GL_DIRECT_OVERRIDE_FORCE_OFF");
    if (s) direct_off = atoi(s);
@@ -1460,6 +1489,9 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
    // Clear Function Pointers
    if (!gl_funcs) gl_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
    if (!gles1_funcs) gles1_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
+
+   // Direct surfaces map texid->Evas_GL_Surface
+   evgl_engine->direct_surfaces = eina_hash_int32_new(NULL);
 
    return evgl_engine;
 
@@ -1496,6 +1528,12 @@ evgl_engine_shutdown(void *eng_data)
    // Destroy internal resources
    _evgl_tls_resource_destroy(eng_data);
 
+   if (evgl_engine->direct_surfaces)
+     {
+        eina_hash_free(evgl_engine->direct_surfaces);
+        evgl_engine->direct_surfaces = NULL;
+     }
+
    LKD(evgl_engine->resource_lock);
 
    // Free engine
@@ -1507,8 +1545,6 @@ void *
 evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
 {
    EVGL_Surface *sfc = NULL;
-   char *s = NULL;
-   int direct_override = 0, direct_mem_opt = 0;
    Eina_Bool need_reconfigure = EINA_FALSE;
    Eina_Bool dbg;
 
@@ -1536,25 +1572,6 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_PARAMETER);
         return NULL;
      }
-
-   // Check for Direct rendering override env var.
-   if (!evgl_engine->direct_override)
-      if ((s = getenv("EVAS_GL_DIRECT_OVERRIDE")))
-        {
-           direct_override = atoi(s);
-           if (direct_override == 1)
-              evgl_engine->direct_override = 1;
-        }
-
-   // Check if Direct Rendering Memory Optimzation flag is on
-   // Creates resources on demand when it fallsback to fbo rendering
-   if (!evgl_engine->direct_mem_opt)
-     if ((s = getenv("EVAS_GL_DIRECT_MEM_OPT")))
-       {
-          direct_mem_opt = atoi(s);
-          if (direct_mem_opt == 1)
-             evgl_engine->direct_mem_opt = 1;
-       }
 
    // Allocate surface structure
    sfc = calloc(1, sizeof(EVGL_Surface));
@@ -1628,6 +1645,12 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    // Keep track of all the created surfaces
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
+
+   if (sfc->direct_fb_opt)
+     {
+        eina_hash_add(evgl_engine->direct_surfaces, &sfc->color_buf, sfc);
+        DBG("Added tex %d as direct surface: %p", sfc->color_buf, sfc);
+     }
 
    if (sfc->direct_fb_opt &&
        (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
@@ -1776,6 +1799,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    EVGL_Resource *rsc;
    Eina_Bool need_reconfigure = EINA_FALSE;
    Eina_Bool dbg;
+   GLuint texid;
 
    // FIXME: This does some make_current(0,0) which may have side effects
 
@@ -1842,6 +1866,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 
 
    // Destroy created buffers
+   texid = sfc->color_buf;
    if (!_surface_buffers_destroy(sfc))
      {
         ERR("Error deleting surface resources.");
@@ -1874,6 +1899,12 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    // Remove it from the list
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
+
+   if (sfc->direct_fb_opt)
+     {
+        eina_hash_del(evgl_engine->direct_surfaces, &texid, sfc);
+        DBG("Removed tex %d from the direct surface: %p", texid, sfc);
+     }
 
    if (sfc->direct_fb_opt &&
        (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
@@ -2369,23 +2400,77 @@ evgl_direct_rendered()
    return rsc->direct.rendered;
 }
 
+/*
+ * This function can tell the engine whether a surface can be directly
+ * rendered to the Evas, despite any window rotation. For that purpose,
+ * we let the engine know the surface flags for this texture
+ */
+Eina_Bool
+evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
+                                    Eina_Bool *direct_render,
+                                    Eina_Bool *client_side_rotation)
+{
+   EVGL_Surface *sfc;
+
+   if (direct_render) *direct_render = EINA_FALSE;
+   if (client_side_rotation) *client_side_rotation = EINA_FALSE;
+
+   if (!evgl_engine) return EINA_FALSE;
+   if (!ns || (ns->type != EVAS_NATIVE_SURFACE_OPENGL)) return EINA_FALSE;
+   if (ns->data.opengl.framebuffer_id != 0) return EINA_FALSE;
+   if (ns->data.opengl.texture_id == 0) return EINA_FALSE;
+
+   sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.opengl.texture_id);
+   if (!sfc)
+     {
+        DBG("Native surface %p (color_buf %d) was not found.",
+            ns, ns->data.opengl.texture_id);
+        return EINA_FALSE;
+     }
+
+   if (evgl_engine->api_debug_mode)
+     {
+        DBG("Found native surface: texid:%u DR:%d CSR:%d",
+            ns->data.opengl.texture_id, (int) sfc->direct_fb_opt,
+            (int) sfc->client_side_rotation);
+     }
+
+   if (direct_render) *direct_render = sfc->direct_fb_opt;
+   if (client_side_rotation) *client_side_rotation = sfc->client_side_rotation;
+   return EINA_TRUE;
+}
+
 void
 evgl_direct_info_set(int win_w, int win_h, int rot,
                      int img_x, int img_y, int img_w, int img_h,
-                     int clip_x, int clip_y, int clip_w, int clip_h)
+                     int clip_x, int clip_y, int clip_w, int clip_h,
+                     unsigned int texid)
 {
    EVGL_Resource *rsc;
+   EVGL_Surface *sfc;
 
-   if (!(rsc=_evgl_tls_resource_get())) return;
+   if (!(rsc = _evgl_tls_resource_get()))
+     return;
 
-   /* Normally direct rendering isn't allowed if rotation is not 0.
-    * BUT, if client_side_rotation or override is on, allow it.
+   /* Check for direct rendering
+    *
+    * DR is allowed iif:
+    * - Rotation == 0
+    * OR: - Client-Side Rotation is set on the surface
+    *     - Direct Override is set
+    *
+    * If the surface is not found, we assume indirect rendering.
     */
-   if ((rot == 0) || evgl_engine->direct_override ||
-       (rsc->current_ctx &&
-        rsc->current_ctx->current_sfc &&
-        rsc->current_ctx->current_sfc->client_side_rotation))
+
+   sfc = eina_hash_find(evgl_engine->direct_surfaces, &texid);
+
+   if ((rot == 0) ||
+       evgl_engine->direct_override ||
+       (sfc && sfc->client_side_rotation))
      {
+        if (evgl_engine->api_debug_mode)
+          DBG("Direct rendering is enabled.");
+
         rsc->direct.enabled = EINA_TRUE;
 
         rsc->direct.win_w   = win_w;
@@ -2404,6 +2489,9 @@ evgl_direct_info_set(int win_w, int win_h, int rot,
      }
    else
      {
+        if (evgl_engine->api_debug_mode)
+          DBG("Direct rendering is disabled.");
+
         rsc->direct.enabled = EINA_FALSE;
      }
 }
@@ -2459,8 +2547,8 @@ evgl_direct_partial_info_clear()
 void
 evgl_direct_override_get(int *override, int *force_off)
 {
-   *override  = evgl_engine->direct_override;
-   *force_off = evgl_engine->direct_force_off;
+   if (override)  *override  = evgl_engine->direct_override;
+   if (force_off) *force_off = evgl_engine->direct_force_off;
 }
 
 void

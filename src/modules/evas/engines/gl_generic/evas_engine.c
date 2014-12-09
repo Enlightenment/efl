@@ -818,8 +818,6 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
        (n->data.opengl.framebuffer_id == 0) &&
        re->func.get_pixels)
      {
-        DBG("Rendering Directly to the window: %p", data);
-
         gl_context->dc = context;
         if ((gl_context->master_clip.enabled) &&
             (gl_context->master_clip.w > 0) &&
@@ -837,7 +835,8 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                              gl_context->dc->clip.x,
                              gl_context->dc->clip.y,
                              gl_context->dc->clip.w,
-                             gl_context->dc->clip.h);
+                             gl_context->dc->clip.h,
+                             n->data.opengl.texture_id);
 
         // Call pixel get function
         re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
@@ -1243,6 +1242,26 @@ eng_gl_direct_override_get(void *data, int *override, int *force_off)
 {
    EVGLINIT(data, );
    evgl_direct_override_get(override, force_off);
+}
+
+static Eina_Bool
+eng_gl_surface_direct_renderable_get(void *data, Evas_Native_Surface *ns)
+{
+   Render_Engine_GL_Generic *re = data;
+   Eina_Bool direct_render, client_side_rotation;
+
+   EVGLINIT(data, EINA_FALSE);
+   if (!re || !ns) return EINA_FALSE;
+   if (!evgl_native_surface_direct_opts_get(ns, &direct_render, &client_side_rotation))
+     return EINA_FALSE;
+
+   if (!direct_render)
+     return EINA_FALSE;
+
+   if ((re->software.outbuf_get_rot(re->software.ob) != 0) && (!client_side_rotation))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1926,6 +1945,7 @@ module_open(Evas_Module *em)
    ORD(gl_native_surface_get);
    ORD(gl_api_get);
    ORD(gl_direct_override_get);
+   ORD(gl_surface_direct_renderable_get);
    ORD(gl_get_pixels_set);
    ORD(gl_surface_lock);
    ORD(gl_surface_read_pixels);

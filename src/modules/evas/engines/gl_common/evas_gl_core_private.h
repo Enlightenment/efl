@@ -294,6 +294,8 @@ struct _EVGL_Engine
 
    int                direct_override;
    int                direct_mem_opt;
+
+   // Add more debug logs (DBG levels 4 and 6)
    int                api_debug_mode;
 
    // Force Off for Debug purposes
@@ -305,6 +307,7 @@ struct _EVGL_Engine
    // Keep track of all the current surfaces/contexts
    Eina_List         *surfaces;
    Eina_List         *contexts;
+   Eina_Hash         *direct_surfaces; // unsigned (texid) --> EVGL_Surface*
    Eina_List         *direct_depth_stencil_surfaces;
 
    //void              *engine_data;  

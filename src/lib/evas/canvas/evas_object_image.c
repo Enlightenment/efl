@@ -2759,25 +2759,27 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                        (ns->data.opengl.texture_id) &&
                        (!ns->data.opengl.framebuffer_id) )
                     {
+                       Eina_Bool direct_renderable = EINA_FALSE;
+
                        // Check if we can do direct rendering...
                        if (ENFN->gl_direct_override_get)
                          ENFN->gl_direct_override_get(output, &direct_override, &direct_force_off);
-                       if ( (((obj->cur->geometry.w == o->cur->image.w) &&
+                       if (ENFN->gl_surface_direct_renderable_get)
+                         direct_renderable = ENFN->gl_surface_direct_renderable_get(output, ns);
+
+                       if ( ((direct_override) ||
+                             ((direct_renderable) &&
+                              (obj->cur->geometry.w == o->cur->image.w) &&
                               (obj->cur->geometry.h == o->cur->image.h) &&
                               (obj->cur->color.r == 255) &&
                               (obj->cur->color.g == 255) &&
                               (obj->cur->color.b == 255) &&
                               (obj->cur->color.a == 255) &&
-                              (!obj->map->cur.map)) ||
-                             (direct_override)) &&
-                            (!direct_force_off) )
+                              (!obj->map->cur.map))
+                             ) && (!direct_force_off) )
                          {
-
                             if (ENFN->gl_get_pixels_set)
-                              {
-                                 ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
-                              }
-
+                              ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
                             o->direct_render = EINA_TRUE;
                          }
                        else
