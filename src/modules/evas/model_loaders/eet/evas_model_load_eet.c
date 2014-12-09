@@ -104,12 +104,12 @@ _set_material_to_mesh_from_eet_file(Evas_3D_Mesh *mesh,
 }
 
 void
-evas_model_load_file_eet(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_eet(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
 {
    Eet_File *ef;
 
    _evas_3d_eet_file_init();
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_open(eina_file_filename_get(loader->file), EET_FILE_MODE_READ);
    eet_file = eet_data_read(ef,
                             _file_descriptor,
                             EVAS_3D_FILE_CACHE_FILE_ENTRY);
@@ -128,4 +128,5 @@ evas_model_load_file_eet(Evas_3D_Mesh *mesh, const char *file)
 
    _evas_3d_eet_file_free();
 }
+
 

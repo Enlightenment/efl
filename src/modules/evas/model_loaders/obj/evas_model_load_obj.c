@@ -38,58 +38,6 @@ struct _OBJ_Counts
    Eina_Bool existence_of_tex_point;
 };
 
-typedef struct _OBJ_Loader
-{
-   Eina_File *file;
-   char *map;
-} OBJ_Loader;
-
-static inline void
-_obj_loader_fini(OBJ_Loader *loader)
-{
-   if (loader->map)
-     {
-        eina_file_map_free(loader->file, loader->map);
-        loader->map = NULL;
-     }
-
-   if (loader->file)
-     {
-        eina_file_close(loader->file);
-        loader->file = NULL;
-     }
-}
-
-static inline Eina_Bool
-_obj_loader_init(OBJ_Loader *loader, const char *file)
-{
-   memset(loader, 0x00, sizeof(OBJ_Loader));
-
-   /* Open given file. */
-   loader->file = eina_file_open(file, 0);
-
-   if (loader->file == NULL)
-     {
-        ERR("Failed to open file %s\n", file);
-        goto error;
-     }
-
-   /* Map the file. */
-   loader->map = eina_file_map_all(loader->file, EINA_FILE_SEQUENTIAL);
-
-   if (loader->map == NULL)
-     {
-        ERR("Failed to create map from file %s\n", file);
-        goto error;
-     }
-
-   return EINA_TRUE;
-
-error:
-   _obj_loader_fini(loader);
-   return EINA_FALSE;
-}
-
 /* create new counter */
 static inline OBJ_Counts
 _new_count_elements()
@@ -135,11 +83,11 @@ _analyze_face_line(char * face_analyzer,
 }
 
 static inline OBJ_Counts
-_count_elements(OBJ_Loader loader)//count elements of mesh in .obj
+_count_elements(Model_Common_Loader *loader)//count elements of mesh in .obj
 {
    OBJ_Counts counts = _new_count_elements();
 
-   char * current = loader.map;
+   char * current = loader->map;
    int polygon_checker = -2;//polygons with n vertices can be represented as n-2 triangles
    Eina_Bool will_check_next_char = EINA_FALSE;
    Eina_Bool first_char_is_v = EINA_FALSE;
@@ -230,11 +178,10 @@ _count_elements(OBJ_Loader loader)//count elements of mesh in .obj
 }
 
 void
-evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
 {
    long i;
    OBJ_Counts counts;//count elements of mesh in .obj
-   OBJ_Loader loader;
    Eina_Bool will_check_next_char = EINA_FALSE;
    Eina_Bool first_char_is_v = EINA_FALSE;
    Eina_Bool first_char_is_f = EINA_FALSE;
@@ -242,13 +189,6 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
    int stride_pos, stride_nor, stride_tex;
    int j, k;
    char * current;
-
-   /* Initialize PLY loader */
-   if (!_obj_loader_init(&loader, file))
-     {
-        ERR("Failed to initialize PLY loader.");
-        return;
-     }
 
    counts = _count_elements(loader);
 
@@ -258,11 +198,10 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
    /* triangle has 3 points, every point has 3(vertix, texture and normal) coord */
    int *_triangles = malloc(counts._triangles_counter * 9 * sizeof(int));
 
-   if ((loader.map == NULL) || (_vertices_obj == NULL) ||
+   if ((loader->map == NULL) || (_vertices_obj == NULL) ||
         (_normales_obj == NULL) || (_tex_coords_obj == NULL) || (_triangles == NULL))
      {
         ERR("Allocate memory is failed.");
-        _obj_loader_fini(&loader);
         free(_vertices_obj);
         free(_normales_obj);
         free(_tex_coords_obj);
@@ -270,7 +209,7 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
         return;
      }
 
-   current = loader.map;
+   current = loader->map;
    i = 0;
 
    /* put data to arrays */
@@ -434,5 +373,5 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file)
      {
         ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
      }
-   _obj_loader_fini(&loader);
 }
+
