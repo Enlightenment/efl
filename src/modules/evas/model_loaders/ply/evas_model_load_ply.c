@@ -24,58 +24,6 @@ struct _PLY_Header
    Eina_Bool existence_of_colors;
 };
 
-typedef struct _PLY_Loader
-{
-   Eina_File *file;
-   char *map;
-} PLY_Loader;
-
-static inline void
-_ply_loader_fini(PLY_Loader *loader)
-{
-   if (loader->map)
-     {
-        eina_file_map_free(loader->file, loader->map);
-        loader->map = NULL;
-     }
-
-   if (loader->file)
-     {
-        eina_file_close(loader->file);
-        loader->file = NULL;
-     }
-}
-
-static inline Eina_Bool
-_ply_loader_init(PLY_Loader *loader, const char *file)
-{
-   memset(loader, 0x00, sizeof(PLY_Loader));
-
-   /* Open given file. */
-   loader->file = eina_file_open(file, 0);
-
-   if (loader->file == NULL)
-     {
-        ERR("Failed to open file %s\n", file);
-        goto error;
-     }
-
-   /* Map the file. */
-   loader->map = eina_file_map_all(loader->file, EINA_FILE_SEQUENTIAL);
-
-   if (loader->map == NULL)
-     {
-        ERR("Failed to create map from file %s\n", file);
-        goto error;
-     }
-
-   return EINA_TRUE;
-
-error:
-   _ply_loader_fini(loader);
-   return EINA_FALSE;
-}
-
 /* create new header */
 static inline PLY_Header
 _new_ply_header()
@@ -230,7 +178,7 @@ _read_header(char *map)//Check properties of mesh in .ply file.
 }
 
 void
-evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_ply(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
 {
    Evas_3D_Mesh_Data *pd;
    int i = 0, j = 0, k = 0, count_of_triangles_in_line = 0;
@@ -241,16 +189,8 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
    float *_vertices_ply = NULL, *_normals_ply = NULL;
    float *_tex_coords_ply = NULL, *_colors_ply = NULL;
    char **helping_pointer;
-   PLY_Loader loader;
 
-   /* Initialize PLY loader */
-   if (!_ply_loader_init(&loader, file))
-     {
-        ERR("Failed to initialize PLY loader.");
-        return;
-     }
-
-   header = _read_header(loader.map);
+   header = _read_header(loader->map);
 
    if (!header.existence_of_geometries)
      {
@@ -258,7 +198,7 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
         return;
      }
 
-   helping_pointer = eina_str_split(loader.map, "end_header\n", 0);
+   helping_pointer = eina_str_split(loader->map, "end_header\n", 0);
 
    if (helping_pointer == NULL)
      {
@@ -284,7 +224,6 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
        (_triangles == NULL))
      {
         ERR("Allocate memory is failed.");
-        _ply_loader_fini(&loader);
         free(_vertices_ply);
         free(_normals_ply);
         free(_tex_coords_ply);
@@ -430,6 +369,5 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file)
      {
         ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
      }
-
-   _ply_loader_fini(&loader);
 }
+

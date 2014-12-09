@@ -67,23 +67,22 @@ struct PACKED _MD2_Texcoord
 
 typedef struct _MD2_Loader
 {
-   Eina_File     *file;
-   char          *map;
-   int            size;
+   Model_Common_Loader *common_loader;
+   int                  size;
 
-   int            skin_width;
-   int            skin_height;
+   int                  skin_width;
+   int                  skin_height;
 
-   int            frame_count;
-   int            frame_size;
-   char          *frames;
+   int                  frame_count;
+   int                  frame_size;
+   char                *frames;
 
-   int            vertex_count;
-   int            triangle_count;
-   int            texcoord_count;
+   int                  vertex_count;
+   int                  triangle_count;
+   int                  texcoord_count;
 
-   MD2_Triangle  *triangles;
-   MD2_Texcoord   *texcoords;
+   MD2_Triangle        *triangles;
+   MD2_Texcoord        *texcoords;
 } MD2_Loader;
 
 static const float normal_table[162][3] =
@@ -252,52 +251,22 @@ static const float normal_table[162][3] =
      {-0.688191f, -0.587785f, -0.425325f},
 };
 
-static inline void
-_md2_loader_fini(MD2_Loader *loader)
-{
-   if (loader->map)
-     {
-        eina_file_map_free(loader->file, loader->map);
-        loader->map = NULL;
-     }
-
-   if (loader->file)
-     {
-        eina_file_close(loader->file);
-        loader->file = NULL;
-     }
-}
-
 static inline Eina_Bool
-_md2_loader_init(MD2_Loader *loader, const char *file)
+_md2_loader_init(MD2_Loader *loader, Model_Common_Loader *common_loader)
 {
    MD2_Header header;
 
    memset(loader, 0x00, sizeof(MD2_Loader));
-
-   /* Open given file. */
-   loader->file = eina_file_open(file, 0);
-
-   if (loader->file == NULL)
-     {
-        ERR("Failed to open file %s\n", file);
-        goto error;
-     }
+   loader->common_loader = common_loader;
 
    /* Check file size. We require a file larger than MD2 header size. */
-   loader->size = eina_file_size_get(loader->file);
+   loader->size = eina_file_size_get(loader->common_loader->file);
 
    if (loader->size < (int)sizeof(MD2_Header))
      goto error;
 
-   /* Map the file. */
-   loader->map = eina_file_map_all(loader->file, EINA_FILE_SEQUENTIAL);
-
-   if (loader->map == NULL)
-     goto error;
-
    /* Read header. */
-   memcpy(&header, loader->map, sizeof(MD2_Header));
+   memcpy(&header, loader->common_loader->map, sizeof(MD2_Header));
 
    /* Check identity */
    if (header.magic != MD2_MAGIC_NUMBER || header.version != MD2_VERSION)
@@ -327,23 +296,22 @@ _md2_loader_init(MD2_Loader *loader, const char *file)
 
    loader->frame_count = header.frame_count;
    loader->frame_size = header.frame_size;
-   loader->frames = loader->map + header.offset_frames;
+   loader->frames = loader->common_loader->map + header.offset_frames;
 
    loader->vertex_count = header.vertex_count;
    loader->triangle_count = header.triangle_count;
    loader->texcoord_count = header.texcoord_count;
 
-   loader->triangles = (MD2_Triangle *)(loader->map + header.offset_triangles);
-   loader->texcoords = (MD2_Texcoord *)(loader->map + header.offset_texcoords);
+   loader->triangles = (MD2_Triangle *)(loader->common_loader->map + header.offset_triangles);
+   loader->texcoords = (MD2_Texcoord *)(loader->common_loader->map + header.offset_texcoords);
    return EINA_TRUE;
 
 error:
-   _md2_loader_fini(loader);
    return EINA_FALSE;
 }
 
 void
-evas_model_load_file_md2(Evas_3D_Mesh *mesh, const char *file)
+evas_model_load_file_md2(Evas_3D_Mesh *mesh, Model_Common_Loader *common_loader)
 {
    MD2_Loader           loader;
    int                  i, j, k;
@@ -353,7 +321,7 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, const char *file)
    Evas_3D_Mesh_Data *pd;
 
    /* Initialize MD2 loader (Open file and read MD2 head ant etc) */
-   if (!_md2_loader_init(&loader, file))
+   if (!_md2_loader_init(&loader, common_loader))
      {
         ERR("Failed to initialize MD2 loader.");
         return;
@@ -441,6 +409,5 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, const char *file)
              ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", f);
           }
      }
-
-   _md2_loader_fini(&loader);
 }
+

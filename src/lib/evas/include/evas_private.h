@@ -158,6 +158,14 @@ struct _Evas_3D_File_Eet
    Evas_3D_Header_Eet *header;
 };//contain mesh data and information about mesh size
 
+typedef struct _Model_Common_Loader Model_Common_Loader;
+
+struct _Model_Common_Loader
+{
+   Eina_File         *file;
+   char               *map;
+};
+
 typedef Eina_Bool (*Evas_3D_Node_Func)(Evas_3D_Node *, void *data);
 
 
@@ -1639,10 +1647,10 @@ void _evas_3d_eet_file_free(void);
 /* Temporary save/load functions */
 void evas_common_load_model_to_file(Evas_3D_Mesh *model, const char *file);
 void evas_common_save_model_to_file(Evas_3D_Mesh *model, const char *file, Evas_3D_Mesh_Frame *f);
-void evas_model_load_file_eet(Evas_3D_Mesh *mesh, const char *file);
-void evas_model_load_file_md2(Evas_3D_Mesh *mesh, const char *file);
-void evas_model_load_file_obj(Evas_3D_Mesh *mesh, const char *file);
-void evas_model_load_file_ply(Evas_3D_Mesh *mesh, const char *file);
+void evas_model_load_file_eet(Evas_3D_Mesh *mesh, Model_Common_Loader *loader);
+void evas_model_load_file_md2(Evas_3D_Mesh *mesh, Model_Common_Loader *loader);
+void evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader);
+void evas_model_load_file_ply(Evas_3D_Mesh *mesh, Model_Common_Loader *loader);
 void evas_model_save_file_eet(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
 void evas_model_save_file_obj(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
 void evas_model_save_file_ply(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
@@ -1810,3 +1818,4 @@ struct _Evas_Mempool
 }
 #endif
 #endif
+
