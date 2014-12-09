@@ -2388,22 +2388,14 @@ _layout_par(Ctxt *c)
                   /* Add all the items that don't need breaking. */
                   for ( ; i ; i = eina_list_next(i), it = _ITEM(eina_list_data_get(i)))
                     {
-                       if (it->type == EVAS_TEXTBLOCK2_ITEM_TEXT)
+                       size_t it_len = GET_ITEM_LEN(it);
+                       if ((it->text_pos < (unsigned int) break_position) &&
+                             ((unsigned int) break_position <= it->text_pos + it_len))
                          {
-                            Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
-                            if ((it->text_pos < (unsigned int) break_position) &&
-                               ((unsigned int) break_position <= it->text_pos + ti->text_props.text_len))
-                              {
-                                 break;
-                              }
-
-                            _layout_par_line_item_add(c, it);
-                         }
-                       else
-                         {
-                            /* FIXME: Do something. */
                             break;
                          }
+
+                       _layout_par_line_item_add(c, it);
                     }
 
                   _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, break_position - it->text_pos);
