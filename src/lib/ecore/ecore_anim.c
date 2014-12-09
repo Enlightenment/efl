@@ -355,7 +355,7 @@ _cubic_bezier_t_get(double a,
 
     const int LIMIT = 100;
     double current_slope;
-    double tmp;
+    double change;
     double current_x;
     double guess_t = a;
 
@@ -364,9 +364,9 @@ _cubic_bezier_t_get(double a,
          current_slope = _cubic_bezier_slope_get(guess_t, x1, x2);
          if (current_slope == 0.0) return guess_t;
          current_x = _cubic_bezier_calc(guess_t, x1, x2) - a;
-         tmp = current_x / current_slope;
-         guess_t -= current_x / current_slope;
-         if (APPROXIMATE_RANGE(tmp)) break;
+         change = current_x / current_slope;
+         guess_t -= change;
+         if (APPROXIMATE_RANGE(change)) break;
       }
     return guess_t;
 }
