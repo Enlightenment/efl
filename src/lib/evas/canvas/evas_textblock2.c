@@ -4077,7 +4077,7 @@ _layout_par_append_ellipsis(Ctxt *c)
 }
 
 static int
-_layout_par_wrap_find(Ctxt *c, Evas_Object_Textblock2_Format *fmt, Evas_Object_Textblock2_Item *first_it, const char *line_breaks)
+_layout_par_wrap_find(Ctxt *c, Evas_Object_Textblock2_Format *fmt, Evas_Object_Textblock2_Item *it, const char *line_breaks)
 {
    int wrap = -1;
 
@@ -4086,8 +4086,6 @@ _layout_par_wrap_find(Ctxt *c, Evas_Object_Textblock2_Format *fmt, Evas_Object_T
           (fmt->wrap_char) ||
           (fmt->wrap_mixed)))
      {
-        Evas_Object_Textblock2_Item *it = first_it;
-
         int line_start = it->text_pos;
         if (it->format->wrap_word)
            wrap = _layout_get_wordwrap(c, it->format, it,
