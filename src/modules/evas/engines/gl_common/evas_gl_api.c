@@ -451,8 +451,66 @@ _evgl_glEnable(GLenum cap)
 
    ctx = evas_gl_common_current_context_get();
 
-   if (cap == GL_SCISSOR_TEST)
-      if (ctx) ctx->scissor_enabled = 1;
+   if (ctx && (cap == GL_SCISSOR_TEST))
+     {
+        ctx->scissor_enabled = 1;
+
+        if (_evgl_direct_enabled())
+          {
+             EVGL_Resource *rsc = _evgl_tls_resource_get();
+             int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0}, cc[4] = {0,0,0,0};
+
+             if (!ctx->current_fbo)
+               {
+                  // Direct rendering to canvas
+                  if (!ctx->scissor_updated)
+                    {
+                       compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                              rsc->direct.rot, 0,
+                                              0, 0, 0, 0,
+                                              rsc->direct.img.x, rsc->direct.img.y,
+                                              rsc->direct.img.w, rsc->direct.img.h,
+                                              rsc->direct.clip.x, rsc->direct.clip.y,
+                                              rsc->direct.clip.w, rsc->direct.clip.h,
+                                              oc, nc, cc);
+                       glScissor(cc[0], cc[1], cc[2], cc[3]);
+                    }
+                  else
+                    {
+                       compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                              rsc->direct.rot, 1,
+                                              ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                              ctx->scissor_coord[2], ctx->scissor_coord[3],
+                                              rsc->direct.img.x, rsc->direct.img.y,
+                                              rsc->direct.img.w, rsc->direct.img.h,
+                                              rsc->direct.clip.x, rsc->direct.clip.y,
+                                              rsc->direct.clip.w, rsc->direct.clip.h,
+                                              oc, nc, cc);
+                       glScissor(nc[0], nc[1], nc[2], nc[3]);
+                    }
+                  ctx->direct_scissor = 1;
+               }
+             else
+               {
+                  // Bound to an FBO, reset scissors to user data
+                  if (ctx->scissor_updated)
+                    {
+                       glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                 ctx->scissor_coord[2], ctx->scissor_coord[3]);
+                    }
+                  else if (ctx->direct_scissor)
+                    {
+                       // Back to the default scissors (here: max texture size)
+                       glScissor(0, 0, evgl_engine->caps.max_w, evgl_engine->caps.max_h);
+                    }
+                  ctx->direct_scissor = 0;
+               }
+
+             glEnable(GL_SCISSOR_TEST);
+             return;
+          }
+     }
+
    glEnable(cap);
 }
 
@@ -463,8 +521,43 @@ _evgl_glDisable(GLenum cap)
 
    ctx = evas_gl_common_current_context_get();
 
-   if (cap == GL_SCISSOR_TEST)
-      if (ctx) ctx->scissor_enabled = 0;
+   if (ctx && (cap == GL_SCISSOR_TEST))
+     {
+        ctx->scissor_enabled = 0;
+
+        if (_evgl_direct_enabled())
+          {
+             if (!ctx->current_fbo)
+               {
+                  // Restore default scissors for direct rendering
+                  int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0}, cc[4] = {0,0,0,0};
+                  EVGL_Resource *rsc = _evgl_tls_resource_get();
+
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 1,
+                                         0, 0, rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+
+                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+                  glScissor(nc[0], nc[1], nc[2], nc[3]);
+
+                  ctx->direct_scissor = 1;
+                  glEnable(GL_SCISSOR_TEST);
+               }
+             else
+               {
+                  // Bound to an FBO, disable scissors for real
+                  ctx->direct_scissor = 0;
+                  glDisable(GL_SCISSOR_TEST);
+               }
+             return;
+          }
+     }
+
    glDisable(cap);
 }
 
@@ -506,8 +599,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
                        return;
                     }
                }
-
-             if (pname == GL_VIEWPORT)
+             else if (pname == GL_VIEWPORT)
                {
                   if (ctx->viewport_updated)
                     {
@@ -722,6 +814,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
      {
         if (!(rsc->current_ctx->current_fbo))
           {
+             // Direct rendering to canvas
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                {
                   glDisable(GL_SCISSOR_TEST);
@@ -747,11 +840,12 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 
              ctx->direct_scissor = 0;
 
-             // Check....!!!!
+             // Mark user scissor_coord as valid
              ctx->scissor_updated = 1;
           }
         else
           {
+             // Bound to an FBO, use these new scissors
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                {
                   glDisable(GL_SCISSOR_TEST);
@@ -760,7 +854,8 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 
              glScissor(x, y, width, height);
 
-             ctx->scissor_updated = 0;
+             // Why did we set this flag to 0???
+             //ctx->scissor_updated = 0;
           }
      }
    else

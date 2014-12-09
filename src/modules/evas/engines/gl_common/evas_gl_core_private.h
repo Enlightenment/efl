@@ -157,12 +157,12 @@ struct _EVGL_Context
    GLuint       current_fbo;
 
    // Direct Rendering Related
-   int          scissor_enabled;
-   int          scissor_updated;
-   int          scissor_coord[4];
-   int          direct_scissor;
+   int          scissor_enabled : 1;
+   int          scissor_updated : 1;
+   int          direct_scissor : 1;
+   int          viewport_updated : 1;
 
-   int          viewport_updated;
+   int          scissor_coord[4];
    int          viewport_coord[4];
 
    // Partial Rendering
