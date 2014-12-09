@@ -148,12 +148,6 @@ typedef struct _Evas_Textblock2_Style              Evas_Textblock2_Style;
  */
 typedef struct _Evas_Textblock2_Cursor             Evas_Textblock2_Cursor;
 
-/**
- * @typedef Evas_Object_Textblock2_Node_Format
- * A format node.
- */
-typedef struct _Evas_Object_Textblock2_Node_Format Evas_Object_Textblock2_Node_Format;
-
 typedef struct _Evas_Textblock2_Rectangle          Evas_Textblock2_Rectangle;
 struct _Evas_Textblock2_Rectangle
 {
@@ -285,93 +279,6 @@ EAPI Eina_Bool                                evas_textblock2_cursor_paragraph_n
  * otherwise.
  */
 EAPI Eina_Bool                                evas_textblock2_cursor_paragraph_prev(Evas_Textblock2_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Returns the next format node (after n)
- *
- * @param n the current format node - not null.
- * @return Returns the next format node, may be null.
- */
-EAPI const Evas_Object_Textblock2_Node_Format *evas_textblock2_node_format_next_get(const Evas_Object_Textblock2_Node_Format *n) EINA_ARG_NONNULL(1);
-
-/**
- * Returns the prev format node (after n)
- *
- * @param n the current format node - not null.
- * @return Returns the prev format node, may be null.
- */
-EAPI const Evas_Object_Textblock2_Node_Format *evas_textblock2_node_format_prev_get(const Evas_Object_Textblock2_Node_Format *n) EINA_ARG_NONNULL(1);
-
-/**
- * Sets the cursor to point to the place where format points to.
- *
- * @param cur the cursor to update.
- * @param n the format node to update according.
- * @deprecated duplicate of evas_textblock2_cursor_at_format_set
- */
-EAPI void                                     evas_textblock2_cursor_set_at_format(Evas_Textblock2_Cursor *cur, const Evas_Object_Textblock2_Node_Format *n) EINA_ARG_NONNULL(1, 2);
-
-/**
- * Return the format node at the position pointed by cur.
- *
- * @param cur the position to look at.
- * @return the format node if found, @c NULL otherwise.
- * @see evas_textblock2_cursor_format_is_visible_get()
- */
-EAPI const Evas_Object_Textblock2_Node_Format *evas_textblock2_cursor_format_get(const Evas_Textblock2_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Get the text format representation of the format node.
- *
- * @param fnode the format node.
- * @return the textual format of the format node.
- */
-EAPI const char                              *evas_textblock2_node_format_text_get(const Evas_Object_Textblock2_Node_Format *fnode) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-
-/**
- * Set the cursor to point to the position of fmt.
- *
- * @param cur the cursor to update
- * @param fmt the format to update according to.
- */
-EAPI void                                     evas_textblock2_cursor_at_format_set(Evas_Textblock2_Cursor *cur, const Evas_Object_Textblock2_Node_Format *fmt) EINA_ARG_NONNULL(1, 2);
-
-/**
- * Check if the current cursor position is a visible format. This way is more
- * efficient than evas_textblock2_cursor_format_get() to check for the existence
- * of a visible format.
- *
- * @param cur the cursor to look at.
- * @return @c EINA_TRUE if the cursor points to a visible format, @c EINA_FALSE
- * otherwise.
- * @see evas_textblock2_cursor_format_get()
- */
-EAPI Eina_Bool                                evas_textblock2_cursor_format_is_visible_get(const Evas_Textblock2_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-
-/**
- * Advances to the next format node
- *
- * @param cur the cursor to be updated.
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool                                evas_textblock2_cursor_format_next(Evas_Textblock2_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Advances to the previous format node.
- *
- * @param cur the cursor to update.
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool                                evas_textblock2_cursor_format_prev(Evas_Textblock2_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Returns true if the cursor points to a format.
- *
- * @param cur the cursor to check.
- * @return  @c EINA_TRUE if a cursor points to a format @c EINA_FALSE
- * otherwise.
- */
-EAPI Eina_Bool                                evas_textblock2_cursor_is_format(const Evas_Textblock2_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
  * Advances 1 char forward.

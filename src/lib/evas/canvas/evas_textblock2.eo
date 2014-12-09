@@ -165,13 +165,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
          @since 1.2 */
          return: const(Evas_Textblock2_Style)*;
       }
-      node_format_remove_pair {
-         /*@ Remove a format node and its match. */
-         legacy: evas_textblock2_node_format_remove_pair;
-         params {
-            @in Evas_Object_Textblock2_Node_Format *n;
-         }
-      }
       clear {
          /*@
          Clear the textblock2 object.
