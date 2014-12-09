@@ -328,7 +328,6 @@ struct _Evas_Object_Textblock2_Paragraph
    int                                line_no;  /**< Line no of the text block. */
    Eina_Bool                          is_bidi : 1;  /**< EINA_TRUE if this is BiDi Paragraph, else EINA_FALSE. */
    Eina_Bool                          visible : 1;  /**< EINA_TRUE if paragraph visible, else EINA_FALSE. */
-   Eina_Bool                          rendered : 1;  /**< EINA_TRUE if paragraph rendered, else EINA_FALSE. */
 };
 
 struct _Evas_Object_Textblock2_Line
@@ -3771,18 +3770,6 @@ _it_break_position_get(Evas_Object_Textblock2_Item *it, const char *breaks)
    return -1;
 }
 
-/* Don't do much for the meanwhile. */
-static inline void
-_layout_paragraph_render(Evas_Textblock2_Data *o,
-			 Evas_Object_Textblock2_Paragraph *par)
-{
-   if (par->rendered)
-      return;
-   par->rendered = EINA_TRUE;
-
-   (void) o;
-}
-
 static int
 _layout_par_wrap_find(Ctxt *c, Evas_Object_Textblock2_Format *fmt, Evas_Object_Textblock2_Item *it, const char *line_breaks)
 {
@@ -3864,7 +3851,6 @@ _layout_par(Ctxt *c)
           }
         c->par->text_node->dirty = EINA_FALSE;
         c->par->text_node->is_new = EINA_FALSE;
-        c->par->rendered = EINA_FALSE;
 
         /* Merge back and clear the paragraph */
           {
@@ -4447,7 +4433,6 @@ _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock2_Node_Te
    found_par = n->par;
    if (found_par)
      {
-        _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              Evas_Object_Textblock2_Item *it;
@@ -4502,7 +4487,6 @@ _find_layout_line_num(const Evas_Object *eo_obj, int line)
    par = _layout_find_paragraph_by_line_no(o, line);
    if (par)
      {
-        _layout_paragraph_render(o, par);
         EINA_INLIST_FOREACH(par->lines, ln)
           {
              if (par->line_no + ln->line_no == line) return ln;
@@ -6351,7 +6335,6 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock2_Cursor *cur, Evas_Coord x,
    found_par = _layout_find_paragraph_by_y(o, y);
    if (found_par)
      {
-        _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              if (ln->par->y + ln->y > y) break;
@@ -6465,7 +6448,6 @@ evas_textblock2_cursor_line_coord_set(Evas_Textblock2_Cursor *cur, Evas_Coord y)
 
    if (found_par)
      {
-        _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              if (ln->par->y + ln->y > y) break;
@@ -7167,7 +7149,6 @@ evas_object_textblock2_render(Evas_Object *eo_obj EINA_UNUSED,
              if ((obj->cur->geometry.y + y + par->y) > (cy + ch + 20)) \
              break; \
           } \
-        _layout_paragraph_render(o, par); \
         EINA_INLIST_FOREACH(par->lines, ln) \
           { \
              if (clip) \
