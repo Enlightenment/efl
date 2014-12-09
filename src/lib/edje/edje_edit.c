@@ -10304,6 +10304,18 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
 	if (img->image.border.l || img->image.border.r || img->image.border.t || img->image.border.b)
 	  BUF_APPENDF(I6"border: %d %d %d %d;\n", img->image.border.l, img->image.border.r, img->image.border.t, img->image.border.b);
+	if (img->image.border.scale_by != 0.0)
+	  _edje_source_with_double_values_append(I6"border_scale_by", 1,
+	                                         TO_DOUBLE(img->image.border.scale_by),
+	                                         0.0, buf, &ret);
+	if (img->image.border.scale)
+	  BUF_APPEND(I6"border_scale: 1;\n");
+
+	if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)
+	  BUF_APPEND(I6"scale_hint: DYNAMIC;\n");
+	else if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)
+	  BUF_APPEND(I6"scale_hint: STATIC;\n");
+
 	if (img->image.border.no_fill == 1)
 	  BUF_APPEND(I6"middle: NONE;\n");
 	else if (img->image.border.no_fill == 0)
