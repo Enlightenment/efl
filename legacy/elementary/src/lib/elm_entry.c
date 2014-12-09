@@ -3077,7 +3077,7 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
 }
 
 EOLIAN static const char *
-_elm_entry_elm_layout_text_get(const Eo *obj, Elm_Entry_Data *sd, const char *item)
+_elm_entry_elm_layout_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
 {
    const char *text;
 

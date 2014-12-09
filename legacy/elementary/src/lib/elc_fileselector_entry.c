@@ -226,7 +226,7 @@ _elm_fileselector_entry_elm_layout_text_set(Eo *obj, Elm_Fileselector_Entry_Data
 }
 
 EOLIAN static const char *
-_elm_fileselector_entry_elm_layout_text_get(const Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
+_elm_fileselector_entry_elm_layout_text_get(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default"))
      {

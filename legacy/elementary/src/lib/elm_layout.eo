@@ -211,19 +211,19 @@ class Elm.Layout (Elm.Container, Efl.File)
             @in part_name: const(char)*; [[A part from loaded edje group.]]
          }
       }
-      text_set {
-         [[Set the text of the given part.]]
-         return: bool;
-         params {
-            @in part: const(char)* @nullable; [[The TEXT part where to set the text.]]
-            @in text: const(char)* @nullable; [[The text to set.]]
+      @property text {
+         set {
+            [[Set the text of the given part.]]
+            return: bool;
          }
-      }
-      text_get @const {
-         [[Get the text set in the given part.]]
-         return: const(char)*;
-         params {
-            @in part: const(char)*; [[The TEXT part to retrieve the text off.]]
+         get {
+            [[Get the text set in the given part.]]
+         }
+         keys {
+            part: const(char)* @nullable; [[The TEXT part where to set the text.]]
+         }
+         values {
+            text: const(char)* @nullable; [[The text to set.]]
          }
       }
       signal_callback_add {

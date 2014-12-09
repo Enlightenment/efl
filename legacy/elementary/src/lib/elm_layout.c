@@ -1190,7 +1190,7 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
 }
 
 EOLIAN static const char*
-_elm_layout_text_get(const Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 

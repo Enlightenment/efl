@@ -145,7 +145,8 @@ evas3d_scene_on_button_example.c \
 evas3d_object_on_button_example.c \
 evas3d_map_example.edc \
 evas3d_map_example.c \
-track_example_01.c
+track_example_01.c \
+twitter_example_01.edc
 
 if HAVE_CXX11
 SRCS += \
@@ -197,7 +198,8 @@ files_DATA += \
 	theme_example.edj \
 	layout_example.edj\
 	codegen_example.edj \
-	evas3d_map_example.edj
+	evas3d_map_example.edj \
+	twitter_example_01.edj
 
 clean-local:
 	rm -f *.edj *.epb *.cfg *.cfg.bkp
@@ -528,4 +530,4 @@ screenshots:
 
 endif
 
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc

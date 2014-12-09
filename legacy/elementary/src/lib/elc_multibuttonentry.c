@@ -1495,7 +1495,7 @@ _elm_multibuttonentry_elm_layout_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_elm_layout_text_get(const Eo *obj, Elm_Multibuttonentry_Data *sd, const char *part)
+_elm_multibuttonentry_elm_layout_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd, const char *part)
 {
    const char *text = NULL;
 

@@ -8,6 +8,7 @@ EOLIAN_FLAGS = @DEPS_EOLIAN_FLAGS@ \
 
 include $(top_srcdir)/Makefile_Eolian_Helper.am
 include $(top_srcdir)/Makefile_Eolian_Cxx_Helper.am
+include $(top_srcdir)/Makefile_Eolian_Js_Helper.am
 
 AM_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
@@ -634,6 +635,8 @@ elm_eolian_impl_hh = $(elm_eolian_files:%.eo=%.eo.impl.hh)
 
 elm_eolian_eot_h = $(elm_eolian_type_files:%.eot=%.eot.h)
 
+elm_eolian_js_cc = $(elm_eolian_files:%.eo=%.eo.js.cc)
+
 BUILT_SOURCES = \
 	$(elm_eolian_c)	\
 	$(elm_eolian_h)	\
@@ -656,3 +659,47 @@ nodist_includecxxbindings_HEADERS = Elementary.hh $(elm_eolian_hh) $(elm_eolian_
 CLEANFILES += $(nodist_includecxxbindings_HEADERS)
 EXTRA_DIST += Elementary.hh.in
 endif
+
+if HAVE_JS
+CLEANFILES += $(elm_eolian_js_cc)
+
+lib_LTLIBRARIES += libelementary_js.la
+
+AM_V_CP = $(am__v_CP_@AM_V@)
+am__v_CP_ = $(am__v_CP_@AM_DEFAULT_V@)
+am__v_CP_0 = @echo "  CP  " $@;
+CP = cp
+
+if HAVE_NODEJS
+elm.node: libelementary_js.la
+	$(AM_V_CP)$(CP) $(abs_top_builddir)/src/lib/.libs/libelementary_js.so $(abs_top_builddir)/src/lib/elm.node
+
+elmnodedir = $(libdir)/node_modules
+elmnode_DATA = elm.node
+
+CLEANFILES += ${elmnodedir_DATA}
+EXTRA_DIST += ${elmnodedir_DATA}
+
+BUILT_SOURCES += ${elmnodedir_DATA}
+endif
+
+AM_CXXFLAGS = @ELEMENTARY_CFLAGS@ @ELEMENTARY_JS_CFLAGS@
+
+elm_js_object_files = $(elm_eolian_files:%.eo=%.eo.js.l$(OBJEXT))
+elm_js_object_files: $(elm_eolian_js_cc)
+
+libelementary_js_la_SOURCES = elementary_js.cc
+nodist_EXTRA_libelementary_js_la_SOURCES = $(elm_eolian_js_cc)
+
+libelementary_js_la_CXXFLAGS = @ELEMENTARY_CFLAGS@ @ELEMENTARY_JS_CFLAGS@
+libelementary_js_la_LIBADD = \
+@ELEMENTARY_LIBS@ \
+@ELEMENTARY_JS_LIBS@ \
+libelementary.la \
+@LTLIBINTL@ \
+$(elm_js_object_files)
+
+libelementary_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+endif
+

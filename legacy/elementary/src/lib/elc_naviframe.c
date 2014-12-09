@@ -1039,7 +1039,7 @@ _elm_naviframe_elm_layout_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, 
 }
 
 EOLIAN static const char*
-_elm_naviframe_elm_layout_text_get(const Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_elm_layout_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
    if (!it) return NULL;

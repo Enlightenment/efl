@@ -459,7 +459,7 @@ _elm_actionslider_elm_layout_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
 }
 
 EOLIAN static const char*
-_elm_actionslider_elm_layout_text_get(const Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part)
+_elm_actionslider_elm_layout_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part)
 {
    const char *text = NULL;
 

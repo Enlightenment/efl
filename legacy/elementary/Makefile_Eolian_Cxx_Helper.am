@@ -6,7 +6,7 @@ AM_V_EOLCXX = $(am__v_EOLCXX_@AM_V@)
 am__v_EOLCXX_ = $(am__v_EOLCXX_@AM_DEFAULT_V@)
 am__v_EOLCXX_0 = @echo "  EOLCXX  " $@;
 
-SUFFIXES += .eo.hh
+SUFFIXES += .eo.hh .eo.impl.hh
 
 %.eo.impl.hh %.eo.hh: %.eo $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \

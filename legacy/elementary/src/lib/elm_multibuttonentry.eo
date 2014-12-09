@@ -181,8 +181,8 @@ class Elm.Multibuttonentry (Elm.Layout)
       Elm.Widget.on_focus;
       Elm.Widget.translate;
       Elm.Widget.event;
-      Elm.Layout.text_set;
-      Elm.Layout.text_get;
+      Elm.Layout.text.set;
+      Elm.Layout.text.get;
       Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Accessible.children.get;
    }

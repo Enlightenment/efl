@@ -46,7 +46,7 @@ class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
-      Elm.Layout.text_set;
+      Elm.Layout.text.set;
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
