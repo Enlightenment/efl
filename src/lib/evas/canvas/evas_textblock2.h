@@ -129,17 +129,6 @@
  */
 
 /**
- * @typedef Evas_Textblock2_Style
- *
- * A textblock2 style object.
- * @see evas_textblock2_style_new()
- * @see evas_textblock2_style_get()
- * @see evas_textblock2_style_set()
- */
-
-typedef struct _Evas_Textblock2_Style              Evas_Textblock2_Style;
-
-/**
  * @typedef Evas_Textblock2_Cursor
  *
  * A textblock2 cursor object, used to maipulate the cursor of an evas textblock2
@@ -196,35 +185,6 @@ EAPI const char                              *evas_textblock2_string_escape_get(
  * @return the unescaped version of the range
  */
 EAPI const char                              *evas_textblock2_escape_string_range_get(const char *escape_start, const char *escape_end) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
-
-/**
- * Creates a new textblock2 style.
- * @return  The new textblock2 style.
- */
-EAPI Evas_Textblock2_Style                    *evas_textblock2_style_new(void) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
-
-/**
- * Destroys a textblock2 style.
- * @param ts The textblock2 style to free.
- */
-EAPI void                                     evas_textblock2_style_free(Evas_Textblock2_Style *ts) EINA_ARG_NONNULL(1);
-
-/**
- * Sets the style ts to the style passed as text by text.
- * Expected a string consisting of many (or none) tag='format' pairs.
- *
- * @param ts  the style to set.
- * @param text the text to parse - NOT NULL.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock2_style_set(Evas_Textblock2_Style *ts, const char *text) EINA_ARG_NONNULL(1);
-
-/**
- * Return the text of the style ts.
- * @param ts  the style to get it's text.
- * @return the text of the style or null on error.
- */
-EAPI const char                              *evas_textblock2_style_get(const Evas_Textblock2_Style *ts) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Prepends markup to the cursor cur.

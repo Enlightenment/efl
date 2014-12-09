@@ -388,13 +388,6 @@ struct _Evas_Object_Textblock2_Format
    Eina_Bool            halign_auto : 1;  /**< EINA_TRUE if auto horizontal align, else EINA_FALSE */
 };
 
-struct _Evas_Textblock2_Style
-{
-   const char            *style_text;
-   Eina_List             *objects;
-   Eina_Bool              delete_me : 1;
-};
-
 struct _Evas_Textblock2_Cursor
 {
    Evas_Object                     *obj;
@@ -407,8 +400,8 @@ struct _Evas_Textblock2_Cursor
 struct _Evas_Object_Textblock2
 {
    DATA32                              magic;
-   Evas_Textblock2_Style               *style;
-   Evas_Textblock2_Style               *style_user;
+   Eina_Stringshare                    *style;
+   Eina_Stringshare                    *style_user;
    Evas_Textblock2_Cursor              *cursor;
    Eina_List                          *cursors;
    Evas_Object_Textblock2_Node_Text    *text_nodes;
@@ -606,28 +599,6 @@ _evas_textblock2_selection_iterator_new(Eina_List *list)
 }
 
 /* styles */
-/**
- * @internal
- * Clears the textblock2 style passed except for the style_text which is replaced.
- * @param ts The ts to be cleared. Must not be NULL.
- * @param style_text the style's text.
- */
-static void
-_style_replace(Evas_Textblock2_Style *ts, const char *style_text)
-{
-   eina_stringshare_replace(&ts->style_text, style_text);
-}
-
-/**
- * @internal
- * Clears the textblock2 style passed.
- * @param ts The ts to be cleared. Must not be NULL.
- */
-static void
-_style_clear(Evas_Textblock2_Style *ts)
-{
-   _style_replace(ts, NULL);
-}
 
 /**
  * @internal
@@ -4142,20 +4113,20 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    /* setup default base style */
      {
         Eina_Bool finalize = EINA_FALSE;
-        if ((c->o->style) && (c->o->style->style_text))
+        if ((c->o->style) && (c->o->style))
           {
              c->fmt = _layout_format_push(c, NULL);
-             _format_fill(c->obj, c->fmt, c->o->style->style_text);
+             _format_fill(c->obj, c->fmt, c->o->style);
              finalize = EINA_TRUE;
           }
 
-        if ((c->o->style_user) && (c->o->style_user->style_text))
+        if ((c->o->style_user) && (c->o->style_user))
           {
              if (!c->fmt)
                {
                   c->fmt = _layout_format_push(c, NULL);
                }
-             _format_fill(c->obj, c->fmt, c->o->style_user->style_text);
+             _format_fill(c->obj, c->fmt, c->o->style_user);
              finalize = EINA_TRUE;
           }
 
@@ -4450,119 +4421,38 @@ _evas_textblock2_eo_base_constructor(Eo *eo_obj, Evas_Textblock2_Data *class_dat
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
 }
 
-EAPI Evas_Textblock2_Style *
-evas_textblock2_style_new(void)
-{
-   Evas_Textblock2_Style *ts;
-
-   ts = calloc(1, sizeof(Evas_Textblock2_Style));
-   return ts;
-}
-
-EAPI void
-evas_textblock2_style_free(Evas_Textblock2_Style *ts)
-{
-   if (!ts) return;
-   if (ts->objects)
-     {
-        ts->delete_me = 1;
-        return;
-     }
-   _style_clear(ts);
-   free(ts);
-}
-
-EAPI void
-evas_textblock2_style_set(Evas_Textblock2_Style *ts, const char *text)
-{
-   Eina_List *l;
-   Evas_Object *eo_obj;
-
-   if (!ts) return;
-   /* If the style wasn't really changed, abort. */
-   if ((!ts->style_text && !text) ||
-       (ts->style_text && text && !strcmp(text, ts->style_text)))
-      return;
-
-   EINA_LIST_FOREACH(ts->objects, l, eo_obj)
-     {
-        Evas_Textblock2_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
-        _evas_textblock2_invalidate_all(o);
-        _evas_textblock2_changed(o, eo_obj);
-     }
-
-   _style_replace(ts, text);
-}
-
-EAPI const char *
-evas_textblock2_style_get(const Evas_Textblock2_Style *ts)
-{
-   if (!ts) return NULL;
-   return ts->style_text;
-}
-
 /* textblock2 styles */
 
-static void
-_textblock2_style_generic_set(Evas_Object *eo_obj, Evas_Textblock2_Style *ts,
-      Evas_Textblock2_Style **obj_ts)
+EOLIAN static void
+_evas_textblock2_style_set(Eo *eo_obj, Evas_Textblock2_Data *o, const char *ts)
 {
-   TB_HEAD();
-   if (ts == *obj_ts) return;
-   if ((ts) && (ts->delete_me)) return;
-   if (*obj_ts)
-     {
-        Evas_Textblock2_Style *old_ts;
-        if (o->markup_text)
-          {
-             free(o->markup_text);
-             o->markup_text = NULL;
-          }
-
-        old_ts = *obj_ts;
-        old_ts->objects = eina_list_remove(old_ts->objects, eo_obj);
-        if ((old_ts->delete_me) && (!old_ts->objects))
-          evas_textblock2_style_free(old_ts);
-     }
-   if (ts)
-     {
-        ts->objects = eina_list_append(ts->objects, eo_obj);
-     }
-   *obj_ts = ts;
-
-   o->format_changed = EINA_TRUE;
-   _evas_textblock2_invalidate_all(o);
+   eina_stringshare_replace(&(o->style), ts);
    _evas_textblock2_changed(o, eo_obj);
 }
 
-EOLIAN static void
-_evas_textblock2_style_set(Eo *eo_obj, Evas_Textblock2_Data *o, const Evas_Textblock2_Style *ts)
-{
-   _textblock2_style_generic_set(eo_obj, (Evas_Textblock2_Style *) ts, &(o->style));
-}
-
-EOLIAN static const Evas_Textblock2_Style*
+EOLIAN static const char *
 _evas_textblock2_style_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
 {
    return o->style;
 }
 
 EOLIAN static void
-_evas_textblock2_style_user_push(Eo *eo_obj, Evas_Textblock2_Data *o, Evas_Textblock2_Style *ts)
+_evas_textblock2_style_user_push(Eo *eo_obj, Evas_Textblock2_Data *o, const char *ts)
 {
-   _textblock2_style_generic_set(eo_obj, ts, &(o->style_user));
+   eina_stringshare_replace(&(o->style_user), ts);
+   _evas_textblock2_changed(o, eo_obj);
 }
 
-EOLIAN static const Evas_Textblock2_Style*
+EOLIAN static const char *
 _evas_textblock2_style_user_peek(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
 {
    return o->style_user;
 }
 
 EOLIAN static void
-_evas_textblock2_style_user_pop(Eo *eo_obj, Evas_Textblock2_Data *o)
+_evas_textblock2_style_user_pop(Eo *eo_obj EINA_UNUSED, Evas_Textblock2_Data *o)
 {
-   _textblock2_style_generic_set(eo_obj, NULL,  &(o->style_user));
+   eina_stringshare_replace(&(o->style_user), NULL);
 }
 
 EOLIAN static void
@@ -6819,19 +6709,15 @@ _evas_textblock2_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock2_Data *o EINA_U
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
 
-   const char *style;
    const char *text = NULL;
    char shorttext[48];
-   const Evas_Textblock2_Style *ts = NULL;
 
-   eo_do(eo_obj, ts = evas_obj_textblock2_style_get());
-   style = evas_textblock2_style_get(ts);
    eo_do(eo_obj, text = efl_text_get());
    strncpy(shorttext, text, 38);
    if (shorttext[37])
      strcpy(shorttext + 37, "\xe2\x80\xa6"); /* HORIZONTAL ELLIPSIS */
 
-   EO_DBG_INFO_APPEND(group, "Style", EINA_VALUE_TYPE_STRING, style);
+   EO_DBG_INFO_APPEND(group, "Style", EINA_VALUE_TYPE_STRING, o->style);
    EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, shorttext);
 
      {

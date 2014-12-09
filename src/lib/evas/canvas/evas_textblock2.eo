@@ -65,7 +65,7 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
             @return the style of the object. */
          }
          values {
-            const(Evas_Textblock2_Style)* ts; /*@ the style to set. */
+            const(char)* ts; /*@ the style to set. */
          }
       }
       size_formatted {
@@ -135,7 +135,6 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
 
          @see evas_object_textblock2_style_get
          @since 1.2 */
-
       }
       cursor_new @const {
          /*@
@@ -163,7 +162,7 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
          @return the style of the object.
          @see evas_object_textblock2_style_get
          @since 1.2 */
-         return: const(Evas_Textblock2_Style)*;
+         return: const(char)*;
       }
       clear {
          /*@
@@ -187,7 +186,7 @@ class Evas.Textblock2 (Evas.Object, Efl.Text)
          @since 1.2 */
 
          params {
-            @in Evas_Textblock2_Style *ts; /*@ the style to set. */
+            @in const(char) *ts; /*@ the style to set. */
          }
       }
    }
