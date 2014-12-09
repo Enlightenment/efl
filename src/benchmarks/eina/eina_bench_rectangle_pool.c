@@ -32,7 +32,6 @@ eina_bench_eina_rectangle_pool(int request)
    int i;
 
    eina_init();
-   eina_init();
 
    pool = eina_rectangle_pool_new(2048, 2048);
    if (!pool)
