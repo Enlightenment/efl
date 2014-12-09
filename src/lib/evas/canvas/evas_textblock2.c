@@ -4264,7 +4264,7 @@ _layout_par(Ctxt *c)
 
                {
                   int wrap = _layout_par_wrap_find(c, it->format, it, line_breaks);
-                  if ((0 < wrap) && (wrap < break_position))
+                  if (((0 < wrap) && (wrap < break_position)) || (break_position < 0))
                     {
                        break_position = wrap;
                     }
