@@ -3545,32 +3545,6 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock2_Format *fmt)
    if (of) evas_font_free(obj->layer->evas->evas, of);
 }
 
-/**
- * @internal
- * Returns true if the item is a tab
- * @def _IS_TAB(item)
- */
-#define _IS_TAB(item) 0
-/**
- * @internal
- * Returns true if the item is a line spearator, false otherwise
- * @def _IS_LINE_SEPARATOR(item)
- */
-#define _IS_LINE_SEPARATOR(item) 0
-/**
- * @internal
- * Returns true if the item is a paragraph separator, false otherwise
- * @def _IS_PARAGRAPH_SEPARATOR(item)
- */
-#define _IS_PARAGRAPH_SEPARATOR_SIMPLE(item) 0
-/**
- * @internal
- * Returns true if the item is a paragraph separator, false otherwise
- * takes legacy mode into account.
- * @def _IS_PARAGRAPH_SEPARATOR(item)
- */
-#define _IS_PARAGRAPH_SEPARATOR(o, item) 0
-
 static void
 _layout_update_par(Ctxt *c)
 {
@@ -6226,25 +6200,18 @@ _evas_textblock2_cursor_char_pen_geometry_common_get(int (*query_func) (void *da
      {
         if (previous_format)
           {
-             if (_IS_LINE_SEPARATOR(fi->item))
+#ifdef BIDI_SUPPORT
+             if (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)
                {
-                  x = 0;
-                  y = ln->par->y + ln->y + ln->h;
+                  x = ln->x;
                }
              else
-               {
-#ifdef BIDI_SUPPORT
-                  if (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)
-                    {
-                       x = ln->x;
-                    }
-                  else
 #endif
-                    {
-                       x = ln->x + ln->w;
-                    }
-                  y = ln->par->y + ln->y;
+               {
+                  x = ln->x + ln->w;
                }
+             y = ln->par->y + ln->y;
+
              w = 0;
              h = ln->h;
           }
