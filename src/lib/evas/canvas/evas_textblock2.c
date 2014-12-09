@@ -4244,9 +4244,6 @@ _layout_par(Ctxt *c)
                    &c->descent, it, it->format);
           }
 
-        /* FIXME: What is first find the cutoff point based on _it_break_position_get
-         * and wrap from all the remaining items, and then I can just add all the
-         * items up until that point, and just reduce the rest. */
         while (i)
           {
              int break_position = 0;
