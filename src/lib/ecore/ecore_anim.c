@@ -317,15 +317,9 @@ _pos_map_cubic_bezier(double pos,
     if (x1 == y1 && x2 == y2) return pos;
 
     /* Bezier Cubic formula:
-       y(t) = (1 - t)^3 + 3t(1 - t)^2 + 3t^2(1 - t) + t^3 */
-
-    /* orignal */
-    // return (pow((1 - pos), 3) * 0) + (3 * pos * pow((1 - pos), 2) * y1) +
-    //       (3 * pow(pos, 2) * (1 - pos) * y2) + (pow(pos, 3) * 1);
-
-    /* simpler one */
-    return (3 * pos * pow((1 - pos), 2) * y1) +
-       (3 * pow(pos, 2) * (1 - pos) * y2) + (pow(pos, 3) * 1);
+		 y(t) = (1 - t)^3 + 3t(1 - t)^2 + 3t^2(1 - t) + t^3 */
+    return (pow((1 - pos), 3) * 0) + (3 * pos * pow((1 - pos), 2) * y1) +
+           (3 * pow(pos, 2) * (1 - pos) * y2) + (pow(pos, 3) * 1);
 }
 
 #define DBL_TO(Fp) eina_f32p32_double_to(Fp)
