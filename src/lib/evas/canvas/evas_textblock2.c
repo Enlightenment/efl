@@ -3466,21 +3466,6 @@ skip:
         tmp_cut = evas_common_language_script_end_of_run_get(str,
               c->par->bidi_props, str_start, script_len);
 
-        /* Cut to newlines */
-          {
-             const Eina_Unicode newline_str[] = {'\n', 0};
-             Eina_Unicode *newline_pos = eina_unicode_strstr(str + str_start, newline_str);
-
-             if (newline_pos)
-               {
-                  int newline_cut = newline_pos - (str + start);
-                  if ((tmp_cut <= 0) || (newline_cut < tmp_cut))
-                    {
-                       tmp_cut = newline_cut;
-                    }
-               }
-          }
-
         if (tmp_cut > 0)
           {
              script_len = tmp_cut;
@@ -3764,6 +3749,26 @@ _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock2_Format *fmt,
 {
    return _layout_get_word_mixwrap_common(c, fmt, it, EINA_TRUE, line_start,
          breaks);
+}
+
+static int
+_it_break_position_get(Evas_Object_Textblock2_Item *it, const char *breaks)
+{
+   if (it->type != EVAS_TEXTBLOCK2_ITEM_TEXT)
+      return -1;
+
+   Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
+   breaks += it->text_pos;
+   size_t i;
+   for (i = 0 ; i < ti->text_props.text_len ; i++, breaks++)
+     {
+        if (*breaks == LINEBREAK_MUSTBREAK)
+          {
+             return i;
+          }
+     }
+
+   return -1;
 }
 
 static Evas_Object_Textblock2_Text_Item *
@@ -4170,6 +4175,15 @@ _layout_par(Ctxt *c)
            _layout_par_ellipsis_items(c, ellip);
      }
 
+     {
+        const char *lang = "";
+        size_t len = eina_ustrbuf_length_get(c->par->text_node->unicode);
+        line_breaks = malloc(len);
+        set_linebreaks_utf32((const utf32_t *)
+              eina_ustrbuf_string_get(c->par->text_node->unicode),
+              len, lang, line_breaks);
+     }
+
    for (i = c->par->logical_items ; i ; )
      {
         Evas_Coord prevdescent = 0, prevascent = 0;
@@ -4246,27 +4260,6 @@ _layout_par(Ctxt *c)
                   it_len = (it->type == EVAS_TEXTBLOCK2_ITEM_FORMAT) ?
                      1 : _ITEM_TEXT(it)->text_props.text_len;
 
-
-                  /* If we haven't calculated the linebreaks yet,
-                   * do */
-                  if (!line_breaks)
-                    {
-                       /* Only relevant in those cases */
-                       if (it->format->wrap_word || it->format->wrap_mixed)
-                         {
-                            const char *lang;
-                            lang = (it->format->font.fdesc) ?
-                               it->format->font.fdesc->lang : "";
-                            size_t len =
-                               eina_ustrbuf_length_get(
-                                     it->text_node->unicode);
-                            line_breaks = malloc(len);
-                            set_linebreaks_utf32((const utf32_t *)
-                                  eina_ustrbuf_string_get(
-                                     it->text_node->unicode),
-                                  len, lang, line_breaks);
-                         }
-                    }
                   if (c->ln->items)
                      line_start = c->ln->items->text_pos;
                   else
@@ -4380,6 +4373,20 @@ _layout_par(Ctxt *c)
                   wrap = -1;
                }
           }
+        else
+          {
+             int break_position = 0;
+             if ((break_position = _it_break_position_get(it, line_breaks)) > 0)
+               {
+                  Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
+                  if (GET_ITEM_TEXT(ti)[break_position] != _PARAGRAPH_SEPARATOR)
+                    {
+                       _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, break_position);
+
+                       adv_line = 1;
+                    }
+               }
+          }
 
         if (!redo_item && !it->visually_deleted)
           {
@@ -4392,14 +4399,6 @@ _layout_par(Ctxt *c)
                   Evas_Object_Textblock2_Format_Item *fi;
                   fi = _ITEM_FORMAT(it);
                   fi->y = c->y;
-               }
-             else
-               {
-                  Evas_Object_Textblock2_Text_Item *ti = _ITEM_TEXT(it);
-                  if (GET_ITEM_TEXT(ti)[ti->text_props.text_len] == '\n')
-                    {
-                       adv_line = 1;
-                    }
                }
              c->x += it->adv;
              if (c->o->ellip_prev_it == i)
