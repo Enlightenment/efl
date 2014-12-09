@@ -4188,9 +4188,6 @@ _layout_par(Ctxt *c)
    /* This loop walks on lines, we do per item inside. */
    for (i = c->par->logical_items ; i ; )
      {
-        Evas_Coord prevdescent = 0, prevascent = 0;
-        int adv_line = 0;
-        int redo_item = 0;
         it = _ITEM(eina_list_data_get(i));
         /* Skip visually deleted items */
         if (it->visually_deleted)
@@ -4209,183 +4206,6 @@ _layout_par(Ctxt *c)
                    &c->descent, it, it->format);
           }
 
-#if 0
-        /* Check if we need to wrap, i.e the text is bigger than the width,
-           or we already found a wrap point. */
-        if ((c->w >= 0) &&
-              (((c->x + it->w) >
-                (c->w - c->o->style_pad.l - c->o->style_pad.r -
-                 c->marginl - c->marginr)) || (wrap > 0)))
-          {
-             /* Handle ellipsis here. If we don't have more width left
-              * and no height left, or no more width left and no wrapping.
-              * Note that this is only for ellipsis == 1.0, and is treated in a
-              * fast path.
-              * Other values of 0.0 <= ellipsis < 1.0 are handled in
-              * _layout_par_ellipsis_items */
-             if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
-                   ((2 * it->h + c->y >
-                     c->h - c->o->style_pad.t - c->o->style_pad.b) ||
-                    (!it->format->wrap_word && !it->format->wrap_char &&
-                     !it->format->wrap_mixed)))
-               {
-                  _layout_handle_ellipsis(c, it, i);
-                  ret = 1;
-                  goto end;
-               }
-             /* If we want to wrap and it's worth checking for wrapping
-              * (i.e there's actually text). */
-             else if ((it->format->wrap_word || it->format->wrap_char ||
-                it->format->wrap_mixed) && it->text_node)
-               {
-                  size_t line_start;
-                  size_t it_len;
-
-                  it_len = (it->type == EVAS_TEXTBLOCK2_ITEM_FORMAT) ?
-                     1 : _ITEM_TEXT(it)->text_props.text_len;
-
-                  if (c->ln->items)
-                     line_start = c->ln->items->text_pos;
-                  else
-                     line_start = it->text_pos;
-
-                  adv_line = 1;
-                  /* If we don't already have a wrap point from before */
-                  if (wrap < 0)
-                    {
-                       if (it->format->wrap_word)
-                          wrap = _layout_get_wordwrap(c, it->format, it,
-                                line_start, line_breaks);
-                       else if (it->format->wrap_char)
-                          wrap = _layout_get_charwrap(c, it->format, it,
-                                line_start, line_breaks);
-                       else if (it->format->wrap_mixed)
-                          wrap = _layout_get_mixedwrap(c, it->format, it,
-                                line_start, line_breaks);
-                       else
-                          wrap = -1;
-                    }
-
-                  /* If it's before the item, rollback and apply.
-                     if it's in the item, cut.
-                     If it's after the item, delay the cut */
-                  if (wrap > 0)
-                    {
-                       size_t uwrap = (size_t) wrap;
-                       if (uwrap < it->text_pos)
-                         {
-                            /* Rollback latest additions, and cut that
-                               item */
-                            i = eina_list_prev(i);
-                            it = eina_list_data_get(i);
-                            while (uwrap < it->text_pos)
-                              {
-                                 c->ln->items = _ITEM(
-                                       eina_inlist_remove(
-                                          EINA_INLIST_GET(c->ln->items),
-                                          EINA_INLIST_GET(it)));
-                                 it->ln = c->ln;
-                                 i = eina_list_prev(i);
-                                 it = eina_list_data_get(i);
-                              }
-                            c->x = it->x;
-                            c->ln->items = _ITEM(
-                                  eina_inlist_remove(
-                                     EINA_INLIST_GET(c->ln->items),
-                                     EINA_INLIST_GET(it)));
-                            continue;
-                         }
-                       /* If it points to the end, it means the previous
-                        * char is a whitespace we should remove, so this
-                        * is a wanted cutting point. */
-                       else if (uwrap > it->text_pos + it_len)
-                         {
-                            /* FIXME: Should redo the ellipsis handling.
-                             * If we can do ellipsis, just cut here. */
-                            if (it->format->ellipsis == 1.0)
-                              {
-                                 _layout_handle_ellipsis(c, it, i);
-                                 ret = 1;
-                                 goto end;
-                              }
-                            else
-                              {
-                                 /* Delay the cut in a smart way i.e use the
-                                    item_pos as the line_start, because
-                                    there's already no cut before*/
-                                 wrap = -1;
-                                 adv_line = 0;
-                              }
-                         }
-                       else
-                         {
-                            wrap -= it->text_pos; /* Cut here */
-                         }
-                    }
-                  if ((wrap >= 0) && ((size_t) wrap == it_len))
-                    {
-                       /* Can happen if this is the last word in the paragraph */
-                       adv_line = 0;
-                    }
-                  else if (wrap > 0)
-                    {
-                       if (it->type == EVAS_TEXTBLOCK2_ITEM_TEXT)
-                         {
-                            _layout_item_text_split_strip_white(c,
-                                  _ITEM_TEXT(it), i, wrap);
-                         }
-                    }
-                  else if (wrap == 0)
-                    {
-                       /* Should wrap before the item */
-
-                       /* We didn't end up using the item, so revert the ascent
-                        * and descent changes. */
-                       c->descent = prevdescent;
-                       c->ascent = prevascent;
-
-                       adv_line = 0;
-                       redo_item = 1;
-                       _layout_line_advance(c, it->format);
-                    }
-                  else // (wrap < 0)
-                    {
-                       /* avoid line advance if there is no wrapping point */
-                       adv_line = 0;
-                    }
-                  /* Reset wrap */
-                  wrap = -1;
-               }
-          }
-
-        if (!redo_item && !it->visually_deleted)
-          {
-             c->ln->items = (Evas_Object_Textblock2_Item *)
-                eina_inlist_append(EINA_INLIST_GET(c->ln->items),
-                      EINA_INLIST_GET(it));
-             it->ln = c->ln;
-             if (it->type == EVAS_TEXTBLOCK2_ITEM_FORMAT)
-               {
-                  Evas_Object_Textblock2_Format_Item *fi;
-                  fi = _ITEM_FORMAT(it);
-                  fi->y = c->y;
-               }
-             c->x += it->adv;
-             if (c->o->ellip_prev_it == i)
-                _layout_par_append_ellipsis(c);
-             i = eina_list_next(i);
-          }
-        if (adv_line)
-          {
-             /* Each line is according to the first item in it, and here
-              * i is already the next item (or the current if we redo it) */
-             if (i)
-               {
-                  it = _ITEM(eina_list_data_get(i));
-               }
-             _layout_line_advance(c, it->format);
-          }
-#endif
         while (i)
           {
              int break_position = 0;
@@ -4463,7 +4283,6 @@ _layout_par(Ctxt *c)
         _layout_line_finalize(c, it->format);
      }
 
-end:
    if (line_breaks)
       free(line_breaks);
 
