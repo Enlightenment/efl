@@ -8,7 +8,7 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 {
    if (!(logind = _ecore_drm_logind_connect(dev)))
      {
-        DBG("Launcher: Not Support loignd\n");
+        DBG("Launcher: Not Support logind\n");
         if (geteuid() == 0)
           {
              DBG("Launcher: Try to keep going with root privilege\n");
