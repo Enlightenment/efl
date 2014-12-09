@@ -10279,6 +10279,17 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         BUF_APPEND(I5"}\n");
      }
 
+   if ((pd->persp.zplane != 0) || (pd->persp.focal != 1000))
+     {
+        BUF_APPEND(I5"perspective {\n");
+
+        if (pd->persp.zplane != 0)
+          BUF_APPENDF(I6"zplane: %d;\n", pd->persp.zplane);
+        if (pd->persp.focal != 1000)
+          BUF_APPENDF(I6"focal: %d;\n", pd->persp.focal);
+
+        BUF_APPEND(I5"}\n");
+     }
 
 
    //Image
