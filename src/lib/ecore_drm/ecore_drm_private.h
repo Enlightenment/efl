@@ -140,10 +140,10 @@ struct _Ecore_Drm_Seat
 struct _Ecore_Drm_Input
 {
    int fd;
-   const char *seat;
-   Eeze_Udev_Watch *watch;
-   Ecore_Fd_Handler *hdlr;
    Ecore_Drm_Device *dev;
+   struct libinput *libinput;
+
+   Ecore_Fd_Handler *hdlr;
 
    Eina_Bool enabled : 1;
    Eina_Bool suspended : 1;
@@ -152,25 +152,25 @@ struct _Ecore_Drm_Input
 struct _Ecore_Drm_Evdev
 {
    Ecore_Drm_Seat *seat;
-   /* struct libinput *linput; */
-   /* struct libinput_device *dev; */
-   const char *name, *path;
+   struct libinput_device *device;
+
+   const char *path;
    int fd;
 
    int mt_slot;
 
-   struct 
-     {
-        int min_x, min_y;
-        int max_x, max_y;
-        double rel_w, rel_h;
-        struct
-          {
-            int x[2];
-            int y[2];
-            Eina_Bool down : 1;
-          } pt[EVDEV_MAX_SLOTS];
-     } abs;
+   /* struct  */
+   /*   { */
+   /*      int min_x, min_y; */
+   /*      int max_x, max_y; */
+   /*      double rel_w, rel_h; */
+   /*      struct */
+   /*        { */
+   /*          int x[2]; */
+   /*          int y[2]; */
+   /*          Eina_Bool down : 1; */
+   /*        } pt[EVDEV_MAX_SLOTS]; */
+   /*   } abs; */
 
    struct 
      {
@@ -179,7 +179,7 @@ struct _Ecore_Drm_Evdev
         double threshold;
         Eina_Bool did_double : 1;
         Eina_Bool did_triple : 1;
-        int prev_button, last_button;
+        uint32_t prev_button, last_button;
      } mouse;
 
    struct 
@@ -198,13 +198,8 @@ struct _Ecore_Drm_Evdev
         unsigned int depressed, latched, locked, group;
      } xkb;
 
-   Ecore_Drm_Evdev_Event_Type pending_event;
-   Ecore_Drm_Evdev_Capabilities caps;
+   /* Ecore_Drm_Evdev_Capabilities caps; */
    Ecore_Drm_Seat_Capabilities seat_caps;
-
-   void (*event_process)(Ecore_Drm_Evdev *dev, struct input_event *event, int count);
-
-   Ecore_Fd_Handler *hdlr;
 };
 
 struct _Ecore_Drm_Sprite
@@ -233,9 +228,9 @@ Eina_Bool _ecore_drm_launcher_device_open(const char *device, Ecore_Drm_Open_Cb 
 int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
 void _ecore_drm_launcher_device_close(const char *device, int fd);
 
-Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
+Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *device);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
-/* int _ecore_drm_evdev_event_process(struct libinput_event *event); */
+Eina_Bool _ecore_drm_evdev_event_process(struct libinput_event *event);
 
 Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
