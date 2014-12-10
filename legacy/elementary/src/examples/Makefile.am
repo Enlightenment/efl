@@ -164,7 +164,7 @@ files_DATA += \
 	theme_example.edj \
 	layout_example.edj\
 	codegen_example.edj \
-   evas3d_map_example.edj
+	evas3d_map_example.edj
 
 clean-local:
 	rm -f *.edj *.epb *.cfg *.cfg.bkp
