@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+SUBDIRS = sphere_hunter
+
 include ../../Makefile_Elm_Helpers.am
 
 .PHONY: screenshots
