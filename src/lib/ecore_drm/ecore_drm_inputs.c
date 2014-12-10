@@ -207,6 +207,7 @@ _ecore_drm_inputs_update_output(Ecore_Drm_Device *dev, int w, int h)
           {
              edev->output.w = w;
              edev->output.h = h;
+             ecore_drm_inputs_device_axis_size_set(edev, w, h);
           }
      }
 }
