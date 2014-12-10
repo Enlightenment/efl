@@ -67,7 +67,7 @@ struct PACKED _MD2_Texcoord
 
 typedef struct _MD2_Loader
 {
-   Model_Common_Loader *common_loader;
+   char                *map;
    int                  size;
 
    int                  skin_width;
@@ -252,21 +252,28 @@ static const float normal_table[162][3] =
 };
 
 static inline Eina_Bool
-_md2_loader_init(MD2_Loader *loader, Model_Common_Loader *common_loader)
+_md2_loader_init(MD2_Loader *loader, Eina_File *file)
 {
    MD2_Header header;
 
    memset(loader, 0x00, sizeof(MD2_Loader));
-   loader->common_loader = common_loader;
+
+   loader->map = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+
+   if (loader->map == NULL)
+     {
+        ERR("Failed to create map from file %s\n", eina_file_filename_get(file));
+        goto error;
+     }
 
    /* Check file size. We require a file larger than MD2 header size. */
-   loader->size = eina_file_size_get(loader->common_loader->file);
+   loader->size = eina_file_size_get(file);
 
    if (loader->size < (int)sizeof(MD2_Header))
      goto error;
 
    /* Read header. */
-   memcpy(&header, loader->common_loader->map, sizeof(MD2_Header));
+   memcpy(&header, loader->map, sizeof(MD2_Header));
 
    /* Check identity */
    if (header.magic != MD2_MAGIC_NUMBER || header.version != MD2_VERSION)
@@ -296,14 +303,14 @@ _md2_loader_init(MD2_Loader *loader, Model_Common_Loader *common_loader)
 
    loader->frame_count = header.frame_count;
    loader->frame_size = header.frame_size;
-   loader->frames = loader->common_loader->map + header.offset_frames;
+   loader->frames = loader->map + header.offset_frames;
 
    loader->vertex_count = header.vertex_count;
    loader->triangle_count = header.triangle_count;
    loader->texcoord_count = header.texcoord_count;
 
-   loader->triangles = (MD2_Triangle *)(loader->common_loader->map + header.offset_triangles);
-   loader->texcoords = (MD2_Texcoord *)(loader->common_loader->map + header.offset_texcoords);
+   loader->triangles = (MD2_Triangle *)(loader->map + header.offset_triangles);
+   loader->texcoords = (MD2_Texcoord *)(loader->map + header.offset_texcoords);
    return EINA_TRUE;
 
 error:
@@ -311,7 +318,7 @@ error:
 }
 
 void
-evas_model_load_file_md2(Evas_3D_Mesh *mesh, Model_Common_Loader *common_loader)
+evas_model_load_file_md2(Evas_3D_Mesh *mesh, Eina_File *file)
 {
    MD2_Loader           loader;
    int                  i, j, k;
@@ -321,7 +328,7 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, Model_Common_Loader *common_loader)
    Evas_3D_Mesh_Data *pd;
 
    /* Initialize MD2 loader (Open file and read MD2 head ant etc) */
-   if (!_md2_loader_init(&loader, common_loader))
+   if (!_md2_loader_init(&loader, file))
      {
         ERR("Failed to initialize MD2 loader.");
         return;
@@ -408,6 +415,12 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, Model_Common_Loader *common_loader)
           {
              ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", f);
           }
+     }
+
+   if (loader.map)
+     {
+        eina_file_map_free(file, loader.map);
+        loader.map = NULL;
      }
 }
 

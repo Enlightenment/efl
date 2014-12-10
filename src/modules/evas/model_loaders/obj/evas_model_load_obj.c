@@ -83,11 +83,11 @@ _analyze_face_line(char * face_analyzer,
 }
 
 static inline OBJ_Counts
-_count_elements(Model_Common_Loader *loader)//count elements of mesh in .obj
+_count_elements(char *map)//count elements of mesh in .obj
 {
    OBJ_Counts counts = _new_count_elements();
 
-   char * current = loader->map;
+   char *current = map;
    int polygon_checker = -2;//polygons with n vertices can be represented as n-2 triangles
    Eina_Bool will_check_next_char = EINA_FALSE;
    Eina_Bool first_char_is_v = EINA_FALSE;
@@ -178,7 +178,7 @@ _count_elements(Model_Common_Loader *loader)//count elements of mesh in .obj
 }
 
 void
-evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
+evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
 {
    long i;
    OBJ_Counts counts;//count elements of mesh in .obj
@@ -188,9 +188,17 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
    float *pos, *nor, *tex;
    int stride_pos, stride_nor, stride_tex;
    int j, k;
-   char * current;
+   char *current, *map;
 
-   counts = _count_elements(loader);
+   map = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+
+   if (map == NULL)
+     {
+        ERR("Failed to create map from file %s\n", eina_file_filename_get(file));
+        return;
+     }
+
+   counts = _count_elements(map);
 
    float *_vertices_obj = malloc(counts._vertex_counter * 3 * sizeof(float));
    float *_normales_obj = malloc(counts._normal_counter * 3 * sizeof(float));
@@ -198,7 +206,7 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
    /* triangle has 3 points, every point has 3(vertix, texture and normal) coord */
    int *_triangles = malloc(counts._triangles_counter * 9 * sizeof(int));
 
-   if ((loader->map == NULL) || (_vertices_obj == NULL) ||
+   if ((map == NULL) || (_vertices_obj == NULL) ||
         (_normales_obj == NULL) || (_tex_coords_obj == NULL) || (_triangles == NULL))
      {
         ERR("Allocate memory is failed.");
@@ -209,7 +217,7 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
         return;
      }
 
-   current = loader->map;
+   current = map;
    i = 0;
 
    /* put data to arrays */
@@ -372,6 +380,12 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
    if (!evas_3d_mesh_aabb_add_to_frame(pd, 0, stride_pos))
      {
         ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
+     }
+
+   if (map)
+     {
+        eina_file_map_free(file, map);
+        map = NULL;
      }
 }
 
