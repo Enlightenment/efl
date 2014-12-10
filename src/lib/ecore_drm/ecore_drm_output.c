@@ -270,8 +270,8 @@ cont:
      }
 
 out:
-   EINA_LIST_FREE(devs, device);
-   eina_stringshare_del(device);
+   EINA_LIST_FREE(devs, device)
+     eina_stringshare_del(device);
 
    return backlight;
 }
