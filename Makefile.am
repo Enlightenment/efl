@@ -164,8 +164,7 @@ pc/eo-cxx.pc
 endif
 
 if HAVE_ELUA
-pkgconfig_DATA += \
-pc/elua.pc
+pkgconfig_DATA += pc/elua.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_X11
@@ -361,12 +360,10 @@ emotion_cmakeconfig_DATA = \
 cmakeconfig/EmotionConfig.cmake \
 cmakeconfig/EmotionConfigVersion.cmake
 
-if HAVE_ELUA
 elua_cmakeconfigdir = $(libdir)/cmake/Elua
 elua_cmakeconfig_DATA = \
 cmakeconfig/EluaConfig.cmake \
 cmakeconfig/EluaConfigVersion.cmake
-endif
 
 # D-Bus services:
 
