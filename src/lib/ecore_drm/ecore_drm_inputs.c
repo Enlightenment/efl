@@ -295,13 +295,6 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
    Ecore_Drm_Seat *seat;
    Ecore_Drm_Evdev *edev;
 
-   EINA_LIST_FREE(dev->inputs, input)
-     {
-        if (input->hdlr) ecore_main_fd_handler_del(input->hdlr);
-        if (input->libinput) libinput_unref(input->libinput);
-        free(input);
-     }
-
    EINA_LIST_FREE(dev->seats, seat)
      {
         EINA_LIST_FREE(seat->devices, edev)
@@ -309,6 +302,13 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
 
         if (seat->name) eina_stringshare_del(seat->name);
         free(seat);
+     }
+
+   EINA_LIST_FREE(dev->inputs, input)
+     {
+        if (input->hdlr) ecore_main_fd_handler_del(input->hdlr);
+        if (input->libinput) libinput_unref(input->libinput);
+        free(input);
      }
 }
 
