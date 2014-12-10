@@ -112,7 +112,7 @@ _ecore_drm_launcher_device_open_no_pending(const char *device, int flags)
      }
    else
      {
-        fd = open(device, flags, flags | O_CLOEXEC);
+        fd = open(device, flags | O_CLOEXEC);
         if (fd < 0) return fd;
         if (fstat(fd, &s) == -1)
           {
