@@ -341,8 +341,10 @@ _device_handle_pointer_motion_absolute(struct libinput_device *device, struct li
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   edev->mouse.x = libinput_event_pointer_get_absolute_x(event);
-   edev->mouse.y = libinput_event_pointer_get_absolute_y(event);
+   edev->mouse.x = 
+     libinput_event_pointer_get_absolute_x_transformed(event, edev->output.w);
+   edev->mouse.y = 
+     libinput_event_pointer_get_absolute_y_transformed(event, edev->output.h);
 
    _device_pointer_motion(edev, event);
 }
