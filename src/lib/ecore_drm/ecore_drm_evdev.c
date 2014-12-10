@@ -680,7 +680,7 @@ _device_handle_touch_up(struct libinput_device *device, struct libinput_event_to
 static void 
 _device_handle_touch_frame(struct libinput_device *device EINA_UNUSED, struct libinput_event_touch *event EINA_UNUSED)
 {
-   DBG("Unhandled Touch Frame Event");
+   /* DBG("Unhandled Touch Frame Event"); */
 }
 
 void 
