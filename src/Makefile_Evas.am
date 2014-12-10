@@ -505,8 +505,10 @@ modules_evas_engines_software_generic_module_la_LDFLAGS = -module @EFL_LTMODULE_
 modules_evas_engines_software_generic_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
+dist_noinst_DATA =
+
 if BUILD_ENGINE_BUFFER
-dist_installed_evasmainheaders_DATA += modules/evas/engines/buffer/Evas_Engine_Buffer.h
+dist_noinst_DATA += modules/evas/engines/buffer/Evas_Engine_Buffer.h
 BUFFER_SOURCES = \
 modules/evas/engines/buffer/evas_engine.c \
 modules/evas/engines/buffer/evas_outbuf.c \
@@ -529,7 +531,7 @@ endif
 endif
 
 if BUILD_ENGINE_FB
-dist_installed_evasmainheaders_DATA += modules/evas/engines/fb/Evas_Engine_FB.h
+dist_noinst_DATA += modules/evas/engines/fb/Evas_Engine_FB.h
 FB_SOURCES = \
 modules/evas/engines/fb/evas_engine.c \
 modules/evas/engines/fb/evas_fb_main.c \
@@ -740,7 +742,7 @@ endif
 endif
 
 if BUILD_ENGINE_GL_COCOA
-dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_cocoa/Evas_Engine_GL_Cocoa.h
+dist_noinst_DATA += modules/evas/engines/gl_cocoa/Evas_Engine_GL_Cocoa.h
 GL_COCOA_SOURCES = \
 modules/evas/engines/gl_cocoa/evas_engine.c \
 modules/evas/engines/gl_cocoa/evas_gl_cocoa_main.m \
@@ -778,7 +780,7 @@ endif
 endif
 
 if BUILD_ENGINE_GL_SDL
-dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_sdl/Evas_Engine_GL_SDL.h
+dist_noinst_DATA += modules/evas/engines/gl_sdl/Evas_Engine_GL_SDL.h
 GL_SDL_SOURCES = \
 modules/evas/engines/gl_sdl/evas_engine.c \
 modules/evas/engines/gl_sdl/evas_engine.h
@@ -809,7 +811,7 @@ endif
 endif
 
 if BUILD_ENGINE_GL_X11
-dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_x11/Evas_Engine_GL_X11.h
+dist_noinst_DATA += modules/evas/engines/gl_x11/Evas_Engine_GL_X11.h
 GL_X11_SOURCES = \
 modules/evas/engines/gl_x11/evas_engine.c \
 modules/evas/engines/gl_x11/evas_x_main.c \
@@ -842,7 +844,7 @@ endif
 endif
 
 if BUILD_ENGINE_PSL1GHT
-dist_installed_evasmainheaders_DATA += modules/evas/engines/psl1ght/Evas_Engine_PSL1GHT.h
+dist_noinst_DATA += modules/evas/engines/psl1ght/Evas_Engine_PSL1GHT.h
 PSL1GHT_SOURCES = \
 modules/evas/engines/psl1ght/evas_engine.c \
 modules/evas/engines/psl1ght/rsxutil.c \
@@ -871,7 +873,7 @@ endif
 endif
 
 if BUILD_ENGINE_SOFTWARE_DDRAW
-dist_installed_evasmainheaders_DATA += modules/evas/engines/software_ddraw/Evas_Engine_Software_DDraw.h
+dist_noinst_DATA += modules/evas/engines/software_ddraw/Evas_Engine_Software_DDraw.h
 SOFTWARE_DDRAW_SOURCES = \
 modules/evas/engines/software_ddraw/evas_engine.c \
 modules/evas/engines/software_ddraw/evas_outbuf.c \
@@ -903,7 +905,7 @@ endif
 endif
 
 if BUILD_ENGINE_SOFTWARE_GDI
-dist_installed_evasmainheaders_DATA += modules/evas/engines/software_gdi/Evas_Engine_Software_Gdi.h
+dist_noinst_DATA += modules/evas/engines/software_gdi/Evas_Engine_Software_Gdi.h
 SOFTWARE_GDI_SOURCES = \
 modules/evas/engines/software_gdi/evas_engine.c \
 modules/evas/engines/software_gdi/evas_outbuf.c \
@@ -933,7 +935,7 @@ endif
 endif
 
 if BUILD_ENGINE_SOFTWARE_X11
-dist_installed_evasmainheaders_DATA += modules/evas/engines/software_x11/Evas_Engine_Software_X11.h
+dist_noinst_DATA += modules/evas/engines/software_x11/Evas_Engine_Software_X11.h
 SOFTWARE_X11_SOURCES = \
 modules/evas/engines/software_x11/evas_engine.c \
 modules/evas/engines/software_x11/evas_engine.h \
@@ -991,7 +993,7 @@ endif
 endif
 
 if BUILD_ENGINE_WAYLAND_EGL
-dist_installed_evasmainheaders_DATA += modules/evas/engines/wayland_egl/Evas_Engine_Wayland_Egl.h
+dist_noinst_DATA += modules/evas/engines/wayland_egl/Evas_Engine_Wayland_Egl.h
 WAYLAND_EGL_SOURCES = \
 modules/evas/engines/wayland_egl/evas_engine.c \
 modules/evas/engines/wayland_egl/evas_wl_main.c \
@@ -1020,7 +1022,7 @@ endif
 endif
 
 if BUILD_ENGINE_WAYLAND_SHM
-dist_installed_evasmainheaders_DATA += modules/evas/engines/wayland_shm/Evas_Engine_Wayland_Shm.h
+dist_noinst_DATA += modules/evas/engines/wayland_shm/Evas_Engine_Wayland_Shm.h
 WAYLAND_SHM_SOURCES = \
 modules/evas/engines/wayland_shm/Evas_Engine_Wayland_Shm.h \
 modules/evas/engines/wayland_shm/evas_engine.c \
@@ -1052,7 +1054,7 @@ endif
 endif
 
 if BUILD_ENGINE_DRM
-dist_installed_evasmainheaders_DATA += modules/evas/engines/drm/Evas_Engine_Drm.h
+dist_noinst_DATA += modules/evas/engines/drm/Evas_Engine_Drm.h
 DRM_SOURCES = \
 modules/evas/engines/drm/evas_drm.c \
 modules/evas/engines/drm/evas_bufmgr.c \
@@ -1087,7 +1089,7 @@ endif
 endif
 
 if BUILD_ENGINE_GL_DRM
-dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
+dist_noinst_DATA += modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
 GL_DRM_SOURCES = \
 modules/evas/engines/gl_drm/evas_drm.c \
 modules/evas/engines/gl_drm/evas_drm_main.c \
