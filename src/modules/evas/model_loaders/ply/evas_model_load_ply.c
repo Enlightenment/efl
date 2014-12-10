@@ -178,19 +178,27 @@ _read_header(char *map)//Check properties of mesh in .ply file.
 }
 
 void
-evas_model_load_file_ply(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
+evas_model_load_file_ply(Evas_3D_Mesh *mesh, Eina_File *file)
 {
    Evas_3D_Mesh_Data *pd;
    int i = 0, j = 0, k = 0, count_of_triangles_in_line = 0;
    float *pos, *nor, *tex, *col;
    int stride_pos, stride_nor, stride_tex, stride_col;
-   char *current;
+   char *current, *map;
    PLY_Header header;
    float *_vertices_ply = NULL, *_normals_ply = NULL;
    float *_tex_coords_ply = NULL, *_colors_ply = NULL;
    char **helping_pointer;
 
-   header = _read_header(loader->map);
+   map = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+
+   if (map == NULL)
+     {
+        ERR("Failed to create map from file %s\n", eina_file_filename_get(file));
+        return;
+     }
+
+   header = _read_header(map);
 
    if (!header.existence_of_geometries)
      {
@@ -198,7 +206,7 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
         return;
      }
 
-   helping_pointer = eina_str_split(loader->map, "end_header\n", 0);
+   helping_pointer = eina_str_split(map, "end_header\n", 0);
 
    if (helping_pointer == NULL)
      {
@@ -368,6 +376,12 @@ evas_model_load_file_ply(Evas_3D_Mesh *mesh, Model_Common_Loader *loader)
    if (!evas_3d_mesh_aabb_add_to_frame(pd, 0, stride_pos))
      {
         ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
+     }
+
+   if (map)
+     {
+        eina_file_map_free(file, map);
+        map = NULL;
      }
 }
 
