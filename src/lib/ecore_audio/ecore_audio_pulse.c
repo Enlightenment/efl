@@ -148,6 +148,7 @@ _ecore_pa_time_new(pa_mainloop_api *api, const struct timeval *tv, pa_time_event
    if (gettimeofday(&now, NULL) == -1)
      {
         ERR("Failed to get the current time!");
+        free(event);
         return NULL;
      }
 
