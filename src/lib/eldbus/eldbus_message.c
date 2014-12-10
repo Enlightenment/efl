@@ -835,6 +835,8 @@ eldbus_message_error_new(const Eldbus_Message *msg, const char *error_name, cons
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_msg, NULL);
 
    reply = eldbus_message_new(EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
+
    reply->dbus_msg = dbus_message_new_error(msg->dbus_msg,
                                             error_name, error_msg);
 
