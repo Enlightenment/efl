@@ -2034,7 +2034,7 @@ eet_read_cipher(Eet_File   *ef,
           {
            case EET_COMPRESSION_VERYFAST:
            case EET_COMPRESSION_SUPERFAST:
-             ret = LZ4_uncompress(tmp_data, data, dlen);
+             ret = LZ4_decompress_fast(tmp_data, data, dlen);
              if (ret != compr_size)
                {
                   if (free_tmp)
@@ -2153,7 +2153,7 @@ eet_read_direct(Eet_File   *ef,
                {
                 case EET_COMPRESSION_VERYFAST:
                 case EET_COMPRESSION_SUPERFAST:
-                  ret = LZ4_uncompress(data, tmp, size);
+                  ret = LZ4_decompress_fast(data, tmp, size);
                   if (ret != compr_size)
                     {
                        free(tmp);
@@ -2268,7 +2268,7 @@ eet_alias_get(Eet_File   *ef,
           {
            case EET_COMPRESSION_VERYFAST:
            case EET_COMPRESSION_SUPERFAST:
-             ret = LZ4_uncompress(data, tmp, size);
+             ret = LZ4_decompress_fast(data, tmp, size);
              if (ret != compr_size)
                {
                   free(tmp);

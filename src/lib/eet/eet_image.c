@@ -945,8 +945,8 @@ eet_data_image_etc2_decode(const void *data,
 
             if (compress)
               {
-                 expand_length = LZ4_uncompress(data_start, buffer,
-                                                block_count * etc_block_size);
+                 expand_length = LZ4_decompress_fast(data_start, buffer,
+                                                     block_count * etc_block_size);
                  // That's an overhead for now, need to be fixed
                  if (expand_length != block_length)
                    goto on_error;
@@ -2465,8 +2465,8 @@ _eet_data_image_decode_inside(const void   *data,
                     {
                      case EET_COMPRESSION_VERYFAST:
                      case EET_COMPRESSION_SUPERFAST:
-                       if (LZ4_uncompress((const char *)body,
-                                          (char *)d, w * h * 4)
+                       if (LZ4_decompress_fast((const char *)body,
+                                               (char *)d, w * h * 4)
                            != (size - 32)) return 0;
                        break;
                      default:
@@ -2491,8 +2491,8 @@ _eet_data_image_decode_inside(const void   *data,
                             
                             dtmp = malloc(src_w * src_h * 4);
                             if (!dtmp) return 0;
-                            if (LZ4_uncompress((const char *)body,
-                                               dtmp, w * h * 4)
+                            if (LZ4_decompress_fast((const char *)body,
+                                                    dtmp, w * h * 4)
                                 != (size - 32))
                               {
                                  free(dtmp);
