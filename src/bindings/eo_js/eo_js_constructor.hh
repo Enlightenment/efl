@@ -49,7 +49,7 @@ inline v8::Handle<v8::Value> constructor(v8::Arguments const& args)
       void* data = v8::External::Cast(*args.Data())->Value();
       std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*
         f = static_cast<std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*>(data);
-      (*f)(args);
+      return (*f)(args);
     }
   else
     {
@@ -197,7 +197,7 @@ v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* kla
 }
 #else
 template <typename... F>
-v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* klass, F... f)
+v8::Handle<v8::Value> constructor_data(v8::Isolate* /*isolate*/, Eo_Class const* klass, F... f)
 {
   fprintf(stderr, "function called %s\n", __func__); fflush(stderr);
   std::cerr << "function called " << __func__ << std::endl;

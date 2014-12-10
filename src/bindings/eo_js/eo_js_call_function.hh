@@ -361,7 +361,7 @@ v8::Handle<v8::Value> call_function_data(v8::Isolate* isolate, F f)
 }
 #else
 template <typename In, typename Out, typename Ownership, typename F>
-v8::Handle<v8::Value> call_function_data(v8::Isolate* isolate, F f)
+v8::Handle<v8::Value> call_function_data(v8::Isolate* /*isolate*/, F f)
 {
   return v8::External::New
     (new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>

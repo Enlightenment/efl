@@ -83,7 +83,7 @@ inline const char* get_value_from_javascript
 
 inline Eo* get_value_from_javascript
   (v8::Local<v8::Value> v
-   , v8::Isolate* isolate
+   , v8::Isolate* /*isolate*/
    , value_tag<Eo*>)
 {
   if(v->IsNull())
@@ -144,7 +144,10 @@ inline int get_value_from_javascript
    , value_tag<Eina_Bool>)
 {
   if(v->IsBoolean() || v->IsBooleanObject())
-    return v->BooleanValue();
+    {
+      std::cout << "Boolean value " << v->BooleanValue() << std::endl;
+      return v->BooleanValue();
+    }
   else
     {
 #if 0
@@ -168,7 +171,10 @@ inline double get_value_from_javascript
    , typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
   if(v->IsNumber())
-    return v->NumberValue();
+    {
+      std::cout << "Number value " << v->NumberValue() << std::endl;
+      return v->NumberValue();
+    }
   else
     {
 #if 0

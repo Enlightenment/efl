@@ -9,6 +9,8 @@ bindings/eo_js/eo_js_constructor.hh \
 bindings/eo_js/eo_js_direction.hh \
 bindings/eo_js/eo_js_get_value_from_c.hh \
 bindings/eo_js/eo_js_get_value.hh \
+bindings/eo_js/eo_js_event.hh \
+bindings/eo_js/eo_js_construct_from_eo.hh \
 bindings/eo_js/Eo_Js.hh
 
 ### Unit tests

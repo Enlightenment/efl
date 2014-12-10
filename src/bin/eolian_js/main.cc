@@ -164,25 +164,32 @@ int main(int argc, char** argv)
    separate_functions(klass, EOLIAN_PROPERTY, false);
 
    EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "functions were separated";
-   
-   std::function<void(Eolian_Class const*)> recurse_inherits
-     = [&] (Eolian_Class const* klass)
+
+   std::function<void(Eolian_Class const*, std::function<void(Eolian_Class const*)>)>
+     recurse_inherits
+     = [&] (Eolian_Class const* klass, std::function<void(Eolian_Class const*)> function)
      {
        for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
              , last; first != last; ++first)
          {
            EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
            Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
-           if(classes.find(base) == classes.end())
-             {
-               classes.insert(base);
-               separate_functions(base, EOLIAN_METHOD, true);
-               separate_functions(base, EOLIAN_PROPERTY, true);
-               recurse_inherits(base);
-             }
+           function(base);
+           recurse_inherits(base, function);
          }
      };
-   recurse_inherits(klass);
+   
+   std::function<void(Eolian_Class const*)> save_functions
+     = [&] (Eolian_Class const* klass)
+     {
+       if(classes.find(klass) == classes.end())
+         {
+           classes.insert(klass);
+           separate_functions(klass, EOLIAN_METHOD, true);
+           separate_functions(klass, EOLIAN_PROPERTY, true);
+         }
+     };
+   recurse_inherits(klass, save_functions);
 
    EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "inherits were recursed";
    
@@ -241,20 +248,12 @@ int main(int argc, char** argv)
 
    if(is_evas(klass))
      os << "#include <Evas.h>\n";
-   
-   std::function<void(Eolian_Class const*)> recurse_inherits_includes
-     = [&] (Eolian_Class const* klass)
+
+   auto includes_fun = [&os] (Eolian_Class const* klass)
      {
-       for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
-             , last; first != last; ++first)
-         {
-           EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
-           Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
-           os << "#include <" << eolian_class_file_get(base) << ".h>\n\n";
-           recurse_inherits_includes(base);
-         }
+       os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
      };
-   recurse_inherits_includes(klass);
+   recurse_inherits(klass, includes_fun);
    os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
 
    os << "}\n";
@@ -270,38 +269,18 @@ int main(int argc, char** argv)
      }
 
    EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "namespace";
+
+   os << "static v8::Persistent<v8::ObjectTemplate> persistent_instance;\n";
+   os << "static v8::Persistent<v8::Function> constructor_from_eo;\n";
    
-   os << "EAPI void register_" << lower_case_class_name
-      << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
+   os << "EAPI v8::Local<v8::ObjectTemplate>\nregister_" << lower_case_class_name << "_from_constructor\n"
+      << "(v8::Isolate* isolate, v8::Handle<v8::FunctionTemplate> constructor)\n";
    os << "{\n";
-   os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
-   os << "    (/*isolate,*/ efl::eo::js::constructor\n"
-      << "     , efl::eo::js::constructor_data(isolate\n"
-         "         , ";
 
-   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "before print eo_class";
-   
-   print_eo_class(klass, os);
-
-   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "print eo_class";
-   
-   for(auto function : constructor_functions)
-     {
-       os << "\n         , & ::"
-          << eolian_function_full_c_name_get(function);
-       if(eolian_function_type_get(function) == EOLIAN_PROPERTY)
-         os << "_set";
-     }
-   
-   os  << "));\n";
-   os << "  constructor->SetClassName(v8::String::New/*FromUtf8(isolate,*/( \""
-      << class_name
-      << "\"));\n";
-   os << "  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
+   os << "  v8::Local<v8::ObjectTemplate> instance = constructor->InstanceTemplate();\n";
    os << "  instance->SetInternalFieldCount(1);\n";
 
-   if(!normal_functions.empty())
-     os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
+   os << "  v8::Handle<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();\n";
 
    for(auto function : normal_functions)
      {
@@ -400,13 +379,88 @@ int main(int argc, char** argv)
          }
      }
 
+   auto generate_events = [&] (Eolian_Class const* klass)
+     {
+       for(efl::eina::iterator< ::Eolian_Event> first ( ::eolian_class_events_get(klass))
+             , last; first != last; ++first)
+         {
+
+           os << "  {\n";
+           os << "    static efl::eo::js::event_information const event_information\n";
+           os << "     = {&constructor_from_eo, ";
+           os << eolian_event_c_name_get(&*first);
+           os << "};\n\n";
+           os << "    /* should include event " << ::eolian_event_name_get(&*first) << "*/" << std::endl;
+           os << "    prototype->Set(v8::String::New(/*FromUtf8(isolate,*/ \"event_";
+           std::string event_name (::eolian_event_name_get(&*first));
+           std::replace(event_name.begin(), event_name.end(), ',', '_');
+           os << event_name << "\")\n      , v8::FunctionTemplate::New(/*isolate,*/ &efl::eo::js::event_call\n"
+              << "        , v8::External::New(const_cast<efl::eo::js::event_information*>"
+              << "(&event_information)) ));\n";
+           os << "  }\n\n";
+           
+         }
+     };
+   generate_events(klass);
+   recurse_inherits(klass, generate_events);
+
+   os << "  static_cast<void>(prototype); /* avoid warnings */\n";
+   os << "  static_cast<void>(isolate); /* avoid warnings */\n";
+   os << "  return instance;\n";
+   os << "}\n\n";
+
+   os << "EAPI void register_" << lower_case_class_name
+      << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
+   os << "{\n";
+   os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
+   os << "    (/*isolate,*/ efl::eo::js::constructor\n"
+      << "     , efl::eo::js::constructor_data(isolate\n"
+         "         , ";
+
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "before print eo_class";
+   
+   print_eo_class(klass, os);
+
+   EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "print eo_class";
+   
+   for(auto function : constructor_functions)
+     {
+       os << "\n         , & ::"
+          << eolian_function_full_c_name_get(function);
+       if(eolian_function_type_get(function) == EOLIAN_PROPERTY)
+         os << "_set";
+     }
+   
+   os  << "));\n";
+
+   os << "  register_" << lower_case_class_name << "_from_constructor(isolate, constructor);\n";
+
+   os << "  constructor->SetClassName(v8::String::New/*FromUtf8(isolate,*/( \""
+      << class_name
+      << "\"));\n";
+
    os << "  global->Set(v8::String::New/*FromUtf8(isolate,*/( \""
       << class_name << "\")"
       << ", constructor->GetFunction());\n";
 
-   os << "}\n";
 
+   os << "  {\n";
+   os << "    v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
+   os << "      (/*isolate,*/ &efl::eo::js::construct_from_eo);\n";
+   os << "    constructor->SetClassName(v8::String::New/*FromUtf8(isolate,*/( \""
+      << class_name
+      << "\"));\n";
+   os << "    v8::Local<v8::ObjectTemplate> instance = "
+      << "register_" << lower_case_class_name << "_from_constructor(isolate, constructor);\n";
+   os << "    persistent_instance = v8::Persistent<v8::ObjectTemplate>::New(instance);\n";
+   os << "    constructor_from_eo = v8::Persistent<v8::Function>::New(constructor->GetFunction());\n";
+   os << "  }\n";
+   
+   os << "}\n\n";
+   
    for(std::size_t i = 0, j = namespace_size(klass); i != j; ++i)
      os << "}";
    os << "\n";
+
+
 }
