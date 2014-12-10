@@ -64,9 +64,7 @@ _cb_device_paused(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
    if (eldbus_message_arguments_get(msg, "uus", &maj, &min, &type))
      {
         if (!strcmp(type, "pause"))
-          {
-             _ecore_drm_dbus_device_pause_done(maj, min);
-          }
+          _ecore_drm_dbus_device_pause_done(maj, min);
 
         if (maj == DRM_MAJOR)
           _ecore_drm_event_activate_send(EINA_FALSE);
