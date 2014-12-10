@@ -159,6 +159,11 @@ struct _Ecore_Drm_Evdev
 
    int mt_slot;
 
+   struct 
+     {
+        int w, h;
+     } output;
+
    /* struct  */
    /*   { */
    /*      int min_x, min_y; */
@@ -227,6 +232,8 @@ typedef void (*Ecore_Drm_Open_Cb)(void *data, int fd, Eina_Bool b);
 Eina_Bool _ecore_drm_launcher_device_open(const char *device, Ecore_Drm_Open_Cb callback, void *data, int flags);
 int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
 void _ecore_drm_launcher_device_close(const char *device, int fd);
+
+void _ecore_drm_inputs_update_output(Ecore_Drm_Device *dev, int w, int h);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *device);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
