@@ -9,16 +9,11 @@ static void
 _device_calibration_set(Ecore_Drm_Evdev *edev)
 {
    const char *sysname;
-   int w = 0, h = 0;
    float cal[6];
    const char *device;
    Eina_List *devices;
    const char *vals;
    enum libinput_config_status status;
-
-   ecore_drm_output_size_get(edev->seat->input->dev, 
-                             edev->seat->input->dev->window, &w, &h);
-   if ((w == 0) || (h == 0)) return;
 
    if ((!libinput_device_config_calibration_has_matrix(edev->device)) || 
        (libinput_device_config_calibration_get_default_matrix(edev->device, cal) != 0))
@@ -37,8 +32,8 @@ _device_calibration_set(Ecore_Drm_Evdev *edev)
                     &cal[0], &cal[1], &cal[2], &cal[3], &cal[4], &cal[5]) != 6))
           goto cont;
 
-        cal[2] /= w;
-        cal[5] /= h;
+        cal[2] /= edev->output.w;
+        cal[5] /= edev->output.h;
 
         status = 
           libinput_device_config_calibration_set_matrix(edev->device, cal);
@@ -609,8 +604,10 @@ _device_handle_touch_down(struct libinput_device *device, struct libinput_event_
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   edev->mouse.x = libinput_event_touch_get_x(event);
-   edev->mouse.y = libinput_event_touch_get_y(event);
+   edev->mouse.x = 
+     libinput_event_touch_get_x_transformed(event, edev->output.w);
+   edev->mouse.y = 
+     libinput_event_touch_get_y_transformed(event, edev->output.h);
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
    _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_DOWN);
@@ -628,8 +625,10 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
-   edev->mouse.x = libinput_event_touch_get_x(event);
-   edev->mouse.y = libinput_event_touch_get_y(event);
+   edev->mouse.x = 
+     libinput_event_touch_get_x_transformed(event, edev->output.w);
+   edev->mouse.y = 
+     libinput_event_touch_get_y_transformed(event, edev->output.h);
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
    ev->window = (Ecore_Window)input->dev->window;
@@ -669,8 +668,8 @@ _device_handle_touch_up(struct libinput_device *device, struct libinput_event_to
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   edev->mouse.x = 0;
-   edev->mouse.y = 0;
+   /* edev->mouse.x = 0; */
+   /* edev->mouse.y = 0; */
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
    _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_UP);
