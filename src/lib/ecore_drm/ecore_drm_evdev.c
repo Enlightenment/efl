@@ -343,7 +343,6 @@ static void
 _device_handle_pointer_motion_absolute(struct libinput_device *device, struct libinput_event_pointer *event)
 {
    Ecore_Drm_Evdev *edev;
-   int x, y;
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
