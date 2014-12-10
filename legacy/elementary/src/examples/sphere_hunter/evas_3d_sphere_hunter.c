@@ -348,7 +348,6 @@ _restart_level(void *data, Evas_Object *btn, void *ev)
    Eina_List *l = NULL;
    Eo *item = NULL;
    Scene_Data *scene = (Scene_Data *)data;
-   Eina_Bool r = EINA_FALSE;
 
    EINA_LIST_FOREACH(scene->items, l, item)
      {
@@ -597,7 +596,6 @@ _create_cubes(Scene_Data *data, Evas_Real r, int count)
    int i;
    Evas_Real alpha;
    Evas_Real d_alpha;
-   Eina_Bool set = EINA_TRUE;
 
    data->items = NULL;
    d_alpha = 360 / count;
@@ -704,36 +702,17 @@ _scene_setup(Scene_Data *data, Evas_Real r, int count)
          evas_3d_scene_camera_node_set(data->camera_node));
 }
 
-static char *
-_score_get(int score)
-{
-   switch(score)
-     {
-        case 1:
-          return "1";
-        case 2:
-          return "2";
-        case 3:
-          return "3";
-        case 4:
-          return "4";
-        case 5:
-          return "5";
-        case 6:
-          return "6";
-        case 7:
-          return "7";
-        case 8:
-          return "8";
-        case 9:
-          return "9";
-        case 10:
-          return "10";
+char score_buffer[32];
 
-        default:
-          return "0";
-        break;
+static char *
+_score_get(int sc)
+{
+   if (sc >= 0 || sc <= 10)
+     {
+        eina_convert_itoa(sc, score_buffer);
+        return score_buffer;
      }
+   return "0";
 }
 
 static Eina_Bool
@@ -746,7 +725,6 @@ _animate_ball(void *data)
    Evas_Real xx, yy, zz;
    Evas_Real d_x, d_y, d_z;
    int i = 9;
-   Eina_Bool r = EINA_FALSE;
 
    if (scene->items && game)
      {
@@ -874,7 +852,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Scene_Data data;
-   Eina_Bool r = EINA_FALSE;
+   Eina_Bool r = EINA_TRUE;
 
    elm_init(0, 0);
    setenv("ELM_ENGINE", "opengl_x11", 1);
@@ -922,14 +900,14 @@ elm_main(int argc, char **argv)
    elm_layout_content_set(layout, "swallow.scene", image);
    evas_object_show(layout);
 
-   r = evas_object_key_grab(win, "w", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "s", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "d", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "a", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "n", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "Up", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "Down", 0, 0, EINA_TRUE);
-   r = evas_object_key_grab(win, "space", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "w", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "s", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "d", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "a", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "n", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "Up", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "Down", 0, 0, EINA_TRUE);
+   r &= evas_object_key_grab(win, "space", 0, 0, EINA_TRUE);
 
    elm_object_focus_set(layout, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_KEY_DOWN, _key_down, &data);
