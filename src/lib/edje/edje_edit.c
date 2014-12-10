@@ -10440,7 +10440,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      }
 
    //Text
-   if (rp->part->type == EDJE_PART_TYPE_TEXT)
+   if ((rp->part->type == EDJE_PART_TYPE_TEXT) || (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
      {
 	Edje_Part_Description_Text *txt;
 
@@ -10461,10 +10461,14 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	     else
 	       BUF_APPENDF(I6"font: \"%s\";\n", edje_string_get(&txt->text.font));
 	  }
+        if (edje_string_id_get(&txt->text.repch))
+          BUF_APPENDF(I6"repch: \"%s\";\n", edje_string_id_get(&txt->text.repch));
 	if (txt->text.size)
 	  BUF_APPENDF(I6"size: %d;\n", txt->text.size);
 	if (txt->text.text_class)
 	  BUF_APPENDF(I6"text_class: \"%s\";\n", txt->text.text_class);
+        if (txt->text.size_range_min || txt->text.size_range_max)
+          BUF_APPENDF(I6"size_range: %d %d;\n", txt->text.size_range_min, txt->text.size_range_max);
 	if (txt->text.fit_x || txt->text.fit_y)
 	  BUF_APPENDF(I6"fit: %d %d;\n", txt->text.fit_x, txt->text.fit_y);
     if (txt->text.min_x || txt->text.min_y)
@@ -10476,12 +10480,18 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 		                                         TO_DOUBLE(txt->text.align.x),
 		                                         TO_DOUBLE(txt->text.align.y),
 		                                         buf, &ret);
-        //TODO Support source
-        //TODO Support text_source
+
+        if (txt->text.id_source != -1)
+          BUF_APPENDF(I6"source: \"%s\";\n", _edje_part_name_find(ed, txt->text.id_source));
+        if (txt->text.id_text_source != -1)
+          BUF_APPENDF(I6"text_source: \"%s\";\n", _edje_part_name_find(ed, txt->text.id_text_source));
 	if (txt->text.ellipsis)
 	  _edje_source_with_double_values_append(I6"ellipsis", 1,
 	                                         txt->text.ellipsis,
 	                                         0.0, buf, &ret);
+        if (edje_string_id_get(&txt->text.style))
+          BUF_APPENDF(I6"style: \"%s\";\n", edje_string_id_get(&txt->text.style));
+        //TODO Filter
 	BUF_APPEND(I5"}\n");
      }
 
