@@ -178,7 +178,12 @@ static uv_loop_t* (*_dl_uv_default_loop)() = 0;
 static int (*_dl_uv_poll_init_socket)(uv_loop_t* loop, uv_poll_t* handle, uv_os_sock_t fd) = 0;
 static int (*_dl_uv_poll_init)(uv_loop_t* loop, uv_poll_t* handle, int fd) = 0;
 static int (*_dl_uv_poll_start)(uv_poll_t* handle, int events, uv_poll_cb cb) = 0;
-static int (*_dl_uv_idle_init)(uv_loop_t* loop, uv_idle_t* idle) = 0;
+static int (*_dl_uv_idle_init_)(uv_loop_t* loop, uv_idle_t* idle) = 0;
+static int _dl_uv_idle_init(uv_loop_t* loop, uv_idle_t* idle)
+{
+  DBG("uv_idle_init %p", idle);
+  return _dl_uv_idle_init_(loop, idle);
+}
 static int (*_dl_uv_idle_start)(uv_idle_t* handle, uv_idle_cb cb) = 0;
 static int (*_dl_uv_timer_init)(uv_loop_t*, uv_timer_t* handle);
 static int (*_dl_uv_timer_start)(uv_timer_t* handle,
@@ -190,7 +195,12 @@ static int (*_dl_uv_prepare_init)(uv_loop_t*, uv_prepare_t* prepare);
 static int (*_dl_uv_prepare_start)(uv_prepare_t* prepare, uv_prepare_cb cb);
 static int (*_dl_uv_check_init)(uv_loop_t*, uv_check_t* prepare);
 static int (*_dl_uv_check_start)(uv_check_t* prepare, uv_check_cb cb);
-static int (*_dl_uv_close)(uv_handle_t* handle, uv_close_cb close_cb);
+static int (*_dl_uv_close_)(uv_handle_t* handle, uv_close_cb close_cb);
+static int _dl_uv_close(uv_handle_t* handle, uv_close_cb close_cb)
+{
+  DBG("closing _dl_uv_close %p", handle);
+  return _dl_uv_close_(handle, close_cb);
+}
 #endif
 
 #define NS_PER_SEC (1000.0 * 1000.0 * 1000.0)
@@ -429,9 +439,9 @@ _ecore_main_uv_poll_cb(uv_poll_t* handle, int status, int events)
 
   if (status)
     fdh->error_active = EINA_TRUE;
-  else if (events & UV_READABLE)
+  if (events & UV_READABLE)
     fdh->read_active = EINA_TRUE;
-  else if (events & UV_WRITABLE)
+  if (events & UV_WRITABLE)
     fdh->write_active = EINA_TRUE;
 
   _ecore_try_add_to_call_list(fdh);
@@ -443,6 +453,7 @@ _ecore_main_uv_events_from_fdh(Ecore_Fd_Handler *fdh)
    int events = 0;
    if (fdh->flags & ECORE_FD_READ) events |= UV_READABLE;
    if (fdh->flags & ECORE_FD_WRITE) events |= UV_WRITABLE;
+   DBG("events is %d", (int)events);
    return events;
 }
 #endif
@@ -466,7 +477,7 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 #ifdef USE_LIBUV
        if(!fdh->file)
          {
-           DBG("_ecore_main_fdh_poll_add libuv socket");
+           DBG("_ecore_main_fdh_poll_add libuv socket %p", fdh);
            fdh->uv_handle.data = fdh;
            DBG("_ecore_main_fdh_poll_add2 %p", fdh);
            _dl_uv_poll_init_socket(_dl_uv_default_loop(), &fdh->uv_handle, fdh->fd);
@@ -956,14 +967,7 @@ void _ecore_main_loop_timer_run(uv_timer_t* timer)
   DBG("_ecore_main_loop_timer_run");
   if(_ecore_main_uv_idling)
     {
-      DBG("_ecore_main_loop_timer_run");
-      if(_ecore_main_uv_idler_calling)
-        {
-          _ecore_main_uv_idler_calling = EINA_FALSE;
-          _dl_uv_close(&_ecore_main_uv_idler_caller, 0);
-        }
-
-      DBG("_ecore_main_loop_timer_run");
+      DBG("_ecore_main_loop_timer_run EXITING IDLE");
       _ecore_main_uv_idling = EINA_FALSE;
       _ecore_animator_run_reset();
       _ecore_idle_exiter_call();
@@ -1001,20 +1005,42 @@ void _ecore_main_loop_timer_run(uv_timer_t* timer)
 
   if(!_ecore_event_exist())
     {
-      DBG("_ecore_main_loop_uv_prepare");
+      DBG("_ecore_main_loop_uv_prepare ENTERING IDLE");
       _ecore_main_uv_idling = EINA_TRUE;
       _ecore_idle_enterer_call();
       _ecore_throttle();
 
       if(_ecore_idler_exist() && !_ecore_event_exist())
         {
-          DBG("_ecore_main_loop_uv_prepare");
-          _ecore_main_uv_idler_calling = EINA_TRUE;
-          _dl_uv_idle_init(_dl_uv_default_loop(), &_ecore_main_uv_idler_caller);
-          _dl_uv_idle_start(&_ecore_main_uv_idler_caller, &_ecore_main_loop_idler_cb);
+          DBG("_ecore_main_loop_uv_prepare may call idles?");
+          if(_ecore_main_uv_idler_calling)
+            {
+              DBG("_ecore_main_loop_uv_prepare CALL IDLES");
+              _ecore_main_uv_idler_calling = EINA_TRUE;
+              _dl_uv_idle_init(_dl_uv_default_loop(), &_ecore_main_uv_idler_caller);
+              _dl_uv_idle_start(&_ecore_main_uv_idler_caller, &_ecore_main_loop_idler_cb);
+            }
+        }
+      else
+        {
+          if(_ecore_main_uv_idler_calling)
+            {
+              DBG("_ecore_main_loop_timer_run STOP IDLES");
+              _ecore_main_uv_idler_calling = EINA_FALSE;
+              _dl_uv_close(&_ecore_main_uv_idler_caller, 0);
+            }
         }
     }
-
+  else
+    {
+      if(_ecore_main_uv_idler_calling)
+        {
+          DBG("_ecore_main_loop_timer_run STOP IDLES");
+          _ecore_main_uv_idler_calling = EINA_FALSE;
+          _dl_uv_close(&_ecore_main_uv_idler_caller, 0);
+        }
+    }
+    
   DBG("exit\n");
 }
 
@@ -1062,16 +1088,16 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
 
    if(_ecore_main_uv_idling)
      {
-       DBG("_ecore_main_loop_idler_cb");
+       DBG("_ecore_main_loop_uv_check");
        if(_ecore_main_uv_idler_calling && (_ecore_event_exist() || !_ecore_idler_exist()))
          {
-           DBG("_ecore_main_loop_idler_cb");
+           DBG("_ecore_main_loop_uv_check STOP IDLES");
            _ecore_main_uv_idler_calling = EINA_FALSE;
            _dl_uv_close(&_ecore_main_uv_idler_caller, 0);
          }
        if(_ecore_event_exist())
          {
-           DBG("_ecore_main_loop_idler_cb");
+           DBG("_ecore_main_loop_idler_cb EXIT IDLE");
            assert(!_ecore_main_uv_idler_calling);
            _ecore_main_uv_idling = EINA_FALSE;
            _ecore_animator_run_reset();
@@ -1097,6 +1123,13 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
      DBG("");
      _ecore_timer_cleanup();
      DBG("");
+
+     _ecore_idle_enterer_call();
+     _ecore_throttle();
+     _ecore_main_uv_idling = EINA_TRUE;
+
+     if (fd_handlers_with_buffer)
+       _ecore_main_fd_handlers_buf_call();
    }
 
    in_main_loop--;
@@ -1157,7 +1190,7 @@ _ecore_main_loop_init(void)
          assert(!!_dl_uv_poll_init);
          _dl_uv_poll_start = dlsym(lib, "uv_poll_start");
          assert(!!_dl_uv_poll_start);
-         _dl_uv_idle_init = dlsym(lib, "uv_idle_init");
+         _dl_uv_idle_init_ = dlsym(lib, "uv_idle_init");
          assert(!!_dl_uv_idle_init);
          _dl_uv_idle_start = dlsym(lib, "uv_idle_start");
          assert(!!_dl_uv_idle_start);
@@ -1175,7 +1208,7 @@ _ecore_main_loop_init(void)
          assert(!!_dl_uv_check_init);
          _dl_uv_check_start = dlsym(lib, "uv_check_start");
          assert(!!_dl_uv_check_start);
-         _dl_uv_close = dlsym(lib, "uv_close");
+         _dl_uv_close_ = dlsym(lib, "uv_close");
          assert(!!_dl_uv_close);
          //dlclose(lib);
 
@@ -1268,6 +1301,7 @@ _ecore_main_loop_shutdown(void)
 #ifdef USE_LIBUV
    if(_dl_uv_run)
      {
+       DBG("_ecore_main_loop_shutdown");
        _dl_uv_timer_stop(&_ecore_main_uv_handle_timers);
        _dl_uv_close(&_ecore_main_uv_handle_timers, 0);
      }
@@ -1406,6 +1440,7 @@ ecore_main_loop_nested_get(void)
 EAPI Eina_Bool
 ecore_main_loop_animator_ticked_get(void)
 {
+   DBG("ecore_main_loop_animator_ticked_get");
    return _ecore_animator_run_get();
 }
 
@@ -2170,14 +2205,14 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
        DBG("_ecore_main_loop_uv_prepare");
         if(!_ecore_event_exist())
           {
-            DBG("_ecore_main_loop_uv_prepare");
+            DBG("_ecore_main_loop_uv_prepare ENTER IDLE");
             _ecore_main_uv_idling = EINA_TRUE;
             _ecore_idle_enterer_call();
             _ecore_throttle();
 
             if(_ecore_idler_exist() && !_ecore_event_exist())
               {
-                DBG("_ecore_main_loop_uv_prepare");
+                DBG("_ecore_main_loop_uv_prepare CALL IDLES");
                 _ecore_main_uv_idler_calling = EINA_TRUE;
                 _dl_uv_idle_init(_dl_uv_default_loop(), &_ecore_main_uv_idler_caller);
                 _dl_uv_idle_start(&_ecore_main_uv_idler_caller, &_ecore_main_loop_idler_cb);
@@ -2190,7 +2225,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
      }
    else if(_ecore_event_exist())
      {
-       DBG("_ecore_main_loop_uv_prepare");
+       DBG("_ecore_main_loop_uv_prepare EXIT IDLE");
        _ecore_main_uv_idling = EINA_FALSE;
 
         _ecore_idle_exiter_call();
