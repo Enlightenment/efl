@@ -209,7 +209,7 @@ static void
 _sphere_init(int precision)
 {
    int i, j;
-   unsigned short *index;
+   unsigned short *idx;
 
    vertex_count = (precision + 1) * (precision + 1);
    index_count = precision * precision * 6;
@@ -275,7 +275,7 @@ _sphere_init(int precision)
           }
      }
 
-   index = &indices[0];
+   idx = &indices[0];
 
    /* Calculate and fill in the buffer of indices,
       prepare stage for gl triangulation. */
@@ -283,13 +283,13 @@ _sphere_init(int precision)
      {
         for (j = 0; j < precision; j++)
           {
-             *index++ = (i * (precision + 1)) + j;
-             *index++ = (i * (precision + 1)) + j + 1;
-             *index++ = ((i + 1) * (precision + 1)) + j;
+             *idx++ = (i * (precision + 1)) + j;
+             *idx++ = (i * (precision + 1)) + j + 1;
+             *idx++ = ((i + 1) * (precision + 1)) + j;
 
-             *index++ = ((i + 1) * (precision + 1)) + j;
-             *index++ = (i * (precision + 1)) + j + 1;
-             *index++ = ((i + 1) * (precision + 1)) + j + 1;
+             *idx++ = ((i + 1) * (precision + 1)) + j;
+             *idx++ = (i * (precision + 1)) + j + 1;
+             *idx++ = ((i + 1) * (precision + 1)) + j + 1;
           }
      }
 
@@ -854,19 +854,16 @@ elm_main(int argc, char **argv)
    Scene_Data data;
    Eina_Bool r = EINA_TRUE;
 
-   elm_init(0, 0);
    setenv("ELM_ENGINE", "opengl_x11", 1);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("__WIN__", "Sphere Hunter");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_show(win);
 
    layout = elm_layout_add(win);
    elm_layout_file_set(layout, "sphere_hunter.edj", "game");
-   elm_win_resize_object_add(win, layout);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, layout);
 
    text = evas_object_text_add(win);
    evas_object_text_font_set(text, "Sans", 75);
@@ -876,13 +873,11 @@ elm_main(int argc, char **argv)
    btn_restart = elm_button_add(win);
    elm_layout_content_set(layout, "swallow.reload", btn_restart);
    elm_object_text_set(btn_restart, "R E S T A R T     L E V E L");
-   evas_object_size_hint_align_set(btn_restart, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(btn_restart);
 
    btn_quit = elm_button_add(win);
    elm_layout_content_set(layout, "swallow.exit", btn_quit);
    elm_object_text_set(btn_quit, "E X I T");
-   evas_object_size_hint_align_set(btn_quit, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(btn_quit);
 
    evas = evas_object_evas_get(win);
@@ -918,6 +913,8 @@ elm_main(int argc, char **argv)
    anim_cube = ecore_animator_add(_animate_cubes, &data);
    anim_camera = ecore_animator_add(_animate_camera, &data);
    anim_ball = ecore_animator_add(_animate_ball, &data);
+
+   evas_object_show(win);
 
    elm_run();
 
