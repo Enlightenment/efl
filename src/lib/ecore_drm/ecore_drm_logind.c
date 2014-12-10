@@ -204,6 +204,11 @@ _ecore_drm_logind_vt_open(Ecore_Drm_Device *dev, const char *name)
      {
         close(dev->tty.fd);
         dev->tty.fd = -1;
+        if (dev->tty.name)
+          {
+             eina_stringshare_del(dev->tty.name);
+             dev->tty.name = NULL;
+          }
         return EINA_FALSE;
      }
 
