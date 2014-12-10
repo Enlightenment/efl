@@ -687,7 +687,7 @@ AM_CONDITIONAL(HAVE_SYSTEMD_LOGIN, test "x$have_systemd_login" = "xyes")
 
 # check for systemd library if requested
 if test "x${want_systemd}" = "xyes" -a "x${have_systemd_pkg}" = "xno"; then
-   AC_MSG_ERROR([Systemd dependencie requested but not found])
+   AC_MSG_ERROR([Systemd dependency requested but not found])
 fi
 
 AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
