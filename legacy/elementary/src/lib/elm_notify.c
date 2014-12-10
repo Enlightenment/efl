@@ -224,17 +224,6 @@ _block_area_clicked_cb(void *data,
    evas_object_smart_callback_call(data, SIG_BLOCK_CLICKED, NULL);
 }
 
-static void
-_restack_cb(void *data EINA_UNUSED,
-            Evas *e EINA_UNUSED,
-            Evas_Object *obj,
-            void *event_info EINA_UNUSED)
-{
-   ELM_NOTIFY_DATA_GET(obj, sd);
-
-   evas_object_layer_set(sd->notify, evas_object_layer_get(obj));
-}
-
 EOLIAN static void
 _elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
@@ -449,9 +438,8 @@ _elm_notify_evas_object_smart_add(Eo *obj, Elm_Notify_Data *priv)
    priv->allow_events = EINA_TRUE;
 
    priv->notify = edje_object_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(priv->notify, obj);
 
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESTACK, _restack_cb, obj);
    edje_object_signal_callback_add
       (priv->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);
 
@@ -656,6 +644,7 @@ _elm_notify_allow_events_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool allow)
         sd->block_events = elm_layout_add(obj);
         _block_events_theme_apply(obj);
         elm_widget_resize_object_set(obj, sd->block_events, EINA_TRUE);
+        evas_object_stack_above(sd->notify, sd->block_events);
         elm_layout_signal_callback_add
           (sd->block_events, "elm,action,click", "elm",
           _block_area_clicked_cb, obj);
