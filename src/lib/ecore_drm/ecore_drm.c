@@ -24,9 +24,11 @@ _ecore_drm_event_activate_send(Eina_Bool active)
 {
    Ecore_Drm_Event_Activate *e;
 
-   e = calloc(1, sizeof(Ecore_Drm_Event_Activate));
+   if (!(e = calloc(1, sizeof(Ecore_Drm_Event_Activate)))) return;
+
    e->active = active;
-   ecore_event_add(ECORE_DRM_EVENT_ACTIVATE, e, _ecore_drm_event_activate_free, NULL);
+   ecore_event_add(ECORE_DRM_EVENT_ACTIVATE, e, 
+                   _ecore_drm_event_activate_free, NULL);
 }
 
 /**
