@@ -4322,6 +4322,7 @@ st_collections_group_parts_part_inherit(void)
         if (pc->parts[i] == current_part)
           {
              ERR("Cannot inherit from same part '%s' in group '%s'", name, current_de->entry);
+             free(name);
              exit(-1);
           }
         pname = current_part->name;
@@ -4336,9 +4337,8 @@ st_collections_group_parts_part_inherit(void)
      }
 
    ERR("Cannot inherit non-existing part '%s' in group '%s'", name, current_de->entry);
-   exit(-1);
-
    free(name);
+   exit(-1);
 }
 
 static void
@@ -9675,7 +9675,6 @@ st_collections_group_parts_part_description_map_color(void)
      {
         ERR("not enough memory");
         exit(-1);
-        return;
      }
 
    *color = tmp;
