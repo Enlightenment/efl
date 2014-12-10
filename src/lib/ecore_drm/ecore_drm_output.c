@@ -258,10 +258,7 @@ _ecore_drm_output_backlight_init(Ecore_Drm_Output *output EINA_UNUSED, uint32_t 
         found = EINA_TRUE;
 cont:
         eina_stringshare_del(devtype);
-        if (found)
-          {
-             break;
-          }
+        if (found) break;
      }
 
    if (!found) goto out;
@@ -274,7 +271,7 @@ cont:
 
 out:
    EINA_LIST_FREE(devs, device);
-      eina_stringshare_del(device);
+   eina_stringshare_del(device);
 
    return backlight;
 }
