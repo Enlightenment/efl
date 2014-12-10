@@ -68,10 +68,8 @@ _cb_device_paused(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
              _ecore_drm_dbus_device_pause_done(maj, min);
           }
 
-        /* if (maj == DRM_MAJOR) */
-        /*   { */
-        /*      // emit paused to compositor */
-        /*   } */
+        if (maj == DRM_MAJOR)
+          _ecore_drm_event_activate_send(EINA_FALSE);
      }
 }
 
@@ -90,10 +88,8 @@ _cb_device_resumed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
 
    if (eldbus_message_arguments_get(msg, "uuh", &maj, &min, &fd))
      {
-        /* if (maj == DRM_MAJOR) */
-        /*   { */
-        /*      // emit active to compositor */
-        /*   } */
+        if (maj == DRM_MAJOR)
+          _ecore_drm_event_activate_send(EINA_TRUE);
      }
 }
 

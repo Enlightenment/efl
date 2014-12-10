@@ -229,6 +229,8 @@ struct _Ecore_Drm_Sprite
 
 typedef void (*Ecore_Drm_Open_Cb)(void *data, int fd, Eina_Bool b);
 
+void _ecore_drm_event_activate_send(Eina_Bool active);
+
 Eina_Bool _ecore_drm_launcher_device_open(const char *device, Ecore_Drm_Open_Cb callback, void *data, int flags);
 int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
 void _ecore_drm_launcher_device_close(const char *device, int fd);

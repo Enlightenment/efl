@@ -78,6 +78,8 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
           }
         else
           ERR("Could not drop drm master: %m");
+
+        _ecore_drm_event_activate_send(EINA_FALSE);
      }
    else if (ev->number == 2)
      {
@@ -99,6 +101,8 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
              /* enable inputs */
              EINA_LIST_FOREACH(dev->inputs, l, input)
                ecore_drm_inputs_enable(input);
+
+             _ecore_drm_event_activate_send(EINA_TRUE);
           }
         else
           ERR("Could not acquire VT: %m");

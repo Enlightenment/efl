@@ -108,6 +108,11 @@ struct _Ecore_Drm_Device
    unsigned int window;
 };
 
+struct _Ecore_Drm_Event_Activate
+{
+   Eina_Bool active;
+};
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -128,6 +133,11 @@ typedef struct _Ecore_Drm_Seat Ecore_Drm_Seat;
 
 /* opaque structure to represent a drm sprite */
 typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
+
+/* sturcture to inform drm activation state */
+typedef struct _Ecore_Drm_Event_Activate Ecore_Drm_Event_Activate;
+
+EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 
 /**
  * @file
