@@ -589,7 +589,7 @@ _device_handle_touch_event(Ecore_Drm_Evdev *edev, struct libinput_event_touch *e
         edev->mouse.prev_button = button;
      }
 
-   ev->buttons = button;
+   ev->buttons = ((button & 0x00F) + 1);
 
    if (edev->mouse.did_double)
      ev->double_click = 1;
@@ -610,6 +610,7 @@ _device_handle_touch_down(struct libinput_device *device, struct libinput_event_
      libinput_event_touch_get_x_transformed(event, edev->output.w);
    edev->mouse.y = 
      libinput_event_touch_get_y_transformed(event, edev->output.h);
+
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
    _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_DOWN);
@@ -631,6 +632,7 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
      libinput_event_touch_get_x_transformed(event, edev->output.w);
    edev->mouse.y = 
      libinput_event_touch_get_y_transformed(event, edev->output.h);
+
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
    ev->window = (Ecore_Window)input->dev->window;
@@ -642,7 +644,8 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
    /* NB: Commented out. This borks mouse movement if no key has been 
     * pressed yet due to 'state' not being set */
 //   _device_modifiers_update(dev);
-   ev->modifiers = edev->xkb.modifiers;
+//   ev->modifiers = edev->xkb.modifiers;
+   ev->modifiers = 0;
 
    ev->x = edev->mouse.x;
    ev->y = edev->mouse.y;
@@ -670,8 +673,6 @@ _device_handle_touch_up(struct libinput_device *device, struct libinput_event_to
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   /* edev->mouse.x = 0; */
-   /* edev->mouse.y = 0; */
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
    _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_UP);
@@ -705,8 +706,6 @@ _ecore_drm_evdev_event_process(struct libinput_event *event)
 {
    struct libinput_device *device;
    Eina_Bool ret = EINA_TRUE;
-
-   /* TODO: Finish Touch Events */
 
    device = libinput_event_get_device(event);
    switch (libinput_event_get_type(event))
