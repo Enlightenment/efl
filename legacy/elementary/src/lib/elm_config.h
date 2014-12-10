@@ -818,9 +818,9 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
  * Elementary will use for drawing its windows' pixels.
  *
  * The following are the available engines:
- * @li "fb"
- * @li "buffer"
- * @li "ews"
+ * @li "fb" (Framebuffer)
+ * @li "buffer" (Pixel Memory Buffer)
+ * @li "ews" (Ecore + Evas Single Process Windowing System)
  * @li NULL - no engine config
  *
  * @deprecated Please use elm_config_accel_preference_override_set() instead
@@ -877,6 +877,8 @@ EAPI const char *elm_config_preferred_engine_get(void);
  * application startup. Note that it is a hint and may not be honored.
  *
  * @see elm_win_add()
+ * @see elm_config_accel_preference_set()
+ * @see elm_config_engine_set()
  */
 EAPI void        elm_config_preferred_engine_set(const char *engine);
 
@@ -912,6 +914,8 @@ EAPI const char *elm_config_accel_preference_get(void);
  * elm_config_preferred_engine_set().
  * 
  * @see elm_win_add()
+ * @see elm_config_accel_preference_override_set()
+ *
  * @since 1.10
  */
 EAPI void        elm_config_accel_preference_set(const char *pref);
@@ -1288,6 +1292,8 @@ EAPI Eina_Bool  elm_config_accel_preference_override_get(void);
  *
  * @param enabled This should be @c EINA_TRUE if enabled, or @c EINA_FALSE if
  * not.
+ *
+ * @see elm_config_accel_preference_set()
  *
  * @since 1.11
  */
