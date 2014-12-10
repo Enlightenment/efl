@@ -254,18 +254,18 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
 
    /* try to init dbus */
    if (!_ecore_drm_dbus_init(sid))
-     {
-        free(sid);
-        return EINA_FALSE;
-     }
+     goto dbus_err;
 
    if (!_ecore_drm_logind_vt_open(dev, NULL))
-     {
-        free(sid);
-        return EINA_FALSE;
-     }
+     goto vt_err;
 
    return EINA_TRUE;
+
+vt_err:
+   _ecore_drm_dbus_shutdown();
+dbus_err:
+   free(sid);
+   return EINA_FALSE;
 }
 
 void
