@@ -903,8 +903,10 @@ EAPI const char *elm_config_accel_preference_get(void);
  *
  * Note that it will take effect only to Elementary windows created after
  * this is called. The @p pref string is a freeform C string that indicates
- * what kind of acceleration is preferred. This may or may not be honored,
- * but a best attempt will be made. Known strings are as follows:
+ * what kind of acceleration is preferred. Here "acceleration" majorly
+ * means to rendering and which hardware unit application renders guis with.
+ * This may or may not be honored, but a best attempt will
+ * be made. Known strings are as follows:
  * 
  * "gl", "opengl" - try use opengl.
  * "3d" - try and use a 3d acceleration unit.
