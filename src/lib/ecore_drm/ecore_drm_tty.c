@@ -254,6 +254,24 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
    return EINA_TRUE;
 }
 
+static void
+_ecore_drm_tty_restore(Ecore_Drm_Device *dev)
+{
+   int fd = dev->tty.fd;
+   struct vt_mode mode = { 0 };
+
+   if (fd < 0) return;
+
+   if (ioctl(fd, KDSETMODE, KD_TEXT))
+     ERR("Could not set KD_TEXT mode on tty: %m\n");
+
+   ecore_drm_device_master_drop(dev);
+
+   mode.mode = VT_AUTO;
+   if (ioctl(fd, VT_SETMODE, &mode) < 0)
+     ERR("Could not reset VT handling\n");
+}
+
 /**
  * Close an already opened tty
  * 
@@ -268,6 +286,8 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
+
+   _ecore_drm_tty_restore(dev);
 
    close(dev->tty.fd);
 
