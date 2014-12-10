@@ -498,7 +498,7 @@ _ecore_evas_drm_init(const char *device)
    if (!ecore_drm_inputs_create(dev))
      {
         ERR("Could not create inputs: %m");
-        goto output_err;
+        goto input_err;
      }
 
    /* try to create outputs */
@@ -513,6 +513,8 @@ _ecore_evas_drm_init(const char *device)
    return _ecore_evas_init_count;
 
 output_err:
+   ecore_drm_inputs_destroy(dev);
+input_err:
    ecore_drm_sprites_destroy(dev);
 sprite_err:
    ecore_drm_device_close(dev);
