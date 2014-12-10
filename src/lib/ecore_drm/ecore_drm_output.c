@@ -165,8 +165,7 @@ _ecore_drm_output_brightness_get(Ecore_Drm_Backlight *backlight)
    if (!brightness) return 0;
 
    ret = strtod(brightness, NULL);
-   if (ret < 0)
-     ret = 0;
+   if (ret < 0) ret = 0;
 
    return ret;
 }
@@ -184,8 +183,7 @@ _ecore_drm_output_actual_brightness_get(Ecore_Drm_Backlight *backlight)
    if (!brightness) return 0;
 
    ret = strtod(brightness, NULL);
-   if (ret < 0)
-     ret = 0;
+   if (ret < 0) ret = 0;
 
    return ret;
 }
@@ -203,8 +201,7 @@ _ecore_drm_output_max_brightness_get(Ecore_Drm_Backlight *backlight)
    if (!brightness) return 0;
 
    ret = strtod(brightness, NULL);
-   if (ret < 0)
-     ret = 0;
+   if (ret < 0) ret = 0;
 
    return ret;
 }
@@ -279,8 +276,7 @@ out:
 static void
 _ecore_drm_output_backlight_shutdown(Ecore_Drm_Backlight *backlight)
 {
-   if (!backlight)
-     return;
+   if (!backlight) return;
 
    if (backlight->device)
      eina_stringshare_del(backlight->device);
@@ -371,15 +367,14 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
         if (!output->current_mode) goto mode_err;
      }
 
-     {
-        dev->use_hw_accel = EINA_FALSE;
-        if (!_ecore_drm_output_software_setup(dev, output))
-          goto mode_err;
-        else
-          DBG("Setup Output %d for Software Rendering", output->crtc_id);
-     }
+   dev->use_hw_accel = EINA_FALSE;
+   if (!_ecore_drm_output_software_setup(dev, output))
+     goto mode_err;
+   else
+     DBG("Setup Output %d for Software Rendering", output->crtc_id);
 
-   output->backlight = _ecore_drm_output_backlight_init(output, conn->connector_type);
+   output->backlight = 
+     _ecore_drm_output_backlight_init(output, conn->connector_type);
 
    return output;
 
@@ -562,7 +557,8 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
 
-             output->dev->outputs = eina_list_append(output->dev->outputs, new_output);
+             output->dev->outputs = 
+               eina_list_append(output->dev->outputs, new_output);
           }
           drmModeFreeConnector(connector);
      }
@@ -589,9 +585,7 @@ _ecore_drm_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EI
    if (!(output = data)) return;
 
    if (_ecore_drm_output_device_is_hotplug(output))
-     {
-        _ecore_drm_update_outputs(output);
-     }
+     _ecore_drm_update_outputs(output);
 }
 
 /* public functions */
@@ -798,17 +792,9 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    /* TODO: assign planes ? */
 
    if (!output->next)
-     {
-          {
-             _ecore_drm_output_software_render(output);
-          }
-     }
+     _ecore_drm_output_software_render(output);
 
-   if (!output->next)
-     {
-        /* DBG("\tNo Next Fb"); */
-        return;
-     }
+   if (!output->next) return;
 
    output->need_repaint = EINA_FALSE;
 
@@ -821,11 +807,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
         ret = drmModeSetCrtc(output->dev->drm.fd, output->crtc_id, 
                              output->next->id, 0, 0, &output->conn_id, 1, 
                              &mode->info);
-        if (ret)
-          {
-             /* ERR("Setting output mode failed"); */
-             goto err;
-          }
+        if (ret) goto err;
      }
 
    if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, output->next->id,
