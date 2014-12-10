@@ -43,6 +43,11 @@ _ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
           }
      }
 
+   /* update input devices with new output size
+    * NB: This is needed so that things like mouse & touch events can get 
+    * transformed into the output coordinates */
+   _ecore_drm_inputs_update_output(dev, w, h);
+
    return EINA_TRUE;
 
 err:
