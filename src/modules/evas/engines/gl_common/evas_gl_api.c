@@ -460,35 +460,38 @@ _evgl_glEnable(GLenum cap)
              EVGL_Resource *rsc = _evgl_tls_resource_get();
              int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0}, cc[4] = {0,0,0,0};
 
-             if (!ctx->current_fbo)
+             if (rsc)
                {
-                  // Direct rendering to canvas
-                  if (!ctx->scissor_updated)
+                  if (!ctx->current_fbo)
                     {
-                       compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
-                                              rsc->direct.rot, 0,
-                                              0, 0, 0, 0,
-                                              rsc->direct.img.x, rsc->direct.img.y,
-                                              rsc->direct.img.w, rsc->direct.img.h,
-                                              rsc->direct.clip.x, rsc->direct.clip.y,
-                                              rsc->direct.clip.w, rsc->direct.clip.h,
-                                              oc, nc, cc);
-                       glScissor(cc[0], cc[1], cc[2], cc[3]);
+                       // Direct rendering to canvas
+                       if (!ctx->scissor_updated)
+                         {
+                            compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                                   rsc->direct.rot, 0,
+                                                   0, 0, 0, 0,
+                                                   rsc->direct.img.x, rsc->direct.img.y,
+                                                   rsc->direct.img.w, rsc->direct.img.h,
+                                                   rsc->direct.clip.x, rsc->direct.clip.y,
+                                                   rsc->direct.clip.w, rsc->direct.clip.h,
+                                                   oc, nc, cc);
+                            glScissor(cc[0], cc[1], cc[2], cc[3]);
+                         }
+                       else
+                         {
+                            compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                                   rsc->direct.rot, 1,
+                                                   ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                                   ctx->scissor_coord[2], ctx->scissor_coord[3],
+                                                   rsc->direct.img.x, rsc->direct.img.y,
+                                                   rsc->direct.img.w, rsc->direct.img.h,
+                                                   rsc->direct.clip.x, rsc->direct.clip.y,
+                                                   rsc->direct.clip.w, rsc->direct.clip.h,
+                                                   oc, nc, cc);
+                            glScissor(nc[0], nc[1], nc[2], nc[3]);
+                         }
+                       ctx->direct_scissor = 1;
                     }
-                  else
-                    {
-                       compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
-                                              rsc->direct.rot, 1,
-                                              ctx->scissor_coord[0], ctx->scissor_coord[1],
-                                              ctx->scissor_coord[2], ctx->scissor_coord[3],
-                                              rsc->direct.img.x, rsc->direct.img.y,
-                                              rsc->direct.img.w, rsc->direct.img.h,
-                                              rsc->direct.clip.x, rsc->direct.clip.y,
-                                              rsc->direct.clip.w, rsc->direct.clip.h,
-                                              oc, nc, cc);
-                       glScissor(nc[0], nc[1], nc[2], nc[3]);
-                    }
-                  ctx->direct_scissor = 1;
                }
              else
                {
@@ -533,20 +536,23 @@ _evgl_glDisable(GLenum cap)
                   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0}, cc[4] = {0,0,0,0};
                   EVGL_Resource *rsc = _evgl_tls_resource_get();
 
-                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
-                                         rsc->direct.rot, 1,
-                                         0, 0, rsc->direct.img.w, rsc->direct.img.h,
-                                         rsc->direct.img.x, rsc->direct.img.y,
-                                         rsc->direct.img.w, rsc->direct.img.h,
-                                         rsc->direct.clip.x, rsc->direct.clip.y,
-                                         rsc->direct.clip.w, rsc->direct.clip.h,
-                                         oc, nc, cc);
+                  if (rsc)
+                    {
+                       compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                              rsc->direct.rot, 1,
+                                              0, 0, rsc->direct.img.w, rsc->direct.img.h,
+                                              rsc->direct.img.x, rsc->direct.img.y,
+                                              rsc->direct.img.w, rsc->direct.img.h,
+                                              rsc->direct.clip.x, rsc->direct.clip.y,
+                                              rsc->direct.clip.w, rsc->direct.clip.h,
+                                              oc, nc, cc);
 
-                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                  glScissor(nc[0], nc[1], nc[2], nc[3]);
+                       RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+                       glScissor(nc[0], nc[1], nc[2], nc[3]);
 
-                  ctx->direct_scissor = 1;
-                  glEnable(GL_SCISSOR_TEST);
+                       ctx->direct_scissor = 1;
+                       glEnable(GL_SCISSOR_TEST);
+                    }
                }
              else
                {
