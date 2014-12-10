@@ -523,6 +523,165 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *dev
    return edev;
 }
 
+static void 
+_device_handle_touch_event(Ecore_Drm_Evdev *edev, struct libinput_event_touch *event, int state)
+{
+   Ecore_Drm_Input *input;
+   Ecore_Event_Mouse_Button *ev;
+   uint32_t timestamp, button = 0;
+
+   if (!edev) return;
+   if (!(input = edev->seat->input)) return;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
+
+   timestamp = libinput_event_touch_get_time(event);
+
+   ev->window = (Ecore_Window)input->dev->window;
+   ev->event_window = (Ecore_Window)input->dev->window;
+   ev->root_window = (Ecore_Window)input->dev->window;
+   ev->timestamp = timestamp;
+   ev->same_screen = 1;
+
+   /* NB: Commented out. This borks mouse button if no key has been 
+    * pressed yet due to 'state' not being set */
+//   _device_modifiers_update(dev);
+   ev->modifiers = edev->xkb.modifiers;
+
+   ev->x = edev->mouse.x;
+   ev->y = edev->mouse.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+
+   ev->multi.device = edev->mt_slot;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = ev->x;
+   ev->multi.y = ev->y;
+   ev->multi.root.x = ev->x;
+   ev->multi.root.y = ev->y;
+
+   if (state == ECORE_EVENT_MOUSE_BUTTON_DOWN)
+     {
+        unsigned int current;
+
+        current = timestamp;
+        edev->mouse.did_double = EINA_FALSE;
+        edev->mouse.did_triple = EINA_FALSE;
+
+        if (((current - edev->mouse.prev) <= edev->mouse.threshold) &&
+            (button == edev->mouse.prev_button))
+          {
+             edev->mouse.did_double = EINA_TRUE;
+             if (((current - edev->mouse.last) <= (2 * edev->mouse.threshold)) && 
+                 (button == edev->mouse.last_button))
+               {
+                  edev->mouse.did_triple = EINA_TRUE;
+                  edev->mouse.prev = 0;
+                  edev->mouse.last = 0;
+                  current = 0;
+               }
+          }
+
+        edev->mouse.last = edev->mouse.prev;
+        edev->mouse.prev = current;
+        edev->mouse.last_button = edev->mouse.prev_button;
+        edev->mouse.prev_button = button;
+     }
+
+   ev->buttons = button;
+
+   if (edev->mouse.did_double)
+     ev->double_click = 1;
+   if (edev->mouse.did_triple)
+     ev->triple_click = 1;
+
+   ecore_event_add(state, ev, NULL, NULL);
+}
+
+static void 
+_device_handle_touch_down(struct libinput_device *device, struct libinput_event_touch *event)
+{
+   Ecore_Drm_Evdev *edev;
+
+   if (!(edev = libinput_device_get_user_data(device))) return;
+
+   edev->mouse.x = libinput_event_touch_get_x(event);
+   edev->mouse.y = libinput_event_touch_get_y(event);
+   edev->mt_slot = libinput_event_touch_get_seat_slot(event);
+
+   _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_DOWN);
+}
+
+static void 
+_device_handle_touch_motion(struct libinput_device *device, struct libinput_event_touch *event)
+{
+   Ecore_Drm_Evdev *edev;
+   Ecore_Drm_Input *input;
+   Ecore_Event_Mouse_Move *ev;
+
+   if (!(edev = libinput_device_get_user_data(device))) return;
+   if (!(input = edev->seat->input)) return;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
+
+   edev->mouse.x = libinput_event_touch_get_x(event);
+   edev->mouse.y = libinput_event_touch_get_y(event);
+   edev->mt_slot = libinput_event_touch_get_seat_slot(event);
+
+   ev->window = (Ecore_Window)input->dev->window;
+   ev->event_window = (Ecore_Window)input->dev->window;
+   ev->root_window = (Ecore_Window)input->dev->window;
+   ev->timestamp = libinput_event_touch_get_time(event);
+   ev->same_screen = 1;
+
+   /* NB: Commented out. This borks mouse movement if no key has been 
+    * pressed yet due to 'state' not being set */
+//   _device_modifiers_update(dev);
+   ev->modifiers = edev->xkb.modifiers;
+
+   ev->x = edev->mouse.x;
+   ev->y = edev->mouse.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+
+   ev->multi.device = edev->mt_slot;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = ev->x;
+   ev->multi.y = ev->y;
+   ev->multi.root.x = ev->x;
+   ev->multi.root.y = ev->y;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+static void 
+_device_handle_touch_up(struct libinput_device *device, struct libinput_event_touch *event)
+{
+   Ecore_Drm_Evdev *edev;
+
+   if (!(edev = libinput_device_get_user_data(device))) return;
+
+   edev->mouse.x = 0;
+   edev->mouse.y = 0;
+   edev->mt_slot = libinput_event_touch_get_seat_slot(event);
+
+   _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_UP);
+}
+
+static void 
+_device_handle_touch_frame(struct libinput_device *device EINA_UNUSED, struct libinput_event_touch *event EINA_UNUSED)
+{
+   DBG("Unhandled Touch Frame Event");
+}
+
 void 
 _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *edev)
 {
@@ -569,12 +728,17 @@ _ecore_drm_evdev_event_process(struct libinput_event *event)
         _device_handle_axis(device, libinput_event_get_pointer_event(event));
         break;
       case LIBINPUT_EVENT_TOUCH_DOWN:
+        _device_handle_touch_down(device, libinput_event_get_touch_event(event));
         break;
       case LIBINPUT_EVENT_TOUCH_MOTION:
+        _device_handle_touch_motion(device, 
+                                    libinput_event_get_touch_event(event));
         break;
       case LIBINPUT_EVENT_TOUCH_UP:
+        _device_handle_touch_up(device, libinput_event_get_touch_event(event));
         break;
       case LIBINPUT_EVENT_TOUCH_FRAME:
+        _device_handle_touch_frame(device, libinput_event_get_touch_event(event));
         break;
       default:
         ret = EINA_FALSE;
