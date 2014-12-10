@@ -5,25 +5,6 @@
 #include "ecore_drm_private.h"
 
 /* local functions */
-static void 
-_cb_libinput_log(struct libinput *libinput EINA_UNUSED, enum libinput_log_priority priority, const char *format, va_list args)
-{
-   switch (priority)
-     {
-      case LIBINPUT_LOG_PRIORITY_DEBUG:
-        DBG(format, args);
-        break;
-      /* case LIBINPUT_LOG_PRIORITY_INFO: */
-      /*   INF(format, args); */
-      /*   break; */
-      case LIBINPUT_LOG_PRIORITY_ERROR:
-        ERR(format, args);
-        break;
-      default:
-        break;
-     }
-}
-
 static int 
 _cb_open_restricted(const char *path, int flags, void *data)
 {
@@ -257,9 +238,6 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
       default:
         break;
      }
-
-   /* set callback for libinput logging */
-   libinput_log_set_handler(input->libinput, &_cb_libinput_log);
 
    /* set libinput log priority */
    libinput_log_set_priority(input->libinput, priority);
