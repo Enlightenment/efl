@@ -415,8 +415,8 @@ evas_image_load_file_data_tgv(void *loader_data,
 
             if (loader->compress)
               {
-                 expand_length = LZ4_uncompress(data_start, buffer,
-                                                block_count * etc_block_size);
+                 expand_length = LZ4_decompress_fast(data_start, buffer,
+                                                     block_count * etc_block_size);
                  // That's an overhead for now, need to be fixed
                  if (expand_length != block_length)
                    goto on_error;
