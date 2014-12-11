@@ -25,7 +25,7 @@ elua_init(void)
    eina_log_timing(_elua_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
    INF("elua init");
 
-   _elua_pfx = eina_prefix_new(NULL, elua_init, "ELUA", "elua", NULL,
+   _elua_pfx = eina_prefix_new(NULL, elua_init, "ELUA", "elua", "checkme",
                                PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
                                LOCALE_DIR);
 

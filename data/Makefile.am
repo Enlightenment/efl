@@ -112,3 +112,9 @@ ethumb_clientfilesdir = $(datadir)/ethumb_client
 ethumb_clientfiles_DATA = ethumb_client/checkme
 EXTRA_DIST += $(ethumb_clientfiles_DATA)
 endif
+
+########################################################################
+# Elua
+eluafilesdir = $(datadir)/elua
+eluafiles_DATA = elua/checkme
+EXTRA_DIST += $(eluafiles_DATA)
