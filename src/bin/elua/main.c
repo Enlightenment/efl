@@ -1,4 +1,4 @@
-#include "config.h" 
+#include "config.h"
 
 /* The Lua runtime component of the EFL */
 
@@ -265,7 +265,7 @@ elua_doscript(lua_State *L, int argc, char **argv, int n, int *quit)
 }
 
 void
-elua_shutdown(lua_State *L, int c)
+elua_bin_shutdown(lua_State *L, int c)
 {
    void *data;
    INF("elua shutdown");
@@ -281,7 +281,7 @@ elua_shutdown(lua_State *L, int c)
    if (L) lua_close(L);
    if (el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
      eina_log_domain_unregister(el_log_domain);
-   eina_shutdown();
+   elua_shutdown();
    exit(c);
 }
 
@@ -584,7 +584,7 @@ main(int argc, char **argv)
    textdomain(PACKAGE);
 #endif
 
-   eina_init();
+   elua_init();
 
    if (!(el_log_domain = eina_log_domain_register("elua", EINA_COLOR_ORANGE)))
      {
@@ -598,7 +598,7 @@ main(int argc, char **argv)
    if (!(L = luaL_newstate()))
      {
         ERR("could not initialize elua state.");
-        elua_shutdown(L, 1);
+        elua_bin_shutdown(L, 1);
      }
 
    elua_state = L;
@@ -609,7 +609,7 @@ main(int argc, char **argv)
    m.argv   = argv;
    m.status = 0;
 
-   elua_shutdown(L, !!(lua_cpcall(L, elua_main, &m) || m.status));
+   elua_bin_shutdown(L, !!(lua_cpcall(L, elua_main, &m) || m.status));
 
    return 0; /* never gets here */
 }

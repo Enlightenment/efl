@@ -54,6 +54,9 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+EAPI int elua_init(void);
+EAPI int elua_shutdown(void);
+
 #endif
 
 #ifdef __cplusplus

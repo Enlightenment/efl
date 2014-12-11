@@ -9,7 +9,12 @@ lib/elua/Elua.h
 lib_elua_libelua_la_SOURCES = \
 lib/elua/elua.c
 
-lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@
+lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
+	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
+	-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
+
 if HAVE_WIN32
 lib_elua_libelua_la_LIBADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@
 else

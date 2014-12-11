@@ -23,6 +23,8 @@
 #include <Evil.h>
 #endif
 
+#include "Elua.h"
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
