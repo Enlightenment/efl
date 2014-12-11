@@ -1,6 +1,21 @@
 ==========
-EFL 1.12.1
+EFL 1.12.2
 ==========
+
+Changes since 1.12.1:
+---------------------
+
+Fixes:
+
+   * textblock: correct text position for RTL text with margins
+   * evas/map: correct last 1 pixel handling in spans.
+   * Evas textblock: Fix possibly null dereference.
+   * ecore con: Fix GnuTLS build error.
+   * ecore/animator: fix the bezier cubic compuation.
+   * ecore-evas-wayland: Fix issue with ELM_PROFILE=mobile and windows not showing up correctly.
+   * eeze_scanner needs to hash on the address of the pointer and not use direct_add() (T1612)
+   * Evas GL: Add preventive padding after Evas_GL_API
+   * ecore/animator: fix the wrong computation of bezier cubic.
 
 Changes since 1.12.0:
 ---------------------
