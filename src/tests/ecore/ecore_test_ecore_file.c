@@ -55,6 +55,29 @@ get_tmp_file()
    return tmp_file;
 }
 
+int
+_compare_path(const char *filePathA, const char *filePathB)
+{
+   char realFilePathA[MAXSIZE];
+   char realFilePathB[MAXSIZE];
+#ifdef _WIN32
+   GetFullPathName(filePathA, MAXSIZE, realFilePathA, NULL);
+   GetFullPathName(filePathB, MAXSIZE, realFilePathB, NULL);
+#else
+   realpath(filePathA, realFilePathA);
+   realpath(filePathB, realFilePathB);
+#endif
+   return strcmp(realFilePathA, realFilePathB);
+}
+
+#define assert_path_eq(X, Y)                                            \
+  do {                                                                  \
+     const char* _ck_x = (X);                                           \
+     const char* _ck_y = (Y);                                           \
+     ck_assert_msg(0 == _compare_path(_ck_y, _ck_x),                    \
+                   "Assertion '%s' failed: %s==\"%s\", %s==\"%s\"", #X"=="#Y, #X, _ck_x, #Y, _ck_y); \
+  } while (0)
+
 static void
 file_monitor_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
                 Ecore_File_Event event, const char *path)
@@ -204,8 +227,8 @@ START_TEST(ecore_test_ecore_file_operations)
 
    res = ecore_file_symlink(src_file, dest_file);
    fail_if(res != EINA_TRUE);
-   ck_assert_str_eq(ecore_file_readlink(dest_file), src_file);
-   ck_assert_str_eq(ecore_file_realpath(dest_file), src_file);
+   assert_path_eq(ecore_file_readlink(dest_file), src_file);
+   assert_path_eq(ecore_file_realpath(dest_file), src_file);
    res = ecore_file_unlink(dest_file);
    fail_if(res != EINA_TRUE);
 
@@ -218,8 +241,8 @@ START_TEST(ecore_test_ecore_file_operations)
    res = ecore_file_exists(src_file);
    fail_if(res != EINA_FALSE);
 
-   ck_assert_str_eq(ecore_file_dir_get(dest_file), tmpdir);
-   ck_assert_str_eq(ecore_file_realpath(dest_file), dest_file);
+   assert_path_eq(ecore_file_dir_get(dest_file), tmpdir);
+   assert_path_eq(ecore_file_realpath(dest_file), dest_file);
    fail_if(ecore_file_mod_time(dest_file) == 0);
    fail_if(ecore_file_can_read(dest_file) != EINA_TRUE);
    fail_if(ecore_file_can_write(dest_file) != EINA_TRUE);
@@ -263,7 +286,7 @@ START_TEST(ecore_test_ecore_file_monitor)
    _writeToFile(file_name, random_text);
    _writeToFile(file_name, random_text);
 
-   ck_assert_str_eq(ecore_file_monitor_path_get(mon), realp);
+   assert_path_eq(ecore_file_monitor_path_get(mon), realp);
 
    ret = ecore_file_mksubdirs(src_dir, sub_dir);
    fail_if(ret != 1);
