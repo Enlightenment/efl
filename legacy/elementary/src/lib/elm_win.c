@@ -209,6 +209,8 @@ struct _Elm_Win_Data
    Eina_Bool    skip_focus : 1;
    Eina_Bool    floating : 1;
    Eina_Bool    noblank : 1;
+   Eina_Bool    theme_alpha : 1;
+   Eina_Bool    application_alpha : 1;
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
@@ -345,6 +347,38 @@ elm_process_state_get(void)
    return _elm_process_state;
 }
 
+static void
+_elm_win_apply_alpha(Eo *obj, Elm_Win_Data *sd)
+{
+   Eina_Bool enabled;
+
+   enabled = sd->theme_alpha | sd->application_alpha;
+   if (sd->img_obj)
+     {
+        evas_object_image_alpha_set(sd->img_obj, enabled);
+        ecore_evas_alpha_set(sd->ee, enabled);
+     }
+   else
+     {
+#ifdef HAVE_ELEMENTARY_X
+        if (sd->x.xwin)
+          {
+             if (enabled)
+               {
+                  if (!ecore_x_screen_is_composited(0))
+                    elm_win_shaped_set(obj, enabled);
+                  else
+                    TRAP(sd, alpha_set, enabled);
+               }
+             else
+               TRAP(sd, alpha_set, enabled);
+             _elm_win_xwin_update(sd);
+          }
+        else
+#endif
+          TRAP(sd, alpha_set, enabled);
+     }
+}
 
 static void
 _elm_win_state_eval(void *data EINA_UNUSED)
@@ -591,7 +625,8 @@ _shot_do(Elm_Win_Data *sd)
    flags = _shot_flags_get(sd);
    ee = ecore_evas_buffer_new(1, 1);
    o = evas_object_image_add(ecore_evas_get(ee));
-   evas_object_image_alpha_set(o, ecore_evas_alpha_get(sd->ee));
+   evas_object_image_alpha_set(o,
+                               sd->theme_alpha | sd->application_alpha);
    evas_object_image_size_set(o, w, h);
    evas_object_image_data_set(o, pixels);
    if (!evas_object_image_save(o, file, key, flags))
@@ -3516,6 +3551,20 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
         eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
      }
 
+   if (edje_object_data_get(sd->layout, "alpha"))
+     {
+        const char *s = edje_object_data_get(sd->layout, "alpha");
+        if (s)
+          {
+             if (!strcmp(s, "1") ||
+                 !strcmp(s, "true"))
+               {
+                  sd->application_alpha = 1;
+                  _elm_win_apply_alpha(obj, sd);
+               }
+          }
+     }
+
    evas_object_show(sd->layout);
 }
 
@@ -3773,31 +3822,8 @@ _elm_win_shaped_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 EOLIAN static void
 _elm_win_alpha_set(Eo *obj, Elm_Win_Data *sd, Eina_Bool enabled)
 {
-   if (sd->img_obj)
-     {
-        evas_object_image_alpha_set(sd->img_obj, enabled);
-        ecore_evas_alpha_set(sd->ee, enabled);
-     }
-   else
-     {
-#ifdef HAVE_ELEMENTARY_X
-        if (sd->x.xwin)
-          {
-             if (enabled)
-               {
-                  if (!ecore_x_screen_is_composited(0))
-                    elm_win_shaped_set(obj, enabled);
-                  else
-                    TRAP(sd, alpha_set, enabled);
-               }
-             else
-               TRAP(sd, alpha_set, enabled);
-             _elm_win_xwin_update(sd);
-          }
-        else
-#endif
-          TRAP(sd, alpha_set, enabled);
-     }
+   sd->application_alpha = enabled;
+   _elm_win_apply_alpha(obj, sd);
 }
 
 EOLIAN static Eina_Bool
