@@ -35,8 +35,7 @@ inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
                                 , void* /*event_info*/)
 {
   event_callback_information* event = static_cast<event_callback_information*>(data);
-  v8::Handle<v8::Value> a[] = {v8::External::New(/*isolate,*/ obj)};
-  // v8::Local<v8::Function> f = (*event->event_info->constructor)->GetFunction();
+  v8::Handle<v8::Value> a[] = {compatibility_new<v8::External>(nullptr, obj)};
   v8::Local<v8::Object> self = (*event->event_info->constructor)->NewInstance(1, a);
 
   v8::Handle<v8::Value> call_args[] = {self};
@@ -45,10 +44,7 @@ inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
   return EO_CALLBACK_CONTINUE;
 }
       
-#if 0
-
-#else
-inline v8::Handle<v8::Value> event_call(v8::Arguments const& args)
+inline compatibility_return_type event_call(compatibility_callback_info_type args)
 {
   if(args.Length() >= 1)
     {
@@ -65,8 +61,9 @@ inline v8::Handle<v8::Value> event_call(v8::Arguments const& args)
           Eo* eo = static_cast<Eo*>(v8::External::Cast(*external)->Value());
 
           event_callback_information* i = new event_callback_information
-            {event, v8::Persistent<v8::Function>::New(v8::Handle<v8::Function>
-                                                      (v8::Function::Cast(*arg1->ToObject())))};
+            {event, compatibility_new<v8::Persistent<v8::Function> >
+             (args.GetIsolate()
+              , v8::Handle<v8::Function>(v8::Function::Cast(*arg1->ToObject())))};
           
           eo_do(eo, eo_event_callback_priority_add
                 (event->event, EO_CALLBACK_PRIORITY_DEFAULT, &event_callback, i));
@@ -75,9 +72,8 @@ inline v8::Handle<v8::Value> event_call(v8::Arguments const& args)
   else
     {
     }
-  return v8::Handle<v8::Value>();
+  return compatibility_return();
 }
-#endif
 
 } } }
 

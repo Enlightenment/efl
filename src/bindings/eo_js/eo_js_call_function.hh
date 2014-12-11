@@ -19,24 +19,14 @@
 
 namespace efl { namespace eo { namespace js {
 
-#if 0
-inline void call_function(v8::FunctionCallbackInfo<v8::Value> const& args)
-{
-  void* data = v8::External::Cast(*args.Data())->Value();
-  std::function<void(v8::FunctionCallbackInfo<v8::Value>const&)>*
-    f = static_cast<std::function<void(v8::FunctionCallbackInfo<v8::Value>const&)>*>(data);
-  (*f)(args);
-}
-#else
-inline v8::Handle<v8::Value> call_function(v8::Arguments const& args)
+inline compatibility_return_type call_function(compatibility_callback_info_type args)
 {
   std::cerr << "call_function" << std::endl;
   void* data = v8::External::Cast(*args.Data())->Value();
-  std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*
-    f = static_cast<std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*>(data);
+  std::function<compatibility_return_type(compatibility_callback_info_type)>*
+    f = static_cast<std::function<compatibility_return_type(compatibility_callback_info_type)>*>(data);
   return (*f)(args);
 }
-#endif
       
 template <typename In, typename Out, typename Ownership, typename F>
 struct method_caller
@@ -167,7 +157,7 @@ struct method_caller
   template <typename U, std::size_t I, typename Outs>
   static
   typename std::tuple_element<I, parameters_t>::type
-  get_value(v8::Arguments const& args, Outs& /*outs*/, v8::Isolate* isolate
+  get_value(compatibility_callback_info_type args, Outs& /*outs*/, v8::Isolate* isolate
             , std::false_type)
   {
     std::cout << "is NOT out" << std::endl;
@@ -182,7 +172,7 @@ struct method_caller
   typename std::tuple_element
     <eina::_mpl::tuple_find<std::integral_constant<std::size_t, I>, Out>::value
      , Outs>::type>::type
-  get_value(v8::Arguments const&, Outs& outs, v8::Isolate*
+  get_value(compatibility_callback_info_type, Outs& outs, v8::Isolate*
             , std::true_type)
   {
     std::cout << "is out" << std::endl;
@@ -258,7 +248,7 @@ struct method_caller
   // }
   
   template <std::size_t... I>
-  void aux(v8::Arguments const& args, eina::index_sequence<I...>
+  void aux(compatibility_callback_info_type args, eina::index_sequence<I...>
            , std::true_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -269,7 +259,7 @@ struct method_caller
   }
 
   template <std::size_t... I>
-  void aux(v8::Arguments const& args, eina::index_sequence<I...>
+  void aux(compatibility_callback_info_type args, eina::index_sequence<I...>
            , std::false_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -291,31 +281,7 @@ struct method_caller
     };
   };
 
-#if 0
-  void operator()(v8::FunctionCallbackInfo<v8::Value> const& args)
-  {
-    int input_parameters = std::tuple_size<In>::value;
-    if(input_parameters <= args.Length())
-      {
-        v8::Local<v8::Object> self = args.This();
-        v8::Local<v8::Value> external = self->GetInternalField(0);
-        Eo* eo = static_cast<Eo*>(v8::External::Cast(*external)->Value());
-        try
-          {
-            eo_do(eo, aux(args, eina::make_index_sequence<std::tuple_size<parameters_t>::value>()
-                          , std::is_same<void, typename eina::_mpl::function_return<F>::type>()));
-          }
-        catch(std::logic_error const&) {}
-      }
-    else
-      {
-        args.GetIsolate()->ThrowException
-          (v8::Exception::TypeError
-           (v8::String::NewFromUtf8(args.GetIsolate(), "Expected more arguments for this call")));
-      }      
-  }
-#else
-  v8::Handle<v8::Value> operator()(v8::Arguments const& args)
+  compatibility_return_type operator()(compatibility_callback_info_type args)
   {
     std::cerr << "call function operator()(args)" << std::endl;
     int input_parameters = std::tuple_size<In>::value;
@@ -333,39 +299,24 @@ struct method_caller
       }
     else
       {
-#if 0
-        args.GetIsolate()->
-#else
-          v8::
-#endif
-          ThrowException
+        return compatibility_throw
           (v8::Exception::TypeError
-           (v8::String::New/*FromUtf8*/(/*args.GetIsolate(),*/ "Expected more arguments for this call")));
+           (compatibility_new<v8::String>(nullptr, "Expected more arguments for this call")));
       }
-    return v8::Handle<v8::Value>();
+    return compatibility_return();
   }
-#endif  
   
   F function;
 };
 
-#if 0
 template <typename In, typename Out, typename Ownership, typename F>
 v8::Handle<v8::Value> call_function_data(v8::Isolate* isolate, F f)
 {
-  return v8::External::New
-    (isolate, new std::function<void(v8::FunctionCallbackInfo<v8::Value> const&)>
+  return compatibility_new<v8::External>
+    (isolate, new std::function<compatibility_return_type(compatibility_callback_info_type const&)>
      (method_caller<In, Out, Ownership, F>{f}));
 }
-#else
-template <typename In, typename Out, typename Ownership, typename F>
-v8::Handle<v8::Value> call_function_data(v8::Isolate* /*isolate*/, F f)
-{
-  return v8::External::New
-    (new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>
-     (method_caller<In, Out, Ownership, F>{f}));
-}
-#endif
+
 } } }
 
 #endif
