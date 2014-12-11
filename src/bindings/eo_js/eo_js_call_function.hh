@@ -309,7 +309,6 @@ struct method_caller
       }
     else
       {
-        std::cout << "Expected more arguments for this call" << std::endl;
         args.GetIsolate()->ThrowException
           (v8::Exception::TypeError
            (v8::String::NewFromUtf8(args.GetIsolate(), "Expected more arguments for this call")));
@@ -334,7 +333,6 @@ struct method_caller
       }
     else
       {
-        std::cout << "Expected more arguments for this call" << std::endl;
 #if 0
         args.GetIsolate()->
 #else

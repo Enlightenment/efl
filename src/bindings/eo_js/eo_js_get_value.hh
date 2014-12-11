@@ -51,12 +51,14 @@ inline char* get_value_from_javascript
    , v8::Isolate* /*isolate*/
    , value_tag<char*>)
 {
-  if(v->IsString())
+  if(v->IsNull())
+    return nullptr;
+  else if(v->IsString())
     {
       v8::String::Utf8Value str(v->ToString());
-      char* string = *str;
+      char* string = strdup(*str); // TODO: leaks
       std::cerr << "String " << string << std::endl;
-      return strdup(string); // TODO: leaks
+      return string;
     }
   else
     {
@@ -145,7 +147,6 @@ inline int get_value_from_javascript
 {
   if(v->IsBoolean() || v->IsBooleanObject())
     {
-      std::cout << "Boolean value " << v->BooleanValue() << std::endl;
       return v->BooleanValue();
     }
   else
@@ -172,7 +173,6 @@ inline double get_value_from_javascript
 {
   if(v->IsNumber())
     {
-      std::cout << "Number value " << v->NumberValue() << std::endl;
       return v->NumberValue();
     }
   else

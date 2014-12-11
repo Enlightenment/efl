@@ -34,20 +34,13 @@ struct event_callback_information
 inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
                                 , void* /*event_info*/)
 {
-  std::cout << "event_callback " << __LINE__ << std::endl;
   event_callback_information* event = static_cast<event_callback_information*>(data);
-  std::cout << "event_callback " << __LINE__ << std::endl;
   v8::Handle<v8::Value> a[] = {v8::External::New(/*isolate,*/ obj)};
-  std::cout << "event_callback " << __LINE__ << std::endl;
   // v8::Local<v8::Function> f = (*event->event_info->constructor)->GetFunction();
-  std::cout << "event_callback " << __LINE__ << std::endl;
   v8::Local<v8::Object> self = (*event->event_info->constructor)->NewInstance(1, a);
-  std::cout << "event_callback " << __LINE__ << std::endl;
 
   v8::Handle<v8::Value> call_args[] = {self};
-  std::cout << "event_callback " << __LINE__ << std::endl;
   event->function->Call(v8::Context::GetCurrent()->Global(), 1, call_args);
-  std::cout << "event_callback " << __LINE__ << std::endl;
   
   return EO_CALLBACK_CONTINUE;
 }
@@ -57,14 +50,11 @@ inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
 #else
 inline v8::Handle<v8::Value> event_call(v8::Arguments const& args)
 {
-  std::cout << "event_call" << std::endl;
   if(args.Length() >= 1)
     {
-      std::cout << "has one argument" << std::endl;
       v8::Local<v8::Value> arg1 = args[0];
       if(arg1->IsFunction())
         {
-          std::cout << "is function" << std::endl;
           v8::Local<v8::Value> data = args.Data();
           event_information* event =
             static_cast<event_information*>
