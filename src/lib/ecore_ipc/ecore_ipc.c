@@ -1275,11 +1275,13 @@ _ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                     }
                   if ((max < 0) || (msg.size <= max))
                     {
+                       Eina_Bool need_free = EINA_FALSE;
                        if (msg.size > 0)
                          {
                             buf = malloc(msg.size);
                             if (!buf) return ECORE_CALLBACK_CANCEL;
                             memcpy(buf, cl->buf + offset + s, msg.size);
+                            need_free = EINA_TRUE;
                          }
                        if (!cl->delete_me)
                          {
@@ -1298,8 +1300,10 @@ _ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                                  ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
                                                  _ecore_ipc_event_client_data_free,
                                                  NULL);
+                                 need_free = EINA_FALSE;
                               }
                          }
+                       if (need_free) free(buf);
                     }
                   cl->prev.i = msg;
                   offset += (s + msg.size);
